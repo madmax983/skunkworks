@@ -124,6 +124,8 @@ struct SignalContext {
     entropy_writes: Vec<EntropyWrite>,
     mutation_requests: Vec<MutationRequest>,
     spawn_requests: Vec<SpawnRequest>,
+    phage_updates: Vec<PhageUpdate>,
+    phage_clones: Vec<PhageCloneRequest>,
     ether_writes: Vec<EtherWrite>,
     ether_reads: Vec<EtherRead>,
     holo_writes: Vec<HoloWrite>,
@@ -131,6 +133,16 @@ struct SignalContext {
     neuron_stimuli: Vec<NeuronStimulus>,
     executions: Vec<(OpCode, Vec<Nucleotide>)>,
     midi_events: Vec<MidiEvent>,
+}
+
+struct PhageUpdate {
+    organelle_idx: usize,
+    new_loc: (usize, usize),
+    new_dir: (i8, i8),
+}
+
+struct PhageCloneRequest {
+    strand_idx: usize,
 }
 
 pub fn process_signals(vm: &mut ChimeraVM) {
@@ -144,6 +156,8 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         entropy_writes: Vec::new(),
         mutation_requests: Vec::new(),
         spawn_requests: Vec::new(),
+        phage_updates: Vec::new(),
+        phage_clones: Vec::new(),
         ether_writes: Vec::new(),
         ether_reads: Vec::new(),
         holo_writes: Vec::new(),
@@ -152,6 +166,9 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         executions: Vec::new(),
         midi_events: Vec::new(),
     };
+
+    // 0. Process Phages
+    process_phages(vm, &mut ctx);
 
     // 1. Scan Phase
     for y in 0..size {
@@ -398,6 +415,37 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    // 1.8 Apply Phage Updates
+    for update in ctx.phage_updates {
+        if update.organelle_idx < vm.organelles.len() {
+            vm.organelles[update.organelle_idx].context_loc = update.new_loc;
+            vm.organelles[update.organelle_idx].direction = update.new_dir;
+        }
+    }
+
+    for clone_req in ctx.phage_clones {
+        if clone_req.strand_idx < vm.dna.helix.strands.len() {
+            if vm.dna.helix.strands.len() < crate::vm::MAX_STRANDS {
+                let new_strand = vm.dna.helix.strands[clone_req.strand_idx].clone();
+                vm.dna.helix.strands.push(new_strand);
+                vm.telomeres.push(50);
+                #[cfg(feature = "cortex")]
+                {
+                    vm.activation_levels.push(0);
+                    vm.synapse_map.push(Vec::new());
+                }
+                let new_idx = vm.dna.helix.strands.len() - 1;
+                vm.cladistics.register_strand(
+                    new_idx,
+                    Some(clone_req.strand_idx),
+                    vm.tick_counter,
+                    "PhageInfection".to_string(),
+                );
+                vm.output.push(format!("PHAGE: Injected strand {} as {}", clone_req.strand_idx, new_idx));
             }
         }
     }
@@ -878,6 +926,89 @@ fn exec_random(vm: &ChimeraVM, y: usize, x: usize, ctx: &mut SignalContext) {
             x: sx,
             val: Value::Str(val_to_char(res).to_string()),
         });
+    }
+}
+
+fn process_phages(vm: &ChimeraVM, ctx: &mut SignalContext) {
+    for (i, org) in vm.organelles.iter().enumerate() {
+        if org.kind == crate::vm::nova::OrganelleType::Phage {
+            let (y, x) = org.context_loc;
+            let (dy, dx) = org.direction;
+
+            // Normalize new position
+            // Note: Using i64 for calculation, handling wrap around via normalize_coords
+            // But Phages might bounce instead of wrap?
+            // Let's bounce on boundary to keep them contained "in the dish".
+            // Or wrap? Standard Orca wraps? normalize_coords wraps.
+            // Let's try to move.
+
+            let next_pos = vm.normalize_coords(y as i64 + dy as i64, x as i64 + dx as i64);
+
+            if let Some((ny, nx)) = next_pos {
+                let cell_val = &vm.grid[ny][nx];
+
+                // Interaction Logic
+                let mut new_dir = (dy, dx);
+                let mut bounced = false;
+
+                match cell_val {
+                    Value::Str(s) => {
+                        match s.as_str() {
+                            "*" | "!" => {
+                                // Mutation
+                                ctx.mutation_requests.push(MutationRequest { strand_idx: org.ip.0 });
+                            },
+                            "H" | "h" => {
+                                // Host / Infection
+                                ctx.phage_clones.push(PhageCloneRequest { strand_idx: org.ip.0 });
+                            },
+                            "#" => {
+                                // Wall - Bounce
+                                new_dir = (-dy, -dx);
+                                bounced = true;
+                            }
+                            _ => {}
+                        }
+                    },
+                    Value::Int(n) => {
+                        // Numeric collision?
+                        // Maybe change direction based on number?
+                        if *n == 0 {
+                            // Empty space, continue
+                        } else {
+                            // Non-empty, bounce?
+                            // Let's just pass through numbers for now.
+                        }
+                    },
+                    _ => {}
+                }
+
+                // If bounced, we stay put (or move back? or just turn?)
+                // If we bounce, we update dir but NOT loc this tick.
+                if bounced {
+                    ctx.phage_updates.push(PhageUpdate {
+                        organelle_idx: i,
+                        new_loc: (y, x),
+                        new_dir,
+                    });
+                } else {
+                    ctx.phage_updates.push(PhageUpdate {
+                        organelle_idx: i,
+                        new_loc: (ny, nx),
+                        new_dir,
+                    });
+                }
+
+            } else {
+                // Out of bounds (if no wrap)
+                // Reverse direction
+                ctx.phage_updates.push(PhageUpdate {
+                    organelle_idx: i,
+                    new_loc: (y, x),
+                    new_dir: (-dy, -dx),
+                });
+            }
+        }
     }
 }
 

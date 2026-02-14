@@ -211,6 +211,9 @@ mod nova_orca_midi_test;
 #[cfg(test)]
 mod nova_orca_test;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_phage_test;
+#[cfg(feature = "nova")]
 pub mod nova_paleontology;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -1389,6 +1392,9 @@ impl ChimeraVM {
             nova::OrganelleType::MadScientist => {
                 self.process_mad_scientist(organelle);
             }
+            nova::OrganelleType::Phage => {
+                // Phages are processed in nova_signals::process_signals
+            }
             nova::OrganelleType::Worker => {}
         }
 
@@ -1400,6 +1406,7 @@ impl ChimeraVM {
                 | nova::OrganelleType::Seed
                 | nova::OrganelleType::Choir
                 | nova::OrganelleType::MadScientist
+                | nova::OrganelleType::Phage
         ) {
             self.execute_organelle_dna(organelle);
         }
