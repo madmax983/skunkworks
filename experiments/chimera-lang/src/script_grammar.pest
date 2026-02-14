@@ -1,7 +1,7 @@
 WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
 COMMENT = _{ ("//" ~ (!"\n" ~ ANY)*) | ("/*" ~ (!"*/" ~ ANY)* ~ "*/") | ("#" ~ (!"\n" ~ ANY)*) }
 
-program = { SOI ~ (include_stmt | macro_def | strand_def)* ~ EOI }
+program = { SOI ~ (include_stmt | macro_def | strand_def | grammar_def)* ~ EOI }
 
 include_stmt = { "include" ~ string }
 
@@ -9,10 +9,13 @@ macro_def = { "macro" ~ identifier ~ "{" ~ instruction* ~ "}" }
 
 strand_def = { "strand" ~ identifier ~ "{" ~ instruction* ~ "}" }
 
+grammar_def = { "grammar" ~ identifier ~ "{" ~ argument ~ "}" }
+
 instruction = {
     block |
     chaos_block |
     oracle_block |
+    polyglot_block |
     literal |
     junction |
     crispr_block |
@@ -21,6 +24,9 @@ instruction = {
     question_branch |
     simple_op
 }
+
+nested_text = @{ ( "{" ~ nested_text ~ "}" | !("{" | "}") ~ ANY )* }
+polyglot_block = { "polyglot" ~ identifier ~ "{" ~ nested_text ~ "}" }
 
 chaos_block = { "chaos" ~ block }
 
@@ -45,8 +51,10 @@ question_branch = { "?" ~ identifier }
 simple_op = { identifier }
 
 argument_list = { argument ~ ("," ~ argument)* }
-argument = { literal | junction | variable | identifier }
-variable = @{ "?" ~ identifier }
+argument = { literal | junction | data_call | variable | identifier }
+variable = @{ "?" ~ (identifier | ASCII_DIGIT+) }
+
+data_call = { identifier ~ "(" ~ argument_list ~ ")" }
 
 junction = { junction_type ~ "(" ~ argument_list ~ ")" }
 junction_type = { "any" | "all" }
