@@ -415,3 +415,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The towers are thinking. Sensors are writing to the grid. DNA is driving the ballistics.
 - **Note:** Hybrid of `chaotic-defense` and `chimera-lang`.
+
+### [Concentration Level: FRESH] - Location: experiments/tidal-channel
+- **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
+- **Status:** The tasks are planets. The worker is a black hole. As they approach the event horizon, the tidal forces rip them into sub-tasks. Parallelization is spaghettification.
+- **Note:** Moonshot: Tidal Forces + Pull-based Reactive Systems.
