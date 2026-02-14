@@ -1,4 +1,4 @@
-use crate::math::Quasicrystal;
+use crate::dungeon::{Dungeon, RoomType};
 use bytemuck::{Pod, Zeroable};
 use cgmath::prelude::*;
 use cgmath::{Deg, Matrix4, Point3, Quaternion, Vector3};
@@ -64,112 +64,44 @@ pub struct State {
     camera_uniform: CameraUniform,
     pub camera: Camera,
     depth_view: wgpu::TextureView,
+
+    // Game State
+    pub dungeon: Dungeon,
+    pub selected_neighbor_idx: Option<usize>,
 }
 
 const VERTICES: &[Vertex] = &[
-    // Cube vertices (unchanged)
+    // Cube vertices
     // Front face
-    Vertex {
-        position: [-0.1, -0.1, 0.1],
-        normal: [0.0, 0.0, 1.0],
-    },
-    Vertex {
-        position: [0.1, -0.1, 0.1],
-        normal: [0.0, 0.0, 1.0],
-    },
-    Vertex {
-        position: [0.1, 0.1, 0.1],
-        normal: [0.0, 0.0, 1.0],
-    },
-    Vertex {
-        position: [-0.1, 0.1, 0.1],
-        normal: [0.0, 0.0, 1.0],
-    },
+    Vertex { position: [-0.1, -0.1, 0.1], normal: [0.0, 0.0, 1.0] },
+    Vertex { position: [0.1, -0.1, 0.1], normal: [0.0, 0.0, 1.0] },
+    Vertex { position: [0.1, 0.1, 0.1], normal: [0.0, 0.0, 1.0] },
+    Vertex { position: [-0.1, 0.1, 0.1], normal: [0.0, 0.0, 1.0] },
     // Back face
-    Vertex {
-        position: [-0.1, -0.1, -0.1],
-        normal: [0.0, 0.0, -1.0],
-    },
-    Vertex {
-        position: [-0.1, 0.1, -0.1],
-        normal: [0.0, 0.0, -1.0],
-    },
-    Vertex {
-        position: [0.1, 0.1, -0.1],
-        normal: [0.0, 0.0, -1.0],
-    },
-    Vertex {
-        position: [0.1, -0.1, -0.1],
-        normal: [0.0, 0.0, -1.0],
-    },
+    Vertex { position: [-0.1, -0.1, -0.1], normal: [0.0, 0.0, -1.0] },
+    Vertex { position: [-0.1, 0.1, -0.1], normal: [0.0, 0.0, -1.0] },
+    Vertex { position: [0.1, 0.1, -0.1], normal: [0.0, 0.0, -1.0] },
+    Vertex { position: [0.1, -0.1, -0.1], normal: [0.0, 0.0, -1.0] },
     // Top face
-    Vertex {
-        position: [-0.1, 0.1, -0.1],
-        normal: [0.0, 1.0, 0.0],
-    },
-    Vertex {
-        position: [-0.1, 0.1, 0.1],
-        normal: [0.0, 1.0, 0.0],
-    },
-    Vertex {
-        position: [0.1, 0.1, 0.1],
-        normal: [0.0, 1.0, 0.0],
-    },
-    Vertex {
-        position: [0.1, 0.1, -0.1],
-        normal: [0.0, 1.0, 0.0],
-    },
+    Vertex { position: [-0.1, 0.1, -0.1], normal: [0.0, 1.0, 0.0] },
+    Vertex { position: [-0.1, 0.1, 0.1], normal: [0.0, 1.0, 0.0] },
+    Vertex { position: [0.1, 0.1, 0.1], normal: [0.0, 1.0, 0.0] },
+    Vertex { position: [0.1, 0.1, -0.1], normal: [0.0, 1.0, 0.0] },
     // Bottom face
-    Vertex {
-        position: [-0.1, -0.1, -0.1],
-        normal: [0.0, -1.0, 0.0],
-    },
-    Vertex {
-        position: [0.1, -0.1, -0.1],
-        normal: [0.0, -1.0, 0.0],
-    },
-    Vertex {
-        position: [0.1, -0.1, 0.1],
-        normal: [0.0, -1.0, 0.0],
-    },
-    Vertex {
-        position: [-0.1, -0.1, 0.1],
-        normal: [0.0, -1.0, 0.0],
-    },
+    Vertex { position: [-0.1, -0.1, -0.1], normal: [0.0, -1.0, 0.0] },
+    Vertex { position: [0.1, -0.1, -0.1], normal: [0.0, -1.0, 0.0] },
+    Vertex { position: [0.1, -0.1, 0.1], normal: [0.0, -1.0, 0.0] },
+    Vertex { position: [-0.1, -0.1, 0.1], normal: [0.0, -1.0, 0.0] },
     // Right face
-    Vertex {
-        position: [0.1, -0.1, -0.1],
-        normal: [1.0, 0.0, 0.0],
-    },
-    Vertex {
-        position: [0.1, 0.1, -0.1],
-        normal: [1.0, 0.0, 0.0],
-    },
-    Vertex {
-        position: [0.1, 0.1, 0.1],
-        normal: [1.0, 0.0, 0.0],
-    },
-    Vertex {
-        position: [0.1, -0.1, 0.1],
-        normal: [1.0, 0.0, 0.0],
-    },
+    Vertex { position: [0.1, -0.1, -0.1], normal: [1.0, 0.0, 0.0] },
+    Vertex { position: [0.1, 0.1, -0.1], normal: [1.0, 0.0, 0.0] },
+    Vertex { position: [0.1, 0.1, 0.1], normal: [1.0, 0.0, 0.0] },
+    Vertex { position: [0.1, -0.1, 0.1], normal: [1.0, 0.0, 0.0] },
     // Left face
-    Vertex {
-        position: [-0.1, -0.1, -0.1],
-        normal: [-1.0, 0.0, 0.0],
-    },
-    Vertex {
-        position: [-0.1, -0.1, 0.1],
-        normal: [-1.0, 0.0, 0.0],
-    },
-    Vertex {
-        position: [-0.1, 0.1, 0.1],
-        normal: [-1.0, 0.0, 0.0],
-    },
-    Vertex {
-        position: [-0.1, 0.1, -0.1],
-        normal: [-1.0, 0.0, 0.0],
-    },
+    Vertex { position: [-0.1, -0.1, -0.1], normal: [-1.0, 0.0, 0.0] },
+    Vertex { position: [-0.1, -0.1, 0.1], normal: [-1.0, 0.0, 0.0] },
+    Vertex { position: [-0.1, 0.1, 0.1], normal: [-1.0, 0.0, 0.0] },
+    Vertex { position: [-0.1, 0.1, -0.1], normal: [-1.0, 0.0, 0.0] },
 ];
 
 const INDICES: &[u16] = &[
@@ -186,7 +118,7 @@ impl State {
         window: Option<Arc<Window>>,
         width: u32,
         height: u32,
-        qc: &Quasicrystal,
+        dungeon: Dungeon,
     ) -> Self {
         let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
             backends: wgpu::Backends::all(),
@@ -404,56 +336,12 @@ impl State {
         });
 
         // Convert QC to instances
-        let mut instances: Vec<InstanceRaw> = Vec::new();
-
-        // Atoms
-        for p in &qc.atoms {
-            let dist = p.to_vec().magnitude();
-            let c = (dist / 10.0).sin() * 0.5 + 0.5;
-
-            let model =
-                Matrix4::from_translation(Vector3::new(p.x, p.y, p.z)) * Matrix4::from_scale(0.5); // Make atoms smaller
-
-            instances.push(InstanceRaw {
-                model: model.into(),
-                color: [c, 0.5, 1.0 - c, 1.0],
-            });
-        }
-
-        // Edges
-        for (start, end) in &qc.edges {
-            let vec = end - start;
-            let len = vec.magnitude();
-            if len < 0.001 {
-                continue;
-            }
-            let dir = vec.normalize();
-            let mid = start + vec * 0.5;
-
-            // Rotation aligning Y-axis (0,1,0) to dir
-            let rot = Quaternion::between_vectors(Vector3::unit_y(), dir);
-
-            // Scale: Y becomes length L. X/Z become thickness.
-            // Original cube is -0.1 to 0.1 (height 0.2).
-            // Scale Y by L / 0.2.
-            // Scale X/Z by 0.2 (thickness factor).
-            let scale_y = len / 0.2;
-            let scale_xz = 0.2;
-
-            let model = Matrix4::from_translation(Vector3::new(mid.x, mid.y, mid.z))
-                * Matrix4::from(rot)
-                * Matrix4::from_nonuniform_scale(scale_xz, scale_y, scale_xz);
-
-            instances.push(InstanceRaw {
-                model: model.into(),
-                color: [0.8, 0.8, 0.8, 0.5], // Grey edges
-            });
-        }
+        let instances = Self::create_instances(&dungeon, None);
 
         let instance_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Instance Buffer"),
             contents: bytemuck::cast_slice(&instances),
-            usage: wgpu::BufferUsages::VERTEX,
+            usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
         });
 
         // Depth Texture
@@ -490,7 +378,79 @@ impl State {
             camera_uniform,
             camera,
             depth_view,
+            dungeon,
+            selected_neighbor_idx: None,
         }
+    }
+
+    fn create_instances(dungeon: &Dungeon, selected_neighbor: Option<usize>) -> Vec<InstanceRaw> {
+        let mut instances = Vec::new();
+        // Atoms
+        for (i, p) in dungeon.lattice.atoms.iter().enumerate() {
+            let mut color = [0.2, 0.2, 0.5, 0.5]; // Default Blue-ish
+
+            if i == dungeon.player_idx {
+                color = [1.0, 1.0, 1.0, 1.0]; // Player White
+            } else if Some(i) == selected_neighbor {
+                color = [1.0, 1.0, 0.0, 1.0]; // Selected Yellow
+            } else if dungeon.visited.contains(&i) {
+                if dungeon.room_types.get(&i) == Some(&RoomType::Start) {
+                    color = [0.0, 1.0, 0.0, 1.0]; // Start Green
+                } else if dungeon.room_types.get(&i) == Some(&RoomType::Goal) {
+                    color = [1.0, 0.0, 0.0, 1.0]; // Goal Red
+                } else {
+                    color = [0.0, 0.8, 0.8, 0.6]; // Visited Cyan
+                }
+            } else if dungeon.room_types.get(&i) == Some(&RoomType::Goal) {
+                 color = [0.5, 0.0, 0.0, 0.3]; // Unvisited Goal (Dim Red)
+            } else {
+                // Dim unvisited based on distance?
+                // Just keep it dark blue
+            }
+
+            let dist = p.to_vec().magnitude();
+            // Pulse effect?
+            // For now static.
+
+            let model =
+                Matrix4::from_translation(Vector3::new(p.x, p.y, p.z)) * Matrix4::from_scale(0.4);
+
+            instances.push(InstanceRaw {
+                model: model.into(),
+                color,
+            });
+        }
+
+        // Edges
+        for (start, end) in &dungeon.lattice.edges {
+            let vec = end - start;
+            let len = vec.magnitude();
+            if len < 0.001 {
+                continue;
+            }
+            let dir = vec.normalize();
+            let mid = start + vec * 0.5;
+
+            let rot = Quaternion::between_vectors(Vector3::unit_y(), dir);
+
+            let scale_y = len / 0.2;
+            let scale_xz = 0.1; // Thinner edges
+
+            let model = Matrix4::from_translation(Vector3::new(mid.x, mid.y, mid.z))
+                * Matrix4::from(rot)
+                * Matrix4::from_nonuniform_scale(scale_xz, scale_y, scale_xz);
+
+            instances.push(InstanceRaw {
+                model: model.into(),
+                color: [0.3, 0.3, 0.3, 0.2], // Dim edges
+            });
+        }
+        instances
+    }
+
+    pub fn update_dungeon_visuals(&mut self) {
+        let instances = Self::create_instances(&self.dungeon, self.selected_neighbor_idx);
+        self.queue.write_buffer(&self.instance_buffer, 0, bytemuck::cast_slice(&instances));
     }
 
     pub fn resize(&mut self, new_size: (u32, u32)) {
@@ -532,6 +492,10 @@ impl State {
             0,
             bytemuck::cast_slice(&[self.camera_uniform]),
         );
+
+        // Also update dungeon visuals if dirty?
+        // Let's assume called explicitly when changed to save bandwidth
+        // But for now, let's just do it in update_dungeon_visuals which main calls.
     }
 
     pub fn render(&mut self) -> Result<(), wgpu::SurfaceError> {
