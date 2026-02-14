@@ -16,3 +16,4 @@
 
   ## Deprecated Approaches
   - [What we learned NOT to do]  - [Genesis (The Oceanographer)]: Treat text as physical obstacles in fluid simulations (SDF or Raster Mask) rather than just overlays. Let the simulation flow *around* the meaning.
+  - [Genesis (The Percussionist)]: For audio experiments (`cpal`, `rodio`), gate the hardware dependency behind a `[features] audio` flag (default off). Implement a "Simulation Mode" fallback (e.g., mock timing thread) so the experiment builds and runs in CI/Sandboxes without ALSA headers.

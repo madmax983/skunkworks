@@ -22,3 +22,4 @@
 - **Status**: OPEN
   - [Genesis (The Mycologist)]: `bio-transit` will reveal that adding a global 'Commuter' goal (Work/Home) to local Physarum sensing creates a 'Braess's Paradox' where adding new roads (trails) can actually slow down the overall system flow due to induced congestion at high-pheromone bottlenecks.
   - [Genesis (The Crystallographer)]: `quasicrystal-dungeon` will demonstrate that aperiodic dungeon layouts (Penrose/Icosahedral) create a unique difficulty curve where "backtracking" is cognitively harder than forward exploration due to the lack of translational symmetry.
+  - [Genesis (The Percussionist)]: `thread-frequency` will reveal that scheduling contention on prime-numbered intervals creates "micro-grooves" (swing) that are indistinguishable from human timing errors, suggesting that "Soul" in music is just resource scarcity.
