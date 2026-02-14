@@ -881,4 +881,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: "Bureaucratic Survival". ChimeraVM organisms must calculate and submit resource demands as Egyptian Fractions to be granted CPU time by the Scales of Maat.
 - **Novel trait**: Self-Calculated Resource Allocation. Organisms evolve to request specific time blocks that fit the greedy allocation algorithm.
 - **Status**: experiments/chimera-maat
-- **Evaluation**: Compiles. TUI operational. Organisms are filing petitions.
+- **Evaluation**: Compiles. TUI operational. Organisms are filing petitions. Re-verified.
+
+### klein-fluid
+- **Parents**: experiments/typographic-turbulence + experiments/klein-flock
+- **Concept**: "Turbulence on a Twisted Manifold". Lattice Boltzmann Fluid Dynamics simulation on a Klein Bottle surface.
+- **Novel trait**: Non-Orientable Flow. Fluid vortices collide with their own inverted reflections when wrapping around the twist.
+- **Status**: experiments/klein-fluid
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational.

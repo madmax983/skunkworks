@@ -411,3 +411,8 @@
 - **Scent Origin:** Genesis (The Mad Scientist) ⚛️
 - **Status:** Harvesting the Chaos. The Logistic Map is driving the enemy spawn rates. Bifurcation diagrams are visible in the TUI.
 - **Note:** Moonshot: Tower Defense + Logistic Map Chaos.
+
+### [Concentration Level: FRESH] - Location: experiments/klein-fluid
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The fluid is twisting. Vortices are meeting their anti-selves. The manifold is non-orientable.
+- **Note:** Hybrid of `typographic-turbulence` and `klein-flock`.
