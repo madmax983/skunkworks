@@ -304,3 +304,8 @@
 - **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
 - **Status:** Reaction-diffusion driven by synthetic rhythms. Gray-Scott patterns are dancing to the beat.
 - **Note:** Audio-reactive simulation using Ping-Pong shaders.
+
+### [Concentration Level: FRESH] - Location: experiments/memory-palace
+- **Scent Origin:** Genesis (The Architect) ⚛️🏛️
+- **Status:** The door is small, but the room is infinite. The heap is a labyrinth. Recursion is an endless hallway.
+- **Note:** Moonshot: Tardis Spaces + Memory Visualization.
