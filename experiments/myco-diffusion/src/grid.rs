@@ -83,13 +83,13 @@ impl GrayScottGrid {
                             0.05
                         };
 
-                        sum_u += unsafe { *u.get_unchecked(idx) } * weight;
-                        sum_v += unsafe { *v.get_unchecked(idx) } * weight;
+                        sum_u += u[idx] * weight;
+                        sum_v += v[idx] * weight;
                     }
                 }
 
-                let cur_u = unsafe { *u.get_unchecked(i) };
-                let cur_v = unsafe { *v.get_unchecked(i) };
+                let cur_u = u[i];
+                let cur_v = v[i];
 
                 let reaction = cur_u * cur_v * cur_v;
 
@@ -107,5 +107,21 @@ impl GrayScottGrid {
         // Swap buffers
         std::mem::swap(&mut self.u, &mut self.next_u);
         std::mem::swap(&mut self.v, &mut self.next_v);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    #[should_panic]
+    fn havoc_width_overflow() {
+        let mut grid = GrayScottGrid::new(10, 10);
+        // Havoc: Manually inflate width to bypass bounds checking logic if unchecked
+        grid.width = 1000;
+
+        // This should trigger UB / Segfault due to unsafe get_unchecked
+        grid.update(0.055, 0.062, 1.0);
     }
 }
