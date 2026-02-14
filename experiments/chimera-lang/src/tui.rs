@@ -4925,6 +4925,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                         crate::vm::nova::OrganelleType::Choir => Color::Blue,
                         crate::vm::nova::OrganelleType::Wisp => Color::Yellow,
                         crate::vm::nova::OrganelleType::MadScientist => Color::Magenta,
+                        crate::vm::nova::OrganelleType::Phage => Color::Red,
                         crate::vm::nova::OrganelleType::Worker => Color::White,
                     };
                     let char_code = match organelle.kind {
@@ -4938,6 +4939,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                         crate::vm::nova::OrganelleType::Choir => "♫",
                         crate::vm::nova::OrganelleType::Wisp => "*",
                         crate::vm::nova::OrganelleType::MadScientist => "⚛",
+                        crate::vm::nova::OrganelleType::Phage => "P",
                         crate::vm::nova::OrganelleType::Worker => "O",
                     };
 
@@ -7750,8 +7752,32 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             let signal = vm.signal_grid[y][x];
             let mut style = Style::default();
 
-            let (ch, base_color) = match val {
-                crate::vm::Value::Str(s) => {
+            // Check for Organelle Overlay
+            let mut overlay_char = None;
+            let mut overlay_color = None;
+
+            #[cfg(feature = "nova")]
+            for org in &vm.organelles {
+                if org.context_loc == (y, x) {
+                    match org.kind {
+                        crate::vm::nova::OrganelleType::Phage => {
+                            overlay_char = Some("P".to_string());
+                            overlay_color = Some(Color::Red);
+                        }
+                        crate::vm::nova::OrganelleType::Void => {
+                            overlay_char = Some("Ø".to_string());
+                            overlay_color = Some(Color::DarkGray);
+                        }
+                        _ => {}
+                    }
+                }
+            }
+
+            let (ch, base_color) = if let Some(c) = overlay_char {
+                (c, overlay_color.unwrap_or(Color::White))
+            } else {
+                match val {
+                    crate::vm::Value::Str(s) => {
                     let c = s.chars().next().unwrap_or('.');
                     let color = match c {
                         '*' | '!' => Color::Red,
@@ -7778,6 +7804,7 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     (c.to_string(), color)
                 }
                 _ => ("?".to_string(), Color::White),
+            }
             };
 
             style = style.fg(base_color);

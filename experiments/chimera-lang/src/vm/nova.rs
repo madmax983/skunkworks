@@ -63,6 +63,8 @@ pub enum OrganelleType {
     Wisp,
     /// The Mad Scientist. Performs random experiments (Alchemy, Mutation, Chaos).
     MadScientist,
+    /// A Viral Agent that moves on the Orca grid and injects genetic code.
+    Phage,
 }
 
 /// An independent execution unit spawned by the main strand.
@@ -1086,6 +1088,7 @@ fn exec_spawn(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     5 => (OrganelleType::Void, (0, 0)),
                     6 => (OrganelleType::Alchemist, (0, 0)),
                     10 => (OrganelleType::MadScientist, (0, 0)),
+                    11 => (OrganelleType::Phage, (0, 1)), // Default East
                     _ => (OrganelleType::Worker, (0, 0)),
                 };
 
@@ -2114,6 +2117,7 @@ fn exec_identity(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         Some(OrganelleType::Choir) => 8,
         Some(OrganelleType::Wisp) => 9,
         Some(OrganelleType::MadScientist) => 10,
+        Some(OrganelleType::Phage) => 11,
     };
     vm.stack.push(Value::Int(id));
     None
@@ -2134,6 +2138,7 @@ fn exec_differentiate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     8 => Some(OrganelleType::Choir),
                     9 => Some(OrganelleType::Wisp),
                     10 => Some(OrganelleType::MadScientist),
+                    11 => Some(OrganelleType::Phage),
                     _ => Some(OrganelleType::Worker),
                 };
 
