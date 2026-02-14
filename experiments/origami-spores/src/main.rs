@@ -1,11 +1,11 @@
 mod mesh_gen;
 mod pbd;
 
+use ::rand::Rng;
 use macroquad::models::{Mesh, Vertex};
 use macroquad::prelude::*;
 use mesh_gen::generate_miura_ori;
 use pbd::{Constraint, PbdSystem};
-use ::rand::Rng;
 
 const MAX_SPORES: usize = 500;
 const INFECTION_RATE: f32 = 0.2;
@@ -24,10 +24,21 @@ impl Spore {
         let mut rng = ::rand::thread_rng();
         Self {
             pos,
-            vel: vec3(rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0)).normalize() * 0.1,
+            vel: vec3(
+                rng.gen_range(-1.0..1.0),
+                rng.gen_range(-1.0..1.0),
+                rng.gen_range(-1.0..1.0),
+            )
+            .normalize()
+                * 0.1,
             target_idx: None,
             life: rng.gen_range(5.0..10.0),
-            color: Color::new(rng.gen_range(0.5..1.0), rng.gen_range(0.0..0.5), rng.gen_range(0.5..1.0), 1.0), // Purple-ish
+            color: Color::new(
+                rng.gen_range(0.5..1.0),
+                rng.gen_range(0.0..0.5),
+                rng.gen_range(0.5..1.0),
+                1.0,
+            ), // Purple-ish
         }
     }
 
@@ -124,13 +135,13 @@ async fn main() {
 
             // Check collision with target
             if let Some(idx) = spore.target_idx {
-                 if idx < system.particles.len() {
+                if idx < system.particles.len() {
                     let target_pos = system.particles[idx].pos;
                     if spore.pos.distance_squared(target_pos) < 0.5 {
                         landed_spores.push(idx);
                         return false; // Absorb spore
                     }
-                 }
+                }
             }
             true
         });
@@ -147,24 +158,34 @@ async fn main() {
         // 2. Actuate folds based on infection (crumpling)
         for constraint in &mut system.constraints {
             match constraint {
-                Constraint::Distance { p1, p2, ref mut stiffness, .. } => {
-                     let inf1 = infection_levels[*p1];
-                     let inf2 = infection_levels[*p2];
-                     if inf1 > 0.0 || inf2 > 0.0 {
-                         // Weaken stiffness
-                         *stiffness = (1.0 - (inf1 + inf2) * 0.4).max(0.1);
-                     }
+                Constraint::Distance {
+                    p1,
+                    p2,
+                    ref mut stiffness,
+                    ..
+                } => {
+                    let inf1 = infection_levels[*p1];
+                    let inf2 = infection_levels[*p2];
+                    if inf1 > 0.0 || inf2 > 0.0 {
+                        // Weaken stiffness
+                        *stiffness = (1.0 - (inf1 + inf2) * 0.4).max(0.1);
+                    }
                 }
-                Constraint::Actuator { p1, p2, ref mut factor, .. } => {
-                     let inf1 = infection_levels[*p1];
-                     let inf2 = infection_levels[*p2];
-                     if inf1 > 0.0 || inf2 > 0.0 {
-                         // Force fold: Close the crease (factor -> 0.0)
-                         // The more infected, the more it folds
-                         let target_fold = 0.0;
-                         let strength = (inf1 + inf2) * 0.5;
-                         *factor = *factor * (1.0 - strength) + target_fold * strength;
-                     }
+                Constraint::Actuator {
+                    p1,
+                    p2,
+                    ref mut factor,
+                    ..
+                } => {
+                    let inf1 = infection_levels[*p1];
+                    let inf2 = infection_levels[*p2];
+                    if inf1 > 0.0 || inf2 > 0.0 {
+                        // Force fold: Close the crease (factor -> 0.0)
+                        // The more infected, the more it folds
+                        let target_fold = 0.0;
+                        let strength = (inf1 + inf2) * 0.5;
+                        *factor = *factor * (1.0 - strength) + target_fold * strength;
+                    }
                 }
                 _ => {}
             }
@@ -217,7 +238,8 @@ async fn main() {
 
             // Color based on infection
             // Average infection of triangle
-            let avg_inf = (infection_levels[idx0] + infection_levels[idx1] + infection_levels[idx2]) / 3.0;
+            let avg_inf =
+                (infection_levels[idx0] + infection_levels[idx1] + infection_levels[idx2]) / 3.0;
 
             // Base Blue -> Infected Green/Purple
             let r = avg_inf * 0.8;
@@ -271,8 +293,20 @@ async fn main() {
         set_default_camera();
 
         draw_text("Origami Spores", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Spores: {}", spores.len()), 10.0, 50.0, 20.0, WHITE);
-        draw_text("Spores infect mesh -> Mesh crumples", 10.0, 70.0, 20.0, GRAY);
+        draw_text(
+            &format!("Spores: {}", spores.len()),
+            10.0,
+            50.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "Spores infect mesh -> Mesh crumples",
+            10.0,
+            70.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }

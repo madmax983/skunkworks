@@ -106,7 +106,7 @@ pub fn generate_heap() -> MemoryGraph {
     // So both portals are 1.5x2.5
     graph.connect(
         r0,
-        vec3(0.0, -2.5, 4.9), // Near floor, on +Z wall
+        vec3(0.0, -2.5, 4.9),                        // Near floor, on +Z wall
         Quat::from_rotation_y(std::f32::consts::PI), // Normal -Z (Inwards)
         vec2(2.0, 3.0),
         r1,
@@ -162,7 +162,7 @@ pub fn generate_heap() -> MemoryGraph {
         Quat::from_rotation_y(std::f32::consts::PI), // Normal -Z (Inwards)
         vec2(2.0, 3.0),
         r1,
-        vec3(-19.9, -5.0, 5.0), // -X wall, offset
+        vec3(-19.9, -5.0, 5.0),                             // -X wall, offset
         Quat::from_rotation_y(std::f32::consts::FRAC_PI_2), // Facing -X
         vec2(2.0, 3.0),
     );

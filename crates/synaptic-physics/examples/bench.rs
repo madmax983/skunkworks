@@ -26,5 +26,8 @@ fn main() {
     let duration = start.elapsed();
     println!("Time: {:.2?}", duration);
     println!("Spikes: {}", spikes);
-    println!("Time per update: {:.2} ns", duration.as_nanos() as f64 / iterations as f64);
+    println!(
+        "Time per update: {:.2} ns",
+        duration.as_nanos() as f64 / iterations as f64
+    );
 }

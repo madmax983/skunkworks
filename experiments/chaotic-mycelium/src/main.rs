@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use ::rand::{thread_rng, Rng};
+use macroquad::prelude::*;
 
 mod chaos;
 mod fungus;
@@ -30,7 +30,7 @@ async fn main() {
     // Initial Target
     let target = IVec2::new(
         rng.gen_range(10..GRID_WIDTH as i32 - 10),
-        rng.gen_range(10..GRID_HEIGHT as i32 - 10)
+        rng.gen_range(10..GRID_HEIGHT as i32 - 10),
     );
     fungus.set_target(target);
 
@@ -47,7 +47,11 @@ async fn main() {
             let grid_x = (mpos.0 / cell_w) as i32;
             let grid_y = (mpos.1 / cell_h) as i32;
 
-            if grid_x >= 0 && grid_x < GRID_WIDTH as i32 && grid_y >= 0 && grid_y < GRID_HEIGHT as i32 {
+            if grid_x >= 0
+                && grid_x < GRID_WIDTH as i32
+                && grid_y >= 0
+                && grid_y < GRID_HEIGHT as i32
+            {
                 fungus.set_target(IVec2::new(grid_x, grid_y));
             }
         }
@@ -66,9 +70,9 @@ async fn main() {
             // Reset fungus but keep target if possible
             fungus = HyphaeNetwork::new(GRID_WIDTH, GRID_HEIGHT, start_pos);
             // New random target
-             let target = IVec2::new(
+            let target = IVec2::new(
                 rng.gen_range(10..GRID_WIDTH as i32 - 10),
-                rng.gen_range(10..GRID_HEIGHT as i32 - 10)
+                rng.gen_range(10..GRID_HEIGHT as i32 - 10),
             );
             fungus.set_target(target);
         }
@@ -81,10 +85,16 @@ async fn main() {
         clear_background(BLACK);
 
         // Draw Chaos
-        draw_texture_ex(&substrate.texture, 0.0, 0.0, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(screen_w, screen_h)),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &substrate.texture,
+            0.0,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(screen_w, screen_h)),
+                ..Default::default()
+            },
+        );
 
         // Set camera to match grid coordinates 0..GRID_WIDTH, 0..GRID_HEIGHT
         // Note: macroquad coordinates are usually top-left origin, Y down.
@@ -145,12 +155,7 @@ async fn main() {
 
         // Draw Target
         if let Some(t) = fungus.target {
-             draw_circle(
-                t.x as f32 + 0.5,
-                t.y as f32 + 0.5,
-                2.0,
-                YELLOW
-            );
+            draw_circle(t.x as f32 + 0.5, t.y as f32 + 0.5, 2.0, YELLOW);
         }
 
         set_default_camera();
@@ -159,14 +164,26 @@ async fn main() {
         draw_rectangle(0., 0., screen_w, 80., Color::new(0., 0., 0., 0.7));
         draw_text("Chaotic Mycelium", 20.0, 30.0, 30.0, WHITE);
         draw_text(&format!("Sequence: {}", sequence), 20.0, 50.0, 20.0, YELLOW);
-        draw_text("Left Click: Set Food | Space: New World", 20.0, 70.0, 20.0, GRAY);
+        draw_text(
+            "Left Click: Set Food | Space: New World",
+            20.0,
+            70.0,
+            20.0,
+            GRAY,
+        );
 
         // Stats
         let mouse_pos = mouse_position();
         let gx = (mouse_pos.0 / cell_w) as i32;
         let gy = (mouse_pos.1 / cell_h) as i32;
         let cost = substrate.get_cost(gx, gy);
-        draw_text(&format!("Cost at Mouse: {:.2}", cost), screen_w - 200., 30., 20., WHITE);
+        draw_text(
+            &format!("Cost at Mouse: {:.2}", cost),
+            screen_w - 200.,
+            30.,
+            20.,
+            WHITE,
+        );
 
         next_frame().await
     }

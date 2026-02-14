@@ -5,8 +5,8 @@ use ratatui::{
     Frame,
 };
 
-use crate::retina::Retina;
 use crate::eye::Eye;
+use crate::retina::Retina;
 
 pub struct App {
     pub retina: Retina,
@@ -81,9 +81,9 @@ impl App {
 
             // Get line content or empty
             let line_content = if y < self.content.len() {
-                 self.content[y].clone()
+                self.content[y].clone()
             } else {
-                 String::new()
+                String::new()
             };
 
             // Iterate over columns
@@ -98,9 +98,9 @@ impl App {
                 let spike_idx = y * self.retina.width + x;
 
                 let is_spiking = if spike_idx < self.retina.spikes.len() {
-                     self.retina.spikes[spike_idx]
+                    self.retina.spikes[spike_idx]
                 } else {
-                     false
+                    false
                 };
 
                 // Determine style
@@ -115,7 +115,7 @@ impl App {
                     if is_spiking {
                         Style::default().fg(Color::DarkGray).bg(Color::Red) // faint flash
                     } else {
-                         Style::default().fg(Color::DarkGray)
+                        Style::default().fg(Color::DarkGray)
                     }
                 };
 
@@ -124,7 +124,11 @@ impl App {
                     ch.to_string()
                 } else {
                     // Peripheral vision sees blocks instead of text
-                    if ch == ' ' { " ".to_string() } else { "░".to_string() }
+                    if ch == ' ' {
+                        " ".to_string()
+                    } else {
+                        "░".to_string()
+                    }
                 };
 
                 line_spans.push(Span::styled(display_char, style));
@@ -132,8 +136,11 @@ impl App {
             spans.push(Line::from(line_spans));
         }
 
-        let paragraph = Paragraph::new(spans)
-            .block(Block::default().borders(Borders::ALL).title(format!("Foveated Code | Eye: ({:.1}, {:.1})", self.eye.x, self.eye.y)));
+        let paragraph =
+            Paragraph::new(spans).block(Block::default().borders(Borders::ALL).title(format!(
+                "Foveated Code | Eye: ({:.1}, {:.1})",
+                self.eye.x, self.eye.y
+            )));
 
         frame.render_widget(paragraph, size);
     }

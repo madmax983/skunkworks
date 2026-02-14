@@ -59,7 +59,6 @@ impl Eye {
         let half_w = self.fovea_width / 2.0;
         let half_h = self.fovea_height / 2.0;
 
-        x >= self.x - half_w && x <= self.x + half_w &&
-        y >= self.y - half_h && y <= self.y + half_h
+        x >= self.x - half_w && x <= self.x + half_w && y >= self.y - half_h && y <= self.y + half_h
     }
 }

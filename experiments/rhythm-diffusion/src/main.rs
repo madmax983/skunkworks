@@ -1,8 +1,8 @@
+use macroquad::miniquad::{PipelineParams, UniformDesc, UniformType};
 use macroquad::prelude::*;
-use macroquad::miniquad::{PipelineParams, UniformType, UniformDesc};
 
-mod shader;
 mod audio;
+mod shader;
 
 use audio::Synthesizer;
 
@@ -47,13 +47,7 @@ async fn main() {
         // Add seed (U=0, V=1) -> Green
         // Actually, if we draw Green (0, 1, 0), R becomes 0, G becomes 1.
         // Reaction consumes U (Red) and produces V (Green).
-        draw_rectangle(
-            w / 2.0 - 10.0,
-            h / 2.0 - 10.0,
-            20.0,
-            20.0,
-            GREEN
-        );
+        draw_rectangle(w / 2.0 - 10.0, h / 2.0 - 10.0, 20.0, 20.0, GREEN);
 
         set_default_camera();
     };
@@ -75,7 +69,8 @@ async fn main() {
             },
             ..Default::default()
         },
-    ).unwrap();
+    )
+    .unwrap();
 
     loop {
         // Handle Resize
@@ -99,7 +94,8 @@ async fn main() {
             // If we draw to A, and A is source for B, B gets the reaction of A (plus our drawing?).
             // Actually, best to draw into the source texture before the simulation step.
 
-            let mut cam = Camera2D::from_display_rect(Rect::new(0.0, 0.0, width as f32, height as f32));
+            let mut cam =
+                Camera2D::from_display_rect(Rect::new(0.0, 0.0, width as f32, height as f32));
             cam.render_target = Some(target_a.clone()); // A is source
             set_camera(&cam);
 
@@ -109,8 +105,9 @@ async fn main() {
             set_default_camera();
         }
         if is_mouse_button_down(MouseButton::Right) {
-             let (mx, my) = mouse_position();
-            let mut cam = Camera2D::from_display_rect(Rect::new(0.0, 0.0, width as f32, height as f32));
+            let (mx, my) = mouse_position();
+            let mut cam =
+                Camera2D::from_display_rect(Rect::new(0.0, 0.0, width as f32, height as f32));
             cam.render_target = Some(target_a.clone());
             set_camera(&cam);
 
@@ -139,7 +136,8 @@ async fn main() {
         for _ in 0..steps {
             // Ping: Read A, Write B
             {
-                let mut cam = Camera2D::from_display_rect(Rect::new(0.0, 0.0, width as f32, height as f32));
+                let mut cam =
+                    Camera2D::from_display_rect(Rect::new(0.0, 0.0, width as f32, height as f32));
                 cam.render_target = Some(target_b.clone()); // Render to B
                 set_camera(&cam);
 
@@ -160,7 +158,7 @@ async fn main() {
                     DrawTextureParams {
                         dest_size: Some(vec2(width as f32, height as f32)),
                         ..Default::default()
-                    }
+                    },
                 );
 
                 gl_use_default_material();
@@ -185,12 +183,24 @@ async fn main() {
                 dest_size: Some(vec2(screen_width(), screen_height())),
                 flip_y: true,
                 ..Default::default()
-            }
+            },
         );
 
         draw_text("Genesis: Rhythm Diffusion", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Feed: {:.4} Kill: {:.4}", feed, kill), 10.0, 50.0, 20.0, LIGHTGRAY);
-        draw_text("LMB: Add | RMB: Erase | Space: Reset", 10.0, screen_height() - 20.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Feed: {:.4} Kill: {:.4}", feed, kill),
+            10.0,
+            50.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            "LMB: Add | RMB: Erase | Space: Reset",
+            10.0,
+            screen_height() - 20.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await
     }

@@ -38,7 +38,8 @@ async fn main() {
             },
             ..Default::default()
         },
-    ).unwrap();
+    )
+    .unwrap();
 
     // Bodies
     let mut bodies = Vec::with_capacity(shader::MAX_BODIES);
@@ -84,22 +85,27 @@ async fn main() {
         if is_mouse_button_pressed(MouseButton::Left) {
             if bodies.len() < shader::MAX_BODIES {
                 let mpos = mouse_position();
-                let world_pos = vec2(mpos.0 - width as f32/2.0, mpos.1 - height as f32/2.0);
+                let world_pos = vec2(mpos.0 - width as f32 / 2.0, mpos.1 - height as f32 / 2.0);
 
                 bodies.push(Body {
                     pos: world_pos,
                     vel: vec2(rand::gen_range(-10.0, 10.0), rand::gen_range(-10.0, 10.0)),
                     mass: rand::gen_range(500.0, 5000.0),
                     radius: rand::gen_range(10.0, 30.0),
-                    color: Color::new(rand::gen_range(0.5, 1.0), rand::gen_range(0.5, 1.0), rand::gen_range(0.5, 1.0), 1.0),
+                    color: Color::new(
+                        rand::gen_range(0.5, 1.0),
+                        rand::gen_range(0.5, 1.0),
+                        rand::gen_range(0.5, 1.0),
+                        1.0,
+                    ),
                 });
             }
         }
 
         if is_mouse_button_pressed(MouseButton::Right) {
-             if bodies.len() < shader::MAX_BODIES {
+            if bodies.len() < shader::MAX_BODIES {
                 let mpos = mouse_position();
-                let world_pos = vec2(mpos.0 - width as f32/2.0, mpos.1 - height as f32/2.0);
+                let world_pos = vec2(mpos.0 - width as f32 / 2.0, mpos.1 - height as f32 / 2.0);
 
                 bodies.push(Body {
                     pos: world_pos,
@@ -135,8 +141,8 @@ async fn main() {
         material.set_uniform("LensingStrength", lensing_strength);
 
         for (i, body) in bodies.iter().enumerate() {
-             material.set_uniform(&format!("Body{}_Pos", i), body.pos);
-             material.set_uniform(&format!("Body{}_Mass", i), body.mass);
+            material.set_uniform(&format!("Body{}_Pos", i), body.pos);
+            material.set_uniform(&format!("Body{}_Mass", i), body.mass);
         }
 
         draw_texture_ex(
@@ -147,7 +153,7 @@ async fn main() {
             DrawTextureParams {
                 dest_size: Some(vec2(width as f32, height as f32)),
                 ..Default::default()
-            }
+            },
         );
 
         gl_use_default_material();
@@ -156,12 +162,29 @@ async fn main() {
         let offset_y = height as f32 / 2.0;
 
         for body in &bodies {
-            draw_circle(body.pos.x + offset_x, body.pos.y + offset_y, body.radius, body.color);
+            draw_circle(
+                body.pos.x + offset_x,
+                body.pos.y + offset_y,
+                body.radius,
+                body.color,
+            );
         }
 
         draw_text("Genesis: Lensing Poetry", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Bodies: {}", bodies.len()), 10.0, 50.0, 20.0, LIGHTGRAY);
-        draw_text("Left Click: Add Mass | Right Click: Add Dark Matter | Space: Reset", 10.0, height as f32 - 20.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Bodies: {}", bodies.len()),
+            10.0,
+            50.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            "Left Click: Add Mass | Right Click: Add Dark Matter | Space: Reset",
+            10.0,
+            height as f32 - 20.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await
     }

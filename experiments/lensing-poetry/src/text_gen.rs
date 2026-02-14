@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use ::rand::Rng;
+use macroquad::prelude::*;
 
 pub fn generate_poetry_target(width: u32, height: u32) -> RenderTarget {
     let target = render_target(width, height);

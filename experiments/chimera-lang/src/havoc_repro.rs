@@ -195,8 +195,11 @@ mod tests {
 
         let vulnerable = vm.output.iter().any(|s| s.contains("SCAVENGE: Consumed"));
         if vulnerable {
-             println!("VM Output: {:?}", vm.output);
+            println!("VM Output: {:?}", vm.output);
         }
-        assert!(!vulnerable, "SECURITY BREACH: Path traversal detected! Able to read ../../Cargo.toml");
+        assert!(
+            !vulnerable,
+            "SECURITY BREACH: Path traversal detected! Able to read ../../Cargo.toml"
+        );
     }
 }

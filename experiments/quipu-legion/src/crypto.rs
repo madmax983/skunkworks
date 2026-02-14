@@ -1,5 +1,5 @@
 use num_bigint::{BigUint, RandBigInt};
-use num_traits::{One, Zero, ToPrimitive};
+use num_traits::{One, ToPrimitive, Zero};
 use rand::Rng;
 
 #[derive(Debug, Clone)]
@@ -64,9 +64,15 @@ fn gen_prime<R: Rng + ?Sized>(bits: usize, rng: &mut R) -> BigUint {
 
 // Miller-Rabin primality test
 fn is_prime(n: &BigUint, k: usize) -> bool {
-    if *n <= BigUint::from(1u32) { return false; }
-    if *n <= BigUint::from(3u32) { return true; }
-    if n % 2u32 == BigUint::zero() { return false; }
+    if *n <= BigUint::from(1u32) {
+        return false;
+    }
+    if *n <= BigUint::from(3u32) {
+        return true;
+    }
+    if n % 2u32 == BigUint::zero() {
+        return false;
+    }
 
     // Write n-1 as 2^r * d
     let one = BigUint::one();
@@ -92,7 +98,7 @@ fn is_prime(n: &BigUint, k: usize) -> bool {
             continue;
         }
 
-        for _ in 0..r-1 {
+        for _ in 0..r - 1 {
             x = x.modpow(&two, n);
             if x == n_minus_one {
                 continue 'witness;
@@ -151,9 +157,9 @@ fn mod_inverse(a: &BigUint, m: &BigUint) -> Option<BigUint> {
             // t - (-q*newt) = t + q*newt
             newt = temp_t + q_times_newt;
             newt_sign = temp_t_sign; // Keep sign of first term (conceptually)
-            // Wait: t (pos) - (-val) = pos + val = pos.
-            // t (neg) - (val) = neg - val = neg.
-            // So sign matches temp_t_sign.
+                                     // Wait: t (pos) - (-val) = pos + val = pos.
+                                     // t (neg) - (val) = neg - val = neg.
+                                     // So sign matches temp_t_sign.
         }
 
         // (r, newr) = (newr, r - quotient * newr) -> Standard Euclidean for r (always positive)

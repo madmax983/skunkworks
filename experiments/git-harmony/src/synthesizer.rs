@@ -169,7 +169,7 @@ impl Synthesizer {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use git_associates::model::{FileChange, DiffStats};
+    use git_associates::model::{DiffStats, FileChange};
 
     #[test]
     fn test_next_event_infinite_loop() {

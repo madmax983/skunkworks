@@ -47,7 +47,8 @@ impl Stage {
     }
 
     pub fn lock_global(&self) -> StageToken<'_> {
-        let guard = self.global_lock
+        let guard = self
+            .global_lock
             .lock()
             .expect("Failed to lock global stage");
 

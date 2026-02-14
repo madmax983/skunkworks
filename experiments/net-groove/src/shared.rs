@@ -29,15 +29,18 @@ impl GrooveState {
     }
 
     pub fn set_kick_latency(&self, duration: Duration) {
-        self.kick_latency_micros.store(duration.as_micros() as u64, Ordering::Relaxed);
+        self.kick_latency_micros
+            .store(duration.as_micros() as u64, Ordering::Relaxed);
     }
 
     pub fn set_snare_latency(&self, duration: Duration) {
-        self.snare_latency_micros.store(duration.as_micros() as u64, Ordering::Relaxed);
+        self.snare_latency_micros
+            .store(duration.as_micros() as u64, Ordering::Relaxed);
     }
 
     pub fn set_hat_latency(&self, duration: Duration) {
-        self.hat_latency_micros.store(duration.as_micros() as u64, Ordering::Relaxed);
+        self.hat_latency_micros
+            .store(duration.as_micros() as u64, Ordering::Relaxed);
     }
 
     pub fn get_kick_latency(&self) -> Duration {

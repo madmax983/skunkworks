@@ -151,7 +151,15 @@ fn ui(f: &mut Frame, app: &mut App) {
         ),
         Span::raw(" | Max Gen: "),
         Span::styled(
-            format!("{}", app.game.pins.iter().map(|p| p.generation).max().unwrap_or(0)),
+            format!(
+                "{}",
+                app.game
+                    .pins
+                    .iter()
+                    .map(|p| p.generation)
+                    .max()
+                    .unwrap_or(0)
+            ),
             Style::default().fg(Color::Yellow),
         ),
         Span::raw(" | Space: Drop Packet | Q: Quit"),

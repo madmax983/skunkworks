@@ -1,11 +1,17 @@
-use macroquad::prelude::*;
 use bifurcation_probe::map::{ChaoticMap, LogisticMap};
+use macroquad::prelude::*;
 use rayon::prelude::*;
 
 const WIDTH: usize = 1200;
 
 fn draw_cobweb(r: f64, rect: Rect) {
-    draw_rectangle(rect.x, rect.y, rect.w, rect.h, Color::new(0.0, 0.0, 0.0, 0.9));
+    draw_rectangle(
+        rect.x,
+        rect.y,
+        rect.w,
+        rect.h,
+        Color::new(0.0, 0.0, 0.0, 0.9),
+    );
     draw_rectangle_lines(rect.x, rect.y, rect.w, rect.h, 2.0, WHITE);
 
     // Draw Diagonal y = x
@@ -52,7 +58,13 @@ fn draw_cobweb(r: f64, rect: Rect) {
         curr_sy = target_sy;
     }
 
-    draw_text(&format!("Cobweb (r={:.5})", r), rect.x + 5., rect.y + 20., 20., WHITE);
+    draw_text(
+        &format!("Cobweb (r={:.5})", r),
+        rect.x + 5.,
+        rect.y + 20.,
+        20.,
+        WHITE,
+    );
 }
 const HEIGHT: usize = 800;
 
@@ -132,77 +144,80 @@ async fn main() {
 
         if dirty {
             // Compute columns in parallel
-            let columns: Vec<(usize, f64, Vec<u8>)> = (0..WIDTH).into_par_iter().map(|px| {
-                let r = min_r + (max_r - min_r) * (px as f64 / WIDTH as f64);
-                let map = LogisticMap::new(r);
+            let columns: Vec<(usize, f64, Vec<u8>)> = (0..WIDTH)
+                .into_par_iter()
+                .map(|px| {
+                    let r = min_r + (max_r - min_r) * (px as f64 / WIDTH as f64);
+                    let map = LogisticMap::new(r);
 
-                // Calculate Lyapunov exponent for color
-                // Use fewer steps for performance? Or just re-use the orbit?
-                // We'll compute it separately or during iteration.
+                    // Calculate Lyapunov exponent for color
+                    // Use fewer steps for performance? Or just re-use the orbit?
+                    // We'll compute it separately or during iteration.
 
-                // 1. Transient
-                let mut x = 0.5;
-                for _ in 0..500 {
-                    x = map.iterate(x);
-                }
+                    // 1. Transient
+                    let mut x = 0.5;
+                    for _ in 0..500 {
+                        x = map.iterate(x);
+                    }
 
-                // 2. Compute Lyapunov + Histogram
-                let mut counts = vec![0u32; HEIGHT];
-                let mut sum_log_deriv = 0.0;
-                let steps = 1000;
+                    // 2. Compute Lyapunov + Histogram
+                    let mut counts = vec![0u32; HEIGHT];
+                    let mut sum_log_deriv = 0.0;
+                    let steps = 1000;
 
-                for _ in 0..steps {
-                    let deriv = map.derivative(x).abs();
-                    if deriv > 1e-9 {
-                        sum_log_deriv += deriv.ln();
+                    for _ in 0..steps {
+                        let deriv = map.derivative(x).abs();
+                        if deriv > 1e-9 {
+                            sum_log_deriv += deriv.ln();
+                        } else {
+                            sum_log_deriv += -10.0; // clamp
+                        }
+
+                        if let Some(y_idx) = map_value_to_pixel(x, min_x, max_x, HEIGHT) {
+                            counts[y_idx] += 1;
+                        }
+                        x = map.iterate(x);
+                    }
+
+                    let lambda = sum_log_deriv / steps as f64;
+
+                    // 3. Render Column
+                    let mut col_pixels = vec![0u8; HEIGHT * 4];
+
+                    // Color based on Lyapunov
+                    // Stable (< 0) -> Blue/Cyan
+                    // Chaotic (> 0) -> Red/Orange
+                    let base_color = if lambda < 0.0 {
+                        let intensity = (-lambda).min(1.0);
+                        Color::new(0.0, 0.5 + 0.5 * intensity as f32, 1.0, 1.0)
                     } else {
-                        sum_log_deriv += -10.0; // clamp
+                        let intensity = (lambda).min(1.0);
+                        Color::new(1.0, 1.0 - intensity as f32, 0.0, 1.0)
+                    };
+
+                    // Find max count to normalize brightness?
+                    // Or just log scale.
+                    let max_count = counts.iter().max().copied().unwrap_or(1).max(1);
+
+                    for y in 0..HEIGHT {
+                        let count = counts[HEIGHT - 1 - y]; // Flip Y for image (0 is top)
+                        if count > 0 {
+                            // Alpha/Brightness based on count
+                            let alpha = (count as f32 / max_count as f32).sqrt();
+
+                            col_pixels[y * 4 + 0] = (base_color.r * 255.0 * alpha) as u8;
+                            col_pixels[y * 4 + 1] = (base_color.g * 255.0 * alpha) as u8;
+                            col_pixels[y * 4 + 2] = (base_color.b * 255.0 * alpha) as u8;
+                            col_pixels[y * 4 + 3] = 255;
+                        } else {
+                            // Background (Black)
+                            col_pixels[y * 4 + 3] = 255; // Opaque black
+                        }
                     }
 
-                    if let Some(y_idx) = map_value_to_pixel(x, min_x, max_x, HEIGHT) {
-                        counts[y_idx] += 1;
-                    }
-                    x = map.iterate(x);
-                }
-
-                let lambda = sum_log_deriv / steps as f64;
-
-                // 3. Render Column
-                let mut col_pixels = vec![0u8; HEIGHT * 4];
-
-                // Color based on Lyapunov
-                // Stable (< 0) -> Blue/Cyan
-                // Chaotic (> 0) -> Red/Orange
-                let base_color = if lambda < 0.0 {
-                    let intensity = (-lambda).min(1.0);
-                    Color::new(0.0, 0.5 + 0.5 * intensity as f32, 1.0, 1.0)
-                } else {
-                    let intensity = (lambda).min(1.0);
-                    Color::new(1.0, 1.0 - intensity as f32, 0.0, 1.0)
-                };
-
-                // Find max count to normalize brightness?
-                // Or just log scale.
-                let max_count = counts.iter().max().copied().unwrap_or(1).max(1);
-
-                for y in 0..HEIGHT {
-                    let count = counts[HEIGHT - 1 - y]; // Flip Y for image (0 is top)
-                    if count > 0 {
-                        // Alpha/Brightness based on count
-                        let alpha = (count as f32 / max_count as f32).sqrt();
-
-                        col_pixels[y * 4 + 0] = (base_color.r * 255.0 * alpha) as u8;
-                        col_pixels[y * 4 + 1] = (base_color.g * 255.0 * alpha) as u8;
-                        col_pixels[y * 4 + 2] = (base_color.b * 255.0 * alpha) as u8;
-                        col_pixels[y * 4 + 3] = 255;
-                    } else {
-                        // Background (Black)
-                        col_pixels[y * 4 + 3] = 255; // Opaque black
-                    }
-                }
-
-                (px, lambda, col_pixels)
-            }).collect();
+                    (px, lambda, col_pixels)
+                })
+                .collect();
 
             // Reconstruct Image
             for (px, _lambda, col_pixels) in columns {
@@ -227,10 +242,16 @@ async fn main() {
         clear_background(BLACK);
 
         // Scale texture to fit screen
-        draw_texture_ex(&texture, 0., 0., WHITE, DrawTextureParams {
-            dest_size: Some(vec2(screen_width(), screen_height())),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &texture,
+            0.,
+            0.,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(screen_width(), screen_height())),
+                ..Default::default()
+            },
+        );
 
         // --- Overlay ---
         // Mouse Hover Info
@@ -238,12 +259,18 @@ async fn main() {
         let r_hover = min_r + (max_r - min_r) * (mouse_pos.0 as f64 / screen_width() as f64);
 
         draw_text(&format!("R: {:.5}", r_hover), 10., 30., 20., WHITE);
-        draw_text("Left Click: Cobweb Plot | Right Click: Pan | Scroll: Zoom", 10., screen_height() - 10., 20., WHITE);
+        draw_text(
+            "Left Click: Cobweb Plot | Right Click: Pan | Scroll: Zoom",
+            10.,
+            screen_height() - 10.,
+            20.,
+            WHITE,
+        );
 
         if is_mouse_button_down(MouseButton::Left) {
-             let size = screen_height().min(screen_width()) * 0.4;
-             let rect = Rect::new(screen_width() - size - 10., 10., size, size);
-             draw_cobweb(r_hover, rect);
+            let size = screen_height().min(screen_width()) * 0.4;
+            let rect = Rect::new(screen_width() - size - 10., 10., size, size);
+            draw_cobweb(r_hover, rect);
         }
 
         next_frame().await;

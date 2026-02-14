@@ -1,12 +1,12 @@
 mod simulation;
 
-use simulation::{Platter, Rgba};
 use macroquad::prelude::*;
+use simulation::{Platter, Rgba};
 
 enum HeadMode {
-    Passive,    // Just looks, doesn't write back
-    Refresh,    // Reads and writes back (locking in decay)
-    Recover,    // Reads, smooths/guesses, and writes back (locking in hallucination)
+    Passive,     // Just looks, doesn't write back
+    Refresh,     // Reads and writes back (locking in decay)
+    Recover,     // Reads, smooths/guesses, and writes back (locking in hallucination)
     Destructive, // Writes random noise
 }
 
@@ -90,7 +90,16 @@ impl Head {
                     }
                 }
                 HeadMode::Destructive => {
-                     platter.write(self.x, self.y, Rgba::new(macroquad::rand::gen_range(0.0, 1.0), macroquad::rand::gen_range(0.0, 1.0), macroquad::rand::gen_range(0.0, 1.0), 1.0));
+                    platter.write(
+                        self.x,
+                        self.y,
+                        Rgba::new(
+                            macroquad::rand::gen_range(0.0, 1.0),
+                            macroquad::rand::gen_range(0.0, 1.0),
+                            macroquad::rand::gen_range(0.0, 1.0),
+                            1.0,
+                        ),
+                    );
                 }
             }
 
@@ -119,13 +128,13 @@ async fn main() {
             platter.write(x, y, Rgba::new(1.0, 0.0, 0.0, 1.0)); // Red square
         }
     }
-     // Blue circleish
+    // Blue circleish
     for y in 0..64 {
         for x in 0..64 {
             let dx = x as f32 - 32.0;
             let dy = y as f32 - 32.0;
-            if dx*dx + dy*dy < 100.0 {
-                 platter.write(x, y, Rgba::new(0.0, 0.0, 1.0, 1.0));
+            if dx * dx + dy * dy < 100.0 {
+                platter.write(x, y, Rgba::new(0.0, 0.0, 1.0, 1.0));
             }
         }
     }
@@ -137,12 +146,12 @@ async fn main() {
         }
         if is_key_pressed(KeyCode::R) {
             platter = Platter::new(64, 64);
-             // Re-Seed
+            // Re-Seed
             for y in 0..64 {
                 for x in 0..64 {
                     let dx = x as f32 - 32.0;
                     let dy = y as f32 - 32.0;
-                    if dx*dx + dy*dy < 100.0 {
+                    if dx * dx + dy * dy < 100.0 {
                         platter.write(x, y, Rgba::new(0.0, 0.0, 1.0, 1.0));
                     }
                 }
@@ -176,10 +185,10 @@ async fn main() {
         // Update
         if !paused {
             platter.decay(0.005); // Decay rate
-            platter.drift(0.1);   // Drift/Noise amount
+            platter.drift(0.1); // Drift/Noise amount
             head.update(&mut platter);
             head.update(&mut platter); // Speed up head x2
-             head.update(&mut platter); // Speed up head x3
+            head.update(&mut platter); // Speed up head x3
         }
 
         // Draw
@@ -208,7 +217,7 @@ async fn main() {
                         y as f32 * cell_h,
                         cell_w,
                         cell_h,
-                        Color::new(c.r, c.g, c.b, 1.0)
+                        Color::new(c.r, c.g, c.b, 1.0),
                     );
                 }
             }
@@ -220,21 +229,33 @@ async fn main() {
             head.y as f32 * cell_h,
             cell_w,
             cell_h,
-            RED // Head is always bright red
+            RED, // Head is always bright red
         );
         draw_rectangle_lines(
-             head.x as f32 * cell_w,
+            head.x as f32 * cell_w,
             head.y as f32 * cell_h,
             cell_w,
             cell_h,
             2.0,
-            WHITE
+            WHITE,
         );
 
         // Draw UI
         draw_text("Magnetic Echo", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Mode: {}", head.mode.as_str()), 10.0, 60.0, 20.0, GOLD);
-        draw_text("[Space] Pause | [R] Reset | [M] Mode | [Click] Inject", 10.0, 80.0, 20.0, GRAY);
+        draw_text(
+            &format!("Mode: {}", head.mode.as_str()),
+            10.0,
+            60.0,
+            20.0,
+            GOLD,
+        );
+        draw_text(
+            "[Space] Pause | [R] Reset | [M] Mode | [Click] Inject",
+            10.0,
+            80.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }

@@ -6,8 +6,8 @@ use crossterm::{
 };
 use ratatui::{
     prelude::*,
-    widgets::{Block, Borders, BorderType, Paragraph, Wrap},
     style::{Color, Modifier, Style},
+    widgets::{Block, BorderType, Borders, Paragraph, Wrap},
 };
 use spqr_rsa::crypto::{KeyPair, decrypt, encrypt, generate_keys};
 use spqr_rsa::roman::Roman;
@@ -155,16 +155,23 @@ fn ui(f: &mut Frame, app: &App) {
         .border_style(Style::default().fg(Color::Yellow));
 
     let title = Paragraph::new(Span::styled(
-            " SPQR RSA: CRYPTOGRAPHIA ROMANA ",
-            Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
-        ))
-        .block(title_block)
-        .alignment(Alignment::Center);
+        " SPQR RSA: CRYPTOGRAPHIA ROMANA ",
+        Style::default()
+            .fg(Color::Yellow)
+            .add_modifier(Modifier::BOLD),
+    ))
+    .block(title_block)
+    .alignment(Alignment::Center);
     f.render_widget(title, chunks[0]);
 
     // Keys Area
     let keys_block_style = Block::default()
-        .title(Span::styled(" CLAVES (Keys) ", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)))
+        .title(Span::styled(
+            " CLAVES (Keys) ",
+            Style::default()
+                .fg(Color::Cyan)
+                .add_modifier(Modifier::BOLD),
+        ))
         .borders(Borders::ALL)
         .border_type(BorderType::Double)
         .border_style(Style::default().fg(Color::Cyan));
@@ -172,23 +179,47 @@ fn ui(f: &mut Frame, app: &App) {
     let mut key_lines = Vec::new();
     if let Some(ref k) = app.keys {
         key_lines.push(Line::from(vec![
-            Span::styled("MODULUS (n): ", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                "MODULUS (n): ",
+                Style::default()
+                    .fg(Color::Cyan)
+                    .add_modifier(Modifier::BOLD),
+            ),
             Span::raw(format!("{}", k.modulus)),
         ]));
         key_lines.push(Line::from(""));
         key_lines.push(Line::from(vec![
-            Span::styled("PUBLICUS (e): ", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                "PUBLICUS (e): ",
+                Style::default()
+                    .fg(Color::Cyan)
+                    .add_modifier(Modifier::BOLD),
+            ),
             Span::raw(format!("{}", k.public)),
         ]));
         key_lines.push(Line::from(""));
         key_lines.push(Line::from(vec![
-            Span::styled("PRIVATUS (d): ", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                "PRIVATUS (d): ",
+                Style::default()
+                    .fg(Color::Cyan)
+                    .add_modifier(Modifier::BOLD),
+            ),
             Span::raw(format!("{}", k.private)),
         ]));
     } else {
-        key_lines.push(Line::from(Span::styled("Tablets are empty.", Style::default().fg(Color::DarkGray))));
-        key_lines.push(Line::from(Span::styled("Wait for the Scribe to carve them.", Style::default().fg(Color::DarkGray))));
-        key_lines.push(Line::from(Span::styled("Press 'G' to summon the Scribe.", Style::default().fg(Color::Yellow))));
+        key_lines.push(Line::from(Span::styled(
+            "Tablets are empty.",
+            Style::default().fg(Color::DarkGray),
+        )));
+        key_lines.push(Line::from(Span::styled(
+            "Wait for the Scribe to carve them.",
+            Style::default().fg(Color::DarkGray),
+        )));
+        key_lines.push(Line::from(Span::styled(
+            "Press 'G' to summon the Scribe.",
+            Style::default().fg(Color::Yellow),
+        )));
     }
 
     let keys_paragraph = Paragraph::new(key_lines)
@@ -198,7 +229,12 @@ fn ui(f: &mut Frame, app: &App) {
 
     // Process Area
     let process_block_style = Block::default()
-        .title(Span::styled(" OPERATIO (Operation) ", Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD)))
+        .title(Span::styled(
+            " OPERATIO (Operation) ",
+            Style::default()
+                .fg(Color::Magenta)
+                .add_modifier(Modifier::BOLD),
+        ))
         .borders(Borders::ALL)
         .border_type(BorderType::Double)
         .border_style(Style::default().fg(Color::Magenta));
@@ -206,27 +242,48 @@ fn ui(f: &mut Frame, app: &App) {
     let mut process_lines = Vec::new();
     if let Some(ref m) = app.message {
         process_lines.push(Line::from(vec![
-            Span::styled("NUNTIUS (Message): ", Style::default().fg(Color::White).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                "NUNTIUS (Message): ",
+                Style::default()
+                    .fg(Color::White)
+                    .add_modifier(Modifier::BOLD),
+            ),
             Span::raw(format!("{}", m)),
         ]));
         process_lines.push(Line::from(""));
     }
     if let Some(ref c) = app.cipher {
         process_lines.push(Line::from(vec![
-            Span::styled("CRYPTA (Cipher): ", Style::default().fg(Color::Red).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                "CRYPTA (Cipher): ",
+                Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
+            ),
             Span::styled(format!("{}", c), Style::default().fg(Color::Red)),
         ]));
         process_lines.push(Line::from(""));
     }
     if let Some(ref d) = app.decrypted {
         process_lines.push(Line::from(vec![
-            Span::styled("REVELATIO (Decrypted): ", Style::default().fg(Color::Green).add_modifier(Modifier::BOLD)),
-            Span::styled(format!("{}", d), Style::default().fg(Color::Green).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                "REVELATIO (Decrypted): ",
+                Style::default()
+                    .fg(Color::Green)
+                    .add_modifier(Modifier::BOLD),
+            ),
+            Span::styled(
+                format!("{}", d),
+                Style::default()
+                    .fg(Color::Green)
+                    .add_modifier(Modifier::BOLD),
+            ),
         ]));
     }
 
     if process_lines.is_empty() {
-         process_lines.push(Line::from(Span::styled("No operations performed yet.", Style::default().fg(Color::DarkGray))));
+        process_lines.push(Line::from(Span::styled(
+            "No operations performed yet.",
+            Style::default().fg(Color::DarkGray),
+        )));
     }
 
     let process_paragraph = Paragraph::new(process_lines)
@@ -249,20 +306,43 @@ fn ui(f: &mut Frame, app: &App) {
 
     let footer_text = vec![
         Line::from(vec![
-            Span::styled("STATUS: ", Style::default().fg(status_color).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                "STATUS: ",
+                Style::default()
+                    .fg(status_color)
+                    .add_modifier(Modifier::BOLD),
+            ),
             Span::styled(&app.status, Style::default().fg(status_color)),
         ]),
         Line::from(vec![
             Span::raw(" | "),
-            Span::styled("[G]", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                "[G]",
+                Style::default()
+                    .fg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD),
+            ),
             Span::raw("enerate "),
-            Span::styled("[E]", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                "[E]",
+                Style::default()
+                    .fg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD),
+            ),
             Span::raw("ncrypt "),
-            Span::styled("[D]", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                "[D]",
+                Style::default()
+                    .fg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD),
+            ),
             Span::raw("ecrypt "),
-            Span::styled("[Q/Esc]", Style::default().fg(Color::Red).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                "[Q/Esc]",
+                Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
+            ),
             Span::raw("uit"),
-        ])
+        ]),
     ];
 
     let footer = Paragraph::new(footer_text)

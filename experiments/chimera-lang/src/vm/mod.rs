@@ -101,12 +101,12 @@ pub mod nova_arcana;
 #[cfg(feature = "nova")]
 pub mod nova_arena;
 #[cfg(feature = "nova")]
+pub mod nova_astrology;
+#[cfg(feature = "nova")]
 pub mod nova_attractor;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_attractor_test;
-#[cfg(feature = "nova")]
-pub mod nova_astrology;
 #[cfg(feature = "nova")]
 pub mod nova_ballistics;
 #[cfg(feature = "nova")]
@@ -170,10 +170,10 @@ mod nova_harvest_test;
 pub mod nova_hologram;
 #[cfg(feature = "nova")]
 #[cfg(test)]
-mod nova_hologram_test;
+mod nova_hologram_grammar_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
-mod nova_hologram_grammar_test;
+mod nova_hologram_test;
 #[cfg(feature = "nova")]
 pub mod nova_ley;
 #[cfg(feature = "nova")]
@@ -232,9 +232,6 @@ pub mod nova_resonance_war;
 #[cfg(test)]
 mod nova_retina_test;
 #[cfg(feature = "nova")]
-#[cfg(test)]
-mod nova_siren_test;
-#[cfg(feature = "nova")]
 pub mod nova_scent;
 #[cfg(feature = "nova")]
 pub mod nova_security;
@@ -243,6 +240,9 @@ pub mod nova_sigil;
 #[cfg(feature = "nova")]
 pub mod nova_signals;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_siren_test;
+#[cfg(feature = "nova")]
 pub mod nova_sovereignty;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -250,17 +250,17 @@ mod nova_sovereignty_test;
 #[cfg(feature = "nova")]
 pub mod nova_strings;
 #[cfg(feature = "nova")]
+pub mod nova_void;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_void_test;
+#[cfg(feature = "nova")]
 pub mod nova_ward;
 #[cfg(feature = "nova")]
 pub mod nova_weaver;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_weaver_test;
-#[cfg(feature = "nova")]
-pub mod nova_void;
-#[cfg(feature = "nova")]
-#[cfg(test)]
-mod nova_void_test;
 pub mod oracle;
 pub mod pandemonium;
 #[cfg(feature = "phylogeny")]
@@ -1423,22 +1423,26 @@ impl ChimeraVM {
                 0 => {
                     // Irradiate
                     self.mutagen_grid[cy][cx] = self.mutagen_grid[cy][cx].saturating_add(50);
-                    self.output.push(format!("MAD SCIENTIST: Irradiated {},{}", cx, cy));
-                },
+                    self.output
+                        .push(format!("MAD SCIENTIST: Irradiated {},{}", cx, cy));
+                }
                 1 => {
                     // Alchemy
                     if alchemy::perform_alchemy(self, cy, cx) {
-                        self.output.push(format!("MAD SCIENTIST: Transmuted {},{}", cx, cy));
+                        self.output
+                            .push(format!("MAD SCIENTIST: Transmuted {},{}", cx, cy));
                     } else {
-                        self.output.push(format!("MAD SCIENTIST: Failed alchemy at {},{}", cx, cy));
+                        self.output
+                            .push(format!("MAD SCIENTIST: Failed alchemy at {},{}", cx, cy));
                     }
-                },
+                }
                 2 => {
                     // Entropy Surge
                     if let Some(_) = nova_flux::exec_entropy_surge(self) {
-                         self.output.push("MAD SCIENTIST: Triggered ENTROPY SURGE!".to_string());
+                        self.output
+                            .push("MAD SCIENTIST: Triggered ENTROPY SURGE!".to_string());
                     }
-                },
+                }
                 3 => {
                     // Spawn
                     if self.organelles.len() < MAX_ORGANELLES {
@@ -1460,9 +1464,10 @@ impl ChimeraVM {
                             genome_id: 0,
                         };
                         self.organelles.push(new_org);
-                        self.output.push(format!("MAD SCIENTIST: Created life at {},{}", cx, cy));
+                        self.output
+                            .push(format!("MAD SCIENTIST: Created life at {},{}", cx, cy));
                     }
-                },
+                }
                 _ => {}
             }
             self.energy = self.energy.saturating_sub(10);
@@ -2195,6 +2200,10 @@ impl ChimeraVM {
         result
     }
 
+    /// Returns a list of grid coordinates within radius `r` of `(cx, cy)`.
+    ///
+    /// Optimized to iterate only within the bounding box of the circle, rather than the entire grid.
+    /// Also pre-allocates the vector to avoid re-allocations.
     pub(crate) fn get_circular_coords(&self, cx: i64, cy: i64, r: i64) -> Vec<(usize, usize)> {
         let mut coords = Vec::new();
 
@@ -2222,8 +2231,21 @@ impl ChimeraVM {
         }
 
         let r_sq = (r as i128).saturating_mul(r as i128);
-        for y in 0..GRID_SIZE {
-            for x in 0..GRID_SIZE {
+
+        let min_y = (cy.saturating_sub(r)).clamp(0, GRID_SIZE as i64) as usize;
+        let max_y = (cy.saturating_add(r).saturating_add(1)).clamp(0, GRID_SIZE as i64) as usize;
+        let min_x = (cx.saturating_sub(r)).clamp(0, GRID_SIZE as i64) as usize;
+        let max_x = (cx.saturating_add(r).saturating_add(1)).clamp(0, GRID_SIZE as i64) as usize;
+
+        // Pre-allocate to avoid re-allocations.
+        // We use a safe upper bound: the bounding box area, clamped to total grid size.
+        let width = max_x.saturating_sub(min_x);
+        let height = max_y.saturating_sub(min_y);
+        let cap = width.saturating_mul(height).min(GRID_SIZE * GRID_SIZE);
+        coords.reserve(cap);
+
+        for y in min_y..max_y {
+            for x in min_x..max_x {
                 let dx = (x as i64).saturating_sub(cx) as i128;
                 let dy = (y as i64).saturating_sub(cy) as i128;
                 let dist_sq = dx.saturating_mul(dx).saturating_add(dy.saturating_mul(dy));
@@ -2428,8 +2450,7 @@ impl ChimeraVM {
                 let sandbox = match std::fs::canonicalize(&self.sandbox_root) {
                     Ok(p) => p,
                     Err(_) => {
-                        self.output
-                            .push("Error: Invalid sandbox root".to_string());
+                        self.output.push("Error: Invalid sandbox root".to_string());
                         self.stack.push(Value::Int(-1));
                         return None;
                     }
@@ -2449,8 +2470,10 @@ impl ChimeraVM {
                 };
 
                 if !canonical_target.starts_with(&sandbox) {
-                    self.output
-                        .push(format!("SECURITY ALERT: Path traversal attempted on '{}'", path));
+                    self.output.push(format!(
+                        "SECURITY ALERT: Path traversal attempted on '{}'",
+                        path
+                    ));
                     self.stack.push(Value::Int(-1));
                     return None;
                 }
@@ -2474,10 +2497,7 @@ impl ChimeraVM {
                     for b in &buffer[0..bytes_read] {
                         let idx = (*b as usize) % count;
                         let op = opcodes[idx].clone();
-                        genes.push(crate::ast::Gene {
-                            op,
-                            args: vec![],
-                        });
+                        genes.push(crate::ast::Gene { op, args: vec![] });
                     }
 
                     let strand = crate::ast::Strand { genes };
@@ -2556,10 +2576,7 @@ impl ChimeraVM {
                     for b in &buffer[0..bytes_read] {
                         let idx = (*b as usize) % count;
                         let op = opcodes[idx].clone();
-                        genes.push(crate::ast::Gene {
-                            op,
-                            args: vec![],
-                        });
+                        genes.push(crate::ast::Gene { op, args: vec![] });
                     }
 
                     let strand = crate::ast::Strand { genes };
@@ -3024,7 +3041,8 @@ impl ChimeraVM {
                         }
                     }
                 } else {
-                    self.output.push("Error: Stack underflow for Chr".to_string());
+                    self.output
+                        .push("Error: Stack underflow for Chr".to_string());
                 }
                 None
             }

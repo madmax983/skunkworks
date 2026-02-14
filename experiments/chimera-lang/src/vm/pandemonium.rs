@@ -114,11 +114,7 @@ pub fn apply_storm(vm: &mut ChimeraVM, strand_idx: usize, gene_idx: usize, radiu
                 #[cfg(not(any(feature = "elektra", feature = "nova")))]
                 {
                     // Fallback for minimal features
-                    let basic_chaos = [
-                        OpCode::Drop,
-                        OpCode::Swap,
-                        OpCode::Nop,
-                    ];
+                    let basic_chaos = [OpCode::Drop, OpCode::Swap, OpCode::Nop];
                     strand.genes[i].op = basic_chaos[rng.gen_range(0..basic_chaos.len())].clone();
                 }
             }

@@ -1,6 +1,6 @@
-use thread_symphony::conductor::{Stage, Instrument};
-use loom::thread;
 use loom::sync::Arc;
+use loom::thread;
+use thread_symphony::conductor::{Instrument, Stage};
 
 #[test]
 fn loom_safe_access() {
@@ -16,10 +16,10 @@ fn loom_safe_access() {
         });
 
         let t2 = thread::spawn(move || {
-             // Thread B: Global -> Instrument
-             // The API forces this order.
-             let token = stage_b.lock_global();
-             let _i = token.lock_instrument(Instrument::Kick);
+            // Thread B: Global -> Instrument
+            // The API forces this order.
+            let token = stage_b.lock_global();
+            let _i = token.lock_instrument(Instrument::Kick);
         });
 
         t1.join().unwrap();

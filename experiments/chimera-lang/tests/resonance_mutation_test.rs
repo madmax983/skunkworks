@@ -2,19 +2,22 @@
 #[cfg(feature = "nova")]
 #[cfg(feature = "resonance")]
 mod tests {
-    use chimera_lang::vm::{ChimeraVM, Value};
-    use chimera_lang::vm::nova::{Organelle, OrganelleType};
-    use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+    use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
+    use chimera_lang::vm::nova::{Organelle, OrganelleType};
     use chimera_lang::vm::nova_signals;
+    use chimera_lang::vm::{ChimeraVM, Value};
 
     fn make_vm() -> ChimeraVM {
         // Use Push(0) so there is an argument to mutate
-        let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }
-        ];
+        let genes = vec![Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }];
         let dna = Dna {
-            helix: Helix { strands: vec![Strand { genes }] }
+            helix: Helix {
+                strands: vec![Strand { genes }],
+            },
         };
         let mut vm = ChimeraVM::new(dna);
         // Ensure phase allows mutation
@@ -72,13 +75,16 @@ mod tests {
         nova_signals::process_signals(&mut vm);
 
         // 3. Assert Wisp Spawn
-        let found = vm.output.iter().any(|s| s.contains("HARMONIC: Spawned Wisp"));
+        let found = vm
+            .output
+            .iter()
+            .any(|s| s.contains("HARMONIC: Spawned Wisp"));
         assert!(found, "Expected harmonic spawn log, got: {:?}", vm.output);
 
         // Check organelle count
         assert_eq!(vm.organelles.len(), 1);
         match vm.organelles[0].kind {
-            OrganelleType::Wisp => {},
+            OrganelleType::Wisp => {}
             _ => panic!("Expected Wisp, got {:?}", vm.organelles[0].kind),
         }
     }

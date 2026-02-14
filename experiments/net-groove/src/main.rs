@@ -3,8 +3,8 @@ pub mod network;
 pub mod shared;
 pub mod tui;
 
-use std::sync::Arc;
 use anyhow::Result;
+use std::sync::Arc;
 
 use crate::audio::AudioEngine;
 use crate::network::start_monitoring;

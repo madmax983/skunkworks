@@ -1,8 +1,8 @@
 mod kinematics;
 
-use macroquad::prelude::*;
 use ::rand::Rng;
 use kinematics::MiuraGrid;
+use macroquad::prelude::*;
 
 #[macroquad::main("Rigid Origami")]
 async fn main() {
@@ -17,13 +17,15 @@ async fn main() {
 
     // Starfield
     let mut rng = ::rand::thread_rng();
-    let stars: Vec<Vec3> = (0..1000).map(|_| {
-        vec3(
-            rng.gen_range(-100.0..100.0),
-            rng.gen_range(-100.0..100.0),
-            rng.gen_range(-100.0..100.0),
-        )
-    }).collect();
+    let stars: Vec<Vec3> = (0..1000)
+        .map(|_| {
+            vec3(
+                rng.gen_range(-100.0..100.0),
+                rng.gen_range(-100.0..100.0),
+                rng.gen_range(-100.0..100.0),
+            )
+        })
+        .collect();
 
     // Deployment state
     let mut expansion = 0.05;
@@ -83,7 +85,11 @@ async fn main() {
 
         set_camera(&Camera3D {
             position: cam_pos,
-            target: vec3(grid.cols as f32 * grid.params.a * 0.5, grid.rows as f32 * grid.params.b * 0.5, 0.0), // Look at center approx
+            target: vec3(
+                grid.cols as f32 * grid.params.a * 0.5,
+                grid.rows as f32 * grid.params.b * 0.5,
+                0.0,
+            ), // Look at center approx
             up: vec3(0.0, 1.0, 0.0),
             ..Default::default()
         });
@@ -135,10 +141,30 @@ async fn main() {
                 let color_bytes: [u8; 4] = color.into();
                 let normal_v4 = vec4(normal1.x, normal1.y, normal1.z, 1.0);
 
-                mesh.vertices.push(Vertex { position: v0, uv: vec2(0.,0.), color: color_bytes, normal: normal_v4 });
-                mesh.vertices.push(Vertex { position: v1, uv: vec2(1.,0.), color: color_bytes, normal: normal_v4 });
-                mesh.vertices.push(Vertex { position: v2, uv: vec2(1.,1.), color: color_bytes, normal: normal_v4 });
-                mesh.vertices.push(Vertex { position: v3, uv: vec2(0.,1.), color: color_bytes, normal: normal_v4 });
+                mesh.vertices.push(Vertex {
+                    position: v0,
+                    uv: vec2(0., 0.),
+                    color: color_bytes,
+                    normal: normal_v4,
+                });
+                mesh.vertices.push(Vertex {
+                    position: v1,
+                    uv: vec2(1., 0.),
+                    color: color_bytes,
+                    normal: normal_v4,
+                });
+                mesh.vertices.push(Vertex {
+                    position: v2,
+                    uv: vec2(1., 1.),
+                    color: color_bytes,
+                    normal: normal_v4,
+                });
+                mesh.vertices.push(Vertex {
+                    position: v3,
+                    uv: vec2(0., 1.),
+                    color: color_bytes,
+                    normal: normal_v4,
+                });
 
                 // Tri 1
                 mesh.indices.push(base_idx);
@@ -163,24 +189,40 @@ async fn main() {
 
         for j in 0..=grid.rows {
             for i in 0..grid.cols {
-                 let idx1 = j * width + i;
-                 let idx2 = j * width + i + 1;
-                 draw_line_3d(vertices[idx1], vertices[idx2], WHITE);
+                let idx1 = j * width + i;
+                let idx2 = j * width + i + 1;
+                draw_line_3d(vertices[idx1], vertices[idx2], WHITE);
             }
         }
         for j in 0..grid.rows {
             for i in 0..=grid.cols {
-                 let idx1 = j * width + i;
-                 let idx2 = (j + 1) * width + i;
-                 draw_line_3d(vertices[idx1], vertices[idx2], WHITE);
+                let idx1 = j * width + i;
+                let idx2 = (j + 1) * width + i;
+                draw_line_3d(vertices[idx1], vertices[idx2], WHITE);
             }
         }
 
         set_default_camera();
 
         draw_text("Rigid Origami Simulation 🛰️", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Expansion: {:.2} {}", expansion, if deploying { "(Deploying...)" } else { "" }), 10.0, 50.0, 20.0, LIGHTGRAY);
-        draw_text("Arrows: Manual | Space: Toggle Deploy | Mouse: Orbit", 10.0, 70.0, 20.0, GRAY);
+        draw_text(
+            &format!(
+                "Expansion: {:.2} {}",
+                expansion,
+                if deploying { "(Deploying...)" } else { "" }
+            ),
+            10.0,
+            50.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            "Arrows: Manual | Space: Toggle Deploy | Mouse: Orbit",
+            10.0,
+            70.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }

@@ -431,8 +431,7 @@ pub fn exec_holo_invoke(
     _args: &[Nucleotide],
 ) -> Option<(usize, usize)> {
     if vm.recursion_depth > super::MAX_RECURSION_DEPTH {
-        vm.output
-            .push("HOLO_INVOKE: Recursion limit".to_string());
+        vm.output.push("HOLO_INVOKE: Recursion limit".to_string());
         return None;
     }
     vm.recursion_depth += 1;
@@ -486,8 +485,7 @@ pub fn exec_holo_speak(
     _args: &[Nucleotide],
 ) -> Option<(usize, usize)> {
     if vm.recursion_depth > super::MAX_RECURSION_DEPTH {
-        vm.output
-            .push("HOLO_SPEAK: Recursion limit".to_string());
+        vm.output.push("HOLO_SPEAK: Recursion limit".to_string());
         return None;
     }
     vm.recursion_depth += 1;
@@ -616,12 +614,14 @@ pub fn exec_cymatic_scan(
                 total_energy
             ));
         } else {
-            vm.output.push("CYMATIC_SCAN: Audio snapshot size mismatch".to_string());
+            vm.output
+                .push("CYMATIC_SCAN: Audio snapshot size mismatch".to_string());
         }
     }
     #[cfg(not(feature = "resonance"))]
     {
-        vm.output.push("CYMATIC_SCAN: Resonance feature disabled".to_string());
+        vm.output
+            .push("CYMATIC_SCAN: Resonance feature disabled".to_string());
     }
 
     vm.energy = vm.energy.saturating_sub(10);

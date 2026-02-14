@@ -2,10 +2,10 @@
 mod tests {
     use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
-    use chimera_lang::vm::{ChimeraVM, Value};
+    use chimera_lang::vm::memetics;
     use chimera_lang::vm::nova::Organelle;
     use chimera_lang::vm::nova::OrganelleType;
-    use chimera_lang::vm::memetics;
+    use chimera_lang::vm::{ChimeraVM, Value};
 
     fn make_vm() -> ChimeraVM {
         let genes = vec![Gene {
@@ -29,7 +29,9 @@ mod tests {
             op: OpCode::Push,
             args: vec![Nucleotide::Number(999)],
         }];
-        vm.dna.helix.strands.push(Strand { genes: payload_genes });
+        vm.dna.helix.strands.push(Strand {
+            genes: payload_genes,
+        });
         let payload_idx = 1;
 
         // 2. Setup Organelle at (5, 5) using Genome 0
@@ -75,11 +77,11 @@ mod tests {
         let last_gene = strand_0.genes.last().unwrap();
 
         if let OpCode::Push = last_gene.op {
-             if let Nucleotide::Number(n) = last_gene.args[0] {
-                 assert_eq!(n, 999, "Payload gene should be injected");
-             } else {
-                 panic!("Wrong arg type");
-             }
+            if let Nucleotide::Number(n) = last_gene.args[0] {
+                assert_eq!(n, 999, "Payload gene should be injected");
+            } else {
+                panic!("Wrong arg type");
+            }
         } else {
             panic!("Wrong OpCode");
         }

@@ -78,8 +78,8 @@ impl PendulumSystem {
             // But TUI canvas is virtual, so maybe not strictly needed.
             // However, to prevent NaN explosions:
             if node.pos.length_squared() > 1000000.0 {
-                 node.pos = node.pos.normalize() * 1000.0;
-                 node.prev_pos = node.pos; // Kill velocity
+                node.pos = node.pos.normalize() * 1000.0;
+                node.prev_pos = node.pos; // Kill velocity
             }
         }
     }
@@ -106,8 +106,16 @@ impl PendulumSystem {
                 let mass_a = self.nodes[link.a].mass;
                 let mass_b = self.nodes[link.b].mass;
 
-                let inv_mass_a = if self.nodes[link.a].fixed { 0.0 } else { 1.0 / mass_a };
-                let inv_mass_b = if self.nodes[link.b].fixed { 0.0 } else { 1.0 / mass_b };
+                let inv_mass_a = if self.nodes[link.a].fixed {
+                    0.0
+                } else {
+                    1.0 / mass_a
+                };
+                let inv_mass_b = if self.nodes[link.b].fixed {
+                    0.0
+                } else {
+                    1.0 / mass_b
+                };
 
                 let total_inv_mass = inv_mass_a + inv_mass_b;
                 if total_inv_mass == 0.0 {

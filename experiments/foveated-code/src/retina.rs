@@ -55,7 +55,6 @@ impl Retina {
             self.spikes[i] = spiked;
         }
     }
-
 }
 
 #[cfg(test)]
@@ -77,6 +76,9 @@ mod tests {
                 break;
             }
         }
-        assert!(spiked, "Neuron at (5,5) should have spiked given '{{' input");
+        assert!(
+            spiked,
+            "Neuron at (5,5) should have spiked given '{{' input"
+        );
     }
 }

@@ -95,23 +95,27 @@ pub fn exec_attractor_op(
 
                     // Set default params based on mode
                     match mode {
-                        0 => { // Lorenz
+                        0 => {
+                            // Lorenz
                             vm.attractor.sigma = 10.0;
                             vm.attractor.rho = 28.0;
                             vm.attractor.beta = 8.0 / 3.0;
                         }
-                        1 => { // Rossler
+                        1 => {
+                            // Rossler
                             vm.attractor.sigma = 0.2;
                             vm.attractor.rho = 0.2;
                             vm.attractor.beta = 5.7;
                         }
-                        2 => { // Thomas
+                        2 => {
+                            // Thomas
                             vm.attractor.sigma = 0.19; // b
                         }
                         _ => {}
                     }
 
-                    vm.output.push(format!("ATTRACTOR: Initialized Mode {}", mode));
+                    vm.output
+                        .push(format!("ATTRACTOR: Initialized Mode {}", mode));
                 }
             }
             None
@@ -138,7 +142,8 @@ pub fn exec_attractor_op(
                     let idx = (z * (scale as f64) / 50.0).abs() as usize;
 
                     if idx < vm.dna.helix.strands.len() {
-                        vm.output.push(format!("SURF: Riding chaos to Strand {}", idx));
+                        vm.output
+                            .push(format!("SURF: Riding chaos to Strand {}", idx));
                         return Some((idx, 0));
                     }
                 }
@@ -154,14 +159,16 @@ pub fn exec_attractor_op(
                             // Lorenz X: -20 to 20
                             let chaos = (vm.attractor.x.abs() / 20.0).clamp(0.0, 1.0);
                             vm.glitch_level = chaos as f32;
-                            vm.output.push(format!("MAP: Attractor X -> Glitch {:.2}", chaos));
+                            vm.output
+                                .push(format!("MAP: Attractor X -> Glitch {:.2}", chaos));
                         }
                         1 => {
                             // Map Y to Havoc Rate
                             // Lorenz Y: -30 to 30
                             let rate = (vm.attractor.y.abs() / 30.0).clamp(0.0, 1.0);
                             vm.havoc.rate = rate;
-                            vm.output.push(format!("MAP: Attractor Y -> Havoc {:.2}", rate));
+                            vm.output
+                                .push(format!("MAP: Attractor Y -> Havoc {:.2}", rate));
                         }
                         _ => {}
                     }

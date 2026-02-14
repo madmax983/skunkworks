@@ -1,8 +1,8 @@
 mod lbm;
 mod renderer;
 
+use lbm::{FluidSim, HEIGHT, WIDTH};
 use macroquad::prelude::*;
-use lbm::{FluidSim, WIDTH, HEIGHT};
 use renderer::render_ascii;
 
 #[macroquad::main("Typographic Turbulence")]
@@ -42,7 +42,9 @@ async fn main() {
 
         // Char input (macroquad collects chars)
         while let Some(c) = get_char_pressed() {
-            if c.is_control() || c == '\n' || c == '\r' || c == '\u{8}' { continue; }
+            if c.is_control() || c == '\n' || c == '\r' || c == '\u{8}' {
+                continue;
+            }
 
             let idx = cursor_y * WIDTH + cursor_x;
             text_grid[idx] = c;
@@ -56,10 +58,18 @@ async fn main() {
         }
 
         // Navigation (Arrow keys)
-        if is_key_pressed(KeyCode::Left) { cursor_x = cursor_x.saturating_sub(1); }
-        if is_key_pressed(KeyCode::Right) { cursor_x = (cursor_x + 1).min(WIDTH - 1); }
-        if is_key_pressed(KeyCode::Up) { cursor_y = cursor_y.saturating_sub(1); }
-        if is_key_pressed(KeyCode::Down) { cursor_y = (cursor_y + 1).min(HEIGHT - 1); }
+        if is_key_pressed(KeyCode::Left) {
+            cursor_x = cursor_x.saturating_sub(1);
+        }
+        if is_key_pressed(KeyCode::Right) {
+            cursor_x = (cursor_x + 1).min(WIDTH - 1);
+        }
+        if is_key_pressed(KeyCode::Up) {
+            cursor_y = cursor_y.saturating_sub(1);
+        }
+        if is_key_pressed(KeyCode::Down) {
+            cursor_y = (cursor_y + 1).min(HEIGHT - 1);
+        }
 
         // Mouse: Add Fluid
         if is_mouse_button_down(MouseButton::Left) {
@@ -121,7 +131,13 @@ async fn main() {
             // Better: Draw the string as one block?
             // No, newlines reset X but Y spacing is determined by font.
             // Let's draw line by line.
-            draw_text(line, 0.0, y_pos + line_height, line_height, Color::new(0.0, 0.5, 1.0, 1.0));
+            draw_text(
+                line,
+                0.0,
+                y_pos + line_height,
+                line_height,
+                Color::new(0.0, 0.5, 1.0, 1.0),
+            );
             y_pos += line_height;
         }
 
@@ -140,8 +156,8 @@ async fn main() {
 
         y_pos = 0.0;
         for line in text_overlay.lines() {
-             draw_text(line, 0.0, y_pos + line_height, line_height, WHITE);
-             y_pos += line_height;
+            draw_text(line, 0.0, y_pos + line_height, line_height, WHITE);
+            y_pos += line_height;
         }
 
         // Cursor
@@ -158,7 +174,13 @@ async fn main() {
         // We should calculate `font_size` such that `WIDTH * advance_x <= sw`.
 
         // Let's do a debug draw of cursor at `cursor_x * advance_x`.
-        draw_rectangle(cursor_x as f32 * advance_x, cursor_y as f32 * line_height, advance_x, line_height, RED);
+        draw_rectangle(
+            cursor_x as f32 * advance_x,
+            cursor_y as f32 * line_height,
+            advance_x,
+            line_height,
+            RED,
+        );
 
         next_frame().await
     }

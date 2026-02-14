@@ -1,4 +1,4 @@
-use crate::lbm::{FluidSim, WIDTH, HEIGHT};
+use crate::lbm::{FluidSim, HEIGHT, WIDTH};
 
 const DENSITY_CHARS: &[char] = &[' ', ' ', '.', ':', '-', '=', '+', '*', '#', '%', '@'];
 

@@ -1,9 +1,9 @@
 mod audio;
 mod physics;
 
-use macroquad::prelude::*;
 use crate::audio::AudioEngine;
-use crate::physics::{Body, update, check_crossings, G};
+use crate::physics::{check_crossings, update, Body, G};
+use macroquad::prelude::*;
 
 const STAR_MASS: f32 = 50000.0;
 
@@ -27,7 +27,14 @@ async fn main() {
     // Harmony Mode
     let mut harmony_mode = false;
     let base_radius = 200.0;
-    let ratios = [(1.0, 1.0), (4.0, 3.0), (3.0, 2.0), (2.0, 1.0), (3.0, 1.0), (4.0, 1.0)];
+    let ratios = [
+        (1.0, 1.0),
+        (4.0, 3.0),
+        (3.0, 2.0),
+        (2.0, 1.0),
+        (3.0, 1.0),
+        (4.0, 1.0),
+    ];
 
     // Previous positions for crossing detection
     let mut old_positions: Vec<Vec2> = bodies.iter().map(|b| b.pos).collect();
@@ -42,7 +49,10 @@ async fn main() {
 
         if is_mouse_button_pressed(MouseButton::Left) {
             let mpos = mouse_position();
-            let mut pos = Vec2::new(mpos.0 - screen_width() / 2.0, mpos.1 - screen_height() / 2.0); // Center at screen center
+            let mut pos = Vec2::new(
+                mpos.0 - screen_width() / 2.0,
+                mpos.1 - screen_height() / 2.0,
+            ); // Center at screen center
 
             let mut dist = pos.length();
 
@@ -55,7 +65,7 @@ async fn main() {
                     let ratio: f32 = n / d;
                     // Period ratio T/T_base = ratio
                     // r/r_base = ratio^(2/3)
-                    let r_target = base_radius * ratio.powf(2.0/3.0);
+                    let r_target = base_radius * ratio.powf(2.0 / 3.0);
                     let diff = (dist - r_target).abs();
                     if diff < min_diff {
                         min_diff = diff;
@@ -63,7 +73,8 @@ async fn main() {
                     }
                 }
 
-                if min_diff < 30.0 { // Snap threshold
+                if min_diff < 30.0 {
+                    // Snap threshold
                     pos = pos.normalize() * best_r;
                     dist = best_r;
                 }
@@ -71,7 +82,7 @@ async fn main() {
 
             if dist > 10.0 {
                 let v_mag = (G * STAR_MASS / dist).sqrt(); // v = sqrt(GM/r)
-                // Tangent direction: (-y, x) / r
+                                                           // Tangent direction: (-y, x) / r
                 let v_dir = Vec2::new(-pos.y, pos.x) / dist;
                 let vel = v_dir * v_mag;
 
@@ -80,7 +91,12 @@ async fn main() {
                     vel,
                     1.0,
                     5.0,
-                    Color::new(rand::gen_range(0.5, 1.0), rand::gen_range(0.5, 1.0), rand::gen_range(0.5, 1.0), 1.0),
+                    Color::new(
+                        rand::gen_range(0.5, 1.0),
+                        rand::gen_range(0.5, 1.0),
+                        rand::gen_range(0.5, 1.0),
+                        1.0,
+                    ),
                 ));
                 old_positions.push(pos);
             }
@@ -127,13 +143,23 @@ async fn main() {
         // Center Camera
         set_camera(&Camera2D {
             target: Vec2::new(0.0, 0.0),
-            zoom: Vec2::new(1.0 / (screen_height() / 2.0), -1.0 / (screen_height() / 2.0)), // Flip Y
+            zoom: Vec2::new(
+                1.0 / (screen_height() / 2.0),
+                -1.0 / (screen_height() / 2.0),
+            ), // Flip Y
             ..Default::default()
         });
 
         // Draw String
         let string_color = Color::new(1.0, 1.0, 1.0, 0.2 + 0.8 * string_flash);
-        draw_line(0.0, 0.0, 2000.0, 0.0, 2.0 + 3.0 * string_flash, string_color);
+        draw_line(
+            0.0,
+            0.0,
+            2000.0,
+            0.0,
+            2.0 + 3.0 * string_flash,
+            string_color,
+        );
         if string_flash > 0.0 {
             string_flash -= dt * 5.0;
         }
@@ -142,7 +168,7 @@ async fn main() {
         if harmony_mode {
             for (n, d) in ratios {
                 let ratio: f32 = n / d;
-                let r = base_radius * ratio.powf(2.0/3.0);
+                let r = base_radius * ratio.powf(2.0 / 3.0);
                 draw_circle_lines(0.0, 0.0, r, 1.0, Color::new(1.0, 1.0, 1.0, 0.1));
             }
         }
@@ -152,9 +178,16 @@ async fn main() {
             // Draw Trail
             for i in 0..body.trail.len().saturating_sub(1) {
                 let p1 = body.trail[i];
-                let p2 = body.trail[i+1];
+                let p2 = body.trail[i + 1];
                 let alpha = (i as f32 / body.trail.len() as f32) * 0.5;
-                draw_line(p1.x, p1.y, p2.x, p2.y, 1.0, Color::new(body.color.r, body.color.g, body.color.b, alpha));
+                draw_line(
+                    p1.x,
+                    p1.y,
+                    p2.x,
+                    p2.y,
+                    1.0,
+                    Color::new(body.color.r, body.color.g, body.color.b, alpha),
+                );
             }
 
             draw_circle(body.pos.x, body.pos.y, body.radius, body.color);
@@ -162,13 +195,37 @@ async fn main() {
 
         // UI (Screen Space)
         set_default_camera();
-        draw_text("Left Click: Add Planet | Right Click: Remove | Space: Clear", 10.0, 30.0, 20.0, WHITE);
-        draw_text(&format!("Bodies: {}", bodies.len()), 10.0, 50.0, 20.0, WHITE);
+        draw_text(
+            "Left Click: Add Planet | Right Click: Remove | Space: Clear",
+            10.0,
+            30.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            &format!("Bodies: {}", bodies.len()),
+            10.0,
+            50.0,
+            20.0,
+            WHITE,
+        );
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 70.0, 20.0, WHITE);
         if harmony_mode {
-            draw_text("Harmony Mode: ON (Snapping to Resonant Orbits)", 10.0, 90.0, 20.0, GREEN);
+            draw_text(
+                "Harmony Mode: ON (Snapping to Resonant Orbits)",
+                10.0,
+                90.0,
+                20.0,
+                GREEN,
+            );
         } else {
-            draw_text("Harmony Mode: OFF (Press H to toggle)", 10.0, 90.0, 20.0, GRAY);
+            draw_text(
+                "Harmony Mode: OFF (Press H to toggle)",
+                10.0,
+                90.0,
+                20.0,
+                GRAY,
+            );
         }
 
         next_frame().await

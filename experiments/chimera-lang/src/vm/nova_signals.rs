@@ -459,7 +459,8 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                     let val = rng.gen_range(0..100);
                     vm.dna.helix.strands[req.strand_idx].genes[g_idx].args[0] =
                         Nucleotide::Number(val);
-                    vm.output.push(format!("MUTATION: Resonance hit strand {}", req.strand_idx));
+                    vm.output
+                        .push(format!("MUTATION: Resonance hit strand {}", req.strand_idx));
                 }
             }
         }
@@ -485,7 +486,8 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 genome_id: 0,
             };
             vm.organelles.push(new_org);
-            vm.output.push(format!("HARMONIC: Spawned Wisp at {},{}", req.x, req.y));
+            vm.output
+                .push(format!("HARMONIC: Spawned Wisp at {},{}", req.x, req.y));
         }
     }
 

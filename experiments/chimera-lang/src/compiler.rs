@@ -163,7 +163,10 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
         }
     }
 
-    fn parse_junction_instruction(&self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
+    fn parse_junction_instruction(
+        &self,
+        inner: pest::iterators::Pair<'i, Rule>,
+    ) -> Result<Vec<Gene>> {
         let val = parse_junction(inner, self.strand_map)?;
         Ok(vec![Gene {
             op: OpCode::Push,
@@ -246,7 +249,10 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
                         for arg in pred_args.into_inner() {
                             term_args.push(parse_argument(arg, self.strand_map)?);
                         }
-                        body_goals.push(Nucleotide::Junction(crate::ast::JunctionType::Any, term_args));
+                        body_goals.push(Nucleotide::Junction(
+                            crate::ast::JunctionType::Any,
+                            term_args,
+                        ));
                     }
 
                     let body = if body_goals.len() == 1 {
@@ -498,9 +504,9 @@ fn parse_argument(
             }
             // Keep as string if variable (starts with ?) to work with Oracle
             if inner.as_rule() == Rule::variable {
-                 Ok(Nucleotide::String(id.to_string()))
+                Ok(Nucleotide::String(id.to_string()))
             } else {
-                 Ok(Nucleotide::Identifier(id.to_string()))
+                Ok(Nucleotide::Identifier(id.to_string()))
             }
         }
         Rule::junction => parse_junction(inner, strand_map),

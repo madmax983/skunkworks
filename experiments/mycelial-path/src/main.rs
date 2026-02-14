@@ -1,5 +1,5 @@
+use ::rand::{thread_rng, Rng};
 use macroquad::prelude::*;
-use ::rand::{Rng, thread_rng};
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 
@@ -89,7 +89,10 @@ impl Eq for Node {}
 impl Ord for Node {
     fn cmp(&self, other: &Self) -> Ordering {
         // Reverse ordering for Min-Heap behavior in BinaryHeap
-        other.f_score.partial_cmp(&self.f_score).unwrap_or(Ordering::Equal)
+        other
+            .f_score
+            .partial_cmp(&self.f_score)
+            .unwrap_or(Ordering::Equal)
     }
 }
 
@@ -120,7 +123,10 @@ impl HyphaeNetwork {
         // Initialize start
         let start_idx = (start.y as usize) * width + (start.x as usize);
         g_score[start_idx] = 0.0;
-        open_set.push(Node { pos: start, f_score: 0.0 });
+        open_set.push(Node {
+            pos: start,
+            f_score: 0.0,
+        });
 
         Self {
             open_set,
@@ -148,12 +154,19 @@ impl HyphaeNetwork {
 
         // Initial heuristic
         let h = ((self.start.x - target.x).abs() + (self.start.y - target.y).abs()) as f32;
-        self.open_set.push(Node { pos: self.start, f_score: h });
+        self.open_set.push(Node {
+            pos: self.start,
+            f_score: h,
+        });
     }
 
     fn update(&mut self, substrate: &Substrate, steps: usize) {
-        if self.found { return; }
-        if self.target.is_none() { return; }
+        if self.found {
+            return;
+        }
+        if self.target.is_none() {
+            return;
+        }
 
         let target = self.target.unwrap();
 
@@ -170,17 +183,24 @@ impl HyphaeNetwork {
 
                 // Neighbors (8-way)
                 let neighbors = [
-                    IVec2::new(0, 1), IVec2::new(0, -1),
-                    IVec2::new(1, 0), IVec2::new(-1, 0),
-                    IVec2::new(1, 1), IVec2::new(1, -1),
-                    IVec2::new(-1, 1), IVec2::new(-1, -1),
+                    IVec2::new(0, 1),
+                    IVec2::new(0, -1),
+                    IVec2::new(1, 0),
+                    IVec2::new(-1, 0),
+                    IVec2::new(1, 1),
+                    IVec2::new(1, -1),
+                    IVec2::new(-1, 1),
+                    IVec2::new(-1, -1),
                 ];
 
                 for &offset in &neighbors {
                     let neighbor = current.pos + offset;
 
-                    if neighbor.x < 0 || neighbor.y < 0 ||
-                       neighbor.x >= self.width as i32 || neighbor.y >= self.height as i32 {
+                    if neighbor.x < 0
+                        || neighbor.y < 0
+                        || neighbor.x >= self.width as i32
+                        || neighbor.y >= self.height as i32
+                    {
                         continue;
                     }
 
@@ -188,7 +208,11 @@ impl HyphaeNetwork {
                     let curr_idx = (current.pos.y as usize) * self.width + (current.pos.x as usize);
 
                     // Cost function: Distance * Density Penalty
-                    let dist = if offset.x != 0 && offset.y != 0 { 1.414 } else { 1.0 };
+                    let dist = if offset.x != 0 && offset.y != 0 {
+                        1.414
+                    } else {
+                        1.0
+                    };
                     let density = substrate.get_density(neighbor);
                     // Higher density = higher cost.
                     let move_cost = dist * (1.0 + density * 20.0); // Increased penalty to make it avoid rocks more
@@ -223,8 +247,10 @@ impl HyphaeNetwork {
             for x in 0..self.width {
                 let idx = y * self.width + x;
                 if let Some(parent) = self.came_from[idx] {
-                    let p1 = Vec2::new(parent.x as f32, parent.y as f32) * CELL_SIZE + Vec2::splat(CELL_SIZE/2.0);
-                    let p2 = Vec2::new(x as f32, y as f32) * CELL_SIZE + Vec2::splat(CELL_SIZE/2.0);
+                    let p1 = Vec2::new(parent.x as f32, parent.y as f32) * CELL_SIZE
+                        + Vec2::splat(CELL_SIZE / 2.0);
+                    let p2 =
+                        Vec2::new(x as f32, y as f32) * CELL_SIZE + Vec2::splat(CELL_SIZE / 2.0);
 
                     draw_line(p1.x, p1.y, p2.x, p2.y, 1.0, Color::new(1.0, 1.0, 1.0, 0.2));
                 }
@@ -233,7 +259,7 @@ impl HyphaeNetwork {
 
         // Draw active tips
         for tip in &self.active_tips {
-             draw_rectangle(
+            draw_rectangle(
                 tip.x as f32 * CELL_SIZE,
                 tip.y as f32 * CELL_SIZE,
                 CELL_SIZE,
@@ -244,11 +270,15 @@ impl HyphaeNetwork {
 
         // Draw Path if found
         if self.found {
-           if let Some(target) = self.target {
-               let mut curr = target;
-               while let Some(parent) = self.came_from[(curr.y as usize) * self.width + (curr.x as usize)] {
-                    let p1 = Vec2::new(parent.x as f32, parent.y as f32) * CELL_SIZE + Vec2::splat(CELL_SIZE/2.0);
-                    let p2 = Vec2::new(curr.x as f32, curr.y as f32) * CELL_SIZE + Vec2::splat(CELL_SIZE/2.0);
+            if let Some(target) = self.target {
+                let mut curr = target;
+                while let Some(parent) =
+                    self.came_from[(curr.y as usize) * self.width + (curr.x as usize)]
+                {
+                    let p1 = Vec2::new(parent.x as f32, parent.y as f32) * CELL_SIZE
+                        + Vec2::splat(CELL_SIZE / 2.0);
+                    let p2 = Vec2::new(curr.x as f32, curr.y as f32) * CELL_SIZE
+                        + Vec2::splat(CELL_SIZE / 2.0);
 
                     // Thicker, pulsating artery
                     let time = get_time() as f32;
@@ -257,8 +287,8 @@ impl HyphaeNetwork {
 
                     draw_line(p1.x, p1.y, p2.x, p2.y, thickness, pulse_color);
                     curr = parent;
-               }
-           }
+                }
+            }
         }
     }
 }
@@ -277,7 +307,7 @@ async fn main() {
     let mut rng = thread_rng();
     let mut target = IVec2::new(
         rng.gen_range(10..GRID_WIDTH as i32 - 10),
-        rng.gen_range(10..GRID_HEIGHT as i32 - 10)
+        rng.gen_range(10..GRID_HEIGHT as i32 - 10),
     );
     fungus.set_target(target);
 
@@ -288,7 +318,11 @@ async fn main() {
             let grid_x = (mpos.0 / CELL_SIZE) as i32;
             let grid_y = (mpos.1 / CELL_SIZE) as i32;
 
-            if grid_x >= 0 && grid_x < GRID_WIDTH as i32 && grid_y >= 0 && grid_y < GRID_HEIGHT as i32 {
+            if grid_x >= 0
+                && grid_x < GRID_WIDTH as i32
+                && grid_y >= 0
+                && grid_y < GRID_HEIGHT as i32
+            {
                 target = IVec2::new(grid_x, grid_y);
                 fungus.set_target(target);
             }
@@ -299,7 +333,7 @@ async fn main() {
             let mut rng = thread_rng();
             target = IVec2::new(
                 rng.gen_range(10..GRID_WIDTH as i32 - 10),
-                rng.gen_range(10..GRID_HEIGHT as i32 - 10)
+                rng.gen_range(10..GRID_HEIGHT as i32 - 10),
             );
             fungus.set_target(target);
         }
@@ -315,10 +349,10 @@ async fn main() {
 
         // Draw target
         draw_circle(
-            target.x as f32 * CELL_SIZE + CELL_SIZE/2.0,
-            target.y as f32 * CELL_SIZE + CELL_SIZE/2.0,
+            target.x as f32 * CELL_SIZE + CELL_SIZE / 2.0,
+            target.y as f32 * CELL_SIZE + CELL_SIZE / 2.0,
             CELL_SIZE * 2.0,
-            YELLOW
+            YELLOW,
         );
 
         // UI

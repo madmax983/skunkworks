@@ -50,7 +50,7 @@ async fn main() {
 
         for i in 0..r.layers.len().saturating_sub(1) {
             let layer_curr = &r.layers[i];
-            let layer_next = &r.layers[i+1];
+            let layer_next = &r.layers[i + 1];
 
             let x1 = i as f32 * LAYER_WIDTH;
             let x2 = (i + 1) as f32 * LAYER_WIDTH;
@@ -77,29 +77,22 @@ async fn main() {
                 }
 
                 if let Some(k) = best_k {
-                    if best_sim > 0.3 { // Threshold
+                    if best_sim > 0.3 {
+                        // Threshold
                         let y2 = k as f32 * LINE_HEIGHT;
 
+                        mycelium.spawn(vec2(x1, y1), vec2(x2, y2), best_sim);
+                    } else {
+                        // Dead end (deletion)
                         mycelium.spawn(
                             vec2(x1, y1),
-                            vec2(x2, y2),
-                            best_sim
-                        );
-                    } else {
-                         // Dead end (deletion)
-                         mycelium.spawn(
-                            vec2(x1, y1),
                             vec2(x1 + LAYER_WIDTH * 0.5, y1 + 20.0), // Droop down
-                            0.0 // Low similarity -> Red/Dead
+                            0.0,                                     // Low similarity -> Red/Dead
                         );
                     }
                 } else {
-                     // No match found (deletion)
-                     mycelium.spawn(
-                        vec2(x1, y1),
-                        vec2(x1 + LAYER_WIDTH * 0.5, y1 + 20.0),
-                        0.0
-                    );
+                    // No match found (deletion)
+                    mycelium.spawn(vec2(x1, y1), vec2(x1 + LAYER_WIDTH * 0.5, y1 + 20.0), 0.0);
                 }
             }
         }
@@ -137,7 +130,7 @@ async fn main() {
         // Draw
         push_camera_state();
         set_camera(&Camera2D {
-            target: vec2(screen_width()/2.0, screen_height()/2.0) - camera_offset,
+            target: vec2(screen_width() / 2.0, screen_height() / 2.0) - camera_offset,
             zoom: vec2(zoom / screen_width() * 2.0, -zoom / screen_height() * 2.0), // Flip Y? No, standard 2D
             ..Default::default()
         });
@@ -155,7 +148,11 @@ async fn main() {
                     &layer.oid.to_string()[0..7],
                     x + 5.0,
                     -20.0,
-                    TextParams { font_size: 20, color: GRAY, ..Default::default() }
+                    TextParams {
+                        font_size: 20,
+                        color: GRAY,
+                        ..Default::default()
+                    },
                 );
             }
         }
@@ -167,10 +164,22 @@ async fn main() {
         // UI
         draw_text("Etymological Mycelium", 10.0, 30.0, 30.0, WHITE);
         draw_text(&format!("File: {}", file_path), 10.0, 50.0, 20.0, GRAY);
-        draw_text(format!("Spores: {}", mycelium.spores.len()).as_str(), 10.0, 70.0, 20.0, GRAY);
+        draw_text(
+            format!("Spores: {}", mycelium.spores.len()).as_str(),
+            10.0,
+            70.0,
+            20.0,
+            GRAY,
+        );
 
         if river.is_none() {
-            draw_text("Failed to load repo/file.", screen_width()/2.0 - 100.0, screen_height()/2.0, 40.0, RED);
+            draw_text(
+                "Failed to load repo/file.",
+                screen_width() / 2.0 - 100.0,
+                screen_height() / 2.0,
+                40.0,
+                RED,
+            );
         }
 
         next_frame().await

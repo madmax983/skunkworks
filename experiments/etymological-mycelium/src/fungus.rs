@@ -1,6 +1,6 @@
+use ::rand::Rng;
 use macroquad::prelude::*;
-use std::f32::consts::PI;
-use ::rand::Rng; // Use the external rand crate explicitly
+use std::f32::consts::PI; // Use the external rand crate explicitly
 
 #[derive(Clone, Copy)]
 #[allow(dead_code)]
@@ -60,7 +60,9 @@ impl Mycelium {
         let mut rng = ::rand::thread_rng();
 
         for spore in &mut self.spores {
-            if !spore.active { continue; }
+            if !spore.active {
+                continue;
+            }
 
             let old_pos = spore.pos;
 
@@ -105,7 +107,7 @@ impl Mycelium {
             // Branching for mutations
             if spore.semantic_similarity < 0.8 && rng.gen_bool(0.01) {
                 // Create a decorative branch
-                let branch_angle = rng.gen_range(0.0..2.0*PI);
+                let branch_angle = rng.gen_range(0.0..2.0 * PI);
                 let branch_dir = vec2(branch_angle.cos(), branch_angle.sin());
 
                 new_spores.push(Spore {
