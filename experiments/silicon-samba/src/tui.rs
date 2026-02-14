@@ -8,6 +8,7 @@ use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
+    text::{Line, Span},
     widgets::{Block, Borders, Gauge, Paragraph},
     Frame, Terminal,
 };
@@ -35,9 +36,10 @@ impl AppTui {
         monitor: &SystemMonitor,
         generators: &[EuclideanGenerator],
         current_step: usize,
+        bpm: f32,
     ) -> Result<()> {
         self.terminal.draw(|f| {
-            ui(f, monitor, generators, current_step);
+            ui(f, monitor, generators, current_step, bpm);
         })?;
         Ok(())
     }
@@ -72,6 +74,7 @@ fn ui(
     monitor: &SystemMonitor,
     generators: &[EuclideanGenerator],
     current_step: usize,
+    bpm: f32,
 ) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -88,7 +91,11 @@ fn ui(
 
     let header_chunks = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
+        .constraints([
+            Constraint::Ratio(1, 3),
+            Constraint::Ratio(1, 3),
+            Constraint::Ratio(1, 3),
+        ])
         .split(chunks[0]);
 
     f.render_widget(
@@ -105,6 +112,13 @@ fn ui(
             .gauge_style(Style::default().fg(Color::Blue))
             .ratio(memory.clamp(0.0, 1.0) as f64),
         header_chunks[1],
+    );
+
+    f.render_widget(
+        Paragraph::new(format!("{:.1}", bpm))
+            .block(Block::default().borders(Borders::ALL).title("BPM"))
+            .style(Style::default().fg(Color::Yellow)),
+        header_chunks[2],
     );
 
     // Tracks
@@ -129,28 +143,48 @@ fn ui(
             _ => "PERC",
         };
 
+        let track_color = match i {
+            0 => Color::Red,
+            1 => Color::Blue,
+            2 => Color::Yellow,
+            3 => Color::Green,
+            _ => Color::White,
+        };
+
         // Visualize pattern
-        let mut pattern_str = String::new();
         let len = gen.pattern.len();
+        let mut spans = Vec::new();
+
         if len > 0 {
             for (idx, &beat) in gen.pattern.iter().enumerate() {
                 let is_current = idx == (current_step % len);
+                let char_display = if beat { "█ " } else { "░ " };
 
-                if is_current {
-                    pattern_str.push_str(if beat { "█" } else { "▒" });
+                let style = if is_current {
+                    Style::default().bg(Color::White).fg(Color::Black)
+                } else if beat {
+                    Style::default().fg(track_color)
                 } else {
-                    pattern_str.push_str(if beat { "●" } else { "·" });
-                }
-                pattern_str.push(' ');
+                    Style::default().fg(Color::DarkGray)
+                };
+
+                spans.push(Span::styled(char_display, style));
             }
         }
 
+        let line = Line::from(spans);
+
         f.render_widget(
-            Paragraph::new(format!(
-                "Steps: {}, Pulses: {}\n{}",
-                gen.steps, gen.pulses, pattern_str
-            ))
-            .block(Block::default().borders(Borders::LEFT).title(track_name)),
+            Paragraph::new(vec![
+                Line::from(format!("Steps: {}, Pulses: {}", gen.steps, gen.pulses)),
+                line,
+            ])
+            .block(
+                Block::default()
+                    .borders(Borders::LEFT)
+                    .title(track_name)
+                    .border_style(Style::default().fg(track_color)),
+            ),
             track_chunks[i],
         );
     }
