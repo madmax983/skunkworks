@@ -1,21 +1,18 @@
 #!/bin/bash
-experiments=(
-    "hyperbolic-lexicon"
-    "morph-physics"
-    "hyperbolic-raymarcher"
+hybrids=(
+    "gaze-attractor"
+    "bifurcation-landscape"
+    "myco-diffusion"
+    "chimera-pachinko"
+    "etymological-mycelium"
 )
 
-echo "Checking compilation..."
-for exp in "${experiments[@]}"; do
-    echo "---------------------------------------------------"
-    echo "Checking $exp"
-    if [ -d "experiments/$exp" ]; then
-        if cargo build -p "$exp" --quiet; then
-            echo "✅ $exp: COMPILES"
-        else
-            echo "❌ $exp: FAILS"
-        fi
+echo "Verifying recent hybrids..."
+for h in "${hybrids[@]}"; do
+    echo "Checking $h..."
+    if cargo build -p "$h" --quiet; then
+        echo "✅ $h: COMPILES"
     else
-        echo "❓ $exp: NOT FOUND"
+        echo "❌ $h: FAILS"
     fi
 done

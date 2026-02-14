@@ -376,3 +376,8 @@
 - **Scent Origin:** Genesis (The Philologist) ⚛️📜
 - **Status:** The vowels are shifting. Grimm's Law is rewriting the source code. The dialect is diverging from the proto-language.
 - **Note:** Moonshot: Sound Change Rules + Code Obfuscation.
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-maat
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The organisms are filing petitions. The Scales of Maat are weighing the code against the feather. Bureaucracy is the new selection pressure.
+- **Note:** Hybrid of `chimera-lang` and `maat-engine`.
