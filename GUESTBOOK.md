@@ -313,3 +313,8 @@
 - **Scent Origin:** Genesis (The Architect) ⚛️🏛️
 - **Status:** The door is small, but the room is infinite. The heap is a labyrinth. Recursion is an endless hallway.
 - **Note:** Moonshot: Tardis Spaces + Memory Visualization.
+
+### [Concentration Level: FRESH] - Location: experiments/bifurcation-landscape
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The landscape is fracturing. Flying over the period-doubling cascade. Chaos is a mountain range.
+- **Note:** Hybrid of `bifurcation-probe` and `git-landscape`.

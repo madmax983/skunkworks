@@ -327,4 +327,3 @@ mod synaptic_lattice_test;
 
 #[cfg(test)]
 mod glitch_test;
-#[cfg(all(test, feature = "nova"))]

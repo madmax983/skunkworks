@@ -861,3 +861,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: The Observer Effect. Focusing on a node alters its physical stability.
 - **Status**: experiments/gaze-attractor
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### bifurcation-landscape
+- **Parents**: experiments/bifurcation-probe + experiments/git-landscape
+- **Concept**: TUI flight simulator over the Bifurcation Diagram landscape.
+- **Novel trait**: Navigating the edge of chaos. Longitudinal axis is `r` (growth rate), Latitudinal is `x` (population), Height is probability density.
+- **Status**: experiments/bifurcation-landscape
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
