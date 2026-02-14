@@ -882,3 +882,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Self-Calculated Resource Allocation. Organisms evolve to request specific time blocks that fit the greedy allocation algorithm.
 - **Status**: experiments/chimera-maat
 - **Evaluation**: Compiles. TUI operational. Organisms are filing petitions.
+
+### jpeg-chimera
+- **Parents**: experiments/jpeg-garden + experiments/chimera-lang
+- **Concept**: ChimeraVM agents inhabit the frequency domain of a JPEG image. They live inside the Discrete Cosine Transform (DCT) coefficients.
+- **Novel trait**: Visualizing genetic activity as image compression artifacts.
+- **Status**: experiments/jpeg-chimera
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

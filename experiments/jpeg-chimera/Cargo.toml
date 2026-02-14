@@ -1,0 +1,12 @@
+[package]
+name = "jpeg-chimera"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4.14"
+image = "0.24.9"
+rand = "0.8.5"
+chimera-lang = { path = "../chimera-lang", features = ["nova"] }
+log = "0.4"
+env_logger = "0.10"
