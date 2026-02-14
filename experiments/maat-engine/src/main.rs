@@ -47,7 +47,12 @@ impl App {
         let soul = Soul::new(self.counter, numer, denom);
         self.counter += 1;
         self.incoming_souls.push(soul);
-        self.message = format!("Summoned Soul #{} with demand {}/{}", self.counter-1, numer, denom);
+        self.message = format!(
+            "Summoned Soul #{} with demand {}/{}",
+            self.counter - 1,
+            numer,
+            denom
+        );
     }
 
     fn weigh_next_heart(&mut self) {
@@ -121,7 +126,11 @@ fn ui(f: &mut Frame, app: &App) {
 
     // Header
     let title = Paragraph::new("⚖️  THE MAAT ENGINE: Resource Allocation by Ancient Law ⚖️")
-        .style(Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))
+        .style(
+            Style::default()
+                .fg(Color::Yellow)
+                .add_modifier(Modifier::BOLD),
+        )
         .block(Block::default().borders(Borders::ALL));
     f.render_widget(title, chunks[0]);
 
@@ -135,12 +144,25 @@ fn ui(f: &mut Frame, app: &App) {
         .split(chunks[1]);
 
     // Queue
-    let items: Vec<ListItem> = app.incoming_souls.iter().map(|s| {
-        ListItem::new(format!("#{} - {}/{}", s.id, s.demand.numer(), s.demand.denom()))
-    }).collect();
+    let items: Vec<ListItem> = app
+        .incoming_souls
+        .iter()
+        .map(|s| {
+            ListItem::new(format!(
+                "#{} - {}/{}",
+                s.id,
+                s.demand.numer(),
+                s.demand.denom()
+            ))
+        })
+        .collect();
 
     let queue_block = List::new(items)
-        .block(Block::default().borders(Borders::ALL).title(" Souls Awaiting Judgment "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Souls Awaiting Judgment "),
+        )
         .highlight_style(Style::default().add_modifier(Modifier::BOLD));
     f.render_widget(queue_block, body_chunks[0]);
 
@@ -157,14 +179,23 @@ fn ui(f: &mut Frame, app: &App) {
     render_timeline(f, scales_chunks[0], app);
 
     // Allocated List
-    let allocated_items: Vec<ListItem> = app.allocated_souls.iter().rev().take(10).map(|s| {
-        // Show Egyptian decomposition
-        let ef = maat_engine::EgyptianFraction::from(s.demand.clone());
-        ListItem::new(format!("#{} : {}", s.id, ef))
-    }).collect();
+    let allocated_items: Vec<ListItem> = app
+        .allocated_souls
+        .iter()
+        .rev()
+        .take(10)
+        .map(|s| {
+            // Show Egyptian decomposition
+            let ef = maat_engine::EgyptianFraction::from(s.demand.clone());
+            ListItem::new(format!("#{} : {}", s.id, ef))
+        })
+        .collect();
 
-    let allocated_block = List::new(allocated_items)
-        .block(Block::default().borders(Borders::ALL).title(" The Field of Reeds (Allocated) "));
+    let allocated_block = List::new(allocated_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(" The Field of Reeds (Allocated) "),
+    );
     f.render_widget(allocated_block, scales_chunks[1]);
 
     // Footer
@@ -175,14 +206,18 @@ fn ui(f: &mut Frame, app: &App) {
 }
 
 fn render_timeline(f: &mut Frame, area: Rect, app: &App) {
-    let block = Block::default().borders(Borders::ALL).title(" The Feather of Truth (Resource Timeline) ");
+    let block = Block::default()
+        .borders(Borders::ALL)
+        .title(" The Feather of Truth (Resource Timeline) ");
     f.render_widget(block.clone(), area);
 
     let inner_area = block.inner(area);
     let width = inner_area.width as usize;
     let height = inner_area.height as usize;
 
-    if width == 0 || height == 0 { return; }
+    if width == 0 || height == 0 {
+        return;
+    }
 
     let total_cells = width * height;
     let slots_per_cell = (app.scales.capacity as f64 / total_cells as f64).ceil() as usize;
@@ -194,7 +229,9 @@ fn render_timeline(f: &mut Frame, area: Rect, app: &App) {
         let start_slot = i * slots_per_cell;
         let end_slot = std::cmp::min((i + 1) * slots_per_cell, app.scales.capacity);
 
-        if start_slot >= app.scales.capacity { break; }
+        if start_slot >= app.scales.capacity {
+            break;
+        }
 
         let mut occupied_count = 0;
         let mut last_soul_id = None;
