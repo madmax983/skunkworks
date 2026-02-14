@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/mandala-vm
+- **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
+- **Status:** The code is spinning. The spiral is executing. The cipher is visible but unreadable. Geometric obfuscation online.
+- **Note:** Visual Cipher + Stack VM.
+
 ### [Concentration Level: EXECUTED] - Location: graveyard/biotic-chaos
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Generic CML implementation. Grace period expired. Moved to graveyard.
