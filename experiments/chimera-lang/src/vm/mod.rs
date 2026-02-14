@@ -340,6 +340,21 @@ pub enum Value {
     Superposition(Vec<(Value, f64)>),
 }
 
+#[derive(Debug, Clone, PartialEq)]
+pub enum VisualEffect {
+    Lightning {
+        from: (usize, usize),
+        to: (usize, usize),
+        color: (u8, u8, u8),
+        ttl: usize,
+    },
+    Spark {
+        loc: (usize, usize),
+        color: (u8, u8, u8),
+        ttl: usize,
+    },
+}
+
 impl std::fmt::Display for Value {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -674,6 +689,7 @@ pub struct ChimeraVM {
     pub void_rifts: Vec<nova_void::VoidRift>,
     #[cfg(feature = "nova")]
     pub biomesh: nova_biomesh::BioMeshState,
+    pub visual_effects: Vec<VisualEffect>,
 }
 
 impl ChimeraVM {
@@ -981,6 +997,7 @@ impl ChimeraVM {
             void_rifts: Vec::new(),
             #[cfg(feature = "nova")]
             biomesh: nova_biomesh::BioMeshState::new(),
+            visual_effects: Vec::new(),
         }
     }
 
@@ -1882,6 +1899,20 @@ impl ChimeraVM {
                 *val = val.saturating_sub(5);
             }
         }
+
+        // Process Visual Effects
+        self.visual_effects.retain_mut(|effect| {
+            match effect {
+                VisualEffect::Lightning { ttl, .. } => {
+                    *ttl = ttl.saturating_sub(1);
+                    *ttl > 0
+                }
+                VisualEffect::Spark { ttl, .. } => {
+                    *ttl = ttl.saturating_sub(1);
+                    *ttl > 0
+                }
+            }
+        });
 
         #[cfg(feature = "nova")]
         self.handle_input_interrupts();

@@ -6863,6 +6863,47 @@ fn render_elektra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
         .split(f.area());
 
+    // Pre-calculate visual effects overlay
+    let mut overlay = std::collections::HashMap::new();
+    for effect in &vm.visual_effects {
+        match effect {
+            crate::vm::VisualEffect::Spark { loc, color, .. } => {
+                overlay.insert(*loc, ('*', Color::Rgb(color.0, color.1, color.2)));
+            }
+            crate::vm::VisualEffect::Lightning { from, to, color, .. } => {
+                // Bresenham's Line Algorithm
+                let (mut x0, mut y0) = (from.1 as i64, from.0 as i64);
+                let (x1, y1) = (to.1 as i64, to.0 as i64);
+                let dx = (x1 - x0).abs();
+                let dy = -(y1 - y0).abs();
+                let sx = if x0 < x1 { 1 } else { -1 };
+                let sy = if y0 < y1 { 1 } else { -1 };
+                let mut err = dx + dy;
+
+                loop {
+                    if x0 >= 0 && x0 < 16 && y0 >= 0 && y0 < 16 {
+                        overlay.insert(
+                            (y0 as usize, x0 as usize),
+                            ('⚡', Color::Rgb(color.0, color.1, color.2)),
+                        );
+                    }
+                    if x0 == x1 && y0 == y1 {
+                        break;
+                    }
+                    let e2 = 2 * err;
+                    if e2 >= dy {
+                        err += dy;
+                        x0 += sx;
+                    }
+                    if e2 <= dx {
+                        err += dx;
+                        y0 += sy;
+                    }
+                }
+            }
+        }
+    }
+
     // Voltage Grid
     let mut grid_lines = Vec::new();
     for y in 0..16 {
@@ -6885,7 +6926,10 @@ fn render_elektra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             }
 
             // Fixed nodes
-            let ch = if r == -1.0 {
+            let ch = if let Some((c, col)) = overlay.get(&(y, x)) {
+                style = style.fg(*col).add_modifier(Modifier::BOLD | Modifier::RAPID_BLINK);
+                c.to_string()
+            } else if r == -1.0 {
                 style = style
                     .fg(Color::White)
                     .bg(Color::Red)

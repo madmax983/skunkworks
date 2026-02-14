@@ -1,6 +1,7 @@
 use super::{ChimeraVM, Value, GRID_SIZE};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
+use crate::vm::VisualEffect;
 
 pub fn exec_elektra_op(
     vm: &mut ChimeraVM,
@@ -161,6 +162,13 @@ pub fn exec_elektra_op(
                             vm.resistance_grid[y][x] = 1.0; // Reset to air
                             vm.output.push(format!("SHOCK: Blown fuse at {},{}", x, y));
                         }
+
+                        // Spark effect
+                        vm.visual_effects.push(VisualEffect::Spark {
+                            loc: (y, x),
+                            color: (255, 100, 100),
+                            ttl: 2,
+                        });
                     }
                     vm.output.push(format!("SHOCK: Discharged {} power", p));
                 }
@@ -190,6 +198,16 @@ pub fn exec_elektra_op(
                         "TESLA COIL: Discharging {} power radius {} at {},{}",
                         p, r, cx, cy
                     ));
+
+                    // Visual Effects
+                    for (x, y) in &coords {
+                        vm.visual_effects.push(VisualEffect::Lightning {
+                            from: (cy, cx),
+                            to: (*y, *x),
+                            color: (200, 200, 255),
+                            ttl: 3,
+                        });
+                    }
 
                     // Check voltage at source
                     if vm.voltage_grid[cy][cx] >= p as f32 {
@@ -251,6 +269,13 @@ pub fn exec_elektra_op(
                             vm.stack.push(Value::Int(new_idx as i64));
 
                             vm.voltage_grid[y][x] = 0.0; // Discharge
+
+                            vm.visual_effects.push(VisualEffect::Spark {
+                                loc: (y, x),
+                                color: (100, 255, 100),
+                                ttl: 5,
+                            });
+
                             vm.output.push(format!(
                                 "GALVANIZE: IT'S ALIVE! Strand {} resurrected as {}",
                                 idx, new_idx
