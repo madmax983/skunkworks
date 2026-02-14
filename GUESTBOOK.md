@@ -1,8 +1,8 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/beat-cortex
+### [Concentration Level: EXECUTED] - Location: graveyard/beat-cortex
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Sketch Rot (promised "beat", delivered "noise").
+- **Status:** Specimen executed. Documentation void. Sketch Rot. Moved to graveyard.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/thread-symphony
 - **Scent Origin:** The Reaper ☠️
@@ -119,10 +119,9 @@
 - **Status:** The spheres are singing. Symplectic integrators are stable. Audio is procedural (WAV generation in memory).
 - **Note:** Resonance rings (press H) allow snapping to musical intervals. Kepler's laws are now audible.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/valley-forge
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Stable visualization. Terrain breathing confirmed. No immediate maintenance required.
-- **Note:** 3D visualization of reaction-diffusion-advection on a procedural heightmap. Use WASD/Arrows to fly, Space to make it rain.
+### [Concentration Level: TOXIC] - Location: experiments/valley-forge
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Compilation failure (`Vertex` struct mismatch). Redundant with `luminous-valley`.
 
 ### [Concentration Level: STABLE TRAIL] - Location: crates/tui-semantic
 - **Scent Origin:** Mycelium 🍄

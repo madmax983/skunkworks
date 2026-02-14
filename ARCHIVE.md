@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **beat-cortex**: Documentation void. Sketch Rot (promised "beat", delivered "noise"). Generic SNN implementation. Grace period: 24h.
+- **valley-forge**: Documentation void. Compilation failure (`Vertex` struct mismatch). Redundant with `luminous-valley`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **beat-cortex**: Specimen executed. Documentation void. Sketch Rot. Failed to improve during grace period. Moved to graveyard.
 - **thread-symphony**: Specimen executed. Terminal compilation failure (`alsa-sys`). Documentation void. Generic implementation. Grace period expired. Moved to graveyard.
 - **chromatic-cipher**: Specimen executed. Documentation void. Redundant with `chromatic-code`. Identity crisis confirmed. Failed to improve during grace period. Moved to graveyard.
 - **quipu-cradle**: Specimen executed. Documentation void. Orphaned. Redundant with `quipu-symphony`. Failed to improve. Moved to graveyard.
