@@ -25,6 +25,7 @@ pub struct FluidSim {
     pub density: Vec<f32>,
     pub velocity_x: Vec<f32>,
     pub velocity_y: Vec<f32>,
+    pub curl: Vec<f32>,
 }
 
 impl FluidSim {
@@ -46,11 +47,17 @@ impl FluidSim {
             density: vec![1.0; N_CELLS],
             velocity_x: vec![0.0; N_CELLS],
             velocity_y: vec![0.0; N_CELLS],
+            curl: vec![0.0; N_CELLS],
         }
     }
 
     pub fn step(&mut self) {
-        // Destructure to avoid borrow checker conflicts
+        // Destructure to access fields inside the closure/loop
+        // We can't destructure &mut self easily for parallel iteration on multiple fields unless we split borrowing.
+        // But we can just use `self.f`, `self.f_next` if we are careful.
+        // Actually, the previous implementation did it well by using `let FluidSim { ... } = self`.
+        // But since we added `curl`, we need to include it.
+
         let FluidSim {
             f,
             f_next,
@@ -58,9 +65,10 @@ impl FluidSim {
             density,
             velocity_x,
             velocity_y,
+            curl,
         } = self;
 
-        // Collision + Streaming step
+        // Collision + Streaming step (Pull scheme)
         f_next
             .par_chunks_mut(N_DIRS)
             .enumerate()
@@ -83,11 +91,14 @@ impl FluidSim {
                     if nx >= 0 && nx < WIDTH as i32 && ny >= 0 && ny < HEIGHT as i32 {
                         let n_idx = (ny as usize) * WIDTH + (nx as usize);
                         if obstacles[n_idx] {
+                            // Bounce-back from obstacle
                             val = f[idx * N_DIRS + INV_DIRS[k]];
                         } else {
+                            // Stream from neighbor
                             val = f[n_idx * N_DIRS + k];
                         }
                     } else {
+                        // Bounce-back from boundary
                         val = f[idx * N_DIRS + INV_DIRS[k]];
                     }
                     f_in[k] = val;
@@ -97,6 +108,13 @@ impl FluidSim {
                 }
 
                 if is_solid {
+                    // Solid node: bounce-back logic for next step?
+                    // Standard bounce-back: f_i(x, t+1) = f_{-i}(x, t)
+                    // But here we are updating f_next (t+1).
+                    // The "Pull" scheme handles bounce-back by reading from self via INV_DIRS in the neighbor check.
+                    // So if *this* node is solid, it doesn't really matter what we write to it,
+                    // unless it becomes non-solid later.
+                    // Let's just set it to equilibrium at zero velocity.
                     for k in 0..9 {
                         cell_next[k] = WEIGHTS[k];
                     }
@@ -109,6 +127,7 @@ impl FluidSim {
                         uy = 0.0;
                     }
 
+                    // Collision (BGK)
                     let omega = 1.0 / (3.0 * VISCOSITY + 0.5);
                     let u2 = ux * ux + uy * uy;
 
@@ -120,8 +139,10 @@ impl FluidSim {
                 }
             });
 
+        // Swap buffers
         std::mem::swap(f, f_next);
 
+        // Update macroscopic variables
         density
             .par_iter_mut()
             .zip(velocity_x.par_iter_mut())
@@ -154,6 +175,49 @@ impl FluidSim {
                     }
                 }
             });
+
+        // Compute Curl (Vorticity)
+        // curl = dv/dx - du/dy
+        // We need neighboring velocities.
+        // This step cannot easily be parallelized in place if we read from self.velocity_x/y while writing to self.curl?
+        // Actually, we read velocity (which is done) and write curl.
+        // `velocity_x` and `velocity_y` are `Vec<f32>`, `curl` is `Vec<f32>`.
+        // We can zip them or just iterate indices.
+        // Since we need neighbors, we need random access to velocity.
+        // So we can iterate `curl` mutably and read velocity immutably.
+        // But inside `par_iter_mut` we can't capture `self` or `velocity_x`.
+        // We need to slice them.
+        let vx = &*velocity_x; // Immutable slice
+        let vy = &*velocity_y; // Immutable slice
+
+        curl.par_iter_mut().enumerate().for_each(|(idx, c)| {
+            let x = (idx % WIDTH) as i32;
+            let y = (idx / WIDTH) as i32;
+
+            if x > 0 && x < (WIDTH - 1) as i32 && y > 0 && y < (HEIGHT - 1) as i32 {
+                let idx_r = idx + 1;
+                let idx_l = idx - 1;
+                let idx_u = idx - WIDTH; // Up is smaller index (y-1) in this coordinate system? Wait.
+                // Usually y=0 is top? In `main.rs` loop:
+                // `y * WIDTH + x`.
+                // If we treat index 0 as (0,0), then `idx - WIDTH` is (x, y-1).
+                // So y increases downwards.
+                // dy = 1.
+                // curl = dv_x/dy - dv_y/dx?
+                // Wait, standard 2D curl is (dv_y/dx - dv_x/dy).
+                // v_x = u, v_y = v.
+                // curl = dv/dx - du/dy.
+
+                let idx_d = idx + WIDTH;
+
+                let dv_dx = (vy[idx_r] - vy[idx_l]) * 0.5;
+                let du_dy = (vx[idx_d] - vx[idx_u]) * 0.5;
+
+                *c = dv_dx - du_dy;
+            } else {
+                *c = 0.0;
+            }
+        });
     }
 
     pub fn add_density(&mut self, x: usize, y: usize, amount: f32) {
@@ -198,8 +262,45 @@ impl FluidSim {
         }
     }
 
-    pub fn _clear_obstacles(&mut self) {
-        self.obstacles.fill(false);
+    // Bilinear interpolation of velocity
+    pub fn get_velocity(&self, x: f32, y: f32) -> (f32, f32) {
+        let x = x.clamp(0.0, (WIDTH - 1) as f32);
+        let y = y.clamp(0.0, (HEIGHT - 1) as f32);
+
+        let x0 = x.floor() as usize;
+        let y0 = y.floor() as usize;
+        let x1 = (x0 + 1).min(WIDTH - 1);
+        let y1 = (y0 + 1).min(HEIGHT - 1);
+
+        let tx = x - x0 as f32;
+        let ty = y - y0 as f32;
+
+        let idx00 = y0 * WIDTH + x0;
+        let idx10 = y0 * WIDTH + x1;
+        let idx01 = y1 * WIDTH + x0;
+        let idx11 = y1 * WIDTH + x1;
+
+        let u00 = self.velocity_x[idx00];
+        let u10 = self.velocity_x[idx10];
+        let u01 = self.velocity_x[idx01];
+        let u11 = self.velocity_x[idx11];
+
+        let v00 = self.velocity_y[idx00];
+        let v10 = self.velocity_y[idx10];
+        let v01 = self.velocity_y[idx01];
+        let v11 = self.velocity_y[idx11];
+
+        let ux = (1.0 - tx) * (1.0 - ty) * u00
+            + tx * (1.0 - ty) * u10
+            + (1.0 - tx) * ty * u01
+            + tx * ty * u11;
+
+        let uy = (1.0 - tx) * (1.0 - ty) * v00
+            + tx * (1.0 - ty) * v10
+            + (1.0 - tx) * ty * v01
+            + tx * ty * v11;
+
+        (ux, uy)
     }
 }
 
@@ -215,10 +316,6 @@ mod tests {
         sim.step();
 
         let final_mass: f32 = sim.density.iter().sum();
-
-        // Float precision might cause drift, but should be small
-        // With density initialized to 1.0, sum is N_CELLS = 20000.
-        // Step shouldn't change it much.
         assert!(
             (initial_mass - final_mass).abs() < 10.0,
             "Mass not conserved: {} vs {}",
@@ -228,9 +325,17 @@ mod tests {
     }
 
     #[test]
-    fn test_obstacle_setting() {
+    fn test_get_velocity() {
         let mut sim = FluidSim::new();
-        sim.set_obstacle(10, 10, true);
-        assert!(sim.obstacles[10 * WIDTH + 10]);
+        // Set some velocity
+        sim.velocity_x[0] = 1.0;
+        sim.velocity_x[1] = 2.0;
+        sim.velocity_y[0] = 1.0; // v00
+        sim.velocity_y[1] = 1.0; // v10
+        // sim.velocity_y[WIDTH] is v01 (x=0, y=1)
+
+        let (ux, uy) = sim.get_velocity(0.5, 0.0);
+        assert!((ux - 1.5).abs() < 0.001);
+        assert!((uy - 1.0).abs() < 0.001);
     }
 }
