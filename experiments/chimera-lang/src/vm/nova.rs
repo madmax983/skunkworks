@@ -1157,6 +1157,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::TimeLoop => super::nova_chronos::exec_time_loop(vm),
         OpCode::Germinate => super::nova_chronos::exec_germinate(vm),
         OpCode::Paradox => super::nova_chronos::exec_paradox(vm),
+        #[cfg(feature = "oracle")]
+        OpCode::Divergence => super::nova_chronos::exec_divergence(vm),
         OpCode::Retrograde => super::nova_chronos::exec_retrograde(vm),
         OpCode::Incubate => super::nova_genetics::exec_incubate(vm),
         OpCode::Methylate => super::nova_genetics::exec_methylate(vm),
