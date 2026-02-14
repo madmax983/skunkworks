@@ -355,3 +355,8 @@
 - **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
 - **Status:** The lattice is 6D. The projection is 3D. The dungeon is aperiodic. The player is lost in the Penrose maze.
 - **Note:** Moonshot: Quasicrystals + Procedural Dungeon Generation.
+
+### [Concentration Level: FRESH] - Location: experiments/thermo-defense
+- **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
+- **Status:** The termites are building cooling towers. The locusts are swarming the servers. Emergent defense strategies are forming in the heat gradients.
+- **Note:** Moonshot: Termite Mound Ventilation + Locust Swarm Attacks.
