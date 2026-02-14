@@ -29,7 +29,9 @@ pub struct EgyptianFraction {
 
 impl fmt::Display for EgyptianFraction {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let terms: Vec<String> = self.denominators.iter()
+        let terms: Vec<String> = self
+            .denominators
+            .iter()
             .map(|d| format!("1/{}", to_hieroglyphs(d)))
             .collect();
         write!(f, "{}", terms.join(" + "))
@@ -90,18 +92,26 @@ impl ScalesOfMaat {
 
         for denom in &decomposition.denominators {
             let d_usize = denom.to_usize().unwrap_or(usize::MAX);
-            if d_usize == 0 { continue; }
+            if d_usize == 0 {
+                continue;
+            }
 
             // Ancient Strictness: Allocation must be exact unit fraction of total capacity.
             let size = self.capacity / d_usize;
             if size == 0 {
-                return Err(format!("Demand 1/{} is too small for the Scales.", to_hieroglyphs(denom)));
+                return Err(format!(
+                    "Demand 1/{} is too small for the Scales.",
+                    to_hieroglyphs(denom)
+                ));
             }
 
             if let Some(start) = Self::allocate_block(&mut temp_timeline, size, soul.id) {
                 allocations.push((start, size));
             } else {
-                return Err(format!("The Scales cannot balance 1/{}.", to_hieroglyphs(denom)));
+                return Err(format!(
+                    "The Scales cannot balance 1/{}.",
+                    to_hieroglyphs(denom)
+                ));
             }
         }
 
@@ -140,7 +150,9 @@ impl From<Ratio<BigUint>> for EgyptianFraction {
         let mut result = Vec::new();
 
         if numer.is_zero() {
-            return EgyptianFraction { denominators: vec![] };
+            return EgyptianFraction {
+                denominators: vec![],
+            };
         }
 
         // Greedy Algorithm (Fibonacci-Sylvester)
@@ -158,7 +170,9 @@ impl From<Ratio<BigUint>> for EgyptianFraction {
             denom = new_denom / &common;
         }
 
-        EgyptianFraction { denominators: result }
+        EgyptianFraction {
+            denominators: result,
+        }
     }
 }
 
@@ -181,7 +195,11 @@ mod tests {
     fn test_decomposition_5_21() {
         let ratio = Ratio::new(BigUint::from(5u64), BigUint::from(21u64));
         let ef = EgyptianFraction::from(ratio);
-        let denoms: Vec<u64> = ef.denominators.iter().map(|d| d.to_u64().unwrap()).collect();
+        let denoms: Vec<u64> = ef
+            .denominators
+            .iter()
+            .map(|d| d.to_u64().unwrap())
+            .collect();
         assert_eq!(denoms, vec![5, 27, 945]);
     }
 
@@ -189,7 +207,11 @@ mod tests {
     fn test_decomposition_3_4() {
         let ratio = Ratio::new(BigUint::from(3u64), BigUint::from(4u64));
         let ef = EgyptianFraction::from(ratio);
-        let denoms: Vec<u64> = ef.denominators.iter().map(|d| d.to_u64().unwrap()).collect();
+        let denoms: Vec<u64> = ef
+            .denominators
+            .iter()
+            .map(|d| d.to_u64().unwrap())
+            .collect();
         assert_eq!(denoms, vec![2, 4]);
     }
 
@@ -197,8 +219,8 @@ mod tests {
     fn test_allocation_success() {
         let mut scales = ScalesOfMaat::new(100);
         let soul = Soul::new(1, 3, 4); // 3/4 = 1/2 + 1/4
-        // 1/2 of 100 = 50. 1/4 of 100 = 25.
-        // Should allocate [0..50] and [50..75].
+                                       // 1/2 of 100 = 50. 1/4 of 100 = 25.
+                                       // Should allocate [0..50] and [50..75].
         assert!(scales.weigh_heart(&soul).is_ok());
 
         // Next 50..75 is used. 75..100 free.

@@ -1710,7 +1710,9 @@ impl ChimeraVM {
                 ";" => self.process_ribosome_write(cy, cx),
                 _ => {
                     if let Ok(op) = s.parse::<OpCode>() {
-                        let _ = self.execute_gene_inner(op, &[]);
+                        if let Some(target) = self.execute_gene_inner(op, &[]) {
+                            self.ip = target;
+                        }
                     }
                 }
             },
@@ -4761,5 +4763,56 @@ mod sentry_value_test {
         assert_eq!(v.depth(), 0);
         let v2 = Value::Junction(crate::ast::JunctionType::Any, vec![v]);
         assert_eq!(v2.depth(), 1);
+    }
+}
+
+#[cfg(test)]
+#[cfg(feature = "nova")]
+mod sentry_ribosome_tests {
+    use super::*;
+    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
+    use crate::vm::nova::OrganelleType;
+
+    #[test]
+    fn test_ribosome_control_flow_bug() {
+        // Setup VM with 2 strands
+        // Strand 0: Empty
+        // Strand 1: Empty (Target)
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![Strand { genes: vec![] }, Strand { genes: vec![] }],
+            },
+        };
+        let mut vm = ChimeraVM::new(dna);
+
+        // Manually spawn a Ribosome at (5, 5)
+        let mut ribosome = Organelle {
+            stack: vec![Value::Int(1)], // Push target strand 1
+            ip: (0, 0),
+            context_loc: (5, 5),
+            call_stack: Vec::new(),
+            recursion_depth: 0,
+            halted: false,
+            kind: OrganelleType::Ribosome,
+            direction: (0, 1),
+            ttl: None,
+            name: "Tester".to_string(),
+            traits: vec![],
+            id: 1,
+            tissue_id: None,
+            genome_id: 0,
+        };
+
+        // Write "jump_s" to grid at (5, 5)
+        vm.grid[5][5] = Value::Str("jump_s".to_string());
+
+        // Tick the organelle
+        // This calls process_ribosome, which reads "jump_s", executes JumpS.
+        // JumpS pops 1 from stack and returns Some((1, 0)).
+        // BUT process_ribosome ignores the return value.
+        vm.tick_organelle(&mut ribosome);
+
+        // ASSERT FIX: IP should be (1, 0) because the jump was executed.
+        assert_eq!(ribosome.ip, (1, 0), "Bug Fixed: Ribosome executed JumpS");
     }
 }
