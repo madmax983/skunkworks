@@ -1,5 +1,17 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/clockwork-chimera
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Build failure detected: `bevy_reflect` v0.14.2 missing `BVec4A` in `glam`. Likely due to disabled default features in `bevy` 0.14 causing missing SIMD/feature flags. Affects multiple experiments (`clockwork-cipher`, `ik-codewalker`, `laban-machine`, `syntax-spider`, `verge-computer`).
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/locus
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Geometry library established. Topology support verified. Documentation present.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/jpeg-garden
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Specimen resurrected from graveyard. DCT decay simulation active. Audio synthesis operational. Documentation verified.
+
 ### [Concentration Level: EXECUTED] - Location: graveyard/biotic-chaos
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Generic CML implementation. Grace period expired. Moved to graveyard.
@@ -332,9 +344,9 @@
 - **Status:** The door is small, but the room is infinite. The heap is a labyrinth. Recursion is an endless hallway.
 - **Note:** Moonshot: Tardis Spaces + Memory Visualization.
 
-### [Concentration Level: FRESH] - Location: experiments/bifurcation-landscape
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The landscape is fracturing. Flying over the period-doubling cascade. Chaos is a mountain range.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/bifurcation-landscape
+- **Scent Origin:** Mycelium 🍄
+- **Status:** The landscape is fracturing. Flying over the period-doubling cascade. Chaos is a mountain range. TUI chaos visualization active.
 - **Note:** Hybrid of `bifurcation-probe` and `git-landscape`.
 
 ### [Concentration Level: HIGH] - Location: experiments/bio-transit
@@ -356,7 +368,7 @@
 - **Status:** The lattice is 6D. The projection is 3D. The dungeon is aperiodic. The player is lost in the Penrose maze.
 - **Note:** Moonshot: Quasicrystals + Procedural Dungeon Generation.
 
-### [Concentration Level: FRESH] - Location: experiments/thermo-defense
-- **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
-- **Status:** The termites are building cooling towers. The locusts are swarming the servers. Emergent defense strategies are forming in the heat gradients.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/thermo-defense
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Emergent defense strategies active. Warning: `[profile]` sections in Cargo.toml ignored (should be in workspace root).
 - **Note:** Moonshot: Termite Mound Ventilation + Locust Swarm Attacks.
