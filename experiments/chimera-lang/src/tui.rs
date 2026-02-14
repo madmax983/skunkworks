@@ -117,6 +117,8 @@ pub(crate) enum ViewMode {
     Attractor,
     #[cfg(feature = "nova")]
     Virology,
+    #[cfg(feature = "nova")]
+    CRISPR,
 }
 
 enum InputMode {
@@ -202,6 +204,14 @@ pub(crate) struct AppState {
     pub(crate) terminal_history: Vec<String>,
     #[cfg(feature = "nova")]
     pub(crate) terminal_history_idx: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) crispr_guide_pattern: String,
+    #[cfg(feature = "nova")]
+    pub(crate) crispr_target_strand: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) crispr_cursor: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) crispr_match_indices: Vec<usize>,
 }
 
 impl AppState {
@@ -285,6 +295,14 @@ impl AppState {
             terminal_history: Vec::new(),
             #[cfg(feature = "nova")]
             terminal_history_idx: 0,
+            #[cfg(feature = "nova")]
+            crispr_guide_pattern: String::new(),
+            #[cfg(feature = "nova")]
+            crispr_target_strand: 0,
+            #[cfg(feature = "nova")]
+            crispr_cursor: 0,
+            #[cfg(feature = "nova")]
+            crispr_match_indices: Vec::new(),
         }
     }
 }
@@ -661,6 +679,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::CRISPR = app_state.view_mode {
+                render_crispr(f, vm, app_state);
+                return;
+            }
+
             render_genome_and_grid(f, vm, app_state);
 
             if vm.glitch_level > 0.01 {
@@ -802,6 +826,78 @@ where
                         _ => {}
                     }
                     continue;
+                }
+
+                #[cfg(feature = "nova")]
+                if let ViewMode::CRISPR = app_state.view_mode {
+                    match key.code {
+                        KeyCode::Char(c) => {
+                            app_state.crispr_guide_pattern.push(c);
+                        }
+                        KeyCode::Backspace => {
+                            app_state.crispr_guide_pattern.pop();
+                        }
+                        KeyCode::Enter => {
+                            if let Some(&cut_idx) = app_state.crispr_match_indices.first() {
+                                let s_idx = app_state.crispr_target_strand;
+                                vm.stack.push(crate::vm::Value::Int(s_idx as i64));
+                                vm.stack.push(crate::vm::Value::Int(cut_idx as i64));
+
+                                crate::vm::nova_genetics::exec_cas9_cut(vm);
+                                app_state.status_msg = format!("CRISPR: Cut strand {} at {}", s_idx, cut_idx);
+                                app_state.crispr_match_indices.clear();
+                            }
+                        }
+                        KeyCode::Up => {
+                             if app_state.crispr_cursor > 0 { app_state.crispr_cursor -= 1; }
+                        }
+                        KeyCode::Down => {
+                             app_state.crispr_cursor += 1;
+                        }
+                        KeyCode::Left => {
+                             if app_state.crispr_target_strand > 0 {
+                                 app_state.crispr_target_strand -= 1;
+                                 app_state.crispr_cursor = 0;
+                             }
+                        }
+                        KeyCode::Right => {
+                             if app_state.crispr_target_strand + 1 < vm.dna.helix.strands.len() {
+                                 app_state.crispr_target_strand += 1;
+                                 app_state.crispr_cursor = 0;
+                             }
+                        }
+                        _ => {}
+                    }
+
+                    if !app_state.crispr_guide_pattern.is_empty() {
+                        let guide_tokens: Vec<&str> = app_state.crispr_guide_pattern.split_whitespace().collect();
+                        if !guide_tokens.is_empty() {
+                            let s_idx = app_state.crispr_target_strand;
+                            if s_idx < vm.dna.helix.strands.len() {
+                                let strand = &vm.dna.helix.strands[s_idx];
+                                let target_names: Vec<String> = strand.genes.iter().map(|g| g.op.to_string()).collect();
+
+                                app_state.crispr_match_indices.clear();
+                                if guide_tokens.len() <= target_names.len() {
+                                    for i in 0..=(target_names.len() - guide_tokens.len()) {
+                                        let slice = &target_names[i..i + guide_tokens.len()];
+                                        let match_found = slice.iter().zip(guide_tokens.iter()).all(|(t, g)| {
+                                            t.eq_ignore_ascii_case(g)
+                                        });
+                                        if match_found {
+                                            app_state.crispr_match_indices.push(i);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        app_state.crispr_match_indices.clear();
+                    }
+
+                    if key.code != KeyCode::Tab && key.code != KeyCode::Esc {
+                        continue;
+                    }
                 }
 
                 #[cfg(feature = "oracle")]
@@ -1321,6 +1417,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::CRISPR => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab =>
@@ -1575,7 +1676,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Attractor => ViewMode::Virology,
                             #[cfg(feature = "nova")]
-                            ViewMode::Virology => ViewMode::Genome,
+                            ViewMode::Virology => ViewMode::CRISPR,
+                            #[cfg(feature = "nova")]
+                            ViewMode::CRISPR => ViewMode::Genome,
                         };
                     }
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
@@ -2411,6 +2514,8 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::CRISPR => {}
                     },
                     KeyCode::Up => match app_state.view_mode {
                         ViewMode::Genome => {
@@ -2657,6 +2762,8 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::CRISPR => {}
                     },
                     KeyCode::Right => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2827,6 +2934,8 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::CRISPR => {}
                     },
                     KeyCode::Left => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2997,6 +3106,8 @@ where
                                 app_state.grid_cursor.0 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::CRISPR => {}
                     },
                     KeyCode::Enter => {
                         #[cfg(feature = "silicon")]
@@ -3053,6 +3164,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Virology => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::CRISPR => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Genome => {
@@ -4550,6 +4665,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Attractor => "STRANGE ATTRACTOR (DYNAMICS)",
         #[cfg(feature = "nova")]
         ViewMode::Virology => "VIROLOGY LAB",
+        #[cfg(feature = "nova")]
+        ViewMode::CRISPR => "CRISPR-CAS9 EDITOR",
     };
 
     let title = match app_state.input_mode {
@@ -5109,6 +5226,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Terminal, "Terminal", "`"));
         views.push((ViewMode::Attractor, "Attractor", "A"));
         views.push((ViewMode::Virology, "Virology", "v"));
+        views.push((ViewMode::CRISPR, "CRISPR Lab", "9"));
     }
     views
 }
@@ -8798,4 +8916,88 @@ fn render_virology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Virology Lab (Known Strains)"),
     );
     f.render_widget(list, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_crispr(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    // Top: Target Genome
+    let mut items = Vec::new();
+    let s_idx = app_state.crispr_target_strand;
+
+    if s_idx < vm.dna.helix.strands.len() {
+        let strand = &vm.dna.helix.strands[s_idx];
+
+        // Parse pattern to get length in genes
+        let pattern_genes: Vec<&str> = app_state.crispr_guide_pattern.split_whitespace().collect();
+        let pattern_len = pattern_genes.len();
+
+        for (i, gene) in strand.genes.iter().enumerate() {
+            let mut style = Style::default().fg(Color::White);
+
+            // Check if this gene is part of a match
+            for &start in &app_state.crispr_match_indices {
+                if i >= start && i < start + pattern_len {
+                    style = style.fg(Color::Red).add_modifier(Modifier::BOLD);
+                    if i == start {
+                        style = style.bg(Color::White).fg(Color::Black); // Highlight Start
+                    }
+                }
+            }
+
+            // Highlight Cursor
+            if i == app_state.crispr_cursor {
+                style = style.add_modifier(Modifier::UNDERLINED | Modifier::REVERSED);
+            }
+
+            items.push(ListItem::new(format!("{}: {}", i, gene.op)).style(style));
+        }
+    } else {
+        items.push(ListItem::new("Invalid Strand Index"));
+    }
+
+    let genome_block = Block::default()
+        .borders(Borders::ALL)
+        .title(format!("Target Strand {} (Genome Editor)", s_idx));
+
+    let list = List::new(items).block(genome_block);
+    f.render_widget(list, chunks[0]);
+
+    // Bottom: Lab Bench
+    let bottom_chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(chunks[1]);
+
+    // Guide Input
+    let guide_block = Block::default()
+        .borders(Borders::ALL)
+        .title("Guide RNA (Pattern)")
+        .style(Style::default().fg(Color::Cyan));
+
+    let guide_text = Paragraph::new(app_state.crispr_guide_pattern.clone())
+        .block(guide_block);
+    f.render_widget(guide_text, bottom_chunks[0]);
+
+    // Controls
+    let controls_text = vec![
+        Line::from("CRISPR-Cas9 Interface"),
+        Line::from(" "),
+        Line::from("Controls:"),
+        Line::from("  Type: Edit Guide RNA (Space separated OpCodes)"),
+        Line::from("  Enter: CUT at Matches"),
+        Line::from("  Up/Down: Move Cursor"),
+        Line::from("  Left/Right: Cycle Strand"),
+        Line::from(" "),
+        Line::from("Status:"),
+        Line::from(format!("  Matches Found: {}", app_state.crispr_match_indices.len())),
+    ];
+
+    let controls = Paragraph::new(controls_text)
+        .block(Block::default().borders(Borders::ALL).title("Controls"));
+    f.render_widget(controls, bottom_chunks[1]);
 }
