@@ -351,6 +351,11 @@
 - **Status**: The slime mold is pulsing to the beat. The landscape is breathing.
 - **Note**: Hybrid of `bio-transit` and `rhythm-diffusion`.
 
+### [Concentration Level: FRESH] - Location: experiments/quasicrystal-mold
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status**: The slime mold is navigating the higher dimensions. Pathfinding on aperiodic lattices is converging.
+- **Note**: Hybrid of `quasicrystal-dungeon` and `bio-transit`.
+
 ### [Concentration Level: FRESH] - Location: experiments/quasicrystal-dungeon
 - **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
 - **Status:** The lattice is 6D. The projection is 3D. The dungeon is aperiodic. The player is lost in the Penrose maze.

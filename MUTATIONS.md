@@ -867,11 +867,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: TUI flight simulator over the Bifurcation Diagram landscape.
 - **Novel trait**: Navigating the edge of chaos. Longitudinal axis is `r` (growth rate), Latitudinal is `x` (population), Height is probability density.
 - **Status**: experiments/bifurcation-landscape
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
 
 ### myco-diffusion
 - **Parents**: experiments/bio-transit + experiments/rhythm-diffusion
 - **Concept**: Slime mold agents navigating a reaction-diffusion landscape modulated by audio rhythms.
 - **Novel trait**: The feedback loop where agents create the landscape that sustains/directs them, which is destabilized by the music.
 - **Status**: experiments/myco-diffusion
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### quasicrystal-mold
+- **Parents**: experiments/quasicrystal-dungeon + experiments/bio-transit
+- **Concept**: Slime mold agents navigating an aperiodic 3D Penrose graph.
+- **Novel trait**: Aperiodic Transport Networks. Agents find paths on a structure that never repeats.
+- **Status**: experiments/quasicrystal-mold
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
