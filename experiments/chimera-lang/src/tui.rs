@@ -3695,7 +3695,7 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     let mut block = Block::default()
         .borders(Borders::ALL)
-        .title("Fishing Minigame");
+        .title("Fishing Minigame (F: Cast/Reel)");
 
     // Flash background if tension is critical
     if app_state.fishing_tension > 0.9 && vm.tick_counter % 4 < 2 {
@@ -3750,6 +3750,23 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 ctx.print(rx, ry, ch);
             }
 
+            // Dock
+            ctx.draw(&Rectangle {
+                x: 0.0,
+                y: 50.0,
+                width: 20.0,
+                height: 50.0,
+                color: Color::DarkGray,
+            });
+            // Dock details
+            for y in (50..100).step_by(5) {
+                ctx.print(1.0, y as f64, "==");
+                ctx.print(10.0, y as f64, "==");
+                ctx.print(18.0, y as f64, "==");
+            }
+            // Fisherman
+            ctx.print(15.0, 60.0, "웃");
+
             if app_state.fishing_cast {
                 // Splash / Ripple around bobber
                 if app_state.fishing_bobber_y < 50.0 {
@@ -3766,8 +3783,8 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
                 // Fishing Line
                 ctx.draw(&ratatui::widgets::canvas::Line {
-                    x1: 50.0,
-                    y1: 100.0, // Top center (approx rod tip)
+                    x1: 18.0, // From Fisherman
+                    y1: 65.0,
                     x2: 50.0,
                     y2: app_state.fishing_bobber_y,
                     color: Color::White,
@@ -3807,8 +3824,30 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     f.render_widget(canvas, chunks[0]);
 
     // Tension Bar
-    let tension = app_state.fishing_tension;
-    let gauge = draw_tension_gauge("Line Tension", tension);
+    // Color scale: Green -> Yellow -> Red
+    let tension = app_state.fishing_tension.clamp(0.0, 1.0);
+    let tension_color = if tension < 0.5 {
+        Color::Green
+    } else if tension < 0.8 {
+        Color::Yellow
+    } else {
+        Color::Red
+    };
+
+    let label = if tension > 0.9 {
+        "CRITICAL TENSION!"
+    } else if tension > 0.5 {
+        "Warning: Line Stress"
+    } else {
+        "Line Tension"
+    };
+
+    let gauge = Gauge::default()
+        .block(Block::default().borders(Borders::ALL).title(label))
+        .gauge_style(Style::default().fg(tension_color).bg(Color::DarkGray))
+        .ratio(tension)
+        .label(format!("{:.0}%", tension * 100.0));
+
     f.render_widget(gauge, chunks[1]);
 }
 
