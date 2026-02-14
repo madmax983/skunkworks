@@ -1,7 +1,7 @@
 #![cfg(feature = "nova")]
 
 use super::{ChimeraVM, Value};
-use crate::ast::{JunctionType, Nucleotide};
+use crate::ast::{Gene, JunctionType, Nucleotide, Strand};
 use crate::opcode::OpCode;
 use rand::Rng;
 
@@ -12,6 +12,29 @@ pub fn exec_babel_op(
     _args: &[Nucleotide],
 ) -> Option<(usize, usize)> {
     match op {
+        OpCode::BabelCompile => {
+            // [ cst, handler_strand ] -> [ new_strand_idx ]
+            if vm.stack.len() >= 2 {
+                let handler_val = vm.stack.pop().unwrap();
+                let cst_val = vm.stack.pop().unwrap();
+
+                if let Value::Int(handler_idx) = handler_val {
+                    if handler_idx >= 0 {
+                        let new_idx = compile_cst(vm, cst_val, handler_idx as usize);
+                        vm.stack.push(Value::Int(new_idx as i64));
+                    } else {
+                        vm.output
+                            .push("Error: Invalid handler index for BabelCompile".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Handler must be an Int (strand index)".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for BabelCompile".to_string());
+            }
+        }
         OpCode::Generate => {
             if let Some(grammar) = vm.stack.pop() {
                 let generated = generate_string(&grammar);
@@ -612,5 +635,78 @@ fn flatten_cst(cst: &Value) -> String {
             s
         }
         _ => String::new(),
+    }
+}
+
+fn compile_cst(vm: &mut ChimeraVM, cst: Value, handler_idx: usize) -> usize {
+    let mut genes = Vec::new();
+    compile_cst_recursive(&cst, &mut genes, handler_idx);
+
+    vm.dna.helix.strands.push(Strand { genes });
+    vm.dna.helix.strands.len() - 1
+}
+
+fn compile_cst_recursive(val: &Value, genes: &mut Vec<Gene>, handler_idx: usize) {
+    match val {
+        Value::Int(n) => {
+            genes.push(Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(*n)],
+            });
+        }
+        Value::Str(s) => {
+            genes.push(Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String(s.clone())],
+            });
+        }
+        Value::Junction(t, children) => {
+            for child in children {
+                compile_cst_recursive(child, genes, handler_idx);
+            }
+            // Push Type
+            let t_str = match t {
+                JunctionType::Any => "Any",
+                JunctionType::All => "All",
+                JunctionType::Dish => "Dish",
+            };
+            genes.push(Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String(t_str.to_string())],
+            });
+            // Push Count
+            genes.push(Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(children.len() as i64)],
+            });
+            // Call Handler
+            genes.push(Gene {
+                op: OpCode::Call,
+                args: vec![Nucleotide::Number(handler_idx as i64)],
+            });
+        }
+        Value::Superposition(states) => {
+            // Treat like a junction but with specific tag?
+            // "Superposition"
+            for (v, p) in states {
+                compile_cst_recursive(v, genes, handler_idx);
+                genes.push(Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number((p * 1000.0) as i64)], // Prob as int 0-1000
+                });
+            }
+            genes.push(Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("Superposition".to_string())],
+            });
+            genes.push(Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(states.len() as i64)],
+            });
+            genes.push(Gene {
+                op: OpCode::Call,
+                args: vec![Nucleotide::Number(handler_idx as i64)],
+            });
+        }
     }
 }

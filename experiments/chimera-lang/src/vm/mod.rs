@@ -2772,7 +2772,8 @@ impl ChimeraVM {
             | OpCode::ParserAltN
             | OpCode::Tongue
             | OpCode::Generate
-            | OpCode::Scribe => {
+            | OpCode::Scribe
+            | OpCode::BabelCompile => {
                 babel::exec_babel_op(self, op, args);
                 None
             }
@@ -4803,6 +4804,8 @@ mod tests {
     }
 }
 mod nova_sequencer_test;
+#[cfg(test)]
+mod babel_test;
 
 #[cfg(test)]
 mod sentry_value_test {

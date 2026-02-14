@@ -2157,6 +2157,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Scribe,
 
+    /// **[Babel]** Compiles a Concrete Syntax Tree (CST) into a new Strand.
+    ///
+    /// **Stack:** `[ ..., cst, handler_strand_idx ] -> [ ..., new_strand_idx ]`
+    /// **Effect:** Creates a strand that recreates the CST traversal, calling handler for each node.
+    #[cfg(feature = "nova")]
+    BabelCompile,
+
     /// **[Babel]** Increases linguistic chaos (Glossolalia).
     ///
     /// **Stack:** `[ ..., amount ] -> [ ... ]`
