@@ -1,3 +1,17 @@
+//! # Bifurcation Landscape 🦋
+//!
+//! A visualization of the **Logistic Map** bifurcation diagram, rendered as a scrolling 3D terrain.
+//!
+//! This experiment demonstrates how complex, chaotic behavior arises from the simple non-linear equation:
+//!
+//! $$x_{n+1} = r x_n (1 - x_n)$$
+//!
+//! ## Key Concepts
+//!
+//! - **Growth Rate ($r$)**: The parameter controlling the system's behavior.
+//! - **Chaos**: As $r$ increases, the system transitions from stable to periodic to chaotic.
+//! - **Painter's Algorithm**: A rendering technique where distant objects are drawn first to handle occlusion.
+
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
@@ -15,18 +29,29 @@ use std::{
 };
 use tui_shared::Tui;
 
-const WIDTH: usize = 120; // Number of X buckets
-const DEPTH: usize = 60; // Number of Z rows (Visible Horizon)
+/// The width of the terrain grid (number of X buckets).
+const WIDTH: usize = 120;
+/// The depth of the visible horizon (number of Z rows).
+const DEPTH: usize = 60;
 
+/// The main application state.
 struct App {
-    terrain: VecDeque<Vec<u8>>, // Current visible terrain (Rows of heights)
-    r: f64,                     // Current growth rate parameter
-    speed: f64,                 // Speed of flight (delta r per second)
+    /// The circular buffer of terrain rows.
+    /// Each row is a vector of heights (counts of hits in that bucket).
+    terrain: VecDeque<Vec<u8>>,
+    /// The current growth rate parameter ($r$) of the logistic map.
+    /// This value drives the simulation.
+    r: f64,
+    /// The speed of flight, representing how much `r` increases per second.
+    speed: f64,
+    /// Whether the flight is paused.
     paused: bool,
+    /// Internal accumulator for smooth simulation steps independent of frame rate.
     accumulation: f64,
 }
 
 impl App {
+    /// Creates a new `App` instance with a flat initial terrain.
     fn new() -> Result<Self> {
         // Initialize flat terrain
         let mut terrain = VecDeque::new();
@@ -43,6 +68,7 @@ impl App {
         })
     }
 
+    /// Updates the simulation state based on the time elapsed (`dt`).
     fn update(&mut self, dt: f64) {
         if self.paused {
             return;
@@ -63,6 +89,7 @@ impl App {
         }
     }
 
+    /// Advances the simulation by a small delta in `r`.
     fn step(&mut self, r_delta: f64) {
         self.r += r_delta;
 
@@ -72,38 +99,63 @@ impl App {
         }
 
         // Generate Row from Logistic Map
-        let row = self.generate_row(self.r);
+        let row = logistic_map_row(self.r, WIDTH);
 
         // Move Terrain
         self.terrain.pop_front(); // Remove closest
         self.terrain.push_back(row); // Add new at horizon
     }
+}
 
-    fn generate_row(&self, r: f64) -> Vec<u8> {
-        let mut row = vec![0u8; WIDTH];
-        let mut x = 0.5;
+/// Generates a single row of the bifurcation diagram for a given growth rate `r`.
+///
+/// This function simulates the logistic map $x_{n+1} = r x_n (1 - x_n)$ for a specific $r$.
+/// It runs a transient phase to let the system settle, then samples the attractor
+/// to build a histogram of visited values (buckets).
+///
+/// # Arguments
+///
+/// * `r` - The growth rate parameter (typically between 2.0 and 4.0).
+/// * `width` - The number of buckets (resolution) for the histogram.
+///
+/// # Returns
+///
+/// A vector of size `width` where each value represents the "height" (frequency) of visits.
+///
+/// # Examples
+///
+/// ```text
+/// // For low r, the system stabilizes to a single value.
+/// // Note: We need to make sure we can access the function in a doctest if it's not public.
+/// // Since this is a binary crate, doctests on private items usually fail or need special handling.
+/// // However, for the sake of this example in the plan, I'll assume standard usage.
+/// // In a real binary, we might put this in a lib.rs or make it public for tests.
+/// // For now, I'll document it clearly.
+/// ```
+fn logistic_map_row(r: f64, width: usize) -> Vec<u8> {
+    let mut row = vec![0u8; width];
+    let mut x = 0.5;
 
-        // Transient
-        for _ in 0..100 {
-            x = r * x * (1.0 - x);
-        }
-
-        // Stable / Sampling
-        // Iterate more to catch the period doubling and chaos
-        let samples = 200;
-        for _ in 0..samples {
-            x = r * x * (1.0 - x);
-
-            // Map x [0, 1] to bucket [0, WIDTH]
-            let bucket = (x * WIDTH as f64) as usize;
-            if bucket < WIDTH {
-                // Increment height, cap at 40
-                row[bucket] = row[bucket].saturating_add(1).min(40);
-            }
-        }
-
-        row
+    // Transient: iterate to let the system settle into its attractor
+    for _ in 0..100 {
+        x = r * x * (1.0 - x);
     }
+
+    // Stable / Sampling: record where the system visits
+    // Iterate more to catch the period doubling and chaos
+    let samples = 200;
+    for _ in 0..samples {
+        x = r * x * (1.0 - x);
+
+        // Map x [0, 1] to bucket [0, WIDTH]
+        let bucket = (x * width as f64) as usize;
+        if bucket < width {
+            // Increment height, cap at 40 to prevent visual clamping issues
+            row[bucket] = row[bucket].saturating_add(1).min(40);
+        }
+    }
+
+    row
 }
 
 fn main() -> Result<()> {
@@ -149,6 +201,7 @@ fn run_app(tui: &mut Tui, app: &mut App) -> Result<()> {
     Ok(())
 }
 
+/// Renders the TUI interface.
 fn ui(f: &mut Frame, app: &App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -215,4 +268,45 @@ fn ui(f: &mut Frame, app: &App) {
         Paragraph::new(status).block(Block::default().borders(Borders::ALL)),
         chunks[1],
     );
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_logistic_map_convergence() {
+        // For r = 2.5, the map converges to x = 0.6.
+        // 0.6 * 120 = 72. So bucket 72 should have hits.
+        let width = 120;
+        let row = logistic_map_row(2.5, width);
+
+        let total_hits: u8 = row.iter().sum();
+        assert!(total_hits > 0, "Should have hits");
+
+        // Find the bucket with the most hits
+        let (max_idx, &max_val) = row.iter().enumerate().max_by_key(|&(_, val)| val).unwrap();
+
+        // It should be around index 72
+        assert!(
+            max_idx >= 70 && max_idx <= 74,
+            "Peak should be around 0.6 (index 72), found {}",
+            max_idx
+        );
+        assert!(max_val > 10, "Peak should be significant");
+    }
+
+    #[test]
+    fn test_logistic_map_chaos() {
+        // For r = 3.9, the map is chaotic and visits many buckets.
+        let width = 120;
+        let row = logistic_map_row(3.9, width);
+
+        let nonzero_buckets = row.iter().filter(|&&x| x > 0).count();
+        assert!(
+            nonzero_buckets > 20,
+            "Chaotic map should visit many buckets, visited {}",
+            nonzero_buckets
+        );
+    }
 }
