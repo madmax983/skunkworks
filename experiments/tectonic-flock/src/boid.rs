@@ -1,3 +1,4 @@
+use flocking::PhysicsState;
 use locus::Vec2;
 use rand::Rng;
 use ratatui::style::Color;
@@ -12,7 +13,7 @@ pub struct Dna {
     pub separation_weight: f64,
     pub alignment_weight: f64,
     pub cohesion_weight: f64,
-    pub fissure_attraction_weight: f64, // New trait: Attraction to fissures
+    pub fissure_attraction_weight: f64,
     pub natural_freq: f64,
     pub coupling_strength: f64,
     pub color: Color,
@@ -30,7 +31,7 @@ impl Dna {
             separation_weight: rng.gen_range(1.2..2.5),
             alignment_weight: rng.gen_range(0.8..1.2),
             cohesion_weight: rng.gen_range(0.8..1.2),
-            fissure_attraction_weight: rng.gen_range(0.5..2.0), // Some boids love disaster
+            fissure_attraction_weight: rng.gen_range(0.5..2.0),
             natural_freq: 0.005 + rng.r#gen::<f64>() * 0.02,
             coupling_strength: 0.005,
             color: Color::Indexed(rng.gen_range(20..230)),
@@ -41,9 +42,7 @@ impl Dna {
 
 #[derive(Clone, Debug)]
 pub struct Boid {
-    pub position: Vec2,
-    pub velocity: Vec2,
-    pub acceleration: Vec2,
+    pub physics: PhysicsState,
     pub dna: Dna,
     pub phase: f64,
     pub flash_timer: usize,
@@ -55,43 +54,40 @@ impl Boid {
         let angle = rng.gen_range(0.0..TAU);
         let dna = Dna::random();
 
+        let mut physics = PhysicsState::new(x, y);
+        physics.velocity = Vec2::new(angle.cos() * dna.max_speed, angle.sin() * dna.max_speed);
+
         Self {
-            position: Vec2::new(x, y),
-            velocity: Vec2::new(angle.cos() * dna.max_speed, angle.sin() * dna.max_speed),
-            acceleration: Vec2::zero(),
+            physics,
             dna,
             phase: rng.r#gen::<f64>(),
             flash_timer: 0,
         }
     }
 
+    pub fn position(&self) -> Vec2 {
+        self.physics.position
+    }
+
     pub fn apply_force(&mut self, force: Vec2) {
-        self.acceleration += force;
+        self.physics.apply_force(force);
     }
 
     pub fn update_physics(&mut self, width: f64, height: f64) {
-        self.velocity += self.acceleration;
-
-        // Limit speed
-        self.velocity = self.velocity.limit(self.dna.max_speed);
-
-        self.position += self.velocity;
-
-        // Reset acceleration
-        self.acceleration = Vec2::zero();
+        self.physics.update(self.dna.max_speed);
 
         // Wrap around edges
-        if self.position.x < 0.0 {
-            self.position.x += width;
+        if self.physics.position.x < 0.0 {
+            self.physics.position.x += width;
         }
-        if self.position.x >= width {
-            self.position.x -= width;
+        if self.physics.position.x >= width {
+            self.physics.position.x -= width;
         }
-        if self.position.y < 0.0 {
-            self.position.y += height;
+        if self.physics.position.y < 0.0 {
+            self.physics.position.y += height;
         }
-        if self.position.y >= height {
-            self.position.y -= height;
+        if self.physics.position.y >= height {
+            self.physics.position.y -= height;
         }
     }
 

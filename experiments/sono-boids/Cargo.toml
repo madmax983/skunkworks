@@ -5,10 +5,11 @@ edition = "2021"
 
 [dependencies]
 locus = { workspace = true }
+flocking = { workspace = true }
 ratatui = { workspace = true }
 crossterm = { workspace = true }
 anyhow = { workspace = true }
 rand = { workspace = true }
 tui-shared = { workspace = true }
-resonance-audio = { path = "../../crates/resonance-audio" }
+resonance-audio = { workspace = true }
 crossbeam-channel = "0.5"

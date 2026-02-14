@@ -1,11 +1,12 @@
 use anyhow::Result;
 use crossbeam_channel::{bounded, Receiver, Sender};
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
+use flocking::{compute_force, FlockingParams, PhysicsState};
 use locus::Vec2;
 use rand::Rng;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
-    style::{Color, Style, Stylize},
+    style::{Color, Style},
     text::{Line, Span},
     widgets::{
         canvas::{Canvas, Points},
@@ -21,46 +22,37 @@ const WIDTH: usize = 80;
 const HEIGHT: usize = 40;
 
 struct Boid {
-    pos: Vec2,
-    vel: Vec2,
-    acc: Vec2,
+    physics: PhysicsState,
 }
 
 impl Boid {
     fn new(x: f64, y: f64) -> Self {
         let mut rng = rand::thread_rng();
-        Self {
-            pos: Vec2::new(x, y),
-            vel: Vec2::new(rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0)).normalize(),
-            acc: Vec2::new(0.0, 0.0),
-        }
+        let mut physics = PhysicsState::new(x, y);
+        physics.velocity = Vec2::new(rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0)).normalize();
+        Self { physics }
     }
 
     fn update(&mut self, width: f64, height: f64, wave_grid: &[f32], grid_w: usize, grid_h: usize) {
-        // Wrap around
-        if self.pos.x < 0.0 {
-            self.pos.x += width;
-        }
-        if self.pos.x >= width {
-            self.pos.x -= width;
-        }
-        if self.pos.y < 0.0 {
-            self.pos.y += height;
-        }
-        if self.pos.y >= height {
-            self.pos.y -= height;
-        }
+        self.physics.update(1.0); // max_speed = 1.0
 
-        self.vel += self.acc;
-        if self.vel.magnitude() > 1.0 {
-            self.vel = self.vel.normalize();
+        // Wrap around
+        if self.physics.position.x < 0.0 {
+            self.physics.position.x += width;
         }
-        self.pos += self.vel;
-        self.acc = Vec2::new(0.0, 0.0);
+        if self.physics.position.x >= width {
+            self.physics.position.x -= width;
+        }
+        if self.physics.position.y < 0.0 {
+            self.physics.position.y += height;
+        }
+        if self.physics.position.y >= height {
+            self.physics.position.y -= height;
+        }
 
         // Wave interaction: steer away from high waves
-        let gx = (self.pos.x / width * grid_w as f64) as usize;
-        let gy = (self.pos.y / height * grid_h as f64) as usize;
+        let gx = (self.physics.position.x / width * grid_w as f64) as usize;
+        let gy = (self.physics.position.y / height * grid_h as f64) as usize;
 
         if gx < grid_w && gy < grid_h {
             let idx = gy * grid_w + gx;
@@ -69,7 +61,7 @@ impl Boid {
                 if wave_val > 0.2 {
                     // Turn randomly if in high wave
                     let mut rng = rand::thread_rng();
-                    self.acc += Vec2::new(rng.gen_range(-0.5..0.5), rng.gen_range(-0.5..0.5));
+                    self.physics.apply_force(Vec2::new(rng.gen_range(-0.5..0.5), rng.gen_range(-0.5..0.5)));
                 }
             }
         }
@@ -118,54 +110,32 @@ impl App {
         }
 
         // Update boids
-        // We clone boids for flocking check to avoid borrow checker
-        let boids_state: Vec<(Vec2, Vec2)> = self.boids.iter().map(|b| (b.pos, b.vel)).collect();
-
+        let physics_states: Vec<PhysicsState> = self.boids.iter().map(|b| b.physics).collect();
         let mut forces = Vec::with_capacity(self.boids.len());
-        for i in 0..self.boids.len() {
-            let mut align = Vec2::new(0.0, 0.0);
-            let mut coh = Vec2::new(0.0, 0.0);
-            let mut sep = Vec2::new(0.0, 0.0);
-            let mut count = 0;
 
-            for j in 0..self.boids.len() {
-                if i == j {
-                    continue;
-                }
-                let pos_j = boids_state[j].0;
-                let vel_j = boids_state[j].1;
-                let d = boids_state[i].0.distance(pos_j);
+        let params = FlockingParams {
+            view_radius: 10.0,
+            separation_radius: 5.0,
+            max_speed: 1.0,
+            max_force: 0.1,
+            separation_weight: 1.5,
+            alignment_weight: 1.0,
+            cohesion_weight: 1.0,
+        };
 
-                if d > 0.0 && d < 10.0 {
-                    align += vel_j;
-                    coh += pos_j;
-                    sep += (boids_state[i].0 - pos_j).normalize() / d;
-                    count += 1;
-                }
-            }
-
-            let mut force = Vec2::new(0.0, 0.0);
-            if count > 0 {
-                align = align / count as f64;
-                align = align.normalize() * 0.05;
-
-                coh = coh / count as f64;
-                coh = (coh - boids_state[i].0).normalize() * 0.01;
-
-                sep = sep.normalize() * 0.05;
-                force = align + coh + sep;
-            }
+        for (i, _) in self.boids.iter().enumerate() {
+            let force = compute_force(&physics_states[i], &physics_states, i, &params);
             forces.push(force);
         }
 
         for (i, boid) in self.boids.iter_mut().enumerate() {
-            boid.acc += forces[i];
+            boid.physics.apply_force(forces[i]);
             boid.update(WIDTH as f64, HEIGHT as f64, &self.wave_grid, WIDTH, HEIGHT);
 
             // Randomly emit ping
             if rand::thread_rng().gen_bool(0.01) {
-                let gx = (boid.pos.x) as usize;
-                let gy = (boid.pos.y) as usize;
+                let gx = (boid.physics.position.x) as usize;
+                let gy = (boid.physics.position.y) as usize;
                 if gx < WIDTH && gy < HEIGHT {
                     let _ = self.cmd_tx.send(AudioCommand::Pluck {
                         x: gx,
@@ -261,8 +231,8 @@ fn ui(f: &mut Frame, app: &mut App) {
             // Draw Boids
             for boid in &app.boids {
                 ctx.print(
-                    boid.pos.x,
-                    HEIGHT as f64 - boid.pos.y,
+                    boid.physics.position.x,
+                    HEIGHT as f64 - boid.physics.position.y,
                     Span::styled("*", Style::default().fg(Color::Yellow)),
                 );
             }

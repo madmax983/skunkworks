@@ -1,5 +1,5 @@
 use crate::boid::Boid;
-use locus::Vec2;
+use flocking::{compute_force, FlockingParams, PhysicsState};
 use std::f64::consts::PI;
 
 pub struct World {
@@ -24,107 +24,58 @@ impl World {
 
     pub fn update(&mut self) {
         let count = self.boids.len();
-        let mut physics_forces = Vec::with_capacity(count);
+
+        // Extract physics states for the flocking algorithm
+        let physics_states: Vec<PhysicsState> = self.boids.iter().map(|b| b.physics).collect();
+
+        let mut forces = Vec::with_capacity(count);
         let mut phase_nudges = vec![0.0; count];
 
-        // Combined O(N^2) loop for physics and synchronization
-        for (i, nudge_out) in phase_nudges.iter_mut().enumerate() {
-            let mut separation = Vec2::zero();
-            let mut alignment = Vec2::zero();
-            let mut cohesion = Vec2::zero();
+        for (i, boid) in self.boids.iter().enumerate() {
+            // 1. Calculate Flocking Force
+            let params = FlockingParams {
+                view_radius: boid.dna.view_radius,
+                separation_radius: boid.dna.view_radius / 2.0,
+                max_speed: boid.dna.max_speed,
+                max_force: boid.dna.max_force,
+                separation_weight: boid.dna.separation_weight,
+                alignment_weight: boid.dna.alignment_weight,
+                cohesion_weight: boid.dna.cohesion_weight,
+            };
 
-            let mut sep_count = 0;
-            let mut ali_count = 0;
-            let mut coh_count = 0;
+            let flocking_force = compute_force(
+                &physics_states[i],
+                &physics_states,
+                i,
+                &params
+            );
+            forces.push(flocking_force);
 
+            // 2. Calculate Firefly Phase Nudge
+            // This is domain-specific, so we keep it here.
             let mut nudge = 0.0;
+            let coupling_radius_sq = boid.dna.coupling_radius.powi(2);
+            let p1 = boid.position();
 
-            // We need to access boids[i] multiple times, so we clone the necessary data
-            // to avoid borrowing issues while iterating over the rest
-            let p1 = self.boids[i].position;
-            let v1 = self.boids[i].velocity;
-            let dna = &self.boids[i].dna;
+            for (j, other) in self.boids.iter().enumerate() {
+                if i == j { continue; }
 
-            let view_radius_sq = dna.view_radius.powi(2);
-            let coupling_radius_sq = dna.coupling_radius.powi(2);
-            let separation_radius_sq = (dna.view_radius / 2.0).powi(2);
-
-            for j in 0..count {
-                if i == j {
-                    continue;
-                }
-
-                let b2 = &self.boids[j];
-                let d_sq = p1.distance_squared(b2.position);
-
-                if d_sq == 0.0 {
-                    continue;
-                }
-
-                // --- Flocking Logic ---
-                if d_sq < view_radius_sq {
-                    // Separation
-                    if d_sq < separation_radius_sq {
-                        let diff = p1 - b2.position;
-                        separation += diff / d_sq;
-                        sep_count += 1;
-                    }
-
-                    // Alignment
-                    alignment += b2.velocity;
-                    ali_count += 1;
-
-                    // Cohesion
-                    cohesion += b2.position;
-                    coh_count += 1;
-                }
-
-                // --- Firefly Logic ---
+                // Firefly coupling
                 // If neighbor is flashing (timer == 5), it pulls us
-                if d_sq < coupling_radius_sq && b2.flash_timer == 5 {
-                    nudge += dna.coupling_strength;
+                // Check distance
+                if p1.distance_squared(other.position()) < coupling_radius_sq {
+                    if other.flash_timer == 5 {
+                        nudge += boid.dna.coupling_strength;
+                    }
                 }
             }
-
-            // Calculate final steering forces
-            let mut total_force = Vec2::zero();
-
-            if sep_count > 0 && separation.magnitude_squared() > 0.0 {
-                separation = separation.normalize() * dna.max_speed;
-                separation -= v1;
-                separation = separation.limit(dna.max_force);
-                total_force += separation * dna.separation_weight;
-            }
-
-            if ali_count > 0 {
-                alignment /= ali_count as f64;
-                if alignment.magnitude_squared() > 0.0 {
-                    alignment = alignment.normalize() * dna.max_speed;
-                    alignment -= v1;
-                    alignment = alignment.limit(dna.max_force);
-                    total_force += alignment * dna.alignment_weight;
-                }
-            }
-
-            if coh_count > 0 {
-                cohesion /= coh_count as f64;
-                let mut desired = cohesion - p1;
-                if desired.magnitude_squared() > 0.0 {
-                    desired = desired.normalize() * dna.max_speed;
-                    desired -= v1;
-                    desired = desired.limit(dna.max_force);
-                    total_force += desired * dna.cohesion_weight;
-                }
-            }
-
-            physics_forces.push(total_force);
-            *nudge_out = nudge;
+            phase_nudges[i] = nudge;
         }
 
         // Apply updates
         for (i, boid) in self.boids.iter_mut().enumerate() {
             // Apply physics
-            boid.apply_force(physics_forces[i]);
+            boid.apply_force(forces[i]);
             boid.update_physics(self.width, self.height);
 
             // Apply phase update

@@ -125,10 +125,10 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
                     if partner_idx < app.world.boids.len() {
                         let partner = &app.world.boids[partner_idx];
                         ctx.draw(&Line {
-                            x1: boid.position.0,
-                            y1: boid.position.1,
-                            x2: partner.position.0,
-                            y2: partner.position.1,
+                            x1: boid.position().x,
+                            y1: boid.position().y,
+                            x2: partner.position().x,
+                            y2: partner.position().y,
                             color: Color::DarkGray,
                         });
                     }
@@ -157,8 +157,8 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
                 };
 
                 ctx.print(
-                    boid.position.0,
-                    boid.position.1,
+                    boid.position().x,
+                    boid.position().y,
                     Span::styled(char_str, Style::default().fg(color)),
                 );
             }

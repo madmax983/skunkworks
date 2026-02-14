@@ -1,5 +1,6 @@
-use crate::boid::{Boid, ENTANGLEMENT_RADIUS};
+use crate::boid::{Boid, ENTANGLEMENT_RADIUS, PERCEPTION_RADIUS};
 use crate::qubit::apply_cnot_approx;
+use flocking::{compute_force, FlockingParams, PhysicsState};
 use rand::Rng;
 
 pub struct World {
@@ -11,8 +12,8 @@ pub struct World {
 impl World {
     pub fn new(width: f64, height: f64) -> Self {
         let mut boids = Vec::new();
-        for i in 0..50 {
-            boids.push(Boid::new(width / 2.0, height / 2.0, i));
+        for _ in 0..50 {
+            boids.push(Boid::new(width / 2.0, height / 2.0));
         }
         Self {
             boids,
@@ -40,7 +41,10 @@ impl World {
                     continue;
                 }
 
-                let dist = distance(boid.position, self.boids[j].position);
+                let pos_i = boid.position();
+                let pos_j = self.boids[j].position();
+                let dist = pos_i.distance(pos_j);
+
                 if dist < ENTANGLEMENT_RADIUS {
                     // Close proximity: Interact
                     // If not entangled, entangle
@@ -68,15 +72,35 @@ impl World {
 
         self.boids = new_boids;
 
-        // Physics update
-        // We can't clone boids inside the loop easily for flocking, so we do it in two passes
-        // Pass 1: Calculate forces (needs read access to all)
-        // Pass 2: Apply updates
-        // Since Boid struct is simple copy, let's just do it
+        // Physics Loop
+        let physics_states: Vec<PhysicsState> = self.boids.iter().map(|b| b.physics).collect();
+        let mut forces = Vec::with_capacity(n);
 
-        let old_boids = self.boids.clone();
-        for boid in &mut self.boids {
-            boid.flock(&old_boids); // Using old positions for flocking calculation
+        for (i, boid) in self.boids.iter().enumerate() {
+             // Quantum Weighting
+             // If Prob(|1>) is high, prefer Separation (Scatter)
+             // If Prob(|0>) is high, prefer Cohesion (Gather)
+             let p_one = boid.qubit.prob_one();
+             let align_w = 1.0;
+             let coh_w = 1.0 + (1.0 - p_one);
+             let sep_w = 1.0 + p_one * 2.0;
+
+             let params = FlockingParams {
+                 view_radius: PERCEPTION_RADIUS,
+                 separation_radius: PERCEPTION_RADIUS / 2.0,
+                 max_speed: boid.current_max_speed,
+                 max_force: 0.05,
+                 separation_weight: sep_w,
+                 alignment_weight: align_w,
+                 cohesion_weight: coh_w,
+             };
+
+             let force = compute_force(&physics_states[i], &physics_states, i, &params);
+             forces.push(force);
+        }
+
+        for (i, boid) in self.boids.iter_mut().enumerate() {
+            boid.apply_force(forces[i]);
             boid.update(self.width, self.height);
         }
     }
@@ -87,8 +111,4 @@ impl World {
             boid.entangled_partner = None; // Measurement breaks entanglement
         }
     }
-}
-
-fn distance(a: (f64, f64), b: (f64, f64)) -> f64 {
-    ((a.0 - b.0).powi(2) + (a.1 - b.1).powi(2)).sqrt()
 }
