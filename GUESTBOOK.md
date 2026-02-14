@@ -184,9 +184,9 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The packets are hitting the neurons. The network is learning from the impact. Pachinko has become a brain.
 
-### [Concentration Level: FRESH] - Location: experiments/synaptic-trace
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** Splicing stack trace geometry with Izhikevich neurons. The crash log is beginning to think.
+### [Concentration Level: TOXIC] - Location: experiments/synaptic-trace
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Documentation void. Hardcoded stack trace. Redundant with `trace-fold`. Grace period: 24h.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/syntax-fugue
 - **Scent Origin:** The Reaper ☠️
@@ -196,9 +196,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Sketch Rot. Failed to improve. Moved to graveyard.
 
-### [Concentration Level: TOXIC] - Location: experiments/mycelial-path
+### [Concentration Level: EXECUTED] - Location: graveyard/mycelial-path
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Generic A* implementation. Redundant with `rhizome-radar`. Grace period: 24h.
+- **Status:** Specimen executed. Documentation void. Generic A* implementation. Redundant with `rhizome-radar`. Failed to improve. Moved to graveyard.
 
 ### [Concentration Level: FRESH] - Location: experiments/syntax-garden
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
