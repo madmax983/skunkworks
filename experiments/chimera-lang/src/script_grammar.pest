@@ -11,13 +11,25 @@ strand_def = { "strand" ~ identifier ~ "{" ~ instruction* ~ "}" }
 
 instruction = {
     block |
+    chaos_block |
+    oracle_block |
     literal |
+    junction |
     crispr_block |
     call |
     arrow_jump |
     question_branch |
     simple_op
 }
+
+chaos_block = { "chaos" ~ block }
+
+oracle_block = { "oracle" ~ "{" ~ oracle_stmt* ~ "}" }
+oracle_stmt = { rule_def | fact_def }
+fact_def = { "fact" ~ "(" ~ argument_list ~ ")" }
+rule_def = { "rule" ~ "(" ~ argument_list ~ ")" ~ ":-" ~ query_expr }
+query_expr = { predicate ~ ("," ~ predicate)* }
+predicate = { identifier ~ "(" ~ argument_list ~ ")" }
 
 crispr_block = { "crispr" ~ "(" ~ identifier ~ ")" ~ "{" ~ pattern_def ~ instruction* ~ "}" }
 pattern_def = { "pattern" ~ ":" ~ identifier ~ ("," ~ identifier)* }
@@ -33,7 +45,8 @@ question_branch = { "?" ~ identifier }
 simple_op = { identifier }
 
 argument_list = { argument ~ ("," ~ argument)* }
-argument = { literal | junction | identifier }
+argument = { literal | junction | variable | identifier }
+variable = @{ "?" ~ identifier }
 
 junction = { junction_type ~ "(" ~ argument_list ~ ")" }
 junction_type = { "any" | "all" }

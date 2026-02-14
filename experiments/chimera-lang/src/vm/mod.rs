@@ -3359,6 +3359,7 @@ impl ChimeraVM {
                         match n {
                             Nucleotide::Number(v) => Some(Value::Int(*v)),
                             Nucleotide::String(s) => Some(Value::Str(s.clone())),
+                            Nucleotide::Identifier(s) => Some(Value::Str(s.clone())),
                             Nucleotide::Junction(t, list) => {
                                 let mut vals = Vec::new();
                                 for item in list {
@@ -3370,7 +3371,6 @@ impl ChimeraVM {
                                 }
                                 Some(Value::Junction(*t, vals))
                             }
-                            _ => None,
                         }
                     }
 
