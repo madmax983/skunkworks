@@ -346,6 +346,34 @@ pub fn exec_babel_op(
             generate_random_grid_grammar(vm, y, x, amount);
             vm.output.push("GLOSSOLALIA: The grid speaks!".to_string());
         }
+        OpCode::BabelLive => {
+            if vm.stack.len() >= 3 {
+                let input_val = vm.stack.pop().unwrap();
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(y), Value::Int(x), Value::Str(input)) =
+                    (y_val, x_val, input_val)
+                {
+                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                        let success = crate::vm::nova_babel_live::exec_live_parse(vm, ny, nx, input);
+                        vm.stack.push(Value::Int(if success { 1 } else { 0 }));
+                        let status = if success { "Success" } else { "Failure" };
+                        vm.output
+                            .push(format!("BABEL_LIVE: Parse {} at {},{}", status, nx, ny));
+                    } else {
+                        vm.output
+                            .push("Error: Coordinates out of bounds for BabelLive".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for BabelLive".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for BabelLive".to_string());
+            }
+        }
         _ => {}
     }
     None

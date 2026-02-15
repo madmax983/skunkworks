@@ -2220,6 +2220,12 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Confuse,
 
+    /// **[Babel]** Runs a Live Parser on the grid.
+    ///
+    /// **Stack:** `[ ..., y, x, input_string ] -> [ ..., success_bool ]`
+    #[cfg(feature = "nova")]
+    BabelLive,
+
     // Ballistics Features (Nova)
     /// **[Nova]** Fires a projectile with velocity and power.
     ///

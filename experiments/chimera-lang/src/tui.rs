@@ -4922,14 +4922,45 @@ fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         .wrap(ratatui::widgets::Wrap { trim: true });
     f.render_widget(ast_widget, top_chunks[0]);
 
-    // 2. Generated Output (Top Right)
-    let gen_widget = Paragraph::new(app_state.babel_result.clone()).block(
+    // 2. Grid Trace (Top Right)
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = &vm.grid[y][x];
+            let mut style = Style::default();
+
+            // Check trace
+            if vm.babel_live_trace.contains(&(y, x)) {
+                style = style.bg(Color::Blue).fg(Color::White).add_modifier(Modifier::BOLD);
+            } else if matches!(val, crate::vm::Value::Str(_)) {
+                style = style.fg(Color::Cyan);
+            } else {
+                style = style.fg(Color::DarkGray);
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            let ch = match val {
+                crate::vm::Value::Str(s) => s.chars().next().unwrap_or('.').to_string(),
+                crate::vm::Value::Int(n) => if *n == 0 { ".".to_string() } else { "#".to_string() },
+                _ => ".".to_string(),
+            };
+             line_spans.push(Span::styled(ch, style));
+             line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
         Block::default()
             .borders(Borders::ALL)
-            .title("Glossolalia (Generated)")
+            .title("Babel Grid (Live Trace)")
             .style(Style::default().fg(Color::Cyan)),
     );
-    f.render_widget(gen_widget, top_chunks[1]);
+    f.render_widget(grid_widget, top_chunks[1]);
 
     // 3. Parser Input (Bottom Left)
     let input_lines = vec![

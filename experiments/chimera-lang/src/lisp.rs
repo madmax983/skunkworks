@@ -210,6 +210,8 @@ fn map_op(s: &str) -> Option<OpCode> {
         "compile" => Some(OpCode::Compile),
         #[cfg(feature = "nova")]
         "decompile" => Some(OpCode::Decompile),
+        #[cfg(feature = "nova")]
+        "babel-live" => Some(OpCode::BabelLive),
         _ => OpCode::from_str(s).ok().or_else(|| {
             if let Some(first) = s.chars().next() {
                 let title = first.to_uppercase().to_string() + &s[1..];

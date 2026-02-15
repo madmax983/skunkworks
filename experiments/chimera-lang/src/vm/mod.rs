@@ -73,6 +73,11 @@ pub mod alchemy;
 pub mod babel;
 #[cfg(feature = "nova")]
 pub mod babel_chaos;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_babel_live_test;
+#[cfg(feature = "nova")]
+pub mod nova_babel_live;
 pub mod bard;
     #[cfg(feature = "nova")]
     pub mod nova_semiotics;
@@ -807,6 +812,8 @@ pub struct ChimeraVM {
     pub semiotic_context: u64,
     #[cfg(feature = "nova")]
     pub meaning_map: HashMap<(u64, u64), Value>,
+    #[cfg(feature = "nova")]
+    pub babel_live_trace: Vec<(usize, usize)>,
     pub visual_effects: Vec<VisualEffect>,
 }
 
@@ -1135,6 +1142,8 @@ impl ChimeraVM {
             semiotic_context: 0,
             #[cfg(feature = "nova")]
             meaning_map: HashMap::new(),
+            #[cfg(feature = "nova")]
+            babel_live_trace: Vec::new(),
             visual_effects: Vec::new(),
         }
     }
@@ -2974,7 +2983,8 @@ impl ChimeraVM {
             | OpCode::Generate
             | OpCode::Scribe
             | OpCode::BabelCompile
-            | OpCode::GridGrammar => {
+            | OpCode::GridGrammar
+            | OpCode::BabelLive => {
                 babel::exec_babel_op(self, op, args);
                 None
             }

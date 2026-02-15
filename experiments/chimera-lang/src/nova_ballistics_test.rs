@@ -63,7 +63,7 @@ fn test_projectile_collision() {
     assert_eq!(vm.projectiles.len(), 0); // Destroyed
     assert_eq!(vm.grid[8][10], Value::Int(0)); // Block destroyed
 
-    assert!(vm.output.iter().any(|s| s.contains("IMPACT")));
+    assert!(vm.output.iter().any(|s: &String| s.contains("IMPACT")));
 }
 
 #[test]
