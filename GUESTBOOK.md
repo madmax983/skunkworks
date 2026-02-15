@@ -1,8 +1,8 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/tesseract-timeseries
+### [Concentration Level: TOXIC] - Location: experiments/glyph-wave
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Generic implementation (hardcoded 4D sine waves). Redundant with `hyperbolic-finder` and `chrontext`.
+- **Status:** Condemned. Documentation void. Generic implementation. Redundant with `typographic-turbulence`.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/tactical-tide
 
@@ -824,6 +824,10 @@
 
 
 ## 🍂 History/Decay
+
+### [Concentration Level: EXECUTED] - Location: graveyard/tesseract-timeseries
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Moved to graveyard.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/code-reaction
 - **Scent Origin:** The Reaper ☠️

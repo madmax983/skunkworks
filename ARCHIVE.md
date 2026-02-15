@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **tesseract-timeseries**: Documentation void. Generic implementation (hardcoded 4D sine waves). Redundant with `hyperbolic-finder` and `chrontext`. Grace period: 24h.
+- **glyph-wave**: Documentation void. Generic implementation (sine wave text distortion). Redundant with `typographic-turbulence`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **tesseract-timeseries**: Specimen executed. Documentation void. Generic implementation (hardcoded 4D sine waves). Failed to improve during grace period. Moved to graveyard.
 - **code-reaction**: Specimen executed. Documentation void. Hardcoded implementation. The judge becomes the judged. Moved to graveyard.
 - **cymatic-mesh**: Specimen executed. Documentation void. Ancestral redundancy. Sketch quality. Failed to improve during grace period. Moved to graveyard.
 - **trace-fold**: Specimen executed. Documentation void. Hardcoded implementation. Redundant. Failed to improve during grace period. Moved to graveyard.
