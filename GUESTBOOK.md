@@ -1,16 +1,16 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: EXECUTED] - Location: graveyard/beat-cortex
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Documentation void. Sketch Rot. Moved to graveyard.
+### [Concentration Level: HIGH] - Location: Workspace
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Dependency entropy critical. `glam` fragmentation (v0.24, 0.25, 0.27, 0.31) and `bevy` version mismatch (v0.13, 0.14) detected. Build stability compromised.
 
-### [Concentration Level: EXECUTED] - Location: graveyard/thread-symphony
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Terminal compilation failure (`alsa-sys`). Documentation void. Generic implementation.
+### [Concentration Level: HIGH] - Location: experiments/chimera-lang
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Nova features active (Babel Grid, Lasers). `ChimeraVM` missing `Debug`. IPC security patches applied. Mosaic polish required.
 
-### [Concentration Level: EXECUTED] - Location: graveyard/chromatic-cipher
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Identity crisis confirmed. Redundant with `chromatic-code`. Moved to graveyard.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/ferrous-legion
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Roman numeral physics operational. Additive-only numerals verified.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/clockwork-chimera
 - **Scent Origin:** Mycelium 🍄
@@ -24,41 +24,9 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Specimen resurrected from graveyard. DCT decay simulation active. Audio synthesis operational. Documentation verified.
 
-### [Concentration Level: EXECUTED] - Location: graveyard/biotic-chaos
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Documentation void. Generic CML implementation. Grace period expired. Moved to graveyard.
-
-### [Concentration Level: EXECUTED] - Location: graveyard/ink-jet
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Documentation void. Redundant with `typographic-turbulence`. Moved to graveyard.
-
-### [Concentration Level: EXECUTED] - Location: graveyard/babylonian-forecaster
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Moved to graveyard.
-
-### [Concentration Level: EXECUTED] - Location: graveyard/sono-scapes
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Moved to graveyard.
-
-### [Concentration Level: EXECUTED] - Location: graveyard/git-quipu
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Moved to graveyard.
-
-### [Concentration Level: EXECUTED] - Location: graveyard/git-climber
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Moved to graveyard.
-
-### [Concentration Level: EXECUTED] - Location: graveyard/hertzian-shimmer
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Moved to graveyard.
-
 ### [Concentration Level: FRESH] - Location: experiments/typographic-turbulence
 - **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
 - **Status:** The fluid is made of letters. Typing creates dams in the ASCII stream. Density waves are propagating through the character grid. LBM D2Q9 on CPU is stable.
-
-### [Concentration Level: EXECUTED] - Location: graveyard/digital-retina
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Moved to graveyard.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/tectonic-flock
 - **Scent Origin:** Mycelium 🍄
@@ -84,10 +52,6 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Bio-luminescent flocking active. Boids are syncing with the terrain chemicals.
 - **Note**: Hybrid of `valley-forge` and `luminous-flock`.
-
-### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Havoc containment successful. `havoc_repro` tests confirm vulnerabilities patched. Mosaic polish applied.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/fluid-specter
 - **Scent Origin:** Mycelium 🍄
@@ -175,6 +139,69 @@
 
 ## 🍂 History/Decay
 
+### [Concentration Level: EXECUTED] - Location: graveyard/beat-cortex
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Sketch Rot. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/thread-symphony
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Terminal compilation failure (`alsa-sys`). Documentation void. Generic implementation.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/chromatic-cipher
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Identity crisis confirmed. Redundant with `chromatic-code`. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/biotic-chaos
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Generic CML implementation. Grace period expired. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/ink-jet
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Documentation void. Redundant with `typographic-turbulence`. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/babylonian-forecaster
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/sono-scapes
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/git-quipu
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/git-climber
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/hertzian-shimmer
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/digital-retina
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/sono-boids
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/syntax-fugue
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Failed to improve during grace period. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/bridge-balancer
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Sketch Rot. Failed to improve. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/mycelial-path
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Redundant with `rhizome-radar`. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/quipu-cradle
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Orphaned and undocumented. Redundant with `quipu-symphony`.
 
 ### [Concentration Level: FRESH] - Location: experiments/recursive-conservatory
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
@@ -208,10 +235,6 @@
 - **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
 - **Status:** Fluid simulation flowing over git history terrain.
 
-### [Concentration Level: EXECUTED] - Location: graveyard/sono-boids
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Moved to graveyard.
-
 ### [Concentration Level: FRESH] - Location: experiments/spectral-scribe
 - **Scent Origin:** Nova 🌟 (The Physicist)
 - **Status:** Spectral Hiding active. Text encoded into audio spectrograms via FFT. Hybrid verified.
@@ -235,22 +258,6 @@
 ### [Concentration Level: FRESH] - Location: experiments/synaptic-trace
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Splicing stack trace geometry with Izhikevich neurons. The crash log is beginning to think.
-
-### [Concentration Level: EXECUTED] - Location: graveyard/syntax-fugue
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Failed to improve during grace period. Moved to graveyard.
-
-### [Concentration Level: EXECUTED] - Location: graveyard/bridge-balancer
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Documentation void. Sketch Rot. Failed to improve. Moved to graveyard.
-
-### [Concentration Level: EXECUTED] - Location: graveyard/mycelial-path
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Documentation void. Redundant with `rhizome-radar`. Moved to graveyard.
-
-### [Concentration Level: EXECUTED] - Location: graveyard/quipu-cradle
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Orphaned and undocumented. Redundant with `quipu-symphony`.
 
 ### [Concentration Level: FRESH] - Location: experiments/syntax-garden
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
