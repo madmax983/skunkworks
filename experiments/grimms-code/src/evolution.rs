@@ -18,7 +18,7 @@ impl Evolver {
                     // Apply sound change to identifier
                     let evolved = change.apply(text);
                     result.push_str(&evolved);
-                },
+                }
                 _ => {
                     // Keep everything else as is
                     result.push_str(text);

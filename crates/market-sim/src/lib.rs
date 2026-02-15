@@ -506,7 +506,13 @@ mod sentry_tests {
         // Grid 3x3
         let mut grid = Grid::new(3, 3);
         // Trade at (1, 0) - Blocking Bid from moving UP
-        grid.set(1, 0, Particle::Trade { age: DEFAULT_TRADE_AGE });
+        grid.set(
+            1,
+            0,
+            Particle::Trade {
+                age: DEFAULT_TRADE_AGE,
+            },
+        );
         // Bid at (1, 1) - Blocked
         grid.set(1, 1, Particle::Bid(1));
 
@@ -515,12 +521,19 @@ mod sentry_tests {
 
         // Bid should move to (0, 1) or (2, 1) (Same Y, different X)
         // (1, 1) should be Empty
-        assert_eq!(grid.get(1, 1), Particle::Empty, "Bid failed to move from (1,1)");
+        assert_eq!(
+            grid.get(1, 1),
+            Particle::Empty,
+            "Bid failed to move from (1,1)"
+        );
 
         let in_left = matches!(grid.get(0, 1), Particle::Bid(1));
         let in_right = matches!(grid.get(2, 1), Particle::Bid(1));
 
-        assert!(in_left || in_right, "Bid did not move sideways to (0,1) or (2,1)");
+        assert!(
+            in_left || in_right,
+            "Bid did not move sideways to (0,1) or (2,1)"
+        );
     }
 
     #[test]
@@ -528,7 +541,13 @@ mod sentry_tests {
         // Grid 3x3
         let mut grid = Grid::new(3, 3);
         // Trade at (1, 2) - Blocking Ask from moving DOWN
-        grid.set(1, 2, Particle::Trade { age: DEFAULT_TRADE_AGE });
+        grid.set(
+            1,
+            2,
+            Particle::Trade {
+                age: DEFAULT_TRADE_AGE,
+            },
+        );
         // Ask at (1, 1) - Blocked
         grid.set(1, 1, Particle::Ask(2));
 
@@ -537,12 +556,19 @@ mod sentry_tests {
 
         // Ask should move to (0, 1) or (2, 1) (Same Y, different X)
         // (1, 1) should be Empty
-        assert_eq!(grid.get(1, 1), Particle::Empty, "Ask failed to move from (1,1)");
+        assert_eq!(
+            grid.get(1, 1),
+            Particle::Empty,
+            "Ask failed to move from (1,1)"
+        );
 
         let in_left = matches!(grid.get(0, 1), Particle::Ask(2));
         let in_right = matches!(grid.get(2, 1), Particle::Ask(2));
 
-        assert!(in_left || in_right, "Ask did not move sideways to (0,1) or (2,1)");
+        assert!(
+            in_left || in_right,
+            "Ask did not move sideways to (0,1) or (2,1)"
+        );
     }
 
     #[test]
@@ -550,9 +576,27 @@ mod sentry_tests {
         // Grid 3x3
         let mut grid = Grid::new(3, 3);
         // Surround (1, 1)
-        grid.set(1, 0, Particle::Trade { age: DEFAULT_TRADE_AGE }); // Top (Up blocked)
-        grid.set(0, 1, Particle::Trade { age: DEFAULT_TRADE_AGE }); // Left (Sideways blocked)
-        grid.set(2, 1, Particle::Trade { age: DEFAULT_TRADE_AGE }); // Right (Sideways blocked)
+        grid.set(
+            1,
+            0,
+            Particle::Trade {
+                age: DEFAULT_TRADE_AGE,
+            },
+        ); // Top (Up blocked)
+        grid.set(
+            0,
+            1,
+            Particle::Trade {
+                age: DEFAULT_TRADE_AGE,
+            },
+        ); // Left (Sideways blocked)
+        grid.set(
+            2,
+            1,
+            Particle::Trade {
+                age: DEFAULT_TRADE_AGE,
+            },
+        ); // Right (Sideways blocked)
 
         // Bid at (1, 1)
         grid.set(1, 1, Particle::Bid(1));
@@ -592,7 +636,13 @@ mod sentry_tests {
         // Grid 3x3
         let mut grid = Grid::new(3, 3);
         // Trade at (1, 0) - Blocking Bid A
-        grid.set(1, 0, Particle::Trade { age: DEFAULT_TRADE_AGE });
+        grid.set(
+            1,
+            0,
+            Particle::Trade {
+                age: DEFAULT_TRADE_AGE,
+            },
+        );
         // Bid A at (1, 1) - Blocked by Trade
         grid.set(1, 1, Particle::Bid(10));
         // Bid B at (1, 2) - Blocked by Bid A initially
@@ -610,7 +660,11 @@ mod sentry_tests {
         assert!(a_left || a_right, "Bid A did not move sideways");
 
         // Verify Bid B moved UP
-        assert_eq!(grid.get(1, 1), Particle::Bid(20), "Bid B should move up to (1,1)");
+        assert_eq!(
+            grid.get(1, 1),
+            Particle::Bid(20),
+            "Bid B should move up to (1,1)"
+        );
 
         // Verify original spot of Bid B is empty
         assert_eq!(grid.get(1, 2), Particle::Empty);

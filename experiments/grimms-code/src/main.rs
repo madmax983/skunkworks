@@ -1,4 +1,3 @@
-use std::io;
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
     execute,
@@ -8,18 +7,18 @@ use ratatui::{
     backend::{Backend, CrosstermBackend},
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
-    text::{Span, Line},
+    text::{Line, Span},
     widgets::{Block, Borders, Paragraph},
-    Terminal,
-    Frame,
+    Frame, Terminal,
 };
+use std::io;
 
+mod evolution;
 mod lexer;
 mod phonology;
-mod evolution;
 
-use phonology::{GrimmsLaw, HighGermanShift, GreatVowelShift, SoundChange};
 use evolution::Evolver;
+use phonology::{GreatVowelShift, GrimmsLaw, HighGermanShift, SoundChange};
 
 const SAMPLE_CODE: &str = r#"
 fn calculate_entropy(data: &[u8]) -> f64 {
@@ -135,7 +134,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn run_app<B: Backend<Error = io::Error>>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<()> {
+fn run_app<B: Backend<Error = io::Error>>(
+    terminal: &mut Terminal<B>,
+    app: &mut App,
+) -> io::Result<()> {
     loop {
         terminal.draw(|f| ui(f, app))?;
 
@@ -165,7 +167,12 @@ fn ui(f: &mut Frame, app: &App) {
 
     // Title
     let title = Paragraph::new(Line::from(vec![
-        Span::styled("Grimm's Code", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+        Span::styled(
+            "Grimm's Code",
+            Style::default()
+                .fg(Color::Cyan)
+                .add_modifier(Modifier::BOLD),
+        ),
         Span::raw(" - The Evolution of Source Code"),
     ]))
     .block(Block::default().borders(Borders::ALL));
@@ -178,8 +185,11 @@ fn ui(f: &mut Frame, app: &App) {
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
         .split(chunks[1]);
 
-    let original = Paragraph::new(app.original_code.as_str())
-        .block(Block::default().borders(Borders::ALL).title("Original (Proto-Code)"));
+    let original = Paragraph::new(app.original_code.as_str()).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Original (Proto-Code)"),
+    );
 
     f.render_widget(original, body_chunks[0]);
 
@@ -191,8 +201,11 @@ fn ui(f: &mut Frame, app: &App) {
 
     let evolved_title = format!("Era {}: {}", app.era_index, era_name);
 
-    let evolved = Paragraph::new(app.evolved_code.as_str())
-        .block(Block::default().borders(Borders::ALL).title(evolved_title.as_str()));
+    let evolved = Paragraph::new(app.evolved_code.as_str()).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(evolved_title.as_str()),
+    );
 
     f.render_widget(evolved, body_chunks[1]);
 
@@ -205,8 +218,7 @@ fn ui(f: &mut Frame, app: &App) {
         Span::raw(" to quit."),
     ]);
 
-    let footer = Paragraph::new(help_text)
-        .block(Block::default().borders(Borders::ALL));
+    let footer = Paragraph::new(help_text).block(Block::default().borders(Borders::ALL));
 
     f.render_widget(footer, chunks[2]);
 }

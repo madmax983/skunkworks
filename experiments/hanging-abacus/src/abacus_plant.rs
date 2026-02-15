@@ -12,11 +12,11 @@ pub fn get_lsystem_for_column(col: &Column) -> LSystem {
     // 0: Sparse
     // 4: Dense
     let f_rule = match earth {
-        0 => "FF",              // Just length
-        1 => "FF[+F]",          // One branch
-        2 => "FF[-F]",          // Other side
-        3 => "FF[+F][-F]",      // Both sides
-        4 => "FF[+F]F[-F]",     // More complex
+        0 => "FF",          // Just length
+        1 => "FF[+F]",      // One branch
+        2 => "FF[-F]",      // Other side
+        3 => "FF[+F][-F]",  // Both sides
+        4 => "FF[+F]F[-F]", // More complex
         _ => "F",
     };
 
@@ -25,16 +25,12 @@ pub fn get_lsystem_for_column(col: &Column) -> LSystem {
     let x_rule = if heaven {
         "F[+X][-X]O" // Bushy top with Flower
     } else {
-        "FX"         // Continue growing
+        "FX" // Continue growing
     };
 
     let o_rule = "O"; // Flower symbol
 
-    let rules = vec![
-        ('X', x_rule),
-        ('F', f_rule),
-        ('O', o_rule),
-    ];
+    let rules = vec![('X', x_rule), ('F', f_rule), ('O', o_rule)];
 
     LSystem::new(axiom, rules)
 }

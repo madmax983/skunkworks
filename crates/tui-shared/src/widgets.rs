@@ -1,9 +1,9 @@
 use ratatui::{
-    style::{Color, Style, Modifier},
-    widgets::{Block, Borders, List, ListItem, Widget},
     buffer::Buffer,
-    layout::{Rect},
+    layout::Rect,
+    style::{Color, Modifier, Style},
     text::Line,
+    widgets::{Block, Borders, List, ListItem, Widget},
 };
 
 /// A widget that displays a list of log messages with automatic color coding.
@@ -94,9 +94,14 @@ impl<'a> Button<'a> {
 impl<'a> Widget for Button<'a> {
     fn render(mut self, area: Rect, buf: &mut Buffer) {
         let style = if self.is_clicked {
-            Style::default().fg(Color::Black).bg(Color::Green).add_modifier(Modifier::BOLD)
+            Style::default()
+                .fg(Color::Black)
+                .bg(Color::Green)
+                .add_modifier(Modifier::BOLD)
         } else if self.is_hovered {
-            Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+            Style::default()
+                .fg(Color::Yellow)
+                .add_modifier(Modifier::BOLD)
         } else {
             Style::default().fg(Color::Gray)
         };

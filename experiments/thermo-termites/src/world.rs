@@ -180,60 +180,58 @@ impl World {
         let grid = &mut self.grid;
 
         // Parallel update
-        grid.par_iter_mut()
-            .enumerate()
-            .for_each(|(i, cell)| {
-                let x = i % width;
-                let y = i / width;
+        grid.par_iter_mut().enumerate().for_each(|(i, cell)| {
+            let x = i % width;
+            let y = i / width;
 
-                // Boundary check
-                if x == 0 || x == width - 1 || y == 0 || y == height - 1 {
-                    cell.heat *= 0.99; // Boundary cooling
-                    cell.pheromone *= 0.99;
-                    return;
-                }
+            // Boundary check
+            if x == 0 || x == width - 1 || y == 0 || y == height - 1 {
+                cell.heat *= 0.99; // Boundary cooling
+                cell.pheromone *= 0.99;
+                return;
+            }
 
-                // Physics Constants
-                let diffusion = 0.20;
-                let wall_insulation = 0.05;
-                let cooling = 0.001; // Global cooling
-                let evap = 0.02; // Pheromone evaporation
-                let pheromone_diffusion = 0.15;
-                let heat_gen = 5.0;
-                let max_heat = 1000.0;
+            // Physics Constants
+            let diffusion = 0.20;
+            let wall_insulation = 0.05;
+            let cooling = 0.001; // Global cooling
+            let evap = 0.02; // Pheromone evaporation
+            let pheromone_diffusion = 0.15;
+            let heat_gen = 5.0;
+            let max_heat = 1000.0;
 
-                // --- Heat Diffusion ---
-                if matches!(cell.material, Material::Server) {
-                    cell.heat = (current_heats[i] + heat_gen).min(max_heat);
+            // --- Heat Diffusion ---
+            if matches!(cell.material, Material::Server) {
+                cell.heat = (current_heats[i] + heat_gen).min(max_heat);
+            } else {
+                let top = current_heats[i - width];
+                let bottom = current_heats[i + width];
+                let left = current_heats[i - 1];
+                let right = current_heats[i + 1];
+
+                let avg = (top + bottom + left + right) * 0.25;
+                let diff = avg - current_heats[i];
+
+                let diff_rate = if matches!(cell.material, Material::Wall) {
+                    diffusion * wall_insulation
                 } else {
-                    let top = current_heats[i - width];
-                    let bottom = current_heats[i + width];
-                    let left = current_heats[i - 1];
-                    let right = current_heats[i + 1];
+                    diffusion
+                };
 
-                    let avg = (top + bottom + left + right) * 0.25;
-                    let diff = avg - current_heats[i];
+                cell.heat = (current_heats[i] + diff * diff_rate) * (1.0 - cooling);
+            }
 
-                    let diff_rate = if matches!(cell.material, Material::Wall) {
-                        diffusion * wall_insulation
-                    } else {
-                        diffusion
-                    };
+            // --- Pheromone Diffusion ---
+            let top_p = current_pheros[i - width];
+            let bottom_p = current_pheros[i + width];
+            let left_p = current_pheros[i - 1];
+            let right_p = current_pheros[i + 1];
 
-                    cell.heat = (current_heats[i] + diff * diff_rate) * (1.0 - cooling);
-                }
-
-                // --- Pheromone Diffusion ---
-                let top_p = current_pheros[i - width];
-                let bottom_p = current_pheros[i + width];
-                let left_p = current_pheros[i - 1];
-                let right_p = current_pheros[i + 1];
-
-                let avg_p = (top_p + bottom_p + left_p + right_p) * 0.25;
-                cell.pheromone = (current_pheros[i]
-                    + (avg_p - current_pheros[i]) * pheromone_diffusion)
-                    * (1.0 - evap);
-            });
+            let avg_p = (top_p + bottom_p + left_p + right_p) * 0.25;
+            cell.pheromone = (current_pheros[i]
+                + (avg_p - current_pheros[i]) * pheromone_diffusion)
+                * (1.0 - evap);
+        });
     }
 
     fn update_agents(&mut self) {
@@ -303,7 +301,11 @@ impl World {
                         if ix > 0 { Some(idx - 1) } else { None },
                         if ix < WIDTH - 1 { Some(idx + 1) } else { None },
                         if iy > 0 { Some(idx - WIDTH) } else { None },
-                        if iy < HEIGHT - 1 { Some(idx + WIDTH) } else { None },
+                        if iy < HEIGHT - 1 {
+                            Some(idx + WIDTH)
+                        } else {
+                            None
+                        },
                     ];
 
                     for n_opt in neighbors {
@@ -418,10 +420,10 @@ impl World {
                     let next_idx = next_iy * WIDTH + next_ix;
 
                     if next_idx < grid.len() && matches!(grid[next_idx].material, Material::Wall) {
-                         // Reflect
-                         agent.vx *= -0.8;
-                         agent.vy *= -0.8;
-                         // Don't move into wall
+                        // Reflect
+                        agent.vx *= -0.8;
+                        agent.vy *= -0.8;
+                        // Don't move into wall
                     } else {
                         agent.x = next_x;
                         agent.y = next_y;
@@ -432,7 +434,7 @@ impl World {
                     agent.vy *= 0.98;
 
                     // Bounds
-                     if agent.x <= 0.0 || agent.x >= width - 1.0 {
+                    if agent.x <= 0.0 || agent.x >= width - 1.0 {
                         agent.vx *= -1.0;
                         agent.x = agent.x.clamp(0.0, width - 1.0);
                     }

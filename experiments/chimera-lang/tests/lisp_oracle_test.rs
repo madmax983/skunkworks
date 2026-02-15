@@ -1,10 +1,10 @@
 #[cfg(feature = "oracle")]
 #[cfg(test)]
 mod tests {
-    use chimera_lang::vm::ChimeraVM;
-    use chimera_lang::lisp;
-    use chimera_lang::vm::Value;
     use chimera_lang::ast::JunctionType;
+    use chimera_lang::lisp;
+    use chimera_lang::vm::ChimeraVM;
+    use chimera_lang::vm::Value;
 
     #[test]
     fn test_lisp_rule_query() {
@@ -33,8 +33,8 @@ mod tests {
         assert_eq!(success, Value::Int(1));
 
         if let Value::Junction(JunctionType::All, list) = bindings {
-             println!("Bindings: {:?}", list);
-             assert!(!list.is_empty());
+            println!("Bindings: {:?}", list);
+            assert!(!list.is_empty());
         } else {
             panic!("Expected bindings list");
         }

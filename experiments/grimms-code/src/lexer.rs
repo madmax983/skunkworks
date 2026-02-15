@@ -59,7 +59,9 @@ pub enum Token {
     #[regex(r"'([^'\\]|\\.)'")]
     Char,
 
-    #[regex(r"[0-9][0-9_]*(\.[0-9][0-9_]*)?([eE][+-]?[0-9_]+)?(f32|f64|i32|u32|i64|u64|isize|usize)?")]
+    #[regex(
+        r"[0-9][0-9_]*(\.[0-9][0-9_]*)?([eE][+-]?[0-9_]+)?(f32|f64|i32|u32|i64|u64|isize|usize)?"
+    )]
     Number,
 
     // Punctuation

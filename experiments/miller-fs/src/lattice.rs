@@ -93,16 +93,25 @@ impl Crystal {
             // First point (0,0) is skipped because it's the parent itself?
             // Actually, the parent is already placed. We want to place children AROUND it.
             // So start r=1.
-            for r in 1..=max_r + 5 { // Add padding
+            for r in 1..=max_r + 5 {
+                // Add padding
                 // Perimeter of square radius r
                 // Top: y=r, x from -r to r
-                for dx in -r..=r { coords.push_back((dx, r)); }
+                for dx in -r..=r {
+                    coords.push_back((dx, r));
+                }
                 // Right: x=r, y from r-1 down to -r
-                for dy in (-r..r).rev() { coords.push_back((r, dy)); }
+                for dy in (-r..r).rev() {
+                    coords.push_back((r, dy));
+                }
                 // Bottom: y=-r, x from r-1 down to -r
-                for dx in (-r..r).rev() { coords.push_back((dx, -r)); }
+                for dx in (-r..r).rev() {
+                    coords.push_back((dx, -r));
+                }
                 // Left: x=-r, y from -r+1 up to r-1
-                for dy in (-r + 1)..r { coords.push_back((-r, dy)); }
+                for dy in (-r + 1)..r {
+                    coords.push_back((-r, dy));
+                }
             }
 
             for entry in entries {
@@ -113,16 +122,16 @@ impl Crystal {
 
                 // Search for next free spot
                 while let Some((du, dv)) = coords.pop_front() {
-                     let pos = LatticePoint::new(
-                         parent_pos.x + du * u.x + dv * v.x,
-                         parent_pos.y + du * u.y + dv * v.y,
-                         parent_pos.z + du * u.z + dv * v.z,
-                     );
+                    let pos = LatticePoint::new(
+                        parent_pos.x + du * u.x + dv * v.x,
+                        parent_pos.y + du * u.y + dv * v.y,
+                        parent_pos.z + du * u.z + dv * v.z,
+                    );
 
-                     if !occupied.contains(&pos) {
-                         found_pos = Some(pos);
-                         break;
-                     }
+                    if !occupied.contains(&pos) {
+                        found_pos = Some(pos);
+                        break;
+                    }
                 }
 
                 if let Some(pos) = found_pos {
@@ -189,16 +198,12 @@ fn get_dir_normal(name: &str, parent_normal: Vector3<i32>) -> Vector3<i32> {
         Vector3::new(1, 0, 0),
         Vector3::new(0, 1, 0),
         Vector3::new(0, 0, 1),
-
         Vector3::new(1, 1, 0),
         Vector3::new(1, -1, 0),
-
         Vector3::new(1, 0, 1),
         Vector3::new(1, 0, -1),
-
         Vector3::new(0, 1, 1),
         Vector3::new(0, 1, -1),
-
         Vector3::new(1, 1, 1),
     ];
 
@@ -239,7 +244,11 @@ mod tests {
 
         let mut positions = HashSet::new();
         for atom in &crystal.atoms {
-            assert!(positions.insert(atom.position), "Duplicate position: {:?}", atom.position);
+            assert!(
+                positions.insert(atom.position),
+                "Duplicate position: {:?}",
+                atom.position
+            );
         }
 
         fs::remove_dir_all(&temp_dir)?;

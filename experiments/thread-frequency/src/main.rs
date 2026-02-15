@@ -49,13 +49,13 @@ fn main() -> Result<()> {
     // Musicians configuration
     // (Name, Period(ms), Voice, WorkLoad(iters), Drift(ms))
     let configs = vec![
-        ("Kick", 500, Voice::Kick, 1000, 0),          // Anchor: 120 BPM, stable
-        ("Snare", 666, Voice::Snare, 2000, 5),        // Polyrhythm 3:4ish, slight drift
-        ("HiHat", 250, Voice::Hihat, 500, 15),        // Fast, jittery (human feel)
-        ("Perc", 400, Voice::Clave, 3000, 2),         // 150 BPM, contends moderately
-        ("Bass", 1500, Voice::Synth(0), 10000, 0),    // Slow, Heavy work (blocks others)
-        ("Pad", 1103, Voice::Synth(7), 5000, 10),     // Prime period, moderate work
-        ("Glitch", 293, Voice::Synth(12), 100, 50),   // Fast prime, very jittery
+        ("Kick", 500, Voice::Kick, 1000, 0),   // Anchor: 120 BPM, stable
+        ("Snare", 666, Voice::Snare, 2000, 5), // Polyrhythm 3:4ish, slight drift
+        ("HiHat", 250, Voice::Hihat, 500, 15), // Fast, jittery (human feel)
+        ("Perc", 400, Voice::Clave, 3000, 2),  // 150 BPM, contends moderately
+        ("Bass", 1500, Voice::Synth(0), 10000, 0), // Slow, Heavy work (blocks others)
+        ("Pad", 1103, Voice::Synth(7), 5000, 10), // Prime period, moderate work
+        ("Glitch", 293, Voice::Synth(12), 100, 50), // Fast prime, very jittery
     ];
 
     let mut names = Vec::new();

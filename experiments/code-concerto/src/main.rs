@@ -84,18 +84,18 @@ async fn run() -> anyhow::Result<()> {
         let dt = get_frame_time() as f64;
 
         if !is_key_down(KeyCode::Space) {
-             visualizer.update(dt);
+            visualizer.update(dt);
 
-             let now = visualizer.current_time;
-             while playback.next_event_idx < playback.events.len() {
-                 let (t, event) = &playback.events[playback.next_event_idx];
-                 if *t <= now {
-                     audio.play_event(event);
-                     playback.next_event_idx += 1;
-                 } else {
-                     break;
-                 }
-             }
+            let now = visualizer.current_time;
+            while playback.next_event_idx < playback.events.len() {
+                let (t, event) = &playback.events[playback.next_event_idx];
+                if *t <= now {
+                    audio.play_event(event);
+                    playback.next_event_idx += 1;
+                } else {
+                    break;
+                }
+            }
         }
 
         clear_background(BLACK);

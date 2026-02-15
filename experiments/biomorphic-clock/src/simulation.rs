@@ -1,5 +1,5 @@
-use rayon::prelude::*;
 use rand::Rng;
+use rayon::prelude::*;
 
 pub struct Grid {
     pub width: usize,
@@ -168,6 +168,9 @@ mod tests {
 
         let center_seeds = grid.v.iter().filter(|&&v| v > 0.0).count();
         assert!(center_seeds > 0, "Should have seeded at least one cell");
-        assert!(center_seeds <= 100, "Should not exceed max possible seeds (10x10 area)");
+        assert!(
+            center_seeds <= 100,
+            "Should not exceed max possible seeds (10x10 area)"
+        );
     }
 }

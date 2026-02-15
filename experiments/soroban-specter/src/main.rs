@@ -2,8 +2,8 @@ mod fluid;
 mod market;
 
 use fluid::FluidSolver;
-use market::{Market, Signal, Trader};
 use macroquad::prelude::*;
+use market::{Market, Signal, Trader};
 use soroban::Soroban;
 
 // --- Constants ---
@@ -24,7 +24,7 @@ struct BeadChange {
     col_idx: usize,
     is_upper: bool,
     bead_index: Option<u8>, // For lower beads, which one moved? Or just general activity?
-                            // Simplified: Just position of activity.
+    // Simplified: Just position of activity.
     active: bool, // Moving to active or inactive?
 }
 
@@ -53,7 +53,7 @@ fn diff_soroban(old: &Soroban, new: &Soroban) -> Vec<BeadChange> {
             let end = o.lower_active.max(n.lower_active);
 
             for b in start..end {
-                 changes.push(BeadChange {
+                changes.push(BeadChange {
                     col_idx: i,
                     is_upper: false,
                     bead_index: Some(b),
@@ -79,7 +79,11 @@ fn get_bead_pos(col_idx: usize, is_upper: bool, bead_idx: Option<u8>, active: bo
     let rod_x = FRAME_X + ((ROD_COUNT - 1 - col_idx) as f32) * ROD_SPACING + ROD_SPACING / 2.0;
 
     let y = if is_upper {
-        if active { UPPER_BEAD_ACTIVE_Y } else { UPPER_BEAD_REST_Y }
+        if active {
+            UPPER_BEAD_ACTIVE_Y
+        } else {
+            UPPER_BEAD_REST_Y
+        }
     } else {
         let b = bead_idx.unwrap_or(0);
         // Wait, "active" in lower beads means PUSHED UP.
@@ -99,7 +103,7 @@ fn get_bead_pos(col_idx: usize, is_upper: bool, bead_idx: Option<u8>, active: bo
 
     // Correction for Lower Down position:
     let final_y = if !is_upper && !active {
-         LOWER_BEAD_ACTIVE_START_Y + (bead_idx.unwrap_or(0) as f32) * BEAD_HEIGHT + 60.0
+        LOWER_BEAD_ACTIVE_START_Y + (bead_idx.unwrap_or(0) as f32) * BEAD_HEIGHT + 60.0
     } else {
         y
     };
@@ -108,9 +112,16 @@ fn get_bead_pos(col_idx: usize, is_upper: bool, bead_idx: Option<u8>, active: bo
 }
 
 fn draw_bead(x: f32, y: f32, color: Color) {
-    draw_poly(x, y + BEAD_HEIGHT/2.0, 6, BEAD_RADIUS, 90.0, color);
+    draw_poly(x, y + BEAD_HEIGHT / 2.0, 6, BEAD_RADIUS, 90.0, color);
     // Highlight
-    draw_poly(x - 3.0, y + BEAD_HEIGHT/2.0 - 3.0, 6, BEAD_RADIUS * 0.3, 90.0, WHITE);
+    draw_poly(
+        x - 3.0,
+        y + BEAD_HEIGHT / 2.0 - 3.0,
+        6,
+        BEAD_RADIUS * 0.3,
+        90.0,
+        WHITE,
+    );
 }
 
 fn draw_soroban(soroban: &Soroban) {
@@ -120,7 +131,7 @@ fn draw_soroban(soroban: &Soroban) {
         FRAME_Y - 20.0,
         (ROD_COUNT as f32) * ROD_SPACING + 40.0,
         400.0,
-        Color::new(0.4, 0.2, 0.1, 0.8) // Semi-transparent wood
+        Color::new(0.4, 0.2, 0.1, 0.8), // Semi-transparent wood
     );
 
     // Beam
@@ -130,7 +141,7 @@ fn draw_soroban(soroban: &Soroban) {
         FRAME_X + (ROD_COUNT as f32) * ROD_SPACING + 10.0,
         BEAM_Y,
         5.0,
-        BLACK
+        BLACK,
     );
 
     for (i, col) in soroban.columns.iter().enumerate() {
@@ -140,7 +151,11 @@ fn draw_soroban(soroban: &Soroban) {
         draw_line(rod_x, FRAME_Y, rod_x, FRAME_Y + 380.0, 3.0, DARKGRAY);
 
         // Upper Bead
-        let upper_y = if col.upper_active { UPPER_BEAD_ACTIVE_Y } else { UPPER_BEAD_REST_Y };
+        let upper_y = if col.upper_active {
+            UPPER_BEAD_ACTIVE_Y
+        } else {
+            UPPER_BEAD_REST_Y
+        };
         draw_bead(rod_x, upper_y, RED);
 
         // Lower Beads
@@ -207,7 +222,12 @@ async fn main() -> anyhow::Result<()> {
             // `change.active` tells us the NEW state.
             // If it became active, it moved UP. If inactive, moved DOWN.
 
-            let pos = get_bead_pos(change.col_idx, change.is_upper, change.bead_index, change.active);
+            let pos = get_bead_pos(
+                change.col_idx,
+                change.is_upper,
+                change.bead_index,
+                change.active,
+            );
 
             // Map Screen Pos to Fluid Grid
             let fx = (pos.x / screen_width() * FLUID_SIZE as f32) as usize;
@@ -222,9 +242,17 @@ async fn main() -> anyhow::Result<()> {
                 // Lower bead: Active=Up, Inactive=Down.
 
                 let vy = if change.is_upper {
-                    if change.active { 5.0 } else { -5.0 } // Down / Up
+                    if change.active {
+                        5.0
+                    } else {
+                        -5.0
+                    } // Down / Up
                 } else {
-                    if change.active { -5.0 } else { 5.0 } // Up / Down
+                    if change.active {
+                        -5.0
+                    } else {
+                        5.0
+                    } // Up / Down
                 };
 
                 fluid.add_velocity(fx, fy, 0.0, vy);
@@ -236,9 +264,9 @@ async fn main() -> anyhow::Result<()> {
             let (mx, my) = mouse_position();
             let fx = (mx / screen_width() * FLUID_SIZE as f32) as usize;
             let fy = (my / screen_height() * FLUID_SIZE as f32) as usize;
-             if fx < FLUID_SIZE && fy < FLUID_SIZE {
+            if fx < FLUID_SIZE && fy < FLUID_SIZE {
                 fluid.add_density(fx, fy, 20.0);
-             }
+            }
         }
 
         // Step Fluid
@@ -280,8 +308,20 @@ async fn main() -> anyhow::Result<()> {
 
         // Draw Info
         draw_text("SOROBAN SPECTER", 20.0, 30.0, 30.0, WHITE);
-        draw_text(format!("Price: {}", market.current_price).as_str(), 20.0, 60.0, 20.0, GREEN);
-        draw_text(format!("SMA: {}", trader.current_sma).as_str(), 20.0, 80.0, 20.0, YELLOW);
+        draw_text(
+            format!("Price: {}", market.current_price).as_str(),
+            20.0,
+            60.0,
+            20.0,
+            GREEN,
+        );
+        draw_text(
+            format!("SMA: {}", trader.current_sma).as_str(),
+            20.0,
+            80.0,
+            20.0,
+            YELLOW,
+        );
 
         let signal_text = match trader.last_signal {
             Signal::Buy => "BUY",

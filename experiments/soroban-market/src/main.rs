@@ -2,8 +2,8 @@ use macroquad::prelude::*;
 
 mod market;
 
+use crate::market::{Market, Signal, Trader};
 use soroban::Soroban;
-use crate::market::{Market, Trader, Signal};
 
 const BEAD_RADIUS: f32 = 12.0;
 const BEAD_HEIGHT: f32 = 18.0;
@@ -17,8 +17,15 @@ const UPPER_BEAD_ACTIVE_Y: f32 = BEAM_Y - BEAD_HEIGHT - 5.0;
 const LOWER_BEAD_ACTIVE_START_Y: f32 = BEAM_Y + 5.0;
 
 fn draw_bead(x: f32, y: f32, color: Color) {
-    draw_poly(x, y + BEAD_HEIGHT/2.0, 6, BEAD_RADIUS, 90.0, color);
-    draw_poly(x - 3.0, y + BEAD_HEIGHT/2.0 - 3.0, 6, BEAD_RADIUS * 0.3, 90.0, WHITE);
+    draw_poly(x, y + BEAD_HEIGHT / 2.0, 6, BEAD_RADIUS, 90.0, color);
+    draw_poly(
+        x - 3.0,
+        y + BEAD_HEIGHT / 2.0 - 3.0,
+        6,
+        BEAD_RADIUS * 0.3,
+        90.0,
+        WHITE,
+    );
 }
 
 fn draw_soroban(soroban: &Soroban) {
@@ -28,14 +35,14 @@ fn draw_soroban(soroban: &Soroban) {
         FRAME_Y - 20.0,
         (ROD_COUNT as f32) * ROD_SPACING + 40.0,
         400.0,
-        BROWN
+        BROWN,
     );
     draw_rectangle(
         FRAME_X - 10.0,
         FRAME_Y - 10.0,
         (ROD_COUNT as f32) * ROD_SPACING + 20.0,
         380.0,
-        BEIGE
+        BEIGE,
     );
 
     // Draw Beam
@@ -45,7 +52,7 @@ fn draw_soroban(soroban: &Soroban) {
         FRAME_X + (ROD_COUNT as f32) * ROD_SPACING + 10.0,
         BEAM_Y,
         5.0,
-        BLACK
+        BLACK,
     );
 
     for (i, col) in soroban.columns.iter().enumerate() {
@@ -56,7 +63,11 @@ fn draw_soroban(soroban: &Soroban) {
         draw_line(rod_x, FRAME_Y, rod_x, FRAME_Y + 380.0, 3.0, DARKGRAY);
 
         // Draw Upper Bead (Heaven)
-        let upper_y = if col.upper_active { UPPER_BEAD_ACTIVE_Y } else { UPPER_BEAD_REST_Y };
+        let upper_y = if col.upper_active {
+            UPPER_BEAD_ACTIVE_Y
+        } else {
+            UPPER_BEAD_REST_Y
+        };
         draw_bead(rod_x, upper_y, RED);
 
         // Draw Lower Beads (Earth)
@@ -75,7 +86,6 @@ fn draw_soroban(soroban: &Soroban) {
     }
 }
 
-
 fn draw_market(market: &Market, sma: u64, signal: Signal) {
     let base_x = 50.0;
     let base_y = 450.0;
@@ -89,14 +99,16 @@ fn draw_market(market: &Market, sma: u64, signal: Signal) {
     let max_p = *market.prices.iter().max().unwrap_or(&10000).max(&sma);
     let range = (max_p - min_p).max(1) as f32;
 
-    if market.prices.len() < 2 { return; }
+    if market.prices.len() < 2 {
+        return;
+    }
 
     let step_x = width / (market.prices.len().max(10) as f32);
 
     // Draw prices
-    for i in 0..market.prices.len()-1 {
+    for i in 0..market.prices.len() - 1 {
         let p1 = market.prices[i];
-        let p2 = market.prices[i+1];
+        let p2 = market.prices[i + 1];
 
         let y1 = base_y + height - ((p1 - min_p) as f32 / range) * height;
         let y2 = base_y + height - ((p2 - min_p) as f32 / range) * height;
@@ -111,8 +123,20 @@ fn draw_market(market: &Market, sma: u64, signal: Signal) {
     let sma_y = base_y + height - ((sma - min_p) as f32 / range) * height;
     draw_line(base_x, sma_y, base_x + width, sma_y, 2.0, YELLOW);
 
-    draw_text(&format!("SMA: {}", sma), base_x + 10.0, base_y + 20.0, 20.0, YELLOW);
-    draw_text(&format!("Price: {}", market.current_price), base_x + 10.0, base_y + 40.0, 20.0, GREEN);
+    draw_text(
+        &format!("SMA: {}", sma),
+        base_x + 10.0,
+        base_y + 20.0,
+        20.0,
+        YELLOW,
+    );
+    draw_text(
+        &format!("Price: {}", market.current_price),
+        base_x + 10.0,
+        base_y + 40.0,
+        20.0,
+        GREEN,
+    );
 
     // Draw Signal
     let (text, color) = match signal {

@@ -1,8 +1,8 @@
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::*;
 use bevy_prototype_lyon::prelude::*;
-use celestial_cipher::orrery::{Planet, MainShaft, PlanetArm, spawn_orrery};
-use celestial_cipher::cipher::{generate_key, encrypt_decrypt};
+use bevy_rapier2d::prelude::*;
+use celestial_cipher::cipher::{encrypt_decrypt, generate_key};
+use celestial_cipher::orrery::{spawn_orrery, MainShaft, Planet, PlanetArm};
 
 #[derive(Resource)]
 struct CipherState {
@@ -44,70 +44,74 @@ fn setup_camera(mut commands: Commands) {
 }
 
 fn setup_ui(mut commands: Commands) {
-    commands.spawn(NodeBundle {
-        style: Style {
-            width: Val::Percent(100.0),
-            height: Val::Percent(100.0),
-            flex_direction: FlexDirection::Column,
-            justify_content: JustifyContent::SpaceBetween,
-            padding: UiRect::all(Val::Px(20.0)),
-            ..default()
-        },
-        ..default()
-    }).with_children(|parent| {
-        // Header
-        parent.spawn(TextBundle::from_section(
-            "Celestial Cipher Mechanism",
-            TextStyle {
-                font_size: 30.0,
-                color: Color::WHITE,
-                ..default()
-            },
-        ));
-
-        // Info Panel
-        parent.spawn(NodeBundle {
+    commands
+        .spawn(NodeBundle {
             style: Style {
+                width: Val::Percent(100.0),
+                height: Val::Percent(100.0),
                 flex_direction: FlexDirection::Column,
+                justify_content: JustifyContent::SpaceBetween,
+                padding: UiRect::all(Val::Px(20.0)),
                 ..default()
             },
             ..default()
-        }).with_children(|panel| {
-            panel.spawn((
-                TextBundle::from_section(
-                    "Key: ...",
-                    TextStyle {
-                        font_size: 20.0,
-                        color: Color::srgb(1.0, 0.84, 0.0),
-                        ..default()
-                    },
-                ),
-                KeyText,
+        })
+        .with_children(|parent| {
+            // Header
+            parent.spawn(TextBundle::from_section(
+                "Celestial Cipher Mechanism",
+                TextStyle {
+                    font_size: 30.0,
+                    color: Color::WHITE,
+                    ..default()
+                },
             ));
 
-            panel.spawn((
-                TextBundle::from_section(
-                    "Decrypted: ...",
-                    TextStyle {
-                        font_size: 20.0,
-                        color: Color::srgb(0.0, 1.0, 0.0),
+            // Info Panel
+            parent
+                .spawn(NodeBundle {
+                    style: Style {
+                        flex_direction: FlexDirection::Column,
                         ..default()
                     },
-                ),
-                MessageText,
+                    ..default()
+                })
+                .with_children(|panel| {
+                    panel.spawn((
+                        TextBundle::from_section(
+                            "Key: ...",
+                            TextStyle {
+                                font_size: 20.0,
+                                color: Color::srgb(1.0, 0.84, 0.0),
+                                ..default()
+                            },
+                        ),
+                        KeyText,
+                    ));
+
+                    panel.spawn((
+                        TextBundle::from_section(
+                            "Decrypted: ...",
+                            TextStyle {
+                                font_size: 20.0,
+                                color: Color::srgb(0.0, 1.0, 0.0),
+                                ..default()
+                            },
+                        ),
+                        MessageText,
+                    ));
+                });
+
+            // Controls
+            parent.spawn(TextBundle::from_section(
+                "Controls: Left/Right Arrow to Wind Time",
+                TextStyle {
+                    font_size: 15.0,
+                    color: Color::srgb(0.5, 0.5, 0.5),
+                    ..default()
+                },
             ));
         });
-
-        // Controls
-        parent.spawn(TextBundle::from_section(
-            "Controls: Left/Right Arrow to Wind Time",
-            TextStyle {
-                font_size: 15.0,
-                color: Color::srgb(0.5, 0.5, 0.5),
-                ..default()
-            },
-        ));
-    });
 }
 
 fn control_input(
@@ -149,7 +153,9 @@ fn update_cipher_ui(
 
     let angles: Vec<f32> = planets.iter().map(|(_, a)| *a).collect();
 
-    if angles.is_empty() { return; }
+    if angles.is_empty() {
+        return;
+    }
 
     // 2. Generate Key
     let key = generate_key(&angles);

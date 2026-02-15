@@ -47,14 +47,20 @@ fn main() -> Result<()> {
 
             // Draw Plants
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title(" Hanging Abacus "))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title(" Hanging Abacus "),
+                )
                 .x_bounds([0.0, width])
                 .y_bounds([0.0, height])
                 .paint(|ctx| {
                     let col_spacing = width / 14.0; // 13 columns + margins
 
                     for (i, col) in soroban.columns.iter().enumerate() {
-                        if i >= 13 { break; } // Safety against future column size changes
+                        if i >= 13 {
+                            break;
+                        } // Safety against future column size changes
 
                         // Position: Col 0 (Ones) is rightmost usually on Soroban
                         // But let's map left-to-right: Col 12 (Trillions) -> Col 0 (Ones)
@@ -77,7 +83,13 @@ fn main() -> Result<()> {
                         let lsys = get_lsystem_for_column(col);
                         let instructions = lsys.expand(PLANT_ITERATIONS);
 
-                        let mut turtle = Turtle::new(x, y_start, -std::f64::consts::FRAC_PI_2, PLANT_STEP_SIZE, PLANT_ANGLE_INCREMENT);
+                        let mut turtle = Turtle::new(
+                            x,
+                            y_start,
+                            -std::f64::consts::FRAC_PI_2,
+                            PLANT_STEP_SIZE,
+                            PLANT_ANGLE_INCREMENT,
+                        );
                         let lines = turtle.interpret(&instructions);
 
                         for line in lines {
@@ -85,7 +97,11 @@ fn main() -> Result<()> {
                             // Heaven active -> Red flower?
                             // Earth active -> Green leaves?
 
-                            let color = if col.upper_active { Color::Red } else { Color::Green };
+                            let color = if col.upper_active {
+                                Color::Red
+                            } else {
+                                Color::Green
+                            };
 
                             ctx.draw(&CanvasLine {
                                 x1: line.x1,
@@ -107,7 +123,10 @@ fn main() -> Result<()> {
                 soroban_val, input_buffer, input_error
             );
 
-            f.render_widget(Paragraph::new(status_text).block(Block::default().borders(Borders::ALL)), chunks[1]);
+            f.render_widget(
+                Paragraph::new(status_text).block(Block::default().borders(Borders::ALL)),
+                chunks[1],
+            );
         })?;
 
         // Handle Input
@@ -134,7 +153,7 @@ fn main() -> Result<()> {
                             }
                         }
                         KeyCode::Esc => {
-                             input_buffer.clear();
+                            input_buffer.clear();
                         }
                         _ => {}
                     }

@@ -107,7 +107,9 @@ impl Garden {
     pub fn update(&mut self, dt: f64) {
         // Update particles physics
         for p in &mut self.particles {
-            if !p.alive { continue; }
+            if !p.alive {
+                continue;
+            }
             p.vy += self.gravity * dt;
             p.y += p.vy * dt;
 
@@ -127,24 +129,32 @@ impl Garden {
         // we can process particles one by one against the mutable garden.
 
         let particles_len = self.particles.len();
-        if particles_len == 0 { return; }
+        if particles_len == 0 {
+            return;
+        }
 
         for p_idx in 0..particles_len {
             let p = self.particles[p_idx];
-            if !p.alive { continue; }
+            if !p.alive {
+                continue;
+            }
 
             let mut particle_killed = false;
 
             for plant in &mut self.plants {
                 // Bounds check
-                if (p.x - plant.x).abs() > 200.0 { continue; } // Rough bound
+                if (p.x - plant.x).abs() > 200.0 {
+                    continue;
+                } // Rough bound
 
                 // Check lines
                 // We want to remove the line if hit.
                 // retain allows us to remove elements based on a predicate.
                 plant.lines.retain(|line| {
-                    if particle_killed { return true; } // Already hit something this frame?
-                    // Actually, one particle kills one line.
+                    if particle_killed {
+                        return true;
+                    } // Already hit something this frame?
+                      // Actually, one particle kills one line.
 
                     // Simple AABB check for line
                     let min_x = line.x1.min(line.x2) - 1.0;
@@ -165,7 +175,9 @@ impl Garden {
                     true
                 });
 
-                if particle_killed { break; }
+                if particle_killed {
+                    break;
+                }
             }
 
             if particle_killed {
@@ -182,7 +194,9 @@ impl Garden {
 
 fn point_segment_distance(px: f64, py: f64, x1: f64, y1: f64, x2: f64, y2: f64) -> f64 {
     let l2 = (x2 - x1).powi(2) + (y2 - y1).powi(2);
-    if l2 == 0.0 { return ((px - x1).powi(2) + (py - y1).powi(2)).sqrt(); }
+    if l2 == 0.0 {
+        return ((px - x1).powi(2) + (py - y1).powi(2)).sqrt();
+    }
 
     let t = ((px - x1) * (x2 - x1) + (py - y1) * (y2 - y1)) / l2;
     let t = t.clamp(0.0, 1.0);

@@ -33,7 +33,7 @@ impl Parser {
         s.hash(&mut hasher);
         let h = hasher.finish();
 
-        let degrees = [1.0, 9.0/8.0, 5.0/4.0, 3.0/2.0, 5.0/3.0];
+        let degrees = [1.0, 9.0 / 8.0, 5.0 / 4.0, 3.0 / 2.0, 5.0 / 3.0];
         let degree = degrees[(h as usize) % degrees.len()];
 
         let base_c4 = 261.63;
@@ -143,9 +143,9 @@ impl<'ast> Visit<'ast> for Parser {
         for (idx, _stmt) in i.block.stmts.iter().enumerate() {
             let pitch_mod = match idx % 4 {
                 0 => 1.0,       // Root
-                1 => 9.0/8.0,   // 2nd
-                2 => 5.0/4.0,   // 3rd
-                3 => 3.0/2.0,   // 5th
+                1 => 9.0 / 8.0, // 2nd
+                2 => 5.0 / 4.0, // 3rd
+                3 => 3.0 / 2.0, // 5th
                 _ => 1.0,
             };
 
@@ -161,7 +161,7 @@ impl<'ast> Visit<'ast> for Parser {
         }
 
         if stmt_count == 0 {
-             events.push(MusicalEvent::NoteOn {
+            events.push(MusicalEvent::NoteOn {
                 instrument: Instrument::Lead,
                 pitch: base_freq,
                 volume: 0.6,
@@ -184,9 +184,16 @@ impl<'ast> Visit<'ast> for Parser {
 
     fn visit_item_impl(&mut self, i: &'ast ItemImpl) {
         let name = if let Some((_, path, _)) = &i.trait_ {
-            path.segments.last().map(|s| s.ident.to_string()).unwrap_or_else(|| "Trait".to_string())
+            path.segments
+                .last()
+                .map(|s| s.ident.to_string())
+                .unwrap_or_else(|| "Trait".to_string())
         } else if let syn::Type::Path(p) = &*i.self_ty {
-             p.path.segments.last().map(|s| s.ident.to_string()).unwrap_or_else(|| "Type".to_string())
+            p.path
+                .segments
+                .last()
+                .map(|s| s.ident.to_string())
+                .unwrap_or_else(|| "Type".to_string())
         } else {
             "Impl".to_string()
         };
