@@ -1,8 +1,8 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/trace-erosion
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Condemned. Deceptive implementation confirmed (random graph generation). Awaiting execution.
+### [Concentration Level: TOXIC] - Location: experiments/magnetic-echo
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Compilation Failure. Redundant. Awaiting execution.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/tactical-tide
 
@@ -985,3 +985,7 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spawning. Market activity generates heat. Termites build cooling fins. The invisible hand is hot.
 - **Note:** Hybrid of experiments/process-auction + experiments/thermo-termites.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/trace-erosion
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Deceptive implementation masked as analysis (random graph generation). Documentation void.
