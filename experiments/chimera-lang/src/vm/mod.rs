@@ -585,6 +585,10 @@ pub struct ChimeraVM {
     pub neurons: std::collections::HashMap<(usize, usize), neuron::Neuron>,
     #[cfg(feature = "biophysics")]
     pub biophysics_synapses: HashMap<(usize, usize), Vec<((usize, usize), f32)>>,
+    #[cfg(feature = "biophysics")]
+    pub biophysics_couplings: HashMap<(usize, usize), f32>,
+    #[cfg(feature = "biophysics")]
+    pub neuron_to_cortex_map: HashMap<(usize, usize), Vec<usize>>,
     #[cfg(feature = "nova")]
     pub blackbox: blackbox::Blackbox,
     #[cfg(feature = "silicon")]
@@ -899,6 +903,10 @@ impl ChimeraVM {
             neurons: std::collections::HashMap::new(),
             #[cfg(feature = "biophysics")]
             biophysics_synapses: HashMap::new(),
+            #[cfg(feature = "biophysics")]
+            biophysics_couplings: HashMap::new(),
+            #[cfg(feature = "biophysics")]
+            neuron_to_cortex_map: HashMap::new(),
             #[cfg(feature = "nova")]
             blackbox: blackbox::Blackbox::new(),
             #[cfg(feature = "silicon")]
@@ -2042,6 +2050,17 @@ impl ChimeraVM {
                     for (target, weight) in targets {
                         if let Some(target_neuron) = self.neurons.get_mut(target) {
                             target_neuron.i_inj += weight * 10.0;
+                        }
+                    }
+                }
+
+                // Synaptic Bridge: Neuron -> Cortex
+                #[cfg(feature = "cortex")]
+                if let Some(strands) = self.neuron_to_cortex_map.get(&source) {
+                    for &s_idx in strands {
+                        if s_idx < self.activation_levels.len() {
+                            self.activation_levels[s_idx] =
+                                self.activation_levels[s_idx].saturating_add(20);
                         }
                     }
                 }
@@ -3267,7 +3286,9 @@ impl ChimeraVM {
             | OpCode::Stimulate
             | OpCode::Dendrite
             | OpCode::Axon
-            | OpCode::Receptor => {
+            | OpCode::Receptor
+            | OpCode::NeuroCoupling
+            | OpCode::NeuroSynapse => {
                 neuron::exec_biophysics_op(self, op, args);
                 None
             }

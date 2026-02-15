@@ -261,6 +261,63 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
                     .push("Error: Stack underflow for receptor".to_string());
             }
         }
+        OpCode::NeuroCoupling => {
+            // Stack: [ ..., weight, y, x ]
+            if vm.stack.len() >= 3 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                let w_val = vm.stack.pop().unwrap();
+                if let (Value::Int(y), Value::Int(x), Value::Int(w)) = (y_val, x_val, w_val) {
+                    if vm.is_valid_coord(y, x) {
+                        let coord = (y as usize, x as usize);
+                        if vm.neurons.contains_key(&coord) {
+                            // Weight 100 = 1.0
+                            let weight = w as f32 / 100.0;
+                            vm.biophysics_couplings.insert(coord, weight);
+                            vm.output.push(format!("NEURO_COUPLING: Set {:.2} at {},{}", weight, x, y));
+                        } else {
+                            vm.output.push(format!("NEURO_COUPLING: No neuron at {},{}", x, y));
+                        }
+                    } else {
+                        vm.output.push("Error: Invalid coordinate for NeuroCoupling".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for NeuroCoupling".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for NeuroCoupling".to_string());
+            }
+        }
+        OpCode::NeuroSynapse => {
+            // Stack: [ ..., strand_idx, y, x ]
+            if vm.stack.len() >= 3 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                let s_val = vm.stack.pop().unwrap();
+                if let (Value::Int(y), Value::Int(x), Value::Int(s_idx)) = (y_val, x_val, s_val) {
+                    if vm.is_valid_coord(y, x) {
+                        let coord = (y as usize, x as usize);
+                        let s_idx = s_idx as usize;
+                        if s_idx < vm.dna.helix.strands.len() {
+                            if vm.neurons.contains_key(&coord) {
+                                vm.neuron_to_cortex_map.entry(coord).or_default().push(s_idx);
+                                vm.output.push(format!("NEURO_SYNAPSE: Connected {},{} -> Strand {}", x, y, s_idx));
+                            } else {
+                                vm.output.push(format!("NEURO_SYNAPSE: No neuron at {},{}", x, y));
+                            }
+                        } else {
+                            vm.output.push("Error: Invalid strand index for NeuroSynapse".to_string());
+                        }
+                    } else {
+                        vm.output.push("Error: Invalid coordinate for NeuroSynapse".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for NeuroSynapse".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for NeuroSynapse".to_string());
+            }
+        }
         _ => {}
     }
 }
