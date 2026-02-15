@@ -815,6 +815,11 @@
 - **Status:** The code is mutating. Grimm's Law is applying to identifiers. Proto-Code is evolving into Germanic dialects. TUI active.
 - **Note:** Moonshot: Sound Change Rules + Code Obfuscation.
 
+### [Concentration Level: FRESH] - Location: experiments/miller-reaction
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The crystals are breathing. The surface of the filesystem is alive with Gray-Scott patterns. CPU load is feeding the reaction.
+- **Note:** Hybrid of `miller-fs` and `reaction-monitor`.
+
 
 
 

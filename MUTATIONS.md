@@ -930,18 +930,25 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: "The Hanging Gardens of Entropy". Git additions create procedurally generated plants that hang from the sky; deletions create acid rain that dissolves them.
 - **Novel trait**: Ecosystem Balance. The struggle between feature growth and refactoring/decay.
 - **Status**: experiments/hanging-gardens
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Re-verified.
 
 ### chimera-specter
 - **Parents**: experiments/chimera-lang + experiments/fluid-specter
 - **Concept**: "Spectral Ecology". Fluid simulation driven by audio spectrum where Chimera agents evolve to eat specific frequencies.
 - **Novel trait**: Spectral Metabolism. Survival depends on the acoustic environment (Bass vs Treble eaters).
 - **Status**: experiments/chimera-specter
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+- **Evaluation**: Compiles. Re-verified.
 
 ### soroban-specter
 - **Parents**: experiments/soroban-market + experiments/fluid-specter
 - **Concept**: "Turbulent Accounting". A visualization where the physical movement of Soroban beads (performing HFT calculations) creates turbulence in a fluid simulation.
 - **Novel trait**: Arithmetic Fluid Dynamics. The "cost" of calculation is visualized as physical disturbance in the market ether.
 - **Status**: experiments/soroban-specter
+- **Evaluation**: Compiles. Re-verified.
+
+### miller-reaction
+- **Parents**: experiments/miller-fs + experiments/reaction-monitor
+- **Concept**: "Living Crystal Filesystem". A 3D crystal lattice where the surface texture is a living Gray-Scott reaction driven by system load.
+- **Novel trait**: Reaction-Diffusion Crystallography. The texture of the file system evolves based on the computer's effort.
+- **Status**: experiments/miller-reaction
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
