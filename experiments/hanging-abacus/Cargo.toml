@@ -1,0 +1,12 @@
+[package]
+name = "hanging-abacus"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+anyhow = { workspace = true }
+soroban = { workspace = true }
+tui-shared = { workspace = true }
+rand = { workspace = true }

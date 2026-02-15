@@ -748,6 +748,11 @@
 - **Status:** Compiles. Implemented by The Splice Surgeon. Verified. Army ants forming bridges where the structural integrity is tied to the semantic integrity of the memories they carry. Novel trait: Semantic Structural Engineering. Bridges collapse as memories fade (glitch).
 - **Note:** Hybrid of experiments/mnem-rot + experiments/biomimetic-bridge.
 
+### [Concentration Level: FRESH] - Location: experiments/tectonic-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Implemented by The Splice Surgeon. Boids flocking around geological fissures in git history. Novel trait: Seismic Swarming. Swarm intelligence identifying "earthquake zones" in the code.
+- **Note:** Hybrid of experiments/tectonic-git + experiments/luminous-flock.
+
 ### [Concentration Level: FRESH] - Location: experiments/chimera-bridge
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Compiles. Implemented by The Splice Surgeon. Army ants forming bridges where each ant is a computing node (ChimeraVM). The bridge structure computes its own stability. Novel trait: Structural Computation. The bridge must "think" to stay standing.
@@ -777,6 +782,11 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Compiles. Verified. Force-directed graph where nodes are magnetic particles floating over a decaying magnetic platter. Novel trait: Path Dependence via Magnetic Hysteresis. Nodes leave trails that attract other nodes; bits rot over time.
 - **Note:** Hybrid of experiments/newtonian-graph + experiments/ferrous-sector.
+
+### [Concentration Level: FRESH] - Location: experiments/ferrous-legion
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Verified. A TUI visualization where Roman Numeral particles interact via "Magnetic Arithmetic". Novel trait: Physical accumulation of value.
+- **Note:** Hybrid of experiments/ferrous-graph + experiments/spqr-rsa.
 
 ### [Concentration Level: FRESH] - Location: experiments/quipu-automaton
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -830,8 +840,10 @@
 - **Status:** The Central Bank is open. 100,000 traders are following the Rössler Attractor. Interest rates are driving the chaos. The trails are long and the volatility is high.
 - **Note:** Hybrid of Rössler Attractor + Economic Indicator Modeling.
 
-
-
+### [Concentration Level: FRESH] - Location: experiments/hanging-abacus
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The vines are counting. Each leaf is a bit, each flower a carry. The arithmetic is blooming.
+- **Note:** Hybrid of `hanging-gardens` and `soroban-market`.
 
 ## 🍂 History/Decay
 
