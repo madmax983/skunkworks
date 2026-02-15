@@ -134,6 +134,7 @@ members = [
     "experiments/bifurcation-landscape", "experiments/echo-cavern", "experiments/maat-engine", "experiments/clockwork-cipher", "experiments/myco-diffusion", "experiments/thermo-defense", "experiments/glossolalia",
     "experiments/chimera-maat", "experiments/thread-frequency", "experiments/root-maze", "experiments/chaotic-defense",
     "experiments/chimera-defense", "experiments/turing-terra", "experiments/chimera-terra", "experiments/trace-erosion", "experiments/stardust-compiler",
+    "experiments/chimera-stardust",
 ]
 resolver = "2"
 
