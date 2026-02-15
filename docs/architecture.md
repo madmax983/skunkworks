@@ -363,6 +363,41 @@ classDiagram
     note for PhysicsState "Uses locus::Vec2"
 ```
 
+### Soroban Logic (crates/soroban)
+
+The `soroban` crate encapsulates the logic of the Japanese Abacus, modeling state as physical bead positions rather than just integer values (ADR 034).
+
+```mermaid
+classDiagram
+    direction TB
+    class Soroban {
+        +[Column; 13] columns
+        +add(val: u64)
+        +sub(val: u64)
+        +value() u64
+    }
+
+    class Column {
+        +bool upper_active
+        +u8 lower_active
+        +value() u8
+    }
+
+    class SorobanMarket {
+        <<Experiment>>
+        +render_tui(soroban)
+    }
+
+    class SorobanSpecter {
+        <<Experiment>>
+        +render_fluid(soroban)
+    }
+
+    Soroban *-- Column : Composes
+    SorobanMarket ..> Soroban : Visualizes
+    SorobanSpecter ..> Soroban : Visualizes
+```
+
 ## Experiment: Git Harmony
 
 **Git Harmony** (formerly Git Rhythm) generates music from git diffs ("Code Singing").
