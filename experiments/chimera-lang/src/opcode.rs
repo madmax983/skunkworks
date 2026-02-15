@@ -631,6 +631,16 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ..., intensity ]`
     #[cfg(feature = "nova")]
     SenseLight,
+    /// **[Nova]** Sets the bioluminescent color and intensity at the current location.
+    ///
+    /// **Stack:** `[ ..., r, g, b, intensity ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Luciferin,
+    /// **[Nova]** Emits the current location's bioluminescence to neighbors.
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Photophore,
     /// **[Nova]** Spawns an Organelle (sub-process).
     ///
     /// **Stack:** `[ ..., strand_idx, type ] -> [ ... ]`

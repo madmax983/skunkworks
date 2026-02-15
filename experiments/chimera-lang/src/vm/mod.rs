@@ -116,6 +116,8 @@ pub mod nova_ballistics;
 #[cfg(feature = "nova")]
 pub mod nova_bestiary;
 #[cfg(feature = "nova")]
+pub mod nova_biolum;
+#[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_bestiary_test;
 #[cfg(feature = "nova")]
@@ -513,6 +515,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub light_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
+    pub light_color_grid: Vec<Vec<(u8, u8, u8)>>,
+    #[cfg(feature = "nova")]
     pub time_grid: Vec<Vec<u8>>,
     #[cfg(feature = "nova")]
     pub projectiles: Vec<nova_ballistics::Projectile>,
@@ -748,6 +752,8 @@ impl ChimeraVM {
         #[cfg(feature = "nova")]
         let light_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
+        let light_color_grid = vec![vec![(0, 0, 0); GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
         let time_grid = vec![vec![1; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let membranes = vec![vec![0; GRID_SIZE]; GRID_SIZE];
@@ -817,6 +823,8 @@ impl ChimeraVM {
             mutagen_grid,
             #[cfg(feature = "nova")]
             light_grid,
+            #[cfg(feature = "nova")]
+            light_color_grid,
             #[cfg(feature = "nova")]
             time_grid,
             #[cfg(feature = "nova")]
@@ -3104,6 +3112,9 @@ impl ChimeraVM {
             OpCode::Scavenge => self.exec_scavenge_op(),
             #[cfg(feature = "nova")]
             OpCode::Digest => self.exec_digest_op(),
+
+            #[cfg(feature = "nova")]
+            OpCode::Luciferin | OpCode::Photophore => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::EntropySurge => {
