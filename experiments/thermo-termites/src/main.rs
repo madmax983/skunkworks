@@ -21,17 +21,20 @@ async fn main() {
     let mut rng = ::rand::thread_rng();
 
     // Init World
-    // Add central server block
-    world.add_server_block(WIDTH / 2 - 20, HEIGHT / 2 - 20, 40, 40);
-    // Add some random server blocks
-    for _ in 0..5 {
-        let x = rng.gen_range(50..WIDTH - 50);
-        let y = rng.gen_range(50..HEIGHT - 50);
-        world.add_server_block(x, y, 20, 20);
+    // Add Server Rack (Grid Layout)
+    let margin = 50;
+    let rack_spacing = 80;
+    let rack_size = 30;
+    for y in 0..4 {
+        for x in 0..5 {
+            let sx = margin + x * rack_spacing;
+            let sy = margin + y * rack_spacing + 100; // Lower half
+            world.add_server_block(sx, sy, rack_size, rack_size);
+        }
     }
 
-    // Add random walls (noise)
-    for _ in 0..5000 {
+    // Add some initial random walls (noise) for termites to erode/build upon
+    for _ in 0..2000 {
         let x = rng.gen_range(0..WIDTH);
         let y = rng.gen_range(0..HEIGHT);
         let idx = world.get_index(x, y);
@@ -41,13 +44,13 @@ async fn main() {
     }
 
     // Add Agents
-    // 50k Air, 50k Termites
+    // 50k Air, 20k Termites
     for _ in 0..50000 {
         let x = rng.gen_range(0.0..WIDTH as f32);
         let y = rng.gen_range(0.0..HEIGHT as f32);
         world.agents.push(world::Agent::new_air(x, y));
     }
-    for _ in 0..50000 {
+    for _ in 0..20000 {
         let x = rng.gen_range(0.0..WIDTH as f32);
         let y = rng.gen_range(0.0..HEIGHT as f32);
         world.agents.push(world::Agent::new_termite(x, y));
@@ -59,8 +62,24 @@ async fn main() {
 
     let max_frames = if args.headless { 100 } else { u64::MAX };
 
+    // View Modes
+    let mut view_mode = 0; // 0=Heat, 1=Pheromone, 2=Velocity
+    let mut show_termites = true;
+    let mut show_air = true;
+    let mut paused = false;
+
     loop {
-        world.update();
+        // Input Handling
+        if is_key_pressed(KeyCode::Space) { paused = !paused; }
+        if is_key_pressed(KeyCode::Key1) { view_mode = 0; }
+        if is_key_pressed(KeyCode::Key2) { view_mode = 1; }
+        if is_key_pressed(KeyCode::Key3) { view_mode = 2; }
+        if is_key_pressed(KeyCode::T) { show_termites = !show_termites; }
+        if is_key_pressed(KeyCode::A) { show_air = !show_air; }
+
+        if !paused {
+            world.update();
+        }
 
         // Render to Image
         for y in 0..HEIGHT {
@@ -68,14 +87,27 @@ async fn main() {
                 let cell = world.get_cell(x, y);
                 let color = match cell.material {
                     Material::Server => RED,
-                    Material::Wall => WHITE,
+                    Material::Wall => Color::new(0.8, 0.8, 0.8, 1.0),
                     Material::Empty => {
-                        // Heat Map
-                        let h = (cell.heat / 100.0).clamp(0.0, 1.0);
-                        let p = (cell.pheromone / 50.0).clamp(0.0, 1.0);
-
-                        // Blue -> Red gradient
-                        Color::new(h, p * 0.5, 0.2 + (1.0 - h) * 0.2, 1.0)
+                        match view_mode {
+                            0 => { // Heat Map
+                                let h = (cell.heat / 100.0).clamp(0.0, 1.0);
+                                // Cold Blue -> Hot Red
+                                Color::new(h, 0.2, 1.0 - h, 1.0)
+                            }
+                            1 => { // Pheromone Map
+                                let p = (cell.pheromone / 50.0).clamp(0.0, 1.0);
+                                Color::new(0.0, p, 0.0, 1.0)
+                            }
+                            2 => { // Velocity Map
+                                let vx = cell.air_vx;
+                                let vy = cell.air_vy;
+                                let speed = (vx*vx + vy*vy).sqrt();
+                                let s = (speed * 5.0).clamp(0.0, 1.0);
+                                Color::new(s, s, s, 1.0)
+                            }
+                            _ => BLACK
+                        }
                     }
                 };
                 render_target.set_pixel(x as u32, y as u32, color);
@@ -87,18 +119,35 @@ async fn main() {
             let x = agent.x as u32;
             let y = agent.y as u32;
             if x < WIDTH as u32 && y < HEIGHT as u32 {
-                let color = match agent.kind {
-                    AgentKind::Air => Color::new(0.5, 0.8, 1.0, 0.5), // Semi-transparent cyan
+                match agent.kind {
+                    AgentKind::Air => {
+                        if show_air {
+                            // Air color based on temp
+                            let h = (agent.heat / 50.0).clamp(0.0, 1.0);
+                            let air_color = Color::new(h, 0.2, 1.0 - h, 1.0);
+
+                             if view_mode == 0 {
+                                 // Additive-ish for Heat Mode
+                                 let current = render_target.get_pixel(x, y);
+                                 render_target.set_pixel(x, y, Color::new(
+                                     (current.r + air_color.r * 0.3).min(1.0),
+                                     (current.g + air_color.g * 0.3).min(1.0),
+                                     (current.b + air_color.b * 0.3).min(1.0),
+                                     1.0
+                                 ));
+                             } else {
+                                 // Simple draw for other modes
+                                 render_target.set_pixel(x, y, air_color);
+                             }
+                        }
+                    },
                     AgentKind::Termite => {
-                        if agent.carrying {
-                            GREEN
-                        } else {
-                            BLUE
+                        if show_termites {
+                            let color = if agent.carrying { GREEN } else { BLUE };
+                            render_target.set_pixel(x, y, color);
                         }
                     }
                 };
-                // Set pixel directly
-                render_target.set_pixel(x, y, color);
             }
         }
 
@@ -108,15 +157,10 @@ async fn main() {
         draw_texture(&texture, 0.0, 0.0, WHITE);
 
         // UI
-        draw_text(&format!("FPS: {}", get_fps()), 10.0, 20.0, 30.0, WHITE);
-        draw_text(
-            &format!("Agents: {}", world.agents.len()),
-            10.0,
-            50.0,
-            30.0,
-            WHITE,
-        );
-        draw_text(&format!("Step: {}", world.step), 10.0, 80.0, 30.0, WHITE);
+        draw_text(&format!("FPS: {}", get_fps()), 10.0, 20.0, 20.0, WHITE);
+        draw_text(&format!("Agents: {}", world.agents.len()), 10.0, 40.0, 20.0, WHITE);
+        draw_text(&format!("Step: {}", world.step), 10.0, 60.0, 20.0, WHITE);
+        draw_text("1:Heat 2:Phero 3:Vel T:Termites A:Air Space:Pause", 10.0, HEIGHT as f32 - 10.0, 20.0, WHITE);
 
         if args.headless {
             if world.step >= max_frames {
