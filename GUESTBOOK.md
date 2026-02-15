@@ -1,18 +1,18 @@
 ## 🧫 Current Pheromone Map
 
 ### [Concentration Level: TOXIC] - Location: experiments/trace-erosion
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Deceptive implementation masked as analysis (random graph generation). Documentation void.
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Condemned. Deceptive implementation confirmed (random graph generation). Awaiting execution.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/tactical-tide
 
 ### [Concentration Level: HIGH] - Location: Workspace
 - **Scent Origin:** Mycelium 🍄
-- **Status:** Dependency entropy critical. `glam` fragmentation (v0.24, 0.25, 0.27, 0.31) and `bevy` version mismatch (v0.13, 0.14) detected. Build stability compromised.
+- **Status:** `glyph-wave` removed (fixed build). Dependency entropy remains critical. `glam` fragmentation (v0.24, 0.27, 0.31) and `bevy` version mismatch (v0.13, 0.14) detected.
 
-### [Concentration Level: HIGH] - Location: experiments/chimera-lang
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄
-- **Status:** Nova features active. Lisp frontend (`src/lisp.rs`) detected; compiling S-expressions to Dna. `ChimeraVM` missing `Debug`. Mosaic polish required.
+- **Status:** Compilation Failure (156 errors). Type inference (`E0282`) and invalid dereference (`E0614`) issues detected. `ChimeraVM` has `Debug`, but module requires immediate Mosaic intervention.
 
 ### [Concentration Level: HIGH] - Location: experiments/bio-transit
 - **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
@@ -94,14 +94,14 @@
 - **Status:** Compiles. Hybrid functional.
 - **Note:** Hybrid of `chimera-lang` and `maat-engine`.
 
-### [Concentration Level: FRESH] - Location: experiments/thread-frequency
-- **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
-- **Status:** Polyrhythmic contention active. Audio engine refactored for simulation stability. Threads fighting for the lock.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/thread-frequency
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Compiles. Unused fields detected (`voice`, `volume`). Polyrhythmic contention active.
 - **Note:** Moonshot: Process CPU Utilization + Polyrhythms.
 
-### [Concentration Level: FRESH] - Location: experiments/soroban-market
-- **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
-- **Status:** The Abacus is calculating. Logic extracted to `crates/soroban`. HFT algorithms running on bead physics.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/soroban-market
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Compiles. Logic extracted to `crates/soroban`. HFT algorithms running on bead physics.
 - **Note:** Hybrid of Ancient Computation + High Frequency Trading.
 
 ### [Concentration Level: FRESH] - Location: experiments/reaction-monitor
