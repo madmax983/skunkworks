@@ -59,11 +59,10 @@ pub struct Column {
     pub lower_active: u8,
 }
 
-
 impl Column {
     /// Returns the decimal value of this column (0-9).
     pub fn value(&self) -> u8 {
-        (if self.upper_active { 5 } else { 0 }) + self.lower_active
+        (self.upper_active as u8 * 5) + self.lower_active
     }
 
     /// Sets the column value directly (for initialization/testing).
@@ -73,7 +72,7 @@ impl Column {
     pub fn set_value(&mut self, val: u8) {
         assert!(val <= 9, "Column value must be 0-9");
         self.upper_active = val >= 5;
-        self.lower_active = val % 5;
+        self.lower_active = val - (self.upper_active as u8 * 5);
     }
 }
 
@@ -136,27 +135,21 @@ impl Soroban {
         }
     }
 
-    fn add_to_column(&mut self, col_idx: usize, amount: u8) {
-        if amount == 0 { return; }
-        if col_idx >= 13 { return; } // Overflow ignored (or could panic)
+    fn add_to_column(&mut self, mut col_idx: usize, mut amount: u8) {
+        while amount > 0 && col_idx < 13 {
+            let current_val = self.columns[col_idx].value();
+            let new_val_raw = current_val + amount;
 
-        let current_lower = self.columns[col_idx].lower_active;
-        let _sum_lower = current_lower + amount;
-
-        // Simple logic first: reconstruct value, add, distribute back.
-        // But to be "Ancient", we should try to manipulate beads.
-        // Let's stick to correct state transition regardless of method for now.
-
-        let current_val = self.columns[col_idx].value();
-        let new_val_raw = current_val + amount;
-
-        if new_val_raw >= 10 {
-            // Carry
-            let kept = new_val_raw - 10;
-            self.columns[col_idx].set_value(kept);
-            self.add_to_column(col_idx + 1, 1);
-        } else {
-            self.columns[col_idx].set_value(new_val_raw);
+            if new_val_raw >= 10 {
+                // Carry
+                let kept = new_val_raw - 10;
+                self.columns[col_idx].set_value(kept);
+                amount = 1;
+                col_idx += 1;
+            } else {
+                self.columns[col_idx].set_value(new_val_raw);
+                amount = 0;
+            }
         }
     }
 
@@ -187,8 +180,12 @@ impl Soroban {
     }
 
     fn sub_from_column(&mut self, col_idx: usize, amount: u8) {
-        if amount == 0 { return; }
-        if col_idx >= 13 { return; }
+        if amount == 0 {
+            return;
+        }
+        if col_idx >= 13 {
+            return;
+        }
 
         let current_val = self.columns[col_idx].value();
 
@@ -203,16 +200,29 @@ impl Soroban {
         }
     }
 
-    fn borrow_from_next(&mut self, col_idx: usize) {
-        if col_idx >= 13 { return; } // Underflow at top ignored
+    fn borrow_from_next(&mut self, start_idx: usize) {
+        let mut idx = start_idx;
+        // Find the first non-zero column
+        while idx < 13 && self.columns[idx].value() == 0 {
+            idx += 1;
+        }
 
-        if self.columns[col_idx].value() > 0 {
-            self.sub_from_column(col_idx, 1);
-        } else {
-            // Need to borrow recursively
-            self.borrow_from_next(col_idx + 1);
-            // After borrowing, this column becomes 10, then we subtract 1 -> 9
-            self.columns[col_idx].set_value(9);
+        if idx >= 13 {
+            // Underflow: borrow from "infinity" (wrap around)
+            // Original recursive behavior: set all traversed columns to 9
+            for i in start_idx..13 {
+                self.columns[i].set_value(9);
+            }
+            return;
+        }
+
+        // Decrease that column by 1
+        let val = self.columns[idx].value();
+        self.columns[idx].set_value(val - 1);
+
+        // Set all intermediate columns to 9
+        for i in start_idx..idx {
+            self.columns[i].set_value(9);
         }
     }
 }
@@ -286,5 +296,28 @@ mod tests {
         assert_eq!(s.columns[0].value(), 9);
         assert_eq!(s.columns[1].value(), 9);
         assert_eq!(s.columns[2].value(), 0);
+    }
+
+    #[test]
+    fn test_carry_overflow() {
+        let mut s = Soroban::new();
+        // 9,999,999,999,999 (13 nines)
+        for i in 0..13 {
+            s.columns[i].set_value(9);
+        }
+        s.add(1);
+        // Should wrap around to 0 effectively for 13 columns?
+        // Or if we check columns, they should be 0.
+        // Wait, add_to_column checks col_idx >= 13.
+        assert_eq!(s.value(), 0);
+    }
+
+    #[test]
+    fn test_borrow_underflow() {
+        let mut s = Soroban::new();
+        s.sub(1);
+        // 0 - 1 = -1 (mod 10^13) -> 9,999,999,999,999
+        let expected = 9_999_999_999_999u64;
+        assert_eq!(s.value(), expected);
     }
 }
