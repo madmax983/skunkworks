@@ -21,9 +21,11 @@ pub enum AgentKind {
 pub struct Cell {
     pub material: Material,
     pub heat: f32,
-    pub next_heat: f32,
     pub pheromone: f32,
-    pub next_pheromone: f32,
+    // Fluid Dynamics Fields (accumulated from particles)
+    pub air_density: f32,
+    pub air_vx: f32,
+    pub air_vy: f32,
 }
 
 impl Default for Cell {
@@ -31,9 +33,10 @@ impl Default for Cell {
         Self {
             material: Material::Empty,
             heat: 0.0,
-            next_heat: 0.0,
             pheromone: 0.0,
-            next_pheromone: 0.0,
+            air_density: 0.0,
+            air_vx: 0.0,
+            air_vy: 0.0,
         }
     }
 }
@@ -49,7 +52,7 @@ mod tests {
         world.grid[50 * WIDTH + 50].heat = 100.0;
 
         // Run update
-        world.diffuse_grid();
+        world.update_grid_physics();
 
         // Neighbors should heat up
         let neighbor_heat = world.grid[50 * WIDTH + 51].heat;
@@ -112,6 +115,9 @@ pub struct World {
     pub grid: Vec<Cell>,
     pub agents: Vec<Agent>,
     pub step: u64,
+    // Double buffers for physics (Reuse memory)
+    current_heats: Vec<f32>,
+    current_pheros: Vec<f32>,
 }
 
 impl World {
@@ -121,6 +127,8 @@ impl World {
             grid,
             agents: Vec::new(),
             step: 0,
+            current_heats: vec![0.0; WIDTH * HEIGHT],
+            current_pheros: vec![0.0; WIDTH * HEIGHT],
         }
     }
 
@@ -150,299 +158,299 @@ impl World {
     }
 
     pub fn update(&mut self) {
-        self.diffuse_grid();
+        self.update_grid_physics();
         self.update_agents();
         self.step += 1;
     }
 
-    fn diffuse_grid(&mut self) {
-        // Parallel diffusion
-        // We need to read from 'heat' and write to 'next_heat'
-        // We can iterate chunks of rows
-
-        // Heat diffusion rate
-        let diffusion = 0.20; // Fast
-        let cooling = 0.005; // Global cooling
-        let evap = 0.01; // Pheromone evaporation
-        let pheromone_diffusion = 0.1;
-
-        // Use par_chunks_mut to allow writing to next_* safely if we split correctly.
-        // Or better: parallel loop over indices.
-        // We need read access to the whole grid (read-only) and write access to the current chunk.
-        // Since we can't easily share the read-ref with mut-ref in safe Rust without unsafe or splitting,
-        // we will use a simpler approach:
-        // 1. Compute next values into a temporary buffer?
-        // No, we have next_heat in the struct.
-        // But we can't iterate self.grid mutably AND read neighbors immutably easily.
-        // Classic Double Buffer problem.
-        //
-        // Strategy:
-        // Unsafe pointer magic is fastest but dangerous.
-        // Index-based loop with `split_at_mut` is safe but complex.
-        //
-        // Let's use `par_iter` on indices and collect results? No, allocation.
-        //
-        // Let's do it single threaded for the grid for now. 512x512 is 262k ops. fast enough.
-        // Actually, with 262k, single thread is fine. It's < 1ms.
-
+    fn update_grid_physics(&mut self) {
         let width = WIDTH;
         let height = HEIGHT;
 
-        // Clone grid state for reading? Expensive.
-        // We can just iterate linearly. For strict CA, we need a snapshot.
-        // Let's just use the current values as approximation (Gauss-Seidel style),
-        // but that introduces bias.
-        //
-        // Correct way:
-        // let old_grid = self.grid.clone(); // Ouch, 3MB copy per frame.
-        // Maybe we just alternate buffers? Struct of Arrays would be better.
-        //
-        // Optimization: Use `next_heat` as the write buffer.
-        // We read from `grid` (heat) and write to `grid` (next_heat).
-        // But we can't have &mut self.grid and &self.grid.
-        //
-        // We can iterate indices.
+        // 1. Copy current state to buffers (Sequential copy is fast enough, ~1ms)
+        // Avoiding allocation in loop
+        for (i, cell) in self.grid.iter().enumerate() {
+            self.current_heats[i] = cell.heat;
+            self.current_pheros[i] = cell.pheromone;
+        }
 
-        self.grid.par_iter_mut().enumerate().for_each(|(i, cell)| {
-            let x = i % width;
-            let y = i / width;
+        // Split borrows for closure
+        let current_heats = &self.current_heats;
+        let current_pheros = &self.current_pheros;
+        let grid = &mut self.grid;
 
-            // Boundary check optimization
-            if x == 0 || x == width - 1 || y == 0 || y == height - 1 {
-                cell.next_heat = cell.heat * (1.0 - cooling);
-                cell.next_pheromone = cell.pheromone * (1.0 - evap);
-                return;
-            }
+        // Parallel update
+        grid.par_iter_mut()
+            .enumerate()
+            .for_each(|(i, cell)| {
+                let x = i % width;
+                let y = i / width;
 
-            // Neighbors indices
-            // old_grid is not available here.
-            // WAIT. We can't access neighbors inside par_iter_mut of the same vec.
-        });
+                // Boundary check
+                if x == 0 || x == width - 1 || y == 0 || y == height - 1 {
+                    cell.heat *= 0.99; // Boundary cooling
+                    cell.pheromone *= 0.99;
+                    return;
+                }
 
-        // Okay, simpler: sequential is fine for 512x512.
-        // Or use `chunks_exact`.
+                // Physics Constants
+                let diffusion = 0.20;
+                let wall_insulation = 0.05;
+                let cooling = 0.001; // Global cooling
+                let evap = 0.02; // Pheromone evaporation
+                let pheromone_diffusion = 0.15;
+                let heat_gen = 5.0;
+                let max_heat = 1000.0;
 
-        // Let's implement sequential first.
-        let mut next_heats = vec![0.0; WIDTH * HEIGHT];
-        let mut next_pheros = vec![0.0; WIDTH * HEIGHT];
-
-        for y in 1..HEIGHT - 1 {
-            for x in 1..WIDTH - 1 {
-                let idx = y * WIDTH + x;
-                let cell = &self.grid[idx];
-
-                // Heat Logic
+                // --- Heat Diffusion ---
                 if matches!(cell.material, Material::Server) {
-                    next_heats[idx] = (cell.heat + 5.0).min(500.0);
+                    cell.heat = (current_heats[i] + heat_gen).min(max_heat);
                 } else {
-                    let top = self.grid[idx - WIDTH].heat;
-                    let bottom = self.grid[idx + WIDTH].heat;
-                    let left = self.grid[idx - 1].heat;
-                    let right = self.grid[idx + 1].heat;
+                    let top = current_heats[i - width];
+                    let bottom = current_heats[i + width];
+                    let left = current_heats[i - 1];
+                    let right = current_heats[i + 1];
 
                     let avg = (top + bottom + left + right) * 0.25;
-                    let diff = avg - cell.heat;
+                    let diff = avg - current_heats[i];
 
-                    // Walls insulate?
                     let diff_rate = if matches!(cell.material, Material::Wall) {
-                        diffusion * 0.1
+                        diffusion * wall_insulation
                     } else {
                         diffusion
                     };
 
-                    next_heats[idx] = (cell.heat + diff * diff_rate) * (1.0 - cooling);
+                    cell.heat = (current_heats[i] + diff * diff_rate) * (1.0 - cooling);
                 }
 
-                // Pheromone Logic
-                let top_p = self.grid[idx - WIDTH].pheromone;
-                let bottom_p = self.grid[idx + WIDTH].pheromone;
-                let left_p = self.grid[idx - 1].pheromone;
-                let right_p = self.grid[idx + 1].pheromone;
+                // --- Pheromone Diffusion ---
+                let top_p = current_pheros[i - width];
+                let bottom_p = current_pheros[i + width];
+                let left_p = current_pheros[i - 1];
+                let right_p = current_pheros[i + 1];
 
                 let avg_p = (top_p + bottom_p + left_p + right_p) * 0.25;
-                next_pheros[idx] = (cell.pheromone
-                    + (avg_p - cell.pheromone) * pheromone_diffusion)
+                cell.pheromone = (current_pheros[i]
+                    + (avg_p - current_pheros[i]) * pheromone_diffusion)
                     * (1.0 - evap);
-            }
-        }
-
-        // Apply back
-        // Parallel apply
-        self.grid.par_iter_mut().enumerate().for_each(|(i, cell)| {
-            if i < next_heats.len() {
-                cell.heat = next_heats[i];
-                cell.pheromone = next_pheros[i];
-            }
-        });
+            });
     }
 
     fn update_agents(&mut self) {
         let width = WIDTH as f32;
         let height = HEIGHT as f32;
 
-        // Parallel update of agents
-        // But agents interact with grid.
-        // Grid is shared resource.
-        // Data race if multiple agents write to same cell.
-        //
-        // Solution:
-        // 1. Agents READ grid to decide movement.
-        // 2. Agents WRITE to separate "Action Buffer"?
-        //
-        // Simplified:
-        // Update positions first (local only).
-        // Then handle interactions serially or with atomics?
-        //
-        // For Termites (Wall building):
-        // Only one termite can modify a cell at a time.
-        //
-        // Let's do sequential update for interactions to be safe for now,
-        // or use `AtomicU32` for grid state (hard with floats).
-        //
-        // We can optimize later. 100k agents sequential update:
-        // 100,000 * 100 cycles = 10M cycles. ~5ms. Safe for 60fps.
+        // 1. Reset Grid Fluid Fields
+        self.grid.par_iter_mut().for_each(|cell| {
+            cell.air_density = 0.0;
+            cell.air_vx = 0.0;
+            cell.air_vy = 0.0;
+        });
 
+        // 2. Sequential Interaction (Scatter & Heat Exchange)
+        // We do this sequentially to allow safe mutable access to both Grid and Agents
         let mut rng = rand::thread_rng();
-
         for agent in &mut self.agents {
-            match agent.kind {
-                AgentKind::Air => {
-                    // Move
-                    agent.x += agent.vx;
-                    agent.y += agent.vy;
+            // Bounds Check
+            agent.x = agent.x.clamp(0.0, width - 1.0);
+            agent.y = agent.y.clamp(0.0, height - 1.0);
 
-                    // Convection (Heat rises -> negative Y)
-                    if agent.heat > 10.0 {
-                        agent.vy -= 0.05;
-                    }
+            let ix = agent.x as usize;
+            let iy = agent.y as usize;
+            let idx = iy * WIDTH + ix;
 
-                    // Bounds & Bounce
-                    if agent.x <= 0.0 || agent.x >= width - 1.0 {
-                        agent.vx *= -1.0;
-                        agent.x = agent.x.clamp(0.0, width - 1.0);
-                    }
-                    if agent.y <= 0.0 || agent.y >= height - 1.0 {
-                        agent.vy *= -1.0;
-                        agent.y = agent.y.clamp(0.0, height - 1.0);
-                        // Floor/Ceiling thermal interaction?
-                        if agent.y < 5.0 {
-                            agent.heat *= 0.8;
-                        } // Top is cooling sink (if -y is up)
-                          // Wait, y=0 is TOP in standard grid? usually.
-                          // Let's assume y=0 is TOP.
-                    }
+            if idx < self.grid.len() {
+                let cell = &mut self.grid[idx];
 
-                    let ix = agent.x as usize;
-                    let iy = agent.y as usize;
-                    let idx = iy * WIDTH + ix;
+                if matches!(agent.kind, AgentKind::Air) {
+                    // Scatter Density & Velocity
+                    cell.air_density += 1.0;
+                    cell.air_vx += agent.vx;
+                    cell.air_vy += agent.vy;
 
-                    if idx < self.grid.len() {
-                        let cell = &mut self.grid[idx];
-
-                        // Bounce off walls
-                        if matches!(cell.material, Material::Wall) {
-                            agent.vx *= -1.0;
-                            agent.vy *= -1.0;
-                            // Simple bounce
-                            agent.x += agent.vx;
-                            agent.y += agent.vy;
-                        } else if matches!(cell.material, Material::Server) {
-                            agent.heat += 5.0;
-                            cell.heat -= 0.1; // Cool the server slightly
+                    // Heat Exchange
+                    if matches!(cell.material, Material::Server) {
+                        agent.heat += 5.0; // Pick up heat
+                        cell.heat -= 0.1;
+                    } else if matches!(cell.material, Material::Wall) {
+                        // Deposit Heat into Wall (Pheromone Trigger)
+                        if agent.heat > 50.0 {
+                            cell.pheromone = (cell.pheromone + 1.0).min(100.0);
+                            agent.heat *= 0.9; // Lose heat to wall
                         }
-
-                        // Exchange heat with air
+                        // Bounce logic is handled in movement phase, but we can lose energy here
+                        agent.vx *= 0.9;
+                        agent.vy *= 0.9;
+                    } else {
+                        // Exchange with Air Cell
+                        // Cell Heat represents "Ambient Temp"
                         let eq_heat = (cell.heat + agent.heat) * 0.5;
                         let transfer = (eq_heat - agent.heat) * 0.1;
                         agent.heat += transfer;
-                        cell.heat -= transfer * 0.01; // Air has less thermal mass
+                        // Cell heat also changes, but air mass is small?
+                        // Let's say Cell Heat is dominant or equal mass for simplicity
+                        cell.heat -= transfer;
                     }
-                }
-                AgentKind::Termite => {
-                    // Move Randomly
-                    agent.vx += rng.gen_range(-0.5..0.5);
-                    agent.vy += rng.gen_range(-0.5..0.5);
+                } else if matches!(agent.kind, AgentKind::Termite) {
+                    // --- Termite Construction Logic ---
+                    // Read Grid State (Copying values to avoid borrow issues)
+                    let current_mat = self.grid[idx].material;
+                    let current_phero = self.grid[idx].pheromone;
 
-                    // Dampen
-                    agent.vx *= 0.9;
-                    agent.vy *= 0.9;
+                    // Check Neighbors (Simple 4-way)
+                    let mut wall_neighbors = 0;
+                    let neighbors = [
+                        if ix > 0 { Some(idx - 1) } else { None },
+                        if ix < WIDTH - 1 { Some(idx + 1) } else { None },
+                        if iy > 0 { Some(idx - WIDTH) } else { None },
+                        if iy < HEIGHT - 1 { Some(idx + WIDTH) } else { None },
+                    ];
 
-                    agent.x += agent.vx;
-                    agent.y += agent.vy;
-
-                    // Clamp
-                    agent.x = agent.x.clamp(1.0, width - 2.0);
-                    agent.y = agent.y.clamp(1.0, height - 2.0);
-
-                    let ix = agent.x as usize;
-                    let iy = agent.y as usize;
-                    let idx = iy * WIDTH + ix;
-
-                    // Actions
-                    if idx < self.grid.len() {
-                        // Pick/Drop
-                        // Count neighbors
-                        let mut neighbors = 0;
-                        // Simple 4-neighbor check
-                        if ix > 0 && matches!(self.grid[idx - 1].material, Material::Wall) {
-                            neighbors += 1;
-                        }
-                        if ix < WIDTH - 1 && matches!(self.grid[idx + 1].material, Material::Wall) {
-                            neighbors += 1;
-                        }
-                        if iy > 0 && matches!(self.grid[idx - WIDTH].material, Material::Wall) {
-                            neighbors += 1;
-                        }
-                        if iy < HEIGHT - 1
-                            && matches!(self.grid[idx + WIDTH].material, Material::Wall)
-                        {
-                            neighbors += 1;
-                        }
-
-                        let cell = &mut self.grid[idx];
-
-                        // Drop Pheromone
-                        if agent.carrying {
-                            cell.pheromone = (cell.pheromone + 10.0).min(100.0);
-                        }
-
-                        if agent.carrying {
-                            // Wants to drop
-                            // If near other walls (building) OR High Pheromone
-                            // Avoid dropping on servers or existing walls
-                            if matches!(cell.material, Material::Empty) {
-                                let should_drop = if neighbors > 0 {
-                                    rng.gen_bool(0.05) // Build onto existing
-                                } else if cell.pheromone > 20.0 {
-                                    rng.gen_bool(0.1) // Stigmergy
-                                } else {
-                                    rng.gen_bool(0.001) // Random drop
-                                };
-
-                                if should_drop {
-                                    cell.material = Material::Wall;
-                                    agent.carrying = false;
-                                }
+                    for n_opt in neighbors {
+                        if let Some(n_idx) = n_opt {
+                            if matches!(self.grid[n_idx].material, Material::Wall) {
+                                wall_neighbors += 1;
                             }
-                        } else {
-                            // Wants to pick
-                            if matches!(cell.material, Material::Wall) {
-                                // Pick if isolated
-                                let should_pick = if neighbors <= 1 {
-                                    rng.gen_bool(0.1)
-                                } else {
-                                    rng.gen_bool(0.0001) // Rarely break walls
-                                };
+                        }
+                    }
 
-                                if should_pick {
-                                    cell.material = Material::Empty;
-                                    agent.carrying = true;
+                    if agent.carrying {
+                        // Wants to Drop (Build)
+                        // Rule: Build if near existing wall (extend) AND Pheromone is High (Active Vent)
+                        // OR Randomly drop if very high pheromone (New nucleation)
+                        if matches!(current_mat, Material::Empty) {
+                            let should_drop = if wall_neighbors > 0 {
+                                // Extend existing wall
+                                // Bias towards High Pheromone (Heat Trace)
+                                if current_phero > 10.0 {
+                                    rng.gen_bool(0.2)
+                                } else {
+                                    rng.gen_bool(0.001) // Low chance to build in cold areas
                                 }
+                            } else {
+                                // Start new wall?
+                                if current_phero > 50.0 {
+                                    rng.gen_bool(0.01) // Nucleate on hot spots
+                                } else {
+                                    false
+                                }
+                            };
+
+                            if should_drop {
+                                self.grid[idx].material = Material::Wall;
+                                agent.carrying = false;
+                            }
+                        }
+                    } else {
+                        // Wants to Pick (Erode)
+                        // Rule: Pick if Wall is Cold (Low Pheromone) OR Isolated (Noise)
+                        if matches!(current_mat, Material::Wall) {
+                            let should_pick = if current_phero < 5.0 {
+                                // Cold Wall -> Erode
+                                if wall_neighbors <= 1 {
+                                    rng.gen_bool(0.5) // Prune isolated
+                                } else {
+                                    rng.gen_bool(0.05) // Slowly erode solid cold walls
+                                }
+                            } else {
+                                // Hot Wall -> Keep
+                                rng.gen_bool(0.0001) // Very rare accidental damage
+                            };
+
+                            if should_pick {
+                                self.grid[idx].material = Material::Empty;
+                                agent.carrying = true;
                             }
                         }
                     }
                 }
             }
         }
+
+        // 3. Parallel Movement Update
+        // Split borrows: Grid is Read-Only, Agents are Mutable
+        let grid = &self.grid;
+        let agents = &mut self.agents;
+
+        agents.par_iter_mut().for_each(|agent| {
+            let mut rng = rand::thread_rng();
+
+            match agent.kind {
+                AgentKind::Air => {
+                    let ix = agent.x as usize;
+                    let iy = agent.y as usize;
+                    let idx = iy * WIDTH + ix;
+
+                    // Physics Forces
+                    if idx < grid.len() {
+                        let cell = &grid[idx];
+
+                        // Buoyancy: Hot air rises (Gravity is +Y, so Up is -Y)
+                        // Buoyancy Force = (AgentTemp - AmbientTemp) * k
+                        let ambient_temp = cell.heat.max(10.0); // Use cell temp as ambient
+                        let buoyancy = (agent.heat - ambient_temp) * 0.005;
+                        agent.vy -= buoyancy;
+
+                        // Pressure: Move from High Density to Low Density
+                        // Look at neighbors
+                        if ix > 0 && ix < WIDTH - 1 && iy > 0 && iy < HEIGHT - 1 {
+                            let left = grid[idx - 1].air_density;
+                            let right = grid[idx + 1].air_density;
+                            let top = grid[idx - WIDTH].air_density;
+                            let bottom = grid[idx + WIDTH].air_density;
+
+                            let dx = left - right;
+                            let dy = top - bottom; // Higher density top pushes down (+Y)
+
+                            // Pressure Strength
+                            let k_p = 0.05;
+                            agent.vx += dx * k_p;
+                            agent.vy += dy * k_p;
+                        }
+                    }
+
+                    // Wall Collision (Bounce)
+                    // We need to check next position
+                    let next_x = agent.x + agent.vx;
+                    let next_y = agent.y + agent.vy;
+                    let next_ix = next_x.clamp(0.0, width - 1.0) as usize;
+                    let next_iy = next_y.clamp(0.0, height - 1.0) as usize;
+                    let next_idx = next_iy * WIDTH + next_ix;
+
+                    if next_idx < grid.len() && matches!(grid[next_idx].material, Material::Wall) {
+                         // Reflect
+                         agent.vx *= -0.8;
+                         agent.vy *= -0.8;
+                         // Don't move into wall
+                    } else {
+                        agent.x = next_x;
+                        agent.y = next_y;
+                    }
+
+                    // Damping / Drag
+                    agent.vx *= 0.98;
+                    agent.vy *= 0.98;
+
+                    // Bounds
+                     if agent.x <= 0.0 || agent.x >= width - 1.0 {
+                        agent.vx *= -1.0;
+                        agent.x = agent.x.clamp(0.0, width - 1.0);
+                    }
+                    if agent.y <= 0.0 || agent.y >= height - 1.0 {
+                        agent.vy *= -1.0;
+                        agent.y = agent.y.clamp(0.0, height - 1.0);
+                    }
+                }
+                AgentKind::Termite => {
+                    // Simple Random Walk for now (Placeholder for Step 4)
+                    agent.vx += rng.gen_range(-0.5..0.5);
+                    agent.vy += rng.gen_range(-0.5..0.5);
+                    agent.vx *= 0.9;
+                    agent.vy *= 0.9;
+                    agent.x = (agent.x + agent.vx).clamp(1.0, width - 2.0);
+                    agent.y = (agent.y + agent.vy).clamp(1.0, height - 2.0);
+                }
+            }
+        });
     }
 }
