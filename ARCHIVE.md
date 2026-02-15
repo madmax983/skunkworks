@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **bifurcation-probe**: Documentation void. Redundant with `bifurcation-landscape`. Grace period: 24h.
+- **chimera-fold**: Documentation void. Generic implementation. Redundant with `chimera-automaton`/`origami-spores`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **bifurcation-probe**: Specimen executed. Documentation void. Redundant with `bifurcation-landscape`. Failed to improve during grace period. Moved to graveyard.
 - **valley-forge**: Specimen executed. Documentation void. Compilation failure (`Vertex` struct mismatch). Redundant with `luminous-valley`. Failed to improve during grace period. Moved to graveyard.
 - **beat-cortex**: Specimen executed. Documentation void. Sketch Rot. Failed to improve during grace period. Moved to graveyard.
 - **thread-symphony**: Specimen executed. Terminal compilation failure (`alsa-sys`). Documentation void. Generic implementation. Grace period expired. Moved to graveyard.
