@@ -50,6 +50,7 @@ pub fn exec_plant(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 id: vm.organelle_id_counter,
                 tissue_id: None,
                 genome_id: 0,
+                energy: 50,
             };
 
             vm.organelles.push(organelle);

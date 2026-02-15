@@ -566,6 +566,50 @@ fn check_dynamic_predicates(
                         return true;
                     }
                 }
+                "ecology_pop" => {
+                    if args.len() == 2 {
+                        let arg_n = &args[1];
+                        #[cfg(feature = "nova")]
+                        let fact_n = Value::Int(vm.organelles.len() as i64);
+                        #[cfg(not(feature = "nova"))]
+                        let fact_n = Value::Int(0);
+
+                        if let Some(new_subst) = unify(arg_n, &fact_n, subst) {
+                            solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+                        }
+                        return true;
+                    }
+                }
+                "ecology_energy" => {
+                    if args.len() == 2 {
+                        let arg_e = &args[1];
+                        #[cfg(feature = "nova")]
+                        let total: i64 = vm.organelles.iter().map(|o| o.energy).sum();
+                        #[cfg(not(feature = "nova"))]
+                        let total = 0;
+
+                        let fact_e = Value::Int(total);
+                        if let Some(new_subst) = unify(arg_e, &fact_e, subst) {
+                            solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+                        }
+                        return true;
+                    }
+                }
+                "species_count" => {
+                    if args.len() == 2 {
+                        let arg_n = &args[1];
+                        #[cfg(feature = "nova")]
+                        let count = vm.organelles.iter().map(|o| &o.name).collect::<std::collections::HashSet<_>>().len() as i64;
+                        #[cfg(not(feature = "nova"))]
+                        let count = 0;
+
+                        let fact_n = Value::Int(count);
+                        if let Some(new_subst) = unify(arg_n, &fact_n, subst) {
+                            solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+                        }
+                        return true;
+                    }
+                }
                 "energy" => {
                     // energy(E)
                     if args.len() == 2 {

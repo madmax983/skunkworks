@@ -45,6 +45,13 @@ pub fn spawn_random_ecology(vm: &mut ChimeraVM, count: usize) {
         }
 
         vm.organelle_id_counter += 1;
+
+        let kind = if rng.gen_bool(0.01) {
+            OrganelleType::MadScientist
+        } else {
+            OrganelleType::Worker
+        };
+
         let organelle = Organelle {
             stack: Vec::new(),
             ip: (s_idx, 0),
@@ -52,7 +59,7 @@ pub fn spawn_random_ecology(vm: &mut ChimeraVM, count: usize) {
             call_stack: Vec::new(),
             recursion_depth: 0,
             halted: false,
-            kind: OrganelleType::Worker,
+            kind,
             direction: (rng.gen_range(-1..=1), rng.gen_range(-1..=1)),
             ttl: None,
             name: format!("Eco-{}", vm.organelle_id_counter),
@@ -60,9 +67,70 @@ pub fn spawn_random_ecology(vm: &mut ChimeraVM, count: usize) {
             id: vm.organelle_id_counter,
             tissue_id: None,
             genome_id: rng.gen(),
+            energy: 100,
         };
         vm.organelles.push(organelle);
     }
+}
+
+#[cfg(feature = "nova")]
+pub fn process_ecology_tick(vm: &mut ChimeraVM) {
+    let mut interactions: std::collections::HashMap<(usize, usize), Vec<usize>> = std::collections::HashMap::new();
+
+    // 1. Metabolism & Map Positions
+    for (i, org) in vm.organelles.iter_mut().enumerate() {
+        if org.halted { continue; }
+
+        // Metabolism
+        org.energy = org.energy.saturating_sub(1);
+        if org.energy <= 0 {
+            org.halted = true;
+            // Drop food on death
+            let (y, x) = org.context_loc;
+            vm.grid[y][x] = Value::Int(25);
+            continue;
+        }
+
+        // Check for food
+        let (y, x) = org.context_loc;
+        if let Value::Int(n) = vm.grid[y][x] {
+            if n > 0 {
+                org.energy = org.energy.saturating_add(n);
+                vm.grid[y][x] = Value::Int(0);
+            }
+        }
+
+        interactions.entry((y, x)).or_default().push(i);
+    }
+
+    // 2. Interactions (Predation/Mating)
+    for (_loc, indices) in interactions {
+        if indices.len() > 1 {
+            // Simple battle royale: Biggest energy wins
+            let mut best_idx = 0;
+            let mut max_energy = -1;
+
+            for &idx in &indices {
+                if vm.organelles[idx].energy > max_energy {
+                    max_energy = vm.organelles[idx].energy;
+                    best_idx = idx;
+                }
+            }
+
+            // Winner eats losers
+            for &idx in &indices {
+                if idx != best_idx {
+                    let food = vm.organelles[idx].energy / 2;
+                    vm.organelles[best_idx].energy = vm.organelles[best_idx].energy.saturating_add(food);
+                    vm.organelles[idx].halted = true;
+                    vm.organelles[idx].energy = 0;
+                }
+            }
+        }
+    }
+
+    // 3. Cleanup Dead
+    vm.organelles.retain(|o| !o.halted);
 }
 
 #[cfg(feature = "nova")]
@@ -86,11 +154,8 @@ pub fn tick_ecology(vm: &mut ChimeraVM) {
         spawn_food(vm);
     }
 
-    // 2. Cull dead organelles
-    // Already handled in process_organelles? No, process_organelles ticks them.
-    // If they halt, they stay until removed?
-    // process_organelles: "if keep { next_organelles.push(organelle); }"
-    // So yes, halted ones are dropped.
+    // 2. Run Life Simulation
+    process_ecology_tick(vm);
 }
 
 #[cfg(feature = "nova")]

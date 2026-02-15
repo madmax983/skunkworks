@@ -60,7 +60,7 @@ mod elektra_madness {
             traits: vec![],
             id: 999,
             tissue_id: None,
-            genome_id: 0,
+            genome_id: 0, energy: 100,
         };
 
         vm.organelles.push(org);

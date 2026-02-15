@@ -1566,6 +1566,7 @@ impl ChimeraVM {
                             id: self.organelle_id_counter,
                             tissue_id: None,
                             genome_id: 0,
+                            energy: 10,
                         };
                         self.organelles.push(new_org);
                         self.output
@@ -1713,6 +1714,7 @@ impl ChimeraVM {
                             id: self.organelle_id_counter,
                             tissue_id: None,
                             genome_id: 0,
+                            energy: 10,
                         };
                         self.organelles.push(new_org);
                     } else {
@@ -2022,6 +2024,7 @@ impl ChimeraVM {
             }
 
             nova_logistics::process_logistics(self);
+            nova_ecology::tick_ecology(self);
             self.process_environment();
             nova_void::process_rifts(self);
             nova_flux::process_flux(self);
@@ -4993,6 +4996,7 @@ mod sentry_ribosome_tests {
             id: 1,
             tissue_id: None,
             genome_id: 0,
+            energy: 10,
         };
 
         // Write "jump_s" to grid at (5, 5)

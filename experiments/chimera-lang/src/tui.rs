@@ -1508,6 +1508,53 @@ where
                                 }
                                 #[cfg(feature = "nova")]
                                 ViewMode::Ecology => {
+                                    // Inject Gene into Selected Organelle
+                                    let gene_src = app_state.input_buffer.clone();
+                                    if !gene_src.is_empty() {
+                                        // 1. Compile gene
+                                        // We use a hack: wrap in strand to compile, then extract gene
+                                        let src = format!("strand injection {{ {} }}", gene_src);
+                                        match crate::compiler::compile(&src, None) {
+                                            Ok(dna) => {
+                                                if let Some(strand) = dna.helix.strands.first() {
+                                                    // 2. Inject into selected organelle
+                                                    let mut found = false;
+                                                    let (cx, cy) = app_state.grid_cursor;
+                                                    for org in vm.organelles.iter_mut() {
+                                                        if org.context_loc == (cy, cx) {
+                                                            // Push to stack or execute immediately?
+                                                            // Let's append to their current strand? No, shared DNA.
+                                                            // Let's force execute immediately (Interrupt)
+                                                            // Or push to their stack?
+
+                                                            // "Mad Science" Injection: Modify the Organelle's IP to a new ephemeral strand?
+                                                            // Complicated.
+                                                            // Let's just try to execute the genes on the organelle's stack context?
+                                                            // VM doesn't support executing genes on organelle directly easily without setting IP.
+
+                                                            // Simplest: Add genes to the end of the Helix, and Jump the organelle there.
+                                                            vm.dna.helix.strands.push(strand.clone());
+                                                            let new_idx = vm.dna.helix.strands.len() - 1;
+
+                                                            // Save current IP to call stack
+                                                            org.call_stack.push(org.ip);
+                                                            org.ip = (new_idx, 0);
+
+                                                            found = true;
+                                                            app_state.status_msg = format!("Injected code into {}", org.name);
+                                                            break;
+                                                        }
+                                                    }
+                                                    if !found {
+                                                        app_state.status_msg = "No organelle at cursor.".to_string();
+                                                    }
+                                                }
+                                            }
+                                            Err(e) => {
+                                                app_state.status_msg = format!("Compilation Error: {}", e);
+                                            }
+                                        }
+                                    }
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
@@ -1929,6 +1976,14 @@ where
                         if let ViewMode::Ecology = app_state.view_mode {
                             vm.organelles.clear();
                             app_state.status_msg = "Extinction Event.".to_string();
+                        }
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('I') => {
+                        if let ViewMode::Ecology = app_state.view_mode {
+                            app_state.input_mode = InputMode::Editing;
+                            app_state.input_buffer.clear();
+                            app_state.status_msg = "Injecting Gene... (Type & Enter)".to_string();
                         }
                     }
                     #[cfg(feature = "nova")]
@@ -9939,6 +9994,7 @@ fn render_ecology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             info.push(Line::from(format!("Name: {}", org.name)));
             info.push(Line::from(format!("ID: {}", org.id)));
             info.push(Line::from(format!("Type: {:?}", org.kind)));
+            info.push(Line::from(format!("Energy: {}", org.energy)));
             info.push(Line::from(format!("Traits: {:?}", org.traits)));
             found = true;
             break;
@@ -9958,6 +10014,7 @@ fn render_ecology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     info.push(Line::from("Controls:"));
     info.push(Line::from("  S: Spawn 10 Random"));
     info.push(Line::from("  f: Spawn Food"));
+    info.push(Line::from("  I: Inject Code"));
     info.push(Line::from("  K: Extinction Event"));
 
     let info_widget = Paragraph::new(info).block(

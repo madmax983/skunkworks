@@ -299,7 +299,7 @@ mod tests {
             traits: vec![],
             id: 1,
             tissue_id: None,
-            genome_id: 0,
+            genome_id: 0, energy: 100,
         };
         vm.organelles.push(org);
 
@@ -339,7 +339,7 @@ mod tests {
             traits: vec![],
             id: 1,
             tissue_id: None,
-            genome_id: 0,
+            genome_id: 0, energy: 100,
         };
         // Prepare stack for "o": [dy, dx] -> [val]
         // Let's read (8+1, 8+1) = (9,9)
@@ -382,7 +382,7 @@ mod tests {
             traits: vec![],
             id: 1,
             tissue_id: None,
-            genome_id: 0,
+            genome_id: 0, energy: 100,
         };
         // Prepare stack for "x": [val, dy, dx] -> []
         // Write 99 to (8-1, 8-1) = (7,7)
@@ -420,7 +420,7 @@ mod tests {
             traits: vec![],
             id: 1,
             tissue_id: None,
-            genome_id: 0,
+            genome_id: 0, energy: 100,
         };
         vm.organelles.push(org);
 
