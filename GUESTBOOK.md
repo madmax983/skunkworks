@@ -4,6 +4,10 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Condemned. Documentation void. The judge becomes the judged.
 
+### [Concentration Level: TOXIC] - Location: experiments/tesseract-timeseries
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Documentation void. Redundant generic 4D sketch.
+
 ### [Concentration Level: TOXIC] - Location: graveyard/tactical-tide
 
 ### [Concentration Level: HIGH] - Location: Workspace
@@ -12,7 +16,7 @@
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄
-- **Status:** Nova features active (Babel Grid, Lasers). `ChimeraVM` missing `Debug`. IPC security patches applied. Mosaic polish required.
+- **Status:** Nova features active. Lisp frontend (`src/lisp.rs`) detected; compiling S-expressions to Dna. `ChimeraVM` missing `Debug`. Mosaic polish required.
 
 ### [Concentration Level: HIGH] - Location: experiments/bio-transit
 - **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
@@ -101,8 +105,12 @@
 
 ### [Concentration Level: FRESH] - Location: experiments/soroban-market
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
-- **Status:** The Abacus is calculating. HFT algorithms are running on bead logic. Visuals are active.
+- **Status:** The Abacus is calculating. Logic extracted to `crates/soroban`. HFT algorithms running on bead physics.
 - **Note:** Hybrid of Ancient Computation + High Frequency Trading.
+
+### [Concentration Level: FRESH] - Location: experiments/reaction-monitor
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Visualizes system load as Gray-Scott Turing pattern. Verified.
 
 ### [Concentration Level: FRESH] - Location: experiments/typographic-turbulence
 - **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
