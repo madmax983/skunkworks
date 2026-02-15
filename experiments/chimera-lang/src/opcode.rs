@@ -1002,6 +1002,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chaos,
 
+    /// **[Nova]** Triggers a Cambrian Explosion (Mass Speciation).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    /// **Effect:** Clears all organelles and spawns diverse new ones.
+    #[cfg(feature = "nova")]
+    Cambrian,
+
     // Attractor Features (Nova - Chaos Dynamics)
     /// **[Nova]** Initializes the Strange Attractor.
     ///
@@ -1829,6 +1836,13 @@ pub enum OpCode {
     /// **Stack:** `[ ..., query_template, transform_template ] -> [ ... ]`
     #[cfg(feature = "oracle")]
     Manifest,
+
+    /// **[Oracle]** Unifies two terms on the stack.
+    ///
+    /// **Stack:** `[ ..., term1, term2 ] -> [ ..., substitution_junction ]`
+    /// **Effect:** Returns a list of variable bindings if successful, or 0 if failed.
+    #[cfg(feature = "oracle")]
+    Unify,
 
     // Git Features (Repository Interaction)
     /// **[Git]** Pushes a list of recent commit hashes to the stack.

@@ -274,6 +274,28 @@ pub fn exec_oracle_op(
             }
             None
         }
+        OpCode::Unify => {
+            if vm.stack.len() >= 2 {
+                let t2 = vm.stack.pop().unwrap();
+                let t1 = vm.stack.pop().unwrap();
+
+                if let Some(subst) = unify(&t1, &t2, &HashMap::new()) {
+                    let mut bindings = Vec::new();
+                    for (k, v) in subst {
+                        bindings.push(Value::Junction(
+                            JunctionType::All,
+                            vec![Value::Str(k), v],
+                        ));
+                    }
+                    vm.stack.push(Value::Junction(JunctionType::All, bindings));
+                } else {
+                    vm.stack.push(Value::Int(0));
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for unify".to_string());
+            }
+            None
+        }
         _ => None,
     }
 }

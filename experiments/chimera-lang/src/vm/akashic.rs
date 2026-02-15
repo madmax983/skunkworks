@@ -15,6 +15,42 @@ use std::io::{Read, Write};
 const AKASHIC_FILE: &str = ".chimera_akashic.json";
 
 #[cfg(feature = "nova")]
+fn check_recursion_depth(json: &str, limit: usize) -> bool {
+    let mut depth = 0;
+    let mut in_string = false;
+    let mut escape = false;
+
+    for c in json.chars() {
+        if in_string {
+            if escape {
+                escape = false;
+            } else if c == '\\' {
+                escape = true;
+            } else if c == '"' {
+                in_string = false;
+            }
+        } else {
+            match c {
+                '"' => in_string = true,
+                '{' | '[' => {
+                    depth += 1;
+                    if depth > limit {
+                        return false;
+                    }
+                }
+                '}' | ']' => {
+                    if depth > 0 {
+                        depth -= 1;
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+    true
+}
+
+#[cfg(feature = "nova")]
 fn load_records() -> Result<HashMap<String, Value>, String> {
     match std::fs::File::open(AKASHIC_FILE) {
         Ok(file) => {
@@ -33,6 +69,9 @@ fn load_records() -> Result<HashMap<String, Value>, String> {
                 .read_to_string(&mut content)
                 .is_ok()
             {
+                if !check_recursion_depth(&content, 64) {
+                    return Err("Akashic Record exceeds recursion depth limit (64)".to_string());
+                }
                 serde_json::from_str(&content).map_err(|e| format!("Akashic Parse Error: {}", e))
             } else {
                 Err("Failed to read Akashic Record".to_string())
