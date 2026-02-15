@@ -980,3 +980,8 @@
 ### [Concentration Level: EXECUTED] - Location: graveyard/glyph-wave
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Generic implementation. Redundant with `typographic-turbulence`.
+
+### [Concentration Level: FRESH] - Location: experiments/thermo-market
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Spawning. Market activity generates heat. Termites build cooling fins. The invisible hand is hot.
+- **Note:** Hybrid of experiments/process-auction + experiments/thermo-termites.

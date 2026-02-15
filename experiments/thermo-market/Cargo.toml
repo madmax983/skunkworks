@@ -1,0 +1,11 @@
+[package]
+name = "thermo-market"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = "0.8"
+clap = { version = "4.4", features = ["derive"] }
+rayon = "1.8"
+image = "0.24"

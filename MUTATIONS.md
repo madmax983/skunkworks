@@ -923,14 +923,14 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Visualizing audio spectrum as fluid.
 - **Novel trait**: State transition from discrete frequency bins to continuous fluid.
 - **Status**: experiments/fluid-specter
-- **Evaluation**: Compiles. Stable trail in GUESTBOOK.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
 
 ### hanging-gardens
 - **Parents**: experiments/babylonian-garden + experiments/entropic-rain
 - **Concept**: "The Hanging Gardens of Entropy". Git additions create procedurally generated plants that hang from the sky; deletions create acid rain that dissolves them.
 - **Novel trait**: Ecosystem Balance. The struggle between feature growth and refactoring/decay.
 - **Status**: experiments/hanging-gardens
-- **Evaluation**: Compiles. Re-verified.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
 
 ### chimera-specter
 - **Parents**: experiments/chimera-lang + experiments/fluid-specter
@@ -959,3 +959,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Organic Arithmetic. Visualization of calculation as a biological process.
 - **Status**: experiments/hanging-abacus
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### thermo-market
+- **Parents**: experiments/process-auction + experiments/thermo-termites
+- **Concept**: "The Invisible Hand is Hot". A market simulation where trading generates physical heat, and termite agents must build infrastructure (cooling fins) to prevent thermal throttling.
+- **Novel trait**: Thermodynamics of Finance.
+- **Status**: experiments/thermo-market
+- **Evaluation**: Spawning.
