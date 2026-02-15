@@ -931,3 +931,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Ecosystem Balance. The struggle between feature growth and refactoring/decay.
 - **Status**: experiments/hanging-gardens
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### chimera-specter
+- **Parents**: experiments/chimera-lang + experiments/fluid-specter
+- **Concept**: "Spectral Ecology". Fluid simulation driven by audio spectrum where Chimera agents evolve to eat specific frequencies.
+- **Novel trait**: Spectral Metabolism. Survival depends on the acoustic environment (Bass vs Treble eaters).
+- **Status**: experiments/chimera-specter
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

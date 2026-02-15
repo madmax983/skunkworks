@@ -739,6 +739,11 @@
 - **Status:** Compiles. Verified by Splice Surgeon. A visualization of knowledge graph decay where nodes rot and text glitches over time. Novel trait: Mnemonic Decay. Information requires active maintenance (healing) to persist.
 - **Note:** Hybrid of experiments/mnem-rot (Genesis).
 
+### [Concentration Level: FRESH] - Location: experiments/mnem-bridge
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Implemented by The Splice Surgeon. Verified. Army ants forming bridges where the structural integrity is tied to the semantic integrity of the memories they carry. Novel trait: Semantic Structural Engineering. Bridges collapse as memories fade (glitch).
+- **Note:** Hybrid of experiments/mnem-rot + experiments/biomimetic-bridge.
+
 ### [Concentration Level: FRESH] - Location: experiments/chimera-bridge
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Compiles. Implemented by The Splice Surgeon. Army ants forming bridges where each ant is a computing node (ChimeraVM). The bridge structure computes its own stability. Novel trait: Structural Computation. The bridge must "think" to stay standing.
@@ -783,6 +788,11 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The gardens are hanging. The rain is falling. Code is growing and dissolving in the void.
 - **Note:** Hybrid of `babylonian-garden` and `entropic-rain`.
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-specter
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The fluid is singing. Chimera agents are feeding on the bass. Spectral ecology active.
+- **Note:** Hybrid of `chimera-lang` and `fluid-specter`.
 
 ### [Concentration Level: VERIFIED] - Location: experiments/mnem-bridge
 
