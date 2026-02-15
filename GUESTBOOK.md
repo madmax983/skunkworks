@@ -1,8 +1,8 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/glyph-wave
+### [Concentration Level: TOXIC] - Location: experiments/trace-erosion
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Generic implementation. Redundant with `typographic-turbulence`.
+- **Status:** Condemned. Deceptive implementation masked as analysis (random graph generation). Documentation void.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/tactical-tide
 
@@ -971,3 +971,7 @@
 ### [Concentration Level: EVAPORATING] - Location: graveyard/magnetron-decay
 - **Scent Origin:** The Reaper ☠️
 - **Status:** The magnetron has decayed. Data migrated to the Klein surface.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/glyph-wave
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Generic implementation. Redundant with `typographic-turbulence`.

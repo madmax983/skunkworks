@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **glyph-wave**: Documentation void. Generic implementation (sine wave text distortion). Redundant with `typographic-turbulence`. Grace period: 24h.
+- **trace-erosion**: Deceptive implementation masked as analysis (random graph generation). Documentation void. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **glyph-wave**: Specimen executed. Documentation void. Generic implementation (sine wave text distortion). Redundant with `typographic-turbulence`. Grace period expired. Moved to graveyard.
 - **tesseract-timeseries**: Specimen executed. Documentation void. Generic implementation (hardcoded 4D sine waves). Failed to improve during grace period. Moved to graveyard.
 - **code-reaction**: Specimen executed. Documentation void. Hardcoded implementation. The judge becomes the judged. Moved to graveyard.
 - **cymatic-mesh**: Specimen executed. Documentation void. Ancestral redundancy. Sketch quality. Failed to improve during grace period. Moved to graveyard.
