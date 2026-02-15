@@ -1,8 +1,8 @@
 mod chem_sim;
 
-use macroquad::prelude::*;
-use macroquad::models::{draw_mesh, Mesh, Vertex};
 use chem_sim::ChemicalState;
+use macroquad::models::{Mesh, Vertex, draw_mesh};
+use macroquad::prelude::*;
 
 const GRID_SIZE: usize = 200;
 
@@ -89,19 +89,20 @@ impl Terrain {
             v.color = if v_val < 0.1 {
                 // Deep Blue
                 let t = v_val / 0.1;
-                Color::new(0.0, 0.2 + t*0.1, 0.5 + t*0.5, 1.0)
+                Color::new(0.0, 0.2 + t * 0.1, 0.5 + t * 0.5, 1.0)
             } else if v_val < 0.25 {
                 // Sand
                 Color::new(0.9, 0.8, 0.5, 1.0)
             } else if v_val < 0.4 {
                 // Green
                 let t = (v_val - 0.25) / 0.15;
-                Color::new(0.1 + t*0.1, 0.6 + t*0.2, 0.1, 1.0)
+                Color::new(0.1 + t * 0.1, 0.6 + t * 0.2, 0.1, 1.0)
             } else {
                 // Coral/Pink/Purple
                 let t = (v_val - 0.4) / 0.6;
-                Color::new(0.8 + t*0.2, 0.2 + t*0.1, 0.4 + t*0.6, 1.0)
-            }.into();
+                Color::new(0.8 + t * 0.2, 0.2 + t * 0.1, 0.4 + t * 0.6, 1.0)
+            }
+            .into();
         }
     }
 }
@@ -153,13 +154,25 @@ async fn main() {
             cam_pos.x += (cam_yaw + std::f32::consts::FRAC_PI_2).cos() * speed * dt;
             cam_pos.z += (cam_yaw + std::f32::consts::FRAC_PI_2).sin() * speed * dt;
         }
-        if is_key_down(KeyCode::Q) { cam_pos.y -= speed * dt; }
-        if is_key_down(KeyCode::E) { cam_pos.y += speed * dt; }
+        if is_key_down(KeyCode::Q) {
+            cam_pos.y -= speed * dt;
+        }
+        if is_key_down(KeyCode::E) {
+            cam_pos.y += speed * dt;
+        }
 
-        if is_key_down(KeyCode::Left) { cam_yaw -= rot_speed * dt; }
-        if is_key_down(KeyCode::Right) { cam_yaw += rot_speed * dt; }
-        if is_key_down(KeyCode::Up) { cam_pitch += rot_speed * dt; }
-        if is_key_down(KeyCode::Down) { cam_pitch -= rot_speed * dt; }
+        if is_key_down(KeyCode::Left) {
+            cam_yaw -= rot_speed * dt;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_yaw += rot_speed * dt;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_pitch += rot_speed * dt;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_pitch -= rot_speed * dt;
+        }
 
         // Interaction: Paint at Crosshair (Center of Screen)
         if is_mouse_button_down(MouseButton::Left) || is_key_down(KeyCode::Space) {
@@ -167,8 +180,9 @@ async fn main() {
             let forward = vec3(
                 cam_yaw.cos() * cam_pitch.cos(),
                 cam_pitch.sin(),
-                cam_yaw.sin() * cam_pitch.cos()
-            ).normalize();
+                cam_yaw.sin() * cam_pitch.cos(),
+            )
+            .normalize();
 
             // Ray-Plane Intersection (Y=0)
             // t = -O.y / D.y
@@ -187,14 +201,18 @@ async fn main() {
             }
         }
 
-
         clear_background(BLACK);
 
         // 3D Draw
         set_camera(&Camera3D {
             position: cam_pos,
             up: vec3(0., 1., 0.),
-            target: cam_pos + vec3(cam_yaw.cos() * cam_pitch.cos(), cam_pitch.sin(), cam_yaw.sin() * cam_pitch.cos()),
+            target: cam_pos
+                + vec3(
+                    cam_yaw.cos() * cam_pitch.cos(),
+                    cam_pitch.sin(),
+                    cam_yaw.sin() * cam_pitch.cos(),
+                ),
             ..Default::default()
         });
 
@@ -208,30 +226,76 @@ async fn main() {
         draw_text("Turing Terra", 20.0, 30.0, 30.0, WHITE);
         draw_text(&format!("FPS: {}", get_fps()), 20.0, 60.0, 20.0, WHITE);
         draw_text(&format!("Feed: {:.4} (J/K)", feed), 20.0, 90.0, 20.0, WHITE);
-        draw_text(&format!("Kill: {:.4} (U/I)", kill), 20.0, 110.0, 20.0, WHITE);
-        draw_text("WASD: Move, Arrows: Look, Q/E: Up/Down", 20.0, 140.0, 20.0, WHITE);
-        draw_text("Click/Space: Paint Catalyst at Crosshair", 20.0, 160.0, 20.0, WHITE);
+        draw_text(
+            &format!("Kill: {:.4} (U/I)", kill),
+            20.0,
+            110.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "WASD: Move, Arrows: Look, Q/E: Up/Down",
+            20.0,
+            140.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "Click/Space: Paint Catalyst at Crosshair",
+            20.0,
+            160.0,
+            20.0,
+            WHITE,
+        );
         draw_text("R: Reset, 1-3: Presets", 20.0, 180.0, 20.0, WHITE);
 
         // Draw Crosshair
-        draw_line(screen_width()/2.0 - 10.0, screen_height()/2.0, screen_width()/2.0 + 10.0, screen_height()/2.0, 2.0, WHITE);
-        draw_line(screen_width()/2.0, screen_height()/2.0 - 10.0, screen_width()/2.0, screen_height()/2.0 + 10.0, 2.0, WHITE);
+        draw_line(
+            screen_width() / 2.0 - 10.0,
+            screen_height() / 2.0,
+            screen_width() / 2.0 + 10.0,
+            screen_height() / 2.0,
+            2.0,
+            WHITE,
+        );
+        draw_line(
+            screen_width() / 2.0,
+            screen_height() / 2.0 - 10.0,
+            screen_width() / 2.0,
+            screen_height() / 2.0 + 10.0,
+            2.0,
+            WHITE,
+        );
 
         // Logic for Parameters
-        if is_key_down(KeyCode::J) { feed -= 0.0001; }
-        if is_key_down(KeyCode::K) { feed += 0.0001; }
-        if is_key_down(KeyCode::U) { kill -= 0.0001; }
-        if is_key_down(KeyCode::I) { kill += 0.0001; }
+        if is_key_down(KeyCode::J) {
+            feed -= 0.0001;
+        }
+        if is_key_down(KeyCode::K) {
+            feed += 0.0001;
+        }
+        if is_key_down(KeyCode::U) {
+            kill -= 0.0001;
+        }
+        if is_key_down(KeyCode::I) {
+            kill += 0.0001;
+        }
 
         // Presets
-        if is_key_pressed(KeyCode::Key1) { // Solitons
-            feed = 0.03; kill = 0.062;
+        if is_key_pressed(KeyCode::Key1) {
+            // Solitons
+            feed = 0.03;
+            kill = 0.062;
         }
-        if is_key_pressed(KeyCode::Key2) { // Coral
-            feed = 0.0545; kill = 0.062;
+        if is_key_pressed(KeyCode::Key2) {
+            // Coral
+            feed = 0.0545;
+            kill = 0.062;
         }
-        if is_key_pressed(KeyCode::Key3) { // Maze
-            feed = 0.029; kill = 0.057;
+        if is_key_pressed(KeyCode::Key3) {
+            // Maze
+            feed = 0.029;
+            kill = 0.057;
         }
 
         // Reset

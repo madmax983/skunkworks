@@ -9565,7 +9565,9 @@ fn render_reactor(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             if flash > 0 {
                 let intensity = flash;
                 // Yellow flash
-                style = style.bg(Color::Rgb(intensity, intensity, 0)).fg(Color::Black);
+                style = style
+                    .bg(Color::Rgb(intensity, intensity, 0))
+                    .fg(Color::Black);
             } else {
                 style = style.fg(Color::Cyan);
             }
@@ -9591,9 +9593,8 @@ fn render_reactor(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let status = if vm.reactor_mode { "ON" } else { "OFF" };
     let title = format!("REACTOR CHAMBER (Active: {})", status);
 
-    let grid_widget = Paragraph::new(grid_lines).block(
-        Block::default().borders(Borders::ALL).title(title)
-    );
+    let grid_widget =
+        Paragraph::new(grid_lines).block(Block::default().borders(Borders::ALL).title(title));
     f.render_widget(grid_widget, chunks[0]);
 
     // Info
@@ -9628,8 +9629,7 @@ fn render_reactor(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     info.push(Line::from("  Reactor (OpCode) to toggle"));
     info.push(Line::from("  Reaction(A,B,C) to add rule"));
 
-    let info_widget = Paragraph::new(info).block(
-        Block::default().borders(Borders::ALL).title("Schematics")
-    );
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Schematics"));
     f.render_widget(info_widget, chunks[1]);
 }

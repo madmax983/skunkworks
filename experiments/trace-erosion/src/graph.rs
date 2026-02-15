@@ -23,7 +23,10 @@ pub struct CallGraph {
 
 impl CallGraph {
     pub fn new() -> Self {
-        Self { nodes: Vec::new(), edges: Vec::new() }
+        Self {
+            nodes: Vec::new(),
+            edges: Vec::new(),
+        }
     }
 
     pub fn generate_random() -> Self {
@@ -53,7 +56,7 @@ impl CallGraph {
                 let jitter_angle = rand::gen_range(-0.2, 0.2);
                 let pos = vec2(
                     radius * (angle + jitter_angle).cos(),
-                    radius * (angle + jitter_angle).sin()
+                    radius * (angle + jitter_angle).sin(),
                 );
 
                 let id = next_id;
@@ -69,27 +72,27 @@ impl CallGraph {
 
                 // Connect to 1 or 2 random parents from previous layer
                 let parent_count = rand::gen_range(1, 3); // 1 to 2 (upper bound exclusive in macroquad rand?)
-                // macroquad::rand::gen_range(low, high) is [low, high) for integers?
-                // Documentation says: "Generates a random value in the range [low, high)."
+                                                          // macroquad::rand::gen_range(low, high) is [low, high) for integers?
+                                                          // Documentation says: "Generates a random value in the range [low, high)."
 
                 for _ in 0..parent_count {
                     if !previous_layer_nodes.is_empty() {
-                         let p_idx = rand::gen_range(0, previous_layer_nodes.len());
-                         let parent = previous_layer_nodes[p_idx];
+                        let p_idx = rand::gen_range(0, previous_layer_nodes.len());
+                        let parent = previous_layer_nodes[p_idx];
 
-                         // Weights distribution: mostly small, some huge (hot paths)
-                         let roll = rand::gen_range(0.0, 1.0);
-                         let weight = if roll > 0.8 {
-                             rand::gen_range(500.0, 1000.0)
-                         } else {
-                             rand::gen_range(10.0, 100.0)
-                         };
+                        // Weights distribution: mostly small, some huge (hot paths)
+                        let roll = rand::gen_range(0.0, 1.0);
+                        let weight = if roll > 0.8 {
+                            rand::gen_range(500.0, 1000.0)
+                        } else {
+                            rand::gen_range(10.0, 100.0)
+                        };
 
-                         graph.edges.push(Edge {
-                             source: parent,
-                             target: id,
-                             weight,
-                         });
+                        graph.edges.push(Edge {
+                            source: parent,
+                            target: id,
+                            weight,
+                        });
                     }
                 }
             }

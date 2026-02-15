@@ -36,7 +36,8 @@ pub fn process_reactor(vm: &mut ChimeraVM) {
 
                     // Check Cache
                     let key = (val.clone(), neighbor_val.clone());
-                    let result_opt: Option<Value> = if let Some(cached) = vm.reactor_cache.get(&key) {
+                    let result_opt: Option<Value> = if let Some(cached) = vm.reactor_cache.get(&key)
+                    {
                         cached.clone()
                     } else {
                         // Query Oracle: reaction(A, B, ?Result)
@@ -46,14 +47,21 @@ pub fn process_reactor(vm: &mut ChimeraVM) {
                                 Value::Str("reaction".to_string()),
                                 val.clone(),
                                 neighbor_val.clone(),
-                                Value::Str("?Result".to_string())
-                            ]
+                                Value::Str("?Result".to_string()),
+                            ],
                         );
 
                         let mut solutions = Vec::new();
                         // Limit depth to avoid stalls
                         #[cfg(feature = "oracle")]
-                        oracle::solve(&[query], HashMap::new(), &vm.knowledge_base, vm, &mut solutions, 0);
+                        oracle::solve(
+                            &[query],
+                            HashMap::new(),
+                            &vm.knowledge_base,
+                            vm,
+                            &mut solutions,
+                            0,
+                        );
 
                         let res = if let Some(sol) = solutions.first() {
                             if let Some(r) = sol.get("?Result") {
@@ -104,7 +112,8 @@ pub fn process_reactor(vm: &mut ChimeraVM) {
 pub fn exec_reactor(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     vm.reactor_mode = !vm.reactor_mode;
     let status = if vm.reactor_mode { "ON" } else { "OFF" };
-    vm.output.push(format!("REACTOR: Logic Automata {}", status));
+    vm.output
+        .push(format!("REACTOR: Logic Automata {}", status));
     None
 }
 
@@ -124,12 +133,7 @@ pub fn exec_reaction(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
         let fact = Value::Junction(
             JunctionType::Any,
-            vec![
-                Value::Str("reaction".to_string()),
-                input_a,
-                input_b,
-                output
-            ]
+            vec![Value::Str("reaction".to_string()), input_a, input_b, output],
         );
 
         if !vm.knowledge_base.contains(&fact) {
@@ -141,7 +145,8 @@ pub fn exec_reaction(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             vm.output.push("REACTION: Rule already exists".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for reaction".to_string());
+        vm.output
+            .push("Error: Stack underflow for reaction".to_string());
     }
     None
 }

@@ -1,5 +1,5 @@
-use chimera_lang::prelude::*;
 use crate::chem_sim::ChemicalState;
+use chimera_lang::prelude::*;
 use rand::prelude::*;
 
 pub struct Organism {
@@ -31,16 +31,34 @@ impl Organism {
         let mut genes = Vec::new();
 
         // 0: Read Sensor (Grid[8][8])
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }); // Y
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }); // X
-        genes.push(Gene { op: OpCode::GRead, args: vec![] }); // Stack: [SensorValue]
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(8)],
+        }); // Y
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(8)],
+        }); // X
+        genes.push(Gene {
+            op: OpCode::GRead,
+            args: vec![],
+        }); // Stack: [SensorValue]
 
         // 1: Check if > 20 (Food present)
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(20)] });
-        genes.push(Gene { op: OpCode::Sub, args: vec![] }); // Stack: [Sensor - 20]
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(20)],
+        });
+        genes.push(Gene {
+            op: OpCode::Sub,
+            args: vec![],
+        }); // Stack: [Sensor - 20]
 
         // Clear stack
-        genes.push(Gene { op: OpCode::Drop, args: vec![] });
+        genes.push(Gene {
+            op: OpCode::Drop,
+            args: vec![],
+        });
 
         // Let's just create a random gene sequence for movement for EACH organism.
         let mut rng = rand::thread_rng();
@@ -49,27 +67,70 @@ impl Organism {
         let dy: i64 = rng.gen_range(-1..=1);
 
         // Write DX to [0,0]
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(dx)] });
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] });
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] });
-        genes.push(Gene { op: OpCode::GWrite, args: vec![] });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(dx)],
+        });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        });
+        genes.push(Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        });
 
         // Write DY to [0,1]
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(dy)] });
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] });
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] });
-        genes.push(Gene { op: OpCode::GWrite, args: vec![] });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(dy)],
+        });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        });
+        genes.push(Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        });
 
         // Write Action (Eat = 1) to [1,0]
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] });
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] });
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] });
-        genes.push(Gene { op: OpCode::GWrite, args: vec![] });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        });
+        genes.push(Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        });
 
         // Jump back to start
-        genes.push(Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] });
+        genes.push(Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(0)],
+        });
 
-        let dna = Dna { helix: Helix { strands: vec![Strand { genes }] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![Strand { genes }],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         // Enable Chaos for evolution
@@ -95,7 +156,9 @@ impl Organism {
         // 2. Think: Step VM
         for _ in 0..10 {
             self.vm.step();
-            if self.vm.halted { break; }
+            if self.vm.halted {
+                break;
+            }
         }
 
         if self.vm.halted {
@@ -137,20 +200,22 @@ impl Organism {
 
         // Apply Action
         match action {
-            1 => { // Eat (Remove V)
+            1 => {
+                // Eat (Remove V)
                 if current_v_level > 0.0 {
                     let amount = 0.1; // Eat amount
                     world.remove_chemical(self.x, self.y, amount);
                     self.energy += amount * 50.0; // Gain energy
                 }
-            },
-            2 => { // Secrete (Add V)
+            }
+            2 => {
+                // Secrete (Add V)
                 let amount = 0.1;
                 if self.energy > 10.0 {
                     world.add_chemical(self.x, self.y, amount);
                     self.energy -= 5.0; // Cost to secrete
                 }
-            },
+            }
             _ => {}
         }
 

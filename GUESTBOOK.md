@@ -436,3 +436,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The landscape is alive. Organisms are terraforming the Gray-Scott grid. Feedback loops between life and geology are active.
 - **Note:** Hybrid of `turing-terra` and `chimera-lang`.
+
+### [Concentration Level: FRESH] - Location: experiments/stardust-compiler
+- **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
+- **Status:** The nebula is whispering secrets. LSB steganography active. Procedural star fields are hiding source code.
+- **Note:** Moonshot: Steganography + Visual Code Distribution.

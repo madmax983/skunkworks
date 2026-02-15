@@ -2,9 +2,9 @@ mod chem_sim;
 mod organism;
 
 use ::rand::Rng;
-use macroquad::prelude::*;
-use macroquad::models::{draw_mesh, Mesh, Vertex};
 use chem_sim::ChemicalState;
+use macroquad::models::{draw_mesh, Mesh, Vertex};
+use macroquad::prelude::*;
 use organism::Organism;
 
 const GRID_SIZE: usize = 200;
@@ -89,19 +89,20 @@ impl Terrain {
             v.color = if v_val < 0.1 {
                 // Deep Blue
                 let t = v_val / 0.1;
-                Color::new(0.0, 0.2 + t*0.1, 0.5 + t*0.5, 1.0)
+                Color::new(0.0, 0.2 + t * 0.1, 0.5 + t * 0.5, 1.0)
             } else if v_val < 0.25 {
                 // Sand
                 Color::new(0.9, 0.8, 0.5, 1.0)
             } else if v_val < 0.4 {
                 // Green
                 let t = (v_val - 0.25) / 0.15;
-                Color::new(0.1 + t*0.1, 0.6 + t*0.2, 0.1, 1.0)
+                Color::new(0.1 + t * 0.1, 0.6 + t * 0.2, 0.1, 1.0)
             } else {
                 // Coral/Pink/Purple
                 let t = (v_val - 0.4) / 0.6;
-                Color::new(0.8 + t*0.2, 0.2 + t*0.1, 0.4 + t*0.6, 1.0)
-            }.into();
+                Color::new(0.8 + t * 0.2, 0.2 + t * 0.1, 0.4 + t * 0.6, 1.0)
+            }
+            .into();
         }
     }
 }
@@ -176,21 +177,34 @@ async fn main() {
             cam_pos.x += (cam_yaw + std::f32::consts::FRAC_PI_2).cos() * speed * dt;
             cam_pos.z += (cam_yaw + std::f32::consts::FRAC_PI_2).sin() * speed * dt;
         }
-        if is_key_down(KeyCode::Q) { cam_pos.y -= speed * dt; }
-        if is_key_down(KeyCode::E) { cam_pos.y += speed * dt; }
+        if is_key_down(KeyCode::Q) {
+            cam_pos.y -= speed * dt;
+        }
+        if is_key_down(KeyCode::E) {
+            cam_pos.y += speed * dt;
+        }
 
-        if is_key_down(KeyCode::Left) { cam_yaw -= rot_speed * dt; }
-        if is_key_down(KeyCode::Right) { cam_yaw += rot_speed * dt; }
-        if is_key_down(KeyCode::Up) { cam_pitch += rot_speed * dt; }
-        if is_key_down(KeyCode::Down) { cam_pitch -= rot_speed * dt; }
+        if is_key_down(KeyCode::Left) {
+            cam_yaw -= rot_speed * dt;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_yaw += rot_speed * dt;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_pitch += rot_speed * dt;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_pitch -= rot_speed * dt;
+        }
 
         // Interaction: Paint at Crosshair
         if is_mouse_button_down(MouseButton::Left) || is_key_down(KeyCode::Space) {
             let forward = vec3(
                 cam_yaw.cos() * cam_pitch.cos(),
                 cam_pitch.sin(),
-                cam_yaw.sin() * cam_pitch.cos()
-            ).normalize();
+                cam_yaw.sin() * cam_pitch.cos(),
+            )
+            .normalize();
 
             if forward.y.abs() > 0.001 {
                 let t = -cam_pos.y / forward.y;
@@ -206,13 +220,17 @@ async fn main() {
             }
         }
 
-
         clear_background(BLACK);
 
         set_camera(&Camera3D {
             position: cam_pos,
             up: vec3(0., 1., 0.),
-            target: cam_pos + vec3(cam_yaw.cos() * cam_pitch.cos(), cam_pitch.sin(), cam_yaw.sin() * cam_pitch.cos()),
+            target: cam_pos
+                + vec3(
+                    cam_yaw.cos() * cam_pitch.cos(),
+                    cam_pitch.sin(),
+                    cam_yaw.sin() * cam_pitch.cos(),
+                ),
             ..Default::default()
         });
 
@@ -237,15 +255,41 @@ async fn main() {
         // UI
         draw_text("Chimera Terra", 20.0, 30.0, 30.0, WHITE);
         draw_text(&format!("FPS: {}", get_fps()), 20.0, 60.0, 20.0, WHITE);
-        draw_text(&format!("Organisms: {}", organisms.len()), 20.0, 90.0, 20.0, WHITE);
-        draw_text(&format!("Feed: {:.4} (J/K)", feed), 20.0, 110.0, 20.0, WHITE);
-        draw_text("WASD: Move, Arrows: Look, Q/E: Up/Down", 20.0, 140.0, 20.0, WHITE);
+        draw_text(
+            &format!("Organisms: {}", organisms.len()),
+            20.0,
+            90.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            &format!("Feed: {:.4} (J/K)", feed),
+            20.0,
+            110.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "WASD: Move, Arrows: Look, Q/E: Up/Down",
+            20.0,
+            140.0,
+            20.0,
+            WHITE,
+        );
 
         // Logic for Parameters
-        if is_key_down(KeyCode::J) { feed -= 0.0001; }
-        if is_key_down(KeyCode::K) { feed += 0.0001; }
-        if is_key_down(KeyCode::U) { kill -= 0.0001; }
-        if is_key_down(KeyCode::I) { kill += 0.0001; }
+        if is_key_down(KeyCode::J) {
+            feed -= 0.0001;
+        }
+        if is_key_down(KeyCode::K) {
+            feed += 0.0001;
+        }
+        if is_key_down(KeyCode::U) {
+            kill -= 0.0001;
+        }
+        if is_key_down(KeyCode::I) {
+            kill += 0.0001;
+        }
 
         if is_key_pressed(KeyCode::R) {
             sim = ChemicalState::new(GRID_SIZE, GRID_SIZE);
