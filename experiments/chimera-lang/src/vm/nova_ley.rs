@@ -112,7 +112,8 @@ fn exec_ley_sense(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
         vm.stack.push(Value::Int(dy));
         vm.stack.push(Value::Int(dx));
-        vm.stack.push(Value::Int(dist.round() as i64));
+        let dist_int: i64 = dist.round() as i64;
+        vm.stack.push(Value::Int(dist_int));
         vm.stack.push(Value::Int(node.power));
     } else {
         vm.stack.push(Value::Int(0));

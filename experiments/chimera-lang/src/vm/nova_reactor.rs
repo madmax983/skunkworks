@@ -38,7 +38,8 @@ pub fn process_reactor(vm: &mut ChimeraVM) {
                     let key = (val.clone(), neighbor_val.clone());
                     let result_opt: Option<Value> = if let Some(cached) = vm.reactor_cache.get(&key)
                     {
-                        cached.clone()
+                        let v: Option<Value> = cached.clone();
+                        v
                     } else {
                         // Query Oracle: reaction(A, B, ?Result)
                         let query = Value::Junction(

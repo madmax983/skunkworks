@@ -192,9 +192,9 @@ pub fn mutate_hologram(vm: &mut ChimeraVM, intensity: f64) {
     for y in 0..GRID_SIZE {
         for x in 0..GRID_SIZE {
             let (re, im) = vm.hologram_grid[y][x];
-            let magnitude = (re * re + im * im).sqrt();
+            let magnitude: f64 = (re * re + im * im).sqrt();
             if magnitude > 0.001 {
-                let phase = im.atan2(re);
+                let phase: f64 = im.atan2(re);
                 let noise = rng.gen_range(-intensity..intensity);
                 let new_phase = phase + noise;
                 vm.hologram_grid[y][x] = (magnitude * new_phase.cos(), magnitude * new_phase.sin());
@@ -240,11 +240,11 @@ pub fn refract_genes(vm: &ChimeraVM) -> Vec<Gene> {
         let z_re = sum_re / grid_area;
         let z_im = sum_im / grid_area;
 
-        let magnitude = (z_re * z_re + z_im * z_im).sqrt();
+        let magnitude: f64 = (z_re * z_re + z_im * z_im).sqrt();
 
         if magnitude > 0.1 {
             // Decode Phase
-            let phase = z_im.atan2(z_re);
+            let phase: f64 = z_im.atan2(z_re);
             let phase_norm = if phase < 0.0 { phase + 2.0 * PI } else { phase };
 
             // Round to nearest OpCode slot
@@ -292,7 +292,7 @@ pub fn exec_project(
     for y in 0..GRID_SIZE {
         for x in 0..GRID_SIZE {
             let (re, im) = vm.hologram_grid[y][x];
-            let magnitude = (re * re + im * im).sqrt();
+            let magnitude: f64 = (re * re + im * im).sqrt();
             let val = (magnitude * 10.0) as i64;
             if val > 0 {
                 vm.grid[y][x] = Value::Int(val);
@@ -328,9 +328,9 @@ pub fn exec_phase_mutate(
     for y in 0..GRID_SIZE {
         for x in 0..GRID_SIZE {
             let (re, im) = vm.hologram_grid[y][x];
-            let magnitude = (re * re + im * im).sqrt();
+            let magnitude: f64 = (re * re + im * im).sqrt();
             if magnitude > 0.001 {
-                let phase = im.atan2(re);
+                let phase: f64 = im.atan2(re);
                 let noise = rng.gen_range(-0.5..0.5); // Tune this?
                 let new_phase = phase + noise;
                 vm.hologram_grid[y][x] = (magnitude * new_phase.cos(), magnitude * new_phase.sin());
@@ -358,11 +358,11 @@ pub fn exec_quantum_scribe(
 
     let (cy, cx) = vm.context_loc;
     let (re, im) = vm.hologram_grid[cy][cx];
-    let magnitude = (re * re + im * im).sqrt();
+    let magnitude: f64 = (re * re + im * im).sqrt();
 
     if magnitude > threshold {
         // Collapse Phase to Char
-        let phase = im.atan2(re); // -PI to PI
+        let phase: f64 = im.atan2(re); // -PI to PI
         let normalized = (phase + PI) / (2.0 * PI); // 0.0 to 1.0
         let idx = (normalized * 94.0).round().clamp(0.0, 93.0) as u8;
         let char_code = idx + 33; // ASCII '!' (33) to '~' (126)
@@ -541,7 +541,7 @@ pub fn exec_holo_sonify(
     for y in 0..GRID_SIZE {
         for x in 0..GRID_SIZE {
             let (re, im) = vm.hologram_grid[y][x];
-            let magnitude = (re * re + im * im).sqrt();
+            let magnitude: f64 = (re * re + im * im).sqrt();
 
             if magnitude > threshold {
                 // Pitch: Map spatial position to scale
@@ -554,7 +554,7 @@ pub fn exec_holo_sonify(
                 let velocity = (magnitude * 20.0).clamp(1.0, 127.0) as u8;
 
                 // Duration: Based on Phase (-PI to PI) -> (1 to 16 ticks)
-                let phase = im.atan2(re);
+                let phase: f64 = im.atan2(re);
                 let duration = (((phase + PI) / (2.0 * PI)) * 16.0).clamp(1.0, 16.0) as u8;
 
                 vm.midi_messages.push(super::MidiEvent::NoteOn {

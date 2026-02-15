@@ -1340,7 +1340,8 @@ impl ChimeraVM {
 
         for row in self.hormone_grid.iter_mut() {
             for cell in row.iter_mut() {
-                for val in cell.iter_mut() {
+                let cell_arr: &mut [i64; 3] = cell;
+                for val in cell_arr.iter_mut() {
                     let v: &mut i64 = val;
                     if *v > 0 {
                         *v -= 1;
@@ -2193,7 +2194,8 @@ impl ChimeraVM {
         // Link Glitch Level to Babel Integrity
         #[cfg(feature = "nova")]
         {
-            let chaos = (1.0 - self.babel_state.integrity).max(0.0f64) as f32;
+            let integrity: f64 = self.babel_state.integrity;
+            let chaos = (1.0f64 - integrity).max(0.0f64) as f32;
             if chaos > self.glitch_level {
                 self.glitch_level = chaos;
             }

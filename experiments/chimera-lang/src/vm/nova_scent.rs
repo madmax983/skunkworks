@@ -131,9 +131,9 @@ fn exec_track(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             let pos_y = cy as f64 + 0.5;
 
             // Gradient descent: Sum vectors weighted by intensity
-            let mut sum_dx = 0.0;
-            let mut sum_dy = 0.0;
-            let mut total_weight = 0.0;
+            let mut sum_dx: f64 = 0.0;
+            let mut sum_dy: f64 = 0.0;
+            let mut total_weight: f64 = 0.0;
 
             for scent in &vm.pheromones {
                 if scent.signature == target_sig {
