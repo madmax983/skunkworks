@@ -19,3 +19,7 @@
 ## 2025-02-18 - Bio-Transit Grid Undefined Behavior
 **Threat:** `TrailMap::diffuse_and_decay` used `unsafe { *self.grid.get_unchecked(...) }` inside a parallel loop. Since `TrailMap` fields are public, a user could truncate `grid` independently of `width` and `height`, causing the unchecked access to read out of bounds (UB).
 **Defense:** Replaced the `unsafe` block with standard safe indexing. This turns the potential UB into a safe panic if invariants are violated.
+
+## 2025-05-23 - Mobius Transformation Singularity (DoS)
+**Threat:** The `Mobius` struct in `crates/poincare-disk` exposed public fields (`a`, `b`, `c`, `d`), allowing the construction of invalid transformations (e.g., zero determinant). Calling `apply` on such a struct would result in division by zero, propagating `NaN`/`Inf` throughout the simulation, potentially crashing or hanging downstream systems.
+**Defense:** Made `Mobius` fields private and introduced a `new` constructor that validates the determinant is non-zero, returning `Option<Self>`. Added getters for read-only access.

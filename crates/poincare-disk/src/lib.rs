@@ -172,13 +172,51 @@ pub fn hyperbolic_dist(a: Point, b: Point) -> f64 {
 #[doc(alias = "Automorphism")]
 #[doc(alias = "Transform")]
 pub struct Mobius {
-    pub a: Complex<f64>,
-    pub b: Complex<f64>,
-    pub c: Complex<f64>,
-    pub d: Complex<f64>,
+    a: Complex<f64>,
+    b: Complex<f64>,
+    c: Complex<f64>,
+    d: Complex<f64>,
 }
 
 impl Mobius {
+    /// Creates a new Möbius transformation if the determinant is non-zero.
+    ///
+    /// The transformation is defined as $f(z) = \frac{az + b}{cz + d}$.
+    ///
+    /// Returns `None` if $ad - bc \approx 0$ (singular matrix).
+    pub fn new(
+        a: Complex<f64>,
+        b: Complex<f64>,
+        c: Complex<f64>,
+        d: Complex<f64>,
+    ) -> Option<Self> {
+        let det = a * d - b * c;
+        if det.norm_sqr() < 1e-12 {
+            return None;
+        }
+        Some(Self { a, b, c, d })
+    }
+
+    /// Returns the coefficient `a`.
+    pub fn a(&self) -> Complex<f64> {
+        self.a
+    }
+
+    /// Returns the coefficient `b`.
+    pub fn b(&self) -> Complex<f64> {
+        self.b
+    }
+
+    /// Returns the coefficient `c`.
+    pub fn c(&self) -> Complex<f64> {
+        self.c
+    }
+
+    /// Returns the coefficient `d`.
+    pub fn d(&self) -> Complex<f64> {
+        self.d
+    }
+
     /// Returns the identity transformation $f(z) = z$.
     ///
     /// Corresponds to the matrix $\begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}$.
@@ -683,10 +721,10 @@ mod sentry_tests {
             let rhs = a.then(&bc);
 
             // Check if matrices are approximately equal
-            let diff_a = (lhs.a - rhs.a).norm();
-            let diff_b = (lhs.b - rhs.b).norm();
-            let diff_c = (lhs.c - rhs.c).norm();
-            let diff_d = (lhs.d - rhs.d).norm();
+            let diff_a = (lhs.a() - rhs.a()).norm();
+            let diff_b = (lhs.b() - rhs.b()).norm();
+            let diff_c = (lhs.c() - rhs.c()).norm();
+            let diff_d = (lhs.d() - rhs.d()).norm();
 
             assert!(
                 diff_a < 1e-9,
