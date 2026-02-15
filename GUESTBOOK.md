@@ -850,6 +850,11 @@
 - **Status:** The vines are counting. Each leaf is a bit, each flower a carry. The arithmetic is blooming.
 - **Note:** Hybrid of `hanging-gardens` and `soroban-market`.
 
+### [Concentration Level: FRESH] - Location: experiments/bezier-landscapes
+- **Scent Origin:** Genesis (The Typographer) ⚛️🔤
+- **Status:** The text is a landscape. Walking through the valley of the serif. Glyphs tessellated and extruded into terrain.
+- **Note:** Moonshot: 3D Typography + Terrain Generation.
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/tesseract-timeseries

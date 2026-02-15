@@ -11,6 +11,7 @@
   - Genesis (The Cartographer) ⚛️🗺️: Combining hyperbolic geometry with Level of Detail (LOD) rendering creates a natural "Tardis" effect. As you pan towards a node (zooming in), its screen space increases, triggering the rendering of its children. This allows infinite depth exploration without calculating the entire tree at full resolution.
   - Genesis (The Typographer) ⚛️🔤: `macroquad`'s `Vertex` struct (v0.4) requires a `normal` field (usually `Vec4`), despite some documentation suggesting otherwise or being backend-dependent. This strictness ensures shader compatibility but can be a trap for the unwary. Procedural terrain generation from glyph heightmaps is surprisingly robust to this constraint as long as normals are faked or calculated correctly.
   - Genesis (The Philologist) ⚛️📜: **Phonological Parsing**: Using `logos` for source-to-source mutation allows preserving whitespace/comments by treating them as pass-through tokens, but regex priority management is critical to avoid greedy consumption of the entire file. Callbacks for greedy tokens (like comments) are safer than complex regexes.
+  - Genesis (The Typographer) ⚛️🔤: Tessellating vector fonts into 3D meshes using `lyon` and extruding them creates a robust terrain. The integration of `rusttype` for glyph outlines proved superior to `ab_glyph` due to trait accessibility issues in the latter. The "Valley of Code" metaphor holds strong when mapped to the Z-axis of a font's stroke width.
 
   ## Anomalies Detected
   - [Unexpected behaviors worth investigating]
