@@ -44,7 +44,7 @@
 //! | **9** | Down       | 4 Up       | $5 + 4$     |
 
 /// A single rod on the Soroban, representing one decimal digit (0-9).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub struct Column {
     /// The Heaven Bead (Value 5).
     ///
@@ -59,14 +59,6 @@ pub struct Column {
     pub lower_active: u8,
 }
 
-impl Default for Column {
-    fn default() -> Self {
-        Self {
-            upper_active: false,
-            lower_active: 0,
-        }
-    }
-}
 
 impl Column {
     /// Returns the decimal value of this column (0-9).
@@ -94,18 +86,10 @@ impl Column {
 /// * **Column 1**: The "Tens" place ($10^1$).
 /// * ...
 /// * **Column 12**: The "Trillions" place ($10^{12}$).
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct Soroban {
     // Column 0 is the ones place, 1 is tens, etc.
     pub columns: [Column; 13],
-}
-
-impl Default for Soroban {
-    fn default() -> Self {
-        Self {
-            columns: [Column::default(); 13],
-        }
-    }
 }
 
 impl Soroban {
@@ -133,7 +117,7 @@ impl Soroban {
     /// # Examples
     ///
     /// ```
-    /// use soroban_market::soroban::Soroban;
+    /// use soroban::Soroban;
     /// let mut s = Soroban::new();
     /// s.add(5);
     /// assert_eq!(s.value(), 5);
@@ -184,7 +168,7 @@ impl Soroban {
     /// # Examples
     ///
     /// ```
-    /// use soroban_market::soroban::Soroban;
+    /// use soroban::Soroban;
     /// let mut s = Soroban::new();
     /// s.add(10);
     /// s.sub(3); // Borrow 1 from tens column (10 -> 0), add 10 to ones (0 -> 10), sub 3 -> 7.

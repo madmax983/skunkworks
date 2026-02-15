@@ -8,6 +8,7 @@ members = [
     "crates/synaptic-physics",
     "crates/tui-semantic",
     "crates/tui-shared",
+    "crates/soroban",
     "experiments/code-bio-dome",
     "experiments/cymatic-ocean",
     "experiments/cymatic-text",
@@ -133,7 +134,7 @@ members = [
     "experiments/bifurcation-landscape", "experiments/echo-cavern", "experiments/maat-engine", "experiments/clockwork-cipher", "experiments/myco-diffusion", "experiments/thermo-defense", "experiments/glossolalia",
     "experiments/chimera-maat", "experiments/thread-frequency", "experiments/root-maze", "experiments/chaotic-defense",
     "experiments/chimera-defense", "experiments/turing-terra", "experiments/chimera-terra", "experiments/trace-erosion", "experiments/stardust-compiler",
-    "experiments/chimera-stardust", "experiments/digital-decay", "experiments/cymatic-mesh",
+    "experiments/chimera-stardust", "experiments/digital-decay",
     "experiments/code-acoustics", "experiments/soroban-market", "experiments/hanging-gardens", "experiments/celestial-cipher", "experiments/chimera-specter", "experiments/code-concerto",
 ]
 resolver = "2"
@@ -153,3 +154,4 @@ market-sim = { path = "crates/market-sim" }
 synaptic-physics = { path = "crates/synaptic-physics" }
 quipu = { path = "crates/quipu" }
 flocking = { path = "crates/flocking" }
+soroban = { path = "crates/soroban" }
