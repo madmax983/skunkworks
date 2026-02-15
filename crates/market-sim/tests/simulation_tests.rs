@@ -1,4 +1,4 @@
-use market_sim::{Grid, Particle};
+use market_sim::{DEFAULT_TRADE_AGE, Grid, Particle};
 
 #[test]
 fn test_sideways_movement_when_blocked() {
@@ -27,7 +27,7 @@ fn test_sideways_movement_when_blocked() {
     // Let's use an Ask as a blocker? No, Ask triggers collision.
     // Let's use a Trade as a blocker! Trade doesn't move.
 
-    grid.set(1, 1, Particle::Trade { age: 5 });
+    grid.set(1, 1, Particle::Trade { age: DEFAULT_TRADE_AGE });
     grid.set(1, 2, Particle::Bid(1));
 
     // Update.
