@@ -96,3 +96,8 @@
 **Bloat:** `experiments/valley-forge` listed in `Cargo.toml` but missing from filesystem.
 **Cut:** Removed from `Cargo.toml`.
 **Saved:** Workspace build sanity.
+
+## [Reduction]
+**Bloat:** Duplicated grid seeding logic in `App::new` and `App::resize`, and inefficient `Span` allocation in `ui` loop in `experiments/biomorphic-clock`.
+**Cut:** Encapsulated seeding in `Grid::random_seed_center`, implemented run-length encoding for UI rendering.
+**Saved:** ~20 lines of duplicated logic, significantly reduced heap allocations per frame.
