@@ -33,8 +33,13 @@ impl AudioEngine {
         #[cfg(feature = "audio")]
         {
             match event {
-                MusicalEvent::NoteOn { instrument, pitch, volume, duration } => {
-                     if let Ok(sink) = Sink::try_new(&self.stream_handle) {
+                MusicalEvent::NoteOn {
+                    instrument,
+                    pitch,
+                    volume,
+                    duration,
+                } => {
+                    if let Ok(sink) = Sink::try_new(&self.stream_handle) {
                         let vol = *volume;
                         let dur = *duration;
                         let freq = *pitch;
@@ -47,7 +52,7 @@ impl AudioEngine {
                                     .fade_in(Duration::from_millis(100))
                                     .fade_out(Duration::from_millis(100));
                                 sink.append(source);
-                            },
+                            }
                             Instrument::Bass => {
                                 let source = rodio::source::SineWave::new(freq)
                                     .take_duration(dur)
@@ -55,7 +60,7 @@ impl AudioEngine {
                                     .fade_in(Duration::from_millis(10))
                                     .fade_out(Duration::from_millis(50));
                                 sink.append(source);
-                            },
+                            }
                             Instrument::Lead => {
                                 let source = rodio::source::SineWave::new(freq)
                                     .take_duration(dur)
@@ -63,7 +68,7 @@ impl AudioEngine {
                                     .fade_in(Duration::from_millis(5))
                                     .fade_out(Duration::from_millis(10));
                                 sink.append(source);
-                            },
+                            }
                             _ => {
                                 let source = rodio::source::SineWave::new(freq)
                                     .take_duration(dur)
@@ -75,7 +80,7 @@ impl AudioEngine {
                         }
 
                         sink.detach();
-                     }
+                    }
                 }
                 MusicalEvent::Wait(_) => {}
             }

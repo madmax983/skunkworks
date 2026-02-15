@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use std::sync::mpsc::{Receiver, Sender, TryRecvError, channel};
+use std::sync::mpsc::{channel, Receiver, Sender, TryRecvError};
 use std::thread;
 
 mod garden;
@@ -58,10 +58,9 @@ async fn main() {
         if is_key_pressed(KeyCode::Right) {
             speed += 1;
         }
-        if is_key_pressed(KeyCode::Left)
-            && speed > 1 {
-                speed -= 1;
-            }
+        if is_key_pressed(KeyCode::Left) && speed > 1 {
+            speed -= 1;
+        }
 
         // Logic
         if playing {

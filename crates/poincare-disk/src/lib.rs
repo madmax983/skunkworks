@@ -184,12 +184,7 @@ impl Mobius {
     /// The transformation is defined as $f(z) = \frac{az + b}{cz + d}$.
     ///
     /// Returns `None` if $ad - bc \approx 0$ (singular matrix).
-    pub fn new(
-        a: Complex<f64>,
-        b: Complex<f64>,
-        c: Complex<f64>,
-        d: Complex<f64>,
-    ) -> Option<Self> {
+    pub fn new(a: Complex<f64>, b: Complex<f64>, c: Complex<f64>, d: Complex<f64>) -> Option<Self> {
         let det = a * d - b * c;
         if det.norm_sqr() < 1e-12 {
             return None;

@@ -177,7 +177,12 @@ async fn main() -> anyhow::Result<()> {
 
             if fx < FLUID_SIZE && fy < FLUID_SIZE {
                 fluid.add_density(fx, fy, 50.0);
-                fluid.add_velocity(fx, fy, macroquad::rand::gen_range(-1.0, 1.0), macroquad::rand::gen_range(-1.0, 1.0));
+                fluid.add_velocity(
+                    fx,
+                    fy,
+                    macroquad::rand::gen_range(-1.0, 1.0),
+                    macroquad::rand::gen_range(-1.0, 1.0),
+                );
             }
         }
 
@@ -198,7 +203,8 @@ async fn main() -> anyhow::Result<()> {
                 // Mutation: Shift frequency preference
                 if macroquad::rand::gen_range(0.0, 1.0) < 0.2 {
                     let shift = macroquad::rand::gen_range(-5, 6);
-                    child.target_freq_bin = (child.target_freq_bin as i32 + shift).clamp(0, 511) as usize;
+                    child.target_freq_bin =
+                        (child.target_freq_bin as i32 + shift).clamp(0, 511) as usize;
                     // Recalculate color
                     let hue = child.target_freq_bin as f32 / 256.0;
                     child.color = hsl_to_rgb(hue.clamp(0.0, 1.0), 1.0, 0.5);
@@ -251,7 +257,13 @@ async fn main() -> anyhow::Result<()> {
 
         // HUD
         draw_text("Chimera Specter", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Agents: {}", agents.len()), 10.0, 60.0, 20.0, WHITE);
+        draw_text(
+            &format!("Agents: {}", agents.len()),
+            10.0,
+            60.0,
+            20.0,
+            WHITE,
+        );
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 80.0, 20.0, LIGHTGRAY);
 
         next_frame().await;

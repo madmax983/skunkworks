@@ -1,6 +1,6 @@
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::*;
 use bevy_prototype_lyon::prelude::*;
+use bevy_rapier2d::prelude::*;
 use std::f32::consts::PI;
 
 pub const GEAR_TOOTH_SIZE: f32 = 10.0;
@@ -37,13 +37,16 @@ pub fn spawn_orrery(mut commands: Commands) {
             RigidBody::Dynamic,
             Collider::ball(main_shaft_radius),
             ColliderMassProperties::Density(10.0),
-            Damping { linear_damping: 0.0, angular_damping: 2.0 },
+            Damping {
+                linear_damping: 0.0,
+                angular_damping: 2.0,
+            },
             ExternalImpulse::default(),
             MainShaft,
         ))
         .with_children(|parent| {
-             // Sun Visual
-             parent.spawn((
+            // Sun Visual
+            parent.spawn((
                 ShapeBundle {
                     path: GeometryBuilder::build_as(&shapes::Circle {
                         radius: 15.0,
@@ -53,19 +56,23 @@ pub fn spawn_orrery(mut commands: Commands) {
                 },
                 Fill::color(Color::srgb(1.0, 1.0, 0.0)),
                 Stroke::new(Color::srgb(1.0, 0.5, 0.0), 2.0),
-             ));
+            ));
         })
         .id();
 
     // Pin Main Shaft to World Center
-    let world_anchor = commands.spawn((
-        TransformBundle::from(Transform::from_xyz(0.0, 0.0, 0.0)),
-        RigidBody::Fixed,
-    )).id();
+    let world_anchor = commands
+        .spawn((
+            TransformBundle::from(Transform::from_xyz(0.0, 0.0, 0.0)),
+            RigidBody::Fixed,
+        ))
+        .id();
 
     commands.entity(main_id).insert(ImpulseJoint::new(
         world_anchor,
-        RevoluteJointBuilder::new().local_anchor1(Vec2::ZERO).local_anchor2(Vec2::ZERO)
+        RevoluteJointBuilder::new()
+            .local_anchor1(Vec2::ZERO)
+            .local_anchor2(Vec2::ZERO),
     ));
 
     // For each planet, create the friction drive mechanism
@@ -102,26 +109,38 @@ pub fn spawn_orrery(mut commands: Commands) {
                 TransformBundle::from(Transform::from_xyz(0.0, 0.0, 0.0)),
                 Collider::ball(driver_r),
                 CollisionGroups::new(group_a, group_a),
-                Friction { coefficient: 100.0, combine_rule: CoefficientCombineRule::Max },
+                Friction {
+                    coefficient: 100.0,
+                    combine_rule: CoefficientCombineRule::Max,
+                },
             ));
         });
 
         // 2. Idler Gear (Compound, spins freely at fixed location)
         let idler_pos = Vec2::new(center_dist, 0.0);
-        let idler_anchor = commands.spawn((
-            TransformBundle::from(Transform::from_translation(idler_pos.extend(0.0))),
-            RigidBody::Fixed,
-        )).id();
+        let idler_anchor = commands
+            .spawn((
+                TransformBundle::from(Transform::from_translation(idler_pos.extend(0.0))),
+                RigidBody::Fixed,
+            ))
+            .id();
 
-        let idler_body = commands.spawn((
-            TransformBundle::from(Transform::from_translation(idler_pos.extend(0.0))),
-            RigidBody::Dynamic,
-            Damping { linear_damping: 0.0, angular_damping: 0.1 },
-        )).id();
+        let idler_body = commands
+            .spawn((
+                TransformBundle::from(Transform::from_translation(idler_pos.extend(0.0))),
+                RigidBody::Dynamic,
+                Damping {
+                    linear_damping: 0.0,
+                    angular_damping: 0.1,
+                },
+            ))
+            .id();
 
         commands.entity(idler_body).insert(ImpulseJoint::new(
             idler_anchor,
-            RevoluteJointBuilder::new().local_anchor1(Vec2::ZERO).local_anchor2(Vec2::ZERO)
+            RevoluteJointBuilder::new()
+                .local_anchor1(Vec2::ZERO)
+                .local_anchor2(Vec2::ZERO),
         ));
 
         // Add Colliders to Idler Body (as children)
@@ -131,7 +150,10 @@ pub fn spawn_orrery(mut commands: Commands) {
                 TransformBundle::from(Transform::from_xyz(0.0, 0.0, 0.0)),
                 Collider::ball(idler_a_r),
                 CollisionGroups::new(group_a, group_a),
-                Friction { coefficient: 100.0, combine_rule: CoefficientCombineRule::Max },
+                Friction {
+                    coefficient: 100.0,
+                    combine_rule: CoefficientCombineRule::Max,
+                },
             ));
 
             // Idler B (Meshes with Driven)
@@ -139,13 +161,19 @@ pub fn spawn_orrery(mut commands: Commands) {
                 TransformBundle::from(Transform::from_xyz(0.0, 0.0, 0.0)),
                 Collider::ball(idler_b_r),
                 CollisionGroups::new(group_b, group_b),
-                Friction { coefficient: 100.0, combine_rule: CoefficientCombineRule::Max },
+                Friction {
+                    coefficient: 100.0,
+                    combine_rule: CoefficientCombineRule::Max,
+                },
             ));
 
             // Visual for Idler
             parent.spawn((
                 ShapeBundle {
-                    path: GeometryBuilder::build_as(&shapes::Circle { radius: idler_a_r.max(idler_b_r), ..default() }),
+                    path: GeometryBuilder::build_as(&shapes::Circle {
+                        radius: idler_a_r.max(idler_b_r),
+                        ..default()
+                    }),
                     ..default()
                 },
                 Fill::color(Color::srgb(0.2, 0.2, 0.2)),
@@ -153,18 +181,28 @@ pub fn spawn_orrery(mut commands: Commands) {
         });
 
         // 3. Driven Gear + Planet Arm (Rotates around center)
-        let planet_arm_id = commands.spawn((
-            TransformBundle::from(Transform::from_xyz(0.0, 0.0, 0.0)),
-            RigidBody::Dynamic,
-            Damping { linear_damping: 0.0, angular_damping: 0.5 },
-            Planet { name, period_days: 0.0 },
-            PlanetArm,
-        )).id();
+        let planet_arm_id = commands
+            .spawn((
+                TransformBundle::from(Transform::from_xyz(0.0, 0.0, 0.0)),
+                RigidBody::Dynamic,
+                Damping {
+                    linear_damping: 0.0,
+                    angular_damping: 0.5,
+                },
+                Planet {
+                    name,
+                    period_days: 0.0,
+                },
+                PlanetArm,
+            ))
+            .id();
 
         // Pin to Center
         commands.entity(planet_arm_id).insert(ImpulseJoint::new(
             world_anchor,
-            RevoluteJointBuilder::new().local_anchor1(Vec2::ZERO).local_anchor2(Vec2::ZERO)
+            RevoluteJointBuilder::new()
+                .local_anchor1(Vec2::ZERO)
+                .local_anchor2(Vec2::ZERO),
         ));
 
         // Add Collider (Driven Gear)
@@ -173,13 +211,19 @@ pub fn spawn_orrery(mut commands: Commands) {
                 TransformBundle::from(Transform::from_xyz(0.0, 0.0, 0.0)),
                 Collider::ball(driven_r),
                 CollisionGroups::new(group_b, group_b),
-                Friction { coefficient: 100.0, combine_rule: CoefficientCombineRule::Max },
+                Friction {
+                    coefficient: 100.0,
+                    combine_rule: CoefficientCombineRule::Max,
+                },
             ));
 
             // Visual Arm
             parent.spawn((
-                 ShapeBundle {
-                    path: GeometryBuilder::build_as(&shapes::Line(Vec2::ZERO, Vec2::new(*visual_dist, 0.0))),
+                ShapeBundle {
+                    path: GeometryBuilder::build_as(&shapes::Line(
+                        Vec2::ZERO,
+                        Vec2::new(*visual_dist, 0.0),
+                    )),
                     ..default()
                 },
                 Stroke::new(Color::WHITE, 1.0),
@@ -188,8 +232,15 @@ pub fn spawn_orrery(mut commands: Commands) {
             // Visual Planet
             parent.spawn((
                 ShapeBundle {
-                    path: GeometryBuilder::build_as(&shapes::Circle { radius: 5.0, ..default() }),
-                    spatial: SpatialBundle::from_transform(Transform::from_xyz(*visual_dist, 0.0, 0.0)),
+                    path: GeometryBuilder::build_as(&shapes::Circle {
+                        radius: 5.0,
+                        ..default()
+                    }),
+                    spatial: SpatialBundle::from_transform(Transform::from_xyz(
+                        *visual_dist,
+                        0.0,
+                        0.0,
+                    )),
                     ..default()
                 },
                 Fill::color(*color),

@@ -369,10 +369,9 @@ impl State {
 
         // Add bonds
         for (start_idx, end_idx) in &crystal.bonds {
-            if let (Some(start_atom), Some(end_atom)) = (
-                crystal.atoms.get(*start_idx),
-                crystal.atoms.get(*end_idx),
-            ) {
+            if let (Some(start_atom), Some(end_atom)) =
+                (crystal.atoms.get(*start_idx), crystal.atoms.get(*end_idx))
+            {
                 let start = start_atom.position.to_vec3();
                 let end = end_atom.position.to_vec3();
 
@@ -383,11 +382,8 @@ impl State {
                 if length > 0.001 {
                     let direction = vector.normalize();
                     // Rotate Z-axis (0,0,1) to direction
-                    let rotation = cgmath::Quaternion::from_arc(
-                        cgmath::Vector3::unit_z(),
-                        direction,
-                        None
-                    );
+                    let rotation =
+                        cgmath::Quaternion::from_arc(cgmath::Vector3::unit_z(), direction, None);
 
                     instances.push(InstanceRaw {
                         model_pos: [mid.x, mid.y, mid.z],
@@ -599,7 +595,11 @@ impl State {
         };
 
         let plane_instance = InstanceRaw {
-            model_pos: [self.camera.target.x, self.camera.target.y, self.camera.target.z], // Move plane with camera target?
+            model_pos: [
+                self.camera.target.x,
+                self.camera.target.y,
+                self.camera.target.z,
+            ], // Move plane with camera target?
             // Actually, keep it at origin (0,0,0) or allow moving it?
             // If we want to slice the crystal, we should probably move it.
             // For now, let's keep it at 0,0,0 or allow shifting.

@@ -1,8 +1,8 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use chimera_lang::vm::ChimeraVM;
     use chimera_lang::lisp;
+    use chimera_lang::vm::ChimeraVM;
     use chimera_lang::vm::Value;
 
     #[test]

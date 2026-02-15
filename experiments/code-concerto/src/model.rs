@@ -57,10 +57,14 @@ impl CodeConcerto {
 
     pub fn add_section(&mut self, section: Section) {
         // Calculate section duration
-        let section_duration: Duration = section.events.iter().map(|e| match e {
-            MusicalEvent::NoteOn { duration, .. } => *duration,
-            MusicalEvent::Wait(d) => *d,
-        }).sum();
+        let section_duration: Duration = section
+            .events
+            .iter()
+            .map(|e| match e {
+                MusicalEvent::NoteOn { duration, .. } => *duration,
+                MusicalEvent::Wait(d) => *d,
+            })
+            .sum();
 
         self.total_duration += section_duration;
         self.sections.push(section);

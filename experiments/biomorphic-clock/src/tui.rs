@@ -163,7 +163,10 @@ fn ui(f: &mut Frame, app: &App) {
 
             if color != current_color {
                 if !current_text.is_empty() {
-                    spans.push(Span::styled(current_text, Style::default().fg(current_color)));
+                    spans.push(Span::styled(
+                        current_text,
+                        Style::default().fg(current_color),
+                    ));
                     current_text = String::new();
                 }
                 current_color = color;
@@ -171,7 +174,10 @@ fn ui(f: &mut Frame, app: &App) {
             current_text.push(ch);
         }
         if !current_text.is_empty() {
-            spans.push(Span::styled(current_text, Style::default().fg(current_color)));
+            spans.push(Span::styled(
+                current_text,
+                Style::default().fg(current_color),
+            ));
         }
         lines.push(Line::from(spans));
     }

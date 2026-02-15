@@ -41,8 +41,12 @@ impl SoundChange for HighGermanShift {
         let mut i = 0;
         while i < chars.len() {
             let c = chars[i];
-            let next = if i + 1 < chars.len() { Some(chars[i+1]) } else { None };
-            let prev = if i > 0 { Some(chars[i-1]) } else { None };
+            let next = if i + 1 < chars.len() {
+                Some(chars[i + 1])
+            } else {
+                None
+            };
+            let prev = if i > 0 { Some(chars[i - 1]) } else { None };
 
             // Handle th -> d
             if c == 't' && next == Some('h') {
@@ -63,7 +67,7 @@ impl SoundChange for HighGermanShift {
                     } else {
                         result.push('p');
                     }
-                },
+                }
                 't' => {
                     if is_initial {
                         result.push('z');
@@ -72,7 +76,7 @@ impl SoundChange for HighGermanShift {
                     } else {
                         result.push('z');
                     }
-                },
+                }
                 'k' => {
                     if is_initial {
                         result.push('k');
@@ -81,9 +85,9 @@ impl SoundChange for HighGermanShift {
                     } else {
                         result.push('k');
                     }
-                },
+                }
                 'd' => result.push('t'),
-                 _ => result.push(c),
+                _ => result.push(c),
             }
             i += 1;
         }

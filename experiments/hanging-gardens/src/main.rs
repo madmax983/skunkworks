@@ -48,16 +48,14 @@ fn main() -> Result<()> {
             timestamp: chrono::Utc::now(),
             parents: vec![],
             stats: None,
-            files: vec![
-                FileChange {
-                    path: "garden.rs".to_string(),
-                    extension: "rs".to_string(),
-                    insertions: 100,
-                    deletions: 0,
-                    is_binary: false,
-                    hunks: vec![],
-                },
-            ],
+            files: vec![FileChange {
+                path: "garden.rs".to_string(),
+                extension: "rs".to_string(),
+                insertions: 100,
+                deletions: 0,
+                is_binary: false,
+                hunks: vec![],
+            }],
         });
         commits.push(Commit {
             hash: "DEMO2".to_string(),
@@ -67,16 +65,14 @@ fn main() -> Result<()> {
             timestamp: chrono::Utc::now(),
             parents: vec![],
             stats: None,
-            files: vec![
-                FileChange {
-                    path: "garden.rs".to_string(),
-                    extension: "rs".to_string(),
-                    insertions: 10,
-                    deletions: 50,
-                    is_binary: false,
-                    hunks: vec![],
-                },
-            ],
+            files: vec![FileChange {
+                path: "garden.rs".to_string(),
+                extension: "rs".to_string(),
+                insertions: 10,
+                deletions: 50,
+                is_binary: false,
+                hunks: vec![],
+            }],
         });
     }
 
@@ -133,7 +129,11 @@ fn main() -> Result<()> {
 
             // Canvas
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title(" Hanging Gardens of Entropy "))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title(" Hanging Gardens of Entropy "),
+                )
                 .x_bounds([0.0, width])
                 .y_bounds([0.0, height]) // 0 is top visually if we map it right, but canvas 0,0 is bottom-left usually.
                 // Wait, standard canvas: (0,0) is bottom-left.
@@ -144,22 +144,22 @@ fn main() -> Result<()> {
                 // So we need to flip Y coordinate when drawing.
                 // Draw Y = Height - SimY.
                 .paint(|ctx| {
-                     // Draw Plants
+                    // Draw Plants
                     for plant in &garden.plants {
-                         let color = Color::Rgb(plant.color.0, plant.color.1, plant.color.2);
-                         for line in &plant.lines {
-                             let y1 = height - line.y1;
-                             let y2 = height - line.y2;
+                        let color = Color::Rgb(plant.color.0, plant.color.1, plant.color.2);
+                        for line in &plant.lines {
+                            let y1 = height - line.y1;
+                            let y2 = height - line.y2;
 
-                             // Don't draw if out of bounds (Canvas panics?)
-                             ctx.draw(&CanvasLine {
-                                 x1: line.x1,
-                                 y1: y1,
-                                 x2: line.x2,
-                                 y2: y2,
-                                 color,
-                             });
-                         }
+                            // Don't draw if out of bounds (Canvas panics?)
+                            ctx.draw(&CanvasLine {
+                                x1: line.x1,
+                                y1: y1,
+                                x2: line.x2,
+                                y2: y2,
+                                color,
+                            });
+                        }
                     }
 
                     // Draw Rain
@@ -180,26 +180,37 @@ fn main() -> Result<()> {
             // Status
             let status = if commit_idx < commits.len() {
                 let c = &commits[commit_idx.saturating_sub(1)];
-                format!("Commit: {} | Plants: {} | Rain: {} | Speed: {} | [SPACE] Pause [q] Quit",
-                    c.short_hash, garden.plants.len(), garden.particles.len(), speed)
+                format!(
+                    "Commit: {} | Plants: {} | Rain: {} | Speed: {} | [SPACE] Pause [q] Quit",
+                    c.short_hash,
+                    garden.plants.len(),
+                    garden.particles.len(),
+                    speed
+                )
             } else {
-                format!("DONE | Plants: {} | Rain: {} | [q] Quit", garden.plants.len(), garden.particles.len())
+                format!(
+                    "DONE | Plants: {} | Rain: {} | [q] Quit",
+                    garden.plants.len(),
+                    garden.particles.len()
+                )
             };
-            f.render_widget(Paragraph::new(status).block(Block::default().borders(Borders::ALL)), chunks[1]);
-
+            f.render_widget(
+                Paragraph::new(status).block(Block::default().borders(Borders::ALL)),
+                chunks[1],
+            );
         })?;
 
         if event::poll(Duration::from_millis(0))? {
             if let Event::Key(key) = event::read()? {
-                 if key.kind == KeyEventKind::Press {
-                     match key.code {
-                         KeyCode::Char('q') => should_quit = true,
-                         KeyCode::Char(' ') => paused = !paused,
-                         KeyCode::Char('+') => speed += 1,
-                         KeyCode::Char('-') => speed = speed.saturating_sub(1).max(1),
-                         _ => {}
-                     }
-                 }
+                if key.kind == KeyEventKind::Press {
+                    match key.code {
+                        KeyCode::Char('q') => should_quit = true,
+                        KeyCode::Char(' ') => paused = !paused,
+                        KeyCode::Char('+') => speed += 1,
+                        KeyCode::Char('-') => speed = speed.saturating_sub(1).max(1),
+                        _ => {}
+                    }
+                }
             }
         }
 

@@ -70,12 +70,24 @@ async fn main() {
 
     loop {
         // Input Handling
-        if is_key_pressed(KeyCode::Space) { paused = !paused; }
-        if is_key_pressed(KeyCode::Key1) { view_mode = 0; }
-        if is_key_pressed(KeyCode::Key2) { view_mode = 1; }
-        if is_key_pressed(KeyCode::Key3) { view_mode = 2; }
-        if is_key_pressed(KeyCode::T) { show_termites = !show_termites; }
-        if is_key_pressed(KeyCode::A) { show_air = !show_air; }
+        if is_key_pressed(KeyCode::Space) {
+            paused = !paused;
+        }
+        if is_key_pressed(KeyCode::Key1) {
+            view_mode = 0;
+        }
+        if is_key_pressed(KeyCode::Key2) {
+            view_mode = 1;
+        }
+        if is_key_pressed(KeyCode::Key3) {
+            view_mode = 2;
+        }
+        if is_key_pressed(KeyCode::T) {
+            show_termites = !show_termites;
+        }
+        if is_key_pressed(KeyCode::A) {
+            show_air = !show_air;
+        }
 
         if !paused {
             world.update();
@@ -90,23 +102,26 @@ async fn main() {
                     Material::Wall => Color::new(0.8, 0.8, 0.8, 1.0),
                     Material::Empty => {
                         match view_mode {
-                            0 => { // Heat Map
+                            0 => {
+                                // Heat Map
                                 let h = (cell.heat / 100.0).clamp(0.0, 1.0);
                                 // Cold Blue -> Hot Red
                                 Color::new(h, 0.2, 1.0 - h, 1.0)
                             }
-                            1 => { // Pheromone Map
+                            1 => {
+                                // Pheromone Map
                                 let p = (cell.pheromone / 50.0).clamp(0.0, 1.0);
                                 Color::new(0.0, p, 0.0, 1.0)
                             }
-                            2 => { // Velocity Map
+                            2 => {
+                                // Velocity Map
                                 let vx = cell.air_vx;
                                 let vy = cell.air_vy;
-                                let speed = (vx*vx + vy*vy).sqrt();
+                                let speed = (vx * vx + vy * vy).sqrt();
                                 let s = (speed * 5.0).clamp(0.0, 1.0);
                                 Color::new(s, s, s, 1.0)
                             }
-                            _ => BLACK
+                            _ => BLACK,
                         }
                     }
                 };
@@ -126,21 +141,25 @@ async fn main() {
                             let h = (agent.heat / 50.0).clamp(0.0, 1.0);
                             let air_color = Color::new(h, 0.2, 1.0 - h, 1.0);
 
-                             if view_mode == 0 {
-                                 // Additive-ish for Heat Mode
-                                 let current = render_target.get_pixel(x, y);
-                                 render_target.set_pixel(x, y, Color::new(
-                                     (current.r + air_color.r * 0.3).min(1.0),
-                                     (current.g + air_color.g * 0.3).min(1.0),
-                                     (current.b + air_color.b * 0.3).min(1.0),
-                                     1.0
-                                 ));
-                             } else {
-                                 // Simple draw for other modes
-                                 render_target.set_pixel(x, y, air_color);
-                             }
+                            if view_mode == 0 {
+                                // Additive-ish for Heat Mode
+                                let current = render_target.get_pixel(x, y);
+                                render_target.set_pixel(
+                                    x,
+                                    y,
+                                    Color::new(
+                                        (current.r + air_color.r * 0.3).min(1.0),
+                                        (current.g + air_color.g * 0.3).min(1.0),
+                                        (current.b + air_color.b * 0.3).min(1.0),
+                                        1.0,
+                                    ),
+                                );
+                            } else {
+                                // Simple draw for other modes
+                                render_target.set_pixel(x, y, air_color);
+                            }
                         }
-                    },
+                    }
                     AgentKind::Termite => {
                         if show_termites {
                             let color = if agent.carrying { GREEN } else { BLUE };
@@ -158,9 +177,21 @@ async fn main() {
 
         // UI
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 20.0, 20.0, WHITE);
-        draw_text(&format!("Agents: {}", world.agents.len()), 10.0, 40.0, 20.0, WHITE);
+        draw_text(
+            &format!("Agents: {}", world.agents.len()),
+            10.0,
+            40.0,
+            20.0,
+            WHITE,
+        );
         draw_text(&format!("Step: {}", world.step), 10.0, 60.0, 20.0, WHITE);
-        draw_text("1:Heat 2:Phero 3:Vel T:Termites A:Air Space:Pause", 10.0, HEIGHT as f32 - 10.0, 20.0, WHITE);
+        draw_text(
+            "1:Heat 2:Phero 3:Vel T:Termites A:Air Space:Pause",
+            10.0,
+            HEIGHT as f32 - 10.0,
+            20.0,
+            WHITE,
+        );
 
         if args.headless {
             if world.step >= max_frames {

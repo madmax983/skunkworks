@@ -1,2 +1,2 @@
-pub mod orrery;
 pub mod cipher;
+pub mod orrery;

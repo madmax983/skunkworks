@@ -129,28 +129,54 @@ async fn main() {
         }
 
         // Input
-        if is_key_down(KeyCode::Left) { cam_yaw -= 2.0 * dt; }
-        if is_key_down(KeyCode::Right) { cam_yaw += 2.0 * dt; }
-        if is_key_down(KeyCode::Up) { cam_pitch = (cam_pitch + 2.0 * dt).clamp(-1.5, 1.5); }
-        if is_key_down(KeyCode::Down) { cam_pitch = (cam_pitch - 2.0 * dt).clamp(-1.5, 1.5); }
-        if is_key_down(KeyCode::W) { cam_dist -= 10.0 * dt; }
-        if is_key_down(KeyCode::S) { cam_dist += 10.0 * dt; }
+        if is_key_down(KeyCode::Left) {
+            cam_yaw -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_yaw += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_pitch = (cam_pitch + 2.0 * dt).clamp(-1.5, 1.5);
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_pitch = (cam_pitch - 2.0 * dt).clamp(-1.5, 1.5);
+        }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 10.0 * dt;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 10.0 * dt;
+        }
 
         // Parameter Control
-        if is_key_down(KeyCode::U) { target_a += 0.1 * dt; }
-        if is_key_down(KeyCode::J) { target_a -= 0.1 * dt; }
-        if is_key_down(KeyCode::I) { target_b += 0.1 * dt; }
-        if is_key_down(KeyCode::K) { target_b -= 0.1 * dt; }
-        if is_key_down(KeyCode::O) { target_c += 1.0 * dt; }
-        if is_key_down(KeyCode::L) { target_c -= 1.0 * dt; }
+        if is_key_down(KeyCode::U) {
+            target_a += 0.1 * dt;
+        }
+        if is_key_down(KeyCode::J) {
+            target_a -= 0.1 * dt;
+        }
+        if is_key_down(KeyCode::I) {
+            target_b += 0.1 * dt;
+        }
+        if is_key_down(KeyCode::K) {
+            target_b -= 0.1 * dt;
+        }
+        if is_key_down(KeyCode::O) {
+            target_c += 1.0 * dt;
+        }
+        if is_key_down(KeyCode::L) {
+            target_c -= 1.0 * dt;
+        }
 
         if is_key_pressed(KeyCode::R) {
             let defaults = RosslerSystem::default_chaotic();
             particles.par_iter_mut().enumerate().for_each(|(i, p)| {
-                 let offset = (i as f32 / PARTICLE_COUNT as f32) * 0.1;
-                 *p = RosslerSystem::new(
+                let offset = (i as f32 / PARTICLE_COUNT as f32) * 0.1;
+                *p = RosslerSystem::new(
                     Vec3::new(1.0 + offset, 1.0 - offset, 1.0 + offset),
-                    defaults.a, defaults.b, defaults.c
+                    defaults.a,
+                    defaults.b,
+                    defaults.c,
                 );
             });
             target_a = defaults.a;
@@ -189,7 +215,7 @@ async fn main() {
             );
 
             // Draw Particles
-             let cam_pos = vec3(
+            let cam_pos = vec3(
                 cam_dist * cam_yaw.cos() * cam_pitch.cos(),
                 cam_dist * cam_pitch.sin(),
                 cam_dist * cam_yaw.sin() * cam_pitch.cos(),
@@ -252,20 +278,64 @@ async fn main() {
         // HUD
         draw_text("Genesis: Rossler Market", 10.0, 30.0, 30.0, WHITE);
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 50.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("Particles: {}", PARTICLE_COUNT), 10.0, 70.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Particles: {}", PARTICLE_COUNT),
+            10.0,
+            70.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
-        draw_text("Market Parameters (Controls: U/J, I/K, O/L)", 10.0, 100.0, 20.0, GOLD);
-        draw_text(&format!("Interest Rate (a): {:.3}", target_a), 10.0, 120.0, 20.0, RED);
-        draw_text(&format!("Inflation (b): {:.3}", target_b), 10.0, 140.0, 20.0, BLUE);
-        draw_text(&format!("Reserve Req (c): {:.3}", target_c), 10.0, 160.0, 20.0, GREEN);
+        draw_text(
+            "Market Parameters (Controls: U/J, I/K, O/L)",
+            10.0,
+            100.0,
+            20.0,
+            GOLD,
+        );
+        draw_text(
+            &format!("Interest Rate (a): {:.3}", target_a),
+            10.0,
+            120.0,
+            20.0,
+            RED,
+        );
+        draw_text(
+            &format!("Inflation (b): {:.3}", target_b),
+            10.0,
+            140.0,
+            20.0,
+            BLUE,
+        );
+        draw_text(
+            &format!("Reserve Req (c): {:.3}", target_c),
+            10.0,
+            160.0,
+            20.0,
+            GREEN,
+        );
 
         let chaos_metric = if let Some(p) = particles.first() {
-             p.pos.length()
-        } else { 0.0 };
-        draw_text(&format!("Market Volatility: {:.2}", chaos_metric), 10.0, 190.0, 20.0, if chaos_metric > 30.0 { RED } else { WHITE });
+            p.pos.length()
+        } else {
+            0.0
+        };
+        draw_text(
+            &format!("Market Volatility: {:.2}", chaos_metric),
+            10.0,
+            190.0,
+            20.0,
+            if chaos_metric > 30.0 { RED } else { WHITE },
+        );
 
         if chaos_metric > 50.0 {
-            draw_text("CRASH IMMINENT", screen_width()/2.0 - 100.0, screen_height()/2.0, 40.0, RED);
+            draw_text(
+                "CRASH IMMINENT",
+                screen_width() / 2.0 - 100.0,
+                screen_height() / 2.0,
+                40.0,
+                RED,
+            );
         }
 
         next_frame().await

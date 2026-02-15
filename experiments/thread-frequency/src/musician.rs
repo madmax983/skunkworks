@@ -1,12 +1,12 @@
 use crate::audio::{RhythmEvent, Voice};
 use crossbeam_channel::Sender;
+use rand::Rng;
 use std::sync::{
     atomic::{AtomicBool, AtomicU64, Ordering},
     Arc, Mutex,
 };
 use std::thread;
 use std::time::Duration;
-use rand::Rng;
 
 pub struct Beacon {
     pub last_beat: AtomicU64,
@@ -75,7 +75,8 @@ impl Musician {
             let period_samples = (self.period_ms as f64 * self.sample_rate as f64 / 1000.0) as u64;
 
             // Initial synchronization
-            let mut next_beat_sample = self.current_time.load(Ordering::Relaxed) + self.sample_rate as u64 / 2;
+            let mut next_beat_sample =
+                self.current_time.load(Ordering::Relaxed) + self.sample_rate as u64 / 2;
 
             while self.running.load(Ordering::Relaxed) {
                 let now = self.current_time.load(Ordering::Relaxed);
@@ -83,7 +84,7 @@ impl Musician {
                 // Catch-up logic: If we missed the beat, skip to the next grid point
                 // This ensures we stay on the Euclidean grid even if we hiccup
                 while next_beat_sample < now {
-                     next_beat_sample += period_samples;
+                    next_beat_sample += period_samples;
                 }
 
                 if now < next_beat_sample {
@@ -125,11 +126,11 @@ impl Musician {
                     };
 
                     if sleep_ms > 0 {
-                         // Add random jitter to the sleep
-                         let randomized_sleep = sleep_ms.saturating_add(jitter as u64);
-                         thread::sleep(Duration::from_millis(randomized_sleep));
+                        // Add random jitter to the sleep
+                        let randomized_sleep = sleep_ms.saturating_add(jitter as u64);
+                        thread::sleep(Duration::from_millis(randomized_sleep));
                     } else if diff_ms > 1.0 {
-                         thread::sleep(Duration::from_millis(1));
+                        thread::sleep(Duration::from_millis(1));
                     } else {
                         std::hint::spin_loop();
                     }

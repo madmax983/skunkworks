@@ -19,47 +19,155 @@ struct Vertex {
 
 const VERTICES: &[Vertex] = &[
     // Front face
-    Vertex { position: [-0.5, -0.5, 0.5], tex_coords: [0.0, 1.0] },
-    Vertex { position: [0.5, -0.5, 0.5], tex_coords: [1.0, 1.0] },
-    Vertex { position: [0.5, 0.5, 0.5], tex_coords: [1.0, 0.0] },
-    Vertex { position: [-0.5, -0.5, 0.5], tex_coords: [0.0, 1.0] },
-    Vertex { position: [0.5, 0.5, 0.5], tex_coords: [1.0, 0.0] },
-    Vertex { position: [-0.5, 0.5, 0.5], tex_coords: [0.0, 0.0] },
+    Vertex {
+        position: [-0.5, -0.5, 0.5],
+        tex_coords: [0.0, 1.0],
+    },
+    Vertex {
+        position: [0.5, -0.5, 0.5],
+        tex_coords: [1.0, 1.0],
+    },
+    Vertex {
+        position: [0.5, 0.5, 0.5],
+        tex_coords: [1.0, 0.0],
+    },
+    Vertex {
+        position: [-0.5, -0.5, 0.5],
+        tex_coords: [0.0, 1.0],
+    },
+    Vertex {
+        position: [0.5, 0.5, 0.5],
+        tex_coords: [1.0, 0.0],
+    },
+    Vertex {
+        position: [-0.5, 0.5, 0.5],
+        tex_coords: [0.0, 0.0],
+    },
     // Back face
-    Vertex { position: [-0.5, -0.5, -0.5], tex_coords: [1.0, 1.0] },
-    Vertex { position: [-0.5, 0.5, -0.5], tex_coords: [1.0, 0.0] },
-    Vertex { position: [0.5, 0.5, -0.5], tex_coords: [0.0, 0.0] },
-    Vertex { position: [-0.5, -0.5, -0.5], tex_coords: [1.0, 1.0] },
-    Vertex { position: [0.5, 0.5, -0.5], tex_coords: [0.0, 0.0] },
-    Vertex { position: [0.5, -0.5, -0.5], tex_coords: [0.0, 1.0] },
+    Vertex {
+        position: [-0.5, -0.5, -0.5],
+        tex_coords: [1.0, 1.0],
+    },
+    Vertex {
+        position: [-0.5, 0.5, -0.5],
+        tex_coords: [1.0, 0.0],
+    },
+    Vertex {
+        position: [0.5, 0.5, -0.5],
+        tex_coords: [0.0, 0.0],
+    },
+    Vertex {
+        position: [-0.5, -0.5, -0.5],
+        tex_coords: [1.0, 1.0],
+    },
+    Vertex {
+        position: [0.5, 0.5, -0.5],
+        tex_coords: [0.0, 0.0],
+    },
+    Vertex {
+        position: [0.5, -0.5, -0.5],
+        tex_coords: [0.0, 1.0],
+    },
     // Top face
-    Vertex { position: [-0.5, 0.5, -0.5], tex_coords: [0.0, 0.0] },
-    Vertex { position: [-0.5, 0.5, 0.5], tex_coords: [0.0, 1.0] },
-    Vertex { position: [0.5, 0.5, 0.5], tex_coords: [1.0, 1.0] },
-    Vertex { position: [-0.5, 0.5, -0.5], tex_coords: [0.0, 0.0] },
-    Vertex { position: [0.5, 0.5, 0.5], tex_coords: [1.0, 1.0] },
-    Vertex { position: [0.5, 0.5, -0.5], tex_coords: [1.0, 0.0] },
+    Vertex {
+        position: [-0.5, 0.5, -0.5],
+        tex_coords: [0.0, 0.0],
+    },
+    Vertex {
+        position: [-0.5, 0.5, 0.5],
+        tex_coords: [0.0, 1.0],
+    },
+    Vertex {
+        position: [0.5, 0.5, 0.5],
+        tex_coords: [1.0, 1.0],
+    },
+    Vertex {
+        position: [-0.5, 0.5, -0.5],
+        tex_coords: [0.0, 0.0],
+    },
+    Vertex {
+        position: [0.5, 0.5, 0.5],
+        tex_coords: [1.0, 1.0],
+    },
+    Vertex {
+        position: [0.5, 0.5, -0.5],
+        tex_coords: [1.0, 0.0],
+    },
     // Bottom face
-    Vertex { position: [-0.5, -0.5, -0.5], tex_coords: [0.0, 1.0] },
-    Vertex { position: [0.5, -0.5, -0.5], tex_coords: [1.0, 1.0] },
-    Vertex { position: [0.5, -0.5, 0.5], tex_coords: [1.0, 0.0] },
-    Vertex { position: [-0.5, -0.5, -0.5], tex_coords: [0.0, 1.0] },
-    Vertex { position: [0.5, -0.5, 0.5], tex_coords: [1.0, 0.0] },
-    Vertex { position: [-0.5, -0.5, 0.5], tex_coords: [0.0, 0.0] },
+    Vertex {
+        position: [-0.5, -0.5, -0.5],
+        tex_coords: [0.0, 1.0],
+    },
+    Vertex {
+        position: [0.5, -0.5, -0.5],
+        tex_coords: [1.0, 1.0],
+    },
+    Vertex {
+        position: [0.5, -0.5, 0.5],
+        tex_coords: [1.0, 0.0],
+    },
+    Vertex {
+        position: [-0.5, -0.5, -0.5],
+        tex_coords: [0.0, 1.0],
+    },
+    Vertex {
+        position: [0.5, -0.5, 0.5],
+        tex_coords: [1.0, 0.0],
+    },
+    Vertex {
+        position: [-0.5, -0.5, 0.5],
+        tex_coords: [0.0, 0.0],
+    },
     // Right face
-    Vertex { position: [0.5, -0.5, -0.5], tex_coords: [1.0, 1.0] },
-    Vertex { position: [0.5, 0.5, -0.5], tex_coords: [1.0, 0.0] },
-    Vertex { position: [0.5, 0.5, 0.5], tex_coords: [0.0, 0.0] },
-    Vertex { position: [0.5, -0.5, -0.5], tex_coords: [1.0, 1.0] },
-    Vertex { position: [0.5, 0.5, 0.5], tex_coords: [0.0, 0.0] },
-    Vertex { position: [0.5, -0.5, 0.5], tex_coords: [0.0, 1.0] },
+    Vertex {
+        position: [0.5, -0.5, -0.5],
+        tex_coords: [1.0, 1.0],
+    },
+    Vertex {
+        position: [0.5, 0.5, -0.5],
+        tex_coords: [1.0, 0.0],
+    },
+    Vertex {
+        position: [0.5, 0.5, 0.5],
+        tex_coords: [0.0, 0.0],
+    },
+    Vertex {
+        position: [0.5, -0.5, -0.5],
+        tex_coords: [1.0, 1.0],
+    },
+    Vertex {
+        position: [0.5, 0.5, 0.5],
+        tex_coords: [0.0, 0.0],
+    },
+    Vertex {
+        position: [0.5, -0.5, 0.5],
+        tex_coords: [0.0, 1.0],
+    },
     // Left face
-    Vertex { position: [-0.5, -0.5, -0.5], tex_coords: [0.0, 1.0] },
-    Vertex { position: [-0.5, -0.5, 0.5], tex_coords: [1.0, 1.0] },
-    Vertex { position: [-0.5, 0.5, 0.5], tex_coords: [1.0, 0.0] },
-    Vertex { position: [-0.5, -0.5, -0.5], tex_coords: [0.0, 1.0] },
-    Vertex { position: [-0.5, 0.5, 0.5], tex_coords: [1.0, 0.0] },
-    Vertex { position: [-0.5, 0.5, -0.5], tex_coords: [0.0, 0.0] },
+    Vertex {
+        position: [-0.5, -0.5, -0.5],
+        tex_coords: [0.0, 1.0],
+    },
+    Vertex {
+        position: [-0.5, -0.5, 0.5],
+        tex_coords: [1.0, 1.0],
+    },
+    Vertex {
+        position: [-0.5, 0.5, 0.5],
+        tex_coords: [1.0, 0.0],
+    },
+    Vertex {
+        position: [-0.5, -0.5, -0.5],
+        tex_coords: [0.0, 1.0],
+    },
+    Vertex {
+        position: [-0.5, 0.5, 0.5],
+        tex_coords: [1.0, 0.0],
+    },
+    Vertex {
+        position: [-0.5, 0.5, -0.5],
+        tex_coords: [0.0, 0.0],
+    },
 ];
 
 impl Vertex {
@@ -291,18 +399,16 @@ impl State {
         let compute_bind_group_layout =
             device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
                 label: Some("Compute Bind Group Layout"),
-                entries: &[
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 0,
-                        visibility: wgpu::ShaderStages::COMPUTE,
-                        ty: wgpu::BindingType::Buffer {
-                            ty: wgpu::BufferBindingType::Uniform,
-                            has_dynamic_offset: false,
-                            min_binding_size: None,
-                        },
-                        count: None,
+                entries: &[wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
                     },
-                ],
+                    count: None,
+                }],
             });
 
         let storage_bind_group_layout =
@@ -492,10 +598,9 @@ impl State {
 
         // Add bonds
         for (start_idx, end_idx) in &crystal.bonds {
-            if let (Some(start_atom), Some(end_atom)) = (
-                crystal.atoms.get(*start_idx),
-                crystal.atoms.get(*end_idx),
-            ) {
+            if let (Some(start_atom), Some(end_atom)) =
+                (crystal.atoms.get(*start_idx), crystal.atoms.get(*end_idx))
+            {
                 let start = start_atom.position.to_vec3();
                 let end = end_atom.position.to_vec3();
 
@@ -506,11 +611,8 @@ impl State {
                 if length > 0.001 {
                     let direction = vector.normalize();
                     // Rotate Z-axis (0,0,1) to direction
-                    let rotation = cgmath::Quaternion::from_arc(
-                        cgmath::Vector3::unit_z(),
-                        direction,
-                        None
-                    );
+                    let rotation =
+                        cgmath::Quaternion::from_arc(cgmath::Vector3::unit_z(), direction, None);
 
                     instances.push(InstanceRaw {
                         model_pos: [mid.x, mid.y, mid.z],
@@ -813,7 +915,11 @@ impl State {
         };
 
         let plane_instance = InstanceRaw {
-            model_pos: [self.camera.target.x, self.camera.target.y, self.camera.target.z],
+            model_pos: [
+                self.camera.target.x,
+                self.camera.target.y,
+                self.camera.target.z,
+            ],
             color,
             scale: [100.0, 100.0, 0.05],
             rotation,

@@ -1,7 +1,7 @@
 mod camera;
 mod lattice;
-mod state;
 mod reaction;
+mod state;
 
 use anyhow::Result;
 use lattice::Crystal;

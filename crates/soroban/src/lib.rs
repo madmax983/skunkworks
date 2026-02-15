@@ -85,10 +85,27 @@ impl Column {
 /// * **Column 1**: The "Tens" place ($10^1$).
 /// * ...
 /// * **Column 12**: The "Trillions" place ($10^{12}$).
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Soroban {
     // Column 0 is the ones place, 1 is tens, etc.
     pub columns: [Column; 13],
+}
+
+impl From<u64> for Soroban {
+    /// Creates a Soroban from a u64.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use soroban::Soroban;
+    /// let s = Soroban::from(123);
+    /// assert_eq!(s.value(), 123);
+    /// ```
+    fn from(val: u64) -> Self {
+        let mut s = Soroban::new();
+        s.add(val);
+        s
+    }
 }
 
 impl Soroban {
@@ -319,5 +336,53 @@ mod tests {
         // 0 - 1 = -1 (mod 10^13) -> 9,999,999,999,999
         let expected = 9_999_999_999_999u64;
         assert_eq!(s.value(), expected);
+    }
+
+    #[test]
+    fn test_fuzz_arithmetic() {
+        // Simple Linear Congruential Generator to avoid dependencies
+        let mut seed = 123456789u64;
+        let mut rng = move || {
+            seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1);
+            seed
+        };
+
+        let mut s = Soroban::new();
+        // Shadow value is modulo 10^13
+        let modulus = 10_000_000_000_000u64;
+        let mut shadow = 0u64;
+
+        // Run 10,000 random operations
+        for i in 0..10_000 {
+            let op = rng() % 2;
+            // Allow values larger than modulus to test wrapping behavior
+            let val = rng() % (modulus * 10);
+
+            if op == 0 {
+                // Add
+                s.add(val);
+                shadow = (shadow + val) % modulus;
+            } else {
+                // Sub
+                s.sub(val);
+                let val_mod = val % modulus;
+                if val_mod > shadow {
+                    shadow = shadow + modulus - val_mod;
+                } else {
+                    shadow -= val_mod;
+                }
+            }
+
+            assert_eq!(
+                s.value(),
+                shadow,
+                "Mismatch at iter {}: op {} val {} (shadow: {}, soroban: {})",
+                i,
+                if op == 0 { "ADD" } else { "SUB" },
+                val,
+                shadow,
+                s.value()
+            );
+        }
     }
 }
