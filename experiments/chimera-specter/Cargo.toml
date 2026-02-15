@@ -1,0 +1,18 @@
+[package]
+name = "chimera-specter"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = []
+audio = ["dep:cpal"]
+
+[dependencies]
+macroquad = { version = "0.4", default-features = false }
+cpal = { version = "0.15", optional = true }
+rustfft = "6.2"
+anyhow = "1.0"
+rand = "0.8"
+log = "0.4"
+env_logger = "0.11"
+chimera-lang = { path = "../chimera-lang", default-features = false, features = ["nova"] }
