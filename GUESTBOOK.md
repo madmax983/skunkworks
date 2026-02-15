@@ -985,3 +985,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spawning. Market activity generates heat. Termites build cooling fins. The invisible hand is hot.
 - **Note:** Hybrid of experiments/process-auction + experiments/thermo-termites.
+
+### [Concentration Level: FRESH] - Location: experiments/retinal-rhythm
+- **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
+- **Status:** Visualizing retinal spike trains driven by bouncing balls. Spikes trigger procedural audio. Pentatonic scale mapped to retinal position.
+- **Note:** Moonshot: Retinal Processing + Procedural Audio.
