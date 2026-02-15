@@ -1,8 +1,6 @@
 # Chimera Lang 🧬
 
-> ⚠️ **IMPORTANT**: Advanced features (including `incubate` and `Pandemonium`) require the `nova` feature flag.
-> If you encounter "OpCode not found" or compilation errors, ensure you have enabled the `nova` feature.
-> See [Nova Features](#nova-features) below.
+> ℹ️ **NOTE**: Advanced features (including `incubate` and `Pandemonium`) are enabled by default via the `nova` feature flag.
 
 Chimera is a bio-inspired, stack-based esoteric programming language. It simulates a biological cell with DNA, enzymes, and metabolism.
 
@@ -210,10 +208,10 @@ You can run legacy DNA files (`.dna`) or new ChimeraScript files (`.chs`).
 
 ```bash
 # Basic usage with standard DNA files
-cargo run --release --features nova -- --input sample.dna
+cargo run --release -- --input sample.dna
 
-# Running complex examples like Genesis (requires Nova features)
-cargo run --release --features nova -- --input examples/genesis.chs
+# Running complex examples like Genesis
+cargo run --release -- --input examples/genesis.chs
 ```
 
 To run in headless mode (no TUI), use the `--headless` flag:
@@ -223,11 +221,7 @@ cargo run --release -- --input sample.dna --headless
 
 ## Nova Features
 
-Some features (Epigenetics, Cell Cycle, Telomeres, `incubate`) are part of the "Nova" expansion and are gated behind a feature flag. To use them, you must enable the `nova` feature:
-
-```bash
-cargo run --release --features nova -- --input sample.dna
-```
+Some features (Epigenetics, Cell Cycle, Telomeres, `incubate`) are part of the "Nova" expansion. This feature is enabled by default.
 
 ## Library Usage
 
@@ -237,7 +231,7 @@ Add to your `Cargo.toml`:
 ```toml
 [dependencies]
 # Note: Adjust path to point to the chimera-lang directory relative to your project
-chimera-lang = { path = "../chimera-lang", features = ["nova"] }
+chimera-lang = { path = "../chimera-lang" }
 ```
 
 Example `main.rs`:
@@ -252,4 +246,7 @@ fn main() {
 }
 ```
 
-See `examples/story_demo.rs` for a full example of programmatic usage (Requires `nova` feature).
+See `examples/story_demo.rs` for a full example of programmatic usage:
+```bash
+cargo run -p chimera-lang --example story_demo
+```
