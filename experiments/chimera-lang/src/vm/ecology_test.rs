@@ -68,7 +68,7 @@ mod tests {
             id: 1,
             tissue_id: None,
             genome_id: 0,
-            energy: 10,
+            energy: 10, experience: 0, stage: 0,
         };
         vm.organelles.push(scavenger);
 
@@ -107,7 +107,7 @@ mod tests {
             id: 1,
             tissue_id: None,
             genome_id: 0,
-            energy: 1, // Will drop to 0 in metabolism
+            energy: 1, experience: 0, stage: 0, // Will drop to 0 in metabolism
         };
         vm.organelles.push(mutant);
 
@@ -146,7 +146,7 @@ mod tests {
             id: 1,
             tissue_id: None,
             genome_id: 0,
-            energy: 100,
+            energy: 100, experience: 0, stage: 0,
         };
 
         let loser_viral = Organelle {
@@ -164,7 +164,7 @@ mod tests {
             id: 2,
             tissue_id: None,
             genome_id: 0,
-            energy: 10,
+            energy: 10, experience: 0, stage: 0,
         };
 
         vm.organelles.push(winner);

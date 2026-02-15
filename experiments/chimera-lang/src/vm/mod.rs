@@ -206,6 +206,8 @@ pub mod nova_market;
 #[cfg(feature = "nova")]
 pub mod nova_metamorphism;
 #[cfg(feature = "nova")]
+pub mod nova_metamorphosis;
+#[cfg(feature = "nova")]
 pub mod nova_metazoa;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -492,7 +494,7 @@ pub struct ChimeraVM {
     /// Biological fuel. Starts at 50. Decreases by 1 per step.
     ///
     /// If energy drops to 0 or below, the organism dies (halts).
-    pub energy: i64,
+    pub energy: i64, experience: 0, stage: 0,
     /// 16x16 2D memory grid.
     ///
     /// Cells can store any `Value`, including OpCodes (Strings) or Integers.
@@ -807,7 +809,7 @@ impl ChimeraVM {
             ip: (0, 0),
             output: Vec::new(),
             halted: false,
-            energy: INITIAL_ENERGY,
+            energy: INITIAL_ENERGY, experience: 0, stage: 0,
             grid,
             chaos_mode: false,
             recursion_depth: 0,
@@ -910,7 +912,7 @@ impl ChimeraVM {
             audio_snapshot: AudioSnapshot {
                 pressure: vec![0.0; GRID_SIZE * GRID_SIZE],
                 materials: vec![],
-                energy: vec![],
+                energy: vec![], experience: 0, stage: 0,
             },
             #[cfg(feature = "biophysics")]
             neurons: std::collections::HashMap::new(),
@@ -1566,7 +1568,7 @@ impl ChimeraVM {
                             id: self.organelle_id_counter,
                             tissue_id: None,
                             genome_id: 0,
-                            energy: 10,
+                            energy: 10, experience: 0, stage: 0,
                         };
                         self.organelles.push(new_org);
                         self.output
@@ -1714,7 +1716,7 @@ impl ChimeraVM {
                             id: self.organelle_id_counter,
                             tissue_id: None,
                             genome_id: 0,
-                            energy: 10,
+                            energy: 10, experience: 0, stage: 0,
                         };
                         self.organelles.push(new_org);
                     } else {
@@ -2029,6 +2031,7 @@ impl ChimeraVM {
             nova_void::process_rifts(self);
             nova_flux::process_flux(self);
             nova_metamorphism::process_metamorphism(self);
+            nova_metamorphosis::process_organelle_growth(self);
             if self.orca_mode {
                 nova_signals::process_signals(self);
             }
@@ -4996,7 +4999,7 @@ mod sentry_ribosome_tests {
             id: 1,
             tissue_id: None,
             genome_id: 0,
-            energy: 10,
+            energy: 10, experience: 0, stage: 0,
         };
 
         // Write "jump_s" to grid at (5, 5)

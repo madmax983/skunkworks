@@ -96,6 +96,8 @@ pub struct Organelle {
     pub tissue_id: Option<usize>,
     pub genome_id: u64,
     pub energy: i64,
+    pub experience: i64,
+    pub stage: u8,
 }
 
 /// Pre-calculated neighbor offsets (dy, dx) and their corresponding bitmasks.
@@ -396,6 +398,8 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> Option<usize> {
                 tissue_id: None,
                 genome_id: 0,
                             energy: 10,
+                            experience: 0,
+                            stage: 0,
             };
             vm.organelles.push(organelle);
             vm.chorus_buffer.clear();
@@ -1124,6 +1128,8 @@ fn exec_spawn(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     tissue_id: None,
                     genome_id,
                     energy: 50,
+                    experience: 0,
+                    stage: 0,
                 };
                 vm.organelles.push(organelle);
                 vm.energy = vm.energy.saturating_sub(20);
@@ -1518,6 +1524,8 @@ fn exec_choir(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     tissue_id: None,
                     genome_id: 0,
                             energy: 50,
+                            experience: 0,
+                            stage: 0,
                 };
                 vm.organelles.push(organelle);
                 vm.energy = vm.energy.saturating_sub(50);
@@ -2612,6 +2620,8 @@ fn exec_lysis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             tissue_id: None,
             genome_id: 0,
             energy: 25,
+            experience: 0,
+            stage: 0,
         };
         vm.organelles.push(organelle);
         vm.energy = vm.energy.saturating_sub(10);
@@ -2703,6 +2713,8 @@ fn exec_void_op(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         tissue_id: None,
         genome_id: 0,
         energy: 100,
+        experience: 0,
+        stage: 0,
     };
     vm.organelles.push(organelle);
     vm.energy = vm.energy.saturating_sub(50);
