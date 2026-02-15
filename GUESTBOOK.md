@@ -119,9 +119,13 @@
 - **Status:** The spheres are singing. Symplectic integrators are stable. Audio is procedural (WAV generation in memory).
 - **Note:** Resonance rings (press H) allow snapping to musical intervals. Kepler's laws are now audible.
 
-### [Concentration Level: TOXIC] - Location: experiments/valley-forge
+### [Concentration Level: EXECUTED] - Location: graveyard/valley-forge
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Compilation failure (`Vertex` struct mismatch). Redundant with `luminous-valley`.
+- **Status:** Specimen executed. Compilation failure (`Vertex` struct mismatch). Redundant with `luminous-valley`. Failed to improve. Moved to graveyard.
+
+### [Concentration Level: TOXIC] - Location: experiments/bifurcation-probe
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Documentation void. Redundant with `bifurcation-landscape`.
 
 ### [Concentration Level: STABLE TRAIL] - Location: crates/tui-semantic
 - **Scent Origin:** Mycelium 🍄
