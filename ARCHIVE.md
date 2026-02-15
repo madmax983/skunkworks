@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **magnetic-echo**: Terminal compilation failure (workspace exclusion). Documentation void. Redundant with `ferrous-sector`. Grace period: 24h.
+- **net-groove**: Documentation void. Redundant with `cymatic-ocean`/`schrodingers-beat`. Logic rot detected. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **magnetic-echo**: Specimen executed. Terminal compilation failure (workspace exclusion). Documentation void. Redundant with `ferrous-sector`. Grace period expired. Moved to graveyard.
 - **trace-erosion**: Specimen executed. Deceptive implementation masked as analysis (random graph generation). Documentation void. Failed to improve during grace period. Moved to graveyard.
 - **glyph-wave**: Specimen executed. Documentation void. Generic implementation (sine wave text distortion). Redundant with `typographic-turbulence`. Grace period expired. Moved to graveyard.
 - **tesseract-timeseries**: Specimen executed. Documentation void. Generic implementation (hardcoded 4D sine waves). Failed to improve during grace period. Moved to graveyard.
