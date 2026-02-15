@@ -84,7 +84,6 @@ members = [
     "experiments/rhizome-radar", 
     "experiments/hyperbolic-roots",
     "experiments/trace-tardis", 
-    "experiments/glyph-wave", 
     "experiments/laban-machine", 
     "experiments/laban-rover", 
     "experiments/repo-fossil", 
