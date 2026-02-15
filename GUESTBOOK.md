@@ -779,6 +779,11 @@
 - **Status:** Compiles. Re-verified. Implemented by The Splice Surgeon. Verified. A neural network where memory is stored as a holographic interference pattern in the frequency domain. Novel trait: Holographic Associative Memory Loop. Neurons drive a hologram, which reconstructs a ghost image that feeds back into the neurons.
 - **Note:** Hybrid of experiments/hologram-text + experiments/lattice-brain.
 
+### [Concentration Level: FRESH] - Location: experiments/hanging-gardens
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The gardens are hanging. The rain is falling. Code is growing and dissolving in the void.
+- **Note:** Hybrid of `babylonian-garden` and `entropic-rain`.
+
 ### [Concentration Level: VERIFIED] - Location: experiments/mnem-bridge
 
 

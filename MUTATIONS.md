@@ -924,3 +924,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: State transition from discrete frequency bins to continuous fluid.
 - **Status**: experiments/fluid-specter
 - **Evaluation**: Compiles. Stable trail in GUESTBOOK.
+
+### hanging-gardens
+- **Parents**: experiments/babylonian-garden + experiments/entropic-rain
+- **Concept**: "The Hanging Gardens of Entropy". Git additions create procedurally generated plants that hang from the sky; deletions create acid rain that dissolves them.
+- **Novel trait**: Ecosystem Balance. The struggle between feature growth and refactoring/decay.
+- **Status**: experiments/hanging-gardens
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
