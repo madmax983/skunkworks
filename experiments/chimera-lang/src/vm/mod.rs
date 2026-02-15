@@ -306,6 +306,9 @@ pub mod nova_void;
 #[cfg(test)]
 mod nova_void_test;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod savant_execution_test;
+#[cfg(feature = "nova")]
 pub mod nova_ward;
 #[cfg(feature = "nova")]
 pub mod nova_weaver;

@@ -55,8 +55,12 @@ pub fn exec_oracle_op(
                 }
 
                 let rule = Value::Junction(JunctionType::Any, rule_args);
-                vm.knowledge_base.push(rule.clone());
-                vm.output.push(format!("RULE: Added {}", rule));
+                if !vm.knowledge_base.contains(&rule) {
+                    vm.knowledge_base.push(rule.clone());
+                    vm.output.push(format!("RULE: Added {}", rule));
+                } else {
+                    vm.output.push(format!("RULE: Already exists {}", rule));
+                }
             } else {
                 vm.output
                     .push("Error: Stack underflow for rule".to_string());
@@ -563,6 +567,148 @@ fn check_dynamic_predicates(
 
                         if let Some(new_subst) = unify(arg_output, &fact_generated, subst) {
                             solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+                        }
+                        return true;
+                    }
+                }
+                "path_find" => {
+                    // path_find(X1, Y1, X2, Y2, NextX, NextY)
+                    if args.len() == 7 {
+                        let x1_val = resolve(&args[1], subst);
+                        let y1_val = resolve(&args[2], subst);
+                        let x2_val = resolve(&args[3], subst);
+                        let y2_val = resolve(&args[4], subst);
+
+                        let next_x_arg = &args[5];
+                        let next_y_arg = &args[6];
+
+                        if let (Value::Int(x1), Value::Int(y1), Value::Int(x2), Value::Int(y2)) =
+                            (x1_val, y1_val, x2_val, y2_val)
+                        {
+                            // BFS
+                            let start = (y1 as usize, x1 as usize);
+                            let end = (y2 as usize, x2 as usize);
+
+                            if start == end {
+                                // Already there
+                                let fact_nx = Value::Int(x1);
+                                let fact_ny = Value::Int(y1);
+                                if let Some(s1) = unify(next_x_arg, &fact_nx, subst) {
+                                    if let Some(s2) = unify(next_y_arg, &fact_ny, &s1) {
+                                        solve(remaining_goals, s2, kb, vm, solutions, depth + 1);
+                                    }
+                                }
+                                return true;
+                            }
+
+                            use std::collections::VecDeque;
+                            let mut queue = VecDeque::new();
+                            queue.push_back(start);
+
+                            let mut came_from = std::collections::HashMap::new();
+                            came_from.insert(start, None);
+
+                            let mut found = false;
+
+                            while let Some(current) = queue.pop_front() {
+                                if current == end {
+                                    found = true;
+                                    break;
+                                }
+
+                                // Neighbors
+                                let dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+                                for (dy, dx) in dirs {
+                                    let ny = current.0 as i64 + dy;
+                                    let nx = current.1 as i64 + dx;
+
+                                    if ny >= 0
+                                        && ny < crate::vm::GRID_SIZE as i64
+                                        && nx >= 0
+                                        && nx < crate::vm::GRID_SIZE as i64
+                                    {
+                                        let next = (ny as usize, nx as usize);
+                                        if !came_from.contains_key(&next) {
+                                            let val = &vm.grid[next.0][next.1];
+                                            let traversable = match val {
+                                                Value::Int(0) => true,
+                                                _ => next == end, // Can move into target
+                                            };
+
+                                            if traversable {
+                                                came_from.insert(next, Some(current));
+                                                queue.push_back(next);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if found {
+                                // Reconstruct path to find first step
+                                let mut curr = end;
+                                while let Some(Some(prev)) = came_from.get(&curr) {
+                                    if *prev == start {
+                                        // curr is the next step
+                                        let fact_nx = Value::Int(curr.1 as i64);
+                                        let fact_ny = Value::Int(curr.0 as i64);
+
+                                        if let Some(s1) = unify(next_x_arg, &fact_nx, subst) {
+                                            if let Some(s2) = unify(next_y_arg, &fact_ny, &s1) {
+                                                solve(
+                                                    remaining_goals,
+                                                    s2,
+                                                    kb,
+                                                    vm,
+                                                    solutions,
+                                                    depth + 1,
+                                                );
+                                            }
+                                        }
+                                        break;
+                                    }
+                                    curr = *prev;
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
+                "neighbor_organelle" => {
+                    // neighbor_organelle(X, Y, Type, Id)
+                    if args.len() == 5 {
+                        let arg_x = &args[1];
+                        let arg_y = &args[2];
+                        let arg_type = &args[3];
+                        let arg_id = &args[4];
+
+                        #[cfg(feature = "nova")]
+                        for org in &vm.organelles {
+                            let fact_x = Value::Int(org.context_loc.1 as i64);
+                            let fact_y = Value::Int(org.context_loc.0 as i64);
+                            let fact_type = Value::Str(format!("{:?}", org.kind));
+                            let fact_id = Value::Int(org.id as i64);
+
+                            let mut current_subst = subst.clone();
+                            if let Some(s1) = unify(arg_x, &fact_x, &current_subst) {
+                                current_subst = s1;
+                                if let Some(s2) = unify(arg_y, &fact_y, &current_subst) {
+                                    current_subst = s2;
+                                    if let Some(s3) = unify(arg_type, &fact_type, &current_subst) {
+                                        current_subst = s3;
+                                        if let Some(s4) = unify(arg_id, &fact_id, &current_subst) {
+                                            solve(
+                                                remaining_goals,
+                                                s4,
+                                                kb,
+                                                vm,
+                                                solutions,
+                                                depth + 1,
+                                            );
+                                        }
+                                    }
+                                }
+                            }
                         }
                         return true;
                     }
