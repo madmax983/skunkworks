@@ -312,6 +312,31 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
     let iterations = 10;
     let grid_size = GRID_SIZE;
 
+    #[cfg(feature = "biophysics")]
+    {
+        // 1. Collect coupling data (Read-only phase)
+        let mut coupling_data = Vec::new();
+        for (coord, weight) in &vm.biophysics_couplings {
+            if let Some(neuron) = vm.neurons.get(coord) {
+                if coord.0 < grid_size && coord.1 < grid_size {
+                    let grid_v = vm.voltage_grid[coord.0][coord.1];
+                    coupling_data.push((*coord, *weight, neuron.v, grid_v));
+                }
+            }
+        }
+
+        // 2. Apply updates (Write phase)
+        for (coord, weight, neuron_v, grid_v) in coupling_data {
+            // Update Grid: Drive grid towards neuron V
+            vm.voltage_grid[coord.0][coord.1] += neuron_v * weight * 0.1;
+
+            // Update Neuron: Inject current from Grid V
+            if let Some(neuron) = vm.neurons.get_mut(&coord) {
+                neuron.i_inj += grid_v * weight;
+            }
+        }
+    }
+
     // Temporary grid for next step
     let mut next_voltage = vm.voltage_grid.clone();
 

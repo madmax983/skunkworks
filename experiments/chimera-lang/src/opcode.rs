@@ -223,6 +223,16 @@ pub enum OpCode {
     /// **Stack:** `[ ..., channel, sensitivity, threshold, y, x ] -> [ ... ]`
     #[cfg(feature = "biophysics")]
     Receptor,
+    /// **[Biophysics]** Sets the bidirectional coupling coefficient between Neuron and Grid Voltage.
+    ///
+    /// **Stack:** `[ ..., weight, y, x ] -> [ ... ]`
+    #[cfg(feature = "biophysics")]
+    NeuroCoupling,
+    /// **[Biophysics]** Connects a neuron to a Cortex Strand.
+    ///
+    /// **Stack:** `[ ..., strand_idx, y, x ] -> [ ... ]`
+    #[cfg(feature = "biophysics")]
+    NeuroSynapse,
 
     // Silicon Features
     /// **[Silicon]** Runs one step of Wireworld on the grid.
