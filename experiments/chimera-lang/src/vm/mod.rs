@@ -175,6 +175,11 @@ pub mod nova_flux;
 #[cfg(test)]
 mod nova_flux_test;
 #[cfg(feature = "nova")]
+pub mod nova_fractal;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_fractal_test;
+#[cfg(feature = "nova")]
 pub mod nova_functional;
 #[cfg(feature = "nova")]
 pub mod nova_garden;
@@ -787,6 +792,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub attractor: nova_attractor::AttractorState,
     #[cfg(feature = "nova")]
+    pub fractal: nova_fractal::FractalState,
+    #[cfg(feature = "nova")]
     pub void_rifts: Vec<nova_void::VoidRift>,
     #[cfg(feature = "nova")]
     pub biomesh: nova_biomesh::BioMeshState,
@@ -1112,6 +1119,8 @@ impl ChimeraVM {
             hologram_mode: false,
             #[cfg(feature = "nova")]
             attractor: nova_attractor::AttractorState::new(),
+            #[cfg(feature = "nova")]
+            fractal: nova_fractal::FractalState::new(),
             #[cfg(feature = "nova")]
             void_rifts: Vec::new(),
             #[cfg(feature = "nova")]
@@ -3238,6 +3247,14 @@ impl ChimeraVM {
             | OpCode::AttractorStep
             | OpCode::AttractorSurf
             | OpCode::AttractorMap => nova_attractor::exec_attractor_op(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Mandelbrot
+            | OpCode::Julia
+            | OpCode::Zoom
+            | OpCode::Pan
+            | OpCode::Iterate
+            | OpCode::Escape => nova_fractal::exec_fractal_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Interfere => nova_hologram::exec_interfere(self, op, args),

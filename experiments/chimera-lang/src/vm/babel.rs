@@ -740,6 +740,12 @@ fn compile_cst_recursive(val: &Value, genes: &mut Vec<Gene>, handler_idx: usize)
                 args: vec![Nucleotide::Number(handler_idx as i64)],
             });
         }
+        Value::Symbol(id) => {
+             genes.push(Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String(format!("§{:x}", id))],
+            });
+        }
     }
 }
 
