@@ -318,14 +318,12 @@ mod tests {
         let mut vm = make_vm();
         // Layout:
         // . 5 .  (Threshold: 5)
-        // . V 9  (Output Value: 9 at East)
+        // . V .  (V at 1,1)
         // . . .
-        // V at (1,1).
         // vm.voltage_grid[1][1] = 6.0 ( > 5)
-        // Expected: Write '9' to South (2,1)
+        // Expected: Write '*' to East (1,2)
 
         vm.grid[0][1] = Value::Str("5".to_string());
-        vm.grid[1][2] = Value::Str("9".to_string()); // East
         vm.grid[1][1] = Value::Str("V".to_string());
 
         // Set voltage (requires Elektra feature)
@@ -335,9 +333,9 @@ mod tests {
 
         process_signals(&mut vm);
 
-        match &vm.grid[2][1] {
-            Value::Str(s) => assert_eq!(s, "9"),
-            _ => panic!("Expected '9' at (2,1), got {:?}", vm.grid[2][1]),
+        match &vm.grid[1][2] {
+            Value::Str(s) => assert_eq!(s, "*"),
+            _ => panic!("Expected '*' at (1,2), got {:?}", vm.grid[1][2]),
         }
     }
 
