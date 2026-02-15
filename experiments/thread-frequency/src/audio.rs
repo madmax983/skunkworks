@@ -16,16 +16,15 @@ pub enum Voice {
 #[derive(Debug, Clone)]
 pub struct RhythmEvent {
     pub timestamp: u64,
-    #[allow(dead_code)]
     pub voice: Voice,
-    #[allow(dead_code)]
     pub volume: f32,
-    #[allow(dead_code)]
     pub source_id: usize,
 }
 
 impl Ord for RhythmEvent {
     fn cmp(&self, other: &Self) -> Ordering {
+        // Reverse order for Min-Heap behavior (if needed), but we use BinaryHeap which is Max-Heap by default.
+        // If we want smallest timestamp first, we reverse order.
         other.timestamp.cmp(&self.timestamp)
     }
 }
@@ -42,12 +41,92 @@ impl PartialEq for RhythmEvent {
 impl Eq for RhythmEvent {}
 
 pub struct AudioEngine {
-    #[allow(dead_code)]
-    sample_rate: u32,
+    pub sample_rate: u32,
     #[cfg(feature = "audio")]
     _stream: cpal::Stream,
     #[cfg(not(feature = "audio"))]
     _simulation_thread: std::thread::JoinHandle<()>,
+}
+
+#[cfg(feature = "audio")]
+struct ActiveVoice {
+    voice: Voice,
+    start_sample: u64,
+    volume: f32,
+    phase: f32,
+}
+
+#[cfg(feature = "audio")]
+struct AudioState {
+    current_sample: u64,
+    events: std::collections::BinaryHeap<RhythmEvent>,
+    receiver: Receiver<RhythmEvent>,
+    active_voices: Vec<ActiveVoice>,
+    sample_rate: f32,
+}
+
+#[cfg(feature = "audio")]
+fn synthesize_voice(v: &mut ActiveVoice, age: f32, sample_rate: f32) -> (f32, bool) {
+    use std::f32::consts::TAU;
+    match v.voice {
+        Voice::Kick => {
+            let freq = 150.0 * (-age * 20.0).exp().max(0.3);
+            v.phase += freq / sample_rate * TAU;
+            if v.phase > TAU {
+                v.phase -= TAU;
+            }
+
+            let amp = (-age * 5.0).exp();
+            let signal = v.phase.sin();
+            // Add some click
+            let click = if age < 0.005 {
+                (rand::random::<f32>() * 2.0 - 1.0) * 0.5
+            } else {
+                0.0
+            };
+
+            ((signal + click) * amp * v.volume, amp > 0.001)
+        }
+        Voice::Snare => {
+            let amp = (-age * 15.0).exp();
+            let tone_freq = 180.0;
+            v.phase += tone_freq / sample_rate * TAU;
+            if v.phase > TAU {
+                v.phase -= TAU;
+            }
+            let tone = v.phase.sin();
+            let noise = rand::random::<f32>() * 2.0 - 1.0;
+
+            ((tone * 0.3 + noise * 0.7) * amp * v.volume, amp > 0.001)
+        }
+        Voice::Hihat => {
+            let amp = (-age * 40.0).exp();
+            let noise = rand::random::<f32>() * 2.0 - 1.0;
+            (noise * amp * v.volume * 0.5, amp > 0.001)
+        }
+        Voice::Clave => {
+            let amp = (-age * 30.0).exp();
+            let freq = 2500.0;
+            v.phase += freq / sample_rate * TAU;
+            if v.phase > TAU {
+                v.phase -= TAU;
+            }
+            (v.phase.sin() * amp * v.volume * 0.3, amp > 0.001)
+        }
+        Voice::Synth(note) => {
+            let amp = (-age * 3.0).exp();
+            let freq = 220.0 * (2.0f32).powf(note as f32 / 12.0);
+            v.phase += freq / sample_rate * TAU;
+            if v.phase > TAU {
+                v.phase -= TAU;
+            }
+
+            let mod_idx = 2.0 * (-age).exp();
+            let signal = (v.phase + (v.phase * 2.0).sin() * mod_idx).sin();
+
+            (signal * amp * v.volume * 0.4, amp > 0.001)
+        }
+    }
 }
 
 impl AudioEngine {
@@ -58,9 +137,7 @@ impl AudioEngine {
     #[cfg(feature = "audio")]
     pub fn new() -> anyhow::Result<(Self, Sender<RhythmEvent>, Arc<std::sync::atomic::AtomicU64>)> {
         use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
-        use rand::Rng;
         use std::collections::BinaryHeap;
-        use std::f32::consts::TAU;
 
         let host = cpal::default_host();
         let device = host
@@ -74,21 +151,6 @@ impl AudioEngine {
         let current_sample_atomic = Arc::new(std::sync::atomic::AtomicU64::new(0));
         let current_sample_atomic_clone = current_sample_atomic.clone();
 
-        struct ActiveVoice {
-            voice: Voice,
-            start_sample: u64,
-            volume: f32,
-            phase: f32,
-        }
-
-        struct AudioState {
-            current_sample: u64,
-            events: BinaryHeap<RhythmEvent>,
-            receiver: Receiver<RhythmEvent>,
-            active_voices: Vec<ActiveVoice>,
-            sample_rate: f32,
-        }
-
         let mut state = AudioState {
             current_sample: 0,
             events: BinaryHeap::new(),
@@ -96,68 +158,6 @@ impl AudioEngine {
             active_voices: Vec::new(),
             sample_rate: sample_rate as f32,
         };
-
-        fn synthesize_voice(v: &mut ActiveVoice, age: f32, sample_rate: f32) -> (f32, bool) {
-            match v.voice {
-                Voice::Kick => {
-                    let freq = 150.0 * (-age * 20.0).exp().max(0.3);
-                    v.phase += freq / sample_rate * TAU;
-                    if v.phase > TAU {
-                        v.phase -= TAU;
-                    }
-
-                    let amp = (-age * 5.0).exp();
-                    let signal = v.phase.sin();
-                    // Add some click
-                    let click = if age < 0.005 {
-                        (rand::random::<f32>() * 2.0 - 1.0) * 0.5
-                    } else {
-                        0.0
-                    };
-
-                    ((signal + click) * amp * v.volume, amp > 0.001)
-                }
-                Voice::Snare => {
-                    let amp = (-age * 15.0).exp();
-                    let tone_freq = 180.0;
-                    v.phase += tone_freq / sample_rate * TAU;
-                    if v.phase > TAU {
-                        v.phase -= TAU;
-                    }
-                    let tone = v.phase.sin();
-                    let noise = rand::random::<f32>() * 2.0 - 1.0;
-
-                    ((tone * 0.3 + noise * 0.7) * amp * v.volume, amp > 0.001)
-                }
-                Voice::Hihat => {
-                    let amp = (-age * 40.0).exp();
-                    let noise = rand::random::<f32>() * 2.0 - 1.0;
-                    (noise * amp * v.volume * 0.5, amp > 0.001)
-                }
-                Voice::Clave => {
-                    let amp = (-age * 30.0).exp();
-                    let freq = 2500.0;
-                    v.phase += freq / sample_rate * TAU;
-                    if v.phase > TAU {
-                        v.phase -= TAU;
-                    }
-                    (v.phase.sin() * amp * v.volume * 0.3, amp > 0.001)
-                }
-                Voice::Synth(note) => {
-                    let amp = (-age * 3.0).exp();
-                    let freq = 220.0 * (2.0f32).powf(note as f32 / 12.0);
-                    v.phase += freq / sample_rate * TAU;
-                    if v.phase > TAU {
-                        v.phase -= TAU;
-                    }
-
-                    let mod_idx = 2.0 * (-age).exp();
-                    let signal = (v.phase + (v.phase * 2.0).sin() * mod_idx).sin();
-
-                    (signal * amp * v.volume * 0.4, amp > 0.001)
-                }
-            }
-        }
 
         let err_fn = |err| eprintln!("an error occurred on stream: {}", err);
 
@@ -179,7 +179,7 @@ impl AudioEngine {
                                 let evt = state.events.pop().unwrap();
                                 state.active_voices.push(ActiveVoice {
                                     voice: evt.voice,
-                                    start_sample: now,
+                                    start_sample: now, // Start NOW, ignoring lateness
                                     volume: evt.volume,
                                     phase: 0.0,
                                 });
@@ -199,7 +199,7 @@ impl AudioEngine {
                             keep
                         });
 
-                        mix_sample = mix_sample.tanh();
+                        mix_sample = mix_sample.tanh(); // Limiter
 
                         for sample_out in frame.iter_mut() {
                             *sample_out = mix_sample;
@@ -251,7 +251,7 @@ impl AudioEngine {
 
         Ok((
             AudioEngine {
-                sample_rate,
+                sample_rate: sample_rate as u32,
                 _simulation_thread: handle,
             },
             tx,
