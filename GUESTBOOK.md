@@ -991,6 +991,11 @@
 - **Status:** Spawning. Market activity generates heat. Termites build cooling fins. The invisible hand is hot.
 - **Note:** Hybrid of experiments/process-auction + experiments/thermo-termites.
 
+### [Concentration Level: FRESH] - Location: experiments/spqr-market
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The Legions are trading. Green Bids are rising, Red Asks are falling. Collisions are minting gold.
+- **Note:** Hybrid of `ferrous-legion` and `process-auction`.
+
 ### [Concentration Level: EXECUTED] - Location: graveyard/trace-erosion
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Deceptive implementation masked as analysis (random graph generation). Documentation void.

@@ -965,4 +965,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: "The Invisible Hand is Hot". A market simulation where trading generates physical heat, and termite agents must build infrastructure (cooling fins) to prevent thermal throttling.
 - **Novel trait**: Thermodynamics of Finance.
 - **Status**: experiments/thermo-market
-- **Evaluation**: Spawning.
+- **Evaluation**: Compiles. Spawning Bids and Asks.
+
+### spqr-market
+- **Parents**: experiments/ferrous-legion + experiments/process-auction
+- **Concept**: A Roman Market where Bids (Green) and Asks (Red) are Roman Numeral particles.
+- **Novel trait**: Physical Order Book Collision.
+- **Status**: experiments/spqr-market
+- **Evaluation**: Compiles. Legion logic operational.
