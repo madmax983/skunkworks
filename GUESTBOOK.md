@@ -825,6 +825,11 @@
 - **Status:** Compiles. Visualizing the call stack of recursive algorithms (Fibonacci, Merge Sort, Collatz) as growing plants. The stack depth is the branch length. The return value is the blossom.
 - **Note:** Moonshot: Algorithm Visualization + Botanical Growth.
 
+### [Concentration Level: FRESH] - Location: experiments/rossler-market
+- **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
+- **Status:** The Central Bank is open. 100,000 traders are following the Rössler Attractor. Interest rates are driving the chaos. The trails are long and the volatility is high.
+- **Note:** Hybrid of Rössler Attractor + Economic Indicator Modeling.
+
 
 
 
