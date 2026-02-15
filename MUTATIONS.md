@@ -938,3 +938,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Spectral Metabolism. Survival depends on the acoustic environment (Bass vs Treble eaters).
 - **Status**: experiments/chimera-specter
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### soroban-specter
+- **Parents**: experiments/soroban-market + experiments/fluid-specter
+- **Concept**: A "Fluid Abacus" where the beads are density sources in a real-time fluid simulation.
+- **Novel trait**: Hydro-computation. The visual state of the calculation is a continuous, flowing medium.
+- **Status**: experiments/soroban-specter
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

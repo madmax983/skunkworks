@@ -796,6 +796,11 @@
 - **Status:** Compiles. Tests passed. An Antikythera Mechanism that generates encryption keys based on planetary alignment.
 - **Note:** Moonshot: Astronomical Clock + Encryption Key Generation. "The Answer is in the Stars".
 
+### [Concentration Level: FRESH] - Location: experiments/soroban-specter
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The beads are liquid. Calculations are creating vortices. Hydro-computation active.
+- **Note:** Hybrid of `soroban-market` and `fluid-specter`.
+
 
 
 
