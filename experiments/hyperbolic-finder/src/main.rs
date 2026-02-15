@@ -128,7 +128,12 @@ async fn main() -> anyhow::Result<()> {
                 let pos = to_screen(star_prime, screen_center, disk_radius);
                 // Twinkle based on position/time
                 let alpha = (star_prime.re * 5.0 + get_time()).sin() * 0.5 + 0.5;
-                draw_circle(pos.x, pos.y, 1.0, Color::new(1.0, 1.0, 1.0, alpha as f32 * 0.5));
+                draw_circle(
+                    pos.x,
+                    pos.y,
+                    1.0,
+                    Color::new(1.0, 1.0, 1.0, alpha as f32 * 0.5),
+                );
             }
         }
 
@@ -160,7 +165,7 @@ async fn main() -> anyhow::Result<()> {
 
         // Right Click to go Up
         if is_mouse_button_released(MouseButton::Right) {
-             if let Some(parent) = current_path.parent() {
+            if let Some(parent) = current_path.parent() {
                 let parent_buf = parent.to_path_buf();
                 git_map = get_repo_statuses(&parent_buf);
                 if let Ok(new_root) = scan_dir(&parent_buf, 5, &git_map) {
@@ -200,10 +205,23 @@ async fn main() -> anyhow::Result<()> {
         // Draw Root Indicator if far
         let root_prime = mobius_sub(Point::new(0.0, 0.0), view_center);
         if root_prime.norm() > 0.1 {
-             let screen_pos = to_screen(root_prime, screen_center, disk_radius);
-             // Draw arrow
-             draw_circle_lines(screen_pos.x, screen_pos.y, 10.0, 2.0, Color::new(1.0, 1.0, 1.0, 0.5));
-             draw_line(screen_pos.x, screen_pos.y, screen_center.x, screen_center.y, 1.0, Color::new(1.0, 1.0, 1.0, 0.2));
+            let screen_pos = to_screen(root_prime, screen_center, disk_radius);
+            // Draw arrow
+            draw_circle_lines(
+                screen_pos.x,
+                screen_pos.y,
+                10.0,
+                2.0,
+                Color::new(1.0, 1.0, 1.0, 0.5),
+            );
+            draw_line(
+                screen_pos.x,
+                screen_pos.y,
+                screen_center.x,
+                screen_center.y,
+                1.0,
+                Color::new(1.0, 1.0, 1.0, 0.2),
+            );
         }
 
         // Hover Info
@@ -353,7 +371,7 @@ fn get_color(ft: FileType, git_status: Option<GitStatus>) -> Color {
             GitStatus::Conflict => return Color::new(1.0, 0.0, 1.0, 1.0), // Magenta
             GitStatus::Deleted => return Color::new(1.0, 0.0, 0.0, 1.0), // Red
             GitStatus::Renamed => return Color::new(0.6, 0.2, 0.8, 1.0), // Purple
-            GitStatus::Clean => {},
+            GitStatus::Clean => {}
         }
     }
 
@@ -403,12 +421,26 @@ fn draw_geodesic(p1: Point, p2: Point, screen_center: Vec2, radius: f32, color: 
     // Draw Glow (3 layers)
     for i in 0..points.len() - 1 {
         let p1 = points[i];
-        let p2 = points[i+1];
+        let p2 = points[i + 1];
 
         // Layer 1: Wide, Faint
-        draw_line(p1.x, p1.y, p2.x, p2.y, 4.0, Color::new(color.r, color.g, color.b, 0.1));
+        draw_line(
+            p1.x,
+            p1.y,
+            p2.x,
+            p2.y,
+            4.0,
+            Color::new(color.r, color.g, color.b, 0.1),
+        );
         // Layer 2: Medium
-        draw_line(p1.x, p1.y, p2.x, p2.y, 2.0, Color::new(color.r, color.g, color.b, 0.3));
+        draw_line(
+            p1.x,
+            p1.y,
+            p2.x,
+            p2.y,
+            2.0,
+            Color::new(color.r, color.g, color.b, 0.3),
+        );
         // Layer 3: Sharp
         draw_line(p1.x, p1.y, p2.x, p2.y, 1.0, color);
     }

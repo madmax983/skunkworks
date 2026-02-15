@@ -21,18 +21,18 @@ pub fn generate_layout(root: &FileNode, area: Rect) -> Vec<LayoutNode> {
 
         // If directory has 0 size (empty files), treat as equal distribution
         let use_count = total_size == 0;
-        let effective_total = if use_count { root.children.len() as f32 } else { total_size as f32 };
+        let effective_total = if use_count {
+            root.children.len() as f32
+        } else {
+            total_size as f32
+        };
 
         let horizontal_split = area.w > area.h;
 
         let mut current_offset = if horizontal_split { area.x } else { area.y };
 
         for child in &root.children {
-            let share = if use_count {
-                1.0
-            } else {
-                child.size as f32
-            } / effective_total;
+            let share = if use_count { 1.0 } else { child.size as f32 } / effective_total;
 
             // Avoid 0-size rects if possible, or just let them be 0
             if share <= 0.0 && !use_count {

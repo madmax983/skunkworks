@@ -38,10 +38,7 @@ async fn main() {
 
     // 2. Generate Layout
     // We map the treemap to the grid coordinates
-    let layout = generate_layout(
-        &root,
-        Rect::new(0.0, 0.0, GRID_W as f32, GRID_H as f32),
-    );
+    let layout = generate_layout(&root, Rect::new(0.0, 0.0, GRID_W as f32, GRID_H as f32));
 
     // 3. Build the acoustic map
     // Default to Wall
@@ -85,10 +82,10 @@ async fn main() {
                     }
                 }
             } else if x_end > x_start && y_end > y_start {
-                 // Too small for margin, just make it Air without walls?
-                 // Or keep as Wall?
-                 // Let's keep small files as simple Air spots if possible
-                 let _ = cmd_tx.send(AudioCommand::PaintMaterial {
+                // Too small for margin, just make it Air without walls?
+                // Or keep as Wall?
+                // Let's keep small files as simple Air spots if possible
+                let _ = cmd_tx.send(AudioCommand::PaintMaterial {
                     x: x_start,
                     y: y_start,
                     material: Material::Air,
@@ -114,9 +111,11 @@ async fn main() {
             // Check layout (reverse to find smallest/deepest first)
             hover_node = layout.iter().rev().find(|n| {
                 let r = n.rect;
-                gx as f32 >= r.x && gx as f32 <= r.x + r.w &&
-                gy as f32 >= r.y && gy as f32 <= r.y + r.h &&
-                !n.node.is_dir
+                gx as f32 >= r.x
+                    && gx as f32 <= r.x + r.w
+                    && gy as f32 >= r.y
+                    && gy as f32 <= r.y + r.h
+                    && !n.node.is_dir
             });
 
             if is_mouse_button_pressed(MouseButton::Left) {
@@ -127,7 +126,7 @@ async fn main() {
                 });
             }
             if is_mouse_button_down(MouseButton::Right) {
-                 let _ = cmd_tx.send(AudioCommand::PaintMaterial {
+                let _ = cmd_tx.send(AudioCommand::PaintMaterial {
                     x: gx,
                     y: gy,
                     material: Material::Wall,
@@ -172,7 +171,7 @@ async fn main() {
                     };
 
                     if material != Material::Void {
-                         draw_rectangle(rect_x, rect_y, cell_w, cell_h, color);
+                        draw_rectangle(rect_x, rect_y, cell_w, cell_h, color);
                     }
                 }
             }
@@ -191,13 +190,19 @@ async fn main() {
                 r.w * cell_w,
                 r.h * cell_h,
                 2.0,
-                YELLOW
+                YELLOW,
             );
         } else {
             draw_text("Code Acoustics", 10.0, 30.0, 30.0, WHITE);
         }
 
-        draw_text("L-Click: Pluck | R-Drag: Wall | R: Reset", 10.0, screen_height() - 10.0, 20.0, GRAY);
+        draw_text(
+            "L-Click: Pluck | R-Drag: Wall | R: Reset",
+            10.0,
+            screen_height() - 10.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await;
     }

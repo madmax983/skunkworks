@@ -9,13 +9,32 @@ mod tests {
         // [ push(255) push(0) push(0) push(100) luciferin() ]
         // Intensity 100, Red Color
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(255)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-            Gene { op: OpCode::Luciferin, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(255)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(100)],
+            },
+            Gene {
+                op: OpCode::Luciferin,
+                args: vec![],
+            },
         ];
-        let dna = Dna { helix: Helix { strands: vec![Strand { genes }] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![Strand { genes }],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         // Execute
@@ -34,15 +53,40 @@ mod tests {
     fn test_photophore() {
         // [ push(255) push(0) push(0) push(100) luciferin() push(2) photophore() ]
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(255)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-            Gene { op: OpCode::Luciferin, args: vec![] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-            Gene { op: OpCode::Photophore, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(255)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(100)],
+            },
+            Gene {
+                op: OpCode::Luciferin,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(2)],
+            },
+            Gene {
+                op: OpCode::Photophore,
+                args: vec![],
+            },
         ];
-        let dna = Dna { helix: Helix { strands: vec![Strand { genes }] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![Strand { genes }],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         for _ in 0..7 {

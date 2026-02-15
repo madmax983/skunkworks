@@ -20,10 +20,7 @@ pub struct AppState {
 pub fn draw_ui(f: &mut Frame, state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Min(0),
-            Constraint::Length(3),
-        ])
+        .constraints([Constraint::Min(0), Constraint::Length(3)])
         .split(f.area());
 
     if state.inspector_view {
@@ -62,7 +59,13 @@ fn draw_grid(f: &mut Frame, area: Rect, state: &AppState) {
     let mut lines = Vec::new();
     let mut current_line_spans = Vec::new();
 
-    for (i, file) in state.files.iter().enumerate().skip(start_index).take(page_size) {
+    for (i, file) in state
+        .files
+        .iter()
+        .enumerate()
+        .skip(start_index)
+        .take(page_size)
+    {
         let is_selected = i == state.selected_index;
 
         let color = if file.health < 0.5 {
@@ -74,13 +77,21 @@ fn draw_grid(f: &mut Frame, area: Rect, state: &AppState) {
         };
 
         let style = if is_selected {
-            Style::default().fg(color).add_modifier(Modifier::REVERSED | Modifier::BOLD)
+            Style::default()
+                .fg(color)
+                .add_modifier(Modifier::REVERSED | Modifier::BOLD)
         } else {
             Style::default().fg(color)
         };
 
         // Representation: █ or ▒ based on health
-        let char_code = if file.health < 0.3 { "░" } else if file.health < 0.7 { "▒" } else { "█" };
+        let char_code = if file.health < 0.3 {
+            "░"
+        } else if file.health < 0.7 {
+            "▒"
+        } else {
+            "█"
+        };
 
         current_line_spans.push(Span::styled(char_code, style));
         // Add a space for visual separation
@@ -105,30 +116,46 @@ fn draw_grid(f: &mut Frame, area: Rect, state: &AppState) {
 fn draw_inspector(f: &mut Frame, area: Rect, state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([
-            Constraint::Percentage(30),
-            Constraint::Percentage(70),
-        ])
+        .constraints([Constraint::Percentage(30), Constraint::Percentage(70)])
         .split(area);
 
     // Left: Details
     if let Some(file) = state.files.get(state.selected_index) {
         let details = vec![
-            Line::from(vec![Span::raw("Path: "), Span::styled(file.path.to_string_lossy(), Style::default().fg(Color::Cyan))]),
+            Line::from(vec![
+                Span::raw("Path: "),
+                Span::styled(
+                    file.path.to_string_lossy(),
+                    Style::default().fg(Color::Cyan),
+                ),
+            ]),
             Line::from(vec![Span::raw(format!("Size: {} bytes", file.size))]),
-            Line::from(vec![Span::raw(format!("Health: {:.2}%", file.health * 100.0))]),
+            Line::from(vec![Span::raw(format!(
+                "Health: {:.2}%",
+                file.health * 100.0
+            ))]),
             Line::from(vec![Span::raw("")]),
-            Line::from(vec![Span::styled("Entropy Level", Style::default().fg(Color::Red)), Span::raw(format!(": {:.2}", state.entropy))]),
+            Line::from(vec![
+                Span::styled("Entropy Level", Style::default().fg(Color::Red)),
+                Span::raw(format!(": {:.2}", state.entropy)),
+            ]),
         ];
 
         let block = Block::default().borders(Borders::ALL).title(" Metadata ");
-        let p = Paragraph::new(details).block(block).wrap(Wrap { trim: true });
+        let p = Paragraph::new(details)
+            .block(block)
+            .wrap(Wrap { trim: true });
         f.render_widget(p, chunks[0]);
     }
 
     // Right: Content
-    let content_block = Block::default().borders(Borders::ALL).title(" Sector View ");
-    let content_text = state.decayed_content.as_deref().unwrap_or("Loading sector...");
+    let content_block = Block::default()
+        .borders(Borders::ALL)
+        .title(" Sector View ");
+    let content_text = state
+        .decayed_content
+        .as_deref()
+        .unwrap_or("Loading sector...");
 
     // TODO: Syntax highlighting or hex dump formatting could go here
     let p = Paragraph::new(content_text)
