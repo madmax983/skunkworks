@@ -1,4 +1,5 @@
 use rayon::prelude::*;
+use rand::Rng;
 
 pub struct Grid {
     pub width: usize,
@@ -26,6 +27,21 @@ impl Grid {
         let idx = y * self.width + x;
         if idx < self.u.len() {
             self.v[idx] = 1.0;
+        }
+    }
+
+    /// Seeds a random pattern in the center of the grid.
+    pub fn random_seed_center(&mut self) {
+        let cx = self.width / 2;
+        let cy = self.height / 2;
+        let mut rng = rand::thread_rng();
+
+        for y in cy.saturating_sub(5)..cy.saturating_add(5) {
+            for x in cx.saturating_sub(5)..cx.saturating_add(5) {
+                if rng.gen_bool(0.5) {
+                    self.seed(x, y);
+                }
+            }
         }
     }
 
@@ -138,5 +154,20 @@ impl Grid {
         // Swap buffers
         std::mem::swap(&mut self.u, &mut self.next_u);
         std::mem::swap(&mut self.v, &mut self.next_v);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_random_seed_center() {
+        let mut grid = Grid::new(20, 20);
+        grid.random_seed_center();
+
+        let center_seeds = grid.v.iter().filter(|&&v| v > 0.0).count();
+        assert!(center_seeds > 0, "Should have seeded at least one cell");
+        assert!(center_seeds <= 100, "Should not exceed max possible seeds (10x10 area)");
     }
 }

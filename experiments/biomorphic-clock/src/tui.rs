@@ -32,18 +32,7 @@ impl App {
         let height = (height as usize).saturating_sub(2);
 
         let mut grid = Grid::new(width, height);
-
-        // Seed center
-        let cx = width / 2;
-        let cy = height / 2;
-        for y in cy.saturating_sub(5)..cy.saturating_add(5) {
-            for x in cx.saturating_sub(5)..cx.saturating_add(5) {
-                // Randomly seed
-                if rand::random::<f32>() > 0.5 {
-                    grid.seed(x, y);
-                }
-            }
-        }
+        grid.random_seed_center();
 
         Ok(Self {
             grid,
@@ -58,16 +47,7 @@ impl App {
         if w != self.grid.width || h != self.grid.height {
             // Re-allocate grid
             self.grid = Grid::new(w, h);
-            // Re-seed
-            let cx = w / 2;
-            let cy = h / 2;
-            for y in cy.saturating_sub(5)..cy.saturating_add(5) {
-                for x in cx.saturating_sub(5)..cx.saturating_add(5) {
-                    if rand::random::<f32>() > 0.5 {
-                        self.grid.seed(x, y);
-                    }
-                }
-            }
+            self.grid.random_seed_center();
         }
     }
 }
@@ -160,7 +140,10 @@ fn ui(f: &mut Frame, app: &App) {
     let mut lines = Vec::with_capacity(app.grid.height);
 
     for y in 0..app.grid.height {
-        let mut spans = Vec::with_capacity(app.grid.width);
+        let mut spans = Vec::new();
+        let mut current_color = Color::Reset;
+        let mut current_text = String::new();
+
         for x in 0..app.grid.width {
             let idx = y * app.grid.width + x;
             let v = app.grid.v[idx];
@@ -178,7 +161,17 @@ fn ui(f: &mut Frame, app: &App) {
                 Color::DarkGray
             };
 
-            spans.push(Span::styled(ch.to_string(), Style::default().fg(color)));
+            if color != current_color {
+                if !current_text.is_empty() {
+                    spans.push(Span::styled(current_text, Style::default().fg(current_color)));
+                    current_text = String::new();
+                }
+                current_color = color;
+            }
+            current_text.push(ch);
+        }
+        if !current_text.is_empty() {
+            spans.push(Span::styled(current_text, Style::default().fg(current_color)));
         }
         lines.push(Line::from(spans));
     }
