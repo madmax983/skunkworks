@@ -864,6 +864,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::VoidCast => super::nova_void::exec_void_cast(vm),
         OpCode::Reactor => super::nova_reactor::exec_reactor(vm),
         OpCode::Reaction => super::nova_reactor::exec_reaction(vm),
+        OpCode::Cambrian => super::nova_ecology::cambrian_explosion(vm),
         OpCode::Supernova => exec_supernova(vm),
         OpCode::Singularity => exec_singularity(vm),
         OpCode::Eval => exec_eval(vm),

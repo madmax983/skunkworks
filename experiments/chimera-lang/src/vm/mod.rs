@@ -3105,7 +3105,8 @@ impl ChimeraVM {
             | OpCode::Catalyze
             | OpCode::VoidRift
             | OpCode::VoidCast
-            | OpCode::Chaos => nova::exec_nova_op(self, op, args),
+            | OpCode::Chaos
+            | OpCode::Cambrian => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "oracle")]
             OpCode::Divergence => nova::exec_nova_op(self, op, args),
@@ -3277,7 +3278,8 @@ impl ChimeraVM {
             | OpCode::Augury
             | OpCode::Divinate
             | OpCode::Seek
-            | OpCode::Manifest => oracle::exec_oracle_op(self, op, args),
+            | OpCode::Manifest
+            | OpCode::Unify => oracle::exec_oracle_op(self, op, args),
 
             #[cfg(feature = "resonance")]
             OpCode::Pluck | OpCode::Oscillate | OpCode::Hear | OpCode::Scream => {

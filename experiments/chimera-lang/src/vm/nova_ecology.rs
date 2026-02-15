@@ -92,3 +92,23 @@ pub fn tick_ecology(vm: &mut ChimeraVM) {
     // process_organelles: "if keep { next_organelles.push(organelle); }"
     // So yes, halted ones are dropped.
 }
+
+#[cfg(feature = "nova")]
+pub fn cambrian_explosion(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    vm.organelles.clear();
+    vm.output.push("CAMBRIAN EXPLOSION: Mass Extinction & Rapid Speciation".to_string());
+
+    // Spawn 50% of capacity
+    spawn_random_ecology(vm, crate::vm::MAX_ORGANELLES / 2);
+
+    // Also fill grid with food/energy to support them
+    for y in 0..crate::vm::GRID_SIZE {
+        for x in 0..crate::vm::GRID_SIZE {
+            if rand::thread_rng().gen_bool(0.3) {
+                vm.grid[y][x] = Value::Int(50);
+            }
+        }
+    }
+
+    None
+}
