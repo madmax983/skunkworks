@@ -1,9 +1,8 @@
 use macroquad::prelude::*;
 
-mod soroban;
 mod market;
 
-use crate::soroban::Soroban;
+use soroban::Soroban;
 use crate::market::{Market, Trader, Signal};
 
 const BEAD_RADIUS: f32 = 12.0;
