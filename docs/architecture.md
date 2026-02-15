@@ -305,19 +305,27 @@ classDiagram
 
 ### Git Associates (crates/git-associates)
 
-Helper utilities for scanning and parsing Git history, used by `tectonic-git`.
+Helper utilities for scanning and parsing Git history, used by `tectonic-git` and others (ADR 033).
 
 ```mermaid
 classDiagram
     class GitAssociates {
         <<Library>>
     }
-    class GitScanner {
-        +scan_repo(path)
-        +parse_diffs()
+    class GitModel {
+        +open(path)
+        +history(limit)
+        +diff_workdir()
     }
 
-    GitAssociates *-- GitScanner : Exports
+    class Commit {
+        +String hash
+        +String message
+        +CommitStats stats
+    }
+
+    GitAssociates *-- GitModel : Exports
+    GitModel ..> Commit : Produces
 ```
 
 ### Flocking Physics (crates/flocking)
