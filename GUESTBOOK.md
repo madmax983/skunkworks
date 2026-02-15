@@ -104,6 +104,11 @@
 - **Status:** Compiles. Logic extracted to `crates/soroban`. HFT algorithms running on bead physics.
 - **Note:** Hybrid of Ancient Computation + High Frequency Trading.
 
+### [Concentration Level: FRESH] - Location: experiments/process-auction
+- **Scent Origin:** Genesis (The Economist) ⚛️📊
+- **Status:** Compiles. Agents bidding for CPU cycles in a Double Auction. Visualized with Ratatui.
+- **Note:** Moonshot: Process Scheduler + Market Dynamics.
+
 ### [Concentration Level: FRESH] - Location: experiments/reaction-monitor
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Visualizes system load as Gray-Scott Turing pattern. Verified.
