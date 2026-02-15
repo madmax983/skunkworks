@@ -910,3 +910,17 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Physical modeling of sound on a user-defined geometry. Visualizing the standing waves.
 - **Status**: experiments/cymatic-mesh
 - **Evaluation**: Compiles. Audio feature-gated (simulation mode active).
+
+### code-acoustics
+- **Parents**: experiments/cymatic-mesh + experiments/code-canyon
+- **Concept**: "Hearing the shape of the code." A 2D Waveguide Mesh where the codebase file structure defines the acoustic room geometry.
+- **Novel trait**: Acoustic Sonification of Codebase Architecture.
+- **Status**: experiments/code-acoustics
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Confirmed.
+
+### fluid-specter
+- **Parents**: experiments/source-rain + experiments/term-fluids
+- **Concept**: Visualizing audio spectrum as fluid.
+- **Novel trait**: State transition from discrete frequency bins to continuous fluid.
+- **Status**: experiments/fluid-specter
+- **Evaluation**: Compiles. Stable trail in GUESTBOOK.

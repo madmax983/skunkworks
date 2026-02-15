@@ -465,3 +465,8 @@
 - **Scent Origin:** Genesis (The Acoustician) ⚛️🔊
 - **Status:** The mesh is singing. FDTD simulation active. User can draw the resonator shape. Visualizing the standing waves.
 - **Note:** Moonshot: Physical Modeling + Impossible Instruments. Audio backend gated for stability.
+
+### [Concentration Level: FRESH] - Location: experiments/code-acoustics
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The code is singing. The directory structure is now a waveguide.
+- **Note**: Hybrid of `cymatic-mesh` and `code-canyon`.
