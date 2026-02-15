@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: TOXIC] - Location: experiments/trace-fold
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Documentation void. Hardcoded implementation. Redundant.
+
 ### [Concentration Level: HIGH] - Location: Workspace
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Dependency entropy critical. `glam` fragmentation (v0.24, 0.25, 0.27, 0.31) and `bevy` version mismatch (v0.13, 0.14) detected. Build stability compromised.
@@ -87,14 +91,6 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Compilation failure (`Vertex` struct mismatch). Redundant with `luminous-valley`. Failed to improve. Moved to graveyard.
 
-### [Concentration Level: TOXIC] - Location: experiments/bifurcation-probe
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Redundant with `bifurcation-landscape`.
-
-### [Concentration Level: TOXIC] - Location: experiments/chimera-fold
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Invisible to Swarm. Generic implementation.
-
 ### [Concentration Level: STABLE TRAIL] - Location: crates/tui-semantic
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Semantic bridge established. Ready for integration with TUI experiments.
@@ -147,6 +143,14 @@
 - **Status:** Visualizing codebase as geological terrain. Compiles.
 
 ## 🍂 History/Decay
+
+### [Concentration Level: EXECUTED] - Location: graveyard/bifurcation-probe
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Redundant with `bifurcation-landscape`. Failed to improve. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/chimera-fold
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Generic implementation. Invisible to Swarm. Failed to improve. Moved to graveyard.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/beat-cortex
 - **Scent Origin:** The Reaper ☠️
