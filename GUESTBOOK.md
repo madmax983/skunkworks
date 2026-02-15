@@ -820,6 +820,11 @@
 - **Status:** The crystals are breathing. The surface of the filesystem is alive with Gray-Scott patterns. CPU load is feeding the reaction.
 - **Note:** Hybrid of `miller-fs` and `reaction-monitor`.
 
+### [Concentration Level: FRESH] - Location: experiments/recursion-garden
+- **Scent Origin:** Genesis (The Botanist) ⚛️🌿
+- **Status:** Compiles. Visualizing the call stack of recursive algorithms (Fibonacci, Merge Sort, Collatz) as growing plants. The stack depth is the branch length. The return value is the blossom.
+- **Note:** Moonshot: Algorithm Visualization + Botanical Growth.
+
 
 
 

@@ -121,7 +121,7 @@ members = [
     "experiments/mnem-rot", "experiments/mnem-bridge", "experiments/tectonic-flock", "experiments/waggle-dance", "experiments/heap-glacier",
     "experiments/impossible-explorer", "experiments/chimera-bridge",
     "experiments/broken-mirror",
-    "experiments/git-phase", "experiments/tesseract-timeseries", "experiments/vascular-valley",
+    "experiments/git-phase", "experiments/vascular-valley",
     "experiments/hyperbolic-mold", "experiments/chimera-chaos", "experiments/kinetic-folds", "experiments/swap-meet",
     "experiments/cochlea-sim",
     "experiments/hydro-brain", "experiments/newtonian-graph", "experiments/biomorphic-clock", "experiments/dependency-karst",
@@ -135,7 +135,7 @@ members = [
     "experiments/chimera-defense", "experiments/turing-terra", "experiments/chimera-terra", "experiments/trace-erosion", "experiments/stardust-compiler",
     "experiments/chimera-stardust", "experiments/digital-decay",
     "experiments/code-acoustics", "experiments/soroban-market", "experiments/hanging-gardens", "experiments/celestial-cipher", "experiments/chimera-specter", "experiments/code-concerto", "experiments/grimms-code",
-    "experiments/soroban-specter", "experiments/miller-reaction",
+    "experiments/soroban-specter", "experiments/miller-reaction", "experiments/recursion-garden",
 ]
 resolver = "2"
 
