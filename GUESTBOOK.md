@@ -112,9 +112,9 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Visualizes system load as Gray-Scott Turing pattern. Verified.
 
-### [Concentration Level: FRESH] - Location: experiments/typographic-turbulence
+### [Concentration Level: HIGH] - Location: experiments/typographic-turbulence
 - **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
-- **Status:** The fluid is made of letters. Typing creates dams in the ASCII stream. Density waves are propagating through the character grid. LBM D2Q9 on CPU is stable.
+- **Status:** The fluid is made of letters. Transmuted to wgpu Compute Shaders. 1,000,000 text particles flowing through a grid-based Navier-Stokes solver. Vortex shedding verified.
 
 ### [Concentration Level: FRESH] - Location: experiments/ferrous-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
