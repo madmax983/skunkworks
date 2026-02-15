@@ -474,3 +474,123 @@ mod tests {
         assert_eq!(events[0].price, 5.0); // 10 - 1 - 4
     }
 }
+
+#[cfg(test)]
+mod sentry_tests {
+    use super::*;
+
+    #[test]
+    fn test_sideways_movement_blocked_by_trade() {
+        // Grid 3x3
+        let mut grid = Grid::new(3, 3);
+        // Trade at (1, 0) - Blocking Bid from moving UP
+        grid.set(1, 0, Particle::Trade { age: 5 });
+        // Bid at (1, 1) - Blocked
+        grid.set(1, 1, Particle::Bid(1));
+
+        // Update
+        grid.update();
+
+        // Bid should move to (0, 1) or (2, 1) (Same Y, different X)
+        // (1, 1) should be Empty
+        assert_eq!(grid.get(1, 1), Particle::Empty, "Bid failed to move from (1,1)");
+
+        let in_left = matches!(grid.get(0, 1), Particle::Bid(1));
+        let in_right = matches!(grid.get(2, 1), Particle::Bid(1));
+
+        assert!(in_left || in_right, "Bid did not move sideways to (0,1) or (2,1)");
+    }
+
+    #[test]
+    fn test_ask_sideways_movement_blocked_by_trade() {
+        // Grid 3x3
+        let mut grid = Grid::new(3, 3);
+        // Trade at (1, 2) - Blocking Ask from moving DOWN
+        grid.set(1, 2, Particle::Trade { age: 5 });
+        // Ask at (1, 1) - Blocked
+        grid.set(1, 1, Particle::Ask(2));
+
+        // Update
+        grid.update();
+
+        // Ask should move to (0, 1) or (2, 1) (Same Y, different X)
+        // (1, 1) should be Empty
+        assert_eq!(grid.get(1, 1), Particle::Empty, "Ask failed to move from (1,1)");
+
+        let in_left = matches!(grid.get(0, 1), Particle::Ask(2));
+        let in_right = matches!(grid.get(2, 1), Particle::Ask(2));
+
+        assert!(in_left || in_right, "Ask did not move sideways to (0,1) or (2,1)");
+    }
+
+    #[test]
+    fn test_trapped_by_trades() {
+        // Grid 3x3
+        let mut grid = Grid::new(3, 3);
+        // Surround (1, 1)
+        grid.set(1, 0, Particle::Trade { age: 5 }); // Top (Up blocked)
+        grid.set(0, 1, Particle::Trade { age: 5 }); // Left (Sideways blocked)
+        grid.set(2, 1, Particle::Trade { age: 5 }); // Right (Sideways blocked)
+
+        // Bid at (1, 1)
+        grid.set(1, 1, Particle::Bid(1));
+
+        grid.update();
+
+        // Should stay put
+        assert_eq!(grid.get(1, 1), Particle::Bid(1), "Bid should be trapped");
+    }
+
+    #[test]
+    fn test_trade_decay() {
+        let mut grid = Grid::new(3, 3);
+        // Trade with age 1
+        grid.set(1, 1, Particle::Trade { age: 1 });
+
+        grid.update();
+
+        // Should decay to 0 then Empty (logic: if age > 0 { age - 1 } else { Empty })
+        // Wait. Code says:
+        // if age > 0 { self.cells[idx] = Particle::Trade { age: age - 1 }; }
+        // else { self.cells[idx] = Particle::Empty; }
+
+        // So age 1 becomes age 0. It is NOT Empty yet.
+        match grid.get(1, 1) {
+            Particle::Trade { age } => assert_eq!(age, 0),
+            _ => panic!("Expected Trade with age 0"),
+        }
+
+        grid.update();
+        // Now age 0 becomes Empty.
+        assert_eq!(grid.get(1, 1), Particle::Empty);
+    }
+
+    #[test]
+    fn test_bid_blocked_by_stationary_bid_moves_sideways() {
+        // Grid 3x3
+        let mut grid = Grid::new(3, 3);
+        // Trade at (1, 0) - Blocking Bid A
+        grid.set(1, 0, Particle::Trade { age: 5 });
+        // Bid A at (1, 1) - Blocked by Trade
+        grid.set(1, 1, Particle::Bid(10));
+        // Bid B at (1, 2) - Blocked by Bid A initially
+        grid.set(1, 2, Particle::Bid(20));
+
+        grid.update();
+
+        // Expectation:
+        // Bid A moves Sideways to (0,1) or (2,1).
+        // Bid B moves UP to (1,1) (filling the void).
+
+        // Verify Bid A moved sideways
+        let a_left = matches!(grid.get(0, 1), Particle::Bid(10));
+        let a_right = matches!(grid.get(2, 1), Particle::Bid(10));
+        assert!(a_left || a_right, "Bid A did not move sideways");
+
+        // Verify Bid B moved UP
+        assert_eq!(grid.get(1, 1), Particle::Bid(20), "Bid B should move up to (1,1)");
+
+        // Verify original spot of Bid B is empty
+        assert_eq!(grid.get(1, 2), Particle::Empty);
+    }
+}
