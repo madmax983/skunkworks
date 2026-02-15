@@ -30,7 +30,8 @@ pub fn exec_weave_op(
                                     // Use first letter of OpCode as pattern char
                                     let op_str = gene.op.to_string();
                                     if let Some(c) = op_str.chars().next() {
-                                        s.push(c.to_ascii_uppercase());
+                                        let c_upper: char = c.to_ascii_uppercase();
+                                        s.push(c_upper);
                                     }
                                 }
                             }

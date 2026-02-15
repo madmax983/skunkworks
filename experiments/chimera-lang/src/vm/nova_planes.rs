@@ -139,16 +139,16 @@ pub fn exec_planes_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                                 0 => {
                                     // Add
                                     if let Value::Int(b_val) = src {
-                                        if let Value::Int(a_val) = dst {
-                                            *a_val = a_val.wrapping_add(*b_val);
+                                        if let Value::Int(ref mut a_val) = dst {
+                                            *a_val = (*a_val).wrapping_add(b_val);
                                         }
                                     }
                                 }
                                 1 => {
                                     // Max
                                     if let Value::Int(b_val) = src {
-                                        if let Value::Int(a_val) = dst {
-                                            *a_val = (*a_val).max(*b_val);
+                                        if let Value::Int(ref mut a_val) = dst {
+                                            *a_val = (*a_val).max(b_val);
                                         }
                                     }
                                 }

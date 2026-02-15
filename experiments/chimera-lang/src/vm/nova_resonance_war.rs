@@ -169,8 +169,8 @@ pub fn process_resonance(vm: &mut ChimeraVM) {
     let mut new_grid = vm.resonance_grid.clone();
 
     // Global harmonic analysis
-    let mut total_amp = 0.0;
-    let mut weighted_freq_sum = 0.0;
+    let mut total_amp: f32 = 0.0;
+    let mut weighted_freq_sum: f32 = 0.0;
 
     for y in 0..size {
         for x in 0..size {

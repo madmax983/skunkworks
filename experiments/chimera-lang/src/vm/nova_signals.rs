@@ -376,7 +376,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                         } else if signal > 0 {
                             // Check for Dynamic Operators in KB
                             #[cfg(feature = "oracle")]
-                            if let Some(strand_idx) = check_kb_operator(vm, s) {
+                            if let Some(strand_idx) = check_kb_operator(vm, s.as_str()) {
                                 ctx.executions
                                     .push((OpCode::Call, vec![Nucleotide::Number(strand_idx)]));
                             }
@@ -518,7 +518,8 @@ pub fn process_signals(vm: &mut ChimeraVM) {
     for r in ctx.ether_reads {
         if let Some(queue) = vm.ether.get_mut(&r.channel) {
             if let Some(val) = queue.pop_front() {
-                vm.grid[r.y][r.x] = val;
+                let v: Value = val;
+                vm.grid[r.y][r.x] = v;
             }
         }
     }
@@ -1420,7 +1421,7 @@ fn exec_psi(vm: &ChimeraVM, y: usize, x: usize, _signal: u8, ctx: &mut SignalCon
 
     // Calculate local magnitude
     let (re, im) = vm.hologram_grid[y][x];
-    let mag = (re * re + im * im).sqrt() * 100.0;
+    let mag: f64 = (re * re + im * im).sqrt() * 100.0;
 
     if (mag as i64 - target).abs() <= 5 {
         // Match! Fire bang.

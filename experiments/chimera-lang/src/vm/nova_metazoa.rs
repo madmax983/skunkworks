@@ -195,7 +195,8 @@ pub fn exec_signify(
                     // Find member
                     for org in &mut vm.organelles {
                         if org.id == member_id {
-                            org.stack.push(val.clone());
+                            let v: Value = val.clone();
+                            org.stack.push(v);
                             count += 1;
                         }
                     }

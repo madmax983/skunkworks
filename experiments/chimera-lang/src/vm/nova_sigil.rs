@@ -271,7 +271,7 @@ pub fn process_passive_sigils(vm: &mut ChimeraVM) {
         .sigil_registry
         .iter()
         .filter(|(_, s)| s.auto_cast)
-        .map(|(k, s)| (k.clone(), s.pattern.clone(), s.strand_idx))
+        .map(|(k, s): (&String, &Sigil)| (k.clone(), s.pattern.clone(), s.strand_idx))
         .collect();
 
     for (name, pattern, strand_idx) in sigils {

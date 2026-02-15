@@ -92,7 +92,7 @@ pub fn exec_string_op(
                     let (x1, y1) = s.start;
                     let (x2, y2) = s.end;
 
-                    let l2 = (x1 - x2).powi(2) + (y1 - y2).powi(2);
+                    let l2: f64 = (x1 - x2).powi(2) + (y1 - y2).powi(2);
                     let dist = if l2 == 0.0 {
                         (cx - x1).powi(2) + (cy - y1).powi(2)
                     } else {
@@ -130,7 +130,7 @@ pub fn exec_string_op(
                 for (i, s) in vm.strings.iter().enumerate() {
                     let (x1, y1) = s.start;
                     let (x2, y2) = s.end;
-                    let l2 = (x1 - x2).powi(2) + (y1 - y2).powi(2);
+                    let l2: f64 = (x1 - x2).powi(2) + (y1 - y2).powi(2);
                     let dist = if l2 == 0.0 {
                         (cx - x1).powi(2) + (cy - y1).powi(2)
                     } else {
@@ -167,7 +167,7 @@ pub fn exec_string_op(
             for s in &vm.strings {
                 let (x1, y1) = s.start;
                 let (x2, y2) = s.end;
-                let l2 = (x1 - x2).powi(2) + (y1 - y2).powi(2);
+                let l2: f64 = (x1 - x2).powi(2) + (y1 - y2).powi(2);
                 let dist = if l2 == 0.0 {
                     (cx - x1).powi(2) + (cy - y1).powi(2)
                 } else {
