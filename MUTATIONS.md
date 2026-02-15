@@ -896,3 +896,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Feedback loop between biological agents and geological processes.
 - **Status**: experiments/chimera-terra
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### chimera-stardust
+- **Parents**: experiments/chimera-lang + experiments/stardust-compiler
+- **Concept**: "The Code is in the Stars." ChimeraVM agents inhabiting a procedurally generated nebula, where pixels are DNA inputs and movement is output.
+- **Novel trait**: Steganographic Ecology. Agents read and write to the image noise, treating it as a shared memory/environment.
+- **Status**: experiments/chimera-stardust
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

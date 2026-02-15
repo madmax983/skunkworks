@@ -1,0 +1,11 @@
+[package]
+name = "chimera-stardust"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+image = "0.24"
+rand = "0.8"
+chimera-lang = { path = "../chimera-lang", features = ["nova"] }
+stardust-compiler = { path = "../stardust-compiler" }
