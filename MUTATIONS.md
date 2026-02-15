@@ -903,3 +903,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Steganographic Ecology. Agents read and write to the image noise, treating it as a shared memory/environment.
 - **Status**: experiments/chimera-stardust
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### cymatic-mesh
+- **Parents**: experiments/cymatic-ocean + experiments/ripple-tank
+- **Concept**: A 2D Waveguide Mesh Synthesizer where the instrument's body is a drawable grid. The user shapes the acoustic space.
+- **Novel trait**: Physical modeling of sound on a user-defined geometry. Visualizing the standing waves.
+- **Status**: experiments/cymatic-mesh
+- **Evaluation**: Compiles. Audio feature-gated (simulation mode active).
