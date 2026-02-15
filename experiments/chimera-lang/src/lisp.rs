@@ -120,19 +120,13 @@ pub fn compile(source: &str) -> Result<Dna> {
                         if items.len() < 2 {
                             return Err(anyhow!("Invalid strand definition"));
                         }
-                        // name is items[1] (not used in DNA struct directly, but maybe for labels?)
-                        // Currently DNA just has a list of strands.
-                        // The compiler tracks names.
-                        // Here we just append.
+                        // name is items[1]
                         let mut genes = Vec::new();
                         for item in items.iter().skip(2) {
                             genes.extend(compile_expr(item)?);
                         }
                         strands.push(Strand { genes });
                     } else {
-                        // Assume implicit main if only one strand?
-                        // Or allow top-level genes to form a "main" strand?
-                        // Let's enforce (strand ...) for now.
                         return Err(anyhow!("Top level must be (strand ...)"));
                     }
                 }
@@ -146,13 +140,21 @@ pub fn compile(source: &str) -> Result<Dna> {
     })
 }
 
+pub fn compile_fragment(source: &str) -> Result<Vec<Gene>> {
+    let exprs = parse(source)?;
+    let mut genes = Vec::new();
+    for expr in exprs {
+        genes.extend(compile_expr(&expr)?);
+    }
+    Ok(genes)
+}
+
 fn map_op(s: &str) -> Option<OpCode> {
     match s {
         "+" => Some(OpCode::Add),
         "-" => Some(OpCode::Sub),
         "*" => Some(OpCode::Mul),
         "/" => Some(OpCode::Div),
-        "%" => None, // OpCode::Mod?, no mod?
         "print" => Some(OpCode::Print),
         "dup" => Some(OpCode::Dup),
         "drop" => Some(OpCode::Drop),
@@ -164,9 +166,51 @@ fn map_op(s: &str) -> Option<OpCode> {
         "spawn" => Some(OpCode::Spawn),
         "consume" => Some(OpCode::Consume),
         "photosynthesize" => Some(OpCode::Photosynthesize),
-        "mutate" => Some(OpCode::HavocRate), // Hack? No, HavocRate sets rate.
+        "mutate" => Some(OpCode::HavocRate),
+        // Nova Mappings
+        #[cfg(feature = "nova")]
+        "entangle" => Some(OpCode::Entangle),
+        #[cfg(feature = "nova")]
+        "decohere" => Some(OpCode::Decohere),
+        #[cfg(feature = "nova")]
+        "time-warp" => Some(OpCode::TimeWarp),
+        #[cfg(feature = "nova")]
+        "glitch" => Some(OpCode::Glitch),
+        #[cfg(feature = "nova")]
+        "resonate" => Some(OpCode::Resonate),
+        "transcribe" => Some(OpCode::Transcribe), // Core
+        #[cfg(feature = "nova")]
+        "methylate" => Some(OpCode::Methylate),
+        #[cfg(feature = "nova")]
+        "demethylate" => Some(OpCode::Demethylate),
+        #[cfg(feature = "nova")]
+        "mitosis" => Some(OpCode::Mitosis),
+        #[cfg(feature = "nova")]
+        "apoptosis" => Some(OpCode::Apoptosis),
+        "g-read" => Some(OpCode::GRead),
+        "g-write" => Some(OpCode::GWrite),
+        "radiate" => Some(OpCode::Radiate),
+        "siphon" => Some(OpCode::Siphon),
+        "virus" => Some(OpCode::Virus),
+        #[cfg(feature = "nova")]
+        "warp" => Some(OpCode::TimeWarp),
+        #[cfg(feature = "nova")]
+        "shape" => Some(OpCode::Shape),
+        #[cfg(feature = "nova")]
+        "void" => Some(OpCode::Void),
+        #[cfg(feature = "nova")]
+        "rift" => Some(OpCode::Rift),
+        #[cfg(feature = "nova")]
+        "seal" => Some(OpCode::Seal),
+        #[cfg(feature = "nova")]
+        "scavenge" => Some(OpCode::Scavenge),
+        #[cfg(feature = "nova")]
+        "digest" => Some(OpCode::Digest),
+        #[cfg(feature = "nova")]
+        "compile" => Some(OpCode::Compile),
+        #[cfg(feature = "nova")]
+        "decompile" => Some(OpCode::Decompile),
         _ => OpCode::from_str(s).ok().or_else(|| {
-            // Case insensitive?
             if let Some(first) = s.chars().next() {
                 let title = first.to_uppercase().to_string() + &s[1..];
                 OpCode::from_str(&title).ok()
@@ -178,11 +222,14 @@ fn map_op(s: &str) -> Option<OpCode> {
 }
 
 fn is_immediate(op: &OpCode) -> bool {
-    matches!(op,
-        OpCode::Push | OpCode::Jump | OpCode::Brz | OpCode::Call |
-        OpCode::Spawn | OpCode::Radiate | OpCode::Siphon | OpCode::Virus |
-        OpCode::Lumine | OpCode::Transcribe | OpCode::HavocRate | OpCode::HavocScope
-    )
+    // Only return true if the VM expects arguments in the Gene struct.
+    // Most ops pop arguments from the stack.
+    match op {
+        OpCode::Push | OpCode::Jump | OpCode::Brz => true,
+        #[cfg(feature = "nova")]
+        OpCode::Call => true,
+        _ => false,
+    }
 }
 
 fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
@@ -194,12 +241,9 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
                 let content = &s[1..s.len()-1];
                 Ok(vec![Gene { op: OpCode::Push, args: vec![Nucleotide::String(content.to_string())] }])
             } else {
-                // Identifier
-                // If it maps to an OpCode, it's a bare OpCode (no args, or stack args)
                 if let Some(op) = map_op(s) {
                     Ok(vec![Gene { op, args: vec![] }])
                 } else {
-                    // Treat as string push (Identifier)
                     Ok(vec![Gene { op: OpCode::Push, args: vec![Nucleotide::String(s.clone())] }])
                 }
             }
@@ -210,7 +254,6 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
             if let SExpr::Atom(head) = &items[0] {
                 if let Some(op) = map_op(head) {
                     if is_immediate(&op) {
-                        // (op arg1 arg2) -> Gene { op, args: [arg1, arg2] }
                         let mut args = Vec::new();
                         for item in items.iter().skip(1) {
                             match item {
@@ -220,7 +263,6 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
                                     } else if s.starts_with('"') {
                                          args.push(Nucleotide::String(s[1..s.len()-1].to_string()));
                                     } else {
-                                         // Identifier in arg position -> String/Identifier
                                          args.push(Nucleotide::Identifier(s.clone()));
                                     }
                                 }
@@ -229,7 +271,7 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
                         }
                         return Ok(vec![Gene { op, args }]);
                     } else {
-                        // Stack Op: (add 1 2) -> 1 2 add
+                        // Stack Op: (op arg1 arg2) -> arg1 arg2 op
                         let mut genes = Vec::new();
                         for arg in items.iter().skip(1) {
                             genes.extend(compile_expr(arg)?);
@@ -240,7 +282,6 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
                 }
             }
 
-            // Just a sequence: ((push 1) (print))
             let mut genes = Vec::new();
             for item in items {
                 genes.extend(compile_expr(item)?);

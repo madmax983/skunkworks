@@ -1,4 +1,5 @@
 use crate::ast::Gene;
+use crate::matrix_rain::MatrixRain;
 use crate::vm::ChimeraVM;
 use crate::{ChimeraParser, Rule};
 use anyhow::Result;
@@ -224,6 +225,7 @@ pub(crate) struct AppState {
     #[cfg(feature = "nova")]
     pub(crate) crispr_result: String,
     pub(crate) evolution_state: EvolutionState,
+    pub(crate) matrix_rain: MatrixRain,
 }
 
 pub(crate) struct EvolutionState {
@@ -334,6 +336,7 @@ impl AppState {
             #[cfg(feature = "nova")]
             crispr_result: String::from("Ready to edit."),
             evolution_state: EvolutionState::new(),
+            matrix_rain: MatrixRain::new(),
         }
     }
 }
@@ -380,6 +383,9 @@ where
     <B as ratatui::backend::Backend>::Error: Send + Sync + 'static,
 {
     loop {
+        let size = terminal.size()?;
+        app_state.matrix_rain.update(size.width, size.height);
+
         if let ViewMode::Evolution = app_state.view_mode {
             if app_state.evolution_state.auto_run {
                 if let Some(engine) = &mut app_state.evolution_state.engine {
@@ -440,6 +446,12 @@ where
         }
 
         terminal.draw(|f| {
+            #[cfg(feature = "nova")]
+            if matches!(app_state.view_mode, ViewMode::Terminal | ViewMode::Void) {
+                let area = f.area();
+                app_state.matrix_rain.render(f.buffer_mut(), area);
+            }
+
             if let ViewMode::Microscope = app_state.view_mode {
                 render_microscope(f, vm, app_state);
                 return;
@@ -863,21 +875,37 @@ where
 
                                 vm.output.push(format!("> {}", input));
 
-                                let src = format!("strand terminal_input {{ {} }}", input);
-                                match crate::compiler::compile(&src, None) {
-                                    Ok(dna) => {
-                                        if let Some(strand) = dna.helix.strands.first() {
-                                            // Execute immediately to mimic REPL
-                                            for gene in &strand.genes {
-                                                let _ = vm.execute_gene_inner(
-                                                    gene.op.clone(),
-                                                    &gene.args,
-                                                );
+                                if input.trim_start().starts_with('(') {
+                                    // Lisp Mode
+                                    match crate::lisp::compile_fragment(&input) {
+                                        Ok(genes) => {
+                                            for gene in genes {
+                                                let _ = vm.execute_gene_inner(gene.op, &gene.args);
                                             }
+                                            vm.output.push("LISP: Executed.".to_string());
+                                        }
+                                        Err(e) => {
+                                            vm.output.push(format!("Lisp Error: {}", e));
                                         }
                                     }
-                                    Err(e) => {
-                                        vm.output.push(format!("Error: {}", e));
+                                } else {
+                                    // ChimeraScript Mode
+                                    let src = format!("strand terminal_input {{ {} }}", input);
+                                    match crate::compiler::compile(&src, None) {
+                                        Ok(dna) => {
+                                            if let Some(strand) = dna.helix.strands.first() {
+                                                // Execute immediately to mimic REPL
+                                                for gene in &strand.genes {
+                                                    let _ = vm.execute_gene_inner(
+                                                        gene.op.clone(),
+                                                        &gene.args,
+                                                    );
+                                                }
+                                            }
+                                        }
+                                        Err(e) => {
+                                            vm.output.push(format!("Error: {}", e));
+                                        }
                                     }
                                 }
                             }
@@ -1979,14 +2007,6 @@ where
                         }
                     }
                     #[cfg(feature = "nova")]
-                    KeyCode::Char('I') => {
-                        if let ViewMode::Ecology = app_state.view_mode {
-                            app_state.input_mode = InputMode::Editing;
-                            app_state.input_buffer.clear();
-                            app_state.status_msg = "Injecting Gene... (Type & Enter)".to_string();
-                        }
-                    }
-                    #[cfg(feature = "nova")]
                     KeyCode::Char('$') => app_state.view_mode = ViewMode::Market,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('!') => app_state.view_mode = ViewMode::Ballistics,
@@ -2112,6 +2132,10 @@ where
                                 &[],
                             );
                             app_state.status_msg = format!("Interfered strand {}", idx);
+                        } else if let ViewMode::Ecology = app_state.view_mode {
+                            app_state.input_mode = InputMode::Editing;
+                            app_state.input_buffer.clear();
+                            app_state.status_msg = "Injecting Gene... (Type & Enter)".to_string();
                         } else {
                             app_state.view_mode = ViewMode::Hologram;
                         }
