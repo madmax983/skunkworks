@@ -1,3 +1,15 @@
+//! # Market Flow Experiment 🌊
+//!
+//! A visualization of a market as a fluid dynamic system.
+//!
+//! This experiment models the Limit Order Book as a physical container where:
+//! *   **Bids** (Buyers) are buoyant particles rising from the bottom.
+//! *   **Asks** (Sellers) are heavy particles falling from the top.
+//! *   **Trades** are high-energy collisions that occur when they meet.
+//!
+//! The simulation combines `market-sim` (physics) with `synth` (audio synthesis) to create
+//! a multisensory representation of liquidity flow.
+
 mod synth;
 
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
@@ -8,21 +20,31 @@ use ratatui::{
     style::{Color, Style},
     symbols::Marker,
     widgets::{
-        Block, Borders, Paragraph, Sparkline,
         canvas::{Canvas, Points},
+        Block, Borders, Paragraph, Sparkline,
     },
 };
 use std::time::Duration;
 use synth::SynthState;
 use tui_shared::Tui;
 
+/// The main application state.
+///
+/// Orchestrates the simulation (`Grid`), the sonification (`SynthState`),
+/// and the TUI rendering loop.
 struct App {
+    /// The physical market grid (60x40).
     grid: Grid,
+    /// The audio synthesizer state.
     synth: SynthState,
+    /// Flag to signal the main loop to exit.
     should_quit: bool,
-    market_price: f32, // The "External" price driving the market maker
+    /// The "True Price" (external market price) driving the simulated Market Maker.
+    /// This value random walks to stimulate order creation.
+    market_price: f32,
 
-    // Rendering buffers (Zero-allocation loop)
+    // --- Rendering Buffers ---
+    // These vectors are pre-allocated to avoid allocations in the render loop.
     bids_buf: Vec<(f64, f64)>,
     asks_buf: Vec<(f64, f64)>,
     trades_buf: Vec<(f64, f64)>,
@@ -30,6 +52,7 @@ struct App {
 }
 
 impl App {
+    /// Initialize the application state.
     fn new() -> Self {
         Self {
             grid: Grid::new(60, 40),
@@ -43,6 +66,12 @@ impl App {
         }
     }
 
+    /// Updates the simulation state for one tick.
+    ///
+    /// 1.  **Market Maker**: Randomly places Bids (below price) and Asks (above price).
+    /// 2.  **Whales**: Occasionally drops large blocks of liquidity.
+    /// 3.  **Physics**: Updates the `Grid` (particle movement and collision).
+    /// 4.  **Audio**: Updates the `SynthState` based on market stats.
     fn update(&mut self) {
         // Market Maker Logic
         let mut rng = rand::thread_rng();
@@ -74,7 +103,7 @@ impl App {
             }
         }
 
-        // Whales
+        // Whales: Randomly inject large blocks of liquidity
         if rng.gen_bool(0.02) {
             // Drop a block
             let is_bid = rng.gen_bool(0.5);
@@ -93,7 +122,10 @@ impl App {
             }
         }
 
+        // Run Physics
         self.grid.update();
+
+        // Update Audio State
         self.synth
             .update(self.grid.center_of_mass, self.grid.trade_count);
     }
@@ -208,6 +240,7 @@ fn main() -> anyhow::Result<()> {
         })?;
 
         // Handle Events
+        #[allow(clippy::collapsible_if)]
         if event::poll(Duration::from_millis(30))? {
             if let Event::Key(key) = event::read()? {
                 if key.kind == KeyEventKind::Press {
