@@ -153,10 +153,10 @@
 - **Status:** Non-Euclidean roguelike on Poincaré disk. Tiling logic active.
 - **Note:** Needs polish.
 
-### [Concentration Level: FRESH] - Location: experiments/miller-fs
-- **Scent Origin:** Mycelium 🍄
-- **Status:** File system visualized as crystal lattice via wgpu. No README found.
-- **Note:** Mosaic polish required.
+### [Concentration Level: HIGH] - Location: experiments/miller-fs
+- **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
+- **Status:** The crystal is growing. File system mapped to Miller Indices. WGPU renderer active with instanced bonds. Documentation verified.
+- **Note:** Moonshot: Crystallographic File System Visualization.
 
 ### [Concentration Level: FRESH] - Location: experiments/silicon-samba
 - **Scent Origin:** Mycelium 🍄

@@ -10,6 +10,7 @@ pub const OPENGL_TO_WGPU_MATRIX: Matrix4<f32> = Matrix4::new(
     0.0, 0.0, 0.5, 1.0,
 );
 
+#[derive(Debug)]
 pub struct Camera {
     pub eye: Point3<f32>,
     pub target: Point3<f32>,
@@ -30,24 +31,30 @@ impl Camera {
 
 pub struct CameraController {
     speed: f32,
+    rotation_speed: f32,
     is_forward_pressed: bool,
     is_backward_pressed: bool,
     is_left_pressed: bool,
     is_right_pressed: bool,
     is_up_pressed: bool,
     is_down_pressed: bool,
+    is_rotate_left_pressed: bool,
+    is_rotate_right_pressed: bool,
 }
 
 impl CameraController {
-    pub fn new(speed: f32) -> Self {
+    pub fn new(speed: f32, rotation_speed: f32) -> Self {
         Self {
             speed,
+            rotation_speed,
             is_forward_pressed: false,
             is_backward_pressed: false,
             is_left_pressed: false,
             is_right_pressed: false,
             is_up_pressed: false,
             is_down_pressed: false,
+            is_rotate_left_pressed: false,
+            is_rotate_right_pressed: false,
         }
     }
 
@@ -78,48 +85,67 @@ impl CameraController {
                 self.is_down_pressed = is_pressed;
                 true
             }
+            PhysicalKey::Code(KeyCode::KeyQ) => {
+                self.is_rotate_left_pressed = is_pressed;
+                true
+            }
+            PhysicalKey::Code(KeyCode::KeyE) => {
+                self.is_rotate_right_pressed = is_pressed;
+                true
+            }
             _ => false,
         }
     }
 
     pub fn update_camera(&self, camera: &mut Camera) {
         let forward = camera.target - camera.eye;
-        let forward_norm = forward.normalize();
-        let _forward_mag = forward.magnitude();
+        let forward_mag = forward.magnitude();
+        let forward_norm = if forward_mag > 0.0 {
+            forward / forward_mag
+        } else {
+            Vector3::unit_z()
+        };
+        let right_norm = forward_norm.cross(camera.up).normalize();
 
-        // Prevents getting too close to 0
+        // Movement
+        let mut delta = Vector3::zero();
         if self.is_forward_pressed {
-            // Removed check against forward_mag for simplicity, or just use it
-            // Actually, if I remove the check, I might go through the target.
-            // But I made _forward_mag.
-            // Reverting logic:
-            camera.eye += forward_norm * self.speed;
+            delta += forward_norm * self.speed;
         }
         if self.is_backward_pressed {
-            camera.eye -= forward_norm * self.speed;
+            delta -= forward_norm * self.speed;
         }
-
-        let right = forward_norm.cross(camera.up);
-
-        // let forward = camera.target - camera.eye;
-        // let forward_mag = forward.magnitude();
-
         if self.is_right_pressed {
-            camera.eye += right * self.speed;
-            camera.target += right * self.speed;
+            delta += right_norm * self.speed;
         }
         if self.is_left_pressed {
-            camera.eye -= right * self.speed;
-            camera.target -= right * self.speed;
+            delta -= right_norm * self.speed;
         }
-
         if self.is_up_pressed {
-            camera.eye += camera.up * self.speed;
-            camera.target += camera.up * self.speed;
+            delta += camera.up * self.speed;
         }
         if self.is_down_pressed {
-            camera.eye -= camera.up * self.speed;
-            camera.target -= camera.up * self.speed;
+            delta -= camera.up * self.speed;
+        }
+
+        // Apply movement to both eye and target to keep direction
+        camera.eye += delta;
+        camera.target += delta;
+
+        // Rotation (Yaw)
+        let mut rotation_angle = Rad(0.0);
+        if self.is_rotate_left_pressed {
+            rotation_angle += Rad(self.rotation_speed);
+        }
+        if self.is_rotate_right_pressed {
+            rotation_angle -= Rad(self.rotation_speed);
+        }
+
+        if rotation_angle.0 != 0.0 {
+            // Rotate forward vector around up axis
+            let rotation = Quaternion::from_axis_angle(camera.up, rotation_angle);
+            let new_forward = rotation.rotate_vector(forward_norm);
+            camera.target = camera.eye + new_forward * forward_mag;
         }
     }
 }
