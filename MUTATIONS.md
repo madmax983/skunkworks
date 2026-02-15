@@ -973,3 +973,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Physical Order Book Collision.
 - **Status**: experiments/spqr-market
 - **Evaluation**: Compiles. Legion logic operational.
+
+### biochemical-soundscapes
+- **Parents**: Gray-Scott Patterns + Audio Synthesis
+- **Concept**: Reaction-Diffusion simulation where chemical parameters (Feed/Kill) are modulated by an audio oscillator, and the pattern modulates the audio.
+- **Novel trait**: Synesthetic Feedback Loop. The pattern sings, and the song shapes the pattern.
+- **Status**: experiments/biochemical-soundscapes
+- **Evaluation**: Compiles. Audio feature-gated.

@@ -136,6 +136,7 @@ members = [
     "experiments/code-acoustics", "experiments/soroban-market", "experiments/hanging-gardens", "experiments/celestial-cipher", "experiments/chimera-specter", "experiments/code-concerto", "experiments/grimms-code",
     "experiments/soroban-specter", "experiments/miller-reaction", "experiments/recursion-garden", "experiments/rossler-market", "experiments/hanging-abacus", "experiments/process-auction", "experiments/thermo-market", "experiments/bezier-landscapes",
     "experiments/spqr-market", "experiments/celestial-rhythms",
+    "experiments/biochemical-soundscapes",
 ]
 resolver = "2"
 
