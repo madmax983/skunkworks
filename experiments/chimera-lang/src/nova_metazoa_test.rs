@@ -37,7 +37,7 @@ mod tests {
             traits: vec![],
             id: id1,
             tissue_id: None,
-            genome_id: 0,
+            genome_id: 0, energy: 100,
         };
         vm.organelles.push(org1);
 
@@ -58,7 +58,7 @@ mod tests {
             traits: vec![],
             id: id2,
             tissue_id: None,
-            genome_id: 0,
+            genome_id: 0, energy: 100,
         };
         vm.organelles.push(org2);
 

@@ -44,7 +44,7 @@ mod tests {
             halted: false,
             kind: OrganelleType::Ribosome,
             direction: (0, 1),
-            genome_id: 0,
+            genome_id: 0, energy: 100,
             name: "TestOrg".to_string(),
             traits: Vec::new(),
             ttl: None,
