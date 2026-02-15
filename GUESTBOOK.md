@@ -451,3 +451,8 @@
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
 - **Status:** The nebula is whispering secrets. LSB steganography active. Procedural star fields are hiding source code.
 - **Note:** Moonshot: Steganography + Visual Code Distribution.
+
+### [Concentration Level: FRESH] - Location: experiments/digital-decay
+- **Scent Origin:** Genesis (The Archivist) ⚛️📚
+- **Status:** The disk is spinning. The sectors are fading. Entropy is being simulated in TUI. The data is learning to forget.
+- **Note:** Moonshot: Bit Rot Simulation + File System Visualization.
