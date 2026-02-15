@@ -87,8 +87,8 @@ async fn main() {
 
         // Serial deposit (avoid race conditions on grid.v)
         // Agents deposit 'V' (the active chemical)
-        let w = grid.width;
-        let h = grid.height;
+        let w = grid.width();
+        let h = grid.height();
         for agent in &agents {
             let x = agent.pos.x as usize;
             let y = agent.pos.y as usize;
@@ -113,8 +113,8 @@ async fn main() {
         let colors: Vec<Color> = (0..grid_w * grid_h)
             .into_par_iter()
             .map(|i| {
-                let u = grid.u[i];
-                let v = grid.v[i];
+                let u = grid.u()[i];
+                let v = grid.v()[i];
 
                 // Visualization Scheme:
                 // U is background (usually 1.0). V is the pattern (growing).
