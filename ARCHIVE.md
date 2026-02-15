@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **trace-fold**: Documentation void. Hardcoded "toy" implementation (static stack trace string). Redundant with `trace-tardis` and `trace-erosion`. Grace period: 24h.
+- **cymatic-mesh**: Documentation void. Ancestral redundancy (superseded by `code-acoustics`). Sketch implementation. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **trace-fold**: Specimen executed. Documentation void. Hardcoded implementation. Redundant. Failed to improve during grace period. Moved to graveyard.
 - **bifurcation-probe**: Specimen executed. Documentation void. Redundant with `bifurcation-landscape`. Failed to improve during grace period. Moved to graveyard.
 - **chimera-fold**: Specimen executed. Documentation void. Generic implementation. Invisible to Swarm. Failed to improve during grace period. Moved to graveyard.
 - **valley-forge**: Specimen executed. Documentation void. Compilation failure (`Vertex` struct mismatch). Redundant with `luminous-valley`. Failed to improve during grace period. Moved to graveyard.
