@@ -23,7 +23,7 @@ pub fn exec_oracle_op(
         OpCode::Assert => {
             if let Some(fact) = vm.stack.pop() {
                 if !vm.knowledge_base.contains(&fact) {
-                    vm.knowledge_base.push(fact.clone());
+                    let val: Value = fact.clone(); vm.knowledge_base.push(val);
                     vm.output.push(format!("ASSERT: Added {}", fact));
                 } else {
                     vm.output

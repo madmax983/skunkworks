@@ -1,4 +1,4 @@
-use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
+use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand, JunctionType};
 use crate::opcode::OpCode;
 use anyhow::{anyhow, Result};
 use std::str::FromStr;
@@ -232,6 +232,27 @@ fn is_immediate(op: &OpCode) -> bool {
     }
 }
 
+fn compile_as_data(expr: &SExpr) -> Result<Nucleotide> {
+    match expr {
+        SExpr::Atom(s) => {
+            if let Ok(n) = s.parse::<i64>() {
+                Ok(Nucleotide::Number(n))
+            } else if s.starts_with('"') && s.ends_with('"') {
+                Ok(Nucleotide::String(s[1..s.len()-1].to_string()))
+            } else {
+                Ok(Nucleotide::Identifier(s.clone()))
+            }
+        }
+        SExpr::List(items) => {
+            let mut nucleos = Vec::new();
+            for item in items {
+                nucleos.push(compile_as_data(item)?);
+            }
+            Ok(Nucleotide::Junction(JunctionType::Any, nucleos))
+        }
+    }
+}
+
 fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
     match expr {
         SExpr::Atom(s) => {
@@ -252,6 +273,211 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
             if items.is_empty() { return Ok(vec![]); }
 
             if let SExpr::Atom(head) = &items[0] {
+                match head.as_str() {
+                    "quote" => {
+                        if items.len() != 2 {
+                            return Err(anyhow!("quote requires exactly one argument"));
+                        }
+                        let data = compile_as_data(&items[1])?;
+                        return Ok(vec![Gene {
+                            op: OpCode::Push,
+                            args: vec![data],
+                        }]);
+                    }
+                    "rule" => {
+                        if items.len() < 2 {
+                            return Err(anyhow!("rule requires at least a head"));
+                        }
+                        let head = compile_as_data(&items[1])?;
+
+                        let mut body_terms = Vec::new();
+                        for item in items.iter().skip(2) {
+                            body_terms.push(compile_as_data(item)?);
+                        }
+                        let body = Nucleotide::Junction(JunctionType::All, body_terms);
+
+                        // Push head, then body (Rule op expects [..., head, body])
+                        return Ok(vec![
+                            Gene {
+                                op: OpCode::Push,
+                                args: vec![head],
+                            },
+                            Gene {
+                                op: OpCode::Push,
+                                args: vec![body],
+                            },
+                            Gene {
+                                op: OpCode::Rule,
+                                args: vec![],
+                            },
+                        ]);
+                    }
+                    "assert" => {
+                        if items.len() != 2 {
+                            return Err(anyhow!("assert requires exactly one argument"));
+                        }
+                        let fact = compile_as_data(&items[1])?;
+                        return Ok(vec![
+                            Gene {
+                                op: OpCode::Push,
+                                args: vec![fact],
+                            },
+                            Gene {
+                                op: OpCode::Assert,
+                                args: vec![],
+                            },
+                        ]);
+                    }
+                    "retract" => {
+                        if items.len() != 2 {
+                            return Err(anyhow!("retract requires exactly one argument"));
+                        }
+                        let fact = compile_as_data(&items[1])?;
+                        return Ok(vec![
+                            Gene {
+                                op: OpCode::Push,
+                                args: vec![fact],
+                            },
+                            Gene {
+                                op: OpCode::Retract,
+                                args: vec![],
+                            },
+                        ]);
+                    }
+                    "query" => {
+                        if items.len() < 2 {
+                            return Err(anyhow!("query requires at least one goal"));
+                        }
+                        // (query goal1 goal2...) -> implicit AND (All)
+                        let goal = if items.len() == 2 {
+                            compile_as_data(&items[1])?
+                        } else {
+                            let mut goals = Vec::new();
+                            for item in items.iter().skip(1) {
+                                goals.push(compile_as_data(item)?);
+                            }
+                            Nucleotide::Junction(JunctionType::All, goals)
+                        };
+                        return Ok(vec![
+                            Gene {
+                                op: OpCode::Push,
+                                args: vec![goal],
+                            },
+                            Gene {
+                                op: OpCode::Query,
+                                args: vec![],
+                            },
+                        ]);
+                    }
+                    "seq" => {
+                        let mut genes = Vec::new();
+                        let count = items.len() - 1;
+                        if count == 0 {
+                            return Err(anyhow!("seq requires at least one argument"));
+                        }
+                        for item in items.iter().skip(1) {
+                            genes.extend(compile_expr(item)?);
+                        }
+                        genes.push(Gene {
+                            op: OpCode::Push,
+                            args: vec![Nucleotide::Number(count as i64)],
+                        });
+                        genes.push(Gene {
+                            op: OpCode::ParserSeqN,
+                            args: vec![],
+                        });
+                        return Ok(genes);
+                    }
+                    "alt" => {
+                        let mut genes = Vec::new();
+                        let count = items.len() - 1;
+                        if count == 0 {
+                            return Err(anyhow!("alt requires at least one argument"));
+                        }
+                        for item in items.iter().skip(1) {
+                            genes.extend(compile_expr(item)?);
+                        }
+                        genes.push(Gene {
+                            op: OpCode::Push,
+                            args: vec![Nucleotide::Number(count as i64)],
+                        });
+                        genes.push(Gene {
+                            op: OpCode::ParserAltN,
+                            args: vec![],
+                        });
+                        return Ok(genes);
+                    }
+                    "match" => {
+                        if items.len() != 2 {
+                            return Err(anyhow!("match requires exactly one argument"));
+                        }
+                        let mut genes = compile_expr(&items[1])?;
+                        genes.push(Gene {
+                            op: OpCode::ParserMatch,
+                            args: vec![],
+                        });
+                        return Ok(genes);
+                    }
+                    "regex" => {
+                        if items.len() != 2 {
+                            return Err(anyhow!("regex requires exactly one argument"));
+                        }
+                        let mut genes = compile_expr(&items[1])?;
+                        genes.push(Gene {
+                            op: OpCode::ParserRegex,
+                            args: vec![],
+                        });
+                        return Ok(genes);
+                    }
+                    "many" => {
+                        if items.len() != 2 {
+                            return Err(anyhow!("many requires exactly one argument"));
+                        }
+                        let mut genes = compile_expr(&items[1])?;
+                        genes.push(Gene {
+                            op: OpCode::ParserMany,
+                            args: vec![],
+                        });
+                        return Ok(genes);
+                    }
+                    "opt" => {
+                        if items.len() != 2 {
+                            return Err(anyhow!("opt requires exactly one argument"));
+                        }
+                        let mut genes = compile_expr(&items[1])?;
+                        genes.push(Gene {
+                            op: OpCode::ParserOpt,
+                            args: vec![],
+                        });
+                        return Ok(genes);
+                    }
+                    "parse" => {
+                        if items.len() != 3 {
+                            return Err(anyhow!("parse requires (parse grammar input)"));
+                        }
+                        let mut genes = Vec::new();
+                        genes.extend(compile_expr(&items[1])?);
+                        genes.extend(compile_expr(&items[2])?);
+                        genes.push(Gene {
+                            op: OpCode::Parse,
+                            args: vec![],
+                        });
+                        return Ok(genes);
+                    }
+                    "generate" => {
+                        if items.len() != 2 {
+                            return Err(anyhow!("generate requires exactly one argument"));
+                        }
+                        let mut genes = compile_expr(&items[1])?;
+                        genes.push(Gene {
+                            op: OpCode::Generate,
+                            args: vec![],
+                        });
+                        return Ok(genes);
+                    }
+                    _ => {}
+                }
+
                 if let Some(op) = map_op(head) {
                     if is_immediate(&op) {
                         let mut args = Vec::new();
