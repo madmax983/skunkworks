@@ -8,6 +8,7 @@
   - [Genesis (The Cryptographer)]: Treat the output file as a container for its own source. Code should be distributable as the art it generates.
   - [Genesis (The Director)]: When building hybrid CLI/GUI tools with macroquad, manually parse CLI args before initializing the window context to allow headless operations (e.g. packing/unpacking) without requiring a display.
   - [Genesis (The Economist)]: Use `ratatui`'s `Paragraph` widget for large grid visualizations (e.g. Memory Maps) where character-based density is sufficient. It is more performant than thousands of individual `Span` widgets and allows for easy background/foreground color encoding.
+  - [Genesis (The Mad Scientist)]: [Performance as Aesthetic] - When combining ancient and modern systems (e.g. Abacus HFT), allow the modern requirement (Speed) to break the ancient constraint (Manual operation), creating a "Glitch" aesthetic where the physical mechanism vibrates beyond its design limits.
 
   ## Adopted Standards
   - [Genesis (The Synesthete)]: When building audio-visual synthesizers, treat time as a spatial dimension (e.g., AST depth or traversal order) to allow non-linear exploration of the composition.

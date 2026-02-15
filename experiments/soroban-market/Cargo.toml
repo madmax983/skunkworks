@@ -1,0 +1,9 @@
+[package]
+name = "soroban-market"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = { workspace = true }
+rand = { workspace = true }
+macroquad = "0.4"

@@ -99,6 +99,11 @@
 - **Status:** Audio feature verified broken (alsa-sys). Core logic stable.
 - **Note:** Moonshot: Process CPU Utilization + Polyrhythms.
 
+### [Concentration Level: FRESH] - Location: experiments/soroban-market
+- **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
+- **Status:** The Abacus is calculating. HFT algorithms are running on bead logic. Visuals are active.
+- **Note:** Hybrid of Ancient Computation + High Frequency Trading.
+
 ### [Concentration Level: FRESH] - Location: experiments/typographic-turbulence
 - **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
 - **Status:** The fluid is made of letters. Typing creates dams in the ASCII stream. Density waves are propagating through the character grid. LBM D2Q9 on CPU is stable.
