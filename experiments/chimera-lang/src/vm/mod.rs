@@ -115,6 +115,8 @@ pub mod nova;
 #[cfg(feature = "nova")]
 pub mod nova_arcana;
 #[cfg(feature = "nova")]
+pub mod nova_savant;
+#[cfg(feature = "nova")]
 pub mod nova_arena;
 #[cfg(feature = "nova")]
 pub mod nova_astrology;
@@ -1348,6 +1350,7 @@ impl ChimeraVM {
         nova_fluid::process_sensors(self);
 
         for row in self.hormone_grid.iter_mut() {
+            let row: &mut Vec<[i64; 3]> = row;
             for cell in row.iter_mut() {
                 let cell_arr: &mut [i64; 3] = cell;
                 for val in cell_arr.iter_mut() {
@@ -1567,6 +1570,9 @@ impl ChimeraVM {
             nova::OrganelleType::Phage => {
                 // Phages are processed in nova_signals::process_signals
             }
+            nova::OrganelleType::Savant => {
+                nova_savant::process_savant(self, organelle);
+            }
             nova::OrganelleType::Worker => {}
         }
 
@@ -1579,6 +1585,7 @@ impl ChimeraVM {
                 | nova::OrganelleType::Choir
                 | nova::OrganelleType::MadScientist
                 | nova::OrganelleType::Phage
+                | nova::OrganelleType::Savant
         ) {
             self.execute_organelle_dna(organelle);
         }
@@ -2054,6 +2061,7 @@ impl ChimeraVM {
         // Decay reactor flash
         #[cfg(feature = "nova")]
         for row in self.reactor_flash.iter_mut() {
+            let row: &mut Vec<u8> = row;
             for val in row.iter_mut() {
                 let v: &mut u8 = val;
                 if *v > 0 {
@@ -2271,7 +2279,8 @@ impl ChimeraVM {
                     *duration -= 1;
                 }
                 if *duration == 0 {
-                    expired.push(buff.clone());
+                    let s: String = (*buff).clone();
+                    expired.push(s);
                 }
             }
             for buff in expired {
@@ -2412,12 +2421,15 @@ impl ChimeraVM {
         let effective_op = {
             let mut final_op = if let Some(dialect) = self.dialects.get(&self.ip.0) {
                 if let Some(mapped) = dialect.get(&op) {
-                    mapped.clone()
+                    let m: OpCode = (*mapped).clone();
+                    m
                 } else {
-                    self.remap_table.get(&op).unwrap_or(&op).clone()
+                    let o: OpCode = self.remap_table.get(&op).unwrap_or(&op).clone();
+                    o
                 }
             } else {
-                self.remap_table.get(&op).unwrap_or(&op).clone()
+                let o: OpCode = self.remap_table.get(&op).unwrap_or(&op).clone();
+                o
             };
 
             // Babel Drift
@@ -2425,7 +2437,7 @@ impl ChimeraVM {
                 let mut rng = rand::thread_rng();
                 if rng.gen_bool(1.0 - self.babel_state.integrity) {
                     if let Some(chaos_op) = self.babel_state.chaos_map.get(&final_op) {
-                        final_op = chaos_op.clone();
+                        final_op = Clone::clone(chaos_op);
                     } else if self.babel_state.integrity < 0.2 && rng.gen_bool(0.1) {
                         // Total breakdown
                         final_op = self.babel_state.get_random_op();
@@ -3696,7 +3708,7 @@ impl ChimeraVM {
             }
             OpCode::Dup => {
                 if let Some(val) = self.stack.last() {
-                    let v: Value = val.clone();
+                    let v: Value = Clone::clone(val);
                     self.stack.push(v);
                 }
             }
