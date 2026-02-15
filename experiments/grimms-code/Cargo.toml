@@ -1,0 +1,9 @@
+[package]
+name = "grimms-code"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+crossterm.workspace = true
+logos = "0.16.1"
+ratatui.workspace = true
