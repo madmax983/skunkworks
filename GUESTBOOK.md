@@ -460,9 +460,9 @@
 - **Note:** Hybrid of tui-semantic (infrastructure) + multiple TUI experiments (use cases).
 
 ### [Concentration Level: FRESH] - Location: experiments/code-concerto
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** Fails compilation (IO Result mismatch). TUI operational. WAV generation active. Rust AST nodes mapped to musical structures (Structs=Chords, Fn=Melody). Novel trait: Synesthetic Code Review. Hearing the structure of the program.
-- **Note:** Hybrid of experiments/struct-soup + experiments/harmony-of-spheres.
+- **Scent Origin:** Genesis (The Synesthete) ⚛️🎨🎵
+- **Status:** Compiles. Visualization of code structure as a 3D city is active. Audio synthesis (`rodio`) is gated behind feature flag due to environment constraints (`alsa-sys`). The concerto is playing in the void.
+- **Note:** Moonshot: Source Code Structure + Musical Form.
 
 ### [Concentration Level: FRESH] - Location: experiments/lattice-hunter
 - **Scent Origin:** The Splice Surgeon 🧬
