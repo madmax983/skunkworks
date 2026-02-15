@@ -59,22 +59,22 @@ mod tests {
         // Expected: 1, 2, 1, 2
         // We check the first arg of each gene (which is push(N))
         if let Nucleotide::Number(n) = &child.genes[0].args[0] {
-            assert_eq!(*n, 1);
+            assert_eq!(n, &1);
         } else {
             panic!("Gene 0 arg mismatch");
         }
         if let Nucleotide::Number(n) = &child.genes[1].args[0] {
-            assert_eq!(*n, 2);
+            assert_eq!(n, &2);
         } else {
             panic!("Gene 1 arg mismatch");
         }
         if let Nucleotide::Number(n) = &child.genes[2].args[0] {
-            assert_eq!(*n, 1);
+            assert_eq!(n, &1);
         } else {
             panic!("Gene 2 arg mismatch");
         }
         if let Nucleotide::Number(n) = &child.genes[3].args[0] {
-            assert_eq!(*n, 2);
+            assert_eq!(n, &2);
         } else {
             panic!("Gene 3 arg mismatch");
         }
@@ -142,16 +142,16 @@ mod tests {
 
         // Expected: 1, 1, 2, 2
         if let Nucleotide::Number(n) = &child.genes[0].args[0] {
-            assert_eq!(*n, 1);
+            assert_eq!(n, &1);
         }
         if let Nucleotide::Number(n) = &child.genes[1].args[0] {
-            assert_eq!(*n, 1);
+            assert_eq!(n, &1);
         }
         if let Nucleotide::Number(n) = &child.genes[2].args[0] {
-            assert_eq!(*n, 2);
+            assert_eq!(n, &2);
         }
         if let Nucleotide::Number(n) = &child.genes[3].args[0] {
-            assert_eq!(*n, 2);
+            assert_eq!(n, &2);
         }
     }
 }
