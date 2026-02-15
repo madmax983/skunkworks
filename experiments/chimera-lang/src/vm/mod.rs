@@ -156,6 +156,11 @@ pub mod nova_cymatics;
 #[cfg(feature = "nova")]
 pub mod nova_egregore;
 #[cfg(feature = "nova")]
+pub mod nova_ecology;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod ecology_test;
+#[cfg(feature = "nova")]
 pub mod nova_fluid;
 #[cfg(feature = "nova")]
 pub mod nova_flux;
