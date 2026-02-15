@@ -52,6 +52,11 @@ pub fn spawn_random_ecology(vm: &mut ChimeraVM, count: usize) {
             OrganelleType::Worker
         };
 
+        let mut traits = vec!["Wild".to_string()];
+        if rng.gen_bool(0.05) { traits.push("Viral".to_string()); }
+        if rng.gen_bool(0.05) { traits.push("Radioactive".to_string()); }
+        if rng.gen_bool(0.05) { traits.push("Scavenger".to_string()); }
+
         let organelle = Organelle {
             stack: Vec::new(),
             ip: (s_idx, 0),
@@ -63,7 +68,7 @@ pub fn spawn_random_ecology(vm: &mut ChimeraVM, count: usize) {
             direction: (rng.gen_range(-1..=1), rng.gen_range(-1..=1)),
             ttl: None,
             name: format!("Eco-{}", vm.organelle_id_counter),
-            traits: vec!["Wild".to_string()],
+            traits,
             id: vm.organelle_id_counter,
             tissue_id: None,
             genome_id: rng.gen(),
@@ -87,16 +92,28 @@ pub fn process_ecology_tick(vm: &mut ChimeraVM) {
             org.halted = true;
             // Drop food on death
             let (y, x) = org.context_loc;
-            vm.grid[y][x] = Value::Int(25);
+            if org.traits.contains(&"Radioactive".to_string()) {
+                vm.grid[y][x] = Value::Int(-50); // Toxic Waste
+            } else {
+                vm.grid[y][x] = Value::Int(25); // Food
+            }
             continue;
         }
 
-        // Check for food
+        // Check for food / poison
         let (y, x) = org.context_loc;
         if let Value::Int(n) = vm.grid[y][x] {
             if n > 0 {
                 org.energy = org.energy.saturating_add(n);
                 vm.grid[y][x] = Value::Int(0);
+            } else if n < 0 {
+                // Toxic Waste
+                if org.traits.contains(&"Scavenger".to_string()) {
+                    org.energy = org.energy.saturating_add(n.abs());
+                    vm.grid[y][x] = Value::Int(0); // Cleaned up
+                } else {
+                    org.energy = org.energy.saturating_sub(n.abs()); // Radiation Damage
+                }
             }
         }
 
@@ -106,11 +123,12 @@ pub fn process_ecology_tick(vm: &mut ChimeraVM) {
     // 2. Interactions (Predation/Mating)
     for (_loc, indices) in interactions {
         if indices.len() > 1 {
-            // Simple battle royale: Biggest energy wins
+            // Battle royale: Biggest energy wins
             let mut best_idx = 0;
             let mut max_energy = -1;
 
             for &idx in &indices {
+                // Skip already dead in this frame (though interactions usually mutual exclusive)
                 if vm.organelles[idx].energy > max_energy {
                     max_energy = vm.organelles[idx].energy;
                     best_idx = idx;
@@ -118,12 +136,37 @@ pub fn process_ecology_tick(vm: &mut ChimeraVM) {
             }
 
             // Winner eats losers
+            // We need to collect viral transfers first to avoid borrow issues
+            let mut viral_transfers = Vec::new();
+
             for &idx in &indices {
                 if idx != best_idx {
+                    // Viral Check
+                    if vm.organelles[idx].traits.contains(&"Viral".to_string()) {
+                        let loser_strand = vm.organelles[idx].ip.0;
+                        let winner_strand = vm.organelles[best_idx].ip.0;
+                        viral_transfers.push((loser_strand, winner_strand));
+                    }
+
                     let food = vm.organelles[idx].energy / 2;
                     vm.organelles[best_idx].energy = vm.organelles[best_idx].energy.saturating_add(food);
                     vm.organelles[idx].halted = true;
                     vm.organelles[idx].energy = 0;
+                }
+            }
+
+            // Execute Viral Transfers
+            for (l_idx, w_idx) in viral_transfers {
+                if l_idx < vm.dna.helix.strands.len() && w_idx < vm.dna.helix.strands.len() {
+                    if !vm.dna.helix.strands[l_idx].genes.is_empty() {
+                        let mut rng = rand::thread_rng();
+                        let gene_idx = rng.gen_range(0..vm.dna.helix.strands[l_idx].genes.len());
+                        let gene = vm.dna.helix.strands[l_idx].genes[gene_idx].clone();
+
+                        // Append to winner's strand
+                        vm.dna.helix.strands[w_idx].genes.push(gene);
+                        vm.output.push(format!("VIRAL: Gene transfer {} -> {}", l_idx, w_idx));
+                    }
                 }
             }
         }

@@ -9941,6 +9941,9 @@ fn render_ecology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 if *n > 0 {
                     style = style.fg(Color::Green);
                     ch = "*".to_string();
+                } else if *n < 0 {
+                    style = style.fg(Color::Magenta);
+                    ch = "☢".to_string();
                 } else {
                     style = style.fg(Color::DarkGray);
                 }
