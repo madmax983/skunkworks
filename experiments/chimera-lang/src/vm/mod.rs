@@ -1573,6 +1573,9 @@ impl ChimeraVM {
             nova::OrganelleType::Savant => {
                 nova_savant::process_savant(self, organelle);
             }
+            nova::OrganelleType::Metazoan => {
+                nova_metazoa::process_metazoan(self, organelle);
+            }
             nova::OrganelleType::Worker => {}
         }
 

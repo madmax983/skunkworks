@@ -135,6 +135,8 @@ pub(crate) enum ViewMode {
     Semiotics,
     #[cfg(feature = "nova")]
     Fractal,
+    #[cfg(feature = "nova")]
+    Metazoa,
 }
 
 enum InputMode {
@@ -786,6 +788,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Fractal = app_state.view_mode {
                 render_fractal(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Metazoa = app_state.view_mode {
+                render_metazoa(f, vm, app_state);
                 return;
             }
 
@@ -1634,6 +1642,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Metazoa => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab =>
@@ -1928,7 +1941,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Fractal => ViewMode::Genome,
                             #[cfg(feature = "nova")]
-                            ViewMode::LifeCycle => ViewMode::Genome,
+                            ViewMode::LifeCycle => ViewMode::Metazoa,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Metazoa => ViewMode::Genome,
                         };
                     }
                     #[cfg(feature = "nova")]
@@ -2597,6 +2612,12 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Kaleidoscope => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Metazoa => {
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
                             }
@@ -10336,5 +10357,102 @@ fn render_ecology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .borders(Borders::ALL)
             .title("Status"),
     );
+    f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_metazoa(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    let canvas = Canvas::default()
+        .block(Block::default().borders(Borders::ALL).title("Metazoa (Multicellular Life)"))
+        .x_bounds([0.0, 16.0])
+        .y_bounds([0.0, 16.0])
+        .paint(|ctx| {
+            // Draw Tissues (Connections)
+            for tissue in vm.tissues.values() {
+                // Collect positions of members
+                let mut points = Vec::new();
+                for member_id in &tissue.members {
+                    if let Some(org) = vm.organelles.iter().find(|o| o.id == *member_id) {
+                        points.push((org.context_loc.1 as f64, org.context_loc.0 as f64)); // x, y
+                    }
+                }
+
+                // Draw lines between adjacent members
+                for i in 0..points.len() {
+                    for j in (i + 1)..points.len() {
+                        let (x1, y1) = points[i];
+                        let (x2, y2) = points[j];
+                        let dist = ((x1 - x2).powi(2) + (y1 - y2).powi(2)).sqrt();
+                        if dist < 1.5 { // Adjacent (including diagonals)
+                             ctx.draw(&ratatui::widgets::canvas::Line {
+                                x1: x1 + 0.5, y1: 15.5 - y1,
+                                x2: x2 + 0.5, y2: 15.5 - y2,
+                                color: Color::Green,
+                            });
+                        }
+                    }
+                }
+            }
+
+            // Draw Organelles
+            for org in &vm.organelles {
+                let (y, x) = org.context_loc;
+                let color = match org.kind {
+                    crate::vm::nova::OrganelleType::Metazoan => Color::Yellow,
+                    _ => Color::Cyan,
+                };
+
+                // Draw cursor if selected
+                if app_state.grid_cursor == (x, y) {
+                     ctx.print(x as f64 + 0.5, 15.5 - y as f64, "@");
+                } else {
+                     ctx.draw(&Rectangle {
+                        x: x as f64 + 0.2,
+                        y: 15.5 - y as f64 - 0.2,
+                        width: 0.6,
+                        height: 0.6,
+                        color,
+                    });
+                }
+            }
+
+            // Draw Grid Cursor
+            let (cx, cy) = app_state.grid_cursor;
+            ctx.print(cx as f64 + 0.5, 15.5 - cy as f64, "+");
+        });
+
+    f.render_widget(canvas, chunks[0]);
+
+    // Info Panel
+    let mut info = Vec::new();
+    info.push(Line::from("METAZOA INSPECTOR"));
+    info.push(Line::from(" "));
+
+    // Find organelle at cursor
+    let (cx, cy) = app_state.grid_cursor;
+    if let Some(org) = vm.organelles.iter().find(|o| o.context_loc == (cy, cx)) {
+        info.push(Line::from(format!("Name: {}", org.name)));
+        info.push(Line::from(format!("ID: {}", org.id)));
+        if let Some(tid) = org.tissue_id {
+             info.push(Line::from(format!("Tissue ID: {}", tid)));
+        } else {
+             info.push(Line::from("Tissue: None"));
+        }
+    } else {
+        info.push(Line::from("No Agent Selected"));
+    }
+
+    info.push(Line::from(" "));
+    info.push(Line::from("Controls:"));
+    info.push(Line::from("  Space: Step"));
+    info.push(Line::from("  Arrows: Move Cursor"));
+    info.push(Line::from("  i: Inject Metazoan"));
+
+    let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Details"));
     f.render_widget(info_widget, chunks[1]);
 }
