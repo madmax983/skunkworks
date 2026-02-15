@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **cymatic-mesh**: Documentation void. Ancestral redundancy (superseded by `code-acoustics`). Sketch implementation. Grace period: 24h.
+- **tesseract-timeseries**: Documentation void. Generic 4D visualization (hardcoded sine waves). Redundant with `hyperbolic-finder`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **cymatic-mesh**: Specimen executed. Documentation void. Ancestral redundancy (superseded by `code-acoustics`). Sketch implementation. Failed to improve during grace period. Moved to graveyard.
 - **trace-fold**: Specimen executed. Documentation void. Hardcoded implementation. Redundant. Failed to improve during grace period. Moved to graveyard.
 - **bifurcation-probe**: Specimen executed. Documentation void. Redundant with `bifurcation-landscape`. Failed to improve during grace period. Moved to graveyard.
 - **chimera-fold**: Specimen executed. Documentation void. Generic implementation. Invisible to Swarm. Failed to improve during grace period. Moved to graveyard.

@@ -1,8 +1,12 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/cymatic-mesh
+### [Concentration Level: TOXIC] - Location: experiments/tesseract-timeseries
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Ancestral redundancy. Sketch quality.
+- **Status:** Condemned. Documentation void. Generic 4D sketch. Redundant.
+
+### [Concentration Level: TOXIC] - Location: graveyard/cymatic-mesh
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/tactical-tide
 
