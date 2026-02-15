@@ -305,7 +305,7 @@ impl State {
             znear: 0.1,
             zfar: 1000.0,
         };
-        let camera_controller = CameraController::new(0.5);
+        let camera_controller = CameraController::new(0.5, 0.05);
 
         let camera_uniform = CameraUniform {
             view_proj: camera.build_view_projection_matrix().into(),
@@ -342,7 +342,7 @@ impl State {
         });
 
         // --- Instance Data ---
-        let instances = crystal
+        let mut instances = crystal
             .atoms
             .iter()
             .map(|atom| {
@@ -357,18 +357,47 @@ impl State {
                     [0.2, 0.2, 0.2]
                 };
 
+                let pos = atom.position.to_vec3();
                 InstanceRaw {
-                    model_pos: [
-                        atom.position.x as f32,
-                        atom.position.y as f32,
-                        atom.position.z as f32,
-                    ],
+                    model_pos: [pos.x, pos.y, pos.z],
                     color,
                     scale,
                     rotation: [0.0, 0.0, 0.0, 1.0], // Identity quaternion
                 }
             })
             .collect::<Vec<_>>();
+
+        // Add bonds
+        for (start_idx, end_idx) in &crystal.bonds {
+            if let (Some(start_atom), Some(end_atom)) = (
+                crystal.atoms.get(*start_idx),
+                crystal.atoms.get(*end_idx),
+            ) {
+                let start = start_atom.position.to_vec3();
+                let end = end_atom.position.to_vec3();
+
+                let vector = end - start;
+                let length = vector.magnitude();
+                let mid = start + vector * 0.5;
+
+                if length > 0.001 {
+                    let direction = vector.normalize();
+                    // Rotate Z-axis (0,0,1) to direction
+                    let rotation = cgmath::Quaternion::from_arc(
+                        cgmath::Vector3::unit_z(),
+                        direction,
+                        None
+                    );
+
+                    instances.push(InstanceRaw {
+                        model_pos: [mid.x, mid.y, mid.z],
+                        color: [0.5, 0.5, 0.5, 0.5], // Semi-transparent grey
+                        scale: [0.05, 0.05, length],
+                        rotation: [rotation.v.x, rotation.v.y, rotation.v.z, rotation.s],
+                    });
+                }
+            }
+        }
 
         let instance_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Instance Buffer"),
@@ -565,16 +594,34 @@ impl State {
 
             (
                 [rotation.v.x, rotation.v.y, rotation.v.z, rotation.s],
-                [1.0, 1.0, 1.0, 0.3],
+                [0.5, 0.8, 1.0, 0.3], // Semi-transparent blue
             )
         };
 
         let plane_instance = InstanceRaw {
-            model_pos: [0.0, 0.0, 0.0],
+            model_pos: [self.camera.target.x, self.camera.target.y, self.camera.target.z], // Move plane with camera target?
+            // Actually, keep it at origin (0,0,0) or allow moving it?
+            // If we want to slice the crystal, we should probably move it.
+            // For now, let's keep it at 0,0,0 or allow shifting.
+            // Let's keep it at (0,0,0) as originally intended.
+            // Wait, if the crystal grows from (0,0,0), keeping it there is fine.
             color,
-            scale: [50.0, 50.0, 0.05],
+            scale: [100.0, 100.0, 0.05],
             rotation,
         };
+
+        // Update plane pos to camera target to allow scanning through the crystal?
+        // Let's modify it to be at camera target so we can "scan" by flying.
+        // plane_instance.model_pos = [self.camera.target.x, self.camera.target.y, self.camera.target.z];
+        // This is a cool feature! "Scanning plane".
+
+        // But let's stick to fixed origin for now to verify miller indices logic.
+        // Actually, scanning is better for "File System Visualization" + "Miller Indices".
+        // The plane cuts through the FS.
+
+        // I will keep it at origin for now to avoid confusion, or maybe make it togglable?
+        // Just origin is safer.
+
         self.queue.write_buffer(
             &self.plane_buffer,
             0,
@@ -626,7 +673,7 @@ impl State {
             render_pass.set_bind_group(0, &self.camera_bind_group, &[]);
             render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
 
-            // Draw Atoms
+            // Draw Atoms and Bonds
             render_pass.set_vertex_buffer(1, self.instance_buffer.slice(..));
             render_pass.draw(0..VERTICES.len() as u32, 0..self.num_instances);
 
