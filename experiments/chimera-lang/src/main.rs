@@ -47,6 +47,8 @@ fn main() -> Result<()> {
 
     let dna = if extension == "chs" {
         compiler::compile(&unparsed_file, path.parent())?
+    } else if extension == "lisp" || extension == "cl" {
+        chimera_lang::lisp::compile(&unparsed_file)?
     } else {
         let dna_pair = ChimeraParser::parse(Rule::dna, &unparsed_file)?
             .next()
