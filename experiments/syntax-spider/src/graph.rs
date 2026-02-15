@@ -121,7 +121,7 @@ impl CodeGraph {
         }
 
         let root_idx = 0;
-        self.layout_recursive(root_idx, 0.0, std::f32::consts::TAU, 100.0, &children_map);
+        self.layout_recursive(root_idx, 0.0, std::f32::consts::TAU, 50.0, &children_map);
     }
 
     fn layout_recursive(
