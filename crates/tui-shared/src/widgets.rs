@@ -1,6 +1,9 @@
 use ratatui::{
-    style::{Color, Style},
-    widgets::{Block, List, ListItem, Widget},
+    style::{Color, Style, Modifier},
+    widgets::{Block, Borders, List, ListItem, Widget},
+    buffer::Buffer,
+    layout::{Rect},
+    text::Line,
 };
 
 /// A widget that displays a list of log messages with automatic color coding.
@@ -49,5 +52,72 @@ impl<'a> Widget for LogList<'a> {
             list = list.block(block);
         }
         list.render(area, buf);
+    }
+}
+
+/// A reusable Button component for Arthropod UI.
+///
+/// Supports hover and click states with visual feedback.
+pub struct Button<'a> {
+    label: String,
+    is_hovered: bool,
+    is_clicked: bool,
+    block: Option<Block<'a>>,
+}
+
+impl<'a> Button<'a> {
+    pub fn new(label: impl Into<String>) -> Self {
+        Self {
+            label: label.into(),
+            is_hovered: false,
+            is_clicked: false,
+            block: None,
+        }
+    }
+
+    pub fn hovered(mut self, hovered: bool) -> Self {
+        self.is_hovered = hovered;
+        self
+    }
+
+    pub fn clicked(mut self, clicked: bool) -> Self {
+        self.is_clicked = clicked;
+        self
+    }
+
+    pub fn block(mut self, block: Block<'a>) -> Self {
+        self.block = Some(block);
+        self
+    }
+}
+
+impl<'a> Widget for Button<'a> {
+    fn render(mut self, area: Rect, buf: &mut Buffer) {
+        let style = if self.is_clicked {
+            Style::default().fg(Color::Black).bg(Color::Green).add_modifier(Modifier::BOLD)
+        } else if self.is_hovered {
+            Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+        } else {
+            Style::default().fg(Color::Gray)
+        };
+
+        if self.block.is_none() {
+            self.block = Some(Block::default().borders(Borders::ALL));
+        }
+
+        let block = self.block.take().unwrap().style(style);
+        let inner_area = block.inner(area);
+        block.render(area, buf);
+
+        let text_area = Rect {
+            x: inner_area.x,
+            y: inner_area.y + (inner_area.height.saturating_sub(1)) / 2,
+            width: inner_area.width,
+            height: 1,
+        };
+
+        let line = Line::from(self.label);
+        let x_offset = (text_area.width.saturating_sub(line.width() as u16)) / 2;
+        buf.set_line(text_area.x + x_offset, text_area.y, &line, text_area.width);
     }
 }

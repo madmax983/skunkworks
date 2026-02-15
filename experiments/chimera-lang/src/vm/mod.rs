@@ -33,6 +33,11 @@ use poincare_disk::Point;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use comfy_table::Table;
+use comfy_table::presets::UTF8_FULL;
+use comfy_table::modifiers::UTF8_ROUND_CORNERS;
+use comfy_table::ContentArrangement;
+use comfy_table::Color;
 #[cfg(feature = "nova")]
 use std::collections::{HashSet, VecDeque};
 #[cfg(feature = "nova")]
@@ -444,6 +449,54 @@ impl Value {
                 1 + states.iter().map(|(v, _)| v.depth()).max().unwrap_or(0)
             }
         }
+    }
+}
+
+impl std::fmt::Display for ChimeraVM {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL)
+            .apply_modifier(UTF8_ROUND_CORNERS)
+            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_header(vec!["Component", "State"]);
+
+        // IP
+        table.add_row(vec![
+            "Instruction Pointer",
+            &format!("Strand: {}, Gene: {}", self.ip.0, self.ip.1),
+        ]);
+
+        // Stack
+        table.add_row(vec![
+            "Stack Depth",
+            &format!("{}", self.stack.len()),
+        ]);
+
+        // Energy (Colorized)
+        let energy_cell = comfy_table::Cell::new(format!("{}", self.energy))
+            .fg(if self.energy > 20 { Color::Green } else { Color::Red });
+        table.add_row(vec![
+            comfy_table::Cell::new("Energy"),
+            energy_cell,
+        ]);
+
+        // Chaos Mode
+        let chaos_str = if self.chaos_mode { "True" } else { "False" };
+        let chaos_color = if self.chaos_mode { Color::Green } else { Color::Red };
+        table.add_row(vec![
+            comfy_table::Cell::new("Chaos Mode"),
+            comfy_table::Cell::new(chaos_str).fg(chaos_color),
+        ]);
+
+        // Nova Stats
+        #[cfg(feature = "nova")]
+        {
+             table.add_row(vec!["Organelles", &format!("{}", self.organelles.len())]);
+             table.add_row(vec!["Phase", &format!("{:?}", self.phase)]);
+        }
+
+        write!(f, "{}", table)
     }
 }
 
@@ -1279,8 +1332,9 @@ impl ChimeraVM {
         for row in self.hormone_grid.iter_mut() {
             for cell in row.iter_mut() {
                 for val in cell.iter_mut() {
-                    if *val > 0 {
-                        *val -= 1;
+                    let v: &mut i64 = val;
+                    if *v > 0 {
+                        *v -= 1;
                     }
                 }
             }
@@ -1982,19 +2036,20 @@ impl ChimeraVM {
         #[cfg(feature = "nova")]
         for row in self.reactor_flash.iter_mut() {
             for val in row.iter_mut() {
-                if *val > 0 {
-                    *val = val.saturating_sub(10);
+                let v: &mut u8 = val;
+                if *v > 0 {
+                    *v = v.saturating_sub(10);
                 }
             }
         }
 
         // Process Visual Effects
         self.visual_effects.retain_mut(|effect| match effect {
-            VisualEffect::Lightning { ttl, .. } => {
+            VisualEffect::Lightning { ref mut ttl, .. } => {
                 *ttl = ttl.saturating_sub(1);
                 *ttl > 0
             }
-            VisualEffect::Spark { ttl, .. } => {
+            VisualEffect::Spark { ref mut ttl, .. } => {
                 *ttl = ttl.saturating_sub(1);
                 *ttl > 0
             }
@@ -2115,7 +2170,7 @@ impl ChimeraVM {
         }
 
         if !time_frozen {
-            let mut havoc = std::mem::take(&mut self.havoc);
+            let mut havoc: havoc::HavocEngine = std::mem::take(&mut self.havoc);
             havoc.tick(self);
             self.havoc = havoc;
         }
@@ -2129,7 +2184,7 @@ impl ChimeraVM {
         // Link Glitch Level to Babel Integrity
         #[cfg(feature = "nova")]
         {
-            let chaos = (1.0 - self.babel_state.integrity).max(0.0) as f32;
+            let chaos = (1.0 - self.babel_state.integrity).max(0.0f64) as f32;
             if chaos > self.glitch_level {
                 self.glitch_level = chaos;
             }
@@ -3612,7 +3667,8 @@ impl ChimeraVM {
             }
             OpCode::Dup => {
                 if let Some(val) = self.stack.last() {
-                    self.stack.push(val.clone());
+                    let v: Value = val.clone();
+                    self.stack.push(v);
                 }
             }
             OpCode::Swap => {
@@ -3949,8 +4005,8 @@ impl ChimeraVM {
                     let y_val = self.stack.pop().unwrap();
 
                     let coords = if let (Value::Int(y), Value::Int(x)) = (&y_val, &x_val) {
-                        if self.is_valid_coord(*y, *x) {
-                            Some((*y, *x))
+                        if self.is_valid_coord(y, x) {
+                            Some((y, x))
                         } else {
                             self.output
                                 .push("Error: Grid index out of bounds".to_string());
@@ -4225,7 +4281,7 @@ impl ChimeraVM {
                 .is_empty();
             if has_args {
                 let old_n = match &self.dna.helix.strands[strand_idx].genes[gene_idx].args[0] {
-                    Nucleotide::Number(n) => *n,
+                    Nucleotide::Number(n) => n,
                     _ => return, // Skip non-number args for simplicity
                 };
                 let new_n = rng.gen_range(0..100);
@@ -4956,6 +5012,19 @@ mod tests {
         vm.step(); // push
         vm.step(); // consume
         assert_eq!(vm.energy, i64::MAX);
+    }
+
+    #[test]
+    fn test_gallifrey_display() {
+        let genes = vec![Gene { op: OpCode::Nop, args: vec![] }];
+        let vm = ChimeraVM::new(make_dna(genes));
+        let output = format!("{}", vm);
+        println!("{}", output);
+        assert!(output.contains("Instruction Pointer"));
+        assert!(output.contains("Energy"));
+        // Check for ASCII art table corners/borders (comfy-table UTF8_FULL)
+        // This confirms the table is being rendered
+        assert!(output.contains("╭"));
     }
 }
 #[cfg(test)]
