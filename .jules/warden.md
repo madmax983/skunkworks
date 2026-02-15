@@ -23,3 +23,7 @@
 ## 2025-05-23 - Mobius Transformation Singularity (DoS)
 **Threat:** The `Mobius` struct in `crates/poincare-disk` exposed public fields (`a`, `b`, `c`, `d`), allowing the construction of invalid transformations (e.g., zero determinant). Calling `apply` on such a struct would result in division by zero, propagating `NaN`/`Inf` throughout the simulation, potentially crashing or hanging downstream systems.
 **Defense:** Made `Mobius` fields private and introduced a `new` constructor that validates the determinant is non-zero, returning `Option<Self>`. Added getters for read-only access.
+
+## 2025-10-27 - Myco-Diffusion Grid Panic (DoS)
+**Threat:** The `GrayScottGrid` struct in `experiments/myco-diffusion` exposed public fields (`width`, `height`, `u`, `v`), allowing external code to modify dimensions without resizing buffers. This inconsistency caused a panic (DoS) when `update` or `deposit_v` accessed the buffers using the modified dimensions.
+**Defense:** Enforced encapsulation by making `GrayScottGrid` fields private and adding read-only accessors (`width()`, `height()`, `u()`, `v()`). This ensures the invariant `u.len() == width * height` is always maintained after initialization.

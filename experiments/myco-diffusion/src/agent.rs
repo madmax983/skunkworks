@@ -39,13 +39,13 @@ impl Agent {
             let sensor_pos = self.pos + dir * sensor_dist;
 
             // Wrap coordinates
-            let w = grid.width as f32;
-            let h = grid.height as f32;
+            let w = grid.width() as f32;
+            let h = grid.height() as f32;
             let x = (sensor_pos.x.rem_euclid(w)) as usize;
             let y = (sensor_pos.y.rem_euclid(h)) as usize;
 
-            if x < grid.width && y < grid.height {
-                grid.v[y * grid.width + x] // Read V
+            if x < grid.width() && y < grid.height() {
+                grid.v()[y * grid.width() + x] // Read V
             } else {
                 0.0
             }
@@ -110,8 +110,8 @@ impl Agent {
         self.pos += dir * settings.move_speed;
 
         // Wrap Position
-        self.pos.x = self.pos.x.rem_euclid(grid.width as f32);
-        self.pos.y = self.pos.y.rem_euclid(grid.height as f32);
+        self.pos.x = self.pos.x.rem_euclid(grid.width() as f32);
+        self.pos.y = self.pos.y.rem_euclid(grid.height() as f32);
     }
 }
 

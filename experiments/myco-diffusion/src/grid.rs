@@ -1,12 +1,12 @@
 use rayon::prelude::*;
 
 pub struct GrayScottGrid {
-    pub width: usize,
-    pub height: usize,
-    pub u: Vec<f32>,
-    pub v: Vec<f32>,
-    pub next_u: Vec<f32>,
-    pub next_v: Vec<f32>,
+    width: usize,
+    height: usize,
+    u: Vec<f32>,
+    v: Vec<f32>,
+    next_u: Vec<f32>,
+    next_v: Vec<f32>,
 }
 
 impl GrayScottGrid {
@@ -27,6 +27,22 @@ impl GrayScottGrid {
             next_u: u,
             next_v: v,
         }
+    }
+
+    pub fn width(&self) -> usize {
+        self.width
+    }
+
+    pub fn height(&self) -> usize {
+        self.height
+    }
+
+    pub fn u(&self) -> &[f32] {
+        &self.u
+    }
+
+    pub fn v(&self) -> &[f32] {
+        &self.v
     }
 
     pub fn deposit_v(&mut self, x: usize, y: usize, amount: f32) {
@@ -116,13 +132,11 @@ mod tests {
     use super::*;
 
     #[test]
-    #[should_panic]
-    fn havoc_width_overflow() {
-        let mut grid = GrayScottGrid::new(10, 10);
-        // Havoc: Manually inflate width to bypass bounds checking logic if unchecked
-        grid.width = 1000;
-
-        // This should trigger UB / Segfault due to unsafe get_unchecked
-        grid.update(0.055, 0.062, 1.0);
+    fn test_grid_consistency() {
+        let grid = GrayScottGrid::new(10, 10);
+        assert_eq!(grid.width(), 10);
+        assert_eq!(grid.height(), 10);
+        assert_eq!(grid.u().len(), 100);
+        assert_eq!(grid.v().len(), 100);
     }
 }
