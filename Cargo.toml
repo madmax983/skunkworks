@@ -131,7 +131,7 @@ members = [
     "experiments/ferrous-legion", "experiments/harmonic-engine", "experiments/log-palette", "experiments/quipu-automaton", "experiments/locust-ddos", "experiments/holographic-brain",
     "experiments/bifurcation-landscape", "experiments/echo-cavern", "experiments/maat-engine", "experiments/clockwork-cipher", "experiments/myco-diffusion", "experiments/thermo-defense", "experiments/glossolalia",
     "experiments/chimera-maat", "experiments/thread-frequency", "experiments/root-maze", "experiments/chaotic-defense",
-    "experiments/chimera-defense", "experiments/turing-terra", "experiments/chimera-terra", "experiments/trace-erosion", "experiments/stardust-compiler",
+    "experiments/chimera-defense", "experiments/turing-terra", "experiments/chimera-terra", "experiments/stardust-compiler",
     "experiments/chimera-stardust", "experiments/digital-decay",
     "experiments/code-acoustics", "experiments/soroban-market", "experiments/hanging-gardens", "experiments/celestial-cipher", "experiments/chimera-specter", "experiments/code-concerto", "experiments/grimms-code",
     "experiments/soroban-specter", "experiments/miller-reaction", "experiments/recursion-garden", "experiments/rossler-market", "experiments/hanging-abacus", "experiments/process-auction", "experiments/thermo-market",
