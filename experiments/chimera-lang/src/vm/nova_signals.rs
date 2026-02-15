@@ -115,12 +115,19 @@ struct HoloWrite {
     im: Option<f64>,
 }
 
+struct VoltageWrite {
+    y: usize,
+    x: usize,
+    amount: f32,
+}
+
 struct SignalContext {
     next_signals: Vec<Vec<u8>>,
     grid_writes: Vec<GridWrite>,
     dna_writes: Vec<DnaWrite>,
     dna_appends: Vec<DnaAppend>,
     resonance_writes: Vec<ResonanceWrite>,
+    voltage_writes: Vec<VoltageWrite>,
     entropy_writes: Vec<EntropyWrite>,
     mutation_requests: Vec<MutationRequest>,
     spawn_requests: Vec<SpawnRequest>,
@@ -153,6 +160,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         dna_writes: Vec::new(),
         dna_appends: Vec::new(),
         resonance_writes: Vec::new(),
+        voltage_writes: Vec::new(),
         entropy_writes: Vec::new(),
         mutation_requests: Vec::new(),
         spawn_requests: Vec::new(),
@@ -327,6 +335,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 #[cfg(not(feature = "oracle"))]
                 '?' => exec_random(vm, y, x, &mut ctx), // Fallback
                 'V' => exec_voltage(vm, y, x, signal, &mut ctx),
+                'E' | 'e' => exec_electrode(vm, y, x, signal, &mut ctx),
                 '%' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| {
                     if b != 0 {
                         a.rem_euclid(b)
@@ -470,6 +479,14 @@ pub fn process_signals(vm: &mut ChimeraVM) {
     // 2. Apply Writes
     for w in ctx.grid_writes {
         vm.grid[w.y][w.x] = w.val;
+    }
+
+    // 2.2 Apply Voltage Writes
+    #[cfg(feature = "elektra")]
+    for w in ctx.voltage_writes {
+        if w.y < vm.voltage_grid.len() && w.x < vm.voltage_grid[0].len() {
+            vm.voltage_grid[w.y][w.x] += w.amount;
+        }
     }
 
     // 2.5 Apply DNA Writes
@@ -671,6 +688,23 @@ fn exec_mutate(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalC
     }
 }
 
+fn exec_electrode(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // E: Electrode
+    // North: Amount (0-9/a-z)
+    // Injects voltage into the electrical grid at this location.
+
+    if let Some(val) = peek(vm, y, x, -1, 0) {
+        ctx.voltage_writes.push(VoltageWrite {
+            y,
+            x,
+            amount: val as f32,
+        });
+    }
+}
+
 fn exec_stack_io(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
     if signal == 0 {
         return;
@@ -699,24 +733,8 @@ fn exec_stack_io(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut Signa
 
 fn exec_voltage(_vm: &ChimeraVM, _y: usize, _x: usize, _signal: u8, _ctx: &mut SignalContext) {
     // V: Voltmeter
-    // North: Threshold (Default 0)
-    // East: Output Value (Default '1')
-    // Read local voltage from vm.voltage_grid
-    // If Voltage > Threshold, Write Output to South
-
-    // Only active if signaled? Or passive?
-    // Most Orca operators are active only on signal/bang.
-    // But some like variables are passive.
-    // Let's make it active on signal OR if it's a sensor (passive).
-    // Sensors in Orca usually run every frame.
-    // Let's make it run every frame (signal ignored or used as modulation?).
-    // If we require signal, it becomes a "Sample & Hold".
-    // Let's follow standard pattern: runs if active (scanned).
-    // In scan loop, `active` is true if signal > 0 OR uppercase.
-    // `V` is uppercase. So it runs.
-
-    // If signal > 0, maybe output higher voltage?
-    // No, let's stick to logic.
+    // North: Threshold
+    // East: Output Bang '*' if Voltage > Threshold.
 
     #[cfg(feature = "elektra")]
     {
@@ -727,17 +745,16 @@ fn exec_voltage(_vm: &ChimeraVM, _y: usize, _x: usize, _signal: u8, _ctx: &mut S
         let ctx = _ctx;
 
         let threshold = peek(vm, y, x, -1, 0).unwrap_or(0);
-        let output_val = peek(vm, y, x, 0, 1).unwrap_or(1); // Default to '1'
 
         // Check bounds
         if y < vm.voltage_grid.len() && x < vm.voltage_grid[0].len() {
             let voltage = vm.voltage_grid[y][x];
             if voltage > threshold as f32 {
-                if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+                if let Some((ey, ex)) = vm.normalize_coords(y as i64, x as i64 + 1) {
                     ctx.grid_writes.push(GridWrite {
-                        y: sy,
-                        x: sx,
-                        val: Value::Str(val_to_char(output_val).to_string()),
+                        y: ey,
+                        x: ex,
+                        val: Value::Str("*".to_string()),
                     });
                 }
             }

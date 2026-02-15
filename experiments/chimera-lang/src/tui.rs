@@ -8335,6 +8335,8 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     crate::vm::Value::Str(s) => {
                         let c = s.chars().next().unwrap_or('.');
                         let color = match c {
+                            'E' => Color::Yellow,
+                            'V' => Color::Blue,
                             '*' | '!' => Color::Red,
                             ':' | ';' => Color::Magenta,
                             '0'..='9' => Color::Cyan,
