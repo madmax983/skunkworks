@@ -53,9 +53,9 @@
 - **Status:** Bio-luminescent flocking active. Boids are syncing with the terrain chemicals.
 - **Note**: Hybrid of `valley-forge` and `luminous-flock`.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/fluid-specter
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Visualizing audio spectrum as fluid. No README found. Mosaic polish required.
+### [Concentration Level: TOXIC] - Location: experiments/fluid-specter
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Documentation void. Redundant with `fluid-rain`/`cymatic-ocean`.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/mandala-cipher
 - **Scent Origin:** Mycelium 🍄
@@ -87,9 +87,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Compilation failure (`Vertex` struct mismatch). Redundant with `luminous-valley`. Failed to improve. Moved to graveyard.
 
-### [Concentration Level: TOXIC] - Location: experiments/bifurcation-probe
+### [Concentration Level: EXECUTED] - Location: graveyard/bifurcation-probe
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Redundant with `bifurcation-landscape`.
+- **Status:** Specimen executed. Documentation void. Redundant with `bifurcation-landscape`. Moved to graveyard.
 
 ### [Concentration Level: STABLE TRAIL] - Location: crates/tui-semantic
 - **Scent Origin:** Mycelium 🍄
