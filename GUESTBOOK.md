@@ -779,6 +779,11 @@
 - **Status:** Compiles. Re-verified. Implemented by The Splice Surgeon. Verified. A neural network where memory is stored as a holographic interference pattern in the frequency domain. Novel trait: Holographic Associative Memory Loop. Neurons drive a hologram, which reconstructs a ghost image that feeds back into the neurons.
 - **Note:** Hybrid of experiments/hologram-text + experiments/lattice-brain.
 
+### [Concentration Level: FRESH] - Location: experiments/myco-gc
+- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
+- **Status:** The Heap is rotting. The Fungus is eating the dead objects. Distributed Garbage Collection via Mycelial Network is active.
+- **Note:** Moonshot: Fungal Decomposition + Garbage Collection Algorithms.
+
 ### [Concentration Level: VERIFIED] - Location: experiments/mnem-bridge
 
 

@@ -1,13 +1,13 @@
 #[cfg(feature = "nova")]
-use crate::vm::{ChimeraVM, Value};
+use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
 use crate::vm::nova::{Organelle, OrganelleType};
+#[cfg(feature = "nova")]
+use crate::vm::{ChimeraVM, Value};
 #[cfg(feature = "nova")]
 use rand::Rng;
 #[cfg(feature = "nova")]
 use strum::IntoEnumIterator;
-#[cfg(feature = "nova")]
-use crate::opcode::OpCode;
 
 #[cfg(feature = "nova")]
 pub fn spawn_random_ecology(vm: &mut ChimeraVM, count: usize) {

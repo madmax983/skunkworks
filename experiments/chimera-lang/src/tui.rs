@@ -9960,10 +9960,7 @@ fn render_ecology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     info.push(Line::from("  f: Spawn Food"));
     info.push(Line::from("  K: Extinction Event"));
 
-    let info_widget = Paragraph::new(info).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Status"),
-    );
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Status"));
     f.render_widget(info_widget, chunks[1]);
 }

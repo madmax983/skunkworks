@@ -70,8 +70,12 @@ impl Soroban {
     }
 
     fn add_to_column(&mut self, col_idx: usize, amount: u8) {
-        if amount == 0 { return; }
-        if col_idx >= 13 { return; } // Overflow ignored (or could panic)
+        if amount == 0 {
+            return;
+        }
+        if col_idx >= 13 {
+            return;
+        } // Overflow ignored (or could panic)
 
         let current_lower = self.columns[col_idx].lower_active;
         let _sum_lower = current_lower + amount;
@@ -106,8 +110,12 @@ impl Soroban {
     }
 
     fn sub_from_column(&mut self, col_idx: usize, amount: u8) {
-        if amount == 0 { return; }
-        if col_idx >= 13 { return; }
+        if amount == 0 {
+            return;
+        }
+        if col_idx >= 13 {
+            return;
+        }
 
         let current_val = self.columns[col_idx].value();
 
@@ -123,7 +131,9 @@ impl Soroban {
     }
 
     fn borrow_from_next(&mut self, col_idx: usize) {
-        if col_idx >= 13 { return; } // Underflow at top ignored
+        if col_idx >= 13 {
+            return;
+        } // Underflow at top ignored
 
         if self.columns[col_idx].value() > 0 {
             self.sub_from_column(col_idx, 1);

@@ -924,3 +924,9 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: State transition from discrete frequency bins to continuous fluid.
 - **Status**: experiments/fluid-specter
 - **Evaluation**: Compiles. Stable trail in GUESTBOOK.
+
+### chimera-gc
+- **Parents**: experiments/myco-gc + experiments/chimera-lang
+- **Concept**: Self-optimizing memory management where the Garbage Collector is an evolved organism (ChimeraVM).
+- **Novel trait**: The GC learns to predict allocation patterns and pre-emptively decompose garbage, optimizing for energy efficiency.
+- **Status**: experiments/chimera-gc

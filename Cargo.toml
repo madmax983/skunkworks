@@ -134,7 +134,7 @@ members = [
     "experiments/chimera-maat", "experiments/thread-frequency", "experiments/root-maze", "experiments/chaotic-defense",
     "experiments/chimera-defense", "experiments/turing-terra", "experiments/chimera-terra", "experiments/trace-erosion", "experiments/stardust-compiler",
     "experiments/chimera-stardust", "experiments/digital-decay", "experiments/cymatic-mesh",
-    "experiments/code-acoustics", "experiments/soroban-market",
+    "experiments/code-acoustics", "experiments/soroban-market", "experiments/myco-gc",
 ]
 resolver = "2"
 

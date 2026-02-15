@@ -77,6 +77,9 @@ pub mod chimera_chaos;
 pub mod cladistics;
 pub mod cortex;
 pub mod dream;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod ecology_test;
 #[cfg(feature = "elektra")]
 pub mod elektra;
 pub mod evolution;
@@ -154,12 +157,9 @@ pub mod nova_crystal;
 #[cfg(all(feature = "nova", feature = "resonance"))]
 pub mod nova_cymatics;
 #[cfg(feature = "nova")]
-pub mod nova_egregore;
-#[cfg(feature = "nova")]
 pub mod nova_ecology;
 #[cfg(feature = "nova")]
-#[cfg(test)]
-mod ecology_test;
+pub mod nova_egregore;
 #[cfg(feature = "nova")]
 pub mod nova_fluid;
 #[cfg(feature = "nova")]

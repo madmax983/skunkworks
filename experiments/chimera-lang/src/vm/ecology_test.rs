@@ -1,15 +1,13 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use crate::vm::ChimeraVM;
     use crate::ast::{Dna, Helix, Strand};
     use crate::vm::nova_ecology;
+    use crate::vm::ChimeraVM;
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
-            helix: Helix {
-                strands: vec![],
-            },
+            helix: Helix { strands: vec![] },
         };
         ChimeraVM::new(dna)
     }

@@ -59,7 +59,9 @@ impl Trader {
         let prices = &market.prices;
         let n = prices.len();
 
-        if n < 1 { return; }
+        if n < 1 {
+            return;
+        }
 
         let new_price = prices[n - 1];
 
