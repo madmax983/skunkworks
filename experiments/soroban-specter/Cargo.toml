@@ -1,0 +1,10 @@
+[package]
+name = "soroban-specter"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+rand = { workspace = true }
+macroquad = "0.4"
+soroban = { workspace = true }

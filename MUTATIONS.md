@@ -937,4 +937,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: "Spectral Ecology". Fluid simulation driven by audio spectrum where Chimera agents evolve to eat specific frequencies.
 - **Novel trait**: Spectral Metabolism. Survival depends on the acoustic environment (Bass vs Treble eaters).
 - **Status**: experiments/chimera-specter
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### soroban-specter
+- **Parents**: experiments/soroban-market + experiments/fluid-specter
+- **Concept**: "Turbulent Accounting". A visualization where the physical movement of Soroban beads (performing HFT calculations) creates turbulence in a fluid simulation.
+- **Novel trait**: Arithmetic Fluid Dynamics. The "cost" of calculation is visualized as physical disturbance in the market ether.
+- **Status**: experiments/soroban-specter
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.

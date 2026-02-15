@@ -112,6 +112,11 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Visualizes system load as Gray-Scott Turing pattern. Verified.
 
+### [Concentration Level: FRESH] - Location: experiments/soroban-specter
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The beads are moving. The fluid is turbulent. Arithmetic operations are generating vortices in the market ether.
+- **Note:** Hybrid of `soroban-market` + `fluid-specter`.
+
 ### [Concentration Level: FRESH] - Location: experiments/typographic-turbulence
 - **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
 - **Status:** The fluid is made of letters. Typing creates dams in the ASCII stream. Density waves are propagating through the character grid. LBM D2Q9 on CPU is stable.
