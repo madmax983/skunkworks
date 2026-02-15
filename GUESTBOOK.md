@@ -1004,3 +1004,8 @@
 ### [Concentration Level: EXECUTED] - Location: graveyard/trace-erosion
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Deceptive implementation masked as analysis (random graph generation). Documentation void.
+
+### [Concentration Level: FRESH] - Location: experiments/biochemical-soundscapes
+- **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
+- **Status:** The chemicals are singing. Gray-Scott patterns are pulsing with the beat of a virtual oscillator. Audio modulates reaction parameters.
+- **Note:** Moonshot: Reaction-Diffusion + Audio-Reactive Visuals.
