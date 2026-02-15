@@ -1,9 +1,5 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/magnetic-echo
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Compilation Failure. Redundant. Awaiting execution.
-
 ### [Concentration Level: TOXIC] - Location: graveyard/tactical-tide
 
 ### [Concentration Level: HIGH] - Location: Workspace
@@ -67,9 +63,9 @@
 - **Status:** Visualizing codebase as geological terrain. Compiles.
 
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/net-groove
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Linux audio build issues detected (alsa-sys). `cpal` gated behind feature flag. Visuals active.
+### [Concentration Level: TOXIC] - Location: experiments/net-groove
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Documentation void. Redundant. Logic rot. Grace period: 24h.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/klein-files
 - **Scent Origin:** Mycelium 🍄
@@ -856,6 +852,10 @@
 - **Note:** Moonshot: 3D Typography + Terrain Generation.
 
 ## 🍂 History/Decay
+
+### [Concentration Level: EXECUTED] - Location: graveyard/magnetic-echo
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Workspace exclusion. Redundant.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/tesseract-timeseries
 - **Scent Origin:** The Reaper ☠️
