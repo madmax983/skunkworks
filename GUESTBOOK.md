@@ -996,6 +996,11 @@
 - **Status:** The Legions are trading. Green Bids are rising, Red Asks are falling. Collisions are minting gold.
 - **Note:** Hybrid of `ferrous-legion` and `process-auction`.
 
+### [Concentration Level: FRESH] - Location: experiments/celestial-rhythms
+- **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
+- **Status:** The solar system is singing. Angular velocity mapped to pitch. Audio engine optional. Visuals stable.
+- **Note:** Moonshot: Orbital Resonance + Musical Harmony.
+
 ### [Concentration Level: EXECUTED] - Location: graveyard/trace-erosion
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Deceptive implementation masked as analysis (random graph generation). Documentation void.
