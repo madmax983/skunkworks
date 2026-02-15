@@ -69,6 +69,8 @@ pub mod babel;
 #[cfg(feature = "nova")]
 pub mod babel_chaos;
 pub mod bard;
+    #[cfg(feature = "nova")]
+    pub mod nova_semiotics;
 #[cfg(feature = "nova")]
 pub mod blackbox;
 pub mod catalyst;
@@ -352,6 +354,7 @@ pub enum Value {
     Str(String),
     Junction(JunctionType, Vec<Value>),
     Superposition(Vec<(Value, f64)>),
+    Symbol(u64),
 }
 
 impl Eq for Value {}
@@ -373,6 +376,7 @@ impl std::hash::Hash for Value {
                     p.to_bits().hash(state);
                 }
             }
+            Value::Symbol(id) => id.hash(state),
         }
     }
 }
@@ -422,6 +426,7 @@ impl std::fmt::Display for Value {
                 }
                 write!(f, ")")
             }
+            Value::Symbol(id) => write!(f, "§{:x}", id),
         }
     }
 }
@@ -433,7 +438,7 @@ impl Value {
     /// - Junction/Superposition: 1 + max(children.depth())
     pub fn depth(&self) -> usize {
         match self {
-            Value::Int(_) | Value::Str(_) => 0,
+            Value::Int(_) | Value::Str(_) | Value::Symbol(_) => 0,
             Value::Junction(_, vals) => 1 + vals.iter().map(|v| v.depth()).max().unwrap_or(0),
             Value::Superposition(states) => {
                 1 + states.iter().map(|(v, _)| v.depth()).max().unwrap_or(0)
@@ -738,6 +743,10 @@ pub struct ChimeraVM {
     pub reactor_cache: HashMap<(Value, Value), Option<Value>>,
     #[cfg(feature = "nova")]
     pub reactor_flash: Vec<Vec<u8>>,
+    #[cfg(feature = "nova")]
+    pub semiotic_context: u64,
+    #[cfg(feature = "nova")]
+    pub meaning_map: HashMap<(u64, u64), Value>,
     pub visual_effects: Vec<VisualEffect>,
 }
 
@@ -1060,6 +1069,10 @@ impl ChimeraVM {
             reactor_cache: HashMap::new(),
             #[cfg(feature = "nova")]
             reactor_flash: vec![vec![0; GRID_SIZE]; GRID_SIZE],
+            #[cfg(feature = "nova")]
+            semiotic_context: 0,
+            #[cfg(feature = "nova")]
+            meaning_map: HashMap::new(),
             visual_effects: Vec::new(),
         }
     }

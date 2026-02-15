@@ -926,6 +926,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::MeshPrune => super::nova_biomesh::exec_mesh_prune(vm),
         OpCode::Luciferin => super::nova_biolum::exec_luciferin(vm),
         OpCode::Photophore => super::nova_biolum::exec_photophore(vm),
+        OpCode::Symbolize => super::nova_semiotics::exec_symbolize(vm),
+        OpCode::Interpret => super::nova_semiotics::exec_interpret(vm),
+        OpCode::ContextShift => super::nova_semiotics::exec_context_shift(vm),
+        OpCode::Deconstruct => super::nova_semiotics::exec_deconstruct(vm),
         _ => None,
     }
 }

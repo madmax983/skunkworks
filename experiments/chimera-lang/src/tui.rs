@@ -131,6 +131,8 @@ pub(crate) enum ViewMode {
     Ecology,
     #[cfg(feature = "nova")]
     LifeCycle,
+    #[cfg(feature = "nova")]
+    Semiotics,
 }
 
 enum InputMode {
@@ -772,6 +774,12 @@ where
                     render_lifecycle(f, vm, app_state);
                     return;
                 }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Semiotics = app_state.view_mode {
+                render_semiotics(f, vm, app_state);
+                return;
+            }
 
             render_genome_and_grid(f, vm, app_state);
 
@@ -1903,9 +1911,13 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Ecology => ViewMode::LifeCycle,
                             #[cfg(feature = "nova")]
+                            ViewMode::Semiotics => ViewMode::Genome,
+                            #[cfg(feature = "nova")]
                             ViewMode::LifeCycle => ViewMode::Genome,
                         };
                     }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('&') => app_state.view_mode = ViewMode::Semiotics,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('y') => app_state.view_mode = ViewMode::LifeCycle,
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
@@ -4305,6 +4317,64 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Territory Info"),
     );
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_semiotics(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(20), Constraint::Percentage(80)].as_ref())
+        .split(f.area());
+
+    // Top: Context Info
+    let context_hash = vm.semiotic_context;
+    let info = vec![
+        Line::from(vec![
+            Span::styled("SEMIOTIC ENGINE", Style::default().add_modifier(Modifier::BOLD)),
+            Span::raw(format!(" [Context: {:x}]", context_hash)),
+        ]),
+        Line::from(" "),
+        Line::from("Meaning is fluid. Symbols shift. Reality is negotiable."),
+    ];
+    let info_widget = Paragraph::new(info)
+        .block(Block::default().borders(Borders::ALL).title("Semiotics"));
+    f.render_widget(info_widget, chunks[0]);
+
+    // Bottom: Meaning Map
+    // Filter map for current context
+    let mut items = Vec::new();
+    let mut count = 0;
+
+    // Sort keys for stability
+    let mut keys: Vec<_> = vm.meaning_map.keys().collect();
+    keys.sort();
+
+    for (ctx, id) in keys {
+        if *ctx == context_hash || *ctx == 0 { // Show current context + global (0)
+            let val = &vm.meaning_map[&(*ctx, *id)];
+            let prefix = if *ctx == 0 { "Global" } else { "Local" };
+            let style = if *ctx == 0 {
+                Style::default().fg(Color::Gray)
+            } else {
+                Style::default().fg(Color::Yellow)
+            };
+
+            items.push(ListItem::new(format!(
+                "[{}] §{:x} -> {}",
+                prefix, id, val
+            )).style(style));
+            count += 1;
+        }
+    }
+
+    if count == 0 {
+        items.push(ListItem::new("No defined symbols in this context."));
+    }
+
+    let map_list = List::new(items).block(
+        Block::default().borders(Borders::ALL).title(format!("Active Meanings ({})", count))
+    );
+    f.render_widget(map_list, chunks[1]);
 }
 
 #[cfg(feature = "nova")]
