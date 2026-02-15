@@ -2439,6 +2439,39 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Deconstruct,
 
+    // Fractal Features (Chaos Visualization)
+    /// **[Nova]** Sets the Fractal Mode to Mandelbrot.
+    ///
+    /// **Stack:** `[ ..., max_iterations ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Mandelbrot,
+    /// **[Nova]** Sets the Fractal Mode to Julia Set with constant c.
+    ///
+    /// **Stack:** `[ ..., c_re, c_im ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Julia,
+    /// **[Nova]** Adjusts the Fractal Zoom level.
+    ///
+    /// **Stack:** `[ ..., factor ] -> [ ... ]`
+    /// **Effect:** Multiplies current zoom by factor.
+    #[cfg(feature = "nova")]
+    Zoom,
+    /// **[Nova]** Pans the Fractal View center.
+    ///
+    /// **Stack:** `[ ..., dx, dy ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Pan,
+    /// **[Nova]** performs one iteration of z = z^2 + c.
+    ///
+    /// **Stack:** `[ ..., z_re, z_im, c_re, c_im ] -> [ ..., new_z_re, new_z_im ]`
+    #[cfg(feature = "nova")]
+    Iterate,
+    /// **[Nova]** Computes escape time for a point.
+    ///
+    /// **Stack:** `[ ..., c_re, c_im, max_iter ] -> [ ..., escape_val ]`
+    #[cfg(feature = "nova")]
+    Escape,
+
     /// No Operation. Does nothing.
     Nop,
 

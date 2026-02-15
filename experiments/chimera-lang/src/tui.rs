@@ -133,6 +133,8 @@ pub(crate) enum ViewMode {
     LifeCycle,
     #[cfg(feature = "nova")]
     Semiotics,
+    #[cfg(feature = "nova")]
+    Fractal,
 }
 
 enum InputMode {
@@ -778,6 +780,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Semiotics = app_state.view_mode {
                 render_semiotics(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Fractal = app_state.view_mode {
+                render_fractal(f, vm, app_state);
                 return;
             }
 
@@ -1621,6 +1629,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Fractal => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab =>
@@ -1913,11 +1926,15 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Semiotics => ViewMode::Genome,
                             #[cfg(feature = "nova")]
+                            ViewMode::Fractal => ViewMode::Genome,
+                            #[cfg(feature = "nova")]
                             ViewMode::LifeCycle => ViewMode::Genome,
                         };
                     }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('&') => app_state.view_mode = ViewMode::Semiotics,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('*') => app_state.view_mode = ViewMode::Fractal,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('y') => app_state.view_mode = ViewMode::LifeCycle,
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
@@ -4318,6 +4335,78 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Block::default()
             .borders(Borders::ALL)
             .title("Territory Info"),
+    );
+    f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_fractal(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    // 1. Compute
+    crate::vm::nova_fractal::compute_fractal(vm);
+
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
+        .split(f.area());
+
+    // 2. Render Grid
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let cell = &vm.chroma_grid[y][x];
+            let mut style = Style::default();
+
+            if let Some((r, g, b)) = cell.fg {
+                style = style.fg(Color::Rgb(r, g, b));
+            }
+
+            let ch = cell.char.unwrap_or(' ').to_string();
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let mode_str = match vm.fractal.mode {
+        crate::vm::nova_fractal::FractalMode::Mandelbrot => "Mandelbrot",
+        crate::vm::nova_fractal::FractalMode::Julia => "Julia",
+    };
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(format!("Fractal View ({})", mode_str)),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // 3. Render Info
+    let info = vec![
+        Line::from("FRACTAL ENGINE"),
+        Line::from(" "),
+        Line::from(format!("Mode: {}", mode_str)),
+        Line::from(format!("Zoom: {:.2e}", vm.fractal.zoom)),
+        Line::from(format!("Center: {:.6} + {:.6}i", vm.fractal.center_re, vm.fractal.center_im)),
+        Line::from(format!("Max Iter: {}", vm.fractal.max_iter)),
+        Line::from(" "),
+        Line::from("Julia Constant:"),
+        Line::from(format!("{:.6} + {:.6}i", vm.fractal.c_re, vm.fractal.c_im)),
+        Line::from(" "),
+        Line::from("Opcodes:"),
+        Line::from("  Mandelbrot(iter), Julia(re, im)"),
+        Line::from("  Zoom(factor), Pan(dx, dy)"),
+        Line::from("  Iterate, Escape"),
+    ];
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Parameters"),
     );
     f.render_widget(info_widget, chunks[1]);
 }
