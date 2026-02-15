@@ -8,6 +8,8 @@ use std::fs;
 use std::path::Path;
 #[cfg(feature = "nova")]
 use std::time::{SystemTime, UNIX_EPOCH};
+#[cfg(feature = "nova")]
+use std::io::Read;
 
 #[cfg(feature = "nova")]
 const ETHER_DIR: &str = ".chimera_ether";
@@ -85,24 +87,33 @@ pub fn receive(vm: &mut ChimeraVM) {
 
                             let lock_path = path.with_extension("json.lock");
                             if fs::rename(&path, &lock_path).is_ok() {
-                                if let Ok(content) = fs::read_to_string(&lock_path) {
-                                    if let Ok(value) = serde_json::from_str::<Value>(&content) {
-                                        vm.stack.push(value);
-                                        // Consume message
-                                        let _ = fs::remove_file(lock_path);
-                                        vm.output.push(format!(
-                                            "RECEIVE: Read from channel {}",
-                                            channel
-                                        ));
-                                        vm.energy = vm.energy.saturating_sub(5);
-                                        found = true;
-                                        break;
+                                let file_result = fs::File::open(&lock_path);
+                                if let Ok(file) = file_result {
+                                    // 1MB Limit to prevent OOM attacks
+                                    let mut buffer = Vec::new();
+                                    let mut handle = file.take(1_048_576);
+                                    if handle.read_to_end(&mut buffer).is_ok() {
+                                        if let Ok(value) = serde_json::from_slice::<Value>(&buffer) {
+                                            vm.stack.push(value);
+                                            // Consume message
+                                            let _ = fs::remove_file(lock_path);
+                                            vm.output.push(format!(
+                                                "RECEIVE: Read from channel {}",
+                                                channel
+                                            ));
+                                            vm.energy = vm.energy.saturating_sub(5);
+                                            found = true;
+                                            break;
+                                        } else {
+                                            // Corrupt (or too large and truncated), delete it
+                                            let _ = fs::remove_file(lock_path);
+                                        }
                                     } else {
-                                        // Corrupt but locked, delete it
+                                        // Failed to read
                                         let _ = fs::remove_file(lock_path);
                                     }
                                 } else {
-                                    // Locked but unreadable?
+                                    // Locked but unopenable
                                     let _ = fs::remove_file(lock_path);
                                 }
                             }
