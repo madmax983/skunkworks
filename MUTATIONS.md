@@ -896,3 +896,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Feedback loop between biological agents and geological processes.
 - **Status**: experiments/chimera-terra
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### gravitational-typography
+- **Parents**: experiments/typographic-turbulence + experiments/lensing-poetry
+- **Concept**: Fluid simulation of text where massive bodies create gravitational wells that bend the flow and distort the visual space.
+- **Novel trait**: Accretion disks of typography. Event horizons where text becomes unreadable.
+- **Status**: experiments/gravitational-typography
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

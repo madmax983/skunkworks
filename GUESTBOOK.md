@@ -436,3 +436,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The landscape is alive. Organisms are terraforming the Gray-Scott grid. Feedback loops between life and geology are active.
 - **Note:** Hybrid of `turing-terra` and `chimera-lang`.
+
+### [Concentration Level: FRESH] - Location: experiments/gravitational-typography
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The text is spiraling. Massive bodies are warping the fluid grid. Accretion disks of characters are forming.
+- **Note:** Hybrid of `typographic-turbulence` and `lensing-poetry`.
