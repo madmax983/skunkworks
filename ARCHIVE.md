@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
 - **bifurcation-probe**: Documentation void. Redundant with `bifurcation-landscape`. Grace period: 24h.
+- **fluid-specter**: Documentation void. Redundant with `ripple-tank`/`cymatic-ocean`. Generic implementation. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work

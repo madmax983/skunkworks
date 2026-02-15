@@ -91,6 +91,10 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Condemned. Documentation void. Redundant with `bifurcation-landscape`.
 
+### [Concentration Level: TOXIC] - Location: experiments/fluid-specter
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Documentation void. Generic implementation. Redundant with `ripple-tank`.
+
 ### [Concentration Level: STABLE TRAIL] - Location: crates/tui-semantic
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Semantic bridge established. Ready for integration with TUI experiments.
