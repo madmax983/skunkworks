@@ -87,6 +87,7 @@ pub fn exec_babel_op(
             if let Some(val) = vm.stack.pop() {
                 let s = match val {
                     Value::Str(s) => s,
+                    Value::Symbol(id) => format!("§{:x}", id),
                     _ => format!("{}", val),
                 };
                 vm.tablet.push(s.clone());

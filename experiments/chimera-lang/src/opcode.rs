@@ -2417,6 +2417,28 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Digest,
 
+    // Semiotics Features (Meaning Mutation)
+    /// **[Nova]** Converts a value into an abstract Symbol.
+    ///
+    /// **Stack:** `[ ..., value ] -> [ ..., symbol ]`
+    #[cfg(feature = "nova")]
+    Symbolize,
+    /// **[Nova]** Resolves a Symbol to a value based on the current context.
+    ///
+    /// **Stack:** `[ ..., symbol ] -> [ ..., resolved_value ]`
+    #[cfg(feature = "nova")]
+    Interpret,
+    /// **[Nova]** Shifts the semiotic context by XORing with a value.
+    ///
+    /// **Stack:** `[ ..., value ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    ContextShift,
+    /// **[Nova]** Deconstructs a string into a junction of constituent Symbols.
+    ///
+    /// **Stack:** `[ ..., string ] -> [ ..., junction_of_symbols ]`
+    #[cfg(feature = "nova")]
+    Deconstruct,
+
     /// No Operation. Does nothing.
     Nop,
 

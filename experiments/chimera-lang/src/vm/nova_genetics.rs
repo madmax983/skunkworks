@@ -30,6 +30,7 @@ pub fn value_to_nucleotide(v: &Value, depth: usize) -> Option<Nucleotide> {
             Some(Nucleotide::Junction(*t, nuc_vals))
         }
         Value::Superposition(_) => None, // Cannot compile superposition to static AST
+        Value::Symbol(_) => None, // Symbols are runtime values, cannot persist to static AST
     }
 }
 
