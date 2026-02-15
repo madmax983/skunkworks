@@ -1,0 +1,12 @@
+[package]
+name = "hyperbolic-market"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+ratatui = { workspace = true }
+poincare-disk = { workspace = true }
+num-complex = "0.4"

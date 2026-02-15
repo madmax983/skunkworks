@@ -973,3 +973,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Physical Order Book Collision.
 - **Status**: experiments/spqr-market
 - **Evaluation**: Compiles. Legion logic operational.
+
+### hyperbolic-market
+- **Parents**: experiments/market-flow + experiments/hyperbolic-ants
+- **Concept**: "Financial Relativity". A market simulation on the Poincaré Disk where volatility corresponds to hyperbolic distance.
+- **Novel trait**: Geodesic Trading. Traders follow curved paths towards extreme prices.
+- **Status**: experiments/hyperbolic-market
+- **Evaluation**: Compiles. TUI operational. Bids and Asks following geodesics.

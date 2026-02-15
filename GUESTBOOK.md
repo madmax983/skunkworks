@@ -1001,6 +1001,11 @@
 - **Status:** The solar system is singing. Angular velocity mapped to pitch. Audio engine optional. Visuals stable.
 - **Note:** Moonshot: Orbital Resonance + Musical Harmony.
 
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-market
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The market is curved. Bids are following geodesics towards infinite price. Volatility is mapped to the boundary.
+- **Note:** Hybrid of `market-flow` + `hyperbolic-ants`.
+
 ### [Concentration Level: EXECUTED] - Location: graveyard/trace-erosion
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Deceptive implementation masked as analysis (random graph generation). Documentation void.
