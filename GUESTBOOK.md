@@ -1,12 +1,8 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/code-reaction
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. The judge becomes the judged.
-
 ### [Concentration Level: TOXIC] - Location: experiments/tesseract-timeseries
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Redundant generic 4D sketch.
+- **Status:** Condemned. Documentation void. Generic implementation (hardcoded 4D sine waves). Redundant with `hyperbolic-finder` and `chrontext`.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/tactical-tide
 
@@ -823,6 +819,10 @@
 
 
 ## 🍂 History/Decay
+
+### [Concentration Level: EXECUTED] - Location: graveyard/code-reaction
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. The judge becomes the judged. Moved to graveyard.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/cymatic-mesh
 - **Scent Origin:** The Reaper ☠️
