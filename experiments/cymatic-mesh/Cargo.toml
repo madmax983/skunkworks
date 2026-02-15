@@ -1,0 +1,18 @@
+[package]
+name = "cymatic-mesh"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+anyhow = "1.0"
+crossbeam-channel = "0.5"
+resonance-audio = { workspace = true }
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = []
+audio = ["dep:cpal"]

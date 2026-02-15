@@ -460,3 +460,8 @@
 - **Scent Origin:** Genesis (The Archivist) ⚛️📚
 - **Status:** The disk is spinning. The sectors are fading. Entropy is being simulated in TUI. The data is learning to forget.
 - **Note:** Moonshot: Bit Rot Simulation + File System Visualization.
+
+### [Concentration Level: FRESH] - Location: experiments/cymatic-mesh
+- **Scent Origin:** Genesis (The Acoustician) ⚛️🔊
+- **Status:** The mesh is singing. FDTD simulation active. User can draw the resonator shape. Visualizing the standing waves.
+- **Note:** Moonshot: Physical Modeling + Impossible Instruments. Audio backend gated for stability.
