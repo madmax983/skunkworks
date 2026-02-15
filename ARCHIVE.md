@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **valley-forge**: Documentation void. Compilation failure (`Vertex` struct mismatch). Redundant with `luminous-valley`. Grace period: 24h.
+- **bifurcation-probe**: Documentation void. Redundant with `bifurcation-landscape`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **valley-forge**: Specimen executed. Documentation void. Compilation failure (`Vertex` struct mismatch). Redundant with `luminous-valley`. Failed to improve during grace period. Moved to graveyard.
 - **beat-cortex**: Specimen executed. Documentation void. Sketch Rot. Failed to improve during grace period. Moved to graveyard.
 - **thread-symphony**: Specimen executed. Terminal compilation failure (`alsa-sys`). Documentation void. Generic implementation. Grace period expired. Moved to graveyard.
 - **chromatic-cipher**: Specimen executed. Documentation void. Redundant with `chromatic-code`. Identity crisis confirmed. Failed to improve during grace period. Moved to graveyard.
