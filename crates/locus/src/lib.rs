@@ -683,9 +683,13 @@ impl Topology {
                 let wrap_x = x.div_euclid(w);
                 if wrap_x % 2 != 0 {
                     // Twisted Y: map y to (h - 1) - y
-                    let twisted_y = (h - 1) - y;
-                    if twisted_y >= 0 && twisted_y < h {
-                        Some((twisted_y as usize, nx as usize))
+                    // Use checked arithmetic to prevent panic on i64::MIN
+                    if let Some(twisted_y) = (h - 1).checked_sub(y) {
+                        if twisted_y >= 0 && twisted_y < h {
+                            Some((twisted_y as usize, nx as usize))
+                        } else {
+                            None
+                        }
                     } else {
                         None
                     }

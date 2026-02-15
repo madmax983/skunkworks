@@ -25,3 +25,16 @@ proptest! {
         let _ = topo.normalize(y, x, width, height);
     }
 }
+
+proptest! {
+    #[test]
+    fn test_mobius_specifically(
+        x in i64::MIN..=i64::MAX,
+        y in i64::MIN..=i64::MAX,
+        width in 1usize..=10_000usize,
+        height in 1usize..=10_000usize
+    ) {
+        // Specifically hammer Mobius to ensure edge cases are covered
+        let _ = Topology::Mobius.normalize(y, x, width, height);
+    }
+}
