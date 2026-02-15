@@ -123,6 +123,8 @@ pub(crate) enum ViewMode {
     Crispr,
     #[cfg(feature = "nova")]
     Reactor,
+    #[cfg(feature = "nova")]
+    Biolum,
     Evolution,
 }
 
@@ -729,6 +731,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Reactor = app_state.view_mode {
                 render_reactor(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Biolum = app_state.view_mode {
+                render_biolum(f, vm, app_state);
                 return;
             }
 
@@ -1504,6 +1512,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Biolum => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab =>
@@ -1778,7 +1791,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Crispr => ViewMode::Reactor,
                             #[cfg(feature = "nova")]
-                            ViewMode::Reactor => ViewMode::Evolution,
+                            ViewMode::Reactor => ViewMode::Biolum,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Biolum => ViewMode::Evolution,
                             ViewMode::Evolution => ViewMode::Genome,
                         };
                     }
@@ -1946,6 +1961,8 @@ where
                             app_state.view_mode = ViewMode::Garden;
                         }
                     }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('l') => app_state.view_mode = ViewMode::Biolum,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('L') => app_state.view_mode = ViewMode::Babel,
                     #[cfg(feature = "nova")]
@@ -2661,6 +2678,12 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Biolum => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
                     },
                     KeyCode::Up => match app_state.view_mode {
                         ViewMode::Genome => {
@@ -2922,6 +2945,12 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Biolum => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                     },
                     KeyCode::Right => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -3103,6 +3132,12 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Reactor => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Biolum => {
                             if app_state.grid_cursor.0 < 15 {
                                 app_state.grid_cursor.0 += 1;
                             }
@@ -3292,6 +3327,12 @@ where
                                 app_state.grid_cursor.0 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Biolum => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
                     },
                     KeyCode::Enter => {
                         #[cfg(feature = "nova")]
@@ -3335,6 +3376,10 @@ where
                                 app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Catalyst => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Biolum => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             #[cfg(feature = "nova")]
@@ -5019,6 +5064,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Crispr => "CRISPR EDITOR",
         #[cfg(feature = "nova")]
         ViewMode::Reactor => "REACTOR CHAMBER",
+        #[cfg(feature = "nova")]
+        ViewMode::Biolum => "BIOLUMINESCENCE",
         ViewMode::Evolution => "EVOLUTION CHAMBER",
     };
 
@@ -9649,5 +9696,87 @@ fn render_reactor(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     let info_widget =
         Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Schematics"));
+    f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_biolum(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    // Biolum Grid
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let intensity = vm.light_grid[y][x];
+            let (r, g, b) = vm.light_color_grid[y][x];
+            let mut style = Style::default();
+
+            // Background color based on light
+            // Scale intensity?
+            let scale = (intensity as f64).clamp(0.0, 255.0) / 255.0;
+            if intensity > 0 {
+                let fr = (r as f64 * scale) as u8;
+                let fg = (g as f64 * scale) as u8;
+                let fb = (b as f64 * scale) as u8;
+                style = style.bg(Color::Rgb(fr, fg, fb));
+
+                // Contrast text
+                if intensity > 128 {
+                    style = style.fg(Color::Black);
+                } else {
+                    style = style.fg(Color::White);
+                }
+            } else {
+                style = style.fg(Color::DarkGray);
+            }
+
+            let mut ch = "·".to_string();
+            if intensity > 50 { ch = "*".to_string(); }
+            if intensity > 150 { ch = "☼".to_string(); }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Bioluminescence (Luciferin/Photophore)"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Info
+    let (cx, cy) = app_state.grid_cursor;
+    let intensity = vm.light_grid[cy][cx];
+    let (r, g, b) = vm.light_color_grid[cy][cx];
+
+    let info = vec![
+        Line::from("BIOLUM SENSOR"),
+        Line::from(" "),
+        Line::from(format!("Pos: {},{}", cx, cy)),
+        Line::from(format!("Intensity: {}", intensity)),
+        Line::from(format!("Color: ({}, {}, {})", r, g, b)),
+        Line::from(" "),
+        Line::from("Opcodes:"),
+        Line::from("  Luciferin(r,g,b,int)"),
+        Line::from("  Photophore(radius)"),
+        Line::from("  Lumine(int, radius)"),
+    ];
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Spectrometer"),
+    );
     f.render_widget(info_widget, chunks[1]);
 }

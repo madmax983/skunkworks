@@ -267,6 +267,7 @@ pub fn diffuse_waste(vm: &mut ChimeraVM) {
 /// Chloroplasts harvest energy from this grid.
 #[allow(clippy::needless_range_loop)]
 pub fn diffuse_light(vm: &mut ChimeraVM) {
+    super::nova_biolum::diffuse_light_color(vm);
     let mut buffer = [[0i64; 16]; 16];
     for y in 0..16 {
         for x in 0..16 {
@@ -916,6 +917,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::MeshRecv => super::nova_biomesh::exec_mesh_recv(vm),
         OpCode::MeshGrow => super::nova_biomesh::exec_mesh_grow(vm),
         OpCode::MeshPrune => super::nova_biomesh::exec_mesh_prune(vm),
+        OpCode::Luciferin => super::nova_biolum::exec_luciferin(vm),
+        OpCode::Photophore => super::nova_biolum::exec_photophore(vm),
         _ => None,
     }
 }
