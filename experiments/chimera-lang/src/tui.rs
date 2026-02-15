@@ -11,7 +11,7 @@ use crossterm::{
 use pest::Parser;
 #[cfg(feature = "nova")]
 use rand::Rng;
-use ratatui::widgets::canvas::{Canvas, Circle, Rectangle};
+use ratatui::widgets::canvas::{Canvas, Rectangle};
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
@@ -4081,7 +4081,14 @@ fn draw_tension_gauge<'a>(title: &'a str, ratio: f64) -> Gauge<'a> {
 fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
+        .constraints(
+            [
+                Constraint::Min(0),
+                Constraint::Length(3), // Tension Bar
+                Constraint::Length(3), // Info
+            ]
+            .as_ref(),
+        )
         .split(f.area());
 
     let mut block = Block::default()
@@ -4173,16 +4180,8 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 });
 
                 // Bobber (Visual)
-                ctx.draw(&Circle {
-                    x: 50.0,
-                    y: app_state.fishing_bobber_y,
-                    radius: 2.0,
-                    color: if app_state.fishing_hooked {
-                        Color::Red
-                    } else {
-                        Color::White
-                    },
-                });
+                let bobber_icon = if app_state.fishing_hooked { "🔴" } else { "⚪" };
+                ctx.print(50.0, app_state.fishing_bobber_y, bobber_icon);
                 // Center detail
                 ctx.print(
                     49.5,
@@ -4219,6 +4218,10 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let tension = app_state.fishing_tension;
     let gauge = draw_tension_gauge("Line Tension", tension);
     f.render_widget(gauge, chunks[1]);
+
+    let info = Paragraph::new("Space: Cast/Reel | Wait for bite...")
+        .block(Block::default().borders(Borders::ALL));
+    f.render_widget(info, chunks[2]);
 }
 
 #[cfg(feature = "nova")]
