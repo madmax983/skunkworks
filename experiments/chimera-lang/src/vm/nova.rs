@@ -67,6 +67,8 @@ pub enum OrganelleType {
     Phage,
     /// A Logic-driven agent that deduces actions from its environment using Prolog rules.
     Savant,
+    /// A multicellular agent capable of forming tissues and complex organisms.
+    Metazoan,
 }
 
 /// An independent execution unit spawned by the main strand.
@@ -1108,6 +1110,7 @@ fn exec_spawn(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     10 => (OrganelleType::MadScientist, (0, 0)),
                     11 => (OrganelleType::Phage, (0, 1)), // Default East
                     12 => (OrganelleType::Savant, (0, 0)),
+                    13 => (OrganelleType::Metazoan, (0, 0)),
                     _ => (OrganelleType::Worker, (0, 0)),
                 };
 
@@ -2187,6 +2190,7 @@ fn exec_identity(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         Some(OrganelleType::MadScientist) => 10,
         Some(OrganelleType::Phage) => 11,
         Some(OrganelleType::Savant) => 12,
+        Some(OrganelleType::Metazoan) => 13,
     };
     vm.stack.push(Value::Int(id));
     None
@@ -2209,6 +2213,7 @@ fn exec_differentiate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     10 => Some(OrganelleType::MadScientist),
                     11 => Some(OrganelleType::Phage),
                     12 => Some(OrganelleType::Savant),
+                    13 => Some(OrganelleType::Metazoan),
                     _ => Some(OrganelleType::Worker),
                 };
 

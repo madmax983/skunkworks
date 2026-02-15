@@ -12,6 +12,31 @@ pub struct Tissue {
     pub members: Vec<u64>, // IDs of Organelles
 }
 
+pub fn process_metazoan(vm: &mut ChimeraVM, organelle: &mut crate::vm::nova::Organelle) {
+    use rand::Rng;
+    let mut rng = rand::thread_rng();
+
+    // 10% chance to change direction
+    if rng.gen_bool(0.1) {
+        let dy = rng.gen_range(-1..=1);
+        let dx = rng.gen_range(-1..=1);
+        organelle.direction = (dy, dx);
+    }
+
+    // Move
+    let (cy, cx) = organelle.context_loc;
+    let (dy, dx) = organelle.direction;
+
+    if dy != 0 || dx != 0 {
+        if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy as i64, cx as i64 + dx as i64) {
+             let mask = crate::vm::nova::get_direction_mask(dy as i64, dx as i64).unwrap_or(0);
+             if (vm.membranes[cy][cx] & mask) == 0 {
+                 organelle.context_loc = (ny, nx);
+             }
+        }
+    }
+}
+
 pub fn exec_bond(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
     // Stack: [ ..., direction ] -> [ ..., tissue_id ]
     // Direction: 0=N, 1=E, 2=S, 3=W
@@ -195,7 +220,7 @@ pub fn exec_signify(
                     // Find member
                     for org in &mut vm.organelles {
                         if org.id == member_id {
-                            let v: Value = val.clone();
+                            let v = Clone::clone(&val);
                             org.stack.push(v);
                             count += 1;
                         }
