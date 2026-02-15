@@ -1,6 +1,8 @@
 use anyhow::Result;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::collections::HashMap;
+use git2::{Repository, Status};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FileType {
@@ -36,6 +38,17 @@ impl FileType {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GitStatus {
+    New,
+    Modified,
+    Deleted,
+    Renamed,
+    Ignored,
+    Clean,
+    Conflict,
+}
+
 #[derive(Debug, Clone)]
 pub struct DirNode {
     pub path: PathBuf,
@@ -47,10 +60,11 @@ pub struct DirNode {
     pub self_size: u64,
     /// Total size of this node + all recursive children (bytes).
     pub total_size: u64,
+    pub git_status: Option<GitStatus>,
 }
 
 impl DirNode {
-    pub fn new(path: PathBuf, is_dir: bool, self_size: u64) -> Self {
+    pub fn new(path: PathBuf, is_dir: bool, self_size: u64, git_status: Option<GitStatus>) -> Self {
         let name = path
             .file_name()
             .unwrap_or(path.as_os_str())
@@ -65,14 +79,72 @@ impl DirNode {
             children: Vec::new(),
             self_size,
             total_size: self_size,
+            git_status,
         }
     }
 }
 
-pub fn scan_dir<P: AsRef<Path>>(path: P, max_depth: usize) -> Result<DirNode> {
+pub fn get_repo_statuses(root: &Path) -> HashMap<PathBuf, GitStatus> {
+    let mut map = HashMap::new();
+    // Try to find repo starting from root
+    if let Ok(repo) = Repository::discover(root) {
+        if let Ok(statuses) = repo.statuses(None) {
+             for entry in statuses.iter() {
+                 if let Some(path_str) = entry.path() {
+                     // entry.path() is relative to repo workdir
+                     if let Some(workdir) = repo.workdir() {
+                         let full_path = workdir.join(path_str);
+
+                         let status = entry.status();
+                         let s = if status.is_conflicted() {
+                             GitStatus::Conflict
+                         } else if status.is_wt_new() || status.is_index_new() {
+                             GitStatus::New
+                         } else if status.is_wt_modified() || status.is_index_modified() {
+                             GitStatus::Modified
+                         } else if status.is_wt_deleted() || status.is_index_deleted() {
+                             GitStatus::Deleted
+                         } else if status.is_ignored() {
+                             GitStatus::Ignored
+                         } else if status.is_index_renamed() {
+                             GitStatus::Renamed
+                         } else {
+                             // clean
+                             GitStatus::Clean
+                         };
+
+                         // We only care if it's not clean, but map.insert overwrites
+                         if s != GitStatus::Clean {
+                            map.insert(full_path, s);
+                         }
+                     }
+                 }
+             }
+        }
+    }
+    map
+}
+
+pub fn scan_dir<P: AsRef<Path>>(path: P, max_depth: usize, git_map: &HashMap<PathBuf, GitStatus>) -> Result<DirNode> {
     let path = path.as_ref();
     let metadata = fs::metadata(path)?;
-    let mut node = DirNode::new(path.to_path_buf(), metadata.is_dir(), metadata.len());
+
+    // Check if path is in git_map
+    // We need to be careful with canonicalization if map has canonical paths,
+    // but here we constructed map with workdir.join(rel), which is usually absolute.
+    // Let's assume path passed in is also compatible (e.g. absolute).
+    // If not, we might miss matches.
+    // Best practice: use canonical paths for keys, but canonicalize can be slow/fail.
+    // For now, rely on consistent path usage (absolute).
+    let path_buf = if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+         std::env::current_dir()?.join(path)
+    };
+
+    let status = git_map.get(&path_buf).copied();
+
+    let mut node = DirNode::new(path.to_path_buf(), metadata.is_dir(), metadata.len(), status);
 
     if max_depth > 0 && node.is_dir {
         // Read directory entries
@@ -92,9 +164,7 @@ pub fn scan_dir<P: AsRef<Path>>(path: P, max_depth: usize) -> Result<DirNode> {
                         }
 
                         // Recursively scan children
-                        // We use a Result here but swallow errors for individual children
-                        // so one bad permission doesn't stop the whole scan.
-                        if let Ok(child) = scan_dir(&child_path, max_depth - 1) {
+                        if let Ok(child) = scan_dir(&child_path, max_depth - 1, git_map) {
                             node.children.push(child);
                         }
                     }
@@ -107,7 +177,6 @@ pub fn scan_dir<P: AsRef<Path>>(path: P, max_depth: usize) -> Result<DirNode> {
     }
 
     // Calculate total size
-    // Note: We sum children's total_size, not self_size, because children might be dirs with content.
     for child in &node.children {
         node.total_size += child.total_size;
     }
@@ -121,4 +190,58 @@ pub fn scan_dir<P: AsRef<Path>>(path: P, max_depth: usize) -> Result<DirNode> {
     });
 
     Ok(node)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs::File;
+    use std::io::Write;
+    use tempfile::tempdir;
+    use git2::Repository;
+
+    #[test]
+    fn test_git_status_integration() -> Result<()> {
+        // Create a temp git repo
+        let dir = tempdir()?;
+        let root = dir.path();
+        let repo = Repository::init(root)?;
+
+        // Create a file (New)
+        let file_path = root.join("new_file.txt");
+        let mut file = File::create(&file_path)?;
+        writeln!(file, "Hello")?;
+
+        // Create a file and commit it (Clean)
+        let clean_path = root.join("clean_file.txt");
+        let mut file = File::create(&clean_path)?;
+        writeln!(file, "Clean")?;
+
+        // Commit
+        let mut index = repo.index()?;
+        index.add_path(Path::new("clean_file.txt"))?;
+        index.write()?; // Write index to disk!
+        let oid = index.write_tree()?;
+        let tree = repo.find_tree(oid)?;
+        let sig = repo.signature()?;
+        repo.commit(Some("HEAD"), &sig, &sig, "Initial commit", &tree, &[])?;
+
+        // Modify the clean file (Modified)
+        let mut file = File::create(&clean_path)?;
+        writeln!(file, "Modified content")?;
+
+        // Scan
+        let git_map = get_repo_statuses(root);
+        let node = scan_dir(root, 2, &git_map)?;
+
+        // Verify "new_file.txt" is New
+        let new_node = node.children.iter().find(|c| c.name == "new_file.txt").unwrap();
+        assert_eq!(new_node.git_status, Some(GitStatus::New));
+
+        // Verify "clean_file.txt" is Modified
+        let mod_node = node.children.iter().find(|c| c.name == "clean_file.txt").unwrap();
+        assert_eq!(mod_node.git_status, Some(GitStatus::Modified));
+
+        Ok(())
+    }
 }

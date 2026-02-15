@@ -118,6 +118,7 @@ mod tests {
             children: Vec::new(),
             self_size: 4096,
             total_size: size, // Pre-calculated for test
+            git_status: None,
         }
     }
 
@@ -132,6 +133,7 @@ mod tests {
             children: Vec::new(),
             self_size: size,
             total_size: size,
+            git_status: None,
         }
     }
 

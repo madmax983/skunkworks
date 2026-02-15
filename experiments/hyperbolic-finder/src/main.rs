@@ -3,7 +3,7 @@ mod layout;
 mod tiling;
 mod ui;
 
-use fs::{scan_dir, FileType};
+use fs::{get_repo_statuses, scan_dir, FileType, GitStatus};
 use layout::{layout_tree, LayoutNode};
 use macroquad::prelude::*;
 use poincare_disk::{mobius_add, mobius_sub, Point};
@@ -15,13 +15,26 @@ const DISK_SCALE: f32 = 0.45;
 async fn main() -> anyhow::Result<()> {
     // Current state
     let mut current_path = std::env::current_dir()?;
+    // Git status map
+    let mut git_map = get_repo_statuses(&current_path);
+
     // Root of the current visualization
-    let mut fs_root = scan_dir(&current_path, 5)?;
+    let mut fs_root = scan_dir(&current_path, 5, &git_map)?;
     let mut layout_root = layout_tree(fs_root.clone());
 
     // Navigation State
     let mut view_center = Point::new(0.0, 0.0);
     let mut target_center = Point::new(0.0, 0.0);
+
+    // Starfield (Points in the unit disk)
+    let stars: Vec<Point> = (0..500)
+        .map(|_| {
+            let angle = rand::gen_range(0.0, std::f64::consts::PI * 2.0);
+            let r = rand::gen_range(0.0f64, 0.99).sqrt(); // Sqrt for uniform distribution
+            use num_complex::Complex;
+            Complex::from_polar(r, angle)
+        })
+        .collect();
 
     // Dragging State
     let mut is_dragging = false;
@@ -108,6 +121,17 @@ async fn main() -> anyhow::Result<()> {
             Color::new(0.05, 0.05, 0.05, 1.0),
         );
 
+        // Draw Starfield
+        for star in &stars {
+            let star_prime = mobius_sub(*star, view_center);
+            if star_prime.norm_sqr() < 0.99 {
+                let pos = to_screen(star_prime, screen_center, disk_radius);
+                // Twinkle based on position/time
+                let alpha = (star_prime.re * 5.0 + get_time()).sin() * 0.5 + 0.5;
+                draw_circle(pos.x, pos.y, 1.0, Color::new(1.0, 1.0, 1.0, alpha as f32 * 0.5));
+            }
+        }
+
         // Draw Tiling (Hyperbolic Grid)
         tiling::draw_tiling(view_center, screen_center, disk_radius);
 
@@ -134,6 +158,21 @@ async fn main() -> anyhow::Result<()> {
             GRAY,
         );
 
+        // Right Click to go Up
+        if is_mouse_button_released(MouseButton::Right) {
+             if let Some(parent) = current_path.parent() {
+                let parent_buf = parent.to_path_buf();
+                git_map = get_repo_statuses(&parent_buf);
+                if let Ok(new_root) = scan_dir(&parent_buf, 5, &git_map) {
+                    current_path = parent_buf;
+                    fs_root = new_root;
+                    layout_root = layout_tree(fs_root.clone());
+                    target_center = Point::new(0.0, 0.0);
+                    view_center = Point::new(0.0, 0.0);
+                }
+            }
+        }
+
         // Buttons
         let btn_w = 120.0;
         let btn_h = 30.0;
@@ -147,7 +186,8 @@ async fn main() -> anyhow::Result<()> {
             if let Some(parent) = current_path.parent() {
                 let parent_buf = parent.to_path_buf();
                 // Re-scan from parent
-                if let Ok(new_root) = scan_dir(&parent_buf, 5) {
+                git_map = get_repo_statuses(&parent_buf);
+                if let Ok(new_root) = scan_dir(&parent_buf, 5, &git_map) {
                     current_path = parent_buf;
                     fs_root = new_root;
                     layout_root = layout_tree(fs_root.clone());
@@ -155,6 +195,15 @@ async fn main() -> anyhow::Result<()> {
                     view_center = Point::new(0.0, 0.0);
                 }
             }
+        }
+
+        // Draw Root Indicator if far
+        let root_prime = mobius_sub(Point::new(0.0, 0.0), view_center);
+        if root_prime.norm() > 0.1 {
+             let screen_pos = to_screen(root_prime, screen_center, disk_radius);
+             // Draw arrow
+             draw_circle_lines(screen_pos.x, screen_pos.y, 10.0, 2.0, Color::new(1.0, 1.0, 1.0, 0.5));
+             draw_line(screen_pos.x, screen_pos.y, screen_center.x, screen_center.y, 1.0, Color::new(1.0, 1.0, 1.0, 0.2));
         }
 
         // Hover Info
@@ -231,6 +280,19 @@ fn draw_node_recursive(
 
     let screen_pos = to_screen(z_prime, screen_center, disk_radius);
 
+    let scale = 1.0 - z_prime.norm_sqr();
+    // Scale node size based on total content size (Memory Visualization)
+    let size_factor = (node.node.total_size as f64).max(1.0).log10() as f32;
+    // Base size depends on hyperbolic scale (distance from center)
+    let radius = ((5.0 + size_factor * 1.5) * scale as f32 + 2.0).max(1.0);
+
+    // LOD: If too small, just draw a dot and return
+    if radius < 2.0 {
+        let color = get_color(node.node.file_type, node.node.git_status);
+        draw_circle(screen_pos.x, screen_pos.y, radius.max(1.0), color);
+        return;
+    }
+
     // Draw Links first
     for child in &node.children {
         let child_z_prime = mobius_sub(child.pos, view_center);
@@ -256,15 +318,7 @@ fn draw_node_recursive(
         );
     }
 
-    // Draw Node
-    let scale = 1.0 - z_prime.norm_sqr();
-
-    // Scale node size based on total content size (Memory Visualization)
-    let size_factor = (node.node.total_size as f64).max(1.0).log10() as f32;
-    // Base size depends on hyperbolic scale (distance from center)
-    let radius = ((5.0 + size_factor * 1.5) * scale as f32 + 2.0).max(1.0);
-
-    let color = get_color(node.node.file_type);
+    let color = get_color(node.node.file_type, node.node.git_status);
 
     // If it's a large directory, draw a "halo" to indicate mass
     if node.node.total_size > 1_000_000 {
@@ -290,7 +344,19 @@ fn draw_node_recursive(
     }
 }
 
-fn get_color(ft: FileType) -> Color {
+fn get_color(ft: FileType, git_status: Option<GitStatus>) -> Color {
+    if let Some(status) = git_status {
+        match status {
+            GitStatus::New => return Color::new(0.2, 1.0, 0.2, 1.0), // Bright Green
+            GitStatus::Modified => return Color::new(0.2, 0.6, 1.0, 1.0), // Bright Blue
+            GitStatus::Ignored => return Color::new(0.4, 0.4, 0.4, 0.5), // Gray
+            GitStatus::Conflict => return Color::new(1.0, 0.0, 1.0, 1.0), // Magenta
+            GitStatus::Deleted => return Color::new(1.0, 0.0, 0.0, 1.0), // Red
+            GitStatus::Renamed => return Color::new(0.6, 0.2, 0.8, 1.0), // Purple
+            GitStatus::Clean => {},
+        }
+    }
+
     match ft {
         FileType::Directory => BLUE,
         FileType::Code => ORANGE,
@@ -323,22 +389,28 @@ fn draw_geodesic(p1: Point, p2: Point, screen_center: Vec2, radius: f32, color: 
     let steps = 15;
     let m_p2 = mobius_sub(p2, p1);
 
-    let mut last_pos = to_screen(p1, screen_center, radius);
+    // Collect points first
+    let mut points = Vec::with_capacity(steps + 1);
+    points.push(to_screen(p1, screen_center, radius));
 
     for i in 1..=steps {
         let t = i as f64 / steps as f64;
         let q = m_p2 * t;
         let world_pos = mobius_add(q, p1); // Map back
-        let screen_pos = to_screen(world_pos, screen_center, radius);
-        draw_line(
-            last_pos.x,
-            last_pos.y,
-            screen_pos.x,
-            screen_pos.y,
-            1.5,
-            color,
-        );
-        last_pos = screen_pos;
+        points.push(to_screen(world_pos, screen_center, radius));
+    }
+
+    // Draw Glow (3 layers)
+    for i in 0..points.len() - 1 {
+        let p1 = points[i];
+        let p2 = points[i+1];
+
+        // Layer 1: Wide, Faint
+        draw_line(p1.x, p1.y, p2.x, p2.y, 4.0, Color::new(color.r, color.g, color.b, 0.1));
+        // Layer 2: Medium
+        draw_line(p1.x, p1.y, p2.x, p2.y, 2.0, Color::new(color.r, color.g, color.b, 0.3));
+        // Layer 3: Sharp
+        draw_line(p1.x, p1.y, p2.x, p2.y, 1.0, color);
     }
 }
 

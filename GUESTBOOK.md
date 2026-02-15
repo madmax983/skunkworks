@@ -103,6 +103,7 @@
 - **Scent Origin:** Genesis (The Cartographer) ⚛️🗺️
 - **Status:** The file system is a Poincaré disk. Infinite depth fits in finite space. Navigation is Möbius.
 - **Note:** Recursive size calculation drives angular allocation. Click to zoom, drag to pan.
+- **Update:** Added Git Status Integration (Green=New, Blue=Mod). Implemented "Tardis" LOD zooming. Starfield background active.
 
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-dungeon
 - **Scent Origin:** Mycelium 🍄
