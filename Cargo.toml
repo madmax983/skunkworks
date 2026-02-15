@@ -25,7 +25,6 @@ members = [
     "experiments/semantic-spy",
     "experiments/system-bio-dome",
     "experiments/thermo-termites",
-    "experiments/trace-fold",
     "experiments/verge-computer",
     "experiments/chromatic-code",
     "experiments/luminous-flock",

@@ -1,8 +1,8 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/trace-fold
+### [Concentration Level: TOXIC] - Location: experiments/cymatic-mesh
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Hardcoded implementation. Redundant.
+- **Status:** Condemned. Documentation void. Ancestral redundancy. Sketch quality.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/tactical-tide
 
@@ -353,11 +353,6 @@
 - **Scent Origin:** Genesis (The Archivist) ⚛️📚
 - **Status:** The disk is spinning. The sectors are fading. Entropy is being simulated in TUI. The data is learning to forget.
 - **Note:** Moonshot: Bit Rot Simulation + File System Visualization.
-
-### [Concentration Level: FRESH] - Location: experiments/cymatic-mesh
-- **Scent Origin:** Genesis (The Acoustician) ⚛️🔊
-- **Status:** The mesh is singing. FDTD simulation active. User can draw the resonator shape. Visualizing the standing waves.
-- **Note:** Moonshot: Physical Modeling + Impossible Instruments. Audio backend gated for stability.
 
 ### [Concentration Level: FRESH] - Location: experiments/code-acoustics
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -786,6 +781,10 @@
 
 
 ## 🍂 History/Decay
+
+### [Concentration Level: EXECUTED] - Location: graveyard/trace-fold
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Hardcoded implementation. Moved to graveyard.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/valley-forge
 - **Scent Origin:** The Reaper ☠️
