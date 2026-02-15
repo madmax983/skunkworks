@@ -86,3 +86,13 @@
 **Bloat:** "Speculative Generality" in `crates/locus::Topology` handling `i64::MAX` grid wrapping, and "Signature Bloat" in `crates/flocking::compute_force` requiring redundant `me` argument.
 **Cut:** Simplified `normalize` to use standard modulo arithmetic; Removed `me` argument from `compute_force`.
 **Saved:** ~100 lines of complex overflow handling logic, removed 1 argument from critical path in physics engine.
+
+## [Reduction]
+**Bloat:** `Plant.index` dead code in `quantum-garden`; `Garden::apply_cnot` dead code re-implemented in `main.rs`.
+**Cut:** Removed `index`, centralized `apply_cnot` logic, deleted manual visual updates in `main.rs`.
+**Saved:** ~15 lines of duplicate logic, 1 dead field, enforced "ViewModel" pattern.
+
+## [Reduction]
+**Bloat:** `experiments/valley-forge` listed in `Cargo.toml` but missing from filesystem.
+**Cut:** Removed from `Cargo.toml`.
+**Saved:** Workspace build sanity.

@@ -4,8 +4,6 @@ use ratatui::style::Color;
 
 #[derive(Debug, Clone)]
 pub struct Plant {
-    #[allow(dead_code)]
-    pub index: usize,
     pub height: f64, // 0.0 to 1.0 (Probability of |1>)
     pub phase_color: Color,
     pub is_entangled: bool,
@@ -22,9 +20,8 @@ impl Garden {
     pub fn new(num_qubits: usize) -> Self {
         let system = QubitSystem::new(num_qubits);
         let mut plants = Vec::new();
-        for i in 0..num_qubits {
+        for _ in 0..num_qubits {
             plants.push(Plant {
-                index: i,
                 height: 0.0,
                 phase_color: Color::Green,
                 is_entangled: false,
@@ -41,16 +38,6 @@ impl Garden {
 
     pub fn update(&mut self) {
         let probs = self.system.get_qubit_probabilities();
-
-        // Simple entanglement check (very heuristic for visualization)
-        // If applying a gate to A affects B's probability significantly, they are linked.
-        // But checking that is expensive (need to simulate).
-        // For now, let's just track "entangled pairs" manually via the CNOT history if we wanted,
-        // but the Plan said "is_entangled: bool".
-        // Let's rely on the user knowing they CNOTed them, or just omit entanglement visual for MVP
-        // if it's too hard to derive from state.
-        // Actually, we can check mutual information or covariance, but that's O(2^N).
-        // Let's just update height for now.
 
         for (i, plant) in self.plants.iter_mut().enumerate() {
             plant.height = probs[i];
@@ -72,19 +59,14 @@ impl Garden {
         Ok(())
     }
 
-    #[allow(dead_code)]
-    pub fn apply_cnot(&mut self, target_idx: usize) -> Result<()> {
-        self.system.apply_cnot(self.selected_index, target_idx)?;
+    pub fn apply_cnot(&mut self, control: usize, target: usize) -> Result<()> {
+        self.system.apply_cnot(control, target)?;
 
         // Mark as entangled visually
-        self.plants[self.selected_index].is_entangled = true;
-        self.plants[target_idx].is_entangled = true;
-        self.plants[self.selected_index]
-            .entangled_with
-            .push(target_idx);
-        self.plants[target_idx]
-            .entangled_with
-            .push(self.selected_index);
+        self.plants[control].is_entangled = true;
+        self.plants[target].is_entangled = true;
+        self.plants[control].entangled_with.push(target);
+        self.plants[target].entangled_with.push(control);
 
         self.update();
         Ok(())
