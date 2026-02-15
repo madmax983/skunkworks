@@ -129,6 +129,8 @@ pub(crate) enum ViewMode {
     Evolution,
     #[cfg(feature = "nova")]
     Ecology,
+    #[cfg(feature = "nova")]
+    LifeCycle,
 }
 
 enum InputMode {
@@ -764,6 +766,12 @@ where
                 render_ecology(f, vm, app_state);
                 return;
             }
+
+                #[cfg(feature = "nova")]
+                if let ViewMode::LifeCycle = app_state.view_mode {
+                    render_lifecycle(f, vm, app_state);
+                    return;
+                }
 
             render_genome_and_grid(f, vm, app_state);
 
@@ -1893,9 +1901,13 @@ where
                                 }
                             }
                             #[cfg(feature = "nova")]
-                            ViewMode::Ecology => ViewMode::Genome,
+                            ViewMode::Ecology => ViewMode::LifeCycle,
+                            #[cfg(feature = "nova")]
+                            ViewMode::LifeCycle => ViewMode::Genome,
                         };
                     }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('y') => app_state.view_mode = ViewMode::LifeCycle,
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
                     #[cfg(feature = "silicon")]
                     KeyCode::Char('F') => app_state.view_mode = ViewMode::Foundry,
@@ -4293,6 +4305,86 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Territory Info"),
     );
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_lifecycle(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(f.area());
+
+    // Left: Organelle List Grouped by Stage
+    let mut stages: Vec<Vec<&crate::vm::nova::Organelle>> = vec![Vec::new(); 4];
+    for org in &vm.organelles {
+        let s = org.stage as usize;
+        if s < stages.len() {
+            stages[s].push(org);
+        } else {
+             // Fallback for higher stages
+             if let Some(last) = stages.last_mut() {
+                 last.push(org);
+             }
+        }
+    }
+
+    let mut items = Vec::new();
+    let stage_names = ["Larva", "Pupa", "Imago", "Titan"];
+
+    for (i, list) in stages.iter().enumerate() {
+        if !list.is_empty() {
+             items.push(ListItem::new(Span::styled(
+                format!("--- Stage {}: {} ---", i, stage_names.get(i).unwrap_or(&"Unknown")),
+                Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+            )));
+            for org in list {
+                let threshold = 100 * (org.stage as i64 + 1);
+                let progress = (org.experience as f64 / threshold as f64).clamp(0.0, 1.0);
+                let bar_len = 10;
+                let filled = (progress * bar_len as f64) as usize;
+                let bar = "=".repeat(filled) + &"-".repeat(bar_len - filled);
+
+                items.push(ListItem::new(format!(
+                    "{} [XP: {}/{}] [{}]",
+                    org.name, org.experience, threshold, bar
+                )));
+            }
+        }
+    }
+
+    if items.is_empty() {
+        items.push(ListItem::new("No life detected."));
+    }
+
+    let list = List::new(items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Life Cycle Analysis"),
+    );
+    f.render_widget(list, chunks[0]);
+
+    // Right: Info
+    let info_text = vec![
+        Line::from("METAMORPHOSIS"),
+        Line::from(" "),
+        Line::from("Stages:"),
+        Line::from("  0. Larva (Base form)"),
+        Line::from("  1. Pupa (Cocoon, tough)"),
+        Line::from("  2. Imago (Wings, specialized)"),
+        Line::from("  3. Titan (Colossal, massive energy)"),
+        Line::from(" "),
+        Line::from("Mechanics:"),
+        Line::from("  Organelles gain Experience (XP) by eating."),
+        Line::from("  Evolution is automatic when threshold reached."),
+        Line::from("  Threshold = 100 * (Stage + 1)."),
+    ];
+
+    let info = Paragraph::new(info_text).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Encyclopedia"),
+    );
+    f.render_widget(info, chunks[1]);
 }
 
 #[cfg(feature = "nova")]

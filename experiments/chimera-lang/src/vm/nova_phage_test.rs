@@ -43,7 +43,7 @@ mod tests {
             traits: vec![],
             id: vm.organelle_id_counter,
             tissue_id: None,
-            genome_id: 0, energy: 100,
+            genome_id: 0, energy: 100, experience: 0, stage: 0,
         };
         vm.organelles.push(organelle);
 
@@ -80,7 +80,7 @@ mod tests {
             traits: vec![],
             id: 1,
             tissue_id: None,
-            genome_id: 0, energy: 100,
+            genome_id: 0, energy: 100, experience: 0, stage: 0,
         });
 
         // Place Bang '*' at (1,2)
@@ -127,7 +127,7 @@ mod tests {
             traits: vec![],
             id: 1,
             tissue_id: None,
-            genome_id: 0, energy: 100,
+            genome_id: 0, energy: 100, experience: 0, stage: 0,
         });
 
         // Place Host 'H' at (1,2)
@@ -174,7 +174,7 @@ mod tests {
             traits: vec![],
             id: 1,
             tissue_id: None,
-            genome_id: 0, energy: 100,
+            genome_id: 0, energy: 100, experience: 0, stage: 0,
         });
 
         // Place Wall '#' at (1,2)

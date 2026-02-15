@@ -73,6 +73,8 @@ pub fn spawn_random_ecology(vm: &mut ChimeraVM, count: usize) {
             tissue_id: None,
             genome_id: rng.gen(),
             energy: 100,
+            experience: 0,
+            stage: 0,
         };
         vm.organelles.push(organelle);
     }
@@ -105,11 +107,13 @@ pub fn process_ecology_tick(vm: &mut ChimeraVM) {
         if let Value::Int(n) = vm.grid[y][x] {
             if n > 0 {
                 org.energy = org.energy.saturating_add(n);
+                org.experience = org.experience.saturating_add(n); // Gain XP from eating
                 vm.grid[y][x] = Value::Int(0);
             } else if n < 0 {
                 // Toxic Waste
                 if org.traits.contains(&"Scavenger".to_string()) {
                     org.energy = org.energy.saturating_add(n.abs());
+                    org.experience = org.experience.saturating_add(n.abs()); // Gain XP from scavenging
                     vm.grid[y][x] = Value::Int(0); // Cleaned up
                 } else {
                     org.energy = org.energy.saturating_sub(n.abs()); // Radiation Damage
