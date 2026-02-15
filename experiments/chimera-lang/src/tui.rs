@@ -126,6 +126,8 @@ pub(crate) enum ViewMode {
     #[cfg(feature = "nova")]
     Biolum,
     Evolution,
+    #[cfg(feature = "nova")]
+    Ecology,
 }
 
 enum InputMode {
@@ -742,6 +744,12 @@ where
 
             if let ViewMode::Evolution = app_state.view_mode {
                 render_evolution(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Ecology = app_state.view_mode {
+                render_ecology(f, vm, app_state);
                 return;
             }
 
@@ -1499,6 +1507,11 @@ where
                                     app_state.input_buffer.clear();
                                 }
                                 #[cfg(feature = "nova")]
+                                ViewMode::Ecology => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "nova")]
                                 ViewMode::BioMesh => {
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
@@ -1794,7 +1807,18 @@ where
                             ViewMode::Reactor => ViewMode::Biolum,
                             #[cfg(feature = "nova")]
                             ViewMode::Biolum => ViewMode::Evolution,
-                            ViewMode::Evolution => ViewMode::Genome,
+                            ViewMode::Evolution => {
+                                #[cfg(feature = "nova")]
+                                {
+                                    ViewMode::Ecology
+                                }
+                                #[cfg(not(feature = "nova"))]
+                                {
+                                    ViewMode::Genome
+                                }
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Ecology => ViewMode::Genome,
                         };
                     }
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
@@ -1901,6 +1925,13 @@ where
                     #[cfg(feature = "nova")]
                     KeyCode::Char('k') => app_state.view_mode = ViewMode::Kaleidoscope,
                     #[cfg(feature = "nova")]
+                    KeyCode::Char('K') => {
+                        if let ViewMode::Ecology = app_state.view_mode {
+                            vm.organelles.clear();
+                            app_state.status_msg = "Extinction Event.".to_string();
+                        }
+                    }
+                    #[cfg(feature = "nova")]
                     KeyCode::Char('$') => app_state.view_mode = ViewMode::Market,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('!') => app_state.view_mode = ViewMode::Ballistics,
@@ -1923,6 +1954,13 @@ where
                         }
                     }
                     KeyCode::Char('f') => {
+                        #[cfg(feature = "nova")]
+                        if let ViewMode::Ecology = app_state.view_mode {
+                            crate::vm::nova_ecology::spawn_food(vm);
+                            app_state.status_msg = "Food spawned.".to_string();
+                            continue;
+                        }
+
                         #[cfg(feature = "silicon")]
                         if let ViewMode::Foundry = app_state.view_mode {
                             // Fabricate current strand
@@ -2242,7 +2280,11 @@ where
                     }
                     KeyCode::Char('s') => {
                         #[cfg(feature = "nova")]
-                        if let ViewMode::Kaleidoscope = app_state.view_mode {
+                        if let ViewMode::Ecology = app_state.view_mode {
+                            crate::vm::nova_ecology::spawn_random_ecology(vm, 10);
+                            app_state.status_msg = "Spawned 10 organisms.".to_string();
+                            continue;
+                        } else if let ViewMode::Kaleidoscope = app_state.view_mode {
                             // Step Piet
                             if vm.piet_state.is_none() {
                                 vm.piet_state = Some(crate::vm::piet::init_piet(vm));
@@ -2684,6 +2726,12 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Ecology => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
                     },
                     KeyCode::Up => match app_state.view_mode {
                         ViewMode::Genome => {
@@ -2951,6 +2999,12 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Ecology => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                     },
                     KeyCode::Right => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -3142,6 +3196,12 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Ecology => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                     },
                     KeyCode::Left => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -3329,6 +3389,12 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Biolum => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Ecology => {
                             if app_state.grid_cursor.0 > 0 {
                                 app_state.grid_cursor.0 -= 1;
                             }
@@ -3713,6 +3779,18 @@ where
                             #[cfg(feature = "elektra")]
                             ViewMode::Elektra => {
                                 // Enable editing grid from Elektra view (like Grid view)
+                                let (x, y) = app_state.grid_cursor;
+                                let val = &vm.grid[y][x];
+                                match val {
+                                    crate::vm::Value::Int(n) => {
+                                        app_state.input_buffer = n.to_string()
+                                    }
+                                    crate::vm::Value::Str(s) => app_state.input_buffer = s.clone(),
+                                    _ => app_state.input_buffer = String::new(),
+                                }
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Ecology => {
                                 let (x, y) = app_state.grid_cursor;
                                 let val = &vm.grid[y][x];
                                 match val {
@@ -5067,6 +5145,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         #[cfg(feature = "nova")]
         ViewMode::Biolum => "BIOLUMINESCENCE",
         ViewMode::Evolution => "EVOLUTION CHAMBER",
+        #[cfg(feature = "nova")]
+        ViewMode::Ecology => "GENETIC ECOLOGY",
     };
 
     let title = match app_state.input_mode {
@@ -5631,6 +5711,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::BioMesh, "BioMesh", "N"));
         views.push((ViewMode::Reactor, "Reactor", "X"));
         views.push((ViewMode::Evolution, "Evolution", "E"));
+        views.push((ViewMode::Ecology, "Genetic Ecology", "Shift+E"));
     }
     views
 }
@@ -9779,5 +9860,110 @@ fn render_biolum(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     let info_widget =
         Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Spectrometer"));
+    f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_ecology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    // Grid Visualization
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = &vm.grid[y][x];
+            let mut style = Style::default();
+            let mut ch = "·".to_string();
+
+            // Background for Food
+            if let crate::vm::Value::Int(n) = val {
+                if *n > 0 {
+                    style = style.fg(Color::Green);
+                    ch = "*".to_string();
+                } else {
+                    style = style.fg(Color::DarkGray);
+                }
+            } else {
+                style = style.fg(Color::DarkGray);
+            }
+
+            // Overlay Organelles
+            for org in &vm.organelles {
+                if org.context_loc == (y, x) {
+                    // Color based on genome hash
+                    let hash = org.genome_id;
+                    let r = (hash & 0xFF) as u8;
+                    let g = ((hash >> 8) & 0xFF) as u8;
+                    let b = ((hash >> 16) & 0xFF) as u8;
+
+                    style = style.fg(Color::Rgb(r, g, b)).add_modifier(Modifier::BOLD);
+                    ch = "@".to_string();
+                    break;
+                }
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Ecology Grid (Genetic Sandbox)"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Info Panel
+    let mut info = Vec::new();
+    info.push(Line::from("GENETIC ECOLOGY"));
+    info.push(Line::from(" "));
+    info.push(Line::from(format!("Organisms: {}", vm.organelles.len())));
+    info.push(Line::from(format!("Shared Energy: {}", vm.energy)));
+    info.push(Line::from(" "));
+
+    // Organelle Details under cursor
+    let (cx, cy) = app_state.grid_cursor;
+    let mut found = false;
+    for org in &vm.organelles {
+        if org.context_loc == (cy, cx) {
+            info.push(Line::from(format!("Name: {}", org.name)));
+            info.push(Line::from(format!("ID: {}", org.id)));
+            info.push(Line::from(format!("Type: {:?}", org.kind)));
+            info.push(Line::from(format!("Traits: {:?}", org.traits)));
+            found = true;
+            break;
+        }
+    }
+
+    if !found {
+        info.push(Line::from("No organism at cursor."));
+        if let crate::vm::Value::Int(n) = vm.grid[cy][cx] {
+            if n > 0 {
+                info.push(Line::from(format!("Food Energy: {}", n)));
+            }
+        }
+    }
+
+    info.push(Line::from(" "));
+    info.push(Line::from("Controls:"));
+    info.push(Line::from("  S: Spawn 10 Random"));
+    info.push(Line::from("  f: Spawn Food"));
+    info.push(Line::from("  K: Extinction Event"));
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Status"),
+    );
     f.render_widget(info_widget, chunks[1]);
 }
