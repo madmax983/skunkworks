@@ -1,10 +1,10 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use crate::ast::{Dna, Helix};
-    use crate::vm::babel::{read_grammar_from_grid, generate_random_grid_grammar};
-    use crate::vm::{ChimeraVM, Value};
     use crate::ast::JunctionType;
+    use crate::ast::{Dna, Helix};
+    use crate::vm::babel::{generate_random_grid_grammar, read_grammar_from_grid};
+    use crate::vm::{ChimeraVM, Value};
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
@@ -101,9 +101,9 @@ mod tests {
         if let Value::Junction(JunctionType::Any, args) = grammar {
             assert_eq!(args[0], Value::Str("Alt".to_string()));
             assert_eq!(args.len(), 3); // Alt + 2 children
-            // Order depends on find_children iteration order: N, E, S, W
-            // E is "B", S is "C"
-            // So args[1] should be B path, args[2] should be C path
+                                       // Order depends on find_children iteration order: N, E, S, W
+                                       // E is "B", S is "C"
+                                       // So args[1] should be B path, args[2] should be C path
 
             // Note: scan_connector calls find_children -> returns list of children
             // B path starts with "-", which is a connector.

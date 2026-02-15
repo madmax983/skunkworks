@@ -961,13 +961,7 @@ pub fn generate_random_grid_grammar(vm: &mut ChimeraVM, y: usize, x: usize, amou
     grow_grammar(vm, y as i64, x as i64, amount, &mut rng);
 }
 
-fn grow_grammar(
-    vm: &mut ChimeraVM,
-    y: i64,
-    x: i64,
-    energy: usize,
-    rng: &mut impl rand::Rng,
-) {
+fn grow_grammar(vm: &mut ChimeraVM, y: i64, x: i64, energy: usize, rng: &mut impl rand::Rng) {
     if energy == 0 {
         return;
     }

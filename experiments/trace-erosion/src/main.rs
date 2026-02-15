@@ -1,8 +1,8 @@
 mod graph;
 mod terrain;
 
-use macroquad::prelude::*;
 use graph::CallGraph;
+use macroquad::prelude::*;
 use terrain::Terrain;
 
 fn window_conf() -> Conf {
@@ -103,17 +103,29 @@ async fn main() {
             draw_line_3d(
                 vec3(start.x, 60.0, start.y),
                 vec3(end.x, 60.0, end.y),
-                Color::new(0.0, 0.0, 1.0, 0.3)
+                Color::new(0.0, 0.0, 1.0, 0.3),
             );
         }
 
         set_default_camera();
 
         draw_text("Trace Erosion", 10.0, 30.0, 30.0, BLACK);
-        draw_text("WASD/Arrows: Move, Q/E: Up/Down", 10.0, 50.0, 20.0, DARKGRAY);
+        draw_text(
+            "WASD/Arrows: Move, Q/E: Up/Down",
+            10.0,
+            50.0,
+            20.0,
+            DARKGRAY,
+        );
         draw_text("Space: Pause/Resume Erosion", 10.0, 70.0, 20.0, DARKGRAY);
         draw_text("R: Reset (New Graph)", 10.0, 90.0, 20.0, DARKGRAY);
-        draw_text(&format!("Nodes: {}, Edges: {}", graph.nodes.len(), graph.edges.len()), 10.0, 110.0, 20.0, DARKGRAY);
+        draw_text(
+            &format!("Nodes: {}, Edges: {}", graph.nodes.len(), graph.edges.len()),
+            10.0,
+            110.0,
+            20.0,
+            DARKGRAY,
+        );
 
         next_frame().await
     }

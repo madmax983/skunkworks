@@ -26,7 +26,13 @@ fn main() {
         .add_systems(Startup, (setup_world, spawn_spider))
         .add_systems(
             Update,
-            (camera_follow, move_spider, update_legs, handle_collisions, pulse_body),
+            (
+                camera_follow,
+                move_spider,
+                update_legs,
+                handle_collisions,
+                pulse_body,
+            ),
         )
         .run();
 }
@@ -103,7 +109,7 @@ fn setup_world(mut commands: Commands) {
             ActiveEvents::COLLISION_EVENTS,
             GraphNode {
                 path: node.path,
-                original_scale: node.radius
+                original_scale: node.radius,
             },
         ));
     }
@@ -257,18 +263,19 @@ fn update_legs(
                         ideal_pos_world,
                         0.0,
                         &Collider::ball(search_radius),
-                        QueryFilter::new().exclude_collider(body_entity)
-                    , |entity| {
-                         // Check distance
-                         // We don't know exact position of collider center easily without querying Transform component of that entity
-                         // But we can just assume the hit is good enough?
-                         // Actually, we want to snap to the center of the node if possible.
-                         best_foothold = Some(entity);
-                         true // Continue? No need to iterate all if we just want one? Let's iterate all to find closest?
-                         // Rapier's callback is simple.
-                         // To find closest, we need access to transforms of these entities.
-                         // For now, just take the first one or valid one.
-                    });
+                        QueryFilter::new().exclude_collider(body_entity),
+                        |entity| {
+                            // Check distance
+                            // We don't know exact position of collider center easily without querying Transform component of that entity
+                            // But we can just assume the hit is good enough?
+                            // Actually, we want to snap to the center of the node if possible.
+                            best_foothold = Some(entity);
+                            true // Continue? No need to iterate all if we just want one? Let's iterate all to find closest?
+                                 // Rapier's callback is simple.
+                                 // To find closest, we need access to transforms of these entities.
+                                 // For now, just take the first one or valid one.
+                        },
+                    );
 
                     // Wait, we need the position of that foothold to snap to it.
                     // We can't get it from Rapier callback easily without a separate Query.
@@ -297,17 +304,17 @@ fn update_legs(
                     if let Some((entity, point)) = rapier_context.project_point(
                         search_target,
                         true, // solid
-                        QueryFilter::new().exclude_collider(body_entity)
+                        QueryFilter::new().exclude_collider(body_entity),
                     ) {
-                         if point.is_inside {
-                             leg.target_foot_pos = search_target; // Already inside?
-                         } else {
-                             // If it is close enough
-                             if point.point.distance(search_target) < search_radius {
-                                 leg.target_foot_pos = point.point;
-                                 leg.foothold_entity = Some(entity);
-                             }
-                         }
+                        if point.is_inside {
+                            leg.target_foot_pos = search_target; // Already inside?
+                        } else {
+                            // If it is close enough
+                            if point.point.distance(search_target) < search_radius {
+                                leg.target_foot_pos = point.point;
+                                leg.foothold_entity = Some(entity);
+                            }
+                        }
                     }
 
                     leg.cooldown = 0.1 + rng.gen_range(0.0..0.1);
@@ -361,10 +368,7 @@ fn update_legs(
     }
 }
 
-fn pulse_body(
-    time: Res<Time>,
-    mut query: Query<(&mut Transform, &SpiderBody)>,
-) {
+fn pulse_body(time: Res<Time>, mut query: Query<(&mut Transform, &SpiderBody)>) {
     for (mut transform, body) in query.iter_mut() {
         let scale_pulse = 1.0 + (time.elapsed_seconds() * 2.0).sin() * 0.05;
         transform.scale = Vec3::splat(body.base_scale * scale_pulse);
@@ -394,7 +398,7 @@ fn handle_collisions(
 
             if let Ok(_node) = node_q.get(other) {
                 // Log the file path
-               // println!("Spider touched: {:?}", node.path);
+                // println!("Spider touched: {:?}", node.path);
             }
         }
     }

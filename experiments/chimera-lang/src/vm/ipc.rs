@@ -5,11 +5,11 @@ use rand::Rng;
 #[cfg(feature = "nova")]
 use std::fs;
 #[cfg(feature = "nova")]
+use std::io::Read;
+#[cfg(feature = "nova")]
 use std::path::Path;
 #[cfg(feature = "nova")]
 use std::time::{SystemTime, UNIX_EPOCH};
-#[cfg(feature = "nova")]
-use std::io::Read;
 
 #[cfg(feature = "nova")]
 const ETHER_DIR: &str = ".chimera_ether";
@@ -93,7 +93,8 @@ pub fn receive(vm: &mut ChimeraVM) {
                                     let mut buffer = Vec::new();
                                     let mut handle = file.take(1_048_576);
                                     if handle.read_to_end(&mut buffer).is_ok() {
-                                        if let Ok(value) = serde_json::from_slice::<Value>(&buffer) {
+                                        if let Ok(value) = serde_json::from_slice::<Value>(&buffer)
+                                        {
                                             vm.stack.push(value);
                                             // Consume message
                                             let _ = fs::remove_file(lock_path);

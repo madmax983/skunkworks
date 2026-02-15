@@ -4922,9 +4922,9 @@ mod tests {
     }
 }
 #[cfg(test)]
-mod babel_test;
-#[cfg(test)]
 mod babel_grid_test;
+#[cfg(test)]
+mod babel_test;
 mod nova_sequencer_test;
 
 #[cfg(test)]

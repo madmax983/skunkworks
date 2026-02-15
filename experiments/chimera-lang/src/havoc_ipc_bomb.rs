@@ -2,8 +2,8 @@
 mod tests {
     use crate::prelude::*;
     use std::fs;
-    use std::path::Path;
     use std::io::Write;
+    use std::path::Path;
 
     #[test]
     fn test_ipc_bomb_unbounded_read() {
@@ -44,7 +44,9 @@ mod tests {
 
         file.write_all(b"]]}").unwrap(); // Close array and object
 
-        let dna = Dna { helix: Helix { strands: vec![] } };
+        let dna = Dna {
+            helix: Helix { strands: vec![] },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         // Prepare stack for receive: push channel ID
@@ -63,13 +65,16 @@ mod tests {
         match result {
             Some(Value::Junction(_, list)) => {
                 if list.len() > 1000 {
-                    panic!("VULNERABILITY CONFIRMED: VM read a huge file ({} items) into memory!", list.len());
+                    panic!(
+                        "VULNERABILITY CONFIRMED: VM read a huge file ({} items) into memory!",
+                        list.len()
+                    );
                 }
-            },
+            }
             Some(Value::Int(0)) => {
                 // This means "Channel empty" (file rejected/deleted).
                 // This is the desired secure behavior.
-            },
+            }
             _ => {
                 // Any other result is fine (maybe error string on stack?)
             }

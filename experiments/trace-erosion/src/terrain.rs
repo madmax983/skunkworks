@@ -1,4 +1,4 @@
-use crate::graph::{CallGraph};
+use crate::graph::CallGraph;
 use macroquad::prelude::*;
 
 pub const GRID_SIZE: usize = 128;
@@ -56,7 +56,9 @@ impl Terrain {
             let dist = start_pos.distance(end_pos);
             let steps = (dist * 1.5) as usize; // 1.5 steps per unit
 
-            if steps == 0 { continue; }
+            if steps == 0 {
+                continue;
+            }
 
             // Meander parameters
             let freq = rand::gen_range(0.05, 0.15);
@@ -84,7 +86,9 @@ impl Terrain {
 
     fn carve_at(&mut self, pos: Vec2, amount: f32) {
         let (x, y) = self.world_to_grid(pos);
-        if x >= self.width || y >= self.height { return; }
+        if x >= self.width || y >= self.height {
+            return;
+        }
 
         // Simple 3x3 kernel carving for wider rivers
         for dy in -1..=1 {
@@ -95,7 +99,7 @@ impl Terrain {
                 if nx >= 0 && nx < self.width as isize && ny >= 0 && ny < self.height as isize {
                     let idx = ny as usize * self.width + nx as usize;
                     // Gaussian-ish falloff
-                    let dist_sq = (dx*dx + dy*dy) as f32;
+                    let dist_sq = (dx * dx + dy * dy) as f32;
                     let factor = (-dist_sq / 2.0).exp();
 
                     self.heightmap[idx] -= amount * factor * 0.1;
@@ -148,10 +152,30 @@ impl Terrain {
                 let normal = vec4(0., 1., 0., 1.);
 
                 // Use .into() for colors as required by macroquad 0.4
-                vertices.push(Vertex { position: vec3(p1.x, h1, p1.y), uv: vec2(0.,0.), color: c1.into(), normal });
-                vertices.push(Vertex { position: vec3(p2.x, h2, p2.y), uv: vec2(1.,0.), color: c2.into(), normal });
-                vertices.push(Vertex { position: vec3(p3.x, h3, p3.y), uv: vec2(1.,1.), color: c3.into(), normal });
-                vertices.push(Vertex { position: vec3(p4.x, h4, p4.y), uv: vec2(0.,1.), color: c4.into(), normal });
+                vertices.push(Vertex {
+                    position: vec3(p1.x, h1, p1.y),
+                    uv: vec2(0., 0.),
+                    color: c1.into(),
+                    normal,
+                });
+                vertices.push(Vertex {
+                    position: vec3(p2.x, h2, p2.y),
+                    uv: vec2(1., 0.),
+                    color: c2.into(),
+                    normal,
+                });
+                vertices.push(Vertex {
+                    position: vec3(p3.x, h3, p3.y),
+                    uv: vec2(1., 1.),
+                    color: c3.into(),
+                    normal,
+                });
+                vertices.push(Vertex {
+                    position: vec3(p4.x, h4, p4.y),
+                    uv: vec2(0., 1.),
+                    color: c4.into(),
+                    normal,
+                });
 
                 indices.push(v_start);
                 indices.push(v_start + 1);

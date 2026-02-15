@@ -45,7 +45,7 @@ impl FabrikSolver {
             let dir = (target - root).normalize_or_zero();
             let dir = if dir == Vec2::ZERO { Vec2::X } else { dir };
             for i in 0..self.lengths.len() {
-                self.joints[i+1] = self.joints[i] + dir * self.lengths[i];
+                self.joints[i + 1] = self.joints[i] + dir * self.lengths[i];
             }
         } else {
             // Reachable - Iteration
@@ -60,27 +60,27 @@ impl FabrikSolver {
                 self.joints[last_idx] = target;
 
                 for i in (0..last_idx).rev() {
-                    let _r = self.joints[i+1] - self.joints[i];
+                    let _r = self.joints[i + 1] - self.joints[i];
                     let len = self.lengths[i];
                     // We want joint i to be at distance 'len' from joint i+1 along vector r
                     // New P_i = P_{i+1} + (P_i - P_{i+1}) / dist * len
-                    let vector_from_next = self.joints[i] - self.joints[i+1];
+                    let vector_from_next = self.joints[i] - self.joints[i + 1];
                     let dir = vector_from_next.normalize_or_zero();
                     let dir = if dir == Vec2::ZERO { Vec2::X } else { dir };
 
-                    self.joints[i] = self.joints[i+1] + dir * len;
+                    self.joints[i] = self.joints[i + 1] + dir * len;
                 }
 
                 // FORWARD: Set root to original root
                 self.joints[0] = root;
                 for i in 0..self.lengths.len() {
                     // New P_{i+1} = P_i + (P_{i+1} - P_i).normalized * len
-                    let vector_from_prev = self.joints[i+1] - self.joints[i];
+                    let vector_from_prev = self.joints[i + 1] - self.joints[i];
                     let dir = vector_from_prev.normalize_or_zero();
                     let dir = if dir == Vec2::ZERO { Vec2::X } else { dir };
                     let len = self.lengths[i];
 
-                    self.joints[i+1] = self.joints[i] + dir * len;
+                    self.joints[i + 1] = self.joints[i] + dir * len;
                 }
 
                 diff = self.joints[last_idx].distance(target);
@@ -89,7 +89,6 @@ impl FabrikSolver {
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -103,12 +102,22 @@ mod tests {
         solver.solve(target);
 
         let end = *solver.joints.last().unwrap();
-        assert!(end.distance(target) < 1.0, "Solver failed to reach target. Got {:?}, expected {:?}", end, target);
+        assert!(
+            end.distance(target) < 1.0,
+            "Solver failed to reach target. Got {:?}, expected {:?}",
+            end,
+            target
+        );
 
         // Verify lengths
         for i in 0..solver.lengths.len() {
-            let d = solver.joints[i].distance(solver.joints[i+1]);
-            assert!((d - solver.lengths[i]).abs() < 0.1, "Segment length violated at {}: {}", i, d);
+            let d = solver.joints[i].distance(solver.joints[i + 1]);
+            assert!(
+                (d - solver.lengths[i]).abs() < 0.1,
+                "Segment length violated at {}: {}",
+                i,
+                d
+            );
         }
     }
 
@@ -121,6 +130,10 @@ mod tests {
 
         let end = *solver.joints.last().unwrap();
         // Should be at (100, 0)
-        assert!((end - Vec2::new(100.0, 0.0)).length() < 0.1, "Solver should stretch fully. Got {:?}", end);
+        assert!(
+            (end - Vec2::new(100.0, 0.0)).length() < 0.1,
+            "Solver should stretch fully. Got {:?}",
+            end
+        );
     }
 }

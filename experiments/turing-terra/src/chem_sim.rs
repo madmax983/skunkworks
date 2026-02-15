@@ -1,5 +1,5 @@
-use rayon::prelude::*;
 use rand::prelude::*;
+use rayon::prelude::*;
 
 pub struct ChemicalState {
     pub width: usize,
@@ -26,9 +26,9 @@ impl ChemicalState {
     pub fn seed_noise(&mut self) {
         let mut rng = rand::thread_rng();
         for i in 0..self.v.len() {
-             if rng.r#gen::<f32>() > 0.99 {
-                 self.v[i] = 1.0;
-             }
+            if rng.r#gen::<f32>() > 0.99 {
+                self.v[i] = 1.0;
+            }
         }
 
         // Add a solid block in the middle
@@ -55,7 +55,8 @@ impl ChemicalState {
         let next_v = &mut self.next_v;
 
         // Parallel iteration
-        next_u.par_iter_mut()
+        next_u
+            .par_iter_mut()
             .zip(next_v.par_iter_mut())
             .enumerate()
             .for_each(|(i, (nu, nv))| {
@@ -114,17 +115,17 @@ impl ChemicalState {
     }
 
     pub fn add_chemical(&mut self, x: usize, y: usize, amount_v: f32) {
-         let idx = y * self.width + x;
-         if idx < self.v.len() {
-             self.v[idx] = (self.v[idx] + amount_v).clamp(0.0, 1.0);
-         }
+        let idx = y * self.width + x;
+        if idx < self.v.len() {
+            self.v[idx] = (self.v[idx] + amount_v).clamp(0.0, 1.0);
+        }
     }
 
     pub fn add_chemical_blob(&mut self, cx: usize, cy: usize, radius: f32, amount_v: f32) {
         let r_int = radius.ceil() as isize;
         for dy in -r_int..=r_int {
             for dx in -r_int..=r_int {
-                if (dx*dx + dy*dy) as f32 <= radius*radius {
+                if (dx * dx + dy * dy) as f32 <= radius * radius {
                     let nx = (cx as isize + dx).rem_euclid(self.width as isize) as usize;
                     let ny = (cy as isize + dy).rem_euclid(self.height as isize) as usize;
                     let idx = ny * self.width + nx;
@@ -156,6 +157,10 @@ mod tests {
         sim.update(1.0, 0.055, 0.062);
 
         let neighbor_v = sim.get_v(cx + 1, cy);
-        assert!(neighbor_v > 0.0, "Diffusion did not occur, neighbor V is {}", neighbor_v);
+        assert!(
+            neighbor_v > 0.0,
+            "Diffusion did not occur, neighbor V is {}",
+            neighbor_v
+        );
     }
 }

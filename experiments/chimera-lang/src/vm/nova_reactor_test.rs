@@ -1,9 +1,9 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use crate::vm::{ChimeraVM, Value};
-    use crate::ast::{Dna, Helix, Strand, Gene, Nucleotide, JunctionType};
+    use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
     use crate::opcode::OpCode;
+    use crate::vm::{ChimeraVM, Value};
 
     fn make_empty_vm() -> ChimeraVM {
         let dna = Dna {
@@ -57,11 +57,26 @@ mod tests {
         // Should assert reaction(1, 1, 2) and toggle reactor off (since it started on in helper)
 
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-            Gene { op: OpCode::Reaction, args: vec![] },
-            Gene { op: OpCode::Reactor, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(2)],
+            },
+            Gene {
+                op: OpCode::Reaction,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Reactor,
+                args: vec![],
+            },
         ];
 
         vm.dna.helix.strands[0].genes = genes;
