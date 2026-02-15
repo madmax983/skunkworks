@@ -952,3 +952,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Reaction-Diffusion Crystallography. The texture of the file system evolves based on the computer's effort.
 - **Status**: experiments/miller-reaction
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### hanging-abacus
+- **Parents**: experiments/hanging-gardens + experiments/soroban-market
+- **Concept**: "Vegetative Calculator". A TUI abacus where beads are plants that bloom or grow based on their decimal value.
+- **Novel trait**: Organic Arithmetic. Visualization of calculation as a biological process.
+- **Status**: experiments/hanging-abacus
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

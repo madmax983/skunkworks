@@ -135,7 +135,7 @@ members = [
     "experiments/chimera-defense", "experiments/turing-terra", "experiments/chimera-terra", "experiments/trace-erosion", "experiments/stardust-compiler",
     "experiments/chimera-stardust", "experiments/digital-decay",
     "experiments/code-acoustics", "experiments/soroban-market", "experiments/hanging-gardens", "experiments/celestial-cipher", "experiments/chimera-specter", "experiments/code-concerto", "experiments/grimms-code",
-    "experiments/soroban-specter", "experiments/miller-reaction", "experiments/recursion-garden", "experiments/rossler-market",
+    "experiments/soroban-specter", "experiments/miller-reaction", "experiments/recursion-garden", "experiments/rossler-market", "experiments/hanging-abacus",
 ]
 resolver = "2"
 
