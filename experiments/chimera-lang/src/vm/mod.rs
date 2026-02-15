@@ -464,7 +464,7 @@ impl Value {
 /// // Values are wrapped in `Value::Int`.
 /// assert_eq!(vm.stack.len(), 1);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ChimeraVM {
     /// The read-only DNA program.
     ///

@@ -9,7 +9,7 @@ use crate::opcode::OpCode;
 use std::collections::{HashMap, HashSet, VecDeque};
 
 /// Represents a "time-travel" snapshot of the VM state.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Spore {
     pub phase: Phase,
     pub chirality: crate::vm::Chirality,

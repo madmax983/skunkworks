@@ -10,7 +10,7 @@ use crossterm::{
 use pest::Parser;
 #[cfg(feature = "nova")]
 use rand::Rng;
-use ratatui::widgets::canvas::{Canvas, Rectangle};
+use ratatui::widgets::canvas::{Canvas, Circle, Rectangle};
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
@@ -3942,21 +3942,39 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 }
 
                 // Fishing Line
+                let line_color = if app_state.fishing_tension > 0.8 {
+                    Color::Red
+                } else if app_state.fishing_tension > 0.5 {
+                    Color::Yellow
+                } else {
+                    Color::White
+                };
+
                 ctx.draw(&ratatui::widgets::canvas::Line {
                     x1: 50.0,
                     y1: 100.0, // Top center (approx rod tip)
                     x2: 50.0,
                     y2: app_state.fishing_bobber_y,
-                    color: Color::White,
+                    color: line_color,
                 });
 
-                // Bobber (Icon)
-                let bobber_icon = if app_state.fishing_hooked {
-                    "◎"
-                } else {
-                    "●"
-                };
-                ctx.print(49.5, app_state.fishing_bobber_y, bobber_icon);
+                // Bobber (Visual)
+                ctx.draw(&Circle {
+                    x: 50.0,
+                    y: app_state.fishing_bobber_y,
+                    radius: 2.0,
+                    color: if app_state.fishing_hooked {
+                        Color::Red
+                    } else {
+                        Color::White
+                    },
+                });
+                // Center detail
+                ctx.print(
+                    49.5,
+                    app_state.fishing_bobber_y - 0.5,
+                    if app_state.fishing_hooked { "!" } else { "." },
+                );
 
                 if app_state.fishing_hooked {
                     // Splash effect
@@ -3974,10 +3992,10 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     ctx.print(49.0, app_state.fishing_fish_y, fish_icon);
                 }
 
-                // Instructions Overlay (Bottom Right)
-                ctx.print(60.0, 5.0, "SPACE: Reel");
+                // Instructions Overlay (Top Right)
+                ctx.print(60.0, 90.0, "SPACE: Reel");
             } else {
-                ctx.print(35.0, 60.0, "Press SPACE to Cast");
+                ctx.print(35.0, 90.0, "Press SPACE to Cast");
             }
         });
 
