@@ -91,6 +91,10 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Condemned. Documentation void. Redundant with `bifurcation-landscape`.
 
+### [Concentration Level: TOXIC] - Location: experiments/chimera-fold
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Documentation void. Invisible to Swarm. Generic implementation.
+
 ### [Concentration Level: STABLE TRAIL] - Location: crates/tui-semantic
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Semantic bridge established. Ready for integration with TUI experiments.
