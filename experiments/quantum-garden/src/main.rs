@@ -39,7 +39,10 @@ impl App {
         }
     }
 
-    fn run<B: Backend>(&mut self, terminal: &mut Terminal<B>) -> Result<()> {
+    fn run<B: Backend>(&mut self, terminal: &mut Terminal<B>) -> Result<()>
+    where
+        <B as Backend>::Error: Send + Sync + 'static,
+    {
         loop {
             terminal.draw(|f| self.ui(f))?;
 
@@ -103,14 +106,7 @@ impl App {
                                             "Self-entanglement impossible! Choose another target."
                                                 .into();
                                     } else {
-                                        self.garden.system.apply_cnot(control, target)?;
-
-                                        // Update visuals
-                                        self.garden.plants[control].is_entangled = true;
-                                        self.garden.plants[target].is_entangled = true;
-                                        self.garden.plants[control].entangled_with.push(target);
-                                        self.garden.plants[target].entangled_with.push(control);
-                                        self.garden.update();
+                                        self.garden.apply_cnot(control, target)?;
 
                                         self.status_msg =
                                             format!("Entangled {} with {}", control, target);

@@ -131,7 +131,6 @@ members = [
     "experiments/bio-transit",
     "experiments/ferrous-graph", "experiments/spqr-rsa",
     "experiments/ferrous-legion", "experiments/harmonic-engine", "experiments/log-palette", "experiments/quipu-automaton", "experiments/locust-ddos", "experiments/holographic-brain", "experiments/bifurcation-probe",
-    "experiments/origami-spores", "experiments/valley-forge", "experiments/harmonic-mycelium", "experiments/luminous-valley", "experiments/gravitational-bridge", "experiments/ferrous-chimera", "experiments/quipu-legion", "experiments/chimera-pachinko", "experiments/git-etymologist", "experiments/etymological-mycelium", "experiments/typographic-turbulence", "experiments/net-groove", "experiments/klein-files", "experiments/process-canopy", "experiments/rigid-origami", "experiments/heap-market", "experiments/foveated-code", "experiments/gaze-attractor", "experiments/type-terrain", "experiments/lensing-poetry", "experiments/rhythm-diffusion", "experiments/memory-palace", "experiments/magnetic-echo",
     "experiments/bifurcation-landscape", "experiments/echo-cavern", "experiments/maat-engine", "experiments/clockwork-cipher", "experiments/myco-diffusion", "experiments/thermo-defense", "experiments/glossolalia",
     "experiments/chimera-maat", "experiments/thread-frequency", "experiments/root-maze", "experiments/chaotic-defense",
     "experiments/chimera-defense", "experiments/turing-terra", "experiments/chimera-terra",
