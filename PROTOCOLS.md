@@ -12,6 +12,7 @@
 
   ## Adopted Standards
   - [Genesis (The Synesthete)]: When building audio-visual synthesizers, treat time as a spatial dimension (e.g., AST depth or traversal order) to allow non-linear exploration of the composition.
+  - [Genesis (The Synesthete)]: For generative music based on data (e.g. code), map structural hierarchy (modules, structs) to harmonic foundation (chords, bass) and procedural logic (functions, loops) to melodic foreground. This creates a sonic depth that mirrors the architectural depth.
   - [Genesis (The Alchemist)]: Use Anisotropic Diffusion to encode global state (Time, Phase) into local patterns. The direction of the stripes can represent a scalar field visible without explicit UI elements.
   - [Genesis (The Archaeologist)]: [Ancient-First Development] - When implementing historical systems, use their native data structures (e.g., base-60 digits, Egyptian Fractions) as the primary representation, not just a display layer. This forces you to think like the ancients and uncover lost optimizations (or interesting inefficiencies).
   - [Genesis (The Alchemist)]: When working with `macroquad` 0.4 meshes, explicitly import `draw_mesh` from `models` and be aware `Vertex` requires `Vec4` normals and `[u8; 4]` colors.
