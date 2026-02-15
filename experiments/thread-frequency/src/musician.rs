@@ -6,6 +6,7 @@ use std::sync::{
 };
 use std::thread;
 use std::time::Duration;
+use rand::Rng;
 
 pub struct Beacon {
     pub last_beat: AtomicU64,
@@ -33,9 +34,12 @@ pub struct Musician {
     shared_resource: Arc<Mutex<()>>, // The resource to contend for
     running: Arc<AtomicBool>,
     beacon: Arc<Beacon>,
+    work_load: u64,
+    drift_ms: u64,
 }
 
 impl Musician {
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         id: usize,
         name: String,
@@ -47,6 +51,8 @@ impl Musician {
         shared_resource: Arc<Mutex<()>>,
         running: Arc<AtomicBool>,
         beacon: Arc<Beacon>,
+        work_load: u64,
+        drift_ms: u64,
     ) -> Self {
         Musician {
             id,
@@ -59,42 +65,90 @@ impl Musician {
             shared_resource,
             running,
             beacon,
+            work_load,
+            drift_ms,
         }
     }
 
     pub fn spawn(self) -> thread::JoinHandle<()> {
         thread::spawn(move || {
             let period_samples = (self.period_ms as f64 * self.sample_rate as f64 / 1000.0) as u64;
-            // Start slightly in the future
-            let start_time =
-                self.current_time.load(Ordering::Relaxed) + self.sample_rate as u64 / 2;
-            let mut next_beat_sample = start_time;
+
+            // Initial synchronization
+            let mut next_beat_sample = self.current_time.load(Ordering::Relaxed) + self.sample_rate as u64 / 2;
 
             while self.running.load(Ordering::Relaxed) {
                 let now = self.current_time.load(Ordering::Relaxed);
+
+                // Catch-up logic: If we missed the beat, skip to the next grid point
+                // This ensures we stay on the Euclidean grid even if we hiccup
+                while next_beat_sample < now {
+                     next_beat_sample += period_samples;
+                }
 
                 if now < next_beat_sample {
                     let diff = next_beat_sample - now;
                     let diff_ms = diff as f64 * 1000.0 / self.sample_rate as f64;
 
-                    if diff_ms > 20.0 {
-                        thread::sleep(Duration::from_millis((diff_ms - 10.0) as u64));
-                    } else if diff_ms > 2.0 {
-                        thread::sleep(Duration::from_millis(1));
+                    // Apply negative jitter (wake up slightly early/late)
+                    // If drift is enabled, we might wake up earlier or later.
+                    // But we can only sleep. So we sleep less.
+                    // Actually, "drift" usually means error.
+                    // Let's implement drift by modifying the sleep time randomly.
+
+                    let jitter = if self.drift_ms > 0 {
+                        rand::thread_rng().gen_range(0..=self.drift_ms) as f64
+                    } else {
+                        0.0
+                    };
+
+                    // We target waking up 'jitter' ms late (or early? let's say late for simplicity/laziness simulation)
+                    // Actually, let's just subtract jitter from the sleep time to be safe?
+                    // No, let's randomize the target wake up time.
+
+                    // Effective diff to sleep is diff_ms +/- jitter?
+                    // Let's just sleep a bit less or more.
+                    // If we sleep less, we spin.
+                    // If we sleep more, we are late (which is the goal of "drift").
+
+                    // Let's say we aim to be late by 'jitter' ms.
+                    // So we sleep diff_ms + jitter.
+
+                    // Wait, if we sleep too much, next_beat_sample < now logic triggers catch up?
+                    // Only if we are *way* late (past the next beat).
+                    // If we are slightly late, we just process late.
+
+                    let sleep_ms = if diff_ms > 20.0 {
+                        (diff_ms - 5.0) as u64 // Wake up 5ms early to spin
+                    } else {
+                        0
+                    };
+
+                    if sleep_ms > 0 {
+                         // Add random jitter to the sleep
+                         let randomized_sleep = sleep_ms.saturating_add(jitter as u64);
+                         thread::sleep(Duration::from_millis(randomized_sleep));
+                    } else if diff_ms > 1.0 {
+                         thread::sleep(Duration::from_millis(1));
                     } else {
                         std::hint::spin_loop();
                     }
-                    continue;
+
+                    // Check time again after waking up
+                    let now_after_sleep = self.current_time.load(Ordering::Relaxed);
+                    if now_after_sleep < next_beat_sample {
+                        continue; // Still early, loop again (spin)
+                    }
                 }
 
-                // It's the beat!
+                // It's the beat! (or we are slightly late)
+
                 // Attempt synchronization (contention)
                 let (final_voice, volume) = match self.shared_resource.try_lock() {
                     Ok(guard) => {
-                        // Simulate work
-                        let work_load = 5000;
+                        // Simulate work based on work_load
                         let mut x: u64 = 0;
-                        for _ in 0..work_load {
+                        for _ in 0..self.work_load {
                             x = x.wrapping_add(1);
                             std::hint::black_box(x);
                         }
@@ -109,9 +163,17 @@ impl Musician {
                     }
                 };
 
-                // Schedule event slightly in future to avoid glitches
-                // If we are late (now > next_beat_sample), we schedule ASAP
-                let schedule_time = std::cmp::max(now + 500, next_beat_sample + 500);
+                let now = self.current_time.load(Ordering::Relaxed);
+
+                // Schedule event. Since we might be late, we schedule it ASAP (now + small buffer)
+                // or at the *intended* time if possible?
+                // If we schedule in the past, AudioEngine (new logic) starts it NOW.
+                // So passing 'next_beat_sample' (the intended time) is correct if we want
+                // the audio engine to handle "catch up" (play immediately if late).
+                // But let's pass 'now + buffer' to be safe against glitches.
+
+                // Actually, passing 'now' is safer for real-time generation.
+                let schedule_time = now; // Play immediately
 
                 let _ = self.tx.send(RhythmEvent {
                     timestamp: schedule_time,
@@ -128,13 +190,8 @@ impl Musician {
                     .is_clash
                     .store(matches!(final_voice, Voice::Clave), Ordering::Relaxed);
 
-                // Advance beat
+                // Advance beat to next grid point
                 next_beat_sample += period_samples;
-
-                // If we fell way behind, skip beats to catch up
-                if next_beat_sample < now {
-                    next_beat_sample = now + period_samples;
-                }
             }
         })
     }

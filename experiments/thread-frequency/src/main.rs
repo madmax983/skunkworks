@@ -5,7 +5,7 @@ mod tui;
 use anyhow::Result;
 use audio::{AudioEngine, Voice};
 use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
+    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyModifiers},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
@@ -21,40 +21,41 @@ use tui::{draw_ui, TuiState};
 fn main() -> Result<()> {
     // Audio Setup
     // AudioEngine::new might fail in CI/Sandbox if no audio device.
-    // We should handle it gracefully to allow TUI to run even if silent?
-    // But AudioEngine::new returns current_time, which drives everything.
-    // If AudioEngine fails, we can fallback to a dummy time source?
-    // For now, let's propagate error and see.
+    // We try to handle it gracefully by allowing simulation mode (via features) or just failing if strict.
+    // Since we refactored audio.rs to have a fallback simulation mode via cfg, this should be fine
+    // provided the feature flags are set correctly.
+    // If 'audio' feature is enabled but fails (e.g. no device), it returns Err.
+    // We can't easily fallback to simulation at runtime if it's compile-time cfg.
+    // But we can just let it fail and print error.
     let (audio_engine, tx, current_time) = match AudioEngine::new() {
         Ok(res) => res,
         Err(e) => {
             eprintln!("Failed to initialize audio: {}", e);
-            // If we are strictly "Audio-only generative music", this is fatal.
-            // But we can try to be nice.
             return Err(e);
         }
     };
 
     let sample_rate = audio_engine.sample_rate();
 
-    // Prevent audio engine from being dropped (it keeps the stream alive)
+    // Prevent audio engine from being dropped
     #[allow(unused_variables)]
     let _audio_engine = audio_engine;
 
     // Shared Resource for Synchronization (The "Drum Circle Center")
+    // Threads contend for this lock.
     let shared_resource = Arc::new(Mutex::new(()));
     let running = Arc::new(AtomicBool::new(true));
 
     // Musicians configuration
-    // Using prime-ish numbers for interesting phasing
+    // (Name, Period(ms), Voice, WorkLoad(iters), Drift(ms))
     let configs = vec![
-        ("Kick", 500, Voice::Kick),        // 120 BPM base
-        ("Snare", 666, Voice::Snare),      // ~90 BPM
-        ("HiHat", 250, Voice::Hihat),      // 240 BPM
-        ("Clave", 400, Voice::Clave),      // 150 BPM
-        ("Bass", 1500, Voice::Synth(0)),   // Slow bass
-        ("Pad", 1103, Voice::Synth(7)),    // Prime 1103ms
-        ("Glitch", 293, Voice::Synth(12)), // Prime 293ms
+        ("Kick", 500, Voice::Kick, 1000, 0),          // Anchor: 120 BPM, stable
+        ("Snare", 666, Voice::Snare, 2000, 5),        // Polyrhythm 3:4ish, slight drift
+        ("HiHat", 250, Voice::Hihat, 500, 15),        // Fast, jittery (human feel)
+        ("Perc", 400, Voice::Clave, 3000, 2),         // 150 BPM, contends moderately
+        ("Bass", 1500, Voice::Synth(0), 10000, 0),    // Slow, Heavy work (blocks others)
+        ("Pad", 1103, Voice::Synth(7), 5000, 10),     // Prime period, moderate work
+        ("Glitch", 293, Voice::Synth(12), 100, 50),   // Fast prime, very jittery
     ];
 
     let mut names = Vec::new();
@@ -63,7 +64,7 @@ fn main() -> Result<()> {
     let mut beacons = Vec::new();
     let mut handles = Vec::new();
 
-    for (id, (name, period, voice)) in configs.into_iter().enumerate() {
+    for (id, (name, period, voice, work, drift)) in configs.into_iter().enumerate() {
         let beacon = Arc::new(Beacon::new());
         beacons.push(beacon.clone());
         names.push(name.to_string());
@@ -81,12 +82,17 @@ fn main() -> Result<()> {
             shared_resource.clone(),
             running.clone(),
             beacon,
+            work,
+            drift,
         );
 
         handles.push(musician.spawn());
     }
 
     // TUI Setup
+    // Use a guard to ensure cleanup even on panic?
+    // Rust doesn't have try-finally, but Drop trait handles it.
+    // For now, standard pattern.
     enable_raw_mode()?;
     let mut stdout = io::stdout();
     execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
@@ -114,8 +120,10 @@ fn main() -> Result<()> {
 
         if crossterm::event::poll(timeout)? {
             if let Event::Key(key) = event::read()? {
-                if let KeyCode::Char('q') = key.code {
-                    break;
+                match key.code {
+                    KeyCode::Char('q') => break,
+                    KeyCode::Char('c') if key.modifiers.contains(KeyModifiers::CONTROL) => break,
+                    _ => {}
                 }
             }
         }
@@ -123,12 +131,17 @@ fn main() -> Result<()> {
         if last_tick.elapsed() >= tick_rate {
             last_tick = std::time::Instant::now();
         }
+
+        // Check if we should stop (external signal?)
+        if !running.load(Ordering::Relaxed) {
+            break;
+        }
     }
 
     // Cleanup
     running.store(false, Ordering::Relaxed);
-    // Wait for threads? No need, we exit process.
 
+    // Restore terminal
     disable_raw_mode()?;
     execute!(
         terminal.backend_mut(),
@@ -136,6 +149,12 @@ fn main() -> Result<()> {
         DisableMouseCapture
     )?;
     terminal.show_cursor()?;
+
+    println!("Session ended. Threads are winding down...");
+
+    // We don't join threads because they might be sleeping or stuck in loops.
+    // The OS will clean them up on exit.
+    // If we wanted to be clean, we'd join, but `running` flag should stop them eventually.
 
     Ok(())
 }
