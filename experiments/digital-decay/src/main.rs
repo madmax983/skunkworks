@@ -51,7 +51,10 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>, app: &mut AppState) -> Result<()>
+fn run_app<B: ratatui::backend::Backend>(
+    terminal: &mut Terminal<B>,
+    app: &mut AppState,
+) -> Result<()>
 where
     <B as ratatui::backend::Backend>::Error: Send + Sync + 'static,
 {
@@ -132,12 +135,12 @@ where
                             }
                         }
                         KeyCode::Left | KeyCode::Char('h') => {
-                             if !app.inspector_view && app.selected_index > 0 {
+                            if !app.inspector_view && app.selected_index > 0 {
                                 app.selected_index -= 1;
                             }
                         }
                         KeyCode::Right | KeyCode::Char('l') => {
-                             if !app.inspector_view && app.selected_index + 1 < app.files.len() {
+                            if !app.inspector_view && app.selected_index + 1 < app.files.len() {
                                 app.selected_index += 1;
                             }
                         }

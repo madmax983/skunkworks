@@ -1,8 +1,8 @@
 use anyhow::Result;
+use git2::{Repository, Status};
+use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
-use std::collections::HashMap;
-use git2::{Repository, Status};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FileType {
@@ -89,43 +89,47 @@ pub fn get_repo_statuses(root: &Path) -> HashMap<PathBuf, GitStatus> {
     // Try to find repo starting from root
     if let Ok(repo) = Repository::discover(root) {
         if let Ok(statuses) = repo.statuses(None) {
-             for entry in statuses.iter() {
-                 if let Some(path_str) = entry.path() {
-                     // entry.path() is relative to repo workdir
-                     if let Some(workdir) = repo.workdir() {
-                         let full_path = workdir.join(path_str);
+            for entry in statuses.iter() {
+                if let Some(path_str) = entry.path() {
+                    // entry.path() is relative to repo workdir
+                    if let Some(workdir) = repo.workdir() {
+                        let full_path = workdir.join(path_str);
 
-                         let status = entry.status();
-                         let s = if status.is_conflicted() {
-                             GitStatus::Conflict
-                         } else if status.is_wt_new() || status.is_index_new() {
-                             GitStatus::New
-                         } else if status.is_wt_modified() || status.is_index_modified() {
-                             GitStatus::Modified
-                         } else if status.is_wt_deleted() || status.is_index_deleted() {
-                             GitStatus::Deleted
-                         } else if status.is_ignored() {
-                             GitStatus::Ignored
-                         } else if status.is_index_renamed() {
-                             GitStatus::Renamed
-                         } else {
-                             // clean
-                             GitStatus::Clean
-                         };
+                        let status = entry.status();
+                        let s = if status.is_conflicted() {
+                            GitStatus::Conflict
+                        } else if status.is_wt_new() || status.is_index_new() {
+                            GitStatus::New
+                        } else if status.is_wt_modified() || status.is_index_modified() {
+                            GitStatus::Modified
+                        } else if status.is_wt_deleted() || status.is_index_deleted() {
+                            GitStatus::Deleted
+                        } else if status.is_ignored() {
+                            GitStatus::Ignored
+                        } else if status.is_index_renamed() {
+                            GitStatus::Renamed
+                        } else {
+                            // clean
+                            GitStatus::Clean
+                        };
 
-                         // We only care if it's not clean, but map.insert overwrites
-                         if s != GitStatus::Clean {
+                        // We only care if it's not clean, but map.insert overwrites
+                        if s != GitStatus::Clean {
                             map.insert(full_path, s);
-                         }
-                     }
-                 }
-             }
+                        }
+                    }
+                }
+            }
         }
     }
     map
 }
 
-pub fn scan_dir<P: AsRef<Path>>(path: P, max_depth: usize, git_map: &HashMap<PathBuf, GitStatus>) -> Result<DirNode> {
+pub fn scan_dir<P: AsRef<Path>>(
+    path: P,
+    max_depth: usize,
+    git_map: &HashMap<PathBuf, GitStatus>,
+) -> Result<DirNode> {
     let path = path.as_ref();
     let metadata = fs::metadata(path)?;
 
@@ -139,12 +143,17 @@ pub fn scan_dir<P: AsRef<Path>>(path: P, max_depth: usize, git_map: &HashMap<Pat
     let path_buf = if path.is_absolute() {
         path.to_path_buf()
     } else {
-         std::env::current_dir()?.join(path)
+        std::env::current_dir()?.join(path)
     };
 
     let status = git_map.get(&path_buf).copied();
 
-    let mut node = DirNode::new(path.to_path_buf(), metadata.is_dir(), metadata.len(), status);
+    let mut node = DirNode::new(
+        path.to_path_buf(),
+        metadata.is_dir(),
+        metadata.len(),
+        status,
+    );
 
     if max_depth > 0 && node.is_dir {
         // Read directory entries
@@ -195,10 +204,10 @@ pub fn scan_dir<P: AsRef<Path>>(path: P, max_depth: usize, git_map: &HashMap<Pat
 #[cfg(test)]
 mod tests {
     use super::*;
+    use git2::Repository;
     use std::fs::File;
     use std::io::Write;
     use tempfile::tempdir;
-    use git2::Repository;
 
     #[test]
     fn test_git_status_integration() -> Result<()> {
@@ -235,11 +244,19 @@ mod tests {
         let node = scan_dir(root, 2, &git_map)?;
 
         // Verify "new_file.txt" is New
-        let new_node = node.children.iter().find(|c| c.name == "new_file.txt").unwrap();
+        let new_node = node
+            .children
+            .iter()
+            .find(|c| c.name == "new_file.txt")
+            .unwrap();
         assert_eq!(new_node.git_status, Some(GitStatus::New));
 
         // Verify "clean_file.txt" is Modified
-        let mod_node = node.children.iter().find(|c| c.name == "clean_file.txt").unwrap();
+        let mod_node = node
+            .children
+            .iter()
+            .find(|c| c.name == "clean_file.txt")
+            .unwrap();
         assert_eq!(mod_node.git_status, Some(GitStatus::Modified));
 
         Ok(())

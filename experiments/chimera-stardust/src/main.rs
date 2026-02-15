@@ -1,7 +1,7 @@
+use ::rand::prelude::*;
 use chimera_lang::prelude::*;
 use image::RgbaImage;
 use macroquad::prelude::*;
-use ::rand::prelude::*;
 use stardust_compiler::stego;
 
 const GRID_WIDTH: u32 = 800;
@@ -27,39 +27,92 @@ impl Agent {
         let mut genes = Vec::new();
 
         // --- READ RED ---
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }); // Y
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }); // X
-        genes.push(Gene { op: OpCode::GRead, args: vec![] }); // Stack: [Red]
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(8)],
+        }); // Y
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(8)],
+        }); // X
+        genes.push(Gene {
+            op: OpCode::GRead,
+            args: vec![],
+        }); // Stack: [Red]
 
         // Modify Red (Add 10)
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] });
-        genes.push(Gene { op: OpCode::Add, args: vec![] });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(10)],
+        });
+        genes.push(Gene {
+            op: OpCode::Add,
+            args: vec![],
+        });
 
         // Write Red ([1][0])
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }); // Y
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }); // X
-        genes.push(Gene { op: OpCode::GWrite, args: vec![] });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        }); // Y
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }); // X
+        genes.push(Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        });
 
         // --- MOVE ---
         // DX (Random -1..1) - simulated by just pushing a number for now,
         // normally we'd want logic but hardcoding movement into genes makes them "drift" in specific directions
         let dx: i64 = rng.gen_range(-1..=1);
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(dx)] });
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }); // Y
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }); // X
-        genes.push(Gene { op: OpCode::GWrite, args: vec![] });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(dx)],
+        });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }); // Y
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }); // X
+        genes.push(Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        });
 
         let dy: i64 = rng.gen_range(-1..=1);
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(dy)] });
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }); // Y
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }); // X
-        genes.push(Gene { op: OpCode::GWrite, args: vec![] });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(dy)],
+        });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }); // Y
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        }); // X
+        genes.push(Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        });
 
         // Loop
-        genes.push(Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] });
+        genes.push(Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(0)],
+        });
 
         let dna = Dna {
-            helix: Helix { strands: vec![Strand { genes }] },
+            helix: Helix {
+                strands: vec![Strand { genes }],
+            },
         };
         let mut vm = ChimeraVM::new(dna);
         vm.chaos_mode = true; // Allow mutations
@@ -87,44 +140,62 @@ impl Agent {
         // 2. Execute DNA
         for _ in 0..10 {
             self.vm.step();
-            if self.vm.halted { break; }
+            if self.vm.halted {
+                break;
+            }
         }
 
         // 3. Read Actuators
         // Movement
-        let dx = match self.vm.grid[0][0] { Value::Int(n) => n.clamp(-1, 1), _ => 0 };
-        let dy = match self.vm.grid[0][1] { Value::Int(n) => n.clamp(-1, 1), _ => 0 };
+        let dx = match self.vm.grid[0][0] {
+            Value::Int(n) => n.clamp(-1, 1),
+            _ => 0,
+        };
+        let dy = match self.vm.grid[0][1] {
+            Value::Int(n) => n.clamp(-1, 1),
+            _ => 0,
+        };
 
         // Color Modification
         let mut new_r = r;
-        if let Value::Int(v) = self.vm.grid[1][0] { new_r = v.clamp(0, 255); }
+        if let Value::Int(v) = self.vm.grid[1][0] {
+            new_r = v.clamp(0, 255);
+        }
 
         let mut new_g = g;
-        if let Value::Int(v) = self.vm.grid[1][1] { new_g = v.clamp(0, 255); }
+        if let Value::Int(v) = self.vm.grid[1][1] {
+            new_g = v.clamp(0, 255);
+        }
 
         let mut new_b = b;
-        if let Value::Int(v) = self.vm.grid[1][2] { new_b = v.clamp(0, 255); }
+        if let Value::Int(v) = self.vm.grid[1][2] {
+            new_b = v.clamp(0, 255);
+        }
 
         // Apply changes to environment
-        img.put_pixel(self.x, self.y, image::Rgba([new_r as u8, new_g as u8, new_b as u8, 255]));
+        img.put_pixel(
+            self.x,
+            self.y,
+            image::Rgba([new_r as u8, new_g as u8, new_b as u8, 255]),
+        );
 
         // Move
         if dx != 0 || dy != 0 {
-             let new_x = (self.x as i64 + dx).rem_euclid(GRID_WIDTH as i64) as u32;
-             let new_y = (self.y as i64 + dy).rem_euclid(GRID_HEIGHT as i64) as u32;
-             self.x = new_x;
-             self.y = new_y;
+            let new_x = (self.x as i64 + dx).rem_euclid(GRID_WIDTH as i64) as u32;
+            let new_y = (self.y as i64 + dy).rem_euclid(GRID_HEIGHT as i64) as u32;
+            self.x = new_x;
+            self.y = new_y;
         }
 
         // Random Mutation (Simulated via drift for now to ensure activity)
         let mut rng = ::rand::thread_rng();
         if rng.gen_bool(0.05) {
-             let mx = rng.gen_range(-1..=1);
-             let my = rng.gen_range(-1..=1);
-             let new_x = (self.x as i64 + mx).rem_euclid(GRID_WIDTH as i64) as u32;
-             let new_y = (self.y as i64 + my).rem_euclid(GRID_HEIGHT as i64) as u32;
-             self.x = new_x;
-             self.y = new_y;
+            let mx = rng.gen_range(-1..=1);
+            let my = rng.gen_range(-1..=1);
+            let new_x = (self.x as i64 + mx).rem_euclid(GRID_WIDTH as i64) as u32;
+            let new_y = (self.y as i64 + my).rem_euclid(GRID_HEIGHT as i64) as u32;
+            self.x = new_x;
+            self.y = new_y;
         }
     }
 }
@@ -170,13 +241,25 @@ async fn main() {
 
         // Draw Agents as bright sparks
         for agent in &agents {
-             draw_circle(agent.x as f32, agent.y as f32, 2.0, agent.color);
+            draw_circle(agent.x as f32, agent.y as f32, 2.0, agent.color);
         }
 
         // UI
         draw_text("Chimera Stardust", 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Agents: {}", agents.len()), 20.0, 60.0, 20.0, WHITE);
-        draw_text("Agents are reading/writing pixels as DNA IO", 20.0, 90.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Agents: {}", agents.len()),
+            20.0,
+            60.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "Agents are reading/writing pixels as DNA IO",
+            20.0,
+            90.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await;
     }

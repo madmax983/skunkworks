@@ -116,10 +116,10 @@ pub mod nova_ballistics;
 #[cfg(feature = "nova")]
 pub mod nova_bestiary;
 #[cfg(feature = "nova")]
-pub mod nova_biolum;
-#[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_bestiary_test;
+#[cfg(feature = "nova")]
+pub mod nova_biolum;
 #[cfg(feature = "nova")]
 pub mod nova_biome;
 #[cfg(feature = "nova")]

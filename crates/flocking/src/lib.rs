@@ -134,18 +134,18 @@ pub fn compute_force(others: &[PhysicsState], my_idx: usize, params: &FlockingPa
     let view_sq = params.view_radius * params.view_radius;
     let sep_sq = params.separation_radius * params.separation_radius;
 
-    for (i, other) in others.iter().enumerate() {
-        if i == my_idx {
-            continue;
-        }
-
-        let d_sq = me.position.distance_squared(other.position);
+    // Helper closure for processing neighbors
+    // Note: We use a closure here to capture the accumulators.
+    // We rely on the compiler to inline this for performance.
+    // If performance regresses, check if inlining failed.
+    let mut process_neighbor = |other: &PhysicsState| {
+        let diff = me.position - other.position;
+        let d_sq = diff.magnitude_squared();
 
         if d_sq > 0.0 && d_sq < view_sq {
             // Separation
             if d_sq < sep_sq {
-                let diff = me.position - other.position;
-                separation += diff / d_sq;
+                separation += diff * (1.0 / d_sq);
                 sep_count += 1;
             }
 
@@ -157,6 +157,14 @@ pub fn compute_force(others: &[PhysicsState], my_idx: usize, params: &FlockingPa
             cohesion += other.position;
             coh_count += 1;
         }
+    };
+
+    let (before, after) = others.split_at(my_idx);
+    for other in before {
+        process_neighbor(other);
+    }
+    for other in &after[1..] {
+        process_neighbor(other);
     }
 
     let mut total = Vec2::zero();

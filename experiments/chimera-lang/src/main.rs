@@ -95,7 +95,9 @@ fn main() -> Result<()> {
             let (type_str, type_color) = match val {
                 chimera_lang::vm::Value::Int(_) => ("Integer", comfy_table::Color::Blue),
                 chimera_lang::vm::Value::Str(_) => ("String", comfy_table::Color::Cyan),
-                chimera_lang::vm::Value::Junction(_, _) => ("Junction", comfy_table::Color::Magenta),
+                chimera_lang::vm::Value::Junction(_, _) => {
+                    ("Junction", comfy_table::Color::Magenta)
+                }
                 chimera_lang::vm::Value::Superposition(_) => {
                     ("Superposition", comfy_table::Color::Yellow)
                 }

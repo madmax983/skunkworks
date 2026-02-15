@@ -16,7 +16,9 @@ pub fn exec_luciferin(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let g_val = vm.stack.pop().unwrap();
         let r_val = vm.stack.pop().unwrap();
 
-        if let (Value::Int(r), Value::Int(g), Value::Int(b), Value::Int(i)) = (r_val, g_val, b_val, intensity_val) {
+        if let (Value::Int(r), Value::Int(g), Value::Int(b), Value::Int(i)) =
+            (r_val, g_val, b_val, intensity_val)
+        {
             let (cy, cx) = vm.context_loc;
             if i > 0 {
                 let r = r.clamp(0, 255) as u8;
@@ -32,13 +34,18 @@ pub fn exec_luciferin(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 vm.light_color_grid[cy][cx] = (r, g, b);
 
                 vm.energy = vm.energy.saturating_sub(i / 10 + 1);
-                vm.output.push(format!("LUCIFERIN: Emitted ({},{},{}) intensity {} at {},{}", r, g, b, i, cx, cy));
+                vm.output.push(format!(
+                    "LUCIFERIN: Emitted ({},{},{}) intensity {} at {},{}",
+                    r, g, b, i, cx, cy
+                ));
             }
         } else {
-            vm.output.push("Error: Type mismatch for luciferin".to_string());
+            vm.output
+                .push("Error: Type mismatch for luciferin".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for luciferin".to_string());
+        vm.output
+            .push("Error: Stack underflow for luciferin".to_string());
     }
     None
 }
@@ -63,16 +70,22 @@ pub fn exec_photophore(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                         vm.light_color_grid[ty][tx] = color;
                     }
                     vm.energy = vm.energy.saturating_sub((count / 2) as i64);
-                    vm.output.push(format!("PHOTOPHORE: Projected light radius {} from {},{}", r, cx, cy));
+                    vm.output.push(format!(
+                        "PHOTOPHORE: Projected light radius {} from {},{}",
+                        r, cx, cy
+                    ));
                 } else {
-                    vm.output.push("PHOTOPHORE: No light to project".to_string());
+                    vm.output
+                        .push("PHOTOPHORE: No light to project".to_string());
                 }
             }
         } else {
-            vm.output.push("Error: Type mismatch for photophore".to_string());
+            vm.output
+                .push("Error: Type mismatch for photophore".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for photophore".to_string());
+        vm.output
+            .push("Error: Stack underflow for photophore".to_string());
     }
     None
 }

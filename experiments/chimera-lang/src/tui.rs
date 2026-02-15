@@ -9735,8 +9735,12 @@ fn render_biolum(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             }
 
             let mut ch = "·".to_string();
-            if intensity > 50 { ch = "*".to_string(); }
-            if intensity > 150 { ch = "☼".to_string(); }
+            if intensity > 50 {
+                ch = "*".to_string();
+            }
+            if intensity > 150 {
+                ch = "☼".to_string();
+            }
 
             if app_state.grid_cursor == (x, y) {
                 style = style.add_modifier(Modifier::REVERSED);
@@ -9773,10 +9777,7 @@ fn render_biolum(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  Lumine(int, radius)"),
     ];
 
-    let info_widget = Paragraph::new(info).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Spectrometer"),
-    );
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Spectrometer"));
     f.render_widget(info_widget, chunks[1]);
 }
