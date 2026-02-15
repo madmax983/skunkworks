@@ -86,14 +86,19 @@ fn main() -> Result<()> {
         println!("Execution complete.");
 
         let mut table = comfy_table::Table::new();
-        table.set_header(vec!["Index", "Type", "Value"]);
+        table
+            .load_preset(comfy_table::presets::UTF8_FULL)
+            .set_content_arrangement(comfy_table::ContentArrangement::Dynamic)
+            .set_header(vec!["Index", "Type", "Value"]);
 
         for (i, val) in vm.stack.iter().rev().enumerate() {
-            let type_str = match val {
-                chimera_lang::vm::Value::Int(_) => "Integer",
-                chimera_lang::vm::Value::Str(_) => "String",
-                chimera_lang::vm::Value::Junction(_, _) => "Junction",
-                chimera_lang::vm::Value::Superposition(_) => "Superposition",
+            let (type_str, type_color) = match val {
+                chimera_lang::vm::Value::Int(_) => ("Integer", comfy_table::Color::Blue),
+                chimera_lang::vm::Value::Str(_) => ("String", comfy_table::Color::Cyan),
+                chimera_lang::vm::Value::Junction(_, _) => ("Junction", comfy_table::Color::Magenta),
+                chimera_lang::vm::Value::Superposition(_) => {
+                    ("Superposition", comfy_table::Color::Yellow)
+                }
             };
 
             let val_str = format!("{}", val);
@@ -104,11 +109,13 @@ fn main() -> Result<()> {
                 val_cell = val_cell.fg(comfy_table::Color::Green);
             } else if val_str == "0" || val_str.to_lowercase() == "false" {
                 val_cell = val_cell.fg(comfy_table::Color::Red);
+            } else if matches!(val, chimera_lang::vm::Value::Str(_)) {
+                val_cell = val_cell.fg(comfy_table::Color::Cyan);
             }
 
             table.add_row(vec![
                 comfy_table::Cell::new(i),
-                comfy_table::Cell::new(type_str),
+                comfy_table::Cell::new(type_str).fg(type_color),
                 val_cell,
             ]);
         }
