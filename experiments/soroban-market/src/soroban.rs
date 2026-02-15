@@ -1,8 +1,61 @@
+//! # Soroban: The Ancient Calculator 🧮
+//!
+//! A **Soroban** (算盤) is a Japanese abacus, optimized for decimal calculation.
+//! Unlike the Chinese Suanpan (which has 2 heaven and 5 earth beads), the modern Soroban
+//! has:
+//!
+//! *   **1 Heaven Bead** (Upper Deck): Represents the value **5**.
+//! *   **4 Earth Beads** (Lower Deck): Each represents the value **1**.
+//!
+//! This minimal design allows for extremely fast mental calculation (Anzan).
+//!
+//! ## Structure of a Column
+//! Each column represents a decimal place ($10^0, 10^1, 10^2, \dots$).
+//!
+//! ```text
+//!       +---+
+//!       | | |  <-- Heaven Bead (Value 5)
+//!       +---+
+//!     ---------  <-- Beam
+//!       +---+
+//!       | | |  <-- Earth Bead 1 (Value 1)
+//!       +---+
+//!       | | |  <-- Earth Bead 2 (Value 1)
+//!       +---+
+//!       | | |  <-- Earth Bead 3 (Value 1)
+//!       +---+
+//!       | | |  <-- Earth Bead 4 (Value 1)
+//!       +---+
+//! ```
+//!
+//! ## Representation of Digits
+//!
+//! | Digit | Heaven (5) | Earth (1s) | Calculation |
+//! |-------|------------|------------|-------------|
+//! | **0** | Up (Inactive)| 0 Up       | $0 + 0$     |
+//! | **1** | Up         | 1 Up       | $0 + 1$     |
+//! | **2** | Up         | 2 Up       | $0 + 2$     |
+//! | **3** | Up         | 3 Up       | $0 + 3$     |
+//! | **4** | Up         | 4 Up       | $0 + 4$     |
+//! | **5** | Down (Active)| 0 Up       | $5 + 0$     |
+//! | **6** | Down       | 1 Up       | $5 + 1$     |
+//! | **7** | Down       | 2 Up       | $5 + 2$     |
+//! | **8** | Down       | 3 Up       | $5 + 3$     |
+//! | **9** | Down       | 4 Up       | $5 + 4$     |
+
+/// A single rod on the Soroban, representing one decimal digit (0-9).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Column {
-    /// True if the heaven bead (5) is down (active)
+    /// The Heaven Bead (Value 5).
+    ///
+    /// * `true`: Bead is **Down** (Active). Value adds 5.
+    /// * `false`: Bead is **Up** (Inactive). Value adds 0.
     pub upper_active: bool,
-    /// Number of earth beads (1) up (active). Range 0-4.
+
+    /// The Earth Beads (Value 1 each).
+    ///
+    /// * Range: 0 to 4.
+    /// * Represents the number of beads pushed **Up** (Active) against the beam.
     pub lower_active: u8,
 }
 
@@ -16,11 +69,15 @@ impl Default for Column {
 }
 
 impl Column {
+    /// Returns the decimal value of this column (0-9).
     pub fn value(&self) -> u8 {
         (if self.upper_active { 5 } else { 0 }) + self.lower_active
     }
 
-    /// Sets the column value directly (for initialization/testing)
+    /// Sets the column value directly (for initialization/testing).
+    ///
+    /// # Panics
+    /// Panics if `val` is greater than 9.
     pub fn set_value(&mut self, val: u8) {
         assert!(val <= 9, "Column value must be 0-9");
         self.upper_active = val >= 5;
@@ -28,6 +85,15 @@ impl Column {
     }
 }
 
+/// A 13-column Japanese Abacus.
+///
+/// Capable of representing numbers up to $10^{13} - 1$ (10 Trillion).
+///
+/// # Layout
+/// * **Column 0**: The "Ones" place ($10^0$).
+/// * **Column 1**: The "Tens" place ($10^1$).
+/// * ...
+/// * **Column 12**: The "Trillions" place ($10^{12}$).
 #[derive(Debug, Clone)]
 pub struct Soroban {
     // Column 0 is the ones place, 1 is tens, etc.
@@ -43,10 +109,12 @@ impl Default for Soroban {
 }
 
 impl Soroban {
+    /// Creates a new, zeroed Soroban.
     pub fn new() -> Self {
         Self::default()
     }
 
+    /// Returns the total integer value represented by the Soroban.
     pub fn value(&self) -> u64 {
         let mut total = 0;
         let mut multiplier = 1;
@@ -57,6 +125,21 @@ impl Soroban {
         total
     }
 
+    /// Adds a number to the Soroban.
+    ///
+    /// Simulates the physical process of adding bead values, including
+    /// "Carrying" over to the next column when a column exceeds 9.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use soroban_market::soroban::Soroban;
+    /// let mut s = Soroban::new();
+    /// s.add(5);
+    /// assert_eq!(s.value(), 5);
+    /// s.add(7); // 5 + 7 = 12 (Carry 1 to tens column)
+    /// assert_eq!(s.value(), 12);
+    /// ```
     pub fn add(&mut self, val: u64) {
         let mut temp_val = val;
         let mut col_idx = 0;
@@ -93,6 +176,20 @@ impl Soroban {
         }
     }
 
+    /// Subtracts a number from the Soroban.
+    ///
+    /// Simulates the physical process of removing bead values, including
+    /// "Borrowing" from higher columns when a column cannot subtract the amount.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use soroban_market::soroban::Soroban;
+    /// let mut s = Soroban::new();
+    /// s.add(10);
+    /// s.sub(3); // Borrow 1 from tens column (10 -> 0), add 10 to ones (0 -> 10), sub 3 -> 7.
+    /// assert_eq!(s.value(), 7);
+    /// ```
     pub fn sub(&mut self, val: u64) {
         let mut temp_val = val;
         let mut col_idx = 0;
