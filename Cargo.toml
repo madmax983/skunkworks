@@ -106,7 +106,6 @@ members = [
     "experiments/quipu-chimera", "experiments/system-attractor", "experiments/biomimetic-synth", "experiments/astral-chimera",
     "experiments/gravity-termites",
     "experiments/cosmic-strings", "experiments/mobius-git", "experiments/git-ghost", "experiments/ripple-tank", "experiments/quipu-serializer",
-    "experiments/lichen-mesh",
     "experiments/hyperbolic-lichen",
     "experiments/synaptic-trace", "experiments/morph-physics", "experiments/hyperbolic-raymarcher", "experiments/hydro-boids", "experiments/recursive-conservatory", "experiments/hyperbolic-lexicon",
     "experiments/quantum-lexicon",
