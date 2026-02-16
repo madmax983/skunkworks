@@ -287,6 +287,8 @@ mod nova_transposon_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_virus_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_memetics_advanced_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_void_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_ward_test;

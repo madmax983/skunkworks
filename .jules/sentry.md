@@ -15,3 +15,7 @@
 ## [Ballistics Integer Overflow]
 **Learning:** Distance calculations using `i64` coordinates like `dx*dx + dy*dy` can easily overflow if inputs are large, causing a panic in debug mode or incorrect wrapping in release mode. The VM handles `Value::Int` (i64), so inputs can be `i64::MAX`.
 **Action:** Always cast integer coordinates to `f64` *before* performing squaring or distance calculations if the result is intended to be a float or large magnitude. `((dx as f64).powi(2) + (dy as f64).powi(2)).sqrt()` is safe.
+
+## [Struct Field Drift in Tests]
+**Learning:** Integration tests in `tests/` are separate compilation units. When core structs (like `Virus` in `chimera-lang`) are updated with new fields, manual construction in tests breaks compilation.
+**Action:** When adding fields to a public struct, search the entire codebase (including `tests/`) for its construction. Consider adding a `new()` constructor or builder pattern to the public API to isolate tests from internal structural changes.
