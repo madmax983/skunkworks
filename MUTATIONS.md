@@ -1014,4 +1014,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Boids emitting activator chemicals into a reaction-diffusion grid, which modulates audio synthesis.
 - **Novel trait**: Auditory Flocking. The swarm behavior generates the soundscape via chemical trails.
 - **Status**: experiments/hydro-soundscapes
+- **Evaluation**: Compiles (Warnings). Verified in GUESTBOOK.
+
+### entropy-beast
+- **Parents**: Genesis (The Archivist)
+- **Concept**: Data resilience visualization where binary serialized creatures are corrupted by entropy and reconstructed by an archaeologist parser.
+- **Novel trait**: Emergent Monstrosity. Detached limbs become new appendages. Data corruption as evolution.
+- **Status**: experiments/entropy-beast
+- **Evaluation**: Compiles. Documented by The Splice Surgeon. Verified in GUESTBOOK.
+
+### chimera-runes
+- **Parents**: experiments/wasm-runes + experiments/chimera-lang
+- **Concept**: Visualizing Genetic Code as Magic Runes. Breeding Runes.
+- **Novel trait**: The visual appearance of the code is deterministically tied to its function (via hash-seeded procedural generation).
+- **Status**: experiments/chimera-runes
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
