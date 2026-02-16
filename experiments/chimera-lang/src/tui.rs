@@ -23,6 +23,7 @@ use ratatui::{
 use std::io;
 
 const GOLDEN_FREQUENCIES: [f32; 4] = [161.8, 261.6, 432.0, 528.0];
+const GRIMOIRE_TEXT: &str = include_str!("../GRIMOIRE.md");
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub(crate) enum ViewMode {
@@ -240,6 +241,8 @@ pub(crate) struct AppState {
     pub(crate) genesis_grammar_buffer: String,
     #[cfg(feature = "nova")]
     pub(crate) genesis_focus: u8, // 0=Editor, 1=Grammar, 2=Grid
+    #[cfg(feature = "nova")]
+    pub(crate) grimoire_scroll: u16,
     pub(crate) evolution_state: EvolutionState,
     pub(crate) matrix_rain: MatrixRain,
 }
@@ -357,6 +360,8 @@ impl AppState {
             genesis_grammar_buffer: String::new(),
             #[cfg(feature = "nova")]
             genesis_focus: 0,
+            #[cfg(feature = "nova")]
+            grimoire_scroll: 0,
             evolution_state: EvolutionState::new(),
             matrix_rain: MatrixRain::new(),
         }
@@ -913,6 +918,21 @@ where
                         _ => {}
                     }
                     continue;
+                }
+
+                #[cfg(feature = "nova")]
+                if let ViewMode::Grimoire = app_state.view_mode {
+                    match key.code {
+                        KeyCode::Up => {
+                            app_state.grimoire_scroll = app_state.grimoire_scroll.saturating_sub(1);
+                            continue;
+                        }
+                        KeyCode::Down => {
+                            app_state.grimoire_scroll = app_state.grimoire_scroll.saturating_add(1);
+                            continue;
+                        }
+                        _ => {}
+                    }
                 }
 
                 #[cfg(feature = "nova")]
@@ -6658,27 +6678,26 @@ fn render_alchemy(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 #[cfg(feature = "nova")]
 fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints(
-            [
-                Constraint::Percentage(20),
-                Constraint::Percentage(20),
-                Constraint::Percentage(40),
-                Constraint::Percentage(20),
-            ]
-            .as_ref(),
-        )
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
         .split(f.area());
 
-    // Ether (IPC)
-    let ether_items: Vec<ListItem> = vm
-        .ether
-        .iter()
-        .map(|(ch, queue)| ListItem::new(format!("Channel {}: {} msgs", ch, queue.len())))
-        .collect();
-    let ether_list =
-        List::new(ether_items).block(Block::default().borders(Borders::ALL).title("Ether (IPC)"));
-    f.render_widget(ether_list, chunks[0]);
+    // Left: Grimoire Text (Manual)
+    let grimoire_widget = Paragraph::new(GRIMOIRE_TEXT)
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("The Grimoire (Manual) - Scroll with Up/Down"),
+        )
+        .wrap(ratatui::widgets::Wrap { trim: false })
+        .scroll((app_state.grimoire_scroll, 0));
+    f.render_widget(grimoire_widget, chunks[0]);
+
+    // Right: Utilities (Oracle & Sigils)
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(chunks[1]);
 
     // Oracle (KB)
     #[cfg(feature = "oracle")]
@@ -6700,9 +6719,9 @@ fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         }
 
         let title = if app_state.query_mode {
-            format!("Oracle (Query Mode: {})", app_state.query_input)
+            format!("Oracle (Query: {})", app_state.query_input)
         } else {
-            "Oracle (Knowledge Base) - Press '/' to Query".to_string()
+            "Oracle (Press '/')".to_string()
         };
 
         let border_style = if app_state.query_mode {
@@ -6717,17 +6736,10 @@ fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 .title(title)
                 .border_style(border_style),
         );
-        f.render_widget(oracle_list, chunks[1]);
-    }
-    #[cfg(not(feature = "oracle"))]
-    {
-        let oracle_list = Paragraph::new("Oracle feature disabled")
-            .block(Block::default().borders(Borders::ALL).title("Oracle"));
-        f.render_widget(&oracle_list, chunks[1]);
+        f.render_widget(oracle_list, right_chunks[0]);
     }
 
-    // Sigil Registry (The Grimoire)
-    #[cfg(feature = "nova")]
+    // Sigil Registry (Spells)
     {
         let mut registry: Vec<_> = vm.sigil_registry.iter().collect();
         registry.sort_by_key(|(k, _)| *k);
