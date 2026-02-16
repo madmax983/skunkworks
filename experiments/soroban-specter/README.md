@@ -6,6 +6,24 @@
 
 This experiment visualizes the physical impact of high-frequency trading calculations. A Japanese Abacus (Soroban) performs calculations for a simulated trading bot. The movement of the beads—representing arithmetic operations—injects energy and turbulence into a background fluid simulation.
 
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Rust and Cargo installed.
+- System dependencies for `macroquad` (usually just basic dev tools, but on Linux you may need: `libasound2-dev libxi-dev libgl1-mesa-dev`).
+
+### Running the Experiment
+
+To run the simulation, navigate to this directory and use `cargo run`. Using `--release` is recommended for smoother performance.
+
+```bash
+cd experiments/soroban-specter
+cargo run --release
+```
+
+**Note:** The simulation opens a window. If you are in a headless environment (like a remote server without X11), it will fail to initialize the display.
+
 ## Features
 
 - **Fluid Simulation**: A 2D Navier-Stokes solver (from `fluid-specter`) visualizes the "atmosphere" of the market.
