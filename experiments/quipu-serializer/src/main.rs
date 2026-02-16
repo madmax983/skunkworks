@@ -4,12 +4,13 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use quipu::{Cord, Quipu};
+use quipu::{Cord, Knot, Quipu};
 use quipu_serializer::ser::to_quipu;
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
+    text::{Line, Span},
     widgets::{Block, Borders, Paragraph, Wrap},
     Frame, Terminal,
 };
@@ -134,6 +135,67 @@ fn main() -> Result<()> {
     Ok(())
 }
 
+fn render_cord_text(cord: &Cord) -> Vec<Line<'static>> {
+    let mut lines = Vec::new();
+
+    if cord.clusters.is_empty() {
+        lines.push(Line::from(vec![
+            Span::styled("  │", Style::default().fg(Color::DarkGray)),
+            Span::raw(" (empty)"),
+        ]));
+        // Tail
+        lines.push(Line::from(vec![Span::styled("  ▼", Style::default().fg(Color::DarkGray))]));
+        return lines;
+    }
+
+    // Display from Top (highest power) to Bottom (units)
+    // clusters[0] is units.
+    for (i, cluster) in cord.clusters.iter().enumerate().rev() {
+        // Vertical line logic
+        if cluster.is_empty() {
+             lines.push(Line::from(vec![
+                Span::styled("  │", Style::default().fg(Color::DarkGray)),
+             ]));
+        } else {
+            let mut spans = Vec::new();
+            spans.push(Span::raw("  ")); // Indent
+            spans.push(Span::styled("│ ", Style::default().fg(Color::DarkGray)));
+
+            for (j, knot) in cluster.iter().enumerate() {
+                let (symbol, color) = match knot {
+                    Knot::Simple => ("●".to_string(), Color::Yellow),
+                    Knot::Long(v) => (format!("≡{}", v), Color::Green),
+                    Knot::FigureEight => ("∞".to_string(), Color::Cyan),
+                };
+
+                spans.push(Span::styled(symbol, Style::default().fg(color)));
+
+                if j < cluster.len() - 1 {
+                    spans.push(Span::raw(" "));
+                }
+            }
+            lines.push(Line::from(spans));
+        }
+
+        // Spacer between clusters
+        if i > 0 {
+             lines.push(Line::from(vec![
+                Span::styled("  │", Style::default().fg(Color::DarkGray)),
+             ]));
+        }
+    }
+
+    // Tail
+    lines.push(Line::from(vec![
+        Span::styled("  │", Style::default().fg(Color::DarkGray)),
+    ]));
+    lines.push(Line::from(vec![
+        Span::styled("  ▼", Style::default().fg(Color::DarkGray)),
+    ]));
+
+    lines
+}
+
 fn ui(f: &mut Frame, app: &mut App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -145,8 +207,8 @@ fn ui(f: &mut Frame, app: &mut App) {
         .split(f.area());
 
     let title_text = match app.mode {
-        Mode::Calculator => "🧮 QUIPU CALCULATOR (Tab to Switch)",
-        Mode::Serializer => "📜 QUIPU SERIALIZER (Tab to Switch)",
+        Mode::Calculator => "🧮 QUIPU CALCULATOR",
+        Mode::Serializer => "📜 QUIPU SERIALIZER",
     };
 
     let header = Paragraph::new(title_text)
@@ -155,6 +217,7 @@ fn ui(f: &mut Frame, app: &mut App) {
                 .fg(Color::Cyan)
                 .add_modifier(Modifier::BOLD),
         )
+        .alignment(ratatui::layout::Alignment::Center)
         .block(Block::default().borders(Borders::ALL));
     f.render_widget(header, chunks[0]);
 
@@ -163,19 +226,25 @@ fn ui(f: &mut Frame, app: &mut App) {
         Mode::Serializer => render_serializer(f, chunks[1], app),
     }
 
-    let footer = Paragraph::new("Q/Esc: Quit | Tab: Switch Mode")
+    let footer_text = match app.mode {
+        Mode::Calculator => "Q/Esc: Quit | Tab: Switch to Serializer | Digits: Input | Enter/Arrows: Focus",
+        Mode::Serializer => "Esc: Quit | Tab: Switch to Calculator | Type JSON | Up/Down: Scroll Output",
+    };
+
+    let footer = Paragraph::new(footer_text)
         .style(Style::default().fg(Color::Gray))
         .block(Block::default().borders(Borders::ALL));
     f.render_widget(footer, chunks[2]);
 }
 
 fn render_calculator(f: &mut Frame, area: Rect, app: &App) {
-    let chunks = Layout::default()
+    let main_chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([
-            Constraint::Percentage(33),
-            Constraint::Percentage(33),
-            Constraint::Percentage(34),
+            Constraint::Percentage(25), // Input A
+            Constraint::Percentage(25), // Input B
+            Constraint::Percentage(30), // Result
+            Constraint::Percentage(20), // Legend
         ])
         .split(area);
 
@@ -183,54 +252,79 @@ fn render_calculator(f: &mut Frame, area: Rect, app: &App) {
     let val_a = app.calc_input_a.parse::<u64>().unwrap_or(0);
     let cord_a = Cord::from(val_a);
     let style_a = if app.calc_focus == 0 {
-        Style::default()
-            .fg(Color::Yellow)
-            .add_modifier(Modifier::BOLD)
+        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
     } else {
-        Style::default()
+        Style::default().fg(Color::White)
+    };
+    let border_style_a = if app.calc_focus == 0 {
+        Style::default().fg(Color::Yellow)
+    } else {
+         Style::default().fg(Color::White)
     };
 
     let block_a = Block::default()
         .borders(Borders::ALL)
+        .border_style(border_style_a)
         .title(format!(" Input A: {} ", app.calc_input_a));
+
     f.render_widget(
-        Paragraph::new(format!("{}", cord_a))
+        Paragraph::new(render_cord_text(&cord_a))
             .block(block_a)
             .style(style_a),
-        chunks[0],
+        main_chunks[0],
     );
 
     // Input B
     let val_b = app.calc_input_b.parse::<u64>().unwrap_or(0);
     let cord_b = Cord::from(val_b);
     let style_b = if app.calc_focus == 1 {
-        Style::default()
-            .fg(Color::Yellow)
-            .add_modifier(Modifier::BOLD)
+        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
     } else {
-        Style::default()
+        Style::default().fg(Color::White)
+    };
+     let border_style_b = if app.calc_focus == 1 {
+        Style::default().fg(Color::Yellow)
+    } else {
+         Style::default().fg(Color::White)
     };
 
     let block_b = Block::default()
         .borders(Borders::ALL)
+        .border_style(border_style_b)
         .title(format!(" Input B: {} ", app.calc_input_b));
     f.render_widget(
-        Paragraph::new(format!("{}", cord_b))
+        Paragraph::new(render_cord_text(&cord_b))
             .block(block_b)
             .style(style_b),
-        chunks[1],
+        main_chunks[1],
     );
 
     // Result
     let cord_sum = cord_a.clone() + cord_b.clone();
     let block_sum = Block::default()
         .borders(Borders::ALL)
-        .title(format!(" Sum: {} ", cord_sum.value()));
+        .title(format!(" Sum (A+B): {} ", cord_sum.value()))
+        .style(Style::default().fg(Color::Green));
     f.render_widget(
-        Paragraph::new(format!("{}", cord_sum))
-            .block(block_sum)
-            .style(Style::default().fg(Color::Green)),
-        chunks[2],
+        Paragraph::new(render_cord_text(&cord_sum))
+            .block(block_sum),
+        main_chunks[2],
+    );
+
+    // Legend
+    let legend_text = vec![
+        Line::from(Span::styled("Legend", Style::default().add_modifier(Modifier::UNDERLINED))),
+        Line::from(""),
+        Line::from(vec![Span::styled("●", Style::default().fg(Color::Yellow)), Span::raw(" = 1 (Tens+)")]),
+        Line::from(vec![Span::styled("≡N", Style::default().fg(Color::Green)), Span::raw(" = N (Units)")]),
+        Line::from(vec![Span::styled("∞", Style::default().fg(Color::Cyan)), Span::raw(" = 1 (Units)")]),
+        Line::from(""),
+        Line::from(vec![Span::styled("│", Style::default().fg(Color::DarkGray)), Span::raw(" = Cord")]),
+    ];
+    let block_legend = Block::default().borders(Borders::ALL).title(" Guide ");
+    f.render_widget(
+        Paragraph::new(legend_text).block(block_legend),
+        main_chunks[3]
     );
 }
 
@@ -241,7 +335,11 @@ fn render_serializer(f: &mut Frame, area: Rect, app: &App) {
         .split(area);
 
     // JSON Input
-    let input_block = Block::default().borders(Borders::ALL).title(" JSON Input ");
+    let input_block = Block::default()
+        .borders(Borders::ALL)
+        .title(" JSON Input ")
+        .style(Style::default().fg(Color::White)); // Explicit white
+
     f.render_widget(
         Paragraph::new(app.ser_input.clone())
             .block(input_block)
@@ -253,18 +351,33 @@ fn render_serializer(f: &mut Frame, area: Rect, app: &App) {
     let output_block = Block::default()
         .borders(Borders::ALL)
         .title(" Quipu Output ");
-    let text = if let Some(q) = &app.ser_output {
-        format!("{}", q)
+
+    // Helper to render a full Quipu (multiple cords)
+    // The `Quipu` struct has `cords: Vec<Cord>`.
+    // We can render them side-by-side or just list them.
+    // For simplicity, let's just list them one after another with headers.
+
+    let mut text_lines = Vec::new();
+    if let Some(q) = &app.ser_output {
+        text_lines.push(Line::from(Span::styled(format!("Quipu with {} cords:", q.cords.len()), Style::default().add_modifier(Modifier::BOLD))));
+        text_lines.push(Line::from(""));
+
+        for (i, cord) in q.cords.iter().enumerate() {
+            text_lines.push(Line::from(Span::styled(format!("Cord {}: (Value: {})", i, cord.value()), Style::default().fg(Color::Cyan))));
+            let cord_lines = render_cord_text(cord);
+            text_lines.extend(cord_lines);
+            text_lines.push(Line::from("")); // Spacing
+        }
     } else {
         if app.ser_input.is_empty() {
-            "Type JSON to see Quipu...".to_string()
+             text_lines.push(Line::from(Span::styled("Type JSON to see Quipu...", Style::default().fg(Color::Gray))));
         } else {
-            "Invalid JSON".to_string()
+             text_lines.push(Line::from(Span::styled("Invalid JSON", Style::default().fg(Color::Red))));
         }
-    };
+    }
 
     f.render_widget(
-        Paragraph::new(text)
+        Paragraph::new(text_lines)
             .block(output_block)
             .scroll((app.ser_scroll, 0)),
         chunks[1],
