@@ -1539,6 +1539,11 @@ pub enum OpCode {
     /// **Stack:** `[ ..., name_str, strand_idx ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Define,
+    /// **[Nova]** Registers a custom Orca operator (Grid Glyph).
+    ///
+    /// **Stack:** `[ ..., char_str, strand_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Operator,
     /// **[Nova]** Removes a defined enzyme.
     ///
     /// **Stack:** `[ ..., name_str ] -> [ ... ]`

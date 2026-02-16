@@ -616,6 +616,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub dictionary: HashMap<String, usize>,
     #[cfg(feature = "nova")]
+    pub custom_operators: HashMap<char, usize>,
+    #[cfg(feature = "nova")]
     pub sigil_registry: HashMap<String, nova_sigil::Sigil>,
     #[cfg(feature = "nova")]
     pub biome_grid: Vec<Vec<nova_biome::Biome>>,
@@ -945,6 +947,8 @@ impl ChimeraVM {
             graveyard: Vec::new(),
             #[cfg(feature = "nova")]
             dictionary: HashMap::new(),
+            #[cfg(feature = "nova")]
+            custom_operators: HashMap::new(),
             #[cfg(feature = "nova")]
             sigil_registry: HashMap::new(),
             #[cfg(feature = "nova")]
@@ -2924,6 +2928,9 @@ impl ChimeraVM {
             OpCode::Define | OpCode::Undefine | OpCode::Dictionary => {
                 meta::exec_meta_op(self, op, args)
             }
+
+            #[cfg(feature = "nova")]
+            OpCode::Operator => nova::exec_operator(self, args),
 
             #[cfg(feature = "nova")]
             OpCode::Grammar

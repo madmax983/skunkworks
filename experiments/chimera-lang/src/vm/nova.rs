@@ -697,6 +697,35 @@ fn exec_brainfuck(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// Returns `Some((strand_idx, gene_idx))` if the operation triggered a jump or call that
 /// modifies the Instruction Pointer (IP). Returns `None` if execution should proceed sequentially.
 #[allow(clippy::needless_range_loop)]
+pub fn exec_operator(vm: &mut ChimeraVM, args: &[Nucleotide]) -> Option<(usize, usize)> {
+    // Stack: [ ..., char_str, strand_idx ]
+    // BUT OpCode usually takes stack args.
+    // Let's check opcode.rs. Stack: [ ..., char_str, strand_idx ] -> [ ... ]
+    // So we pop from stack.
+    if vm.stack.len() >= 2 {
+        let idx_val = vm.stack.pop().unwrap();
+        let char_val = vm.stack.pop().unwrap();
+
+        if let (Value::Str(s), Value::Int(idx)) = (char_val, idx_val) {
+            if let Some(c) = s.chars().next() {
+                if idx >= 0 && (idx as usize) < vm.dna.helix.strands.len() {
+                    vm.custom_operators.insert(c, idx as usize);
+                    vm.output.push(format!("OPERATOR: Defined '{}' -> Strand {}", c, idx));
+                } else {
+                    vm.output.push("Error: Invalid strand index for Operator".to_string());
+                }
+            } else {
+                vm.output.push("Error: Empty string for Operator char".to_string());
+            }
+        } else {
+            vm.output.push("Error: Type mismatch for Operator".to_string());
+        }
+    } else {
+        vm.output.push("Error: Stack underflow for Operator".to_string());
+    }
+    None
+}
+
 pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
     match op {
         OpCode::Levenshtein => super::nova_linguistics::exec_levenshtein(vm),
