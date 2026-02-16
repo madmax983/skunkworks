@@ -1,0 +1,23 @@
+[package]
+name = "sys-dance"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bevy = { version = "0.13", default-features = false, features = [
+    "animation",
+    "bevy_asset",
+    "bevy_winit",
+    "bevy_core_pipeline",
+    "bevy_render",
+    "bevy_sprite",
+    "bevy_text",
+    "bevy_ui",
+    "multi-threaded",
+    "x11",
+    "tonemapping_luts",
+    "default_font",
+] }
+bevy_prototype_lyon = "0.11"
+sysinfo = "0.30"
+rand = "0.8"

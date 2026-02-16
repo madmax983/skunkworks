@@ -1017,3 +1017,8 @@
 - **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
 - **Status:** The chemicals are singing. Gray-Scott patterns are pulsing with the beat of a virtual oscillator. Audio modulates reaction parameters.
 - **Note:** Moonshot: Reaction-Diffusion + Audio-Reactive Visuals.
+
+### [Concentration Level: FRESH] - Location: experiments/sys-dance
+- **Scent Origin:** Genesis (The Choreographer) ⚛️💃
+- **Status:** The machine is dancing. CPU load is driving the tempo. RAM is adding weight to the steps. 2-Bone IK active.
+- **Note:** Moonshot: System Metrics + Procedural Choreography.
