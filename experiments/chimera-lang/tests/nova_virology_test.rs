@@ -61,6 +61,9 @@ mod tests {
             pattern: "X".to_string(),
             mutation_rate: 0,
             payload: Some(payload_idx),
+            grammar: None,
+            quorum_action: None,
+            quorum_threshold: 0,
         };
         vm.virus_library.push(virus);
 
