@@ -1030,16 +1030,30 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/chimera-runes
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
 
-## [Hybrid] experiments/mechanical-integrator
-- **Parents:** Mechanical Calculator x Floating Point Arithmetic
-- **Dominant Trait:** Analog Computation (Differential Analyzer)
-- **Recessive Trait:** Damped Harmonic Oscillator Simulation
-- **Mutation:** Using kinematic constraints to solve differential equations instead of discrete logic.
-- ** reusable:**  and  structs in .
+### mechanical-integrator
+- **Parents**: Mechanical Calculator + Floating Point Arithmetic
+- **Concept**: Analog Differential Analyzer simulating a damped harmonic oscillator.
+- **Novel trait**: Kinematic constraints solving differential equations.
+- **Status**: experiments/mechanical-integrator
+- **Evaluation**: Compiles. Solid physics simulation.
 
-## [Hybrid] experiments/mechanical-integrator
-- **Parents:** Mechanical Calculator x Floating Point Arithmetic
-- **Dominant Trait:** Analog Computation (Differential Analyzer)
-- **Recessive Trait:** Damped Harmonic Oscillator Simulation
-- **Mutation:** Using kinematic constraints to solve differential equations instead of discrete logic.
-- **reusable:** `Integrator` and `Differential` structs in `mechanism.rs`.
+### myco-reaper
+- **Parents**: Fungal Growth + Garbage Collection Algorithms
+- **Concept**: Visualizing memory management (Reference Counting, Mark & Sweep) as fungal life cycles.
+- **Novel trait**: The "Reaper" is a biological decay process.
+- **Status**: experiments/myco-reaper
+- **Evaluation**: Compiles. Visuals operational.
+
+### nile-scheduler
+- **Parents**: Egyptian Fractions + Resource Allocation
+- **Concept**: Task scheduler that splits resource demands into Unit Fractions (1/n) using the Fibonacci-Sylvester algorithm.
+- **Novel trait**: Ancient mathematics applied to modern OS scheduling.
+- **Status**: experiments/nile-scheduler
+- **Evaluation**: Compiles. TUI operational.
+
+### myco-nile
+- **Parents**: experiments/nile-scheduler + experiments/myco-reaper
+- **Concept**: "The Fungal Economy". Tasks are allocated space via Egyptian Fractions, which become fungal colonies that must grow to fill their niche.
+- **Novel trait**: Fractional Growth. Biological visualization of mathematical fragmentation.
+- **Status**: experiments/myco-nile
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

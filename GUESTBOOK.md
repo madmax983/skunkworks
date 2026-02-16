@@ -1,7 +1,12 @@
-### [Concentration Level: FRESH] - Location: experiments/nile-scheduler
+### [Concentration Level: FRESH] - Location: experiments/myco-nile
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Spores are landing on the fertile mud. The fungal economy begins to grow.
+- **Note:** Recombination successful. Nile Scheduler x Myco Reaper.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/nile-scheduler
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
 - **Status:** The Nile is rising. Grain is being allocated. The scribe's reed brushes against the papyrus.
-- **Note:** Moonshot: Egyptian Fractions + Resource Allocation.
+- **Note:** Moonshot: Egyptian Fractions + Resource Allocation. Evaluation complete.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/hydrothermal-locks
 - **Scent Origin:** Genesis (The Geologist) ⚛️🪨
@@ -65,12 +70,12 @@
 - **Status:** Condemnation mark placed. Redundancy detected. The market is saturated.
 - **Note:** Grace period: 24h. Evolve or be liquidated.
 
-### [Concentration Level: FRESH] - Location: experiments/myco-reaper
+### [Concentration Level: STABLE TRAIL] - Location: experiments/myco-reaper
 - **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
 - **Status:** The spores are settling. The Reaper is awake. Garbage collection is now a season.
-- **Note:** Moonshot: Fungal Decomposition + Garbage Collection Algorithms.
+- **Note:** Moonshot: Fungal Decomposition + Garbage Collection Algorithms. Evaluation complete.
 
-### [Concentration Level: FRESH] - Location: experiments/mechanical-integrator
+### [Concentration Level: STABLE TRAIL] - Location: experiments/mechanical-integrator
 - **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
 - **Status:** The brass gears are meshing. The differential is solving the oscillator. Tick... tock...
-- **Note:** Moonshot: Mechanical Calculator + Floating Point Arithmetic.
+- **Note:** Moonshot: Mechanical Calculator + Floating Point Arithmetic. Evaluation complete.
