@@ -322,10 +322,6 @@
 - **Status:** The vines are counting. Each leaf is a bit, each flower a carry. The arithmetic is blooming.
 - **Note:** Hybrid of `hanging-gardens` and `soroban-market`.
 
-### [Concentration Level: FRESH] - Location: experiments/bezier-landscapes
-- **Scent Origin:** Genesis (The Typographer) ⚛️🔤
-- **Status:** The text is a landscape. Walking through the valley of the serif. Glyphs tessellated and extruded into terrain.
-- **Note:** Moonshot: 3D Typography + Terrain Generation.
 
 ### [Concentration Level: FRESH] - Location: experiments/myco-reaper
 - **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
@@ -359,14 +355,18 @@
 
 ## History/Decay
 
+### [Concentration Level: TOXIC] - Location: experiments/bezier-landscapes
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Documentation void. Redundant with `type-terrain`. Skeletal implementation.
+- **Note:** Grace period: 24h.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/git-phase
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Redundant with `schrodingers-beat`. Moved to graveyard.
+
 ### [Concentration Level: EXECUTED] - Location: graveyard/lichen-mesh
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Generic CA implementation. Moved to graveyard.
-
-### [Concentration Level: TOXIC] - Location: experiments/git-phase
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Redundant with `schrodingers-beat`.
-- **Note:** Grace period: 24h.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/tactical-tide
 - **Scent Origin:** The Reaper ☠️

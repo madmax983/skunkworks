@@ -115,7 +115,7 @@ members = [
     "experiments/mnem-rot", "experiments/mnem-bridge", "experiments/tectonic-flock", "experiments/waggle-dance",
     "experiments/impossible-explorer", "experiments/chimera-bridge",
     "experiments/broken-mirror",
-    "experiments/git-phase", "experiments/vascular-valley",
+    "experiments/vascular-valley",
     "experiments/hyperbolic-mold", "experiments/chimera-chaos", "experiments/swap-meet",
     "experiments/cochlea-sim",
     "experiments/hydro-brain", "experiments/newtonian-graph", "experiments/biomorphic-clock", "experiments/dependency-karst",
