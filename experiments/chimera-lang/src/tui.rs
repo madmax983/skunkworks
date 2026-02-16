@@ -1757,31 +1757,19 @@ where
                                         app_state.input_mode = InputMode::Normal;
                                     } else if app_state.genesis_focus == 1 {
                                         // Update Grammar
-                                        // We need to parse the grammar buffer as a Value
-                                        // Since we don't have a direct Value parser exposed easily,
-                                        // we can use Lisp parser!
                                         match crate::lisp::parse(&app_state.genesis_grammar_buffer) {
                                             Ok(exprs) => {
-                                                // Convert SExpr to Value...
-                                                // Wait, we don't have SExpr -> Value conversion yet.
-                                                // We have SExpr -> Gene.
-                                                // Let's assume the user enters a valid OpCode sequence that pushes the grammar.
-                                                // e.g. "push(Match) push(A) grammar(Match)"
-                                                // Compile and execute it.
-                                                let src = format!("strand grammar_load {{ {} }}", app_state.genesis_grammar_buffer);
-                                                match crate::compiler::compile(&src, None) {
-                                                    Ok(dna) => {
-                                                        if let Some(strand) = dna.helix.strands.first() {
-                                                            for gene in &strand.genes {
-                                                                vm.execute_gene_inner(gene.op.clone(), &gene.args);
-                                                            }
-                                                            // Assume the code pushed the grammar to stack.
-                                                            // Call SelfRewrite to consume it.
-                                                            crate::vm::babel::exec_babel_op(vm, crate::opcode::OpCode::SelfRewrite, &[]);
+                                                // Take the first expression as the grammar
+                                                if let Some(expr) = exprs.first() {
+                                                    match crate::lisp::sexpr_to_value(expr) {
+                                                        Ok(grammar) => {
+                                                            vm.active_grammar = grammar;
                                                             app_state.status_msg = "Genesis: Grammar Updated.".to_string();
                                                         }
+                                                        Err(e) => app_state.status_msg = format!("Value Conversion Error: {}", e),
                                                     }
-                                                    Err(e) => app_state.status_msg = format!("Grammar Error: {}", e),
+                                                } else {
+                                                    app_state.status_msg = "Error: Empty Grammar".to_string();
                                                 }
                                                 app_state.input_mode = InputMode::Normal;
                                             }

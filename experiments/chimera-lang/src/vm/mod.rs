@@ -3176,7 +3176,8 @@ impl ChimeraVM {
             | OpCode::VoidCast
             | OpCode::Chaos
             | OpCode::TuiMod
-            | OpCode::Cambrian => nova::exec_nova_op(self, op, args),
+            | OpCode::Cambrian
+            | OpCode::BioHack => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "oracle")]
             OpCode::Divergence => nova::exec_nova_op(self, op, args),

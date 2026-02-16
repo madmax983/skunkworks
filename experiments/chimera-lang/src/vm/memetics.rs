@@ -50,6 +50,74 @@ pub fn exec_memetics_op(
     _args: &[Nucleotide],
 ) -> Option<(usize, usize)> {
     match op {
+        OpCode::BioHack => {
+            // Stack: [ ..., name_str, grammar_junction, meme_id ]
+            if vm.stack.len() >= 3 {
+                let meme_val = vm.stack.pop().unwrap();
+                let grammar_val = vm.stack.pop().unwrap();
+                let name_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(m_id), Value::Str(name)) = (meme_val, name_val) {
+                    let meme_idx = m_id as usize;
+                    if meme_idx < vm.meme_pool.memes.len() {
+                        let meme = &vm.meme_pool.memes[meme_idx];
+
+                        // Create a temporary strand for the payload
+                        // In Nova, we can just push it to the helix.
+                        let payload_strand = crate::ast::Strand {
+                            genes: meme.genes.clone(),
+                        };
+                        vm.dna.helix.strands.push(payload_strand);
+                        let payload_idx = vm.dna.helix.strands.len() - 1;
+                        vm.telomeres.push(50); // Default telomere for new strand
+                        #[cfg(feature = "cortex")]
+                        {
+                            vm.activation_levels.push(0);
+                            vm.synapse_map.push(Vec::new());
+                        }
+
+                        let mut rng = rand::thread_rng();
+                        let color = (
+                            rng.gen_range(50..255),
+                            rng.gen_range(50..255),
+                            rng.gen_range(50..255),
+                        );
+
+                        let virus = Virus {
+                            name: name.clone(),
+                            color,
+                            pattern: ".*".to_string(), // Default pattern matches everything? Or maybe derive from name?
+                            mutation_rate: meme.virulence, // Use virulence as mutation rate
+                            payload: Some(payload_idx),
+                            grammar: Some(grammar_val),
+                            quorum_threshold: 0,
+                            quorum_action: None,
+                        };
+
+                        let virus_id = vm.virus_library.len();
+                        vm.virus_library.push(virus);
+
+                        let (cy, cx) = vm.context_loc;
+                        vm.viral_grid[cy][cx] = Some(ViralState {
+                            infection_level: 100,
+                            virus_id,
+                        });
+
+                        vm.output.push(format!(
+                            "BIOHACK: Synthesized Virus '{}' (ID {}) from Meme {}",
+                            name, virus_id, meme_idx
+                        ));
+                    } else {
+                        vm.output.push("BIOHACK: Invalid Meme ID".to_string());
+                    }
+                } else {
+                    vm.output.push("BIOHACK: Type mismatch [name:Str, grammar:Junction, meme:Int]".to_string());
+                }
+            } else {
+                vm.output.push("BIOHACK: Stack underflow".to_string());
+            }
+            None
+        }
         OpCode::Conceive => {
             // Stack: [ ..., len, virulence, fidelity ]
             if vm.stack.len() >= 3 {
