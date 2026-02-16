@@ -4447,6 +4447,17 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             }
 
             // Highlight cursor
+            #[cfg(feature = "nova")]
+            {
+                let biome = vm.biome_grid[y][x];
+                let (br, bg, bb) = biome.color();
+                if (br, bg, bb) != (0, 0, 0) {
+                    if style.bg.is_none() {
+                        style = style.bg(Color::Rgb(br, bg, bb));
+                    }
+                }
+            }
+
             if app_state.grid_cursor == (x, y) {
                 style = style.add_modifier(Modifier::REVERSED);
             }

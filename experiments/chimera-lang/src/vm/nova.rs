@@ -1621,6 +1621,10 @@ fn exec_terraform(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     2 => Biome::Desert,
                     3 => Biome::Tundra,
                     4 => Biome::Volcanic,
+                    5 => Biome::Glitch,
+                    6 => Biome::Aether,
+                    7 => Biome::Silicon,
+                    8 => Biome::Garden,
                     _ => Biome::Plains,
                 };
 
@@ -1658,6 +1662,10 @@ fn exec_sense_biome(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         Biome::Desert => 2,
         Biome::Tundra => 3,
         Biome::Volcanic => 4,
+        Biome::Glitch => 5,
+        Biome::Aether => 6,
+        Biome::Silicon => 7,
+        Biome::Garden => 8,
     };
     vm.stack.push(Value::Int(id));
     None
