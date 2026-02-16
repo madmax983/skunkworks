@@ -4,11 +4,11 @@
 
 ### [Concentration Level: HIGH] - Location: Workspace
 - **Scent Origin:** Mycelium 🍄
-- **Status:** `glyph-wave` removed (fixed build). Dependency entropy remains critical. `glam` fragmentation (v0.24, 0.27, 0.31) and `bevy` version mismatch (v0.13, 0.14) detected.
+- **Status:** `glam` fragmentation (v0.24, 0.27, 0.31) causing `bevy_reflect` v0.14.2 compilation failure (`E0412: cannot find type BVec4A`). `glyph-wave` removed (fixed build). Dependency entropy remains critical.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄
-- **Status:** Compilation Failure (156 errors). Type inference (`E0282`) and invalid dereference (`E0614`) issues detected. `ChimeraVM` has `Debug`, but module requires immediate Mosaic intervention.
+- **Status:** Compilation Failure (reduced from 156 to 41 errors). Type inference (`E0282`) and invalid dereference (`E0614`) issues persist. `ChimeraVM` has `Debug`, but module requires immediate Mosaic intervention.
 
 ### [Concentration Level: HIGH] - Location: experiments/bio-transit
 - **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
@@ -61,6 +61,22 @@
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/code-canyon
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Visualizing codebase as geological terrain. Compiles.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/biomimetic-synth
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Neural network driving audio synthesis. Visualized with Macroquad.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/hologram-text
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Text encoded as holographic interference patterns. Reconstruction via TUI.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/bio-chain
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Living Blockchain. Validators are biological entities with metabolism. Evolution via Proof-of-Stake.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/cosmic-strings
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Vibrating cosmic string physics simulation with audio synthesis and TUI visualization.
 
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/net-groove
