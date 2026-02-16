@@ -310,6 +310,9 @@ mod nova_void_test;
 #[cfg(test)]
 mod savant_execution_test;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod genesis_test;
+#[cfg(feature = "nova")]
 pub mod nova_ward;
 #[cfg(feature = "nova")]
 pub mod nova_weaver;
@@ -738,6 +741,8 @@ pub struct ChimeraVM {
     pub meaning_map: HashMap<(u64, u64), Value>,
     #[cfg(feature = "nova")]
     pub babel_live_trace: Vec<(usize, usize)>,
+    #[cfg(feature = "nova")]
+    pub active_grammar: Value,
     pub visual_effects: Vec<VisualEffect>,
 }
 
@@ -1068,6 +1073,8 @@ impl ChimeraVM {
             meaning_map: HashMap::new(),
             #[cfg(feature = "nova")]
             babel_live_trace: Vec::new(),
+            #[cfg(feature = "nova")]
+            active_grammar: Value::Junction(JunctionType::Any, vec![]),
             visual_effects: Vec::new(),
         }
     }

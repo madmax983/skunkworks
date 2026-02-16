@@ -41,7 +41,7 @@ mod tests {
         // Let's verify result at (2,1)
         match &vm.grid[2][1] {
             Value::Str(s) => assert_eq!(s, "3"),
-            Value::Int(n) => assert_eq!(n, 3), // Depending on implementation
+            Value::Int(n) => assert_eq!(*n, 3), // Depending on implementation
             _ => panic!("Expected result 3, got {:?}", vm.grid[2][1]),
         }
     }
@@ -66,7 +66,7 @@ mod tests {
 
         match &vm.grid[2][1] {
             Value::Str(s) => assert_eq!(s, "b"),
-            Value::Int(n) => assert_eq!(n, 11),
+            Value::Int(n) => assert_eq!(*n, 11),
             _ => panic!("Expected result 'b' (11), got {:?}", vm.grid[2][1]),
         }
     }
@@ -410,7 +410,7 @@ mod tests {
         // Grid at South (4,3) should be 7
         match &vm.grid[4][3] {
             Value::Str(s) => assert_eq!(s, "7"),
-            Value::Int(n) => assert_eq!(n, 7),
+            Value::Int(n) => assert_eq!(*n, 7),
             _ => panic!("Expected 7 at South, got {:?}", vm.grid[4][3]),
         }
     }
