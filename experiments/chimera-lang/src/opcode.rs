@@ -77,6 +77,18 @@ pub enum OpCode {
     /// **Stack:** `[ ..., a, b ] -> [ ..., a / b ]`
     /// **Error:** Pushes error message if `b` is 0.
     Div,
+    /// Pops two values, checks if they are equal, and pushes 1 (true) or 0 (false).
+    ///
+    /// **Stack:** `[ ..., a, b ] -> [ ..., 1 if a == b else 0 ]`
+    Eq,
+    /// Pops two values, checks if first is greater than second.
+    ///
+    /// **Stack:** `[ ..., a, b ] -> [ ..., 1 if a > b else 0 ]`
+    Gt,
+    /// Pops two values, checks if first is less than second.
+    ///
+    /// **Stack:** `[ ..., a, b ] -> [ ..., 1 if a < b else 0 ]`
+    Lt,
     /// Duplicates the top value of the stack.
     ///
     /// **Stack:** `[ ..., a ] -> [ ..., a, a ]`

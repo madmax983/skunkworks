@@ -2827,7 +2827,7 @@ impl ChimeraVM {
     ) -> Option<(usize, usize)> {
         match op {
             OpCode::Push => self.exec_stack_op(op, args),
-            OpCode::Add | OpCode::Sub | OpCode::Mul | OpCode::Div => {
+            OpCode::Add | OpCode::Sub | OpCode::Mul | OpCode::Div | OpCode::Eq | OpCode::Gt | OpCode::Lt => {
                 self.exec_math_op(op);
                 None
             }
@@ -3747,6 +3747,8 @@ impl ChimeraVM {
                 OpCode::Sub => OpCode::Add,
                 OpCode::Mul => OpCode::Div,
                 OpCode::Div => OpCode::Mul,
+                OpCode::Gt => OpCode::Lt,
+                OpCode::Lt => OpCode::Gt,
                 _ => op,
             }
         } else {
@@ -3756,6 +3758,34 @@ impl ChimeraVM {
         let effective_op = op;
 
         match effective_op {
+            OpCode::Eq => {
+                if self.stack.len() >= 2 {
+                    let b = self.stack.pop().unwrap();
+                    let a = self.stack.pop().unwrap();
+                    self.stack.push(Value::Int(if a == b { 1 } else { 0 }));
+                } else {
+                    self.output.push("Error: Stack underflow".to_string());
+                }
+            }
+            OpCode::Gt | OpCode::Lt => {
+                if self.stack.len() >= 2 {
+                    let b = self.stack.pop().unwrap();
+                    let a = self.stack.pop().unwrap();
+                    match (a, b) {
+                        (Value::Int(ia), Value::Int(ib)) => {
+                            let res = match effective_op {
+                                OpCode::Gt => ia > ib,
+                                OpCode::Lt => ia < ib,
+                                _ => false,
+                            };
+                            self.stack.push(Value::Int(if res { 1 } else { 0 }));
+                        }
+                        _ => self.output.push("Error: Type mismatch".to_string()),
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow".to_string());
+                }
+            }
             OpCode::Add => {
                 // Check for string concatenation
                 if self.stack.len() >= 2 {

@@ -1,3 +1,9 @@
+## 🧫 Current Pheromone Map
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Enzymatic deficiency resolved. `eq`, `gt`, `lt` synthesized.
+
 ### [Concentration Level: FRESH] - Location: experiments/sandpile-scheduler
 - **Scent Origin:** Genesis (The Geomorphologist) ⚛️⏳
 - **Status:** The pile is critical. Avalanches are routing the packets. The load is balancing itself through collapse.
