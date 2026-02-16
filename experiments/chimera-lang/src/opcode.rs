@@ -77,6 +77,18 @@ pub enum OpCode {
     /// **Stack:** `[ ..., a, b ] -> [ ..., a / b ]`
     /// **Error:** Pushes error message if `b` is 0.
     Div,
+    /// Pops two values, checks if they are equal, and pushes 1 (true) or 0 (false).
+    ///
+    /// **Stack:** `[ ..., a, b ] -> [ ..., 1 if a == b else 0 ]`
+    Eq,
+    /// Pops two values, checks if first is greater than second.
+    ///
+    /// **Stack:** `[ ..., a, b ] -> [ ..., 1 if a > b else 0 ]`
+    Gt,
+    /// Pops two values, checks if first is less than second.
+    ///
+    /// **Stack:** `[ ..., a, b ] -> [ ..., 1 if a < b else 0 ]`
+    Lt,
     /// Duplicates the top value of the stack.
     ///
     /// **Stack:** `[ ..., a ] -> [ ..., a, a ]`
@@ -1002,6 +1014,12 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chaos,
 
+    /// **[Mad Science]** Replaces occurrences of an OpCode with another with a given probability.
+    ///
+    /// **Stack:** `[ ..., target_strand, probability, from_op_str, to_op_str ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Mutagen,
+
     /// **[Nova]** Triggers a Cambrian Explosion (Mass Speciation).
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`
@@ -1333,50 +1351,6 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     StringListen,
 
-    // Astrology Features (Nova)
-    /// **[Nova]** Gazes at the sky to measure star intensity and color.
-    ///
-    /// **Stack:** `[ ... ] -> [ ..., intensity, color ]`
-    #[cfg(feature = "nova")]
-    Gaze,
-    /// **[Nova]** Summons a meteor strike if a star is overhead.
-    ///
-    /// **Stack:** `[ ... ] -> [ ... ]`
-    /// **Cost:** 50 Energy.
-    #[cfg(feature = "nova")]
-    Starfall,
-    /// **[Nova]** Checks alignment with the nearest star.
-    ///
-    /// **Stack:** `[ ... ] -> [ ..., angle_to_nearest ]`
-    #[cfg(feature = "nova")]
-    Align,
-
-    // Gastronomy Features (Nova)
-    /// **[Nova]** Cooks stack items into a Dish.
-    ///
-    /// **Stack:** `[ ..., count, item_1, ..., item_n ] -> [ ..., dish_junction ]`
-    #[cfg(feature = "nova")]
-    Cook,
-    /// **[Nova]** Adds a spice (modifier) to a Dish.
-    ///
-    /// **Stack:** `[ ..., dish_junction, spice_string ] -> [ ..., spiced_dish ]`
-    #[cfg(feature = "nova")]
-    Spice,
-    /// **[Nova]** Consumes a Dish to gain Energy and Buffs.
-    ///
-    /// **Stack:** `[ ..., dish_junction ] -> [ ... ]`
-    #[cfg(feature = "nova")]
-    Savor,
-    /// **[Nova]** Cultivates a grid cell to increase its value/quality.
-    ///
-    /// **Stack:** `[ ... ] -> [ ... ]` (Operates on current location)
-    #[cfg(feature = "nova")]
-    Cultivate,
-    /// **[Nova]** Feeds neighbors with energy/healing.
-    ///
-    /// **Stack:** `[ ..., radius, amount ] -> [ ... ]`
-    #[cfg(feature = "nova")]
-    Banquet,
 
     // Market Features
     /// **[Nova]** Places a Sell Order (Ask) on the Market.
@@ -1843,6 +1817,13 @@ pub enum OpCode {
     /// **Effect:** Returns a list of variable bindings if successful, or 0 if failed.
     #[cfg(feature = "oracle")]
     Unify,
+
+    /// **[Oracle]** Executes a Prolog-style query string.
+    ///
+    /// **Stack:** `[ ..., query_string ] -> [ ..., result_junction ]`
+    /// **Effect:** Parses and runs a query, returning bindings.
+    #[cfg(feature = "oracle")]
+    PrologCall,
 
     // Git Features (Repository Interaction)
     /// **[Git]** Pushes a list of recent commit hashes to the stack.

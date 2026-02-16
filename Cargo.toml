@@ -139,7 +139,8 @@ members = [
     "experiments/biochemical-soundscapes", "experiments/sys-dance", "experiments/hydrothermal-locks",
     "experiments/hydro-flock", "experiments/wasm-runes",
     "experiments/hydro-soundscapes", "experiments/entropy-beast",
-    "experiments/chimera-runes",
+    "experiments/chimera-runes", "experiments/nile-scheduler", "experiments/myco-reaper", "experiments/mechanical-integrator", "experiments/syntax-fugue", "experiments/crystal-conquest", "experiments/sandpile-scheduler", "experiments/codex-vulgaris",
+    "experiments/mechanical-market",
 ]
 resolver = "2"
 

@@ -51,14 +51,38 @@ use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssi
 ///
 /// # Examples
 ///
+/// ## Navigation: Moving towards a target
+///
 /// ```
 /// use locus::Vec2;
 ///
-/// let v1 = Vec2::new(3.0, 4.0);
-/// let v2 = Vec2::new(1.0, 2.0);
+/// let mut position = Vec2::new(0.0, 0.0);
+/// let target = Vec2::new(10.0, 10.0);
+/// let speed = 2.0;
 ///
-/// let sum = v1 + v2;
-/// assert_eq!(sum, Vec2::new(4.0, 6.0));
+/// // Calculate direction vector
+/// let direction = (target - position).normalize();
+///
+/// // Move towards target
+/// position += direction * speed;
+///
+/// assert!((position.x - 1.414).abs() < 0.001);
+/// assert!((position.y - 1.414).abs() < 0.001);
+/// ```
+///
+/// ## Physics: Applying force
+///
+/// ```
+/// use locus::Vec2;
+///
+/// let mut velocity = Vec2::new(5.0, 0.0);
+/// let wind = Vec2::new(0.0, 1.0);
+/// let friction = 0.9;
+///
+/// velocity += wind;
+/// velocity *= friction;
+///
+/// assert_eq!(velocity, Vec2::new(4.5, 0.9));
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -541,6 +565,12 @@ pub enum Topology {
     /// **Plane**: A standard bounded grid.
     ///
     /// Edges are hard walls. Coordinates outside `[0, width)` or `[0, height)` are invalid.
+    ///
+    /// ```text
+    /// +---+
+    /// |   |
+    /// +---+
+    /// ```
     Plane,
 
     /// **Torus**: Wraps both X and Y.
@@ -550,6 +580,14 @@ pub enum Topology {
     ///
     /// This simulates a world where walking off the right edge brings you to the left,
     /// and walking off the bottom brings you to the top.
+    ///
+    /// ```text
+    ///    ^
+    ///    |
+    /// <--+--> (Wraps horizontally)
+    ///    |
+    ///    v (Wraps vertically)
+    /// ```
     Torus,
 
     /// **Horizontal Cylinder**: Wraps X (Horizontal), Bounded Y (Vertical).
@@ -557,6 +595,14 @@ pub enum Topology {
     /// The grid forms a tube running horizontally.
     /// * `x` wraps around.
     /// * `y` is bounded (hard walls at top/bottom).
+    ///
+    /// ```text
+    /// +-----+
+    /// |     |
+    /// <--+--> (Wraps horizontally)
+    /// |     |
+    /// +-----+
+    /// ```
     CylinderH,
 
     /// **Vertical Cylinder**: Bounded X (Horizontal), Wraps Y (Vertical).
@@ -564,6 +610,16 @@ pub enum Topology {
     /// The grid forms a tube running vertically.
     /// * `x` is bounded (hard walls at left/right).
     /// * `y` wraps around.
+    ///
+    /// ```text
+    ///    ^
+    ///    |
+    /// +--+--+
+    /// |  |  |
+    /// +--+--+
+    ///    |
+    ///    v (Wraps vertically)
+    /// ```
     CylinderV,
 
     /// **Klein Bottle**: Wraps X normally. Wraps Y with a twist in X.
@@ -571,6 +627,14 @@ pub enum Topology {
     /// A non-orientable surface.
     /// * `x` wraps normally (`x % width`).
     /// * `y` wraps (`y % height`), but if it wraps, `x` is mirrored: `x' = (width - 1) - x`.
+    ///
+    /// ```text
+    ///    ^
+    ///    |
+    /// <--+--> (Wraps horizontally)
+    ///    |
+    ///    X (Twists vertically: x -> width - 1 - x)
+    /// ```
     Klein,
 
     /// **Möbius Strip**: Wraps X with a twist, Bounded Y.
@@ -578,12 +642,33 @@ pub enum Topology {
     /// A non-orientable surface with a boundary.
     /// * If `x` wraps (off left/right), `y` is mirrored: `y' = (height - 1) - y`.
     /// * `y` is bounded (cannot wrap).
+    ///
+    /// ```text
+    /// +-----+
+    /// |     |
+    /// X--+--X (Twists horizontally: y -> height - 1 - y)
+    /// |     |
+    /// +-----+
+    /// ```
     Mobius,
 
     /// **Hyperbolic**: Poincaré Disk model mapping.
     ///
     /// Typically handled externally or treated as bounded.
     Hyperbolic,
+
+    /// **Sphere**: Wraps X, Bounded Y with Antipodal Shift.
+    ///
+    /// * `x` wraps normally (`x % width`).
+    /// * `y` wraps (`y % height`), but if it crosses a pole, `x` shifts by `width / 2`
+    ///   and `y` is reflected.
+    Sphere,
+
+    /// **Real Projective Plane**: Wraps both X and Y with a twist.
+    ///
+    /// * If `x` wraps, `y` is mirrored: `y' = (height - 1) - y`.
+    /// * If `y` wraps, `x` is mirrored: `x' = (width - 1) - x`.
+    Projective,
 }
 
 impl Topology {
@@ -632,11 +717,27 @@ impl Topology {
     /// // Moving off the top edge (y=-1) wraps to bottom (y=9)
     /// // BUT flips the X coordinate (x=2 becomes width-1-2 = 7)
     /// assert_eq!(klein.normalize(-1, 2, 10, 10), Some((9, 7)));
+    ///
+    /// // ---------------------------------------------------------
+    /// // CylinderV: The Infinite Scroll (Wraps Y, Bounded X)
+    /// // ---------------------------------------------------------
+    /// let cyl_v = Topology::CylinderV;
+    ///
+    /// // Walking off bottom (y=10) wraps to top (y=0)
+    /// assert_eq!(cyl_v.normalize(10, 5, 10, 10), Some((0, 5)));
+    ///
+    /// // Walking off side (x=10) hits a wall (None)
+    /// assert_eq!(cyl_v.normalize(5, 10, 10, 10), None);
     /// ```
     pub fn normalize(&self, y: i64, x: i64, width: usize, height: usize) -> Option<(usize, usize)> {
         if width == 0 || height == 0 {
             return None;
         }
+        // Protect against overflow when casting to i64 (e.g. usize::MAX -> -1)
+        if width > i64::MAX as usize || height > i64::MAX as usize {
+            return None;
+        }
+
         let w = width as i64;
         let h = height as i64;
 
@@ -698,6 +799,36 @@ impl Topology {
                 } else {
                     None
                 }
+            }
+            Topology::Sphere => {
+                let wrap_y = y.div_euclid(h);
+                let mut ny = y.rem_euclid(h);
+                let mut nx = x.rem_euclid(w);
+
+                if wrap_y % 2 != 0 {
+                    // Crossed pole: reflect Y and shift X
+                    ny = (h - 1) - ny;
+                    nx = (nx + w / 2) % w;
+                }
+
+                Some((ny as usize, nx as usize))
+            }
+            Topology::Projective => {
+                let wrap_x = x.div_euclid(w);
+                let wrap_y = y.div_euclid(h);
+
+                let mut nx = x.rem_euclid(w);
+                let mut ny = y.rem_euclid(h);
+
+                if wrap_x % 2 != 0 {
+                    ny = (h - 1) - ny;
+                }
+
+                if wrap_y % 2 != 0 {
+                    nx = (w - 1) - nx;
+                }
+
+                Some((ny as usize, nx as usize))
             }
         }
     }
@@ -764,5 +895,54 @@ mod topology_tests {
         // twist y: 9 - 12 = -3.
         // -3 out of bounds. -> None.
         assert_eq!(topo.normalize(12, 10, width, height), None);
+    }
+
+    #[test]
+    fn test_sphere_wrapping() {
+        let topo = Topology::Sphere;
+        let width = 10;
+        let height = 10;
+
+        // Normal wrapping in X
+        // x = 10 -> 0
+        assert_eq!(topo.normalize(5, 10, width, height), Some((5, 0)));
+
+        // Crossing North Pole (y = -1)
+        // wrap_y = -1 (odd).
+        // ny = -1 % 10 = 9. Reflected: 9 - 9 = 0.
+        // nx = 2 + 5 = 7.
+        // Expected: (0, 7)
+        assert_eq!(topo.normalize(-1, 2, width, height), Some((0, 7)));
+
+        // Crossing South Pole (y = 10)
+        // wrap_y = 1 (odd).
+        // ny = 10 % 10 = 0. Reflected: 9 - 0 = 9.
+        // nx = 2 + 5 = 7.
+        // Expected: (9, 7)
+        assert_eq!(topo.normalize(10, 2, width, height), Some((9, 7)));
+    }
+
+    #[test]
+    fn test_projective_wrapping() {
+        let topo = Topology::Projective;
+        let width = 10;
+        let height = 10;
+
+        // Wrap X (twist Y)
+        // x = 10 -> 0. wrap_x = 1 (odd).
+        // y = 2 -> 9 - 2 = 7.
+        assert_eq!(topo.normalize(2, 10, width, height), Some((7, 0)));
+
+        // Wrap Y (twist X)
+        // y = 10 -> 0. wrap_y = 1 (odd).
+        // x = 2 -> 9 - 2 = 7.
+        assert_eq!(topo.normalize(10, 2, width, height), Some((0, 7)));
+
+        // Wrap Both (double twist)
+        // x = 10 -> 0. wrap_x = 1.
+        // y = 10 -> 0. wrap_y = 1.
+        // nx = 0 -> 9 - 0 = 9.
+        // ny = 0 -> 9 - 0 = 9.
+        assert_eq!(topo.normalize(10, 10, width, height), Some((9, 9)));
     }
 }

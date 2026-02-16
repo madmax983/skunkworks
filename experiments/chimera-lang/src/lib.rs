@@ -136,8 +136,6 @@ mod nova_akashic_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_arcana_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_astrology_test;
-#[cfg(all(test, feature = "nova"))]
 mod nova_atmosphere_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_ballistics_optics_test;
@@ -188,8 +186,6 @@ mod nova_fluid_test;
 mod nova_fungi_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_garden_test;
-#[cfg(all(test, feature = "nova"))]
-mod nova_gastronomy_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_gravity_test;
 #[cfg(all(test, feature = "nova"))]
