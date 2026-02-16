@@ -1,6 +1,6 @@
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
-use crate::vm::{ChimeraVM, Value};
+use crate::vm::{ChimeraVM, Value, MAX_STRINGS};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -43,6 +43,11 @@ pub fn exec_string_op(
                 if let (Value::Int(x), Value::Int(y), Value::Int(t), Value::Int(l)) =
                     (x_val, y_val, t_val, l_val)
                 {
+                    if vm.strings.len() >= MAX_STRINGS {
+                        vm.output.push("Error: Max strings limit reached".to_string());
+                        return None;
+                    }
+
                     let start_x = x as f64;
                     let start_y = y as f64;
                     let length = l as f64;
@@ -193,4 +198,42 @@ pub fn exec_string_op(
         _ => {}
     }
     None
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
+
+    #[test]
+    fn test_string_limit() {
+        let genes = vec![
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
+            Gene { op: OpCode::StringNew, args: vec![] },
+            Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
+        ];
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![Strand { genes }],
+            },
+        };
+        let mut vm = ChimeraVM::new(dna);
+        vm.energy = 100000; // Infinite energy for test
+        vm.telomeres[0] = 10000; // Infinite life
+
+        // Loop runs 6 ops. StringNew is 1 op.
+        // To create 300 strings, we need 300 * 6 = 1800 steps.
+        for _ in 0..2000 {
+            vm.step();
+        }
+
+        assert!(vm.strings.len() <= MAX_STRINGS);
+        assert!(vm.strings.len() > 0);
+
+        // Check for error message
+        assert!(vm.output.iter().any(|s| s.contains("Max strings limit reached")));
+    }
 }

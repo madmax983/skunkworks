@@ -68,6 +68,10 @@ pub fn exec_retina_draw(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         if let (Value::Int(x), Value::Int(y), Value::Int(c), Value::Int(rgb)) =
             (x_val, y_val, char_val, color_val)
         {
+            if x < 0 || y < 0 {
+                vm.output.push("Error: Negative coordinates".to_string());
+                return None;
+            }
             let r = ((rgb >> 16) & 0xFF) as u8;
             let g = ((rgb >> 8) & 0xFF) as u8;
             let b = (rgb & 0xFF) as u8;
@@ -152,6 +156,10 @@ pub fn exec_rasterize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let y_val = vm.stack.pop().unwrap();
 
         if let (Value::Int(y), Value::Int(x), Value::Int(mode)) = (y_val, x_val, mode_val) {
+            if x < 0 || y < 0 {
+                vm.output.push("Error: Negative coordinates".to_string());
+                return None;
+            }
             let mut pixel_data = Vec::new();
 
             match data_val {
