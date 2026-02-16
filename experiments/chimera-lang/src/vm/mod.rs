@@ -1982,7 +1982,21 @@ impl ChimeraVM {
             self.context_loc,
         );
 
-        self.energy -= 1;
+        #[cfg(feature = "nova")]
+        {
+            let (cy, cx) = self.context_loc;
+            let modifier = self.biome_grid[cy][cx].energy_cost_modifier();
+            let base_cost = 1.0 * modifier;
+            let int_cost = base_cost.floor() as i64;
+            let prob = base_cost - int_cost as f64;
+            let mut rng = rand::thread_rng();
+            let extra = if rng.gen_bool(prob) { 1 } else { 0 };
+            self.energy -= (int_cost + extra);
+        }
+        #[cfg(not(feature = "nova"))]
+        {
+            self.energy -= 1;
+        }
 
         // Decay execution trail
         for val in self.execution_trail.iter_mut() {
@@ -2157,7 +2171,12 @@ impl ChimeraVM {
 
         if !time_frozen && self.chaos_mode {
             let mut rng = rand::thread_rng();
-            if rng.gen_bool(0.1) {
+            #[cfg(feature = "nova")]
+            let chance = 0.1 * self.biome_grid[self.context_loc.0][self.context_loc.1].mutation_rate();
+            #[cfg(not(feature = "nova"))]
+            let chance = 0.1;
+
+            if rng.gen_bool(chance.clamp(0.0, 1.0)) {
                 self.mutate();
             }
         }
