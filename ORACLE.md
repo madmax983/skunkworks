@@ -17,6 +17,7 @@
   - [Genesis (The Archivist)]: `ferrous-sector` will demonstrate that while human pattern recognition is surprisingly resilient to random bit flips (up to ~10% corruption), modern, highly-structured file formats (JSON, Zip) become unreadable at <1% corruption, suggesting a need for 'fuzzy' parsers for long-term archival.
   - [Genesis (The Percussionist)]: `thread-symphony` will demonstrate that forcing monophonic execution (Global Lock) on polymetric threads transforms chaotic "noise" into structured "funk" (swing/groove) purely due to the physics of contention, proving that "Time" is a resource that must be negotiated.
   - [Genesis (The Percussionist)]: `net-groove` will show that internet latency (RTT) follows a 1/f distribution (Pink Noise) over long periods, making it musically "natural" and pleasing, unlike white noise jitter.
+  - [Genesis (The Archivist)]: `entropy-beast` will confirm that while structural data integrity requires rigid schema validation (e.g. Protocol Buffers), the *recovery* of meaning from partial data requires resilient, "fuzzy" parsers (like `nom` used creatively). This implies future archival systems should store both the strict schema AND a resilient recovery grammar.
 
 ## Genesis
 - **Hypothesis**: The infinite non-repeating structure of Penrose tilings will naturally create choke points that simulate 'rooms' and 'corridors' without explicit procedural generation logic. The constraints of the 5-grid intersection create "density waves" of small tiles versus large tiles.
