@@ -27,3 +27,7 @@
 ## 2025-10-27 - Myco-Diffusion Grid Panic (DoS)
 **Threat:** The `GrayScottGrid` struct in `experiments/myco-diffusion` exposed public fields (`width`, `height`, `u`, `v`), allowing external code to modify dimensions without resizing buffers. This inconsistency caused a panic (DoS) when `update` or `deposit_v` accessed the buffers using the modified dimensions.
 **Defense:** Enforced encapsulation by making `GrayScottGrid` fields private and adding read-only accessors (`width()`, `height()`, `u()`, `v()`). This ensures the invariant `u.len() == width * height` is always maintained after initialization.
+
+## 2026-02-16 - Nova Physics Integer Overflow Panic
+**Threat:** The `exec_irradiate` and `exec_detox` OpCodes in `experiments/chimera-lang/src/vm/nova.rs` calculated energy cost using `(r * r + 1)` where `r` is a user-controlled `i64`. If `r` was large (e.g. `i64::MAX`), `r*r` would overflow `i64`, causing a panic in debug builds (DoS) or wrapping in release builds.
+**Defense:** Switched to calculating `r_sq` using `(r as i128).saturating_mul(r as i128)` to ensure safety and correct cost capping.
