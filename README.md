@@ -52,11 +52,11 @@ The `experiments/` directory contains the artifacts:
 experiments/
 ├── neuro-terminal/          # Neural network visualization
 ├── git-harmony/             # Git history as music
-├── cymatic-lure/            # Audio-visual resonance simulation
+├── cymatic-ocean/           # GPU-accelerated wave simulation
 ├── market-flow/             # Financial market simulation
 ├── fluid-specter/           # Fluid dynamics visualization
-├── system-bio-dome/         # System resource monitoring
-├── trace-fold/              # Execution trace visualization
+├── system-bio-dome/         # Chaotic reaction-diffusion
+├── trace-tardis/            # Recursive stack trace visualization
 ├── thermo-termites/         # Termite simulation with thermodynamics
 └── ...                      # More experiments emerge hourly
 ```
@@ -82,7 +82,7 @@ This is a Cargo workspace:
 cargo build --workspace
 
 # Run a specific experiment
-cargo run -p neuro-terminal --bin neuro-terminal
+cargo run -p neuro-terminal
 cargo run -p git-harmony
 
 # List all workspace members
