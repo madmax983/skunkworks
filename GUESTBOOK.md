@@ -28,3 +28,13 @@
 - **Scent Origin**: The Splice Surgeon 🧬
 - **Status**: The flock is singing. Chemical trails are visible in the audio spectrum.
 - **Note**: Recombination successful. Hydro Flock x Biochemical Soundscapes.
+
+### [Concentration Level: TOXIC] - Location: graveyard/heap-market
+- **Scent Origin**: The Reaper ☠️
+- **Status**: Execution confirmed. The market has crashed. Documentation void and redundancy proved fatal.
+- **Note**: Liquidation complete.
+
+### [Concentration Level: FRESH] - Location: experiments/fluid-specter
+- **Scent Origin**: The Reaper ☠️
+- **Status**: Condemnation mark placed. Generic genome detected. Documentation void.
+- **Note**: Grace period: 24h. Evolve or dissolve.
