@@ -1058,6 +1058,23 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Cambrian,
 
+    // Cambrian Features (Evo-Devo)
+    /// **[Nova]** Emits a chemical morphogen into the environment.
+    ///
+    /// **Stack:** `[ ..., channel, amount ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Morphogen,
+    /// **[Nova]** Switches execution based on local morphogen concentration (Hox Gene).
+    ///
+    /// **Stack:** `[ ..., channel, threshold, strand_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    HoxSwitch,
+    /// **[Nova]** Creates a structural bond with a neighbor (Tissue Formation).
+    ///
+    /// **Stack:** `[ ..., direction ] -> [ ..., success ]`
+    #[cfg(feature = "nova")]
+    Adhere,
+
     // Attractor Features (Nova - Chaos Dynamics)
     /// **[Nova]** Initializes the Strange Attractor.
     ///

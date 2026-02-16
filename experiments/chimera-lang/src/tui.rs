@@ -140,6 +140,8 @@ pub(crate) enum ViewMode {
     Metazoa,
     #[cfg(feature = "nova")]
     Genesis,
+    #[cfg(feature = "nova")]
+    Cambrian,
 }
 
 enum InputMode {
@@ -859,6 +861,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Genesis = app_state.view_mode {
                 render_genesis(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Cambrian = app_state.view_mode {
+                render_cambrian(f, vm, app_state);
                 return;
             }
 
@@ -2110,8 +2118,12 @@ where
                             ViewMode::Metazoa => ViewMode::Genesis,
                             #[cfg(feature = "nova")]
                             ViewMode::Genesis => ViewMode::Genome,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Cambrian => ViewMode::Genome,
                         };
                     }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('^') => app_state.view_mode = ViewMode::Cambrian,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('&') => app_state.view_mode = ViewMode::Semiotics,
                     #[cfg(feature = "nova")]
@@ -10790,4 +10802,74 @@ fn render_genesis(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     // Status
     f.render_widget(Paragraph::new(app_state.status_msg.as_str()).block(Block::default().borders(Borders::ALL)), grid_chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_cambrian(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let hormone = vm.hormone_grid[y][x]; // [i64; 3]
+            // Normalize 0-1000 -> 0-255
+            let r = (hormone[0] as f64 / 1000.0 * 255.0).clamp(0.0, 255.0) as u8;
+            let g = (hormone[1] as f64 / 1000.0 * 255.0).clamp(0.0, 255.0) as u8;
+            let b = (hormone[2] as f64 / 1000.0 * 255.0).clamp(0.0, 255.0) as u8;
+
+            let mut style = Style::default().bg(Color::Rgb(r, g, b));
+
+            // Contrast text color
+            let brightness = (r as u16 + g as u16 + b as u16) / 3;
+            if brightness > 128 {
+                style = style.fg(Color::Black);
+            } else {
+                style = style.fg(Color::White);
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            let val = &vm.grid[y][x];
+            let s = match val {
+                crate::vm::Value::Str(s) => s.chars().next().unwrap_or(' ').to_string(),
+                crate::vm::Value::Int(n) => n.to_string(),
+                _ => "?".to_string(),
+            };
+            let display = format!("{:^3.3}", s);
+            line_spans.push(Span::styled(display, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default().borders(Borders::ALL).title("Cambrian Morphogens (RGB)"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Info
+    let (cx, cy) = app_state.grid_cursor;
+    let h = vm.hormone_grid[cy][cx];
+
+    let info = vec![
+        Line::from("MORPHOGEN GRADIENTS"),
+        Line::from(" "),
+        Line::from(format!("Pos: {},{}", cx, cy)),
+        Line::from(format!("Ch A (Red):   {}", h[0])),
+        Line::from(format!("Ch B (Green): {}", h[1])),
+        Line::from(format!("Ch C (Blue):  {}", h[2])),
+        Line::from(" "),
+        Line::from("Opcodes:"),
+        Line::from("  Morphogen(ch, amt)"),
+        Line::from("  HoxSwitch(ch, thresh, strand)"),
+        Line::from("  Adhere(dir)"),
+    ];
+    let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Development"));
+    f.render_widget(info_widget, chunks[1]);
 }
