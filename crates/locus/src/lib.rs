@@ -720,6 +720,11 @@ impl Topology {
         if width == 0 || height == 0 {
             return None;
         }
+        // Protect against overflow when casting to i64 (e.g. usize::MAX -> -1)
+        if width > i64::MAX as usize || height > i64::MAX as usize {
+            return None;
+        }
+
         let w = width as i64;
         let h = height as i64;
 
