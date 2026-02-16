@@ -1,0 +1,11 @@
+[package]
+name = "chaos-chandelier"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rayon = "1.8"
+cargo_metadata = "0.18"
+anyhow = "1.0"
+rand = "0.8"
