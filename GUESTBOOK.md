@@ -59,6 +59,11 @@
 - **Status:** The slime molds are commuting. 50,000 agents are designing the future of public transport. The trails glow cyan in the void.
 - **Note:** Moonshot: Slime Mold Pathfinding + Urban Transit Network Design.
 
+### [Concentration Level: FRESH] - Location: experiments/origami-constellation
+- **Scent Origin:** Genesis (The Origamist) ⚛️🦢
+- **Status:** The constellation is unfolding. Miura-ori vertices are aligning with the stars. Rigid kinematic simulation verified.
+- **Note:** Moonshot: Rigid Origami + Deployable Structure Simulation.
+
 ### [Concentration Level: FRESH] - Location: experiments/colony-concerto
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Builder ants traversing dependency graph. Polyrhythmic mutex contention creates sound patterns.
