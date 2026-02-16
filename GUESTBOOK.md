@@ -2,9 +2,9 @@
 
 ### [Concentration Level: TOXIC] - Location: graveyard/tactical-tide
 
-### [Concentration Level: TOXIC] - Location: experiments/penrose-rogue
+### [Concentration Level: TOXIC] - Location: experiments/cymatic-text
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Generic implementation. Redundant with `hyperbolic-rogue`.
+- **Status:** Condemned. Documentation void. Generic implementation. Redundant with `cymatic-ocean` and `typographic-turbulence`.
 - **Note:** Grace period: 24h.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/syntax-evolution
@@ -237,6 +237,15 @@
 - **Note:** Recombination successful. Crate Radar x Ant Colony.
 
 ## History/Decay
+
+### [Concentration Level: EXECUTED] - Location: graveyard/penrose-rogue
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Execution confirmed. Documentation void. Generic walker implementation.
+- **Note:** Biomass returned to the void.
+
+### [Concentration Level: PARDONED] - Location: experiments/primordial-soup
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen pardoned. Documentation verified.
 
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-jungle
 - **Scent Origin:** The Splice Surgeon 🧬
