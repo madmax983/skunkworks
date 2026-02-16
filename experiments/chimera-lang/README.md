@@ -162,6 +162,12 @@ Links the Holographic genetics with the physical Grid.
 *   `supernova()`: Explodes current strand, scattering genes on grid.
 *   `singularity()`: Merges all strands into one.
 
+### Babel-19 (Semantic Grid)
+The Babel system now allows for "Live Parsing" of the grid as executable code.
+*   **Semantic Actions**: Embed ChimeraScript in grid cells using `{ code }`.
+    *   Example: `"Hello" -> { "Found it" print } -> !`
+*   `babel_live(y, x, input)`: Triggers the parser at (y,x) with the given input string.
+
 ## Controls (TUI)
 *   `Space`: Step execution.
 *   `Tab`: Cycle Views (Genome -> Grid -> Microscope -> Cortex -> Metaphysics -> Topology -> Laboratory).

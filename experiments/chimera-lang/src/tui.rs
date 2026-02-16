@@ -1647,6 +1647,7 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                _ => {}
                             }
                         }
                         KeyCode::Tab =>
@@ -2873,6 +2874,7 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
+                        _ => {}
                     },
                     KeyCode::Up => match app_state.view_mode {
                         ViewMode::Genome => {
@@ -3146,6 +3148,7 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        _ => {}
                     },
                     KeyCode::Right => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -3343,6 +3346,7 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        _ => {}
                     },
                     KeyCode::Left => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -3540,6 +3544,7 @@ where
                                 app_state.grid_cursor.0 -= 1;
                             }
                         }
+                        _ => {}
                     },
                     KeyCode::Enter => {
                         #[cfg(feature = "nova")]
@@ -3966,6 +3971,7 @@ where
                                     _ => app_state.input_buffer = String::new(),
                                 }
                             }
+                            _ => {}
                         }
                     }
                     _ => {}
@@ -5532,6 +5538,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Evolution => "EVOLUTION CHAMBER",
         #[cfg(feature = "nova")]
         ViewMode::Ecology => "GENETIC ECOLOGY",
+        _ => "UNKNOWN MODE",
     };
 
     let title = match app_state.input_mode {
@@ -5572,6 +5579,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
             #[allow(unused_mut)]
             let (mut char_rep, mut style) = match val {
                 crate::vm::Value::Int(0) => (".".to_string(), Style::default().fg(Color::DarkGray)),
+                crate::vm::Value::Symbol(id) => (format!("§{:x}", id), Style::default().fg(Color::Magenta)),
                 crate::vm::Value::Int(n) => {
                     #[cfg(feature = "silicon")]
                     if vm.silicon_mode {
@@ -5761,6 +5769,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                         crate::vm::nova::OrganelleType::Wisp => Color::Yellow,
                         crate::vm::nova::OrganelleType::MadScientist => Color::Magenta,
                         crate::vm::nova::OrganelleType::Phage => Color::Red,
+                        crate::vm::nova::OrganelleType::Savant => Color::Cyan,
+                        crate::vm::nova::OrganelleType::Metazoan => Color::Green,
                         crate::vm::nova::OrganelleType::Worker => Color::White,
                     };
                     let char_code = match organelle.kind {
@@ -5775,6 +5785,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                         crate::vm::nova::OrganelleType::Wisp => "*",
                         crate::vm::nova::OrganelleType::MadScientist => "⚛",
                         crate::vm::nova::OrganelleType::Phage => "P",
+                        crate::vm::nova::OrganelleType::Savant => "S",
+                        crate::vm::nova::OrganelleType::Metazoan => "M",
                         crate::vm::nova::OrganelleType::Worker => "O",
                     };
 
