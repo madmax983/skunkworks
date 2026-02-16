@@ -1914,7 +1914,7 @@ fn exec_absorb(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
-fn exec_detox(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+pub(crate) fn exec_detox(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(r) = val {
             let (cy, cx) = vm.context_loc;
@@ -1922,7 +1922,9 @@ fn exec_detox(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             for (tx, ty) in coords {
                 vm.waste_grid[ty][tx] = 0;
             }
-            vm.energy = vm.energy.saturating_sub((r * r + 1).clamp(5, 50));
+            let r_sq = (r as i128).saturating_mul(r as i128);
+            let cost = (r_sq + 1).clamp(5, 50) as i64;
+            vm.energy = vm.energy.saturating_sub(cost);
             vm.output
                 .push(format!("DETOX: Cleansed radius {} at {},{}", r, cx, cy));
         } else {
@@ -2647,7 +2649,7 @@ fn exec_lysis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
-fn exec_irradiate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+pub(crate) fn exec_irradiate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let radius_val = vm.stack.pop().unwrap();
         let amount_val = vm.stack.pop().unwrap();
@@ -2658,9 +2660,9 @@ fn exec_irradiate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 for (tx, ty) in coords {
                     vm.mutagen_grid[ty][tx] = vm.mutagen_grid[ty][tx].saturating_add(amount);
                 }
-                vm.energy = vm
-                    .energy
-                    .saturating_sub((r * r + 1).clamp(5, 50) + amount / 10);
+                let r_sq = (r as i128).saturating_mul(r as i128);
+                let cost = (r_sq + 1).clamp(5, 50) as i64 + amount / 10;
+                vm.energy = vm.energy.saturating_sub(cost);
                 vm.output.push(format!(
                     "IRRADIATE: Added {} mutagen at {},{} r={}",
                     amount, cx, cy, r
