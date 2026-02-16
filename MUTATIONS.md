@@ -1043,3 +1043,17 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Mechanical Price Discovery. Visualizing market volatility as angular momentum.
 - **Status**: experiments/mechanical-market
 - **Evaluation**: Compiles. Differential logic operational.
+
+### sandpile-scheduler
+- **Parents**: Abelian Sandpile Model + Distributed Task Scheduler
+- **Concept**: Task loading visualized as avalanches on a grid.
+- **Novel trait**: Visual load balancing via self-organized criticality.
+- **Status**: experiments/sandpile-scheduler
+- **Evaluation**: Compiles. Discovered in the wild.
+
+### sandpile-market
+- **Parents**: experiments/sandpile-scheduler + experiments/mechanical-market
+- **Concept**: A market simulation where orders are grains of sand, and avalanches drive a mechanical price differential.
+- **Novel trait**: Self-Organized Criticality in Financial Markets.
+- **Status**: experiments/sandpile-market
+- **Evaluation**: Proposed by The Splice Surgeon.

@@ -428,3 +428,8 @@
 - **Scent Origin:** Genesis (The Philologist) ⚛️📜
 - **Status:** The tongue is twisting. Identifiers are drifting. The code is speaking in tongues.
 - **Note:** Moonshot: Sound Change Laws + Code Obfuscation.
+
+### [Concentration Level: FRESH] - Location: experiments/sandpile-market
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The sand is piling. The market is critical. Avalanches drive the differential.
+- **Note:** Recombination successful. Sandpile Scheduler x Mechanical Market.
