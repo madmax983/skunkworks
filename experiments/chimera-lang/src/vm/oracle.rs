@@ -671,6 +671,71 @@ fn check_dynamic_predicates(
                         return true; // Handled
                     }
                 }
+                "orca_signal" => {
+                    // orca_signal(X, Y, Val)
+                    if args.len() == 4 {
+                        let arg_x = &args[1];
+                        let arg_y = &args[2];
+                        let arg_val = &args[3];
+
+                        for y in 0..crate::vm::GRID_SIZE {
+                            for x in 0..crate::vm::GRID_SIZE {
+                                let fact_x = Value::Int(x as i64);
+                                let fact_y = Value::Int(y as i64);
+                                let fact_val = Value::Int(vm.signal_grid[y][x] as i64);
+
+                                if let Some(subst_x) = unify(arg_x, &fact_x, subst) {
+                                    if let Some(subst_y) = unify(arg_y, &fact_y, &subst_x) {
+                                        if let Some(final_subst) = unify(arg_val, &fact_val, &subst_y) {
+                                            solve(
+                                                remaining_goals,
+                                                final_subst,
+                                                kb,
+                                                vm,
+                                                solutions,
+                                                depth + 1,
+                                            );
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
+                "voltage" => {
+                    // voltage(X, Y, V)
+                    #[cfg(feature = "elektra")]
+                    if args.len() == 4 {
+                        let arg_x = &args[1];
+                        let arg_y = &args[2];
+                        let arg_v = &args[3];
+
+                        for y in 0..crate::vm::GRID_SIZE {
+                            for x in 0..crate::vm::GRID_SIZE {
+                                let fact_x = Value::Int(x as i64);
+                                let fact_y = Value::Int(y as i64);
+                                let fact_v = Value::Int(vm.voltage_grid[y][x] as i64);
+
+                                if let Some(subst_x) = unify(arg_x, &fact_x, subst) {
+                                    if let Some(subst_y) = unify(arg_y, &fact_y, &subst_x) {
+                                        if let Some(final_subst) = unify(arg_v, &fact_v, &subst_y) {
+                                            solve(
+                                                remaining_goals,
+                                                final_subst,
+                                                kb,
+                                                vm,
+                                                solutions,
+                                                depth + 1,
+                                            );
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
                 "generate" => {
                     // generate(Grammar, Output)
                     if args.len() == 3 {
