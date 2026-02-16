@@ -1,0 +1,15 @@
+[package]
+name = "lock-step"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = { workspace = true }
+rand = { workspace = true }
+crossbeam = "0.8"
+parking_lot = "0.12"
+cpal = { version = "0.15", optional = true }
+
+[features]
+default = []
+audio = ["cpal"]
