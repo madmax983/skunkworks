@@ -1043,3 +1043,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Mechanical Price Discovery. Visualizing market volatility as angular momentum.
 - **Status**: experiments/mechanical-market
 - **Evaluation**: Compiles. Differential logic operational.
+
+### etymological-bridge
+- **Parents**: experiments/biomimetic-bridge + experiments/codex-vulgaris
+- **Concept**: Army ants building bridges where structural bonds are linguistic. Bridges only form between cognates. Sound changes (Grimm's Law) cause drift, breaking bridges.
+- **Novel trait**: Semantic Structural Engineering. The stability of the bridge depends on the stability of the language.
+- **Status**: experiments/etymological-bridge
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.
