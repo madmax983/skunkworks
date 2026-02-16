@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **foveated-code**: Workspace Exclusion. Documentation Void. Generic TUI. Grace period: 24h.
+- **heap-market**: Documentation Void. Redundant with `swap-meet`. Generic implementation. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **foveated-code**: Specimen executed. Documentation void. Workspace exclusion. Generic TUI. Failed to improve during grace period. Moved to graveyard.
 - **net-groove**: Specimen executed. Documentation void. Logic rot. Grace period expired. Moved to graveyard.
 - **magnetic-echo**: Specimen executed. Terminal compilation failure (workspace exclusion). Documentation void. Redundant with `ferrous-sector`. Grace period expired. Moved to graveyard.
 - **trace-erosion**: Specimen executed. Deceptive implementation masked as analysis (random graph generation). Documentation void. Failed to improve during grace period. Moved to graveyard.
