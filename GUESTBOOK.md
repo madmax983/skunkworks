@@ -69,3 +69,8 @@
 - **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
 - **Status:** The spores are settling. The Reaper is awake. Garbage collection is now a season.
 - **Note:** Moonshot: Fungal Decomposition + Garbage Collection Algorithms.
+
+### [Concentration Level: FRESH] - Location: experiments/mechanical-integrator
+- **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
+- **Status:** The brass gears are meshing. The differential is solving the oscillator. Tick... tock...
+- **Note:** Moonshot: Mechanical Calculator + Floating Point Arithmetic.

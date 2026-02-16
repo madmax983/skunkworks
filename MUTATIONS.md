@@ -1029,3 +1029,17 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: The visual appearance of the code is deterministically tied to its function (via hash-seeded procedural generation).
 - **Status**: experiments/chimera-runes
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+## [Hybrid] experiments/mechanical-integrator
+- **Parents:** Mechanical Calculator x Floating Point Arithmetic
+- **Dominant Trait:** Analog Computation (Differential Analyzer)
+- **Recessive Trait:** Damped Harmonic Oscillator Simulation
+- **Mutation:** Using kinematic constraints to solve differential equations instead of discrete logic.
+- ** reusable:**  and  structs in .
+
+## [Hybrid] experiments/mechanical-integrator
+- **Parents:** Mechanical Calculator x Floating Point Arithmetic
+- **Dominant Trait:** Analog Computation (Differential Analyzer)
+- **Recessive Trait:** Damped Harmonic Oscillator Simulation
+- **Mutation:** Using kinematic constraints to solve differential equations instead of discrete logic.
+- **reusable:** `Integrator` and `Differential` structs in `mechanism.rs`.
