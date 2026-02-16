@@ -11,3 +11,7 @@
 **[Duplicated Control Flow in Error Handling]**
 **Learning:** Logic for updating application state was duplicated in both success and error branches of a `match` statement, leading to drift risk.
 **Action:** Extract the calculation logic (e.g., `measure_latency`) to return a unified value (e.g., `Duration`) so state updates happen in a single, linear path.
+
+**[Logic Duplication in Grid Iteration]**
+**Learning:** Logic for calculating cell properties (e.g. conductivity) was duplicated inside multiple nested loops, making it hard to change the property definition globally.
+**Action:** Extract property calculation into a pure helper function (`get_conductivity`) before iterating.
