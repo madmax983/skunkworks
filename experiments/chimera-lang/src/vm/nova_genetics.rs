@@ -870,6 +870,9 @@ pub fn exec_incubate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                             Value::Superposition(_) => {
                                 k += 1; // Skip
                             }
+                            Value::Symbol(_) => {
+                                k += 1; // Skip
+                            }
                             Value::Str(s) => {
                                 let op = s.parse().unwrap_or(OpCode::Unknown(s.clone()));
                                 let mut args = Vec::new();

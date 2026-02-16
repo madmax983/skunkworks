@@ -121,6 +121,9 @@ fn exec_savor(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                         Value::Superposition(_) => {
                             energy_gain += 50; // Quantum flavor
                         }
+                        Value::Symbol(_) => {
+                            energy_gain += 100; // Symbolic flavor
+                        }
                     }
                 }
 

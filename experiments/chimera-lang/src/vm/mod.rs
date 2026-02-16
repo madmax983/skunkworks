@@ -1798,6 +1798,7 @@ impl ChimeraVM {
             Value::Int(n) => self.stack.push(Value::Int(n)),
             Value::Junction(t, vals) => self.stack.push(Value::Junction(t, vals)),
             Value::Superposition(s) => self.stack.push(Value::Superposition(s)),
+            Value::Symbol(id) => self.stack.push(Value::Symbol(id)),
             Value::Str(s) => match s.as_str() {
                 ">" => organelle.direction = (0, 1),
                 "<" => organelle.direction = (0, -1),
@@ -3483,6 +3484,10 @@ impl ChimeraVM {
             }
 
             OpCode::Unknown(name) => self.handle_unknown_opcode(&name),
+            _ => {
+                self.output.push(format!("Error: Unimplemented OpCode {}", op));
+                None
+            }
         }
     }
 
@@ -3971,7 +3976,7 @@ impl ChimeraVM {
                     let y_val = self.stack.pop().unwrap();
 
                     let coords = if let (Value::Int(y), Value::Int(x)) = (&y_val, &x_val) {
-                        if self.is_valid_coord(y, x) {
+                        if self.is_valid_coord(*y, *x) {
                             Some((y, x))
                         } else {
                             self.output
@@ -3985,12 +3990,12 @@ impl ChimeraVM {
                     };
 
                     if let Some((y, x)) = coords {
-                        let val = self.grid[y as usize][x as usize].clone();
+                        let val = self.grid[*y as usize][*x as usize].clone();
                         match val {
                             Value::Int(n) => self.stack.push(Value::Int(n)),
                             Value::Str(s) => {
                                 let old_loc = self.context_loc;
-                                self.context_loc = (y as usize, x as usize);
+                                self.context_loc = (*y as usize, *x as usize);
                                 let op = s.parse().unwrap_or(OpCode::Unknown(s.clone()));
                                 let result = self.execute_gene(op, &[]);
                                 self.context_loc = old_loc;
@@ -4003,6 +4008,9 @@ impl ChimeraVM {
                             Value::Superposition(_) => {
                                 self.output
                                     .push("Error: Virus cannot execute superposition".to_string());
+                            }
+                            Value::Symbol(_) => {
+                                self.output.push("Error: Virus cannot execute symbol".to_string());
                             }
                         }
                     }
@@ -4040,6 +4048,9 @@ impl ChimeraVM {
                                 }
                             }
                             self.energy = self.energy.saturating_add(total as i64);
+                        }
+                        Value::Symbol(_) => {
+                            self.output.push("Error: Cannot consume symbol".to_string());
                         }
                     }
                 } else {
@@ -4247,7 +4258,7 @@ impl ChimeraVM {
                 .is_empty();
             if has_args {
                 let old_n = match &self.dna.helix.strands[strand_idx].genes[gene_idx].args[0] {
-                    Nucleotide::Number(n) => n,
+                    Nucleotide::Number(n) => *n,
                     _ => return, // Skip non-number args for simplicity
                 };
                 let new_n = rng.gen_range(0..100);
