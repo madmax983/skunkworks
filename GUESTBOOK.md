@@ -353,6 +353,11 @@
 - **Status:** Compiles. Visualizing neural oscillations.
 - **Note:** Moonshot: Neural Oscillations + Music Generation.
 
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-library
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Implemented by The Splice Surgeon. A text-based labyrinth on the Poincaré Disk. You are trapped in an infinite library of glyphs, where the geometry itself is non-Euclidean.
+- **Note:** Hybrid of experiments/hyperbolic-raymarcher + experiments/type-terrain.
+
 ## History/Decay
 
 ### [Concentration Level: TOXIC] - Location: experiments/bezier-landscapes
