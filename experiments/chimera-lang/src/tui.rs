@@ -142,6 +142,8 @@ pub(crate) enum ViewMode {
     Genesis,
     #[cfg(feature = "nova")]
     Cambrian,
+    #[cfg(feature = "nova")]
+    Savant,
 }
 
 enum InputMode {
@@ -867,6 +869,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Cambrian = app_state.view_mode {
                 render_cambrian(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Savant = app_state.view_mode {
+                render_savant(f, vm, app_state);
                 return;
             }
 
@@ -2137,7 +2145,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Genesis => ViewMode::Genome,
                             #[cfg(feature = "nova")]
-                            ViewMode::Cambrian => ViewMode::Genome,
+                            ViewMode::Cambrian => ViewMode::Savant,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Savant => ViewMode::Genome,
                         };
                     }
                     #[cfg(feature = "nova")]
@@ -2148,6 +2158,8 @@ where
                     KeyCode::Char('*') => app_state.view_mode = ViewMode::Fractal,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('y') => app_state.view_mode = ViewMode::LifeCycle,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('|') => app_state.view_mode = ViewMode::Savant,
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
                     #[cfg(feature = "silicon")]
                     KeyCode::Char('F') => app_state.view_mode = ViewMode::Foundry,
@@ -6342,6 +6354,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Reactor, "Reactor", "X"));
         views.push((ViewMode::Evolution, "Evolution", "E"));
         views.push((ViewMode::Ecology, "Genetic Ecology", "Shift+E"));
+        views.push((ViewMode::Savant, "Savant", "Shift+\\"));
     }
     views
 }
@@ -10944,4 +10957,75 @@ fn render_cambrian(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let info_widget =
         Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Development"));
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_savant(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    // Left: Knowledge Base (Facts & Rules)
+    #[cfg(feature = "oracle")]
+    let kb_items: Vec<ListItem> = vm
+        .knowledge_base
+        .iter()
+        .map(|val| ListItem::new(format!("{}", val)).style(Style::default().fg(Color::Cyan)))
+        .collect();
+
+    #[cfg(not(feature = "oracle"))]
+    let kb_items: Vec<ListItem> = vec![ListItem::new("Oracle feature disabled.")];
+
+    let kb_list = List::new(kb_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Savant Knowledge Base"),
+    );
+    f.render_widget(kb_list, chunks[0]);
+
+    // Right: Savant Organelles & Logs
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(chunks[1]);
+
+    // Top Right: Active Savants
+    let mut savant_items = Vec::new();
+    for org in &vm.organelles {
+        if matches!(org.kind, crate::vm::nova::OrganelleType::Savant) {
+            savant_items.push(ListItem::new(format!(
+                "ID {}: {} @ {},{}",
+                org.id, org.name, org.context_loc.1, org.context_loc.0
+            )).style(Style::default().fg(Color::Yellow)));
+        }
+    }
+
+    if savant_items.is_empty() {
+        savant_items.push(ListItem::new("No active Savants.").style(Style::default().fg(Color::DarkGray)));
+    }
+
+    let savant_list = List::new(savant_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Active Agents"),
+    );
+    f.render_widget(savant_list, right_chunks[0]);
+
+    // Bottom Right: Logic Logs (Filtered Output)
+    let log_items: Vec<ListItem> = vm
+        .output
+        .iter()
+        .filter(|s| s.starts_with("SAVANT") || s.starts_with("ORACLE"))
+        .rev()
+        .take(20)
+        .map(|s| ListItem::new(s.clone()).style(Style::default().fg(Color::Green)))
+        .collect();
+
+    let log_list = List::new(log_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Inference Log"),
+    );
+    f.render_widget(log_list, right_chunks[1]);
 }
