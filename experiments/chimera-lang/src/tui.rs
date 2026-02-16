@@ -2120,6 +2120,32 @@ where
                                 }
                                 Err(e) => app_state.status_msg = format!("Error: {}", e),
                             }
+                        } else if let ViewMode::BioticChaos = app_state.view_mode {
+                            let (x, y) = app_state.grid_cursor;
+                            vm.chaos_struct.set_growth_rate(y, x, vm.chaos_struct.r_grid[y][x] + 0.01);
+                            app_state.status_msg = format!("Increased Growth Rate: {:.2}", vm.chaos_struct.r_grid[y][x]);
+                        }
+                    }
+                    KeyCode::Char('R') => {
+                        if let ViewMode::BioticChaos = app_state.view_mode {
+                            let (x, y) = app_state.grid_cursor;
+                            vm.chaos_struct.set_growth_rate(y, x, vm.chaos_struct.r_grid[y][x] - 0.01);
+                            app_state.status_msg = format!("Decreased Growth Rate: {:.2}", vm.chaos_struct.r_grid[y][x]);
+                        }
+                    }
+                    KeyCode::Char('c') => {
+                        if let ViewMode::BioticChaos = app_state.view_mode {
+                            vm.chaos_struct.set_coupling(vm.chaos_struct.coupling + 0.01);
+                            app_state.status_msg = format!("Increased Coupling: {:.2}", vm.chaos_struct.coupling);
+                        } else {
+                            vm.chaos_mode = !vm.chaos_mode;
+                            app_state.status_msg = format!("Chaos Mode: {}", vm.chaos_mode);
+                        }
+                    }
+                    KeyCode::Char('C') => {
+                        if let ViewMode::BioticChaos = app_state.view_mode {
+                            vm.chaos_struct.set_coupling(vm.chaos_struct.coupling - 0.01);
+                            app_state.status_msg = format!("Decreased Coupling: {:.2}", vm.chaos_struct.coupling);
                         }
                     }
                     #[cfg(feature = "biophysics")]
@@ -2291,7 +2317,14 @@ where
                     #[cfg(feature = "nova")]
                     KeyCode::Char('H') => app_state.view_mode = ViewMode::Hyperspace,
                     #[cfg(feature = "nova")]
-                    KeyCode::Char('W') => app_state.view_mode = ViewMode::Weaver,
+                    KeyCode::Char('z') => {
+                        if let ViewMode::BioticChaos = app_state.view_mode {
+                            vm.chaos_struct.reset_random();
+                            app_state.status_msg = "Reset Biotic Chaos Grid".to_string();
+                        } else {
+                            app_state.view_mode = ViewMode::Bestiary;
+                        }
+                    }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('`') => app_state.view_mode = ViewMode::Terminal,
                     #[cfg(feature = "nova")]
@@ -2368,6 +2401,13 @@ where
                     }
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char(' ') => {
+                        if let ViewMode::BioticChaos = app_state.view_mode {
+                            let (x, y) = app_state.grid_cursor;
+                            vm.chaos_struct.inject_chaos(y, x);
+                            app_state.status_msg = "Injected Chaos!".to_string();
+                            continue;
+                        }
+
                         if let ViewMode::Evolution = app_state.view_mode {
                             if let Some(engine) = &mut app_state.evolution_state.engine {
                                 engine.step(vm);

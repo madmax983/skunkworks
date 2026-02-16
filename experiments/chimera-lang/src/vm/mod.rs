@@ -83,6 +83,11 @@ pub mod bard;
     #[cfg(feature = "nova")]
     pub mod nova_semiotics;
 #[cfg(feature = "nova")]
+pub mod nova_chaos_link;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_chaos_link_test;
+#[cfg(feature = "nova")]
 pub mod blackbox;
 pub mod catalyst;
 pub mod chimera_chaos;
@@ -2162,6 +2167,10 @@ impl ChimeraVM {
 
         if !time_frozen {
             self.chaos_struct.tick();
+            #[cfg(feature = "nova")]
+            if self.chaos_mode {
+                nova_chaos_link::sync_biomes_from_chaos(self);
+            }
         }
 
         if !time_frozen && self.chaos_mode {

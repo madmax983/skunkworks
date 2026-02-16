@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use rand::Rng;
 
 pub const GRID_SIZE: usize = 16;
 
@@ -48,5 +49,31 @@ impl ChimeraChaos {
             }
         }
         self.grid = next_grid;
+    }
+
+    pub fn inject_chaos(&mut self, y: usize, x: usize) {
+        if y < GRID_SIZE && x < GRID_SIZE {
+            let mut rng = rand::thread_rng();
+            self.grid[y][x] = rng.gen::<f64>();
+        }
+    }
+
+    pub fn set_growth_rate(&mut self, y: usize, x: usize, r: f64) {
+        if y < GRID_SIZE && x < GRID_SIZE {
+            self.r_grid[y][x] = r.clamp(3.0, 4.0);
+        }
+    }
+
+    pub fn set_coupling(&mut self, e: f64) {
+        self.coupling = e.clamp(0.0, 1.0);
+    }
+
+    pub fn reset_random(&mut self) {
+        let mut rng = rand::thread_rng();
+        for y in 0..GRID_SIZE {
+            for x in 0..GRID_SIZE {
+                self.grid[y][x] = rng.gen::<f64>();
+            }
+        }
     }
 }

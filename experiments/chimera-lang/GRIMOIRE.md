@@ -66,11 +66,34 @@ The **Nova** expansion adds metaphysical and quantum capabilities.
 *   `void_rift(y, x)`: Tear a hole in the grid.
 *   `entropy_surge()`: Increase global chaos.
 
+## 🌀 Biotic Chaos (The CML)
+
+The **Biotic Chaos** system simulates a Coupled Map Lattice (CML) on top of the grid. This invisible field of chaos drives the mutation and evolution of the biome.
+
+### Dynamics
+*   **Chaos Value**: A value between 0.0 and 1.0 in each cell.
+*   **Growth Rate (r)**: Determines the chaotic behavior of the cell (3.0 = Stable, 4.0 = Chaos).
+*   **Coupling (e)**: Determines how much neighbor cells influence each other.
+
+### Biome Link
+The CML state directly influences the **Biome** of the grid cells:
+*   **Low Chaos**: Tundra (Frozen, Low Mutation)
+*   **High Chaos**: Volcanic (Active, High Mutation)
+*   **Extreme Chaos**: Glitch (Reality Failure)
+*   **Stable R**: Garden (Fertile)
+
+### TUI Controls
+In `BioticChaos` view:
+*   `Space`: Inject chaos at cursor.
+*   `r` / `R`: Adjust local Growth Rate (r).
+*   `c` / `C`: Adjust global Coupling (e).
+*   `z`: Reset grid to random state.
+
 ## 🕹️ Interface (Prologue)
 
 The TUI is your laboratory.
 
-*   **Tab**: Cycle Views (Genome, Grid, Microscope, **Grimoire**, etc.)
+*   **Tab**: Cycle Views (Genome, Grid, Microscope, **Grimoire**, **BioticChaos**, etc.)
 *   **Space**: Step execution.
 *   **Q**: Quit.
 
