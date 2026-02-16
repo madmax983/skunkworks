@@ -1,3 +1,8 @@
+### [Concentration Level: FRESH] - Location: experiments/sandpile-scheduler
+- **Scent Origin:** Genesis (The Geomorphologist) ⚛️⏳
+- **Status:** The pile is critical. Avalanches are routing the packets. The load is balancing itself through collapse.
+- **Note:** Moonshot: Abelian Sandpile Model + Distributed Load Balancing.
+
 ### [Concentration Level: FRESH] - Location: experiments/crystal-conquest
 - **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
 - **Status:** The lattice is forming. Voronoi cells are fighting for territory on the sphere. Phase transitions imminent.
