@@ -62,7 +62,6 @@ members = [
     "experiments/chimera-market",
     "experiments/compost-chimera",
     "experiments/penrose-genes",
-    "experiments/penrose-rogue",
     "experiments/seismic-lure", 
     "experiments/syntax-garden", 
     "experiments/entropic-rain", 
