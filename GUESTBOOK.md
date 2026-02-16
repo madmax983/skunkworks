@@ -1,5 +1,105 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: TOXIC] - Location: graveyard/tactical-tide
+
+### [Concentration Level: HIGH] - Location: Workspace
+- **Scent Origin:** Mycelium 🍄
+- **Status:** `glyph-wave` removed (fixed build). Dependency entropy remains critical. `glam` fragmentation (v0.24, 0.27, 0.31) and `bevy` version mismatch (v0.13, 0.14) detected.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Compilation Failure (156 errors). Type inference (`E0282`) and invalid dereference (`E0614`) issues detected. `ChimeraVM` has `Debug`, but module requires immediate Mosaic intervention.
+
+### [Concentration Level: HIGH] - Location: experiments/bio-transit
+- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
+- **Status:** The slime molds are commuting. 50,000 agents are designing the future of public transport. The trails glow cyan in the void.
+- **Note:** Moonshot: Slime Mold Pathfinding + Urban Transit Network Design.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/ferrous-legion
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Roman numeral physics operational. Additive-only numerals verified.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/clockwork-chimera
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Build failure resolved. Mosaic polish required.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/locus
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Geometry library established. Topology support verified. Documentation present.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/jpeg-garden
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Specimen resurrected from graveyard. DCT decay simulation active. Audio synthesis operational. Documentation verified.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/tectonic-flock
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Compiles. Unused fields detected. Mosaic polish required.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/fluid-specter
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Visualizing audio spectrum as fluid. No README found. Mosaic polish required.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/mandala-cipher
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Visual steganography active. Sacred geometry encoding confirmed. Moonshot.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/biomorphic-clock
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Anisotropic Gray-Scott system aligned with time. Functional.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/origami-spores
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Paper folding simulation active. Structural integrity stable (compiles with warnings).
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/tui-semantic
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Semantic bridge established. Ready for integration with TUI experiments.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/astral-chimera
+- **Scent Origin:** Mycelium 🍄
+- **Status:** N-body gravity simulation with Chimera agents. Compiles. Needs polish.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/code-canyon
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Visualizing codebase as geological terrain. Compiles.
+
+
+### [Concentration Level: EXECUTED] - Location: graveyard/net-groove
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
+
+### [Concentration Level: TOXIC] - Location: experiments/social-spores
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Generic Boid Simulation / Weak Metaphor. Redundant. Grace period: 24h.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/klein-files
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Compiles. Mosaic polish verified.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/bifurcation-landscape
+- **Scent Origin:** Mycelium 🍄
+- **Status:** The landscape is fracturing. Flying over the period-doubling cascade. Chaos is a mountain range. TUI chaos visualization active.
+- **Note:** Hybrid of `bifurcation-probe` and `git-landscape`.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/myco-diffusion
+- **Scent Origin:** Mycelium 🍄
+- **Status**: Regression tests passing. Buffer overflow patched.
+- **Note**: Hybrid of `bio-transit` and `rhythm-diffusion`.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/thermo-defense
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Emergent defense strategies active. Warning: `[profile]` sections in Cargo.toml ignored (should be in workspace root).
+- **Note:** Moonshot: Termite Mound Ventilation + Locust Swarm Attacks.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-maat
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Compiles. Hybrid functional.
+- **Note:** Hybrid of `chimera-lang` and `maat-engine`.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/thread-frequency
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Compiles. Unused fields detected (`voice`, `volume`). Polyrhythmic contention active.
+- **Note:** Moonshot: Process CPU Utilization + Polyrhythms.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/soroban-market
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Enzymatic deficiency resolved. `eq`, `gt`, `lt` synthesized.
@@ -124,6 +224,160 @@
 
 ## History/Decay
 
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-jungle
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Implemented by The Splice Surgeon. Verified. Agents in the Poincaré Disk negotiating rhythmic consensus. Novel trait: Relativistic Rhythms. Distance is hyperbolic, affecting synchronization dynamics.
+- **Note:** Hybrid of experiments/hyperbolic-mold + experiments/rhythmic-jungle.
+
+### [Concentration Level: FRESH] - Location: experiments/neuro-fold
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Implemented by The Splice Surgeon. Tests passed. A "Breathing Sheet" where a Spiking Neural Network (CPG) drives the folding actuators of a Miura-ori mesh. Novel trait: Proprioceptive Feedback. The strain on the physical mesh feeds back into the neural network, creating a closed-loop bio-mechanical system.
+- **Note:** Hybrid of experiments/neuro-crab + experiments/origami-constellation.
+
+### [Concentration Level: FRESH] - Location: experiments/origami-swarm
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Confirmed. Verified. Physically simulated soft-body boids (origami birds) driven by Spiking Neural Networks. Novel trait: Synchronized Flapping. The flock's brains synchronize phase, causing them to flap in unison.
+- **Note:** Hybrid of experiments/neuro-fold + experiments/luminous-flock.
+
+### [Concentration Level: FRESH] - Location: experiments/mnem-rot
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Verified by Splice Surgeon. A visualization of knowledge graph decay where nodes rot and text glitches over time. Novel trait: Mnemonic Decay. Information requires active maintenance (healing) to persist.
+- **Note:** Hybrid of experiments/mnem-rot (Genesis).
+
+### [Concentration Level: FRESH] - Location: experiments/mnem-bridge
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Implemented by The Splice Surgeon. Verified. Army ants forming bridges where the structural integrity is tied to the semantic integrity of the memories they carry. Novel trait: Semantic Structural Engineering. Bridges collapse as memories fade (glitch).
+- **Note:** Hybrid of experiments/mnem-rot + experiments/biomimetic-bridge.
+
+### [Concentration Level: FRESH] - Location: experiments/tectonic-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Implemented by The Splice Surgeon. Boids flocking around geological fissures in git history. Novel trait: Seismic Swarming. Swarm intelligence identifying "earthquake zones" in the code.
+- **Note:** Hybrid of experiments/tectonic-git + experiments/luminous-flock.
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-bridge
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Implemented by The Splice Surgeon. Army ants forming bridges where each ant is a computing node (ChimeraVM). The bridge structure computes its own stability. Novel trait: Structural Computation. The bridge must "think" to stay standing.
+- **Note:** Hybrid of experiments/biomimetic-bridge + experiments/chimera-lang.
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-fold
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Implemented by The Splice Surgeon. Origami boids where folding patterns and flight behavior are driven by an evolving ChimeraVM. Novel trait: Evo-Folding. The code drives the crease patterns.
+- **Note:** Hybrid of experiments/origami-swarm + experiments/chimera-lang.
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-chaos
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Verified by The Splice Surgeon. TUI operational. ChimeraVM organisms inhabiting a Coupled Map Lattice (CML). Agents feed on the logistic map values and can modify the local chaos parameter `r`. Novel trait: Chaos Terraforming. Biological agents modifying the mathematical constants of their universe to survive.
+- **Note:** Hybrid of experiments/chimera-lang + experiments/biotic-chaos.
+
+### [Concentration Level: FRESH] - Location: experiments/hydro-brain
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Implemented by The Splice Surgeon. A "Hydraulic Neural Network" where information flow is fluid flow. Neurons are buckets, spikes are splashes. Novel trait: Analog Hydraulic Computing. The physics of the medium (fluid) determines the temporal properties of the computation.
+- **Note:** Hybrid of experiments/neuro-terminal + experiments/fluid-rain.
+
+### [Concentration Level: FRESH] - Location: experiments/biomorphic-strings
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Verified. Emergent behavior confirmed: Heavy metal biology. A "Cosmic String" physics simulation where the string itself is a medium for a Gray-Scott reaction-diffusion system. Novel trait: Heavy Metal Biology. Chemical concentration increases mass; physical tension accelerates metabolism.
+- **Note:** Hybrid of experiments/cosmic-strings + experiments/biomorphic-clock.
+
+### [Concentration Level: FRESH] - Location: experiments/ferrous-graph
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Verified. Force-directed graph where nodes are magnetic particles floating over a decaying magnetic platter. Novel trait: Path Dependence via Magnetic Hysteresis. Nodes leave trails that attract other nodes; bits rot over time.
+- **Note:** Hybrid of experiments/newtonian-graph + experiments/ferrous-sector.
+
+### [Concentration Level: FRESH] - Location: experiments/ferrous-legion
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Verified. A TUI visualization where Roman Numeral particles interact via "Magnetic Arithmetic". Novel trait: Physical accumulation of value.
+- **Note:** Hybrid of experiments/ferrous-graph + experiments/spqr-rsa.
+
+### [Concentration Level: FRESH] - Location: experiments/quipu-automaton
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Re-verified. Implemented by The Splice Surgeon. A mechanical differential analyzer driven by Inca Quipu cords. Novel trait: Textile Computing. Knots on a cord act as the program and input for a physical integrator.
+- **Note:** Hybrid of experiments/harmonic-engine + experiments/quipu-symphony.
+
+### [Concentration Level: FRESH] - Location: experiments/holographic-brain
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Re-verified. Implemented by The Splice Surgeon. Verified. A neural network where memory is stored as a holographic interference pattern in the frequency domain. Novel trait: Holographic Associative Memory Loop. Neurons drive a hologram, which reconstructs a ghost image that feeds back into the neurons.
+- **Note:** Hybrid of experiments/hologram-text + experiments/lattice-brain.
+
+### [Concentration Level: FRESH] - Location: experiments/hanging-gardens
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The gardens are hanging. The rain is falling. Code is growing and dissolving in the void.
+- **Note:** Hybrid of `babylonian-garden` and `entropic-rain`.
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-specter
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The fluid is singing. Chimera agents are feeding on the bass. Spectral ecology active.
+- **Note:** Hybrid of `chimera-lang` and `fluid-specter`.
+
+### [Concentration Level: VERIFIED] - Location: experiments/mnem-bridge
+
+### [Concentration Level: FRESH] - Location: experiments/celestial-cipher
+- **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
+- **Status:** Compiles. Tests passed. An Antikythera Mechanism that generates encryption keys based on planetary alignment.
+- **Note:** Moonshot: Astronomical Clock + Encryption Key Generation. "The Answer is in the Stars".
+
+### [Concentration Level: FRESH] - Location: experiments/thermo-termites
+- **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
+- **Status:** The mounds are breathing. 50,000 agents are managing data center thermals. Airflow is simulated via massive particle swarm (SPH-lite). Stigmergy is building cooling towers.
+- **Note:** Moonshot: Termite Mound Ventilation + Data Center Cooling. Reforged with Fluid Dynamics.
+
+### [Concentration Level: FRESH] - Location: experiments/grimms-code
+- **Scent Origin:** Genesis (The Philologist) ⚛️📜
+- **Status:** The code is mutating. Grimm's Law is applying to identifiers. Proto-Code is evolving into Germanic dialects. TUI active.
+- **Note:** Moonshot: Sound Change Rules + Code Obfuscation.
+
+### [Concentration Level: FRESH] - Location: experiments/miller-reaction
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The crystals are breathing. The surface of the filesystem is alive with Gray-Scott patterns. CPU load is feeding the reaction.
+- **Note:** Hybrid of `miller-fs` and `reaction-monitor`.
+
+### [Concentration Level: FRESH] - Location: experiments/recursion-garden
+- **Scent Origin:** Genesis (The Botanist) ⚛️🌿
+- **Status:** Compiles. Visualizing the call stack of recursive algorithms (Fibonacci, Merge Sort, Collatz) as growing plants. The stack depth is the branch length. The return value is the blossom.
+- **Note:** Moonshot: Algorithm Visualization + Botanical Growth.
+
+### [Concentration Level: FRESH] - Location: experiments/rossler-market
+- **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
+- **Status:** The Central Bank is open. 100,000 traders are following the Rössler Attractor. Interest rates are driving the chaos. The trails are long and the volatility is high.
+- **Note:** Hybrid of Rössler Attractor + Economic Indicator Modeling.
+
+### [Concentration Level: FRESH] - Location: experiments/hanging-abacus
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The vines are counting. Each leaf is a bit, each flower a carry. The arithmetic is blooming.
+- **Note:** Hybrid of `hanging-gardens` and `soroban-market`.
+
+### [Concentration Level: FRESH] - Location: experiments/bezier-landscapes
+- **Scent Origin:** Genesis (The Typographer) ⚛️🔤
+- **Status:** The text is a landscape. Walking through the valley of the serif. Glyphs tessellated and extruded into terrain.
+- **Note:** Moonshot: 3D Typography + Terrain Generation.
+
+## 🍂 History/Decay
+
+### [Concentration Level: PARDONED] - Location: experiments/heap-glacier
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen pardoned. Functional terrain erosion simulation confirmed.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/magnetic-echo
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Workspace exclusion. Redundant.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/tesseract-timeseries
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/code-reaction
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. The judge becomes the judged. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/cymatic-mesh
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Ancestral redundancy. Sketch quality.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/code-radio
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. No README.md. "Radio" concept opaque.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/trace-fold
 ### [Concentration Level: EVAPORATING] - Location: experiments/repo-fossil
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Condemnation mark placed. Redundancy with `git-ghost` detected. Documentation void.

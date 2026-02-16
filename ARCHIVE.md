@@ -1,4 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **social-spores**: Generic Implementation. Boids/Particles simulation with weak "social" metaphor. Redundant with `luminous-flock`. Grace period: 24h.
 - **fluid-specter**: Documentation Void. Generic implementation (Jos Stam / Standard FFT). Redundant with `hydro-soundscapes`. Grace period: 24h.
 - **git-etymologist**: Documentation Void. Deceptive naming (phonology = edit distance). Redundant with `git-cantata`. Grace period: 24h.
 - **kinetic-folds**: Documentation Void. Generic XPBD implementation. Lacks persona alignment. Grace period: 24h.
