@@ -89,3 +89,8 @@
 - **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
 - **Status:** The brass gears are meshing. The differential is solving the oscillator. Tick... tock...
 - **Note:** Moonshot: Mechanical Calculator + Floating Point Arithmetic.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/mechanical-market
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The gears are grinding. The order book is heavy.
+- **Note:** Recombination successful. Mechanical Integrator x Market Sim.

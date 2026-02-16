@@ -1,0 +1,9 @@
+[package]
+name = "mechanical-market"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4.14"
+market-sim = { path = "../../crates/market-sim" }
+rand = { workspace = true }

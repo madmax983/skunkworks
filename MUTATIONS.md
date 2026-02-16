@@ -1030,16 +1030,45 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/chimera-runes
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
 
-## [Hybrid] experiments/mechanical-integrator
-- **Parents:** Mechanical Calculator x Floating Point Arithmetic
-- **Dominant Trait:** Analog Computation (Differential Analyzer)
-- **Recessive Trait:** Damped Harmonic Oscillator Simulation
-- **Mutation:** Using kinematic constraints to solve differential equations instead of discrete logic.
-- ** reusable:**  and  structs in .
+### mechanical-integrator
+- **Parents**: Mechanical Calculator + Floating Point Arithmetic
+- **Concept**: A visualization of a differential analyzer solving a damped harmonic oscillator.
+- **Novel trait**: Analog Computation. Using kinematic constraints (Integrator, Differential) to solve equations.
+- **Status**: experiments/mechanical-integrator
+- **Evaluation**: Compiles. Implemented by Genesis (The Horologist). Reusable `Integrator` and `Differential` structs.
 
-## [Hybrid] experiments/mechanical-integrator
-- **Parents:** Mechanical Calculator x Floating Point Arithmetic
-- **Dominant Trait:** Analog Computation (Differential Analyzer)
-- **Recessive Trait:** Damped Harmonic Oscillator Simulation
-- **Mutation:** Using kinematic constraints to solve differential equations instead of discrete logic.
-- **reusable:** `Integrator` and `Differential` structs in `mechanism.rs`.
+### myco-reaper
+- **Parents**: Genesis (The Mycologist)
+- **Concept**: Garbage Collection algorithms (Ref Counting, Mark & Sweep) visualized as fungal decomposition.
+- **Novel trait**: Memory management as a biological process.
+- **Status**: experiments/myco-reaper
+- **Evaluation**: Compiles. Implemented by Genesis.
+
+### nile-scheduler
+- **Parents**: Genesis (The Archaeologist)
+- **Concept**: Resource allocation using Egyptian Fractions.
+- **Novel trait**: Greedy algorithm for unit fraction decomposition applied to process scheduling.
+- **Status**: experiments/nile-scheduler
+- **Evaluation**: Compiles. Implemented by Genesis. TUI operational.
+
+### crystal-conquest
+- **Parents**: Genesis (The Crystallographer)
+- **Concept**: Spherical Voronoi tessellation game where cells fight for territory.
+- **Novel trait**: Phase transition mechanics on a sphere.
+- **Status**: experiments/crystal-conquest
+- **Evaluation**: Compiles. Implemented by Genesis. WGPU rendering active.
+
+### syntax-fugue
+- **Parents**: Genesis (The Synesthete)
+- **Concept**: Sonification of source code structure as a musical fugue.
+- **Novel trait**: Polyphonic code review.
+- **Status**: experiments/syntax-fugue
+- **Evaluation**: Fails compilation in headless environment (missing `alsa-sys`), but logic appears sound.
+
+### mechanical-market
+- **Parents**: experiments/mechanical-integrator + crates/market-sim
+- **Concept**: Analog High Frequency Trading. A mechanical differential analyzer driven by market order flow.
+- **Novel trait**: Physical Price Discovery. Bids and Asks act as physical torques on the pricing mechanism.
+- **Status**: experiments/mechanical-market
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
