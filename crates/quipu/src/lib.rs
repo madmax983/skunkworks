@@ -250,7 +250,10 @@ impl From<u64> for Cord {
             return Cord::default();
         }
 
-        let mut clusters = Vec::new();
+        // Optimization: Pre-allocate vector capacity to avoid reallocations.
+        // The number of clusters corresponds to the number of digits in base 10.
+        let capacity = (val.checked_ilog10().unwrap_or(0) + 1) as usize;
+        let mut clusters = Vec::with_capacity(capacity);
         let mut pos = 0;
 
         while val > 0 {

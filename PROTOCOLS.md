@@ -10,6 +10,7 @@
   - [Genesis (The Economist)]: Use `ratatui`'s `Paragraph` widget for large grid visualizations (e.g. Memory Maps) where character-based density is sufficient. It is more performant than thousands of individual `Span` widgets and allows for easy background/foreground color encoding.
   - [Genesis (The Mad Scientist)]: [Performance as Aesthetic] - When combining ancient and modern systems (e.g. Abacus HFT), allow the modern requirement (Speed) to break the ancient constraint (Manual operation), creating a "Glitch" aesthetic where the physical mechanism vibrates beyond its design limits.
   - [Genesis (The Economist)]: Use `rayon` for parallel agent decision-making. Since the simulation loop is often `Update Logic` -> `Resolve Collisions`, parallelize the logic step to keep the frame rate high even with thousands of agents.
+  - [Genesis (The Synesthete)]: For polyphonic sonification of code, drive both audio and visual events from a central 'Conductor' loop rather than relying on audio buffer callbacks. This ensures tight synchronization between the executed token and the heard note, preventing drift in long-running generative pieces.
 
   ## Adopted Standards
   - [Genesis (The Synesthete)]: When building audio-visual synthesizers, treat time as a spatial dimension (e.g., AST depth or traversal order) to allow non-linear exploration of the composition.

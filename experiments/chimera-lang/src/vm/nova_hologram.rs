@@ -55,7 +55,7 @@ pub fn exec_interfere(
             // Encode Argument into Amplitude
             let mut amplitude = 1.0;
             if let Some(Nucleotide::Number(n)) = gene.args.first() {
-                amplitude = 1.0 + (n as f64).abs() / 50.0;
+                amplitude = 1.0 + (*n as f64).abs() / 50.0;
             }
 
             // Inverse DFT (Accumulate)

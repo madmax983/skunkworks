@@ -23,6 +23,7 @@ use ratatui::{
 use std::io;
 
 const GOLDEN_FREQUENCIES: [f32; 4] = [161.8, 261.6, 432.0, 528.0];
+const GRIMOIRE_TEXT: &str = include_str!("../GRIMOIRE.md");
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub(crate) enum ViewMode {
@@ -137,6 +138,8 @@ pub(crate) enum ViewMode {
     Fractal,
     #[cfg(feature = "nova")]
     Metazoa,
+    #[cfg(feature = "nova")]
+    Genesis,
 }
 
 enum InputMode {
@@ -232,6 +235,14 @@ pub(crate) struct AppState {
     pub(crate) crispr_focus: usize,
     #[cfg(feature = "nova")]
     pub(crate) crispr_result: String,
+    #[cfg(feature = "nova")]
+    pub(crate) genesis_editor_buffer: String,
+    #[cfg(feature = "nova")]
+    pub(crate) genesis_grammar_buffer: String,
+    #[cfg(feature = "nova")]
+    pub(crate) genesis_focus: u8, // 0=Editor, 1=Grammar, 2=Grid
+    #[cfg(feature = "nova")]
+    pub(crate) grimoire_scroll: u16,
     pub(crate) evolution_state: EvolutionState,
     pub(crate) matrix_rain: MatrixRain,
 }
@@ -343,6 +354,14 @@ impl AppState {
             crispr_focus: 0,
             #[cfg(feature = "nova")]
             crispr_result: String::from("Ready to edit."),
+            #[cfg(feature = "nova")]
+            genesis_editor_buffer: String::new(),
+            #[cfg(feature = "nova")]
+            genesis_grammar_buffer: String::new(),
+            #[cfg(feature = "nova")]
+            genesis_focus: 0,
+            #[cfg(feature = "nova")]
+            grimoire_scroll: 0,
             evolution_state: EvolutionState::new(),
             matrix_rain: MatrixRain::new(),
         }
@@ -797,6 +816,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Genesis = app_state.view_mode {
+                render_genesis(f, vm, app_state);
+                return;
+            }
+
             render_genome_and_grid(f, vm, app_state);
 
             if vm.glitch_level > 0.01 {
@@ -893,6 +918,21 @@ where
                         _ => {}
                     }
                     continue;
+                }
+
+                #[cfg(feature = "nova")]
+                if let ViewMode::Grimoire = app_state.view_mode {
+                    match key.code {
+                        KeyCode::Up => {
+                            app_state.grimoire_scroll = app_state.grimoire_scroll.saturating_sub(1);
+                            continue;
+                        }
+                        KeyCode::Down => {
+                            app_state.grimoire_scroll = app_state.grimoire_scroll.saturating_add(1);
+                            continue;
+                        }
+                        _ => {}
+                    }
                 }
 
                 #[cfg(feature = "nova")]
@@ -1647,6 +1687,67 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Genesis => {
+                                    // Commit change based on focus
+                                    if app_state.genesis_focus == 0 {
+                                        // Compile Editor Code
+                                        let src = format!("strand genesis {{ {} }}", app_state.genesis_editor_buffer);
+                                        match crate::compiler::compile(&src, None) {
+                                            Ok(dna) => {
+                                                if let Some(strand) = dna.helix.strands.first() {
+                                                    // Execute immediately
+                                                    for gene in &strand.genes {
+                                                        vm.execute_gene_inner(gene.op.clone(), &gene.args);
+                                                    }
+                                                    app_state.status_msg = "Genesis: Executed.".to_string();
+                                                }
+                                            }
+                                            Err(e) => app_state.status_msg = format!("Compile Error: {}", e),
+                                        }
+                                        // Clear buffer? Maybe keep it for repeated editing.
+                                        app_state.input_mode = InputMode::Normal;
+                                    } else if app_state.genesis_focus == 1 {
+                                        // Update Grammar
+                                        // We need to parse the grammar buffer as a Value
+                                        // Since we don't have a direct Value parser exposed easily,
+                                        // we can use Lisp parser!
+                                        match crate::lisp::parse(&app_state.genesis_grammar_buffer) {
+                                            Ok(exprs) => {
+                                                // Convert SExpr to Value...
+                                                // Wait, we don't have SExpr -> Value conversion yet.
+                                                // We have SExpr -> Gene.
+                                                // Let's assume the user enters a valid OpCode sequence that pushes the grammar.
+                                                // e.g. "push(Match) push(A) grammar(Match)"
+                                                // Compile and execute it.
+                                                let src = format!("strand grammar_load {{ {} }}", app_state.genesis_grammar_buffer);
+                                                match crate::compiler::compile(&src, None) {
+                                                    Ok(dna) => {
+                                                        if let Some(strand) = dna.helix.strands.first() {
+                                                            for gene in &strand.genes {
+                                                                vm.execute_gene_inner(gene.op.clone(), &gene.args);
+                                                            }
+                                                            // Assume the code pushed the grammar to stack.
+                                                            // Call SelfRewrite to consume it.
+                                                            crate::vm::babel::exec_babel_op(vm, crate::opcode::OpCode::SelfRewrite, &[]);
+                                                            app_state.status_msg = "Genesis: Grammar Updated.".to_string();
+                                                        }
+                                                    }
+                                                    Err(e) => app_state.status_msg = format!("Grammar Error: {}", e),
+                                                }
+                                                app_state.input_mode = InputMode::Normal;
+                                            }
+                                            Err(e) => app_state.status_msg = format!("Lisp Error: {}", e),
+                                        }
+                                    } else {
+                                        // Grid
+                                        let val = parse_grid_value(&app_state.input_buffer);
+                                        let (x, y) = app_state.grid_cursor;
+                                        vm.grid[y][x] = val;
+                                        app_state.input_mode = InputMode::Normal;
+                                        app_state.input_buffer.clear();
+                                    }
+                                }
                                 _ => {}
                             }
                         }
@@ -1666,7 +1767,15 @@ where
                         KeyCode::Char(c) =>
                         {
                             #[cfg(feature = "nova")]
-                            if let ViewMode::Babel = app_state.view_mode {
+                            if let ViewMode::Genesis = app_state.view_mode {
+                                if app_state.genesis_focus == 0 {
+                                    app_state.genesis_editor_buffer.push(c);
+                                } else if app_state.genesis_focus == 1 {
+                                    app_state.genesis_grammar_buffer.push(c);
+                                } else {
+                                    app_state.input_buffer.push(c);
+                                }
+                            } else if let ViewMode::Babel = app_state.view_mode {
                                 let target = if app_state.babel_focus == 0 {
                                     &mut app_state.babel_pattern
                                 } else {
@@ -1686,7 +1795,15 @@ where
                         KeyCode::Backspace =>
                         {
                             #[cfg(feature = "nova")]
-                            if let ViewMode::Babel = app_state.view_mode {
+                            if let ViewMode::Genesis = app_state.view_mode {
+                                if app_state.genesis_focus == 0 {
+                                    app_state.genesis_editor_buffer.pop();
+                                } else if app_state.genesis_focus == 1 {
+                                    app_state.genesis_grammar_buffer.pop();
+                                } else {
+                                    app_state.input_buffer.pop();
+                                }
+                            } else if let ViewMode::Babel = app_state.view_mode {
                                 let target = if app_state.babel_focus == 0 {
                                     &mut app_state.babel_pattern
                                 } else {
@@ -1728,6 +1845,12 @@ where
 
                 match key.code {
                     KeyCode::Tab => {
+                        #[cfg(feature = "nova")]
+                        if let ViewMode::Genesis = app_state.view_mode {
+                            app_state.genesis_focus = (app_state.genesis_focus + 1) % 3;
+                            return Ok(());
+                        }
+
                         app_state.view_mode = match app_state.view_mode {
                             ViewMode::Genome => ViewMode::Grid,
                             ViewMode::Grid => ViewMode::Microscope,
@@ -1944,7 +2067,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::LifeCycle => ViewMode::Metazoa,
                             #[cfg(feature = "nova")]
-                            ViewMode::Metazoa => ViewMode::Genome,
+                            ViewMode::Metazoa => ViewMode::Genesis,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Genesis => ViewMode::Genome,
                         };
                     }
                     #[cfg(feature = "nova")]
@@ -2614,6 +2739,12 @@ where
                         #[cfg(feature = "nova")]
                         ViewMode::Kaleidoscope => {
                             if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Genesis => {
+                            if app_state.genesis_focus == 2 && app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
@@ -4316,6 +4447,17 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             }
 
             // Highlight cursor
+            #[cfg(feature = "nova")]
+            {
+                let biome = vm.biome_grid[y][x];
+                let (br, bg, bb) = biome.color();
+                if (br, bg, bb) != (0, 0, 0) {
+                    if style.bg.is_none() {
+                        style = style.bg(Color::Rgb(br, bg, bb));
+                    }
+                }
+            }
+
             if app_state.grid_cursor == (x, y) {
                 style = style.add_modifier(Modifier::REVERSED);
             }
@@ -4972,7 +5114,7 @@ fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
             let ch = match val {
                 crate::vm::Value::Str(s) => s.chars().next().unwrap_or('.').to_string(),
-                crate::vm::Value::Int(n) => if n == 0 { ".".to_string() } else { "#".to_string() },
+                crate::vm::Value::Int(n) => if *n == 0 { ".".to_string() } else { "#".to_string() },
                 _ => ".".to_string(),
             };
              line_spans.push(Span::styled(ch, style));
@@ -6547,27 +6689,26 @@ fn render_alchemy(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 #[cfg(feature = "nova")]
 fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints(
-            [
-                Constraint::Percentage(20),
-                Constraint::Percentage(20),
-                Constraint::Percentage(40),
-                Constraint::Percentage(20),
-            ]
-            .as_ref(),
-        )
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
         .split(f.area());
 
-    // Ether (IPC)
-    let ether_items: Vec<ListItem> = vm
-        .ether
-        .iter()
-        .map(|(ch, queue)| ListItem::new(format!("Channel {}: {} msgs", ch, queue.len())))
-        .collect();
-    let ether_list =
-        List::new(ether_items).block(Block::default().borders(Borders::ALL).title("Ether (IPC)"));
-    f.render_widget(ether_list, chunks[0]);
+    // Left: Grimoire Text (Manual)
+    let grimoire_widget = Paragraph::new(GRIMOIRE_TEXT)
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("The Grimoire (Manual) - Scroll with Up/Down"),
+        )
+        .wrap(ratatui::widgets::Wrap { trim: false })
+        .scroll((app_state.grimoire_scroll, 0));
+    f.render_widget(grimoire_widget, chunks[0]);
+
+    // Right: Utilities (Oracle & Sigils)
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(chunks[1]);
 
     // Oracle (KB)
     #[cfg(feature = "oracle")]
@@ -6589,9 +6730,9 @@ fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         }
 
         let title = if app_state.query_mode {
-            format!("Oracle (Query Mode: {})", app_state.query_input)
+            format!("Oracle (Query: {})", app_state.query_input)
         } else {
-            "Oracle (Knowledge Base) - Press '/' to Query".to_string()
+            "Oracle (Press '/')".to_string()
         };
 
         let border_style = if app_state.query_mode {
@@ -6606,17 +6747,10 @@ fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 .title(title)
                 .border_style(border_style),
         );
-        f.render_widget(oracle_list, chunks[1]);
-    }
-    #[cfg(not(feature = "oracle"))]
-    {
-        let oracle_list = Paragraph::new("Oracle feature disabled")
-            .block(Block::default().borders(Borders::ALL).title("Oracle"));
-        f.render_widget(&oracle_list, chunks[1]);
+        f.render_widget(oracle_list, right_chunks[0]);
     }
 
-    // Sigil Registry (The Grimoire)
-    #[cfg(feature = "nova")]
+    // Sigil Registry (Spells)
     {
         let mut registry: Vec<_> = vm.sigil_registry.iter().collect();
         registry.sort_by_key(|(k, _)| *k);
@@ -6748,7 +6882,7 @@ fn render_topology(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         map_lines.push(Line::from(spans));
     }
     let map = Paragraph::new(map_lines)
-        .block(Block::default().borders(Borders::ALL).title("Topology Map"));
+        .block(Block::default().borders(Borders::ALL).title(format!("Topology Map ({:?})", vm.topology)));
     f.render_widget(map, chunks[1]);
 }
 
@@ -8542,7 +8676,7 @@ fn render_garden(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             let mut ch = "·".to_string();
 
             if let crate::vm::Value::Int(n) = val {
-                if n > 0 {
+                if *n > 0 {
                     // Color based on Species ID
                     let colors = [
                         Color::Red,
@@ -8553,7 +8687,7 @@ fn render_garden(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                         Color::Cyan,
                         Color::White,
                     ];
-                    let bg = colors[(n as usize) % colors.len()];
+                    let bg = colors[(*n as usize) % colors.len()];
                     style = style.bg(bg).fg(Color::Black);
                     ch = format!("{}", n % 10);
                 } else {
@@ -8695,7 +8829,7 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                         } else {
                             ((v as u8 - 10) + b'a') as char
                         };
-                        let color = if n == 0 {
+                        let color = if *n == 0 {
                             Color::DarkGray
                         } else {
                             Color::Cyan
@@ -10280,10 +10414,10 @@ fn render_ecology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
             // Background for Food
             if let crate::vm::Value::Int(n) = val {
-                if n > 0 {
+                if *n > 0 {
                     style = style.fg(Color::Green);
                     ch = "*".to_string();
-                } else if n < 0 {
+                } else if *n < 0 {
                     style = style.fg(Color::Magenta);
                     ch = "☢".to_string();
                 } else {
@@ -10467,4 +10601,107 @@ fn render_metazoa(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Details"));
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_genesis(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(30), Constraint::Percentage(30), Constraint::Percentage(40)].as_ref())
+        .split(f.area());
+
+    // 1. Editor (ChimeraScript)
+    let editor_block = Block::default()
+        .borders(Borders::ALL)
+        .title("Genesis Editor (Code)")
+        .border_style(if app_state.genesis_focus == 0 {
+            Style::default().fg(Color::Yellow)
+        } else {
+            Style::default()
+        });
+
+    let editor_text = if app_state.genesis_editor_buffer.is_empty() {
+        "Type ChimeraScript here..."
+    } else {
+        app_state.genesis_editor_buffer.as_str()
+    };
+    f.render_widget(Paragraph::new(editor_text).block(editor_block).wrap(ratatui::widgets::Wrap { trim: false }), chunks[0]);
+
+    // 2. Grammar Editor (Babel)
+    let grammar_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(chunks[1]);
+
+    let grammar_block = Block::default()
+        .borders(Borders::ALL)
+        .title("Active Grammar (Perception)")
+        .border_style(if app_state.genesis_focus == 1 {
+            Style::default().fg(Color::Yellow)
+        } else {
+            Style::default()
+        });
+
+    let grammar_text = if app_state.genesis_grammar_buffer.is_empty() {
+        format!("Current: {:?}", vm.active_grammar)
+    } else {
+        app_state.genesis_grammar_buffer.clone()
+    };
+    f.render_widget(Paragraph::new(grammar_text).block(grammar_block).wrap(ratatui::widgets::Wrap { trim: false }), grammar_chunks[0]);
+
+    // Controls Help
+    let help_text = vec![
+        Line::from("GENESIS CONSOLE"),
+        Line::from("Tab: Switch Pane"),
+        Line::from("Enter: Edit Pane"),
+        Line::from("Ctrl+Enter: Execute/Compile"),
+        Line::from(" "),
+        Line::from("Ops:"),
+        Line::from("  SelfRewrite(grammar)"),
+        Line::from("  Perceive(len)"),
+    ];
+    let help_widget = Paragraph::new(help_text).block(Block::default().borders(Borders::ALL).title("Manual"));
+    f.render_widget(help_widget, grammar_chunks[1]);
+
+    // 3. Grid Visualizer (Right)
+    let grid_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
+        .split(chunks[2]);
+
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = &vm.grid[y][x];
+            let mut style = Style::default();
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            let s = match val {
+                crate::vm::Value::Str(s) => s.chars().next().unwrap_or(' ').to_string(),
+                crate::vm::Value::Int(n) => n.to_string(),
+                _ => "?".to_string(),
+            };
+
+            line_spans.push(Span::styled(format!("{:^3.3}", s), style));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_block = Block::default()
+        .borders(Borders::ALL)
+        .title("Reality (Grid)")
+        .border_style(if app_state.genesis_focus == 2 {
+            Style::default().fg(Color::Yellow)
+        } else {
+            Style::default()
+        });
+
+    f.render_widget(Paragraph::new(grid_lines).block(grid_block), grid_chunks[0]);
+
+    // Status
+    f.render_widget(Paragraph::new(app_state.status_msg.as_str()).block(Block::default().borders(Borders::ALL)), grid_chunks[1]);
 }

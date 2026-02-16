@@ -1,0 +1,15 @@
+[package]
+name = "chimera-runes"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chimera-lang = { path = "../chimera-lang", features = ["nova"] }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+image = "0.24"
+rand = { workspace = true }
+rand_chacha = "0.3"
+sha2 = "0.10"
+anyhow = { workspace = true }
+strum = "0.26"

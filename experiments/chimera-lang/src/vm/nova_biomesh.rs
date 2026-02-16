@@ -38,7 +38,7 @@ pub fn exec_mesh_net(vm: &mut ChimeraVM, args: &[Nucleotide]) -> Option<(usize, 
     // MeshNet(id)
     // Turns current cell into a node.
     let id = if let Some(Nucleotide::Number(n)) = args.first() {
-        n as u64
+        *n as u64
     } else if let Some(val) = vm.stack.pop() {
         if let Value::Int(n) = val {
             n as u64

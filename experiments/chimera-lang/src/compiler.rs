@@ -82,6 +82,7 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
     let mut strand_map: HashMap<String, usize> = HashMap::new();
     let mut macro_map: HashMap<String, pest::iterators::Pairs<Rule>> = HashMap::new();
     let mut grammar_map: HashMap<String, Nucleotide> = HashMap::new();
+    let mut organelle_map: HashMap<String, usize> = HashMap::new();
 
     for pair in program.clone().into_inner() {
         match pair.as_rule() {
@@ -92,6 +93,16 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                 if strand_map.insert(name.to_string(), idx).is_some() {
                     return Err(anyhow!("Duplicate strand name: {}", name));
                 }
+            }
+            Rule::organelle_def => {
+                let mut inner = pair.into_inner();
+                let name = inner.next().unwrap().as_str();
+                let strand_name = format!("{}_DNA", name);
+                let idx = strand_map.len();
+                if strand_map.insert(strand_name, idx).is_some() {
+                    return Err(anyhow!("Duplicate strand name from organelle: {}", name));
+                }
+                organelle_map.insert(name.to_string(), idx);
             }
             Rule::macro_def => {
                 let mut inner = pair.into_inner();
@@ -115,23 +126,46 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
 
     // Pass 2: Generate Genes
     for pair in program.into_inner() {
-        if pair.as_rule() == Rule::strand_def {
-            let mut inner = pair.into_inner();
-            let _name = inner.next().unwrap(); // skip name
-            let mut genes = Vec::new();
+        match pair.as_rule() {
+            Rule::strand_def => {
+                let mut inner = pair.into_inner();
+                let _name = inner.next().unwrap(); // skip name
+                let mut genes = Vec::new();
 
-            for instr in inner {
-                let generated = parse_instructions(
-                    instr,
-                    &strand_map,
-                    &macro_map,
-                    &grammar_map,
-                    &mut anonymous_strands,
-                    0,
-                )?;
-                genes.extend(generated);
+                for instr in inner {
+                    let generated = parse_instructions(
+                        instr,
+                        &strand_map,
+                        &macro_map,
+                        &grammar_map,
+                        &organelle_map,
+                        &mut anonymous_strands,
+                        0,
+                    )?;
+                    genes.extend(generated);
+                }
+                strands_ast.push(Strand { genes });
             }
-            strands_ast.push(Strand { genes });
+            Rule::organelle_def => {
+                let mut inner = pair.into_inner();
+                let _name = inner.next().unwrap(); // skip name
+                let mut genes = Vec::new();
+
+                for instr in inner {
+                    let generated = parse_instructions(
+                        instr,
+                        &strand_map,
+                        &macro_map,
+                        &grammar_map,
+                        &organelle_map,
+                        &mut anonymous_strands,
+                        0,
+                    )?;
+                    genes.extend(generated);
+                }
+                strands_ast.push(Strand { genes });
+            }
+            _ => {}
         }
     }
 
@@ -149,6 +183,7 @@ struct CompilerContext<'a, 'i> {
     strand_map: &'a HashMap<String, usize>,
     macro_map: &'a HashMap<String, pest::iterators::Pairs<'i, Rule>>,
     grammar_map: &'a HashMap<String, Nucleotide>,
+    organelle_map: &'a HashMap<String, usize>,
     anonymous_strands: &'a mut Vec<Strand>,
     depth: usize,
 }
@@ -339,6 +374,27 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
             return Ok(macro_genes);
         }
 
+        // Handle Spawn<Name> macro for organelles
+        if let Some(stripped) = name.strip_prefix("Spawn") {
+            if let Some(&idx) = self.organelle_map.get(stripped) {
+                // push(idx) push(0) spawn
+                return Ok(vec![
+                    Gene {
+                        op: OpCode::Push,
+                        args: vec![Nucleotide::Number(idx as i64)],
+                    },
+                    Gene {
+                        op: OpCode::Push,
+                        args: vec![Nucleotide::Number(0)],
+                    }, // Type 0 = Worker (Default)
+                    Gene {
+                        op: OpCode::Spawn,
+                        args: vec![],
+                    },
+                ]);
+            }
+        }
+
         if let Some(&idx) = self.strand_map.get(name) {
             return Ok(vec![Gene {
                 op: OpCode::Push,
@@ -496,6 +552,7 @@ fn parse_instructions(
     strand_map: &HashMap<String, usize>,
     macro_map: &HashMap<String, pest::iterators::Pairs<Rule>>,
     grammar_map: &HashMap<String, Nucleotide>,
+    organelle_map: &HashMap<String, usize>,
     anonymous_strands: &mut Vec<Strand>,
     depth: usize,
 ) -> Result<Vec<Gene>> {
@@ -503,6 +560,7 @@ fn parse_instructions(
         strand_map,
         macro_map,
         grammar_map,
+        organelle_map,
         anonymous_strands,
         depth,
     };

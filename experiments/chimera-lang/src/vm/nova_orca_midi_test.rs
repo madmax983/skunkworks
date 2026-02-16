@@ -45,7 +45,7 @@ mod tests {
                 duration,
             } => {
                 assert_eq!(*channel, 0);
-                assert_eq!(note, 48); // 0 + 48 = C3
+                assert_eq!(*note, 48); // 0 + 48 = C3
                 assert_eq!(*velocity, 127); // 'z' (35) -> 1.0 -> 127
                 assert_eq!(*duration, 4);
             }

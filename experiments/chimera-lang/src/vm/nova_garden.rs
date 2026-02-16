@@ -134,7 +134,7 @@ pub fn exec_evolve(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         for x in 0..cols {
             let current_val = match &vm.grid[y][x] {
                 Value::Int(n) => n,
-                _ => 0,
+                _ => &0,
             };
 
             // Count neighbors per species
@@ -148,21 +148,21 @@ pub fn exec_evolve(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
                         if let Value::Int(n) = vm.grid[ny][nx] {
                             if n > 0 {
-                                neighbor_counts.entry(n).or_insert(0) += 1;
+                                *neighbor_counts.entry(n).or_insert(0) += 1;
                             }
                         }
                     }
                 }
             }
 
-            if current_val > 0 {
+            if *current_val > 0 {
                 // Survival
                 let rule = vm.garden.rules.get(&current_val);
                 let count = neighbor_counts.get(&current_val).unwrap_or(&0);
 
                 let survives = if let Some(r) = rule {
                     r.survival.contains(&count)
-                } else if current_val == 1 {
+                } else if *current_val == 1 {
                     [2, 3].contains(&count)
                 } else {
                     false
