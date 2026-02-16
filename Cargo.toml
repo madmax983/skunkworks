@@ -76,7 +76,6 @@ members = [
     "crates/resonance-audio", 
     "crates/poincare-disk", 
     "experiments/hive-mind-dependencies",
-    "experiments/syntax-evolution",
     "experiments/clockwork-chimera", 
     "experiments/schrodingers-beat",
     "experiments/colony-concerto", 

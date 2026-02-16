@@ -245,6 +245,7 @@ pub(crate) struct AppState {
     pub(crate) grimoire_scroll: u16,
     pub(crate) evolution_state: EvolutionState,
     pub(crate) matrix_rain: MatrixRain,
+    pub(crate) screen_shake: f32,
 }
 
 pub(crate) struct EvolutionState {
@@ -364,6 +365,28 @@ impl AppState {
             grimoire_scroll: 0,
             evolution_state: EvolutionState::new(),
             matrix_rain: MatrixRain::new(),
+            screen_shake: 0.0,
+        }
+    }
+
+    pub fn get_render_area(&self, full_area: ratatui::layout::Rect) -> ratatui::layout::Rect {
+        if self.screen_shake > 0.1 {
+            let mut rng = rand::thread_rng();
+            use rand::Rng;
+            let dx = (rng.gen::<f32>() - 0.5) * self.screen_shake;
+            let dy = (rng.gen::<f32>() - 0.5) * self.screen_shake;
+
+            let new_x = (full_area.x as f32 + dx).clamp(0.0, full_area.width as f32);
+            let new_y = (full_area.y as f32 + dy).clamp(0.0, full_area.height as f32);
+
+            ratatui::layout::Rect {
+                x: new_x as u16,
+                y: new_y as u16,
+                width: full_area.width.saturating_sub(dx.abs() as u16),
+                height: full_area.height.saturating_sub(dy.abs() as u16),
+            }
+        } else {
+            full_area
         }
     }
 }
@@ -410,6 +433,23 @@ where
     <B as ratatui::backend::Backend>::Error: Send + Sync + 'static,
 {
     loop {
+        // Process TuiEvents
+        for event in vm.tui_events.drain(..) {
+            match event {
+                crate::vm::TuiEvent::Glitch(v) => vm.glitch_level = v,
+                crate::vm::TuiEvent::Shake(v) => app_state.screen_shake = v,
+                crate::vm::TuiEvent::Message(s) => app_state.status_msg = s,
+            }
+        }
+
+        // Decay Shake
+        if app_state.screen_shake > 0.0 {
+            app_state.screen_shake *= 0.9;
+            if app_state.screen_shake < 0.1 {
+                app_state.screen_shake = 0.0;
+            }
+        }
+
         let size = terminal.size()?;
         app_state.matrix_rain.update(size.width, size.height);
 
@@ -475,7 +515,7 @@ where
         terminal.draw(|f| {
             #[cfg(feature = "nova")]
             if matches!(app_state.view_mode, ViewMode::Terminal | ViewMode::Void) {
-                let area = f.area();
+                let area = app_state.get_render_area(f.area());
                 app_state.matrix_rain.render(f.buffer_mut(), area);
             }
 
@@ -829,7 +869,7 @@ where
             }
 
             if vm.glitch_level > 0.8 {
-                let area = f.area();
+                let area = app_state.get_render_area(f.area());
                 let warning_area = ratatui::layout::Rect {
                     x: area.width.saturating_sub(20) / 2,
                     y: 0,
@@ -4150,7 +4190,7 @@ fn render_signals(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Signal Grid
     let mut grid_lines = Vec::new();
@@ -4276,7 +4316,7 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             ]
             .as_ref(),
         )
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     let mut block = Block::default()
         .borders(Borders::ALL)
@@ -4416,7 +4456,7 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Left: Sovereignty Grid
     let mut grid_lines = Vec::new();
@@ -4516,7 +4556,7 @@ fn render_fractal(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // 2. Render Grid
     let mut grid_lines = Vec::new();
@@ -4581,11 +4621,11 @@ fn render_fractal(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_semiotics(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_semiotics(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Percentage(20), Constraint::Percentage(80)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Top: Context Info
     let context_hash = vm.semiotic_context;
@@ -4639,11 +4679,11 @@ fn render_semiotics(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_lifecycle(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_lifecycle(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Left: Organelle List Grouped by Stage
     let mut stages: Vec<Vec<&crate::vm::nova::Organelle>> = vec![Vec::new(); 4];
@@ -4723,7 +4763,7 @@ fn render_crispr(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Top: Target Strand
     let idx = app_state.crispr_target_strand;
@@ -4847,7 +4887,7 @@ fn render_foundry(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Left: Schematic Grid
     let mut grid_lines = Vec::new();
@@ -4995,7 +5035,7 @@ fn render_wisdom(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Left: Knowledge Base (Facts & Rules)
     let mut kb_items = Vec::new();
@@ -5062,7 +5102,7 @@ fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     let top_chunks = Layout::default()
         .direction(Direction::Horizontal)
@@ -5232,7 +5272,7 @@ fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Length(3), Constraint::Min(0)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Scan Data
     let (cx, cy) = app_state.grid_cursor;
@@ -5335,7 +5375,7 @@ fn render_spectrogram(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Frequency/Amp Grid
     let mut grid_lines = Vec::new();
@@ -5425,11 +5465,11 @@ fn render_spectrogram(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     f.render_widget(info_widget, chunks[1]);
 }
 
-fn render_heatmap(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_heatmap(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(100)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     let mut max_count = 1;
     for strand_counts in &vm.gene_execution_counts {
@@ -5488,7 +5528,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
     let main_chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     let left_chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -6131,7 +6171,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
 
     // Draw Injection Popup
     if let InputMode::Injection = app_state.input_mode {
-        let area = f.area();
+        let area = app_state.get_render_area(f.area());
         let popup_area = ratatui::layout::Rect {
             x: area.width / 4,
             y: area.height / 3,
@@ -6153,7 +6193,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
     // Draw Spirit Popup on top
     #[cfg(feature = "nova")]
     if vm.spirit_request {
-        let area = f.area();
+        let area = app_state.get_render_area(f.area());
         let popup_area = ratatui::layout::Rect {
             x: area.width / 4,
             y: area.height / 3,
@@ -6256,7 +6296,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
 }
 
 fn render_view_selector(f: &mut Frame, app_state: &AppState) {
-    let area = f.area();
+    let area = app_state.get_render_area(f.area());
     let width = 60;
     let height = 30;
     let x = (area.width.saturating_sub(width)) / 2;
@@ -6307,7 +6347,7 @@ fn render_view_selector(f: &mut Frame, app_state: &AppState) {
 }
 
 fn render_palette(f: &mut Frame, app_state: &AppState) {
-    let area = f.area();
+    let area = app_state.get_render_area(f.area());
     let width = 30;
     let height = 10;
     let x = (area.width - width) / 2;
@@ -6359,13 +6399,13 @@ fn render_palette(f: &mut Frame, app_state: &AppState) {
 }
 
 #[cfg(feature = "biophysics")]
-fn render_cortex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &mut AppState) {
+fn render_cortex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     use ratatui::widgets::canvas::{Canvas, Line as CanvasLine};
 
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Left: Neural Map (Canvas)
     let canvas = Canvas::default()
@@ -6459,11 +6499,11 @@ fn render_cortex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &mut AppState) {
     }
 }
 #[cfg(feature = "resonance")]
-fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Wave Grid
     let mut lines = Vec::new();
@@ -6550,11 +6590,11 @@ fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_memetics(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_memetics(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Left: Meme Pool
     let mut meme_items = Vec::new();
@@ -6617,7 +6657,7 @@ fn render_alchemy(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             ]
             .as_ref(),
         )
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Shelf
     let elements = [
@@ -6691,7 +6731,7 @@ fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Left: Grimoire Text (Manual)
     let grimoire_widget = Paragraph::new(GRIMOIRE_TEXT)
@@ -6798,11 +6838,11 @@ fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_topology(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_topology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(40), Constraint::Percentage(60)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     let left_chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -6898,7 +6938,7 @@ fn render_laboratory(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             ]
             .as_ref(),
         )
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Helper to render strand preview
     let render_strand = |idx: usize, title: &str, is_focused: bool| {
@@ -7081,7 +7121,7 @@ fn render_graveyard(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     let top_chunks = Layout::default()
         .direction(Direction::Horizontal)
@@ -7143,11 +7183,11 @@ fn render_graveyard(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_retina(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_retina(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Retina Display
     let mut lines = Vec::new();
@@ -7177,11 +7217,11 @@ fn render_retina(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_quantum(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_quantum(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Left: Entanglements
     let mut ent_items = Vec::new();
@@ -7251,7 +7291,7 @@ fn render_dream(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(40), Constraint::Percentage(60)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Trace List
     let mut trace_items = Vec::new();
@@ -7361,11 +7401,11 @@ fn render_dream(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_piano_roll(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_piano_roll(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Calculate total duration to define the time window
     let mut total_duration = 0;
@@ -7468,11 +7508,11 @@ fn layout_tree_node(
 }
 
 #[cfg(feature = "nova")]
-fn render_phylogeny(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_phylogeny(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     use ratatui::widgets::canvas::{Canvas, Line, Rectangle};
 
@@ -7552,11 +7592,11 @@ fn render_phylogeny(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_egregore(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_egregore(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     let face_str = if vm.egregore.alignment < -20 {
         // Demon
@@ -7628,7 +7668,7 @@ fn render_elektra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Pre-calculate visual effects overlay
     let mut overlay = std::collections::HashMap::new();
@@ -7804,7 +7844,7 @@ fn render_weaver(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             ]
             .as_ref(),
         )
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Helper to render strand preview (reused concept from Laboratory)
     let render_strand = |idx: usize, title: &str, is_focused: bool| {
@@ -7932,7 +7972,7 @@ fn render_weaver(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_market(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_market(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints(
@@ -7943,7 +7983,7 @@ fn render_market(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
             ]
             .as_ref(),
         )
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Asks
     let mut ask_items = Vec::new();
@@ -7996,11 +8036,11 @@ fn render_market(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_ballistics(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_ballistics(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Projectile List
     let mut items = Vec::new();
@@ -8028,11 +8068,11 @@ fn render_ballistics(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_scent(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_scent(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Scent List
     let mut items = Vec::new();
@@ -8078,7 +8118,7 @@ fn render_bestiary(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(30), Constraint::Percentage(70)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Organelle List
     let mut items = Vec::new();
@@ -8152,7 +8192,7 @@ fn render_kaleidoscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) 
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Left: Grid (Piet Canvas)
     let mut grid_lines = Vec::new();
@@ -8326,7 +8366,7 @@ fn render_void(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Void Grid
     let mut grid_lines = Vec::new();
@@ -8429,7 +8469,7 @@ fn render_schematic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Schematic Grid
     let mut grid_lines = Vec::new();
@@ -8555,11 +8595,11 @@ fn render_schematic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_arena(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_arena(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Top: Combatants
     let arena = match &vm.arena {
@@ -8664,7 +8704,7 @@ fn render_garden(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Garden Grid (Rainbow CA)
     let mut grid_lines = Vec::new();
@@ -8772,7 +8812,7 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Grid
     let mut grid_lines = Vec::new();
@@ -8936,11 +8976,11 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_strings(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_strings(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     let canvas = Canvas::default()
         .block(
@@ -9023,11 +9063,11 @@ fn render_strings(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_quipu(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_quipu(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     let canvas = Canvas::default()
         .block(
@@ -9110,7 +9150,7 @@ fn render_hydra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Fluid Grid
     let mut grid_lines = Vec::new();
@@ -9224,7 +9264,7 @@ fn render_chronos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Left: Time Grid (Dilation Factors)
     let mut grid_lines = Vec::new();
@@ -9342,7 +9382,7 @@ fn render_logos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     let mut grid_lines = Vec::new();
     for y in 0..16 {
@@ -9425,7 +9465,7 @@ fn render_pandemonium(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     let canvas = Canvas::default()
         .block(
@@ -9517,7 +9557,7 @@ fn render_biotic_chaos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) 
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     let mut grid_lines = Vec::new();
     for y in 0..16 {
@@ -9605,7 +9645,7 @@ fn render_catalyst(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Catalyst List
     let mut items = Vec::new();
@@ -9672,11 +9712,11 @@ fn render_catalyst(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_hyperspace(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_hyperspace(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Percentage(80), Constraint::Percentage(20)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     let canvas = Canvas::default()
         .block(
@@ -9774,7 +9814,7 @@ fn render_hologram(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Hologram Grid Visualization
     let mut grid_lines = Vec::new();
@@ -9877,7 +9917,7 @@ fn render_terminal(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Show last N lines, oldest first (standard terminal log)
     let log_start = vm.output.len().saturating_sub(30);
@@ -9907,11 +9947,11 @@ fn render_terminal(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_attractor(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_attractor(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     let canvas = Canvas::default()
         .block(
@@ -9974,7 +10014,7 @@ fn render_virology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Left: Viral Grid
     let mut grid_lines = Vec::new();
@@ -10057,7 +10097,7 @@ fn render_evolution(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Top: Stats & Graph
     let top_chunks = Layout::default()
@@ -10139,7 +10179,7 @@ fn render_evolution(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
         let center = Paragraph::new("Evolution Engine Offline.\nSelect a Strand in Genome View and press 'E' to initialize.")
             .alignment(ratatui::layout::Alignment::Center)
             .block(Block::default().borders(Borders::ALL));
-        f.render_widget(center, f.area());
+        f.render_widget(center, app_state.get_render_area(f.area()));
     }
 }
 
@@ -10148,7 +10188,7 @@ fn render_biomesh(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Left: Grid with connections
     let mut grid_lines = Vec::new();
@@ -10230,7 +10270,7 @@ fn render_reactor(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Grid
     let mut grid_lines = Vec::new();
@@ -10318,7 +10358,7 @@ fn render_biolum(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Biolum Grid
     let mut grid_lines = Vec::new();
@@ -10401,7 +10441,7 @@ fn render_ecology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // Grid Visualization
     let mut grid_lines = Vec::new();
@@ -10511,7 +10551,7 @@ fn render_metazoa(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     let canvas = Canvas::default()
         .block(Block::default().borders(Borders::ALL).title("Metazoa (Multicellular Life)"))
@@ -10608,7 +10648,7 @@ fn render_genesis(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(30), Constraint::Percentage(30), Constraint::Percentage(40)].as_ref())
-        .split(f.area());
+        .split(app_state.get_render_area(f.area()));
 
     // 1. Editor (ChimeraScript)
     let editor_block = Block::default()
