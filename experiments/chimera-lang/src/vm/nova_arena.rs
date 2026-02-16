@@ -118,9 +118,7 @@ impl ArenaState {
                             action_desc = format!("uses {}", op);
                         }
                         OpCode::Consume
-                        | OpCode::Photosynthesize
-                        | OpCode::Banquet
-                        | OpCode::Savor => {
+                        | OpCode::Photosynthesize => {
                             heal_out += 2;
                             action_desc = format!("uses {}", op);
                         }

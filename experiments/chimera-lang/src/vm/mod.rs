@@ -120,8 +120,6 @@ pub mod nova_savant;
 #[cfg(feature = "nova")]
 pub mod nova_arena;
 #[cfg(feature = "nova")]
-pub mod nova_astrology;
-#[cfg(feature = "nova")]
 pub mod nova_attractor;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -191,8 +189,6 @@ mod nova_fractal_test;
 pub mod nova_functional;
 #[cfg(feature = "nova")]
 pub mod nova_garden;
-#[cfg(feature = "nova")]
-pub mod nova_gastronomy;
 #[cfg(feature = "nova")]
 pub mod nova_genetics;
 #[cfg(feature = "nova")]
@@ -659,8 +655,6 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub piet_state: Option<piet::PietState>,
     #[cfg(feature = "nova")]
-    pub sky: nova_astrology::Sky,
-    #[cfg(feature = "nova")]
     pub chord_registry: HashMap<Vec<String>, usize>,
     #[cfg(feature = "nova")]
     pub cartography_grid: Vec<Vec<Value>>,
@@ -990,8 +984,6 @@ impl ChimeraVM {
             dialects: HashMap::new(),
             #[cfg(feature = "nova")]
             piet_state: None,
-            #[cfg(feature = "nova")]
-            sky: nova_astrology::Sky::new(),
             #[cfg(feature = "nova")]
             chord_registry: HashMap::new(),
             #[cfg(feature = "nova")]
@@ -2039,7 +2031,6 @@ impl ChimeraVM {
 
         #[cfg(feature = "nova")]
         if !time_frozen {
-            self.sky.tick();
             let manifestation = self.egregore.tick();
             match manifestation {
                 nova_egregore::Manifestation::Smite => {
@@ -2967,12 +2958,6 @@ impl ChimeraVM {
             | OpCode::Cipher
             | OpCode::Pangram => nova::exec_nova_op(self, op, args),
 
-            #[cfg(feature = "nova")]
-            OpCode::Cook | OpCode::Spice | OpCode::Savor | OpCode::Cultivate | OpCode::Banquet => {
-                nova::exec_nova_op(self, op, args)
-            }
-
-            #[cfg(feature = "nova")]
             OpCode::Transposon => self.exec_transposon(),
 
             #[cfg(feature = "nova")]
@@ -3133,9 +3118,6 @@ impl ChimeraVM {
             | OpCode::Entropy
             | OpCode::Stabilize
             | OpCode::Disintegrate
-            | OpCode::Gaze
-            | OpCode::Starfall
-            | OpCode::Align
             | OpCode::Tsunami
             | OpCode::Dry
             | OpCode::Harmonize

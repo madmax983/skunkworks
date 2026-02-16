@@ -101,3 +101,8 @@
 **Bloat:** Duplicated grid seeding logic in `App::new` and `App::resize`, and inefficient `Span` allocation in `ui` loop in `experiments/biomorphic-clock`.
 **Cut:** Encapsulated seeding in `Grid::random_seed_center`, implemented run-length encoding for UI rendering.
 **Saved:** ~20 lines of duplicated logic, significantly reduced heap allocations per frame.
+
+## [Reduction]
+**Bloat:** `nova_astrology` (Starfall, Gaze) and `nova_gastronomy` (Cook, Savor). Niche "flavor" features adding 8 OpCodes, struct fields, and heavy modules.
+**Cut:** Deleted both modules, their tests, and all references in OpCode enum, VM dispatch, and struct definitions.
+**Saved:** ~500 lines of code, 8 OpCodes, 2 VM fields, 4 files.
