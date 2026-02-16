@@ -1,6 +1,6 @@
 #![cfg(feature = "nova")]
 use crate::ast::JunctionType;
-use crate::vm::Value;
+use crate::value::Value;
 
 pub fn load_standard_library() -> Vec<Value> {
     let mut kb = Vec::new();

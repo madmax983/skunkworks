@@ -5,7 +5,9 @@ use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
 use crate::vm::nova::{Organelle, OrganelleType};
 #[cfg(feature = "nova")]
-use crate::vm::{ChimeraVM, Value};
+use crate::vm::ChimeraVM;
+#[cfg(feature = "nova")]
+use crate::value::Value;
 #[cfg(feature = "nova")]
 use serde::{Deserialize, Serialize};
 
@@ -274,7 +276,8 @@ pub fn process_passive_sigils(vm: &mut ChimeraVM) {
         .map(|(k, s): (&String, &Sigil)| (k.clone(), s.pattern.clone(), s.strand_idx))
         .collect();
 
-    for (name, pattern, strand_idx) in sigils {
+    for item in sigils.into_iter() {
+        let (name, pattern, strand_idx): (String, Vec<(i64, i64, Value)>, usize) = item;
         if check_dynamic_pattern(vm, cy, cx, &pattern) {
             consume_dynamic_pattern(vm, cy, cx, &pattern);
             vm.energy = vm.energy.saturating_sub(5);

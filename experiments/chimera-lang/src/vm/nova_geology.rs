@@ -1,6 +1,7 @@
 #![cfg(feature = "nova")]
 
-use super::{ChimeraVM, Value, GRID_SIZE};
+use super::{ChimeraVM, GRID_SIZE};
+use crate::value::Value;
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use rand::Rng;
@@ -70,7 +71,7 @@ fn exec_erode(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
         let mut count = 0;
         for (x, y) in coords {
-            if let Value::Int(n) = &mut vm.grid[y][x] {
+            if let Value::Int(ref mut n) = &mut vm.grid[y][x] {
                 if *n > 0 {
                     *n -= 1;
                     count += 1;
@@ -91,7 +92,7 @@ fn exec_sediment(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
         let mut count = 0;
         for (x, y) in coords {
-            if let Value::Int(n) = &mut vm.grid[y][x] {
+            if let Value::Int(ref mut n) = &mut vm.grid[y][x] {
                 if *n < 100 {
                     *n += 1;
                     count += 1;

@@ -1,6 +1,6 @@
 use super::ChimeraVM;
 use crate::opcode::OpCode;
-use crate::vm::Value;
+use crate::value::Value;
 use rand::Rng;
 
 #[derive(Debug, Clone, PartialEq)]

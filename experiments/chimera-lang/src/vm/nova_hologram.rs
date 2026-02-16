@@ -1,5 +1,7 @@
 #[cfg(feature = "nova")]
-use super::{ChimeraVM, Value, GRID_SIZE};
+use super::{ChimeraVM, GRID_SIZE};
+#[cfg(feature = "nova")]
+use crate::value::Value;
 #[cfg(feature = "nova")]
 use crate::ast::{Gene, Nucleotide};
 #[cfg(feature = "nova")]
@@ -53,7 +55,7 @@ pub fn exec_interfere(
             // Encode Argument into Amplitude
             let mut amplitude = 1.0;
             if let Some(Nucleotide::Number(n)) = gene.args.first() {
-                amplitude = 1.0 + (*n as f64).abs() / 50.0;
+                amplitude = 1.0 + (n as f64).abs() / 50.0;
             }
 
             // Inverse DFT (Accumulate)

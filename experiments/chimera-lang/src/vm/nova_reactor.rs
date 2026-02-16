@@ -84,7 +84,7 @@ pub fn process_reactor(vm: &mut ChimeraVM) {
                         // Reaction logic: A + B -> A' (Result)
                         // This updates the CURRENT cell based on neighbor.
                         // Does it consume the neighbor? Usually CA rules just update self based on neighbors.
-                        // Let's assume the rule defines the *new state of A* when adjacent to B.
+                        // Let's assume the rule defines the new state of A* when adjacent to B.
 
                         // Avoid overwriting if multiple neighbors cause reaction?
                         // First match wins? Or sum?

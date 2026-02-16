@@ -25,6 +25,7 @@
 
 use crate::ast::{Dna, JunctionType, Nucleotide};
 use crate::opcode::OpCode;
+pub use crate::value::Value;
 #[cfg(any(feature = "nova", feature = "silicon"))]
 pub use locus::Topology;
 #[cfg(feature = "nova")]
@@ -368,39 +369,6 @@ pub enum Chirality {
     Right, // Dextro (Inverted)
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub enum Value {
-    Int(i64),
-    Str(String),
-    Junction(JunctionType, Vec<Value>),
-    Superposition(Vec<(Value, f64)>),
-    Symbol(u64),
-}
-
-impl Eq for Value {}
-
-#[allow(clippy::derive_hash_xor_eq)]
-impl std::hash::Hash for Value {
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        std::mem::discriminant(self).hash(state);
-        match self {
-            Value::Int(i) => i.hash(state),
-            Value::Str(s) => s.hash(state),
-            Value::Junction(t, vals) => {
-                t.hash(state);
-                vals.hash(state);
-            }
-            Value::Superposition(states) => {
-                for (v, p) in states {
-                    v.hash(state);
-                    p.to_bits().hash(state);
-                }
-            }
-            Value::Symbol(id) => id.hash(state),
-        }
-    }
-}
-
 #[derive(Debug, Clone, PartialEq)]
 pub enum VisualEffect {
     Lightning {
@@ -414,57 +382,6 @@ pub enum VisualEffect {
         color: (u8, u8, u8),
         ttl: usize,
     },
-}
-
-impl std::fmt::Display for Value {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Value::Int(i) => write!(f, "{}", i),
-            Value::Str(s) => write!(f, "\"{}\"", s),
-            Value::Junction(t, vals) => {
-                let t_str = match t {
-                    JunctionType::Any => "any",
-                    JunctionType::All => "all",
-                    JunctionType::Dish => "dish",
-                };
-                write!(f, "{}(", t_str)?;
-                for (i, v) in vals.iter().enumerate() {
-                    if i > 0 {
-                        write!(f, ", ")?;
-                    }
-                    write!(f, "{}", v)?;
-                }
-                write!(f, ")")
-            }
-            Value::Superposition(states) => {
-                write!(f, "Ψ(")?;
-                for (i, (v, p)) in states.iter().enumerate() {
-                    if i > 0 {
-                        write!(f, " | ")?;
-                    }
-                    write!(f, "{}:{:.2}", v, p)?;
-                }
-                write!(f, ")")
-            }
-            Value::Symbol(id) => write!(f, "§{:x}", id),
-        }
-    }
-}
-
-impl Value {
-    /// Recursively calculates the depth of nested structures.
-    ///
-    /// - Int/Str: Depth 0
-    /// - Junction/Superposition: 1 + max(children.depth())
-    pub fn depth(&self) -> usize {
-        match self {
-            Value::Int(_) | Value::Str(_) | Value::Symbol(_) => 0,
-            Value::Junction(_, vals) => 1 + vals.iter().map(|v| v.depth()).max().unwrap_or(0),
-            Value::Superposition(states) => {
-                1 + states.iter().map(|(v, _)| v.depth()).max().unwrap_or(0)
-            }
-        }
-    }
 }
 
 impl std::fmt::Display for ChimeraVM {
@@ -567,7 +484,9 @@ pub struct ChimeraVM {
     /// Biological fuel. Starts at 50. Decreases by 1 per step.
     ///
     /// If energy drops to 0 or below, the organism dies (halts).
-    pub energy: i64, experience: 0, stage: 0,
+    pub energy: i64,
+    pub experience: u64,
+    pub stage: u64,
     /// 16x16 2D memory grid.
     ///
     /// Cells can store any `Value`, including OpCodes (Strings) or Integers.
