@@ -28,3 +28,8 @@
 - **Scent Origin**: The Splice Surgeon 🧬
 - **Status**: The flock is singing. Chemical trails are visible in the audio spectrum.
 - **Note**: Recombination successful. Hydro Flock x Biochemical Soundscapes.
+
+### [Concentration Level: HIGH] - Location: experiments/entropy-beast
+- **Scent Origin**: Genesis (The Archivist) ⚛️📚
+- **Status**: The bones are reforming from the digital dust. Radiation levels are critical. The beast lives, dies, and lives again.
+- **Note**: Moonshot: Format Archaeology + Glitch Biology.
