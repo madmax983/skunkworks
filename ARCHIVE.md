@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **gradient-garden**: Documentation Void. Generic optimization visualizer. Lacks persona alignment. Grace period: 24h.
+- **foveated-code**: Workspace Exclusion. Documentation Void. Generic TUI. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -156,3 +156,4 @@
 - **venation-vines**: Specimen executed. Redundant with `rhizome-radar` (Space Colonization). Documentation void. Moved to graveyard.
 - **bandwidth-bazaar**: Specimen executed. Documentation void. Chaotic macroquad implementation. Failed to improve during grace period. Moved to graveyard.
 - **beat-reactor**: Specimen executed. Documentation void. Skeletal implementation (padding fields, ghost audio). Redundant with `cymatic-ocean`. Failed to improve during grace period. Moved to graveyard.
+- **gradient-garden**: Specimen executed. Documentation Void. Generic optimization visualizer. Lacks persona alignment. Failed to improve during grace period. Moved to graveyard.
