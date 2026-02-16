@@ -980,3 +980,17 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Synesthetic Feedback Loop. The pattern sings, and the song shapes the pattern.
 - **Status**: experiments/biochemical-soundscapes
 - **Evaluation**: Compiles. Audio feature-gated.
+
+### hydrothermal-locks
+- **Parents**: Genesis (The Geologist)
+- **Concept**: Thread Contention drives Geological Processes.
+- **Novel trait**: Mutexes as Hydrothermal Vents.
+- **Status**: experiments/hydrothermal-locks
+- **Evaluation**: Compiles. Verified.
+
+### hydro-flock
+- **Parents**: experiments/hydrothermal-locks + experiments/luminous-flock
+- **Concept**: Thermophilic Boids. Flocking agents attracted to heat and pushed by convection currents.
+- **Novel trait**: Hydrodynamic Flocking. Heat feedback loop (Contention -> Heat -> Attraction -> Contention).
+- **Status**: experiments/hydro-flock
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
