@@ -1844,6 +1844,13 @@ pub enum OpCode {
     #[cfg(feature = "oracle")]
     Unify,
 
+    /// **[Oracle]** Executes a Prolog query and pushes the result to the stack.
+    ///
+    /// **Stack:** `[ ..., query_term ] -> [ ..., result_binding_list ]`
+    /// **Effect:** Solves the query. Pushes a list of bindings (Junction of Junctions) if successful, or 0 if failed.
+    #[cfg(feature = "oracle")]
+    PrologCall,
+
     // Git Features (Repository Interaction)
     /// **[Git]** Pushes a list of recent commit hashes to the stack.
     ///

@@ -301,6 +301,44 @@ pub fn exec_oracle_op(
             }
             None
         }
+        OpCode::PrologCall => {
+            if let Some(query) = vm.stack.pop() {
+                let goals = match query {
+                    Value::Junction(JunctionType::All, ref args) => args.clone(),
+                    _ => vec![query.clone()],
+                };
+
+                let mut solutions = Vec::new();
+                solve(
+                    &goals,
+                    HashMap::new(),
+                    &vm.knowledge_base,
+                    vm,
+                    &mut solutions,
+                    0,
+                );
+
+                if solutions.is_empty() {
+                    vm.stack.push(Value::Int(0));
+                } else {
+                    let mut solutions_list = Vec::new();
+                    for sol in solutions {
+                        let mut binding_list = Vec::new();
+                        for (k, v) in sol {
+                            binding_list.push(Value::Junction(
+                                JunctionType::All,
+                                vec![Value::Str(k), v],
+                            ));
+                        }
+                        solutions_list.push(Value::Junction(JunctionType::All, binding_list));
+                    }
+                    vm.stack.push(Value::Junction(JunctionType::All, solutions_list));
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for PrologCall".to_string());
+            }
+            None
+        }
         _ => None,
     }
 }
@@ -309,6 +347,39 @@ fn apply_manifestation(vm: &mut ChimeraVM, effect: &Value) {
     if let Value::Junction(JunctionType::Any, args) = effect {
         if let Some(Value::Str(pred)) = args.first() {
             match pred.as_str() {
+                "spawn_strand" => {
+                    // spawn_strand(GenesList)
+                    if args.len() == 2 {
+                        if let Value::Junction(_, genes_val) = &args[1] {
+                            let mut new_genes = Vec::new();
+                            for g_val in genes_val {
+                                // Parse gene from Value
+                                // Expect: Junction(Any, ["OpName", Args...])
+                                if let Value::Junction(_, g_parts) = g_val {
+                                    if !g_parts.is_empty() {
+                                        if let Value::Str(op_name) = &g_parts[0] {
+                                            if let Ok(op) = op_name.parse::<OpCode>() {
+                                                let mut g_args = Vec::new();
+                                                for arg_val in &g_parts[1..] {
+                                                    match arg_val {
+                                                        Value::Int(n) => g_args.push(Nucleotide::Number(*n)),
+                                                        Value::Str(s) => g_args.push(Nucleotide::String(s.clone())),
+                                                        _ => {}
+                                                    }
+                                                }
+                                                new_genes.push(crate::ast::Gene { op, args: g_args });
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if !new_genes.is_empty() {
+                                vm.dna.helix.strands.push(crate::ast::Strand { genes: new_genes });
+                                vm.output.push(format!("MANIFEST: Spawning new strand with {} genes", vm.dna.helix.strands.last().unwrap().genes.len()));
+                            }
+                        }
+                    }
+                }
                 "cell" => {
                     // cell(X, Y, Val)
                     if args.len() == 4 {
@@ -566,6 +637,17 @@ fn check_dynamic_predicates(
                         let fact_generated = Value::Str(generated);
 
                         if let Some(new_subst) = unify(arg_output, &fact_generated, subst) {
+                            solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+                        }
+                        return true;
+                    }
+                }
+                "metabolism" => {
+                    // metabolism(E) - Alias for energy
+                    if args.len() == 2 {
+                        let arg_e = &args[1];
+                        let fact_e = Value::Int(vm.energy);
+                        if let Some(new_subst) = unify(arg_e, &fact_e, subst) {
                             solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
                         }
                         return true;

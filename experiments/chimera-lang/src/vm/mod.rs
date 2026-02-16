@@ -308,6 +308,9 @@ pub mod nova_void;
 mod nova_void_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
+mod nova_logic_test;
+#[cfg(feature = "nova")]
+#[cfg(test)]
 mod savant_execution_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -3327,7 +3330,8 @@ impl ChimeraVM {
             | OpCode::Divinate
             | OpCode::Seek
             | OpCode::Manifest
-            | OpCode::Unify => oracle::exec_oracle_op(self, op, args),
+            | OpCode::Unify
+            | OpCode::PrologCall => oracle::exec_oracle_op(self, op, args),
 
             #[cfg(feature = "resonance")]
             OpCode::Pluck | OpCode::Oscillate | OpCode::Hear | OpCode::Scream => {

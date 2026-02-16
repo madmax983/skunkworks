@@ -6702,26 +6702,28 @@ fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     // Oracle (KB)
     #[cfg(feature = "oracle")]
     {
+        let kb_len = vm.knowledge_base.len();
         let mut kb_items: Vec<ListItem> = vm
             .knowledge_base
             .iter()
-            .take(20)
+            .rev() // Show newest first
+            .take(30)
             .map(|fact| ListItem::new(format!("{}", fact)))
             .collect();
 
         if !app_state.query_results.is_empty() {
-            kb_items.push(
+            kb_items.insert(0,
                 ListItem::new("--- Query Results ---").style(Style::default().fg(Color::Yellow)),
             );
-            for res in &app_state.query_results {
-                kb_items.push(ListItem::new(res.clone()).style(Style::default().fg(Color::Cyan)));
+            for res in app_state.query_results.iter().rev() {
+                kb_items.insert(1, ListItem::new(res.clone()).style(Style::default().fg(Color::Cyan)));
             }
         }
 
         let title = if app_state.query_mode {
-            format!("Oracle (Query: {})", app_state.query_input)
+            format!("Oracle (Query: {}) [Facts: {}]", app_state.query_input, kb_len)
         } else {
-            "Oracle (Press '/')".to_string()
+            format!("Oracle (Press '/') [Facts: {}]", kb_len)
         };
 
         let border_style = if app_state.query_mode {

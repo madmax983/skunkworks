@@ -66,6 +66,20 @@ The **Nova** expansion adds metaphysical and quantum capabilities.
 *   `void_rift(y, x)`: Tear a hole in the grid.
 *   `entropy_surge()`: Increase global chaos.
 
+## 🧠 Oracle (Logic Engine)
+
+The Oracle allows the organism to reason about itself and the world using Prolog-like logic.
+
+*   `prolog_call(query)`: Executes a logic query and pushes bindings to the stack.
+    *   Example: `prolog_call(metabolism(?E))` -> pushes `[[["?E", 50]]]`
+*   `manifest(query, transform)`: Applies a transformation to all states matching the query.
+    *   Example: `manifest(energy(?E), spawn_strand([["push", ?E]]))`
+
+### Dynamic Predicates
+*   `metabolism(?Energy)`: Unifies with current energy level.
+*   `cell(?X, ?Y, ?Val)`: Unifies with grid cells.
+*   `gene(?Strand, ?Idx, ?Op)`: Unifies with genome.
+
 ## 🕹️ Interface (Prologue)
 
 The TUI is your laboratory.
@@ -76,6 +90,7 @@ The TUI is your laboratory.
 
 ### The Grimoire View
 You are reading it. Use **Up/Down** arrows to scroll through this ancient text.
+The panel on the right shows the **Knowledge Base** facts and query results.
 
 ---
 *End of Fragment.*
