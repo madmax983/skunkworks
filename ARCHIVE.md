@@ -1,4 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **fluid-specter**: Documentation Void. Generic implementation (Jos Stam / Standard FFT). Redundant with `hydro-soundscapes`. Grace period: 24h.
 - **git-etymologist**: Documentation Void. Deceptive naming (phonology = edit distance). Redundant with `git-cantata`. Grace period: 24h.
 - **kinetic-folds**: Documentation Void. Generic XPBD implementation. Lacks persona alignment. Grace period: 24h.
 - **repo-fossil**: Documentation Void. Redundant with `git-ghost`/`git-rogue`. Unused code warnings. Grace period: 24h.
@@ -14,6 +15,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **heap-market**: Specimen executed. Documentation void. Redundant with `swap-meet`. Generic implementation. Failed to improve during grace period. Moved to graveyard.
 - **heap-market**: Specimen executed. Documentation Void. Redundant with `swap-meet`. Failed to improve during grace period. Moved to graveyard.
 - **heap-market**: Specimen executed. Documentation void. Redundant with `swap-meet`. Generic implementation. Failed to improve during grace period. Moved to graveyard.
 - **heap-market**: Documentation Void. Redundant with `swap-meet`. Generic implementation. Grace period expired. Moved to graveyard.
