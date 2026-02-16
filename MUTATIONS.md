@@ -993,7 +993,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Thermophilic Boids. Flocking agents attracted to heat and pushed by convection currents.
 - **Novel trait**: Hydrodynamic Flocking. Heat feedback loop (Contention -> Heat -> Attraction -> Contention).
 - **Status**: experiments/hydro-flock
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+- **Evaluation**: Compiles (Warnings). Implemented by The Splice Surgeon. Verified.
 
 ### biochemical-soundscapes
 - **Parents**: Gray-Scott Patterns + Audio Synthesis
@@ -1028,4 +1028,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Visualizing Genetic Code as Magic Runes. Breeding Runes.
 - **Novel trait**: The visual appearance of the code is deterministically tied to its function (via hash-seeded procedural generation).
 - **Status**: experiments/chimera-runes
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### voronoi-market
+- **Parents**: experiments/voronoi-ants + experiments/market-flow
+- **Concept**: A visualization of the Limit Order Book where orders are seeds in a Voronoi diagram. The boundary between Bid cells (Green) and Ask cells (Red) represents the spread.
+- **Novel trait**: Territorial Liquidity. Market dominance is visualized as spatial territory. The "Bid Front" advances against the "Ask Front".
+- **Status**: experiments/voronoi-market
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.

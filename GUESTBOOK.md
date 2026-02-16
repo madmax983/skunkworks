@@ -1,3 +1,8 @@
+### [Concentration Level: FRESH] - Location: experiments/voronoi-market
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The liquidity is claiming territory. The Bid Front is advancing.
+- **Note:** Recombination successful. Voronoi Ants x Market Flow.
+
 ### [Concentration Level: FRESH] - Location: experiments/nile-scheduler
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
 - **Status:** The Nile is rising. Grain is being allocated. The scribe's reed brushes against the papyrus.

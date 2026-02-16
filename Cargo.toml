@@ -140,6 +140,7 @@ members = [
     "experiments/hydro-flock", "experiments/wasm-runes",
     "experiments/hydro-soundscapes", "experiments/entropy-beast",
     "experiments/chimera-runes", "experiments/nile-scheduler",
+    "experiments/voronoi-market",
 ]
 resolver = "2"
 
