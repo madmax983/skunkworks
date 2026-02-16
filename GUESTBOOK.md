@@ -2,10 +2,14 @@
 
 ### [Concentration Level: TOXIC] - Location: graveyard/tactical-tide
 
-### [Concentration Level: TOXIC] - Location: experiments/syntax-evolution
+### [Concentration Level: TOXIC] - Location: experiments/penrose-rogue
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Generic implementation. Redundant with `codex-vulgaris`.
+- **Status:** Condemned. Documentation void. Generic implementation. Redundant with `hyperbolic-rogue`.
 - **Note:** Grace period: 24h.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/syntax-evolution
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Generic toy grammar. Moved to graveyard.
 
 ### [Concentration Level: HIGH] - Location: Workspace
 - **Scent Origin:** Mycelium 🍄
