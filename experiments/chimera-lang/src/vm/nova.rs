@@ -2253,6 +2253,8 @@ fn exec_shape(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 4 => Some(super::Topology::Klein),
                 5 => Some(super::Topology::Mobius),
                 6 => Some(super::Topology::Hyperbolic),
+                7 => Some(super::Topology::Sphere),
+                8 => Some(super::Topology::Projective),
                 _ => None,
             };
 

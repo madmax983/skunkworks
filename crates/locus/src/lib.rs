@@ -656,6 +656,19 @@ pub enum Topology {
     ///
     /// Typically handled externally or treated as bounded.
     Hyperbolic,
+
+    /// **Sphere**: Wraps X, Bounded Y with Antipodal Shift.
+    ///
+    /// * `x` wraps normally (`x % width`).
+    /// * `y` wraps (`y % height`), but if it crosses a pole, `x` shifts by `width / 2`
+    ///   and `y` is reflected.
+    Sphere,
+
+    /// **Real Projective Plane**: Wraps both X and Y with a twist.
+    ///
+    /// * If `x` wraps, `y` is mirrored: `y' = (height - 1) - y`.
+    /// * If `y` wraps, `x` is mirrored: `x' = (width - 1) - x`.
+    Projective,
 }
 
 impl Topology {
@@ -782,6 +795,36 @@ impl Topology {
                     None
                 }
             }
+            Topology::Sphere => {
+                let wrap_y = y.div_euclid(h);
+                let mut ny = y.rem_euclid(h);
+                let mut nx = x.rem_euclid(w);
+
+                if wrap_y % 2 != 0 {
+                    // Crossed pole: reflect Y and shift X
+                    ny = (h - 1) - ny;
+                    nx = (nx + w / 2) % w;
+                }
+
+                Some((ny as usize, nx as usize))
+            }
+            Topology::Projective => {
+                let wrap_x = x.div_euclid(w);
+                let wrap_y = y.div_euclid(h);
+
+                let mut nx = x.rem_euclid(w);
+                let mut ny = y.rem_euclid(h);
+
+                if wrap_x % 2 != 0 {
+                    ny = (h - 1) - ny;
+                }
+
+                if wrap_y % 2 != 0 {
+                    nx = (w - 1) - nx;
+                }
+
+                Some((ny as usize, nx as usize))
+            }
         }
     }
 }
@@ -847,5 +890,54 @@ mod topology_tests {
         // twist y: 9 - 12 = -3.
         // -3 out of bounds. -> None.
         assert_eq!(topo.normalize(12, 10, width, height), None);
+    }
+
+    #[test]
+    fn test_sphere_wrapping() {
+        let topo = Topology::Sphere;
+        let width = 10;
+        let height = 10;
+
+        // Normal wrapping in X
+        // x = 10 -> 0
+        assert_eq!(topo.normalize(5, 10, width, height), Some((5, 0)));
+
+        // Crossing North Pole (y = -1)
+        // wrap_y = -1 (odd).
+        // ny = -1 % 10 = 9. Reflected: 9 - 9 = 0.
+        // nx = 2 + 5 = 7.
+        // Expected: (0, 7)
+        assert_eq!(topo.normalize(-1, 2, width, height), Some((0, 7)));
+
+        // Crossing South Pole (y = 10)
+        // wrap_y = 1 (odd).
+        // ny = 10 % 10 = 0. Reflected: 9 - 0 = 9.
+        // nx = 2 + 5 = 7.
+        // Expected: (9, 7)
+        assert_eq!(topo.normalize(10, 2, width, height), Some((9, 7)));
+    }
+
+    #[test]
+    fn test_projective_wrapping() {
+        let topo = Topology::Projective;
+        let width = 10;
+        let height = 10;
+
+        // Wrap X (twist Y)
+        // x = 10 -> 0. wrap_x = 1 (odd).
+        // y = 2 -> 9 - 2 = 7.
+        assert_eq!(topo.normalize(2, 10, width, height), Some((7, 0)));
+
+        // Wrap Y (twist X)
+        // y = 10 -> 0. wrap_y = 1 (odd).
+        // x = 2 -> 9 - 2 = 7.
+        assert_eq!(topo.normalize(10, 2, width, height), Some((0, 7)));
+
+        // Wrap Both (double twist)
+        // x = 10 -> 0. wrap_x = 1.
+        // y = 10 -> 0. wrap_y = 1.
+        // nx = 0 -> 9 - 0 = 9.
+        // ny = 0 -> 9 - 0 = 9.
+        assert_eq!(topo.normalize(10, 10, width, height), Some((9, 9)));
     }
 }

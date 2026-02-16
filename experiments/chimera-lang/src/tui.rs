@@ -6882,7 +6882,7 @@ fn render_topology(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         map_lines.push(Line::from(spans));
     }
     let map = Paragraph::new(map_lines)
-        .block(Block::default().borders(Borders::ALL).title("Topology Map"));
+        .block(Block::default().borders(Borders::ALL).title(format!("Topology Map ({:?})", vm.topology)));
     f.render_widget(map, chunks[1]);
 }
 
