@@ -308,11 +308,9 @@ impl World {
                         },
                     ];
 
-                    for n_opt in neighbors {
-                        if let Some(n_idx) = n_opt {
-                            if matches!(self.grid[n_idx].material, Material::Wall) {
-                                wall_neighbors += 1;
-                            }
+                    for n_idx in neighbors.into_iter().flatten() {
+                        if matches!(self.grid[n_idx].material, Material::Wall) {
+                            wall_neighbors += 1;
                         }
                     }
 
@@ -375,8 +373,6 @@ impl World {
         let agents = &mut self.agents;
 
         agents.par_iter_mut().for_each(|agent| {
-            let mut rng = rand::thread_rng();
-
             match agent.kind {
                 AgentKind::Air => {
                     let ix = agent.x as usize;
@@ -444,6 +440,8 @@ impl World {
                     }
                 }
                 AgentKind::Termite => {
+                    // PERF: Only initialize RNG for Termites (avoiding TLS overhead for 50k Air agents)
+                    let mut rng = rand::thread_rng();
                     // Simple Random Walk for now (Placeholder for Step 4)
                     agent.vx += rng.gen_range(-0.5..0.5);
                     agent.vy += rng.gen_range(-0.5..0.5);
