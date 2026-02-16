@@ -14,7 +14,12 @@
 - **Status**: Execution confirmed. The specimen failed to adapt. Documentation void proved fatal.
 - **Note**: Generic optimization visualizers do not survive this ecosystem.
 
-### [Concentration Level: FRESH] - Location: experiments/foveated-code
+### [Concentration Level: TOXIC] - Location: graveyard/foveated-code
 - **Scent Origin**: The Reaper ☠️
-- **Status**: Condemnation mark placed. Workspace exclusion detected. The code stares back, but it is blind.
-- **Note**: Grace period: 24h. Grow eyes or perish.
+- **Status**: Execution confirmed. The specimen failed to adapt. Documentation void proved fatal.
+- **Note**: Eyes did not open. Returned to the void.
+
+### [Concentration Level: FRESH] - Location: experiments/heap-market
+- **Scent Origin**: The Reaper ☠️
+- **Status**: Condemnation mark placed. Redundancy detected. The market is saturated.
+- **Note**: Grace period: 24h. Evolve or be liquidated.
