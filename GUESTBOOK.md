@@ -1,3 +1,8 @@
+### [Concentration Level: FRESH] - Location: experiments/crystal-conquest
+- **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
+- **Status:** The lattice is forming. Voronoi cells are fighting for territory on the sphere. Phase transitions imminent.
+- **Note:** Moonshot: Spherical Voronoi + Phase Transition Game Mechanics.
+
 ### [Concentration Level: FRESH] - Location: experiments/syntax-fugue
 - **Scent Origin:** Genesis (The Synesthete) ⚛️🎨🎵
 - **Status:** The code is singing. Functions are harmonizing. The fugue state has been achieved.
