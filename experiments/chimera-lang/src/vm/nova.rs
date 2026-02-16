@@ -957,8 +957,55 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Interpret => super::nova_semiotics::exec_interpret(vm),
         OpCode::ContextShift => super::nova_semiotics::exec_context_shift(vm),
         OpCode::Deconstruct => super::nova_semiotics::exec_deconstruct(vm),
+        OpCode::TuiMod => exec_tui_mod(vm),
         _ => None,
     }
+}
+
+fn exec_tui_mod(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if vm.stack.len() >= 2 {
+        let mode_val = vm.stack.pop().unwrap();
+        let val_val = vm.stack.pop().unwrap();
+
+        match (mode_val, val_val) {
+            (Value::Int(mode), Value::Int(val)) => match mode {
+                0 => {
+                    let intensity = (val as f32) / 100.0;
+                    vm.tui_events
+                        .push(crate::vm::TuiEvent::Glitch(intensity));
+                    vm.output
+                        .push(format!("TUI: Glitch set to {:.2}", intensity));
+                }
+                1 => {
+                    let intensity = (val as f32) / 10.0;
+                    vm.tui_events.push(crate::vm::TuiEvent::Shake(intensity));
+                    vm.output
+                        .push(format!("TUI: Screen Shake {:.2}", intensity));
+                }
+                _ => {
+                    vm.output.push("TUI: Unknown mode".to_string());
+                }
+            },
+            (Value::Int(mode), Value::Str(s)) => {
+                if mode == 2 {
+                    vm.tui_events
+                        .push(crate::vm::TuiEvent::Message(s.clone()));
+                    vm.output.push(format!("TUI: Message '{}'", s));
+                } else {
+                    vm.output
+                        .push("Error: TuiMod mode requires Int value".to_string());
+                }
+            }
+            _ => {
+                vm.output
+                    .push("Error: Type mismatch for TuiMod".to_string());
+            }
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for TuiMod".to_string());
+    }
+    None
 }
 
 fn glob_match(pattern: &str, target: &str) -> bool {

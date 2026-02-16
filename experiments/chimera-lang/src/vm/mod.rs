@@ -383,6 +383,13 @@ pub enum VisualEffect {
     },
 }
 
+#[derive(Debug, Clone, PartialEq)]
+pub enum TuiEvent {
+    Glitch(f32),
+    Shake(f32),
+    Message(String),
+}
+
 impl std::fmt::Display for ChimeraVM {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut table = Table::new();
@@ -740,6 +747,7 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub active_grammar: Value,
     pub visual_effects: Vec<VisualEffect>,
+    pub tui_events: Vec<TuiEvent>,
 }
 
 impl ChimeraVM {
@@ -1072,6 +1080,7 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             active_grammar: Value::Junction(JunctionType::Any, vec![]),
             visual_effects: Vec::new(),
+            tui_events: Vec::new(),
         }
     }
 
@@ -3154,6 +3163,7 @@ impl ChimeraVM {
             | OpCode::VoidRift
             | OpCode::VoidCast
             | OpCode::Chaos
+            | OpCode::TuiMod
             | OpCode::Cambrian => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "oracle")]

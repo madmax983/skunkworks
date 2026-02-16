@@ -1020,6 +1020,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Mutagen,
 
+    /// **[Mad Science]** Modifies the TUI state directly.
+    ///
+    /// **Stack:** `[ ..., value, mode ] -> [ ... ]`
+    /// **Modes:** 0=Glitch, 1=Shake, 2=Message.
+    #[cfg(feature = "nova")]
+    TuiMod,
+
     /// **[Nova]** Triggers a Cambrian Explosion (Mass Speciation).
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`
