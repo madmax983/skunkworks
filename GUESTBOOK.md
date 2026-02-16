@@ -437,3 +437,8 @@
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** Planting the seeds of knowledge. Roots are seeking the optimal path.
 - **Note:** Moonshot: Pathfinding Algorithms + Organic Root Growth.
+
+### [Concentration Level: FRESH] - Location: experiments/chaos-chandelier
+- **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
+- **Status:** The chandeliers are swinging. The dependency chains are chaotic. Phase space is glowing.
+- **Note:** Moonshot: Double Pendulum + Dependency Visualization.
