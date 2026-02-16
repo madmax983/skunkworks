@@ -151,6 +151,8 @@ mod nova_botany_test;
 #[cfg(feature = "nova")]
 pub mod nova_bureaucracy;
 #[cfg(feature = "nova")]
+pub mod nova_cambrian;
+#[cfg(feature = "nova")]
 pub mod nova_cartography;
 #[cfg(feature = "nova")]
 pub mod nova_chemistry;
@@ -2920,6 +2922,13 @@ impl ChimeraVM {
                 nova_morphogenesis::exec_morph(self);
                 None
             }
+
+            #[cfg(feature = "nova")]
+            OpCode::Morphogen => nova_cambrian::exec_morphogen(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::HoxSwitch => nova_cambrian::exec_hox_switch(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::Adhere => nova_cambrian::exec_adhere(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Grow => {
