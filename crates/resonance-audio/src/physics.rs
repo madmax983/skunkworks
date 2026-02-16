@@ -114,10 +114,27 @@ impl PhysicsGrid {
     }
 
     /// Advances the simulation by one time step.
+    ///
+    /// Implements the standard 2D FDTD update for the wave equation.
+    ///
+    /// The wave equation is discretized as:
+    /// $u_{x,y}^{t+1} = 2u_{x,y}^t - u_{x,y}^{t-1} + c^2 \cdot \nabla^2 u_{x,y}^t$
+    ///
+    /// Where $\nabla^2$ is the discrete Laplacian.
+    ///
+    /// # Buffer Swapping Logic
+    ///
+    /// To avoid allocation, we cycle through three buffers: `u_prev`, `u`, and `u_next`.
+    ///
+    /// 1. Compute `u_next` (t+1) using `u` (t) and `u_prev` (t-1).
+    /// 2. `u_prev` becomes `u` (storing state t for the next step).
+    /// 3. `u` becomes `u_next` (storing state t+1 for the next step).
+    /// 4. `u_next` reclaims the old `u_prev` memory to be used as scratch space in the next iteration.
     pub fn step(&mut self) {
         let w = self.width;
         let h = self.height;
 
+        // Iterate over the interior of the grid (skipping boundaries)
         for y in 1..h - 1 {
             for x in 1..w - 1 {
                 let idx = y * w + x;
@@ -135,20 +152,25 @@ impl PhysicsGrid {
                 let c2 = self.c2_map[idx];
                 let damping = self.damping_map[idx];
 
+                // Standard 5-point discrete Laplacian stencil
                 let laplacian =
                     self.u[up] + self.u[down] + self.u[left] + self.u[right] - 4.0 * u_curr;
 
+                // Wave equation update
                 let mut val = 2.0 * u_curr - u_prev + c2 * laplacian;
                 val *= damping;
 
                 self.u_next[idx] = val;
 
-                // Accumulate energy with decay
+                // Accumulate energy with decay (for visualization)
                 self.energy_map[idx] = self.energy_map[idx] * 0.9995 + val.abs() * 0.005;
             }
         }
 
-        // Swap buffers
+        // Cycle buffers:
+        // t-1 (u_prev) -> recycled
+        // t   (u)      -> t-1 (u_prev)
+        // t+1 (u_next) -> t   (u)
         std::mem::swap(&mut self.u_prev, &mut self.u);
         std::mem::swap(&mut self.u, &mut self.u_next);
     }
@@ -245,5 +267,51 @@ mod tests {
         assert_eq!(grid.get(5, 6), 0.0);
         // But value at (5,4) should be non-zero
         assert!(grid.get(5, 4).abs() > 0.001);
+    }
+
+    #[test]
+    fn test_energy_decay() {
+        let mut grid = PhysicsGrid::new(10, 10);
+        // Pluck with high energy
+        grid.pluck(5, 5, 100.0);
+
+        // Run simulation for a while
+        for _ in 0..100 {
+            grid.step();
+        }
+
+        // Energy should have spread out and be non-zero
+        let mut total_energy = 0.0;
+        for val in &grid.u {
+            total_energy += val.abs();
+        }
+
+        assert!(total_energy > 0.0);
+        assert!(total_energy.is_finite());
+    }
+
+    #[test]
+    fn test_damping_effect() {
+        let mut grid_damped = PhysicsGrid::new(10, 10);
+        // Set strong damping
+        grid_damped.damping_map.fill(0.9);
+        grid_damped.pluck(5, 5, 1.0);
+
+        let mut grid_undamped = PhysicsGrid::new(10, 10);
+        // Set no damping
+        grid_undamped.damping_map.fill(1.0);
+        grid_undamped.pluck(5, 5, 1.0);
+
+        // Run both
+        for _ in 0..50 {
+            grid_damped.step();
+            grid_undamped.step();
+        }
+
+        let energy_damped: f32 = grid_damped.u.iter().map(|v| v.abs()).sum();
+        let energy_undamped: f32 = grid_undamped.u.iter().map(|v| v.abs()).sum();
+
+        // Damped grid should have less total "activity"
+        assert!(energy_damped < energy_undamped);
     }
 }
