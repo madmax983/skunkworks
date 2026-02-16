@@ -727,9 +727,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Prism => super::nova_optics::exec_prism(vm),
         OpCode::Lens => super::nova_optics::exec_lens(vm),
         OpCode::Sacrifice => super::nova_egregore::exec_sacrifice(vm),
-        OpCode::Gaze => super::nova_astrology::exec_gaze(vm),
-        OpCode::Starfall => super::nova_astrology::exec_starfall(vm),
-        OpCode::Align => super::nova_astrology::exec_align(vm),
         OpCode::Pray => super::nova_egregore::exec_pray(vm),
         OpCode::EgregoreTithe => super::nova_egregore::exec_egregore_tithe(vm),
         OpCode::EgregoreChannel => super::nova_egregore::exec_egregore_channel(vm),
@@ -774,9 +771,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Fossilize => super::nova_paleontology::exec_fossilize(vm),
         OpCode::Unearth => super::nova_paleontology::exec_unearth(vm),
         OpCode::CarbonDate => super::nova_paleontology::exec_carbon_date(vm),
-        OpCode::Cook | OpCode::Spice | OpCode::Savor | OpCode::Cultivate | OpCode::Banquet => {
-            super::nova_gastronomy::exec_gastronomy_op(vm, op, args)
-        }
         OpCode::Emit | OpCode::Smell | OpCode::Track => {
             super::nova_scent::exec_scent_op(vm, op, args)
         }

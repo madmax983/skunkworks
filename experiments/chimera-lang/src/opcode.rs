@@ -1339,50 +1339,6 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     StringListen,
 
-    // Astrology Features (Nova)
-    /// **[Nova]** Gazes at the sky to measure star intensity and color.
-    ///
-    /// **Stack:** `[ ... ] -> [ ..., intensity, color ]`
-    #[cfg(feature = "nova")]
-    Gaze,
-    /// **[Nova]** Summons a meteor strike if a star is overhead.
-    ///
-    /// **Stack:** `[ ... ] -> [ ... ]`
-    /// **Cost:** 50 Energy.
-    #[cfg(feature = "nova")]
-    Starfall,
-    /// **[Nova]** Checks alignment with the nearest star.
-    ///
-    /// **Stack:** `[ ... ] -> [ ..., angle_to_nearest ]`
-    #[cfg(feature = "nova")]
-    Align,
-
-    // Gastronomy Features (Nova)
-    /// **[Nova]** Cooks stack items into a Dish.
-    ///
-    /// **Stack:** `[ ..., count, item_1, ..., item_n ] -> [ ..., dish_junction ]`
-    #[cfg(feature = "nova")]
-    Cook,
-    /// **[Nova]** Adds a spice (modifier) to a Dish.
-    ///
-    /// **Stack:** `[ ..., dish_junction, spice_string ] -> [ ..., spiced_dish ]`
-    #[cfg(feature = "nova")]
-    Spice,
-    /// **[Nova]** Consumes a Dish to gain Energy and Buffs.
-    ///
-    /// **Stack:** `[ ..., dish_junction ] -> [ ... ]`
-    #[cfg(feature = "nova")]
-    Savor,
-    /// **[Nova]** Cultivates a grid cell to increase its value/quality.
-    ///
-    /// **Stack:** `[ ... ] -> [ ... ]` (Operates on current location)
-    #[cfg(feature = "nova")]
-    Cultivate,
-    /// **[Nova]** Feeds neighbors with energy/healing.
-    ///
-    /// **Stack:** `[ ..., radius, amount ] -> [ ... ]`
-    #[cfg(feature = "nova")]
-    Banquet,
 
     // Market Features
     /// **[Nova]** Places a Sell Order (Ask) on the Market.
