@@ -138,6 +138,60 @@ pub fn exec_live_parse(
                             return false; // Invalid Regex
                         }
                     }
+                    '{' => {
+                        // Action mode: Execute embedded ChimeraScript
+                        let mut action_code = String::new();
+                        let mut temp_x = cursor_x;
+                        let mut temp_y = cursor_y;
+
+                        // Advance
+                        if let Some((ny, nx)) = vm.normalize_coords(temp_y as i64 + dy, temp_x as i64 + dx) {
+                            temp_y = ny;
+                            temp_x = nx;
+                        } else {
+                            break;
+                        }
+
+                        loop {
+                            vm.babel_live_trace.push((temp_y, temp_x));
+                            if let Value::Str(ref char_s) = vm.grid[temp_y][temp_x] {
+                                if char_s == "}" {
+                                    break;
+                                }
+                                action_code.push_str(char_s);
+                            } else {
+                                break;
+                            }
+
+                            if let Some((ny, nx)) = vm.normalize_coords(temp_y as i64 + dy, temp_x as i64 + dx) {
+                                temp_y = ny;
+                                temp_x = nx;
+                            } else {
+                                break;
+                            }
+                        }
+
+                        // Execute Action
+                        let src = format!("strand action {{ {} }}", action_code);
+                        if let Ok(dna) = crate::compiler::compile(&src, None) {
+                            if let Some(strand) = dna.helix.strands.first() {
+                                // Execute immediately
+                                for gene in &strand.genes {
+                                    let _ = vm.execute_gene_inner(gene.op.clone(), &gene.args);
+                                    // If halted or died, stop parsing
+                                    if vm.halted || vm.energy <= 0 {
+                                        return false;
+                                    }
+                                }
+                            }
+                        } else {
+                            vm.output.push(format!("BABEL ERROR: Failed to compile action '{}'", action_code));
+                            return false;
+                        }
+
+                        cursor_y = temp_y;
+                        cursor_x = temp_x;
+                    }
                     '>' => { dy = 0; dx = 1; }
                     '<' => { dy = 0; dx = -1; }
                     '^' => { dy = -1; dx = 0; }

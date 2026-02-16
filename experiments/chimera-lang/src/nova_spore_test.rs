@@ -143,7 +143,7 @@ mod tests {
         vm.execute_gene_inner(OpCode::Transcribe, &[]);
 
         if let Nucleotide::Number(n) = &vm.dna.helix.strands[0].genes[1].args[0] {
-            assert_eq!(n, 77);
+            assert_eq!(*n, 77);
         } else {
             panic!("DNA mutation failed");
         }
@@ -152,7 +152,7 @@ mod tests {
         vm.execute_gene_inner(OpCode::Germinate, &[]);
 
         if let Nucleotide::Number(n) = &vm.dna.helix.strands[0].genes[1].args[0] {
-            assert_eq!(n, 99);
+            assert_eq!(*n, 99);
         } else {
             panic!("DNA restoration failed");
         }

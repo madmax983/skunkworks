@@ -53,7 +53,7 @@ pub fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 Value::Int(n) => {
                     genes.push(crate::ast::Gene {
                         op: OpCode::Push,
-                        args: vec![crate::ast::Nucleotide::Number(n)],
+                        args: vec![crate::ast::Nucleotide::Number(*n)],
                     });
                     x += 1;
                 }
@@ -76,6 +76,9 @@ pub fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 }
                 Value::Superposition(_) => {
                     x += 1; // Skip
+                }
+                Value::Symbol(_) => {
+                    x += 1; // Skip symbols
                 }
                 Value::Str(s) => {
                     let op = s.parse().unwrap_or(OpCode::Unknown(s.clone()));
@@ -868,6 +871,9 @@ pub fn exec_incubate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                                 k += 1;
                             }
                             Value::Superposition(_) => {
+                                k += 1; // Skip
+                            }
+                            Value::Symbol(_) => {
                                 k += 1; // Skip
                             }
                             Value::Str(s) => {

@@ -35,7 +35,7 @@ fn val_to_char(v: i64) -> char {
 fn peek(vm: &ChimeraVM, y: usize, x: usize, dy: i64, dx: i64) -> Option<i64> {
     if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
         match &vm.grid[ny][nx] {
-            Value::Int(n) => Some(n),
+            Value::Int(n) => Some(*n),
             Value::Str(s) => {
                 if s.len() == 1 {
                     char_to_val(s.chars().next().unwrap())
@@ -1043,7 +1043,7 @@ fn process_phages(vm: &ChimeraVM, ctx: &mut SignalContext) {
                     Value::Int(n) => {
                         // Numeric collision?
                         // Maybe change direction based on number?
-                        if n == 0 {
+                        if *n == 0 {
                             // Empty space, continue
                         } else {
                             // Non-empty, bounce?

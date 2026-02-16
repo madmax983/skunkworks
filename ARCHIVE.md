@@ -1,5 +1,9 @@
 ## ☠️ Condemned (Awaiting Execution)
 - **social-spores**: Generic Implementation. Boids/Particles simulation with weak "social" metaphor. Redundant with `luminous-flock`. Grace period: 24h.
+- **fluid-specter**: Documentation Void. Generic implementation (Jos Stam / Standard FFT). Redundant with `hydro-soundscapes`. Grace period: 24h.
+- **git-etymologist**: Documentation Void. Deceptive naming (phonology = edit distance). Redundant with `git-cantata`. Grace period: 24h.
+- **kinetic-folds**: Documentation Void. Generic XPBD implementation. Lacks persona alignment. Grace period: 24h.
+- **repo-fossil**: Documentation Void. Redundant with `git-ghost`/`git-rogue`. Unused code warnings. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +16,11 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **heap-market**: Specimen executed. Documentation void. Redundant with `swap-meet`. Generic implementation. Failed to improve during grace period. Moved to graveyard.
+- **heap-market**: Specimen executed. Documentation Void. Redundant with `swap-meet`. Failed to improve during grace period. Moved to graveyard.
+- **heap-market**: Specimen executed. Documentation void. Redundant with `swap-meet`. Generic implementation. Failed to improve during grace period. Moved to graveyard.
+- **heap-market**: Documentation Void. Redundant with `swap-meet`. Generic implementation. Grace period expired. Moved to graveyard.
+- **foveated-code**: Specimen executed. Documentation void. Workspace exclusion. Generic TUI. Failed to improve during grace period. Moved to graveyard.
 - **net-groove**: Specimen executed. Documentation void. Logic rot. Grace period expired. Moved to graveyard.
 - **magnetic-echo**: Specimen executed. Terminal compilation failure (workspace exclusion). Documentation void. Redundant with `ferrous-sector`. Grace period expired. Moved to graveyard.
 - **trace-erosion**: Specimen executed. Deceptive implementation masked as analysis (random graph generation). Documentation void. Failed to improve during grace period. Moved to graveyard.
@@ -156,3 +165,4 @@
 - **venation-vines**: Specimen executed. Redundant with `rhizome-radar` (Space Colonization). Documentation void. Moved to graveyard.
 - **bandwidth-bazaar**: Specimen executed. Documentation void. Chaotic macroquad implementation. Failed to improve during grace period. Moved to graveyard.
 - **beat-reactor**: Specimen executed. Documentation void. Skeletal implementation (padding fields, ghost audio). Redundant with `cymatic-ocean`. Failed to improve during grace period. Moved to graveyard.
+- **gradient-garden**: Specimen executed. Documentation Void. Generic optimization visualizer. Lacks persona alignment. Failed to improve during grace period. Moved to graveyard.

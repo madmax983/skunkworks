@@ -727,9 +727,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Prism => super::nova_optics::exec_prism(vm),
         OpCode::Lens => super::nova_optics::exec_lens(vm),
         OpCode::Sacrifice => super::nova_egregore::exec_sacrifice(vm),
-        OpCode::Gaze => super::nova_astrology::exec_gaze(vm),
-        OpCode::Starfall => super::nova_astrology::exec_starfall(vm),
-        OpCode::Align => super::nova_astrology::exec_align(vm),
         OpCode::Pray => super::nova_egregore::exec_pray(vm),
         OpCode::EgregoreTithe => super::nova_egregore::exec_egregore_tithe(vm),
         OpCode::EgregoreChannel => super::nova_egregore::exec_egregore_channel(vm),
@@ -774,9 +771,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Fossilize => super::nova_paleontology::exec_fossilize(vm),
         OpCode::Unearth => super::nova_paleontology::exec_unearth(vm),
         OpCode::CarbonDate => super::nova_paleontology::exec_carbon_date(vm),
-        OpCode::Cook | OpCode::Spice | OpCode::Savor | OpCode::Cultivate | OpCode::Banquet => {
-            super::nova_gastronomy::exec_gastronomy_op(vm, op, args)
-        }
         OpCode::Emit | OpCode::Smell | OpCode::Track => {
             super::nova_scent::exec_scent_op(vm, op, args)
         }
@@ -1621,6 +1615,10 @@ fn exec_terraform(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     2 => Biome::Desert,
                     3 => Biome::Tundra,
                     4 => Biome::Volcanic,
+                    5 => Biome::Glitch,
+                    6 => Biome::Aether,
+                    7 => Biome::Silicon,
+                    8 => Biome::Garden,
                     _ => Biome::Plains,
                 };
 
@@ -1658,6 +1656,10 @@ fn exec_sense_biome(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         Biome::Desert => 2,
         Biome::Tundra => 3,
         Biome::Volcanic => 4,
+        Biome::Glitch => 5,
+        Biome::Aether => 6,
+        Biome::Silicon => 7,
+        Biome::Garden => 8,
     };
     vm.stack.push(Value::Int(id));
     None
@@ -1914,7 +1916,7 @@ fn exec_absorb(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
-fn exec_detox(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+pub(crate) fn exec_detox(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(r) = val {
             let (cy, cx) = vm.context_loc;
@@ -1922,7 +1924,9 @@ fn exec_detox(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             for (tx, ty) in coords {
                 vm.waste_grid[ty][tx] = 0;
             }
-            vm.energy = vm.energy.saturating_sub((r * r + 1).clamp(5, 50));
+            let r_sq = (r as i128).saturating_mul(r as i128);
+            let cost = (r_sq + 1).clamp(5, 50) as i64;
+            vm.energy = vm.energy.saturating_sub(cost);
             vm.output
                 .push(format!("DETOX: Cleansed radius {} at {},{}", r, cx, cy));
         } else {
@@ -2249,6 +2253,8 @@ fn exec_shape(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 4 => Some(super::Topology::Klein),
                 5 => Some(super::Topology::Mobius),
                 6 => Some(super::Topology::Hyperbolic),
+                7 => Some(super::Topology::Sphere),
+                8 => Some(super::Topology::Projective),
                 _ => None,
             };
 
@@ -2647,7 +2653,7 @@ fn exec_lysis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
-fn exec_irradiate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+pub(crate) fn exec_irradiate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let radius_val = vm.stack.pop().unwrap();
         let amount_val = vm.stack.pop().unwrap();
@@ -2658,9 +2664,9 @@ fn exec_irradiate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 for (tx, ty) in coords {
                     vm.mutagen_grid[ty][tx] = vm.mutagen_grid[ty][tx].saturating_add(amount);
                 }
-                vm.energy = vm
-                    .energy
-                    .saturating_sub((r * r + 1).clamp(5, 50) + amount / 10);
+                let r_sq = (r as i128).saturating_mul(r as i128);
+                let cost = (r_sq + 1).clamp(5, 50) as i64 + amount / 10;
+                vm.energy = vm.energy.saturating_sub(cost);
                 vm.output.push(format!(
                     "IRRADIATE: Added {} mutagen at {},{} r={}",
                     amount, cx, cy, r

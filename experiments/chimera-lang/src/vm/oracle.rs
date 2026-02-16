@@ -1,7 +1,9 @@
 #![cfg(feature = "oracle")]
 use super::{babel, ChimeraVM, Value};
-use crate::ast::{JunctionType, Nucleotide};
+use crate::ast::{Gene, JunctionType, Nucleotide};
 use crate::opcode::OpCode;
+use crate::{ChimeraParser, Rule};
+use pest::Parser;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use strum::IntoEnumIterator;
@@ -301,6 +303,76 @@ pub fn exec_oracle_op(
             }
             None
         }
+        OpCode::PrologCall => {
+            if let Some(query_val) = vm.stack.pop() {
+                let query_str = match &query_val {
+                    Value::Str(s) => s.clone(),
+                    _ => format!("{}", query_val),
+                };
+                match ChimeraParser::parse(Rule::gene, &query_str) {
+                    Ok(mut pairs) => {
+                        let pair = pairs.next().unwrap();
+                        match Gene::try_from_pair(pair) {
+                            Ok(gene) => {
+                                let op_name = gene.op.to_string();
+                                let mut terms = vec![Value::Str(op_name)];
+
+                                fn nuc_to_val(n: &Nucleotide) -> Value {
+                                    match n {
+                                        Nucleotide::Number(i) => Value::Int(*i),
+                                        Nucleotide::String(s) => Value::Str(s.clone()),
+                                        Nucleotide::Identifier(s) => Value::Str(s.clone()),
+                                        Nucleotide::Junction(t, args) => {
+                                            Value::Junction(*t, args.iter().map(nuc_to_val).collect())
+                                        }
+                                    }
+                                }
+
+                                for arg in gene.args {
+                                    terms.push(nuc_to_val(&arg));
+                                }
+
+                                let goal = Value::Junction(JunctionType::Any, terms);
+                                let mut solutions = Vec::new();
+                                solve(
+                                    &[goal],
+                                    HashMap::new(),
+                                    &vm.knowledge_base,
+                                    vm,
+                                    &mut solutions,
+                                    0,
+                                );
+
+                                if let Some(first_sol) = solutions.first() {
+                                    let mut binding_list = Vec::new();
+                                    for (k, v) in first_sol {
+                                        let pair = Value::Junction(
+                                            JunctionType::All,
+                                            vec![Value::Str(k.clone()), v.clone()],
+                                        );
+                                        binding_list.push(pair);
+                                    }
+                                    vm.stack.push(Value::Junction(JunctionType::All, binding_list));
+                                } else {
+                                    vm.stack.push(Value::Int(0));
+                                }
+                            }
+                            Err(e) => {
+                                vm.output.push(format!("PrologCall Error: {}", e));
+                                vm.stack.push(Value::Int(-1));
+                            }
+                        }
+                    }
+                    Err(e) => {
+                        vm.output.push(format!("PrologCall Syntax Error: {}", e));
+                        vm.stack.push(Value::Int(-1));
+                    }
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for PrologCall".to_string());
+            }
+            None
+        }
         _ => None,
     }
 }
@@ -359,6 +431,53 @@ fn apply_manifestation(vm: &mut ChimeraVM, effect: &Value) {
                     if args.len() == 2 {
                         if let Value::Int(amt) = &args[1] {
                             vm.energy = *amt;
+                        }
+                    }
+                }
+                "synthesize" => {
+                    // synthesize(Goal, StrandID)
+                    // Goal: "energy", "move", "grow"
+                    if args.len() == 3 {
+                        if let (Value::Str(goal), Value::Int(s_idx)) = (&args[1], &args[2]) {
+                            let genes = match goal.as_str() {
+                                "energy" => vec![crate::ast::Gene {
+                                    op: OpCode::Photosynthesize,
+                                    args: vec![],
+                                }],
+                                "move" => vec![crate::ast::Gene {
+                                    op: OpCode::Migrate,
+                                    args: vec![Nucleotide::Number(1), Nucleotide::Number(0)],
+                                }],
+                                "grow" => vec![crate::ast::Gene {
+                                    op: OpCode::Mitosis,
+                                    args: vec![Nucleotide::Number(0)],
+                                }],
+                                _ => vec![crate::ast::Gene {
+                                    op: OpCode::Nop,
+                                    args: vec![],
+                                }],
+                            };
+
+                            let target_idx = *s_idx as usize;
+                            if target_idx < vm.dna.helix.strands.len() {
+                                vm.dna.helix.strands[target_idx].genes = genes;
+                                vm.output.push(format!("SYNTHESIZE: Rewrote strand {} for {}", target_idx, goal));
+                            } else if target_idx == vm.dna.helix.strands.len() && vm.dna.helix.strands.len() < crate::vm::MAX_STRANDS {
+                                vm.dna.helix.strands.push(crate::ast::Strand { genes });
+                                vm.output.push(format!("SYNTHESIZE: Created strand {} for {}", target_idx, goal));
+                            }
+                        }
+                    }
+                }
+                "mutate" => {
+                    // mutate(StrandID)
+                    if args.len() == 2 {
+                        if let Value::Int(_s_idx) = &args[1] {
+                            // Mutation is global/random currently, but let's trigger it.
+                            // Ideally we would target s_idx, but `mutate` method chooses random.
+                            // We can implement targeted mutation later. For now, trigger global.
+                            vm.mutate();
+                            vm.output.push("MUTATE: Triggered via Logic".to_string());
                         }
                     }
                 }
@@ -567,6 +686,22 @@ fn check_dynamic_predicates(
 
                         if let Some(new_subst) = unify(arg_output, &fact_generated, subst) {
                             solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+                        }
+                        return true;
+                    }
+                }
+                "metabolism" => {
+                    // metabolism(E, Experience)
+                    if args.len() == 3 {
+                        let arg_e = &args[1];
+                        let arg_exp = &args[2];
+                        let fact_e = Value::Int(vm.energy);
+                        let fact_exp = Value::Int(vm.experience as i64);
+
+                        if let Some(s1) = unify(arg_e, &fact_e, subst) {
+                            if let Some(s2) = unify(arg_exp, &fact_exp, &s1) {
+                                solve(remaining_goals, s2, kb, vm, solutions, depth + 1);
+                            }
                         }
                         return true;
                     }

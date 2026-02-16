@@ -107,7 +107,7 @@ members = [
     "experiments/market-swarm", "experiments/polyrhythmic-cylinder", "experiments/babylonian-garden", "experiments/phase-engine", "experiments/cryo-colony", "experiments/biomimetic-bridge",
     "experiments/bridge-specter", "experiments/silicon-samba",
     "experiments/hyperbolic-hell",
-    "experiments/quipu-chimera", "experiments/gradient-garden", "experiments/system-attractor", "experiments/biomimetic-synth", "experiments/astral-chimera",
+    "experiments/quipu-chimera", "experiments/system-attractor", "experiments/biomimetic-synth", "experiments/astral-chimera",
     "experiments/gravity-termites",
     "experiments/cosmic-strings", "experiments/mobius-git", "experiments/git-ghost", "experiments/ripple-tank", "experiments/quipu-serializer",
     "experiments/lichen-mesh",
@@ -136,7 +136,11 @@ members = [
     "experiments/code-acoustics", "experiments/soroban-market", "experiments/hanging-gardens", "experiments/celestial-cipher", "experiments/chimera-specter", "experiments/code-concerto", "experiments/grimms-code",
     "experiments/soroban-specter", "experiments/miller-reaction", "experiments/recursion-garden", "experiments/rossler-market", "experiments/hanging-abacus", "experiments/process-auction", "experiments/thermo-market", "experiments/bezier-landscapes",
     "experiments/spqr-market", "experiments/celestial-rhythms",
-    "experiments/biochemical-soundscapes",
+    "experiments/biochemical-soundscapes", "experiments/sys-dance", "experiments/hydrothermal-locks",
+    "experiments/hydro-flock", "experiments/wasm-runes",
+    "experiments/hydro-soundscapes", "experiments/entropy-beast",
+    "experiments/chimera-runes", "experiments/nile-scheduler", "experiments/myco-reaper", "experiments/mechanical-integrator", "experiments/syntax-fugue", "experiments/crystal-conquest", "experiments/sandpile-scheduler", "experiments/codex-vulgaris",
+    "experiments/mechanical-market",
 ]
 resolver = "2"
 

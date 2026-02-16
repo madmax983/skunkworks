@@ -971,3 +971,68 @@ classDiagram
     Strata ..> GitScanner : Created from
     note for Strata "Stress = keywords(TODO, FIXME, panic!)"
 ```
+
+### Experiment: WASM Runes (ADR 035)
+
+**WASM Runes** embeds executable WASM logic into procedurally generated "Rune" images, prioritized by a central spiral encoding.
+
+#### Architecture
+
+The system is composed of an embedding engine (`Stego`), a procedural generator (`Rune`), and a lightweight runner (`VM`).
+
+```mermaid
+classDiagram
+    direction LR
+    class Rune {
+        +generate(hash) RgbaImage
+        -draw_glyph()
+    }
+
+    class Stego {
+        +embed(img, data)
+        +extract(img) Vec~u8~
+    }
+
+    class SpiralIter {
+        +next() (dx, dy)
+        -step_size
+        -turn_counter
+    }
+
+    class VM {
+        +WasmEngine engine
+        +run(binary)
+    }
+
+    Stego ..> SpiralIter : Uses
+    Stego ..> Rune : Modifies Output
+    VM ..> Stego : Consumes Payload
+    note for VM "Uses wasmtime v14.0"
+```
+
+#### Lifecycle
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Stego
+    participant Rune
+    participant VM
+
+    Note over User: User compiles Rust -> .wasm
+
+    User->>Stego: embed(wasm_bytes)
+    Stego->>Rune: generate(hash(wasm))
+    Rune-->>Stego: RgbaImage
+    Stego->>Stego: SpiralIter encode LSB
+    Stego-->>User: "spell.png"
+
+    Note over User: User shares image
+
+    User->>VM: run("spell.png")
+    VM->>Stego: extract("spell.png")
+    Stego->>Stego: SpiralIter decode LSB
+    Stego-->>VM: wasm_bytes
+    VM->>VM: wasmtime::instantiate()
+    VM-->>User: Output
+```

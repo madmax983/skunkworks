@@ -69,7 +69,7 @@ pub fn tick_wisp(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
         } else {
             // Mutate existing value
             if let Value::Int(n) = &mut vm.grid[gy][gx] {
-                n = n.wrapping_add(rng.gen_range(-10..=10));
+                *n = n.wrapping_add(rng.gen_range(-10..=10));
             }
         }
         vm.output.push(format!("WISP: Glitch at {},{}", gx, gy));

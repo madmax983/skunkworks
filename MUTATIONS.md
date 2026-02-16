@@ -980,3 +980,66 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Synesthetic Feedback Loop. The pattern sings, and the song shapes the pattern.
 - **Status**: experiments/biochemical-soundscapes
 - **Evaluation**: Compiles. Audio feature-gated.
+
+### hydrothermal-locks
+- **Parents**: Genesis (The Geologist)
+- **Concept**: Thread Contention drives Geological Processes.
+- **Novel trait**: Mutexes as Hydrothermal Vents.
+- **Status**: experiments/hydrothermal-locks
+- **Evaluation**: Compiles. Verified.
+
+### hydro-flock
+- **Parents**: experiments/hydrothermal-locks + experiments/luminous-flock
+- **Concept**: Thermophilic Boids. Flocking agents attracted to heat and pushed by convection currents.
+- **Novel trait**: Hydrodynamic Flocking. Heat feedback loop (Contention -> Heat -> Attraction -> Contention).
+- **Status**: experiments/hydro-flock
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### biochemical-soundscapes
+- **Parents**: Gray-Scott Patterns + Audio Synthesis
+- **Concept**: Reaction-Diffusion simulation where chemical parameters (Feed/Kill) are modulated by an audio oscillator, and the pattern modulates the audio.
+- **Novel trait**: Synesthetic Feedback Loop. The pattern sings, and the song shapes the pattern.
+- **Status**: experiments/biochemical-soundscapes
+- **Evaluation**: Compiles. Audio feature-gated. Verified.
+
+### impossible-explorer
+- **Parents**: Unknown
+- **Concept**: Non-Euclidean file explorer.
+- **Novel trait**: Portal navigation.
+- **Status**: experiments/impossible-explorer
+- **Evaluation**: Compiles. Verified.
+
+### hydro-soundscapes
+- **Parents**: experiments/hydro-flock + experiments/biochemical-soundscapes
+- **Concept**: Boids emitting activator chemicals into a reaction-diffusion grid, which modulates audio synthesis.
+- **Novel trait**: Auditory Flocking. The swarm behavior generates the soundscape via chemical trails.
+- **Status**: experiments/hydro-soundscapes
+- **Evaluation**: Compiles (Warnings). Verified in GUESTBOOK.
+
+### entropy-beast
+- **Parents**: Genesis (The Archivist)
+- **Concept**: Data resilience visualization where binary serialized creatures are corrupted by entropy and reconstructed by an archaeologist parser.
+- **Novel trait**: Emergent Monstrosity. Detached limbs become new appendages. Data corruption as evolution.
+- **Status**: experiments/entropy-beast
+- **Evaluation**: Compiles. Documented by The Splice Surgeon. Verified in GUESTBOOK.
+
+### chimera-runes
+- **Parents**: experiments/wasm-runes + experiments/chimera-lang
+- **Concept**: Visualizing Genetic Code as Magic Runes. Breeding Runes.
+- **Novel trait**: The visual appearance of the code is deterministically tied to its function (via hash-seeded procedural generation).
+- **Status**: experiments/chimera-runes
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### mechanical-integrator
+- **Parents**: Mechanical Calculator + Floating Point Arithmetic
+- **Concept**: Analog computation simulation using kinematic constraints to solve differential equations.
+- **Novel trait**: Solving differential equations via mechanical linkage logic.
+- **Status**: experiments/mechanical-integrator
+- **Evaluation**: Compiles. Reusable `Integrator` and `Differential` structs found.
+
+### mechanical-market
+- **Parents**: market-sim + mechanical-integrator
+- **Concept**: Analog High Frequency Trading where Bids and Asks are physical torques driving a Differential gear.
+- **Novel trait**: Mechanical Price Discovery. Visualizing market volatility as angular momentum.
+- **Status**: experiments/mechanical-market
+- **Evaluation**: Compiles. Differential logic operational.
