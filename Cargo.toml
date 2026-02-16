@@ -12,7 +12,6 @@ members = [
     "experiments/algo-botany",
     "experiments/code-bio-dome",
     "experiments/cymatic-ocean",
-    "experiments/cymatic-text",
     "experiments/digital-compost",
     "experiments/fabric-limb",
     "experiments/fissure-tracker",
