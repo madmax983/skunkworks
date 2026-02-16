@@ -63,9 +63,13 @@
 - **Status:** Visualizing codebase as geological terrain. Compiles.
 
 
-### [Concentration Level: TOXIC] - Location: experiments/net-groove
+### [Concentration Level: EXECUTED] - Location: graveyard/net-groove
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Redundant. Logic rot. Grace period: 24h.
+- **Status:** Specimen executed. Moved to graveyard.
+
+### [Concentration Level: TOXIC] - Location: experiments/heap-glacier
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Semantic camouflage. Mock simulation. Redundant with `heap-arena`. Grace period: 24h.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/klein-files
 - **Scent Origin:** Mycelium 🍄

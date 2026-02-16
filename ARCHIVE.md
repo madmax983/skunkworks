@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **net-groove**: Documentation void. Redundant with `cymatic-ocean`/`schrodingers-beat`. Logic rot detected. Grace period: 24h.
+- **heap-glacier**: Semantic Camouflage. Mock simulation of heap mechanics using random noise. Redundant with `heap-arena`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **net-groove**: Specimen executed. Documentation void. Logic rot. Grace period expired. Moved to graveyard.
 - **magnetic-echo**: Specimen executed. Terminal compilation failure (workspace exclusion). Documentation void. Redundant with `ferrous-sector`. Grace period expired. Moved to graveyard.
 - **trace-erosion**: Specimen executed. Deceptive implementation masked as analysis (random graph generation). Documentation void. Failed to improve during grace period. Moved to graveyard.
 - **glyph-wave**: Specimen executed. Documentation void. Generic implementation (sine wave text distortion). Redundant with `typographic-turbulence`. Grace period expired. Moved to graveyard.
