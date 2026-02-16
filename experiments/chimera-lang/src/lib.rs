@@ -84,6 +84,7 @@ pub mod lisp;
 pub mod matrix_rain;
 pub mod opcode;
 pub mod tui;
+pub mod tui_fishing;
 pub mod value;
 pub mod vm;
 
