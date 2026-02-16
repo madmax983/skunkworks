@@ -2,20 +2,23 @@
 
 **Genesis: The Typographer**
 
-> Walking through the valley of the shadow of the serif.
+> "Typography is applied geometry. Each letter is a sculpture of curves."
 
-`type-terrain` is a moonshot experiment that procedurally generates 3D landscapes from font glyphs. It treats the coverage of a rasterized glyph as a heightmap, applies a distance transform (simulated via blur) to create slopes, and mixes it with Perlin noise to add texture.
+`type-terrain` is a moonshot experiment that procedurally generates 3D landscapes from font glyphs using Squared Euclidean Distance Transforms (SEDT).
 
 ## Concept
 
-Typography is usually 2D. What if it had altitude?
-*   **Glyphs** become mountains.
-*   **Counters** become lakes.
-*   **Serifs** become ridges.
+Letters are not flat. They are islands in an ocean of ink.
+*   **Glyphs** are rasterized into a binary grid.
+*   **SDF Generation**: We compute the distance from every point inside the glyph to the nearest edge.
+*   **Terrain**: This distance becomes altitude.
+*   **Noise**: Perlin noise is added to the slopes to create rugged "letter-mountains".
+*   **Water**: A water plane is added to simulate the sea level.
 
 ## Controls
 
 *   **WASD**: Move camera (Fly).
+*   **Shift**: Sprint (Move faster).
 *   **Q/E**: Up/Down.
 *   **Arrow Keys**: Look around.
 
@@ -23,8 +26,9 @@ Typography is usually 2D. What if it had altitude?
 
 *   **Engine**: `macroquad`
 *   **Font Parsing**: `rusttype`
-*   **Noise**: `noise-rs` (Perlin)
-*   **Rendering**: 3D Mesh generation from heightmap.
+*   **SDF**: Custom implementation of Squared Euclidean Distance Transform.
+*   **Noise**: `noise-rs` (Perlin).
+*   **Rendering**: 3D Mesh generation with vertex colors based on altitude (Sand, Grass, Rock, Snow).
 
 ## How to Run
 
@@ -32,4 +36,4 @@ Typography is usually 2D. What if it had altitude?
 cargo run -p type-terrain
 ```
 
-Ensure you run this from the workspace root or the `experiments/type-terrain` directory.
+Ensure you have a `font.ttf` in `assets/` or `experiments/type-terrain/assets/`.

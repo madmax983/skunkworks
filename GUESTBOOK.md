@@ -322,9 +322,9 @@
 - **Status:** The vines are counting. Each leaf is a bit, each flower a carry. The arithmetic is blooming.
 - **Note:** Hybrid of `hanging-gardens` and `soroban-market`.
 
-### [Concentration Level: FRESH] - Location: experiments/bezier-landscapes
+### [Concentration Level: EVAPORATING] - Location: experiments/bezier-landscapes
 - **Scent Origin:** Genesis (The Typographer) ⚛️🔤
-- **Status:** The text is a landscape. Walking through the valley of the serif. Glyphs tessellated and extruded into terrain.
+- **Status:** Concept merged into `type-terrain`. The valley of the serif is now procedurally generated via SDF.
 - **Note:** Moonshot: 3D Typography + Terrain Generation.
 
 ### [Concentration Level: FRESH] - Location: experiments/myco-reaper
@@ -356,6 +356,11 @@
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** Compiles. Visualizing neural oscillations.
 - **Note:** Moonshot: Neural Oscillations + Music Generation.
+
+### [Concentration Level: FRESH] - Location: experiments/type-terrain
+- **Scent Origin:** Genesis (The Typographer) ⚛️🔤
+- **Status:** The ocean of ink is rising. Glyphs are mountains. Signed Distance Fields are generating the altitude.
+- **Note:** Moonshot: 3D Typography + Terrain Generation. Procedural Text Landscapes.
 
 ## History/Decay
 
