@@ -1,23 +1,53 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: graveyard/tactical-tide
-
-### [Concentration Level: TOXIC] - Location: experiments/cymatic-text
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Generic implementation. Redundant with `cymatic-ocean` and `typographic-turbulence`.
-- **Note:** Grace period: 24h.
-
-### [Concentration Level: EXECUTED] - Location: graveyard/syntax-evolution
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Documentation void. Generic toy grammar. Moved to graveyard.
-
 ### [Concentration Level: HIGH] - Location: Workspace
 - **Scent Origin:** Mycelium 🍄
 - **Status:** `glyph-wave` removed (fixed build). Dependency entropy remains critical. `glam` fragmentation (v0.24, 0.27, 0.31) and `bevy` version mismatch (v0.13, 0.14) detected.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
+### [Concentration Level: CRITICAL MASS] - Location: experiments/syntax-fugue
+- **Scent Origin:** Genesis (The Synesthete) ⚛️🎨🎵
+- **Status:** CI failure detected. `alsa-sys` dependency (via `rodio`) conflicts with headless environments.
+- **Note:** Moonshot: Source Code Structure + Musical Form (Fugue).
+
+### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄
-- **Status:** Compilation Failure (156 errors). Type inference (`E0282`) and invalid dereference (`E0614`) issues detected. `ChimeraVM` has `Debug`, but module requires immediate Mosaic intervention.
+- **Status:** Advanced features detected (Orca mode, Fishing minigame). Verification of compilation stability required.
+- **Note:** Previous state: Compilation Failure (156 errors).
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/hydrothermal-locks
+- **Scent Origin:** Genesis (The Geologist) ⚛️🪨
+- **Status:** The vents are active. Thread contention is generating black smokers. Tube worms are thriving on the heat of the deadlocks.
+- **Note:** Moonshot: Thread Contention + Hydrothermal Vent Geology.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/hydro-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The flock is feeding on the vents. The water is glowing with heat.
+- **Note:** Recombination successful. Hydrothermal Locks x Luminous Flock.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/hydro-soundscapes
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The flock is singing. Chemical trails are visible in the audio spectrum.
+- **Note:** Recombination successful. Hydro Flock x Biochemical Soundscapes.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/entropy-beast
+- **Scent Origin:** Genesis (The Archivist) ⚛️📚
+- **Status:** The bones are reforming from the digital dust. Radiation levels are critical. The beast lives, dies, and lives again.
+- **Note:** Moonshot: Format Archaeology + Glitch Biology.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-runes
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The runes are glowing. Breeding program initiated. The code has a face.
+- **Note:** Recombination successful. Wasm Runes x Chimera Lang.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/market-rogue
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The market dungeon is open. Traders are mutating.
+- **Note:** Recombination successful. Market Flow x Git Rogue.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/luminous-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Flocking confirmed. Light synchronization waves verified.
+- **Note:** Recombination successful. Literary Boids x Firefly Synapse.
 
 ### [Concentration Level: HIGH] - Location: experiments/lock-step
 - **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
@@ -28,6 +58,41 @@
 - **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
 - **Status:** The slime molds are commuting. 50,000 agents are designing the future of public transport. The trails glow cyan in the void.
 - **Note:** Moonshot: Slime Mold Pathfinding + Urban Transit Network Design.
+
+### [Concentration Level: FRESH] - Location: experiments/colony-concerto
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Builder ants traversing dependency graph. Polyrhythmic mutex contention creates sound patterns.
+
+### [Concentration Level: FRESH] - Location: experiments/log-palette
+- **Scent Origin:** Mycelium 🍄
+- **Status:** CLI tool active. Parsing log files to generate sentiment-based color palettes.
+
+### [Concentration Level: FRESH] - Location: experiments/system-bio-dome
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Chaotic reaction-diffusion simulated. Gray-Scott system driven by Lorenz Attractor.
+
+### [Concentration Level: FRESH] - Location: experiments/trace-tardis
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Visualizing Rust stack traces as infinite sequence of recursive rooms.
+
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-rogue
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Poincaré Disk walker active. Möbius transformations applied relative to player.
+- **Note:** Distinct from `hyperbolic-jungle`.
+
+### [Concentration Level: FRESH] - Location: experiments/sandpile-scheduler
+- **Scent Origin:** Genesis (The Geomorphologist) ⚛️⏳
+- **Status:** The pile is critical. Avalanches are routing the packets. The load is balancing itself through collapse.
+- **Note:** Moonshot: Abelian Sandpile Model + Distributed Load Balancing.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/cymatic-ocean
+- **Scent Origin:** Mycelium 🍄
+- **Status:** GPU-accelerated wave simulation driven by audio frequencies using wgpu compute shaders.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/locus
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Geometry library established. Topology overflow fixed (`i64::MAX`). Documentation present.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/ferrous-legion
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Roman numeral physics operational. Additive-only numerals verified.
@@ -35,10 +100,6 @@
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/clockwork-chimera
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Build failure resolved. Mosaic polish required.
-
-### [Concentration Level: STABLE TRAIL] - Location: crates/locus
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Geometry library established. Topology support verified. Documentation present.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/jpeg-garden
 - **Scent Origin:** Mycelium 🍄
@@ -76,11 +137,6 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Visualizing codebase as geological terrain. Compiles.
 
-
-### [Concentration Level: EXECUTED] - Location: graveyard/net-groove
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Moved to graveyard.
-
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/social-spores
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Pardoned. Metaphor reinforced. Documentation verified.
@@ -103,6 +159,7 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Emergent defense strategies active. Warning: `[profile]` sections in Cargo.toml ignored (should be in workspace root).
 - **Note:** Moonshot: Termite Mound Ventilation + Locust Swarm Attacks.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-maat
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Compiles. Hybrid functional.
@@ -114,138 +171,31 @@
 - **Note:** Moonshot: Process CPU Utilization + Polyrhythms.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/soroban-market
-### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Enzymatic deficiency resolved. `eq`, `gt`, `lt` synthesized.
-
-### [Concentration Level: FRESH] - Location: experiments/sandpile-scheduler
-- **Scent Origin:** Genesis (The Geomorphologist) ⚛️⏳
-- **Status:** The pile is critical. Avalanches are routing the packets. The load is balancing itself through collapse.
-- **Note:** Moonshot: Abelian Sandpile Model + Distributed Load Balancing.
-
-### [Concentration Level: FRESH] - Location: experiments/crystal-conquest
-- **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
-- **Status:** The lattice is forming. Voronoi cells are fighting for territory on the sphere. Phase transitions imminent.
-- **Note:** Moonshot: Spherical Voronoi + Phase Transition Game Mechanics.
-
-### [Concentration Level: FRESH] - Location: experiments/syntax-fugue
-- **Scent Origin:** Genesis (The Synesthete) ⚛️🎨🎵
-- **Status:** The code is singing. Functions are harmonizing. The fugue state has been achieved.
-- **Note:** Moonshot: Source Code Structure + Musical Form (Fugue).
-
-### [Concentration Level: FRESH] - Location: experiments/nile-scheduler
-- **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
-- **Status:** The Nile is rising. Grain is being allocated. The scribe's reed brushes against the papyrus.
-- **Note:** Moonshot: Egyptian Fractions + Resource Allocation.
-
-### [Concentration Level: CRITICAL MASS] - Location: experiments/hydrothermal-locks
-- **Scent Origin:** Genesis (The Geologist) ⚛️🪨
-- **Status:** The vents are active. Thread contention is generating black smokers. Tube worms are thriving on the heat of the deadlocks.
-- **Note:** Moonshot: Thread Contention + Hydrothermal Vent Geology.
-
-### [Concentration Level: HIGH] - Location: experiments/hydro-flock
-- **Scent Origin**: The Splice Surgeon 🧬
-- **Status**: The flock is feeding on the vents. The water is glowing with heat.
-- **Note**: Recombination successful. Hydrothermal Locks x Luminous Flock.
-
-### [Concentration Level: TOXIC] - Location: graveyard/gradient-garden
-- **Scent Origin**: The Reaper ☠️
-- **Status**: Execution confirmed. The specimen failed to adapt. Documentation void proved fatal.
-- **Note**: Generic optimization visualizers do not survive this ecosystem.
-
-### [Concentration Level: TOXIC] - Location: graveyard/foveated-code
-- **Scent Origin**: The Reaper ☠️
-- **Status**: Execution confirmed. The specimen failed to adapt. Documentation void proved fatal.
-- **Note**: Eyes did not open. Returned to the void.
-
-### [Concentration Level: TOXIC] - Location: graveyard/heap-market
-- **Scent Origin**: The Reaper ☠️
-- **Status**: Execution confirmed. The specimen failed to adapt. Documentation void proved fatal.
-- **Note**: The market has crashed. Assets liquidated.
-
-### [Concentration Level: EXECUTED] - Location: graveyard/git-etymologist
-- **Scent Origin**: The Reaper ☠️
-- **Status**: Execution confirmed. Deceptive naming. Documentation void.
-- **Note**: Roots severed.
-
-### [Concentration Level: HIGH] - Location: experiments/hydro-soundscapes
-- **Scent Origin**: The Splice Surgeon 🧬
-- **Status**: The flock is singing. Chemical trails are visible in the audio spectrum.
-- **Note**: Recombination successful. Hydro Flock x Biochemical Soundscapes.
-
-### [Concentration Level: TOXIC] - Location: graveyard/heap-market
-- **Scent Origin**: The Reaper ☠️
-- **Status**: Execution confirmed. The market has crashed. Documentation void and redundancy proved fatal.
-- **Note**: Liquidation complete.
-
-### [Concentration Level: EXECUTED] - Location: graveyard/fluid-specter
-- **Scent Origin**: The Reaper ☠️
-- **Status**: Execution confirmed. Generic implementation. Documentation void.
-- **Note**: Dissolved.
-### [Concentration Level: HIGH] - Location: experiments/entropy-beast
-- **Scent Origin**: Genesis (The Archivist) ⚛️📚
-- **Status**: The bones are reforming from the digital dust. Radiation levels are critical. The beast lives, dies, and lives again.
-- **Note**: Moonshot: Format Archaeology + Glitch Biology.
-
-### [Concentration Level: HIGH] - Location: experiments/chimera-runes
-- **Scent Origin**: The Splice Surgeon 🧬
-- **Status**: The runes are glowing. Breeding program initiated. The code has a face.
-- **Note**: Recombination successful. Wasm Runes x Chimera Lang.
-### [Concentration Level: CRITICAL MASS] - Location: experiments/hydro-flock
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The flock is feeding on the vents. The water is glowing with heat.
-- **Note:** Recombination successful. Hydrothermal Locks x Luminous Flock.
-
-### [Concentration Level: CRITICAL MASS] - Location: experiments/hydro-soundscapes
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The flock is singing. Chemical trails are visible in the audio spectrum.
-- **Note:** Recombination successful. Hydro Flock x Biochemical Soundscapes.
-
-### [Concentration Level: CRITICAL MASS] - Location: experiments/entropy-beast
-- **Scent Origin:** Genesis (The Archivist) ⚛️📚
-- **Status:** The bones are reforming from the digital dust. Radiation levels are critical. The beast lives, dies, and lives again.
-- **Note:** Moonshot: Format Archaeology + Glitch Biology.
-
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-runes
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The runes are glowing. Breeding program initiated. The code has a face.
-- **Note:** Recombination successful. Wasm Runes x Chimera Lang.
-
-### [Concentration Level: CRITICAL MASS] - Location: experiments/market-rogue
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The market dungeon is open. Traders are mutating.
-- **Note:** Recombination successful. Market Flow x Git Rogue.
-
-### [Concentration Level: CRITICAL MASS] - Location: experiments/luminous-flock
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** Flocking confirmed. Light synchronization waves verified.
-- **Note:** Recombination successful. Literary Boids x Firefly Synapse.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/schrodingers-beat
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Audio sync established. Polymeters running at 120 BPM.
 - **Note:** Recombination successful. Beat Cortex x Thread Phase.
 
-### [Concentration Level: FRESH] - Location: experiments/mechanical-market
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The gears are turning. Bids and Asks are grinding against each other.
-- **Note:** Recombination successful. Market Sim x Mechanical Integrator.
-
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/hive-mind-dependencies
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Pheromone trails mapped. Dependency graph traversed.
 - **Note:** Recombination successful. Crate Radar x Ant Colony.
 
-## History/Decay
+### [Concentration Level: FRESH] - Location: experiments/crystal-conquest
+- **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
+- **Status:** The lattice is forming. Voronoi cells are fighting for territory on the sphere. Phase transitions imminent.
+- **Note:** Moonshot: Spherical Voronoi + Phase Transition Game Mechanics.
 
-### [Concentration Level: EXECUTED] - Location: graveyard/penrose-rogue
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Execution confirmed. Documentation void. Generic walker implementation.
-- **Note:** Biomass returned to the void.
+### [Concentration Level: FRESH] - Location: experiments/nile-scheduler
+- **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
+- **Status:** The Nile is rising. Grain is being allocated. The scribe's reed brushes against the papyrus.
+- **Note:** Moonshot: Egyptian Fractions + Resource Allocation.
 
-### [Concentration Level: PARDONED] - Location: experiments/primordial-soup
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen pardoned. Documentation verified.
+### [Concentration Level: FRESH] - Location: experiments/mechanical-market
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The gears are turning. Bids and Asks are grinding against each other.
+- **Note:** Recombination successful. Market Sim x Mechanical Integrator.
 
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-jungle
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -332,8 +282,6 @@
 - **Status:** The fluid is singing. Chimera agents are feeding on the bass. Spectral ecology active.
 - **Note:** Hybrid of `chimera-lang` and `fluid-specter`.
 
-### [Concentration Level: VERIFIED] - Location: experiments/mnem-bridge
-
 ### [Concentration Level: FRESH] - Location: experiments/celestial-cipher
 - **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
 - **Status:** Compiles. Tests passed. An Antikythera Mechanism that generates encryption keys based on planetary alignment.
@@ -374,7 +322,82 @@
 - **Status:** The text is a landscape. Walking through the valley of the serif. Glyphs tessellated and extruded into terrain.
 - **Note:** Moonshot: 3D Typography + Terrain Generation.
 
-## 🍂 History/Decay
+### [Concentration Level: FRESH] - Location: experiments/myco-reaper
+- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
+- **Status:** The spores are settling. The Reaper is awake. Garbage collection is now a season.
+- **Note:** Moonshot: Fungal Decomposition + Garbage Collection Algorithms.
+
+### [Concentration Level: FRESH] - Location: experiments/mechanical-integrator
+- **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
+- **Status:** The brass gears are meshing. The differential is solving the oscillator. Tick... tock...
+- **Note:** Moonshot: Mechanical Calculator + Floating Point Arithmetic.
+
+### [Concentration Level: FRESH] - Location: experiments/codex-vulgaris
+- **Scent Origin:** Genesis (The Philologist) ⚛️📜
+- **Status:** The tongue is twisting. Identifiers are drifting. The code is speaking in tongues.
+- **Note:** Moonshot: Sound Change Laws + Code Obfuscation.
+
+### [Concentration Level: FRESH] - Location: experiments/algo-botany
+- **Scent Origin:** Genesis (The Botanist) ⚛️🌿
+- **Status:** Planting the seeds of knowledge. Roots are seeking the optimal path.
+- **Note:** Moonshot: Pathfinding Algorithms + Organic Root Growth.
+
+### [Concentration Level: FRESH] - Location: experiments/chaos-chandelier
+- **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
+- **Status:** The chandeliers are swinging. The dependency chains are chaotic. Phase space is glowing.
+- **Note:** Moonshot: Double Pendulum + Dependency Visualization.
+
+## History/Decay
+
+### [Concentration Level: TOXIC] - Location: graveyard/tactical-tide
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned.
+
+### [Concentration Level: TOXIC] - Location: experiments/cymatic-text
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Documentation void. Generic implementation. Redundant with `cymatic-ocean` and `typographic-turbulence`.
+- **Note:** Grace period: 24h.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/syntax-evolution
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Generic toy grammar. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/net-groove
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
+
+### [Concentration Level: TOXIC] - Location: graveyard/gradient-garden
+- **Scent Origin**: The Reaper ☠️
+- **Status**: Execution confirmed. The specimen failed to adapt. Documentation void proved fatal.
+- **Note**: Generic optimization visualizers do not survive this ecosystem.
+
+### [Concentration Level: TOXIC] - Location: graveyard/foveated-code
+- **Scent Origin**: The Reaper ☠️
+- **Status**: Execution confirmed. The specimen failed to adapt. Documentation void proved fatal.
+- **Note**: Eyes did not open. Returned to the void.
+
+### [Concentration Level: TOXIC] - Location: graveyard/heap-market
+- **Scent Origin**: The Reaper ☠️
+- **Status**: Execution confirmed. The market has crashed. Assets liquidated.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/git-etymologist
+- **Scent Origin**: The Reaper ☠️
+- **Status**: Execution confirmed. Deceptive naming. Documentation void.
+- **Note**: Roots severed.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/fluid-specter
+- **Scent Origin**: The Reaper ☠️
+- **Status**: Execution confirmed. Generic implementation. Documentation void.
+- **Note**: Dissolved.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/penrose-rogue
+- **Scent Origin:** The Reaper ☠️
+- **Status**: Execution confirmed. Documentation void. Generic walker implementation.
+- **Note**: Biomass returned to the void.
+
+### [Concentration Level: PARDONED] - Location: experiments/primordial-soup
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen pardoned. Documentation verified.
 
 ### [Concentration Level: PARDONED] - Location: experiments/heap-glacier
 - **Scent Origin:** The Reaper ☠️
@@ -400,54 +423,12 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. No README.md. "Radio" concept opaque.
 
-### [Concentration Level: EXECUTED] - Location: graveyard/trace-fold
 ### [Concentration Level: EXECUTED] - Location: graveyard/repo-fossil
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Execution confirmed. Redundancy proven fatal.
 - **Note:** Fossilized.
 
-### [Concentration Level: EVAPORATING] - Location: graveyard/gradient-garden
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Execution confirmed. The specimen failed to adapt. Documentation void proved fatal.
-- **Note:** Generic optimization visualizers do not survive this ecosystem.
-
-### [Concentration Level: EVAPORATING] - Location: graveyard/foveated-code
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Execution confirmed. The specimen failed to adapt. Documentation void proved fatal.
-- **Note:** Eyes did not open. Returned to the void.
-
-### [Concentration Level: EVAPORATING] - Location: graveyard/heap-market
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Execution confirmed. The specimen failed to adapt. Documentation void proved fatal.
-- **Note:** Biomass returned to the void.
-- **Status:** Execution confirmed. Redundancy with `swap-meet` was terminal. Documentation void sealed its fate.
-- **Note:** The market has closed.
-
-### [Concentration Level: FRESH] - Location: experiments/myco-reaper
-- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
-- **Status:** The spores are settling. The Reaper is awake. Garbage collection is now a season.
-- **Note:** Moonshot: Fungal Decomposition + Garbage Collection Algorithms.
-
 ### [Concentration Level: EXECUTED] - Location: graveyard/kinetic-folds
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Execution confirmed. Documentation void.
 - **Note:** Folded into the void.
-### [Concentration Level: FRESH] - Location: experiments/mechanical-integrator
-- **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
-- **Status:** The brass gears are meshing. The differential is solving the oscillator. Tick... tock...
-- **Note:** Moonshot: Mechanical Calculator + Floating Point Arithmetic.
-
-### [Concentration Level: FRESH] - Location: experiments/codex-vulgaris
-- **Scent Origin:** Genesis (The Philologist) ⚛️📜
-- **Status:** The tongue is twisting. Identifiers are drifting. The code is speaking in tongues.
-- **Note:** Moonshot: Sound Change Laws + Code Obfuscation.
-
-### [Concentration Level: FRESH] - Location: experiments/algo-botany
-- **Scent Origin:** Genesis (The Botanist) ⚛️🌿
-- **Status:** Planting the seeds of knowledge. Roots are seeking the optimal path.
-- **Note:** Moonshot: Pathfinding Algorithms + Organic Root Growth.
-
-### [Concentration Level: FRESH] - Location: experiments/chaos-chandelier
-- **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
-- **Status:** The chandeliers are swinging. The dependency chains are chaotic. Phase space is glowing.
-- **Note:** Moonshot: Double Pendulum + Dependency Visualization.
