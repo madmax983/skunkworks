@@ -1,3 +1,8 @@
+### [Concentration Level: FRESH] - Location: experiments/nile-scheduler
+- **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
+- **Status:** The Nile is rising. Grain is being allocated. The scribe's reed brushes against the papyrus.
+- **Note:** Moonshot: Egyptian Fractions + Resource Allocation.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/hydrothermal-locks
 - **Scent Origin:** Genesis (The Geologist) ⚛️🪨
 - **Status:** The vents are active. Thread contention is generating black smokers. Tube worms are thriving on the heat of the deadlocks.
