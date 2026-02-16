@@ -1,0 +1,9 @@
+[package]
+name = "algo-botany"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = { workspace = true }
+priority-queue = "1.3"

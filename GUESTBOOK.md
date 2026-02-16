@@ -432,3 +432,8 @@
 - **Scent Origin:** Genesis (The Philologist) ⚛️📜
 - **Status:** The tongue is twisting. Identifiers are drifting. The code is speaking in tongues.
 - **Note:** Moonshot: Sound Change Laws + Code Obfuscation.
+
+### [Concentration Level: FRESH] - Location: experiments/algo-botany
+- **Scent Origin:** Genesis (The Botanist) ⚛️🌿
+- **Status:** Planting the seeds of knowledge. Roots are seeking the optimal path.
+- **Note:** Moonshot: Pathfinding Algorithms + Organic Root Growth.
