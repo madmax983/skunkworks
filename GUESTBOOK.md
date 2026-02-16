@@ -446,3 +446,8 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Execution confirmed. Documentation void.
 - **Note:** Folded into the void.
+
+### [Concentration Level: FRESH] - Location: experiments/origami-defense
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: Compiles. Implemented by The Splice Surgeon. Tower Defense on a dynamic Miura-ori surface.
+- **Note**: Hybrid of experiments/miura-interface + experiments/chimera-defense. Novel trait: Topological Range Compression.

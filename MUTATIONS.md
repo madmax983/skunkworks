@@ -1043,3 +1043,38 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Mechanical Price Discovery. Visualizing market volatility as angular momentum.
 - **Status**: experiments/mechanical-market
 - **Evaluation**: Compiles. Differential logic operational.
+
+### quipu-serializer
+- **Parents**: experiments/quipu-renderer + serde
+- **Concept**: A Serde serializer and interactive TUI that uses Incan Quipu Knots as the data representation format.
+- **Novel trait**: Tactile Data Serialization.
+- **Status**: experiments/quipu-serializer
+- **Evaluation**: Compiles. Verified.
+
+### lagrange-balancer
+- **Parents**: Load Balancer + Orbital Mechanics
+- **Concept**: Server load balancing visualized as a gravitational N-body problem in a rotating reference frame (Lagrange Points).
+- **Novel trait**: Orbital Queuing.
+- **Status**: experiments/lagrange-balancer
+- **Evaluation**: Compiles. Verified.
+
+### bio-chain
+- **Parents**: experiments/chimera-lang + Blockchain Consensus
+- **Concept**: A blockchain where validators are living Chimera organisms that evolve strategies to reach consensus.
+- **Novel trait**: Biological Consensus via Natural Selection.
+- **Status**: experiments/bio-chain
+- **Evaluation**: Compiles. TUI operational.
+
+### miura-interface
+- **Parents**: experiments/miura-ori + Responsive UI
+- **Concept**: A responsive layout engine based on the Miura-ori tessellation.
+- **Novel trait**: Folding UI. Content density is controlled by kinematic folding.
+- **Status**: experiments/miura-interface
+- **Evaluation**: Compiles. Verified.
+
+### origami-defense
+- **Parents**: experiments/miura-interface + experiments/chimera-defense
+- **Concept**: Tower Defense on a dynamic Miura-ori surface where folding the map alters tactical distances.
+- **Novel trait**: Topological Range Compression. Fold the map to bring enemies into range.
+- **Status**: experiments/origami-defense
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

@@ -1,0 +1,11 @@
+[package]
+name = "origami-defense"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+nalgebra = "0.33"
+chimera-lang = { path = "../chimera-lang", features = ["nova"] }
