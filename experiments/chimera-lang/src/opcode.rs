@@ -1038,6 +1038,12 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chaos,
 
+    /// **[Mad Science]** Creates a new Virus using a Meme as payload and a Grammar for mutation.
+    ///
+    /// **Stack:** `[ ..., name_str, grammar_junction, meme_id ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    BioHack,
+
     /// **[Mad Science]** Replaces occurrences of an OpCode with another with a given probability.
     ///
     /// **Stack:** `[ ..., target_strand, probability, from_op_str, to_op_str ] -> [ ... ]`

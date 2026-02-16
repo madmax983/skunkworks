@@ -1,5 +1,6 @@
 use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand, JunctionType};
 use crate::opcode::OpCode;
+use crate::vm::Value;
 use anyhow::{anyhow, Result};
 use std::str::FromStr;
 
@@ -19,6 +20,29 @@ pub fn parse(input: &str) -> Result<Vec<SExpr>> {
         idx = next_idx;
     }
     Ok(exprs)
+}
+
+pub fn sexpr_to_value(expr: &SExpr) -> Result<Value> {
+    match expr {
+        SExpr::Atom(s) => {
+            if let Ok(n) = s.parse::<i64>() {
+                Ok(Value::Int(n))
+            } else if s.starts_with('"') && s.ends_with('"') {
+                Ok(Value::Str(s[1..s.len()-1].to_string()))
+            } else {
+                Ok(Value::Str(s.clone()))
+            }
+        }
+        SExpr::List(items) => {
+            let mut vals = Vec::new();
+            for item in items {
+                vals.push(sexpr_to_value(item)?);
+            }
+            // Wrap lists as Junctions. Babel grammars expect Junction(Any, [Type, ...args])
+            // e.g. (Seq "A" "B") -> Junction(Any, ["Seq", "A", "B"])
+            Ok(Value::Junction(JunctionType::Any, vals))
+        }
+    }
 }
 
 fn tokenize(input: &str) -> Vec<String> {
@@ -212,6 +236,8 @@ fn map_op(s: &str) -> Option<OpCode> {
         "decompile" => Some(OpCode::Decompile),
         #[cfg(feature = "nova")]
         "babel-live" => Some(OpCode::BabelLive),
+        #[cfg(feature = "nova")]
+        "bio-hack" => Some(OpCode::BioHack),
         _ => OpCode::from_str(s).ok().or_else(|| {
             if let Some(first) = s.chars().next() {
                 let title = first.to_uppercase().to_string() + &s[1..];

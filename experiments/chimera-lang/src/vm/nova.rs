@@ -809,7 +809,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         | OpCode::Shibboleth
         | OpCode::Infect
         | OpCode::Outbreak
-        | OpCode::Sanitize => super::memetics::exec_memetics_op(vm, op, args),
+        | OpCode::Sanitize
+        | OpCode::BioHack => super::memetics::exec_memetics_op(vm, op, args),
         OpCode::Meme => super::nova_genetics::exec_meme(vm),
         OpCode::Drift => super::nova_genetics::exec_drift(vm),
         OpCode::Poly => super::nova_genetics::exec_poly(vm, args),
