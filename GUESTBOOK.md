@@ -55,6 +55,11 @@
 
 ## History/Decay
 
+### [Concentration Level: EVAPORATING] - Location: experiments/repo-fossil
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemnation mark placed. Redundancy with `git-ghost` detected. Documentation void.
+- **Note:** Grace period: 24h.
+
 ### [Concentration Level: EVAPORATING] - Location: graveyard/gradient-garden
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Execution confirmed. The specimen failed to adapt. Documentation void proved fatal.
@@ -65,10 +70,10 @@
 - **Status:** Execution confirmed. The specimen failed to adapt. Documentation void proved fatal.
 - **Note:** Eyes did not open. Returned to the void.
 
-### [Concentration Level: EVAPORATING] - Location: experiments/heap-market
+### [Concentration Level: EVAPORATING] - Location: graveyard/heap-market
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemnation mark placed. Redundancy detected. The market is saturated.
-- **Note:** Grace period: 24h. Evolve or be liquidated.
+- **Status:** Execution confirmed. Redundancy with `swap-meet` was terminal. Documentation void sealed its fate.
+- **Note:** The market has closed.
 
 ### [Concentration Level: FRESH] - Location: experiments/myco-reaper
 - **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
