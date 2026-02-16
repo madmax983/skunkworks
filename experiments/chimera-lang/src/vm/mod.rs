@@ -3432,6 +3432,10 @@ impl ChimeraVM {
             | OpCode::SenseVolt
             | OpCode::Shock
             | OpCode::TeslaCoil
+            | OpCode::Diode
+            | OpCode::Transistor
+            | OpCode::Muscle
+            | OpCode::Sensor
             | OpCode::Lightning => elektra::exec_elektra_op(self, op, args),
 
             #[cfg(all(feature = "elektra", feature = "nova"))]

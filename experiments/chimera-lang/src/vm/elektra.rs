@@ -10,7 +10,6 @@ pub fn exec_elektra_op(
 ) -> Option<(usize, usize)> {
     match op {
         OpCode::Electrogenesis => {
-            // [amount]
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(amount) = val {
                     let cost = amount.abs().max(1);
@@ -28,13 +27,12 @@ pub fn exec_elektra_op(
             }
         }
         OpCode::Induction => {
-            // [] -> [amount]
             let (y, x) = vm.context_loc;
             let v = vm.voltage_grid[y][x];
             let energy_gain = v.abs() as i64;
             if energy_gain > 0 {
                 vm.energy = vm.energy.saturating_add(energy_gain);
-                vm.voltage_grid[y][x] = 0.0; // Absorb charge
+                vm.voltage_grid[y][x] = 0.0;
                 vm.stack.push(Value::Int(energy_gain));
                 vm.output.push(format!(
                     "INDUCTION: Absorbed {}V -> {} Energy",
@@ -45,12 +43,10 @@ pub fn exec_elektra_op(
             }
         }
         OpCode::WireGrowth => {
-            // [direction]
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(dir) = val {
                     if vm.energy >= 5 {
                         let (cy, cx) = vm.context_loc;
-                        // 0=N, 1=E, 2=S, 3=W
                         let (dy, dx) = match dir % 4 {
                             0 => (-1, 0),
                             1 => (0, 1),
@@ -59,16 +55,13 @@ pub fn exec_elektra_op(
                             _ => (0, 0),
                         };
 
-                        // Check bounds manually or use helper?
-                        // vm.normalize_coords might wrap if torus, but here let's assume valid grid.
-                        // Actually, better to check bounds.
                         let ny = cy as i64 + dy;
                         let nx = cx as i64 + dx;
 
                         if ny >= 0 && ny < GRID_SIZE as i64 && nx >= 0 && nx < GRID_SIZE as i64 {
                             let ny = ny as usize;
                             let nx = nx as usize;
-                            vm.grid[ny][nx] = Value::Int(1); // Wire
+                            vm.grid[ny][nx] = Value::Int(1);
                             vm.energy -= 5;
                             vm.output.push(format!("WIREGROWTH: Wire at {},{}", nx, ny));
                         } else {
@@ -81,7 +74,6 @@ pub fn exec_elektra_op(
             }
         }
         OpCode::CircuitBreaker => {
-            // [threshold, strand_idx]
             if vm.stack.len() >= 2 {
                 let s_val = vm.stack.pop().unwrap();
                 let t_val = vm.stack.pop().unwrap();
@@ -100,7 +92,6 @@ pub fn exec_elektra_op(
             }
         }
         OpCode::Battery => {
-            // [voltage, y, x]
             if vm.stack.len() >= 3 {
                 let x_val = vm.stack.pop().unwrap();
                 let y_val = vm.stack.pop().unwrap();
@@ -110,14 +101,13 @@ pub fn exec_elektra_op(
                         let ux = x as usize;
                         let uy = y as usize;
                         vm.voltage_grid[uy][ux] = v as f32;
-                        vm.resistance_grid[uy][ux] = -1.0; // Mark as Battery
+                        vm.resistance_grid[uy][ux] = -1.0;
                         vm.output.push(format!("BATTERY: {}V at {},{}", v, x, y));
                     }
                 }
             }
         }
         OpCode::Ground => {
-            // [y, x]
             if vm.stack.len() >= 2 {
                 let x_val = vm.stack.pop().unwrap();
                 let y_val = vm.stack.pop().unwrap();
@@ -126,14 +116,13 @@ pub fn exec_elektra_op(
                         let ux = x as usize;
                         let uy = y as usize;
                         vm.voltage_grid[uy][ux] = 0.0;
-                        vm.resistance_grid[uy][ux] = -2.0; // Mark as Ground
+                        vm.resistance_grid[uy][ux] = -2.0;
                         vm.output.push(format!("GROUND: 0V at {},{}", x, y));
                     }
                 }
             }
         }
         OpCode::SenseVolt => {
-            // [y, x] -> [volts]
             if vm.stack.len() >= 2 {
                 let x_val = vm.stack.pop().unwrap();
                 let y_val = vm.stack.pop().unwrap();
@@ -148,7 +137,6 @@ pub fn exec_elektra_op(
             }
         }
         OpCode::Shock => {
-            // [power, radius] (Centered on context_loc)
             if vm.stack.len() >= 2 {
                 let r_val = vm.stack.pop().unwrap();
                 let p_val = vm.stack.pop().unwrap();
@@ -156,14 +144,10 @@ pub fn exec_elektra_op(
                     let (cy, cx) = vm.context_loc;
                     let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
                     for (x, y) in coords {
-                        // Reset voltage/resistance? Or just damage?
-                        // Let's reset component status (blow fuse)
                         if vm.resistance_grid[y][x] < 0.0 {
-                            vm.resistance_grid[y][x] = 1.0; // Reset to air
+                            vm.resistance_grid[y][x] = 1.0;
                             vm.output.push(format!("SHOCK: Blown fuse at {},{}", x, y));
                         }
-
-                        // Spark effect
                         vm.visual_effects.push(VisualEffect::Spark {
                             loc: (y, x),
                             color: (255, 100, 100),
@@ -175,18 +159,15 @@ pub fn exec_elektra_op(
             }
         }
         OpCode::Lightning => {
-            // [y, x] - Visual + Sound?
             if vm.stack.len() >= 2 {
                 let x_val = vm.stack.pop().unwrap();
                 let y_val = vm.stack.pop().unwrap();
                 if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
                     vm.output.push(format!("LIGHTNING: Strike at {},{}", x, y));
-                    // Could trigger neighbors
                 }
             }
         }
         OpCode::TeslaCoil => {
-            // [power, radius]
             if vm.stack.len() >= 2 {
                 let r_val = vm.stack.pop().unwrap();
                 let p_val = vm.stack.pop().unwrap();
@@ -199,7 +180,6 @@ pub fn exec_elektra_op(
                         p, r, cx, cy
                     ));
 
-                    // Visual Effects
                     for (x, y) in &coords {
                         vm.visual_effects.push(VisualEffect::Lightning {
                             from: (cy, cx),
@@ -209,19 +189,16 @@ pub fn exec_elektra_op(
                         });
                     }
 
-                    // Check voltage at source
                     if vm.voltage_grid[cy][cx] >= p as f32 {
                         vm.voltage_grid[cy][cx] -= p as f32;
 
-                        // Damage organics
                         #[cfg(feature = "nova")]
                         {
                             let mut hit_count = 0;
                             for (x, y) in coords {
-                                // Check organelles
                                 for org in vm.organelles.iter_mut() {
                                     if org.context_loc == (y, x) {
-                                        org.halted = true; // Stunned/Killed
+                                        org.halted = true;
                                         hit_count += 1;
                                     }
                                 }
@@ -240,7 +217,6 @@ pub fn exec_elektra_op(
         }
         #[cfg(all(feature = "elektra", feature = "nova"))]
         OpCode::Galvanize => {
-            // [graveyard_idx] -> [new_strand_idx]
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(idx) = val {
                     let idx = idx as usize;
@@ -250,14 +226,12 @@ pub fn exec_elektra_op(
                     if voltage > 100.0 {
                         if idx < vm.graveyard.len() {
                             let mut strand = vm.graveyard[idx].clone();
-                            vm.graveyard.remove(idx); // Exhume
+                            vm.graveyard.remove(idx);
 
-                            // Apply mutation due to shock
                             if !strand.genes.is_empty() {
                                 use rand::Rng;
                                 let mut rng = rand::thread_rng();
                                 let g_idx = rng.gen_range(0..strand.genes.len());
-                                // Randomly change an argument
                                 if !strand.genes[g_idx].args.is_empty() {
                                     strand.genes[g_idx].args[0] =
                                         Nucleotide::Number(rng.gen_range(0..100));
@@ -268,7 +242,7 @@ pub fn exec_elektra_op(
                             let new_idx = vm.dna.helix.strands.len() - 1;
                             vm.stack.push(Value::Int(new_idx as i64));
 
-                            vm.voltage_grid[y][x] = 0.0; // Discharge
+                            vm.voltage_grid[y][x] = 0.0;
 
                             vm.visual_effects.push(VisualEffect::Spark {
                                 loc: (y, x),
@@ -295,26 +269,171 @@ pub fn exec_elektra_op(
                 }
             }
         }
+        OpCode::Diode => {
+            if vm.stack.len() >= 3 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                let dir_val = vm.stack.pop().unwrap();
+                if let (Value::Int(x), Value::Int(y), Value::Int(dir)) = (x_val, y_val, dir_val) {
+                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                        vm.grid[ny][nx] = Value::Str(format!("D:{}", dir % 4));
+                        vm.output.push(format!("DIODE: Created at {},{} dir {}", nx, ny, dir % 4));
+                    }
+                }
+            }
+        }
+        OpCode::Transistor => {
+            if vm.stack.len() >= 3 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                let dir_val = vm.stack.pop().unwrap();
+                if let (Value::Int(x), Value::Int(y), Value::Int(dir)) = (x_val, y_val, dir_val) {
+                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                        vm.grid[ny][nx] = Value::Str(format!("T:{}", dir % 4));
+                        vm.output.push(format!("TRANSISTOR: Created at {},{} base {}", nx, ny, dir % 4));
+                    }
+                }
+            }
+        }
+        OpCode::Muscle => {
+            if vm.stack.len() >= 3 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                let t_val = vm.stack.pop().unwrap();
+                if let (Value::Int(x), Value::Int(y), Value::Int(t)) = (x_val, y_val, t_val) {
+                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                        vm.grid[ny][nx] = Value::Str(format!("M:{}", t));
+                        vm.output.push(format!("MUSCLE: Created at {},{} thresh {}", nx, ny, t));
+                    }
+                }
+            }
+        }
+        OpCode::Sensor => {
+            if vm.stack.len() >= 3 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                let m_val = vm.stack.pop().unwrap();
+                if let (Value::Int(x), Value::Int(y), Value::Int(m)) = (x_val, y_val, m_val) {
+                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                        vm.grid[ny][nx] = Value::Str(format!("S:{}", m));
+                        vm.output.push(format!("SENSOR: Created at {},{} mode {}", nx, ny, m));
+                    }
+                }
+            }
+        }
         _ => {}
     }
     None
 }
 
+// Helper to calculate effective conductivity multiplier based on component logic
+fn get_component_multiplier(vm: &ChimeraVM, y: usize, x: usize, neighbor_y: usize, neighbor_x: usize) -> f32 {
+    let mut mult = 1.0;
+
+    // Check SELF component logic
+    if let Value::Str(s) = &vm.grid[y][x] {
+        if s.starts_with("D:") {
+            let dir = s.trim_start_matches("D:").parse::<i64>().unwrap_or(0);
+            let (dy, dx) = match dir {
+                0 => (-1, 0), 1 => (0, 1), 2 => (1, 0), 3 => (0, -1), _ => (0, 0)
+            };
+            // Relative position of neighbor
+            let ry = neighbor_y as i64 - y as i64;
+            let rx = neighbor_x as i64 - x as i64;
+
+            // Check wrapping (simple check, might be wrong for torus boundary)
+            // Assuming neighbors are adjacent.
+
+            // Forward (Cathode)
+            if ry == dy && rx == dx {
+                if vm.voltage_grid[y][x] < vm.voltage_grid[neighbor_y][neighbor_x] {
+                    mult *= 0.001;
+                }
+            }
+            // Backward (Anode)
+            else if ry == -dy && rx == -dx {
+                if vm.voltage_grid[neighbor_y][neighbor_x] < vm.voltage_grid[y][x] {
+                    mult *= 0.001;
+                }
+            }
+            else {
+                mult = 0.0; // Block sides
+            }
+        } else if s.starts_with("T:") {
+            let dir = s.trim_start_matches("T:").parse::<i64>().unwrap_or(0);
+            let (dy, dx) = match dir {
+                0 => (-1, 0), 1 => (0, 1), 2 => (1, 0), 3 => (0, -1), _ => (0, 0)
+            };
+            let ry = neighbor_y as i64 - y as i64;
+            let rx = neighbor_x as i64 - x as i64;
+
+            if ry == dy && rx == dx {
+                mult = 0.0; // Base is high impedance
+            } else {
+                // Check Base Voltage
+                if let Some((by, bx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    if vm.voltage_grid[by][bx] < 50.0 {
+                        mult *= 0.001;
+                    }
+                }
+            }
+        }
+    }
+
+    // Check NEIGHBOR component logic (Reciprocal)
+    if let Value::Str(s) = &vm.grid[neighbor_y][neighbor_x] {
+        if s.starts_with("D:") {
+            let dir = s.trim_start_matches("D:").parse::<i64>().unwrap_or(0);
+            let (dy, dx) = match dir {
+                0 => (-1, 0), 1 => (0, 1), 2 => (1, 0), 3 => (0, -1), _ => (0, 0)
+            };
+            // Relative position of SELF from neighbor
+            let ry = y as i64 - neighbor_y as i64;
+            let rx = x as i64 - neighbor_x as i64;
+
+            if ry == dy && rx == dx {
+                // We are at Neighbor's Cathode
+                if vm.voltage_grid[neighbor_y][neighbor_x] < vm.voltage_grid[y][x] {
+                    mult *= 0.001;
+                }
+            } else if ry == -dy && rx == -dx {
+                // We are at Neighbor's Anode
+                if vm.voltage_grid[y][x] < vm.voltage_grid[neighbor_y][neighbor_x] {
+                    mult *= 0.001;
+                }
+            } else {
+                mult = 0.0;
+            }
+        } else if s.starts_with("T:") {
+            let dir = s.trim_start_matches("T:").parse::<i64>().unwrap_or(0);
+            let (dy, dx) = match dir {
+                0 => (-1, 0), 1 => (0, 1), 2 => (1, 0), 3 => (0, -1), _ => (0, 0)
+            };
+            let ry = y as i64 - neighbor_y as i64;
+            let rx = x as i64 - neighbor_x as i64;
+
+            if ry == dy && rx == dx {
+                mult = 0.0;
+            } else {
+                if let Some((by, bx)) = vm.normalize_coords(neighbor_y as i64 + dy, neighbor_x as i64 + dx) {
+                    if vm.voltage_grid[by][bx] < 50.0 {
+                        mult *= 0.001;
+                    }
+                }
+            }
+        }
+    }
+
+    mult
+}
+
 #[allow(clippy::needless_range_loop)]
 pub fn update_circuit(vm: &mut ChimeraVM) {
-    // Iterative solver for potential
-    // V[new] = avg(V[neighbors])
-    // Resistance affects coupling.
-    // If R is high (Air), coupling is low.
-    // If R is low (Wire), coupling is high.
-    // Sources (R < 0) are fixed.
-
     let iterations = 10;
     let grid_size = GRID_SIZE;
 
     #[cfg(feature = "biophysics")]
     {
-        // 1. Collect coupling data (Read-only phase)
         let mut coupling_data = Vec::new();
         for (coord, weight) in &vm.biophysics_couplings {
             if let Some(neuron) = vm.neurons.get(coord) {
@@ -324,20 +443,55 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
                 }
             }
         }
-
-        // 2. Apply updates (Write phase)
         for (coord, weight, neuron_v, grid_v) in coupling_data {
-            // Update Grid: Drive grid towards neuron V
             vm.voltage_grid[coord.0][coord.1] += neuron_v * weight * 0.1;
-
-            // Update Neuron: Inject current from Grid V
             if let Some(neuron) = vm.neurons.get_mut(&coord) {
                 neuron.i_inj += grid_v * weight;
             }
         }
     }
 
-    // Temporary grid for next step
+    for y in 0..grid_size {
+        for x in 0..grid_size {
+            if let Value::Str(s) = &vm.grid[y][x] {
+                if s.starts_with("S:") {
+                    let mode = s.trim_start_matches("S:").parse::<i64>().unwrap_or(0);
+                    let active = match mode {
+                        0 => {
+                            #[cfg(feature = "nova")]
+                            {
+                                vm.organelles.iter().any(|o| o.context_loc == (y, x))
+                            }
+                            #[cfg(not(feature = "nova"))]
+                            false
+                        },
+                        1 => {
+                            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+                            let mut found = false;
+                            for (dy, dx) in neighbors {
+                                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                                    if !matches!(vm.grid[ny][nx], Value::Int(0)) {
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            found
+                        },
+                        _ => false
+                    };
+
+                    if active {
+                        vm.voltage_grid[y][x] = 100.0;
+                        vm.resistance_grid[y][x] = -1.0;
+                    } else if vm.resistance_grid[y][x] == -1.0 {
+                         vm.resistance_grid[y][x] = 1.0;
+                    }
+                }
+            }
+        }
+    }
+
     let mut next_voltage = vm.voltage_grid.clone();
 
     for _ in 0..iterations {
@@ -345,27 +499,27 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
             for x in 0..grid_size {
                 let r_self = vm.resistance_grid[y][x];
 
-                // Fixed nodes
                 if r_self < 0.0 {
                     next_voltage[y][x] = vm.voltage_grid[y][x];
                     continue;
                 }
 
-                // Determine effective resistance based on grid content
-                // 1 (Wire) -> 0.1, Else -> 100.0 (Air)
-                // If resistance_grid is set to something else (e.g. by future resistor op), use it?
-                // For now, resistance_grid > 0 is just "initialized".
-                // We trust grid content more for wiring.
                 let cell_val = &vm.grid[y][x];
-                let conductivity = match cell_val {
-                    Value::Int(0) => 0.0,                                  // Air
-                    Value::Int(1) | Value::Int(2) | Value::Int(3) => 10.0, // Wire
-                    Value::Int(_) => 0.01,                                 // Other matter
-                    _ => 0.0,                                              // Air
+                let base_cond = match cell_val {
+                    Value::Int(0) => 0.0,
+                    Value::Int(1) | Value::Int(2) | Value::Int(3) => 10.0,
+                    Value::Str(s) => {
+                        if s.starts_with("D:") || s.starts_with("T:") || s.starts_with("M:") || s.starts_with("S:") {
+                            10.0
+                        } else {
+                            0.01
+                        }
+                    }
+                    Value::Int(_) => 0.01,
+                    _ => 0.0,
                 };
 
-                if conductivity <= 0.001 {
-                    // Insulator, V decays to 0
+                if base_cond <= 0.001 {
                     next_voltage[y][x] = vm.voltage_grid[y][x] * 0.9;
                     continue;
                 }
@@ -375,51 +529,89 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
 
                 let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
                 for (dy, dx) in neighbors {
-                    let ny = y as i64 + dy;
-                    let nx = x as i64 + dx;
-                    if ny >= 0 && ny < grid_size as i64 && nx >= 0 && nx < grid_size as i64 {
-                        let ny = ny as usize;
-                        let nx = nx as usize;
-
+                    if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
                         let neighbor_val = &vm.grid[ny][nx];
-                        let neighbor_cond = match neighbor_val {
-                            Value::Int(0) => 0.0,
-                            Value::Int(1) | Value::Int(2) | Value::Int(3) => 10.0,
-                            Value::Int(_) => 0.01,
-                            _ => 0.0,
-                        };
-
-                        // Harmonic mean of conductivity (Series conductance)
-                        // If either is 0 (Air), no coupling.
-                        let coupling = if conductivity == 0.0 || neighbor_cond == 0.0 {
-                            0.0
+                        let neighbor_r = vm.resistance_grid[ny][nx];
+                        let neighbor_cond = if neighbor_r < 0.0 {
+                            10.0
                         } else {
-                            (conductivity * neighbor_cond) / (conductivity + neighbor_cond)
+                            match neighbor_val {
+                                Value::Int(0) => 0.0,
+                                Value::Int(1) | Value::Int(2) | Value::Int(3) => 10.0,
+                                Value::Str(s) => {
+                                    if s.starts_with("D:") || s.starts_with("T:") || s.starts_with("M:") || s.starts_with("S:") {
+                                        10.0
+                                    } else {
+                                        0.01
+                                    }
+                                },
+                                Value::Int(_) => 0.01,
+                                _ => 0.0,
+                            }
                         };
 
-                        v_sum += vm.voltage_grid[ny][nx] * coupling;
-                        weight_sum += coupling;
+                        if neighbor_cond <= 0.001 {
+                            continue;
+                        }
+
+                        let mult = get_component_multiplier(vm, y, x, ny, nx);
+                        let effective_cond = (base_cond * neighbor_cond) / (base_cond + neighbor_cond) * mult;
+
+                        v_sum += vm.voltage_grid[ny][nx] * effective_cond;
+                        weight_sum += effective_cond;
                     }
                 }
 
                 if weight_sum > 0.0 {
                     next_voltage[y][x] = v_sum / weight_sum;
                 } else {
-                    next_voltage[y][x] = vm.voltage_grid[y][x] * 0.95; // Decay
+                    next_voltage[y][x] = vm.voltage_grid[y][x] * 0.95;
                 }
             }
         }
         vm.voltage_grid = next_voltage.clone();
     }
 
-    // Calculate Current (I = dV * Conductance)
-    // We'll store magnitude of current flow
+    for y in 0..grid_size {
+        for x in 0..grid_size {
+            if let Value::Str(s) = &vm.grid[y][x] {
+                if s.starts_with("M:") {
+                    let threshold = s.trim_start_matches("M:").parse::<f32>().unwrap_or(50.0);
+                    if vm.voltage_grid[y][x] > threshold {
+                        #[cfg(feature = "nova")]
+                        {
+                            let topology = vm.topology;
+                            for org in vm.organelles.iter_mut() {
+                                if org.context_loc == (y, x) {
+                                    use ::rand::Rng;
+                                    let mut rng = ::rand::thread_rng();
+                                    let dy = rng.gen_range(-1..=1);
+                                    let dx = rng.gen_range(-1..=1);
+                                    if let Some((ny, nx)) = topology.normalize(y as i64 + dy, x as i64 + dx, GRID_SIZE, GRID_SIZE) {
+                                        org.context_loc = (ny, nx);
+                                    }
+                                }
+                            }
+                        }
+
+                        vm.visual_effects.push(VisualEffect::Spark {
+                            loc: (y, x),
+                            color: (200, 100, 100),
+                            ttl: 1,
+                        });
+                    }
+                }
+            }
+        }
+    }
+
     for y in 0..grid_size {
         for x in 0..grid_size {
             let cell_val = &vm.grid[y][x];
             let conductivity = match cell_val {
                 Value::Int(0) => 0.0,
                 Value::Int(1) | Value::Int(2) | Value::Int(3) => 10.0,
+                Value::Str(s) if s.starts_with("D:") || s.starts_with("T:") || s.starts_with("M:") => 10.0,
                 Value::Int(_) => 0.01,
                 _ => 0.0,
             };
@@ -427,11 +619,7 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
             let mut max_diff = 0.0;
             let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
             for (dy, dx) in neighbors {
-                let ny = y as i64 + dy;
-                let nx = x as i64 + dx;
-                if ny >= 0 && ny < grid_size as i64 && nx >= 0 && nx < grid_size as i64 {
-                    let ny = ny as usize;
-                    let nx = nx as usize;
+                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
                     let diff = (vm.voltage_grid[y][x] - vm.voltage_grid[ny][nx]).abs();
                     if diff > max_diff {
                         max_diff = diff;
