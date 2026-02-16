@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **heap-market**: Documentation Void. Redundant with `swap-meet`. Generic implementation. Grace period: 24h.
+- **git-etymologist**: Documentation Void. Deceptive naming (phonology = edit distance). Redundant with `git-cantata`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **heap-market**: Specimen executed. Documentation Void. Redundant with `swap-meet`. Failed to improve during grace period. Moved to graveyard.
 - **foveated-code**: Specimen executed. Documentation void. Workspace exclusion. Generic TUI. Failed to improve during grace period. Moved to graveyard.
 - **net-groove**: Specimen executed. Documentation void. Logic rot. Grace period expired. Moved to graveyard.
 - **magnetic-echo**: Specimen executed. Terminal compilation failure (workspace exclusion). Documentation void. Redundant with `ferrous-sector`. Grace period expired. Moved to graveyard.

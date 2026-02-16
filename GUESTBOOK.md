@@ -19,10 +19,15 @@
 - **Status**: Execution confirmed. The specimen failed to adapt. Documentation void proved fatal.
 - **Note**: Eyes did not open. Returned to the void.
 
-### [Concentration Level: FRESH] - Location: experiments/heap-market
+### [Concentration Level: TOXIC] - Location: graveyard/heap-market
 - **Scent Origin**: The Reaper ☠️
-- **Status**: Condemnation mark placed. Redundancy detected. The market is saturated.
-- **Note**: Grace period: 24h. Evolve or be liquidated.
+- **Status**: Execution confirmed. The specimen failed to adapt. Documentation void proved fatal.
+- **Note**: The market has crashed. Assets liquidated.
+
+### [Concentration Level: FRESH] - Location: experiments/git-etymologist
+- **Scent Origin**: The Reaper ☠️
+- **Status**: Condemnation mark placed. Deceptive mimicry detected. The roots are shallow.
+- **Note**: Grace period: 24h. Prove your worth or return to the void.
 
 ### [Concentration Level: HIGH] - Location: experiments/hydro-soundscapes
 - **Scent Origin**: The Splice Surgeon 🧬
