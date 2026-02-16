@@ -50,6 +50,18 @@ fn peek(vm: &ChimeraVM, y: usize, x: usize, dy: i64, dx: i64) -> Option<i64> {
     }
 }
 
+fn peek_char(vm: &ChimeraVM, y: usize, x: usize, dy: i64, dx: i64) -> Option<char> {
+    if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+        match &vm.grid[ny][nx] {
+            Value::Str(s) => s.chars().next(),
+            Value::Int(n) => Some(val_to_char(*n)),
+            _ => None,
+        }
+    } else {
+        None
+    }
+}
+
 struct GridWrite {
     y: usize,
     x: usize,
@@ -121,6 +133,11 @@ struct VoltageWrite {
     amount: f32,
 }
 
+struct OperatorRegister {
+    char_val: char,
+    strand_idx: usize,
+}
+
 struct SignalContext {
     next_signals: Vec<Vec<u8>>,
     grid_writes: Vec<GridWrite>,
@@ -136,6 +153,7 @@ struct SignalContext {
     ether_writes: Vec<EtherWrite>,
     ether_reads: Vec<EtherRead>,
     holo_writes: Vec<HoloWrite>,
+    operator_registers: Vec<OperatorRegister>,
     #[cfg(feature = "biophysics")]
     neuron_stimuli: Vec<NeuronStimulus>,
     executions: Vec<(OpCode, Vec<Nucleotide>)>,
@@ -169,6 +187,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         ether_writes: Vec::new(),
         ether_reads: Vec::new(),
         holo_writes: Vec::new(),
+        operator_registers: Vec::new(),
         #[cfg(feature = "biophysics")]
         neuron_stimuli: Vec::new(),
         executions: Vec::new(),
@@ -228,6 +247,17 @@ pub fn process_signals(vm: &mut ChimeraVM) {
             let active = signal > 0 || is_uppercase || is_bang || is_special;
 
             if !active {
+                continue;
+            }
+
+            // 1.1 Check Overrides (Custom Operators)
+            if let Some(&strand_idx) = vm.custom_operators.get(&c) {
+                if signal > 0 {
+                    // Push context (y, x) to stack
+                    ctx.executions.push((OpCode::Push, vec![Nucleotide::Number(y as i64)]));
+                    ctx.executions.push((OpCode::Push, vec![Nucleotide::Number(x as i64)]));
+                    ctx.executions.push((OpCode::Call, vec![Nucleotide::Number(strand_idx as i64)]));
+                }
                 continue;
             }
 
@@ -367,6 +397,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 'Φ' | 'φ' => exec_phi(vm, y, x, signal, &mut ctx),
                 'Ω' | 'ω' => exec_omega(vm, y, x, signal, &mut ctx),
                 '§' => exec_sigil(vm, y, x, signal, &mut ctx),
+                'ƒ' => exec_function_op(vm, y, x, signal, &mut ctx),
                 _ => {
                     if let Value::Str(s) = val {
                         if let Ok(op) = s.parse::<OpCode>() {
@@ -375,28 +406,22 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                             }
                         } else if signal > 0 {
                             // Check for Dynamic Operators in KB
-                            #[cfg(feature = "oracle")]
-                            if let Some(strand_idx) = check_kb_operator(vm, s.as_str()) {
-                                ctx.executions
-                                    .push((OpCode::Call, vec![Nucleotide::Number(strand_idx)]));
-                            }
-
-                            // Check for Named Sigils
-                            #[cfg(feature = "nova")]
-                            if let Some(sigil) = vm.sigil_registry.get(s) {
-                                if nova_sigil::check_dynamic_pattern(vm, y, x, &sigil.pattern) {
-                                    // Consume pattern? Maybe not for named invocation via grid text.
-                                    // Usually "Invoking" consumes materials.
-                                    // Let's make it consume if it matches.
-                                    // But since we can't easily consume inside this check without cloning pattern,
-                                    // we'll defer consumption or skip it for this mode.
-                                    // Let's just execute.
-                                    ctx.executions.push((
-                                        OpCode::Call,
-                                        vec![Nucleotide::Number(sigil.strand_idx as i64)],
-                                    ));
+                                #[cfg(feature = "oracle")]
+                                if let Some(strand_idx) = check_kb_operator(vm, s.as_str()) {
+                                    ctx.executions
+                                        .push((OpCode::Call, vec![Nucleotide::Number(strand_idx)]));
                                 }
-                            }
+
+                                // Check for Named Sigils
+                                #[cfg(feature = "nova")]
+                                if let Some(sigil) = vm.sigil_registry.get(s) {
+                                    if nova_sigil::check_dynamic_pattern(vm, y, x, &sigil.pattern) {
+                                        ctx.executions.push((
+                                            OpCode::Call,
+                                            vec![Nucleotide::Number(sigil.strand_idx as i64)],
+                                        ));
+                                    }
+                                }
                         }
                     }
                 }
@@ -607,6 +632,12 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         }
     }
 
+    // 3.7 Apply Operator Registers
+    for reg in ctx.operator_registers {
+        vm.custom_operators.insert(reg.char_val, reg.strand_idx);
+        vm.output.push(format!("ORCA: Registered operator '{}' -> {}", reg.char_val, reg.strand_idx));
+    }
+
     // 3.75 Apply MIDI
     vm.midi_messages.extend(ctx.midi_events);
 
@@ -702,6 +733,22 @@ fn exec_electrode(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut Sign
             y,
             x,
             amount: val as f32,
+        });
+    }
+}
+
+fn exec_function_op(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // ƒ: Function Definition
+    // North: Character (Glyph)
+    // East: Strand Index
+
+    if let (Some(c), Some(strand_idx)) = (peek_char(vm, y, x, -1, 0), peek(vm, y, x, 0, 1)) {
+        ctx.operator_registers.push(OperatorRegister {
+            char_val: c,
+            strand_idx: strand_idx as usize,
         });
     }
 }

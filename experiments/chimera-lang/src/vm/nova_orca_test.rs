@@ -414,4 +414,84 @@ mod tests {
             _ => panic!("Expected 7 at South, got {:?}", vm.grid[4][3]),
         }
     }
+
+    #[test]
+    fn test_custom_operator_f() {
+        use crate::ast::{Gene, Nucleotide, Strand};
+        use crate::opcode::OpCode;
+
+        let mut vm = make_vm();
+
+        // Define Strand 1: [ Push(100) ]
+        // Just pushes 100 to stack.
+        let strand = Strand {
+            genes: vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(100)],
+            }],
+        };
+        // Setup helix with empty strand 0 and our strand 1
+        vm.dna.helix.strands.push(Strand { genes: vec![] });
+        vm.dna.helix.strands.push(strand);
+
+        // Step 1: Define Operator 'X' -> Strand 1
+        // Layout:
+        // . X .  (North: Char 'X')
+        // . ƒ 1  (East: Strand 1)
+        // . . .
+
+        vm.grid[0][1] = Value::Str("X".to_string());
+        vm.grid[1][1] = Value::Str("ƒ".to_string());
+        vm.grid[1][2] = Value::Str("1".to_string());
+
+        vm.signal_grid[1][1] = 1; // Signal ƒ
+
+        process_signals(&mut vm);
+
+        // Check registry
+        assert_eq!(vm.custom_operators.get(&'X'), Some(&1));
+
+        // Step 2: Trigger Operator 'X'
+        // Layout at (8,8):
+        // * X .
+
+        vm.grid[8][8] = Value::Str("X".to_string());
+        vm.grid[8][7] = Value::Str("*".to_string());
+
+        // * fires into X
+        vm.signal_grid[8][7] = 1;
+        process_signals(&mut vm); // Propagates * -> X
+
+        // Now X has signal. Next process_signals should trigger it?
+        // process_signals() does: Scan Phase (reads signal_grid) -> Exec Phase.
+        // If * is at (8,7), it propagates signal to (8,8) in next_signals.
+        // But execution of X happens in *this* tick if X has signal.
+        // Wait, if I set signal_grid[8][7]=1, then process_signals() sees * at 8,7.
+        // * executes: propagates signal to neighbors (8,8) in next_signals.
+        // X at 8,8 does NOT execute yet because it has no signal in current signal_grid.
+        // So we need another step.
+
+        // Swap signals
+        vm.signal_grid = vec![vec![0; 16]; 16];
+        vm.signal_grid[8][8] = 1; // Simulate propagation result
+
+        process_signals(&mut vm); // Now X executes
+
+        // Check execution result
+        // X should call Strand 1.
+        // Strand 1 pushes 100.
+        // But process_signals only performs the Call jump and argument pushes.
+        // It does NOT execute the target strand genes.
+        // So stack should be [y, x]. And IP should be (1, 0).
+
+        if vm.stack.len() != 2 {
+            println!("VM Output: {:?}", vm.output);
+            println!("Custom Operators: {:?}", vm.custom_operators);
+        }
+
+        assert_eq!(vm.stack.len(), 2, "Expected stack [y, x]");
+        assert_eq!(vm.stack[1], Value::Int(8));   // X
+        assert_eq!(vm.stack[0], Value::Int(8));   // Y
+        assert_eq!(vm.ip, (1, 0));
+    }
 }
