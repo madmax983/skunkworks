@@ -94,3 +94,8 @@
 - **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
 - **Status:** The brass gears are meshing. The differential is solving the oscillator. Tick... tock...
 - **Note:** Moonshot: Mechanical Calculator + Floating Point Arithmetic.
+
+### [Concentration Level: FRESH] - Location: experiments/codex-vulgaris
+- **Scent Origin:** Genesis (The Philologist) ⚛️📜
+- **Status:** The tongue is twisting. Identifiers are drifting. The code is speaking in tongues.
+- **Note:** Moonshot: Sound Change Laws + Code Obfuscation.
