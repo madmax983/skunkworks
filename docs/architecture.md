@@ -35,10 +35,8 @@ classDiagram
     }
 
     class NeuroTerminal
-    class AutomataWarfare
 
     NeuroTerminal ..> Tui : Uses
-    AutomataWarfare ..> Tui : Uses
 
     note for Tui "Handles raw mode, alternate screen,\nand mouse capture automatically."
 ```
@@ -1035,4 +1033,38 @@ sequenceDiagram
     Stego-->>VM: wasm_bytes
     VM->>VM: wasmtime::instantiate()
     VM-->>User: Output
+```
+
+## Experiment: Sandpile Scheduler (ADR 036)
+
+**Sandpile Scheduler** simulates distributed task scheduling using the Abelian Sandpile Model to visualize load balancing and avalanches.
+
+### Grid Architecture
+
+The system uses a double-buffered grid and parallel iteration to handle large-scale updates.
+
+```mermaid
+classDiagram
+    direction LR
+    class Grid {
+        +Vec~Cell~ cells
+        +Vec~Cell~ next_cells
+        +add_load(x, y, amount)
+        +update(process_rate)
+        +total_load() u64
+    }
+
+    class Cell {
+        +u32 load
+        +u64 processed
+    }
+
+    class Rayon {
+        <<Library>>
+        +par_iter_mut()
+    }
+
+    Grid *-- Cell : Contains (Double Buffer)
+    Grid ..> Rayon : Uses for Update
+    note for Grid "Topple Rule: Load >= 4 -> Distribute to neighbors"
 ```
