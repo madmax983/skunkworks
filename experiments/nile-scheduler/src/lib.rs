@@ -38,15 +38,19 @@ impl Scheduler {
     pub fn allocate(&mut self, demand: Ratio<u64>) -> Result<EgyptianFraction> {
         let available = self.free_space.to_ratio();
         if demand > available {
-            return Err(anyhow!("Not enough resources. Demand: {}, Available: {}", demand, available));
+            return Err(anyhow!(
+                "Not enough resources. Demand: {}, Available: {}",
+                demand,
+                available
+            ));
         }
 
-        // Convert demand to Egyptian Fraction
-        let allocated_fraction = EgyptianFraction::from(demand);
+        // Optimize: Update free space in Ratio domain first to avoid redundant conversions
+        let new_free_ratio = available - demand;
+        self.free_space = EgyptianFraction::from(new_free_ratio);
 
-        // Update free space
-        // free_space = free_space - allocated
-        self.free_space = self.free_space.clone() - allocated_fraction.clone();
+        // Convert demand to Egyptian Fraction for the process record
+        let allocated_fraction = EgyptianFraction::from(demand);
 
         let process = Process {
             id: self.next_id,
@@ -86,25 +90,19 @@ impl From<Ratio<u64>> for EgyptianFraction {
         let mut parts = Vec::new();
         let mut remaining = val;
 
-        while remaining.numer() > &0 {
+        while !remaining.is_zero() {
             let num = *remaining.numer();
             let den = *remaining.denom();
 
-            // n = ceil(den / num)
+            // Greedy algorithm: n = ceil(den / num)
             let n = (den + num - 1) / num;
 
             parts.push(n);
 
-            let unit = Ratio::new(1, n);
-            if remaining < unit {
-                 break;
-            }
-            remaining = remaining - unit;
+            remaining = remaining - Ratio::new(1, n);
         }
 
-        parts.sort();
-        parts.dedup();
-
+        // Greedy algorithm naturally produces sorted and distinct denominators.
         Self { parts }
     }
 }
