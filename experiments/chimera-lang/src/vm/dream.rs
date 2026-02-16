@@ -1,5 +1,5 @@
 use crate::ast::Strand;
-use crate::vm::Value;
+use crate::value::Value;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

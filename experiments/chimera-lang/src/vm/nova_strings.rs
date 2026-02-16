@@ -89,8 +89,8 @@ pub fn exec_string_op(
                 let mut min_dist = f64::MAX;
 
                 for (i, s) in vm.strings.iter().enumerate() {
-                    let (x1, y1) = s.start;
-                    let (x2, y2) = s.end;
+                    let (x1, y1): (f64, f64) = s.start;
+                    let (x2, y2): (f64, f64) = s.end;
 
                     let l2: f64 = (x1 - x2).powi(2) + (y1 - y2).powi(2);
                     let dist = if l2 == 0.0 {
@@ -128,8 +128,8 @@ pub fn exec_string_op(
                 let mut min_dist = f64::MAX;
 
                 for (i, s) in vm.strings.iter().enumerate() {
-                    let (x1, y1) = s.start;
-                    let (x2, y2) = s.end;
+                    let (x1, y1): (f64, f64) = s.start;
+                    let (x2, y2): (f64, f64) = s.end;
                     let l2: f64 = (x1 - x2).powi(2) + (y1 - y2).powi(2);
                     let dist = if l2 == 0.0 {
                         (cx - x1).powi(2) + (cy - y1).powi(2)
@@ -165,8 +165,8 @@ pub fn exec_string_op(
             let mut min_dist = f64::MAX;
 
             for s in &vm.strings {
-                let (x1, y1) = s.start;
-                let (x2, y2) = s.end;
+                let (x1, y1): (f64, f64) = s.start;
+                let (x2, y2): (f64, f64) = s.end;
                 let l2: f64 = (x1 - x2).powi(2) + (y1 - y2).powi(2);
                 let dist = if l2 == 0.0 {
                     (cx - x1).powi(2) + (cy - y1).powi(2)

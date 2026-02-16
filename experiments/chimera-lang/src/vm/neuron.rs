@@ -2,7 +2,7 @@
 use super::ChimeraVM;
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
-use crate::vm::Value;
+use crate::value::Value;
 
 #[derive(Debug, Clone)]
 pub struct Neuron {

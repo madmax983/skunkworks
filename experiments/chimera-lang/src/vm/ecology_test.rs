@@ -50,7 +50,7 @@ mod tests {
     fn test_scavenger_mechanics() {
         let mut vm = make_vm();
         use crate::vm::nova::{Organelle, OrganelleType};
-        use crate::vm::Value;
+        use crate::value::Value;
 
         // Create Scavenger
         let scavenger = Organelle {
@@ -88,7 +88,7 @@ mod tests {
     fn test_radioactive_death() {
         let mut vm = make_vm();
         use crate::vm::nova::{Organelle, OrganelleType};
-        use crate::vm::Value;
+        use crate::value::Value;
 
         // Create Radioactive Organism with 0 energy (dying)
         // Note: process_ecology_tick subtracts 1 energy at start. So 1 -> 0 -> Death.

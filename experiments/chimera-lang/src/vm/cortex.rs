@@ -33,7 +33,7 @@
 use super::ChimeraVM;
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
-use crate::vm::Value;
+use crate::value::Value;
 
 /// Executes Cortex-related OpCodes (Neural Network Logic).
 ///

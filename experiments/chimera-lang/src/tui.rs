@@ -2830,12 +2830,12 @@ where
                                 {
                                     if pos + 1 < neurons_sorted.len() {
                                         app_state.selected_neuron_coords =
-                                            Some(*neurons_sorted[pos + 1]);
+                                            Some(neurons_sorted[pos + 1]);
                                         app_state.voltage_history.clear(); // Reset history on switch
                                     }
                                 }
                             } else if !neurons_sorted.is_empty() {
-                                app_state.selected_neuron_coords = Some(*neurons_sorted[0]);
+                                app_state.selected_neuron_coords = Some(neurons_sorted[0]);
                             }
                         }
                         #[cfg(feature = "nova")]
@@ -2956,12 +2956,12 @@ where
                                 {
                                     if pos > 0 {
                                         app_state.selected_neuron_coords =
-                                            Some(*neurons_sorted[pos - 1]);
+                                            Some(neurons_sorted[pos - 1]);
                                         app_state.voltage_history.clear();
                                     }
                                 }
                             } else if !neurons_sorted.is_empty() {
-                                app_state.selected_neuron_coords = Some(*neurons_sorted[0]);
+                                app_state.selected_neuron_coords = Some(neurons_sorted[0]);
                             }
                         }
                         #[cfg(feature = "nova")]
@@ -4966,7 +4966,7 @@ fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
             let ch = match val {
                 crate::vm::Value::Str(s) => s.chars().next().unwrap_or('.').to_string(),
-                crate::vm::Value::Int(n) => if *n == 0 { ".".to_string() } else { "#".to_string() },
+                crate::vm::Value::Int(n) => if n == 0 { ".".to_string() } else { "#".to_string() },
                 _ => ".".to_string(),
             };
              line_spans.push(Span::styled(ch, style));
@@ -8530,7 +8530,7 @@ fn render_garden(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             let mut ch = "·".to_string();
 
             if let crate::vm::Value::Int(n) = val {
-                if *n > 0 {
+                if n > 0 {
                     // Color based on Species ID
                     let colors = [
                         Color::Red,
@@ -8541,7 +8541,7 @@ fn render_garden(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                         Color::Cyan,
                         Color::White,
                     ];
-                    let bg = colors[(*n as usize) % colors.len()];
+                    let bg = colors[(n as usize) % colors.len()];
                     style = style.bg(bg).fg(Color::Black);
                     ch = format!("{}", n % 10);
                 } else {
@@ -8677,13 +8677,13 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                         (c.to_string(), color)
                     }
                     crate::vm::Value::Int(n) => {
-                        let v = (*n).rem_euclid(36);
+                        let v = (n).rem_euclid(36);
                         let c = if v < 10 {
                             ((v as u8) + b'0') as char
                         } else {
                             ((v as u8 - 10) + b'a') as char
                         };
-                        let color = if *n == 0 {
+                        let color = if n == 0 {
                             Color::DarkGray
                         } else {
                             Color::Cyan
@@ -10268,10 +10268,10 @@ fn render_ecology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
             // Background for Food
             if let crate::vm::Value::Int(n) = val {
-                if *n > 0 {
+                if n > 0 {
                     style = style.fg(Color::Green);
                     ch = "*".to_string();
-                } else if *n < 0 {
+                } else if n < 0 {
                     style = style.fg(Color::Magenta);
                     ch = "☢".to_string();
                 } else {

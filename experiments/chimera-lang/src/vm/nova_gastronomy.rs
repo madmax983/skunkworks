@@ -164,7 +164,7 @@ fn exec_cultivate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
     match val {
         Value::Int(n) => {
-            *n = n.saturating_add(1);
+            n = n.saturating_add(1);
             vm.output.push(format!("CULTIVATE: Growth to {}", n));
         }
         Value::Str(s) => {
@@ -203,7 +203,7 @@ fn exec_banquet(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                         let per_cell = amount / count as i64;
                         for (tx, ty) in coords {
                             if let Value::Int(n) = &mut vm.grid[ty][tx] {
-                                *n = n.saturating_add(per_cell);
+                                n = n.saturating_add(per_cell);
                             } else {
                                 // Plant energy?
                                 vm.grid[ty][tx] = Value::Int(per_cell);

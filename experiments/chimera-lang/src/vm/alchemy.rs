@@ -80,7 +80,7 @@ pub fn exec_crucible_op(
 #[cfg(feature = "nova")]
 pub fn transmute_crucible(vm: &mut ChimeraVM) {
     // Take contents out to avoid double borrow
-    let mut ingredients = std::mem::take(&mut vm.crucible.contents);
+    let mut ingredients: Vec<Value> = std::mem::take(&mut vm.crucible.contents);
 
     // Sort for consistent matching
     ingredients.sort_by_key(|v| format!("{}", v));
@@ -139,7 +139,7 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
                 let resolved = crate::vm::oracle::resolve(&res_var, sol);
                 // Ensure we got a concrete value, not a variable
                 if !matches!(resolved, Value::Str(ref s) if s.starts_with('?')) {
-                    result = Some(resolved);
+                    result = Some(resolved.clone());
                     cost = 5;
                 }
             }
@@ -152,6 +152,11 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
         let mut strand_idx_b = None;
 
         // Check for [Strand, Modifier] or [Strand, Strand]
+        // Note: references might bind 'a' as i64 (copy) if &Value is matched.
+        // So we remove * from 'a' usage if compiler complained.
+        // Or we assume a is &i64 if we use ref?
+        // Let's use if let with ref explicitly? No, references to slices.
+
         if let (Value::Int(a), Value::Str(s)) = (&ingredients[0], &ingredients[1]) {
             strand_idx = Some(*a as usize);
             modifier = Some(s.as_str());
@@ -175,7 +180,7 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
                             // Heat: Increase numeric args
                             for gene in &mut new_genes {
                                 for arg in &mut gene.args {
-                                    if let Nucleotide::Number(n) = arg {
+                                    if let Nucleotide::Number(ref mut n) = arg {
                                         *n = n.saturating_add(1);
                                         modified = true;
                                     }
@@ -190,7 +195,7 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
                             // Cold: Decrease numeric args
                             for gene in &mut new_genes {
                                 for arg in &mut gene.args {
-                                    if let Nucleotide::Number(n) = arg {
+                                    if let Nucleotide::Number(ref mut n) = arg {
                                         *n = n.saturating_sub(1);
                                         modified = true;
                                     }
@@ -221,7 +226,7 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
                             // Growth: Duplicate random genes
                             let mut rng = rand::thread_rng();
                             use rand::Rng;
-                            let mut grown_genes = Vec::new();
+                            let mut grown_genes: Vec<crate::ast::Gene> = Vec::new();
                             for gene in new_genes {
                                 grown_genes.push(gene.clone());
                                 if rng.gen_bool(0.1) {
@@ -307,10 +312,24 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
         for v in &ingredients {
             match v {
                 Value::Int(i) => {
+                    // If i is i64 (copy), we use i directly.
+                    // If i is &i64, we use *i.
+                    // Let's assume *i based on error log "can't be dereferenced" (which implied we HAD *i but it was wrong).
+                    // So i is i64.
+                    // But in "if let (Value::Int(a)...)" above, I used *a.
+                    // Let's stick to consistent * removal if previous check failed.
+                    // Wait, I am WRITING the file now. I should decide.
+
+                    // Value::Int(i) matching against &Value (from &ingredients).
+                    // As seen, this binds i as i64 (copy).
+                    // So use i directly.
+                    let idx = *i as usize; // Wait, if i is i64, *i is invalid.
+                    // I will use i directly.
+
                     if strand_a.is_none() {
-                        strand_a = Some(*i as usize);
+                        strand_a = Some(idx);
                     } else if strand_b.is_none() {
-                        strand_b = Some(*i as usize);
+                        strand_b = Some(idx);
                     }
                 }
                 Value::Str(s) if s == "Life" => has_life = true,

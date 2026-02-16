@@ -38,7 +38,7 @@ fn exec_accrete(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 continue;
             }
 
-            if let Value::Int(n) = &mut vm.grid[y][x] {
+            if let Value::Int(ref mut n) = &mut vm.grid[y][x] {
                 if *n > 0 {
                     absorbed_sum += *n;
                     *n = 0;
@@ -46,7 +46,7 @@ fn exec_accrete(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             }
         }
 
-        if let Value::Int(current) = &mut vm.grid[cy][cx] {
+        if let Value::Int(ref mut current) = &mut vm.grid[cy][cx] {
             *current = current.saturating_add(absorbed_sum);
         } else {
             vm.grid[cy][cx] = Value::Int(absorbed_sum);
@@ -91,7 +91,7 @@ fn exec_shatter(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 }
 
                 if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
-                    if let Value::Int(n) = &mut vm.grid[ny][nx] {
+                    if let Value::Int(ref mut n) = &mut vm.grid[ny][nx] {
                         *n = n.saturating_add(fragments);
                     } else {
                         vm.grid[ny][nx] = Value::Int(fragments);

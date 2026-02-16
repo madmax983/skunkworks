@@ -144,7 +144,7 @@ mod tests {
         let new_strand = &vm.dna.helix.strands[1];
         assert_eq!(new_strand.genes.len(), 1);
         if let Nucleotide::Number(n) = &new_strand.genes[0].args[0] {
-            assert_eq!(*n, 99);
+            assert_eq!(n, 99);
         } else {
             panic!("Unexpected gene arg");
         }

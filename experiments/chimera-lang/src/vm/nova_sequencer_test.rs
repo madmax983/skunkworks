@@ -135,7 +135,7 @@ mod tests {
         // Gene 0 arg should now be 5
         let gene = &vm.dna.helix.strands[0].genes[0];
         match &gene.args[0] {
-            Nucleotide::Number(n) => assert_eq!(*n, 5),
+            Nucleotide::Number(n) => assert_eq!(n, 5),
             _ => panic!("Expected Number(5)"),
         }
     }

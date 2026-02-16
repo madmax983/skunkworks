@@ -84,6 +84,7 @@ pub mod lisp;
 pub mod matrix_rain;
 pub mod opcode;
 pub mod tui;
+pub mod value;
 pub mod vm;
 
 /// Common imports for Chimera Language.
@@ -92,7 +93,8 @@ pub mod vm;
 pub mod prelude {
     pub use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
     pub use crate::opcode::OpCode;
-    pub use crate::vm::{ChimeraVM, Value};
+    pub use crate::value::Value;
+    pub use crate::vm::ChimeraVM;
 }
 
 #[cfg(all(test, feature = "nova"))]

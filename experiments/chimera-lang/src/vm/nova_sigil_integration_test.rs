@@ -86,7 +86,7 @@ mod tests {
         }
 
         match &vm.grid[2][2] {
-            Value::Int(n) => assert_eq!(*n, 100),
+            Value::Int(n) => assert_eq!(n, 100),
             Value::Str(s) => assert_eq!(s, "100"),
             _ => panic!("Expected result 100 at (2,2), got {:?}", vm.grid[2][2]),
         }
@@ -142,7 +142,7 @@ mod tests {
         }
 
         match &vm.grid[3][3] {
-            Value::Int(n) => assert_eq!(*n, 99),
+            Value::Int(n) => assert_eq!(n, 99),
             Value::Str(s) => assert_eq!(s, "99"),
             _ => panic!("Expected result 99 at (3,3), got {:?}", vm.grid[3][3]),
         }

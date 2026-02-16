@@ -53,7 +53,7 @@ pub fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 Value::Int(n) => {
                     genes.push(crate::ast::Gene {
                         op: OpCode::Push,
-                        args: vec![crate::ast::Nucleotide::Number(*n)],
+                        args: vec![crate::ast::Nucleotide::Number(n)],
                     });
                     x += 1;
                 }

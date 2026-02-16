@@ -210,7 +210,7 @@ fn execute_savant_action(vm: &mut ChimeraVM, organelle: &mut Organelle, action: 
                     let (cy, cx) = organelle.context_loc;
                     let val = &vm.grid[cy][cx];
                     match val {
-                        Value::Int(n) => vm.energy = vm.energy.saturating_add(*n),
+                        Value::Int(n) => vm.energy = vm.energy.saturating_add(n),
                         Value::Str(s) => vm.energy = vm.energy.saturating_add(s.len() as i64),
                         _ => {}
                     }
