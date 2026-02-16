@@ -1,5 +1,5 @@
-use std::sync::{Arc, Mutex};
 use anyhow::Result;
+use std::sync::{Arc, Mutex};
 
 #[cfg(feature = "audio")]
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
@@ -71,9 +71,7 @@ impl AudioEngine {
         #[cfg(not(feature = "audio"))]
         {
             println!("Audio disabled (missing 'audio' feature).");
-            Ok(Self {
-                shared_state,
-            })
+            Ok(Self { shared_state })
         }
     }
 
@@ -82,9 +80,9 @@ impl AudioEngine {
         let mut state = self.shared_state.lock().unwrap();
 
         if state.len() < params.len() {
-             state.resize(params.len(), Oscillator::new(0.0, 0.0));
+            state.resize(params.len(), Oscillator::new(0.0, 0.0));
         } else if state.len() > params.len() {
-             state.truncate(params.len());
+            state.truncate(params.len());
         }
 
         for (i, (freq, amp)) in params.iter().enumerate() {

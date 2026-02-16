@@ -1,7 +1,7 @@
 #[cfg(test)]
 #[cfg(feature = "nova")]
 mod tests {
-    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand, JunctionType};
+    use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
     use crate::opcode::OpCode;
     use crate::vm::{ChimeraVM, Value};
 
@@ -26,7 +26,10 @@ mod tests {
         // Grammar: Match("REWRITTEN")
         let grammar = Value::Junction(
             JunctionType::Any,
-            vec![Value::Str("Match".to_string()), Value::Str("REWRITTEN".to_string())]
+            vec![
+                Value::Str("Match".to_string()),
+                Value::Str("REWRITTEN".to_string()),
+            ],
         );
 
         vm.stack.push(grammar);
@@ -52,7 +55,10 @@ mod tests {
 
         let grammar = Value::Junction(
             JunctionType::Any,
-            vec![Value::Str("Match".to_string()), Value::Str("REWRITTEN".to_string())]
+            vec![
+                Value::Str("Match".to_string()),
+                Value::Str("REWRITTEN".to_string()),
+            ],
         );
 
         let virus = crate::vm::memetics::Virus {
@@ -104,15 +110,24 @@ mod tests {
             mutation_rate: 0,
             payload: None,
             grammar: None,
-            quorum_threshold: 2, // Need 2 neighbors
+            quorum_threshold: 2,    // Need 2 neighbors
             quorum_action: Some(0), // Exec Strand 0
         };
         vm.virus_library.push(virus);
 
         // Infect (5,5) and 2 neighbors
-        vm.viral_grid[5][5] = Some(crate::vm::memetics::ViralState { infection_level: 100, virus_id: 0 });
-        vm.viral_grid[5][6] = Some(crate::vm::memetics::ViralState { infection_level: 100, virus_id: 0 });
-        vm.viral_grid[6][5] = Some(crate::vm::memetics::ViralState { infection_level: 100, virus_id: 0 });
+        vm.viral_grid[5][5] = Some(crate::vm::memetics::ViralState {
+            infection_level: 100,
+            virus_id: 0,
+        });
+        vm.viral_grid[5][6] = Some(crate::vm::memetics::ViralState {
+            infection_level: 100,
+            virus_id: 0,
+        });
+        vm.viral_grid[6][5] = Some(crate::vm::memetics::ViralState {
+            infection_level: 100,
+            virus_id: 0,
+        });
 
         vm.context_loc = (5, 5);
 
@@ -122,10 +137,22 @@ mod tests {
         // Check if Organelle spawned at (5,5) (or others)
         // Since outbreak iterates whole grid, (5,5) sees 2 neighbors. (5,6) sees 2 (5,5 and 6,5). (6,5) sees 2.
         // So all 3 should spawn an agent if empty.
-        let orgs = vm.organelles.iter().filter(|o| o.name.contains("Virus 0 Agent")).count();
-        assert!(orgs >= 1, "Should spawn viral agent on quorum, got {}", orgs);
+        let orgs = vm
+            .organelles
+            .iter()
+            .filter(|o| o.name.contains("Virus 0 Agent"))
+            .count();
+        assert!(
+            orgs >= 1,
+            "Should spawn viral agent on quorum, got {}",
+            orgs
+        );
 
-        let org = vm.organelles.iter().find(|o| o.name.contains("Virus 0 Agent")).unwrap();
+        let org = vm
+            .organelles
+            .iter()
+            .find(|o| o.name.contains("Virus 0 Agent"))
+            .unwrap();
         assert_eq!(org.ip.0, 0); // Check strand index
     }
 }

@@ -136,8 +136,8 @@ impl DoublePendulum {
         let g = self.g;
 
         let ke = 0.5 * (m1 + m2) * l1 * l1 * w1 * w1
-               + 0.5 * m2 * l2 * l2 * w2 * w2
-               + m2 * l1 * l2 * w1 * w2 * (t1 - t2).cos();
+            + 0.5 * m2 * l2 * l2 * w2 * w2
+            + m2 * l1 * l2 * w1 * w2 * (t1 - t2).cos();
 
         // Potential Energy (zero at pivot, y goes down)
         // y1 = l1 * cos(t1)
@@ -176,6 +176,11 @@ mod tests {
 
         // 100 steps of 0.01 is 1 second.
         // With RK4, drift should be small but not zero.
-        assert!(drift < 0.5, "Energy drifted too much: {} -> {}", initial_energy, final_energy);
+        assert!(
+            drift < 0.5,
+            "Energy drifted too much: {} -> {}",
+            initial_energy,
+            final_energy
+        );
     }
 }

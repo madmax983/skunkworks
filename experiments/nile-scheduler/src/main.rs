@@ -2,16 +2,13 @@ use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEvent, KeyEventKind},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
 use nile_scheduler::Scheduler;
 use num_rational::Ratio;
-use ratatui::{
-    prelude::*,
-    widgets::*,
-};
-use std::{io, time::Duration};
 use rand::Rng;
+use ratatui::{prelude::*, widgets::*};
+use std::{io, time::Duration};
 
 struct App {
     scheduler: Scheduler,
@@ -80,15 +77,19 @@ impl App {
         let demand = if parts.len() == 2 {
             let n: u64 = parts[0].trim().parse().unwrap_or(0);
             let d: u64 = parts[1].trim().parse().unwrap_or(1);
-            if d == 0 { Ratio::new(0, 1) } else { Ratio::new(n, d) }
+            if d == 0 {
+                Ratio::new(0, 1)
+            } else {
+                Ratio::new(n, d)
+            }
         } else {
-             let n: u64 = self.input_buffer.trim().parse().unwrap_or(0);
-             Ratio::new(n, 1)
+            let n: u64 = self.input_buffer.trim().parse().unwrap_or(0);
+            Ratio::new(n, 1)
         };
 
         if *demand.numer() == 0 {
-             self.message = "Invalid input. Use 'n/d'.".to_string();
-             return;
+            self.message = "Invalid input. Use 'n/d'.".to_string();
+            return;
         }
 
         match self.scheduler.allocate(demand) {
@@ -149,7 +150,11 @@ fn ui(f: &mut Frame, app: &App) {
 
 fn render_header(f: &mut Frame, area: Rect) {
     let title = Paragraph::new("𓀀 THE NILE SCHEDULER 𓀀")
-        .style(Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))
+        .style(
+            Style::default()
+                .fg(Color::Yellow)
+                .add_modifier(Modifier::BOLD),
+        )
         .alignment(Alignment::Center)
         .block(Block::default().borders(Borders::ALL));
     f.render_widget(title, area);
@@ -191,8 +196,11 @@ fn render_nile_bar(f: &mut Frame, area: Rect, scheduler: &Scheduler) {
         spans.push(Span::styled(s, Style::default().fg(Color::DarkGray)));
     }
 
-    let nile = Paragraph::new(Line::from(spans))
-        .block(Block::default().title("Resource Allocation (The Nile)").borders(Borders::ALL));
+    let nile = Paragraph::new(Line::from(spans)).block(
+        Block::default()
+            .title("Resource Allocation (The Nile)")
+            .borders(Borders::ALL),
+    );
     f.render_widget(nile, area);
 }
 
@@ -208,8 +216,7 @@ fn render_process_list(f: &mut Frame, area: Rect, scheduler: &Scheduler) {
         })
         .collect();
 
-    let list = List::new(items)
-        .block(Block::default().title("Scribe's Log").borders(Borders::ALL));
+    let list = List::new(items).block(Block::default().title("Scribe's Log").borders(Borders::ALL));
     f.render_widget(list, area);
 }
 

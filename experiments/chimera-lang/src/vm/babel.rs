@@ -352,11 +352,11 @@ pub fn exec_babel_op(
                 let x_val = vm.stack.pop().unwrap();
                 let y_val = vm.stack.pop().unwrap();
 
-                if let (Value::Int(y), Value::Int(x), Value::Str(input)) =
-                    (y_val, x_val, input_val)
+                if let (Value::Int(y), Value::Int(x), Value::Str(input)) = (y_val, x_val, input_val)
                 {
                     if let Some((ny, nx)) = vm.normalize_coords(y, x) {
-                        let success = crate::vm::nova_babel_live::exec_live_parse(vm, ny, nx, input);
+                        let success =
+                            crate::vm::nova_babel_live::exec_live_parse(vm, ny, nx, input);
                         vm.stack.push(Value::Int(if success { 1 } else { 0 }));
                         let status = if success { "Success" } else { "Failure" };
                         vm.output
@@ -835,7 +835,7 @@ fn compile_cst_recursive(val: &Value, genes: &mut Vec<Gene>, handler_idx: usize)
             });
         }
         Value::Symbol(id) => {
-             genes.push(Gene {
+            genes.push(Gene {
                 op: OpCode::Push,
                 args: vec![Nucleotide::String(format!("§{:x}", id))],
             });

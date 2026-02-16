@@ -254,9 +254,12 @@ pub fn process_signals(vm: &mut ChimeraVM) {
             if let Some(&strand_idx) = vm.custom_operators.get(&c) {
                 if signal > 0 {
                     // Push context (y, x) to stack
-                    ctx.executions.push((OpCode::Push, vec![Nucleotide::Number(y as i64)]));
-                    ctx.executions.push((OpCode::Push, vec![Nucleotide::Number(x as i64)]));
-                    ctx.executions.push((OpCode::Call, vec![Nucleotide::Number(strand_idx as i64)]));
+                    ctx.executions
+                        .push((OpCode::Push, vec![Nucleotide::Number(y as i64)]));
+                    ctx.executions
+                        .push((OpCode::Push, vec![Nucleotide::Number(x as i64)]));
+                    ctx.executions
+                        .push((OpCode::Call, vec![Nucleotide::Number(strand_idx as i64)]));
                 }
                 continue;
             }
@@ -407,22 +410,22 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                             }
                         } else if signal > 0 {
                             // Check for Dynamic Operators in KB
-                                #[cfg(feature = "oracle")]
-                                if let Some(strand_idx) = check_kb_operator(vm, s.as_str()) {
-                                    ctx.executions
-                                        .push((OpCode::Call, vec![Nucleotide::Number(strand_idx)]));
-                                }
+                            #[cfg(feature = "oracle")]
+                            if let Some(strand_idx) = check_kb_operator(vm, s.as_str()) {
+                                ctx.executions
+                                    .push((OpCode::Call, vec![Nucleotide::Number(strand_idx)]));
+                            }
 
-                                // Check for Named Sigils
-                                #[cfg(feature = "nova")]
-                                if let Some(sigil) = vm.sigil_registry.get(s) {
-                                    if nova_sigil::check_dynamic_pattern(vm, y, x, &sigil.pattern) {
-                                        ctx.executions.push((
-                                            OpCode::Call,
-                                            vec![Nucleotide::Number(sigil.strand_idx as i64)],
-                                        ));
-                                    }
+                            // Check for Named Sigils
+                            #[cfg(feature = "nova")]
+                            if let Some(sigil) = vm.sigil_registry.get(s) {
+                                if nova_sigil::check_dynamic_pattern(vm, y, x, &sigil.pattern) {
+                                    ctx.executions.push((
+                                        OpCode::Call,
+                                        vec![Nucleotide::Number(sigil.strand_idx as i64)],
+                                    ));
                                 }
+                            }
                         }
                     }
                 }
@@ -625,7 +628,9 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 id: vm.organelle_id_counter,
                 tissue_id: None,
                 genome_id: 0,
-                energy: 50, experience: 0, stage: 0,
+                energy: 50,
+                experience: 0,
+                stage: 0,
             };
             vm.organelles.push(new_org);
             vm.output
@@ -636,7 +641,10 @@ pub fn process_signals(vm: &mut ChimeraVM) {
     // 3.7 Apply Operator Registers
     for reg in ctx.operator_registers {
         vm.custom_operators.insert(reg.char_val, reg.strand_idx);
-        vm.output.push(format!("ORCA: Registered operator '{}' -> {}", reg.char_val, reg.strand_idx));
+        vm.output.push(format!(
+            "ORCA: Registered operator '{}' -> {}",
+            reg.char_val, reg.strand_idx
+        ));
     }
 
     // 3.75 Apply MIDI

@@ -1,8 +1,8 @@
+use crate::renderer::Renderer;
+use crate::simulation::Simulation;
+use anyhow::Result;
 use std::sync::Arc;
 use winit::window::Window;
-use anyhow::Result;
-use crate::simulation::Simulation;
-use crate::renderer::Renderer;
 
 pub struct State {
     pub surface: wgpu::Surface<'static>,
@@ -34,23 +34,30 @@ impl State {
 
         let surface = instance.create_surface(window.clone())?;
 
-        let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions {
-            power_preference: wgpu::PowerPreference::HighPerformance,
-            compatible_surface: Some(&surface),
-            force_fallback_adapter: false,
-        }).await.ok_or_else(|| anyhow::anyhow!("No adapter found"))?;
+        let adapter = instance
+            .request_adapter(&wgpu::RequestAdapterOptions {
+                power_preference: wgpu::PowerPreference::HighPerformance,
+                compatible_surface: Some(&surface),
+                force_fallback_adapter: false,
+            })
+            .await
+            .ok_or_else(|| anyhow::anyhow!("No adapter found"))?;
 
-        let (device, queue) = adapter.request_device(
-            &wgpu::DeviceDescriptor {
-                required_features: wgpu::Features::empty(),
-                required_limits: wgpu::Limits::default(),
-                label: None,
-            },
-            None,
-        ).await?;
+        let (device, queue) = adapter
+            .request_device(
+                &wgpu::DeviceDescriptor {
+                    required_features: wgpu::Features::empty(),
+                    required_limits: wgpu::Limits::default(),
+                    label: None,
+                },
+                None,
+            )
+            .await?;
 
         let surface_caps = surface.get_capabilities(&adapter);
-        let surface_format = surface_caps.formats.iter()
+        let surface_format = surface_caps
+            .formats
+            .iter()
             .copied()
             .filter(|f| f.is_srgb())
             .next()
@@ -105,13 +112,13 @@ impl State {
             winit::event::WindowEvent::CursorMoved { position, .. } => {
                 self.mouse_pos = (position.x, position.y);
                 false
-            },
+            }
             winit::event::WindowEvent::MouseInput { state, button, .. } => {
                 if *button == winit::event::MouseButton::Left {
                     self.mouse_pressed = *state == winit::event::ElementState::Pressed;
                 }
                 false
-            },
+            }
             winit::event::WindowEvent::MouseWheel { delta, .. } => {
                 match delta {
                     winit::event::MouseScrollDelta::LineDelta(_, y) => {
@@ -145,16 +152,27 @@ impl State {
         self.simulation.update(0.016);
 
         // Update buffers
-        self.renderer.update(&self.queue, &self.simulation, self.camera_yaw, self.camera_pitch, self.camera_dist, self.size);
+        self.renderer.update(
+            &self.queue,
+            &self.simulation,
+            self.camera_yaw,
+            self.camera_pitch,
+            self.camera_dist,
+            self.size,
+        );
     }
 
     pub fn render(&mut self) -> Result<(), wgpu::SurfaceError> {
         let output = self.surface.get_current_texture()?;
-        let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());
+        let view = output
+            .texture
+            .create_view(&wgpu::TextureViewDescriptor::default());
 
-        let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-            label: Some("Render Encoder"),
-        });
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("Render Encoder"),
+            });
 
         self.renderer.render(&mut encoder, &view);
 

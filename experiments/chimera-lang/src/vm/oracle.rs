@@ -289,17 +289,15 @@ pub fn exec_oracle_op(
                 if let Some(subst) = unify(&t1, &t2, &HashMap::new()) {
                     let mut bindings = Vec::new();
                     for (k, v) in subst {
-                        bindings.push(Value::Junction(
-                            JunctionType::All,
-                            vec![Value::Str(k), v],
-                        ));
+                        bindings.push(Value::Junction(JunctionType::All, vec![Value::Str(k), v]));
                     }
                     vm.stack.push(Value::Junction(JunctionType::All, bindings));
                 } else {
                     vm.stack.push(Value::Int(0));
                 }
             } else {
-                vm.output.push("Error: Stack underflow for unify".to_string());
+                vm.output
+                    .push("Error: Stack underflow for unify".to_string());
             }
             None
         }
@@ -322,9 +320,10 @@ pub fn exec_oracle_op(
                                         Nucleotide::Number(i) => Value::Int(*i),
                                         Nucleotide::String(s) => Value::Str(s.clone()),
                                         Nucleotide::Identifier(s) => Value::Str(s.clone()),
-                                        Nucleotide::Junction(t, args) => {
-                                            Value::Junction(*t, args.iter().map(nuc_to_val).collect())
-                                        }
+                                        Nucleotide::Junction(t, args) => Value::Junction(
+                                            *t,
+                                            args.iter().map(nuc_to_val).collect(),
+                                        ),
                                     }
                                 }
 
@@ -352,7 +351,8 @@ pub fn exec_oracle_op(
                                         );
                                         binding_list.push(pair);
                                     }
-                                    vm.stack.push(Value::Junction(JunctionType::All, binding_list));
+                                    vm.stack
+                                        .push(Value::Junction(JunctionType::All, binding_list));
                                 } else {
                                     vm.stack.push(Value::Int(0));
                                 }
@@ -369,7 +369,8 @@ pub fn exec_oracle_op(
                     }
                 }
             } else {
-                vm.output.push("Error: Stack underflow for PrologCall".to_string());
+                vm.output
+                    .push("Error: Stack underflow for PrologCall".to_string());
             }
             None
         }
@@ -461,10 +462,18 @@ fn apply_manifestation(vm: &mut ChimeraVM, effect: &Value) {
                             let target_idx = *s_idx as usize;
                             if target_idx < vm.dna.helix.strands.len() {
                                 vm.dna.helix.strands[target_idx].genes = genes;
-                                vm.output.push(format!("SYNTHESIZE: Rewrote strand {} for {}", target_idx, goal));
-                            } else if target_idx == vm.dna.helix.strands.len() && vm.dna.helix.strands.len() < crate::vm::MAX_STRANDS {
+                                vm.output.push(format!(
+                                    "SYNTHESIZE: Rewrote strand {} for {}",
+                                    target_idx, goal
+                                ));
+                            } else if target_idx == vm.dna.helix.strands.len()
+                                && vm.dna.helix.strands.len() < crate::vm::MAX_STRANDS
+                            {
                                 vm.dna.helix.strands.push(crate::ast::Strand { genes });
-                                vm.output.push(format!("SYNTHESIZE: Created strand {} for {}", target_idx, goal));
+                                vm.output.push(format!(
+                                    "SYNTHESIZE: Created strand {} for {}",
+                                    target_idx, goal
+                                ));
                             }
                         }
                     }
@@ -946,7 +955,12 @@ fn check_dynamic_predicates(
                     if args.len() == 2 {
                         let arg_n = &args[1];
                         #[cfg(feature = "nova")]
-                        let count = vm.organelles.iter().map(|o| &o.name).collect::<std::collections::HashSet<_>>().len() as i64;
+                        let count = vm
+                            .organelles
+                            .iter()
+                            .map(|o| &o.name)
+                            .collect::<std::collections::HashSet<_>>()
+                            .len() as i64;
                         #[cfg(not(feature = "nova"))]
                         let count = 0;
 

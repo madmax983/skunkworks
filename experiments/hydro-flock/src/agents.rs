@@ -126,15 +126,28 @@ impl FlockManager {
             agent.pos += agent.vel * dt;
 
             // Boundaries (Wrap)
-            if agent.pos.x < 0.0 { agent.pos.x += width; }
-            if agent.pos.x > width { agent.pos.x -= width; }
-            if agent.pos.y < 0.0 { agent.pos.y += height; }
-            if agent.pos.y > height { agent.pos.y -= height; }
+            if agent.pos.x < 0.0 {
+                agent.pos.x += width;
+            }
+            if agent.pos.x > width {
+                agent.pos.x -= width;
+            }
+            if agent.pos.y < 0.0 {
+                agent.pos.y += height;
+            }
+            if agent.pos.y > height {
+                agent.pos.y -= height;
+            }
         }
     }
 }
 
-fn compute_flocking(my_idx: usize, my_pos: Vec2, my_vel: Vec2, others: &[(Vec2, Vec2)]) -> (Vec2, Vec2, Vec2) {
+fn compute_flocking(
+    my_idx: usize,
+    my_pos: Vec2,
+    my_vel: Vec2,
+    others: &[(Vec2, Vec2)],
+) -> (Vec2, Vec2, Vec2) {
     let mut sep = vec2(0.0, 0.0);
     let mut ali = vec2(0.0, 0.0);
     let mut coh = vec2(0.0, 0.0);
@@ -144,7 +157,9 @@ fn compute_flocking(my_idx: usize, my_pos: Vec2, my_vel: Vec2, others: &[(Vec2, 
     let sep_dist = 20.0;
 
     for (i, (pos, vel)) in others.iter().enumerate() {
-        if i == my_idx { continue; }
+        if i == my_idx {
+            continue;
+        }
 
         let d = my_pos.distance(*pos);
         if d > 0.0 && d < view_dist {

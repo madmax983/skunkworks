@@ -1,12 +1,12 @@
-mod synth;
 mod audio;
+mod synth;
 
 use anyhow::Result;
 use audio::{AudioBackend, DummyBackend};
-use synth::Waveform;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
+use synth::Waveform;
 
 #[cfg(feature = "audio")]
 use audio::CpalBackend;
@@ -17,13 +17,14 @@ fn main() -> Result<()> {
 
     // 1. Setup Audio
     #[cfg(feature = "audio")]
-    let (_stream_guard, audio_handle): (Option<CpalBackend>, Arc<dyn AudioBackend>) = match CpalBackend::new() {
-        Ok((b, h)) => (Some(b), Arc::new(h)),
-        Err(e) => {
-            eprintln!("Audio backend failed: {}. Using dummy.", e);
-            (None, Arc::new(DummyBackend::new()?))
-        }
-    };
+    let (_stream_guard, audio_handle): (Option<CpalBackend>, Arc<dyn AudioBackend>) =
+        match CpalBackend::new() {
+            Ok((b, h)) => (Some(b), Arc::new(h)),
+            Err(e) => {
+                eprintln!("Audio backend failed: {}. Using dummy.", e);
+                (None, Arc::new(DummyBackend::new()?))
+            }
+        };
 
     #[cfg(not(feature = "audio"))]
     let audio_handle: Arc<dyn AudioBackend> = Arc::new(DummyBackend::new()?);
@@ -111,16 +112,17 @@ fn main() -> Result<()> {
     let b4 = audio_handle.clone();
     let s4 = stage.clone();
     handles.push(thread::spawn(move || {
-         loop {
-             let delay = rand::random::<u64>() % 2000 + 500;
-             thread::sleep(Duration::from_millis(delay));
+        loop {
+            let delay = rand::random::<u64>() % 2000 + 500;
+            thread::sleep(Duration::from_millis(delay));
 
-             if let Ok(_guard) = s4.lock() { // This one WAITS (Swing/Drag)
-                 b4.play_note(110.0, 0.5, Waveform::Sine);
-                 println!("[CHAOS] 👻 WOOO (sync drag)");
-                 thread::sleep(Duration::from_millis(200));
-             }
-         }
+            if let Ok(_guard) = s4.lock() {
+                // This one WAITS (Swing/Drag)
+                b4.play_note(110.0, 0.5, Waveform::Sine);
+                println!("[CHAOS] 👻 WOOO (sync drag)");
+                thread::sleep(Duration::from_millis(200));
+            }
+        }
     }));
 
     // Keep main thread alive

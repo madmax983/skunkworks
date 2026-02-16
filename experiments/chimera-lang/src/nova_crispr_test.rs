@@ -32,10 +32,7 @@ mod tests {
             gene("push", Some(3)),
         ];
 
-        let guide_genes = vec![
-            gene("push", Some(99)),
-            gene("add", None),
-        ];
+        let guide_genes = vec![gene("push", Some(99)), gene("add", None)];
 
         let program_genes = vec![
             gene("push", Some(0)),

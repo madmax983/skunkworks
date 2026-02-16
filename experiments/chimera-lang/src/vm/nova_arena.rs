@@ -117,8 +117,7 @@ impl ArenaState {
                             dmg_out += 5 + (gladiator.stats.attack / 2);
                             action_desc = format!("uses {}", op);
                         }
-                        OpCode::Consume
-                        | OpCode::Photosynthesize => {
+                        OpCode::Consume | OpCode::Photosynthesize => {
                             heal_out += 2;
                             action_desc = format!("uses {}", op);
                         }

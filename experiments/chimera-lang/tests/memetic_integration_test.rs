@@ -1,6 +1,6 @@
 #[cfg(feature = "nova")]
 mod memetic_integration_test {
-    use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand, JunctionType};
+    use chimera_lang::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
     use chimera_lang::vm::{ChimeraVM, Value};
 
@@ -32,29 +32,63 @@ mod memetic_integration_test {
 
         let genes = vec![
             // Conceive Meme (Captures next 3 genes)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(3)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-            Gene { op: OpCode::Conceive, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(3)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(100)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(100)],
+            },
+            Gene {
+                op: OpCode::Conceive,
+                args: vec![],
+            },
             // Meme Payload (3 genes)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-            Gene { op: OpCode::Add, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::Add,
+                args: vec![],
+            },
             // Push Name (Bottom)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("TestVirus".to_string())] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("TestVirus".to_string())],
+            },
             // Create Grammar (Middle)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("A".to_string())] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("Match".to_string())] },
-            Gene { op: OpCode::Grammar, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("A".to_string())],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("Match".to_string())],
+            },
+            Gene {
+                op: OpCode::Grammar,
+                args: vec![],
+            },
             // Push Meme ID (Top)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
             // BioHack: Pops [Meme, Grammar, Name]
-            Gene { op: OpCode::BioHack, args: vec![] },
+            Gene {
+                op: OpCode::BioHack,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));

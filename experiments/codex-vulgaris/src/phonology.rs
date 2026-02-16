@@ -6,26 +6,43 @@ pub enum Phoneme {
 
 #[derive(Debug, Clone, PartialEq, Copy)]
 pub enum Vowel {
-    A, E, I, O, U, // Basic 5-vowel system for Proto-Code
+    A,
+    E,
+    I,
+    O,
+    U, // Basic 5-vowel system for Proto-Code
     // Add more for evolution
-    Ae, // Ash (cat)
+    Ae,    // Ash (cat)
     Schwa, // uh
-    Y, // u-umlaut
+    Y,     // u-umlaut
 }
 
 #[derive(Debug, Clone, PartialEq, Copy)]
 pub enum Consonant {
-    P, B, M, // Bilabial
-    F, V, // Labiodental
-    Th, Dh, // Dental
-    T, D, N, // Alveolar
-    S, Z, // Alveolar Fricative
-    L, R, // Liquid
-    Sh, Zh, // Post-alveolar
-    Ch, Jh, // Affricate
-    K, G, Ng, // Velar
-    H, // Glottal
-    W, Y, // Semivowels
+    P,
+    B,
+    M, // Bilabial
+    F,
+    V, // Labiodental
+    Th,
+    Dh, // Dental
+    T,
+    D,
+    N, // Alveolar
+    S,
+    Z, // Alveolar Fricative
+    L,
+    R, // Liquid
+    Sh,
+    Zh, // Post-alveolar
+    Ch,
+    Jh, // Affricate
+    K,
+    G,
+    Ng, // Velar
+    H,  // Glottal
+    W,
+    Y, // Semivowels
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -89,7 +106,11 @@ pub fn parse_identifier(text: &str) -> Word {
 
     while i < chars.len() {
         let c = chars[i].to_ascii_lowercase();
-        let next = if i + 1 < chars.len() { Some(chars[i+1].to_ascii_lowercase()) } else { None };
+        let next = if i + 1 < chars.len() {
+            Some(chars[i + 1].to_ascii_lowercase())
+        } else {
+            None
+        };
 
         match c {
             'a' => phonemes.push(Phoneme::Vowel(Vowel::A)),
@@ -98,10 +119,10 @@ pub fn parse_identifier(text: &str) -> Word {
             'o' => phonemes.push(Phoneme::Vowel(Vowel::O)),
             'u' => phonemes.push(Phoneme::Vowel(Vowel::U)),
             'y' => {
-                 // Y is tricky. Treating as vowel at end or consonant at start?
-                 // Let's say Consonant Y for now, or Vowel I.
-                 phonemes.push(Phoneme::Consonant(Consonant::Y));
-            },
+                // Y is tricky. Treating as vowel at end or consonant at start?
+                // Let's say Consonant Y for now, or Vowel I.
+                phonemes.push(Phoneme::Consonant(Consonant::Y));
+            }
 
             'p' => {
                 if next == Some('h') {
@@ -110,7 +131,7 @@ pub fn parse_identifier(text: &str) -> Word {
                 } else {
                     phonemes.push(Phoneme::Consonant(Consonant::P));
                 }
-            },
+            }
             'b' => phonemes.push(Phoneme::Consonant(Consonant::B)),
             'm' => phonemes.push(Phoneme::Consonant(Consonant::M)),
             'f' => phonemes.push(Phoneme::Consonant(Consonant::F)),
@@ -123,7 +144,7 @@ pub fn parse_identifier(text: &str) -> Word {
                 } else {
                     phonemes.push(Phoneme::Consonant(Consonant::T));
                 }
-            },
+            }
             'd' => phonemes.push(Phoneme::Consonant(Consonant::D)),
             'n' => {
                 if next == Some('g') {
@@ -132,7 +153,7 @@ pub fn parse_identifier(text: &str) -> Word {
                 } else {
                     phonemes.push(Phoneme::Consonant(Consonant::N));
                 }
-            },
+            }
 
             's' => {
                 if next == Some('h') {
@@ -141,7 +162,7 @@ pub fn parse_identifier(text: &str) -> Word {
                 } else {
                     phonemes.push(Phoneme::Consonant(Consonant::S));
                 }
-            },
+            }
             'z' => phonemes.push(Phoneme::Consonant(Consonant::Z)),
 
             'c' => {
@@ -153,23 +174,23 @@ pub fn parse_identifier(text: &str) -> Word {
                 } else {
                     phonemes.push(Phoneme::Consonant(Consonant::K));
                 }
-            },
+            }
             'k' => phonemes.push(Phoneme::Consonant(Consonant::K)),
             'g' => {
                 // Hard G default for code (get, git, go)
-                 phonemes.push(Phoneme::Consonant(Consonant::G));
-            },
+                phonemes.push(Phoneme::Consonant(Consonant::G));
+            }
             'q' => {
                 phonemes.push(Phoneme::Consonant(Consonant::K));
                 if next == Some('u') {
                     phonemes.push(Phoneme::Consonant(Consonant::W));
                     i += 1;
                 }
-            },
+            }
             'x' => {
                 phonemes.push(Phoneme::Consonant(Consonant::K));
                 phonemes.push(Phoneme::Consonant(Consonant::S));
-            },
+            }
 
             'l' => phonemes.push(Phoneme::Consonant(Consonant::L)),
             'r' => phonemes.push(Phoneme::Consonant(Consonant::R)),
@@ -180,9 +201,9 @@ pub fn parse_identifier(text: &str) -> Word {
             '_' => {
                 // Ignore underscore or treat as break?
                 // Let's ignore for sound, maybe it implies a syllable break?
-            },
+            }
 
-            _ => {}, // Ignore numbers/symbols in phonology for now
+            _ => {} // Ignore numbers/symbols in phonology for now
         }
         i += 1;
     }
@@ -234,7 +255,7 @@ pub fn evolve(word: &mut Word, rule: RuleType) {
                     _ => new_phonemes.push(p),
                 }
             }
-        },
+        }
         RuleType::VowelShift => {
             // Great Vowel Shift (Very simplified)
             // A -> E
@@ -250,70 +271,82 @@ pub fn evolve(word: &mut Word, rule: RuleType) {
                         Vowel::I => {
                             new_phonemes.push(Phoneme::Vowel(Vowel::A));
                             new_phonemes.push(Phoneme::Vowel(Vowel::I));
-                        },
+                        }
                         Vowel::O => new_phonemes.push(Phoneme::Vowel(Vowel::U)),
                         Vowel::U => {
                             new_phonemes.push(Phoneme::Vowel(Vowel::A));
                             new_phonemes.push(Phoneme::Vowel(Vowel::U)); // Au
+                        }
+                        _ => new_phonemes.push(p),
+                    },
+                    _ => new_phonemes.push(p),
+                }
+            }
+        }
+        RuleType::Lenition => {
+            // Intervocalic voicing/softening
+            // VCV -> VFV / VDV
+            // P -> B between vowels
+            // T -> D between vowels
+            // K -> G between vowels
+            for i in 0..old_phonemes.len() {
+                let p = old_phonemes[i];
+                let prev = if i > 0 {
+                    Some(old_phonemes[i - 1])
+                } else {
+                    None
+                };
+                let next = if i + 1 < old_phonemes.len() {
+                    Some(old_phonemes[i + 1])
+                } else {
+                    None
+                };
+
+                let is_vowel = |ph: Option<Phoneme>| matches!(ph, Some(Phoneme::Vowel(_)));
+
+                if is_vowel(prev) && is_vowel(next) {
+                    match p {
+                        Phoneme::Consonant(c) => match c {
+                            Consonant::P => new_phonemes.push(Phoneme::Consonant(Consonant::B)),
+                            Consonant::T => new_phonemes.push(Phoneme::Consonant(Consonant::D)),
+                            Consonant::K => new_phonemes.push(Phoneme::Consonant(Consonant::G)),
+                            Consonant::S => new_phonemes.push(Phoneme::Consonant(Consonant::Z)),
+                            _ => new_phonemes.push(p),
+                        },
+                        _ => new_phonemes.push(p),
+                    }
+                } else {
+                    new_phonemes.push(p);
+                }
+            }
+        }
+        RuleType::Assimilation => {
+            // N -> M before P/B/M
+            // N -> Ng before K/G
+            for i in 0..old_phonemes.len() {
+                let p = old_phonemes[i];
+                let next = if i + 1 < old_phonemes.len() {
+                    Some(old_phonemes[i + 1])
+                } else {
+                    None
+                };
+
+                match p {
+                    Phoneme::Consonant(Consonant::N) => match next {
+                        Some(Phoneme::Consonant(c)) => match c {
+                            Consonant::P | Consonant::B | Consonant::M => {
+                                new_phonemes.push(Phoneme::Consonant(Consonant::M))
+                            }
+                            Consonant::K | Consonant::G => {
+                                new_phonemes.push(Phoneme::Consonant(Consonant::Ng))
+                            }
+                            _ => new_phonemes.push(p),
                         },
                         _ => new_phonemes.push(p),
                     },
                     _ => new_phonemes.push(p),
                 }
             }
-        },
-        RuleType::Lenition => {
-             // Intervocalic voicing/softening
-             // VCV -> VFV / VDV
-             // P -> B between vowels
-             // T -> D between vowels
-             // K -> G between vowels
-             for i in 0..old_phonemes.len() {
-                 let p = old_phonemes[i];
-                 let prev = if i > 0 { Some(old_phonemes[i-1]) } else { None };
-                 let next = if i + 1 < old_phonemes.len() { Some(old_phonemes[i+1]) } else { None };
-
-                 let is_vowel = |ph: Option<Phoneme>| matches!(ph, Some(Phoneme::Vowel(_)));
-
-                 if is_vowel(prev) && is_vowel(next) {
-                     match p {
-                         Phoneme::Consonant(c) => match c {
-                             Consonant::P => new_phonemes.push(Phoneme::Consonant(Consonant::B)),
-                             Consonant::T => new_phonemes.push(Phoneme::Consonant(Consonant::D)),
-                             Consonant::K => new_phonemes.push(Phoneme::Consonant(Consonant::G)),
-                             Consonant::S => new_phonemes.push(Phoneme::Consonant(Consonant::Z)),
-                             _ => new_phonemes.push(p),
-                         },
-                         _ => new_phonemes.push(p),
-                     }
-                 } else {
-                     new_phonemes.push(p);
-                 }
-             }
-        },
-         RuleType::Assimilation => {
-            // N -> M before P/B/M
-            // N -> Ng before K/G
-             for i in 0..old_phonemes.len() {
-                 let p = old_phonemes[i];
-                 let next = if i + 1 < old_phonemes.len() { Some(old_phonemes[i+1]) } else { None };
-
-                 match p {
-                     Phoneme::Consonant(Consonant::N) => {
-                         match next {
-                             Some(Phoneme::Consonant(c)) => match c {
-                                 Consonant::P | Consonant::B | Consonant::M =>
-                                     new_phonemes.push(Phoneme::Consonant(Consonant::M)),
-                                 Consonant::K | Consonant::G =>
-                                     new_phonemes.push(Phoneme::Consonant(Consonant::Ng)),
-                                 _ => new_phonemes.push(p),
-                             },
-                             _ => new_phonemes.push(p),
-                         }
-                     },
-                     _ => new_phonemes.push(p),
-                 }
-             }
         }
     }
 

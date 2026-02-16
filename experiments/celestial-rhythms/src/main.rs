@@ -1,9 +1,9 @@
-mod physics;
 mod audio;
+mod physics;
 
+use audio::AudioEngine;
 use macroquad::prelude::*;
 use physics::{Body, System};
-use audio::AudioEngine;
 
 #[macroquad::main("Celestial Rhythms")]
 async fn main() -> anyhow::Result<()> {
@@ -66,11 +66,11 @@ async fn main() -> anyhow::Result<()> {
     }
 
     let mut scale_factor = 200000.0; // Audio frequency scale (needs to be high for slow orbits)
-    // Earth omega ~ 2pi / year.
-    // Here, G=1000, M=50000, R=300. v=sqrt(5e7/300)=408. T=2pi*300/408 = 4.6s.
-    // f = 1/4.6 = 0.2 Hz.
-    // To get 200Hz, scale needs to be 1000.
-    // Let's adjust based on hearing.
+                                     // Earth omega ~ 2pi / year.
+                                     // Here, G=1000, M=50000, R=300. v=sqrt(5e7/300)=408. T=2pi*300/408 = 4.6s.
+                                     // f = 1/4.6 = 0.2 Hz.
+                                     // To get 200Hz, scale needs to be 1000.
+                                     // Let's adjust based on hearing.
 
     let mut paused = false;
     let mut trails: Vec<Vec<Vec2>> = vec![Vec::new(); 9]; // Sun + 8 planets
@@ -86,7 +86,7 @@ async fn main() -> anyhow::Result<()> {
             scale_factor *= 0.99;
         }
         if is_key_pressed(KeyCode::R) {
-             // Reset? Maybe later.
+            // Reset? Maybe later.
         }
 
         let dt = get_frame_time();
@@ -110,7 +110,9 @@ async fn main() -> anyhow::Result<()> {
             for (i, body) in system.bodies.iter().enumerate() {
                 // Only add point if moved enough? Or every N frames.
                 // Adding every frame makes smooth lines but uses memory.
-                if trails[i].is_empty() || (body.pos - *trails[i].last().unwrap()).length_squared() > 4.0 {
+                if trails[i].is_empty()
+                    || (body.pos - *trails[i].last().unwrap()).length_squared() > 4.0
+                {
                     trails[i].push(body.pos);
                     if trails[i].len() > 500 {
                         trails[i].remove(0);
@@ -125,7 +127,9 @@ async fn main() -> anyhow::Result<()> {
             let mut audio_params = Vec::new();
 
             for (i, body) in system.bodies.iter().enumerate() {
-                if i == 0 { continue; } // Skip Sun (or make it a drone?)
+                if i == 0 {
+                    continue;
+                } // Skip Sun (or make it a drone?)
 
                 // Angular velocity relative to Sun
                 let omega = body.angular_velocity(sun_pos).abs();
@@ -167,17 +171,26 @@ async fn main() -> anyhow::Result<()> {
 
         // Draw Trails
         for (i, trail) in trails.iter().enumerate() {
-            if trail.len() < 2 { continue; }
+            if trail.len() < 2 {
+                continue;
+            }
             let color = system.bodies[i].color;
             // Draw as connected lines
-            for j in 0..trail.len()-1 {
-                draw_line(trail[j].x, trail[j].y, trail[j+1].x, trail[j+1].y, 2.0, color);
+            for j in 0..trail.len() - 1 {
+                draw_line(
+                    trail[j].x,
+                    trail[j].y,
+                    trail[j + 1].x,
+                    trail[j + 1].y,
+                    2.0,
+                    color,
+                );
             }
         }
 
         // Draw Bodies
         for body in &system.bodies {
-             draw_circle(body.pos.x, body.pos.y, body.radius, body.color);
+            draw_circle(body.pos.x, body.pos.y, body.radius, body.color);
         }
 
         set_default_camera();
@@ -185,17 +198,29 @@ async fn main() -> anyhow::Result<()> {
         // HUD
         draw_text("CELESTIAL RHYTHMS", 10.0, 30.0, 30.0, WHITE);
         draw_text("Space: Pause | Up/Down: Tune Scale", 10.0, 50.0, 20.0, GRAY);
-        draw_text(&format!("Scale: {:.1}", scale_factor), 10.0, 70.0, 20.0, GOLD);
+        draw_text(
+            &format!("Scale: {:.1}", scale_factor),
+            10.0,
+            70.0,
+            20.0,
+            GOLD,
+        );
 
         // Visualize frequencies
         if let Some(_) = &audio_engine {
-             let mut y = 100.0;
-             for (i, body) in system.bodies.iter().skip(1).enumerate() {
-                 let omega = body.angular_velocity(sun_pos).abs();
-                 let freq = omega * scale_factor;
-                 draw_text(&format!("Planet {}: {:.1} Hz", i+1, freq), 10.0, y, 20.0, body.color);
-                 y += 20.0;
-             }
+            let mut y = 100.0;
+            for (i, body) in system.bodies.iter().skip(1).enumerate() {
+                let omega = body.angular_velocity(sun_pos).abs();
+                let freq = omega * scale_factor;
+                draw_text(
+                    &format!("Planet {}: {:.1} Hz", i + 1, freq),
+                    10.0,
+                    y,
+                    20.0,
+                    body.color,
+                );
+                y += 20.0;
+            }
         }
 
         next_frame().await

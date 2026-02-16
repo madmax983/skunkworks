@@ -129,7 +129,11 @@ mod tests {
         assert!(!mesh.vertices.is_empty(), "Mesh should have vertices");
 
         for v in mesh.vertices {
-            assert!(v.pos.z.abs() < 1e-4, "Z should be approx 0 when flat, got {}", v.pos.z);
+            assert!(
+                v.pos.z.abs() < 1e-4,
+                "Z should be approx 0 when flat, got {}",
+                v.pos.z
+            );
         }
     }
 

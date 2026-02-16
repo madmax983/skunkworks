@@ -2,9 +2,9 @@
 #[cfg(test)]
 mod tests {
     use crate::ast::{Dna, Helix};
+    use crate::value::Value;
     use crate::vm::nova_signals::process_signals;
     use crate::vm::ChimeraVM;
-    use crate::value::Value;
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {

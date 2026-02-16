@@ -82,7 +82,9 @@ mod tests {
         // Center has V=1.0, others V=0.0. U=0.0 everywhere to disable reaction (uvv term).
         let mut gs = GrayScottCpu::new(3, 3);
         // Clear U to 0
-        for i in 0..9 { gs.u[i] = 0.0; }
+        for i in 0..9 {
+            gs.u[i] = 0.0;
+        }
 
         gs.set(1, 1, 0.0, 1.0); // Center V=1.0
 
@@ -95,10 +97,18 @@ mod tests {
         // Assert diffusion happened
         // V center was 1.0. Laplacian was -4.
         // dV = 0.2 * -4 = -0.8. New V = 0.2.
-        assert!(gs.v[center_idx] < 1.0, "Center should diffuse away (was 1.0, became {})", gs.v[center_idx]);
+        assert!(
+            gs.v[center_idx] < 1.0,
+            "Center should diffuse away (was 1.0, became {})",
+            gs.v[center_idx]
+        );
 
         // V neighbor was 0.0. Laplacian was 1.
         // dV = 0.2 * 1 = 0.2. New V = 0.2.
-        assert!(gs.v[neighbor_idx] > 0.0, "Neighbor should receive diffusion (was 0.0, became {})", gs.v[neighbor_idx]);
+        assert!(
+            gs.v[neighbor_idx] > 0.0,
+            "Neighbor should receive diffusion (was 0.0, became {})",
+            gs.v[neighbor_idx]
+        );
     }
 }

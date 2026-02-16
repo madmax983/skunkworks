@@ -3,7 +3,7 @@ mod lexer;
 mod phonology;
 mod ui;
 
-use std::{io, time::Duration};
+use app::App;
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
     execute,
@@ -13,7 +13,7 @@ use ratatui::{
     backend::{Backend, CrosstermBackend},
     Terminal,
 };
-use app::App;
+use std::{io, time::Duration};
 use ui::ui;
 
 fn main() -> io::Result<()> {
@@ -43,10 +43,13 @@ fn main() -> io::Result<()> {
 }
 
 fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<()>
-where B::Error: std::fmt::Debug
+where
+    B::Error: std::fmt::Debug,
 {
     loop {
-        terminal.draw(|f| ui(f, app)).map_err(|e| io::Error::new(io::ErrorKind::Other, format!("{:?}", e)))?;
+        terminal
+            .draw(|f| ui(f, app))
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, format!("{:?}", e)))?;
 
         if event::poll(Duration::from_millis(250))? {
             if let Event::Key(key) = event::read()? {
@@ -54,21 +57,21 @@ where B::Error: std::fmt::Debug
                     KeyCode::Char('q') => {
                         app.should_quit = true;
                         return Ok(());
-                    },
+                    }
                     KeyCode::Char('?') => {
                         app.toggle_help();
-                    },
+                    }
                     KeyCode::Esc => {
                         if app.show_help {
                             app.show_help = false;
                         }
-                    },
+                    }
                     KeyCode::Right => {
                         app.next_era();
-                    },
+                    }
                     KeyCode::Left => {
                         app.prev_era();
-                    },
+                    }
                     _ => {}
                 }
             }

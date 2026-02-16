@@ -45,8 +45,8 @@ async fn main() {
 
     // Connect cross connections for complexity
     for i in 0..num_neurons {
-         let other = (i + num_neurons / 2) % num_neurons;
-         network.add_synapse(i, other, 30.0, 20);
+        let other = (i + num_neurons / 2) % num_neurons;
+        network.add_synapse(i, other, 30.0, 20);
     }
 
     loop {
@@ -82,9 +82,9 @@ async fn main() {
 
         // Space to reset/inject all
         if is_key_pressed(KeyCode::Space) {
-             for neuron in &mut network.neurons {
-                 neuron.physics.inject(50.0);
-             }
+            for neuron in &mut network.neurons {
+                neuron.physics.inject(50.0);
+            }
         }
 
         // Update Network
@@ -142,7 +142,13 @@ async fn main() {
             draw_circle_lines(neuron.pos.x, neuron.pos.y, 10.0, 2.0, LIGHTGRAY);
         }
 
-        draw_text("Click neuron to stimulate. SPACE to stimulate all.", 20.0, 30.0, 20.0, WHITE);
+        draw_text(
+            "Click neuron to stimulate. SPACE to stimulate all.",
+            20.0,
+            30.0,
+            20.0,
+            WHITE,
+        );
 
         next_frame().await;
     }

@@ -40,7 +40,7 @@ pub fn corrupt(data: &mut Vec<u8>, intensity: f32) {
                 // Byte Drop (rare, very destructive)
                 if rng.gen_bool(0.1) && data.len() > 10 {
                     if idx < data.len() {
-                         data.remove(idx);
+                        data.remove(idx);
                     }
                 }
             }

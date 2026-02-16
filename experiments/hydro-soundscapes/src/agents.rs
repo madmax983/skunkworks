@@ -15,9 +15,7 @@ pub struct FlockManager {
 
 impl FlockManager {
     pub fn new() -> Self {
-        Self {
-            agents: Vec::new(),
-        }
+        Self { agents: Vec::new() }
     }
 
     pub fn spawn_agent(&mut self, x: f32, y: f32) {
@@ -43,7 +41,8 @@ impl FlockManager {
             let mut acc = vec2(0.0, 0.0);
 
             // 1. Flocking
-            let (sep, ali, coh) = compute_flocking(i, agent.pos, agent.vel, &agent_positions, &agent_velocities);
+            let (sep, ali, coh) =
+                compute_flocking(i, agent.pos, agent.vel, &agent_positions, &agent_velocities);
             acc += sep * 2.0;
             acc += ali * 1.0;
             acc += coh * 1.0;
@@ -75,10 +74,18 @@ impl FlockManager {
             agent.pos += agent.vel * dt;
 
             // Wrap
-            if agent.pos.x < 0.0 { agent.pos.x += width; }
-            if agent.pos.x > width { agent.pos.x -= width; }
-            if agent.pos.y < 0.0 { agent.pos.y += height; }
-            if agent.pos.y > height { agent.pos.y -= height; }
+            if agent.pos.x < 0.0 {
+                agent.pos.x += width;
+            }
+            if agent.pos.x > width {
+                agent.pos.x -= width;
+            }
+            if agent.pos.y < 0.0 {
+                agent.pos.y += height;
+            }
+            if agent.pos.y > height {
+                agent.pos.y -= height;
+            }
         }
     }
 }
@@ -89,7 +96,13 @@ fn get_chem_at(fluid: &FluidSim, pos: Vec2) -> f32 {
     fluid.get_chem_b(cx, cy)
 }
 
-fn compute_flocking(my_idx: usize, my_pos: Vec2, my_vel: Vec2, positions: &[Vec2], velocities: &[Vec2]) -> (Vec2, Vec2, Vec2) {
+fn compute_flocking(
+    my_idx: usize,
+    my_pos: Vec2,
+    my_vel: Vec2,
+    positions: &[Vec2],
+    velocities: &[Vec2],
+) -> (Vec2, Vec2, Vec2) {
     let mut sep = vec2(0.0, 0.0);
     let mut ali = vec2(0.0, 0.0);
     let mut coh = vec2(0.0, 0.0);
@@ -99,7 +112,9 @@ fn compute_flocking(my_idx: usize, my_pos: Vec2, my_vel: Vec2, positions: &[Vec2
     let sep_dist = 15.0;
 
     for i in 0..positions.len() {
-        if i == my_idx { continue; }
+        if i == my_idx {
+            continue;
+        }
 
         let pos = positions[i];
         let vel = velocities[i];

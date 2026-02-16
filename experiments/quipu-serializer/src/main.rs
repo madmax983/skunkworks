@@ -144,7 +144,10 @@ fn render_cord_text(cord: &Cord) -> Vec<Line<'static>> {
             Span::raw(" (empty)"),
         ]));
         // Tail
-        lines.push(Line::from(vec![Span::styled("  ▼", Style::default().fg(Color::DarkGray))]));
+        lines.push(Line::from(vec![Span::styled(
+            "  ▼",
+            Style::default().fg(Color::DarkGray),
+        )]));
         return lines;
     }
 
@@ -153,9 +156,10 @@ fn render_cord_text(cord: &Cord) -> Vec<Line<'static>> {
     for (i, cluster) in cord.clusters.iter().enumerate().rev() {
         // Vertical line logic
         if cluster.is_empty() {
-             lines.push(Line::from(vec![
-                Span::styled("  │", Style::default().fg(Color::DarkGray)),
-             ]));
+            lines.push(Line::from(vec![Span::styled(
+                "  │",
+                Style::default().fg(Color::DarkGray),
+            )]));
         } else {
             let mut spans = Vec::new();
             spans.push(Span::raw("  ")); // Indent
@@ -179,19 +183,22 @@ fn render_cord_text(cord: &Cord) -> Vec<Line<'static>> {
 
         // Spacer between clusters
         if i > 0 {
-             lines.push(Line::from(vec![
-                Span::styled("  │", Style::default().fg(Color::DarkGray)),
-             ]));
+            lines.push(Line::from(vec![Span::styled(
+                "  │",
+                Style::default().fg(Color::DarkGray),
+            )]));
         }
     }
 
     // Tail
-    lines.push(Line::from(vec![
-        Span::styled("  │", Style::default().fg(Color::DarkGray)),
-    ]));
-    lines.push(Line::from(vec![
-        Span::styled("  ▼", Style::default().fg(Color::DarkGray)),
-    ]));
+    lines.push(Line::from(vec![Span::styled(
+        "  │",
+        Style::default().fg(Color::DarkGray),
+    )]));
+    lines.push(Line::from(vec![Span::styled(
+        "  ▼",
+        Style::default().fg(Color::DarkGray),
+    )]));
 
     lines
 }
@@ -227,8 +234,12 @@ fn ui(f: &mut Frame, app: &mut App) {
     }
 
     let footer_text = match app.mode {
-        Mode::Calculator => "Q/Esc: Quit | Tab: Switch to Serializer | Digits: Input | Enter/Arrows: Focus",
-        Mode::Serializer => "Esc: Quit | Tab: Switch to Calculator | Type JSON | Up/Down: Scroll Output",
+        Mode::Calculator => {
+            "Q/Esc: Quit | Tab: Switch to Serializer | Digits: Input | Enter/Arrows: Focus"
+        }
+        Mode::Serializer => {
+            "Esc: Quit | Tab: Switch to Calculator | Type JSON | Up/Down: Scroll Output"
+        }
     };
 
     let footer = Paragraph::new(footer_text)
@@ -252,14 +263,16 @@ fn render_calculator(f: &mut Frame, area: Rect, app: &App) {
     let val_a = app.calc_input_a.parse::<u64>().unwrap_or(0);
     let cord_a = Cord::from(val_a);
     let style_a = if app.calc_focus == 0 {
-        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+        Style::default()
+            .fg(Color::Yellow)
+            .add_modifier(Modifier::BOLD)
     } else {
         Style::default().fg(Color::White)
     };
     let border_style_a = if app.calc_focus == 0 {
         Style::default().fg(Color::Yellow)
     } else {
-         Style::default().fg(Color::White)
+        Style::default().fg(Color::White)
     };
 
     let block_a = Block::default()
@@ -278,14 +291,16 @@ fn render_calculator(f: &mut Frame, area: Rect, app: &App) {
     let val_b = app.calc_input_b.parse::<u64>().unwrap_or(0);
     let cord_b = Cord::from(val_b);
     let style_b = if app.calc_focus == 1 {
-        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+        Style::default()
+            .fg(Color::Yellow)
+            .add_modifier(Modifier::BOLD)
     } else {
         Style::default().fg(Color::White)
     };
-     let border_style_b = if app.calc_focus == 1 {
+    let border_style_b = if app.calc_focus == 1 {
         Style::default().fg(Color::Yellow)
     } else {
-         Style::default().fg(Color::White)
+        Style::default().fg(Color::White)
     };
 
     let block_b = Block::default()
@@ -306,25 +321,39 @@ fn render_calculator(f: &mut Frame, area: Rect, app: &App) {
         .title(format!(" Sum (A+B): {} ", cord_sum.value()))
         .style(Style::default().fg(Color::Green));
     f.render_widget(
-        Paragraph::new(render_cord_text(&cord_sum))
-            .block(block_sum),
+        Paragraph::new(render_cord_text(&cord_sum)).block(block_sum),
         main_chunks[2],
     );
 
     // Legend
     let legend_text = vec![
-        Line::from(Span::styled("Legend", Style::default().add_modifier(Modifier::UNDERLINED))),
+        Line::from(Span::styled(
+            "Legend",
+            Style::default().add_modifier(Modifier::UNDERLINED),
+        )),
         Line::from(""),
-        Line::from(vec![Span::styled("●", Style::default().fg(Color::Yellow)), Span::raw(" = 1 (Tens+)")]),
-        Line::from(vec![Span::styled("≡N", Style::default().fg(Color::Green)), Span::raw(" = N (Units)")]),
-        Line::from(vec![Span::styled("∞", Style::default().fg(Color::Cyan)), Span::raw(" = 1 (Units)")]),
+        Line::from(vec![
+            Span::styled("●", Style::default().fg(Color::Yellow)),
+            Span::raw(" = 1 (Tens+)"),
+        ]),
+        Line::from(vec![
+            Span::styled("≡N", Style::default().fg(Color::Green)),
+            Span::raw(" = N (Units)"),
+        ]),
+        Line::from(vec![
+            Span::styled("∞", Style::default().fg(Color::Cyan)),
+            Span::raw(" = 1 (Units)"),
+        ]),
         Line::from(""),
-        Line::from(vec![Span::styled("│", Style::default().fg(Color::DarkGray)), Span::raw(" = Cord")]),
+        Line::from(vec![
+            Span::styled("│", Style::default().fg(Color::DarkGray)),
+            Span::raw(" = Cord"),
+        ]),
     ];
     let block_legend = Block::default().borders(Borders::ALL).title(" Guide ");
     f.render_widget(
         Paragraph::new(legend_text).block(block_legend),
-        main_chunks[3]
+        main_chunks[3],
     );
 }
 
@@ -359,20 +388,32 @@ fn render_serializer(f: &mut Frame, area: Rect, app: &App) {
 
     let mut text_lines = Vec::new();
     if let Some(q) = &app.ser_output {
-        text_lines.push(Line::from(Span::styled(format!("Quipu with {} cords:", q.cords.len()), Style::default().add_modifier(Modifier::BOLD))));
+        text_lines.push(Line::from(Span::styled(
+            format!("Quipu with {} cords:", q.cords.len()),
+            Style::default().add_modifier(Modifier::BOLD),
+        )));
         text_lines.push(Line::from(""));
 
         for (i, cord) in q.cords.iter().enumerate() {
-            text_lines.push(Line::from(Span::styled(format!("Cord {}: (Value: {})", i, cord.value()), Style::default().fg(Color::Cyan))));
+            text_lines.push(Line::from(Span::styled(
+                format!("Cord {}: (Value: {})", i, cord.value()),
+                Style::default().fg(Color::Cyan),
+            )));
             let cord_lines = render_cord_text(cord);
             text_lines.extend(cord_lines);
             text_lines.push(Line::from("")); // Spacing
         }
     } else {
         if app.ser_input.is_empty() {
-             text_lines.push(Line::from(Span::styled("Type JSON to see Quipu...", Style::default().fg(Color::Gray))));
+            text_lines.push(Line::from(Span::styled(
+                "Type JSON to see Quipu...",
+                Style::default().fg(Color::Gray),
+            )));
         } else {
-             text_lines.push(Line::from(Span::styled("Invalid JSON", Style::default().fg(Color::Red))));
+            text_lines.push(Line::from(Span::styled(
+                "Invalid JSON",
+                Style::default().fg(Color::Red),
+            )));
         }
     }
 

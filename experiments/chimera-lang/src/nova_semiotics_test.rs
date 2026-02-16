@@ -49,20 +49,35 @@ mod tests {
     fn test_context_shift() {
         let genes = vec![
             // 1. Create Symbol for "A" in Context 0
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("A".to_string())] },
-            Gene { op: OpCode::Symbolize, args: vec![] }, // Stack: [Symbol(A)]
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("A".to_string())],
+            },
+            Gene {
+                op: OpCode::Symbolize,
+                args: vec![],
+            }, // Stack: [Symbol(A)]
             // 2. Duplicate Symbol
-            Gene { op: OpCode::Dup, args: vec![] }, // Stack: [Symbol(A), Symbol(A)]
-
+            Gene {
+                op: OpCode::Dup,
+                args: vec![],
+            }, // Stack: [Symbol(A), Symbol(A)]
             // 3. Shift Context using "Shift"
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("Shift".to_string())] },
-            Gene { op: OpCode::ContextShift, args: vec![] }, // Context changed
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("Shift".to_string())],
+            },
+            Gene {
+                op: OpCode::ContextShift,
+                args: vec![],
+            }, // Context changed
             // 4. Interpret Symbol in NEW context
             // Should fail (return 0) or return Symbol if logic changes.
             // My implementation pushes 0 on failure.
-            Gene { op: OpCode::Interpret, args: vec![] }, // Stack: [Symbol(A), 0]
+            Gene {
+                op: OpCode::Interpret,
+                args: vec![],
+            }, // Stack: [Symbol(A), 0]
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));
@@ -80,8 +95,14 @@ mod tests {
     #[test]
     fn test_deconstruct() {
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("ABC".to_string())] },
-            Gene { op: OpCode::Deconstruct, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("ABC".to_string())],
+            },
+            Gene {
+                op: OpCode::Deconstruct,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));

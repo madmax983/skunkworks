@@ -1,5 +1,5 @@
-use bevy::prelude::*;
 use crate::skeleton::IKChain;
+use bevy::prelude::*;
 
 pub fn solve_two_bone(
     root_pos: Vec2,
@@ -51,26 +51,25 @@ pub fn ik_system(
         let target_pos = chain.target;
 
         // Calculate angles
-        let (global_angle1, local_angle2) = solve_two_bone(
-            root_pos,
-            target_pos,
-            chain.len1,
-            chain.len2,
-            chain.bend_dir
-        );
+        let (global_angle1, local_angle2) =
+            solve_two_bone(root_pos, target_pos, chain.len1, chain.len2, chain.bend_dir);
 
         // We need the parent's global rotation to convert global_angle1 to local
         if let Ok(parent_global) = globals.get(parent.get()) {
-             let parent_rotation = parent_global.to_scale_rotation_translation().1.to_euler(EulerRot::XYZ).2;
+            let parent_rotation = parent_global
+                .to_scale_rotation_translation()
+                .1
+                .to_euler(EulerRot::XYZ)
+                .2;
 
-             // Apply offset because visual is -Y aligned (Down)
-             // We want Angle1 to correspond to direction.
-             // Rotation R applied to (0,-1) = (cos(a), sin(a))
-             // R - PI/2 = a => R = a + PI/2
-             let local_angle1 = global_angle1 - parent_rotation + std::f32::consts::FRAC_PI_2;
+            // Apply offset because visual is -Y aligned (Down)
+            // We want Angle1 to correspond to direction.
+            // Rotation R applied to (0,-1) = (cos(a), sin(a))
+            // R - PI/2 = a => R = a + PI/2
+            let local_angle1 = global_angle1 - parent_rotation + std::f32::consts::FRAC_PI_2;
 
-             updates.push((chain.bone1, local_angle1));
-             updates.push((chain.bone2, local_angle2));
+            updates.push((chain.bone1, local_angle1));
+            updates.push((chain.bone2, local_angle2));
         }
     }
 
@@ -92,7 +91,7 @@ mod tests {
         let (a1, a2) = solve_two_bone(Vec2::ZERO, Vec2::new(0.0, -20.0), 10.0, 10.0, 1.0);
         // Angle1 should be -PI/2 (pointing down)
         // Angle2 should be 0 (straight)
-        assert!((a1 - -PI/2.0).abs() < 0.05, "Angle1 was {}", a1);
+        assert!((a1 - -PI / 2.0).abs() < 0.05, "Angle1 was {}", a1);
         assert!(a2.abs() < 0.05, "Angle2 was {}", a2);
     }
 }

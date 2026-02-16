@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use ::rand::Rng;
+use macroquad::prelude::*;
 
 mod mechanism;
 use mechanism::{Differential, Integrator};
@@ -13,7 +13,7 @@ struct Order {
     pos: Vec2,
     vel: Vec2,
     order_type: OrderType, // Bid or Ask
-    value: f32, // Size of the order (force)
+    value: f32,            // Size of the order (force)
     active: bool,
 }
 
@@ -26,7 +26,7 @@ enum OrderType {
 struct Machine {
     // Price Discovery Mechanism
     diff: Differential, // Sums Bid Torque + Ask Torque
-    price: f32, // Current Price (Accumulated diff output)
+    price: f32,         // Current Price (Accumulated diff output)
 
     // Trend Analysis Mechanism
     sma_integrator: Integrator, // Integrates Price over time
@@ -79,7 +79,9 @@ impl Machine {
         let cx = screen_width() / 2.0;
 
         for order in &mut self.orders {
-            if !order.active { continue; }
+            if !order.active {
+                continue;
+            }
 
             order.pos += order.vel;
             order.vel.y += 0.2; // Gravity
@@ -92,7 +94,9 @@ impl Machine {
                     order.active = false;
                 }
                 // Ask Paddle (Right)
-                else if order.order_type == OrderType::Ask && (order.pos.x - (cx + 100.0)).abs() < 30.0 {
+                else if order.order_type == OrderType::Ask
+                    && (order.pos.x - (cx + 100.0)).abs() < 30.0
+                {
                     self.ask_torque -= order.value; // Negative Torque pushes Price DOWN
                     order.active = false;
                 }
@@ -115,11 +119,15 @@ impl Machine {
         // Let's add some "market noise" or random walk if torque is 0?
         // No, let's keep it pure physics.
 
-        let delta_price = self.diff.update(self.bid_torque * sensitivity, self.ask_torque * sensitivity);
+        let delta_price = self
+            .diff
+            .update(self.bid_torque * sensitivity, self.ask_torque * sensitivity);
         self.price += delta_price;
 
         // Clamp Price
-        if self.price < 0.0 { self.price = 0.0; }
+        if self.price < 0.0 {
+            self.price = 0.0;
+        }
 
         // Integrator: Input = Time (constant rotation), Carriage = Price
         // Carriage position is relative to some center.
@@ -160,11 +168,17 @@ impl Machine {
 
         draw_text("MECHANICAL MARKET", 20.0, 30.0, 30.0, WHITE);
         draw_text("Analog High Frequency Trading", 20.0, 50.0, 20.0, LIGHTGRAY);
-        draw_text("Left: BID (Buy) | Right: ASK (Sell)", 20.0, 70.0, 20.0, GRAY);
+        draw_text(
+            "Left: BID (Buy) | Right: ASK (Sell)",
+            20.0,
+            70.0,
+            20.0,
+            GRAY,
+        );
 
         // Paddles / Buckets
         draw_rectangle(cx - 120.0, cy, 40.0, 10.0, GREEN); // Bid Bucket
-        draw_rectangle(cx + 80.0, cy, 40.0, 10.0, RED);   // Ask Bucket
+        draw_rectangle(cx + 80.0, cy, 40.0, 10.0, RED); // Ask Bucket
 
         // Funnels
         draw_line(cx - 130.0, 0.0, cx - 120.0, cy, 2.0, DARKGRAY);
@@ -175,12 +189,40 @@ impl Machine {
 
         // Shafts to Differential
         // Left Shaft (Bids)
-        draw_line(cx - 100.0, cy + 10.0, cx - 100.0, cy + 80.0, 4.0, SHAFT_COLOR);
-        draw_line(cx - 100.0, cy + 80.0, cx - 30.0, cy + 80.0, 4.0, SHAFT_COLOR);
+        draw_line(
+            cx - 100.0,
+            cy + 10.0,
+            cx - 100.0,
+            cy + 80.0,
+            4.0,
+            SHAFT_COLOR,
+        );
+        draw_line(
+            cx - 100.0,
+            cy + 80.0,
+            cx - 30.0,
+            cy + 80.0,
+            4.0,
+            SHAFT_COLOR,
+        );
 
         // Right Shaft (Asks)
-        draw_line(cx + 100.0, cy + 10.0, cx + 100.0, cy + 80.0, 4.0, SHAFT_COLOR);
-        draw_line(cx + 100.0, cy + 80.0, cx + 30.0, cy + 80.0, 4.0, SHAFT_COLOR);
+        draw_line(
+            cx + 100.0,
+            cy + 10.0,
+            cx + 100.0,
+            cy + 80.0,
+            4.0,
+            SHAFT_COLOR,
+        );
+        draw_line(
+            cx + 100.0,
+            cy + 80.0,
+            cx + 30.0,
+            cy + 80.0,
+            4.0,
+            SHAFT_COLOR,
+        );
 
         // Differential Box
         let diff_pos = vec2(cx, cy + 100.0);
@@ -195,7 +237,14 @@ impl Machine {
         let gauge_top = cy + 150.0;
         let gauge_h = 200.0;
 
-        draw_line(gauge_x, gauge_top, gauge_x, gauge_top + gauge_h, 4.0, SHAFT_COLOR);
+        draw_line(
+            gauge_x,
+            gauge_top,
+            gauge_x,
+            gauge_top + gauge_h,
+            4.0,
+            SHAFT_COLOR,
+        );
 
         // Price Marker
         // Map Price 0..200 to gauge height
@@ -203,7 +252,13 @@ impl Machine {
         let marker_y = gauge_top + gauge_h - (price_norm * gauge_h);
 
         draw_circle(gauge_x, marker_y, 8.0, YELLOW);
-        draw_text(&format!("{:.2}", self.price), gauge_x + 15.0, marker_y + 5.0, 20.0, YELLOW);
+        draw_text(
+            &format!("{:.2}", self.price),
+            gauge_x + 15.0,
+            marker_y + 5.0,
+            20.0,
+            YELLOW,
+        );
 
         // Integrator
         let int_pos = vec2(cx + 200.0, cy + 200.0);
@@ -247,13 +302,17 @@ impl Machine {
         draw_rectangle(pos.x, pos.y, size.x, size.y, Color::new(0.0, 0.0, 0.0, 0.5));
         draw_rectangle_lines(pos.x, pos.y, size.x, size.y, 1.0, GRAY);
 
-        if self.history.len() < 2 { return; }
+        if self.history.len() < 2 {
+            return;
+        }
 
         let t_start = self.history.first().unwrap().0;
         let t_end = self.history.last().unwrap().0;
         let t_span = t_end - t_start;
 
-        if t_span < 0.001 { return; }
+        if t_span < 0.001 {
+            return;
+        }
 
         let min_price = 0.0;
         let max_price = 200.0;

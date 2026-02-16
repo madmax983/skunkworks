@@ -26,6 +26,11 @@
 use crate::ast::{Dna, JunctionType, Nucleotide};
 use crate::opcode::OpCode;
 pub use crate::value::Value;
+use comfy_table::modifiers::UTF8_ROUND_CORNERS;
+use comfy_table::presets::UTF8_FULL;
+use comfy_table::Color;
+use comfy_table::ContentArrangement;
+use comfy_table::Table;
 #[cfg(any(feature = "nova", feature = "silicon"))]
 pub use locus::Topology;
 #[cfg(feature = "nova")]
@@ -34,11 +39,6 @@ use poincare_disk::Point;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use comfy_table::Table;
-use comfy_table::presets::UTF8_FULL;
-use comfy_table::modifiers::UTF8_ROUND_CORNERS;
-use comfy_table::ContentArrangement;
-use comfy_table::Color;
 #[cfg(feature = "nova")]
 use std::collections::{HashSet, VecDeque};
 #[cfg(feature = "nova")]
@@ -78,15 +78,8 @@ pub mod babel;
 pub mod babel_chaos;
 #[cfg(feature = "nova")]
 #[cfg(test)]
-mod nova_babel_live_test;
-#[cfg(feature = "nova")]
-#[cfg(test)]
 mod babel_virus_test;
-#[cfg(feature = "nova")]
-pub mod nova_babel_live;
 pub mod bard;
-    #[cfg(feature = "nova")]
-    pub mod nova_semiotics;
 #[cfg(feature = "nova")]
 pub mod blackbox;
 pub mod catalyst;
@@ -95,9 +88,15 @@ pub mod chimera_chaos;
 pub mod cladistics;
 pub mod cortex;
 pub mod dream;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod ecology_test;
 #[cfg(feature = "elektra")]
 pub mod elektra;
 pub mod evolution;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod genesis_test;
 #[cfg(feature = "git")]
 pub mod git;
 #[cfg(feature = "nova")]
@@ -121,14 +120,17 @@ pub mod nova;
 #[cfg(feature = "nova")]
 pub mod nova_arcana;
 #[cfg(feature = "nova")]
-pub mod nova_savant;
-#[cfg(feature = "nova")]
 pub mod nova_arena;
 #[cfg(feature = "nova")]
 pub mod nova_attractor;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_attractor_test;
+#[cfg(feature = "nova")]
+pub mod nova_babel_live;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_babel_live_test;
 #[cfg(feature = "nova")]
 pub mod nova_ballistics;
 #[cfg(feature = "nova")]
@@ -174,12 +176,9 @@ pub mod nova_crystal;
 #[cfg(all(feature = "nova", feature = "resonance"))]
 pub mod nova_cymatics;
 #[cfg(feature = "nova")]
-pub mod nova_egregore;
-#[cfg(feature = "nova")]
 pub mod nova_ecology;
 #[cfg(feature = "nova")]
-#[cfg(test)]
-mod ecology_test;
+pub mod nova_egregore;
 #[cfg(feature = "nova")]
 pub mod nova_fluid;
 #[cfg(feature = "nova")]
@@ -284,9 +283,13 @@ pub mod nova_resonance_war;
 #[cfg(test)]
 mod nova_retina_test;
 #[cfg(feature = "nova")]
+pub mod nova_savant;
+#[cfg(feature = "nova")]
 pub mod nova_scent;
 #[cfg(feature = "nova")]
 pub mod nova_security;
+#[cfg(feature = "nova")]
+pub mod nova_semiotics;
 #[cfg(feature = "nova")]
 pub mod nova_sigil;
 #[cfg(feature = "nova")]
@@ -310,12 +313,6 @@ pub mod nova_void;
 #[cfg(test)]
 mod nova_void_test;
 #[cfg(feature = "nova")]
-#[cfg(test)]
-mod savant_execution_test;
-#[cfg(feature = "nova")]
-#[cfg(test)]
-mod genesis_test;
-#[cfg(feature = "nova")]
 pub mod nova_ward;
 #[cfg(feature = "nova")]
 pub mod nova_weaver;
@@ -331,6 +328,9 @@ pub mod piet;
 pub mod resonance;
 #[cfg(feature = "nova")]
 pub mod retina;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod savant_execution_test;
 #[cfg(feature = "silicon")]
 pub mod silicon;
 
@@ -413,22 +413,24 @@ impl std::fmt::Display for ChimeraVM {
         ]);
 
         // Stack
-        table.add_row(vec![
-            "Stack Depth",
-            &format!("{}", self.stack.len()),
-        ]);
+        table.add_row(vec!["Stack Depth", &format!("{}", self.stack.len())]);
 
         // Energy (Colorized)
-        let energy_cell = comfy_table::Cell::new(format!("{}", self.energy))
-            .fg(if self.energy > 20 { Color::Green } else { Color::Red });
-        table.add_row(vec![
-            comfy_table::Cell::new("Energy"),
-            energy_cell,
-        ]);
+        let energy_cell =
+            comfy_table::Cell::new(format!("{}", self.energy)).fg(if self.energy > 20 {
+                Color::Green
+            } else {
+                Color::Red
+            });
+        table.add_row(vec![comfy_table::Cell::new("Energy"), energy_cell]);
 
         // Chaos Mode
         let chaos_str = if self.chaos_mode { "True" } else { "False" };
-        let chaos_color = if self.chaos_mode { Color::Green } else { Color::Red };
+        let chaos_color = if self.chaos_mode {
+            Color::Green
+        } else {
+            Color::Red
+        };
         table.add_row(vec![
             comfy_table::Cell::new("Chaos Mode"),
             comfy_table::Cell::new(chaos_str).fg(chaos_color),
@@ -437,8 +439,8 @@ impl std::fmt::Display for ChimeraVM {
         // Nova Stats
         #[cfg(feature = "nova")]
         {
-             table.add_row(vec!["Organelles", &format!("{}", self.organelles.len())]);
-             table.add_row(vec!["Phase", &format!("{:?}", self.phase)]);
+            table.add_row(vec!["Organelles", &format!("{}", self.organelles.len())]);
+            table.add_row(vec!["Phase", &format!("{:?}", self.phase)]);
         }
 
         write!(f, "{}", table)
@@ -825,7 +827,9 @@ impl ChimeraVM {
             ip: (0, 0),
             output: Vec::new(),
             halted: false,
-            energy: INITIAL_ENERGY, experience: 0, stage: 0,
+            energy: INITIAL_ENERGY,
+            experience: 0,
+            stage: 0,
             grid,
             chaos_mode: false,
             recursion_depth: 0,
@@ -928,7 +932,9 @@ impl ChimeraVM {
             audio_snapshot: AudioSnapshot {
                 pressure: vec![0.0; GRID_SIZE * GRID_SIZE],
                 materials: vec![],
-                energy: vec![], experience: 0, stage: 0,
+                energy: vec![],
+                experience: 0,
+                stage: 0,
             },
             #[cfg(feature = "biophysics")]
             neurons: std::collections::HashMap::new(),
@@ -1605,7 +1611,9 @@ impl ChimeraVM {
                             id: self.organelle_id_counter,
                             tissue_id: None,
                             genome_id: 0,
-                            energy: 10, experience: 0, stage: 0,
+                            energy: 10,
+                            experience: 0,
+                            stage: 0,
                         };
                         self.organelles.push(new_org);
                         self.output
@@ -1753,7 +1761,9 @@ impl ChimeraVM {
                             id: self.organelle_id_counter,
                             tissue_id: None,
                             genome_id: 0,
-                            energy: 10, experience: 0, stage: 0,
+                            energy: 10,
+                            experience: 0,
+                            stage: 0,
                         };
                         self.organelles.push(new_org);
                     } else {
@@ -2183,7 +2193,8 @@ impl ChimeraVM {
         if !time_frozen && self.chaos_mode {
             let mut rng = rand::thread_rng();
             #[cfg(feature = "nova")]
-            let chance = 0.1 * self.biome_grid[self.context_loc.0][self.context_loc.1].mutation_rate();
+            let chance =
+                0.1 * self.biome_grid[self.context_loc.0][self.context_loc.1].mutation_rate();
             #[cfg(not(feature = "nova"))]
             let chance = 0.1;
 
@@ -2838,7 +2849,13 @@ impl ChimeraVM {
     ) -> Option<(usize, usize)> {
         match op {
             OpCode::Push => self.exec_stack_op(op, args),
-            OpCode::Add | OpCode::Sub | OpCode::Mul | OpCode::Div | OpCode::Eq | OpCode::Gt | OpCode::Lt => {
+            OpCode::Add
+            | OpCode::Sub
+            | OpCode::Mul
+            | OpCode::Div
+            | OpCode::Eq
+            | OpCode::Gt
+            | OpCode::Lt => {
                 self.exec_math_op(op);
                 None
             }
@@ -3195,18 +3212,35 @@ impl ChimeraVM {
                     let prob_val = self.stack.pop().unwrap();
                     let target_val = self.stack.pop().unwrap();
 
-                    if let (Value::Str(to_s), Value::Str(from_s), Value::Int(prob_int), Value::Int(target_idx)) = (to_val, from_val, prob_val, target_val) {
-                        if let (Ok(to_op), Ok(from_op)) = (to_s.parse::<OpCode>(), from_s.parse::<OpCode>()) {
+                    if let (
+                        Value::Str(to_s),
+                        Value::Str(from_s),
+                        Value::Int(prob_int),
+                        Value::Int(target_idx),
+                    ) = (to_val, from_val, prob_val, target_val)
+                    {
+                        if let (Ok(to_op), Ok(from_op)) =
+                            (to_s.parse::<OpCode>(), from_s.parse::<OpCode>())
+                        {
                             let prob = (prob_int as f64) / 100.0;
-                            pandemonium::apply_mutagen(self, target_idx as usize, from_op, to_op, prob);
+                            pandemonium::apply_mutagen(
+                                self,
+                                target_idx as usize,
+                                from_op,
+                                to_op,
+                                prob,
+                            );
                         } else {
-                             self.output.push("Error: Invalid OpCode string for Mutagen".to_string());
+                            self.output
+                                .push("Error: Invalid OpCode string for Mutagen".to_string());
                         }
                     } else {
-                        self.output.push("Error: Type mismatch for Mutagen".to_string());
+                        self.output
+                            .push("Error: Type mismatch for Mutagen".to_string());
                     }
                 } else {
-                    self.output.push("Error: Stack underflow for Mutagen".to_string());
+                    self.output
+                        .push("Error: Stack underflow for Mutagen".to_string());
                 }
                 None
             }
@@ -3554,7 +3588,8 @@ impl ChimeraVM {
 
             OpCode::Unknown(name) => self.handle_unknown_opcode(&name),
             _ => {
-                self.output.push(format!("Error: Unimplemented OpCode {}", op));
+                self.output
+                    .push(format!("Error: Unimplemented OpCode {}", op));
                 None
             }
         }
@@ -4109,7 +4144,8 @@ impl ChimeraVM {
                                     .push("Error: Virus cannot execute superposition".to_string());
                             }
                             Value::Symbol(_) => {
-                                self.output.push("Error: Virus cannot execute symbol".to_string());
+                                self.output
+                                    .push("Error: Virus cannot execute symbol".to_string());
                             }
                         }
                     }
@@ -5092,7 +5128,10 @@ mod tests {
 
     #[test]
     fn test_gallifrey_display() {
-        let genes = vec![Gene { op: OpCode::Nop, args: vec![] }];
+        let genes = vec![Gene {
+            op: OpCode::Nop,
+            args: vec![],
+        }];
         let vm = ChimeraVM::new(make_dna(genes));
         let output = format!("{}", vm);
         println!("{}", output);
@@ -5157,7 +5196,9 @@ mod sentry_ribosome_tests {
             id: 1,
             tissue_id: None,
             genome_id: 0,
-            energy: 10, experience: 0, stage: 0,
+            energy: 10,
+            experience: 0,
+            stage: 0,
         };
 
         // Write "jump_s" to grid at (5, 5)

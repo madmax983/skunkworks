@@ -1,6 +1,6 @@
-use wgpu::util::DeviceExt;
-use cgmath::{Matrix4, Vector3, Point3, SquareMatrix};
 use crate::simulation::Simulation;
+use cgmath::{Matrix4, Point3, SquareMatrix, Vector3};
+use wgpu::util::DeviceExt;
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, bytemuck::Pod, bytemuck::Zeroable)]
@@ -23,7 +23,11 @@ pub struct Renderer {
 }
 
 impl Renderer {
-    pub fn new(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration, simulation: &Simulation) -> Self {
+    pub fn new(
+        device: &wgpu::Device,
+        config: &wgpu::SurfaceConfiguration,
+        simulation: &Simulation,
+    ) -> Self {
         let shader = device.create_shader_module(wgpu::include_wgsl!("shader.wgsl"));
 
         // Uniform Buffer
@@ -44,40 +48,43 @@ impl Renderer {
         });
 
         // Bind Group Layouts
-        let bind_group_layout_0 = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            entries: &[wgpu::BindGroupLayoutEntry {
-                binding: 0,
-                visibility: wgpu::ShaderStages::FRAGMENT | wgpu::ShaderStages::VERTEX,
-                ty: wgpu::BindingType::Buffer {
-                    ty: wgpu::BufferBindingType::Uniform,
-                    has_dynamic_offset: false,
-                    min_binding_size: None,
-                },
-                count: None,
-            }],
-            label: Some("uniform_bind_group_layout"),
-        });
+        let bind_group_layout_0 =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                entries: &[wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::FRAGMENT | wgpu::ShaderStages::VERTEX,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                }],
+                label: Some("uniform_bind_group_layout"),
+            });
 
-        let bind_group_layout_1 = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            entries: &[wgpu::BindGroupLayoutEntry {
-                binding: 0,
-                visibility: wgpu::ShaderStages::FRAGMENT,
-                ty: wgpu::BindingType::Buffer {
-                    ty: wgpu::BufferBindingType::Storage { read_only: true },
-                    has_dynamic_offset: false,
-                    min_binding_size: None,
-                },
-                count: None,
-            }],
-            label: Some("particle_bind_group_layout"),
-        });
+        let bind_group_layout_1 =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                entries: &[wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: true },
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                }],
+                label: Some("particle_bind_group_layout"),
+            });
 
         // Pipeline Layout
-        let render_pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            label: Some("Render Pipeline Layout"),
-            bind_group_layouts: &[&bind_group_layout_0, &bind_group_layout_1],
-            push_constant_ranges: &[],
-        });
+        let render_pipeline_layout =
+            device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                label: Some("Render Pipeline Layout"),
+                bind_group_layouts: &[&bind_group_layout_0, &bind_group_layout_1],
+                push_constant_ranges: &[],
+            });
 
         // Render Pipeline
         let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -148,9 +155,21 @@ impl Renderer {
         // Handle resize if needed (e.g. depth buffer)
     }
 
-    pub fn update(&mut self, queue: &wgpu::Queue, simulation: &Simulation, yaw: f32, pitch: f32, dist: f32, size: winit::dpi::PhysicalSize<u32>) {
+    pub fn update(
+        &mut self,
+        queue: &wgpu::Queue,
+        simulation: &Simulation,
+        yaw: f32,
+        pitch: f32,
+        dist: f32,
+        size: winit::dpi::PhysicalSize<u32>,
+    ) {
         // Update particles
-        queue.write_buffer(&self.particle_buffer, 0, bytemuck::cast_slice(&simulation.particles));
+        queue.write_buffer(
+            &self.particle_buffer,
+            0,
+            bytemuck::cast_slice(&simulation.particles),
+        );
 
         // Camera Math
         let target = Point3::new(0.0, 0.0, 0.0);

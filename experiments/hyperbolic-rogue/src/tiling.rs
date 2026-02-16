@@ -19,8 +19,8 @@ pub fn generate_7_3_tiling(max_depth: usize) -> Vec<Polygon> {
 
     // 1. Calculate radius of vertices for {7,3}
     // r = sqrt( (cos(pi/p + pi/q)) / (cos(pi/p - pi/q)) )
-    let num = (PI/P + PI/Q).cos();
-    let den = (PI/P - PI/Q).cos();
+    let num = (PI / P + PI / Q).cos();
+    let den = (PI / P - PI / Q).cos();
     let r = (num / den).sqrt();
 
     // 2. Base Polygon Vertices (centered at 0)
@@ -136,7 +136,10 @@ pub fn generate_7_3_tiling(max_depth: usize) -> Vec<Polygon> {
 
     while let Some((transform, depth)) = queue.pop_front() {
         let center = transform.apply(origin);
-        let key = ((center.re * 10000.0).round() as i64, (center.im * 10000.0).round() as i64);
+        let key = (
+            (center.re * 10000.0).round() as i64,
+            (center.im * 10000.0).round() as i64,
+        );
 
         if visited.contains(&key) {
             continue;

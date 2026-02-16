@@ -20,8 +20,8 @@ use ratatui::{
     style::{Color, Style},
     symbols::Marker,
     widgets::{
-        canvas::{Canvas, Points},
         Block, Borders, Paragraph, Sparkline,
+        canvas::{Canvas, Points},
     },
 };
 use std::time::Duration;

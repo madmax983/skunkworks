@@ -50,28 +50,30 @@ impl AudioEngine {
                 let sample_rate = config.sample_rate().0 as f32;
                 let mut phase = 0.0;
 
-                device.build_output_stream(
-                    &config.into(),
-                    move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
-                        // Use a simple sine wave
-                        // In a real loop we'd be careful about lock contention
-                        // But for a moonshot, locking per buffer is fine.
-                        let (freq, vol) = {
-                            let s = state_clone.lock().unwrap();
-                            (s.frequency, s.volume)
-                        };
+                device
+                    .build_output_stream(
+                        &config.into(),
+                        move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
+                            // Use a simple sine wave
+                            // In a real loop we'd be careful about lock contention
+                            // But for a moonshot, locking per buffer is fine.
+                            let (freq, vol) = {
+                                let s = state_clone.lock().unwrap();
+                                (s.frequency, s.volume)
+                            };
 
-                        let phase_inc = freq / sample_rate;
+                            let phase_inc = freq / sample_rate;
 
-                        for sample in data.iter_mut() {
-                            *sample = (phase * 2.0 * std::f32::consts::PI).sin() * vol;
-                            phase = (phase + phase_inc) % 1.0;
-                        }
-                    },
-                    err_fn,
-                    None,
-                ).ok()?
-            },
+                            for sample in data.iter_mut() {
+                                *sample = (phase * 2.0 * std::f32::consts::PI).sin() * vol;
+                                phase = (phase + phase_inc) % 1.0;
+                            }
+                        },
+                        err_fn,
+                        None,
+                    )
+                    .ok()?
+            }
             _ => return None, // Only supporting F32
         };
 

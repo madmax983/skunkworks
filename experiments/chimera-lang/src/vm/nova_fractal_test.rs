@@ -1,7 +1,7 @@
 use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use crate::opcode::OpCode;
-use crate::vm::{ChimeraVM, Value};
 use crate::vm::nova_fractal::FractalMode;
+use crate::vm::{ChimeraVM, Value};
 
 fn make_vm(genes: Vec<Gene>) -> ChimeraVM {
     let dna = Dna {
@@ -90,11 +90,26 @@ fn test_iterate() {
     // stack order: c_im, c_re, z_im, z_re
 
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1000)] }, // c_im
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1000)] }, // c_re
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },    // z_im
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },    // z_re
-        Gene { op: OpCode::Iterate, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1000)],
+        }, // c_im
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1000)],
+        }, // c_re
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }, // z_im
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }, // z_re
+        Gene {
+            op: OpCode::Iterate,
+            args: vec![],
+        },
     ];
     let mut vm = make_vm(genes);
     for _ in 0..5 {

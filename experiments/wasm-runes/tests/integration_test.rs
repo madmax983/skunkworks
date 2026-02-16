@@ -1,6 +1,6 @@
-use std::fs;
 use assert_cmd::Command;
 use predicates::prelude::*;
+use std::fs;
 use tempfile::tempdir;
 
 #[test]
@@ -39,21 +39,21 @@ fn test_forge_and_invoke() -> Result<(), Box<dyn std::error::Error>> {
     // 2. Run `forge`
     let mut cmd = Command::cargo_bin("wasm-runes")?;
     cmd.arg("forge")
-       .arg(input_path.to_str().unwrap())
-       .arg(rune_path.to_str().unwrap())
-       .assert()
-       .success()
-       .stdout(predicate::str::contains("Rune forged successfully"));
+        .arg(input_path.to_str().unwrap())
+        .arg(rune_path.to_str().unwrap())
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Rune forged successfully"));
 
     assert!(rune_path.exists());
 
     // 3. Run `invoke`
     let mut cmd = Command::cargo_bin("wasm-runes")?;
     cmd.arg("invoke")
-       .arg(rune_path.to_str().unwrap())
-       .assert()
-       .success()
-       .stdout(predicate::str::contains("Hello, World!"));
+        .arg(rune_path.to_str().unwrap())
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Hello, World!"));
 
     Ok(())
 }

@@ -7,7 +7,7 @@ mod geometry;
 mod tiling;
 
 use geometry::{Mobius, Point};
-use tiling::{generate_7_3_tiling, Polygon};
+use tiling::{Polygon, generate_7_3_tiling};
 
 fn calculate_id(point: Point) -> u64 {
     let mut hasher = DefaultHasher::new();
@@ -77,7 +77,10 @@ async fn main() {
     // Center is at 0. Neighbors are at `2 * a_eucl` distance? No.
     // Let's just look at their centers.
 
-    let center_poly = local_polygons.iter().find(|p| p.transform.apply(Point::new(0.0,0.0)).norm() < 0.001).unwrap();
+    let center_poly = local_polygons
+        .iter()
+        .find(|p| p.transform.apply(Point::new(0.0, 0.0)).norm() < 0.001)
+        .unwrap();
 
     // Neighbors
     // Sort by distance from origin
@@ -89,7 +92,8 @@ async fn main() {
     });
 
     // Skip the first one (center, dist ~ 0) and take next 7
-    let neighbors: Vec<Mobius> = sorted_polys.iter()
+    let neighbors: Vec<Mobius> = sorted_polys
+        .iter()
         .skip(1)
         .take(7)
         .map(|p| p.transform)
@@ -209,12 +213,15 @@ async fn main() {
             // We'll use draw_triangle_fan for filled, draw_line_loop for outline
 
             // Convert to screen coords
-            let screen_coords: Vec<(f32, f32)> = screen_verts.iter().map(|p| {
-                (
-                    offset_x + (p.re as f32) * scale,
-                    offset_y - (p.im as f32) * scale // Flip Y
-                )
-            }).collect();
+            let screen_coords: Vec<(f32, f32)> = screen_verts
+                .iter()
+                .map(|p| {
+                    (
+                        offset_x + (p.re as f32) * scale,
+                        offset_y - (p.im as f32) * scale, // Flip Y
+                    )
+                })
+                .collect();
 
             // Draw filled
             // Split into triangles (fan from center of poly?)
@@ -222,7 +229,7 @@ async fn main() {
             let poly_center = view_matrix.apply(poly.transform.apply(Point::new(0.0, 0.0)));
             let center_screen = (
                 offset_x + (poly_center.re as f32) * scale,
-                offset_y - (poly_center.im as f32) * scale
+                offset_y - (poly_center.im as f32) * scale,
             );
 
             for i in 0..screen_coords.len() {
@@ -233,11 +240,11 @@ async fn main() {
                     vec2(center_screen.0, center_screen.1),
                     vec2(p1.0, p1.1),
                     vec2(p2.0, p2.1),
-                    Color::new(color.r, color.g, color.b, 0.5)
+                    Color::new(color.r, color.g, color.b, 0.5),
                 );
             }
 
-             // Draw outline
+            // Draw outline
             for i in 0..screen_coords.len() {
                 let p1 = screen_coords[i];
                 let p2 = screen_coords[(i + 1) % screen_coords.len()];
@@ -253,8 +260,23 @@ async fn main() {
 
         // UI
         draw_text("Hyperbolic Rogue", 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Pos: {:.2}, {:.2}", player_pos.re, player_pos.im), 20.0, 60.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("ID: {:x}", calculate_id(current_world_transform.apply(Point::new(0.0,0.0)))), 20.0, 80.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Pos: {:.2}, {:.2}", player_pos.re, player_pos.im),
+            20.0,
+            60.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            &format!(
+                "ID: {:x}",
+                calculate_id(current_world_transform.apply(Point::new(0.0, 0.0)))
+            ),
+            20.0,
+            80.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await
     }

@@ -48,14 +48,14 @@ async fn main() {
         // Spawn particles from hot spots (Vents/Contention)
         for y in 0..GRID_HEIGHT {
             for x in 0..GRID_WIDTH {
-                 let temp = fluid.get_temp(x, y);
-                 if temp > 0.5 {
-                     if rand::gen_range(0.0, 1.0) < 0.05 * temp {
-                         let px = x as f32 * CELL_SIZE + rand::gen_range(0.0, CELL_SIZE);
-                         let py = y as f32 * CELL_SIZE + rand::gen_range(0.0, CELL_SIZE);
-                         particles.spawn(vec2(px, py), 1);
-                     }
-                 }
+                let temp = fluid.get_temp(x, y);
+                if temp > 0.5 {
+                    if rand::gen_range(0.0, 1.0) < 0.05 * temp {
+                        let px = x as f32 * CELL_SIZE + rand::gen_range(0.0, CELL_SIZE);
+                        let py = y as f32 * CELL_SIZE + rand::gen_range(0.0, CELL_SIZE);
+                        particles.spawn(vec2(px, py), 1);
+                    }
+                }
             }
         }
 
@@ -110,7 +110,13 @@ async fn main() {
         worms.draw();
 
         // UI
-        draw_text(&format!("Boids: {}", flock.agents.len()), 10.0, 20.0, 20.0, WHITE);
+        draw_text(
+            &format!("Boids: {}", flock.agents.len()),
+            10.0,
+            20.0,
+            20.0,
+            WHITE,
+        );
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 40.0, 20.0, WHITE);
 
         next_frame().await

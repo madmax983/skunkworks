@@ -62,7 +62,7 @@ impl Biome {
             Biome::Glitch => 0.8,   // Easy but dangerous
             Biome::Aether => 0.5,   // Magic flows freely
             Biome::Silicon => 1.0,
-            Biome::Garden => 0.5,   // Fertile
+            Biome::Garden => 0.5, // Fertile
         }
     }
 
@@ -94,15 +94,15 @@ impl Biome {
     /// Returns the RGB color for TUI visualization.
     pub fn color(&self) -> (u8, u8, u8) {
         match self {
-            Biome::Plains => (0, 0, 0),       // Default/Transparent
-            Biome::Swamp => (20, 40, 20),     // Dark Green
-            Biome::Desert => (60, 40, 10),    // Dark Orange/Brown
-            Biome::Tundra => (30, 50, 60),    // Dark Cyan/Blue
-            Biome::Volcanic => (50, 10, 10),  // Dark Red
-            Biome::Glitch => (40, 0, 40),     // Dark Magenta
-            Biome::Aether => (40, 40, 50),    // Dark Blue/White
-            Biome::Silicon => (30, 30, 35),   // Dark Gray/Metallic
-            Biome::Garden => (20, 60, 20),    // Lush Green
+            Biome::Plains => (0, 0, 0),      // Default/Transparent
+            Biome::Swamp => (20, 40, 20),    // Dark Green
+            Biome::Desert => (60, 40, 10),   // Dark Orange/Brown
+            Biome::Tundra => (30, 50, 60),   // Dark Cyan/Blue
+            Biome::Volcanic => (50, 10, 10), // Dark Red
+            Biome::Glitch => (40, 0, 40),    // Dark Magenta
+            Biome::Aether => (40, 40, 50),   // Dark Blue/White
+            Biome::Silicon => (30, 30, 35),  // Dark Gray/Metallic
+            Biome::Garden => (20, 60, 20),   // Lush Green
         }
     }
 }

@@ -1,5 +1,5 @@
-use rayon::prelude::*;
 use rand::Rng;
+use rayon::prelude::*;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Cell {
@@ -20,8 +20,20 @@ impl Grid {
         Self {
             width,
             height,
-            cells: vec![Cell { load: 0, processed: 0 }; size],
-            next_cells: vec![Cell { load: 0, processed: 0 }; size],
+            cells: vec![
+                Cell {
+                    load: 0,
+                    processed: 0
+                };
+                size
+            ],
+            next_cells: vec![
+                Cell {
+                    load: 0,
+                    processed: 0
+                };
+                size
+            ],
         }
     }
 
@@ -44,50 +56,53 @@ impl Grid {
         // We need to capture 'cells' as read-only slice
         let current_cells = &self.cells;
 
-        self.next_cells.par_iter_mut().enumerate().for_each(|(i, next_cell)| {
-            let x = i % width;
-            let y = i / width;
+        self.next_cells
+            .par_iter_mut()
+            .enumerate()
+            .for_each(|(i, next_cell)| {
+                let x = i % width;
+                let y = i / width;
 
-            let mut my_load = current_cells[i].load;
-            let mut my_processed = current_cells[i].processed;
+                let mut my_load = current_cells[i].load;
+                let mut my_processed = current_cells[i].processed;
 
-            // 1. Toppling Logic (Deterministic based on current state)
-            // If I have >= 4, I will topple in this step.
-            if my_load >= 4 {
-                my_load -= 4;
-            }
+                // 1. Toppling Logic (Deterministic based on current state)
+                // If I have >= 4, I will topple in this step.
+                if my_load >= 4 {
+                    my_load -= 4;
+                }
 
-            // 2. Inflow from neighbors (Deterministic based on neighbor's current state)
-            let neighbors = [
-                (x.wrapping_sub(1), y), // Left (wrapping handles < 0 check with usize but usually creates huge number, we need check)
-                (x + 1, y),
-                (x, y.wrapping_sub(1)),
-                (x, y + 1),
-            ];
+                // 2. Inflow from neighbors (Deterministic based on neighbor's current state)
+                let neighbors = [
+                    (x.wrapping_sub(1), y), // Left (wrapping handles < 0 check with usize but usually creates huge number, we need check)
+                    (x + 1, y),
+                    (x, y.wrapping_sub(1)),
+                    (x, y + 1),
+                ];
 
-            for (nx, ny) in neighbors {
-                if nx < width && ny < height {
-                    let n_idx = ny * width + nx;
-                    // Neighbor topples if it had >= 4
-                    if current_cells[n_idx].load >= 4 {
-                        my_load += 1;
+                for (nx, ny) in neighbors {
+                    if nx < width && ny < height {
+                        let n_idx = ny * width + nx;
+                        // Neighbor topples if it had >= 4
+                        if current_cells[n_idx].load >= 4 {
+                            my_load += 1;
+                        }
                     }
                 }
-            }
 
-            // 3. Processing (Stochastic)
-            // Apply processing to the *result* of the flow.
-            // This ensures conservation of mass during the flow phase.
-            // Mass is only lost here, explicitly.
-            let mut rng = rand::thread_rng();
-            if my_load > 0 && rng.gen_bool(process_rate) {
-                my_load -= 1;
-                my_processed += 1;
-            }
+                // 3. Processing (Stochastic)
+                // Apply processing to the *result* of the flow.
+                // This ensures conservation of mass during the flow phase.
+                // Mass is only lost here, explicitly.
+                let mut rng = rand::thread_rng();
+                if my_load > 0 && rng.gen_bool(process_rate) {
+                    my_load -= 1;
+                    my_processed += 1;
+                }
 
-            next_cell.load = my_load;
-            next_cell.processed = my_processed;
-        });
+                next_cell.load = my_load;
+                next_cell.processed = my_processed;
+            });
 
         // Swap buffers
         std::mem::swap(&mut self.cells, &mut self.next_cells);

@@ -55,7 +55,8 @@ impl Creature {
         data.extend_from_slice(&self.head.color);
         // Simple checksum: XOR of data bytes (excluding marker)
         let mut checksum = 0u8;
-        for b in &data[data.len()-8..] { // size(4) + eye(1) + color(3) = 8
+        for b in &data[data.len() - 8..] {
+            // size(4) + eye(1) + color(3) = 8
             checksum ^= b;
         }
         data.push(checksum);
@@ -77,13 +78,18 @@ impl Limb {
 
         let mut children = Vec::new();
         if depth < 2 && rng.gen_bool(0.6) {
-             let num_children = rng.gen_range(1..3);
-             for _ in 0..num_children {
-                 children.push(Limb::random(rng, depth + 1));
-             }
+            let num_children = rng.gen_range(1..3);
+            for _ in 0..num_children {
+                children.push(Limb::random(rng, depth + 1));
+            }
         }
 
-        Limb { length, thickness, joints, children }
+        Limb {
+            length,
+            thickness,
+            joints,
+            children,
+        }
     }
 
     pub fn serialize_into(&self, data: &mut Vec<u8>) {

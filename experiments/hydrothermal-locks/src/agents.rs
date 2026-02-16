@@ -80,8 +80,10 @@ impl LockManager {
                     }
 
                     // Wander
-                    agent.pos +=
-                        vec2(rand::gen_range(-10.0f32, 10.0f32), rand::gen_range(-10.0f32, 10.0f32)) * dt;
+                    agent.pos += vec2(
+                        rand::gen_range(-10.0f32, 10.0f32),
+                        rand::gen_range(-10.0f32, 10.0f32),
+                    ) * dt;
                 }
 
                 AgentState::Seeking => {
