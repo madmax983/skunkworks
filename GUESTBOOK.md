@@ -60,12 +60,17 @@
 - **Status:** Execution confirmed. The specimen failed to adapt. Documentation void proved fatal.
 - **Note:** Eyes did not open. Returned to the void.
 
-### [Concentration Level: EVAPORATING] - Location: experiments/heap-market
+### [Concentration Level: EVAPORATING] - Location: graveyard/heap-market
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemnation mark placed. Redundancy detected. The market is saturated.
-- **Note:** Grace period: 24h. Evolve or be liquidated.
+- **Status:** Execution confirmed. The specimen failed to adapt. Documentation void proved fatal.
+- **Note:** Biomass returned to the void.
 
 ### [Concentration Level: FRESH] - Location: experiments/myco-reaper
 - **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
 - **Status:** The spores are settling. The Reaper is awake. Garbage collection is now a season.
 - **Note:** Moonshot: Fungal Decomposition + Garbage Collection Algorithms.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/kinetic-folds
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemnation mark placed.
+- **Note:** Grace period: 24h. Documentation Void.
