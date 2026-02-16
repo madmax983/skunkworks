@@ -1029,3 +1029,17 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: The visual appearance of the code is deterministically tied to its function (via hash-seeded procedural generation).
 - **Status**: experiments/chimera-runes
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### mechanical-integrator
+- **Parents**: Mechanical Calculator + Floating Point Arithmetic
+- **Concept**: Analog computation simulation using kinematic constraints to solve differential equations.
+- **Novel trait**: Solving differential equations via mechanical linkage logic.
+- **Status**: experiments/mechanical-integrator
+- **Evaluation**: Compiles. Reusable `Integrator` and `Differential` structs found.
+
+### mechanical-market
+- **Parents**: market-sim + mechanical-integrator
+- **Concept**: Analog High Frequency Trading where Bids and Asks are physical torques driving a Differential gear.
+- **Novel trait**: Mechanical Price Discovery. Visualizing market volatility as angular momentum.
+- **Status**: experiments/mechanical-market
+- **Evaluation**: Compiles. Differential logic operational.

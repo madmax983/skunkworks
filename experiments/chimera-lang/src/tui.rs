@@ -4447,6 +4447,17 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             }
 
             // Highlight cursor
+            #[cfg(feature = "nova")]
+            {
+                let biome = vm.biome_grid[y][x];
+                let (br, bg, bb) = biome.color();
+                if (br, bg, bb) != (0, 0, 0) {
+                    if style.bg.is_none() {
+                        style = style.bg(Color::Rgb(br, bg, bb));
+                    }
+                }
+            }
+
             if app_state.grid_cursor == (x, y) {
                 style = style.add_modifier(Modifier::REVERSED);
             }
@@ -6871,7 +6882,7 @@ fn render_topology(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         map_lines.push(Line::from(spans));
     }
     let map = Paragraph::new(map_lines)
-        .block(Block::default().borders(Borders::ALL).title("Topology Map"));
+        .block(Block::default().borders(Borders::ALL).title(format!("Topology Map ({:?})", vm.topology)));
     f.render_widget(map, chunks[1]);
 }
 

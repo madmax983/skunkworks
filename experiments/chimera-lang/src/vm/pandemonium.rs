@@ -122,6 +122,38 @@ pub fn apply_storm(vm: &mut ChimeraVM, strand_idx: usize, gene_idx: usize, radiu
     }
 }
 
+/// Targeted mutation: Replaces occurrences of `from` OpCode with `to` OpCode in the target strand.
+/// `probability` determines the chance of replacement for each occurrence (0.0 to 1.0).
+pub fn apply_mutagen(
+    vm: &mut ChimeraVM,
+    strand_idx: usize,
+    from: OpCode,
+    to: OpCode,
+    probability: f64,
+) {
+    if strand_idx < vm.dna.helix.strands.len() {
+        let strand = &mut vm.dna.helix.strands[strand_idx];
+        let mut rng = rand::thread_rng();
+        let mut replacements = 0;
+
+        for gene in &mut strand.genes {
+            if gene.op == from {
+                if rng.gen_bool(probability.clamp(0.0, 1.0)) {
+                    gene.op = to.clone();
+                    replacements += 1;
+                }
+            }
+        }
+
+        if replacements > 0 {
+            vm.output.push(format!(
+                "MUTAGEN: Replaced {} occurrences of {} with {} in strand {}",
+                replacements, from, to, strand_idx
+            ));
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -173,6 +205,19 @@ mod tests {
         // Only index 2 left (Push 3)
         if let Nucleotide::Number(n) = &vm.dna.helix.strands[0].genes[0].args[0] {
             assert_eq!(*n, 3);
+        }
+    }
+
+    #[test]
+    fn test_mutagen() {
+        let mut vm = make_vm();
+        // Strand 0 has [Push(1), Push(2), Push(3)]
+
+        // Replace Push with Nop
+        apply_mutagen(&mut vm, 0, OpCode::Push, OpCode::Nop, 1.0);
+
+        for gene in &vm.dna.helix.strands[0].genes {
+            assert_eq!(gene.op, OpCode::Nop);
         }
     }
 }

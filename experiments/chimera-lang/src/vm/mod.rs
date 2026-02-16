@@ -120,8 +120,6 @@ pub mod nova_savant;
 #[cfg(feature = "nova")]
 pub mod nova_arena;
 #[cfg(feature = "nova")]
-pub mod nova_astrology;
-#[cfg(feature = "nova")]
 pub mod nova_attractor;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -191,8 +189,6 @@ mod nova_fractal_test;
 pub mod nova_functional;
 #[cfg(feature = "nova")]
 pub mod nova_garden;
-#[cfg(feature = "nova")]
-pub mod nova_gastronomy;
 #[cfg(feature = "nova")]
 pub mod nova_genetics;
 #[cfg(feature = "nova")]
@@ -659,8 +655,6 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub piet_state: Option<piet::PietState>,
     #[cfg(feature = "nova")]
-    pub sky: nova_astrology::Sky,
-    #[cfg(feature = "nova")]
     pub chord_registry: HashMap<Vec<String>, usize>,
     #[cfg(feature = "nova")]
     pub cartography_grid: Vec<Vec<Value>>,
@@ -990,8 +984,6 @@ impl ChimeraVM {
             dialects: HashMap::new(),
             #[cfg(feature = "nova")]
             piet_state: None,
-            #[cfg(feature = "nova")]
-            sky: nova_astrology::Sky::new(),
             #[cfg(feature = "nova")]
             chord_registry: HashMap::new(),
             #[cfg(feature = "nova")]
@@ -1982,7 +1974,21 @@ impl ChimeraVM {
             self.context_loc,
         );
 
-        self.energy -= 1;
+        #[cfg(feature = "nova")]
+        {
+            let (cy, cx) = self.context_loc;
+            let modifier = self.biome_grid[cy][cx].energy_cost_modifier();
+            let base_cost = 1.0 * modifier;
+            let int_cost = base_cost.floor() as i64;
+            let prob = base_cost - int_cost as f64;
+            let mut rng = rand::thread_rng();
+            let extra = if rng.gen_bool(prob) { 1 } else { 0 };
+            self.energy -= (int_cost + extra);
+        }
+        #[cfg(not(feature = "nova"))]
+        {
+            self.energy -= 1;
+        }
 
         // Decay execution trail
         for val in self.execution_trail.iter_mut() {
@@ -2025,7 +2031,6 @@ impl ChimeraVM {
 
         #[cfg(feature = "nova")]
         if !time_frozen {
-            self.sky.tick();
             let manifestation = self.egregore.tick();
             match manifestation {
                 nova_egregore::Manifestation::Smite => {
@@ -2157,7 +2162,12 @@ impl ChimeraVM {
 
         if !time_frozen && self.chaos_mode {
             let mut rng = rand::thread_rng();
-            if rng.gen_bool(0.1) {
+            #[cfg(feature = "nova")]
+            let chance = 0.1 * self.biome_grid[self.context_loc.0][self.context_loc.1].mutation_rate();
+            #[cfg(not(feature = "nova"))]
+            let chance = 0.1;
+
+            if rng.gen_bool(chance.clamp(0.0, 1.0)) {
                 self.mutate();
             }
         }
@@ -2808,7 +2818,7 @@ impl ChimeraVM {
     ) -> Option<(usize, usize)> {
         match op {
             OpCode::Push => self.exec_stack_op(op, args),
-            OpCode::Add | OpCode::Sub | OpCode::Mul | OpCode::Div => {
+            OpCode::Add | OpCode::Sub | OpCode::Mul | OpCode::Div | OpCode::Eq | OpCode::Gt | OpCode::Lt => {
                 self.exec_math_op(op);
                 None
             }
@@ -2948,12 +2958,6 @@ impl ChimeraVM {
             | OpCode::Cipher
             | OpCode::Pangram => nova::exec_nova_op(self, op, args),
 
-            #[cfg(feature = "nova")]
-            OpCode::Cook | OpCode::Spice | OpCode::Savor | OpCode::Cultivate | OpCode::Banquet => {
-                nova::exec_nova_op(self, op, args)
-            }
-
-            #[cfg(feature = "nova")]
             OpCode::Transposon => self.exec_transposon(),
 
             #[cfg(feature = "nova")]
@@ -3114,9 +3118,6 @@ impl ChimeraVM {
             | OpCode::Entropy
             | OpCode::Stabilize
             | OpCode::Disintegrate
-            | OpCode::Gaze
-            | OpCode::Starfall
-            | OpCode::Align
             | OpCode::Tsunami
             | OpCode::Dry
             | OpCode::Harmonize
@@ -3153,6 +3154,30 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             OpCode::Weave | OpCode::Unravel => nova_weaver::exec_weave_op(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Mutagen => {
+                if self.stack.len() >= 4 {
+                    let to_val = self.stack.pop().unwrap();
+                    let from_val = self.stack.pop().unwrap();
+                    let prob_val = self.stack.pop().unwrap();
+                    let target_val = self.stack.pop().unwrap();
+
+                    if let (Value::Str(to_s), Value::Str(from_s), Value::Int(prob_int), Value::Int(target_idx)) = (to_val, from_val, prob_val, target_val) {
+                        if let (Ok(to_op), Ok(from_op)) = (to_s.parse::<OpCode>(), from_s.parse::<OpCode>()) {
+                            let prob = (prob_int as f64) / 100.0;
+                            pandemonium::apply_mutagen(self, target_idx as usize, from_op, to_op, prob);
+                        } else {
+                             self.output.push("Error: Invalid OpCode string for Mutagen".to_string());
+                        }
+                    } else {
+                        self.output.push("Error: Type mismatch for Mutagen".to_string());
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow for Mutagen".to_string());
+                }
+                None
+            }
 
             #[cfg(feature = "nova")]
             OpCode::Scavenge => self.exec_scavenge_op(),
@@ -3327,7 +3352,8 @@ impl ChimeraVM {
             | OpCode::Divinate
             | OpCode::Seek
             | OpCode::Manifest
-            | OpCode::Unify => oracle::exec_oracle_op(self, op, args),
+            | OpCode::Unify
+            | OpCode::PrologCall => oracle::exec_oracle_op(self, op, args),
 
             #[cfg(feature = "resonance")]
             OpCode::Pluck | OpCode::Oscillate | OpCode::Hear | OpCode::Scream => {
@@ -3703,6 +3729,8 @@ impl ChimeraVM {
                 OpCode::Sub => OpCode::Add,
                 OpCode::Mul => OpCode::Div,
                 OpCode::Div => OpCode::Mul,
+                OpCode::Gt => OpCode::Lt,
+                OpCode::Lt => OpCode::Gt,
                 _ => op,
             }
         } else {
@@ -3712,6 +3740,34 @@ impl ChimeraVM {
         let effective_op = op;
 
         match effective_op {
+            OpCode::Eq => {
+                if self.stack.len() >= 2 {
+                    let b = self.stack.pop().unwrap();
+                    let a = self.stack.pop().unwrap();
+                    self.stack.push(Value::Int(if a == b { 1 } else { 0 }));
+                } else {
+                    self.output.push("Error: Stack underflow".to_string());
+                }
+            }
+            OpCode::Gt | OpCode::Lt => {
+                if self.stack.len() >= 2 {
+                    let b = self.stack.pop().unwrap();
+                    let a = self.stack.pop().unwrap();
+                    match (a, b) {
+                        (Value::Int(ia), Value::Int(ib)) => {
+                            let res = match effective_op {
+                                OpCode::Gt => ia > ib,
+                                OpCode::Lt => ia < ib,
+                                _ => false,
+                            };
+                            self.stack.push(Value::Int(if res { 1 } else { 0 }));
+                        }
+                        _ => self.output.push("Error: Type mismatch".to_string()),
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow".to_string());
+                }
+            }
             OpCode::Add => {
                 // Check for string concatenation
                 if self.stack.len() >= 2 {

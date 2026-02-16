@@ -1,0 +1,9 @@
+[package]
+name = "sandpile-scheduler"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rayon = "1.8"
+rand = { workspace = true }

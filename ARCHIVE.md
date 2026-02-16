@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
 - **kinetic-folds**: Documentation Void. Generic XPBD implementation. Lacks persona alignment. Grace period: 24h.
+- **repo-fossil**: Documentation Void. Redundant with `git-ghost`/`git-rogue`. Unused code warnings. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -13,6 +14,7 @@
 
 ## Executed
 - **heap-market**: Specimen executed. Documentation void. Redundant with `swap-meet`. Generic implementation. Failed to improve during grace period. Moved to graveyard.
+- **heap-market**: Documentation Void. Redundant with `swap-meet`. Generic implementation. Grace period expired. Moved to graveyard.
 - **foveated-code**: Specimen executed. Documentation void. Workspace exclusion. Generic TUI. Failed to improve during grace period. Moved to graveyard.
 - **net-groove**: Specimen executed. Documentation void. Logic rot. Grace period expired. Moved to graveyard.
 - **magnetic-echo**: Specimen executed. Terminal compilation failure (workspace exclusion). Documentation void. Redundant with `ferrous-sector`. Grace period expired. Moved to graveyard.
