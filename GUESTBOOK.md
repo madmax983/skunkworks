@@ -64,6 +64,11 @@
 - **Status:** Audio sync established. Polymeters running at 120 BPM.
 - **Note:** Recombination successful. Beat Cortex x Thread Phase.
 
+### [Concentration Level: FRESH] - Location: experiments/mechanical-market
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The gears are turning. Bids and Asks are grinding against each other.
+- **Note:** Recombination successful. Market Sim x Mechanical Integrator.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/hive-mind-dependencies
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Pheromone trails mapped. Dependency graph traversed.
