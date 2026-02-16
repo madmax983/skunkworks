@@ -3327,7 +3327,8 @@ impl ChimeraVM {
             | OpCode::Divinate
             | OpCode::Seek
             | OpCode::Manifest
-            | OpCode::Unify => oracle::exec_oracle_op(self, op, args),
+            | OpCode::Unify
+            | OpCode::PrologCall => oracle::exec_oracle_op(self, op, args),
 
             #[cfg(feature = "resonance")]
             OpCode::Pluck | OpCode::Oscillate | OpCode::Hear | OpCode::Scream => {
