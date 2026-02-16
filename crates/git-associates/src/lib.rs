@@ -32,6 +32,7 @@
 //! }
 //! ```
 
+#[doc(hidden)]
 pub mod model;
 
 use anyhow::{Context, Result};
@@ -205,6 +206,12 @@ impl GitModel {
         })
     }
 
+    /// Internal helper to iterate over a diff and extract file statistics and changes.
+    ///
+    /// This function walks through every delta in the diff (which corresponds to a changed file).
+    /// For each delta, it creates a `Patch` to inspect the line-by-line changes.
+    ///
+    /// It aggregates total insertions and deletions and constructs a list of `FileChange` objects.
     fn process_diff_internal(
         &self,
         diff: &git2::Diff,
@@ -215,11 +222,13 @@ impl GitModel {
         let mut total_deletions = 0;
 
         for i in 0..diff.deltas().len() {
+            // A Patch object lets us examine the hunks and lines of a delta
             let Ok(Some(patch)) = git2::Patch::from_diff(diff, i) else {
                 continue;
             };
 
             let delta = patch.delta();
+            // Try to get the new path, fallback to old path (e.g., for deletions)
             let path = delta
                 .new_file()
                 .path()
@@ -233,6 +242,7 @@ impl GitModel {
                 .unwrap_or("")
                 .to_string();
 
+            // line_stats returns (context, insertions, deletions)
             let stats = patch.line_stats().unwrap_or((0, 0, 0));
             let insertions = stats.1;
             let deletions = stats.2;
@@ -259,9 +269,14 @@ impl GitModel {
         Ok((total_insertions, total_deletions, files))
     }
 
+    /// Extracts detailed hunk information from a patch.
+    ///
+    /// A Hunk is a contiguous block of changes in a file. This function iterates
+    /// through all hunks and their lines, classifying them as Added, Removed, or Context.
     fn extract_hunks(patch: &git2::Patch) -> Vec<Hunk> {
         let mut hunks = Vec::new();
         for h_idx in 0..patch.num_hunks() {
+            // Get the hunk header info and the number of lines in this hunk
             let Ok((hunk_info, lines_count)) = patch.hunk(h_idx) else {
                 continue;
             };
@@ -271,6 +286,8 @@ impl GitModel {
                     let content = std::str::from_utf8(line.content())
                         .unwrap_or("")
                         .to_string();
+                    // Origin character indicates the type of change:
+                    // '+' = Addition, '-' = Deletion, ' ' = Context
                     match line.origin() {
                         '+' => hunk_lines.push(LineChange::Added(content)),
                         '-' => hunk_lines.push(LineChange::Removed(content)),
