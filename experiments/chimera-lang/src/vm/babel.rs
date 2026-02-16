@@ -374,6 +374,72 @@ pub fn exec_babel_op(
                     .push("Error: Stack underflow for BabelLive".to_string());
             }
         }
+        OpCode::SelfRewrite => {
+            if let Some(grammar) = vm.stack.pop() {
+                vm.active_grammar = grammar;
+                vm.output
+                    .push("SELF_REWRITE: Active Grammar Updated".to_string());
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for SelfRewrite".to_string());
+            }
+        }
+        OpCode::Perceive => {
+            if let Some(Value::Int(len)) = vm.stack.pop() {
+                if len > 0 {
+                    let max_len = (len as usize).min(crate::vm::GRID_SIZE * crate::vm::GRID_SIZE);
+                    let (y, x) = vm.context_loc;
+                    let mut input = String::new();
+
+                    for k in 0..max_len {
+                        if let Some((ny, nx)) = vm.normalize_coords(y as i64, x as i64 + k as i64) {
+                            let val = &vm.grid[ny][nx];
+                            match val {
+                                Value::Str(s) => input.push_str(s),
+                                Value::Int(n) => input.push_str(&n.to_string()),
+                                _ => input.push(' '),
+                            }
+                        }
+                    }
+
+                    // Clone active grammar to avoid borrow issues with vm
+                    let grammar = vm.active_grammar.clone();
+                    match run_parser(&grammar, &input) {
+                        Ok((cst, consumed)) => {
+                            if consumed > 0 {
+                                let handler_idx = vm.ip.0;
+                                let new_idx = compile_cst(vm, cst, handler_idx);
+
+                                if vm.call_stack.len() < crate::vm::MAX_CALL_STACK_DEPTH {
+                                    vm.call_stack.push((vm.ip.0, vm.ip.1 + 1));
+                                    vm.stack.push(Value::Int(1)); // Success
+                                    vm.output.push(format!(
+                                        "PERCEIVE: Parsed '{}' -> Strand {}",
+                                        input[..consumed].to_string(),
+                                        new_idx
+                                    ));
+                                    return Some((new_idx, 0));
+                                } else {
+                                    vm.output.push("PERCEIVE: Call stack full".to_string());
+                                    vm.stack.push(Value::Int(0));
+                                }
+                            } else {
+                                vm.stack.push(Value::Int(0)); // Fail
+                            }
+                        }
+                        Err(_) => {
+                            vm.stack.push(Value::Int(0)); // Fail
+                        }
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Perceive length must be > 0".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for Perceive".to_string());
+            }
+        }
         _ => {}
     }
     None

@@ -197,7 +197,7 @@ pub fn exec_splash(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                         "Elixir" => {
                             for (tx, ty) in targets {
                                 if let Value::Int(n) = &mut vm.grid[ty][tx] {
-                                    n = n.saturating_add(potency);
+                                    *n = n.saturating_add(potency);
                                 }
                             }
                             vm.energy = vm.energy.saturating_add(potency);

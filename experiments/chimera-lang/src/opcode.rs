@@ -2226,6 +2226,20 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     BabelLive,
 
+    /// **[Babel]** Rewrites the active grid-perception grammar.
+    ///
+    /// **Stack:** `[ ..., grammar_junction ] -> [ ... ]`
+    /// **Effect:** Sets the VM's active grammar for Perception.
+    #[cfg(feature = "nova")]
+    SelfRewrite,
+
+    /// **[Babel]** Perceives the grid as code using the active grammar.
+    ///
+    /// **Stack:** `[ ..., len ] -> [ ..., success_bool ]`
+    /// **Effect:** Reads `len` cells from grid at current location, parses with Active Grammar, compiles, and calls the result.
+    #[cfg(feature = "nova")]
+    Perceive,
+
     // Ballistics Features (Nova)
     /// **[Nova]** Fires a projectile with velocity and power.
     ///
