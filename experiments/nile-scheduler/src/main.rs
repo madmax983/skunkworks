@@ -141,18 +141,27 @@ fn ui(f: &mut Frame, app: &App) {
         ])
         .split(f.area());
 
+    render_header(f, chunks[0]);
+    render_nile_bar(f, chunks[1], &app.scheduler);
+    render_process_list(f, chunks[2], &app.scheduler);
+    render_status(f, chunks[3], app);
+}
+
+fn render_header(f: &mut Frame, area: Rect) {
     let title = Paragraph::new("𓀀 THE NILE SCHEDULER 𓀀")
         .style(Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))
         .alignment(Alignment::Center)
         .block(Block::default().borders(Borders::ALL));
-    f.render_widget(title, chunks[0]);
+    f.render_widget(title, area);
+}
 
+fn render_nile_bar(f: &mut Frame, area: Rect, scheduler: &Scheduler) {
     // The Nile Bar Visualization
-    let width = chunks[1].width as u64;
+    let width = area.width as u64;
 
     let mut spans = Vec::new();
 
-    for p in &app.scheduler.allocated {
+    for p in &scheduler.allocated {
         for &d in &p.allocated.parts {
             let fraction = 1.0 / (d as f64);
             let block_len_f = (width as f64 - 2.0) * fraction;
@@ -173,38 +182,49 @@ fn ui(f: &mut Frame, app: &App) {
     }
 
     // Remaining free space
-    let free_ratio = app.scheduler.free_space.to_ratio();
+    let free_ratio = scheduler.free_space.to_ratio();
     if *free_ratio.numer() > 0 {
-         let free_frac = (*free_ratio.numer() as f64) / (*free_ratio.denom() as f64);
-         let free_len_f = (width as f64 - 2.0) * free_frac;
-         let free_len = free_len_f.round() as usize;
-         let s = "░".repeat(free_len);
-         spans.push(Span::styled(s, Style::default().fg(Color::DarkGray)));
+        let free_frac = (*free_ratio.numer() as f64) / (*free_ratio.denom() as f64);
+        let free_len_f = (width as f64 - 2.0) * free_frac;
+        let free_len = free_len_f.round() as usize;
+        let s = "░".repeat(free_len);
+        spans.push(Span::styled(s, Style::default().fg(Color::DarkGray)));
     }
 
     let nile = Paragraph::new(Line::from(spans))
         .block(Block::default().title("Resource Allocation (The Nile)").borders(Borders::ALL));
-    f.render_widget(nile, chunks[1]);
+    f.render_widget(nile, area);
+}
 
-
-    // List of Processes
-    let items: Vec<ListItem> = app.scheduler.allocated.iter().rev().take(10).map(|p| {
-        let content = format!("Proc #{}: {} -> {}", p.id, p.demand, p.allocated);
-        ListItem::new(content)
-    }).collect();
+fn render_process_list(f: &mut Frame, area: Rect, scheduler: &Scheduler) {
+    let items: Vec<ListItem> = scheduler
+        .allocated
+        .iter()
+        .rev()
+        .take(10)
+        .map(|p| {
+            let content = format!("Proc #{}: {} -> {}", p.id, p.demand, p.allocated);
+            ListItem::new(content)
+        })
+        .collect();
 
     let list = List::new(items)
         .block(Block::default().title("Scribe's Log").borders(Borders::ALL));
-    f.render_widget(list, chunks[2]);
+    f.render_widget(list, area);
+}
 
-    // Status / Input
+fn render_status(f: &mut Frame, area: Rect, app: &App) {
     let status_text = if app.input_mode {
         format!("Input (n/d): {}_", app.input_buffer)
     } else {
         app.message.clone()
     };
     let status = Paragraph::new(status_text)
-        .style(if app.input_mode { Style::default().fg(Color::Yellow) } else { Style::default() })
+        .style(if app.input_mode {
+            Style::default().fg(Color::Yellow)
+        } else {
+            Style::default()
+        })
         .block(Block::default().title("Status").borders(Borders::ALL));
-    f.render_widget(status, chunks[3]);
+    f.render_widget(status, area);
 }
