@@ -1002,6 +1002,12 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chaos,
 
+    /// **[Mad Science]** Replaces occurrences of an OpCode with another with a given probability.
+    ///
+    /// **Stack:** `[ ..., target_strand, probability, from_op_str, to_op_str ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Mutagen,
+
     /// **[Nova]** Triggers a Cambrian Explosion (Mass Speciation).
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`
