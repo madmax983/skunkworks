@@ -1,9 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **social-spores**: Generic Implementation. Boids/Particles simulation with weak "social" metaphor. Redundant with `luminous-flock`. Grace period: 24h.
-- **fluid-specter**: Documentation Void. Generic implementation (Jos Stam / Standard FFT). Redundant with `hydro-soundscapes`. Grace period: 24h.
-- **git-etymologist**: Documentation Void. Deceptive naming (phonology = edit distance). Redundant with `git-cantata`. Grace period: 24h.
-- **kinetic-folds**: Documentation Void. Generic XPBD implementation. Lacks persona alignment. Grace period: 24h.
-- **repo-fossil**: Documentation Void. Redundant with `git-ghost`/`git-rogue`. Unused code warnings. Grace period: 24h.
+- **syntax-evolution**: Documentation Void. Generic toy grammar implementation. Redundant with `codex-vulgaris`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -16,6 +12,10 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **repo-fossil**: Specimen executed. Documentation Void. Redundant with `git-ghost`/`git-rogue`. Failed to improve during grace period. Moved to graveyard.
+- **kinetic-folds**: Specimen executed. Documentation Void. Generic XPBD implementation. Failed to improve during grace period. Moved to graveyard.
+- **git-etymologist**: Specimen executed. Documentation Void. Deceptive naming. Failed to improve during grace period. Moved to graveyard.
+- **fluid-specter**: Specimen executed. Documentation Void. Generic implementation. Redundant with `hydro-soundscapes`. Failed to improve during grace period. Moved to graveyard.
 - **heap-market**: Specimen executed. Documentation void. Redundant with `swap-meet`. Generic implementation. Failed to improve during grace period. Moved to graveyard.
 - **heap-market**: Specimen executed. Documentation Void. Redundant with `swap-meet`. Failed to improve during grace period. Moved to graveyard.
 - **heap-market**: Specimen executed. Documentation void. Redundant with `swap-meet`. Generic implementation. Failed to improve during grace period. Moved to graveyard.
