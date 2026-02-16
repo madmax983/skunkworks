@@ -138,6 +138,7 @@ members = [
     "experiments/spqr-market", "experiments/celestial-rhythms",
     "experiments/biochemical-soundscapes", "experiments/sys-dance", "experiments/hydrothermal-locks",
     "experiments/hydro-flock", "experiments/wasm-runes",
+    "experiments/hydro-soundscapes",
 ]
 resolver = "2"
 

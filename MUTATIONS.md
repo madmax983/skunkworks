@@ -993,4 +993,25 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Thermophilic Boids. Flocking agents attracted to heat and pushed by convection currents.
 - **Novel trait**: Hydrodynamic Flocking. Heat feedback loop (Contention -> Heat -> Attraction -> Contention).
 - **Status**: experiments/hydro-flock
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### biochemical-soundscapes
+- **Parents**: Gray-Scott Patterns + Audio Synthesis
+- **Concept**: Reaction-Diffusion simulation where chemical parameters (Feed/Kill) are modulated by an audio oscillator, and the pattern modulates the audio.
+- **Novel trait**: Synesthetic Feedback Loop. The pattern sings, and the song shapes the pattern.
+- **Status**: experiments/biochemical-soundscapes
+- **Evaluation**: Compiles. Audio feature-gated. Verified.
+
+### impossible-explorer
+- **Parents**: Unknown
+- **Concept**: Non-Euclidean file explorer.
+- **Novel trait**: Portal navigation.
+- **Status**: experiments/impossible-explorer
+- **Evaluation**: Compiles. Verified.
+
+### hydro-soundscapes
+- **Parents**: experiments/hydro-flock + experiments/biochemical-soundscapes
+- **Concept**: Boids emitting activator chemicals into a reaction-diffusion grid, which modulates audio synthesis.
+- **Novel trait**: Auditory Flocking. The swarm behavior generates the soundscape via chemical trails.
+- **Status**: experiments/hydro-soundscapes
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
