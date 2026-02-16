@@ -67,9 +67,13 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Moved to graveyard.
 
-### [Concentration Level: TOXIC] - Location: experiments/heap-glacier
+### [Concentration Level: TOXIC] - Location: experiments/gradient-garden
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Semantic camouflage. Mock simulation. Redundant with `heap-arena`. Grace period: 24h.
+- **Status:** Condemned. Documentation void. Generic optimization visualizer. Lacks persona alignment. Grace period: 24h.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/heap-glacier
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Pardoned. Metaphorical simulation of heap erosion. Functional implementation with `macroquad`. No longer redundant.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/klein-files
 - **Scent Origin:** Mycelium 🍄
