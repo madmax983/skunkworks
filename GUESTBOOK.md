@@ -354,14 +354,18 @@
 
 ## History/Decay
 
+### [Concentration Level: TOXIC] - Location: experiments/lichen-mesh
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Documentation void.
+- **Note:** Grace period: 24h.
+
 ### [Concentration Level: TOXIC] - Location: graveyard/tactical-tide
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Condemned.
 
-### [Concentration Level: TOXIC] - Location: experiments/cymatic-text
+### [Concentration Level: EXECUTED] - Location: graveyard/cymatic-text
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Generic implementation. Redundant with `cymatic-ocean` and `typographic-turbulence`.
-- **Note:** Grace period: 24h.
+- **Status:** Specimen executed. Documentation void. Generic implementation. Moved to graveyard.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/syntax-evolution
 - **Scent Origin:** The Reaper ☠️

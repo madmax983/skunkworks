@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **cymatic-text**: Documentation Void. Generic implementation. Redundant with `cymatic-ocean` and `typographic-turbulence`. Grace period: 24h.
+- **lichen-mesh**: Documentation Void. Generic CA implementation. Compiles but lacks purpose. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **cymatic-text**: Specimen executed. Documentation Void. Generic implementation. Redundant with `cymatic-ocean`. Grace period expired. Moved to graveyard.
 - **penrose-rogue**: Specimen executed. Documentation Void. Generic walker implementation. Failed to improve during grace period. Moved to graveyard.
 - **syntax-evolution**: Specimen executed. Documentation Void. Generic toy grammar. Failed to improve during grace period. Moved to graveyard.
 - **repo-fossil**: Specimen executed. Documentation Void. Redundant with `git-ghost`/`git-rogue`. Failed to improve during grace period. Moved to graveyard.

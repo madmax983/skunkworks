@@ -1,76 +1,46 @@
 import os
-import sys
 
-def scan_experiments():
-    root = "experiments"
+def check_experiment(path):
+    has_readme = os.path.exists(os.path.join(path, "README.md"))
+    has_cargo = os.path.exists(os.path.join(path, "Cargo.toml"))
+    file_count = 0
+    for _, _, files in os.walk(path):
+        file_count += len(files)
+
+    return {
+        "path": path,
+        "has_readme": has_readme,
+        "has_cargo": has_cargo,
+        "file_count": file_count
+    }
+
+def main():
+    experiments_dir = "experiments"
     results = []
-
-    if not os.path.exists(root):
-        print(f"Error: {root} directory not found.")
+    if not os.path.exists(experiments_dir):
+        print("No experiments directory found.")
         return
 
-    for experiment in os.listdir(root):
-        exp_path = os.path.join(root, experiment)
-        if not os.path.isdir(exp_path):
-            continue
+    for name in os.listdir(experiments_dir):
+        path = os.path.join(experiments_dir, name)
+        if os.path.isdir(path):
+            results.append(check_experiment(path))
 
-        score = 0
-        notes = []
+    # Sort by health (worst first)
+    # Penalize missing README, missing Cargo, low file count
+    def score(e):
+        s = 0
+        if e["has_readme"]: s += 10
+        if e["has_cargo"]: s += 10
+        s += min(e["file_count"], 10) # Cap file count contribution
+        return s
 
-        # Check README
-        readme_path = os.path.join(exp_path, "README.md")
-        if os.path.exists(readme_path):
-            score += 20
-        else:
-            notes.append("No README")
+    results.sort(key=score)
 
-        # Check Cargo.toml
-        cargo_path = os.path.join(exp_path, "Cargo.toml")
-        if os.path.exists(cargo_path):
-            score += 10
-        else:
-            score -= 50
-            notes.append("No Cargo.toml")
-
-        # Check Source Code
-        src_path = os.path.join(exp_path, "src")
-        main_rs = os.path.join(src_path, "main.rs")
-        lib_rs = os.path.join(src_path, "lib.rs")
-
-        has_code = False
-        code_size = 0
-
-        if os.path.exists(main_rs):
-            has_code = True
-            code_size = os.path.getsize(main_rs)
-        elif os.path.exists(lib_rs):
-            has_code = True
-            code_size = os.path.getsize(lib_rs)
-
-        if has_code:
-            # Heuristic: < 500 bytes is likely a stub
-            if code_size < 500:
-                score -= 10
-                notes.append(f"Small code ({code_size} bytes)")
-            else:
-                score += min(code_size // 100, 20) # Max 20 points for size
-        else:
-            score -= 20
-            notes.append("No src/main.rs or src/lib.rs")
-
-        results.append({
-            "name": experiment,
-            "score": score,
-            "notes": ", ".join(notes)
-        })
-
-    # Sort by score ascending (worst first)
-    results.sort(key=lambda x: x["score"])
-
-    print(f"{'Name':<30} | {'Score':<5} | {'Notes'}")
+    print(f"{'Path':<40} {'README':<10} {'Cargo':<10} {'Files':<10} {'Score':<10}")
     print("-" * 80)
-    for r in results[:15]:
-        print(f"{r['name']:<30} | {r['score']:<5} | {r['notes']}")
+    for res in results[:20]: # Show top 20 worst
+        print(f"{res['path']:<40} {str(res['has_readme']):<10} {str(res['has_cargo']):<10} {res['file_count']:<10} {score(res):<10}")
 
 if __name__ == "__main__":
-    scan_experiments()
+    main()
