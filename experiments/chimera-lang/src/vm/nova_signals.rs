@@ -332,7 +332,8 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 'E' => read_write_directional(vm, y, x, 0, 1, 0, -1, &mut ctx),
                 'W' => read_write_directional(vm, y, x, 0, -1, 0, 1, &mut ctx),
                 'A' | 'a' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| a.wrapping_add(b)),
-                'B' | 'b' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| a.wrapping_sub(b)),
+                'B' | 'b' => exec_babel_signal(vm, y, x, signal, &mut ctx),
+                's' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| a.wrapping_sub(b)),
                 'D' | 'd' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| {
                     if b != 0 {
                         a.wrapping_div(b)
@@ -365,7 +366,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 #[cfg(not(feature = "oracle"))]
                 '?' => exec_random(vm, y, x, &mut ctx), // Fallback
                 'V' => exec_voltage(vm, y, x, signal, &mut ctx),
-                'E' | 'e' => exec_electrode(vm, y, x, signal, &mut ctx),
+                'e' => exec_electrode(vm, y, x, signal, &mut ctx),
                 '%' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| {
                     if b != 0 {
                         a.rem_euclid(b)
@@ -1518,5 +1519,40 @@ fn exec_omega(vm: &ChimeraVM, y: usize, x: usize, _signal: u8, ctx: &mut SignalC
             re: Some(re + 0.1),
             im: Some(im - 0.1),
         });
+    }
+}
+
+fn exec_babel_signal(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // B: Babel Live Parse
+    // Reads Input string from North neighbor
+    // Triggers parsing starting from East neighbor
+
+    if let Some((ny, nx)) = vm.normalize_coords(y as i64 - 1, x as i64) {
+        let input_str = match &vm.grid[ny][nx] {
+            Value::Str(s) => s.clone(),
+            Value::Int(n) => n.to_string(),
+            _ => String::new(),
+        };
+
+        if !input_str.is_empty() {
+             // Target start is East
+             if let Some((ey, ex)) = vm.normalize_coords(y as i64, x as i64 + 1) {
+                 // Push args for BabelLive: [input, x, y]
+                 // Note: BabelLive expects [input, x, y] (top is Y, then X, then Input?)
+                 // Let's check babel.rs again.
+                 // let input_val = vm.stack.pop().unwrap();
+                 // let x_val = vm.stack.pop().unwrap();
+                 // let y_val = vm.stack.pop().unwrap();
+                 // So Stack Top is Input. Order pushed: Y, X, Input.
+
+                 ctx.executions.push((OpCode::Push, vec![Nucleotide::Number(ey as i64)]));
+                 ctx.executions.push((OpCode::Push, vec![Nucleotide::Number(ex as i64)]));
+                 ctx.executions.push((OpCode::Push, vec![Nucleotide::String(input_str)]));
+                 ctx.executions.push((OpCode::BabelLive, vec![]));
+             }
+        }
     }
 }

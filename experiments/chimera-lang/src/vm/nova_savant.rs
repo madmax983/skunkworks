@@ -206,6 +206,61 @@ fn execute_savant_action(vm: &mut ChimeraVM, organelle: &mut Organelle, action: 
                         vm.energy = vm.energy.saturating_sub(1);
                     }
                 }
+                "orca_write" => {
+                    // orca_write(Y, X, Val)
+                    if args.len() >= 4 {
+                        let y_val = &args[1];
+                        let x_val = &args[2];
+                        let val = &args[3];
+
+                        if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
+                            if let Some((ny, nx)) = vm.normalize_coords(*y, *x) {
+                                vm.grid[ny][nx] = val.clone();
+                                vm.energy = vm.energy.saturating_sub(2);
+                                vm.output.push(format!("SAVANT: Orca write at {},{}", nx, ny));
+                            }
+                        }
+                    }
+                }
+                "circuit_place" => {
+                    // circuit_place(Type, Y, X)
+                    if args.len() >= 4 {
+                        let type_val = &args[1];
+                        let y_val = &args[2];
+                        let x_val = &args[3];
+
+                        if let (Value::Str(t), Value::Int(y), Value::Int(x)) = (type_val, y_val, x_val) {
+                            if let Some((ny, nx)) = vm.normalize_coords(*y, *x) {
+                                let comp = match t.as_str() {
+                                    "wire" => Value::Int(1),
+                                    "diode_n" => Value::Str("D:0".to_string()),
+                                    "diode_e" => Value::Str("D:1".to_string()),
+                                    "diode_s" => Value::Str("D:2".to_string()),
+                                    "diode_w" => Value::Str("D:3".to_string()),
+                                    #[cfg(feature = "elektra")]
+                                    "battery" => {
+                                        vm.voltage_grid[ny][nx] = 100.0;
+                                        vm.resistance_grid[ny][nx] = -1.0;
+                                        Value::Int(0) // Marker
+                                    },
+                                    #[cfg(feature = "elektra")]
+                                    "ground" => {
+                                        vm.voltage_grid[ny][nx] = 0.0;
+                                        vm.resistance_grid[ny][nx] = -2.0;
+                                        Value::Int(0)
+                                    },
+                                    _ => Value::Int(0)
+                                };
+
+                                if !matches!(comp, Value::Int(0)) {
+                                    vm.grid[ny][nx] = comp;
+                                }
+                                vm.energy = vm.energy.saturating_sub(5);
+                                vm.output.push(format!("SAVANT: Placed {} at {},{}", t, nx, ny));
+                            }
+                        }
+                    }
+                }
                 "execute" => {
                     // execute(OpCode, Arg) or execute(OpCode)
                     if args.len() >= 2 {
