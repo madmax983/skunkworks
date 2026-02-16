@@ -1028,7 +1028,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Visualizing Genetic Code as Magic Runes. Breeding Runes.
 - **Novel trait**: The visual appearance of the code is deterministically tied to its function (via hash-seeded procedural generation).
 - **Status**: experiments/chimera-runes
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Re-verified.
 
 ### mechanical-integrator
 - **Parents**: Mechanical Calculator + Floating Point Arithmetic
@@ -1042,4 +1042,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Analog High Frequency Trading where Bids and Asks are physical torques driving a Differential gear.
 - **Novel trait**: Mechanical Price Discovery. Visualizing market volatility as angular momentum.
 - **Status**: experiments/mechanical-market
-- **Evaluation**: Compiles. Differential logic operational.
+- **Evaluation**: Compiles. Differential logic operational. Re-verified.
+
+### hyperbolic-library
+- **Parents**: experiments/hyperbolic-raymarcher + experiments/type-terrain
+- **Concept**: An infinite labyrinth on the Poincaré Disk where the walls are text glyphs.
+- **Novel trait**: Semantic Labyrinth. Navigating a world made of words in non-Euclidean space.
+- **Status**: experiments/hyperbolic-library
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
