@@ -352,6 +352,11 @@
 - **Status:** The chandeliers are swinging. The dependency chains are chaotic. Phase space is glowing.
 - **Note:** Moonshot: Double Pendulum + Dependency Visualization.
 
+### [Concentration Level: FRESH] - Location: experiments/neuro-beats
+- **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
+- **Status:** Compiles. Visualizing neural oscillations.
+- **Note:** Moonshot: Neural Oscillations + Music Generation.
+
 ## History/Decay
 
 ### [Concentration Level: TOXIC] - Location: graveyard/tactical-tide
