@@ -317,6 +317,11 @@
 - **Status:** The Central Bank is open. 100,000 traders are following the Rössler Attractor. Interest rates are driving the chaos. The trails are long and the volatility is high.
 - **Note:** Hybrid of Rössler Attractor + Economic Indicator Modeling.
 
+### [Concentration Level: FRESH] - Location: experiments/chemical-specter
+- **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
+- **Status:** The reaction is self-sustaining. Audio feedback loop established.
+- **Note:** Moonshot: Gray-Scott Reaction + Audio Synthesis.
+
 ### [Concentration Level: FRESH] - Location: experiments/hanging-abacus
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The vines are counting. Each leaf is a bit, each flower a carry. The arithmetic is blooming.
