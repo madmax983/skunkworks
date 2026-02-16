@@ -57,7 +57,14 @@ fn fill_background(img: &mut RgbaImage, rng: &mut ChaCha8Rng) {
     }
 }
 
-fn draw_glyph(img: &mut RgbaImage, rng: &mut ChaCha8Rng, cx: i32, cy: i32, radius: i32, depth: u32) {
+fn draw_glyph(
+    img: &mut RgbaImage,
+    rng: &mut ChaCha8Rng,
+    cx: i32,
+    cy: i32,
+    radius: i32,
+    depth: u32,
+) {
     if radius < 5 || depth > 4 {
         return;
     }
@@ -92,12 +99,12 @@ fn draw_glyph(img: &mut RgbaImage, rng: &mut ChaCha8Rng, cx: i32, cy: i32, radiu
 
 fn random_neon(rng: &mut ChaCha8Rng) -> Rgba<u8> {
     let colors = [
-        Rgba([0, 255, 255, 255]),   // Cyan
-        Rgba([255, 0, 255, 255]),   // Magenta
-        Rgba([57, 255, 20, 255]),   // Neon Green
-        Rgba([0, 128, 255, 255]),   // Electric Blue
-        Rgba([255, 255, 0, 255]),   // Yellow
-        Rgba([255, 100, 0, 255]),   // Orange
+        Rgba([0, 255, 255, 255]), // Cyan
+        Rgba([255, 0, 255, 255]), // Magenta
+        Rgba([57, 255, 20, 255]), // Neon Green
+        Rgba([0, 128, 255, 255]), // Electric Blue
+        Rgba([255, 255, 0, 255]), // Yellow
+        Rgba([255, 100, 0, 255]), // Orange
     ];
     colors[rng.gen_range(0..colors.len())]
 }
@@ -137,7 +144,9 @@ fn draw_line(img: &mut RgbaImage, x0: i32, y0: i32, x1: i32, y1: i32, color: Rgb
 
     loop {
         put_pixel_safe(img, x, y, color);
-        if x == x1 && y == y1 { break; }
+        if x == x1 && y == y1 {
+            break;
+        }
         let e2 = 2 * err;
         if e2 >= dy {
             err += dy;
@@ -179,18 +188,25 @@ fn draw_circle(img: &mut RgbaImage, cx: i32, cy: i32, radius: i32, color: Rgba<u
 fn draw_filled_circle(img: &mut RgbaImage, cx: i32, cy: i32, radius: i32, color: Rgba<u8>) {
     for y in -radius..=radius {
         for x in -radius..=radius {
-            if x*x + y*y <= radius*radius {
+            if x * x + y * y <= radius * radius {
                 put_pixel_safe(img, cx + x, cy + y, color);
             }
         }
     }
 }
 
-fn draw_filled_circle_additive(img: &mut RgbaImage, cx: i32, cy: i32, radius: i32, color: Rgba<u8>, alpha: f32) {
+fn draw_filled_circle_additive(
+    img: &mut RgbaImage,
+    cx: i32,
+    cy: i32,
+    radius: i32,
+    color: Rgba<u8>,
+    alpha: f32,
+) {
     for y in -radius..=radius {
         for x in -radius..=radius {
-            let dist_sq = x*x + y*y;
-            if dist_sq <= radius*radius {
+            let dist_sq = x * x + y * y;
+            if dist_sq <= radius * radius {
                 // Fade out at edges
                 let dist = (dist_sq as f32).sqrt();
                 let fade = 1.0 - (dist / radius as f32);

@@ -18,12 +18,12 @@ pub struct Meme {
 #[derive(Debug, Clone, PartialEq)]
 pub struct Virus {
     pub name: String,
-    pub color: (u8, u8, u8),    // RGB
-    pub pattern: String,        // Target text pattern (contains match)
-    pub mutation_rate: u8,      // 0-100
-    pub payload: Option<usize>, // DNA Strand index to inject
-    pub grammar: Option<Value>, // Grammar for linguistic mutation
-    pub quorum_threshold: u8,   // Neighbors needed for quorum action
+    pub color: (u8, u8, u8),          // RGB
+    pub pattern: String,              // Target text pattern (contains match)
+    pub mutation_rate: u8,            // 0-100
+    pub payload: Option<usize>,       // DNA Strand index to inject
+    pub grammar: Option<Value>,       // Grammar for linguistic mutation
+    pub quorum_threshold: u8,         // Neighbors needed for quorum action
     pub quorum_action: Option<usize>, // Strand to execute on quorum
 }
 
@@ -111,7 +111,9 @@ pub fn exec_memetics_op(
                         vm.output.push("BIOHACK: Invalid Meme ID".to_string());
                     }
                 } else {
-                    vm.output.push("BIOHACK: Type mismatch [name:Str, grammar:Junction, meme:Int]".to_string());
+                    vm.output.push(
+                        "BIOHACK: Type mismatch [name:Str, grammar:Junction, meme:Int]".to_string(),
+                    );
                 }
             } else {
                 vm.output.push("BIOHACK: Stack underflow".to_string());
@@ -287,12 +289,18 @@ pub fn exec_memetics_op(
                 // Then remaining top is quorum_threshold (Int), then quorum_action (Int).
 
                 if vm.stack.len() >= 2 {
-                    if let (Value::Int(_), Value::Int(_)) = (&vm.stack[vm.stack.len()-1], &vm.stack[vm.stack.len()-2]) {
+                    if let (Value::Int(_), Value::Int(_)) =
+                        (&vm.stack[vm.stack.len() - 1], &vm.stack[vm.stack.len() - 2])
+                    {
                         if let Value::Int(thresh) = vm.stack.pop().unwrap() {
                             quorum_threshold = thresh.clamp(0, 8) as u8;
                         }
                         if let Value::Int(action) = vm.stack.pop().unwrap() {
-                            quorum_action = if action >= 0 { Some(action as usize) } else { None };
+                            quorum_action = if action >= 0 {
+                                Some(action as usize)
+                            } else {
+                                None
+                            };
                         }
                     }
                 }
@@ -300,7 +308,7 @@ pub fn exec_memetics_op(
                 // Check for Grammar arg
                 if !vm.stack.is_empty() {
                     // Check if top is Junction
-                    if let Value::Junction(_, _) = &vm.stack[vm.stack.len()-1] {
+                    if let Value::Junction(_, _) = &vm.stack[vm.stack.len() - 1] {
                         grammar = Some(vm.stack.pop().unwrap());
                     }
                 }
@@ -461,51 +469,65 @@ pub fn exec_memetics_op(
 
                         // Quorum Sensing
                         if virus.quorum_threshold > 0 && virus.quorum_action.is_some() {
-                             let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)];
-                             let mut count = 0;
-                             for (dy, dx) in neighbors {
-                                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                            let neighbors = [
+                                (-1, 0),
+                                (1, 0),
+                                (0, -1),
+                                (0, 1),
+                                (-1, -1),
+                                (-1, 1),
+                                (1, -1),
+                                (1, 1),
+                            ];
+                            let mut count = 0;
+                            for (dy, dx) in neighbors {
+                                if let Some((ny, nx)) =
+                                    vm.normalize_coords(y as i64 + dy, x as i64 + dx)
+                                {
                                     if let Some(n_state) = &vm.viral_grid[ny][nx] {
                                         if n_state.virus_id == state.virus_id {
                                             count += 1;
                                         }
                                     }
                                 }
-                             }
+                            }
 
-                             if count >= virus.quorum_threshold {
-                                 if let Some(action_idx) = virus.quorum_action {
-                                     // Check if we should trigger (to avoid spamming, maybe check entropy or energy?)
-                                     // Spawn a temporary Worker organelle to run the payload
-                                     if vm.organelles.len() < crate::vm::MAX_ORGANELLES {
-                                         // Don't spawn if already occupied by an organelle?
-                                         if vm.organelles.iter().all(|o| o.context_loc != (y, x)) {
-                                             vm.organelle_id_counter += 1;
-                                             let organelle = crate::vm::nova::Organelle {
-                                                 stack: Vec::new(),
-                                                 ip: (action_idx, 0),
-                                                 context_loc: (y, x),
-                                                 call_stack: Vec::new(),
-                                                 recursion_depth: 0,
-                                                 halted: false,
-                                                 kind: crate::vm::nova::OrganelleType::Worker,
-                                                 direction: (0, 0),
-                                                 ttl: Some(1), // Ephemeral
-                                                 name: format!("Virus {} Agent", state.virus_id),
-                                                 traits: vec!["Viral".to_string()],
-                                                 id: vm.organelle_id_counter,
-                                                 tissue_id: None,
-                                                 genome_id: 0,
-                                                 energy: 20,
-                                                 experience: 0,
-                                                 stage: 0,
-                                             };
-                                             vm.organelles.push(organelle);
-                                             vm.output.push(format!("QUORUM: Virus {} triggered action {} at {},{}", state.virus_id, action_idx, x, y));
-                                         }
-                                     }
-                                 }
-                             }
+                            if count >= virus.quorum_threshold {
+                                if let Some(action_idx) = virus.quorum_action {
+                                    // Check if we should trigger (to avoid spamming, maybe check entropy or energy?)
+                                    // Spawn a temporary Worker organelle to run the payload
+                                    if vm.organelles.len() < crate::vm::MAX_ORGANELLES {
+                                        // Don't spawn if already occupied by an organelle?
+                                        if vm.organelles.iter().all(|o| o.context_loc != (y, x)) {
+                                            vm.organelle_id_counter += 1;
+                                            let organelle = crate::vm::nova::Organelle {
+                                                stack: Vec::new(),
+                                                ip: (action_idx, 0),
+                                                context_loc: (y, x),
+                                                call_stack: Vec::new(),
+                                                recursion_depth: 0,
+                                                halted: false,
+                                                kind: crate::vm::nova::OrganelleType::Worker,
+                                                direction: (0, 0),
+                                                ttl: Some(1), // Ephemeral
+                                                name: format!("Virus {} Agent", state.virus_id),
+                                                traits: vec!["Viral".to_string()],
+                                                id: vm.organelle_id_counter,
+                                                tissue_id: None,
+                                                genome_id: 0,
+                                                energy: 20,
+                                                experience: 0,
+                                                stage: 0,
+                                            };
+                                            vm.organelles.push(organelle);
+                                            vm.output.push(format!(
+                                                "QUORUM: Virus {} triggered action {} at {},{}",
+                                                state.virus_id, action_idx, x, y
+                                            ));
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         // 3. Decay/Growth

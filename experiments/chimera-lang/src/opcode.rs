@@ -1405,7 +1405,6 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     StringListen,
 
-
     // Market Features
     /// **[Nova]** Places a Sell Order (Ask) on the Market.
     ///

@@ -56,7 +56,10 @@ pub fn process_savant(vm: &mut ChimeraVM, organelle: &mut Organelle) {
         // Goal: action(?A)
         let goal = Value::Junction(
             JunctionType::Any,
-            vec![Value::Str("action".to_string()), Value::Str("?A".to_string())],
+            vec![
+                Value::Str("action".to_string()),
+                Value::Str("?A".to_string()),
+            ],
         );
 
         let mut solutions = Vec::new();
@@ -163,7 +166,9 @@ fn execute_savant_action(vm: &mut ChimeraVM, organelle: &mut Organelle, action: 
                             organelle.direction = (dy, dx); // Update direction
 
                             let (cy, cx) = vm.context_loc;
-                            if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy as i64, cx as i64 + dx as i64) {
+                            if let Some((ny, nx)) =
+                                vm.normalize_coords(cy as i64 + dy as i64, cx as i64 + dx as i64)
+                            {
                                 // Simple collision check: if grid is empty (0)
                                 if let Value::Int(0) = vm.grid[ny][nx] {
                                     vm.context_loc = (ny, nx);

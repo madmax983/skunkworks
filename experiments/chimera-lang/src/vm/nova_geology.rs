@@ -1,9 +1,9 @@
 #![cfg(feature = "nova")]
 
 use super::{ChimeraVM, GRID_SIZE};
-use crate::value::Value;
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
+use crate::value::Value;
 use rand::Rng;
 
 pub fn exec_geology_op(

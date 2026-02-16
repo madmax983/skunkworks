@@ -27,7 +27,13 @@ impl Oscillator {
     pub fn next_sample(&mut self) -> f32 {
         let value = match self.waveform {
             Waveform::Sine => (self.phase * 2.0 * PI).sin(),
-            Waveform::Square => if self.phase < 0.5 { 1.0 } else { -1.0 },
+            Waveform::Square => {
+                if self.phase < 0.5 {
+                    1.0
+                } else {
+                    -1.0
+                }
+            }
             Waveform::Noise => rand::random::<f32>() * 2.0 - 1.0,
         };
 

@@ -1,9 +1,9 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand, JunctionType};
-    use crate::vm::{ChimeraVM, Value, GRID_SIZE};
+    use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
     use crate::opcode::OpCode;
+    use crate::vm::{ChimeraVM, Value, GRID_SIZE};
 
     fn make_empty_vm() -> ChimeraVM {
         let dna = Dna {
@@ -61,7 +61,11 @@ mod tests {
         assert!(new_strand > 0, "Should jump to new strand");
         assert_eq!(new_gene, 0);
 
-        assert_eq!(vm.stack.pop(), Some(Value::Int(1)), "Stack should have Success(1)");
+        assert_eq!(
+            vm.stack.pop(),
+            Some(Value::Int(1)),
+            "Stack should have Success(1)"
+        );
         assert_eq!(vm.call_stack.len(), 1, "Should have pushed return address");
         assert_eq!(vm.call_stack[0], (0, 1));
 

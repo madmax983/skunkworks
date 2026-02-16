@@ -1,4 +1,4 @@
-use crate::grid::{Grid, CellType};
+use crate::grid::{CellType, Grid};
 use macroquad::prelude::*;
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashMap};
@@ -79,8 +79,11 @@ impl Plant {
 
         // Process a few nodes per frame for animation
         for _ in 0..self.growth_speed {
-            if let Some(State { cost: _f, position: current }) = self.open_set.pop() {
-
+            if let Some(State {
+                cost: _f,
+                position: current,
+            }) = self.open_set.pop()
+            {
                 // Check if goal reached
                 if let Some(goal) = grid.goal {
                     if current == goal {
@@ -160,7 +163,7 @@ impl Plant {
         if self.finished && !self.path.is_empty() {
             for i in 0..self.path.len() - 1 {
                 let p1 = self.path[i];
-                let p2 = self.path[i+1];
+                let p2 = self.path[i + 1];
                 draw_line(
                     p1.0 as f32 * cell_size + cell_size / 2.0 + offset_x,
                     p1.1 as f32 * cell_size + cell_size / 2.0 + offset_y,
@@ -216,6 +219,6 @@ mod tests {
         assert!(plant.path.len() > 0);
         // Path should be (0,0) -> (1,0) -> (2,0) -> (3,0) -> (4,0) (length 5)
         // Or similar length
-        assert_eq!(plant.path.last(), Some(&(4,0)));
+        assert_eq!(plant.path.last(), Some(&(4, 0)));
     }
 }

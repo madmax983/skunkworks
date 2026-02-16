@@ -305,7 +305,8 @@ impl Universe {
         }
 
         // Remove old Neutral bodies
-        self.bodies.retain(|b| b.side != Side::Neutral || b.age < 50);
+        self.bodies
+            .retain(|b| b.side != Side::Neutral || b.age < 50);
 
         // 3. Platter Decay
         self.platter.decay(decay_rate);
@@ -363,7 +364,8 @@ impl Universe {
                             // Spawn Neutral (Trade Confirmation)
                             // Maybe sum value?
                             let trade_val = Roman::from_u64(bid_val); // Keep bid value as symbol
-                            let mut neutral = Body::new(midpoint.x, midpoint.y, trade_val, Side::Neutral);
+                            let mut neutral =
+                                Body::new(midpoint.x, midpoint.y, trade_val, Side::Neutral);
                             neutral.vel = Vec2::ZERO; // Stay put
                             new_bodies.push(neutral);
 

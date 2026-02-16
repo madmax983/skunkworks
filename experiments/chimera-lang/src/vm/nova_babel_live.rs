@@ -7,12 +7,7 @@ use regex::Regex;
 ///
 /// Traces a path on the grid, consuming the input string.
 /// Returns `true` if parsing was successful (reached a '!' end node with input consumed).
-pub fn exec_live_parse(
-    vm: &mut ChimeraVM,
-    start_y: usize,
-    start_x: usize,
-    input: String,
-) -> bool {
+pub fn exec_live_parse(vm: &mut ChimeraVM, start_y: usize, start_x: usize, input: String) -> bool {
     let mut cursor_y = start_y;
     let mut cursor_x = start_x;
     let mut input_idx = 0;
@@ -46,7 +41,9 @@ pub fn exec_live_parse(
                         let mut temp_y = cursor_y;
 
                         // Advance one step first to enter string
-                        if let Some((ny, nx)) = vm.normalize_coords(temp_y as i64 + dy, temp_x as i64 + dx) {
+                        if let Some((ny, nx)) =
+                            vm.normalize_coords(temp_y as i64 + dy, temp_x as i64 + dx)
+                        {
                             temp_y = ny;
                             temp_x = nx;
                         } else {
@@ -75,7 +72,9 @@ pub fn exec_live_parse(
                                 matched = false; // Non-string cell in string path
                             }
 
-                            if let Some((ny, nx)) = vm.normalize_coords(temp_y as i64 + dy, temp_x as i64 + dx) {
+                            if let Some((ny, nx)) =
+                                vm.normalize_coords(temp_y as i64 + dy, temp_x as i64 + dx)
+                            {
                                 temp_y = ny;
                                 temp_x = nx;
                             } else {
@@ -97,7 +96,9 @@ pub fn exec_live_parse(
                         let mut temp_y = cursor_y;
 
                         // Advance
-                        if let Some((ny, nx)) = vm.normalize_coords(temp_y as i64 + dy, temp_x as i64 + dx) {
+                        if let Some((ny, nx)) =
+                            vm.normalize_coords(temp_y as i64 + dy, temp_x as i64 + dx)
+                        {
                             temp_y = ny;
                             temp_x = nx;
                         } else {
@@ -115,7 +116,9 @@ pub fn exec_live_parse(
                                 break;
                             }
 
-                            if let Some((ny, nx)) = vm.normalize_coords(temp_y as i64 + dy, temp_x as i64 + dx) {
+                            if let Some((ny, nx)) =
+                                vm.normalize_coords(temp_y as i64 + dy, temp_x as i64 + dx)
+                            {
                                 temp_y = ny;
                                 temp_x = nx;
                             } else {
@@ -145,7 +148,9 @@ pub fn exec_live_parse(
                         let mut temp_y = cursor_y;
 
                         // Advance
-                        if let Some((ny, nx)) = vm.normalize_coords(temp_y as i64 + dy, temp_x as i64 + dx) {
+                        if let Some((ny, nx)) =
+                            vm.normalize_coords(temp_y as i64 + dy, temp_x as i64 + dx)
+                        {
                             temp_y = ny;
                             temp_x = nx;
                         } else {
@@ -163,7 +168,9 @@ pub fn exec_live_parse(
                                 break;
                             }
 
-                            if let Some((ny, nx)) = vm.normalize_coords(temp_y as i64 + dy, temp_x as i64 + dx) {
+                            if let Some((ny, nx)) =
+                                vm.normalize_coords(temp_y as i64 + dy, temp_x as i64 + dx)
+                            {
                                 temp_y = ny;
                                 temp_x = nx;
                             } else {
@@ -185,17 +192,32 @@ pub fn exec_live_parse(
                                 }
                             }
                         } else {
-                            vm.output.push(format!("BABEL ERROR: Failed to compile action '{}'", action_code));
+                            vm.output.push(format!(
+                                "BABEL ERROR: Failed to compile action '{}'",
+                                action_code
+                            ));
                             return false;
                         }
 
                         cursor_y = temp_y;
                         cursor_x = temp_x;
                     }
-                    '>' => { dy = 0; dx = 1; }
-                    '<' => { dy = 0; dx = -1; }
-                    '^' => { dy = -1; dx = 0; }
-                    'v' => { dy = 1; dx = 0; }
+                    '>' => {
+                        dy = 0;
+                        dx = 1;
+                    }
+                    '<' => {
+                        dy = 0;
+                        dx = -1;
+                    }
+                    '^' => {
+                        dy = -1;
+                        dx = 0;
+                    }
+                    'v' => {
+                        dy = 1;
+                        dx = 0;
+                    }
                     '!' => {
                         return input_idx == input_chars.len();
                     }

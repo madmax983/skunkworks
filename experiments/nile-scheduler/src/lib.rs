@@ -1,6 +1,6 @@
 use anyhow::{Result, anyhow};
 use num_rational::Ratio;
-use num_traits::{Zero, One};
+use num_traits::{One, Zero};
 use std::fmt;
 use std::ops::{Add, Sub};
 
@@ -132,9 +132,7 @@ impl fmt::Display for EgyptianFraction {
         if self.parts.is_empty() {
             return write!(f, "0");
         }
-        let terms: Vec<String> = self.parts.iter()
-            .map(|d| format!("1/{}", d))
-            .collect();
+        let terms: Vec<String> = self.parts.iter().map(|d| format!("1/{}", d)).collect();
         write!(f, "{}", terms.join(" + "))
     }
 }

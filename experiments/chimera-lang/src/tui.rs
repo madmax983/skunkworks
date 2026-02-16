@@ -834,11 +834,11 @@ where
                 return;
             }
 
-                #[cfg(feature = "nova")]
-                if let ViewMode::LifeCycle = app_state.view_mode {
-                    render_lifecycle(f, vm, app_state);
-                    return;
-                }
+            #[cfg(feature = "nova")]
+            if let ViewMode::LifeCycle = app_state.view_mode {
+                render_lifecycle(f, vm, app_state);
+                return;
+            }
 
             #[cfg(feature = "nova")]
             if let ViewMode::Semiotics = app_state.view_mode {
@@ -1681,25 +1681,34 @@ where
                                                             // VM doesn't support executing genes on organelle directly easily without setting IP.
 
                                                             // Simplest: Add genes to the end of the Helix, and Jump the organelle there.
-                                                            vm.dna.helix.strands.push(strand.clone());
-                                                            let new_idx = vm.dna.helix.strands.len() - 1;
+                                                            vm.dna
+                                                                .helix
+                                                                .strands
+                                                                .push(strand.clone());
+                                                            let new_idx =
+                                                                vm.dna.helix.strands.len() - 1;
 
                                                             // Save current IP to call stack
                                                             org.call_stack.push(org.ip);
                                                             org.ip = (new_idx, 0);
 
                                                             found = true;
-                                                            app_state.status_msg = format!("Injected code into {}", org.name);
+                                                            app_state.status_msg = format!(
+                                                                "Injected code into {}",
+                                                                org.name
+                                                            );
                                                             break;
                                                         }
                                                     }
                                                     if !found {
-                                                        app_state.status_msg = "No organelle at cursor.".to_string();
+                                                        app_state.status_msg =
+                                                            "No organelle at cursor.".to_string();
                                                     }
                                                 }
                                             }
                                             Err(e) => {
-                                                app_state.status_msg = format!("Compilation Error: {}", e);
+                                                app_state.status_msg =
+                                                    format!("Compilation Error: {}", e);
                                             }
                                         }
                                     }
@@ -1740,40 +1749,61 @@ where
                                     // Commit change based on focus
                                     if app_state.genesis_focus == 0 {
                                         // Compile Editor Code
-                                        let src = format!("strand genesis {{ {} }}", app_state.genesis_editor_buffer);
+                                        let src = format!(
+                                            "strand genesis {{ {} }}",
+                                            app_state.genesis_editor_buffer
+                                        );
                                         match crate::compiler::compile(&src, None) {
                                             Ok(dna) => {
                                                 if let Some(strand) = dna.helix.strands.first() {
                                                     // Execute immediately
                                                     for gene in &strand.genes {
-                                                        vm.execute_gene_inner(gene.op.clone(), &gene.args);
+                                                        vm.execute_gene_inner(
+                                                            gene.op.clone(),
+                                                            &gene.args,
+                                                        );
                                                     }
-                                                    app_state.status_msg = "Genesis: Executed.".to_string();
+                                                    app_state.status_msg =
+                                                        "Genesis: Executed.".to_string();
                                                 }
                                             }
-                                            Err(e) => app_state.status_msg = format!("Compile Error: {}", e),
+                                            Err(e) => {
+                                                app_state.status_msg =
+                                                    format!("Compile Error: {}", e)
+                                            }
                                         }
                                         // Clear buffer? Maybe keep it for repeated editing.
                                         app_state.input_mode = InputMode::Normal;
                                     } else if app_state.genesis_focus == 1 {
                                         // Update Grammar
-                                        match crate::lisp::parse(&app_state.genesis_grammar_buffer) {
+                                        match crate::lisp::parse(&app_state.genesis_grammar_buffer)
+                                        {
                                             Ok(exprs) => {
                                                 // Take the first expression as the grammar
                                                 if let Some(expr) = exprs.first() {
                                                     match crate::lisp::sexpr_to_value(expr) {
                                                         Ok(grammar) => {
                                                             vm.active_grammar = grammar;
-                                                            app_state.status_msg = "Genesis: Grammar Updated.".to_string();
+                                                            app_state.status_msg =
+                                                                "Genesis: Grammar Updated."
+                                                                    .to_string();
                                                         }
-                                                        Err(e) => app_state.status_msg = format!("Value Conversion Error: {}", e),
+                                                        Err(e) => {
+                                                            app_state.status_msg = format!(
+                                                                "Value Conversion Error: {}",
+                                                                e
+                                                            )
+                                                        }
                                                     }
                                                 } else {
-                                                    app_state.status_msg = "Error: Empty Grammar".to_string();
+                                                    app_state.status_msg =
+                                                        "Error: Empty Grammar".to_string();
                                                 }
                                                 app_state.input_mode = InputMode::Normal;
                                             }
-                                            Err(e) => app_state.status_msg = format!("Lisp Error: {}", e),
+                                            Err(e) => {
+                                                app_state.status_msg = format!("Lisp Error: {}", e)
+                                            }
                                         }
                                     } else {
                                         // Grid
@@ -4407,7 +4437,11 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 });
 
                 // Bobber (Visual)
-                let bobber_icon = if app_state.fishing_hooked { "🔴" } else { "⚪" };
+                let bobber_icon = if app_state.fishing_hooked {
+                    "🔴"
+                } else {
+                    "⚪"
+                };
                 ctx.print(50.0, app_state.fishing_bobber_y, bobber_icon);
                 // Center detail
                 ctx.print(
@@ -4600,7 +4634,10 @@ fn render_fractal(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from(" "),
         Line::from(format!("Mode: {}", mode_str)),
         Line::from(format!("Zoom: {:.2e}", vm.fractal.zoom)),
-        Line::from(format!("Center: {:.6} + {:.6}i", vm.fractal.center_re, vm.fractal.center_im)),
+        Line::from(format!(
+            "Center: {:.6} + {:.6}i",
+            vm.fractal.center_re, vm.fractal.center_im
+        )),
         Line::from(format!("Max Iter: {}", vm.fractal.max_iter)),
         Line::from(" "),
         Line::from("Julia Constant:"),
@@ -4612,11 +4649,8 @@ fn render_fractal(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  Iterate, Escape"),
     ];
 
-    let info_widget = Paragraph::new(info).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Parameters"),
-    );
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Parameters"));
     f.render_widget(info_widget, chunks[1]);
 }
 
@@ -4631,14 +4665,17 @@ fn render_semiotics(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let context_hash = vm.semiotic_context;
     let info = vec![
         Line::from(vec![
-            Span::styled("SEMIOTIC ENGINE", Style::default().add_modifier(Modifier::BOLD)),
+            Span::styled(
+                "SEMIOTIC ENGINE",
+                Style::default().add_modifier(Modifier::BOLD),
+            ),
             Span::raw(format!(" [Context: {:x}]", context_hash)),
         ]),
         Line::from(" "),
         Line::from("Meaning is fluid. Symbols shift. Reality is negotiable."),
     ];
-    let info_widget = Paragraph::new(info)
-        .block(Block::default().borders(Borders::ALL).title("Semiotics"));
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Semiotics"));
     f.render_widget(info_widget, chunks[0]);
 
     // Bottom: Meaning Map
@@ -4651,7 +4688,8 @@ fn render_semiotics(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     keys.sort();
 
     for (ctx, id) in keys {
-        if *ctx == context_hash || *ctx == 0 { // Show current context + global (0)
+        if *ctx == context_hash || *ctx == 0 {
+            // Show current context + global (0)
             let val = &vm.meaning_map[&(*ctx, *id)];
             let prefix = if *ctx == 0 { "Global" } else { "Local" };
             let style = if *ctx == 0 {
@@ -4660,10 +4698,7 @@ fn render_semiotics(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 Style::default().fg(Color::Yellow)
             };
 
-            items.push(ListItem::new(format!(
-                "[{}] §{:x} -> {}",
-                prefix, id, val
-            )).style(style));
+            items.push(ListItem::new(format!("[{}] §{:x} -> {}", prefix, id, val)).style(style));
             count += 1;
         }
     }
@@ -4673,7 +4708,9 @@ fn render_semiotics(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     }
 
     let map_list = List::new(items).block(
-        Block::default().borders(Borders::ALL).title(format!("Active Meanings ({})", count))
+        Block::default()
+            .borders(Borders::ALL)
+            .title(format!("Active Meanings ({})", count)),
     );
     f.render_widget(map_list, chunks[1]);
 }
@@ -4692,10 +4729,10 @@ fn render_lifecycle(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         if s < stages.len() {
             stages[s].push(org);
         } else {
-             // Fallback for higher stages
-             if let Some(last) = stages.last_mut() {
-                 last.push(org);
-             }
+            // Fallback for higher stages
+            if let Some(last) = stages.last_mut() {
+                last.push(org);
+            }
         }
     }
 
@@ -4704,9 +4741,15 @@ fn render_lifecycle(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     for (i, list) in stages.iter().enumerate() {
         if !list.is_empty() {
-             items.push(ListItem::new(Span::styled(
-                format!("--- Stage {}: {} ---", i, stage_names.get(i).unwrap_or(&"Unknown")),
-                Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+            items.push(ListItem::new(Span::styled(
+                format!(
+                    "--- Stage {}: {} ---",
+                    i,
+                    stage_names.get(i).unwrap_or(&"Unknown")
+                ),
+                Style::default()
+                    .fg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD),
             )));
             for org in list {
                 let threshold = 100 * (org.stage as i64 + 1);
@@ -4750,11 +4793,8 @@ fn render_lifecycle(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  Threshold = 100 * (Stage + 1)."),
     ];
 
-    let info = Paragraph::new(info_text).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Encyclopedia"),
-    );
+    let info = Paragraph::new(info_text)
+        .block(Block::default().borders(Borders::ALL).title("Encyclopedia"));
     f.render_widget(info, chunks[1]);
 }
 
@@ -5141,7 +5181,10 @@ fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
             // Check trace
             if vm.babel_live_trace.contains(&(y, x)) {
-                style = style.bg(Color::Blue).fg(Color::White).add_modifier(Modifier::BOLD);
+                style = style
+                    .bg(Color::Blue)
+                    .fg(Color::White)
+                    .add_modifier(Modifier::BOLD);
             } else if matches!(val, crate::vm::Value::Str(_)) {
                 style = style.fg(Color::Cyan);
             } else {
@@ -5154,11 +5197,17 @@ fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
             let ch = match val {
                 crate::vm::Value::Str(s) => s.chars().next().unwrap_or('.').to_string(),
-                crate::vm::Value::Int(n) => if *n == 0 { ".".to_string() } else { "#".to_string() },
+                crate::vm::Value::Int(n) => {
+                    if *n == 0 {
+                        ".".to_string()
+                    } else {
+                        "#".to_string()
+                    }
+                }
                 _ => ".".to_string(),
             };
-             line_spans.push(Span::styled(ch, style));
-             line_spans.push(Span::raw(" "));
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
         }
         grid_lines.push(Line::from(line_spans));
     }
@@ -5761,7 +5810,9 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
             #[allow(unused_mut)]
             let (mut char_rep, mut style) = match val {
                 crate::vm::Value::Int(0) => (".".to_string(), Style::default().fg(Color::DarkGray)),
-                crate::vm::Value::Symbol(id) => (format!("§{:x}", id), Style::default().fg(Color::Magenta)),
+                crate::vm::Value::Symbol(id) => {
+                    (format!("§{:x}", id), Style::default().fg(Color::Magenta))
+                }
                 crate::vm::Value::Int(n) => {
                     #[cfg(feature = "silicon")]
                     if vm.silicon_mode {
@@ -6921,8 +6972,11 @@ fn render_topology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         }
         map_lines.push(Line::from(spans));
     }
-    let map = Paragraph::new(map_lines)
-        .block(Block::default().borders(Borders::ALL).title(format!("Topology Map ({:?})", vm.topology)));
+    let map = Paragraph::new(map_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(format!("Topology Map ({:?})", vm.topology)),
+    );
     f.render_widget(map, chunks[1]);
 }
 
@@ -10584,11 +10638,8 @@ fn render_ecology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     info.push(Line::from("  I: Inject Code"));
     info.push(Line::from("  K: Extinction Event"));
 
-    let info_widget = Paragraph::new(info).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Status"),
-    );
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Status"));
     f.render_widget(info_widget, chunks[1]);
 }
 
@@ -10600,7 +10651,11 @@ fn render_metazoa(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         .split(app_state.get_render_area(f.area()));
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Metazoa (Multicellular Life)"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Metazoa (Multicellular Life)"),
+        )
         .x_bounds([0.0, 16.0])
         .y_bounds([0.0, 16.0])
         .paint(|ctx| {
@@ -10610,7 +10665,8 @@ fn render_metazoa(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 let mut points = Vec::new();
                 for member_id in &tissue.members {
                     if let Some(org) = vm.organelles.iter().find(|o| o.id == *member_id) {
-                        points.push((org.context_loc.1 as f64, org.context_loc.0 as f64)); // x, y
+                        points.push((org.context_loc.1 as f64, org.context_loc.0 as f64));
+                        // x, y
                     }
                 }
 
@@ -10620,10 +10676,13 @@ fn render_metazoa(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                         let (x1, y1) = points[i];
                         let (x2, y2) = points[j];
                         let dist = ((x1 - x2).powi(2) + (y1 - y2).powi(2)).sqrt();
-                        if dist < 1.5 { // Adjacent (including diagonals)
-                             ctx.draw(&ratatui::widgets::canvas::Line {
-                                x1: x1 + 0.5, y1: 15.5 - y1,
-                                x2: x2 + 0.5, y2: 15.5 - y2,
+                        if dist < 1.5 {
+                            // Adjacent (including diagonals)
+                            ctx.draw(&ratatui::widgets::canvas::Line {
+                                x1: x1 + 0.5,
+                                y1: 15.5 - y1,
+                                x2: x2 + 0.5,
+                                y2: 15.5 - y2,
                                 color: Color::Green,
                             });
                         }
@@ -10641,9 +10700,9 @@ fn render_metazoa(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
                 // Draw cursor if selected
                 if app_state.grid_cursor == (x, y) {
-                     ctx.print(x as f64 + 0.5, 15.5 - y as f64, "@");
+                    ctx.print(x as f64 + 0.5, 15.5 - y as f64, "@");
                 } else {
-                     ctx.draw(&Rectangle {
+                    ctx.draw(&Rectangle {
                         x: x as f64 + 0.2,
                         y: 15.5 - y as f64 - 0.2,
                         width: 0.6,
@@ -10671,9 +10730,9 @@ fn render_metazoa(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         info.push(Line::from(format!("Name: {}", org.name)));
         info.push(Line::from(format!("ID: {}", org.id)));
         if let Some(tid) = org.tissue_id {
-             info.push(Line::from(format!("Tissue ID: {}", tid)));
+            info.push(Line::from(format!("Tissue ID: {}", tid)));
         } else {
-             info.push(Line::from("Tissue: None"));
+            info.push(Line::from("Tissue: None"));
         }
     } else {
         info.push(Line::from("No Agent Selected"));
@@ -10685,7 +10744,8 @@ fn render_metazoa(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     info.push(Line::from("  Arrows: Move Cursor"));
     info.push(Line::from("  i: Inject Metazoan"));
 
-    let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Details"));
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Details"));
     f.render_widget(info_widget, chunks[1]);
 }
 
@@ -10693,7 +10753,14 @@ fn render_metazoa(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 fn render_genesis(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([Constraint::Percentage(30), Constraint::Percentage(30), Constraint::Percentage(40)].as_ref())
+        .constraints(
+            [
+                Constraint::Percentage(30),
+                Constraint::Percentage(30),
+                Constraint::Percentage(40),
+            ]
+            .as_ref(),
+        )
         .split(app_state.get_render_area(f.area()));
 
     // 1. Editor (ChimeraScript)
@@ -10711,7 +10778,12 @@ fn render_genesis(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     } else {
         app_state.genesis_editor_buffer.as_str()
     };
-    f.render_widget(Paragraph::new(editor_text).block(editor_block).wrap(ratatui::widgets::Wrap { trim: false }), chunks[0]);
+    f.render_widget(
+        Paragraph::new(editor_text)
+            .block(editor_block)
+            .wrap(ratatui::widgets::Wrap { trim: false }),
+        chunks[0],
+    );
 
     // 2. Grammar Editor (Babel)
     let grammar_chunks = Layout::default()
@@ -10733,7 +10805,12 @@ fn render_genesis(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     } else {
         app_state.genesis_grammar_buffer.clone()
     };
-    f.render_widget(Paragraph::new(grammar_text).block(grammar_block).wrap(ratatui::widgets::Wrap { trim: false }), grammar_chunks[0]);
+    f.render_widget(
+        Paragraph::new(grammar_text)
+            .block(grammar_block)
+            .wrap(ratatui::widgets::Wrap { trim: false }),
+        grammar_chunks[0],
+    );
 
     // Controls Help
     let help_text = vec![
@@ -10746,7 +10823,8 @@ fn render_genesis(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  SelfRewrite(grammar)"),
         Line::from("  Perceive(len)"),
     ];
-    let help_widget = Paragraph::new(help_text).block(Block::default().borders(Borders::ALL).title("Manual"));
+    let help_widget =
+        Paragraph::new(help_text).block(Block::default().borders(Borders::ALL).title("Manual"));
     f.render_widget(help_widget, grammar_chunks[1]);
 
     // 3. Grid Visualizer (Right)
@@ -10789,7 +10867,10 @@ fn render_genesis(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     f.render_widget(Paragraph::new(grid_lines).block(grid_block), grid_chunks[0]);
 
     // Status
-    f.render_widget(Paragraph::new(app_state.status_msg.as_str()).block(Block::default().borders(Borders::ALL)), grid_chunks[1]);
+    f.render_widget(
+        Paragraph::new(app_state.status_msg.as_str()).block(Block::default().borders(Borders::ALL)),
+        grid_chunks[1],
+    );
 }
 
 #[cfg(feature = "nova")]
@@ -10804,7 +10885,7 @@ fn render_cambrian(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         let mut line_spans = Vec::new();
         for x in 0..16 {
             let hormone = vm.hormone_grid[y][x]; // [i64; 3]
-            // Normalize 0-1000 -> 0-255
+                                                 // Normalize 0-1000 -> 0-255
             let r = (hormone[0] as f64 / 1000.0 * 255.0).clamp(0.0, 255.0) as u8;
             let g = (hormone[1] as f64 / 1000.0 * 255.0).clamp(0.0, 255.0) as u8;
             let b = (hormone[2] as f64 / 1000.0 * 255.0).clamp(0.0, 255.0) as u8;
@@ -10837,7 +10918,9 @@ fn render_cambrian(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     }
 
     let grid_widget = Paragraph::new(grid_lines).block(
-        Block::default().borders(Borders::ALL).title("Cambrian Morphogens (RGB)"),
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Cambrian Morphogens (RGB)"),
     );
     f.render_widget(grid_widget, chunks[0]);
 
@@ -10858,6 +10941,7 @@ fn render_cambrian(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  HoxSwitch(ch, thresh, strand)"),
         Line::from("  Adhere(dir)"),
     ];
-    let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Development"));
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Development"));
     f.render_widget(info_widget, chunks[1]);
 }

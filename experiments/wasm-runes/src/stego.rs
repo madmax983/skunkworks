@@ -1,5 +1,5 @@
+use anyhow::{anyhow, Result};
 use image::RgbaImage;
-use anyhow::{Result, anyhow};
 
 pub fn embed(img: &mut RgbaImage, data: &[u8]) -> Result<()> {
     let (w, h) = img.dimensions();
@@ -50,7 +50,9 @@ pub fn embed(img: &mut RgbaImage, data: &[u8]) -> Result<()> {
     }
 
     if bit_idx < bits.len() {
-        return Err(anyhow!("Failed to embed all data (image too small or spiral exhausted)"));
+        return Err(anyhow!(
+            "Failed to embed all data (image too small or spiral exhausted)"
+        ));
     }
 
     Ok(())
@@ -75,7 +77,9 @@ pub fn extract(img: &RgbaImage) -> Result<Vec<u8>> {
     loop {
         if let Some((dx, dy)) = spiral.next() {
             steps += 1;
-            if steps > max_steps { break; }
+            if steps > max_steps {
+                break;
+            }
 
             let x = cx + dx;
             let y = cy + dy;
@@ -120,7 +124,9 @@ pub fn extract(img: &RgbaImage) -> Result<Vec<u8>> {
             break;
         }
     }
-    Err(anyhow!("Failed to extract payload (incomplete or corrupted)"))
+    Err(anyhow!(
+        "Failed to extract payload (incomplete or corrupted)"
+    ))
 }
 
 struct SpiralIter {
@@ -135,7 +141,15 @@ struct SpiralIter {
 
 impl SpiralIter {
     fn new() -> Self {
-        Self { x: 0, y: 0, dx: 1, dy: 0, step_size: 1, step_remain: 1, turn_counter: 0 }
+        Self {
+            x: 0,
+            y: 0,
+            dx: 1,
+            dy: 0,
+            step_size: 1,
+            step_remain: 1,
+            turn_counter: 0,
+        }
     }
 }
 

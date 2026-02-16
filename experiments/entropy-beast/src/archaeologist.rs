@@ -1,9 +1,9 @@
+use crate::dna::{Creature, Head, Limb, HEAD_MARKER, LIMB_MARKER, MAGIC};
 use nom::{
     bytes::complete::{tag, take},
     number::complete::{le_f32, le_u8},
     IResult,
 };
-use crate::dna::{Creature, Head, Limb, HEAD_MARKER, LIMB_MARKER, MAGIC};
 
 pub fn resurrect(data: &[u8]) -> Creature {
     // Attempt to find MAGIC
@@ -23,7 +23,14 @@ pub fn resurrect(data: &[u8]) -> Creature {
         Ok((rem, h)) => (rem, h),
         Err(_) => {
             // Fallback: Default Head
-            (input, Head { size: 10.0, eye_count: 0, color: [100, 100, 100] })
+            (
+                input,
+                Head {
+                    size: 10.0,
+                    eye_count: 0,
+                    color: [100, 100, 100],
+                },
+            )
         }
     };
 
@@ -34,7 +41,9 @@ pub fn resurrect(data: &[u8]) -> Creature {
 }
 
 fn find_magic(input: &[u8]) -> Option<usize> {
-    input.windows(MAGIC.len()).position(|window| window == MAGIC)
+    input
+        .windows(MAGIC.len())
+        .position(|window| window == MAGIC)
 }
 
 fn parse_head_resilient(input: &[u8]) -> IResult<&[u8], Head> {
@@ -42,7 +51,10 @@ fn parse_head_resilient(input: &[u8]) -> IResult<&[u8], Head> {
     let mut current = input;
     loop {
         if current.is_empty() {
-             return Err(nom::Err::Error(nom::error::Error::new(input, nom::error::ErrorKind::Tag)));
+            return Err(nom::Err::Error(nom::error::Error::new(
+                input,
+                nom::error::ErrorKind::Tag,
+            )));
         }
         if current[0] == HEAD_MARKER {
             if let Ok((rem, head)) = parse_head_exact(current) {
@@ -63,9 +75,20 @@ fn parse_head_exact(input: &[u8]) -> IResult<&[u8], Head> {
     let color = [color_bytes[0], color_bytes[1], color_bytes[2]];
 
     // Sanitize
-    let size = if size.is_nan() || size <= 0.0 || size > 1000.0 { 10.0 } else { size };
+    let size = if size.is_nan() || size <= 0.0 || size > 1000.0 {
+        10.0
+    } else {
+        size
+    };
 
-    Ok((input, Head { size, eye_count, color }))
+    Ok((
+        input,
+        Head {
+            size,
+            eye_count,
+            color,
+        },
+    ))
 }
 
 fn parse_limbs_resilient(input: &[u8]) -> Vec<Limb> {
@@ -104,8 +127,16 @@ fn parse_limb_exact(input: &[u8]) -> IResult<&[u8], Limb> {
 
     let (mut current_input, _checksum) = le_u8(input)?;
 
-    let length = if length.is_nan() || length.abs() > 1000.0 { 20.0 } else { length.abs() };
-    let thickness = if thickness.is_nan() || thickness.abs() > 100.0 { 5.0 } else { thickness.abs() };
+    let length = if length.is_nan() || length.abs() > 1000.0 {
+        20.0
+    } else {
+        length.abs()
+    };
+    let thickness = if thickness.is_nan() || thickness.abs() > 100.0 {
+        5.0
+    } else {
+        thickness.abs()
+    };
 
     let mut children = Vec::new();
 
@@ -120,7 +151,15 @@ fn parse_limb_exact(input: &[u8]) -> IResult<&[u8], Limb> {
         }
     }
 
-    Ok((current_input, Limb { length, thickness, joints, children }))
+    Ok((
+        current_input,
+        Limb {
+            length,
+            thickness,
+            joints,
+            children,
+        },
+    ))
 }
 
 #[cfg(test)]

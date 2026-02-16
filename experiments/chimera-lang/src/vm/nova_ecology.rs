@@ -1,13 +1,13 @@
 #[cfg(feature = "nova")]
-use crate::vm::{ChimeraVM, Value};
+use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
 use crate::vm::nova::{Organelle, OrganelleType};
+#[cfg(feature = "nova")]
+use crate::vm::{ChimeraVM, Value};
 #[cfg(feature = "nova")]
 use rand::Rng;
 #[cfg(feature = "nova")]
 use strum::IntoEnumIterator;
-#[cfg(feature = "nova")]
-use crate::opcode::OpCode;
 
 #[cfg(feature = "nova")]
 pub fn spawn_random_ecology(vm: &mut ChimeraVM, count: usize) {
@@ -53,9 +53,15 @@ pub fn spawn_random_ecology(vm: &mut ChimeraVM, count: usize) {
         };
 
         let mut traits = vec!["Wild".to_string()];
-        if rng.gen_bool(0.05) { traits.push("Viral".to_string()); }
-        if rng.gen_bool(0.05) { traits.push("Radioactive".to_string()); }
-        if rng.gen_bool(0.05) { traits.push("Scavenger".to_string()); }
+        if rng.gen_bool(0.05) {
+            traits.push("Viral".to_string());
+        }
+        if rng.gen_bool(0.05) {
+            traits.push("Radioactive".to_string());
+        }
+        if rng.gen_bool(0.05) {
+            traits.push("Scavenger".to_string());
+        }
 
         let organelle = Organelle {
             stack: Vec::new(),
@@ -82,11 +88,14 @@ pub fn spawn_random_ecology(vm: &mut ChimeraVM, count: usize) {
 
 #[cfg(feature = "nova")]
 pub fn process_ecology_tick(vm: &mut ChimeraVM) {
-    let mut interactions: std::collections::HashMap<(usize, usize), Vec<usize>> = std::collections::HashMap::new();
+    let mut interactions: std::collections::HashMap<(usize, usize), Vec<usize>> =
+        std::collections::HashMap::new();
 
     // 1. Metabolism & Map Positions
     for (i, org) in vm.organelles.iter_mut().enumerate() {
-        if org.halted { continue; }
+        if org.halted {
+            continue;
+        }
 
         // Metabolism
         org.energy = org.energy.saturating_sub(1);
@@ -153,7 +162,8 @@ pub fn process_ecology_tick(vm: &mut ChimeraVM) {
                     }
 
                     let food = vm.organelles[idx].energy / 2;
-                    vm.organelles[best_idx].energy = vm.organelles[best_idx].energy.saturating_add(food);
+                    vm.organelles[best_idx].energy =
+                        vm.organelles[best_idx].energy.saturating_add(food);
                     vm.organelles[idx].halted = true;
                     vm.organelles[idx].energy = 0;
                 }
@@ -169,7 +179,8 @@ pub fn process_ecology_tick(vm: &mut ChimeraVM) {
 
                         // Append to winner's strand
                         vm.dna.helix.strands[w_idx].genes.push(gene);
-                        vm.output.push(format!("VIRAL: Gene transfer {} -> {}", l_idx, w_idx));
+                        vm.output
+                            .push(format!("VIRAL: Gene transfer {} -> {}", l_idx, w_idx));
                     }
                 }
             }
@@ -208,7 +219,8 @@ pub fn tick_ecology(vm: &mut ChimeraVM) {
 #[cfg(feature = "nova")]
 pub fn cambrian_explosion(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     vm.organelles.clear();
-    vm.output.push("CAMBRIAN EXPLOSION: Mass Extinction & Rapid Speciation".to_string());
+    vm.output
+        .push("CAMBRIAN EXPLOSION: Mass Extinction & Rapid Speciation".to_string());
 
     // Spawn 50% of capacity
     spawn_random_ecology(vm, crate::vm::MAX_ORGANELLES / 2);

@@ -1,8 +1,8 @@
 mod grid;
 
+use ::rand::Rng;
 use grid::Grid;
-use macroquad::prelude::*;
-use ::rand::Rng; // Use the external rand crate
+use macroquad::prelude::*; // Use the external rand crate
 
 const GRID_WIDTH: usize = 512;
 const GRID_HEIGHT: usize = 512;
@@ -65,7 +65,7 @@ async fn main() {
                     grid.add_load(rx, ry, 1);
                 }
                 // Focused attack on center
-                grid.add_load(GRID_WIDTH/2, GRID_HEIGHT/2, 10);
+                grid.add_load(GRID_WIDTH / 2, GRID_HEIGHT / 2, 10);
             }
 
             grid.update(process_rate);
@@ -111,14 +111,34 @@ async fn main() {
         // UI
         draw_text("Sandpile Scheduler", 10.0, 20.0, 30.0, WHITE);
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 50.0, 20.0, WHITE);
-        draw_text(&format!("Total Load: {}", grid.total_load()), 10.0, 70.0, 20.0, WHITE);
-        draw_text(&format!("Process Rate: {:.3}", process_rate), 10.0, 90.0, 20.0, WHITE);
+        draw_text(
+            &format!("Total Load: {}", grid.total_load()),
+            10.0,
+            70.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            &format!("Process Rate: {:.3}", process_rate),
+            10.0,
+            90.0,
+            20.0,
+            WHITE,
+        );
         draw_text(
             if ddos_mode { "DDoS: ON" } else { "DDoS: OFF" },
-            10.0, 110.0, 20.0,
-            if ddos_mode { RED } else { GREEN }
+            10.0,
+            110.0,
+            20.0,
+            if ddos_mode { RED } else { GREEN },
         );
-        draw_text("Controls: [Space] Pause, [D] DDoS, [R] Reset, [Click] Add Load", 10.0, screen_height() - 20.0, 20.0, LIGHTGRAY);
+        draw_text(
+            "Controls: [Space] Pause, [D] DDoS, [R] Reset, [Click] Add Load",
+            10.0,
+            screen_height() - 20.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await
     }

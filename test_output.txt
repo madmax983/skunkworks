@@ -1,0 +1,58 @@
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /app/experiments/thermo-defense/Cargo.toml
+workspace: /app/Cargo.toml
+warning: variable does not need to be mutable
+  --> experiments/hohmann-delivery/src/main.rs:44:9
+   |
+44 |     let mut dt = 0.1;
+   |         ----^^
+   |         |
+   |         help: remove this `mut`
+   |
+   = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: fields `time_of_flight` and `current_phase_angle` are never read
+  --> experiments/hohmann-delivery/src/guidance.rs:9:9
+   |
+ 6 | pub struct TransferWindow {
+   |            -------------- fields in this struct
+...
+ 9 |     pub time_of_flight: f32,
+   |         ^^^^^^^^^^^^^^
+10 |     pub phase_angle_required: f32,
+11 |     pub current_phase_angle: f32,
+   |         ^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `TransferWindow` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `plan` is never read
+  --> experiments/hohmann-delivery/src/ship.rs:18:9
+   |
+16 |     InTransit {
+   |     --------- field in this variant
+17 |         target_index: usize,
+18 |         plan: TransferWindow,
+   |         ^^^^
+   |
+   = note: `ShipState` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: variable `G` should have a snake case name
+  --> experiments/hohmann-delivery/src/physics.rs:82:13
+   |
+82 |         let G = 1.0;
+   |             ^ help: convert the identifier to snake case: `g`
+   |
+   = note: `#[warn(non_snake_case)]` (part of `#[warn(nonstandard_style)]`) on by default
+
+warning: `hohmann-delivery` (bin "hohmann-delivery" test) generated 4 warnings (run `cargo fix --bin "hohmann-delivery" -p hohmann-delivery --tests` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.48s
+     Running unittests src/main.rs (target/debug/deps/hohmann_delivery-7968c4d1a6653929)
+
+running 2 tests
+test guidance::tests::test_hohmann_earth_mars ... ok
+test physics::tests::test_gravity_attraction ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+EXIT CODE: 0

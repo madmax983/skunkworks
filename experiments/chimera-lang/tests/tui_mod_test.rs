@@ -1,6 +1,6 @@
-use chimera_lang::vm::{ChimeraVM, TuiEvent, Value};
-use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use chimera_lang::opcode::OpCode;
+use chimera_lang::vm::{ChimeraVM, TuiEvent, Value};
 
 fn make_dna(genes: Vec<Gene>) -> Dna {
     Dna {
@@ -13,9 +13,18 @@ fn make_dna(genes: Vec<Gene>) -> Dna {
 #[test]
 fn test_tui_mod_glitch() {
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(50)] }, // Value
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },  // Mode 0 (Glitch)
-        Gene { op: OpCode::TuiMod, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(50)],
+        }, // Value
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }, // Mode 0 (Glitch)
+        Gene {
+            op: OpCode::TuiMod,
+            args: vec![],
+        },
     ];
     let mut vm = ChimeraVM::new(make_dna(genes));
     vm.step(); // Push 50
@@ -32,9 +41,18 @@ fn test_tui_mod_glitch() {
 #[test]
 fn test_tui_mod_shake() {
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(50)] }, // Value
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },  // Mode 1 (Shake)
-        Gene { op: OpCode::TuiMod, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(50)],
+        }, // Value
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        }, // Mode 1 (Shake)
+        Gene {
+            op: OpCode::TuiMod,
+            args: vec![],
+        },
     ];
     let mut vm = ChimeraVM::new(make_dna(genes));
     vm.step();
@@ -51,9 +69,18 @@ fn test_tui_mod_shake() {
 #[test]
 fn test_tui_mod_message() {
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::String("CHAOS".to_string())] }, // Value
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },  // Mode 2 (Message)
-        Gene { op: OpCode::TuiMod, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String("CHAOS".to_string())],
+        }, // Value
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(2)],
+        }, // Mode 2 (Message)
+        Gene {
+            op: OpCode::TuiMod,
+            args: vec![],
+        },
     ];
     let mut vm = ChimeraVM::new(make_dna(genes));
     vm.step();

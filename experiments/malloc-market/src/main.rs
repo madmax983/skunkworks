@@ -1,6 +1,6 @@
-use macroquad::prelude::*;
-use ::rand::{Rng, thread_rng};
 use ::rand::seq::SliceRandom;
+use ::rand::{thread_rng, Rng};
+use macroquad::prelude::*;
 
 const GRID_W: usize = 64;
 const GRID_H: usize = 64;
@@ -112,7 +112,9 @@ impl Market {
         // Price Dynamics
         let delta = utilization - TARGET_UTILIZATION;
         self.price *= 1.0 + (delta * PRICE_SENSITIVITY);
-        if self.price < 0.1 { self.price = 0.1; }
+        if self.price < 0.1 {
+            self.price = 0.1;
+        }
 
         self.history.push(self.price);
         if self.history.len() > 300 {
@@ -150,19 +152,21 @@ impl Market {
             if agent.wealth > expansion_threshold {
                 if let Some(&(hx, hy)) = agent.holdings.choose(&mut rng) {
                     let neighbors: [(usize, usize); 4] = [
-                        (hx.wrapping_sub(1), hy), (hx + 1, hy),
-                        (hx, hy.wrapping_sub(1)), (hx, hy + 1)
+                        (hx.wrapping_sub(1), hy),
+                        (hx + 1, hy),
+                        (hx, hy.wrapping_sub(1)),
+                        (hx, hy + 1),
                     ];
 
                     for &(nx, ny) in neighbors.iter() {
                         if nx < GRID_W && ny < GRID_H && grid[nx][ny] == CellState::Free {
-                             let cost = current_price * 1.5; // Buying fee
-                             if agent.wealth > cost + expansion_threshold {
-                                 agent.wealth -= cost;
-                                 grid[nx][ny] = CellState::Allocated(agent.id);
-                                 agent.holdings.push((nx, ny));
-                                 break; // Buy one per tick max
-                             }
+                            let cost = current_price * 1.5; // Buying fee
+                            if agent.wealth > cost + expansion_threshold {
+                                agent.wealth -= cost;
+                                grid[nx][ny] = CellState::Allocated(agent.id);
+                                agent.holdings.push((nx, ny));
+                                break; // Buy one per tick max
+                            }
                         }
                     }
                 }
@@ -207,7 +211,7 @@ impl Market {
 
         // 5. Spawning
         if self.agents.len() < 10 || (self.agents.len() < 100 && rng.gen_bool(0.05)) {
-             self.spawn_agent();
+            self.spawn_agent();
         }
     }
 }
@@ -253,12 +257,12 @@ async fn main() {
                     CellState::Free => BLACK,
                     CellState::Allocated(pid) => {
                         if let Some(agent) = market.agents.iter().find(|a| a.id == pid) {
-                             agent.color
+                            agent.color
                         } else {
                             // Zombie cell? Should not happen.
                             DARKGRAY
                         }
-                    },
+                    }
                     CellState::Fragmented(timer) => {
                         let shade = (timer as f32 / FRAGMENTATION_TIME as f32) * 0.5;
                         Color::new(shade, shade, shade, 1.0)
@@ -273,14 +277,38 @@ async fn main() {
 
         // Draw UI
         let ui_y = grid_view_h;
-        draw_rectangle(0.0, ui_y, screen_w, ui_height, Color::new(0.1, 0.1, 0.1, 1.0));
+        draw_rectangle(
+            0.0,
+            ui_y,
+            screen_w,
+            ui_height,
+            Color::new(0.1, 0.1, 0.1, 1.0),
+        );
 
         // Stats Text
         let text_color = WHITE;
-        draw_text(&format!("Price: {:.2}", market.price), 10.0, ui_y + 30.0, 30.0, text_color);
-        draw_text(&format!("Agents: {}", market.agents.len()), 10.0, ui_y + 60.0, 30.0, text_color);
+        draw_text(
+            &format!("Price: {:.2}", market.price),
+            10.0,
+            ui_y + 30.0,
+            30.0,
+            text_color,
+        );
+        draw_text(
+            &format!("Agents: {}", market.agents.len()),
+            10.0,
+            ui_y + 60.0,
+            30.0,
+            text_color,
+        );
         if let Some(util) = market.utilization_history.last() {
-             draw_text(&format!("Util: {:.1}%", util * 100.0), 10.0, ui_y + 90.0, 30.0, text_color);
+            draw_text(
+                &format!("Util: {:.1}%", util * 100.0),
+                10.0,
+                ui_y + 90.0,
+                30.0,
+                text_color,
+            );
         }
 
         // Charts
@@ -293,14 +321,19 @@ async fn main() {
 
         // Draw Price History (Green)
         if market.history.len() > 1 {
-            let max_val = market.history.iter().cloned().fold(0.0/0.0, f32::max).max(2.0);
+            let max_val = market
+                .history
+                .iter()
+                .cloned()
+                .fold(0.0 / 0.0, f32::max)
+                .max(2.0);
 
-             for i in 0..market.history.len() - 1 {
+            for i in 0..market.history.len() - 1 {
                 let v1 = market.history[i];
-                let v2 = market.history[i+1];
+                let v2 = market.history[i + 1];
 
                 let x1 = chart_x + (i as f32 / market.history.len() as f32) * chart_w;
-                let x2 = chart_x + ((i+1) as f32 / market.history.len() as f32) * chart_w;
+                let x2 = chart_x + ((i + 1) as f32 / market.history.len() as f32) * chart_w;
 
                 let y1 = chart_y + chart_h - (v1 / max_val) * chart_h;
                 let y2 = chart_y + chart_h - (v2 / max_val) * chart_h;
@@ -311,12 +344,13 @@ async fn main() {
 
         // Draw Utilization History (Blue)
         if market.utilization_history.len() > 1 {
-             for i in 0..market.utilization_history.len() - 1 {
+            for i in 0..market.utilization_history.len() - 1 {
                 let v1 = market.utilization_history[i];
-                let v2 = market.utilization_history[i+1];
+                let v2 = market.utilization_history[i + 1];
 
                 let x1 = chart_x + (i as f32 / market.utilization_history.len() as f32) * chart_w;
-                let x2 = chart_x + ((i+1) as f32 / market.utilization_history.len() as f32) * chart_w;
+                let x2 =
+                    chart_x + ((i + 1) as f32 / market.utilization_history.len() as f32) * chart_w;
 
                 // Utilization is 0.0 to 1.0
                 let y1 = chart_y + chart_h - v1 * chart_h;
@@ -345,8 +379,8 @@ mod tests {
 
         // Agent might survive or die, but initially it should survive.
         if !market.agents.is_empty() {
-             let agent = &market.agents[0];
-             assert_ne!(agent.wealth, initial_wealth);
+            let agent = &market.agents[0];
+            assert_ne!(agent.wealth, initial_wealth);
         }
     }
 }

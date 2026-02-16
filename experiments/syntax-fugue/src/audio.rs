@@ -18,7 +18,10 @@ impl AudioEngine {
                 sinks: Vec::new(),
             }),
             Err(e) => {
-                eprintln!("Warning: Audio initialization failed: {}. Running in silent mode.", e);
+                eprintln!(
+                    "Warning: Audio initialization failed: {}. Running in silent mode.",
+                    e
+                );
                 Ok(Self {
                     _stream: None,
                     stream_handle: None,

@@ -490,8 +490,8 @@ mod tests {
         }
 
         assert_eq!(vm.stack.len(), 2, "Expected stack [y, x]");
-        assert_eq!(vm.stack[1], Value::Int(8));   // X
-        assert_eq!(vm.stack[0], Value::Int(8));   // Y
+        assert_eq!(vm.stack[1], Value::Int(8)); // X
+        assert_eq!(vm.stack[0], Value::Int(8)); // Y
         assert_eq!(vm.ip, (1, 0));
     }
 }

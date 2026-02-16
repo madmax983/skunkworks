@@ -44,7 +44,8 @@ pub fn exec_string_op(
                     (x_val, y_val, t_val, l_val)
                 {
                     if vm.strings.len() >= MAX_STRINGS {
-                        vm.output.push("Error: Max strings limit reached".to_string());
+                        vm.output
+                            .push("Error: Max strings limit reached".to_string());
                         return None;
                     }
 
@@ -208,12 +209,30 @@ mod tests {
     #[test]
     fn test_string_limit() {
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-            Gene { op: OpCode::StringNew, args: vec![] },
-            Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::StringNew,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(0)],
+            },
         ];
         let dna = Dna {
             helix: Helix {
@@ -234,6 +253,9 @@ mod tests {
         assert!(vm.strings.len() > 0);
 
         // Check for error message
-        assert!(vm.output.iter().any(|s| s.contains("Max strings limit reached")));
+        assert!(vm
+            .output
+            .iter()
+            .any(|s| s.contains("Max strings limit reached")));
     }
 }

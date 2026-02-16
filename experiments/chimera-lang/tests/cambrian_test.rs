@@ -1,9 +1,9 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use chimera_lang::vm::{ChimeraVM, Value};
     use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
+    use chimera_lang::vm::{ChimeraVM, Value};
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
         Dna {
@@ -59,20 +59,37 @@ mod tests {
 
         let strand0 = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // Channel
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(50)] }, // Threshold
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Target Strand
-                Gene { op: OpCode::HoxSwitch, args: vec![] },
-            ]
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(0)],
+                }, // Channel
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(50)],
+                }, // Threshold
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                }, // Target Strand
+                Gene {
+                    op: OpCode::HoxSwitch,
+                    args: vec![],
+                },
+            ],
         };
 
         let strand1 = Strand {
-            genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(999)] },
-            ]
+            genes: vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(999)],
+            }],
         };
 
-        let dna = Dna { helix: Helix { strands: vec![strand0, strand1] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![strand0, strand1],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
         vm.context_loc = (5, 5);
 

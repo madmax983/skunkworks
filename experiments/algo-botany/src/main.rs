@@ -1,10 +1,10 @@
 use macroquad::prelude::*;
 
-mod grid;
 mod botany;
+mod grid;
 
-use grid::{Grid, CellType};
 use botany::Plant;
+use grid::{CellType, Grid};
 
 const GRID_WIDTH: usize = 60;
 const GRID_HEIGHT: usize = 40;
@@ -27,7 +27,8 @@ async fn main() {
     loop {
         let screen_width = screen_width();
         let screen_height = screen_height();
-        let cell_size = (screen_width.min(screen_height) / GRID_WIDTH.max(GRID_HEIGHT) as f32 * 0.9).floor();
+        let cell_size =
+            (screen_width.min(screen_height) / GRID_WIDTH.max(GRID_HEIGHT) as f32 * 0.9).floor();
         let offset_x = (screen_width - cell_size * GRID_WIDTH as f32) / 2.0;
         let offset_y = (screen_height - cell_size * GRID_HEIGHT as f32) / 2.0;
 
@@ -56,7 +57,7 @@ async fn main() {
 
         // Place Seed (Start)
         if is_key_down(KeyCode::S) && is_mouse_button_pressed(MouseButton::Left) {
-             let (mx, my) = mouse_position();
+            let (mx, my) = mouse_position();
             let gx = ((mx - offset_x) / cell_size) as i32;
             let gy = ((my - offset_y) / cell_size) as i32;
 
@@ -69,9 +70,9 @@ async fn main() {
 
         if is_key_pressed(KeyCode::R) {
             if let Some(start) = grid.start {
-                 plant = Plant::new(start);
+                plant = Plant::new(start);
             } else {
-                 plant = Plant::new((0, 0));
+                plant = Plant::new((0, 0));
             }
         }
 

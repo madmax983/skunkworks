@@ -1,6 +1,6 @@
 use crate::lexer::Token;
+use crate::phonology::{evolve, parse_identifier, RuleType};
 use logos::Logos;
-use crate::phonology::{parse_identifier, evolve, RuleType};
 use std::collections::HashMap;
 
 pub struct App {
@@ -60,11 +60,11 @@ impl App {
                     let evolved = self.evolve_identifier(&text);
                     new_code.push_str(&evolved);
                     map.insert(text, evolved);
-                },
+                }
                 Ok(Token::Unknown(_)) => {
-                     // Just keep it as is
-                     new_code.push_str(&self.source_code[range.clone()]);
-                },
+                    // Just keep it as is
+                    new_code.push_str(&self.source_code[range.clone()]);
+                }
                 _ => {
                     // Keywords, punctuation, numbers - keep as is
                     new_code.push_str(&self.source_code[range.clone()]);

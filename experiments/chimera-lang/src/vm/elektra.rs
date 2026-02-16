@@ -12,7 +12,11 @@ fn get_conductivity(val: &Value) -> f32 {
         Value::Int(0) => CONDUCTIVITY_NONE,
         Value::Int(1) | Value::Int(2) | Value::Int(3) => CONDUCTIVITY_WIRE,
         Value::Str(s) => {
-            if s.starts_with("D:") || s.starts_with("T:") || s.starts_with("M:") || s.starts_with("S:") {
+            if s.starts_with("D:")
+                || s.starts_with("T:")
+                || s.starts_with("M:")
+                || s.starts_with("S:")
+            {
                 CONDUCTIVITY_WIRE
             } else {
                 CONDUCTIVITY_DEFAULT
@@ -57,9 +61,11 @@ fn exec_electrogenesis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             vm.energy -= cost;
             let (y, x) = vm.context_loc;
             vm.voltage_grid[y][x] += amount as f32;
-            vm.output.push(format!("ELECTROGENESIS: +{}V at {},{}", amount, x, y));
+            vm.output
+                .push(format!("ELECTROGENESIS: +{}V at {},{}", amount, x, y));
         } else {
-            vm.output.push("ELECTROGENESIS: Not enough energy".to_string());
+            vm.output
+                .push("ELECTROGENESIS: Not enough energy".to_string());
         }
     }
     None
@@ -73,7 +79,10 @@ fn exec_induction(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         vm.energy = vm.energy.saturating_add(energy_gain);
         vm.voltage_grid[y][x] = 0.0;
         vm.stack.push(Value::Int(energy_gain));
-        vm.output.push(format!("INDUCTION: Absorbed {}V -> {} Energy", v, energy_gain));
+        vm.output.push(format!(
+            "INDUCTION: Absorbed {}V -> {} Energy",
+            v, energy_gain
+        ));
     } else {
         vm.stack.push(Value::Int(0));
     }
@@ -108,7 +117,9 @@ fn exec_wire_growth(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 fn exec_circuit_breaker(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    if vm.stack.len() < 2 { return None; }
+    if vm.stack.len() < 2 {
+        return None;
+    }
     let s_val = vm.stack.pop().unwrap();
     let t_val = vm.stack.pop().unwrap();
 
@@ -116,7 +127,8 @@ fn exec_circuit_breaker(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let (y, x) = vm.context_loc;
         let v = vm.voltage_grid[y][x];
         if v > threshold as f32 && strand_idx >= 0 {
-            vm.output.push(format!("CIRCUITBREAKER: Tripped at {}V > {}", v, threshold));
+            vm.output
+                .push(format!("CIRCUITBREAKER: Tripped at {}V > {}", v, threshold));
             return Some((strand_idx as usize, 0));
         }
     }
@@ -124,7 +136,9 @@ fn exec_circuit_breaker(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 fn exec_battery(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    if vm.stack.len() < 3 { return None; }
+    if vm.stack.len() < 3 {
+        return None;
+    }
     let x_val = vm.stack.pop().unwrap();
     let y_val = vm.stack.pop().unwrap();
     let v_val = vm.stack.pop().unwrap();
@@ -139,7 +153,9 @@ fn exec_battery(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 fn exec_ground(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    if vm.stack.len() < 2 { return None; }
+    if vm.stack.len() < 2 {
+        return None;
+    }
     let x_val = vm.stack.pop().unwrap();
     let y_val = vm.stack.pop().unwrap();
     if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
@@ -153,7 +169,9 @@ fn exec_ground(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 fn exec_sense_volt(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    if vm.stack.len() < 2 { return None; }
+    if vm.stack.len() < 2 {
+        return None;
+    }
     let x_val = vm.stack.pop().unwrap();
     let y_val = vm.stack.pop().unwrap();
     if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
@@ -168,7 +186,9 @@ fn exec_sense_volt(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 fn exec_shock(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    if vm.stack.len() < 2 { return None; }
+    if vm.stack.len() < 2 {
+        return None;
+    }
     let r_val = vm.stack.pop().unwrap();
     let p_val = vm.stack.pop().unwrap();
     if let (Value::Int(r), Value::Int(p)) = (r_val, p_val) {
@@ -191,7 +211,9 @@ fn exec_shock(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 fn exec_lightning(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    if vm.stack.len() < 2 { return None; }
+    if vm.stack.len() < 2 {
+        return None;
+    }
     let x_val = vm.stack.pop().unwrap();
     let y_val = vm.stack.pop().unwrap();
     if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
@@ -201,7 +223,9 @@ fn exec_lightning(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 fn exec_tesla_coil(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    if vm.stack.len() < 2 { return None; }
+    if vm.stack.len() < 2 {
+        return None;
+    }
     let r_val = vm.stack.pop().unwrap();
     let p_val = vm.stack.pop().unwrap();
     if let (Value::Int(r), Value::Int(p)) = (r_val, p_val) {
@@ -237,11 +261,13 @@ fn exec_tesla_coil(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     }
                 }
                 if hit_count > 0 {
-                    vm.output.push(format!("TESLA COIL: Fried {} organelles", hit_count));
+                    vm.output
+                        .push(format!("TESLA COIL: Fried {} organelles", hit_count));
                 }
             }
         } else {
-            vm.output.push("TESLA COIL: Insufficient voltage".to_string());
+            vm.output
+                .push("TESLA COIL: Insufficient voltage".to_string());
         }
     }
     None
@@ -265,8 +291,7 @@ fn exec_galvanize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     let mut rng = rand::thread_rng();
                     let g_idx = rng.gen_range(0..strand.genes.len());
                     if !strand.genes[g_idx].args.is_empty() {
-                        strand.genes[g_idx].args[0] =
-                            Nucleotide::Number(rng.gen_range(0..100));
+                        strand.genes[g_idx].args[0] = Nucleotide::Number(rng.gen_range(0..100));
                     }
                 }
 
@@ -310,14 +335,20 @@ fn exec_galvanize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 fn exec_component_placement(vm: &mut ChimeraVM, type_prefix: &str) -> Option<(usize, usize)> {
-    if vm.stack.len() < 3 { return None; }
+    if vm.stack.len() < 3 {
+        return None;
+    }
     let x_val = vm.stack.pop().unwrap();
     let y_val = vm.stack.pop().unwrap();
     let param_val = vm.stack.pop().unwrap();
 
     if let (Value::Int(x), Value::Int(y), Value::Int(p)) = (x_val, y_val, param_val) {
         if let Some((ny, nx)) = vm.normalize_coords(y, x) {
-            let p_mod = if type_prefix == "D" || type_prefix == "T" { p % 4 } else { p };
+            let p_mod = if type_prefix == "D" || type_prefix == "T" {
+                p % 4
+            } else {
+                p
+            };
             vm.grid[ny][nx] = Value::Str(format!("{}:{}", type_prefix, p_mod));
 
             let name = match type_prefix {
@@ -328,14 +359,23 @@ fn exec_component_placement(vm: &mut ChimeraVM, type_prefix: &str) -> Option<(us
                 _ => "COMPONENT",
             };
 
-            vm.output.push(format!("{}: Created at {},{} param {}", name, nx, ny, p_mod));
+            vm.output.push(format!(
+                "{}: Created at {},{} param {}",
+                name, nx, ny, p_mod
+            ));
         }
     }
     None
 }
 
 // Helper to calculate effective conductivity multiplier based on component logic
-fn get_component_multiplier(vm: &ChimeraVM, y: usize, x: usize, neighbor_y: usize, neighbor_x: usize) -> f32 {
+fn get_component_multiplier(
+    vm: &ChimeraVM,
+    y: usize,
+    x: usize,
+    neighbor_y: usize,
+    neighbor_x: usize,
+) -> f32 {
     let mut mult = 1.0;
 
     // Check SELF component logic
@@ -366,7 +406,11 @@ fn get_component_multiplier(vm: &ChimeraVM, y: usize, x: usize, neighbor_y: usiz
 
 fn check_diode(dir: i64, y: usize, x: usize, ny: usize, nx: usize, vm: &ChimeraVM) -> f32 {
     let (dy, dx) = match dir {
-        0 => (-1, 0), 1 => (0, 1), 2 => (1, 0), 3 => (0, -1), _ => (0, 0)
+        0 => (-1, 0),
+        1 => (0, 1),
+        2 => (1, 0),
+        3 => (0, -1),
+        _ => (0, 0),
     };
     let ry = ny as i64 - y as i64;
     let rx = nx as i64 - x as i64;
@@ -389,7 +433,11 @@ fn check_diode(dir: i64, y: usize, x: usize, ny: usize, nx: usize, vm: &ChimeraV
 
 fn check_transistor(dir: i64, y: usize, x: usize, ny: usize, nx: usize, vm: &ChimeraVM) -> f32 {
     let (dy, dx) = match dir {
-        0 => (-1, 0), 1 => (0, 1), 2 => (1, 0), 3 => (0, -1), _ => (0, 0)
+        0 => (-1, 0),
+        1 => (0, 1),
+        2 => (1, 0),
+        3 => (0, -1),
+        _ => (0, 0),
     };
     let ry = ny as i64 - y as i64;
     let rx = nx as i64 - x as i64;
@@ -462,7 +510,8 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
                         }
 
                         let mult = get_component_multiplier(vm, y, x, ny, nx);
-                        let effective_cond = (base_cond * neighbor_cond) / (base_cond + neighbor_cond) * mult;
+                        let effective_cond =
+                            (base_cond * neighbor_cond) / (base_cond + neighbor_cond) * mult;
 
                         v_sum += vm.voltage_grid[ny][nx] * effective_cond;
                         weight_sum += effective_cond;
@@ -511,7 +560,7 @@ fn update_sensor(vm: &mut ChimeraVM, y: usize, x: usize, mode: i64) {
             }
             #[cfg(not(feature = "nova"))]
             false
-        },
+        }
         1 => {
             let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
             let mut found = false;
@@ -524,15 +573,15 @@ fn update_sensor(vm: &mut ChimeraVM, y: usize, x: usize, mode: i64) {
                 }
             }
             found
-        },
-        _ => false
+        }
+        _ => false,
     };
 
     if active {
         vm.voltage_grid[y][x] = 100.0;
         vm.resistance_grid[y][x] = -1.0;
     } else if vm.resistance_grid[y][x] == -1.0 {
-            vm.resistance_grid[y][x] = 1.0;
+        vm.resistance_grid[y][x] = 1.0;
     }
 }
 
@@ -552,7 +601,12 @@ fn update_muscles(vm: &mut ChimeraVM, grid_size: usize) {
                                     let mut rng = ::rand::thread_rng();
                                     let dy = rng.gen_range(-1..=1);
                                     let dx = rng.gen_range(-1..=1);
-                                    if let Some((ny, nx)) = topology.normalize(y as i64 + dy, x as i64 + dx, GRID_SIZE, GRID_SIZE) {
+                                    if let Some((ny, nx)) = topology.normalize(
+                                        y as i64 + dy,
+                                        x as i64 + dx,
+                                        GRID_SIZE,
+                                        GRID_SIZE,
+                                    ) {
                                         org.context_loc = (ny, nx);
                                     }
                                 }

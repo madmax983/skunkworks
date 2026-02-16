@@ -3,10 +3,10 @@
 #[cfg(feature = "oracle")]
 use crate::ast::JunctionType;
 #[cfg(feature = "oracle")]
+use crate::value::Value;
+#[cfg(feature = "oracle")]
 use crate::vm::oracle;
 use crate::vm::ChimeraVM;
-#[cfg(feature = "oracle")]
-use crate::value::Value;
 #[cfg(feature = "oracle")]
 use std::collections::HashMap;
 

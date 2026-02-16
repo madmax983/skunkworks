@@ -3,11 +3,11 @@ use crate::ast::Nucleotide;
 #[cfg(feature = "nova")]
 use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
+use crate::value::Value;
+#[cfg(feature = "nova")]
 use crate::vm::nova::{Organelle, OrganelleType};
 #[cfg(feature = "nova")]
 use crate::vm::ChimeraVM;
-#[cfg(feature = "nova")]
-use crate::value::Value;
 #[cfg(feature = "nova")]
 use serde::{Deserialize, Serialize};
 
@@ -133,7 +133,9 @@ fn perform_invoke(vm: &mut ChimeraVM, name: &str) -> Option<(usize, usize)> {
                         id: vm.organelle_id_counter,
                         tissue_id: None,
                         genome_id: 0,
-                        energy: 50, experience: 0, stage: 0,
+                        energy: 50,
+                        experience: 0,
+                        stage: 0,
                     };
                     vm.organelles.push(organelle);
                     vm.output.push("INVOKE: Void Summoned".to_string());
@@ -301,7 +303,9 @@ pub fn process_passive_sigils(vm: &mut ChimeraVM) {
                     id: vm.organelle_id_counter,
                     tissue_id: None,
                     genome_id: 0,
-                    energy: 20, experience: 0, stage: 0,
+                    energy: 20,
+                    experience: 0,
+                    stage: 0,
                 };
                 vm.organelles.push(organelle);
             }

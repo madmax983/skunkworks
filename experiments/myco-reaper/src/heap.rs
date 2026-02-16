@@ -129,7 +129,9 @@ impl Heap {
         // For the test "basic", a single pass is enough.
 
         // We need to collect IDs first to avoid borrow issues
-        let to_kill: Vec<usize> = self.nodes.values()
+        let to_kill: Vec<usize> = self
+            .nodes
+            .values()
             .filter(|n| n.ref_count == 0 && !self.roots.contains(&n.id) && n.alive)
             .map(|n| n.id)
             .collect();

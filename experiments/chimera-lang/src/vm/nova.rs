@@ -401,9 +401,9 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> Option<usize> {
                 id: vm.organelle_id_counter,
                 tissue_id: None,
                 genome_id: 0,
-                            energy: 10,
-                            experience: 0,
-                            stage: 0,
+                energy: 10,
+                experience: 0,
+                stage: 0,
             };
             vm.organelles.push(organelle);
             vm.chorus_buffer.clear();
@@ -710,18 +710,23 @@ pub fn exec_operator(vm: &mut ChimeraVM, args: &[Nucleotide]) -> Option<(usize, 
             if let Some(c) = s.chars().next() {
                 if idx >= 0 && (idx as usize) < vm.dna.helix.strands.len() {
                     vm.custom_operators.insert(c, idx as usize);
-                    vm.output.push(format!("OPERATOR: Defined '{}' -> Strand {}", c, idx));
+                    vm.output
+                        .push(format!("OPERATOR: Defined '{}' -> Strand {}", c, idx));
                 } else {
-                    vm.output.push("Error: Invalid strand index for Operator".to_string());
+                    vm.output
+                        .push("Error: Invalid strand index for Operator".to_string());
                 }
             } else {
-                vm.output.push("Error: Empty string for Operator char".to_string());
+                vm.output
+                    .push("Error: Empty string for Operator char".to_string());
             }
         } else {
-            vm.output.push("Error: Type mismatch for Operator".to_string());
+            vm.output
+                .push("Error: Type mismatch for Operator".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for Operator".to_string());
+        vm.output
+            .push("Error: Stack underflow for Operator".to_string());
     }
     None
 }
@@ -972,8 +977,7 @@ fn exec_tui_mod(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             (Value::Int(mode), Value::Int(val)) => match mode {
                 0 => {
                     let intensity = (val as f32) / 100.0;
-                    vm.tui_events
-                        .push(crate::vm::TuiEvent::Glitch(intensity));
+                    vm.tui_events.push(crate::vm::TuiEvent::Glitch(intensity));
                     vm.output
                         .push(format!("TUI: Glitch set to {:.2}", intensity));
                 }
@@ -989,8 +993,7 @@ fn exec_tui_mod(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             },
             (Value::Int(mode), Value::Str(s)) => {
                 if mode == 2 {
-                    vm.tui_events
-                        .push(crate::vm::TuiEvent::Message(s.clone()));
+                    vm.tui_events.push(crate::vm::TuiEvent::Message(s.clone()));
                     vm.output.push(format!("TUI: Message '{}'", s));
                 } else {
                     vm.output
@@ -1604,9 +1607,9 @@ fn exec_choir(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     id: vm.organelle_id_counter,
                     tissue_id: None,
                     genome_id: 0,
-                            energy: 50,
-                            experience: 0,
-                            stage: 0,
+                    energy: 50,
+                    experience: 0,
+                    stage: 0,
                 };
                 vm.organelles.push(organelle);
                 vm.energy = vm.energy.saturating_sub(50);

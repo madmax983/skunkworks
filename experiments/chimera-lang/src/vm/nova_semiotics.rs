@@ -20,9 +20,11 @@ pub fn exec_symbolize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
         vm.stack.push(Value::Symbol(id));
         vm.energy = vm.energy.saturating_sub(5);
-        vm.output.push(format!("SYMBOLIZE: Created Symbol §{:x}", id));
+        vm.output
+            .push(format!("SYMBOLIZE: Created Symbol §{:x}", id));
     } else {
-        vm.output.push("Error: Stack underflow for symbolize".to_string());
+        vm.output
+            .push("Error: Stack underflow for symbolize".to_string());
     }
     None
 }
@@ -38,19 +40,22 @@ pub fn exec_interpret(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             if let Some(resolved) = vm.meaning_map.get(&key) {
                 vm.stack.push(resolved.clone());
                 vm.energy = vm.energy.saturating_sub(2);
-                vm.output.push(format!("INTERPRET: §{:x} -> {}", id, resolved));
+                vm.output
+                    .push(format!("INTERPRET: §{:x} -> {}", id, resolved));
             } else {
                 // Meaning lost/unknown - drift?
                 // For now, push the symbol back or push 0 (meaningless)
                 vm.stack.push(Value::Int(0));
-                vm.output.push(format!("INTERPRET: Meaning lost for §{:x}", id));
+                vm.output
+                    .push(format!("INTERPRET: Meaning lost for §{:x}", id));
             }
         } else {
             // Self-interpreting value
             vm.stack.push(val);
         }
     } else {
-        vm.output.push("Error: Stack underflow for interpret".to_string());
+        vm.output
+            .push("Error: Stack underflow for interpret".to_string());
     }
     None
 }
@@ -67,9 +72,13 @@ pub fn exec_context_shift(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
         vm.semiotic_context ^= shift;
         vm.energy = vm.energy.saturating_sub(10);
-        vm.output.push(format!("CONTEXT_SHIFT: New Context {:x}", vm.semiotic_context));
+        vm.output.push(format!(
+            "CONTEXT_SHIFT: New Context {:x}",
+            vm.semiotic_context
+        ));
     } else {
-        vm.output.push("Error: Stack underflow for context_shift".to_string());
+        vm.output
+            .push("Error: Stack underflow for context_shift".to_string());
     }
     None
 }
@@ -89,18 +98,24 @@ pub fn exec_deconstruct(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
                 // Register default meaning for char symbols (char itself)
                 let key = (0, id); // Base context
-                vm.meaning_map.entry(key).or_insert(Value::Str(c.to_string()));
+                vm.meaning_map
+                    .entry(key)
+                    .or_insert(Value::Str(c.to_string()));
 
                 symbols.push(Value::Symbol(id));
             }
-            vm.stack.push(Value::Junction(crate::ast::JunctionType::All, symbols));
+            vm.stack
+                .push(Value::Junction(crate::ast::JunctionType::All, symbols));
             vm.energy = vm.energy.saturating_sub(s.len() as i64);
-            vm.output.push(format!("DECONSTRUCT: Broken '{}' into symbols", s));
+            vm.output
+                .push(format!("DECONSTRUCT: Broken '{}' into symbols", s));
         } else {
-            vm.output.push("Error: Type mismatch for deconstruct".to_string());
+            vm.output
+                .push("Error: Type mismatch for deconstruct".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for deconstruct".to_string());
+        vm.output
+            .push("Error: Stack underflow for deconstruct".to_string());
     }
     None
 }

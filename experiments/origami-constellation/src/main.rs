@@ -61,7 +61,7 @@ async fn main() {
 
         // Also allow dragging with Right Mouse Button to fold
         if is_mouse_button_down(MouseButton::Right) {
-             extension += delta.x * 0.005;
+            extension += delta.x * 0.005;
         }
 
         extension = extension.clamp(0.0, 1.0);
@@ -115,8 +115,8 @@ async fn main() {
 
         for i in (0..mesh_data.indices.len()).step_by(3) {
             let idx0 = mesh_data.indices[i] as usize;
-            let idx1 = mesh_data.indices[i+1] as usize;
-            let idx2 = mesh_data.indices[i+2] as usize;
+            let idx1 = mesh_data.indices[i + 1] as usize;
+            let idx2 = mesh_data.indices[i + 2] as usize;
 
             let v0 = mesh_data.vertices[idx0].pos;
             let v1 = mesh_data.vertices[idx1].pos;
@@ -130,7 +130,12 @@ async fn main() {
             let normal = (v1 - v0).cross(v2 - v0).normalize_or_zero();
             let intensity = normal.dot(light_dir).abs() * 0.6 + 0.4;
 
-            let color = Color::new(base_color.r * intensity, base_color.g * intensity, base_color.b * intensity, base_color.a);
+            let color = Color::new(
+                base_color.r * intensity,
+                base_color.g * intensity,
+                base_color.b * intensity,
+                base_color.a,
+            );
             let color_bytes: [u8; 4] = color.into();
 
             let start = mq_mesh.vertices.len() as u16;
@@ -170,27 +175,49 @@ async fn main() {
 
         // Draw Vertices (Stars)
         for v in &mesh_data.vertices {
-             // Billboard? Nah, just small sphere or point
-             // draw_sphere(v.pos, 0.05, None, WHITE); // Expensive for many vertices
-             // Use lines for "cross" star
-             let s = 0.05;
-             draw_line_3d(v.pos - vec3(s,0.,0.), v.pos + vec3(s,0.,0.), WHITE);
-             draw_line_3d(v.pos - vec3(0.,s,0.), v.pos + vec3(0.,s,0.), WHITE);
-             draw_line_3d(v.pos - vec3(0.,0.,s), v.pos + vec3(0.,0.,s), WHITE);
+            // Billboard? Nah, just small sphere or point
+            // draw_sphere(v.pos, 0.05, None, WHITE); // Expensive for many vertices
+            // Use lines for "cross" star
+            let s = 0.05;
+            draw_line_3d(v.pos - vec3(s, 0., 0.), v.pos + vec3(s, 0., 0.), WHITE);
+            draw_line_3d(v.pos - vec3(0., s, 0.), v.pos + vec3(0., s, 0.), WHITE);
+            draw_line_3d(v.pos - vec3(0., 0., s), v.pos + vec3(0., 0., s), WHITE);
         }
 
         set_default_camera();
 
         // UI Overlay
         draw_text("ORIGAMI CONSTELLATION", 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Extension: {:.1}%", extension * 100.0), 20.0, 60.0, 20.0, WHITE);
-        draw_text("Controls: Left/Right Arrow or Right Mouse Drag to Fold", 20.0, 80.0, 20.0, GRAY);
-        draw_text("Orbit: Left Mouse Drag | Zoom: Scroll", 20.0, 100.0, 20.0, GRAY);
+        draw_text(
+            &format!("Extension: {:.1}%", extension * 100.0),
+            20.0,
+            60.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "Controls: Left/Right Arrow or Right Mouse Drag to Fold",
+            20.0,
+            80.0,
+            20.0,
+            GRAY,
+        );
+        draw_text(
+            "Orbit: Left Mouse Drag | Zoom: Scroll",
+            20.0,
+            100.0,
+            20.0,
+            GRAY,
+        );
 
         // "Moonshot" flavor text
-        let status = if extension > 0.95 { "ARRAY DEPLOYED - COLLECTING PHOTONS" }
-                     else if extension < 0.05 { "STOWED FOR TRANSIT" }
-                     else { "DEPLOYMENT IN PROGRESS..." };
+        let status = if extension > 0.95 {
+            "ARRAY DEPLOYED - COLLECTING PHOTONS"
+        } else if extension < 0.05 {
+            "STOWED FOR TRANSIT"
+        } else {
+            "DEPLOYMENT IN PROGRESS..."
+        };
 
         let color = if extension > 0.95 { GREEN } else { YELLOW };
         draw_text(status, 20.0, screen_height() - 30.0, 20.0, color);

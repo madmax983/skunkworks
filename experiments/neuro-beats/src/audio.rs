@@ -32,7 +32,7 @@ impl AudioEngine {
 
             // Fire and forget
             match handle.play_raw(source.convert_samples()) {
-                Ok(_) => {},
+                Ok(_) => {}
                 Err(e) => eprintln!("Failed to play sound: {}", e),
             }
         }
