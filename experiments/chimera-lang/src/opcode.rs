@@ -400,6 +400,30 @@ pub enum OpCode {
     #[cfg(all(feature = "elektra", feature = "nova"))]
     Galvanize,
 
+    /// **[Elektra]** Creates a Diode (One-way conductor) on the grid.
+    ///
+    /// **Stack:** `[ ..., direction, y, x ] -> [ ... ]`
+    #[cfg(feature = "elektra")]
+    Diode,
+
+    /// **[Elektra]** Creates a Transistor (Switch) on the grid.
+    ///
+    /// **Stack:** `[ ..., base_direction, y, x ] -> [ ... ]`
+    #[cfg(feature = "elektra")]
+    Transistor,
+
+    /// **[Elektra]** Creates a Muscle (Actuator) on the grid.
+    ///
+    /// **Stack:** `[ ..., threshold, y, x ] -> [ ... ]`
+    #[cfg(feature = "elektra")]
+    Muscle,
+
+    /// **[Elektra]** Creates a Sensor (Source) on the grid.
+    ///
+    /// **Stack:** `[ ..., mode, y, x ] -> [ ... ]`
+    #[cfg(feature = "elektra")]
+    Sensor,
+
     // Nova Features
     /// **[Nova]** Expands an L-System axiom using rules and iterations.
     ///

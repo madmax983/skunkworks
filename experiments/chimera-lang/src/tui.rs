@@ -7752,6 +7752,48 @@ fn render_elektra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     .bg(Color::Blue)
                     .add_modifier(Modifier::BOLD);
                 "-".to_string() // Ground
+            } else if let crate::vm::Value::Str(s) = &vm.grid[y][x] {
+                if s.starts_with("D:") {
+                    style = style.fg(Color::White).add_modifier(Modifier::BOLD);
+                    let dir = s.trim_start_matches("D:").parse::<i64>().unwrap_or(0);
+                    match dir {
+                        0 => "△",
+                        1 => "▷",
+                        2 => "▽",
+                        3 => "◁",
+                        _ => "D",
+                    }
+                    .to_string()
+                } else if s.starts_with("T:") {
+                    style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
+                    "Y".to_string()
+                } else if s.starts_with("M:") {
+                    style = style.fg(Color::Red).add_modifier(Modifier::BOLD);
+                    "M".to_string()
+                } else if s.starts_with("S:") {
+                    style = style.fg(Color::Cyan).add_modifier(Modifier::BOLD);
+                    "?".to_string()
+                } else {
+                    // Fallback to voltage visualization for other strings
+                    let i = vm.current_grid[y][x];
+                    if i > 0.1 {
+                        style = style.bg(Color::Rgb(
+                            0,
+                            (i * 10.0).clamp(0.0, 100.0) as u8,
+                            (i * 20.0).clamp(0.0, 255.0) as u8,
+                        ));
+                    }
+
+                    if v.abs() < 0.1 {
+                        "·".to_string()
+                    } else if v.abs() < 10.0 {
+                        "~".to_string()
+                    } else if v.abs() < 50.0 {
+                        "≈".to_string()
+                    } else {
+                        "⚡".to_string()
+                    }
+                }
             } else {
                 // Current flow?
                 let i = vm.current_grid[y][x];
@@ -7817,6 +7859,10 @@ fn render_elektra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  ground(y, x) - Set Sink"),
         Line::from("  sense_volt(y, x) - Read Voltage"),
         Line::from("  shock(p, r) - Discharge"),
+        Line::from("  diode(dir, y, x) - One-way"),
+        Line::from("  transistor(dir, y, x) - Switch"),
+        Line::from("  muscle(thresh, y, x) - Actuator"),
+        Line::from("  sensor(mode, y, x) - Source"),
         Line::from(" "),
         Line::from("Physics:"),
         Line::from("  V propagates via Grid neighbors."),
