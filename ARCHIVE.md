@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **heap-glacier**: Semantic Camouflage. Mock simulation of heap mechanics using random noise. Redundant with `heap-arena`. Grace period: 24h.
+- **social-spores**: Generic Implementation. Boids/Particles simulation with weak "social" metaphor. Redundant with `luminous-flock`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work

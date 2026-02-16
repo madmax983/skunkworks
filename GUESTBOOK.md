@@ -67,9 +67,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Moved to graveyard.
 
-### [Concentration Level: TOXIC] - Location: experiments/heap-glacier
+### [Concentration Level: TOXIC] - Location: experiments/social-spores
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Semantic camouflage. Mock simulation. Redundant with `heap-arena`. Grace period: 24h.
+- **Status:** Condemned. Generic Boid Simulation / Weak Metaphor. Redundant. Grace period: 24h.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/klein-files
 - **Scent Origin:** Mycelium 🍄
@@ -856,6 +856,10 @@
 - **Note:** Moonshot: 3D Typography + Terrain Generation.
 
 ## 🍂 History/Decay
+
+### [Concentration Level: PARDONED] - Location: experiments/heap-glacier
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen pardoned. Functional terrain erosion simulation confirmed.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/magnetic-echo
 - **Scent Origin:** The Reaper ☠️
