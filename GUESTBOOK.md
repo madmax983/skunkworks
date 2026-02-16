@@ -437,3 +437,5 @@
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** Planting the seeds of knowledge. Roots are seeking the optimal path.
 - **Note:** Moonshot: Pathfinding Algorithms + Organic Root Growth.
+
+- 🧬 **The Splice Surgeon**: Spliced `luminous-limb` from `fabric-limb` and `luminous-flock`. The swarm fears the arm. Emergent avoidance behavior observed.

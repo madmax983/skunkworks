@@ -1043,3 +1043,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Mechanical Price Discovery. Visualizing market volatility as angular momentum.
 - **Status**: experiments/mechanical-market
 - **Evaluation**: Compiles. Differential logic operational.
+
+### luminous-limb
+- **Parents**: experiments/fabric-limb + experiments/luminous-flock
+- **Concept**: A bioluminescent predator arm (IK) hunting a flock of reactive firefly boids.
+- **Novel trait**: Interactive Flocking. The swarm flees from the predator's reach, creating a dynamic negative space.
+- **Status**: experiments/luminous-limb
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

@@ -139,6 +139,7 @@ members = [
     "experiments/hydro-soundscapes", "experiments/entropy-beast",
     "experiments/chimera-runes", "experiments/nile-scheduler", "experiments/myco-reaper", "experiments/mechanical-integrator", "experiments/syntax-fugue", "experiments/crystal-conquest", "experiments/sandpile-scheduler", "experiments/codex-vulgaris",
     "experiments/mechanical-market", "experiments/lock-step", "experiments/hyperbolic-rogue",
+    "experiments/luminous-limb",
 ]
 resolver = "2"
 

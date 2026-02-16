@@ -1,0 +1,13 @@
+[package]
+name = "luminous-limb"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+locus = { workspace = true }
+flocking = { workspace = true }
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+ratatui = { workspace = true }
+tui-shared = { workspace = true }
