@@ -62,6 +62,8 @@ mod elektra_madness {
             tissue_id: None,
             genome_id: 0,
             energy: 100,
+            experience: 0,
+            stage: 0,
         };
 
         vm.organelles.push(org);
