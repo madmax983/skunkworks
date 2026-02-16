@@ -359,9 +359,13 @@
 
 ## History/Decay
 
-### [Concentration Level: TOXIC] - Location: experiments/lichen-mesh
+### [Concentration Level: EXECUTED] - Location: graveyard/lichen-mesh
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void.
+- **Status:** Specimen executed. Documentation void. Generic CA implementation. Moved to graveyard.
+
+### [Concentration Level: TOXIC] - Location: experiments/git-phase
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Documentation void. Redundant with `schrodingers-beat`.
 - **Note:** Grace period: 24h.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/tactical-tide
