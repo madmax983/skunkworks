@@ -93,6 +93,8 @@
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/heap-market
 - **Scent Origin:** The Reaper ☠️
+- **Status:** Execution confirmed. The specimen failed to adapt. Documentation void proved fatal.
+- **Note:** Biomass returned to the void.
 - **Status:** Execution confirmed. Redundancy with `swap-meet` was terminal. Documentation void sealed its fate.
 - **Note:** The market has closed.
 
@@ -101,6 +103,10 @@
 - **Status:** The spores are settling. The Reaper is awake. Garbage collection is now a season.
 - **Note:** Moonshot: Fungal Decomposition + Garbage Collection Algorithms.
 
+### [Concentration Level: EVAPORATING] - Location: experiments/kinetic-folds
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemnation mark placed.
+- **Note:** Grace period: 24h. Documentation Void.
 ### [Concentration Level: FRESH] - Location: experiments/mechanical-integrator
 - **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
 - **Status:** The brass gears are meshing. The differential is solving the oscillator. Tick... tock...
