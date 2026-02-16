@@ -78,6 +78,9 @@ pub mod babel_chaos;
 #[cfg(test)]
 mod nova_babel_live_test;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod babel_virus_test;
+#[cfg(feature = "nova")]
 pub mod nova_babel_live;
 pub mod bard;
     #[cfg(feature = "nova")]
