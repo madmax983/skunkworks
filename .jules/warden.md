@@ -31,3 +31,10 @@
 ## 2026-02-16 - Nova Physics Integer Overflow Panic
 **Threat:** The `exec_irradiate` and `exec_detox` OpCodes in `experiments/chimera-lang/src/vm/nova.rs` calculated energy cost using `(r * r + 1)` where `r` is a user-controlled `i64`. If `r` was large (e.g. `i64::MAX`), `r*r` would overflow `i64`, causing a panic in debug builds (DoS) or wrapping in release builds.
 **Defense:** Switched to calculating `r_sq` using `(r as i128).saturating_mul(r as i128)` to ensure safety and correct cost capping.
+
+## 2026-03-01 - Nova Strings Unbounded Allocation (DoS) & Retina Hardening
+**Threat:** The `OpCode::StringNew` operation in `experiments/chimera-lang/src/vm/nova_strings.rs` allowed unbounded creation of `CosmicString` objects via an infinite loop, leading to memory exhaustion (DoS).
+**Defense:** Introduced `MAX_STRINGS` (256) limit in `vm/mod.rs` and enforced it in `exec_string_op`.
+
+**Threat:** `exec_rasterize` in `experiments/chimera-lang/src/vm/retina.rs` allowed integer underflow wrapping via `x as usize` when `x` was negative, potentially writing to index 0 instead of being bounds-checked.
+**Defense:** Added explicit checks for `x < 0 || y < 0` in `exec_retina_draw` and `exec_rasterize`.
