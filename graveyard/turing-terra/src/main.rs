@@ -1,733 +1,309 @@
-use std::sync::Arc;
-use wgpu::util::DeviceExt;
-use winit::{
-    dpi::PhysicalPosition,
-    event::*,
-    event_loop::EventLoop,
-    keyboard::{KeyCode, PhysicalKey},
-    window::{Window, WindowBuilder},
-};
+mod chem_sim;
 
-const WIDTH: u32 = 1024;
-const HEIGHT: u32 = 1024;
+use chem_sim::ChemicalState;
+use macroquad::models::{Mesh, Vertex, draw_mesh};
+use macroquad::prelude::*;
 
-#[repr(C)]
-#[derive(Debug, Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
-struct Uniforms {
-    feed: f32,
-    kill: f32,
-    dt: f32,
-    diff_u: f32,
-    diff_v: f32,
-    _padding1: f32,
-    _padding2: f32,
-    _padding3: f32,
+const GRID_SIZE: usize = 200;
+
+fn window_conf() -> Conf {
+    Conf {
+        window_title: "Turing Terra".to_owned(),
+        window_width: 1280,
+        window_height: 720,
+        high_dpi: true,
+        ..Default::default()
+    }
 }
 
-struct State<'a> {
-    surface: wgpu::Surface<'a>,
-    device: wgpu::Device,
-    queue: wgpu::Queue,
-    config: wgpu::SurfaceConfiguration,
-    size: winit::dpi::PhysicalSize<u32>,
-    window: Arc<Window>,
-    cursor_pos: PhysicalPosition<f64>,
-
-    // Pipelines
-    compute_pipeline: wgpu::ComputePipeline,
-    render_pipeline: wgpu::RenderPipeline,
-
-    // Resources
-    uniform_buffer: wgpu::Buffer,
-    uniform_bind_group: wgpu::BindGroup,
-
-    texture_a: wgpu::Texture,
-    texture_b: wgpu::Texture,
-
-    bind_group_a: wgpu::BindGroup, // Read A, Write B
-    bind_group_b: wgpu::BindGroup, // Read B, Write A
-
-    display_bind_group_a: wgpu::BindGroup, // Display A
-    display_bind_group_b: wgpu::BindGroup, // Display B
-
-    frame_count: u64,
-
-    // Simulation Params
-    uniforms: Uniforms,
-
-    // Input State
-    mouse_pressed_left: bool,
-    mouse_pressed_right: bool,
+struct Terrain {
+    mesh: Mesh,
+    grid_width: usize,
+    grid_height: usize,
 }
 
-impl<'a> State<'a> {
-    async fn new(window: Arc<Window>) -> Self {
-        let size = window.inner_size();
-        let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
-            backends: wgpu::Backends::all(),
-            ..Default::default()
-        });
+impl Terrain {
+    fn new(width: usize, height: usize) -> Self {
+        let mut vertices = Vec::with_capacity(width * height);
+        let mut indices = Vec::with_capacity((width - 1) * (height - 1) * 6);
 
-        let surface = instance.create_surface(window.clone()).unwrap();
-
-        let adapter = instance
-            .request_adapter(&wgpu::RequestAdapterOptions {
-                power_preference: wgpu::PowerPreference::HighPerformance,
-                compatible_surface: Some(&surface),
-                force_fallback_adapter: false,
-            })
-            .await
-            .unwrap();
-
-        let (device, queue) = adapter
-            .request_device(
-                &wgpu::DeviceDescriptor {
-                    required_features: wgpu::Features::TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES,
-                    required_limits: wgpu::Limits::default(),
-                    label: None,
-                },
-                None,
-            )
-            .await
-            .unwrap();
-
-        let surface_caps = surface.get_capabilities(&adapter);
-        let surface_format = surface_caps
-            .formats
-            .iter()
-            .copied()
-            .find(|f| f.is_srgb())
-            .unwrap_or(surface_caps.formats[0]);
-
-        let config = wgpu::SurfaceConfiguration {
-            usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
-            format: surface_format,
-            width: size.width,
-            height: size.height,
-            present_mode: surface_caps.present_modes[0],
-            alpha_mode: surface_caps.alpha_modes[0],
-            view_formats: vec![],
-            desired_maximum_frame_latency: 2,
-        };
-        surface.configure(&device, &config);
-
-        // --- Resources ---
-
-        let texture_desc = wgpu::TextureDescriptor {
-            label: Some("Simulation Texture"),
-            size: wgpu::Extent3d {
-                width: WIDTH,
-                height: HEIGHT,
-                depth_or_array_layers: 1,
-            },
-            mip_level_count: 1,
-            sample_count: 1,
-            dimension: wgpu::TextureDimension::D2,
-            format: wgpu::TextureFormat::Rgba32Float,
-            usage: wgpu::TextureUsages::TEXTURE_BINDING
-                | wgpu::TextureUsages::STORAGE_BINDING
-                | wgpu::TextureUsages::COPY_DST,
-            view_formats: &[],
-        };
-
-        let texture_a = device.create_texture(&texture_desc);
-        let texture_b = device.create_texture(&texture_desc);
-        let texture_view_a = texture_a.create_view(&wgpu::TextureViewDescriptor::default());
-        let texture_view_b = texture_b.create_view(&wgpu::TextureViewDescriptor::default());
-
-        // Initial Parameters for "Islands/Spots"
-        // Feed: 0.055, Kill: 0.062
-        let uniforms = Uniforms {
-            feed: 0.055,
-            kill: 0.062,
-            dt: 1.0,
-            diff_u: 1.0,
-            diff_v: 0.5,
-            _padding1: 0.0,
-            _padding2: 0.0,
-            _padding3: 0.0,
-        };
-        let uniform_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("Uniform Buffer"),
-            contents: bytemuck::cast_slice(&[uniforms]),
-            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
-        });
-
-        let shader = device.create_shader_module(wgpu::include_wgsl!("shader.wgsl"));
-
-        // --- Pipelines ---
-
-        let compute_bind_group_layout =
-            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-                label: Some("Compute Bind Group Layout"),
-                entries: &[wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Uniform,
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                }],
-            });
-
-        let storage_bind_group_layout =
-            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-                label: Some("Storage Bind Group Layout"),
-                entries: &[
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 0,
-                        visibility: wgpu::ShaderStages::COMPUTE,
-                        ty: wgpu::BindingType::Texture {
-                            multisampled: false,
-                            view_dimension: wgpu::TextureViewDimension::D2,
-                            sample_type: wgpu::TextureSampleType::Float { filterable: false },
-                        },
-                        count: None,
-                    },
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 1,
-                        visibility: wgpu::ShaderStages::COMPUTE,
-                        ty: wgpu::BindingType::StorageTexture {
-                            access: wgpu::StorageTextureAccess::WriteOnly,
-                            format: wgpu::TextureFormat::Rgba32Float,
-                            view_dimension: wgpu::TextureViewDimension::D2,
-                        },
-                        count: None,
-                    },
-                ],
-            });
-
-        let compute_pipeline_layout =
-            device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-                label: Some("Compute Pipeline Layout"),
-                bind_group_layouts: &[&compute_bind_group_layout, &storage_bind_group_layout],
-                push_constant_ranges: &[],
-            });
-
-        let compute_pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
-            label: Some("Compute Pipeline"),
-            layout: Some(&compute_pipeline_layout),
-            module: &shader,
-            entry_point: "update",
-        });
-
-        let render_bind_group_layout =
-            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-                label: Some("Render Bind Group Layout"),
-                entries: &[
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 0,
-                        visibility: wgpu::ShaderStages::FRAGMENT,
-                        ty: wgpu::BindingType::Buffer {
-                            ty: wgpu::BufferBindingType::Uniform,
-                            has_dynamic_offset: false,
-                            min_binding_size: None,
-                        },
-                        count: None,
-                    },
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 1,
-                        visibility: wgpu::ShaderStages::FRAGMENT,
-                        ty: wgpu::BindingType::Texture {
-                            multisampled: false,
-                            view_dimension: wgpu::TextureViewDimension::D2,
-                            sample_type: wgpu::TextureSampleType::Float { filterable: false },
-                        },
-                        count: None,
-                    },
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 2,
-                        visibility: wgpu::ShaderStages::FRAGMENT,
-                        ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::NonFiltering),
-                        count: None,
-                    },
-                ],
-            });
-
-        let render_pipeline_layout =
-            device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-                label: Some("Render Pipeline Layout"),
-                bind_group_layouts: &[&render_bind_group_layout],
-                push_constant_ranges: &[],
-            });
-
-        let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-            label: Some("Render Pipeline"),
-            layout: Some(&render_pipeline_layout),
-            vertex: wgpu::VertexState {
-                module: &shader,
-                entry_point: "vs_main",
-                buffers: &[],
-            },
-            fragment: Some(wgpu::FragmentState {
-                module: &shader,
-                entry_point: "fs_main",
-                targets: &[Some(wgpu::ColorTargetState {
-                    format: config.format,
-                    blend: Some(wgpu::BlendState::REPLACE),
-                    write_mask: wgpu::ColorWrites::ALL,
-                })],
-            }),
-            primitive: wgpu::PrimitiveState::default(),
-            depth_stencil: None,
-            multisample: wgpu::MultisampleState::default(),
-            multiview: None,
-        });
-
-        let uniform_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("Uniform Bind Group"),
-            layout: &compute_bind_group_layout,
-            entries: &[wgpu::BindGroupEntry {
-                binding: 0,
-                resource: uniform_buffer.as_entire_binding(),
-            }],
-        });
-
-        let bind_group_a = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("Compute Bind Group A"),
-            layout: &storage_bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: wgpu::BindingResource::TextureView(&texture_view_a),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: wgpu::BindingResource::TextureView(&texture_view_b),
-                },
-            ],
-        });
-
-        let bind_group_b = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("Compute Bind Group B"),
-            layout: &storage_bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: wgpu::BindingResource::TextureView(&texture_view_b),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: wgpu::BindingResource::TextureView(&texture_view_a),
-                },
-            ],
-        });
-
-        let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
-            address_mode_u: wgpu::AddressMode::Repeat,
-            address_mode_v: wgpu::AddressMode::Repeat,
-            mag_filter: wgpu::FilterMode::Nearest,
-            min_filter: wgpu::FilterMode::Nearest,
-            ..Default::default()
-        });
-
-        let display_bind_group_a = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("Display Bind Group A"),
-            layout: &render_bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: uniform_buffer.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: wgpu::BindingResource::TextureView(&texture_view_a),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: wgpu::BindingResource::Sampler(&sampler),
-                },
-            ],
-        });
-
-        let display_bind_group_b = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("Display Bind Group B"),
-            layout: &render_bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: uniform_buffer.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: wgpu::BindingResource::TextureView(&texture_view_b),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: wgpu::BindingResource::Sampler(&sampler),
-                },
-            ],
-        });
-
-        // Initialize State: Fill with U=1.0, V=0.0
-        // Then add random noise to V in a central area
-        let mut initial_data = vec![0u8; (WIDTH * HEIGHT * 4 * 4) as usize];
-        for i in 0..(WIDTH * HEIGHT) {
-            let idx = (i * 16) as usize;
-            // R = U = 1.0
-            let u_val: f32 = 1.0;
-            let u_bytes = u_val.to_ne_bytes();
-            initial_data[idx] = u_bytes[0];
-            initial_data[idx + 1] = u_bytes[1];
-            initial_data[idx + 2] = u_bytes[2];
-            initial_data[idx + 3] = u_bytes[3];
-            // G = V = 0.0 (already zeroed by vec!)
-        }
-
-        // Add random "seeds"
-        use rand::Rng;
-        let mut rng = rand::thread_rng();
-        for _ in 0..100 {
-            let cx = rng.gen_range(20..(WIDTH - 20));
-            let cy = rng.gen_range(20..(HEIGHT - 20));
-            for y in (cy - 10)..(cy + 10) {
-                for x in (cx - 10)..(cx + 10) {
-                    let idx = ((y * WIDTH + x) * 16) as usize;
-                    let v_val: f32 = 1.0;
-                    let bytes = v_val.to_ne_bytes();
-                    initial_data[idx + 4] = bytes[0];
-                    initial_data[idx + 5] = bytes[1];
-                    initial_data[idx + 6] = bytes[2];
-                    initial_data[idx + 7] = bytes[3];
-                }
+        for y in 0..height {
+            for x in 0..width {
+                vertices.push(Vertex {
+                    position: vec3(x as f32, 0.0, y as f32),
+                    uv: vec2(x as f32 / width as f32, y as f32 / height as f32),
+                    color: WHITE.into(),
+                    normal: vec4(0.0, 1.0, 0.0, 0.0),
+                });
             }
         }
 
-        queue.write_texture(
-            wgpu::ImageCopyTexture {
-                texture: &texture_a,
-                mip_level: 0,
-                origin: wgpu::Origin3d::ZERO,
-                aspect: wgpu::TextureAspect::All,
-            },
-            &initial_data,
-            wgpu::ImageDataLayout {
-                offset: 0,
-                bytes_per_row: Some(WIDTH * 16),
-                rows_per_image: Some(HEIGHT),
-            },
-            wgpu::Extent3d {
-                width: WIDTH,
-                height: HEIGHT,
-                depth_or_array_layers: 1,
-            },
-        );
+        for y in 0..height - 1 {
+            for x in 0..width - 1 {
+                let tl = (y * width + x) as u16;
+                let tr = (y * width + x + 1) as u16;
+                let bl = ((y + 1) * width + x) as u16;
+                let br = ((y + 1) * width + x + 1) as u16;
+
+                indices.push(tl);
+                indices.push(bl);
+                indices.push(tr);
+
+                indices.push(tr);
+                indices.push(bl);
+                indices.push(br);
+            }
+        }
 
         Self {
-            surface,
-            device,
-            queue,
-            config,
-            size,
-            window,
-            cursor_pos: PhysicalPosition::new(0.0, 0.0),
-            compute_pipeline,
-            render_pipeline,
-            uniform_buffer,
-            uniform_bind_group,
-            texture_a,
-            texture_b,
-            bind_group_a,
-            bind_group_b,
-            display_bind_group_a,
-            display_bind_group_b,
-            frame_count: 0,
-            uniforms,
-            mouse_pressed_left: false,
-            mouse_pressed_right: false,
-        }
-    }
-
-    fn resize(&mut self, new_size: winit::dpi::PhysicalSize<u32>) {
-        if new_size.width > 0 && new_size.height > 0 {
-            self.size = new_size;
-            self.config.width = new_size.width;
-            self.config.height = new_size.height;
-            self.surface.configure(&self.device, &self.config);
-        }
-    }
-
-    fn input(&mut self, event: &WindowEvent) -> bool {
-        match event {
-            WindowEvent::CursorMoved { position, .. } => {
-                self.cursor_pos = *position;
-                true
-            }
-            WindowEvent::MouseInput { state, button, .. } => {
-                match button {
-                    MouseButton::Left => self.mouse_pressed_left = *state == ElementState::Pressed,
-                    MouseButton::Right => {
-                        self.mouse_pressed_right = *state == ElementState::Pressed
-                    }
-                    _ => {}
-                }
-                true
-            }
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        state: ElementState::Pressed,
-                        physical_key: PhysicalKey::Code(keycode),
-                        ..
-                    },
-                ..
-            } => match keycode {
-                KeyCode::ArrowUp => {
-                    self.uniforms.feed += 0.001;
-                    println!(
-                        "Feed: {:.4}, Kill: {:.4}",
-                        self.uniforms.feed, self.uniforms.kill
-                    );
-                    true
-                }
-                KeyCode::ArrowDown => {
-                    self.uniforms.feed -= 0.001;
-                    println!(
-                        "Feed: {:.4}, Kill: {:.4}",
-                        self.uniforms.feed, self.uniforms.kill
-                    );
-                    true
-                }
-                KeyCode::ArrowRight => {
-                    self.uniforms.kill += 0.001;
-                    println!(
-                        "Feed: {:.4}, Kill: {:.4}",
-                        self.uniforms.feed, self.uniforms.kill
-                    );
-                    true
-                }
-                KeyCode::ArrowLeft => {
-                    self.uniforms.kill -= 0.001;
-                    println!(
-                        "Feed: {:.4}, Kill: {:.4}",
-                        self.uniforms.feed, self.uniforms.kill
-                    );
-                    true
-                }
-                _ => false,
+            mesh: Mesh {
+                vertices,
+                indices,
+                texture: None,
             },
-            _ => false,
+            grid_width: width,
+            grid_height: height,
         }
     }
 
-    fn add_catalyst(&mut self, add_v: bool) {
-        let w = self.size.width as f64;
-        let h = self.size.height as f64;
-        if w == 0.0 || h == 0.0 {
-            return;
-        }
+    fn update_from_sim(&mut self, sim: &ChemicalState) {
+        // Map u/v to height/color
 
-        let cx = self.cursor_pos.x.clamp(0.0, w - 1.0);
-        let cy = self.cursor_pos.y.clamp(0.0, h - 1.0);
+        for (i, v) in self.mesh.vertices.iter_mut().enumerate() {
+            let x = i % self.grid_width;
+            let y = i / self.grid_width;
 
-        let tx = (cx / w * WIDTH as f64) as u32;
-        let ty = (cy / h * HEIGHT as f64) as u32;
+            let _u_val = sim.get_u(x, y);
+            let v_val = sim.get_v(x, y);
 
-        let radius = 20;
-        let diameter = radius * 2;
+            // Height: V makes mountains.
+            // Scale: 0.0 -> 0.0, 1.0 -> 50.0
+            let height = v_val * 50.0;
 
-        let mut data = vec![0u8; (diameter * diameter * 16) as usize];
+            v.position.y = height;
 
-        for dy in 0..diameter {
-            for dx in 0..diameter {
-                let val: f32 = if add_v { 0.9 } else { 0.0 };
-                let bytes = val.to_ne_bytes();
-                let idx = ((dy * diameter + dx) * 16) as usize;
+            // Color ramp
+            // V low -> Sand/Water (Blue/Yellow)
+            // V high -> Vegetation/Coral (Green/Pink)
 
-                // If adding V, we set V=0.9. If removing, we set V=0.0.
-                // We should probably preserve U?
-                // For simplicity, let's just blast the V channel.
-                // Actually texture writes replace.
-                // So if we write, we replace U and V.
-                // If we want to raise land (add V), we usually want U to drop.
-                // If we want to lower land (remove V), we want U to rise (replenish).
-
-                // Raise Land: U=0.0, V=0.9
-                // Lower Land: U=1.0, V=0.0
-
-                let u_val: f32 = if add_v { 0.0 } else { 1.0 };
-                let u_bytes = u_val.to_ne_bytes();
-
-                data[idx] = u_bytes[0];
-                data[idx + 1] = u_bytes[1];
-                data[idx + 2] = u_bytes[2];
-                data[idx + 3] = u_bytes[3];
-
-                data[idx + 4] = bytes[0];
-                data[idx + 5] = bytes[1];
-                data[idx + 6] = bytes[2];
-                data[idx + 7] = bytes[3];
-            }
-        }
-
-        let origin_x = tx.saturating_sub(radius);
-        let origin_y = ty.saturating_sub(radius);
-        let copy_width = diameter.min(WIDTH - origin_x);
-        let copy_height = diameter.min(HEIGHT - origin_y);
-
-        if copy_width == 0 || copy_height == 0 {
-            return;
-        }
-
-        for texture in [&self.texture_a, &self.texture_b] {
-            self.queue.write_texture(
-                wgpu::ImageCopyTexture {
-                    texture,
-                    mip_level: 0,
-                    origin: wgpu::Origin3d {
-                        x: origin_x,
-                        y: origin_y,
-                        z: 0,
-                    },
-                    aspect: wgpu::TextureAspect::All,
-                },
-                &data,
-                wgpu::ImageDataLayout {
-                    offset: 0,
-                    bytes_per_row: Some(diameter * 16),
-                    rows_per_image: Some(diameter),
-                },
-                wgpu::Extent3d {
-                    width: copy_width,
-                    height: copy_height,
-                    depth_or_array_layers: 1,
-                },
-            );
-        }
-    }
-
-    fn update(&mut self) {
-        if self.mouse_pressed_left {
-            self.add_catalyst(true);
-        }
-        if self.mouse_pressed_right {
-            self.add_catalyst(false);
-        }
-
-        self.queue.write_buffer(
-            &self.uniform_buffer,
-            0,
-            bytemuck::cast_slice(&[self.uniforms]),
-        );
-    }
-
-    fn render(&mut self) -> Result<(), wgpu::SurfaceError> {
-        let output = self.surface.get_current_texture()?;
-        let view = output
-            .texture
-            .create_view(&wgpu::TextureViewDescriptor::default());
-
-        let mut encoder = self
-            .device
-            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
-                label: Some("Render Encoder"),
-            });
-
-        // 10 simulation steps per frame for speed
-        for _ in 0..10 {
-            let (compute_bind_group, _) = if self.frame_count % 2 == 0 {
-                (&self.bind_group_a, &self.display_bind_group_b)
+            v.color = if v_val < 0.1 {
+                // Deep Blue
+                let t = v_val / 0.1;
+                Color::new(0.0, 0.2 + t * 0.1, 0.5 + t * 0.5, 1.0)
+            } else if v_val < 0.25 {
+                // Sand
+                Color::new(0.9, 0.8, 0.5, 1.0)
+            } else if v_val < 0.4 {
+                // Green
+                let t = (v_val - 0.25) / 0.15;
+                Color::new(0.1 + t * 0.1, 0.6 + t * 0.2, 0.1, 1.0)
             } else {
-                (&self.bind_group_b, &self.display_bind_group_a)
-            };
-
-            {
-                let mut cpass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
-                    label: Some("Compute Pass"),
-                    timestamp_writes: None,
-                });
-                cpass.set_pipeline(&self.compute_pipeline);
-                cpass.set_bind_group(0, &self.uniform_bind_group, &[]);
-                cpass.set_bind_group(1, compute_bind_group, &[]);
-                cpass.dispatch_workgroups(WIDTH / 16, HEIGHT / 16, 1);
+                // Coral/Pink/Purple
+                let t = (v_val - 0.4) / 0.6;
+                Color::new(0.8 + t * 0.2, 0.2 + t * 0.1, 0.4 + t * 0.6, 1.0)
             }
-            self.frame_count += 1;
+            .into();
         }
-
-        // Display the last state
-        let (_, display_bind_group) = if self.frame_count % 2 == 0 {
-            (&self.bind_group_a, &self.display_bind_group_b)
-        } else {
-            (&self.bind_group_b, &self.display_bind_group_a)
-        };
-
-        {
-            let mut rpass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                label: Some("Render Pass"),
-                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: &view,
-                    resolve_target: None,
-                    ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Clear(wgpu::Color::BLACK),
-                        store: wgpu::StoreOp::Store,
-                    },
-                })],
-                depth_stencil_attachment: None,
-                occlusion_query_set: None,
-                timestamp_writes: None,
-            });
-            rpass.set_pipeline(&self.render_pipeline);
-            rpass.set_bind_group(0, display_bind_group, &[]);
-            rpass.draw(0..3, 0..1);
-        }
-
-        self.queue.submit(std::iter::once(encoder.finish()));
-        output.present();
-
-        Ok(())
     }
 }
 
-pub fn main() {
-    env_logger::init();
-    let event_loop = EventLoop::new().unwrap();
-    let window = Arc::new(
-        WindowBuilder::new()
-            .with_title("Turing Terra")
-            .build(&event_loop)
-            .unwrap(),
-    );
+#[macroquad::main(window_conf)]
+async fn main() {
+    let mut sim = ChemicalState::new(GRID_SIZE, GRID_SIZE);
+    sim.seed_noise();
 
-    let mut state = pollster::block_on(State::new(window.clone()));
+    let mut terrain = Terrain::new(GRID_SIZE, GRID_SIZE);
 
-    let _ = event_loop.run(move |event, elwt| match event {
-        Event::WindowEvent {
-            ref event,
-            window_id,
-        } if window_id == window.id() => {
-            if !state.input(event) {
-                match event {
-                    WindowEvent::CloseRequested
-                    | WindowEvent::KeyboardInput {
-                        event:
-                            KeyEvent {
-                                state: ElementState::Pressed,
-                                physical_key: PhysicalKey::Code(KeyCode::Escape),
-                                ..
-                            },
-                        ..
-                    } => elwt.exit(),
-                    WindowEvent::Resized(physical_size) => {
-                        state.resize(*physical_size);
+    // Camera state
+    let mut cam_pos = vec3(GRID_SIZE as f32 / 2.0, 100.0, GRID_SIZE as f32 * 1.5);
+    let mut cam_yaw: f32 = -1.57;
+    let mut cam_pitch: f32 = -0.5;
+
+    let mut feed = 0.055;
+    let mut kill = 0.062;
+    let steps_per_frame = 8; // Speed up simulation
+
+    loop {
+        // Update Simulation
+        // Using rayon internally in update, so we can't easily parallelize the outer loop, but that's fine.
+        for _ in 0..steps_per_frame {
+            sim.update(1.0, feed, kill);
+        }
+
+        // Update Mesh
+        terrain.update_from_sim(&sim);
+
+        // Input Handling (Camera)
+        let dt = get_frame_time();
+        let speed = 50.0;
+        let rot_speed = 1.0;
+
+        if is_key_down(KeyCode::W) {
+            cam_pos.x += cam_yaw.cos() * speed * dt;
+            cam_pos.z += cam_yaw.sin() * speed * dt;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_pos.x -= cam_yaw.cos() * speed * dt;
+            cam_pos.z -= cam_yaw.sin() * speed * dt;
+        }
+        if is_key_down(KeyCode::A) {
+            cam_pos.x += (cam_yaw - std::f32::consts::FRAC_PI_2).cos() * speed * dt;
+            cam_pos.z += (cam_yaw - std::f32::consts::FRAC_PI_2).sin() * speed * dt;
+        }
+        if is_key_down(KeyCode::D) {
+            cam_pos.x += (cam_yaw + std::f32::consts::FRAC_PI_2).cos() * speed * dt;
+            cam_pos.z += (cam_yaw + std::f32::consts::FRAC_PI_2).sin() * speed * dt;
+        }
+        if is_key_down(KeyCode::Q) {
+            cam_pos.y -= speed * dt;
+        }
+        if is_key_down(KeyCode::E) {
+            cam_pos.y += speed * dt;
+        }
+
+        if is_key_down(KeyCode::Left) {
+            cam_yaw -= rot_speed * dt;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_yaw += rot_speed * dt;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_pitch += rot_speed * dt;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_pitch -= rot_speed * dt;
+        }
+
+        // Interaction: Paint at Crosshair (Center of Screen)
+        if is_mouse_button_down(MouseButton::Left) || is_key_down(KeyCode::Space) {
+            // Ray from camera
+            let forward = vec3(
+                cam_yaw.cos() * cam_pitch.cos(),
+                cam_pitch.sin(),
+                cam_yaw.sin() * cam_pitch.cos(),
+            )
+            .normalize();
+
+            // Ray-Plane Intersection (Y=0)
+            // t = -O.y / D.y
+            if forward.y.abs() > 0.001 {
+                let t = -cam_pos.y / forward.y;
+                if t > 0.0 {
+                    let hit_pos = cam_pos + forward * t;
+                    let hx = hit_pos.x.round() as isize;
+                    let hz = hit_pos.z.round() as isize;
+
+                    if hx >= 0 && hx < GRID_SIZE as isize && hz >= 0 && hz < GRID_SIZE as isize {
+                        // Paint
+                        sim.add_chemical_blob(hx as usize, hz as usize, 5.0, 0.5);
                     }
-                    WindowEvent::RedrawRequested => {
-                        state.update();
-                        match state.render() {
-                            Ok(_) => {}
-                            Err(wgpu::SurfaceError::Lost) => state.resize(state.size),
-                            Err(wgpu::SurfaceError::OutOfMemory) => elwt.exit(),
-                            Err(e) => eprintln!("{:?}", e),
-                        }
-                    }
-                    _ => {}
                 }
             }
         }
-        Event::AboutToWait => {
-            window.request_redraw();
+
+        clear_background(BLACK);
+
+        // 3D Draw
+        set_camera(&Camera3D {
+            position: cam_pos,
+            up: vec3(0., 1., 0.),
+            target: cam_pos
+                + vec3(
+                    cam_yaw.cos() * cam_pitch.cos(),
+                    cam_pitch.sin(),
+                    cam_yaw.sin() * cam_pitch.cos(),
+                ),
+            ..Default::default()
+        });
+
+        draw_grid(GRID_SIZE as u32, 1.0, BLACK, GRAY);
+
+        draw_mesh(&terrain.mesh);
+
+        set_default_camera();
+
+        // UI
+        draw_text("Turing Terra", 20.0, 30.0, 30.0, WHITE);
+        draw_text(&format!("FPS: {}", get_fps()), 20.0, 60.0, 20.0, WHITE);
+        draw_text(&format!("Feed: {:.4} (J/K)", feed), 20.0, 90.0, 20.0, WHITE);
+        draw_text(
+            &format!("Kill: {:.4} (U/I)", kill),
+            20.0,
+            110.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "WASD: Move, Arrows: Look, Q/E: Up/Down",
+            20.0,
+            140.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "Click/Space: Paint Catalyst at Crosshair",
+            20.0,
+            160.0,
+            20.0,
+            WHITE,
+        );
+        draw_text("R: Reset, 1-3: Presets", 20.0, 180.0, 20.0, WHITE);
+
+        // Draw Crosshair
+        draw_line(
+            screen_width() / 2.0 - 10.0,
+            screen_height() / 2.0,
+            screen_width() / 2.0 + 10.0,
+            screen_height() / 2.0,
+            2.0,
+            WHITE,
+        );
+        draw_line(
+            screen_width() / 2.0,
+            screen_height() / 2.0 - 10.0,
+            screen_width() / 2.0,
+            screen_height() / 2.0 + 10.0,
+            2.0,
+            WHITE,
+        );
+
+        // Logic for Parameters
+        if is_key_down(KeyCode::J) {
+            feed -= 0.0001;
         }
-        _ => {}
-    });
+        if is_key_down(KeyCode::K) {
+            feed += 0.0001;
+        }
+        if is_key_down(KeyCode::U) {
+            kill -= 0.0001;
+        }
+        if is_key_down(KeyCode::I) {
+            kill += 0.0001;
+        }
+
+        // Presets
+        if is_key_pressed(KeyCode::Key1) {
+            // Solitons
+            feed = 0.03;
+            kill = 0.062;
+        }
+        if is_key_pressed(KeyCode::Key2) {
+            // Coral
+            feed = 0.0545;
+            kill = 0.062;
+        }
+        if is_key_pressed(KeyCode::Key3) {
+            // Maze
+            feed = 0.029;
+            kill = 0.057;
+        }
+
+        // Reset
+        if is_key_pressed(KeyCode::R) {
+            sim = ChemicalState::new(GRID_SIZE, GRID_SIZE);
+            sim.seed_noise();
+        }
+
+        next_frame().await
+    }
 }
