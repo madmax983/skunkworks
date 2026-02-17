@@ -10,106 +10,72 @@ use std::collections::HashMap;
 use std::fs::OpenOptions;
 #[cfg(feature = "nova")]
 use std::io::{Read, Write};
+#[cfg(feature = "nova")]
+use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "nova")]
 const AKASHIC_FILE: &str = ".chimera_akashic.json";
 
 #[cfg(feature = "nova")]
-fn check_recursion_depth(json: &str, limit: usize) -> bool {
-    let mut depth = 0;
-    let mut in_string = false;
-    let mut escape = false;
-
-    for c in json.chars() {
-        if in_string {
-            if escape {
-                escape = false;
-            } else if c == '\\' {
-                escape = true;
-            } else if c == '"' {
-                in_string = false;
-            }
-        } else {
-            match c {
-                '"' => in_string = true,
-                '{' | '[' => {
-                    depth += 1;
-                    if depth > limit {
-                        return false;
-                    }
-                }
-                '}' | ']' => {
-                    if depth > 0 {
-                        depth -= 1;
-                    }
-                }
-                _ => {}
-            }
-        }
-    }
-    true
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AkashicRecords {
+    pub storage: HashMap<String, Value>,
+    pub karma: i64,
 }
 
 #[cfg(feature = "nova")]
-fn load_records() -> Result<HashMap<String, Value>, String> {
-    match std::fs::File::open(AKASHIC_FILE) {
-        Ok(file) => {
-            if let Ok(metadata) = file.metadata() {
-                if metadata.len() > MAX_AKASHIC_SIZE {
-                    return Err(format!(
-                        "Akashic Record too large (> {} bytes)",
-                        MAX_AKASHIC_SIZE
-                    ));
+impl AkashicRecords {
+    pub fn new() -> Self {
+        Self::load().unwrap_or_else(|_| Self {
+            storage: HashMap::new(),
+            karma: 0,
+        })
+    }
+
+    pub fn load() -> Result<Self, String> {
+        match std::fs::File::open(AKASHIC_FILE) {
+            Ok(mut file) => {
+                // Check size
+                if let Ok(metadata) = file.metadata() {
+                    if metadata.len() > MAX_AKASHIC_SIZE {
+                        return Err(format!("Akashic Record too large (> {} bytes)", MAX_AKASHIC_SIZE));
+                    }
+                }
+
+                let mut content = String::new();
+                if file.read_to_string(&mut content).is_ok() {
+                    serde_json::from_str(&content).map_err(|e| format!("Parse Error: {}", e))
+                } else {
+                    Err("Read Error".to_string())
                 }
             }
-            let mut content = String::new();
-            // Use take to strictly enforce limit even if metadata lied
-            if file
-                .take(MAX_AKASHIC_SIZE)
-                .read_to_string(&mut content)
-                .is_ok()
-            {
-                if !check_recursion_depth(&content, 64) {
-                    return Err("Akashic Record exceeds recursion depth limit (64)".to_string());
-                }
-                serde_json::from_str(&content).map_err(|e| format!("Akashic Parse Error: {}", e))
-            } else {
-                Err("Failed to read Akashic Record".to_string())
-            }
+            Err(_) => Ok(Self {
+                storage: HashMap::new(),
+                karma: 0,
+            }),
         }
-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(HashMap::new()),
-        Err(e) => Err(format!("Failed to open Akashic Record: {}", e)),
-    }
-}
-
-#[cfg(feature = "nova")]
-fn save_records(records: &HashMap<String, Value>) -> Result<(), String> {
-    let content = serde_json::to_string_pretty(records).map_err(|e| e.to_string())?;
-
-    if content.len() as u64 > MAX_AKASHIC_SIZE {
-        return Err(format!(
-            "Akashic Record exceeds limit ({} > {})",
-            content.len(),
-            MAX_AKASHIC_SIZE
-        ));
     }
 
-    let temp_file = format!("{}.tmp", AKASHIC_FILE);
-    {
-        let mut file = OpenOptions::new()
-            .write(true)
-            .create(true)
-            .truncate(true)
-            .open(&temp_file)
-            .map_err(|e| format!("Failed to create temp file: {}", e))?;
-        file.write_all(content.as_bytes())
-            .map_err(|e| format!("Failed to write temp file: {}", e))?;
-        file.sync_all()
-            .map_err(|e| format!("Failed to sync temp file: {}", e))?;
-    }
+    pub fn save(&self) -> Result<(), String> {
+        let content = serde_json::to_string_pretty(self).map_err(|e| e.to_string())?;
 
-    std::fs::rename(&temp_file, AKASHIC_FILE)
-        .map_err(|e| format!("Failed to commit Akashic Record: {}", e))
+        if content.len() as u64 > MAX_AKASHIC_SIZE {
+            return Err(format!("Akashic Record limit exceeded"));
+        }
+
+        let temp_file = format!("{}.tmp", AKASHIC_FILE);
+        {
+            let mut file = OpenOptions::new()
+                .write(true)
+                .create(true)
+                .truncate(true)
+                .open(&temp_file)
+                .map_err(|e| e.to_string())?;
+            file.write_all(content.as_bytes()).map_err(|e| e.to_string())?;
+            file.sync_all().map_err(|e| e.to_string())?;
+        }
+        std::fs::rename(&temp_file, AKASHIC_FILE).map_err(|e| e.to_string())
+    }
 }
 
 #[cfg(feature = "nova")]
@@ -119,63 +85,114 @@ pub fn exec_akashic_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
             if vm.stack.len() >= 2 {
                 let value = vm.stack.pop().unwrap();
                 let key_val = vm.stack.pop().unwrap();
-
                 if let Value::Str(key) = key_val {
-                    match load_records() {
-                        Ok(mut records) => {
-                            records.insert(key.clone(), value);
-                            match save_records(&records) {
-                                Ok(_) => {
-                                    vm.output.push(format!("AKASHIC: Wrote '{}'", key));
-                                    vm.energy = vm.energy.saturating_sub(10);
-                                }
-                                Err(e) => {
-                                    vm.output
-                                        .push(format!("Error: Akashic Write Failed: {}", e));
-                                }
-                            }
-                        }
-                        Err(e) => {
-                            vm.output.push(format!("Error: Akashic Load Failed: {}", e));
-                        }
+                    vm.akashic.storage.insert(key.clone(), value);
+                    if let Err(e) = vm.akashic.save() {
+                        vm.output.push(format!("AKASHIC ERROR: {}", e));
+                    } else {
+                        vm.output.push(format!("AKASHIC: Wrote '{}'", key));
                     }
+                    vm.energy = vm.energy.saturating_sub(10);
                 } else {
-                    vm.output
-                        .push("Error: Key must be a string for AkashicWrite".to_string());
+                    vm.output.push("Error: Key must be string".to_string());
                 }
             } else {
-                vm.output
-                    .push("Error: Stack underflow for AkashicWrite".to_string());
+                vm.output.push("Error: Stack underflow".to_string());
             }
         }
         OpCode::AkashicRead => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Str(key) = val {
-                    match load_records() {
-                        Ok(records) => {
-                            if let Some(value) = records.get(&key) {
-                                vm.stack.push(value.clone());
-                                vm.output.push(format!("AKASHIC: Read '{}'", key));
-                            } else {
-                                vm.stack.push(Value::Int(0)); // Default if missing
-                                vm.output.push(format!("AKASHIC: Key '{}' not found", key));
-                            }
-                            vm.energy = vm.energy.saturating_sub(5);
-                        }
-                        Err(e) => {
-                            vm.output.push(format!("Error: Akashic Load Failed: {}", e));
-                            vm.stack.push(Value::Int(0)); // Maintain stack balance
-                        }
+                    if let Some(v) = vm.akashic.storage.get(&key) {
+                        vm.stack.push(v.clone());
+                        vm.output.push(format!("AKASHIC: Read '{}'", key));
+                    } else {
+                        vm.stack.push(Value::Int(0));
+                        vm.output.push(format!("AKASHIC: Key '{}' not found", key));
                     }
+                    vm.energy = vm.energy.saturating_sub(5);
                 } else {
-                    vm.output
-                        .push("Error: Key must be a string for AkashicRead".to_string());
+                    vm.output.push("Error: Key must be string".to_string());
                 }
             } else {
-                vm.output
-                    .push("Error: Stack underflow for AkashicRead".to_string());
+                vm.output.push("Error: Stack underflow".to_string());
             }
         }
+        OpCode::Karma => {
+            if let Some(Value::Int(amount)) = vm.stack.pop() {
+                vm.akashic.karma = vm.akashic.karma.saturating_add(amount);
+                let _ = vm.akashic.save();
+                vm.output.push(format!("KARMA: Total {}", vm.akashic.karma));
+            }
+        }
+        OpCode::Miracle => {
+            if let Some(Value::Int(id)) = vm.stack.pop() {
+                let cost = match id {
+                    0 => 1000, // Resurrection
+                    1 => 5000, // Terraform
+                    2 => 2000, // Wealth
+                    3 => 500,  // Cleanse
+                    4 => 10000, // Ascension
+                    _ => 0,
+                };
+
+                if cost > 0 && vm.akashic.karma >= cost {
+                    vm.akashic.karma -= cost;
+                    perform_miracle(vm, id);
+                    let _ = vm.akashic.save();
+                } else if cost > 0 {
+                    vm.output.push(format!("MIRACLE: Insufficient Karma (Need {})", cost));
+                } else {
+                    vm.output.push("MIRACLE: Unknown ID".to_string());
+                }
+            }
+        }
+        _ => {}
+    }
+}
+
+#[cfg(feature = "nova")]
+fn perform_miracle(vm: &mut ChimeraVM, id: i64) {
+    match id {
+        0 => { // Resurrection
+            vm.output.push("MIRACLE: The Dead Rise!".to_string());
+            while let Some(strand) = vm.graveyard.pop() {
+                vm.dna.helix.strands.push(strand);
+                vm.telomeres.push(100);
+                #[cfg(feature = "cortex")]
+                { vm.activation_levels.push(0); vm.synapse_map.push(Vec::new()); }
+            }
+        },
+        1 => { // Terraform
+            vm.output.push("MIRACLE: A New World!".to_string());
+            for row in vm.biome_grid.iter_mut() {
+                for cell in row.iter_mut() {
+                    *cell = crate::vm::nova_biome::Biome::Garden;
+                }
+            }
+        },
+        2 => { // Wealth
+            vm.output.push("MIRACLE: Abundance!".to_string());
+            vm.energy = 5000; // Massive energy boost
+        },
+        3 => { // Cleanse
+            vm.output.push("MIRACLE: Purification!".to_string());
+            for row in vm.viral_grid.iter_mut() {
+                for cell in row.iter_mut() {
+                    *cell = None;
+                }
+            }
+            for row in vm.entropy_grid.iter_mut() {
+                for cell in row.iter_mut() {
+                    *cell = 0;
+                }
+            }
+        },
+        4 => { // Ascension
+            vm.output.push("MIRACLE: ASCENSION ACHIEVED!".to_string());
+            vm.output.push("You have transcended the simulation.".to_string());
+            vm.halted = true;
+        },
         _ => {}
     }
 }

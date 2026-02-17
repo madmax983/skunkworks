@@ -144,6 +144,8 @@ pub(crate) enum ViewMode {
     Cambrian,
     #[cfg(feature = "nova")]
     Savant,
+    #[cfg(feature = "nova")]
+    Akashic,
 }
 
 enum InputMode {
@@ -875,6 +877,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Savant = app_state.view_mode {
                 render_savant(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Akashic = app_state.view_mode {
+                render_akashic(f, vm, app_state);
                 return;
             }
 
@@ -2147,7 +2155,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Cambrian => ViewMode::Savant,
                             #[cfg(feature = "nova")]
-                            ViewMode::Savant => ViewMode::Genome,
+                            ViewMode::Savant => ViewMode::Akashic,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Akashic => ViewMode::Genome,
                         };
                     }
                     #[cfg(feature = "nova")]
@@ -2160,6 +2170,8 @@ where
                     KeyCode::Char('y') => app_state.view_mode = ViewMode::LifeCycle,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('|') => app_state.view_mode = ViewMode::Savant,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('#') => app_state.view_mode = ViewMode::Akashic,
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
                     #[cfg(feature = "silicon")]
                     KeyCode::Char('F') => app_state.view_mode = ViewMode::Foundry,
@@ -11028,4 +11040,48 @@ fn render_savant(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Inference Log"),
     );
     f.render_widget(log_list, right_chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_akashic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    // Left: Records (Key-Value)
+    let mut items = Vec::new();
+    for (k, v) in &vm.akashic.storage {
+        items.push(ListItem::new(format!("{}: {}", k, v)).style(Style::default().fg(Color::Cyan)));
+    }
+    if items.is_empty() {
+        items.push(ListItem::new("Akashic Records Empty.").style(Style::default().fg(Color::DarkGray)));
+    }
+
+    let list = List::new(items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Persistent Memory"),
+    );
+    f.render_widget(list, chunks[0]);
+
+    // Right: Karma & Miracles
+    let mut info = Vec::new();
+    info.push(Line::from(format!("Karma: {}", vm.akashic.karma)));
+    info.push(Line::from(" "));
+    info.push(Line::from("Miracles (Cost):"));
+    info.push(Line::from("  0: Resurrection (1000)"));
+    info.push(Line::from("  1: Terraform (5000)"));
+    info.push(Line::from("  2: Wealth (2000)"));
+    info.push(Line::from("  3: Cleanse (500)"));
+    info.push(Line::from("  4: Ascension (10000)"));
+    info.push(Line::from(" "));
+    info.push(Line::from("Use 'Miracle(id)' OpCode to invoke."));
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Karma & Destiny"),
+    );
+    f.render_widget(info_widget, chunks[1]);
 }

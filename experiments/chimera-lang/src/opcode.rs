@@ -1619,6 +1619,17 @@ pub enum OpCode {
     /// **Stack:** `[ ..., key ] -> [ ..., value ]`
     #[cfg(feature = "nova")]
     AkashicRead,
+    /// **[Nova]** Modifies the organism's Karma.
+    ///
+    /// **Stack:** `[ ..., amount ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Karma,
+    /// **[Nova]** Performs a Miracle using Karma.
+    ///
+    /// **Stack:** `[ ..., miracle_id ] -> [ ... ]`
+    /// **IDs:** 0=Resurrection, 1=Terraform, 2=Wealth, 3=Cleanse, 4=Ascension.
+    #[cfg(feature = "nova")]
+    Miracle,
 
     /// **[Nova]** Dumps the flight recorder (blackbox) to the stack.
     ///
