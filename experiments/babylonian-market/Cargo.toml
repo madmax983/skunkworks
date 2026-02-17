@@ -1,0 +1,14 @@
+[package]
+name = "babylonian-market"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = "0.26.1"
+crossterm = "0.27.0"
+market-sim = { workspace = true }
+chrono = "0.4"
+num-rational = "0.4"
+num-traits = "0.2"
+anyhow = "1.0"
+rand = "0.8"

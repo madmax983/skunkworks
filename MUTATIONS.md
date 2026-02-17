@@ -1069,3 +1069,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Self-tuning instrument. The code learns to sing.
 - **Status**: experiments/genetic-luthier
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### babylonian-market
+- **Parents**: experiments/chronos-observatory + experiments/market-flow
+- **Concept**: A market simulation where price predictions and trade execution use ancient Babylonian mathematics (Base-60) and Mayan calendar cycles.
+- **Novel trait**: Astrological Technical Analysis. Market cycles aligned with celestial calendars.
+- **Status**: experiments/babylonian-market
+- **Evaluation**: Compiles. Tests passed. Implemented by The Splice Surgeon.

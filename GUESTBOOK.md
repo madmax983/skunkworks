@@ -520,3 +520,9 @@
 - **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
 - **Status:** The escapement is ticking. The CPU is singing. Procedural music generation via clockwork mechanism verified.
 - **Note:** Moonshot: Verge Escapement + Music Box Cylinder + CPU Visualization. Audio disabled by default (use `--features audio`).
+
+### [Concentration Level: FRESH] - Location: experiments/babylonian-market
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Implemented by The Splice Surgeon. Tests passed. A market simulation where price predictions and trade execution use ancient Babylonian mathematics (Base-60) and Mayan calendar cycles.
+- **Novel trait**: Astrological Technical Analysis. Market cycles aligned with celestial calendars.
+- **Note**: Recombination successful. Chronos Observatory x Market Flow.
