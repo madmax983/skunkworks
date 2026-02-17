@@ -1069,3 +1069,66 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Self-tuning instrument. The code learns to sing.
 - **Status**: experiments/genetic-luthier
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### sonata-cycle
+- **Parents**: experiments/verge-computer + experiments/music-box
+- **Concept**: A "Clockwork CPU" simulation where a rotating music box cylinder drives CPU instructions via physics-based collision events.
+- **Novel trait**: Procedural audio from physics collisions.
+- **Status**: experiments/sonata-cycle
+- **Evaluation**: Fails compilation. Dependency conflict (`bevy_reflect` / `glam`).
+
+### locust-ddos
+- **Parents**: experiments/ant-colony + experiments/packet-pachinko
+- **Concept**: Simulates a DDoS attack using swarm intelligence mechanics where agents (packets) reduce `server_health`.
+- **Novel trait**: Visualizing network attacks as biological swarms.
+- **Status**: experiments/locust-ddos
+- **Evaluation**: Compiles.
+
+### quasicrystal-dungeon
+- **Parents**: experiments/aperiodic-citadel + experiments/dungeon-crawler
+- **Concept**: "Aperiodic Roguelike" where dungeon layout is derived from the connectivity of a 6D-to-3D projected Icosahedral Quasicrystal.
+- **Novel trait**: Non-repeating, self-similar dungeon layout.
+- **Status**: experiments/quasicrystal-dungeon
+- **Evaluation**: Compiles.
+
+### malloc-expressionism
+- **Parents**: experiments/alloc-tardis + experiments/generative-art
+- **Concept**: Visualization tool that renders memory allocator activity as an abstract expressionist painting.
+- **Novel trait**: Heap fragmentation as art.
+- **Status**: experiments/malloc-expressionism
+- **Evaluation**: Compiles.
+
+### sys-dance
+- **Parents**: experiments/laban-machine + experiments/system-attractor
+- **Concept**: Visualizes real-time system performance (RAM/CPU) as a procedurally animated dancer.
+- **Novel trait**: Interpretive dance of system metrics.
+- **Status**: experiments/sys-dance
+- **Evaluation**: Compiles.
+
+### thermo-defense
+- **Parents**: experiments/thermo-termites + experiments/chaotic-defense
+- **Concept**: Tower defense where heat diffusion plays a central role.
+- **Novel trait**: Hybrid parallel architecture (ADR 037).
+- **Status**: experiments/thermo-defense
+- **Evaluation**: Compiles.
+
+### stego-cartridge
+- **Parents**: experiments/stego-fs + experiments/fantasy-console
+- **Concept**: Fantasy console where stack-based bytecode is steganographically embedded in PNG images.
+- **Novel trait**: Images as executable cartridges.
+- **Status**: experiments/stego-cartridge
+- **Evaluation**: Compiles.
+
+### slime-trash
+- **Parents**: experiments/bio-transit + experiments/garbage-collector
+- **Concept**: Hybrid experiment (Slime Mold Pathfinding x Garbage Collection) where agents use dual pheromone trails to optimize routes.
+- **Novel trait**: Biological optimization of trash collection.
+- **Status**: experiments/slime-trash
+- **Evaluation**: Compiles.
+
+### crystal-defense
+- **Parents**: experiments/quasicrystal-dungeon + experiments/thermo-defense
+- **Concept**: Tower Defense where heat diffusion occurs on an aperiodic 3D graph (Icosahedral Quasicrystal).
+- **Novel trait**: Non-Euclidean heat diffusion.
+- **Status**: experiments/crystal-defense
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
