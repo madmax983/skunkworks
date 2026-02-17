@@ -315,6 +315,8 @@ pub mod nova_void;
 #[cfg(test)]
 mod nova_void_test;
 #[cfg(feature = "nova")]
+pub mod tablet;
+#[cfg(feature = "nova")]
 pub mod nova_ward;
 #[cfg(feature = "nova")]
 pub mod nova_weaver;

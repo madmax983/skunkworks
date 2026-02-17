@@ -146,6 +146,8 @@ pub(crate) enum ViewMode {
     Savant,
     #[cfg(feature = "nova")]
     Akashic,
+    #[cfg(feature = "nova")]
+    Tablet,
     Sequencer,
 }
 
@@ -250,6 +252,12 @@ pub(crate) struct AppState {
     pub(crate) genesis_focus: u8, // 0=Editor, 1=Grammar, 2=Grid
     #[cfg(feature = "nova")]
     pub(crate) grimoire_scroll: u16,
+    #[cfg(feature = "nova")]
+    pub(crate) tablet_source: String,
+    #[cfg(feature = "nova")]
+    pub(crate) tablet_compiled: Vec<String>,
+    #[cfg(feature = "nova")]
+    pub(crate) tablet_focus: usize, // 0=Editor, 1=Preview
     pub(crate) evolution_state: EvolutionState,
     pub(crate) matrix_rain: MatrixRain,
     pub(crate) screen_shake: f32,
@@ -370,6 +378,12 @@ impl AppState {
             genesis_focus: 0,
             #[cfg(feature = "nova")]
             grimoire_scroll: 0,
+            #[cfg(feature = "nova")]
+            tablet_source: String::new(),
+            #[cfg(feature = "nova")]
+            tablet_compiled: Vec::new(),
+            #[cfg(feature = "nova")]
+            tablet_focus: 0,
             evolution_state: EvolutionState::new(),
             matrix_rain: MatrixRain::new(),
             screen_shake: 0.0,
@@ -892,6 +906,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Tablet = app_state.view_mode {
+                render_tablet(f, vm, app_state);
+                return;
+            }
+
             render_genome_and_grid(f, vm, app_state);
 
             if vm.glitch_level > 0.01 {
@@ -1002,6 +1022,64 @@ where
                             continue;
                         }
                         _ => {}
+                    }
+                }
+
+                #[cfg(feature = "nova")]
+                if let ViewMode::Tablet = app_state.view_mode {
+                    match key.code {
+                        KeyCode::Char('s') if key.modifiers.contains(crossterm::event::KeyModifiers::CONTROL) => {
+                             match crate::compiler::compile(&app_state.tablet_source, None) {
+                                 Ok(dna) => {
+                                     if let Some(strand) = dna.helix.strands.first() {
+                                         let compiled = crate::vm::tablet::compile_to_grid(&strand.genes);
+                                         app_state.tablet_compiled = compiled;
+                                         app_state.status_msg = "Tablet: Transmutation Successful".to_string();
+                                     }
+                                 }
+                                 Err(e) => {
+                                     app_state.status_msg = format!("Compile Error: {}", e);
+                                 }
+                             }
+                        }
+                        // Cast (Ctrl+E) - Execute/Stamp
+                        KeyCode::Char('e') if key.modifiers.contains(crossterm::event::KeyModifiers::CONTROL) => {
+                            let (cx, cy) = app_state.grid_cursor;
+                            for (r, row_str) in app_state.tablet_compiled.iter().enumerate() {
+                                for (c, ch) in row_str.chars().enumerate() {
+                                    if cy + r < 16 && cx + c < 16 {
+                                        vm.grid[cy + r][cx + c] = crate::vm::Value::Str(ch.to_string());
+                                    }
+                                }
+                            }
+                            app_state.status_msg = "Tablet: Cast Spell to Grid".to_string();
+                        }
+                        KeyCode::Char(c) => {
+                            if !key.modifiers.contains(crossterm::event::KeyModifiers::CONTROL) &&
+                               !key.modifiers.contains(crossterm::event::KeyModifiers::ALT) {
+                                app_state.tablet_source.push(c);
+                            }
+                        }
+                        KeyCode::Backspace => {
+                            app_state.tablet_source.pop();
+                        }
+                        KeyCode::Enter => {
+                            app_state.tablet_source.push('\n');
+                        }
+                        KeyCode::Tab => {
+                            // Don't cycle views, stay here
+                            // Or allow Tab to switch views?
+                            // Default behavior handles Tab to switch views.
+                            // If we want to capture Tab for focus switching within Tablet, we must return/continue.
+                            // But View Selector uses Tab logic at bottom.
+                            // If I return continue, I block view switching.
+                            // Let's use Ctrl+Tab for internal focus? Or just Arrow keys?
+                            // Let's let Tab switch views for now, consistent with other views.
+                        }
+                        _ => {}
+                    }
+                    if key.code != KeyCode::Tab {
+                        continue;
                     }
                 }
 
@@ -2163,7 +2241,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Savant => ViewMode::Akashic,
                             #[cfg(feature = "nova")]
-                            ViewMode::Akashic => ViewMode::Sequencer,
+                            ViewMode::Akashic => ViewMode::Tablet,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Tablet => ViewMode::Sequencer,
                             ViewMode::Sequencer => ViewMode::Genome,
                         };
                     }
@@ -11206,4 +11286,63 @@ fn render_akashic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Karma & Destiny"),
     );
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_tablet(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    // Left: Source Code
+    let editor_block = Block::default()
+        .borders(Borders::ALL)
+        .title("Tablet Editor (ChimeraScript)")
+        .border_style(Style::default().fg(Color::Cyan));
+
+    let source = if app_state.tablet_source.is_empty() {
+        "Type code here...\nPress Ctrl+S to Transmute.\nPress Ctrl+E to Cast to Grid."
+    } else {
+        &app_state.tablet_source
+    };
+
+    let p = Paragraph::new(source)
+        .block(editor_block)
+        .wrap(ratatui::widgets::Wrap { trim: false });
+    f.render_widget(p, chunks[0]);
+
+    // Right: Compiled Grid Preview
+    let preview_block = Block::default()
+        .borders(Borders::ALL)
+        .title("Transmutation Preview (Grid)")
+        .border_style(Style::default().fg(Color::Yellow));
+
+    let mut grid_text = String::new();
+    if app_state.tablet_compiled.is_empty() {
+        grid_text.push_str("(No compiled output)");
+    } else {
+        for row in &app_state.tablet_compiled {
+            grid_text.push_str(row);
+            grid_text.push('\n');
+        }
+    }
+
+    let p_preview = Paragraph::new(grid_text).block(preview_block);
+    f.render_widget(p_preview, chunks[1]);
+
+    // Status Bar?
+    // Main run_app handles status_msg display? No, it's usually inside specific renderers or passed.
+    // render_genome_and_grid handles it.
+    // We should probably render status_msg overlay or bottom bar.
+    // Let's add a bottom chunk for status.
+
+    let main_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Min(0), Constraint::Length(1)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    let status = Paragraph::new(app_state.status_msg.as_str())
+        .style(Style::default().bg(Color::Blue).fg(Color::White));
+    f.render_widget(status, main_chunks[1]);
 }
