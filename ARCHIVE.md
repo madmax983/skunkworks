@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **soroban-market**: Terminal Redundancy (Superseded by `soroban-specter`). Illegal configuration (`edition = "2024"`). Grace period: 24h.
+- **mechanical-integrator**: Terminal Genericism. Illegal Configuration (`edition = "2024"`). Documentation Void. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **soroban-market**: Specimen executed. Terminal Redundancy (Superseded by `soroban-specter`). Illegal configuration (`edition = "2024"`). Grace period expired. Moved to graveyard.
 - **trace-tardis**: Specimen executed. Terminal Stagnation. Redundant with `chimera-tardis`. Grace period expired. Moved to graveyard.
 - **turing-terra**: Specimen executed. Zombie Resurrection. Illegal configuration (`edition = "2024"`). Redundant. Grace period expired. Moved to graveyard.
 - **hyperbolic-hell**: Specimen executed. Compilation failure (private field access confirmed). Redundant with `hyperbolic-rogue`. Grace period expired. Moved to graveyard.
