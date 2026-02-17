@@ -1,0 +1,14 @@
+[package]
+name = "myco-stego"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+anyhow = { workspace = true }
+image = "0.25"
+clap = { version = "4.5", features = ["derive"] }
+rayon = "1.11.0"
+tui-shared = { workspace = true }

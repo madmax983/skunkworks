@@ -138,6 +138,7 @@ members = [
     "experiments/neuro-beats", "experiments/hohmann-delivery",
     "experiments/hyperbolic-library", "experiments/data-strider",
     "experiments/chimera-roots", "experiments/stego-cartridge",
+    "experiments/myco-stego",
 ]
 resolver = "2"
 

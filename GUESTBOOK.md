@@ -370,6 +370,11 @@
 - **Status**: Compiles. VM and Assembler operational. Demo cartridge `noise.png` packed.
 - **Note**: Moonshot: LSB Steganography + Code Distribution. The image is the console.
 
+### [Concentration Level: FRESH] - Location: experiments/myco-stego
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Implemented by The Splice Surgeon. Verified. Biological Steganalysis. Slime mold agents foraging on the hidden data (LSBs) of an image. Novel trait: Visualizing the invisible data layer as a biological terrain.
+- **Note:** Hybrid of experiments/stego-cartridge + experiments/myco-transit.
+
 ## History/Decay
 
 ### [Concentration Level: TOXIC] - Location: experiments/hyperbolic-raymarcher

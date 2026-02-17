@@ -1037,19 +1037,12 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/mechanical-integrator
 - **Evaluation**: Compiles. Reusable `Integrator` and `Differential` structs found.
 
-### mechanical-market
-- **Parents**: market-sim + mechanical-integrator
-- **Concept**: Analog High Frequency Trading where Bids and Asks are physical torques driving a Differential gear.
-- **Novel trait**: Mechanical Price Discovery. Visualizing market volatility as angular momentum.
-- **Status**: experiments/mechanical-market
-- **Evaluation**: Compiles. Differential logic operational. Re-verified.
-
 ### hyperbolic-library
 - **Parents**: experiments/hyperbolic-raymarcher + experiments/type-terrain
 - **Concept**: An infinite labyrinth on the Poincaré Disk where the walls are text glyphs.
 - **Novel trait**: Semantic Labyrinth. Navigating a world made of words in non-Euclidean space.
 - **Status**: experiments/hyperbolic-library
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
 
 ### hyper-botany
 - **Parents**: experiments/algo-botany + experiments/hyperbolic-library
@@ -1062,3 +1055,16 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Evolving Heuristics. Roots learn to find water.
 - **Status**: experiments/chimera-roots
 - **Evaluation**: Compiles. Evolving roots confirmed.
+
+### myco-transit
+- **Parents**: experiments/bio-transit + experiments/rhythm-diffusion
+- **Concept**: Slime mold agents navigating a reaction-diffusion landscape.
+- **Status**: experiments/myco-transit
+- **Evaluation**: Compiles. Slime mold operational.
+
+### myco-stego
+- **Parents**: experiments/stego-cartridge + experiments/myco-transit
+- **Concept**: Biological Steganalysis. Slime mold agents foraging on the hidden data (LSBs) of an image.
+- **Novel trait**: Visualizing the invisible data layer as a biological terrain.
+- **Status**: experiments/myco-stego
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
