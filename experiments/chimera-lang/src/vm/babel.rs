@@ -440,7 +440,56 @@ pub fn exec_babel_op(
                     .push("Error: Stack underflow for Perceive".to_string());
             }
         }
+        OpCode::Ouroboros => {
+            return exec_ouroboros(vm);
+        }
         _ => {}
+    }
+    None
+}
+
+/// The Ouroboros Protocol: Self-consumption and rebirth.
+///
+/// **OpCode:** `Ouroboros`
+/// **Stack:** `[ ..., grammar_junction ] -> [ ... ]`
+/// **Effect:** Decompiles self, parses with grammar, mutates, recompiles, replaces self.
+pub fn exec_ouroboros(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if let Some(grammar) = vm.stack.pop() {
+        let current_strand_idx = vm.ip.0;
+
+        if current_strand_idx >= vm.dna.helix.strands.len() {
+            vm.output.push("OUROBOROS: Invalid strand index".to_string());
+            return None;
+        }
+
+        // 1. Decompile Self
+        let strand = &vm.dna.helix.strands[current_strand_idx];
+        let source = crate::vm::nova_genetics::strand_to_string(strand);
+
+        // 2. Parse with Grammar
+        if let Ok((cst, _consumed)) = run_parser(&grammar, &source) {
+            // 3. Mutate CST
+            // Base mutation rate + Glitch Level
+            let rate = 0.1 + vm.glitch_level as f64;
+            let mutated_cst = mutate_cst(&cst, rate);
+
+            // 4. Compile to New Strand
+            // We use current strand as handler for any recursive structures
+            let new_strand_idx = compile_cst(vm, mutated_cst, current_strand_idx);
+
+            // 5. Hot-Swap (Rebirth)
+            vm.output.push(format!(
+                "OUROBOROS: Strand {} rebirthed as {}",
+                current_strand_idx, new_strand_idx
+            ));
+            return Some((new_strand_idx, 0));
+        } else {
+            vm.output
+                .push("OUROBOROS: Failed to parse self.".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for Ouroboros".to_string());
     }
     None
 }
