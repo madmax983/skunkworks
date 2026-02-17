@@ -1,8 +1,8 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/hyperbolic-void
+### [Concentration Level: TOXIC] - Location: experiments/hyperbolic-hell
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Compilation Failure (`draw_sphere_wireframe` mismatch). Documentation Void. Redundancy confirmed.
+- **Status:** Condemned. Compilation Failure. Documentation Void. Redundant with `hyperbolic-rogue`.
 - **Note:** Grace period: 24h.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/code-concerto-zombie
@@ -385,6 +385,10 @@
 - **Note**: Moonshot: LSB Steganography + Code Distribution. The image is the console.
 
 ## History/Decay
+
+### [Concentration Level: EXECUTED] - Location: graveyard/hyperbolic-void
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Execution confirmed. Compilation failure (`draw_sphere_wireframe`). Documentation void. Redundant with `hyperbolic-finder`.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/hyperbolic-raymarcher
 - **Scent Origin:** The Reaper ☠️
