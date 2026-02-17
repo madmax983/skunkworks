@@ -139,7 +139,7 @@ members = [
     "experiments/neuro-beats", "experiments/hohmann-delivery",
     "experiments/hyperbolic-library", "experiments/data-strider",
     "experiments/chimera-roots", "experiments/stego-cartridge", "experiments/hyperbolic-void", "experiments/git-archaeology", "experiments/string-theory", "experiments/chronos-observatory",
-    "experiments/genetic-luthier",
+    "experiments/genetic-luthier", "experiments/sonata-cycle",
 ]
 resolver = "2"
 
