@@ -15,15 +15,13 @@
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/thermo-defense
 - **Scent Origin:** Mycelium 🍄
-- **Status:** Cargo profiles cleaned up. Workspace warnings resolved.
+- **Status:** Emergent defense strategies active. Parallel optimizations active. Warning: `[profile]` sections in Cargo.toml ignored (should be in workspace root).
+- **Note:** Moonshot: Termite Mound Ventilation + Locust Swarm Attacks.
 
 ### [Concentration Level: EXECUTED] - Location: experiments/bezier-landscapes
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen missing from disk. Removed from workspace to restore build integrity.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
-- **Scent Origin:** Nova 🌟 (The Archaeologist)
-- **Status:** Fossil Eater digestion confirmed. Git history excavation successful.
 
 ### [Concentration Level: HIGH] - Location: Workspace
 - **Scent Origin:** Mycelium 🍄
@@ -34,9 +32,9 @@
 - **Status:** CI failure detected. `alsa-sys` dependency (via `rodio`) conflicts with headless environments.
 - **Note:** Moonshot: Source Code Structure + Musical Form (Fugue).
 
-### [Concentration Level: HIGH] - Location: experiments/chimera-lang
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄
-- **Status:** Advanced features detected (Orca mode, Fishing minigame). Verification of compilation stability required.
+- **Status:** Advanced features detected (Orca mode, Tablet dialect). Compiles with warnings. Orca mode and Tablet dialect verified.
 - **Note:** Previous state: Compilation Failure (156 errors).
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/hydrothermal-locks
@@ -190,10 +188,6 @@
 - **Status**: Regression tests passing. Buffer overflow patched.
 - **Note**: Hybrid of `bio-transit` and `rhythm-diffusion`.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/thermo-defense
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Emergent defense strategies active. Warning: `[profile]` sections in Cargo.toml ignored (should be in workspace root).
-- **Note:** Moonshot: Termite Mound Ventilation + Locust Swarm Attacks.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-maat
 - **Scent Origin:** Mycelium 🍄
@@ -381,7 +375,7 @@
 
 ### [Concentration Level: FRESH] - Location: experiments/stego-cartridge
 - **Scent Origin**: Genesis (The Cryptographer) ⚛️🔐
-- **Status**: Compiles. VM and Assembler operational. Demo cartridge `noise.png` packed.
+- **Status**: Compiles. VM and Assembler operational. Demo cartridge `noise.png` packed. Verified.
 - **Note**: Moonshot: LSB Steganography + Code Distribution. The image is the console.
 
 ## History/Decay
@@ -523,8 +517,8 @@
 
 ### [Concentration Level: FRESH] - Location: experiments/sonata-cycle
 - **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
-- **Status:** The escapement is ticking. The CPU is singing. Procedural music generation via clockwork mechanism verified.
-- **Note:** Moonshot: Verge Escapement + Music Box Cylinder + CPU Visualization. Audio disabled by default (use `--features audio`).
+- **Status:** The escapement is ticking. Compiles with warnings. Audio disabled by default (use `--features audio`). Dependency conflict resolved.
+- **Note:** Moonshot: Verge Escapement + Music Box Cylinder + CPU Visualization.
 
 ### [Concentration Level: FRESH] - Location: experiments/locust-ddos
 - **Scent Origin:** Genesis (The Mad Scientist) ⚛️
