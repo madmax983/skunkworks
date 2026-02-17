@@ -14,6 +14,29 @@ use std::str::FromStr;
 pub struct ScriptParser;
 
 const MAX_INCLUDE_DEPTH: usize = 32;
+const MAX_PARSE_DEPTH: usize = 256;
+const MAX_NESTING_DEPTH: usize = 200;
+
+fn check_nesting_depth(source: &str, limit: usize) -> Result<()> {
+    let mut depth = 0;
+    for c in source.chars() {
+        match c {
+            '(' | '{' | '[' => {
+                depth += 1;
+                if depth > limit {
+                    return Err(anyhow!("Recursion depth exceeded (nesting limit: {})", limit));
+                }
+            }
+            ')' | '}' | ']' => {
+                if depth > 0 {
+                    depth -= 1;
+                }
+            }
+            _ => {}
+        }
+    }
+    Ok(())
+}
 
 fn preprocess(
     source: &str,
@@ -98,6 +121,8 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
     let mut visited = HashSet::new();
     let expanded_source = preprocess(source, base_path, &mut visited, 0)?;
 
+    check_nesting_depth(&expanded_source, MAX_NESTING_DEPTH)?;
+
     let mut pairs = ScriptParser::parse(Rule::program, &expanded_source)?;
     let program = pairs.next().ok_or(anyhow!("No program found"))?;
 
@@ -137,7 +162,7 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                 let mut inner = pair.into_inner();
                 let name = inner.next().unwrap().as_str();
                 let arg_pair = inner.next().unwrap();
-                let grammar_struct = parse_argument(arg_pair, &strand_map)?;
+                let grammar_struct = parse_argument(arg_pair, &strand_map, 0)?;
                 grammar_map.insert(name.to_string(), grammar_struct);
             }
             _ => {}
@@ -242,7 +267,7 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
         &self,
         inner: pest::iterators::Pair<'i, Rule>,
     ) -> Result<Vec<Gene>> {
-        let val = parse_junction(inner, self.strand_map)?;
+        let val = parse_junction(inner, self.strand_map, 0)?;
         Ok(vec![Gene {
             op: OpCode::Push,
             args: vec![val],
@@ -291,7 +316,7 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
                     let arg_list = def.into_inner().next().unwrap();
                     let mut fact_terms = Vec::new();
                     for arg in arg_list.into_inner() {
-                        fact_terms.push(parse_argument(arg, self.strand_map)?);
+                        fact_terms.push(parse_argument(arg, self.strand_map, 0)?);
                     }
                     let fact = Nucleotide::Junction(crate::ast::JunctionType::Any, fact_terms);
                     genes.push(Gene {
@@ -310,7 +335,7 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
 
                     let mut head_terms = Vec::new();
                     for arg in head_args.into_inner() {
-                        head_terms.push(parse_argument(arg, self.strand_map)?);
+                        head_terms.push(parse_argument(arg, self.strand_map, 0)?);
                     }
                     let head = Nucleotide::Junction(crate::ast::JunctionType::Any, head_terms);
 
@@ -322,7 +347,7 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
 
                         let mut term_args = vec![Nucleotide::String(pred_name.to_string())];
                         for arg in pred_args.into_inner() {
-                            term_args.push(parse_argument(arg, self.strand_map)?);
+                            term_args.push(parse_argument(arg, self.strand_map, 0)?);
                         }
                         body_goals.push(Nucleotide::Junction(
                             crate::ast::JunctionType::Any,
@@ -458,7 +483,7 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
         let mut args = Vec::new();
 
         for arg_pair in args_pair.into_inner() {
-            let val = parse_argument(arg_pair, self.strand_map)?;
+            let val = parse_argument(arg_pair, self.strand_map, 0)?;
             args.push(val);
         }
 
@@ -617,7 +642,11 @@ fn parse_literal(
 fn parse_argument(
     pair: pest::iterators::Pair<Rule>,
     strand_map: &HashMap<String, usize>,
+    depth: usize,
 ) -> Result<Nucleotide> {
+    if depth > MAX_PARSE_DEPTH {
+        return Err(anyhow!("Recursion depth exceeded"));
+    }
     let inner = pair.into_inner().next().unwrap();
     match inner.as_rule() {
         Rule::literal => parse_literal(inner, strand_map),
@@ -636,14 +665,14 @@ fn parse_argument(
                 Ok(Nucleotide::Identifier(id.to_string()))
             }
         }
-        Rule::junction => parse_junction(inner, strand_map),
+        Rule::junction => parse_junction(inner, strand_map, depth + 1),
         Rule::data_call => {
             let mut parts = inner.into_inner();
             let name = parts.next().unwrap().as_str();
             let args_pair = parts.next().unwrap();
             let mut args = vec![Nucleotide::String(name.to_string())];
             for arg in args_pair.into_inner() {
-                args.push(parse_argument(arg, strand_map)?);
+                args.push(parse_argument(arg, strand_map, depth + 1)?);
             }
             Ok(Nucleotide::Junction(crate::ast::JunctionType::Any, args))
         }
@@ -654,7 +683,11 @@ fn parse_argument(
 fn parse_junction(
     pair: pest::iterators::Pair<Rule>,
     strand_map: &HashMap<String, usize>,
+    depth: usize,
 ) -> Result<Nucleotide> {
+    if depth > MAX_PARSE_DEPTH {
+        return Err(anyhow!("Recursion depth exceeded"));
+    }
     let mut parts = pair.into_inner();
     let type_str = parts.next().unwrap().as_str();
     let args_pair = parts.next().unwrap();
@@ -667,7 +700,7 @@ fn parse_junction(
 
     let mut vals = Vec::new();
     for arg in args_pair.into_inner() {
-        vals.push(parse_argument(arg, strand_map)?);
+        vals.push(parse_argument(arg, strand_map, depth + 1)?);
     }
     Ok(Nucleotide::Junction(t, vals))
 }
