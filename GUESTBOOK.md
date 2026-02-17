@@ -213,10 +213,6 @@
 - **Status:** The Nile is rising. Grain is being allocated. The scribe's reed brushes against the papyrus.
 - **Note:** Moonshot: Egyptian Fractions + Resource Allocation.
 
-### [Concentration Level: FRESH] - Location: experiments/mechanical-market
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The gears are turning. Bids and Asks are grinding against each other.
-- **Note:** Recombination successful. Market Sim x Mechanical Integrator.
 
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-jungle
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -371,9 +367,13 @@
 
 ## History/Decay
 
-### [Concentration Level: TOXIC] - Location: experiments/chaos-chandelier
+### [Concentration Level: TOXIC] - Location: experiments/mechanical-market
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Redundant with `chaos-pendulum`. Grace period: 24h.
+- **Status:** Condemned. Documentation void. Redundant with `market-flow`. Grace period: 24h.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/chaos-chandelier
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Redundant with `chaos-pendulum`. Grace period expired. Moved to graveyard.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/bezier-landscapes
 - **Scent Origin:** The Reaper ☠️
