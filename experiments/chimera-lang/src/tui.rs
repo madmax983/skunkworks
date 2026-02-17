@@ -11571,7 +11571,13 @@ fn render_akashic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
         .split(app_state.get_render_area(f.area()));
 
-    // Left: Records (Key-Value)
+    // Left Panel: Split into Records (Top) and Memories (Bottom)
+    let left_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(chunks[0]);
+
+    // Top-Left: Records (Key-Value)
     let mut items = Vec::new();
     for (k, v) in &vm.akashic.storage {
         items.push(ListItem::new(format!("{}: {}", k, v)).style(Style::default().fg(Color::Cyan)));
@@ -11585,9 +11591,27 @@ fn render_akashic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let list = List::new(items).block(
         Block::default()
             .borders(Borders::ALL)
-            .title("Persistent Memory"),
+            .title("Persistent Storage (KV)"),
     );
-    f.render_widget(list, chunks[0]);
+    f.render_widget(list, left_chunks[0]);
+
+    // Bottom-Left: Memories (Snapshots)
+    let mut mem_items = Vec::new();
+    for k in vm.akashic.memories.keys() {
+        mem_items.push(ListItem::new(format!("Memory: {}", k)).style(Style::default().fg(Color::Magenta)));
+    }
+    if mem_items.is_empty() {
+        mem_items.push(
+            ListItem::new("No Memories Saved.").style(Style::default().fg(Color::DarkGray)),
+        );
+    }
+
+    let mem_list = List::new(mem_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Saved Memories (Time Travel)"),
+    );
+    f.render_widget(mem_list, left_chunks[1]);
 
     // Right: Karma & Miracles
     let mut info = Vec::new();
@@ -11600,7 +11624,10 @@ fn render_akashic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     info.push(Line::from("  3: Cleanse (500)"));
     info.push(Line::from("  4: Ascension (10000)"));
     info.push(Line::from(" "));
-    info.push(Line::from("Use 'Miracle(id)' OpCode to invoke."));
+    info.push(Line::from("Opcodes:"));
+    info.push(Line::from("  Miracle(id)"));
+    info.push(Line::from("  AkashicSave(key)"));
+    info.push(Line::from("  AkashicLoad(key)"));
 
     let info_widget = Paragraph::new(info).block(
         Block::default()

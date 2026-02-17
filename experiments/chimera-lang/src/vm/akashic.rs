@@ -1,4 +1,6 @@
 #[cfg(feature = "nova")]
+use super::nova_chronos::Spore;
+#[cfg(feature = "nova")]
 use super::{ChimeraVM, Value, MAX_AKASHIC_SIZE};
 #[cfg(feature = "nova")]
 use crate::ast::Nucleotide;
@@ -21,6 +23,8 @@ const AKASHIC_FILE: &str = ".chimera_akashic.json";
 pub struct AkashicRecords {
     pub storage: HashMap<String, Value>,
     pub karma: i64,
+    #[serde(default)]
+    pub memories: HashMap<String, Spore>,
 }
 
 #[cfg(feature = "nova")]
@@ -29,6 +33,7 @@ impl AkashicRecords {
         Self::load().unwrap_or_else(|_| Self {
             storage: HashMap::new(),
             karma: 0,
+            memories: HashMap::new(),
         })
     }
 
@@ -55,6 +60,7 @@ impl AkashicRecords {
             Err(_) => Ok(Self {
                 storage: HashMap::new(),
                 karma: 0,
+                memories: HashMap::new(),
             }),
         }
     }
@@ -97,6 +103,42 @@ pub fn exec_akashic_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                         vm.output.push(format!("AKASHIC: Wrote '{}'", key));
                     }
                     vm.energy = vm.energy.saturating_sub(10);
+                } else {
+                    vm.output.push("Error: Key must be string".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow".to_string());
+            }
+        }
+        OpCode::AkashicSave => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Str(key) = val {
+                    let spore = super::nova_chronos::create_spore(vm);
+                    vm.akashic.memories.insert(key.clone(), spore);
+                    if let Err(e) = vm.akashic.save() {
+                        vm.output.push(format!("AKASHIC ERROR: {}", e));
+                    } else {
+                        vm.output.push(format!("AKASHIC: Saved Memory '{}'", key));
+                    }
+                    vm.energy = vm.energy.saturating_sub(100);
+                } else {
+                    vm.output.push("Error: Key must be string".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow".to_string());
+            }
+        }
+        OpCode::AkashicLoad => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Str(key) = val {
+                    if let Some(spore) = vm.akashic.memories.get(&key).cloned() {
+                        super::nova_chronos::restore_state(vm, &spore);
+                        vm.output
+                            .push(format!("AKASHIC: Restored Memory '{}'", key));
+                    } else {
+                        vm.output
+                            .push(format!("AKASHIC: Memory '{}' not found", key));
+                    }
                 } else {
                     vm.output.push("Error: Key must be string".to_string());
                 }

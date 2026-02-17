@@ -22,9 +22,10 @@ use rand::Rng;
 use std::collections::hash_map::DefaultHasher;
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::hash::{Hash, Hasher};
+use serde::{Deserialize, Serialize};
 
 /// The physical state of the organism, affecting movement and mutation.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
 pub enum Phase {
     /// Standard state. Blocks movement through walls. Normal energy costs.
     #[default]
@@ -38,7 +39,7 @@ pub enum Phase {
 }
 
 /// Defines the specialized behavior of an Organelle.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum OrganelleType {
     /// Standard execution unit. No special abilities.
     Worker,
@@ -75,7 +76,7 @@ pub enum OrganelleType {
 ///
 /// Organelles run in parallel to the main organism (sequentially in the loop, but logically parallel).
 /// They have their own stack, IP, and location, but share the organism's Energy and DNA.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Organelle {
     /// The organelle's private stack.
     pub stack: Vec<Value>,
