@@ -88,6 +88,9 @@ pub mod chimera_chaos;
 #[cfg(feature = "nova")]
 pub mod nova_chaos;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_chaos_transmutation_test;
+#[cfg(feature = "nova")]
 pub mod cladistics;
 pub mod cortex;
 pub mod dream;
@@ -3253,7 +3256,14 @@ impl ChimeraVM {
             | OpCode::BioHack => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
-            OpCode::ChaosDefine | OpCode::ChaosScramble | OpCode::ChaosInvoke => {
+            OpCode::ChaosDefine
+            | OpCode::ChaosScramble
+            | OpCode::ChaosInvoke
+            | OpCode::ChaosLearn
+            | OpCode::Mercury
+            | OpCode::Venus
+            | OpCode::Salt
+            | OpCode::Sulfur => {
                 nova_chaos::exec_chaos_op(self, op, args);
                 None
             }
