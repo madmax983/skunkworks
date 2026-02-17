@@ -1,12 +1,24 @@
 use crate::ast::JunctionType;
 use serde::{Deserialize, Serialize};
 
+/// The fundamental data types in the Chimera VM.
+///
+/// Can be stored on the Stack, in the Grid, or in a Junction.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum Value {
+    /// A 64-bit integer. The basic unit of arithmetic and coordinates.
     Int(i64),
+    /// A UTF-8 string. Used for gene names, messages, and genetic code.
     Str(String),
+    /// A collection of values with logic gate semantics (Any/All).
+    ///
+    /// Used for complex data structures and pattern matching.
     Junction(JunctionType, Vec<Value>),
+    /// A quantum superposition of values with associated probabilities.
+    ///
+    /// Used by Nova features for probabilistic computing.
     Superposition(Vec<(Value, f64)>),
+    /// An abstract symbol ID. Used by Semiotics features.
     Symbol(u64),
 }
 

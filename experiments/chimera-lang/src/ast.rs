@@ -3,40 +3,70 @@ use crate::Rule;
 use pest::iterators::Pair;
 use serde::{Deserialize, Serialize};
 
+/// The complete genetic blueprint of a Chimera organism.
+///
+/// Contains the `Helix` which stores all executable code.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Dna {
+    /// The double-helix structure containing strands of genes.
     pub helix: Helix,
 }
 
+/// A collection of DNA strands.
+///
+/// Represents the chromosome set of the organism.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Helix {
+    /// List of named or anonymous functions (Strands).
     pub strands: Vec<Strand>,
 }
 
+/// A sequence of instructions (Genes).
+///
+/// Equivalent to a function or subroutine in traditional programming.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Strand {
+    /// The sequence of operations to execute.
     pub genes: Vec<Gene>,
 }
 
+/// A single instruction.
+///
+/// Consists of an Enzyme (`OpCode`) and its Arguments (`Nucleotide`s).
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Gene {
+    /// The operation to perform (Enzyme).
     pub op: OpCode,
+    /// The arguments for the operation (Nucleotides).
     pub args: Vec<Nucleotide>,
 }
 
+/// Logic gate type for Junctions.
+///
+/// Determines how a Junction aggregates its children.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Copy, Serialize, Deserialize)]
 pub enum JunctionType {
+    /// Returns true if ANY child is true (OR gate).
     Any,
+    /// Returns true if ALL children are true (AND gate).
     All,
+    /// Represents a spatial collection (e.g. cells in a Petri Dish).
     Dish,
 }
 
+/// The atomic unit of data in DNA.
+///
+/// Represents arguments to Genes.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Nucleotide {
+    /// Integer literal (e.g. `42`).
     Number(i64),
+    /// String literal (e.g. `"hello"`).
     String(String),
+    /// Identifier (variable or label name).
     #[allow(dead_code)]
     Identifier(String),
+    /// A structured collection of nucleotides (List/Tuple).
     Junction(JunctionType, Vec<Nucleotide>),
 }
 
