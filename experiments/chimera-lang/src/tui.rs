@@ -11770,7 +11770,9 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 _ => ".".to_string(),
             };
 
-            if vm.prologue_state.runes.contains(&(y, x)) {
+            if vm.prologue_state.signal_grid[y][x].is_some() {
+                style = style.fg(Color::Green).add_modifier(Modifier::BOLD);
+            } else if vm.prologue_state.runes.contains(&(y, x)) {
                 style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
             } else {
                 style = style.fg(Color::DarkGray);
@@ -11801,10 +11803,24 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     // Right: Rules
     let mut info = Vec::new();
-    info.push(Line::from("Inferred Rules:"));
-    for rule in &vm.prologue_state.rules {
-        info.push(Line::from(rule.clone()));
+    info.push(Line::from("Logic Engine Status:"));
+    info.push(Line::from(format!("Active Agents: {}", vm.prologue_state.agents.len())));
+
+    // Debug Signals
+    let mut signal_count = 0;
+    for row in &vm.prologue_state.signal_grid {
+        for cell in row {
+            if cell.is_some() { signal_count += 1; }
+        }
     }
+    info.push(Line::from(format!("Active Signals: {}", signal_count)));
+
+    info.push(Line::from(" "));
+    info.push(Line::from("Rules:"));
+    info.push(Line::from("  ! Source (Emits North)"));
+    info.push(Line::from("  ? Sink (Reads South)"));
+    info.push(Line::from("  ~ Wire, & AND, | OR"));
+    info.push(Line::from("  @ Agent (Moves to Signal)"));
 
     let info_widget = Paragraph::new(info).block(
         Block::default().borders(Borders::ALL).title("Logic Engine"),

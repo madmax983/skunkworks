@@ -1,37 +1,58 @@
-# Prologue Language 🔮
+# Prologue: Rune Logic 🔮
 
-Prologue is a Rune-based Logic Language that runs on the Chimera Grid.
-It combines visual programming with logic inference.
+Prologue is a Grid-based Visual Logic Language embedded within Chimera.
+It allows for the construction of "Digital Circuits" and "Logic Agents" directly on the memory grid.
 
 ## Activation
 
-Toggle Prologue mode with `[` in the TUI or the `prologue` OpCode.
+Toggle Prologue mode with `[` in the TUI or the `OpCode::Prologue`.
 
-## Runes
+## The Grid Circuit
 
-Runes are single characters placed on the grid that define logic rules.
+Prologue treats the grid as a circuit board. Signals propagate instantly (within one tick) through connected components.
 
-*   `?` **Query**: Scans the cell to the North. If not empty, logs a query.
-*   `!` **Fact**: Asserts a fact about the cell to the North.
-*   `@` **Agent**: A logic agent that can move or interact based on rules.
-*   `~` **Stream**: Connects logic components.
-*   `&` **AND**: Logic conjunction.
-*   `|` **OR**: Logic disjunction.
+### Runes
 
-## Logic Engine
+| Rune | Name | Function |
+|---|---|---|
+| `!` | **Source** | **Emits** the value of the cell to its **North**. |
+| `?` | **Sink** | **Reads** signal from its **South**. If active, triggers a log/event. |
+| `~` | **Wire** | Conducts signals in all cardinal directions (N, S, E, W). |
+| `&` | **AND Gate** | Output (South) = Input (West) **AND** Input (East). |
+| `|` | **OR Gate** | Output (South) = Input (West) **OR** Input (East). |
+| `@` | **Agent** | A mobile logic cursor that can interact with the grid. |
 
-The Prologue engine scans the grid every tick (`prologue_tick`).
-It identifies Runes and infers rules dynamically.
+### Signal Theory
 
-Example:
+*   **Values**: Signals carry the full `Value` type (Int, String, etc.).
+*   **Propagation**: Signals travel through `~` wires.
+*   **Conflict**: If multiple signals meet on a wire, the behavior is "Last Write Wins" or "Undefined" (implementation dependent).
+*   **Logic**:
+    *   `AND`: Requires both inputs to be Truthy (non-zero Int, non-empty Str). Output is 1.
+    *   `OR`: Requires at least one input to be Truthy. Output is 1.
+
+### Agents (`@`)
+
+Agents are autonomous cursors.
+*   They scan their local neighborhood.
+*   (Future) They can be programmed via the Oracle to move towards specific signals.
+
+## Example
+
+**Simple Circuit:**
 ```
-  A
-  |
-  ?
+  42      (Value 42)
+  !       (Source reads 42)
+  ~       (Wire carries 42)
+  ~       (Wire carries 42)
+  ?       (Sink receives 42 -> Logs "42")
 ```
-This implies "Query A".
 
-## Integration
-
-Prologue runs alongside Nova physics and Chimera DNA execution.
-Use `Rune(char, y, x)` to place runes programmatically.
+**Logic Gate:**
+```
+  1   1
+  !   !
+  ~   ~
+  &       (AND Gate)
+  ?       (Sink receives 1)
+```
