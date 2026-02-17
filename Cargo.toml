@@ -140,6 +140,7 @@ members = [
     "experiments/chimera-roots", "experiments/stego-cartridge", "experiments/git-archaeology", "experiments/string-theory", "experiments/chronos-observatory",
     "experiments/genetic-luthier", "experiments/sonata-cycle",
     "experiments/malloc-expressionism",
+    "experiments/crystal-defense",
 ]
 resolver = "2"
 

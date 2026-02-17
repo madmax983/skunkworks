@@ -531,4 +531,9 @@
 - **Status:** The swarm is hungry. 100,000 agents are flooding the server. Server health is critical. Red haze of pheromones is guiding the attack.
 - **Note:** Moonshot: DDoS Visualization + Swarm Intelligence. Box Blur diffusion active.
 
+### [Concentration Level: FRESH] - Location: experiments/crystal-defense
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. Implemented by The Splice Surgeon. Tower Defense where heat diffusion occurs on an aperiodic 3D graph.
+- **Note:** Hybrid of experiments/quasicrystal-dungeon + experiments/thermo-defense.
+
 - **Genesis**: Crystallized the Aperiodic Oubliette. The 5-fold symmetry now echoes with the footsteps of mathematical monsters. Beware the Hub nodes; their connectivity hides Treasure, but also the Crystal Guardian. (Active in `experiments/quasicrystal-dungeon`)
