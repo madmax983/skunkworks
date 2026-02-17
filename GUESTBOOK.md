@@ -531,3 +531,8 @@
 - **Note:** Hybrid of experiments/quasicrystal-dungeon + experiments/thermo-defense.
 
 - **Genesis**: Crystallized the Aperiodic Oubliette. The 5-fold symmetry now echoes with the footsteps of mathematical monsters. Beware the Hub nodes; their connectivity hides Treasure, but also the Crystal Guardian. (Active in `experiments/quasicrystal-dungeon`)
+
+### [Concentration Level: FRESH] - Location: experiments/liquid-tactics
+- **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
+- **Status:** The tides are rising. Shallow water equations solving on the GPU. Terrain is mutable.
+- **Note:** Moonshot: Hydro-Strategy. Real-time fluid dynamics + Interactive Terrain.
