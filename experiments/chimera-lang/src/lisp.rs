@@ -235,6 +235,8 @@ fn map_op(s: &str) -> Option<OpCode> {
         #[cfg(feature = "nova")]
         "decompile" => Some(OpCode::Decompile),
         #[cfg(feature = "nova")]
+        "lisp-eval" => Some(OpCode::LispEval),
+        #[cfg(feature = "nova")]
         "babel-live" => Some(OpCode::BabelLive),
         #[cfg(feature = "nova")]
         "bio-hack" => Some(OpCode::BioHack),

@@ -2041,7 +2041,7 @@ impl ChimeraVM {
             let prob = base_cost - int_cost as f64;
             let mut rng = rand::thread_rng();
             let extra = if rng.gen_bool(prob) { 1 } else { 0 };
-            self.energy -= (int_cost + extra);
+            self.energy -= int_cost + extra;
         }
         #[cfg(not(feature = "nova"))]
         {
@@ -3196,6 +3196,7 @@ impl ChimeraVM {
             | OpCode::Decompile
             | OpCode::Sonar
             | OpCode::Eval
+            | OpCode::LispEval
             | OpCode::Map
             | OpCode::Fold
             | OpCode::Filter

@@ -36,7 +36,6 @@ pub fn exec_live_parse(vm: &mut ChimeraVM, start_y: usize, start_x: usize, input
                     '"' => {
                         // String literal mode: consume grid cells until closing quote
                         // and match against input.
-                        let mut match_buffer = String::new();
                         let mut temp_x = cursor_x;
                         let mut temp_y = cursor_y;
 
