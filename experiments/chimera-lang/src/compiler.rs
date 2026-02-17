@@ -1,3 +1,29 @@
+//! # The Ribosome Compiler 🧬
+//!
+//! The `compiler` module acts as the cellular machinery that translates high-level
+//! **ChimeraScript** (RNA) into executable **DNA** (OpCodes).
+//!
+//! ## Compilation Pipeline
+//!
+//! 1.  **Preprocessing**: Handling `#include` directives and ensuring no circular dependencies or path traversal attacks.
+//! 2.  **Parsing**: Using `pest` to convert the source text into a Concrete Syntax Tree (CST).
+//! 3.  **Gene Generation**: Walking the CST to produce `Gene` instructions, resolving macros, and linking jumps.
+//!
+//! ## Syntax Overview
+//!
+//! ChimeraScript is a concatenative, stack-oriented language.
+//!
+//! ```chimera
+//! strand main {
+//!     push(5)
+//!     push(3)
+//!     add
+//!     print
+//! }
+//! ```
+//!
+//! See [`compile`] for usage details.
+
 use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use crate::opcode::OpCode;
 use anyhow::{anyhow, Result};
@@ -9,14 +35,29 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
+/// The Pest parser for ChimeraScript.
+///
+/// Derived from `script_grammar.pest`. This handles the lexical analysis and parsing
+/// of the source text into a CST (Concrete Syntax Tree).
 #[derive(Parser)]
 #[grammar = "script_grammar.pest"]
 pub struct ScriptParser;
 
+/// Maximum depth of `#include` directives to prevent stack overflow.
 const MAX_INCLUDE_DEPTH: usize = 32;
+/// Maximum depth of recursive parsing (e.g. nested Junctions).
 const MAX_PARSE_DEPTH: usize = 256;
+/// Maximum nesting level of brackets `{ [ (` in source code.
 const MAX_NESTING_DEPTH: usize = 200;
 
+/// Validates that the source code does not exceed the nesting limit.
+///
+/// This is a fast-fail check before parsing to prevent Pest from crashing on
+/// extremely deep recursion (Stack Overflow Protection).
+///
+/// # Errors
+///
+/// Returns an error if nesting depth exceeds `limit`.
 fn check_nesting_depth(source: &str, limit: usize) -> Result<()> {
     let mut depth = 0;
     for c in source.chars() {
@@ -41,6 +82,18 @@ fn check_nesting_depth(source: &str, limit: usize) -> Result<()> {
     Ok(())
 }
 
+/// Recursively processes `#include` statements in the source code.
+///
+/// # Security
+///
+/// - Checks for circular dependencies (using `visited`).
+/// - Enforces `MAX_INCLUDE_DEPTH`.
+/// - Prevents Path Traversal attacks (`../`) by verifying that the resolved path
+///   is within the `base_path` sandbox.
+///
+/// # Returns
+///
+/// A single string containing the expanded source code.
 fn preprocess(
     source: &str,
     base_path: Option<&Path>,
@@ -120,12 +173,51 @@ fn preprocess(
     Ok(expanded)
 }
 
+/// Compiles ChimeraScript source code into DNA.
+///
+/// This is the main entry point for the compiler.
+///
+/// # Arguments
+///
+/// * `source` - The ChimeraScript source code string.
+/// * `base_path` - Optional path for resolving `#include` directives. Usually the directory of the source file.
+///
+/// # Errors
+///
+/// Returns an error if:
+/// - Parsing fails (Syntax Error).
+/// - An unknown opcode is used (if not defined in grammar).
+/// - Recursion depth limits are exceeded.
+/// - File inclusion fails (I/O or Security).
+///
+/// # Example
+///
+/// ```rust
+/// use chimera_lang::compiler::compile;
+/// use chimera_lang::opcode::OpCode;
+///
+/// let src = r#"
+/// strand main {
+///     push(10)
+///     push(20)
+///     add
+/// }
+/// "#;
+///
+/// let dna = compile(src, None).expect("Compilation failed");
+/// assert_eq!(dna.helix.strands.len(), 1);
+/// let genes = &dna.helix.strands[0].genes;
+/// assert_eq!(genes[2].op, OpCode::Add);
+/// ```
 pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
+    // Phase 1: Preprocessing (Includes)
     let mut visited = HashSet::new();
     let expanded_source = preprocess(source, base_path, &mut visited, 0)?;
 
+    // Phase 2: Safety Checks
     check_nesting_depth(&expanded_source, MAX_NESTING_DEPTH)?;
 
+    // Phase 3: Parsing (Text -> CST)
     let mut pairs = ScriptParser::parse(Rule::program, &expanded_source)?;
     let program = pairs.next().ok_or(anyhow!("No program found"))?;
 
@@ -269,12 +361,22 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
     })
 }
 
+/// Internal state used during the gene generation phase.
+///
+/// Holds symbol tables (strand names, macros) and accumulates anonymous
+/// strands (created by blocks `{ ... }`).
 struct CompilerContext<'a, 'i> {
+    /// Maps strand names to their index in the Helix.
     strand_map: &'a HashMap<String, usize>,
+    /// Maps macro names to their CST nodes (lazy expansion).
     macro_map: &'a HashMap<String, pest::iterators::Pairs<'i, Rule>>,
+    /// Maps grammar definitions to their Nucleotide structure.
     grammar_map: &'a HashMap<String, Nucleotide>,
+    /// Maps organelle type names to strand indices.
     organelle_map: &'a HashMap<String, usize>,
+    /// Accumulates anonymous code blocks (lambdas) generated during compilation.
     anonymous_strands: &'a mut Vec<Strand>,
+    /// Current recursion depth for macro expansion and block nesting.
     depth: usize,
 }
 
