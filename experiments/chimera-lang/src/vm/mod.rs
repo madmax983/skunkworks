@@ -153,8 +153,6 @@ pub mod nova_botany;
 #[cfg(test)]
 mod nova_botany_test;
 #[cfg(feature = "nova")]
-pub mod nova_bureaucracy;
-#[cfg(feature = "nova")]
 pub mod nova_cambrian;
 #[cfg(feature = "nova")]
 pub mod nova_cartography;
@@ -679,8 +677,6 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub sovereignty_grid: Vec<Vec<Option<usize>>>,
     #[cfg(feature = "nova")]
-    pub bureaucracy_grid: Vec<Vec<i64>>,
-    #[cfg(feature = "nova")]
     pub tax_rates: HashMap<usize, i64>,
     #[cfg(feature = "nova")]
     pub resonance_grid: Vec<Vec<(f32, f32)>>,
@@ -800,8 +796,6 @@ impl ChimeraVM {
         let cartography_grid = vec![vec![Value::Int(0); GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let sovereignty_grid = vec![vec![None; GRID_SIZE]; GRID_SIZE];
-        #[cfg(feature = "nova")]
-        let bureaucracy_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let resonance_grid = vec![vec![(0.0, 0.0); GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
@@ -1015,8 +1009,6 @@ impl ChimeraVM {
             cartography_grid,
             #[cfg(feature = "nova")]
             sovereignty_grid,
-            #[cfg(feature = "nova")]
-            bureaucracy_grid,
             #[cfg(feature = "nova")]
             tax_rates: HashMap::new(),
             #[cfg(feature = "nova")]
@@ -2104,7 +2096,6 @@ impl ChimeraVM {
             }
             nova_ballistics::update_projectiles(self);
             nova_sovereignty::process_territory(self);
-            nova_bureaucracy::process_red_tape(self);
             nova_arcana::process_fate(self);
             #[cfg(feature = "resonance")]
             nova_resonance_war::process_resonance(self);
@@ -3539,12 +3530,6 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::Nucleate | OpCode::Accrete | OpCode::Shatter | OpCode::Anneal => {
                 nova_crystal::exec_crystal_op(self, op, args);
-                None
-            }
-
-            #[cfg(feature = "nova")]
-            OpCode::Form | OpCode::Sign | OpCode::Permit | OpCode::RedTape => {
-                nova_bureaucracy::exec_bureaucracy_op(self, op, args);
                 None
             }
 
