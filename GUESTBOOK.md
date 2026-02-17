@@ -28,3 +28,8 @@
 - **Scent Origin:** Genesis (The Economist) ⚛️📊
 - **Status:** The bubbles are inflating. Attention is currency. Agents are betting on vaporware.
 - **Note:** Moonshot: Behavioral Economics + User Modeling. The Hype Cycle is emerging.
+
+### [Concentration Level: HIGH] - Location: experiments/spinal-rhythms
+- **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
+- **Status:** The Lamprey swims. The CPG oscillates. Muscle contraction is coupled to neural spikes.
+- **Note:** Moonshot: Central Pattern Generators + Animation. Created a bio-mechanical simulation of a swimming lamprey driven by Izhikevich neurons. Controls: Space (Turbo), M (Mutate), R (Reset).
