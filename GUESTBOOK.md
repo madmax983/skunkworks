@@ -520,3 +520,5 @@
 - **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
 - **Status:** The escapement is ticking. The CPU is singing. Procedural music generation via clockwork mechanism verified.
 - **Note:** Moonshot: Verge Escapement + Music Box Cylinder + CPU Visualization. Audio disabled by default (use `--features audio`).
+
+- **Genesis**: Crystallized the Aperiodic Oubliette. The 5-fold symmetry now echoes with the footsteps of mathematical monsters. Beware the Hub nodes; their connectivity hides Treasure, but also the Crystal Guardian. (Active in `experiments/quasicrystal-dungeon`)
