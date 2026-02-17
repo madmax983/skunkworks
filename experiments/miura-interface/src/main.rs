@@ -27,9 +27,36 @@ use guestbook::{parse_guestbook, GuestbookEntry};
 // 3D Math helpers
 use nalgebra::{Rotation3, Vector3};
 
+fn dim_color(color: Color, factor: f64) -> Color {
+    let factor = factor.clamp(0.2, 1.0);
+    match color {
+        Color::Rgb(r, g, b) => Color::Rgb(
+            (r as f64 * factor) as u8,
+            (g as f64 * factor) as u8,
+            (b as f64 * factor) as u8,
+        ),
+        Color::Red => Color::Rgb((255.0 * factor) as u8, 0, 0),
+        Color::Green => Color::Rgb(0, (255.0 * factor) as u8, 0),
+        Color::Blue => Color::Rgb(0, 0, (255.0 * factor) as u8),
+        Color::Yellow => Color::Rgb((255.0 * factor) as u8, (255.0 * factor) as u8, 0),
+        Color::Cyan => Color::Rgb(0, (255.0 * factor) as u8, (255.0 * factor) as u8),
+        Color::Magenta => Color::Rgb((255.0 * factor) as u8, 0, (255.0 * factor) as u8),
+        Color::White => Color::Rgb((255.0 * factor) as u8, (255.0 * factor) as u8, (255.0 * factor) as u8),
+        Color::Gray => Color::Rgb((128.0 * factor) as u8, (128.0 * factor) as u8, (128.0 * factor) as u8),
+        Color::DarkGray => Color::Rgb((64.0 * factor) as u8, (64.0 * factor) as u8, (64.0 * factor) as u8),
+        c => c, // fallback
+    }
+}
+
 struct Panel {
     entry: Option<GuestbookEntry>,
     color: Color,
+}
+
+#[derive(PartialEq)]
+enum ViewMode {
+    Fold,
+    CreasePattern,
 }
 
 struct App {
@@ -41,6 +68,8 @@ struct App {
     auto_responsive: bool,
     rotation: (f64, f64), // (pitch, yaw)
     panels: Vec<Panel>,
+    view_mode: ViewMode,
+    message: Option<(String, Instant)>,
 }
 
 impl App {
@@ -91,11 +120,13 @@ impl App {
             auto_responsive: true,
             rotation: (0.5, 0.5),
             panels,
+            view_mode: ViewMode::Fold,
+            message: None,
         }
     }
 
     fn update(&mut self, area: Rect) {
-        if self.auto_responsive {
+        if self.auto_responsive && self.view_mode == ViewMode::Fold {
             // Map width to rho
             let w = area.width as f64;
             let min_w = 40.0;
@@ -122,6 +153,13 @@ impl App {
             self.rho = 1.0;
             self.velocity *= -0.5;
         }
+
+        // Expire message
+        if let Some((_, time)) = self.message {
+            if time.elapsed() > Duration::from_secs(3) {
+                self.message = None;
+            }
+        }
     }
 
     fn handle_event(&mut self, event: Event) {
@@ -137,10 +175,32 @@ impl App {
                     self.auto_responsive = false;
                     self.target_rho = (self.target_rho + 0.1).clamp(0.0, 1.0)
                 }
+                KeyCode::Up => { // Also control fold with Up/Down
+                    self.auto_responsive = false;
+                     self.target_rho = (self.target_rho + 0.1).clamp(0.0, 1.0)
+                }
+                KeyCode::Down => {
+                    self.auto_responsive = false;
+                    self.target_rho = (self.target_rho - 0.1).clamp(0.0, 1.0)
+                }
                 KeyCode::Char('w') => self.rotation.0 -= 0.1,
                 KeyCode::Char('s') => self.rotation.0 += 0.1,
                 KeyCode::Char('a') => self.rotation.1 -= 0.1,
                 KeyCode::Char('d') => self.rotation.1 += 0.1,
+                KeyCode::Char('c') => {
+                    self.view_mode = match self.view_mode {
+                        ViewMode::Fold => ViewMode::CreasePattern,
+                        ViewMode::CreasePattern => ViewMode::Fold,
+                    }
+                }
+                KeyCode::Char('e') => {
+                    let svg = self.pattern.export_cp_svg();
+                    if let Err(e) = fs::write("miura_cp.svg", svg) {
+                        self.message = Some((format!("Error: {}", e), Instant::now()));
+                    } else {
+                        self.message = Some(("Exported to miura_cp.svg".to_string(), Instant::now()));
+                    }
+                }
                 _ => {}
             }
         }
@@ -155,12 +215,21 @@ fn draw_ui(f: &mut Frame, app: &App) {
 
     let canvas_area = chunks[0];
 
-    // Compute vertices
-    let vertices = app.pattern.compute_vertices(app.rho);
+    // Select vertices based on mode
+    let vertices = if app.view_mode == ViewMode::CreasePattern {
+        // Flat state, no rotation (top down view)
+        app.pattern.compute_vertices(1.0)
+    } else {
+        app.pattern.compute_vertices(app.rho)
+    };
 
     // Rotation
-    let rot = Rotation3::from_axis_angle(&Vector3::x_axis(), app.rotation.0)
-        * Rotation3::from_axis_angle(&Vector3::y_axis(), app.rotation.1);
+    let rot = if app.view_mode == ViewMode::CreasePattern {
+        Rotation3::identity() // No rotation in CP mode
+    } else {
+        Rotation3::from_axis_angle(&Vector3::x_axis(), app.rotation.0)
+            * Rotation3::from_axis_angle(&Vector3::y_axis(), app.rotation.1)
+    };
 
     // Project
     let projected: Vec<(f64, f64)> = vertices
@@ -177,6 +246,10 @@ fn draw_ui(f: &mut Frame, app: &App) {
         |(minx, maxx, miny, maxy), (x, y)| (minx.min(*x), maxx.max(*x), miny.min(*y), maxy.max(*y)),
     );
 
+    // Bounds depend on mode to avoid jumping too much
+    // In CP mode, we want fixed bounds. In Fold mode, we want dynamic bounds?
+    // Let's stick to dynamic for now.
+
     let width = (max_x - min_x).max(1.0) * 1.2;
     let height = (max_y - min_y).max(1.0) * 1.2;
     let cx = (min_x + max_x) / 2.0;
@@ -187,7 +260,6 @@ fn draw_ui(f: &mut Frame, app: &App) {
 
     // Helper to map 3D projected coords to Screen coords
     let to_screen = |x: f64, y: f64| -> Option<(u16, u16)> {
-        // Normalize 0..1
         let nx = (x - x_bounds[0]) / (x_bounds[1] - x_bounds[0]);
         let ny = (y - y_bounds[0]) / (y_bounds[1] - y_bounds[0]);
 
@@ -195,20 +267,23 @@ fn draw_ui(f: &mut Frame, app: &App) {
             return None;
         }
 
-        // Map to area
         let sx = canvas_area.x as f64 + nx * (canvas_area.width as f64 - 1.0);
-        // Invert Y for screen
         let sy = (canvas_area.y as f64 + canvas_area.height as f64 - 1.0)
             - ny * (canvas_area.height as f64 - 1.0);
 
         Some((sx as u16, sy as u16))
     };
 
+    let title = match app.view_mode {
+        ViewMode::Fold => " Origami Layout Engine: 3D View ",
+        ViewMode::CreasePattern => " Origami Layout Engine: Crease Pattern ",
+    };
+
     let canvas = Canvas::default()
         .block(
             Block::default()
                 .borders(Borders::ALL)
-                .title(" Origami Layout Engine: GUESTBOOK.md "),
+                .title(title),
         )
         .x_bounds(x_bounds)
         .y_bounds(y_bounds)
@@ -222,16 +297,18 @@ fn draw_ui(f: &mut Frame, app: &App) {
                     let idx = r * cols + c;
                     let (x1, y1) = projected[idx];
 
+                    // Draw connections
                     // Right
                     if c + 1 < cols {
                         let idx2 = r * cols + (c + 1);
                         let (x2, y2) = projected[idx2];
+                        let color = if app.view_mode == ViewMode::CreasePattern {
+                             if (r+c)%2 == 0 { Color::Red } else { Color::Blue } // Mountain/Valley
+                        } else {
+                             Color::DarkGray
+                        };
                         ctx.draw(&CanvasLine {
-                            x1,
-                            y1,
-                            x2,
-                            y2,
-                            color: Color::DarkGray,
+                            x1, y1, x2, y2, color
                         });
                     }
 
@@ -239,12 +316,13 @@ fn draw_ui(f: &mut Frame, app: &App) {
                     if r + 1 < rows {
                         let idx2 = (r + 1) * cols + c;
                         let (x2, y2) = projected[idx2];
+                        let color = if app.view_mode == ViewMode::CreasePattern {
+                             if (r+c)%2 == 1 { Color::Red } else { Color::Blue }
+                        } else {
+                             Color::DarkGray
+                        };
                         ctx.draw(&CanvasLine {
-                            x1,
-                            y1,
-                            x2,
-                            y2,
-                            color: Color::DarkGray,
+                            x1, y1, x2, y2, color
                         });
                     }
                 }
@@ -261,9 +339,7 @@ fn draw_ui(f: &mut Frame, app: &App) {
                 break;
             }
 
-            // Get Quad vertices
             if let Some(indices) = app.pattern.get_quad_indices(r, c) {
-                // Calculate Centroid
                 let mut cx_w = 0.0;
                 let mut cy_w = 0.0;
                 for &i in &indices {
@@ -274,14 +350,10 @@ fn draw_ui(f: &mut Frame, app: &App) {
                 cy_w /= 4.0;
 
                 if let Some((sx, sy)) = to_screen(cx_w, cy_w) {
-                    // Check if face is big enough to draw
                     let p0 = projected[indices[0]];
-                    let p1 = projected[indices[1]]; // Horizontal neighbor
-                                                    // dist in world
+                    let p1 = projected[indices[1]];
                     let dist = (p0.0 - p1.0).hypot(p0.1 - p1.1);
-                    // dist in screen pixels
-                    let screen_width =
-                        dist / (x_bounds[1] - x_bounds[0]) * canvas_area.width as f64;
+                    let screen_width = dist / (x_bounds[1] - x_bounds[0]) * canvas_area.width as f64;
 
                     if screen_width > 4.0 {
                         let rect_w = (screen_width * 0.9) as u16;
@@ -290,41 +362,41 @@ fn draw_ui(f: &mut Frame, app: &App) {
                         let rx = sx.saturating_sub(rect_w / 2);
                         let ry = sy;
 
-                        // Clip
                         let visible_rect =
                             Rect::new(rx, ry, rect_w, rect_h).intersection(canvas_area);
 
                         if visible_rect.width > 0 && visible_rect.height > 0 {
                             let panel = &app.panels[panel_idx];
 
+                            // Dim color based on folding (rho)
+                            let dim_factor = 0.4 + 0.6 * app.rho;
+                            let panel_color = dim_color(panel.color, dim_factor);
+
                             if let Some(entry) = &panel.entry {
                                 // LOD Logic
                                 if screen_width < 10.0 {
-                                    // LOD 0: Color Block
-                                    let b = Block::default().bg(panel.color);
+                                    let b = Block::default().bg(panel_color);
                                     f.render_widget(b, visible_rect);
                                 } else if screen_width < 25.0 {
-                                    // LOD 1: Experiment Name
-                                    // Extract just the name from "experiments/name"
                                     let name = entry
                                         .location
                                         .split('/')
                                         .next_back()
                                         .unwrap_or(&entry.location);
+                                    // Text color contrast
+                                    let fg = if dim_factor < 0.5 { Color::White } else { Color::Black };
                                     let p = Paragraph::new(name)
-                                        .style(Style::default().fg(Color::Black).bg(panel.color));
+                                        .style(Style::default().fg(fg).bg(panel_color));
                                     f.render_widget(p, visible_rect);
                                 } else {
-                                    // LOD 2: Status (Truncated)
-                                    // Or Scent + Status
                                     let text = format!("{} - {}", entry.scent_origin, entry.status);
+                                    let fg = if dim_factor < 0.5 { Color::White } else { Color::Black };
                                     let p = Paragraph::new(text)
-                                        .style(Style::default().fg(Color::Black).bg(panel.color));
+                                        .style(Style::default().fg(fg).bg(panel_color));
                                     f.render_widget(p, visible_rect);
                                 }
                             } else {
-                                // Empty Panel
-                                let b = Block::default().bg(Color::DarkGray);
+                                let b = Block::default().bg(dim_color(Color::DarkGray, dim_factor));
                                 f.render_widget(b, visible_rect);
                             }
                         }
@@ -335,10 +407,15 @@ fn draw_ui(f: &mut Frame, app: &App) {
         }
     }
 
-    let status_text = format!(
-        "Rho: {:.2} (Target: {:.2}) | Auto: {} | WASD Rotate, Arrows Fold",
-        app.rho, app.target_rho, app.auto_responsive
-    );
+    let status_text = if let Some((msg, _)) = &app.message {
+         format!("MSG: {}", msg)
+    } else {
+         format!(
+            "Rho: {:.2} (Target: {:.2}) | Mode: {} | 'C' Toggle CP | 'E' Export",
+            app.rho, app.target_rho, match app.view_mode { ViewMode::Fold => "FOLD", ViewMode::CreasePattern => "CP" }
+        )
+    };
+
     f.render_widget(
         Paragraph::new(status_text).block(Block::default().borders(Borders::ALL)),
         chunks[1],
@@ -346,7 +423,6 @@ fn draw_ui(f: &mut Frame, app: &App) {
 }
 
 fn main() -> Result<()> {
-    // Setup Terminal
     enable_raw_mode()?;
     let mut stdout = io::stdout();
     execute!(stdout, EnterAlternateScreen)?;
@@ -354,12 +430,11 @@ fn main() -> Result<()> {
     let mut terminal = Terminal::new(backend)?;
 
     let mut app = App::new();
-    let tick_rate = Duration::from_millis(16); // 60 FPS for smooth physics
+    let tick_rate = Duration::from_millis(16);
     let mut last_tick = Instant::now();
 
     loop {
         terminal.draw(|f| {
-            // Update logic here inside draw because we need frame size
             app.update(f.area());
             draw_ui(f, &app);
         })?;
@@ -381,7 +456,6 @@ fn main() -> Result<()> {
         }
     }
 
-    // Restore Terminal
     disable_raw_mode()?;
     execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
