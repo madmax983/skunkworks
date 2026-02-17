@@ -1146,3 +1146,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Linguistic Grazing. Agents act as biological erosion on semantic structures.
 - **Status**: experiments/polyglot-chimera
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### quipu-fold
+- **Parents**: experiments/miura-interface + experiments/quipu-symphony
+- **Concept**: Quipu cords mapped onto a Miura-ori tessellated surface. The folding of the surface compresses the data (knots).
+- **Novel trait**: Topological Data Compression. Zig-zag cords following the crease pattern.
+- **Status**: experiments/quipu-fold
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
