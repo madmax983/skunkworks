@@ -1,5 +1,6 @@
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, MouseEventKind};
+use gray_scott::GrayScott;
 use rand::Rng;
 use ratatui::{prelude::*, widgets::*};
 use std::{
@@ -10,10 +11,10 @@ use std::{
 use tui_shared::Tui;
 
 mod lorenz;
-mod reaction;
+// mod reaction; // Removed
 
 use lorenz::{LorenzParams, LorenzState};
-use reaction::ChemicalSystem;
+// use reaction::ChemicalSystem;
 
 fn main() -> Result<(), Box<dyn Error>> {
     // Setup terminal
@@ -34,7 +35,11 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>) -> io::Result<()> {
     // Initialize system
     let width = 120;
     let height = 60;
-    let mut chem = ChemicalSystem::new(width, height);
+    let mut chem = GrayScott::new(width, height);
+
+    // Set custom diffusion rates to match original behavior (f64: 1.0, 0.5)
+    chem.diff_u = 1.0;
+    chem.diff_v = 0.5;
 
     // Seed random spots
     let mut rng = rand::thread_rng();
@@ -60,10 +65,14 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>) -> io::Result<()> {
     let mut last_tick = Instant::now();
     let tick_rate = Duration::from_millis(16); // ~60 FPS
 
+    // Store current f and k for UI
+    let mut current_f = 0.055;
+    let mut current_k = 0.062;
+
     loop {
         terminal
             .draw(|f| {
-                ui(f, &chem, &lorenz_state);
+                ui(f, &chem, &lorenz_state, current_f, current_k);
             })
             .map_err(|e| io::Error::other(e.to_string()))?;
 
@@ -107,18 +116,21 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>) -> io::Result<()> {
 
             // Damping the chaos slightly to keep it in the "alive" zone
             // f = 0.055 + (x / 100.0) -> +/- 0.02 variation
-            chem.f = 0.055 + (lorenz_state.x / 400.0);
+            let mut f = 0.055 + (lorenz_state.x / 400.0);
             // k = 0.062 + ((z - 25.0) / 1000.0)
-            chem.k = 0.062 + ((lorenz_state.z - 25.0) / 1000.0);
+            let mut k = 0.062 + ((lorenz_state.z - 25.0) / 1000.0);
 
             // Clamp to sane values to prevent explosion
-            chem.f = chem.f.clamp(0.01, 0.1);
-            chem.k = chem.k.clamp(0.03, 0.08);
+            f = f.clamp(0.01, 0.1);
+            k = k.clamp(0.03, 0.08);
+
+            current_f = f;
+            current_k = k;
 
             // 3. Update Chemical System
             // Multiple updates per frame for speed
             for _ in 0..8 {
-                chem.update(1.0);
+                chem.update(f as f32, k as f32, 1.0);
             }
 
             last_tick = Instant::now();
@@ -126,7 +138,7 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>) -> io::Result<()> {
     }
 }
 
-fn ui(f: &mut Frame, chem: &ChemicalSystem, lorenz: &LorenzState) {
+fn ui(f: &mut Frame, chem: &GrayScott, lorenz: &LorenzState, feed: f64, kill: f64) {
     let area = f.area();
 
     // Split into main view and sidebar
@@ -162,8 +174,8 @@ fn ui(f: &mut Frame, chem: &ChemicalSystem, lorenz: &LorenzState) {
             "Expression (Gray-Scott):",
             Style::default().fg(Color::Green),
         )),
-        Line::from(format!("Feed (f): {:.5}", chem.f)),
-        Line::from(format!("Kill (k): {:.5}", chem.k)),
+        Line::from(format!("Feed (f): {:.5}", feed)),
+        Line::from(format!("Kill (k): {:.5}", kill)),
         Line::from(""),
         Line::from(Span::styled(
             "Controls:",
@@ -183,7 +195,7 @@ fn ui(f: &mut Frame, chem: &ChemicalSystem, lorenz: &LorenzState) {
 }
 
 struct ChemWidget<'a> {
-    system: &'a ChemicalSystem,
+    system: &'a GrayScott,
 }
 
 impl<'a> Widget for ChemWidget<'a> {
@@ -195,15 +207,15 @@ impl<'a> Widget for ChemWidget<'a> {
                 let grid_y_top = (y * 2) as usize;
                 let grid_y_bot = (y * 2 + 1) as usize;
 
-                if grid_x >= self.system.width || grid_y_bot >= self.system.height {
+                if grid_x >= self.system.width() || grid_y_bot >= self.system.height() {
                     continue;
                 }
 
                 let idx_top = self.system.get_index(grid_x, grid_y_top);
                 let idx_bot = self.system.get_index(grid_x, grid_y_bot);
 
-                let v_top = self.system.v[idx_top];
-                let v_bot = self.system.v[idx_bot];
+                let v_top = self.system.v()[idx_top] as f64;
+                let v_bot = self.system.v()[idx_bot] as f64;
 
                 let color_top = value_to_color(v_top);
                 let color_bot = value_to_color(v_bot);

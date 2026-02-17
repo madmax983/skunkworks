@@ -1,13 +1,14 @@
+use gray_scott::GrayScott;
 use macroquad::prelude::*;
 use rayon::prelude::*;
 
 mod agent;
 mod audio;
-mod grid;
+// mod grid; // Extracted to crate
 
 use agent::{Agent, Settings};
 use audio::Synthesizer;
-use grid::GrayScottGrid;
+// use grid::GrayScottGrid;
 
 fn window_conf() -> Conf {
     Conf {
@@ -27,13 +28,16 @@ async fn main() {
     let num_agents = 5000;
 
     // Simulation Objects
-    let mut grid = GrayScottGrid::new(grid_w, grid_h);
-    let mut settings = Settings::default();
+    let mut grid = GrayScott::new(grid_w, grid_h);
 
     // Customize Settings
-    settings.move_speed = 1.0;
-    settings.deposit_amount = 0.5; // Strong deposit to trigger reaction
-    settings.sensor_dist = 5.0;
+    // GrayScott defaults are diff_u=0.16, diff_v=0.08 which matches myco-diffusion
+    let settings = Settings {
+        move_speed: 1.0,
+        deposit_amount: 0.5, // Strong deposit to trigger reaction
+        sensor_dist: 5.0,
+        ..Default::default()
+    };
 
     // Initialize Agents
     let mut agents = Vec::with_capacity(num_agents);
@@ -93,7 +97,7 @@ async fn main() {
             let x = agent.pos.x as usize;
             let y = agent.pos.y as usize;
             if x < w && y < h {
-                grid.deposit_v(x, y, settings.deposit_amount);
+                grid.add_chemical(x, y, settings.deposit_amount);
             }
         }
 
@@ -160,7 +164,7 @@ async fn main() {
         // Only draw a subset if too many? 5000 is okay for points.
         // Actually, the agents ARE the deposit, so seeing them is redundant if the trail is visible.
         // But let's draw them as tiny bright specks to show the "source".
-        if is_key_down(KeyCode::A) || true {
+        if is_key_down(KeyCode::A) {
             // Toggle with A?
             for agent in &agents {
                 let sx = agent.pos.x * scale_x;

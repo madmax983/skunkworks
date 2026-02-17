@@ -1,4 +1,4 @@
-use crate::grid::GrayScottGrid;
+use gray_scott::GrayScott;
 use macroquad::prelude::*;
 
 #[derive(Clone, Copy, PartialEq)]
@@ -27,7 +27,7 @@ impl Agent {
         }
     }
 
-    pub fn update(&mut self, grid: &GrayScottGrid, settings: &Settings) {
+    pub fn update(&mut self, grid: &GrayScott, settings: &Settings) {
         let sensor_angle = settings.sensor_angle;
         let sensor_dist = settings.sensor_dist;
         let turn_angle = settings.turn_angle;

@@ -1,0 +1,12 @@
+[package]
+name = "gray-scott"
+version = "0.1.0"
+edition = "2021"
+description = "A shared Gray-Scott reaction-diffusion simulation library"
+
+[dependencies]
+rayon = { version = "1.8", optional = true }
+
+[features]
+default = []
+parallel = ["dep:rayon"]
