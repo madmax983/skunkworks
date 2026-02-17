@@ -957,8 +957,6 @@ impl ChimeraVM {
                 pressure: vec![0.0; GRID_SIZE * GRID_SIZE],
                 materials: vec![],
                 energy: vec![],
-                experience: 0,
-                stage: 0,
             },
             #[cfg(feature = "biophysics")]
             neurons: std::collections::HashMap::new(),

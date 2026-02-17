@@ -4,7 +4,7 @@ use crossbeam_channel::{Receiver, Sender};
 use std::f32::consts::PI;
 
 /// A snapshot of the simulation state for visualization.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct AudioSnapshot {
     pub pressure: Vec<f32>,
     pub materials: Vec<Material>,

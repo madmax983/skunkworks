@@ -66,6 +66,7 @@ mod tests {
             grammar: None,
             quorum_action: None,
             quorum_threshold: 0,
+            mode: memetics::VirusMode::Overwrite,
         };
         vm.virus_library.push(virus);
 

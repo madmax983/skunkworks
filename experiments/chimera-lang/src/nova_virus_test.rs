@@ -34,11 +34,12 @@ mod tests {
         // let pattern_val = vm.stack.pop().unwrap();
         // let rate_val = vm.stack.pop().unwrap();
 
-        // So we need to push: Payload, Rate, then Pattern, then Name.
+        // So we need to push: Payload, Rate, Pattern, Name, Mode.
         vm.stack.push(Value::Int(-1)); // Payload
         vm.stack.push(Value::Int(100)); // Rate
         vm.stack.push(Value::Str("FOO".to_string())); // Pattern
-        vm.stack.push(Value::Str("TestVirus".to_string())); // Name (Top)
+        vm.stack.push(Value::Str("TestVirus".to_string())); // Name
+        vm.stack.push(Value::Int(0)); // Mode (Overwrite) (Top)
 
         vm.context_loc = (5, 5);
 
@@ -68,6 +69,7 @@ mod tests {
             grammar: None,
             quorum_threshold: 0,
             quorum_action: None,
+            mode: crate::vm::memetics::VirusMode::Overwrite,
         };
         vm.virus_library.push(virus);
 
