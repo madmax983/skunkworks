@@ -1702,6 +1702,16 @@ pub enum OpCode {
     /// **Stack:** `[ ..., key ] -> [ ..., value ]`
     #[cfg(feature = "nova")]
     AkashicRead,
+    /// **[Nova]** Saves the entire VM state as a Memory in the Akashic Record.
+    ///
+    /// **Stack:** `[ ..., key_str ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    AkashicSave,
+    /// **[Nova]** Loads a Memory from the Akashic Record, overwriting the current state.
+    ///
+    /// **Stack:** `[ ..., key_str ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    AkashicLoad,
     /// **[Nova]** Modifies the organism's Karma.
     ///
     /// **Stack:** `[ ..., amount ] -> [ ... ]`

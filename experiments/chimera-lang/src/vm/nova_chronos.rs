@@ -6,10 +6,11 @@ use super::oracle;
 use super::{ChimeraVM, ChromaCell, Value};
 use crate::ast::Dna;
 use crate::opcode::OpCode;
+use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};
 
 /// Represents a "time-travel" snapshot of the VM state.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Spore {
     pub phase: Phase,
     pub chirality: crate::vm::Chirality,
@@ -33,6 +34,7 @@ pub struct Spore {
     pub input_buffer: VecDeque<char>,
     pub receptors: HashMap<char, usize>,
     pub entangled_pairs: HashMap<usize, usize>,
+    #[serde(skip)]
     pub portals: HashMap<(usize, usize), (usize, usize)>,
     pub membranes: Vec<Vec<u8>>,
     pub chroma_grid: Vec<Vec<ChromaCell>>,
@@ -40,8 +42,10 @@ pub struct Spore {
     pub symbiotes: Vec<(usize, usize)>,
     pub ether: HashMap<i64, VecDeque<Value>>,
     pub reflexes: HashMap<i64, usize>,
+    #[serde(skip)]
     pub remap_table: HashMap<OpCode, OpCode>,
     pub direction: isize,
+    #[serde(skip)]
     pub mycelium: HashMap<(usize, usize), Vec<(usize, usize)>>,
     pub immune_system: HashSet<u64>,
     pub dictionary: HashMap<String, usize>,
@@ -99,7 +103,7 @@ pub fn exec_time_loop(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
-fn create_spore(vm: &ChimeraVM) -> Spore {
+pub fn create_spore(vm: &ChimeraVM) -> Spore {
     Spore {
         phase: vm.phase,
         chirality: vm.chirality,
@@ -147,7 +151,7 @@ fn create_spore(vm: &ChimeraVM) -> Spore {
     }
 }
 
-fn restore_state(vm: &mut ChimeraVM, spore: &Spore) {
+pub fn restore_state(vm: &mut ChimeraVM, spore: &Spore) {
     vm.phase = spore.phase;
     vm.chirality = spore.chirality;
     vm.dna = spore.dna.clone();

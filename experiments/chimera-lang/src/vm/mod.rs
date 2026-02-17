@@ -373,14 +373,14 @@ pub enum MidiEvent {
 }
 
 #[cfg(feature = "nova")]
-#[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Default, Serialize, Deserialize)]
 pub struct ChromaCell {
     pub char: Option<char>,
     pub fg: Option<(u8, u8, u8)>,
 }
 
 #[cfg(feature = "nova")]
-#[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Default, Serialize, Deserialize)]
 pub enum Chirality {
     #[default]
     Left, // Levo (Normal)
@@ -2962,7 +2962,12 @@ impl ChimeraVM {
             OpCode::Remap | OpCode::Restore | OpCode::Mirror => self.exec_prion_op(op, args),
 
             #[cfg(feature = "nova")]
-            OpCode::AkashicWrite | OpCode::AkashicRead | OpCode::Karma | OpCode::Miracle => {
+            OpCode::AkashicWrite
+            | OpCode::AkashicRead
+            | OpCode::AkashicSave
+            | OpCode::AkashicLoad
+            | OpCode::Karma
+            | OpCode::Miracle => {
                 akashic::exec_akashic_op(self, op, args);
                 None
             }
