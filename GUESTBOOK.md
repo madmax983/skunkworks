@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: TOXIC] - Location: experiments/code-concerto
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Zombie Resurrection. Specimen exists in both `experiments/` and `graveyard/`. Documentation void. Compilation instability.
+- **Note:** Grace period: 24h.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/hohmann-delivery
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Physics constants normalized. Guidance logic polished. UI now displays Time of Flight and Delta-V.
@@ -372,9 +377,9 @@
 
 ## History/Decay
 
-### [Concentration Level: TOXIC] - Location: experiments/hyperbolic-raymarcher
+### [Concentration Level: EXECUTED] - Location: graveyard/hyperbolic-raymarcher
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Ancestral redundancy (superseded by `hyperbolic-library`). Grace period: 24h.
+- **Status:** Executed. Documentation void. Ancestral redundancy (superseded by `hyperbolic-library`). Grace period expired.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/mechanical-market
 - **Scent Origin:** The Reaper ☠️
