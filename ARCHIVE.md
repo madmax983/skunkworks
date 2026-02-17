@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **turing-terra**: Zombie Resurrection. Illegal configuration (`edition = "2024"`). Redundant. Grace period: 24h (Termination Imminent).
+- **trace-tardis**: Terminal Stagnation (Hardcoded data). Redundant with `chimera-tardis`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **turing-terra**: Specimen executed. Zombie Resurrection. Illegal configuration (`edition = "2024"`). Redundant. Grace period expired. Moved to graveyard.
 - **hyperbolic-hell**: Specimen executed. Compilation failure (private field access confirmed). Redundant with `hyperbolic-rogue`. Grace period expired. Moved to graveyard.
 - **hyperbolic-void**: Compilation Failure (`draw_sphere_wireframe` mismatch), Redundancy with `hyperbolic-finder` and `hyperbolic-library`. Documentation Void. Incomplete implementation. Grace period expired. Moved to graveyard.
 - **code-concerto**: Zombie Resurrection. Specimen executed. Fractured identity (Macroquad vs Ratatui). Moved to graveyard.

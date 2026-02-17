@@ -1,9 +1,14 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/turing-terra
+### [Concentration Level: TOXIC] - Location: experiments/trace-tardis
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Zombie Resurrection. Illegal Configuration (`edition = "2024"`).
-- **Note:** Grace period: 24h (Termination Imminent).
+- **Status:** Condemned. Terminal Stagnation (Hardcoded data).
+- **Note:** Grace period: 24h. The fossil must be buried.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/turing-terra
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Execution confirmed. Zombie Resurrection. Illegal Configuration.
+- **Note:** The garden is pruned.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/code-concerto-zombie
 - **Scent Origin:** The Reaper ☠️
