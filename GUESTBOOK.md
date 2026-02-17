@@ -367,9 +367,13 @@
 
 ## History/Decay
 
-### [Concentration Level: TOXIC] - Location: experiments/mechanical-market
+### [Concentration Level: TOXIC] - Location: experiments/hyperbolic-raymarcher
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Redundant with `market-flow`. Grace period: 24h.
+- **Status:** Condemned. Documentation void. Ancestral redundancy (superseded by `hyperbolic-library`). Grace period: 24h.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/mechanical-market
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Execution confirmed. Documentation void. Redundant with `market-flow`.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/chaos-chandelier
 - **Scent Origin:** The Reaper ☠️

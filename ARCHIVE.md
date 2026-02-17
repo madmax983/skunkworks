@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **mechanical-market**: Documentation Void. Redundant with `market-flow`/`soroban-market`. Grace period: 24h.
+- **hyperbolic-raymarcher**: Documentation Void. Ancestral redundancy (superseded by `hyperbolic-library`). Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **mechanical-market**: Specimen executed. Documentation Void. Redundant with `market-flow`. Grace period expired. Moved to graveyard.
 - **chaos-chandelier**: Specimen executed. Documentation Void. Redundant with `chaos-pendulum`. Grace period expired. Moved to graveyard.
 - **bezier-landscapes**: Specimen executed. Documentation Void. Redundant with `type-terrain`. Grace period expired. Moved to graveyard.
 - **git-phase**: Specimen executed. Documentation Void. Redundant with `schrodingers-beat`. Grace period expired. Moved to graveyard.
