@@ -155,6 +155,16 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                 }
                 organelle_map.insert(name.to_string(), idx);
             }
+            Rule::chimera_def => {
+                let mut inner = pair.into_inner();
+                let name = inner.next().unwrap().as_str();
+                let strand_name = format!("{}_DNA", name);
+                let idx = strand_map.len();
+                if strand_map.insert(strand_name, idx).is_some() {
+                    return Err(anyhow!("Duplicate strand name from chimera: {}", name));
+                }
+                organelle_map.insert(name.to_string(), idx);
+            }
             Rule::macro_def => {
                 let mut inner = pair.into_inner();
                 let name = inner.next().unwrap().as_str();
@@ -203,6 +213,35 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                 let mut genes = Vec::new();
 
                 for instr in inner {
+                    let generated = parse_instructions(
+                        instr,
+                        &strand_map,
+                        &macro_map,
+                        &grammar_map,
+                        &organelle_map,
+                        &mut anonymous_strands,
+                        0,
+                    )?;
+                    genes.extend(generated);
+                }
+                strands_ast.push(Strand { genes });
+            }
+            Rule::chimera_def => {
+                let mut inner = pair.into_inner();
+                let _name = inner.next().unwrap(); // skip name
+                let grammar_arg_pair = inner.next().unwrap(); // grammar argument
+                let boot_block_pair = inner.next().unwrap(); // block
+
+                let grammar_val = parse_argument(grammar_arg_pair, &strand_map, 0)?;
+
+                // Prepend push(grammar)
+                let mut genes = vec![Gene {
+                    op: OpCode::Push,
+                    args: vec![grammar_val],
+                }];
+
+                // Compile block instructions
+                for instr in boot_block_pair.into_inner() {
                     let generated = parse_instructions(
                         instr,
                         &strand_map,

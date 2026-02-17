@@ -3049,9 +3049,9 @@ impl ChimeraVM {
             | OpCode::Scribe
             | OpCode::BabelCompile
             | OpCode::GridGrammar
-            | OpCode::BabelLive => {
-                babel::exec_babel_op(self, op, args);
-                None
+            | OpCode::BabelLive
+            | OpCode::Ouroboros => {
+                babel::exec_babel_op(self, op, args)
             }
 
             #[cfg(feature = "nova")]

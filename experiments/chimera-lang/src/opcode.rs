@@ -2388,6 +2388,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Perceive,
 
+    /// **[Babel]** The Ouroboros Protocol: Self-consumption and rebirth.
+    ///
+    /// **Stack:** `[ ..., grammar_junction ] -> [ ... ]`
+    /// **Effect:** Decompiles self, parses with grammar, mutates, recompiles, replaces self.
+    #[cfg(feature = "nova")]
+    Ouroboros,
+
     // Ballistics Features (Nova)
     /// **[Nova]** Fires a projectile with velocity and power.
     ///
