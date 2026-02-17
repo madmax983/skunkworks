@@ -9,10 +9,10 @@ ratatui = { workspace = true }
 crossterm = { workspace = true }
 anyhow = { workspace = true }
 rand = { workspace = true }
-cpal = { version = "0.15", optional = true }
 crossbeam-channel = "0.5"
-tui-shared = { path = "../../crates/tui-shared" }
+tui-shared = { workspace = true }
+quipu = { workspace = true, optional = true }
 
 [features]
 default = []
-audio = ["dep:cpal"]
+audio = ["dep:quipu", "quipu/audio"]

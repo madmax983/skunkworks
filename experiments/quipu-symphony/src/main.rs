@@ -1,7 +1,5 @@
 #![allow(dead_code, unused_imports)]
 
-mod audio;
-
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
 use ratatui::{
@@ -19,7 +17,8 @@ use std::{
 };
 use tui_shared::Tui;
 
-use crate::audio::{AudioEngine, AudioEvent};
+#[cfg(feature = "audio")]
+use quipu::audio::{AudioEngine, AudioEvent};
 use quipu::{Cord, Knot};
 
 struct CordTrack {
@@ -129,7 +128,10 @@ impl AppState {
 
 fn main() -> Result<()> {
     let mut tui = Tui::init()?;
+
+    #[cfg(feature = "audio")]
     let audio = AudioEngine::new()?;
+    #[cfg(feature = "audio")]
     let tx = audio.get_sender();
 
     let mut state = AppState::new();
@@ -202,33 +204,36 @@ fn main() -> Result<()> {
                             state.triggered_clusters.insert((t_idx, c_idx));
 
                             // Trigger Sound
-                            match track.sound_type {
-                                TrackSound::Percussion => {
-                                    // Use first knot type to decide
-                                    if let Some(k) = cluster.first() {
-                                        match k {
-                                            Knot::Simple => {
-                                                let _ = tx.send(AudioEvent::Kick);
-                                            }
-                                            Knot::Long(_) => {
-                                                let _ = tx.send(AudioEvent::Snare);
-                                            }
-                                            Knot::FigureEight => {
-                                                let _ = tx.send(AudioEvent::HiHat);
+                            #[cfg(feature = "audio")]
+                            {
+                                match track.sound_type {
+                                    TrackSound::Percussion => {
+                                        // Use first knot type to decide
+                                        if let Some(k) = cluster.first() {
+                                            match k {
+                                                Knot::Simple => {
+                                                    let _ = tx.send(AudioEvent::Kick);
+                                                }
+                                                Knot::Long(_) => {
+                                                    let _ = tx.send(AudioEvent::Snare);
+                                                }
+                                                Knot::FigureEight => {
+                                                    let _ = tx.send(AudioEvent::HiHat);
+                                                }
                                             }
                                         }
                                     }
-                                }
-                                TrackSound::Melodic => {
-                                    // Sum values for pitch offset
-                                    let mut val = 0;
-                                    for k in cluster {
-                                        val += k.value();
+                                    TrackSound::Melodic => {
+                                        // Sum values for pitch offset
+                                        let mut val = 0;
+                                        for k in cluster {
+                                            val += k.value();
+                                        }
+                                        // scale: pentatonic?
+                                        // simple chromatic for now: base * 2^(val/12)
+                                        let pitch = track.base_freq * 2.0_f32.powf(val as f32 / 12.0);
+                                        let _ = tx.send(AudioEvent::Pluck(pitch));
                                     }
-                                    // scale: pentatonic?
-                                    // simple chromatic for now: base * 2^(val/12)
-                                    let pitch = track.base_freq * 2.0_f32.powf(val as f32 / 12.0);
-                                    let _ = tx.send(AudioEvent::Pluck(pitch));
                                 }
                             }
                         }

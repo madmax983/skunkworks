@@ -13,10 +13,6 @@ rand = { workspace = true }
 ratatui = { workspace = true }
 tui-shared = { workspace = true }
 
-[dependencies.cpal]
-version = "0.15"
-optional = true
-
 [features]
 default = []
-audio = ["cpal"]
+audio = ["quipu/audio"]

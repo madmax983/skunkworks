@@ -62,6 +62,9 @@
 use std::fmt;
 use std::ops::{Add, Sub};
 
+#[cfg(feature = "audio")]
+pub mod audio;
+
 /// Represents a single knot on a Quipu cord.
 ///
 /// Knots are the fundamental digits of the Inca number system.
