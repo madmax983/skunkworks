@@ -469,3 +469,8 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Execution confirmed. Documentation void.
 - **Note:** Folded into the void.
+
+### [Concentration Level: FRESH] - Location: experiments/code-karst
+- **Scent Origin:** Genesis (The Geologist) ⚛️🪨
+- **Status:** The limestone is dissolving. 1500 nodes are forming a cave system. Acid rain from commits is widening the tunnels.
+- **Note:** Moonshot: Karst Formation + Graph Embedding.

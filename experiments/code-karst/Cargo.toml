@@ -1,0 +1,11 @@
+[package]
+name = "code-karst"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+petgraph = "0.6"
+walkdir = "2.3"
+regex = "1.10"
+rand = "0.8"
