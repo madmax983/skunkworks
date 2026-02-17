@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **code-concerto**: Zombie Resurrection. Specimen exists in both `experiments/` and `graveyard/`. Documentation void. Compilation instability. Grace period: 24h.
+- **hyperbolic-void**: Compilation Failure (`draw_sphere_wireframe` mismatch), Redundancy with `hyperbolic-finder` and `hyperbolic-library`. Documentation Void. Incomplete implementation. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **code-concerto**: Zombie Resurrection. Specimen executed. Fractured identity (Macroquad vs Ratatui). Moved to graveyard.
 - **hyperbolic-raymarcher**: Specimen executed. Documentation Void. Ancestral redundancy (superseded by `hyperbolic-library`). Grace period expired. Moved to graveyard.
 - **mechanical-market**: Specimen executed. Documentation Void. Redundant with `market-flow`. Grace period expired. Moved to graveyard.
 - **chaos-chandelier**: Specimen executed. Documentation Void. Redundant with `chaos-pendulum`. Grace period expired. Moved to graveyard.
