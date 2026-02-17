@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chaos-chandelier**: Documentation Void. Redundant with `chaos-pendulum`. Grace period: 24h.
+- **mechanical-market**: Documentation Void. Redundant with `market-flow`/`soroban-market`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **chaos-chandelier**: Specimen executed. Documentation Void. Redundant with `chaos-pendulum`. Grace period expired. Moved to graveyard.
 - **bezier-landscapes**: Specimen executed. Documentation Void. Redundant with `type-terrain`. Grace period expired. Moved to graveyard.
 - **git-phase**: Specimen executed. Documentation Void. Redundant with `schrodingers-beat`. Grace period expired. Moved to graveyard.
 - **lichen-mesh**: Specimen executed. Documentation Void. Generic CA implementation. Grace period expired. Moved to graveyard.
