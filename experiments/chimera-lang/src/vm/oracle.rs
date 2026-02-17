@@ -1344,7 +1344,7 @@ fn check_dynamic_predicates(
                             let fact_name = Value::Str(op_name.clone());
                             let fact_val = Value::Str(op_name); // For now, Val is same as Name
 
-                            let mut current_subst = subst.clone();
+                            let current_subst = subst.clone();
                             if let Some(s1) = unify(arg_name, &fact_name, &current_subst) {
                                 if let Some(s2) = unify(arg_val, &fact_val, &s1) {
                                     solve(remaining_goals, s2, kb, vm, solutions, depth + 1);
@@ -1368,7 +1368,7 @@ fn check_dynamic_predicates(
                                 let op_name = gene.op.to_string();
                                 let fact_op = Value::Str(op_name);
 
-                                let mut current_subst = subst.clone();
+                                let current_subst = subst.clone();
                                 if let Some(s1) = unify(arg_strand, &fact_strand, &current_subst) {
                                     if let Some(s2) = unify(arg_op, &fact_op, &s1) {
                                         solve(remaining_goals, s2, kb, vm, solutions, depth + 1);

@@ -844,7 +844,7 @@ fn flatten_ast(ast: &Nucleotide) -> Result<Vec<Gene>> {
 }
 
 fn resolve_template(template: &Nucleotide, match_res: &Nucleotide) -> Nucleotide {
-    use crate::ast::JunctionType;
+
     match template {
         Nucleotide::String(s) if s.starts_with('?') => {
             // Variable ?1, ?2 etc

@@ -189,7 +189,7 @@ pub fn compute_fractal(vm: &mut ChimeraVM) {
             let color = if iter == vm.fractal.max_iter {
                 (0, 0, 0) // Black (Inside)
             } else {
-                let hue = (iter as f64 / vm.fractal.max_iter as f64) * 360.0;
+                let _hue = (iter as f64 / vm.fractal.max_iter as f64) * 360.0;
                 // Simple HSV to RGB (S=1, V=1)
                 // Or just some map
                 let r = ((iter * 5) % 255) as u8;

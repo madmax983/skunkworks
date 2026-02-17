@@ -14,6 +14,7 @@ use crate::opcode::OpCode;
 use rand::Rng;
 use std::collections::HashMap;
 
+#[cfg(feature = "resonance")]
 const GOLDEN_FREQUENCIES: [f32; 4] = [161.8, 261.6, 432.0, 528.0];
 
 fn char_to_val(c: char) -> Option<i64> {

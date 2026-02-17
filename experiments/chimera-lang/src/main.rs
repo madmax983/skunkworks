@@ -5,6 +5,7 @@ use std::fs;
 
 use chimera_lang::{ast::Dna, compiler, tui::run_tui, vm::ChimeraVM, ChimeraParser, Rule};
 use std::path::Path;
+use crossterm::style::Stylize;
 
 #[cfg(feature = "resonance")]
 use crossbeam_channel::unbounded;
@@ -128,10 +129,21 @@ fn main() -> Result<()> {
         println!("Final Stack (Top -> Bottom):");
         println!("{table}");
 
-        println!("Output Log:");
+        println!("\nOutput Log:");
+        println!("{}", "-".repeat(40).grey());
         for line in vm.output {
-            println!("  {}", line);
+            let line_lower = line.to_lowercase();
+            if line_lower.contains("error") || line_lower.contains("fail") {
+                println!("  {}", line.red());
+            } else if line_lower.contains("success") || line_lower.contains("pass") {
+                println!("  {}", line.green());
+            } else if line_lower.contains("warn") {
+                println!("  {}", line.yellow());
+            } else {
+                println!("  {}", line);
+            }
         }
+        println!("{}", "-".repeat(40).grey());
     } else {
         run_tui(vm)?;
     }

@@ -37,8 +37,6 @@ pub use locus::Topology;
 use poincare_disk::hyperbolic_dist;
 use poincare_disk::Point;
 use rand::Rng;
-#[cfg(feature = "nova")]
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 #[cfg(feature = "nova")]
 use std::collections::{HashSet, VecDeque};
@@ -2043,7 +2041,7 @@ impl ChimeraVM {
             let prob = base_cost - int_cost as f64;
             let mut rng = rand::thread_rng();
             let extra = if rng.gen_bool(prob) { 1 } else { 0 };
-            self.energy -= (int_cost + extra);
+            self.energy -= int_cost + extra;
         }
         #[cfg(not(feature = "nova"))]
         {

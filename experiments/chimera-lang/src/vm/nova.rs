@@ -697,7 +697,7 @@ fn exec_brainfuck(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// Returns `Some((strand_idx, gene_idx))` if the operation triggered a jump or call that
 /// modifies the Instruction Pointer (IP). Returns `None` if execution should proceed sequentially.
 #[allow(clippy::needless_range_loop)]
-pub fn exec_operator(vm: &mut ChimeraVM, args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_operator(vm: &mut ChimeraVM, _args: &[Nucleotide]) -> Option<(usize, usize)> {
     // Stack: [ ..., char_str, strand_idx ]
     // BUT OpCode usually takes stack args.
     // Let's check opcode.rs. Stack: [ ..., char_str, strand_idx ] -> [ ... ]

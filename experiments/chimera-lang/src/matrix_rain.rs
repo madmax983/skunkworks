@@ -81,7 +81,7 @@ impl MatrixRain {
                     if x < area.width {
                         // Bounds check against buffer area
                         if (area.x + x) < buf.area.width && (area.y + y as u16) < buf.area.height {
-                            let cell = buf.get_mut(area.x + x, area.y + y as u16);
+                            let cell = &mut buf[(area.x + x, area.y + y as u16)];
                             cell.set_char(*ch);
 
                             let color = if i == 0 {

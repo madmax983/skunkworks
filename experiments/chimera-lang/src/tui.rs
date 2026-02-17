@@ -22,6 +22,7 @@ use ratatui::{
 };
 use std::io;
 
+#[cfg(feature = "resonance")]
 const GOLDEN_FREQUENCIES: [f32; 4] = [161.8, 261.6, 432.0, 528.0];
 const GRIMOIRE_TEXT: &str = include_str!("../GRIMOIRE.md");
 
@@ -4359,7 +4360,12 @@ fn render_signals(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn draw_tension_gauge<'a>(title: &'a str, ratio: f64) -> Gauge<'a> {
+fn draw_info_panel<'a>(title: &'a str, lines: Vec<Line<'a>>) -> Paragraph<'a> {
+    Paragraph::new(lines)
+        .block(Block::default().borders(Borders::ALL).title(title))
+}
+
+fn draw_tension_gauge<'a>(title: &'a str, ratio: f64) -> ratatui::widgets::LineGauge<'a> {
     let (tension_color, label) = if ratio < 0.5 {
         (Color::Green, "SAFE")
     } else if ratio < 0.8 {
@@ -4368,9 +4374,10 @@ fn draw_tension_gauge<'a>(title: &'a str, ratio: f64) -> Gauge<'a> {
         (Color::Red, "CRITICAL")
     };
 
-    Gauge::default()
+    ratatui::widgets::LineGauge::default()
         .block(Block::default().borders(Borders::ALL).title(title))
-        .gauge_style(Style::default().fg(tension_color))
+        .filled_style(Style::default().fg(tension_color))
+        .filled_symbol(ratatui::symbols::line::THICK.horizontal)
         .ratio(ratio.clamp(0.0, 1.0))
         .label(format!("{} ({:.0}%)", label, ratio * 100.0))
 }
@@ -4521,8 +4528,7 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let gauge = draw_tension_gauge("Line Tension", tension);
     f.render_widget(gauge, chunks[1]);
 
-    let info = Paragraph::new("Space: Cast/Reel | Wait for bite...")
-        .block(Block::default().borders(Borders::ALL));
+    let info = draw_info_panel("Controls", vec![Line::from("Space: Cast/Reel | Wait for bite...")]);
     f.render_widget(info, chunks[2]);
 }
 
