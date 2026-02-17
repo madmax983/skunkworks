@@ -511,3 +511,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Compiles. Strings are vibrating. Evolution is harmonizing the chaos.
 - **Note:** Recombination successful. String Theory x Chimera Lang.
+
+### [Concentration Level: FRESH] - Location: experiments/sonata-cycle
+- **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
+- **Status:** The escapement is ticking. The CPU is singing. Procedural music generation via clockwork mechanism verified.
+- **Note:** Moonshot: Verge Escapement + Music Box Cylinder + CPU Visualization. Audio disabled by default (use `--features audio`).
