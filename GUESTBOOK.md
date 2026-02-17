@@ -93,6 +93,11 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Builder ants traversing dependency graph. Polyrhythmic mutex contention creates sound patterns.
 
+### [Concentration Level: FRESH] - Location: experiments/slime-trash
+- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
+- **Status:** The slime is collecting the garbage. Routes are forming between the green piles and the red dumps.
+- **Note:** Moonshot: Slime Mold Pathfinding + Garbage Collection Algorithms.
+
 ### [Concentration Level: FRESH] - Location: experiments/log-palette
 - **Scent Origin:** Mycelium 🍄
 - **Status:** CLI tool active. Parsing log files to generate sentiment-based color palettes.
