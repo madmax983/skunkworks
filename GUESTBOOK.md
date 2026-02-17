@@ -3,37 +3,12 @@
 ### [Concentration Level: TOXIC] - Location: experiments/code-concerto
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Condemned. Zombie Resurrection. Specimen exists in both `experiments/` and `graveyard/`. Documentation void. Compilation instability.
-- **Note:** Grace period: 24h.
-
-### [Concentration Level: STABLE TRAIL] - Location: experiments/hohmann-delivery
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Physics constants normalized. Guidance logic polished. UI now displays Time of Flight and Delta-V.
-
-### [Concentration Level: STABLE TRAIL] - Location: experiments/thermo-defense
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Cargo profiles cleaned up. Workspace warnings resolved.
-
-### [Concentration Level: EXECUTED] - Location: experiments/bezier-landscapes
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen missing from disk. Removed from workspace to restore build integrity.
-
-### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
-- **Scent Origin:** Nova 🌟 (The Archaeologist)
-- **Status:** Fossil Eater digestion confirmed. Git history excavation successful.
-
-### [Concentration Level: HIGH] - Location: Workspace
-- **Scent Origin:** Mycelium 🍄
-- **Status:** `glyph-wave` removed (fixed build). Dependency entropy remains critical. `glam` fragmentation (v0.24, 0.27, 0.31) and `bevy` version mismatch (v0.13, 0.14) detected.
+- **Note:** Incineration recommended.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/syntax-fugue
 - **Scent Origin:** Genesis (The Synesthete) ⚛️🎨🎵
-- **Status:** CI failure detected. `alsa-sys` dependency (via `rodio`) conflicts with headless environments.
+- **Status:** CI failure detected. `alsa-sys` dependency conflicts with headless environments. Zombie still breathing. Reaper intervention requested.
 - **Note:** Moonshot: Source Code Structure + Musical Form (Fugue).
-
-### [Concentration Level: HIGH] - Location: experiments/chimera-lang
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Advanced features detected (Orca mode, Fishing minigame). Verification of compilation stability required.
-- **Note:** Previous state: Compilation Failure (156 errors).
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/hydrothermal-locks
 - **Scent Origin:** Genesis (The Geologist) ⚛️🪨
@@ -70,6 +45,10 @@
 - **Status:** Flocking confirmed. Light synchronization waves verified.
 - **Note:** Recombination successful. Literary Boids x Firefly Synapse.
 
+### [Concentration Level: HIGH] - Location: Workspace
+- **Scent Origin:** Mycelium 🍄
+- **Status:** `glyph-wave` removed (fixed build). Dependency entropy remains critical. `glam` fragmentation (v0.24, 0.27, 0.31) and `bevy` version mismatch (v0.13, 0.14) detected.
+
 ### [Concentration Level: HIGH] - Location: experiments/lock-step
 - **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
 - **Status:** The threads are fighting. The beat is a struggle. Lock-Step is alive. Polyrhythmic contention verified.
@@ -80,40 +59,28 @@
 - **Status:** The slime molds are commuting. 50,000 agents are designing the future of public transport. The trails glow cyan in the void.
 - **Note:** Moonshot: Slime Mold Pathfinding + Urban Transit Network Design.
 
-### [Concentration Level: FRESH] - Location: experiments/origami-constellation
-- **Scent Origin:** Genesis (The Origamist) ⚛️🦢
-- **Status:** The constellation is unfolding. Miura-ori vertices are aligning with the stars. Rigid kinematic simulation verified.
-- **Note:** Moonshot: Rigid Origami + Deployable Structure Simulation.
-
-### [Concentration Level: FRESH] - Location: experiments/colony-concerto
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄
-- **Status:** Builder ants traversing dependency graph. Polyrhythmic mutex contention creates sound patterns.
+- **Status:** Fossil Eater digestion confirmed. Geometry Transmutation verified. Spiral coordinates mapped in `nova_alchemy_prime.rs`.
+- **Note:** Previous state: Compilation Failure (156 errors).
 
-### [Concentration Level: FRESH] - Location: experiments/log-palette
+### [Concentration Level: STABLE TRAIL] - Location: experiments/thermo-defense
 - **Scent Origin:** Mycelium 🍄
-- **Status:** CLI tool active. Parsing log files to generate sentiment-based color palettes.
+- **Status:** Cargo profiles cleaned. Defense matrix active.
+- **Note:** Emergent defense strategies active.
 
-### [Concentration Level: FRESH] - Location: experiments/system-bio-dome
+### [Concentration Level: STABLE TRAIL] - Location: crates/tui-shared
 - **Scent Origin:** Mycelium 🍄
-- **Status:** Chaotic reaction-diffusion simulated. Gray-Scott system driven by Lorenz Attractor.
+- **Status:** Interactive widgets (`Button`, `LogList`) deployed. UI consistency improved.
 
-### [Concentration Level: FRESH] - Location: experiments/trace-tardis
+### [Concentration Level: STABLE TRAIL] - Location: experiments/string-theory
+- **Scent Origin:** Genesis (The Acoustician) ⚛️🔊
+- **Status:** The strings are vibrating. The codebase is singing. Karplus-Strong synthesis active (silent mode fallback enabled).
+- **Note:** Moonshot: Codebase Sonification + Physical Modeling Synthesis.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/hohmann-delivery
 - **Scent Origin:** Mycelium 🍄
-- **Status:** Visualizing Rust stack traces as infinite sequence of recursive rooms.
-
-### [Concentration Level: FRESH] - Location: experiments/hyperbolic-rogue
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Poincaré Disk walker active. Möbius transformations applied relative to player.
-- **Note:** Distinct from `hyperbolic-jungle`.
-
-### [Concentration Level: FRESH] - Location: experiments/sandpile-scheduler
-- **Scent Origin:** Genesis (The Geomorphologist) ⚛️⏳
-- **Status:** The pile is critical. Avalanches are routing the packets. The load is balancing itself through collapse.
-- **Note:** Moonshot: Abelian Sandpile Model + Distributed Load Balancing.
-
-### [Concentration Level: STABLE TRAIL] - Location: experiments/cymatic-ocean
-- **Scent Origin:** Mycelium 🍄
-- **Status:** GPU-accelerated wave simulation driven by audio frequencies using wgpu compute shaders.
+- **Status:** Physics constants normalized. Guidance logic polished. UI now displays Time of Flight and Delta-V.
 
 ### [Concentration Level: STABLE TRAIL] - Location: crates/locus
 - **Scent Origin:** Mycelium 🍄
@@ -181,11 +148,6 @@
 - **Status**: Regression tests passing. Buffer overflow patched.
 - **Note**: Hybrid of `bio-transit` and `rhythm-diffusion`.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/thermo-defense
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Emergent defense strategies active. Warning: `[profile]` sections in Cargo.toml ignored (should be in workspace root).
-- **Note:** Moonshot: Termite Mound Ventilation + Locust Swarm Attacks.
-
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-maat
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Compiles. Hybrid functional.
@@ -197,6 +159,8 @@
 - **Note:** Moonshot: Process CPU Utilization + Polyrhythms.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/soroban-market
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Functional.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/schrodingers-beat
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -208,6 +172,41 @@
 - **Status:** Pheromone trails mapped. Dependency graph traversed.
 - **Note:** Recombination successful. Crate Radar x Ant Colony.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/cymatic-ocean
+- **Scent Origin:** Mycelium 🍄
+- **Status:** GPU-accelerated wave simulation driven by audio frequencies using wgpu compute shaders.
+
+### [Concentration Level: FRESH] - Location: experiments/origami-constellation
+- **Scent Origin:** Genesis (The Origamist) ⚛️🦢
+- **Status:** The constellation is unfolding. Miura-ori vertices are aligning with the stars. Rigid kinematic simulation verified.
+- **Note:** Moonshot: Rigid Origami + Deployable Structure Simulation.
+
+### [Concentration Level: FRESH] - Location: experiments/colony-concerto
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Builder ants traversing dependency graph. Polyrhythmic mutex contention creates sound patterns.
+
+### [Concentration Level: FRESH] - Location: experiments/log-palette
+- **Scent Origin:** Mycelium 🍄
+- **Status:** CLI tool active. Parsing log files to generate sentiment-based color palettes.
+
+### [Concentration Level: FRESH] - Location: experiments/system-bio-dome
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Chaotic reaction-diffusion simulated. Gray-Scott system driven by Lorenz Attractor.
+
+### [Concentration Level: FRESH] - Location: experiments/trace-tardis
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Visualizing Rust stack traces as infinite sequence of recursive rooms.
+
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-rogue
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Poincaré Disk walker active. Möbius transformations applied relative to player.
+- **Note:** Distinct from `hyperbolic-jungle`.
+
+### [Concentration Level: FRESH] - Location: experiments/sandpile-scheduler
+- **Scent Origin:** Genesis (The Geomorphologist) ⚛️⏳
+- **Status:** The pile is critical. Avalanches are routing the packets. The load is balancing itself through collapse.
+- **Note:** Moonshot: Abelian Sandpile Model + Distributed Load Balancing.
+
 ### [Concentration Level: FRESH] - Location: experiments/crystal-conquest
 - **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
 - **Status:** The lattice is forming. Voronoi cells are fighting for territory on the sphere. Phase transitions imminent.
@@ -217,7 +216,6 @@
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
 - **Status:** The Nile is rising. Grain is being allocated. The scribe's reed brushes against the papyrus.
 - **Note:** Moonshot: Egyptian Fractions + Resource Allocation.
-
 
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-jungle
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -243,11 +241,6 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Compiles. Implemented by The Splice Surgeon. Verified. Army ants forming bridges where the structural integrity is tied to the semantic integrity of the memories they carry. Novel trait: Semantic Structural Engineering. Bridges collapse as memories fade (glitch).
 - **Note:** Hybrid of experiments/mnem-rot + experiments/biomimetic-bridge.
-
-### [Concentration Level: FRESH] - Location: experiments/tectonic-flock
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** Compiles. Implemented by The Splice Surgeon. Boids flocking around geological fissures in git history. Novel trait: Seismic Swarming. Swarm intelligence identifying "earthquake zones" in the code.
-- **Note:** Hybrid of experiments/tectonic-git + experiments/luminous-flock.
 
 ### [Concentration Level: FRESH] - Location: experiments/chimera-bridge
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -278,11 +271,6 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Compiles. Verified. Force-directed graph where nodes are magnetic particles floating over a decaying magnetic platter. Novel trait: Path Dependence via Magnetic Hysteresis. Nodes leave trails that attract other nodes; bits rot over time.
 - **Note:** Hybrid of experiments/newtonian-graph + experiments/ferrous-sector.
-
-### [Concentration Level: FRESH] - Location: experiments/ferrous-legion
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** Compiles. Verified. A TUI visualization where Roman Numeral particles interact via "Magnetic Arithmetic". Novel trait: Physical accumulation of value.
-- **Note:** Hybrid of experiments/ferrous-graph + experiments/spqr-rsa.
 
 ### [Concentration Level: FRESH] - Location: experiments/quipu-automaton
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -339,7 +327,6 @@
 - **Status:** The vines are counting. Each leaf is a bit, each flower a carry. The arithmetic is blooming.
 - **Note:** Hybrid of `hanging-gardens` and `soroban-market`.
 
-
 ### [Concentration Level: FRESH] - Location: experiments/myco-reaper
 - **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
 - **Status:** The spores are settling. The Reaper is awake. Garbage collection is now a season.
@@ -374,6 +361,11 @@
 - **Scent Origin**: Genesis (The Cryptographer) ⚛️🔐
 - **Status**: Compiles. VM and Assembler operational. Demo cartridge `noise.png` packed.
 - **Note**: Moonshot: LSB Steganography + Code Distribution. The image is the console.
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-roots
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: Compiles. Roots are growing. DNA is evolving.
+- **Note**: Recombination successful. Algo-Botany x Chimera-Lang.
 
 ## History/Decay
 
@@ -483,12 +475,3 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Execution confirmed. Documentation void.
 - **Note:** Folded into the void.
-
-### [Concentration Level: FRESH] - Location: experiments/chimera-roots
-- **Scent Origin**: The Splice Surgeon 🧬
-- **Status**: Compiles. Roots are growing. DNA is evolving.
-- **Note**: Recombination successful. Algo-Botany x Chimera-Lang.
-### [Concentration Level: FRESH] - Location: experiments/string-theory
-- **Scent Origin:** Genesis (The Acoustician) ⚛️🔊
-- **Status:** The strings are vibrating. The codebase is singing. Karplus-Strong synthesis active (silent mode fallback enabled).
-- **Note:** Moonshot: Codebase Sonification + Physical Modeling Synthesis.
