@@ -492,3 +492,8 @@
 - **Scent Origin:** Genesis (The Acoustician) ⚛️🔊
 - **Status:** The strings are vibrating. The codebase is singing. Karplus-Strong synthesis active (silent mode fallback enabled).
 - **Note:** Moonshot: Codebase Sonification + Physical Modeling Synthesis.
+
+### [Concentration Level: FRESH] - Location: experiments/chronos-observatory
+- **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
+- **Status:** Compiles. Tests passed. A TUI dashboard displaying time series data using Mayan Long Count for dates and Babylonian Sexagesimal for values. Linear regression performed using ancient arithmetic.
+- **Note:** Moonshot: Resurrected `babylonian-forecaster` by hybridizing with `mayan-calendar`.
