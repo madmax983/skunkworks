@@ -55,6 +55,29 @@ fn preprocess(
             path.clone()
         };
 
+        // Security Check: Ensure the resolved path is within the base directory
+        let effective_base = if bp.as_os_str().is_empty() {
+            Path::new(".")
+        } else {
+            bp
+        };
+
+        // Fail Closed: If we can't determine the canonical base path, we must deny access.
+        let canonical_base = effective_base.canonicalize().map_err(|e| {
+            anyhow!(
+                "Security Error: Failed to resolve base path {:?}: {}",
+                effective_base,
+                e
+            )
+        })?;
+
+        if !abs_path.starts_with(&canonical_base) {
+            return Err(anyhow!(
+                "Security Error: Path traversal attempt detected. Access denied to {:?}",
+                abs_path
+            ));
+        }
+
         if !visited.insert(abs_path.clone()) {
             return Err(anyhow!("Recursive include detected: {:?}", abs_path));
         }
