@@ -1,4 +1,4 @@
-use crate::git::CommitData;
+use crate::git::Commit;
 use rand::Rng;
 use ratatui::{
     style::Color,
@@ -36,7 +36,7 @@ impl VisualState {
         }
     }
 
-    pub fn spawn_commit(&mut self, commit: &CommitData) {
+    pub fn spawn_commit(&mut self, commit: &Commit) {
         let mut rng = rand::thread_rng();
 
         // Start position based on hash (roughly)
@@ -49,7 +49,7 @@ impl VisualState {
         let center_x = (hash_val % (self.width as usize)) as f64;
         let center_y = ((hash_val / 100) % (self.height as usize)) as f64;
 
-        for change in &commit.changes {
+        for change in &commit.files {
             let color = match change.extension.as_str() {
                 "rs" => Color::Red,
                 "toml" => Color::Magenta,

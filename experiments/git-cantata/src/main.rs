@@ -1,7 +1,7 @@
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use git_cantata::audio::AudioEngine;
-use git_cantata::git::{get_repo_history, CommitData};
+use git_cantata::git::{get_repo_history, Commit};
 use git_cantata::vis::VisualState;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
@@ -17,7 +17,7 @@ use std::{
 use tui_shared::Tui;
 
 struct App {
-    commits: Vec<CommitData>,
+    commits: Vec<Commit>,
     current_idx: usize,
     audio: AudioEngine,
     vis: VisualState,
@@ -206,7 +206,7 @@ fn ui(f: &mut Frame, app: &App) {
             ]),
             Line::from(vec![
                 Span::styled("Files: ", Style::default().fg(Color::Gray)),
-                Span::raw(commit.changes.len().to_string()),
+                Span::raw(commit.files.len().to_string()),
             ]),
             Line::from(""),
             Line::from(vec![
