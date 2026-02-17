@@ -1097,6 +1097,18 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     TuiMod,
 
+    // Prologue Features (Rune Logic)
+    /// **[Prologue]** Toggles Prologue Language mode.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Prologue,
+    /// **[Prologue]** Places a Rune on the grid.
+    ///
+    /// **Stack:** `[ ..., rune_char, y, x ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Rune,
+
     // Chaos Cartridge Features (Programmable Physics)
     /// **[Chaos]** Defines a new alchemical recipe.
     ///

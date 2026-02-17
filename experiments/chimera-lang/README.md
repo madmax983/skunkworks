@@ -168,6 +168,12 @@ The Babel system now allows for "Live Parsing" of the grid as executable code.
     *   Example: `"Hello" -> { "Found it" print } -> !`
 *   `babel_live(y, x, input)`: Triggers the parser at (y,x) with the given input string.
 
+### Prologue (Rune Logic)
+A new Rune-based Logic Language that runs on the grid.
+*   Toggle with `[` or `OpCode::Prologue`.
+*   Runes: `?` (Query), `!` (Fact), `@` (Agent).
+*   See `PROLOGUE.md` for details.
+
 ## Controls (TUI)
 *   `Space`: Step execution.
 *   `Tab`: Cycle Views (Genome -> Grid -> Microscope -> Cortex -> Metaphysics -> Topology -> Laboratory).

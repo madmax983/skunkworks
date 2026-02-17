@@ -149,6 +149,8 @@ pub(crate) enum ViewMode {
     Akashic,
     #[cfg(feature = "nova")]
     ChaosCartridge,
+    #[cfg(feature = "nova")]
+    Prologue,
     Sequencer,
 }
 
@@ -971,6 +973,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::ChaosCartridge = app_state.view_mode {
                 render_chaos_cartridge(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Prologue = app_state.view_mode {
+                render_prologue(f, vm, app_state);
                 return;
             }
 
@@ -1926,6 +1934,15 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Prologue => {
+                                    let val = parse_grid_value(&app_state.input_buffer);
+                                    let (x, y) = app_state.grid_cursor;
+                                    vm.grid[y][x] = val;
+                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                                 ViewMode::Evolution => {
                                     if let Ok(val) = app_state.input_buffer.parse::<i64>() {
                                         app_state.evolution_state.target_val = val;
@@ -2427,7 +2444,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Akashic => ViewMode::ChaosCartridge,
                             #[cfg(feature = "nova")]
-                            ViewMode::ChaosCartridge => ViewMode::Sequencer,
+                            ViewMode::ChaosCartridge => ViewMode::Prologue,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Prologue => ViewMode::Sequencer,
                             ViewMode::Sequencer => ViewMode::Genome,
                         };
                     }
@@ -2443,6 +2462,8 @@ where
                     KeyCode::Char('|') => app_state.view_mode = ViewMode::Savant,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('#') => app_state.view_mode = ViewMode::Akashic,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('\\') => app_state.view_mode = ViewMode::Prologue,
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
                     #[cfg(feature = "silicon")]
                     KeyCode::Char('F') => app_state.view_mode = ViewMode::Foundry,
@@ -11726,6 +11747,67 @@ fn render_chaos_cartridge(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         Block::default()
             .borders(Borders::ALL)
             .title("System Status"),
+    );
+    f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let mut style = Style::default();
+            let val = &vm.grid[y][x];
+            let s = match val {
+                crate::vm::Value::Str(s) => s.clone(),
+                crate::vm::Value::Int(n) => n.to_string(),
+                _ => ".".to_string(),
+            };
+
+            if vm.prologue_state.runes.contains(&(y, x)) {
+                style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
+            } else {
+                style = style.fg(Color::DarkGray);
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            // Truncate to 3 chars
+            let display = format!("{:^3.3}", s);
+            line_spans.push(Span::styled(display, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let status = if vm.prologue_state.active { "ACTIVE" } else { "INACTIVE" };
+    let color = if vm.prologue_state.active { Color::Green } else { Color::Red };
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default().borders(Borders::ALL).title(Span::styled(
+            format!("PROLOGUE GRID ({})", status),
+            Style::default().fg(color),
+        )),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Right: Rules
+    let mut info = Vec::new();
+    info.push(Line::from("Inferred Rules:"));
+    for rule in &vm.prologue_state.rules {
+        info.push(Line::from(rule.clone()));
+    }
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default().borders(Borders::ALL).title("Logic Engine"),
     );
     f.render_widget(info_widget, chunks[1]);
 }
