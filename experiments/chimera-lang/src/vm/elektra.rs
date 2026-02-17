@@ -49,8 +49,46 @@ pub fn exec_elektra_op(
         OpCode::Transistor => exec_component_placement(vm, "T"),
         OpCode::Muscle => exec_component_placement(vm, "M"),
         OpCode::Sensor => exec_component_placement(vm, "S"),
+        OpCode::Patch => exec_patch(vm),
         _ => None,
     }
+}
+
+fn exec_patch(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if vm.stack.len() < 4 {
+        return None;
+    }
+    let target_val = vm.stack.pop().unwrap();
+    let x_val = vm.stack.pop().unwrap();
+    let y_val = vm.stack.pop().unwrap();
+    let source_val = vm.stack.pop().unwrap();
+
+    if let (Value::Int(source_type), Value::Int(y), Value::Int(x), Value::Int(target_id)) =
+        (source_val, y_val, x_val, target_val)
+    {
+        if source_type == 0 {
+            // Voltage
+            if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                let target = match target_id {
+                    0 => Some(crate::vm::PatchTarget::EnergyRegen),
+                    1 => Some(crate::vm::PatchTarget::MutationRate),
+                    _ => None,
+                };
+
+                if let Some(t) = target {
+                    vm.patch_bay.insert((ny, nx), t);
+                    vm.output
+                        .push(format!("PATCH: Connected {},{} to {:?}", nx, ny, t));
+                } else {
+                    vm.output.push(format!("PATCH: Invalid target {}", target_id));
+                }
+            }
+        } else {
+            vm.output
+                .push(format!("PATCH: Unknown source type {}", source_type));
+        }
+    }
+    None
 }
 
 fn exec_electrogenesis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {

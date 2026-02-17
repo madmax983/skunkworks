@@ -336,6 +336,10 @@ mod savant_execution_test;
 #[cfg(feature = "silicon")]
 pub mod silicon;
 
+#[cfg(feature = "elektra")]
+#[cfg(test)]
+mod sequencer_test;
+
 #[cfg(feature = "resonance")]
 use crossbeam_channel::{Receiver, Sender};
 #[cfg(feature = "resonance")]
@@ -397,6 +401,12 @@ pub enum TuiEvent {
     Glitch(f32),
     Shake(f32),
     Message(String),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum PatchTarget {
+    EnergyRegen,
+    MutationRate,
 }
 
 impl std::fmt::Display for ChimeraVM {
@@ -619,6 +629,8 @@ pub struct ChimeraVM {
     pub current_grid: Vec<Vec<f32>>,
     #[cfg(feature = "elektra")]
     pub resistance_grid: Vec<Vec<f32>>,
+    #[cfg(feature = "elektra")]
+    pub patch_bay: HashMap<(usize, usize), PatchTarget>,
     #[cfg(feature = "nova")]
     pub last_gene: Option<crate::ast::Gene>,
     #[cfg(feature = "nova")]
@@ -958,6 +970,8 @@ impl ChimeraVM {
             current_grid: vec![vec![0.0; GRID_SIZE]; GRID_SIZE],
             #[cfg(feature = "elektra")]
             resistance_grid: vec![vec![1.0; GRID_SIZE]; GRID_SIZE], // Default resistance 1.0 (Air/Void might be high?)
+            #[cfg(feature = "elektra")]
+            patch_bay: HashMap::new(),
             #[cfg(feature = "nova")]
             last_gene: None,
             #[cfg(feature = "nova")]
@@ -2168,6 +2182,33 @@ impl ChimeraVM {
         #[cfg(feature = "elektra")]
         if !time_frozen {
             elektra::update_circuit(self);
+
+            // Process Patch Bay
+            let mut energy_gain = 0.0;
+            let mut chaos_mod = 0.0;
+
+            for ((y, x), target) in &self.patch_bay {
+                if *y < GRID_SIZE && *x < GRID_SIZE {
+                    let v = self.voltage_grid[*y][*x];
+                    match target {
+                        PatchTarget::EnergyRegen => {
+                            if v > 0.0 {
+                                energy_gain += v * 0.1;
+                            }
+                        }
+                        PatchTarget::MutationRate => {
+                            chaos_mod += v * 0.01;
+                        }
+                    }
+                }
+            }
+
+            if energy_gain > 0.0 {
+                self.energy = self.energy.saturating_add(energy_gain as i64);
+            }
+            if chaos_mod > 0.0 {
+                self.glitch_level = (self.glitch_level + chaos_mod).clamp(0.0, 1.0);
+            }
         }
 
         if !time_frozen {
@@ -3491,6 +3532,7 @@ impl ChimeraVM {
             | OpCode::Transistor
             | OpCode::Muscle
             | OpCode::Sensor
+            | OpCode::Patch
             | OpCode::Lightning => elektra::exec_elektra_op(self, op, args),
 
             #[cfg(all(feature = "elektra", feature = "nova"))]

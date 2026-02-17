@@ -146,6 +146,7 @@ pub(crate) enum ViewMode {
     Savant,
     #[cfg(feature = "nova")]
     Akashic,
+    Sequencer,
 }
 
 enum InputMode {
@@ -883,6 +884,11 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Akashic = app_state.view_mode {
                 render_akashic(f, vm, app_state);
+                return;
+            }
+
+            if let ViewMode::Sequencer = app_state.view_mode {
+                render_sequencer(f, vm, app_state);
                 return;
             }
 
@@ -2157,7 +2163,8 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Savant => ViewMode::Akashic,
                             #[cfg(feature = "nova")]
-                            ViewMode::Akashic => ViewMode::Genome,
+                            ViewMode::Akashic => ViewMode::Sequencer,
+                            ViewMode::Sequencer => ViewMode::Genome,
                         };
                     }
                     #[cfg(feature = "nova")]
@@ -4604,6 +4611,96 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Territory Info"),
     );
     f.render_widget(info_widget, chunks[1]);
+}
+
+fn render_sequencer(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    // Left: DNA Tracker
+    let strand_count = vm.dna.helix.strands.len();
+    // Show up to 4 strands
+    let display_count = if strand_count == 0 { 1 } else { strand_count.min(4) };
+
+    let mut constraints = Vec::new();
+    for _ in 0..display_count {
+        constraints.push(Constraint::Ratio(1, display_count as u32));
+    }
+
+    let tracker_chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints(constraints)
+        .split(chunks[0]);
+
+    for i in 0..display_count {
+        let s_idx = i; // TODO: Scroll offset
+        if s_idx < strand_count {
+            let strand = &vm.dna.helix.strands[s_idx];
+            let mut items = Vec::new();
+
+            for (g_idx, gene) in strand.genes.iter().enumerate() {
+                let mut style = Style::default();
+                if vm.ip == (s_idx, g_idx) {
+                    style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD | Modifier::REVERSED);
+                } else {
+                    style = style.fg(Color::Green);
+                }
+
+                let s = format!("{:03}: {}", g_idx, gene.op);
+                items.push(ListItem::new(s).style(style));
+            }
+
+            let title = format!("Strand {} [{}]", s_idx, strand.genes.len());
+            let list = List::new(items).block(Block::default().borders(Borders::ALL).title(title));
+            f.render_widget(list, tracker_chunks[i]);
+        } else {
+             f.render_widget(Block::default().borders(Borders::ALL).title("Empty Slot"), tracker_chunks[i]);
+        }
+    }
+
+    // Right: Patch Bay & Controls
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(chunks[1]);
+
+    // Patch Bay
+    let mut patches = Vec::new();
+    #[cfg(feature = "elektra")]
+    {
+        for ((y, x), target) in &vm.patch_bay {
+            let voltage = vm.voltage_grid[*y][*x];
+            patches.push(ListItem::new(format!(
+                "Grid({},{}) [{:.1}V] -> {:?}",
+                x, y, voltage, target
+            )).style(Style::default().fg(Color::Cyan)));
+        }
+    }
+    if patches.is_empty() {
+        patches.push(ListItem::new("No active patches."));
+    }
+
+    let patch_list = List::new(patches).block(Block::default().borders(Borders::ALL).title("Voltage Patches"));
+    f.render_widget(patch_list, right_chunks[0]);
+
+    // Info
+    let info = vec![
+        Line::from("HYPER-SEQUENCER"),
+        Line::from(" "),
+        Line::from("Controls:"),
+        Line::from("  Space: Step"),
+        Line::from("  Tab: Cycle Views"),
+        Line::from(" "),
+        Line::from("Patching:"),
+        Line::from("  Use 'Patch' opcode to connect."),
+        Line::from("  Voltage modulates VM state."),
+        Line::from("  patch(0, y, x, target)"),
+        Line::from("  Targets: 0=Energy, 1=Mutate"),
+    ];
+    let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Manual"));
+    f.render_widget(info_widget, right_chunks[1]);
 }
 
 #[cfg(feature = "nova")]
