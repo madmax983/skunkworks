@@ -1,0 +1,26 @@
+[package]
+name = "data-strider"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bevy = { version = "0.13", default-features = false, features = [
+    "animation",
+    "bevy_asset",
+    "bevy_core_pipeline",
+    "bevy_gizmos",
+    "bevy_render",
+    "bevy_scene",
+    "bevy_sprite",
+    "bevy_text",
+    "bevy_ui",
+    "bevy_winit",
+    "default_font",
+    "multi-threaded",
+    "png",
+    "x11",
+    "tonemapping_luts",
+] }
+bevy_rapier2d = "0.26"
+bevy_prototype_lyon = "0.11"
+rand = "0.8"
