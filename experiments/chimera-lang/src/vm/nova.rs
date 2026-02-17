@@ -1001,8 +1001,34 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::TuiMod => exec_tui_mod(vm),
         OpCode::Horcrux => exec_horcrux(vm),
         OpCode::Rebirth => exec_rebirth(vm),
+        OpCode::Prologue => exec_prologue(vm),
+        OpCode::Rune => exec_rune(vm),
         _ => None,
     }
+}
+
+fn exec_prologue(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    vm.prologue_state.active = !vm.prologue_state.active;
+    let status = if vm.prologue_state.active { "ON" } else { "OFF" };
+    vm.output.push(format!("PROLOGUE: Rune Logic {}", status));
+    None
+}
+
+fn exec_rune(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if vm.stack.len() >= 3 {
+        let x_val = vm.stack.pop().unwrap();
+        let y_val = vm.stack.pop().unwrap();
+        let c_val = vm.stack.pop().unwrap();
+        if let (Value::Int(c), Value::Int(y), Value::Int(x)) = (c_val, y_val, x_val) {
+             if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                 if let Some(ch) = char::from_u32(c as u32) {
+                     vm.grid[ny][nx] = Value::Str(ch.to_string());
+                     vm.output.push(format!("RUNE: Placed '{}' at {},{}", ch, nx, ny));
+                 }
+             }
+        }
+    }
+    None
 }
 
 fn exec_tui_mod(vm: &mut ChimeraVM) -> Option<(usize, usize)> {

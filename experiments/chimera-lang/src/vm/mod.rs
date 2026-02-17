@@ -334,6 +334,8 @@ pub mod pandemonium;
 pub mod phylogeny;
 #[cfg(feature = "nova")]
 pub mod piet;
+#[cfg(feature = "nova")]
+pub mod prologue;
 pub mod resonance;
 #[cfg(feature = "nova")]
 pub mod retina;
@@ -780,6 +782,8 @@ pub struct ChimeraVM {
     pub active_grammar: Value,
     #[cfg(feature = "nova")]
     pub akashic: akashic::AkashicRecords,
+    #[cfg(feature = "nova")]
+    pub prologue_state: prologue::PrologueState,
     pub visual_effects: Vec<VisualEffect>,
     pub tui_events: Vec<TuiEvent>,
 }
@@ -1121,6 +1125,8 @@ impl ChimeraVM {
             active_grammar: Value::Junction(JunctionType::Any, vec![]),
             #[cfg(feature = "nova")]
             akashic: akashic::AkashicRecords::new(),
+            #[cfg(feature = "nova")]
+            prologue_state: prologue::PrologueState::new(),
             visual_effects: Vec::new(),
             tui_events: Vec::new(),
         }
@@ -2144,6 +2150,9 @@ impl ChimeraVM {
             }
             if self.reactor_mode {
                 nova_reactor::process_reactor(self);
+            }
+            if self.prologue_state.active {
+                prologue::exec_prologue_tick(self);
             }
         }
 
