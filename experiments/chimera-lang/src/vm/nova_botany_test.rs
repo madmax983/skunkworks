@@ -29,7 +29,7 @@ mod tests {
         assert_eq!(vm.organelles.len(), 1);
         let org = &vm.organelles[0];
         assert_eq!(org.kind, crate::vm::nova::OrganelleType::Seed);
-        assert_eq!(org.stack.len(), 4);
+        assert_eq!(org.stack.len(), 5);
     }
 
     #[test]
@@ -104,8 +104,6 @@ mod tests {
         // Should execute 2 ticks worth: X->F then F->Draw
         crate::vm::nova_botany::tick_seed(&mut vm, &mut org);
 
-        let (y, x) = vm.context_loc;
-
         // Check grid - should be drawn immediately
         match &vm.grid[8][8] {
             // Note: interpret_char writes to CURRENT location (8,8) then MOVES.
@@ -114,6 +112,47 @@ mod tests {
                 "Expected # on grid at 8,8 due to boost, got {:?}",
                 vm.grid[8][8]
             ),
+        }
+
+        swap_organelle_context(&mut vm, &mut org);
+    }
+
+    #[test]
+    fn test_genetic_synthesis() {
+        let mut vm = make_vm();
+
+        // Define mapping: {'F': 1}
+        // Junction(All, [Junction(All, [Str("F"), Int(1)])])
+        let mapping = Value::Junction(
+            crate::ast::JunctionType::All,
+            vec![Value::Junction(
+                crate::ast::JunctionType::All,
+                vec![Value::Str("F".to_string()), Value::Int(1)],
+            )],
+        );
+
+        vm.stack.push(Value::Str("X=F".to_string())); // Rules
+        vm.stack.push(mapping);                       // Mapping
+        vm.stack.push(Value::Str("X".to_string()));   // Axiom
+
+        crate::vm::nova_botany::exec_plant(&mut vm);
+
+        let mut org = vm.organelles.pop().unwrap();
+
+        // Tick 1: X -> F
+        swap_organelle_context(&mut vm, &mut org);
+        crate::vm::nova_botany::tick_seed(&mut vm, &mut org);
+        swap_organelle_context(&mut vm, &mut org);
+
+        // Tick 2: F -> 1 (via mapping)
+        swap_organelle_context(&mut vm, &mut org);
+        let (y, x) = vm.context_loc;
+        crate::vm::nova_botany::tick_seed(&mut vm, &mut org);
+
+        // Check grid
+        match &vm.grid[y][x] {
+            Value::Int(n) => assert_eq!(*n, 1),
+            _ => panic!("Expected 1 on grid, got {:?}", vm.grid[y][x]),
         }
 
         swap_organelle_context(&mut vm, &mut org);

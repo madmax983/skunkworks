@@ -4,20 +4,48 @@ use crate::vm::{nova::Organelle, ChimeraVM, Value};
 use rand::Rng;
 
 #[cfg(feature = "nova")]
+fn is_mapping(v: &Value) -> bool {
+    if let Value::Junction(_, items) = v {
+        if let Some(first) = items.first() {
+            // Check if it's a Pair (Junction of length 2 usually, or just Junction)
+            // Or simple Key-Value pair represented as Junction.
+            if let Value::Junction(_, _) = first {
+                return true;
+            }
+        }
+    }
+    false
+}
+
+#[cfg(feature = "nova")]
 pub fn exec_plant(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    // Stack: rules, axiom (top)
+    // Stack: rules, mapping (optional), axiom (top)
     if vm.stack.len() < 2 {
         vm.output
             .push("Error: Stack underflow for plant".to_string());
         return None;
     }
 
-    let axiom_val = vm.stack.pop().unwrap();
-    let rules_val = vm.stack.pop().unwrap();
+    // Determine arguments based on stack content
+    // Check if 2nd item from top is a Mapping
+    let arg2 = &vm.stack[vm.stack.len() - 2];
+
+    let (axiom_val, mapping_val, rules_val) = if is_mapping(arg2) && vm.stack.len() >= 3 {
+        // [rules, mapping, axiom]
+        let axiom = vm.stack.pop().unwrap();
+        let mapping = vm.stack.pop().unwrap();
+        let rules = vm.stack.pop().unwrap();
+        (axiom, mapping, rules)
+    } else {
+        // [rules, axiom]
+        let axiom = vm.stack.pop().unwrap();
+        let rules = vm.stack.pop().unwrap();
+        (axiom, Value::Junction(crate::ast::JunctionType::All, Vec::new()), rules)
+    };
 
     // Validate types
     if let Value::Str(_) = &axiom_val {
-        if let Value::Str(_) | Value::Junction(_, _) = &rules_val {
+        if matches!(rules_val, Value::Str(_) | Value::Junction(_, _)) {
             if vm.organelles.len() >= crate::vm::MAX_ORGANELLES {
                 vm.output
                     .push("Error: Organelle limit exceeded".to_string());
@@ -27,9 +55,10 @@ pub fn exec_plant(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             let (cy, cx) = vm.context_loc;
 
             // Create Seed Organelle
-            // Stack: [ rules, axiom, index, turtle_stack_placeholder ]
+            // Stack: [ rules, mapping, axiom, index, turtle_stack_placeholder ]
             let mut stack = Vec::new();
             stack.push(rules_val);
+            stack.push(mapping_val);
             stack.push(axiom_val);
             stack.push(Value::Int(0)); // Index
             stack.push(Value::Junction(crate::ast::JunctionType::All, Vec::new())); // Turtle Stack
@@ -71,9 +100,9 @@ pub fn exec_plant(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 #[cfg(feature = "nova")]
 pub fn tick_seed(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
-    // Stack: [ rules, current_string, index, turtle_stack ] (Top)
+    // Stack: [ rules, mapping, current_string, index, turtle_stack ] (Top)
     // Note: vm.stack contains the organelle's data due to swap in tick_organelle
-    if vm.stack.len() < 4 {
+    if vm.stack.len() < 5 {
         return false;
     }
 
@@ -90,7 +119,7 @@ pub fn tick_seed(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
     let mut still_alive = true;
 
     for _ in 0..speed {
-        if vm.stack.len() < 4 {
+        if vm.stack.len() < 5 {
             still_alive = false;
             break;
         }
@@ -99,6 +128,7 @@ pub fn tick_seed(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
         let mut turtle_stack_val = vm.stack.pop().unwrap();
         let mut index_val = vm.stack.pop().unwrap();
         let mut string_val = vm.stack.pop().unwrap();
+        let mapping_val = vm.stack.pop().unwrap();
         let rules_val = vm.stack.last().unwrap().clone();
 
         let mut alive = true;
@@ -143,11 +173,11 @@ pub fn tick_seed(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
                         vm.energy = vm.energy.saturating_sub(1);
                     } else {
                         // Limit reached, interpret instead
-                        interpret_char(vm, organelle, c, &mut turtle_stack_val);
+                        interpret_char(vm, organelle, c, &mut turtle_stack_val, &mapping_val);
                         grew = true;
                     }
                 } else {
-                    interpret_char(vm, organelle, c, &mut turtle_stack_val);
+                    interpret_char(vm, organelle, c, &mut turtle_stack_val, &mapping_val);
                     grew = true;
                 }
 
@@ -157,6 +187,7 @@ pub fn tick_seed(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
             alive = false;
         }
 
+        vm.stack.push(mapping_val);
         vm.stack.push(string_val);
         vm.stack.push(index_val);
         vm.stack.push(turtle_stack_val);
@@ -194,9 +225,35 @@ fn interpret_char(
     organelle: &mut Organelle,
     c: char,
     turtle_stack: &mut Value,
+    mapping: &Value,
 ) {
     let (cy, cx) = vm.context_loc;
     let (dy, dx) = organelle.direction;
+
+    // Check Mapping first
+    if let Value::Junction(_, pairs) = mapping {
+        for pair in pairs {
+            if let Value::Junction(_, kv) = pair {
+                if kv.len() >= 2 {
+                    if let Value::Str(key) = &kv[0] {
+                        if key.chars().next() == Some(c) {
+                            // Found custom mapping
+                            vm.grid[cy][cx] = kv[1].clone();
+                            // Move forward by default after writing
+                            if let Some((ny, nx)) =
+                                vm.normalize_coords(cy as i64 + dy as i64, cx as i64 + dx as i64)
+                            {
+                                if matches!(vm.grid[ny][nx], Value::Int(0)) {
+                                    vm.context_loc = (ny, nx);
+                                }
+                            }
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     match c {
         'F' | 'G' => {
