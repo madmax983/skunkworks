@@ -39,6 +39,7 @@ mod tests {
         vm.stack.push(Value::Int(100)); // Rate
         vm.stack.push(Value::Str("TARGET".to_string())); // Pattern
         vm.stack.push(Value::Str("GrammarVirus".to_string())); // Name
+        vm.stack.push(Value::Int(0)); // Mode (Overwrite)
 
         vm.context_loc = (5, 5);
         crate::vm::memetics::exec_memetics_op(&mut vm, OpCode::Infect, &[]);
@@ -70,6 +71,7 @@ mod tests {
             grammar: Some(grammar),
             quorum_threshold: 0,
             quorum_action: None,
+            mode: crate::vm::memetics::VirusMode::Overwrite,
         };
         vm.virus_library.push(virus);
 
@@ -112,6 +114,7 @@ mod tests {
             grammar: None,
             quorum_threshold: 2,    // Need 2 neighbors
             quorum_action: Some(0), // Exec Strand 0
+            mode: crate::vm::memetics::VirusMode::Overwrite,
         };
         vm.virus_library.push(virus);
 

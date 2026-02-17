@@ -253,6 +253,7 @@ pub(crate) struct AppState {
     #[cfg(feature = "nova")]
     pub(crate) grimoire_scroll: u16,
     pub(crate) evolution_state: EvolutionState,
+    pub(crate) sequencer_state: SequencerState,
     pub(crate) matrix_rain: MatrixRain,
     pub(crate) screen_shake: f32,
 }
@@ -269,6 +270,24 @@ impl EvolutionState {
             engine: None,
             target_val: 42,
             auto_run: false,
+        }
+    }
+}
+
+pub(crate) struct SequencerState {
+    pub(crate) playing: bool,
+    pub(crate) bpm: u64,
+    pub(crate) tick: usize,
+    pub(crate) scroll_x: usize,
+}
+
+impl SequencerState {
+    fn new() -> Self {
+        Self {
+            playing: false,
+            bpm: 120,
+            tick: 0,
+            scroll_x: 0,
         }
     }
 }
@@ -373,6 +392,7 @@ impl AppState {
             #[cfg(feature = "nova")]
             grimoire_scroll: 0,
             evolution_state: EvolutionState::new(),
+            sequencer_state: SequencerState::new(),
             matrix_rain: MatrixRain::new(),
             screen_shake: 0.0,
         }
@@ -466,6 +486,40 @@ where
             if app_state.evolution_state.auto_run {
                 if let Some(engine) = &mut app_state.evolution_state.engine {
                     engine.step(vm);
+                }
+            }
+        }
+
+        if let ViewMode::Sequencer = app_state.view_mode {
+            if app_state.sequencer_state.playing {
+                app_state.sequencer_state.tick += 1;
+
+                #[cfg(feature = "resonance")]
+                {
+                    if let Some(tx) = &vm.audio_tx {
+                        let tick = app_state.sequencer_state.tick;
+                        for strand in &vm.dna.helix.strands {
+                            if tick < strand.genes.len() {
+                                let gene = &strand.genes[tick];
+                                let freq = match gene.op {
+                                    crate::opcode::OpCode::Push => 110.0,
+                                    crate::opcode::OpCode::Add => 220.0,
+                                    crate::opcode::OpCode::Sub => 440.0,
+                                    crate::opcode::OpCode::Jump => 55.0,
+                                    _ => (gene.op.to_string().len() as f32 * 50.0 + 200.0),
+                                };
+
+                                use resonance_audio::audio::AudioCommand;
+                                let _ = tx.send(AudioCommand::Tone {
+                                    x: 0,
+                                    y: 0,
+                                    frequency: freq,
+                                    strength: 0.5,
+                                    duration_ms: 100,
+                                });
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -1089,6 +1143,62 @@ where
                         _ => {}
                     }
                     continue;
+                }
+
+                if let ViewMode::Sequencer = app_state.view_mode {
+                    let mut handled = true;
+                    match key.code {
+                        KeyCode::Char(' ') => {
+                            app_state.sequencer_state.playing = !app_state.sequencer_state.playing;
+                        }
+                        KeyCode::Char('+') | KeyCode::Char('=') => {
+                            app_state.sequencer_state.bpm =
+                                app_state.sequencer_state.bpm.saturating_add(10);
+                        }
+                        KeyCode::Char('-') => {
+                            app_state.sequencer_state.bpm =
+                                app_state.sequencer_state.bpm.saturating_sub(10).max(10);
+                        }
+                        KeyCode::Left => {
+                            app_state.sequencer_state.tick =
+                                app_state.sequencer_state.tick.saturating_sub(1);
+                            if app_state.sequencer_state.tick < app_state.sequencer_state.scroll_x {
+                                app_state.sequencer_state.scroll_x = app_state.sequencer_state.tick;
+                            }
+                        }
+                        KeyCode::Right => {
+                            app_state.sequencer_state.tick += 1;
+                            if app_state.sequencer_state.tick
+                                > app_state.sequencer_state.scroll_x + 80
+                            {
+                                app_state.sequencer_state.scroll_x =
+                                    app_state.sequencer_state.tick - 80;
+                            }
+                        }
+                        KeyCode::Char('s') => {
+                            crate::vm::pandemonium::apply_scramble(
+                                vm,
+                                0,
+                                app_state.sequencer_state.tick,
+                                5.0,
+                            );
+                            app_state.status_msg = "Sequencer: Scrambled!".to_string();
+                        }
+                        KeyCode::Char('m') => {
+                            crate::vm::pandemonium::apply_mutation(
+                                vm,
+                                0,
+                                app_state.sequencer_state.tick,
+                            );
+                            app_state.status_msg = "Sequencer: Mutated!".to_string();
+                        }
+                        _ => {
+                            handled = false;
+                        }
+                    }
+                    if handled {
+                        continue;
+                    }
                 }
 
                 #[cfg(feature = "oracle")]
@@ -4625,11 +4735,11 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
 fn render_sequencer(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
-        .direction(Direction::Horizontal)
+        .direction(Direction::Vertical)
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
         .split(app_state.get_render_area(f.area()));
 
-    // Left: DNA Tracker
+    // Top: Tracks
     let strand_count = vm.dna.helix.strands.len();
     // Show up to 4 strands
     let display_count = if strand_count == 0 {
@@ -4638,96 +4748,136 @@ fn render_sequencer(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         strand_count.min(4)
     };
 
-    let mut constraints = Vec::new();
-    for _ in 0..display_count {
-        constraints.push(Constraint::Ratio(1, display_count as u32));
-    }
+    let track_constraints: Vec<Constraint> = (0..display_count)
+        .map(|_| Constraint::Ratio(1, display_count as u32))
+        .collect();
 
-    let tracker_chunks = Layout::default()
-        .direction(Direction::Horizontal)
-        .constraints(constraints)
+    let track_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints(track_constraints)
         .split(chunks[0]);
 
+    // Calculate time window based on scroll
+    let window_start = app_state.sequencer_state.scroll_x;
+    let window_width = chunks[0].width as usize - 4; // approximate
+    let window_end = window_start + window_width;
+
     for i in 0..display_count {
-        let s_idx = i; // TODO: Scroll offset
+        let s_idx = i;
         if s_idx < strand_count {
             let strand = &vm.dna.helix.strands[s_idx];
-            let mut items = Vec::new();
 
-            for (g_idx, gene) in strand.genes.iter().enumerate() {
-                let mut style = Style::default();
-                if vm.ip == (s_idx, g_idx) {
-                    style = style
-                        .fg(Color::Yellow)
-                        .add_modifier(Modifier::BOLD | Modifier::REVERSED);
-                } else {
-                    style = style.fg(Color::Green);
-                }
+            // Render Track
+            let title = format!("Track {} ({} Genes)", s_idx, strand.genes.len());
 
-                let s = format!("{:03}: {}", g_idx, gene.op);
-                items.push(ListItem::new(s).style(style));
-            }
+            // Use Canvas to draw genes as blocks
+            let canvas = Canvas::default()
+                .block(Block::default().borders(Borders::ALL).title(title))
+                .x_bounds([window_start as f64, window_end as f64])
+                .y_bounds([0.0, 10.0])
+                .paint(|ctx| {
+                    // Draw Playhead
+                    let tick = app_state.sequencer_state.tick as f64;
+                    if tick >= window_start as f64 && tick <= window_end as f64 {
+                        ctx.draw(&ratatui::widgets::canvas::Line {
+                            x1: tick,
+                            y1: 0.0,
+                            x2: tick,
+                            y2: 10.0,
+                            color: Color::Red,
+                        });
+                    }
 
-            let title = format!("Strand {} [{}]", s_idx, strand.genes.len());
-            let list = List::new(items).block(Block::default().borders(Borders::ALL).title(title));
-            f.render_widget(list, tracker_chunks[i]);
-        } else {
-            f.render_widget(
-                Block::default().borders(Borders::ALL).title("Empty Slot"),
-                tracker_chunks[i],
-            );
+                    // Draw Genes
+                    for (g_idx, gene) in strand.genes.iter().enumerate() {
+                        if g_idx >= window_start && g_idx <= window_end {
+                            // Map OpCode to Color/Height
+                            // Simple hash mapping
+                            let h = (gene.op.to_string().len() % 8) + 2;
+                            let color = match gene.op {
+                                crate::opcode::OpCode::Push => Color::Blue,
+                                crate::opcode::OpCode::Add | crate::opcode::OpCode::Sub => {
+                                    Color::Green
+                                }
+                                crate::opcode::OpCode::Jump | crate::opcode::OpCode::Brz => {
+                                    Color::Yellow
+                                }
+                                crate::opcode::OpCode::GRead | crate::opcode::OpCode::GWrite => {
+                                    Color::Cyan
+                                }
+                                _ => Color::DarkGray,
+                            };
+
+                            let x = g_idx as f64;
+                            ctx.draw(&Rectangle {
+                                x,
+                                y: 1.0,
+                                width: 0.8,
+                                height: h as f64,
+                                color,
+                            });
+                        }
+                    }
+                });
+
+            f.render_widget(canvas, track_chunks[i]);
         }
     }
 
-    // Right: Patch Bay & Controls
-    let right_chunks = Layout::default()
-        .direction(Direction::Vertical)
+    // Bottom: Controls & Status
+    let bottom_chunks = Layout::default()
+        .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
         .split(chunks[1]);
 
-    // Patch Bay
-    let mut patches = Vec::new();
-    #[cfg(feature = "elektra")]
-    {
-        for ((y, x), target) in &vm.patch_bay {
-            let voltage = vm.voltage_grid[*y][*x];
-            patches.push(
-                ListItem::new(format!(
-                    "Grid({},{}) [{:.1}V] -> {:?}",
-                    x, y, voltage, target
-                ))
-                .style(Style::default().fg(Color::Cyan)),
-            );
-        }
-    }
-    if patches.is_empty() {
-        patches.push(ListItem::new("No active patches."));
-    }
-
-    let patch_list = List::new(patches).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Voltage Patches"),
-    );
-    f.render_widget(patch_list, right_chunks[0]);
-
     // Info
-    let info = vec![
-        Line::from("HYPER-SEQUENCER"),
+    let status = if app_state.sequencer_state.playing {
+        "PLAYING"
+    } else {
+        "PAUSED"
+    };
+    let status_color = if app_state.sequencer_state.playing {
+        Color::Green
+    } else {
+        Color::Yellow
+    };
+
+    let info_text = vec![
+        Line::from(Span::styled(
+            "CHIMERA SEQUENCER",
+            Style::default().add_modifier(Modifier::BOLD),
+        )),
         Line::from(" "),
-        Line::from("Controls:"),
-        Line::from("  Space: Step"),
-        Line::from("  Tab: Cycle Views"),
-        Line::from(" "),
-        Line::from("Patching:"),
-        Line::from("  Use 'Patch' opcode to connect."),
-        Line::from("  Voltage modulates VM state."),
-        Line::from("  patch(0, y, x, target)"),
-        Line::from("  Targets: 0=Energy, 1=Mutate"),
+        Line::from(vec![
+            Span::raw("Status: "),
+            Span::styled(
+                status,
+                Style::default().fg(status_color).add_modifier(Modifier::BOLD),
+            ),
+        ]),
+        Line::from(format!("BPM: {}", app_state.sequencer_state.bpm)),
+        Line::from(format!("Tick: {}", app_state.sequencer_state.tick)),
     ];
-    let info_widget =
-        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Manual"));
-    f.render_widget(info_widget, right_chunks[1]);
+
+    f.render_widget(
+        Paragraph::new(info_text).block(Block::default().borders(Borders::ALL).title("Transport")),
+        bottom_chunks[0],
+    );
+
+    // Help
+    let help_text = vec![
+        Line::from("Controls:"),
+        Line::from("  Space: Play/Pause"),
+        Line::from("  +/-: Adjust BPM"),
+        Line::from("  Left/Right: Scrub / Scroll"),
+        Line::from("  M: Mutate at Playhead"),
+        Line::from("  S: Scramble Track"),
+    ];
+
+    f.render_widget(
+        Paragraph::new(help_text).block(Block::default().borders(Borders::ALL).title("Manual")),
+        bottom_chunks[1],
+    );
 }
 
 #[cfg(feature = "nova")]
