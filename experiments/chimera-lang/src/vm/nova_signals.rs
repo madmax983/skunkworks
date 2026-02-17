@@ -415,6 +415,8 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 'Ω' | 'ω' => exec_omega(vm, y, x, signal, &mut ctx),
                 '§' => exec_sigil(vm, y, x, signal, &mut ctx),
                 'ƒ' => exec_function_op(vm, y, x, signal, &mut ctx),
+                'Γ' => exec_gamma(vm, y, x, signal, &mut ctx),
+                'Σ' => exec_sigma(vm, y, x, &mut ctx),
                 _ => {
                     if let Value::Str(s) = val {
                         if let Ok(op) = s.parse::<OpCode>() {
@@ -1412,6 +1414,44 @@ fn exec_ether_recv(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut Sig
                 x: sx,
             });
         }
+    }
+}
+
+fn exec_gamma(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // Γ: Gamma Ray (Mutation)
+    // Writes a random operator to East
+    let mut rng = rand::thread_rng();
+    let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{};':\",./<>?|\\~`";
+    let idx = rng.gen_range(0..chars.len());
+    let c = chars.chars().nth(idx).unwrap();
+
+    if let Some((ey, ex)) = vm.normalize_coords(y as i64, x as i64 + 1) {
+        ctx.grid_writes.push(GridWrite {
+            y: ey,
+            x: ex,
+            val: Value::Str(c.to_string()),
+        });
+    }
+}
+
+fn exec_sigma(vm: &ChimeraVM, y: usize, x: usize, ctx: &mut SignalContext) {
+    // Σ: Summation
+    // Sums N, E, W. Output S.
+    let n = peek(vm, y, x, -1, 0).unwrap_or(0);
+    let e = peek(vm, y, x, 0, 1).unwrap_or(0);
+    let w = peek(vm, y, x, 0, -1).unwrap_or(0);
+
+    let sum = n.wrapping_add(e).wrapping_add(w);
+
+    if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+        ctx.grid_writes.push(GridWrite {
+            y: sy,
+            x: sx,
+            val: Value::Str(val_to_char(sum).to_string()),
+        });
     }
 }
 
