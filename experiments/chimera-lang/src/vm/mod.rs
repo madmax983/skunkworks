@@ -71,6 +71,8 @@ pub const MAX_STRINGS: usize = 256;
 #[cfg(feature = "nova")]
 pub mod akashic;
 #[cfg(feature = "nova")]
+pub mod nova_alchemy_prime;
+#[cfg(feature = "nova")]
 pub mod alchemy;
 #[cfg(feature = "nova")]
 pub mod babel;
@@ -3589,6 +3591,12 @@ impl ChimeraVM {
                 crate::vm::nova::exec_nova_op(self, op, args);
                 None
             }
+
+            #[cfg(feature = "nova")]
+            OpCode::AbsorbGeometry => nova_alchemy_prime::exec_absorb_geometry(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::ProjectGeometry => nova_alchemy_prime::exec_project_geometry(self, op, args),
 
             OpCode::Unknown(name) => self.handle_unknown_opcode(&name),
             _ => {

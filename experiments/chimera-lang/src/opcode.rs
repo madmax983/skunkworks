@@ -1024,6 +1024,18 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Alchemy,
 
+    /// **[Nova]** Reads the grid geometry into a strand (Grid -> DNA).
+    ///
+    /// **Stack:** `[ ..., radius, start_y, start_x ] -> [ ..., new_strand_idx ]`
+    #[cfg(feature = "nova")]
+    AbsorbGeometry,
+
+    /// **[Nova]** Projects a strand onto the grid geometry (DNA -> Grid).
+    ///
+    /// **Stack:** `[ ..., strand_idx, start_y, start_x ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    ProjectGeometry,
+
     /// **[Nova]** Triggers a metamorphic reboot based on a CA rule.
     ///
     /// **Stack:** `[ ..., rule_id ] -> [ ... ]`
