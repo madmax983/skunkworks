@@ -57,15 +57,15 @@ fn test_fuzz_roundtrip() {
 }
 
 #[test]
-#[should_panic]
 fn test_manual_construction_overflow() {
     // 22 clusters means 10^21 multiplier will be reached
     // 10^19 fits in u64, 10^20 overflows.
     // Cord::value() updates multiplier: multiplier *= 10.
-    // This will panic in debug mode due to overflow checks.
+    // With saturating arithmetic, this should NOT panic, but saturate.
+    // Since clusters are empty, value is 0.
     let clusters = vec![Vec::new(); 22];
     let cord = Cord { clusters };
-    let _ = cord.value();
+    assert_eq!(cord.value(), 0);
 }
 
 #[test]

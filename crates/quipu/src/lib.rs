@@ -190,9 +190,12 @@ impl Cord {
             for knot in cluster {
                 cluster_val += knot.value() as u64;
             }
-            total += cluster_val * multiplier;
+            // Use saturating arithmetic to prevent panic/wrap on overflow
+            let term = cluster_val.saturating_mul(multiplier);
+            total = total.saturating_add(term);
+
             if i < self.clusters.len() - 1 {
-                multiplier *= 10;
+                multiplier = multiplier.saturating_mul(10);
             }
         }
         total
