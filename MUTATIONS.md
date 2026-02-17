@@ -1146,3 +1146,31 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Linguistic Grazing. Agents act as biological erosion on semantic structures.
 - **Status**: experiments/polyglot-chimera
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### vascular-valley
+- **Parents**: experiments/erosion-sim + experiments/leaf-morphology
+- **Concept**: Hydraulic erosion simulation on a leaf-shaped domain.
+- **Novel trait**: Vascular Erosion. Water flows carve veins into the leaf structure.
+- **Status**: experiments/vascular-valley
+- **Evaluation**: Compiles. Verified.
+
+### typographic-turbulence
+- **Parents**: experiments/term-fluids + experiments/typo-rain
+- **Concept**: Interactive fluid simulation where typing injects velocity and particles into the flow.
+- **Novel trait**: Linguistic Fluid Dynamics. Text acts as a physical force in the medium.
+- **Status**: experiments/typographic-turbulence
+- **Evaluation**: Compiles. Verified.
+
+### resonant-glyphs
+- **Parents**: experiments/sound-waves + experiments/text-renderer
+- **Concept**: Text glyphs distorted by sine waves to visualize resonance.
+- **Novel trait**: Elastic Typography. Text behaves as a wave medium.
+- **Status**: experiments/resonant-glyphs
+- **Evaluation**: Compiles. Verified.
+
+### neuro-calligraphy
+- **Parents**: experiments/resonant-glyphs + experiments/spinal-rhythms
+- **Concept**: Typography that behaves like aquatic life. Font outlines become the skin of creatures driven by CPG neural networks.
+- **Novel trait**: Neural-Driven Typography. Letters writhe and swim with organic rhythms.
+- **Status**: experiments/neuro-calligraphy
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
