@@ -1050,3 +1050,15 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Semantic Labyrinth. Navigating a world made of words in non-Euclidean space.
 - **Status**: experiments/hyperbolic-library
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### hyper-botany
+- **Parents**: experiments/algo-botany + experiments/hyperbolic-library
+- **Concept**: Roots growing in hyperbolic space.
+- **Status**: Proposed but deferred in favor of chimera-roots.
+
+### chimera-roots
+- **Parents**: experiments/algo-botany + experiments/chimera-lang
+- **Concept**: Evolving root systems where each root tip is a ChimeraVM executing genetic code to navigate soil.
+- **Novel trait**: Evolving Heuristics. Roots learn to find water.
+- **Status**: experiments/chimera-roots
+- **Evaluation**: Compiles. Evolving roots confirmed.
