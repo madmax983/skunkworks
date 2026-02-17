@@ -250,6 +250,19 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 continue;
             }
 
+            // 1.05 BioMesh Signal Propagation (Hyperloop)
+            #[cfg(feature = "nova")]
+            if signal > 0 {
+                if let Some(node) = vm.biomesh.nodes.get(&(y, x)) {
+                    for (ny, nx) in &node.connections {
+                        if *ny < size && *nx < size {
+                            ctx.next_signals[*ny][*nx] =
+                                ctx.next_signals[*ny][*nx].saturating_add(signal);
+                        }
+                    }
+                }
+            }
+
             // 1.1 Check Overrides (Custom Operators)
             if let Some(&strand_idx) = vm.custom_operators.get(&c) {
                 if signal > 0 {
