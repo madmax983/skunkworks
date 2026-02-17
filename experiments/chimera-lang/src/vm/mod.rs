@@ -3065,7 +3065,9 @@ impl ChimeraVM {
             OpCode::Transposon => self.exec_transposon(),
 
             #[cfg(feature = "nova")]
-            OpCode::Resonate
+            OpCode::Horcrux
+            | OpCode::Rebirth
+            | OpCode::Resonate
             | OpCode::SonicClaim
             | OpCode::Dampen
             | OpCode::ListenFreq
