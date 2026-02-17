@@ -715,7 +715,7 @@ pub fn mutate_grammar(grammar: &Value, rate: f64) -> Value {
     grammar.clone()
 }
 
-fn mutate_cst(cst: &Value, rate: f64) -> Value {
+pub fn mutate_cst(cst: &Value, rate: f64) -> Value {
     let mut rng = rand::thread_rng();
     if !rng.gen_bool(rate) {
         return cst.clone();
@@ -750,7 +750,7 @@ fn mutate_cst(cst: &Value, rate: f64) -> Value {
     }
 }
 
-fn flatten_cst(cst: &Value) -> String {
+pub fn flatten_cst(cst: &Value) -> String {
     match cst {
         Value::Str(s) => s.clone(),
         Value::Junction(JunctionType::All, children) => {
@@ -764,7 +764,7 @@ fn flatten_cst(cst: &Value) -> String {
     }
 }
 
-fn compile_cst(vm: &mut ChimeraVM, cst: Value, handler_idx: usize) -> usize {
+pub fn compile_cst(vm: &mut ChimeraVM, cst: Value, handler_idx: usize) -> usize {
     let mut genes = Vec::new();
     compile_cst_recursive(&cst, &mut genes, handler_idx);
 
