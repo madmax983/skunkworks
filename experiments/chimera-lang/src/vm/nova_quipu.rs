@@ -30,6 +30,12 @@ pub struct Cord {
     pub clusters: Vec<Vec<Knot>>,
 }
 
+impl Default for Cord {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Cord {
     pub fn new() -> Self {
         Self {
@@ -103,6 +109,12 @@ impl Cord {
 pub struct QuipuState {
     pub cords: Vec<Cord>,
     pub active_cord: usize,
+}
+
+impl Default for QuipuState {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl QuipuState {

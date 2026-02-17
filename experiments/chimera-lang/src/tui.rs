@@ -2981,10 +2981,9 @@ where
                                     // 8 items
                                     app_state.alchemy_shelf_idx += 1;
                                 }
-                            } else {
-                                if app_state.alchemy_strand_idx + 1 < vm.dna.helix.strands.len() {
-                                    app_state.alchemy_strand_idx += 1;
-                                }
+                            } else if app_state.alchemy_strand_idx + 1 < vm.dna.helix.strands.len()
+                            {
+                                app_state.alchemy_strand_idx += 1;
                             }
                         }
                         ViewMode::Heatmap => {}
@@ -3047,10 +3046,10 @@ where
                         ViewMode::Egregore => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Bestiary => {
-                            if !vm.organelles.is_empty() {
-                                if app_state.selected_organelle_index + 1 < vm.organelles.len() {
-                                    app_state.selected_organelle_index += 1;
-                                }
+                            if !vm.organelles.is_empty()
+                                && app_state.selected_organelle_index + 1 < vm.organelles.len()
+                            {
+                                app_state.selected_organelle_index += 1;
                             }
                         }
                         #[cfg(feature = "biophysics")]
@@ -3224,10 +3223,8 @@ where
                                 if app_state.alchemy_shelf_idx > 0 {
                                     app_state.alchemy_shelf_idx -= 1;
                                 }
-                            } else {
-                                if app_state.alchemy_strand_idx > 0 {
-                                    app_state.alchemy_strand_idx -= 1;
-                                }
+                            } else if app_state.alchemy_strand_idx > 0 {
+                                app_state.alchemy_strand_idx -= 1;
                             }
                         }
                         ViewMode::Heatmap => {}
@@ -4228,9 +4225,7 @@ fn apply_glitch_fx(buffer: &mut ratatui::buffer::Buffer, intensity: f32) {
                         cell.set_char(chars[rng.gen_range(0..chars.len())]);
                     }
                     1 => {
-                        let fg = cell.fg;
-                        cell.fg = cell.bg;
-                        cell.bg = fg;
+                        std::mem::swap(&mut cell.fg, &mut cell.bg);
                     }
                     2 => {
                         cell.fg = Color::DarkGray;
@@ -4264,7 +4259,7 @@ fn render_signals(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
             // Background for Execution Trail
             if trail > 0 {
-                let intensity = trail as u8;
+                let intensity = trail;
                 // Fade from white (255) to dark blue
                 style = style.bg(Color::Rgb(0, 0, intensity.min(150)));
             }
@@ -4556,10 +4551,8 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             {
                 let biome = vm.biome_grid[y][x];
                 let (br, bg, bb) = biome.color();
-                if (br, bg, bb) != (0, 0, 0) {
-                    if style.bg.is_none() {
-                        style = style.bg(Color::Rgb(br, bg, bb));
-                    }
+                if (br, bg, bb) != (0, 0, 0) && style.bg.is_none() {
+                    style = style.bg(Color::Rgb(br, bg, bb));
                 }
             }
 
@@ -6222,12 +6215,10 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                             } else {
                                 char_rep = "←".to_string();
                             }
+                        } else if p.vy > 0.0 {
+                            char_rep = "↓".to_string();
                         } else {
-                            if p.vy > 0.0 {
-                                char_rep = "↓".to_string();
-                            } else {
-                                char_rep = "↑".to_string();
-                            }
+                            char_rep = "↑".to_string();
                         }
                     }
                 }
@@ -9449,12 +9440,10 @@ fn render_hydra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     } else {
                         ch = "↑".to_string();
                     }
+                } else if wind.1 > 0 {
+                    ch = "→".to_string();
                 } else {
-                    if wind.1 > 0 {
-                        ch = "→".to_string();
-                    } else {
-                        ch = "←".to_string();
-                    }
+                    ch = "←".to_string();
                 }
             }
 

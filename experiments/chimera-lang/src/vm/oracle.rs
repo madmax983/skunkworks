@@ -839,7 +839,9 @@ fn check_dynamic_predicates(
                                         && nx < crate::vm::GRID_SIZE as i64
                                     {
                                         let next = (ny as usize, nx as usize);
-                                        if !came_from.contains_key(&next) {
+                                        if let std::collections::hash_map::Entry::Vacant(e) =
+                                            came_from.entry(next)
+                                        {
                                             let val = &vm.grid[next.0][next.1];
                                             let traversable = match val {
                                                 Value::Int(0) => true,
@@ -847,7 +849,7 @@ fn check_dynamic_predicates(
                                             };
 
                                             if traversable {
-                                                came_from.insert(next, Some(current));
+                                                e.insert(Some(current));
                                                 queue.push_back(next);
                                             }
                                         }
@@ -1344,7 +1346,7 @@ fn check_dynamic_predicates(
                             let fact_name = Value::Str(op_name.clone());
                             let fact_val = Value::Str(op_name); // For now, Val is same as Name
 
-                            let mut current_subst = subst.clone();
+                            let current_subst = subst.clone();
                             if let Some(s1) = unify(arg_name, &fact_name, &current_subst) {
                                 if let Some(s2) = unify(arg_val, &fact_val, &s1) {
                                     solve(remaining_goals, s2, kb, vm, solutions, depth + 1);
@@ -1368,7 +1370,7 @@ fn check_dynamic_predicates(
                                 let op_name = gene.op.to_string();
                                 let fact_op = Value::Str(op_name);
 
-                                let mut current_subst = subst.clone();
+                                let current_subst = subst.clone();
                                 if let Some(s1) = unify(arg_strand, &fact_strand, &current_subst) {
                                     if let Some(s2) = unify(arg_op, &fact_op, &s1) {
                                         solve(remaining_goals, s2, kb, vm, solutions, depth + 1);

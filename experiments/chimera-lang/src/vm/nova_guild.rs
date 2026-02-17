@@ -250,7 +250,7 @@ pub fn exec_charter(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             match action.as_str() {
                 "Tax" => {
                     if let Value::Int(rate) = arg_val {
-                        if rate >= 0 && rate <= 100 {
+                        if (0..=100).contains(&rate) {
                             guild.policies.insert("Tax".to_string(), rate);
                             msg = Some(format!("CHARTER: Set tax rate to {}%", rate));
                         } else {

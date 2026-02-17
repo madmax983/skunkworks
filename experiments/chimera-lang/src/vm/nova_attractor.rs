@@ -18,6 +18,12 @@ pub struct AttractorState {
     pub history: VecDeque<(f64, f64, f64)>,
 }
 
+impl Default for AttractorState {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl AttractorState {
     pub fn new() -> Self {
         Self {

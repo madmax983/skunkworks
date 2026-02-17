@@ -295,15 +295,13 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
                     op: OpCode::Push,
                     args: vec![Nucleotide::String(content.to_string())],
                 }])
+            } else if let Some(op) = map_op(s) {
+                Ok(vec![Gene { op, args: vec![] }])
             } else {
-                if let Some(op) = map_op(s) {
-                    Ok(vec![Gene { op, args: vec![] }])
-                } else {
-                    Ok(vec![Gene {
-                        op: OpCode::Push,
-                        args: vec![Nucleotide::String(s.clone())],
-                    }])
-                }
+                Ok(vec![Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::String(s.clone())],
+                }])
             }
         }
         SExpr::List(items) => {

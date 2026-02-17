@@ -29,6 +29,12 @@ pub struct ArenaState {
 }
 
 #[cfg(feature = "nova")]
+impl Default for ArenaState {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ArenaState {
     pub fn new() -> Self {
         Self {

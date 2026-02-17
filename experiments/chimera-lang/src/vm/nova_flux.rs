@@ -12,10 +12,8 @@ pub fn process_flux(vm: &mut ChimeraVM) {
             if entropy > 80 {
                 let mut rng = rand::thread_rng();
                 // 1% chance to spawn Wisp if high entropy
-                if rng.gen_bool(0.01) {
-                    if vm.organelles.len() < super::MAX_ORGANELLES {
-                        to_spawn.push((y, x));
-                    }
+                if rng.gen_bool(0.01) && vm.organelles.len() < super::MAX_ORGANELLES {
+                    to_spawn.push((y, x));
                 }
             }
         }
@@ -116,7 +114,7 @@ pub fn exec_chaos(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 }
                 amount if amount > 0 => {
                     // Legacy entropy injection
-                    let amt = amount.min(100) as i64;
+                    let amt = amount.min(100);
 
                     // Increase Havoc rate (0.0 to 1.0)
                     vm.havoc.rate = (vm.havoc.rate + (amt as f64 / 1000.0)).clamp(0.0, 1.0);

@@ -1,7 +1,7 @@
 #![cfg(feature = "nova")]
 
 use crate::ast::Nucleotide;
-use crate::vm::{ChimeraVM, Value, GRID_SIZE};
+use crate::vm::{ChimeraVM, Value};
 use std::collections::{HashMap, VecDeque};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -24,6 +24,12 @@ impl BioMeshNode {
 #[derive(Debug, Clone)]
 pub struct BioMeshState {
     pub nodes: HashMap<(usize, usize), BioMeshNode>,
+}
+
+impl Default for BioMeshState {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl BioMeshState {
@@ -163,8 +169,8 @@ pub fn exec_mesh_send(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     }
 
                     for &next in &node.connections {
-                        if !visited.contains_key(&next) {
-                            visited.insert(next, curr);
+                        if let std::collections::hash_map::Entry::Vacant(e) = visited.entry(next) {
+                            e.insert(curr);
                             queue.push_back(next);
                         }
                     }

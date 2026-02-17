@@ -73,7 +73,7 @@ pub fn receive(vm: &mut ChimeraVM) {
                         let path = entry.path();
 
                         // Only process .json files. Ignore .lock files to prevent race conditions.
-                        if path.extension().map_or(false, |ext| ext == "json") {
+                        if path.extension().is_some_and(|ext| ext == "json") {
                             // Attempt to lock by renaming
                             // Note: with_extension on "msg.json" -> "msg.json.lock" (replaces json with json.lock? No)
                             // Path::new("msg.json").with_extension("json.lock") -> "msg.json.lock" (Replaces "json")

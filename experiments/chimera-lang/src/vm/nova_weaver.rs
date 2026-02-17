@@ -74,11 +74,9 @@ pub fn exec_weave_op(
                                             new_genes.push(strand_a.genes[ptr_a].clone());
                                             ptr_a += 1;
                                         }
-                                    } else {
-                                        if ptr_b < strand_b.genes.len() {
-                                            new_genes.push(strand_b.genes[ptr_b].clone());
-                                            ptr_b += 1;
-                                        }
+                                    } else if ptr_b < strand_b.genes.len() {
+                                        new_genes.push(strand_b.genes[ptr_b].clone());
+                                        ptr_b += 1;
                                     }
                                 }
                                 '0' => {

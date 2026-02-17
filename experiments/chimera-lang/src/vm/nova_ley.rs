@@ -19,6 +19,12 @@ pub struct LeyNetwork {
     pub connections: Vec<Vec<usize>>,
 }
 
+impl Default for LeyNetwork {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl LeyNetwork {
     pub fn new() -> Self {
         Self {
@@ -61,11 +67,13 @@ impl LeyNetwork {
     }
 
     pub fn connect(&mut self, idx1: usize, idx2: usize) {
-        if idx1 < self.nodes.len() && idx2 < self.nodes.len() && idx1 != idx2 {
-            if !self.connections[idx1].contains(&idx2) {
-                self.connections[idx1].push(idx2);
-                self.connections[idx2].push(idx1);
-            }
+        if idx1 < self.nodes.len()
+            && idx2 < self.nodes.len()
+            && idx1 != idx2
+            && !self.connections[idx1].contains(&idx2)
+        {
+            self.connections[idx1].push(idx2);
+            self.connections[idx2].push(idx1);
         }
     }
 
@@ -83,11 +91,7 @@ impl LeyNetwork {
             }
         }
 
-        if let Some(idx) = nearest_idx {
-            Some((idx, min_dist))
-        } else {
-            None
-        }
+        nearest_idx.map(|idx| (idx, min_dist))
     }
 }
 

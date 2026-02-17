@@ -90,7 +90,7 @@ pub fn process_savant(vm: &mut ChimeraVM, organelle: &mut Organelle) {
 }
 
 #[cfg(feature = "oracle")]
-fn inject_sensors(vm: &mut ChimeraVM, organelle: &mut Organelle) -> Vec<Value> {
+fn inject_sensors(vm: &mut ChimeraVM, _organelle: &mut Organelle) -> Vec<Value> {
     let mut added = Vec::new();
 
     // neighbor(Dir, Val)
@@ -297,12 +297,9 @@ fn execute_savant_action(vm: &mut ChimeraVM, organelle: &mut Organelle, action: 
             }
         }
     } else if let Value::Str(s) = action {
-        match s.as_str() {
-            "die" => {
-                organelle.halted = true;
-                vm.output.push("SAVANT: Accepted death".to_string());
-            }
-            _ => {}
+        if s.as_str() == "die" {
+            organelle.halted = true;
+            vm.output.push("SAVANT: Accepted death".to_string());
         }
     }
 }
