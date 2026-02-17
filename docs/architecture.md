@@ -1068,3 +1068,82 @@ classDiagram
     Grid ..> Rayon : Uses for Update
     note for Grid "Topple Rule: Load >= 4 -> Distribute to neighbors"
 ```
+
+## Experiment: Thermo-Defense (ADR 037)
+
+**Thermo-Defense** simulates emergent defense strategies using swarm intelligence and heat diffusion.
+
+### Swarm Architecture
+
+The simulation uses a hybrid parallel architecture to support thousands of agents.
+
+```mermaid
+classDiagram
+    direction LR
+    class World {
+        +Grid grid
+        +Vec~Agent~ agents
+        +update()
+    }
+
+    class Grid {
+        +Vec~Cell~ cells
+        +Vec~Cell~ next_cells
+        +update_diffusion()
+    }
+
+    class Cell {
+        +f32 heat
+        +f32 pheromone_defense
+        +f32 pheromone_attack
+        +Material material
+    }
+
+    class Agent {
+        +AgentType kind
+        +Vec2 position
+        +update(grid, rng) Option~GridAction~
+    }
+
+    class AgentType {
+        <<Enum>>
+        +Termite
+        +Locust
+    }
+
+    World *-- Grid : Owns
+    World *-- Agent : Owns
+    Grid *-- Cell : Contains (Double Buffer)
+    Agent ..> AgentType : Is-A
+```
+
+### Simulation Loop
+
+To ensure determinism and performance, the simulation separates diffusion (Parallel), decision (Parallel), and mutation (Sequential).
+
+```mermaid
+sequenceDiagram
+    participant World
+    participant Grid
+    participant Agents
+    participant Actions
+
+    Note over World: Update Step
+
+    World->>Grid: update_diffusion()
+    Grid->>Grid: Parallel Iter (Rayon)
+    Grid-->>Grid: Swap Buffers
+
+    World->>Agents: par_iter_mut()
+    loop Parallel Decision
+        Agents->>Grid: Read Cell (x,y)
+        Agents->>Agents: Compute Logic
+        Agents-->>Actions: Collect Option<Action>
+    end
+
+    World->>Actions: Iterate Results
+    loop Sequential Resolution
+        Actions->>Grid: Apply Mutation (Build/Destroy)
+        Grid-->>Grid: Update Heat/Pheromone
+    end
+```
