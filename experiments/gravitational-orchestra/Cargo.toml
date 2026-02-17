@@ -1,0 +1,9 @@
+[package]
+name = "gravitational-orchestra"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+cpal = "0.15"
+rand = "0.8"
