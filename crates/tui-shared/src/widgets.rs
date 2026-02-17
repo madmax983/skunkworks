@@ -1,3 +1,15 @@
+//! # Reusable TUI Widgets
+//!
+//! This module provides a collection of reusable widgets for building consistent
+//! Terminal User Interfaces with `ratatui`.
+//!
+//! ## Components
+//!
+//! - [`LogList`]: A list widget that automatically color-codes log messages based on severity
+//!   (Error, Warning, Success, Info).
+//! - [`Button`]: A highly configurable button widget with support for hover/click states,
+//!   styles, and icons.
+
 use ratatui::{
     buffer::Buffer,
     layout::Rect,
@@ -8,8 +20,32 @@ use ratatui::{
 
 /// A widget that displays a list of log messages with automatic color coding.
 ///
-/// Use `LogList::new` to create a new instance, passing a vector of strings.
-/// Messages containing "Error" will be red, "Warning" yellow, and "Note" blue.
+/// Use [`LogList::new`] to create a new instance, passing a vector of strings.
+/// Messages containing specific keywords will be styled automatically:
+/// - "Error": Red text with ❌ prefix
+/// - "Warning": Yellow text with ⚠️ prefix
+/// - "Success": Green text with ✅ prefix
+/// - "Note" or "Info": Blue text with ℹ️ prefix
+///
+/// # Example
+///
+/// ```
+/// use tui_shared::widgets::LogList;
+/// use ratatui::widgets::Widget;
+/// use ratatui::layout::Rect;
+/// use ratatui::buffer::Buffer;
+///
+/// let logs = vec![
+///     "Error: Connection failed".to_string(),
+///     "Success: Data saved".to_string(),
+/// ];
+/// let widget = LogList::new(logs).with_title("System Logs");
+///
+/// // Render to buffer (usually done by Terminal::draw)
+/// let area = Rect::new(0, 0, 20, 10);
+/// let mut buffer = Buffer::empty(area);
+/// widget.render(area, &mut buffer);
+/// ```
 pub struct LogList<'a> {
     items: Vec<String>,
     block: Option<Block<'a>>,
@@ -22,12 +58,32 @@ impl<'a> LogList<'a> {
     }
 
     /// Sets the block for the widget (e.g., borders and title).
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use tui_shared::widgets::LogList;
+    /// use ratatui::widgets::{Block, Borders};
+    ///
+    /// let widget = LogList::new(vec![]).block(Block::default().borders(Borders::ALL));
+    /// ```
     pub fn block(mut self, block: Block<'a>) -> Self {
         self.block = Some(block);
         self
     }
 
-    /// Helper to set a block with a title and borders.
+    /// Helper to set a block with a title and all borders.
+    ///
+    /// This is a convenience method equivalent to creating a block with `Borders::ALL`
+    /// and the given title.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use tui_shared::widgets::LogList;
+    ///
+    /// let widget = LogList::new(vec![]).with_title("Events");
+    /// ```
     pub fn with_title(mut self, title: impl Into<String>) -> Self {
         self.block = Some(Block::default().borders(Borders::ALL).title(title.into()));
         self
@@ -69,27 +125,57 @@ impl<'a> Widget for LogList<'a> {
     }
 }
 
+/// Represents the interaction state of a [`Button`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum ButtonState {
+    /// The default state.
     #[default]
     Normal,
+    /// The button is being hovered over (e.g., by a mouse or selection).
     Hovered,
+    /// The button is currently being pressed.
     Clicked,
+    /// The button is disabled and cannot be interacted with.
     Disabled,
 }
 
+/// Defines the visual style variant of a [`Button`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum ButtonStyle {
+    /// The primary action button (Blue background).
     #[default]
     Primary,
+    /// A secondary action button (Gray/White).
     Secondary,
+    /// A ghost button with only an outline.
     Outline,
+    /// A destructive action button (Red).
     Danger,
 }
 
-/// A reusable Button component for Arthropod UI.
+/// A reusable Button component for TUI applications.
 ///
-/// Supports hover, click, and disabled states with visual feedback.
+/// The button supports different [styles](ButtonStyle) and [states](ButtonState),
+/// automatically handling the visual changes for hover and click effects.
+///
+/// # Example
+///
+/// ```
+/// use tui_shared::widgets::{Button, ButtonStyle, ButtonState};
+/// use ratatui::widgets::Widget;
+/// use ratatui::layout::Rect;
+/// use ratatui::buffer::Buffer;
+///
+/// let button = Button::new("Submit")
+///     .style_variant(ButtonStyle::Primary)
+///     .state(ButtonState::Hovered)
+///     .icon("🚀");
+///
+/// // Render
+/// let area = Rect::new(0, 0, 10, 3);
+/// let mut buffer = Buffer::empty(area);
+/// button.render(area, &mut buffer);
+/// ```
 pub struct Button<'a> {
     label: String,
     state: ButtonState,
@@ -99,6 +185,9 @@ pub struct Button<'a> {
 }
 
 impl<'a> Button<'a> {
+    /// Creates a new `Button` with the given label.
+    ///
+    /// The button defaults to [`ButtonStyle::Primary`] and [`ButtonState::Normal`].
     pub fn new(label: impl Into<String>) -> Self {
         Self {
             label: label.into(),
@@ -109,6 +198,16 @@ impl<'a> Button<'a> {
         }
     }
 
+    /// Sets the hovered state of the button.
+    ///
+    /// If the button is [`ButtonState::Disabled`], this call is ignored.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use tui_shared::widgets::Button;
+    /// let btn = Button::new("Hover Me").hovered(true);
+    /// ```
     pub fn hovered(mut self, hovered: bool) -> Self {
         if self.state != ButtonState::Disabled {
             self.state = if hovered {
@@ -120,6 +219,9 @@ impl<'a> Button<'a> {
         self
     }
 
+    /// Sets the clicked state of the button.
+    ///
+    /// If the button is [`ButtonState::Disabled`], this call is ignored.
     pub fn clicked(mut self, clicked: bool) -> Self {
         if self.state != ButtonState::Disabled {
             self.state = if clicked {
@@ -131,21 +233,37 @@ impl<'a> Button<'a> {
         self
     }
 
+    /// Explicitly sets the button's state.
     pub fn state(mut self, state: ButtonState) -> Self {
         self.state = state;
         self
     }
 
+    /// Sets the visual style variant.
     pub fn style_variant(mut self, variant: ButtonStyle) -> Self {
         self.style_variant = variant;
         self
     }
 
+    /// Adds an icon to the left of the label.
+    ///
+    /// The icon is typically a short string or emoji.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use tui_shared::widgets::Button;
+    /// let btn = Button::new("Delete").icon("🗑️");
+    /// ```
     pub fn icon(mut self, icon: impl Into<String>) -> Self {
         self.icon = Some(icon.into());
         self
     }
 
+    /// Sets a custom block for the button.
+    ///
+    /// By default, the button renders with a border appropriate for its style.
+    /// Setting a custom block overrides the default border.
     pub fn block(mut self, block: Block<'a>) -> Self {
         self.block = Some(block);
         self
