@@ -328,4 +328,43 @@ mod tests {
         vm.step(); // push 99
         assert_eq!(vm.stack.last(), Some(&Value::Int(99)));
     }
+
+    #[test]
+    #[cfg(feature = "nova")]
+    fn test_railgun() {
+        // [ push(1) push(0) railgun() ]
+        // dy=1, dx=0 -> Fire South
+        let genes = vec![
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)], // dy
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)], // dx
+            },
+            Gene {
+                op: OpCode::Railgun,
+                args: vec![],
+            },
+        ];
+        let mut vm = make_vm(genes);
+        vm.context_loc = (8, 8);
+        vm.voltage_grid[8][8] = 50.0; // 50V -> Power 5
+        vm.resistance_grid[8][8] = -1.0; // Mark as Battery to prevent decay
+
+        vm.step(); // push 1
+        vm.step(); // push 0
+        vm.step(); // railgun
+
+        // Check projectile
+        assert_eq!(vm.projectiles.len(), 1);
+        let p = &vm.projectiles[0];
+        assert_eq!(p.power, 5); // 50.0 / 10.0
+        assert_eq!(p.vx, 0.0);
+        assert_eq!(p.vy, 1.0);
+
+        // Check discharge
+        assert_eq!(vm.voltage_grid[8][8], 0.0);
+    }
 }

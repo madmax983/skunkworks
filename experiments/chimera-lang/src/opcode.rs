@@ -400,6 +400,12 @@ pub enum OpCode {
     #[cfg(all(feature = "elektra", feature = "nova"))]
     Galvanize,
 
+    /// **[Elektra + Nova]** Fires a projectile with power derived from local voltage.
+    ///
+    /// **Stack:** `[ ..., dy, dx ] -> [ ... ]`
+    #[cfg(all(feature = "elektra", feature = "nova"))]
+    Railgun,
+
     /// **[Elektra]** Creates a Diode (One-way conductor) on the grid.
     ///
     /// **Stack:** `[ ..., direction, y, x ] -> [ ... ]`
