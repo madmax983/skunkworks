@@ -1062,10 +1062,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Evolving Heuristics. Roots learn to find water.
 - **Status**: experiments/chimera-roots
 - **Evaluation**: Compiles. Evolving roots confirmed.
+
 ### genetic-luthier
-- **Parent A**: experiments/string-theory
-- **Parent B**: experiments/chimera-lang
+- **Parents**: experiments/string-theory + experiments/chimera-lang
 - **Concept**: ChimeraVM agents evolving the physical parameters (tension, density, length) of the code-strings to maximize harmonic consonance.
-- **Expected traits**: Self-tuning instrument. The code learns to sing.
-- **Rationale**: Optimization of physical models via genetic algorithms.
-- **Proposed by**: Genesis (The Acoustician)
+- **Novel trait**: Self-tuning instrument. The code learns to sing.
+- **Status**: experiments/genetic-luthier
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
