@@ -129,7 +129,7 @@ members = [
     "experiments/chimera-defense", "experiments/turing-terra", "experiments/chimera-terra", "experiments/stardust-compiler",
     "experiments/chimera-stardust", "experiments/digital-decay",
     "experiments/code-acoustics", "experiments/soroban-market", "experiments/hanging-gardens", "experiments/celestial-cipher", "experiments/chimera-specter", "experiments/code-concerto", "experiments/grimms-code",
-    "experiments/soroban-specter", "experiments/miller-reaction", "experiments/recursion-garden", "experiments/rossler-market", "experiments/hanging-abacus", "experiments/process-auction", "experiments/thermo-market", "experiments/bezier-landscapes",
+    "experiments/soroban-specter", "experiments/miller-reaction", "experiments/recursion-garden", "experiments/rossler-market", "experiments/hanging-abacus", "experiments/process-auction", "experiments/thermo-market",
     "experiments/spqr-market", "experiments/celestial-rhythms",
     "experiments/biochemical-soundscapes", "experiments/sys-dance", "experiments/hydrothermal-locks",
     "experiments/hydro-flock", "experiments/wasm-runes",
@@ -137,7 +137,7 @@ members = [
     "experiments/chimera-runes", "experiments/nile-scheduler", "experiments/myco-reaper", "experiments/mechanical-integrator", "experiments/syntax-fugue", "experiments/crystal-conquest", "experiments/sandpile-scheduler", "experiments/codex-vulgaris",
     "experiments/mechanical-market", "experiments/lock-step", "experiments/hyperbolic-rogue", "experiments/chaos-chandelier", "experiments/malloc-market",
     "experiments/neuro-beats", "experiments/hohmann-delivery",
-    "experiments/hyperbolic-library",
+    "experiments/hyperbolic-library", "experiments/data-strider",
 ]
 resolver = "2"
 
