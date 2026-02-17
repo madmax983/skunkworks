@@ -122,20 +122,18 @@ impl Agent {
                 new_material = Some(Material::Wall);
                 self.carrying = false;
             }
-        } else {
-            if material == Material::Wall {
-                let should_pickup = if heat > 80.0 {
-                    rng.gen_bool(0.1)
-                } else if neighbors <= 1 {
-                    rng.gen_bool(0.5)
-                } else {
-                    rng.gen_bool(0.001)
-                };
+        } else if material == Material::Wall {
+            let should_pickup = if heat > 80.0 {
+                rng.gen_bool(0.1)
+            } else if neighbors <= 1 {
+                rng.gen_bool(0.5)
+            } else {
+                rng.gen_bool(0.001)
+            };
 
-                if should_pickup {
-                    new_material = Some(Material::Empty);
-                    self.carrying = true;
-                }
+            if should_pickup {
+                new_material = Some(Material::Empty);
+                self.carrying = true;
             }
         }
 
@@ -192,10 +190,8 @@ impl Agent {
 
         if material == Material::Server {
             heat_delta = 10.0;
-        } else if material == Material::Wall {
-            if rng.gen_bool(0.1) {
-                new_material = Some(Material::Empty);
-            }
+        } else if material == Material::Wall && rng.gen_bool(0.1) {
+            new_material = Some(Material::Empty);
         }
 
         Some(GridAction::UpdateCell {

@@ -36,6 +36,12 @@ pub struct Grid {
     pub next_cells: Vec<Cell>, // Double buffering for parallel updates
 }
 
+impl Default for Grid {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Grid {
     pub fn new() -> Self {
         let size = WIDTH * HEIGHT;
@@ -54,46 +60,42 @@ impl Grid {
     }
 
     pub fn update_diffusion(&mut self) {
-        // Parallel diffusion using chunks or just parallel iterator if we can structure it right
-        // For simplicity with double buffering, we can read from `cells` and write to `next_cells`.
-
+        // Parallel diffusion using chunks (rows) to avoid div/mod per cell and optimize access
         let cells = &self.cells;
         let next_cells = &mut self.next_cells;
+        let width = WIDTH;
+        let height = HEIGHT;
 
-        // Use rayon to iterate over next_cells in parallel
+        // Use rayon to iterate over rows in parallel
         next_cells
-            .par_iter_mut()
+            .par_chunks_mut(width)
             .enumerate()
-            .for_each(|(i, next_cell)| {
-                let (x, y) = Self::get_coords(i);
+            .for_each(|(y, row)| {
+                for (x, next_cell) in row.iter_mut().enumerate() {
+                    let i = y * width + x;
 
-                // Get current state from the read-only buffer
-                let current = &cells[i];
+                    // Get current state from the read-only buffer
+                    let current = &cells[i];
 
-                // Default behavior: copy current state
-                *next_cell = *current;
+                    // Default behavior: copy current state
+                    *next_cell = *current;
 
-                // Skip if it's a wall (blocks diffusion)
-                if current.material == Material::Wall {
-                    return;
-                }
+                    // Skip if it's a wall (blocks diffusion)
+                    if current.material == Material::Wall {
+                        continue;
+                    }
 
-                let mut heat_sum = 0.0;
-                let mut defense_sum = 0.0;
-                let mut attack_sum = 0.0;
-                let mut count = 0.0;
+                    let mut heat_sum = 0.0;
+                    let mut defense_sum = 0.0;
+                    let mut attack_sum = 0.0;
+                    let mut count = 0.0;
 
-                // Check 4 neighbors
-                let neighbors = [
-                    (x as isize - 1, y as isize),
-                    (x as isize + 1, y as isize),
-                    (x as isize, y as isize - 1),
-                    (x as isize, y as isize + 1),
-                ];
+                    // Neighbors logic without div/mod
+                    // We directly calculate indices based on x and y
 
-                for (nx, ny) in neighbors {
-                    if nx >= 0 && nx < WIDTH as isize && ny >= 0 && ny < HEIGHT as isize {
-                        let idx = Self::get_index(nx as usize, ny as usize);
+                    // Left
+                    if x > 0 {
+                        let idx = i - 1;
                         let neighbor = &cells[idx];
                         if neighbor.material != Material::Wall {
                             heat_sum += neighbor.heat;
@@ -102,38 +104,74 @@ impl Grid {
                             count += 1.0;
                         }
                     }
-                }
 
-                // Diffusion Parameters
-                let diffusion_rate = 0.1;
-                let evaporation_rate = 0.01;
+                    // Right
+                    if x < width - 1 {
+                        let idx = i + 1;
+                        let neighbor = &cells[idx];
+                        if neighbor.material != Material::Wall {
+                            heat_sum += neighbor.heat;
+                            defense_sum += neighbor.pheromone_defense;
+                            attack_sum += neighbor.pheromone_attack;
+                            count += 1.0;
+                        }
+                    }
 
-                if count > 0.0 {
-                    let avg_heat = heat_sum / count;
-                    let avg_defense = defense_sum / count;
-                    let avg_attack = attack_sum / count;
+                    // Up
+                    if y > 0 {
+                        let idx = i - width;
+                        let neighbor = &cells[idx];
+                        if neighbor.material != Material::Wall {
+                            heat_sum += neighbor.heat;
+                            defense_sum += neighbor.pheromone_defense;
+                            attack_sum += neighbor.pheromone_attack;
+                            count += 1.0;
+                        }
+                    }
 
-                    next_cell.heat =
-                        current.heat * (1.0 - diffusion_rate) + avg_heat * diffusion_rate;
-                    next_cell.pheromone_defense = (current.pheromone_defense
-                        * (1.0 - diffusion_rate)
-                        + avg_defense * diffusion_rate)
-                        * (1.0 - evaporation_rate);
-                    next_cell.pheromone_attack = (current.pheromone_attack
-                        * (1.0 - diffusion_rate)
-                        + avg_attack * diffusion_rate)
-                        * (1.0 - evaporation_rate);
-                } else {
-                    next_cell.heat = current.heat;
-                    next_cell.pheromone_defense =
-                        current.pheromone_defense * (1.0 - evaporation_rate);
-                    next_cell.pheromone_attack =
-                        current.pheromone_attack * (1.0 - evaporation_rate);
-                }
+                    // Down
+                    if y < height - 1 {
+                        let idx = i + width;
+                        let neighbor = &cells[idx];
+                        if neighbor.material != Material::Wall {
+                            heat_sum += neighbor.heat;
+                            defense_sum += neighbor.pheromone_defense;
+                            attack_sum += neighbor.pheromone_attack;
+                            count += 1.0;
+                        }
+                    }
 
-                // If server, generate heat
-                if next_cell.material == Material::Server {
-                    next_cell.heat = (next_cell.heat + 5.0).min(1000.0);
+                    // Diffusion Parameters
+                    let diffusion_rate = 0.1;
+                    let evaporation_rate = 0.01;
+
+                    if count > 0.0 {
+                        let avg_heat = heat_sum / count;
+                        let avg_defense = defense_sum / count;
+                        let avg_attack = attack_sum / count;
+
+                        next_cell.heat =
+                            current.heat * (1.0 - diffusion_rate) + avg_heat * diffusion_rate;
+                        next_cell.pheromone_defense = (current.pheromone_defense
+                            * (1.0 - diffusion_rate)
+                            + avg_defense * diffusion_rate)
+                            * (1.0 - evaporation_rate);
+                        next_cell.pheromone_attack = (current.pheromone_attack
+                            * (1.0 - diffusion_rate)
+                            + avg_attack * diffusion_rate)
+                            * (1.0 - evaporation_rate);
+                    } else {
+                        next_cell.heat = current.heat;
+                        next_cell.pheromone_defense =
+                            current.pheromone_defense * (1.0 - evaporation_rate);
+                        next_cell.pheromone_attack =
+                            current.pheromone_attack * (1.0 - evaporation_rate);
+                    }
+
+                    // If server, generate heat
+                    if next_cell.material == Material::Server {
+                        next_cell.heat = (next_cell.heat + 5.0).min(1000.0);
+                    }
                 }
             });
 
