@@ -530,4 +530,9 @@
 - **Status:** Compiles. Implemented by The Splice Surgeon. Tower Defense where heat diffusion occurs on an aperiodic 3D graph.
 - **Note:** Hybrid of experiments/quasicrystal-dungeon + experiments/thermo-defense.
 
+### [Concentration Level: FRESH] - Location: experiments/stego-attack
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The image is dissolving. 20,000 pixels are taking flight. The hidden command is executing.
+- **Note**: Recombination successful. Stego Cartridge x Locust DDoS.
+
 - **Genesis**: Crystallized the Aperiodic Oubliette. The 5-fold symmetry now echoes with the footsteps of mathematical monsters. Beware the Hub nodes; their connectivity hides Treasure, but also the Crystal Guardian. (Active in `experiments/quasicrystal-dungeon`)

@@ -1082,7 +1082,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Simulates a DDoS attack using swarm intelligence mechanics where agents (packets) reduce `server_health`.
 - **Novel trait**: Visualizing network attacks as biological swarms.
 - **Status**: experiments/locust-ddos
-- **Evaluation**: Compiles.
+- **Evaluation**: Compiles. Pheromone grid active. Agents successfully attacking server.
 
 ### quasicrystal-dungeon
 - **Parents**: experiments/aperiodic-citadel + experiments/dungeon-crawler
@@ -1117,7 +1117,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Fantasy console where stack-based bytecode is steganographically embedded in PNG images.
 - **Novel trait**: Images as executable cartridges.
 - **Status**: experiments/stego-cartridge
-- **Evaluation**: Compiles.
+- **Evaluation**: Compiles. VM and Assembler operational. Demo cartridge `noise.png` packed. Verified.
 
 ### slime-trash
 - **Parents**: experiments/bio-transit + experiments/garbage-collector
@@ -1132,3 +1132,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Non-Euclidean heat diffusion.
 - **Status**: experiments/crystal-defense
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### stego-attack
+- **Parents**: experiments/stego-cartridge + experiments/locust-ddos
+- **Concept**: A DDoS simulation where the attack parameters are steganographically hidden in an image. The image dissolves into a swarm of attacking agents.
+- **Novel trait**: Steganographic Command & Control. The medium destroys itself to execute the command.
+- **Status**: experiments/stego-attack
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Demo active.
