@@ -1,9 +1,9 @@
-use macroquad::prelude::*;
-use crate::phonology::{TerrainPoint, char_to_terrain, terrain_to_char};
 use crate::erosion::{hydraulic_erosion, thermal_weathering};
+use crate::phonology::{char_to_terrain, terrain_to_char, TerrainPoint};
+use macroquad::prelude::*;
 
-mod phonology;
 mod erosion;
+mod phonology;
 
 const TERRAIN_SCALE_X: f32 = 20.0;
 const TERRAIN_SCALE_Y: f32 = 150.0;
@@ -63,8 +63,8 @@ async fn main() {
         // Reconstruction
         // We only reconstruct every few frames to avoid flickering text
         if get_frame_time() > 0.0 {
-             // Reconstruct logic
-             last_reconstruction = reconstruct_text(&terrain);
+            // Reconstruct logic
+            last_reconstruction = reconstruct_text(&terrain);
         }
 
         // --- Drawing ---
@@ -81,7 +81,8 @@ async fn main() {
 
         // Draw Text Labels on Peaks
         for (i, point) in terrain.iter().enumerate() {
-            if point.height > 0.2 { // Show char if significant
+            if point.height > 0.2 {
+                // Show char if significant
                 let c = terrain_to_char(point);
                 if c != ' ' {
                     let x = i as f32 * TERRAIN_SCALE_X + 50.0;
@@ -92,9 +93,27 @@ async fn main() {
         }
 
         // UI
-        draw_text("Geo-Linguistics: The Geology of Language", 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Input: {}", input_text), 20.0, 60.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("Current: {}", last_reconstruction), 20.0, 90.0, 20.0, GOLD);
+        draw_text(
+            "Geo-Linguistics: The Geology of Language",
+            20.0,
+            30.0,
+            30.0,
+            WHITE,
+        );
+        draw_text(
+            &format!("Input: {}", input_text),
+            20.0,
+            60.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            &format!("Current: {}", last_reconstruction),
+            20.0,
+            90.0,
+            20.0,
+            GOLD,
+        );
 
         draw_text("Controls:", 20.0, screen_height() - 100.0, 20.0, GRAY);
         draw_text("Type to set word | Space: Toggle Erosion | E: Hold to Erode | S: Save Stratum | R: Reset", 20.0, screen_height() - 70.0, 20.0, GRAY);
@@ -108,7 +127,10 @@ fn text_to_terrain(text: &str) -> Vec<TerrainPoint> {
 
     // Padding
     for _ in 0..5 {
-        terrain.push(TerrainPoint { height: 0.0, hardness: 0.0 });
+        terrain.push(TerrainPoint {
+            height: 0.0,
+            hardness: 0.0,
+        });
     }
 
     for c in text.chars() {
@@ -121,7 +143,7 @@ fn text_to_terrain(text: &str) -> Vec<TerrainPoint> {
         // Left shoulder
         terrain.push(TerrainPoint {
             height: center.height * 0.5,
-            hardness: center.hardness * 0.8
+            hardness: center.hardness * 0.8,
         });
 
         // Center
@@ -130,16 +152,22 @@ fn text_to_terrain(text: &str) -> Vec<TerrainPoint> {
         // Right shoulder
         terrain.push(TerrainPoint {
             height: center.height * 0.5,
-            hardness: center.hardness * 0.8
+            hardness: center.hardness * 0.8,
         });
 
         // Gap
-        terrain.push(TerrainPoint { height: 0.1, hardness: 0.1 });
+        terrain.push(TerrainPoint {
+            height: 0.1,
+            hardness: 0.1,
+        });
     }
 
     // Padding
     for _ in 0..5 {
-        terrain.push(TerrainPoint { height: 0.0, hardness: 0.0 });
+        terrain.push(TerrainPoint {
+            height: 0.0,
+            hardness: 0.0,
+        });
     }
 
     terrain
@@ -157,7 +185,7 @@ fn reconstruct_text(terrain: &Vec<TerrainPoint>) -> String {
         // Left, Center, Right, Gap.
         // So checking index i+1 (Center) is a good approximation if we stride by 4
 
-        let point = &terrain[i+1];
+        let point = &terrain[i + 1];
         let c = terrain_to_char(point);
         if c != ' ' {
             s.push(c);
@@ -175,11 +203,18 @@ fn draw_terrain(terrain: &Vec<TerrainPoint>, base_y: f32, color: Color) {
         let y1 = base_y - terrain[i].height * TERRAIN_SCALE_Y;
 
         let x2 = (i + 1) as f32 * TERRAIN_SCALE_X + 50.0;
-        let y2 = base_y - terrain[i+1].height * TERRAIN_SCALE_Y;
+        let y2 = base_y - terrain[i + 1].height * TERRAIN_SCALE_Y;
 
         draw_line(x1, y1, x2, y2, 2.0, color);
 
         // Fill below?
-        draw_line(x1, y1, x1, base_y, 1.0, Color::new(color.r, color.g, color.b, 0.1));
+        draw_line(
+            x1,
+            y1,
+            x1,
+            base_y,
+            1.0,
+            Color::new(color.r, color.g, color.b, 0.1),
+        );
     }
 }

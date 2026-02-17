@@ -48,11 +48,8 @@ impl LorenzState {
             self.z + k2z * dt * 0.5,
         );
 
-        let (k4x, k4y, k4z) = self.derivatives(
-            self.x + k3x * dt,
-            self.y + k3y * dt,
-            self.z + k3z * dt,
-        );
+        let (k4x, k4y, k4z) =
+            self.derivatives(self.x + k3x * dt, self.y + k3y * dt, self.z + k3z * dt);
 
         let dx = (k1x + 2.0 * k2x + 2.0 * k3x + k4x) * (dt / 6.0);
         let dy = (k1y + 2.0 * k2y + 2.0 * k3y + k4y) * (dt / 6.0);

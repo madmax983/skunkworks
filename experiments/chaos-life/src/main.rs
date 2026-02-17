@@ -1,11 +1,11 @@
 use macroquad::prelude::*;
 use std::collections::VecDeque;
 
-mod lorenz;
 mod life;
+mod lorenz;
 
-use lorenz::LorenzState;
 use life::LifeGrid;
+use lorenz::LorenzState;
 
 const GRID_WIDTH: usize = 200;
 const GRID_HEIGHT: usize = 200;
@@ -39,7 +39,9 @@ async fn main() {
             speed += 1;
         }
         if is_key_pressed(KeyCode::Down) {
-            if speed > 1 { speed -= 1; }
+            if speed > 1 {
+                speed -= 1;
+            }
         }
 
         if !paused {
@@ -129,7 +131,13 @@ async fn main() {
         let plot_y = 0.0;
 
         // Background for plot
-        draw_rectangle(plot_x, plot_y, plot_w, plot_h, Color::new(0.05, 0.05, 0.05, 1.0));
+        draw_rectangle(
+            plot_x,
+            plot_y,
+            plot_w,
+            plot_h,
+            Color::new(0.05, 0.05, 0.05, 1.0),
+        );
 
         // Draw axes
         // ...
@@ -138,7 +146,7 @@ async fn main() {
         if trail.len() > 1 {
             for i in 0..trail.len() - 1 {
                 let (x1, _y1, z1) = trail[i];
-                let (x2, _y2, z2) = trail[i+1];
+                let (x2, _y2, z2) = trail[i + 1];
 
                 // Map (x, z) to screen
                 // x: [-25, 25] -> [plot_x, plot_x + plot_w]
@@ -165,7 +173,13 @@ async fn main() {
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 20.0, 20.0, WHITE);
         draw_text(&format!("Rho: {:.2}", lorenz.rho), 10.0, 40.0, 20.0, WHITE);
         draw_text(&format!("Density: {:.4}", density), 10.0, 60.0, 20.0, WHITE);
-        draw_text(&format!("Rules: S[{}-{}] B[{}]", rules.0, rules.1, rules.2), 10.0, 80.0, 20.0, GREEN);
+        draw_text(
+            &format!("Rules: S[{}-{}] B[{}]", rules.0, rules.1, rules.2),
+            10.0,
+            80.0,
+            20.0,
+            GREEN,
+        );
         draw_text(&format!("Speed: {}x", speed), 10.0, 100.0, 20.0, YELLOW);
 
         // Draw dot for current state on plot

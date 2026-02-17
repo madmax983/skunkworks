@@ -1,6 +1,6 @@
+use ::rand::Rng;
 use chimera_lang::prelude::*;
 use macroquad::prelude::*;
-use ::rand::Rng;
 
 pub struct LuthierString {
     // Physics / Visuals
@@ -48,8 +48,8 @@ impl LuthierString {
 
         let dna = Dna {
             helix: Helix {
-                strands: vec![Strand { genes }]
-            }
+                strands: vec![Strand { genes }],
+            },
         };
 
         let vm = ChimeraVM::new(dna);
@@ -158,6 +158,12 @@ impl LuthierString {
         }
 
         // Draw frequency text
-        draw_text(&format!("{:.1}Hz", self.frequency), start.x - 20.0, end.y + 20.0, 16.0, LIGHTGRAY);
+        draw_text(
+            &format!("{:.1}Hz", self.frequency),
+            start.x - 20.0,
+            end.y + 20.0,
+            16.0,
+            LIGHTGRAY,
+        );
     }
 }

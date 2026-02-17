@@ -8,8 +8,8 @@ pub struct Quasicrystal {
     pub adj: Vec<Vec<usize>>,
 }
 
-// Golden Ratio
-const TAU: f32 = 1.61803398875;
+// Golden Ratio (PHI)
+const TAU: f32 = 1.618_034;
 
 // Basis vectors for 6D -> 3D projection (Icosahedral)
 fn get_basis_vectors() -> (Vec<Vector3<f32>>, Vec<Vector3<f32>>) {

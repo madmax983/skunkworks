@@ -19,7 +19,10 @@ async fn main() {
     // Initial setup
     // Random Agents
     for _ in 0..1000 {
-        world.add_agent(macroquad::rand::gen_range(0.0, width as f32), macroquad::rand::gen_range(0.0, height as f32));
+        world.add_agent(
+            macroquad::rand::gen_range(0.0, width as f32),
+            macroquad::rand::gen_range(0.0, height as f32),
+        );
     }
 
     // Random Trash
@@ -46,16 +49,19 @@ async fn main() {
         if is_key_pressed(KeyCode::R) {
             world = World::new(width, height);
             for _ in 0..1000 {
-                world.add_agent(macroquad::rand::gen_range(0.0, width as f32), macroquad::rand::gen_range(0.0, height as f32));
+                world.add_agent(
+                    macroquad::rand::gen_range(0.0, width as f32),
+                    macroquad::rand::gen_range(0.0, height as f32),
+                );
             }
-             for _ in 0..5 {
+            for _ in 0..5 {
                 world.add_trash(
                     macroquad::rand::gen_range(100.0, width as f32 - 100.0),
                     macroquad::rand::gen_range(100.0, height as f32 - 100.0),
                     500.0,
                 );
             }
-             for _ in 0..2 {
+            for _ in 0..2 {
                 world.add_dump(
                     macroquad::rand::gen_range(50.0, width as f32 - 50.0),
                     macroquad::rand::gen_range(50.0, height as f32 - 50.0),
@@ -78,7 +84,7 @@ async fn main() {
             for x in 0..width {
                 let idx = y * width + x;
                 let t = world.trash_trails[idx]; // Greenish
-                let d = world.dump_trails[idx];  // Reddish
+                let d = world.dump_trails[idx]; // Reddish
 
                 // Color mapping:
                 // Trash Trail (Attracts Empty agents to Trash) -> Should look enticing?
@@ -115,7 +121,13 @@ async fn main() {
             draw_circle(agent.position.0, agent.position.1, 2.0, color);
         }
 
-        draw_text(format!("FPS: {}", get_fps()).as_str(), 10.0, 20.0, 30.0, WHITE);
+        draw_text(
+            format!("FPS: {}", get_fps()).as_str(),
+            10.0,
+            20.0,
+            30.0,
+            WHITE,
+        );
         draw_text("Click to add trash. R to reset.", 10.0, 50.0, 20.0, GRAY);
 
         next_frame().await

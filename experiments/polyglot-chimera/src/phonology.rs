@@ -13,7 +13,11 @@ pub struct Phoneme {
 
 impl Phoneme {
     pub const fn new(char: char, height: f32, hardness: f32) -> Self {
-        Self { char, target_height: height, target_hardness: hardness }
+        Self {
+            char,
+            target_height: height,
+            target_hardness: hardness,
+        }
     }
 }
 
@@ -24,25 +28,21 @@ pub const PHONEME_TABLE: &[Phoneme] = &[
     Phoneme::new('i', 0.2, 0.1),
     Phoneme::new('o', 0.12, 0.1),
     Phoneme::new('u', 0.18, 0.1),
-
     Phoneme::new('p', 0.9, 0.9),
     Phoneme::new('t', 0.92, 0.95),
     Phoneme::new('k', 0.88, 0.9),
     Phoneme::new('b', 0.85, 0.8),
     Phoneme::new('d', 0.87, 0.85),
     Phoneme::new('g', 0.82, 0.8),
-
     Phoneme::new('f', 0.5, 0.4),
     Phoneme::new('s', 0.55, 0.5),
     Phoneme::new('v', 0.48, 0.4),
     Phoneme::new('z', 0.52, 0.5),
     Phoneme::new('h', 0.4, 0.2),
-
     Phoneme::new('m', 0.3, 0.3),
     Phoneme::new('n', 0.35, 0.35),
     Phoneme::new('r', 0.32, 0.4),
     Phoneme::new('l', 0.28, 0.3),
-
     Phoneme::new(' ', 0.0, 0.0), // Silence
 ];
 
@@ -50,10 +50,16 @@ pub fn char_to_terrain(c: char) -> TerrainPoint {
     let lower_c = c.to_ascii_lowercase();
 
     if let Some(ph) = PHONEME_TABLE.iter().find(|p| p.char == lower_c) {
-        TerrainPoint { height: ph.target_height, hardness: ph.target_hardness }
+        TerrainPoint {
+            height: ph.target_height,
+            hardness: ph.target_hardness,
+        }
     } else {
         // Unknown chars treated as generic noise/hills
-        TerrainPoint { height: 0.2, hardness: 0.2 }
+        TerrainPoint {
+            height: 0.2,
+            hardness: 0.2,
+        }
     }
 }
 

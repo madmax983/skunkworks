@@ -559,11 +559,13 @@ impl State {
 
         let new_size = (instances.len() * std::mem::size_of::<InstanceRaw>()) as u64;
         if new_size > self.instance_buffer.size() {
-            self.instance_buffer = self.device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some("Instance Buffer"),
-                contents: bytemuck::cast_slice(&instances),
-                usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
-            });
+            self.instance_buffer =
+                self.device
+                    .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                        label: Some("Instance Buffer"),
+                        contents: bytemuck::cast_slice(&instances),
+                        usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
+                    });
         } else {
             self.queue
                 .write_buffer(&self.instance_buffer, 0, bytemuck::cast_slice(&instances));

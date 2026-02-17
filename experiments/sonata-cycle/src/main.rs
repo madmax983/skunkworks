@@ -2,9 +2,9 @@ use bevy::prelude::*;
 use bevy_prototype_lyon::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-mod mechanism;
-mod cpu;
 mod audio;
+mod cpu;
+mod mechanism;
 
 fn main() {
     App::new()

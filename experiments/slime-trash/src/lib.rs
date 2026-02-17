@@ -82,7 +82,11 @@ impl World {
             self.agents[i].angle += turn_angle;
 
             // Move
-            let speed = if self.agents[i].cargo > 0.0 { 15.0 } else { 40.0 };
+            let speed = if self.agents[i].cargo > 0.0 {
+                15.0
+            } else {
+                40.0
+            };
             let dx = self.agents[i].angle.cos() * speed * dt;
             let dy = self.agents[i].angle.sin() * speed * dt;
 
@@ -117,7 +121,7 @@ impl World {
         }
 
         // 2. Logic Interactions (Pickup/Drop)
-         for agent in &mut self.agents {
+        for agent in &mut self.agents {
             match agent.state {
                 AgentState::SeekingTrash => {
                     for trash in &mut self.trash_piles {
@@ -139,17 +143,17 @@ impl World {
                 }
                 AgentState::SeekingDump => {
                     for dump in &self.dumps {
-                         let dx = agent.position.0 - dump.0;
-                         let dy = agent.position.1 - dump.1;
-                         let dist_sq = dx * dx + dy * dy;
+                        let dx = agent.position.0 - dump.0;
+                        let dy = agent.position.1 - dump.1;
+                        let dist_sq = dx * dx + dy * dy;
 
-                         if dist_sq < drop_radius * drop_radius {
-                             // Drop all
-                             agent.cargo = 0.0;
-                             agent.state = AgentState::SeekingTrash;
-                             agent.angle += std::f32::consts::PI;
-                             break;
-                         }
+                        if dist_sq < drop_radius * drop_radius {
+                            // Drop all
+                            agent.cargo = 0.0;
+                            agent.state = AgentState::SeekingTrash;
+                            agent.angle += std::f32::consts::PI;
+                            break;
+                        }
                     }
                 }
             }
@@ -157,8 +161,12 @@ impl World {
 
         // 3. Diffuse & Decay
         let decay = 0.95;
-        for v in &mut self.trash_trails { *v *= decay; }
-        for v in &mut self.dump_trails { *v *= decay; }
+        for v in &mut self.trash_trails {
+            *v *= decay;
+        }
+        for v in &mut self.dump_trails {
+            *v *= decay;
+        }
 
         // Remove empty trash
         self.trash_piles.retain(|t| t.2 > 0.001);

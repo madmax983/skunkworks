@@ -132,8 +132,8 @@ mod tests {
         );
 
         vm.stack.push(Value::Str("X=F".to_string())); // Rules
-        vm.stack.push(mapping);                       // Mapping
-        vm.stack.push(Value::Str("X".to_string()));   // Axiom
+        vm.stack.push(mapping); // Mapping
+        vm.stack.push(Value::Str("X".to_string())); // Axiom
 
         crate::vm::nova_botany::exec_plant(&mut vm);
 

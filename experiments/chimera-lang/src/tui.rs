@@ -4985,7 +4985,9 @@ fn render_sequencer(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             Span::raw("Status: "),
             Span::styled(
                 status,
-                Style::default().fg(status_color).add_modifier(Modifier::BOLD),
+                Style::default()
+                    .fg(status_color)
+                    .add_modifier(Modifier::BOLD),
             ),
         ]),
         Line::from(format!("BPM: {}", app_state.sequencer_state.bpm)),
@@ -11618,15 +11620,22 @@ fn render_chaos_cartridge(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
     // Left: Active Recipes
     let mut items = Vec::new();
     if vm.chaos_cartridge.recipes.is_empty() {
-        items.push(ListItem::new("No active chaos recipes.").style(Style::default().fg(Color::DarkGray)));
+        items.push(
+            ListItem::new("No active chaos recipes.").style(Style::default().fg(Color::DarkGray)),
+        );
         items.push(ListItem::new(""));
-        items.push(ListItem::new("Use 'ChaosDefine' or 'ChaosScramble' to create rules."));
+        items.push(ListItem::new(
+            "Use 'ChaosDefine' or 'ChaosScramble' to create rules.",
+        ));
     } else {
         for (i, recipe) in vm.chaos_cartridge.recipes.iter().enumerate() {
             let inputs_str = recipe.inputs.join(" + ");
             let content = format!(
                 "#{}: {} -> {} (Prob: {:.0}%)",
-                i, inputs_str, recipe.output, recipe.probability * 100.0
+                i,
+                inputs_str,
+                recipe.output,
+                recipe.probability * 100.0
             );
 
             // Color based on output element?
@@ -11653,13 +11662,26 @@ fn render_chaos_cartridge(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
     f.render_widget(list, chunks[0]);
 
     // Right: Status & Controls
-    let status = if vm.chaos_cartridge.active { "ACTIVE" } else { "INACTIVE" };
-    let status_color = if vm.chaos_cartridge.active { Color::Green } else { Color::Red };
+    let status = if vm.chaos_cartridge.active {
+        "ACTIVE"
+    } else {
+        "INACTIVE"
+    };
+    let status_color = if vm.chaos_cartridge.active {
+        Color::Green
+    } else {
+        Color::Red
+    };
 
     let mut info = Vec::new();
     info.push(Line::from(vec![
         Span::raw("Status: "),
-        Span::styled(status, Style::default().fg(status_color).add_modifier(Modifier::BOLD)),
+        Span::styled(
+            status,
+            Style::default()
+                .fg(status_color)
+                .add_modifier(Modifier::BOLD),
+        ),
     ]));
     info.push(Line::from(" "));
     info.push(Line::from(format!("Entropy Level: {:.2}", vm.glitch_level)));

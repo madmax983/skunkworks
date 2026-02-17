@@ -3,7 +3,9 @@ use rand::Rng;
 
 pub fn hydraulic_erosion(terrain: &mut Vec<TerrainPoint>) {
     let len = terrain.len();
-    if len < 2 { return; }
+    if len < 2 {
+        return;
+    }
 
     let mut rng = rand::thread_rng();
 
@@ -66,15 +68,17 @@ pub fn hydraulic_erosion(terrain: &mut Vec<TerrainPoint>) {
 
 pub fn thermal_weathering(terrain: &mut Vec<TerrainPoint>) {
     let len = terrain.len();
-    if len < 3 { return; }
+    if len < 3 {
+        return;
+    }
 
     // Simple diffusion (blur)
     // We need a temp buffer to avoid feedback loop bias
     let old_terrain = terrain.clone();
 
-    for i in 1..len-1 {
-        let h_left = old_terrain[i-1].height;
-        let h_right = old_terrain[i+1].height;
+    for i in 1..len - 1 {
+        let h_left = old_terrain[i - 1].height;
+        let h_right = old_terrain[i + 1].height;
         let h_curr = old_terrain[i].height;
 
         // If current is higher than average of neighbors, it crumbles
@@ -84,8 +88,8 @@ pub fn thermal_weathering(terrain: &mut Vec<TerrainPoint>) {
             let crumble = diff * 0.1 * (1.0 - old_terrain[i].hardness * 0.8);
 
             terrain[i].height -= crumble;
-            terrain[i-1].height += crumble * 0.5;
-            terrain[i+1].height += crumble * 0.5;
+            terrain[i - 1].height += crumble * 0.5;
+            terrain[i + 1].height += crumble * 0.5;
         }
     }
 }

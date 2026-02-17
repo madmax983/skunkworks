@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use ::rand::Rng;
+use macroquad::prelude::*;
 
 #[derive(Clone, Copy, Debug)]
 pub struct Node {
@@ -35,7 +35,13 @@ impl Tree {
         }
     }
 
-    pub fn grow_step(&mut self, target: Option<Vec2>, obstacles: &[Obstacle], other_trees: &[&Tree], bounds: Rect) {
+    pub fn grow_step(
+        &mut self,
+        target: Option<Vec2>,
+        obstacles: &[Obstacle],
+        other_trees: &[&Tree],
+        bounds: Rect,
+    ) {
         let mut rng = ::rand::thread_rng();
 
         // 1. Sample
@@ -57,7 +63,9 @@ impl Tree {
         let diff = sample - nearest_node.pos;
         let dist = diff.length();
 
-        if dist < 0.1 { return; } // Too close
+        if dist < 0.1 {
+            return;
+        } // Too close
 
         let step = diff.normalize() * self.step_size.min(dist);
         let new_pos = nearest_node.pos + step;
@@ -181,7 +189,11 @@ mod tests {
     #[test]
     fn test_nearest_neighbor() {
         let mut tree = Tree::new(Vec2::new(0.0, 0.0), RED);
-        tree.nodes.push(Node { pos: Vec2::new(10.0, 10.0), parent_index: Some(0), cost: 14.14 });
+        tree.nodes.push(Node {
+            pos: Vec2::new(10.0, 10.0),
+            parent_index: Some(0),
+            cost: 14.14,
+        });
 
         let idx = tree.nearest_node_index(Vec2::new(11.0, 11.0));
         assert_eq!(idx, 1);

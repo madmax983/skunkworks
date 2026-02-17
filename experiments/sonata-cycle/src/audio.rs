@@ -1,6 +1,6 @@
-use bevy::prelude::*;
 #[cfg(feature = "audio")]
 use crate::cpu::InstructionTriggered;
+use bevy::prelude::*;
 #[cfg(feature = "audio")]
 use std::f32::consts::PI;
 
@@ -40,7 +40,11 @@ fn play_instruction_sound(
         for i in 0..num_samples {
             let t = i as f32 / sample_rate as f32;
             let sample = (t * frequency * 2.0 * PI).sin();
-            let envelope = if t < 0.01 { t / 0.01 } else { 1.0 - (t - 0.01) / (duration_secs - 0.01) };
+            let envelope = if t < 0.01 {
+                t / 0.01
+            } else {
+                1.0 - (t - 0.01) / (duration_secs - 0.01)
+            };
             let val = sample * envelope * 0.3;
             samples.push(val);
         }
@@ -50,9 +54,7 @@ fn play_instruction_sound(
         // Convert Vec<u8> to Arc<[u8]>
         let bytes: std::sync::Arc<[u8]> = std::sync::Arc::from(wav_data);
 
-        let source = AudioSource {
-            bytes,
-        };
+        let source = AudioSource { bytes };
 
         let handle = audio_assets.add(source);
 

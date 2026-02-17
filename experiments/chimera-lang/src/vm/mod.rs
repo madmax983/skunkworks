@@ -86,11 +86,6 @@ pub mod blackbox;
 pub mod catalyst;
 pub mod chimera_chaos;
 #[cfg(feature = "nova")]
-pub mod nova_chaos;
-#[cfg(feature = "nova")]
-#[cfg(test)]
-mod nova_chaos_transmutation_test;
-#[cfg(feature = "nova")]
 pub mod cladistics;
 pub mod cortex;
 pub mod dream;
@@ -166,6 +161,11 @@ pub mod nova_bureaucracy;
 pub mod nova_cambrian;
 #[cfg(feature = "nova")]
 pub mod nova_cartography;
+#[cfg(feature = "nova")]
+pub mod nova_chaos;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_chaos_transmutation_test;
 #[cfg(feature = "nova")]
 pub mod nova_chemistry;
 #[cfg(feature = "nova")]

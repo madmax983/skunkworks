@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use ::rand::Rng;
+use macroquad::prelude::*;
 
 mod heap;
 use heap::*;
@@ -26,15 +26,18 @@ async fn main() {
         // Input
         if is_key_pressed(KeyCode::Key1) {
             mode = Mode::WebServer;
-            heap = Heap::new(1000); allocations.clear();
+            heap = Heap::new(1000);
+            allocations.clear();
         }
         if is_key_pressed(KeyCode::Key2) {
             mode = Mode::Database;
-            heap = Heap::new(1000); allocations.clear();
+            heap = Heap::new(1000);
+            allocations.clear();
         }
         if is_key_pressed(KeyCode::Key3) {
             mode = Mode::Leak;
-            heap = Heap::new(1000); allocations.clear();
+            heap = Heap::new(1000);
+            allocations.clear();
         }
         if is_key_pressed(KeyCode::Space) {
             heap = Heap::new(1000);
@@ -54,13 +57,13 @@ async fn main() {
                         rng.gen_range(0.5..1.0),
                         rng.gen_range(0.2..0.8),
                         rng.gen_range(0.2..0.8),
-                        1.0
+                        1.0,
                     );
                     if let Some(addr) = heap.malloc(size, color) {
                         allocations.push((addr, rng.gen_range(1.0..3.0)));
                     }
                 }
-            },
+            }
             Mode::Database => {
                 // Low churn: large allocs, long life (Color Field)
                 if rng.gen_bool(0.02) {
@@ -71,13 +74,13 @@ async fn main() {
                         base,
                         base + rng.gen_range(0.0..0.2),
                         base + rng.gen_range(0.4..0.7),
-                        1.0
+                        1.0,
                     );
                     if let Some(addr) = heap.malloc(size, color) {
                         allocations.push((addr, rng.gen_range(5.0..15.0)));
                     }
                 }
-            },
+            }
             Mode::Leak => {
                 // Allocs, no free (Accumulation)
                 if rng.gen_bool(0.1) {
@@ -87,7 +90,7 @@ async fn main() {
                         rng.gen_range(0.2..0.8),
                         rng.gen_range(0.1..0.6),
                         rng.gen_range(0.0..0.2),
-                        1.0
+                        1.0,
                     );
                     if let Some(_addr) = heap.malloc(size, color) {
                         // Infinite TTL
@@ -137,7 +140,7 @@ async fn main() {
 
                 // Draw
                 let color = if block.free {
-                     Color::new(0.92, 0.92, 0.9, 1.0) // Faint texture
+                    Color::new(0.92, 0.92, 0.9, 1.0) // Faint texture
                 } else {
                     block.color
                 };
@@ -156,11 +159,29 @@ async fn main() {
 
         // UI
         draw_text("Malloc Expressionism", 20.0, 40.0, 40.0, BLACK);
-        draw_text(&format!("Movement: {}", mode_name(&mode)), 20.0, 70.0, 20.0, DARKGRAY);
+        draw_text(
+            &format!("Movement: {}", mode_name(&mode)),
+            20.0,
+            70.0,
+            20.0,
+            DARKGRAY,
+        );
 
         let stats_y = screen_height() - 40.0;
-        draw_text(&format!("Allocations: {}", allocations.len()), 20.0, stats_y, 20.0, DARKGRAY);
-        draw_text("1: Impressionism | 2: Color Field | 3: Accumulation | Space: Reset", 20.0, screen_height() - 15.0, 20.0, BLACK);
+        draw_text(
+            &format!("Allocations: {}", allocations.len()),
+            20.0,
+            stats_y,
+            20.0,
+            DARKGRAY,
+        );
+        draw_text(
+            "1: Impressionism | 2: Color Field | 3: Accumulation | Space: Reset",
+            20.0,
+            screen_height() - 15.0,
+            20.0,
+            BLACK,
+        );
 
         next_frame().await
     }

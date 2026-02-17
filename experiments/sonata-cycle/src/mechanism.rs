@@ -1,6 +1,6 @@
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::*;
 use bevy_prototype_lyon::prelude::*;
+use bevy_rapier2d::prelude::*;
 use std::f32::consts::PI;
 
 pub struct MechanismPlugin;
@@ -8,7 +8,7 @@ pub struct MechanismPlugin;
 impl Plugin for MechanismPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, spawn_mechanism)
-           .add_systems(Update, apply_mainspring);
+            .add_systems(Update, apply_mainspring);
     }
 }
 
@@ -100,16 +100,23 @@ fn spawn_mechanism(mut commands: Commands) {
         .insert(Restitution::coefficient(0.5))
         .insert(MainSpring)
         .insert(ExternalForce::default())
-        .insert(Damping { linear_damping: 0.5, angular_damping: 1.0 }) // Damping to simulate escapement load
+        .insert(Damping {
+            linear_damping: 0.5,
+            angular_damping: 1.0,
+        }) // Damping to simulate escapement load
         .insert(PinBarrel)
         .id();
 
     // Axis Joint
     // We need a ground entity for the joint
-    let ground = commands.spawn((TransformBundle::default(), RigidBody::Fixed)).id();
+    let ground = commands
+        .spawn((TransformBundle::default(), RigidBody::Fixed))
+        .id();
     commands.entity(shaft_id).insert(ImpulseJoint::new(
         ground,
-        RevoluteJointBuilder::new().local_anchor1(Vec2::ZERO).local_anchor2(Vec2::ZERO)
+        RevoluteJointBuilder::new()
+            .local_anchor1(Vec2::ZERO)
+            .local_anchor2(Vec2::ZERO),
     ));
 
     // 2. Pins
@@ -125,24 +132,32 @@ fn spawn_mechanism(mut commands: Commands) {
 
         let pin_pos = Vec2::new(angle.cos() * barrel_radius, angle.sin() * barrel_radius);
 
-        commands.spawn((
-            ShapeBundle {
-                path: GeometryBuilder::build_as(&shapes::Circle { radius: 5.0, ..default() }),
-                spatial: SpatialBundle::from_transform(Transform::from_translation(pin_pos.extend(1.0))),
-                ..default()
-            },
-            Fill::color(Color::srgb(0.9, 0.9, 0.9)), // Silver
-            Stroke::new(Color::BLACK, 1.0),
-        ))
-        .insert(RigidBody::Fixed) // Relative to parent? No, Bevy Rapier doesn't support hierarchy well for rigid bodies unless using Multibody (not in 2D yet?) or welding.
-        // Actually, if we make them children of the Dynamic shaft, they move with it VISUALLY,
-        // but Rapier colliders on children of a RigidBody works as a Compound Collider!
-        // So we just add Collider to the child.
-        .insert(Collider::ball(5.0))
-        .insert(Pin { note_index: note_idx })
-        .insert(Sensor) // Sensor so it doesn't jam, just triggers
-        .insert(ActiveEvents::COLLISION_EVENTS)
-        .set_parent(shaft_id);
+        commands
+            .spawn((
+                ShapeBundle {
+                    path: GeometryBuilder::build_as(&shapes::Circle {
+                        radius: 5.0,
+                        ..default()
+                    }),
+                    spatial: SpatialBundle::from_transform(Transform::from_translation(
+                        pin_pos.extend(1.0),
+                    )),
+                    ..default()
+                },
+                Fill::color(Color::srgb(0.9, 0.9, 0.9)), // Silver
+                Stroke::new(Color::BLACK, 1.0),
+            ))
+            .insert(RigidBody::Fixed) // Relative to parent? No, Bevy Rapier doesn't support hierarchy well for rigid bodies unless using Multibody (not in 2D yet?) or welding.
+            // Actually, if we make them children of the Dynamic shaft, they move with it VISUALLY,
+            // but Rapier colliders on children of a RigidBody works as a Compound Collider!
+            // So we just add Collider to the child.
+            .insert(Collider::ball(5.0))
+            .insert(Pin {
+                note_index: note_idx,
+            })
+            .insert(Sensor) // Sensor so it doesn't jam, just triggers
+            .insert(ActiveEvents::COLLISION_EVENTS)
+            .set_parent(shaft_id);
     }
 
     // 3. Logic Levers (The "Comb")
@@ -161,21 +176,24 @@ fn spawn_mechanism(mut commands: Commands) {
 
     let lever_pos = Vec2::new(0.0, -barrel_radius); // Slightly intersecting to trigger
 
-    commands.spawn((
-        ShapeBundle {
-            path: GeometryBuilder::build_as(&shapes::Rectangle { extents: Vec2::new(20.0, 40.0), origin: shapes::RectangleOrigin::Center }),
-            spatial: SpatialBundle::from_transform(Transform::from_xyz(0.0, lever_y, 0.0)),
-            ..default()
-        },
-        Fill::color(Color::srgb(0.5, 0.2, 0.2)),
-        Stroke::new(Color::BLACK, 2.0),
-    ))
-    .insert(RigidBody::Fixed) // Static reader
-    .insert(Collider::cuboid(10.0, 20.0))
-    .insert(LogicLever { note_index: 0 }) // Generic reader
-    .insert(Sensor)
-    .insert(ActiveEvents::COLLISION_EVENTS);
-
+    commands
+        .spawn((
+            ShapeBundle {
+                path: GeometryBuilder::build_as(&shapes::Rectangle {
+                    extents: Vec2::new(20.0, 40.0),
+                    origin: shapes::RectangleOrigin::Center,
+                }),
+                spatial: SpatialBundle::from_transform(Transform::from_xyz(0.0, lever_y, 0.0)),
+                ..default()
+            },
+            Fill::color(Color::srgb(0.5, 0.2, 0.2)),
+            Stroke::new(Color::BLACK, 2.0),
+        ))
+        .insert(RigidBody::Fixed) // Static reader
+        .insert(Collider::cuboid(10.0, 20.0))
+        .insert(LogicLever { note_index: 0 }) // Generic reader
+        .insert(Sensor)
+        .insert(ActiveEvents::COLLISION_EVENTS);
 }
 
 fn apply_mainspring(mut query: Query<&mut ExternalForce, With<MainSpring>>) {

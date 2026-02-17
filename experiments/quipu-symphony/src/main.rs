@@ -231,7 +231,8 @@ fn main() -> Result<()> {
                                         }
                                         // scale: pentatonic?
                                         // simple chromatic for now: base * 2^(val/12)
-                                        let pitch = track.base_freq * 2.0_f32.powf(val as f32 / 12.0);
+                                        let pitch =
+                                            track.base_freq * 2.0_f32.powf(val as f32 / 12.0);
                                         let _ = tx.send(AudioEvent::Pluck(pitch));
                                     }
                                 }

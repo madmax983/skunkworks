@@ -1,28 +1,43 @@
 #[cfg(feature = "nova")]
 #[test]
 fn test_horcrux_ritual() {
-    use chimera_lang::vm::{ChimeraVM, Value};
     use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
+    use chimera_lang::vm::{ChimeraVM, Value};
 
     // Strand 0: Main (Calls Victim)
-    let main_genes = vec![
-        Gene { op: OpCode::Call, args: vec![Nucleotide::Number(1)] },
-    ];
+    let main_genes = vec![Gene {
+        op: OpCode::Call,
+        args: vec![Nucleotide::Number(1)],
+    }];
 
     // Strand 1: Victim (Writes Horcrux at 5,5)
     let victim_genes = vec![
-        Gene { op: OpCode::SIndex, args: vec![] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // y
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // x
-        Gene { op: OpCode::Horcrux, args: vec![] },
+        Gene {
+            op: OpCode::SIndex,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        }, // y
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        }, // x
+        Gene {
+            op: OpCode::Horcrux,
+            args: vec![],
+        },
     ];
 
     let dna = Dna {
         helix: Helix {
             strands: vec![
                 Strand { genes: main_genes },
-                Strand { genes: victim_genes },
+                Strand {
+                    genes: victim_genes,
+                },
             ],
         },
     };
@@ -56,18 +71,32 @@ fn test_horcrux_ritual() {
     }
 
     // Verify Victim Death
-    assert!(vm.dna.helix.strands[1].genes.is_empty(), "Victim genes should be cleared");
+    assert!(
+        vm.dna.helix.strands[1].genes.is_empty(),
+        "Victim genes should be cleared"
+    );
 
     // Step 3: Rebirth
     // Create a strand that executes Rebirth
     let necromancer_genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // y
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // x
-        Gene { op: OpCode::Rebirth, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        }, // y
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        }, // x
+        Gene {
+            op: OpCode::Rebirth,
+            args: vec![],
+        },
     ];
 
     // Inject this strand
-    vm.dna.helix.strands.push(Strand { genes: necromancer_genes });
+    vm.dna.helix.strands.push(Strand {
+        genes: necromancer_genes,
+    });
     let necro_idx = vm.dna.helix.strands.len() - 1;
 
     // Manually set IP to execute the necromancer strand
@@ -82,11 +111,22 @@ fn test_horcrux_ritual() {
     if vm.dna.helix.strands.len() != 4 {
         println!("VM Output: {:#?}", vm.output);
     }
-    assert_eq!(vm.dna.helix.strands.len(), 4, "Should have 4 strands (0, 1[dead], 2[necro], 3[new])");
+    assert_eq!(
+        vm.dna.helix.strands.len(),
+        4,
+        "Should have 4 strands (0, 1[dead], 2[necro], 3[new])"
+    );
     let new_strand = &vm.dna.helix.strands[3];
-    assert!(!new_strand.genes.is_empty(), "Resurrected strand should have genes");
+    assert!(
+        !new_strand.genes.is_empty(),
+        "Resurrected strand should have genes"
+    );
     // Victim had 4 genes
-    assert_eq!(new_strand.genes.len(), 4, "Resurrected strand should have 4 genes");
+    assert_eq!(
+        new_strand.genes.len(),
+        4,
+        "Resurrected strand should have 4 genes"
+    );
 
     // Verify Grid Cleared
     assert_eq!(vm.grid[5][5], Value::Int(0), "Grid should be cleared");

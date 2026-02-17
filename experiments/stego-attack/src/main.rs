@@ -1,8 +1,8 @@
+use macroquad::prelude::*;
+use std::path::PathBuf;
 use stego_attack::config::AttackConfig;
 use stego_attack::simulation::World;
 use stego_attack::stego;
-use macroquad::prelude::*;
-use std::path::PathBuf;
 
 #[macroquad::main("Stego Attack")]
 async fn main() {
@@ -15,17 +15,19 @@ async fn main() {
 
     println!("Loading image from {:?}", path);
 
-    let img = image::open(&path).map(|i| i.to_rgba8()).unwrap_or_else(|_| {
-        println!("Failed to load image, generating noise fallback");
-        // Fallback: Generate noise image
-        let width = 500;
-        let height = 500;
-        let mut img = image::RgbaImage::new(width, height);
-        for pixel in img.pixels_mut() {
-            *pixel = image::Rgba([::rand::random(), ::rand::random(), ::rand::random(), 255]);
-        }
-        img
-    });
+    let img = image::open(&path)
+        .map(|i| i.to_rgba8())
+        .unwrap_or_else(|_| {
+            println!("Failed to load image, generating noise fallback");
+            // Fallback: Generate noise image
+            let width = 500;
+            let height = 500;
+            let mut img = image::RgbaImage::new(width, height);
+            for pixel in img.pixels_mut() {
+                *pixel = image::Rgba([::rand::random(), ::rand::random(), ::rand::random(), 255]);
+            }
+            img
+        });
 
     let config = match stego::extract(&img) {
         Ok(bytes) => serde_json::from_slice(&bytes).unwrap_or_else(|_| {
@@ -68,14 +70,32 @@ async fn main() {
         let dx = (screen_width() - dw) / 2.0;
         let dy = (screen_height() - dh) / 2.0;
 
-        draw_texture_ex(&texture, dx, dy, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(dw, dh)),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &texture,
+            dx,
+            dy,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(dw, dh)),
+                ..Default::default()
+            },
+        );
 
         draw_text("Stego Attack", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Agents: {}", world.agents.len()), 10.0, 60.0, 20.0, WHITE);
-        draw_text(&format!("Target: {:.2}, {:.2}", config.target_x, config.target_y), 10.0, 90.0, 20.0, WHITE);
+        draw_text(
+            &format!("Agents: {}", world.agents.len()),
+            10.0,
+            60.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            &format!("Target: {:.2}, {:.2}", config.target_x, config.target_y),
+            10.0,
+            90.0,
+            20.0,
+            WHITE,
+        );
 
         // Draw target marker
         let tx = dx + config.target_x * dw;

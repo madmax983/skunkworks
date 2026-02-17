@@ -1,5 +1,5 @@
-use rayon::prelude::*;
 use rand::Rng;
+use rayon::prelude::*;
 
 pub struct LifeGrid {
     pub width: usize,
@@ -12,9 +12,9 @@ impl LifeGrid {
     pub fn new(width: usize, height: usize) -> Self {
         let size = width * height;
         let mut rng = rand::thread_rng();
-        let cells: Vec<u8> = (0..size).map(|_| {
-            if rng.gen::<f32>() < 0.2 { 1 } else { 0 }
-        }).collect();
+        let cells: Vec<u8> = (0..size)
+            .map(|_| if rng.gen::<f32>() < 0.2 { 1 } else { 0 })
+            .collect();
 
         Self {
             width,
@@ -40,7 +40,8 @@ impl LifeGrid {
         // Using par_chunks_mut on next_cells allows us to parallelize by rows.
         let cells_slice = &self.cells;
 
-        self.next_cells.par_chunks_mut(width)
+        self.next_cells
+            .par_chunks_mut(width)
             .enumerate()
             .for_each(|(y, row)| {
                 for x in 0..width {
@@ -50,7 +51,9 @@ impl LifeGrid {
                     // Wrap-around logic
                     for dy in -1..=1 {
                         for dx in -1..=1 {
-                            if dx == 0 && dy == 0 { continue; }
+                            if dx == 0 && dy == 0 {
+                                continue;
+                            }
 
                             let nx = (x as isize + dx).rem_euclid(width as isize) as usize;
                             let ny = (y as isize + dy).rem_euclid(height as isize) as usize;
@@ -64,9 +67,17 @@ impl LifeGrid {
 
                     let current = cells_slice[y * width + x];
                     let next = if current == 1 {
-                        if neighbors >= s_min && neighbors <= s_max { 1 } else { 0 }
+                        if neighbors >= s_min && neighbors <= s_max {
+                            1
+                        } else {
+                            0
+                        }
                     } else {
-                        if neighbors == birth { 1 } else { 0 }
+                        if neighbors == birth {
+                            1
+                        } else {
+                            0
+                        }
                     };
                     row[x] = next;
                 }
@@ -92,7 +103,9 @@ mod tests {
         let height = 10;
         let mut grid = LifeGrid::new(width, height);
         // Clear random init
-        for c in grid.cells.iter_mut() { *c = 0; }
+        for c in grid.cells.iter_mut() {
+            *c = 0;
+        }
 
         // Glider
         // .O.
@@ -120,7 +133,9 @@ mod tests {
         let width = 3;
         let height = 3;
         let mut grid = LifeGrid::new(width, height);
-        for c in grid.cells.iter_mut() { *c = 0; }
+        for c in grid.cells.iter_mut() {
+            *c = 0;
+        }
 
         // Blinker at edge
         // O O O (row 0)
@@ -134,7 +149,9 @@ mod tests {
         // Let's just check simple survival logic.
 
         // If we set center only:
-        for c in grid.cells.iter_mut() { *c = 0; }
+        for c in grid.cells.iter_mut() {
+            *c = 0;
+        }
         grid.cells[1 * width + 1] = 1; // Center
 
         // Neighbors:

@@ -503,12 +503,15 @@ pub fn exec_memetics_op(
                                                             &vm.dna.helix.strands[strand_idx],
                                                         );
                                                     if let Ok((cst, _)) =
-                                                        crate::vm::babel::run_parser(grammar, &source)
+                                                        crate::vm::babel::run_parser(
+                                                            grammar, &source,
+                                                        )
                                                     {
-                                                        let mutated_cst = crate::vm::babel::mutate_cst(
-                                                            &cst,
-                                                            virus.mutation_rate as f64 / 100.0,
-                                                        );
+                                                        let mutated_cst =
+                                                            crate::vm::babel::mutate_cst(
+                                                                &cst,
+                                                                virus.mutation_rate as f64 / 100.0,
+                                                            );
                                                         // This pushes a new strand
                                                         let new_idx = crate::vm::babel::compile_cst(
                                                             vm,
