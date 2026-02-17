@@ -3559,7 +3559,7 @@ impl ChimeraVM {
             | OpCode::Lightning => elektra::exec_elektra_op(self, op, args),
 
             #[cfg(all(feature = "elektra", feature = "nova"))]
-            OpCode::Galvanize => elektra::exec_elektra_op(self, op, args),
+            OpCode::Galvanize | OpCode::Railgun => elektra::exec_elektra_op(self, op, args),
 
             #[cfg(feature = "hive")]
             OpCode::HiveBind | OpCode::HiveSend | OpCode::HiveRecv | OpCode::HiveClose => {

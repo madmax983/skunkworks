@@ -45,6 +45,8 @@ pub fn exec_elektra_op(
         OpCode::TeslaCoil => exec_tesla_coil(vm),
         #[cfg(all(feature = "elektra", feature = "nova"))]
         OpCode::Galvanize => exec_galvanize(vm),
+        #[cfg(all(feature = "elektra", feature = "nova"))]
+        OpCode::Railgun => exec_railgun(vm),
         OpCode::Diode => exec_component_placement(vm, "D"),
         OpCode::Transistor => exec_component_placement(vm, "T"),
         OpCode::Muscle => exec_component_placement(vm, "M"),
@@ -369,6 +371,76 @@ fn exec_galvanize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             ));
             vm.stack.push(Value::Int(-1));
         }
+    }
+    None
+}
+
+#[cfg(all(feature = "elektra", feature = "nova"))]
+fn exec_railgun(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if vm.stack.len() < 2 {
+        vm.output
+            .push("Error: Stack underflow for Railgun".to_string());
+        return None;
+    }
+
+    let x_val = vm.stack.pop().unwrap();
+    let y_val = vm.stack.pop().unwrap();
+
+    if let (Value::Int(dx), Value::Int(dy)) = (x_val, y_val) {
+        let (cy, cx) = vm.context_loc;
+        let voltage = vm.voltage_grid[cy][cx];
+
+        if voltage > 0.0 {
+            if vm.projectiles.len() >= crate::vm::MAX_PROJECTILES {
+                vm.output
+                    .push("RAILGUN: Projectile limit reached".to_string());
+                return None;
+            }
+
+            // Normalize vector
+            let len = ((dx as f64).powi(2) + (dy as f64).powi(2)).sqrt();
+            let (vx, vy) = if len > 0.0 {
+                ((dx as f64) / len, (dy as f64) / len)
+            } else {
+                (0.0, 0.0)
+            };
+
+            // Power from Voltage
+            let power = (voltage / 10.0).clamp(1.0, 100.0) as i64;
+
+            let p = crate::vm::nova_ballistics::Projectile {
+                x: cx as f64,
+                y: cy as f64,
+                vx,
+                vy,
+                power,
+                ttl: 50, // Long range
+                owner: vm.ip.0,
+                last_hit: None,
+            };
+
+            vm.projectiles.push(p);
+
+            // Discharge
+            vm.voltage_grid[cy][cx] = 0.0;
+
+            // Visual Effect
+            vm.visual_effects.push(VisualEffect::Spark {
+                loc: (cy, cx),
+                color: (50, 50, 255), // Blue spark
+                ttl: 3,
+            });
+
+            vm.output.push(format!(
+                "RAILGUN: Fired projectile power {} vector ({:.1}, {:.1})",
+                power, vx, vy
+            ));
+        } else {
+            vm.output.push("RAILGUN: Insufficient voltage".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Type mismatch for Railgun args".to_string());
     }
     None
 }
