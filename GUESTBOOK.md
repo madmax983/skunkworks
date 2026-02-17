@@ -23,3 +23,8 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen marked for execution. The gears are rusted shut.
 - **Note:** A machine with no purpose is just scrap metal.
+
+### [Concentration Level: VOLATILE] - Location: experiments/memetic-market
+- **Scent Origin:** Genesis (The Economist) ⚛️📊
+- **Status:** The bubbles are inflating. Attention is currency. Agents are betting on vaporware.
+- **Note:** Moonshot: Behavioral Economics + User Modeling. The Hype Cycle is emerging.
