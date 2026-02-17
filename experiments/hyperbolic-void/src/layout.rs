@@ -1,7 +1,7 @@
+use crate::math::mobius_add;
+use crate::scanner::FSNode;
 use macroquad::prelude::Vec3;
 use std::f32::consts::PI;
-use crate::scanner::FSNode;
-use crate::math::mobius_add;
 
 pub struct LayoutNode {
     pub position: Vec3,
@@ -61,7 +61,11 @@ mod tests {
     fn make_dummy_node(name: &str, children_count: usize) -> FSNode {
         let mut children = Vec::new();
         for i in 0..children_count {
-            children.push(FSNode::new(PathBuf::from(format!("{}/child_{}", name, i)), NodeType::File, 100));
+            children.push(FSNode::new(
+                PathBuf::from(format!("{}/child_{}", name, i)),
+                NodeType::File,
+                100,
+            ));
         }
 
         let mut node = FSNode::new(PathBuf::from(name), NodeType::Directory, 0);
@@ -79,7 +83,11 @@ mod tests {
 
         for child in layout.children {
             // Check if child is inside unit ball
-            assert!(child.position.length() < 1.0, "Child at {:?} escaped unit ball", child.position);
+            assert!(
+                child.position.length() < 1.0,
+                "Child at {:?} escaped unit ball",
+                child.position
+            );
             // Check distance from origin (should be radius since parent is at origin)
             // Note: displacement length is 0.4.
             // mobius_add(0, v) = v.

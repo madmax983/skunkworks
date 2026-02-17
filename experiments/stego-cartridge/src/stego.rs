@@ -1,6 +1,6 @@
 use image::{Rgba, RgbaImage};
-use rand::{Rng, SeedableRng};
 use rand::rngs::StdRng;
+use rand::{Rng, SeedableRng};
 
 /// Embeds data into the LSBs of the image.
 /// The first 32 bits (8 pixels * 4 channels) store the length of the data (u32, little-endian).
@@ -9,15 +9,16 @@ pub fn embed(image: &mut RgbaImage, data: &[u8]) -> Result<(), String> {
     let required_bits = 32 + (data.len() * 8);
 
     if required_bits > capacity {
-        return Err(format!("Data too large for image. Capacity: {} bits, Required: {} bits", capacity, required_bits));
+        return Err(format!(
+            "Data too large for image. Capacity: {} bits, Required: {} bits",
+            capacity, required_bits
+        ));
     }
 
     let mut bit_idx = 0;
 
     // Helper to get bit from value
-    let get_bit = |val: u8, bit: usize| -> u8 {
-        (val >> bit) & 1
-    };
+    let get_bit = |val: u8, bit: usize| -> u8 { (val >> bit) & 1 };
 
     // Embed length (u32)
     let len = data.len() as u32;
@@ -76,7 +77,10 @@ pub fn extract(image: &RgbaImage) -> Result<Vec<u8>, String> {
     // Sanity check length
     let capacity_bytes = (image.width() * image.height() * 4 / 8) as u32 - 4;
     if len > capacity_bytes {
-        return Err(format!("Extracted length {} exceeds capacity {}", len, capacity_bytes));
+        return Err(format!(
+            "Extracted length {} exceeds capacity {}",
+            len, capacity_bytes
+        ));
     }
 
     // Extract data

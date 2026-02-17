@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use crate::vm::OpCode;
+use std::collections::HashMap;
 
 pub fn assemble(source: &str) -> Result<Vec<u8>, String> {
     let mut bytecode = Vec::new();
@@ -37,8 +37,12 @@ pub fn assemble(source: &str) -> Result<Vec<u8>, String> {
         match mnemonic.as_str() {
             "PUSH" => {
                 bytecode.push(OpCode::Push as u8);
-                if parts.len() < 2 { return Err("PUSH requires an argument".to_string()); }
-                let val: i32 = parts[1].parse().map_err(|_| "Invalid number for PUSH".to_string())?;
+                if parts.len() < 2 {
+                    return Err("PUSH requires an argument".to_string());
+                }
+                let val: i32 = parts[1]
+                    .parse()
+                    .map_err(|_| "Invalid number for PUSH".to_string())?;
                 bytecode.extend_from_slice(&val.to_le_bytes());
             }
             "POP" => bytecode.push(OpCode::Pop as u8),
@@ -49,19 +53,25 @@ pub fn assemble(source: &str) -> Result<Vec<u8>, String> {
             "MOD" => bytecode.push(OpCode::Mod as u8),
             "JMP" => {
                 bytecode.push(OpCode::Jmp as u8);
-                if parts.len() < 2 { return Err("JMP requires a label".to_string()); }
+                if parts.len() < 2 {
+                    return Err("JMP requires a label".to_string());
+                }
                 jump_patches.push((bytecode.len(), parts[1].to_string()));
                 bytecode.extend_from_slice(&0u32.to_le_bytes()); // Placeholder
             }
             "JZ" => {
                 bytecode.push(OpCode::Jz as u8);
-                if parts.len() < 2 { return Err("JZ requires a label".to_string()); }
+                if parts.len() < 2 {
+                    return Err("JZ requires a label".to_string());
+                }
                 jump_patches.push((bytecode.len(), parts[1].to_string()));
                 bytecode.extend_from_slice(&0u32.to_le_bytes()); // Placeholder
             }
             "JNZ" => {
                 bytecode.push(OpCode::Jnz as u8);
-                if parts.len() < 2 { return Err("JNZ requires a label".to_string()); }
+                if parts.len() < 2 {
+                    return Err("JNZ requires a label".to_string());
+                }
                 jump_patches.push((bytecode.len(), parts[1].to_string()));
                 bytecode.extend_from_slice(&0u32.to_le_bytes()); // Placeholder
             }
@@ -79,9 +89,11 @@ pub fn assemble(source: &str) -> Result<Vec<u8>, String> {
 
     // Second pass: Patch jumps
     for (offset, label) in jump_patches {
-        let target_addr = labels.get(&label).ok_or(format!("Undefined label: {}", label))?;
+        let target_addr = labels
+            .get(&label)
+            .ok_or(format!("Undefined label: {}", label))?;
         let addr_bytes = (*target_addr as u32).to_le_bytes();
-        bytecode[offset..offset+4].copy_from_slice(&addr_bytes);
+        bytecode[offset..offset + 4].copy_from_slice(&addr_bytes);
     }
 
     Ok(bytecode)
@@ -127,7 +139,7 @@ mod tests {
         // Check JNZ target
         let jnz_opcode_idx = 12;
         assert_eq!(bc[jnz_opcode_idx], OpCode::Jnz as u8);
-        let target_bytes = &bc[jnz_opcode_idx+1..jnz_opcode_idx+5];
+        let target_bytes = &bc[jnz_opcode_idx + 1..jnz_opcode_idx + 5];
         let target = u32::from_le_bytes(target_bytes.try_into().unwrap());
         assert_eq!(target, 5);
     }

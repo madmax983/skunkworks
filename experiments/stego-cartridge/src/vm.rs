@@ -105,8 +105,11 @@ impl VM {
         match OpCode::from_u8(opcode_byte) {
             Some(OpCode::Push) => {
                 // Read next 4 bytes as i32 (little endian)
-                if self.pc + 4 > MEMORY_SIZE { self.halted = true; return; }
-                let bytes = &self.memory[self.pc..self.pc+4];
+                if self.pc + 4 > MEMORY_SIZE {
+                    self.halted = true;
+                    return;
+                }
+                let bytes = &self.memory[self.pc..self.pc + 4];
                 let val = i32::from_le_bytes(bytes.try_into().unwrap());
                 self.stack.push(val);
                 self.pc += 4;
@@ -132,22 +135,36 @@ impl VM {
             Some(OpCode::Div) => {
                 let b = self.stack.pop().unwrap_or(1); // Avoid div by zero
                 let a = self.stack.pop().unwrap_or(0);
-                if b == 0 { self.stack.push(0); } else { self.stack.push(a.wrapping_div(b)); }
+                if b == 0 {
+                    self.stack.push(0);
+                } else {
+                    self.stack.push(a.wrapping_div(b));
+                }
             }
             Some(OpCode::Mod) => {
                 let b = self.stack.pop().unwrap_or(1);
                 let a = self.stack.pop().unwrap_or(0);
-                if b == 0 { self.stack.push(0); } else { self.stack.push(a.wrapping_rem(b)); }
+                if b == 0 {
+                    self.stack.push(0);
+                } else {
+                    self.stack.push(a.wrapping_rem(b));
+                }
             }
             Some(OpCode::Jmp) => {
-                if self.pc + 4 > MEMORY_SIZE { self.halted = true; return; }
-                let bytes = &self.memory[self.pc..self.pc+4];
+                if self.pc + 4 > MEMORY_SIZE {
+                    self.halted = true;
+                    return;
+                }
+                let bytes = &self.memory[self.pc..self.pc + 4];
                 let addr = u32::from_le_bytes(bytes.try_into().unwrap()) as usize;
                 self.pc = addr;
             }
             Some(OpCode::Jz) => {
-                if self.pc + 4 > MEMORY_SIZE { self.halted = true; return; }
-                let bytes = &self.memory[self.pc..self.pc+4];
+                if self.pc + 4 > MEMORY_SIZE {
+                    self.halted = true;
+                    return;
+                }
+                let bytes = &self.memory[self.pc..self.pc + 4];
                 let addr = u32::from_le_bytes(bytes.try_into().unwrap()) as usize;
                 let val = self.stack.pop().unwrap_or(0);
                 self.pc += 4; // Advance past addr
@@ -156,8 +173,11 @@ impl VM {
                 }
             }
             Some(OpCode::Jnz) => {
-                if self.pc + 4 > MEMORY_SIZE { self.halted = true; return; }
-                let bytes = &self.memory[self.pc..self.pc+4];
+                if self.pc + 4 > MEMORY_SIZE {
+                    self.halted = true;
+                    return;
+                }
+                let bytes = &self.memory[self.pc..self.pc + 4];
                 let addr = u32::from_le_bytes(bytes.try_into().unwrap()) as usize;
                 let val = self.stack.pop().unwrap_or(0);
                 self.pc += 4; // Advance past addr

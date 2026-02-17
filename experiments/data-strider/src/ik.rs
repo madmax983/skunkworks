@@ -37,17 +37,17 @@ impl TwoBoneSolver {
 
         let min_reach = (self.l1 - self.l2).abs();
         if dist < min_reach {
-             // If dist is too small, clamp to min_reach
-             if dist < 0.0001 {
-                 final_target = Vec2::new(min_reach, 0.0);
-             } else {
-                 final_target = valid_target.normalize() * min_reach;
-             }
-             dist = min_reach;
+            // If dist is too small, clamp to min_reach
+            if dist < 0.0001 {
+                final_target = Vec2::new(min_reach, 0.0);
+            } else {
+                final_target = valid_target.normalize() * min_reach;
+            }
+            dist = min_reach;
         }
 
         if dist < 0.001 {
-             // Should not happen if min_reach > 0.001, but handled above
+            // Should not happen if min_reach > 0.001, but handled above
             return (Vec2::new(self.l1, 0.0), Vec2::ZERO);
         }
 
@@ -61,7 +61,8 @@ impl TwoBoneSolver {
         // Angle offset for the first bone
         // cos(angle) = (b^2 + c^2 - a^2) / (2bc)
         // here a = l2, b = l1, c = dist
-        let cos_angle_l1 = (self.l1 * self.l1 + dist * dist - self.l2 * self.l2) / (2.0 * self.l1 * dist);
+        let cos_angle_l1 =
+            (self.l1 * self.l1 + dist * dist - self.l2 * self.l2) / (2.0 * self.l1 * dist);
 
         // Clamp for safety (floating point errors)
         let cos_angle_l1 = cos_angle_l1.clamp(-1.0, 1.0);

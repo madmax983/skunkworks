@@ -695,7 +695,9 @@ fn check_dynamic_predicates(
 
                                 if let Some(subst_x) = unify(arg_x, &fact_x, subst) {
                                     if let Some(subst_y) = unify(arg_y, &fact_y, &subst_x) {
-                                        if let Some(final_subst) = unify(arg_val, &fact_val, &subst_y) {
+                                        if let Some(final_subst) =
+                                            unify(arg_val, &fact_val, &subst_y)
+                                        {
                                             solve(
                                                 remaining_goals,
                                                 final_subst,

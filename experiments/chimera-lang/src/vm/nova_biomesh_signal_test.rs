@@ -2,9 +2,9 @@
 #[cfg(feature = "nova")]
 mod tests {
     use crate::ast::{Dna, Helix};
+    use crate::vm::nova_biomesh::BioMeshNode;
     use crate::vm::nova_signals::process_signals;
     use crate::vm::{ChimeraVM, Value};
-    use crate::vm::nova_biomesh::BioMeshNode;
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
@@ -44,6 +44,9 @@ mod tests {
         // Note: process_signals updates signal_grid to next_signals at the end.
         // So vm.signal_grid[1][10] should be > 0.
 
-        assert!(vm.signal_grid[1][10] > 0, "Signal did not propagate to connected mesh node at (1,10)");
+        assert!(
+            vm.signal_grid[1][10] > 0,
+            "Signal did not propagate to connected mesh node at (1,10)"
+        );
     }
 }

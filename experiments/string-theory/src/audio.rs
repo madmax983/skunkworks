@@ -63,10 +63,16 @@ impl Voice {
     }
 
     fn next_sample(&mut self) -> f32 {
-        if !self.active || self.len == 0 { return 0.0; }
+        if !self.active || self.len == 0 {
+            return 0.0;
+        }
 
         let current = self.buffer[self.ptr];
-        let prev_idx = if self.ptr == 0 { self.len - 1 } else { self.ptr - 1 };
+        let prev_idx = if self.ptr == 0 {
+            self.len - 1
+        } else {
+            self.ptr - 1
+        };
         let prev = self.buffer[prev_idx];
 
         // Karplus-Strong update
@@ -109,7 +115,11 @@ impl AudioModel {
 
     fn handle_command(&mut self, cmd: AudioCommand) {
         match cmd {
-            AudioCommand::Pluck { frequency, decay, amplitude } => {
+            AudioCommand::Pluck {
+                frequency,
+                decay,
+                amplitude,
+            } => {
                 let idx = self.next_voice;
                 self.voices[idx].reset(frequency, self.sample_rate, decay, amplitude);
                 self.next_voice = (self.next_voice + 1) % MAX_VOICES;
@@ -137,7 +147,8 @@ pub fn init_audio() -> Result<(AudioHandle, Sender<AudioCommand>)> {
     #[cfg(feature = "audio")]
     {
         let host = cpal::default_host();
-        let device = host.default_output_device()
+        let device = host
+            .default_output_device()
             .ok_or_else(|| anyhow!("No output device available"))?;
 
         let config: StreamConfig = device.default_output_config()?.into();

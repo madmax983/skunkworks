@@ -59,8 +59,22 @@ impl StringVisual {
 
         // Add a glow effect if vibrating significantly
         if self.vibration.abs() > 1.0 {
-            draw_line(start.x, start.y, control.x, control.y, thickness * 3.0, Color::new(color.r, color.g, color.b, 0.2));
-            draw_line(control.x, control.y, end.x, end.y, thickness * 3.0, Color::new(color.r, color.g, color.b, 0.2));
+            draw_line(
+                start.x,
+                start.y,
+                control.x,
+                control.y,
+                thickness * 3.0,
+                Color::new(color.r, color.g, color.b, 0.2),
+            );
+            draw_line(
+                control.x,
+                control.y,
+                end.x,
+                end.y,
+                thickness * 3.0,
+                Color::new(color.r, color.g, color.b, 0.2),
+            );
         }
     }
 
@@ -77,7 +91,10 @@ impl StringVisual {
         let y_min = start.y.min(end.y);
         let y_max = start.y.max(end.y);
 
-        self.is_hovered = mouse_pos.x >= x_min && mouse_pos.x <= x_max && mouse_pos.y >= y_min && mouse_pos.y <= y_max;
+        self.is_hovered = mouse_pos.x >= x_min
+            && mouse_pos.x <= x_max
+            && mouse_pos.y >= y_min
+            && mouse_pos.y <= y_max;
         self.is_hovered
     }
 }

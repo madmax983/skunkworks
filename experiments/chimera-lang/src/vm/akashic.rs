@@ -5,13 +5,13 @@ use crate::ast::Nucleotide;
 #[cfg(feature = "nova")]
 use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
+use serde::{Deserialize, Serialize};
+#[cfg(feature = "nova")]
 use std::collections::HashMap;
 #[cfg(feature = "nova")]
 use std::fs::OpenOptions;
 #[cfg(feature = "nova")]
 use std::io::{Read, Write};
-#[cfg(feature = "nova")]
-use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "nova")]
 const AKASHIC_FILE: &str = ".chimera_akashic.json";
@@ -38,7 +38,10 @@ impl AkashicRecords {
                 // Check size
                 if let Ok(metadata) = file.metadata() {
                     if metadata.len() > MAX_AKASHIC_SIZE {
-                        return Err(format!("Akashic Record too large (> {} bytes)", MAX_AKASHIC_SIZE));
+                        return Err(format!(
+                            "Akashic Record too large (> {} bytes)",
+                            MAX_AKASHIC_SIZE
+                        ));
                     }
                 }
 
@@ -71,7 +74,8 @@ impl AkashicRecords {
                 .truncate(true)
                 .open(&temp_file)
                 .map_err(|e| e.to_string())?;
-            file.write_all(content.as_bytes()).map_err(|e| e.to_string())?;
+            file.write_all(content.as_bytes())
+                .map_err(|e| e.to_string())?;
             file.sync_all().map_err(|e| e.to_string())?;
         }
         std::fs::rename(&temp_file, AKASHIC_FILE).map_err(|e| e.to_string())
@@ -128,10 +132,10 @@ pub fn exec_akashic_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
         OpCode::Miracle => {
             if let Some(Value::Int(id)) = vm.stack.pop() {
                 let cost = match id {
-                    0 => 1000, // Resurrection
-                    1 => 5000, // Terraform
-                    2 => 2000, // Wealth
-                    3 => 500,  // Cleanse
+                    0 => 1000,  // Resurrection
+                    1 => 5000,  // Terraform
+                    2 => 2000,  // Wealth
+                    3 => 500,   // Cleanse
                     4 => 10000, // Ascension
                     _ => 0,
                 };
@@ -141,7 +145,8 @@ pub fn exec_akashic_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     perform_miracle(vm, id);
                     let _ = vm.akashic.save();
                 } else if cost > 0 {
-                    vm.output.push(format!("MIRACLE: Insufficient Karma (Need {})", cost));
+                    vm.output
+                        .push(format!("MIRACLE: Insufficient Karma (Need {})", cost));
                 } else {
                     vm.output.push("MIRACLE: Unknown ID".to_string());
                 }
@@ -154,28 +159,35 @@ pub fn exec_akashic_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
 #[cfg(feature = "nova")]
 fn perform_miracle(vm: &mut ChimeraVM, id: i64) {
     match id {
-        0 => { // Resurrection
+        0 => {
+            // Resurrection
             vm.output.push("MIRACLE: The Dead Rise!".to_string());
             while let Some(strand) = vm.graveyard.pop() {
                 vm.dna.helix.strands.push(strand);
                 vm.telomeres.push(100);
                 #[cfg(feature = "cortex")]
-                { vm.activation_levels.push(0); vm.synapse_map.push(Vec::new()); }
+                {
+                    vm.activation_levels.push(0);
+                    vm.synapse_map.push(Vec::new());
+                }
             }
-        },
-        1 => { // Terraform
+        }
+        1 => {
+            // Terraform
             vm.output.push("MIRACLE: A New World!".to_string());
             for row in vm.biome_grid.iter_mut() {
                 for cell in row.iter_mut() {
                     *cell = crate::vm::nova_biome::Biome::Garden;
                 }
             }
-        },
-        2 => { // Wealth
+        }
+        2 => {
+            // Wealth
             vm.output.push("MIRACLE: Abundance!".to_string());
             vm.energy = 5000; // Massive energy boost
-        },
-        3 => { // Cleanse
+        }
+        3 => {
+            // Cleanse
             vm.output.push("MIRACLE: Purification!".to_string());
             for row in vm.viral_grid.iter_mut() {
                 for cell in row.iter_mut() {
@@ -187,12 +199,14 @@ fn perform_miracle(vm: &mut ChimeraVM, id: i64) {
                     *cell = 0;
                 }
             }
-        },
-        4 => { // Ascension
+        }
+        4 => {
+            // Ascension
             vm.output.push("MIRACLE: ASCENSION ACHIEVED!".to_string());
-            vm.output.push("You have transcended the simulation.".to_string());
+            vm.output
+                .push("You have transcended the simulation.".to_string());
             vm.halted = true;
-        },
+        }
         _ => {}
     }
 }

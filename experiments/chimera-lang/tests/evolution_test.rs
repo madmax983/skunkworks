@@ -1,9 +1,9 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod evolution_tests {
-    use chimera_lang::vm::{ChimeraVM, Value};
-    use chimera_lang::ast::{Dna, Helix, Nucleotide, JunctionType};
+    use chimera_lang::ast::{Dna, Helix, JunctionType, Nucleotide};
     use chimera_lang::vm::nova::{Organelle, OrganelleType};
+    use chimera_lang::vm::{ChimeraVM, Value};
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
@@ -33,15 +33,20 @@ mod evolution_tests {
             id: 1,
             tissue_id: None,
             genome_id: 0,
-            energy: 100, experience: 0, stage: 0,
+            energy: 100,
+            experience: 0,
+            stage: 0,
         };
         vm.organelles.push(savant);
 
         // action("die")
-        let fact = Value::Junction(JunctionType::Any, vec![
-            Value::Str("action".to_string()),
-            Value::Str("die".to_string())
-        ]);
+        let fact = Value::Junction(
+            JunctionType::Any,
+            vec![
+                Value::Str("action".to_string()),
+                Value::Str("die".to_string()),
+            ],
+        );
         vm.knowledge_base.push(fact);
 
         vm.step();
@@ -71,21 +76,26 @@ mod evolution_tests {
             id: 1,
             tissue_id: None,
             genome_id: 0,
-            energy: 100, experience: 0, stage: 0,
+            energy: 100,
+            experience: 0,
+            stage: 0,
         };
         vm.organelles.push(savant);
 
-        let action = Value::Junction(JunctionType::Any, vec![
-            Value::Str("orca_write".to_string()),
-            Value::Int(6),
-            Value::Int(6),
-            Value::Str("Test".to_string())
-        ]);
+        let action = Value::Junction(
+            JunctionType::Any,
+            vec![
+                Value::Str("orca_write".to_string()),
+                Value::Int(6),
+                Value::Int(6),
+                Value::Str("Test".to_string()),
+            ],
+        );
 
-        let fact = Value::Junction(JunctionType::Any, vec![
-            Value::Str("action".to_string()),
-            action
-        ]);
+        let fact = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("action".to_string()), action],
+        );
 
         vm.knowledge_base.push(fact);
 
@@ -116,21 +126,26 @@ mod evolution_tests {
             id: 1,
             tissue_id: None,
             genome_id: 0,
-            energy: 100, experience: 0, stage: 0,
+            energy: 100,
+            experience: 0,
+            stage: 0,
         };
         vm.organelles.push(savant);
 
         // action(circuit_place("wire", 7, 7))
-        let action = Value::Junction(JunctionType::Any, vec![
-            Value::Str("circuit_place".to_string()),
-            Value::Str("wire".to_string()),
-            Value::Int(7),
-            Value::Int(7)
-        ]);
-        let fact = Value::Junction(JunctionType::Any, vec![
-            Value::Str("action".to_string()),
-            action
-        ]);
+        let action = Value::Junction(
+            JunctionType::Any,
+            vec![
+                Value::Str("circuit_place".to_string()),
+                Value::Str("wire".to_string()),
+                Value::Int(7),
+                Value::Int(7),
+            ],
+        );
+        let fact = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("action".to_string()), action],
+        );
         vm.knowledge_base.push(fact);
 
         vm.step();
@@ -147,6 +162,9 @@ mod evolution_tests {
         vm.signal_grid[6][5] = 1;
         vm.grid[6][6] = Value::Str(".".to_string());
         vm.step();
-        assert!(!vm.stack.is_empty(), "Stack should have result from BabelLive");
+        assert!(
+            !vm.stack.is_empty(),
+            "Stack should have result from BabelLive"
+        );
     }
 }

@@ -62,17 +62,16 @@ fn scan_recursive(path: &Path, current_depth: usize, max_depth: usize) -> Option
             for entry in entries.flatten() {
                 let child_path = entry.path();
                 // Avoid symlink loops or hidden files if necessary
-                if let Some(child_node) = scan_recursive(&child_path, current_depth + 1, max_depth) {
+                if let Some(child_node) = scan_recursive(&child_path, current_depth + 1, max_depth)
+                {
                     children.push(child_node);
                 }
             }
             // Sort children: Directories first, then files
-            children.sort_by(|a, b| {
-                match (&a.node_type, &b.node_type) {
-                    (NodeType::Directory, NodeType::File) => std::cmp::Ordering::Less,
-                    (NodeType::File, NodeType::Directory) => std::cmp::Ordering::Greater,
-                    _ => a.name.cmp(&b.name),
-                }
+            children.sort_by(|a, b| match (&a.node_type, &b.node_type) {
+                (NodeType::Directory, NodeType::File) => std::cmp::Ordering::Less,
+                (NodeType::File, NodeType::Directory) => std::cmp::Ordering::Greater,
+                _ => a.name.cmp(&b.name),
             });
             node.children = children;
 

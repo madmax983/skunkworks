@@ -71,8 +71,6 @@ pub const MAX_STRINGS: usize = 256;
 #[cfg(feature = "nova")]
 pub mod akashic;
 #[cfg(feature = "nova")]
-pub mod nova_alchemy_prime;
-#[cfg(feature = "nova")]
 pub mod alchemy;
 #[cfg(feature = "nova")]
 pub mod babel;
@@ -119,6 +117,8 @@ mod neurochem_test;
 #[cfg(feature = "biophysics")]
 pub mod neuron;
 pub mod nova;
+#[cfg(feature = "nova")]
+pub mod nova_alchemy_prime;
 #[cfg(feature = "nova")]
 pub mod nova_arcana;
 #[cfg(feature = "nova")]

@@ -111,15 +111,23 @@ impl<'a> Button<'a> {
 
     pub fn hovered(mut self, hovered: bool) -> Self {
         if self.state != ButtonState::Disabled {
-            self.state = if hovered { ButtonState::Hovered } else { ButtonState::Normal };
+            self.state = if hovered {
+                ButtonState::Hovered
+            } else {
+                ButtonState::Normal
+            };
         }
         self
     }
 
     pub fn clicked(mut self, clicked: bool) -> Self {
-         if self.state != ButtonState::Disabled {
-             self.state = if clicked { ButtonState::Clicked } else { self.state };
-         }
+        if self.state != ButtonState::Disabled {
+            self.state = if clicked {
+                ButtonState::Clicked
+            } else {
+                self.state
+            };
+        }
         self
     }
 
@@ -147,37 +155,63 @@ impl<'a> Button<'a> {
 impl<'a> Widget for Button<'a> {
     fn render(mut self, area: Rect, buf: &mut Buffer) {
         let (fg, bg, modifier) = match (self.style_variant, self.state) {
-             // Disabled
+            // Disabled
             (_, ButtonState::Disabled) => (Color::DarkGray, Color::Black, Modifier::empty()),
 
             // Primary
-            (ButtonStyle::Primary, ButtonState::Normal) => (Color::Black, Color::Blue, Modifier::BOLD),
-            (ButtonStyle::Primary, ButtonState::Hovered) => (Color::Black, Color::LightBlue, Modifier::BOLD),
-            (ButtonStyle::Primary, ButtonState::Clicked) => (Color::White, Color::Blue, Modifier::BOLD),
+            (ButtonStyle::Primary, ButtonState::Normal) => {
+                (Color::Black, Color::Blue, Modifier::BOLD)
+            }
+            (ButtonStyle::Primary, ButtonState::Hovered) => {
+                (Color::Black, Color::LightBlue, Modifier::BOLD)
+            }
+            (ButtonStyle::Primary, ButtonState::Clicked) => {
+                (Color::White, Color::Blue, Modifier::BOLD)
+            }
 
             // Secondary
-            (ButtonStyle::Secondary, ButtonState::Normal) => (Color::White, Color::DarkGray, Modifier::empty()),
-            (ButtonStyle::Secondary, ButtonState::Hovered) => (Color::White, Color::Gray, Modifier::empty()),
-            (ButtonStyle::Secondary, ButtonState::Clicked) => (Color::Black, Color::White, Modifier::BOLD),
+            (ButtonStyle::Secondary, ButtonState::Normal) => {
+                (Color::White, Color::DarkGray, Modifier::empty())
+            }
+            (ButtonStyle::Secondary, ButtonState::Hovered) => {
+                (Color::White, Color::Gray, Modifier::empty())
+            }
+            (ButtonStyle::Secondary, ButtonState::Clicked) => {
+                (Color::Black, Color::White, Modifier::BOLD)
+            }
 
             // Outline
-            (ButtonStyle::Outline, ButtonState::Normal) => (Color::Gray, Color::Reset, Modifier::empty()),
-            (ButtonStyle::Outline, ButtonState::Hovered) => (Color::White, Color::Reset, Modifier::BOLD),
-            (ButtonStyle::Outline, ButtonState::Clicked) => (Color::Green, Color::Reset, Modifier::BOLD),
+            (ButtonStyle::Outline, ButtonState::Normal) => {
+                (Color::Gray, Color::Reset, Modifier::empty())
+            }
+            (ButtonStyle::Outline, ButtonState::Hovered) => {
+                (Color::White, Color::Reset, Modifier::BOLD)
+            }
+            (ButtonStyle::Outline, ButtonState::Clicked) => {
+                (Color::Green, Color::Reset, Modifier::BOLD)
+            }
 
             // Danger
-            (ButtonStyle::Danger, ButtonState::Normal) => (Color::White, Color::Red, Modifier::BOLD),
-            (ButtonStyle::Danger, ButtonState::Hovered) => (Color::White, Color::LightRed, Modifier::BOLD),
-            (ButtonStyle::Danger, ButtonState::Clicked) => (Color::Black, Color::Red, Modifier::BOLD | Modifier::REVERSED),
+            (ButtonStyle::Danger, ButtonState::Normal) => {
+                (Color::White, Color::Red, Modifier::BOLD)
+            }
+            (ButtonStyle::Danger, ButtonState::Hovered) => {
+                (Color::White, Color::LightRed, Modifier::BOLD)
+            }
+            (ButtonStyle::Danger, ButtonState::Clicked) => (
+                Color::Black,
+                Color::Red,
+                Modifier::BOLD | Modifier::REVERSED,
+            ),
         };
 
         let style = Style::default().fg(fg).bg(bg).add_modifier(modifier);
 
         if self.block.is_none() {
             let borders = if self.style_variant == ButtonStyle::Outline {
-                 Borders::ALL
+                Borders::ALL
             } else {
-                 Borders::ALL
+                Borders::ALL
             };
             self.block = Some(Block::default().borders(borders));
         }
@@ -266,7 +300,7 @@ mod tests {
         // Check border style (Primary Normal -> Blue)
         let cell = &buffer[(0, 0)];
         assert_eq!(cell.fg, Color::Black); // Text color for Primary Normal is Black
-        assert_eq!(cell.bg, Color::Blue);  // Bg color for Primary Normal is Blue
+        assert_eq!(cell.bg, Color::Blue); // Bg color for Primary Normal is Blue
 
         // Check text content
         // Text is centered. Width 20, text "Click Me" (8 chars).
@@ -278,7 +312,7 @@ mod tests {
 
     #[test]
     fn test_button_danger_hovered() {
-         let button = Button::new("Del") // Short label to fit easily
+        let button = Button::new("Del") // Short label to fit easily
             .style_variant(ButtonStyle::Danger)
             .state(ButtonState::Hovered)
             .icon("X"); // Simple ascii icon to avoid emoji width issues

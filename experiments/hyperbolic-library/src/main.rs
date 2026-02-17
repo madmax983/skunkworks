@@ -33,10 +33,15 @@ fn generate_font_atlas(font_bytes: &[u8]) -> Texture2D {
 
     for i in 0..(grid_cols * grid_rows) {
         let char_code = start_char + i as u8;
-        if char_code > 126 { break; } // ASCII limit
+        if char_code > 126 {
+            break;
+        } // ASCII limit
 
         let c = char_code as char;
-        let glyph = font.glyph(c).scaled(scale).positioned(rusttype::point(0.0, 0.0));
+        let glyph = font
+            .glyph(c)
+            .scaled(scale)
+            .positioned(rusttype::point(0.0, 0.0));
 
         // Calculate cell position
         let col = i % grid_cols;
@@ -46,7 +51,10 @@ fn generate_font_atlas(font_bytes: &[u8]) -> Texture2D {
         let cell_y = row * cell_size;
 
         // Center the glyph in the cell
-        let bb = glyph.pixel_bounding_box().unwrap_or(rusttype::Rect { min: rusttype::Point { x: 0, y: 0 }, max: rusttype::Point { x: 0, y: 0 } });
+        let bb = glyph.pixel_bounding_box().unwrap_or(rusttype::Rect {
+            min: rusttype::Point { x: 0, y: 0 },
+            max: rusttype::Point { x: 0, y: 0 },
+        });
         let glyph_w = bb.width();
         let glyph_h = bb.height();
 
@@ -66,10 +74,10 @@ fn generate_font_atlas(font_bytes: &[u8]) -> Texture2D {
 
                     // Additive blending (max)
                     if val > pixels[idx] {
-                        pixels[idx] = val;     // R
-                        pixels[idx+1] = val;   // G
-                        pixels[idx+2] = val;   // B
-                        pixels[idx+3] = 255;   // A (Full Alpha if there is any pixel)
+                        pixels[idx] = val; // R
+                        pixels[idx + 1] = val; // G
+                        pixels[idx + 2] = val; // B
+                        pixels[idx + 3] = 255; // A (Full Alpha if there is any pixel)
                     }
                 }
             });
@@ -221,7 +229,13 @@ async fn main() {
         draw_text("WASD to Navigate the Library", 10.0, 50.0, 20.0, GRAY);
 
         // FPS
-        draw_text(&format!("FPS: {}", get_fps()), screen_width() - 100.0, 30.0, 20.0, WHITE);
+        draw_text(
+            &format!("FPS: {}", get_fps()),
+            screen_width() - 100.0,
+            30.0,
+            20.0,
+            WHITE,
+        );
 
         next_frame().await
     }

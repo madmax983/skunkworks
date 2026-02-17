@@ -80,7 +80,8 @@ fn exec_patch(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     vm.output
                         .push(format!("PATCH: Connected {},{} to {:?}", nx, ny, t));
                 } else {
-                    vm.output.push(format!("PATCH: Invalid target {}", target_id));
+                    vm.output
+                        .push(format!("PATCH: Invalid target {}", target_id));
                 }
             }
         } else {
