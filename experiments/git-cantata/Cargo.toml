@@ -9,6 +9,7 @@ crossterm.workspace = true
 rand.workspace = true
 ratatui.workspace = true
 tui-shared = { path = "../../crates/tui-shared" }
+git-associates = { path = "../../crates/git-associates" }
 
 git2 = "0.18"
 rodio = { version = "0.19", optional = true }
