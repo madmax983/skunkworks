@@ -141,6 +141,7 @@ members = [
     "experiments/malloc-expressionism",
     "experiments/crystal-defense", "experiments/geo-linguistics",
     "experiments/stego-attack", "experiments/tesseract-time", "experiments/rhizome-wars", "experiments/chaos-life", "experiments/polyglot-chimera",
+    "experiments/memetic-market",
 ]
 resolver = "2"
 
