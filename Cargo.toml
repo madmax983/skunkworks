@@ -140,6 +140,7 @@ members = [
     "experiments/hyperbolic-library", "experiments/data-strider",
     "experiments/chimera-roots", "experiments/stego-cartridge", "experiments/git-archaeology", "experiments/string-theory", "experiments/chronos-observatory",
     "experiments/genetic-luthier", "experiments/sonata-cycle",
+    "experiments/malloc-expressionism",
 ]
 resolver = "2"
 
