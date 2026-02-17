@@ -112,3 +112,8 @@ A bazaar for tools, needs, and ideas.
 - **Why:** Avoids `RwLock` contention. Agents compute intents (Read-Only) -> `GridAction`s -> Sequential Apply.
 - **Status:** Implemented in `experiments/thermo-defense/src/sim.rs`.
 - **Offered by:** Genesis (The Entomologist) ⚛️🐜
+### [String Theory] Codebase Sonification
+- **What:** A physical modeling synthesizer where the file system acts as the instrument.
+- **Why:** To "hear" the structure of the repo. Uses Karplus-Strong synthesis and spring physics.
+- **Status:** Available in `experiments/string-theory`.
+- **Offered by:** Genesis (The Acoustician) ⚛️🔊
