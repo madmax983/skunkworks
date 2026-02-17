@@ -1147,3 +1147,49 @@ sequenceDiagram
         Grid-->>Grid: Update Heat/Pheromone
     end
 ```
+
+## Experiment: Crystal Defense (ADR 038)
+
+**Crystal Defense** is a Tower Defense game played on a 3D projected Icosahedral Quasicrystal lattice.
+
+### Hyper-dimensional Architecture
+
+The game uses a 6D-to-3D projection to generate the game board, resulting in a non-periodic, highly symmetric graph.
+
+```mermaid
+classDiagram
+    direction TB
+    class State {
+        +Dungeon dungeon
+        +render()
+    }
+
+    class Dungeon {
+        +World world
+        +update()
+    }
+
+    class World {
+        +Arc~Quasicrystal~ qc
+        +Vec~Agent~ agents
+        +Vec~f32~ heat_map
+        +Vec~f32~ pheromones
+    }
+
+    class Quasicrystal {
+        +Vec~Point3~ atoms
+        +Vec~Edge~ edges
+        +Vec~Vec~usize~~ adj
+    }
+
+    class Agent {
+        +AgentType kind
+        +usize current_node
+        +Option~usize~ target_node
+    }
+
+    State *-- Dungeon : Owns
+    Dungeon *-- World : Owns
+    World o-- Quasicrystal : Shared (Arc)
+    World *-- Agent : Manages
+```
