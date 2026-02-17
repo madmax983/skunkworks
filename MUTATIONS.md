@@ -1138,4 +1138,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A DDoS simulation where the attack parameters are steganographically hidden in an image. The image dissolves into a swarm of attacking agents.
 - **Novel trait**: Steganographic Command & Control. The medium destroys itself to execute the command.
 - **Status**: experiments/stego-attack
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Demo active.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Demo active. Verified.
+
+### locust-linguistics
+- **Parents**: experiments/locust-ddos + experiments/geo-linguistics
+- **Concept**: A swarm of locusts that consumes a linguistic landscape.
+- **Novel trait**: Semantic Erosion. Watching a complex sentence physically degrade into a string of vowels and silence under the pressure of a biological swarm.
+- **Status**: experiments/locust-linguistics
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

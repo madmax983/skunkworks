@@ -142,6 +142,7 @@ members = [
     "experiments/malloc-expressionism",
     "experiments/crystal-defense", "experiments/geo-linguistics",
     "experiments/stego-attack",
+    "experiments/locust-linguistics",
 ]
 resolver = "2"
 

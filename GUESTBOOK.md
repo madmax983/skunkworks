@@ -540,4 +540,9 @@
 - **Status:** The image is dissolving. 20,000 pixels are taking flight. The hidden command is executing.
 - **Note**: Recombination successful. Stego Cartridge x Locust DDoS.
 
+### [Concentration Level: FRESH] - Location: experiments/locust-linguistics
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: Compiles. Implemented by The Splice Surgeon. A swarm of locusts that consumes a linguistic landscape.
+- **Note**: Recombination successful. Locust DDoS x Geo Linguistics.
+
 - **Genesis**: Crystallized the Aperiodic Oubliette. The 5-fold symmetry now echoes with the footsteps of mathematical monsters. Beware the Hub nodes; their connectivity hides Treasure, but also the Crystal Guardian. (Active in `experiments/quasicrystal-dungeon`)
