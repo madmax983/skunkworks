@@ -19,11 +19,11 @@ pub struct World {
     pub agents: Vec<Locust>,
     pub pheromones: Vec<f32>,        // Grid of danger levels
     pub firewalls: Vec<(Vec2, f32)>, // (Center, Radius)
-    pub width: usize,
-    pub height: usize,
     pub grid_w: usize,
     pub grid_h: usize,
     pub target: Vec2,
+    pub server_health: f32,
+    pub max_health: f32,
 }
 
 impl World {
@@ -55,11 +55,11 @@ impl World {
             agents,
             pheromones: vec![0.0; grid_w * grid_h],
             firewalls: Vec::new(),
-            width: WORLD_SIZE as usize,
-            height: WORLD_SIZE as usize,
             grid_w,
             grid_h,
             target: vec2(WORLD_SIZE / 2.0, WORLD_SIZE / 2.0),
+            server_health: 1000.0,
+            max_health: 1000.0,
         }
     }
 
@@ -74,7 +74,7 @@ impl World {
         let pheromones = &self.pheromones;
 
         // Parallel update of agents
-        let updates: Vec<(Vec2, Vec2, u8, Option<(usize, usize)>)> = self
+        let updates: Vec<(Vec2, Vec2, u8, Option<(usize, usize)>, f32)> = self
             .agents
             .par_iter()
             .map(|agent| {
@@ -91,14 +91,29 @@ impl World {
                             2 => (0.0, rng.gen_range(0.0..WORLD_SIZE)),
                             _ => (WORLD_SIZE, rng.gen_range(0.0..WORLD_SIZE)),
                         };
-                        return (vec2(x, y), vec2(0.0, 0.0), 0, None);
+                        return (vec2(x, y), vec2(0.0, 0.0), 0, None, 0.0);
                     }
-                    return (agent.pos, agent.vel, 1, None);
+                    return (agent.pos, agent.vel, 1, None, 0.0);
                 }
 
                 // Seek Target
                 let to_target = target - agent.pos;
                 let dist_target = to_target.length();
+
+                // Hit Target?
+                if dist_target < 15.0 {
+                    // Respawn
+                    let mut rng = ::rand::thread_rng();
+                    let side = rng.gen_range(0..4);
+                    let (x, y) = match side {
+                        0 => (rng.gen_range(0.0..WORLD_SIZE), 0.0),
+                        1 => (rng.gen_range(0.0..WORLD_SIZE), WORLD_SIZE),
+                        2 => (0.0, rng.gen_range(0.0..WORLD_SIZE)),
+                        _ => (WORLD_SIZE, rng.gen_range(0.0..WORLD_SIZE)),
+                    };
+                    return (vec2(x, y), vec2(0.0, 0.0), 0, None, 1.0);
+                }
+
                 let mut desire = if dist_target > 0.0 {
                     to_target.normalize() * SPEED
                 } else {
@@ -150,15 +165,17 @@ impl World {
                     new_pos = new_pos.clamp(vec2(0.0, 0.0), vec2(WORLD_SIZE, WORLD_SIZE));
                 }
 
-                (new_pos, new_vel, state, drop_pheromone)
+                (new_pos, new_vel, state, drop_pheromone, 0.0)
             })
             .collect();
 
         // Apply updates
-        for (i, (pos, vel, state, pheromone)) in updates.into_iter().enumerate() {
+        let mut total_damage = 0.0;
+        for (i, (pos, vel, state, pheromone, damage)) in updates.into_iter().enumerate() {
             self.agents[i].pos = pos;
             self.agents[i].vel = vel;
             self.agents[i].state = state;
+            total_damage += damage;
 
             if let Some((px, py)) = pheromone {
                 let idx = py * self.grid_w + px;
@@ -166,13 +183,35 @@ impl World {
             }
         }
 
-        // Decay pheromones
-        // Simple decay
-        // Also maybe diffuse? Diffusion is expensive on CPU for 250x250 every frame?
-        // 62500 cells. It's fine.
+        self.server_health = (self.server_health - total_damage).max(0.0);
 
-        // Parallel diffusion (approximated or just simple decay for speed first)
-        // Let's just do decay first. 100k agents is the bottleneck.
+        // Diffusion (Box Blur)
+        let w = self.grid_w;
+        let h = self.grid_h;
+        let prev_pheromones = self.pheromones.clone(); // Read from this
+
+        self.pheromones
+            .par_chunks_mut(w)
+            .enumerate()
+            .for_each(|(y, row)| {
+                for (x, cell) in row.iter_mut().enumerate() {
+                    if y == 0 || y == h - 1 || x == 0 || x == w - 1 {
+                        continue; // Skip edges for simplicity
+                    }
+
+                    // Average of 3x3 kernel
+                    let mut sum = 0.0;
+                    for dy in -1..=1 {
+                        for dx in -1..=1 {
+                            let idx = ((y as isize + dy) as usize) * w + ((x as isize + dx) as usize);
+                            sum += prev_pheromones[idx];
+                        }
+                    }
+                    *cell = sum / 9.0;
+                }
+            });
+
+        // Decay pheromones
         self.pheromones.par_iter_mut().for_each(|p| {
             *p *= PHEROMONE_DECAY;
             if *p < 0.01 {
@@ -182,12 +221,11 @@ impl World {
     }
 
     pub fn render_to_buffer(&self, buffer: &mut [u8], width: usize, height: usize) {
-        // Clear buffer (Black)
-        // Using parellel iterator for clearing is overkill but consistent
+        // Clear buffer (Dark Blue-ish)
         buffer.par_chunks_exact_mut(4).for_each(|pixel| {
-            pixel[0] = 10; // Dark background
-            pixel[1] = 10;
-            pixel[2] = 20;
+            pixel[0] = 5;
+            pixel[1] = 5;
+            pixel[2] = 15;
             pixel[3] = 255;
         });
 
@@ -195,40 +233,6 @@ impl World {
         let scale_y = height as f32 / WORLD_SIZE;
 
         // Draw Pheromones (Heatmap)
-        // Iterate over grid and draw rects? No, too slow.
-        // We iterate pixels and sample grid?
-        // Or just map grid directly if resolution matches.
-        // Let's skip drawing pheromones for now, or draw them lightly.
-
-        // Draw Agents
-        // Serial because random access to buffer is hard to parallelize without conflicts
-        // But we can use atomics or just accept race conditions (glitch art!)
-        // Since we want deterministic-ish visualization, serial is safer.
-        // 100k points is fast on CPU.
-
-        for agent in &self.agents {
-            let px = (agent.pos.x * scale_x) as isize;
-            let py = (agent.pos.y * scale_y) as isize;
-
-            if px >= 0 && px < width as isize && py >= 0 && py < height as isize {
-                let idx = ((py as usize) * width + (px as usize)) * 4;
-
-                if agent.state == 1 {
-                    // Dead / blocked (Red)
-                    buffer[idx] = 255;
-                    buffer[idx + 1] = 50;
-                    buffer[idx + 2] = 50;
-                } else {
-                    // Alive (Green/Cyan)
-                    // Additive blending manually
-                    let c = buffer[idx + 1].saturating_add(100);
-                    buffer[idx + 1] = c;
-                    buffer[idx + 2] = c;
-                }
-            }
-        }
-
-        // Draw Pheromones (Overlay)
         for y in 0..self.grid_h {
             for x in 0..self.grid_w {
                 let val = self.pheromones[y * self.grid_w + x];
@@ -237,8 +241,8 @@ impl World {
                     let screen_x = (x as f32 * GRID_SCALE as f32 * scale_x) as usize;
                     let screen_y = (y as f32 * GRID_SCALE as f32 * scale_y) as usize;
 
-                    // Draw a generic 2x2 or 4x4 block
                     let block_size = (GRID_SCALE as f32 * scale_x) as usize;
+                    let intensity = (val * 25.0).min(200.0) as u8;
 
                     for dy in 0..block_size {
                         for dx in 0..block_size {
@@ -246,11 +250,36 @@ impl World {
                             let sy = screen_y + dy;
                             if sx < width && sy < height {
                                 let idx = (sy * width + sx) * 4;
-                                let r = buffer[idx].saturating_add((val * 20.0) as u8);
-                                buffer[idx] = r;
+                                // Add Red haze
+                                buffer[idx] = buffer[idx].saturating_add(intensity);
+                                // A bit of Green for "rotten" look?
+                                buffer[idx+1] = buffer[idx+1].saturating_add(intensity / 4);
                             }
                         }
                     }
+                }
+            }
+        }
+
+        // Draw Agents
+        for agent in &self.agents {
+            let px = (agent.pos.x * scale_x) as isize;
+            let py = (agent.pos.y * scale_y) as isize;
+
+            if px >= 0 && px < width as isize && py >= 0 && py < height as isize {
+                let idx = ((py as usize) * width + (px as usize)) * 4;
+
+                if agent.state == 1 {
+                    // Dead / blocked (Bright Red / White)
+                    buffer[idx] = 255;
+                    buffer[idx + 1] = 150;
+                    buffer[idx + 2] = 150;
+                } else {
+                    // Alive (Cyan / Electric Blue)
+                    // Additive blending
+                    buffer[idx] = buffer[idx].saturating_add(50);
+                    buffer[idx + 1] = buffer[idx + 1].saturating_add(200);
+                    buffer[idx + 2] = buffer[idx + 2].saturating_add(255);
                 }
             }
         }
@@ -273,5 +302,17 @@ mod tests {
     fn test_world_init() {
         let world = World::new();
         assert_eq!(world.agents.len(), AGENT_COUNT);
+    }
+
+    #[test]
+    fn test_server_damage() {
+        let mut world = World::new();
+        // Move one agent to target
+        world.agents[0].pos = world.target;
+
+        let initial_health = world.server_health;
+        world.update();
+
+        assert!(world.server_health < initial_health);
     }
 }

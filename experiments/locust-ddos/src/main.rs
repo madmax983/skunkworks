@@ -68,8 +68,16 @@ async fn main() {
         // Draw Target
         let tx = world.target.x / WORLD_SIZE * screen_width();
         let ty = world.target.y / WORLD_SIZE * screen_height();
-        draw_circle(tx, ty, 15.0, BLUE);
-        draw_text("SERVER", tx - 30.0, ty - 20.0, 20.0, WHITE);
+
+        let health_pct = (world.server_health / world.max_health).clamp(0.0, 1.0);
+        let server_color = Color::new(1.0 - health_pct, 0.0, health_pct, 1.0); // Blue (Healthy) -> Red (Dead)
+
+        draw_circle(tx, ty, 15.0, server_color);
+        draw_text("SERVER", tx - 30.0, ty - 25.0, 20.0, WHITE);
+
+        // Health Bar
+        draw_rectangle(tx - 40.0, ty + 20.0, 80.0, 8.0, RED);
+        draw_rectangle(tx - 40.0, ty + 20.0, 80.0 * health_pct, 8.0, GREEN);
 
         // UI
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 30.0, 30.0, WHITE);
@@ -79,6 +87,13 @@ async fn main() {
             60.0,
             30.0,
             WHITE,
+        );
+        draw_text(
+            &format!("Server Health: {:.1}%", health_pct * 100.0),
+            10.0,
+            90.0,
+            30.0,
+            if health_pct < 0.2 { RED } else { WHITE },
         );
         draw_text(
             "Left Click: Deploy Firewall | C: Clear Rules",
