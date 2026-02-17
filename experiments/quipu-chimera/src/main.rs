@@ -16,11 +16,12 @@ use ratatui::{
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
-mod audio;
-use audio::{AudioEngine, AudioEvent};
+#[cfg(feature = "audio")]
+use quipu::audio::{AudioEngine, AudioEvent};
 
 struct App {
     vm: ChimeraVM,
+    #[cfg(feature = "audio")]
     audio_tx: crossbeam_channel::Sender<AudioEvent>,
     paused: bool,
     gravity_timer: Instant,
@@ -29,10 +30,14 @@ struct App {
 }
 
 impl App {
-    fn new(audio_tx: crossbeam_channel::Sender<AudioEvent>) -> Self {
+    fn new(
+        #[cfg(feature = "audio")]
+        audio_tx: crossbeam_channel::Sender<AudioEvent>
+    ) -> Self {
         let dna = Self::generate_dna();
         Self {
             vm: ChimeraVM::new(dna),
+            #[cfg(feature = "audio")]
             audio_tx,
             paused: false,
             gravity_timer: Instant::now(),
@@ -154,28 +159,31 @@ impl App {
     }
 
     fn trigger_audio(&self) {
-        // Determine sound based on the executed instruction (or just generic)
-        // We can look at the instruction at last_pc (if valid)
-        // Or just map based on the opcode type.
+        #[cfg(feature = "audio")]
+        {
+            // Determine sound based on the executed instruction (or just generic)
+            // We can look at the instruction at last_pc (if valid)
+            // Or just map based on the opcode type.
 
-        let (s_idx, g_idx) = self.last_pc;
-        if let Some(strand) = self.vm.dna.helix.strands.get(s_idx) {
-            if let Some(gene) = strand.genes.get(g_idx) {
-                match gene.op {
-                    OpCode::Push | OpCode::Dup => {
-                        let _ = self.audio_tx.send(AudioEvent::Pluck(220.0));
-                    }
-                    OpCode::Add | OpCode::Sub | OpCode::Mul | OpCode::Div => {
-                        let _ = self.audio_tx.send(AudioEvent::Pluck(440.0));
-                    }
-                    OpCode::Jump | OpCode::Brz => {
-                        let _ = self.audio_tx.send(AudioEvent::Kick);
-                    }
-                    OpCode::Print => {
-                        let _ = self.audio_tx.send(AudioEvent::Snare);
-                    }
-                    _ => {
-                        let _ = self.audio_tx.send(AudioEvent::HiHat);
+            let (s_idx, g_idx) = self.last_pc;
+            if let Some(strand) = self.vm.dna.helix.strands.get(s_idx) {
+                if let Some(gene) = strand.genes.get(g_idx) {
+                    match gene.op {
+                        OpCode::Push | OpCode::Dup => {
+                            let _ = self.audio_tx.send(AudioEvent::Pluck(220.0));
+                        }
+                        OpCode::Add | OpCode::Sub | OpCode::Mul | OpCode::Div => {
+                            let _ = self.audio_tx.send(AudioEvent::Pluck(440.0));
+                        }
+                        OpCode::Jump | OpCode::Brz => {
+                            let _ = self.audio_tx.send(AudioEvent::Kick);
+                        }
+                        OpCode::Print => {
+                            let _ = self.audio_tx.send(AudioEvent::Snare);
+                        }
+                        _ => {
+                            let _ = self.audio_tx.send(AudioEvent::HiHat);
+                        }
                     }
                 }
             }
@@ -185,12 +193,18 @@ impl App {
 
 fn main() -> Result<()> {
     // Initialize Audio
-    let audio = AudioEngine::new()?;
-    let tx = audio.get_sender();
+    #[cfg(feature = "audio")]
+    let _audio = AudioEngine::new()?;
+    #[cfg(feature = "audio")]
+    let tx = _audio.get_sender();
 
     // Initialize TUI
     let mut tui = Tui::init()?;
+
+    #[cfg(feature = "audio")]
     let mut app = App::new(tx);
+    #[cfg(not(feature = "audio"))]
+    let mut app = App::new();
 
     loop {
         app.update();

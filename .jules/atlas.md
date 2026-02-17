@@ -71,3 +71,9 @@
 **Blueprint:** Created `crates/flocking` to centralize `PhysicsState` and `compute_force` (Reynolds logic). Refactored all 4 experiments to use it.
 **Stability:** Single source of truth for flocking behavior. Flexible `FlockingParams` allows customization per experiment.
 **Verification:** Verified with `cargo check` and `cargo test` for the new crate and all 4 experiments.
+
+## [Quipu Audio Extraction]
+**Tangle:** The Copy-Paste - `experiments/quipu-chimera` and `experiments/quipu-symphony` contained identical `audio.rs` implementations for a rhythmic audio engine.
+**Blueprint:** Extracted `AudioEngine` to `crates/quipu` under an `audio` feature flag. Refactored both experiments to use the shared module.
+**Stability:** Centralized audio logic, enforced strict feature gating for "silent mode" compatibility.
+**Verification:** Verified `cargo check` for `quipu` (without audio due to env), `quipu-chimera`, and `quipu-symphony`. Verified `cargo test` for `quipu`.
