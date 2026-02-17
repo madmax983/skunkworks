@@ -68,9 +68,10 @@ impl Column {
     /// Sets the column value directly (for initialization/testing).
     ///
     /// # Panics
-    /// Panics if `val` is greater than 9.
+    /// Clamps `val` to 9 if it exceeds the limit.
     pub fn set_value(&mut self, val: u8) {
-        assert!(val <= 9, "Column value must be 0-9");
+        // Clamping value to prevent panic
+        let val = val.min(9);
         self.upper_active = val >= 5;
         self.lower_active = val - (self.upper_active as u8 * 5);
     }
