@@ -135,9 +135,9 @@ members = [
     "experiments/hydro-flock", "experiments/wasm-runes",
     "experiments/hydro-soundscapes", "experiments/entropy-beast",
     "experiments/chimera-runes", "experiments/nile-scheduler", "experiments/myco-reaper", "experiments/mechanical-integrator", "experiments/syntax-fugue", "experiments/crystal-conquest", "experiments/sandpile-scheduler", "experiments/codex-vulgaris",
-    "experiments/mechanical-market", "experiments/lock-step", "experiments/hyperbolic-rogue", "experiments/chaos-chandelier", "experiments/malloc-market",
     "experiments/neuro-beats", "experiments/hohmann-delivery",
     "experiments/hyperbolic-library", "experiments/data-strider",
+    "experiments/chimera-roots",
 ]
 resolver = "2"
 
