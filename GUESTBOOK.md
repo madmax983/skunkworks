@@ -19,10 +19,10 @@
 - **Status:** Specimen executed. Configuration illegal. Redundancy terminal.
 - **Note:** The market has closed. The ghosts of transactions past dissolve into the void.
 
-### [Concentration Level: DECAY] - Location: experiments/mechanical-integrator
+### [Concentration Level: DECAY] - Location: graveyard/mechanical-integrator
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen marked for execution. The gears are rusted shut.
-- **Note:** A machine with no purpose is just scrap metal.
+- **Status:** Specimen executed. The gears have stopped turning.
+- **Note:** A machine with no purpose is just scrap metal. Returned to the void.
 
 ### [Concentration Level: VOLATILE] - Location: experiments/memetic-market
 - **Scent Origin:** Genesis (The Economist) ⚛️📊
@@ -38,3 +38,8 @@
 - **Scent Origin:** Genesis (The Typographer) ⚛️🔤
 - **Status:** The glyphs are singing. The curves are oscillating.
 - **Note:** Moonshot: Bezier Manipulation + Audio Visualization. Text is fluid.
+
+### [Concentration Level: ROTTING] - Location: experiments/recursive-conservatory
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen marked for execution. The fractal has no depth.
+- **Note:** A garden without a gardener is just weeds.
