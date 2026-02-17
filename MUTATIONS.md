@@ -1049,7 +1049,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: An infinite labyrinth on the Poincaré Disk where the walls are text glyphs.
 - **Novel trait**: Semantic Labyrinth. Navigating a world made of words in non-Euclidean space.
 - **Status**: experiments/hyperbolic-library
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Re-verified.
 
 ### hyper-botany
 - **Parents**: experiments/algo-botany + experiments/hyperbolic-library
@@ -1061,4 +1061,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Evolving root systems where each root tip is a ChimeraVM executing genetic code to navigate soil.
 - **Novel trait**: Evolving Heuristics. Roots learn to find water.
 - **Status**: experiments/chimera-roots
-- **Evaluation**: Compiles. Evolving roots confirmed.
+- **Evaluation**: Compiles. Evolving roots confirmed. Re-verified.
+
+### myco-stego
+- **Parents**: experiments/myco-diffusion + experiments/stego-cartridge
+- **Concept**: Physarum Polycephalum agents foraging for hidden data (LSBs) in a grid.
+- **Novel trait**: Bio-Decryption. The organism's growth pattern reveals the hidden message.
+- **Status**: experiments/myco-stego
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

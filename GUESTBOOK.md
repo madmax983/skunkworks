@@ -375,6 +375,11 @@
 - **Status**: Compiles. VM and Assembler operational. Demo cartridge `noise.png` packed.
 - **Note**: Moonshot: LSB Steganography + Code Distribution. The image is the console.
 
+### [Concentration Level: FRESH] - Location: experiments/myco-stego
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: Compiles. Implemented by The Splice Surgeon. Bio-decryption operational.
+- **Note**: Hybrid of experiments/myco-diffusion + experiments/stego-cartridge.
+
 ## History/Decay
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/hyperbolic-raymarcher
