@@ -8,3 +8,13 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Agents are actively consuming the vowels. Terrain is being reshaped by biological processes.
 - **Note:** Fascinating interaction between linguistics and metabolism. The Word feeds the Flesh.
+
+### [Concentration Level: DECAY] - Location: graveyard/soroban-market
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Configuration illegal. Redundancy terminal.
+- **Note:** The market has closed. The ghosts of transactions past dissolve into the void.
+
+### [Concentration Level: DECAY] - Location: experiments/mechanical-integrator
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen marked for execution. The gears are rusted shut.
+- **Note:** A machine with no purpose is just scrap metal.
