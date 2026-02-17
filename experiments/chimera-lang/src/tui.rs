@@ -252,6 +252,18 @@ pub(crate) struct AppState {
     pub(crate) genesis_focus: u8, // 0=Editor, 1=Grammar, 2=Grid
     #[cfg(feature = "nova")]
     pub(crate) grimoire_scroll: u16,
+    #[cfg(feature = "nova")]
+    pub(crate) virus_design_name: String,
+    #[cfg(feature = "nova")]
+    pub(crate) virus_design_pattern: String,
+    #[cfg(feature = "nova")]
+    pub(crate) virus_design_rate: u8,
+    #[cfg(feature = "nova")]
+    pub(crate) virus_design_payload: i64,
+    #[cfg(feature = "nova")]
+    pub(crate) virus_design_mode: usize, // 0=Overwrite, 1=RewriteGrid, 2=RewriteDNA
+    #[cfg(feature = "nova")]
+    pub(crate) virus_design_focus: u8, // 0=Name, 1=Pattern, 2=Rate, 3=Payload, 4=Mode
     pub(crate) evolution_state: EvolutionState,
     pub(crate) sequencer_state: SequencerState,
     pub(crate) matrix_rain: MatrixRain,
@@ -391,6 +403,18 @@ impl AppState {
             genesis_focus: 0,
             #[cfg(feature = "nova")]
             grimoire_scroll: 0,
+            #[cfg(feature = "nova")]
+            virus_design_name: String::from("NewVirus"),
+            #[cfg(feature = "nova")]
+            virus_design_pattern: String::from(".*"),
+            #[cfg(feature = "nova")]
+            virus_design_rate: 50,
+            #[cfg(feature = "nova")]
+            virus_design_payload: -1,
+            #[cfg(feature = "nova")]
+            virus_design_mode: 0,
+            #[cfg(feature = "nova")]
+            virus_design_focus: 0,
             evolution_state: EvolutionState::new(),
             sequencer_state: SequencerState::new(),
             matrix_rain: MatrixRain::new(),
@@ -1201,6 +1225,104 @@ where
                     }
                 }
 
+                #[cfg(feature = "nova")]
+                if let ViewMode::Virology = app_state.view_mode {
+                    let mut handled = true;
+                    match key.code {
+                        KeyCode::Tab => {
+                            app_state.virus_design_focus = (app_state.virus_design_focus + 1) % 5;
+                        }
+                        KeyCode::Enter => {
+                            app_state.input_buffer = match app_state.virus_design_focus {
+                                0 => app_state.virus_design_name.clone(),
+                                1 => app_state.virus_design_pattern.clone(),
+                                2 => app_state.virus_design_rate.to_string(),
+                                3 => app_state.virus_design_payload.to_string(),
+                                _ => String::new(),
+                            };
+
+                            if app_state.virus_design_focus != 4 {
+                                app_state.input_mode = InputMode::Editing;
+                            }
+                        }
+                        KeyCode::Up => {
+                            if app_state.virus_design_focus == 4 && app_state.virus_design_mode > 0
+                            {
+                                app_state.virus_design_mode -= 1;
+                            }
+                        }
+                        KeyCode::Down => {
+                            if app_state.virus_design_focus == 4 && app_state.virus_design_mode < 2
+                            {
+                                app_state.virus_design_mode += 1;
+                            }
+                        }
+                        KeyCode::Char('S') => {
+                            let mode = match app_state.virus_design_mode {
+                                1 => crate::vm::memetics::VirusMode::RewriteGrid,
+                                2 => crate::vm::memetics::VirusMode::RewriteDNA,
+                                _ => crate::vm::memetics::VirusMode::Overwrite,
+                            };
+                            let payload = if app_state.virus_design_payload >= 0 {
+                                Some(app_state.virus_design_payload as usize)
+                            } else {
+                                None
+                            };
+
+                            use rand::Rng;
+                            let mut rng = rand::thread_rng();
+                            let color = (
+                                rng.gen_range(50..255),
+                                rng.gen_range(50..255),
+                                rng.gen_range(50..255),
+                            );
+
+                            let virus = crate::vm::memetics::Virus {
+                                name: app_state.virus_design_name.clone(),
+                                color,
+                                pattern: app_state.virus_design_pattern.clone(),
+                                mutation_rate: app_state.virus_design_rate,
+                                payload,
+                                grammar: None,
+                                quorum_threshold: 0,
+                                quorum_action: None,
+                                mode,
+                            };
+                            vm.virus_library.push(virus);
+                            app_state.status_msg = "Virus Synthesized!".to_string();
+                        }
+                        KeyCode::Char('I') => {
+                            if !vm.virus_library.is_empty() {
+                                let v_id = vm.virus_library.len() - 1;
+                                let (x, y) = app_state.grid_cursor;
+                                vm.viral_grid[y][x] = Some(crate::vm::memetics::ViralState {
+                                    infection_level: 100,
+                                    virus_id: v_id,
+                                });
+                                app_state.status_msg =
+                                    format!("Injected Virus ID {} at {},{}", v_id, x, y);
+                            } else {
+                                app_state.status_msg =
+                                    "Library Empty! Synthesize (S) first.".to_string();
+                            }
+                        }
+                        KeyCode::Char(' ') => {
+                            crate::vm::memetics::exec_memetics_op(
+                                vm,
+                                crate::opcode::OpCode::Outbreak,
+                                &[],
+                            );
+                            app_state.status_msg = "Outbreak Simulated.".to_string();
+                        }
+                        _ => {
+                            handled = false;
+                        }
+                    }
+                    if handled {
+                        continue;
+                    }
+                }
+
                 #[cfg(feature = "oracle")]
                 if app_state.query_mode {
                     match key.code {
@@ -1779,6 +1901,17 @@ where
                                 }
                                 #[cfg(feature = "nova")]
                                 ViewMode::Virology => {
+                                    match app_state.virus_design_focus {
+                                        0 => app_state.virus_design_name = app_state.input_buffer.clone(),
+                                        1 => app_state.virus_design_pattern = app_state.input_buffer.clone(),
+                                        2 => if let Ok(n) = app_state.input_buffer.parse::<u8>() {
+                                            app_state.virus_design_rate = n.clamp(0, 100);
+                                        },
+                                        3 => if let Ok(n) = app_state.input_buffer.parse::<i64>() {
+                                            app_state.virus_design_payload = n;
+                                        },
+                                        _ => {}
+                                    }
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
@@ -10481,7 +10614,13 @@ fn render_virology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     );
     f.render_widget(grid_widget, chunks[0]);
 
-    // Right: Virus Library
+    // Right Panel: Split into Library (Top) and Designer (Bottom)
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(chunks[1]);
+
+    // Top: Virus Library
     let mut items = Vec::new();
     if vm.virus_library.is_empty() {
         items.push(ListItem::new("No known viruses."));
@@ -10508,7 +10647,91 @@ fn render_virology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .borders(Borders::ALL)
             .title("Virology Lab (Known Strains)"),
     );
-    f.render_widget(list, chunks[1]);
+    f.render_widget(list, right_chunks[0]);
+
+    // Bottom: Virus Designer
+    let designer_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints(
+            [
+                Constraint::Length(3), // Name
+                Constraint::Length(3), // Pattern
+                Constraint::Length(3), // Rate
+                Constraint::Length(3), // Payload
+                Constraint::Length(3), // Mode
+                Constraint::Min(0),    // Help
+            ]
+            .as_ref(),
+        )
+        .split(right_chunks[1]);
+
+    let focused_style = Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD);
+    let default_style = Style::default().fg(Color::White);
+
+    let mut draw_field = |title: &str, value: &str, focus_idx: u8, chunk_idx: usize| {
+        let style = if app_state.virus_design_focus == focus_idx {
+            focused_style
+        } else {
+            default_style
+        };
+        let widget = Paragraph::new(value)
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title(title)
+                    .border_style(style),
+            )
+            .style(style);
+        f.render_widget(widget, designer_chunks[chunk_idx]);
+    };
+
+    draw_field(
+        "Name (0)",
+        &app_state.virus_design_name,
+        0,
+        0,
+    );
+    draw_field(
+        "Target Pattern (1)",
+        &app_state.virus_design_pattern,
+        1,
+        1,
+    );
+    draw_field(
+        "Mutation Rate % (2)",
+        &app_state.virus_design_rate.to_string(),
+        2,
+        2,
+    );
+    draw_field(
+        "Payload Strand ID (3)",
+        &app_state.virus_design_payload.to_string(),
+        3,
+        3,
+    );
+
+    let mode_str = match app_state.virus_design_mode {
+        0 => "Overwrite (Replace cell)",
+        1 => "RewriteGrid (Mutate Grammar)",
+        2 => "RewriteDNA (Mutate Organelle)",
+        _ => "Unknown",
+    };
+    draw_field("Mode (4)", mode_str, 4, 4);
+
+    let help_text = vec![
+        Line::from("Controls:"),
+        Line::from("  Tab: Next Field"),
+        Line::from("  Enter: Edit / Confirm"),
+        Line::from("  S: Synthesize (Save to Library)"),
+        Line::from("  I: Inject Selected (From Library)"),
+        Line::from("  Space: Outbreak (Step Sim)"),
+    ];
+    let help_widget = Paragraph::new(help_text).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Viral Engineering"),
+    );
+    f.render_widget(help_widget, designer_chunks[5]);
 }
 
 fn render_evolution(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
