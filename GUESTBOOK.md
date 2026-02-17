@@ -43,3 +43,8 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Condemned.
 - **Note:** The web is broken. The weaver is tangled in its own mutable borrows.
+
+### [Concentration Level: FRESH] - Location: experiments/neuro-calligraphy
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The letters are alive. The ink is squirming. Neural networks are driving the strokes.
+- **Note:** Moonshot: Resonant Glyphs + Spinal Rhythms. Typography has developed a central nervous system.
