@@ -227,6 +227,20 @@ async fn main() {
                 30.0,
                 LIGHTGRAY,
             );
+            draw_text(
+                format!("Est. TOF: {:.1} s", plan.time_of_flight).as_str(),
+                10.0,
+                200.0,
+                30.0,
+                LIGHTGRAY,
+            );
+            draw_text(
+                format!("Arrival dV: {:.2}", plan.delta_v_arrival).as_str(),
+                10.0,
+                230.0,
+                30.0,
+                LIGHTGRAY,
+            );
         }
 
         if let ShipState::Arrived { .. } = ship.state {

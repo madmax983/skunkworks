@@ -15,7 +15,7 @@ pub enum ShipState {
     },
     InTransit {
         target_index: usize,
-        plan: TransferWindow,
+        _plan: TransferWindow,
     },
     Arrived {
         body_index: usize,
@@ -155,7 +155,7 @@ impl Ship {
 
             self.state = ShipState::InTransit {
                 target_index: target_idx,
-                plan,
+                _plan: plan,
             };
             return ShipEvent::Launched;
         } else if let Some(target_idx) = arrive_data {
