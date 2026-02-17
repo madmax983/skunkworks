@@ -37,6 +37,7 @@ pub use locus::Topology;
 use poincare_disk::hyperbolic_dist;
 use poincare_disk::Point;
 use rand::Rng;
+#[cfg(feature = "nova")]
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 #[cfg(feature = "nova")]
@@ -84,6 +85,8 @@ pub mod bard;
 pub mod blackbox;
 pub mod catalyst;
 pub mod chimera_chaos;
+#[cfg(feature = "nova")]
+pub mod nova_chaos;
 #[cfg(feature = "nova")]
 pub mod cladistics;
 pub mod cortex;
@@ -740,6 +743,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub tablet: Vec<String>,
     pub chaos_struct: chimera_chaos::ChimeraChaos,
+    #[cfg(feature = "nova")]
+    pub chaos_cartridge: nova_chaos::ChaosCartridge,
     pub catalysts: Vec<catalyst::Catalyst>,
     #[cfg(feature = "nova")]
     pub babel_state: babel_chaos::BabelState,
@@ -1081,6 +1086,8 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             tablet: Vec::new(),
             chaos_struct: chimera_chaos::ChimeraChaos::new(),
+            #[cfg(feature = "nova")]
+            chaos_cartridge: nova_chaos::ChaosCartridge::new(),
             catalysts: Vec::new(),
             #[cfg(feature = "nova")]
             babel_state: babel_chaos::BabelState::new(),
@@ -3244,6 +3251,12 @@ impl ChimeraVM {
             | OpCode::TuiMod
             | OpCode::Cambrian
             | OpCode::BioHack => nova::exec_nova_op(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::ChaosDefine | OpCode::ChaosScramble | OpCode::ChaosInvoke => {
+                nova_chaos::exec_chaos_op(self, op, args);
+                None
+            }
 
             #[cfg(feature = "oracle")]
             OpCode::Divergence => nova::exec_nova_op(self, op, args),

@@ -1077,6 +1077,23 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     TuiMod,
 
+    // Chaos Cartridge Features (Programmable Physics)
+    /// **[Chaos]** Defines a new alchemical recipe.
+    ///
+    /// **Stack:** `[ ..., input_junction, output_str ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    ChaosDefine,
+    /// **[Chaos]** Randomizes the current physics recipes.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    ChaosScramble,
+    /// **[Chaos]** Manually triggers a physics transmutation tick.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    ChaosInvoke,
+
     /// **[Nova]** Triggers a Cambrian Explosion (Mass Speciation).
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`

@@ -525,6 +525,10 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         vm.grid[w.y][w.x] = w.val;
     }
 
+    // 2.1 Apply Chaos Physics
+    #[cfg(feature = "nova")]
+    super::nova_chaos::process_chaos_physics(vm);
+
     // 2.2 Apply Voltage Writes
     #[cfg(feature = "elektra")]
     for w in ctx.voltage_writes {

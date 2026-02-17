@@ -146,6 +146,8 @@ pub(crate) enum ViewMode {
     Savant,
     #[cfg(feature = "nova")]
     Akashic,
+    #[cfg(feature = "nova")]
+    ChaosCartridge,
     Sequencer,
 }
 
@@ -884,6 +886,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Akashic = app_state.view_mode {
                 render_akashic(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::ChaosCartridge = app_state.view_mode {
+                render_chaos_cartridge(f, vm, app_state);
                 return;
             }
 
@@ -2163,7 +2171,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Savant => ViewMode::Akashic,
                             #[cfg(feature = "nova")]
-                            ViewMode::Akashic => ViewMode::Sequencer,
+                            ViewMode::Akashic => ViewMode::ChaosCartridge,
+                            #[cfg(feature = "nova")]
+                            ViewMode::ChaosCartridge => ViewMode::Sequencer,
                             ViewMode::Sequencer => ViewMode::Genome,
                         };
                     }
@@ -11204,6 +11214,75 @@ fn render_akashic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Block::default()
             .borders(Borders::ALL)
             .title("Karma & Destiny"),
+    );
+    f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_chaos_cartridge(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    // Left: Active Recipes
+    let mut items = Vec::new();
+    if vm.chaos_cartridge.recipes.is_empty() {
+        items.push(ListItem::new("No active chaos recipes.").style(Style::default().fg(Color::DarkGray)));
+        items.push(ListItem::new(""));
+        items.push(ListItem::new("Use 'ChaosDefine' or 'ChaosScramble' to create rules."));
+    } else {
+        for (i, recipe) in vm.chaos_cartridge.recipes.iter().enumerate() {
+            let inputs_str = recipe.inputs.join(" + ");
+            let content = format!(
+                "#{}: {} -> {} (Prob: {:.0}%)",
+                i, inputs_str, recipe.output, recipe.probability * 100.0
+            );
+
+            // Color based on output element?
+            let color = match recipe.output.as_str() {
+                "Fire" => Color::Red,
+                "Water" => Color::Blue,
+                "Earth" => Color::Green,
+                "Air" => Color::Cyan,
+                "Void" => Color::Magenta,
+                "Life" => Color::Yellow,
+                "Death" => Color::DarkGray,
+                _ => Color::White,
+            };
+
+            items.push(ListItem::new(content).style(Style::default().fg(color)));
+        }
+    }
+
+    let list = List::new(items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Chaos Cartridge (Active Physics)"),
+    );
+    f.render_widget(list, chunks[0]);
+
+    // Right: Status & Controls
+    let status = if vm.chaos_cartridge.active { "ACTIVE" } else { "INACTIVE" };
+    let status_color = if vm.chaos_cartridge.active { Color::Green } else { Color::Red };
+
+    let mut info = Vec::new();
+    info.push(Line::from(vec![
+        Span::raw("Status: "),
+        Span::styled(status, Style::default().fg(status_color).add_modifier(Modifier::BOLD)),
+    ]));
+    info.push(Line::from(" "));
+    info.push(Line::from(format!("Entropy Level: {:.2}", vm.glitch_level)));
+    info.push(Line::from(" "));
+    info.push(Line::from("Opcodes:"));
+    info.push(Line::from("  ChaosDefine(inputs, output)"));
+    info.push(Line::from("  ChaosScramble()"));
+    info.push(Line::from("  ChaosInvoke()"));
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("System Status"),
     );
     f.render_widget(info_widget, chunks[1]);
 }
