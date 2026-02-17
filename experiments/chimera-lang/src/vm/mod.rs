@@ -755,6 +755,8 @@ pub struct ChimeraVM {
     pub babel_live_trace: Vec<(usize, usize)>,
     #[cfg(feature = "nova")]
     pub active_grammar: Value,
+    #[cfg(feature = "nova")]
+    pub akashic: akashic::AkashicRecords,
     pub visual_effects: Vec<VisualEffect>,
     pub tui_events: Vec<TuiEvent>,
 }
@@ -1092,6 +1094,8 @@ impl ChimeraVM {
             babel_live_trace: Vec::new(),
             #[cfg(feature = "nova")]
             active_grammar: Value::Junction(JunctionType::Any, vec![]),
+            #[cfg(feature = "nova")]
+            akashic: akashic::AkashicRecords::new(),
             visual_effects: Vec::new(),
             tui_events: Vec::new(),
         }
@@ -2907,7 +2911,7 @@ impl ChimeraVM {
             OpCode::Remap | OpCode::Restore | OpCode::Mirror => self.exec_prion_op(op, args),
 
             #[cfg(feature = "nova")]
-            OpCode::AkashicWrite | OpCode::AkashicRead => {
+            OpCode::AkashicWrite | OpCode::AkashicRead | OpCode::Karma | OpCode::Miracle => {
                 akashic::exec_akashic_op(self, op, args);
                 None
             }
