@@ -1,7 +1,7 @@
 use clap::Parser;
+use std::path::PathBuf;
 use stego_attack::config::AttackConfig;
 use stego_attack::stego;
-use std::path::PathBuf;
 
 #[derive(Parser)]
 #[command(name = "stego-generator")]

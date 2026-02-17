@@ -1,7 +1,7 @@
 use crate::config::AttackConfig;
+use ::rand::Rng;
 use image::RgbaImage;
 use macroquad::prelude::*;
-use ::rand::Rng;
 use rayon::prelude::*;
 
 #[derive(Clone, Copy)]
@@ -76,7 +76,10 @@ impl World {
             background,
             width,
             height,
-            target: vec2(config.target_x * width as f32, config.target_y * height as f32),
+            target: vec2(
+                config.target_x * width as f32,
+                config.target_y * height as f32,
+            ),
             speed: config.agent_speed,
             dissolve_rate: config.dissolve_rate,
         }
@@ -123,14 +126,14 @@ impl World {
         // This simulates the image breaking apart
         if dissolve > 0.0 {
             let chunk_size = self.width * 4;
-             self.background.par_chunks_mut(chunk_size).for_each(|row| {
-                 let mut rng = ::rand::thread_rng();
-                 for i in (0..row.len()).step_by(4) {
-                     if row[i+3] > 0 && rng.gen_bool(dissolve as f64) {
-                         row[i+3] = row[i+3].saturating_sub(10);
-                     }
-                 }
-             });
+            self.background.par_chunks_mut(chunk_size).for_each(|row| {
+                let mut rng = ::rand::thread_rng();
+                for i in (0..row.len()).step_by(4) {
+                    if row[i + 3] > 0 && rng.gen_bool(dissolve as f64) {
+                        row[i + 3] = row[i + 3].saturating_sub(10);
+                    }
+                }
+            });
         }
     }
 
@@ -139,9 +142,12 @@ impl World {
         // Ideally we would blend, but simple copy is fast
         // buffer.copy_from_slice(&self.background);
         // Use parallel copy if large
-        buffer.par_iter_mut().zip(self.background.par_iter()).for_each(|(dst, src)| {
-            *dst = *src;
-        });
+        buffer
+            .par_iter_mut()
+            .zip(self.background.par_iter())
+            .for_each(|(dst, src)| {
+                *dst = *src;
+            });
 
         // Draw agents
         // This is sequential or needs mutex if parallel, let's do sequential for simplicity
@@ -149,7 +155,9 @@ impl World {
         // Sequential is fine for ~20k agents usually.
 
         for agent in &self.agents {
-            if !agent.active { continue; }
+            if !agent.active {
+                continue;
+            }
 
             let px = agent.pos.x as usize;
             let py = agent.pos.y as usize;
@@ -164,9 +172,9 @@ impl World {
                 let [r, g, b, a] = agent.color;
 
                 buffer[idx] = r;
-                buffer[idx+1] = g;
-                buffer[idx+2] = b;
-                buffer[idx+3] = a;
+                buffer[idx + 1] = g;
+                buffer[idx + 2] = b;
+                buffer[idx + 3] = a;
             }
         }
     }

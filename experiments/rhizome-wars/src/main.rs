@@ -3,8 +3,8 @@ use macroquad::prelude::*;
 mod rrt;
 mod simulation;
 
-use rrt::{Tree, Obstacle};
-use simulation::{Scheduler, Resource};
+use rrt::{Obstacle, Tree};
+use simulation::{Resource, Scheduler};
 
 #[macroquad::main("Rhizome Wars")]
 async fn main() {
@@ -79,8 +79,10 @@ async fn main() {
 
             // Update Trees
             // Target strategy: find nearest resource for each tree
-            let target1 = find_nearest_resource(tree1.nodes.last().unwrap().pos, &scheduler.resources);
-            let target2 = find_nearest_resource(tree2.nodes.last().unwrap().pos, &scheduler.resources);
+            let target1 =
+                find_nearest_resource(tree1.nodes.last().unwrap().pos, &scheduler.resources);
+            let target2 =
+                find_nearest_resource(tree2.nodes.last().unwrap().pos, &scheduler.resources);
 
             // Grow multiple steps per frame for speed
             for _ in 0..10 {
@@ -107,7 +109,13 @@ async fn main() {
         for res in &scheduler.resources {
             draw_circle(res.pos.x, res.pos.y, res.radius, BLUE);
             // Pulse effect?
-            draw_circle_lines(res.pos.x, res.pos.y, res.radius + (get_time() as f32 * 5.0).sin() * 2.0 + 2.0, 1.0, SKYBLUE);
+            draw_circle_lines(
+                res.pos.x,
+                res.pos.y,
+                res.radius + (get_time() as f32 * 5.0).sin() * 2.0 + 2.0,
+                1.0,
+                SKYBLUE,
+            );
         }
 
         // Draw Trees
@@ -116,9 +124,27 @@ async fn main() {
 
         // UI
         draw_text("Rhizome Wars", 20.0, 30.0, 30.0, WHITE);
-        draw_text("Space: Pause | R: Reset | Click: Add Rock", 20.0, 60.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("Green: {}", tree1.nodes.len()), 20.0, 90.0, 20.0, GREEN);
-        draw_text(&format!("Red: {}", tree2.nodes.len()), 20.0, 110.0, 20.0, RED);
+        draw_text(
+            "Space: Pause | R: Reset | Click: Add Rock",
+            20.0,
+            60.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            &format!("Green: {}", tree1.nodes.len()),
+            20.0,
+            90.0,
+            20.0,
+            GREEN,
+        );
+        draw_text(
+            &format!("Red: {}", tree2.nodes.len()),
+            20.0,
+            110.0,
+            20.0,
+            RED,
+        );
 
         next_frame().await
     }
@@ -171,7 +197,14 @@ fn draw_tree(tree: &Tree) {
     for node in &tree.nodes {
         if let Some(parent_idx) = node.parent_index {
             let parent = tree.nodes[parent_idx];
-            draw_line(parent.pos.x, parent.pos.y, node.pos.x, node.pos.y, 1.5, tree.color);
+            draw_line(
+                parent.pos.x,
+                parent.pos.y,
+                node.pos.x,
+                node.pos.y,
+                1.5,
+                tree.color,
+            );
         }
     }
 }

@@ -82,11 +82,11 @@ async fn main() {
                 let mut neighbors = 0;
 
                 if i > 0 {
-                    score += calculate_consonance(f1, strings[i-1].frequency);
+                    score += calculate_consonance(f1, strings[i - 1].frequency);
                     neighbors += 1;
                 }
                 if i < STRING_COUNT - 1 {
-                    score += calculate_consonance(f1, strings[i+1].frequency);
+                    score += calculate_consonance(f1, strings[i + 1].frequency);
                     neighbors += 1;
                 }
 
@@ -113,7 +113,13 @@ async fn main() {
 
         // UI
         draw_text("Genetic Luthier", 10.0, 30.0, 30.0, WHITE);
-        draw_text("Strings evolve to harmonize with neighbors.", 10.0, 50.0, 20.0, GRAY);
+        draw_text(
+            "Strings evolve to harmonize with neighbors.",
+            10.0,
+            50.0,
+            20.0,
+            GRAY,
+        );
         draw_text("Mouse: Pluck strings", 10.0, 70.0, 20.0, GRAY);
 
         prev_mouse = mouse_pos;
@@ -126,14 +132,14 @@ fn calculate_consonance(f1: f32, f2: f32) -> f32 {
 
     // Standard harmonic intervals
     let intervals = [
-        1.0,      // Unison
-        2.0,      // Octave
-        1.5,      // Perfect Fifth
-        1.3333,   // Perfect Fourth
-        1.25,     // Major Third
-        1.2,      // Minor Third
-        1.6666,   // Major Sixth
-        1.6,      // Minor Sixth
+        1.0,    // Unison
+        2.0,    // Octave
+        1.5,    // Perfect Fifth
+        1.3333, // Perfect Fourth
+        1.25,   // Major Third
+        1.2,    // Minor Third
+        1.6666, // Major Sixth
+        1.6,    // Minor Sixth
     ];
 
     for &target in intervals.iter() {

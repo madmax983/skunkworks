@@ -21,6 +21,7 @@ pub struct Agent {
 pub struct World {
     pub agents: Vec<Agent>,
     pub heat_map: Vec<f32>,
+    pub next_heat_map: Vec<f32>,
     pub pheromone_attack: Vec<f32>,
     pub pheromone_defense: Vec<f32>,
     pub server_health: f32,
@@ -57,13 +58,18 @@ impl World {
         }
 
         // Find leaf nodes (furthest 10%)
-        let mut dists: Vec<(usize, f32)> = dist_to_center.iter().enumerate().map(|(i, &d)| (i, d)).collect();
+        let mut dists: Vec<(usize, f32)> = dist_to_center
+            .iter()
+            .enumerate()
+            .map(|(i, &d)| (i, d))
+            .collect();
         dists.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
         let leaf_nodes: Vec<usize> = dists.iter().take(n / 10).map(|(i, _)| *i).collect();
 
         Self {
             agents: Vec::new(),
             heat_map: vec![0.0; n],
+            next_heat_map: vec![0.0; n],
             pheromone_attack: vec![0.0; n],
             pheromone_defense: vec![0.0; n],
             server_health: 1000.0,
@@ -75,6 +81,7 @@ impl World {
         }
     }
 
+    #[allow(clippy::manual_is_multiple_of)]
     pub fn update(&mut self) {
         self.ticks += 1;
 
@@ -82,29 +89,37 @@ impl World {
         let decay_rate = 0.98;
         let diffusion_rate = 0.1;
 
-        let old_heat = &self.heat_map;
-        let next_heat: Vec<f32> = (0..self.heat_map.len()).into_par_iter().map(|i| {
-            let current = old_heat[i];
-            let neighbors = &self.qc.adj[i];
+        // Double buffering to avoid allocation
+        let adj = &self.qc.adj;
+        let (current_map, next_map) = (&self.heat_map, &mut self.next_heat_map);
+
+        next_map.par_iter_mut().enumerate().for_each(|(i, out)| {
+            let current = current_map[i];
+            let neighbors = &adj[i];
             if neighbors.is_empty() {
-                return current * decay_rate;
+                *out = current * decay_rate;
+                return;
             }
 
             let mut inflow = 0.0;
             for &n in neighbors {
-                inflow += old_heat[n];
+                inflow += current_map[n];
             }
             let avg_neighbor = inflow / neighbors.len() as f32;
             let next = current + diffusion_rate * (avg_neighbor - current);
-            next * decay_rate
-        }).collect();
-        self.heat_map = next_heat;
+            *out = next * decay_rate;
+        });
+        std::mem::swap(&mut self.heat_map, &mut self.next_heat_map);
 
         // --- 2. Pheromone Diffusion (Parallel) ---
         // Simplified: just decay for now, add diffusion later if needed
         let pheromone_decay = 0.95;
-        self.pheromone_attack.par_iter_mut().for_each(|p| *p *= pheromone_decay);
-        self.pheromone_defense.par_iter_mut().for_each(|p| *p *= pheromone_decay);
+        self.pheromone_attack
+            .par_iter_mut()
+            .for_each(|p| *p *= pheromone_decay);
+        self.pheromone_defense
+            .par_iter_mut()
+            .for_each(|p| *p *= pheromone_decay);
 
         // --- 3. Spawn Agents ---
         // Spawn Locusts (Attackers)
@@ -159,9 +174,15 @@ impl World {
                         AgentType::Locust => {
                             // Move towards center (smaller dist) + randomness
                             // Find neighbor with min dist
-                            let best = neighbors.iter()
-                                .min_by(|&&a, &&b| dists[a].partial_cmp(&dists[b]).unwrap_or(std::cmp::Ordering::Equal))
-                                .cloned().unwrap_or(neighbors[0]);
+                            let best = neighbors
+                                .iter()
+                                .min_by(|&&a, &&b| {
+                                    dists[a]
+                                        .partial_cmp(&dists[b])
+                                        .unwrap_or(std::cmp::Ordering::Equal)
+                                })
+                                .cloned()
+                                .unwrap_or(neighbors[0]);
 
                             // 20% chance to move randomly (avoid local minima / traffic)
                             if rng.gen_bool(0.2) {
@@ -169,13 +190,19 @@ impl World {
                             } else {
                                 best
                             }
-                        },
+                        }
                         AgentType::Termite => {
                             // Move towards Attack Pheromone
                             // If no pheromone, move randomly or patrol
-                            let best = neighbors.iter()
-                                .max_by(|&&a, &&b| pheromone_attack[a].partial_cmp(&pheromone_attack[b]).unwrap_or(std::cmp::Ordering::Equal))
-                                .cloned().unwrap_or(neighbors[0]);
+                            let best = neighbors
+                                .iter()
+                                .max_by(|&&a, &&b| {
+                                    pheromone_attack[a]
+                                        .partial_cmp(&pheromone_attack[b])
+                                        .unwrap_or(std::cmp::Ordering::Equal)
+                                })
+                                .cloned()
+                                .unwrap_or(neighbors[0]);
 
                             if pheromone_attack[best] > 0.1 {
                                 best
@@ -208,7 +235,7 @@ impl World {
                                 damage += 5.0;
                                 agent.hp = 0.0; // Suicide
                             }
-                        },
+                        }
                         AgentType::Termite => {
                             pheromone_defense[agent.current_node] += 5.0;
                             // Cool down node
@@ -228,6 +255,38 @@ impl World {
         if self.server_health < 0.0 {
             self.server_health = 0.0;
             // Game Over state?
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::math::generate_icosahedral_lattice;
+
+    #[test]
+    fn test_heat_diffusion_allocation() {
+        let qc = Arc::new(generate_icosahedral_lattice(2));
+        let mut world = World::new(qc.clone());
+
+        // Inject some heat
+        world.heat_map[0] = 100.0;
+
+        let initial_heat_sum: f32 = world.heat_map.iter().sum();
+
+        // Run update
+        world.update();
+
+        let next_heat_sum: f32 = world.heat_map.iter().sum();
+
+        // Heat should decay
+        assert!(next_heat_sum < initial_heat_sum);
+        assert!(next_heat_sum > 0.0);
+
+        // Heat should diffuse
+        let neighbors = &qc.adj[0];
+        for &n in neighbors {
+            assert!(world.heat_map[n] > 0.0, "Heat should diffuse to neighbors");
         }
     }
 }

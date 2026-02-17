@@ -31,7 +31,9 @@ fn test_path_traversal_exploit() {
 
     // Assert that the compilation FAILED (it should not be able to read the secret)
     match result {
-        Ok(_) => panic!("Vulnerability confirmed: Compiler successfully included a file outside the sandbox!"),
+        Ok(_) => panic!(
+            "Vulnerability confirmed: Compiler successfully included a file outside the sandbox!"
+        ),
         Err(e) => {
             let error_msg = e.to_string();
             assert!(

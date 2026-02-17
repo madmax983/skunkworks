@@ -159,7 +159,8 @@ async fn run_window() -> Result<()> {
                                         // For now just move camera focus
                                         state.selected_neighbor_idx = None;
 
-                                        let p = state.dungeon.world.qc.atoms[state.dungeon.player_idx];
+                                        let p =
+                                            state.dungeon.world.qc.atoms[state.dungeon.player_idx];
                                         let offset = Vector3::new(2.0, 2.0, 2.0);
                                         state.camera.target = p;
                                         state.camera.eye = p + offset;

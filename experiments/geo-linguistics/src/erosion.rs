@@ -3,7 +3,9 @@ use rand::Rng;
 
 pub fn hydraulic_erosion(terrain: &mut Vec<TerrainPoint>) {
     let len = terrain.len();
-    if len < 2 { return; }
+    if len < 2 {
+        return;
+    }
 
     let mut rng = rand::thread_rng();
 
@@ -66,15 +68,17 @@ pub fn hydraulic_erosion(terrain: &mut Vec<TerrainPoint>) {
 
 pub fn thermal_weathering(terrain: &mut Vec<TerrainPoint>) {
     let len = terrain.len();
-    if len < 3 { return; }
+    if len < 3 {
+        return;
+    }
 
     // Simple diffusion (blur)
     // We need a temp buffer to avoid feedback loop bias
     let old_terrain = terrain.clone();
 
-    for i in 1..len-1 {
-        let h_left = old_terrain[i-1].height;
-        let h_right = old_terrain[i+1].height;
+    for i in 1..len - 1 {
+        let h_left = old_terrain[i - 1].height;
+        let h_right = old_terrain[i + 1].height;
         let h_curr = old_terrain[i].height;
 
         // If current is higher than average of neighbors, it crumbles
@@ -84,8 +88,8 @@ pub fn thermal_weathering(terrain: &mut Vec<TerrainPoint>) {
             let crumble = diff * 0.1 * (1.0 - old_terrain[i].hardness * 0.8);
 
             terrain[i].height -= crumble;
-            terrain[i-1].height += crumble * 0.5;
-            terrain[i+1].height += crumble * 0.5;
+            terrain[i - 1].height += crumble * 0.5;
+            terrain[i + 1].height += crumble * 0.5;
         }
     }
 }
@@ -98,9 +102,18 @@ mod tests {
     #[test]
     fn test_peak_erosion() {
         let mut terrain = vec![
-            TerrainPoint { height: 0.1, hardness: 0.1 },
-            TerrainPoint { height: 1.0, hardness: 0.1 }, // Peak
-            TerrainPoint { height: 0.1, hardness: 0.1 },
+            TerrainPoint {
+                height: 0.1,
+                hardness: 0.1,
+            },
+            TerrainPoint {
+                height: 1.0,
+                hardness: 0.1,
+            }, // Peak
+            TerrainPoint {
+                height: 0.1,
+                hardness: 0.1,
+            },
         ];
 
         let initial_height = terrain[1].height;
@@ -111,15 +124,29 @@ mod tests {
             hydraulic_erosion(&mut terrain);
         }
 
-        assert!(terrain[1].height < initial_height, "Peak should erode. Was {}, now {}", initial_height, terrain[1].height);
+        assert!(
+            terrain[1].height < initial_height,
+            "Peak should erode. Was {}, now {}",
+            initial_height,
+            terrain[1].height
+        );
     }
 
     #[test]
     fn test_sediment_transport() {
         let mut terrain = vec![
-            TerrainPoint { height: 1.0, hardness: 0.1 }, // Source
-            TerrainPoint { height: 0.5, hardness: 0.1 }, // Slope
-            TerrainPoint { height: 0.0, hardness: 0.1 }, // Sink
+            TerrainPoint {
+                height: 1.0,
+                hardness: 0.1,
+            }, // Source
+            TerrainPoint {
+                height: 0.5,
+                hardness: 0.1,
+            }, // Slope
+            TerrainPoint {
+                height: 0.0,
+                hardness: 0.1,
+            }, // Sink
         ];
         // Note: Needs a slope or direct connection. 2 points might be tricky if drop spawns on 0.
         // I added a middle point to ensure flow.
@@ -130,6 +157,11 @@ mod tests {
             hydraulic_erosion(&mut terrain);
         }
 
-        assert!(terrain[2].height > initial_sink, "Sediment should fill valley. Was {}, now {}", initial_sink, terrain[2].height);
+        assert!(
+            terrain[2].height > initial_sink,
+            "Sediment should fill valley. Was {}, now {}",
+            initial_sink,
+            terrain[2].height
+        );
     }
 }

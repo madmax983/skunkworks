@@ -1,12 +1,14 @@
 #![cfg(all(feature = "nova", feature = "oracle"))]
 
-use chimera_lang::ast::{Dna, Helix, Strand, JunctionType};
-use chimera_lang::vm::{ChimeraVM, Value};
+use chimera_lang::ast::{Dna, Helix, JunctionType, Strand};
 use chimera_lang::vm::nova_signals::process_signals;
+use chimera_lang::vm::{ChimeraVM, Value};
 
 fn make_vm() -> ChimeraVM {
     let dna = Dna {
-        helix: Helix { strands: vec![Strand { genes: vec![] }] },
+        helix: Helix {
+            strands: vec![Strand { genes: vec![] }],
+        },
     };
     let mut vm = ChimeraVM::new(dna);
     vm.orca_mode = true;
@@ -24,8 +26,8 @@ fn test_logic_pi_assert() {
 
     vm.grid[5][5] = Value::Str("Π".to_string());
     vm.grid[4][5] = Value::Str("likes".to_string()); // Predicate
-    vm.grid[5][6] = Value::Str("cat".to_string());   // Subject
-    vm.grid[5][4] = Value::Str("milk".to_string());  // Object
+    vm.grid[5][6] = Value::Str("cat".to_string()); // Subject
+    vm.grid[5][4] = Value::Str("milk".to_string()); // Object
 
     // Fire the signal at (5,5)
     vm.signal_grid[5][5] = 1;
@@ -47,7 +49,10 @@ fn test_logic_pi_assert() {
         ],
     );
 
-    assert!(vm.knowledge_base.contains(&expected), "KB should contain the fact");
+    assert!(
+        vm.knowledge_base.contains(&expected),
+        "KB should contain the fact"
+    );
 }
 
 #[test]
@@ -72,8 +77,8 @@ fn test_logic_lambda_query() {
 
     vm.grid[5][5] = Value::Str("λ".to_string());
     vm.grid[4][5] = Value::Str("likes".to_string()); // Predicate
-    vm.grid[5][6] = Value::Str("cat".to_string());   // Subject
-    vm.grid[5][4] = Value::Str("milk".to_string());  // Object
+    vm.grid[5][6] = Value::Str("cat".to_string()); // Subject
+    vm.grid[5][4] = Value::Str("milk".to_string()); // Object
 
     // Fire signal
     vm.signal_grid[5][5] = 1;

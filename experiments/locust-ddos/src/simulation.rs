@@ -203,7 +203,8 @@ impl World {
                     let mut sum = 0.0;
                     for dy in -1..=1 {
                         for dx in -1..=1 {
-                            let idx = ((y as isize + dy) as usize) * w + ((x as isize + dx) as usize);
+                            let idx =
+                                ((y as isize + dy) as usize) * w + ((x as isize + dx) as usize);
                             sum += prev_pheromones[idx];
                         }
                     }
@@ -253,7 +254,7 @@ impl World {
                                 // Add Red haze
                                 buffer[idx] = buffer[idx].saturating_add(intensity);
                                 // A bit of Green for "rotten" look?
-                                buffer[idx+1] = buffer[idx+1].saturating_add(intensity / 4);
+                                buffer[idx + 1] = buffer[idx + 1].saturating_add(intensity / 4);
                             }
                         }
                     }

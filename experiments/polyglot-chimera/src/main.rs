@@ -1,15 +1,15 @@
-use macroquad::prelude::*;
-use chimera_lang::vm::ChimeraVM;
-use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+use ::rand::Rng;
+use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use chimera_lang::opcode::OpCode;
 use chimera_lang::value::Value;
-use ::rand::Rng;
+use chimera_lang::vm::ChimeraVM;
+use macroquad::prelude::*;
 
-mod phonology;
 mod erosion;
+mod phonology;
 
-use crate::phonology::{TerrainPoint, char_to_terrain, terrain_to_char};
 use crate::erosion::{hydraulic_erosion, thermal_weathering};
+use crate::phonology::{char_to_terrain, terrain_to_char, TerrainPoint};
 
 const TERRAIN_SCALE_X: f32 = 15.0;
 const TERRAIN_SCALE_Y: f32 = 150.0;
@@ -86,8 +86,14 @@ async fn main() {
             // 1. Sense Environment
             let point = terrain[agent.x];
             // Push Height (scaled 0-100) and Hardness (scaled 0-100)
-            agent.vm.stack.push(Value::Int((point.hardness * 100.0) as i64));
-            agent.vm.stack.push(Value::Int((point.height * 100.0) as i64));
+            agent
+                .vm
+                .stack
+                .push(Value::Int((point.hardness * 100.0) as i64));
+            agent
+                .vm
+                .stack
+                .push(Value::Int((point.height * 100.0) as i64));
 
             // 2. Step VM
             agent.vm.step();
@@ -98,19 +104,22 @@ async fn main() {
             if let Some(val) = agent.vm.stack.pop() {
                 if let Value::Int(cmd) = val {
                     match cmd {
-                        1 => { // Move Left
+                        1 => {
+                            // Move Left
                             if agent.x > 0 {
                                 agent.x -= 1;
                                 agent.last_action = "L".to_string();
                             }
                         }
-                        2 => { // Move Right
+                        2 => {
+                            // Move Right
                             if agent.x < terrain.len() - 1 {
                                 agent.x += 1;
                                 agent.last_action = "R".to_string();
                             }
                         }
-                        3 => { // Dig / Eat
+                        3 => {
+                            // Dig / Eat
                             // Reduce height based on hardness
                             let erosion = 0.05 * (1.0 - terrain[agent.x].hardness * 0.5);
                             terrain[agent.x].height = (terrain[agent.x].height - erosion).max(0.0);
@@ -132,11 +141,13 @@ async fn main() {
             // Random movement jitter if stuck (mutation/drift)
             let mut rng = ::rand::thread_rng();
             if rng.gen_bool(0.05) {
-                if rng.gen_bool(0.5) && agent.x > 0 { agent.x -= 1; }
-                else if agent.x < terrain.len() - 1 { agent.x += 1; }
+                if rng.gen_bool(0.5) && agent.x > 0 {
+                    agent.x -= 1;
+                } else if agent.x < terrain.len() - 1 {
+                    agent.x += 1;
+                }
             }
         }
-
 
         // --- Drawing ---
 
@@ -145,7 +156,13 @@ async fn main() {
 
         // Draw Text Labels (Reconstruction)
         let reconstructed = reconstruct_text(&terrain);
-        draw_text(&format!("Current Landscape Reads: {}", reconstructed), 20.0, 90.0, 20.0, GOLD);
+        draw_text(
+            &format!("Current Landscape Reads: {}", reconstructed),
+            20.0,
+            90.0,
+            20.0,
+            GOLD,
+        );
 
         // Draw Agents
         for agent in &agents {
@@ -157,11 +174,35 @@ async fn main() {
         }
 
         // UI
-        draw_text("Polyglot Chimera: Agents eating Language", 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Input: {}", input_text), 20.0, 60.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("Agents: {}", agents.len()), 20.0, 120.0, 20.0, WHITE);
+        draw_text(
+            "Polyglot Chimera: Agents eating Language",
+            20.0,
+            30.0,
+            30.0,
+            WHITE,
+        );
+        draw_text(
+            &format!("Input: {}", input_text),
+            20.0,
+            60.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            &format!("Agents: {}", agents.len()),
+            20.0,
+            120.0,
+            20.0,
+            WHITE,
+        );
 
-        draw_text("Controls: Type to change terrain | E: Natural Erosion | R: Respawn Agents", 20.0, screen_height() - 30.0, 20.0, GRAY);
+        draw_text(
+            "Controls: Type to change terrain | E: Natural Erosion | R: Respawn Agents",
+            20.0,
+            screen_height() - 30.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }
@@ -188,20 +229,48 @@ fn spawn_agents(agents: &mut Vec<PolyglotAgent>, terrain_len: usize) {
 
     // Let's make a simple "Eater" gene
     let genes = vec![
-        Gene { op: OpCode::Dup, args: vec![] }, // Check Height
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(20)] }, // Threshold
-        Gene { op: OpCode::Gt, args: vec![] },
-        Gene { op: OpCode::Brz, args: vec![Nucleotide::Number(3)] }, // Skip to Move
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(3)] }, // Eat
-        Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(100)] }, // End/Restart
+        Gene {
+            op: OpCode::Dup,
+            args: vec![],
+        }, // Check Height
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(20)],
+        }, // Threshold
+        Gene {
+            op: OpCode::Gt,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Brz,
+            args: vec![Nucleotide::Number(3)],
+        }, // Skip to Move
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(3)],
+        }, // Eat
+        Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(100)],
+        }, // End/Restart
         // Move Logic
-        Gene { op: OpCode::Drop, args: vec![] }, // Drop Height
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Move Left
-        // Note: Real random walk requires randomness in VM.
-        // We rely on external jitter in main loop for true randomness if DNA is static.
+        Gene {
+            op: OpCode::Drop,
+            args: vec![],
+        }, // Drop Height
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        }, // Move Left
+           // Note: Real random walk requires randomness in VM.
+           // We rely on external jitter in main loop for true randomness if DNA is static.
     ];
 
-    let dna = Dna { helix: Helix { strands: vec![Strand { genes }] } };
+    let dna = Dna {
+        helix: Helix {
+            strands: vec![Strand { genes }],
+        },
+    };
 
     for _ in 0..AGENT_COUNT {
         let x = rng.gen_range(0..terrain_len);
@@ -214,7 +283,10 @@ fn text_to_terrain(text: &str) -> Vec<TerrainPoint> {
 
     // Padding
     for _ in 0..5 {
-        terrain.push(TerrainPoint { height: 0.0, hardness: 0.0 });
+        terrain.push(TerrainPoint {
+            height: 0.0,
+            hardness: 0.0,
+        });
     }
 
     for c in text.chars() {
@@ -224,7 +296,7 @@ fn text_to_terrain(text: &str) -> Vec<TerrainPoint> {
         // Left shoulder
         terrain.push(TerrainPoint {
             height: center.height * 0.5,
-            hardness: center.hardness * 0.8
+            hardness: center.hardness * 0.8,
         });
 
         // Center
@@ -233,16 +305,22 @@ fn text_to_terrain(text: &str) -> Vec<TerrainPoint> {
         // Right shoulder
         terrain.push(TerrainPoint {
             height: center.height * 0.5,
-            hardness: center.hardness * 0.8
+            hardness: center.hardness * 0.8,
         });
 
         // Gap
-        terrain.push(TerrainPoint { height: 0.1, hardness: 0.1 });
+        terrain.push(TerrainPoint {
+            height: 0.1,
+            hardness: 0.1,
+        });
     }
 
     // Padding
     for _ in 0..5 {
-        terrain.push(TerrainPoint { height: 0.0, hardness: 0.0 });
+        terrain.push(TerrainPoint {
+            height: 0.0,
+            hardness: 0.0,
+        });
     }
 
     terrain
@@ -252,7 +330,7 @@ fn reconstruct_text(terrain: &Vec<TerrainPoint>) -> String {
     let mut s = String::new();
     let mut i = 5;
     while i < terrain.len().saturating_sub(5) {
-        let point = &terrain[i+1];
+        let point = &terrain[i + 1];
         let c = terrain_to_char(point);
         if c != ' ' {
             s.push(c);
@@ -268,9 +346,16 @@ fn draw_terrain(terrain: &Vec<TerrainPoint>, base_y: f32, color: Color) {
         let y1 = base_y - terrain[i].height * TERRAIN_SCALE_Y;
 
         let x2 = (i + 1) as f32 * TERRAIN_SCALE_X + 50.0;
-        let y2 = base_y - terrain[i+1].height * TERRAIN_SCALE_Y;
+        let y2 = base_y - terrain[i + 1].height * TERRAIN_SCALE_Y;
 
         draw_line(x1, y1, x2, y2, 2.0, color);
-        draw_line(x1, y1, x1, base_y, 1.0, Color::new(color.r, color.g, color.b, 0.1));
+        draw_line(
+            x1,
+            y1,
+            x1,
+            base_y,
+            1.0,
+            Color::new(color.r, color.g, color.b, 0.1),
+        );
     }
 }

@@ -40,7 +40,11 @@ pub fn exec_plant(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         // [rules, axiom]
         let axiom = vm.stack.pop().unwrap();
         let rules = vm.stack.pop().unwrap();
-        (axiom, Value::Junction(crate::ast::JunctionType::All, Vec::new()), rules)
+        (
+            axiom,
+            Value::Junction(crate::ast::JunctionType::All, Vec::new()),
+            rules,
+        )
     };
 
     // Validate types

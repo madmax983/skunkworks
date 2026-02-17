@@ -1,6 +1,6 @@
+use clap::Parser;
 use image::{Rgba, RgbaImage};
 use std::path::PathBuf;
-use clap::Parser;
 
 #[derive(Parser)]
 struct Cli {
@@ -15,9 +15,9 @@ fn main() {
     let mut img = RgbaImage::new(width, height);
     for pixel in img.pixels_mut() {
         if rand::random::<f32>() > 0.9 {
-             *pixel = Rgba([rand::random(), rand::random(), rand::random(), 255]);
+            *pixel = Rgba([rand::random(), rand::random(), rand::random(), 255]);
         } else {
-             *pixel = Rgba([0, 0, 0, 0]);
+            *pixel = Rgba([0, 0, 0, 0]);
         }
     }
     img.save(&cli.output).expect("Failed to save image");

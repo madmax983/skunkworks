@@ -30,10 +30,7 @@ struct App {
 }
 
 impl App {
-    fn new(
-        #[cfg(feature = "audio")]
-        audio_tx: crossbeam_channel::Sender<AudioEvent>
-    ) -> Self {
+    fn new(#[cfg(feature = "audio")] audio_tx: crossbeam_channel::Sender<AudioEvent>) -> Self {
         let dna = Self::generate_dna();
         Self {
             vm: ChimeraVM::new(dna),

@@ -3818,7 +3818,8 @@ fn exec_rebirth(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                                 }
                             }
                         } else {
-                            vm.output.push("REBIRTH ERROR: Malformed Horcrux".to_string());
+                            vm.output
+                                .push("REBIRTH ERROR: Malformed Horcrux".to_string());
                         }
                     } else {
                         vm.output.push("REBIRTH: Not a Horcrux".to_string());

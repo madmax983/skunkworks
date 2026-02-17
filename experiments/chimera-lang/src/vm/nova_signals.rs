@@ -3,11 +3,11 @@
 #[cfg(feature = "biophysics")]
 use super::neuron::Neuron;
 #[cfg(feature = "nova")]
+use super::nova_chaos;
+#[cfg(feature = "nova")]
 use super::nova_sigil;
 #[cfg(feature = "oracle")]
 use super::oracle;
-#[cfg(feature = "nova")]
-use super::nova_chaos;
 use super::{ChimeraVM, MidiEvent, Value, GRID_SIZE};
 use crate::ast::{JunctionType, Nucleotide};
 use crate::opcode::OpCode;
@@ -1519,10 +1519,7 @@ fn exec_pi(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalConte
     let subj = peek_value(vm, y, x, 0, 1).unwrap_or(Value::Int(0));
     let obj = peek_value(vm, y, x, 0, -1).unwrap_or(Value::Int(0));
 
-    let fact = Value::Junction(
-        JunctionType::Any,
-        vec![pred, subj, obj],
-    );
+    let fact = Value::Junction(JunctionType::Any, vec![pred, subj, obj]);
     ctx.knowledge_writes.push(KnowledgeWrite { fact });
 }
 
@@ -1538,10 +1535,7 @@ fn exec_lambda(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalC
     let subj = peek_value(vm, y, x, 0, 1).unwrap_or(Value::Int(0));
     let obj = peek_value(vm, y, x, 0, -1).unwrap_or(Value::Int(0));
 
-    let query = Value::Junction(
-        JunctionType::Any,
-        vec![pred, subj, obj],
-    );
+    let query = Value::Junction(JunctionType::Any, vec![pred, subj, obj]);
 
     let found = vm.knowledge_base.contains(&query);
 
@@ -1723,7 +1717,12 @@ fn exec_babel_signal(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut S
 fn exec_mercury(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
     if signal > 0 {
         if let Some((out, consumed)) = nova_chaos::check_local_transmutation(vm, y, x) {
-            ctx.transmutation_writes.push(TransmutationWrite { y, x, output: out, consumed });
+            ctx.transmutation_writes.push(TransmutationWrite {
+                y,
+                x,
+                output: out,
+                consumed,
+            });
         }
     }
 }
@@ -1734,7 +1733,12 @@ fn exec_venus(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalCo
         for (dy, dx) in neighbors {
             if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
                 if let Some((out, consumed)) = nova_chaos::check_local_transmutation(vm, ny, nx) {
-                    ctx.transmutation_writes.push(TransmutationWrite { y: ny, x: nx, output: out, consumed });
+                    ctx.transmutation_writes.push(TransmutationWrite {
+                        y: ny,
+                        x: nx,
+                        output: out,
+                        consumed,
+                    });
                 }
             }
         }

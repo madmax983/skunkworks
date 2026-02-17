@@ -13,10 +13,7 @@ impl Dungeon {
         let world = World::new(lattice.clone());
         let player_idx = world.center_node;
 
-        Dungeon {
-            world,
-            player_idx,
-        }
+        Dungeon { world, player_idx }
     }
 
     pub fn update(&mut self) {

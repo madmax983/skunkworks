@@ -1,11 +1,11 @@
 #[cfg(feature = "nova")]
-use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand, JunctionType};
+use chimera_lang::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
 #[cfg(feature = "nova")]
 use chimera_lang::opcode::OpCode;
 #[cfg(feature = "nova")]
-use chimera_lang::vm::{ChimeraVM, Value};
-#[cfg(feature = "nova")]
 use chimera_lang::vm::nova::OrganelleType;
+#[cfg(feature = "nova")]
+use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 #[cfg(feature = "nova")]
@@ -26,23 +26,52 @@ fn test_viral_rewrite_grid() {
     // 3. Create Virus via Strand
     // Stack: [ ..., (grammar), (quorum_action, quorum_threshold), payload_idx, mutation_rate, pattern_str, name_str, mode ]
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Junction(JunctionType::Any, vec![
-            Nucleotide::String("Match".to_string()),
-            Nucleotide::String("target".to_string()),
-        ])] }, // Grammar
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(-1)] }, // Payload
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] }, // Rate
-        Gene { op: OpCode::Push, args: vec![Nucleotide::String("target".to_string())] }, // Pattern
-        Gene { op: OpCode::Push, args: vec![Nucleotide::String("Rewriter".to_string())] }, // Name
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Mode 1 = RewriteGrid
-        Gene { op: OpCode::Infect, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Junction(
+                JunctionType::Any,
+                vec![
+                    Nucleotide::String("Match".to_string()),
+                    Nucleotide::String("target".to_string()),
+                ],
+            )],
+        }, // Grammar
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(-1)],
+        }, // Payload
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(100)],
+        }, // Rate
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String("target".to_string())],
+        }, // Pattern
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String("Rewriter".to_string())],
+        }, // Name
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        }, // Mode 1 = RewriteGrid
+        Gene {
+            op: OpCode::Infect,
+            args: vec![],
+        },
     ];
 
     let dna = Dna {
         helix: Helix {
             strands: vec![
                 Strand { genes }, // Strand 0: Infect
-                Strand { genes: vec![Gene { op: OpCode::Outbreak, args: vec![] }] }, // Strand 1: Outbreak
+                Strand {
+                    genes: vec![Gene {
+                        op: OpCode::Outbreak,
+                        args: vec![],
+                    }],
+                }, // Strand 1: Outbreak
             ],
         },
     };
@@ -86,28 +115,67 @@ fn test_viral_rewrite_dna() {
     // Strand 2: Victim [ push(1) ]
 
     let infect_genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Junction(JunctionType::Any, vec![
-            Nucleotide::String("Regex".to_string()),
-            Nucleotide::String(".*".to_string()),
-        ])] }, // Grammar
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(-1)] }, // Payload
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] }, // Rate
-        Gene { op: OpCode::Push, args: vec![Nucleotide::String(".*".to_string())] }, // Pattern
-        Gene { op: OpCode::Push, args: vec![Nucleotide::String("GeneHacker".to_string())] }, // Name
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] }, // Mode 2 = RewriteDNA
-        Gene { op: OpCode::Infect, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Junction(
+                JunctionType::Any,
+                vec![
+                    Nucleotide::String("Regex".to_string()),
+                    Nucleotide::String(".*".to_string()),
+                ],
+            )],
+        }, // Grammar
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(-1)],
+        }, // Payload
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(100)],
+        }, // Rate
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String(".*".to_string())],
+        }, // Pattern
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String("GeneHacker".to_string())],
+        }, // Name
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(2)],
+        }, // Mode 2 = RewriteDNA
+        Gene {
+            op: OpCode::Infect,
+            args: vec![],
+        },
     ];
 
     let dna = Dna {
         helix: Helix {
             strands: vec![
-                Strand { genes: infect_genes },
-                Strand { genes: vec![Gene { op: OpCode::Outbreak, args: vec![] }] },
+                Strand {
+                    genes: infect_genes,
+                },
+                Strand {
+                    genes: vec![Gene {
+                        op: OpCode::Outbreak,
+                        args: vec![],
+                    }],
+                },
                 // Victim Strand: Infinite Loop so it stays alive
-                Strand { genes: vec![
-                    Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-                    Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(2)] } // Jump to self (Strand 2)
-                ] },
+                Strand {
+                    genes: vec![
+                        Gene {
+                            op: OpCode::Push,
+                            args: vec![Nucleotide::Number(1)],
+                        },
+                        Gene {
+                            op: OpCode::Jump,
+                            args: vec![Nucleotide::Number(2)],
+                        }, // Jump to self (Strand 2)
+                    ],
+                },
             ],
         },
     };
@@ -162,6 +230,9 @@ fn test_viral_rewrite_dna() {
     // If compilation fails, it stays at 2? No, logic says "if Ok(cst)..."
     // With ".*" regex, it should parse.
 
-    assert_ne!(org.ip.0, 2, "Organelle should have been moved to a new strand");
+    assert_ne!(
+        org.ip.0, 2,
+        "Organelle should have been moved to a new strand"
+    );
     assert!(vm.dna.helix.strands.len() > 3);
 }

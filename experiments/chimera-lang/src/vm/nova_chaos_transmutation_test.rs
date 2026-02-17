@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
     use crate::ast::{Dna, Helix, Strand};
-    use crate::vm::{ChimeraVM, Value};
     use crate::vm::nova_chaos::{check_local_transmutation, AlchemyRecipe};
+    use crate::vm::{ChimeraVM, Value};
 
     fn create_vm() -> ChimeraVM {
         let dna = Dna {

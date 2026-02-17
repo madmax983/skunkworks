@@ -43,7 +43,9 @@ impl ChaosCartridge {
 
     pub fn scramble(&mut self) {
         let mut rng = rand::thread_rng();
-        let elements = ["Fire", "Water", "Earth", "Air", "Void", "Life", "Death", "Chaos"];
+        let elements = [
+            "Fire", "Water", "Earth", "Air", "Void", "Life", "Death", "Chaos",
+        ];
         let inputs: Vec<String> = (0..rng.gen_range(2..4))
             .map(|_| elements[rng.gen_range(0..elements.len())].to_string())
             .collect();
@@ -73,14 +75,19 @@ pub fn exec_chaos_op(
                         }
                     }
                     if !input_strs.is_empty() {
-                        vm.chaos_cartridge.add_recipe(input_strs, output.clone(), 1.0);
-                        vm.output.push(format!("CHAOS: Defined recipe -> {}", output));
+                        vm.chaos_cartridge
+                            .add_recipe(input_strs, output.clone(), 1.0);
+                        vm.output
+                            .push(format!("CHAOS: Defined recipe -> {}", output));
                     }
                 } else {
-                    vm.output.push("Error: ChaosDefine requires [input_junction, output_str]".to_string());
+                    vm.output.push(
+                        "Error: ChaosDefine requires [input_junction, output_str]".to_string(),
+                    );
                 }
             } else {
-                vm.output.push("Error: Stack underflow for ChaosDefine".to_string());
+                vm.output
+                    .push("Error: Stack underflow for ChaosDefine".to_string());
             }
         }
         OpCode::ChaosScramble => {
@@ -89,7 +96,8 @@ pub fn exec_chaos_op(
         }
         OpCode::ChaosInvoke => {
             process_chaos_physics(vm);
-            vm.output.push("CHAOS: Physics invoked manually.".to_string());
+            vm.output
+                .push("CHAOS: Physics invoked manually.".to_string());
         }
         OpCode::ChaosLearn => {
             // Learn a recipe from a DNA strand
@@ -97,9 +105,11 @@ pub fn exec_chaos_op(
             if let Some(Value::Int(idx)) = vm.stack.pop() {
                 if let Some(recipe) = parse_strand_to_recipe(vm, idx as usize) {
                     vm.chaos_cartridge.recipes.push(recipe.clone());
-                    vm.output.push(format!("CHAOS: Learned recipe -> {}", recipe.output));
+                    vm.output
+                        .push(format!("CHAOS: Learned recipe -> {}", recipe.output));
                 } else {
-                    vm.output.push("CHAOS: Failed to learn recipe from strand.".to_string());
+                    vm.output
+                        .push("CHAOS: Failed to learn recipe from strand.".to_string());
                 }
             }
         }
@@ -110,7 +120,8 @@ pub fn exec_chaos_op(
                 for (y, x) in consumed {
                     vm.grid[y][x] = Value::Int(0);
                 }
-                vm.output.push("MERCURY: Transmutation successful.".to_string());
+                vm.output
+                    .push("MERCURY: Transmutation successful.".to_string());
             }
         }
         OpCode::Venus => {
@@ -129,7 +140,8 @@ pub fn exec_chaos_op(
                 }
             }
             if count > 0 {
-                vm.output.push(format!("VENUS: Transmuted {} neighbors.", count));
+                vm.output
+                    .push(format!("VENUS: Transmuted {} neighbors.", count));
             }
         }
         OpCode::Salt => {
@@ -220,9 +232,7 @@ pub fn check_local_transmutation(
     }
 
     // Gather Context (Neighbors)
-    let neighbors = [
-        (-1, 0), (1, 0), (0, -1), (0, 1)
-    ];
+    let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
 
     let mut context_vals = Vec::new();
     let mut context_coords = Vec::new();

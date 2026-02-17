@@ -1,9 +1,9 @@
-mod math4d;
 mod attractor;
+mod math4d;
 
+use attractor::Lissajous4D;
 use macroquad::prelude::*;
 use math4d::Vec4;
-use attractor::Lissajous4D;
 
 fn generate_tesseract() -> (Vec<Vec4>, Vec<(usize, usize)>) {
     let mut verts = Vec::new();
@@ -17,7 +17,7 @@ fn generate_tesseract() -> (Vec<Vec4>, Vec<(usize, usize)>) {
 
     let mut edges = Vec::new();
     for i in 0..16 {
-        for j in (i+1)..16 {
+        for j in (i + 1)..16 {
             // Check hamming distance
             let diff: usize = i ^ j;
             if diff.count_ones() == 1 {
@@ -50,22 +50,48 @@ async fn main() {
         let dt = get_frame_time();
 
         // Input
-        if is_key_down(KeyCode::Left) { cam_yaw += 2.0 * dt; }
-        if is_key_down(KeyCode::Right) { cam_yaw -= 2.0 * dt; }
-        if is_key_down(KeyCode::Up) { cam_pitch += 2.0 * dt; }
-        if is_key_down(KeyCode::Down) { cam_pitch -= 2.0 * dt; }
+        if is_key_down(KeyCode::Left) {
+            cam_yaw += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_yaw -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_pitch += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_pitch -= 2.0 * dt;
+        }
 
         // Zoom
-        if is_key_down(KeyCode::W) { cam_dist -= 5.0 * dt; }
-        if is_key_down(KeyCode::S) { cam_dist += 5.0 * dt; }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 5.0 * dt;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 5.0 * dt;
+        }
 
         // 4D Rotation Controls
-        if is_key_down(KeyCode::Q) { angle_xw += dt; auto_rotate = false; }
-        if is_key_down(KeyCode::E) { angle_xw -= dt; auto_rotate = false; }
-        if is_key_down(KeyCode::R) { angle_yw += dt; auto_rotate = false; }
-        if is_key_down(KeyCode::F) { angle_yw -= dt; auto_rotate = false; }
+        if is_key_down(KeyCode::Q) {
+            angle_xw += dt;
+            auto_rotate = false;
+        }
+        if is_key_down(KeyCode::E) {
+            angle_xw -= dt;
+            auto_rotate = false;
+        }
+        if is_key_down(KeyCode::R) {
+            angle_yw += dt;
+            auto_rotate = false;
+        }
+        if is_key_down(KeyCode::F) {
+            angle_yw -= dt;
+            auto_rotate = false;
+        }
 
-        if is_key_pressed(KeyCode::Space) { auto_rotate = !auto_rotate; }
+        if is_key_pressed(KeyCode::Space) {
+            auto_rotate = !auto_rotate;
+        }
 
         if auto_rotate {
             angle_xw += dt * 0.3;
@@ -131,7 +157,7 @@ async fn main() {
         // Draw Trail
         for i in 0..trail.len().saturating_sub(1) {
             let v1 = trail[i];
-            let v2 = trail[i+1];
+            let v2 = trail[i + 1];
 
             let p1 = transform(v1);
             let p2 = transform(v2);
@@ -152,7 +178,13 @@ async fn main() {
         draw_text("Arrows: Rotate 3D Camera", 10.0, 40.0, 20.0, GRAY);
         draw_text("Q/E, R/F: Rotate 4D Planes", 10.0, 60.0, 20.0, GRAY);
         draw_text("Space: Toggle Auto-Rotate", 10.0, 80.0, 20.0, GRAY);
-        draw_text(format!("Trail Points: {}", trail.len()).as_str(), 10.0, 100.0, 20.0, LIGHTGRAY);
+        draw_text(
+            format!("Trail Points: {}", trail.len()).as_str(),
+            10.0,
+            100.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await
     }
