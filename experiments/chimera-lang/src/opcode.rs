@@ -424,6 +424,14 @@ pub enum OpCode {
     #[cfg(feature = "elektra")]
     Sensor,
 
+    /// **[Elektra]** Patches a grid location to a VM parameter (Voltage Control).
+    ///
+    /// **Stack:** `[ ..., source_type, y, x, target_param ] -> [ ... ]`
+    /// **Source:** 0=Voltage.
+    /// **Target:** 0=EnergyRegen, 1=MutationRate.
+    #[cfg(feature = "elektra")]
+    Patch,
+
     // Nova Features
     /// **[Nova]** Expands an L-System axiom using rules and iterations.
     ///
