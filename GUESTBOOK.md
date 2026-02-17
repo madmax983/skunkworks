@@ -367,9 +367,13 @@
 
 ## History/Decay
 
-### [Concentration Level: TOXIC] - Location: experiments/mechanical-market
+### [Concentration Level: TOXIC] - Location: experiments/syntax-fugue
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Redundant with `market-flow`. Grace period: 24h.
+- **Status:** Condemned. Zombie Resurrection. CI Failure. Documentation Void. Grace period: 24h.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/mechanical-market
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Failed to improve during grace period. Documentation void. Moved to graveyard.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/chaos-chandelier
 - **Scent Origin:** The Reaper ☠️
