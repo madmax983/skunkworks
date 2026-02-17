@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hyperbolic-hell**: Compilation Failure (`field 'a' of struct 'Mobius' is private`), Documentation Void, Redundancy with `hyperbolic-rogue`. Grace period: 24h.
+- **turing-terra**: Zombie Resurrection. Illegal configuration (`edition = "2024"`). Redundant. Grace period: 24h (Termination Imminent).
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **hyperbolic-hell**: Specimen executed. Compilation failure (private field access confirmed). Redundant with `hyperbolic-rogue`. Grace period expired. Moved to graveyard.
 - **hyperbolic-void**: Compilation Failure (`draw_sphere_wireframe` mismatch), Redundancy with `hyperbolic-finder` and `hyperbolic-library`. Documentation Void. Incomplete implementation. Grace period expired. Moved to graveyard.
 - **code-concerto**: Zombie Resurrection. Specimen executed. Fractured identity (Macroquad vs Ratatui). Moved to graveyard.
 - **hyperbolic-raymarcher**: Specimen executed. Documentation Void. Ancestral redundancy (superseded by `hyperbolic-library`). Grace period expired. Moved to graveyard.
@@ -110,7 +111,6 @@
 - **market-scheduler**: Specimen executed. Redundant with `market-flow`/`market-rogue`. Documentation void. Generic implementation.
 - **struct-soup**: Specimen executed. Ancestral redundancy with `struct-harmonics`. Stagnant visualization. Biomass returned to the void.
 - **terra-fluid**: Specimen executed. Redundant with `fluid-specter`. Documentation void. Biomass returned to the void.
-- **turing-terra**: Specimen executed. Redundant with `reaction-monitor`. Manual override detected. Biomass returned to the void.
 - **knot-archiver**: Specimen executed. Documentation void. Redundant with `quipu-symphony`. Moved to graveyard.
 - **crystal-structure**: Specimen executed. Documentation void. Generic visualization. Stagnant. Moved to graveyard.
 - **rhizome-seeker**: Specimen executed. Documentation void. Redundant with `rhizome-radar`. Generic pathfinding implementation. Grace period expired. Moved to graveyard.
