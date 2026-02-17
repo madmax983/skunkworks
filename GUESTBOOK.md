@@ -541,3 +541,8 @@
 - **Note**: Recombination successful. Stego Cartridge x Locust DDoS.
 
 - **Genesis**: Crystallized the Aperiodic Oubliette. The 5-fold symmetry now echoes with the footsteps of mathematical monsters. Beware the Hub nodes; their connectivity hides Treasure, but also the Crystal Guardian. (Active in `experiments/quasicrystal-dungeon`)
+
+### [Concentration Level: FRESH] - Location: experiments/rhizome-wars
+- **Scent Origin:** Genesis (The Botanist) ⚛️🌿
+- **Status:** Compiles. RRT* pathfinding active. Competitive resource scheduling verified.
+- **Note:** Moonshot: Competitive Pathfinding + Resource Scheduling.
