@@ -964,6 +964,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::ContextShift => super::nova_semiotics::exec_context_shift(vm),
         OpCode::Deconstruct => super::nova_semiotics::exec_deconstruct(vm),
         OpCode::TuiMod => exec_tui_mod(vm),
+        OpCode::Horcrux => exec_horcrux(vm),
+        OpCode::Rebirth => exec_rebirth(vm),
         _ => None,
     }
 }
@@ -3703,6 +3705,141 @@ fn exec_observe(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     } else {
         vm.output
             .push("Error: Stack underflow for observe".to_string());
+    }
+    None
+}
+
+fn exec_horcrux(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if vm.stack.len() >= 3 {
+        let x_val = vm.stack.pop().unwrap();
+        let y_val = vm.stack.pop().unwrap();
+        let s_val = vm.stack.pop().unwrap();
+
+        if let (Value::Int(s_idx), Value::Int(y), Value::Int(x)) = (s_val, y_val, x_val) {
+            let idx = s_idx as usize;
+            if idx < vm.dna.helix.strands.len() {
+                if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                    let strand = &vm.dna.helix.strands[idx];
+                    let mut hasher = DefaultHasher::new();
+                    strand.hash(&mut hasher);
+                    let hash = hasher.finish();
+                    let gene_str = super::nova_genetics::strand_to_string(strand);
+                    let horcrux_str = format!("Horcrux:{:x}:{}", hash, gene_str);
+
+                    vm.grid[ny][nx] = Value::Str(horcrux_str);
+
+                    // Kill source strand
+                    vm.dna.helix.strands[idx].genes.clear();
+                    vm.epigenome.retain(|(s, _)| *s != idx);
+                    vm.cladistics.kill_strand(idx, vm.tick_counter);
+
+                    vm.energy = vm.energy.saturating_sub(50);
+                    vm.output.push(format!(
+                        "HORCRUX: Strand {} soul bound to {},{}",
+                        idx, nx, ny
+                    ));
+                } else {
+                    vm.output
+                        .push("Error: Coordinates out of bounds for horcrux".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Invalid strand index for horcrux".to_string());
+            }
+        } else {
+            vm.output
+                .push("Error: Type mismatch for horcrux".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for horcrux".to_string());
+    }
+    None
+}
+
+fn exec_rebirth(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if vm.stack.len() >= 2 {
+        let x_val = vm.stack.pop().unwrap();
+        let y_val = vm.stack.pop().unwrap();
+
+        if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
+            if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                if let Value::Str(s) = &vm.grid[ny][nx] {
+                    if s.starts_with("Horcrux:") {
+                        let parts: Vec<&str> = s.splitn(3, ':').collect();
+                        if parts.len() == 3 {
+                            let _hash = parts[1];
+                            let gene_src = parts[2];
+
+                            match ChimeraParser::parse(Rule::strand, gene_src) {
+                                Ok(mut pairs) => {
+                                    let pair = pairs.next().unwrap();
+                                    match crate::ast::Strand::try_from_pair(pair) {
+                                        Ok(strand) => {
+                                            if vm.dna.helix.strands.len() >= MAX_STRANDS {
+                                                vm.output.push(
+                                                    "REBIRTH ERROR: Strand limit exceeded"
+                                                        .to_string(),
+                                                );
+                                            } else {
+                                                vm.dna.helix.strands.push(strand);
+                                                vm.telomeres.push(50);
+                                                #[cfg(feature = "cortex")]
+                                                {
+                                                    vm.activation_levels.push(0);
+                                                    vm.synapse_map.push(Vec::new());
+                                                }
+                                                let new_idx = vm.dna.helix.strands.len() - 1;
+
+                                                vm.cladistics.register_strand(
+                                                    new_idx,
+                                                    Some(vm.ip.0),
+                                                    vm.tick_counter,
+                                                    "Rebirth".to_string(),
+                                                );
+
+                                                vm.grid[ny][nx] = Value::Int(0); // Consume Horcrux
+                                                vm.stack.push(Value::Int(new_idx as i64));
+                                                vm.energy = vm.energy.saturating_sub(25);
+                                                vm.output.push(format!(
+                                                    "REBIRTH: Soul restored as strand {}",
+                                                    new_idx
+                                                ));
+                                            }
+                                        }
+                                        Err(e) => {
+                                            vm.output
+                                                .push(format!("REBIRTH ERROR: Parse failed {}", e));
+                                        }
+                                    }
+                                }
+                                Err(e) => {
+                                    vm.output.push(format!("REBIRTH ERROR: Syntax error {}", e));
+                                }
+                            }
+                        } else {
+                            vm.output.push("REBIRTH ERROR: Malformed Horcrux".to_string());
+                        }
+                    } else {
+                        vm.output.push("REBIRTH: Not a Horcrux".to_string());
+                        vm.stack.push(Value::Int(-1));
+                    }
+                } else {
+                    vm.output
+                        .push("REBIRTH: Cell does not contain string".to_string());
+                    vm.stack.push(Value::Int(-1));
+                }
+            } else {
+                vm.output
+                    .push("Error: Coordinates out of bounds for rebirth".to_string());
+            }
+        } else {
+            vm.output
+                .push("Error: Type mismatch for rebirth".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for rebirth".to_string());
     }
     None
 }

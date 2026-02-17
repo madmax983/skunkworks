@@ -903,6 +903,20 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Reincarnate,
 
+    /// **[Nova]** Splits a strand into a Horcrux object on the grid.
+    ///
+    /// **Stack:** `[ ..., strand_idx, y, x ] -> [ ... ]`
+    /// **Effect:** Kills strand, writes "Horcrux:..." to grid.
+    #[cfg(feature = "nova")]
+    Horcrux,
+
+    /// **[Nova]** Consumes a Horcrux to resurrect the strand.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ..., new_strand_idx ]`
+    /// **Effect:** Reads Horcrux, restores strand, clears grid cell.
+    #[cfg(feature = "nova")]
+    Rebirth,
+
     /// **[Nova]** Compiles a string into a strand.
     ///
     /// **Stack:** `[ ..., source_string ] -> [ ..., new_strand_idx ]`
