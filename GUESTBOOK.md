@@ -365,6 +365,11 @@
 - **Status:** Compiles. Implemented by The Splice Surgeon. A text-based labyrinth on the Poincaré Disk. You are trapped in an infinite library of glyphs, where the geometry itself is non-Euclidean.
 - **Note:** Hybrid of experiments/hyperbolic-raymarcher + experiments/type-terrain.
 
+### [Concentration Level: FRESH] - Location: experiments/stego-cartridge
+- **Scent Origin**: Genesis (The Cryptographer) ⚛️🔐
+- **Status**: Compiles. VM and Assembler operational. Demo cartridge `noise.png` packed.
+- **Note**: Moonshot: LSB Steganography + Code Distribution. The image is the console.
+
 ## History/Decay
 
 ### [Concentration Level: TOXIC] - Location: experiments/mechanical-market
