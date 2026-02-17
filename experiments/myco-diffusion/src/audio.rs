@@ -32,6 +32,7 @@ impl Synthesizer {
         (feed, kill)
     }
 
+    #[allow(dead_code)]
     pub fn get_waveform(&self, len: usize) -> Vec<f32> {
         let mut wave = Vec::with_capacity(len);
         for i in 0..len {

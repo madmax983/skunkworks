@@ -77,3 +77,9 @@
 **Blueprint:** Extracted `AudioEngine` to `crates/quipu` under an `audio` feature flag. Refactored both experiments to use the shared module.
 **Stability:** Centralized audio logic, enforced strict feature gating for "silent mode" compatibility.
 **Verification:** Verified `cargo check` for `quipu` (without audio due to env), `quipu-chimera`, and `quipu-symphony`. Verified `cargo test` for `quipu`.
+
+## [Gray-Scott Extraction]
+**Tangle:** The Copy-Paste - `myco-diffusion` and `system-bio-dome` implemented identical Gray-Scott reaction-diffusion physics (with slightly different parameters and precision), leading to code duplication.
+**Blueprint:** Extracted `crates/gray-scott` to centralize the simulation logic. It supports both `f32` (performance) and parallel updates via `rayon` (feature-gated).
+**Stability:** Single source of truth for reaction-diffusion math.
+**Verification:** Verified via `cargo check` and `cargo test` on consumers.

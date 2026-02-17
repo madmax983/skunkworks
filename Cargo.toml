@@ -9,6 +9,7 @@ members = [
     "crates/tui-semantic",
     "crates/tui-shared",
     "crates/soroban",
+    "crates/gray-scott",
     "experiments/algo-botany",
     "experiments/code-bio-dome",
     "experiments/cymatic-ocean",
@@ -161,3 +162,4 @@ synaptic-physics = { path = "crates/synaptic-physics" }
 quipu = { path = "crates/quipu" }
 flocking = { path = "crates/flocking" }
 soroban = { path = "crates/soroban" }
+gray-scott = { path = "crates/gray-scott" }

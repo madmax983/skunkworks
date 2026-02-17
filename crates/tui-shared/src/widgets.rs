@@ -326,12 +326,7 @@ impl<'a> Widget for Button<'a> {
         let style = Style::default().fg(fg).bg(bg).add_modifier(modifier);
 
         if self.block.is_none() {
-            let borders = if self.style_variant == ButtonStyle::Outline {
-                Borders::ALL
-            } else {
-                Borders::ALL
-            };
-            self.block = Some(Block::default().borders(borders));
+            self.block = Some(Block::default().borders(Borders::ALL));
         }
 
         let block = self.block.take().unwrap().style(style);

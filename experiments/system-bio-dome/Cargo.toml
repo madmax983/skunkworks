@@ -9,3 +9,4 @@ crossterm = { workspace = true }
 ratatui = { workspace = true }
 tui-shared = { workspace = true }
 rand = { workspace = true }
+gray-scott = { workspace = true }
