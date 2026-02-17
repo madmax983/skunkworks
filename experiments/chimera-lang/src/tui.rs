@@ -5895,8 +5895,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
 
     let title = match app_state.input_mode {
                 InputMode::Normal => format!(
-                    "{} (Tab: Switch View, Space: Step, M: Mutate, C: Chaos[{}], I: Inject, Arrows: Nav, Enter: Edit, Q: Quit)",
-                    mode_str, chaos_status
+                    "{} (Tab: Switch View, Space: Step, M: Mutate, C: Chaos[{}], Madness[{:.2}], I: Inject, Arrows: Nav, Enter: Edit, Q: Quit)",
+                    mode_str, chaos_status, vm.glitch_level
                 ),
                 InputMode::Editing => format!(
                     "EDITING {} (Enter: Commit, Esc: Cancel) - {}",
@@ -9147,6 +9147,8 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  A/B/D (Math: + - /)"),
         Line::from("  M (Mutate), C (Clock)"),
         Line::from("  Q (Query), H (Harvest)"),
+        Line::from("  Γ (Gamma) - Randomize East"),
+        Line::from("  Σ (Sigma) - Sum Neighbors"),
         Line::from(" "),
         Line::from("Controls:"),
         Line::from("  Type to place operators."),
