@@ -1529,49 +1529,53 @@ pub fn exec_compile(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+pub fn strand_to_string(strand: &crate::ast::Strand) -> String {
+    fn format_nucleotide(n: &crate::ast::Nucleotide, depth: usize) -> String {
+        if depth > crate::vm::MAX_RECURSION_DEPTH {
+            return "...".to_string();
+        }
+        match n {
+            crate::ast::Nucleotide::Number(i) => i.to_string(),
+            crate::ast::Nucleotide::String(s) => format!("\"{}\"", s),
+            crate::ast::Nucleotide::Identifier(s) => s.clone(),
+            crate::ast::Nucleotide::Junction(t, args) => {
+                let t_str = match t {
+                    crate::ast::JunctionType::Any => "any",
+                    crate::ast::JunctionType::All => "all",
+                    crate::ast::JunctionType::Dish => "dish",
+                };
+                let args_str: Vec<String> = args
+                    .iter()
+                    .map(|arg| format_nucleotide(arg, depth + 1))
+                    .collect();
+                format!("{}({})", t_str, args_str.join(" "))
+            }
+        }
+    }
+
+    let mut s = String::from("[ ");
+    for gene in &strand.genes {
+        s.push_str(gene.op.as_ref());
+        s.push('(');
+        for (i, arg) in gene.args.iter().enumerate() {
+            if i > 0 {
+                s.push(' ');
+            }
+            s.push_str(&format_nucleotide(arg, 0));
+        }
+        s.push_str(") ");
+    }
+    s.push(']');
+    s
+}
+
 pub fn exec_decompile(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(idx) = val {
             let s_idx = idx as usize;
             if s_idx < vm.dna.helix.strands.len() {
                 let strand = &vm.dna.helix.strands[s_idx];
-
-                fn format_nucleotide(n: &crate::ast::Nucleotide, depth: usize) -> String {
-                    if depth > crate::vm::MAX_RECURSION_DEPTH {
-                        return "...".to_string();
-                    }
-                    match n {
-                        crate::ast::Nucleotide::Number(i) => i.to_string(),
-                        crate::ast::Nucleotide::String(s) => format!("\"{}\"", s),
-                        crate::ast::Nucleotide::Identifier(s) => s.clone(),
-                        crate::ast::Nucleotide::Junction(t, args) => {
-                            let t_str = match t {
-                                crate::ast::JunctionType::Any => "any",
-                                crate::ast::JunctionType::All => "all",
-                                crate::ast::JunctionType::Dish => "dish",
-                            };
-                            let args_str: Vec<String> = args
-                                .iter()
-                                .map(|arg| format_nucleotide(arg, depth + 1))
-                                .collect();
-                            format!("{}({})", t_str, args_str.join(" "))
-                        }
-                    }
-                }
-
-                let mut s = String::from("[ ");
-                for gene in &strand.genes {
-                    s.push_str(gene.op.as_ref());
-                    s.push('(');
-                    for (i, arg) in gene.args.iter().enumerate() {
-                        if i > 0 {
-                            s.push(' ');
-                        }
-                        s.push_str(&format_nucleotide(arg, 0));
-                    }
-                    s.push_str(") ");
-                }
-                s.push(']');
+                let s = strand_to_string(strand);
                 vm.stack.push(Value::Str(s));
                 vm.energy = vm.energy.saturating_sub(10);
             } else {

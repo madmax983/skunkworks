@@ -15,6 +15,13 @@ pub struct Meme {
     pub description: String,
 }
 
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+pub enum VirusMode {
+    Overwrite,   // Current behavior: Replace cell with new content
+    RewriteGrid, // Parse cell content -> Mutate -> Write back
+    RewriteDNA,  // Parse Organelle DNA -> Mutate -> Compile -> Replace
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct Virus {
     pub name: String,
@@ -25,6 +32,7 @@ pub struct Virus {
     pub grammar: Option<Value>,       // Grammar for linguistic mutation
     pub quorum_threshold: u8,         // Neighbors needed for quorum action
     pub quorum_action: Option<usize>, // Strand to execute on quorum
+    pub mode: VirusMode,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
@@ -92,6 +100,7 @@ pub fn exec_memetics_op(
                             grammar: Some(grammar_val),
                             quorum_threshold: 0,
                             quorum_action: None,
+                            mode: VirusMode::Overwrite,
                         };
 
                         let virus_id = vm.virus_library.len();
@@ -269,8 +278,9 @@ pub fn exec_memetics_op(
             None
         }
         OpCode::Infect => {
-            // Stack: [ ..., (grammar), (quorum_action, quorum_threshold), payload_idx, mutation_rate, pattern_str, name_str ]
-            if vm.stack.len() >= 4 {
+            // Stack: [ ..., (grammar), (quorum_action, quorum_threshold), payload_idx, mutation_rate, pattern_str, name_str, mode ]
+            if vm.stack.len() >= 5 {
+                let mode_val = vm.stack.pop().unwrap();
                 let name_val = vm.stack.pop().unwrap();
                 let pattern_val = vm.stack.pop().unwrap();
                 let rate_val = vm.stack.pop().unwrap();
@@ -281,13 +291,7 @@ pub fn exec_memetics_op(
                 let mut quorum_threshold = 0;
                 let mut quorum_action = None;
 
-                // Check for Quorum args (must come together: action, threshold)
-                // We peek. Top is Name.
-                // Wait, stack pop order: name (top), pattern, rate, payload.
-                // Remaining stack top: quorum_action?
-                // If we assume extended signature: [ ..., grammar, quorum, payload, rate, pattern, name ]
-                // Then remaining top is quorum_threshold (Int), then quorum_action (Int).
-
+                // Check for Quorum args
                 if vm.stack.len() >= 2 {
                     if let (Value::Int(_), Value::Int(_)) =
                         (&vm.stack[vm.stack.len() - 1], &vm.stack[vm.stack.len() - 2])
@@ -318,13 +322,20 @@ pub fn exec_memetics_op(
                     Value::Str(pattern),
                     Value::Int(rate),
                     Value::Int(p_idx),
-                ) = (name_val, pattern_val, rate_val, payload_val)
+                    Value::Int(mode_int),
+                ) = (name_val, pattern_val, rate_val, payload_val, mode_val)
                 {
                     let mutation_rate = rate.clamp(0, 100) as u8;
                     let payload = if p_idx >= 0 && (p_idx as usize) < vm.dna.helix.strands.len() {
                         Some(p_idx as usize)
                     } else {
                         None
+                    };
+
+                    let mode = match mode_int {
+                        1 => VirusMode::RewriteGrid,
+                        2 => VirusMode::RewriteDNA,
+                        _ => VirusMode::Overwrite,
                     };
 
                     let mut rng = rand::thread_rng();
@@ -343,6 +354,7 @@ pub fn exec_memetics_op(
                         grammar,
                         quorum_threshold,
                         quorum_action,
+                        mode,
                     };
 
                     let virus_id = vm.virus_library.len();
@@ -380,7 +392,7 @@ pub fn exec_memetics_op(
                         if state.virus_id >= vm.virus_library.len() {
                             continue;
                         }
-                        let virus = &vm.virus_library[state.virus_id];
+                        let virus = vm.virus_library[state.virus_id].clone();
 
                         // 1. Spread to neighbors
                         // Only spread if infection level is high enough (>20)
@@ -449,19 +461,86 @@ pub fn exec_memetics_op(
                         if state.infection_level > 80 {
                             let mut rng = rand::thread_rng();
                             if rng.gen_range(0..100) < virus.mutation_rate {
-                                // Grammar Rewrite or Scramble
-                                if let Some(grammar) = &virus.grammar {
-                                    let new_content = crate::vm::babel::generate_string(grammar);
-                                    vm.grid[y][x] = Value::Str(new_content);
-                                    mutation_count += 1;
-                                } else if let Value::Str(s) = &mut vm.grid[y][x] {
-                                    if !s.is_empty() {
-                                        // Simple mutation: bitflip a char
-                                        let _idx = rng.gen_range(0..s.len());
-                                        // Rust strings are utf8, modifying in place is hard.
-                                        // Just replace with random char or "GLITCH"
-                                        *s = format!("GLITCH_{}", rng.gen_range(0..999));
-                                        mutation_count += 1;
+                                match virus.mode {
+                                    VirusMode::RewriteGrid => {
+                                        if let Some(grammar) = &virus.grammar {
+                                            let content = match &vm.grid[y][x] {
+                                                Value::Str(s) => s.clone(),
+                                                _ => String::new(),
+                                            };
+                                            if !content.is_empty() {
+                                                if let Ok((cst, _)) =
+                                                    crate::vm::babel::run_parser(grammar, &content)
+                                                {
+                                                    let mutated_cst = crate::vm::babel::mutate_cst(
+                                                        &cst,
+                                                        virus.mutation_rate as f64 / 100.0,
+                                                    );
+                                                    let new_content =
+                                                        crate::vm::babel::flatten_cst(&mutated_cst);
+                                                    vm.grid[y][x] = Value::Str(new_content);
+                                                    mutation_count += 1;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    VirusMode::RewriteDNA => {
+                                        if let Some(grammar) = &virus.grammar {
+                                            // Find organelle at this location
+                                            let target_org_indices: Vec<usize> = vm
+                                                .organelles
+                                                .iter()
+                                                .enumerate()
+                                                .filter(|(_, o)| o.context_loc == (y, x))
+                                                .map(|(i, _)| i)
+                                                .collect();
+
+                                            for idx in target_org_indices {
+                                                let strand_idx = vm.organelles[idx].ip.0;
+                                                if strand_idx < vm.dna.helix.strands.len() {
+                                                    let source =
+                                                        crate::vm::nova_genetics::strand_to_string(
+                                                            &vm.dna.helix.strands[strand_idx],
+                                                        );
+                                                    if let Ok((cst, _)) =
+                                                        crate::vm::babel::run_parser(grammar, &source)
+                                                    {
+                                                        let mutated_cst = crate::vm::babel::mutate_cst(
+                                                            &cst,
+                                                            virus.mutation_rate as f64 / 100.0,
+                                                        );
+                                                        // This pushes a new strand
+                                                        let new_idx = crate::vm::babel::compile_cst(
+                                                            vm,
+                                                            mutated_cst,
+                                                            strand_idx,
+                                                        );
+                                                        // Update Organelle
+                                                        if idx < vm.organelles.len() {
+                                                            vm.organelles[idx].ip = (new_idx, 0);
+                                                            vm.output.push(format!("REWRITE: Virus {} rewrote Organelle {} DNA to Strand {}", state.virus_id, vm.organelles[idx].name, new_idx));
+                                                            mutation_count += 1;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    VirusMode::Overwrite => {
+                                        // Grammar Rewrite or Scramble
+                                        if let Some(grammar) = &virus.grammar {
+                                            let new_content =
+                                                crate::vm::babel::generate_string(grammar);
+                                            vm.grid[y][x] = Value::Str(new_content);
+                                            mutation_count += 1;
+                                        } else if let Value::Str(s) = &mut vm.grid[y][x] {
+                                            if !s.is_empty() {
+                                                // Simple mutation: bitflip a char
+                                                let _idx = rng.gen_range(0..s.len());
+                                                *s = format!("GLITCH_{}", rng.gen_range(0..999));
+                                                mutation_count += 1;
+                                            }
+                                        }
                                     }
                                 }
                             }
