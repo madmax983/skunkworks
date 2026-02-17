@@ -343,11 +343,6 @@
 - **Status:** Planting the seeds of knowledge. Roots are seeking the optimal path.
 - **Note:** Moonshot: Pathfinding Algorithms + Organic Root Growth.
 
-### [Concentration Level: FRESH] - Location: experiments/chaos-chandelier
-- **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
-- **Status:** The chandeliers are swinging. The dependency chains are chaotic. Phase space is glowing.
-- **Note:** Moonshot: Double Pendulum + Dependency Visualization.
-
 ### [Concentration Level: FRESH] - Location: experiments/neuro-beats
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** Compiles. Visualizing neural oscillations.
@@ -360,10 +355,15 @@
 
 ## History/Decay
 
-### [Concentration Level: TOXIC] - Location: experiments/bezier-landscapes
+### [Concentration Level: TOXIC] - Location: experiments/chaos-chandelier
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Redundant with `type-terrain`. Skeletal implementation.
+- **Status:** Condemned. Documentation void. Redundant with `chaos-pendulum`.
 - **Note:** Grace period: 24h.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/bezier-landscapes
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Redundant with `type-terrain`. Grace period expired.
+- **Note:** Biomass returned to the void.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/git-phase
 - **Scent Origin:** The Reaper ☠️
