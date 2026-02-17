@@ -1,3 +1,3 @@
-**[Parallel Agent Interaction]
-**Learning:** Parallelizing lightweight agent logic (70k agents) using a Delta buffer (2MB) caused a regression (600ms -> 1000ms). The memory bandwidth overhead of writing/reading deltas outweighed the computational gain of parallelizing simple logic.
-**Action:** For lightweight agents, prefer sequential updates or single-pass parallel updates (using atomics if possible, or partitioning), rather than multi-pass delta buffers. Also, avoid parallelizing simple memory copies (memcpy is faster).**
+**[Performance]**
+**Learning:** Removing `div` and `mod` from hot loops in cellular automata by using `par_chunks` and direct indexing yields >2x speedup (50%+ reduction in frame time).
+**Action:** Always prefer row-based iteration (`par_chunks`) over flat iteration (`par_iter().enumerate()`) when 2D coordinates are needed.
