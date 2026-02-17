@@ -1,4 +1,5 @@
 use crate::math::Quasicrystal;
+use rand::Rng;
 use std::collections::{HashMap, HashSet, VecDeque};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -8,12 +9,15 @@ pub enum RoomType {
     Goal,
     Treasure,
     Enemy,
+    Trap,
+    Boss,
 }
 
 pub struct Dungeon {
     pub lattice: Quasicrystal,
     pub player_idx: usize,
     pub visited: HashSet<usize>,
+    #[allow(dead_code)]
     pub goal_idx: usize,
     pub room_types: HashMap<usize, RoomType>,
 }
@@ -50,9 +54,7 @@ impl Dungeon {
         // BFS to find furthest node for Goal
         let goal_idx = Self::find_furthest_node(&lattice, start_idx);
 
-        let mut room_types = HashMap::new();
-        room_types.insert(start_idx, RoomType::Start);
-        room_types.insert(goal_idx, RoomType::Goal);
+        let room_types = Self::populate_dungeon(&lattice, start_idx, goal_idx);
 
         Dungeon {
             lattice,
@@ -61,6 +63,60 @@ impl Dungeon {
             goal_idx,
             room_types,
         }
+    }
+
+    fn populate_dungeon(
+        lattice: &Quasicrystal,
+        start_idx: usize,
+        goal_idx: usize,
+    ) -> HashMap<usize, RoomType> {
+        let mut room_types = HashMap::new();
+        let mut rng = rand::thread_rng();
+
+        room_types.insert(start_idx, RoomType::Start);
+        room_types.insert(goal_idx, RoomType::Goal);
+
+        for (i, _) in lattice.atoms.iter().enumerate() {
+            if i == start_idx || i == goal_idx {
+                continue;
+            }
+
+            let neighbors = lattice.adj[i].len();
+            let room = if neighbors >= 10 {
+                // High connectivity: Hub
+                let roll = rng.gen_range(0..100);
+                if roll < 20 {
+                    RoomType::Treasure
+                } else if roll < 25 {
+                    RoomType::Boss
+                } else {
+                    RoomType::Empty
+                }
+            } else if neighbors <= 5 {
+                // Low connectivity: Corridor / Dead end
+                let roll = rng.gen_range(0..100);
+                if roll < 10 {
+                    RoomType::Enemy
+                } else if roll < 20 {
+                    RoomType::Trap
+                } else {
+                    RoomType::Empty
+                }
+            } else {
+                // Average
+                let roll = rng.gen_range(0..100);
+                if roll < 5 {
+                    RoomType::Enemy
+                } else {
+                    RoomType::Empty
+                }
+            };
+
+            if room != RoomType::Empty {
+                room_types.insert(i, room);
+            }
+        }
+        room_types
     }
 
     fn find_furthest_node(lattice: &Quasicrystal, start_idx: usize) -> usize {

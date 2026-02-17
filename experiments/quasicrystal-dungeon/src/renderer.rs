@@ -460,32 +460,54 @@ impl State {
         // Atoms
         for (i, p) in dungeon.lattice.atoms.iter().enumerate() {
             let mut color = [0.2, 0.2, 0.5, 0.5]; // Default Blue-ish
+            let mut scale = 0.4; // Default scale
 
             if i == dungeon.player_idx {
                 color = [1.0, 1.0, 1.0, 1.0]; // Player White
+                scale = 0.5;
             } else if Some(i) == selected_neighbor {
                 color = [1.0, 1.0, 0.0, 1.0]; // Selected Yellow
+                scale = 0.5;
             } else if dungeon.visited.contains(&i) {
-                if dungeon.room_types.get(&i) == Some(&RoomType::Start) {
-                    color = [0.0, 1.0, 0.0, 1.0]; // Start Green
-                } else if dungeon.room_types.get(&i) == Some(&RoomType::Goal) {
-                    color = [1.0, 0.0, 0.0, 1.0]; // Goal Red
-                } else {
-                    color = [0.0, 0.8, 0.8, 0.6]; // Visited Cyan
+                match dungeon.room_types.get(&i) {
+                    Some(RoomType::Start) => color = [0.0, 1.0, 0.0, 1.0],
+                    Some(RoomType::Goal) => color = [1.0, 0.0, 0.0, 1.0],
+                    Some(RoomType::Treasure) => {
+                        color = [1.0, 0.8, 0.0, 1.0];
+                        scale = 0.6;
+                    }
+                    Some(RoomType::Enemy) => {
+                        color = [0.8, 0.0, 0.0, 1.0];
+                        scale = 0.4;
+                    }
+                    Some(RoomType::Boss) => {
+                        color = [0.6, 0.0, 0.8, 1.0];
+                        scale = 0.8;
+                    }
+                    Some(RoomType::Trap) => {
+                        color = [0.3, 0.3, 0.3, 1.0];
+                        scale = 0.3;
+                    }
+                    _ => color = [0.0, 0.8, 0.8, 0.6], // Visited default
                 }
-            } else if dungeon.room_types.get(&i) == Some(&RoomType::Goal) {
-                color = [0.5, 0.0, 0.0, 0.3]; // Unvisited Goal (Dim Red)
             } else {
-                // Dim unvisited based on distance?
-                // Just keep it dark blue
+                // Unvisited
+                match dungeon.room_types.get(&i) {
+                    Some(RoomType::Goal) => color = [0.5, 0.0, 0.0, 0.3], // Dim Goal
+                    _ => {}
+                }
             }
 
             let dist = p.to_vec().magnitude();
-            // Pulse effect?
-            // For now static.
+            // Fog of war / Depth cue
+            // Dim distant nodes slightly to give depth.
+            let brightness = 1.0 / (1.0 + dist * 0.05);
+            color[0] *= brightness;
+            color[1] *= brightness;
+            color[2] *= brightness;
 
             let model =
-                Matrix4::from_translation(Vector3::new(p.x, p.y, p.z)) * Matrix4::from_scale(0.4);
+                Matrix4::from_translation(Vector3::new(p.x, p.y, p.z)) * Matrix4::from_scale(scale);
 
             instances.push(InstanceRaw {
                 model: model.into(),

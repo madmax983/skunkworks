@@ -5,7 +5,7 @@ mod renderer;
 use anyhow::Result;
 use cgmath::InnerSpace;
 use cgmath::Vector3;
-use dungeon::Dungeon;
+use dungeon::{Dungeon, RoomType};
 use log::{error, info};
 use renderer::State;
 use std::sync::Arc;
@@ -155,6 +155,24 @@ async fn run_window() -> Result<()> {
                                 if let Some(target) = state.selected_neighbor_idx {
                                     if state.dungeon.move_player(target) {
                                         info!("Moved Player to {}", target);
+
+                                        match state.dungeon.room_types.get(&target) {
+                                            Some(RoomType::Treasure) => {
+                                                info!("💎 You found a TREASURE room!")
+                                            }
+                                            Some(RoomType::Enemy) => {
+                                                info!("⚔️ An ENEMY attacks!")
+                                            }
+                                            Some(RoomType::Boss) => {
+                                                info!("👹 You face the CRYSTAL GUARDIAN!")
+                                            }
+                                            Some(RoomType::Trap) => info!("⚠️ It's a TRAP!"),
+                                            Some(RoomType::Goal) => {
+                                                info!("🏁 You reached the GOAL!")
+                                            }
+                                            _ => {}
+                                        }
+
                                         state.selected_neighbor_idx = None;
                                         state.update_dungeon_visuals();
 
