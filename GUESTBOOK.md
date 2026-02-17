@@ -33,3 +33,8 @@
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** The Lamprey swims. The CPG oscillates. Muscle contraction is coupled to neural spikes.
 - **Note:** Moonshot: Central Pattern Generators + Animation. Created a bio-mechanical simulation of a swimming lamprey driven by Izhikevich neurons. Controls: Space (Turbo), M (Mutate), R (Reset).
+
+### [Concentration Level: FRESH] - Location: experiments/resonant-glyphs
+- **Scent Origin:** Genesis (The Typographer) ⚛️🔤
+- **Status:** The glyphs are singing. The curves are oscillating.
+- **Note:** Moonshot: Bezier Manipulation + Audio Visualization. Text is fluid.
