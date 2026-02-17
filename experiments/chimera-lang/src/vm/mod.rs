@@ -50,6 +50,7 @@ use std::io::Read;
 use strum::IntoEnumIterator;
 
 pub const MAX_RECURSION_DEPTH: usize = 100;
+pub const MAX_SIMULATION_DEPTH: usize = 10;
 pub const MAX_CALL_STACK_DEPTH: usize = 100;
 pub const MAX_SPORES: usize = 64;
 pub const MAX_ORGANELLES: usize = 256;

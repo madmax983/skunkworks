@@ -469,6 +469,11 @@ fn exec_prophecy(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
                 // Inherit and increment recursion depth to prevent infinite prophecy loops
                 sim_vm.recursion_depth += 1;
+                if sim_vm.recursion_depth > crate::vm::MAX_SIMULATION_DEPTH {
+                    vm.output
+                        .push("Error: Simulation depth limit exceeded in prophecy".to_string());
+                    return None;
+                }
                 if sim_vm.recursion_depth > crate::vm::MAX_RECURSION_DEPTH {
                     vm.output
                         .push("Error: Recursion limit exceeded in prophecy".to_string());
@@ -557,7 +562,12 @@ fn exec_simulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         if let (Value::Int(ticks), Value::Int(s_idx)) = (ticks_val, s_val) {
             let idx = s_idx as usize;
             if idx < vm.dna.helix.strands.len() && ticks > 0 {
-                if vm.recursion_depth > 100 {
+                if vm.recursion_depth > crate::vm::MAX_SIMULATION_DEPTH {
+                    vm.output
+                        .push("Error: Simulation depth limit exceeded".to_string());
+                    return None;
+                }
+                if vm.recursion_depth > crate::vm::MAX_RECURSION_DEPTH {
                     vm.output
                         .push("Error: Recursion limit exceeded".to_string());
                     return None;
@@ -1430,6 +1440,12 @@ fn exec_dream(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         if let (Value::Int(ticks), Value::Int(s_idx)) = (ticks_val, s_val) {
             let idx = s_idx as usize;
             if idx < vm.dna.helix.strands.len() && ticks > 0 {
+                if vm.recursion_depth > crate::vm::MAX_SIMULATION_DEPTH {
+                    vm.output
+                        .push("Error: Simulation depth limit exceeded".to_string());
+                    return None;
+                }
+
                 // Cap ticks
                 let safe_ticks = ticks.min(1000);
 
