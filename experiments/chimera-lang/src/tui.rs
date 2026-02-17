@@ -5770,8 +5770,21 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         }
 
         for (g_idx, gene) in strand.genes.iter().enumerate() {
-            let content = format!("{}({:?})", gene.op, gene.args);
+            let op_str = format!("{}", gene.op);
+            let args_str = format!("{:?}", gene.args);
             let mut style = Style::default();
+
+            // Helix Visualization
+            let helix_phase = g_idx % 4;
+            let (h_prefix, h_suffix) = match helix_phase {
+                0 => (" /--[", "]--\\ "),
+                1 => ("|    ", "    |"),
+                2 => (" \\--[", "]--/ "),
+                3 => ("     ", "     "),
+                _ => ("", ""),
+            };
+
+            let display_content = format!("{}{:^12}{}{}", h_prefix, op_str, h_suffix, args_str);
             let mut prefix = "  ";
 
             // Logic for execution highlighting
@@ -5807,7 +5820,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                 }
             }
 
-            strand_items.push(ListItem::new(format!("{}{}", prefix, content)).style(style));
+            strand_items.push(ListItem::new(format!("{}{}", prefix, display_content)).style(style));
         }
         strand_items.push(ListItem::new("-------------------"));
     }

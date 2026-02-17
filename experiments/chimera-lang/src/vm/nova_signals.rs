@@ -62,6 +62,14 @@ fn peek_char(vm: &ChimeraVM, y: usize, x: usize, dy: i64, dx: i64) -> Option<cha
     }
 }
 
+fn peek_value(vm: &ChimeraVM, y: usize, x: usize, dy: i64, dx: i64) -> Option<Value> {
+    if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+        Some(vm.grid[ny][nx].clone())
+    } else {
+        None
+    }
+}
+
 struct GridWrite {
     y: usize,
     x: usize,
@@ -138,6 +146,11 @@ struct OperatorRegister {
     strand_idx: usize,
 }
 
+#[cfg(feature = "oracle")]
+struct KnowledgeWrite {
+    fact: Value,
+}
+
 struct SignalContext {
     next_signals: Vec<Vec<u8>>,
     grid_writes: Vec<GridWrite>,
@@ -158,6 +171,8 @@ struct SignalContext {
     neuron_stimuli: Vec<NeuronStimulus>,
     executions: Vec<(OpCode, Vec<Nucleotide>)>,
     midi_events: Vec<MidiEvent>,
+    #[cfg(feature = "oracle")]
+    knowledge_writes: Vec<KnowledgeWrite>,
 }
 
 struct PhageUpdate {
@@ -192,6 +207,8 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         neuron_stimuli: Vec::new(),
         executions: Vec::new(),
         midi_events: Vec::new(),
+        #[cfg(feature = "oracle")]
+        knowledge_writes: Vec::new(),
     };
 
     // 0. Process Phages
@@ -417,6 +434,10 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 'ƒ' => exec_function_op(vm, y, x, signal, &mut ctx),
                 'Γ' => exec_gamma(vm, y, x, signal, &mut ctx),
                 'Σ' => exec_sigma(vm, y, x, &mut ctx),
+                #[cfg(feature = "oracle")]
+                'Π' => exec_pi(vm, y, x, signal, &mut ctx),
+                #[cfg(feature = "oracle")]
+                'λ' => exec_lambda(vm, y, x, signal, &mut ctx),
                 _ => {
                     if let Value::Str(s) = val {
                         if let Ok(op) = s.parse::<OpCode>() {
@@ -664,6 +685,14 @@ pub fn process_signals(vm: &mut ChimeraVM) {
             "ORCA: Registered operator '{}' -> {}",
             reg.char_val, reg.strand_idx
         ));
+    }
+
+    // 3.7 Apply Knowledge Writes
+    #[cfg(feature = "oracle")]
+    for w in ctx.knowledge_writes {
+        if !vm.knowledge_base.contains(&w.fact) {
+            vm.knowledge_base.push(w.fact);
+        }
     }
 
     // 3.75 Apply MIDI
@@ -1455,6 +1484,52 @@ fn exec_sigma(vm: &ChimeraVM, y: usize, x: usize, ctx: &mut SignalContext) {
             y: sy,
             x: sx,
             val: Value::Str(val_to_char(sum).to_string()),
+        });
+    }
+}
+
+#[cfg(feature = "oracle")]
+fn exec_pi(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // Π: Define Fact
+    // N: Predicate, E: Subject, W: Object
+    let pred = peek_value(vm, y, x, -1, 0).unwrap_or(Value::Int(0));
+    let subj = peek_value(vm, y, x, 0, 1).unwrap_or(Value::Int(0));
+    let obj = peek_value(vm, y, x, 0, -1).unwrap_or(Value::Int(0));
+
+    let fact = Value::Junction(
+        JunctionType::Any,
+        vec![pred, subj, obj],
+    );
+    ctx.knowledge_writes.push(KnowledgeWrite { fact });
+}
+
+#[cfg(feature = "oracle")]
+fn exec_lambda(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // λ: Query Fact
+    // N: Predicate, E: Subject, W: Object
+    // S: Output (1 if found, 0 if not)
+    let pred = peek_value(vm, y, x, -1, 0).unwrap_or(Value::Int(0));
+    let subj = peek_value(vm, y, x, 0, 1).unwrap_or(Value::Int(0));
+    let obj = peek_value(vm, y, x, 0, -1).unwrap_or(Value::Int(0));
+
+    let query = Value::Junction(
+        JunctionType::Any,
+        vec![pred, subj, obj],
+    );
+
+    let found = vm.knowledge_base.contains(&query);
+
+    if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+        ctx.grid_writes.push(GridWrite {
+            y: sy,
+            x: sx,
+            val: Value::Int(if found { 1 } else { 0 }),
         });
     }
 }
