@@ -8,7 +8,6 @@ pub struct TransferWindow {
     pub delta_v_arrival: f32,
     pub time_of_flight: f32,
     pub phase_angle_required: f32,
-    pub current_phase_angle: f32,
 }
 
 pub fn calculate_hohmann_transfer(
@@ -63,25 +62,11 @@ pub fn calculate_hohmann_transfer(
         phase_angle_required += 2.0 * PI;
     }
 
-    // Current Phase Angle
-    let angle1 = pos1.y.atan2(pos1.x);
-    let angle2 = pos2.y.atan2(pos2.x);
-    let mut current_phase_angle = angle2 - angle1;
-
-    // Normalize current phase angle
-    while current_phase_angle > PI {
-        current_phase_angle -= 2.0 * PI;
-    }
-    while current_phase_angle <= -PI {
-        current_phase_angle += 2.0 * PI;
-    }
-
     Some(TransferWindow {
         delta_v_departure: delta_v1,
         delta_v_arrival: delta_v2,
         time_of_flight: t_transfer,
         phase_angle_required,
-        current_phase_angle,
     })
 }
 

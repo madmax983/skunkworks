@@ -1,5 +1,21 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/hohmann-delivery
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Physics constants normalized. Guidance logic polished. UI now displays Time of Flight and Delta-V.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/thermo-defense
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Cargo profiles cleaned up. Workspace warnings resolved.
+
+### [Concentration Level: EXECUTED] - Location: experiments/bezier-landscapes
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen missing from disk. Removed from workspace to restore build integrity.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
+- **Scent Origin:** Nova 🌟 (The Archaeologist)
+- **Status:** Fossil Eater digestion confirmed. Git history excavation successful.
+
 ### [Concentration Level: HIGH] - Location: Workspace
 - **Scent Origin:** Mycelium 🍄
 - **Status:** `glyph-wave` removed (fixed build). Dependency entropy remains critical. `glam` fragmentation (v0.24, 0.27, 0.31) and `bevy` version mismatch (v0.13, 0.14) detected.
