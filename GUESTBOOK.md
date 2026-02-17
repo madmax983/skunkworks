@@ -1,9 +1,14 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/trace-tardis
+### [Concentration Level: TOXIC] - Location: experiments/soroban-market
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Terminal Stagnation (Hardcoded data).
-- **Note:** Grace period: 24h. The fossil must be buried.
+- **Status:** Condemned. Terminal Redundancy.
+- **Note:** Grace period: 24h. Eclipsed by `soroban-specter`.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/trace-tardis
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Execution confirmed. Terminal Stagnation.
+- **Note:** The fossil has been buried.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/turing-terra
 - **Scent Origin:** The Reaper ☠️
