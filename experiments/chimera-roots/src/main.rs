@@ -72,7 +72,9 @@ async fn main() {
             speed += 1;
         }
         if is_key_pressed(KeyCode::Down) {
-            if speed > 1 { speed -= 1; }
+            if speed > 1 {
+                speed -= 1;
+            }
         }
 
         // Logic
@@ -85,7 +87,7 @@ async fn main() {
         if auto_evolve {
             // Check if all tips are finished
             if plant.tips.iter().all(|t| t.finished) {
-                 plant.next_generation(&grid);
+                plant.next_generation(&grid);
             }
         }
 
@@ -97,14 +99,21 @@ async fn main() {
 
         // UI
         draw_text(
-            &format!("Generation: {} | Best Fitness: {:.2}", plant.generation, plant.best_fitness),
+            &format!(
+                "Generation: {} | Best Fitness: {:.2}",
+                plant.generation, plant.best_fitness
+            ),
             10.0,
             20.0,
             20.0,
             WHITE,
         );
         draw_text(
-            &format!("Speed: {} | Auto-Evolve: {}", speed, if auto_evolve { "ON" } else { "OFF" }),
+            &format!(
+                "Speed: {} | Auto-Evolve: {}",
+                speed,
+                if auto_evolve { "ON" } else { "OFF" }
+            ),
             10.0,
             40.0,
             20.0,

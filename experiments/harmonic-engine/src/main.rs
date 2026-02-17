@@ -160,8 +160,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
             f.render_widget(canvas, main_chunks[0]);
 
-            let log_list = LogList::new(event_log.clone().into_iter().rev().collect())
-                .with_title("Music Log");
+            let log_list =
+                LogList::new(event_log.clone().into_iter().rev().collect()).with_title("Music Log");
             f.render_widget(log_list, main_chunks[1]);
 
             // Footer with buttons
@@ -171,8 +171,8 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .split(chunks[1]);
 
             let footer_text = Paragraph::new("Controls: Q to Quit")
-                 .block(Block::default().borders(Borders::ALL))
-                 .alignment(Alignment::Center);
+                .block(Block::default().borders(Borders::ALL))
+                .alignment(Alignment::Center);
             f.render_widget(footer_text, footer_layout[0]);
 
             let quit_btn = Button::new("Quit")
@@ -180,7 +180,6 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .icon("🛑")
                 .state(ButtonState::Normal); // Just visual for now
             f.render_widget(quit_btn, footer_layout[1]);
-
         })?;
     }
 

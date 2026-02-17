@@ -222,7 +222,8 @@ fn execute_savant_action(vm: &mut ChimeraVM, organelle: &mut Organelle, action: 
                             if let Some((ny, nx)) = vm.normalize_coords(*y, *x) {
                                 vm.grid[ny][nx] = val.clone();
                                 vm.energy = vm.energy.saturating_sub(2);
-                                vm.output.push(format!("SAVANT: Orca write at {},{}", nx, ny));
+                                vm.output
+                                    .push(format!("SAVANT: Orca write at {},{}", nx, ny));
                             }
                         }
                     }
@@ -234,7 +235,9 @@ fn execute_savant_action(vm: &mut ChimeraVM, organelle: &mut Organelle, action: 
                         let y_val = &args[2];
                         let x_val = &args[3];
 
-                        if let (Value::Str(t), Value::Int(y), Value::Int(x)) = (type_val, y_val, x_val) {
+                        if let (Value::Str(t), Value::Int(y), Value::Int(x)) =
+                            (type_val, y_val, x_val)
+                        {
                             if let Some((ny, nx)) = vm.normalize_coords(*y, *x) {
                                 let comp = match t.as_str() {
                                     "wire" => Value::Int(1),
@@ -247,21 +250,22 @@ fn execute_savant_action(vm: &mut ChimeraVM, organelle: &mut Organelle, action: 
                                         vm.voltage_grid[ny][nx] = 100.0;
                                         vm.resistance_grid[ny][nx] = -1.0;
                                         Value::Int(0) // Marker
-                                    },
+                                    }
                                     #[cfg(feature = "elektra")]
                                     "ground" => {
                                         vm.voltage_grid[ny][nx] = 0.0;
                                         vm.resistance_grid[ny][nx] = -2.0;
                                         Value::Int(0)
-                                    },
-                                    _ => Value::Int(0)
+                                    }
+                                    _ => Value::Int(0),
                                 };
 
                                 if !matches!(comp, Value::Int(0)) {
                                     vm.grid[ny][nx] = comp;
                                 }
                                 vm.energy = vm.energy.saturating_sub(5);
-                                vm.output.push(format!("SAVANT: Placed {} at {},{}", t, nx, ny));
+                                vm.output
+                                    .push(format!("SAVANT: Placed {} at {},{}", t, nx, ny));
                             }
                         }
                     }

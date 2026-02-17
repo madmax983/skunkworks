@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
-    use crate::vm::ChimeraVM;
-    use crate::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use crate::opcode::OpCode;
+    use crate::vm::ChimeraVM;
     use crate::vm::Value;
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
@@ -22,17 +22,43 @@ mod tests {
 
         let genes = vec![
             // Battery(100, 0, 0)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] }, // V
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },   // Y
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },   // X
-            Gene { op: OpCode::Battery, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(100)],
+            }, // V
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // Y
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // X
+            Gene {
+                op: OpCode::Battery,
+                args: vec![],
+            },
             // Patch(0, 0, 0, 0) -> Voltage(0) at (0,0) to Energy(0)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },   // Source Type (Voltage)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },   // Y
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },   // X
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },   // Target (EnergyRegen)
-            Gene { op: OpCode::Patch, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // Source Type (Voltage)
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // Y
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // X
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // Target (EnergyRegen)
+            Gene {
+                op: OpCode::Patch,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));
@@ -57,6 +83,11 @@ mod tests {
         // Net change approx +9.
 
         let energy_after = vm.energy;
-        assert!(energy_after > energy_before, "Energy should increase due to patch ({} -> {})", energy_before, energy_after);
+        assert!(
+            energy_after > energy_before,
+            "Energy should increase due to patch ({} -> {})",
+            energy_before,
+            energy_after
+        );
     }
 }

@@ -1,6 +1,6 @@
+use git_associates::{model::Commit, GitModel};
+use macroquad::miniquad::{ShaderSource, UniformDesc, UniformType};
 use macroquad::prelude::*;
-use macroquad::miniquad::{UniformDesc, UniformType, ShaderSource};
-use git_associates::{GitModel, model::Commit};
 use std::fmt::Write; // For write! macro on String
 
 mod decay;
@@ -68,7 +68,8 @@ async fn main() {
             ],
             ..Default::default()
         },
-    ).expect("Failed to load material");
+    )
+    .expect("Failed to load material");
 
     let mut camera_y = 0.0;
     let mut target_camera_y = 0.0;
@@ -97,8 +98,12 @@ async fn main() {
 
         // Clamp camera
         let max_depth = blocks.len() as f32 * 2.5;
-        if target_camera_y > 5.0 { target_camera_y = 5.0; }
-        if target_camera_y < -max_depth - 10.0 { target_camera_y = -max_depth - 10.0; }
+        if target_camera_y > 5.0 {
+            target_camera_y = 5.0;
+        }
+        if target_camera_y < -max_depth - 10.0 {
+            target_camera_y = -max_depth - 10.0;
+        }
 
         // Find closest block to center
         let center_y_world = camera_y - 5.0;
@@ -106,10 +111,10 @@ async fn main() {
         let mut min_dist = 2.0; // Selection Threshold
 
         for (i, block) in blocks.iter().enumerate() {
-             if (block.pos.y - center_y_world).abs() < min_dist {
-                 min_dist = (block.pos.y - center_y_world).abs();
-                 closest_idx = Some(i);
-             }
+            if (block.pos.y - center_y_world).abs() < min_dist {
+                min_dist = (block.pos.y - center_y_world).abs();
+                closest_idx = Some(i);
+            }
         }
         selected_block_idx = closest_idx;
 
@@ -159,7 +164,13 @@ async fn main() {
         set_default_camera();
 
         draw_text("GIT ARCHAEOLOGY", 20.0, 30.0, 30.0, GREEN);
-        draw_text(&format!("Depth: {:.1}m", -camera_y), 20.0, 60.0, 20.0, GREEN);
+        draw_text(
+            &format!("Depth: {:.1}m", -camera_y),
+            20.0,
+            60.0,
+            20.0,
+            GREEN,
+        );
         draw_text("W/S: Move | SPACE: Restore", 20.0, 90.0, 20.0, GREEN);
 
         if let Some(idx) = selected_block_idx {
@@ -169,7 +180,13 @@ async fn main() {
             // Draw Info Box
             let info_h = 240.0;
             let info_y = screen_height() - info_h - 10.0;
-            draw_rectangle(10.0, info_y, screen_width() - 20.0, info_h, Color::new(0.0, 0.1, 0.0, 0.8));
+            draw_rectangle(
+                10.0,
+                info_y,
+                screen_width() - 20.0,
+                info_h,
+                Color::new(0.0, 0.1, 0.0, 0.8),
+            );
             draw_rectangle_lines(10.0, info_y, screen_width() - 20.0, info_h, 2.0, GREEN);
 
             // Corrupt Text using buffers
@@ -182,7 +199,11 @@ async fn main() {
             decay::corrupt_text_into(&scratch_buf, effective_decay, &mut author_buf);
 
             scratch_buf.clear();
-            let _ = write!(&mut scratch_buf, "{}", block.commit.message.lines().next().unwrap_or(""));
+            let _ = write!(
+                &mut scratch_buf,
+                "{}",
+                block.commit.message.lines().next().unwrap_or("")
+            );
             decay::corrupt_text_into(&scratch_buf, effective_decay, &mut msg_buf);
 
             draw_text(&title_buf, 30.0, info_y + 40.0, 30.0, GREEN);
@@ -191,13 +212,19 @@ async fn main() {
             draw_text(&msg_buf, 30.0, info_y + 120.0, 20.0, LIGHTGRAY);
 
             if block.restored < 0.99 {
-                draw_text("[HOLD SPACE TO RESTORE DATA]", 30.0, info_y + 200.0, 20.0, RED);
+                draw_text(
+                    "[HOLD SPACE TO RESTORE DATA]",
+                    30.0,
+                    info_y + 200.0,
+                    20.0,
+                    RED,
+                );
                 // Restoration progress bar
                 let bar_width = 300.0;
                 draw_rectangle(30.0, info_y + 210.0, bar_width, 10.0, DARKGRAY);
                 draw_rectangle(30.0, info_y + 210.0, bar_width * block.restored, 10.0, BLUE);
             } else {
-                 draw_text("DATA INTEGRITY: 100%", 30.0, info_y + 200.0, 20.0, BLUE);
+                draw_text("DATA INTEGRITY: 100%", 30.0, info_y + 200.0, 20.0, BLUE);
             }
         }
 

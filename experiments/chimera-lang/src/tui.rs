@@ -4622,7 +4622,11 @@ fn render_sequencer(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     // Left: DNA Tracker
     let strand_count = vm.dna.helix.strands.len();
     // Show up to 4 strands
-    let display_count = if strand_count == 0 { 1 } else { strand_count.min(4) };
+    let display_count = if strand_count == 0 {
+        1
+    } else {
+        strand_count.min(4)
+    };
 
     let mut constraints = Vec::new();
     for _ in 0..display_count {
@@ -4643,7 +4647,9 @@ fn render_sequencer(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             for (g_idx, gene) in strand.genes.iter().enumerate() {
                 let mut style = Style::default();
                 if vm.ip == (s_idx, g_idx) {
-                    style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD | Modifier::REVERSED);
+                    style = style
+                        .fg(Color::Yellow)
+                        .add_modifier(Modifier::BOLD | Modifier::REVERSED);
                 } else {
                     style = style.fg(Color::Green);
                 }
@@ -4656,7 +4662,10 @@ fn render_sequencer(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             let list = List::new(items).block(Block::default().borders(Borders::ALL).title(title));
             f.render_widget(list, tracker_chunks[i]);
         } else {
-             f.render_widget(Block::default().borders(Borders::ALL).title("Empty Slot"), tracker_chunks[i]);
+            f.render_widget(
+                Block::default().borders(Borders::ALL).title("Empty Slot"),
+                tracker_chunks[i],
+            );
         }
     }
 
@@ -4672,17 +4681,24 @@ fn render_sequencer(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     {
         for ((y, x), target) in &vm.patch_bay {
             let voltage = vm.voltage_grid[*y][*x];
-            patches.push(ListItem::new(format!(
-                "Grid({},{}) [{:.1}V] -> {:?}",
-                x, y, voltage, target
-            )).style(Style::default().fg(Color::Cyan)));
+            patches.push(
+                ListItem::new(format!(
+                    "Grid({},{}) [{:.1}V] -> {:?}",
+                    x, y, voltage, target
+                ))
+                .style(Style::default().fg(Color::Cyan)),
+            );
         }
     }
     if patches.is_empty() {
         patches.push(ListItem::new("No active patches."));
     }
 
-    let patch_list = List::new(patches).block(Block::default().borders(Borders::ALL).title("Voltage Patches"));
+    let patch_list = List::new(patches).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Voltage Patches"),
+    );
     f.render_widget(patch_list, right_chunks[0]);
 
     // Info
@@ -4699,7 +4715,8 @@ fn render_sequencer(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  patch(0, y, x, target)"),
         Line::from("  Targets: 0=Energy, 1=Mutate"),
     ];
-    let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Manual"));
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Manual"));
     f.render_widget(info_widget, right_chunks[1]);
 }
 
@@ -11105,15 +11122,19 @@ fn render_savant(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let mut savant_items = Vec::new();
     for org in &vm.organelles {
         if matches!(org.kind, crate::vm::nova::OrganelleType::Savant) {
-            savant_items.push(ListItem::new(format!(
-                "ID {}: {} @ {},{}",
-                org.id, org.name, org.context_loc.1, org.context_loc.0
-            )).style(Style::default().fg(Color::Yellow)));
+            savant_items.push(
+                ListItem::new(format!(
+                    "ID {}: {} @ {},{}",
+                    org.id, org.name, org.context_loc.1, org.context_loc.0
+                ))
+                .style(Style::default().fg(Color::Yellow)),
+            );
         }
     }
 
     if savant_items.is_empty() {
-        savant_items.push(ListItem::new("No active Savants.").style(Style::default().fg(Color::DarkGray)));
+        savant_items
+            .push(ListItem::new("No active Savants.").style(Style::default().fg(Color::DarkGray)));
     }
 
     let savant_list = List::new(savant_items).block(
@@ -11154,7 +11175,9 @@ fn render_akashic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         items.push(ListItem::new(format!("{}: {}", k, v)).style(Style::default().fg(Color::Cyan)));
     }
     if items.is_empty() {
-        items.push(ListItem::new("Akashic Records Empty.").style(Style::default().fg(Color::DarkGray)));
+        items.push(
+            ListItem::new("Akashic Records Empty.").style(Style::default().fg(Color::DarkGray)),
+        );
     }
 
     let list = List::new(items).block(

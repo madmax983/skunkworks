@@ -1,7 +1,7 @@
+use crate::ik::TwoBoneSolver;
 use bevy::prelude::*;
 use bevy_prototype_lyon::prelude::*;
 use bevy_rapier2d::prelude::*;
-use crate::ik::TwoBoneSolver;
 
 #[derive(Component)]
 pub struct StriderBody {
@@ -38,7 +38,7 @@ pub struct StriderPlugin;
 impl Plugin for StriderPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, spawn_strider)
-           .add_systems(Update, (strider_movement, leg_logic));
+            .add_systems(Update, (strider_movement, leg_logic));
     }
 }
 
@@ -46,32 +46,37 @@ fn spawn_strider(mut commands: Commands) {
     let body_radius = 20.0;
 
     // Body
-    let body_entity = commands.spawn((
-        ShapeBundle {
-            path: GeometryBuilder::build_as(&shapes::RegularPolygon {
-                sides: 6,
-                feature: shapes::RegularPolygonFeature::Radius(body_radius),
-                ..default()
-            }),
-            spatial: SpatialBundle {
-                transform: Transform::from_xyz(0.0, 0.0, 10.0),
+    let body_entity = commands
+        .spawn((
+            ShapeBundle {
+                path: GeometryBuilder::build_as(&shapes::RegularPolygon {
+                    sides: 6,
+                    feature: shapes::RegularPolygonFeature::Radius(body_radius),
+                    ..default()
+                }),
+                spatial: SpatialBundle {
+                    transform: Transform::from_xyz(0.0, 0.0, 10.0),
+                    ..default()
+                },
                 ..default()
             },
-            ..default()
-        },
-        Fill::color(Color::rgb(0.8, 0.2, 0.2)),
-        Stroke::new(Color::BLACK, 2.0),
-        RigidBody::Dynamic,
-        Collider::ball(body_radius),
-        Damping { linear_damping: 5.0, angular_damping: 5.0 },
-        Velocity::default(),
-        ExternalForce::default(),
-        StriderBody {
-            speed: 4000.0,
-            turn_speed: 10000.0, // Torque
-            target_heading: 0.0,
-        },
-    )).id();
+            Fill::color(Color::rgb(0.8, 0.2, 0.2)),
+            Stroke::new(Color::BLACK, 2.0),
+            RigidBody::Dynamic,
+            Collider::ball(body_radius),
+            Damping {
+                linear_damping: 5.0,
+                angular_damping: 5.0,
+            },
+            Velocity::default(),
+            ExternalForce::default(),
+            StriderBody {
+                speed: 4000.0,
+                turn_speed: 10000.0, // Torque
+                target_heading: 0.0,
+            },
+        ))
+        .id();
 
     // Legs
     let num_legs = 6;
@@ -95,28 +100,30 @@ fn spawn_strider(mut commands: Commands) {
         let reach = 80.0;
         let foot_pos = Vec2::new(angle.cos(), angle.sin()) * (root_offset + reach * 0.5);
 
-        commands.spawn((
-            ShapeBundle {
-                path: GeometryBuilder::build_as(&shapes::Line(Vec2::ZERO, Vec2::X * 10.0)), // Placeholder
-                spatial: SpatialBundle {
-                    transform: Transform::from_xyz(0.0, 0.0, 9.0),
+        commands
+            .spawn((
+                ShapeBundle {
+                    path: GeometryBuilder::build_as(&shapes::Line(Vec2::ZERO, Vec2::X * 10.0)), // Placeholder
+                    spatial: SpatialBundle {
+                        transform: Transform::from_xyz(0.0, 0.0, 9.0),
+                        ..default()
+                    },
                     ..default()
                 },
-                ..default()
-            },
-            Stroke::new(Color::rgb(0.7, 0.7, 0.7), 4.0),
-            StriderLeg {
-                index: i,
-                offset_angle: angle,
-                root_offset_dist: root_offset,
-                solver: TwoBoneSolver::new(reach * 0.6, reach * 0.6),
-                state: LegState::Grounded,
-                current_foot_pos: foot_pos, // Will be corrected
-                target_foot_pos: foot_pos,
-                start_step_pos: foot_pos,
-                step_progress: 0.0,
-            },
-        )).set_parent(body_entity);
+                Stroke::new(Color::rgb(0.7, 0.7, 0.7), 4.0),
+                StriderLeg {
+                    index: i,
+                    offset_angle: angle,
+                    root_offset_dist: root_offset,
+                    solver: TwoBoneSolver::new(reach * 0.6, reach * 0.6),
+                    state: LegState::Grounded,
+                    current_foot_pos: foot_pos, // Will be corrected
+                    target_foot_pos: foot_pos,
+                    start_step_pos: foot_pos,
+                    step_progress: 0.0,
+                },
+            ))
+            .set_parent(body_entity);
     }
 }
 
@@ -156,7 +163,10 @@ fn leg_logic(
     rapier_context: Res<RapierContext>,
 ) {
     // Count how many legs are stepping to limit concurrency
-    let mut stepping_count = leg_query.iter().filter(|(l, _, _)| l.state == LegState::Stepping).count();
+    let mut stepping_count = leg_query
+        .iter()
+        .filter(|(l, _, _)| l.state == LegState::Stepping)
+        .count();
     let max_stepping = 3; // Tripod gait allows 3
 
     for (mut leg, mut path, parent) in leg_query.iter_mut() {
@@ -168,11 +178,13 @@ fn leg_logic(
             // Calculate ideal foot position
             // Body Angle + Leg Offset
             let mounting_angle = body_angle + leg.offset_angle;
-            let mounting_pos = body_pos + Vec2::new(mounting_angle.cos(), mounting_angle.sin()) * leg.root_offset_dist;
+            let mounting_pos = body_pos
+                + Vec2::new(mounting_angle.cos(), mounting_angle.sin()) * leg.root_offset_dist;
 
             // Ideal foot pos is some distance out from mounting point, potentially lead by velocity
             let ideal_dist = 60.0;
-            let ideal_pos_world = mounting_pos + Vec2::new(mounting_angle.cos(), mounting_angle.sin()) * ideal_dist;
+            let ideal_pos_world =
+                mounting_pos + Vec2::new(mounting_angle.cos(), mounting_angle.sin()) * ideal_dist;
 
             // Add velocity prediction
             let velocity_lead = body_vel.linvel * 0.3;
@@ -208,7 +220,9 @@ fn leg_logic(
                             let body_entity = parent.get();
                             let filter = filter.exclude_collider(body_entity);
 
-                            if let Some((_entity, projection)) = rapier_context.project_point(target_search_center, true, filter) {
+                            if let Some((_entity, projection)) =
+                                rapier_context.project_point(target_search_center, true, filter)
+                            {
                                 // If the point is inside or close, snap to it?
                                 // Actually, `project_point` gives closest point on collider surface.
                                 // If inside, point is same.
@@ -255,7 +269,8 @@ fn leg_logic(
             // So local space of leg entity is body space.
 
             // Mounting point relative to body:
-            let mount_local = Vec2::new(leg.offset_angle.cos(), leg.offset_angle.sin()) * leg.root_offset_dist;
+            let mount_local =
+                Vec2::new(leg.offset_angle.cos(), leg.offset_angle.sin()) * leg.root_offset_dist;
 
             // Foot position relative to body:
             // We need to inverse transform current_foot_pos from World to Body Local.

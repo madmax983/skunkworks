@@ -1599,21 +1599,24 @@ fn exec_babel_signal(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut S
         };
 
         if !input_str.is_empty() {
-             // Target start is East
-             if let Some((ey, ex)) = vm.normalize_coords(y as i64, x as i64 + 1) {
-                 // Push args for BabelLive: [input, x, y]
-                 // Note: BabelLive expects [input, x, y] (top is Y, then X, then Input?)
-                 // Let's check babel.rs again.
-                 // let input_val = vm.stack.pop().unwrap();
-                 // let x_val = vm.stack.pop().unwrap();
-                 // let y_val = vm.stack.pop().unwrap();
-                 // So Stack Top is Input. Order pushed: Y, X, Input.
+            // Target start is East
+            if let Some((ey, ex)) = vm.normalize_coords(y as i64, x as i64 + 1) {
+                // Push args for BabelLive: [input, x, y]
+                // Note: BabelLive expects [input, x, y] (top is Y, then X, then Input?)
+                // Let's check babel.rs again.
+                // let input_val = vm.stack.pop().unwrap();
+                // let x_val = vm.stack.pop().unwrap();
+                // let y_val = vm.stack.pop().unwrap();
+                // So Stack Top is Input. Order pushed: Y, X, Input.
 
-                 ctx.executions.push((OpCode::Push, vec![Nucleotide::Number(ey as i64)]));
-                 ctx.executions.push((OpCode::Push, vec![Nucleotide::Number(ex as i64)]));
-                 ctx.executions.push((OpCode::Push, vec![Nucleotide::String(input_str)]));
-                 ctx.executions.push((OpCode::BabelLive, vec![]));
-             }
+                ctx.executions
+                    .push((OpCode::Push, vec![Nucleotide::Number(ey as i64)]));
+                ctx.executions
+                    .push((OpCode::Push, vec![Nucleotide::Number(ex as i64)]));
+                ctx.executions
+                    .push((OpCode::Push, vec![Nucleotide::String(input_str)]));
+                ctx.executions.push((OpCode::BabelLive, vec![]));
+            }
         }
     }
 }

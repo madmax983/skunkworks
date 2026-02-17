@@ -1,7 +1,7 @@
 use crate::grid::{CellType, Grid};
+use ::rand::Rng;
 use chimera_lang::prelude::*;
 use macroquad::prelude::*;
-use ::rand::Rng;
 
 pub struct RootTip {
     pub position: (usize, usize),
@@ -49,7 +49,7 @@ impl RootTip {
             OpCode::Drop,
             OpCode::Dup,
             OpCode::Swap,
-            OpCode::GRead, // Read from grid (sensors)
+            OpCode::GRead,  // Read from grid (sensors)
             OpCode::GWrite, // Write to grid (memory)
             OpCode::Jump,
             OpCode::Brz,
@@ -60,7 +60,9 @@ impl RootTip {
             let op = opcodes[rng.gen_range(0..opcodes.len())].clone();
             let args = match op {
                 OpCode::Push => vec![Nucleotide::Number(rng.gen_range(0..4))], // Push direction or value
-                OpCode::Jump | OpCode::Brz => vec![Nucleotide::Number(rng.gen_range(0..len as i64))],
+                OpCode::Jump | OpCode::Brz => {
+                    vec![Nucleotide::Number(rng.gen_range(0..len as i64))]
+                }
                 OpCode::GRead | OpCode::GWrite => vec![], // GRead takes from stack
                 _ => vec![],
             };
@@ -104,15 +106,12 @@ impl Plant {
             for (i, (dx, dy)) in dirs.iter().enumerate() {
                 let nx = tip.position.0 as i32 + dx;
                 let ny = tip.position.1 as i32 + dy;
-                let val = if nx >= 0
-                    && nx < grid.width as i32
-                    && ny >= 0
-                    && ny < grid.height as i32
+                let val = if nx >= 0 && nx < grid.width as i32 && ny >= 0 && ny < grid.height as i32
                 {
                     match grid.get(nx as usize, ny as usize).unwrap().cell_type {
                         CellType::Soil => 1,
                         CellType::HardSoil => 2,
-                        CellType::Rock => 100, // Obstacle
+                        CellType::Rock => 100,  // Obstacle
                         CellType::Water => 200, // Goal
                         CellType::Seed => 0,
                     }
@@ -146,11 +145,7 @@ impl Plant {
                     let nx = tip.position.0 as i32 + dx;
                     let ny = tip.position.1 as i32 + dy;
 
-                    if nx >= 0
-                        && nx < grid.width as i32
-                        && ny >= 0
-                        && ny < grid.height as i32
-                    {
+                    if nx >= 0 && nx < grid.width as i32 && ny >= 0 && ny < grid.height as i32 {
                         let nx = nx as usize;
                         let ny = ny as usize;
                         let cell_type = grid.get(nx, ny).unwrap().cell_type;
@@ -193,31 +188,45 @@ impl Plant {
         // Calculate fitness
         // Fitness = 1.0 / distance_to_water
         // If reached water, fitness = 100.0 + remaining_energy
-        let mut fitnesses: Vec<(usize, f32)> = self.tips.iter().enumerate().map(|(i, tip)| {
-            let score = if tip.reached_water {
-                100.0 + tip.energy
-            } else {
-                if let Some(goal) = grid.goal {
-                     let dist = ((tip.position.0 as f32 - goal.0 as f32).powi(2) + (tip.position.1 as f32 - goal.1 as f32).powi(2)).sqrt();
-                     100.0 / (dist + 1.0)
+        let mut fitnesses: Vec<(usize, f32)> = self
+            .tips
+            .iter()
+            .enumerate()
+            .map(|(i, tip)| {
+                let score = if tip.reached_water {
+                    100.0 + tip.energy
                 } else {
-                    0.0
-                }
-            };
-            (i, score)
-        }).collect();
+                    if let Some(goal) = grid.goal {
+                        let dist = ((tip.position.0 as f32 - goal.0 as f32).powi(2)
+                            + (tip.position.1 as f32 - goal.1 as f32).powi(2))
+                        .sqrt();
+                        100.0 / (dist + 1.0)
+                    } else {
+                        0.0
+                    }
+                };
+                (i, score)
+            })
+            .collect();
 
         fitnesses.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
         self.best_fitness = fitnesses[0].1;
 
         // Select top 20%
         let elite_count = (self.tips.len() as f32 * 0.2).ceil() as usize;
-        let elite_indices: Vec<usize> = fitnesses.iter().take(elite_count).map(|(i, _)| *i).collect();
+        let elite_indices: Vec<usize> = fitnesses
+            .iter()
+            .take(elite_count)
+            .map(|(i, _)| *i)
+            .collect();
 
         let mut new_tips = Vec::new();
 
         // Elitism: keep best
-        new_tips.push(RootTip::new(self.start, self.tips[elite_indices[0]].genome.clone()));
+        new_tips.push(RootTip::new(
+            self.start,
+            self.tips[elite_indices[0]].genome.clone(),
+        ));
 
         // Breeding / Mutation
         while new_tips.len() < self.tips.len() {
@@ -235,14 +244,14 @@ impl Plant {
                     }
                     1 => {
                         // Insert a gene
-                         let idx = rng.gen_range(0..genome.len());
-                         genome.insert(idx, RootTip::random_genome(1)[0].clone());
+                        let idx = rng.gen_range(0..genome.len());
+                        genome.insert(idx, RootTip::random_genome(1)[0].clone());
                     }
                     2 => {
                         // Delete a gene
                         if genome.len() > 1 {
-                             let idx = rng.gen_range(0..genome.len());
-                             genome.remove(idx);
+                            let idx = rng.gen_range(0..genome.len());
+                            genome.remove(idx);
                         }
                     }
                     _ => {}
@@ -264,14 +273,18 @@ impl Plant {
             if tip.path.len() > 1 {
                 for i in 0..tip.path.len() - 1 {
                     let p1 = tip.path[i];
-                    let p2 = tip.path[i+1];
+                    let p2 = tip.path[i + 1];
                     draw_line(
                         p1.0 as f32 * cell_size + cell_size / 2.0 + offset_x,
                         p1.1 as f32 * cell_size + cell_size / 2.0 + offset_y,
                         p2.0 as f32 * cell_size + cell_size / 2.0 + offset_x,
                         p2.1 as f32 * cell_size + cell_size / 2.0 + offset_y,
                         2.0,
-                        if tip.reached_water { BLUE } else { Color::new(0.6, 0.4, 0.2, 0.3) }, // Faint brown for trails
+                        if tip.reached_water {
+                            BLUE
+                        } else {
+                            Color::new(0.6, 0.4, 0.2, 0.3)
+                        }, // Faint brown for trails
                     );
                 }
             }

@@ -55,10 +55,7 @@ pub fn exec_absorb_geometry(
                         // `strum` is usually strict unless configured.
                         // Let's assume the string on grid matches the string format.
                         if let Ok(op) = OpCode::from_str(s) {
-                            genes.push(Gene {
-                                op,
-                                args: vec![],
-                            });
+                            genes.push(Gene { op, args: vec![] });
                         } else {
                             // Fallback to Push String
                             genes.push(Gene {
@@ -86,9 +83,9 @@ pub fn exec_absorb_geometry(
         let new_idx = vm.dna.helix.strands.len() - 1;
         vm.stack.push(Value::Int(new_idx as i64));
 
-        vm.output.push(format!("ABSORB: Created strand {} from geometry", new_idx));
+        vm.output
+            .push(format!("ABSORB: Created strand {} from geometry", new_idx));
         vm.energy = vm.energy.saturating_sub(10 + (count as i64 / 2));
-
     } else {
         vm.output
             .push("Error: Invalid arguments for absorb_geometry".to_string());
@@ -116,7 +113,7 @@ pub fn exec_project_geometry(
 
     if let (Value::Int(start_x), Value::Int(start_y), Value::Int(s_idx)) = (x_val, y_val, s_val) {
         if s_idx < 0 || (s_idx as usize) >= vm.dna.helix.strands.len() {
-             vm.output
+            vm.output
                 .push("Error: Invalid strand index for project_geometry".to_string());
             return None;
         }
@@ -126,7 +123,9 @@ pub fn exec_project_geometry(
         let coords = get_spiral_coords(start_y, start_x, count);
 
         for (i, (y, x)) in coords.into_iter().enumerate() {
-            if i >= strand.genes.len() { break; }
+            if i >= strand.genes.len() {
+                break;
+            }
             let gene = &strand.genes[i];
 
             if let Some((ny, nx)) = vm.normalize_coords(y, x) {
@@ -142,7 +141,7 @@ pub fn exec_project_geometry(
                         } else {
                             Value::Int(0)
                         }
-                    },
+                    }
                     _ => Value::Str(gene.op.to_string()),
                 };
 
@@ -150,9 +149,9 @@ pub fn exec_project_geometry(
             }
         }
 
-        vm.output.push(format!("PROJECT: Inscribed strand {} onto geometry", s_idx));
+        vm.output
+            .push(format!("PROJECT: Inscribed strand {} onto geometry", s_idx));
         vm.energy = vm.energy.saturating_sub(10 + (count as i64 / 2));
-
     } else {
         vm.output
             .push("Error: Invalid arguments for project_geometry".to_string());

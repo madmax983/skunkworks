@@ -1,5 +1,5 @@
-mod map;
 mod ik;
+mod map;
 mod strider;
 
 use bevy::prelude::*;

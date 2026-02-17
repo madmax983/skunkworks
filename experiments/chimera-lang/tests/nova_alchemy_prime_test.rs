@@ -21,8 +21,14 @@ mod tests {
         // Create a strand with some genes
         // [ push(10) add ]
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-            Gene { op: OpCode::Add, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::Add,
+                args: vec![],
+            },
         ];
 
         vm.dna.helix.strands.push(Strand { genes });
@@ -100,8 +106,8 @@ mod tests {
 
         // Check rest are Push(0)
         for i in 2..9 {
-             assert_eq!(new_strand.genes[i].op, OpCode::Push);
-             match &new_strand.genes[i].args[0] {
+            assert_eq!(new_strand.genes[i].op, OpCode::Push);
+            match &new_strand.genes[i].args[0] {
                 Nucleotide::Number(n) => assert_eq!(*n, 0),
                 _ => panic!("Expected Number 0"),
             }

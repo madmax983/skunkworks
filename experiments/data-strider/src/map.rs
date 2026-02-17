@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 use bevy_prototype_lyon::prelude::*;
 use bevy_rapier2d::prelude::*;
-use std::path::{Path, PathBuf};
 use std::fs;
+use std::path::{Path, PathBuf};
 
 #[derive(Component)]
 pub struct GraphNode {
@@ -25,9 +25,9 @@ impl Plugin for MapPlugin {
 fn spawn_map(mut commands: Commands) {
     // Start scanning from the experiments directory
     let root_path = PathBuf::from("experiments"); // Relative to repo root
-    // But since we run the binary from target/debug/deps, or via cargo run, the CWD matters.
-    // Usually cargo run sets CWD to the workspace root if run from there, or package root.
-    // We'll assume CWD is repo root for now, or fallback.
+                                                  // But since we run the binary from target/debug/deps, or via cargo run, the CWD matters.
+                                                  // Usually cargo run sets CWD to the workspace root if run from there, or package root.
+                                                  // We'll assume CWD is repo root for now, or fallback.
 
     let root_path = if root_path.exists() {
         root_path
@@ -79,7 +79,12 @@ fn spawn_map(mut commands: Commands) {
 }
 
 // Returns a flat list of nodes and their calculated positions
-fn scan_directory(path: &Path, depth: u32, center: Vec2, available_radius: f32) -> Vec<(GraphNode, Vec2)> {
+fn scan_directory(
+    path: &Path,
+    depth: u32,
+    center: Vec2,
+    available_radius: f32,
+) -> Vec<(GraphNode, Vec2)> {
     let mut results = Vec::new();
 
     // Add self
@@ -129,7 +134,8 @@ fn scan_directory(path: &Path, depth: u32, center: Vec2, available_radius: f32) 
                 // Give them a smaller available radius
                 let child_available = available_radius / 3.0;
 
-                let child_nodes = scan_directory(&entry.path(), depth + 1, child_pos, child_available);
+                let child_nodes =
+                    scan_directory(&entry.path(), depth + 1, child_pos, child_available);
                 results.extend(child_nodes);
             }
         }

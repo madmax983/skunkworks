@@ -36,23 +36,31 @@ async fn main() {
     // Ideally we store it in a struct or just box leak it.
     let _audio_stream = audio_stream;
 
-    let mut visuals: Vec<StringVisual> = files.iter().enumerate().map(|(i, f)| {
-        let x = i as f32 * STRING_SPACING + 50.0;
-        let color = match f.extension.as_deref() {
-            Some("rs") => ORANGE,
-            Some("toml") => BROWN,
-            Some("md") => LIGHTGRAY,
-            Some("json") => YELLOW,
-            Some("lock") => DARKGRAY,
-            _ => BLUE,
-        };
-        StringVisual::new(
-            vec2(x, TOP_MARGIN),
-            STRING_LENGTH,
-            color,
-            f.path.file_name().unwrap_or(std::ffi::OsStr::new("")).to_string_lossy().to_string(),
-        )
-    }).collect();
+    let mut visuals: Vec<StringVisual> = files
+        .iter()
+        .enumerate()
+        .map(|(i, f)| {
+            let x = i as f32 * STRING_SPACING + 50.0;
+            let color = match f.extension.as_deref() {
+                Some("rs") => ORANGE,
+                Some("toml") => BROWN,
+                Some("md") => LIGHTGRAY,
+                Some("json") => YELLOW,
+                Some("lock") => DARKGRAY,
+                _ => BLUE,
+            };
+            StringVisual::new(
+                vec2(x, TOP_MARGIN),
+                STRING_LENGTH,
+                color,
+                f.path
+                    .file_name()
+                    .unwrap_or(std::ffi::OsStr::new(""))
+                    .to_string_lossy()
+                    .to_string(),
+            )
+        })
+        .collect();
 
     let mut camera_x = 0.0;
     let (mx, my) = mouse_position();
@@ -97,8 +105,8 @@ async fn main() {
             // Check if mouse crossed the string
             // Check relative to the string X + vibration
             let string_x = v.pos.x + v.vibration;
-            let crossed = (prev_mouse.x < string_x && mouse_pos.x >= string_x) ||
-                          (prev_mouse.x > string_x && mouse_pos.x <= string_x);
+            let crossed = (prev_mouse.x < string_x && mouse_pos.x >= string_x)
+                || (prev_mouse.x > string_x && mouse_pos.x <= string_x);
 
             // Check vertical bounds
             let in_vertical_range = mouse_pos.y >= v.pos.y && mouse_pos.y <= v.pos.y + v.length;
@@ -134,16 +142,28 @@ async fn main() {
 
         // UI Overlay
         if let Some(hovered) = visuals.iter().find(|v| v.is_hovered) {
-             // Find corresponding file data for more info?
-             // We'd need to lookup by label or store index in visual.
-             // For now just show label.
-             draw_text(&format!("File: {}", hovered.label), 10.0, 30.0, 30.0, WHITE);
+            // Find corresponding file data for more info?
+            // We'd need to lookup by label or store index in visual.
+            // For now just show label.
+            draw_text(&format!("File: {}", hovered.label), 10.0, 30.0, 30.0, WHITE);
         } else {
-             draw_text("String Theory: Pluck the Codebase", 10.0, 30.0, 30.0, WHITE);
+            draw_text("String Theory: Pluck the Codebase", 10.0, 30.0, 30.0, WHITE);
         }
 
-        draw_text("Arrows/Scroll: Navigate | Mouse: Pluck", 10.0, screen_height() - 10.0, 20.0, GRAY);
-        draw_text(&format!("Files: {}", visuals.len()), screen_width() - 150.0, 30.0, 20.0, DARKGRAY);
+        draw_text(
+            "Arrows/Scroll: Navigate | Mouse: Pluck",
+            10.0,
+            screen_height() - 10.0,
+            20.0,
+            GRAY,
+        );
+        draw_text(
+            &format!("Files: {}", visuals.len()),
+            screen_width() - 150.0,
+            30.0,
+            20.0,
+            DARKGRAY,
+        );
 
         prev_mouse = mouse_pos;
         next_frame().await;

@@ -1,12 +1,12 @@
+mod layout;
 mod math;
 mod scanner;
-mod layout;
 
-use macroquad::prelude::*;
-use macroquad::input::{show_mouse, set_cursor_grab}; // Ensure input functions are imported
+use crate::layout::{layout_tree, LayoutNode};
 use crate::math::mobius_add;
 use crate::scanner::{scan_fs, NodeType};
-use crate::layout::{layout_tree, LayoutNode};
+use macroquad::input::{set_cursor_grab, show_mouse}; // Ensure input functions are imported
+use macroquad::prelude::*;
 use std::path::PathBuf;
 
 const MOVE_SPEED: f32 = 0.02; // Hyperbolic step size per frame
@@ -63,18 +63,31 @@ async fn main() {
             player.yaw.cos() * player.pitch.cos(),
             player.pitch.sin(),
             player.yaw.sin() * player.pitch.cos(),
-        ).normalize();
+        )
+        .normalize();
 
         let right = front.cross(Vec3::new(0.0, 1.0, 0.0)).normalize();
         let up = right.cross(front).normalize(); // Local up
 
         let mut move_dir = Vec3::ZERO;
-        if is_key_down(KeyCode::W) { move_dir += front; }
-        if is_key_down(KeyCode::S) { move_dir -= front; }
-        if is_key_down(KeyCode::A) { move_dir -= right; }
-        if is_key_down(KeyCode::D) { move_dir += right; }
-        if is_key_down(KeyCode::Space) { move_dir += up; }
-        if is_key_down(KeyCode::LeftShift) { move_dir -= up; }
+        if is_key_down(KeyCode::W) {
+            move_dir += front;
+        }
+        if is_key_down(KeyCode::S) {
+            move_dir -= front;
+        }
+        if is_key_down(KeyCode::A) {
+            move_dir -= right;
+        }
+        if is_key_down(KeyCode::D) {
+            move_dir += right;
+        }
+        if is_key_down(KeyCode::Space) {
+            move_dir += up;
+        }
+        if is_key_down(KeyCode::LeftShift) {
+            move_dir -= up;
+        }
 
         if move_dir.length_squared() > 0.001 {
             move_dir = move_dir.normalize();
@@ -112,11 +125,23 @@ async fn main() {
         set_default_camera();
         draw_text("Hyperbolic Void", 10.0, 20.0, 30.0, WHITE);
         draw_text(&format!("Pos: {:.2?}", player.pos), 10.0, 40.0, 20.0, GRAY);
-        draw_text(&format!("Norm: {:.4}", player.pos.length()), 10.0, 60.0, 20.0, GRAY);
-        draw_text("WASD to Move, Mouse to Look", 10.0, screen_height() - 20.0, 20.0, WHITE);
+        draw_text(
+            &format!("Norm: {:.4}", player.pos.length()),
+            10.0,
+            60.0,
+            20.0,
+            GRAY,
+        );
+        draw_text(
+            "WASD to Move, Mouse to Look",
+            10.0,
+            screen_height() - 20.0,
+            20.0,
+            WHITE,
+        );
 
         // Reticle
-        draw_circle_lines(screen_width()/2.0, screen_height()/2.0, 5.0, 2.0, WHITE);
+        draw_circle_lines(screen_width() / 2.0, screen_height() / 2.0, 5.0, 2.0, WHITE);
 
         next_frame().await
     }
@@ -128,7 +153,9 @@ fn draw_layout_recursive(node: &LayoutNode, view_pos: Vec3, depth: usize) {
     let p_view = mobius_add(-view_pos, node.position);
 
     let dist_sq = p_view.length_squared();
-    if dist_sq >= 0.999 { return; }
+    if dist_sq >= 0.999 {
+        return;
+    }
 
     // Calculate base size based on file size (log scale)
     let size_bytes = node.node.size.max(1);
@@ -138,7 +165,9 @@ fn draw_layout_recursive(node: &LayoutNode, view_pos: Vec3, depth: usize) {
     // Euclidean size ~ (1 - r^2) * base_radius
     let scale = (1.0 - dist_sq) * base_radius;
 
-    if scale < 0.001 { return; } // Cull small objects
+    if scale < 0.001 {
+        return;
+    } // Cull small objects
 
     // Color
     let color = match node.node.node_type {
@@ -175,8 +204,8 @@ fn draw_layout_recursive(node: &LayoutNode, view_pos: Vec3, depth: usize) {
         let c_view = mobius_add(-view_pos, child.position);
 
         if c_view.length_squared() < 0.99 {
-             // Draw line
-             draw_line_3d(p_view, c_view, Color::new(1.0, 1.0, 1.0, 0.2));
+            // Draw line
+            draw_line_3d(p_view, c_view, Color::new(1.0, 1.0, 1.0, 0.2));
         }
 
         draw_layout_recursive(child, view_pos, depth + 1);

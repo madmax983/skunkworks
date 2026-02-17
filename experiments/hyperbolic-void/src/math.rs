@@ -84,7 +84,11 @@ mod tests {
         println!("Diff: {:?}", (lhs - rhs).length());
 
         // Assert they are different enough
-        assert!((lhs - rhs).length() > 1e-8, "Möbius addition appeared associative! Diff: {}", (lhs - rhs).length());
+        assert!(
+            (lhs - rhs).length() > 1e-8,
+            "Möbius addition appeared associative! Diff: {}",
+            (lhs - rhs).length()
+        );
     }
 
     #[test]

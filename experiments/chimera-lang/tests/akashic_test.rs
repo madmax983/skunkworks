@@ -27,7 +27,7 @@ mod tests {
         // 1. Write "foo" -> 42
         let write_genes = vec![
             gene(OpCode::Push, vec![Nucleotide::String("foo".to_string())]), // Key
-            gene(OpCode::Push, vec![Nucleotide::Number(42)]),               // Value
+            gene(OpCode::Push, vec![Nucleotide::Number(42)]),                // Value
             gene(OpCode::AkashicWrite, vec![]),
         ];
         let mut vm_write = make_vm(write_genes);
@@ -60,7 +60,9 @@ mod tests {
         ];
         let mut vm = make_vm(karma_genes);
         // Execute Karma gain
-        for _ in 0..2 { vm.step(); }
+        for _ in 0..2 {
+            vm.step();
+        }
 
         // 2. Perform Miracle (Wealth)
         // Wealth Miracle sets energy to high value.
@@ -76,7 +78,9 @@ mod tests {
         vm.dna.helix.strands[0].genes.extend(miracle_genes);
 
         // Run Miracle
-        for _ in 0..2 { vm.step(); }
+        for _ in 0..2 {
+            vm.step();
+        }
 
         // Wealth should grant massive energy
         assert!(vm.energy > 1000);
