@@ -141,6 +141,7 @@ members = [
     "experiments/genetic-luthier", "experiments/sonata-cycle",
     "experiments/malloc-expressionism",
     "experiments/crystal-defense", "experiments/geo-linguistics",
+    "experiments/stego-attack",
 ]
 resolver = "2"
 
