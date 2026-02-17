@@ -3,7 +3,10 @@ use harmonic_engine::{audio::MusicBox, physics::PhysicsWorld};
 use nalgebra::Vector2;
 use ratatui::{prelude::*, widgets::*};
 use std::{error::Error, time::Duration};
-use tui_shared::{widgets::LogList, Tui};
+use tui_shared::{
+    widgets::{Button, ButtonState, ButtonStyle, LogList},
+    Tui,
+};
 
 fn main() -> Result<(), Box<dyn Error>> {
     // Setup Terminal
@@ -26,6 +29,9 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let mut music_box = MusicBox::new(world.integrators.len());
     let mut event_log: Vec<String> = Vec::new();
+
+    // Initial success message to show off the icon
+    event_log.push("Success: Harmonic Engine Initialized".to_string());
 
     loop {
         // Input
@@ -155,14 +161,26 @@ fn main() -> Result<(), Box<dyn Error>> {
             f.render_widget(canvas, main_chunks[0]);
 
             let log_list = LogList::new(event_log.clone().into_iter().rev().collect())
-                .block(Block::default().borders(Borders::ALL).title("Music Log"));
+                .with_title("Music Log");
             f.render_widget(log_list, main_chunks[1]);
 
-            // Footer
-            let footer = Paragraph::new("Press 'q' to quit")
-                .block(Block::default().borders(Borders::ALL))
-                .alignment(Alignment::Center);
-            f.render_widget(footer, chunks[1]);
+            // Footer with buttons
+            let footer_layout = Layout::default()
+                .direction(Direction::Horizontal)
+                .constraints([Constraint::Min(0), Constraint::Length(20)])
+                .split(chunks[1]);
+
+            let footer_text = Paragraph::new("Controls: Q to Quit")
+                 .block(Block::default().borders(Borders::ALL))
+                 .alignment(Alignment::Center);
+            f.render_widget(footer_text, footer_layout[0]);
+
+            let quit_btn = Button::new("Quit")
+                .style_variant(ButtonStyle::Danger)
+                .icon("🛑")
+                .state(ButtonState::Normal); // Just visual for now
+            f.render_widget(quit_btn, footer_layout[1]);
+
         })?;
     }
 
