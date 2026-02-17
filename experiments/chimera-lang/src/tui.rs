@@ -22,6 +22,7 @@ use ratatui::{
 };
 use std::io;
 
+#[allow(dead_code)]
 const GOLDEN_FREQUENCIES: [f32; 4] = [161.8, 261.6, 432.0, 528.0];
 const GRIMOIRE_TEXT: &str = include_str!("../GRIMOIRE.md");
 

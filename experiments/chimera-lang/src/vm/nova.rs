@@ -521,6 +521,29 @@ fn exec_prophecy(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+pub fn exec_lisp_eval(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if let Some(val) = vm.stack.pop() {
+        if let Value::Str(s) = val {
+            match crate::lisp::compile_fragment(&s) {
+                Ok(genes) => {
+                    let strand = crate::ast::Strand { genes };
+                    execute_ephemeral_strand(vm, &strand);
+                    vm.output.push("LISP_EVAL: Success".to_string());
+                }
+                Err(e) => {
+                    vm.output.push(format!("LISP_EVAL ERROR: {}", e));
+                }
+            }
+        } else {
+            vm.output.push("Error: Type mismatch for lisp_eval".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for lisp_eval".to_string());
+    }
+    None
+}
+
 /// Runs a sandboxed simulation of a specific strand.
 ///
 /// **OpCode:** `Simulate`
@@ -698,7 +721,7 @@ fn exec_brainfuck(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// Returns `Some((strand_idx, gene_idx))` if the operation triggered a jump or call that
 /// modifies the Instruction Pointer (IP). Returns `None` if execution should proceed sequentially.
 #[allow(clippy::needless_range_loop)]
-pub fn exec_operator(vm: &mut ChimeraVM, args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_operator(vm: &mut ChimeraVM, _args: &[Nucleotide]) -> Option<(usize, usize)> {
     // Stack: [ ..., char_str, strand_idx ]
     // BUT OpCode usually takes stack args.
     // Let's check opcode.rs. Stack: [ ..., char_str, strand_idx ] -> [ ... ]
@@ -885,6 +908,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Rift => exec_rift(vm),
         OpCode::Seal => exec_seal(vm),
         OpCode::Sonar => exec_sonar(vm),
+        OpCode::LispEval => exec_lisp_eval(vm),
         OpCode::Broadcast => exec_broadcast(vm),
         OpCode::Tune => exec_tune(vm),
         OpCode::Isomerize => exec_isomerize(vm),

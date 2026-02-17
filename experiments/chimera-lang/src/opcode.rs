@@ -1736,6 +1736,11 @@ pub enum OpCode {
     /// **Stack:** `[ ..., code_string ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Eval,
+    /// **[Nova]** Evaluates a string as Lisp code.
+    ///
+    /// **Stack:** `[ ..., lisp_code_string ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    LispEval,
     /// **[Nova]** Concatenates two strands into a new function (Functional Composition).
     ///
     /// **Stack:** `[ ..., strand_g, strand_f ] -> [ ..., new_strand_idx ]`
