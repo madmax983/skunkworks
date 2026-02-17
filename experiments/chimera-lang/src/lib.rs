@@ -322,6 +322,8 @@ mod warden_memory_test;
 mod warden_parser_test;
 #[cfg(test)]
 mod warden_phylogeny_test;
+#[cfg(test)]
+mod warden_dos_simulation;
 
 #[cfg(all(test, feature = "nova"))]
 mod havoc_recursive_prophecy;

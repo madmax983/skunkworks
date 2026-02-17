@@ -38,3 +38,7 @@
 
 **Threat:** `exec_rasterize` in `experiments/chimera-lang/src/vm/retina.rs` allowed integer underflow wrapping via `x as usize` when `x` was negative, potentially writing to index 0 instead of being bounds-checked.
 **Defense:** Added explicit checks for `x < 0 || y < 0` in `exec_retina_draw` and `exec_rasterize`.
+
+## 2026-04-10 - Simulation Amplification (DoS)
+**Threat:** The `OpCode::Simulate`, `OpCode::Prophecy`, and `OpCode::Dream` operations in `experiments/chimera-lang` allowed recursive execution of the VM. By chaining these calls (Branching Factor > 1), a user could trigger exponential computational work ($Cost \approx Branching^{Depth}$) while only paying linear energy cost, causing a Denial of Service (CPU Exhaustion).
+**Defense:** Introduced `MAX_SIMULATION_DEPTH` (10) constant and enforced it in `exec_simulate`, `exec_prophecy`, and `exec_dream`. This restricts the recursion depth of expensive simulation operations significantly compared to the standard `MAX_RECURSION_DEPTH` (100).
