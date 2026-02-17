@@ -3,6 +3,21 @@ use rand::prelude::*;
 use rayon::prelude::*;
 use std::sync::Arc;
 
+const HEAT_DECAY_RATE: f32 = 0.98;
+const HEAT_DIFFUSION_RATE: f32 = 0.1;
+const PHEROMONE_DECAY: f32 = 0.95;
+const LOCUST_SPAWN_INTERVAL: usize = 20;
+const TERMITE_SPAWN_INTERVAL: usize = 30;
+const MAX_AGENTS: usize = 2000;
+const LOCUST_SPEED: f32 = 0.05;
+const PHEROMONE_THRESHOLD: f32 = 0.1;
+const RANDOM_MOVE_CHANCE: f64 = 0.2;
+const LOCUST_DAMAGE: f32 = 5.0;
+const PHEROMONE_DROP: f32 = 5.0;
+const HEAT_GENERATION: f32 = 2.0;
+const COOLING_FACTOR: f32 = 0.8;
+const SERVER_INITIAL_HEALTH: f32 = 1000.0;
+
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum AgentType {
     Termite, // Defender
@@ -72,7 +87,7 @@ impl World {
             next_heat_map: vec![0.0; n],
             pheromone_attack: vec![0.0; n],
             pheromone_defense: vec![0.0; n],
-            server_health: 1000.0,
+            server_health: SERVER_INITIAL_HEALTH,
             ticks: 0,
             qc,
             center_node,
@@ -85,10 +100,13 @@ impl World {
     pub fn update(&mut self) {
         self.ticks += 1;
 
-        // --- 1. Heat Diffusion (Parallel) ---
-        let decay_rate = 0.98;
-        let diffusion_rate = 0.1;
+        self.update_heat_diffusion();
+        self.update_pheromone_diffusion();
+        self.spawn_agents();
+        self.update_agents();
+    }
 
+    fn update_heat_diffusion(&mut self) {
         // Double buffering to avoid allocation
         let adj = &self.qc.adj;
         let (current_map, next_map) = (&self.heat_map, &mut self.next_heat_map);
@@ -97,7 +115,7 @@ impl World {
             let current = current_map[i];
             let neighbors = &adj[i];
             if neighbors.is_empty() {
-                *out = current * decay_rate;
+                *out = current * HEAT_DECAY_RATE;
                 return;
             }
 
@@ -106,24 +124,26 @@ impl World {
                 inflow += current_map[n];
             }
             let avg_neighbor = inflow / neighbors.len() as f32;
-            let next = current + diffusion_rate * (avg_neighbor - current);
-            *out = next * decay_rate;
+            let next = current + HEAT_DIFFUSION_RATE * (avg_neighbor - current);
+            *out = next * HEAT_DECAY_RATE;
         });
         std::mem::swap(&mut self.heat_map, &mut self.next_heat_map);
+    }
 
-        // --- 2. Pheromone Diffusion (Parallel) ---
+    fn update_pheromone_diffusion(&mut self) {
         // Simplified: just decay for now, add diffusion later if needed
-        let pheromone_decay = 0.95;
         self.pheromone_attack
             .par_iter_mut()
-            .for_each(|p| *p *= pheromone_decay);
+            .for_each(|p| *p *= PHEROMONE_DECAY);
         self.pheromone_defense
             .par_iter_mut()
-            .for_each(|p| *p *= pheromone_decay);
+            .for_each(|p| *p *= PHEROMONE_DECAY);
+    }
 
-        // --- 3. Spawn Agents ---
+    #[allow(clippy::manual_is_multiple_of)]
+    fn spawn_agents(&mut self) {
         // Spawn Locusts (Attackers)
-        if self.ticks % 20 == 0 && self.agents.len() < 2000 {
+        if self.ticks % LOCUST_SPAWN_INTERVAL == 0 && self.agents.len() < MAX_AGENTS {
             let mut rng = rand::thread_rng();
             if let Some(&start_node) = self.leaf_nodes.choose(&mut rng) {
                 self.agents.push(Agent {
@@ -137,7 +157,7 @@ impl World {
         }
 
         // Spawn Termites (Defenders)
-        if self.ticks % 30 == 0 && self.agents.len() < 2000 {
+        if self.ticks % TERMITE_SPAWN_INTERVAL == 0 && self.agents.len() < MAX_AGENTS {
             self.agents.push(Agent {
                 kind: AgentType::Termite,
                 current_node: self.center_node,
@@ -146,8 +166,9 @@ impl World {
                 hp: 20.0,
             });
         }
+    }
 
-        // --- 4. Update Agents ---
+    fn update_agents(&mut self) {
         let adj = &self.qc.adj;
         let dists = &self.dist_to_center;
         let pheromone_attack = &mut self.pheromone_attack;
@@ -156,12 +177,8 @@ impl World {
         let center = self.center_node;
         let mut damage = 0.0;
 
-        let mut dead_agents = Vec::new();
-
-        // Single threaded update for agents (logic is complex with interactions)
-        for (idx, agent) in self.agents.iter_mut().enumerate() {
+        for agent in self.agents.iter_mut() {
             if agent.hp <= 0.0 {
-                dead_agents.push(idx);
                 continue;
             }
 
@@ -185,7 +202,7 @@ impl World {
                                 .unwrap_or(neighbors[0]);
 
                             // 20% chance to move randomly (avoid local minima / traffic)
-                            if rng.gen_bool(0.2) {
+                            if rng.gen_bool(RANDOM_MOVE_CHANCE) {
                                 *neighbors.choose(&mut rng).unwrap()
                             } else {
                                 best
@@ -204,7 +221,7 @@ impl World {
                                 .cloned()
                                 .unwrap_or(neighbors[0]);
 
-                            if pheromone_attack[best] > 0.1 {
+                            if pheromone_attack[best] > PHEROMONE_THRESHOLD {
                                 best
                             } else {
                                 *neighbors.choose(&mut rng).unwrap()
@@ -218,7 +235,7 @@ impl World {
 
             // Move along edge
             if let Some(target) = agent.target_node {
-                agent.progress += 0.05; // Speed
+                agent.progress += LOCUST_SPEED;
 
                 if agent.progress >= 1.0 {
                     // Arrived
@@ -229,17 +246,17 @@ impl World {
                     // Actions on Arrival
                     match agent.kind {
                         AgentType::Locust => {
-                            pheromone_attack[agent.current_node] += 5.0; // Drop trail
-                            heat_map[agent.current_node] += 2.0; // Generate heat
+                            pheromone_attack[agent.current_node] += PHEROMONE_DROP;
+                            heat_map[agent.current_node] += HEAT_GENERATION;
                             if agent.current_node == center {
-                                damage += 5.0;
+                                damage += LOCUST_DAMAGE;
                                 agent.hp = 0.0; // Suicide
                             }
                         }
                         AgentType::Termite => {
-                            pheromone_defense[agent.current_node] += 5.0;
+                            pheromone_defense[agent.current_node] += PHEROMONE_DROP;
                             // Cool down node
-                            heat_map[agent.current_node] *= 0.8;
+                            heat_map[agent.current_node] *= COOLING_FACTOR;
                         }
                     }
                 }
@@ -247,14 +264,11 @@ impl World {
         }
 
         // Remove dead
-        // Simple swap remove from back to avoid n^2 if possible, but indices change.
-        // We can just retain.
         self.agents.retain(|a| a.hp > 0.0);
 
         self.server_health -= damage;
         if self.server_health < 0.0 {
             self.server_health = 0.0;
-            // Game Over state?
         }
     }
 }
@@ -288,5 +302,44 @@ mod tests {
         for &n in neighbors {
             assert!(world.heat_map[n] > 0.0, "Heat should diffuse to neighbors");
         }
+    }
+
+    #[test]
+    fn test_agent_movement() {
+        let qc = Arc::new(generate_icosahedral_lattice(2));
+        let mut world = World::new(qc.clone());
+
+        // Force spawn a termite
+        world.agents.push(Agent {
+            kind: AgentType::Termite,
+            current_node: world.center_node,
+            target_node: None,
+            progress: 0.0,
+            hp: 20.0,
+        });
+
+        // Ensure neighbor exists
+        let neighbors = &qc.adj[world.center_node];
+        assert!(!neighbors.is_empty(), "Center node should have neighbors");
+
+        // Manually set some pheromone to guide it (so it doesn't just pick random)
+        // Termites follow attack pheromone
+        world.pheromone_attack[neighbors[0]] = 10.0;
+
+        // Run update
+        world.update();
+
+        // Check if agent picked a target
+        let agent = &world.agents[0];
+        assert!(
+            agent.target_node.is_some(),
+            "Agent should have picked a target"
+        );
+        assert_eq!(
+            agent.target_node,
+            Some(neighbors[0]),
+            "Agent should follow pheromone"
+        );
+        assert!(agent.progress > 0.0, "Agent should have moved");
     }
 }

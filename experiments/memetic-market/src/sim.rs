@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use rand::Rng;
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum MarketPhase {
@@ -130,12 +130,12 @@ impl Agent {
                     }
                 }
                 Strategy::HypeBeast => {
-                     // Buy if price is high (Momentum)
-                     if topic.market_price > 50.0 {
-                         self.allocate(&topic.name, self.cash * 0.2);
-                     } else {
-                         self.withdraw(&topic.name, current_allocation * 0.05);
-                     }
+                    // Buy if price is high (Momentum)
+                    if topic.market_price > 50.0 {
+                        self.allocate(&topic.name, self.cash * 0.2);
+                    } else {
+                        self.withdraw(&topic.name, current_allocation * 0.05);
+                    }
                 }
                 Strategy::Contrarian => {
                     // Inverse of Trend
@@ -147,7 +147,7 @@ impl Agent {
                             self.withdraw(&topic.name, current_allocation * 0.2);
                         } else {
                             // Trend DOWN -> Buy
-                             self.allocate(&topic.name, self.cash * 0.1);
+                            self.allocate(&topic.name, self.cash * 0.1);
                         }
                     }
                 }

@@ -24,7 +24,10 @@ fn check_nesting_depth(source: &str, limit: usize) -> Result<()> {
             '(' | '{' | '[' => {
                 depth += 1;
                 if depth > limit {
-                    return Err(anyhow!("Recursion depth exceeded (nesting limit: {})", limit));
+                    return Err(anyhow!(
+                        "Recursion depth exceeded (nesting limit: {})",
+                        limit
+                    ));
                 }
             }
             ')' | '}' | ']' => {

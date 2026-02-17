@@ -19,10 +19,10 @@ use crate::{ChimeraParser, Rule};
 use pest::Parser;
 use rand::seq::SliceRandom;
 use rand::Rng;
+use serde::{Deserialize, Serialize};
 use std::collections::hash_map::DefaultHasher;
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::hash::{Hash, Hasher};
-use serde::{Deserialize, Serialize};
 
 /// The physical state of the organism, affecting movement and mutation.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]

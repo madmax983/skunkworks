@@ -94,15 +94,22 @@ impl MiuraPattern {
         // Find bounds
         let (min_x, max_x, min_y, max_y) = verts.iter().fold(
             (f64::MAX, f64::MIN, f64::MAX, f64::MIN),
-            |(minx, maxx, miny, maxy), v| (minx.min(v.x), maxx.max(v.x), miny.min(v.y), maxy.max(v.y))
+            |(minx, maxx, miny, maxy), v| {
+                (minx.min(v.x), maxx.max(v.x), miny.min(v.y), maxy.max(v.y))
+            },
         );
 
         let width = max_x - min_x;
         let height = max_y - min_y;
 
         let mut svg = String::new();
-        svg.push_str(&format!(r#"<svg viewBox="{} {} {} {}" xmlns="http://www.w3.org/2000/svg">"#,
-            min_x - 10.0, -max_y - 10.0, width + 20.0, height + 20.0));
+        svg.push_str(&format!(
+            r#"<svg viewBox="{} {} {} {}" xmlns="http://www.w3.org/2000/svg">"#,
+            min_x - 10.0,
+            -max_y - 10.0,
+            width + 20.0,
+            height + 20.0
+        ));
         svg.push_str(r#"<style>line { stroke: black; stroke-width: 0.2; } .mountain { stroke: red; } .valley { stroke: blue; }</style>"#);
 
         for r in 0..self.rows {
@@ -111,19 +118,33 @@ impl MiuraPattern {
                 let p = verts[idx];
                 let (x1, y1) = (p.x, -p.y); // Flip Y for SVG
 
-                 if c + 1 < self.cols {
-                    let p2 = verts[idx+1];
+                if c + 1 < self.cols {
+                    let p2 = verts[idx + 1];
                     let (x2, y2) = (p2.x, -p2.y);
                     // Assignment for CP
-                    let class = if (r+c)%2==0 { "mountain" } else { "valley" };
-                    svg.push_str(&format!(r#"<line x1="{:.2}" y1="{:.2}" x2="{:.2}" y2="{:.2}" class="{}" />"#, x1, y1, x2, y2, class));
+                    let class = if (r + c) % 2 == 0 {
+                        "mountain"
+                    } else {
+                        "valley"
+                    };
+                    svg.push_str(&format!(
+                        r#"<line x1="{:.2}" y1="{:.2}" x2="{:.2}" y2="{:.2}" class="{}" />"#,
+                        x1, y1, x2, y2, class
+                    ));
                 }
 
                 if r + 1 < self.rows {
                     let p2 = verts[idx + self.cols];
                     let (x2, y2) = (p2.x, -p2.y);
-                    let class = if (r+c)%2==1 { "mountain" } else { "valley" };
-                    svg.push_str(&format!(r#"<line x1="{:.2}" y1="{:.2}" x2="{:.2}" y2="{:.2}" class="{}" />"#, x1, y1, x2, y2, class));
+                    let class = if (r + c) % 2 == 1 {
+                        "mountain"
+                    } else {
+                        "valley"
+                    };
+                    svg.push_str(&format!(
+                        r#"<line x1="{:.2}" y1="{:.2}" x2="{:.2}" y2="{:.2}" class="{}" />"#,
+                        x1, y1, x2, y2, class
+                    ));
                 }
             }
         }
@@ -159,11 +180,23 @@ mod tests {
 
                     let p_right = verts[idx + 1];
                     let d_right = nalgebra::distance(&p, &p_right);
-                    assert!((d_right - pattern.a).abs() < 1e-3, "H-edge mismatch rho={}: {} vs {}", rho, d_right, pattern.a);
+                    assert!(
+                        (d_right - pattern.a).abs() < 1e-3,
+                        "H-edge mismatch rho={}: {} vs {}",
+                        rho,
+                        d_right,
+                        pattern.a
+                    );
 
                     let p_down = verts[idx + pattern.cols];
                     let d_down = nalgebra::distance(&p, &p_down);
-                    assert!((d_down - pattern.b).abs() < 1e-3, "V-edge mismatch rho={}: {} vs {}", rho, d_down, pattern.b);
+                    assert!(
+                        (d_down - pattern.b).abs() < 1e-3,
+                        "V-edge mismatch rho={}: {} vs {}",
+                        rho,
+                        d_down,
+                        pattern.b
+                    );
                 }
             }
         }
