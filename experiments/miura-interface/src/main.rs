@@ -41,9 +41,21 @@ fn dim_color(color: Color, factor: f64) -> Color {
         Color::Yellow => Color::Rgb((255.0 * factor) as u8, (255.0 * factor) as u8, 0),
         Color::Cyan => Color::Rgb(0, (255.0 * factor) as u8, (255.0 * factor) as u8),
         Color::Magenta => Color::Rgb((255.0 * factor) as u8, 0, (255.0 * factor) as u8),
-        Color::White => Color::Rgb((255.0 * factor) as u8, (255.0 * factor) as u8, (255.0 * factor) as u8),
-        Color::Gray => Color::Rgb((128.0 * factor) as u8, (128.0 * factor) as u8, (128.0 * factor) as u8),
-        Color::DarkGray => Color::Rgb((64.0 * factor) as u8, (64.0 * factor) as u8, (64.0 * factor) as u8),
+        Color::White => Color::Rgb(
+            (255.0 * factor) as u8,
+            (255.0 * factor) as u8,
+            (255.0 * factor) as u8,
+        ),
+        Color::Gray => Color::Rgb(
+            (128.0 * factor) as u8,
+            (128.0 * factor) as u8,
+            (128.0 * factor) as u8,
+        ),
+        Color::DarkGray => Color::Rgb(
+            (64.0 * factor) as u8,
+            (64.0 * factor) as u8,
+            (64.0 * factor) as u8,
+        ),
         c => c, // fallback
     }
 }
@@ -175,9 +187,10 @@ impl App {
                     self.auto_responsive = false;
                     self.target_rho = (self.target_rho + 0.1).clamp(0.0, 1.0)
                 }
-                KeyCode::Up => { // Also control fold with Up/Down
+                KeyCode::Up => {
+                    // Also control fold with Up/Down
                     self.auto_responsive = false;
-                     self.target_rho = (self.target_rho + 0.1).clamp(0.0, 1.0)
+                    self.target_rho = (self.target_rho + 0.1).clamp(0.0, 1.0)
                 }
                 KeyCode::Down => {
                     self.auto_responsive = false;
@@ -198,7 +211,8 @@ impl App {
                     if let Err(e) = fs::write("miura_cp.svg", svg) {
                         self.message = Some((format!("Error: {}", e), Instant::now()));
                     } else {
-                        self.message = Some(("Exported to miura_cp.svg".to_string(), Instant::now()));
+                        self.message =
+                            Some(("Exported to miura_cp.svg".to_string(), Instant::now()));
                     }
                 }
                 _ => {}
@@ -280,11 +294,7 @@ fn draw_ui(f: &mut Frame, app: &App) {
     };
 
     let canvas = Canvas::default()
-        .block(
-            Block::default()
-                .borders(Borders::ALL)
-                .title(title),
-        )
+        .block(Block::default().borders(Borders::ALL).title(title))
         .x_bounds(x_bounds)
         .y_bounds(y_bounds)
         .paint(|ctx| {
@@ -303,12 +313,20 @@ fn draw_ui(f: &mut Frame, app: &App) {
                         let idx2 = r * cols + (c + 1);
                         let (x2, y2) = projected[idx2];
                         let color = if app.view_mode == ViewMode::CreasePattern {
-                             if (r+c)%2 == 0 { Color::Red } else { Color::Blue } // Mountain/Valley
+                            if (r + c) % 2 == 0 {
+                                Color::Red
+                            } else {
+                                Color::Blue
+                            } // Mountain/Valley
                         } else {
-                             Color::DarkGray
+                            Color::DarkGray
                         };
                         ctx.draw(&CanvasLine {
-                            x1, y1, x2, y2, color
+                            x1,
+                            y1,
+                            x2,
+                            y2,
+                            color,
                         });
                     }
 
@@ -317,12 +335,20 @@ fn draw_ui(f: &mut Frame, app: &App) {
                         let idx2 = (r + 1) * cols + c;
                         let (x2, y2) = projected[idx2];
                         let color = if app.view_mode == ViewMode::CreasePattern {
-                             if (r+c)%2 == 1 { Color::Red } else { Color::Blue }
+                            if (r + c) % 2 == 1 {
+                                Color::Red
+                            } else {
+                                Color::Blue
+                            }
                         } else {
-                             Color::DarkGray
+                            Color::DarkGray
                         };
                         ctx.draw(&CanvasLine {
-                            x1, y1, x2, y2, color
+                            x1,
+                            y1,
+                            x2,
+                            y2,
+                            color,
                         });
                     }
                 }
@@ -353,7 +379,8 @@ fn draw_ui(f: &mut Frame, app: &App) {
                     let p0 = projected[indices[0]];
                     let p1 = projected[indices[1]];
                     let dist = (p0.0 - p1.0).hypot(p0.1 - p1.1);
-                    let screen_width = dist / (x_bounds[1] - x_bounds[0]) * canvas_area.width as f64;
+                    let screen_width =
+                        dist / (x_bounds[1] - x_bounds[0]) * canvas_area.width as f64;
 
                     if screen_width > 4.0 {
                         let rect_w = (screen_width * 0.9) as u16;
@@ -384,13 +411,21 @@ fn draw_ui(f: &mut Frame, app: &App) {
                                         .next_back()
                                         .unwrap_or(&entry.location);
                                     // Text color contrast
-                                    let fg = if dim_factor < 0.5 { Color::White } else { Color::Black };
+                                    let fg = if dim_factor < 0.5 {
+                                        Color::White
+                                    } else {
+                                        Color::Black
+                                    };
                                     let p = Paragraph::new(name)
                                         .style(Style::default().fg(fg).bg(panel_color));
                                     f.render_widget(p, visible_rect);
                                 } else {
                                     let text = format!("{} - {}", entry.scent_origin, entry.status);
-                                    let fg = if dim_factor < 0.5 { Color::White } else { Color::Black };
+                                    let fg = if dim_factor < 0.5 {
+                                        Color::White
+                                    } else {
+                                        Color::Black
+                                    };
                                     let p = Paragraph::new(text)
                                         .style(Style::default().fg(fg).bg(panel_color));
                                     f.render_widget(p, visible_rect);
@@ -408,11 +443,16 @@ fn draw_ui(f: &mut Frame, app: &App) {
     }
 
     let status_text = if let Some((msg, _)) = &app.message {
-         format!("MSG: {}", msg)
+        format!("MSG: {}", msg)
     } else {
-         format!(
+        format!(
             "Rho: {:.2} (Target: {:.2}) | Mode: {} | 'C' Toggle CP | 'E' Export",
-            app.rho, app.target_rho, match app.view_mode { ViewMode::Fold => "FOLD", ViewMode::CreasePattern => "CP" }
+            app.rho,
+            app.target_rho,
+            match app.view_mode {
+                ViewMode::Fold => "FOLD",
+                ViewMode::CreasePattern => "CP",
+            }
         )
     };
 

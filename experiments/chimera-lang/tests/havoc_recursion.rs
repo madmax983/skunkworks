@@ -25,8 +25,15 @@ mod tests {
 
         println!("Compiling deeply nested junction of depth {}", depth);
         let result = compile(&src, None);
-        assert!(result.is_err(), "Expected compilation error due to recursion depth");
+        assert!(
+            result.is_err(),
+            "Expected compilation error due to recursion depth"
+        );
         let err = result.unwrap_err();
-        assert!(err.to_string().contains("Recursion depth exceeded"), "Expected specific recursion error, got: {}", err);
+        assert!(
+            err.to_string().contains("Recursion depth exceeded"),
+            "Expected specific recursion error, got: {}",
+            err
+        );
     }
 }

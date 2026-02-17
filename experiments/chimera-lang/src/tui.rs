@@ -1902,14 +1902,24 @@ where
                                 #[cfg(feature = "nova")]
                                 ViewMode::Virology => {
                                     match app_state.virus_design_focus {
-                                        0 => app_state.virus_design_name = app_state.input_buffer.clone(),
-                                        1 => app_state.virus_design_pattern = app_state.input_buffer.clone(),
-                                        2 => if let Ok(n) = app_state.input_buffer.parse::<u8>() {
-                                            app_state.virus_design_rate = n.clamp(0, 100);
-                                        },
-                                        3 => if let Ok(n) = app_state.input_buffer.parse::<i64>() {
-                                            app_state.virus_design_payload = n;
-                                        },
+                                        0 => {
+                                            app_state.virus_design_name =
+                                                app_state.input_buffer.clone()
+                                        }
+                                        1 => {
+                                            app_state.virus_design_pattern =
+                                                app_state.input_buffer.clone()
+                                        }
+                                        2 => {
+                                            if let Ok(n) = app_state.input_buffer.parse::<u8>() {
+                                                app_state.virus_design_rate = n.clamp(0, 100);
+                                            }
+                                        }
+                                        3 => {
+                                            if let Ok(n) = app_state.input_buffer.parse::<i64>() {
+                                                app_state.virus_design_payload = n;
+                                            }
+                                        }
                                         _ => {}
                                     }
                                     app_state.input_mode = InputMode::Normal;
@@ -10667,7 +10677,9 @@ fn render_virology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         )
         .split(right_chunks[1]);
 
-    let focused_style = Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD);
+    let focused_style = Style::default()
+        .fg(Color::Yellow)
+        .add_modifier(Modifier::BOLD);
     let default_style = Style::default().fg(Color::White);
 
     let mut draw_field = |title: &str, value: &str, focus_idx: u8, chunk_idx: usize| {
@@ -10687,18 +10699,8 @@ fn render_virology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         f.render_widget(widget, designer_chunks[chunk_idx]);
     };
 
-    draw_field(
-        "Name (0)",
-        &app_state.virus_design_name,
-        0,
-        0,
-    );
-    draw_field(
-        "Target Pattern (1)",
-        &app_state.virus_design_pattern,
-        1,
-        1,
-    );
+    draw_field("Name (0)", &app_state.virus_design_name, 0, 0);
+    draw_field("Target Pattern (1)", &app_state.virus_design_pattern, 1, 1);
     draw_field(
         "Mutation Rate % (2)",
         &app_state.virus_design_rate.to_string(),
@@ -11598,12 +11600,13 @@ fn render_akashic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     // Bottom-Left: Memories (Snapshots)
     let mut mem_items = Vec::new();
     for k in vm.akashic.memories.keys() {
-        mem_items.push(ListItem::new(format!("Memory: {}", k)).style(Style::default().fg(Color::Magenta)));
+        mem_items.push(
+            ListItem::new(format!("Memory: {}", k)).style(Style::default().fg(Color::Magenta)),
+        );
     }
     if mem_items.is_empty() {
-        mem_items.push(
-            ListItem::new("No Memories Saved.").style(Style::default().fg(Color::DarkGray)),
-        );
+        mem_items
+            .push(ListItem::new("No Memories Saved.").style(Style::default().fg(Color::DarkGray)));
     }
 
     let mem_list = List::new(mem_items).block(

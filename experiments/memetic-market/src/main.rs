@@ -6,17 +6,15 @@ use crossterm::{
 };
 use ratatui::{
     prelude::*,
-    widgets::{
-        Block, Borders, Chart, Dataset, GraphType, List, ListItem, Axis,
-    },
     symbols,
+    widgets::{Axis, Block, Borders, Chart, Dataset, GraphType, List, ListItem},
 };
 use std::{
     io,
     time::{Duration, Instant},
 };
 
-use memetic_market::sim::{Market, Topic, Agent, Strategy};
+use memetic_market::sim::{Agent, Market, Strategy, Topic};
 use rand::Rng;
 
 fn main() -> Result<()> {
@@ -121,7 +119,9 @@ fn ui(f: &mut Frame, market: &Market, selected_topic_index: usize) {
         .enumerate()
         .map(|(i, t)| {
             let style = if i == selected_topic_index {
-                Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+                Style::default()
+                    .fg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD)
             } else {
                 Style::default()
             };
@@ -138,8 +138,11 @@ fn ui(f: &mut Frame, market: &Market, selected_topic_index: usize) {
         })
         .collect();
 
-    let list = List::new(items)
-        .block(Block::default().borders(Borders::ALL).title("Topics (Up/Down to Select)"));
+    let list = List::new(items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Topics (Up/Down to Select)"),
+    );
     f.render_widget(list, left_chunks[0]);
 
     // 2. Agent Leaderboard
@@ -149,14 +152,18 @@ fn ui(f: &mut Frame, market: &Market, selected_topic_index: usize) {
     let mut rich_agents: Vec<&Agent> = market.agents.iter().collect();
     rich_agents.sort_by(|a, b| b.cash.total_cmp(&a.cash));
 
-    let agent_items: Vec<ListItem> = rich_agents.iter().take(10).map(|a| {
-        ListItem::new(format!("{}: ${:.2} ({:?})", a.name, a.cash, a.strategy))
-    }).collect();
+    let agent_items: Vec<ListItem> = rich_agents
+        .iter()
+        .take(10)
+        .map(|a| ListItem::new(format!("{}: ${:.2} ({:?})", a.name, a.cash, a.strategy)))
+        .collect();
 
-    let agent_list = List::new(agent_items)
-        .block(Block::default().borders(Borders::ALL).title("Top Agents (Cash)"));
+    let agent_list = List::new(agent_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Top Agents (Cash)"),
+    );
     f.render_widget(agent_list, left_chunks[1]);
-
 
     // 3. Chart
     if let Some(topic) = market.topics.get(selected_topic_index) {
@@ -174,25 +181,35 @@ fn ui(f: &mut Frame, market: &Market, selected_topic_index: usize) {
                 .graph_type(GraphType::Line)
                 .style(Style::default().fg(Color::Cyan))
                 .data(&data),
-             Dataset::default()
+            Dataset::default()
                 .name("Intrinsic Value")
-                 .marker(symbols::Marker::Dot)
-                 .graph_type(GraphType::Line)
-                 .style(Style::default().fg(Color::Green))
-                 // Just a horizontal line for intrinsic value for now, or we track it if we stored history
-                 .data(&[]),
+                .marker(symbols::Marker::Dot)
+                .graph_type(GraphType::Line)
+                .style(Style::default().fg(Color::Green))
+                // Just a horizontal line for intrinsic value for now, or we track it if we stored history
+                .data(&[]),
         ];
 
-        let min_price = topic.history.iter().cloned().fold(f64::INFINITY, f64::min).min(topic.intrinsic_value * 0.5);
-        let max_price = topic.history.iter().cloned().fold(f64::NEG_INFINITY, f64::max).max(topic.intrinsic_value * 1.5);
+        let min_price = topic
+            .history
+            .iter()
+            .cloned()
+            .fold(f64::INFINITY, f64::min)
+            .min(topic.intrinsic_value * 0.5);
+        let max_price = topic
+            .history
+            .iter()
+            .cloned()
+            .fold(f64::NEG_INFINITY, f64::max)
+            .max(topic.intrinsic_value * 1.5);
 
         let chart = Chart::new(datasets)
-            .block(Block::default().borders(Borders::ALL).title(format!("{} Hype Cycle", topic.name)))
-            .x_axis(
-                Axis::default()
-                    .title("Time")
-                    .bounds([0.0, 100.0])
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title(format!("{} Hype Cycle", topic.name)),
             )
+            .x_axis(Axis::default().title("Time").bounds([0.0, 100.0]))
             .y_axis(
                 Axis::default()
                     .title("Price")
@@ -201,7 +218,7 @@ fn ui(f: &mut Frame, market: &Market, selected_topic_index: usize) {
                         Span::raw(format!("{:.1}", min_price)),
                         Span::raw(format!("{:.1}", (min_price + max_price) / 2.0)),
                         Span::raw(format!("{:.1}", max_price)),
-                    ])
+                    ]),
             );
         f.render_widget(chart, chunks[1]);
     }

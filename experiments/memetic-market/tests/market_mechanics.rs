@@ -1,14 +1,9 @@
-use memetic_market::sim::{Market, Topic, Agent, Strategy, MarketPhase};
+use memetic_market::sim::{Agent, Market, MarketPhase, Strategy, Topic};
 
 #[test]
 fn test_market_initialization() {
-    let topics = vec![
-        Topic::new("RUST", 100.0),
-        Topic::new("AI", 200.0),
-    ];
-    let agents = vec![
-        Agent::new("Alice", Strategy::TrendFollower, 1000.0),
-    ];
+    let topics = vec![Topic::new("RUST", 100.0), Topic::new("AI", 200.0)];
+    let agents = vec![Agent::new("Alice", Strategy::TrendFollower, 1000.0)];
     let market = Market::new(topics, agents);
 
     assert_eq!(market.topics.len(), 2);
@@ -40,7 +35,10 @@ fn test_price_discovery() {
     // Or Price = Base + Demand.
     // If agent put 100 in, price should reflect that.
     // Let's assert it increased from 1.0.
-    assert!(updated_topic.market_price > 1.0, "Price should increase when attention is allocated");
+    assert!(
+        updated_topic.market_price > 1.0,
+        "Price should increase when attention is allocated"
+    );
 }
 
 #[test]
@@ -59,5 +57,10 @@ fn test_bubble_formation() {
     let intrinsic = market.get_topic("VAPORWARE").unwrap().intrinsic_value;
 
     // A bubble is defined as Price >> Intrinsic.
-    assert!(price > intrinsic * 2.0, "Price {} should be > 2x Intrinsic {} (Bubble)", price, intrinsic);
+    assert!(
+        price > intrinsic * 2.0,
+        "Price {} should be > 2x Intrinsic {} (Bubble)",
+        price,
+        intrinsic
+    );
 }
