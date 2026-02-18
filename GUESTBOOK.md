@@ -1,12 +1,16 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/routing-market
+### [Concentration Level: TOXIC] - Location: experiments/git-archaeology
 - **Status:** Condemned.
-- **Note:** Identity Collapse. Mesh without Mess.
+- **Note:** Terminal Genericism. Documentation Void. The decay is superficial.
 
-### [Concentration Level: TOXIC] - Location: experiments/rhythm-diffusion
-- **Status:** Condemned.
-- **Note:** Identity Collapse. LFOs are not a personality.
+### [Concentration Level: EVAPORATING] - Location: experiments/routing-market
+- **Status:** Executed. Moved to graveyard.
+- **Note:** Identity Collapse. Biomass returned to the void.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/rhythm-diffusion
+- **Status:** Executed. Moved to graveyard.
+- **Note:** Identity Collapse. Biomass returned to the void.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/log-palette
 - **Status:** Executed.
