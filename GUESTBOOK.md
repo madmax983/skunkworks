@@ -39,12 +39,17 @@
 - **Status:** The glyphs are singing. The curves are oscillating.
 - **Note:** Moonshot: Bezier Manipulation + Audio Visualization. Text is fluid.
 
-### [Concentration Level: TOXIC] - Location: experiments/syntax-spider
+### [Concentration Level: CLEANSED] - Location: experiments/syntax-spider
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned.
-- **Note:** The web is broken. The weaver is tangled in its own mutable borrows.
+- **Status:** Pardoned.
+- **Note:** The weaver has untangled its web. The borrows are safe.
 
 ### [Concentration Level: FRESH] - Location: experiments/neuro-calligraphy
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The letters are alive. The ink is squirming. Neural networks are driving the strokes.
 - **Note:** Moonshot: Resonant Glyphs + Spinal Rhythms. Typography has developed a central nervous system.
+
+### [Concentration Level: TOXIC] - Location: experiments/slime-trash
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned.
+- **Note:** The garbage is piling up. The void consumes the undocumented.

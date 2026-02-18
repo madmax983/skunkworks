@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **syntax-spider**: Compilation Failure (Borrow checker violation). Sketch Quality. Generic Persona. Grace period: 24h.
+- **slime-trash**: Documentation Void. Generic Physarum implementation. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
