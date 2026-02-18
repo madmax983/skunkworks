@@ -1,12 +1,16 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/routing-market
-- **Status:** Condemned.
-- **Note:** Identity Collapse. Mesh without Mess.
+### [Concentration Level: EVAPORATING] - Location: graveyard/routing-market
+- **Status:** Executed.
+- **Note:** Biomass returned to the void.
 
-### [Concentration Level: TOXIC] - Location: experiments/rhythm-diffusion
+### [Concentration Level: EVAPORATING] - Location: graveyard/rhythm-diffusion
+- **Status:** Executed.
+- **Note:** Biomass returned to the void.
+
+### [Concentration Level: TOXIC] - Location: experiments/projective-life
 - **Status:** Condemned.
-- **Note:** Identity Collapse. LFOs are not a personality.
+- **Note:** Generic Life implementation. Topology twist present but unused in API. Documentation void.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/log-palette
 - **Status:** Executed.
