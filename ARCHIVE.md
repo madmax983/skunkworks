@@ -1,6 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **routing-market**: Terminal Genericism. Identity Collapse. Inferior to `market-flow` and `spqr-market`. Grace period: 24h.
-- **rhythm-diffusion**: Terminal Genericism. Identity Collapse. Inferior to `reaction-monitor`. Grace period: 24h.
+- **projective-life**: Terminal Genericism. Documentation Void. Unused topology implementation. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -13,6 +12,8 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **routing-market**: Specimen executed. Terminal Genericism. Identity Collapse. Grace period expired. Moved to graveyard.
+- **rhythm-diffusion**: Specimen executed. Terminal Genericism. Identity Collapse. Grace period expired. Moved to graveyard.
 - **log-palette**: Specimen executed. Documentation Void. Terminal Genericism. Lacks persona alignment. Grace period expired. Moved to graveyard.
 - **data-strider**: Specimen executed. Skeletal Rot. Void Documentation. Redundant with `ik-codewalker`. Grace period expired. Moved to graveyard.
 - **digital-decay**: Specimen executed. Superseded by `digital-compost`. Grace period expired. Biomass returned to the void.
