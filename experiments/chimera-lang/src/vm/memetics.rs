@@ -518,16 +518,19 @@ pub fn exec_memetics_op(
                                                                 virus.mutation_rate as f64 / 100.0,
                                                             );
                                                         // This pushes a new strand
-                                                        let new_idx = crate::vm::babel::compile_cst(
+                                                        if let Some(new_idx) = crate::vm::babel::compile_cst(
                                                             vm,
                                                             mutated_cst,
                                                             strand_idx,
-                                                        );
-                                                        // Update Organelle
-                                                        if idx < vm.organelles.len() {
-                                                            vm.organelles[idx].ip = (new_idx, 0);
-                                                            vm.output.push(format!("REWRITE: Virus {} rewrote Organelle {} DNA to Strand {}", state.virus_id, vm.organelles[idx].name, new_idx));
-                                                            mutation_count += 1;
+                                                        ) {
+                                                            // Update Organelle
+                                                            if idx < vm.organelles.len() {
+                                                                vm.organelles[idx].ip = (new_idx, 0);
+                                                                vm.output.push(format!("REWRITE: Virus {} rewrote Organelle {} DNA to Strand {}", state.virus_id, vm.organelles[idx].name, new_idx));
+                                                                mutation_count += 1;
+                                                            }
+                                                        } else {
+                                                            vm.output.push("REWRITE: Compilation failed (Recursion limit)".to_string());
                                                         }
                                                     }
                                                 }

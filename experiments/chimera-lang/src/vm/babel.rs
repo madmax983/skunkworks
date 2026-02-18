@@ -20,8 +20,13 @@ pub fn exec_babel_op(
 
                 if let Value::Int(handler_idx) = handler_val {
                     if handler_idx >= 0 {
-                        let new_idx = compile_cst(vm, cst_val, handler_idx as usize);
-                        vm.stack.push(Value::Int(new_idx as i64));
+                        if let Some(new_idx) = compile_cst(vm, cst_val, handler_idx as usize) {
+                            vm.stack.push(Value::Int(new_idx as i64));
+                        } else {
+                            vm.output
+                                .push("Error: Compilation failed (Recursion limit)".to_string());
+                            vm.stack.push(Value::Int(-1));
+                        }
                     } else {
                         vm.output
                             .push("Error: Invalid handler index for BabelCompile".to_string());
@@ -229,10 +234,16 @@ pub fn exec_babel_op(
             if vm.stack.len() >= 2 {
                 let p2 = vm.stack.pop().unwrap();
                 let p1 = vm.stack.pop().unwrap();
-                vm.stack.push(Value::Junction(
-                    JunctionType::Any,
-                    vec![Value::Str("Seq".to_string()), p1, p2],
-                ));
+                if p1.depth() > 500 || p2.depth() > 500 {
+                    vm.output.push("Error: Parser depth limit exceeded".to_string());
+                    vm.stack.push(p1); // Restore stack roughly?
+                    vm.stack.push(p2);
+                } else {
+                    vm.stack.push(Value::Junction(
+                        JunctionType::Any,
+                        vec![Value::Str("Seq".to_string()), p1, p2],
+                    ));
+                }
             } else {
                 vm.output
                     .push("Error: Stack underflow for ParserSeq".to_string());
@@ -248,8 +259,18 @@ pub fn exec_babel_op(
                         items.push(vm.stack.pop().unwrap());
                     }
                     items.reverse();
-                    args.extend(items);
-                    vm.stack.push(Value::Junction(JunctionType::Any, args));
+
+                    let max_depth = items.iter().map(|v| v.depth()).max().unwrap_or(0);
+                    if max_depth > 500 {
+                        vm.output.push("Error: Parser depth limit exceeded".to_string());
+                        // Push back?
+                        for item in items {
+                            vm.stack.push(item);
+                        }
+                    } else {
+                        args.extend(items);
+                        vm.stack.push(Value::Junction(JunctionType::Any, args));
+                    }
                 } else {
                     vm.output
                         .push("Error: Stack underflow for ParserSeqN".to_string());
@@ -263,10 +284,16 @@ pub fn exec_babel_op(
             if vm.stack.len() >= 2 {
                 let p2 = vm.stack.pop().unwrap();
                 let p1 = vm.stack.pop().unwrap();
-                vm.stack.push(Value::Junction(
-                    JunctionType::Any,
-                    vec![Value::Str("Alt".to_string()), p1, p2],
-                ));
+                if p1.depth() > 500 || p2.depth() > 500 {
+                    vm.output.push("Error: Parser depth limit exceeded".to_string());
+                    vm.stack.push(p1);
+                    vm.stack.push(p2);
+                } else {
+                    vm.stack.push(Value::Junction(
+                        JunctionType::Any,
+                        vec![Value::Str("Alt".to_string()), p1, p2],
+                    ));
+                }
             } else {
                 vm.output
                     .push("Error: Stack underflow for ParserAlt".to_string());
@@ -282,8 +309,17 @@ pub fn exec_babel_op(
                         items.push(vm.stack.pop().unwrap());
                     }
                     items.reverse();
-                    args.extend(items);
-                    vm.stack.push(Value::Junction(JunctionType::Any, args));
+
+                    let max_depth = items.iter().map(|v| v.depth()).max().unwrap_or(0);
+                    if max_depth > 500 {
+                        vm.output.push("Error: Parser depth limit exceeded".to_string());
+                        for item in items {
+                            vm.stack.push(item);
+                        }
+                    } else {
+                        args.extend(items);
+                        vm.stack.push(Value::Junction(JunctionType::Any, args));
+                    }
                 } else {
                     vm.output
                         .push("Error: Stack underflow for ParserAltN".to_string());
@@ -295,10 +331,15 @@ pub fn exec_babel_op(
         }
         OpCode::ParserMany => {
             if let Some(p) = vm.stack.pop() {
-                vm.stack.push(Value::Junction(
-                    JunctionType::Any,
-                    vec![Value::Str("Many".to_string()), p],
-                ));
+                if p.depth() > 500 {
+                    vm.output.push("Error: Parser depth limit exceeded".to_string());
+                    vm.stack.push(p);
+                } else {
+                    vm.stack.push(Value::Junction(
+                        JunctionType::Any,
+                        vec![Value::Str("Many".to_string()), p],
+                    ));
+                }
             } else {
                 vm.output
                     .push("Error: Stack underflow for ParserMany".to_string());
@@ -306,10 +347,15 @@ pub fn exec_babel_op(
         }
         OpCode::ParserOpt => {
             if let Some(p) = vm.stack.pop() {
-                vm.stack.push(Value::Junction(
-                    JunctionType::Any,
-                    vec![Value::Str("Opt".to_string()), p],
-                ));
+                if p.depth() > 500 {
+                    vm.output.push("Error: Parser depth limit exceeded".to_string());
+                    vm.stack.push(p);
+                } else {
+                    vm.stack.push(Value::Junction(
+                        JunctionType::Any,
+                        vec![Value::Str("Opt".to_string()), p],
+                    ));
+                }
             } else {
                 vm.output
                     .push("Error: Stack underflow for ParserOpt".to_string());
@@ -408,19 +454,22 @@ pub fn exec_babel_op(
                         Ok((cst, consumed)) => {
                             if consumed > 0 {
                                 let handler_idx = vm.ip.0;
-                                let new_idx = compile_cst(vm, cst, handler_idx);
-
-                                if vm.call_stack.len() < crate::vm::MAX_CALL_STACK_DEPTH {
-                                    vm.call_stack.push((vm.ip.0, vm.ip.1 + 1));
-                                    vm.stack.push(Value::Int(1)); // Success
-                                    vm.output.push(format!(
-                                        "PERCEIVE: Parsed '{}' -> Strand {}",
-                                        input[..consumed].to_string(),
-                                        new_idx
-                                    ));
-                                    return Some((new_idx, 0));
+                                if let Some(new_idx) = compile_cst(vm, cst, handler_idx) {
+                                    if vm.call_stack.len() < crate::vm::MAX_CALL_STACK_DEPTH {
+                                        vm.call_stack.push((vm.ip.0, vm.ip.1 + 1));
+                                        vm.stack.push(Value::Int(1)); // Success
+                                        vm.output.push(format!(
+                                            "PERCEIVE: Parsed '{}' -> Strand {}",
+                                            input[..consumed].to_string(),
+                                            new_idx
+                                        ));
+                                        return Some((new_idx, 0));
+                                    } else {
+                                        vm.output.push("PERCEIVE: Call stack full".to_string());
+                                        vm.stack.push(Value::Int(0));
+                                    }
                                 } else {
-                                    vm.output.push("PERCEIVE: Call stack full".to_string());
+                                    vm.output.push("PERCEIVE: Compilation failed".to_string());
                                     vm.stack.push(Value::Int(0));
                                 }
                             } else {
@@ -476,14 +525,17 @@ pub fn exec_ouroboros(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
             // 4. Compile to New Strand
             // We use current strand as handler for any recursive structures
-            let new_strand_idx = compile_cst(vm, mutated_cst, current_strand_idx);
-
-            // 5. Hot-Swap (Rebirth)
-            vm.output.push(format!(
-                "OUROBOROS: Strand {} rebirthed as {}",
-                current_strand_idx, new_strand_idx
-            ));
-            return Some((new_strand_idx, 0));
+            if let Some(new_strand_idx) = compile_cst(vm, mutated_cst, current_strand_idx) {
+                // 5. Hot-Swap (Rebirth)
+                vm.output.push(format!(
+                    "OUROBOROS: Strand {} rebirthed as {}",
+                    current_strand_idx, new_strand_idx
+                ));
+                return Some((new_strand_idx, 0));
+            } else {
+                vm.output
+                    .push("OUROBOROS: Compilation failed".to_string());
+            }
         } else {
             vm.output
                 .push("OUROBOROS: Failed to parse self.".to_string());
@@ -814,15 +866,20 @@ pub fn flatten_cst(cst: &Value) -> String {
     }
 }
 
-pub fn compile_cst(vm: &mut ChimeraVM, cst: Value, handler_idx: usize) -> usize {
+pub fn compile_cst(vm: &mut ChimeraVM, cst: Value, handler_idx: usize) -> Option<usize> {
     let mut genes = Vec::new();
-    compile_cst_recursive(&cst, &mut genes, handler_idx);
+    if compile_cst_recursive(&cst, &mut genes, handler_idx, 0).is_err() {
+        return None;
+    }
 
     vm.dna.helix.strands.push(Strand { genes });
-    vm.dna.helix.strands.len() - 1
+    Some(vm.dna.helix.strands.len() - 1)
 }
 
-fn compile_cst_recursive(val: &Value, genes: &mut Vec<Gene>, handler_idx: usize) {
+fn compile_cst_recursive(val: &Value, genes: &mut Vec<Gene>, handler_idx: usize, depth: usize) -> Result<(), ()> {
+    if depth > 500 {
+        return Err(());
+    }
     match val {
         Value::Int(n) => {
             genes.push(Gene {
@@ -838,7 +895,7 @@ fn compile_cst_recursive(val: &Value, genes: &mut Vec<Gene>, handler_idx: usize)
         }
         Value::Junction(t, children) => {
             for child in children {
-                compile_cst_recursive(child, genes, handler_idx);
+                compile_cst_recursive(child, genes, handler_idx, depth + 1)?;
             }
             // Push Type
             let t_str = match t {
@@ -865,7 +922,7 @@ fn compile_cst_recursive(val: &Value, genes: &mut Vec<Gene>, handler_idx: usize)
             // Treat like a junction but with specific tag?
             // "Superposition"
             for (v, p) in states {
-                compile_cst_recursive(v, genes, handler_idx);
+                compile_cst_recursive(v, genes, handler_idx, depth + 1)?;
                 genes.push(Gene {
                     op: OpCode::Push,
                     args: vec![Nucleotide::Number((p * 1000.0) as i64)], // Prob as int 0-1000
@@ -891,6 +948,7 @@ fn compile_cst_recursive(val: &Value, genes: &mut Vec<Gene>, handler_idx: usize)
             });
         }
     }
+    Ok(())
 }
 
 pub fn read_grammar_from_grid(vm: &ChimeraVM, y: usize, x: usize) -> Value {
