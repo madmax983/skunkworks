@@ -3,10 +3,11 @@ mod layout;
 mod tiling;
 mod ui;
 
-use fs::{get_repo_statuses, scan_dir, FileType, GitStatus};
+use fs::{get_repo_statuses, get_view_root, FileType, GitStatus};
 use layout::{layout_tree, LayoutNode};
 use macroquad::prelude::*;
 use poincare_disk::{mobius_add, mobius_sub, Point};
+use std::path::PathBuf;
 use ui::Button;
 
 const DISK_SCALE: f32 = 0.45;
@@ -19,12 +20,13 @@ async fn main() -> anyhow::Result<()> {
     let mut git_map = get_repo_statuses(&current_path);
 
     // Root of the current visualization
-    let mut fs_root = scan_dir(&current_path, 5, &git_map)?;
+    let mut fs_root = get_view_root(&current_path, 5, &git_map)?;
     let mut layout_root = layout_tree(fs_root.clone());
 
     // Navigation State
     let mut view_center = Point::new(0.0, 0.0);
     let mut target_center = Point::new(0.0, 0.0);
+    let mut navigating_to: Option<PathBuf> = None;
 
     // Starfield (Points in the unit disk)
     let stars: Vec<Point> = (0..500)
@@ -86,10 +88,9 @@ async fn main() -> anyhow::Result<()> {
                     0.05, // hit radius
                 ) {
                     if clicked_node.node.is_dir {
-                        // If directory, center on it
+                        // If directory, center on it and prepare to navigate
                         target_center = clicked_pos;
-                        // TODO: If it's a deep directory, maybe re-root?
-                        // For now, just center.
+                        navigating_to = Some(clicked_node.node.path.clone());
                     } else {
                         // File action
                         println!("Clicked file: {:?}", clicked_node.node.path);
@@ -108,6 +109,26 @@ async fn main() -> anyhow::Result<()> {
         if diff.norm() > 0.0001 {
             if !is_dragging {
                 view_center = view_center + diff * 0.1;
+            }
+        } else if let Some(path) = navigating_to.take() {
+            // We reached the target! Switch context.
+            // If the path is different from current, reload
+            if path != current_path {
+                // If path is ".." we need to be careful, but get_view_root adds ".." with the PARENT path.
+                // So clicked_node.node.path IS the parent path.
+                current_path = path;
+                git_map = get_repo_statuses(&current_path);
+                match get_view_root(&current_path, 5, &git_map) {
+                    Ok(new_root) => {
+                        fs_root = new_root;
+                        layout_root = layout_tree(fs_root.clone());
+                        target_center = Point::new(0.0, 0.0);
+                        view_center = Point::new(0.0, 0.0);
+                    }
+                    Err(e) => {
+                        eprintln!("Failed to scan directory: {}", e);
+                    }
+                }
             }
         }
 
@@ -168,7 +189,7 @@ async fn main() -> anyhow::Result<()> {
             if let Some(parent) = current_path.parent() {
                 let parent_buf = parent.to_path_buf();
                 git_map = get_repo_statuses(&parent_buf);
-                if let Ok(new_root) = scan_dir(&parent_buf, 5, &git_map) {
+                if let Ok(new_root) = get_view_root(&parent_buf, 5, &git_map) {
                     current_path = parent_buf;
                     fs_root = new_root;
                     layout_root = layout_tree(fs_root.clone());
@@ -192,7 +213,7 @@ async fn main() -> anyhow::Result<()> {
                 let parent_buf = parent.to_path_buf();
                 // Re-scan from parent
                 git_map = get_repo_statuses(&parent_buf);
-                if let Ok(new_root) = scan_dir(&parent_buf, 5, &git_map) {
+                if let Ok(new_root) = get_view_root(&parent_buf, 5, &git_map) {
                     current_path = parent_buf;
                     fs_root = new_root;
                     layout_root = layout_tree(fs_root.clone());

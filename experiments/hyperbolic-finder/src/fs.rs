@@ -201,6 +201,32 @@ pub fn scan_dir<P: AsRef<Path>>(
     Ok(node)
 }
 
+pub fn get_view_root(
+    path: &Path,
+    max_depth: usize,
+    git_map: &HashMap<PathBuf, GitStatus>,
+) -> Result<DirNode> {
+    let mut root = scan_dir(path, max_depth, git_map)?;
+
+    // Add ".." if parent exists
+    if let Some(parent) = path.parent() {
+        let parent_node = DirNode {
+            path: parent.to_path_buf(),
+            name: "..".to_string(),
+            is_dir: true,
+            file_type: FileType::Directory,
+            children: Vec::new(),
+            self_size: 0,
+            total_size: 0, // Keep it small so it doesn't dominate layout
+            git_status: None,
+        };
+        // Insert at beginning
+        root.children.insert(0, parent_node);
+    }
+
+    Ok(root)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -258,6 +284,34 @@ mod tests {
             .find(|c| c.name == "clean_file.txt")
             .unwrap();
         assert_eq!(mod_node.git_status, Some(GitStatus::Modified));
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_get_view_root_has_parent() -> Result<()> {
+        let dir = tempdir()?;
+        let root = dir.path();
+
+        // Create subdir structure: root/child/grandchild
+        let child = root.join("child");
+        fs::create_dir(&child)?;
+        let grandchild = child.join("grandchild");
+        fs::create_dir(&grandchild)?;
+
+        let git_map = HashMap::new();
+
+        // Test 1: Root view (no parent)
+        // tempdir creates a dir in /tmp, so it DOES have a parent (/tmp).
+        // scan_dir uses absolute paths.
+        // We need to be careful. tempdir path usually has parents.
+
+        let node = get_view_root(&child, 1, &git_map)?;
+
+        // Should have ".." pointing to root
+        let parent_node = node.children.iter().find(|c| c.name == "..");
+        assert!(parent_node.is_some());
+        assert_eq!(parent_node.unwrap().path, root);
 
         Ok(())
     }

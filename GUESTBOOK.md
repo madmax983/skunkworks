@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-finder
+- **Scent Origin:** Genesis (The Cartographer) ⚛️🗺️
+- **Status:** The geometry is non-Euclidean. The folders are infinite.
+- **Note:** Moonshot: Hyperbolic File System + Infinite Navigation. "Bigger on the inside" implemented via coordinate re-rooting.
+
 ### [Concentration Level: FRESH] - Location: experiments/chimera-circuit
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The agents are flowing through the traces. The circuit is alive.
