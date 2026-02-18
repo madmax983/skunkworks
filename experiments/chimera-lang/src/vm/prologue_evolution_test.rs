@@ -1,12 +1,34 @@
 #[cfg(test)]
 mod tests {
-    use crate::ast::{Dna, Helix};
+    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
+    use crate::opcode::OpCode;
     use crate::vm::prologue::exec_prologue_tick;
     use crate::vm::{ChimeraVM, Value};
 
     fn setup_vm() -> ChimeraVM {
+        let genes0 = vec![Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(10)],
+        }];
+        // Strand 1: [ Add, Sub ]
+        let genes1 = vec![
+            Gene {
+                op: OpCode::Add,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Sub,
+                args: vec![],
+            }
+        ];
+
         let dna = Dna {
-            helix: Helix { strands: vec![] },
+            helix: Helix {
+                strands: vec![
+                    Strand { genes: genes0 }, // Index 0
+                    Strand { genes: genes1 }, // Index 1
+                ],
+            },
         };
         let mut vm = ChimeraVM::new(dna);
         vm.prologue_state.active = true;
@@ -14,99 +36,84 @@ mod tests {
     }
 
     #[test]
-    fn test_quantum_superposition() {
+    fn test_length_rune() {
         let mut vm = setup_vm();
-        // Setup: 10 -> ! -> q
-        vm.grid[4][4] = Value::Int(10);
+        // Setup: 1 (Idx) -> ! -> l
+        vm.grid[4][4] = Value::Int(1);
         vm.grid[5][4] = Value::Str("!".to_string());
-        vm.grid[5][5] = Value::Str("q".to_string());
+        vm.grid[5][5] = Value::Str("l".to_string());
 
         exec_prologue_tick(&mut vm);
 
-        // Check if q outputted superposition
+        // Check if l outputted 2 (length of strand 1)
         let output = &vm.prologue_state.signal_grid[5][5];
-        match output {
-            Some(Value::Superposition(states)) => {
-                assert_eq!(states.len(), 2);
-                // Check if it contains 10 and 11
-                let has_10 = states.iter().any(|(v, _)| *v == Value::Int(10));
-                let has_11 = states.iter().any(|(v, _)| *v == Value::Int(11));
-                assert!(has_10 && has_11);
-            }
-            _ => panic!("Expected Superposition, got {:?}", output),
-        }
+        assert_eq!(*output, Some(Value::Int(2)));
     }
 
     #[test]
-    fn test_quantum_measurement() {
+    fn test_nucleotide_rune() {
         let mut vm = setup_vm();
-        // Setup: Superposition -> ! -> m
-        let sup = Value::Superposition(vec![(Value::Int(1), 1.0)]); // 100% prob of 1
-        vm.grid[4][4] = sup;
-        vm.grid[5][4] = Value::Str("!".to_string());
-        vm.grid[5][5] = Value::Str("m".to_string());
+        // Setup:
+        //   1 (Gene Idx)
+        //   !
+        // 1 (Strand Idx) -> ! -> n
 
-        exec_prologue_tick(&mut vm);
-
-        // Check if m outputted collapsed value
-        let output = &vm.prologue_state.signal_grid[5][5];
-        assert_eq!(*output, Some(Value::Int(1)));
-    }
-
-    #[test]
-    fn test_teleportation() {
-        let mut vm = setup_vm();
-        // Setup Sender: 42 -> ! -> { <- 1 (Channel)
-        // 4,4: 42
-        // 5,4: !
-        // 5,5: {
-        // 4,5: 1 (Channel)
-        // 5,5 needs North signal. So 4,5 needs to be signal source.
-        // 3,5: 1
-        // 4,5: !
-
-        vm.grid[4][4] = Value::Int(42);
-        vm.grid[5][4] = Value::Str("!".to_string());
-
-        vm.grid[3][5] = Value::Int(1);
+        vm.grid[3][5] = Value::Int(1); // Gene 1 (Sub)
         vm.grid[4][5] = Value::Str("!".to_string());
 
-        vm.grid[5][5] = Value::Str("{".to_string());
+        vm.grid[4][4] = Value::Int(1); // Strand 1
+        vm.grid[5][4] = Value::Str("!".to_string());
 
-        // Setup Receiver: 1 (Channel) -> }
-        // 7,8: 1
-        // 8,8: !
-        // 9,8: }
+        vm.grid[5][5] = Value::Str("n".to_string());
 
-        vm.grid[7][8] = Value::Int(1);
-        vm.grid[8][8] = Value::Str("!".to_string());
-        vm.grid[9][8] = Value::Str("}".to_string());
-
-        // Tick 1: Teleport
         exec_prologue_tick(&mut vm);
 
-        // Check storage
-        assert!(vm.prologue_state.teleport_channels.contains_key(&1));
-        assert_eq!(
-            vm.prologue_state.teleport_channels.get(&1),
-            Some(&Value::Int(42))
-        );
+        // Check if n outputted "sub" (OpCode of gene 1 in strand 1)
+        let output = &vm.prologue_state.signal_grid[5][5];
+        assert_eq!(*output, Some(Value::Str("sub".to_string())));
+    }
 
-        // Tick 2: Receive
-        // Note: Receiver logic executes in same tick if order permits, but here we check across ticks to be safe.
-        // Actually, if we just ran tick 1, signals propagated.
-        // Did } receive in Tick 1?
-        // } is at 9,8. It needs North signal from 8,8.
-        // 8,8 is !. It reads 7,8 (Int 1).
-        // ! emits to signal grid at start of tick.
-        // So } should read it in Tick 1.
-        // And if teleport_channels was updated in same tick (by { at 5,5), } might read it if processed after?
-        // Current logic iterates propagation.
-        // But `teleport_channels` is updated instantly in `apply_teleport_runes`.
-        // So yes, it should work in one tick if iteration order hits { then }.
-        // Or multiple iterations of propagation.
-        // Let's check result of Tick 1.
+    #[test]
+    fn test_genesis_rune() {
+        let mut vm = setup_vm();
+        // Setup: "strand temp { add }" -> ! -> G
+        let code = "strand temp { add }";
+        vm.grid[3][5] = Value::Str(code.to_string());
+        vm.grid[4][5] = Value::Str("!".to_string());
+        vm.grid[5][5] = Value::Str("G".to_string());
 
-        assert_eq!(vm.prologue_state.signal_grid[9][8], Some(Value::Int(42)));
+        exec_prologue_tick(&mut vm);
+
+        if vm.prologue_state.signal_grid[5][5].is_none() {
+            println!("VM Output: {:?}", vm.output);
+        }
+
+        // Check if G created a new strand (Index 2) and outputted 2
+        let output = &vm.prologue_state.signal_grid[5][5];
+        assert_eq!(*output, Some(Value::Int(2)));
+        assert_eq!(vm.dna.helix.strands.len(), 3);
+    }
+
+    #[test]
+    fn test_evolve_rune() {
+        let mut vm = setup_vm();
+        // Setup: 1 (Idx) -> ! -> e
+        vm.grid[4][4] = Value::Int(1);
+        vm.grid[5][4] = Value::Str("!".to_string());
+        vm.grid[5][5] = Value::Str("e".to_string());
+
+        exec_prologue_tick(&mut vm);
+
+        // Check if e created a mutated copy (Index 2)
+        let output = &vm.prologue_state.signal_grid[5][5];
+        assert_eq!(*output, Some(Value::Int(2)));
+        assert_eq!(vm.dna.helix.strands.len(), 3);
+
+        // Check if new strand is different or same length (mutation might change length)
+        // Original strand 1 has length 2.
+        // Mutation logic: 50% delete, 50% duplicate.
+        // New length should be 1 or 3.
+        let new_len = vm.dna.helix.strands[2].genes.len();
+        assert!(new_len == 1 || new_len == 3);
     }
 }
