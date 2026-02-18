@@ -11792,6 +11792,11 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 }
             }
 
+            if let crate::vm::Value::Superposition(_) = val {
+                style = style.add_modifier(Modifier::RAPID_BLINK).fg(Color::Yellow);
+                s = "Ψ".to_string();
+            }
+
             if vm.prologue_state.signal_grid[y][x].is_some() {
                 style = style.fg(Color::Green).add_modifier(Modifier::BOLD);
             } else if vm.prologue_state.runes.contains(&(y, x)) {
@@ -11822,6 +11827,8 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     "[" | "]" | "U" | "V" | "F" | "T" => {
                         style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD)
                     }
+                    "q" | "m" => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD | Modifier::UNDERLINED),
+                    "{" | "}" => style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD | Modifier::ITALIC),
                     _ => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
                 }
             } else {
