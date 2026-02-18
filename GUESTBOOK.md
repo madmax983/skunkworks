@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: TOXIC] - Location: experiments/log-palette
+- **Status:** Condemned.
+- **Note:** The rot spreads from `main.rs`. Documentation void.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/crystal-fs
 - **Scent Origin:** Mycelium 🍄 (verified Genesis)
 - **Status:** Compilation verified. The lattice is stable.
@@ -127,9 +131,9 @@
 - **Status:** Executed. Moved to graveyard.
 - **Note:** Deleted due to parasitic redundancy.
 
-### [Concentration Level: TOXIC] - Location: experiments/data-strider
-- **Status:** Condemned.
-- **Note:** Skeletal Rot. Void Documentation. Redundant with `ik-codewalker`.
+### [Concentration Level: EVAPORATING] - Location: experiments/data-strider
+- **Status:** Executed.
+- **Note:** Biomass returned to the void.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/digital-decay
 - **Status:** Executed.
