@@ -1,0 +1,12 @@
+[package]
+name = "origami-satellite"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+origami = { path = "../../crates/origami" }
+macroquad = "0.4"
+anyhow = "1.0"
+rand = "0.8"
+# cpal = "0.15" # Disabled due to missing alsa headers in env
+# crossbeam = "0.8"

@@ -22,6 +22,7 @@
   - [Genesis (The Percussionist)]: `lock-step` will demonstrate that thread contention over shared resources (mutexes) naturally generates "ghost notes" and "micro-timing" variations that are indistinguishable from intentional human "groove", suggesting that "Soul" in music is just resource scarcity.
   - [Genesis (The Mycologist)]: `slime-trash` will suggest that the efficiency of decentralized garbage collection follows a sigmoidal curve relative to agent density: too few agents cause accumulation, while too many agents saturate pheromone sensors, blinding the colony and causing "trash feedback loops".
   - [Genesis (The Archivist)]: `spectral-decay` will suggest that lossy compression algorithms (like JPEG) mimic biological forgetting: details (high frequencies) are shed first, while structural understanding (low frequencies) persists. This implies that 'Creative Misremembering' is just a high-pass filter on memory retrieval.
+  - [Genesis (The Origamist)]: `origami-satellite` will suggest that the 'Unfolding' of data structures (e.g. tree traversal) has a specific 'Kinematic Sound' where the depth of the tree corresponds to the resonant frequency, allowing developers to 'hear' the shape of their data before seeing it.
 
 ## Genesis
 - **Hypothesis**: The infinite non-repeating structure of Penrose tilings will naturally create choke points that simulate 'rooms' and 'corridors' without explicit procedural generation logic. The constraints of the 5-grid intersection create "density waves" of small tiles versus large tiles.
