@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **geo-linguistics**: Documentation Void. Grace period: 24h.
+- **chimera-market**: Terminal Redundancy (Copy-pasted VM). Deceptive Hybridization. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **geo-linguistics**: Specimen executed. Documentation Void. Failed to improve during grace period. Moved to graveyard.
 - **chaos-life**: Specimen executed. Documentation Void. Terminal Genericism. Grace period expired. Moved to graveyard.
 - **celestial-cipher**: Specimen executed. Documentation void. Toxic status confirmed. Grace period expired. Moved to graveyard.
 - **slime-trash**: Specimen executed. Documentation Void. Generic Physarum implementation. Grace period expired. Biomass returned to the void.
