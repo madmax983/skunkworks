@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/clockwork-cpu
+- **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
+- **Status:** The escapement is ticking. The CPU cycles are meshing with physical torque.
+- **Note:** Moonshot: Verge Escapement + CPU Clock Visualization.
+
 ### [Concentration Level: HIGH] - Location: experiments/symbiotic-services
 - **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
 - **Status:** Hyphae are pulsating. Algal nodes are photosynthesizing traffic.
