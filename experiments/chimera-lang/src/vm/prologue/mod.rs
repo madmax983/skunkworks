@@ -6,6 +6,7 @@ use std::collections::{HashMap, HashSet, VecDeque};
 pub mod quantum;
 pub mod teleport;
 pub mod chronos;
+pub mod alchemy;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PrologueAgent {
@@ -105,6 +106,9 @@ impl PrologueState {
                             | "s"
                             | "g"
                             | "r"
+                            | "t"
+                            | "f"
+                            | "d"
                     ) {
                         self.runes.insert((y, x));
 
@@ -255,6 +259,9 @@ fn apply_propagation_rune(
         return true;
     }
     if chronos::apply_chronos_runes(rune, y, x, current_signals, next_signals, history) {
+        return true;
+    }
+    if alchemy::apply_alchemy_runes(rune, y, x, current_signals, next_signals) {
         return true;
     }
     false
