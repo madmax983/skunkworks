@@ -1,0 +1,14 @@
+[package]
+name = "hyperbolic-circuit"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+chimera-lang = { path = "../chimera-lang" }
+poincare-disk = { path = "../../crates/poincare-disk" }
+rand = "0.8"
+rand_chacha = "0.3"
+num-complex = "0.4"
+sha2 = "0.10"
+anyhow = "1.0"

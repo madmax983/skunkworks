@@ -1209,3 +1209,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Physical Intelligence. Signal propagation delay is determined by physical trace length.
 - **Status**: experiments/neuro-circuit
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### hyperbolic-circuit
+- **Parents**: experiments/hyperbolic-finder + experiments/chimera-circuit
+- **Concept**: Circuit layout on the Poincaré Disk.
+- **Novel trait**: Infinite Wiring Density. Traces can branch exponentially towards the boundary.
+- **Status**: experiments/hyperbolic-circuit
+- **Evaluation**: Implemented by The Splice Surgeon.
