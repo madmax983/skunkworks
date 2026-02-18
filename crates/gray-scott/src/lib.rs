@@ -49,6 +49,9 @@ impl GrayScott {
     }
 
     pub fn add_chemical(&mut self, x: usize, y: usize, amount: f32) {
+        if x >= self.width || y >= self.height {
+            return;
+        }
         let idx = self.get_index(x, y);
         if idx < self.v.len() {
             self.v[idx] = (self.v[idx] + amount).min(1.0);
@@ -222,5 +225,23 @@ mod tests {
 
         // V diffuses to neighbor
         assert!(gs.v[neighbor] > 0.0, "V should diffuse");
+    }
+
+    #[test]
+    fn test_add_chemical_bounds() {
+        let mut gs = GrayScott::new(10, 10);
+        // Add chemical at x=10, y=0. This is out of bounds for row 0 (width is 10, so max index is 9).
+        // It should NOT wrap to (0, 1) which is index 10.
+        gs.add_chemical(10, 0, 0.5);
+
+        let idx = gs.get_index(0, 1);
+        assert_eq!(gs.v[idx], 0.0, "Out of bounds x write wrapped to next row");
+    }
+
+    #[test]
+    fn test_zero_dimensions() {
+        let mut gs = GrayScott::new(0, 0);
+        gs.update(0.05, 0.06, 1.0);
+        assert_eq!(gs.u.len(), 0);
     }
 }

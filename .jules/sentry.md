@@ -19,3 +19,7 @@
 ## [Rust Float Clamping Bug]
 **Learning:** `f64::min(a, b)` returns `a` if `b` is `NaN` (and vice versa). This means `NaN.min(0.99)` returns `0.99`, effectively masking NaN errors in clamping logic.
 **Action:** Always check `.is_nan()` explicitly before using `min`/`max` for clamping, or verify which value is returned.
+
+**[Grid Wrapping Bug]
+**Learning:** In 1D vectors representing 2D grids, `x >= width` checks are critical. Relying solely on `index < vec.len()` allows "scanline wrapping" where `(width, y)` writes to `(0, y+1)`.
+**Action:** Always verify `x < width` and `y < height` explicitly before calculating the 1D index.
