@@ -29,6 +29,12 @@ Prologue treats the grid as a circuit board. Signals propagate instantly (within
 | `^` | **Jump** | Input (West) -> Output (East). Skips self (Teleport). |
 | `M` | **Mutate** | Reads signal from **West**, writes **Random** Value to Grid **South**. |
 | `O` | **Organelle** | Reads signal from **West**, spawns **Agent (@)** at Grid **South**. |
+| `[` | **Collect** | Reads inputs from **N, E, S, W**. Creates a `Value::Junction` list. Output **Self**. |
+| `]` | **Scatter** | Reads **West** (List). Distributes elements: `[0]->N`, `[1]->E`, `[2]->S`. |
+| `U` | **Unwrap** | Reads **West** (List). Outputs `Head` (Element 0) to **Self**. |
+| `V` | **Vector** | Reads **West** (List). Outputs `Tail` (Elements 1..) to **Self**. |
+| `F` | **Filter** | Reads **West** (List), **North** (Mask). Outputs filtered list to **Self**. |
+| `T` | **Take** | Reads **West** (List), **North** (Count). Outputs first `N` elements to **Self**. |
 
 ### Gene Execution
 
