@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
     use crate::ast::{Dna, Helix};
-    use crate::vm::{ChimeraVM, Value};
     use crate::vm::prologue::exec_prologue_tick;
+    use crate::vm::{ChimeraVM, Value};
 
     #[test]
     fn test_chronos_delay_line() {
@@ -45,7 +45,12 @@ mod tests {
         // So s (5,6) runs before g (5,7).
         // s pushes. g pops. Immediate transfer.
 
-        assert!(vm.prologue_state.history.get(&(5,6)).map(|q| q.is_empty()).unwrap_or(true));
+        assert!(vm
+            .prologue_state
+            .history
+            .get(&(5, 6))
+            .map(|q| q.is_empty())
+            .unwrap_or(true));
 
         // Output should show 42
         let output = vm.output.join("\n");
@@ -79,7 +84,7 @@ mod tests {
         assert!(output.contains("PROLOGUE: Sink at 8,5 received Int(3)"));
 
         // History should have 1, 2
-        let h = vm.prologue_state.history.get(&(5,6)).unwrap();
+        let h = vm.prologue_state.history.get(&(5, 6)).unwrap();
         assert_eq!(h.len(), 2);
         assert_eq!(h[0], Value::Int(1));
         assert_eq!(h[1], Value::Int(2));

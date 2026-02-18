@@ -235,7 +235,8 @@ pub fn exec_babel_op(
                 let p2 = vm.stack.pop().unwrap();
                 let p1 = vm.stack.pop().unwrap();
                 if p1.depth() > 500 || p2.depth() > 500 {
-                    vm.output.push("Error: Parser depth limit exceeded".to_string());
+                    vm.output
+                        .push("Error: Parser depth limit exceeded".to_string());
                     vm.stack.push(p1); // Restore stack roughly?
                     vm.stack.push(p2);
                 } else {
@@ -262,7 +263,8 @@ pub fn exec_babel_op(
 
                     let max_depth = items.iter().map(|v| v.depth()).max().unwrap_or(0);
                     if max_depth > 500 {
-                        vm.output.push("Error: Parser depth limit exceeded".to_string());
+                        vm.output
+                            .push("Error: Parser depth limit exceeded".to_string());
                         // Push back?
                         for item in items {
                             vm.stack.push(item);
@@ -285,7 +287,8 @@ pub fn exec_babel_op(
                 let p2 = vm.stack.pop().unwrap();
                 let p1 = vm.stack.pop().unwrap();
                 if p1.depth() > 500 || p2.depth() > 500 {
-                    vm.output.push("Error: Parser depth limit exceeded".to_string());
+                    vm.output
+                        .push("Error: Parser depth limit exceeded".to_string());
                     vm.stack.push(p1);
                     vm.stack.push(p2);
                 } else {
@@ -312,7 +315,8 @@ pub fn exec_babel_op(
 
                     let max_depth = items.iter().map(|v| v.depth()).max().unwrap_or(0);
                     if max_depth > 500 {
-                        vm.output.push("Error: Parser depth limit exceeded".to_string());
+                        vm.output
+                            .push("Error: Parser depth limit exceeded".to_string());
                         for item in items {
                             vm.stack.push(item);
                         }
@@ -332,7 +336,8 @@ pub fn exec_babel_op(
         OpCode::ParserMany => {
             if let Some(p) = vm.stack.pop() {
                 if p.depth() > 500 {
-                    vm.output.push("Error: Parser depth limit exceeded".to_string());
+                    vm.output
+                        .push("Error: Parser depth limit exceeded".to_string());
                     vm.stack.push(p);
                 } else {
                     vm.stack.push(Value::Junction(
@@ -348,7 +353,8 @@ pub fn exec_babel_op(
         OpCode::ParserOpt => {
             if let Some(p) = vm.stack.pop() {
                 if p.depth() > 500 {
-                    vm.output.push("Error: Parser depth limit exceeded".to_string());
+                    vm.output
+                        .push("Error: Parser depth limit exceeded".to_string());
                     vm.stack.push(p);
                 } else {
                     vm.stack.push(Value::Junction(
@@ -533,8 +539,7 @@ pub fn exec_ouroboros(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 ));
                 return Some((new_strand_idx, 0));
             } else {
-                vm.output
-                    .push("OUROBOROS: Compilation failed".to_string());
+                vm.output.push("OUROBOROS: Compilation failed".to_string());
             }
         } else {
             vm.output
@@ -876,7 +881,12 @@ pub fn compile_cst(vm: &mut ChimeraVM, cst: Value, handler_idx: usize) -> Option
     Some(vm.dna.helix.strands.len() - 1)
 }
 
-fn compile_cst_recursive(val: &Value, genes: &mut Vec<Gene>, handler_idx: usize, depth: usize) -> Result<(), ()> {
+fn compile_cst_recursive(
+    val: &Value,
+    genes: &mut Vec<Gene>,
+    handler_idx: usize,
+    depth: usize,
+) -> Result<(), ()> {
     if depth > 500 {
         return Err(());
     }

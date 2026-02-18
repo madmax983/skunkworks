@@ -3,7 +3,7 @@ use macroquad::prelude::*;
 use resonance_audio::audio::{AudioCommand, AudioModel, AudioSnapshot};
 
 mod simulation;
-use simulation::{Scheduler, ProcessTree, SchedulerEvent, SchedulingAlgorithm, ProcessState};
+use simulation::{ProcessState, ProcessTree, Scheduler, SchedulerEvent, SchedulingAlgorithm};
 
 #[cfg(feature = "audio")]
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
@@ -81,7 +81,7 @@ async fn main() {
             if listener_pos.0 != sun_grid_x {
                 listener_pos.0 = sun_grid_x;
                 // Update listener in AudioModel
-                 let _ = cmd_tx.send(AudioCommand::MoveListener {
+                let _ = cmd_tx.send(AudioCommand::MoveListener {
                     x: listener_pos.0,
                     y: listener_pos.1,
                 });
@@ -89,9 +89,12 @@ async fn main() {
 
             for event in events {
                 match event {
-                    SchedulerEvent::ContextSwitch { .. } => {
-                    }
-                    SchedulerEvent::ProcessTick { pid: _, pos, priority } => {
+                    SchedulerEvent::ContextSwitch { .. } => {}
+                    SchedulerEvent::ProcessTick {
+                        pid: _,
+                        pos,
+                        priority,
+                    } => {
                         let grid_x = ((pos / screen_w) * GRID_WIDTH as f32) as usize;
                         let grid_x = grid_x.clamp(0, GRID_WIDTH - 1);
 
@@ -134,11 +137,11 @@ async fn main() {
             scheduler.kill_current();
         }
         if is_key_pressed(KeyCode::R) {
-             scheduler = Scheduler::new();
-             for _ in 0..5 {
+            scheduler = Scheduler::new();
+            for _ in 0..5 {
                 add_random_process(&mut scheduler);
             }
-             let _ = cmd_tx.send(AudioCommand::ClearWaves);
+            let _ = cmd_tx.send(AudioCommand::ClearWaves);
         }
 
         // Update texture
@@ -208,7 +211,14 @@ fn add_random_process(scheduler: &mut Scheduler) {
     let priority = macroquad::rand::gen_range(0, 255) as u8;
     let cpu_needed = macroquad::rand::gen_range(100.0, 400.0); // Height
 
-    scheduler.add_process(ProcessTree::new(id, pos, width, priority, cpu_needed, get_time()));
+    scheduler.add_process(ProcessTree::new(
+        id,
+        pos,
+        width,
+        priority,
+        cpu_needed,
+        get_time(),
+    ));
 }
 
 fn draw_tree(process: &ProcessTree) {
@@ -303,10 +313,16 @@ fn draw_ui(scheduler: &Scheduler, running: bool) {
 
     if let Some(idx) = scheduler.current_process_idx {
         if idx < scheduler.processes.len() {
-             let p = &scheduler.processes[idx];
-             draw_text(
-                &format!("Running: PID {} | Prio {} | Rem {:.1}", p.id, p.priority, scheduler.time_left),
-                20.0, 100.0, 20.0, WHITE
+            let p = &scheduler.processes[idx];
+            draw_text(
+                &format!(
+                    "Running: PID {} | Prio {} | Rem {:.1}",
+                    p.id, p.priority, scheduler.time_left
+                ),
+                20.0,
+                100.0,
+                20.0,
+                WHITE,
             );
         }
     } else {

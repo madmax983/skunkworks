@@ -11,9 +11,9 @@ pub enum ProcessState {
 #[derive(Clone, Debug)]
 pub struct ProcessTree {
     pub id: usize,
-    pub priority: u8, // 0-255, higher is better
+    pub priority: u8,    // 0-255, higher is better
     pub cpu_needed: f32, // Total height needed to finish
-    pub progress: f32, // Current height
+    pub progress: f32,   // Current height
     pub state: ProcessState,
     pub pos: f32, // X position
     pub width: f32,
@@ -23,7 +23,14 @@ pub struct ProcessTree {
 }
 
 impl ProcessTree {
-    pub fn new(id: usize, pos: f32, width: f32, priority: u8, cpu_needed: f32, creation_time: f64) -> Self {
+    pub fn new(
+        id: usize,
+        pos: f32,
+        width: f32,
+        priority: u8,
+        cpu_needed: f32,
+        creation_time: f64,
+    ) -> Self {
         Self {
             id,
             priority,
@@ -43,12 +50,7 @@ impl ProcessTree {
         // High priority -> Bright Green
         // Low priority -> Brownish Green
         let t = priority as f32 / 255.0;
-        Color::new(
-            0.4 - t * 0.2,
-            0.4 + t * 0.6,
-            0.1 + t * 0.1,
-            1.0,
-        )
+        Color::new(0.4 - t * 0.2, 0.4 + t * 0.6, 0.1 + t * 0.1, 1.0)
     }
 
     pub fn grow(&mut self, amount: f32) {
@@ -65,24 +67,31 @@ impl ProcessTree {
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum SchedulingAlgorithm {
     RoundRobin,
-    FCFS, // First Come First Served
+    FCFS,     // First Come First Served
     Priority, // Highest Priority
     ShortestJobFirst,
 }
 
 #[derive(Debug, PartialEq)]
 pub enum SchedulerEvent {
-    ContextSwitch { from: Option<usize>, to: Option<usize> },
-    ProcessTick { pid: usize, pos: f32, priority: u8 },
+    ContextSwitch {
+        from: Option<usize>,
+        to: Option<usize>,
+    },
+    ProcessTick {
+        pid: usize,
+        pos: f32,
+        priority: u8,
+    },
 }
 
 pub struct Scheduler {
     pub processes: Vec<ProcessTree>,
     pub current_process_idx: Option<usize>,
     pub algorithm: SchedulingAlgorithm,
-    pub quantum: f32, // Time slice length
+    pub quantum: f32,   // Time slice length
     pub time_left: f32, // Remaining time in slice
-    pub sun_pos: f32, // Visual position of the "Sun" (Listener)
+    pub sun_pos: f32,   // Visual position of the "Sun" (Listener)
 }
 
 impl Scheduler {
@@ -103,9 +112,9 @@ impl Scheduler {
 
     pub fn kill_current(&mut self) {
         if let Some(idx) = self.current_process_idx {
-             self.processes.remove(idx);
-             self.current_process_idx = None;
-             self.time_left = 0.0;
+            self.processes.remove(idx);
+            self.current_process_idx = None;
+            self.time_left = 0.0;
         }
     }
 
@@ -119,20 +128,19 @@ impl Scheduler {
 
         // Check if we need to switch context
         let current_state_is_zombie = if let Some(idx) = self.current_process_idx {
-             // Handle case where index might be out of bounds if killed?
-             // But kill_current sets current_process_idx to None.
-             if idx < self.processes.len() {
-                 self.processes[idx].state == ProcessState::Zombie
-             } else {
-                 true
-             }
+            // Handle case where index might be out of bounds if killed?
+            // But kill_current sets current_process_idx to None.
+            if idx < self.processes.len() {
+                self.processes[idx].state == ProcessState::Zombie
+            } else {
+                true
+            }
         } else {
             false
         };
 
-        let need_switch = self.current_process_idx.is_none()
-            || self.time_left <= 0.0
-            || current_state_is_zombie;
+        let need_switch =
+            self.current_process_idx.is_none() || self.time_left <= 0.0 || current_state_is_zombie;
 
         if need_switch {
             let from = self.current_process_idx;
@@ -146,7 +154,7 @@ impl Scheduler {
 
         // Grow the current process
         if let Some(idx) = self.current_process_idx {
-             if idx < self.processes.len() {
+            if idx < self.processes.len() {
                 let process = &mut self.processes[idx];
                 if process.state == ProcessState::Running {
                     process.grow(dt * 10.0); // Growth speed
@@ -163,9 +171,9 @@ impl Scheduler {
                     let target_sun = process.pos + process.width / 2.0;
                     self.sun_pos += (target_sun - self.sun_pos) * 5.0 * dt;
                 }
-             } else {
-                 self.current_process_idx = None;
-             }
+            } else {
+                self.current_process_idx = None;
+            }
         }
 
         events
@@ -198,7 +206,7 @@ impl Scheduler {
                 self.current_process_idx = found;
             }
             SchedulingAlgorithm::FCFS => {
-                 let mut found = None;
+                let mut found = None;
                 for (i, p) in self.processes.iter().enumerate() {
                     if p.state != ProcessState::Zombie {
                         found = Some(i);
@@ -212,7 +220,7 @@ impl Scheduler {
                 }
                 return;
             }
-             SchedulingAlgorithm::Priority => {
+            SchedulingAlgorithm::Priority => {
                 let mut best_idx = None;
                 let mut max_prio = 0;
 
@@ -263,10 +271,14 @@ mod tests {
         // Initial update - should produce a ContextSwitch
         let events = scheduler.update(0.1, 0.1);
 
-        let has_switch = events.iter().any(|e| matches!(e, SchedulerEvent::ContextSwitch { .. }));
+        let has_switch = events
+            .iter()
+            .any(|e| matches!(e, SchedulerEvent::ContextSwitch { .. }));
         assert!(has_switch, "Should produce ContextSwitch on first run");
 
-        let has_tick = events.iter().any(|e| matches!(e, SchedulerEvent::ProcessTick { .. }));
+        let has_tick = events
+            .iter()
+            .any(|e| matches!(e, SchedulerEvent::ProcessTick { .. }));
         assert!(has_tick, "Should produce ProcessTick");
     }
 
@@ -289,7 +301,9 @@ mod tests {
         assert_eq!(scheduler.current_process_idx, Some(1));
 
         // Verify event
-        let switch_event = events.iter().find(|e| matches!(e, SchedulerEvent::ContextSwitch { .. }));
+        let switch_event = events
+            .iter()
+            .find(|e| matches!(e, SchedulerEvent::ContextSwitch { .. }));
         assert!(switch_event.is_some());
 
         if let Some(SchedulerEvent::ContextSwitch { from, to }) = switch_event {

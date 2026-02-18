@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use ::rand::Rng;
+use macroquad::prelude::*;
 
 mod brain;
 mod synth;
@@ -58,7 +58,9 @@ async fn main() {
         // Local connections
         let my_pos = brain.neurons[i].pos;
         for j in 0..brain.neurons.len() {
-            if i == j { continue; }
+            if i == j {
+                continue;
+            }
             let dist = my_pos.distance(brain.neurons[j].pos);
 
             // Probability of connection falls off with distance
@@ -68,10 +70,10 @@ async fn main() {
             if dist < SPACING * 1.5 {
                 // Neighbors
                 if rng.gen::<f32>() < 0.3 {
-                     let weight = match brain.neurons[i].neuron_type {
-                        NeuronType::Excitatory => 15.0, // Strong excitation
+                    let weight = match brain.neurons[i].neuron_type {
+                        NeuronType::Excitatory => 15.0,  // Strong excitation
                         NeuronType::Inhibitory => -20.0, // Strong inhibition
-                        NeuronType::Pacemaker => 30.0, // Strong drive
+                        NeuronType::Pacemaker => 30.0,   // Strong drive
                     };
                     brain.add_synapse(i, j, weight + rng.gen_range(-5.0..5.0));
                 }
@@ -108,7 +110,7 @@ async fn main() {
                 metronome_timer = 0.0;
                 pulse = true;
                 // Play kick
-                 let _ = cmd_tx.send(AudioCommand::Trigger {
+                let _ = cmd_tx.send(AudioCommand::Trigger {
                     frequency: 60.0,
                     decay: 0.8,
                     amplitude: 0.8,
@@ -149,11 +151,11 @@ async fn main() {
 
         // Update Brain
         brain.update(dt * 1000.0, &external_currents); // dt in seconds, Izhikevich uses roughly ms?
-        // Wait, Izhikevich model: "t" is usually ms.
-        // If dt is 0.016s (16ms), we should pass 16.0?
-        // Yes, step is usually 1ms or 0.1ms.
-        // If we pass 0.016, it will be very slow.
-        // Let's pass dt * 1000.0.
+                                                       // Wait, Izhikevich model: "t" is usually ms.
+                                                       // If dt is 0.016s (16ms), we should pass 16.0?
+                                                       // Yes, step is usually 1ms or 0.1ms.
+                                                       // If we pass 0.016, it will be very slow.
+                                                       // Let's pass dt * 1000.0.
 
         // Audio Triggering
         for &spike_idx in &brain.spikes {
@@ -173,19 +175,19 @@ async fn main() {
                         amplitude: 0.1,
                         waveform: Waveform::Sine,
                     });
-                },
+                }
                 NeuronType::Inhibitory => {
                     // Hi-hats or clicks?
-                     let _ = cmd_tx.send(AudioCommand::Trigger {
+                    let _ = cmd_tx.send(AudioCommand::Trigger {
                         frequency: freq * 4.0, // High pitch
                         decay: 0.5,
                         amplitude: 0.05,
                         waveform: Waveform::Noise,
                     });
-                },
+                }
                 NeuronType::Pacemaker => {
                     // Snare?
-                     let _ = cmd_tx.send(AudioCommand::Trigger {
+                    let _ = cmd_tx.send(AudioCommand::Trigger {
                         frequency: 150.0,
                         decay: 0.7,
                         amplitude: 0.3,
@@ -205,7 +207,7 @@ async fn main() {
                 match neuron.neuron_type {
                     NeuronType::Excitatory => Color::new(0.2, 0.2, v_norm, 1.0), // Blue
                     NeuronType::Inhibitory => Color::new(v_norm, 0.2, 0.2, 1.0), // Red
-                    NeuronType::Pacemaker => Color::new(0.2, v_norm, 0.2, 1.0), // Green
+                    NeuronType::Pacemaker => Color::new(0.2, v_norm, 0.2, 1.0),  // Green
                 }
             };
 
@@ -223,11 +225,21 @@ async fn main() {
             let neuron = &brain.neurons[spike_idx];
             // We can't see outgoing easily without O(N) search or storing outgoing.
             // Let's just draw a ring.
-             draw_circle_lines(neuron.pos.x, neuron.pos.y, NEURON_RADIUS * 3.0, 1.0, WHITE);
+            draw_circle_lines(neuron.pos.x, neuron.pos.y, NEURON_RADIUS * 3.0, 1.0, WHITE);
         }
 
         draw_text("Neural Beatbox", 10.0, 30.0, 30.0, WHITE);
-        draw_text(if use_metronome { "Metronome: ON (Space)" } else { "Metronome: OFF (Space)" }, 10.0, 50.0, 20.0, GRAY);
+        draw_text(
+            if use_metronome {
+                "Metronome: ON (Space)"
+            } else {
+                "Metronome: OFF (Space)"
+            },
+            10.0,
+            50.0,
+            20.0,
+            GRAY,
+        );
         draw_text("Click to stimulate", 10.0, 70.0, 20.0, GRAY);
 
         next_frame().await;

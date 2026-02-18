@@ -1,5 +1,5 @@
-use crate::vm::Value;
 use super::normalize_coords;
+use crate::vm::Value;
 use rand::Rng;
 use std::collections::{HashMap, VecDeque};
 

@@ -120,7 +120,11 @@ mod tests {
         grid.update(0.0);
 
         for val in grid.cells.iter() {
-            assert!((val - 0.18).abs() < 1e-6, "Value should be 0.18, got {}", val);
+            assert!(
+                (val - 0.18).abs() < 1e-6,
+                "Value should be 0.18, got {}",
+                val
+            );
         }
     }
 

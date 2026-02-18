@@ -8,13 +8,13 @@ use bevy::{
 use crossbeam::channel::{unbounded, Receiver};
 use sysinfo::System;
 
-mod fluid;
 mod audio;
+mod fluid;
 mod rhythm;
 
-use fluid::{FluidImage, FluidPlugin, ForceImage, FluidParams};
 use audio::AudioEngine;
-use rhythm::{Conductor, RhythmEvent, MusicianState};
+use fluid::{FluidImage, FluidParams, FluidPlugin, ForceImage};
+use rhythm::{Conductor, MusicianState, RhythmEvent};
 
 // Resource to hold the receiver for Bevy system
 #[derive(Resource)]
@@ -48,7 +48,9 @@ fn main() {
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
         .add_plugins(FluidPlugin)
         .insert_resource(RhythmReceiver(rhythm_rx))
-        .insert_resource(SysMonitor { sys: System::new_all() })
+        .insert_resource(SysMonitor {
+            sys: System::new_all(),
+        })
         .insert_non_send_resource(audio_engine) // Keep it alive
         .insert_non_send_resource(conductor) // Keep threads alive
         .add_systems(Startup, setup)
@@ -122,38 +124,35 @@ fn apply_rhythm_forces(
         let RhythmEvent::StateChange(id, state) = event;
         if state == MusicianState::Playing {
             // Determine position based on ID
-                // Map IDs 1..5 to locations
-                let (x, y) = match id {
-                    1 => (GRID_SIZE / 2, GRID_SIZE / 2), // Center
-                    2 => (GRID_SIZE / 4, GRID_SIZE / 4), // Top Left
-                    3 => (GRID_SIZE / 4 * 3, GRID_SIZE / 4), // Top Right
-                    4 => (GRID_SIZE / 4, GRID_SIZE / 4 * 3), // Bottom Left
-                    5 => (GRID_SIZE / 4 * 3, GRID_SIZE / 4 * 3), // Bottom Right
-                    _ => (GRID_SIZE / 2, GRID_SIZE / 2),
-                };
+            // Map IDs 1..5 to locations
+            let (x, y) = match id {
+                1 => (GRID_SIZE / 2, GRID_SIZE / 2),         // Center
+                2 => (GRID_SIZE / 4, GRID_SIZE / 4),         // Top Left
+                3 => (GRID_SIZE / 4 * 3, GRID_SIZE / 4),     // Top Right
+                4 => (GRID_SIZE / 4, GRID_SIZE / 4 * 3),     // Bottom Left
+                5 => (GRID_SIZE / 4 * 3, GRID_SIZE / 4 * 3), // Bottom Right
+                _ => (GRID_SIZE / 2, GRID_SIZE / 2),
+            };
 
-                let idx = ((y as u32 * GRID_SIZE + x as u32) * 4) as usize;
+            let idx = ((y as u32 * GRID_SIZE + x as u32) * 4) as usize;
 
-                if idx + 4 < data.len() {
-                    // Inject Density (Color)
-                    // R channel = density
-                    data[idx] = 10.0; // Strong puff
+            if idx + 4 < data.len() {
+                // Inject Density (Color)
+                // R channel = density
+                data[idx] = 10.0; // Strong puff
 
-                    // Inject Velocity
-                    // Random or directional?
-                    let angle = (time.elapsed_seconds() * 10.0 + id as f32) % 6.28;
-                    let speed = 50.0;
-                    data[idx+1] = angle.cos() * speed; // G = Vel X
-                    data[idx+2] = angle.sin() * speed; // B = Vel Y
-                }
+                // Inject Velocity
+                // Random or directional?
+                let angle = (time.elapsed_seconds() * 10.0 + id as f32) % 6.28;
+                let speed = 50.0;
+                data[idx + 1] = angle.cos() * speed; // G = Vel X
+                data[idx + 2] = angle.sin() * speed; // B = Vel Y
             }
+        }
     }
 }
 
-fn update_viscosity(
-    mut sys_mon: ResMut<SysMonitor>,
-    mut params: ResMut<FluidParams>,
-) {
+fn update_viscosity(mut sys_mon: ResMut<SysMonitor>, mut params: ResMut<FluidParams>) {
     // Refresh CPU
     sys_mon.sys.refresh_cpu();
     let usage = sys_mon.sys.global_cpu_info().cpu_usage(); // 0..100

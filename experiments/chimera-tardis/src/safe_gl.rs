@@ -24,9 +24,18 @@ impl Drop for ScopedScissor {
 pub fn intersect_rect(a: (i32, i32, i32, i32), b: (i32, i32, i32, i32)) -> (i32, i32, i32, i32) {
     let x1 = a.0.max(b.0);
     let y1 = a.1.max(b.1);
-    let x2 = (a.0 + a.2).min(b.0 + b.2);
-    let y2 = (a.1 + a.3).min(b.1 + b.3);
-    (x1, y1, (x2 - x1).max(0), (y2 - y1).max(0))
+    let ax2 = a.0.saturating_add(a.2);
+    let bx2 = b.0.saturating_add(b.2);
+    let ay2 = a.1.saturating_add(a.3);
+    let by2 = b.1.saturating_add(b.3);
+    let x2 = ax2.min(bx2);
+    let y2 = ay2.min(by2);
+    (
+        x1,
+        y1,
+        x2.saturating_sub(x1).max(0),
+        y2.saturating_sub(y1).max(0),
+    )
 }
 
 /// Executes the given closure `f` with a scissor rectangle applied.
@@ -84,5 +93,21 @@ mod tests {
         let intersection = intersect_rect(r1, r2);
         assert_eq!(intersection.2, 0); // width 0
         assert_eq!(intersection.3, 0); // height 0
+    }
+
+    #[test]
+    fn test_intersect_rect_overflow() {
+        // Test with large coordinates that would overflow standard addition
+        let r1 = (i32::MAX - 100, 0, 200, 100);
+        let r2 = (i32::MAX - 50, 0, 200, 100);
+        // r1 ends at MAX - 100 + 200 = MAX + 100 (Saturated to MAX)
+        // r2 starts at MAX - 50.
+        // Intersection should start at MAX - 50.
+        // End at MAX.
+        // Width = 50.
+
+        let intersection = intersect_rect(r1, r2);
+        assert_eq!(intersection.0, i32::MAX - 50); // x1
+        assert_eq!(intersection.2, 50); // width
     }
 }

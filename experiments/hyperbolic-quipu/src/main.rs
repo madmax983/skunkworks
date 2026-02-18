@@ -64,7 +64,12 @@ async fn main() -> anyhow::Result<()> {
         // --- Drawing ---
 
         // Background Circle
-        draw_circle(screen_center.x, screen_center.y, disk_radius, Color::new(0.05, 0.05, 0.05, 1.0));
+        draw_circle(
+            screen_center.x,
+            screen_center.y,
+            disk_radius,
+            Color::new(0.05, 0.05, 0.05, 1.0),
+        );
 
         // Grid
         tiling::draw_tiling(view_center, screen_center, disk_radius);
@@ -74,19 +79,38 @@ async fn main() -> anyhow::Result<()> {
 
         // Quipu
         let mut hover_info = None;
-        draw_quipu_recursive(&quipu_root, view_center, screen_center, disk_radius, mouse_z, &mut hover_info);
+        draw_quipu_recursive(
+            &quipu_root,
+            view_center,
+            screen_center,
+            disk_radius,
+            mouse_z,
+            &mut hover_info,
+        );
 
         // Hover Info
         if let Some((name, info, sx, sy)) = hover_info {
             let text = format!("{} ({})", name, info);
             let dims = measure_text(&text, None, 20, 1.0);
-            draw_rectangle(sx + 10.0, sy - 25.0, dims.width + 10.0, 30.0, Color::new(0.0, 0.0, 0.0, 0.8));
+            draw_rectangle(
+                sx + 10.0,
+                sy - 25.0,
+                dims.width + 10.0,
+                30.0,
+                Color::new(0.0, 0.0, 0.0, 0.8),
+            );
             draw_text(&text, sx + 15.0, sy - 5.0, 20.0, WHITE);
         }
 
         // UI
         draw_text("Hyperbolic Quipu", 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Path: {}", current_path.display()), 20.0, 60.0, 20.0, GRAY);
+        draw_text(
+            &format!("Path: {}", current_path.display()),
+            20.0,
+            60.0,
+            20.0,
+            GRAY,
+        );
         draw_text("Drag to Pan", 20.0, h - 30.0, 20.0, DARKGRAY);
 
         next_frame().await
@@ -120,7 +144,9 @@ fn draw_quipu_recursive(
         let m_diff = mobius_sub(node.end_pos, node.start_pos); // Vector from start to end in start's frame
 
         for (i, cluster) in node.cord.clusters.iter().enumerate() {
-            if cluster.is_empty() { continue; }
+            if cluster.is_empty() {
+                continue;
+            }
 
             // Position t along the cord (0.0 to 1.0)
             // Reverse index (Unit at bottom/end, High power at top/start)
@@ -144,31 +170,53 @@ fn draw_quipu_recursive(
             let dist_mouse = (p_view - mouse_z).norm();
             // hit radius in disk space varies with zoom, but let's approximate
             if dist_mouse < 0.02 {
-                 *hover_state = Some((node.name.clone(), node.info.clone(), pos_screen.x, pos_screen.y));
-                 draw_circle_lines(pos_screen.x, pos_screen.y, 10.0, 1.0, YELLOW);
+                *hover_state = Some((
+                    node.name.clone(),
+                    node.info.clone(),
+                    pos_screen.x,
+                    pos_screen.y,
+                ));
+                draw_circle_lines(pos_screen.x, pos_screen.y, 10.0, 1.0, YELLOW);
             }
 
             // Draw individual knots
             for (k_idx, knot) in cluster.iter().enumerate() {
-                 let offset = (k_idx as f32) * 4.0;
-                 match knot {
-                     Knot::Simple => draw_circle(pos_screen.x + offset, pos_screen.y, 2.0, YELLOW),
-                     Knot::Long(v) => draw_rectangle(pos_screen.x + offset, pos_screen.y - 2.0, 3.0, 4.0 + *v as f32, BLUE),
-                     Knot::FigureEight => draw_circle_lines(pos_screen.x + offset, pos_screen.y, 3.0, 1.0, RED),
-                 }
+                let offset = (k_idx as f32) * 4.0;
+                match knot {
+                    Knot::Simple => draw_circle(pos_screen.x + offset, pos_screen.y, 2.0, YELLOW),
+                    Knot::Long(v) => draw_rectangle(
+                        pos_screen.x + offset,
+                        pos_screen.y - 2.0,
+                        3.0,
+                        4.0 + *v as f32,
+                        BLUE,
+                    ),
+                    Knot::FigureEight => {
+                        draw_circle_lines(pos_screen.x + offset, pos_screen.y, 3.0, 1.0, RED)
+                    }
+                }
             }
         }
     }
 
     // Recurse
     for child in &node.children {
-        draw_quipu_recursive(child, view_center, screen_center, disk_radius, mouse_z, hover_state);
+        draw_quipu_recursive(
+            child,
+            view_center,
+            screen_center,
+            disk_radius,
+            mouse_z,
+            hover_state,
+        );
     }
 }
 
 // Helper to draw geodesic arc
 fn draw_geodesic(p1: Point, p2: Point, screen_center: Vec2, radius: f32, color: Color) {
-    if (p1 - p2).norm_sqr() < 1e-6 { return; }
+    if (p1 - p2).norm_sqr() < 1e-6 {
+        return;
+    }
     let steps = 15;
     let m_diff = mobius_sub(p2, p1);
 
@@ -180,7 +228,14 @@ fn draw_geodesic(p1: Point, p2: Point, screen_center: Vec2, radius: f32, color: 
         let world_pos = mobius_add(q, p1); // Map back to p1's frame -> View Frame
 
         let screen_pos = to_screen(world_pos, screen_center, radius);
-        draw_line(last_pos.x, last_pos.y, screen_pos.x, screen_pos.y, 2.0, color);
+        draw_line(
+            last_pos.x,
+            last_pos.y,
+            screen_pos.x,
+            screen_pos.y,
+            2.0,
+            color,
+        );
         last_pos = screen_pos;
     }
 }

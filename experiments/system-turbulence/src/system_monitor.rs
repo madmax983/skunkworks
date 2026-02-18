@@ -113,7 +113,19 @@ mod tests {
             if let Ok(mut stats) = bridge_clone.lock() {
                 stats.total_cpu_usage = sys.global_cpu_info().cpu_usage();
                 stats.total_memory_usage = sys.used_memory() as f32 / sys.total_memory() as f32;
-                stats.top_processes = sys.processes().iter().take(5).map(|(pid, p)| (pid.as_u32(), p.name().to_string(), p.cpu_usage(), p.memory())).collect();
+                stats.top_processes = sys
+                    .processes()
+                    .iter()
+                    .take(5)
+                    .map(|(pid, p)| {
+                        (
+                            pid.as_u32(),
+                            p.name().to_string(),
+                            p.cpu_usage(),
+                            p.memory(),
+                        )
+                    })
+                    .collect();
             }
         });
 

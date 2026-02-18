@@ -2,11 +2,11 @@ mod audio;
 mod conductor;
 mod ui;
 
-use anyhow::Result;
-use crossbeam::channel;
 use crate::audio::AudioEngine;
 use crate::conductor::Conductor;
 use crate::ui::App;
+use anyhow::Result;
+use crossbeam::channel;
 
 fn main() -> Result<()> {
     // 1. Audio Channel

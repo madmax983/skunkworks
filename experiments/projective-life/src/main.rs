@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use life::LifeGame;
+use macroquad::prelude::*;
 
 mod life;
 
@@ -42,7 +42,8 @@ async fn main() {
             },
             ..Default::default()
         },
-    ).unwrap();
+    )
+    .unwrap();
 
     loop {
         // Update Game
@@ -54,9 +55,9 @@ async fn main() {
             for y in 0..height {
                 for x in 0..width {
                     if game.grid[y * width + x] == 1 {
-                         image.set_pixel(x as u32, y as u32, WHITE);
+                        image.set_pixel(x as u32, y as u32, WHITE);
                     } else {
-                         image.set_pixel(x as u32, y as u32, BLACK);
+                        image.set_pixel(x as u32, y as u32, BLACK);
                     }
                 }
             }

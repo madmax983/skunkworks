@@ -1,14 +1,15 @@
-use chimera_lang::vm::ChimeraVM;
-use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use chimera_lang::opcode::OpCode;
+use chimera_lang::vm::ChimeraVM;
 use chimera_lang::vm::Value;
 
 #[test]
 fn test_sigil_strand_oob() {
     let dummy_strand = Strand {
-        genes: vec![
-            Gene { op: OpCode::Nop, args: vec![] },
-        ],
+        genes: vec![Gene {
+            op: OpCode::Nop,
+            args: vec![],
+        }],
     };
     let dna = Dna {
         helix: Helix {
@@ -25,7 +26,7 @@ fn test_sigil_strand_oob() {
 
     // Push arguments for Inscribe
     vm.stack.push(Value::Int(1000)); // Strand Index (Out of Bounds)
-    vm.stack.push(Value::Int(1));    // Radius
+    vm.stack.push(Value::Int(1)); // Radius
     vm.stack.push(Value::Str("CrashSigil".to_string())); // Name
 
     // Execute Inscribe
@@ -55,14 +56,21 @@ fn test_sigil_strand_oob() {
     } else {
         println!("Sigil 'CrashSigil' NOT registered (Fixed).");
         // Verify output contains error
-        assert!(vm.output.iter().any(|s| s.contains("Error: Strand index out of bounds")));
+        assert!(vm
+            .output
+            .iter()
+            .any(|s| s.contains("Error: Strand index out of bounds")));
     }
 }
 
 #[test]
 fn test_babel_compile_stack_overflow() {
     let dummy_strand = Strand { genes: vec![] };
-    let dna = Dna { helix: Helix { strands: vec![dummy_strand] } };
+    let dna = Dna {
+        helix: Helix {
+            strands: vec![dummy_strand],
+        },
+    };
     let mut vm = ChimeraVM::new(dna);
 
     // Build a deeply nested structure

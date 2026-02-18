@@ -1,5 +1,5 @@
-use crate::vm::Value;
 use super::normalize_coords;
+use crate::vm::Value;
 
 pub fn apply_optics_runes(
     rune: &str,
@@ -32,24 +32,44 @@ pub fn apply_optics_runes(
         "\\" => {
             // Mirror Back
             // N -> E, E -> N, S -> W, W -> S
-            if let Some(s) = get_sig(-1, 0) { set_sig(0, 1, s); } // N -> E
-            if let Some(s) = get_sig(0, 1) { set_sig(-1, 0, s); } // E -> N
-            if let Some(s) = get_sig(1, 0) { set_sig(0, -1, s); } // S -> W
-            if let Some(s) = get_sig(0, -1) { set_sig(1, 0, s); } // W -> S
+            if let Some(s) = get_sig(-1, 0) {
+                set_sig(0, 1, s);
+            } // N -> E
+            if let Some(s) = get_sig(0, 1) {
+                set_sig(-1, 0, s);
+            } // E -> N
+            if let Some(s) = get_sig(1, 0) {
+                set_sig(0, -1, s);
+            } // S -> W
+            if let Some(s) = get_sig(0, -1) {
+                set_sig(1, 0, s);
+            } // W -> S
         }
         "/" => {
             // Mirror Forward
             // N -> W, W -> N, S -> E, E -> S
-            if let Some(s) = get_sig(-1, 0) { set_sig(0, -1, s); } // N -> W
-            if let Some(s) = get_sig(0, -1) { set_sig(-1, 0, s); } // W -> N
-            if let Some(s) = get_sig(1, 0) { set_sig(0, 1, s); } // S -> E
-            if let Some(s) = get_sig(0, 1) { set_sig(1, 0, s); } // E -> S
+            if let Some(s) = get_sig(-1, 0) {
+                set_sig(0, -1, s);
+            } // N -> W
+            if let Some(s) = get_sig(0, -1) {
+                set_sig(-1, 0, s);
+            } // W -> N
+            if let Some(s) = get_sig(1, 0) {
+                set_sig(0, 1, s);
+            } // S -> E
+            if let Some(s) = get_sig(0, 1) {
+                set_sig(1, 0, s);
+            } // E -> S
         }
         "-" => {
             // Horizontal Beam
             // W <-> E
-            if let Some(s) = get_sig(0, -1) { set_sig(0, 1, s); } // W -> E
-            if let Some(s) = get_sig(0, 1) { set_sig(0, -1, s); } // E -> W
+            if let Some(s) = get_sig(0, -1) {
+                set_sig(0, 1, s);
+            } // W -> E
+            if let Some(s) = get_sig(0, 1) {
+                set_sig(0, -1, s);
+            } // E -> W
         }
         _ => {}
     }

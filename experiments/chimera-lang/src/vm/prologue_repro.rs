@@ -40,7 +40,10 @@ mod tests {
 
         // Setup Scatter ] at 8,5
         // Input West (8,4)
-        let junction = Value::Junction(JunctionType::Any, vec![Value::Int(10), Value::Int(20), Value::Int(30)]);
+        let junction = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Int(10), Value::Int(20), Value::Int(30)],
+        );
         vm.prologue_state.delayed_signals[8][4] = Some(junction);
 
         vm.grid[8][5] = Value::Str("]".to_string());

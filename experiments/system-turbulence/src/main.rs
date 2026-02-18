@@ -143,10 +143,10 @@ fn update_forces(
 
             // Write to pixel and neighbors (splat)
             // Just single pixel for now
-            data[idx] += heat * 5.0;     // Density
-            data[idx + 1] += vx;   // Vel X
-            data[idx + 2] += vy;   // Vel Y
-            // Alpha unused
+            data[idx] += heat * 5.0; // Density
+            data[idx + 1] += vx; // Vel X
+            data[idx + 2] += vy; // Vel Y
+                                 // Alpha unused
         }
     }
 

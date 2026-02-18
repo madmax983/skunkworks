@@ -1,11 +1,11 @@
-use macroquad::prelude::*;
 use ::rand::Rng;
+use macroquad::prelude::*;
 
-mod grid;
 mod agent;
+mod grid;
 
-use grid::Grid;
 use agent::{Agent, AgentKind};
+use grid::Grid;
 
 const GRID_WIDTH: usize = 400;
 const GRID_HEIGHT: usize = 300;
@@ -57,8 +57,16 @@ async fn main() {
             }
             agents.clear();
             for _ in 0..1000 {
-                agents.push(Agent::new(rng.gen_range(0.0..GRID_WIDTH as f32), rng.gen_range(0.0..GRID_HEIGHT as f32), AgentKind::Red));
-                agents.push(Agent::new(rng.gen_range(0.0..GRID_WIDTH as f32), rng.gen_range(0.0..GRID_HEIGHT as f32), AgentKind::Blue));
+                agents.push(Agent::new(
+                    rng.gen_range(0.0..GRID_WIDTH as f32),
+                    rng.gen_range(0.0..GRID_HEIGHT as f32),
+                    AgentKind::Red,
+                ));
+                agents.push(Agent::new(
+                    rng.gen_range(0.0..GRID_WIDTH as f32),
+                    rng.gen_range(0.0..GRID_HEIGHT as f32),
+                    AgentKind::Blue,
+                ));
             }
         }
         if is_key_pressed(KeyCode::G) {
@@ -82,11 +90,15 @@ async fn main() {
             let gy = (my / SCALE) as isize;
 
             let brush_size = 10;
-            let strength = if is_mouse_button_down(MouseButton::Left) { 0.05 } else { -0.05 }; // Left = Chaos (Red), Right = Order (Blue)
+            let strength = if is_mouse_button_down(MouseButton::Left) {
+                0.05
+            } else {
+                -0.05
+            }; // Left = Chaos (Red), Right = Order (Blue)
 
             for dy in -brush_size..=brush_size {
                 for dx in -brush_size..=brush_size {
-                    if dx*dx + dy*dy <= brush_size*brush_size {
+                    if dx * dx + dy * dy <= brush_size * brush_size {
                         let idx = grid.get_idx(gx + dx as isize, gy + dy as isize);
                         grid.params_r[idx] = (grid.params_r[idx] + strength).clamp(2.0, 4.0);
                     }
@@ -137,7 +149,9 @@ async fn main() {
 
         // Update texture
         for (i, pixel) in image.bytes.chunks_exact_mut(4).enumerate() {
-            if i >= grid.cells.len() { break; }
+            if i >= grid.cells.len() {
+                break;
+            }
 
             if show_params {
                 // Visualize r
@@ -170,10 +184,16 @@ async fn main() {
         }
         texture.update(&image);
 
-        draw_texture_ex(&texture, 0.0, 0.0, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(GRID_WIDTH as f32 * SCALE, GRID_HEIGHT as f32 * SCALE)),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &texture,
+            0.0,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(GRID_WIDTH as f32 * SCALE, GRID_HEIGHT as f32 * SCALE)),
+                ..Default::default()
+            },
+        );
 
         // Draw Agents
         for agent in &agents {
@@ -181,21 +201,39 @@ async fn main() {
                 AgentKind::Red => RED,
                 AgentKind::Blue => BLUE,
             };
-            draw_rectangle(
-                agent.x * SCALE,
-                agent.y * SCALE,
-                SCALE,
-                SCALE,
-                color
-            );
+            draw_rectangle(agent.x * SCALE, agent.y * SCALE, SCALE, SCALE, color);
         }
 
         // UI
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 20.0, 20.0, WHITE);
-        draw_text(&format!("Agents: {}", agents.len()), 10.0, 40.0, 20.0, WHITE);
-        draw_text(&format!("Coupling (Up/Down): {:.2}", epsilon), 10.0, 60.0, 20.0, WHITE);
-        draw_text("Left Click: Chaos (Red), Right Click: Order (Blue)", 10.0, 80.0, 20.0, WHITE);
-        draw_text("Space: Pause, G: Toggle Heatmap, R: Reset", 10.0, 100.0, 20.0, WHITE);
+        draw_text(
+            &format!("Agents: {}", agents.len()),
+            10.0,
+            40.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            &format!("Coupling (Up/Down): {:.2}", epsilon),
+            10.0,
+            60.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "Left Click: Chaos (Red), Right Click: Order (Blue)",
+            10.0,
+            80.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "Space: Pause, G: Toggle Heatmap, R: Reset",
+            10.0,
+            100.0,
+            20.0,
+            WHITE,
+        );
 
         next_frame().await
     }

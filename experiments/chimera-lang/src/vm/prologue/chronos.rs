@@ -1,5 +1,5 @@
-use crate::vm::Value;
 use super::normalize_coords;
+use crate::vm::Value;
 use std::collections::{HashMap, VecDeque};
 
 pub fn apply_chronos_runes(

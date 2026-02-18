@@ -11,9 +11,9 @@ pub enum ProcessState {
 #[derive(Clone, Debug)]
 pub struct ProcessTree {
     pub id: usize,
-    pub priority: u8, // 0-255, higher is better
+    pub priority: u8,    // 0-255, higher is better
     pub cpu_needed: f32, // Total height needed to finish
-    pub progress: f32, // Current height
+    pub progress: f32,   // Current height
     pub state: ProcessState,
     pub pos: f32, // X position
     pub width: f32,
@@ -23,7 +23,14 @@ pub struct ProcessTree {
 }
 
 impl ProcessTree {
-    pub fn new(id: usize, pos: f32, width: f32, priority: u8, cpu_needed: f32, creation_time: f64) -> Self {
+    pub fn new(
+        id: usize,
+        pos: f32,
+        width: f32,
+        priority: u8,
+        cpu_needed: f32,
+        creation_time: f64,
+    ) -> Self {
         Self {
             id,
             priority,
@@ -43,12 +50,7 @@ impl ProcessTree {
         // High priority -> Bright Green
         // Low priority -> Brownish Green
         let t = priority as f32 / 255.0;
-        Color::new(
-            0.4 - t * 0.2,
-            0.4 + t * 0.6,
-            0.1 + t * 0.1,
-            1.0,
-        )
+        Color::new(0.4 - t * 0.2, 0.4 + t * 0.6, 0.1 + t * 0.1, 1.0)
     }
 
     pub fn grow(&mut self, amount: f32) {
@@ -92,7 +94,7 @@ mod tests {
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum SchedulingAlgorithm {
     RoundRobin,
-    FCFS, // First Come First Served
+    FCFS,     // First Come First Served
     Priority, // Highest Priority
     ShortestJobFirst,
 }
@@ -101,9 +103,9 @@ pub struct Scheduler {
     pub processes: Vec<ProcessTree>,
     pub current_process_idx: Option<usize>,
     pub algorithm: SchedulingAlgorithm,
-    pub quantum: f32, // Time slice length
+    pub quantum: f32,   // Time slice length
     pub time_left: f32, // Remaining time in slice
-    pub sun_pos: f32, // Visual position of the "Sun"
+    pub sun_pos: f32,   // Visual position of the "Sun"
 }
 
 impl Scheduler {
@@ -124,11 +126,11 @@ impl Scheduler {
 
     pub fn kill_current(&mut self) {
         if let Some(idx) = self.current_process_idx {
-             // Remove from list? Or mark as dead?
-             // Let's remove it to clear space.
-             self.processes.remove(idx);
-             self.current_process_idx = None;
-             self.time_left = 0.0;
+            // Remove from list? Or mark as dead?
+            // Let's remove it to clear space.
+            self.processes.remove(idx);
+            self.current_process_idx = None;
+            self.time_left = 0.0;
         }
     }
 
@@ -154,8 +156,8 @@ impl Scheduler {
 
         // Grow the current process
         if let Some(idx) = self.current_process_idx {
-             // Re-verify index is valid (in case of removal)
-             if idx < self.processes.len() {
+            // Re-verify index is valid (in case of removal)
+            if idx < self.processes.len() {
                 let process = &mut self.processes[idx];
                 if process.state == ProcessState::Running {
                     process.grow(dt * 10.0); // Growth speed
@@ -166,9 +168,9 @@ impl Scheduler {
                     let target_sun = process.pos + process.width / 2.0;
                     self.sun_pos += (target_sun - self.sun_pos) * 5.0 * dt;
                 }
-             } else {
-                 self.current_process_idx = None;
-             }
+            } else {
+                self.current_process_idx = None;
+            }
         }
     }
 
@@ -203,7 +205,7 @@ impl Scheduler {
                 // Find oldest ready process
                 // Assuming vector is ordered by creation time roughly
                 // Just pick the first non-zombie
-                 let mut found = None;
+                let mut found = None;
                 for (i, p) in self.processes.iter().enumerate() {
                     if p.state != ProcessState::Zombie {
                         found = Some(i);
@@ -220,7 +222,7 @@ impl Scheduler {
                 }
                 return; // Return early to skip default quantum set
             }
-             SchedulingAlgorithm::Priority => {
+            SchedulingAlgorithm::Priority => {
                 // Find highest priority ready process
                 let mut best_idx = None;
                 let mut max_prio = 0; // Assuming u8
@@ -236,7 +238,7 @@ impl Scheduler {
                 self.current_process_idx = best_idx;
             }
             SchedulingAlgorithm::ShortestJobFirst => {
-                 // Find process with least remaining work
+                // Find process with least remaining work
                 let mut best_idx = None;
                 let mut min_remaining = f32::MAX;
 

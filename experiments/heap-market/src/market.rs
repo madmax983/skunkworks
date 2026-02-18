@@ -54,7 +54,11 @@ impl Heap {
 
     pub fn allocate(&mut self, size: usize, agent_id: usize, price: f64, duration: usize) -> bool {
         // Find first fit
-        if let Some(index) = self.blocks.iter().position(|b| b.owner.is_none() && b.size >= size) {
+        if let Some(index) = self
+            .blocks
+            .iter()
+            .position(|b| b.owner.is_none() && b.size >= size)
+        {
             let block = &mut self.blocks[index];
 
             if block.size == size {
@@ -115,10 +119,10 @@ impl Heap {
 
 #[derive(Clone, Debug)]
 pub enum Strategy {
-    Hoarder,   // Buys big, holds long
-    Flipper,   // Buys small, holds short (high frequency)
+    Hoarder,    // Buys big, holds long
+    Flipper,    // Buys small, holds short (high frequency)
     JustInTime, // Buys what it needs immediately
-    Panic,     // Buys anything at any price if capacity is low
+    Panic,      // Buys anything at any price if capacity is low
 }
 
 #[derive(Clone, Debug)]
@@ -153,9 +157,9 @@ impl Agent {
                         duration: rng.gen_range(100..500),
                     });
                 }
-            },
+            }
             Strategy::Flipper => {
-                 if rng.gen_bool(0.3) && self.budget > market_price * 10.0 {
+                if rng.gen_bool(0.3) && self.budget > market_price * 10.0 {
                     return Some(Order::Bid {
                         agent_id: self.id,
                         size: rng.gen_range(5..20),
@@ -163,20 +167,20 @@ impl Agent {
                         duration: rng.gen_range(5..20),
                     });
                 }
-            },
+            }
             Strategy::JustInTime => {
                 if rng.gen_bool(0.05) && self.budget > market_price * 50.0 {
-                     return Some(Order::Bid {
+                    return Some(Order::Bid {
                         agent_id: self.id,
                         size: rng.gen_range(10..50),
                         price: market_price * 1.05,
                         duration: rng.gen_range(20..50),
                     });
                 }
-            },
+            }
             Strategy::Panic => {
                 if fragmentation > 10.0 && self.budget > 0.0 {
-                     return Some(Order::Bid {
+                    return Some(Order::Bid {
                         agent_id: self.id,
                         size: rng.gen_range(1..10),
                         price: market_price * 2.0,
@@ -248,16 +252,18 @@ impl Market {
         let fragmentation = self.heap.fragmentation();
         let current_price = self.current_price;
 
-        let orders: Vec<Order> = self.agents.par_iter()
+        let orders: Vec<Order> = self
+            .agents
+            .par_iter()
             .filter_map(|a| a.decide(current_price, fragmentation))
             .collect();
 
         // 3. Process Orders (Sequential)
         // Sort by price (highest bid first)
         let mut sorted_orders = orders;
-        sorted_orders.sort_by(|a, b| {
-            match (a, b) {
-                (Order::Bid { price: p1, .. }, Order::Bid { price: p2, .. }) => p2.partial_cmp(p1).unwrap_or(std::cmp::Ordering::Equal),
+        sorted_orders.sort_by(|a, b| match (a, b) {
+            (Order::Bid { price: p1, .. }, Order::Bid { price: p2, .. }) => {
+                p2.partial_cmp(p1).unwrap_or(std::cmp::Ordering::Equal)
             }
         });
 
@@ -266,7 +272,12 @@ impl Market {
 
         for order in sorted_orders {
             match order {
-                Order::Bid { agent_id, size, price, duration } => {
+                Order::Bid {
+                    agent_id,
+                    size,
+                    price,
+                    duration,
+                } => {
                     if self.heap.allocate(size, agent_id, price, duration) {
                         if let Some(agent) = self.agents.get_mut(agent_id) {
                             agent.budget -= price * size as f64; // Price is per unit? Or total? Let's say price is per unit.
@@ -288,7 +299,15 @@ impl Market {
         // If demand is low (lots of failed bids due to price? or just no bids?), price goes down.
         // Or based on free space.
 
-        let utilization = 1.0 - (self.heap.blocks.iter().filter(|b| b.owner.is_none()).map(|b| b.size).sum::<usize>() as f64 / self.heap.capacity as f64);
+        let utilization = 1.0
+            - (self
+                .heap
+                .blocks
+                .iter()
+                .filter(|b| b.owner.is_none())
+                .map(|b| b.size)
+                .sum::<usize>() as f64
+                / self.heap.capacity as f64);
 
         // Price adjustment
         if utilization > 0.9 {
@@ -298,8 +317,12 @@ impl Market {
         }
 
         // Clamp price
-        if self.current_price < 0.1 { self.current_price = 0.1; }
-        if self.current_price > 100.0 { self.current_price = 100.0; }
+        if self.current_price < 0.1 {
+            self.current_price = 0.1;
+        }
+        if self.current_price > 100.0 {
+            self.current_price = 100.0;
+        }
 
         self.history.push_back(self.current_price);
         if self.history.len() > 100 {

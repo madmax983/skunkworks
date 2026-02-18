@@ -1,8 +1,11 @@
-use std::sync::{Arc, Mutex, atomic::{AtomicBool, Ordering}};
+use crate::audio::AudioEvent;
+use crossbeam::channel::Sender;
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc, Mutex,
+};
 use std::thread;
 use std::time::Duration;
-use crossbeam::channel::Sender;
-use crate::audio::AudioEvent;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum MusicianState {
@@ -51,7 +54,10 @@ impl Musician {
 
                     // PLAYING (Critical Section)
                     let _ = ui_tx.send(UiEvent::StateChange(self.id, MusicianState::Playing));
-                    let _ = audio_tx.send(AudioEvent::NoteOn { id: self.id, freq: self.pitch });
+                    let _ = audio_tx.send(AudioEvent::NoteOn {
+                        id: self.id,
+                        freq: self.pitch,
+                    });
 
                     thread::sleep(Duration::from_millis(self.hold_duration_ms));
 
@@ -127,40 +133,35 @@ mod tests {
             hold_duration_ms: 10,
         };
 
-        let handle = musician.start(
-            beat_lock.clone(),
-            audio_tx,
-            ui_tx,
-            running.clone(),
-        );
+        let handle = musician.start(beat_lock.clone(), audio_tx, ui_tx, running.clone());
 
         // Expect Resting
         match ui_rx.recv_timeout(Duration::from_millis(200)) {
-            Ok(UiEvent::StateChange(1, MusicianState::Resting)) => {},
+            Ok(UiEvent::StateChange(1, MusicianState::Resting)) => {}
             x => panic!("Expected Resting, got {:?}", x),
         }
 
         // Expect Waiting (after 10ms)
         match ui_rx.recv_timeout(Duration::from_millis(200)) {
-            Ok(UiEvent::StateChange(1, MusicianState::Waiting)) => {},
+            Ok(UiEvent::StateChange(1, MusicianState::Waiting)) => {}
             x => panic!("Expected Waiting, got {:?}", x),
         }
 
         // Expect Playing (acquired lock immediately)
         match ui_rx.recv_timeout(Duration::from_millis(200)) {
-            Ok(UiEvent::StateChange(1, MusicianState::Playing)) => {},
+            Ok(UiEvent::StateChange(1, MusicianState::Playing)) => {}
             x => panic!("Expected Playing, got {:?}", x),
         }
 
         // Expect NoteOn
         match audio_rx.recv_timeout(Duration::from_millis(200)) {
-            Ok(AudioEvent::NoteOn { id: 1, freq: _ }) => {}, // freq is 440.0, checking logic
+            Ok(AudioEvent::NoteOn { id: 1, freq: _ }) => {} // freq is 440.0, checking logic
             x => panic!("Expected NoteOn, got {:?}", x),
         }
 
         // Expect NoteOff (after 10ms)
         match audio_rx.recv_timeout(Duration::from_millis(200)) {
-            Ok(AudioEvent::NoteOff { id: 1 }) => {},
+            Ok(AudioEvent::NoteOff { id: 1 }) => {}
             x => panic!("Expected NoteOff, got {:?}", x),
         }
 
