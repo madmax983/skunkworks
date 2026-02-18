@@ -14,6 +14,7 @@ pub mod optics;
 pub mod quantum;
 pub mod teleport;
 pub mod topology;
+pub mod void;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PrologueAgent {
@@ -120,6 +121,9 @@ impl PrologueState {
                             | "b"
                             | "l"
                             | "n"
+                            | "µ"
+                            | "Ø"
+                            | "§"
                     ) {
                         self.runes.insert((y, x));
 
@@ -290,6 +294,9 @@ fn apply_propagation_rune(
     if evolution::apply_evolution_runes(rune, y, x, dna, current_signals, next_signals) {
         return true;
     }
+    if void::apply_void_runes(rune, y, x, current_signals, next_signals) {
+        return true;
+    }
     false
 }
 
@@ -457,6 +464,18 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                 }
             }
         }
+        "§" => {
+            // Singularity: Consume all neighbor signals
+            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+            for (dy, dx) in neighbors {
+                if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    if vm.prologue_state.signal_grid[ny][nx].is_some() {
+                        vm.prologue_state.signal_grid[ny][nx] = None;
+                        vm.output.push(format!("PROLOGUE: Singularity consumed signal at {},{}", nx, ny));
+                    }
+                }
+            }
+        }
         _ => {
             evolution::apply_evolution_sinks(vm, rune, y, x);
         }
@@ -467,6 +486,16 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
     // Agents move towards signal
     // We need to update agents list in state, and also update the Grid (move the '@' char)
     // This requires mutable access to grid.
+
+    // Scan for Singularities first
+    let mut singularities = Vec::new();
+    for (ry, rx) in &vm.prologue_state.runes {
+        if let Value::Str(s) = &grid_snapshot[*ry][*rx] {
+            if s == "§" {
+                singularities.push((*ry, *rx));
+            }
+        }
+    }
 
     // We iterate agents from state (snapshot) and update grid.
     let agents = vm.prologue_state.agents.clone();
@@ -483,63 +512,101 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
         let mut target = None;
         let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
 
-        if current_type == "K" {
-            // Chaos: Move Randomly
-            let mut rng = rand::thread_rng();
-            let mut possible_moves = Vec::new();
-            for (dy, dx) in neighbors {
-                if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                    if let Value::Int(0) = &grid_snapshot[ny][nx] {
-                        possible_moves.push((ny, nx));
-                    }
+        // Priority: Singularity Attraction
+        if !singularities.is_empty() {
+            let mut closest_dist = f64::MAX;
+            let mut closest_sing = None;
+
+            for (sy, sx) in &singularities {
+                let dist = ((y as isize - *sy as isize).pow(2) + (x as isize - *sx as isize).pow(2)) as f64;
+                if dist < 25.0 && dist < closest_dist { // Range 5
+                    closest_dist = dist;
+                    closest_sing = Some((*sy, *sx));
                 }
             }
-            if !possible_moves.is_empty() {
-                let idx = rng.gen_range(0..possible_moves.len());
-                target = Some(possible_moves[idx]);
-            }
-        } else if current_type == "H" {
-            // Hunter: Seek Prey (@ or K)
-            for (dy, dx) in neighbors {
-                if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                    if let Value::Str(s) = &grid_snapshot[ny][nx] {
-                        if s == "@" || s == "K" {
-                            target = Some((ny, nx));
-                            break;
+
+            if let Some((sy, sx)) = closest_sing {
+                // Move towards singularity
+                let mut best_move = None;
+                let mut best_move_dist = f64::MAX;
+
+                for (my, mx) in neighbors {
+                    if let Some((ny, nx)) = normalize_coords(y as i64 + my, x as i64 + mx) {
+                        // Check if empty
+                        if let Value::Int(0) = &grid_snapshot[ny][nx] {
+                             let d = ((ny as isize - sy as isize).pow(2) + (nx as isize - sx as isize).pow(2)) as f64;
+                             if d < best_move_dist {
+                                 best_move_dist = d;
+                                 best_move = Some((ny, nx));
+                             }
                         }
                     }
                 }
+                if best_move.is_some() {
+                    target = best_move;
+                }
             }
-            // If no prey, seek signal like @
-            if target.is_none() {
+        }
+
+        if target.is_none() {
+            if current_type == "K" {
+                // Chaos: Move Randomly
+                let mut rng = rand::thread_rng();
+                let mut possible_moves = Vec::new();
+                for (dy, dx) in neighbors {
+                    if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                        if let Value::Int(0) = &grid_snapshot[ny][nx] {
+                            possible_moves.push((ny, nx));
+                        }
+                    }
+                }
+                if !possible_moves.is_empty() {
+                    let idx = rng.gen_range(0..possible_moves.len());
+                    target = Some(possible_moves[idx]);
+                }
+            } else if current_type == "H" {
+                // Hunter: Seek Prey (@ or K)
+                for (dy, dx) in neighbors {
+                    if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                        if let Value::Str(s) = &grid_snapshot[ny][nx] {
+                            if s == "@" || s == "K" {
+                                target = Some((ny, nx));
+                                break;
+                            }
+                        }
+                    }
+                }
+                // If no prey, seek signal like @
+                if target.is_none() {
+                    for (dy, dx) in neighbors {
+                        if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                            if vm.prologue_state.signal_grid[ny][nx].is_some() {
+                                let cell = &grid_snapshot[ny][nx];
+                                if matches!(cell, Value::Int(0) | Value::Str(_)) {
+                                    target = Some((ny, nx));
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Seeker (@): Seek Signal
                 for (dy, dx) in neighbors {
                     if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
                         if vm.prologue_state.signal_grid[ny][nx].is_some() {
                             let cell = &grid_snapshot[ny][nx];
-                            if matches!(cell, Value::Int(0) | Value::Str(_)) {
-                                target = Some((ny, nx));
-                                break;
+                            match cell {
+                                Value::Int(0) => {
+                                    target = Some((ny, nx));
+                                    break;
+                                }
+                                Value::Str(s) if s == "~" => {
+                                    target = Some((ny, nx));
+                                    break;
+                                }
+                                _ => {}
                             }
-                        }
-                    }
-                }
-            }
-        } else {
-            // Seeker (@): Seek Signal
-            for (dy, dx) in neighbors {
-                if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                    if vm.prologue_state.signal_grid[ny][nx].is_some() {
-                        let cell = &grid_snapshot[ny][nx];
-                        match cell {
-                            Value::Int(0) => {
-                                target = Some((ny, nx));
-                                break;
-                            }
-                            Value::Str(s) if s == "~" => {
-                                target = Some((ny, nx));
-                                break;
-                            }
-                            _ => {}
                         }
                     }
                 }

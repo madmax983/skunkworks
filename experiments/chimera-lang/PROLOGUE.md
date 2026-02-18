@@ -104,3 +104,13 @@ Enabled via `OpCode::Orca` or TUI toggle. This is a concurrent cellular automata
 | `C` | **Clock** | Outputs time-based modulo values. |
 | `M` | **Mutate** | Mutates target strand or value. |
 | `Q` | **Query** | Reads value at offset. |
+
+# Prologue III: Void Runes 🕳️
+
+Runes for manipulating negative space and signal absence.
+
+| Rune | Name | Function |
+|---|---|---|
+| `µ` | **Vacuum** | Inverter (NOT Gate). If **West** is Empty, emits `1` to Self. |
+| `Ø` | **Void Anchor** | NOR Gate. If **N, S, E, W** are ALL Empty, emits `1` to Self. Acts as an Oscillator base. |
+| `§` | **Singularity** | **Gravity Well**. Attracts Agents (`@`) from range 5. **Consumes** (clears) signals from all neighbors. |
