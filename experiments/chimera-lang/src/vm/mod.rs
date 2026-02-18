@@ -5312,3 +5312,6 @@ mod nova_biomesh_signal_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod prologue_test;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod prologue_new_runes_test;
