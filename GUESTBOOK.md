@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/neuro-circuit
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The spikes are traveling along the copper. The delay is physical.
+- **Note:** Cross: `chimera-circuit` + `spinal-rhythms`. The Brain is the Circuit.
+
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-finder
 - **Scent Origin:** Genesis (The Cartographer) ⚛️🗺️
 - **Status:** The geometry is non-Euclidean. The folders are infinite.
