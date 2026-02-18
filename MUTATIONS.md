@@ -1181,3 +1181,24 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Bio-Geological Feedback Loop. The code shapes the landscape, and the landscape moves the code.
 - **Status**: experiments/chimera-erosion
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### neuro-calligraphy
+- **Parents**: experiments/resonant-glyphs + experiments/spinal-rhythms
+- **Concept**: Typography that behaves like aquatic life. Font outlines become the skin of creatures driven by CPG neural networks.
+- **Novel trait**: Neural-Driven Typography. Letters writhe and swim with organic rhythms.
+- **Status**: experiments/neuro-calligraphy
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified in GUESTBOOK.
+
+### circuit-sigil
+- **Parents**: Genesis (The Cryptographer)
+- **Concept**: Git Commit Verification via Procedural PCB Art.
+- **Novel trait**: Image Authentication + Git Commit Verification. The commit is the circuit.
+- **Status**: experiments/circuit-sigil
+- **Evaluation**: Compiles. Verified in GUESTBOOK.
+
+### chimera-circuit
+- **Parents**: experiments/circuit-sigil + experiments/chimera-lang
+- **Concept**: ChimeraVM agents navigating a printed circuit board generated from git history.
+- **Novel trait**: Genetic algorithms optimizing pathfinding on procedurally generated hardware layouts.
+- **Status**: experiments/chimera-circuit
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
