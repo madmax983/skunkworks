@@ -1,6 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chaos-life**: Documentation Void. Terminal Genericism. Grace period: 24h.
-- **celestial-cipher**: Specimen executed. Documentation void. Toxic status confirmed. Grace period expired. Moved to graveyard.
+- **geo-linguistics**: Documentation Void. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -13,6 +12,8 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **chaos-life**: Specimen executed. Documentation Void. Terminal Genericism. Grace period expired. Moved to graveyard.
+- **celestial-cipher**: Specimen executed. Documentation void. Toxic status confirmed. Grace period expired. Moved to graveyard.
 - **slime-trash**: Specimen executed. Documentation Void. Generic Physarum implementation. Grace period expired. Biomass returned to the void.
 - **mechanical-integrator**: Specimen executed. Terminal Genericism. Illegal Configuration (`edition = "2024"`). Documentation Void. Grace period expired. Moved to graveyard.
 - **soroban-market**: Specimen executed. Terminal Redundancy (Superseded by `soroban-specter`). Illegal configuration (`edition = "2024"`). Grace period expired. Moved to graveyard.
