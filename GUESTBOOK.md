@@ -130,3 +130,8 @@
 ### [Concentration Level: TOXIC] - Location: experiments/digital-decay
 - **Status:** Condemned.
 - **Note:** Redundant with digital-compost. Manual entropy slider lacks historical truth.
+
+### [Concentration Level: HIGH] - Location: experiments/system-turbulence
+- **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
+- **Status:** Fluid dynamic simulation driven by system metrics.
+- **Note:** Moonshot: Navier-Stokes + System Monitor.
