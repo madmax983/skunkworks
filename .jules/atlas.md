@@ -83,3 +83,9 @@
 **Blueprint:** Extracted `crates/gray-scott` to centralize the simulation logic. It supports both `f32` (performance) and parallel updates via `rayon` (feature-gated).
 **Stability:** Single source of truth for reaction-diffusion math.
 **Verification:** Verified via `cargo check` and `cargo test` on consumers.
+
+## [Origami Logic Extraction]
+**Tangle:** The Copy-Paste - `origami-constellation`, `rigid-origami`, and `origami-spores` all implemented Miura-ori mesh generation logic with slight variations (different orientations and parameter handling).
+**Blueprint:** Created `crates/origami` to centralize `MiuraParams` and `MiuraOri`. Implemented `Orientation::Horizontal` (for visualizer) and `Orientation::Vertical` (for rigid/simulation) strategies. Refactored all 3 experiments to use the shared crate.
+**Stability:** Centralized geometry logic, ensured edge length preservation (rigidity) in both orientations via tests.
+**Verification:** Verified with `cargo check` and `cargo test`. Added unit tests for flat/folded states and edge length constraints.

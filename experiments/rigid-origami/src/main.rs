@@ -1,12 +1,17 @@
-mod kinematics;
-
 use ::rand::Rng;
-use kinematics::MiuraGrid;
 use macroquad::prelude::*;
+use origami::{MiuraOri, MiuraParams, Orientation};
 
 #[macroquad::main("Rigid Origami")]
 async fn main() {
-    let grid = MiuraGrid::new(20, 15);
+    let params = MiuraParams {
+        a: 1.0,
+        b: 1.0,
+        gamma: 80.0f32.to_radians(),
+        orientation: Orientation::Vertical,
+    };
+    let grid = MiuraOri::new(params, (20, 15));
+    let (cols, rows) = grid.grid_size;
 
     // Camera state
     let mut cam_yaw: f32 = 0.0;
@@ -85,11 +90,7 @@ async fn main() {
 
         set_camera(&Camera3D {
             position: cam_pos,
-            target: vec3(
-                grid.cols as f32 * grid.params.a * 0.5,
-                grid.rows as f32 * grid.params.b * 0.5,
-                0.0,
-            ), // Look at center approx
+            target: vec3(0.0, 0.0, 0.0),
             up: vec3(0.0, 1.0, 0.0),
             ..Default::default()
         });
@@ -101,7 +102,7 @@ async fn main() {
         }
 
         // 1. Calculate vertices
-        let vertices = grid.get_vertices(expansion);
+        let vertices = grid.generate_grid(expansion);
 
         // 2. Build Mesh
         let mut mesh = Mesh {
@@ -110,13 +111,13 @@ async fn main() {
             texture: None,
         };
 
-        let width = grid.cols + 1;
+        let width = cols + 1;
 
         // Solar Panel Colors
         let face_color = Color::new(0.1, 0.1, 0.4, 1.0); // Dark Blue
 
-        for j in 0..grid.rows {
-            for i in 0..grid.cols {
+        for j in 0..rows {
+            for i in 0..cols {
                 let idx0 = (j * width + i) as u16;
                 let idx1 = (j * width + i + 1) as u16;
                 let idx2 = ((j + 1) * width + i + 1) as u16;
@@ -187,15 +188,15 @@ async fn main() {
         // Vertical lines are all Mountain (or Valley depending on convention)
         // Actually, let's just draw lines.
 
-        for j in 0..=grid.rows {
-            for i in 0..grid.cols {
+        for j in 0..=rows {
+            for i in 0..cols {
                 let idx1 = j * width + i;
                 let idx2 = j * width + i + 1;
                 draw_line_3d(vertices[idx1], vertices[idx2], WHITE);
             }
         }
-        for j in 0..grid.rows {
-            for i in 0..=grid.cols {
+        for j in 0..rows {
+            for i in 0..=cols {
                 let idx1 = j * width + i;
                 let idx2 = (j + 1) * width + i;
                 draw_line_3d(vertices[idx1], vertices[idx2], WHITE);
