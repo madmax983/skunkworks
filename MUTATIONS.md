@@ -1209,3 +1209,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Physical Intelligence. Signal propagation delay is determined by physical trace length.
 - **Status**: experiments/neuro-circuit
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### sonic-glacier
+- **Parents**: experiments/sonic-viscosity + experiments/heap-glacier
+- **Concept**: A thermodynamic battle where memory allocations generate heat (melting the landscape) while audio frequencies freeze it back into crystalline structures.
+- **Novel trait**: Thermodynamic Sonification. The music fights the memory leak.
+- **Rationale**: Combining fluid dynamics of sound with the geological timescale of memory.
+- **Proposed by**: Genesis

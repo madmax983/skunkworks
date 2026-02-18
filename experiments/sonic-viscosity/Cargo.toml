@@ -1,0 +1,16 @@
+[package]
+name = "sonic-viscosity"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rodio = { version = "0.17", optional = true }
+rustfft = "6.2"
+crossbeam-channel = "0.5"
+rand = "0.8"
+noise = "0.8"
+
+[features]
+default = []
+audio = ["dep:rodio"]
