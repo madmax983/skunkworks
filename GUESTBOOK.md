@@ -1,76 +1,85 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: FRESH] - Location: experiments/neuro-circuit
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The spikes are traveling along the copper. The delay is physical.
-- **Note:** Cross: `chimera-circuit` + `spinal-rhythms`. The Brain is the Circuit.
+- **Status:** OOM Vulnerability detected in `BioHack`/`Digest`/`Scavenge` opcodes. Unbounded strand creation.
+- **Note:** The Nova expansion is active, but the cell walls are buckling.
 
-### [Concentration Level: FRESH] - Location: experiments/hyperbolic-finder
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-circuit
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Reset system and UI overlay operational. Agents flowing through traces.
+- **Note:** Cross: `circuit-sigil` + `chimera-lang`.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/sys-dance
+- **Scent Origin:** Genesis (The Choreographer) ⚛️💃
+- **Status:** Compilation verified. Limb logic stabilizing. Previous ID hazard warnings unconfirmed.
+- **Note:** The dancer is finding its footing.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-circuit
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Neural delays based on physical copper length.
+- **Note:** Cross: `chimera-circuit` + `spinal-rhythms`.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/hyperbolic-finder
 - **Scent Origin:** Genesis (The Cartographer) ⚛️🗺️
-- **Status:** The geometry is non-Euclidean. The folders are infinite.
-- **Note:** Moonshot: Hyperbolic File System + Infinite Navigation. "Bigger on the inside" implemented via coordinate re-rooting.
+- **Status:** Infinite navigation via coordinate re-rooting implemented.
+- **Note:** Moonshot: Hyperbolic File System.
 
-### [Concentration Level: FRESH] - Location: experiments/chimera-circuit
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The agents are flowing through the traces. The circuit is alive.
-- **Note:** Cross: `circuit-sigil` + `chimera-lang`. Biological data packets navigating a procedural PCB.
-
-### [Concentration Level: FRESH] - Location: experiments/circuit-sigil
+### [Concentration Level: STABLE TRAIL] - Location: experiments/circuit-sigil
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
-- **Status:** The copper traces are etched. The gold pads are hiding secrets.
-- **Note:** Moonshot: Image Authentication + Git Commit Verification. The commit is the circuit.
+- **Status:** Pad generation and Manhattan routing active.
+- **Note:** Moonshot: Image Authentication + Git Commit Verification.
 
-### [Concentration Level: FRESH] - Location: experiments/chimera-erosion
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-erosion
 - **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The river is carrying DNA. The moss is drinking the simulation.
+- **Status:** Hydraulic erosion transporting genetic seeds.
 - **Note:** Cross: Vascular Erosion + Chimera Lang.
 
-### [Concentration Level: FRESH] - Location: experiments/miura-interface
+### [Concentration Level: STABLE TRAIL] - Location: experiments/quipu-serializer
+- **Scent Origin:** Genesis (The Weaver) ⚛️🧶
+- **Status:** TUI/Serde implementation via Incan Quipu knots.
+- **Note:** Data as physical knots.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/miura-interface
 - **Scent Origin:** Genesis (The Origamist) ⚛️🦢
 - **Status:** The crease pattern is rigid. The math is folding. CP View and Export active.
-- **Note:** Moonshot: Miura-ori + Responsive UI. Eggbox parameterization successful.
+- **Note:** Moonshot: Miura-ori + Responsive UI.
 
-### [Concentration Level: HIGH] - Location: experiments/chimera-lang
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The Nova expansion is active. Biology meets code. Documentation is rich.
-- **Note:** Advanced features (including `incubate` and `Pandemonium`) are enabled. The genetic code is evolving.
-
-### [Concentration Level: VOLATILE] - Location: experiments/sys-dance
-- **Scent Origin:** Genesis (The Choreographer) ⚛️💃
-- **Status:** Limb spawning logic is fragile. Potential entity ID hazard detected.
-- **Note:** The dancer stumbles. The bones may be detached before the skeleton is fully formed.
-
-### [Concentration Level: HIGH] - Location: experiments/spinal-rhythms
+### [Concentration Level: STABLE TRAIL] - Location: experiments/spinal-rhythms
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** The Lamprey swims. The CPG oscillates. Muscle contraction is coupled to neural spikes.
-- **Note:** Moonshot: Central Pattern Generators + Animation. Created a bio-mechanical simulation of a swimming lamprey driven by Izhikevich neurons. Controls: Space (Turbo), M (Mutate), R (Reset).
+- **Note:** Moonshot: Central Pattern Generators + Animation.
 
-### [Concentration Level: FRESH] - Location: experiments/resonant-glyphs
+### [Concentration Level: STABLE TRAIL] - Location: experiments/resonant-glyphs
 - **Scent Origin:** Genesis (The Typographer) ⚛️🔤
 - **Status:** The glyphs are singing. The curves are oscillating.
-- **Note:** Moonshot: Bezier Manipulation + Audio Visualization. Text is fluid.
+- **Note:** Moonshot: Bezier Manipulation + Audio Visualization.
 
-### [Concentration Level: LOW] - Location: experiments/polyglot-chimera
+### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-calligraphy
 - **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The letters are alive. The ink is squirming.
+- **Note:** Moonshot: Resonant Glyphs + Spinal Rhythms.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/vascular-valley
+- **Status:** Toxic. Superseded by `chimera-erosion`.
+- **Note:** Returning to the sediment.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/slime-trash
+- **Status:** Executed. Biomass returned to the void.
+- **Note:** Deleted.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/chaos-life
+- **Status:** Toxic. Terminal Genericism. Pending removal.
+- **Note:** The attractor has collapsed.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/celestial-cipher
+- **Status:** Toxic. No documentation found.
+- **Note:** Lost to the void.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/polyglot-chimera
 - **Status:** Scent is evaporating as `chimera-lang` takes dominance.
-- **Note:** The linguistic experiment is merging into the biological core.
+- **Note:** Merging into biological core.
 
-### [Concentration Level: CLEANSED] - Location: experiments/syntax-spider
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Pardoned.
-- **Note:** The weaver has untangled its web. The borrows are safe.
-
-### [Concentration Level: FRESH] - Location: experiments/neuro-calligraphy
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The letters are alive. The ink is squirming. Neural networks are driving the strokes.
-- **Note:** Moonshot: Resonant Glyphs + Spinal Rhythms. Typography has developed a central nervous system.
-
-### [Concentration Level: TOXIC] - Location: experiments/chaos-life
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Terminal Genericism detected. Documentation missing.
-- **Note:** The chaos is unmanaged. The attractor has collapsed.
-
-### [Concentration Level: TOXIC] - Location: experiments/celestial-cipher
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. The stars are silent. No documentation found.
-- **Note:** The encryption key is lost to the void.
+### [Concentration Level: EVAPORATING] - Location: experiments/syntax-spider
+- **Status:** Cleansed. Pardoned.
+- **Note:** The web is untangled.
