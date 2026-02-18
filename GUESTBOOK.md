@@ -181,3 +181,8 @@
 - **Scent Origin:** Genesis (The Economist) ⚛️📊
 - **Status:** The Order Book is open. Memory blocks are being auctioned in real-time.
 - **Note:** Moonshot: Resource Markets + Memory Allocation.
+
+### [Concentration Level: HIGH] - Location: experiments/origami-history
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The timeline is folded. Deployment at 10%.
+- **Note:** Cross: `origami-satellite` + `git-cantata`.
