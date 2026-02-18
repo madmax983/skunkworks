@@ -120,15 +120,32 @@ impl Knot {
 }
 
 /// Represents the color of a cord, which could indicate data type or category.
+///
+/// In the Inca system, colors were used to distinguish different types of data
+/// (e.g., one color for potatoes, another for maize, another for census data).
+///
+/// # Examples
+///
+/// ```
+/// use quipu::Color;
+/// let c = Color::Red;
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum Color {
+    /// Un-dyed cotton or wool (the default).
     #[default]
     Natural,
+    /// Often associated with political or military data.
     Red,
+    /// Often associated with conquest or geography.
     Green,
+    /// Often associated with religious data.
     Blue,
+    /// Often associated with gold or corn (maize).
     Yellow,
+    /// Often associated with time or history.
     Black,
+    /// Often associated with silver or peace.
     White,
 }
 
@@ -380,6 +397,21 @@ impl fmt::Display for Cord {
 impl Add for Cord {
     type Output = Cord;
 
+    /// Adds two Cords together.
+    ///
+    /// The result is a new Cord representing the sum of the values.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use quipu::Cord;
+    ///
+    /// let c1 = Cord::from(100);
+    /// let c2 = Cord::from(50);
+    /// let sum = c1 + c2;
+    ///
+    /// assert_eq!(sum.value(), 150);
+    /// ```
     fn add(self, rhs: Self) -> Self::Output {
         let val = self.value() + rhs.value();
         Cord::from(val)
@@ -396,6 +428,18 @@ impl Sub for Cord {
     /// Panics if the result would be negative (i.e., `rhs > self`).
     /// The Inca number system does not support negative numbers.
     /// Use [`Cord::checked_sub`] for safe subtraction.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use quipu::Cord;
+    ///
+    /// let c1 = Cord::from(100);
+    /// let c2 = Cord::from(25);
+    /// let diff = c1 - c2;
+    ///
+    /// assert_eq!(diff.value(), 75);
+    /// ```
     fn sub(self, rhs: Self) -> Self::Output {
         // Only implementing positive result subtraction
         if self.value() < rhs.value() {
@@ -427,6 +471,9 @@ impl Sub for Cord {
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct Quipu {
     /// The list of pendant cords attached to the main cord.
+    ///
+    /// Each cord represents a number or data point.
+    /// The index in the vector corresponds to the physical position on the main cord.
     pub cords: Vec<Cord>,
 }
 
@@ -437,6 +484,19 @@ impl Quipu {
     }
 
     /// Adds a cord to the Quipu.
+    ///
+    /// The new cord is attached at the end of the main cord.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use quipu::{Quipu, Cord};
+    ///
+    /// let mut q = Quipu::new();
+    /// q.add_cord(Cord::from(10));
+    ///
+    /// assert_eq!(q.cords.len(), 1);
+    /// ```
     pub fn add_cord(&mut self, cord: Cord) {
         self.cords.push(cord);
     }
