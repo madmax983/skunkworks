@@ -1,166 +1,41 @@
 [workspace]
-members = [
-    "crates/git-associates",
-    "crates/locus",
-    "crates/market-sim",
-    "crates/flocking",
-    "crates/quipu",
-    "crates/synaptic-physics",
-    "crates/tui-semantic",
-    "crates/tui-shared",
-    "crates/soroban",
-    "crates/gray-scott",
-    "experiments/algo-botany",
-    "experiments/code-bio-dome",
-    "experiments/cymatic-ocean",
-    "experiments/digital-compost",
-    "experiments/fabric-limb",
-    "experiments/fissure-tracker",
-    "experiments/fluid-rain",
-    "experiments/git-harmony",
-    "experiments/git-rogue",
-    "experiments/hyperbolic-dungeon",
-    "experiments/market-flow",
-    "experiments/myco-transit",
-    "experiments/neuro-terminal",
-    "experiments/semantic-spy",
-    "experiments/system-bio-dome",
-    "experiments/thermo-termites",
-    "experiments/verge-computer",
-    "experiments/chromatic-code",
-    "experiments/luminous-flock",
-    "experiments/heap-arena",
-    "experiments/crate-radar",
-    "experiments/quantum-garden",
-    "experiments/quasicrystal-dungeon",
-    "experiments/quipu-symphony",
-    "experiments/quantum-boids",
-    "experiments/git-harmonograph",
-    "experiments/phonetic-flock",
-    "experiments/photon-racer",
-    "experiments/voronoi-ants",
-    "experiments/miura-interface",
-    "experiments/routing-market",
-    "experiments/tectonic-git",
-    "experiments/struct-harmonics",
-    "experiments/symphonic-terrain",
-    "experiments/cargo-rocket",
-    "experiments/chaos-pendulum",
-    "experiments/chimera-lang",
-    "experiments/repo-rover", 
-    "experiments/reaction-monitor", 
-    "experiments/syntax-spider", 
-    "experiments/hive-synth",
-    "experiments/market-rogue",
-    "experiments/hidden-brush", 
-    "experiments/hologram-text",
-    "experiments/sediment-flow", 
-    "experiments/fungal-balancer",
-    "experiments/hyperbolic-ants", 
-    "experiments/klein-life",
-    "experiments/firefly-synapse",
-    "experiments/chimera-market",
-    "experiments/compost-chimera",
-    "experiments/penrose-genes",
-    "experiments/seismic-lure", 
-    "experiments/syntax-garden", 
-    "experiments/entropic-rain", 
-    "experiments/harmony-of-spheres", 
-    "experiments/chaotic-mycelium",
-    "experiments/bio-chain",
-    "experiments/primordial-soup", 
-    "experiments/hyperbolic-finder", 
-    "experiments/luminous-flock-web", 
-    "experiments/fairy-consensus",
-    "experiments/chimera-resonance",
-    "crates/resonance-audio", 
-    "crates/poincare-disk", 
-    "experiments/hive-mind-dependencies",
-    "experiments/clockwork-chimera", 
-    "experiments/schrodingers-beat",
-    "experiments/colony-concerto", 
-    "experiments/rhizome-radar", 
-    "experiments/hyperbolic-roots",
-    "experiments/laban-machine", 
-    "experiments/laban-rover", 
-    "experiments/chimera-fossil",
-    "experiments/cam-automaton", 
-    "experiments/git-cantata",
-    "experiments/chimera-automaton", 
-    "experiments/miller-fs", 
-    "experiments/git-landscape", 
-    "experiments/chimera-tardis",
-    "experiments/hyperbolic-git", 
-    "experiments/chrontext", 
-    "experiments/synaptic-pachinko", 
-    "experiments/lagrange-balancer", 
-    "experiments/klein-magnetron", 
-    "experiments/code-canyon", 
-    "experiments/code-phage",  
-    "experiments/lattice-brain",
-    "experiments/jpeg-garden",
-    "experiments/klein-flock", "experiments/sono-boids",
-    "experiments/market-swarm", "experiments/polyrhythmic-cylinder", "experiments/babylonian-garden", "experiments/phase-engine", "experiments/cryo-colony", "experiments/biomimetic-bridge",
-    "experiments/bridge-specter", "experiments/silicon-samba",
-    "experiments/quipu-chimera", "experiments/system-attractor", "experiments/biomimetic-synth", "experiments/astral-chimera",
-    "experiments/gravity-termites",
-    "experiments/cosmic-strings", "experiments/mobius-git", "experiments/git-ghost", "experiments/ripple-tank", "experiments/quipu-serializer",
-    "experiments/hyperbolic-lichen",
-    "experiments/synaptic-trace", "experiments/morph-physics", "experiments/hydro-boids", "experiments/recursive-conservatory", "experiments/hyperbolic-lexicon",
-    "experiments/quantum-lexicon",
-    "experiments/hyperbolic-bridge",
-    "experiments/protocol-jungle", "experiments/origami-constellation", "experiments/neuro-crab", "experiments/rhythmic-jungle", "experiments/hyperbolic-jungle", "experiments/neuro-fold",
-    "experiments/origami-swarm", "experiments/pixel-archivist",
-    "experiments/mnem-rot", "experiments/mnem-bridge", "experiments/tectonic-flock", "experiments/waggle-dance",
-    "experiments/impossible-explorer", "experiments/chimera-bridge",
-    "experiments/broken-mirror",
-    "experiments/vascular-valley",
-    "experiments/hyperbolic-mold", "experiments/chimera-chaos", "experiments/swap-meet",
-    "experiments/cochlea-sim",
-    "experiments/hydro-brain", "experiments/newtonian-graph", "experiments/biomorphic-clock", "experiments/dependency-karst",
-    "experiments/mandala-cipher", "experiments/penrose-deps",
-    "experiments/biomorphic-strings",
-    "experiments/bio-transit",
-    "experiments/ferrous-graph", "experiments/spqr-rsa",
-    "experiments/ferrous-legion", "experiments/harmonic-engine", "experiments/log-palette", "experiments/quipu-automaton", "experiments/locust-ddos", "experiments/holographic-brain",
-    "experiments/bifurcation-landscape", "experiments/echo-cavern", "experiments/maat-engine", "experiments/clockwork-cipher", "experiments/myco-diffusion", "experiments/thermo-defense", "experiments/glossolalia",
-    "experiments/chimera-maat", "experiments/thread-frequency", "experiments/root-maze", "experiments/chaotic-defense",
-    "experiments/chimera-defense", "experiments/chimera-terra", "experiments/stardust-compiler",
-    "experiments/chimera-stardust", "experiments/digital-decay",
-    "experiments/code-acoustics", "experiments/hanging-gardens", "experiments/celestial-cipher", "experiments/chimera-specter", "experiments/grimms-code",
-    "experiments/soroban-specter", "experiments/miller-reaction", "experiments/recursion-garden", "experiments/rossler-market", "experiments/hanging-abacus", "experiments/process-auction", "experiments/thermo-market",
-    "experiments/spqr-market", "experiments/celestial-rhythms",
-    "experiments/biochemical-soundscapes", "experiments/sys-dance", "experiments/hydrothermal-locks",
-    "experiments/hydro-flock", "experiments/wasm-runes",
-    "experiments/hydro-soundscapes", "experiments/entropy-beast",
-    "experiments/chimera-runes", "experiments/nile-scheduler", "experiments/myco-reaper", "experiments/syntax-fugue", "experiments/crystal-conquest", "experiments/sandpile-scheduler", "experiments/codex-vulgaris",
-    "experiments/neuro-beats", "experiments/hohmann-delivery",
-    "experiments/hyperbolic-library", "experiments/data-strider",
-    "experiments/chimera-roots", "experiments/stego-cartridge", "experiments/git-archaeology", "experiments/string-theory", "experiments/chronos-observatory",
-    "experiments/genetic-luthier", "experiments/sonata-cycle",
-    "experiments/malloc-expressionism",
-    "experiments/crystal-defense", "experiments/geo-linguistics",
-    "experiments/stego-attack", "experiments/tesseract-time", "experiments/rhizome-wars", "experiments/chaos-life", "experiments/polyglot-chimera",
-    "experiments/memetic-market", "experiments/spinal-rhythms", "experiments/resonant-glyphs", "experiments/gravitational-orchestra",
-    "experiments/typographic-turbulence", "experiments/neuro-calligraphy", "experiments/chimera-erosion", "experiments/circuit-sigil",
-    "experiments/chimera-circuit", "experiments/spectral-decay",
-]
 resolver = "2"
+members = [
+    "crates/*",
+    "experiments/*",
+]
 
 [workspace.dependencies]
 anyhow = "1.0"
+clap = { version = "4.5", features = ["derive"] }
 crossterm = "0.28"
 rand = "0.8"
 ratatui = "0.30"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "2.0"
+tokio = { version = "1.0", features = ["full"] }
 git2 = "0.18"
+locus = { path = "crates/locus" }
+flocking = { path = "crates/flocking" }
+git-associates = { path = "crates/git-associates" }
+gray-scott = { path = "crates/gray-scott" }
+market-sim = { path = "crates/market-sim" }
+poincare-disk = { path = "crates/poincare-disk" }
+quipu = { path = "crates/quipu" }
+resonance-audio = { path = "crates/resonance-audio" }
+soroban = { path = "crates/soroban" }
+synaptic-physics = { path = "crates/synaptic-physics" }
 tui-semantic = { path = "crates/tui-semantic" }
 tui-shared = { path = "crates/tui-shared" }
-resonance-audio = { path = "crates/resonance-audio" }
-poincare-disk = { path = "crates/poincare-disk" }
-locus = { path = "crates/locus" }
-market-sim = { path = "crates/market-sim" }
-synaptic-physics = { path = "crates/synaptic-physics" }
-quipu = { path = "crates/quipu" }
-flocking = { path = "crates/flocking" }
-soroban = { path = "crates/soroban" }
-gray-scott = { path = "crates/gray-scott" }
+# Add chimera-lang as it is likely used by others?
+chimera-lang = { path = "experiments/chimera-lang" }
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"

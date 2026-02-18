@@ -1201,4 +1201,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: ChimeraVM agents navigating a printed circuit board generated from git history.
 - **Novel trait**: Genetic algorithms optimizing pathfinding on procedurally generated hardware layouts.
 - **Status**: experiments/chimera-circuit
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### neuro-circuit
+- **Parents**: experiments/chimera-circuit + experiments/spinal-rhythms
+- **Concept**: A Neural Network embedded on a PCB where spikes travel as light pulses along copper traces.
+- **Novel trait**: Physical Intelligence. Signal propagation delay is determined by physical trace length.
+- **Status**: experiments/neuro-circuit
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
