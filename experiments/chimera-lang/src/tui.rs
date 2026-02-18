@@ -11781,14 +11781,16 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     "M" => style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD),
                     "O" => style = style.fg(Color::Blue).add_modifier(Modifier::BOLD),
                     "%" => style = style.fg(Color::White).add_modifier(Modifier::BOLD),
-                    "^" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
+                    "^" | "J" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
                     "@" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
                     "G" => style = style.fg(Color::Green).add_modifier(Modifier::BOLD),
-                    "E" => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
-                    "D" => style = style.fg(Color::Blue).add_modifier(Modifier::BOLD),
-                    "A" | "S" | "P" | "Q" => {
+                    "D" | "N" | "S" | "E" | "W" => {
+                        style = style.fg(Color::Blue).add_modifier(Modifier::BOLD)
+                    }
+                    "A" | "B" | "P" | "Q" | "C" => {
                         style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD)
                     }
+                    "(" => style = style.fg(Color::Cyan).add_modifier(Modifier::BOLD),
                     "=" | ">" | "<" => style = style.fg(Color::White).add_modifier(Modifier::BOLD),
                     "I" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
                     "Y" | "L" => style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD),
@@ -11856,8 +11858,9 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     info.push(Line::from("  @ Agent (Moves to Signal)"));
     info.push(Line::from("  $ Scribe (W->S), % Mod"));
     info.push(Line::from("  M Mutate, O Organelle"));
-    info.push(Line::from("  ^ Jump (W->E)"));
-    info.push(Line::from("  A/S/P/Q Arithmetic"));
+    info.push(Line::from("  ^ Jump, J Jumper, ( Warp"));
+    info.push(Line::from("  A/B/P/Q/C Arithmetic/Time"));
+    info.push(Line::from("  N/S/E/W Directional"));
     info.push(Line::from("  =/</> Compare, I If"));
     info.push(Line::from("  Y/L Ether (Yell/Listen)"));
 
