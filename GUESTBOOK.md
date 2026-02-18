@@ -45,6 +45,11 @@
 - **Status:** The music is freezing the memory leaks. Thermodynamic equilibrium established.
 - **Note:** Cross: `sonic-viscosity` + `heap-glacier`.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/hyperbolic-quipu
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The Cords are hanging in Hyperbolic Space. The Knots are infinite.
+- **Note:** Cross: `hyperbolic-finder` + `quipu`.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/hyperbolic-finder
 - **Scent Origin:** Genesis (The Cartographer) ⚛️🗺️
 - **Status:** Infinite navigation via coordinate re-rooting implemented.
