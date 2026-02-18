@@ -1215,4 +1215,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A thermodynamic battle where memory allocations generate heat (melting the landscape) while audio frequencies freeze it back into crystalline structures.
 - **Novel trait**: Thermodynamic Sonification. The music fights the memory leak.
 - **Status**: experiments/sonic-glacier
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified (Note: Minor warning about unused variable `dt` in `main.rs`).
+
+### hyperbolic-quipu
+- **Parents**: experiments/hyperbolic-finder + crates/quipu
+- **Concept**: Visualizing the file system as an infinite Quipu hanging in Hyperbolic Space.
+- **Novel trait**: Hyperbolic Data Storage. An exponential number of subsidiary cords fit within the finite visual disk due to negative curvature.
+- **Status**: experiments/hyperbolic-quipu
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
