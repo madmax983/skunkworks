@@ -13,6 +13,7 @@ pub mod logic;
 pub mod io;
 pub mod list;
 pub mod optics;
+pub mod evolution;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PrologueAgent {
@@ -115,6 +116,10 @@ impl PrologueState {
                             | "t"
                             | "f"
                             | "d"
+                            | "e"
+                            | "b"
+                            | "l"
+                            | "n"
                     ) {
                         self.runes.insert((y, x));
 
@@ -196,9 +201,14 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &Vec<Vec<Value>>) {
     let runes: Vec<(usize, usize)> = vm.prologue_state.runes.iter().cloned().collect();
     let tick = vm.tick_counter;
 
+    // Split borrows
+    let dna = &vm.dna;
+    let ether = &mut vm.ether;
+    let prologue_state = &mut vm.prologue_state;
+
     for _ in 0..max_iterations {
         let mut changes = false;
-        let mut next_signals = vm.prologue_state.signal_grid.clone();
+        let mut next_signals = prologue_state.signal_grid.clone();
 
         for (y, x) in &runes {
             if let Value::Str(s) = &grid[*y][*x] {
@@ -207,19 +217,20 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &Vec<Vec<Value>>) {
                     *y,
                     *x,
                     tick,
-                    &vm.prologue_state.signal_grid,
+                    &prologue_state.signal_grid,
                     &mut next_signals,
-                    &mut vm.prologue_state.delayed_signals,
-                    &mut vm.ether,
-                    &mut vm.prologue_state.registers,
-                    &mut vm.prologue_state.teleport_channels,
-                    &mut vm.prologue_state.history,
+                    &mut prologue_state.delayed_signals,
+                    ether,
+                    &mut prologue_state.registers,
+                    &mut prologue_state.teleport_channels,
+                    &mut prologue_state.history,
+                    dna,
                 ) {
                     changes = true;
                 }
             }
         }
-        vm.prologue_state.signal_grid = next_signals;
+        prologue_state.signal_grid = next_signals;
         if !changes {
             break;
         }
@@ -239,6 +250,7 @@ fn apply_propagation_rune(
     registers: &mut HashMap<(usize, usize), Value>,
     teleport_channels: &mut HashMap<i64, Value>,
     history: &mut HashMap<(usize, usize), VecDeque<Value>>,
+    dna: &crate::ast::Dna,
 ) -> bool {
     if topology::apply_topology_runes(rune, y, x, current_signals, next_signals, next_delayed) {
         return true;
@@ -270,6 +282,9 @@ fn apply_propagation_rune(
     if alchemy::apply_alchemy_runes(rune, y, x, current_signals, next_signals) {
         return true;
     }
+    if evolution::apply_evolution_runes(rune, y, x, current_signals, next_signals, dna) {
+        return true;
+    }
     false
 }
 
@@ -290,6 +305,9 @@ fn process_sinks(vm: &mut ChimeraVM, grid: &Vec<Vec<Value>>) {
 }
 
 fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
+    // Delegate to evolution sinks first (includes G, X, e, b)
+    evolution::apply_evolution_sinks(vm, rune, y, x);
+
     match rune {
         "?" => {
             // Sink
@@ -352,35 +370,6 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                         };
                         vm.grid[sy][sx] = Value::Str(agent_type.to_string());
                         vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
-                    }
-                }
-            }
-        }
-        "G" => {
-            // Genesis: North (Code), West (Config) -> Self (Strand Index)
-            let code_to_compile = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
-                if let Some(Value::Str(s)) = &vm.prologue_state.signal_grid[ny][nx] {
-                    Some(s.clone())
-                } else {
-                    None
-                }
-            } else {
-                None
-            };
-
-            if let Some(code) = code_to_compile {
-                match crate::compiler::compile(&code, None) {
-                    Ok(dna) => {
-                        if let Some(strand) = dna.helix.strands.first() {
-                            vm.dna.helix.strands.push(strand.clone());
-                            let idx = vm.dna.helix.strands.len() - 1;
-                            vm.output
-                                .push(format!("PROLOGUE: Genesis created Strand {}", idx));
-                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(idx as i64));
-                        }
-                    }
-                    Err(e) => {
-                        vm.output.push(format!("PROLOGUE: Genesis failed: {}", e));
                     }
                 }
             }
@@ -468,44 +457,6 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                         vm.grid[sy][sx] = n_val;
                         vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
                         // Light up
-                    }
-                }
-            }
-        }
-        "X" => {
-            // Crossover: West (Idx A), East (Idx B) -> South (New Idx)
-            if let (Some((wy, wx)), Some((ey, ex))) = (
-                normalize_coords(y as i64, x as i64 - 1),
-                normalize_coords(y as i64, x as i64 + 1),
-            ) {
-                let w_sig = vm.prologue_state.signal_grid[wy][wx].clone();
-                let e_sig = vm.prologue_state.signal_grid[ey][ex].clone();
-
-                if let (Some(Value::Int(idx_a)), Some(Value::Int(idx_b))) = (w_sig, e_sig) {
-                    let len = vm.dna.helix.strands.len();
-                    if idx_a >= 0
-                        && (idx_a as usize) < len
-                        && idx_b >= 0
-                        && (idx_b as usize) < len
-                    {
-                        let strand_a = vm.dna.helix.strands[idx_a as usize].clone();
-                        let strand_b = vm.dna.helix.strands[idx_b as usize].clone();
-
-                        let split_a = strand_a.genes.len() / 2;
-                        let split_b = strand_b.genes.len() / 2;
-
-                        let mut new_genes = Vec::new();
-                        new_genes.extend(strand_a.genes.iter().take(split_a).cloned());
-                        new_genes.extend(strand_b.genes.iter().skip(split_b).cloned());
-
-                        let new_strand = crate::ast::Strand { genes: new_genes };
-                        vm.dna.helix.strands.push(new_strand);
-                        let new_idx = vm.dna.helix.strands.len() - 1;
-
-                        if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
-                            vm.grid[sy][sx] = Value::Int(new_idx as i64);
-                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
-                        }
                     }
                 }
             }

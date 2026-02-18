@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod tests {
-    use crate::ast::{Dna, Helix};
+    use crate::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+    use crate::opcode::OpCode;
     use crate::vm::prologue::exec_prologue_tick;
     use crate::vm::{ChimeraVM, Value};
 
@@ -10,100 +11,140 @@ mod tests {
         };
         let mut vm = ChimeraVM::new(dna);
         vm.prologue_state.active = true;
+        // Push a dummy strand at index 0 because '!' rune treats Int(0) as empty signal.
+        vm.dna.helix.strands.push(Strand { genes: vec![] });
         vm
     }
 
     #[test]
-    fn test_quantum_superposition() {
+    fn test_evolution_length() {
         let mut vm = setup_vm();
-        // Setup: 10 -> ! -> q
-        vm.grid[4][4] = Value::Int(10);
-        vm.grid[5][4] = Value::Str("!".to_string());
-        vm.grid[5][5] = Value::Str("q".to_string());
+        // Setup: Strand 1 has 2 genes.
+        // 1 -> ! -> l
+
+        let strand = Strand {
+            genes: vec![
+                Gene { op: OpCode::Push, args: vec![] },
+                Gene { op: OpCode::Add, args: vec![] },
+            ],
+        };
+        vm.dna.helix.strands.push(strand); // Index 1
+
+        vm.grid[5][4] = Value::Int(1);
+        vm.grid[6][4] = Value::Str("!".to_string());
+        vm.grid[6][5] = Value::Str("l".to_string());
 
         exec_prologue_tick(&mut vm);
 
-        // Check if q outputted superposition
-        let output = &vm.prologue_state.signal_grid[5][5];
-        match output {
-            Some(Value::Superposition(states)) => {
-                assert_eq!(states.len(), 2);
-                // Check if it contains 10 and 11
-                let has_10 = states.iter().any(|(v, _)| *v == Value::Int(10));
-                let has_11 = states.iter().any(|(v, _)| *v == Value::Int(11));
-                assert!(has_10 && has_11);
-            }
-            _ => panic!("Expected Superposition, got {:?}", output),
+        // Check l output at 6,5
+        assert_eq!(vm.prologue_state.signal_grid[6][5], Some(Value::Int(2)));
+    }
+
+    #[test]
+    fn test_evolution_nucleotide() {
+        let mut vm = setup_vm();
+        // Setup: Strand 1. Gene 1 is Add.
+        // West (ID): 1. North (Idx): 1.
+        // 1 -> ! -> n <- ! <- 1
+        // n at 6,5.
+
+        let strand = Strand {
+            genes: vec![
+                Gene { op: OpCode::Push, args: vec![] },
+                Gene { op: OpCode::Add, args: vec![] },
+            ],
+        };
+        vm.dna.helix.strands.push(strand); // Index 1
+
+        vm.grid[5][4] = Value::Int(1);
+        vm.grid[6][4] = Value::Str("!".to_string()); // Source 1 at 6,4 (West)
+
+        vm.grid[4][5] = Value::Int(1);
+        vm.grid[5][5] = Value::Str("!".to_string()); // Source 1 at 5,5 (North)
+
+        vm.grid[6][5] = Value::Str("n".to_string());
+
+        exec_prologue_tick(&mut vm);
+
+        // Check n output at 6,5. Should be "Add".
+        if let Some(Value::Str(s)) = &vm.prologue_state.signal_grid[6][5] {
+            assert_eq!(s, "Add");
+        } else {
+            panic!("Nucleotide failed, got {:?}", vm.prologue_state.signal_grid[6][5]);
         }
     }
 
     #[test]
-    fn test_quantum_measurement() {
+    fn test_evolution_evolve() {
         let mut vm = setup_vm();
-        // Setup: Superposition -> ! -> m
-        let sup = Value::Superposition(vec![(Value::Int(1), 1.0)]); // 100% prob of 1
-        vm.grid[4][4] = sup;
-        vm.grid[5][4] = Value::Str("!".to_string());
-        vm.grid[5][5] = Value::Str("m".to_string());
+        // Setup: Strand 1.
+        // 1 -> ! -> e
+        // e at 6,5.
+
+        let strand = Strand {
+            genes: vec![
+                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
+            ],
+        };
+        vm.dna.helix.strands.push(strand); // Index 1
+
+        vm.grid[5][4] = Value::Int(1);
+        vm.grid[6][4] = Value::Str("!".to_string());
+        vm.grid[6][5] = Value::Str("e".to_string());
 
         exec_prologue_tick(&mut vm);
 
-        // Check if m outputted collapsed value
-        let output = &vm.prologue_state.signal_grid[5][5];
-        assert_eq!(*output, Some(Value::Int(1)));
+        // e should output 1 (signal) to current grid, and New Index (2) to Delayed grid.
+        assert_eq!(vm.prologue_state.signal_grid[6][5], Some(Value::Int(1)));
+        assert_eq!(vm.prologue_state.delayed_signals[6][5], Some(Value::Int(2)));
+
+        // DNA should have 3 strands (0=dummy, 1=original, 2=mutated)
+        assert_eq!(vm.dna.helix.strands.len(), 3);
     }
 
     #[test]
-    fn test_teleportation() {
+    fn test_evolution_breed() {
         let mut vm = setup_vm();
-        // Setup Sender: 42 -> ! -> { <- 1 (Channel)
-        // 4,4: 42
-        // 5,4: !
-        // 5,5: {
-        // 4,5: 1 (Channel)
-        // 5,5 needs North signal. So 4,5 needs to be signal source.
-        // 3,5: 1
-        // 4,5: !
+        // Setup: Strand 1, Strand 2.
+        // 1 -> ! -> b <- ! <- 2
+        // b at 6,5.
 
-        vm.grid[4][4] = Value::Int(42);
-        vm.grid[5][4] = Value::Str("!".to_string());
+        let strand0 = Strand {
+            genes: vec![
+                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+            ],
+        };
+        let strand1 = Strand {
+            genes: vec![
+                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
+                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
+            ],
+        };
+        vm.dna.helix.strands.push(strand0); // Index 1
+        vm.dna.helix.strands.push(strand1); // Index 2
 
-        vm.grid[3][5] = Value::Int(1);
-        vm.grid[4][5] = Value::Str("!".to_string());
+        vm.grid[5][4] = Value::Int(1);
+        vm.grid[6][4] = Value::Str("!".to_string()); // Source 1
 
-        vm.grid[5][5] = Value::Str("{".to_string());
+        vm.grid[5][6] = Value::Int(2);
+        vm.grid[6][6] = Value::Str("!".to_string()); // Source 2
 
-        // Setup Receiver: 1 (Channel) -> }
-        // 7,8: 1
-        // 8,8: !
-        // 9,8: }
+        vm.grid[6][5] = Value::Str("b".to_string());
 
-        vm.grid[7][8] = Value::Int(1);
-        vm.grid[8][8] = Value::Str("!".to_string());
-        vm.grid[9][8] = Value::Str("}".to_string());
-
-        // Tick 1: Teleport
         exec_prologue_tick(&mut vm);
 
-        // Check storage
-        assert!(vm.prologue_state.teleport_channels.contains_key(&1));
-        assert_eq!(vm.prologue_state.teleport_channels.get(&1), Some(&Value::Int(42)));
+        // b should output New Index (3) to Delayed.
+        assert_eq!(vm.prologue_state.delayed_signals[6][5], Some(Value::Int(3)));
+        assert_eq!(vm.dna.helix.strands.len(), 4); // 0, 1, 2, 3
 
-        // Tick 2: Receive
-        // Note: Receiver logic executes in same tick if order permits, but here we check across ticks to be safe.
-        // Actually, if we just ran tick 1, signals propagated.
-        // Did } receive in Tick 1?
-        // } is at 9,8. It needs North signal from 8,8.
-        // 8,8 is !. It reads 7,8 (Int 1).
-        // ! emits to signal grid at start of tick.
-        // So } should read it in Tick 1.
-        // And if teleport_channels was updated in same tick (by { at 5,5), } might read it if processed after?
-        // Current logic iterates propagation.
-        // But `teleport_channels` is updated instantly in `apply_teleport_runes`.
-        // So yes, it should work in one tick if iteration order hits { then }.
-        // Or multiple iterations of propagation.
-        // Let's check result of Tick 1.
+        // Crossover logic: 50/50 split.
+        let child = &vm.dna.helix.strands[3];
+        assert_eq!(child.genes.len(), 2);
 
-        assert_eq!(vm.prologue_state.signal_grid[9][8], Some(Value::Int(42)));
+        // First gene from Strand 1 (Push 0)
+        assert_eq!(child.genes[0].args[0], Nucleotide::Number(0));
+        // Second gene from Strand 2 (Push 1)
+        assert_eq!(child.genes[1].args[0], Nucleotide::Number(1));
     }
 }
