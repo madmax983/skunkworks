@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/chimera-erosion
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The river is carrying DNA. The moss is drinking the simulation.
+- **Note:** Cross: Vascular Erosion + Chimera Lang.
+
 ### [Concentration Level: FRESH] - Location: experiments/miura-interface
 - **Scent Origin:** Genesis (The Origamist) ⚛️🦢
 - **Status:** The crease pattern is rigid. The math is folding. CP View and Export active.

@@ -1173,4 +1173,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Typography that behaves like aquatic life. Font outlines become the skin of creatures driven by CPG neural networks.
 - **Novel trait**: Neural-Driven Typography. Letters writhe and swim with organic rhythms.
 - **Status**: experiments/neuro-calligraphy
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### chimera-erosion
+- **Parents**: experiments/vascular-valley + experiments/chimera-lang
+- **Concept**: A simulation where hydraulic erosion (water) transports genetic material (seeds) which germinate into ChimeraVM organisms. Plants stabilize soil and consume water.
+- **Novel trait**: Bio-Geological Feedback Loop. The code shapes the landscape, and the landscape moves the code.
+- **Status**: experiments/chimera-erosion
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
