@@ -53,3 +53,8 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Condemned.
 - **Note:** The garbage is piling up. The void consumes the undocumented.
+
+### [Concentration Level: HIGH] - Location: experiments/algo-ballet
+- **Scent Origin:** Genesis (The Choreographer) ⚛️💃
+- **Status:** The bubble sort is a waltz. The array elements are performing a pas de deux.
+- **Note:** Moonshot: Ballet Notation + Sorting Algorithms. Procedural motion driven by Laban Effort.
