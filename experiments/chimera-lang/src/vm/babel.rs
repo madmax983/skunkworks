@@ -458,7 +458,8 @@ pub fn exec_ouroboros(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let current_strand_idx = vm.ip.0;
 
         if current_strand_idx >= vm.dna.helix.strands.len() {
-            vm.output.push("OUROBOROS: Invalid strand index".to_string());
+            vm.output
+                .push("OUROBOROS: Invalid strand index".to_string());
             return None;
         }
 

@@ -1,6 +1,6 @@
 use chimera_lang::prelude::*;
-use macroquad::prelude::*;
 use image::RgbaImage;
+use macroquad::prelude::*;
 
 pub struct BioAgent {
     pub vm: ChimeraVM,
@@ -60,8 +60,12 @@ impl BioAgent {
             let mut diff = angle_to_target - current_angle;
 
             // Normalize angle diff to -PI..PI
-            while diff > std::f32::consts::PI { diff -= 2.0 * std::f32::consts::PI; }
-            while diff < -std::f32::consts::PI { diff += 2.0 * std::f32::consts::PI; }
+            while diff > std::f32::consts::PI {
+                diff -= 2.0 * std::f32::consts::PI;
+            }
+            while diff < -std::f32::consts::PI {
+                diff += 2.0 * std::f32::consts::PI;
+            }
 
             self.vm.grid[0][1] = Value::Int(dist as i64);
             self.vm.grid[0][2] = Value::Int((diff * 100.0) as i64); // Scaled angle
@@ -72,9 +76,10 @@ impl BioAgent {
             for &(px, py) in pads {
                 let p_vec = vec2(px as f32, py as f32);
                 let d_sq = self.pos.distance_squared(p_vec);
-                if d_sq < min_dist_sq && d_sq > 100.0 { // Don't target current pad
-                     min_dist_sq = d_sq;
-                     nearest = Some(p_vec);
+                if d_sq < min_dist_sq && d_sq > 100.0 {
+                    // Don't target current pad
+                    min_dist_sq = d_sq;
+                    nearest = Some(p_vec);
                 }
             }
             self.target = nearest;
@@ -89,15 +94,15 @@ impl BioAgent {
 
         // 1. Turn (15, 0) - Range -100 to 100
         if let Value::Int(turn_val) = self.vm.grid[15][0] {
-             let turn_angle = (turn_val as f32 * 0.05).to_radians(); // Sensitivity
-             let cos_a = turn_angle.cos();
-             let sin_a = turn_angle.sin();
-             let new_x = self.dir.x * cos_a - self.dir.y * sin_a;
-             let new_y = self.dir.x * sin_a + self.dir.y * cos_a;
-             self.dir = vec2(new_x, new_y).normalize();
+            let turn_angle = (turn_val as f32 * 0.05).to_radians(); // Sensitivity
+            let cos_a = turn_angle.cos();
+            let sin_a = turn_angle.sin();
+            let new_x = self.dir.x * cos_a - self.dir.y * sin_a;
+            let new_y = self.dir.x * sin_a + self.dir.y * cos_a;
+            self.dir = vec2(new_x, new_y).normalize();
 
-             // Decay the signal
-             self.vm.grid[15][0] = Value::Int(turn_val / 2);
+            // Decay the signal
+            self.vm.grid[15][0] = Value::Int(turn_val / 2);
         }
 
         // 2. Speed (15, 1) - Range 0 to 10
@@ -120,9 +125,10 @@ impl BioAgent {
         let y_u = self.pos.y as u32;
         if x_u < circuit.width() && y_u < circuit.height() {
             let pixel = circuit.get_pixel(x_u, y_u);
-            if pixel[0] > 200 && pixel[1] > 200 { // Gold-ish
-                 self.vm.energy = self.vm.energy.saturating_add(5).min(100);
-                 self.fitness += 1.0;
+            if pixel[0] > 200 && pixel[1] > 200 {
+                // Gold-ish
+                self.vm.energy = self.vm.energy.saturating_add(5).min(100);
+                self.fitness += 1.0;
             }
         }
     }

@@ -39,8 +39,10 @@ fn resample_contour(contour: &[Vec2], spacing: f32) -> Vec<Vec2> {
 
         // Loop to find next point
         // Max iterations to prevent infinite loop
-        for _ in 0..n*2 {
-            if dist_needed <= 0.001 { break; }
+        for _ in 0..n * 2 {
+            if dist_needed <= 0.001 {
+                break;
+            }
 
             let p_next = contour[next_idx];
             let dist_to_next = (p_next - current_pos).length();
@@ -92,47 +94,55 @@ async fn main() {
 
     for c in text.chars() {
         if let Some(outline) = load_glyph(&face, c) {
-             for contour in outline.contours {
-                 let mut points = Vec::new();
-                 points.push(vec2(contour.start.x, contour.start.y));
+            for contour in outline.contours {
+                let mut points = Vec::new();
+                points.push(vec2(contour.start.x, contour.start.y));
 
-                 for segment in contour.segments {
-                     match segment {
-                         Segment::Line(p) => points.push(vec2(p.x, p.y)),
-                         Segment::Quad(p1, p2) => {
-                             let start = *points.last().unwrap();
-                             let steps = 5;
-                             for i in 1..=steps {
-                                 let t = i as f32 / steps as f32;
-                                 let p = quadratic_bezier(start, vec2(p1.x, p1.y), vec2(p2.x, p2.y), t);
-                                 points.push(p);
-                             }
-                         },
-                         Segment::Cubic(p1, p2, p3) => {
-                             let start = *points.last().unwrap();
-                             let steps = 5;
-                             for i in 1..=steps {
-                                 let t = i as f32 / steps as f32;
-                                 let p = cubic_bezier(start, vec2(p1.x, p1.y), vec2(p2.x, p2.y), vec2(p3.x, p3.y), t);
-                                 points.push(p);
-                             }
-                         }
-                     }
-                 }
+                for segment in contour.segments {
+                    match segment {
+                        Segment::Line(p) => points.push(vec2(p.x, p.y)),
+                        Segment::Quad(p1, p2) => {
+                            let start = *points.last().unwrap();
+                            let steps = 5;
+                            for i in 1..=steps {
+                                let t = i as f32 / steps as f32;
+                                let p =
+                                    quadratic_bezier(start, vec2(p1.x, p1.y), vec2(p2.x, p2.y), t);
+                                points.push(p);
+                            }
+                        }
+                        Segment::Cubic(p1, p2, p3) => {
+                            let start = *points.last().unwrap();
+                            let steps = 5;
+                            for i in 1..=steps {
+                                let t = i as f32 / steps as f32;
+                                let p = cubic_bezier(
+                                    start,
+                                    vec2(p1.x, p1.y),
+                                    vec2(p2.x, p2.y),
+                                    vec2(p3.x, p3.y),
+                                    t,
+                                );
+                                points.push(p);
+                            }
+                        }
+                    }
+                }
 
-                 // Transform to screen space
-                 let world_points: Vec<Vec2> = points.iter().map(|p| {
-                     vec2(x_cursor + p.x * scale, start_y - p.y * scale)
-                 }).collect();
+                // Transform to screen space
+                let world_points: Vec<Vec2> = points
+                    .iter()
+                    .map(|p| vec2(x_cursor + p.x * scale, start_y - p.y * scale))
+                    .collect();
 
-                 // Resample
-                 let resampled = resample_contour(&world_points, spacing);
+                // Resample
+                let resampled = resample_contour(&world_points, spacing);
 
-                 if resampled.len() > 5 {
-                     creatures.push(ContourCreature::new(&mut world, &resampled, 8.0));
-                 }
-             }
-             x_cursor += outline.advance_width * scale + 20.0;
+                if resampled.len() > 5 {
+                    creatures.push(ContourCreature::new(&mut world, &resampled, 8.0));
+                }
+            }
+            x_cursor += outline.advance_width * scale + 20.0;
         }
     }
 
@@ -154,10 +164,10 @@ async fn main() {
         }
 
         if is_key_pressed(KeyCode::Space) {
-             // Reset? Or burst drive?
-             for c in &mut creatures {
-                 c.base_drive += 5.0;
-             }
+            // Reset? Or burst drive?
+            for c in &mut creatures {
+                c.base_drive += 5.0;
+            }
         }
 
         let dt = get_frame_time();
@@ -181,8 +191,20 @@ async fn main() {
         }
 
         draw_text("NEURO-CALLIGRAPHY", 20.0, 30.0, 30.0, WHITE);
-        draw_text("Biological Typography Simulation", 20.0, 50.0, 20.0, LIGHTGRAY);
-        draw_text("Click to Disturb | Space to Excite", 20.0, screen_height() - 20.0, 20.0, LIGHTGRAY);
+        draw_text(
+            "Biological Typography Simulation",
+            20.0,
+            50.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            "Click to Disturb | Space to Excite",
+            20.0,
+            screen_height() - 20.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await
     }

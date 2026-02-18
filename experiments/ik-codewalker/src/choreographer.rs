@@ -1,8 +1,8 @@
+use crate::code_graph::CodeGraph;
+use crate::components::*;
+use crate::ik::IKChain;
 use bevy::prelude::*;
 use rand::Rng;
-use crate::components::*;
-use crate::code_graph::CodeGraph;
-use crate::ik::IKChain;
 
 pub struct ChoreographerPlugin;
 
@@ -49,24 +49,24 @@ fn choreographer_system(
 
         // Move IK Target entity towards the current target node position
         if let Some(target_node_entity) = choreo.current_target_node {
-             if let Ok(node_tf) = global_transforms.get(target_node_entity) {
-                 let target_dest = node_tf.translation();
+            if let Ok(node_tf) = global_transforms.get(target_node_entity) {
+                let target_dest = node_tf.translation();
 
-                 if let Ok(mut t) = target_transforms.get_mut(choreo.target_entity) {
-                     let current = t.translation;
-                     let direction = target_dest - current;
-                     let dist = direction.length();
+                if let Ok(mut t) = target_transforms.get_mut(choreo.target_entity) {
+                    let current = t.translation;
+                    let direction = target_dest - current;
+                    let dist = direction.length();
 
-                     if dist > 1.0 {
-                         let move_step = direction.normalize() * choreo.speed * time.delta_seconds();
-                         if move_step.length() > dist {
-                             t.translation = target_dest;
-                         } else {
-                             t.translation += move_step;
-                         }
-                     }
-                 }
-             }
+                    if dist > 1.0 {
+                        let move_step = direction.normalize() * choreo.speed * time.delta_seconds();
+                        if move_step.length() > dist {
+                            t.translation = target_dest;
+                        } else {
+                            t.translation += move_step;
+                        }
+                    }
+                }
+            }
         }
     }
 }

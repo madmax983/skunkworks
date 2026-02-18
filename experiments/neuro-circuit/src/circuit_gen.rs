@@ -41,7 +41,8 @@ impl CircuitGenerator {
 
         // Generate Pads
         for _ in 0..num_pads {
-            for _ in 0..100 { // Max attempts per pad
+            for _ in 0..100 {
+                // Max attempts per pad
                 let x = rng.gen_range(20..self.width - 20);
                 let y = rng.gen_range(20..self.height - 20);
 
@@ -49,7 +50,7 @@ impl CircuitGenerator {
                 for &(px, py) in &pads {
                     let dx = x as i32 - px as i32;
                     let dy = y as i32 - py as i32;
-                    if dx*dx + dy*dy < min_dist_sq {
+                    if dx * dx + dy * dy < min_dist_sq {
                         collision = true;
                         break;
                     }
@@ -71,11 +72,13 @@ impl CircuitGenerator {
             let num_connections = rng.gen_range(1..=3);
 
             // Sort potential targets by distance to find neighbors
-            let mut targets: Vec<(usize, i32)> = pads.iter().enumerate()
+            let mut targets: Vec<(usize, i32)> = pads
+                .iter()
+                .enumerate()
                 .map(|(idx, &(px, py))| {
                     let dx = pads[i].0 as i32 - px as i32;
                     let dy = pads[i].1 as i32 - py as i32;
-                    (idx, dx*dx + dy*dy)
+                    (idx, dx * dx + dy * dy)
                 })
                 .filter(|(idx, _)| *idx != i)
                 .collect();
@@ -87,7 +90,7 @@ impl CircuitGenerator {
 
             // 50% chance to connect to nearest
             if !targets.is_empty() && rng.gen_bool(0.7) {
-                 chosen_indices.push(targets[0].0);
+                chosen_indices.push(targets[0].0);
             }
 
             // Random others
@@ -119,7 +122,12 @@ impl CircuitGenerator {
         }
     }
 
-    fn generate_trace_path(&self, start: (u32, u32), end: (u32, u32), rng: &mut ChaCha20Rng) -> Vec<(u32, u32)> {
+    fn generate_trace_path(
+        &self,
+        start: (u32, u32),
+        end: (u32, u32),
+        rng: &mut ChaCha20Rng,
+    ) -> Vec<(u32, u32)> {
         let mut path = Vec::new();
         let (x1, y1) = start;
         let (x2, y2) = end;
@@ -133,12 +141,16 @@ impl CircuitGenerator {
             // (x1, y1) -> (x2, y1) -> (x2, y2)
             self.add_segment(&mut path, x1, y1, x2, y1);
             // Avoid duplicate point at corner
-            if !path.is_empty() { path.pop(); }
+            if !path.is_empty() {
+                path.pop();
+            }
             self.add_segment(&mut path, x2, y1, x2, y2);
         } else {
-             // (x1, y1) -> (x1, y2) -> (x2, y2)
+            // (x1, y1) -> (x1, y2) -> (x2, y2)
             self.add_segment(&mut path, x1, y1, x1, y2);
-            if !path.is_empty() { path.pop(); }
+            if !path.is_empty() {
+                path.pop();
+            }
             self.add_segment(&mut path, x1, y2, x2, y2);
         }
 

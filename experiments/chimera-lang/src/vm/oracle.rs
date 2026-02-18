@@ -1084,9 +1084,14 @@ fn check_dynamic_predicates(
                             let fact_y = Value::Int(org.context_loc.0 as i64);
 
                             let current_subst = subst.clone();
-                            if let Some(current_subst) = unify(&args[1], &fact_idx, &current_subst) {
-                                if let Some(current_subst) = unify(&args[2], &fact_type, &current_subst) {
-                                    if let Some(current_subst) = unify(&args[3], &fact_x, &current_subst) {
+                            if let Some(current_subst) = unify(&args[1], &fact_idx, &current_subst)
+                            {
+                                if let Some(current_subst) =
+                                    unify(&args[2], &fact_type, &current_subst)
+                                {
+                                    if let Some(current_subst) =
+                                        unify(&args[3], &fact_x, &current_subst)
+                                    {
                                         if let Some(s4) = unify(&args[4], &fact_y, &current_subst) {
                                             solve(
                                                 remaining_goals,
@@ -1294,8 +1299,11 @@ fn check_dynamic_predicates(
                                         let fact_ny = Value::Int(ny as i64);
 
                                         let current_subst = subst.clone();
-                                        if let Some(current_subst) = unify(arg_x, &fact_x, &current_subst) {
-                                            if let Some(current_subst) = unify(arg_y, &fact_y, &current_subst)
+                                        if let Some(current_subst) =
+                                            unify(arg_x, &fact_x, &current_subst)
+                                        {
+                                            if let Some(current_subst) =
+                                                unify(arg_y, &fact_y, &current_subst)
                                             {
                                                 if let Some(current_subst) =
                                                     unify(arg_dir, &fact_dir, &current_subst)

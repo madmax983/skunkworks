@@ -1,5 +1,5 @@
+use anyhow::{Context, Result};
 use image::RgbaImage;
-use anyhow::{Result, Context};
 
 pub fn embed(img: &mut RgbaImage, data: &str, pads: &[(u32, u32)]) -> Result<()> {
     let payload = data.as_bytes();
@@ -31,14 +31,16 @@ pub fn embed(img: &mut RgbaImage, data: &str, pads: &[(u32, u32)]) -> Result<()>
                     return Ok(());
                 }
 
-                if x < 0 || x >= img.width() as i32 || y < 0 || y >= img.height() as i32 { continue; }
+                if x < 0 || x >= img.width() as i32 || y < 0 || y >= img.height() as i32 {
+                    continue;
+                }
 
                 let dx = x - cx as i32;
                 let dy = y - cy as i32;
-                let dist_sq = dx*dx + dy*dy;
+                let dist_sq = dx * dx + dy * dy;
 
                 // Check annulus: hole < dist <= radius
-                if dist_sq > hole_radius*hole_radius && dist_sq <= radius*radius {
+                if dist_sq > hole_radius * hole_radius && dist_sq <= radius * radius {
                     let pixel = img.get_pixel_mut(x as u32, y as u32);
                     // Embed in R, G, B
                     for c in 0..3 {
@@ -68,15 +70,17 @@ pub fn extract(img: &RgbaImage, pads: &[(u32, u32)]) -> Result<String> {
     let hole_radius = 2;
 
     for &(cx, cy) in pads {
-         for y in (cy as i32 - radius)..(cy as i32 + radius + 1) {
+        for y in (cy as i32 - radius)..(cy as i32 + radius + 1) {
             for x in (cx as i32 - radius)..(cx as i32 + radius + 1) {
-                if x < 0 || x >= img.width() as i32 || y < 0 || y >= img.height() as i32 { continue; }
+                if x < 0 || x >= img.width() as i32 || y < 0 || y >= img.height() as i32 {
+                    continue;
+                }
 
                 let dx = x - cx as i32;
                 let dy = y - cy as i32;
-                let dist_sq = dx*dx + dy*dy;
+                let dist_sq = dx * dx + dy * dy;
 
-                if dist_sq > hole_radius*hole_radius && dist_sq <= radius*radius {
+                if dist_sq > hole_radius * hole_radius && dist_sq <= radius * radius {
                     let pixel = img.get_pixel(x as u32, y as u32);
                     for c in 0..3 {
                         bits.push(pixel[c] & 1);
@@ -98,7 +102,11 @@ pub fn extract(img: &RgbaImage, pads: &[(u32, u32)]) -> Result<String> {
 
     let needed_bits = 32 + (len as usize * 8);
     if bits.len() < needed_bits {
-         return Err(anyhow::anyhow!("Data truncated. Expected {} bits, got {}.", needed_bits, bits.len()));
+        return Err(anyhow::anyhow!(
+            "Data truncated. Expected {} bits, got {}.",
+            needed_bits,
+            bits.len()
+        ));
     }
 
     let mut data_bytes = Vec::new();

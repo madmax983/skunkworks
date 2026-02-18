@@ -86,7 +86,9 @@ where
                 let mut sample_sum: f32 = 0.0;
 
                 for i in 0..state_snapshot.count {
-                    if i >= MAX_BODIES { break; }
+                    if i >= MAX_BODIES {
+                        break;
+                    }
                     let body = state_snapshot.bodies[i];
 
                     // Frequency mapping

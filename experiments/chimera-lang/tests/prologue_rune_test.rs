@@ -1,14 +1,16 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+    use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
-    use chimera_lang::vm::{ChimeraVM, Value};
     use chimera_lang::vm::prologue::exec_prologue_tick;
+    use chimera_lang::vm::{ChimeraVM, Value};
 
     #[test]
     fn test_prologue_basic_circuit() {
-        let dna = Dna { helix: Helix { strands: vec![] } };
+        let dna = Dna {
+            helix: Helix { strands: vec![] },
+        };
         let mut vm = ChimeraVM::new(dna);
         vm.prologue_state.active = true;
 
@@ -34,7 +36,9 @@ mod tests {
 
     #[test]
     fn test_prologue_xor_gate() {
-        let dna = Dna { helix: Helix { strands: vec![] } };
+        let dna = Dna {
+            helix: Helix { strands: vec![] },
+        };
         let mut vm = ChimeraVM::new(dna);
         vm.prologue_state.active = true;
 
@@ -55,8 +59,8 @@ mod tests {
         // (5,2)=1, (5,3)=!, (5,4)=~
         vm.grid[5][2] = Value::Int(1);
         vm.grid[5][3] = Value::Str("!".to_string()); // ! reads North (4,3). Wait.
-        // ! reads North (y-1).
-        // Let's put value at (4,3).
+                                                     // ! reads North (y-1).
+                                                     // Let's put value at (4,3).
         vm.grid[4][3] = Value::Int(1);
 
         // This setup is tricky because '!' is a Source.
@@ -89,12 +93,17 @@ mod tests {
         exec_prologue_tick(&mut vm);
         assert!(vm.prologue_state.signal_grid[5][4].is_some());
         assert!(vm.prologue_state.signal_grid[5][6].is_some());
-        assert!(vm.prologue_state.signal_grid[5][5].is_none(), "1 XOR 1 should be 0 (None)");
+        assert!(
+            vm.prologue_state.signal_grid[5][5].is_none(),
+            "1 XOR 1 should be 0 (None)"
+        );
     }
 
     #[test]
     fn test_prologue_splitter() {
-        let dna = Dna { helix: Helix { strands: vec![] } };
+        let dna = Dna {
+            helix: Helix { strands: vec![] },
+        };
         let mut vm = ChimeraVM::new(dna);
         vm.prologue_state.active = true;
 
@@ -131,7 +140,9 @@ mod tests {
 
     #[test]
     fn test_prologue_delay() {
-        let dna = Dna { helix: Helix { strands: vec![] } };
+        let dna = Dna {
+            helix: Helix { strands: vec![] },
+        };
         let mut vm = ChimeraVM::new(dna);
         vm.prologue_state.active = true;
 
@@ -151,8 +162,14 @@ mod tests {
         // ? reads (5,5), sees nothing.
         exec_prologue_tick(&mut vm);
 
-        assert!(vm.prologue_state.signal_grid[5][5].is_none(), "Delay should not emit on first tick");
-        assert!(vm.prologue_state.delayed_signals[5][5].is_some(), "Delay should store signal");
+        assert!(
+            vm.prologue_state.signal_grid[5][5].is_none(),
+            "Delay should not emit on first tick"
+        );
+        assert!(
+            vm.prologue_state.delayed_signals[5][5].is_some(),
+            "Delay should store signal"
+        );
 
         // Tick 2:
         // delayed_signals copied to signal_grid at start. (5,5) has 77.
@@ -164,7 +181,10 @@ mod tests {
         vm.output.clear();
         exec_prologue_tick(&mut vm);
 
-        assert!(vm.prologue_state.signal_grid[5][5].is_some(), "Delay should emit on second tick");
+        assert!(
+            vm.prologue_state.signal_grid[5][5].is_some(),
+            "Delay should emit on second tick"
+        );
         let output = vm.output.join("\n");
         assert!(output.contains("PROLOGUE: Sink at 5,6 received Int(77)"));
     }
@@ -173,12 +193,22 @@ mod tests {
     fn test_prologue_gene_trigger() {
         // Setup DNA with a named strand "test_strand"
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(999)] },
-            Gene { op: OpCode::Print, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(999)],
+            },
+            Gene {
+                op: OpCode::Print,
+                args: vec![],
+            },
         ];
         let strand = Strand { genes };
 
-        let dna = Dna { helix: Helix { strands: vec![strand, Strand { genes: vec![] }] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![strand, Strand { genes: vec![] }],
+            },
+        };
         // We add a dummy strand at 1 so "test_strand" can be 0 or 1.
         // Wait, interrupt works by index.
 

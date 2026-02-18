@@ -1,6 +1,6 @@
 use chimera_lang::compiler::compile;
-use chimera_lang::vm::ChimeraVM;
 use chimera_lang::value::Value;
+use chimera_lang::vm::ChimeraVM;
 
 #[test]
 fn test_ouroboros_protocol() {
@@ -26,12 +26,12 @@ fn test_ouroboros_protocol() {
     match vm.stack.last() {
         Some(Value::Junction(_, args)) => {
             // Should be Regex(".*")
-             if let Value::Str(t) = &args[0] {
-                 assert_eq!(t, "Regex");
-             } else {
-                 panic!("Expected Regex grammar");
-             }
-        },
+            if let Value::Str(t) = &args[0] {
+                assert_eq!(t, "Regex");
+            } else {
+                panic!("Expected Regex grammar");
+            }
+        }
         _ => panic!("Expected grammar on stack"),
     }
 
@@ -39,7 +39,11 @@ fn test_ouroboros_protocol() {
     vm.step();
 
     // Check if new strand created
-    assert_eq!(vm.dna.helix.strands.len(), 2, "Ouroboros should create a new strand");
+    assert_eq!(
+        vm.dna.helix.strands.len(),
+        2,
+        "Ouroboros should create a new strand"
+    );
 
     // Check if IP jumped to new strand
     assert_eq!(vm.ip.0, 1, "IP should jump to new strand");

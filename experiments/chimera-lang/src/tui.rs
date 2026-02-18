@@ -2195,7 +2195,9 @@ where
                 // Handle Normal Mode
                 #[cfg(feature = "nova")]
                 if let KeyCode::Char(c) = key.code {
-                    if app_state.view_mode == ViewMode::Orca || app_state.view_mode == ViewMode::Prologue {
+                    if app_state.view_mode == ViewMode::Orca
+                        || app_state.view_mode == ViewMode::Prologue
+                    {
                         if c == ' ' {
                             // Let Space fall through
                         } else if c.is_ascii_graphic() {
@@ -11784,7 +11786,9 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     "G" => style = style.fg(Color::Green).add_modifier(Modifier::BOLD),
                     "E" => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
                     "D" => style = style.fg(Color::Blue).add_modifier(Modifier::BOLD),
-                    "A" | "S" | "P" | "Q" => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
+                    "A" | "S" | "P" | "Q" => {
+                        style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD)
+                    }
                     "=" | ">" | "<" => style = style.fg(Color::White).add_modifier(Modifier::BOLD),
                     "I" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
                     "Y" | "L" => style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD),
@@ -11806,8 +11810,16 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         grid_lines.push(Line::from(line_spans));
     }
 
-    let status = if vm.prologue_state.active { "ACTIVE" } else { "INACTIVE" };
-    let color = if vm.prologue_state.active { Color::Green } else { Color::Red };
+    let status = if vm.prologue_state.active {
+        "ACTIVE"
+    } else {
+        "INACTIVE"
+    };
+    let color = if vm.prologue_state.active {
+        Color::Green
+    } else {
+        Color::Red
+    };
 
     let grid_widget = Paragraph::new(grid_lines).block(
         Block::default().borders(Borders::ALL).title(Span::styled(
@@ -11820,13 +11832,18 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     // Right: Rules
     let mut info = Vec::new();
     info.push(Line::from("Logic Engine Status:"));
-    info.push(Line::from(format!("Active Agents: {}", vm.prologue_state.agents.len())));
+    info.push(Line::from(format!(
+        "Active Agents: {}",
+        vm.prologue_state.agents.len()
+    )));
 
     // Debug Signals
     let mut signal_count = 0;
     for row in &vm.prologue_state.signal_grid {
         for cell in row {
-            if cell.is_some() { signal_count += 1; }
+            if cell.is_some() {
+                signal_count += 1;
+            }
         }
     }
     info.push(Line::from(format!("Active Signals: {}", signal_count)));
@@ -11844,8 +11861,7 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     info.push(Line::from("  =/</> Compare, I If"));
     info.push(Line::from("  Y/L Ether (Yell/Listen)"));
 
-    let info_widget = Paragraph::new(info).block(
-        Block::default().borders(Borders::ALL).title("Logic Engine"),
-    );
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Logic Engine"));
     f.render_widget(info_widget, chunks[1]);
 }

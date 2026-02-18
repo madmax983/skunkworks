@@ -68,9 +68,9 @@ async fn main() {
         }
 
         if is_key_pressed(KeyCode::Space) {
-             bodies.clear();
-             // Reset to central star
-             bodies.push(Body::new(
+            bodies.clear();
+            // Reset to central star
+            bodies.push(Body::new(
                 vec2(screen_width() / 2.0, screen_height() / 2.0),
                 vec2(0.0, 0.0),
                 1000.0,
@@ -88,10 +88,18 @@ async fn main() {
         let width = screen_width();
         let height = screen_height();
         for body in &mut bodies {
-            if body.pos.x < -100.0 { body.pos.x = width + 100.0; }
-            if body.pos.x > width + 100.0 { body.pos.x = -100.0; }
-            if body.pos.y < -100.0 { body.pos.y = height + 100.0; }
-            if body.pos.y > height + 100.0 { body.pos.y = -100.0; }
+            if body.pos.x < -100.0 {
+                body.pos.x = width + 100.0;
+            }
+            if body.pos.x > width + 100.0 {
+                body.pos.x = -100.0;
+            }
+            if body.pos.y < -100.0 {
+                body.pos.y = height + 100.0;
+            }
+            if body.pos.y > height + 100.0 {
+                body.pos.y = -100.0;
+            }
         }
 
         // Sync Audio
@@ -100,7 +108,9 @@ async fn main() {
             state.count = bodies.len();
             let center = vec2(width / 2.0, height / 2.0);
             for (i, body) in bodies.iter().enumerate() {
-                if i >= MAX_BODIES { break; }
+                if i >= MAX_BODIES {
+                    break;
+                }
                 state.bodies[i] = AudioBody {
                     vel_sq: body.vel.length_squared(),
                     mass: body.mass,

@@ -2,9 +2,9 @@ mod distortion;
 mod font;
 
 use distortion::{distort, flatten};
-use font::{load_glyph, GlyphOutline};
-use macroquad::prelude::*;
+use font::{GlyphOutline, load_glyph};
 use macroquad::color::hsl_to_rgb;
+use macroquad::prelude::*;
 use ttf_parser::Face;
 
 #[macroquad::main("Resonant Glyphs")]
@@ -77,7 +77,7 @@ async fn main() {
 
                 for i in 0..contour_points.len() - 1 {
                     let p1 = contour_points[i];
-                    let p2 = contour_points[i+1];
+                    let p2 = contour_points[i + 1];
 
                     let sx1 = start_x + (x_offset * scale) + (p1.x * scale);
                     let sy1 = baseline_y - (p1.y * scale);

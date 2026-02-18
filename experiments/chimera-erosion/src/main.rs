@@ -77,8 +77,14 @@ async fn main() {
     "#;
 
     let seeds = vec![
-        Seed { species: "Moss".to_string(), dna_source: moss_dna.to_string() },
-        Seed { species: "Pine".to_string(), dna_source: pine_dna.to_string() },
+        Seed {
+            species: "Moss".to_string(),
+            dna_source: moss_dna.to_string(),
+        },
+        Seed {
+            species: "Pine".to_string(),
+            dna_source: pine_dna.to_string(),
+        },
     ];
 
     let mut image = Image::gen_image_color(
@@ -89,8 +95,9 @@ async fn main() {
     let texture = Texture2D::from_image(&image);
 
     let mut eroding = true;
-    let mut drops_per_frame = 1000;
+    let drops_per_frame = 1000;
     let mut show_plants = true;
+    let mut planted_seeds_buffer = Vec::new();
 
     loop {
         if is_key_pressed(KeyCode::R) {
@@ -127,13 +134,15 @@ async fn main() {
 
         if eroding {
             // Erosion Step
-            let planted_seeds = erode_step(&mut map, drops_per_frame, &seeds);
+            planted_seeds_buffer.clear();
+            erode_step(&mut map, drops_per_frame, &seeds, &mut planted_seeds_buffer);
 
             // Plant new seeds
-            for (x, y, seed_idx) in planted_seeds {
-                if plants.len() < 5000 { // Limit population
-                    let seed = &seeds[seed_idx];
-                    plants.push(Plant::new(x, y, &seed.species, &seed.dna_source));
+            for (x, y, seed_idx) in planted_seeds_buffer.iter() {
+                if plants.len() < 5000 {
+                    // Limit population
+                    let seed = &seeds[*seed_idx];
+                    plants.push(Plant::new(*x, *y, &seed.species, &seed.dna_source));
                 }
             }
 
@@ -155,7 +164,7 @@ async fn main() {
                     BioAction::GrowRoots(amount) => {
                         let idx = plant.y * map.width + plant.x;
                         map.heightmap[idx] += amount;
-                    },
+                    }
                     BioAction::Drink(amount) => {
                         let idx = plant.y * map.width + plant.x;
                         if map.water[idx] > amount {
@@ -163,11 +172,16 @@ async fn main() {
                         } else {
                             map.water[idx] = 0.0;
                         }
-                    },
+                    }
                     BioAction::Reproduce => {
-                        reproduction_queue.push((plant.x, plant.y, plant.species.clone(), plant.dna_source.clone()));
-                    },
-                    BioAction::None => {},
+                        reproduction_queue.push((
+                            plant.x,
+                            plant.y,
+                            plant.species.clone(),
+                            plant.dna_source.clone(),
+                        ));
+                    }
+                    BioAction::None => {}
                 }
             }
 
@@ -178,17 +192,17 @@ async fn main() {
 
             // Handle Reproduction
             for (px, py, species, source) in reproduction_queue {
-                 if plants.len() < 5000 {
-                     // Spread nearby
-                     let dx = macroquad::rand::gen_range(-3, 4);
-                     let dy = macroquad::rand::gen_range(-3, 4);
-                     let nx = (px as isize + dx).clamp(0, map.width as isize - 1) as usize;
-                     let ny = (py as isize + dy).clamp(0, map.height as isize - 1) as usize;
+                if plants.len() < 5000 {
+                    // Spread nearby
+                    let dx = macroquad::rand::gen_range(-3, 4);
+                    let dy = macroquad::rand::gen_range(-3, 4);
+                    let nx = (px as isize + dx).clamp(0, map.width as isize - 1) as usize;
+                    let ny = (py as isize + dy).clamp(0, map.height as isize - 1) as usize;
 
-                     if map.is_inside(nx, ny) {
-                         plants.push(Plant::new(nx, ny, &species, &source));
-                     }
-                 }
+                    if map.is_inside(nx, ny) {
+                        plants.push(Plant::new(nx, ny, &species, &source));
+                    }
+                }
             }
         }
 
@@ -259,8 +273,20 @@ async fn main() {
             },
         );
 
-        draw_text(&format!("Plants: {}", plants.len()), 20.0, 30.0, 30.0, WHITE);
-        draw_text("Space: Pause | D: Debug | R: Reset", 20.0, 60.0, 20.0, WHITE);
+        draw_text(
+            &format!("Plants: {}", plants.len()),
+            20.0,
+            30.0,
+            30.0,
+            WHITE,
+        );
+        draw_text(
+            "Space: Pause | D: Debug | R: Reset",
+            20.0,
+            60.0,
+            20.0,
+            WHITE,
+        );
 
         next_frame().await
     }

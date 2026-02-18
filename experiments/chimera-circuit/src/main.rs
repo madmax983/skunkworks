@@ -2,8 +2,8 @@ mod bio;
 mod circuit;
 
 use bio::BioAgent;
-use circuit::CircuitGenerator;
 use chimera_lang::prelude::*;
+use circuit::CircuitGenerator;
 use macroquad::prelude::*;
 
 fn generate_seeker_dna() -> Dna {
@@ -14,20 +14,48 @@ fn generate_seeker_dna() -> Dna {
     // 3. Write Speed 2 to (15, 1)
     let genes = vec![
         // Read Angle (0, 2)
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] }, // X
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // Y
-        Gene { op: OpCode::GRead, args: vec![] },
-
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(2)],
+        }, // X
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }, // Y
+        Gene {
+            op: OpCode::GRead,
+            args: vec![],
+        },
         // Write Turn (15, 0)
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // Y
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(15)] }, // X
-        Gene { op: OpCode::GWrite, args: vec![] },
-
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }, // Y
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(15)],
+        }, // X
+        Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        },
         // Write Speed (15, 1)
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] }, // Value
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Y
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(15)] }, // X
-        Gene { op: OpCode::GWrite, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(2)],
+        }, // Value
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        }, // Y
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(15)],
+        }, // X
+        Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        },
     ];
 
     Dna {
@@ -51,15 +79,39 @@ fn draw_ui(agents: &[BioAgent]) {
 
     // Stats
     draw_text("Chimera Circuit", 15.0, 30.0, 30.0, WHITE);
-    draw_text(&format!("Agents: {}", active_count), 15.0, 55.0, 20.0, LIGHTGRAY);
-    draw_text(&format!("Avg Fitness: {:.2}", avg_fitness), 15.0, 75.0, 20.0, LIGHTGRAY);
-    draw_text(&format!("Max Generation: {}", max_generation), 15.0, 95.0, 20.0, LIGHTGRAY);
+    draw_text(
+        &format!("Agents: {}", active_count),
+        15.0,
+        55.0,
+        20.0,
+        LIGHTGRAY,
+    );
+    draw_text(
+        &format!("Avg Fitness: {:.2}", avg_fitness),
+        15.0,
+        75.0,
+        20.0,
+        LIGHTGRAY,
+    );
+    draw_text(
+        &format!("Max Generation: {}", max_generation),
+        15.0,
+        95.0,
+        20.0,
+        LIGHTGRAY,
+    );
 
     // Pulse Effect for Interaction Prompt
     let alpha = (get_time().sin() * 0.5 + 0.5) as f32; // Oscillate between 0.0 and 1.0
-    // Keep minimum visibility so it doesn't disappear completely
+                                                       // Keep minimum visibility so it doesn't disappear completely
     let text_alpha = alpha * 0.7 + 0.3;
-    draw_text("Press R to Regenerate", 15.0, 120.0, 20.0, Color::new(0.7, 0.7, 0.7, text_alpha));
+    draw_text(
+        "Press R to Regenerate",
+        15.0,
+        120.0,
+        20.0,
+        Color::new(0.7, 0.7, 0.7, text_alpha),
+    );
 }
 
 #[macroquad::main("Chimera Circuit")]
@@ -94,26 +146,26 @@ async fn main() {
     loop {
         // Handle Input
         if is_key_pressed(KeyCode::R) {
-             let (new_img, new_pads) = generator.generate(&format!("seed-{}", get_time()));
-             // Update texture
-             texture.update(&Image {
-                 width: new_img.width() as u16,
-                 height: new_img.height() as u16,
-                 bytes: new_img.as_raw().clone(),
-             });
+            let (new_img, new_pads) = generator.generate(&format!("seed-{}", get_time()));
+            // Update texture
+            texture.update(&Image {
+                width: new_img.width() as u16,
+                height: new_img.height() as u16,
+                bytes: new_img.as_raw().clone(),
+            });
 
-             // Update Physics Data
-             img = new_img;
-             pads = new_pads;
+            // Update Physics Data
+            img = new_img;
+            pads = new_pads;
 
-             // Reset agents
-             agents.clear();
-             for _ in 0..50 {
+            // Reset agents
+            agents.clear();
+            for _ in 0..50 {
                 let start_pad_idx = ::rand::Rng::gen_range(&mut rng, 0..pads.len());
                 let (px, py) = pads[start_pad_idx];
                 let pos = vec2(px as f32, py as f32);
                 agents.push(BioAgent::new(pos, generate_seeker_dna()));
-             }
+            }
         }
 
         // Update
@@ -126,10 +178,10 @@ async fn main() {
 
         // Respawn if low
         if agents.len() < 10 {
-             let start_pad_idx = ::rand::Rng::gen_range(&mut rng, 0..pads.len());
-             let (px, py) = pads[start_pad_idx];
-             let pos = vec2(px as f32, py as f32);
-             agents.push(BioAgent::new(pos, generate_seeker_dna()));
+            let start_pad_idx = ::rand::Rng::gen_range(&mut rng, 0..pads.len());
+            let (px, py) = pads[start_pad_idx];
+            let pos = vec2(px as f32, py as f32);
+            agents.push(BioAgent::new(pos, generate_seeker_dna()));
         }
 
         // Draw

@@ -1,14 +1,14 @@
 use crate::neuro::{CPGNetwork, IzhikevichNeuron};
 use crate::physics::{DistanceConstraint, PhysicsWorld, VerletPoint};
-use macroquad::prelude::*;
 use ::rand::Rng;
+use macroquad::prelude::*;
 
 pub struct ContourCreature {
     pub left_points: Vec<usize>,
     pub right_points: Vec<usize>,
     pub cpg: CPGNetwork,
     pub neuron_map: Vec<(usize, usize)>, // (Left Neuron, Right Neuron) per segment
-    pub muscles: Vec<(usize, usize)>, // (Left Constraint, Right Constraint) per segment
+    pub muscles: Vec<(usize, usize)>,    // (Left Constraint, Right Constraint) per segment
     pub segment_lengths: Vec<f32>,
     pub base_drive: f32,
 }
@@ -130,9 +130,7 @@ impl ContourCreature {
     pub fn update(&mut self, dt: f32, world: &mut PhysicsWorld) {
         // Step CPG
         let drive = self.base_drive;
-        let inputs: Vec<f32> = (0..self.cpg.neurons.len())
-            .map(|_| drive)
-            .collect();
+        let inputs: Vec<f32> = (0..self.cpg.neurons.len()).map(|_| drive).collect();
 
         let total_ms = dt * 1000.0;
         let steps = (total_ms / 1.0).ceil() as usize; // 1ms steps

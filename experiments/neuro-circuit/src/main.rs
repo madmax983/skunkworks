@@ -35,11 +35,20 @@ async fn main() {
 
         // Draw Traces
         for trace in &circuit.traces {
-            if trace.path.len() < 2 { continue; }
+            if trace.path.len() < 2 {
+                continue;
+            }
             for i in 0..trace.path.len() - 1 {
                 let (x1, y1) = trace.path[i];
-                let (x2, y2) = trace.path[i+1];
-                draw_line(x1 as f32, y1 as f32, x2 as f32, y2 as f32, 2.0, Color::new(0.0, 0.4, 0.0, 1.0));
+                let (x2, y2) = trace.path[i + 1];
+                draw_line(
+                    x1 as f32,
+                    y1 as f32,
+                    x2 as f32,
+                    y2 as f32,
+                    2.0,
+                    Color::new(0.0, 0.4, 0.0, 1.0),
+                );
             }
         }
 
@@ -77,8 +86,20 @@ async fn main() {
 
         // UI
         draw_text("NEURO-CIRCUIT", 20.0, 30.0, 30.0, WHITE);
-        draw_text(format!("Neurons: {}", brain.neurons.len()).as_str(), 20.0, 50.0, 20.0, GRAY);
-        draw_text(format!("Pulses: {}", brain.pulses.len()).as_str(), 20.0, 70.0, 20.0, GRAY);
+        draw_text(
+            format!("Neurons: {}", brain.neurons.len()).as_str(),
+            20.0,
+            50.0,
+            20.0,
+            GRAY,
+        );
+        draw_text(
+            format!("Pulses: {}", brain.pulses.len()).as_str(),
+            20.0,
+            70.0,
+            20.0,
+            GRAY,
+        );
         draw_text("Press [R] to Regenerate", 20.0, 90.0, 20.0, GRAY);
 
         next_frame().await

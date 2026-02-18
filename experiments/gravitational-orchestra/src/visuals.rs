@@ -160,8 +160,10 @@ impl Visuals {
     }
 
     pub fn draw(&self, bodies: &[crate::physics::Body]) {
-        self.material.set_uniform("u_resolution", (screen_width(), screen_height()));
-        self.material.set_uniform("u_body_count", bodies.len().min(8) as i32);
+        self.material
+            .set_uniform("u_resolution", (screen_width(), screen_height()));
+        self.material
+            .set_uniform("u_body_count", bodies.len().min(8) as i32);
 
         let default_body = vec3(0.0, 0.0, 0.0);
 
@@ -185,20 +187,22 @@ impl Visuals {
         self.material.set_uniform("u_b7", get_b(7));
 
         gl_use_material(&self.material);
-            draw_texture_ex(
-                &self.background_texture,
-                0.0,
-                0.0,
-                WHITE,
-                DrawTextureParams {
-                    dest_size: Some(vec2(screen_width(), screen_height())),
-                    ..Default::default()
-                },
-            );
+        draw_texture_ex(
+            &self.background_texture,
+            0.0,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(screen_width(), screen_height())),
+                ..Default::default()
+            },
+        );
         gl_use_default_material();
 
         for (i, body) in bodies.iter().enumerate() {
-            if i >= 8 { break; } // Only show 8 if shader limits
+            if i >= 8 {
+                break;
+            } // Only show 8 if shader limits
             draw_circle(body.pos.x, body.pos.y, body.radius, body.color);
         }
     }

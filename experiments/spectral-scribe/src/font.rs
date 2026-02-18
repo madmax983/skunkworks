@@ -1,4 +1,4 @@
-use font8x8::{BASIC_FONTS, UnicodeFonts};
+use font8x8::{UnicodeFonts, BASIC_FONTS};
 
 pub fn render_text(text: &str) -> Vec<Vec<u8>> {
     let width = text.len() * 8;
@@ -10,7 +10,9 @@ pub fn render_text(text: &str) -> Vec<Vec<u8>> {
     for (i, c) in text.chars().enumerate() {
         if let Some(glyph) = BASIC_FONTS.get(c) {
             for (row, byte) in glyph.iter().enumerate() {
-                if row >= 8 { continue; }
+                if row >= 8 {
+                    continue;
+                }
                 for bit in 0..8 {
                     // font8x8: MSB is left-most pixel.
                     // bit 0 is LSB (right-most).

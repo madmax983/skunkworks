@@ -1,6 +1,6 @@
-use chimera_lang::prelude::*;
-use chimera_lang::compiler::compile;
 use crate::leaf::LeafMap;
+use chimera_lang::compiler::compile;
+use chimera_lang::prelude::*;
 
 #[derive(Debug, Clone)]
 pub enum BioAction {
@@ -26,10 +26,12 @@ impl Plant {
         let dna = compile(source, None).unwrap_or_else(|e| {
             println!("Failed to compile plant DNA for {}: {}", species, e);
             // Return empty DNA as fallback
-            Dna { helix: Helix { strands: vec![] } }
+            Dna {
+                helix: Helix { strands: vec![] },
+            }
         });
 
-        let mut vm = ChimeraVM::new(dna);
+        let vm = ChimeraVM::new(dna);
 
         Self {
             x,
@@ -62,11 +64,11 @@ impl Plant {
 
         // Photosynthesis
         if w < 0.2 {
-             // Exposed to sun
-             self.energy += 2;
+            // Exposed to sun
+            self.energy += 2;
         } else {
-             // Underwater
-             self.energy -= 1;
+            // Underwater
+            self.energy -= 1;
         }
 
         // Prepare Inputs for VM
@@ -86,27 +88,27 @@ impl Plant {
 
         // Interpret Output
         if let Some(val) = self.vm.stack.pop() {
-             match val {
-                 Value::Int(1) => {
-                     // Grow Roots
-                     if self.energy >= 10 {
-                         self.energy -= 10;
-                         return BioAction::GrowRoots(0.01);
-                     }
-                 },
-                 Value::Int(2) => {
-                     // Drink
-                     return BioAction::Drink(0.05);
-                 },
-                 Value::Int(3) => {
-                     // Reproduce
-                     if self.energy >= 30 {
-                         self.energy -= 30;
-                         return BioAction::Reproduce;
-                     }
-                 },
-                 _ => {}
-             }
+            match val {
+                Value::Int(1) => {
+                    // Grow Roots
+                    if self.energy >= 10 {
+                        self.energy -= 10;
+                        return BioAction::GrowRoots(0.01);
+                    }
+                }
+                Value::Int(2) => {
+                    // Drink
+                    return BioAction::Drink(0.05);
+                }
+                Value::Int(3) => {
+                    // Reproduce
+                    if self.energy >= 30 {
+                        self.energy -= 30;
+                        return BioAction::Reproduce;
+                    }
+                }
+                _ => {}
+            }
         }
 
         BioAction::None
