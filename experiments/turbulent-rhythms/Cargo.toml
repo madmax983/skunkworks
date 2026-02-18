@@ -1,0 +1,27 @@
+[package]
+name = "turbulent-rhythms"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bevy = { version = "0.13", default-features = false, features = [
+    "bevy_asset",
+    "bevy_winit",
+    "bevy_core_pipeline",
+    "bevy_render",
+    "bevy_sprite",
+    "bevy_ui",
+    "bevy_text",
+    "bevy_gizmos",
+    "x11",
+    "png",
+    "webgl2",
+    "multi-threaded"
+] }
+sysinfo = "0.30"
+bytemuck = { version = "1.16", features = ["derive"] }
+rand = "0.8"
+wgpu = "0.19"
+cpal = "0.15"
+crossbeam = "0.8"
+anyhow = "1.0"

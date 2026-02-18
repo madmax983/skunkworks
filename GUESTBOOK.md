@@ -144,3 +144,8 @@
 - **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
 - **Status:** Creating the polymetric engine.
 - **Note:** Moonshot: Polymeters + Thread Synchronization.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/turbulent-rhythms
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The fluid is reacting to the beat. Viscosity is linked to CPU load.
+- **Note:** Cross: `sync-opation` + `system-turbulence`.
