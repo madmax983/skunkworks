@@ -41,7 +41,7 @@ impl PrologueState {
             for x in 0..GRID_SIZE {
                 if let Value::Str(s) = &grid[y][x] {
                     // Identify Runes
-                    if matches!(s.as_str(), "?" | "!" | "~" | "&" | "|" | "+" | "*" | "#" | "@" | "$" | "%" | "^" | "M" | "O") {
+                    if matches!(s.as_str(), "?" | "!" | "~" | "&" | "|" | "+" | "*" | "#" | "@" | "$" | "%" | "^" | "M" | "O" | "G" | "E" | "D") {
                         self.runes.insert((y, x));
 
                         if s == "@" {
@@ -310,6 +310,76 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
                                  vm.prologue_state.signal_grid[*y][*x] = Some(Value::Int(1)); // Light up
                              }
                         }
+                    }
+                },
+                "G" => { // Genesis: North (Code), West (Config) -> Self (Strand Index)
+                    let code_to_compile = if let Some((ny, nx)) = normalize_coords(*y as i64 - 1, *x as i64) {
+                        if let Some(Value::Str(s)) = &vm.prologue_state.signal_grid[ny][nx] {
+                            Some(s.clone())
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    };
+
+                    if let Some(code) = code_to_compile {
+                         match crate::compiler::compile(&code, None) {
+                             Ok(dna) => {
+                                 if let Some(strand) = dna.helix.strands.first() {
+                                     vm.dna.helix.strands.push(strand.clone());
+                                     let idx = vm.dna.helix.strands.len() - 1;
+                                     vm.output.push(format!("PROLOGUE: Genesis created Strand {}", idx));
+                                     vm.prologue_state.signal_grid[*y][*x] = Some(Value::Int(idx as i64));
+                                 }
+                             },
+                             Err(e) => {
+                                 vm.output.push(format!("PROLOGUE: Genesis failed: {}", e));
+                             }
+                         }
+                    }
+                },
+                "E" => { // Eval: West (Code) -> Self (Result)
+                    let code_to_eval = if let Some((wy, wx)) = normalize_coords(*y as i64, *x as i64 - 1) {
+                        if let Some(Value::Str(s)) = &vm.prologue_state.signal_grid[wy][wx] {
+                            Some(s.clone())
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    };
+
+                    if let Some(code) = code_to_eval {
+                         match crate::compiler::compile(&code, None) {
+                             Ok(dna) => {
+                                 if let Some(strand) = dna.helix.strands.first() {
+                                     for gene in &strand.genes {
+                                         vm.execute_gene_inner(gene.op.clone(), &gene.args);
+                                     }
+                                     vm.output.push("PROLOGUE: Eval executed.".to_string());
+                                     vm.prologue_state.signal_grid[*y][*x] = Some(Value::Int(1));
+                                 }
+                             },
+                             Err(e) => {
+                                 vm.output.push(format!("PROLOGUE: Eval failed: {}", e));
+                             }
+                         }
+                    }
+                },
+                "D" => { // Data: Neighbors -> Self (List)
+                    let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)]; // N S W E
+                    let mut data = Vec::new();
+                    for (dy, dx) in neighbors {
+                        if let Some((ny, nx)) = normalize_coords(*y as i64 + dy, *x as i64 + dx) {
+                            let val = vm.grid[ny][nx].clone();
+                            if !is_empty_val(&val) {
+                                data.push(val);
+                            }
+                        }
+                    }
+                    if !data.is_empty() {
+                        vm.prologue_state.signal_grid[*y][*x] = Some(Value::Junction(crate::ast::JunctionType::Any, data));
                     }
                 },
                 _ => {}

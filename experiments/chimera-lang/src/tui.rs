@@ -27,7 +27,7 @@ const GOLDEN_FREQUENCIES: [f32; 4] = [161.8, 261.6, 432.0, 528.0];
 const GRIMOIRE_TEXT: &str = include_str!("../GRIMOIRE.md");
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub(crate) enum ViewMode {
+pub enum ViewMode {
     Genome,
     Grid,
     Microscope,
@@ -308,11 +308,11 @@ impl SequencerState {
 }
 
 impl AppState {
-    pub(crate) fn new() -> Self {
+    pub(crate) fn new(initial_view: Option<ViewMode>) -> Self {
         let mut view_selector_state = ListState::default();
         view_selector_state.select(Some(0));
         Self {
-            view_mode: ViewMode::Genome,
+            view_mode: initial_view.unwrap_or(ViewMode::Genome),
             show_view_selector: false,
             view_selector_state: std::cell::RefCell::new(view_selector_state),
             input_mode: InputMode::Normal,
@@ -447,14 +447,14 @@ impl AppState {
     }
 }
 
-pub fn run_tui(mut vm: ChimeraVM) -> Result<()> {
+pub fn run_tui(mut vm: ChimeraVM, initial_view: Option<ViewMode>) -> Result<()> {
     enable_raw_mode()?;
     let mut stdout = io::stdout();
     execute!(stdout, EnterAlternateScreen)?;
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-    let mut app_state = AppState::new();
+    let mut app_state = AppState::new(initial_view);
 
     let res = run_app(&mut terminal, &mut vm, &mut app_state);
 
@@ -2195,7 +2195,7 @@ where
                 // Handle Normal Mode
                 #[cfg(feature = "nova")]
                 if let KeyCode::Char(c) = key.code {
-                    if app_state.view_mode == ViewMode::Orca {
+                    if app_state.view_mode == ViewMode::Orca || app_state.view_mode == ViewMode::Prologue {
                         if c == ' ' {
                             // Let Space fall through
                         } else if c.is_ascii_graphic() {
@@ -11781,6 +11781,9 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     "%" => style = style.fg(Color::White).add_modifier(Modifier::BOLD),
                     "^" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
                     "@" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
+                    "G" => style = style.fg(Color::Green).add_modifier(Modifier::BOLD),
+                    "E" => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
+                    "D" => style = style.fg(Color::Blue).add_modifier(Modifier::BOLD),
                     _ => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
                 }
             } else {
