@@ -1,11 +1,11 @@
 mod audio;
 mod simulation;
 
-use audio::{SonicEngine, Spectrum};
-use simulation::HeapTerrain;
-use macroquad::prelude::*;
-use crossbeam_channel::unbounded;
 use ::rand::Rng;
+use audio::{SonicEngine, Spectrum};
+use crossbeam_channel::unbounded;
+use macroquad::prelude::*;
+use simulation::HeapTerrain;
 
 #[macroquad::main("Sonic Glacier")]
 async fn main() {
@@ -24,7 +24,12 @@ async fn main() {
     let mut yaw: f32 = 0.0;
     let mut pitch: f32 = -0.5;
 
-    let mut spectrum = Spectrum { low: 0.0, mid: 0.0, high: 0.0, raw: vec![] };
+    let mut spectrum = Spectrum {
+        low: 0.0,
+        mid: 0.0,
+        high: 0.0,
+        raw: vec![],
+    };
     let mut auto_mode = false;
 
     loop {
@@ -89,19 +94,19 @@ async fn main() {
 
             // Low freq -> shifts bedrock slightly (vibration)
             if spectrum.low > 10.0 {
-                 if rng.gen_bool(0.1) {
-                     terrain.bedrock[y * width + x] += (rng.gen::<f32>() - 0.5) * 0.1;
-                 }
+                if rng.gen_bool(0.1) {
+                    terrain.bedrock[y * width + x] += (rng.gen::<f32>() - 0.5) * 0.1;
+                }
             }
 
             // Mid freq -> Freezes water
             if spectrum.mid > 5.0 {
-                 terrain.apply_cold(x, y, spectrum.mid * 0.1);
+                terrain.apply_cold(x, y, spectrum.mid * 0.1);
             }
 
             // High freq -> Creates ice spikes (adds ice directly)
             if spectrum.high > 2.0 {
-                 terrain.ice[y * width + x] += spectrum.high * 0.05;
+                terrain.ice[y * width + x] += spectrum.high * 0.05;
             }
         }
 
@@ -228,13 +233,23 @@ async fn main() {
             BLACK,
         );
         draw_text(
-            format!("Spectrum: L:{:.1} M:{:.1} H:{:.1}", spectrum.low, spectrum.mid, spectrum.high).as_str(),
+            format!(
+                "Spectrum: L:{:.1} M:{:.1} H:{:.1}",
+                spectrum.low, spectrum.mid, spectrum.high
+            )
+            .as_str(),
             20.0,
             80.0,
             20.0,
             BLUE,
         );
-        draw_text("WASD+Arrows to move. 'H' for Heat (Melt). 'M' Toggle Auto Heat.", 20.0, 100.0, 20.0, DARKGRAY);
+        draw_text(
+            "WASD+Arrows to move. 'H' for Heat (Melt). 'M' Toggle Auto Heat.",
+            20.0,
+            100.0,
+            20.0,
+            DARKGRAY,
+        );
 
         next_frame().await
     }
@@ -256,10 +271,10 @@ fn start_audio(engine: SonicEngine) {
         // Create the stream in this thread and block
         let stream_result = OutputStream::try_default();
         if let Ok((_stream, stream_handle)) = stream_result {
-             if let Ok(sink) = Sink::try_new(&stream_handle) {
+            if let Ok(sink) = Sink::try_new(&stream_handle) {
                 sink.append(engine);
                 sink.sleep_until_end();
-             }
+            }
         }
     });
 }

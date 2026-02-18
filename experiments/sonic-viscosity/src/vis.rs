@@ -36,10 +36,18 @@ impl Painter {
         self.pos += self.vel * dt;
 
         // Wrap around
-        if self.pos.x < 0.0 { self.pos.x = bounds.x; }
-        if self.pos.x > bounds.x { self.pos.x = 0.0; }
-        if self.pos.y < 0.0 { self.pos.y = bounds.y; }
-        if self.pos.y > bounds.y { self.pos.y = 0.0; }
+        if self.pos.x < 0.0 {
+            self.pos.x = bounds.x;
+        }
+        if self.pos.x > bounds.x {
+            self.pos.x = 0.0;
+        }
+        if self.pos.y < 0.0 {
+            self.pos.y = bounds.y;
+        }
+        if self.pos.y > bounds.y {
+            self.pos.y = 0.0;
+        }
 
         self.noise_offset += dt * (0.5 + energy * 2.0);
         // Modulate size by energy
@@ -76,7 +84,7 @@ impl FluidCanvas {
 
         for dy in -r..=r {
             for dx in -r..=r {
-                if dx*dx + dy*dy <= r2 {
+                if dx * dx + dy * dy <= r2 {
                     let nx = ix + dx;
                     let ny = iy + dy;
                     if nx >= 0 && nx < self.width as i32 && ny >= 0 && ny < self.height as i32 {
@@ -84,17 +92,17 @@ impl FluidCanvas {
 
                         // Blend
                         let old_r = self.pixels[idx];
-                        let old_g = self.pixels[idx+1];
-                        let old_b = self.pixels[idx+2];
+                        let old_g = self.pixels[idx + 1];
+                        let old_b = self.pixels[idx + 2];
 
                         let new_r = (old_r as f32 * (1.0 - ca) + cr as f32 * ca) as u8;
                         let new_g = (old_g as f32 * (1.0 - ca) + cg as f32 * ca) as u8;
                         let new_b = (old_b as f32 * (1.0 - ca) + cb as f32 * ca) as u8;
 
                         self.pixels[idx] = new_r;
-                        self.pixels[idx+1] = new_g;
-                        self.pixels[idx+2] = new_b;
-                        self.pixels[idx+3] = 255; // Always opaque output
+                        self.pixels[idx + 1] = new_g;
+                        self.pixels[idx + 2] = new_b;
+                        self.pixels[idx + 3] = 255; // Always opaque output
                     }
                 }
             }
@@ -109,25 +117,37 @@ impl FluidCanvas {
         // Optimization: Double buffering could avoid allocation, but cloning Vec<u8> is fast enough for small grids.
         let source = self.pixels.clone();
 
-        for y in 1..h-1 {
-            for x in 1..w-1 {
+        for y in 1..h - 1 {
+            for x in 1..w - 1 {
                 let idx = (y * w + x) * 4;
 
-                let up = ((y-1)*w + x) * 4;
-                let down = ((y+1)*w + x) * 4;
-                let left = (y*w + x-1) * 4;
-                let right = (y*w + x+1) * 4;
+                let up = ((y - 1) * w + x) * 4;
+                let down = ((y + 1) * w + x) * 4;
+                let left = (y * w + x - 1) * 4;
+                let right = (y * w + x + 1) * 4;
 
                 // R
-                let r = (source[up] as u16 + source[down] as u16 + source[left] as u16 + source[right] as u16) >> 2;
+                let r = (source[up] as u16
+                    + source[down] as u16
+                    + source[left] as u16
+                    + source[right] as u16)
+                    >> 2;
                 // G
-                let g = (source[up+1] as u16 + source[down+1] as u16 + source[left+1] as u16 + source[right+1] as u16) >> 2;
+                let g = (source[up + 1] as u16
+                    + source[down + 1] as u16
+                    + source[left + 1] as u16
+                    + source[right + 1] as u16)
+                    >> 2;
                 // B
-                let b = (source[up+2] as u16 + source[down+2] as u16 + source[left+2] as u16 + source[right+2] as u16) >> 2;
+                let b = (source[up + 2] as u16
+                    + source[down + 2] as u16
+                    + source[left + 2] as u16
+                    + source[right + 2] as u16)
+                    >> 2;
 
                 self.pixels[idx] = r as u8;
-                self.pixels[idx+1] = g as u8;
-                self.pixels[idx+2] = b as u8;
+                self.pixels[idx + 1] = g as u8;
+                self.pixels[idx + 2] = b as u8;
             }
         }
     }
@@ -147,8 +167,11 @@ mod tests {
         // Paint inside
         canvas.paint(50.0, 50.0, 10.0, Color::new(1.0, 0.0, 0.0, 1.0));
         let center_idx = (50 * 100 + 50) * 4;
-        println!("Pixel at center: {:?}", &canvas.pixels[center_idx..center_idx+4]);
+        println!(
+            "Pixel at center: {:?}",
+            &canvas.pixels[center_idx..center_idx + 4]
+        );
         assert!(canvas.pixels[center_idx] > 250); // Red channel should be near 255
-        assert_eq!(canvas.pixels[center_idx+1], 0); // Green channel
+        assert_eq!(canvas.pixels[center_idx + 1], 0); // Green channel
     }
 }

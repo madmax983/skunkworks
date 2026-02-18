@@ -154,19 +154,23 @@ impl MiuraOri {
         let denominator = c1 - 2.0 * c2;
 
         let (l_y, s_y, h) = if denominator.abs() < 1e-6 {
-             // Fallback/Flat
-             (b, a * alpha.cos(), 0.0)
+            // Fallback/Flat
+            (b, a * alpha.cos(), 0.0)
         } else {
             let l_y_sq = (c2 * c2) / denominator;
-             if l_y_sq < 0.0 {
-                 (b, a * alpha.cos(), 0.0)
-             } else {
-                 let l_y = l_y_sq.sqrt();
-                 let s_y = l_y + c2 / l_y;
-                 let h_sq_4 = b * b - l_y * l_y;
-                 let h = if h_sq_4 < 0.0 { 0.0 } else { (h_sq_4 / 4.0).sqrt() };
-                 (l_y, s_y, h)
-             }
+            if l_y_sq < 0.0 {
+                (b, a * alpha.cos(), 0.0)
+            } else {
+                let l_y = l_y_sq.sqrt();
+                let s_y = l_y + c2 / l_y;
+                let h_sq_4 = b * b - l_y * l_y;
+                let h = if h_sq_4 < 0.0 {
+                    0.0
+                } else {
+                    (h_sq_4 / 4.0).sqrt()
+                };
+                (l_y, s_y, h)
+            }
         };
 
         let mut positions = Vec::with_capacity((rows + 1) * (cols + 1));
@@ -212,7 +216,11 @@ mod tests {
                 let idx1 = j * width + i;
                 let idx2 = j * width + i + 1;
                 let d = grid[idx1].distance(grid[idx2]);
-                assert!((d - 1.0).abs() < 1e-4, "Horizontal edge length mismatch: {}", d);
+                assert!(
+                    (d - 1.0).abs() < 1e-4,
+                    "Horizontal edge length mismatch: {}",
+                    d
+                );
             }
         }
 
@@ -222,7 +230,11 @@ mod tests {
                 let idx1 = j * width + i;
                 let idx2 = (j + 1) * width + i;
                 let d = grid[idx1].distance(grid[idx2]);
-                assert!((d - 1.0).abs() < 1e-4, "Vertical edge length mismatch: {}", d);
+                assert!(
+                    (d - 1.0).abs() < 1e-4,
+                    "Vertical edge length mismatch: {}",
+                    d
+                );
             }
         }
     }
@@ -245,7 +257,11 @@ mod tests {
                 let idx1 = j * width + i;
                 let idx2 = j * width + i + 1;
                 let d = grid[idx1].distance(grid[idx2]);
-                assert!((d - 1.0).abs() < 1e-4, "Horizontal edge length mismatch: {}", d);
+                assert!(
+                    (d - 1.0).abs() < 1e-4,
+                    "Horizontal edge length mismatch: {}",
+                    d
+                );
             }
         }
 
@@ -255,7 +271,11 @@ mod tests {
                 let idx1 = j * width + i;
                 let idx2 = (j + 1) * width + i;
                 let d = grid[idx1].distance(grid[idx2]);
-                assert!((d - 1.0).abs() < 1e-4, "Vertical edge length mismatch: {}", d);
+                assert!(
+                    (d - 1.0).abs() < 1e-4,
+                    "Vertical edge length mismatch: {}",
+                    d
+                );
             }
         }
     }
