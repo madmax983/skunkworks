@@ -1,0 +1,18 @@
+[package]
+name = "crystal-fs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+wgpu = "0.19"
+winit = "0.29"
+pollster = "0.3"
+bytemuck = { version = "1.16", features = ["derive"] }
+cgmath = "0.18"
+walkdir = "2.5"
+rand = "0.8"
+env_logger = "0.11"
+log = "0.4"
+
+[dev-dependencies]
+tempfile = "3.25.0"

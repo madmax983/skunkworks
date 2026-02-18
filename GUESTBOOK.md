@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/crystal-fs
+- **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
+- **Status:** The lattice is growing. 4D Miller Indices are projecting onto the view plane.
+- **Note:** Moonshot: Miller Indices + File System Visualization.
+
 ### [Concentration Level: HIGH] - Location: experiments/clockwork-cpu
 - **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
 - **Status:** The escapement is ticking. The CPU cycles are meshing with physical torque.
