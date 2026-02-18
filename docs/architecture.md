@@ -396,6 +396,64 @@ classDiagram
     SorobanSpecter ..> Soroban : Visualizes
 ```
 
+### Origami Logic (crates/origami)
+
+Encapsulates Miura-ori folding geometry, separating mathematical vertex generation from rendering (ADR 040).
+
+```mermaid
+classDiagram
+    direction TB
+    class MiuraOri {
+        +MiuraParams params
+        +generate_mesh(extension) OrigamiMesh
+        +generate_grid(extension) Vec~Vec3~
+    }
+
+    class MiuraParams {
+        +f32 a
+        +f32 b
+        +f32 gamma
+        +Orientation orientation
+    }
+
+    class OrigamiMesh {
+        +Vec~OrigamiVertex~ vertices
+        +Vec~u16~ indices
+    }
+
+    class Orientation {
+        <<Enum>>
+        +Horizontal
+        +Vertical
+    }
+
+    MiuraOri *-- MiuraParams : Configured by
+    MiuraOri ..> OrigamiMesh : Produces
+```
+
+### Gray-Scott Simulation (crates/gray-scott)
+
+Provides a shared, optimized Gray-Scott reaction-diffusion simulation kernel with optional parallel updates (ADR 041).
+
+```mermaid
+classDiagram
+    direction TB
+    class GrayScott {
+        +Vec~f32~ u
+        +Vec~f32~ v
+        +update(feed, kill, dt)
+        +add_chemical(x, y, amt)
+    }
+
+    class Rayon {
+        <<Library>>
+        +par_iter_mut()
+    }
+
+    GrayScott ..> Rayon : Uses (if feature=parallel)
+    note for GrayScott "Implements 3x3 Laplacian Convolution"
+```
+
 ## Experiment: Git Harmony
 
 **Git Harmony** (formerly Git Rhythm) generates music from git diffs ("Code Singing").
