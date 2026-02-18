@@ -67,13 +67,16 @@ async fn main() {
             },
             ..Default::default()
         },
-    ).unwrap();
+    )
+    .unwrap();
 
     loop {
         // --- Input ---
 
         // Deployment control: Mouse drag vertical (Right click or Shift+Left)
-        if is_mouse_button_down(MouseButton::Right) || (is_key_down(KeyCode::LeftShift) && is_mouse_button_down(MouseButton::Left)) {
+        if is_mouse_button_down(MouseButton::Right)
+            || (is_key_down(KeyCode::LeftShift) && is_mouse_button_down(MouseButton::Left))
+        {
             let dy = mouse_delta_position().y;
             extension -= dy * 2.0;
         }
@@ -158,7 +161,7 @@ async fn main() {
                     base_color.r * z_shade,
                     base_color.g * z_shade,
                     base_color.b * z_shade,
-                    1.0
+                    1.0,
                 );
                 let color_bytes: [u8; 4] = col.into();
 
@@ -236,8 +239,20 @@ async fn main() {
         // UI
         draw_text("Origami Satellite Deployment", 20.0, 30.0, 30.0, WHITE);
         draw_text("Left Click: Rotate Camera", 20.0, 60.0, 20.0, LIGHTGRAY);
-        draw_text("Right Click / Shift+Drag: Deploy/Retract", 20.0, 80.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("Extension: {:.1}%", extension * 100.0), 20.0, 110.0, 20.0, if is_locked { GREEN } else { YELLOW });
+        draw_text(
+            "Right Click / Shift+Drag: Deploy/Retract",
+            20.0,
+            80.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            &format!("Extension: {:.1}%", extension * 100.0),
+            20.0,
+            110.0,
+            20.0,
+            if is_locked { GREEN } else { YELLOW },
+        );
 
         if is_locked {
             draw_text("LOCKED - POWER MAXIMIZED", 20.0, 140.0, 20.0, GREEN);
@@ -249,12 +264,14 @@ async fn main() {
 
 // Helper for wireframe
 fn draw_wireframe(mesh: &Mesh, color: Color) {
-    if mesh.indices.len() < 3 { return; }
+    if mesh.indices.len() < 3 {
+        return;
+    }
     // Draw lines for indices
     for i in (0..mesh.indices.len()).step_by(3) {
         let i0 = mesh.indices[i] as usize;
-        let i1 = mesh.indices[i+1] as usize;
-        let i2 = mesh.indices[i+2] as usize;
+        let i1 = mesh.indices[i + 1] as usize;
+        let i2 = mesh.indices[i + 2] as usize;
 
         let v0 = mesh.vertices[i0].position;
         let v1 = mesh.vertices[i1].position;

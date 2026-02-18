@@ -41,11 +41,23 @@ impl Agent {
         let fitness = match self.kind {
             AgentKind::Red => {
                 // Thrives in chaos (r > 3.5)
-                if r > 3.5 { 0.02 } else if r > 3.0 { 0.005 } else { -0.01 }
+                if r > 3.5 {
+                    0.02
+                } else if r > 3.0 {
+                    0.005
+                } else {
+                    -0.01
+                }
             }
             AgentKind::Blue => {
                 // Thrives in order (r < 3.0)
-                if r < 3.0 { 0.02 } else if r < 3.5 { 0.005 } else { -0.01 }
+                if r < 3.0 {
+                    0.02
+                } else if r < 3.5 {
+                    0.005
+                } else {
+                    -0.01
+                }
             }
         };
         self.energy += fitness;
@@ -81,14 +93,16 @@ impl Agent {
             // Check 3x3 neighborhood
             for dy in -1..=1 {
                 for dx in -1..=1 {
-                    if dx == 0 && dy == 0 { continue; }
+                    if dx == 0 && dy == 0 {
+                        continue;
+                    }
                     let check_x = ix + dx as isize;
                     let check_y = iy + dy as isize;
                     let n_idx = grid.get_idx(check_x, check_y);
                     let nr = grid.params_r[n_idx];
 
                     let score = match self.kind {
-                        AgentKind::Red => nr, // Higher r is better
+                        AgentKind::Red => nr,   // Higher r is better
                         AgentKind::Blue => -nr, // Lower r is better
                     };
 

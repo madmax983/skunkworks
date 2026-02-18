@@ -1,4 +1,3 @@
-
 #[derive(Clone)]
 pub struct LifeGame {
     pub grid: Vec<u8>,
@@ -11,7 +10,12 @@ impl LifeGame {
     pub fn new(width: usize, height: usize) -> Self {
         let grid = vec![0; width * height];
         let next_grid = vec![0; width * height];
-        Self { grid, next_grid, width, height }
+        Self {
+            grid,
+            next_grid,
+            width,
+            height,
+        }
     }
 
     pub fn randomize(&mut self, seed: u64) {
@@ -71,8 +75,11 @@ impl LifeGame {
                 let mut neighbors = 0;
                 for dy in -1..=1 {
                     for dx in -1..=1 {
-                        if dx == 0 && dy == 0 { continue; }
-                        let (nx, ny) = Self::calculate_neighbor(width, height, x as i32 + dx, y as i32 + dy);
+                        if dx == 0 && dy == 0 {
+                            continue;
+                        }
+                        let (nx, ny) =
+                            Self::calculate_neighbor(width, height, x as i32 + dx, y as i32 + dy);
                         neighbors += grid[ny * width + nx];
                     }
                 }

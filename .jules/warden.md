@@ -46,3 +46,10 @@
 ## 2026-05-20 - Unbounded DNA Strand Growth (OOM DoS)
 **Threat:** `OpCode::BioHack` (Memetics), `Scavenge`, and `Digest` (Self-modification) allowed creating unbounded DNA strands by bypassing the `MAX_STRANDS` limit. A malicious genome could loop these instructions to consume infinite memory (OOM).
 **Defense:** Added explicit checks for `vm.dna.helix.strands.len() >= MAX_STRANDS` in `memetics.rs` and `mod.rs`. Introduced `warden_security_oom.rs` regression test and fixed a flawed "red team" test (`havoc_poly_crash.rs`) that incorrectly panicked on success.
+
+## 2026-02-18 - Unbounded Prologue Strands & GL Overflow
+**Threat:** The `G` (Genesis) and `X` (Crossover) runes in `experiments/chimera-lang/src/vm/prologue/mod.rs` allowed creating unlimited DNA strands by bypassing the `MAX_STRANDS` limit. A malicious grid could trigger these runes in a loop to consume infinite memory (OOM DoS).
+**Defense:** Added explicit checks for `vm.dna.helix.strands.len() < MAX_STRANDS` in `apply_sink_rune`. If the limit is reached, the operation is skipped and an error is logged.
+
+**Threat:** `intersect_rect` in `experiments/chimera-tardis/src/safe_gl.rs` used standard addition `a.0 + a.2`, which could panic (debug) or wrap (release) if coordinates were large (e.g., `i32::MAX`), leading to incorrect rendering or DoS.
+**Defense:** Replaced arithmetic with `.saturating_add()` and `.saturating_sub()` to ensure safe clamping behavior.

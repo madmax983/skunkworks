@@ -1,5 +1,5 @@
 use anyhow::Result;
-use crossbeam_channel::{bounded, Sender, Receiver};
+use crossbeam_channel::{bounded, Receiver, Sender};
 
 #[cfg(feature = "audio")]
 use anyhow::anyhow;
@@ -16,7 +16,9 @@ struct Xorshift32 {
 
 impl Xorshift32 {
     fn new(seed: u32) -> Self {
-        Self { state: if seed == 0 { 123456789 } else { seed } }
+        Self {
+            state: if seed == 0 { 123456789 } else { seed },
+        }
     }
     fn next_f32(&mut self) -> f32 {
         let mut x = self.state;
@@ -93,7 +95,13 @@ impl Voice {
 
         let sample = match self.waveform {
             Waveform::Sine => (self.phase * 2.0 * std::f32::consts::PI).sin(),
-            Waveform::Square => if (self.phase * 2.0 * std::f32::consts::PI).sin() > 0.0 { 1.0 } else { -1.0 },
+            Waveform::Square => {
+                if (self.phase * 2.0 * std::f32::consts::PI).sin() > 0.0 {
+                    1.0
+                } else {
+                    -1.0
+                }
+            }
             Waveform::Saw => self.phase * 2.0 - 1.0,
             Waveform::Noise => self.rng.next_f32(),
         };
@@ -140,7 +148,12 @@ impl AudioModel {
 
     fn handle_command(&mut self, cmd: AudioCommand) {
         match cmd {
-            AudioCommand::Trigger { frequency, decay, amplitude, waveform } => {
+            AudioCommand::Trigger {
+                frequency,
+                decay,
+                amplitude,
+                waveform,
+            } => {
                 let idx = self.next_voice;
                 self.voices[idx].trigger(frequency, decay, amplitude, waveform);
                 self.next_voice = (self.next_voice + 1) % MAX_VOICES;
@@ -170,16 +183,21 @@ pub fn init_audio() -> Result<(AudioHandle, Sender<AudioCommand>)> {
 
     #[cfg(feature = "audio")]
     match init_cpal(cmd_rx.clone()) {
-        Ok(stream) => return Ok((AudioHandle { _stream: Some(stream) }, cmd_tx)),
+        Ok(stream) => {
+            return Ok((
+                AudioHandle {
+                    _stream: Some(stream),
+                },
+                cmd_tx,
+            ))
+        }
         Err(e) => {
             eprintln!("Audio init failed: {}. Running silent.", e);
         }
     }
 
     // Fallback: drain channel
-    std::thread::spawn(move || {
-        while cmd_rx.recv().is_ok() {}
-    });
+    std::thread::spawn(move || while cmd_rx.recv().is_ok() {});
 
     #[cfg(feature = "audio")]
     return Ok((AudioHandle { _stream: None }, cmd_tx));
@@ -191,7 +209,9 @@ pub fn init_audio() -> Result<(AudioHandle, Sender<AudioCommand>)> {
 #[cfg(feature = "audio")]
 fn init_cpal(cmd_rx: Receiver<AudioCommand>) -> Result<Stream> {
     let host = cpal::default_host();
-    let device = host.default_output_device().ok_or_else(|| anyhow!("No output device"))?;
+    let device = host
+        .default_output_device()
+        .ok_or_else(|| anyhow!("No output device"))?;
     let config: StreamConfig = device.default_output_config()?.into();
     let sample_rate = config.sample_rate.0 as f32;
 

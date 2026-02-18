@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
-    use chimera_lang::vm::{ChimeraVM, Value};
     use chimera_lang::ast::{Dna, Helix};
     use chimera_lang::vm::prologue::exec_prologue_tick;
+    use chimera_lang::vm::{ChimeraVM, Value};
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
@@ -23,7 +23,12 @@ mod tests {
         // Z emits to all neighbors
         let neighbors = [(4, 5), (6, 5), (5, 4), (5, 6)];
         for (y, x) in neighbors {
-            assert!(vm.prologue_state.signal_grid[y][x].is_some(), "Neighbor {},{} should have signal", x, y);
+            assert!(
+                vm.prologue_state.signal_grid[y][x].is_some(),
+                "Neighbor {},{} should have signal",
+                x,
+                y
+            );
         }
     }
 

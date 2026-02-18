@@ -1,5 +1,5 @@
-use crate::vm::Value;
 use super::normalize_coords;
+use crate::vm::Value;
 use rand::Rng;
 
 pub fn apply_quantum_runes(
@@ -45,7 +45,10 @@ pub fn apply_quantum_runes(
                             let mut rng = rand::thread_rng();
                             let r: f64 = rng.gen();
                             let mut cumulative = 0.0;
-                            let mut selected = states.last().map(|(v, _)| v.clone()).unwrap_or(Value::Int(0));
+                            let mut selected = states
+                                .last()
+                                .map(|(v, _)| v.clone())
+                                .unwrap_or(Value::Int(0));
 
                             for (v, p) in states {
                                 cumulative += p;

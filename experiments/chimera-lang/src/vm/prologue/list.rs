@@ -1,5 +1,5 @@
-use crate::vm::Value;
 use super::normalize_coords;
+use crate::vm::Value;
 
 pub fn apply_list_runes(
     rune: &str,
@@ -30,7 +30,8 @@ pub fn apply_list_runes(
             }
             if !items.is_empty() {
                 if next_signals[y][x].is_none() {
-                    next_signals[y][x] = Some(Value::Junction(crate::ast::JunctionType::Any, items));
+                    next_signals[y][x] =
+                        Some(Value::Junction(crate::ast::JunctionType::Any, items));
                     changes = true;
                 }
             }
@@ -40,7 +41,7 @@ pub fn apply_list_runes(
             if let Some(Value::Junction(_, items)) = w_sig {
                 // Distribute items
                 // Item 0 -> N
-                if items.len() > 0 {
+                if !items.is_empty() {
                     if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
                         if next_signals[ny][nx].is_none() {
                             next_signals[ny][nx] = Some(items[0].clone());

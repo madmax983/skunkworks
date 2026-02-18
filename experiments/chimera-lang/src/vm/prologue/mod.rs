@@ -1,18 +1,18 @@
-use crate::vm::{ChimeraVM, Value, GRID_SIZE};
+use crate::vm::{ChimeraVM, Value, GRID_SIZE, MAX_STRANDS};
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};
 
-pub mod quantum;
-pub mod teleport;
-pub mod chronos;
 pub mod alchemy;
-pub mod topology;
-pub mod math;
-pub mod logic;
+pub mod chronos;
 pub mod io;
 pub mod list;
+pub mod logic;
+pub mod math;
 pub mod optics;
+pub mod quantum;
+pub mod teleport;
+pub mod topology;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PrologueAgent {
@@ -154,7 +154,7 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
     process_agents(vm, &grid_snapshot);
 }
 
-fn prepare_signals(vm: &mut ChimeraVM, grid: &Vec<Vec<Value>>) {
+fn prepare_signals(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
     // Start with empty signal grid
     let mut current_signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
 
@@ -188,7 +188,7 @@ fn prepare_signals(vm: &mut ChimeraVM, grid: &Vec<Vec<Value>>) {
     }
 }
 
-fn process_signal_propagation(vm: &mut ChimeraVM, grid: &Vec<Vec<Value>>) {
+fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
     // Simple iterative flood fill for wires
     // Gates need specific inputs.
     // Iteration loop to allow signal to travel across grid in one tick
@@ -249,7 +249,16 @@ fn apply_propagation_rune(
     if logic::apply_logic_runes(rune, y, x, current_signals, next_signals) {
         return true;
     }
-    if io::apply_io_runes(rune, y, x, tick, current_signals, next_signals, ether, registers) {
+    if io::apply_io_runes(
+        rune,
+        y,
+        x,
+        tick,
+        current_signals,
+        next_signals,
+        ether,
+        registers,
+    ) {
         return true;
     }
     if list::apply_list_runes(rune, y, x, current_signals, next_signals) {
@@ -261,7 +270,8 @@ fn apply_propagation_rune(
     if quantum::apply_quantum_runes(rune, y, x, current_signals, next_signals) {
         return true;
     }
-    if teleport::apply_teleport_runes(rune, y, x, current_signals, next_signals, teleport_channels) {
+    if teleport::apply_teleport_runes(rune, y, x, current_signals, next_signals, teleport_channels)
+    {
         return true;
     }
     if chronos::apply_chronos_runes(rune, y, x, current_signals, next_signals, history) {
@@ -273,13 +283,7 @@ fn apply_propagation_rune(
     false
 }
 
-
-
-
-
-
-
-fn process_sinks(vm: &mut ChimeraVM, grid: &Vec<Vec<Value>>) {
+fn process_sinks(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
     let runes: Vec<(usize, usize)> = vm.prologue_state.runes.iter().cloned().collect();
 
     for (y, x) in &runes {
@@ -372,11 +376,17 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                 match crate::compiler::compile(&code, None) {
                     Ok(dna) => {
                         if let Some(strand) = dna.helix.strands.first() {
-                            vm.dna.helix.strands.push(strand.clone());
-                            let idx = vm.dna.helix.strands.len() - 1;
-                            vm.output
-                                .push(format!("PROLOGUE: Genesis created Strand {}", idx));
-                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(idx as i64));
+                            if vm.dna.helix.strands.len() < MAX_STRANDS {
+                                vm.dna.helix.strands.push(strand.clone());
+                                let idx = vm.dna.helix.strands.len() - 1;
+                                vm.output
+                                    .push(format!("PROLOGUE: Genesis created Strand {}", idx));
+                                vm.prologue_state.signal_grid[y][x] = Some(Value::Int(idx as i64));
+                            } else {
+                                vm.output.push(
+                                    "PROLOGUE: Genesis failed (MAX_STRANDS limit)".to_string(),
+                                );
+                            }
                         }
                     }
                     Err(e) => {
@@ -443,7 +453,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                 if let (Some(val), Some(Value::Int(channel))) = (w_sig, e_sig) {
                     vm.ether
                         .entry(*channel)
-                        .or_insert_with(std::collections::VecDeque::new)
+                        .or_default()
                         .push_back(val.clone());
                     vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
                     // Light up
@@ -483,10 +493,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
 
                 if let (Some(Value::Int(idx_a)), Some(Value::Int(idx_b))) = (w_sig, e_sig) {
                     let len = vm.dna.helix.strands.len();
-                    if idx_a >= 0
-                        && (idx_a as usize) < len
-                        && idx_b >= 0
-                        && (idx_b as usize) < len
+                    if idx_a >= 0 && (idx_a as usize) < len && idx_b >= 0 && (idx_b as usize) < len
                     {
                         let strand_a = vm.dna.helix.strands[idx_a as usize].clone();
                         let strand_b = vm.dna.helix.strands[idx_b as usize].clone();
@@ -499,12 +506,17 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                         new_genes.extend(strand_b.genes.iter().skip(split_b).cloned());
 
                         let new_strand = crate::ast::Strand { genes: new_genes };
-                        vm.dna.helix.strands.push(new_strand);
-                        let new_idx = vm.dna.helix.strands.len() - 1;
+                        if vm.dna.helix.strands.len() < MAX_STRANDS {
+                            vm.dna.helix.strands.push(new_strand);
+                            let new_idx = vm.dna.helix.strands.len() - 1;
 
-                        if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
-                            vm.grid[sy][sx] = Value::Int(new_idx as i64);
-                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                            if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
+                                vm.grid[sy][sx] = Value::Int(new_idx as i64);
+                                vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                            }
+                        } else {
+                            vm.output
+                                .push("PROLOGUE: Crossover failed (MAX_STRANDS limit)".to_string());
                         }
                     }
                 }
@@ -514,7 +526,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     }
 }
 
-fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &Vec<Vec<Value>>) {
+fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
     // Agents move towards signal
     // We need to update agents list in state, and also update the Grid (move the '@' char)
     // This requires mutable access to grid.

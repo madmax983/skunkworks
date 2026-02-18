@@ -91,7 +91,14 @@ fn add_random_process(scheduler: &mut Scheduler) {
     let priority = rand::gen_range(0, 255) as u8;
     let cpu_needed = rand::gen_range(100.0, 400.0); // Height
 
-    scheduler.add_process(ProcessTree::new(id, pos, width, priority, cpu_needed, get_time()));
+    scheduler.add_process(ProcessTree::new(
+        id,
+        pos,
+        width,
+        priority,
+        cpu_needed,
+        get_time(),
+    ));
 }
 
 fn draw_tree(process: &ProcessTree) {
@@ -188,10 +195,16 @@ fn draw_ui(scheduler: &Scheduler, running: bool) {
 
     if let Some(idx) = scheduler.current_process_idx {
         if idx < scheduler.processes.len() {
-             let p = &scheduler.processes[idx];
-             draw_text(
-                &format!("Running: PID {} | Prio {} | Rem {:.1}", p.id, p.priority, scheduler.time_left),
-                20.0, 100.0, 20.0, BLACK
+            let p = &scheduler.processes[idx];
+            draw_text(
+                &format!(
+                    "Running: PID {} | Prio {} | Rem {:.1}",
+                    p.id, p.priority, scheduler.time_left
+                ),
+                20.0,
+                100.0,
+                20.0,
+                BLACK,
             );
         }
     } else {

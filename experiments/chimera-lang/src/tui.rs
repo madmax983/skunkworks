@@ -2209,7 +2209,13 @@ where
                         }
                     }
 
-                    if c != 'q' && c != ' ' && c != 'm' && c != 'c' && c != 'C' && vm.handle_input(c) {
+                    if c != 'q'
+                        && c != ' '
+                        && c != 'm'
+                        && c != 'c'
+                        && c != 'C'
+                        && vm.handle_input(c)
+                    {
                         continue;
                     }
                 }
@@ -11788,7 +11794,7 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                         style = style.fg(Color::DarkGray);
                     }
                 } else if rng.gen_bool(0.1) {
-                     style = style.add_modifier(Modifier::RAPID_BLINK);
+                    style = style.add_modifier(Modifier::RAPID_BLINK);
                 }
             }
 
@@ -11819,16 +11825,26 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     "=" | ">" | "<" => style = style.fg(Color::White).add_modifier(Modifier::BOLD),
                     "I" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
                     "Y" | "L" => style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD),
-                    "K" => style = style
-                        .fg(Color::Red)
-                        .add_modifier(Modifier::BOLD | Modifier::SLOW_BLINK),
+                    "K" => {
+                        style = style
+                            .fg(Color::Red)
+                            .add_modifier(Modifier::BOLD | Modifier::SLOW_BLINK)
+                    }
                     "R" => style = style.fg(Color::White).add_modifier(Modifier::BOLD),
                     "X" => style = style.fg(Color::Green).add_modifier(Modifier::BOLD),
                     "[" | "]" | "U" | "V" | "F" | "T" => {
                         style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD)
                     }
-                    "q" | "m" => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD | Modifier::UNDERLINED),
-                    "{" | "}" => style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD | Modifier::ITALIC),
+                    "q" | "m" => {
+                        style = style
+                            .fg(Color::Yellow)
+                            .add_modifier(Modifier::BOLD | Modifier::UNDERLINED)
+                    }
+                    "{" | "}" => {
+                        style = style
+                            .fg(Color::Magenta)
+                            .add_modifier(Modifier::BOLD | Modifier::ITALIC)
+                    }
                     _ => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
                 }
             } else {

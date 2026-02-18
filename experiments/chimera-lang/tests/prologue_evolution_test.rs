@@ -1,7 +1,7 @@
-use chimera_lang::vm::{ChimeraVM, Value};
-use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use chimera_lang::opcode::OpCode;
 use chimera_lang::vm::prologue::exec_prologue_tick;
+use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_chaos_rune() {
@@ -17,7 +17,7 @@ fn test_chaos_rune() {
     exec_prologue_tick(&mut vm);
 
     // Check neighbors for random values
-    let neighbors = [(4,5), (6,5), (5,4), (5,6)];
+    let neighbors = [(4, 5), (6, 5), (5, 4), (5, 6)];
     let mut found_signal = false;
     for (ny, nx) in neighbors {
         if let Some(Value::Int(_)) = &vm.prologue_state.signal_grid[ny][nx] {
@@ -46,7 +46,10 @@ fn test_register_rune() {
     exec_prologue_tick(&mut vm);
 
     // Verify register has 42
-    assert_eq!(vm.prologue_state.registers.get(&(5,5)), Some(&Value::Int(42)));
+    assert_eq!(
+        vm.prologue_state.registers.get(&(5, 5)),
+        Some(&Value::Int(42))
+    );
 
     // 2. Read Phase
     // Clear signals manually for test
@@ -71,11 +74,23 @@ fn test_register_rune() {
 fn test_crossover_rune() {
     // Strand 0: Push 1
     // Strand 1: Push 2
-    let s0 = Strand { genes: vec![Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }] };
-    let s1 = Strand { genes: vec![Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] }] };
+    let s0 = Strand {
+        genes: vec![Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        }],
+    };
+    let s1 = Strand {
+        genes: vec![Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(2)],
+        }],
+    };
 
     let dna = Dna {
-        helix: Helix { strands: vec![s0, s1] },
+        helix: Helix {
+            strands: vec![s0, s1],
+        },
     };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;

@@ -1,4 +1,5 @@
 use bevy::{
+    core_pipeline::core_2d::graph as core_2d_graph,
     prelude::*,
     render::{
         extract_resource::{ExtractResource, ExtractResourcePlugin},
@@ -6,12 +7,11 @@ use bevy::{
         render_graph::{self, RenderGraphApp, RenderLabel},
         render_resource::*,
         renderer::{RenderContext, RenderDevice},
-        Render, RenderSet, RenderApp,
+        Render, RenderApp, RenderSet,
     },
-    core_pipeline::core_2d::graph as core_2d_graph,
 };
-use std::borrow::Cow;
 use bytemuck::{Pod, Zeroable};
+use std::borrow::Cow;
 // use wgpu::util::DeviceExt; // Removed
 
 // --- Resources (Main World) ---
@@ -59,7 +59,10 @@ impl Plugin for FluidPlugin {
         let render_app = app.sub_app_mut(RenderApp);
         render_app
             .add_systems(Render, prepare_fluid_pipeline.in_set(RenderSet::Prepare))
-            .add_systems(Render, prepare_bind_group.in_set(RenderSet::PrepareBindGroups))
+            .add_systems(
+                Render,
+                prepare_bind_group.in_set(RenderSet::PrepareBindGroups),
+            )
             .add_render_graph_node::<FluidNode>(core_2d_graph::Core2d, FluidLabel)
             .add_render_graph_edge(
                 core_2d_graph::Core2d,
@@ -97,7 +100,9 @@ fn prepare_fluid_pipeline(
     render_device: Res<RenderDevice>,
     pipeline: Option<Res<FluidPipeline>>,
 ) {
-    if pipeline.is_some() { return; }
+    if pipeline.is_some() {
+        return;
+    }
 
     let bind_group_layout = render_device.create_bind_group_layout(
         Some("fluid_bind_group_layout"),
@@ -106,45 +111,69 @@ fn prepare_fluid_pipeline(
             BindGroupLayoutEntry {
                 binding: 0,
                 visibility: ShaderStages::COMPUTE,
-                ty: BindingType::Texture { sample_type: TextureSampleType::Float { filterable: false }, view_dimension: TextureViewDimension::D2, multisampled: false },
+                ty: BindingType::Texture {
+                    sample_type: TextureSampleType::Float { filterable: false },
+                    view_dimension: TextureViewDimension::D2,
+                    multisampled: false,
+                },
                 count: None,
             },
             // 1: density_out (storage)
             BindGroupLayoutEntry {
                 binding: 1,
                 visibility: ShaderStages::COMPUTE,
-                ty: BindingType::StorageTexture { access: StorageTextureAccess::WriteOnly, format: TextureFormat::Rgba32Float, view_dimension: TextureViewDimension::D2 },
+                ty: BindingType::StorageTexture {
+                    access: StorageTextureAccess::WriteOnly,
+                    format: TextureFormat::Rgba32Float,
+                    view_dimension: TextureViewDimension::D2,
+                },
                 count: None,
             },
             // 2: velocity_in (texture)
             BindGroupLayoutEntry {
                 binding: 2,
                 visibility: ShaderStages::COMPUTE,
-                ty: BindingType::Texture { sample_type: TextureSampleType::Float { filterable: false }, view_dimension: TextureViewDimension::D2, multisampled: false },
+                ty: BindingType::Texture {
+                    sample_type: TextureSampleType::Float { filterable: false },
+                    view_dimension: TextureViewDimension::D2,
+                    multisampled: false,
+                },
                 count: None,
             },
             // 3: velocity_out (storage)
             BindGroupLayoutEntry {
                 binding: 3,
                 visibility: ShaderStages::COMPUTE,
-                ty: BindingType::StorageTexture { access: StorageTextureAccess::WriteOnly, format: TextureFormat::Rgba32Float, view_dimension: TextureViewDimension::D2 },
+                ty: BindingType::StorageTexture {
+                    access: StorageTextureAccess::WriteOnly,
+                    format: TextureFormat::Rgba32Float,
+                    view_dimension: TextureViewDimension::D2,
+                },
                 count: None,
             },
             // 4: force_tex (texture)
             BindGroupLayoutEntry {
                 binding: 4,
                 visibility: ShaderStages::COMPUTE,
-                ty: BindingType::Texture { sample_type: TextureSampleType::Float { filterable: false }, view_dimension: TextureViewDimension::D2, multisampled: false },
+                ty: BindingType::Texture {
+                    sample_type: TextureSampleType::Float { filterable: false },
+                    view_dimension: TextureViewDimension::D2,
+                    multisampled: false,
+                },
                 count: None,
             },
             // 5: params (uniform)
             BindGroupLayoutEntry {
                 binding: 5,
                 visibility: ShaderStages::COMPUTE,
-                ty: BindingType::Buffer { ty: BufferBindingType::Uniform, has_dynamic_offset: false, min_binding_size: None },
+                ty: BindingType::Buffer {
+                    ty: BufferBindingType::Uniform,
+                    has_dynamic_offset: false,
+                    min_binding_size: None,
+                },
                 count: None,
             },
-        ]
+        ],
     );
 
     let shader_source = include_str!("../assets/shaders/fluid.wgsl");
@@ -186,7 +215,6 @@ fn prepare_bind_group(
     let force_image_gpu = gpu_images.get(&force_image.0);
 
     if let (Some(den_img), Some(force_img)) = (density_image, force_image_gpu) {
-
         let aux = if let Some(aux) = aux_opt {
             aux
         } else {
@@ -198,7 +226,10 @@ fn prepare_bind_group(
                     sample_count: 1,
                     dimension: TextureDimension::D2,
                     format: TextureFormat::Rgba32Float,
-                    usage: TextureUsages::TEXTURE_BINDING | TextureUsages::STORAGE_BINDING | TextureUsages::COPY_SRC | TextureUsages::COPY_DST,
+                    usage: TextureUsages::TEXTURE_BINDING
+                        | TextureUsages::STORAGE_BINDING
+                        | TextureUsages::COPY_SRC
+                        | TextureUsages::COPY_DST,
                     view_formats: &[],
                 })
             };
@@ -215,9 +246,15 @@ fn prepare_bind_group(
             return;
         };
 
-        let den_out_view = aux.density_out.create_view(&TextureViewDescriptor::default());
-        let vel_in_view = aux.velocity_in.create_view(&TextureViewDescriptor::default());
-        let vel_out_view = aux.velocity_out.create_view(&TextureViewDescriptor::default());
+        let den_out_view = aux
+            .density_out
+            .create_view(&TextureViewDescriptor::default());
+        let vel_in_view = aux
+            .velocity_in
+            .create_view(&TextureViewDescriptor::default());
+        let vel_out_view = aux
+            .velocity_out
+            .create_view(&TextureViewDescriptor::default());
 
         #[repr(C)]
         #[derive(Copy, Clone, Pod, Zeroable)]
@@ -249,12 +286,30 @@ fn prepare_bind_group(
             Some("fluid_bind_group"),
             &pipeline.bind_group_layout,
             &[
-                BindGroupEntry { binding: 0, resource: BindingResource::TextureView(&den_img.texture_view) },
-                BindGroupEntry { binding: 1, resource: BindingResource::TextureView(&den_out_view) },
-                BindGroupEntry { binding: 2, resource: BindingResource::TextureView(&vel_in_view) },
-                BindGroupEntry { binding: 3, resource: BindingResource::TextureView(&vel_out_view) },
-                BindGroupEntry { binding: 4, resource: BindingResource::TextureView(&force_img.texture_view) },
-                BindGroupEntry { binding: 5, resource: params_buffer.as_entire_binding() },
+                BindGroupEntry {
+                    binding: 0,
+                    resource: BindingResource::TextureView(&den_img.texture_view),
+                },
+                BindGroupEntry {
+                    binding: 1,
+                    resource: BindingResource::TextureView(&den_out_view),
+                },
+                BindGroupEntry {
+                    binding: 2,
+                    resource: BindingResource::TextureView(&vel_in_view),
+                },
+                BindGroupEntry {
+                    binding: 3,
+                    resource: BindingResource::TextureView(&vel_out_view),
+                },
+                BindGroupEntry {
+                    binding: 4,
+                    resource: BindingResource::TextureView(&force_img.texture_view),
+                },
+                BindGroupEntry {
+                    binding: 5,
+                    resource: params_buffer.as_entire_binding(),
+                },
             ],
         );
 
@@ -289,7 +344,9 @@ impl render_graph::Node for FluidNode {
         };
 
         {
-            let mut pass = render_context.command_encoder().begin_compute_pass(&ComputePassDescriptor::default());
+            let mut pass = render_context
+                .command_encoder()
+                .begin_compute_pass(&ComputePassDescriptor::default());
             pass.set_pipeline(&pipeline.pipeline);
             pass.set_bind_group(0, &bind_group.0, &[]);
             pass.dispatch_workgroups(32, 32, 1);

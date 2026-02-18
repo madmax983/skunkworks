@@ -87,7 +87,10 @@ mod tests {
 
         // Check storage
         assert!(vm.prologue_state.teleport_channels.contains_key(&1));
-        assert_eq!(vm.prologue_state.teleport_channels.get(&1), Some(&Value::Int(42)));
+        assert_eq!(
+            vm.prologue_state.teleport_channels.get(&1),
+            Some(&Value::Int(42))
+        );
 
         // Tick 2: Receive
         // Note: Receiver logic executes in same tick if order permits, but here we check across ticks to be safe.

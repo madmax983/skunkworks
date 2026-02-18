@@ -1,7 +1,7 @@
+use crate::fs::DirNode;
 use macroquad::prelude::*;
 use poincare_disk::{mobius_add, mobius_sub, Point};
 use quipu::Cord;
-use crate::fs::DirNode;
 use std::f64::consts::PI;
 
 pub struct QuipuNode {
@@ -78,7 +78,7 @@ impl QuipuNode {
         // P_global = start_pos (+) P_local
         let start_pos = parent_end;
         let end_pos = mobius_add(start_pos, p_local); // Note: mobius_add(a, b) is (a+b)/(1+ab_bar)
-                                                     // This effectively moves b "from" a.
+                                                      // This effectively moves b "from" a.
 
         let mut quipu_node = QuipuNode {
             cord,

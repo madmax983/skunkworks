@@ -29,14 +29,14 @@ impl Neuron {
                 physics.b = 0.2;
                 physics.c = -65.0;
                 physics.d = 8.0;
-            },
+            }
             NeuronType::Inhibitory => {
                 // FS: a=0.1, b=0.2, c=-65, d=2
                 physics.a = 0.1;
                 physics.b = 0.2;
                 physics.c = -65.0;
                 physics.d = 2.0;
-            },
+            }
             NeuronType::Pacemaker => {
                 // CH: a=0.02, b=0.2, c=-50, d=2
                 physics.a = 0.02;
@@ -141,7 +141,11 @@ impl Brain {
             };
 
             for (i, neuron) in self.neurons.iter_mut().enumerate() {
-                let external = if i < external_currents.len() { external_currents[i] } else { 0.0 };
+                let external = if i < external_currents.len() {
+                    external_currents[i]
+                } else {
+                    0.0
+                };
                 let (v, spiked) = neuron.physics.update(dt, external);
 
                 neuron.voltage = v;

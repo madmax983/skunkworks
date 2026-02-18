@@ -1,9 +1,11 @@
 use crate::ast::{Dna, Helix};
-use crate::vm::{ChimeraVM, Value};
 use crate::vm::prologue::exec_prologue_tick;
+use crate::vm::{ChimeraVM, Value};
 
 fn make_vm() -> ChimeraVM {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
     vm
@@ -23,7 +25,10 @@ fn test_transmute_to_string() {
 
     exec_prologue_tick(&mut vm);
 
-    assert_eq!(vm.prologue_state.signal_grid[6][5], Some(Value::Str("42".to_string())));
+    assert_eq!(
+        vm.prologue_state.signal_grid[6][5],
+        Some(Value::Str("42".to_string()))
+    );
 }
 
 #[test]
@@ -73,7 +78,10 @@ fn test_fuse_string_int() {
 
     exec_prologue_tick(&mut vm);
 
-    assert_eq!(vm.prologue_state.signal_grid[5][5], Some(Value::Str("AAA".to_string())));
+    assert_eq!(
+        vm.prologue_state.signal_grid[5][5],
+        Some(Value::Str("AAA".to_string()))
+    );
 }
 
 #[test]
@@ -93,7 +101,13 @@ fn test_distill_string() {
     exec_prologue_tick(&mut vm);
 
     // Output North (4,5) -> "a"
-    assert_eq!(vm.prologue_state.signal_grid[4][5], Some(Value::Str("a".to_string())));
+    assert_eq!(
+        vm.prologue_state.signal_grid[4][5],
+        Some(Value::Str("a".to_string()))
+    );
     // Output South (6,5) -> "bc"
-    assert_eq!(vm.prologue_state.signal_grid[6][5], Some(Value::Str("bc".to_string())));
+    assert_eq!(
+        vm.prologue_state.signal_grid[6][5],
+        Some(Value::Str("bc".to_string()))
+    );
 }
