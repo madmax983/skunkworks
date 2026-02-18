@@ -5340,3 +5340,4 @@ mod prologue_optics_test;
 mod prologue_repro;
 #[cfg(feature = "nova")] #[cfg(test)] mod prologue_evolution_test;
 #[cfg(feature = "nova")] #[cfg(test)] mod prologue_chronos_test;
+#[cfg(feature = "nova")] #[cfg(test)] mod prologue_alchemy_test;
