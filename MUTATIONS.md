@@ -1223,3 +1223,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Hyperbolic Data Storage. An exponential number of subsidiary cords fit within the finite visual disk due to negative curvature.
 - **Status**: experiments/hyperbolic-quipu
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### turbulent-rhythms
+- **Parents**: experiments/sync-opation + experiments/system-turbulence
+- **Concept**: Fluid simulation where viscosity is controlled by system load, and thread synchronization events create turbulence.
+- **Novel trait**: Visualizing thread contention as fluid dynamics.
+- **Status**: experiments/turbulent-rhythms
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
