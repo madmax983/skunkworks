@@ -403,7 +403,8 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 'H' | 'h' => exec_project_signal(vm, y, x, signal, &mut ctx),
                 'U' | 'u' => exec_unzip(vm, y, x, signal, &mut ctx),
                 'F' | 'f' => exec_flux(vm, y, x, signal, &mut ctx),
-                'J' | 'j' => exec_jam(vm, y, x, signal, &mut ctx),
+                'J' | 'j' => exec_jumper(vm, y, x, signal, &mut ctx),
+                '(' => exec_warp(vm, y, x, signal, &mut ctx),
                 ':' => exec_midi_note(vm, y, x, signal, &mut ctx),
                 ';' => exec_midi_cc(vm, y, x, signal, &mut ctx),
                 #[cfg(feature = "oracle")]
@@ -1407,16 +1408,44 @@ fn exec_flux(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalCon
     }
 }
 
-fn exec_jam(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
-    if let Some(amount) = peek(vm, y, x, 0, -1) {
-        if signal > 0 {
-            if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
-                ctx.entropy_writes.push(EntropyWrite {
-                    y: sy,
-                    x: sx,
-                    val: -amount,
-                });
-            }
+fn exec_jumper(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // Jumper: Reads West, Writes East
+    if let Some(val) = peek_value(vm, y, x, 0, -1) {
+        if let Some((ey, ex)) = vm.normalize_coords(y as i64, x as i64 + 1) {
+            ctx.grid_writes.push(GridWrite {
+                y: ey,
+                x: ex,
+                val,
+            });
+        }
+    }
+}
+
+fn exec_warp(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // Warp: Swap North and South
+    if let (Some(n_val), Some(s_val)) = (
+        peek_value(vm, y, x, -1, 0),
+        peek_value(vm, y, x, 1, 0),
+    ) {
+        if let Some((ny, nx)) = vm.normalize_coords(y as i64 - 1, x as i64) {
+            ctx.grid_writes.push(GridWrite {
+                y: ny,
+                x: nx,
+                val: s_val,
+            });
+        }
+        if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+            ctx.grid_writes.push(GridWrite {
+                y: sy,
+                x: sx,
+                val: n_val,
+            });
         }
     }
 }

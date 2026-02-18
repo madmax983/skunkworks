@@ -78,3 +78,20 @@ Agents are autonomous cursors.
   #       (Delay 1 Tick)
   ?       (Sink receives "func" -> Executes Strand "func")
 ```
+
+# Prologue II: Signal Grid (Orca Mode) 🐋
+
+Enabled via `OpCode::Orca` or TUI toggle. This is a concurrent cellular automata system inspired by Orca.
+
+### New Operators
+
+| Operator | Name | Function |
+|---|---|---|
+| `J` | **Jumper** | Moves value from **West** to **East**, skipping Self. |
+| `(` | **Warp** | Swaps the values of **North** and **South** neighbors. |
+| `*` | **Bang** | Fires a signal to all neighbors if it receives one. |
+| `N/S/E/W` | **Directional** | Moves values in cardinal directions. |
+| `A/B/D` | **Math** | Add, Subtract, Divide. |
+| `C` | **Clock** | Outputs time-based modulo values. |
+| `M` | **Mutate** | Mutates target strand or value. |
+| `Q` | **Query** | Reads value at offset. |
