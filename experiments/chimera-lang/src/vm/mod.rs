@@ -2796,6 +2796,13 @@ impl ChimeraVM {
 
                 let mut buffer = vec![0u8; len as usize];
                 if let Ok(bytes_read) = file.read(&mut buffer) {
+                    if self.dna.helix.strands.len() >= MAX_STRANDS {
+                        self.output
+                            .push("SCAVENGE: Strand limit exceeded".to_string());
+                        self.stack.push(Value::Int(-1));
+                        return None;
+                    }
+
                     let opcodes: Vec<OpCode> = OpCode::iter().collect();
                     let count = opcodes.len();
                     let mut genes = Vec::new();
@@ -2875,6 +2882,13 @@ impl ChimeraVM {
 
                 let mut buffer = vec![0u8; len as usize];
                 if let Ok(bytes_read) = file.read(&mut buffer) {
+                    if self.dna.helix.strands.len() >= MAX_STRANDS {
+                        self.output
+                            .push("DIGEST: Strand limit exceeded".to_string());
+                        self.stack.push(Value::Int(-1));
+                        return None;
+                    }
+
                     let opcodes: Vec<OpCode> = OpCode::iter().collect();
                     let count = opcodes.len();
                     let mut genes = Vec::new();

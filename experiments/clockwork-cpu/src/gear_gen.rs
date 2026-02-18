@@ -25,10 +25,22 @@ pub fn create_gear_path(radius: f32, teeth: u32) -> Path {
         // Gap between this tooth and previous is handled by the line to root_start
 
         // Coordinates
-        let p_root_start = Vec2::new(root_radius * angle_root_start.cos(), root_radius * angle_root_start.sin());
-        let p_tip_start = Vec2::new(outer_radius * angle_tip_start.cos(), outer_radius * angle_tip_start.sin());
-        let p_tip_end = Vec2::new(outer_radius * angle_tip_end.cos(), outer_radius * angle_tip_end.sin());
-        let p_root_end = Vec2::new(root_radius * angle_root_end.cos(), root_radius * angle_root_end.sin());
+        let p_root_start = Vec2::new(
+            root_radius * angle_root_start.cos(),
+            root_radius * angle_root_start.sin(),
+        );
+        let p_tip_start = Vec2::new(
+            outer_radius * angle_tip_start.cos(),
+            outer_radius * angle_tip_start.sin(),
+        );
+        let p_tip_end = Vec2::new(
+            outer_radius * angle_tip_end.cos(),
+            outer_radius * angle_tip_end.sin(),
+        );
+        let p_root_end = Vec2::new(
+            root_radius * angle_root_end.cos(),
+            root_radius * angle_root_end.sin(),
+        );
 
         if i == 0 {
             path_builder.move_to(p_root_start);

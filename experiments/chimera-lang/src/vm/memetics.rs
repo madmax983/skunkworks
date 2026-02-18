@@ -68,6 +68,11 @@ pub fn exec_memetics_op(
                 if let (Value::Int(m_id), Value::Str(name)) = (meme_val, name_val) {
                     let meme_idx = m_id as usize;
                     if meme_idx < vm.meme_pool.memes.len() {
+                        if vm.dna.helix.strands.len() >= crate::vm::MAX_STRANDS {
+                            vm.output.push("BIOHACK: Strand limit exceeded".to_string());
+                            return None;
+                        }
+
                         let meme = &vm.meme_pool.memes[meme_idx];
 
                         // Create a temporary strand for the payload

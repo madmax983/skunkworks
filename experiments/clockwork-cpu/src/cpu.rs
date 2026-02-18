@@ -1,5 +1,5 @@
-use bevy::prelude::*;
 use crate::components::*;
+use bevy::prelude::*;
 use std::f32::consts::PI;
 
 pub struct CpuPlugin;
@@ -12,29 +12,31 @@ impl Plugin for CpuPlugin {
 }
 
 fn spawn_cpu_display(mut commands: Commands) {
-    commands.spawn(NodeBundle {
-        style: Style {
-            width: Val::Percent(100.0),
-            height: Val::Percent(100.0),
-            justify_content: JustifyContent::FlexEnd,
-            align_items: AlignItems::FlexStart,
-            padding: UiRect::all(Val::Px(20.0)),
+    commands
+        .spawn(NodeBundle {
+            style: Style {
+                width: Val::Percent(100.0),
+                height: Val::Percent(100.0),
+                justify_content: JustifyContent::FlexEnd,
+                align_items: AlignItems::FlexStart,
+                padding: UiRect::all(Val::Px(20.0)),
+                ..default()
+            },
             ..default()
-        },
-        ..default()
-    }).with_children(|parent| {
-        parent.spawn((
-            TextBundle::from_section(
-                "CPU STATE: HALTED",
-                TextStyle {
-                    font_size: 40.0,
-                    color: Color::GOLD,
-                    ..default()
-                },
-            ),
-            CpuStateDisplay,
-        ));
-    });
+        })
+        .with_children(|parent| {
+            parent.spawn((
+                TextBundle::from_section(
+                    "CPU STATE: HALTED",
+                    TextStyle {
+                        font_size: 40.0,
+                        color: Color::GOLD,
+                        ..default()
+                    },
+                ),
+                CpuStateDisplay,
+            ));
+        });
 }
 
 fn update_cpu_state(

@@ -3,13 +3,13 @@ use bevy_prototype_lyon::prelude::*;
 use bevy_rapier2d::prelude::*;
 
 mod components;
+mod cpu;
 mod escapement;
 mod gear_gen;
-mod cpu;
 
-use escapement::EscapementPlugin;
-use cpu::CpuPlugin;
 use components::MainCamera;
+use cpu::CpuPlugin;
+use escapement::EscapementPlugin;
 
 fn main() {
     App::new()

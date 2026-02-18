@@ -12,7 +12,9 @@ mod tests {
                 strands: vec![Strand { genes: vec![] }],
             },
         };
-        ChimeraVM::new(dna)
+        let mut vm = ChimeraVM::new(dna);
+        vm.knowledge_base.clear(); // Clear standard library for tests
+        vm
     }
 
     #[test]
