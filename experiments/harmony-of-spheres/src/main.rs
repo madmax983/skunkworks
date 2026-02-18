@@ -1,8 +1,5 @@
-mod audio;
-mod physics;
-
-use crate::audio::AudioEngine;
-use crate::physics::{check_crossings, update, Body, G};
+use harmony_of_spheres::audio::{AudioEngine, Waveform};
+use harmony_of_spheres::physics::{check_crossings, update, Body, G};
 use macroquad::prelude::*;
 
 const STAR_MASS: f32 = 50000.0;
@@ -86,17 +83,24 @@ async fn main() {
                 let v_dir = Vec2::new(-pos.y, pos.x) / dist;
                 let vel = v_dir * v_mag;
 
+                // Random mass between 0.5 and 5.0
+                let mass = rand::gen_range(0.5, 5.0);
+
+                // Color based on mass
+                let color = if mass > 3.0 {
+                    RED
+                } else if mass > 1.5 {
+                    GREEN
+                } else {
+                    BLUE
+                };
+
                 bodies.push(Body::new(
                     pos,
                     vel,
-                    1.0,
-                    5.0,
-                    Color::new(
-                        rand::gen_range(0.5, 1.0),
-                        rand::gen_range(0.5, 1.0),
-                        rand::gen_range(0.5, 1.0),
-                        1.0,
-                    ),
+                    mass,
+                    3.0 + mass, // Radius based on mass
+                    color,
                 ));
                 old_positions.push(pos);
             }
@@ -113,13 +117,6 @@ async fn main() {
         }
 
         // Physics
-        // Store old positions for checking crossings
-        // We need to update old_positions carefully.
-        // Actually, update() updates bodies in place.
-        // We should capture old positions BEFORE update.
-        // But the list size might change (add/remove above).
-        // Sync old_positions size first.
-
         if old_positions.len() != bodies.len() {
             old_positions = bodies.iter().map(|b| b.pos).collect();
         } else {
@@ -132,8 +129,21 @@ async fn main() {
 
         // Check Crossings
         let events = check_crossings(&bodies, &old_positions);
-        for freq in events {
-            audio.play_closest(freq);
+        for (freq, mass) in events {
+            let waveform = if mass > 3.0 {
+                Waveform::Square
+            } else if mass > 1.5 {
+                Waveform::Saw
+            } else {
+                Waveform::Sine
+            };
+
+            // Map freq (velocity) to note frequency
+            // v ~ 100..500
+            // Map to 100..1000 Hz
+            let note_freq = freq * 1.5;
+
+            audio.play_note(note_freq, waveform, 0.5);
             string_flash = 1.0;
         }
 
