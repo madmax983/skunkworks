@@ -89,6 +89,44 @@ impl AkashicRecords {
 }
 
 #[cfg(feature = "nova")]
+impl std::fmt::Display for AkashicRecords {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut table = comfy_table::Table::new();
+        table
+            .load_preset(comfy_table::presets::UTF8_FULL)
+            .set_content_arrangement(comfy_table::ContentArrangement::Dynamic)
+            .set_header(vec!["Key", "Value"]);
+
+        let mut keys: Vec<_> = self.storage.keys().collect();
+        keys.sort();
+
+        for k in keys {
+            let v = &self.storage[k];
+            let v_str = format!("{}", v);
+            let mut v_cell = comfy_table::Cell::new(&v_str);
+
+            if v_str == "True" || v_str == "1" {
+                v_cell = v_cell.fg(comfy_table::Color::Green);
+            } else if v_str == "False" || v_str == "0" {
+                v_cell = v_cell.fg(comfy_table::Color::Red);
+            } else {
+                v_cell = v_cell.fg(comfy_table::Color::Cyan);
+            }
+
+            table.add_row(vec![
+                comfy_table::Cell::new(k).add_attribute(comfy_table::Attribute::Bold),
+                v_cell,
+            ]);
+        }
+
+        writeln!(f, "GALLIFREY DB (Akashic Records)")?;
+        writeln!(f, "Karma: {}", self.karma)?;
+        writeln!(f, "Memories: {}", self.memories.len())?;
+        write!(f, "{}", table)
+    }
+}
+
+#[cfg(feature = "nova")]
 pub fn exec_akashic_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
     match op {
         OpCode::AkashicWrite => {

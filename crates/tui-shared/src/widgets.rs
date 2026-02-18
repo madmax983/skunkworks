@@ -268,11 +268,9 @@ impl<'a> Button<'a> {
         self.block = Some(block);
         self
     }
-}
 
-impl<'a> Widget for Button<'a> {
-    fn render(mut self, area: Rect, buf: &mut Buffer) {
-        let (fg, bg, modifier) = match (self.style_variant, self.state) {
+    fn get_style(&self) -> (Color, Color, Modifier) {
+        match (self.style_variant, self.state) {
             // Disabled
             (_, ButtonState::Disabled) => (Color::DarkGray, Color::Black, Modifier::empty()),
 
@@ -321,8 +319,13 @@ impl<'a> Widget for Button<'a> {
                 Color::Red,
                 Modifier::BOLD | Modifier::REVERSED,
             ),
-        };
+        }
+    }
+}
 
+impl<'a> Widget for Button<'a> {
+    fn render(mut self, area: Rect, buf: &mut Buffer) {
+        let (fg, bg, modifier) = self.get_style();
         let style = Style::default().fg(fg).bg(bg).add_modifier(modifier);
 
         if self.block.is_none() {

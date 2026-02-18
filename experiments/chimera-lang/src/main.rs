@@ -19,16 +19,30 @@ use std::time::Duration;
 #[command(author, version, about, long_about = None)]
 struct Cli {
     #[arg(short, long)]
-    input: String,
+    input: Option<String>,
 
     /// Run in headless mode (no TUI)
     #[arg(long)]
     headless: bool,
+
+    /// Dump Akashic Records (GallifreyDB)
+    #[arg(long)]
+    dump_akashic: bool,
 }
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
-    let unparsed_file = fs::read_to_string(&cli.input)?;
+
+    #[cfg(feature = "nova")]
+    if cli.dump_akashic {
+        let records = chimera_lang::vm::akashic::AkashicRecords::load()
+            .unwrap_or_else(|_| chimera_lang::vm::akashic::AkashicRecords::new());
+        println!("{}", records);
+        return Ok(());
+    }
+
+    let input_str = cli.input.ok_or_else(|| anyhow::anyhow!("Input file required (unless --dump-akashic)"))?;
+    let unparsed_file = fs::read_to_string(&input_str)?;
 
     // Set a panic hook to restore the terminal if we panic
     let original_hook = std::panic::take_hook();
@@ -39,7 +53,7 @@ fn main() -> Result<()> {
         original_hook(panic_info);
     }));
 
-    let path = Path::new(&cli.input);
+    let path = Path::new(&input_str);
     let extension = path
         .extension()
         .and_then(std::ffi::OsStr::to_str)
