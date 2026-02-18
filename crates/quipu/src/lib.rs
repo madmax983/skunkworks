@@ -119,6 +119,19 @@ impl Knot {
     }
 }
 
+/// Represents the color of a cord, which could indicate data type or category.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum Color {
+    #[default]
+    Natural,
+    Red,
+    Green,
+    Blue,
+    Yellow,
+    Black,
+    White,
+}
+
 /// A hanging cord representing a single integer number.
 ///
 /// The cord is divided into clusters of knots, representing powers of 10.
@@ -165,6 +178,10 @@ pub struct Cord {
     ///
     /// `clusters[0]` represents units ($10^0$), `clusters[1]` represents tens ($10^1$), etc.
     pub clusters: Vec<Vec<Knot>>,
+    /// Subsidiary cords hanging from this cord.
+    pub subsidiaries: Vec<Cord>,
+    /// The color of the cord.
+    pub color: Color,
 }
 
 impl Cord {
@@ -284,7 +301,57 @@ impl From<u64> for Cord {
             pos += 1;
         }
 
-        Cord { clusters }
+        Cord {
+            clusters,
+            subsidiaries: Vec::new(),
+            color: Color::default(),
+        }
+    }
+}
+
+impl Cord {
+    fn fmt_indented(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
+        let indent = "  ".repeat(level);
+
+        if self.color != Color::Natural {
+            writeln!(f, "{}[{:?}]", indent, self.color)?;
+        }
+
+        if self.clusters.is_empty() {
+            write!(f, "{}(empty)", indent)?;
+        } else {
+            for (i, cluster) in self.clusters.iter().enumerate().rev() {
+                write!(f, "{}", indent)?;
+                if cluster.is_empty() {
+                    write!(f, "  |  ")?;
+                } else {
+                    for (j, knot) in cluster.iter().enumerate() {
+                        match knot {
+                            Knot::Simple => write!(f, "●")?,
+                            Knot::Long(v) => write!(f, "≡{}", v)?,
+                            Knot::FigureEight => write!(f, "∞")?,
+                        }
+                        if j < cluster.len() - 1 {
+                            write!(f, " ")?;
+                        }
+                    }
+                }
+                if i > 0 {
+                    writeln!(f)?;
+                }
+            }
+        }
+
+        if !self.subsidiaries.is_empty() {
+            writeln!(f)?;
+            for (idx, sub) in self.subsidiaries.iter().enumerate() {
+                sub.fmt_indented(f, level + 1)?;
+                if idx < self.subsidiaries.len() - 1 {
+                    writeln!(f)?;
+                }
+            }
+        }
+        Ok(())
     }
 }
 
@@ -306,31 +373,7 @@ impl fmt::Display for Cord {
     /// println!("{}", cord);
     /// ```
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if self.clusters.is_empty() {
-            return write!(f, "(empty)");
-        }
-        // Display from Top (highest power) to Bottom (units)
-        // clusters[0] is units.
-        for (i, cluster) in self.clusters.iter().enumerate().rev() {
-            if cluster.is_empty() {
-                write!(f, "  |  ")?;
-            } else {
-                for (j, knot) in cluster.iter().enumerate() {
-                    match knot {
-                        Knot::Simple => write!(f, "●")?,
-                        Knot::Long(v) => write!(f, "≡{}", v)?,
-                        Knot::FigureEight => write!(f, "∞")?,
-                    }
-                    if j < cluster.len() - 1 {
-                        write!(f, " ")?;
-                    }
-                }
-            }
-            if i > 0 {
-                writeln!(f)?;
-            }
-        }
-        Ok(())
+        self.fmt_indented(f, 0)
     }
 }
 

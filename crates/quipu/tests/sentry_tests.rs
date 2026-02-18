@@ -64,7 +64,11 @@ fn test_manual_construction_overflow() {
     // With saturating arithmetic, this should NOT panic, but saturate.
     // Since clusters are empty, value is 0.
     let clusters = vec![Vec::new(); 22];
-    let cord = Cord { clusters };
+    let cord = Cord {
+        clusters,
+        subsidiaries: Vec::new(),
+        color: Default::default(),
+    };
     assert_eq!(cord.value(), 0);
 }
 
