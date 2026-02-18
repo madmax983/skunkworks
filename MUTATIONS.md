@@ -38,6 +38,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 
 **NOTE:** Automated workspace verification failed due to `glam`/`bevy` version conflicts in `hive-mind-dependencies`. Verification was performed partially.
 
+### ferrous-fluid
+- **Parents**: experiments/ferrous-graph + experiments/fluid-rain
+- **Concept**: TUI Ferrofluid simulation where particles are magnetic and fluid.
+- **Novel trait**: Grid-based density pressure + Magnetic forces in ASCII.
+- **Status**: experiments/ferrous-fluid
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.
+
 ### code-bio-dome
 - **Parents**: experiments/code-crawler + experiments/biomorph-flow
 - **Concept**: Code functions harvested from disk become organisms in a simulation.
@@ -1229,18 +1236,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Fluid simulation where viscosity is controlled by system load, and thread synchronization events create turbulence.
 - **Novel trait**: Visualizing thread contention as fluid dynamics.
 - **Status**: experiments/turbulent-rhythms
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified. Re-verified compilation (failed due to missing alsa-sys, logic sound).
+- **Evaluation**: Fails compilation (missing alsa-sys).
 
 ### ripple-scheduler
 - **Parents**: experiments/canopy-scheduler + experiments/ripple-tank
 - **Concept**: OS Scheduling visualized as wave interference in a ripple tank.
 - **Novel trait**: Temporal interference patterns of CPU scheduling algorithms.
 - **Status**: experiments/ripple-scheduler
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.
+- **Evaluation**: Compiles. Verified.
 
 ### origami-history
 - **Parents**: experiments/origami-satellite + experiments/git-cantata
 - **Concept**: Visualizing git history as a deployable Miura-ori fold structure. Each panel is a commit.
 - **Novel trait**: Physical History. The timeline is a folded sheet that physically expands to reveal the past.
 - **Status**: experiments/origami-history
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Verified.
