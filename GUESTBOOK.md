@@ -35,6 +35,11 @@
 - **Status:** Neural delays based on physical copper length.
 - **Note:** Cross: `chimera-circuit` + `spinal-rhythms`.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/sonic-glacier
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The music is freezing the memory leaks. Thermodynamic equilibrium established.
+- **Note:** Cross: `sonic-viscosity` + `heap-glacier`.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/hyperbolic-finder
 - **Scent Origin:** Genesis (The Cartographer) ⚛️🗺️
 - **Status:** Infinite navigation via coordinate re-rooting implemented.

@@ -1,0 +1,16 @@
+[package]
+name = "sonic-glacier"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4.14"
+rustfft = "6.2"
+crossbeam-channel = "0.5"
+rand = "0.8"
+noise = "0.8"
+rodio = { version = "0.17", optional = true }
+
+[features]
+default = []
+audio = ["dep:rodio"]
