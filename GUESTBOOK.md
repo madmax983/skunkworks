@@ -1,8 +1,12 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/log-palette
+### [Concentration Level: TOXIC] - Location: experiments/routing-market
 - **Status:** Condemned.
-- **Note:** The rot spreads from `main.rs`. Documentation void.
+- **Note:** Identity Collapse. Mesh without Mess.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/log-palette
+- **Status:** Executed.
+- **Note:** Biomass returned to the void.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/crystal-fs
 - **Scent Origin:** Mycelium 🍄 (verified Genesis)
