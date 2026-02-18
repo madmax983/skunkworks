@@ -271,6 +271,7 @@ pub(crate) struct AppState {
     pub(crate) sequencer_state: SequencerState,
     pub(crate) matrix_rain: MatrixRain,
     pub(crate) screen_shake: f32,
+    pub(crate) chaos_mode: bool,
 }
 
 pub(crate) struct EvolutionState {
@@ -422,6 +423,7 @@ impl AppState {
             sequencer_state: SequencerState::new(),
             matrix_rain: MatrixRain::new(),
             screen_shake: 0.0,
+            chaos_mode: false,
         }
     }
 
@@ -2207,12 +2209,16 @@ where
                         }
                     }
 
-                    if c != 'q' && c != ' ' && c != 'm' && c != 'c' && vm.handle_input(c) {
+                    if c != 'q' && c != ' ' && c != 'm' && c != 'c' && c != 'C' && vm.handle_input(c) {
                         continue;
                     }
                 }
 
                 match key.code {
+                    KeyCode::Char('C') => {
+                        app_state.chaos_mode = !app_state.chaos_mode;
+                        app_state.status_msg = format!("Chaos Mode: {}", app_state.chaos_mode);
+                    }
                     KeyCode::Tab => {
                         #[cfg(feature = "nova")]
                         if let ViewMode::Genesis = app_state.view_mode {
@@ -11766,11 +11772,25 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         for x in 0..16 {
             let mut style = Style::default();
             let val = &vm.grid[y][x];
-            let s = match val {
+            let mut s = match val {
                 crate::vm::Value::Str(s) => s.clone(),
                 crate::vm::Value::Int(n) => n.to_string(),
                 _ => ".".to_string(),
             };
+
+            if app_state.chaos_mode {
+                use rand::Rng;
+                let mut rng = rand::thread_rng();
+                if s == "." || s == "0" {
+                    if rng.gen_bool(0.05) {
+                        let glitches = ['░', '▒', '▓', '█', '!', '?', '*', '#', '@', '§', '¶'];
+                        s = glitches[rng.gen_range(0..glitches.len())].to_string();
+                        style = style.fg(Color::DarkGray);
+                    }
+                } else if rng.gen_bool(0.1) {
+                     style = style.add_modifier(Modifier::RAPID_BLINK);
+                }
+            }
 
             if vm.prologue_state.signal_grid[y][x].is_some() {
                 style = style.fg(Color::Green).add_modifier(Modifier::BOLD);

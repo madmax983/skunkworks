@@ -79,10 +79,12 @@ impl PrologueState {
                             | "K"
                             | "R"
                             | "X"
+                            | "Z"
+                            | "H"
                     ) {
                         self.runes.insert((y, x));
 
-                        if s == "@" {
+                        if s == "@" || s == "K" || s == "H" {
                             self.agents.push(PrologueAgent {
                                 x,
                                 y,
@@ -593,6 +595,25 @@ fn apply_propagation_rune(
                 }
             }
         }
+        "Z" => {
+            // Zeitgeist: Emits Time Signal
+            use std::time::{SystemTime, UNIX_EPOCH};
+            let start = SystemTime::now();
+            let since_the_epoch = start
+                .duration_since(UNIX_EPOCH)
+                .expect("Time went backwards");
+            let val = Value::Int((since_the_epoch.as_secs() % 100) as i64);
+
+            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+            for (dy, dx) in neighbors {
+                if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    if next_signals[ny][nx].is_none() {
+                        next_signals[ny][nx] = Some(val.clone());
+                        changes = true;
+                    }
+                }
+            }
+        }
         _ => {}
     }
     changes
@@ -662,14 +683,15 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
         "O" => {
             // Organelle: Signal West -> Spawn Agent South
             if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
-                if vm.prologue_state.signal_grid[wy][wx].is_some() {
+                if let Some(sig) = &vm.prologue_state.signal_grid[wy][wx] {
                     if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
-                        // Check if agent already exists?
-                        // Simple logic: Overwrite grid with '@'
-                        vm.grid[sy][sx] = Value::Str("@".to_string());
-                        // Note: Will be picked up by scan next tick
+                        let agent_type = match sig {
+                            Value::Int(2) => "K", // Chaos
+                            Value::Int(3) => "H", // Hunter
+                            _ => "@",             // Seeker
+                        };
+                        vm.grid[sy][sx] = Value::Str(agent_type.to_string());
                         vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
-                        // Light up
                     }
                 }
             }
@@ -844,26 +866,72 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &Vec<Vec<Value>>) {
     for agent in agents {
         let (y, x) = (agent.y, agent.x);
 
-        // Find neighbor with signal
-        let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-        let mut target = None;
+        let mut current_type = "@".to_string();
+        if let Value::Str(s) = &grid_snapshot[y][x] {
+            current_type = s.clone();
+        }
 
-        for (dy, dx) in neighbors {
-            if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                if vm.prologue_state.signal_grid[ny][nx].is_some() {
-                    // Don't move INTO a rune (collision), unless it's a wire/signal?
-                    // Let's simple logic: move if empty or wire.
-                    let cell = &grid_snapshot[ny][nx];
-                    match cell {
-                        Value::Int(0) => {
+        let mut target = None;
+        let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+
+        if current_type == "K" {
+            // Chaos: Move Randomly
+            let mut rng = rand::thread_rng();
+            let mut possible_moves = Vec::new();
+            for (dy, dx) in neighbors {
+                if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    if let Value::Int(0) = &grid_snapshot[ny][nx] {
+                        possible_moves.push((ny, nx));
+                    }
+                }
+            }
+            if !possible_moves.is_empty() {
+                let idx = rng.gen_range(0..possible_moves.len());
+                target = Some(possible_moves[idx]);
+            }
+        } else if current_type == "H" {
+            // Hunter: Seek Prey (@ or K)
+            for (dy, dx) in neighbors {
+                if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    if let Value::Str(s) = &grid_snapshot[ny][nx] {
+                        if s == "@" || s == "K" {
                             target = Some((ny, nx));
                             break;
                         }
-                        Value::Str(s) if s == "~" => {
-                            target = Some((ny, nx));
-                            break;
+                    }
+                }
+            }
+            // If no prey, seek signal like @
+            if target.is_none() {
+                for (dy, dx) in neighbors {
+                    if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                        if vm.prologue_state.signal_grid[ny][nx].is_some() {
+                            let cell = &grid_snapshot[ny][nx];
+                            if matches!(cell, Value::Int(0) | Value::Str(_)) {
+                                target = Some((ny, nx));
+                                break;
+                            }
                         }
-                        _ => {}
+                    }
+                }
+            }
+        } else {
+            // Seeker (@): Seek Signal
+            for (dy, dx) in neighbors {
+                if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    if vm.prologue_state.signal_grid[ny][nx].is_some() {
+                        let cell = &grid_snapshot[ny][nx];
+                        match cell {
+                            Value::Int(0) => {
+                                target = Some((ny, nx));
+                                break;
+                            }
+                            Value::Str(s) if s == "~" => {
+                                target = Some((ny, nx));
+                                break;
+                            }
+                            _ => {}
+                        }
                     }
                 }
             }
@@ -873,12 +941,13 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &Vec<Vec<Value>>) {
             // Move agent
             // Clear old pos
             if let Value::Str(s) = &vm.grid[y][x] {
-                if s == "@" {
+                // Only clear if it matches our agent type (avoid clearing overwrites?)
+                if s == &current_type {
                     vm.grid[y][x] = Value::Int(0);
                 }
             }
             // Set new pos
-            vm.grid[ny][nx] = Value::Str("@".to_string());
+            vm.grid[ny][nx] = Value::Str(current_type.clone());
             new_agents.push(PrologueAgent {
                 x: nx,
                 y: ny,
