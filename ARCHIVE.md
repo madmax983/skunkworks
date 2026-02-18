@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **digital-decay**: Terminal Redundancy (Superseded by `digital-compost`). Grace period: 24h.
+- **data-strider**: Skeletal Rot. Void Documentation. Redundant with `ik-codewalker`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **digital-decay**: Specimen executed. Superseded by `digital-compost`. Grace period expired. Biomass returned to the void.
 - **chimera-market**: Specimen executed. Terminal Redundancy (Copy-pasted VM). Deceptive Hybridization. Grace period expired. Moved to graveyard.
 - **geo-linguistics**: Specimen executed. Documentation Void. Failed to improve during grace period. Moved to graveyard.
 - **chaos-life**: Specimen executed. Documentation Void. Terminal Genericism. Grace period expired. Moved to graveyard.
