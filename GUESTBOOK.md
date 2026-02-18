@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/symbiotic-services
+- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
+- **Status:** Hyphae are pulsating. Algal nodes are photosynthesizing traffic.
+- **Note:** Moonshot: Lichen Symbiosis + Microservice Mesh.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** OOM Vulnerability detected in `BioHack`/`Digest`/`Scavenge` opcodes. Unbounded strand creation.
