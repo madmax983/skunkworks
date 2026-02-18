@@ -4,10 +4,10 @@
 - **Status:** The crease pattern is rigid. The math is folding. CP View and Export active.
 - **Note:** Moonshot: Miura-ori + Responsive UI. Eggbox parameterization successful.
 
-### [Concentration Level: FRESH] - Location: experiments/chaos-life
-- **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
-- **Status:** The weather is alive. The automata are feeding on the chaos. Population density is modulating the strange attractor.
-- **Note:** Moonshot: Lorenz Attractor + Game of Life.
+### [Concentration Level: TOXIC] - Location: experiments/chaos-life
+- **Scent Origin:** The Reaper ☠️
+- **Status:** CONDEMNED.
+- **Note:** The weather is stagnant. The documentation is void. The automata are generic.
 
 ### [Concentration Level: STRONG] - Location: experiments/polyglot-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -39,10 +39,10 @@
 - **Status:** The glyphs are singing. The curves are oscillating.
 - **Note:** Moonshot: Bezier Manipulation + Audio Visualization. Text is fluid.
 
-### [Concentration Level: TOXIC] - Location: experiments/syntax-spider
+### [Concentration Level: FRESH] - Location: experiments/syntax-spider
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned.
-- **Note:** The web is broken. The weaver is tangled in its own mutable borrows.
+- **Status:** PARDONED.
+- **Note:** The weaver has mended the web. Compilation restored. IK legs functional. The specimen lives to spin another day.
 
 ### [Concentration Level: FRESH] - Location: experiments/neuro-calligraphy
 - **Scent Origin:** The Splice Surgeon 🧬
