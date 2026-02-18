@@ -1193,3 +1193,42 @@ classDiagram
     World o-- Quasicrystal : Shared (Arc)
     World *-- Agent : Manages
 ```
+
+## Experiment: Chimera Circuit (ADR 039)
+
+**Chimera Circuit** is a hybrid experiment that combines procedurally generated circuit boards with genetic algorithms.
+
+### Hybrid Architecture
+
+The experiment reuses logic from `circuit-sigil` via source adaptation and `chimera-lang` via library import.
+
+```mermaid
+classDiagram
+    direction TB
+    class ChimeraCircuit {
+        +CircuitGenerator circuit
+        +Vec~BioAgent~ agents
+        +run()
+    }
+
+    class BioAgent {
+        +ChimeraVM vm
+        +Vec2 pos
+        +update(circuit)
+    }
+
+    class CircuitGenerator {
+        <<Adapted from circuit-sigil>>
+        +generate(seed) (Image, Pads)
+    }
+
+    class ChimeraVM {
+        <<Library: chimera-lang>>
+        +execute()
+    }
+
+    ChimeraCircuit *-- CircuitGenerator : Owns
+    ChimeraCircuit *-- BioAgent : Owns
+    BioAgent *-- ChimeraVM : Wraps
+    BioAgent ..> CircuitGenerator : Senses
+```
