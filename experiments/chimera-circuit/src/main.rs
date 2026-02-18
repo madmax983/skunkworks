@@ -37,6 +37,31 @@ fn generate_seeker_dna() -> Dna {
     }
 }
 
+fn draw_ui(agents: &[BioAgent]) {
+    let active_count = agents.len();
+    let avg_fitness = if active_count > 0 {
+        agents.iter().map(|a| a.fitness).sum::<f32>() / active_count as f32
+    } else {
+        0.0
+    };
+    let max_generation = agents.iter().map(|a| a.generation).max().unwrap_or(0);
+
+    // Background Box (Semi-transparent Black)
+    draw_rectangle(5.0, 5.0, 250.0, 130.0, Color::new(0.0, 0.0, 0.0, 0.8));
+
+    // Stats
+    draw_text("Chimera Circuit", 15.0, 30.0, 30.0, WHITE);
+    draw_text(&format!("Agents: {}", active_count), 15.0, 55.0, 20.0, LIGHTGRAY);
+    draw_text(&format!("Avg Fitness: {:.2}", avg_fitness), 15.0, 75.0, 20.0, LIGHTGRAY);
+    draw_text(&format!("Max Generation: {}", max_generation), 15.0, 95.0, 20.0, LIGHTGRAY);
+
+    // Pulse Effect for Interaction Prompt
+    let alpha = (get_time().sin() * 0.5 + 0.5) as f32; // Oscillate between 0.0 and 1.0
+    // Keep minimum visibility so it doesn't disappear completely
+    let text_alpha = alpha * 0.7 + 0.3;
+    draw_text("Press R to Regenerate", 15.0, 120.0, 20.0, Color::new(0.7, 0.7, 0.7, text_alpha));
+}
+
 #[macroquad::main("Chimera Circuit")]
 async fn main() {
     let mut rng = ::rand::thread_rng();
@@ -122,9 +147,7 @@ async fn main() {
 
         set_default_camera();
 
-        draw_text("Chimera Circuit", 10.0, 20.0, 30.0, WHITE);
-        draw_text(&format!("Agents: {}", agents.len()), 10.0, 50.0, 20.0, WHITE);
-        draw_text("Press R to Regenerate", 10.0, 80.0, 20.0, GRAY);
+        draw_ui(&agents);
 
         next_frame().await;
     }
