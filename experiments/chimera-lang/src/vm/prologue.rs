@@ -69,6 +69,13 @@ impl PrologueState {
                             | "I"
                             | "Y"
                             | "L"
+                            | "J"
+                            | "C"
+                            | "("
+                            | "N"
+                            | "S"
+                            | "E"
+                            | "W"
                     ) {
                         self.runes.insert((y, x));
 
@@ -148,6 +155,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &Vec<Vec<Value>>) {
     // Iteration loop to allow signal to travel across grid in one tick
     let max_iterations = GRID_SIZE * 2;
     let runes: Vec<(usize, usize)> = vm.prologue_state.runes.iter().cloned().collect();
+    let tick = vm.tick_counter;
 
     for _ in 0..max_iterations {
         let mut changes = false;
@@ -159,6 +167,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &Vec<Vec<Value>>) {
                     s,
                     *y,
                     *x,
+                    tick,
                     &vm.prologue_state.signal_grid,
                     &mut next_signals,
                     &mut vm.prologue_state.delayed_signals,
@@ -180,6 +189,7 @@ fn apply_propagation_rune(
     rune: &str,
     y: usize,
     x: usize,
+    tick: u64,
     current_signals: &[Vec<Option<Value>>],
     next_signals: &mut Vec<Vec<Option<Value>>>,
     next_delayed: &mut Vec<Vec<Option<Value>>>,
@@ -219,8 +229,8 @@ fn apply_propagation_rune(
                 }
             }
         }
-        "S" => {
-            // Sub
+        "B" => {
+            // Sub (B)
             if let (Some((wy, wx)), Some((ey, ex))) = (
                 normalize_coords(y as i64, x as i64 - 1),
                 normalize_coords(y as i64, x as i64 + 1),
@@ -398,7 +408,7 @@ fn apply_propagation_rune(
                 }
             }
         }
-        "^" => {
+        "^" | "J" => {
             // Jump: Input West -> Output East (Skipping Self)
             if let (Some((wy, wx)), Some((ey, ex))) = (
                 normalize_coords(y as i64, x as i64 - 1),
@@ -467,6 +477,76 @@ fn apply_propagation_rune(
                                 changes = true;
                             }
                         }
+                    }
+                }
+            }
+        }
+        "C" => {
+            // Clock: West (Mod) -> Self (Tick % Mod)
+            if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+                if let Some(Value::Int(m)) = &current_signals[wy][wx] {
+                    if *m > 0 {
+                        let val = tick % (*m as u64);
+                        if next_signals[y][x].is_none() {
+                            next_signals[y][x] = Some(Value::Int(val as i64));
+                            changes = true;
+                        }
+                    }
+                }
+            }
+        }
+        "N" => {
+            // North Emitter: West -> North
+            if let (Some((wy, wx)), Some((ny, nx))) = (
+                normalize_coords(y as i64, x as i64 - 1),
+                normalize_coords(y as i64 - 1, x as i64),
+            ) {
+                if let Some(sig) = &current_signals[wy][wx] {
+                    if next_signals[ny][nx].is_none() {
+                        next_signals[ny][nx] = Some(sig.clone());
+                        changes = true;
+                    }
+                }
+            }
+        }
+        "S" => {
+            // South Emitter: West -> South
+            if let (Some((wy, wx)), Some((sy, sx))) = (
+                normalize_coords(y as i64, x as i64 - 1),
+                normalize_coords(y as i64 + 1, x as i64),
+            ) {
+                if let Some(sig) = &current_signals[wy][wx] {
+                    if next_signals[sy][sx].is_none() {
+                        next_signals[sy][sx] = Some(sig.clone());
+                        changes = true;
+                    }
+                }
+            }
+        }
+        "E" => {
+            // East Emitter: West -> East
+            if let (Some((wy, wx)), Some((ey, ex))) = (
+                normalize_coords(y as i64, x as i64 - 1),
+                normalize_coords(y as i64, x as i64 + 1),
+            ) {
+                if let Some(sig) = &current_signals[wy][wx] {
+                    if next_signals[ey][ex].is_none() {
+                        next_signals[ey][ex] = Some(sig.clone());
+                        changes = true;
+                    }
+                }
+            }
+        }
+        "W" => {
+            // West Emitter: East -> West
+            if let (Some((ey, ex)), Some((wy, wx))) = (
+                normalize_coords(y as i64, x as i64 + 1),
+                normalize_coords(y as i64, x as i64 - 1),
+            ) {
+                if let Some(sig) = &current_signals[ey][ex] {
+                    if next_signals[wy][wx].is_none() {
+                        next_signals[wy][wx] = Some(sig.clone());
+                        changes = true;
                     }
                 }
             }
@@ -643,6 +723,28 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                         .push_back(val.clone());
                     vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
                     // Light up
+                }
+            }
+        }
+        "(" => {
+            // Warp: Swap North and South values (Grid Modification)
+            // Triggered by West signal
+            if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+                if vm.prologue_state.signal_grid[wy][wx].is_some() {
+                    if let (Some((ny, nx)), Some((sy, sx))) = (
+                        normalize_coords(y as i64 - 1, x as i64),
+                        normalize_coords(y as i64 + 1, x as i64),
+                    ) {
+                        // We need to swap values in the grid
+                        // To avoid borrowing issues, we can't swap directly if we hold references?
+                        // But we have mutable access to VM.
+                        let n_val = vm.grid[ny][nx].clone();
+                        let s_val = vm.grid[sy][sx].clone();
+                        vm.grid[ny][nx] = s_val;
+                        vm.grid[sy][sx] = n_val;
+                        vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                        // Light up
+                    }
                 }
             }
         }
