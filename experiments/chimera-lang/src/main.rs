@@ -133,7 +133,7 @@ fn main() -> Result<()> {
             println!("  {}", line);
         }
     } else {
-        run_tui(vm)?;
+        run_tui(vm, None)?;
     }
 
     Ok(())
