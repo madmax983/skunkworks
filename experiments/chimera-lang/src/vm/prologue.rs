@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::collections::{HashSet, VecDeque};
+use std::collections::HashSet;
 use crate::vm::{Value, GRID_SIZE, ChimeraVM};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -15,6 +15,7 @@ pub struct PrologueState {
     pub runes: HashSet<(usize, usize)>,
     pub rules: Vec<String>,
     pub signal_grid: Vec<Vec<Option<Value>>>,
+    pub delayed_signals: Vec<Vec<Option<Value>>>,
     pub agents: Vec<PrologueAgent>,
 }
 
@@ -25,6 +26,7 @@ impl PrologueState {
             runes: HashSet::new(),
             rules: Vec::new(),
             signal_grid: vec![vec![None; GRID_SIZE]; GRID_SIZE],
+            delayed_signals: vec![vec![None; GRID_SIZE]; GRID_SIZE],
             agents: Vec::new(),
         }
     }
@@ -38,7 +40,7 @@ impl PrologueState {
             for x in 0..GRID_SIZE {
                 if let Value::Str(s) = &grid[y][x] {
                     // Identify Runes
-                    if matches!(s.as_str(), "?" | "!" | "~" | "&" | "|" | "@") {
+                    if matches!(s.as_str(), "?" | "!" | "~" | "&" | "|" | "+" | "*" | "#" | "@") {
                         self.runes.insert((y, x));
 
                         if s == "@" {
@@ -62,8 +64,22 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
     let grid = vm.grid.clone(); // Clone for read access
     vm.prologue_state.scan_grid_rules(&grid);
 
-    // 2. Clear Signals
-    vm.prologue_state.signal_grid = vec![vec![None; GRID_SIZE]; GRID_SIZE];
+    // 2. Clear Signals & Apply Delays
+    // Start with empty signal grid
+    let mut current_signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
+
+    // Apply delayed signals from previous tick
+    for y in 0..GRID_SIZE {
+        for x in 0..GRID_SIZE {
+            if let Some(val) = &vm.prologue_state.delayed_signals[y][x] {
+                current_signals[y][x] = Some(val.clone());
+            }
+        }
+    }
+    vm.prologue_state.signal_grid = current_signals;
+
+    // Prepare next tick's delayed signals (cleared initially)
+    let mut next_delayed = vec![vec![None; GRID_SIZE]; GRID_SIZE];
 
     // 3. Source Emission (!)
     // '!' reads from North (y-1) and emits to self (and propagates)
@@ -82,7 +98,7 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
         }
     }
 
-    // 4. Propagation (Wires ~ and Gates & |)
+    // 4. Propagation (Wires ~ and Gates & | + * #)
     // Simple iterative flood fill for wires
     // Gates need specific inputs.
     // Iteration loop to allow signal to travel across grid in one tick
@@ -145,6 +161,50 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
                             }
                         }
                     },
+                    "+" => {
+                        // XOR: West XOR East -> Output Self
+                        let mut w_active = false;
+                        let mut e_active = false;
+                        if let Some((wy, wx)) = normalize_coords(*y as i64, *x as i64 - 1) {
+                            if vm.prologue_state.signal_grid[wy][wx].is_some() { w_active = true; }
+                        }
+                        if let Some((ey, ex)) = normalize_coords(*y as i64, *x as i64 + 1) {
+                            if vm.prologue_state.signal_grid[ey][ex].is_some() { e_active = true; }
+                        }
+
+                        if w_active ^ e_active {
+                            if next_signals[*y][*x].is_none() {
+                                next_signals[*y][*x] = Some(Value::Int(1));
+                                changes = true;
+                            }
+                        }
+                    },
+                    "*" => {
+                        // Splitter: Input North -> Output Self (which distributes to others)
+                        if let Some((ny, nx)) = normalize_coords(*y as i64 - 1, *x as i64) {
+                             if let Some(sig) = &vm.prologue_state.signal_grid[ny][nx] {
+                                 if next_signals[*y][*x].is_none() {
+                                     next_signals[*y][*x] = Some(sig.clone());
+                                     changes = true;
+                                 }
+                             }
+                        }
+                    },
+                    "#" => {
+                        // Delay: Input North -> Output to next_delayed (for next tick)
+                        // Does NOT output to current signal_grid (so it blocks flow for this tick)
+                        if let Some((ny, nx)) = normalize_coords(*y as i64 - 1, *x as i64) {
+                             if let Some(sig) = &vm.prologue_state.signal_grid[ny][nx] {
+                                 if next_delayed[*y][*x].is_none() {
+                                     next_delayed[*y][*x] = Some(sig.clone());
+                                 }
+                             }
+                        }
+
+                        // Note: If # had a signal from previous tick, it was already put into signal_grid
+                        // in step 2. And since signal_grid persists in this loop, it acts as a source
+                        // for this tick.
+                    },
                     _ => {}
                 }
             }
@@ -152,6 +212,9 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
         vm.prologue_state.signal_grid = next_signals;
         if !changes { break; }
     }
+
+    // Save delayed signals for next tick
+    vm.prologue_state.delayed_signals = next_delayed;
 
     // 5. Sink Consumption (?)
     // Sinks read from North (signal flow is usually N->S for gates, but wires are omni)
@@ -169,13 +232,20 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
                 let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
                 for (dy, dx) in neighbors {
                     if let Some((ny, nx)) = normalize_coords(*y as i64 + dy, *x as i64 + dx) {
-                        if let Some(sig) = &vm.prologue_state.signal_grid[ny][nx] {
+                        // Clone signal to avoid holding borrow during mutation
+                        let sig_opt = vm.prologue_state.signal_grid[ny][nx].clone();
+
+                        if let Some(sig) = sig_opt {
                             // Trigger!
                             vm.output.push(format!("PROLOGUE: Sink at {},{} received {:?}", x, y, sig));
                             vm.prologue_state.signal_grid[*y][*x] = Some(sig.clone()); // Light up sink
 
-                            // If signal is a query string, try to solve it?
-                            // For now, just log.
+                            // If signal is a string, check if it's a strand name to execute
+                            if let Value::Str(name) = sig {
+                                if let Some(&idx) = vm.dictionary.get(&name) {
+                                    vm.interrupt(idx);
+                                }
+                            }
                         }
                     }
                 }
