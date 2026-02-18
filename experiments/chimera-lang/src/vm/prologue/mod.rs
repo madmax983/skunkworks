@@ -5,6 +5,7 @@ use std::collections::{HashMap, HashSet, VecDeque};
 
 pub mod quantum;
 pub mod teleport;
+pub mod chronos;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PrologueAgent {
@@ -23,6 +24,7 @@ pub struct PrologueState {
     pub agents: Vec<PrologueAgent>,
     pub registers: HashMap<(usize, usize), Value>,
     pub teleport_channels: HashMap<i64, Value>,
+    pub history: HashMap<(usize, usize), VecDeque<Value>>,
 }
 
 impl PrologueState {
@@ -36,6 +38,7 @@ impl PrologueState {
             agents: Vec::new(),
             registers: HashMap::new(),
             teleport_channels: HashMap::new(),
+            history: HashMap::new(),
         }
     }
 
@@ -99,6 +102,9 @@ impl PrologueState {
                             | "m"
                             | "{"
                             | "}"
+                            | "s"
+                            | "g"
+                            | "r"
                     ) {
                         self.runes.insert((y, x));
 
@@ -197,6 +203,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &Vec<Vec<Value>>) {
                     &mut vm.ether,
                     &mut vm.prologue_state.registers,
                     &mut vm.prologue_state.teleport_channels,
+                    &mut vm.prologue_state.history,
                 ) {
                     changes = true;
                 }
@@ -221,6 +228,7 @@ fn apply_propagation_rune(
     ether: &mut HashMap<i64, VecDeque<Value>>,
     registers: &mut HashMap<(usize, usize), Value>,
     teleport_channels: &mut HashMap<i64, Value>,
+    history: &mut HashMap<(usize, usize), VecDeque<Value>>,
 ) -> bool {
     if apply_topology_runes(rune, y, x, current_signals, next_signals, next_delayed) {
         return true;
@@ -244,6 +252,9 @@ fn apply_propagation_rune(
         return true;
     }
     if teleport::apply_teleport_runes(rune, y, x, current_signals, next_signals, teleport_channels) {
+        return true;
+    }
+    if chronos::apply_chronos_runes(rune, y, x, current_signals, next_signals, history) {
         return true;
     }
     false
