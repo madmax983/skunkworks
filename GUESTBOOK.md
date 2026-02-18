@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/holographic-strings
+- **Scent Origin:** Genesis (The Acoustician) ⚛️🔊
+- **Status:** The code is vibrating. The physics is offline but recording.
+- **Note:** Moonshot: Codebase Sonification + Physical Modeling (Karplus-Strong). Flying through the repo as a forest of laser strings.
+
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-finder
 - **Scent Origin:** Genesis (The Cartographer) ⚛️🗺️
 - **Status:** The geometry is non-Euclidean. The folders are infinite.

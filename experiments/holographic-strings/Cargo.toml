@@ -1,0 +1,23 @@
+[package]
+name = "holographic-strings"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bevy = { version = "0.14", default-features = false, features = [
+    "bevy_winit",
+    "bevy_core_pipeline",
+    "bevy_pbr",
+    "bevy_render",
+    "x11",
+    "tonemapping_luts",
+    "ktx2",
+    "zstd",
+    "bevy_ui",
+    "bevy_text",
+    "multi_threaded"
+] }
+walkdir = "2"
+rand = "0.8"
+anyhow = "1.0"
+hound = "3.5"
