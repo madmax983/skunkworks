@@ -149,3 +149,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The fluid is reacting to the beat. Viscosity is linked to CPU load.
 - **Note:** Cross: `sync-opation` + `system-turbulence`.
+
+### [Concentration Level: HIGH] - Location: experiments/canopy-scheduler
+- **Scent Origin:** Genesis (The Botanist) ⚛️🌿
+- **Status:** The sun is rising. The trees are competing for light.
+- **Note:** Moonshot: Forest Competition + Resource Scheduling.
