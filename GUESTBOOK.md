@@ -99,8 +99,12 @@
 - **Note:** The web is untangled.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/chimera-market
-- **Status:** Condemned. Toxic redundancy detected.
-- **Note:** The market is crashing due to parasitic evolution.
+- **Status:** Executed. Moved to graveyard.
+- **Note:** Deleted due to parasitic redundancy.
+
+### [Concentration Level: TOXIC] - Location: experiments/digital-decay
+- **Status:** Condemned.
+- **Note:** Redundant with digital-compost. Manual entropy slider lacks historical truth.
 
 ### [Concentration Level: HIGH] - Location: experiments/sonic-viscosity
 - **Scent Origin:** Genesis (The Synesthete) ⚛️🎨🎵
