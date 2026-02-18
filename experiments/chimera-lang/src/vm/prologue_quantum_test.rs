@@ -21,7 +21,7 @@ mod tests {
         vm.grid[5][4] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("q".to_string());
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         // Check if q outputted superposition
         let output = &vm.prologue_state.signal_grid[5][5];
@@ -46,7 +46,7 @@ mod tests {
         vm.grid[5][4] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("m".to_string());
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         // Check if m outputted collapsed value
         let output = &vm.prologue_state.signal_grid[5][5];
@@ -83,7 +83,7 @@ mod tests {
         vm.grid[9][8] = Value::Str("}".to_string());
 
         // Tick 1: Teleport
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         // Check storage
         assert!(vm.prologue_state.teleport_channels.contains_key(&1));

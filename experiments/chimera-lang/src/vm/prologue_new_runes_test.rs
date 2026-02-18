@@ -25,7 +25,7 @@ mod tests {
         vm.grid[5][4] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("J".to_string());
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         // J should output to East (5,6)
         assert!(vm.prologue_state.signal_grid[5][6].is_some());
@@ -50,7 +50,7 @@ mod tests {
         vm.grid[6][5] = Value::Int(20);
         vm.grid[5][5] = Value::Str("(".to_string());
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         // Check Grid Swap
         assert_eq!(vm.grid[4][5], Value::Int(20));
@@ -70,12 +70,12 @@ mod tests {
         vm.grid[5][5] = Value::Str("C".to_string());
 
         vm.tick_counter = 10;
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
         // 10 % 3 = 1. Output at Self (5,5)
         assert_eq!(vm.prologue_state.signal_grid[5][5], Some(Value::Int(1)));
 
         vm.tick_counter = 11;
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
         // 11 % 3 = 2
         assert_eq!(vm.prologue_state.signal_grid[5][5], Some(Value::Int(2)));
     }
@@ -92,7 +92,7 @@ mod tests {
         vm.grid[5][4] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("E".to_string());
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         // E reads West (5,4) and writes East (5,6)
         assert_eq!(vm.prologue_state.signal_grid[5][6], Some(Value::Int(99)));

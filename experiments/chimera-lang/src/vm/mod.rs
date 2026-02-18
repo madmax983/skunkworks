@@ -2155,7 +2155,9 @@ impl ChimeraVM {
                 nova_reactor::process_reactor(self);
             }
             if self.prologue_state.active {
-                prologue::exec_prologue_tick(self);
+                let mut state = std::mem::take(&mut self.prologue_state);
+                prologue::exec_prologue_tick(self, &mut state);
+                self.prologue_state = state;
             }
         }
 
@@ -5353,3 +5355,49 @@ mod prologue_oom_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod prologue_repro;
+
+use crate::vm::prologue::PrologueHost;
+
+impl PrologueHost for ChimeraVM {
+    fn grid_read(&self, y: usize, x: usize) -> Value {
+        self.grid[y][x].clone()
+    }
+
+    fn grid_write(&mut self, y: usize, x: usize, val: Value) {
+        self.grid[y][x] = val;
+    }
+
+    fn ether_get_map(
+        &mut self,
+    ) -> &mut std::collections::HashMap<i64, std::collections::VecDeque<Value>> {
+        &mut self.ether
+    }
+
+    fn interrupt(&mut self, strand_idx: usize) {
+        self.interrupt(strand_idx);
+    }
+
+    fn output_push(&mut self, msg: String) {
+        self.output.push(msg);
+    }
+
+    fn dictionary_get(&self, name: &str) -> Option<usize> {
+        self.dictionary.get(name).copied()
+    }
+
+    fn execute_gene(&mut self, op: crate::opcode::OpCode, args: &[crate::ast::Nucleotide]) {
+        self.execute_gene_inner(op, args);
+    }
+
+    fn tick_counter(&self) -> u64 {
+        self.tick_counter
+    }
+
+    fn dna(&self) -> &crate::ast::Dna {
+        &self.dna
+    }
+
+    fn dna_mut(&mut self) -> &mut crate::ast::Dna {
+        &mut self.dna
+    }
+}

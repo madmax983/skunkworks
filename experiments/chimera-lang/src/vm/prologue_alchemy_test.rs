@@ -23,7 +23,7 @@ fn test_transmute_to_string() {
     vm.grid[6][4] = Value::Str("!".to_string());
     vm.grid[6][5] = Value::Str("t".to_string());
 
-    exec_prologue_tick(&mut vm);
+    { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
     assert_eq!(
         vm.prologue_state.signal_grid[6][5],
@@ -51,7 +51,7 @@ fn test_transmute_to_int() {
 
     vm.grid[6][5] = Value::Str("t".to_string());
 
-    exec_prologue_tick(&mut vm);
+    { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
     assert_eq!(vm.prologue_state.signal_grid[6][5], Some(Value::Int(100)));
 }
@@ -76,7 +76,7 @@ fn test_fuse_string_int() {
 
     vm.grid[5][5] = Value::Str("f".to_string());
 
-    exec_prologue_tick(&mut vm);
+    { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
     assert_eq!(
         vm.prologue_state.signal_grid[5][5],
@@ -98,7 +98,7 @@ fn test_distill_string() {
 
     vm.grid[5][5] = Value::Str("d".to_string());
 
-    exec_prologue_tick(&mut vm);
+    { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
     // Output North (4,5) -> "a"
     assert_eq!(

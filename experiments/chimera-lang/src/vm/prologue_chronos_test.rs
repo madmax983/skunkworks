@@ -36,7 +36,7 @@ mod tests {
 
         // Tick 1: ! emits 42. s reads 42, pushes to history. outputs 42.
         // g reads history (42), pops it, outputs 42.
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         // Check s history (should be empty if g popped it?)
         // If they run in order s then g?
@@ -78,7 +78,7 @@ mod tests {
         vm.grid[5][8] = Value::Str("?".to_string());
 
         // Tick 1: r pops back (3)
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         let output = vm.output.join("\n");
         assert!(output.contains("PROLOGUE: Sink at 8,5 received Int(3)"));

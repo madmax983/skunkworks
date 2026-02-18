@@ -43,7 +43,7 @@ mod tests {
         vm.grid[5][4] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("l".to_string());
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         // Check if l outputted 2 (length of strand 1)
         let output = &vm.prologue_state.signal_grid[5][5];
@@ -66,7 +66,7 @@ mod tests {
 
         vm.grid[5][5] = Value::Str("n".to_string());
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         // Check if n outputted "sub" (OpCode of gene 1 in strand 1)
         let output = &vm.prologue_state.signal_grid[5][5];
@@ -82,7 +82,7 @@ mod tests {
         vm.grid[4][5] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("G".to_string());
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         if vm.prologue_state.signal_grid[5][5].is_none() {
             println!("VM Output: {:?}", vm.output);
@@ -102,7 +102,7 @@ mod tests {
         vm.grid[5][4] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("e".to_string());
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         // Check if e created a mutated copy (Index 2)
         let output = &vm.prologue_state.signal_grid[5][5];

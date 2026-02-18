@@ -40,7 +40,7 @@ mod tests {
             vm.prologue_state.delayed_signals[5][4] = Some(Value::Int(0));
             vm.prologue_state.delayed_signals[5][6] = Some(Value::Int(0));
 
-            exec_prologue_tick(&mut vm);
+            { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
             if vm.dna.helix.strands.len() > MAX_STRANDS {
                 exceeded = true;

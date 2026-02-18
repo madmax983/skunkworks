@@ -20,7 +20,7 @@ mod tests {
         vm.grid[6][5] = Value::Str("~".to_string());
         vm.grid[7][5] = Value::Str("?".to_string());
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         // Check if signal propagated to wire
         if let Some(Value::Int(v)) = &vm.prologue_state.signal_grid[6][5] {
@@ -51,7 +51,7 @@ mod tests {
         // Case 1: 0 XOR 0 -> 0 (No Signal)
         // (5,5) = +
         vm.grid[5][5] = Value::Str("+".to_string());
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
         assert!(vm.prologue_state.signal_grid[5][5].is_none());
 
         // Case 2: 1 XOR 0 -> 1
@@ -80,7 +80,7 @@ mod tests {
         vm.grid[5][6] = Value::Str("!".to_string());
         vm.grid[4][6] = Value::Int(0); // Input B (Empty/Zero)
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
         // (5,4) should have signal 1.
         // (5,6) should have no signal (0 is empty).
         // (5,5) should have signal 1 (1 XOR 0 = 1).
@@ -90,7 +90,7 @@ mod tests {
 
         // Case 3: 1 XOR 1 -> 0
         vm.grid[4][6] = Value::Int(1); // Set B to 1
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
         assert!(vm.prologue_state.signal_grid[5][4].is_some());
         assert!(vm.prologue_state.signal_grid[5][6].is_some());
         assert!(
@@ -117,7 +117,7 @@ mod tests {
         vm.grid[5][4] = Value::Str("~".to_string());
         vm.grid[5][6] = Value::Str("~".to_string());
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         // ! emits at (4,5)
         // * at (5,5) reads North (4,5), gets 99.
@@ -160,7 +160,7 @@ mod tests {
         // # reads 77 from (4,5). Stores in delayed_signals.
         // # does NOT emit to (5,5) in this tick.
         // ? reads (5,5), sees nothing.
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         assert!(
             vm.prologue_state.signal_grid[5][5].is_none(),
@@ -179,7 +179,7 @@ mod tests {
 
         // Clear output before tick 2
         vm.output.clear();
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         assert!(
             vm.prologue_state.signal_grid[5][5].is_some(),
@@ -231,7 +231,7 @@ mod tests {
         // Move IP away from (0,0) to prove jump happens.
         vm.ip = (1, 0);
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         // Sink reads "test_strand". Triggers interrupt(0).
         // IP should become (0,0). Call stack should have (1,0).

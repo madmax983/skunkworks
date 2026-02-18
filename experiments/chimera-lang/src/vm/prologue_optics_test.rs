@@ -31,7 +31,7 @@ mod tests {
         vm.grid[5][4] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("\\".to_string());
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         // Mirror Output Logic:
         // If 5,5 receives signal from West (5,4), it outputs to South (6,5).
@@ -59,7 +59,7 @@ mod tests {
         vm.grid[5][4] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("/".to_string());
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         // Input West -> Output North (4,5)
         assert_eq!(vm.prologue_state.signal_grid[4][5], Some(Value::Int(42)));
@@ -79,7 +79,7 @@ mod tests {
         vm.grid[5][4] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("-".to_string());
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         // Input West -> Output East (5,6)
         assert_eq!(vm.prologue_state.signal_grid[5][6], Some(Value::Int(42)));
@@ -96,7 +96,7 @@ mod tests {
         vm2.grid[4][5] = Value::Str("!".to_string());
         vm2.grid[5][5] = Value::Str("-".to_string());
 
-        exec_prologue_tick(&mut vm2);
+        { let mut state = std::mem::take(&mut vm2.prologue_state); exec_prologue_tick(&mut vm2, &mut state); vm2.prologue_state = state; }
 
         // Signal from North (4,5) should NOT pass to South (6,5) or East/West
         // Note: The signal might exist at 4,5 (from source), but the rune at 5,5 (-)

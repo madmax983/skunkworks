@@ -1,209 +1,95 @@
-use crate::vm::{ChimeraVM, Value, GRID_SIZE, MAX_STRANDS};
+use crate::vm::{Value, GRID_SIZE};
 use rand::Rng;
-use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{HashMap, VecDeque};
 
 pub mod alchemy;
 pub mod chronos;
 pub mod evolution;
+pub mod host;
 pub mod io;
 pub mod list;
 pub mod logic;
 pub mod math;
 pub mod optics;
 pub mod quantum;
+pub mod state;
 pub mod teleport;
 pub mod topology;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct PrologueAgent {
-    pub x: usize,
-    pub y: usize,
-    pub state: Value,
-}
+pub use host::PrologueHost;
+pub use state::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct PrologueState {
-    pub active: bool,
-    pub runes: HashSet<(usize, usize)>,
-    pub rules: Vec<String>,
-    pub signal_grid: Vec<Vec<Option<Value>>>,
-    pub delayed_signals: Vec<Vec<Option<Value>>>,
-    pub agents: Vec<PrologueAgent>,
-    pub registers: HashMap<(usize, usize), Value>,
-    pub teleport_channels: HashMap<i64, Value>,
-    pub history: HashMap<(usize, usize), VecDeque<Value>>,
-}
-
-impl PrologueState {
-    pub fn new() -> Self {
-        Self {
-            active: false,
-            runes: HashSet::new(),
-            rules: Vec::new(),
-            signal_grid: vec![vec![None; GRID_SIZE]; GRID_SIZE],
-            delayed_signals: vec![vec![None; GRID_SIZE]; GRID_SIZE],
-            agents: Vec::new(),
-            registers: HashMap::new(),
-            teleport_channels: HashMap::new(),
-            history: HashMap::new(),
-        }
-    }
-
-    pub fn scan_grid_rules(&mut self, grid: &Vec<Vec<Value>>) {
-        self.runes.clear();
-        self.rules.clear();
-        self.agents.clear();
-
-        for y in 0..GRID_SIZE {
-            for x in 0..GRID_SIZE {
-                if let Value::Str(s) = &grid[y][x] {
-                    // Identify Runes
-                    if matches!(
-                        s.as_str(),
-                        "?" | "!"
-                            | "~"
-                            | "&"
-                            | "|"
-                            | "+"
-                            | "*"
-                            | "#"
-                            | "@"
-                            | "$"
-                            | "%"
-                            | "^"
-                            | "M"
-                            | "O"
-                            | "G"
-                            | "E"
-                            | "D"
-                            | "A"
-                            | "S"
-                            | "P"
-                            | "Q"
-                            | "="
-                            | ">"
-                            | "<"
-                            | "I"
-                            | "Y"
-                            | "L"
-                            | "J"
-                            | "C"
-                            | "("
-                            | "N"
-                            | "W"
-                            | "K"
-                            | "R"
-                            | "X"
-                            | "Z"
-                            | "H"
-                            | "["
-                            | "]"
-                            | "U"
-                            | "V"
-                            | "F"
-                            | "T"
-                            | "\\"
-                            | "/"
-                            | "-"
-                            | "q"
-                            | "m"
-                            | "{"
-                            | "}"
-                            | "s"
-                            | "g"
-                            | "r"
-                            | "t"
-                            | "f"
-                            | "d"
-                            | "e"
-                            | "b"
-                            | "l"
-                            | "n"
-                    ) {
-                        self.runes.insert((y, x));
-
-                        if s == "@" || s == "K" || s == "H" {
-                            self.agents.push(PrologueAgent {
-                                x,
-                                y,
-                                state: Value::Int(0),
-                            });
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
-    if !vm.prologue_state.active {
+pub fn exec_prologue_tick(host: &mut impl PrologueHost, state: &mut PrologueState) {
+    if !state.active {
         return;
     }
 
     // 1. Scan Grid for Topology (Runes)
-    let grid_snapshot = vm.grid.clone(); // Clone for read access
-    vm.prologue_state.scan_grid_rules(&grid_snapshot);
+    // Create snapshot from Host
+    let mut grid_snapshot = vec![vec![Value::Int(0); GRID_SIZE]; GRID_SIZE];
+    for y in 0..GRID_SIZE {
+        for x in 0..GRID_SIZE {
+            grid_snapshot[y][x] = host.grid_read(y, x);
+        }
+    }
+
+    state.scan_grid_rules(&grid_snapshot);
 
     // 2. Clear Signals & Apply Delays & 3. Source Emission
-    prepare_signals(vm, &grid_snapshot);
+    prepare_signals(state, &grid_snapshot);
 
     // 4. Propagation (Wires ~ and Gates & | + * # % ^)
-    process_signal_propagation(vm, &grid_snapshot);
+    process_signal_propagation(host, state, &grid_snapshot);
 
     // 5. Sink Consumption / Actions (?, $, M, O)
-    process_sinks(vm, &grid_snapshot);
+    process_sinks(host, state, &grid_snapshot);
 
     // 6. Agents (@)
-    process_agents(vm, &grid_snapshot);
+    process_agents(host, state, &grid_snapshot);
 }
 
-fn prepare_signals(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
+fn prepare_signals(state: &mut PrologueState, grid: &[Vec<Value>]) {
     // Start with empty signal grid
     let mut current_signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
 
     // Apply delayed signals from previous tick
     for y in 0..GRID_SIZE {
         for x in 0..GRID_SIZE {
-            if let Some(val) = &vm.prologue_state.delayed_signals[y][x] {
+            if let Some(val) = &state.delayed_signals[y][x] {
                 current_signals[y][x] = Some(val.clone());
             }
         }
     }
-    vm.prologue_state.signal_grid = current_signals;
+    state.signal_grid = current_signals;
 
     // Prepare next tick's delayed signals (cleared initially)
-    vm.prologue_state.delayed_signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
+    state.delayed_signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
 
     // Source Emission (!)
-    let runes: Vec<(usize, usize)> = vm.prologue_state.runes.iter().cloned().collect();
+    let runes: Vec<(usize, usize)> = state.runes.iter().cloned().collect();
 
     for (y, x) in &runes {
         if let Value::Str(s) = &grid[*y][*x] {
             if s == "!" && *y > 0 {
                 let val = grid[*y - 1][*x].clone();
-                // Only emit truthy values? Or all values?
-                // Let's emit non-empty signals.
                 if !is_empty_val(&val) {
-                    vm.prologue_state.signal_grid[*y][*x] = Some(val);
+                    state.signal_grid[*y][*x] = Some(val);
                 }
             }
         }
     }
 }
 
-fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
-    // Simple iterative flood fill for wires
-    // Gates need specific inputs.
-    // Iteration loop to allow signal to travel across grid in one tick
+fn process_signal_propagation(host: &mut impl PrologueHost, state: &mut PrologueState, grid: &[Vec<Value>]) {
     let max_iterations = GRID_SIZE * 2;
-    let runes: Vec<(usize, usize)> = vm.prologue_state.runes.iter().cloned().collect();
-    let tick = vm.tick_counter;
+    let runes: Vec<(usize, usize)> = state.runes.iter().cloned().collect();
+    let tick = host.tick_counter();
+    let dna = host.dna().clone(); // Dna is cheap to clone? No, but we need it. Host returns &Dna.
+    // apply_propagation_rune takes &Dna.
 
     for _ in 0..max_iterations {
         let mut changes = false;
-        let mut next_signals = vm.prologue_state.signal_grid.clone();
+        let mut next_signals = state.signal_grid.clone();
 
         for (y, x) in &runes {
             if let Value::Str(s) = &grid[*y][*x] {
@@ -212,20 +98,20 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     *y,
                     *x,
                     tick,
-                    &vm.dna,
-                    &vm.prologue_state.signal_grid,
+                    host,
+                    &dna,
+                    &state.signal_grid,
                     &mut next_signals,
-                    &mut vm.prologue_state.delayed_signals,
-                    &mut vm.ether,
-                    &mut vm.prologue_state.registers,
-                    &mut vm.prologue_state.teleport_channels,
-                    &mut vm.prologue_state.history,
+                    &mut state.delayed_signals,
+                    &mut state.registers,
+                    &mut state.teleport_channels,
+                    &mut state.history,
                 ) {
                     changes = true;
                 }
             }
         }
-        vm.prologue_state.signal_grid = next_signals;
+        state.signal_grid = next_signals;
         if !changes {
             break;
         }
@@ -238,15 +124,18 @@ fn apply_propagation_rune(
     y: usize,
     x: usize,
     tick: u64,
+    host: &mut impl PrologueHost, // Added Host
     dna: &crate::ast::Dna,
     current_signals: &[Vec<Option<Value>>],
     next_signals: &mut Vec<Vec<Option<Value>>>,
     next_delayed: &mut Vec<Vec<Option<Value>>>,
-    ether: &mut HashMap<i64, VecDeque<Value>>,
     registers: &mut HashMap<(usize, usize), Value>,
     teleport_channels: &mut HashMap<i64, Value>,
     history: &mut HashMap<(usize, usize), VecDeque<Value>>,
 ) -> bool {
+    // Pass host.ether_get_map() to submodules
+    let ether = host.ether_get_map();
+
     if topology::apply_topology_runes(rune, y, x, current_signals, next_signals, next_delayed) {
         return true;
     }
@@ -293,34 +182,32 @@ fn apply_propagation_rune(
     false
 }
 
-fn process_sinks(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
-    let runes: Vec<(usize, usize)> = vm.prologue_state.runes.iter().cloned().collect();
+fn process_sinks(host: &mut impl PrologueHost, state: &mut PrologueState, grid: &[Vec<Value>]) {
+    let runes: Vec<(usize, usize)> = state.runes.iter().cloned().collect();
 
     for (y, x) in &runes {
         if let Value::Str(s) = &grid[*y][*x] {
-            apply_sink_rune(vm, s, *y, *x);
+            apply_sink_rune(host, state, s, *y, *x);
         }
     }
 }
 
-fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
+fn apply_sink_rune(host: &mut impl PrologueHost, state: &mut PrologueState, rune: &str, y: usize, x: usize) {
     match rune {
         "?" => {
             // Sink
-            // Check neighbors for signal
             let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
             for (dy, dx) in neighbors {
                 if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                    let sig_opt = vm.prologue_state.signal_grid[ny][nx].clone();
+                    let sig_opt = state.signal_grid[ny][nx].clone();
 
                     if let Some(sig) = sig_opt {
-                        vm.output
-                            .push(format!("PROLOGUE: Sink at {},{} received {:?}", x, y, sig));
-                        vm.prologue_state.signal_grid[y][x] = Some(sig.clone()); // Light up
+                        host.output_push(format!("PROLOGUE: Sink at {},{} received {:?}", x, y, sig));
+                        state.signal_grid[y][x] = Some(sig.clone());
 
                         if let Value::Str(name) = sig {
-                            if let Some(&idx) = vm.dictionary.get(&name) {
-                                vm.interrupt(idx);
+                            if let Some(idx) = host.dictionary_get(&name) {
+                                host.interrupt(idx);
                             }
                         }
                     }
@@ -330,50 +217,47 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
         "$" => {
             // Scribe: Write West -> South
             if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
-                if let Some(sig) = &vm.prologue_state.signal_grid[wy][wx] {
-                    // Write to South
+                if let Some(sig) = &state.signal_grid[wy][wx] {
                     if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
-                        vm.grid[sy][sx] = sig.clone();
-                        vm.prologue_state.signal_grid[y][x] = Some(sig.clone());
-                        // Light up
+                        host.grid_write(sy, sx, sig.clone());
+                        state.signal_grid[y][x] = Some(sig.clone());
                     }
                 }
             }
         }
         "M" => {
-            // Mutate: Signal West -> Randomize South
+            // Mutate
             if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
-                if vm.prologue_state.signal_grid[wy][wx].is_some() {
+                if state.signal_grid[wy][wx].is_some() {
                     if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
                         let mut rng = rand::thread_rng();
                         let val = rng.gen_range(0..100);
-                        vm.grid[sy][sx] = Value::Int(val);
-                        vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
-                        // Light up
+                        host.grid_write(sy, sx, Value::Int(val));
+                        state.signal_grid[y][x] = Some(Value::Int(1));
                     }
                 }
             }
         }
         "O" => {
-            // Organelle: Signal West -> Spawn Agent South
+            // Organelle
             if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
-                if let Some(sig) = &vm.prologue_state.signal_grid[wy][wx] {
+                if let Some(sig) = &state.signal_grid[wy][wx] {
                     if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
                         let agent_type = match sig {
-                            Value::Int(2) => "K", // Chaos
-                            Value::Int(3) => "H", // Hunter
-                            _ => "@",             // Seeker
+                            Value::Int(2) => "K",
+                            Value::Int(3) => "H",
+                            _ => "@",
                         };
-                        vm.grid[sy][sx] = Value::Str(agent_type.to_string());
-                        vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                        host.grid_write(sy, sx, Value::Str(agent_type.to_string()));
+                        state.signal_grid[y][x] = Some(Value::Int(1));
                     }
                 }
             }
         }
         "E" => {
-            // Eval: West (Code) -> Self (Result)
+            // Eval
             let code_to_eval = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
-                if let Some(Value::Str(s)) = &vm.prologue_state.signal_grid[wy][wx] {
+                if let Some(Value::Str(s)) = &state.signal_grid[wy][wx] {
                     Some(s.clone())
                 } else {
                     None
@@ -387,89 +271,76 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                     Ok(dna) => {
                         if let Some(strand) = dna.helix.strands.first() {
                             for gene in &strand.genes {
-                                vm.execute_gene_inner(gene.op.clone(), &gene.args);
+                                host.execute_gene(gene.op.clone(), &gene.args);
                             }
-                            vm.output.push("PROLOGUE: Eval executed.".to_string());
-                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                            host.output_push("PROLOGUE: Eval executed.".to_string());
+                            state.signal_grid[y][x] = Some(Value::Int(1));
                         }
                     }
                     Err(e) => {
-                        vm.output.push(format!("PROLOGUE: Eval failed: {}", e));
+                        host.output_push(format!("PROLOGUE: Eval failed: {}", e));
                     }
                 }
             }
         }
         "D" => {
-            // Data: Neighbors -> Self (List)
-            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)]; // N S W E
+            // Data
+            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
             let mut data = Vec::new();
             for (dy, dx) in neighbors {
                 if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                    let val = vm.grid[ny][nx].clone();
+                    let val = host.grid_read(ny, nx);
                     if !is_empty_val(&val) {
                         data.push(val);
                     }
                 }
             }
             if !data.is_empty() {
-                vm.prologue_state.signal_grid[y][x] =
+                state.signal_grid[y][x] =
                     Some(Value::Junction(crate::ast::JunctionType::Any, data));
             }
         }
         "Y" => {
-            // Yell: West (Value), East (Channel) -> Push to Ether
+            // Yell
             if let (Some((wy, wx)), Some((ey, ex))) = (
                 normalize_coords(y as i64, x as i64 - 1),
                 normalize_coords(y as i64, x as i64 + 1),
             ) {
-                let w_sig = &vm.prologue_state.signal_grid[wy][wx];
-                let e_sig = &vm.prologue_state.signal_grid[ey][ex];
+                let w_sig = &state.signal_grid[wy][wx];
+                let e_sig = &state.signal_grid[ey][ex];
 
                 if let (Some(val), Some(Value::Int(channel))) = (w_sig, e_sig) {
-                    vm.ether
-                        .entry(*channel)
-                        .or_default()
-                        .push_back(val.clone());
-                    vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
-                    // Light up
+                    let map = host.ether_get_map();
+                    map.entry(*channel).or_default().push_back(val.clone());
+                    state.signal_grid[y][x] = Some(Value::Int(1));
                 }
             }
         }
         "(" => {
-            // Warp: Swap North and South values (Grid Modification)
-            // Triggered by West signal
+            // Warp
             if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
-                if vm.prologue_state.signal_grid[wy][wx].is_some() {
+                if state.signal_grid[wy][wx].is_some() {
                     if let (Some((ny, nx)), Some((sy, sx))) = (
                         normalize_coords(y as i64 - 1, x as i64),
                         normalize_coords(y as i64 + 1, x as i64),
                     ) {
-                        // We need to swap values in the grid
-                        // To avoid borrowing issues, we can't swap directly if we hold references?
-                        // But we have mutable access to VM.
-                        let n_val = vm.grid[ny][nx].clone();
-                        let s_val = vm.grid[sy][sx].clone();
-                        vm.grid[ny][nx] = s_val;
-                        vm.grid[sy][sx] = n_val;
-                        vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
-                        // Light up
+                        let n_val = host.grid_read(ny, nx);
+                        let s_val = host.grid_read(sy, sx);
+                        host.grid_write(ny, nx, s_val);
+                        host.grid_write(sy, sx, n_val);
+                        state.signal_grid[y][x] = Some(Value::Int(1));
                     }
                 }
             }
         }
         _ => {
-            evolution::apply_evolution_sinks(vm, rune, y, x);
+            evolution::apply_evolution_sinks(host, state, rune, y, x);
         }
     }
 }
 
-fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
-    // Agents move towards signal
-    // We need to update agents list in state, and also update the Grid (move the '@' char)
-    // This requires mutable access to grid.
-
-    // We iterate agents from state (snapshot) and update grid.
-    let agents = vm.prologue_state.agents.clone();
+fn process_agents(host: &mut impl PrologueHost, state: &mut PrologueState, grid_snapshot: &[Vec<Value>]) {
+    let agents = state.agents.clone();
     let mut new_agents = Vec::new();
 
     for agent in agents {
@@ -484,7 +355,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
         let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
 
         if current_type == "K" {
-            // Chaos: Move Randomly
+            // Chaos
             let mut rng = rand::thread_rng();
             let mut possible_moves = Vec::new();
             for (dy, dx) in neighbors {
@@ -499,7 +370,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 target = Some(possible_moves[idx]);
             }
         } else if current_type == "H" {
-            // Hunter: Seek Prey (@ or K)
+            // Hunter
             for (dy, dx) in neighbors {
                 if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
                     if let Value::Str(s) = &grid_snapshot[ny][nx] {
@@ -510,11 +381,10 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                     }
                 }
             }
-            // If no prey, seek signal like @
             if target.is_none() {
                 for (dy, dx) in neighbors {
                     if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                        if vm.prologue_state.signal_grid[ny][nx].is_some() {
+                        if state.signal_grid[ny][nx].is_some() {
                             let cell = &grid_snapshot[ny][nx];
                             if matches!(cell, Value::Int(0) | Value::Str(_)) {
                                 target = Some((ny, nx));
@@ -525,10 +395,10 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 }
             }
         } else {
-            // Seeker (@): Seek Signal
+            // Seeker
             for (dy, dx) in neighbors {
                 if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                    if vm.prologue_state.signal_grid[ny][nx].is_some() {
+                    if state.signal_grid[ny][nx].is_some() {
                         let cell = &grid_snapshot[ny][nx];
                         match cell {
                             Value::Int(0) => {
@@ -548,15 +418,12 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
 
         if let Some((ny, nx)) = target {
             // Move agent
-            // Clear old pos
-            if let Value::Str(s) = &vm.grid[y][x] {
-                // Only clear if it matches our agent type (avoid clearing overwrites?)
-                if s == &current_type {
-                    vm.grid[y][x] = Value::Int(0);
+            if let Value::Str(s) = host.grid_read(y, x) {
+                if s == current_type {
+                    host.grid_write(y, x, Value::Int(0));
                 }
             }
-            // Set new pos
-            vm.grid[ny][nx] = Value::Str(current_type.clone());
+            host.grid_write(ny, nx, Value::Str(current_type.clone()));
             new_agents.push(PrologueAgent {
                 x: nx,
                 y: ny,
@@ -566,7 +433,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
             new_agents.push(agent);
         }
     }
-    vm.prologue_state.agents = new_agents;
+    state.agents = new_agents;
 }
 
 fn is_empty_val(v: &Value) -> bool {
@@ -606,7 +473,9 @@ mod tests {
         vm.grid[6][5] = Value::Str("~".to_string());
         vm.grid[7][5] = Value::Str("?".to_string());
 
-        exec_prologue_tick(&mut vm);
+        let mut state = std::mem::take(&mut vm.prologue_state);
+        exec_prologue_tick(&mut vm, &mut state);
+        vm.prologue_state = state;
 
         // Check if signal propagated to wire
         assert!(vm.prologue_state.signal_grid[6][5].is_some());

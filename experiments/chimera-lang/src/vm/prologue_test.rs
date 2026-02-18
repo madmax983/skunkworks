@@ -22,7 +22,7 @@ fn test_scribe_rune() {
     vm.grid[6][4] = Value::Str("!".to_string());
     vm.grid[6][5] = Value::Str("$".to_string());
 
-    exec_prologue_tick(&mut vm);
+    { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
     // Check Grid at 7,5
     assert_eq!(vm.grid[7][5], Value::Int(42));
@@ -41,7 +41,7 @@ fn test_jump_rune() {
     vm.grid[6][5] = Value::Str("^".to_string());
     vm.grid[6][6] = Value::Str("~".to_string());
 
-    exec_prologue_tick(&mut vm);
+    { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
     // Check wire at 6,6
     if let Some(Value::Int(v)) = &vm.prologue_state.signal_grid[6][6] {
@@ -67,7 +67,7 @@ fn test_modulo_rune() {
 
     vm.grid[6][5] = Value::Str("%".to_string());
 
-    exec_prologue_tick(&mut vm);
+    { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
     // Check % at 6,5. Should be 10 % 3 = 1.
     if let Some(Value::Int(v)) = &vm.prologue_state.signal_grid[6][5] {
@@ -90,7 +90,7 @@ fn test_mutate_rune() {
     vm.grid[6][5] = Value::Str("M".to_string());
     vm.grid[7][5] = Value::Int(999); // Initial value
 
-    exec_prologue_tick(&mut vm);
+    { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
     // Check 7,5 is not 999
     // And is between 0..100
@@ -113,7 +113,7 @@ fn test_organelle_rune() {
     vm.grid[6][5] = Value::Str("O".to_string());
     vm.grid[7][5] = Value::Int(0);
 
-    exec_prologue_tick(&mut vm);
+    { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
     // Check grid has "@"
     if let Value::Str(s) = &vm.grid[7][5] {
@@ -143,7 +143,7 @@ fn test_arithmetic_runes() {
 
     vm.grid[6][5] = Value::Str("A".to_string());
 
-    exec_prologue_tick(&mut vm);
+    { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
     if let Some(Value::Int(v)) = &vm.prologue_state.signal_grid[6][5] {
         assert_eq!(*v, 30);
@@ -162,7 +162,7 @@ fn test_comparison_runes() {
     vm.grid[6][6] = Value::Str("!".to_string());
     vm.grid[6][5] = Value::Str("=".to_string());
 
-    exec_prologue_tick(&mut vm);
+    { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
     if let Some(Value::Int(v)) = &vm.prologue_state.signal_grid[6][5] {
         assert_eq!(*v, 1);
@@ -187,7 +187,7 @@ fn test_if_rune() {
 
     vm.grid[6][5] = Value::Str("I".to_string());
 
-    exec_prologue_tick(&mut vm);
+    { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
     if let Some(Value::Int(v)) = &vm.prologue_state.signal_grid[6][5] {
         assert_eq!(*v, 42);
@@ -210,7 +210,7 @@ fn test_ether_runes() {
 
     vm.grid[6][5] = Value::Str("Y".to_string());
 
-    exec_prologue_tick(&mut vm);
+    { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
     // Check Ether
     if let Some(queue) = vm.ether.get(&1) {
@@ -225,7 +225,7 @@ fn test_ether_runes() {
     vm.grid[8][4] = Value::Str("!".to_string()); // Source 1 at 8,4 (West of L)
     vm.grid[8][5] = Value::Str("L".to_string());
 
-    exec_prologue_tick(&mut vm);
+    { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
     if let Some(Value::Int(v)) = &vm.prologue_state.signal_grid[8][5] {
         assert_eq!(*v, 42);

@@ -14,7 +14,7 @@ fn test_chaos_rune() {
     // Place K at 5,5
     vm.grid[5][5] = Value::Str("K".to_string());
 
-    exec_prologue_tick(&mut vm);
+    { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
     // Check neighbors for random values
     let neighbors = [(4, 5), (6, 5), (5, 4), (5, 6)];
@@ -43,7 +43,7 @@ fn test_register_rune() {
     vm.prologue_state.delayed_signals[5][4] = Some(Value::Int(42));
 
     // Execute tick (Propagation will run R write logic)
-    exec_prologue_tick(&mut vm);
+    { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
     // Verify register has 42
     assert_eq!(
@@ -62,7 +62,7 @@ fn test_register_rune() {
     // Inject signal North of R (4,5)
     vm.prologue_state.delayed_signals[4][5] = Some(Value::Int(1));
 
-    exec_prologue_tick(&mut vm);
+    { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
     // Check signal South (6,5)
     // Note: R propagation writes to next_signals.
@@ -103,7 +103,7 @@ fn test_crossover_rune() {
     vm.prologue_state.delayed_signals[5][4] = Some(Value::Int(0));
     vm.prologue_state.delayed_signals[5][6] = Some(Value::Int(1));
 
-    exec_prologue_tick(&mut vm);
+    { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
     // Should produce Strand 2
     assert_eq!(vm.dna.helix.strands.len(), 3);

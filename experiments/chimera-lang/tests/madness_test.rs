@@ -18,7 +18,7 @@ mod tests {
         let mut vm = make_vm();
         vm.grid[5][5] = Value::Str("Z".to_string());
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         // Z emits to all neighbors
         let neighbors = [(4, 5), (6, 5), (5, 4), (5, 6)];
@@ -45,7 +45,7 @@ mod tests {
         vm.grid[5][4] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("O".to_string());
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         // ! should have signal
         assert!(vm.prologue_state.signal_grid[5][4].is_some());
@@ -68,7 +68,7 @@ mod tests {
         // Need to ensure they are registered as agents.
         // exec_prologue_tick calls scan_grid_rules first.
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         // H should move to 5,6 (eating @)
         // 5,5 should be empty (or 0)

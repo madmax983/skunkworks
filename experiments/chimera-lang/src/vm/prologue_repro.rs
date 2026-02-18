@@ -26,7 +26,7 @@ mod tests {
 
         vm.grid[5][5] = Value::Str("[".to_string());
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         let sig = &vm.prologue_state.signal_grid[5][5];
         if let Some(Value::Junction(JunctionType::Any, vals)) = sig {
@@ -48,7 +48,7 @@ mod tests {
 
         vm.grid[8][5] = Value::Str("]".to_string());
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         // Check outputs
         // N (7,5) -> Item 0
@@ -74,7 +74,7 @@ mod tests {
         vm.prologue_state.delayed_signals[5][4] = Some(list.clone());
         vm.grid[5][5] = Value::Str("U".to_string());
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         let head = &vm.prologue_state.signal_grid[5][5]; // Output Self
         assert_eq!(head, &Some(Value::Int(1)));
@@ -83,7 +83,7 @@ mod tests {
         vm.prologue_state.delayed_signals[8][4] = Some(list.clone());
         vm.grid[8][5] = Value::Str("V".to_string());
 
-        exec_prologue_tick(&mut vm);
+        { let mut state = std::mem::take(&mut vm.prologue_state); exec_prologue_tick(&mut vm, &mut state); vm.prologue_state = state; }
 
         let tail = &vm.prologue_state.signal_grid[8][5]; // Output Self
         if let Some(Value::Junction(_, vals)) = tail {
