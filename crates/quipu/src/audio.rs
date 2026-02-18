@@ -1,16 +1,46 @@
+//! # Quipu Audio Engine 🔊
+//!
+//! > "The universe is made of stories, not of atoms." - *Muriel Rukeyser*
+//!
+//! The Audio Engine provides a way to sonify the Quipu state.
+//! It allows you to trigger sounds corresponding to different events or data points.
+//!
+//! **Note:** This module requires the `audio` feature to be enabled.
+//!
+//! ## Example
+//!
+//! ```rust,no_run
+//! use quipu::audio::{AudioEngine, AudioEvent};
+//!
+//! // Create the engine
+//! let engine = AudioEngine::new().expect("Failed to initialize audio");
+//! let sender = engine.get_sender();
+//!
+//! // Trigger a sound
+//! sender.send(AudioEvent::Kick).unwrap();
+//! ```
+
 use anyhow::Result;
 use crossbeam_channel::{bounded, Sender};
 use std::any::Any;
 
+/// Represents the type of sound event to trigger.
 #[derive(Debug, Clone, Copy)]
 #[allow(dead_code)]
 pub enum AudioEvent {
+    /// A low-frequency kick drum sound.
     Kick,
+    /// A snappy snare drum sound.
     Snare,
+    /// A high-frequency hi-hat sound.
     HiHat,
-    Pluck(f32), // Frequency
+    /// A plucked string sound at a specific frequency (Hz).
+    Pluck(f32),
 }
 
+/// The main engine for processing and playing audio.
+///
+/// It handles the audio stream and processes incoming `AudioEvent`s.
 pub struct AudioEngine {
     _stream: Option<Box<dyn Any>>, // Keep stream alive
     tx: Sender<AudioEvent>,
@@ -18,11 +48,31 @@ pub struct AudioEngine {
 
 #[cfg(not(feature = "audio"))]
 impl AudioEngine {
+    /// Creates a new `AudioEngine`.
+    ///
+    /// If the `audio` feature is disabled, this returns a dummy engine that does nothing but consume events.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use quipu::audio::AudioEngine;
+    /// let engine = AudioEngine::new().unwrap();
+    /// ```
     pub fn new() -> Result<Self> {
         let (tx, _) = bounded(1024);
         Ok(Self { _stream: None, tx })
     }
 
+    /// Returns a sender channel to trigger audio events.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use quipu::audio::{AudioEngine, AudioEvent};
+    /// let engine = AudioEngine::new().unwrap();
+    /// let sender = engine.get_sender();
+    /// sender.send(AudioEvent::Kick).unwrap();
+    /// ```
     pub fn get_sender(&self) -> Sender<AudioEvent> {
         self.tx.clone()
     }
@@ -51,6 +101,20 @@ enum SoundKind {
 
 #[cfg(feature = "audio")]
 impl AudioEngine {
+    /// Creates a new `AudioEngine`.
+    ///
+    /// Initializes the audio device and starts the output stream.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if no audio device is found or if the stream cannot be built.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use quipu::audio::AudioEngine;
+    /// let engine = AudioEngine::new().expect("Audio init failed");
+    /// ```
     pub fn new() -> Result<Self> {
         let host = cpal::default_host();
         let device = match host.default_output_device() {
@@ -92,6 +156,16 @@ impl AudioEngine {
         })
     }
 
+    /// Returns a sender channel to trigger audio events.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use quipu::audio::{AudioEngine, AudioEvent};
+    /// let engine = AudioEngine::new().unwrap();
+    /// let sender = engine.get_sender();
+    /// sender.send(AudioEvent::Kick).unwrap();
+    /// ```
     pub fn get_sender(&self) -> Sender<AudioEvent> {
         self.tx.clone()
     }
@@ -164,7 +238,7 @@ fn process_audio(
                 }
                 SoundKind::HiHat => {
                     // High freq noise
-                    let noise = (rand::random::<f32>() * 2.0 - 1.0);
+                    let noise = rand::random::<f32>() * 2.0 - 1.0;
                     let env = (1.0 - sound.t * 30.0).max(0.0);
                     if env <= 0.0 {
                         return false;
