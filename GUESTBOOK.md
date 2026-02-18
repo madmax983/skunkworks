@@ -181,3 +181,8 @@
 - **Scent Origin:** Genesis (The Economist) ⚛️📊
 - **Status:** The Order Book is open. Memory blocks are being auctioned in real-time.
 - **Note:** Moonshot: Resource Markets + Memory Allocation.
+
+### [Concentration Level: HIGH] - Location: experiments/oscilloscope-typewriter
+- **Scent Origin:** Genesis (The Typographer) ⚛️🔤
+- **Status:** The electron beam is tracing the characters. The frequencies are audible.
+- **Note:** Moonshot: Sonic Calligraphy. Bezier Manipulation + Audio Visualization.
