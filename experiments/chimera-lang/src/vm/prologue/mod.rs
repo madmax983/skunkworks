@@ -3,6 +3,9 @@ use rand::Rng;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};
 
+pub mod quantum;
+pub mod teleport;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PrologueAgent {
     pub x: usize,
@@ -19,6 +22,7 @@ pub struct PrologueState {
     pub delayed_signals: Vec<Vec<Option<Value>>>,
     pub agents: Vec<PrologueAgent>,
     pub registers: HashMap<(usize, usize), Value>,
+    pub teleport_channels: HashMap<i64, Value>,
 }
 
 impl PrologueState {
@@ -31,6 +35,7 @@ impl PrologueState {
             delayed_signals: vec![vec![None; GRID_SIZE]; GRID_SIZE],
             agents: Vec::new(),
             registers: HashMap::new(),
+            teleport_channels: HashMap::new(),
         }
     }
 
@@ -87,9 +92,13 @@ impl PrologueState {
                             | "V"
                             | "F"
                             | "T"
-                        | "\\"
-                        | "/"
-                        | "-"
+                            | "\\"
+                            | "/"
+                            | "-"
+                            | "q"
+                            | "m"
+                            | "{"
+                            | "}"
                     ) {
                         self.runes.insert((y, x));
 
@@ -187,6 +196,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &Vec<Vec<Value>>) {
                     &mut vm.prologue_state.delayed_signals,
                     &mut vm.ether,
                     &mut vm.prologue_state.registers,
+                    &mut vm.prologue_state.teleport_channels,
                 ) {
                     changes = true;
                 }
@@ -210,6 +220,7 @@ fn apply_propagation_rune(
     next_delayed: &mut Vec<Vec<Option<Value>>>,
     ether: &mut HashMap<i64, VecDeque<Value>>,
     registers: &mut HashMap<(usize, usize), Value>,
+    teleport_channels: &mut HashMap<i64, Value>,
 ) -> bool {
     if apply_topology_runes(rune, y, x, current_signals, next_signals, next_delayed) {
         return true;
@@ -227,6 +238,12 @@ fn apply_propagation_rune(
         return true;
     }
     if apply_optics_runes(rune, y, x, current_signals, next_signals) {
+        return true;
+    }
+    if quantum::apply_quantum_runes(rune, y, x, current_signals, next_signals) {
+        return true;
+    }
+    if teleport::apply_teleport_runes(rune, y, x, current_signals, next_signals, teleport_channels) {
         return true;
     }
     false
@@ -1146,7 +1163,7 @@ fn is_empty_val(v: &Value) -> bool {
     }
 }
 
-fn normalize_coords(y: i64, x: i64) -> Option<(usize, usize)> {
+pub fn normalize_coords(y: i64, x: i64) -> Option<(usize, usize)> {
     if y >= 0 && y < GRID_SIZE as i64 && x >= 0 && x < GRID_SIZE as i64 {
         Some((y as usize, x as usize))
     } else {
