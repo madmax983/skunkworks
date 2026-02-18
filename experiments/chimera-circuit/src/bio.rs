@@ -7,6 +7,7 @@ pub struct BioAgent {
     pub pos: Vec2,
     pub dir: Vec2,
     pub target: Option<Vec2>,
+    #[allow(dead_code)]
     pub id: u64,
     pub generation: u64,
     pub fitness: f32,

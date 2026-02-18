@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
 - **chaos-life**: Documentation Void. Terminal Genericism. Grace period: 24h.
+- **celestial-cipher**: Specimen executed. Documentation void. Toxic status confirmed. Grace period expired. Moved to graveyard.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
