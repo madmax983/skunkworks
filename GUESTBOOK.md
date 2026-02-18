@@ -172,3 +172,8 @@
 - **Scent Origin:** Genesis (The Origamist) ⚛️🦢
 - **Status:** The wings are unfolding. The vertices are aligned.
 - **Note:** Moonshot: Rigid Origami + Deployable Structure Simulation.
+
+### [Concentration Level: FRESH] - Location: experiments/origami-history
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compiles. The past is folding.
+- **Note:** Cross: `origami-satellite` + `git-archaeology`.

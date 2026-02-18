@@ -1,0 +1,11 @@
+[package]
+name = "origami-history"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+git-associates = { path = "../../crates/git-associates" }
+origami = { path = "../../crates/origami" }
+chrono = "0.4"
+anyhow = "1.0"

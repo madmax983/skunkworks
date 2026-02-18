@@ -10,6 +10,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 
 <!-- Suggest hybrid experiments by combining existing ones -->
 
+### chimera-origami
+- **Parents**: experiments/chimera-lang + experiments/origami-satellite
+- **Concept**: Self-folding DNA. ChimeraVM agents control the crease pattern of a Miura-ori mesh.
+- **Expected traits**: Evo-Devo Folding.
+- **Rationale**: Combining genetic logic with physical deployment.
+- **Proposed by**: The Splice Surgeon
+
 <!-- Example:
 ### [Hybrid Name]
 - **Parent A**: experiments/git-galaxy
@@ -1236,4 +1243,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: OS Scheduling visualized as wave interference in a ripple tank.
 - **Novel trait**: Temporal interference patterns of CPU scheduling algorithms.
 - **Status**: experiments/ripple-scheduler
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.
+- **Evaluation**: Compiles. Re-verified by Splice Surgeon. Tests passed.
+
+### origami-history
+- **Parents**: experiments/origami-satellite + experiments/git-archaeology
+- **Concept**: Git history visualized as a deployable Miura-ori solar array.
+- **Novel trait**: Folding Time. The past is a physical surface that can be crumpled or smoothed.
+- **Status**: experiments/origami-history
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
