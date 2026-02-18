@@ -11784,14 +11784,18 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     "^" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
                     "@" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
                     "G" => style = style.fg(Color::Green).add_modifier(Modifier::BOLD),
-                    "E" => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
+                    "V" => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
                     "D" => style = style.fg(Color::Blue).add_modifier(Modifier::BOLD),
-                    "A" | "S" | "P" | "Q" => {
+                    "A" | "B" | "P" | "Q" => {
                         style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD)
                     }
                     "=" | ">" | "<" => style = style.fg(Color::White).add_modifier(Modifier::BOLD),
                     "I" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
                     "Y" | "L" => style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD),
+                    "(" => style = style.fg(Color::Cyan).add_modifier(Modifier::BOLD),
+                    "C" => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
+                    "N" | "S" | "E" | "W" => style = style.fg(Color::Blue).add_modifier(Modifier::BOLD),
+                    "X" => style = style.fg(Color::Green).add_modifier(Modifier::BOLD),
                     _ => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
                 }
             } else {

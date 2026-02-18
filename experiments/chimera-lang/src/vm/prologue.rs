@@ -57,10 +57,10 @@ impl PrologueState {
                             | "M"
                             | "O"
                             | "G"
-                            | "E"
+                            | "V"
                             | "D"
                             | "A"
-                            | "S"
+                            | "B"
                             | "P"
                             | "Q"
                             | "="
@@ -69,6 +69,13 @@ impl PrologueState {
                             | "I"
                             | "Y"
                             | "L"
+                            | "("
+                            | "C"
+                            | "N"
+                            | "S"
+                            | "E"
+                            | "W"
+                            | "X"
                     ) {
                         self.runes.insert((y, x));
 
@@ -112,7 +119,7 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
     // Prepare next tick's delayed signals (cleared initially)
     let mut next_delayed = vec![vec![None; GRID_SIZE]; GRID_SIZE];
 
-    // 3. Source Emission (!)
+    // 3. Source Emission (!, C)
     // '!' reads from North (y-1) and emits to self (and propagates)
     let runes: Vec<(usize, usize)> = vm.prologue_state.runes.iter().cloned().collect();
 
@@ -125,6 +132,22 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
                 if !is_empty_val(&val) {
                     vm.prologue_state.signal_grid[*y][*x] = Some(val);
                 }
+            } else if s == "C" {
+                // Clock: Output tick count
+                // Optional: Read East for Modulo
+                let mut modulo = 0;
+                if let Some((_, ex)) = normalize_coords(*y as i64, *x as i64 + 1) {
+                    if let Value::Int(m) = &grid[*y][ex] {
+                        modulo = *m;
+                    }
+                }
+
+                let val = if modulo > 0 {
+                    (vm.tick_counter as i64) % modulo
+                } else {
+                    vm.tick_counter as i64
+                };
+                vm.prologue_state.signal_grid[*y][*x] = Some(Value::Int(val));
             }
         }
     }
@@ -173,8 +196,8 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
                             }
                         }
                     }
-                    "S" => {
-                        // Sub
+                    "B" => {
+                        // Sub (Bounce/Difference)
                         if let (Some((wy, wx)), Some((ey, ex))) = (
                             normalize_coords(*y as i64, *x as i64 - 1),
                             normalize_coords(*y as i64, *x as i64 + 1),
@@ -434,6 +457,75 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
                             }
                         }
                     }
+                    "N" => {
+                        // North: Input South -> Output North
+                        if let Some((sy, sx)) = normalize_coords(*y as i64 + 1, *x as i64) {
+                            if let Some(sig) = &vm.prologue_state.signal_grid[sy][sx] {
+                                if let Some((ny, nx)) = normalize_coords(*y as i64 - 1, *x as i64) {
+                                    if next_signals[ny][nx].is_none() {
+                                        next_signals[ny][nx] = Some(sig.clone());
+                                        changes = true;
+                                    }
+                                }
+                                // Also light up self?
+                                if next_signals[*y][*x].is_none() {
+                                    next_signals[*y][*x] = Some(sig.clone());
+                                    changes = true;
+                                }
+                            }
+                        }
+                    }
+                    "S" => {
+                        // South: Input North -> Output South
+                        if let Some((ny, nx)) = normalize_coords(*y as i64 - 1, *x as i64) {
+                            if let Some(sig) = &vm.prologue_state.signal_grid[ny][nx] {
+                                if let Some((sy, sx)) = normalize_coords(*y as i64 + 1, *x as i64) {
+                                    if next_signals[sy][sx].is_none() {
+                                        next_signals[sy][sx] = Some(sig.clone());
+                                        changes = true;
+                                    }
+                                }
+                                if next_signals[*y][*x].is_none() {
+                                    next_signals[*y][*x] = Some(sig.clone());
+                                    changes = true;
+                                }
+                            }
+                        }
+                    }
+                    "E" => {
+                        // East: Input West -> Output East
+                        if let Some((wy, wx)) = normalize_coords(*y as i64, *x as i64 - 1) {
+                            if let Some(sig) = &vm.prologue_state.signal_grid[wy][wx] {
+                                if let Some((ey, ex)) = normalize_coords(*y as i64, *x as i64 + 1) {
+                                    if next_signals[ey][ex].is_none() {
+                                        next_signals[ey][ex] = Some(sig.clone());
+                                        changes = true;
+                                    }
+                                }
+                                if next_signals[*y][*x].is_none() {
+                                    next_signals[*y][*x] = Some(sig.clone());
+                                    changes = true;
+                                }
+                            }
+                        }
+                    }
+                    "W" => {
+                        // West: Input East -> Output West
+                        if let Some((ey, ex)) = normalize_coords(*y as i64, *x as i64 + 1) {
+                            if let Some(sig) = &vm.prologue_state.signal_grid[ey][ex] {
+                                if let Some((wy, wx)) = normalize_coords(*y as i64, *x as i64 - 1) {
+                                    if next_signals[wy][wx].is_none() {
+                                        next_signals[wy][wx] = Some(sig.clone());
+                                        changes = true;
+                                    }
+                                }
+                                if next_signals[*y][*x].is_none() {
+                                    next_signals[*y][*x] = Some(sig.clone());
+                                    changes = true;
+                                }
+                            }
+                        }
+                    }
                     _ => {}
                 }
             }
@@ -549,8 +641,8 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
                         }
                     }
                 }
-                "E" => {
-                    // Eval: West (Code) -> Self (Result)
+                "V" => {
+                    // Eval (Var): West (Code) -> Self (Result)
                     let code_to_eval =
                         if let Some((wy, wx)) = normalize_coords(*y as i64, *x as i64 - 1) {
                             if let Some(Value::Str(s)) = &vm.prologue_state.signal_grid[wy][wx] {
@@ -612,6 +704,55 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
                                 .push_back(val.clone());
                             vm.prologue_state.signal_grid[*y][*x] = Some(Value::Int(1));
                             // Light up
+                        }
+                    }
+                }
+                "(" => {
+                    // Warp: West (Signal) -> Swap North/South Values
+                    if let Some((wy, wx)) = normalize_coords(*y as i64, *x as i64 - 1) {
+                        if vm.prologue_state.signal_grid[wy][wx].is_some() {
+                            if let (Some((ny, nx)), Some((sy, sx))) = (
+                                normalize_coords(*y as i64 - 1, *x as i64),
+                                normalize_coords(*y as i64 + 1, *x as i64),
+                            ) {
+                                let n_val = vm.grid[ny][nx].clone();
+                                let s_val = vm.grid[sy][sx].clone();
+                                vm.grid[ny][nx] = s_val;
+                                vm.grid[sy][sx] = n_val;
+                                vm.prologue_state.signal_grid[*y][*x] = Some(Value::Int(1));
+                            }
+                        }
+                    }
+                }
+                "X" => {
+                    // Crossover: West (Strand A), East (Strand B) -> Self (New Strand)
+                    if let (Some((wy, wx)), Some((ey, ex))) = (
+                        normalize_coords(*y as i64, *x as i64 - 1),
+                        normalize_coords(*y as i64, *x as i64 + 1),
+                    ) {
+                        let w_sig = &vm.prologue_state.signal_grid[wy][wx];
+                        let e_sig = &vm.prologue_state.signal_grid[ey][ex];
+
+                        if let (Some(Value::Int(a_idx)), Some(Value::Int(b_idx))) = (w_sig, e_sig) {
+                            let helix_len = vm.dna.helix.strands.len();
+                            if *a_idx >= 0 && (*a_idx as usize) < helix_len && *b_idx >= 0 && (*b_idx as usize) < helix_len {
+                                // Perform Crossover
+                                let strand_a = &vm.dna.helix.strands[*a_idx as usize];
+                                let strand_b = &vm.dna.helix.strands[*b_idx as usize];
+
+                                let cut_a = strand_a.genes.len() / 2;
+                                let cut_b = strand_b.genes.len() / 2;
+
+                                let mut new_genes = Vec::new();
+                                new_genes.extend_from_slice(&strand_a.genes[0..cut_a]);
+                                new_genes.extend_from_slice(&strand_b.genes[cut_b..]);
+
+                                vm.dna.helix.strands.push(crate::ast::Strand { genes: new_genes });
+                                let new_idx = vm.dna.helix.strands.len() - 1;
+
+                                // Output to Self
+                                vm.prologue_state.signal_grid[*y][*x] = Some(Value::Int(new_idx as i64));
+                            }
                         }
                     }
                 }
