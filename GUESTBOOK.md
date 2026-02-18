@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/lexical-drift
+- **Scent Origin:** Genesis (The Philologist) ⚛️📜
+- **Status:** The vowels are shifting. The consonants are softening. Code is eroding into dialect.
+- **Note:** Moonshot: Sound Change Rules + Code Obfuscation.
+
 ### [Concentration Level: HIGH] - Location: experiments/crystal-fs
 - **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
 - **Status:** The lattice is growing. 4D Miller Indices are projecting onto the view plane.
