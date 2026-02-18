@@ -1,0 +1,18 @@
+[package]
+name = "ripple-scheduler"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+crossbeam-channel = "0.5"
+resonance-audio = { path = "../../crates/resonance-audio" }
+anyhow = { workspace = true }
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = []
+audio = ["cpal"]

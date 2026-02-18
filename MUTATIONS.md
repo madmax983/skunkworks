@@ -1215,18 +1215,25 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A thermodynamic battle where memory allocations generate heat (melting the landscape) while audio frequencies freeze it back into crystalline structures.
 - **Novel trait**: Thermodynamic Sonification. The music fights the memory leak.
 - **Status**: experiments/sonic-glacier
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified (Note: Minor warning about unused variable `dt` in `main.rs`).
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified. Re-verified compilation.
 
 ### hyperbolic-quipu
 - **Parents**: experiments/hyperbolic-finder + crates/quipu
 - **Concept**: Visualizing the file system as an infinite Quipu hanging in Hyperbolic Space.
 - **Novel trait**: Hyperbolic Data Storage. An exponential number of subsidiary cords fit within the finite visual disk due to negative curvature.
 - **Status**: experiments/hyperbolic-quipu
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified. Re-verified compilation.
 
 ### turbulent-rhythms
 - **Parents**: experiments/sync-opation + experiments/system-turbulence
 - **Concept**: Fluid simulation where viscosity is controlled by system load, and thread synchronization events create turbulence.
 - **Novel trait**: Visualizing thread contention as fluid dynamics.
 - **Status**: experiments/turbulent-rhythms
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified. Re-verified compilation (failed due to missing alsa-sys, logic sound).
+
+### ripple-scheduler
+- **Parents**: experiments/canopy-scheduler + experiments/ripple-tank
+- **Concept**: OS Scheduling visualized as wave interference in a ripple tank.
+- **Novel trait**: Temporal interference patterns of CPU scheduling algorithms.
+- **Status**: experiments/ripple-scheduler
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.

@@ -158,3 +158,8 @@
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** The sun is rising. The trees are competing for light.
 - **Note:** Moonshot: Forest Competition + Resource Scheduling.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/ripple-scheduler
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The waves are interfering. The schedule is sonified.
+- **Note:** Cross: `canopy-scheduler` + `ripple-tank`.
