@@ -1,6 +1,6 @@
+use quipu::Color;
 use quipu_serializer::ser::to_quipu;
 use serde::Serialize;
-use quipu::Color;
 
 #[derive(Serialize)]
 struct Trade {

@@ -1,4 +1,4 @@
-use quipu::{Cord, Color};
+use quipu::{Color, Cord};
 
 #[test]
 fn test_nested_display() {

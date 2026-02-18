@@ -15,3 +15,7 @@
 ## [Ballistics Integer Overflow]
 **Learning:** Distance calculations using `i64` coordinates like `dx*dx + dy*dy` can easily overflow if inputs are large, causing a panic in debug mode or incorrect wrapping in release mode. The VM handles `Value::Int` (i64), so inputs can be `i64::MAX`.
 **Action:** Always cast integer coordinates to `f64` *before* performing squaring or distance calculations if the result is intended to be a float or large magnitude. `((dx as f64).powi(2) + (dy as f64).powi(2)).sqrt()` is safe.
+
+## [Rust Float Clamping Bug]
+**Learning:** `f64::min(a, b)` returns `a` if `b` is `NaN` (and vice versa). This means `NaN.min(0.99)` returns `0.99`, effectively masking NaN errors in clamping logic.
+**Action:** Always check `.is_nan()` explicitly before using `min`/`max` for clamping, or verify which value is returned.

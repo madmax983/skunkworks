@@ -88,7 +88,8 @@ pub type Point = Complex<f64>;
 ///
 /// # Panics
 ///
-/// Does not panic, but returns `z` unchanged if `|a| >= 1` (invalid translation).
+/// Does not panic, but returns `z` unchanged if `|a| >= 1` (invalid translation)
+/// or if `|z| >= 1` (invalid point).
 ///
 /// # Examples
 ///
@@ -103,7 +104,13 @@ pub type Point = Complex<f64>;
 /// assert_eq!(result, a);
 /// ```
 pub fn mobius_add(z: Point, a: Point) -> Point {
+    // If 'a' is outside the disk, this is an invalid translation.
     if a.norm_sqr() >= 1.0 {
+        return z;
+    }
+    // If 'z' is outside the disk, the operation is undefined and could cause division by zero.
+    // We return 'z' to propagate the error safely.
+    if z.norm_sqr() >= 1.0 {
         return z;
     }
     (z + a) / (1.0 + a.conj() * z)
@@ -127,6 +134,9 @@ pub fn mobius_add(z: Point, a: Point) -> Point {
 /// ```
 pub fn mobius_sub(z: Point, a: Point) -> Point {
     if a.norm_sqr() >= 1.0 {
+        return z;
+    }
+    if z.norm_sqr() >= 1.0 {
         return z;
     }
     (z - a) / (1.0 - a.conj() * z)
@@ -155,6 +165,12 @@ pub fn hyperbolic_dist(a: Point, b: Point) -> f64 {
     let num = a - b;
     let den = 1.0 - a.conj() * b;
     let modulus = (num / den).norm();
+
+    // Propagate NaN to avoid masking errors
+    if modulus.is_nan() {
+        return f64::NAN;
+    }
+
     // Clamp to avoid atanh(1.0) = infinity/NaN if floating point errors push us over
     let clamped = modulus.min(0.99999999);
     2.0 * clamped.atanh()
@@ -806,9 +822,9 @@ mod sentry_tests {
 
         // This is technically undefined behavior according to docs ("assumes norm < 1"),
         // but robust code shouldn't panic.
-        // Formula: (2 + 0.5) / (1 + 0.5*2) = 2.5 / 2.0 = 1.25
+        // With safety checks, it should return z unchanged.
         let res = mobius_add(z, a);
-        assert!((res.re - 1.25).abs() < 1e-9);
+        assert!((res - z).norm() < 1e-9);
 
         // z outside, causing singularity
         // 1 + a.conj() * z = 0  => a.conj() * z = -1
@@ -816,7 +832,7 @@ mod sentry_tests {
         // 1 + 0.5 * (-2) = 0.
         let z_bad = Point::new(-2.0, 0.0);
         let res_bad = mobius_add(z_bad, a);
-        // This likely produces Inf/NaN, but definitely should NOT panic
-        assert!(!res_bad.re.is_finite() || !res_bad.im.is_finite());
+        // With safety checks, this avoids singularity and returns z_bad
+        assert!((res_bad - z_bad).norm() < 1e-9);
     }
 }

@@ -43,11 +43,7 @@ impl<'a> ser::Serializer for &'a mut Serializer {
     type SerializeStructVariant = Compound;
 
     fn serialize_bool(self, v: bool) -> Result<Cord, Error> {
-        let mut cord = if v {
-            Cord::from(1)
-        } else {
-            Cord::from(0)
-        };
+        let mut cord = if v { Cord::from(1) } else { Cord::from(0) };
         cord.color = Color::Blue; // Bool: Blue
         Ok(cord)
     }
