@@ -261,6 +261,11 @@ fn main() {
 
     vm.step(); // Execute Push
     vm.step(); // Execute Print
+
+    // The VM captures output in `vm.output` (Vec<String>) instead of printing to stdout.
+    for line in &vm.output {
+        println!("{}", line);
+    }
 }
 ```
 
