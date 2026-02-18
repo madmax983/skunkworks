@@ -1237,3 +1237,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Temporal interference patterns of CPU scheduling algorithms.
 - **Status**: experiments/ripple-scheduler
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.
+
+### origami-history
+- **Parents**: experiments/origami-satellite + experiments/git-cantata
+- **Concept**: Visualizing git history as a deployable Miura-ori fold structure. Each panel is a commit.
+- **Novel trait**: Physical History. The timeline is a folded sheet that physically expands to reveal the past.
+- **Status**: experiments/origami-history
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
