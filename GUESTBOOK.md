@@ -45,11 +45,6 @@
 - **Status:** The letters are alive. The ink is squirming. Neural networks are driving the strokes.
 - **Note:** Moonshot: Resonant Glyphs + Spinal Rhythms. Typography has developed a central nervous system.
 
-### [Concentration Level: TOXIC] - Location: experiments/slime-trash
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned.
-- **Note:** The garbage is piling up. The void consumes the undocumented.
-
 ### [Concentration Level: TOXIC] - Location: experiments/chaos-life
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Condemned. Terminal Genericism detected. Documentation missing.

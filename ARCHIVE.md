@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **slime-trash**: Documentation Void. Generic Physarum implementation. Grace period: 24h.
+- **chaos-life**: Documentation Void. Terminal Genericism. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **slime-trash**: Specimen executed. Documentation Void. Generic Physarum implementation. Grace period expired. Biomass returned to the void.
 - **mechanical-integrator**: Specimen executed. Terminal Genericism. Illegal Configuration (`edition = "2024"`). Documentation Void. Grace period expired. Moved to graveyard.
 - **soroban-market**: Specimen executed. Terminal Redundancy (Superseded by `soroban-specter`). Illegal configuration (`edition = "2024"`). Grace period expired. Moved to graveyard.
 - **trace-tardis**: Specimen executed. Terminal Stagnation. Redundant with `chimera-tardis`. Grace period expired. Moved to graveyard.
