@@ -1,9 +1,9 @@
+use rand::rngs::StdRng;
+use rand::{Rng, SeedableRng};
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
 use std::path::Path;
 use walkdir::WalkDir;
-use rand::{Rng, SeedableRng};
-use rand::rngs::StdRng;
-use std::hash::{Hash, Hasher};
-use std::collections::hash_map::DefaultHasher;
 
 #[derive(Debug, Clone, Copy)]
 pub struct CrystalPoint {
@@ -28,7 +28,7 @@ fn get_vector_from_seed(seed: u64) -> [f32; 4] {
     ];
 
     // Normalize
-    let len = (v[0]*v[0] + v[1]*v[1] + v[2]*v[2] + v[3]*v[3]).sqrt();
+    let len = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2] + v[3] * v[3]).sqrt();
     if len > 0.0001 {
         v[0] /= len;
         v[1] /= len;
@@ -40,12 +40,12 @@ fn get_vector_from_seed(seed: u64) -> [f32; 4] {
 
 fn get_color_from_ext(ext: Option<&str>) -> [f32; 4] {
     match ext {
-        Some("rs") => [1.0, 0.2, 0.0, 1.0], // Rust - Orange
+        Some("rs") => [1.0, 0.2, 0.0, 1.0],   // Rust - Orange
         Some("toml") => [0.2, 0.8, 0.2, 1.0], // Config - Green
-        Some("md") => [0.2, 0.2, 0.8, 1.0], // Markdown - Blue
+        Some("md") => [0.2, 0.2, 0.8, 1.0],   // Markdown - Blue
         Some("lock") => [0.5, 0.5, 0.5, 1.0], // Lock - Grey
         Some("png") | Some("jpg") => [0.8, 0.2, 0.8, 1.0], // Images - Purple
-        _ => [0.9, 0.9, 0.9, 1.0], // Default - White
+        _ => [0.9, 0.9, 0.9, 1.0],            // Default - White
     }
 }
 
@@ -77,9 +77,12 @@ pub fn scan(root: &Path) -> Vec<CrystalPoint> {
 
         // If it's a file, add it as a point
         if entry.file_type().is_file() {
-             let ext = path.extension().and_then(|s| s.to_str());
-             let color = get_color_from_ext(ext);
-             points.push(CrystalPoint { position: pos, color });
+            let ext = path.extension().and_then(|s| s.to_str());
+            let color = get_color_from_ext(ext);
+            points.push(CrystalPoint {
+                position: pos,
+                color,
+            });
         }
         // If it's a directory, maybe add a node point too?
         // Let's add directory points as larger/different colored?

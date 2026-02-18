@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
     use crate::ast::{Dna, Helix};
-    use crate::vm::{ChimeraVM, Value};
     use crate::vm::prologue::exec_prologue_tick;
+    use crate::vm::{ChimeraVM, Value};
 
     fn setup_vm() -> ChimeraVM {
         let dna = Dna {

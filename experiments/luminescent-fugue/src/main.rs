@@ -32,13 +32,14 @@ async fn main() {
 
         // Mouse interaction: Inject signal
         if is_mouse_button_down(MouseButton::Left) {
-             let (mx, my) = mouse_position();
-             // Map screen to world
-             // Assuming full screen fit
-             let scale_x = world.width / screen_width();
-             let scale_y = world.height / screen_height();
+            let (mx, my) = mouse_position();
+            // Map screen to world
+            // Assuming full screen fit
+            let scale_x = world.width / screen_width();
+            let scale_y = world.height / screen_height();
 
-             world.inject_signal(mx * scale_x, my * scale_y, 50.0, [1.0, 1.0, 1.0]); // White signal
+            world.inject_signal(mx * scale_x, my * scale_y, 50.0, [1.0, 1.0, 1.0]);
+            // White signal
         }
 
         // Update Physics

@@ -1,11 +1,11 @@
 mod audio;
 mod vis;
 
-use macroquad::prelude::*;
 use audio::{SonicEngine, Spectrum};
-use vis::{Painter, FluidCanvas};
 use crossbeam_channel::unbounded;
+use macroquad::prelude::*;
 use noise::Perlin;
+use vis::{FluidCanvas, Painter};
 
 #[macroquad::main("Sonic Viscosity")]
 async fn main() {
@@ -24,13 +24,18 @@ async fn main() {
     texture.set_filter(FilterMode::Linear);
 
     let mut painters = vec![
-        Painter::new(w as f32 * 0.5, h as f32 * 0.5, RED),    // Low
-        Painter::new(w as f32 * 0.5, h as f32 * 0.5, GREEN),  // Mid
-        Painter::new(w as f32 * 0.5, h as f32 * 0.5, BLUE),   // High
+        Painter::new(w as f32 * 0.5, h as f32 * 0.5, RED), // Low
+        Painter::new(w as f32 * 0.5, h as f32 * 0.5, GREEN), // Mid
+        Painter::new(w as f32 * 0.5, h as f32 * 0.5, BLUE), // High
     ];
 
     let noise = Perlin::new(1);
-    let mut spectrum = Spectrum { low: 0.0, mid: 0.0, high: 0.0, raw: vec![] };
+    let mut spectrum = Spectrum {
+        low: 0.0,
+        mid: 0.0,
+        high: 0.0,
+        raw: vec![],
+    };
 
     loop {
         // Receive latest spectrum (drain channel to get latest)
@@ -79,10 +84,16 @@ async fn main() {
         clear_background(BLACK);
 
         // Draw texture scaled up
-        draw_texture_ex(&texture, 0.0, 0.0, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(screen_width(), screen_height())),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &texture,
+            0.0,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(screen_width(), screen_height())),
+                ..Default::default()
+            },
+        );
 
         // Overlay info
         draw_text("SONIC VISCOSITY", 20.0, 30.0, 30.0, WHITE);
@@ -106,10 +117,10 @@ fn start_audio(engine: SonicEngine) {
         // Create the stream in this thread and block
         let stream_result = OutputStream::try_default();
         if let Ok((_stream, stream_handle)) = stream_result {
-             if let Ok(sink) = Sink::try_new(&stream_handle) {
+            if let Ok(sink) = Sink::try_new(&stream_handle) {
                 sink.append(engine);
                 sink.sleep_until_end();
-             }
+            }
         }
     });
 }

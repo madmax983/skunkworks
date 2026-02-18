@@ -1,12 +1,12 @@
+use cgmath::prelude::*;
 use std::iter;
+use wgpu::util::DeviceExt;
 use winit::{
     event::*,
     event_loop::EventLoop,
-    window::{WindowBuilder, Window},
     keyboard::{KeyCode, PhysicalKey},
+    window::{Window, WindowBuilder},
 };
-use wgpu::util::DeviceExt;
-use cgmath::prelude::*;
 
 use crystal_fs::scanner;
 
@@ -18,7 +18,8 @@ struct Vertex {
 }
 
 impl Vertex {
-    const ATTRIBS: [wgpu::VertexAttribute; 2] = wgpu::vertex_attr_array![0 => Float32x4, 1 => Float32x4];
+    const ATTRIBS: [wgpu::VertexAttribute; 2] =
+        wgpu::vertex_attr_array![0 => Float32x4, 1 => Float32x4];
 
     fn desc() -> wgpu::VertexBufferLayout<'static> {
         wgpu::VertexBufferLayout {
@@ -75,25 +76,31 @@ impl State {
 
         let surface = instance.create_surface(window.clone()).unwrap();
 
-        let adapter = instance.request_adapter(
-            &wgpu::RequestAdapterOptions {
+        let adapter = instance
+            .request_adapter(&wgpu::RequestAdapterOptions {
                 power_preference: wgpu::PowerPreference::default(),
                 compatible_surface: Some(&surface),
                 force_fallback_adapter: false,
-            },
-        ).await.unwrap();
+            })
+            .await
+            .unwrap();
 
-        let (device, queue) = adapter.request_device(
-            &wgpu::DeviceDescriptor {
-                required_features: wgpu::Features::empty(),
-                required_limits: wgpu::Limits::default(),
-                label: None,
-            },
-            None,
-        ).await.unwrap();
+        let (device, queue) = adapter
+            .request_device(
+                &wgpu::DeviceDescriptor {
+                    required_features: wgpu::Features::empty(),
+                    required_limits: wgpu::Limits::default(),
+                    label: None,
+                },
+                None,
+            )
+            .await
+            .unwrap();
 
         let surface_caps = surface.get_capabilities(&adapter);
-        let surface_format = surface_caps.formats.iter()
+        let surface_format = surface_caps
+            .formats
+            .iter()
             .copied()
             .find(|f| f.is_srgb())
             .unwrap_or(surface_caps.formats[0]);
@@ -112,25 +119,26 @@ impl State {
 
         let path = std::env::current_dir().unwrap();
         let points = scanner::scan(&path);
-        let vertices: Vec<Vertex> = points.iter().map(|p| Vertex {
-            position: p.position,
-            color: p.color,
-        }).collect();
+        let vertices: Vec<Vertex> = points
+            .iter()
+            .map(|p| Vertex {
+                position: p.position,
+                color: p.color,
+            })
+            .collect();
 
         let num_vertices = vertices.len() as u32;
-        let vertex_buffer = device.create_buffer_init(
-            &wgpu::util::BufferInitDescriptor {
-                label: Some("Vertex Buffer"),
-                contents: bytemuck::cast_slice(&vertices),
-                usage: wgpu::BufferUsages::VERTEX,
-            }
-        );
+        let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("Vertex Buffer"),
+            contents: bytemuck::cast_slice(&vertices),
+            usage: wgpu::BufferUsages::VERTEX,
+        });
 
         let shader = device.create_shader_module(wgpu::include_wgsl!("shader.wgsl"));
 
-        let uniform_bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            entries: &[
-                wgpu::BindGroupLayoutEntry {
+        let uniform_bind_group_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                entries: &[wgpu::BindGroupLayoutEntry {
                     binding: 0,
                     visibility: wgpu::ShaderStages::VERTEX,
                     ty: wgpu::BindingType::Buffer {
@@ -139,16 +147,16 @@ impl State {
                         min_binding_size: None,
                     },
                     count: None,
-                }
-            ],
-            label: Some("uniform_bind_group_layout"),
-        });
+                }],
+                label: Some("uniform_bind_group_layout"),
+            });
 
-        let render_pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            label: Some("Render Pipeline Layout"),
-            bind_group_layouts: &[&uniform_bind_group_layout],
-            push_constant_ranges: &[],
-        });
+        let render_pipeline_layout =
+            device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                label: Some("Render Pipeline Layout"),
+                bind_group_layouts: &[&uniform_bind_group_layout],
+                push_constant_ranges: &[],
+            });
 
         let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("Render Pipeline"),
@@ -190,22 +198,18 @@ impl State {
             rot_4d: cgmath::Matrix4::identity().into(),
         };
 
-        let uniform_buffer = device.create_buffer_init(
-            &wgpu::util::BufferInitDescriptor {
-                label: Some("Uniform Buffer"),
-                contents: bytemuck::cast_slice(&[uniforms]),
-                usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
-            }
-        );
+        let uniform_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("Uniform Buffer"),
+            contents: bytemuck::cast_slice(&[uniforms]),
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+        });
 
         let uniform_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &uniform_bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: uniform_buffer.as_entire_binding(),
-                }
-            ],
+            entries: &[wgpu::BindGroupEntry {
+                binding: 0,
+                resource: uniform_buffer.as_entire_binding(),
+            }],
             label: Some("uniform_bind_group"),
         });
 
@@ -244,11 +248,12 @@ impl State {
     fn input(&mut self, event: &WindowEvent) -> bool {
         match event {
             WindowEvent::KeyboardInput {
-                event: KeyEvent {
-                    physical_key: PhysicalKey::Code(key),
-                    state,
-                    ..
-                },
+                event:
+                    KeyEvent {
+                        physical_key: PhysicalKey::Code(key),
+                        state,
+                        ..
+                    },
                 ..
             } => {
                 let pressed = *state == ElementState::Pressed;
@@ -291,17 +296,20 @@ impl State {
         }
 
         // Clamp pitch
-        if self.camera_pitch > 89.0 { self.camera_pitch = 89.0; }
-        if self.camera_pitch < -89.0 { self.camera_pitch = -89.0; }
+        if self.camera_pitch > 89.0 {
+            self.camera_pitch = 89.0;
+        }
+        if self.camera_pitch < -89.0 {
+            self.camera_pitch = -89.0;
+        }
 
         let (yaw_sin, yaw_cos) = cgmath::Rad::from(cgmath::Deg(self.camera_yaw)).0.sin_cos();
-        let (pitch_sin, pitch_cos) = cgmath::Rad::from(cgmath::Deg(self.camera_pitch)).0.sin_cos();
+        let (pitch_sin, pitch_cos) = cgmath::Rad::from(cgmath::Deg(self.camera_pitch))
+            .0
+            .sin_cos();
 
-        let front = cgmath::Vector3::new(
-            pitch_cos * yaw_cos,
-            pitch_sin,
-            pitch_cos * yaw_sin
-        ).normalize();
+        let front =
+            cgmath::Vector3::new(pitch_cos * yaw_cos, pitch_sin, pitch_cos * yaw_sin).normalize();
 
         let right = front.cross(cgmath::Vector3::unit_y()).normalize();
         let up = right.cross(front).normalize();
@@ -327,21 +335,29 @@ impl State {
         }
 
         // 4D Rotation (Q/E for XW, R/F for YW, T/G for ZW)
-        if self.keys_down.contains(&KeyCode::KeyQ) { self.rot_xw += rot_speed; }
-        if self.keys_down.contains(&KeyCode::KeyE) { self.rot_xw -= rot_speed; }
+        if self.keys_down.contains(&KeyCode::KeyQ) {
+            self.rot_xw += rot_speed;
+        }
+        if self.keys_down.contains(&KeyCode::KeyE) {
+            self.rot_xw -= rot_speed;
+        }
 
-        if self.keys_down.contains(&KeyCode::KeyR) { self.rot_yw += rot_speed; }
-        if self.keys_down.contains(&KeyCode::KeyF) { self.rot_yw -= rot_speed; }
+        if self.keys_down.contains(&KeyCode::KeyR) {
+            self.rot_yw += rot_speed;
+        }
+        if self.keys_down.contains(&KeyCode::KeyF) {
+            self.rot_yw -= rot_speed;
+        }
 
-        if self.keys_down.contains(&KeyCode::KeyT) { self.rot_zw += rot_speed; }
-        if self.keys_down.contains(&KeyCode::KeyG) { self.rot_zw -= rot_speed; }
+        if self.keys_down.contains(&KeyCode::KeyT) {
+            self.rot_zw += rot_speed;
+        }
+        if self.keys_down.contains(&KeyCode::KeyG) {
+            self.rot_zw -= rot_speed;
+        }
 
         // Construct View Matrix
-        let view = cgmath::Matrix4::look_at_rh(
-            self.camera_pos,
-            self.camera_pos + front,
-            up,
-        );
+        let view = cgmath::Matrix4::look_at_rh(self.camera_pos, self.camera_pos + front, up);
         let aspect = self.config.width as f32 / self.config.height as f32;
         let proj = cgmath::perspective(cgmath::Deg(45.0), aspect, 0.1, 1000.0);
         let view_proj = proj * view;
@@ -350,24 +366,33 @@ impl State {
         // We accumulate rotations.
         // Rot(xw) * Rot(yw) * Rot(zw)
 
-        let cxw = self.rot_xw.cos(); let sxw = self.rot_xw.sin();
-        let cyw = self.rot_yw.cos(); let syw = self.rot_yw.sin();
-        let czw = self.rot_zw.cos(); let szw = self.rot_zw.sin();
+        let cxw = self.rot_xw.cos();
+        let sxw = self.rot_xw.sin();
+        let cyw = self.rot_yw.cos();
+        let syw = self.rot_yw.sin();
+        let czw = self.rot_zw.cos();
+        let szw = self.rot_zw.sin();
 
         // R_xw: Rotates x and w
         let mut r_xw = cgmath::Matrix4::identity();
-        r_xw.x.x = cxw; r_xw.x.w = -sxw;
-        r_xw.w.x = sxw; r_xw.w.w = cxw;
+        r_xw.x.x = cxw;
+        r_xw.x.w = -sxw;
+        r_xw.w.x = sxw;
+        r_xw.w.w = cxw;
 
         // R_yw: Rotates y and w
         let mut r_yw = cgmath::Matrix4::identity();
-        r_yw.y.y = cyw; r_yw.y.w = -syw;
-        r_yw.w.y = syw; r_yw.w.w = cyw;
+        r_yw.y.y = cyw;
+        r_yw.y.w = -syw;
+        r_yw.w.y = syw;
+        r_yw.w.w = cyw;
 
         // R_zw: Rotates z and w
         let mut r_zw = cgmath::Matrix4::identity();
-        r_zw.z.z = czw; r_zw.z.w = -szw;
-        r_zw.w.z = szw; r_zw.w.w = czw;
+        r_zw.z.z = czw;
+        r_zw.z.w = -szw;
+        r_zw.w.z = szw;
+        r_zw.w.w = czw;
 
         let rot_4d = r_xw * r_yw * r_zw;
 
@@ -376,15 +401,20 @@ impl State {
             rot_4d: rot_4d.into(),
         };
 
-        self.queue.write_buffer(&self.uniform_buffer, 0, bytemuck::cast_slice(&[uniforms]));
+        self.queue
+            .write_buffer(&self.uniform_buffer, 0, bytemuck::cast_slice(&[uniforms]));
     }
 
     fn render(&mut self) -> Result<(), wgpu::SurfaceError> {
         let output = self.surface.get_current_texture()?;
-        let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());
-        let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-            label: Some("Render Encoder"),
-        });
+        let view = output
+            .texture
+            .create_view(&wgpu::TextureViewDescriptor::default());
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("Render Encoder"),
+            });
 
         {
             let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -423,17 +453,22 @@ impl State {
 fn main() {
     env_logger::init();
     let event_loop = EventLoop::new().unwrap();
-    let window = std::sync::Arc::new(WindowBuilder::new().with_title("Genesis Crystal FS").build(&event_loop).unwrap());
+    let window = std::sync::Arc::new(
+        WindowBuilder::new()
+            .with_title("Genesis Crystal FS")
+            .build(&event_loop)
+            .unwrap(),
+    );
 
     let mut state = pollster::block_on(State::new(window.clone()));
 
-    event_loop.run(move |event, target| {
-        match event {
+    event_loop
+        .run(move |event, target| match event {
             Event::WindowEvent {
                 ref event,
                 window_id,
             } if window_id == state.window.id() => {
-                 if !state.input(event) {
+                if !state.input(event) {
                     match event {
                         WindowEvent::CloseRequested => target.exit(),
                         WindowEvent::Resized(physical_size) => state.resize(*physical_size),
@@ -449,11 +484,11 @@ fn main() {
                         _ => {}
                     }
                 }
-            },
+            }
             Event::AboutToWait => {
-                 state.window.request_redraw();
+                state.window.request_redraw();
             }
             _ => {}
-        }
-    }).unwrap();
+        })
+        .unwrap();
 }

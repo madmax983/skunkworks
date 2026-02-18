@@ -30,7 +30,7 @@ impl HeapTerrain {
 
         // Excessive heat can even erode bedrock slightly (thermal shock)
         if amount > self.ice[idx] + 5.0 {
-             self.bedrock[idx] -= 0.05;
+            self.bedrock[idx] -= 0.05;
         }
     }
 

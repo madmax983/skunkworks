@@ -78,18 +78,18 @@ impl World {
     pub fn reset(&mut self) {
         let mut rng = rand::thread_rng();
         for agent in &mut self.agents {
-             agent.x = rng.gen::<f32>() * WORLD_SIZE;
-             agent.y = rng.gen::<f32>() * WORLD_SIZE;
-             agent.phase = rng.gen::<f32>() * 2.0 * PI;
-             agent.color = [rng.gen(), rng.gen(), rng.gen()];
+            agent.x = rng.gen::<f32>() * WORLD_SIZE;
+            agent.y = rng.gen::<f32>() * WORLD_SIZE;
+            agent.phase = rng.gen::<f32>() * 2.0 * PI;
+            agent.color = [rng.gen(), rng.gen(), rng.gen()];
         }
     }
 
     pub fn inject_chaos(&mut self) {
         let mut rng = rand::thread_rng();
         for agent in &mut self.agents {
-             agent.phase = rng.gen::<f32>() * 2.0 * PI;
-             // Don't reset color, let's see if they recover or drift
+            agent.phase = rng.gen::<f32>() * 2.0 * PI;
+            // Don't reset color, let's see if they recover or drift
         }
     }
 
@@ -99,7 +99,7 @@ impl World {
         for agent in &mut self.agents {
             let dx = agent.x - x;
             let dy = agent.y - y;
-            if dx*dx + dy*dy < radius*radius {
+            if dx * dx + dy * dy < radius * radius {
                 agent.color = color;
                 agent.phase = 0.0; // Force sync
             }
@@ -229,7 +229,7 @@ impl World {
                 if new_phase > 2.0 * PI {
                     new_phase -= 2.0 * PI;
                 } else if new_phase < 0.0 {
-                     new_phase += 2.0 * PI;
+                    new_phase += 2.0 * PI;
                 }
 
                 // Color Update
@@ -318,9 +318,15 @@ impl World {
                 // But Additive looks more "glowy".
                 // Let's use Max for now to keep colors distinct.
 
-                if r > buffer[idx] { buffer[idx] = r; }
-                if g > buffer[idx+1] { buffer[idx+1] = g; }
-                if b > buffer[idx+2] { buffer[idx+2] = b; }
+                if r > buffer[idx] {
+                    buffer[idx] = r;
+                }
+                if g > buffer[idx + 1] {
+                    buffer[idx + 1] = g;
+                }
+                if b > buffer[idx + 2] {
+                    buffer[idx + 2] = b;
+                }
             }
         }
     }
@@ -336,9 +342,21 @@ impl World {
         let mean_g = sum_g / n;
         let mean_b = sum_b / n;
 
-        let variance_r: f32 = self.agents.iter().map(|a| (a.color[0] - mean_r).powi(2)).sum();
-        let variance_g: f32 = self.agents.iter().map(|a| (a.color[1] - mean_g).powi(2)).sum();
-        let variance_b: f32 = self.agents.iter().map(|a| (a.color[2] - mean_b).powi(2)).sum();
+        let variance_r: f32 = self
+            .agents
+            .iter()
+            .map(|a| (a.color[0] - mean_r).powi(2))
+            .sum();
+        let variance_g: f32 = self
+            .agents
+            .iter()
+            .map(|a| (a.color[1] - mean_g).powi(2))
+            .sum();
+        let variance_b: f32 = self
+            .agents
+            .iter()
+            .map(|a| (a.color[2] - mean_b).powi(2))
+            .sum();
 
         ((variance_r + variance_g + variance_b) / n).sqrt()
     }
@@ -374,7 +392,12 @@ mod tests {
 
         let final_diff = (world.agents[0].phase - world.agents[1].phase).abs();
 
-        assert!(final_diff < initial_diff, "Phases should converge. Init: {}, Final: {}", initial_diff, final_diff);
+        assert!(
+            final_diff < initial_diff,
+            "Phases should converge. Init: {}, Final: {}",
+            initial_diff,
+            final_diff
+        );
     }
 
     #[test]
@@ -403,6 +426,11 @@ mod tests {
 
         let final_diff = (world.agents[0].color[0] - world.agents[1].color[0]).abs();
 
-        assert!(final_diff < initial_diff, "Colors should converge. Init: {}, Final: {}", initial_diff, final_diff);
+        assert!(
+            final_diff < initial_diff,
+            "Colors should converge. Init: {}, Final: {}",
+            initial_diff,
+            final_diff
+        );
     }
 }

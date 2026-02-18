@@ -1,7 +1,7 @@
-use std::sync::{Arc, Mutex};
-use rustfft::{FftPlanner, num_complex::Complex};
 use crossbeam_channel::Sender;
+use rustfft::{num_complex::Complex, FftPlanner};
 use std::f32::consts::PI;
+use std::sync::{Arc, Mutex};
 
 pub const SAMPLE_RATE: u32 = 44100;
 pub const FFT_SIZE: usize = 1024;
@@ -69,7 +69,9 @@ impl SonicEngine {
         let mut planner = self.fft_planner.lock().unwrap();
         let fft = planner.plan_fft_forward(FFT_SIZE);
 
-        let mut input: Vec<Complex<f32>> = self.buffer.iter()
+        let mut input: Vec<Complex<f32>> = self
+            .buffer
+            .iter()
             .map(|&x| Complex { re: x, im: 0.0 })
             .collect();
 
@@ -82,9 +84,7 @@ impl SonicEngine {
         fft.process(&mut input);
 
         // Calculate magnitude
-        let magnitudes: Vec<f32> = input.iter().take(FFT_SIZE / 2)
-            .map(|c| c.norm())
-            .collect();
+        let magnitudes: Vec<f32> = input.iter().take(FFT_SIZE / 2).map(|c| c.norm()).collect();
 
         // Binning
         // Bin width = 44100 / 1024 = ~43 Hz
@@ -98,8 +98,14 @@ impl SonicEngine {
         let end_idx = magnitudes.len();
 
         let low_e: f32 = magnitudes.iter().take(low_idx).sum::<f32>() / low_idx.max(1) as f32;
-        let mid_e: f32 = magnitudes.iter().skip(low_idx).take(mid_idx - low_idx).sum::<f32>() / (mid_idx - low_idx).max(1) as f32;
-        let high_e: f32 = magnitudes.iter().skip(mid_idx).sum::<f32>() / (end_idx - mid_idx).max(1) as f32;
+        let mid_e: f32 = magnitudes
+            .iter()
+            .skip(low_idx)
+            .take(mid_idx - low_idx)
+            .sum::<f32>()
+            / (mid_idx - low_idx).max(1) as f32;
+        let high_e: f32 =
+            magnitudes.iter().skip(mid_idx).sum::<f32>() / (end_idx - mid_idx).max(1) as f32;
 
         let _ = self.sender.try_send(Spectrum {
             low: low_e,
@@ -124,10 +130,18 @@ use std::time::Duration;
 
 #[cfg(feature = "audio")]
 impl Source for SonicEngine {
-    fn current_frame_len(&self) -> Option<usize> { None }
-    fn channels(&self) -> u16 { 1 }
-    fn sample_rate(&self) -> u32 { SAMPLE_RATE }
-    fn total_duration(&self) -> Option<Duration> { None }
+    fn current_frame_len(&self) -> Option<usize> {
+        None
+    }
+    fn channels(&self) -> u16 {
+        1
+    }
+    fn sample_rate(&self) -> u32 {
+        SAMPLE_RATE
+    }
+    fn total_duration(&self) -> Option<Duration> {
+        None
+    }
 }
 
 #[cfg(test)]
@@ -157,7 +171,10 @@ mod tests {
         let spectrum = rx.try_recv().expect("Should receive spectrum");
 
         // Check if mid energy is dominant (430Hz is in mid range: 200-2000)
-        println!("Low: {}, Mid: {}, High: {}", spectrum.low, spectrum.mid, spectrum.high);
+        println!(
+            "Low: {}, Mid: {}, High: {}",
+            spectrum.low, spectrum.mid, spectrum.high
+        );
         assert!(spectrum.mid > spectrum.low);
         assert!(spectrum.mid > spectrum.high);
     }

@@ -37,9 +37,9 @@ pub fn generate_miura_ori(rows: usize, cols: usize) -> MeshData {
     for j in 0..rows {
         for i in 0..cols {
             // Row-major indexing: j * width + i
-            let p00 = j * width + i;           // (i, j)
-            let p10 = j * width + (i + 1);     // (i+1, j)
-            let p01 = (j + 1) * width + i;     // (i, j+1)
+            let p00 = j * width + i; // (i, j)
+            let p10 = j * width + (i + 1); // (i+1, j)
+            let p01 = (j + 1) * width + i; // (i, j+1)
             let p11 = (j + 1) * width + (i + 1); // (i+1, j+1)
 
             // Triangles: Split along p01-p10 diagonal (matching original connectivity)
