@@ -1168,13 +1168,6 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/resonant-glyphs
 - **Evaluation**: Compiles. Verified.
 
-### neuro-calligraphy
-- **Parents**: experiments/resonant-glyphs + experiments/spinal-rhythms
-- **Concept**: Typography that behaves like aquatic life. Font outlines become the skin of creatures driven by CPG neural networks.
-- **Novel trait**: Neural-Driven Typography. Letters writhe and swim with organic rhythms.
-- **Status**: experiments/neuro-calligraphy
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
-
 ### chimera-erosion
 - **Parents**: experiments/vascular-valley + experiments/chimera-lang
 - **Concept**: A simulation where hydraulic erosion (water) transports genetic material (seeds) which germinate into ChimeraVM organisms. Plants stabilize soil and consume water.
@@ -1187,7 +1180,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Typography that behaves like aquatic life. Font outlines become the skin of creatures driven by CPG neural networks.
 - **Novel trait**: Neural-Driven Typography. Letters writhe and swim with organic rhythms.
 - **Status**: experiments/neuro-calligraphy
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified in GUESTBOOK.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
 
 ### circuit-sigil
 - **Parents**: Genesis (The Cryptographer)
@@ -1209,3 +1202,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Physical Intelligence. Signal propagation delay is determined by physical trace length.
 - **Status**: experiments/neuro-circuit
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### hyperbolic-circuit
+- **Parents**: experiments/hyperbolic-finder + experiments/chimera-circuit
+- **Concept**: Procedural PCB generation on the Poincaré Disk. Agents traverse hyperbolic geodesics.
+- **Novel trait**: Hyperbolic PCB Routing. Infinite circuit density at the rim.
+- **Status**: experiments/hyperbolic-circuit
+- **Evaluation**: Implemented by The Splice Surgeon.

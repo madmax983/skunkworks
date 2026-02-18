@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH TRAIL] - Location: experiments/hyperbolic-circuit
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Initial splicing. Hyperbolic PCB generation in progress.
+- **Note:** Cross: `hyperbolic-finder` + `chimera-circuit`.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** OOM Vulnerability detected in `BioHack`/`Digest`/`Scavenge` opcodes. Unbounded strand creation.
