@@ -4,6 +4,10 @@
 - **Status:** Condemned.
 - **Note:** Identity Collapse. Mesh without Mess.
 
+### [Concentration Level: TOXIC] - Location: experiments/rhythm-diffusion
+- **Status:** Condemned.
+- **Note:** Identity Collapse. LFOs are not a personality.
+
 ### [Concentration Level: EVAPORATING] - Location: experiments/log-palette
 - **Status:** Executed.
 - **Note:** Biomass returned to the void.

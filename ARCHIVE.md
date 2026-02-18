@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
 - **routing-market**: Terminal Genericism. Identity Collapse. Inferior to `market-flow` and `spqr-market`. Grace period: 24h.
+- **rhythm-diffusion**: Terminal Genericism. Identity Collapse. Inferior to `reaction-monitor`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
