@@ -1,32 +1,47 @@
 //! # Synaptic Physics
 //!
-//! Shared physics logic for neural simulation experiments.
+//! Shared physics logic for neural simulation experiments, specifically providing the [`Izhikevich`] neuron model.
 //!
-//! This crate provides the [`Izhikevich`] neuron model, a computationally efficient model that reproduces
-//! spiking and bursting behavior of cortical neurons. It combines the biological plausibility of
-//! Hodgkin-Huxley-type dynamics with the computational efficiency of integrate-and-fire models.
+//! ## Why use this?
 //!
-//! The model uses a system of two ordinary differential equations to simulate membrane potential dynamics:
+//! Simulating biological neural networks involves a trade-off between realism and performance:
+//! *   **Hodgkin-Huxley:** Biologically accurate but computationally expensive (4+ ODEs per neuron).
+//! *   **Integrate-and-Fire:** Very fast but lacks complex spiking dynamics (bursting, chattering).
+//! *   **Izhikevich (This crate):** The "Goldilocks" zone. It uses just 2 ODEs and 4 parameters to reproduce
+//!     virtually all known cortical spiking patterns (regular spiking, fast spiking, bursting, etc.)
+//!     with the speed of integrate-and-fire models.
 //!
-//! 1. $v' = 0.04v^2 + 5v + 140 - u + I$
-//! 2. $u' = a(bv - u)$
+//! ## The Physics
+//!
+//! The model simulates membrane potential using two differential equations:
+//!
+//! 1.  **Membrane Potential ($v$):**
+//!     $v' = 0.04v^2 + 5v + 140 - u + I$
+//!
+//! 2.  **Recovery Variable ($u$):**
+//!     $u' = a(bv - u)$
+//!
+//! **Units:**
+//! *   **$v$ (Voltage):** Measured in millivolts (mV). Resting potential is typically around -65.0 mV.
+//! *   **$t$ (Time):** Measured in milliseconds (ms).
+//! *   **$I$ (Current):** Input current. In this dimensionless model, $10.0$ is a typical strong DC input.
 //!
 //! ## Usage
 //!
 //! ```rust
 //! use synaptic_physics::Izhikevich;
 //!
-//! // Create a default "Regular Spiking" neuron
+//! // 1. Create a neuron (e.g., Regular Spiking)
 //! let mut neuron = Izhikevich::new();
 //!
-//! // Simulate for 100ms
-//! let dt = 0.1; // time step
-//! for _ in 0..1000 {
-//!     // Update with 10.0 units of input current
+//! // 2. Simulate for 100ms with a time step of 0.1ms
+//! let dt = 0.1;
+//! for t in 0..1000 {
+//!     // 3. Update state with 10.0 units of constant input current
 //!     let (voltage, spiked) = neuron.update(dt, 10.0);
 //!
 //!     if spiked {
-//!         println!("Spike!");
+//!         println!("Neuron fired at {} ms!", t as f32 * dt);
 //!     }
 //! }
 //! ```
@@ -45,7 +60,7 @@ use std::fmt;
 ///
 /// # Examples
 ///
-/// Creating a custom neuron:
+/// Creating a custom neuron with modified reset parameters:
 ///
 /// ```rust
 /// use synaptic_physics::Izhikevich;
@@ -55,44 +70,53 @@ use std::fmt;
 ///     u: -13.0,
 ///     a: 0.02,
 ///     b: 0.2,
-///     c: -55.0, // Higher reset potential
-///     d: 4.0,   // Lower reset recovery
+///     c: -55.0, // Reset to -55mV (instead of standard -65mV)
+///     d: 4.0,   // Smaller recovery step
 ///     current_decay: 0.0,
-///     tau: 10.0, // Decay time constant
+///     tau: 10.0,
 /// };
 /// ```
 #[derive(Clone, Copy, Debug)]
 pub struct Izhikevich {
-    /// Membrane potential ($v$). Represents the voltage across the neuron membrane in millivolts (mV).
-    /// Typically rests around -65.0.
+    /// **Membrane potential ($v$).**
+    /// Represents the voltage across the neuron membrane in millivolts (mV).
+    /// *   Range: Typically -90.0 to +30.0.
+    /// *   Resting: ~ -65.0.
     pub v: f32,
 
-    /// Membrane recovery variable ($u$). Accounts for the activation of K+ ionic currents
-    /// and inactivation of Na+ ionic currents. It provides negative feedback to $v$.
+    /// **Membrane recovery variable ($u$).**
+    /// Accounts for the activation of K+ ionic currents and inactivation of Na+ ionic currents.
+    /// It provides negative feedback to $v$.
     pub u: f32,
 
-    /// Time scale of the recovery variable $u$.
-    /// Smaller values result in slower recovery.
+    /// **Time scale of recovery ($a$).**
+    /// Describes how fast the variable $u$ returns to equilibrium.
+    /// *   Small values (e.g., 0.02) result in slow recovery.
     pub a: f32,
 
-    /// Sensitivity of the recovery variable $u$ to the subthreshold fluctuations of the membrane potential $v$.
-    /// Greater values couple $v$ and $u$ more strongly.
+    /// **Sensitivity of recovery ($b$).**
+    /// Describes how strongly $u$ is coupled to subthreshold fluctuations of $v$.
+    /// *   Larger values result in stronger coupling.
     pub b: f32,
 
-    /// After-spike reset value of the membrane potential $v$.
-    /// When $v \ge 30$, $v$ is reset to $c$.
+    /// **After-spike reset value ($c$).**
+    /// The value $v$ is reset to after a spike ($v \ge 30$).
+    /// *   Typical value: -65.0 mV.
     pub c: f32,
 
-    /// After-spike reset of the recovery variable $u$.
-    /// When $v \ge 30$, $u$ is reset to $u + d$.
+    /// **After-spike recovery reset ($d$).**
+    /// The amount added to $u$ after a spike.
+    /// *   Typical value: 8.0 or 2.0.
     pub d: f32,
 
-    /// Decaying injected current (used for impulse injections).
-    /// This value is added to the input current during updates and decays exponentially based on `tau`.
+    /// **Transient Synaptic Current.**
+    /// Represents decaying input current from synaptic events (spikes).
+    /// Values added here (via `inject`) decay exponentially based on `tau`.
     pub current_decay: f32,
 
-    /// Time constant for current decay (in ms).
-    /// Controls how fast the injected impulse fades.
+    /// **Synaptic Decay Time Constant ($\tau$).**
+    /// Controls how fast the injected impulse fades (in milliseconds).
+    /// *   Formula: $I(t) = I_0 \cdot e^{-t/\tau}$
     pub tau: f32,
 }
 
@@ -187,7 +211,9 @@ impl Izhikevich {
     ///
     /// ```rust
     /// use synaptic_physics::Izhikevich;
-    /// let mut rng = rand::thread_rng();
+    /// use rand::thread_rng;
+    ///
+    /// let mut rng = thread_rng();
     /// let neuron = Izhikevich::random(&mut rng);
     /// ```
     pub fn random(rng: &mut impl Rng) -> Self {
@@ -211,7 +237,14 @@ impl Izhikevich {
     /// ```rust
     /// use synaptic_physics::Izhikevich;
     /// let mut neuron = Izhikevich::new();
-    /// neuron.inject(50.0); // Simulates a strong kick
+    ///
+    /// // Inject a spike event (e.g., EPSP)
+    /// neuron.inject(50.0);
+    ///
+    /// // The injection fades over time
+    /// assert!(neuron.current_decay == 50.0);
+    /// neuron.update(1.0, 0.0);
+    /// assert!(neuron.current_decay < 50.0);
     /// ```
     pub fn inject(&mut self, current: f32) {
         self.current_decay += current;
@@ -230,7 +263,8 @@ impl Izhikevich {
     /// # Returns
     ///
     /// Returns a tuple `(voltage, spiked)`:
-    /// * `voltage`: The membrane potential after the update. If a spike occurred, this may be the reset potential.
+    /// * `voltage`: The membrane potential after the update.
+    ///   **Note:** If a spike occurred, this value is the reset potential ($c$), not the peak (30mV).
     /// * `spiked`: Boolean indicating if the neuron fired an action potential (reached threshold 30mV) during any substep.
     ///
     /// # Panics
@@ -242,8 +276,13 @@ impl Izhikevich {
     /// ```rust
     /// use synaptic_physics::Izhikevich;
     /// let mut neuron = Izhikevich::new();
+    ///
     /// // Advance by 1.0 unit of time with 5.0 units of input current
     /// let (v, spiked) = neuron.update(1.0, 5.0);
+    ///
+    /// if spiked {
+    ///     println!("Bang!");
+    /// }
     /// ```
     pub fn update(&mut self, dt: f32, extra_current: f32) -> (f32, bool) {
         // Internal substeps for numerical stability
