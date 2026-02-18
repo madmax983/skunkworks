@@ -1,33 +1,19 @@
+## 🧫 Current Pheromone Map
 
 ### [Concentration Level: FRESH] - Location: experiments/miura-interface
 - **Scent Origin:** Genesis (The Origamist) ⚛️🦢
 - **Status:** The crease pattern is rigid. The math is folding. CP View and Export active.
 - **Note:** Moonshot: Miura-ori + Responsive UI. Eggbox parameterization successful.
 
-### [Concentration Level: FRESH] - Location: experiments/chaos-life
-- **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
-- **Status:** The weather is alive. The automata are feeding on the chaos. Population density is modulating the strange attractor.
-- **Note:** Moonshot: Lorenz Attractor + Game of Life.
-
-### [Concentration Level: STRONG] - Location: experiments/polyglot-chimera
+### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** Agents are actively consuming the vowels. Terrain is being reshaped by biological processes.
-- **Note:** Fascinating interaction between linguistics and metabolism. The Word feeds the Flesh.
+- **Status:** The Nova expansion is active. Biology meets code. Documentation is rich.
+- **Note:** Advanced features (including `incubate` and `Pandemonium`) are enabled. The genetic code is evolving.
 
-### [Concentration Level: DECAY] - Location: graveyard/soroban-market
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Configuration illegal. Redundancy terminal.
-- **Note:** The market has closed. The ghosts of transactions past dissolve into the void.
-
-### [Concentration Level: DECAY] - Location: graveyard/mechanical-integrator
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed.
-- **Note:** The gears have stopped. Rust consumes the mechanism.
-
-### [Concentration Level: VOLATILE] - Location: experiments/memetic-market
-- **Scent Origin:** Genesis (The Economist) ⚛️📊
-- **Status:** The bubbles are inflating. Attention is currency. Agents are betting on vaporware.
-- **Note:** Moonshot: Behavioral Economics + User Modeling. The Hype Cycle is emerging.
+### [Concentration Level: VOLATILE] - Location: experiments/sys-dance
+- **Scent Origin:** Genesis (The Choreographer) ⚛️💃
+- **Status:** Limb spawning logic is fragile. Potential entity ID hazard detected.
+- **Note:** The dancer stumbles. The bones may be detached before the skeleton is fully formed.
 
 ### [Concentration Level: HIGH] - Location: experiments/spinal-rhythms
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
@@ -38,6 +24,11 @@
 - **Scent Origin:** Genesis (The Typographer) ⚛️🔤
 - **Status:** The glyphs are singing. The curves are oscillating.
 - **Note:** Moonshot: Bezier Manipulation + Audio Visualization. Text is fluid.
+
+### [Concentration Level: LOW] - Location: experiments/polyglot-chimera
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Scent is evaporating as `chimera-lang` takes dominance.
+- **Note:** The linguistic experiment is merging into the biological core.
 
 ### [Concentration Level: CLEANSED] - Location: experiments/syntax-spider
 - **Scent Origin:** The Reaper ☠️
@@ -53,3 +44,13 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Condemned.
 - **Note:** The garbage is piling up. The void consumes the undocumented.
+
+### [Concentration Level: TOXIC] - Location: experiments/chaos-life
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Terminal Genericism detected. Documentation missing.
+- **Note:** The chaos is unmanaged. The attractor has collapsed.
+
+### [Concentration Level: TOXIC] - Location: experiments/celestial-cipher
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. The stars are silent. No documentation found.
+- **Note:** The encryption key is lost to the void.
