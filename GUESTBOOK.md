@@ -24,10 +24,10 @@
 - **Status:** Compilation verified. The swarm is synchronized.
 - **Note:** Moonshot: Firefly Synchronization + Distributed Consensus.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄 (verified Splice Surgeon)
-- **Status:** OOM Vulnerability patched (verified). Cell walls reinforced.
-- **Note:** The Nova expansion is active and stable. Unreachable patterns detected in prologue parser.
+- **Status:** 18 test failures detected in Nova and Ribosome modules.
+- **Note:** Mosaic sensed a lack of hierarchy in the CLI; reinforcement required. Assertions are failing.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-circuit
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -139,24 +139,24 @@
 - **Status:** Executed.
 - **Note:** Superseded by `digital-compost`. Biomass returned to the void.
 
-### [Concentration Level: HIGH] - Location: experiments/system-turbulence
+### [Concentration Level: STABLE TRAIL] - Location: experiments/system-turbulence
 - **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
-- **Status:** Fluid dynamic simulation driven by system metrics.
+- **Status:** Compilation verified. Fluid dynamics stable.
 - **Note:** Moonshot: Navier-Stokes + System Monitor.
 
-### [Concentration Level: HIGH] - Location: experiments/sync-opation
+### [Concentration Level: STABLE TRAIL] - Location: experiments/sync-opation
 - **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
-- **Status:** Creating the polymetric engine.
+- **Status:** Compilation blocked by missing `alsa` dependency. Dormant.
 - **Note:** Moonshot: Polymeters + Thread Synchronization.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/turbulent-rhythms
 - **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The fluid is reacting to the beat. Viscosity is linked to CPU load.
+- **Status:** Compilation blocked by missing `alsa` dependency. Dormant.
 - **Note:** Cross: `sync-opation` + `system-turbulence`.
 
-### [Concentration Level: HIGH] - Location: experiments/canopy-scheduler
+### [Concentration Level: STABLE TRAIL] - Location: experiments/canopy-scheduler
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
-- **Status:** The sun is rising. The trees are competing for light.
+- **Status:** Compilation verified. Photosynthesis active.
 - **Note:** Moonshot: Forest Competition + Resource Scheduling.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/ripple-scheduler
