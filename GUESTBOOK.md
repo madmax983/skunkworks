@@ -69,12 +69,16 @@
 - **Note:** Deleted.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/chaos-life
-- **Status:** Toxic. Terminal Genericism. Pending removal.
+- **Status:** Executed. Moved to graveyard.
 - **Note:** The attractor has collapsed.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/celestial-cipher
-- **Status:** Toxic. No documentation found.
+- **Status:** Executed. Moved to graveyard.
 - **Note:** Lost to the void.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/geo-linguistics
+- **Status:** Condemned. Documentation Void.
+- **Note:** The strata are silent.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/polyglot-chimera
 - **Status:** Scent is evaporating as `chimera-lang` takes dominance.
