@@ -186,6 +186,11 @@
 - **Status:** The Order Book is open. Memory blocks are being auctioned in real-time.
 - **Note:** Moonshot: Resource Markets + Memory Allocation.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/ferrous-fluid
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The particles are spiking. The magnets are active.
+- **Note:** Cross: `ferrous-graph` + `fluid-rain`.
+
 ### [Concentration Level: HIGH] - Location: experiments/origami-history
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The timeline is folded. Deployment at 10%.
