@@ -90,7 +90,7 @@ pub fn process_savant(vm: &mut ChimeraVM, organelle: &mut Organelle) {
 }
 
 #[cfg(feature = "oracle")]
-fn inject_sensors(vm: &mut ChimeraVM, organelle: &mut Organelle) -> Vec<Value> {
+fn inject_sensors(vm: &mut ChimeraVM, _organelle: &mut Organelle) -> Vec<Value> {
     let mut added = Vec::new();
 
     // neighbor(Dir, Val)

@@ -585,6 +585,7 @@ pub fn exec_cymatic_scan(
     _args: &[Nucleotide],
 ) -> Option<(usize, usize)> {
     // Stack: [ ..., scale ]
+    #[allow(unused_variables)]
     let scale = if let Some(Value::Int(s)) = vm.stack.pop() {
         s as f64 / 10.0
     } else {

@@ -1083,13 +1083,10 @@ fn check_dynamic_predicates(
                             let fact_x = Value::Int(org.context_loc.1 as i64);
                             let fact_y = Value::Int(org.context_loc.0 as i64);
 
-                            let mut current_subst = subst.clone();
-                            if let Some(s1) = unify(&args[1], &fact_idx, &current_subst) {
-                                current_subst = s1;
-                                if let Some(s2) = unify(&args[2], &fact_type, &current_subst) {
-                                    current_subst = s2;
-                                    if let Some(s3) = unify(&args[3], &fact_x, &current_subst) {
-                                        current_subst = s3;
+                            let current_subst = subst.clone();
+                            if let Some(current_subst) = unify(&args[1], &fact_idx, &current_subst) {
+                                if let Some(current_subst) = unify(&args[2], &fact_type, &current_subst) {
+                                    if let Some(current_subst) = unify(&args[3], &fact_x, &current_subst) {
                                         if let Some(s4) = unify(&args[4], &fact_y, &current_subst) {
                                             solve(
                                                 remaining_goals,
@@ -1296,20 +1293,16 @@ fn check_dynamic_predicates(
                                         let fact_nx = Value::Int(nx as i64);
                                         let fact_ny = Value::Int(ny as i64);
 
-                                        let mut current_subst = subst.clone();
-                                        if let Some(s1) = unify(arg_x, &fact_x, &current_subst) {
-                                            current_subst = s1;
-                                            if let Some(s2) = unify(arg_y, &fact_y, &current_subst)
+                                        let current_subst = subst.clone();
+                                        if let Some(current_subst) = unify(arg_x, &fact_x, &current_subst) {
+                                            if let Some(current_subst) = unify(arg_y, &fact_y, &current_subst)
                                             {
-                                                current_subst = s2;
-                                                if let Some(s3) =
+                                                if let Some(current_subst) =
                                                     unify(arg_dir, &fact_dir, &current_subst)
                                                 {
-                                                    current_subst = s3;
-                                                    if let Some(s4) =
+                                                    if let Some(current_subst) =
                                                         unify(arg_nx, &fact_nx, &current_subst)
                                                     {
-                                                        current_subst = s4;
                                                         if let Some(s5) =
                                                             unify(arg_ny, &fact_ny, &current_subst)
                                                         {
@@ -1344,7 +1337,7 @@ fn check_dynamic_predicates(
                             let fact_name = Value::Str(op_name.clone());
                             let fact_val = Value::Str(op_name); // For now, Val is same as Name
 
-                            let mut current_subst = subst.clone();
+                            let current_subst = subst.clone();
                             if let Some(s1) = unify(arg_name, &fact_name, &current_subst) {
                                 if let Some(s2) = unify(arg_val, &fact_val, &s1) {
                                     solve(remaining_goals, s2, kb, vm, solutions, depth + 1);
@@ -1368,7 +1361,7 @@ fn check_dynamic_predicates(
                                 let op_name = gene.op.to_string();
                                 let fact_op = Value::Str(op_name);
 
-                                let mut current_subst = subst.clone();
+                                let current_subst = subst.clone();
                                 if let Some(s1) = unify(arg_strand, &fact_strand, &current_subst) {
                                     if let Some(s2) = unify(arg_op, &fact_op, &s1) {
                                         solve(remaining_goals, s2, kb, vm, solutions, depth + 1);
