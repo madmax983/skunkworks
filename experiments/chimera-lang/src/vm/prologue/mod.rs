@@ -5,6 +5,8 @@ use std::collections::{HashMap, HashSet, VecDeque};
 
 pub mod quantum;
 pub mod teleport;
+#[cfg(feature = "nova")]
+pub mod chronos;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PrologueAgent {
@@ -99,6 +101,9 @@ impl PrologueState {
                             | "m"
                             | "{"
                             | "}"
+                            | "s"
+                            | "g"
+                            | "r"
                     ) {
                         self.runes.insert((y, x));
 
@@ -1044,6 +1049,10 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                     }
                 }
             }
+        }
+        "s" | "g" | "r" => {
+            #[cfg(feature = "nova")]
+            chronos::apply_chronos_sink(vm, rune, y, x);
         }
         _ => {}
     }

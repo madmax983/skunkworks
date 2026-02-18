@@ -11828,7 +11828,7 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                         style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD)
                     }
                     "q" | "m" => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD | Modifier::UNDERLINED),
-                    "{" | "}" => style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD | Modifier::ITALIC),
+                    "{" | "}" | "s" | "g" | "r" => style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD | Modifier::ITALIC),
                     _ => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
                 }
             } else {
