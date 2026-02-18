@@ -81,6 +81,12 @@ impl PrologueState {
                             | "X"
                             | "Z"
                             | "H"
+                            | "["
+                            | "]"
+                            | "U"
+                            | "V"
+                            | "F"
+                            | "T"
                     ) {
                         self.runes.insert((y, x));
 
@@ -202,213 +208,42 @@ fn apply_propagation_rune(
     ether: &mut HashMap<i64, VecDeque<Value>>,
     registers: &mut HashMap<(usize, usize), Value>,
 ) -> bool {
-    let mut changes = false;
+    if apply_topology_runes(rune, y, x, current_signals, next_signals, next_delayed) {
+        return true;
+    }
+    if apply_math_runes(rune, y, x, current_signals, next_signals) {
+        return true;
+    }
+    if apply_logic_runes(rune, y, x, current_signals, next_signals) {
+        return true;
+    }
+    if apply_io_runes(rune, y, x, tick, current_signals, next_signals, ether, registers) {
+        return true;
+    }
+    if apply_list_runes(rune, y, x, current_signals, next_signals) {
+        return true;
+    }
+    false
+}
 
+fn apply_topology_runes(
+    rune: &str,
+    y: usize,
+    x: usize,
+    current_signals: &[Vec<Option<Value>>],
+    next_signals: &mut Vec<Vec<Option<Value>>>,
+    next_delayed: &mut Vec<Vec<Option<Value>>>,
+) -> bool {
+    let mut changes = false;
     match rune {
         "~" => {
             // Wires: OR of all neighbors
-            // Propagate signal FROM neighbors TO here
             let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
             for (dy, dx) in neighbors {
                 if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
                     if let Some(sig) = &current_signals[ny][nx] {
                         if next_signals[y][x].is_none() {
                             next_signals[y][x] = Some(sig.clone());
-                            changes = true;
-                        }
-                    }
-                }
-            }
-        }
-        "A" => {
-            // Add
-            if let (Some((wy, wx)), Some((ey, ex))) = (
-                normalize_coords(y as i64, x as i64 - 1),
-                normalize_coords(y as i64, x as i64 + 1),
-            ) {
-                let w_sig = &current_signals[wy][wx];
-                let e_sig = &current_signals[ey][ex];
-                if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
-                    if next_signals[y][x].is_none() {
-                        next_signals[y][x] = Some(Value::Int(w.wrapping_add(*e)));
-                        changes = true;
-                    }
-                }
-            }
-        }
-        "B" => {
-            // Sub (B)
-            if let (Some((wy, wx)), Some((ey, ex))) = (
-                normalize_coords(y as i64, x as i64 - 1),
-                normalize_coords(y as i64, x as i64 + 1),
-            ) {
-                let w_sig = &current_signals[wy][wx];
-                let e_sig = &current_signals[ey][ex];
-                if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
-                    if next_signals[y][x].is_none() {
-                        next_signals[y][x] = Some(Value::Int(w.wrapping_sub(*e)));
-                        changes = true;
-                    }
-                }
-            }
-        }
-        "P" => {
-            // Product (Mul)
-            if let (Some((wy, wx)), Some((ey, ex))) = (
-                normalize_coords(y as i64, x as i64 - 1),
-                normalize_coords(y as i64, x as i64 + 1),
-            ) {
-                let w_sig = &current_signals[wy][wx];
-                let e_sig = &current_signals[ey][ex];
-                if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
-                    if next_signals[y][x].is_none() {
-                        next_signals[y][x] = Some(Value::Int(w.wrapping_mul(*e)));
-                        changes = true;
-                    }
-                }
-            }
-        }
-        "Q" => {
-            // Quotient (Div)
-            if let (Some((wy, wx)), Some((ey, ex))) = (
-                normalize_coords(y as i64, x as i64 - 1),
-                normalize_coords(y as i64, x as i64 + 1),
-            ) {
-                let w_sig = &current_signals[wy][wx];
-                let e_sig = &current_signals[ey][ex];
-                if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
-                    if *e != 0 {
-                        if next_signals[y][x].is_none() {
-                            next_signals[y][x] = Some(Value::Int(w.wrapping_div(*e)));
-                            changes = true;
-                        }
-                    }
-                }
-            }
-        }
-        "=" => {
-            // Eq
-            if let (Some((wy, wx)), Some((ey, ex))) = (
-                normalize_coords(y as i64, x as i64 - 1),
-                normalize_coords(y as i64, x as i64 + 1),
-            ) {
-                let w_sig = &current_signals[wy][wx];
-                let e_sig = &current_signals[ey][ex];
-                if let (Some(w), Some(e)) = (w_sig, e_sig) {
-                    if next_signals[y][x].is_none() {
-                        next_signals[y][x] = Some(Value::Int(if w == e { 1 } else { 0 }));
-                        changes = true;
-                    }
-                }
-            }
-        }
-        ">" => {
-            // Gt
-            if let (Some((wy, wx)), Some((ey, ex))) = (
-                normalize_coords(y as i64, x as i64 - 1),
-                normalize_coords(y as i64, x as i64 + 1),
-            ) {
-                let w_sig = &current_signals[wy][wx];
-                let e_sig = &current_signals[ey][ex];
-                if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
-                    if next_signals[y][x].is_none() {
-                        next_signals[y][x] = Some(Value::Int(if w > e { 1 } else { 0 }));
-                        changes = true;
-                    }
-                }
-            }
-        }
-        "<" => {
-            // Lt
-            if let (Some((wy, wx)), Some((ey, ex))) = (
-                normalize_coords(y as i64, x as i64 - 1),
-                normalize_coords(y as i64, x as i64 + 1),
-            ) {
-                let w_sig = &current_signals[wy][wx];
-                let e_sig = &current_signals[ey][ex];
-                if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
-                    if next_signals[y][x].is_none() {
-                        next_signals[y][x] = Some(Value::Int(if w < e { 1 } else { 0 }));
-                        changes = true;
-                    }
-                }
-            }
-        }
-        "&" => {
-            // AND: West AND East -> Output Self (to be picked up by South wire/sink)
-            // Inputs:
-            if let (Some((wy, wx)), Some((ey, ex))) = (
-                normalize_coords(y as i64, x as i64 - 1),
-                normalize_coords(y as i64, x as i64 + 1),
-            ) {
-                let w_sig = &current_signals[wy][wx];
-                let e_sig = &current_signals[ey][ex];
-
-                if w_sig.is_some() && e_sig.is_some() {
-                    // Output 1 (True)
-                    if next_signals[y][x].is_none() {
-                        next_signals[y][x] = Some(Value::Int(1));
-                        changes = true;
-                    }
-                }
-            }
-        }
-        "|" => {
-            // OR: West OR East -> Output Self
-            let mut active = false;
-            if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
-                if current_signals[wy][wx].is_some() {
-                    active = true;
-                }
-            }
-            if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
-                if current_signals[ey][ex].is_some() {
-                    active = true;
-                }
-            }
-
-            if active {
-                if next_signals[y][x].is_none() {
-                    next_signals[y][x] = Some(Value::Int(1));
-                    changes = true;
-                }
-            }
-        }
-        "+" => {
-            // XOR: West XOR East -> Output Self
-            let mut w_active = false;
-            let mut e_active = false;
-            if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
-                if current_signals[wy][wx].is_some() {
-                    w_active = true;
-                }
-            }
-            if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
-                if current_signals[ey][ex].is_some() {
-                    e_active = true;
-                }
-            }
-
-            if w_active ^ e_active {
-                if next_signals[y][x].is_none() {
-                    next_signals[y][x] = Some(Value::Int(1));
-                    changes = true;
-                }
-            }
-        }
-        "%" => {
-            // Modulo: West % East -> Output Self
-            if let (Some((wy, wx)), Some((ey, ex))) = (
-                normalize_coords(y as i64, x as i64 - 1),
-                normalize_coords(y as i64, x as i64 + 1),
-            ) {
-                let w_sig = &current_signals[wy][wx];
-                let e_sig = &current_signals[ey][ex];
-
-                if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
-                    if *e != 0 {
-                        if next_signals[y][x].is_none() {
-                            next_signals[y][x] = Some(Value::Int(w % e));
                             changes = true;
                         }
                     }
@@ -422,7 +257,6 @@ fn apply_propagation_rune(
                 normalize_coords(y as i64, x as i64 + 1),
             ) {
                 if let Some(sig) = &current_signals[wy][wx] {
-                    // Propagate to East
                     if next_signals[ey][ex].is_none() {
                         next_signals[ey][ex] = Some(sig.clone());
                         changes = true;
@@ -431,7 +265,7 @@ fn apply_propagation_rune(
             }
         }
         "*" => {
-            // Splitter: Input North -> Output Self (which distributes to others)
+            // Splitter: Input North -> Output Self
             if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
                 if let Some(sig) = &current_signals[ny][nx] {
                     if next_signals[y][x].is_none() {
@@ -442,8 +276,7 @@ fn apply_propagation_rune(
             }
         }
         "#" => {
-            // Delay: Input North -> Output to next_delayed (for next tick)
-            // Does NOT output to current signal_grid (so it blocks flow for this tick)
+            // Delay: Input North -> Output to next_delayed
             if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
                 if let Some(sig) = &current_signals[ny][nx] {
                     if next_delayed[y][x].is_none() {
@@ -452,117 +285,265 @@ fn apply_propagation_rune(
                 }
             }
         }
+        _ => {}
+    }
+    changes
+}
+
+fn apply_math_runes(
+    rune: &str,
+    y: usize,
+    x: usize,
+    current_signals: &[Vec<Option<Value>>],
+    next_signals: &mut Vec<Vec<Option<Value>>>,
+) -> bool {
+    let mut changes = false;
+    let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+        current_signals[wy][wx].clone()
+    } else {
+        None
+    };
+    let e_sig = if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
+        current_signals[ey][ex].clone()
+    } else {
+        None
+    };
+
+    match rune {
+        "A" => {
+            if let (Some(Value::Int(w)), Some(Value::Int(e))) = (&w_sig, &e_sig) {
+                if next_signals[y][x].is_none() {
+                    next_signals[y][x] = Some(Value::Int(w.wrapping_add(*e)));
+                    changes = true;
+                }
+            }
+        }
+        "B" => {
+            if let (Some(Value::Int(w)), Some(Value::Int(e))) = (&w_sig, &e_sig) {
+                if next_signals[y][x].is_none() {
+                    next_signals[y][x] = Some(Value::Int(w.wrapping_sub(*e)));
+                    changes = true;
+                }
+            }
+        }
+        "P" => {
+            if let (Some(Value::Int(w)), Some(Value::Int(e))) = (&w_sig, &e_sig) {
+                if next_signals[y][x].is_none() {
+                    next_signals[y][x] = Some(Value::Int(w.wrapping_mul(*e)));
+                    changes = true;
+                }
+            }
+        }
+        "Q" => {
+            if let (Some(Value::Int(w)), Some(Value::Int(e))) = (&w_sig, &e_sig) {
+                if *e != 0 {
+                    if next_signals[y][x].is_none() {
+                        next_signals[y][x] = Some(Value::Int(w.wrapping_div(*e)));
+                        changes = true;
+                    }
+                }
+            }
+        }
+        "=" => {
+            if let (Some(w), Some(e)) = (&w_sig, &e_sig) {
+                if next_signals[y][x].is_none() {
+                    next_signals[y][x] = Some(Value::Int(if w == e { 1 } else { 0 }));
+                    changes = true;
+                }
+            }
+        }
+        ">" => {
+            if let (Some(Value::Int(w)), Some(Value::Int(e))) = (&w_sig, &e_sig) {
+                if next_signals[y][x].is_none() {
+                    next_signals[y][x] = Some(Value::Int(if w > e { 1 } else { 0 }));
+                    changes = true;
+                }
+            }
+        }
+        "<" => {
+            if let (Some(Value::Int(w)), Some(Value::Int(e))) = (&w_sig, &e_sig) {
+                if next_signals[y][x].is_none() {
+                    next_signals[y][x] = Some(Value::Int(if w < e { 1 } else { 0 }));
+                    changes = true;
+                }
+            }
+        }
+        "%" => {
+            if let (Some(Value::Int(w)), Some(Value::Int(e))) = (&w_sig, &e_sig) {
+                if *e != 0 {
+                    if next_signals[y][x].is_none() {
+                        next_signals[y][x] = Some(Value::Int(w % e));
+                        changes = true;
+                    }
+                }
+            }
+        }
+        _ => {}
+    }
+    changes
+}
+
+fn apply_logic_runes(
+    rune: &str,
+    y: usize,
+    x: usize,
+    current_signals: &[Vec<Option<Value>>],
+    next_signals: &mut Vec<Vec<Option<Value>>>,
+) -> bool {
+    let mut changes = false;
+    let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+        current_signals[wy][wx].clone()
+    } else {
+        None
+    };
+    let e_sig = if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
+        current_signals[ey][ex].clone()
+    } else {
+        None
+    };
+
+    match rune {
+        "&" => {
+            if w_sig.is_some() && e_sig.is_some() {
+                if next_signals[y][x].is_none() {
+                    next_signals[y][x] = Some(Value::Int(1));
+                    changes = true;
+                }
+            }
+        }
+        "|" => {
+            if w_sig.is_some() || e_sig.is_some() {
+                if next_signals[y][x].is_none() {
+                    next_signals[y][x] = Some(Value::Int(1));
+                    changes = true;
+                }
+            }
+        }
+        "+" => {
+            // XOR
+            if w_sig.is_some() ^ e_sig.is_some() {
+                if next_signals[y][x].is_none() {
+                    next_signals[y][x] = Some(Value::Int(1));
+                    changes = true;
+                }
+            }
+        }
         "I" => {
             // If: West (Condition) != 0 -> Output North (Value) to Self
-            if let (Some((wy, wx)), Some((ny, nx))) = (
-                normalize_coords(y as i64, x as i64 - 1),
-                normalize_coords(y as i64 - 1, x as i64),
-            ) {
-                let w_sig = &current_signals[wy][wx];
-                let n_sig = &current_signals[ny][nx];
+            // Need N input too
+            let n_sig = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+                current_signals[ny][nx].clone()
+            } else {
+                None
+            };
 
-                if let Some(Value::Int(cond)) = w_sig {
-                    if *cond != 0 {
-                        if let Some(val) = n_sig {
-                            if next_signals[y][x].is_none() {
-                                next_signals[y][x] = Some(val.clone());
-                                changes = true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        "L" => {
-            // Listen: West (Channel) -> Pop from Ether -> Output Self
-            if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
-                if let Some(Value::Int(channel)) = &current_signals[wy][wx] {
-                    if next_signals[y][x].is_none() {
-                        if let Some(queue) = ether.get_mut(channel) {
-                            if let Some(val) = queue.pop_front() {
-                                next_signals[y][x] = Some(val);
-                                changes = true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        "C" => {
-            // Clock: West (Mod) -> Self (Tick % Mod)
-            if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
-                if let Some(Value::Int(m)) = &current_signals[wy][wx] {
-                    if *m > 0 {
-                        let val = tick % (*m as u64);
+            if let Some(Value::Int(cond)) = w_sig {
+                if cond != 0 {
+                    if let Some(val) = n_sig {
                         if next_signals[y][x].is_none() {
-                            next_signals[y][x] = Some(Value::Int(val as i64));
+                            next_signals[y][x] = Some(val);
                             changes = true;
                         }
                     }
                 }
             }
         }
+        _ => {}
+    }
+    changes
+}
+
+#[allow(clippy::too_many_arguments)]
+fn apply_io_runes(
+    rune: &str,
+    y: usize,
+    x: usize,
+    tick: u64,
+    current_signals: &[Vec<Option<Value>>],
+    next_signals: &mut Vec<Vec<Option<Value>>>,
+    ether: &mut HashMap<i64, VecDeque<Value>>,
+    registers: &mut HashMap<(usize, usize), Value>,
+) -> bool {
+    let mut changes = false;
+    let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+        current_signals[wy][wx].clone()
+    } else {
+        None
+    };
+
+    match rune {
+        "L" => {
+            if let Some(Value::Int(channel)) = w_sig {
+                if next_signals[y][x].is_none() {
+                    if let Some(queue) = ether.get_mut(&channel) {
+                        if let Some(val) = queue.pop_front() {
+                            next_signals[y][x] = Some(val);
+                            changes = true;
+                        }
+                    }
+                }
+            }
+        }
+        "C" => {
+            if let Some(Value::Int(m)) = w_sig {
+                if m > 0 {
+                    let val = tick % (m as u64);
+                    if next_signals[y][x].is_none() {
+                        next_signals[y][x] = Some(Value::Int(val as i64));
+                        changes = true;
+                    }
+                }
+            }
+        }
         "N" => {
-            // North Emitter: West -> North
-            if let (Some((wy, wx)), Some((ny, nx))) = (
-                normalize_coords(y as i64, x as i64 - 1),
-                normalize_coords(y as i64 - 1, x as i64),
-            ) {
-                if let Some(sig) = &current_signals[wy][wx] {
+            // West -> North
+            if let Some(sig) = w_sig {
+                if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
                     if next_signals[ny][nx].is_none() {
-                        next_signals[ny][nx] = Some(sig.clone());
+                        next_signals[ny][nx] = Some(sig);
                         changes = true;
                     }
                 }
             }
         }
         "S" => {
-            // South Emitter: West -> South
-            if let (Some((wy, wx)), Some((sy, sx))) = (
-                normalize_coords(y as i64, x as i64 - 1),
-                normalize_coords(y as i64 + 1, x as i64),
-            ) {
-                if let Some(sig) = &current_signals[wy][wx] {
+            // West -> South
+            if let Some(sig) = w_sig {
+                if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
                     if next_signals[sy][sx].is_none() {
-                        next_signals[sy][sx] = Some(sig.clone());
+                        next_signals[sy][sx] = Some(sig);
                         changes = true;
                     }
                 }
             }
         }
         "E" => {
-            // East Emitter: West -> East
-            if let (Some((wy, wx)), Some((ey, ex))) = (
-                normalize_coords(y as i64, x as i64 - 1),
-                normalize_coords(y as i64, x as i64 + 1),
-            ) {
-                if let Some(sig) = &current_signals[wy][wx] {
+            // West -> East
+            if let Some(sig) = w_sig {
+                if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
                     if next_signals[ey][ex].is_none() {
-                        next_signals[ey][ex] = Some(sig.clone());
+                        next_signals[ey][ex] = Some(sig);
                         changes = true;
                     }
                 }
             }
         }
         "W" => {
-            // West Emitter: East -> West
-            if let (Some((ey, ex)), Some((wy, wx))) = (
-                normalize_coords(y as i64, x as i64 + 1),
-                normalize_coords(y as i64, x as i64 - 1),
-            ) {
+            // East -> West
+            if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
                 if let Some(sig) = &current_signals[ey][ex] {
-                    if next_signals[wy][wx].is_none() {
-                        next_signals[wy][wx] = Some(sig.clone());
-                        changes = true;
+                    if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+                        if next_signals[wy][wx].is_none() {
+                            next_signals[wy][wx] = Some(sig.clone());
+                            changes = true;
+                        }
                     }
                 }
             }
         }
         "K" => {
-            // Chaos: Emit random value to all neighbors
             let mut rng = rand::thread_rng();
             let val = Value::Int(rng.gen_range(0..100));
-
             let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
             for (dy, dx) in neighbors {
                 if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
@@ -574,14 +555,12 @@ fn apply_propagation_rune(
             }
         }
         "R" => {
-            // Register: West (Write), North (Read -> South)
-            // Write
-            if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
-                if let Some(sig) = &current_signals[wy][wx] {
-                    registers.insert((y, x), sig.clone());
-                }
+            // Register
+            // Write (West)
+            if let Some(sig) = w_sig {
+                registers.insert((y, x), sig);
             }
-            // Read
+            // Read (North)
             if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
                 if current_signals[ny][nx].is_some() {
                     if let Some(val) = registers.get(&(y, x)) {
@@ -596,14 +575,12 @@ fn apply_propagation_rune(
             }
         }
         "Z" => {
-            // Zeitgeist: Emits Time Signal
             use std::time::{SystemTime, UNIX_EPOCH};
             let start = SystemTime::now();
             let since_the_epoch = start
                 .duration_since(UNIX_EPOCH)
                 .expect("Time went backwards");
             let val = Value::Int((since_the_epoch.as_secs() % 100) as i64);
-
             let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
             for (dy, dx) in neighbors {
                 if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
@@ -611,6 +588,146 @@ fn apply_propagation_rune(
                         next_signals[ny][nx] = Some(val.clone());
                         changes = true;
                     }
+                }
+            }
+        }
+        _ => {}
+    }
+    changes
+}
+
+fn apply_list_runes(
+    rune: &str,
+    y: usize,
+    x: usize,
+    current_signals: &[Vec<Option<Value>>],
+    next_signals: &mut Vec<Vec<Option<Value>>>,
+) -> bool {
+    let mut changes = false;
+    let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+        current_signals[wy][wx].clone()
+    } else {
+        None
+    };
+
+    match rune {
+        "[" => {
+            // Collect: N, E, S, W -> Junction
+            let mut items = Vec::new();
+            // Clockwise from North
+            let neighbors = [(-1, 0), (0, 1), (1, 0), (0, -1)]; // N E S W
+            for (dy, dx) in neighbors {
+                if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    if let Some(sig) = &current_signals[ny][nx] {
+                        items.push(sig.clone());
+                    }
+                }
+            }
+            if !items.is_empty() {
+                if next_signals[y][x].is_none() {
+                    next_signals[y][x] = Some(Value::Junction(crate::ast::JunctionType::Any, items));
+                    changes = true;
+                }
+            }
+        }
+        "]" => {
+            // Scatter: West (Junction) -> N, E, S
+            if let Some(Value::Junction(_, items)) = w_sig {
+                // Distribute items
+                // Item 0 -> N
+                if items.len() > 0 {
+                    if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+                        if next_signals[ny][nx].is_none() {
+                            next_signals[ny][nx] = Some(items[0].clone());
+                            changes = true;
+                        }
+                    }
+                }
+                // Item 1 -> E
+                if items.len() > 1 {
+                    if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
+                        if next_signals[ey][ex].is_none() {
+                            next_signals[ey][ex] = Some(items[1].clone());
+                            changes = true;
+                        }
+                    }
+                }
+                // Item 2 -> S
+                if items.len() > 2 {
+                    if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
+                        if next_signals[sy][sx].is_none() {
+                            next_signals[sy][sx] = Some(items[2].clone());
+                            changes = true;
+                        }
+                    }
+                }
+            }
+        }
+        "U" => {
+            // Unwrap (Head): West -> Self
+            if let Some(Value::Junction(_, items)) = w_sig {
+                if let Some(head) = items.first() {
+                    if next_signals[y][x].is_none() {
+                        next_signals[y][x] = Some(head.clone());
+                        changes = true;
+                    }
+                }
+            }
+        }
+        "V" => {
+            // Vector (Tail): West -> Self
+            if let Some(Value::Junction(t, items)) = w_sig {
+                if items.len() > 1 {
+                    let tail = items[1..].to_vec();
+                    if next_signals[y][x].is_none() {
+                        next_signals[y][x] = Some(Value::Junction(t, tail));
+                        changes = true;
+                    }
+                }
+            }
+        }
+        "F" => {
+            // Filter: West (List), North (Mask) -> Self
+            let n_sig = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+                current_signals[ny][nx].clone()
+            } else {
+                None
+            };
+
+            if let (Some(Value::Junction(t, items)), Some(mask)) = (w_sig, n_sig) {
+                // How does mask work?
+                // If mask is Int(1), pass all?
+                // If mask is a Junction of booleans?
+                // Or maybe mask is just "Truthiness"?
+                // Let's implement: If Mask is truthy, pass list? No that's trivial.
+                // Maybe F applies a filter logic... but we don't have lambdas here easily.
+                // Let's make it simple: Filter by Type? Or Filter non-empty?
+
+                // Let's make it: Filter out items equal to Mask.
+                // Or: Keep items equal to Mask?
+                // Let's say: Remove items equal to Mask.
+
+                let filtered: Vec<Value> = items.into_iter().filter(|v| *v != mask).collect();
+                if next_signals[y][x].is_none() {
+                    next_signals[y][x] = Some(Value::Junction(t, filtered));
+                    changes = true;
+                }
+            }
+        }
+        "T" => {
+            // Take: West (List), North (Count) -> Self
+            let n_sig = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+                current_signals[ny][nx].clone()
+            } else {
+                None
+            };
+
+            if let (Some(Value::Junction(t, items)), Some(Value::Int(n))) = (w_sig, n_sig) {
+                let count = n.max(0) as usize;
+                let taken: Vec<Value> = items.into_iter().take(count).collect();
+                if next_signals[y][x].is_none() {
+                    next_signals[y][x] = Some(Value::Junction(t, taken));
+                    changes = true;
                 }
             }
         }
