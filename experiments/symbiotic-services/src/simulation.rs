@@ -1,12 +1,12 @@
-use macroquad::prelude::*;
 use ::rand::prelude::*;
+use macroquad::prelude::*;
 
 #[derive(Clone, Copy)]
 pub struct ServiceNode {
     pub pos: Vec2,
-    pub load: f32,      // 0.0 to 1.0 (Current traffic)
-    pub capacity: f32,  // Max load before stress
-    pub health: f32,    // 0.0 to 1.0 (1.0 = Healthy)
+    pub load: f32,     // 0.0 to 1.0 (Current traffic)
+    pub capacity: f32, // Max load before stress
+    pub health: f32,   // 0.0 to 1.0 (1.0 = Healthy)
     pub radius: f32,
     pub is_gateway: bool,
 }
@@ -98,7 +98,9 @@ impl World {
 
         // For each node, if it's not connected, try to connect it
         for (i, node) in self.nodes.iter().enumerate() {
-            if node.is_gateway { continue; }
+            if node.is_gateway {
+                continue;
+            }
 
             let mut connected = false;
             for hypha in &self.hyphae {
@@ -143,33 +145,35 @@ impl World {
         // 3. Traffic Simulation
         // Spawn particles at Gateway if there is load
         if rng.gen_bool(0.1) {
-             let mut gateway_pos = None;
-             let mut should_spawn = false;
+            let mut gateway_pos = None;
+            let mut should_spawn = false;
 
-             if let Some(gateway) = self.nodes.iter().find(|n| n.is_gateway) {
-                 if gateway.load > 10.0 {
-                     gateway_pos = Some(gateway.pos);
-                     should_spawn = true;
-                 }
-             }
+            if let Some(gateway) = self.nodes.iter().find(|n| n.is_gateway) {
+                if gateway.load > 10.0 {
+                    gateway_pos = Some(gateway.pos);
+                    should_spawn = true;
+                }
+            }
 
-             if should_spawn && self.nodes.len() > 1 {
-                 if let Some(start_pos) = gateway_pos {
-                     let target_idx = rng.gen_range(1..self.nodes.len());
-                     let target = self.nodes[target_idx].pos;
-                     self.particles.push(TrafficParticle {
-                         pos: start_pos,
-                         target,
-                         speed: 200.0,
-                         active: true,
-                     });
-                 }
-             }
+            if should_spawn && self.nodes.len() > 1 {
+                if let Some(start_pos) = gateway_pos {
+                    let target_idx = rng.gen_range(1..self.nodes.len());
+                    let target = self.nodes[target_idx].pos;
+                    self.particles.push(TrafficParticle {
+                        pos: start_pos,
+                        target,
+                        speed: 200.0,
+                        active: true,
+                    });
+                }
+            }
         }
 
         // Move particles
         for p in &mut self.particles {
-            if !p.active { continue; }
+            if !p.active {
+                continue;
+            }
             let dir = (p.target - p.pos).normalize_or_zero();
             p.pos += dir * p.speed * dt;
 
@@ -200,11 +204,16 @@ impl World {
 
         // 4. Autoscaling (Spawn new nodes if system is stressed)
         let total_load: f32 = self.nodes.iter().map(|n| n.load).sum();
-        let avg_load = if self.nodes.is_empty() { 0.0 } else { total_load / self.nodes.len() as f32 };
+        let avg_load = if self.nodes.is_empty() {
+            0.0
+        } else {
+            total_load / self.nodes.len() as f32
+        };
 
         // Find stressed node position without holding a borrow
         let stressed_pos = if avg_load > 50.0 && self.nodes.len() < 100 && rng.gen_bool(0.05) {
-            self.nodes.iter()
+            self.nodes
+                .iter()
                 .max_by_key(|n| (n.load * 100.0) as i32)
                 .map(|n| n.pos)
         } else {
@@ -212,15 +221,18 @@ impl World {
         };
 
         if let Some(pos) = stressed_pos {
-             let angle = rng.gen_range(0.0..std::f32::consts::TAU);
-             let dist = rng.gen_range(50.0..150.0);
-             let offset = vec2(angle.cos(), angle.sin()) * dist;
-             let new_pos = pos + offset;
+            let angle = rng.gen_range(0.0..std::f32::consts::TAU);
+            let dist = rng.gen_range(50.0..150.0);
+            let offset = vec2(angle.cos(), angle.sin()) * dist;
+            let new_pos = pos + offset;
 
-             // Keep in bounds
-             let new_pos = new_pos.clamp(vec2(10.0, 10.0), vec2(self.width - 10.0, self.height - 10.0));
+            // Keep in bounds
+            let new_pos = new_pos.clamp(
+                vec2(10.0, 10.0),
+                vec2(self.width - 10.0, self.height - 10.0),
+            );
 
-             self.nodes.push(ServiceNode::new(new_pos, false));
+            self.nodes.push(ServiceNode::new(new_pos, false));
         }
     }
 

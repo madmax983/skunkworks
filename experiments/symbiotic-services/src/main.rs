@@ -46,8 +46,10 @@ async fn main() {
             // For now just white lines
             let alpha = (hypha.width / 5.0).clamp(0.2, 0.8);
             draw_line(
-                hypha.start.x, hypha.start.y,
-                hypha.end.x, hypha.end.y,
+                hypha.start.x,
+                hypha.start.y,
+                hypha.end.x,
+                hypha.end.y,
                 hypha.width,
                 Color::new(0.8, 0.8, 0.9, alpha),
             );
@@ -69,10 +71,10 @@ async fn main() {
                 Color::new(0.2, 0.8, 1.0, 1.0) // Cyan for Gateway
             } else {
                 Color::new(
-                    load_ratio,           // R increases with load
-                    1.0 - load_ratio,     // G decreases with load
-                    0.2,                  // B constant
-                    1.0
+                    load_ratio,       // R increases with load
+                    1.0 - load_ratio, // G decreases with load
+                    0.2,              // B constant
+                    1.0,
                 )
             };
 
@@ -86,9 +88,27 @@ async fn main() {
 
         // UI Overlay
         draw_text("Symbiotic Services", 20.0, 30.0, 30.0, WHITE);
-        draw_text("Space: Spawn Node | Click: Add Traffic", 20.0, 60.0, 20.0, GRAY);
-        draw_text(&format!("Nodes: {}", world.nodes.len()), 20.0, 90.0, 20.0, GRAY);
-        draw_text(&format!("Connections: {}", world.hyphae.len()), 20.0, 120.0, 20.0, GRAY);
+        draw_text(
+            "Space: Spawn Node | Click: Add Traffic",
+            20.0,
+            60.0,
+            20.0,
+            GRAY,
+        );
+        draw_text(
+            &format!("Nodes: {}", world.nodes.len()),
+            20.0,
+            90.0,
+            20.0,
+            GRAY,
+        );
+        draw_text(
+            &format!("Connections: {}", world.hyphae.len()),
+            20.0,
+            120.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }

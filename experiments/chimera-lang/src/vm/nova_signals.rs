@@ -1415,11 +1415,7 @@ fn exec_jumper(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalC
     // Jumper: Reads West, Writes East
     if let Some(val) = peek_value(vm, y, x, 0, -1) {
         if let Some((ey, ex)) = vm.normalize_coords(y as i64, x as i64 + 1) {
-            ctx.grid_writes.push(GridWrite {
-                y: ey,
-                x: ex,
-                val,
-            });
+            ctx.grid_writes.push(GridWrite { y: ey, x: ex, val });
         }
     }
 }
@@ -1429,10 +1425,7 @@ fn exec_warp(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalCon
         return;
     }
     // Warp: Swap North and South
-    if let (Some(n_val), Some(s_val)) = (
-        peek_value(vm, y, x, -1, 0),
-        peek_value(vm, y, x, 1, 0),
-    ) {
+    if let (Some(n_val), Some(s_val)) = (peek_value(vm, y, x, -1, 0), peek_value(vm, y, x, 1, 0)) {
         if let Some((ny, nx)) = vm.normalize_coords(y as i64 - 1, x as i64) {
             ctx.grid_writes.push(GridWrite {
                 y: ny,
