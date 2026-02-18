@@ -55,17 +55,11 @@ mod tests {
 
         println!("Strand count: {}", vm.dna.helix.strands.len());
 
-        // If we crossed the threshold, we proved the vulnerability.
-        // Ideally we would crash it, but creating a 30GB process in CI is rude.
-        // Proving it goes > 1000 without error is sufficient evidence of missing bounds.
+        // We expect the strands to be capped at MAX_STRANDS (1024).
+        // If it grows beyond that, the vulnerability exists.
         assert!(
-            vm.dna.helix.strands.len() > 1000,
-            "Failed to reproduce unbounded growth"
-        );
-
-        // Force a panic to ensure the test "fails" (Havoc wins)
-        panic!(
-            "👺 HAVOC SUCCESS: Created {} strands. No limit detected!",
+            vm.dna.helix.strands.len() <= crate::vm::MAX_STRANDS,
+            "Memory bomb exploded! Strands: {}",
             vm.dna.helix.strands.len()
         );
     }

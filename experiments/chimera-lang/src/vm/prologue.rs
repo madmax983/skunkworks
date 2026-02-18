@@ -497,10 +497,8 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                     let sig_opt = vm.prologue_state.signal_grid[ny][nx].clone();
 
                     if let Some(sig) = sig_opt {
-                        vm.output.push(format!(
-                            "PROLOGUE: Sink at {},{} received {:?}",
-                            x, y, sig
-                        ));
+                        vm.output
+                            .push(format!("PROLOGUE: Sink at {},{} received {:?}", x, y, sig));
                         vm.prologue_state.signal_grid[y][x] = Some(sig.clone()); // Light up
 
                         if let Value::Str(name) = sig {
@@ -556,16 +554,15 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
         }
         "G" => {
             // Genesis: North (Code), West (Config) -> Self (Strand Index)
-            let code_to_compile =
-                if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
-                    if let Some(Value::Str(s)) = &vm.prologue_state.signal_grid[ny][nx] {
-                        Some(s.clone())
-                    } else {
-                        None
-                    }
+            let code_to_compile = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+                if let Some(Value::Str(s)) = &vm.prologue_state.signal_grid[ny][nx] {
+                    Some(s.clone())
                 } else {
                     None
-                };
+                }
+            } else {
+                None
+            };
 
             if let Some(code) = code_to_compile {
                 match crate::compiler::compile(&code, None) {
@@ -586,16 +583,15 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
         }
         "E" => {
             // Eval: West (Code) -> Self (Result)
-            let code_to_eval =
-                if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
-                    if let Some(Value::Str(s)) = &vm.prologue_state.signal_grid[wy][wx] {
-                        Some(s.clone())
-                    } else {
-                        None
-                    }
+            let code_to_eval = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+                if let Some(Value::Str(s)) = &vm.prologue_state.signal_grid[wy][wx] {
+                    Some(s.clone())
                 } else {
                     None
-                };
+                }
+            } else {
+                None
+            };
 
             if let Some(code) = code_to_eval {
                 match crate::compiler::compile(&code, None) {

@@ -42,3 +42,7 @@
 ## 2026-04-10 - Simulation Amplification (DoS)
 **Threat:** The `OpCode::Simulate`, `OpCode::Prophecy`, and `OpCode::Dream` operations in `experiments/chimera-lang` allowed recursive execution of the VM. By chaining these calls (Branching Factor > 1), a user could trigger exponential computational work ($Cost \approx Branching^{Depth}$) while only paying linear energy cost, causing a Denial of Service (CPU Exhaustion).
 **Defense:** Introduced `MAX_SIMULATION_DEPTH` (10) constant and enforced it in `exec_simulate`, `exec_prophecy`, and `exec_dream`. This restricts the recursion depth of expensive simulation operations significantly compared to the standard `MAX_RECURSION_DEPTH` (100).
+
+## 2026-05-20 - Unbounded DNA Strand Growth (OOM DoS)
+**Threat:** `OpCode::BioHack` (Memetics), `Scavenge`, and `Digest` (Self-modification) allowed creating unbounded DNA strands by bypassing the `MAX_STRANDS` limit. A malicious genome could loop these instructions to consume infinite memory (OOM).
+**Defense:** Added explicit checks for `vm.dna.helix.strands.len() >= MAX_STRANDS` in `memetics.rs` and `mod.rs`. Introduced `warden_security_oom.rs` regression test and fixed a flawed "red team" test (`havoc_poly_crash.rs`) that incorrectly panicked on success.
