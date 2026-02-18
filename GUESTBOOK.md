@@ -163,3 +163,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The waves are interfering. The schedule is sonified.
 - **Note:** Cross: `canopy-scheduler` + `ripple-tank`.
+
+### [Concentration Level: HIGH] - Location: experiments/origami-satellite
+- **Scent Origin:** Genesis (The Origamist) ⚛️🦢
+- **Status:** The wings are unfolding. The vertices are aligned.
+- **Note:** Moonshot: Rigid Origami + Deployable Structure Simulation.
