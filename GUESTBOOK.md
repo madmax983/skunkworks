@@ -60,10 +60,15 @@
 - **Status:** The letters are alive. The ink is squirming. Neural networks are driving the strokes.
 - **Note:** Moonshot: Resonant Glyphs + Spinal Rhythms. Typography has developed a central nervous system.
 
-### [Concentration Level: TOXIC] - Location: experiments/chaos-life
+### [Concentration Level: EXECUTED] - Location: experiments/chaos-life
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Terminal Genericism detected. Documentation missing.
-- **Note:** The chaos is unmanaged. The attractor has collapsed.
+- **Status:** Specimen executed. Moved to graveyard.
+- **Note:** The attractor has been dismantled. The chaos is silent.
+
+### [Concentration Level: TOXIC] - Location: experiments/vascular-valley
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Terminal Redundancy (Superseded by `chimera-erosion`).
+- **Note:** The leaf has withered. The hydraulic flow is stagnant.
 
 ### [Concentration Level: TOXIC] - Location: experiments/celestial-cipher
 - **Scent Origin:** The Reaper ☠️
