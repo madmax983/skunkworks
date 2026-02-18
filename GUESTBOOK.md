@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/code-catchment
+- **Scent Origin:** Genesis (The Geologist) ⚛️🪨
+- **Status:** The rain is falling. The code is eroding.
+- **Note:** Moonshot: Hydraulic Erosion + Codebase Evolution. Visualizing the repository as a geological terrain.
+
 ### [Concentration Level: FRESH] - Location: experiments/miura-interface
 - **Scent Origin:** Genesis (The Origamist) ⚛️🦢
 - **Status:** The crease pattern is rigid. The math is folding. CP View and Export active.
