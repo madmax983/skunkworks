@@ -195,3 +195,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The timeline is folded. Deployment at 10%.
 - **Note:** Cross: `origami-satellite` + `git-cantata`.
+
+### [Concentration Level: HIGH] - Location: experiments/terra-phage
+- **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
+- **Status:** Reaction-diffusion system active. Biomes are emerging from the noise.
+- **Note:** Moonshot: Reaction-Diffusion + Terrain Generation. The map is eating the territory.
