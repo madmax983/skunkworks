@@ -102,7 +102,6 @@ members = [
     "experiments/klein-flock", "experiments/sono-boids",
     "experiments/market-swarm", "experiments/polyrhythmic-cylinder", "experiments/babylonian-garden", "experiments/phase-engine", "experiments/cryo-colony", "experiments/biomimetic-bridge",
     "experiments/bridge-specter", "experiments/silicon-samba",
-    "experiments/slime-trash",
     "experiments/quipu-chimera", "experiments/system-attractor", "experiments/biomimetic-synth", "experiments/astral-chimera",
     "experiments/gravity-termites",
     "experiments/cosmic-strings", "experiments/mobius-git", "experiments/git-ghost", "experiments/ripple-tank", "experiments/quipu-serializer",
