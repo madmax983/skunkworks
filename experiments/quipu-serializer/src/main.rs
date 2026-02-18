@@ -135,70 +135,96 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn render_cord_text(cord: &Cord) -> Vec<Line<'static>> {
-    let mut lines = Vec::new();
+fn map_color(c: quipu::Color) -> Color {
+    match c {
+        quipu::Color::Natural => Color::Gray,
+        quipu::Color::Red => Color::Red,
+        quipu::Color::Green => Color::Green,
+        quipu::Color::Blue => Color::Blue,
+        quipu::Color::Yellow => Color::Yellow,
+        quipu::Color::Black => Color::DarkGray,
+        quipu::Color::White => Color::White,
+    }
+}
 
+fn render_cord_text(cord: &Cord, indent_level: usize) -> Vec<Line<'static>> {
+    let mut lines = Vec::new();
+    let indent_str = "  ".repeat(indent_level);
+
+    // Color Label
+    if cord.color != quipu::Color::Natural {
+        lines.push(Line::from(vec![
+            Span::raw(indent_str.clone()),
+            Span::styled(
+                format!("[{:?}]", cord.color),
+                Style::default().fg(map_color(cord.color)),
+            ),
+        ]));
+    }
+
+    // Main Cord String
     if cord.clusters.is_empty() {
         lines.push(Line::from(vec![
+            Span::raw(indent_str.clone()),
             Span::styled("  │", Style::default().fg(Color::DarkGray)),
             Span::raw(" (empty)"),
         ]));
-        // Tail
-        lines.push(Line::from(vec![Span::styled(
-            "  ▼",
-            Style::default().fg(Color::DarkGray),
-        )]));
-        return lines;
-    }
-
-    // Display from Top (highest power) to Bottom (units)
-    // clusters[0] is units.
-    for (i, cluster) in cord.clusters.iter().enumerate().rev() {
-        // Vertical line logic
-        if cluster.is_empty() {
-            lines.push(Line::from(vec![Span::styled(
-                "  │",
-                Style::default().fg(Color::DarkGray),
-            )]));
-        } else {
+    } else {
+        // Display from Top (highest power) to Bottom (units)
+        for (i, cluster) in cord.clusters.iter().enumerate().rev() {
             let mut spans = Vec::new();
-            spans.push(Span::raw("  ")); // Indent
-            spans.push(Span::styled("│ ", Style::default().fg(Color::DarkGray)));
+            spans.push(Span::raw(indent_str.clone()));
+            spans.push(Span::raw("  ")); // Spacing for cord
 
-            for (j, knot) in cluster.iter().enumerate() {
-                let (symbol, color) = match knot {
-                    Knot::Simple => ("●".to_string(), Color::Yellow),
-                    Knot::Long(v) => (format!("≡{}", v), Color::Green),
-                    Knot::FigureEight => ("∞".to_string(), Color::Cyan),
-                };
-
-                spans.push(Span::styled(symbol, Style::default().fg(color)));
-
-                if j < cluster.len() - 1 {
-                    spans.push(Span::raw(" "));
+            if cluster.is_empty() {
+                spans.push(Span::styled("│", Style::default().fg(Color::DarkGray)));
+            } else {
+                spans.push(Span::styled("│ ", Style::default().fg(Color::DarkGray)));
+                for (j, knot) in cluster.iter().enumerate() {
+                    let (symbol, color) = match knot {
+                        Knot::Simple => ("●".to_string(), Color::Yellow),
+                        Knot::Long(v) => (format!("≡{}", v), Color::Green),
+                        Knot::FigureEight => ("∞".to_string(), Color::Cyan),
+                    };
+                    spans.push(Span::styled(symbol, Style::default().fg(color)));
+                    if j < cluster.len() - 1 {
+                        spans.push(Span::raw(" "));
+                    }
                 }
             }
             lines.push(Line::from(spans));
-        }
 
-        // Spacer between clusters
-        if i > 0 {
-            lines.push(Line::from(vec![Span::styled(
-                "  │",
-                Style::default().fg(Color::DarkGray),
-            )]));
+            // Spacer between clusters (verticality)
+            if i > 0 {
+                lines.push(Line::from(vec![
+                    Span::raw(indent_str.clone()),
+                    Span::raw("    "),
+                    Span::styled("│", Style::default().fg(Color::DarkGray)),
+                ]));
+            }
         }
     }
 
-    // Tail
-    lines.push(Line::from(vec![Span::styled(
-        "  │",
-        Style::default().fg(Color::DarkGray),
-    )]));
-    lines.push(Line::from(vec![Span::styled(
-        "  ▼",
-        Style::default().fg(Color::DarkGray),
-    )]));
+    // Tail of main cord
+    lines.push(Line::from(vec![
+        Span::raw(indent_str.clone()),
+        Span::raw("    "),
+        Span::styled("▼", Style::default().fg(Color::DarkGray)),
+    ]));
+
+    // Subsidiaries
+    if !cord.subsidiaries.is_empty() {
+        // Connector
+        lines.push(Line::from(vec![
+            Span::raw(indent_str.clone()),
+            Span::styled("  └─Subsidiaries:", Style::default().fg(Color::DarkGray)),
+        ]));
+        for sub in &cord.subsidiaries {
+            lines.extend(render_cord_text(sub, indent_level + 1));
+            // Add a spacer line between siblings?
+            lines.push(Line::from(""));
+        }
+    }
 
     lines
 }
@@ -281,7 +307,7 @@ fn render_calculator(f: &mut Frame, area: Rect, app: &App) {
         .title(format!(" Input A: {} ", app.calc_input_a));
 
     f.render_widget(
-        Paragraph::new(render_cord_text(&cord_a))
+        Paragraph::new(render_cord_text(&cord_a, 0))
             .block(block_a)
             .style(style_a),
         main_chunks[0],
@@ -308,7 +334,7 @@ fn render_calculator(f: &mut Frame, area: Rect, app: &App) {
         .border_style(border_style_b)
         .title(format!(" Input B: {} ", app.calc_input_b));
     f.render_widget(
-        Paragraph::new(render_cord_text(&cord_b))
+        Paragraph::new(render_cord_text(&cord_b, 0))
             .block(block_b)
             .style(style_b),
         main_chunks[1],
@@ -321,7 +347,7 @@ fn render_calculator(f: &mut Frame, area: Rect, app: &App) {
         .title(format!(" Sum (A+B): {} ", cord_sum.value()))
         .style(Style::default().fg(Color::Green));
     f.render_widget(
-        Paragraph::new(render_cord_text(&cord_sum)).block(block_sum),
+        Paragraph::new(render_cord_text(&cord_sum, 0)).block(block_sum),
         main_chunks[2],
     );
 
@@ -348,6 +374,10 @@ fn render_calculator(f: &mut Frame, area: Rect, app: &App) {
         Line::from(vec![
             Span::styled("│", Style::default().fg(Color::DarkGray)),
             Span::raw(" = Cord"),
+        ]),
+        Line::from(vec![
+            Span::styled("[Color]", Style::default().fg(Color::Magenta)),
+            Span::raw(" = Type/Metadata"),
         ]),
     ];
     let block_legend = Block::default().borders(Borders::ALL).title(" Guide ");
@@ -381,25 +411,20 @@ fn render_serializer(f: &mut Frame, area: Rect, app: &App) {
         .borders(Borders::ALL)
         .title(" Quipu Output ");
 
-    // Helper to render a full Quipu (multiple cords)
-    // The `Quipu` struct has `cords: Vec<Cord>`.
-    // We can render them side-by-side or just list them.
-    // For simplicity, let's just list them one after another with headers.
-
     let mut text_lines = Vec::new();
     if let Some(q) = &app.ser_output {
         text_lines.push(Line::from(Span::styled(
-            format!("Quipu with {} cords:", q.cords.len()),
+            format!("Quipu with {} pendant cord(s):", q.cords.len()),
             Style::default().add_modifier(Modifier::BOLD),
         )));
         text_lines.push(Line::from(""));
 
         for (i, cord) in q.cords.iter().enumerate() {
             text_lines.push(Line::from(Span::styled(
-                format!("Cord {}: (Value: {})", i, cord.value()),
+                format!("Pendant Cord {}: (Value: {})", i, cord.value()),
                 Style::default().fg(Color::Cyan),
             )));
-            let cord_lines = render_cord_text(cord);
+            let cord_lines = render_cord_text(cord, 0);
             text_lines.extend(cord_lines);
             text_lines.push(Line::from("")); // Spacing
         }
