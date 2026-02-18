@@ -20,9 +20,15 @@ pub struct PrologueState {
     pub rules: Vec<String>,
     pub signal_grid: Vec<Vec<Option<Value>>>,
     pub delayed_signals: Vec<Vec<Option<Value>>>,
+    #[serde(skip, default = "default_signal_grid")]
+    pub propagation_buffer: Vec<Vec<Option<Value>>>,
     pub agents: Vec<PrologueAgent>,
     pub registers: HashMap<(usize, usize), Value>,
     pub teleport_channels: HashMap<i64, Value>,
+}
+
+fn default_signal_grid() -> Vec<Vec<Option<Value>>> {
+    vec![vec![None; GRID_SIZE]; GRID_SIZE]
 }
 
 impl PrologueState {
@@ -33,6 +39,7 @@ impl PrologueState {
             rules: Vec::new(),
             signal_grid: vec![vec![None; GRID_SIZE]; GRID_SIZE],
             delayed_signals: vec![vec![None; GRID_SIZE]; GRID_SIZE],
+            propagation_buffer: vec![vec![None; GRID_SIZE]; GRID_SIZE],
             agents: Vec::new(),
             registers: HashMap::new(),
             teleport_channels: HashMap::new(),
@@ -180,9 +187,27 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &Vec<Vec<Value>>) {
     let runes: Vec<(usize, usize)> = vm.prologue_state.runes.iter().cloned().collect();
     let tick = vm.tick_counter;
 
+    let ether = &mut vm.ether;
+    let state = &mut vm.prologue_state;
+
+    // Ensure buffer size (handle potential empty buffer from deserialization)
+    if state.propagation_buffer.len() != GRID_SIZE {
+        state.propagation_buffer = vec![vec![None; GRID_SIZE]; GRID_SIZE];
+    }
+
     for _ in 0..max_iterations {
         let mut changes = false;
-        let mut next_signals = vm.prologue_state.signal_grid.clone();
+
+        state.propagation_buffer.clone_from(&state.signal_grid);
+
+        let PrologueState {
+            signal_grid,
+            propagation_buffer,
+            delayed_signals,
+            registers,
+            teleport_channels,
+            ..
+        } = state;
 
         for (y, x) in &runes {
             if let Value::Str(s) = &grid[*y][*x] {
@@ -191,18 +216,18 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &Vec<Vec<Value>>) {
                     *y,
                     *x,
                     tick,
-                    &vm.prologue_state.signal_grid,
-                    &mut next_signals,
-                    &mut vm.prologue_state.delayed_signals,
-                    &mut vm.ether,
-                    &mut vm.prologue_state.registers,
-                    &mut vm.prologue_state.teleport_channels,
+                    signal_grid,
+                    propagation_buffer,
+                    delayed_signals,
+                    ether,
+                    registers,
+                    teleport_channels,
                 ) {
                     changes = true;
                 }
             }
         }
-        vm.prologue_state.signal_grid = next_signals;
+        std::mem::swap(signal_grid, propagation_buffer);
         if !changes {
             break;
         }
