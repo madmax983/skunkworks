@@ -11773,7 +11773,16 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             if vm.prologue_state.signal_grid[y][x].is_some() {
                 style = style.fg(Color::Green).add_modifier(Modifier::BOLD);
             } else if vm.prologue_state.runes.contains(&(y, x)) {
-                style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
+                // Colorize Runes
+                match s.as_str() {
+                    "$" => style = style.fg(Color::Cyan).add_modifier(Modifier::BOLD),
+                    "M" => style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD),
+                    "O" => style = style.fg(Color::Blue).add_modifier(Modifier::BOLD),
+                    "%" => style = style.fg(Color::White).add_modifier(Modifier::BOLD),
+                    "^" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
+                    "@" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
+                    _ => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
+                }
             } else {
                 style = style.fg(Color::DarkGray);
             }
@@ -11821,6 +11830,9 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     info.push(Line::from("  ? Sink (Reads South)"));
     info.push(Line::from("  ~ Wire, & AND, | OR"));
     info.push(Line::from("  @ Agent (Moves to Signal)"));
+    info.push(Line::from("  $ Scribe (W->S), % Mod"));
+    info.push(Line::from("  M Mutate, O Organelle"));
+    info.push(Line::from("  ^ Jump (W->E)"));
 
     let info_widget = Paragraph::new(info).block(
         Block::default().borders(Borders::ALL).title("Logic Engine"),
