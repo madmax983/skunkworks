@@ -123,3 +123,111 @@ fn test_organelle_rune() {
     // Check O lit up
     assert!(vm.prologue_state.signal_grid[6][5].is_some());
 }
+
+#[test]
+fn test_arithmetic_runes() {
+    let mut vm = setup_vm();
+    // 10 -> ! -> A -> ~
+    // 20 -> ! -> ^
+    // Input West: 10
+    // Input East: 20
+    // A at 6,5.
+    // West: 6,4. East: 6,6.
+    vm.grid[5][4] = Value::Int(10);
+    vm.grid[6][4] = Value::Str("!".to_string());
+
+    vm.grid[5][6] = Value::Int(20);
+    vm.grid[6][6] = Value::Str("!".to_string());
+
+    vm.grid[6][5] = Value::Str("A".to_string());
+
+    exec_prologue_tick(&mut vm);
+
+    if let Some(Value::Int(v)) = &vm.prologue_state.signal_grid[6][5] {
+        assert_eq!(*v, 30);
+    } else {
+        panic!("Add failed");
+    }
+}
+
+#[test]
+fn test_comparison_runes() {
+    let mut vm = setup_vm();
+    // 10 = 10 -> 1
+    vm.grid[5][4] = Value::Int(10);
+    vm.grid[6][4] = Value::Str("!".to_string());
+    vm.grid[5][6] = Value::Int(10);
+    vm.grid[6][6] = Value::Str("!".to_string());
+    vm.grid[6][5] = Value::Str("=".to_string());
+
+    exec_prologue_tick(&mut vm);
+
+    if let Some(Value::Int(v)) = &vm.prologue_state.signal_grid[6][5] {
+        assert_eq!(*v, 1);
+    } else {
+        panic!("Eq failed");
+    }
+}
+
+#[test]
+fn test_if_rune() {
+    let mut vm = setup_vm();
+    // West (Cond): 1
+    // North (Val): 42
+    // I at 6,5
+    // West Input: 6,4.
+    vm.grid[5][4] = Value::Int(1);
+    vm.grid[6][4] = Value::Str("!".to_string());
+
+    // North Input: 5,5.
+    vm.grid[4][5] = Value::Int(42);
+    vm.grid[5][5] = Value::Str("!".to_string());
+
+    vm.grid[6][5] = Value::Str("I".to_string());
+
+    exec_prologue_tick(&mut vm);
+
+    if let Some(Value::Int(v)) = &vm.prologue_state.signal_grid[6][5] {
+        assert_eq!(*v, 42);
+    } else {
+        panic!("If failed");
+    }
+}
+
+#[test]
+fn test_ether_runes() {
+    let mut vm = setup_vm();
+    // Tick 1: Yell 42 to Channel 1
+    // Y at 6,5.
+    // West (Val): 42. East (Chan): 1.
+    vm.grid[5][4] = Value::Int(42);
+    vm.grid[6][4] = Value::Str("!".to_string()); // Source 42 at 6,4 (West of Y)
+
+    vm.grid[5][6] = Value::Int(1);
+    vm.grid[6][6] = Value::Str("!".to_string()); // Source 1 at 6,6 (East of Y)
+
+    vm.grid[6][5] = Value::Str("Y".to_string());
+
+    exec_prologue_tick(&mut vm);
+
+    // Check Ether
+    if let Some(queue) = vm.ether.get(&1) {
+        assert_eq!(queue[0], Value::Int(42));
+    } else {
+        panic!("Yell failed to push to ether");
+    }
+
+    // Tick 2: Listen from Channel 1
+    // West (Chan): 1.
+    vm.grid[7][4] = Value::Int(1);
+    vm.grid[8][4] = Value::Str("!".to_string()); // Source 1 at 8,4 (West of L)
+    vm.grid[8][5] = Value::Str("L".to_string());
+
+    exec_prologue_tick(&mut vm);
+
+    if let Some(Value::Int(v)) = &vm.prologue_state.signal_grid[8][5] {
+        assert_eq!(*v, 42);
+    } else {
+        panic!("Listen failed to pop from ether");
+    }
+}
