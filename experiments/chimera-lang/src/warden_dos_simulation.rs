@@ -46,7 +46,10 @@ mod tests {
 
         let last_msg = vm.output.last().expect("Output should not be empty");
         println!("Output: {}", last_msg);
-        assert!(last_msg.contains("Simulation depth limit exceeded"), "Should block simulation at depth 11");
+        assert!(
+            last_msg.contains("Simulation depth limit exceeded"),
+            "Should block simulation at depth 11"
+        );
 
         // Case 2: Recursion Depth 5 (Safe)
         // Should execute.
@@ -59,6 +62,9 @@ mod tests {
 
         let last_msg_2 = vm2.output.last().expect("Output should not be empty");
         println!("Output 2: {}", last_msg_2);
-        assert!(last_msg_2.contains("SIMULATE: Ran strand 0"), "Should allow simulation at depth 5");
+        assert!(
+            last_msg_2.contains("SIMULATE: Ran strand 0"),
+            "Should allow simulation at depth 5"
+        );
     }
 }

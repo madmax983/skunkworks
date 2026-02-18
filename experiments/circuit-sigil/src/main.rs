@@ -50,7 +50,12 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
-        Commands::Generate { hash, author, message, output } => {
+        Commands::Generate {
+            hash,
+            author,
+            message,
+            output,
+        } => {
             println!("Generating Sigil for hash: {}", hash);
             let generator = circuit::CircuitGenerator::new(512, 512);
             let (mut img, pads) = generator.generate(&hash);
@@ -58,11 +63,9 @@ fn main() -> Result<()> {
             let payload = format!("Author: {}\nMessage: {}", author, message);
             println!("Embedding payload: {:?}", payload);
 
-            stego::embed(&mut img, &payload, &pads)
-                .context("Failed to embed data into Sigil")?;
+            stego::embed(&mut img, &payload, &pads).context("Failed to embed data into Sigil")?;
 
-            img.save(&output)
-                .context("Failed to save output image")?;
+            img.save(&output).context("Failed to save output image")?;
 
             println!("Sigil generated successfully: {:?}", output);
         }
@@ -80,7 +83,9 @@ fn main() -> Result<()> {
             let (expected_img, pads) = generator.generate(&hash);
 
             // 3. Visual Verification
-            if loaded_img.width() != expected_img.width() || loaded_img.height() != expected_img.height() {
+            if loaded_img.width() != expected_img.width()
+                || loaded_img.height() != expected_img.height()
+            {
                 println!("❌ Visual Verification FAILED: Dimensions mismatch.");
             } else {
                 let mut diff_pixels = 0;
@@ -91,14 +96,17 @@ fn main() -> Result<()> {
 
                         // Compare ignoring LSB (mask with 0xFE)
                         let mut match_pixel = true;
-                        for c in 0..3 { // RGB only, ignore Alpha for now? No, alpha should match too.
+                        for c in 0..3 {
+                            // RGB only, ignore Alpha for now? No, alpha should match too.
                             if (p1[c] & 0xFE) != (p2[c] & 0xFE) {
                                 match_pixel = false;
                                 break;
                             }
                         }
                         // Alpha check (usually 255)
-                        if p1[3] != p2[3] { match_pixel = false; }
+                        if p1[3] != p2[3] {
+                            match_pixel = false;
+                        }
 
                         if !match_pixel {
                             diff_pixels += 1;
@@ -109,7 +117,10 @@ fn main() -> Result<()> {
                 if diff_pixels == 0 {
                     println!("✅ Visual Verification SUCCESS: Image matches hash perfectly (ignoring LSBs).");
                 } else {
-                    println!("❌ Visual Verification FAILED: {} pixels differ visually.", diff_pixels);
+                    println!(
+                        "❌ Visual Verification FAILED: {} pixels differ visually.",
+                        diff_pixels
+                    );
                 }
             }
 

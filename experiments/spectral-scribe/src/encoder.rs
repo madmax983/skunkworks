@@ -1,6 +1,6 @@
-use rustfft::{FftPlanner, num_complex::Complex};
-use rand::prelude::*;
 use crate::font;
+use rand::prelude::*;
+use rustfft::{num_complex::Complex, FftPlanner};
 use std::f32::consts::PI;
 
 pub struct EncoderConfig {

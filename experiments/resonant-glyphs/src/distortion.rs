@@ -1,29 +1,35 @@
-use crate::font::{GlyphOutline, Contour, Segment, Point};
+use crate::font::{Contour, GlyphOutline, Point, Segment};
 
 pub fn distort(outline: &GlyphOutline, time: f64, freq: f32, amp: f32) -> GlyphOutline {
-    let contours = outline.contours.iter().map(|c| {
-        let start = distort_point(c.start, time, freq, amp);
-        let segments = c.segments.iter().map(|s| {
-            match s {
-                Segment::Line(p) => Segment::Line(distort_point(*p, time, freq, amp)),
-                Segment::Quad(p1, p2) => Segment::Quad(
-                    distort_point(*p1, time, freq, amp),
-                    distort_point(*p2, time, freq, amp),
-                ),
-                Segment::Cubic(p1, p2, p3) => Segment::Cubic(
-                    distort_point(*p1, time, freq, amp),
-                    distort_point(*p2, time, freq, amp),
-                    distort_point(*p3, time, freq, amp),
-                ),
-            }
-        }).collect();
+    let contours = outline
+        .contours
+        .iter()
+        .map(|c| {
+            let start = distort_point(c.start, time, freq, amp);
+            let segments = c
+                .segments
+                .iter()
+                .map(|s| match s {
+                    Segment::Line(p) => Segment::Line(distort_point(*p, time, freq, amp)),
+                    Segment::Quad(p1, p2) => Segment::Quad(
+                        distort_point(*p1, time, freq, amp),
+                        distort_point(*p2, time, freq, amp),
+                    ),
+                    Segment::Cubic(p1, p2, p3) => Segment::Cubic(
+                        distort_point(*p1, time, freq, amp),
+                        distort_point(*p2, time, freq, amp),
+                        distort_point(*p3, time, freq, amp),
+                    ),
+                })
+                .collect();
 
-        Contour {
-            start,
-            segments,
-            closed: c.closed,
-        }
-    }).collect();
+            Contour {
+                start,
+                segments,
+                closed: c.closed,
+            }
+        })
+        .collect();
 
     GlyphOutline {
         contours,
@@ -104,15 +110,17 @@ fn eval_quad(p0: Point, p1: Point, p2: Point, t: f32) -> Point {
 
 fn eval_cubic(p0: Point, p1: Point, p2: Point, p3: Point, t: f32) -> Point {
     let mt = 1.0 - t;
-    let x = mt * mt * mt * p0.x + 3.0 * mt * mt * t * p1.x + 3.0 * mt * t * t * p2.x + t * t * t * p3.x;
-    let y = mt * mt * mt * p0.y + 3.0 * mt * mt * t * p1.y + 3.0 * mt * t * t * p2.y + t * t * t * p3.y;
+    let x =
+        mt * mt * mt * p0.x + 3.0 * mt * mt * t * p1.x + 3.0 * mt * t * t * p2.x + t * t * t * p3.x;
+    let y =
+        mt * mt * mt * p0.y + 3.0 * mt * mt * t * p1.y + 3.0 * mt * t * t * p2.y + t * t * t * p3.y;
     Point::new(x, y)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::font::{GlyphOutline, Contour, Segment, Point};
+    use crate::font::{Contour, GlyphOutline, Point, Segment};
 
     #[test]
     fn test_distort() {

@@ -540,7 +540,8 @@ pub fn exec_lisp_eval(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 }
             }
         } else {
-            vm.output.push("Error: Type mismatch for lisp_eval".to_string());
+            vm.output
+                .push("Error: Type mismatch for lisp_eval".to_string());
         }
     } else {
         vm.output
@@ -1009,7 +1010,11 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
 fn exec_prologue(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     vm.prologue_state.active = !vm.prologue_state.active;
-    let status = if vm.prologue_state.active { "ON" } else { "OFF" };
+    let status = if vm.prologue_state.active {
+        "ON"
+    } else {
+        "OFF"
+    };
     vm.output.push(format!("PROLOGUE: Rune Logic {}", status));
     None
 }
@@ -1020,12 +1025,13 @@ fn exec_rune(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let y_val = vm.stack.pop().unwrap();
         let c_val = vm.stack.pop().unwrap();
         if let (Value::Int(c), Value::Int(y), Value::Int(x)) = (c_val, y_val, x_val) {
-             if let Some((ny, nx)) = vm.normalize_coords(y, x) {
-                 if let Some(ch) = char::from_u32(c as u32) {
-                     vm.grid[ny][nx] = Value::Str(ch.to_string());
-                     vm.output.push(format!("RUNE: Placed '{}' at {},{}", ch, nx, ny));
-                 }
-             }
+            if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                if let Some(ch) = char::from_u32(c as u32) {
+                    vm.grid[ny][nx] = Value::Str(ch.to_string());
+                    vm.output
+                        .push(format!("RUNE: Placed '{}' at {},{}", ch, nx, ny));
+                }
+            }
         }
     }
     None

@@ -1,8 +1,8 @@
-use macroquad::prelude::*;
 use macroquad::audio::{load_sound, play_sound_once};
+use macroquad::prelude::*;
 
-use spectral_scribe::encoder::{EncoderConfig, generate_audio, save_wav};
-use spectral_scribe::decoder::{DecoderConfig, audio_to_spectrogram, recover_text};
+use spectral_scribe::decoder::{audio_to_spectrogram, recover_text, DecoderConfig};
+use spectral_scribe::encoder::{generate_audio, save_wav, EncoderConfig};
 
 enum AppState {
     Editor,
@@ -50,7 +50,13 @@ async fn main() {
                 }
 
                 draw_text("Press [ENTER] to Encrypt & Play", 20.0, 200.0, 20.0, WHITE);
-                draw_text("Note: Generates 'output.wav' in current dir", 20.0, 230.0, 20.0, DARKGRAY);
+                draw_text(
+                    "Note: Generates 'output.wav' in current dir",
+                    20.0,
+                    230.0,
+                    20.0,
+                    DARKGRAY,
+                );
 
                 if is_key_pressed(KeyCode::Enter) && !input_text.is_empty() {
                     let samples = generate_audio(&input_text, &enc_config);
@@ -72,7 +78,7 @@ async fn main() {
                                     duration,
                                     text: decoded,
                                 });
-                            },
+                            }
                             Err(e) => {
                                 eprintln!("Audio load failed: {}", e);
                                 next_state = Some(AppState::Playing {
@@ -85,15 +91,21 @@ async fn main() {
                         }
                     }
                 }
-            },
-            AppState::Playing { start_time, spectrogram, duration, text } => {
+            }
+            AppState::Playing {
+                start_time,
+                spectrogram,
+                duration,
+                text,
+            } => {
                 let time = get_time() - *start_time;
 
                 if time > *duration + 2.0 {
                     next_state = Some(AppState::Editor);
                 }
 
-                let current_frame = (time * enc_config.sample_rate as f64 / enc_config.fft_size as f64) as usize;
+                let current_frame =
+                    (time * enc_config.sample_rate as f64 / enc_config.fft_size as f64) as usize;
                 let frame_width = 4.0;
                 let center_x = screen_width() / 2.0;
                 let visible_frames = (screen_width() / frame_width) as usize;

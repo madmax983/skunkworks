@@ -313,6 +313,8 @@ mod silicon_test;
 #[cfg(all(test, feature = "nova"))]
 mod song_test;
 #[cfg(test)]
+mod warden_dos_simulation;
+#[cfg(test)]
 mod warden_dos_test;
 #[cfg(test)]
 mod warden_exploit_test;
@@ -322,8 +324,6 @@ mod warden_memory_test;
 mod warden_parser_test;
 #[cfg(test)]
 mod warden_phylogeny_test;
-#[cfg(test)]
-mod warden_dos_simulation;
 
 #[cfg(all(test, feature = "nova"))]
 mod havoc_recursive_prophecy;

@@ -1,5 +1,5 @@
-use rustfft::{FftPlanner, num_complex::Complex};
-use font8x8::{BASIC_FONTS, UnicodeFonts};
+use font8x8::{UnicodeFonts, BASIC_FONTS};
+use rustfft::{num_complex::Complex, FftPlanner};
 
 pub struct DecoderConfig {
     pub fft_size: usize,
@@ -27,7 +27,8 @@ impl Default for DecoderConfig {
 pub fn load_wav(path: &str) -> anyhow::Result<Vec<f32>> {
     let mut reader = hound::WavReader::open(path)?;
     // Check spec? Assume matches for now.
-    let samples: Vec<f32> = reader.samples::<i16>()
+    let samples: Vec<f32> = reader
+        .samples::<i16>()
         .map(|s| s.map(|x| x as f32 / i16::MAX as f32))
         .collect::<Result<_, _>>()?;
     Ok(samples)
@@ -40,16 +41,17 @@ pub fn audio_to_spectrogram(samples: &[f32], config: &DecoderConfig) -> Vec<Vec<
     let mut spectrogram = Vec::new();
 
     for chunk in samples.chunks(config.fft_size) {
-        if chunk.len() < config.fft_size { break; }
+        if chunk.len() < config.fft_size {
+            break;
+        }
 
-        let mut buffer: Vec<Complex<f32>> = chunk.iter()
-            .map(|&s| Complex::new(s, 0.0))
-            .collect();
+        let mut buffer: Vec<Complex<f32>> = chunk.iter().map(|&s| Complex::new(s, 0.0)).collect();
 
         fft.process(&mut buffer);
 
         // Compute magnitude of first half
-        let magnitude: Vec<f32> = buffer.iter()
+        let magnitude: Vec<f32> = buffer
+            .iter()
             .take(config.fft_size / 2)
             .map(|c| c.norm())
             .collect();
@@ -61,10 +63,14 @@ pub fn audio_to_spectrogram(samples: &[f32], config: &DecoderConfig) -> Vec<Vec<
 
 pub fn recover_text(spectrogram: &[Vec<f32>], config: &DecoderConfig) -> String {
     let num_frames = spectrogram.len();
-    if num_frames == 0 { return String::new(); }
+    if num_frames == 0 {
+        return String::new();
+    }
 
     let width = num_frames / config.stretch_factor;
-    if width == 0 { return String::new(); }
+    if width == 0 {
+        return String::new();
+    }
 
     // Recover grid
     let mut recovered_grid = vec![vec![0u8; width]; 8];
@@ -81,19 +87,25 @@ pub fn recover_text(spectrogram: &[Vec<f32>], config: &DecoderConfig) -> String 
             let mut count = 0;
 
             for frame_idx in start_frame..end_frame {
-                if frame_idx >= spectrogram.len() { break; }
+                if frame_idx >= spectrogram.len() {
+                    break;
+                }
                 let frame = &spectrogram[frame_idx];
 
                 for k in 0..config.bin_per_pixel {
-                     let bin = start_bin + k;
-                     if bin < frame.len() {
-                         sum_mag += frame[bin];
-                         count += 1;
-                     }
+                    let bin = start_bin + k;
+                    if bin < frame.len() {
+                        sum_mag += frame[bin];
+                        count += 1;
+                    }
                 }
             }
 
-            let avg_mag = if count > 0 { sum_mag / count as f32 } else { 0.0 };
+            let avg_mag = if count > 0 {
+                sum_mag / count as f32
+            } else {
+                0.0
+            };
 
             // Threshold
             // avg_mag is average per BIN.

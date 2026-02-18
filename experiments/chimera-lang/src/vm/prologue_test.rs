@@ -1,9 +1,11 @@
-use crate::vm::{ChimeraVM, Value};
 use crate::ast::{Dna, Helix};
 use crate::vm::prologue::exec_prologue_tick;
+use crate::vm::{ChimeraVM, Value};
 
 fn setup_vm() -> ChimeraVM {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
     vm

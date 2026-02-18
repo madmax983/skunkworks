@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use ::rand::Rng;
+use macroquad::prelude::*;
 
 const GRID_SIZE: usize = 40;
 
@@ -142,7 +142,12 @@ impl World {
             spore.update(dt, wind);
 
             // Bounds check
-            if spore.life <= 0.0 || spore.pos.x <= 0.0 || spore.pos.x >= width || spore.pos.y <= 0.0 || spore.pos.y >= height {
+            if spore.life <= 0.0
+                || spore.pos.x <= 0.0
+                || spore.pos.x >= width
+                || spore.pos.y <= 0.0
+                || spore.pos.y >= height
+            {
                 return false;
             }
 
@@ -196,9 +201,16 @@ async fn main() {
     let mut world = World::new(screen_width(), screen_height());
 
     // Add some initial nodes
-    world.nodes.push(Node::new(vec2(world.width * 0.2, world.height * 0.5), RED));
-    world.nodes.push(Node::new(vec2(world.width * 0.8, world.height * 0.5), BLUE));
-    world.nodes.push(Node::new(vec2(world.width * 0.5, world.height * 0.2), GREEN));
+    world
+        .nodes
+        .push(Node::new(vec2(world.width * 0.2, world.height * 0.5), RED));
+    world
+        .nodes
+        .push(Node::new(vec2(world.width * 0.8, world.height * 0.5), BLUE));
+    world.nodes.push(Node::new(
+        vec2(world.width * 0.5, world.height * 0.2),
+        GREEN,
+    ));
 
     loop {
         let dt = get_frame_time();
@@ -212,11 +224,11 @@ async fn main() {
         }
 
         if is_key_pressed(KeyCode::R) {
-             world = World::new(screen_width(), screen_height());
+            world = World::new(screen_width(), screen_height());
         }
 
         if is_key_pressed(KeyCode::Space) {
-             world.time += 100.0; // Jump time to shift wind
+            world.time += 100.0; // Jump time to shift wind
         }
 
         // Update
@@ -231,7 +243,14 @@ async fn main() {
                 let wind = world.wind_grid[y][x];
                 let px = (x as f32 / GRID_SIZE as f32) * screen_width();
                 let py = (y as f32 / GRID_SIZE as f32) * screen_height();
-                draw_line(px, py, px + wind.x * 20.0, py + wind.y * 20.0, 1.0, Color::new(0.2, 0.2, 0.2, 0.3));
+                draw_line(
+                    px,
+                    py,
+                    px + wind.x * 20.0,
+                    py + wind.y * 20.0,
+                    1.0,
+                    Color::new(0.2, 0.2, 0.2, 0.3),
+                );
             }
         }
 
@@ -245,13 +264,42 @@ async fn main() {
         // Draw Nodes
         for node in &world.nodes {
             let pulse_scale = 1.0 + (node.pulse.sin() * 0.2);
-            draw_circle(node.pos.x, node.pos.y, node.radius * pulse_scale, node.color);
-            draw_circle_lines(node.pos.x, node.pos.y, node.radius * pulse_scale, 2.0, WHITE);
+            draw_circle(
+                node.pos.x,
+                node.pos.y,
+                node.radius * pulse_scale,
+                node.color,
+            );
+            draw_circle_lines(
+                node.pos.x,
+                node.pos.y,
+                node.radius * pulse_scale,
+                2.0,
+                WHITE,
+            );
         }
 
-        draw_text(format!("Nodes: {}", world.nodes.len()).as_str(), 10.0, 20.0, 20.0, WHITE);
-        draw_text(format!("Spores: {}", world.spores.len()).as_str(), 10.0, 40.0, 20.0, WHITE);
-        draw_text("Click: Add Node | Space: Shift Wind | R: Reset", 10.0, screen_height() - 20.0, 20.0, GRAY);
+        draw_text(
+            format!("Nodes: {}", world.nodes.len()).as_str(),
+            10.0,
+            20.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            format!("Spores: {}", world.spores.len()).as_str(),
+            10.0,
+            40.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "Click: Add Node | Space: Shift Wind | R: Reset",
+            10.0,
+            screen_height() - 20.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }

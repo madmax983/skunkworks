@@ -115,12 +115,10 @@ fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
     );
 }
 
-fn decay_system(
-    mut store: ResMut<MemoryStore>,
-    config: Res<DecayConfig>,
-    time: Res<Time>
-) {
-    if config.paused { return; }
+fn decay_system(mut store: ResMut<MemoryStore>, config: Res<DecayConfig>, time: Res<Time>) {
+    if config.paused {
+        return;
+    }
 
     let dt = time.delta_seconds();
     let mem = &mut store.0;
@@ -132,30 +130,30 @@ fn decay_system(
     // Parallel iter? No, simple loop is fine for 65k items.
 
     for y in 0..h {
-        let fy = if y <= h/2 { y } else { h - y };
+        let fy = if y <= h / 2 { y } else { h - y };
         for x in 0..w {
-             let fx = if x <= w/2 { x } else { w - x };
-             // Normalized frequency squared (0.0 to 1.0 approx if divided by N/2^2)
-             let f_sq = (fx*fx + fy*fy) as f32;
+            let fx = if x <= w / 2 { x } else { w - x };
+            // Normalized frequency squared (0.0 to 1.0 approx if divided by N/2^2)
+            let f_sq = (fx * fx + fy * fy) as f32;
 
-             let idx = y * w + x;
-             let c = &mut mem.buffer[idx];
+            let idx = y * w + x;
+            let c = &mut mem.buffer[idx];
 
-             // Higher freq decays faster (Low Pass Filter)
-             // e^(-k * f^2)
-             let decay_factor = 1.0 - (f_sq * 0.000005 * dt * 60.0);
-             *c = *c * decay_factor.max(0.99);
+            // Higher freq decays faster (Low Pass Filter)
+            // e^(-k * f^2)
+            let decay_factor = 1.0 - (f_sq * 0.000005 * dt * 60.0);
+            *c = *c * decay_factor.max(0.99);
 
-             // Phase drift proportional to freq
-             let drift = (f_sq.sqrt() * config.phase_drift * dt) * rng.gen_range(-0.1..0.1);
-             let rot = Complex::from_polar(1.0, drift);
-             *c = *c * rot;
+            // Phase drift proportional to freq
+            let drift = (f_sq.sqrt() * config.phase_drift * dt) * rng.gen_range(-0.1..0.1);
+            let rot = Complex::from_polar(1.0, drift);
+            *c = *c * rot;
 
-             // Noise (Cosmic Rays)
-             if rng.gen_bool(config.noise as f64) {
-                 let spike = Complex::new(rng.gen_range(-50.0..50.0), rng.gen_range(-50.0..50.0));
-                 *c = *c + spike;
-             }
+            // Noise (Cosmic Rays)
+            if rng.gen_bool(config.noise as f64) {
+                let spike = Complex::new(rng.gen_range(-50.0..50.0), rng.gen_range(-50.0..50.0));
+                *c = *c + spike;
+            }
         }
     }
 }
@@ -163,7 +161,7 @@ fn decay_system(
 fn reconstruction_system(
     store: Res<MemoryStore>,
     tex_res: Res<MemoryTexture>,
-    mut images: ResMut<Assets<Image>>
+    mut images: ResMut<Assets<Image>>,
 ) {
     let recalled = store.0.recall();
 
@@ -173,9 +171,9 @@ fn reconstruction_system(
             let idx = i * 4;
             if idx + 3 < image.data.len() {
                 image.data[idx] = val;
-                image.data[idx+1] = val;
-                image.data[idx+2] = val;
-                image.data[idx+3] = 255;
+                image.data[idx + 1] = val;
+                image.data[idx + 2] = val;
+                image.data[idx + 3] = 255;
             }
         }
     }

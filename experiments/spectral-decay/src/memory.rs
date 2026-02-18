@@ -1,5 +1,5 @@
 use num_complex::Complex;
-use rustfft::{FftPlanner, FftDirection};
+use rustfft::{FftDirection, FftPlanner};
 
 #[derive(Clone)]
 pub struct SpectralMemory {
@@ -38,11 +38,15 @@ impl SpectralMemory {
 
         let normalization = (self.width * self.height) as f32;
 
-        temp_memory.buffer.iter().map(|c| {
-            // Normalize (divide by N)
-            let val = c.re / normalization;
-            val.clamp(0.0, 255.0) as u8
-        }).collect()
+        temp_memory
+            .buffer
+            .iter()
+            .map(|c| {
+                // Normalize (divide by N)
+                let val = c.re / normalization;
+                val.clamp(0.0, 255.0) as u8
+            })
+            .collect()
     }
 
     fn perform_fft(&mut self, direction: FftDirection) {
@@ -113,7 +117,13 @@ mod tests {
         for i in 0..data.len() {
             let diff = (data[i] as i16 - recalled[i] as i16).abs();
             // Allow off-by-one due to float rounding
-            assert!(diff <= 1, "Pixel {} mismatch: expected {}, got {}", i, data[i], recalled[i]);
+            assert!(
+                diff <= 1,
+                "Pixel {} mismatch: expected {}, got {}",
+                i,
+                data[i],
+                recalled[i]
+            );
         }
     }
 }

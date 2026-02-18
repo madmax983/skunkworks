@@ -9,9 +9,13 @@ pub struct Seed {
     pub dna_source: String,
 }
 
-pub fn erode_step(map: &mut LeafMap, drops: usize, seeds: &[Seed]) -> Vec<(usize, usize, usize)> {
+pub fn erode_step(
+    map: &mut LeafMap,
+    drops: usize,
+    seeds: &[Seed],
+    new_plants: &mut Vec<(usize, usize, usize)>,
+) {
     let mut rng = rand::thread_rng();
-    let mut new_plants = Vec::new();
 
     for _ in 0..drops {
         let x = rng.gen_range(0..map.width);
@@ -33,7 +37,6 @@ pub fn erode_step(map: &mut LeafMap, drops: usize, seeds: &[Seed]) -> Vec<(usize
             }
         }
     }
-    new_plants
 }
 
 pub fn erode_at(map: &mut LeafMap, start_x: usize, start_y: usize) -> Option<(usize, usize)> {
@@ -44,10 +47,30 @@ pub fn erode_at(map: &mut LeafMap, start_x: usize, start_y: usize) -> Option<(us
 
     let mut x = start_x;
     let mut y = start_y;
+    let width = map.width;
+    let height = map.height;
+    let width_i = width as isize;
+
+    // Precompute offsets for neighbor checking
+    // Order: TL, T, TR, L, R, BL, B, BR
+    let offsets = [
+        -width_i - 1,
+        -width_i,
+        -width_i + 1,
+        -1,
+        1,
+        width_i - 1,
+        width_i,
+        width_i + 1,
+    ];
+
+    // Corresponding dx, dy for updating position
+    let delta_x = [-1, 0, 1, -1, 1, -1, 0, 1];
+    let delta_y = [-1, -1, -1, 0, 0, 1, 1, 1];
 
     // Flow Downhill
     for _step in 0..MAX_PATH {
-        let idx = y * map.width + x;
+        let idx = y * width + x;
 
         // Accumulate water visualization
         map.water[idx] += 0.1;
@@ -56,40 +79,62 @@ pub fn erode_at(map: &mut LeafMap, start_x: usize, start_y: usize) -> Option<(us
         }
 
         // Find lowest neighbor
-        let mut best_x = x;
-        let mut best_y = y;
         let mut min_h = map.heightmap[idx];
+        let mut best_dx = 0;
+        let mut best_dy = 0;
+        let mut found_lower = false;
 
-        // Check 8 neighbors
-        for dy in -1..=1 {
-            for dx in -1..=1 {
-                if dx == 0 && dy == 0 {
-                    continue;
+        // Fast path for non-edge pixels (avoids repeated boundary checks and coord calculations)
+        if x > 0 && x < width - 1 && y > 0 && y < height - 1 {
+            for i in 0..8 {
+                // Safety: x,y bounds check ensures idx+offset is within [0, width*height)
+                let n_idx = (idx as isize + offsets[i]) as usize;
+
+                if map.mask[n_idx] {
+                    let h = map.heightmap[n_idx];
+                    if h < min_h {
+                        min_h = h;
+                        best_dx = delta_x[i];
+                        best_dy = delta_y[i];
+                        found_lower = true;
+                    }
                 }
+            }
+        } else {
+            // Slow path (edge cases) with full bounds checking
+            for dy in -1..=1 {
+                for dx in -1..=1 {
+                    if dx == 0 && dy == 0 {
+                        continue;
+                    }
 
-                let nx = x as isize + dx;
-                let ny = y as isize + dy;
+                    let nx = x as isize + dx;
+                    let ny = y as isize + dy;
 
-                if nx >= 0 && nx < map.width as isize && ny >= 0 && ny < map.height as isize {
-                    let nx = nx as usize;
-                    let ny = ny as usize;
-                    if map.mask[ny * map.width + nx] {
-                        let h = map.heightmap[ny * map.width + nx];
-                        if h < min_h {
-                            min_h = h;
-                            best_x = nx;
-                            best_y = ny;
+                    if nx >= 0 && nx < width as isize && ny >= 0 && ny < height as isize {
+                        let nx = nx as usize;
+                        let ny = ny as usize;
+                        let n_idx = ny * width + nx;
+
+                        if map.mask[n_idx] {
+                            let h = map.heightmap[n_idx];
+                            if h < min_h {
+                                min_h = h;
+                                best_dx = dx;
+                                best_dy = dy;
+                                found_lower = true;
+                            }
                         }
                     }
                 }
             }
         }
 
-        if best_x != x || best_y != y {
+        if found_lower {
             let slope = map.heightmap[idx] - min_h;
             map.heightmap[idx] -= EROSION_RATE * slope.max(0.1);
-            x = best_x;
-            y = best_y;
+            x = (x as isize + best_dx) as usize;
+            y = (y as isize + best_dy) as usize;
         } else {
             // Local minimum (pool)
             map.heightmap[idx] += EROSION_RATE * 0.5;
@@ -97,4 +142,29 @@ pub fn erode_at(map: &mut LeafMap, start_x: usize, start_y: usize) -> Option<(us
         }
     }
     Some((x, y))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::leaf::LeafMap;
+    use std::time::Instant;
+
+    #[test]
+    fn test_erode_step_perf() {
+        let width = 200;
+        let height = 200;
+        let mut map = LeafMap::new(width, height);
+        map.generate_shape();
+        let seeds = vec![];
+        let mut plants_buffer = Vec::new();
+
+        let start = Instant::now();
+        // Run 100 times * 1000 drops = 100,000 drops
+        for _ in 0..100 {
+            plants_buffer.clear();
+            erode_step(&mut map, 1000, &seeds, &mut plants_buffer);
+        }
+        println!("test_erode_step_perf elapsed: {:?}", start.elapsed());
+    }
 }
