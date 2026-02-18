@@ -143,6 +143,7 @@ members = [
     "experiments/stego-attack", "experiments/tesseract-time", "experiments/rhizome-wars", "experiments/chaos-life", "experiments/polyglot-chimera",
     "experiments/memetic-market", "experiments/spinal-rhythms", "experiments/resonant-glyphs", "experiments/gravitational-orchestra",
     "experiments/typographic-turbulence", "experiments/neuro-calligraphy", "experiments/chimera-erosion", "experiments/circuit-sigil",
+    "experiments/chimera-circuit",
 ]
 resolver = "2"
 

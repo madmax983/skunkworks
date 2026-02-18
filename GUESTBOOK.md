@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/chimera-circuit
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The agents are flowing through the traces. The circuit is alive.
+- **Note:** Cross: `circuit-sigil` + `chimera-lang`. Biological data packets navigating a procedural PCB.
+
 ### [Concentration Level: FRESH] - Location: experiments/circuit-sigil
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
 - **Status:** The copper traces are etched. The gold pads are hiding secrets.
