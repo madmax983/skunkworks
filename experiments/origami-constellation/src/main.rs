@@ -1,8 +1,6 @@
-mod origami;
-
 use macroquad::models::Vertex as MqVertex;
 use macroquad::prelude::*;
-use origami::{MiuraOri, MiuraParams};
+use origami::{MiuraOri, MiuraParams, Orientation};
 
 #[macroquad::main("Origami Constellation")]
 async fn main() {
@@ -10,6 +8,7 @@ async fn main() {
         a: 1.0,
         b: 1.0,
         gamma: 80.0f32.to_radians(),
+        orientation: Orientation::Horizontal,
     };
     let grid_size = (20, 20); // 20x20 grid
     let origami = MiuraOri::new(params, grid_size);
@@ -67,7 +66,7 @@ async fn main() {
         extension = extension.clamp(0.0, 1.0);
 
         // Generate Mesh
-        let mesh_data = origami.generate(extension);
+        let mesh_data = origami.generate_mesh(extension);
 
         // Convert to Macroquad Mesh
         // We'll use flat shading per triangle for the "low poly" look

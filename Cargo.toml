@@ -21,6 +21,7 @@ flocking = { path = "crates/flocking" }
 git-associates = { path = "crates/git-associates" }
 gray-scott = { path = "crates/gray-scott" }
 market-sim = { path = "crates/market-sim" }
+origami = { path = "crates/origami" }
 poincare-disk = { path = "crates/poincare-disk" }
 quipu = { path = "crates/quipu" }
 resonance-audio = { path = "crates/resonance-audio" }
