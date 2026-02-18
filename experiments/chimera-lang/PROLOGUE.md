@@ -24,6 +24,11 @@ Prologue treats the grid as a circuit board. Signals propagate instantly (within
 | `*` | **Splitter** | Input (North) -> Output (Self). Acts as a diode/repeater allowing W/E/S to read. |
 | `#` | **Delay** | Input (North) -> Output (Self) in the **Next Tick**. |
 | `@` | **Agent** | A mobile logic cursor that moves towards signals. |
+| `$` | **Scribe** | Reads signal from **West**, writes Value to Grid **South**. |
+| `%` | **Modulo** | Output (Self) = Input (West) **%** Input (East). |
+| `^` | **Jump** | Input (West) -> Output (East). Skips self (Teleport). |
+| `M` | **Mutate** | Reads signal from **West**, writes **Random** Value to Grid **South**. |
+| `O` | **Organelle** | Reads signal from **West**, spawns **Agent (@)** at Grid **South**. |
 
 ### Gene Execution
 

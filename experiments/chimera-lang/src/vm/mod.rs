@@ -5308,3 +5308,6 @@ mod sentry_ribosome_tests {
     }
 }
 mod nova_biomesh_signal_test;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod prologue_test;

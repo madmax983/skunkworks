@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use crate::vm::{Value, GRID_SIZE, ChimeraVM};
+use rand::Rng;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PrologueAgent {
@@ -40,7 +41,7 @@ impl PrologueState {
             for x in 0..GRID_SIZE {
                 if let Value::Str(s) = &grid[y][x] {
                     // Identify Runes
-                    if matches!(s.as_str(), "?" | "!" | "~" | "&" | "|" | "+" | "*" | "#" | "@") {
+                    if matches!(s.as_str(), "?" | "!" | "~" | "&" | "|" | "+" | "*" | "#" | "@" | "$" | "%" | "^" | "M" | "O") {
                         self.runes.insert((y, x));
 
                         if s == "@" {
@@ -98,7 +99,7 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
         }
     }
 
-    // 4. Propagation (Wires ~ and Gates & | + * #)
+    // 4. Propagation (Wires ~ and Gates & | + * # % ^)
     // Simple iterative flood fill for wires
     // Gates need specific inputs.
     // Iteration loop to allow signal to travel across grid in one tick
@@ -179,6 +180,40 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
                             }
                         }
                     },
+                    "%" => {
+                        // Modulo: West % East -> Output Self
+                        if let (Some((wy, wx)), Some((ey, ex))) = (
+                            normalize_coords(*y as i64, *x as i64 - 1),
+                            normalize_coords(*y as i64, *x as i64 + 1)
+                        ) {
+                            let w_sig = &vm.prologue_state.signal_grid[wy][wx];
+                            let e_sig = &vm.prologue_state.signal_grid[ey][ex];
+
+                            if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
+                                if *e != 0 {
+                                    if next_signals[*y][*x].is_none() {
+                                        next_signals[*y][*x] = Some(Value::Int(w % e));
+                                        changes = true;
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "^" => {
+                        // Jump: Input West -> Output East (Skipping Self)
+                        if let (Some((wy, wx)), Some((ey, ex))) = (
+                            normalize_coords(*y as i64, *x as i64 - 1),
+                            normalize_coords(*y as i64, *x as i64 + 1)
+                        ) {
+                            if let Some(sig) = &vm.prologue_state.signal_grid[wy][wx] {
+                                 // Propagate to East
+                                 if next_signals[ey][ex].is_none() {
+                                     next_signals[ey][ex] = Some(sig.clone());
+                                     changes = true;
+                                 }
+                            }
+                        }
+                    },
                     "*" => {
                         // Splitter: Input North -> Output Self (which distributes to others)
                         if let Some((ny, nx)) = normalize_coords(*y as i64 - 1, *x as i64) {
@@ -216,39 +251,68 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
     // Save delayed signals for next tick
     vm.prologue_state.delayed_signals = next_delayed;
 
-    // 5. Sink Consumption (?)
-    // Sinks read from North (signal flow is usually N->S for gates, but wires are omni)
-    // Let's say Sink reads from its own cell (if wire propagated to it) OR from North/West/East/South neighbors?
-    // Let's stick to "Sinks read from the cell directly North of them" or "Sinks read signal AT their location"
-    // Since wires propagate signal TO the wire cell, the sink should probably be connected to a wire.
-    // If '?' is at (y,x), and '~' is at (y-1, x) with signal, does '?' get it?
-    // In step 4, '~' pulls from neighbors. '?' isn't a wire.
-    // So '?' must pull from neighbors.
-
+    // 5. Sink Consumption / Actions (?, $, M, O)
+    // iterate runes again
     for (y, x) in &runes {
         if let Value::Str(s) = &grid[*y][*x] {
-            if s == "?" {
-                // Check neighbors for signal
-                let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-                for (dy, dx) in neighbors {
-                    if let Some((ny, nx)) = normalize_coords(*y as i64 + dy, *x as i64 + dx) {
-                        // Clone signal to avoid holding borrow during mutation
-                        let sig_opt = vm.prologue_state.signal_grid[ny][nx].clone();
+            match s.as_str() {
+                "?" => { // Sink
+                    // Check neighbors for signal
+                    let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+                    for (dy, dx) in neighbors {
+                        if let Some((ny, nx)) = normalize_coords(*y as i64 + dy, *x as i64 + dx) {
+                            let sig_opt = vm.prologue_state.signal_grid[ny][nx].clone();
 
-                        if let Some(sig) = sig_opt {
-                            // Trigger!
-                            vm.output.push(format!("PROLOGUE: Sink at {},{} received {:?}", x, y, sig));
-                            vm.prologue_state.signal_grid[*y][*x] = Some(sig.clone()); // Light up sink
+                            if let Some(sig) = sig_opt {
+                                vm.output.push(format!("PROLOGUE: Sink at {},{} received {:?}", x, y, sig));
+                                vm.prologue_state.signal_grid[*y][*x] = Some(sig.clone()); // Light up
 
-                            // If signal is a string, check if it's a strand name to execute
-                            if let Value::Str(name) = sig {
-                                if let Some(&idx) = vm.dictionary.get(&name) {
-                                    vm.interrupt(idx);
+                                if let Value::Str(name) = sig {
+                                    if let Some(&idx) = vm.dictionary.get(&name) {
+                                        vm.interrupt(idx);
+                                    }
                                 }
                             }
                         }
                     }
-                }
+                },
+                "$" => { // Scribe: Write West -> South
+                    if let Some((wy, wx)) = normalize_coords(*y as i64, *x as i64 - 1) {
+                        if let Some(sig) = &vm.prologue_state.signal_grid[wy][wx] {
+                             // Write to South
+                             if let Some((sy, sx)) = normalize_coords(*y as i64 + 1, *x as i64) {
+                                 vm.grid[sy][sx] = sig.clone();
+                                 vm.prologue_state.signal_grid[*y][*x] = Some(sig.clone()); // Light up
+                             }
+                        }
+                    }
+                },
+                "M" => { // Mutate: Signal West -> Randomize South
+                    if let Some((wy, wx)) = normalize_coords(*y as i64, *x as i64 - 1) {
+                        if vm.prologue_state.signal_grid[wy][wx].is_some() {
+                             if let Some((sy, sx)) = normalize_coords(*y as i64 + 1, *x as i64) {
+                                 let mut rng = rand::thread_rng();
+                                 let val = rng.gen_range(0..100);
+                                 vm.grid[sy][sx] = Value::Int(val);
+                                 vm.prologue_state.signal_grid[*y][*x] = Some(Value::Int(1)); // Light up
+                             }
+                        }
+                    }
+                },
+                "O" => { // Organelle: Signal West -> Spawn Agent South
+                    if let Some((wy, wx)) = normalize_coords(*y as i64, *x as i64 - 1) {
+                        if vm.prologue_state.signal_grid[wy][wx].is_some() {
+                             if let Some((sy, sx)) = normalize_coords(*y as i64 + 1, *x as i64) {
+                                 // Check if agent already exists?
+                                 // Simple logic: Overwrite grid with '@'
+                                 vm.grid[sy][sx] = Value::Str("@".to_string());
+                                 // Note: Will be picked up by scan next tick
+                                 vm.prologue_state.signal_grid[*y][*x] = Some(Value::Int(1)); // Light up
+                             }
+                        }
+                    }
+                },
+                _ => {}
             }
         }
     }
