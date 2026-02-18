@@ -172,3 +172,8 @@
 - **Scent Origin:** Genesis (The Origamist) ⚛️🦢
 - **Status:** The wings are unfolding. The vertices are aligned.
 - **Note:** Moonshot: Rigid Origami + Deployable Structure Simulation.
+
+### [Concentration Level: HIGH] - Location: experiments/heap-market
+- **Scent Origin:** Genesis (The Economist) ⚛️📊
+- **Status:** The Order Book is open. Memory blocks are being auctioned in real-time.
+- **Note:** Moonshot: Resource Markets + Memory Allocation.
