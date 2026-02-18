@@ -18,6 +18,7 @@ pub struct PrologueState {
     pub signal_grid: Vec<Vec<Option<Value>>>,
     pub delayed_signals: Vec<Vec<Option<Value>>>,
     pub agents: Vec<PrologueAgent>,
+    pub registers: HashMap<(usize, usize), Value>,
 }
 
 impl PrologueState {
@@ -29,6 +30,7 @@ impl PrologueState {
             signal_grid: vec![vec![None; GRID_SIZE]; GRID_SIZE],
             delayed_signals: vec![vec![None; GRID_SIZE]; GRID_SIZE],
             agents: Vec::new(),
+            registers: HashMap::new(),
         }
     }
 
@@ -73,9 +75,10 @@ impl PrologueState {
                             | "C"
                             | "("
                             | "N"
-                            | "S"
-                            | "E"
                             | "W"
+                            | "K"
+                            | "R"
+                            | "X"
                     ) {
                         self.runes.insert((y, x));
 
@@ -172,6 +175,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &Vec<Vec<Value>>) {
                     &mut next_signals,
                     &mut vm.prologue_state.delayed_signals,
                     &mut vm.ether,
+                    &mut vm.prologue_state.registers,
                 ) {
                     changes = true;
                 }
@@ -194,6 +198,7 @@ fn apply_propagation_rune(
     next_signals: &mut Vec<Vec<Option<Value>>>,
     next_delayed: &mut Vec<Vec<Option<Value>>>,
     ether: &mut HashMap<i64, VecDeque<Value>>,
+    registers: &mut HashMap<(usize, usize), Value>,
 ) -> bool {
     let mut changes = false;
 
@@ -551,6 +556,43 @@ fn apply_propagation_rune(
                 }
             }
         }
+        "K" => {
+            // Chaos: Emit random value to all neighbors
+            let mut rng = rand::thread_rng();
+            let val = Value::Int(rng.gen_range(0..100));
+
+            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+            for (dy, dx) in neighbors {
+                if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    if next_signals[ny][nx].is_none() {
+                        next_signals[ny][nx] = Some(val.clone());
+                        changes = true;
+                    }
+                }
+            }
+        }
+        "R" => {
+            // Register: West (Write), North (Read -> South)
+            // Write
+            if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+                if let Some(sig) = &current_signals[wy][wx] {
+                    registers.insert((y, x), sig.clone());
+                }
+            }
+            // Read
+            if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+                if current_signals[ny][nx].is_some() {
+                    if let Some(val) = registers.get(&(y, x)) {
+                        if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
+                            if next_signals[sy][sx].is_none() {
+                                next_signals[sy][sx] = Some(val.clone());
+                                changes = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         _ => {}
     }
     changes
@@ -744,6 +786,44 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                         vm.grid[sy][sx] = n_val;
                         vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
                         // Light up
+                    }
+                }
+            }
+        }
+        "X" => {
+            // Crossover: West (Idx A), East (Idx B) -> South (New Idx)
+            if let (Some((wy, wx)), Some((ey, ex))) = (
+                normalize_coords(y as i64, x as i64 - 1),
+                normalize_coords(y as i64, x as i64 + 1),
+            ) {
+                let w_sig = vm.prologue_state.signal_grid[wy][wx].clone();
+                let e_sig = vm.prologue_state.signal_grid[ey][ex].clone();
+
+                if let (Some(Value::Int(idx_a)), Some(Value::Int(idx_b))) = (w_sig, e_sig) {
+                    let len = vm.dna.helix.strands.len();
+                    if idx_a >= 0
+                        && (idx_a as usize) < len
+                        && idx_b >= 0
+                        && (idx_b as usize) < len
+                    {
+                        let strand_a = vm.dna.helix.strands[idx_a as usize].clone();
+                        let strand_b = vm.dna.helix.strands[idx_b as usize].clone();
+
+                        let split_a = strand_a.genes.len() / 2;
+                        let split_b = strand_b.genes.len() / 2;
+
+                        let mut new_genes = Vec::new();
+                        new_genes.extend(strand_a.genes.iter().take(split_a).cloned());
+                        new_genes.extend(strand_b.genes.iter().skip(split_b).cloned());
+
+                        let new_strand = crate::ast::Strand { genes: new_genes };
+                        vm.dna.helix.strands.push(new_strand);
+                        let new_idx = vm.dna.helix.strands.len() - 1;
+
+                        if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
+                            vm.grid[sy][sx] = Value::Int(new_idx as i64);
+                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                        }
                     }
                 }
             }
