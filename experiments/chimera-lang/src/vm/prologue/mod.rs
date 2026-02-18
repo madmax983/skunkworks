@@ -7,6 +7,7 @@ pub mod quantum;
 pub mod teleport;
 pub mod chronos;
 pub mod alchemy;
+pub mod genetics;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PrologueAgent {
@@ -109,6 +110,10 @@ impl PrologueState {
                             | "t"
                             | "f"
                             | "d"
+                            | "b"
+                            | "h"
+                            | "c"
+                            | "i"
                     ) {
                         self.runes.insert((y, x));
 
@@ -909,34 +914,8 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                 }
             }
         }
-        "G" => {
-            // Genesis: North (Code), West (Config) -> Self (Strand Index)
-            let code_to_compile = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
-                if let Some(Value::Str(s)) = &vm.prologue_state.signal_grid[ny][nx] {
-                    Some(s.clone())
-                } else {
-                    None
-                }
-            } else {
-                None
-            };
-
-            if let Some(code) = code_to_compile {
-                match crate::compiler::compile(&code, None) {
-                    Ok(dna) => {
-                        if let Some(strand) = dna.helix.strands.first() {
-                            vm.dna.helix.strands.push(strand.clone());
-                            let idx = vm.dna.helix.strands.len() - 1;
-                            vm.output
-                                .push(format!("PROLOGUE: Genesis created Strand {}", idx));
-                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(idx as i64));
-                        }
-                    }
-                    Err(e) => {
-                        vm.output.push(format!("PROLOGUE: Genesis failed: {}", e));
-                    }
-                }
-            }
+        "G" | "X" | "b" | "h" | "c" | "i" => {
+            genetics::apply_genetic_sinks(vm, rune, y, x);
         }
         "E" => {
             // Eval: West (Code) -> Self (Result)
@@ -1021,44 +1000,6 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                         vm.grid[sy][sx] = n_val;
                         vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
                         // Light up
-                    }
-                }
-            }
-        }
-        "X" => {
-            // Crossover: West (Idx A), East (Idx B) -> South (New Idx)
-            if let (Some((wy, wx)), Some((ey, ex))) = (
-                normalize_coords(y as i64, x as i64 - 1),
-                normalize_coords(y as i64, x as i64 + 1),
-            ) {
-                let w_sig = vm.prologue_state.signal_grid[wy][wx].clone();
-                let e_sig = vm.prologue_state.signal_grid[ey][ex].clone();
-
-                if let (Some(Value::Int(idx_a)), Some(Value::Int(idx_b))) = (w_sig, e_sig) {
-                    let len = vm.dna.helix.strands.len();
-                    if idx_a >= 0
-                        && (idx_a as usize) < len
-                        && idx_b >= 0
-                        && (idx_b as usize) < len
-                    {
-                        let strand_a = vm.dna.helix.strands[idx_a as usize].clone();
-                        let strand_b = vm.dna.helix.strands[idx_b as usize].clone();
-
-                        let split_a = strand_a.genes.len() / 2;
-                        let split_b = strand_b.genes.len() / 2;
-
-                        let mut new_genes = Vec::new();
-                        new_genes.extend(strand_a.genes.iter().take(split_a).cloned());
-                        new_genes.extend(strand_b.genes.iter().skip(split_b).cloned());
-
-                        let new_strand = crate::ast::Strand { genes: new_genes };
-                        vm.dna.helix.strands.push(new_strand);
-                        let new_idx = vm.dna.helix.strands.len() - 1;
-
-                        if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
-                            vm.grid[sy][sx] = Value::Int(new_idx as i64);
-                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
-                        }
                     }
                 }
             }

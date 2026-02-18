@@ -5333,6 +5333,10 @@ mod prologue_new_runes_test;
 
 #[cfg(feature = "nova")]
 #[cfg(test)]
+mod prologue_genetics_test;
+
+#[cfg(feature = "nova")]
+#[cfg(test)]
 mod prologue_optics_test;
 
 #[cfg(feature = "nova")]
