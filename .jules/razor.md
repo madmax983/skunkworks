@@ -106,3 +106,13 @@
 **Bloat:** `nova_astrology` (Starfall, Gaze) and `nova_gastronomy` (Cook, Savor). Niche "flavor" features adding 8 OpCodes, struct fields, and heavy modules.
 **Cut:** Deleted both modules, their tests, and all references in OpCode enum, VM dispatch, and struct definitions.
 **Saved:** ~500 lines of code, 8 OpCodes, 2 VM fields, 4 files.
+
+## [Reduction]
+**Bloat:** `SynapseData` struct in `biomimetic-synth` duplicating `Synapse` from `network.rs`; `Snapshot` struct allocation heavy vectors.
+**Cut:** Reused `Synapse` struct, removed `SynapseData`, and cloned vectors directly.
+**Saved:** ~20 lines of code, reduced memory fragmentation and cognitive load.
+
+## [Reduction]
+**Bloat:** `experiments/slime-trash` was a "Condemned" experiment with no documentation and generic implementation.
+**Cut:** Deleted the entire experiment.
+**Saved:** 1 Experiment, 1 Cargo.toml entry, cleaned up workspace.

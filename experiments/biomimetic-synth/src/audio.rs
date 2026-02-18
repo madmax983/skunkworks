@@ -1,4 +1,4 @@
-use crate::network::Network;
+use crate::network::{Network, Synapse};
 use crossbeam_channel::{unbounded, Receiver, Sender};
 use std::thread;
 use std::time::{Duration, Instant};
@@ -7,17 +7,10 @@ pub const SAMPLE_RATE: u32 = 44100;
 pub const SNAPSHOT_INTERVAL: u32 = 735; // Send snapshot every ~60Hz (44100 / 60)
 
 #[derive(Clone, Debug)]
-pub struct SynapseData {
-    pub pre: usize,
-    pub post: usize,
-    pub weight: f32,
-}
-
-#[derive(Clone, Debug)]
 pub struct Snapshot {
     pub voltages: Vec<f32>,
     pub spikes: Vec<bool>,
-    pub synapses: Vec<SynapseData>,
+    pub synapses: Vec<Synapse>,
     pub mean_field: f32,
 }
 
@@ -106,16 +99,8 @@ impl AudioEngine {
             self.sample_count = 0;
 
             let voltages: Vec<f32> = self.network.neurons.iter().map(|n| n.v).collect();
-            let synapses: Vec<SynapseData> = self
-                .network
-                .synapses
-                .iter()
-                .map(|s| SynapseData {
-                    pre: s.pre,
-                    post: s.post,
-                    weight: s.weight,
-                })
-                .collect();
+            // Razor: No need to map and allocate new structs, just clone the vector
+            let synapses = self.network.synapses.clone();
 
             let _ = self.snap_tx.try_send(Snapshot {
                 voltages,
