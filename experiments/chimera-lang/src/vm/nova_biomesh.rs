@@ -1,7 +1,7 @@
 #![cfg(feature = "nova")]
 
 use crate::ast::Nucleotide;
-use crate::vm::{ChimeraVM, Value, GRID_SIZE};
+use crate::vm::{ChimeraVM, Value};
 use std::collections::{HashMap, VecDeque};
 
 #[derive(Debug, Clone, PartialEq)]

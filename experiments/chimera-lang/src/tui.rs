@@ -533,7 +533,7 @@ where
                                     crate::opcode::OpCode::Add => 220.0,
                                     crate::opcode::OpCode::Sub => 440.0,
                                     crate::opcode::OpCode::Jump => 55.0,
-                                    _ => (gene.op.to_string().len() as f32 * 50.0 + 200.0),
+                                    _ => gene.op.to_string().len() as f32 * 50.0 + 200.0,
                                 };
 
                                 use resonance_audio::audio::AudioCommand;

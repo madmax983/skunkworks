@@ -67,7 +67,7 @@ impl EvolutionEngine {
             // Secondary fitness: code length (shorter is better)
             // But primary is value.
             // Let's add length/10 to fitness to break ties
-            let len_penalty = (strand.genes.len() as i64);
+            let len_penalty = strand.genes.len() as i64;
             let final_fitness = fitness.saturating_add(len_penalty);
 
             results.push((final_fitness, strand.clone()));

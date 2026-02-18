@@ -226,9 +226,9 @@ cargo run --release -- --input sample.dna
 cargo run --release -- --input examples/genesis.chs
 ```
 
-To run in headless mode (no TUI), use the `--headless` flag:
+To run in headless mode (no TUI, recommended for CI or non-interactive shells), use the `--headless` flag:
 ```bash
-cargo run --release -- --input sample.dna --headless
+cargo run --release -- --input examples/genesis.chs --headless
 ```
 
 ## Nova Features
@@ -251,10 +251,16 @@ Example `main.rs`:
 use chimera_lang::prelude::*;
 
 fn main() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    // Create a simple organism that prints "Hello"
+    let genes = vec![
+        Gene { op: OpCode::Push, args: vec![Nucleotide::String("Hello".to_string())] },
+        Gene { op: OpCode::Print, args: vec![] },
+    ];
+    let dna = Dna { helix: Helix { strands: vec![Strand { genes }] } };
     let mut vm = ChimeraVM::new(dna);
-    // ... configure VM ...
-    vm.step();
+
+    vm.step(); // Execute Push
+    vm.step(); // Execute Print
 }
 ```
 
