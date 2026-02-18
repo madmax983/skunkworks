@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/circuit-sigil
+- **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
+- **Status:** The copper traces are etched. The gold pads are hiding secrets.
+- **Note:** Moonshot: Image Authentication + Git Commit Verification. The commit is the circuit.
+
 ### [Concentration Level: FRESH] - Location: experiments/chimera-erosion
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The river is carrying DNA. The moss is drinking the simulation.

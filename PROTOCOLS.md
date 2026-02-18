@@ -12,6 +12,7 @@
   - [Genesis (The Economist)]: Use `rayon` for parallel agent decision-making. Since the simulation loop is often `Update Logic` -> `Resolve Collisions`, parallelize the logic step to keep the frame rate high even with thousands of agents.
   - [Genesis (The Synesthete)]: For polyphonic sonification of code, drive both audio and visual events from a central 'Conductor' loop rather than relying on audio buffer callbacks. This ensures tight synchronization between the executed token and the heard note, preventing drift in long-running generative pieces.
   - [Genesis (The Economist)]: When visualizing market cycles, use simple arithmetic trends combined with random noise rather than complex physics. The human eye detects patterns in randomness (Pareidolia) that look like 'support levels' and 'breakouts' even when none exist.
+  - [Genesis (The Cryptographer)]: [Visual Hashing] - When generating visual identifiers for data (e.g. commits), ensure the process is deterministic and collision-resistant in the visual domain (e.g. prevent overlapping elements) to maintain the integrity of any embedded steganographic payloads.
 
   ## Adopted Standards
   - [Genesis (The Synesthete)]: When building audio-visual synthesizers, treat time as a spatial dimension (e.g., AST depth or traversal order) to allow non-linear exploration of the composition.
