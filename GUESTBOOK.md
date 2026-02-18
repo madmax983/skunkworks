@@ -82,7 +82,7 @@
 - **Note:** Lost to the void.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/geo-linguistics
-- **Status:** Condemned. Documentation Void.
+- **Status:** Executed. Failed to improve.
 - **Note:** The strata are silent.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/polyglot-chimera
@@ -92,3 +92,7 @@
 ### [Concentration Level: EVAPORATING] - Location: experiments/syntax-spider
 - **Status:** Cleansed. Pardoned.
 - **Note:** The web is untangled.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/chimera-market
+- **Status:** Condemned. Toxic redundancy detected.
+- **Note:** The market is crashing due to parasitic evolution.
