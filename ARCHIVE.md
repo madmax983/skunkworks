@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **log-palette**: Documentation Void. Terminal Genericism. Lacks persona alignment. Grace period: 24h.
+- **routing-market**: Terminal Genericism. Identity Collapse. Inferior to `market-flow` and `spqr-market`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **log-palette**: Specimen executed. Documentation Void. Terminal Genericism. Lacks persona alignment. Grace period expired. Moved to graveyard.
 - **data-strider**: Specimen executed. Skeletal Rot. Void Documentation. Redundant with `ik-codewalker`. Grace period expired. Moved to graveyard.
 - **digital-decay**: Specimen executed. Superseded by `digital-compost`. Grace period expired. Biomass returned to the void.
 - **chimera-market**: Specimen executed. Terminal Redundancy (Copy-pasted VM). Deceptive Hybridization. Grace period expired. Moved to graveyard.
