@@ -127,9 +127,13 @@
 - **Status:** Executed. Moved to graveyard.
 - **Note:** Deleted due to parasitic redundancy.
 
-### [Concentration Level: TOXIC] - Location: experiments/digital-decay
+### [Concentration Level: TOXIC] - Location: experiments/data-strider
 - **Status:** Condemned.
-- **Note:** Redundant with digital-compost. Manual entropy slider lacks historical truth.
+- **Note:** Skeletal Rot. Void Documentation. Redundant with `ik-codewalker`.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/digital-decay
+- **Status:** Executed.
+- **Note:** Superseded by `digital-compost`. Biomass returned to the void.
 
 ### [Concentration Level: HIGH] - Location: experiments/system-turbulence
 - **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
