@@ -695,55 +695,9 @@ fn process_critter_logic(
     let (y, x) = (agent.y, agent.x);
     if let Value::Str(state_str) = &agent.state {
         if let Ok(mut critter) = state_str.parse::<critter::CritterState>() {
-            let (ny, nx) = critter::process_critter_move(&mut critter, y, x, grid_snapshot);
+            let action = critter::process_critter_move(&mut critter, y, x, grid_snapshot);
             let mut updated_agent = agent.clone();
             updated_agent.state = critter.to_value();
-
-            // Check collision
-            let dest_val = &vm.grid[ny][nx]; // Check LIVE grid
-
-            let mut blocked = false;
-            let mut moved_target = None;
-
-            if let Value::Str(s) = dest_val {
-                if s == "C" && (ny != y || nx != x) {
-                    // Collided with another Critter
-                    let mut rng = rand::thread_rng();
-                    let spawn_dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-                    let (dy, dx) = spawn_dirs[rng.gen_range(0..4)];
-                    if let Some((sy, sx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                        if matches!(vm.grid[sy][sx], Value::Int(0)) {
-                            let other_state = vm
-                                .prologue_state
-                                .registers
-                                .get(&(ny, nx))
-                                .and_then(|v| if let Value::Str(s) = v { s.parse().ok() } else { None })
-                                .unwrap_or(critter::CritterState::default());
-
-                            let child = critter::breed(&critter, &other_state);
-                            vm.grid[sy][sx] = Value::Str("C".to_string());
-                            vm.prologue_state.registers.insert((sy, sx), child.to_value());
-                        }
-                    }
-                    blocked = true;
-                } else if s == "!" {
-                    // Eat Food
-                    critter.energy += 20;
-                    updated_agent.state = critter.to_value();
-                } else if !is_empty_val(dest_val) {
-                    blocked = true;
-                }
-            } else if !is_empty_val(dest_val) {
-                blocked = true;
-            }
-
-            if !blocked {
-                moved_target = Some((ny, nx));
-            }
-
-            if moved_target.is_none() {
-                vm.prologue_state.registers.insert((y, x), updated_agent.state.clone());
-            }
 
             if critter.energy <= 0 {
                 vm.grid[y][x] = Value::Int(0);
@@ -751,7 +705,134 @@ fn process_critter_logic(
                 return None; // Dead
             }
 
-            return Some((updated_agent, moved_target));
+            match action {
+                critter::CritterAction::Move(ny, nx) => {
+                    let dest_val = &vm.grid[ny][nx]; // Check LIVE grid
+                    let mut blocked = false;
+                    let mut moved_target = None;
+
+                    if let Value::Str(s) = dest_val {
+                        if s == "C" && (ny != y || nx != x) {
+                            // Collided with another Critter -> Breed
+                            let mut rng = rand::thread_rng();
+                            let spawn_dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+                            let (dy, dx) = spawn_dirs[rng.gen_range(0..4)];
+                            if let Some((sy, sx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                                if matches!(vm.grid[sy][sx], Value::Int(0)) {
+                                    let other_state = vm
+                                        .prologue_state
+                                        .registers
+                                        .get(&(ny, nx))
+                                        .and_then(|v| {
+                                            if let Value::Str(s) = v {
+                                                s.parse().ok()
+                                            } else {
+                                                None
+                                            }
+                                        })
+                                        .unwrap_or(critter::CritterState::default());
+
+                                    let child = critter::breed(&critter, &other_state);
+                                    vm.grid[sy][sx] = Value::Str("C".to_string());
+                                    vm.prologue_state
+                                        .registers
+                                        .insert((sy, sx), child.to_value());
+                                }
+                            }
+                            blocked = true;
+                        } else if s == "!" {
+                            // Eat Food
+                            critter.energy += 20;
+                            updated_agent.state = critter.to_value();
+                            // Move into it (Eat)
+                            moved_target = Some((ny, nx));
+                        } else if !is_empty_val(dest_val) {
+                            blocked = true;
+                        }
+                    } else if !is_empty_val(dest_val) {
+                        blocked = true;
+                    }
+
+                    if !blocked && moved_target.is_none() {
+                        moved_target = Some((ny, nx));
+                    }
+
+                    if moved_target.is_none() {
+                        vm.prologue_state
+                            .registers
+                            .insert((y, x), updated_agent.state.clone());
+                    }
+
+                    return Some((updated_agent, moved_target));
+                }
+                critter::CritterAction::Attack(ny, nx) => {
+                    // Kill agent at target
+                    let dest_val = vm.grid[ny][nx].clone();
+                    if let Value::Str(s) = dest_val {
+                        if s == "@" || s == "K" || s == "H" || s == "C" {
+                            // Kill
+                            vm.grid[ny][nx] = Value::Int(0); // Corpse?
+                            if s == "C" {
+                                vm.prologue_state.registers.remove(&(ny, nx));
+                            }
+                            critter.energy += 30; // Predation gain
+                            updated_agent.state = critter.to_value();
+                        }
+                    }
+                    vm.prologue_state
+                        .registers
+                        .insert((y, x), updated_agent.state.clone());
+                    return Some((updated_agent, None)); // Stay put
+                }
+                critter::CritterAction::Split => {
+                    // Mitosis
+                    if critter.energy > 50 {
+                        let mut rng = rand::thread_rng();
+                        let spawn_dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+                        let (dy, dx) = spawn_dirs[rng.gen_range(0..4)];
+                        if let Some((sy, sx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                            if matches!(vm.grid[sy][sx], Value::Int(0)) {
+                                let child = critter::breed(&critter, &critter); // Self-breed
+                                vm.grid[sy][sx] = Value::Str("C".to_string());
+                                vm.prologue_state
+                                    .registers
+                                    .insert((sy, sx), child.to_value());
+                                critter.energy -= 30;
+                                updated_agent.state = critter.to_value();
+                            }
+                        }
+                    }
+                    vm.prologue_state
+                        .registers
+                        .insert((y, x), updated_agent.state.clone());
+                    return Some((updated_agent, None));
+                }
+                critter::CritterAction::Mark => {
+                    // Mark forward
+                    let (dy, dx) = match critter.direction {
+                        0 => (-1, 0),
+                        1 => (0, 1),
+                        2 => (1, 0),
+                        3 => (0, -1),
+                        _ => (0, 0),
+                    };
+                    if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                        if matches!(vm.grid[ny][nx], Value::Int(0)) {
+                            vm.grid[ny][nx] = Value::Str(".".to_string());
+                        }
+                    }
+                    vm.prologue_state
+                        .registers
+                        .insert((y, x), updated_agent.state.clone());
+                    return Some((updated_agent, None));
+                }
+                critter::CritterAction::None => {
+                    vm.prologue_state
+                        .registers
+                        .insert((y, x), updated_agent.state.clone());
+                    return Some((updated_agent, None));
+                }
+            }
         }
     }
     // Fallback if parsing fails or not a string (should not happen for C)
