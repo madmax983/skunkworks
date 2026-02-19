@@ -1,35 +1,42 @@
 mod lbm;
 mod particles;
+mod text_render;
+
 use lbm::{FluidSim, HEIGHT, WIDTH};
-use macroquad::color::hsl_to_rgb;
 use macroquad::prelude::*;
 use particles::ParticleSystem;
+use text_render::TextManager;
 
 #[macroquad::main("Typographic Turbulence")]
 async fn main() {
+    // 1. Initialize Simulation
     let mut sim = FluidSim::new();
-    let mut particle_system = ParticleSystem::new();
+    let mut particle_system = ParticleSystem::new(20000); // 20k particles
+    let mut text_manager = TextManager::new();
+
+    // 2. Setup Visualization
+    let mut fluid_image = Image::gen_image_color(WIDTH as u16, HEIGHT as u16, BLACK);
+    let fluid_texture = Texture2D::from_image(&fluid_image);
+    fluid_texture.set_filter(FilterMode::Nearest);
 
     // UI State
-    let mut cursor_x = WIDTH / 2;
-    let mut cursor_y = HEIGHT / 2;
     let mut show_fluid = true;
-    let mut wind_tunnel = false;
+    let mut show_particles = true;
+
+    // Auto-spawn timer
+    let mut last_spawn_time = 0.0;
 
     loop {
+        let dt = get_frame_time();
+        let time = get_time();
+
         let sw = screen_width();
         let sh = screen_height();
         let cell_w = sw / WIDTH as f32;
         let cell_h = sh / HEIGHT as f32;
-        // Use a font size slightly larger than cell height to ensure visibility?
-        // Or exactly cell height.
-        // For drawing, let's use cell_h.
-        let font_size = cell_h * 1.2;
 
-        // Input: Interaction
-        let dt = get_frame_time();
-
-        // Mouse Interaction
+        // 3. Input Handling
+        // Mouse interaction
         if is_mouse_button_down(MouseButton::Left) {
             let (mx, my) = mouse_position();
             let gx = (mx / cell_w) as usize;
@@ -39,155 +46,107 @@ async fn main() {
 
             let delta = mouse_delta_position();
             // Scale delta to be meaningful impulse
-            sim.add_velocity(gx, gy, delta.x * 200.0, delta.y * 200.0);
+            sim.add_velocity(gx, gy, delta.x * 10.0, delta.y * 10.0);
         }
 
-        // Keyboard Interaction: Spawn Particles
-        // We capture chars.
+        // Typing to spawn text at mouse cursor
         while let Some(c) = get_char_pressed() {
-            if !c.is_control() && c != '\n' && c != '\r' && c != '\u{8}' {
-                // Spawn particle at cursor
-                // Let's spawn a cluster or just one?
-                // Just one for now.
-                // Color: White?
-                // Let's cycle colors or random.
-                let color = hsl_to_rgb(rand::gen_range(0.0, 1.0), 0.8, 0.8);
+            if !c.is_control() {
+                let (mx, my) = mouse_position();
+                let gx = mx / cell_w;
+                let gy = my / cell_h;
 
-                particle_system.spawn(cursor_x as f32, cursor_y as f32, c, color);
+                // Random velocity
+                let vx = rand::gen_range(-10.0, 10.0);
+                let vy = rand::gen_range(-5.0, 5.0);
 
-                // Add some velocity to fluid at cursor to "shoot" it?
-                // Or let it float.
-                // Let's add a small impulse in direction of typing?
-                // Assuming left-to-right typing.
-                sim.add_velocity(cursor_x, cursor_y, 0.5, 0.0);
-
-                // Move cursor
-                cursor_x += 1;
-                if cursor_x >= WIDTH {
-                    cursor_x = 0;
-                    cursor_y = (cursor_y + 1).min(HEIGHT - 1);
-                }
+                text_manager.spawn(&c.to_string(), gx, gy, vx, vy);
             }
         }
 
-        // Navigation (Arrow keys)
-        if is_key_pressed(KeyCode::Left) {
-            cursor_x = cursor_x.saturating_sub(1);
-        }
-        if is_key_pressed(KeyCode::Right) {
-            cursor_x = (cursor_x + 1).min(WIDTH - 1);
-        }
-        if is_key_pressed(KeyCode::Up) {
-            cursor_y = cursor_y.saturating_sub(1);
-        }
-        if is_key_pressed(KeyCode::Down) {
-            cursor_y = (cursor_y + 1).min(HEIGHT - 1);
+        // Background scrolling text
+        if time - last_spawn_time > 3.0 {
+            let words = ["FLOW", "FLUID", "CHAOS", "VORTEX", "TURBULENCE", "RUST", "MACROQUAD", "SIMULATION", "GENESIS", "MOONSHOT"];
+            let word = words[rand::gen_range(0, words.len())];
+            let y = rand::gen_range(10.0, HEIGHT as f32 - 10.0);
+            // Move left
+            text_manager.spawn(word, WIDTH as f32, y, -10.0, 0.0);
+            last_spawn_time = time;
         }
 
-        // Toggle Fluid View
+        // Toggle views
         if is_key_pressed(KeyCode::F) {
             show_fluid = !show_fluid;
         }
-
-        // Toggle Wind Tunnel
-        if is_key_pressed(KeyCode::W) {
-            wind_tunnel = !wind_tunnel;
+        if is_key_pressed(KeyCode::P) {
+            show_particles = !show_particles;
         }
 
-        if wind_tunnel {
-            // Inject velocity at left boundary
-            for y in 1..HEIGHT - 1 {
-                // Add velocity to the left edge
-                sim.add_velocity(1, y, 0.2, 0.0);
-            }
-        }
+        // 4. Updates
+        // First update text (which sets obstacles and imparts velocity)
+        text_manager.update(&mut sim, dt);
 
-        // Simulation Steps
+        // Then step fluid
         sim.step();
+
+        // Then move particles
         particle_system.update(&sim, dt);
 
-        // Rendering
+        // 5. Rendering
         clear_background(BLACK);
 
-        // 1. Draw Fluid Background (optional)
         if show_fluid {
-            // We can draw a coarse grid or pixels.
-            // Drawing 200x100 pixels is fast.
-            // `draw_texture` with a constructed image?
-            // Or just iterating rectangles is too slow? 20k rects might be okay for macroquad.
-            // But let's try just drawing characters for fluid?
-            // Or dots.
-            // Let's draw small rects where Curl is high.
-
-            for y in (0..HEIGHT).step_by(2) {
-                for x in (0..WIDTH).step_by(2) {
+            // Update fluid texture
+            // Map density/curl to colors
+            for y in 0..HEIGHT {
+                for x in 0..WIDTH {
                     let idx = y * WIDTH + x;
-                    let curl = sim.curl[idx];
-                    let abs_curl = curl.abs();
 
-                    if abs_curl > 0.05 {
-                        let color = if curl > 0.0 {
-                            Color::new(1.0, 0.2, 0.2, abs_curl * 5.0) // Red for positive curl
-                        } else {
-                            Color::new(0.2, 0.2, 1.0, abs_curl * 5.0) // Blue for negative curl
-                        };
+                    if sim.obstacles[idx] {
+                        fluid_image.set_pixel(x as u32, y as u32, WHITE);
+                    } else {
+                        let rho = sim.density[idx];
+                        let curl = sim.curl[idx];
 
-                        draw_rectangle(
-                            x as f32 * cell_w,
-                            y as f32 * cell_h,
-                            cell_w * 2.0,
-                            cell_h * 2.0,
-                            color,
-                        );
+                        // Visualize Curl
+                        let c = (curl * 10.0).tanh(); // Amplify curl
+                        let r = if c > 0.0 { c } else { 0.0 };
+                        let b = if c < 0.0 { -c } else { 0.0 };
+
+                        // Add some density visualization
+                        let g = (rho - 1.0).abs() * 2.0;
+
+                        fluid_image.set_pixel(x as u32, y as u32, Color::new(r, g, b, 1.0));
                     }
                 }
             }
-        }
-
-        // 2. Draw Particles
-        for p in particle_system.particles() {
-            // Fade out
-            let alpha = 1.0 - (p.lifetime / p.max_lifetime).powf(2.0);
-            if alpha <= 0.0 {
-                continue;
-            }
-
-            let mut color = p.color;
-            color.a = alpha;
-
-            let px = p.position.x * cell_w;
-            let py = p.position.y * cell_h;
-
-            // Draw text
-            draw_text(
-                &p.char.to_string(),
-                px,
-                py + font_size, // Offset because draw_text y is baseline? No, usually top-left for some, baseline for others. Macroquad draw_text y is baseline.
-                font_size,
-                color,
+            fluid_texture.update(&fluid_image);
+            draw_texture_ex(
+                &fluid_texture,
+                0.0,
+                0.0,
+                WHITE,
+                DrawTextureParams {
+                    dest_size: Some(vec2(sw, sh)),
+                    ..Default::default()
+                },
             );
         }
 
-        // 3. Draw Cursor
-        let cursor_screen_x = cursor_x as f32 * cell_w;
-        let cursor_screen_y = cursor_y as f32 * cell_h;
-        draw_rectangle_lines(cursor_screen_x, cursor_screen_y, cell_w, cell_h, 2.0, GREEN);
+        if show_particles {
+             for p in particle_system.particles() {
+                 let x = p.position.x * cell_w;
+                 let y = p.position.y * cell_h;
+                 // Draw char
+                 draw_text(&p.char.to_string(), x, y, cell_h * 1.5, p.color);
+             }
+        }
 
-        // UI Info
-        draw_text(
-            &format!("Particles: {}", particle_system.count()),
-            10.0,
-            20.0,
-            20.0,
-            WHITE,
-        );
-        draw_text(
-            "Type to add particles. Mouse to stir. F: Fluid, W: Wind Tunnel.",
-            10.0,
-            40.0,
-            20.0,
-            LIGHTGRAY,
-        );
+        // Draw UI
+        draw_text("Typographic Turbulence", 10.0, 30.0, 30.0, WHITE);
+        draw_text(&format!("Particles: {}", particle_system.count()), 10.0, 60.0, 20.0, WHITE);
+        draw_text("Type to spawn text. Mouse to stir.", 10.0, 80.0, 20.0, GRAY);
+        draw_text("F: Toggle Fluid | P: Toggle Particles", 10.0, 100.0, 20.0, GRAY);
 
         next_frame().await
     }
