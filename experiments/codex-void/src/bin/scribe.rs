@@ -1,8 +1,8 @@
+use anyhow::{Context, Result};
 use clap::Parser;
 use codex_void::starmap::StarMap;
 use std::fs;
 use std::path::PathBuf;
-use anyhow::{Context, Result};
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -44,7 +44,11 @@ fn main() -> Result<()> {
         let len = data.len() as f64;
         let w = len.sqrt().ceil() as u32;
         // Make it at least a bit wide
-        if w < 10 { w.max(1) } else { w }
+        if w < 10 {
+            w.max(1)
+        } else {
+            w
+        }
     });
 
     println!("Encoding {} bytes into grid width {}...", data.len(), width);
@@ -52,7 +56,8 @@ fn main() -> Result<()> {
     let starmap = StarMap::new(&data, width);
     let img = starmap.generate();
 
-    img.save(&cli.output).context("Failed to save output image")?;
+    img.save(&cli.output)
+        .context("Failed to save output image")?;
 
     println!("Saved star map to {}", cli.output.display());
 

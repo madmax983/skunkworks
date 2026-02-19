@@ -1,6 +1,6 @@
+use crate::graph::Graph;
 use bevy::prelude::*;
 use bevy_prototype_lyon::prelude::*;
-use crate::graph::Graph;
 
 #[derive(Component)]
 pub struct Strider {
@@ -29,55 +29,68 @@ pub struct StriderPlugin;
 impl Plugin for StriderPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, spawn_strider)
-           .add_systems(Update, update_limbs_render);
+            .add_systems(Update, update_limbs_render);
     }
 }
 
 fn spawn_strider(mut commands: Commands, graph: Res<Graph>) {
-    if graph.nodes.is_empty() { return; }
+    if graph.nodes.is_empty() {
+        return;
+    }
 
     let start_node = 0;
     let start_pos = graph.nodes[start_node];
 
     // Spawn Body
-    let body = commands.spawn((
-        ShapeBundle {
-            path: GeometryBuilder::build_as(&shapes::Circle { radius: 10.0, center: Vec2::ZERO }),
-            spatial: SpatialBundle::from_transform(Transform::from_translation(start_pos.extend(1.0))),
-            ..default()
-        },
-        Fill::color(Color::rgb(0.8, 0.2, 0.2)),
-        Strider { target_node: start_node },
-    )).id();
+    let body = commands
+        .spawn((
+            ShapeBundle {
+                path: GeometryBuilder::build_as(&shapes::Circle {
+                    radius: 10.0,
+                    center: Vec2::ZERO,
+                }),
+                spatial: SpatialBundle::from_transform(Transform::from_translation(
+                    start_pos.extend(1.0),
+                )),
+                ..default()
+            },
+            Fill::color(Color::rgb(0.8, 0.2, 0.2)),
+            Strider {
+                target_node: start_node,
+            },
+        ))
+        .id();
 
     // Spawn 4 Limbs as children
     for i in 0..4 {
         let offset = match i {
-            0 => Vec2::new(-30.0, 30.0), // FL
-            1 => Vec2::new(30.0, 30.0),  // FR
-            2 => Vec2::new(-30.0, -30.0),// BL
-            3 => Vec2::new(30.0, -30.0), // BR
+            0 => Vec2::new(-30.0, 30.0),  // FL
+            1 => Vec2::new(30.0, 30.0),   // FR
+            2 => Vec2::new(-30.0, -30.0), // BL
+            3 => Vec2::new(30.0, -30.0),  // BR
             _ => Vec2::ZERO,
         };
         let foot_pos = start_pos + offset;
 
-        let limb = commands.spawn((
-            ShapeBundle {
-                path: GeometryBuilder::build_as(&shapes::Line(Vec2::ZERO, Vec2::ZERO)), // Placeholder
-                spatial: SpatialBundle::default(), // Relative to body
-                ..default()
-            },
-            Stroke::new(Color::rgb(0.8, 0.5, 0.5), 2.0),
-            Limb {
-                index: i,
-                foot_pos,
-                start_foot_pos: foot_pos,
-                target_foot_pos: foot_pos,
-                knee_pos: Vec2::ZERO,
-                state: LimbState::Stance,
-                lift_height: 0.0,
-            },
-        )).id();
+        let limb = commands
+            .spawn((
+                ShapeBundle {
+                    path: GeometryBuilder::build_as(&shapes::Line(Vec2::ZERO, Vec2::ZERO)), // Placeholder
+                    spatial: SpatialBundle::default(), // Relative to body
+                    ..default()
+                },
+                Stroke::new(Color::rgb(0.8, 0.5, 0.5), 2.0),
+                Limb {
+                    index: i,
+                    foot_pos,
+                    start_foot_pos: foot_pos,
+                    target_foot_pos: foot_pos,
+                    knee_pos: Vec2::ZERO,
+                    state: LimbState::Stance,
+                    lift_height: 0.0,
+                },
+            ))
+            .id();
 
         commands.entity(body).add_child(limb);
     }

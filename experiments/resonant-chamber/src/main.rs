@@ -67,16 +67,14 @@ impl Analyzer {
 
     fn compute_fft(&mut self) {
         let fft = self.planner.plan_fft_forward(self.buffer.len());
-        let mut input: Vec<Complex<f32>> = self
-            .buffer
-            .iter()
-            .map(|&x| Complex::new(x, 0.0))
-            .collect();
+        let mut input: Vec<Complex<f32>> =
+            self.buffer.iter().map(|&x| Complex::new(x, 0.0)).collect();
 
         // Apply Hanning window
         let len = input.len();
         for (i, val) in input.iter_mut().enumerate() {
-            let window = 0.5 * (1.0 - (2.0 * std::f32::consts::PI * i as f32 / (len - 1) as f32).cos());
+            let window =
+                0.5 * (1.0 - (2.0 * std::f32::consts::PI * i as f32 / (len - 1) as f32).cos());
             *val = *val * window;
         }
 
@@ -147,7 +145,10 @@ async fn main() {
             if analyzer.push_samples(&samples) {
                 // Analysis finished
                 state = AppState::Interactive;
-                println!("Analysis complete. Spectrum size: {}", analyzer.spectrum.len());
+                println!(
+                    "Analysis complete. Spectrum size: {}",
+                    analyzer.spectrum.len()
+                );
             }
         }
 
@@ -237,7 +238,7 @@ async fn main() {
 
                 // Right click triggers simple pluck for testing
                 if is_mouse_button_pressed(MouseButton::Right) {
-                     let _ = cmd_tx.send(AudioCommand::Pluck {
+                    let _ = cmd_tx.send(AudioCommand::Pluck {
                         x: gx,
                         y: gy,
                         strength: 0.8,
@@ -266,12 +267,21 @@ async fn main() {
         for (i, (tool, label)) in tools.iter().enumerate() {
             let x = start_x + i as f32 * (btn_w + 10.0);
             let y = start_y;
-            let color = if current_tool == *tool { WHITE } else { LIGHTGRAY };
+            let color = if current_tool == *tool {
+                WHITE
+            } else {
+                LIGHTGRAY
+            };
 
             draw_rectangle(x, y, btn_w, btn_h, color);
             draw_text(label, x + 10.0, y + 20.0, 20.0, BLACK);
 
-            if mx >= x && mx <= x + btn_w && my >= y && my <= y + btn_h && is_mouse_button_pressed(MouseButton::Left) {
+            if mx >= x
+                && mx <= x + btn_w
+                && my >= y
+                && my <= y + btn_h
+                && is_mouse_button_pressed(MouseButton::Left)
+            {
                 current_tool = *tool;
             }
         }
@@ -279,11 +289,20 @@ async fn main() {
         // Analyze Button
         let analyze_x = start_x;
         let analyze_y = start_y + btn_h + 10.0;
-        let analyze_color = if state == AppState::Analyzing { RED } else { BLUE };
+        let analyze_color = if state == AppState::Analyzing {
+            RED
+        } else {
+            BLUE
+        };
         draw_rectangle(analyze_x, analyze_y, btn_w, btn_h, analyze_color);
         draw_text("Analyze", analyze_x + 10.0, analyze_y + 20.0, 20.0, WHITE);
 
-        if mx >= analyze_x && mx <= analyze_x + btn_w && my >= analyze_y && my <= analyze_y + btn_h && is_mouse_button_pressed(MouseButton::Left) {
+        if mx >= analyze_x
+            && mx <= analyze_x + btn_w
+            && my >= analyze_y
+            && my <= analyze_y + btn_h
+            && is_mouse_button_pressed(MouseButton::Left)
+        {
             if state == AppState::Interactive {
                 state = AppState::Analyzing;
                 // Trigger analysis
@@ -306,7 +325,12 @@ async fn main() {
         draw_rectangle(clear_x, clear_y, btn_w, btn_h, RED);
         draw_text("Clear All", clear_x + 10.0, clear_y + 20.0, 20.0, WHITE);
 
-        if mx >= clear_x && mx <= clear_x + btn_w && my >= clear_y && my <= clear_y + btn_h && is_mouse_button_pressed(MouseButton::Left) {
+        if mx >= clear_x
+            && mx <= clear_x + btn_w
+            && my >= clear_y
+            && my <= clear_y + btn_h
+            && is_mouse_button_pressed(MouseButton::Left)
+        {
             let _ = cmd_tx.send(AudioCommand::ClearWalls);
             // Rebuild border
             for x in 0..GRID_W {
@@ -340,12 +364,24 @@ async fn main() {
                     graph_x + i as f32 * step,
                     graph_y + graph_h - h,
                     1.0,
-                    GREEN
+                    GREEN,
                 );
             }
-            draw_text("Frequency Response", graph_x + 5.0, graph_y + 15.0, 15.0, WHITE);
+            draw_text(
+                "Frequency Response",
+                graph_x + 5.0,
+                graph_y + 15.0,
+                15.0,
+                WHITE,
+            );
         } else {
-             draw_text("No Data", graph_x + graph_w/2.0 - 20.0, graph_y + graph_h/2.0, 20.0, GRAY);
+            draw_text(
+                "No Data",
+                graph_x + graph_w / 2.0 - 20.0,
+                graph_y + graph_h / 2.0,
+                20.0,
+                GRAY,
+            );
         }
 
         next_frame().await;

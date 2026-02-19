@@ -27,9 +27,21 @@ mod tests {
         }
 
         // Verify grid state
-        assert_eq!(vm.grid[5][5], Value::Str("!".to_string()), "Expected '!' at (5,5)");
-        assert_eq!(vm.grid[5][7], Value::Str("~".to_string()), "Expected '~' at (7,5)");
-        assert_eq!(vm.grid[5][9], Value::Str("?".to_string()), "Expected '?' at (9,5)");
+        assert_eq!(
+            vm.grid[5][5],
+            Value::Str("!".to_string()),
+            "Expected '!' at (5,5)"
+        );
+        assert_eq!(
+            vm.grid[5][7],
+            Value::Str("~".to_string()),
+            "Expected '~' at (7,5)"
+        );
+        assert_eq!(
+            vm.grid[5][9],
+            Value::Str("?".to_string()),
+            "Expected '?' at (9,5)"
+        );
     }
 
     #[test]

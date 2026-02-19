@@ -1,10 +1,10 @@
 use macroquad::prelude::*;
 use origami::{MiuraOri, MiuraParams, Orientation};
 
-mod memory;
 mod decay;
-use memory::Memory;
+mod memory;
 use decay::Decay;
+use memory::Memory;
 
 const IMG_WIDTH: u32 = 512;
 const IMG_HEIGHT: u32 = 512;
@@ -70,8 +70,12 @@ async fn main() {
 
         // Fold Control
         let old_extension = extension;
-        if is_key_down(KeyCode::Up) { extension += 0.01; }
-        if is_key_down(KeyCode::Down) { extension -= 0.01; }
+        if is_key_down(KeyCode::Up) {
+            extension += 0.01;
+        }
+        if is_key_down(KeyCode::Down) {
+            extension -= 0.01;
+        }
         extension = extension.clamp(0.05, 1.0);
 
         // --- Logic: Stress Calculation ---
@@ -139,10 +143,30 @@ async fn main() {
                 let u3 = i as f32 / cols as f32;
                 let v3_uv = (j + 1) as f32 / rows as f32;
 
-                vertices.push(Vertex { position: v0, uv: vec2(u0, v0_uv), color: [255, 255, 255, 255], normal: vec4(0.,1.,0.,0.) });
-                vertices.push(Vertex { position: v1, uv: vec2(u1, v1_uv), color: [255, 255, 255, 255], normal: vec4(0.,1.,0.,0.) });
-                vertices.push(Vertex { position: v2, uv: vec2(u2, v2_uv), color: [255, 255, 255, 255], normal: vec4(0.,1.,0.,0.) });
-                vertices.push(Vertex { position: v3, uv: vec2(u3, v3_uv), color: [255, 255, 255, 255], normal: vec4(0.,1.,0.,0.) });
+                vertices.push(Vertex {
+                    position: v0,
+                    uv: vec2(u0, v0_uv),
+                    color: [255, 255, 255, 255],
+                    normal: vec4(0., 1., 0., 0.),
+                });
+                vertices.push(Vertex {
+                    position: v1,
+                    uv: vec2(u1, v1_uv),
+                    color: [255, 255, 255, 255],
+                    normal: vec4(0., 1., 0., 0.),
+                });
+                vertices.push(Vertex {
+                    position: v2,
+                    uv: vec2(u2, v2_uv),
+                    color: [255, 255, 255, 255],
+                    normal: vec4(0., 1., 0., 0.),
+                });
+                vertices.push(Vertex {
+                    position: v3,
+                    uv: vec2(u3, v3_uv),
+                    color: [255, 255, 255, 255],
+                    normal: vec4(0., 1., 0., 0.),
+                });
 
                 indices.push(idx + 0);
                 indices.push(idx + 1);
@@ -184,9 +208,27 @@ async fn main() {
 
         // UI
         draw_text("Crumpled Memory 🦢🧠", 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Extension: {:.1}%", extension * 100.0), 20.0, 50.0, 20.0, YELLOW);
-        draw_text("UP/DOWN: Fold/Unfold | Mouse: Orbit", 20.0, 70.0, 20.0, LIGHTGRAY);
-        draw_text("Folding causes mechanical stress and memory erasure.", 20.0, 90.0, 16.0, RED);
+        draw_text(
+            &format!("Extension: {:.1}%", extension * 100.0),
+            20.0,
+            50.0,
+            20.0,
+            YELLOW,
+        );
+        draw_text(
+            "UP/DOWN: Fold/Unfold | Mouse: Orbit",
+            20.0,
+            70.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            "Folding causes mechanical stress and memory erasure.",
+            20.0,
+            90.0,
+            16.0,
+            RED,
+        );
 
         next_frame().await
     }

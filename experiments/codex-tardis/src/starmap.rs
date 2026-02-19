@@ -1,6 +1,6 @@
-use image::{ImageBuffer, Rgb};
-use ::rand::Rng;
 use crate::glyph::Glyph;
+use ::rand::Rng;
+use image::{ImageBuffer, Rgb};
 use macroquad::prelude::*;
 
 pub const SPACING: u32 = 12;
@@ -44,7 +44,7 @@ impl StarMap {
             let x = rng.gen_range(0..self.width);
             let y = rng.gen_range(0..self.height);
             let b = rng.gen_range(50..150);
-            img.put_pixel(x, y, Rgb([b, b, b+20]));
+            img.put_pixel(x, y, Rgb([b, b, b + 20]));
         }
 
         // Render Glyphs

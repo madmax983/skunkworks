@@ -31,10 +31,10 @@ impl Memory {
                 let dx = x as i32 - center_x as i32;
                 let dy = y as i32 - center_y as i32;
                 if dx * dx + dy * dy < (radius * radius) as i32 {
-                     let p = ground_truth.get_pixel_mut(x, y);
-                     p[0] = 255 - p[0];
-                     p[1] = 255 - p[1];
-                     p[2] = 255 - p[2];
+                    let p = ground_truth.get_pixel_mut(x, y);
+                    p[0] = 255 - p[0];
+                    p[1] = 255 - p[1];
+                    p[2] = 255 - p[2];
                 }
             }
         }

@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use macroquad::audio::{load_sound_from_bytes, play_sound, PlaySoundParams};
+use macroquad::prelude::*;
 
 mod memory;
 use memory::Memory;
@@ -46,16 +46,22 @@ async fn main() {
             // We await here, which causes a slight "glitch" pause, reinforcing the effort of recall.
             let wav_data = audio::generate_drone(&memory.perceived);
             if let Ok(sound) = load_sound_from_bytes(&wav_data).await {
-                play_sound(&sound, PlaySoundParams{ looped: false, volume: 0.5 });
+                play_sound(
+                    &sound,
+                    PlaySoundParams {
+                        looped: false,
+                        volume: 0.5,
+                    },
+                );
             }
         }
 
         if is_key_down(KeyCode::Space) {
-             // Full recall (expensive? No, just iterates pixels if we implemented full recall)
-             // For now, let's just recall a random spot every frame to simulate "trying to remember everything"
-             let rx = rand::gen_range(0, width);
-             let ry = rand::gen_range(0, height);
-             memory.recall(rx, ry, 100);
+            // Full recall (expensive? No, just iterates pixels if we implemented full recall)
+            // For now, let's just recall a random spot every frame to simulate "trying to remember everything"
+            let rx = rand::gen_range(0, width);
+            let ry = rand::gen_range(0, height);
+            memory.recall(rx, ry, 100);
         }
 
         if is_key_pressed(KeyCode::R) {
@@ -109,7 +115,13 @@ async fn main() {
         // UI
         draw_rectangle(0.0, 0.0, screen_w, 40.0, Color::new(0.0, 0.0, 0.0, 0.8));
         draw_text("MNEMOSYNE: The Fading Gallery", 10.0, 25.0, 20.0, WHITE);
-        draw_text("Left Click: Recall | Space: Panicked Recall | R: Reset", 10.0, screen_h - 10.0, 16.0, GRAY);
+        draw_text(
+            "Left Click: Recall | Space: Panicked Recall | R: Reset",
+            10.0,
+            screen_h - 10.0,
+            16.0,
+            GRAY,
+        );
 
         // Debug
         // draw_text(&format!("FPS: {}", get_fps()), screen_w - 100.0, 25.0, 20.0, GREEN);

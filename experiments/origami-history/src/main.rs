@@ -1,6 +1,6 @@
 use anyhow::Result;
 use chrono::Utc;
-use git_associates::{GitModel, Commit};
+use git_associates::{Commit, GitModel};
 use macroquad::prelude::*;
 use origami::{MiuraOri, MiuraParams, Orientation};
 use std::f32::consts::PI;
@@ -91,11 +91,14 @@ async fn main() -> Result<()> {
             },
             ..Default::default()
         },
-    ).unwrap();
+    )
+    .unwrap();
 
     loop {
         // --- Input ---
-        if is_mouse_button_down(MouseButton::Right) || (is_key_down(KeyCode::LeftShift) && is_mouse_button_down(MouseButton::Left)) {
+        if is_mouse_button_down(MouseButton::Right)
+            || (is_key_down(KeyCode::LeftShift) && is_mouse_button_down(MouseButton::Left))
+        {
             let dy = mouse_delta_position().y;
             extension -= dy * 2.0;
         }
@@ -139,7 +142,9 @@ async fn main() -> Result<()> {
         for j in 0..rows {
             for i in 0..cols {
                 let panel_idx = j * cols + i;
-                if panel_idx >= panels.len() { continue; }
+                if panel_idx >= panels.len() {
+                    continue;
+                }
                 let panel = &panels[panel_idx];
 
                 // Grid indices
@@ -163,13 +168,33 @@ async fn main() -> Result<()> {
 
                 // Quad vertices (duplicated for flat shading look)
                 // 0
-                vertices.push(Vertex { position: v0, uv: vec2(0., 0.), color: color_bytes, normal: vec4(0., 1., 0., 0.) });
+                vertices.push(Vertex {
+                    position: v0,
+                    uv: vec2(0., 0.),
+                    color: color_bytes,
+                    normal: vec4(0., 1., 0., 0.),
+                });
                 // 1
-                vertices.push(Vertex { position: v1, uv: vec2(1., 0.), color: color_bytes, normal: vec4(0., 1., 0., 0.) });
+                vertices.push(Vertex {
+                    position: v1,
+                    uv: vec2(1., 0.),
+                    color: color_bytes,
+                    normal: vec4(0., 1., 0., 0.),
+                });
                 // 2
-                vertices.push(Vertex { position: v2, uv: vec2(1., 1.), color: color_bytes, normal: vec4(0., 1., 0., 0.) });
+                vertices.push(Vertex {
+                    position: v2,
+                    uv: vec2(1., 1.),
+                    color: color_bytes,
+                    normal: vec4(0., 1., 0., 0.),
+                });
                 // 3
-                vertices.push(Vertex { position: v3, uv: vec2(0., 1.), color: color_bytes, normal: vec4(0., 1., 0., 0.) });
+                vertices.push(Vertex {
+                    position: v3,
+                    uv: vec2(0., 1.),
+                    color: color_bytes,
+                    normal: vec4(0., 1., 0., 0.),
+                });
 
                 // Triangles: 0-1-3, 1-2-3
                 indices.push(idx_counter + 0);
@@ -202,14 +227,26 @@ async fn main() -> Result<()> {
         // UI
         draw_text("Origami History", 20.0, 30.0, 30.0, WHITE);
         draw_text(&format!("Commits: {}", count), 20.0, 50.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("Extension: {:.1}%", extension * 100.0), 20.0, 70.0, 20.0, YELLOW);
+        draw_text(
+            &format!("Extension: {:.1}%", extension * 100.0),
+            20.0,
+            70.0,
+            20.0,
+            YELLOW,
+        );
 
         // Let's just stick to listing the most recent commits on the side for now.
 
         let mut y = 100.0;
         for panel in panels.iter().take(10) {
             if let Some(c) = &panel.commit {
-                draw_text(&format!("{}: {}", &c.short_hash, c.author), 20.0, y, 20.0, panel.color);
+                draw_text(
+                    &format!("{}: {}", &c.short_hash, c.author),
+                    20.0,
+                    y,
+                    20.0,
+                    panel.color,
+                );
                 y += 20.0;
             }
         }
@@ -235,7 +272,7 @@ fn hash_to_color(s: &str) -> Color {
 
     // Boost saturation/brightness
     let max = r.max(g).max(b).max(0.1);
-    Color::new(r/max, g/max, b/max, 1.0)
+    Color::new(r / max, g / max, b / max, 1.0)
 }
 
 fn generate_dummy_commits(n: usize) -> Vec<Commit> {
@@ -244,7 +281,11 @@ fn generate_dummy_commits(n: usize) -> Vec<Commit> {
         v.push(Commit {
             hash: format!("dummyhash{}", i),
             short_hash: format!("dmy{:03}", i),
-            author: if i % 2 == 0 { "Alice".to_string() } else { "Bob".to_string() },
+            author: if i % 2 == 0 {
+                "Alice".to_string()
+            } else {
+                "Bob".to_string()
+            },
             message: "Fixed a bug".to_string(),
             timestamp: Utc::now(),
             parents: vec![],
@@ -256,11 +297,13 @@ fn generate_dummy_commits(n: usize) -> Vec<Commit> {
 }
 
 fn draw_wireframe(mesh: &Mesh, color: Color) {
-    if mesh.indices.len() < 3 { return; }
+    if mesh.indices.len() < 3 {
+        return;
+    }
     for i in (0..mesh.indices.len()).step_by(3) {
         let i0 = mesh.indices[i] as usize;
-        let i1 = mesh.indices[i+1] as usize;
-        let i2 = mesh.indices[i+2] as usize;
+        let i1 = mesh.indices[i + 1] as usize;
+        let i2 = mesh.indices[i + 2] as usize;
 
         let v0 = mesh.vertices[i0].position;
         let v1 = mesh.vertices[i1].position;

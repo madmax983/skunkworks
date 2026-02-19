@@ -1,8 +1,8 @@
-use macroquad::prelude::*;
-use codex_void::{Scanner, Glyph, starmap::SPACING};
-use image::io::Reader as ImageReader;
-use std::path::PathBuf;
 use clap::Parser;
+use codex_void::{starmap::SPACING, Glyph, Scanner};
+use image::io::Reader as ImageReader;
+use macroquad::prelude::*;
+use std::path::PathBuf;
 
 #[derive(Parser)]
 struct Cli {
@@ -100,7 +100,7 @@ async fn main() {
                 // Draw value
                 draw_text(&format!("0x{:02X}", b), cx + 10., cy - 10., 20., YELLOW);
                 if b.is_ascii_graphic() || b == 0x20 {
-                     draw_text(&format!("'{}'", b as char), cx + 10., cy + 10., 20., ORANGE);
+                    draw_text(&format!("'{}'", b as char), cx + 10., cy + 10., 20., ORANGE);
                 }
 
                 // Draw rays for active bits

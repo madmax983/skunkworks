@@ -1,6 +1,6 @@
-use image::{ImageBuffer, Rgb};
 use crate::glyph::Glyph;
 use crate::starmap::SPACING;
+use image::{ImageBuffer, Rgb};
 
 pub struct Scanner;
 
@@ -22,9 +22,10 @@ impl Scanner {
             }
         });
 
-        stars.iter().map(|&(x, y)| {
-            Glyph::decode(x, y, img)
-        }).collect()
+        stars
+            .iter()
+            .map(|&(x, y)| Glyph::decode(x, y, img))
+            .collect()
     }
 
     pub fn find_stars(img: &ImageBuffer<Rgb<u8>, Vec<u8>>) -> Vec<(u32, u32)> {

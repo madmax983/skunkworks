@@ -1,6 +1,6 @@
-use bevy::prelude::*;
 use crate::graph::Graph;
 use crate::strider::Strider;
+use bevy::prelude::*;
 
 pub struct InputPlugin;
 
@@ -21,7 +21,9 @@ fn handle_click(
         if let Ok(window) = windows.get_single() {
             if let Some(position) = window.cursor_position() {
                 if let Ok((camera, camera_transform)) = camera.get_single() {
-                    if let Some(world_position) = camera.viewport_to_world_2d(camera_transform, position) {
+                    if let Some(world_position) =
+                        camera.viewport_to_world_2d(camera_transform, position)
+                    {
                         // Find nearest node
                         let mut nearest_node = None;
                         let mut min_dist = f32::MAX;
@@ -35,7 +37,8 @@ fn handle_click(
                         }
 
                         if let Some(idx) = nearest_node {
-                            if min_dist < 40.0 { // Click radius
+                            if min_dist < 40.0 {
+                                // Click radius
                                 for mut strider in striders.iter_mut() {
                                     strider.target_node = idx;
                                 }

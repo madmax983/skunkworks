@@ -1,5 +1,5 @@
-use bevy::prelude::*;
 use crate::strider::Limb;
+use bevy::prelude::*;
 use rand::prelude::*;
 
 #[derive(Component)]
@@ -16,28 +16,24 @@ impl Plugin for ParticlePlugin {
     }
 }
 
-fn spawn_particles(
-    mut commands: Commands,
-    limbs: Query<(Entity, &Limb)>,
-) {
+fn spawn_particles(mut commands: Commands, limbs: Query<(Entity, &Limb)>) {
     let mut rng = thread_rng();
     for (limb_entity, _) in limbs.iter() {
         if rng.gen_bool(0.2) {
             let speed = rng.gen_range(0.8..1.5);
-            commands.spawn((
-                SpriteBundle {
-                    sprite: Sprite {
-                        color: Color::rgba(0.7, 0.9, 1.0, 0.7),
-                        custom_size: Some(Vec2::new(4.0, 4.0)),
+            commands
+                .spawn((
+                    SpriteBundle {
+                        sprite: Sprite {
+                            color: Color::rgba(0.7, 0.9, 1.0, 0.7),
+                            custom_size: Some(Vec2::new(4.0, 4.0)),
+                            ..default()
+                        },
                         ..default()
                     },
-                    ..default()
-                },
-                FlowParticle {
-                    t: 0.0,
-                    speed,
-                },
-            )).set_parent(limb_entity);
+                    FlowParticle { t: 0.0, speed },
+                ))
+                .set_parent(limb_entity);
         }
     }
 }
@@ -70,7 +66,7 @@ fn update_particles(
                     transform.translation = pos.extend(2.0); // Z=2.0 to be on top of limb
                 }
             } else {
-                 commands.entity(entity).despawn();
+                commands.entity(entity).despawn();
             }
         } else {
             commands.entity(entity).despawn();

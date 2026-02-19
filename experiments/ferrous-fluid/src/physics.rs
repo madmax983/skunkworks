@@ -8,25 +8,53 @@ pub struct Vec2 {
 
 impl Vec2 {
     pub const ZERO: Self = Self { x: 0.0, y: 0.0 };
-    pub fn new(x: f32, y: f32) -> Self { Self { x, y } }
-    pub fn length_squared(self) -> f32 { self.x * self.x + self.y * self.y }
-    pub fn length(self) -> f32 { self.length_squared().sqrt() }
+    pub fn new(x: f32, y: f32) -> Self {
+        Self { x, y }
+    }
+    pub fn length_squared(self) -> f32 {
+        self.x * self.x + self.y * self.y
+    }
+    pub fn length(self) -> f32 {
+        self.length_squared().sqrt()
+    }
     pub fn normalize_or_zero(self) -> Self {
         let len = self.length();
-        if len > 0.0 { Self { x: self.x / len, y: self.y / len } } else { Self::ZERO }
+        if len > 0.0 {
+            Self {
+                x: self.x / len,
+                y: self.y / len,
+            }
+        } else {
+            Self::ZERO
+        }
     }
 }
 impl std::ops::Add for Vec2 {
     type Output = Self;
-    fn add(self, rhs: Self) -> Self { Self { x: self.x + rhs.x, y: self.y + rhs.y } }
+    fn add(self, rhs: Self) -> Self {
+        Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+        }
+    }
 }
 impl std::ops::Sub for Vec2 {
     type Output = Self;
-    fn sub(self, rhs: Self) -> Self { Self { x: self.x - rhs.x, y: self.y - rhs.y } }
+    fn sub(self, rhs: Self) -> Self {
+        Self {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+        }
+    }
 }
 impl std::ops::Mul<f32> for Vec2 {
     type Output = Self;
-    fn mul(self, rhs: f32) -> Self { Self { x: self.x * rhs, y: self.y * rhs } }
+    fn mul(self, rhs: f32) -> Self {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+        }
+    }
 }
 
 pub struct Particle {
@@ -129,7 +157,7 @@ impl Universe {
                     if mag.polarity {
                         force = force + dir * mag_force; // Attract
                     } else {
-                         force = force + dir * -mag_force; // Repel
+                        force = force + dir * -mag_force; // Repel
                     }
                 }
             }
@@ -139,7 +167,11 @@ impl Universe {
             let gx = p_pos.x.round() as isize;
             let gy = p_pos.y.round() as isize;
 
-            if gx > 0 && gx < (self.grid_w as isize - 1) && gy > 0 && gy < (self.grid_h as isize - 1) {
+            if gx > 0
+                && gx < (self.grid_w as isize - 1)
+                && gy > 0
+                && gy < (self.grid_h as isize - 1)
+            {
                 let idx = gy as usize * self.grid_w + gx as usize;
 
                 // Gradient

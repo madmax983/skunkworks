@@ -1,4 +1,4 @@
-use crate::world::{Block, Room, World, Player};
+use crate::world::{Block, Player, Room, World};
 use macroquad::prelude::*;
 // Use the rand crate explicitly
 use ::rand::prelude::*;

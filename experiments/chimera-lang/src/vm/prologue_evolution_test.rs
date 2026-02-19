@@ -19,7 +19,7 @@ mod tests {
             Gene {
                 op: OpCode::Sub,
                 args: vec![],
-            }
+            },
         ];
 
         let dna = Dna {

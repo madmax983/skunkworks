@@ -5345,13 +5345,13 @@ mod prologue_alchemy_test;
 mod prologue_chronos_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
-mod prologue_quantum_test;
-#[cfg(feature = "nova")]
-#[cfg(test)]
 mod prologue_evolution_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod prologue_oom_test;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod prologue_quantum_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod prologue_repro;

@@ -47,10 +47,7 @@ impl VoxelGrid {
             }
         }
 
-        Self {
-            voxels,
-            void_count,
-        }
+        Self { voxels, void_count }
     }
 
     pub fn get(&self, x: usize, y: usize, z: usize) -> Voxel {
