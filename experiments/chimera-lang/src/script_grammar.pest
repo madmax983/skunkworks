@@ -1,11 +1,14 @@
 WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
 COMMENT = _{ ("//" ~ (!"\n" ~ ANY)*) | ("/*" ~ (!"*/" ~ ANY)* ~ "*/") | ("#" ~ (!"\n" ~ ANY)*) }
 
-program = { SOI ~ (include_stmt | macro_def | strand_def | organelle_def | grammar_def | chimera_def)* ~ EOI }
+program = { SOI ~ (include_stmt | macro_def | map_def | strand_def | organelle_def | grammar_def | chimera_def)* ~ EOI }
 
 include_stmt = { "include" ~ string }
 
 macro_def = { "macro" ~ identifier ~ "{" ~ instruction* ~ "}" }
+
+map_def = ${ "map" ~ WHITESPACE+ ~ identifier ~ WHITESPACE* ~ "{" ~ map_content ~ "}" }
+map_content = @{ (!"}" ~ ANY)* }
 
 strand_def = { "strand" ~ identifier ~ "{" ~ instruction* ~ "}" }
 
@@ -23,11 +26,14 @@ instruction = {
     literal |
     junction |
     crispr_block |
+    apply_map_stmt |
     call |
     arrow_jump |
     question_branch |
     simple_op
 }
+
+apply_map_stmt = { "apply_map" ~ "(" ~ string ~ "," ~ number ~ "," ~ number ~ ")" }
 
 nested_text = @{ ( "{" ~ nested_text ~ "}" | !("{" | "}") ~ ANY )* }
 polyglot_block = { "polyglot" ~ identifier ~ "{" ~ nested_text ~ "}" }

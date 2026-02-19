@@ -226,9 +226,41 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
     let mut macro_map: HashMap<String, pest::iterators::Pairs<Rule>> = HashMap::new();
     let mut grammar_map: HashMap<String, Nucleotide> = HashMap::new();
     let mut organelle_map: HashMap<String, usize> = HashMap::new();
+    let mut grid_maps: HashMap<String, Vec<String>> = HashMap::new();
 
     for pair in program.clone().into_inner() {
         match pair.as_rule() {
+            Rule::map_def => {
+                let mut inner = pair.into_inner();
+                let name = inner.next().unwrap().as_str();
+                let content_pair = inner.next().unwrap();
+                let content = content_pair.as_str();
+
+                // Trim leading newline (after {) and trailing whitespace
+                let trimmed = content.trim_matches(|c| c == '\n' || c == '\r');
+                let lines: Vec<&str> = trimmed.lines().collect();
+
+                // Calculate minimum indentation
+                let min_indent = lines
+                    .iter()
+                    .filter(|l| !l.trim().is_empty())
+                    .map(|l| l.chars().take_while(|c| *c == ' ').count())
+                    .min()
+                    .unwrap_or(0);
+
+                let rows: Vec<String> = lines
+                    .iter()
+                    .map(|line| {
+                        if line.len() >= min_indent {
+                            line[min_indent..].trim_end().to_string()
+                        } else {
+                            line.trim_end().to_string()
+                        }
+                    })
+                    .collect();
+
+                grid_maps.insert(name.to_string(), rows);
+            }
             Rule::strand_def => {
                 let mut inner = pair.into_inner();
                 let name = inner.next().unwrap().as_str();
@@ -292,6 +324,7 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                         &macro_map,
                         &grammar_map,
                         &organelle_map,
+                        &grid_maps,
                         &mut anonymous_strands,
                         0,
                     )?;
@@ -311,6 +344,7 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                         &macro_map,
                         &grammar_map,
                         &organelle_map,
+                        &grid_maps,
                         &mut anonymous_strands,
                         0,
                     )?;
@@ -340,6 +374,7 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                         &macro_map,
                         &grammar_map,
                         &organelle_map,
+                        &grid_maps,
                         &mut anonymous_strands,
                         0,
                     )?;
@@ -374,6 +409,8 @@ struct CompilerContext<'a, 'i> {
     grammar_map: &'a HashMap<String, Nucleotide>,
     /// Maps organelle type names to strand indices.
     organelle_map: &'a HashMap<String, usize>,
+    /// Maps grid layout names to their content (rows of strings).
+    grid_maps: &'a HashMap<String, Vec<String>>,
     /// Accumulates anonymous code blocks (lambdas) generated during compilation.
     anonymous_strands: &'a mut Vec<Strand>,
     /// Current recursion depth for macro expansion and block nesting.
@@ -399,11 +436,60 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
             #[cfg(feature = "nova")]
             Rule::crispr_block => self.parse_crispr_block(inner),
             Rule::chaos_block => self.parse_chaos_block(inner),
+            Rule::apply_map_stmt => self.parse_apply_map(inner),
             #[cfg(feature = "oracle")]
             Rule::oracle_block => self.parse_oracle_block(inner),
             #[cfg(not(feature = "oracle"))]
             Rule::oracle_block => return Err(anyhow!("Oracle feature is disabled")),
             _ => unreachable!("Unexpected instruction rule: {:?}", inner.as_rule()),
+        }
+    }
+
+    fn parse_apply_map(&self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
+        let mut parts = inner.into_inner();
+        let map_name = parts.next().unwrap().as_str().trim_matches('"');
+        let x_val_str = parts.next().unwrap().as_str();
+        let y_val_str = parts.next().unwrap().as_str();
+
+        let base_x: i64 = x_val_str.parse()?;
+        let base_y: i64 = y_val_str.parse()?;
+
+        if let Some(rows) = self.grid_maps.get(map_name) {
+            let mut genes = Vec::new();
+            for (r, row) in rows.iter().enumerate() {
+                for (c, ch) in row.chars().enumerate() {
+                    // Skip whitespace? No, spaces might be significant (overwrite with space?)
+                    // Usually spaces in ASCII art are 'empty'.
+                    // Let's decide: if space, do nothing.
+                    if ch == ' ' {
+                        continue;
+                    }
+
+                    // Push char code
+                    genes.push(Gene {
+                        op: OpCode::Push,
+                        args: vec![Nucleotide::Number(ch as i64)],
+                    });
+                    // Push Y
+                    genes.push(Gene {
+                        op: OpCode::Push,
+                        args: vec![Nucleotide::Number(base_y + r as i64)],
+                    });
+                    // Push X
+                    genes.push(Gene {
+                        op: OpCode::Push,
+                        args: vec![Nucleotide::Number(base_x + c as i64)],
+                    });
+                    // Rune
+                    genes.push(Gene {
+                        op: OpCode::Rune,
+                        args: vec![],
+                    });
+                }
+            }
+            Ok(genes)
+        } else {
+            Err(anyhow!("Unknown map: {}", map_name))
         }
     }
 
@@ -745,6 +831,7 @@ fn parse_instructions(
     macro_map: &HashMap<String, pest::iterators::Pairs<Rule>>,
     grammar_map: &HashMap<String, Nucleotide>,
     organelle_map: &HashMap<String, usize>,
+    grid_maps: &HashMap<String, Vec<String>>,
     anonymous_strands: &mut Vec<Strand>,
     depth: usize,
 ) -> Result<Vec<Gene>> {
@@ -753,6 +840,7 @@ fn parse_instructions(
         macro_map,
         grammar_map,
         organelle_map,
+        grid_maps,
         anonymous_strands,
         depth,
     };
