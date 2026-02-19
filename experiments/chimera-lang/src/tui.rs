@@ -11884,6 +11884,18 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 s = "Ψ".to_string();
             }
 
+            use crate::vm::prologue::epigenetics::EpigeneticMark;
+            let epi = vm.prologue_state.epigenetic_grid[y][x];
+            match epi {
+                EpigeneticMark::Methylated => {
+                    style = style.fg(Color::DarkGray).add_modifier(Modifier::CROSSED_OUT);
+                }
+                EpigeneticMark::Phosphorylated => {
+                    style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
+                }
+                _ => {}
+            }
+
             if vm.prologue_state.signal_grid[y][x].is_some() {
                 style = style.fg(Color::Green).add_modifier(Modifier::BOLD);
             } else if vm.prologue_state.runes.contains(&(y, x)) {
@@ -11933,6 +11945,7 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     }
                     "z" => style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD),
                     "h" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
+                    "." | ":" | "," => style = style.fg(Color::LightCyan).add_modifier(Modifier::BOLD),
                     _ => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
                 }
             } else {
