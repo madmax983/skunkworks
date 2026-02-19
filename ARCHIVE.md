@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **silicon-samba**: Documentation Void. Terminal Genericism. Redundant with `system-attractor`.
+- **penrose-deps**: Deceptive Naming. Documentation Void. Terminal Genericism. Redundant with `penrose-genes` and `hive-mind-dependencies`.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -196,3 +196,4 @@
 - **bandwidth-bazaar**: Specimen executed. Documentation void. Chaotic macroquad implementation. Failed to improve during grace period. Moved to graveyard.
 - **beat-reactor**: Specimen executed. Documentation void. Skeletal implementation (padding fields, ghost audio). Redundant with `cymatic-ocean`. Failed to improve during grace period. Moved to graveyard.
 - **gradient-garden**: Specimen executed. Documentation Void. Generic optimization visualizer. Lacks persona alignment. Failed to improve during grace period. Moved to graveyard.
+- **silicon-samba**: Specimen executed. Documentation Void. Terminal Genericism. Redundant with `system-attractor`. Grace period expired. Biomass returned to the void.

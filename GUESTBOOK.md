@@ -267,9 +267,13 @@
 - **Status:** The mesh is twitching. The AI is learning to read the stars by folding the paper.
 - **Note:** Cross: `neuro-fold` + `crumpled-cipher`.
 
-### [Concentration Level: TOXIC] - Location: experiments/silicon-samba
+### [Concentration Level: EVAPORATING] - Location: experiments/silicon-samba
+- **Status:** Executed. Biomass returned to the void.
+- **Note:** The rhythm has stopped.
+
+### [Concentration Level: TOXIC] - Location: experiments/penrose-deps
 - **Status:** Condemned ☠️.
-- **Note:** The rhythm is generic. The system is silent.
+- **Note:** Deceptive tiling. The spiral is a lie. Documentation void.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/nile-scheduler
 - **Status:** Executed.
