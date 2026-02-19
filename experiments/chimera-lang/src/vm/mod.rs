@@ -5425,3 +5425,4 @@ mod prologue_chaos_test;
 mod prologue_necromancy_test;
 #[cfg(test)] mod prologue_darwin_test;
 #[cfg(test)] mod prologue_symbiosis_test;
+#[cfg(test)] mod prologue_pandemonium_test;
