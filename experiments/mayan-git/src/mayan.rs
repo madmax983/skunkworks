@@ -27,7 +27,13 @@ impl LongCount {
     pub const EPOCH_JD: i64 = 584283;
 
     pub fn new(baktun: u32, katun: u8, tun: u8, uinal: u8, kin: u8) -> Self {
-        Self { baktun, katun, tun, uinal, kin }
+        Self {
+            baktun,
+            katun,
+            tun,
+            uinal,
+            kin,
+        }
     }
 
     /// Convert a chrono DateTime to LongCount.
@@ -55,7 +61,13 @@ impl LongCount {
         let uinal = (rem3 / 20) as u8;
         let kin = (rem3 % 20) as u8;
 
-        Self { baktun, katun, tun, uinal, kin }
+        Self {
+            baktun,
+            katun,
+            tun,
+            uinal,
+            kin,
+        }
     }
 
     /// Returns a string representation of the glyphs as a vertical stack of ASCII art blocks.
@@ -119,26 +131,35 @@ impl LongCount {
 impl fmt::Display for LongCount {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fn to_mayan_inline(n: u8) -> String {
-            if n == 0 { return "(@)".to_string(); }
+            if n == 0 {
+                return "(@)".to_string();
+            }
             let bars = n / 5;
             let dots = n % 5;
             let mut s = String::new();
             // Bars first or dots first? Standard is dots on top. Inline: dots then bars?
             // Actually, usually dots are on top of bars.
             // Inline: `...||`
-            for _ in 0..dots { s.push('.'); }
-            for _ in 0..bars { s.push('|'); }
+            for _ in 0..dots {
+                s.push('.');
+            }
+            for _ in 0..bars {
+                s.push('|');
+            }
             s
         }
         // Baktun usually displayed as simple number in scholarly text, but we want NO ARABIC.
         // We'll use the inline notation.
         // Note: Baktun can go higher than 19 in deep time, but for Git history (near 2012), it's around 13.
-        write!(f, "{}.{}.{}.{}.{}",
+        write!(
+            f,
+            "{}.{}.{}.{}.{}",
             to_mayan_inline(self.baktun as u8),
             to_mayan_inline(self.katun),
             to_mayan_inline(self.tun),
             to_mayan_inline(self.uinal),
-            to_mayan_inline(self.kin))
+            to_mayan_inline(self.kin)
+        )
     }
 }
 
