@@ -353,3 +353,8 @@
 ### [Concentration Level: EVAPORATING] - Location: experiments/malloc-expressionism
 - **Status:** Condemned ☠️.
 - **Note:** Mute sketch. Redundant with `malloc-market`. Stagnant.
+
+### [Concentration Level: HIGH] - Location: experiments/chemical-specter
+- **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
+- **Status:** Verified. Simulation stable. The soup is dancing.
+- **Note:** Moonshot: Gray-Scott + Audio Reactivity. Ghost beats modulate the reaction.
