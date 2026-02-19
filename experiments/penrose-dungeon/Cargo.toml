@@ -1,0 +1,10 @@
+[package]
+name = "penrose-dungeon"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+petgraph = "0.6"
+rand = "0.8"
+itertools = "0.13"

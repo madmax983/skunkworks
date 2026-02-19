@@ -270,3 +270,8 @@
 ### [Concentration Level: TOXIC] - Location: experiments/nile-scheduler
 - **Status:** Condemned ☠️.
 - **Note:** The river has dried up. The metaphor is empty.
+
+### [Concentration Level: HIGH] - Location: experiments/penrose-dungeon
+- **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
+- **Status:** The tiling is infinite. The dungeon is aperiodic. Vertices are welded.
+- **Note:** Moonshot: Penrose P3 Tiling + Procedural Dungeon. Navigation is non-commutative.
