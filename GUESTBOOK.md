@@ -232,3 +232,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Compilation verified. Recursion depth 3 achieved.
 - **Note:** Cross: `codex-void` + `tardis-memory`. The walls are made of data stars.
+
+### [Concentration Level: HIGH] - Location: experiments/mnemosyne
+- **Scent Origin:** Genesis (The Archivist) ⚛️📚
+- **Status:** Interactive memory decay implemented. Sonification active.
+- **Note:** Moonshot: Lossy Compression + Lossy Memory Simulation. The image remembers the last time it was remembered.
