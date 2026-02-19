@@ -1285,7 +1285,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A digital memory cloth (Miura-ori mesh) where physical folding/unfolding creates mechanical stress that erodes the data.
 - **Novel trait**: Mechanical Erasure. The act of storing (folding) the memory destroys it.
 - **Status**: experiments/crumpled-memory
-- **Evaluation**: Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
 
 ### crumpled-cipher
 - **Parents**: experiments/crumpled-memory + experiments/codex-void
@@ -1300,3 +1300,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Self-Solving Cryptographic Origami. The network explores folding space until the "focus" (alignment) is maximized.
 - **Status**: experiments/neuro-cipher
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: Very High.
+
+### stego-mycelium
+- **Parents**: experiments/stego-cartridge + experiments/chaotic-mycelium
+- **Concept**: A visualization where the user loads an image containing hidden data (steganography). The image acts as the substrate for a fungal colony. The fungus grows preferentially towards pixels that contain hidden data.
+- **Novel trait**: Cryptographic Chemotaxis. The organism detects the artificiality of the noise (hidden data) and consumes it, revealing the message structure as a living network.
+- **Status**: experiments/stego-mycelium
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Confirmed.
