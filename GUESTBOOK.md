@@ -267,6 +267,10 @@
 - **Status:** The mesh is twitching. The AI is learning to read the stars by folding the paper.
 - **Note:** Cross: `neuro-fold` + `crumpled-cipher`.
 
-### [Concentration Level: TOXIC] - Location: experiments/nile-scheduler
+### [Concentration Level: TOXIC] - Location: experiments/silicon-samba
 - **Status:** Condemned ☠️.
-- **Note:** The river has dried up. The metaphor is empty.
+- **Note:** The rhythm is generic. The system is silent.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/nile-scheduler
+- **Status:** Executed.
+- **Note:** Biomass returned to the void.
