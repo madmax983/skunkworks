@@ -206,6 +206,54 @@ mod tests {
         assert_eq!(vm.dna.helix.strands.len(), MAX_STRANDS);
         assert!(vm.output.last().unwrap().contains("Strand limit exceeded"));
     }
+
+    #[test]
+    fn test_ether_dos_limit() {
+        let mut vm = make_vm(vec![]);
+
+        // Try to create 10,000 channels
+        for i in 0..10_000 {
+            vm.stack.push(Value::Int(i)); // Channel
+            vm.stack.push(Value::Int(1)); // Value
+            vm.execute_gene_inner(OpCode::Broadcast, &[]);
+        }
+
+        // Should be capped (e.g., 256 or 1024)
+        // Currently unsafe, so this assertion expects failure if we assume it's uncapped
+        // But since this is Red Phase, we assert the SAFE condition, and it should fail.
+        assert!(vm.ether.len() <= 1024, "Ether channels should be capped. Got {}", vm.ether.len());
+    }
+
+    #[test]
+    fn test_reflex_dos_limit() {
+        let mut vm = make_vm(vec![]);
+
+        for i in 0..10_000 {
+            vm.stack.push(Value::Int(0)); // Strand
+            vm.stack.push(Value::Int(i)); // Event
+            vm.execute_gene_inner(OpCode::Reflex, &[]);
+        }
+
+        assert!(vm.reflexes.len() <= 1024, "Reflexes should be capped. Got {}", vm.reflexes.len());
+    }
+
+    #[test]
+    fn test_chord_registry_dos_limit() {
+        let mut vm = make_vm(vec![]);
+
+        for i in 0..10_000 {
+            let chord_note = format!("Note{}", i);
+            let chord = vec![Value::Str(chord_note)];
+            let val = Value::Junction(crate::ast::JunctionType::All, chord);
+
+            vm.stack.push(val); // Chord
+            vm.stack.push(Value::Int(0)); // Strand
+
+            vm.execute_gene_inner(OpCode::Harmonize, &[]);
+        }
+
+        assert!(vm.chord_registry.len() <= 1024, "Chord registry should be capped. Got {}", vm.chord_registry.len());
+    }
 }
 
 #[cfg(test)]

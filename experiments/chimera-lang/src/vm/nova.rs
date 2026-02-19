@@ -999,15 +999,23 @@ fn exec_tui_mod(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             (Value::Int(mode), Value::Int(val)) => match mode {
                 0 => {
                     let intensity = (val as f32) / 100.0;
-                    vm.tui_events.push(crate::vm::TuiEvent::Glitch(intensity));
-                    vm.output
-                        .push(format!("TUI: Glitch set to {:.2}", intensity));
+                    if vm.tui_events.len() < crate::vm::MAX_TUI_EVENTS {
+                        vm.tui_events.push(crate::vm::TuiEvent::Glitch(intensity));
+                        vm.output
+                            .push(format!("TUI: Glitch set to {:.2}", intensity));
+                    } else {
+                        vm.output.push("TUI: Event queue full".to_string());
+                    }
                 }
                 1 => {
                     let intensity = (val as f32) / 10.0;
-                    vm.tui_events.push(crate::vm::TuiEvent::Shake(intensity));
-                    vm.output
-                        .push(format!("TUI: Screen Shake {:.2}", intensity));
+                    if vm.tui_events.len() < crate::vm::MAX_TUI_EVENTS {
+                        vm.tui_events.push(crate::vm::TuiEvent::Shake(intensity));
+                        vm.output
+                            .push(format!("TUI: Screen Shake {:.2}", intensity));
+                    } else {
+                        vm.output.push("TUI: Event queue full".to_string());
+                    }
                 }
                 _ => {
                     vm.output.push("TUI: Unknown mode".to_string());
@@ -1015,8 +1023,12 @@ fn exec_tui_mod(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             },
             (Value::Int(mode), Value::Str(s)) => {
                 if mode == 2 {
-                    vm.tui_events.push(crate::vm::TuiEvent::Message(s.clone()));
-                    vm.output.push(format!("TUI: Message '{}'", s));
+                    if vm.tui_events.len() < crate::vm::MAX_TUI_EVENTS {
+                        vm.tui_events.push(crate::vm::TuiEvent::Message(s.clone()));
+                        vm.output.push(format!("TUI: Message '{}'", s));
+                    } else {
+                        vm.output.push("TUI: Event queue full".to_string());
+                    }
                 } else {
                     vm.output
                         .push("Error: TuiMod mode requires Int value".to_string());
@@ -1532,6 +1544,11 @@ fn exec_harmonize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 }
 
                 if valid && !chord_str.is_empty() {
+                    if vm.chord_registry.len() >= crate::vm::MAX_CHORD_REGISTRY {
+                        vm.output
+                            .push("Error: Chord registry limit exceeded".to_string());
+                        return None;
+                    }
                     vm.chord_registry.insert(chord_str.clone(), idx);
                     vm.output.push(format!(
                         "HARMONIZE: Registered chord {:?} -> Strand {}",
@@ -2439,6 +2456,11 @@ fn exec_broadcast(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let value = vm.stack.pop().unwrap();
         let channel_val = vm.stack.pop().unwrap();
         if let Value::Int(channel) = channel_val {
+            if vm.ether.len() >= crate::vm::MAX_ETHER_CHANNELS && !vm.ether.contains_key(&channel) {
+                vm.output
+                    .push("Error: Ether channel limit exceeded".to_string());
+                return None;
+            }
             let queue = vm.ether.entry(channel).or_default();
             if queue.len() < 100 {
                 queue.push_back(value);
@@ -2622,6 +2644,10 @@ fn exec_reflex(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
     let s_idx = s as usize;
     if s_idx < vm.dna.helix.strands.len() {
+        if vm.reflexes.len() >= crate::vm::MAX_REFLEXES {
+            vm.output.push("Error: Reflex limit exceeded".to_string());
+            return None;
+        }
         vm.reflexes.insert(e, s_idx);
         vm.output
             .push(format!("REFLEX: Bound event {} to strand {}", e, s_idx));

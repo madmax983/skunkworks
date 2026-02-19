@@ -53,3 +53,7 @@
 
 **Threat:** `intersect_rect` in `experiments/chimera-tardis/src/safe_gl.rs` used standard addition `a.0 + a.2`, which could panic (debug) or wrap (release) if coordinates were large (e.g., `i32::MAX`), leading to incorrect rendering or DoS.
 **Defense:** Replaced arithmetic with `.saturating_add()` and `.saturating_sub()` to ensure safe clamping behavior.
+
+## 2025-05-27 - Nova Resource Exhaustion (DoS)
+**Threat:** The `Broadcast` (Ether), `Reflex`, `Harmonize` (Chord Registry), and `TuiMod` (Event Queue) operations in `experiments/chimera-lang/src/vm/nova.rs` allowed unbounded allocation of resources via HashMap/Vec growth. A malicious program could loop these instructions to consume infinite memory (OOM DoS).
+**Defense:** Introduced `MAX_ETHER_CHANNELS` (1024), `MAX_REFLEXES` (256), `MAX_CHORD_REGISTRY` (256), and `MAX_TUI_EVENTS` (64) constants in `vm/mod.rs` and enforced them in `vm/nova.rs`.
