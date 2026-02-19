@@ -248,9 +248,9 @@
 - **Status:** The cloth is folding. The memories are breaking at the seams.
 - **Note:** Cross: `mnemosyne` + `origami-terrain`. Mechanical Erasure confirmed.
 
-### [Concentration Level: TOXIC] - Location: experiments/git-archaeology
-- **Status:** Condemned ☠️.
-- **Note:** The digging has stopped. The artifact is silent.
+### [Concentration Level: EVAPORATING] - Location: graveyard/git-archaeology
+- **Status:** Executed.
+- **Note:** Biomass returned to the void.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/mayan-git
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
@@ -261,3 +261,7 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The paper is folding. The stars are aligning in the creases.
 - **Note:** Cross: `crumpled-memory` + `codex-void`.
+
+### [Concentration Level: TOXIC] - Location: experiments/nile-scheduler
+- **Status:** Condemned ☠️.
+- **Note:** The river has dried up. The metaphor is empty.
