@@ -1,5 +1,7 @@
 use crate::vm::Value;
 use rand::Rng;
+use std::fmt;
+use std::str::FromStr;
 use super::normalize_coords;
 
 /// Represents the state of a Critter agent.
@@ -26,24 +28,30 @@ impl CritterState {
         }
     }
 
-    pub fn parse(s: &str) -> Option<Self> {
-        let parts: Vec<&str> = s.split(':').collect();
-        if parts.len() >= 4 && parts[0] == "C" {
-            let energy = parts[1].parse().ok()?;
-            let genes = parts[2].to_string();
-            let ip = parts[3].parse().ok()?;
-            Some(Self { energy, genes, ip })
-        } else {
-            None
-        }
-    }
-
-    pub fn to_string(&self) -> String {
-        format!("C:{}:{}:{}", self.energy, self.genes, self.ip)
-    }
-
     pub fn to_value(&self) -> Value {
         Value::Str(self.to_string())
+    }
+}
+
+impl fmt::Display for CritterState {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "C:{}:{}:{}", self.energy, self.genes, self.ip)
+    }
+}
+
+impl FromStr for CritterState {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let parts: Vec<&str> = s.split(':').collect();
+        if parts.len() >= 4 && parts[0] == "C" {
+            let energy = parts[1].parse().map_err(|_| ())?;
+            let genes = parts[2].to_string();
+            let ip = parts[3].parse().map_err(|_| ())?;
+            Ok(Self { energy, genes, ip })
+        } else {
+            Err(())
+        }
     }
 }
 

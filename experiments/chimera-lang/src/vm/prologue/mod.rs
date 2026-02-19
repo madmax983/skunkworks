@@ -687,6 +687,156 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     }
 }
 
+fn process_critter_logic(
+    vm: &mut ChimeraVM,
+    agent: &PrologueAgent,
+    grid_snapshot: &[Vec<Value>],
+) -> Option<(PrologueAgent, Option<(usize, usize)>)> {
+    let (y, x) = (agent.y, agent.x);
+    if let Value::Str(state_str) = &agent.state {
+        if let Ok(mut critter) = state_str.parse::<critter::CritterState>() {
+            let (ny, nx) = critter::process_critter_move(&mut critter, y, x, grid_snapshot);
+            let mut updated_agent = agent.clone();
+            updated_agent.state = critter.to_value();
+
+            // Check collision
+            let dest_val = &vm.grid[ny][nx]; // Check LIVE grid
+
+            let mut blocked = false;
+            let mut moved_target = None;
+
+            if let Value::Str(s) = dest_val {
+                if s == "C" && (ny != y || nx != x) {
+                    // Collided with another Critter
+                    let mut rng = rand::thread_rng();
+                    let spawn_dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+                    let (dy, dx) = spawn_dirs[rng.gen_range(0..4)];
+                    if let Some((sy, sx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                        if matches!(vm.grid[sy][sx], Value::Int(0)) {
+                            let other_state = vm
+                                .prologue_state
+                                .registers
+                                .get(&(ny, nx))
+                                .and_then(|v| if let Value::Str(s) = v { s.parse().ok() } else { None })
+                                .unwrap_or(critter::CritterState::default());
+
+                            let child = critter::breed(&critter, &other_state);
+                            vm.grid[sy][sx] = Value::Str("C".to_string());
+                            vm.prologue_state.registers.insert((sy, sx), child.to_value());
+                        }
+                    }
+                    blocked = true;
+                } else if s == "!" {
+                    // Eat Food
+                    critter.energy += 20;
+                    updated_agent.state = critter.to_value();
+                } else if !is_empty_val(dest_val) {
+                    blocked = true;
+                }
+            } else if !is_empty_val(dest_val) {
+                blocked = true;
+            }
+
+            if !blocked {
+                moved_target = Some((ny, nx));
+            }
+
+            if moved_target.is_none() {
+                vm.prologue_state.registers.insert((y, x), updated_agent.state.clone());
+            }
+
+            if critter.energy <= 0 {
+                vm.grid[y][x] = Value::Int(0);
+                vm.prologue_state.registers.remove(&(y, x));
+                return None; // Dead
+            }
+
+            return Some((updated_agent, moved_target));
+        }
+    }
+    // Fallback if parsing fails or not a string (should not happen for C)
+    Some((agent.clone(), None))
+}
+
+fn process_chaos_logic(
+    _vm: &mut ChimeraVM,
+    agent: &PrologueAgent,
+    grid_snapshot: &[Vec<Value>],
+) -> Option<(usize, usize)> {
+    let (y, x) = (agent.y, agent.x);
+    let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+    let mut rng = rand::thread_rng();
+    let mut possible_moves = Vec::new();
+    for (dy, dx) in neighbors {
+        if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+            if let Value::Int(0) = &grid_snapshot[ny][nx] {
+                possible_moves.push((ny, nx));
+            }
+        }
+    }
+    if !possible_moves.is_empty() {
+        let idx = rng.gen_range(0..possible_moves.len());
+        Some(possible_moves[idx])
+    } else {
+        None
+    }
+}
+
+fn process_hunter_logic(
+    vm: &mut ChimeraVM,
+    agent: &PrologueAgent,
+    grid_snapshot: &[Vec<Value>],
+) -> Option<(usize, usize)> {
+    let (y, x) = (agent.y, agent.x);
+    let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+
+    // 1. Seek Prey
+    for (dy, dx) in neighbors {
+        if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+            if let Value::Str(s) = &grid_snapshot[ny][nx] {
+                if s == "@" || s == "K" {
+                    return Some((ny, nx));
+                }
+            }
+        }
+    }
+
+    // 2. Seek Signal
+    for (dy, dx) in neighbors {
+        if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+            if vm.prologue_state.signal_grid[ny][nx].is_some() {
+                let cell = &grid_snapshot[ny][nx];
+                if matches!(cell, Value::Int(0) | Value::Str(_)) {
+                    return Some((ny, nx));
+                }
+            }
+        }
+    }
+    None
+}
+
+fn process_seeker_logic(
+    vm: &mut ChimeraVM,
+    agent: &PrologueAgent,
+    grid_snapshot: &[Vec<Value>],
+) -> Option<(usize, usize)> {
+    let (y, x) = (agent.y, agent.x);
+    let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+    for (dy, dx) in neighbors {
+        if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+            if vm.prologue_state.signal_grid[ny][nx].is_some() {
+                let cell = &grid_snapshot[ny][nx];
+                match cell {
+                    Value::Int(0) => return Some((ny, nx)),
+                    Value::Str(s) if s == "~" => return Some((ny, nx)),
+                    _ => {}
+                }
+            }
+        }
+    }
+    None
+}
+
 /// Updates the position of Prologue Agents (`@`, `K`, `H`, `C`).
 ///
 /// Agents observe the grid (Snapshot) and move towards interesting features (Signals, Prey).
@@ -708,134 +858,21 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
             current_type = s.clone();
         }
 
-        let mut target = None;
-        let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-
-        if current_type == "C" {
-            // Critter: Genetic Movement
-            if let Value::Str(state_str) = &agent.state {
-                if let Some(mut critter) = critter::CritterState::parse(state_str) {
-                    let (ny, nx) = critter::process_critter_move(&mut critter, y, x, grid_snapshot);
-                    agent.state = critter.to_value();
-
-                    // Check collision
-                    let dest_val = &vm.grid[ny][nx]; // Check LIVE grid
-
-                    let mut blocked = false;
-                    if let Value::Str(s) = dest_val {
-                        if s == "C" && (ny != y || nx != x) {
-                            // Collided with another Critter (or self if didn't move)
-                            // Breed?
-                            // For simplicity, just block and breed nearby if possible
-                            let mut rng = rand::thread_rng();
-                            let spawn_dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-                            let (dy, dx) = spawn_dirs[rng.gen_range(0..4)];
-                            if let Some((sy, sx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                                if matches!(vm.grid[sy][sx], Value::Int(0)) {
-                                    // Get other critter state
-                                    let other_state = vm.prologue_state.registers.get(&(ny, nx))
-                                        .and_then(|v| if let Value::Str(s) = v { critter::CritterState::parse(s) } else { None })
-                                        .unwrap_or(critter::CritterState::default());
-
-                                    let child = critter::breed(&critter, &other_state);
-                                    vm.grid[sy][sx] = Value::Str("C".to_string());
-                                    vm.prologue_state.registers.insert((sy, sx), child.to_value());
-                                }
-                            }
-                            blocked = true;
-                        } else if s == "!" {
-                            // Eat Food
-                            critter.energy += 20;
-                            agent.state = critter.to_value();
-                        } else if !is_empty_val(dest_val) {
-                             blocked = true;
-                        }
-                    } else if !is_empty_val(dest_val) {
-                         blocked = true;
-                    }
-
-                    if !blocked {
-                        target = Some((ny, nx));
-                    }
-
-                    // Update state in registers regardless of move (energy usage)
-                    // If moving, we handle it below. If blocked, update here?
-                    // The logic below updates registers for target.
-                    // If blocked, target is None, so we should update (y,x) register.
-                    if target.is_none() {
-                         vm.prologue_state.registers.insert((y, x), agent.state.clone());
-                    }
-
-                    // Check death
-                    if critter.energy <= 0 {
-                         vm.grid[y][x] = Value::Int(0);
-                         vm.prologue_state.registers.remove(&(y, x));
-                         continue; // Remove from agents list
-                    }
+        let target = if current_type == "C" {
+            match process_critter_logic(vm, &agent, grid_snapshot) {
+                Some((updated_agent, t)) => {
+                    agent = updated_agent;
+                    t
                 }
+                None => continue, // Dead
             }
         } else if current_type == "K" {
-            // Chaos: Move Randomly
-            let mut rng = rand::thread_rng();
-            let mut possible_moves = Vec::new();
-            for (dy, dx) in neighbors {
-                if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                    if let Value::Int(0) = &grid_snapshot[ny][nx] {
-                        possible_moves.push((ny, nx));
-                    }
-                }
-            }
-            if !possible_moves.is_empty() {
-                let idx = rng.gen_range(0..possible_moves.len());
-                target = Some(possible_moves[idx]);
-            }
+            process_chaos_logic(vm, &agent, grid_snapshot)
         } else if current_type == "H" {
-            // Hunter: Seek Prey (@ or K)
-            for (dy, dx) in neighbors {
-                if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                    if let Value::Str(s) = &grid_snapshot[ny][nx] {
-                        if s == "@" || s == "K" {
-                            target = Some((ny, nx));
-                            break;
-                        }
-                    }
-                }
-            }
-            // If no prey, seek signal like @
-            if target.is_none() {
-                for (dy, dx) in neighbors {
-                    if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                        if vm.prologue_state.signal_grid[ny][nx].is_some() {
-                            let cell = &grid_snapshot[ny][nx];
-                            if matches!(cell, Value::Int(0) | Value::Str(_)) {
-                                target = Some((ny, nx));
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
+            process_hunter_logic(vm, &agent, grid_snapshot)
         } else {
-            // Seeker (@): Seek Signal
-            for (dy, dx) in neighbors {
-                if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                    if vm.prologue_state.signal_grid[ny][nx].is_some() {
-                        let cell = &grid_snapshot[ny][nx];
-                        match cell {
-                            Value::Int(0) => {
-                                target = Some((ny, nx));
-                                break;
-                            }
-                            Value::Str(s) if s == "~" => {
-                                target = Some((ny, nx));
-                                break;
-                            }
-                            _ => {}
-                        }
-                    }
-                }
-            }
-        }
+            process_seeker_logic(vm, &agent, grid_snapshot)
+        };
 
         if let Some((ny, nx)) = target {
             // Move agent
