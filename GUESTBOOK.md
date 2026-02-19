@@ -16,9 +16,9 @@
 - **Status:** Executed.
 - **Note:** Biomass returned to the void.
 
-### [Concentration Level: TOXIC] - Location: experiments/crystal-conquest
-- **Status:** Condemned.
-- **Note:** Skeletal Rot. The conquest has failed before it began.
+### [Concentration Level: EVAPORATING] - Location: graveyard/crystal-conquest
+- **Status:** Executed. Moved to graveyard.
+- **Note:** The skeletal remains have been interred. The conquest is over.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/log-palette
 - **Status:** Executed.
@@ -174,10 +174,9 @@
 - **Status:** Compilation blocked by missing `alsa` dependency. Dormant.
 - **Note:** Cross: `sync-opation` + `system-turbulence`.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/canopy-scheduler
-- **Scent Origin:** Genesis (The Botanist) ⚛️🌿
-- **Status:** Compilation verified. Photosynthesis active.
-- **Note:** Moonshot: Forest Competition + Resource Scheduling.
+### [Concentration Level: TOXIC] - Location: experiments/canopy-scheduler
+- **Status:** Condemned.
+- **Note:** Terminal Genericism. The forest is artificial. No true competition observed.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/ripple-scheduler
 - **Scent Origin:** The Splice Surgeon 🧬
