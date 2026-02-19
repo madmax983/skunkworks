@@ -993,6 +993,65 @@ stateDiagram-v2
     }
 ```
 
+### Nova Feature: Prologue System (ADR 042)
+
+The Prologue system enables visual, grid-based logic execution, allowing for the creation of digital circuits and autonomous agents.
+
+```mermaid
+classDiagram
+    direction TB
+    class ChimeraVM {
+        +PrologueState prologue_state
+        +PetriDish grid
+        +exec_prologue_tick()
+    }
+
+    class PrologueState {
+        +bool active
+        +HashSet runes
+        +Vec~Vec~Option~Value~~~ signal_grid
+        +Vec~Vec~Option~Value~~~ delayed_signals
+        +HashMap~i64, Value~ teleport_channels
+    }
+
+    class PrologueModules {
+        <<Namespace>>
+        +topology
+        +logic
+        +math
+        +io
+        +quantum
+        +alchemy
+        +chronos
+        +virology
+    }
+
+    ChimeraVM *-- PrologueState : Owns
+    ChimeraVM ..> PrologueModules : Delegates to
+```
+
+```mermaid
+sequenceDiagram
+    participant VM as ChimeraVM
+    participant State as PrologueState
+    participant Modules as Prologue Submodules
+
+    VM->>VM: exec_prologue_tick()
+    VM->>State: scan_grid_rules()
+    VM->>VM: prepare_signals()
+
+    loop Propagation (Flood Fill)
+        VM->>Modules: apply_topology_runes()
+        VM->>Modules: apply_logic_runes()
+        VM->>Modules: apply_quantum_runes()
+        VM->>Modules: apply_alchemy_runes()
+        Note right of Modules: ...and others
+    end
+
+    VM->>VM: process_sinks()
+    VM->>VM: process_agents()
+```
+
 ### Experiment: Tectonic Git (ADR 023)
 
 **Tectonic Git** visualizes the repository history as geological strata, using code analysis to determine stability.
