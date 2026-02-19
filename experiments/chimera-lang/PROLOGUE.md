@@ -38,6 +38,8 @@ Prologue treats the grid as a circuit board. Signals propagate instantly (within
 | `\` | **Mirror Back** | Reflects signal 90° (N<->E, S<->W). |
 | `/` | **Mirror Fwd** | Reflects signal 90° (N<->W, S<->E). |
 | `-` | **Beam H** | Conducts signal horizontally (W<->E), blocks vertical. |
+| `B` | **Blueprint** | Reads **West** (Trig), **North** (H), **South** (W). Captures Grid East. |
+| `Π` | **Prototyper**| Reads **West** (Blueprint). Pastes to Grid East. |
 
 ### Gene Execution
 
