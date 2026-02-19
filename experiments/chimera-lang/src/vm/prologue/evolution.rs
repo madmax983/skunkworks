@@ -1,7 +1,9 @@
 use super::normalize_coords;
-use crate::ast::Dna;
-use crate::vm::{ChimeraVM, Value, MAX_STRANDS};
+use crate::ast::{Dna, Gene, JunctionType, Nucleotide, Strand};
+use crate::opcode::OpCode;
+use crate::vm::{ChimeraVM, Value, GRID_SIZE, MAX_STRANDS};
 use rand::Rng;
+use std::str::FromStr;
 
 pub fn apply_evolution_runes(
     rune: &str,
@@ -202,6 +204,150 @@ pub fn apply_evolution_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
                 }
             }
         }
+        "p" => {
+            // Polymerase: West (List of Genes) -> Self (Strand Idx)
+            // Example Input: Junction(Dish, [Str("push"), Int(10), Str("add")])
+            // Wait, flat list is ambiguous.
+            // Better Input: Junction(Dish, [Junction(Dish, [Str("push"), Int(10)]), Str("add")])
+            if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+                if let Some(Value::Junction(_, items)) = &vm.prologue_state.signal_grid[wy][wx] {
+                    let mut genes = Vec::new();
+                    for item in items {
+                        if let Some(gene) = value_to_gene(item) {
+                            genes.push(gene);
+                        }
+                    }
+
+                    if !genes.is_empty() {
+                        if vm.dna.helix.strands.len() < MAX_STRANDS {
+                            vm.dna.helix.strands.push(Strand { genes });
+                            let new_idx = vm.dna.helix.strands.len() - 1;
+                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(new_idx as i64));
+                            vm.output.push(format!(
+                                "PROLOGUE: Polymerase synthesized Strand {}",
+                                new_idx
+                            ));
+                        } else {
+                            vm.output.push(
+                                "PROLOGUE: Polymerase failed (MAX_STRANDS limit)".to_string(),
+                            );
+                        }
+                    }
+                }
+            }
+        }
+        "o" => {
+            // Operon: West (Strand Idx) -> Writes Genes to Grid (South..East)
+            if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+                if let Some(Value::Int(idx)) = &vm.prologue_state.signal_grid[wy][wx] {
+                    let s_idx = *idx as usize;
+                    if s_idx < vm.dna.helix.strands.len() {
+                        let strand = &vm.dna.helix.strands[s_idx];
+                        let mut cursor_y = y as i64 + 1;
+                        let mut cursor_x = x as i64;
+
+                        for gene in &strand.genes {
+                            let val = gene_to_value(gene);
+                            // Normalize (wrap) coordinates
+                            // We move East. If X wraps, we move to next row (like a typewriter)
+                            // Or just wrap X.
+                            // Let's wrap X.
+                            // But normalize_coords returns None if out of bounds.
+                            // We want modulo wrapping for printing long strands?
+                            // Or just clamp?
+                            // Let's use simple modulo wrapping for X and Y.
+                            let ny = (cursor_y % GRID_SIZE as i64 + GRID_SIZE as i64)
+                                % GRID_SIZE as i64;
+                            let nx = (cursor_x % GRID_SIZE as i64 + GRID_SIZE as i64)
+                                % GRID_SIZE as i64;
+
+                            vm.grid[ny as usize][nx as usize] = val;
+
+                            cursor_x += 1;
+                            if cursor_x >= GRID_SIZE as i64 {
+                                cursor_x = 0;
+                                cursor_y += 1;
+                            }
+                        }
+                        // Light up self
+                        vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                    }
+                }
+            }
+        }
         _ => {}
+    }
+}
+
+fn value_to_gene(v: &Value) -> Option<Gene> {
+    match v {
+        Value::Str(s) => {
+            // OpCode without args
+            if let Ok(op) = OpCode::from_str(s) {
+                Some(Gene { op, args: vec![] })
+            } else {
+                None
+            }
+        }
+        Value::Junction(_, items) => {
+            // [OpCode, Arg1, Arg2...]
+            if let Some(Value::Str(op_str)) = items.first() {
+                if let Ok(op) = OpCode::from_str(op_str) {
+                    let mut args = Vec::new();
+                    for arg_val in items.iter().skip(1) {
+                        if let Some(nuc) = value_to_nucleotide(arg_val) {
+                            args.push(nuc);
+                        }
+                    }
+                    Some(Gene { op, args })
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        }
+        _ => None,
+    }
+}
+
+fn value_to_nucleotide(v: &Value) -> Option<Nucleotide> {
+    match v {
+        Value::Int(n) => Some(Nucleotide::Number(*n)),
+        Value::Str(s) => Some(Nucleotide::String(s.clone())),
+        Value::Junction(t, items) => {
+            let mut nucs = Vec::new();
+            for item in items {
+                if let Some(n) = value_to_nucleotide(item) {
+                    nucs.push(n);
+                }
+            }
+            Some(Nucleotide::Junction(*t, nucs))
+        }
+        _ => None,
+    }
+}
+
+fn gene_to_value(gene: &Gene) -> Value {
+    if gene.args.is_empty() {
+        Value::Str(gene.op.to_string())
+    } else {
+        let mut items = vec![Value::Str(gene.op.to_string())];
+        for arg in &gene.args {
+            items.push(nucleotide_to_value(arg));
+        }
+        Value::Junction(JunctionType::Dish, items)
+    }
+}
+
+fn nucleotide_to_value(n: &Nucleotide) -> Value {
+    match n {
+        Nucleotide::Number(i) => Value::Int(*i),
+        Nucleotide::String(s) => Value::Str(s.clone()),
+        Nucleotide::Identifier(s) => Value::Str(s.clone()),
+        Nucleotide::Junction(t, list) => {
+            let items = list.iter().map(nucleotide_to_value).collect();
+            Value::Junction(*t, items)
+        }
     }
 }

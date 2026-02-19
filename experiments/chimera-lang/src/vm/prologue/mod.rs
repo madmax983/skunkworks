@@ -216,6 +216,8 @@ impl PrologueState {
                             | "b"
                             | "l"
                             | "n"
+                            | "p"
+                            | "o"
                         // Void
                             | "µ"
                             | "Ø"
