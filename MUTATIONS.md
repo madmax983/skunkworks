@@ -1286,3 +1286,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Mechanical Erasure. The act of storing (folding) the memory destroys it.
 - **Status**: experiments/crumpled-memory
 - **Evaluation**: Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
+
+### crumpled-cipher
+- **Parents**: experiments/crumpled-memory + experiments/codex-void
+- **Concept**: A digital cipher where the message is hidden in the dark void and revealed only by the mechanical stress of folding the medium.
+- **Novel trait**: Crease-Activated Cryptography. The fold is the key.
+- **Status**: experiments/crumpled-cipher
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

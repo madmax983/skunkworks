@@ -256,3 +256,8 @@
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
 - **Status:** The Stela is carved. The repository history is aligned with the cosmos.
 - **Note:** Moonshot: Mayan Long Count + Git History.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/crumpled-cipher
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The paper is folding. The stars are aligning in the creases.
+- **Note:** Cross: `crumpled-memory` + `codex-void`.
