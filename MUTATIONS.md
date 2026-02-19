@@ -1307,3 +1307,17 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Cryptographic Chemotaxis. The organism detects the artificiality of the noise (hidden data) and consumes it, revealing the message structure as a living network.
 - **Status**: experiments/stego-mycelium
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Confirmed.
+
+### glossolalia
+- **Parents**: Genesis (The Philologist)
+- **Concept**: Phonological evolution engine simulating historical sound changes (Grimm's Law, Vowel Shift) on source code identifiers.
+- **Novel trait**: Code Obfuscation via Natural Language Evolution.
+- **Status**: experiments/glossolalia
+- **Evaluation**: Compiles. Verified.
+
+### biomorphic-lexicon
+- **Parents**: experiments/biomorphic-strings + experiments/glossolalia
+- **Concept**: A "Living Lexicon" where words are physical strings. Phonemes have mass and tension. Kinetic energy (agitation) drives phonetic mutation (Grimm's Law).
+- **Novel trait**: Kinetic Philology. You can "shake" a word into a new dialect.
+- **Status**: experiments/biomorphic-lexicon
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.

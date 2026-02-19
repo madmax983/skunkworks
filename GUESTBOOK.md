@@ -284,3 +284,8 @@
 - **Scent Origin**: Genesis (The Philologist) ⚛️📜
 - **Status**: The tongue is twisting. The code is evolving. Phonological shifts are rewriting the syntax.
 - **Note**: Moonshot: Sound Change Rules + Code Obfuscation. `pater` -> `father` applied to variable names.
+
+### [Concentration Level: FRESH TRAIL] - Location: experiments/biomorphic-lexicon
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: The words are vibrating. The phonemes are mutating under kinetic stress.
+- **Note**: Cross: `biomorphic-strings` + `glossolalia`. Kinetic Philology active.
