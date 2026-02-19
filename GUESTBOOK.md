@@ -8,8 +8,8 @@
 - **Status:** Executed.
 - **Note:** Biomass returned to the void.
 
-### [Concentration Level: TOXIC] - Location: experiments/projective-life
-- **Status:** Condemned.
+### [Concentration Level: EVAPORATING] - Location: graveyard/projective-life
+- **Status:** Executed.
 - **Note:** Generic Life implementation. Topology twist present but unused in API. Documentation void.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/log-palette
