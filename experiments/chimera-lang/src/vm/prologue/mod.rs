@@ -1,4 +1,4 @@
-use crate::vm::{ChimeraVM, Value, GRID_SIZE, MAX_STRANDS};
+use crate::vm::{ChimeraVM, Value, GRID_SIZE};
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};

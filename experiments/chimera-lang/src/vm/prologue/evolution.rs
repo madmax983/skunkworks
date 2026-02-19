@@ -22,7 +22,7 @@ pub fn apply_evolution_runes(
     } else {
         None
     };
-    let e_sig = if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
+    let _e_sig = if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
         current_signals[ey][ex].clone()
     } else {
         None
