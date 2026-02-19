@@ -13,6 +13,7 @@ pub mod io;
 pub mod list;
 pub mod logic;
 pub mod math;
+pub mod necromancy;
 pub mod optics;
 pub mod quantum;
 pub mod teleport;
@@ -139,6 +140,9 @@ impl PrologueState {
                             | "k"
                             | "z"
                             | "h"
+                            | "†"
+                            | "‡"
+                            | "Ψ"
                     ) {
                         self.runes.insert((y, x));
 
@@ -328,6 +332,9 @@ fn apply_propagation_rune(
     if chaos::apply_chaos_runes(rune, y, x, current_signals, next_signals) {
         return true;
     }
+    if necromancy::apply_necromancy_runes(rune, y, x, current_signals, next_signals) {
+        return true;
+    }
     false
 }
 
@@ -498,6 +505,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             virology::apply_virology_sinks(vm, rune, y, x);
             biolum::apply_biolum_sinks(vm, rune, y, x);
             chaos::apply_chaos_sinks(vm, rune, y, x);
+            necromancy::apply_necromancy_sinks(vm, rune, y, x);
         }
     }
 }

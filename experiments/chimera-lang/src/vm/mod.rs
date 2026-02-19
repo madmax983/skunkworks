@@ -5415,3 +5415,7 @@ mod prologue_biolum_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod prologue_chaos_test;
+
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod prologue_necromancy_test;
