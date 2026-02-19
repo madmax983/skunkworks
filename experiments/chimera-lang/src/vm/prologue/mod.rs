@@ -72,6 +72,7 @@ pub mod math;
 pub mod necromancy;
 pub mod optics;
 pub mod quantum;
+pub mod symbiosis;
 pub mod teleport;
 pub mod topology;
 pub mod virology;
@@ -239,6 +240,11 @@ impl PrologueState {
                             | "†"
                             | "‡"
                             | "Ψ"
+                        // Symbiosis
+                            | "u"
+                            | "y"
+                            | "w"
+                            | "j"
                     ) {
                         self.runes.insert((y, x));
 
@@ -634,6 +640,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             biolum::apply_biolum_sinks(vm, rune, y, x);
             chaos::apply_chaos_sinks(vm, rune, y, x);
             necromancy::apply_necromancy_sinks(vm, rune, y, x);
+            symbiosis::apply_symbiosis_sinks(vm, rune, y, x);
         }
     }
 }
