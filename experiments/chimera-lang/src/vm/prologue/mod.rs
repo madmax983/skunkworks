@@ -14,6 +14,7 @@ pub mod optics;
 pub mod quantum;
 pub mod teleport;
 pub mod topology;
+pub mod void;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PrologueAgent {
@@ -120,6 +121,9 @@ impl PrologueState {
                             | "b"
                             | "l"
                             | "n"
+                            | "µ"
+                            | "Ø"
+                            | "§"
                     ) {
                         self.runes.insert((y, x));
 
@@ -288,6 +292,9 @@ fn apply_propagation_rune(
         return true;
     }
     if evolution::apply_evolution_runes(rune, y, x, dna, current_signals, next_signals) {
+        return true;
+    }
+    if void::apply_void_runes(rune, y, x, current_signals, next_signals) {
         return true;
     }
     false
