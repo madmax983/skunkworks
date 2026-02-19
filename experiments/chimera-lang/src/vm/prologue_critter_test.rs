@@ -1,7 +1,7 @@
-use crate::ast::{Dna, Helix};
+use crate::vm::prologue::critter::{CritterState, process_critter_tick, CritterAction};
 use crate::vm::prologue::exec_prologue_tick;
-use crate::vm::prologue::critter::CritterState;
-use crate::vm::{ChimeraVM, Value};
+use crate::ast::{Dna, Helix};
+use crate::vm::{ChimeraVM, Value, GRID_SIZE};
 
 fn setup_vm() -> ChimeraVM {
     let dna = Dna {
@@ -13,130 +13,113 @@ fn setup_vm() -> ChimeraVM {
 }
 
 #[test]
-fn test_critter_persistence() {
-    let mut vm = setup_vm();
+fn test_critter_state_parse() {
+    let s = "C:100:FRL:0:1";
+    let c = CritterState::parse(s).expect("Failed to parse");
+    assert_eq!(c.energy, 100);
+    assert_eq!(c.genes, "FRL");
+    assert_eq!(c.ip, 0);
+    assert_eq!(c.dir, 1);
 
-    // Setup: C at 5,5
-    vm.grid[5][5] = Value::Str("C".to_string());
-
-    // Set initial state
-    let critter = CritterState::new(100, "R".to_string(), 0);
-    vm.prologue_state.registers.insert((5, 5), critter.to_value());
-
-    // Run tick
-    exec_prologue_tick(&mut vm);
-
-    // After tick, Critter might have moved.
-    // We scan grid to find "C".
-    let mut found = false;
-    for y in 0..16 {
-        for x in 0..16 {
-            if let Value::Str(s) = &vm.grid[y][x] {
-                if s == "C" {
-                    found = true;
-                    // Check register
-                    if let Some(val) = vm.prologue_state.registers.get(&(y, x)) {
-                        if let Value::Str(state_str) = val {
-                            let new_critter = CritterState::parse(state_str).expect("Failed to parse critter state");
-                            assert!(new_critter.energy < 100, "Energy should decay");
-                        } else {
-                            panic!("Register value not a string");
-                        }
-                    } else {
-                        panic!("Register missing for Critter at {},{}", y, x);
-                    }
-                }
-            }
-        }
-    }
-    assert!(found, "Critter disappeared");
+    assert_eq!(c.to_string(), s);
 }
 
 #[test]
-fn test_critter_movement() {
+fn test_critter_tick_move() {
+    // 16x16 grid
+    let grid = vec![vec![Value::Int(0); 16]; 16];
+
+    // Critter at 5,5 facing East (1)
+    let mut c = CritterState::new(100, "F".to_string(), 0, 1);
+
+    let action = process_critter_tick(&mut c, 5, 5, &grid);
+
+    match action {
+        CritterAction::Move(y, x) => {
+            assert_eq!(y, 5);
+            assert_eq!(x, 6);
+        }
+        _ => panic!("Expected Move action"),
+    }
+
+    assert_eq!(c.energy, 99);
+}
+
+#[test]
+fn test_critter_tick_turn() {
+    let grid = vec![vec![Value::Int(0); 16]; 16];
+
+    // Critter at 5,5 facing North (0), Gene "R" (Turn Right)
+    let mut c = CritterState::new(100, "R".to_string(), 0, 0);
+
+    let action = process_critter_tick(&mut c, 5, 5, &grid);
+
+    assert_eq!(action, CritterAction::None);
+    assert_eq!(c.dir, 1); // North (0) -> East (1)
+}
+
+#[test]
+fn test_critter_tick_eat() {
+    let mut grid = vec![vec![Value::Int(0); 16]; 16];
+    grid[5][6] = Value::Str("!".to_string()); // Food East
+
+    // Critter at 5,5 facing East (1), Gene "E"
+    let mut c = CritterState::new(100, "E".to_string(), 0, 1);
+
+    let action = process_critter_tick(&mut c, 5, 5, &grid);
+
+    match action {
+        CritterAction::Eat(y, x) => {
+            assert_eq!(y, 5);
+            assert_eq!(x, 6);
+        }
+        _ => panic!("Expected Eat action"),
+    }
+}
+
+#[test]
+fn test_integration_move() {
     let mut vm = setup_vm();
 
-    // Setup: C at 5,5 with DNA "E" (East)
+    // Setup C at 5,5 with Gene F
     vm.grid[5][5] = Value::Str("C".to_string());
-
-    let critter = CritterState::new(100, "E".to_string(), 0);
-    vm.prologue_state.registers.insert((5, 5), critter.to_value());
+    let c = CritterState::new(100, "F".to_string(), 0, 1); // East
+    vm.prologue_state.registers.insert((5, 5), c.to_value());
 
     exec_prologue_tick(&mut vm);
 
     // Should be at 5,6
-    assert_eq!(vm.grid[5][5], Value::Int(0), "Old position not cleared");
-    assert_eq!(vm.grid[5][6], Value::Str("C".to_string()), "New position not occupied");
+    assert_eq!(vm.grid[5][5], Value::Int(0));
+    assert_eq!(vm.grid[5][6], Value::Str("C".to_string()));
 
-    // Register should move
+    // Check register moved
     assert!(vm.prologue_state.registers.get(&(5, 5)).is_none());
     assert!(vm.prologue_state.registers.get(&(5, 6)).is_some());
 }
 
 #[test]
-fn test_critter_collision_breed() {
+fn test_integration_split() {
     let mut vm = setup_vm();
 
-    // Setup: C1 at 5,5 (East), C2 at 5,7 (West)
-    // They will meet at 5,6? No, 5,5 -> 5,6. 5,7 -> 5,6.
-    // If processed sequentially:
-    // 5,5 moves to 5,6.
-    // 5,7 sees 5,6 occupied by C. Triggers breed.
-
+    // Setup C at 5,5 with Gene S (Split)
+    // S lays egg BEHIND. Facing East (1), Behind is West (5,4).
     vm.grid[5][5] = Value::Str("C".to_string());
-    vm.grid[5][7] = Value::Str("C".to_string());
-
-    let c1 = CritterState::new(100, "E".to_string(), 0);
-    let c2 = CritterState::new(100, "W".to_string(), 0);
-
-    vm.prologue_state.registers.insert((5, 5), c1.to_value());
-    vm.prologue_state.registers.insert((5, 7), c2.to_value());
+    let c = CritterState::new(100, "S".to_string(), 0, 1);
+    vm.prologue_state.registers.insert((5, 5), c.to_value());
 
     exec_prologue_tick(&mut vm);
 
-    // C1 should be at 5,6
-    // C2 might have bred and stayed at 5,7? Or moved if blocked?
-    // If blocked, it stays at 5,7.
+    // Parent should still be at 5,5 (Split doesn't move)
+    assert_eq!(vm.grid[5][5], Value::Str("C".to_string()));
 
-    // Check if we have 3 critters now
-    let mut count = 0;
-    for y in 0..16 {
-        for x in 0..16 {
-            if let Value::Str(s) = &vm.grid[y][x] {
-                if s == "C" {
-                    count += 1;
-                }
-            }
-        }
-    }
+    // Child should be at 5,4
+    assert_eq!(vm.grid[5][4], Value::Str("C".to_string()));
 
-    // Depending on spawn location, might overwrite?
-    // But breeding spawns in empty neighbor.
-    // Expected: C1(5,6), C2(5,7), Child(neighbor of 5,7)
-    assert!(count >= 3, "Breeding failed, count: {}", count);
-}
-
-#[test]
-fn test_critter_eat() {
-    let mut vm = setup_vm();
-
-    // Setup: C at 5,5 (East). Food (!) at 5,6.
-    vm.grid[5][5] = Value::Str("C".to_string());
-    vm.grid[5][6] = Value::Str("!".to_string());
-
-    let c1 = CritterState::new(100, "E".to_string(), 0);
-    vm.prologue_state.registers.insert((5, 5), c1.to_value());
-
-    exec_prologue_tick(&mut vm);
-
-    // C should be at 5,6 (Food eaten)
-    assert_eq!(vm.grid[5][6], Value::Str("C".to_string()));
-
-    // Check energy increased (started 100, cost 1, gain 20 = 119)
-    if let Some(val) = vm.prologue_state.registers.get(&(5, 6)) {
-        if let Value::Str(s) = val {
-             let state = CritterState::parse(s).unwrap();
-             assert!(state.energy > 100, "Critter did not gain energy");
-        }
+    // Parent energy reduced
+    if let Value::Str(s) = vm.prologue_state.registers.get(&(5, 5)).unwrap() {
+        let p_state = CritterState::parse(s).unwrap();
+        assert!(p_state.energy < 100);
+    } else {
+        panic!("Parent register is not a string");
     }
 }

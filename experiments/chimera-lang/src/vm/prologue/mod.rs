@@ -534,9 +534,18 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                         let agent_type = match sig {
                             Value::Int(2) => "K", // Chaos
                             Value::Int(3) => "H", // Hunter
+                            Value::Int(4) => "C", // Critter
+                            Value::Str(s) if s == "Z" => "C", // Zooid/Critter
                             _ => "@",             // Seeker
                         };
                         vm.grid[sy][sx] = Value::Str(agent_type.to_string());
+
+                        if agent_type == "C" {
+                            // Initialize Critter State
+                            let state = critter::CritterState::default();
+                            vm.prologue_state.registers.insert((sy, sx), state.to_value());
+                        }
+
                         vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
                     }
                 }
@@ -665,62 +674,79 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
             // Critter: Genetic Movement
             if let Value::Str(state_str) = &agent.state {
                 if let Some(mut critter) = critter::CritterState::parse(state_str) {
-                    let (ny, nx) = critter::process_critter_move(&mut critter, y, x, grid_snapshot);
+                    let action = critter::process_critter_tick(&mut critter, y, x, grid_snapshot);
+
+                    // Update internal state (Energy, IP, Dir)
                     agent.state = critter.to_value();
 
-                    // Check collision
-                    let dest_val = &vm.grid[ny][nx]; // Check LIVE grid
-
-                    let mut blocked = false;
-                    if let Value::Str(s) = dest_val {
-                        if s == "C" && (ny != y || nx != x) {
-                            // Collided with another Critter (or self if didn't move)
-                            // Breed?
-                            // For simplicity, just block and breed nearby if possible
-                            let mut rng = rand::thread_rng();
-                            let spawn_dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-                            let (dy, dx) = spawn_dirs[rng.gen_range(0..4)];
-                            if let Some((sy, sx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                                if matches!(vm.grid[sy][sx], Value::Int(0)) {
-                                    // Get other critter state
-                                    let other_state = vm.prologue_state.registers.get(&(ny, nx))
-                                        .and_then(|v| if let Value::Str(s) = v { critter::CritterState::parse(s) } else { None })
-                                        .unwrap_or(critter::CritterState::default());
-
-                                    let child = critter::breed(&critter, &other_state);
-                                    vm.grid[sy][sx] = Value::Str("C".to_string());
-                                    vm.prologue_state.registers.insert((sy, sx), child.to_value());
+                    match action {
+                        critter::CritterAction::Move(ny, nx) => {
+                            let dest = &vm.grid[ny][nx];
+                            if is_empty_val(dest) {
+                                target = Some((ny, nx));
+                            } else if let Value::Str(s) = dest {
+                                if s == "C" {
+                                    // Bumping into another Critter -> Breed attempt?
+                                    // For now, just block.
                                 }
                             }
-                            blocked = true;
-                        } else if s == "!" {
-                            // Eat Food
-                            critter.energy += 20;
-                            agent.state = critter.to_value();
-                        } else if !is_empty_val(dest_val) {
-                             blocked = true;
                         }
-                    } else if !is_empty_val(dest_val) {
-                         blocked = true;
+                        critter::CritterAction::Eat(ny, nx) => {
+                            let dest = &vm.grid[ny][nx];
+                            let edible = match dest {
+                                Value::Str(s) => s == "!" || s == "~", // Eat Signals/Wires
+                                Value::Int(n) => *n > 0, // Eat Energy/Data
+                                _ => false,
+                            };
+
+                            if edible {
+                                vm.grid[ny][nx] = Value::Int(0);
+                                critter.energy += 20;
+                                agent.state = critter.to_value();
+                            }
+                        }
+                        critter::CritterAction::Attack(ny, nx) => {
+                            let dest = &vm.grid[ny][nx];
+                            if let Value::Str(s) = dest {
+                                if s == "C" || s == "@" || s == "K" || s == "H" {
+                                    // Kill
+                                    vm.grid[ny][nx] = Value::Int(0);
+                                    vm.prologue_state.registers.remove(&(ny, nx));
+                                    critter.energy += 50;
+                                    agent.state = critter.to_value();
+                                }
+                            }
+                        }
+                        critter::CritterAction::Split(ny, nx) => {
+                            if is_empty_val(&vm.grid[ny][nx]) {
+                                // Mitosis / Clone
+                                // Slightly mutate parent's genes for child
+                                let child = critter::breed(&critter, &critter);
+                                vm.grid[ny][nx] = Value::Str("C".to_string());
+                                vm.prologue_state.registers.insert((ny, nx), child.to_value());
+
+                                critter.energy -= 30;
+                                agent.state = critter.to_value();
+                            }
+                        }
+                        critter::CritterAction::Mark(ny, nx) => {
+                            if is_empty_val(&vm.grid[ny][nx]) {
+                                vm.grid[ny][nx] = Value::Int(1); // Mark trail
+                            }
+                        }
+                        critter::CritterAction::None => {}
                     }
 
-                    if !blocked {
-                        target = Some((ny, nx));
-                    }
-
-                    // Update state in registers regardless of move (energy usage)
-                    // If moving, we handle it below. If blocked, update here?
-                    // The logic below updates registers for target.
-                    // If blocked, target is None, so we should update (y,x) register.
+                    // Update Register with new state (even if not moved)
                     if target.is_none() {
-                         vm.prologue_state.registers.insert((y, x), agent.state.clone());
+                        vm.prologue_state.registers.insert((y, x), agent.state.clone());
                     }
 
                     // Check death
                     if critter.energy <= 0 {
                          vm.grid[y][x] = Value::Int(0);
                          vm.prologue_state.registers.remove(&(y, x));
-                         continue; // Remove from agents list
+                         continue; // Remove from agents list (Death)
                     }
                 }
             }

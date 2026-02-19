@@ -11845,6 +11845,7 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             } else if vm.prologue_state.runes.contains(&(y, x)) {
                 // Colorize Runes
                 match s.as_str() {
+                    "C" => style = style.fg(Color::Green).add_modifier(Modifier::BOLD),
                     "$" => style = style.fg(Color::Cyan).add_modifier(Modifier::BOLD),
                     "M" => style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD),
                     "O" => style = style.fg(Color::Blue).add_modifier(Modifier::BOLD),
@@ -11855,7 +11856,7 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     "D" | "N" | "S" | "E" | "W" => {
                         style = style.fg(Color::Blue).add_modifier(Modifier::BOLD)
                     }
-                    "A" | "B" | "P" | "Q" | "C" => {
+                    "A" | "B" | "P" | "Q" => {
                         style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD)
                     }
                     "(" => style = style.fg(Color::Cyan).add_modifier(Modifier::BOLD),
@@ -11928,24 +11929,53 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     // Right: Rules
     let mut info = Vec::new();
-    info.push(Line::from("Logic Engine Status:"));
-    info.push(Line::from(format!(
-        "Active Agents: {}",
-        vm.prologue_state.agents.len()
-    )));
 
-    // Debug Signals
-    let mut signal_count = 0;
-    for row in &vm.prologue_state.signal_grid {
-        for cell in row {
-            if cell.is_some() {
-                signal_count += 1;
+    // Agent Inspection
+    let (cx, cy) = app_state.grid_cursor;
+    let mut inspected_agent = None;
+
+    // Check if cursor is over an agent
+    for agent in &vm.prologue_state.agents {
+        if agent.x == cx && agent.y == cy {
+            if let crate::vm::Value::Str(s) = &agent.state {
+                if let Some(critter) = crate::vm::prologue::critter::CritterState::parse(s) {
+                    inspected_agent = Some(critter);
+                    break;
+                }
             }
         }
     }
-    info.push(Line::from(format!("Active Signals: {}", signal_count)));
 
-    info.push(Line::from(" "));
+    if let Some(c) = inspected_agent {
+        info.push(Line::from(Span::styled("CRITTER INSPECTOR", Style::default().fg(Color::Green).add_modifier(Modifier::BOLD))));
+        info.push(Line::from(format!("Energy: {}", c.energy)));
+        info.push(Line::from(format!("Genes: {}", c.genes)));
+        let gene_char = c.genes.chars().nth(c.ip).unwrap_or('?');
+        info.push(Line::from(format!("IP: {} [{}]", c.ip, gene_char)));
+        let dir_s = match c.dir {
+            0 => "North", 1 => "East", 2 => "South", 3 => "West", _ => "?"
+        };
+        info.push(Line::from(format!("Facing: {}", dir_s)));
+        info.push(Line::from(" "));
+    } else {
+        info.push(Line::from("Logic Engine Status:"));
+        info.push(Line::from(format!(
+            "Active Agents: {}",
+            vm.prologue_state.agents.len()
+        )));
+
+        // Debug Signals
+        let mut signal_count = 0;
+        for row in &vm.prologue_state.signal_grid {
+            for cell in row {
+                if cell.is_some() {
+                    signal_count += 1;
+                }
+            }
+        }
+        info.push(Line::from(format!("Active Signals: {}", signal_count)));
+        info.push(Line::from(" "));
+    }
     info.push(Line::from("Rules:"));
     info.push(Line::from("  ! Source (Emits North)"));
     info.push(Line::from("  ? Sink (Reads South)"));
