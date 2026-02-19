@@ -4,11 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-rodio = "0.19"
+hound = "3.5"
 syn = { version = "2.0", features = ["full", "visit", "extra-traits"] }
 quote = "1.0"
 proc-macro2 = "1.0"
-ratatui = "0.30"
-crossterm = "0.28"
+ratatui = "0.26"
+crossterm = "0.27"
 anyhow = "1.0"
 rand = "0.8"

@@ -57,7 +57,7 @@ impl TuiApp {
 
     pub fn draw(&mut self) -> Result<()> {
         self.terminal.draw(|f| {
-            let size = f.area();
+            let size = f.size();
 
             if self.voices.is_empty() {
                 let block = Block::default()

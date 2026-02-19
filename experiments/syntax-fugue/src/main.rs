@@ -26,7 +26,6 @@ fn main() -> Result<()> {
         Ok(v) => v,
         Err(e) => {
             eprintln!("Failed to parse {}: {}", path, e);
-            // Fallback to default if user provided bad path? Or just exit.
             return Err(e);
         }
     };
@@ -51,39 +50,56 @@ fn main() -> Result<()> {
 
     // Playback loop
     let tick_rate = Duration::from_millis(16); // ~60 FPS
+    let mut last_tick = Instant::now();
 
     while !app.should_quit {
         let loop_start = Instant::now();
+        let dt = loop_start.duration_since(last_tick).as_secs_f32();
+        last_tick = loop_start;
 
         // Handle input
         app.handle_events()?;
 
+        // Advance virtual audio engine
+        audio.update(dt);
+
         // Update voices
         for (i, state) in app.voices.iter_mut().enumerate() {
-            // Check if audio finished playing the previous note
-            if !audio.is_voice_busy(i) {
-                // If previously playing, we finished that note, so advance.
-                // If not started yet, we stay at 0.
-                if state.started {
-                    state.current_token_idx += 1;
+            let mut play_next = false;
+
+            if !state.started {
+                play_next = true;
+            } else {
+                // Check if current note finished
+                if state.current_token_idx < state.voice.tokens.len() {
+                    let current_token = &state.voice.tokens[state.current_token_idx];
+                    if state.last_play_time.elapsed().as_secs_f32() >= current_token.duration {
+                        state.current_token_idx += 1;
+                        play_next = true;
+                    }
                 }
+            }
 
-                // Check if we reached the end of the voice
-                if state.current_token_idx >= state.voice.tokens.len() {
-                    continue; // Voice finished
-                }
+            if play_next {
+                if state.current_token_idx < state.voice.tokens.len() {
+                    let token = &state.voice.tokens[state.current_token_idx];
 
-                // Play the current note
-                let token = &state.voice.tokens[state.current_token_idx];
-
-                // Skip if duration is 0?
-                if token.duration > 0.0 {
-                    audio.play_note(i, token.pitch, token.duration, token.velocity);
-                    state.started = true;
-                    state.last_play_time = loop_start;
-                } else {
-                    // Immediate advance if duration is 0 (shouldn't happen with our parser)
-                    state.started = true; // Mark as started so next loop advances
+                    if token.duration > 0.0 {
+                        audio.play_synth_note(
+                            i,
+                            token.pitch,
+                            token.duration,
+                            token.velocity,
+                            token.waveform,
+                            token.adsr
+                        );
+                        state.started = true;
+                        state.last_play_time = loop_start;
+                    } else {
+                        // Skip zero duration tokens immediately
+                        state.current_token_idx += 1;
+                        // Potentially loop again to find next playable token, but simple is fine
+                    }
                 }
             }
         }
@@ -96,6 +112,14 @@ fn main() -> Result<()> {
         if loop_duration < tick_rate {
             std::thread::sleep(tick_rate - loop_duration);
         }
+    }
+
+    // Save audio on exit
+    println!("Saving composition to output.wav...");
+    if let Err(e) = audio.save_wav("output.wav") {
+        eprintln!("Failed to save WAV: {}", e);
+    } else {
+        println!("Saved output.wav successfully.");
     }
 
     Ok(())
