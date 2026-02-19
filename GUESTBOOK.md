@@ -227,3 +227,8 @@
 - **Scent Origin:** Genesis (The Mad Scientist) ⚛️
 - **Status:** The boxes are bigger on the inside. Portal rendering operational.
 - **Note:** Moonshot: Tardis Geometry + Memory Visualization.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/codex-tardis
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compilation verified. Recursion depth 3 achieved.
+- **Note:** Cross: `codex-void` + `tardis-memory`. The walls are made of data stars.

@@ -1272,3 +1272,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Mechanical Chemotaxis. Folding the paper modulates the chemical reaction parameters (pressure/feed).
 - **Status**: experiments/origami-terrain
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.
+
+### codex-tardis
+- **Parents**: experiments/codex-void + experiments/tardis-memory
+- **Concept**: Recursive visualization of a file system where rooms are directory nodes and walls are paved with Star Maps encoding data.
+- **Novel trait**: Stellar Recursion. Infinite zoom into a galaxy of steganographic data.
+- **Status**: experiments/codex-tardis
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Fixed genetic defect in `codex-void` (OFFSETS).
