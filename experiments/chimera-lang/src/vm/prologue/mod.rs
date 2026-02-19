@@ -71,6 +71,7 @@ pub mod logic;
 pub mod math;
 pub mod necromancy;
 pub mod optics;
+pub mod pandemonium;
 pub mod quantum;
 pub mod symbiosis;
 pub mod teleport;
@@ -245,6 +246,10 @@ impl PrologueState {
                             | "y"
                             | "w"
                             | "j"
+                        // Pandemonium
+                            | "¿"
+                            | "¡"
+                            | "≈"
                     ) {
                         self.runes.insert((y, x));
 
@@ -462,6 +467,9 @@ fn apply_propagation_rune(
     if necromancy::apply_necromancy_runes(rune, y, x, current_signals, next_signals) {
         return true;
     }
+    if pandemonium::apply_pandemonium_runes(rune, y, x, current_signals, next_signals) {
+        return true;
+    }
     false
 }
 
@@ -641,6 +649,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             chaos::apply_chaos_sinks(vm, rune, y, x);
             necromancy::apply_necromancy_sinks(vm, rune, y, x);
             symbiosis::apply_symbiosis_sinks(vm, rune, y, x);
+            pandemonium::apply_pandemonium_sinks(vm, rune, y, x);
         }
     }
 }
