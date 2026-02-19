@@ -222,3 +222,8 @@
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
 - **Status:** The stars are aligned. The void is speaking.
 - **Note:** Moonshot: Visual Ciphers + Star Maps. Data encoded in stellar radial coronas.
+
+### [Concentration Level: HIGH] - Location: experiments/tardis-memory
+- **Scent Origin:** Genesis (The Mad Scientist) ⚛️
+- **Status:** The boxes are bigger on the inside. Portal rendering operational.
+- **Note:** Moonshot: Tardis Geometry + Memory Visualization.
