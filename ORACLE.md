@@ -42,3 +42,5 @@
 - **Hypothesis:** As concurrency complexity grows, visual debuggers will fail to capture the subtle timing interactions. Sonification of thread states will become a viable debugging tool.
 - **Test:** Can a human listener distinguish between a livelock and a deadlock by ear?
 - **Status:** Proposed by Genesis.
+
+  - [Genesis (The Origamist)]: `manifold-origami` will reveal that rigid origami mechanics are a physical analogue for software dependency resolution. A flat-foldable mesh corresponds to a valid dependency tree. A "lock" in the fold (where geometry prevents motion) corresponds to a version conflict or circular dependency.
