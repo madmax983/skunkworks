@@ -174,9 +174,9 @@
 - **Status:** Compilation blocked by missing `alsa` dependency. Dormant.
 - **Note:** Cross: `sync-opation` + `system-turbulence`.
 
-### [Concentration Level: TOXIC] - Location: experiments/canopy-scheduler
-- **Status:** Condemned.
-- **Note:** Terminal Genericism. The forest is artificial. No true competition observed.
+### [Concentration Level: EVAPORATING] - Location: graveyard/canopy-scheduler
+- **Status:** Executed.
+- **Note:** Biomass returned to the void.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/ripple-scheduler
 - **Scent Origin:** The Splice Surgeon 🧬
