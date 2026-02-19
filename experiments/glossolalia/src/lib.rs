@@ -1,3 +1,2 @@
-pub mod lexer;
-pub mod obfuscator;
 pub mod phonology;
+pub mod lexicon;

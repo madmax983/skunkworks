@@ -1,116 +1,158 @@
-use std::time::Duration;
-
-use crossterm::event::{self, Event, KeyCode, KeyEventKind};
-use ratatui::{
-    layout::{Constraint, Direction, Layout},
-    style::{Color, Style},
-    widgets::{Block, Borders, Paragraph, Wrap},
-};
-use tui_shared::Tui;
-
-mod lexer;
-mod obfuscator;
-mod phonology;
-
-use obfuscator::Obfuscator;
+use macroquad::prelude::*;
+use glossolalia::phonology::{GrimmsLaw, VowelShift, Rule};
+use glossolalia::lexicon::{Lexicon, TokenType};
+use ::rand::SeedableRng;
+use ::rand::rngs::StdRng;
 
 const SAMPLE_CODE: &str = r#"
 fn main() {
-    let mut x = 0;
-    for i in 0..10 {
-        x += i;
-        println!("Value: {}", x);
-    }
-    match x {
-        0 => println!("Zero"),
-        _ => println!("Non-zero"),
+    let mut civilization = Civilization::new();
+    let mut year = 0;
+
+    loop {
+        civilization.evolve();
+        year += 1;
+
+        if year > 1000 {
+            println!("The fall of Rome");
+            break;
+        }
     }
 }
 
-pub struct Point {
-    x: i32,
-    y: i32,
+struct Civilization {
+    population: u64,
+    language: String,
 }
 
-impl Point {
-    fn new(x: i32, y: i32) -> Self {
-        Self { x, y }
+impl Civilization {
+    fn new() -> Self {
+        Self {
+            population: 100,
+            language: "Latin".to_string(),
+        }
+    }
+
+    fn evolve(&mut self) {
+        // Entropy increases
+        self.population -= 1;
     }
 }
 "#;
 
-fn main() -> anyhow::Result<()> {
-    let mut tui = Tui::init()?;
-    let mut obfuscator = Obfuscator::new(42);
-    let mut generation = 0;
+#[macroquad::main("Glossolalia")]
+async fn main() {
+    let mut lexicon = Lexicon::new(SAMPLE_CODE);
+    let mut rng = StdRng::seed_from_u64(42);
 
-    // Initialize dictionary
-    obfuscator.transmute(SAMPLE_CODE);
+    let rules: Vec<Box<dyn Rule>> = vec![
+        Box::new(GrimmsLaw),
+        Box::new(VowelShift),
+    ];
+
+    let mut century = 0;
+    let mut last_evolution = get_time();
+    let evolution_interval = 2.0; // Seconds per century
+    let mut auto_evolve = true;
 
     loop {
-        tui.terminal.draw(|f| {
-            let size = f.area();
+        clear_background(Color::new(0.05, 0.05, 0.05, 1.0)); // Dark grey
 
-            let chunks = Layout::default()
-                .direction(Direction::Vertical)
-                .constraints([Constraint::Min(3), Constraint::Length(3)])
-                .split(size);
+        // Update
+        if is_key_pressed(KeyCode::Space) {
+            auto_evolve = !auto_evolve;
+        }
 
-            let main_chunks = Layout::default()
-                .direction(Direction::Horizontal)
-                .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
-                .split(chunks[0]);
+        if is_key_pressed(KeyCode::Right) || (auto_evolve && get_time() - last_evolution > evolution_interval) {
+            lexicon.evolve(&rules, &mut rng);
+            century += 100;
+            last_evolution = get_time();
+        }
 
-            // Left Pane: Original
-            let original_block = Block::default()
-                .title(" Proto-Code (Original) ")
-                .borders(Borders::ALL)
-                .border_style(Style::default().fg(Color::Cyan));
-            let original_text = Paragraph::new(SAMPLE_CODE)
-                .block(original_block)
-                .wrap(Wrap { trim: false });
-            f.render_widget(original_text, main_chunks[0]);
+        if is_key_pressed(KeyCode::R) {
+            lexicon = Lexicon::new(SAMPLE_CODE);
+            century = 0;
+            rng = StdRng::seed_from_u64(42);
+        }
 
-            // Right Pane: Evolved
-            let evolved_code = obfuscator.transmute(SAMPLE_CODE);
-            let evolved_block = Block::default()
-                .title(format!(" Modern Dialect (Gen {}) ", generation))
-                .borders(Borders::ALL)
-                .border_style(Style::default().fg(Color::Magenta));
-            let evolved_text = Paragraph::new(evolved_code)
-                .block(evolved_block)
-                .wrap(Wrap { trim: false });
-            f.render_widget(evolved_text, main_chunks[1]);
+        // Draw
+        let start_y = 40.0;
+        let line_height = 20.0;
+        let start_x = 20.0;
 
-            // Bottom Pane: Controls
-            let controls_block = Block::default().title(" Controls ").borders(Borders::ALL);
-            let controls_text = Paragraph::new("SPACE: Evolve | R: Reset | Q: Quit")
-                .block(controls_block)
-                .style(Style::default().fg(Color::Yellow))
-                .alignment(ratatui::layout::Alignment::Center);
-            f.render_widget(controls_text, chunks[1]);
-        })?;
+        draw_text(&format!("Year: {}", century), start_x, 20.0, 30.0, GOLD);
+        draw_text("Space: Pause/Play | Right: Step | R: Reset", 300.0, 20.0, 20.0, LIGHTGRAY);
 
-        if event::poll(Duration::from_millis(16))? {
-            if let Event::Key(key) = event::read()? {
-                if key.kind == KeyEventKind::Press {
-                    match key.code {
-                        KeyCode::Char('q') => break,
-                        KeyCode::Char(' ') => {
-                            obfuscator.advance_generation();
-                            generation += 1;
-                        }
-                        KeyCode::Char('r') => {
-                            obfuscator = Obfuscator::new(42);
-                            obfuscator.transmute(SAMPLE_CODE); // Reset dictionary
-                            generation = 0;
-                        }
-                        _ => {}
+        let mut x = start_x;
+        let mut y = start_y;
+
+        // Simple line wrapping logic (very basic)
+        // Or just render line by line if we assume code is pre-formatted
+        // My tokenizer preserves whitespace (newlines), so I can just follow the tokens.
+
+        for token in &lexicon.tokens {
+            let text = match token.token_type {
+                TokenType::Identifier => {
+                    if let Some(word) = lexicon.evolved_identifiers.get(&token.content) {
+                        word.to_string()
+                    } else {
+                        token.content.clone()
                     }
+                },
+                _ => token.content.clone(),
+            };
+
+            // Check for newlines in whitespace tokens
+            if token.token_type == TokenType::Whitespace {
+                // If it contains newlines, reset x and increment y
+                let newlines = text.matches('\n').count();
+                if newlines > 0 {
+                    y += newlines as f32 * line_height;
+                    x = start_x;
+                    // Handle indentation: the text after the last newline is the indentation
+                    if let Some(last_line) = text.lines().last() {
+                         // But wait, split keeps the newlines?
+                         // text.lines() removes newlines.
+                         // If text is "\n    ", lines gives ["", "    "].
+                         // I just need to calculate the length of the last part.
+                         // Or just draw the spaces?
+                         // Simplest: just draw every char? No, variable width font.
+                         // macroquad uses a monospaced font by default? No, it uses a default font (sans-serif).
+                         // I should load a mono font or just hope for the best.
+                         // But drawing whitespace " " advances x.
+                         // Newline "\n" resets x.
+                    }
+                    // For simplicity, let's process char by char for whitespace tokens containing newlines
+                     for c in text.chars() {
+                        if c == '\n' {
+                            y += line_height;
+                            x = start_x;
+                        } else {
+                            let dims = measure_text(&c.to_string(), None, 20, 1.0);
+                            x += dims.width;
+                        }
+                    }
+                    continue;
                 }
             }
-        }
-    }
 
-    Ok(())
+            let color = match token.token_type {
+                TokenType::Keyword => SKYBLUE,
+                TokenType::Identifier => WHITE, // They evolve!
+                TokenType::Symbol => GRAY,
+                TokenType::Literal => GREEN,
+                TokenType::Comment => DARKGRAY,
+                TokenType::Whitespace => WHITE,
+            };
+
+            // Draw the token text
+            draw_text(&text, x, y, 20.0, color);
+
+            // Advance cursor
+            let dims = measure_text(&text, None, 20, 1.0);
+            x += dims.width;
+        }
+
+        next_frame().await
+    }
 }
