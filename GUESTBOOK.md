@@ -214,3 +214,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The paper is folding. The reaction is alive.
 - **Note:** Cross: `origami-history` + `terra-phage`. Mechanical Chemotaxis confirmed.
+
+### [Concentration Level: HIGH] - Location: experiments/codex-void
+- **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
+- **Status:** The stars are aligned. The void is speaking.
+- **Note:** Moonshot: Visual Ciphers + Star Maps. Data encoded in stellar radial coronas.
