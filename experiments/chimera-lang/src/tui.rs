@@ -587,6 +587,7 @@ where
                     app_state.fishing_cast = false;
                     app_state.fishing_hooked = false;
                     app_state.fishing_tension = 0.0;
+                    app_state.screen_shake = 2.0;
                 }
             }
         }
@@ -4651,17 +4652,25 @@ fn render_signals(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 fn draw_tension_gauge<'a>(title: &'a str, ratio: f64) -> Gauge<'a> {
     let (tension_color, label) = if ratio < 0.5 {
         (Color::Green, "SAFE")
-    } else if ratio < 0.8 {
-        (Color::Yellow, "WARNING")
+    } else if ratio < 0.75 {
+        (Color::Yellow, "CAUTION")
+    } else if ratio < 0.9 {
+        (Color::LightRed, "DANGER")
     } else {
         (Color::Red, "CRITICAL")
     };
 
-    Gauge::default()
+    let gauge = Gauge::default()
         .block(Block::default().borders(Borders::ALL).title(title))
-        .gauge_style(Style::default().fg(tension_color))
-        .ratio(ratio.clamp(0.0, 1.0))
-        .label(format!("{} ({:.0}%)", label, ratio * 100.0))
+        .gauge_style(Style::default().fg(tension_color).bg(Color::DarkGray))
+        .use_unicode(true)
+        .ratio(ratio.clamp(0.0, 1.0));
+
+    if ratio >= 1.0 {
+        gauge.label("SNAP! (100%)")
+    } else {
+        gauge.label(format!("{} ({:.0}%)", label, ratio * 100.0))
+    }
 }
 
 #[cfg(feature = "nova")]
@@ -4736,6 +4745,19 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             }
 
             if app_state.fishing_cast {
+                // Bobber X Animation (Shake when hooked)
+                let mut bobber_x = 50.0;
+                if app_state.fishing_hooked {
+                    let shake_mag = if app_state.fishing_tension > 0.5 {
+                        1.5
+                    } else {
+                        0.5
+                    };
+                    // Simple pseudo-random shake using tick
+                    let offset = ((vm.tick_counter % 3) as f64 - 1.0) * shake_mag;
+                    bobber_x += offset;
+                }
+
                 // Splash / Ripple around bobber
                 if app_state.fishing_bobber_y < 50.0 {
                     // Bobber is underwater/surface
@@ -4745,8 +4767,8 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                         1 => ("<", ">"),
                         _ => ("{", "}"),
                     };
-                    ctx.print(48.0, app_state.fishing_bobber_y, left);
-                    ctx.print(51.0, app_state.fishing_bobber_y, right);
+                    ctx.print(bobber_x - 2.0, app_state.fishing_bobber_y, left);
+                    ctx.print(bobber_x + 1.0, app_state.fishing_bobber_y, right);
                 }
 
                 // Fishing Line
@@ -4761,7 +4783,7 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 ctx.draw(&ratatui::widgets::canvas::Line {
                     x1: 50.0,
                     y1: 100.0, // Top center (approx rod tip)
-                    x2: 50.0,
+                    x2: bobber_x,
                     y2: app_state.fishing_bobber_y,
                     color: line_color,
                 });
@@ -4772,18 +4794,28 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 } else {
                     "⚪"
                 };
-                ctx.print(50.0, app_state.fishing_bobber_y, bobber_icon);
+                ctx.print(bobber_x, app_state.fishing_bobber_y, bobber_icon);
                 // Center detail
                 ctx.print(
-                    49.5,
+                    bobber_x - 0.5,
                     app_state.fishing_bobber_y - 0.5,
                     if app_state.fishing_hooked { "!" } else { "." },
                 );
 
                 if app_state.fishing_hooked {
-                    // Splash effect
-                    ctx.print(48.0, app_state.fishing_bobber_y, "~");
-                    ctx.print(51.0, app_state.fishing_bobber_y, "~");
+                    // Splash particles
+                    let t = vm.tick_counter;
+                    if t % 2 == 0 {
+                        ctx.print(bobber_x - 3.0, app_state.fishing_bobber_y + 1.0, ".");
+                        ctx.print(bobber_x + 3.0, app_state.fishing_bobber_y + 2.0, ".");
+                    } else {
+                        ctx.print(bobber_x - 2.0, app_state.fishing_bobber_y + 2.0, "°");
+                        ctx.print(bobber_x + 4.0, app_state.fishing_bobber_y + 1.0, ".");
+                    }
+
+                    // Water churn
+                    ctx.print(bobber_x - 2.0, app_state.fishing_bobber_y, "~");
+                    ctx.print(bobber_x + 2.0, app_state.fishing_bobber_y, "~");
                 }
 
                 // Fish (Icon)
@@ -4793,11 +4825,15 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     } else {
                         "🐟"
                     };
-                    ctx.print(49.0, app_state.fishing_fish_y, fish_icon);
+                    // Fish tries to align with bobber X somewhat, or fights away?
+                    // Let's keep it independent X for now (49.0 originally)
+                    // But maybe shift it slightly based on tension (fight)
+                    let fish_x = 49.0 + (app_state.fishing_tension * 10.0 * ((vm.tick_counter % 5) as f64 - 2.0));
+                    ctx.print(fish_x, app_state.fishing_fish_y, fish_icon);
                 }
 
                 // Instructions Overlay (Top Right)
-                ctx.print(60.0, 90.0, "SPACE: Reel");
+                ctx.print(60.0, 90.0, "SPACE: Reel (Hold)");
             } else {
                 ctx.print(35.0, 90.0, "Press SPACE to Cast");
             }
