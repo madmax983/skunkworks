@@ -5361,3 +5361,7 @@ mod prologue_void_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod prologue_construct_test;
+
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod prologue_virology_test;
