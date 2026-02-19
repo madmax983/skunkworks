@@ -38,6 +38,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 
 **NOTE:** Automated workspace verification failed due to `glam`/`bevy` version conflicts in `hive-mind-dependencies`. Verification was performed partially.
 
+### quantum-groove
+- **Parents**: experiments/quantum-rogue + experiments/atomic-groove
+- **Concept**: A "Rhythmic Roguelike" where quantum states (qubits) are entangled with the beat. The entire dungeon is a quantum system that collapses on the beat. You must move in sync with the rhythm to navigate the superposition.
+- **Novel trait**: Beat-Quantized Reality.
+- **Status**: experiments/quantum-groove
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
 ### ferrous-fluid
 - **Parents**: experiments/ferrous-graph + experiments/fluid-rain
 - **Concept**: TUI Ferrofluid simulation where particles are magnetic and fluid.
@@ -1320,7 +1327,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A "Living Lexicon" where words are physical strings. Phonemes have mass and tension. Kinetic energy (agitation) drives phonetic mutation (Grimm's Law).
 - **Novel trait**: Kinetic Philology. You can "shake" a word into a new dialect.
 - **Status**: experiments/biomorphic-lexicon
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
 
 ### origami-lexicon
 - **Parents**: experiments/manifold-origami + experiments/biomorphic-lexicon
@@ -1334,4 +1341,4 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A Roguelike where entities (items/enemies) are qubits in a quantum system.
 - **Novel trait**: Dynamic Entanglement. Merging and splitting quantum systems based on player interaction (CNOT gates).
 - **Status**: experiments/quantum-rogue
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
