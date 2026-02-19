@@ -457,93 +457,77 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> Option<usize> {
 #[allow(clippy::needless_range_loop)]
 fn exec_prophecy(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: ticks (top)
-    if let Some(val) = vm.stack.pop() {
-        if let Value::Int(ticks) = val {
-            if ticks > 0 {
-                let safe_ticks = ticks.min(1000);
+    let ticks = vm.pop_int("prophecy")?;
 
-                // Clone VM
-                let mut sim_vm = vm.clone();
+    if ticks > 0 {
+        let safe_ticks = ticks.min(1000);
 
-                // Inherit and increment recursion depth to prevent infinite prophecy loops
-                sim_vm.recursion_depth += 1;
-                if sim_vm.recursion_depth > crate::vm::MAX_SIMULATION_DEPTH {
-                    vm.output
-                        .push("Error: Simulation depth limit exceeded in prophecy".to_string());
-                    return None;
-                }
-                if sim_vm.recursion_depth > crate::vm::MAX_RECURSION_DEPTH {
-                    vm.output
-                        .push("Error: Recursion limit exceeded in prophecy".to_string());
-                    return None;
-                }
+        // Clone VM
+        let mut sim_vm = vm.clone();
 
-                sim_vm.output.clear(); // Silence output
-                sim_vm.halted = false; // Ensure it can run (unless already dead?)
-
-                // Advance IP to avoid infinite recursion (executing prophecy again)
-                // We assume standard sequential flow (IP.1 + 1)
-                sim_vm.ip.1 += 1;
-
-                if vm.energy <= 0 {
-                    // If already dead, prophecy is 1
-                    vm.stack.push(Value::Int(1));
-                } else {
-                    // Run simulation loop
-                    for _ in 0..safe_ticks {
-                        sim_vm.step();
-                        if sim_vm.halted {
-                            break;
-                        }
-                    }
-
-                    // Result: 1 if Dead (halted), 0 if Alive
-                    let result = if sim_vm.halted { 1 } else { 0 };
-                    vm.stack.push(Value::Int(result));
-
-                    // Cost
-                    let cost = 50 + (safe_ticks / 2);
-                    vm.energy = vm.energy.saturating_sub(cost);
-                    vm.output.push(format!(
-                        "PROPHECY: Predicted {} (1=Death, 0=Life) in {} ticks",
-                        result, safe_ticks
-                    ));
-                }
-            } else {
-                vm.output
-                    .push("Error: Invalid ticks for prophecy".to_string());
-            }
-        } else {
+        // Inherit and increment recursion depth to prevent infinite prophecy loops
+        sim_vm.recursion_depth += 1;
+        if sim_vm.recursion_depth > crate::vm::MAX_SIMULATION_DEPTH {
             vm.output
-                .push("Error: Type mismatch for prophecy".to_string());
+                .push("Error: Simulation depth limit exceeded in prophecy".to_string());
+            return None;
+        }
+        if sim_vm.recursion_depth > crate::vm::MAX_RECURSION_DEPTH {
+            vm.output
+                .push("Error: Recursion limit exceeded in prophecy".to_string());
+            return None;
+        }
+
+        sim_vm.output.clear(); // Silence output
+        sim_vm.halted = false; // Ensure it can run (unless already dead?)
+
+        // Advance IP to avoid infinite recursion (executing prophecy again)
+        // We assume standard sequential flow (IP.1 + 1)
+        sim_vm.ip.1 += 1;
+
+        if vm.energy <= 0 {
+            // If already dead, prophecy is 1
+            vm.stack.push(Value::Int(1));
+        } else {
+            // Run simulation loop
+            for _ in 0..safe_ticks {
+                sim_vm.step();
+                if sim_vm.halted {
+                    break;
+                }
+            }
+
+            // Result: 1 if Dead (halted), 0 if Alive
+            let result = if sim_vm.halted { 1 } else { 0 };
+            vm.stack.push(Value::Int(result));
+
+            // Cost
+            let cost = 50 + (safe_ticks / 2);
+            vm.energy = vm.energy.saturating_sub(cost);
+            vm.output.push(format!(
+                "PROPHECY: Predicted {} (1=Death, 0=Life) in {} ticks",
+                result, safe_ticks
+            ));
         }
     } else {
         vm.output
-            .push("Error: Stack underflow for prophecy".to_string());
+            .push("Error: Invalid ticks for prophecy".to_string());
     }
     None
 }
 
 pub fn exec_lisp_eval(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    if let Some(val) = vm.stack.pop() {
-        if let Value::Str(s) = val {
-            match crate::lisp::compile_fragment(&s) {
-                Ok(genes) => {
-                    let strand = crate::ast::Strand { genes };
-                    execute_ephemeral_strand(vm, &strand);
-                    vm.output.push("LISP_EVAL: Success".to_string());
-                }
-                Err(e) => {
-                    vm.output.push(format!("LISP_EVAL ERROR: {}", e));
-                }
-            }
-        } else {
-            vm.output
-                .push("Error: Type mismatch for lisp_eval".to_string());
+    let s = vm.pop_str("lisp_eval")?;
+
+    match crate::lisp::compile_fragment(&s) {
+        Ok(genes) => {
+            let strand = crate::ast::Strand { genes };
+            execute_ephemeral_strand(vm, &strand);
+            vm.output.push("LISP_EVAL: Success".to_string());
         }
-    } else {
-        vm.output
-            .push("Error: Stack underflow for lisp_eval".to_string());
+        Err(e) => {
+            vm.output.push(format!("LISP_EVAL ERROR: {}", e));
+        }
     }
     None
 }
@@ -554,76 +538,66 @@ pub fn exec_lisp_eval(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// **Stack:** `[ ..., strand_idx, ticks ] -> [ ..., top_val, final_energy, status ]`
 fn exec_simulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: ticks, strand_idx (bottom)
-    if vm.stack.len() >= 2 {
-        let ticks_val = vm.stack.pop().unwrap();
-        let s_val = vm.stack.pop().unwrap();
+    let ticks = vm.pop_int("simulate")?;
+    let s_idx = vm.pop_int("simulate")?;
 
-        if let (Value::Int(ticks), Value::Int(s_idx)) = (ticks_val, s_val) {
-            let idx = s_idx as usize;
-            if idx < vm.dna.helix.strands.len() && ticks > 0 {
-                if vm.recursion_depth > crate::vm::MAX_SIMULATION_DEPTH {
-                    vm.output
-                        .push("Error: Simulation depth limit exceeded".to_string());
-                    return None;
-                }
-                if vm.recursion_depth > crate::vm::MAX_RECURSION_DEPTH {
-                    vm.output
-                        .push("Error: Recursion limit exceeded".to_string());
-                    return None;
-                }
-
-                // Cap ticks to prevent DoS
-                let safe_ticks = ticks.min(1000);
-
-                // Fork VM
-                // Cloning `vm` clones everything, which provides an accurate snapshot.
-                let mut sim_vm = vm.clone();
-
-                // Setup simulation context
-                sim_vm.ip = (idx, 0);
-                sim_vm.output.clear(); // Silence output
-                sim_vm.halted = false;
-
-                // Run simulation loop
-                for _ in 0..safe_ticks {
-                    sim_vm.step();
-                    if sim_vm.halted {
-                        break;
-                    }
-                }
-
-                // Collect Results
-                // 1. Top of stack (or 0 if empty)
-                let top_val = sim_vm.stack.last().cloned().unwrap_or(Value::Int(0));
-                // 2. Final Energy
-                let energy = sim_vm.energy;
-                // 3. Status (1 = Alive, 0 = Halted/Dead)
-                let status = if sim_vm.halted { 0 } else { 1 };
-
-                // Push results to original VM stack
-                vm.stack.push(top_val);
-                vm.stack.push(Value::Int(energy));
-                vm.stack.push(Value::Int(status));
-
-                // Deduct Energy Cost: Base cost + duration cost
-                let cost = safe_ticks.saturating_add(50);
-                vm.energy = vm.energy.saturating_sub(cost);
-
-                vm.output.push(format!(
-                    "SIMULATE: Ran strand {} for {} ticks. Status: {}",
-                    idx, safe_ticks, status
-                ));
-            } else {
-                vm.output
-                    .push("Error: Invalid args for simulate".to_string());
-            }
-        } else {
+    let idx = s_idx as usize;
+    if idx < vm.dna.helix.strands.len() && ticks > 0 {
+        if vm.recursion_depth > crate::vm::MAX_SIMULATION_DEPTH {
             vm.output
-                .push("Error: Type mismatch for simulate".to_string());
+                .push("Error: Simulation depth limit exceeded".to_string());
+            return None;
         }
+        if vm.recursion_depth > crate::vm::MAX_RECURSION_DEPTH {
+            vm.output
+                .push("Error: Recursion limit exceeded".to_string());
+            return None;
+        }
+
+        // Cap ticks to prevent DoS
+        let safe_ticks = ticks.min(1000);
+
+        // Fork VM
+        // Cloning `vm` clones everything, which provides an accurate snapshot.
+        let mut sim_vm = vm.clone();
+
+        // Setup simulation context
+        sim_vm.ip = (idx, 0);
+        sim_vm.output.clear(); // Silence output
+        sim_vm.halted = false;
+
+        // Run simulation loop
+        for _ in 0..safe_ticks {
+            sim_vm.step();
+            if sim_vm.halted {
+                break;
+            }
+        }
+
+        // Collect Results
+        // 1. Top of stack (or 0 if empty)
+        let top_val = sim_vm.stack.last().cloned().unwrap_or(Value::Int(0));
+        // 2. Final Energy
+        let energy = sim_vm.energy;
+        // 3. Status (1 = Alive, 0 = Halted/Dead)
+        let status = if sim_vm.halted { 0 } else { 1 };
+
+        // Push results to original VM stack
+        vm.stack.push(top_val);
+        vm.stack.push(Value::Int(energy));
+        vm.stack.push(Value::Int(status));
+
+        // Deduct Energy Cost: Base cost + duration cost
+        let cost = safe_ticks.saturating_add(50);
+        vm.energy = vm.energy.saturating_sub(cost);
+
+        vm.output.push(format!(
+            "SIMULATE: Ran strand {} for {} ticks. Status: {}",
+            idx, safe_ticks, status
+        ));
     } else {
         vm.output
-            .push("Error: Stack underflow for simulate".to_string());
+            .push("Error: Invalid args for simulate".to_string());
     }
     None
 }
@@ -634,89 +608,80 @@ fn exec_simulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// **Stack:** `[ ..., bf_code, input ] -> [ ..., output ]`
 fn exec_brainfuck(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: bf_code_string, input_string (top)
-    if vm.stack.len() >= 2 {
-        let input_val = vm.stack.pop().unwrap();
-        let code_val = vm.stack.pop().unwrap();
+    let input = vm.pop_str("brainfuck")?;
+    let code = vm.pop_str("brainfuck")?;
 
-        if let (Value::Str(code), Value::Str(input)) = (code_val, input_val) {
-            let code_chars: Vec<char> = code.chars().collect();
-            let mut input_chars: VecDeque<u8> = input.bytes().collect::<VecDeque<_>>();
-            let mut output_bytes: Vec<u8> = Vec::new();
+    let code_chars: Vec<char> = code.chars().collect();
+    let mut input_chars: VecDeque<u8> = input.bytes().collect::<VecDeque<_>>();
+    let mut output_bytes: Vec<u8> = Vec::new();
 
-            let mut tape = vec![0u8; 30000];
-            let mut ptr = 0;
-            let mut pc = 0;
-            let mut cycles = 0;
-            let max_cycles = 10000; // Safety limit
+    let mut tape = vec![0u8; 30000];
+    let mut ptr = 0;
+    let mut pc = 0;
+    let mut cycles = 0;
+    let max_cycles = 10000; // Safety limit
 
-            // Precompute jump targets
-            let mut jumps = HashMap::new();
-            let mut loop_stack = Vec::new();
-            for (i, &c) in code_chars.iter().enumerate() {
-                if c == '[' {
-                    loop_stack.push(i);
-                } else if c == ']' {
-                    if let Some(start) = loop_stack.pop() {
-                        jumps.insert(start, i);
-                        jumps.insert(i, start);
-                    }
-                }
+    // Precompute jump targets
+    let mut jumps = HashMap::new();
+    let mut loop_stack = Vec::new();
+    for (i, &c) in code_chars.iter().enumerate() {
+        if c == '[' {
+            loop_stack.push(i);
+        } else if c == ']' {
+            if let Some(start) = loop_stack.pop() {
+                jumps.insert(start, i);
+                jumps.insert(i, start);
             }
-
-            while pc < code_chars.len() && cycles < max_cycles {
-                match code_chars[pc] {
-                    '>' => {
-                        if ptr < tape.len() - 1 {
-                            ptr += 1;
-                        } else {
-                            ptr = 0;
-                        } // Wrap
-                    }
-                    '<' => {
-                        if ptr > 0 {
-                            ptr -= 1;
-                        } else {
-                            ptr = tape.len() - 1;
-                        } // Wrap
-                    }
-                    '+' => tape[ptr] = tape[ptr].wrapping_add(1),
-                    '-' => tape[ptr] = tape[ptr].wrapping_sub(1),
-                    '.' => output_bytes.push(tape[ptr]),
-                    ',' => {
-                        tape[ptr] = input_chars.pop_front().unwrap_or(0);
-                    }
-                    '[' => {
-                        if tape[ptr] == 0 {
-                            if let Some(&target) = jumps.get(&pc) {
-                                pc = target;
-                            }
-                        }
-                    }
-                    ']' => {
-                        if tape[ptr] != 0 {
-                            if let Some(&target) = jumps.get(&pc) {
-                                pc = target;
-                            }
-                        }
-                    }
-                    _ => {} // Ignore non-BF chars
-                }
-                pc += 1;
-                cycles += 1;
-            }
-
-            let output_str = String::from_utf8_lossy(&output_bytes).to_string();
-            vm.stack.push(Value::Str(output_str));
-            vm.energy = vm.energy.saturating_sub((cycles / 100) as i64);
-            vm.output.push(format!("BRAINFUCK: Ran {} cycles", cycles));
-        } else {
-            vm.output
-                .push("Error: Type mismatch for brainfuck".to_string());
         }
-    } else {
-        vm.output
-            .push("Error: Stack underflow for brainfuck".to_string());
     }
+
+    while pc < code_chars.len() && cycles < max_cycles {
+        match code_chars[pc] {
+            '>' => {
+                if ptr < tape.len() - 1 {
+                    ptr += 1;
+                } else {
+                    ptr = 0;
+                } // Wrap
+            }
+            '<' => {
+                if ptr > 0 {
+                    ptr -= 1;
+                } else {
+                    ptr = tape.len() - 1;
+                } // Wrap
+            }
+            '+' => tape[ptr] = tape[ptr].wrapping_add(1),
+            '-' => tape[ptr] = tape[ptr].wrapping_sub(1),
+            '.' => output_bytes.push(tape[ptr]),
+            ',' => {
+                tape[ptr] = input_chars.pop_front().unwrap_or(0);
+            }
+            '[' => {
+                if tape[ptr] == 0 {
+                    if let Some(&target) = jumps.get(&pc) {
+                        pc = target;
+                    }
+                }
+            }
+            ']' => {
+                if tape[ptr] != 0 {
+                    if let Some(&target) = jumps.get(&pc) {
+                        pc = target;
+                    }
+                }
+            }
+            _ => {} // Ignore non-BF chars
+        }
+        pc += 1;
+        cycles += 1;
+    }
+
+    let output_str = String::from_utf8_lossy(&output_bytes).to_string();
+    vm.stack.push(Value::Str(output_str));
+    vm.energy = vm.energy.saturating_sub((cycles / 100) as i64);
+    vm.output.push(format!("BRAINFUCK: Ran {} cycles", cycles));
+
     None
 }
 
@@ -735,31 +700,21 @@ pub fn exec_operator(vm: &mut ChimeraVM, _args: &[Nucleotide]) -> Option<(usize,
     // BUT OpCode usually takes stack args.
     // Let's check opcode.rs. Stack: [ ..., char_str, strand_idx ] -> [ ... ]
     // So we pop from stack.
-    if vm.stack.len() >= 2 {
-        let idx_val = vm.stack.pop().unwrap();
-        let char_val = vm.stack.pop().unwrap();
+    let idx = vm.pop_int("Operator")?;
+    let s = vm.pop_str("Operator")?;
 
-        if let (Value::Str(s), Value::Int(idx)) = (char_val, idx_val) {
-            if let Some(c) = s.chars().next() {
-                if idx >= 0 && (idx as usize) < vm.dna.helix.strands.len() {
-                    vm.custom_operators.insert(c, idx as usize);
-                    vm.output
-                        .push(format!("OPERATOR: Defined '{}' -> Strand {}", c, idx));
-                } else {
-                    vm.output
-                        .push("Error: Invalid strand index for Operator".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Empty string for Operator char".to_string());
-            }
+    if let Some(c) = s.chars().next() {
+        if idx >= 0 && (idx as usize) < vm.dna.helix.strands.len() {
+            vm.custom_operators.insert(c, idx as usize);
+            vm.output
+                .push(format!("OPERATOR: Defined '{}' -> Strand {}", c, idx));
         } else {
             vm.output
-                .push("Error: Type mismatch for Operator".to_string());
+                .push("Error: Invalid strand index for Operator".to_string());
         }
     } else {
         vm.output
-            .push("Error: Stack underflow for Operator".to_string());
+            .push("Error: Empty string for Operator char".to_string());
     }
     None
 }
@@ -1138,434 +1093,387 @@ fn execute_strand_sync(vm: &mut ChimeraVM, strand_idx: usize) {
 
 fn exec_gravitate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: radius
-    if let Some(val) = vm.stack.pop() {
-        if let Value::Int(r) = val {
-            if r > 0 {
-                let (cy, cx) = vm.context_loc;
-                // Get coordinates within radius
-                // Note: get_circular_coords uses Euclidean distance on Plane.
-                // For Torus, we should use toroidal distance, but for simplicity we keep it local.
-                // However, valid coordinates are returned.
-                let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
+    let r = vm.pop_int("gravitate")?;
 
-                // Calculate distances and sort
-                let mut coords_with_dist: Vec<((usize, usize), i64)> = coords
-                    .into_iter()
-                    .map(|(x, y)| {
-                        let dx = x as i64 - cx as i64;
-                        let dy = y as i64 - cy as i64;
-                        // Squared distance is sufficient for sorting
-                        ((x, y), dx * dx + dy * dy)
-                    })
-                    .collect();
+    if r > 0 {
+        let (cy, cx) = vm.context_loc;
+        // Get coordinates within radius
+        // Note: get_circular_coords uses Euclidean distance on Plane.
+        // For Torus, we should use toroidal distance, but for simplicity we keep it local.
+        // However, valid coordinates are returned.
+        let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
 
-                // Sort by distance (ascending)
-                coords_with_dist.sort_by_key(|&(_, d)| d);
+        // Calculate distances and sort
+        let mut coords_with_dist: Vec<((usize, usize), i64)> = coords
+            .into_iter()
+            .map(|(x, y)| {
+                let dx = x as i64 - cx as i64;
+                let dy = y as i64 - cy as i64;
+                // Squared distance is sufficient for sorting
+                ((x, y), dx * dx + dy * dy)
+            })
+            .collect();
 
-                let mut moved_count = 0;
+        // Sort by distance (ascending)
+        coords_with_dist.sort_by_key(|&(_, d)| d);
 
-                for ((tx, ty), dist_sq) in coords_with_dist {
-                    if dist_sq == 0 {
-                        continue; // Skip center
-                    }
+        let mut moved_count = 0;
 
-                    // If empty, skip
-                    if matches!(vm.grid[ty][tx], Value::Int(0)) {
-                        continue;
-                    }
-
-                    // Calculate target (one step closer to center)
-                    let dx = cx as i64 - tx as i64;
-                    let dy = cy as i64 - ty as i64;
-
-                    let sx = if dx > 0 {
-                        1
-                    } else if dx < 0 {
-                        -1
-                    } else {
-                        0
-                    };
-                    let sy = if dy > 0 {
-                        1
-                    } else if dy < 0 {
-                        -1
-                    } else {
-                        0
-                    };
-
-                    // Use normalize_coords to find valid target
-                    if let Some((target_y, target_x)) =
-                        vm.normalize_coords(ty as i64 + sy, tx as i64 + sx)
-                    {
-                        // Check if target is empty
-                        if matches!(vm.grid[target_y][target_x], Value::Int(0)) {
-                            // Move
-                            vm.grid[target_y][target_x] = vm.grid[ty][tx].clone();
-                            vm.grid[ty][tx] = Value::Int(0);
-                            moved_count += 1;
-                        }
-                    }
-                }
-
-                vm.energy = vm.energy.saturating_sub(moved_count + 5); // Base cost + variable
-                vm.output.push(format!(
-                    "GRAVITATE: Pulled {} items towards {},{}",
-                    moved_count, cx, cy
-                ));
-            } else {
-                // Negative or zero radius is no-op
+        for ((tx, ty), dist_sq) in coords_with_dist {
+            if dist_sq == 0 {
+                continue; // Skip center
             }
-        } else {
-            vm.output
-                .push("Error: Type mismatch for gravitate".to_string());
+
+            // If empty, skip
+            if matches!(vm.grid[ty][tx], Value::Int(0)) {
+                continue;
+            }
+
+            // Calculate target (one step closer to center)
+            let dx = cx as i64 - tx as i64;
+            let dy = cy as i64 - ty as i64;
+
+            let sx = if dx > 0 {
+                1
+            } else if dx < 0 {
+                -1
+            } else {
+                0
+            };
+            let sy = if dy > 0 {
+                1
+            } else if dy < 0 {
+                -1
+            } else {
+                0
+            };
+
+            // Use normalize_coords to find valid target
+            if let Some((target_y, target_x)) =
+                vm.normalize_coords(ty as i64 + sy, tx as i64 + sx)
+            {
+                // Check if target is empty
+                if matches!(vm.grid[target_y][target_x], Value::Int(0)) {
+                    // Move
+                    vm.grid[target_y][target_x] = vm.grid[ty][tx].clone();
+                    vm.grid[ty][tx] = Value::Int(0);
+                    moved_count += 1;
+                }
+            }
         }
+
+        vm.energy = vm.energy.saturating_sub(moved_count + 5); // Base cost + variable
+        vm.output.push(format!(
+            "GRAVITATE: Pulled {} items towards {},{}",
+            moved_count, cx, cy
+        ));
     } else {
-        vm.output
-            .push("Error: Stack underflow for gravitate".to_string());
+        // Negative or zero radius is no-op
     }
     None
 }
 
 fn exec_spawn(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: type, strand_idx (bottom)
-    if vm.stack.len() >= 2 {
-        let type_val = vm.stack.pop().unwrap();
-        let idx_val = vm.stack.pop().unwrap();
+    let t = vm.pop_int("spawn")?;
+    let idx = vm.pop_int("spawn")?;
 
-        if let (Value::Int(t), Value::Int(idx)) = (type_val, idx_val) {
-            let s_idx = idx as usize;
-            if s_idx < vm.dna.helix.strands.len() {
-                if vm.organelles.len() >= crate::vm::MAX_ORGANELLES {
-                    vm.output
-                        .push("Error: Organelle limit exceeded".to_string());
-                    return None;
-                }
-
-                let (kind, direction) = match t {
-                    1 => (OrganelleType::Chloroplast, (0, 0)),
-                    2 => (OrganelleType::Mitochondria, (0, 0)),
-                    3 => (OrganelleType::Lysosome, (0, 0)),
-                    4 => (OrganelleType::Ribosome, (0, 1)), // Default East
-                    5 => (OrganelleType::Void, (0, 0)),
-                    6 => (OrganelleType::Alchemist, (0, 0)),
-                    10 => (OrganelleType::MadScientist, (0, 0)),
-                    11 => (OrganelleType::Phage, (0, 1)), // Default East
-                    12 => (OrganelleType::Savant, (0, 0)),
-                    13 => (OrganelleType::Metazoan, (0, 0)),
-                    _ => (OrganelleType::Worker, (0, 0)),
-                };
-
-                let strand = &vm.dna.helix.strands[s_idx];
-                let mut hasher = DefaultHasher::new();
-                strand.hash(&mut hasher);
-                let genome_id = hasher.finish();
-                let traits = nova_bestiary::analyze_traits(strand);
-                let name = nova_bestiary::generate_name(genome_id, &traits);
-
-                vm.organelle_id_counter += 1;
-                let organelle = Organelle {
-                    stack: Vec::new(),
-                    ip: (s_idx, 0),
-                    context_loc: vm.context_loc,
-                    call_stack: Vec::new(),
-                    recursion_depth: 0,
-                    halted: false,
-                    kind: kind.clone(),
-                    direction,
-                    ttl: None,
-                    name,
-                    traits,
-                    id: vm.organelle_id_counter,
-                    tissue_id: None,
-                    genome_id,
-                    energy: 50,
-                    experience: 0,
-                    stage: 0,
-                };
-                vm.organelles.push(organelle);
-                vm.energy = vm.energy.saturating_sub(20);
-                vm.output.push(format!(
-                    "SPAWN: Created {:?} Organelle executing strand {}",
-                    kind, s_idx
-                ));
-            } else {
-                vm.output
-                    .push("Error: Strand index out of bounds for spawn".to_string());
-            }
-        } else {
-            vm.output.push("Error: Type mismatch for spawn".to_string());
+    let s_idx = idx as usize;
+    if s_idx < vm.dna.helix.strands.len() {
+        if vm.organelles.len() >= crate::vm::MAX_ORGANELLES {
+            vm.output
+                .push("Error: Organelle limit exceeded".to_string());
+            return None;
         }
+
+        let (kind, direction) = match t {
+            1 => (OrganelleType::Chloroplast, (0, 0)),
+            2 => (OrganelleType::Mitochondria, (0, 0)),
+            3 => (OrganelleType::Lysosome, (0, 0)),
+            4 => (OrganelleType::Ribosome, (0, 1)), // Default East
+            5 => (OrganelleType::Void, (0, 0)),
+            6 => (OrganelleType::Alchemist, (0, 0)),
+            10 => (OrganelleType::MadScientist, (0, 0)),
+            11 => (OrganelleType::Phage, (0, 1)), // Default East
+            12 => (OrganelleType::Savant, (0, 0)),
+            13 => (OrganelleType::Metazoan, (0, 0)),
+            _ => (OrganelleType::Worker, (0, 0)),
+        };
+
+        let strand = &vm.dna.helix.strands[s_idx];
+        let mut hasher = DefaultHasher::new();
+        strand.hash(&mut hasher);
+        let genome_id = hasher.finish();
+        let traits = nova_bestiary::analyze_traits(strand);
+        let name = nova_bestiary::generate_name(genome_id, &traits);
+
+        vm.organelle_id_counter += 1;
+        let organelle = Organelle {
+            stack: Vec::new(),
+            ip: (s_idx, 0),
+            context_loc: vm.context_loc,
+            call_stack: Vec::new(),
+            recursion_depth: 0,
+            halted: false,
+            kind: kind.clone(),
+            direction,
+            ttl: None,
+            name,
+            traits,
+            id: vm.organelle_id_counter,
+            tissue_id: None,
+            genome_id,
+            energy: 50,
+            experience: 0,
+            stage: 0,
+        };
+        vm.organelles.push(organelle);
+        vm.energy = vm.energy.saturating_sub(20);
+        vm.output.push(format!(
+            "SPAWN: Created {:?} Organelle executing strand {}",
+            kind, s_idx
+        ));
     } else {
         vm.output
-            .push("Error: Stack underflow for spawn".to_string());
+            .push("Error: Strand index out of bounds for spawn".to_string());
     }
     None
 }
 
 fn exec_migrate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: dy, dx (top)
-    if vm.stack.len() >= 2 {
-        let dx_val = vm.stack.pop().unwrap();
-        let dy_val = vm.stack.pop().unwrap();
-        if let (Value::Int(mut dy), Value::Int(mut dx)) = (dy_val, dx_val) {
-            if vm.chirality == crate::vm::Chirality::Right {
-                dy = -dy;
-                dx = -dx;
+    let mut dx = vm.pop_int("migrate")?;
+    let mut dy = vm.pop_int("migrate")?;
+
+    if vm.chirality == crate::vm::Chirality::Right {
+        dy = -dy;
+        dx = -dx;
+    }
+
+    if vm.phase == Phase::Crystalline {
+        vm.output
+            .push("Error: Crystalline phase is immobile".to_string());
+        return None;
+    }
+
+    let (cy, cx) = vm.context_loc;
+
+    let mut blocked = false;
+    if vm.phase != Phase::Ethereal {
+        if let Some(mask) = get_direction_mask(dy, dx) {
+            if (vm.membranes[cy][cx] & mask) != 0 {
+                blocked = true;
+            }
+        }
+    }
+
+    if !blocked {
+        if let Some((mut new_y, mut new_x)) =
+            vm.normalize_coords(cy as i64 + dy, cx as i64 + dx)
+        {
+            // Check for portal
+            if let Some(&(py, px)) = vm.portals.get(&(new_y, new_x)) {
+                vm.output.push(format!(
+                    "PORTAL: Teleported from {},{} to {},{}",
+                    new_x, new_y, px, py
+                ));
+                new_y = py;
+                new_x = px;
             }
 
-            if vm.phase == Phase::Crystalline {
-                vm.output
-                    .push("Error: Crystalline phase is immobile".to_string());
-                return None;
-            }
+            vm.context_loc = (new_y, new_x);
+            vm.energy = vm.energy.saturating_sub(5);
+            vm.output
+                .push(format!("MIGRATE: moved to {},{}", new_x, new_y));
 
-            let (cy, cx) = vm.context_loc;
-
-            let mut blocked = false;
-            if vm.phase != Phase::Ethereal {
-                if let Some(mask) = get_direction_mask(dy, dx) {
-                    if (vm.membranes[cy][cx] & mask) != 0 {
-                        blocked = true;
-                    }
-                }
-            }
-
-            if !blocked {
-                if let Some((mut new_y, mut new_x)) =
-                    vm.normalize_coords(cy as i64 + dy, cx as i64 + dx)
-                {
-                    // Check for portal
-                    if let Some(&(py, px)) = vm.portals.get(&(new_y, new_x)) {
-                        vm.output.push(format!(
-                            "PORTAL: Teleported from {},{} to {},{}",
-                            new_x, new_y, px, py
-                        ));
-                        new_y = py;
-                        new_x = px;
-                    }
-
-                    vm.context_loc = (new_y, new_x);
-                    vm.energy = vm.energy.saturating_sub(5);
-                    vm.output
-                        .push(format!("MIGRATE: moved to {},{}", new_x, new_y));
-
-                    if let Some(target) = super::nova_ward::check_ward_trigger(vm) {
-                        return Some(target);
-                    }
-                } else {
-                    // Hit boundary
-                    vm.energy = vm.energy.saturating_sub(2);
-                    vm.output.push("MIGRATE: Blocked by boundary".to_string());
-                    if vm.trigger_reflex(0) {
-                        return Some(vm.ip);
-                    }
-                }
-            } else {
-                // Blocked by membrane
-                vm.energy = vm.energy.saturating_sub(2);
-                vm.output.push("MIGRATE: Blocked by membrane".to_string());
-                if vm.trigger_reflex(0) {
-                    return Some(vm.ip);
-                }
+            if let Some(target) = super::nova_ward::check_ward_trigger(vm) {
+                return Some(target);
             }
         } else {
-            vm.output
-                .push("Error: Type mismatch for migrate".to_string());
+            // Hit boundary
+            vm.energy = vm.energy.saturating_sub(2);
+            vm.output.push("MIGRATE: Blocked by boundary".to_string());
+            if vm.trigger_reflex(0) {
+                return Some(vm.ip);
+            }
         }
     } else {
-        vm.output
-            .push("Error: Stack underflow for migrate".to_string());
+        // Blocked by membrane
+        vm.energy = vm.energy.saturating_sub(2);
+        vm.output.push("MIGRATE: Blocked by membrane".to_string());
+        if vm.trigger_reflex(0) {
+            return Some(vm.ip);
+        }
     }
     None
 }
 
 fn exec_conjugate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: direction (0=R, 1=D, 2=L, 3=U), y, x, strand_idx (bottom)
-    if vm.stack.len() >= 4 {
-        let dir_val = vm.stack.pop().unwrap();
-        let x_val = vm.stack.pop().unwrap();
-        let y_val = vm.stack.pop().unwrap();
-        let s_val = vm.stack.pop().unwrap();
+    let dir = vm.pop_int("conjugate")?;
+    let x = vm.pop_int("conjugate")?;
+    let y = vm.pop_int("conjugate")?;
+    let s = vm.pop_int("conjugate")?;
 
-        if let (Value::Int(s), Value::Int(y), Value::Int(x), Value::Int(dir)) =
-            (s_val, y_val, x_val, dir_val)
-        {
-            let s_idx = s as usize;
-            if s_idx < vm.dna.helix.strands.len() {
-                let strand = &vm.dna.helix.strands[s_idx];
-                let mut curr_x = x;
-                let mut curr_y = y;
-                let (dx, dy) = match dir.rem_euclid(4) {
-                    0 => (1, 0),
-                    1 => (0, 1),
-                    2 => (-1, 0),
-                    3 => (0, -1),
-                    _ => (0, 0),
-                };
+    let s_idx = s as usize;
+    if s_idx < vm.dna.helix.strands.len() {
+        let strand = &vm.dna.helix.strands[s_idx];
+        let mut curr_x = x;
+        let mut curr_y = y;
+        let (dx, dy) = match dir.rem_euclid(4) {
+            0 => (1, 0),
+            1 => (0, 1),
+            2 => (-1, 0),
+            3 => (0, -1),
+            _ => (0, 0),
+        };
 
-                let mut success_count = 0;
-                let mut cells_to_write = Vec::new();
+        let mut success_count = 0;
+        let mut cells_to_write = Vec::new();
 
-                for gene in &strand.genes {
-                    cells_to_write.push(Value::Str(gene.op.to_string()));
-                    for arg in &gene.args {
-                        match arg {
-                            crate::ast::Nucleotide::Number(n) => {
-                                cells_to_write.push(Value::Int(*n));
-                            }
-                            crate::ast::Nucleotide::String(s) => {
-                                cells_to_write.push(Value::Str(s.clone()));
-                            }
-                            _ => {}
-                        }
+        for gene in &strand.genes {
+            cells_to_write.push(Value::Str(gene.op.to_string()));
+            for arg in &gene.args {
+                match arg {
+                    crate::ast::Nucleotide::Number(n) => {
+                        cells_to_write.push(Value::Int(*n));
                     }
-                }
-
-                for val in cells_to_write {
-                    if let Some((ny, nx)) = vm.normalize_coords(curr_y, curr_x) {
-                        vm.grid[ny][nx] = val;
-                        success_count += 1;
-
-                        // Advance
-                        if let Some((next_y, next_x)) =
-                            vm.normalize_coords(ny as i64 + dy, nx as i64 + dx)
-                        {
-                            curr_y = next_y as i64;
-                            curr_x = next_x as i64;
-                        } else {
-                            // Hit wall, stop writing
-                            break;
-                        }
-                    } else {
-                        break; // Start out of bounds
+                    crate::ast::Nucleotide::String(s) => {
+                        cells_to_write.push(Value::Str(s.clone()));
                     }
+                    _ => {}
                 }
-
-                vm.energy -= success_count; // Cost 1 per cell
-                vm.output.push(format!(
-                    "CONJUGATE: Wrote {} cells from strand {} at {},{}",
-                    success_count, s_idx, x, y
-                ));
-            } else {
-                vm.output
-                    .push("Error: Invalid strand index for conjugate".to_string());
             }
-        } else {
-            vm.output
-                .push("Error: Type mismatch for conjugate".to_string());
         }
+
+        for val in cells_to_write {
+            if let Some((ny, nx)) = vm.normalize_coords(curr_y, curr_x) {
+                vm.grid[ny][nx] = val;
+                success_count += 1;
+
+                // Advance
+                if let Some((next_y, next_x)) =
+                    vm.normalize_coords(ny as i64 + dy, nx as i64 + dx)
+                {
+                    curr_y = next_y as i64;
+                    curr_x = next_x as i64;
+                } else {
+                    // Hit wall, stop writing
+                    break;
+                }
+            } else {
+                break; // Start out of bounds
+            }
+        }
+
+        vm.energy -= success_count; // Cost 1 per cell
+        vm.output.push(format!(
+            "CONJUGATE: Wrote {} cells from strand {} at {},{}",
+            success_count, s_idx, x, y
+        ));
     } else {
         vm.output
-            .push("Error: Stack underflow for conjugate".to_string());
+            .push("Error: Invalid strand index for conjugate".to_string());
     }
     None
 }
 
 fn exec_dream(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: ticks, strand_idx (bottom)
-    if vm.stack.len() >= 2 {
-        let ticks_val = vm.stack.pop().unwrap();
-        let s_val = vm.stack.pop().unwrap();
+    let ticks = vm.pop_int("dream")?;
+    let s_idx = vm.pop_int("dream")?;
 
-        if let (Value::Int(ticks), Value::Int(s_idx)) = (ticks_val, s_val) {
-            let idx = s_idx as usize;
-            if idx < vm.dna.helix.strands.len() && ticks > 0 {
-                if vm.recursion_depth > crate::vm::MAX_SIMULATION_DEPTH {
-                    vm.output
-                        .push("Error: Simulation depth limit exceeded".to_string());
-                    return None;
-                }
+    let idx = s_idx as usize;
+    if idx < vm.dna.helix.strands.len() && ticks > 0 {
+        if vm.recursion_depth > crate::vm::MAX_SIMULATION_DEPTH {
+            vm.output
+                .push("Error: Simulation depth limit exceeded".to_string());
+            return None;
+        }
 
-                // Cap ticks
-                let safe_ticks = ticks.min(1000);
+        // Cap ticks
+        let safe_ticks = ticks.min(1000);
 
-                // Clone VM
-                let mut dream_vm = vm.clone();
+        // Clone VM
+        let mut dream_vm = vm.clone();
 
-                // Force a mutation
-                dream_vm.mutate();
-                let mutation_desc = dream_vm
-                    .output
-                    .last()
-                    .cloned()
-                    .unwrap_or_else(|| "Unknown Mutation".to_string());
+        // Force a mutation
+        dream_vm.mutate();
+        let mutation_desc = dream_vm
+            .output
+            .last()
+            .cloned()
+            .unwrap_or_else(|| "Unknown Mutation".to_string());
 
-                // Capture mutated strand
-                let mutated_strand = if idx < dream_vm.dna.helix.strands.len() {
-                    Some(dream_vm.dna.helix.strands[idx].clone())
-                } else {
-                    None
-                };
+        // Capture mutated strand
+        let mutated_strand = if idx < dream_vm.dna.helix.strands.len() {
+            Some(dream_vm.dna.helix.strands[idx].clone())
+        } else {
+            None
+        };
 
-                // Run simulation
-                dream_vm.ip = (idx, 0);
-                dream_vm.output.clear();
-                dream_vm.halted = false;
+        // Run simulation
+        dream_vm.ip = (idx, 0);
+        dream_vm.output.clear();
+        dream_vm.halted = false;
 
-                for _ in 0..safe_ticks {
-                    dream_vm.step();
-                    if dream_vm.halted {
-                        break;
-                    }
-                }
+        for _ in 0..safe_ticks {
+            dream_vm.step();
+            if dream_vm.halted {
+                break;
+            }
+        }
 
-                // Evaluate
-                let mut success = dream_vm.energy > vm.energy;
+        // Evaluate
+        let mut success = dream_vm.energy > vm.energy;
 
-                // Nightmare Check
-                let (cy, cx) = vm.context_loc;
-                let entropy = vm.entropy_grid[cy][cx];
-                let is_nightmare = entropy > 50;
+        // Nightmare Check
+        let (cy, cx) = vm.context_loc;
+        let entropy = vm.entropy_grid[cy][cx];
+        let is_nightmare = entropy > 50;
 
-                if is_nightmare {
-                    success = true; // Nightmares are forced
-                    vm.output
-                        .push("NIGHTMARE: The Void invades the dream...".to_string());
-                }
+        if is_nightmare {
+            success = true; // Nightmares are forced
+            vm.output
+                .push("NIGHTMARE: The Void invades the dream...".to_string());
+        }
 
-                // Pay Cost (Base 50 + ticks/2)
-                let cost = 50 + (safe_ticks / 2);
+        // Pay Cost (Base 50 + ticks/2)
+        let cost = 50 + (safe_ticks / 2);
 
-                let trace = crate::vm::dream::DreamTrace::new(
-                    0,
-                    idx,
-                    safe_ticks as usize,
-                    cost,
-                    dream_vm.energy,
-                    if dream_vm.halted { 0 } else { 1 },
-                    mutation_desc,
-                    mutated_strand,
-                    success,
-                    is_nightmare,
-                    dream_vm.output.clone(),
-                    None,
-                );
-                vm.dream_traces.push(trace);
+        let trace = crate::vm::dream::DreamTrace::new(
+            0,
+            idx,
+            safe_ticks as usize,
+            cost,
+            dream_vm.energy,
+            if dream_vm.halted { 0 } else { 1 },
+            mutation_desc,
+            mutated_strand,
+            success,
+            is_nightmare,
+            dream_vm.output.clone(),
+            None,
+        );
+        vm.dream_traces.push(trace);
 
-                if success {
-                    // Adopt DNA
-                    vm.dna = dream_vm.dna;
-                    vm.stack.push(Value::Int(1)); // Success
-                    if is_nightmare {
-                        vm.output.push("DREAM: Nightmare realized!".to_string());
-                    } else {
-                        vm.output.push("DREAM: Mutation accepted".to_string());
-                    }
-                } else {
-                    vm.stack.push(Value::Int(0)); // Failure
-                    vm.output.push("DREAM: Mutation discarded".to_string());
-                }
-
-                vm.energy = vm.energy.saturating_sub(cost);
+        if success {
+            // Adopt DNA
+            vm.dna = dream_vm.dna;
+            vm.stack.push(Value::Int(1)); // Success
+            if is_nightmare {
+                vm.output.push("DREAM: Nightmare realized!".to_string());
             } else {
-                vm.output.push("Error: Invalid args for dream".to_string());
+                vm.output.push("DREAM: Mutation accepted".to_string());
             }
         } else {
-            vm.output.push("Error: Type mismatch for dream".to_string());
+            vm.stack.push(Value::Int(0)); // Failure
+            vm.output.push("DREAM: Mutation discarded".to_string());
         }
+
+        vm.energy = vm.energy.saturating_sub(cost);
     } else {
-        vm.output
-            .push("Error: Stack underflow for dream".to_string());
+        vm.output.push("Error: Invalid args for dream".to_string());
     }
     None
 }
@@ -1588,25 +1496,18 @@ pub fn get_direction_mask(dy: i64, dx: i64) -> Option<u8> {
 }
 
 fn exec_lucid(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    if let Some(val) = vm.stack.pop() {
-        if let Value::Int(amount) = val {
-            if amount > 0 {
-                let cost = amount;
-                if vm.energy >= cost {
-                    vm.energy -= cost;
-                    let (cy, cx) = vm.context_loc;
-                    vm.entropy_grid[cy][cx] = vm.entropy_grid[cy][cx].saturating_sub(amount).max(0);
-                    vm.output.push("LUCIDITY: Clarity restored.".to_string());
-                } else {
-                    vm.output.push("LUCID: Insufficient energy".to_string());
-                }
-            }
+    let amount = vm.pop_int("lucid")?;
+
+    if amount > 0 {
+        let cost = amount;
+        if vm.energy >= cost {
+            vm.energy -= cost;
+            let (cy, cx) = vm.context_loc;
+            vm.entropy_grid[cy][cx] = vm.entropy_grid[cy][cx].saturating_sub(amount).max(0);
+            vm.output.push("LUCIDITY: Clarity restored.".to_string());
         } else {
-            vm.output.push("Error: Type mismatch for lucid".to_string());
+            vm.output.push("LUCID: Insufficient energy".to_string());
         }
-    } else {
-        vm.output
-            .push("Error: Stack underflow for lucid".to_string());
     }
     None
 }
@@ -2617,151 +2518,116 @@ fn exec_phase_shift(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 fn exec_membrane(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    if let Some(val) = vm.stack.pop() {
-        if let Value::Int(mask_val) = val {
-            let mask = mask_val as u8;
-            let (cy, cx) = vm.context_loc;
+    let mask_val = vm.pop_int("membrane")?;
 
-            vm.membranes[cy][cx] ^= mask;
+    let mask = mask_val as u8;
+    let (cy, cx) = vm.context_loc;
 
-            if (mask & 1) != 0 {
-                if let Some((ny, nx)) = vm.normalize_coords(cy as i64 - 1, cx as i64) {
-                    vm.membranes[ny][nx] ^= 2;
-                }
-            }
-            if (mask & 2) != 0 {
-                if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + 1, cx as i64) {
-                    vm.membranes[ny][nx] ^= 1;
-                }
-            }
-            if (mask & 4) != 0 {
-                if let Some((ny, nx)) = vm.normalize_coords(cy as i64, cx as i64 + 1) {
-                    vm.membranes[ny][nx] ^= 8;
-                }
-            }
-            if (mask & 8) != 0 {
-                if let Some((ny, nx)) = vm.normalize_coords(cy as i64, cx as i64 - 1) {
-                    vm.membranes[ny][nx] ^= 4;
-                }
-            }
+    vm.membranes[cy][cx] ^= mask;
 
-            vm.energy = vm.energy.saturating_sub(10);
-            vm.output
-                .push(format!("MEMBRANE: Toggled mask {} at {},{}", mask, cx, cy));
-        } else {
-            vm.output
-                .push("Error: Type mismatch for membrane".to_string());
+    if (mask & 1) != 0 {
+        if let Some((ny, nx)) = vm.normalize_coords(cy as i64 - 1, cx as i64) {
+            vm.membranes[ny][nx] ^= 2;
         }
-    } else {
-        vm.output
-            .push("Error: Stack underflow for membrane".to_string());
     }
+    if (mask & 2) != 0 {
+        if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + 1, cx as i64) {
+            vm.membranes[ny][nx] ^= 1;
+        }
+    }
+    if (mask & 4) != 0 {
+        if let Some((ny, nx)) = vm.normalize_coords(cy as i64, cx as i64 + 1) {
+            vm.membranes[ny][nx] ^= 8;
+        }
+    }
+    if (mask & 8) != 0 {
+        if let Some((ny, nx)) = vm.normalize_coords(cy as i64, cx as i64 - 1) {
+            vm.membranes[ny][nx] ^= 4;
+        }
+    }
+
+    vm.energy = vm.energy.saturating_sub(10);
+    vm.output
+        .push(format!("MEMBRANE: Toggled mask {} at {},{}", mask, cx, cy));
+
     None
 }
 
 fn exec_osmosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    if vm.stack.len() >= 2 {
-        let dx_val = vm.stack.pop().unwrap();
-        let dy_val = vm.stack.pop().unwrap();
-        if let (Value::Int(dy), Value::Int(dx)) = (dy_val, dx_val) {
-            let (cy, cx) = vm.context_loc;
-            if let Some((mut new_y, mut new_x)) =
-                vm.normalize_coords(cy as i64 + dy, cx as i64 + dx)
-            {
-                if let Some(&(py, px)) = vm.portals.get(&(new_y, new_x)) {
-                    vm.output.push(format!(
-                        "PORTAL: Teleported from {},{} to {},{}",
-                        new_x, new_y, px, py
-                    ));
-                    new_y = py;
-                    new_x = px;
-                }
+    let dx = vm.pop_int("osmosis")?;
+    let dy = vm.pop_int("osmosis")?;
 
-                vm.context_loc = (new_y, new_x);
-                vm.energy = vm.energy.saturating_sub(20);
-                vm.output
-                    .push(format!("OSMOSIS: Moved to {},{}", new_x, new_y));
+    let (cy, cx) = vm.context_loc;
+    if let Some((mut new_y, mut new_x)) =
+        vm.normalize_coords(cy as i64 + dy, cx as i64 + dx)
+    {
+        if let Some(&(py, px)) = vm.portals.get(&(new_y, new_x)) {
+            vm.output.push(format!(
+                "PORTAL: Teleported from {},{} to {},{}",
+                new_x, new_y, px, py
+            ));
+            new_y = py;
+            new_x = px;
+        }
 
-                if let Some(target) = super::nova_ward::check_ward_trigger(vm) {
-                    return Some(target);
-                }
-            } else {
-                vm.energy = vm.energy.saturating_sub(5);
-                vm.output.push("OSMOSIS: Blocked by boundary".to_string());
-            }
-        } else {
-            vm.output
-                .push("Error: Type mismatch for osmosis".to_string());
+        vm.context_loc = (new_y, new_x);
+        vm.energy = vm.energy.saturating_sub(20);
+        vm.output
+            .push(format!("OSMOSIS: Moved to {},{}", new_x, new_y));
+
+        if let Some(target) = super::nova_ward::check_ward_trigger(vm) {
+            return Some(target);
         }
     } else {
-        vm.output
-            .push("Error: Stack underflow for osmosis".to_string());
+        vm.energy = vm.energy.saturating_sub(5);
+        vm.output.push("OSMOSIS: Blocked by boundary".to_string());
     }
     None
 }
 
 fn exec_symbiosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    if vm.stack.len() >= 2 {
-        let dx_val = vm.stack.pop().unwrap();
-        let dy_val = vm.stack.pop().unwrap();
-        if let (Value::Int(dy), Value::Int(dx)) = (dy_val, dx_val) {
-            let (cy, cx) = vm.context_loc;
-            if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
-                let mut found_idx = None;
-                for (i, org) in vm.organelles.iter().enumerate() {
-                    if org.context_loc == (ny, nx) {
-                        found_idx = Some(i);
-                        break;
-                    }
-                }
+    let dx = vm.pop_int("symbiosis")?;
+    let dy = vm.pop_int("symbiosis")?;
 
-                if let Some(idx) = found_idx {
-                    let organelle = vm.organelles.remove(idx);
-                    vm.symbiotes.push(organelle.ip);
-                    vm.stack.extend(organelle.stack);
-                    vm.energy = vm.energy.saturating_sub(20);
-                    vm.output
-                        .push(format!("SYMBIOSIS: Absorbed organelle at {},{}", nx, ny));
-                } else {
-                    vm.output.push("SYMBIOSIS: No organelle found".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Coordinates out of bounds for symbiosis".to_string());
+    let (cy, cx) = vm.context_loc;
+    if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+        let mut found_idx = None;
+        for (i, org) in vm.organelles.iter().enumerate() {
+            if org.context_loc == (ny, nx) {
+                found_idx = Some(i);
+                break;
             }
-        } else {
+        }
+
+        if let Some(idx) = found_idx {
+            let organelle = vm.organelles.remove(idx);
+            vm.symbiotes.push(organelle.ip);
+            vm.stack.extend(organelle.stack);
+            vm.energy = vm.energy.saturating_sub(20);
             vm.output
-                .push("Error: Type mismatch for symbiosis".to_string());
+                .push(format!("SYMBIOSIS: Absorbed organelle at {},{}", nx, ny));
+        } else {
+            vm.output.push("SYMBIOSIS: No organelle found".to_string());
         }
     } else {
         vm.output
-            .push("Error: Stack underflow for symbiosis".to_string());
+            .push("Error: Coordinates out of bounds for symbiosis".to_string());
     }
     None
 }
 
 fn exec_reflex(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    if vm.stack.len() >= 2 {
-        let event_val = vm.stack.pop().unwrap();
-        let strand_val = vm.stack.pop().unwrap();
+    let e = vm.pop_int("reflex")?;
+    let s = vm.pop_int("reflex")?;
 
-        if let (Value::Int(s), Value::Int(e)) = (strand_val, event_val) {
-            let s_idx = s as usize;
-            if s_idx < vm.dna.helix.strands.len() {
-                vm.reflexes.insert(e, s_idx);
-                vm.output
-                    .push(format!("REFLEX: Bound event {} to strand {}", e, s_idx));
-            } else {
-                vm.output
-                    .push("Error: Strand index out of bounds for reflex".to_string());
-            }
-        } else {
-            vm.output
-                .push("Error: Type mismatch for reflex".to_string());
-        }
+    let s_idx = s as usize;
+    if s_idx < vm.dna.helix.strands.len() {
+        vm.reflexes.insert(e, s_idx);
+        vm.output
+            .push(format!("REFLEX: Bound event {} to strand {}", e, s_idx));
     } else {
         vm.output
-            .push("Error: Stack underflow for reflex".to_string());
+            .push("Error: Strand index out of bounds for reflex".to_string());
     }
     None
 }
@@ -2807,31 +2673,22 @@ fn exec_lysis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 pub(crate) fn exec_irradiate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    if vm.stack.len() >= 2 {
-        let radius_val = vm.stack.pop().unwrap();
-        let amount_val = vm.stack.pop().unwrap();
-        if let (Value::Int(r), Value::Int(amount)) = (radius_val, amount_val) {
-            if r > 0 && amount > 0 {
-                let (cy, cx) = vm.context_loc;
-                let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
-                for (tx, ty) in coords {
-                    vm.mutagen_grid[ty][tx] = vm.mutagen_grid[ty][tx].saturating_add(amount);
-                }
-                let r_sq = (r as i128).saturating_mul(r as i128);
-                let cost = (r_sq + 1).clamp(5, 50) as i64 + amount / 10;
-                vm.energy = vm.energy.saturating_sub(cost);
-                vm.output.push(format!(
-                    "IRRADIATE: Added {} mutagen at {},{} r={}",
-                    amount, cx, cy, r
-                ));
-            }
-        } else {
-            vm.output
-                .push("Error: Type mismatch for irradiate".to_string());
+    let r = vm.pop_int("irradiate")?;
+    let amount = vm.pop_int("irradiate")?;
+
+    if r > 0 && amount > 0 {
+        let (cy, cx) = vm.context_loc;
+        let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
+        for (tx, ty) in coords {
+            vm.mutagen_grid[ty][tx] = vm.mutagen_grid[ty][tx].saturating_add(amount);
         }
-    } else {
-        vm.output
-            .push("Error: Stack underflow for irradiate".to_string());
+        let r_sq = (r as i128).saturating_mul(r as i128);
+        let cost = (r_sq + 1).clamp(5, 50) as i64 + amount / 10;
+        vm.energy = vm.energy.saturating_sub(cost);
+        vm.output.push(format!(
+            "IRRADIATE: Added {} mutagen at {},{} r={}",
+            amount, cx, cy, r
+        ));
     }
     None
 }

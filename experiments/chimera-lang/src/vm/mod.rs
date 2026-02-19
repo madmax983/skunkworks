@@ -792,6 +792,44 @@ pub struct ChimeraVM {
 }
 
 impl ChimeraVM {
+    /// Pops an integer from the stack.
+    ///
+    /// If the stack is empty or the top value is not an integer, an error is pushed to output.
+    pub fn pop_int(&mut self, context: &str) -> Option<i64> {
+        if let Some(val) = self.stack.pop() {
+            if let Value::Int(n) = val {
+                Some(n)
+            } else {
+                self.output
+                    .push(format!("Error: Type mismatch for {}", context));
+                None
+            }
+        } else {
+            self.output
+                .push(format!("Error: Stack underflow for {}", context));
+            None
+        }
+    }
+
+    /// Pops a string from the stack.
+    ///
+    /// If the stack is empty or the top value is not a string, an error is pushed to output.
+    pub fn pop_str(&mut self, context: &str) -> Option<String> {
+        if let Some(val) = self.stack.pop() {
+            if let Value::Str(s) = val {
+                Some(s)
+            } else {
+                self.output
+                    .push(format!("Error: Type mismatch for {}", context));
+                None
+            }
+        } else {
+            self.output
+                .push(format!("Error: Stack underflow for {}", context));
+            None
+        }
+    }
+
     /// Creates a new VM instance with the given DNA.
     ///
     /// Initializes the grid to zeros, energy to INITIAL_ENERGY, and IP to (0,0).
