@@ -8,9 +8,13 @@
 - **Status:** Executed.
 - **Note:** Biomass returned to the void.
 
-### [Concentration Level: TOXIC] - Location: experiments/projective-life
+### [Concentration Level: EVAPORATING] - Location: graveyard/projective-life
+- **Status:** Executed.
+- **Note:** Biomass returned to the void.
+
+### [Concentration Level: TOXIC] - Location: experiments/cochlea-sim
 - **Status:** Condemned.
-- **Note:** Generic Life implementation. Topology twist present but unused in API. Documentation void.
+- **Note:** Documentation Void. Terminal Genericism. The cochlea is silent.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/log-palette
 - **Status:** Executed.
