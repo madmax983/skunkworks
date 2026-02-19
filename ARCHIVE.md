@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **nile-scheduler**: Terminal Genericism. Documentation Void. Redundant with `ripple-scheduler`.
+- **silicon-samba**: Documentation Void. Terminal Genericism. Redundant with `system-attractor`.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **nile-scheduler**: Specimen executed. Terminal Genericism. Documentation Void. Failed to improve during grace period. Moved to graveyard.
 - **git-archaeology**: Specimen executed. Documentation Void. Hidden mechanics. Redundant with `git-ghost`. Grace period expired. Biomass returned to the void.
 - **canopy-scheduler**: Specimen executed. Terminal Genericism. Documentation Void. Failed to improve during grace period. Moved to graveyard.
 - **crystal-conquest**: Specimen executed. Terminal Genericism. Skeletal Rot. Documentation Void. Grace period expired. Moved to graveyard.
