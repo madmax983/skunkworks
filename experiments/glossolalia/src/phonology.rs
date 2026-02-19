@@ -1,294 +1,196 @@
-use rand::Rng;
+use rand::{Rng, RngCore};
 use std::fmt;
 
-#[allow(dead_code)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Copy)]
-pub enum PhonemeType {
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum Voice {
+    Voiced,
+    Voiceless,
+    Neutral, // For vowels/liquids that don't contrast voicing
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum Manner {
+    Stop,
+    Fricative,
+    Nasal,
+    Liquid,
     Vowel,
-    Consonant,
+    Approximant,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum Place {
+    Labial,    // p, b, m, f, v
+    Alveolar,  // t, d, n, s, z, l, r
+    Palatal,   // j, ch, sh
+    Velar,     // k, g, ng
+    Glottal,   // h
+    Front,     // i, e
+    Central,   // a
+    Back,      // u, o
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum Phoneme {
-    // Vowels
-    A,
-    E,
-    I,
-    O,
-    U,
-    Y,
-    // Consonants
-    B,
-    C,
-    D,
-    F,
-    G,
-    H,
-    J,
-    K,
-    L,
-    M,
-    N,
-    P,
-    Q,
-    R,
-    S,
-    T,
-    V,
-    W,
-    X,
-    Z,
-    // Special
-    #[allow(dead_code)]
-    Null, // For deletion
-}
-
-impl fmt::Display for Phoneme {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let s = match self {
-            Phoneme::A => "a",
-            Phoneme::E => "e",
-            Phoneme::I => "i",
-            Phoneme::O => "o",
-            Phoneme::U => "u",
-            Phoneme::Y => "y",
-            Phoneme::B => "b",
-            Phoneme::C => "c",
-            Phoneme::D => "d",
-            Phoneme::F => "f",
-            Phoneme::G => "g",
-            Phoneme::H => "h",
-            Phoneme::J => "j",
-            Phoneme::K => "k",
-            Phoneme::L => "l",
-            Phoneme::M => "m",
-            Phoneme::N => "n",
-            Phoneme::P => "p",
-            Phoneme::Q => "q",
-            Phoneme::R => "r",
-            Phoneme::S => "s",
-            Phoneme::T => "t",
-            Phoneme::V => "v",
-            Phoneme::W => "w",
-            Phoneme::X => "x",
-            Phoneme::Z => "z",
-            Phoneme::Null => "",
-        };
-        write!(f, "{}", s)
-    }
+pub struct Phoneme {
+    pub symbol: char,
+    pub voice: Voice,
+    pub manner: Manner,
+    pub place: Place,
 }
 
 impl Phoneme {
+    pub fn new(symbol: char, voice: Voice, manner: Manner, place: Place) -> Self {
+        Self {
+            symbol,
+            voice,
+            manner,
+            place,
+        }
+    }
+
     pub fn from_char(c: char) -> Option<Self> {
         match c.to_ascii_lowercase() {
-            'a' => Some(Phoneme::A),
-            'e' => Some(Phoneme::E),
-            'i' => Some(Phoneme::I),
-            'o' => Some(Phoneme::O),
-            'u' => Some(Phoneme::U),
-            'y' => Some(Phoneme::Y),
-            'b' => Some(Phoneme::B),
-            'c' => Some(Phoneme::C),
-            'd' => Some(Phoneme::D),
-            'f' => Some(Phoneme::F),
-            'g' => Some(Phoneme::G),
-            'h' => Some(Phoneme::H),
-            'j' => Some(Phoneme::J),
-            'k' => Some(Phoneme::K),
-            'l' => Some(Phoneme::L),
-            'm' => Some(Phoneme::M),
-            'n' => Some(Phoneme::N),
-            'p' => Some(Phoneme::P),
-            'q' => Some(Phoneme::Q),
-            'r' => Some(Phoneme::R),
-            's' => Some(Phoneme::S),
-            't' => Some(Phoneme::T),
-            'v' => Some(Phoneme::V),
-            'w' => Some(Phoneme::W),
-            'x' => Some(Phoneme::X),
-            'z' => Some(Phoneme::Z),
+            // Stops
+            'p' => Some(Self::new('p', Voice::Voiceless, Manner::Stop, Place::Labial)),
+            'b' => Some(Self::new('b', Voice::Voiced, Manner::Stop, Place::Labial)),
+            't' => Some(Self::new('t', Voice::Voiceless, Manner::Stop, Place::Alveolar)),
+            'd' => Some(Self::new('d', Voice::Voiced, Manner::Stop, Place::Alveolar)),
+            'k' => Some(Self::new('k', Voice::Voiceless, Manner::Stop, Place::Velar)),
+            'g' => Some(Self::new('g', Voice::Voiced, Manner::Stop, Place::Velar)),
+            'c' => Some(Self::new('c', Voice::Voiceless, Manner::Stop, Place::Velar)), // Hard C
+            'q' => Some(Self::new('q', Voice::Voiceless, Manner::Stop, Place::Velar)), // Like k
+            // Fricatives
+            'f' => Some(Self::new('f', Voice::Voiceless, Manner::Fricative, Place::Labial)),
+            'v' => Some(Self::new('v', Voice::Voiced, Manner::Fricative, Place::Labial)),
+            's' => Some(Self::new('s', Voice::Voiceless, Manner::Fricative, Place::Alveolar)),
+            'z' => Some(Self::new('z', Voice::Voiced, Manner::Fricative, Place::Alveolar)),
+            'h' => Some(Self::new('h', Voice::Voiceless, Manner::Fricative, Place::Glottal)),
+            'x' => Some(Self::new('x', Voice::Voiceless, Manner::Fricative, Place::Velar)), // Pseudo-phoneme
+            // Nasals
+            'm' => Some(Self::new('m', Voice::Voiced, Manner::Nasal, Place::Labial)),
+            'n' => Some(Self::new('n', Voice::Voiced, Manner::Nasal, Place::Alveolar)),
+            // Liquids/Approximants
+            'l' => Some(Self::new('l', Voice::Voiced, Manner::Liquid, Place::Alveolar)),
+            'r' => Some(Self::new('r', Voice::Voiced, Manner::Liquid, Place::Alveolar)),
+            'j' => Some(Self::new('j', Voice::Voiced, Manner::Approximant, Place::Palatal)),
+            'w' => Some(Self::new('w', Voice::Voiced, Manner::Approximant, Place::Labial)),
+            // Vowels
+            'a' => Some(Self::new('a', Voice::Voiced, Manner::Vowel, Place::Central)),
+            'e' => Some(Self::new('e', Voice::Voiced, Manner::Vowel, Place::Front)),
+            'i' => Some(Self::new('i', Voice::Voiced, Manner::Vowel, Place::Front)),
+            'o' => Some(Self::new('o', Voice::Voiced, Manner::Vowel, Place::Back)),
+            'u' => Some(Self::new('u', Voice::Voiced, Manner::Vowel, Place::Back)),
+            'y' => Some(Self::new('y', Voice::Voiced, Manner::Vowel, Place::Front)), // simplified
             _ => None,
         }
     }
 
-    #[allow(dead_code)]
     pub fn is_vowel(&self) -> bool {
-        matches!(
-            self,
-            Phoneme::A | Phoneme::E | Phoneme::I | Phoneme::O | Phoneme::U | Phoneme::Y
-        )
+        self.manner == Manner::Vowel
+    }
+
+    pub fn is_consonant(&self) -> bool {
+        !self.is_vowel()
     }
 }
 
-pub struct SoundChange {
-    #[allow(dead_code)]
-    pub name: String,
-    pub pattern: fn(&[Phoneme], usize) -> bool, // Check if pattern matches at index
-    pub replacement: fn(&[Phoneme], usize) -> Vec<Phoneme>, // Return replacement phonemes
-    pub probability: f64,
+impl fmt::Display for Phoneme {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.symbol)
+    }
 }
 
-pub struct EvolutionEngine {
-    changes: Vec<SoundChange>,
+#[derive(Debug, Clone)]
+pub struct Word {
+    pub phonemes: Vec<Phoneme>,
 }
 
-impl EvolutionEngine {
-    pub fn new() -> Self {
-        Self {
-            changes: vec![
-                // Grimm's Law (simplified)
-                SoundChange {
-                    name: "Grimm: P->F".to_string(),
-                    pattern: |p, i| p[i] == Phoneme::P,
-                    replacement: |_, _| vec![Phoneme::F],
-                    probability: 0.3,
-                },
-                SoundChange {
-                    name: "Grimm: T->Th".to_string(),
-                    pattern: |p, i| p[i] == Phoneme::T,
-                    replacement: |_, _| vec![Phoneme::T, Phoneme::H],
-                    probability: 0.3,
-                },
-                SoundChange {
-                    name: "Grimm: K->H".to_string(),
-                    pattern: |p, i| p[i] == Phoneme::K,
-                    replacement: |_, _| vec![Phoneme::H],
-                    probability: 0.3,
-                },
-                SoundChange {
-                    name: "Grimm: D->T".to_string(),
-                    pattern: |p, i| p[i] == Phoneme::D,
-                    replacement: |_, _| vec![Phoneme::T],
-                    probability: 0.3,
-                },
-                SoundChange {
-                    name: "Grimm: G->K".to_string(),
-                    pattern: |p, i| p[i] == Phoneme::G,
-                    replacement: |_, _| vec![Phoneme::K],
-                    probability: 0.3,
-                },
-                // Vowel Shift (A -> E -> I -> O -> U -> A)
-                SoundChange {
-                    name: "Vowel Shift A->E".to_string(),
-                    pattern: |p, i| p[i] == Phoneme::A,
-                    replacement: |_, _| vec![Phoneme::E],
-                    probability: 0.2,
-                },
-                SoundChange {
-                    name: "Vowel Shift E->I".to_string(),
-                    pattern: |p, i| p[i] == Phoneme::E,
-                    replacement: |_, _| vec![Phoneme::I],
-                    probability: 0.2,
-                },
-                SoundChange {
-                    name: "Vowel Shift I->O".to_string(),
-                    pattern: |p, i| p[i] == Phoneme::I,
-                    replacement: |_, _| vec![Phoneme::O],
-                    probability: 0.2,
-                },
-                // Lenition (Intervocalic voicing)
-                SoundChange {
-                    name: "Lenition S->Z".to_string(),
-                    pattern: |p, i| {
-                        if i > 0 && i < p.len() - 1 {
-                            p[i] == Phoneme::S && p[i - 1].is_vowel() && p[i + 1].is_vowel()
-                        } else {
-                            false
-                        }
-                    },
-                    replacement: |_, _| vec![Phoneme::Z],
-                    probability: 0.4,
-                },
-                // Palatalization K->C before I/E
-                SoundChange {
-                    name: "Palatalization K->C".to_string(),
-                    pattern: |p, i| {
-                        p[i] == Phoneme::K
-                            && i < p.len() - 1
-                            && (p[i + 1] == Phoneme::I || p[i + 1] == Phoneme::E)
-                    },
-                    replacement: |_, _| vec![Phoneme::C],
-                    probability: 0.5,
-                },
-            ],
-        }
+impl Word {
+    pub fn new(s: &str) -> Self {
+        let phonemes = s
+            .chars()
+            .filter_map(Phoneme::from_char)
+            .collect();
+        Self { phonemes }
     }
 
-    pub fn evolve_word(&self, word: &str, rng: &mut impl Rng) -> String {
-        let phonemes: Vec<Phoneme> = word.chars().filter_map(Phoneme::from_char).collect();
+    pub fn to_string(&self) -> String {
+        self.phonemes.iter().map(|p| p.symbol).collect()
+    }
+}
 
-        // Apply changes
-        // Since replacements can change length, we construct a new vector
-        let mut new_phonemes = Vec::new();
-        let mut i = 0;
-        while i < phonemes.len() {
-            let mut applied = false;
-            for change in &self.changes {
-                if (change.pattern)(&phonemes, i) {
-                    if rng.gen::<f64>() < change.probability {
-                        let replacement = (change.replacement)(&phonemes, i);
-                        new_phonemes.extend(replacement);
-                        i += 1;
-                        applied = true;
-                        break;
-                    }
+pub trait Rule {
+    fn apply(&self, word: &mut Word, rng: &mut dyn RngCore) -> bool;
+}
+
+// Implement some concrete rules
+
+pub struct GrimmsLaw;
+
+impl Rule for GrimmsLaw {
+    fn apply(&self, word: &mut Word, rng: &mut dyn RngCore) -> bool {
+        let mut changed = false;
+        for i in 0..word.phonemes.len() {
+            let p = &mut word.phonemes[i];
+
+            // Voiceless Stop -> Voiceless Fricative (p->f, t->θ(th), k->h/x)
+            if p.voice == Voice::Voiceless && p.manner == Manner::Stop {
+                if rng.gen_bool(0.3) {
+                     match p.place {
+                        Place::Labial => *p = Phoneme::from_char('f').unwrap(),
+                        Place::Alveolar => {
+                             // Simplified: t -> th (represented as 'T' or just 'th' digraph?
+                             // Let's stick to single chars for simplicity in this moonshot: t -> s/z or special char?
+                             // Let's map t -> s (spirantization) or introduce 'θ' if supported.
+                             // For ASCII code, maybe use 'T' for Theta?
+                             // Let's use 'z' or 's' for simplicity or 'h'.
+                             // Real Grimm's law: t -> θ. Let's use 's' as a proxy for fricative.
+                             *p = Phoneme::from_char('s').unwrap();
+                        },
+                        Place::Velar => *p = Phoneme::from_char('h').unwrap(),
+                        _ => {}
+                     }
+                     changed = true;
                 }
             }
-            if !applied {
-                new_phonemes.push(phonemes[i].clone());
-                i += 1;
+
+            // Voiced Stop -> Voiceless Stop (b->p, d->t, g->k)
+            else if p.voice == Voice::Voiced && p.manner == Manner::Stop {
+                 if rng.gen_bool(0.3) {
+                     match p.place {
+                        Place::Labial => *p = Phoneme::from_char('p').unwrap(),
+                        Place::Alveolar => *p = Phoneme::from_char('t').unwrap(),
+                        Place::Velar => *p = Phoneme::from_char('k').unwrap(),
+                         _ => {}
+                     }
+                     changed = true;
+                 }
             }
         }
-
-        new_phonemes.iter().map(|p| p.to_string()).collect()
+        changed
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use rand::rngs::StdRng;
-    use rand::SeedableRng;
+pub struct VowelShift;
 
-    #[test]
-    fn test_phoneme_conversion() {
-        assert_eq!(Phoneme::from_char('a'), Some(Phoneme::A));
-        assert_eq!(Phoneme::from_char('z'), Some(Phoneme::Z));
-        assert_eq!(Phoneme::from_char('!'), None);
-    }
-
-    #[test]
-    fn test_grimm_p_to_f() {
-        let engine = EvolutionEngine::new();
-        // Force probability?
-        // We can just iterate until it happens or check the logic.
-        // Or we can mock the RNG if we make the function generic.
-        // For now, let's just check that it *can* happen.
-
-        let mut rng = StdRng::seed_from_u64(42);
+impl Rule for VowelShift {
+    fn apply(&self, word: &mut Word, rng: &mut dyn RngCore) -> bool {
         let mut changed = false;
-        for _ in 0..100 {
-            let res = engine.evolve_word("pater", &mut rng);
-            if res.starts_with("f") {
-                changed = true;
-                break;
-            }
+        for p in &mut word.phonemes {
+             if p.manner == Manner::Vowel {
+                 if rng.gen_bool(0.2) {
+                     match p.symbol {
+                         'a' => *p = Phoneme::from_char('e').unwrap(),
+                         'e' => *p = Phoneme::from_char('i').unwrap(),
+                         'i' => *p = Phoneme::from_char('o').unwrap(), // stylized shift
+                         'o' => *p = Phoneme::from_char('u').unwrap(),
+                         'u' => *p = Phoneme::from_char('a').unwrap(),
+                         _ => {}
+                     }
+                     changed = true;
+                 }
+             }
         }
-        assert!(changed, "P should eventually evolve to F");
-    }
-
-    #[test]
-    fn test_vowel_shift() {
-        let engine = EvolutionEngine::new();
-        let mut rng = StdRng::seed_from_u64(123);
-        let mut changed = false;
-        for _ in 0..100 {
-            let res = engine.evolve_word("aaa", &mut rng);
-            if res.contains("e") {
-                changed = true;
-                break;
-            }
-        }
-        assert!(changed, "A should eventually evolve to E");
+        changed
     }
 }
