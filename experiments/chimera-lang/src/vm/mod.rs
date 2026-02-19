@@ -5423,3 +5423,4 @@ mod prologue_chaos_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod prologue_necromancy_test;
+#[cfg(test)] mod prologue_darwin_test;
