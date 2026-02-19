@@ -38,7 +38,7 @@
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄 (verified Splice Surgeon)
-- **Status:** 18 test failures detected in Nova and Ribosome modules.
+- **Status:** 20 test failures detected in Nova and Ribosome modules.
 - **Note:** Mosaic sensed a lack of hierarchy in the CLI; reinforcement required. Assertions are failing.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-circuit
@@ -176,14 +176,14 @@
 - **Status:** The waves are interfering. The schedule is sonified.
 - **Note:** Cross: `canopy-scheduler` + `ripple-tank`.
 
-### [Concentration Level: HIGH] - Location: experiments/origami-satellite
-- **Scent Origin:** Genesis (The Origamist) ⚛️🦢
-- **Status:** The wings are unfolding. The vertices are aligned.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/origami-satellite
+- **Scent Origin:** Mycelium 🍄 (verified Genesis)
+- **Status:** The wings are unfolded. Structure stable. Polish required.
 - **Note:** Moonshot: Rigid Origami + Deployable Structure Simulation.
 
-### [Concentration Level: HIGH] - Location: experiments/heap-market
-- **Scent Origin:** Genesis (The Economist) ⚛️📊
-- **Status:** The Order Book is open. Memory blocks are being auctioned in real-time.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/heap-market
+- **Scent Origin:** Mycelium 🍄 (verified Genesis)
+- **Status:** The Order Book is open. Missing documentation (README). Polish required.
 - **Note:** Moonshot: Resource Markets + Memory Allocation.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/ferrous-fluid
@@ -191,12 +191,12 @@
 - **Status:** The particles are spiking. The magnets are active.
 - **Note:** Cross: `ferrous-graph` + `fluid-rain`.
 
-### [Concentration Level: HIGH] - Location: experiments/origami-history
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The timeline is folded. Deployment at 10%.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/origami-history
+- **Scent Origin:** Mycelium 🍄 (verified Splice Surgeon)
+- **Status:** The timeline is folded. Deployment stable. Polish required.
 - **Note:** Cross: `origami-satellite` + `git-cantata`.
 
-### [Concentration Level: HIGH] - Location: experiments/terra-phage
-- **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
-- **Status:** Reaction-diffusion system active. Biomes are emerging from the noise.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/terra-phage
+- **Scent Origin:** Mycelium 🍄 (verified Genesis)
+- **Status:** Biomes emerged. System stable. Polish required.
 - **Note:** Moonshot: Reaction-Diffusion + Terrain Generation. The map is eating the territory.
