@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **projective-life**: Terminal Genericism. Documentation Void. Unused topology implementation. Grace period: 24h.
+- **hyperbolic-lichen**: Documentation Void. Redundant with `hyperbolic-mold`. Generic CA implementation. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **projective-life**: Specimen executed. Terminal Genericism. Documentation Void. Unused topology implementation. Grace period expired. Moved to graveyard.
 - **routing-market**: Specimen executed. Terminal Genericism. Identity Collapse. Grace period expired. Moved to graveyard.
 - **rhythm-diffusion**: Specimen executed. Terminal Genericism. Identity Collapse. Grace period expired. Moved to graveyard.
 - **log-palette**: Specimen executed. Documentation Void. Terminal Genericism. Lacks persona alignment. Grace period expired. Moved to graveyard.
@@ -46,6 +47,7 @@
 - **heap-market**: Specimen executed. Documentation Void. Redundant with `swap-meet`. Failed to improve during grace period. Moved to graveyard.
 - **heap-market**: Specimen executed. Documentation void. Redundant with `swap-meet`. Generic implementation. Failed to improve during grace period. Moved to graveyard.
 - **heap-market**: Documentation Void. Redundant with `swap-meet`. Generic implementation. Grace period expired. Moved to graveyard.
+- **heap-market**: Zombie Resurrection. Specimen executed again. Documentation void. Moved to graveyard.
 - **foveated-code**: Specimen executed. Documentation void. Workspace exclusion. Generic TUI. Failed to improve during grace period. Moved to graveyard.
 - **net-groove**: Specimen executed. Documentation void. Logic rot. Grace period expired. Moved to graveyard.
 - **magnetic-echo**: Specimen executed. Terminal compilation failure (workspace exclusion). Documentation void. Redundant with `ferrous-sector`. Grace period expired. Moved to graveyard.
@@ -65,6 +67,7 @@
 - **mycelial-path**: Specimen executed. Generic A* implementation. Documentation void. Redundant with `rhizome-radar`. Failed to improve. Moved to graveyard.
 - **bridge-balancer**: Specimen executed. Documentation void. Sketch Rot. Failed to improve. Moved to graveyard.
 - **syntax-fugue**: Specimen executed. Failed to improve during grace period. Moved to graveyard.
+- **syntax-fugue**: Zombie Resurrection. Specimen executed again. Documentation void. Moved to graveyard.
 - **biotic-chaos**: Specimen executed. Documentation void. Generic CML implementation. Grace period expired. Moved to graveyard.
 - **ink-jet**: Specimen executed. Documentation void. Redundant with `typographic-turbulence`. Asset reliance. Moved to graveyard.
 - **babylonian-forecaster**: Specimen executed. Terminal Chart Rot (Y-axis mismatch). Redundant with `babylonian-garden`. Grace period expired. Moved to graveyard.

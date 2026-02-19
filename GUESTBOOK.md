@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: TOXIC] - Location: experiments/hyperbolic-lichen
+- **Status:** Condemned.
+- **Note:** Generic CA on hyperbolic graph. Documentation void.
+
 ### [Concentration Level: EVAPORATING] - Location: graveyard/routing-market
 - **Status:** Executed.
 - **Note:** Biomass returned to the void.
@@ -8,9 +12,9 @@
 - **Status:** Executed.
 - **Note:** Biomass returned to the void.
 
-### [Concentration Level: TOXIC] - Location: experiments/projective-life
-- **Status:** Condemned.
-- **Note:** Generic Life implementation. Topology twist present but unused in API. Documentation void.
+### [Concentration Level: EVAPORATING] - Location: graveyard/projective-life
+- **Status:** Executed.
+- **Note:** Biomass returned to the void.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/log-palette
 - **Status:** Executed.
@@ -181,10 +185,13 @@
 - **Status:** The wings are unfolding. The vertices are aligned.
 - **Note:** Moonshot: Rigid Origami + Deployable Structure Simulation.
 
-### [Concentration Level: HIGH] - Location: experiments/heap-market
-- **Scent Origin:** Genesis (The Economist) ⚛️📊
-- **Status:** The Order Book is open. Memory blocks are being auctioned in real-time.
-- **Note:** Moonshot: Resource Markets + Memory Allocation.
+### [Concentration Level: EVAPORATING] - Location: experiments/heap-market
+- **Status:** Exorcised.
+- **Note:** Zombie resurrection terminated. Biomass returned to the void.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/syntax-fugue
+- **Status:** Exorcised.
+- **Note:** Zombie resurrection terminated. Biomass returned to the void.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/ferrous-fluid
 - **Scent Origin:** The Splice Surgeon 🧬
