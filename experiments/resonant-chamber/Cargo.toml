@@ -1,0 +1,20 @@
+[package]
+name = "resonant-chamber"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+crossbeam-channel = "0.5"
+rustfft = "6.2"
+num-complex = "0.4"
+resonance-audio = { workspace = true }
+anyhow = "1.0"
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = []
+audio = ["dep:cpal"]
