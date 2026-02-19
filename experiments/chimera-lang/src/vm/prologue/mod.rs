@@ -311,8 +311,8 @@ fn prepare_signals(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
 
     for (y, x) in &runes {
         if let Value::Str(s) = &grid[*y][*x] {
-            if s == "!" && *y > 0 {
-                let val = grid[*y - 1][*x].clone();
+            if s == "!" && *x > 0 {
+                let val = grid[*y][*x - 1].clone();
                 // Only emit truthy values? Or all values?
                 // Let's emit non-empty signals.
                 if !is_empty_val(&val) {
