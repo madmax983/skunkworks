@@ -112,6 +112,12 @@ pub fn process_ecology_tick(vm: &mut ChimeraVM) {
         }
 
         // Check for food / poison
+        // Ribosomes interact with grid values as data, so they shouldn't eat them.
+        if org.kind == OrganelleType::Ribosome {
+            interactions.entry(org.context_loc).or_default().push(i);
+            continue;
+        }
+
         let (y, x) = org.context_loc;
         if let Value::Int(n) = vm.grid[y][x] {
             if n > 0 {
