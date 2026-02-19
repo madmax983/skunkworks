@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **neural-beatbox**: Documentation Void. Redundant with `neuro-beats`. Sketch Quality.
+- **malloc-expressionism**: Documentation Void. Redundant with `malloc-market`. Sketch Quality.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -200,3 +200,4 @@
 - **penrose-deps**: Specimen executed. Deceptive Naming. Documentation Void. Terminal Genericism. Moved to graveyard.
 - **hanging-abacus**: Specimen executed. Documentation Void. Deceptive Naming. Redundant with `soroban-specter`. Grace period expired. Moved to graveyard.
 - **wasm-runes**: Specimen executed. Documentation Void. Skeletal Implementation. Moved to graveyard.
+- **neural-beatbox**: Specimen executed. Documentation Void. Redundant with `neuro-beats`. Grace period expired. Moved to graveyard.

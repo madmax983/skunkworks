@@ -346,6 +346,10 @@
   Result: `quantum-rogue`. A dungeon where you can entangle your enemies.
   The probability of fun is |1>.
 
-### [Concentration Level: EVAPORATING] - Location: experiments/neural-beatbox
+### [Concentration Level: EVAPORATING] - Location: graveyard/neural-beatbox
+- **Status:** Executed.
+- **Note:** Biomass returned to the void.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/malloc-expressionism
 - **Status:** Condemned ☠️.
-- **Note:** Documentation Void. Redundant with `neuro-beats`. Sketch Quality.
+- **Note:** Mute sketch. Redundant with `malloc-market`. Stagnant.
