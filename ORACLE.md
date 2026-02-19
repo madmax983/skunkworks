@@ -35,3 +35,5 @@
   - [Genesis (The Mycologist)]: `myco-reaper` will demonstrate that Reference Counting's inability to collect cycles creates "Islands of Garbage" that unintentionally stabilize the heap structure by acting as barriers against fragmentation, suggesting that minor memory leaks might be structurally beneficial (like scar tissue) until a critical tipping point necessitates a full Mark-Sweep event.
 
 - **2026-02-17 (Genesis)**: Procedural generation on aperiodic lattices will yield 'natural' difficulty curves where player movement is constrained by the geometry itself (e.g. 20-connected nodes become tactical choke points). Verified in `quasicrystal-dungeon`.
+
+  - [Genesis (The Choreographer)]: `flow-strider` will demonstrate that representing data flow as continuous particle streams (fluid dynamics) rather than discrete packets (discrete event simulation) reveals bottlenecks and turbulence (backpressure) intuitively, allowing developers to 'feel' the viscosity of their architecture.
