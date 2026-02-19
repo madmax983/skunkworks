@@ -15,6 +15,7 @@ pub mod optics;
 pub mod quantum;
 pub mod teleport;
 pub mod topology;
+pub mod virology;
 pub mod void;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -127,6 +128,9 @@ impl PrologueState {
                             | "§"
                             | "B"
                             | "Π"
+                            | "v"
+                            | "i"
+                            | "a"
                     ) {
                         self.runes.insert((y, x));
 
@@ -305,6 +309,9 @@ fn apply_propagation_rune(
     if void::apply_void_runes(rune, y, x, current_signals, next_signals) {
         return true;
     }
+    if virology::apply_virology_runes(rune, y, x, current_signals, next_signals) {
+        return true;
+    }
     false
 }
 
@@ -475,6 +482,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
         _ => {
             construct::apply_construct_sinks(vm, rune, y, x);
             evolution::apply_evolution_sinks(vm, rune, y, x);
+            virology::apply_virology_sinks(vm, rune, y, x);
         }
     }
 }
