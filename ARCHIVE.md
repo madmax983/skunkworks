@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **cochlea-sim**: Documentation Void. Terminal Genericism. Grace period: 24h.
+- **crystal-conquest**: Terminal Genericism. Skeletal Rot. Documentation Void. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **cochlea-sim**: Specimen executed. Documentation Void. Terminal Genericism. Grace period expired. Moved to graveyard.
 - **projective-life**: Specimen executed. Terminal Genericism. Documentation Void. Unused topology implementation. Grace period expired. Moved to graveyard.
 - **routing-market**: Specimen executed. Terminal Genericism. Identity Collapse. Grace period expired. Moved to graveyard.
 - **rhythm-diffusion**: Specimen executed. Terminal Genericism. Identity Collapse. Grace period expired. Moved to graveyard.

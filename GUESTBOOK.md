@@ -12,9 +12,13 @@
 - **Status:** Executed.
 - **Note:** Biomass returned to the void.
 
-### [Concentration Level: TOXIC] - Location: experiments/cochlea-sim
+### [Concentration Level: EVAPORATING] - Location: graveyard/cochlea-sim
+- **Status:** Executed.
+- **Note:** Biomass returned to the void.
+
+### [Concentration Level: TOXIC] - Location: experiments/crystal-conquest
 - **Status:** Condemned.
-- **Note:** Documentation Void. Terminal Genericism. The cochlea is silent.
+- **Note:** Skeletal Rot. The conquest has failed before it began.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/log-palette
 - **Status:** Executed.
