@@ -202,6 +202,71 @@ pub fn apply_evolution_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
                 }
             }
         }
+        "∞" => {
+            // Infinity: Darwinian Selector
+            // West: Trigger
+            // North: Goal
+            // East: Actual
+            // South: Subject Area (5x5 Cone)
+
+            if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+                if vm.prologue_state.signal_grid[wy][wx].is_some() {
+                    // Triggered
+                    let goal = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+                        if let Some(val) = &vm.prologue_state.signal_grid[ny][nx] {
+                            val.clone()
+                        } else {
+                            Value::Int(0)
+                        }
+                    } else {
+                        Value::Int(0)
+                    };
+
+                    let actual = if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
+                        if let Some(val) = &vm.prologue_state.signal_grid[ey][ex] {
+                            val.clone()
+                        } else {
+                            Value::Int(0)
+                        }
+                    } else {
+                        Value::Int(0)
+                    };
+
+                    if goal == actual {
+                        // Success
+                        vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                        vm.output.push("DARWIN: Success match".to_string());
+                    } else {
+                        // Failure -> Mutate South
+                        let mut rng = rand::thread_rng();
+                        let dy = rng.gen_range(1..=5);
+                        let dx = rng.gen_range(-2..=2);
+
+                        if let Some((ty, tx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                            let val = &mut vm.grid[ty][tx];
+                            let old_val = val.clone();
+                            match val {
+                                Value::Int(n) => *n = rng.gen_range(0..100),
+                                Value::Str(_) => {
+                                    let runes = [
+                                        "~", "*", "+", "-", "%", "&", "|", "^", "!", "?", "A", "S",
+                                        "M", "D",
+                                    ];
+                                    *val = Value::Str(
+                                        runes[rng.gen_range(0..runes.len())].to_string(),
+                                    );
+                                }
+                                _ => {}
+                            }
+                            vm.output.push(format!(
+                                "DARWIN: Mutation at {},{} ({} -> {})",
+                                tx, ty, old_val, val
+                            ));
+                        }
+                    }
+                }
+            }
+        }
         _ => {}
     }
 }
