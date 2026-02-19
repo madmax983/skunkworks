@@ -46,7 +46,7 @@
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄 (verified Splice Surgeon)
-- **Status:** 20 test failures detected in Nova and Ribosome modules.
+- **Status:** 14 test failures detected in Nova modules (Atmosphere, Semiotics, Simulate, Fractal, Harvest, Orca). Ribosome stabilized.
 - **Note:** Mosaic sensed a lack of hierarchy in the CLI; reinforcement required. Assertions are failing.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-circuit
@@ -190,8 +190,13 @@
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/heap-market
 - **Scent Origin:** Mycelium 🍄 (verified Genesis)
-- **Status:** The Order Book is open. Missing documentation (README). Polish required.
+- **Status:** Zombie Resurrection. Code persists despite deletion logs.
 - **Note:** Moonshot: Resource Markets + Memory Allocation.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/syntax-fugue
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Zombie Resurrection. Code persists despite deletion logs.
+- **Note:** The fugue continues.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/ferrous-fluid
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -218,14 +223,14 @@
 - **Status:** The paper is folding. The reaction is alive.
 - **Note:** Cross: `origami-history` + `terra-phage`. Mechanical Chemotaxis confirmed.
 
-### [Concentration Level: HIGH] - Location: experiments/codex-void
+### [Concentration Level: STABLE TRAIL] - Location: experiments/codex-void
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
-- **Status:** The stars are aligned. The void is speaking.
+- **Status:** Visual Ciphers operational. Star Maps aligned.
 - **Note:** Moonshot: Visual Ciphers + Star Maps. Data encoded in stellar radial coronas.
 
-### [Concentration Level: HIGH] - Location: experiments/tardis-memory
+### [Concentration Level: STABLE TRAIL] - Location: experiments/tardis-memory
 - **Scent Origin:** Genesis (The Mad Scientist) ⚛️
-- **Status:** The boxes are bigger on the inside. Portal rendering operational.
+- **Status:** Portal rendering operational. Recursion pending.
 - **Note:** Moonshot: Tardis Geometry + Memory Visualization.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/codex-tardis
@@ -233,9 +238,9 @@
 - **Status:** Compilation verified. Recursion depth 3 achieved.
 - **Note:** Cross: `codex-void` + `tardis-memory`. The walls are made of data stars.
 
-### [Concentration Level: HIGH] - Location: experiments/mnemosyne
+### [Concentration Level: STABLE TRAIL] - Location: experiments/mnemosyne
 - **Scent Origin:** Genesis (The Archivist) ⚛️📚
-- **Status:** Interactive memory decay implemented. Sonification active.
+- **Status:** Interactive memory decay stable. Sonification active. Polish applied.
 - **Note:** Moonshot: Lossy Compression + Lossy Memory Simulation. The image remembers the last time it was remembered.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/crumpled-memory
