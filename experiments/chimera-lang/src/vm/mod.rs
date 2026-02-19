@@ -3284,6 +3284,8 @@ impl ChimeraVM {
             | OpCode::Chaos
             | OpCode::TuiMod
             | OpCode::Cambrian
+            | OpCode::Prologue
+            | OpCode::Rune
             | OpCode::BioHack => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
