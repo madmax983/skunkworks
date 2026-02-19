@@ -71,6 +71,13 @@ pub const MAX_AKASHIC_SIZE: u64 = 10 * 1024 * 1024; // 10MB
 pub const MAX_STRINGS: usize = 256;
 #[cfg(feature = "nova")]
 pub const MAX_GRAVEYARD_SIZE: usize = 256;
+#[cfg(feature = "nova")]
+pub const MAX_ETHER_CHANNELS: usize = 1024;
+#[cfg(feature = "nova")]
+pub const MAX_REFLEXES: usize = 256;
+#[cfg(feature = "nova")]
+pub const MAX_CHORD_REGISTRY: usize = 256;
+pub const MAX_TUI_EVENTS: usize = 64;
 
 #[cfg(feature = "nova")]
 pub mod akashic;
