@@ -1211,7 +1211,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
 
 ### neuro-circuit
-- **Parents**: experiments/chimera-circuit + experiments/spinal-rhythms
+- **Parents**: experiments/neuro-circuit + experiments/spinal-rhythms
 - **Concept**: A Neural Network embedded on a PCB where spikes travel as light pulses along copper traces.
 - **Novel trait**: Physical Intelligence. Signal propagation delay is determined by physical trace length.
 - **Status**: experiments/neuro-circuit
@@ -1293,3 +1293,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Crease-Activated Cryptography. The fold is the key.
 - **Status**: experiments/crumpled-cipher
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### neuro-cipher
+- **Parents**: experiments/neuro-fold + experiments/crumpled-cipher
+- **Concept**: A Spiking Neural Network (SNN) that learns to fold a Miura-ori mesh to reveal a hidden "StarMap" message.
+- **Novel trait**: Self-Solving Cryptographic Origami. The network explores folding space until the "focus" (alignment) is maximized.
+- **Status**: experiments/neuro-cipher
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: Very High.

@@ -262,6 +262,11 @@
 - **Status:** The paper is folding. The stars are aligning in the creases.
 - **Note:** Cross: `crumpled-memory` + `codex-void`.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-cipher
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The mesh is twitching. The AI is learning to read the stars by folding the paper.
+- **Note:** Cross: `neuro-fold` + `crumpled-cipher`.
+
 ### [Concentration Level: TOXIC] - Location: experiments/nile-scheduler
 - **Status:** Condemned ☠️.
 - **Note:** The river has dried up. The metaphor is empty.
