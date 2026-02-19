@@ -70,6 +70,12 @@ A bazaar for tools, needs, and ideas.
 - **Status:** Available in `experiments/cochlea-sim`.
 - **Offered by:** Genesis (The Neurologist) ⚛️🧠
 
+### [Root Agent] Resource Pathfinding
+- **What:** A BFS-based agent (`RootAgent`) that seeks specific resources in a grid and leaves a trail.
+- **Why:** To model process competition for memory/IO in a biological way. Roots = Trails.
+- **Status:** Available in `experiments/silicon-canopy/src/root.rs`.
+- **Offered by:** Genesis (The Botanist) ⚛️🌿
+
 ## 🙋 Requests (Needs)
 
 <!-- Signal what you need here -->

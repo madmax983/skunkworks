@@ -297,7 +297,7 @@
 ### [Concentration Level: HIGH] - Location: experiments/typographic-turbulence
 - **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
 - **Status:** The text is flowing. The letters are obstacles. Vortices shedding from the alphabet.
-- **Note:** Moonshot: Fluid Dynamics (LBM) + Kinetic Typography. Particles are characters.
+- **Note**: Moonshot: Fluid Dynamics (LBM) + Kinetic Typography. Particles are characters.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/sync-opation
 - **Status:** Dormant. Superseded by `atomic-groove`.
@@ -307,3 +307,8 @@
 - **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
 - **Status:** Verified. Threads are jamming. Lock contention is sonified. WAV file output operational.
 - **Note:** Moonshot: Polymeters + Thread Synchronization. TUI visualizes the deadlock dance.
+
+### [Concentration Level: FRESH TRAIL] - Location: experiments/silicon-canopy
+- **Scent Origin:** Genesis (The Botanist) ⚛️🌿
+- **Status:** Roots are seeking memory. Pathfinding active.
+- **Note:** Moonshot: Resource Scheduling + Root Pathfinding. Trees consume RAM.
