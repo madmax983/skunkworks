@@ -1,3 +1,58 @@
+//! # Prologue: Rune-based Logic System
+//!
+//! Prologue is a Grid-based Visual Logic Language embedded within Chimera.
+//! It allows for the construction of "Digital Circuits" and "Logic Agents" directly on the memory grid.
+//!
+//! ## Execution Cycle
+//!
+//! The Prologue system runs in discrete ticks, following this pipeline:
+//!
+//! 1.  **Scan**: Identify all Runes and Agents on the grid.
+//! 2.  **Signal**: Activate `!` Source runes and release pending delayed signals.
+//! 3.  **Propagate**: Spread signals through Wires (`~`) and process Logic Gates (`&`, `|`, `+`, etc.).
+//!     *   This phase iterates until the grid stabilizes (up to a limit).
+//! 4.  **Sink**: Active Sinks (`?`, `$`, `M`, etc.) consume signals and perform actions (Logging, Gene Execution, Grid Writes).
+//! 5.  **Agent**: Agents (`@`, `K`, `H`) perceive their surroundings and move.
+//!
+//! ## Rune Reference
+//!
+//! | Category | Runes | Description |
+//! |---|---|---|
+//! | **Source/Sink** | `!` | **Source**: Emits value to North. |
+//! | | `?` | **Sink**: Reads from South. Logs or Executes Gene. |
+//! | | `$` | **Scribe**: Reads West (Val), Writes South. |
+//! | **Wires** | `~` | **Wire**: Conducts signal in all directions. |
+//! | | `*` | **Splitter**: North -> Self (One-way). |
+//! | | `#` | **Delay**: North -> Self (Next Tick). |
+//! | **Logic** | `&` | **AND**: West & East -> South. |
+//! | | `\|` | **OR**: West \| East -> South. |
+//! | | `+` | **XOR**: West ^ East -> South. |
+//! | | `I` | **IF**: West (Cond) -> Passes North (Val). |
+//! | **Math** | `A` | **Add**: West + East -> South. |
+//! | | `S` | **Sub**: West - East -> South. |
+//! | | `M` | **Mutate**: West -> Randomize South. |
+//! | | `%` | **Modulo**: West % East -> South. |
+//! | **Agents** | `@` | **Seeker**: Moves towards signals. |
+//! | | `K` | **Chaos**: Moves randomly. |
+//! | | `H` | **Hunter**: Chases other agents. |
+//! | | `O` | **Organelle**: Spawns an agent. |
+//! | **IO** | `Y` | **Yell**: Pushes to Ether Channel. |
+//! | | `L` | **Listen**: Pops from Ether Channel. |
+//! | **Flow** | `^` | **Jump**: West -> East (Teleport). |
+//! | | `\` | **Mirror**: Reflects 90° (N<->E). |
+//!
+//! ## Example: Simple Logic Gate
+//!
+//! This circuit implements `(1 AND 1) -> Log`:
+//!
+//! ```text
+//!   1   1
+//!   !   !   (Sources emit 1 North)
+//!   ~   ~   (Wires carry signals)
+//!   &       (AND Gate receives both)
+//!   ?       (Sink receives Result 1)
+//! ```
+
 use crate::vm::{ChimeraVM, Value, GRID_SIZE};
 use rand::Rng;
 use serde::{Deserialize, Serialize};
@@ -20,27 +75,42 @@ pub mod topology;
 pub mod virology;
 pub mod void;
 
+/// An autonomous agent wandering the Prologue grid.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PrologueAgent {
+    /// X Coordinate (Column)
     pub x: usize,
+    /// Y Coordinate (Row)
     pub y: usize,
+    /// Internal state memory
     pub state: Value,
 }
 
+/// The entire state of the Prologue system.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PrologueState {
+    /// Whether the Prologue system is currently running.
     pub active: bool,
+    /// Cache of active Rune locations.
     pub runes: HashSet<(usize, usize)>,
+    /// Active rules (unused currently).
     pub rules: Vec<String>,
+    /// The overlay grid carrying transient signals for the current tick.
     pub signal_grid: Vec<Vec<Option<Value>>>,
+    /// Signals to be released in the next tick (from Delay `#` runes).
     pub delayed_signals: Vec<Vec<Option<Value>>>,
+    /// List of active agents.
     pub agents: Vec<PrologueAgent>,
+    /// General purpose registers for runes.
     pub registers: HashMap<(usize, usize), Value>,
+    /// Teleportation channels.
     pub teleport_channels: HashMap<i64, Value>,
+    /// Historical data for time-travel runes.
     pub history: HashMap<(usize, usize), VecDeque<Value>>,
 }
 
 impl PrologueState {
+    /// Creates a new, empty Prologue state.
     pub fn new() -> Self {
         Self {
             active: false,
@@ -55,6 +125,10 @@ impl PrologueState {
         }
     }
 
+    /// Scans the entire grid to identify Runes and Agents.
+    ///
+    /// This populates the `runes` cache and `agents` list for the upcoming tick.
+    /// It effectively compiles the grid into an active circuit description.
     pub fn scan_grid_rules(&mut self, grid: &Vec<Vec<Value>>) {
         self.runes.clear();
         self.rules.clear();
@@ -66,20 +140,28 @@ impl PrologueState {
                     // Identify Runes
                     if matches!(
                         s.as_str(),
+                        // IO
                         "?" | "!"
+                        // Topology
                             | "~"
+                        // Logic
                             | "&"
                             | "|"
                             | "+"
+                        // Circuit
                             | "*"
                             | "#"
+                        // Agents
                             | "@"
                             | "$"
+                        // Math
                             | "%"
                             | "^"
                             | "M"
+                        // Biology
                             | "O"
                             | "G"
+                        // Control
                             | "E"
                             | "D"
                             | "A"
@@ -102,40 +184,52 @@ impl PrologueState {
                             | "X"
                             | "Z"
                             | "H"
+                        // Lists
                             | "["
                             | "]"
                             | "U"
                             | "V"
                             | "F"
                             | "T"
+                        // Optics
                             | "\\"
                             | "/"
                             | "-"
+                        // Quantum
                             | "q"
                             | "m"
+                        // Teleport
                             | "{"
                             | "}"
+                        // Chronos
                             | "s"
                             | "g"
                             | "r"
+                        // Alchemy
                             | "t"
                             | "f"
                             | "d"
+                        // Evolution
                             | "e"
                             | "b"
                             | "l"
                             | "n"
+                        // Void
                             | "µ"
                             | "Ø"
                             | "§"
+                        // Construct
                             | "B"
                             | "Π"
+                        // Virology
                             | "v"
                             | "i"
                             | "a"
+                        // Biolum
                             | "Φ"
                             | "Λ"
                             | "Ω"
+                        // Chaos
                             | "k"
                             | "z"
                             | "h"
@@ -156,6 +250,14 @@ impl PrologueState {
     }
 }
 
+/// Executes a single tick of the Prologue system.
+///
+/// This function coordinates the 5-phase execution cycle:
+/// 1.  **Scan**: Maps the grid topology.
+/// 2.  **Signal**: Initializes signals from Sources and Delays.
+/// 3.  **Propagate**: Spreads signals through the network.
+/// 4.  **Sink**: Triggers effects at Sink terminals.
+/// 5.  **Agent**: Updates agent positions.
 pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
     if !vm.prologue_state.active {
         return;
@@ -178,6 +280,11 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
     process_agents(vm, &grid_snapshot);
 }
 
+/// Prepares the signal grid for the current tick.
+///
+/// *   Clears the previous tick's transient signals.
+/// *   Applies any signals delayed from the previous tick (via `#`).
+/// *   Activates Source runes (`!`) to emit their values.
 fn prepare_signals(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
     // Start with empty signal grid
     let mut current_signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
@@ -212,6 +319,11 @@ fn prepare_signals(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
     }
 }
 
+/// Iteratively propagates signals across the grid.
+///
+/// Simulates instantaneous travel through wires and logic gates.
+/// Iteration continues until the grid state stabilizes (no changes) or `max_iterations` is reached.
+/// This allows signals to travel the entire width of the grid in a single tick.
 fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
     // Simple iterative flood fill for wires
     // Gates need specific inputs.
@@ -253,6 +365,9 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
     }
 }
 
+/// Applies the logic for a single "Active" Rune (Wire, Gate, Math, etc.).
+///
+/// Returns `true` if the signal state changed, prompting another propagation iteration.
 #[allow(clippy::too_many_arguments)]
 fn apply_propagation_rune(
     rune: &str,
@@ -331,6 +446,10 @@ fn apply_propagation_rune(
     false
 }
 
+/// Scans the grid for Sink Runes and triggers their side effects.
+///
+/// Sinks are runes that consume signals to interact with the world (Logging, VM, Grid).
+/// They do not propagate signals further in the same tick (usually).
 fn process_sinks(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
     let runes: Vec<(usize, usize)> = vm.prologue_state.runes.iter().cloned().collect();
 
@@ -341,6 +460,9 @@ fn process_sinks(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
     }
 }
 
+/// Executes the logic for a Sink Rune.
+///
+/// Handles `?` (Sink), `$` (Scribe), `M` (Mutate), `O` (Organelle), etc.
 fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     match rune {
         "?" => {
@@ -502,6 +624,10 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     }
 }
 
+/// Updates the position of Prologue Agents (`@`, `K`, `H`).
+///
+/// Agents observe the grid (Snapshot) and move towards interesting features (Signals, Prey).
+/// This function updates both the `agents` list in the state and the `grid` itself (moving the char).
 fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
     // Agents move towards signal
     // We need to update agents list in state, and also update the Grid (move the '@' char)
@@ -616,6 +742,9 @@ fn is_empty_val(v: &Value) -> bool {
     }
 }
 
+/// Helper to safely convert (i64, i64) coordinates to (usize, usize).
+///
+/// Returns `None` if the coordinates are out of bounds (0..GRID_SIZE).
 pub fn normalize_coords(y: i64, x: i64) -> Option<(usize, usize)> {
     if y >= 0 && y < GRID_SIZE as i64 && x >= 0 && x < GRID_SIZE as i64 {
         Some((y as usize, x as usize))
