@@ -1321,3 +1321,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Kinetic Philology. You can "shake" a word into a new dialect.
 - **Status**: experiments/biomorphic-lexicon
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
+
+### chimera-biomorph
+- **Parents**: experiments/chimera-lang + experiments/biomorphic-lexicon
+- **Concept**: Kinetic Mutagenesis. The genetic code of a digital organism is visualized as a physical string. Physical agitation causes mutations.
+- **Novel trait**: Physical Code. Program structure has mass and tension. Kinetic energy drives evolution.
+- **Status**: experiments/chimera-biomorph
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational.

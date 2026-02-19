@@ -311,3 +311,8 @@
 - **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
 - **Status:** Verified. Threads are jamming. Lock contention is sonified. WAV file output operational.
 - **Note:** Moonshot: Polymeters + Thread Synchronization. TUI visualizes the deadlock dance.
+
+### [Concentration Level: FRESH TRAIL] - Location: experiments/chimera-biomorph
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: The code is physical. The string is mutating under stress.
+- **Note**: Cross: `chimera-lang` + `biomorphic-lexicon`. Kinetic Mutagenesis active.
