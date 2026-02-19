@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **wasm-runes**: Documentation Void. Naming Collision. Skeletal Implementation.
+- **neural-beatbox**: Documentation Void. Redundant with `neuro-beats`. Sketch Quality.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -199,3 +199,4 @@
 - **silicon-samba**: Specimen executed. Documentation Void. Terminal Genericism. Redundant with `system-attractor`. Grace period expired. Biomass returned to the void.
 - **penrose-deps**: Specimen executed. Deceptive Naming. Documentation Void. Terminal Genericism. Moved to graveyard.
 - **hanging-abacus**: Specimen executed. Documentation Void. Deceptive Naming. Redundant with `soroban-specter`. Grace period expired. Moved to graveyard.
+- **wasm-runes**: Specimen executed. Documentation Void. Skeletal Implementation. Moved to graveyard.
