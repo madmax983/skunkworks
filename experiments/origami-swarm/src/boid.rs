@@ -1,5 +1,5 @@
-use crate::network::Network;
-use crate::pbd::{Constraint, PbdSystem};
+use neuro_sim::Network;
+use physics_pbd::{Constraint, PbdSystem};
 use ::rand::Rng;
 use macroquad::prelude::*;
 

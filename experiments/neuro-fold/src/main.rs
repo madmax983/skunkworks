@@ -1,13 +1,7 @@
 use ::rand::Rng;
-use macroquad::models::{Mesh, Vertex};
-use macroquad::prelude::*; // Use ::rand to avoid ambiguity
-
-mod network;
-mod neuron;
-mod pbd;
-
-use network::Network;
-use pbd::{Constraint, PbdSystem};
+use macroquad::prelude::*;
+use neuro_sim::Network;
+use physics_pbd::{Constraint, PbdSystem};
 
 const MESH_ROWS: usize = 6;
 const MESH_COLS: usize = 12; // Longer sheet to see waves

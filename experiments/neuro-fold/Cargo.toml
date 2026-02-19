@@ -6,3 +6,6 @@ edition = "2021"
 [dependencies]
 macroquad = "0.4"
 rand = "0.8"
+physics-pbd = { path = "../../crates/physics-pbd" }
+neuro-sim = { path = "../../crates/neuro-sim" }
+synaptic-physics = { path = "../../crates/synaptic-physics" }

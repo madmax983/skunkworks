@@ -1,7 +1,4 @@
 mod boid;
-mod network;
-mod neuron;
-mod pbd;
 
 use boid::OrigamiBoid;
 use macroquad::prelude::*;
@@ -95,32 +92,6 @@ async fn main() {
             }
             */
             // So we just call it.
-        }
-
-        // Since we can't call boid.draw() if we are borrowing boids mutably?
-        // Wait, loop `for boid in &mut boids` ended.
-        // Now `for boid in &boids`.
-
-        for boid in &boids {
-            // Manual draw implementation here because we can't easily export `draw` if it depends on macroquad
-            // Actually `boid.rs` has `use macroquad::prelude::*`.
-            // So `boid.draw()` should work if `draw_mesh` is available.
-
-            // However, creating a Mesh every frame involves allocation.
-            // For 50 boids * 4 vertices, it's negligible.
-
-            // Wait, I need to make sure `boid.draw()` is public. It is.
-
-            // But I cannot see `boid.draw` in the file `boid.rs` I wrote?
-            // Let me check what I wrote to `boid.rs`.
-            /*
-            pub fn draw(&self) {
-               let mut mesh = Mesh { ... };
-               ...
-               draw_mesh(&mesh);
-            }
-            */
-            // Yes, I wrote it.
             boid.draw();
         }
 
