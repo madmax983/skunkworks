@@ -40,6 +40,9 @@ Prologue treats the grid as a circuit board. Signals propagate instantly (within
 | `-` | **Beam H** | Conducts signal horizontally (W<->E), blocks vertical. |
 | `B` | **Blueprint** | Reads **West** (Trig), **North** (H), **South** (W). Captures Grid East. |
 | `Π` | **Prototyper**| Reads **West** (Blueprint). Pastes to Grid East. |
+| `Φ` | **Photon** | Reads **West** (Intensity) and **N/E/S** (Color). Emits Light. |
+| `Λ` | **Sensor** | Reads Light Intensity at **Self**. Output to **Self**. |
+| `Ω` | **Absorb** | Reads **West** (Intensity). Absorbs Light at **Self**. |
 
 ### Gene Execution
 
