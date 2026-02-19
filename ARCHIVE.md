@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- [Experiment name]: [What was tried] → [Why it failed]
+- **git-archaeology**: 3D Git History Visualization → Documentation Void. Hidden mechanics. Redundant with `git-ghost`.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
