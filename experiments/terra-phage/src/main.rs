@@ -1,7 +1,7 @@
-use macroquad::prelude::*;
-use macroquad::models::draw_mesh;
-use gray_scott::GrayScott;
 use ::rand::Rng;
+use gray_scott::GrayScott;
+use macroquad::models::draw_mesh;
+use macroquad::prelude::*;
 
 const WIDTH: usize = 255;
 const HEIGHT: usize = 255;
@@ -29,10 +29,10 @@ async fn main() {
     // Seed with random noise/rectangles
     let mut rng = ::rand::thread_rng();
     for _ in 0..50 {
-        let cx = rng.gen_range(20..WIDTH-20);
-        let cy = rng.gen_range(20..HEIGHT-20);
-        for y in cy-5..cy+5 {
-            for x in cx-5..cx+5 {
+        let cx = rng.gen_range(20..WIDTH - 20);
+        let cy = rng.gen_range(20..HEIGHT - 20);
+        for y in cy - 5..cy + 5 {
+            for x in cx - 5..cx + 5 {
                 gs.add_chemical(x, y, 0.5);
             }
         }
@@ -66,37 +66,45 @@ async fn main() {
         cam_dist = cam_dist.clamp(50.0, 600.0);
 
         // Feed/Kill Controls
-        if is_key_down(KeyCode::Up) { feed += 0.0001; }
-        if is_key_down(KeyCode::Down) { feed -= 0.0001; }
-        if is_key_down(KeyCode::Right) { kill += 0.0001; }
-        if is_key_down(KeyCode::Left) { kill -= 0.0001; }
+        if is_key_down(KeyCode::Up) {
+            feed += 0.0001;
+        }
+        if is_key_down(KeyCode::Down) {
+            feed -= 0.0001;
+        }
+        if is_key_down(KeyCode::Right) {
+            kill += 0.0001;
+        }
+        if is_key_down(KeyCode::Left) {
+            kill -= 0.0001;
+        }
 
         // Interaction: Rain (Space)
         if is_key_down(KeyCode::Space) {
-             let mut rng = ::rand::thread_rng();
-             for _ in 0..10 {
-                 let cx = rng.gen_range(5..WIDTH-5);
-                 let cy = rng.gen_range(5..HEIGHT-5);
-                 for y in cy-2..cy+2 {
-                     for x in cx-2..cx+2 {
-                         gs.add_chemical(x, y, 0.5);
-                     }
-                 }
-             }
+            let mut rng = ::rand::thread_rng();
+            for _ in 0..10 {
+                let cx = rng.gen_range(5..WIDTH - 5);
+                let cy = rng.gen_range(5..HEIGHT - 5);
+                for y in cy - 2..cy + 2 {
+                    for x in cx - 2..cx + 2 {
+                        gs.add_chemical(x, y, 0.5);
+                    }
+                }
+            }
         }
 
         // Interaction: Bomb (Enter)
         if is_key_pressed(KeyCode::Enter) {
-             let mut rng = ::rand::thread_rng();
-             for _ in 0..50 {
-                 let cx = rng.gen_range(10..WIDTH-10);
-                 let cy = rng.gen_range(10..HEIGHT-10);
-                 for y in cy-5..cy+5 {
-                     for x in cx-5..cx+5 {
-                         gs.add_chemical(x, y, 0.8);
-                     }
-                 }
-             }
+            let mut rng = ::rand::thread_rng();
+            for _ in 0..50 {
+                let cx = rng.gen_range(10..WIDTH - 10);
+                let cy = rng.gen_range(10..HEIGHT - 10);
+                for y in cy - 5..cy + 5 {
+                    for x in cx - 5..cx + 5 {
+                        gs.add_chemical(x, y, 0.8);
+                    }
+                }
+            }
         }
 
         // Interaction: Reset (R)
@@ -104,10 +112,10 @@ async fn main() {
             gs = GrayScott::new(WIDTH, HEIGHT);
             let mut rng = ::rand::thread_rng();
             for _ in 0..50 {
-                let cx = rng.gen_range(20..WIDTH-20);
-                let cy = rng.gen_range(20..HEIGHT-20);
-                for y in cy-5..cy+5 {
-                    for x in cx-5..cx+5 {
+                let cx = rng.gen_range(20..WIDTH - 20);
+                let cy = rng.gen_range(20..HEIGHT - 20);
+                for y in cy - 5..cy + 5 {
+                    for x in cx - 5..cx + 5 {
                         gs.add_chemical(x, y, 0.5);
                     }
                 }
@@ -143,18 +151,38 @@ async fn main() {
         // Draw water plane (transparent blue quad)
         // Adjust height as needed (e.g., 20.0)
         let water_level = 20.0;
-        draw_cube(vec3(WIDTH as f32/2.0, water_level - 5.0, HEIGHT as f32/2.0),
-                  vec3(WIDTH as f32, 10.0, HEIGHT as f32),
-                  None,
-                  Color::new(0.0, 0.3, 0.8, 0.5));
+        draw_cube(
+            vec3(WIDTH as f32 / 2.0, water_level - 5.0, HEIGHT as f32 / 2.0),
+            vec3(WIDTH as f32, 10.0, HEIGHT as f32),
+            None,
+            Color::new(0.0, 0.3, 0.8, 0.5),
+        );
 
         set_default_camera();
 
         // UI
         draw_text("Terra Phage ⚛️", 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Feed: {:.4} | Kill: {:.4}", feed, kill), 20.0, 50.0, 20.0, LIGHTGRAY);
-        draw_text("ARROWS: Adjust Params | SPACE: Rain | ENTER: Bomb | R: Reset", 20.0, 70.0, 16.0, GRAY);
-        draw_text("Right Click + Drag: Rotate Camera | Scroll: Zoom", 20.0, 90.0, 16.0, GRAY);
+        draw_text(
+            &format!("Feed: {:.4} | Kill: {:.4}", feed, kill),
+            20.0,
+            50.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            "ARROWS: Adjust Params | SPACE: Rain | ENTER: Bomb | R: Reset",
+            20.0,
+            70.0,
+            16.0,
+            GRAY,
+        );
+        draw_text(
+            "Right Click + Drag: Rotate Camera | Scroll: Zoom",
+            20.0,
+            90.0,
+            16.0,
+            GRAY,
+        );
 
         next_frame().await
     }
@@ -239,16 +267,16 @@ fn update_mesh(mesh: &mut Mesh, gs: &GrayScott) {
 
         let color = if val_v > 0.3 {
             // High activity: Magma/Rock
-             Color::new(0.8, 0.2 + val_v, 0.2, 1.0)
+            Color::new(0.8, 0.2 + val_v, 0.2, 1.0)
         } else if val_u > 0.6 {
             // High substrate: Grass/Forest
-             Color::new(0.1, 0.5 + val_u * 0.4, 0.1, 1.0)
+            Color::new(0.1, 0.5 + val_u * 0.4, 0.1, 1.0)
         } else if val_u > 0.3 {
             // Medium substrate: Sand
-             Color::new(0.8, 0.8, 0.4, 1.0)
+            Color::new(0.8, 0.8, 0.4, 1.0)
         } else {
-             // Low everything: Water/Darkness
-             Color::new(0.0, 0.1, 0.3, 1.0)
+            // Low everything: Water/Darkness
+            Color::new(0.0, 0.1, 0.3, 1.0)
         };
 
         vertex.color = color.into();

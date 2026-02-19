@@ -1,17 +1,17 @@
 use bevy::prelude::*;
 use bevy_prototype_lyon::prelude::*;
 
-mod graph;
-mod strider;
 mod gait;
-mod particles;
+mod graph;
 mod input;
+mod particles;
+mod strider;
 
-use graph::GraphPlugin;
-use strider::StriderPlugin;
 use gait::GaitPlugin;
-use particles::ParticlePlugin;
+use graph::GraphPlugin;
 use input::InputPlugin;
+use particles::ParticlePlugin;
+use strider::StriderPlugin;
 
 fn main() {
     App::new()

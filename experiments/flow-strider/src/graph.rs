@@ -13,7 +13,7 @@ pub struct GraphPlugin;
 impl Plugin for GraphPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<Graph>()
-           .add_systems(Startup, setup_graph);
+            .add_systems(Startup, setup_graph);
     }
 }
 
@@ -29,7 +29,11 @@ fn setup_graph(mut commands: Commands, mut graph: ResMut<Graph>) {
         for x in 0..cols {
             let cx = x as f32 * spacing - (cols as f32 * spacing) / 2.0;
             let cy = y as f32 * spacing - (rows as f32 * spacing) / 2.0;
-            let pos = Vec2::new(cx, cy) + Vec2::new(rng.gen_range(-jitter..jitter), rng.gen_range(-jitter..jitter));
+            let pos = Vec2::new(cx, cy)
+                + Vec2::new(
+                    rng.gen_range(-jitter..jitter),
+                    rng.gen_range(-jitter..jitter),
+                );
             graph.nodes.push(pos);
         }
     }
@@ -56,7 +60,9 @@ fn setup_graph(mut commands: Commands, mut graph: ResMut<Graph>) {
         commands.spawn((
             ShapeBundle {
                 path: GeometryBuilder::build_as(&shape),
-                spatial: SpatialBundle::from_transform(Transform::from_translation(pos.extend(0.0))),
+                spatial: SpatialBundle::from_transform(Transform::from_translation(
+                    pos.extend(0.0),
+                )),
                 ..default()
             },
             Fill::color(Color::rgb(0.2, 0.2, 0.2)),

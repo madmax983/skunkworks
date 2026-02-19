@@ -43,7 +43,10 @@ fn test_vacuum_rune() {
     exec_prologue_tick(&mut vm2);
 
     // Check if signal reached 5,4 (West of Vacuum)
-    assert!(vm2.prologue_state.signal_grid[5][4].is_some(), "Source should emit signal");
+    assert!(
+        vm2.prologue_state.signal_grid[5][4].is_some(),
+        "Source should emit signal"
+    );
 
     // Check Vacuum at 5,5
     if let Some(Value::Int(v)) = &vm2.prologue_state.signal_grid[5][5] {
@@ -143,6 +146,12 @@ fn test_singularity_rune() {
 
     // So Singularity should successfully clear them.
 
-    assert!(vm.prologue_state.signal_grid[4][5].is_none(), "North signal should be consumed");
-    assert!(vm.prologue_state.signal_grid[5][4].is_none(), "West signal should be consumed");
+    assert!(
+        vm.prologue_state.signal_grid[4][5].is_none(),
+        "North signal should be consumed"
+    );
+    assert!(
+        vm.prologue_state.signal_grid[5][4].is_none(),
+        "West signal should be consumed"
+    );
 }

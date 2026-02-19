@@ -91,21 +91,20 @@ impl<'a> Widget for CaveWidget<'a> {
             let pz = (pos.z * GRID_SIZE as f32) as usize;
 
             // Show nodes within +/- 1 Z level
-            if pz.abs_diff(z) <= 1
-                && px < inner.width as usize && py < inner.height as usize {
-                    let name = &self.graph[*node];
-                    // Just show first char
-                    let symbol = &name[0..1];
-                    let color = if pz == z {
-                        Color::Yellow
-                    } else {
-                        Color::Rgb(100, 100, 0)
-                    }; // Dimmer if not exact Z
-                    if let Some(c) = buf.cell_mut((inner.x + px as u16, inner.y + py as u16)) {
-                        c.set_symbol(symbol);
-                        c.set_style(Style::default().fg(color).add_modifier(Modifier::BOLD));
-                    }
+            if pz.abs_diff(z) <= 1 && px < inner.width as usize && py < inner.height as usize {
+                let name = &self.graph[*node];
+                // Just show first char
+                let symbol = &name[0..1];
+                let color = if pz == z {
+                    Color::Yellow
+                } else {
+                    Color::Rgb(100, 100, 0)
+                }; // Dimmer if not exact Z
+                if let Some(c) = buf.cell_mut((inner.x + px as u16, inner.y + py as u16)) {
+                    c.set_symbol(symbol);
+                    c.set_style(Style::default().fg(color).add_modifier(Modifier::BOLD));
                 }
+            }
         }
 
         // Render Cursor

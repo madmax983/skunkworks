@@ -1,10 +1,10 @@
+mod gen;
 mod glyph;
 mod starmap;
 mod world;
-mod gen;
 
-use macroquad::prelude::*;
 use gen::generate_galaxy;
+use macroquad::prelude::*;
 use world::{Block, Room, World};
 
 const MOVE_SPEED: f32 = 10.0;
@@ -27,24 +27,28 @@ async fn main() {
         world.player.pitch -= mouse_delta.y * LOOK_SPEED * 500.0;
         world.player.pitch = world.player.pitch.clamp(-1.5, 1.5);
 
-        let front = Vec3::new(
-            world.player.yaw.cos(),
-            0.0,
-            world.player.yaw.sin(),
-        ).normalize();
-        let right = Vec3::new(
-            world.player.yaw.sin(),
-            0.0,
-            -world.player.yaw.cos(),
-        ).normalize();
+        let front = Vec3::new(world.player.yaw.cos(), 0.0, world.player.yaw.sin()).normalize();
+        let right = Vec3::new(world.player.yaw.sin(), 0.0, -world.player.yaw.cos()).normalize();
 
         let mut move_vec = Vec3::ZERO;
-        if is_key_down(KeyCode::W) { move_vec += front; }
-        if is_key_down(KeyCode::S) { move_vec -= front; }
-        if is_key_down(KeyCode::D) { move_vec -= right; }
-        if is_key_down(KeyCode::A) { move_vec += right; }
-        if is_key_down(KeyCode::Space) { move_vec += Vec3::Y; }
-        if is_key_down(KeyCode::LeftShift) { move_vec -= Vec3::Y; }
+        if is_key_down(KeyCode::W) {
+            move_vec += front;
+        }
+        if is_key_down(KeyCode::S) {
+            move_vec -= front;
+        }
+        if is_key_down(KeyCode::D) {
+            move_vec -= right;
+        }
+        if is_key_down(KeyCode::A) {
+            move_vec += right;
+        }
+        if is_key_down(KeyCode::Space) {
+            move_vec += Vec3::Y;
+        }
+        if is_key_down(KeyCode::LeftShift) {
+            move_vec -= Vec3::Y;
+        }
 
         if move_vec.length_squared() > 0.0 {
             move_vec = move_vec.normalize();
@@ -61,7 +65,8 @@ async fn main() {
             world.player.yaw.cos() * world.player.pitch.cos(),
             world.player.pitch.sin(),
             world.player.yaw.sin() * world.player.pitch.cos(),
-        ).normalize();
+        )
+        .normalize();
 
         let camera = Camera3D {
             position: world.player.pos,
@@ -80,8 +85,20 @@ async fn main() {
 
         // HUD
         draw_text("CODEX TARDIS", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Room: {}", world.player.current_room_id), 10.0, 50.0, 20.0, WHITE);
-        draw_text("WASD to Move | Mouse to Look", 10.0, screen_height() - 20.0, 20.0, GRAY);
+        draw_text(
+            &format!("Room: {}", world.player.current_room_id),
+            10.0,
+            50.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "WASD to Move | Mouse to Look",
+            10.0,
+            screen_height() - 20.0,
+            20.0,
+            GRAY,
+        );
 
         if is_key_pressed(KeyCode::Escape) {
             break;
@@ -103,10 +120,13 @@ fn check_teleport(world: &mut World) {
                 let max = block.pos + block.size / 2.0;
 
                 // Simple AABB check
-                if player_pos.x >= min.x && player_pos.x <= max.x &&
-                   player_pos.y >= min.y && player_pos.y <= max.y &&
-                   player_pos.z >= min.z && player_pos.z <= max.z {
-
+                if player_pos.x >= min.x
+                    && player_pos.x <= max.x
+                    && player_pos.y >= min.y
+                    && player_pos.y <= max.y
+                    && player_pos.z >= min.z
+                    && player_pos.z <= max.z
+                {
                     teleport_target = Some((target_id, Vec3::ZERO));
                 }
             }
@@ -127,44 +147,54 @@ fn draw_room(room: &Room) {
     let tex = room.texture.as_ref();
 
     // Floor
-    draw_plane(Vec3::new(s.x/2.0, 0.0, s.z/2.0), Vec2::new(s.x, s.z), tex, WHITE);
+    draw_plane(
+        Vec3::new(s.x / 2.0, 0.0, s.z / 2.0),
+        Vec2::new(s.x, s.z),
+        tex,
+        WHITE,
+    );
 
     // Ceiling
     // draw_plane draws facing up. We need facing down.
     // For now just draw it, it will be visible from below if backface culling is off (Macroquad default is off I think)
-    draw_plane(Vec3::new(s.x/2.0, s.y, s.z/2.0), Vec2::new(s.x, s.z), tex, WHITE);
+    draw_plane(
+        Vec3::new(s.x / 2.0, s.y, s.z / 2.0),
+        Vec2::new(s.x, s.z),
+        tex,
+        WHITE,
+    );
 
     // Walls (North, South, East, West)
     // Front Wall (+Z)
     draw_cube(
-        Vec3::new(s.x/2.0, s.y/2.0, s.z),
+        Vec3::new(s.x / 2.0, s.y / 2.0, s.z),
         Vec3::new(s.x, s.y, 0.1),
         tex,
-        WHITE
+        WHITE,
     );
 
     // Back Wall (0)
     draw_cube(
-        Vec3::new(s.x/2.0, s.y/2.0, 0.0),
+        Vec3::new(s.x / 2.0, s.y / 2.0, 0.0),
         Vec3::new(s.x, s.y, 0.1),
         tex,
-        WHITE
+        WHITE,
     );
 
     // Left Wall (0)
     draw_cube(
-        Vec3::new(0.0, s.y/2.0, s.z/2.0),
+        Vec3::new(0.0, s.y / 2.0, s.z / 2.0),
         Vec3::new(0.1, s.y, s.z),
         tex,
-        WHITE
+        WHITE,
     );
 
     // Right Wall (+X)
     draw_cube(
-        Vec3::new(s.x, s.y/2.0, s.z/2.0),
+        Vec3::new(s.x, s.y / 2.0, s.z / 2.0),
         Vec3::new(0.1, s.y, s.z),
         tex,
-        WHITE
+        WHITE,
     );
 
     // Draw Blocks (Portals)

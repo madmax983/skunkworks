@@ -49,32 +49,36 @@ impl Decay for Memory {
             for x in x_start..x_end {
                 let dx = x as i64 - cx as i64;
                 let dy = y as i64 - cy as i64;
-                if dx*dx + dy*dy > (radius as i64 * radius as i64) {
+                if dx * dx + dy * dy > (radius as i64 * radius as i64) {
                     continue;
                 }
 
                 // Heal/Refresh logic could go here
                 // For now, let's just slightly restore ground truth
-                 let gt_pixel = *self.ground_truth.get_pixel(x, y);
-                 let p_pixel = self.perceived.get_pixel_mut(x, y);
+                let gt_pixel = *self.ground_truth.get_pixel(x, y);
+                let p_pixel = self.perceived.get_pixel_mut(x, y);
 
-                 for c in 0..3 {
-                     let gt = gt_pixel[c] as f32;
-                     let p = p_pixel[c] as f32;
-                     p_pixel[c] = (p * 0.9 + gt * 0.1) as u8;
-                 }
+                for c in 0..3 {
+                    let gt = gt_pixel[c] as f32;
+                    let p = p_pixel[c] as f32;
+                    p_pixel[c] = (p * 0.9 + gt * 0.1) as u8;
+                }
             }
         }
     }
 
     fn stress(&mut self, x: u32, y: u32, amount: f32) {
-        if x >= self.width || y >= self.height { return; }
+        if x >= self.width || y >= self.height {
+            return;
+        }
 
         let mut rng = rand::thread_rng();
         // Probability of damage proportional to amount
         // If amount is high (e.g. 1.0), almost certain damage
         // We scale it down so it's not instant destruction
-        if rng.gen::<f32>() > amount * 0.5 { return; }
+        if rng.gen::<f32>() > amount * 0.5 {
+            return;
+        }
 
         let pixel = self.perceived.get_pixel_mut(x, y);
 
@@ -82,21 +86,24 @@ impl Decay for Memory {
         // Scratches (white) or Cracks (black) or Color Shift
         let mode = rng.gen_range(0..3);
         match mode {
-            0 => { // Fade to white (Crease mark)
+            0 => {
+                // Fade to white (Crease mark)
                 for c in 0..3 {
                     pixel[c] = pixel[c].saturating_add((amount * 100.0) as u8);
                 }
-            },
-            1 => { // Fade to black (Deep crack)
+            }
+            1 => {
+                // Fade to black (Deep crack)
                 for c in 0..3 {
                     pixel[c] = pixel[c].saturating_sub((amount * 100.0) as u8);
                 }
-            },
-            _ => { // Chromatic aberration / Noise
-                 for c in 0..3 {
+            }
+            _ => {
+                // Chromatic aberration / Noise
+                for c in 0..3 {
                     let noise = rng.gen_range(-50.0..50.0) * amount;
                     pixel[c] = (pixel[c] as f32 + noise).clamp(0.0, 255.0) as u8;
-                 }
+                }
             }
         }
     }
@@ -123,13 +130,23 @@ impl Decay for Memory {
                 // Add some thickness randomness
                 let mut rng = rand::thread_rng();
                 if rng.gen_bool(0.3) {
-                     self.stress((x0 + 1).min(self.width as i32 - 1) as u32, y0 as u32, amount * 0.5);
-                     self.stress(x0.saturating_sub(1) as u32, y0 as u32, amount * 0.5);
-                     self.stress(x0 as u32, (y0 + 1).min(self.height as i32 - 1) as u32, amount * 0.5);
-                     self.stress(x0 as u32, y0.saturating_sub(1) as u32, amount * 0.5);
+                    self.stress(
+                        (x0 + 1).min(self.width as i32 - 1) as u32,
+                        y0 as u32,
+                        amount * 0.5,
+                    );
+                    self.stress(x0.saturating_sub(1) as u32, y0 as u32, amount * 0.5);
+                    self.stress(
+                        x0 as u32,
+                        (y0 + 1).min(self.height as i32 - 1) as u32,
+                        amount * 0.5,
+                    );
+                    self.stress(x0 as u32, y0.saturating_sub(1) as u32, amount * 0.5);
                 }
             }
-            if x0 == x1 && y0 == y1 { break; }
+            if x0 == x1 && y0 == y1 {
+                break;
+            }
             let e2 = 2 * err;
             if e2 >= dy {
                 err += dy;

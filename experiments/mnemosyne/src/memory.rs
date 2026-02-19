@@ -31,10 +31,10 @@ impl Memory {
                 let dx = x as i32 - center_x as i32;
                 let dy = y as i32 - center_y as i32;
                 if dx * dx + dy * dy < (radius * radius) as i32 {
-                     let p = ground_truth.get_pixel_mut(x, y);
-                     p[0] = 255 - p[0];
-                     p[1] = 255 - p[1];
-                     p[2] = 255 - p[2];
+                    let p = ground_truth.get_pixel_mut(x, y);
+                    p[0] = 255 - p[0];
+                    p[1] = 255 - p[1];
+                    p[2] = 255 - p[2];
                 }
             }
         }
@@ -71,14 +71,22 @@ mod tests {
     #[test]
     fn test_erosion() {
         let mut mem = Memory::new(100, 100);
-        let initial_sum: u64 = mem.perceived.pixels().map(|p| p[0] as u64 + p[1] as u64 + p[2] as u64).sum();
+        let initial_sum: u64 = mem
+            .perceived
+            .pixels()
+            .map(|p| p[0] as u64 + p[1] as u64 + p[2] as u64)
+            .sum();
 
         // Erode heavily
         for _ in 0..1000 {
             mem.erode();
         }
 
-        let final_sum: u64 = mem.perceived.pixels().map(|p| p[0] as u64 + p[1] as u64 + p[2] as u64).sum();
+        let final_sum: u64 = mem
+            .perceived
+            .pixels()
+            .map(|p| p[0] as u64 + p[1] as u64 + p[2] as u64)
+            .sum();
         assert_ne!(initial_sum, final_sum, "Memory should erode over time");
     }
 }

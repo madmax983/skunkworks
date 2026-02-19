@@ -1,6 +1,6 @@
+use chimera_lang::ast::JunctionType;
 use chimera_lang::prelude::*;
 use chimera_lang::vm::Value;
-use chimera_lang::ast::JunctionType;
 
 fn main() {
     println!("👺 Havoc: Initializing Recursive Depth Charge...");

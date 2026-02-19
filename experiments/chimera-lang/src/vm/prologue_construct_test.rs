@@ -20,8 +20,8 @@ mod tests {
 
         // Manually inject trigger signal for B (via delayed, so it survives prepare_signals)
         vm.prologue_state.delayed_signals[6][4] = Some(Value::Int(1)); // West Trigger
-        // Default Height/Width is 1x1.
-        // Capture Area: (6,6).
+                                                                       // Default Height/Width is 1x1.
+                                                                       // Capture Area: (6,6).
 
         // Execute Tick 1
         exec_prologue_tick(&mut vm);
@@ -33,10 +33,10 @@ mod tests {
         if let Some(Value::Junction(JunctionType::Dish, rows)) = &blueprint {
             assert_eq!(rows.len(), 1);
             if let Value::Junction(_, cells) = &rows[0] {
-                 assert_eq!(cells.len(), 1);
-                 assert_eq!(cells[0], Value::Int(42));
+                assert_eq!(cells.len(), 1);
+                assert_eq!(cells[0], Value::Int(42));
             } else {
-                 panic!("Invalid row structure");
+                panic!("Invalid row structure");
             }
         } else {
             panic!("Blueprint not found or invalid type");
@@ -63,7 +63,9 @@ mod tests {
 
     #[test]
     fn test_construct_dimensions() {
-        let dna = Dna { helix: Helix { strands: vec![] } };
+        let dna = Dna {
+            helix: Helix { strands: vec![] },
+        };
         let mut vm = ChimeraVM::new(dna);
         vm.prologue_state.active = true;
 

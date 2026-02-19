@@ -448,10 +448,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                 let e_sig = &vm.prologue_state.signal_grid[ey][ex];
 
                 if let (Some(val), Some(Value::Int(channel))) = (w_sig, e_sig) {
-                    vm.ether
-                        .entry(*channel)
-                        .or_default()
-                        .push_back(val.clone());
+                    vm.ether.entry(*channel).or_default().push_back(val.clone());
                     vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
                     // Light up
                 }

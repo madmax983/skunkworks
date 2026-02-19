@@ -6,7 +6,7 @@ pub struct Block {
     pub size: Vec3,
     pub color: Color,
     pub target_room_id: Option<usize>, // If Some, this is a portal
-    pub portal_face_normal: Vec3,      // Which face is the portal (usually +Z or -Z relative to block)
+    pub portal_face_normal: Vec3, // Which face is the portal (usually +Z or -Z relative to block)
 }
 
 #[derive(Clone, Debug)]

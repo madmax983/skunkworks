@@ -4828,7 +4828,8 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     // Fish tries to align with bobber X somewhat, or fights away?
                     // Let's keep it independent X for now (49.0 originally)
                     // But maybe shift it slightly based on tension (fight)
-                    let fish_x = 49.0 + (app_state.fishing_tension * 10.0 * ((vm.tick_counter % 5) as f64 - 2.0));
+                    let fish_x = 49.0
+                        + (app_state.fishing_tension * 10.0 * ((vm.tick_counter % 5) as f64 - 2.0));
                     ctx.print(fish_x, app_state.fishing_fish_y, fish_icon);
                 }
 

@@ -1,8 +1,8 @@
 mod gen;
 mod world;
 
-use macroquad::prelude::*;
 use gen::generate_heap;
+use macroquad::prelude::*;
 use world::{Block, Room, World};
 
 const MOVE_SPEED: f32 = 10.0;
@@ -34,24 +34,28 @@ async fn main() {
         world.player.pitch -= mouse_delta.y * LOOK_SPEED * 500.0;
         world.player.pitch = world.player.pitch.clamp(-1.5, 1.5);
 
-        let front = Vec3::new(
-            world.player.yaw.cos(),
-            0.0,
-            world.player.yaw.sin(),
-        ).normalize();
-        let right = Vec3::new(
-            world.player.yaw.sin(),
-            0.0,
-            -world.player.yaw.cos(),
-        ).normalize();
+        let front = Vec3::new(world.player.yaw.cos(), 0.0, world.player.yaw.sin()).normalize();
+        let right = Vec3::new(world.player.yaw.sin(), 0.0, -world.player.yaw.cos()).normalize();
 
         let mut move_vec = Vec3::ZERO;
-        if is_key_down(KeyCode::W) { move_vec += front; }
-        if is_key_down(KeyCode::S) { move_vec -= front; }
-        if is_key_down(KeyCode::D) { move_vec -= right; }
-        if is_key_down(KeyCode::A) { move_vec += right; }
-        if is_key_down(KeyCode::Space) { move_vec += Vec3::Y; }
-        if is_key_down(KeyCode::LeftShift) { move_vec -= Vec3::Y; }
+        if is_key_down(KeyCode::W) {
+            move_vec += front;
+        }
+        if is_key_down(KeyCode::S) {
+            move_vec -= front;
+        }
+        if is_key_down(KeyCode::D) {
+            move_vec -= right;
+        }
+        if is_key_down(KeyCode::A) {
+            move_vec += right;
+        }
+        if is_key_down(KeyCode::Space) {
+            move_vec += Vec3::Y;
+        }
+        if is_key_down(KeyCode::LeftShift) {
+            move_vec -= Vec3::Y;
+        }
 
         if move_vec.length_squared() > 0.0 {
             move_vec = move_vec.normalize();
@@ -72,7 +76,9 @@ async fn main() {
 
             for (block_idx, block) in room.blocks.iter().enumerate() {
                 if let Some(target_id) = block.target_room_id {
-                    if target_idx >= render_targets.len() { break; }
+                    if target_idx >= render_targets.len() {
+                        break;
+                    }
 
                     let target = render_targets[target_idx].clone();
                     target_idx += 1;
@@ -80,8 +86,16 @@ async fn main() {
                     let target_room = world.get_room(target_id).unwrap();
                     let target_center = target_room.size / 2.0;
 
-                    let cam_pos = Vec3::new(target_center.x, target_center.y + 2.0, target_center.z - 5.0);
-                    let cam_target = Vec3::new(target_center.x, target_center.y + 2.0, target_center.z + 5.0);
+                    let cam_pos = Vec3::new(
+                        target_center.x,
+                        target_center.y + 2.0,
+                        target_center.z - 5.0,
+                    );
+                    let cam_target = Vec3::new(
+                        target_center.x,
+                        target_center.y + 2.0,
+                        target_center.z + 5.0,
+                    );
 
                     let mut portal_cam = Camera3D {
                         position: cam_pos,
@@ -110,7 +124,8 @@ async fn main() {
             world.player.yaw.cos() * world.player.pitch.cos(),
             world.player.pitch.sin(),
             world.player.yaw.sin() * world.player.pitch.cos(),
-        ).normalize();
+        )
+        .normalize();
 
         let camera = Camera3D {
             position: world.player.pos,
@@ -124,7 +139,8 @@ async fn main() {
         if let Some(room) = world.get_room(world.player.current_room_id) {
             draw_room_walls(room);
             for (i, block) in room.blocks.iter().enumerate() {
-                let texture_ref = portal_textures.iter()
+                let texture_ref = portal_textures
+                    .iter()
                     .find(|(idx, _)| *idx == i)
                     .map(|(_, t)| t);
                 draw_block(block, texture_ref);
@@ -132,8 +148,20 @@ async fn main() {
         }
 
         set_default_camera();
-        draw_text("WASD+Space/Shift to Move, Mouse to Look", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Current Room: {}", world.player.current_room_id), 10.0, 60.0, 20.0, WHITE);
+        draw_text(
+            "WASD+Space/Shift to Move, Mouse to Look",
+            10.0,
+            30.0,
+            30.0,
+            WHITE,
+        );
+        draw_text(
+            &format!("Current Room: {}", world.player.current_room_id),
+            10.0,
+            60.0,
+            20.0,
+            WHITE,
+        );
 
         if is_key_pressed(KeyCode::Escape) {
             break;
@@ -155,10 +183,13 @@ fn check_teleport(world: &mut World) {
                 let min = block.pos - block.size / 2.0;
                 let max = block.pos + block.size / 2.0;
 
-                if player_pos.x >= min.x && player_pos.x <= max.x &&
-                   player_pos.y >= min.y && player_pos.y <= max.y &&
-                   player_pos.z >= min.z && player_pos.z <= max.z {
-
+                if player_pos.x >= min.x
+                    && player_pos.x <= max.x
+                    && player_pos.y >= min.y
+                    && player_pos.y <= max.y
+                    && player_pos.z >= min.z
+                    && player_pos.z <= max.z
+                {
                     teleport_target = Some((target_id, Vec3::ZERO));
                 }
             }
@@ -178,15 +209,20 @@ fn check_teleport(world: &mut World) {
 fn draw_room_walls(room: &Room) {
     let s = room.size;
     draw_grid(20, 1.0, BLACK, GRAY);
-    draw_cube(Vec3::new(s.x/2.0, -0.5, s.z/2.0), Vec3::new(s.x, 1.0, s.z), None, room.background_color);
-    draw_cube_wires(Vec3::new(s.x/2.0, s.y/2.0, s.z/2.0), s, WHITE);
+    draw_cube(
+        Vec3::new(s.x / 2.0, -0.5, s.z / 2.0),
+        Vec3::new(s.x, 1.0, s.z),
+        None,
+        room.background_color,
+    );
+    draw_cube_wires(Vec3::new(s.x / 2.0, s.y / 2.0, s.z / 2.0), s, WHITE);
 }
 
 fn draw_room_internal(world: &World, room_id: usize) {
     if let Some(room) = world.get_room(room_id) {
         draw_room_walls(room);
         for block in &room.blocks {
-             draw_block(block, None);
+            draw_block(block, None);
         }
     }
 }

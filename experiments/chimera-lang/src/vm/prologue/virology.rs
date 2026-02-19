@@ -30,12 +30,7 @@ pub fn apply_virology_runes(
     changes
 }
 
-pub fn apply_virology_sinks(
-    vm: &mut crate::vm::ChimeraVM,
-    rune: &str,
-    y: usize,
-    x: usize,
-) {
+pub fn apply_virology_sinks(vm: &mut crate::vm::ChimeraVM, rune: &str, y: usize, x: usize) {
     let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
         vm.prologue_state.signal_grid[wy][wx].clone()
     } else {
@@ -68,7 +63,7 @@ pub fn apply_virology_sinks(
         "i" => {
             // Infect: North (Payload) + South (Direction) -> Target
             let n_val = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
-                 Some(vm.grid[ny][nx].clone())
+                Some(vm.grid[ny][nx].clone())
             } else {
                 None
             };
@@ -80,20 +75,20 @@ pub fn apply_virology_sinks(
             };
 
             if let (Some(payload), Some(Value::Int(dir))) = (n_val, s_val) {
-                 let (dy, dx) = match dir {
-                     0 => (-1, 0), // N
-                     1 => (0, 1),  // E
-                     2 => (1, 0),  // S
-                     3 => (0, -1), // W
-                     _ => (0, 0),
-                 };
+                let (dy, dx) = match dir {
+                    0 => (-1, 0), // N
+                    1 => (0, 1),  // E
+                    2 => (1, 0),  // S
+                    3 => (0, -1), // W
+                    _ => (0, 0),
+                };
 
-                 if (dy, dx) != (0, 0) {
-                     if let Some((ty, tx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                         vm.grid[ty][tx] = payload;
-                         vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
-                     }
-                 }
+                if (dy, dx) != (0, 0) {
+                    if let Some((ty, tx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                        vm.grid[ty][tx] = payload;
+                        vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                    }
+                }
             }
         }
         "a" => {
@@ -104,7 +99,7 @@ pub fn apply_virology_sinks(
                     if let Value::Str(s) = &vm.grid[ny][nx] {
                         if s == "v" {
                             vm.grid[ny][nx] = Value::Int(0); // Kill virus
-                             vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
                         }
                     }
                 }

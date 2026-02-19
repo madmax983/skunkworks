@@ -1,6 +1,6 @@
-use bevy::prelude::*;
 use crate::graph::Graph;
-use crate::strider::{Strider, Limb, LimbState};
+use crate::strider::{Limb, LimbState, Strider};
+use bevy::prelude::*;
 use rand::prelude::*;
 
 pub struct GaitPlugin;
@@ -19,7 +19,9 @@ fn move_body(
     let speed = 60.0; // pixels per second
 
     for (mut transform, mut strider) in striders.iter_mut() {
-        if strider.target_node >= graph.nodes.len() { continue; }
+        if strider.target_node >= graph.nodes.len() {
+            continue;
+        }
 
         let target_pos = graph.nodes[strider.target_node];
         let current_pos = transform.translation.truncate();
@@ -81,7 +83,7 @@ fn update_limbs(
                         limb.target_foot_pos = ideal_pos;
                         limb.lift_height = 20.0;
                     }
-                },
+                }
                 LimbState::Lift(mut t) => {
                     t += time.delta_seconds() * 4.0; // Step speed
                     if t >= 1.0 {

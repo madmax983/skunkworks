@@ -1,6 +1,6 @@
 use image::RgbaImage;
-use std::f32::consts::PI;
 use rand::Rng;
+use std::f32::consts::PI;
 
 pub fn generate_drone(image: &RgbaImage) -> Vec<u8> {
     let mut rng = rand::thread_rng();
@@ -61,7 +61,9 @@ pub fn generate_drone(image: &RgbaImage) -> Vec<u8> {
         let freq = base_freq + wobble;
 
         phase += freq * 2.0 * PI / sample_rate as f32;
-        if phase > 2.0 * PI { phase -= 2.0 * PI; }
+        if phase > 2.0 * PI {
+            phase -= 2.0 * PI;
+        }
 
         let sine = phase.sin();
         let noise: f32 = rng.gen_range(-1.0..1.0);

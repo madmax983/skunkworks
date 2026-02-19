@@ -74,14 +74,10 @@ pub fn apply_construct_runes(
     changes
 }
 
-pub fn apply_construct_sinks(
-    vm: &mut crate::vm::ChimeraVM,
-    rune: &str,
-    y: usize,
-    x: usize,
-) {
+pub fn apply_construct_sinks(vm: &mut crate::vm::ChimeraVM, rune: &str, y: usize, x: usize) {
     match rune {
-        "Π" => { // Prototyper: West (Blueprint) -> Grid (East)
+        "Π" => {
+            // Prototyper: West (Blueprint) -> Grid (East)
             let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
                 vm.prologue_state.signal_grid[wy][wx].clone()
             } else {
@@ -89,23 +85,25 @@ pub fn apply_construct_sinks(
             };
 
             if let Some(Value::Junction(JunctionType::Dish, rows)) = w_sig {
-                 // Paste
-                 let h = rows.len() as i64;
-                 let start_y = (y as i64) - (h / 2);
-                 let start_x = (x as i64) + 1;
+                // Paste
+                let h = rows.len() as i64;
+                let start_y = (y as i64) - (h / 2);
+                let start_x = (x as i64) + 1;
 
-                 for (r_idx, row_val) in rows.iter().enumerate() {
-                     if let Value::Junction(JunctionType::Dish, cells) = row_val {
-                         for (c_idx, cell_val) in cells.iter().enumerate() {
-                             if let Some((ny, nx)) = normalize_coords(start_y + r_idx as i64, start_x + c_idx as i64) {
-                                 // Always overwrite.
-                                 vm.grid[ny][nx] = cell_val.clone();
-                             }
-                         }
-                     }
-                 }
-                 // Light up self
-                 vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                for (r_idx, row_val) in rows.iter().enumerate() {
+                    if let Value::Junction(JunctionType::Dish, cells) = row_val {
+                        for (c_idx, cell_val) in cells.iter().enumerate() {
+                            if let Some((ny, nx)) =
+                                normalize_coords(start_y + r_idx as i64, start_x + c_idx as i64)
+                            {
+                                // Always overwrite.
+                                vm.grid[ny][nx] = cell_val.clone();
+                            }
+                        }
+                    }
+                }
+                // Light up self
+                vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
             }
         }
         _ => {}

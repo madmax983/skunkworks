@@ -183,9 +183,9 @@ fn diffuse_scalar_grid<F>(
     }
 
     for y in 0..size {
-        for x in 0..size {
-            source[y][x] = buffer[y][x];
-        }
+        // Optimization: Use copy_from_slice (memcpy) instead of element-wise loop.
+        // We slice by `size` to ensure lengths match and avoid panics if vectors are oversized.
+        source[y][..size].copy_from_slice(&buffer[y][..size]);
     }
 }
 
@@ -248,9 +248,8 @@ pub fn diffuse_hormones(vm: &mut ChimeraVM) {
         }
     }
     for y in 0..16 {
-        for x in 0..16 {
-            vm.hormone_grid[y][x] = buffer[y][x];
-        }
+        // Optimization: Use copy_from_slice (memcpy).
+        vm.hormone_grid[y][..16].copy_from_slice(&buffer[y][..16]);
     }
 }
 
@@ -303,9 +302,8 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
         }
     }
     for y in 0..16 {
-        for x in 0..16 {
-            vm.light_grid[y][x] = buffer[y][x];
-        }
+        // Optimization: Use copy_from_slice (memcpy).
+        vm.light_grid[y][..16].copy_from_slice(&buffer[y][..16]);
     }
 }
 

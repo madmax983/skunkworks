@@ -1,7 +1,7 @@
-use macroquad::prelude::*;
-use gray_scott::GrayScott;
-use origami::{MiuraOri, MiuraParams, Orientation};
 use ::rand::Rng;
+use gray_scott::GrayScott;
+use macroquad::prelude::*;
+use origami::{MiuraOri, MiuraParams, Orientation};
 
 const WIDTH: usize = 120;
 const HEIGHT: usize = 120;
@@ -25,10 +25,10 @@ async fn main() {
     // Seed with random noise
     let mut rng = ::rand::thread_rng();
     for _ in 0..50 {
-        let cx = rng.gen_range(20..WIDTH-20);
-        let cy = rng.gen_range(20..HEIGHT-20);
-        for y in cy-5..cy+5 {
-            for x in cx-5..cx+5 {
+        let cx = rng.gen_range(20..WIDTH - 20);
+        let cy = rng.gen_range(20..HEIGHT - 20);
+        for y in cy - 5..cy + 5 {
+            for x in cx - 5..cx + 5 {
                 gs.add_chemical(x, y, 0.5);
             }
         }
@@ -72,7 +72,8 @@ async fn main() {
             },
             ..Default::default()
         },
-    ).unwrap();
+    )
+    .unwrap();
 
     loop {
         // --- Input ---
@@ -86,22 +87,26 @@ async fn main() {
         cam_dist = cam_dist.clamp(50.0, 800.0);
 
         // Fold Control
-        if is_key_down(KeyCode::Up) { extension += 0.01; }
-        if is_key_down(KeyCode::Down) { extension -= 0.01; }
+        if is_key_down(KeyCode::Up) {
+            extension += 0.01;
+        }
+        if is_key_down(KeyCode::Down) {
+            extension -= 0.01;
+        }
         extension = extension.clamp(0.1, 1.0); // Don't go to 0.0 fully to avoid singularity
 
         // Interactive "Rain"
         if is_key_down(KeyCode::Space) {
-             let mut rng = ::rand::thread_rng();
-             for _ in 0..10 {
-                 let cx = rng.gen_range(5..WIDTH-5);
-                 let cy = rng.gen_range(5..HEIGHT-5);
-                 for y in cy-2..cy+2 {
-                     for x in cx-2..cx+2 {
-                         gs.add_chemical(x, y, 0.5);
-                     }
-                 }
-             }
+            let mut rng = ::rand::thread_rng();
+            for _ in 0..10 {
+                let cx = rng.gen_range(5..WIDTH - 5);
+                let cy = rng.gen_range(5..HEIGHT - 5);
+                for y in cy - 2..cy + 2 {
+                    for x in cx - 2..cx + 2 {
+                        gs.add_chemical(x, y, 0.5);
+                    }
+                }
+            }
         }
 
         // --- Logic ---
@@ -183,10 +188,30 @@ async fn main() {
                 v3.y += displacement;
 
                 // Push Quad (duplicated for flat shading look)
-                vertices.push(Vertex { position: v0, uv: vec2(0.,0.), color: color_bytes, normal: vec4(0.,1.,0.,0.) });
-                vertices.push(Vertex { position: v1, uv: vec2(1.,0.), color: color_bytes, normal: vec4(0.,1.,0.,0.) });
-                vertices.push(Vertex { position: v2, uv: vec2(1.,1.), color: color_bytes, normal: vec4(0.,1.,0.,0.) });
-                vertices.push(Vertex { position: v3, uv: vec2(0.,1.), color: color_bytes, normal: vec4(0.,1.,0.,0.) });
+                vertices.push(Vertex {
+                    position: v0,
+                    uv: vec2(0., 0.),
+                    color: color_bytes,
+                    normal: vec4(0., 1., 0., 0.),
+                });
+                vertices.push(Vertex {
+                    position: v1,
+                    uv: vec2(1., 0.),
+                    color: color_bytes,
+                    normal: vec4(0., 1., 0., 0.),
+                });
+                vertices.push(Vertex {
+                    position: v2,
+                    uv: vec2(1., 1.),
+                    color: color_bytes,
+                    normal: vec4(0., 1., 0., 0.),
+                });
+                vertices.push(Vertex {
+                    position: v3,
+                    uv: vec2(0., 1.),
+                    color: color_bytes,
+                    normal: vec4(0., 1., 0., 0.),
+                });
 
                 indices.push(idx + 0);
                 indices.push(idx + 1);
@@ -230,9 +255,27 @@ async fn main() {
 
         // UI
         draw_text("Origami Terrain 🦢🏔️", 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Extension: {:.1}%", extension * 100.0), 20.0, 50.0, 20.0, YELLOW);
-        draw_text(&format!("Feed: {:.4} (Modulated by Fold)", feed), 20.0, 70.0, 20.0, LIGHTGRAY);
-        draw_text("Controls: UP/DOWN to Fold | SPACE for Rain | Mouse to Orbit", 20.0, 90.0, 16.0, GRAY);
+        draw_text(
+            &format!("Extension: {:.1}%", extension * 100.0),
+            20.0,
+            50.0,
+            20.0,
+            YELLOW,
+        );
+        draw_text(
+            &format!("Feed: {:.4} (Modulated by Fold)", feed),
+            20.0,
+            70.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            "Controls: UP/DOWN to Fold | SPACE for Rain | Mouse to Orbit",
+            20.0,
+            90.0,
+            16.0,
+            GRAY,
+        );
 
         next_frame().await
     }

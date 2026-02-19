@@ -62,7 +62,8 @@ impl Glyph {
                 // Simple threshold check.
                 // If sum of channels > threshold
                 let brightness = pixel[0] as u16 + pixel[1] as u16 + pixel[2] as u16;
-                if brightness > 300 { // 100 per channel avg
+                if brightness > 300 {
+                    // 100 per channel avg
                     byte |= 1 << i;
                 }
             }

@@ -1,7 +1,7 @@
-use crate::world::{Block, Room, World, Player};
 use crate::starmap::StarMap;
-use macroquad::prelude::*;
+use crate::world::{Block, Player, Room, World};
 use ::rand::prelude::*;
+use macroquad::prelude::*;
 
 const MAX_DEPTH: usize = 3;
 const ROOM_SCALE_FACTOR: f32 = 5.0;
@@ -36,7 +36,12 @@ fn generate_recursive(
     // Generate Codex Texture (Simulated Payload)
     // In a real app, this would be the file content.
     // Here we generate a random string based on ID and Depth.
-    let payload = format!("Room {} Depth {} - Codex Data: {}", current_room.id, depth, rng.gen::<u64>());
+    let payload = format!(
+        "Room {} Depth {} - Codex Data: {}",
+        current_room.id,
+        depth,
+        rng.gen::<u64>()
+    );
     let starmap = StarMap::new(payload.as_bytes(), 16);
     // Note: We cannot generate texture here because we might not have GL context if run in test?
     // But this is run in main(). So it is fine.
@@ -44,7 +49,6 @@ fn generate_recursive(
     // Let's defer texture generation to rendering or just do it here if possible.
     // We'll set it here assuming GL is active.
     current_room.texture = Some(starmap.generate_texture());
-
 
     if depth >= MAX_DEPTH {
         return;

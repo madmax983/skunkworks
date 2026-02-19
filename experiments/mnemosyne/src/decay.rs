@@ -65,7 +65,7 @@ impl Decay for Memory {
                 // Circular region check
                 let dx = x as i64 - cx as i64;
                 let dy = y as i64 - cy as i64;
-                if dx*dx + dy*dy > (radius as i64 * radius as i64) {
+                if dx * dx + dy * dy > (radius as i64 * radius as i64) {
                     continue;
                 }
 
@@ -102,8 +102,10 @@ impl Decay for Memory {
 
                 // Occasional spatial jitter (swap with neighbor)
                 if rng.gen_bool(0.01) {
-                    let nx = (x as i32 + rng.gen_range(-1..2)).clamp(0, (self.width - 1) as i32) as u32;
-                    let ny = (y as i32 + rng.gen_range(-1..2)).clamp(0, (self.height - 1) as i32) as u32;
+                    let nx =
+                        (x as i32 + rng.gen_range(-1..2)).clamp(0, (self.width - 1) as i32) as u32;
+                    let ny =
+                        (y as i32 + rng.gen_range(-1..2)).clamp(0, (self.height - 1) as i32) as u32;
                     // We can't swap easily without reading again, just take the neighbor's value
                     // This is lossy, which is good.
                     let neighbor = *self.ground_truth.get_pixel(nx, ny);
