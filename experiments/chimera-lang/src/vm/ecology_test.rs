@@ -1,7 +1,7 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use crate::ast::{Dna, Helix, Strand};
+    use crate::ast::{Dna, Helix};
     use crate::vm::nova_ecology;
     use crate::vm::ChimeraVM;
 

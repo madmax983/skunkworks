@@ -15,11 +15,11 @@ fn make_vm() -> ChimeraVM {
 fn test_transmute_to_string() {
     let mut vm = make_vm();
     // Setup:
-    // Value 42 at (5,4).
+    // Value 42 at (6,3).
     // ! at (6,4) -> Emits 42 to (6,4) [West of t].
     // t at (6,5) -> Reads West (42), Default Mode 0.
 
-    vm.grid[5][4] = Value::Int(42);
+    vm.grid[6][3] = Value::Int(42);
     vm.grid[6][4] = Value::Str("!".to_string());
     vm.grid[6][5] = Value::Str("t".to_string());
 
@@ -35,18 +35,18 @@ fn test_transmute_to_string() {
 fn test_transmute_to_int() {
     let mut vm = make_vm();
     // Setup:
-    // Value "100" at (5,4).
+    // Value "100" at (6,3).
     // ! at (6,4) -> Emits "100" to (6,4) [West of t].
 
-    // Mode 1 at (4,5).
+    // Mode 1 at (5,4).
     // ! at (5,5) -> Emits 1 to (5,5) [North of t].
 
     // t at (6,5) -> Reads West ("100"), North (1).
 
-    vm.grid[5][4] = Value::Str("100".to_string());
+    vm.grid[6][3] = Value::Str("100".to_string());
     vm.grid[6][4] = Value::Str("!".to_string());
 
-    vm.grid[4][5] = Value::Int(1);
+    vm.grid[5][4] = Value::Int(1);
     vm.grid[5][5] = Value::Str("!".to_string());
 
     vm.grid[6][5] = Value::Str("t".to_string());
@@ -60,19 +60,21 @@ fn test_transmute_to_int() {
 fn test_fuse_string_int() {
     let mut vm = make_vm();
     // Setup:
-    // West Input: "A" at (4,4).
+    // West Input: "A" at (5,3).
     // ! at (5,4) -> Emits "A" to (5,4).
 
-    // East Input: 3 at (4,6).
-    // ! at (5,6) -> Emits 3 to (5,6).
+    // East Input: 3 at (4,5).
+    // ! at (4,6) -> Emits 3 to (4,6).
+    // Wire ~ at (5,6) reads North (4,6).
 
     // Fuse at (5,5). Reads West (5,4) and East (5,6).
 
-    vm.grid[4][4] = Value::Str("A".to_string());
+    vm.grid[5][3] = Value::Str("A".to_string());
     vm.grid[5][4] = Value::Str("!".to_string());
 
-    vm.grid[4][6] = Value::Int(3);
-    vm.grid[5][6] = Value::Str("!".to_string());
+    vm.grid[4][5] = Value::Int(3);
+    vm.grid[4][6] = Value::Str("!".to_string());
+    vm.grid[5][6] = Value::Str("~".to_string());
 
     vm.grid[5][5] = Value::Str("f".to_string());
 
@@ -88,12 +90,12 @@ fn test_fuse_string_int() {
 fn test_distill_string() {
     let mut vm = make_vm();
     // Setup:
-    // Input "abc" at (4,4).
+    // Input "abc" at (5,3).
     // ! at (5,4) -> Emits "abc" to (5,4).
 
     // Distill at (5,5). Reads West (5,4).
 
-    vm.grid[4][4] = Value::Str("abc".to_string());
+    vm.grid[5][3] = Value::Str("abc".to_string());
     vm.grid[5][4] = Value::Str("!".to_string());
 
     vm.grid[5][5] = Value::Str("d".to_string());

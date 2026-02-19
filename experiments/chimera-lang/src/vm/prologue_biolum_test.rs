@@ -11,12 +11,12 @@ fn test_biolum_emitter() {
     vm.prologue_state.active = true;
 
     // Setup: 100 -> ! -> ~ -> Φ
-    // ! reads North (3,4).
+    // ! reads West (4,3).
     // ! (4,4) emits to self.
     // ~ (4,5) reads West (4,4).
     // Φ (4,6) reads West (4,5).
 
-    vm.grid[3][4] = Value::Int(100);
+    vm.grid[4][3] = Value::Int(100);
     vm.grid[4][4] = Value::Str("!".to_string());
     vm.grid[4][5] = Value::Str("~".to_string());
     vm.grid[4][6] = Value::Str("Φ".to_string());
@@ -65,9 +65,9 @@ fn test_biolum_absorber() {
     vm.prologue_state.active = true;
 
     // Setup: 50 -> ! -> ~ -> Ω
-    // ! reads North (3,4).
+    // ! reads West (4,3).
 
-    vm.grid[3][4] = Value::Int(50);
+    vm.grid[4][3] = Value::Int(50);
     vm.grid[4][4] = Value::Str("!".to_string());
     vm.grid[4][5] = Value::Str("~".to_string());
     vm.grid[4][6] = Value::Str("Ω".to_string());

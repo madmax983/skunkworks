@@ -1,6 +1,6 @@
 use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use chimera_lang::opcode::OpCode;
-use chimera_lang::vm::{ChimeraVM, TuiEvent, Value};
+use chimera_lang::vm::{ChimeraVM, TuiEvent};
 
 fn make_dna(genes: Vec<Gene>) -> Dna {
     Dna {

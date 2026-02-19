@@ -1,9 +1,9 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
+    use crate::ast::{Dna, Helix, JunctionType, Nucleotide, Strand};
     use crate::opcode::OpCode;
-    use crate::vm::{ChimeraVM, Value, GRID_SIZE};
+    use crate::vm::{ChimeraVM, Value};
 
     fn make_empty_vm() -> ChimeraVM {
         let dna = Dna {

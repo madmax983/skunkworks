@@ -15,7 +15,7 @@ Prologue treats the grid as a circuit board. Signals propagate instantly (within
 
 | Rune | Name | Function |
 |---|---|---|
-| `!` | **Source** | **Emits** the value of the cell to its **North**. |
+| `!` | **Source** | **Reads** value from **West**, **Emits** to **Self**. |
 | `?` | **Sink** | **Reads** signal from its **South** (or Self). Triggers log or **Gene Execution**. |
 | `~` | **Wire** | Conducts signals in all cardinal directions (N, S, E, W). |
 | `&` | **AND Gate** | Output (South/Self) = Input (West) **AND** Input (East). |

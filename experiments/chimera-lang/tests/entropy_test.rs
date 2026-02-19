@@ -3,7 +3,7 @@
 mod tests {
     use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
-    use chimera_lang::vm::nova::OrganelleType;
+
     use chimera_lang::vm::{ChimeraVM, Value};
 
     fn make_dna(genes: Vec<Gene>) -> Dna {

@@ -15,7 +15,7 @@ fn test_viral_rewrite_grid() {
     grid[5][5] = Value::Str("target".to_string());
 
     // 2. Define Grammar: Match "target"
-    let grammar = Value::Junction(
+    let _grammar = Value::Junction(
         JunctionType::Any,
         vec![
             Value::Str("Match".to_string()),

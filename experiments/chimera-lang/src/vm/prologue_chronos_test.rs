@@ -13,22 +13,10 @@ mod tests {
         vm.prologue_state.active = true;
 
         // Setup Circuit: Source -> s -> g -> Sink
-        // 1 2 3 -> ! -> s -> g -> ?
+        // 42 -> ! -> s -> g -> ?
 
-        // At tick 0: ! emits 1.
-        // s reads 1, saves to history, outputs 1.
-        // g reads s's history (1), outputs 1.
-
-        // Wait, if g reads history, does it see it immediately?
-        // s runs. pushes 1.
-        // g runs. sees 1 in s's history. pops 1.
-        // So no delay?
-
-        // Let's force a delay.
-        // Maybe g only outputs if history len > 1?
-        // Or manually fill history first?
-
-        vm.grid[4][5] = Value::Int(42); // North of Source
+        // ! reads West.
+        vm.grid[5][4] = Value::Int(42); // West of Source
         vm.grid[5][5] = Value::Str("!".to_string()); // Source
         vm.grid[5][6] = Value::Str("s".to_string()); // Sporulate (Record)
         vm.grid[5][7] = Value::Str("g".to_string()); // Germinate (Play/Pop Front)
@@ -39,12 +27,6 @@ mod tests {
         exec_prologue_tick(&mut vm);
 
         // Check s history (should be empty if g popped it?)
-        // If they run in order s then g?
-        // Iteration order is based on scan?
-        // Scan order is Y then X.
-        // So s (5,6) runs before g (5,7).
-        // s pushes. g pops. Immediate transfer.
-
         assert!(vm
             .prologue_state
             .history
