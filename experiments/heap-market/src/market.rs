@@ -133,6 +133,14 @@ pub struct Agent {
     pub owned_blocks: usize,
 }
 
+#[derive(Clone, Debug)]
+pub struct Order {
+    pub agent_id: usize,
+    pub size: usize,
+    pub price: f64,
+    pub duration: usize,
+}
+
 impl Agent {
     pub fn new(id: usize, strategy: Strategy) -> Self {
         Self {
@@ -150,7 +158,7 @@ impl Agent {
         match self.strategy {
             Strategy::Hoarder => {
                 if rng.gen_bool(0.1) && self.budget > market_price * 100.0 {
-                    return Some(Order::Bid {
+                    return Some(Order {
                         agent_id: self.id,
                         size: rng.gen_range(50..200),
                         price: market_price * 1.1,
@@ -160,7 +168,7 @@ impl Agent {
             }
             Strategy::Flipper => {
                 if rng.gen_bool(0.3) && self.budget > market_price * 10.0 {
-                    return Some(Order::Bid {
+                    return Some(Order {
                         agent_id: self.id,
                         size: rng.gen_range(5..20),
                         price: market_price * 0.9,
@@ -170,7 +178,7 @@ impl Agent {
             }
             Strategy::JustInTime => {
                 if rng.gen_bool(0.05) && self.budget > market_price * 50.0 {
-                    return Some(Order::Bid {
+                    return Some(Order {
                         agent_id: self.id,
                         size: rng.gen_range(10..50),
                         price: market_price * 1.05,
@@ -180,7 +188,7 @@ impl Agent {
             }
             Strategy::Panic => {
                 if fragmentation > 10.0 && self.budget > 0.0 {
-                    return Some(Order::Bid {
+                    return Some(Order {
                         agent_id: self.id,
                         size: rng.gen_range(1..10),
                         price: market_price * 2.0,
@@ -191,18 +199,6 @@ impl Agent {
         }
         None
     }
-}
-
-#[derive(Clone, Debug)]
-pub enum Order {
-    Bid {
-        agent_id: usize,
-        size: usize,
-        price: f64,
-        duration: usize,
-    },
-    // Ask logic is implicit: Agents free memory when ticks expire.
-    // Explicit selling could be added later.
 }
 
 pub struct Market {
@@ -261,32 +257,19 @@ impl Market {
         // 3. Process Orders (Sequential)
         // Sort by price (highest bid first)
         let mut sorted_orders = orders;
-        sorted_orders.sort_by(|a, b| match (a, b) {
-            (Order::Bid { price: p1, .. }, Order::Bid { price: p2, .. }) => {
-                p2.partial_cmp(p1).unwrap_or(std::cmp::Ordering::Equal)
-            }
-        });
+        sorted_orders.sort_by(|a, b| b.price.partial_cmp(&a.price).unwrap_or(std::cmp::Ordering::Equal));
 
         let mut successful_transactions = 0;
         let mut total_transaction_value = 0.0;
 
         for order in sorted_orders {
-            match order {
-                Order::Bid {
-                    agent_id,
-                    size,
-                    price,
-                    duration,
-                } => {
-                    if self.heap.allocate(size, agent_id, price, duration) {
-                        if let Some(agent) = self.agents.get_mut(agent_id) {
-                            agent.budget -= price * size as f64; // Price is per unit? Or total? Let's say price is per unit.
-                            agent.owned_blocks += 1;
-                        }
-                        successful_transactions += 1;
-                        total_transaction_value += price;
-                    }
+            if self.heap.allocate(order.size, order.agent_id, order.price, order.duration) {
+                if let Some(agent) = self.agents.get_mut(order.agent_id) {
+                    agent.budget -= order.price * order.size as f64; // Price is per unit? Or total? Let's say price is per unit.
+                    agent.owned_blocks += 1;
                 }
+                successful_transactions += 1;
+                total_transaction_value += order.price;
             }
         }
 

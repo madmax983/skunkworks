@@ -1,20 +1,14 @@
 use anyhow::Result;
 use clap::Parser;
-use crossterm::{
-    event::{self, Event, KeyCode},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
-use ratatui::{backend::CrosstermBackend, Terminal};
-use std::{
-    io,
-    time::{Duration, Instant},
-};
+use crossterm::event::{self, Event, KeyCode};
+use std::time::{Duration, Instant};
+use tui_shared::Tui;
 
 mod market;
 mod tui;
 
 use market::Market;
+use tui as ui;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -28,11 +22,7 @@ fn main() -> Result<()> {
     let args = Args::parse();
 
     // Setup Terminal
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = Tui::init()?;
 
     // App State
     let mut market = Market::new(1024, 20); // 1KB heap, 20 agents
@@ -40,7 +30,7 @@ fn main() -> Result<()> {
     let tick_rate = Duration::from_millis(50); // Fast simulation
 
     loop {
-        terminal.draw(|f| tui::draw_ui(f, &market))?;
+        tui.terminal.draw(|f| ui::draw_ui(f, &market))?;
 
         let timeout = tick_rate
             .checked_sub(last_tick.elapsed())
@@ -65,11 +55,6 @@ fn main() -> Result<()> {
             }
         }
     }
-
-    // Restore Terminal
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
 
     Ok(())
 }
