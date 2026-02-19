@@ -80,6 +80,7 @@ pub mod virology;
 pub mod void;
 pub mod epigenetics;
 pub mod elemental;
+pub mod hypnagogia;
 
 /// An autonomous agent wandering the Prologue grid.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -116,6 +117,9 @@ pub struct PrologueState {
     /// Epigenetic layer (Methylation/Phosphorylation).
     #[serde(default = "default_epigenetic_grid")]
     pub epigenetic_grid: Vec<Vec<epigenetics::EpigeneticMark>>,
+    /// Hypnagogia: Dream Intensity (0.0 - 100.0).
+    #[serde(default)]
+    pub dream_intensity: f32,
 }
 
 fn default_epigenetic_grid() -> Vec<Vec<epigenetics::EpigeneticMark>> {
@@ -136,6 +140,7 @@ impl PrologueState {
             teleport_channels: HashMap::new(),
             history: HashMap::new(),
             epigenetic_grid: vec![vec![epigenetics::EpigeneticMark::None; GRID_SIZE]; GRID_SIZE],
+            dream_intensity: 0.0,
         }
     }
 
@@ -271,6 +276,9 @@ impl PrologueState {
                             | "○"
                             | "☆"
                             | "☿"
+                        // Hypnagogia
+                            | "☾"
+                            | "☀"
                     ) {
                         self.runes.insert((y, x));
 
@@ -320,6 +328,9 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
 
     // 6. Agents (@)
     process_agents(vm, &grid_snapshot);
+
+    // 7. Hypnagogia (Dream Logic)
+    hypnagogia::process_dream_logic(vm);
 }
 
 /// Prepares the signal grid for the current tick.
@@ -405,6 +416,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     &mut vm.prologue_state.history,
                     grid,
                     &vm.light_grid,
+                    &mut vm.prologue_state.dream_intensity,
                 ) {
                     changes = true;
                 }
@@ -436,7 +448,18 @@ fn apply_propagation_rune(
     history: &mut HashMap<(usize, usize), VecDeque<Value>>,
     grid: &[Vec<Value>],
     light_grid: &[Vec<i64>],
+    dream_intensity: &mut f32,
 ) -> bool {
+    if hypnagogia::apply_hypnagogia_runes(
+        rune,
+        y,
+        x,
+        current_signals,
+        next_signals,
+        dream_intensity,
+    ) {
+        return true;
+    }
     if construct::apply_construct_runes(rune, y, x, current_signals, next_delayed, grid) {
         return true;
     }
