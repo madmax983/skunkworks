@@ -79,6 +79,7 @@ pub mod topology;
 pub mod virology;
 pub mod void;
 pub mod epigenetics;
+pub mod elemental;
 
 /// An autonomous agent wandering the Prologue grid.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -263,6 +264,13 @@ impl PrologueState {
                             | "."
                             | ":"
                             | ","
+                        // Elemental
+                            | "Δ"
+                            | "∇"
+                            | "◊"
+                            | "○"
+                            | "☆"
+                            | "☿"
                     ) {
                         self.runes.insert((y, x));
 
@@ -491,6 +499,9 @@ fn apply_propagation_rune(
         return true;
     }
     if pandemonium::apply_pandemonium_runes(rune, y, x, current_signals, next_signals) {
+        return true;
+    }
+    if elemental::apply_elemental_runes(rune, y, x, current_signals, next_signals) {
         return true;
     }
     false

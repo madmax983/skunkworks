@@ -96,6 +96,25 @@ Agents are autonomous cursors.
   ?       (Sink receives "func" -> Executes Strand "func")
 ```
 
+# Elemental Alchemy ⚗️
+
+Introduces elemental forces to the grid.
+
+| Rune | Name | Function |
+|---|---|---|
+| `Δ` | **Fire** | Emits **Fire** Element. |
+| `∇` | **Water** | Emits **Water** Element. |
+| `◊` | **Earth** | Emits **Earth** Element. |
+| `○` | **Air** | Emits **Air** Element. |
+| `☆` | **Aether** | Emits **Aether** (Spirit) Element. |
+| `☿` | **Mercury** | **Mixes** adjacent elemental signals. |
+
+**Reactions:**
+*   Fire + Water -> **Steam**
+*   Fire + Earth -> **Lava**
+*   Water + Earth -> **Mud**
+*   Fire + Air -> **Plasma**
+
 # Prologue II: Signal Grid (Orca Mode) 🐋
 
 Enabled via `OpCode::Orca` or TUI toggle. This is a concurrent cellular automata system inspired by Orca.
