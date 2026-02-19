@@ -133,6 +133,13 @@ impl Gene {
 
 impl Nucleotide {
     pub fn try_from_pair(pair: Pair<Rule>) -> Result<Self, String> {
+        Self::try_from_pair_with_depth(pair, 0)
+    }
+
+    fn try_from_pair_with_depth(pair: Pair<Rule>, depth: usize) -> Result<Self, String> {
+        if depth > 100 {
+            return Err("Recursion limit exceeded".to_string());
+        }
         match pair.as_rule() {
             Rule::number => {
                 let s = pair.as_str();
@@ -161,7 +168,7 @@ impl Nucleotide {
                 let args_pair = inner.next().ok_or("Expected junction args")?;
                 let args: Result<Vec<Nucleotide>, String> = args_pair
                     .into_inner()
-                    .map(Nucleotide::try_from_pair)
+                    .map(|p| Self::try_from_pair_with_depth(p, depth + 1))
                     .collect();
                 Ok(Nucleotide::Junction(j_type, args?))
             }

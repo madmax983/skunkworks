@@ -12,6 +12,7 @@ impl Drop for ScopedScissor {
     fn drop(&mut self) {
         unsafe {
             if let Some((x, y, w, h)) = self.parent {
+                gl::glEnable(gl::GL_SCISSOR_TEST);
                 gl::glScissor(x, y, w, h);
             } else {
                 gl::glDisable(gl::GL_SCISSOR_TEST);
