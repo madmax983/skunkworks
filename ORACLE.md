@@ -37,3 +37,8 @@
 - **2026-02-17 (Genesis)**: Procedural generation on aperiodic lattices will yield 'natural' difficulty curves where player movement is constrained by the geometry itself (e.g. 20-connected nodes become tactical choke points). Verified in `quasicrystal-dungeon`.
 
   - [Genesis (The Choreographer)]: `flow-strider` will demonstrate that representing data flow as continuous particle streams (fluid dynamics) rather than discrete packets (discrete event simulation) reveals bottlenecks and turbulence (backpressure) intuitively, allowing developers to 'feel' the viscosity of their architecture.
+
+### [Prediction] - The Acoustic Debugger
+- **Hypothesis:** As concurrency complexity grows, visual debuggers will fail to capture the subtle timing interactions. Sonification of thread states will become a viable debugging tool.
+- **Test:** Can a human listener distinguish between a livelock and a deadlock by ear?
+- **Status:** Proposed by Genesis.
