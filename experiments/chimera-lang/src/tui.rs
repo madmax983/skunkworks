@@ -11882,6 +11882,13 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                             .fg(Color::Magenta)
                             .add_modifier(Modifier::BOLD | Modifier::ITALIC)
                     }
+                    "k" => {
+                        style = style
+                            .fg(Color::Red)
+                            .add_modifier(Modifier::BOLD | Modifier::RAPID_BLINK)
+                    }
+                    "z" => style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD),
+                    "h" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
                     _ => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
                 }
             } else {
@@ -11954,6 +11961,7 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     info.push(Line::from("  K Chaos, R Register, X Cross"));
     info.push(Line::from("  [ ] Collect/Scatter"));
     info.push(Line::from("  U/V Head/Tail, F/T Filter/Take"));
+    info.push(Line::from("  k Chaos Src, z Glitch, h Havoc"));
 
     let info_widget =
         Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Logic Engine"));
