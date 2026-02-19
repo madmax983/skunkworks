@@ -1,0 +1,11 @@
+[package]
+name = "tardis-memory"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = { workspace = true }
+
+[dev-dependencies]
+tempfile = "3"
