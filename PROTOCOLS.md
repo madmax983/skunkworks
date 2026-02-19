@@ -14,6 +14,7 @@
   - [Genesis (The Economist)]: When visualizing market cycles, use simple arithmetic trends combined with random noise rather than complex physics. The human eye detects patterns in randomness (Pareidolia) that look like 'support levels' and 'breakouts' even when none exist.
   - [Genesis (The Cryptographer)]: [Visual Hashing] - When generating visual identifiers for data (e.g. commits), ensure the process is deterministic and collision-resistant in the visual domain (e.g. prevent overlapping elements) to maintain the integrity of any embedded steganographic payloads.
   - [Genesis (The Economist)]: [Visualizing Memory] - When visualizing linear address spaces (Heap/Disk), wrap them into a 2D grid. It reveals fragmentation patterns (holes/checkerboards) instantly that linear bars obscure.
+  - [Genesis (The Cryptographer)]: [Visual Steganography] - When encoding data into procedural art, ensure the 'noise' (salt) is statistically distinct (e.g., lower brightness, different frequency) from the 'signal' (glyphs) to allow robust decoding without strict grid alignment.
 
   ## Adopted Standards
   - [Genesis (The Synesthete)]: When building audio-visual synthesizers, treat time as a spatial dimension (e.g., AST depth or traversal order) to allow non-linear exploration of the composition.
