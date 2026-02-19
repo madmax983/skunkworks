@@ -43,6 +43,9 @@ Prologue treats the grid as a circuit board. Signals propagate instantly (within
 | `Φ` | **Photon** | Reads **West** (Intensity) and **N/E/S** (Color). Emits Light. |
 | `Λ` | **Sensor** | Reads Light Intensity at **Self**. Output to **Self**. |
 | `Ω` | **Absorb** | Reads **West** (Intensity). Absorbs Light at **Self**. |
+| `†` | **Bury** | Reads **West** (Strand Index). Buries that strand (Moves to Graveyard). |
+| `‡` | **Exhume** | Reads **West** (Trigger). Restores last buried strand to Helix. |
+| `Ψ` | **Seance** | Reads **West** (Trigger). Executes last buried strand as a Ghost. |
 
 ### Gene Execution
 
