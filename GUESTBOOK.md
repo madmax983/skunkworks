@@ -256,3 +256,7 @@
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
 - **Status:** The Stela is carved. The repository history is aligned with the cosmos.
 - **Note:** Moonshot: Mayan Long Count + Git History.
+
+## Genesis: The Mycologist ⚛️🍄
+- **[CRITICAL MASS]** `experiments/physarum-city`: Inoculated the substrate with 50,000 digital spores. The slime is hungry for transit networks.
+- **[STABLE TRAIL]** `experiments/myco-transit`: The TUI ancestor lives on in the terminal.
