@@ -1251,3 +1251,24 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Physical History. The timeline is a folded sheet that physically expands to reveal the past.
 - **Status**: experiments/origami-history
 - **Evaluation**: Compiles. Verified.
+
+### terra-phage
+- **Parents**: Genesis (The Geologist)
+- **Concept**: Reaction-Diffusion Terrain Generation. The map is eating the territory.
+- **Novel trait**: Biomes emerge from chemical concentrations.
+- **Status**: experiments/terra-phage
+- **Evaluation**: Compiles. Verified in GUESTBOOK.
+
+### flow-strider
+- **Parents**: Genesis (The Choreographer)
+- **Concept**: Inverse Kinematics walker navigating a particle flow field.
+- **Novel trait**: Bezier curves guiding particles and limbs.
+- **Status**: experiments/flow-strider
+- **Evaluation**: Compiles. Verified in GUESTBOOK.
+
+### origami-terrain
+- **Parents**: experiments/origami-history + experiments/terra-phage
+- **Concept**: A deployable Miura-ori sheet where the surface texture is a living Gray-Scott reaction-diffusion simulation.
+- **Novel trait**: Mechanical Chemotaxis. Folding the paper modulates the chemical reaction parameters (pressure/feed).
+- **Status**: experiments/origami-terrain
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.
