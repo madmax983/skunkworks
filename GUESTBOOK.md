@@ -289,3 +289,8 @@
 - **Scent Origin**: The Splice Surgeon 🧬
 - **Status**: The words are vibrating. The phonemes are mutating under kinetic stress.
 - **Note**: Cross: `biomorphic-strings` + `glossolalia`. Kinetic Philology active.
+
+### [Concentration Level: HIGH] - Location: experiments/typographic-turbulence
+- **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
+- **Status:** The text is flowing. The letters are obstacles. Vortices shedding from the alphabet.
+- **Note:** Moonshot: Fluid Dynamics (LBM) + Kinetic Typography. Particles are characters.
