@@ -1,6 +1,6 @@
 use anyhow::Result;
 use cargo_metadata::MetadataCommand;
-use petgraph::graph::{Graph, NodeIndex};
+use petgraph::graph::Graph;
 use petgraph::Directed;
 use std::collections::HashMap;
 

@@ -16,25 +16,27 @@ pub enum Voxel {
 
 pub struct VoxelGrid {
     pub voxels: Vec<Voxel>,
-    pub width: usize,
-    pub height: usize,
-    pub depth: usize,
     pub void_count: usize,
+}
+
+impl Default for VoxelGrid {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl VoxelGrid {
     pub fn new() -> Self {
-        let size = GRID_SIZE;
         let perlin = Perlin::new(1);
-        let mut voxels = vec![Voxel::Rock; size * size * size];
+        let mut voxels = vec![Voxel::Rock; GRID_SIZE * GRID_SIZE * GRID_SIZE];
         let void_count = 0;
 
         // Initialize with faults
-        for z in 0..size {
-            for y in 0..size {
-                for x in 0..size {
+        for z in 0..GRID_SIZE {
+            for y in 0..GRID_SIZE {
+                for x in 0..GRID_SIZE {
                     let val = perlin.get([x as f64 * 0.1, y as f64 * 0.1, z as f64 * 0.1]);
-                    let idx = x + y * size + z * size * size;
+                    let idx = x + y * GRID_SIZE + z * GRID_SIZE * GRID_SIZE;
                     // Perlin noise typically returns -1.0 to 1.0
                     if val > 0.2 {
                         voxels[idx] = Voxel::Crack;
@@ -47,25 +49,22 @@ impl VoxelGrid {
 
         Self {
             voxels,
-            width: size,
-            height: size,
-            depth: size,
             void_count,
         }
     }
 
     pub fn get(&self, x: usize, y: usize, z: usize) -> Voxel {
-        if x >= self.width || y >= self.height || z >= self.depth {
+        if x >= GRID_SIZE || y >= GRID_SIZE || z >= GRID_SIZE {
             return Voxel::Rock;
         }
-        self.voxels[x + y * self.width + z * self.width * self.height]
+        self.voxels[x + y * GRID_SIZE + z * GRID_SIZE * GRID_SIZE]
     }
 
     pub fn set(&mut self, x: usize, y: usize, z: usize, voxel: Voxel) {
-        if x >= self.width || y >= self.height || z >= self.depth {
+        if x >= GRID_SIZE || y >= GRID_SIZE || z >= GRID_SIZE {
             return;
         }
-        let idx = x + y * self.width + z * self.width * self.height;
+        let idx = x + y * GRID_SIZE + z * GRID_SIZE * GRID_SIZE;
         if self.voxels[idx] != Voxel::Air && voxel == Voxel::Air {
             self.void_count += 1;
         }
@@ -73,7 +72,7 @@ impl VoxelGrid {
     }
 
     pub fn erode(&mut self, graph: &CrateGraph, positions: &HashMap<NodeIndex, Vec3>) {
-        let size_f = self.width as f32;
+        let size_f = GRID_SIZE as f32;
 
         for edge in graph.edge_indices() {
             if let Some((u, v)) = graph.edge_endpoints(edge) {
@@ -145,7 +144,7 @@ impl VoxelGrid {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::layout::Layout;
+
     use petgraph::Graph;
 
     #[test]

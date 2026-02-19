@@ -116,3 +116,13 @@
 **Bloat:** `experiments/slime-trash` was a "Condemned" experiment with no documentation and generic implementation.
 **Cut:** Deleted the entire experiment.
 **Saved:** 1 Experiment, 1 Cargo.toml entry, cleaned up workspace.
+
+## [Reduction]
+**Bloat:** Redundant `width`, `height`, `depth` fields in `dependency-karst::VoxelGrid` always equal to `GRID_SIZE`.
+**Cut:** Removed fields and used `GRID_SIZE` constant directly.
+**Saved:** 3 struct fields, multiple initialization lines, and cognitive load of checking if dimensions vary.
+
+## [Reduction]
+**Bloat:** Manual TUI setup/teardown boilerplate in `experiments/dependency-karst/src/main.rs`.
+**Cut:** Replaced with `tui_shared::Tui` RAII wrapper.
+**Saved:** ~15 lines of sensitive terminal handling code.

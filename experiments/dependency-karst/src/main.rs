@@ -1,23 +1,14 @@
 use anyhow::Result;
-use crossterm::{
-    event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use dependency_karst::graph::load_graph;
 use dependency_karst::layout::Layout;
 use dependency_karst::simulation::{VoxelGrid, GRID_SIZE};
 use dependency_karst::tui::{CaveWidget, TuiState};
-use ratatui::{backend::CrosstermBackend, Terminal};
-use std::io::stdout;
+use tui_shared::Tui;
 
 fn main() -> Result<()> {
     // Setup Terminal
-    enable_raw_mode()?;
-    let mut stdout = stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = Tui::init()?;
 
     // Load Data
     let graph = load_graph()?;
@@ -32,7 +23,7 @@ fn main() -> Result<()> {
     // App Loop
     let mut running = true;
     while running {
-        terminal.draw(|f| {
+        tui.terminal.draw(|f| {
             let size = f.area();
             let widget = CaveWidget::new(&grid, &state, &layout.positions, &graph);
             f.render_widget(widget, size);
@@ -83,11 +74,6 @@ fn main() -> Result<()> {
             }
         }
     }
-
-    // Restore Terminal
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
 
     Ok(())
 }

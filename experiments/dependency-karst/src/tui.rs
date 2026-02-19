@@ -14,6 +14,12 @@ pub struct TuiState {
     pub cursor_y: usize,
 }
 
+impl Default for TuiState {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl TuiState {
     pub fn new() -> Self {
         Self {
@@ -57,8 +63,8 @@ impl<'a> Widget for CaveWidget<'a> {
 
         let z = self.state.slice_z;
 
-        for y in 0..self.grid.height.min(inner.height as usize) {
-            for x in 0..self.grid.width.min(inner.width as usize) {
+        for y in 0..GRID_SIZE.min(inner.height as usize) {
+            for x in 0..GRID_SIZE.min(inner.width as usize) {
                 let voxel = self.grid.get(x, y, z);
                 let char_sym = match voxel {
                     Voxel::Rock => "█",
@@ -80,13 +86,13 @@ impl<'a> Widget for CaveWidget<'a> {
 
         // Render Nodes that are on this slice (or near it)
         for (node, pos) in self.positions {
-            let px = (pos.x * self.grid.width as f32) as usize;
-            let py = (pos.y * self.grid.height as f32) as usize;
-            let pz = (pos.z * self.grid.depth as f32) as usize;
+            let px = (pos.x * GRID_SIZE as f32) as usize;
+            let py = (pos.y * GRID_SIZE as f32) as usize;
+            let pz = (pos.z * GRID_SIZE as f32) as usize;
 
             // Show nodes within +/- 1 Z level
-            if pz.abs_diff(z) <= 1 {
-                if px < inner.width as usize && py < inner.height as usize {
+            if pz.abs_diff(z) <= 1
+                && px < inner.width as usize && py < inner.height as usize {
                     let name = &self.graph[*node];
                     // Just show first char
                     let symbol = &name[0..1];
@@ -100,7 +106,6 @@ impl<'a> Widget for CaveWidget<'a> {
                         c.set_style(Style::default().fg(color).add_modifier(Modifier::BOLD));
                     }
                 }
-            }
         }
 
         // Render Cursor

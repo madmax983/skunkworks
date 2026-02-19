@@ -11,3 +11,4 @@ anyhow = { workspace = true }
 cargo_metadata = "0.18"
 petgraph = "0.6"
 noise = "0.9"
+tui-shared = { workspace = true }
