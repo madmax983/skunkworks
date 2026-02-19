@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};
 
 pub mod alchemy;
+pub mod biolum;
 pub mod chronos;
 pub mod construct;
 pub mod evolution;
@@ -131,6 +132,9 @@ impl PrologueState {
                             | "v"
                             | "i"
                             | "a"
+                            | "Φ"
+                            | "Λ"
+                            | "Ω"
                     ) {
                         self.runes.insert((y, x));
 
@@ -232,6 +236,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     &mut vm.prologue_state.teleport_channels,
                     &mut vm.prologue_state.history,
                     grid,
+                    &vm.light_grid,
                 ) {
                     changes = true;
                 }
@@ -259,6 +264,7 @@ fn apply_propagation_rune(
     teleport_channels: &mut HashMap<i64, Value>,
     history: &mut HashMap<(usize, usize), VecDeque<Value>>,
     grid: &[Vec<Value>],
+    light_grid: &[Vec<i64>],
 ) -> bool {
     if construct::apply_construct_runes(rune, y, x, current_signals, next_delayed, grid) {
         return true;
@@ -310,6 +316,9 @@ fn apply_propagation_rune(
         return true;
     }
     if virology::apply_virology_runes(rune, y, x, current_signals, next_signals) {
+        return true;
+    }
+    if biolum::apply_biolum_runes(rune, y, x, current_signals, next_signals, light_grid) {
         return true;
     }
     false
@@ -480,6 +489,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             construct::apply_construct_sinks(vm, rune, y, x);
             evolution::apply_evolution_sinks(vm, rune, y, x);
             virology::apply_virology_sinks(vm, rune, y, x);
+            biolum::apply_biolum_sinks(vm, rune, y, x);
         }
     }
 }
