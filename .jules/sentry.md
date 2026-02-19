@@ -23,3 +23,7 @@
 **[Grid Wrapping Bug]
 **Learning:** In 1D vectors representing 2D grids, `x >= width` checks are critical. Relying solely on `index < vec.len()` allows "scanline wrapping" where `(width, y)` writes to `(0, y+1)`.
 **Action:** Always verify `x < width` and `y < height` explicitly before calculating the 1D index.
+
+**[Topology Quirks in Testing]**
+**Learning:** `ChimeraVM` defaults to `Topology::Torus`, which makes "out of bounds" testing tricky for coordinate-based logic like `exec_splash`. Tests relying on boundaries must explicitly set `vm.topology = Topology::Plane`.
+**Action:** When testing grid operations, always check the default topology and override it if boundary conditions are being tested.

@@ -2,7 +2,7 @@ use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEvent, KeyEventKind},
     execute,
-    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
+    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use git_associates::GitModel;
 use ratatui::{prelude::*, widgets::*};
@@ -64,10 +64,10 @@ fn main() -> Result<()> {
     let app_result = App::new();
 
     if let Err(e) = app_result {
-         disable_raw_mode()?;
-         execute!(io::stdout(), LeaveAlternateScreen)?;
-         eprintln!("Error initializing app: {}", e);
-         return Err(e);
+        disable_raw_mode()?;
+        execute!(io::stdout(), LeaveAlternateScreen)?;
+        eprintln!("Error initializing app: {}", e);
+        return Err(e);
     }
     let mut app = app_result.unwrap();
 
@@ -97,10 +97,7 @@ fn main() -> Result<()> {
 fn ui(f: &mut Frame, app: &App) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([
-            Constraint::Percentage(50),
-            Constraint::Percentage(50),
-        ])
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
         .split(f.area());
 
     render_commit_list(f, chunks[0], app);
@@ -108,14 +105,21 @@ fn ui(f: &mut Frame, app: &App) {
 }
 
 fn render_commit_list(f: &mut Frame, area: Rect, app: &App) {
-    let items: Vec<ListItem> = app.commits
+    let items: Vec<ListItem> = app
+        .commits
         .iter()
         .map(|c| {
             let lc = LongCount::from_timestamp(c.timestamp);
             let content = Line::from(vec![
-                Span::styled(format!("{:<15}", lc.to_string()), Style::default().fg(Color::Yellow)),
+                Span::styled(
+                    format!("{:<15}", lc.to_string()),
+                    Style::default().fg(Color::Yellow),
+                ),
                 Span::raw(" | "),
-                Span::styled(format!("{}", c.short_hash), Style::default().fg(Color::Cyan)),
+                Span::styled(
+                    format!("{}", c.short_hash),
+                    Style::default().fg(Color::Cyan),
+                ),
                 Span::raw(" | "),
                 Span::raw(c.message.lines().next().unwrap_or("")),
             ]);
@@ -124,7 +128,11 @@ fn render_commit_list(f: &mut Frame, area: Rect, app: &App) {
         .collect();
 
     let list = List::new(items)
-        .block(Block::default().title("The Long Count of History").borders(Borders::ALL))
+        .block(
+            Block::default()
+                .title("The Long Count of History")
+                .borders(Borders::ALL),
+        )
         .highlight_style(Style::default().add_modifier(Modifier::REVERSED))
         .highlight_symbol(">> ");
 
@@ -139,8 +147,7 @@ fn render_stela(f: &mut Frame, area: Rect, app: &App) {
     let block = Block::default().title("Stela").borders(Borders::ALL);
 
     if app.commits.is_empty() {
-        let p = Paragraph::new("No commits found (or not a git repo).")
-            .block(block);
+        let p = Paragraph::new("No commits found (or not a git repo).").block(block);
         f.render_widget(p, area);
         return;
     }
@@ -163,7 +170,10 @@ fn render_stela(f: &mut Frame, area: Rect, app: &App) {
 
     // Add stela art lines
     for line in stela_art.lines() {
-        lines.push(Line::from(Span::styled(line.to_string(), Style::default().fg(Color::Green))));
+        lines.push(Line::from(Span::styled(
+            line.to_string(),
+            Style::default().fg(Color::Green),
+        )));
     }
 
     let p = Paragraph::new(lines)

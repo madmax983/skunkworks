@@ -242,3 +242,228 @@ pub fn exec_splash(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     }
     None
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::ast::{Dna, Helix, JunctionType};
+    use crate::vm::{ChimeraVM, Value};
+
+    fn setup_vm() -> ChimeraVM {
+        let dna = Dna {
+            helix: Helix { strands: vec![] },
+        };
+        let mut vm = ChimeraVM::new(dna);
+        vm.context_loc = (8, 8);
+        vm
+    }
+
+    #[test]
+    fn test_mix_creation() {
+        let mut vm = setup_vm();
+
+        // Setup neighbors
+        // Center is (8,8)
+        vm.grid[8][9] = Value::Str("Water".to_string());
+        vm.grid[7][8] = Value::Str("Fire".to_string());
+
+        // Push radius 2
+        vm.stack.push(Value::Int(2));
+
+        exec_mix(&mut vm);
+
+        // Check center
+        match &vm.grid[8][8] {
+            Value::Junction(JunctionType::Dish, ingredients) => {
+                let has_water = ingredients
+                    .iter()
+                    .any(|v| matches!(v, Value::Str(s) if s == "Water"));
+                let has_fire = ingredients
+                    .iter()
+                    .any(|v| matches!(v, Value::Str(s) if s == "Fire"));
+                assert!(has_water, "Mixture should contain Water");
+                assert!(has_fire, "Mixture should contain Fire");
+            }
+            _ => panic!("Expected Dish junction at center, got {:?}", vm.grid[8][8]),
+        }
+
+        // Check neighbors cleared
+        assert_eq!(vm.grid[8][9], Value::Int(0));
+        assert_eq!(vm.grid[7][8], Value::Int(0));
+    }
+
+    #[test]
+    fn test_mix_radius_zero() {
+        let mut vm = setup_vm();
+        vm.grid[8][9] = Value::Str("Water".to_string());
+        vm.stack.push(Value::Int(0));
+
+        exec_mix(&mut vm);
+
+        // Center should be unchanged (0)
+        assert_eq!(vm.grid[8][8], Value::Int(0));
+        // Neighbor should be unchanged
+        assert_eq!(vm.grid[8][9], Value::Str("Water".to_string()));
+    }
+
+    #[test]
+    fn test_brew_acid() {
+        let mut vm = setup_vm();
+        let ingredients = vec![
+            Value::Str("Water".to_string()),
+            Value::Str("Fire".to_string()),
+        ];
+        vm.grid[8][8] = Value::Junction(JunctionType::Dish, ingredients);
+
+        // Heat 10
+        vm.stack.push(Value::Int(10));
+
+        exec_brew(&mut vm);
+
+        // Check result
+        if let Value::Junction(JunctionType::Dish, args) = &vm.grid[8][8] {
+            assert_eq!(args[0], Value::Str("Solution".to_string()));
+            assert_eq!(args[1], Value::Str("Acid".to_string()));
+            assert_eq!(args[2], Value::Int(20)); // 10 heat + 10 bonus
+        } else {
+            panic!("Expected Solution Dish");
+        }
+    }
+
+    #[test]
+    fn test_brew_steam() {
+        let mut vm = setup_vm();
+        let ingredients = vec![
+            Value::Str("Water".to_string()),
+            Value::Str("Fire".to_string()),
+        ];
+        vm.grid[8][8] = Value::Junction(JunctionType::Dish, ingredients);
+
+        // Heat 5 (less than 10)
+        vm.stack.push(Value::Int(5));
+
+        exec_brew(&mut vm);
+
+        if let Value::Junction(JunctionType::Dish, args) = &vm.grid[8][8] {
+            assert_eq!(args[1], Value::Str("Steam".to_string()));
+        } else {
+            panic!("Expected Solution Dish");
+        }
+    }
+
+    #[test]
+    fn test_brew_elixir() {
+        let mut vm = setup_vm();
+        let ingredients = vec![
+            Value::Str("Life".to_string()),
+            Value::Str("Energy".to_string()),
+        ];
+        vm.grid[8][8] = Value::Junction(JunctionType::Dish, ingredients);
+
+        // Heat 5
+        vm.stack.push(Value::Int(5));
+
+        exec_brew(&mut vm);
+
+        if let Value::Junction(JunctionType::Dish, args) = &vm.grid[8][8] {
+            assert_eq!(args[1], Value::Str("Elixir".to_string()));
+            assert_eq!(args[2], Value::Int(25)); // 5 + 20
+        } else {
+            panic!("Expected Solution Dish");
+        }
+    }
+
+    #[test]
+    fn test_splash_acid() {
+        let mut vm = setup_vm();
+
+        // Setup Solution
+        let solution = Value::Junction(
+            JunctionType::Dish,
+            vec![
+                Value::Str("Solution".to_string()),
+                Value::Str("Acid".to_string()),
+                Value::Int(50),
+            ],
+        );
+        vm.grid[8][8] = solution;
+
+        // Setup target area
+        // Target 8,9 (East 1)
+        vm.grid[8][9] = Value::Int(100);
+
+        // Splash: radius 1, dy 0, dx 1
+        vm.stack.push(Value::Int(1)); // r
+        vm.stack.push(Value::Int(0)); // y
+        vm.stack.push(Value::Int(1)); // x
+
+        exec_splash(&mut vm);
+
+        // Center should be empty (thrown)
+        assert_eq!(vm.grid[8][8], Value::Int(0));
+        // Target should be destroyed
+        assert_eq!(vm.grid[8][9], Value::Int(0));
+    }
+
+    #[test]
+    fn test_splash_elixir() {
+        let mut vm = setup_vm();
+
+        // Setup Solution
+        let solution = Value::Junction(
+            JunctionType::Dish,
+            vec![
+                Value::Str("Solution".to_string()),
+                Value::Str("Elixir".to_string()),
+                Value::Int(10),
+            ],
+        );
+        vm.grid[8][8] = solution;
+
+        // Setup target
+        vm.grid[8][9] = Value::Int(5);
+
+        // Splash: radius 1, dy 0, dx 1
+        vm.stack.push(Value::Int(1));
+        vm.stack.push(Value::Int(0));
+        vm.stack.push(Value::Int(1));
+
+        exec_splash(&mut vm);
+
+        // Target should be increased
+        assert_eq!(vm.grid[8][9], Value::Int(15));
+    }
+
+    #[test]
+    fn test_splash_out_of_bounds() {
+        let mut vm = setup_vm();
+        // Use Plane topology to enforce bounds checking
+        vm.topology = crate::vm::Topology::Plane;
+
+        let solution = Value::Junction(
+            JunctionType::Dish,
+            vec![
+                Value::Str("Solution".to_string()),
+                Value::Str("Acid".to_string()),
+                Value::Int(50),
+            ],
+        );
+        vm.grid[8][8] = solution;
+
+        // Splash far away: radius 1, dy 100, dx 100
+        vm.stack.push(Value::Int(1));
+        vm.stack.push(Value::Int(100));
+        vm.stack.push(Value::Int(100));
+
+        exec_splash(&mut vm);
+
+        // Center consumed
+        assert_eq!(vm.grid[8][8], Value::Int(0));
+        // Error logged
+        assert!(
+            vm.output.iter().any(|s| s.contains("Target out of bounds")),
+            "Output was: {:?}",
+            vm.output
+        );
+    }
+}
