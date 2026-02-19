@@ -1,22 +1,26 @@
 # Clockwork CPU ⚛️⏱️
 
-**Genesis (The Horologist)** presents a mechanical simulation of a CPU cycle, driven by a physical escapement.
+A "Moonshot" experiment by Genesis: The Horologist.
 
 ## Concept
-Modern CPUs are abstract state machines. This experiment makes them concrete physical machines.
-- **Clock Source:** A Verge/Anchor Escapement driven by constant torque (gravity/spring).
-- **Cycle:** The rotation of the Escape Wheel corresponds to the Fetch-Decode-Execute-Writeback cycle.
-- **Physics:** Simulated using `bevy_rapier2d`. Every "tick" is a physical collision between the pallet and the wheel tooth.
+This experiment visualizes a CPU clock frequency not as a quartz crystal oscillation, but as a mechanical **Verge Escapement**—the earliest known mechanical escapement, used in clockwork from the 13th to the 17th century.
 
-## Tech Stack
-- **Engine:** Bevy 0.13
-- **Physics:** Bevy Rapier 2D
-- **Rendering:** Bevy Prototype Lyon (Procedural Vector Shapes)
+It simulates the physical interaction between a **Crown Wheel** (driven by a constant torque, representing "Voltage") and a **Verge & Foliot** (the regulator, representing the clock crystal).
 
-## Running
-```bash
-cargo run -p clockwork-cpu
-```
+The "Tick" of the CPU is physically determined by the moment of inertia of the foliot and the torque of the crown wheel.
 
-## Observations
-The regularity of the CPU clock is emergent from the physical properties (inertia, friction, torque) of the mechanism, just like in early mechanical chronometers.
+## Controls
+*   **UP Arrow**: Increase Voltage (Torque). Makes the clock run faster (higher Hz).
+*   **DOWN Arrow**: Decrease Voltage. Slows down the clock.
+
+## The Physics
+The simulation uses a custom rigid body physics engine (`src/physics.rs`) to model:
+*   **Crown Wheel**: Driven by torque, has inertia.
+*   **Verge**: Has pallets that collide with the crown wheel teeth.
+*   **Collision**: Impulse-based resolution. The crown wheel pushes the verge out of the way, transferring energy (Voltage -> Frequency).
+
+## Visualization
+*   **Yellow Wheel**: The Crown Wheel.
+*   **Gray Bar**: The Foliot (Oscillator).
+*   **Green/Gray Dots**: The Pallet interaction points (Top and Bottom).
+*   **Green Oscilloscope**: Real-time graph of the Verge's angular velocity, simulating the CPU clock signal.
