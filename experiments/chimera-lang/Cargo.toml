@@ -42,3 +42,6 @@ name = "story_demo"
 [[bin]]
 name = "prologue"
 path = "src/bin/prologue.rs"
+
+[dev-dependencies]
+proptest = "1.4"
