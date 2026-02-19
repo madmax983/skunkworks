@@ -62,6 +62,7 @@ pub mod alchemy;
 pub mod biolum;
 pub mod chaos;
 pub mod chronos;
+pub mod critter;
 pub mod construct;
 pub mod evolution;
 pub mod io;
@@ -240,12 +241,16 @@ impl PrologueState {
                     ) {
                         self.runes.insert((y, x));
 
-                        if s == "@" || s == "K" || s == "H" {
-                            self.agents.push(PrologueAgent {
-                                x,
-                                y,
-                                state: Value::Int(0),
+                        if s == "@" || s == "K" || s == "H" || s == "C" {
+                            // Try to retrieve persistent state
+                            let state = self.registers.get(&(y, x)).cloned().unwrap_or_else(|| {
+                                if s == "C" {
+                                    critter::CritterState::default().to_value()
+                                } else {
+                                    Value::Int(0)
+                                }
                             });
+                            self.agents.push(PrologueAgent { x, y, state });
                         }
                     }
                 }
@@ -632,7 +637,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     }
 }
 
-/// Updates the position of Prologue Agents (`@`, `K`, `H`).
+/// Updates the position of Prologue Agents (`@`, `K`, `H`, `C`).
 ///
 /// Agents observe the grid (Snapshot) and move towards interesting features (Signals, Prey).
 /// This function updates both the `agents` list in the state and the `grid` itself (moving the char).
@@ -645,7 +650,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
     let agents = vm.prologue_state.agents.clone();
     let mut new_agents = Vec::new();
 
-    for agent in agents {
+    for mut agent in agents {
         let (y, x) = (agent.y, agent.x);
 
         let mut current_type = "@".to_string();
@@ -656,7 +661,70 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
         let mut target = None;
         let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
 
-        if current_type == "K" {
+        if current_type == "C" {
+            // Critter: Genetic Movement
+            if let Value::Str(state_str) = &agent.state {
+                if let Some(mut critter) = critter::CritterState::parse(state_str) {
+                    let (ny, nx) = critter::process_critter_move(&mut critter, y, x, grid_snapshot);
+                    agent.state = critter.to_value();
+
+                    // Check collision
+                    let dest_val = &vm.grid[ny][nx]; // Check LIVE grid
+
+                    let mut blocked = false;
+                    if let Value::Str(s) = dest_val {
+                        if s == "C" && (ny != y || nx != x) {
+                            // Collided with another Critter (or self if didn't move)
+                            // Breed?
+                            // For simplicity, just block and breed nearby if possible
+                            let mut rng = rand::thread_rng();
+                            let spawn_dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+                            let (dy, dx) = spawn_dirs[rng.gen_range(0..4)];
+                            if let Some((sy, sx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                                if matches!(vm.grid[sy][sx], Value::Int(0)) {
+                                    // Get other critter state
+                                    let other_state = vm.prologue_state.registers.get(&(ny, nx))
+                                        .and_then(|v| if let Value::Str(s) = v { critter::CritterState::parse(s) } else { None })
+                                        .unwrap_or(critter::CritterState::default());
+
+                                    let child = critter::breed(&critter, &other_state);
+                                    vm.grid[sy][sx] = Value::Str("C".to_string());
+                                    vm.prologue_state.registers.insert((sy, sx), child.to_value());
+                                }
+                            }
+                            blocked = true;
+                        } else if s == "!" {
+                            // Eat Food
+                            critter.energy += 20;
+                            agent.state = critter.to_value();
+                        } else if !is_empty_val(dest_val) {
+                             blocked = true;
+                        }
+                    } else if !is_empty_val(dest_val) {
+                         blocked = true;
+                    }
+
+                    if !blocked {
+                        target = Some((ny, nx));
+                    }
+
+                    // Update state in registers regardless of move (energy usage)
+                    // If moving, we handle it below. If blocked, update here?
+                    // The logic below updates registers for target.
+                    // If blocked, target is None, so we should update (y,x) register.
+                    if target.is_none() {
+                         vm.prologue_state.registers.insert((y, x), agent.state.clone());
+                    }
+
+                    // Check death
+                    if critter.energy <= 0 {
+                         vm.grid[y][x] = Value::Int(0);
+                         vm.prologue_state.registers.remove(&(y, x));
+                         continue; // Remove from agents list
+                    }
+                }
+            }
+        } else if current_type == "K" {
             // Chaos: Move Randomly
             let mut rng = rand::thread_rng();
             let mut possible_moves = Vec::new();
@@ -730,6 +798,13 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
             }
             // Set new pos
             vm.grid[ny][nx] = Value::Str(current_type.clone());
+
+            // Move Registers
+            if current_type == "C" {
+                vm.prologue_state.registers.remove(&(y, x));
+                vm.prologue_state.registers.insert((ny, nx), agent.state.clone());
+            }
+
             new_agents.push(PrologueAgent {
                 x: nx,
                 y: ny,
