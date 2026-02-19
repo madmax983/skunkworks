@@ -331,3 +331,8 @@
 - **Scent Origin:** Genesis (The Origamist) ⚛️🦢
 - **Status:** The mesh is folding. The creases are stressed. PBD solver operational.
 - **Note:** Moonshot: Rigid Origami + Deployment Simulation. Miura-ori mechanics validated.
+
+### [Concentration Level: HIGH] - Location: experiments/malloc-market
+- **Scent Origin:** Genesis (The Economist) ⚛️📊
+- **Status:** The Order Book is open. Prices are emerging. Rayon agents are bidding for memory blocks.
+- **Note:** Moonshot: Resource Markets + Memory Allocation. Double Auction implemented.

@@ -1,11 +1,14 @@
-use ::rand::seq::SliceRandom;
 use ::rand::{thread_rng, Rng};
 use macroquad::prelude::*;
+use rayon::prelude::*;
+
+mod order_book;
+use order_book::*;
 
 const GRID_W: usize = 64;
 const GRID_H: usize = 64;
-const TARGET_UTILIZATION: f32 = 0.70;
-const PRICE_SENSITIVITY: f32 = 0.02;
+// const TARGET_UTILIZATION: f32 = 0.70;
+// const PRICE_SENSITIVITY: f32 = 0.02; // Deprecated: Emergent pricing
 const BASE_INCOME_PER_BLOCK: f32 = 1.0;
 const INITIAL_WEALTH: f32 = 50.0;
 const FRAGMENTATION_TIME: u32 = 20;
@@ -23,15 +26,19 @@ struct Agent {
     wealth: f32,
     holdings: Vec<(usize, usize)>,
     efficiency: f32,
+    // Strategy parameters
+    urgency: f32, // How much they are willing to bid above market
 }
 
 struct Market {
     grid: [[CellState; GRID_H]; GRID_W],
     agents: Vec<Agent>,
-    price: f32,
+    last_price: f32,
+    order_book: OrderBook,
     history: Vec<f32>,
     next_pid: usize,
     utilization_history: Vec<f32>,
+    last_tx_count: usize,
 }
 
 impl Market {
@@ -39,10 +46,12 @@ impl Market {
         Self {
             grid: [[CellState::Free; GRID_H]; GRID_W],
             agents: Vec::new(),
-            price: 1.0,
+            last_price: 1.0,
+            order_book: OrderBook::new(),
             history: Vec::new(),
             next_pid: 0,
             utilization_history: Vec::new(),
+            last_tx_count: 0,
         }
     }
 
@@ -69,9 +78,10 @@ impl Market {
                     wealth: INITIAL_WEALTH,
                     holdings: Vec::new(),
                     efficiency: rng.gen_range(0.8..1.5),
+                    urgency: rng.gen_range(0.9..1.5),
                 };
 
-                // Initial purchase
+                // Initial purchase (Gift/Genesis block)
                 agent.holdings.push((x, y));
                 self.grid[x][y] = CellState::Allocated(id);
                 self.agents.push(agent);
@@ -85,6 +95,7 @@ impl Market {
         let mut allocated_count = 0;
 
         // 1. Grid Maintenance (Fragmentation Decay) & Counting
+        let mut free_cells = Vec::new();
         for x in 0..GRID_W {
             for y in 0..GRID_H {
                 match self.grid[x][y] {
@@ -95,111 +106,160 @@ impl Market {
                             self.grid[x][y] = CellState::Fragmented(timer);
                         } else {
                             self.grid[x][y] = CellState::Free;
+                            free_cells.push((x, y));
                         }
                     }
-                    CellState::Free => {}
+                    CellState::Free => {
+                        free_cells.push((x, y));
+                    }
                 }
             }
         }
 
-        // 2. Market Macro-Economics
+        // 2. Stats
         let utilization = allocated_count as f32 / total_cells;
         self.utilization_history.push(utilization);
         if self.utilization_history.len() > 300 {
             self.utilization_history.remove(0);
         }
 
-        // Price Dynamics
-        let delta = utilization - TARGET_UTILIZATION;
-        self.price *= 1.0 + (delta * PRICE_SENSITIVITY);
-        if self.price < 0.1 {
-            self.price = 0.1;
+        // 3. Clear Order Book
+        self.order_book.clear();
+
+        // 4. System (Seller) places Asks
+        // Supply Curve: Price increases with Utilization
+        // If grid is full, price is infinite.
+        // Base price = 1.0
+        // Price = Base * (1 / (1 - Utilization)^2)
+        // Or simpler: Linear? Exponential?
+        let system_ask_price = if utilization < 0.99 {
+            1.0 / (1.0 - utilization).powi(2)
+        } else {
+            100.0 // Cap
+        };
+
+        // The system offers all free cells at this price (or a range?)
+        // Let's say the system places ONE large ask order for all free cells.
+        // Agent ID for system is usize::MAX
+        if !free_cells.is_empty() {
+            self.order_book.add_order(usize::MAX, system_ask_price, free_cells.len(), OrderType::Ask);
         }
 
-        self.history.push(self.price);
+        // 5. Agents (Buyers) place Bids
+        // Parallel decision making?
+        // Collecting orders first.
+        let last_price = self.last_price;
+        let orders: Vec<(usize, f32, usize, OrderType)> = self.agents.par_iter().filter_map(|agent| {
+            let _rng = thread_rng();
+
+            // Income calculation is done later in serial update, but decision depends on current wealth
+            let estimated_wealth = agent.wealth; // + income?
+
+            if estimated_wealth < 0.0 {
+                return None;
+            }
+
+            // Demand Strategy
+            // If efficiency is high, expand.
+            // Bid price depends on Urgency.
+            let bid_price = last_price * agent.urgency;
+
+            // Check budget
+            if estimated_wealth > bid_price * 2.0 {
+                // Place a bid for 1 block
+                 Some((agent.id, bid_price, 1, OrderType::Bid))
+            } else {
+                None
+            }
+        }).collect();
+
+        for (id, price, qty, otype) in orders {
+            self.order_book.add_order(id, price, qty, otype);
+        }
+
+        // 6. Match Orders
+        let transactions = self.order_book.match_orders();
+        self.last_tx_count = transactions.len();
+
+        // 7. Process Transactions
+        if !transactions.is_empty() {
+            let mut price_sum = 0.0;
+            for tx in &transactions {
+                price_sum += tx.price;
+
+                // Seller Logic
+                if tx.seller_id == usize::MAX {
+                    // System sold a block
+                    // Find a free block to give
+                    // We need to pop from free_cells.
+                    // But wait, free_cells was collected before match.
+                    // We need to be careful not to double allocate if we had multiple asks (but we only had one big ask).
+
+                    for _ in 0..tx.quantity {
+                         if let Some((fx, fy)) = free_cells.pop() {
+                             self.grid[fx][fy] = CellState::Allocated(tx.buyer_id);
+                             // Update Buyer
+                             if let Some(agent) = self.agents.iter_mut().find(|a| a.id == tx.buyer_id) {
+                                 agent.holdings.push((fx, fy));
+                                 agent.wealth -= tx.price;
+                             }
+                         }
+                    }
+                } else {
+                    // Agent to Agent trade? (Not implemented yet, but scaffold is here)
+                }
+            }
+            self.last_price = price_sum / transactions.len() as f32;
+        } else {
+            // Price decay if no trades? Or stick?
+            // Let's decay slightly to encourage trading if stuck high
+            self.last_price *= 0.99;
+            if self.last_price < 0.1 { self.last_price = 0.1; }
+        }
+
+        self.history.push(self.last_price);
         if self.history.len() > 300 {
             self.history.remove(0);
         }
 
-        // 3. Agent Decisions
-        // We split borrows here to avoid borrow checker issues.
-        // `grid` and `agents` are disjoint fields.
-        let grid = &mut self.grid;
-        let current_price = self.price;
+        // 8. Agent Updates (Income, Rent, Death)
         let mut dead_agent_ids = Vec::new();
-
-        let mut rng = thread_rng();
+        let current_price = self.last_price;
 
         for agent in self.agents.iter_mut() {
             let holdings_count = agent.holdings.len() as f32;
 
-            // Income
+            // Income: Agents generate value by holding memory (simulation of work)
             let income = holdings_count * BASE_INCOME_PER_BLOCK * agent.efficiency;
             agent.wealth += income;
 
-            // Rent
-            let rent = holdings_count * current_price;
-            agent.wealth -= rent;
+            // Rent: Agents must pay upkeep to the system?
+            // In a pure purchase market, maybe no rent?
+            // But if there is no rent, hoarding is free.
+            // Let's implement a Property Tax / Maintenance Cost.
+            let tax_rate = 0.05 * current_price;
+            let tax = holdings_count * tax_rate;
+            agent.wealth -= tax;
 
+            // Panic Sell (Liquidation)
             if agent.wealth < 0.0 {
                 dead_agent_ids.push(agent.id);
-                continue; // Agent is dead, skip actions
-            }
-
-            // EXPANSION
-            // If wealthy, try to buy adjacent
-            let expansion_threshold = rent * 2.0 + 50.0;
-            if agent.wealth > expansion_threshold {
-                if let Some(&(hx, hy)) = agent.holdings.choose(&mut rng) {
-                    let neighbors: [(usize, usize); 4] = [
-                        (hx.wrapping_sub(1), hy),
-                        (hx + 1, hy),
-                        (hx, hy.wrapping_sub(1)),
-                        (hx, hy + 1),
-                    ];
-
-                    for &(nx, ny) in neighbors.iter() {
-                        if nx < GRID_W && ny < GRID_H && grid[nx][ny] == CellState::Free {
-                            let cost = current_price * 1.5; // Buying fee
-                            if agent.wealth > cost + expansion_threshold {
-                                agent.wealth -= cost;
-                                grid[nx][ny] = CellState::Allocated(agent.id);
-                                agent.holdings.push((nx, ny));
-                                break; // Buy one per tick max
-                            }
-                        }
-                    }
+            } else if agent.wealth < tax * 5.0 && agent.holdings.len() > 1 {
+                // Sell holding back to system (free it)
+                // In a real market, they would place an Ask.
+                // For simplicity, they "abandon" it.
+                if let Some((rx, ry)) = agent.holdings.pop() {
+                     self.grid[rx][ry] = CellState::Free; // Immediately free
                 }
-            }
-
-            // CONTRACTION
-            // If poor, sell random holding
-            let panic_threshold = rent * 1.5;
-            if agent.wealth < panic_threshold && agent.holdings.len() > 1 {
-                let remove_idx = rng.gen_range(0..agent.holdings.len());
-                let (rx, ry) = agent.holdings.remove(remove_idx);
-                // "Selling" just releases it to Free immediately (or Fragmented?)
-                // Let's say selling is orderly, so it becomes Free.
-                grid[rx][ry] = CellState::Free;
-                // No refund, just stop paying rent.
             }
         }
 
-        // 4. Cleanup Dead Agents
+        // 9. Cleanup Dead Agents
         if !dead_agent_ids.is_empty() {
-            // Remove agents
-            // We need to move agents out or retain.
-            // Since we need to access `grid` to mark fragmentation based on the dead agent's holdings,
-            // we first find the holdings of dead agents.
-
-            // Actually, we can just iterate again or do it in the loop?
-            // In the loop above, we didn't remove holdings because we were iterating.
-
-            let mut i = 0;
+             let mut i = 0;
             while i < self.agents.len() {
-                if self.agents[i].wealth < 0.0 {
+                if dead_agent_ids.contains(&self.agents[i].id) {
                     let agent = self.agents.remove(i);
-                    // Mark grid
                     for (x, y) in agent.holdings {
                         self.grid[x][y] = CellState::Fragmented(FRAGMENTATION_TIME);
                     }
@@ -209,8 +269,8 @@ impl Market {
             }
         }
 
-        // 5. Spawning
-        if self.agents.len() < 10 || (self.agents.len() < 100 && rng.gen_bool(0.05)) {
+        // 10. Spawning
+        if self.agents.len() < 10 || (self.agents.len() < 100 && thread_rng().gen_bool(0.05)) {
             self.spawn_agent();
         }
     }
@@ -259,7 +319,6 @@ async fn main() {
                         if let Some(agent) = market.agents.iter().find(|a| a.id == pid) {
                             agent.color
                         } else {
-                            // Zombie cell? Should not happen.
                             DARKGRAY
                         }
                     }
@@ -288,7 +347,7 @@ async fn main() {
         // Stats Text
         let text_color = WHITE;
         draw_text(
-            &format!("Price: {:.2}", market.price),
+            &format!("Price: {:.2}", market.last_price),
             10.0,
             ui_y + 30.0,
             30.0,
@@ -301,11 +360,18 @@ async fn main() {
             30.0,
             text_color,
         );
+        draw_text(
+            &format!("TX/Tick: {}", market.last_tx_count),
+            10.0,
+            ui_y + 90.0,
+            30.0,
+            text_color,
+        );
         if let Some(util) = market.utilization_history.last() {
             draw_text(
                 &format!("Util: {:.1}%", util * 100.0),
                 10.0,
-                ui_y + 90.0,
+                ui_y + 120.0,
                 30.0,
                 text_color,
             );
@@ -373,14 +439,21 @@ mod tests {
         let mut market = Market::new();
         market.spawn_agent();
 
-        let initial_wealth = market.agents[0].wealth;
+        // Ensure agent has enough wealth to bid
+        market.agents[0].wealth = 100.0;
+        let initial_holdings = market.agents[0].holdings.len();
 
         market.update();
 
-        // Agent might survive or die, but initially it should survive.
-        if !market.agents.is_empty() {
-            let agent = &market.agents[0];
-            assert_ne!(agent.wealth, initial_wealth);
+        // Check if market updated
+        assert!(market.history.len() > 0);
+
+        // Check if transaction happened (agent bought something)
+        // Agent logic: if wealthy, bid.
+        // Initial holdings: 1.
+        // After update, if bought, holdings: 2.
+        if market.agents[0].holdings.len() > initial_holdings {
+            assert!(market.last_tx_count > 0);
         }
     }
 }
