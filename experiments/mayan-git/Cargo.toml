@@ -1,0 +1,11 @@
+[package]
+name = "mayan-git"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow.workspace = true
+chrono = "0.4"
+crossterm.workspace = true
+git-associates.workspace = true
+ratatui.workspace = true
