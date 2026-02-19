@@ -14,6 +14,12 @@ use std::collections::HashMap;
 use std::fs::OpenOptions;
 #[cfg(feature = "nova")]
 use std::io::{Read, Write};
+#[cfg(feature = "nova")]
+use comfy_table::modifiers::UTF8_ROUND_CORNERS;
+#[cfg(feature = "nova")]
+use comfy_table::presets::UTF8_FULL;
+#[cfg(feature = "nova")]
+use comfy_table::{Color, Table, Cell};
 
 #[cfg(feature = "nova")]
 const AKASHIC_FILE: &str = ".chimera_akashic.json";
@@ -85,6 +91,45 @@ impl AkashicRecords {
             file.sync_all().map_err(|e| e.to_string())?;
         }
         std::fs::rename(&temp_file, AKASHIC_FILE).map_err(|e| e.to_string())
+    }
+}
+
+#[cfg(feature = "nova")]
+impl std::fmt::Display for AkashicRecords {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL)
+            .apply_modifier(UTF8_ROUND_CORNERS)
+            .set_header(vec!["Key", "Value"]);
+
+        let mut keys: Vec<_> = self.storage.keys().collect();
+        keys.sort();
+
+        for k in keys {
+            let val = &self.storage[k];
+            let val_str = format!("{}", val);
+            let mut val_cell = Cell::new(&val_str);
+
+            if val_str.to_lowercase() == "true" {
+                val_cell = val_cell.fg(Color::Green);
+            } else if val_str.to_lowercase() == "false" {
+                val_cell = val_cell.fg(Color::Red);
+            }
+
+            table.add_row(vec![
+                Cell::new(k).fg(Color::Cyan),
+                val_cell,
+            ]);
+        }
+
+        // Summary footer
+        table.add_row(vec![
+            Cell::new("Karma").add_attribute(comfy_table::Attribute::Bold),
+            Cell::new(format!("{}", self.karma)).fg(Color::Yellow),
+        ]);
+
+        write!(f, "{}", table)
     }
 }
 
