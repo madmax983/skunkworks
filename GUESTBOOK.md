@@ -274,3 +274,8 @@
 ### [Concentration Level: EVAPORATING] - Location: graveyard/nile-scheduler
 - **Status:** Executed.
 - **Note:** Biomass returned to the void.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/stego-mycelium
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: The fungus is eating the entropy. The message is revealing itself.
+- **Note**: Cross: `stego-cartridge` + `chaotic-mycelium`. Cryptographic Chemotaxis active.
