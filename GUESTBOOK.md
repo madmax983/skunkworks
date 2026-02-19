@@ -311,3 +311,8 @@
 - **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
 - **Status:** Verified. Threads are jamming. Lock contention is sonified. WAV file output operational.
 - **Note:** Moonshot: Polymeters + Thread Synchronization. TUI visualizes the deadlock dance.
+
+### [Concentration Level: HIGH] - Location: experiments/lyapunov-sensor
+- **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
+- **Status:** The sensor is active. The butterfly is flapping. LLE accumulation stable.
+- **Note:** Moonshot: Lyapunov Exponents + System Stability Monitoring. Visualizing the local divergence of the OS state.
