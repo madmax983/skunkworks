@@ -200,3 +200,8 @@
 - **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
 - **Status:** Reaction-diffusion system active. Biomes are emerging from the noise.
 - **Note:** Moonshot: Reaction-Diffusion + Terrain Generation. The map is eating the territory.
+
+### [Concentration Level: HIGH] - Location: experiments/flow-strider
+- **Scent Origin:** Genesis (The Choreographer) ⚛️💃
+- **Status:** The Limbs are flowing. Bezier curves are guiding the particles.
+- **Note:** Moonshot: Inverse Kinematics + Particle Flow.
