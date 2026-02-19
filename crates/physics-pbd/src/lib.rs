@@ -53,6 +53,24 @@ impl PbdSystem {
         }
     }
 
+    /// Adds a particle to the system.
+    ///
+    /// # Arguments
+    /// * `pos` - Initial position.
+    /// * `mass` - Mass of the particle. If 0.0, the particle is static (infinite mass).
+    ///
+    /// # Returns
+    /// The index of the added particle.
+    ///
+    /// # Example
+    /// ```
+    /// use physics_pbd::PbdSystem;
+    /// use macroquad::prelude::Vec3;
+    ///
+    /// let mut system = PbdSystem::new();
+    /// let idx = system.add_particle(Vec3::new(0.0, 10.0, 0.0), 1.0);
+    /// assert_eq!(idx, 0);
+    /// ```
     pub fn add_particle(&mut self, pos: Vec3, mass: f32) -> usize {
         let idx = self.particles.len();
         self.particles.push(Particle {
@@ -64,6 +82,20 @@ impl PbdSystem {
         idx
     }
 
+    /// Adds a distance constraint between two particles.
+    ///
+    /// The rest length is automatically calculated based on the current distance between the particles.
+    ///
+    /// # Example
+    /// ```
+    /// use physics_pbd::PbdSystem;
+    /// use macroquad::prelude::Vec3;
+    ///
+    /// let mut system = PbdSystem::new();
+    /// let p1 = system.add_particle(Vec3::ZERO, 1.0);
+    /// let p2 = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
+    /// system.add_distance_constraint(p1, p2, 0.5);
+    /// ```
     pub fn add_distance_constraint(&mut self, p1: usize, p2: usize, stiff: f32) {
         let dist = self.particles[p1].pos.distance(self.particles[p2].pos);
         self.constraints.push(Constraint::Distance {
@@ -102,6 +134,14 @@ impl PbdSystem {
     /// Optimization note: The constraint solver loop iterates directly over constraints and uses a
     /// split-borrow of particles to avoid repeated array indexing and `self` borrowing overhead,
     /// significantly improving performance on large systems.
+    ///
+    /// # Example
+    /// ```
+    /// use physics_pbd::PbdSystem;
+    ///
+    /// let mut system = PbdSystem::new();
+    /// system.step(0.016, 10);
+    /// ```
     pub fn step(&mut self, dt: f32, iterations: usize) {
         // Integrate
         for p in &mut self.particles {
@@ -220,5 +260,108 @@ mod tests {
         }
         let elapsed = start.elapsed();
         println!("Time taken: {:?}", elapsed);
+    }
+
+    #[test]
+    fn test_add_particle() {
+        let mut system = PbdSystem::new();
+        let pos = Vec3::new(10.0, 5.0, 0.0);
+        let idx = system.add_particle(pos, 10.0);
+
+        assert_eq!(idx, 0);
+        assert_eq!(system.particles.len(), 1);
+        assert_eq!(system.particles[0].pos, pos);
+        assert!((system.particles[0].inv_mass - 0.1).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn test_integration() {
+        let mut system = PbdSystem::new();
+        let start_pos = Vec3::new(0.0, 0.0, 0.0);
+        let idx = system.add_particle(start_pos, 1.0);
+
+        // Set velocity manually
+        system.particles[idx].vel = Vec3::new(1.0, 0.0, 0.0);
+
+        // Step simulation
+        let dt = 1.0;
+        system.step(dt, 1);
+
+        // New position should be approx (1.0, 0.0, 0.0)
+        // Note: Logic is p.pos += p.vel * dt
+        let expected = Vec3::new(1.0, 0.0, 0.0);
+        let actual = system.particles[idx].pos;
+
+        assert!((actual.x - expected.x).abs() < 1e-5);
+    }
+
+    #[test]
+    fn test_distance_constraint() {
+        let mut system = PbdSystem::new();
+
+        // Two particles at distance 2.0
+        let p1 = system.add_particle(Vec3::new(0.0, 0.0, 0.0), 1.0);
+        let p2 = system.add_particle(Vec3::new(2.0, 0.0, 0.0), 1.0);
+
+        // Constrain them to distance 1.0
+        system.constraints.push(Constraint::Distance {
+            p1,
+            p2,
+            rest_length: 1.0,
+            stiffness: 1.0,
+        });
+
+        // Step
+        system.step(0.1, 10);
+
+        let dist = system.particles[p1].pos.distance(system.particles[p2].pos);
+        // They should have moved closer to 1.0
+        assert!(dist < 2.0);
+        assert!((dist - 1.0).abs() < 0.1);
+    }
+
+    #[test]
+    fn test_pin_constraint() {
+        let mut system = PbdSystem::new();
+        let pos = Vec3::new(5.0, 5.0, 0.0);
+        let p1 = system.add_particle(pos, 1.0);
+
+        // Pin it to (0,0,0)
+        system.add_pin_constraint(p1, Vec3::ZERO);
+
+        system.step(0.1, 5);
+
+        // Should be at (0,0,0)
+        assert_eq!(system.particles[p1].pos, Vec3::ZERO);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_invalid_indices_panic() {
+        let mut system = PbdSystem::new();
+        let p1 = system.add_particle(Vec3::ZERO, 1.0);
+
+        // Add constraint with invalid index
+        system.constraints.push(Constraint::Distance {
+            p1,
+            p2: 999,
+            rest_length: 1.0,
+            stiffness: 1.0,
+        });
+
+        system.step(0.1, 1);
+    }
+
+    #[test]
+    fn test_zero_mass() {
+        let mut system = PbdSystem::new();
+        let p1 = system.add_particle(Vec3::ZERO, 0.0); // Infinite mass
+
+        system.particles[p1].vel = Vec3::new(100.0, 0.0, 0.0);
+
+        system.step(1.0, 1);
+
+        // Should not move
+        assert_eq!(system.particles[p1].pos, Vec3::ZERO);
     }
 }
