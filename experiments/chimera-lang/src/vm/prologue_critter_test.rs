@@ -37,7 +37,7 @@ fn test_critter_persistence() {
                     // Check register
                     if let Some(val) = vm.prologue_state.registers.get(&(y, x)) {
                         if let Value::Str(state_str) = val {
-                            let new_critter = CritterState::parse(state_str).expect("Failed to parse critter state");
+                            let new_critter: CritterState = state_str.parse().expect("Failed to parse critter state");
                             assert!(new_critter.energy < 100, "Energy should decay");
                         } else {
                             panic!("Register value not a string");
@@ -135,7 +135,7 @@ fn test_critter_eat() {
     // Check energy increased (started 100, cost 1, gain 20 = 119)
     if let Some(val) = vm.prologue_state.registers.get(&(5, 6)) {
         if let Value::Str(s) = val {
-             let state = CritterState::parse(s).unwrap();
+             let state: CritterState = s.parse().unwrap();
              assert!(state.energy > 100, "Critter did not gain energy");
         }
     }
