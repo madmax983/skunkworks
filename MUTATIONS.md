@@ -1278,4 +1278,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Recursive visualization of a file system where rooms are directory nodes and walls are paved with Star Maps encoding data.
 - **Novel trait**: Stellar Recursion. Infinite zoom into a galaxy of steganographic data.
 - **Status**: experiments/codex-tardis
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Fixed genetic defect in `codex-void` (OFFSETS).
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Fixed genetic defect in `codex-void` (OFFSETS). Verified compilation and stability.
+
+### crumpled-memory
+- **Parents**: experiments/mnemosyne + experiments/origami-terrain
+- **Concept**: A digital memory cloth (Miura-ori mesh) where physical folding/unfolding creates mechanical stress that erodes the data.
+- **Novel trait**: Mechanical Erasure. The act of storing (folding) the memory destroys it.
+- **Status**: experiments/crumpled-memory
+- **Evaluation**: Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
