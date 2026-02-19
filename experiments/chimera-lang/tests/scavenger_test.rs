@@ -3,7 +3,7 @@
 mod tests {
     use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
-    use chimera_lang::vm::{ChimeraVM, Value};
+    use chimera_lang::vm::ChimeraVM;
     use std::fs::File;
     use std::io::Write;
 

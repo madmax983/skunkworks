@@ -152,6 +152,7 @@ pub enum ViewMode {
     #[cfg(feature = "nova")]
     Prologue,
     Sequencer,
+    Mutagen,
 }
 
 enum InputMode {
@@ -990,6 +991,11 @@ where
                 return;
             }
 
+            if let ViewMode::Mutagen = app_state.view_mode {
+                render_mutagen(f, vm, app_state);
+                return;
+            }
+
             render_genome_and_grid(f, vm, app_state);
 
             if vm.glitch_level > 0.01 {
@@ -1179,6 +1185,43 @@ where
                         _ => {}
                     }
                     continue;
+                }
+
+                if let ViewMode::Mutagen = app_state.view_mode {
+                    let mut handled = true;
+                    match key.code {
+                        KeyCode::Up => {
+                             app_state.selected_gene = app_state.selected_gene.saturating_sub(1);
+                        }
+                        KeyCode::Down => {
+                             if let Some(strand) = vm.dna.helix.strands.get(app_state.selected_strand) {
+                                 if app_state.selected_gene + 1 < strand.genes.len() {
+                                     app_state.selected_gene += 1;
+                                 }
+                             }
+                        }
+                        KeyCode::Left => {
+                             app_state.selected_strand = app_state.selected_strand.saturating_sub(1);
+                             app_state.selected_gene = 0;
+                        }
+                        KeyCode::Right => {
+                             if app_state.selected_strand + 1 < vm.dna.helix.strands.len() {
+                                 app_state.selected_strand += 1;
+                                 app_state.selected_gene = 0;
+                             }
+                        }
+                        KeyCode::Char('M') => {
+                             crate::vm::pandemonium::apply_mutation(vm, app_state.selected_strand, app_state.selected_gene);
+                             app_state.status_msg = "Mutated!".to_string();
+                             app_state.screen_shake = 1.0;
+                        }
+                        _ => {
+                            handled = false;
+                        }
+                    }
+                    if handled {
+                        continue;
+                    }
                 }
 
                 if let ViewMode::Sequencer = app_state.view_mode {
@@ -2462,7 +2505,8 @@ where
                             ViewMode::ChaosCartridge => ViewMode::Prologue,
                             #[cfg(feature = "nova")]
                             ViewMode::Prologue => ViewMode::Sequencer,
-                            ViewMode::Sequencer => ViewMode::Genome,
+                            ViewMode::Sequencer => ViewMode::Mutagen,
+                            ViewMode::Mutagen => ViewMode::Genome,
                         };
                     }
                     #[cfg(feature = "nova")]
@@ -11965,5 +12009,71 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     let info_widget =
         Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Logic Engine"));
+    f.render_widget(info_widget, chunks[1]);
+}
+
+fn render_mutagen(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    // Helix Canvas
+    let canvas = Canvas::default()
+        .block(Block::default().borders(Borders::ALL).title("Mutagen Chamber"))
+        .x_bounds([0.0, 20.0])
+        .y_bounds([0.0, 40.0])
+        .paint(|ctx| {
+             // Draw Helix
+             if let Some(strand) = vm.dna.helix.strands.get(app_state.selected_strand) {
+                 for (i, gene) in strand.genes.iter().enumerate() {
+                     let y = 38.0 - (i as f64 * 2.0); // Start from top
+                     if y < 0.0 { break; }
+
+                     let phase = (i as f64) * 0.5;
+                     let x1 = 10.0 + 5.0 * phase.sin();
+                     let x2 = 10.0 + 5.0 * (phase + std::f64::consts::PI).sin();
+
+                     // Draw Strands
+                     ctx.draw(&ratatui::widgets::canvas::Line {
+                         x1, y1: y, x2: x1, y2: y-2.0, color: Color::Cyan
+                     });
+                     ctx.draw(&ratatui::widgets::canvas::Line {
+                         x1: x2, y1: y, x2: x2, y2: y-2.0, color: Color::Magenta
+                     });
+
+                     // Draw Base Pair (Rung)
+                     let color = if i == app_state.selected_gene { Color::Yellow } else { Color::Green };
+                     ctx.draw(&ratatui::widgets::canvas::Line {
+                         x1, y1: y, x2: x2, y2: y, color
+                     });
+
+                     // Draw Label
+                     if i == app_state.selected_gene {
+                         ctx.print(x2 + 2.0, y, format!("<- {}", gene.op));
+                     }
+                 }
+             }
+        });
+    f.render_widget(canvas, chunks[0]);
+
+    // Info Panel
+    let mut info = Vec::new();
+    info.push(Line::from("MUTAGEN CONTROLS"));
+    info.push(Line::from(" "));
+    info.push(Line::from("Arrows: Navigate"));
+    info.push(Line::from("M: Mutate Gene (Randomize)"));
+    info.push(Line::from("Tab: Switch View"));
+
+    if let Some(strand) = vm.dna.helix.strands.get(app_state.selected_strand) {
+        info.push(Line::from(format!("Strand: {}", app_state.selected_strand)));
+        if let Some(gene) = strand.genes.get(app_state.selected_gene) {
+             info.push(Line::from(" "));
+             info.push(Line::from(format!("Selected Gene: {}", gene.op)));
+             info.push(Line::from(format!("Args: {:?}", gene.args)));
+        }
+    }
+
+    let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Genetic Sequencer"));
     f.render_widget(info_widget, chunks[1]);
 }

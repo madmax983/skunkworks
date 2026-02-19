@@ -20,7 +20,7 @@ fn test_virus_replication() {
     // Target at (5,6) is empty.
 
     vm.grid[5][4] = Value::Str("!".to_string());
-    vm.grid[4][4] = Value::Int(1); // Source for !
+    vm.grid[5][3] = Value::Int(1); // Source for ! (West)
     vm.grid[5][5] = Value::Str("v".to_string());
 
     exec_prologue_tick(&mut vm);
@@ -42,21 +42,13 @@ fn test_infect_injection() {
     // Infect "i" at (5,5)
 
     vm.grid[5][4] = Value::Str("!".to_string());
-    vm.grid[4][4] = Value::Int(1); // Source for !
+    vm.grid[5][3] = Value::Int(1); // Source for ! (West)
 
-    vm.grid[4][5] = Value::Str("P".to_string()); // Payload
-    vm.grid[6][5] = Value::Int(2); // Direction: South
+    vm.grid[4][5] = Value::Str("P".to_string()); // Payload (North)
+    vm.grid[6][5] = Value::Int(2); // Direction: South (South)
     vm.grid[5][5] = Value::Str("i".to_string());
 
-    // Target (South of i) is (7,5)
-    // However, direction 2 is South (1,0). So (y+1, x). Target is (6,5)?
-    // Wait. i is at (5,5). South neighbor is (6,5).
-    // Logic:
-    // i reads Payload from North (4,5).
-    // i reads Direction from South (6,5).
-    // i WRITES Payload to Neighbor in Direction.
-    // If Dir=2 (South), neighbor is (6,5).
-    // So it overwrites the Direction rune itself? Yes.
+    // Target (South of i) is (6,5). i overwrites Direction rune.
 
     exec_prologue_tick(&mut vm);
 
@@ -76,7 +68,7 @@ fn test_antibody_cleaning() {
     // Virus "v" at (5,6) (East neighbor)
 
     vm.grid[5][4] = Value::Str("!".to_string());
-    vm.grid[4][4] = Value::Int(1); // Source for !
+    vm.grid[5][3] = Value::Int(1); // Source for ! (West)
     vm.grid[5][5] = Value::Str("a".to_string());
     vm.grid[5][6] = Value::Str("v".to_string());
 

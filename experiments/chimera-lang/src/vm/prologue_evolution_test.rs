@@ -39,7 +39,7 @@ mod tests {
     fn test_length_rune() {
         let mut vm = setup_vm();
         // Setup: 1 (Idx) -> ! -> l
-        vm.grid[4][4] = Value::Int(1);
+        vm.grid[5][3] = Value::Int(1);
         vm.grid[5][4] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("l".to_string());
 
@@ -58,11 +58,11 @@ mod tests {
         //   !
         // 1 (Strand Idx) -> ! -> n
 
-        vm.grid[3][5] = Value::Int(1); // Gene 1 (Sub)
-        vm.grid[4][5] = Value::Str("!".to_string());
+        vm.grid[4][4] = Value::Int(1); // Gene 1 (Sub) at (4,4) West of !
+        vm.grid[4][5] = Value::Str("!".to_string()); // Source at (4,5) North of n
 
-        vm.grid[4][4] = Value::Int(1); // Strand 1
-        vm.grid[5][4] = Value::Str("!".to_string());
+        vm.grid[5][3] = Value::Int(1); // Strand 1 at (5,3) West of !
+        vm.grid[5][4] = Value::Str("!".to_string()); // Source at (5,4) West of n
 
         vm.grid[5][5] = Value::Str("n".to_string());
 
@@ -78,8 +78,8 @@ mod tests {
         let mut vm = setup_vm();
         // Setup: "strand temp { add }" -> ! -> G
         let code = "strand temp { add }";
-        vm.grid[3][5] = Value::Str(code.to_string());
-        vm.grid[4][5] = Value::Str("!".to_string());
+        vm.grid[4][4] = Value::Str(code.to_string()); // West of !
+        vm.grid[4][5] = Value::Str("!".to_string()); // Source at (4,5) North of G
         vm.grid[5][5] = Value::Str("G".to_string());
 
         exec_prologue_tick(&mut vm);
@@ -98,7 +98,7 @@ mod tests {
     fn test_evolve_rune() {
         let mut vm = setup_vm();
         // Setup: 1 (Idx) -> ! -> e
-        vm.grid[4][4] = Value::Int(1);
+        vm.grid[5][3] = Value::Int(1);
         vm.grid[5][4] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("e".to_string());
 

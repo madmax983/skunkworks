@@ -18,7 +18,7 @@
 //!
 //! | Category | Runes | Description |
 //! |---|---|---|
-//! | **Source/Sink** | `!` | **Source**: Emits value to North. |
+//! | **Source/Sink** | `!` | **Source**: Reads West, Emits to Self. |
 //! | | `?` | **Sink**: Reads from South. Logs or Executes Gene. |
 //! | | `$` | **Scribe**: Reads West (Val), Writes South. |
 //! | **Wires** | `~` | **Wire**: Conducts signal in all directions. |
@@ -869,7 +869,7 @@ mod tests {
         vm.prologue_state.active = true;
 
         // Setup Circuit: 42 -> ! -> ~ -> ?
-        vm.grid[4][5] = Value::Int(42);
+        vm.grid[5][4] = Value::Int(42);
         vm.grid[5][5] = Value::Str("!".to_string());
         vm.grid[6][5] = Value::Str("~".to_string());
         vm.grid[7][5] = Value::Str("?".to_string());

@@ -1,6 +1,5 @@
 use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use chimera_lang::opcode::OpCode;
-use chimera_lang::vm::Value;
 use chimera_lang::vm::{ChimeraVM, MAX_STRANDS};
 
 #[test]

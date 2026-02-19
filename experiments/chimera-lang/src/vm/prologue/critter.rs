@@ -1,4 +1,4 @@
-use crate::vm::{Value, GRID_SIZE};
+use crate::vm::Value;
 use rand::Rng;
 use super::normalize_coords;
 

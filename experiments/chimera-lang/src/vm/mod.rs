@@ -5315,7 +5315,7 @@ mod sentry_value_test {
 #[cfg(feature = "nova")]
 mod sentry_ribosome_tests {
     use super::*;
-    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
+    use crate::ast::{Dna, Helix, Strand};
     use crate::vm::nova::OrganelleType;
 
     #[test]

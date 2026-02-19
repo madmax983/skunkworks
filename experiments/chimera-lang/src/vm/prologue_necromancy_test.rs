@@ -33,7 +33,7 @@ fn test_necromancy_bury_exhume() {
 
     // 2. Setup Bury Circuit: 1 -> ! -> †
     // Input West: 1 (Index of strand)
-    vm.grid[5][4] = Value::Int(1);
+    vm.grid[6][3] = Value::Int(1);
     vm.grid[6][4] = Value::Str("!".to_string());
     vm.grid[6][5] = Value::Str("†".to_string());
 
@@ -53,13 +53,13 @@ fn test_necromancy_bury_exhume() {
     }
 
     // Clean up Bury circuit to prevent re-execution
-    vm.grid[5][4] = Value::Int(0);
+    vm.grid[6][3] = Value::Int(0);
     vm.grid[6][4] = Value::Int(0);
     vm.grid[6][5] = Value::Int(0);
 
     // 4. Setup Exhume Circuit: 1 -> ! -> ‡
     // Input West: Any trigger (e.g., 1)
-    vm.grid[8][4] = Value::Int(1);
+    vm.grid[9][3] = Value::Int(1);
     vm.grid[9][4] = Value::Str("!".to_string());
     vm.grid[9][5] = Value::Str("‡".to_string());
 
@@ -99,7 +99,7 @@ fn test_necromancy_seance() {
     vm.graveyard.push(strand);
 
     // 2. Setup Seance Circuit: 1 -> ! -> Ψ
-    vm.grid[5][4] = Value::Int(1);
+    vm.grid[6][3] = Value::Int(1);
     vm.grid[6][4] = Value::Str("!".to_string());
     vm.grid[6][5] = Value::Str("Ψ".to_string());
 

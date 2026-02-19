@@ -17,8 +17,8 @@ mod tests {
     fn test_rune_mirror_back() {
         let mut vm = setup_vm();
         // Setup: 42 -> ! -> \
-        // 4,4: 42 (Value)
-        // 5,4: ! (Source, reads North 4,4)
+        // 5,3: 42 (Value)
+        // 5,4: ! (Source, reads West 5,3)
         // 5,5: \ (Mirror, reads West 5,4, should reflect South)
 
         // \ reflects:
@@ -27,7 +27,7 @@ mod tests {
         // Input East -> Output North
         // Input South -> Output West
 
-        vm.grid[4][4] = Value::Int(42);
+        vm.grid[5][3] = Value::Int(42);
         vm.grid[5][4] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("\\".to_string());
 
@@ -45,7 +45,7 @@ mod tests {
     fn test_rune_mirror_forward() {
         let mut vm = setup_vm();
         // Setup: 42 -> ! -> /
-        // 4,4: 42
+        // 5,3: 42
         // 5,4: !
         // 5,5: / (Mirror, reads West, reflects North)
 
@@ -55,7 +55,7 @@ mod tests {
         // Input East -> Output South
         // Input South -> Output East
 
-        vm.grid[4][4] = Value::Int(42);
+        vm.grid[5][3] = Value::Int(42);
         vm.grid[5][4] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("/".to_string());
 
@@ -71,11 +71,11 @@ mod tests {
     fn test_rune_beam_horizontal() {
         let mut vm = setup_vm();
         // Setup: 42 -> ! -> -
-        // 4,4: 42
+        // 5,3: 42
         // 5,4: !
         // 5,5: - (Beam, reads West, passes East)
 
-        vm.grid[4][4] = Value::Int(42);
+        vm.grid[5][3] = Value::Int(42);
         vm.grid[5][4] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("-".to_string());
 
@@ -86,26 +86,20 @@ mod tests {
 
         // Verify it BLOCKS North input
         // Setup: 99 -> ! -> (North of -)
-        // 4,5: 99
+        // 4,4: 99
+        // 4,5: ! (Reads 4,4 -> Emits to 4,5)
         // 5,5: - (Already there)
         // 6,5: ? (South of -)
 
         // Reset grid for part 2
         let mut vm2 = setup_vm();
-        vm2.grid[3][5] = Value::Int(99);
+        vm2.grid[4][4] = Value::Int(99);
         vm2.grid[4][5] = Value::Str("!".to_string());
         vm2.grid[5][5] = Value::Str("-".to_string());
 
         exec_prologue_tick(&mut vm2);
 
         // Signal from North (4,5) should NOT pass to South (6,5) or East/West
-        // Note: The signal might exist at 4,5 (from source), but the rune at 5,5 (-)
-        // should only accept West/East inputs.
-        // If 5,5 reads North, it ignores it.
-        // So 5,5 should remain None if only North input is present?
-        // Or it lights up but outputs nothing?
-        // Typically runes light up if they activate.
-
         assert!(vm2.prologue_state.signal_grid[6][5].is_none());
         assert!(vm2.prologue_state.signal_grid[5][6].is_none());
     }

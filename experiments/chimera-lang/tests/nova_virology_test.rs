@@ -5,7 +5,7 @@ mod tests {
     use chimera_lang::vm::memetics;
     use chimera_lang::vm::nova::Organelle;
     use chimera_lang::vm::nova::OrganelleType;
-    use chimera_lang::vm::{ChimeraVM, Value};
+    use chimera_lang::vm::ChimeraVM;
 
     fn make_vm() -> ChimeraVM {
         let genes = vec![Gene {

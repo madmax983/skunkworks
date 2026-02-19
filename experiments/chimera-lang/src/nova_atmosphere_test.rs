@@ -49,7 +49,7 @@ mod tests {
         ];
         let mut vm = make_vm(genes);
         vm.energy = 100; // Prevent starvation
-        let (cy, cx) = vm.context_loc;
+        let (_cy, _cx) = vm.context_loc;
 
         vm.step(); // push 5
         vm.step(); // chronostasis

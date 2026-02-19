@@ -36,7 +36,7 @@ mod tests {
 
         let mut changed = false;
         let mut found_elektra = false;
-        let mut found_chaos = false;
+        let _found_chaos = false;
 
         for gene in &vm.dna.helix.strands[0].genes {
             if gene.op != OpCode::Push {

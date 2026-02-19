@@ -17,11 +17,11 @@ mod tests {
     fn test_rune_jumper() {
         let mut vm = setup_vm();
         // Setup: 42 -> ! -> J -> ?
-        // 4,4: 42 (Value)
-        // 5,4: ! (Source, reads North 4,4, becomes signal)
+        // 5,3: 42 (Value)
+        // 5,4: ! (Source, reads West 5,3, becomes signal at 5,4)
         // 5,5: J (Jumper, reads West 5,4, writes East 5,6)
 
-        vm.grid[4][4] = Value::Int(42);
+        vm.grid[5][3] = Value::Int(42);
         vm.grid[5][4] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("J".to_string());
 
@@ -37,13 +37,13 @@ mod tests {
         let mut vm = setup_vm();
         // Setup: 1 -> ! -> (
         // Operands: A (North of (), 4,5), B (South of (), 6,5)
-        // 4,4: 1 (Trigger Signal)
+        // 5,3: 1 (Trigger Signal)
         // 5,4: !
         // 5,5: (
         // 4,5: 10
         // 6,5: 20
 
-        vm.grid[4][4] = Value::Int(1);
+        vm.grid[5][3] = Value::Int(1);
         vm.grid[5][4] = Value::Str("!".to_string());
 
         vm.grid[4][5] = Value::Int(10);
@@ -61,13 +61,16 @@ mod tests {
     fn test_rune_clock() {
         let mut vm = setup_vm();
         // Setup: 3 -> ! -> C
-        // 4,4: 3 (Modulus)
+        // 5,3: 3 (Modulus)
         // 5,4: !
         // 5,5: C
 
-        vm.grid[4][4] = Value::Int(3);
+        vm.grid[5][3] = Value::Int(3);
         vm.grid[5][4] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("C".to_string());
+
+        // Fix: C is also a Critter. Set it to static state so it doesn't move away.
+        vm.prologue_state.registers.insert((5, 5), Value::Str("C:100:.:0".to_string()));
 
         vm.tick_counter = 10;
         exec_prologue_tick(&mut vm);
@@ -84,11 +87,11 @@ mod tests {
     fn test_rune_directional() {
         let mut vm = setup_vm();
         // Setup: 99 -> ! -> E
-        // 4,4: 99
+        // 5,3: 99
         // 5,4: !
         // 5,5: E (East Emitter)
 
-        vm.grid[4][4] = Value::Int(99);
+        vm.grid[5][3] = Value::Int(99);
         vm.grid[5][4] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("E".to_string());
 

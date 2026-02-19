@@ -15,10 +15,10 @@ fn setup_vm() -> ChimeraVM {
 fn test_scribe_rune() {
     let mut vm = setup_vm();
     // Setup: 42 -> ! -> $
-    // ! at 6,4 (reading 5,4).
+    // ! at 6,4 (reading 6,3).
     // $ at 6,5 (reading West 6,4).
     // Scribe should write to South (7,5).
-    vm.grid[5][4] = Value::Int(42);
+    vm.grid[6][3] = Value::Int(42);
     vm.grid[6][4] = Value::Str("!".to_string());
     vm.grid[6][5] = Value::Str("$".to_string());
 
@@ -36,7 +36,7 @@ fn test_jump_rune() {
     // ^ at 6,5 (Reads West 6,4, Emits East 6,6).
     // ~ at 6,6.
 
-    vm.grid[5][4] = Value::Int(42);
+    vm.grid[6][3] = Value::Int(42);
     vm.grid[6][4] = Value::Str("!".to_string());
     vm.grid[6][5] = Value::Str("^".to_string());
     vm.grid[6][6] = Value::Str("~".to_string());
@@ -55,15 +55,16 @@ fn test_jump_rune() {
 fn test_modulo_rune() {
     let mut vm = setup_vm();
     // % : West % East -> Self
-    // West Input: (6,4) -> 10
-    // East Input: (6,6) -> 3
+    // West Input: (6,3) -> 10
+    // East Input: (5,5) -> ! -> ~ -> (6,6) -> 3
     // % at (6,5)
 
-    vm.grid[5][4] = Value::Int(10);
-    vm.grid[6][4] = Value::Str("!".to_string()); // Source 10
+    vm.grid[6][3] = Value::Int(10);
+    vm.grid[6][4] = Value::Str("!".to_string()); // Source 10 at 6,4
 
-    vm.grid[5][6] = Value::Int(3);
-    vm.grid[6][6] = Value::Str("!".to_string()); // Source 3
+    vm.grid[5][5] = Value::Int(3);
+    vm.grid[5][6] = Value::Str("!".to_string()); // Source 3 at 5,6
+    vm.grid[6][6] = Value::Str("~".to_string()); // Wire at 6,6 (reads North 5,6)
 
     vm.grid[6][5] = Value::Str("%".to_string());
 
@@ -85,7 +86,7 @@ fn test_mutate_rune() {
     // ! at 6,4. M at 6,5.
     // Write random to 7,5.
 
-    vm.grid[5][4] = Value::Int(42);
+    vm.grid[6][3] = Value::Int(42);
     vm.grid[6][4] = Value::Str("!".to_string());
     vm.grid[6][5] = Value::Str("M".to_string());
     vm.grid[7][5] = Value::Int(999); // Initial value
@@ -108,7 +109,7 @@ fn test_organelle_rune() {
     // O reads West, Spawns Agent South.
     // ! -> O
 
-    vm.grid[5][4] = Value::Int(1);
+    vm.grid[6][3] = Value::Int(1);
     vm.grid[6][4] = Value::Str("!".to_string());
     vm.grid[6][5] = Value::Str("O".to_string());
     vm.grid[7][5] = Value::Int(0);
@@ -135,11 +136,12 @@ fn test_arithmetic_runes() {
     // Input East: 20
     // A at 6,5.
     // West: 6,4. East: 6,6.
-    vm.grid[5][4] = Value::Int(10);
+    vm.grid[6][3] = Value::Int(10);
     vm.grid[6][4] = Value::Str("!".to_string());
 
-    vm.grid[5][6] = Value::Int(20);
-    vm.grid[6][6] = Value::Str("!".to_string());
+    vm.grid[5][5] = Value::Int(20);
+    vm.grid[5][6] = Value::Str("!".to_string());
+    vm.grid[6][6] = Value::Str("~".to_string());
 
     vm.grid[6][5] = Value::Str("A".to_string());
 
@@ -156,10 +158,13 @@ fn test_arithmetic_runes() {
 fn test_comparison_runes() {
     let mut vm = setup_vm();
     // 10 = 10 -> 1
-    vm.grid[5][4] = Value::Int(10);
+    vm.grid[6][3] = Value::Int(10);
     vm.grid[6][4] = Value::Str("!".to_string());
-    vm.grid[5][6] = Value::Int(10);
-    vm.grid[6][6] = Value::Str("!".to_string());
+
+    vm.grid[5][5] = Value::Int(10);
+    vm.grid[5][6] = Value::Str("!".to_string());
+    vm.grid[6][6] = Value::Str("~".to_string());
+
     vm.grid[6][5] = Value::Str("=".to_string());
 
     exec_prologue_tick(&mut vm);
@@ -178,11 +183,12 @@ fn test_if_rune() {
     // North (Val): 42
     // I at 6,5
     // West Input: 6,4.
-    vm.grid[5][4] = Value::Int(1);
+    vm.grid[6][3] = Value::Int(1);
     vm.grid[6][4] = Value::Str("!".to_string());
 
     // North Input: 5,5.
-    vm.grid[4][5] = Value::Int(42);
+    // ! at 5,5 reading 5,4.
+    vm.grid[5][4] = Value::Int(42);
     vm.grid[5][5] = Value::Str("!".to_string());
 
     vm.grid[6][5] = Value::Str("I".to_string());
@@ -202,11 +208,12 @@ fn test_ether_runes() {
     // Tick 1: Yell 42 to Channel 1
     // Y at 6,5.
     // West (Val): 42. East (Chan): 1.
-    vm.grid[5][4] = Value::Int(42);
+    vm.grid[6][3] = Value::Int(42);
     vm.grid[6][4] = Value::Str("!".to_string()); // Source 42 at 6,4 (West of Y)
 
-    vm.grid[5][6] = Value::Int(1);
-    vm.grid[6][6] = Value::Str("!".to_string()); // Source 1 at 6,6 (East of Y)
+    vm.grid[5][5] = Value::Int(1);
+    vm.grid[5][6] = Value::Str("!".to_string()); // Source 1 at 5,6
+    vm.grid[6][6] = Value::Str("~".to_string()); // Wire at 6,6 (East of Y)
 
     vm.grid[6][5] = Value::Str("Y".to_string());
 
@@ -221,7 +228,7 @@ fn test_ether_runes() {
 
     // Tick 2: Listen from Channel 1
     // West (Chan): 1.
-    vm.grid[7][4] = Value::Int(1);
+    vm.grid[8][3] = Value::Int(1);
     vm.grid[8][4] = Value::Str("!".to_string()); // Source 1 at 8,4 (West of L)
     vm.grid[8][5] = Value::Str("L".to_string());
 

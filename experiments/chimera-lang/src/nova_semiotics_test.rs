@@ -111,7 +111,7 @@ mod tests {
         }
 
         assert_eq!(vm.stack.len(), 1);
-        if let Value::Junction(t, vals) = &vm.stack[0] {
+        if let Value::Junction(_t, vals) = &vm.stack[0] {
             assert_eq!(vals.len(), 3);
             for v in vals {
                 assert!(matches!(v, Value::Symbol(_)));

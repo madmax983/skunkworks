@@ -1,7 +1,7 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod evolution_tests {
-    use chimera_lang::ast::{Dna, Helix, JunctionType, Nucleotide};
+    use chimera_lang::ast::{Dna, Helix, JunctionType};
     use chimera_lang::vm::nova::{Organelle, OrganelleType};
     use chimera_lang::vm::{ChimeraVM, Value};
 
@@ -18,7 +18,7 @@ mod evolution_tests {
         let mut vm = make_vm();
         vm.knowledge_base.clear();
 
-        let mut savant = Organelle {
+        let savant = Organelle {
             stack: Vec::new(),
             ip: (0, 0),
             context_loc: (5, 5),
@@ -61,7 +61,7 @@ mod evolution_tests {
         let mut vm = make_vm();
         vm.knowledge_base.clear();
 
-        let mut savant = Organelle {
+        let savant = Organelle {
             stack: Vec::new(),
             ip: (0, 0),
             context_loc: (5, 5),
@@ -111,7 +111,7 @@ mod evolution_tests {
         let mut vm = make_vm();
         vm.knowledge_base.clear();
 
-        let mut savant = Organelle {
+        let savant = Organelle {
             stack: Vec::new(),
             ip: (0, 0),
             context_loc: (5, 5),

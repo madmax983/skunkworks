@@ -6,7 +6,7 @@ mod tests {
     use crate::vm::nova_sigil::Sigil;
     use crate::vm::nova_signals::process_signals;
     use crate::vm::{ChimeraVM, Value};
-    use std::collections::HashMap;
+
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {

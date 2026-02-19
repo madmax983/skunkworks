@@ -17,7 +17,7 @@ mod tests {
     fn test_quantum_superposition() {
         let mut vm = setup_vm();
         // Setup: 10 -> ! -> q
-        vm.grid[4][4] = Value::Int(10);
+        vm.grid[5][3] = Value::Int(10);
         vm.grid[5][4] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("q".to_string());
 
@@ -42,7 +42,7 @@ mod tests {
         let mut vm = setup_vm();
         // Setup: Superposition -> ! -> m
         let sup = Value::Superposition(vec![(Value::Int(1), 1.0)]); // 100% prob of 1
-        vm.grid[4][4] = sup;
+        vm.grid[5][3] = sup;
         vm.grid[5][4] = Value::Str("!".to_string());
         vm.grid[5][5] = Value::Str("m".to_string());
 
@@ -57,28 +57,26 @@ mod tests {
     fn test_teleportation() {
         let mut vm = setup_vm();
         // Setup Sender: 42 -> ! -> { <- 1 (Channel)
-        // 4,4: 42
-        // 5,4: !
+        // 5,3: 42
+        // 5,4: ! (Value Src)
         // 5,5: {
-        // 4,5: 1 (Channel)
-        // 5,5 needs North signal. So 4,5 needs to be signal source.
-        // 3,5: 1
-        // 4,5: !
+        // 4,4: 1
+        // 4,5: ! (Channel Src, emits to 4,5 which is North of {)
 
-        vm.grid[4][4] = Value::Int(42);
+        vm.grid[5][3] = Value::Int(42);
         vm.grid[5][4] = Value::Str("!".to_string());
 
-        vm.grid[3][5] = Value::Int(1);
+        vm.grid[4][4] = Value::Int(1);
         vm.grid[4][5] = Value::Str("!".to_string());
 
         vm.grid[5][5] = Value::Str("{".to_string());
 
         // Setup Receiver: 1 (Channel) -> }
-        // 7,8: 1
-        // 8,8: !
+        // 8,7: 1
+        // 8,8: ! (Channel Src, emits to 8,8 which is North of })
         // 9,8: }
 
-        vm.grid[7][8] = Value::Int(1);
+        vm.grid[8][7] = Value::Int(1);
         vm.grid[8][8] = Value::Str("!".to_string());
         vm.grid[9][8] = Value::Str("}".to_string());
 
@@ -92,21 +90,7 @@ mod tests {
             Some(&Value::Int(42))
         );
 
-        // Tick 2: Receive
-        // Note: Receiver logic executes in same tick if order permits, but here we check across ticks to be safe.
-        // Actually, if we just ran tick 1, signals propagated.
-        // Did } receive in Tick 1?
-        // } is at 9,8. It needs North signal from 8,8.
-        // 8,8 is !. It reads 7,8 (Int 1).
-        // ! emits to signal grid at start of tick.
-        // So } should read it in Tick 1.
-        // And if teleport_channels was updated in same tick (by { at 5,5), } might read it if processed after?
-        // Current logic iterates propagation.
-        // But `teleport_channels` is updated instantly in `apply_teleport_runes`.
-        // So yes, it should work in one tick if iteration order hits { then }.
-        // Or multiple iterations of propagation.
-        // Let's check result of Tick 1.
-
+        // Tick 2: Receive (should happen in same tick if order permits)
         assert_eq!(vm.prologue_state.signal_grid[9][8], Some(Value::Int(42)));
     }
 }
