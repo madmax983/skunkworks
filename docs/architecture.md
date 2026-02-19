@@ -1052,6 +1052,88 @@ sequenceDiagram
     VM->>VM: process_agents()
 ```
 
+### Prologue Ecosystem Expansion (ADR 043)
+
+The Prologue system has been expanded to include Artificial Life, Environmental Physics, and Chaos Theory.
+
+#### Module Hierarchy
+
+```mermaid
+classDiagram
+    direction TB
+    class ChimeraVM {
+        +PrologueState prologue_state
+        +Vec~Vec~i64~~ light_grid
+        +Vec~Vec~RGB~~ light_color_grid
+        +exec_prologue_tick()
+    }
+
+    class PrologueState {
+        +bool active
+        +HashSet runes
+        +Vec~PrologueAgent~ agents
+        +HashMap~Coord, Value~ registers
+    }
+
+    class CoreModules {
+        <<Logic & Math>>
+        +topology
+        +logic
+        +math
+        +io
+        +list
+        +construct
+    }
+
+    class BioModules {
+        <<Life & Chaos>>
+        +critter
+        +evolution
+        +virology
+        +biolum
+        +chaos
+        +necromancy
+    }
+
+    ChimeraVM *-- PrologueState : Owns
+    ChimeraVM ..> CoreModules : Delegates
+    ChimeraVM ..> BioModules : Delegates
+```
+
+#### Critter Lifecycle
+
+Autonomous agents (`C`) persist state (Energy, Genes) in `PrologueState.registers` and interact with the grid.
+
+```mermaid
+sequenceDiagram
+    participant VM
+    participant Agent as Agent (C)
+    participant Grid
+    participant Registers
+
+    Note over VM: process_agents()
+    VM->>Registers: get(x, y)
+    Registers-->>Agent: CritterState(Energy, Genes)
+
+    Agent->>Agent: Parse Genes -> Direction
+    Agent->>Agent: Decrement Energy
+
+    alt Energy <= 0
+        Agent->>Grid: Die (Remove 'C')
+        Agent->>Registers: Clear State
+    else Alive
+        Agent->>Grid: Check Target Cell
+        alt Target is Empty
+            Agent->>Grid: Move (Clear Old, Set New)
+            Agent->>Registers: Move State
+        else Target is Critter
+            Agent->>Agent: Breed(Self, Target)
+            Agent->>Grid: Spawn Child
+            Agent->>Registers: Init Child State
+        end
+    end
+```
+
 ### Experiment: Tectonic Git (ADR 023)
 
 **Tectonic Git** visualizes the repository history as geological strata, using code analysis to determine stability.
