@@ -340,3 +340,8 @@
 ### [Concentration Level: EVAPORATING] - Location: experiments/wasm-runes
 - **Status:** Condemned ☠️.
 - **Note:** Documentation Void. Naming Collision. Skeletal Implementation.
+
+[SPLICE SURGEON]
+  The recombination is complete. The market's chaos and the quantum garden's order have been spliced.
+  Result: `quantum-rogue`. A dungeon where you can entangle your enemies.
+  The probability of fun is |1>.
