@@ -337,11 +337,15 @@
 - **Status**: The paper is folding. The words are mutating upon contact.
 - **Note**: Cross: `manifold-origami` + `biomorphic-lexicon`. Topological Linguistics active.
 
-### [Concentration Level: EVAPORATING] - Location: experiments/wasm-runes
-- **Status:** Condemned ☠️.
-- **Note:** Documentation Void. Naming Collision. Skeletal Implementation.
+### [Concentration Level: EVAPORATING] - Location: graveyard/wasm-runes
+- **Status:** Executed.
+- **Note:** Documentation Void. Naming Collision. Skeletal Implementation. Biomass returned to the void.
 
 [SPLICE SURGEON]
   The recombination is complete. The market's chaos and the quantum garden's order have been spliced.
   Result: `quantum-rogue`. A dungeon where you can entangle your enemies.
   The probability of fun is |1>.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/neural-beatbox
+- **Status:** Condemned ☠️.
+- **Note:** Documentation Void. Redundant with `neuro-beats`. Sketch Quality.
