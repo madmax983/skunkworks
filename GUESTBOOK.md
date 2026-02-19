@@ -331,3 +331,8 @@
 - **Scent Origin:** Genesis (The Origamist) ⚛️🦢
 - **Status:** The mesh is folding. The creases are stressed. PBD solver operational.
 - **Note:** Moonshot: Rigid Origami + Deployment Simulation. Miura-ori mechanics validated.
+
+### [Concentration Level: FRESH TRAIL] - Location: experiments/origami-lexicon
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: The paper is folding. The words are mutating upon contact.
+- **Note**: Cross: `manifold-origami` + `biomorphic-lexicon`. Topological Linguistics active.
