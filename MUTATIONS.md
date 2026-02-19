@@ -1328,3 +1328,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Topological Linguistics. Meaning is created by the spatial folding of the medium.
 - **Status**: experiments/origami-lexicon
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### quantum-rogue
+- **Parents**: experiments/market-rogue + experiments/quantum-garden
+- **Concept**: A Roguelike where entities (items/enemies) are qubits in a quantum system.
+- **Novel trait**: Dynamic Entanglement. Merging and splitting quantum systems based on player interaction (CNOT gates).
+- **Status**: experiments/quantum-rogue
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
