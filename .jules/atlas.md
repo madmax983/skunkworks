@@ -89,3 +89,9 @@
 **Blueprint:** Created `crates/origami` to centralize `MiuraParams` and `MiuraOri`. Implemented `Orientation::Horizontal` (for visualizer) and `Orientation::Vertical` (for rigid/simulation) strategies. Refactored all 3 experiments to use the shared crate.
 **Stability:** Centralized geometry logic, ensured edge length preservation (rigidity) in both orientations via tests.
 **Verification:** Verified with `cargo check` and `cargo test`. Added unit tests for flat/folded states and edge length constraints.
+
+## [Neuro-Sim Extraction]
+**Tangle:** The Copy-Paste - `experiments/neuro-fold`, `experiments/neuro-cipher`, and `experiments/origami-swarm` all implemented identical `IzhikevichNeuron`, `Network` (SNN), and `PbdSystem` (Position Based Dynamics) logic.
+**Blueprint:** Created `crates/physics-pbd` for PBD logic and `crates/neuro-sim` for SNN logic (wrapping `synaptic-physics`). Refactored all 3 experiments to use these shared crates.
+**Stability:** Centralized physics and neural logic. Enforced `Clone` on `PbdSystem` to satisfy requirements.
+**Verification:** Verified with `cargo check` for all affected crates and `cargo test` for `neuro-sim`.

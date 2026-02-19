@@ -2,13 +2,10 @@ use ::rand::Rng;
 use macroquad::prelude::*;
 
 mod glyph;
-mod network;
-mod neuron;
-mod pbd;
 mod starmap;
 
-use network::Network;
-use pbd::{Constraint, PbdSystem};
+use neuro_sim::Network;
+use physics_pbd::{Constraint, PbdSystem};
 use starmap::StarMap;
 
 const MESH_ROWS: usize = 8;

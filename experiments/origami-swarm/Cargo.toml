@@ -7,3 +7,6 @@ edition = "2021"
 macroquad = "0.4"
 rand = "0.8"
 rayon = "1.10"
+physics-pbd = { path = "../../crates/physics-pbd" }
+neuro-sim = { path = "../../crates/neuro-sim" }
+synaptic-physics = { path = "../../crates/synaptic-physics" }
