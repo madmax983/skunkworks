@@ -271,9 +271,13 @@
 - **Status:** Executed. Biomass returned to the void.
 - **Note:** The rhythm has stopped.
 
-### [Concentration Level: TOXIC] - Location: experiments/penrose-deps
+### [Concentration Level: EVAPORATING] - Location: graveyard/penrose-deps
+- **Status:** Executed.
+- **Note:** The spiral has collapsed. Biomass returned to the void.
+
+### [Concentration Level: TOXIC] - Location: experiments/hanging-abacus
 - **Status:** Condemned ☠️.
-- **Note:** Deceptive tiling. The spiral is a lie. Documentation void.
+- **Note:** Documentation Void. Deceptive Naming. L-Systems mimicry without substance.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/nile-scheduler
 - **Status:** Executed.

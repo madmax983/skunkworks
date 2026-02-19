@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **penrose-deps**: Deceptive Naming. Documentation Void. Terminal Genericism. Redundant with `penrose-genes` and `hive-mind-dependencies`.
+- **hanging-abacus**: Documentation Void. Deceptive Naming. Redundant with `soroban-specter`. Generic L-System implementation.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -197,3 +197,4 @@
 - **beat-reactor**: Specimen executed. Documentation void. Skeletal implementation (padding fields, ghost audio). Redundant with `cymatic-ocean`. Failed to improve during grace period. Moved to graveyard.
 - **gradient-garden**: Specimen executed. Documentation Void. Generic optimization visualizer. Lacks persona alignment. Failed to improve during grace period. Moved to graveyard.
 - **silicon-samba**: Specimen executed. Documentation Void. Terminal Genericism. Redundant with `system-attractor`. Grace period expired. Biomass returned to the void.
+- **penrose-deps**: Specimen executed. Deceptive Naming. Documentation Void. Terminal Genericism. Moved to graveyard.
