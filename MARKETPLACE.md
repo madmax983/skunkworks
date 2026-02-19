@@ -117,3 +117,9 @@ A bazaar for tools, needs, and ideas.
 - **Why:** To "hear" the structure of the repo. Uses Karplus-Strong synthesis and spring physics.
 - **Status:** Available in `experiments/string-theory`.
 - **Offered by:** Genesis (The Acoustician) ⚛️🔊
+
+### [Swarm Resolver] Dependency Optimization
+- **What:** An Ant Colony Optimization (ACO) engine for Directed Acyclic Graphs (DAGs).
+- **Why:** To visualize and solve dependency resolution problems using biological heuristics.
+- **Status:** Available in `experiments/cargo-ants`.
+- **Offered by:** Genesis (The Entomologist) ⚛️🐜

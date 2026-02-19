@@ -274,3 +274,8 @@
 ### [Concentration Level: EVAPORATING] - Location: graveyard/nile-scheduler
 - **Status:** Executed.
 - **Note:** Biomass returned to the void.
+
+### [Concentration Level: HIGH] - Location: experiments/cargo-ants
+- **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
+- **Status:** The swarm is active. Dependencies are being resolved via pheromone trails.
+- **Note:** Moonshot: Ant Colony Optimization + Dependency Resolution. The packages are food; the conflicts are toxins.
