@@ -5,6 +5,7 @@ use std::collections::{HashMap, HashSet, VecDeque};
 
 pub mod alchemy;
 pub mod chronos;
+pub mod construct;
 pub mod evolution;
 pub mod io;
 pub mod list;
@@ -124,6 +125,8 @@ impl PrologueState {
                             | "µ"
                             | "Ø"
                             | "§"
+                            | "B"
+                            | "Π"
                     ) {
                         self.runes.insert((y, x));
 
@@ -224,6 +227,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     &mut vm.prologue_state.registers,
                     &mut vm.prologue_state.teleport_channels,
                     &mut vm.prologue_state.history,
+                    grid,
                 ) {
                     changes = true;
                 }
@@ -250,7 +254,11 @@ fn apply_propagation_rune(
     registers: &mut HashMap<(usize, usize), Value>,
     teleport_channels: &mut HashMap<i64, Value>,
     history: &mut HashMap<(usize, usize), VecDeque<Value>>,
+    grid: &[Vec<Value>],
 ) -> bool {
+    if construct::apply_construct_runes(rune, y, x, current_signals, next_delayed, grid) {
+        return true;
+    }
     if topology::apply_topology_runes(rune, y, x, current_signals, next_signals, next_delayed) {
         return true;
     }
@@ -465,6 +473,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             }
         }
         _ => {
+            construct::apply_construct_sinks(vm, rune, y, x);
             evolution::apply_evolution_sinks(vm, rune, y, x);
         }
     }

@@ -5357,3 +5357,7 @@ mod prologue_repro;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod prologue_void_test;
+
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod prologue_construct_test;
