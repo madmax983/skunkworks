@@ -30,7 +30,7 @@
 //!
 //! // 2. Initialize the audio model
 //! // Width: 100, Height: 100
-//! let mut model = AudioModel::new(100, 100, cmd_rx, snap_tx);
+//! let mut model = AudioModel::new(100, 100, cmd_rx, snap_tx, None);
 //!
 //! // 3. Send a command to pluck the grid at (50, 50)
 //! cmd_tx.send(AudioCommand::Pluck { x: 50, y: 50, strength: 0.5 }).unwrap();

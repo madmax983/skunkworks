@@ -126,6 +126,8 @@ pub struct AudioModel {
     pub command_rx: Receiver<AudioCommand>,
     /// Sender for simulation snapshots (for visualization).
     pub snapshot_tx: Sender<AudioSnapshot>,
+    /// Optional sender for raw audio samples (for analysis/recording).
+    pub recording_tx: Option<Sender<Vec<f32>>>,
     /// Counter for generated samples, used for snapshot timing.
     pub sample_counter: usize,
     /// Active continuous oscillators.
@@ -143,11 +145,13 @@ impl AudioModel {
     /// * `height` - The height of the simulation grid.
     /// * `command_rx` - The channel receiver for `AudioCommand`s.
     /// * `snapshot_tx` - The channel sender for grid snapshots (visualization).
+    /// * `recording_tx` - Optional channel to stream raw audio samples.
     pub fn new(
         width: usize,
         height: usize,
         command_rx: Receiver<AudioCommand>,
         snapshot_tx: Sender<AudioSnapshot>,
+        recording_tx: Option<Sender<Vec<f32>>>,
     ) -> Self {
         Self {
             grid: PhysicsGrid::new(width, height),
@@ -155,6 +159,7 @@ impl AudioModel {
             listener_y: height / 2,
             command_rx,
             snapshot_tx,
+            recording_tx,
             sample_counter: 0,
             oscillators: Vec::new(),
             active_tones: Vec::new(),
@@ -304,6 +309,13 @@ impl AudioModel {
                 });
             }
         }
+
+        // If recording is enabled, send a copy of the output buffer
+        if let Some(tx) = &self.recording_tx {
+            let buffer_copy = output.to_vec();
+            // Ignore error if receiver is dropped or full (if bounded)
+            let _ = tx.try_send(buffer_copy);
+        }
     }
 }
 
@@ -317,7 +329,7 @@ mod tests {
         let (cmd_tx, cmd_rx) = bounded(10);
         let (snap_tx, snap_rx) = bounded(10);
 
-        let mut model = AudioModel::new(10, 10, cmd_rx, snap_tx);
+        let mut model = AudioModel::new(10, 10, cmd_rx, snap_tx, None);
 
         // Pluck via command
         cmd_tx
@@ -351,7 +363,7 @@ mod tests {
         let (cmd_tx, cmd_rx) = bounded(10);
         let (snap_tx, _snap_rx) = bounded(10);
 
-        let mut model = AudioModel::new(10, 10, cmd_rx, snap_tx);
+        let mut model = AudioModel::new(10, 10, cmd_rx, snap_tx, None);
         let mut buffer = vec![0.0; 10];
 
         // 1. Add Oscillator
