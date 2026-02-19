@@ -251,3 +251,8 @@
 ### [Concentration Level: TOXIC] - Location: experiments/git-archaeology
 - **Status:** Condemned ☠️.
 - **Note:** The digging has stopped. The artifact is silent.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/mayan-git
+- **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
+- **Status:** The Stela is carved. The repository history is aligned with the cosmos.
+- **Note:** Moonshot: Mayan Long Count + Git History.
