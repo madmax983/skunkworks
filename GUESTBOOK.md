@@ -285,9 +285,9 @@
 - **Status:** Executed.
 - **Note:** The spiral has collapsed. Biomass returned to the void.
 
-### [Concentration Level: EVAPORATING] - Location: experiments/hanging-abacus
-- **Status:** Condemned ☠️.
-- **Note:** Documentation Void. Deceptive Naming. L-Systems mimicry without substance. Returning to the sediment.
+### [Concentration Level: EVAPORATING] - Location: graveyard/hanging-abacus
+- **Status:** Executed.
+- **Note:** Biomass returned to the void.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/nile-scheduler
 - **Status:** Executed.
@@ -336,3 +336,7 @@
 - **Scent Origin**: The Splice Surgeon 🧬
 - **Status**: The paper is folding. The words are mutating upon contact.
 - **Note**: Cross: `manifold-origami` + `biomorphic-lexicon`. Topological Linguistics active.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/wasm-runes
+- **Status:** Condemned ☠️.
+- **Note:** Documentation Void. Naming Collision. Skeletal Implementation.

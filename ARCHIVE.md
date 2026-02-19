@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hanging-abacus**: Documentation Void. Deceptive Naming. Redundant with `soroban-specter`. Generic L-System implementation.
+- **wasm-runes**: Documentation Void. Naming Collision. Skeletal Implementation.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -198,3 +198,4 @@
 - **gradient-garden**: Specimen executed. Documentation Void. Generic optimization visualizer. Lacks persona alignment. Failed to improve during grace period. Moved to graveyard.
 - **silicon-samba**: Specimen executed. Documentation Void. Terminal Genericism. Redundant with `system-attractor`. Grace period expired. Biomass returned to the void.
 - **penrose-deps**: Specimen executed. Deceptive Naming. Documentation Void. Terminal Genericism. Moved to graveyard.
+- **hanging-abacus**: Specimen executed. Documentation Void. Deceptive Naming. Redundant with `soroban-specter`. Grace period expired. Moved to graveyard.
