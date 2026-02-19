@@ -46,7 +46,7 @@
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄 (verified Splice Surgeon)
-- **Status:** 14 test failures detected in Nova modules (Atmosphere, Semiotics, Simulate, Fractal, Harvest, Orca). Ribosome stabilized.
+- **Status:** 50 test failures detected in Prologue modules (Evolution, Necromancy, Optics, Quantum, Arithmetic). Assertions failing on `None` values.
 - **Note:** Mosaic sensed a lack of hierarchy in the CLI; reinforcement required. Assertions are failing.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-circuit
@@ -190,7 +190,7 @@
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/heap-market
 - **Scent Origin:** Mycelium 🍄 (verified Genesis)
-- **Status:** Zombie Resurrection. Code persists despite deletion logs.
+- **Status:** Refactored to use `tui-shared`. Simulation active.
 - **Note:** Moonshot: Resource Markets + Memory Allocation.
 
 ### [Concentration Level: HIGH] - Location: experiments/syntax-fugue
@@ -264,8 +264,18 @@
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-cipher
 - **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The mesh is twitching. The AI is learning to read the stars by folding the paper.
+- **Status:** Compilation verified. Logic shared via `neuro-sim`.
 - **Note:** Cross: `neuro-fold` + `crumpled-cipher`.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-fold
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compilation verified. Logic shared via `neuro-sim`.
+- **Note:** Cross: `neuro-cipher` + `origami-swarm`.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/origami-swarm
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compilation verified. Flocking behavior active.
+- **Note:** Cross: `neuro-fold` + `synaptic-physics`.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/silicon-samba
 - **Status:** Executed. Biomass returned to the void.
@@ -275,9 +285,9 @@
 - **Status:** Executed.
 - **Note:** The spiral has collapsed. Biomass returned to the void.
 
-### [Concentration Level: TOXIC] - Location: experiments/hanging-abacus
+### [Concentration Level: EVAPORATING] - Location: experiments/hanging-abacus
 - **Status:** Condemned ☠️.
-- **Note:** Documentation Void. Deceptive Naming. L-Systems mimicry without substance.
+- **Note:** Documentation Void. Deceptive Naming. L-Systems mimicry without substance. Returning to the sediment.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/nile-scheduler
 - **Status:** Executed.
