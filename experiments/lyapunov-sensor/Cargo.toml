@@ -1,0 +1,9 @@
+[package]
+name = "lyapunov-sensor"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+sysinfo = "0.30"
+anyhow = "1.0"
