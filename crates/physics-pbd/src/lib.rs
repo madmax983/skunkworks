@@ -1,34 +1,88 @@
+//! # Physics PBD
+//!
+//! A simple Position Based Dynamics (PBD) physics engine for 2D/3D applications.
+//!
+//! This crate provides a `PbdSystem` struct that manages particles and constraints.
+//! It is designed to be easy to use with `macroquad`, utilizing `glam` types (via `macroquad::prelude::Vec3`).
+//!
+//! ## Key Concepts
+//!
+//! - **Particles**: Point masses with position, velocity, and inverse mass.
+//! - **Constraints**: Rules that limit the movement of particles (e.g., distance, pinning).
+//! - **Solver**: An iterative solver that resolves constraints to simulate physical behavior.
+//!
+//! ## Example
+//!
+//! ```
+//! use physics_pbd::{PbdSystem, Constraint};
+//! use macroquad::prelude::Vec3;
+//!
+//! let mut system = PbdSystem::new();
+//!
+//! // Add two particles
+//! let p1 = system.add_particle(Vec3::new(0.0, 10.0, 0.0), 1.0);
+//! let p2 = system.add_particle(Vec3::new(1.0, 10.0, 0.0), 1.0);
+//!
+//! // Add a distance constraint
+//! system.add_distance_constraint(p1, p2, 0.5);
+//!
+//! // Simulate
+//! system.step(0.016, 5);
+//! ```
+
 use macroquad::prelude::*;
 
+/// A point mass in the physics simulation.
 #[derive(Debug, Clone, Copy)]
 pub struct Particle {
+    /// Current position of the particle.
     pub pos: Vec3,
+    /// Previous position of the particle (used for Verlet integration).
     pub prev_pos: Vec3,
+    /// Inverse mass of the particle (1.0 / mass). 0.0 means infinite mass (static).
     pub inv_mass: f32,
+    /// Velocity of the particle.
     pub vel: Vec3,
 }
 
+/// A constraint that limits the movement of particles.
 #[derive(Debug, Clone, Copy)]
 pub enum Constraint {
+    /// Constrains two particles to be at a fixed distance from each other.
     Distance {
+        /// Index of the first particle.
         p1: usize,
+        /// Index of the second particle.
         p2: usize,
+        /// The target distance between the particles.
         rest_length: f32,
+        /// The stiffness of the constraint (0.0 to 1.0).
         stiffness: f32,
     },
-    // Actuator controls the distance between two points (usually wing tips of a hinge)
-    // factor: 0.0 = min_len, 1.0 = max_len
+    /// An actuator that changes the distance between two particles based on a factor.
+    ///
+    /// Useful for simulating muscles, pistons, or motorized hinges.
     Actuator {
+        /// Index of the first particle.
         p1: usize,
+        /// Index of the second particle.
         p2: usize,
+        /// The minimum length of the actuator.
         min_len: f32,
+        /// The maximum length of the actuator.
         max_len: f32,
+        /// The current extension factor (0.0 = min_len, 1.0 = max_len).
         factor: f32,
+        /// The stiffness of the constraint.
         stiffness: f32,
     },
-    // Pins a particle to a specific position (e.g. for dragging or anchoring)
+    /// Pins a particle to a specific position in world space.
+    ///
+    /// Useful for anchoring objects or implementing mouse dragging.
     Pin {
+        /// Index of the particle to pin.
         p: usize,
+        /// The position to pin the particle to.
         pos: Vec3,
     },
 }
@@ -106,6 +160,18 @@ impl PbdSystem {
         });
     }
 
+    /// Adds an actuator constraint between two particles.
+    ///
+    /// # Example
+    /// ```
+    /// use physics_pbd::PbdSystem;
+    /// use macroquad::prelude::Vec3;
+    ///
+    /// let mut system = PbdSystem::new();
+    /// let p1 = system.add_particle(Vec3::ZERO, 1.0);
+    /// let p2 = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
+    /// system.add_actuator_constraint(p1, p2, 0.5, 1.5, 1.0);
+    /// ```
     pub fn add_actuator_constraint(
         &mut self,
         p1: usize,
@@ -124,6 +190,17 @@ impl PbdSystem {
         });
     }
 
+    /// Pins a particle to a specific position.
+    ///
+    /// # Example
+    /// ```
+    /// use physics_pbd::PbdSystem;
+    /// use macroquad::prelude::Vec3;
+    ///
+    /// let mut system = PbdSystem::new();
+    /// let p = system.add_particle(Vec3::ZERO, 1.0);
+    /// system.add_pin_constraint(p, Vec3::new(5.0, 5.0, 5.0));
+    /// ```
     pub fn add_pin_constraint(&mut self, p: usize, pos: Vec3) {
         self.constraints.push(Constraint::Pin { p, pos });
     }
@@ -134,6 +211,9 @@ impl PbdSystem {
     /// Optimization note: The constraint solver loop iterates directly over constraints and uses a
     /// split-borrow of particles to avoid repeated array indexing and `self` borrowing overhead,
     /// significantly improving performance on large systems.
+    ///
+    /// # Panics
+    /// Panics if any constraint references a particle index that does not exist.
     ///
     /// # Example
     /// ```
