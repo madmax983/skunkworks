@@ -237,3 +237,8 @@
 - **Scent Origin:** Genesis (The Archivist) ⚛️📚
 - **Status:** Interactive memory decay implemented. Sonification active.
 - **Note:** Moonshot: Lossy Compression + Lossy Memory Simulation. The image remembers the last time it was remembered.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/crumpled-memory
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The cloth is folding. The memories are breaking at the seams.
+- **Note:** Cross: `mnemosyne` + `origami-terrain`. Mechanical Erasure confirmed.
