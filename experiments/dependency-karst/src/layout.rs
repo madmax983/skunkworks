@@ -44,33 +44,6 @@ impl Vec3 {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use petgraph::Graph;
-
-    #[test]
-    fn test_layout() {
-        let mut graph = Graph::new();
-        let n1 = graph.add_node("A".to_string());
-        let n2 = graph.add_node("B".to_string());
-        graph.add_edge(n1, n2, ());
-
-        let layout = Layout::new(&graph);
-        assert_eq!(layout.positions.len(), 2);
-
-        let p1 = layout.positions[&n1];
-        let p2 = layout.positions[&n2];
-
-        assert!(p1.x >= 0.0 && p1.x <= 1.0);
-        assert!(p1.y >= 0.0 && p1.y <= 1.0);
-        assert!(p1.z >= 0.0 && p1.z <= 1.0);
-
-        // Ensure they are not on top of each other
-        assert!(p1.distance_sq(p2) > 0.0);
-    }
-}
-
 pub struct Layout {
     pub positions: HashMap<NodeIndex, Vec3>,
 }
@@ -188,5 +161,32 @@ impl Layout {
                 }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use petgraph::Graph;
+
+    #[test]
+    fn test_layout() {
+        let mut graph = Graph::new();
+        let n1 = graph.add_node("A".to_string());
+        let n2 = graph.add_node("B".to_string());
+        graph.add_edge(n1, n2, ());
+
+        let layout = Layout::new(&graph);
+        assert_eq!(layout.positions.len(), 2);
+
+        let p1 = layout.positions[&n1];
+        let p2 = layout.positions[&n2];
+
+        assert!(p1.x >= 0.0 && p1.x <= 1.0);
+        assert!(p1.y >= 0.0 && p1.y <= 1.0);
+        assert!(p1.z >= 0.0 && p1.z <= 1.0);
+
+        // Ensure they are not on top of each other
+        assert!(p1.distance_sq(p2) > 0.0);
     }
 }
