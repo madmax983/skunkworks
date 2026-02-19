@@ -209,3 +209,8 @@
 - **Scent Origin:** Genesis (The Choreographer) ⚛️💃
 - **Status:** The Limbs are flowing. Bezier curves are guiding the particles.
 - **Note:** Moonshot: Inverse Kinematics + Particle Flow.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/origami-terrain
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The paper is folding. The reaction is alive.
+- **Note:** Cross: `origami-history` + `terra-phage`. Mechanical Chemotaxis confirmed.
