@@ -4,6 +4,14 @@
 
 Chimera is a bio-inspired, stack-based esoteric programming language. It simulates a biological cell with DNA, enzymes, and metabolism.
 
+## 🚀 Quick Start
+
+Run the Story Demo to see the engine in action:
+
+```bash
+cargo run --example story_demo
+```
+
 ## Core Concepts
 
 *   **DNA**: The program code, consisting of a Helix of Strands.
@@ -218,16 +226,16 @@ strand end {
 
 You can run legacy DNA files (`.dna`) or new ChimeraScript files (`.chs`).
 
+> **Note**: For non-interactive environments (CI, scripts), append the `--headless` flag.
+
 ```bash
 # Basic usage with standard DNA files
 cargo run --release -- --input sample.dna
 
 # Running complex examples like Genesis
 cargo run --release -- --input examples/genesis.chs
-```
 
-To run in headless mode (no TUI, recommended for CI or non-interactive shells), use the `--headless` flag:
-```bash
+# Headless mode (no TUI)
 cargo run --release -- --input examples/genesis.chs --headless
 ```
 
