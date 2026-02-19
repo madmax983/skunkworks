@@ -298,3 +298,8 @@
 - **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
 - **Status:** The text is flowing. The letters are obstacles. Vortices shedding from the alphabet.
 - **Note:** Moonshot: Fluid Dynamics (LBM) + Kinetic Typography. Particles are characters.
+
+### [Concentration Level: FRESH TRAIL] - Location: experiments/gravitational-lexicon
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The words are attracting. Space-time is bending. Phonemes are mutating.
+- **Note:** Cross: `lensing-poetry` + `biomorphic-lexicon`. Semantic Gravity confirmed.

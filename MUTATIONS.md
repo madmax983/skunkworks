@@ -1320,4 +1320,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A "Living Lexicon" where words are physical strings. Phonemes have mass and tension. Kinetic energy (agitation) drives phonetic mutation (Grimm's Law).
 - **Novel trait**: Kinetic Philology. You can "shake" a word into a new dialect.
 - **Status**: experiments/biomorphic-lexicon
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
+- **Evaluation**: Compiles. Verified.
+
+### gravitational-lexicon
+- **Parents**: experiments/lensing-poetry + experiments/biomorphic-lexicon
+- **Concept**: A "Semantic Universe" where words are physical bodies composed of phoneme-particles connected by springs. Words have mass based on their linguistic properties and attract each other via gravity. The collective mass of the words distorts the background text via a gravitational lensing shader.
+- **Novel trait**: Semantic Gravity. Words cluster and distort the fabric of the textual universe.
+- **Status**: experiments/gravitational-lexicon
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
