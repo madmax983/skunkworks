@@ -78,6 +78,7 @@ pub mod teleport;
 pub mod topology;
 pub mod virology;
 pub mod void;
+pub mod epigenetics;
 
 /// An autonomous agent wandering the Prologue grid.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -111,6 +112,13 @@ pub struct PrologueState {
     pub teleport_channels: HashMap<i64, Value>,
     /// Historical data for time-travel runes.
     pub history: HashMap<(usize, usize), VecDeque<Value>>,
+    /// Epigenetic layer (Methylation/Phosphorylation).
+    #[serde(default = "default_epigenetic_grid")]
+    pub epigenetic_grid: Vec<Vec<epigenetics::EpigeneticMark>>,
+}
+
+fn default_epigenetic_grid() -> Vec<Vec<epigenetics::EpigeneticMark>> {
+    vec![vec![epigenetics::EpigeneticMark::None; GRID_SIZE]; GRID_SIZE]
 }
 
 impl PrologueState {
@@ -126,6 +134,7 @@ impl PrologueState {
             registers: HashMap::new(),
             teleport_channels: HashMap::new(),
             history: HashMap::new(),
+            epigenetic_grid: vec![vec![epigenetics::EpigeneticMark::None; GRID_SIZE]; GRID_SIZE],
         }
     }
 
@@ -250,6 +259,10 @@ impl PrologueState {
                             | "¿"
                             | "¡"
                             | "≈"
+                        // Epigenetics
+                            | "."
+                            | ":"
+                            | ","
                     ) {
                         self.runes.insert((y, x));
 
@@ -327,6 +340,11 @@ fn prepare_signals(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
     let runes: Vec<(usize, usize)> = vm.prologue_state.runes.iter().cloned().collect();
 
     for (y, x) in &runes {
+        // Epigenetic Check: Methylation silences Source
+        if vm.prologue_state.epigenetic_grid[*y][*x] == epigenetics::EpigeneticMark::Methylated {
+            continue;
+        }
+
         if let Value::Str(s) = &grid[*y][*x] {
             if s == "!" && *x > 0 {
                 let val = grid[*y][*x - 1].clone();
@@ -358,6 +376,11 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
         let mut next_signals = vm.prologue_state.signal_grid.clone();
 
         for (y, x) in &runes {
+            // Epigenetic Check: Methylation stops propagation
+            if vm.prologue_state.epigenetic_grid[*y][*x] == epigenetics::EpigeneticMark::Methylated {
+                continue;
+            }
+
             if let Value::Str(s) = &grid[*y][*x] {
                 if apply_propagation_rune(
                     s,
@@ -482,7 +505,16 @@ fn process_sinks(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
 
     for (y, x) in &runes {
         if let Value::Str(s) = &grid[*y][*x] {
-            apply_sink_rune(vm, s, *y, *x);
+            let mark = vm.prologue_state.epigenetic_grid[*y][*x];
+            if mark == epigenetics::EpigeneticMark::Methylated {
+                continue;
+            }
+
+            let iterations = if mark == epigenetics::EpigeneticMark::Phosphorylated { 2 } else { 1 };
+
+            for _ in 0..iterations {
+                apply_sink_rune(vm, s, *y, *x);
+            }
         }
     }
 }
@@ -650,6 +682,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             necromancy::apply_necromancy_sinks(vm, rune, y, x);
             symbiosis::apply_symbiosis_sinks(vm, rune, y, x);
             pandemonium::apply_pandemonium_sinks(vm, rune, y, x);
+            epigenetics::apply_epigenetic_runes(vm, rune, y, x);
         }
     }
 }
