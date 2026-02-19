@@ -3388,6 +3388,12 @@ fn exec_bury(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             Value::Int(idx) => {
                 let s_idx = idx as usize;
                 if s_idx < vm.dna.helix.strands.len() {
+                    if vm.graveyard.len() >= crate::vm::MAX_GRAVEYARD_SIZE {
+                        vm.output
+                            .push("BURY: Graveyard limit reached".to_string());
+                        return None;
+                    }
+
                     let strand = vm.dna.helix.strands[s_idx].clone();
                     vm.graveyard.push(strand);
 

@@ -69,6 +69,8 @@ pub const MAX_POCKET_RADIUS: i64 = 32;
 pub const MAX_AKASHIC_SIZE: u64 = 10 * 1024 * 1024; // 10MB
 #[cfg(feature = "nova")]
 pub const MAX_STRINGS: usize = 256;
+#[cfg(feature = "nova")]
+pub const MAX_GRAVEYARD_SIZE: usize = 256;
 
 #[cfg(feature = "nova")]
 pub mod akashic;
