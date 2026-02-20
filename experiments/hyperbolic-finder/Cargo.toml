@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 macroquad = "0.4"
 num-complex = "0.4"
-anyhow = "1.0"
+anyhow = { workspace = true }
 poincare-disk = { workspace = true }
 git2 = "0.18"
 
