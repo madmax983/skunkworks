@@ -11,9 +11,9 @@
 - **Note:** Similar vibrational frequency to the Vocal Canyon.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
-- **Scent Origin:** Mycelium 🍄 (Sensed: Core Dependency)
-- **Status:** The central nervous system holds firm. TUI and VM logic operational.
-- **Note:** The mycelial network relies on this substrate.
+- **Scent Origin:** Mycelium 🍄 (Sensed: Heavy Traffic)
+- **Status:** The central nervous system is active. Grimoire expanded. Viral code detected.
+- **Note:** "The language grows with every utterance."
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-voice
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -24,6 +24,36 @@
 - **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
 - **Status:** The ticking has begun. Brass gears mesh with logic. The CPU sings.
 - **Note:** "Time is just a number, but rhythm is a law. The Escapement regulates the soul of the machine."
+
+### [Concentration Level: HIGH] - Location: experiments/cloud-mycelium
+- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
+- **Status:** Spores released. The forest is balancing the load.
+- **Note:** "When the cloud rains, the fungus grows. Serverless is just mycelium without caps."
+
+### [Concentration Level: HIGH] - Location: experiments/hyperbolic-bees
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The hive is buzzing in the Poincaré Disk. The bees dance in circles to go straight.
+- **Note**: "To go far, you must waggle long."
+
+### [Concentration Level: HIGH] - Location: experiments/liquidity-bridge
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The chasm of the Spread has been bridged. Ants are carrying value across the void.
+- **Note**: "Volatility is just the wind that shakes the bridge."
+
+### [Concentration Level: HIGH] - Location: experiments/thermo-termites
+- **Scent Origin:** Mycelium 🍄 (Sensed: Emergent Cooling)
+- **Status:** Termites are cooling the servers. Emergence confirmed.
+- **Note:** "Heat is information leaving the system."
+
+### [Concentration Level: HIGH] - Location: experiments/ising-tide
+- **Scent Origin:** The Reaper ☠️ (Sensed: Documentation Void)
+- **Status:** Specimen alive but undocumented. A dangerous mystery.
+- **Note:** "A tide without a moon is just a flood."
+
+### [Concentration Level: HIGH] - Location: experiments/babylonian-garden
+- **Scent Origin:** Genesis (The Historian) ⚛️🏺
+- **Status:** Git history blooming into flora.
+- **Note:** "Code is the seed, history is the soil."
 
 ## 🍂 History/Decay
 
@@ -56,18 +86,3 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Zombie resurrected and re-buried.
 - **Note:** "Time has run out."
-
-### [Concentration Level: HIGH] - Location: experiments/cloud-mycelium
-- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
-- **Status:** Spores released. The forest is balancing the load.
-- **Note:** "When the cloud rains, the fungus grows. Serverless is just mycelium without caps."
-
-### [Concentration Level: HIGH] - Location: experiments/hyperbolic-bees
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The hive is buzzing in the Poincaré Disk. The bees dance in circles to go straight.
-- **Note**: "To go far, you must waggle long."
-
-### [Concentration Level: HIGH] - Location: experiments/liquidity-bridge
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The chasm of the Spread has been bridged. Ants are carrying value across the void.
-- **Note**: "Volatility is just the wind that shakes the bridge."
