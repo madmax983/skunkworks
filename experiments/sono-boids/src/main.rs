@@ -1,7 +1,7 @@
 use anyhow::Result;
 use crossbeam_channel::{bounded, Receiver, Sender};
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
-use flocking::{compute_force, FlockingParams, PhysicsState};
+use flocking::{compute_force, FlockingParams};
 use locus::Vec2;
 use rand::Rng;
 use ratatui::{
@@ -22,38 +22,50 @@ const WIDTH: usize = 80;
 const HEIGHT: usize = 40;
 
 struct Boid {
-    physics: PhysicsState,
+    position: Vec2,
+    velocity: Vec2,
+    acceleration: Vec2,
 }
 
 impl Boid {
     fn new(x: f64, y: f64) -> Self {
         let mut rng = rand::thread_rng();
-        let mut physics = PhysicsState::new(x, y);
-        physics.velocity =
-            Vec2::new(rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0)).normalize();
-        Self { physics }
+        let velocity = Vec2::new(rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0)).normalize();
+        Self {
+            position: Vec2::new(x, y),
+            velocity,
+            acceleration: Vec2::zero(),
+        }
+    }
+
+    fn apply_force(&mut self, force: Vec2) {
+        self.acceleration += force;
     }
 
     fn update(&mut self, width: f64, height: f64, wave_grid: &[f32], grid_w: usize, grid_h: usize) {
-        self.physics.update(1.0); // max_speed = 1.0
+        // Physics update
+        self.velocity += self.acceleration;
+        self.velocity = self.velocity.limit(1.0); // max_speed
+        self.position += self.velocity;
+        self.acceleration = Vec2::zero();
 
         // Wrap around
-        if self.physics.position.x < 0.0 {
-            self.physics.position.x += width;
+        if self.position.x < 0.0 {
+            self.position.x += width;
         }
-        if self.physics.position.x >= width {
-            self.physics.position.x -= width;
+        if self.position.x >= width {
+            self.position.x -= width;
         }
-        if self.physics.position.y < 0.0 {
-            self.physics.position.y += height;
+        if self.position.y < 0.0 {
+            self.position.y += height;
         }
-        if self.physics.position.y >= height {
-            self.physics.position.y -= height;
+        if self.position.y >= height {
+            self.position.y -= height;
         }
 
         // Wave interaction: steer away from high waves
-        let gx = (self.physics.position.x / width * grid_w as f64) as usize;
-        let gy = (self.physics.position.y / height * grid_h as f64) as usize;
+        let gx = (self.position.x / width * grid_w as f64) as usize;
+        let gy = (self.position.y / height * grid_h as f64) as usize;
 
         if gx < grid_w && gy < grid_h {
             let idx = gy * grid_w + gx;
@@ -62,7 +74,7 @@ impl Boid {
                 if wave_val > 0.2 {
                     // Turn randomly if in high wave
                     let mut rng = rand::thread_rng();
-                    self.physics.apply_force(Vec2::new(
+                    self.apply_force(Vec2::new(
                         rng.gen_range(-0.5..0.5),
                         rng.gen_range(-0.5..0.5),
                     ));
@@ -86,7 +98,7 @@ impl App {
         let (cmd_tx, cmd_rx) = bounded(100);
         let (snap_tx, snap_rx) = bounded(2);
 
-        let wave_model = AudioModel::new(WIDTH, HEIGHT, cmd_rx, snap_tx);
+        let wave_model = AudioModel::new(WIDTH, HEIGHT, cmd_rx, snap_tx, None);
 
         let mut boids = Vec::new();
         for _ in 0..50 {
@@ -114,7 +126,8 @@ impl App {
         }
 
         // Update boids
-        let physics_states: Vec<PhysicsState> = self.boids.iter().map(|b| b.physics).collect();
+        let positions: Vec<Vec2> = self.boids.iter().map(|b| b.position).collect();
+        let velocities: Vec<Vec2> = self.boids.iter().map(|b| b.velocity).collect();
         let mut forces = Vec::with_capacity(self.boids.len());
 
         let params = FlockingParams {
@@ -128,18 +141,18 @@ impl App {
         };
 
         for (i, _) in self.boids.iter().enumerate() {
-            let force = compute_force(&physics_states, i, &params);
+            let force = compute_force(&positions, &velocities, i, &params);
             forces.push(force);
         }
 
         for (i, boid) in self.boids.iter_mut().enumerate() {
-            boid.physics.apply_force(forces[i]);
+            boid.apply_force(forces[i]);
             boid.update(WIDTH as f64, HEIGHT as f64, &self.wave_grid, WIDTH, HEIGHT);
 
             // Randomly emit ping
             if rand::thread_rng().gen_bool(0.01) {
-                let gx = (boid.physics.position.x) as usize;
-                let gy = (boid.physics.position.y) as usize;
+                let gx = (boid.position.x) as usize;
+                let gy = (boid.position.y) as usize;
                 if gx < WIDTH && gy < HEIGHT {
                     let _ = self.cmd_tx.send(AudioCommand::Pluck {
                         x: gx,
@@ -235,8 +248,8 @@ fn ui(f: &mut Frame, app: &mut App) {
             // Draw Boids
             for boid in &app.boids {
                 ctx.print(
-                    boid.physics.position.x,
-                    HEIGHT as f64 - boid.physics.position.y,
+                    boid.position.x,
+                    HEIGHT as f64 - boid.position.y,
                     Span::styled("*", Style::default().fg(Color::Yellow)),
                 );
             }

@@ -207,8 +207,8 @@ fn draw_world(ctx: &mut Context, world: &World) {
         };
 
         ctx.print(
-            boid.physics.position.x,
-            boid.physics.position.y,
+            boid.position.x,
+            boid.position.y,
             Span::styled(char_str, Style::default().fg(color)),
         );
     }

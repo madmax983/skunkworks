@@ -122,8 +122,8 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
                 };
 
                 ctx.print(
-                    boid.physics.position.x,
-                    boid.physics.position.y,
+                    boid.position.x,
+                    boid.position.y,
                     Span::styled(char_str, Style::default().fg(color)),
                 );
             }

@@ -1,6 +1,7 @@
 use crate::boid::{Boid, ENTANGLEMENT_RADIUS, PERCEPTION_RADIUS};
 use crate::qubit::apply_cnot_approx;
-use flocking::{compute_force, FlockingParams, PhysicsState};
+use flocking::{compute_force, FlockingParams};
+use locus::Vec2;
 use rand::Rng;
 
 pub struct World {
@@ -73,7 +74,8 @@ impl World {
         self.boids = new_boids;
 
         // Physics Loop
-        let physics_states: Vec<PhysicsState> = self.boids.iter().map(|b| b.physics).collect();
+        let positions: Vec<Vec2> = self.boids.iter().map(|b| b.position).collect();
+        let velocities: Vec<Vec2> = self.boids.iter().map(|b| b.velocity).collect();
         let mut forces = Vec::with_capacity(n);
 
         for (i, boid) in self.boids.iter().enumerate() {
@@ -95,7 +97,7 @@ impl World {
                 cohesion_weight: coh_w,
             };
 
-            let force = compute_force(&physics_states, i, &params);
+            let force = compute_force(&positions, &velocities, i, &params);
             forces.push(force);
         }
 
