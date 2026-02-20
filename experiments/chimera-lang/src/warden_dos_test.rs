@@ -221,7 +221,11 @@ mod tests {
         // Should be capped (e.g., 256 or 1024)
         // Currently unsafe, so this assertion expects failure if we assume it's uncapped
         // But since this is Red Phase, we assert the SAFE condition, and it should fail.
-        assert!(vm.ether.len() <= 1024, "Ether channels should be capped. Got {}", vm.ether.len());
+        assert!(
+            vm.ether.len() <= 1024,
+            "Ether channels should be capped. Got {}",
+            vm.ether.len()
+        );
     }
 
     #[test]
@@ -234,7 +238,11 @@ mod tests {
             vm.execute_gene_inner(OpCode::Reflex, &[]);
         }
 
-        assert!(vm.reflexes.len() <= 1024, "Reflexes should be capped. Got {}", vm.reflexes.len());
+        assert!(
+            vm.reflexes.len() <= 1024,
+            "Reflexes should be capped. Got {}",
+            vm.reflexes.len()
+        );
     }
 
     #[test]
@@ -252,7 +260,11 @@ mod tests {
             vm.execute_gene_inner(OpCode::Harmonize, &[]);
         }
 
-        assert!(vm.chord_registry.len() <= 1024, "Chord registry should be capped. Got {}", vm.chord_registry.len());
+        assert!(
+            vm.chord_registry.len() <= 1024,
+            "Chord registry should be capped. Got {}",
+            vm.chord_registry.len()
+        );
     }
 }
 

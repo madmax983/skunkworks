@@ -6,23 +6,27 @@ use chimera_lang::vm::{ChimeraVM, Value};
 #[ignore]
 fn test_prophecy_rune() {
     // Strand 0: Supernova (Immediate Halt/Death)
-    let genes_dead = vec![
-        Gene { op: OpCode::Supernova, args: vec![] },
-    ];
+    let genes_dead = vec![Gene {
+        op: OpCode::Supernova,
+        args: vec![],
+    }];
 
     // Strand 1: Sustainable Loop (Life)
     // [ push(1) jump(1) ] -> Jump to self (Strand 1)
     let genes_alive = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-        Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(1)] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        },
+        Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(1)],
+        },
     ];
 
     let dna = Dna {
         helix: Helix {
-            strands: vec![
-                Strand { genes: genes_dead },
-                Strand { genes: genes_alive },
-            ],
+            strands: vec![Strand { genes: genes_dead }, Strand { genes: genes_alive }],
         },
     };
     let mut vm = ChimeraVM::new(dna);

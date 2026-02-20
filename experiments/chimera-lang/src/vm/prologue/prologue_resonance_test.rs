@@ -2,9 +2,9 @@
 mod tests {
     use crate::ast::Dna;
     use crate::ast::Helix;
+    use crate::vm::prologue::exec_prologue_tick;
     use crate::vm::ChimeraVM;
     use crate::vm::Value;
-    use crate::vm::prologue::exec_prologue_tick;
 
     #[test]
     fn test_resonance_note() {
@@ -36,7 +36,11 @@ mod tests {
 
         // Check output
         let output = vm.output.join("\n");
-        assert!(output.contains("RESONANCE: Note 60"), "Output was: {}", output);
+        assert!(
+            output.contains("RESONANCE: Note 60"),
+            "Output was: {}",
+            output
+        );
     }
 
     #[test]
@@ -72,7 +76,11 @@ mod tests {
         exec_prologue_tick(&mut vm);
 
         let output = vm.output.join("\n");
-        assert!(output.contains("RESONANCE: Chord 60 Type 1"), "Output was: {}", output);
+        assert!(
+            output.contains("RESONANCE: Chord 60 Type 1"),
+            "Output was: {}",
+            output
+        );
     }
 
     #[test]

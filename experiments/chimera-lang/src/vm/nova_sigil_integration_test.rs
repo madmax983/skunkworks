@@ -7,7 +7,6 @@ mod tests {
     use crate::vm::nova_signals::process_signals;
     use crate::vm::{ChimeraVM, Value};
 
-
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
             helix: Helix { strands: vec![] },

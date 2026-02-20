@@ -1191,29 +1191,35 @@ where
                     let mut handled = true;
                     match key.code {
                         KeyCode::Up => {
-                             app_state.selected_gene = app_state.selected_gene.saturating_sub(1);
+                            app_state.selected_gene = app_state.selected_gene.saturating_sub(1);
                         }
                         KeyCode::Down => {
-                             if let Some(strand) = vm.dna.helix.strands.get(app_state.selected_strand) {
-                                 if app_state.selected_gene + 1 < strand.genes.len() {
-                                     app_state.selected_gene += 1;
-                                 }
-                             }
+                            if let Some(strand) =
+                                vm.dna.helix.strands.get(app_state.selected_strand)
+                            {
+                                if app_state.selected_gene + 1 < strand.genes.len() {
+                                    app_state.selected_gene += 1;
+                                }
+                            }
                         }
                         KeyCode::Left => {
-                             app_state.selected_strand = app_state.selected_strand.saturating_sub(1);
-                             app_state.selected_gene = 0;
+                            app_state.selected_strand = app_state.selected_strand.saturating_sub(1);
+                            app_state.selected_gene = 0;
                         }
                         KeyCode::Right => {
-                             if app_state.selected_strand + 1 < vm.dna.helix.strands.len() {
-                                 app_state.selected_strand += 1;
-                                 app_state.selected_gene = 0;
-                             }
+                            if app_state.selected_strand + 1 < vm.dna.helix.strands.len() {
+                                app_state.selected_strand += 1;
+                                app_state.selected_gene = 0;
+                            }
                         }
                         KeyCode::Char('M') => {
-                             crate::vm::pandemonium::apply_mutation(vm, app_state.selected_strand, app_state.selected_gene);
-                             app_state.status_msg = "Mutated!".to_string();
-                             app_state.screen_shake = 1.0;
+                            crate::vm::pandemonium::apply_mutation(
+                                vm,
+                                app_state.selected_strand,
+                                app_state.selected_gene,
+                            );
+                            app_state.status_msg = "Mutated!".to_string();
+                            app_state.screen_shake = 1.0;
                         }
                         _ => {
                             handled = false;
@@ -1386,7 +1392,8 @@ where
                         KeyCode::Up => app_state.pandemonium_cursor.1 -= 1.0,
                         KeyCode::Down => app_state.pandemonium_cursor.1 += 1.0,
                         KeyCode::Char('[') => {
-                            app_state.pandemonium_radius = (app_state.pandemonium_radius - 0.5).max(0.5);
+                            app_state.pandemonium_radius =
+                                (app_state.pandemonium_radius - 0.5).max(0.5);
                         }
                         KeyCode::Char(']') => app_state.pandemonium_radius += 0.5,
                         KeyCode::Char('1') => app_state.pandemonium_selected_tool = 0,
@@ -2049,10 +2056,12 @@ where
                                 }
                                 ViewMode::Evolution => {
                                     if let Ok(val) = app_state.input_buffer.parse::<i64>() {
-                                        app_state.evolution_state.challenge = crate::vm::evolution::Challenge::Target(val);
+                                        app_state.evolution_state.challenge =
+                                            crate::vm::evolution::Challenge::Target(val);
                                         if let Some(engine) = &mut app_state.evolution_state.engine
                                         {
-                                            engine.challenge = crate::vm::evolution::Challenge::Target(val);
+                                            engine.challenge =
+                                                crate::vm::evolution::Challenge::Target(val);
                                         }
                                         app_state.status_msg = format!("Target set to {}", val);
                                     }
@@ -2330,16 +2339,18 @@ where
                     KeyCode::Tab => {
                         if let ViewMode::Evolution = app_state.view_mode {
                             use crate::vm::evolution::Challenge;
-                            app_state.evolution_state.challenge = match app_state.evolution_state.challenge {
-                                Challenge::Target(_) => Challenge::Doubler,
-                                Challenge::Doubler => Challenge::Adder,
-                                Challenge::Adder => Challenge::Fibonacci,
-                                Challenge::Fibonacci => Challenge::Target(42),
-                            };
+                            app_state.evolution_state.challenge =
+                                match app_state.evolution_state.challenge {
+                                    Challenge::Target(_) => Challenge::Doubler,
+                                    Challenge::Doubler => Challenge::Adder,
+                                    Challenge::Adder => Challenge::Fibonacci,
+                                    Challenge::Fibonacci => Challenge::Target(42),
+                                };
                             if let Some(engine) = &mut app_state.evolution_state.engine {
                                 engine.challenge = app_state.evolution_state.challenge.clone();
                             }
-                            app_state.status_msg = format!("Challenge set to {}", app_state.evolution_state.challenge);
+                            app_state.status_msg =
+                                format!("Challenge set to {}", app_state.evolution_state.challenge);
                             return Ok(());
                         }
 
@@ -11973,7 +11984,9 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             let epi = vm.prologue_state.epigenetic_grid[y][x];
             match epi {
                 EpigeneticMark::Methylated => {
-                    style = style.fg(Color::DarkGray).add_modifier(Modifier::CROSSED_OUT);
+                    style = style
+                        .fg(Color::DarkGray)
+                        .add_modifier(Modifier::CROSSED_OUT);
                 }
                 EpigeneticMark::Phosphorylated => {
                     style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
@@ -12030,12 +12043,22 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     }
                     "z" => style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD),
                     "h" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
-                    "." | ":" | "," => style = style.fg(Color::LightCyan).add_modifier(Modifier::BOLD),
-                    "⚡" => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD | Modifier::RAPID_BLINK),
+                    "." | ":" | "," => {
+                        style = style.fg(Color::LightCyan).add_modifier(Modifier::BOLD)
+                    }
+                    "⚡" => {
+                        style = style
+                            .fg(Color::Yellow)
+                            .add_modifier(Modifier::BOLD | Modifier::RAPID_BLINK)
+                    }
                     "≡" => style = style.fg(Color::Blue).add_modifier(Modifier::BOLD),
                     "∿" => style = style.fg(Color::Cyan).add_modifier(Modifier::BOLD),
                     "¶" => style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD),
-                    "λ" => style = style.fg(Color::LightMagenta).add_modifier(Modifier::BOLD | Modifier::UNDERLINED),
+                    "λ" => {
+                        style = style
+                            .fg(Color::LightMagenta)
+                            .add_modifier(Modifier::BOLD | Modifier::UNDERLINED)
+                    }
                     _ => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
                 }
             } else {
@@ -12123,40 +12146,62 @@ fn render_mutagen(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     // Helix Canvas
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Mutagen Chamber"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Mutagen Chamber"),
+        )
         .x_bounds([0.0, 20.0])
         .y_bounds([0.0, 40.0])
         .paint(|ctx| {
-             // Draw Helix
-             if let Some(strand) = vm.dna.helix.strands.get(app_state.selected_strand) {
-                 for (i, gene) in strand.genes.iter().enumerate() {
-                     let y = 38.0 - (i as f64 * 2.0); // Start from top
-                     if y < 0.0 { break; }
+            // Draw Helix
+            if let Some(strand) = vm.dna.helix.strands.get(app_state.selected_strand) {
+                for (i, gene) in strand.genes.iter().enumerate() {
+                    let y = 38.0 - (i as f64 * 2.0); // Start from top
+                    if y < 0.0 {
+                        break;
+                    }
 
-                     let phase = (i as f64) * 0.5;
-                     let x1 = 10.0 + 5.0 * phase.sin();
-                     let x2 = 10.0 + 5.0 * (phase + std::f64::consts::PI).sin();
+                    let phase = (i as f64) * 0.5;
+                    let x1 = 10.0 + 5.0 * phase.sin();
+                    let x2 = 10.0 + 5.0 * (phase + std::f64::consts::PI).sin();
 
-                     // Draw Strands
-                     ctx.draw(&ratatui::widgets::canvas::Line {
-                         x1, y1: y, x2: x1, y2: y-2.0, color: Color::Cyan
-                     });
-                     ctx.draw(&ratatui::widgets::canvas::Line {
-                         x1: x2, y1: y, x2: x2, y2: y-2.0, color: Color::Magenta
-                     });
+                    // Draw Strands
+                    ctx.draw(&ratatui::widgets::canvas::Line {
+                        x1,
+                        y1: y,
+                        x2: x1,
+                        y2: y - 2.0,
+                        color: Color::Cyan,
+                    });
+                    ctx.draw(&ratatui::widgets::canvas::Line {
+                        x1: x2,
+                        y1: y,
+                        x2: x2,
+                        y2: y - 2.0,
+                        color: Color::Magenta,
+                    });
 
-                     // Draw Base Pair (Rung)
-                     let color = if i == app_state.selected_gene { Color::Yellow } else { Color::Green };
-                     ctx.draw(&ratatui::widgets::canvas::Line {
-                         x1, y1: y, x2: x2, y2: y, color
-                     });
+                    // Draw Base Pair (Rung)
+                    let color = if i == app_state.selected_gene {
+                        Color::Yellow
+                    } else {
+                        Color::Green
+                    };
+                    ctx.draw(&ratatui::widgets::canvas::Line {
+                        x1,
+                        y1: y,
+                        x2: x2,
+                        y2: y,
+                        color,
+                    });
 
-                     // Draw Label
-                     if i == app_state.selected_gene {
-                         ctx.print(x2 + 2.0, y, format!("<- {}", gene.op));
-                     }
-                 }
-             }
+                    // Draw Label
+                    if i == app_state.selected_gene {
+                        ctx.print(x2 + 2.0, y, format!("<- {}", gene.op));
+                    }
+                }
+            }
         });
     f.render_widget(canvas, chunks[0]);
 
@@ -12171,12 +12216,16 @@ fn render_mutagen(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     if let Some(strand) = vm.dna.helix.strands.get(app_state.selected_strand) {
         info.push(Line::from(format!("Strand: {}", app_state.selected_strand)));
         if let Some(gene) = strand.genes.get(app_state.selected_gene) {
-             info.push(Line::from(" "));
-             info.push(Line::from(format!("Selected Gene: {}", gene.op)));
-             info.push(Line::from(format!("Args: {:?}", gene.args)));
+            info.push(Line::from(" "));
+            info.push(Line::from(format!("Selected Gene: {}", gene.op)));
+            info.push(Line::from(format!("Args: {:?}", gene.args)));
         }
     }
 
-    let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Genetic Sequencer"));
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Genetic Sequencer"),
+    );
     f.render_widget(info_widget, chunks[1]);
 }

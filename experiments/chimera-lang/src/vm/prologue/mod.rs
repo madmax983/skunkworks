@@ -65,31 +65,31 @@ pub mod alchemy;
 pub mod biolum;
 pub mod chaos;
 pub mod chronos;
-pub mod critter;
 pub mod construct;
+pub mod critter;
+pub mod elektra;
+pub mod elemental;
+pub mod epigenetics;
 pub mod evolution;
+pub mod hypnagogia;
 pub mod io;
+pub mod linguistics;
 pub mod list;
 pub mod logic;
 pub mod math;
 pub mod necromancy;
 pub mod optics;
+pub mod oracle;
 pub mod pandemonium;
+pub mod prism;
+pub mod psionics;
 pub mod quantum;
+pub mod resonance;
 pub mod symbiosis;
 pub mod teleport;
 pub mod topology;
 pub mod virology;
 pub mod void;
-pub mod epigenetics;
-pub mod elemental;
-pub mod hypnagogia;
-pub mod elektra;
-pub mod oracle;
-pub mod psionics;
-pub mod resonance;
-pub mod prism;
-pub mod linguistics;
 
 /// An autonomous agent wandering the Prologue grid.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -456,7 +456,8 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
 
         for (y, x) in &runes {
             // Epigenetic Check: Methylation stops propagation
-            if vm.prologue_state.epigenetic_grid[*y][*x] == epigenetics::EpigeneticMark::Methylated {
+            if vm.prologue_state.epigenetic_grid[*y][*x] == epigenetics::EpigeneticMark::Methylated
+            {
                 continue;
             }
 
@@ -640,7 +641,11 @@ fn process_sinks(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                 continue;
             }
 
-            let iterations = if mark == epigenetics::EpigeneticMark::Phosphorylated { 2 } else { 1 };
+            let iterations = if mark == epigenetics::EpigeneticMark::Phosphorylated {
+                2
+            } else {
+                1
+            };
 
             for _ in 0..iterations {
                 apply_sink_rune(vm, s, *y, *x);
@@ -1123,7 +1128,9 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
             // Move Registers
             if current_type == "C" {
                 vm.prologue_state.registers.remove(&(y, x));
-                vm.prologue_state.registers.insert((ny, nx), agent.state.clone());
+                vm.prologue_state
+                    .registers
+                    .insert((ny, nx), agent.state.clone());
             }
 
             new_agents.push(PrologueAgent {

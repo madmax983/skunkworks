@@ -337,3 +337,174 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
         _ => {}
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
+    use crate::opcode::OpCode;
+    use crate::value::Value;
+    use crate::vm::ChimeraVM;
+
+    fn make_vm() -> ChimeraVM {
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![Strand { genes: vec![] }],
+            },
+        };
+        ChimeraVM::new(dna)
+    }
+
+    #[test]
+    fn test_neuron_initialization() {
+        let n = Neuron::new();
+        assert_eq!(n.v, -65.0);
+        assert_eq!(n.i_inj, 0.0);
+    }
+
+    #[test]
+    fn test_neuron_step_decay() {
+        let mut n = Neuron::new();
+        n.v = -50.0; // Perturb
+                     // Step without input
+        for _ in 0..100 {
+            n.step(0.1, 0);
+        }
+        // Should decay towards rest (approx -65)
+        assert!(
+            n.v < -60.0,
+            "Voltage should decay to resting potential, got {}",
+            n.v
+        );
+    }
+
+    #[test]
+    fn test_neuron_spike() {
+        let mut n = Neuron::new();
+        n.i_inj = 50.0; // Strong input
+        let mut spiked = false;
+        // Step enough times to integrate
+        for i in 0..100 {
+            if n.step(0.1, i) {
+                spiked = true;
+                break;
+            }
+        }
+        assert!(spiked, "Neuron should spike with high input");
+        assert!(n.last_spike > 0 || spiked); // If spiked, last_spike set
+    }
+
+    #[test]
+    fn test_neuro_genesis_op() {
+        let mut vm = make_vm();
+        vm.stack.push(Value::Int(5)); // y
+        vm.stack.push(Value::Int(5)); // x
+
+        exec_biophysics_op(&mut vm, OpCode::NeuroGenesis, &[]);
+
+        assert!(vm.neurons.contains_key(&(5, 5)));
+    }
+
+    #[test]
+    fn test_stimulate_op() {
+        let mut vm = make_vm();
+        // Create neuron first
+        vm.neurons.insert((5, 5), Neuron::new());
+
+        vm.stack.push(Value::Int(100)); // amount
+        vm.stack.push(Value::Int(5)); // y
+        vm.stack.push(Value::Int(5)); // x
+
+        exec_biophysics_op(&mut vm, OpCode::Stimulate, &[]);
+
+        let n = vm.neurons.get(&(5, 5)).unwrap();
+        assert_eq!(n.i_inj, 100.0);
+    }
+
+    #[test]
+    fn test_dendrite_op() {
+        let mut vm = make_vm();
+        let mut n = Neuron::new();
+        n.v = -40.0;
+        vm.neurons.insert((5, 5), n);
+
+        vm.stack.push(Value::Int(5)); // y
+        vm.stack.push(Value::Int(5)); // x
+
+        exec_biophysics_op(&mut vm, OpCode::Dendrite, &[]);
+
+        assert_eq!(vm.stack.pop(), Some(Value::Int(-40)));
+    }
+
+    #[test]
+    fn test_axon_op() {
+        let mut vm = make_vm();
+        vm.neurons.insert((0, 0), Neuron::new());
+        vm.neurons.insert((1, 1), Neuron::new());
+
+        // Stack: y_src, x_src, y_tgt, x_tgt
+        // Pushed order: src_x, src_y, tgt_x, tgt_y
+
+        vm.stack.push(Value::Int(0)); // x_src
+        vm.stack.push(Value::Int(0)); // y_src
+        vm.stack.push(Value::Int(1)); // x_tgt
+        vm.stack.push(Value::Int(1)); // y_tgt
+
+        exec_biophysics_op(&mut vm, OpCode::Axon, &[]);
+
+        let synapse = vm.biophysics_synapses.get(&(0, 0)).unwrap();
+        assert_eq!(synapse[0], ((1, 1), 1.0));
+    }
+
+    #[test]
+    fn test_neuro_coupling_op() {
+        let mut vm = make_vm();
+        vm.neurons.insert((2, 2), Neuron::new());
+
+        vm.stack.push(Value::Int(100)); // weight (1.0)
+        vm.stack.push(Value::Int(2)); // y
+        vm.stack.push(Value::Int(2)); // x
+
+        exec_biophysics_op(&mut vm, OpCode::NeuroCoupling, &[]);
+
+        let w = vm.biophysics_couplings.get(&(2, 2)).unwrap();
+        assert!((w - 1.0).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn test_neuro_synapse_op() {
+        let mut vm = make_vm();
+        vm.neurons.insert((3, 3), Neuron::new());
+
+        // We need a valid strand index. make_vm creates 1 empty strand (idx 0).
+        vm.stack.push(Value::Int(0)); // strand_idx
+        vm.stack.push(Value::Int(3)); // y
+        vm.stack.push(Value::Int(3)); // x
+
+        exec_biophysics_op(&mut vm, OpCode::NeuroSynapse, &[]);
+
+        let strands = vm.neuron_to_cortex_map.get(&(3, 3)).unwrap();
+        assert_eq!(strands[0], 0);
+    }
+
+    #[test]
+    fn test_op_error_handling() {
+        let mut vm = make_vm();
+
+        // NeuroGenesis Underflow
+        exec_biophysics_op(&mut vm, OpCode::NeuroGenesis, &[]);
+        assert!(vm.output.last().unwrap().contains("Stack underflow"));
+
+        // Type Mismatch
+        vm.stack.push(Value::Str("foo".to_string()));
+        vm.stack.push(Value::Int(0));
+        exec_biophysics_op(&mut vm, OpCode::NeuroGenesis, &[]);
+        assert!(vm.output.last().unwrap().contains("Type mismatch"));
+
+        // Invalid Coord
+        vm.stack.push(Value::Int(1000)); // y
+        vm.stack.push(Value::Int(1000)); // x
+        exec_biophysics_op(&mut vm, OpCode::NeuroGenesis, &[]);
+        assert!(vm.output.last().unwrap().contains("Invalid coordinate"));
+    }
+}

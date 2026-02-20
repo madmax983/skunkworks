@@ -1,4 +1,4 @@
-use chimera_lang::{prelude::*, compiler};
+use chimera_lang::{compiler, prelude::*};
 
 fn main() {
     let source = r#"
@@ -16,7 +16,9 @@ fn main() {
 
     // Run until halted or for a max number of steps
     for _ in 0..100 {
-        if vm.halted { break; }
+        if vm.halted {
+            break;
+        }
         vm.step();
     }
 

@@ -107,7 +107,8 @@ pub fn apply_chronos_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
 
                             if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
                                 vm.grid[sy][sx] = Value::Int(result);
-                                vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1)); // Light up
+                                vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                                // Light up
                             }
                         }
                     }

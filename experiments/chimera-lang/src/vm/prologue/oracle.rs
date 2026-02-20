@@ -1,9 +1,9 @@
 use super::normalize_coords;
-use crate::vm::{ChimeraVM, Value};
 #[cfg(feature = "oracle")]
 use crate::ast::JunctionType;
 #[cfg(feature = "oracle")]
 use crate::vm::oracle;
+use crate::vm::{ChimeraVM, Value};
 #[cfg(feature = "oracle")]
 use std::collections::HashMap;
 
@@ -18,7 +18,8 @@ pub fn apply_oracle_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                     if !vm.knowledge_base.contains(fact) {
                         vm.knowledge_base.push(fact.clone());
                         vm.output.push(format!("PROLOGUE: Asserted {}", fact));
-                        vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1)); // Feedback
+                        vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                        // Feedback
                     }
                 }
             }
@@ -55,7 +56,8 @@ pub fn apply_oracle_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
 
                     if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
                         vm.grid[sy][sx] = result;
-                        vm.prologue_state.signal_grid[y][x] = Some(Value::Int(solutions.len() as i64));
+                        vm.prologue_state.signal_grid[y][x] =
+                            Some(Value::Int(solutions.len() as i64));
                     }
                 }
             }

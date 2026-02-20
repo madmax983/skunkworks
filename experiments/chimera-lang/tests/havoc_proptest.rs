@@ -1,7 +1,7 @@
-use proptest::prelude::*;
 use chimera_lang::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
 use chimera_lang::opcode::OpCode;
 use chimera_lang::vm::ChimeraVM;
+use proptest::prelude::*;
 
 fn opcode_strategy() -> impl Strategy<Value = OpCode> {
     prop_oneof![
@@ -35,32 +35,32 @@ fn nucleotide_strategy() -> impl Strategy<Value = Nucleotide> {
     ];
 
     leaf.prop_recursive(
-        4, // levels deep
+        4,  // levels deep
         64, // max size nodes
         10, // items per collection
         |inner| {
-            prop_oneof![
-                prop::collection::vec(inner, 0..10).prop_map(|v| Nucleotide::Junction(JunctionType::Any, v)),
-            ]
-        }
+            prop_oneof![prop::collection::vec(inner, 0..10)
+                .prop_map(|v| Nucleotide::Junction(JunctionType::Any, v)),]
+        },
     )
 }
 
 fn gene_strategy() -> impl Strategy<Value = Gene> {
-    (opcode_strategy(), prop::collection::vec(nucleotide_strategy(), 0..3))
+    (
+        opcode_strategy(),
+        prop::collection::vec(nucleotide_strategy(), 0..3),
+    )
         .prop_map(|(op, args)| Gene { op, args })
 }
 
 fn strand_strategy() -> impl Strategy<Value = Strand> {
-    prop::collection::vec(gene_strategy(), 0..20)
-        .prop_map(|genes| Strand { genes })
+    prop::collection::vec(gene_strategy(), 0..20).prop_map(|genes| Strand { genes })
 }
 
 fn dna_strategy() -> impl Strategy<Value = Dna> {
-    prop::collection::vec(strand_strategy(), 1..5)
-        .prop_map(|strands| Dna {
-            helix: Helix { strands },
-        })
+    prop::collection::vec(strand_strategy(), 1..5).prop_map(|strands| Dna {
+        helix: Helix { strands },
+    })
 }
 
 proptest! {

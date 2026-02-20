@@ -22,10 +22,7 @@ pub fn apply_prism_runes(
             if let Some(val) = w_sig {
                 let parts: Vec<Value> = match val {
                     Value::Junction(_, list) => list,
-                    Value::Str(s) => s
-                        .chars()
-                        .map(|c| Value::Str(c.to_string()))
-                        .collect(),
+                    Value::Str(s) => s.chars().map(|c| Value::Str(c.to_string())).collect(),
                     _ => vec![val],
                 };
 
@@ -68,10 +65,8 @@ pub fn apply_prism_runes(
 
             if !collected.is_empty() {
                 if next_signals[y][x].is_none() {
-                    next_signals[y][x] = Some(Value::Junction(
-                        crate::ast::JunctionType::Any,
-                        collected,
-                    ));
+                    next_signals[y][x] =
+                        Some(Value::Junction(crate::ast::JunctionType::Any, collected));
                     changes = true;
                 }
             }
@@ -89,10 +84,8 @@ pub fn apply_prism_runes(
                         .collect();
 
                     if next_signals[y][x].is_none() {
-                        next_signals[y][x] = Some(Value::Junction(
-                            crate::ast::JunctionType::Any,
-                            gene_strs,
-                        ));
+                        next_signals[y][x] =
+                            Some(Value::Junction(crate::ast::JunctionType::Any, gene_strs));
                         changes = true;
                     }
                 }
@@ -105,7 +98,11 @@ pub fn apply_prism_runes(
                 if let Some(paren_idx) = s.find('(') {
                     let op_name = &s[..paren_idx];
                     // Safer parsing for closing paren
-                    let end_idx = if s.ends_with(')') { s.len() - 1 } else { s.len() };
+                    let end_idx = if s.ends_with(')') {
+                        s.len() - 1
+                    } else {
+                        s.len()
+                    };
                     let args_str = if paren_idx + 1 < end_idx {
                         &s[paren_idx + 1..end_idx]
                     } else {
@@ -116,7 +113,8 @@ pub fn apply_prism_runes(
                     let args: Vec<Value> = if args_str.trim().is_empty() {
                         Vec::new()
                     } else {
-                        args_str.split(',')
+                        args_str
+                            .split(',')
                             .map(|a| {
                                 let a = a.trim();
                                 if let Ok(n) = a.parse::<i64>() {
@@ -139,16 +137,14 @@ pub fn apply_prism_runes(
                     // Output Args to South
                     if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
                         if next_signals[sy][sx].is_none() {
-                            next_signals[sy][sx] = Some(Value::Junction(
-                                crate::ast::JunctionType::Any,
-                                args,
-                            ));
+                            next_signals[sy][sx] =
+                                Some(Value::Junction(crate::ast::JunctionType::Any, args));
                             changes = true;
                         }
                     }
                 } else {
                     // No parens? Just OpCode
-                     if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+                    if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
                         if next_signals[ny][nx].is_none() {
                             next_signals[ny][nx] = Some(Value::Str(s));
                             changes = true;

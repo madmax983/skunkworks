@@ -25,8 +25,14 @@ fn test_mem_bomb() {
     // Double it 30 times -> 1 GB
     for _ in 0..30 {
         // Keep energy up
-        genes.push(Gene { op: OpCode::Photosynthesize, args: vec![] });
-        genes.push(Gene { op: OpCode::Photosynthesize, args: vec![] });
+        genes.push(Gene {
+            op: OpCode::Photosynthesize,
+            args: vec![],
+        });
+        genes.push(Gene {
+            op: OpCode::Photosynthesize,
+            args: vec![],
+        });
 
         genes.push(Gene {
             op: OpCode::Dup,
@@ -68,7 +74,7 @@ fn test_mem_bomb() {
     while !vm.halted && vm.tick_counter < 10000 {
         vm.step();
         if vm.energy < 10 {
-             vm.energy = 10000; // Cheat mode: infinite energy from "God" (Test harness)
+            vm.energy = 10000; // Cheat mode: infinite energy from "God" (Test harness)
         }
     }
 }

@@ -1,11 +1,11 @@
 #[cfg(feature = "nova")]
-use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 #[cfg(feature = "nova")]
 use chimera_lang::opcode::OpCode;
 #[cfg(feature = "nova")]
-use chimera_lang::vm::{ChimeraVM, Value};
-#[cfg(feature = "nova")]
 use chimera_lang::vm::prologue::exec_prologue_tick;
+#[cfg(feature = "nova")]
+use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 #[cfg(feature = "nova")]
@@ -28,7 +28,7 @@ fn test_prism_disperse() {
 
     vm.prologue_state.delayed_signals[5][4] = Some(Value::Junction(
         chimera_lang::ast::JunctionType::Any,
-        vec![Value::Int(1), Value::Int(2), Value::Int(3)]
+        vec![Value::Int(1), Value::Int(2), Value::Int(3)],
     ));
 
     exec_prologue_tick(&mut vm);
@@ -76,17 +76,20 @@ fn test_prism_converge() {
     match &vm.prologue_state.signal_grid[5][5] {
         Some(Value::Junction(_, list)) => {
             // Filter empty if any
-            let list: Vec<&Value> = list.iter().filter(|v| match v {
-                Value::Int(0) => false,
-                Value::Str(s) => !s.is_empty(),
-                _ => true,
-            }).collect();
+            let list: Vec<&Value> = list
+                .iter()
+                .filter(|v| match v {
+                    Value::Int(0) => false,
+                    Value::Str(s) => !s.is_empty(),
+                    _ => true,
+                })
+                .collect();
 
             assert_eq!(list.len(), 3, "List length mismatch: {:?}", list);
             assert_eq!(list[0], &Value::Int(1)); // N
             assert_eq!(list[1], &Value::Int(2)); // E
             assert_eq!(list[2], &Value::Int(3)); // S
-        },
+        }
         _ => panic!("Converge failed: {:?}", vm.prologue_state.signal_grid[5][5]),
     }
 }
@@ -96,11 +99,19 @@ fn test_prism_converge() {
 fn test_prism_sequence() {
     // 🧬: StrandIdx -> List[GeneStr]
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] },
-        Gene { op: OpCode::Add, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(42)],
+        },
+        Gene {
+            op: OpCode::Add,
+            args: vec![],
+        },
     ];
     let dna = Dna {
-        helix: Helix { strands: vec![Strand { genes }] },
+        helix: Helix {
+            strands: vec![Strand { genes }],
+        },
     };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
@@ -116,7 +127,7 @@ fn test_prism_sequence() {
             assert_eq!(list.len(), 2);
             assert_eq!(list[0], Value::Str("push(42)".to_string()));
             assert_eq!(list[1], Value::Str("add()".to_string()));
-        },
+        }
         _ => panic!("Sequence failed: {:?}", vm.prologue_state.signal_grid[5][5]),
     }
 }
@@ -125,7 +136,9 @@ fn test_prism_sequence() {
 #[cfg(feature = "nova")]
 fn test_prism_decompose() {
     // ⚛: "push(42)" -> N="push", S=[42]
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -138,7 +151,10 @@ fn test_prism_decompose() {
     // Check North (OpCode)
     match &vm.prologue_state.signal_grid[4][5] {
         Some(Value::Str(s)) => assert_eq!(s, "push"),
-        _ => panic!("Decompose OpCode failed: {:?}", vm.prologue_state.signal_grid[4][5]),
+        _ => panic!(
+            "Decompose OpCode failed: {:?}",
+            vm.prologue_state.signal_grid[4][5]
+        ),
     }
 
     // Check South (Args)
@@ -146,7 +162,10 @@ fn test_prism_decompose() {
         Some(Value::Junction(_, list)) => {
             assert_eq!(list.len(), 1);
             assert_eq!(list[0], Value::Int(42));
-        },
-        _ => panic!("Decompose Args failed: {:?}", vm.prologue_state.signal_grid[6][5]),
+        }
+        _ => panic!(
+            "Decompose Args failed: {:?}",
+            vm.prologue_state.signal_grid[6][5]
+        ),
     }
 }

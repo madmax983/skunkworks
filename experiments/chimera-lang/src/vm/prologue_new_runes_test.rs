@@ -70,7 +70,9 @@ mod tests {
         vm.grid[5][5] = Value::Str("C".to_string());
 
         // Fix: C is also a Critter. Set it to static state so it doesn't move away.
-        vm.prologue_state.registers.insert((5, 5), Value::Str("C:100:.:0".to_string()));
+        vm.prologue_state
+            .registers
+            .insert((5, 5), Value::Str("C:100:.:0".to_string()));
 
         vm.tick_counter = 10;
         exec_prologue_tick(&mut vm);

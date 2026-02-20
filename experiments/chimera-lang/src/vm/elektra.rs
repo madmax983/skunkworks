@@ -72,8 +72,10 @@ fn exec_modulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         // Let's assume Modulate sets positive resistance.
         let r = res.max(0) as f32;
         vm.resistance_grid[y][x] = r;
-        vm.output
-            .push(format!("MODULATE: Resistance set to {:.2} at {},{}", r, x, y));
+        vm.output.push(format!(
+            "MODULATE: Resistance set to {:.2} at {},{}",
+            r, x, y
+        ));
     }
     None
 }
@@ -125,7 +127,8 @@ fn exec_electrophoresis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             }
         }
     } else {
-        vm.output.push("ELECTROPHORESIS: Stagnant field".to_string());
+        vm.output
+            .push("ELECTROPHORESIS: Stagnant field".to_string());
     }
 
     None

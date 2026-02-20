@@ -17,8 +17,7 @@ pub fn spawn_random_ecology(vm: &mut ChimeraVM, count: usize) {
             break;
         }
         if vm.dna.helix.strands.len() >= crate::vm::MAX_STRANDS {
-            vm.output
-                .push("CAMBRIAN: Strand limit reached".to_string());
+            vm.output.push("CAMBRIAN: Strand limit reached".to_string());
             break;
         }
 

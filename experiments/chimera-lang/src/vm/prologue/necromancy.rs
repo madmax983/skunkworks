@@ -1,6 +1,6 @@
+use super::normalize_coords;
 use crate::vm::ChimeraVM;
 use crate::vm::Value;
-use super::normalize_coords;
 
 pub fn apply_necromancy_runes(
     rune: &str,
@@ -19,7 +19,7 @@ pub fn apply_necromancy_runes(
     match rune {
         "†" | "‡" | "Ψ" => {
             if w_sig.is_some() {
-                 if next_signals[y][x].is_none() {
+                if next_signals[y][x].is_none() {
                     next_signals[y][x] = Some(Value::Int(1));
                     return true;
                 }
@@ -59,7 +59,8 @@ pub fn apply_necromancy_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize
                     vm.output.push(format!("NECROMANCY: Buried strand {}", idx));
                     vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1)); // Light up
                 } else {
-                    vm.output.push(format!("NECROMANCY: Invalid strand index {}", idx));
+                    vm.output
+                        .push(format!("NECROMANCY: Invalid strand index {}", idx));
                 }
             }
         }
@@ -73,7 +74,8 @@ pub fn apply_necromancy_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize
                 if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
                     vm.grid[sy][sx] = Value::Int(new_idx as i64);
                 }
-                vm.output.push(format!("NECROMANCY: Exhumed strand to {}", new_idx));
+                vm.output
+                    .push(format!("NECROMANCY: Exhumed strand to {}", new_idx));
                 vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
             } else {
                 vm.output.push("NECROMANCY: Graveyard empty".to_string());
@@ -83,7 +85,8 @@ pub fn apply_necromancy_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize
             // Seance: Executes last buried strand as Ghost.
             if let Some(strand) = vm.graveyard.last() {
                 if vm.dna.helix.strands.len() >= crate::vm::MAX_STRANDS {
-                    vm.output.push("NECROMANCY: Helix full, cannot Seance".to_string());
+                    vm.output
+                        .push("NECROMANCY: Helix full, cannot Seance".to_string());
                     return;
                 }
 
@@ -95,7 +98,8 @@ pub fn apply_necromancy_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize
                 // Trigger interrupt
                 vm.interrupt(ghost_idx);
 
-                vm.output.push(format!("NECROMANCY: Seance for ghost {}", ghost_idx));
+                vm.output
+                    .push(format!("NECROMANCY: Seance for ghost {}", ghost_idx));
                 vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
             } else {
                 vm.output.push("NECROMANCY: Graveyard empty".to_string());

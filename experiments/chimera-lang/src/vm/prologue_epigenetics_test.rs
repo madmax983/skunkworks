@@ -1,11 +1,13 @@
 use crate::ast::{Dna, Helix};
-use crate::vm::{ChimeraVM, Value};
-use crate::vm::prologue::exec_prologue_tick;
 use crate::vm::prologue::epigenetics::EpigeneticMark;
+use crate::vm::prologue::exec_prologue_tick;
+use crate::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_epigenetic_methylation() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -23,16 +25,24 @@ fn test_epigenetic_methylation() {
     exec_prologue_tick(&mut vm);
 
     // Wire should NOT have signal because apply_propagation_rune returns early
-    assert!(vm.prologue_state.signal_grid[6][5].is_none(), "Methylated wire should not carry signal");
+    assert!(
+        vm.prologue_state.signal_grid[6][5].is_none(),
+        "Methylated wire should not carry signal"
+    );
 
     // Sink check
     let output = vm.output.join("\n");
-    assert!(!output.contains("PROLOGUE: Sink"), "Sink should not trigger");
+    assert!(
+        !output.contains("PROLOGUE: Sink"),
+        "Sink should not trigger"
+    );
 }
 
 #[test]
 fn test_epigenetic_rune_application() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -48,12 +58,17 @@ fn test_epigenetic_rune_application() {
 
     exec_prologue_tick(&mut vm);
 
-    assert_eq!(vm.prologue_state.epigenetic_grid[6][6], EpigeneticMark::Methylated);
+    assert_eq!(
+        vm.prologue_state.epigenetic_grid[6][6],
+        EpigeneticMark::Methylated
+    );
 }
 
 #[test]
 fn test_phosphorylation_amplify() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -70,6 +85,10 @@ fn test_phosphorylation_amplify() {
     exec_prologue_tick(&mut vm);
 
     // Count occurrences in output
-    let count = vm.output.iter().filter(|s| s.contains("PROLOGUE: Sink")).count();
+    let count = vm
+        .output
+        .iter()
+        .filter(|s| s.contains("PROLOGUE: Sink"))
+        .count();
     assert_eq!(count, 2, "Phosphorylated sink should trigger twice");
 }

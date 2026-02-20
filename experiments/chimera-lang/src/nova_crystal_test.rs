@@ -212,6 +212,9 @@ fn test_anneal() {
 
     // Check if we have 10, 20, 30 (ignore random artifacts)
     values.sort();
-    assert!(values.contains(&10) && values.contains(&20) && values.contains(&30),
-            "Values {:?} missing expected elements", values);
+    assert!(
+        values.contains(&10) && values.contains(&20) && values.contains(&30),
+        "Values {:?} missing expected elements",
+        values
+    );
 }

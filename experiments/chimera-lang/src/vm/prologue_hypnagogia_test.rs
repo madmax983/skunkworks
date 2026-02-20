@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
     use crate::ast::{Dna, Helix};
-    use crate::vm::{ChimeraVM, Value};
     use crate::vm::prologue::exec_prologue_tick;
+    use crate::vm::{ChimeraVM, Value};
 
     #[test]
     fn test_dream_intensity_increase() {
@@ -24,7 +24,10 @@ mod tests {
         // But process_dream_logic runs at end of tick and decays by 0.1
         // So 5.0 - 0.1 = 4.9
         assert!(vm.prologue_state.dream_intensity > 0.0);
-        assert!((vm.prologue_state.dream_intensity - 4.9).abs() < 0.001, "Intensity should be approx 4.9");
+        assert!(
+            (vm.prologue_state.dream_intensity - 4.9).abs() < 0.001,
+            "Intensity should be approx 4.9"
+        );
 
         // Check output signal (self)
         // Output signal is set during propagation (before decay)
@@ -74,6 +77,9 @@ mod tests {
             }
         }
 
-        assert!(manifested, "High dream intensity should eventually manifest effects");
+        assert!(
+            manifested,
+            "High dream intensity should eventually manifest effects"
+        );
     }
 }

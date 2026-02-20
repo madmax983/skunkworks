@@ -1,6 +1,6 @@
-use crate::vm::Value;
-use crate::ast::JunctionType;
 use super::normalize_coords;
+use crate::ast::JunctionType;
+use crate::vm::Value;
 use regex::Regex;
 
 pub fn apply_linguistics_runes(
@@ -74,10 +74,13 @@ pub fn apply_linguistics_runes(
         "©" => {
             // Join: West (List), North (Delim) -> Self (String)
             if let (Some(Value::Junction(_, list)), Some(Value::Str(delim))) = (w_sig, n_sig) {
-                let strings: Vec<String> = list.iter().map(|v| match v {
-                    Value::Str(s) => s.clone(),
-                    _ => format!("{}", v),
-                }).collect();
+                let strings: Vec<String> = list
+                    .iter()
+                    .map(|v| match v {
+                        Value::Str(s) => s.clone(),
+                        _ => format!("{}", v),
+                    })
+                    .collect();
                 let joined = strings.join(delim);
 
                 let res = Value::Str(joined);
@@ -102,7 +105,7 @@ pub fn apply_linguistics_runes(
             }
         }
         "↓" => {
-             // Shift Down: West (String) -> Self (Lower)
+            // Shift Down: West (String) -> Self (Lower)
             if let Some(val) = w_sig {
                 let s = match val {
                     Value::Str(s) => s.clone(),
@@ -147,8 +150,12 @@ fn levenshtein_distance(a: &str, b: &str) -> usize {
     // Use 2 rows for space optimization if needed, but matrix is fine for small strings
     let mut matrix = vec![vec![0; len_b + 1]; len_a + 1];
 
-    for i in 0..=len_a { matrix[i][0] = i; }
-    for j in 0..=len_b { matrix[0][j] = j; }
+    for i in 0..=len_a {
+        matrix[i][0] = i;
+    }
+    for j in 0..=len_b {
+        matrix[0][j] = j;
+    }
 
     for (i, ca) in a.chars().enumerate() {
         for (j, cb) in b.chars().enumerate() {

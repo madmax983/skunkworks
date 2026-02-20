@@ -1161,8 +1161,7 @@ fn exec_gravitate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             };
 
             // Use normalize_coords to find valid target
-            if let Some((target_y, target_x)) =
-                vm.normalize_coords(ty as i64 + sy, tx as i64 + sx)
+            if let Some((target_y, target_x)) = vm.normalize_coords(ty as i64 + sy, tx as i64 + sx)
             {
                 // Check if target is empty
                 if matches!(vm.grid[target_y][target_x], Value::Int(0)) {
@@ -1280,9 +1279,7 @@ fn exec_migrate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     }
 
     if !blocked {
-        if let Some((mut new_y, mut new_x)) =
-            vm.normalize_coords(cy as i64 + dy, cx as i64 + dx)
-        {
+        if let Some((mut new_y, mut new_x)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
             // Check for portal
             if let Some(&(py, px)) = vm.portals.get(&(new_y, new_x)) {
                 vm.output.push(format!(
@@ -1364,8 +1361,7 @@ fn exec_conjugate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 success_count += 1;
 
                 // Advance
-                if let Some((next_y, next_x)) =
-                    vm.normalize_coords(ny as i64 + dy, nx as i64 + dx)
+                if let Some((next_y, next_x)) = vm.normalize_coords(ny as i64 + dy, nx as i64 + dx)
                 {
                     curr_y = next_y as i64;
                     curr_x = next_x as i64;
@@ -2580,9 +2576,7 @@ fn exec_osmosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let dy = vm.pop_int("osmosis")?;
 
     let (cy, cx) = vm.context_loc;
-    if let Some((mut new_y, mut new_x)) =
-        vm.normalize_coords(cy as i64 + dy, cx as i64 + dx)
-    {
+    if let Some((mut new_y, mut new_x)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
         if let Some(&(py, px)) = vm.portals.get(&(new_y, new_x)) {
             vm.output.push(format!(
                 "PORTAL: Teleported from {},{} to {},{}",
@@ -3415,8 +3409,7 @@ fn exec_bury(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 let s_idx = idx as usize;
                 if s_idx < vm.dna.helix.strands.len() {
                     if vm.graveyard.len() >= crate::vm::MAX_GRAVEYARD_SIZE {
-                        vm.output
-                            .push("BURY: Graveyard limit reached".to_string());
+                        vm.output.push("BURY: Graveyard limit reached".to_string());
                         return None;
                     }
 
