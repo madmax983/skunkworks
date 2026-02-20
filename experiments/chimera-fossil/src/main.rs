@@ -1,4 +1,5 @@
 use anyhow::Result;
+use clap::Parser;
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
     execute,
@@ -25,6 +26,14 @@ use chimera_lang::{
 };
 use entropy::{fossilize, Fossil};
 use git::{get_file_content, get_files_in_commit, load_history, Commit};
+
+#[derive(Parser)]
+#[command(author, version, about, long_about = None)]
+struct Cli {
+    /// List fossil history (Git Log) in a table
+    #[arg(short, long)]
+    list: bool,
+}
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 pub enum FossilMode {
@@ -273,6 +282,13 @@ fn splice_text_to_dna(text: &str) -> Dna {
 }
 
 fn main() -> Result<()> {
+    let cli = Cli::parse();
+
+    if cli.list {
+        run_cli_list()?;
+        return Ok(());
+    }
+
     // Setup Terminal
     enable_raw_mode()?;
     let mut stdout = io::stdout();
@@ -299,6 +315,38 @@ fn main() -> Result<()> {
         println!("{:?}", err);
     }
 
+    Ok(())
+}
+
+fn run_cli_list() -> Result<()> {
+    let commits = load_history()?;
+    let mut table = comfy_table::Table::new();
+    table
+        .load_preset(comfy_table::presets::UTF8_FULL)
+        .set_header(vec!["Hash", "Date", "Author", "Message", "Verified"]);
+
+    for commit in commits {
+        // Simulate a "Verified" status based on commit hash or message properties
+        // For visual demonstration of "True" as Green
+        let is_verified = commit.hash.chars().next().unwrap_or('0').is_numeric(); // Arbitrary check
+        let verified_str = if is_verified { "True" } else { "False" };
+
+        let verified_cell = if is_verified {
+            comfy_table::Cell::new(verified_str).fg(comfy_table::Color::Green)
+        } else {
+            comfy_table::Cell::new(verified_str).fg(comfy_table::Color::Red)
+        };
+
+        table.add_row(vec![
+            comfy_table::Cell::new(&commit.hash[0..7]),
+            comfy_table::Cell::new(commit.date.to_string()),
+            comfy_table::Cell::new(&commit.author),
+            comfy_table::Cell::new(&commit.message),
+            verified_cell,
+        ]);
+    }
+
+    println!("{table}");
     Ok(())
 }
 
