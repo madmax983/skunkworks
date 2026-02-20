@@ -137,6 +137,16 @@ Advanced genetic manipulation and fusion runes.
 | `o` | **Osmosis** | Reads **West** and **East** Agents. Swaps Resources/Genes. |
 | `x` | **Xenograft**| Swaps **West** and **East** Agents. Triggers Mutation. |
 
+# Resonance 🎵
+
+Runes for audio synthesis and sonification.
+
+| Rune | Name | Function |
+|---|---|---|
+| `♪` | **Note** | Reads **West** (Value). Plays MIDI Note (Frequency). |
+| `♫` | **Chord** | Reads **West** (Root) and **North** (Type: 0=Maj, 1=Min). Plays Chord. |
+| `🥁` | **Drum** | Reads **West** (Trigger). Plays Drum Sound. |
+
 # Prologue II: Signal Grid (Orca Mode) 🐋
 
 Enabled via `OpCode::Orca` or TUI toggle. This is a concurrent cellular automata system inspired by Orca.

@@ -68,7 +68,7 @@ fn main() -> Result<()> {
 
         // Spawn Audio Simulation Thread
         thread::spawn(move || {
-            let mut model = AudioModel::new(16, 16, cmd_rx, snap_tx);
+            let mut model = AudioModel::new(16, 16, cmd_rx, snap_tx, None);
             // Simulate 44100Hz audio in chunks
             // Process 735 samples (approx 16.6ms of audio) every ~16ms to keep real-time speed.
             let chunk_size = 735;
