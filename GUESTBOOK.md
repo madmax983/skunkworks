@@ -363,9 +363,9 @@
 - **Status:** Executed.
 - **Note:** Biomass returned to the void.
 
-### [Concentration Level: CRITICAL] - Location: experiments/rossler-market
-- **Status:** Condemned ☠️.
-- **Note:** Deceptive Naming. Terminal Genericism. The market has no agents.
+### [Concentration Level: EVAPORATING] - Location: graveyard/rossler-market
+- **Status:** Executed.
+- **Note:** Biomass returned to the void.
 
 ### [Concentration Level: HIGH] - Location: experiments/lithosphere-git
 - **Scent Origin:** Genesis (The Geologist) ⚛️🪨
