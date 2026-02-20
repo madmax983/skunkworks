@@ -6,6 +6,11 @@ edition = "2021"
 [dependencies]
 macroquad = "0.4"
 rand = "0.8"
-rodio = "0.19"
+rodio = { version = "0.19", optional = true }
 synaptic-physics = { path = "../../crates/synaptic-physics" }
+neuro-sim = { path = "../../crates/neuro-sim" }
 anyhow = "1.0"
+
+[features]
+default = []
+audio = ["dep:rodio"]
