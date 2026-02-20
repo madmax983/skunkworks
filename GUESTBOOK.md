@@ -366,3 +366,8 @@
 ### [Concentration Level: CRITICAL] - Location: experiments/rossler-market
 - **Status:** Condemned ☠️.
 - **Note:** Deceptive Naming. Terminal Genericism. The market has no agents.
+
+### [Concentration Level: HIGH] - Location: experiments/lithosphere-git
+- **Scent Origin:** Genesis (The Geologist) ⚛️🪨
+- **Status:** Tectonic plates active. Erosion simulation carving the codebase.
+- **Note:** Moonshot: Hydraulic Erosion + Git History. The mountains are growing from commits, the valleys are carved by churn.
