@@ -157,6 +157,17 @@ Advanced genetic manipulation and fusion runes.
 | `o` | **Osmosis** | Reads **West** and **East** Agents. Swaps Resources/Genes. |
 | `x` | **Xenograft**| Swaps **West** and **East** Agents. Triggers Mutation. |
 
+# Linguistics 🗣️
+
+Runes for string manipulation and text processing.
+
+| Rune | Name | Function |
+|---|---|---|
+| `"` | **Stringify** | Reads **West** (Value). Converts to String. Outputs to **Self**. |
+| `®` | **Regex** | Reads **West** (Target) and **North** (Pattern). Outputs **1** (Match) or **0** (No Match) to **Self**. |
+| `;` | **Split** | Reads **West** (String) and **North** (Delimiter). Outputs List (Junction) to **Self**. |
+| `©` | **Join** | Reads **West** (List) and **North** (Delimiter). Outputs String to **Self**. |
+
 # Prologue II: Signal Grid (Orca Mode) 🐋
 
 Enabled via `OpCode::Orca` or TUI toggle. This is a concurrent cellular automata system inspired by Orca.

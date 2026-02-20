@@ -89,6 +89,7 @@ pub mod oracle;
 pub mod psionics;
 pub mod resonance;
 pub mod prism;
+pub mod linguistics;
 
 /// An autonomous agent wandering the Prologue grid.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -316,6 +317,11 @@ impl PrologueState {
                             | "▼"
                             | "🧬"
                             | "⚛"
+                        // Linguistics
+                            | "\""
+                            | "®"
+                            | ";"
+                            | "©"
                     ) {
                         self.runes.insert((y, x));
 
@@ -609,6 +615,9 @@ fn apply_propagation_rune(
         return true;
     }
     if prism::apply_prism_runes(rune, y, x, current_signals, next_signals, dna) {
+        return true;
+    }
+    if linguistics::apply_linguistics_runes(rune, y, x, current_signals, next_signals) {
         return true;
     }
     false
@@ -1192,3 +1201,6 @@ mod prologue_oracle_test;
 
 #[cfg(test)]
 mod prologue_resonance_test;
+
+#[cfg(test)]
+mod prologue_linguistics_test;
