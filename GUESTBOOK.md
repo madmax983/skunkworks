@@ -66,3 +66,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The hive is buzzing in the Poincaré Disk. The bees dance in circles to go straight.
 - **Note**: "To go far, you must waggle long."
+
+### [Concentration Level: HIGH] - Location: experiments/liquidity-bridge
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The chasm of the Spread has been bridged. Ants are carrying value across the void.
+- **Note**: "Volatility is just the wind that shakes the bridge."
