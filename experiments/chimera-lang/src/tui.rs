@@ -277,7 +277,7 @@ pub(crate) struct AppState {
 
 pub(crate) struct EvolutionState {
     pub(crate) engine: Option<crate::vm::evolution::EvolutionEngine>,
-    pub(crate) target_val: i64,
+    pub(crate) challenge: crate::vm::evolution::Challenge,
     pub(crate) auto_run: bool,
 }
 
@@ -285,7 +285,7 @@ impl EvolutionState {
     fn new() -> Self {
         Self {
             engine: None,
-            target_val: 42,
+            challenge: crate::vm::evolution::Challenge::default(),
             auto_run: false,
         }
     }
@@ -1991,10 +1991,10 @@ where
                                 }
                                 ViewMode::Evolution => {
                                     if let Ok(val) = app_state.input_buffer.parse::<i64>() {
-                                        app_state.evolution_state.target_val = val;
+                                        app_state.evolution_state.challenge = crate::vm::evolution::Challenge::Target(val);
                                         if let Some(engine) = &mut app_state.evolution_state.engine
                                         {
-                                            engine.target_val = val;
+                                            engine.challenge = crate::vm::evolution::Challenge::Target(val);
                                         }
                                         app_state.status_msg = format!("Target set to {}", val);
                                     }
@@ -2270,6 +2270,21 @@ where
                         app_state.status_msg = format!("Chaos Mode: {}", app_state.chaos_mode);
                     }
                     KeyCode::Tab => {
+                        if let ViewMode::Evolution = app_state.view_mode {
+                            use crate::vm::evolution::Challenge;
+                            app_state.evolution_state.challenge = match app_state.evolution_state.challenge {
+                                Challenge::Target(_) => Challenge::Doubler,
+                                Challenge::Doubler => Challenge::Adder,
+                                Challenge::Adder => Challenge::Fibonacci,
+                                Challenge::Fibonacci => Challenge::Target(42),
+                            };
+                            if let Some(engine) = &mut app_state.evolution_state.engine {
+                                engine.challenge = app_state.evolution_state.challenge.clone();
+                            }
+                            app_state.status_msg = format!("Challenge set to {}", app_state.evolution_state.challenge);
+                            return Ok(());
+                        }
+
                         #[cfg(feature = "nova")]
                         if let ViewMode::Genesis = app_state.view_mode {
                             app_state.genesis_focus = (app_state.genesis_focus + 1) % 3;
@@ -2647,7 +2662,7 @@ where
                                 let engine = crate::vm::evolution::EvolutionEngine::new(
                                     strand.clone(),
                                     20, // Population
-                                    app_state.evolution_state.target_val,
+                                    app_state.evolution_state.challenge.clone(),
                                 );
                                 app_state.evolution_state.engine = Some(engine);
                                 app_state.view_mode = ViewMode::Evolution;
@@ -10878,8 +10893,8 @@ fn render_evolution(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
             Line::from(format!("Generation: {}", engine.generation)),
             Line::from(format!("Best Fitness: {}", engine.best_fitness)),
             Line::from(format!(
-                "Target Value: {}",
-                app_state.evolution_state.target_val
+                "Challenge: {}",
+                app_state.evolution_state.challenge
             )),
             Line::from(format!("Population: {}", engine.population.len())),
             Line::from(format!("Auto-Run: {}", app_state.evolution_state.auto_run)),
@@ -10887,7 +10902,8 @@ fn render_evolution(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
             Line::from("Controls:"),
             Line::from("  Space: Step Generation"),
             Line::from("  A: Toggle Auto-Run"),
-            Line::from("  Enter: Set Target"),
+            Line::from("  Enter: Set Target (Int)"),
+            Line::from("  Tab: Cycle Challenge"),
         ];
 
         let stats_widget =

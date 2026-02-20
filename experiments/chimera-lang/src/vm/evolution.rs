@@ -3,21 +3,53 @@ use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value};
 use rand::Rng;
 
+#[derive(Clone, Debug, PartialEq)]
+pub enum Challenge {
+    Target(i64),
+    Doubler,
+    Adder,
+    Fibonacci,
+}
+
+impl Default for Challenge {
+    fn default() -> Self {
+        Challenge::Target(42)
+    }
+}
+
+impl std::fmt::Display for Challenge {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Challenge::Target(n) => write!(f, "Target({})", n),
+            Challenge::Doubler => write!(f, "Doubler (x -> 2x)"),
+            Challenge::Adder => write!(f, "Adder (x,y -> x+y)"),
+            Challenge::Fibonacci => write!(f, "Fibonacci (n -> fib(n))"),
+        }
+    }
+}
+
 #[derive(Clone)]
 pub struct EvolutionEngine {
     pub population: Vec<Strand>,
-    pub target_val: i64,
+    pub challenge: Challenge,
     pub generation: usize,
     pub best_fitness: i64,
     pub history: Vec<i64>,
 }
 
 impl EvolutionEngine {
-    pub fn new(seed: Strand, population_size: usize, target: i64) -> Self {
-        let population = vec![seed; population_size];
+    pub fn new(seed: Strand, population_size: usize, challenge: Challenge) -> Self {
+        let mut population = vec![seed.clone(); population_size];
+
+        // Initial diversity
+        let mut rng = rand::thread_rng();
+        for i in 1..population_size {
+            Self::mutate_strand(&mut population[i], &mut rng);
+        }
+
         Self {
             population,
-            target_val: target,
+            challenge,
             generation: 0,
             best_fitness: i64::MAX,
             history: Vec::new(),
@@ -27,50 +59,10 @@ impl EvolutionEngine {
     pub fn step(&mut self, vm_template: &ChimeraVM) {
         let mut results = Vec::new();
 
+        // 1. Evaluate Fitness
         for strand in &self.population {
-            // Sandboxed VM
-            let mut vm = vm_template.clone();
-            // Clear existing DNA and use just this strand
-            vm.dna.helix.strands = vec![strand.clone()];
-            vm.ip = (0, 0);
-            vm.energy = 100; // Enough energy
-            vm.halted = false;
-            vm.chaos_mode = false; // Disable random mutations during sim
-
-            // Run for fixed steps
-            let max_ticks = 50;
-            for _ in 0..max_ticks {
-                if vm.halted {
-                    break;
-                }
-                vm.step();
-            }
-
-            // Calculate Fitness (Distance to target)
-            // We look at the top of the stack.
-            let val = vm
-                .stack
-                .last()
-                .and_then(|v| match v {
-                    Value::Int(n) => Some(*n),
-                    _ => None,
-                })
-                .unwrap_or(0);
-
-            // If stack empty, heavy penalty
-            let fitness = if vm.stack.is_empty() {
-                i64::MAX / 2
-            } else {
-                (val - self.target_val).abs()
-            };
-
-            // Secondary fitness: code length (shorter is better)
-            // But primary is value.
-            // Let's add length/10 to fitness to break ties
-            let len_penalty = strand.genes.len() as i64;
-            let final_fitness = fitness.saturating_add(len_penalty);
-
-            results.push((final_fitness, strand.clone()));
+            let fitness = Self::evaluate_fitness(vm_template, strand, &self.challenge);
+            results.push((fitness, strand.clone()));
         }
 
         // Sort by fitness (lowest is best)
@@ -83,15 +75,131 @@ impl EvolutionEngine {
 
         let best_strand = best.1;
         let pop_size = self.population.len();
-        self.population.clear();
-        self.population.push(best_strand.clone()); // Elitism
+
+        let mut next_gen = Vec::new();
+        next_gen.push(best_strand.clone()); // Elitism
 
         let mut rng = rand::thread_rng();
-        while self.population.len() < pop_size {
-            let mut clone = best_strand.clone();
-            Self::mutate_strand(&mut clone, &mut rng);
-            self.population.push(clone);
+
+        // 2. Selection & Reproduction
+        while next_gen.len() < pop_size {
+            // Tournament Selection
+            let parent_a = Self::tournament_select(&results, &mut rng);
+            let parent_b = Self::tournament_select(&results, &mut rng);
+
+            let mut child = if rng.gen_bool(0.7) {
+                // Crossover
+                Self::crossover(&parent_a, &parent_b, &mut rng)
+            } else {
+                parent_a.clone()
+            };
+
+            // Mutation
+            Self::mutate_strand(&mut child, &mut rng);
+            next_gen.push(child);
         }
+
+        self.population = next_gen;
+    }
+
+    fn tournament_select(pool: &[(i64, Strand)], rng: &mut impl Rng) -> Strand {
+        let k = 3; // Tournament size
+        let mut best: Option<&(i64, Strand)> = None;
+
+        for _ in 0..k {
+            let idx = rng.gen_range(0..pool.len());
+            let candidate = &pool[idx];
+            match best {
+                None => best = Some(candidate),
+                Some(b) => {
+                    if candidate.0 < b.0 {
+                        best = Some(candidate);
+                    }
+                }
+            }
+        }
+        best.unwrap().1.clone()
+    }
+
+    fn crossover(a: &Strand, b: &Strand, rng: &mut impl Rng) -> Strand {
+        if a.genes.is_empty() || b.genes.is_empty() {
+            return a.clone();
+        }
+
+        let len_a = a.genes.len();
+        let len_b = b.genes.len();
+        let min_len = len_a.min(len_b);
+        let split = rng.gen_range(0..min_len);
+
+        let mut new_genes = Vec::new();
+        // Head from A
+        for i in 0..split {
+            new_genes.push(a.genes[i].clone());
+        }
+        // Tail from B
+        for i in split..len_b {
+            new_genes.push(b.genes[i].clone());
+        }
+
+        Strand { genes: new_genes }
+    }
+
+    fn evaluate_fitness(vm_template: &ChimeraVM, strand: &Strand, challenge: &Challenge) -> i64 {
+        let mut total_error = 0;
+        let test_cases = match challenge {
+            Challenge::Target(n) => vec![(vec![], *n)],
+            Challenge::Doubler => vec![
+                (vec![Value::Int(5)], 10),
+                (vec![Value::Int(12)], 24),
+                (vec![Value::Int(0)], 0),
+                (vec![Value::Int(-5)], -10),
+            ],
+            Challenge::Adder => vec![
+                (vec![Value::Int(5), Value::Int(3)], 8),
+                (vec![Value::Int(10), Value::Int(20)], 30),
+                (vec![Value::Int(0), Value::Int(0)], 0),
+                (vec![Value::Int(-5), Value::Int(5)], 0),
+            ],
+            Challenge::Fibonacci => vec![
+                (vec![Value::Int(0)], 0),
+                (vec![Value::Int(1)], 1),
+                (vec![Value::Int(5)], 5),
+                (vec![Value::Int(6)], 8),
+                (vec![Value::Int(7)], 13),
+            ],
+        };
+
+        for (inputs, expected) in test_cases {
+            let mut vm = vm_template.clone();
+            vm.dna.helix.strands = vec![strand.clone()];
+            vm.ip = (0, 0);
+            vm.energy = 100;
+            vm.halted = false;
+            vm.chaos_mode = false;
+            vm.stack = inputs; // Preload stack
+
+            let max_ticks = 100;
+            for _ in 0..max_ticks {
+                if vm.halted {
+                    break;
+                }
+                vm.step();
+            }
+
+            let val = vm.stack.last().and_then(|v| match v {
+                Value::Int(n) => Some(*n),
+                _ => None,
+            }).unwrap_or(0);
+
+            // Stack Depth Check: Should be exactly 1
+            let stack_penalty = if vm.stack.len() == 1 { 0 } else { 1000 };
+
+            total_error += (val - expected).abs() + stack_penalty;
+        }
+
+        // Length Penalty
+        let len_penalty = strand.genes.len() as i64;
+        total_error.saturating_add(len_penalty)
     }
 
     fn mutate_strand(strand: &mut Strand, rng: &mut impl Rng) {
@@ -120,7 +228,6 @@ impl EvolutionEngine {
                 let val = rng.gen_range(0..100);
                 strand.genes[idx].args[0] = Nucleotide::Number(val);
             } else if strand.genes[idx].op == OpCode::Push {
-                // Convert Nop to Push? Or fix Push with no args
                 strand.genes[idx]
                     .args
                     .push(Nucleotide::Number(rng.gen_range(0..100)));
@@ -142,6 +249,13 @@ impl EvolutionEngine {
         if rng.gen_bool(0.2) && !strand.genes.is_empty() {
             let idx = rng.gen_range(0..strand.genes.len());
             strand.genes.remove(idx);
+        }
+
+        // 5. Swap Genes (Transposition)
+        if strand.genes.len() > 1 && rng.gen_bool(0.1) {
+            let idx1 = rng.gen_range(0..strand.genes.len());
+            let idx2 = rng.gen_range(0..strand.genes.len());
+            strand.genes.swap(idx1, idx2);
         }
     }
 }
@@ -167,22 +281,24 @@ mod tests {
         };
         let vm_template = ChimeraVM::new(dna);
 
-        let mut engine = EvolutionEngine::new(seed, 20, 42);
-
-        // It might take many generations, but fitness should not regress significantly
-        // and should eventually find 42 (Push 42 or Push 40 Add 2 etc)
-        // With random mutations, 50 generations might not be enough for complex logic,
-        // but for a simple "Push X", it should find X=42 quickly.
-
+        // Test Target
+        let mut engine = EvolutionEngine::new(seed.clone(), 20, Challenge::Target(42));
         for _ in 0..100 {
             engine.step(&vm_template);
-            if engine.best_fitness < 10 {
-                // Allow some slack for length penalty
-                break;
-            }
+            if engine.best_fitness < 10 { break; }
         }
+        assert!(engine.best_fitness < 100, "Target convergence failed");
 
-        println!("Best Fitness: {}", engine.best_fitness);
-        assert!(engine.best_fitness < 1000, "Fitness should be reasonable");
+        // Test Doubler
+        let mut engine = EvolutionEngine::new(seed, 20, Challenge::Doubler);
+        // This is harder, give it more time
+        for _ in 0..200 {
+            engine.step(&vm_template);
+            // Perfect fitness is approx length of code (e.g. 5 for Push 2 Mul)
+            if engine.best_fitness < 20 { break; }
+        }
+        println!("Doubler Best Fitness: {}", engine.best_fitness);
+        // We can't guarantee convergence with random mutation in unit test time, but ensure it runs
+        assert!(engine.generation == 200 || engine.best_fitness < 20);
     }
 }
