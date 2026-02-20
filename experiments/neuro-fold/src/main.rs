@@ -6,12 +6,28 @@ use physics_pbd::{Constraint, PbdSystem};
 const MESH_ROWS: usize = 6;
 const MESH_COLS: usize = 12; // Longer sheet to see waves
 const SIM_STEPS: usize = 4;
+const UPDATE_DT: f32 = 0.016;
+
+const GAIN_SENSOR: f32 = 5.0;
+const GAIN_PACEMAKER: f32 = 50.0;
+const PACEMAKER_PERIOD: f64 = 2.0;
+const PACEMAKER_DUTY: f64 = 0.1;
+const SYNAPSE_FORWARD: f32 = 20.0;
+const SYNAPSE_BACKWARD: f32 = -5.0;
+const SYNAPSE_REFLEX: f32 = 15.0;
+
+struct MiuraMesh {
+    system: PbdSystem,
+    indices: Vec<u16>,
+    actuators_v: Vec<usize>,
+    _actuators_h: Vec<usize>,
+}
 
 struct Creature {
     system: PbdSystem,
     indices: Vec<u16>,
-    actuators_v: Vec<usize>, // Vertical creases (controlled by neurons)
-    actuators_h: Vec<usize>, // Horizontal creases
+    actuators_v: Vec<usize>,  // Vertical creases (controlled by neurons)
+    _actuators_h: Vec<usize>, // Horizontal creases
     brain: Network,
     motor_neurons: Vec<usize>, // Indices of neurons controlling vertical zones
     sensor_neurons: Vec<usize>, // Indices of neurons receiving strain feedback
@@ -19,8 +35,27 @@ struct Creature {
 
 impl Creature {
     fn new() -> Self {
-        let (system, indices, actuators_v, actuators_h) = generate_miura_ori(MESH_ROWS, MESH_COLS);
+        let MiuraMesh {
+            system,
+            indices,
+            actuators_v,
+            _actuators_h,
+        } = generate_miura_ori(MESH_ROWS, MESH_COLS);
 
+        let (brain, motor_neurons, sensor_neurons) = Self::setup_brain(MESH_COLS);
+
+        Self {
+            system,
+            indices,
+            actuators_v,
+            _actuators_h,
+            brain,
+            motor_neurons,
+            sensor_neurons,
+        }
+    }
+
+    fn setup_brain(cols: usize) -> (Network, Vec<usize>, Vec<usize>) {
         let mut brain = Network::new();
         let mut motor_neurons = Vec::new();
         let mut sensor_neurons = Vec::new();
@@ -28,7 +63,7 @@ impl Creature {
         // Create a CPG chain for the columns
         let mut prev_neuron = None;
 
-        for _ in 0..MESH_COLS {
+        for _ in 0..cols {
             // Motor neuron for this column
             let motor = brain.add_neuron();
             motor_neurons.push(motor);
@@ -40,13 +75,13 @@ impl Creature {
             // CPG Logic:
             if let Some(prev) = prev_neuron {
                 // Forward propagation
-                brain.add_synapse(prev, motor, 20.0);
+                brain.add_synapse(prev, motor, SYNAPSE_FORWARD);
                 // Backward inhibition?
-                brain.add_synapse(motor, prev, -5.0);
+                brain.add_synapse(motor, prev, SYNAPSE_BACKWARD);
             }
 
             // Sensor excites motor (Reflex)
-            brain.add_synapse(sensor, motor, 15.0);
+            brain.add_synapse(sensor, motor, SYNAPSE_REFLEX);
 
             prev_neuron = Some(motor);
         }
@@ -54,25 +89,34 @@ impl Creature {
         // Loop the chain to create a ring oscillator?
         if let Some(last) = prev_neuron {
             if !motor_neurons.is_empty() {
-                brain.add_synapse(last, motor_neurons[0], 20.0);
+                brain.add_synapse(last, motor_neurons[0], SYNAPSE_FORWARD);
             }
         }
 
-        Self {
-            system,
-            indices,
-            actuators_v,
-            actuators_h,
-            brain,
-            motor_neurons,
-            sensor_neurons,
-        }
+        (brain, motor_neurons, sensor_neurons)
     }
 
-    fn update(&mut self, dt: f32) {
+    fn update(&mut self, dt: f32, current_time: f64) {
         // 1. Calculate Strain -> Sensor Inputs
-        let mut inputs = vec![0.0; self.brain.neurons.len()];
+        let mut inputs = self.calculate_strain_sensors();
 
+        // Periodic pacemaker input to the first neuron to start the wave
+        if current_time % PACEMAKER_PERIOD < PACEMAKER_DUTY && !self.motor_neurons.is_empty() {
+            inputs[self.motor_neurons[0]] += GAIN_PACEMAKER;
+        }
+
+        // 2. Step Brain
+        self.brain.step(&inputs);
+
+        // 3. Map Motor Output -> Actuator Targets
+        self.update_motor_actuators();
+
+        // 4. Step Physics
+        self.system.step(dt, SIM_STEPS);
+    }
+
+    fn calculate_strain_sensors(&self) -> Vec<f32> {
+        let mut inputs = vec![0.0; self.brain.neurons.len()];
         let actuators_per_col = MESH_ROWS + 1; // Number of vertical creases per column
 
         for col in 0..(MESH_COLS - 1) {
@@ -101,21 +145,14 @@ impl Creature {
 
             // Feed strain into sensor neuron for this column
             if col < self.sensor_neurons.len() {
-                inputs[self.sensor_neurons[col]] = total_strain * 5.0; // Gain
+                inputs[self.sensor_neurons[col]] = total_strain * GAIN_SENSOR;
             }
         }
+        inputs
+    }
 
-        // Periodic pacemaker input to the first neuron to start the wave
-        if get_time() % 2.0 < 0.1 {
-            if !self.motor_neurons.is_empty() {
-                inputs[self.motor_neurons[0]] += 50.0;
-            }
-        }
-
-        // 2. Step Brain
-        self.brain.step(&inputs);
-
-        // 3. Map Motor Output -> Actuator Targets
+    fn update_motor_actuators(&mut self) {
+        let actuators_per_col = MESH_ROWS + 1;
         for col in 0..(MESH_COLS - 1) {
             if col < self.motor_neurons.len() {
                 let neuron_idx = self.motor_neurons[col];
@@ -162,9 +199,6 @@ impl Creature {
                 }
             }
         }
-
-        // 4. Step Physics
-        self.system.step(dt, SIM_STEPS);
     }
 
     fn draw(&self) {
@@ -239,7 +273,7 @@ impl Creature {
 }
 
 // Adapted from origami-constellation/src/mesh_gen.rs
-fn generate_miura_ori(rows: usize, cols: usize) -> (PbdSystem, Vec<u16>, Vec<usize>, Vec<usize>) {
+fn generate_miura_ori(rows: usize, cols: usize) -> MiuraMesh {
     let mut system = PbdSystem::new();
     let mut indices = Vec::new();
     let mut actuators_v = Vec::new();
@@ -328,11 +362,16 @@ fn generate_miura_ori(rows: usize, cols: usize) -> (PbdSystem, Vec<u16>, Vec<usi
     }
 
     // Pin the head (left side) so it doesn't float away
-    let head_idx = (rows + 1) / 2;
+    let head_idx = rows.div_ceil(2);
     let head_pos = system.particles[head_idx].pos;
     system.add_pin_constraint(head_idx, head_pos);
 
-    (system, indices, actuators_v, actuators_h)
+    MiuraMesh {
+        system,
+        indices,
+        actuators_v,
+        _actuators_h: actuators_h,
+    }
 }
 
 #[macroquad::main("Neuro-Fold")]
@@ -357,7 +396,7 @@ async fn main() {
             creature.brain.neurons[idx].v += 50.0;
         }
 
-        creature.update(0.016);
+        creature.update(UPDATE_DT, get_time());
         creature.draw();
 
         set_default_camera();
@@ -386,5 +425,30 @@ async fn main() {
         }
 
         next_frame().await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_update_determinism() {
+        let mut creature = Creature::new();
+        let mut time = 0.0;
+
+        for _ in 0..100 {
+            creature.update(UPDATE_DT, time);
+            time += UPDATE_DT as f64;
+        }
+
+        let expected = -74.70514;
+        let actual = creature.brain.neurons[0].v;
+        assert!(
+            (actual - expected).abs() < 0.001,
+            "Expected {}, got {}",
+            expected,
+            actual
+        );
     }
 }
