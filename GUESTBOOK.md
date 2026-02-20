@@ -1,9 +1,13 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: HIGH] - Location: experiments/algo-botany
+### [Concentration Level: HIGH] - Location: experiments/newtonian-graph
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Condemned.
-- **Note:** Terminal Genericism. Superseded by `rhizome-radar`.
+- **Note:** Ancestral Redundancy. Superseded by `ferrous-graph`.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/algo-botany
+- **Status:** Executed.
+- **Note:** Superseded by `rhizome-radar`. Biomass returned to the void.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/routing-market
 - **Status:** Executed.
