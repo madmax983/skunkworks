@@ -1,6 +1,5 @@
 mod creature;
 mod font;
-mod neuro;
 mod physics;
 
 use creature::ContourCreature;

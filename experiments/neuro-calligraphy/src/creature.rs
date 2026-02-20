@@ -1,4 +1,4 @@
-use crate::neuro::{CPGNetwork, IzhikevichNeuron};
+use neuro_sim::Network;
 use crate::physics::{DistanceConstraint, PhysicsWorld, VerletPoint};
 use ::rand::Rng;
 use macroquad::prelude::*;
@@ -6,7 +6,7 @@ use macroquad::prelude::*;
 pub struct ContourCreature {
     pub left_points: Vec<usize>,
     pub right_points: Vec<usize>,
-    pub cpg: CPGNetwork,
+    pub cpg: Network,
     pub neuron_map: Vec<(usize, usize)>, // (Left Neuron, Right Neuron) per segment
     pub muscles: Vec<(usize, usize)>,    // (Left Constraint, Right Constraint) per segment
     pub segment_lengths: Vec<f32>,
@@ -80,19 +80,18 @@ impl ContourCreature {
         }
 
         // 3. Create CPG (Ring Network)
-        let mut cpg = CPGNetwork::new();
+        let mut cpg = Network::new();
         let mut neuron_map = Vec::new();
         let mut rng = ::rand::thread_rng();
 
         for _ in 0..n {
-            let mut ln = IzhikevichNeuron::new_rs();
-            let mut rn = IzhikevichNeuron::new_rs();
+            // Add Default Neurons (Regular Spiking)
+            let l_idx = cpg.add_neuron();
+            let r_idx = cpg.add_neuron();
 
-            ln.v = -65.0 + rng.gen_range(-5.0..5.0);
-            rn.v = -65.0 + rng.gen_range(-5.0..5.0);
-
-            let l_idx = cpg.add_neuron(ln);
-            let r_idx = cpg.add_neuron(rn);
+            // Randomize initial voltage
+            cpg.neurons[l_idx].v = -65.0 + rng.gen_range(-5.0..5.0);
+            cpg.neurons[r_idx].v = -65.0 + rng.gen_range(-5.0..5.0);
 
             neuron_map.push((l_idx, r_idx));
         }
@@ -107,13 +106,13 @@ impl ContourCreature {
             let next_i = (i + 1) % n;
             let (next_l, next_r) = neuron_map[next_i];
 
-            // Cross Inhibition
-            cpg.add_synapse(l, r, weight_inhib, 0);
-            cpg.add_synapse(r, l, weight_inhib, 0);
+            // Cross Inhibition (Delay 0 = immediate/next step)
+            cpg.add_synapse_with_delay(l, r, weight_inhib, 0);
+            cpg.add_synapse_with_delay(r, l, weight_inhib, 0);
 
             // Forward Excitation (Wave propagation)
-            cpg.add_synapse(l, next_l, weight_exc, delay);
-            cpg.add_synapse(r, next_r, weight_exc, delay);
+            cpg.add_synapse_with_delay(l, next_l, weight_exc, delay);
+            cpg.add_synapse_with_delay(r, next_r, weight_exc, delay);
         }
 
         Self {
@@ -134,10 +133,10 @@ impl ContourCreature {
 
         let total_ms = dt * 1000.0;
         let steps = (total_ms / 1.0).ceil() as usize; // 1ms steps
-        let sub_dt = total_ms / steps as f32;
+        // let sub_dt = total_ms / steps as f32; // Unused as neuro-sim assumes 1.0
 
         for _ in 0..steps {
-            self.cpg.step(sub_dt, &inputs);
+            self.cpg.step(&inputs);
         }
 
         // Update Muscles

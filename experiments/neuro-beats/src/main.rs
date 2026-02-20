@@ -1,15 +1,21 @@
 use macroquad::prelude::*;
+use neuro_sim::Network;
+// use synaptic_physics::Izhikevich; // Not directly needed if we access via Network
 
 mod audio;
-mod neuron;
-
 use audio::AudioEngine;
-use neuron::Network;
+
+struct NeuronData {
+    pos: Vec2,
+    frequency: f32,
+    last_spike_time: Option<f32>,
+}
 
 #[macroquad::main("Neuro Beats")]
 async fn main() {
     let audio_engine = AudioEngine::new();
     let mut network = Network::new();
+    let mut neuron_data: Vec<NeuronData> = Vec::new();
 
     let center = vec2(screen_width() / 2.0, screen_height() / 2.0);
     let radius = 200.0;
@@ -28,7 +34,15 @@ async fn main() {
         let ratio = scale_ratios[i % 5];
         let freq = base_freq * ratio * 2.0f32.powf(octave);
 
-        network.add_neuron(pos, freq);
+        // Add neuron to network
+        network.add_neuron();
+
+        // Add metadata
+        neuron_data.push(NeuronData {
+            pos,
+            frequency: freq,
+            last_spike_time: None,
+        });
     }
 
     // Connect in a ring
@@ -40,19 +54,19 @@ async fn main() {
         // Input adds to v' = ... + I.
         // With substeps=2, dt=1.0 roughly.
         // Let's try 50.0.
-        network.add_synapse(i, next, 50.0, 10); // 10 ticks delay
+        network.add_synapse_with_delay(i, next, 50.0, 10); // 10 ticks delay
     }
 
     // Connect cross connections for complexity
     for i in 0..num_neurons {
         let other = (i + num_neurons / 2) % num_neurons;
-        network.add_synapse(i, other, 30.0, 20);
+        network.add_synapse_with_delay(i, other, 30.0, 20);
     }
 
     loop {
         clear_background(BLACK);
 
-        let dt = 1.0; // Simulation time step (not necessarily wall clock)
+        // let dt = 1.0; // Simulation time step (implied by neuro-sim step)
 
         // Input Handling
         if is_mouse_button_pressed(MouseButton::Left) {
@@ -62,20 +76,20 @@ async fn main() {
             let mut closest = None;
             let mut min_dist = f32::MAX;
 
-            for neuron in &network.neurons {
-                let d = neuron.pos.distance(mouse_pos);
+            for (i, data) in neuron_data.iter().enumerate() {
+                let d = data.pos.distance(mouse_pos);
                 if d < min_dist {
                     min_dist = d;
-                    closest = Some(neuron.id);
+                    closest = Some(i);
                 }
             }
 
             if let Some(id) = closest {
                 if min_dist < 50.0 {
                     // Inject current
-                    network.neurons[id].physics.inject(100.0);
+                    network.neurons[id].inject(100.0);
                     // Also play a sound immediately for feedback
-                    audio_engine.play_tone(network.neurons[id].frequency, 0.1);
+                    audio_engine.play_tone(neuron_data[id].frequency, 0.1);
                 }
             }
         }
@@ -83,52 +97,67 @@ async fn main() {
         // Space to reset/inject all
         if is_key_pressed(KeyCode::Space) {
             for neuron in &mut network.neurons {
-                neuron.physics.inject(50.0);
+                neuron.inject(50.0);
             }
         }
 
         // Update Network
-        let spikes = network.update(dt, get_time() as f32);
+        network.step(&[]);
 
-        // Audio
-        for &id in &spikes {
-            let neuron = &network.neurons[id];
-            // Play short blip
-            audio_engine.play_tone(neuron.frequency, 0.1);
+        // Check for spikes and play audio
+        for (i, spiked) in network.spikes.iter().enumerate() {
+            if *spiked {
+                let data = &mut neuron_data[i];
+                data.last_spike_time = Some(get_time() as f32);
+                // Play short blip
+                audio_engine.play_tone(data.frequency, 0.1);
+            }
         }
 
         // Draw Synapses
-        for synapse in &network.synapses {
-            let start = network.neurons[synapse.from].pos;
-            let end = network.neurons[synapse.to].pos;
+        for (syn_idx, synapse) in network.synapses.iter().enumerate() {
+            let start = neuron_data[synapse.from].pos;
+            let end = neuron_data[synapse.to].pos;
 
-            let color = if synapse.active {
+            let is_active = network.get_synapse_activity(syn_idx);
+
+            let color = if is_active {
                 YELLOW
-            } else if synapse.timer > 0 {
-                // Signal traveling
-                let t = synapse.timer as f32 / synapse.delay as f32;
-                // Interpolate position
-                let pos = start + (end - start) * (1.0 - t);
-                draw_circle(pos.x, pos.y, 3.0, WHITE);
-                GRAY
             } else {
-                DARKGRAY
+                // Visualize signal traveling?
+                // neuro-sim doesn't expose `timer` directly easily (it's inside spikes_in_transit).
+                // But we can check if `spikes_in_transit` is not empty.
+                if !synapse.spikes_in_transit.is_empty() {
+                    // Just draw a blip somewhere?
+                    // Without exact timer, we can't interpolate perfectly.
+                    // But we can just draw the line brighter.
+                    Color::new(0.5, 0.5, 0.5, 1.0)
+                } else {
+                    DARKGRAY
+                }
             };
 
             draw_line(start.x, start.y, end.x, end.y, 1.0, color);
+
+            // If active, draw a circle at destination
+            if is_active {
+                 draw_circle(end.x, end.y, 5.0, YELLOW);
+            }
         }
 
         // Draw Neurons
-        for neuron in &network.neurons {
+        for (i, neuron) in network.neurons.iter().enumerate() {
+            let data = &neuron_data[i];
+
             // Map voltage to color
             // v is typically -65 to 30.
-            let v = neuron.physics.v;
+            let v = neuron.v;
             let normalized = ((v + 80.0) / 110.0).clamp(0.0, 1.0);
 
             let color = Color::new(normalized, 0.2, 1.0 - normalized, 1.0);
 
             // Flash white on spike
-            let draw_color = if let Some(last) = neuron.last_spike_time {
+            let draw_color = if let Some(last) = data.last_spike_time {
                 if get_time() as f32 - last < 0.1 {
                     WHITE
                 } else {
@@ -138,8 +167,8 @@ async fn main() {
                 color
             };
 
-            draw_circle(neuron.pos.x, neuron.pos.y, 10.0, draw_color);
-            draw_circle_lines(neuron.pos.x, neuron.pos.y, 10.0, 2.0, LIGHTGRAY);
+            draw_circle(data.pos.x, data.pos.y, 10.0, draw_color);
+            draw_circle_lines(data.pos.x, data.pos.y, 10.0, 2.0, LIGHTGRAY);
         }
 
         draw_text(
