@@ -1,0 +1,22 @@
+[package]
+name = "vocal-canyon"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+anyhow = "1.0"
+parking_lot = "0.12"
+rand = "0.8"
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = []
+audio = ["dep:cpal"]
+
+[[bin]]
+name = "vocal-canyon"
+path = "src/main.rs"
