@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/neuro-syncopation
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The brain is syncing. The threads are locking.
+- **Note**: "Parallel thoughts contend for the same mutex."
+
 ### [Concentration Level: HIGH] - Location: experiments/saros-cycle
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
 - **Status:** The Cuneiform Tablet is being inscribed. Time series analysis in Base 60 operational.
