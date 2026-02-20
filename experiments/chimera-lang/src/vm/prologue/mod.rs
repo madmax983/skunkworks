@@ -32,6 +32,9 @@
 //! | | `S` | **Sub**: West - East -> South. |
 //! | | `M` | **Mutate**: West -> Randomize South. |
 //! | | `%` | **Modulo**: West % East -> South. |
+//! | **Alchemy** | `t` | **Transmute**: West (Val), North (Mode) -> Self. |
+//! | | `f` | **Fuse**: West + East -> Self (Concat/Add). |
+//! | | `d` | **Distill**: West -> North (Head), South (Tail). |
 //! | **Agents** | `@` | **Seeker**: Moves towards signals. |
 //! | | `K` | **Chaos**: Moves randomly. |
 //! | | `H` | **Hunter**: Chases other agents. |

@@ -98,6 +98,16 @@ Agents are autonomous cursors.
   ?       (Sink receives "func" -> Executes Strand "func")
 ```
 
+# Data Alchemy ⚗️
+
+Runes for transforming, combining, and inspecting raw data values (Integers, Strings, Lists).
+
+| Rune | Name | Function |
+|---|---|---|
+| `t` | **Transmute** | Reads **West** (Value) and **North** (Mode). Converts type (0=Str, 1=Int, 2=Type, 3=Len). |
+| `f` | **Fuse** | Reads **West** (A) and **East** (B). Combines them (Concat, Add, Push). |
+| `d` | **Distill** | Reads **West** (Value). Splits into **North** (Head) and **South** (Tail). |
+
 # Elemental Alchemy ⚗️
 
 Introduces elemental forces to the grid.

@@ -1,6 +1,68 @@
+//! # Alchemy Runes ⚗️
+//!
+//! The Alchemy module provides runes for **Data Transformation** and **Type Casting**.
+//! Unlike the elemental alchemy (Fire/Water), these runes operate on the raw `Value` types
+//! (Integers, Strings, Lists) flowing through the Prologue grid.
+//!
+//! ## Philosophy
+//!
+//! Alchemy allows a circuit to modify the *nature* of a signal, not just its path.
+//! It is essential for:
+//! *   **Serialization**: converting numbers to strings for logging.
+//! *   **Parsing**: converting user input strings to numbers.
+//! *   **List Processing**: splitting and joining lists or strings.
+//! *   **Type Introspection**: checking if a value is a number or text.
+//!
+//! ## Rune Reference
+//!
+//! | Rune | Name | Input | Output | Description |
+//! |---|---|---|---|---|
+//! | `t` | **Transmute** | West (Val), North (Mode) | Self | Converts types based on Mode (0=Str, 1=Int, 2=Type, 3=Len). |
+//! | `f` | **Fuse** | West (A), East (B) | Self | Combines A and B (Concat, Add, Push). |
+//! | `d` | **Distill** | West (Val) | North (Head), South (Tail) | Splits value into two parts. |
+
 use super::normalize_coords;
 use crate::vm::Value;
 
+/// Applies the logic for Alchemy runes (`t`, `f`, `d`).
+///
+/// This function is called during the propagation phase of the Prologue execution cycle.
+///
+/// # Arguments
+///
+/// * `rune` - The character representation of the rune (e.g., "t").
+/// * `y`, `x` - The grid coordinates of the rune.
+/// * `current_signals` - The state of signals at the start of this propagation step.
+/// * `next_signals` - The buffer to write new signals to (Double Buffering).
+///
+/// # Returns
+///
+/// Returns `true` if any new signal was generated, prompting another propagation iteration.
+///
+/// # Examples
+///
+/// ## Transmutation (Mode 0: To String)
+/// ```text
+///   42  0
+///   !   !
+///   ~   t   -> "42"
+/// ```
+///
+/// ## Fusion (String Concatenation)
+/// ```text
+///   "A" "B"
+///    !   !
+///    f       -> "AB"
+/// ```
+///
+/// ## Distillation (Splitting)
+/// ```text
+///      "a" (North)
+///       ^
+///  "abc"-> d
+///       v
+///      "bc" (South)
+/// ```
 pub fn apply_alchemy_runes(
     rune: &str,
     y: usize,
@@ -9,6 +71,8 @@ pub fn apply_alchemy_runes(
     next_signals: &mut Vec<Vec<Option<Value>>>,
 ) -> bool {
     let mut changes = false;
+
+    // Gather Inputs
     let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
         current_signals[wy][wx].clone()
     } else {
@@ -27,16 +91,26 @@ pub fn apply_alchemy_runes(
 
     match rune {
         "t" => {
-            // Transmute: West (Value), North (Mode) -> Self
+            // Rune: Transmute (t)
+            // Function: Type Conversion and Introspection
+            // Inputs:
+            //   - West: The value to transform.
+            //   - North: The mode (Integer). Defaults to 0 if missing.
+            // Modes:
+            //   0: To String (Format)
+            //   1: To Int (Parse)
+            //   2: Type ID (0=Int, 1=Str, 2=List, 3=Quantum)
+            //   3: Length (String len or List len)
+
             if let Some(val) = w_sig {
                 let mode = match n_sig {
                     Some(Value::Int(m)) => m,
-                    _ => 0, // Default mode 0
+                    _ => 0, // Default mode 0 (ToString)
                 };
 
                 let result = match mode {
                     0 => {
-                        // ToString
+                        // Mode 0: To String
                         match val {
                             Value::Int(n) => Some(Value::Str(n.to_string())),
                             Value::Str(s) => Some(Value::Str(s)),
@@ -44,41 +118,42 @@ pub fn apply_alchemy_runes(
                         }
                     }
                     1 => {
-                        // ToInt
+                        // Mode 1: To Int
                         match val {
                             Value::Int(n) => Some(Value::Int(n)),
                             Value::Str(s) => {
                                 if let Ok(n) = s.parse::<i64>() {
                                     Some(Value::Int(n))
                                 } else if s.len() == 1 {
+                                    // Char code
                                     Some(Value::Int(s.chars().next().unwrap() as i64))
                                 } else {
-                                    Some(Value::Int(0)) // Error case
+                                    Some(Value::Int(0)) // Parse Error / Empty
                                 }
                             }
                             _ => Some(Value::Int(0)),
                         }
                     }
                     2 => {
-                        // Type ID
+                        // Mode 2: Type ID
                         let type_id = match val {
                             Value::Int(_) => 0,
                             Value::Str(_) => 1,
                             Value::Junction(_, _) => 2,
                             Value::Superposition(_) => 3,
-                            _ => -1,
+                            _ => -1, // Unknown
                         };
                         Some(Value::Int(type_id))
                     }
                     3 => {
-                        // Length
+                        // Mode 3: Length
                         match val {
                             Value::Str(s) => Some(Value::Int(s.len() as i64)),
                             Value::Junction(_, items) => Some(Value::Int(items.len() as i64)),
                             _ => Some(Value::Int(0)),
                         }
                     }
-                    _ => None,
+                    _ => None, // Invalid Mode
                 };
 
                 if let Some(res) = result {
@@ -90,7 +165,16 @@ pub fn apply_alchemy_runes(
             }
         }
         "f" => {
-            // Fuse: West + East -> Self
+            // Rune: Fuse (f)
+            // Function: Combine two values.
+            // Inputs: West (A) + East (B)
+            // Operations:
+            //   Str + Str -> Concat ("A" + "B" = "AB")
+            //   Str + Int -> Repeat ("A" * 3 = "AAA")
+            //   Int + Int -> Add (Arithmetic fallback)
+            //   List + Val -> Push (Append to end)
+            //   Val + List -> Unshift (Prepend to start)
+
             if let (Some(left), Some(right)) = (w_sig, e_sig) {
                 let result = match (left, right) {
                     (Value::Str(s1), Value::Str(s2)) => Some(Value::Str(format!("{}{}", s1, s2))),
@@ -111,7 +195,7 @@ pub fn apply_alchemy_runes(
                         items.insert(0, val);
                         Some(Value::Junction(t, items))
                     }
-                    _ => None,
+                    _ => None, // Incompatible types
                 };
 
                 if let Some(res) = result {
@@ -123,7 +207,19 @@ pub fn apply_alchemy_runes(
             }
         }
         "d" => {
-            // Distill: West (Value) -> North (Head), South (Tail)
+            // Rune: Distill (d)
+            // Function: Split a value into Head and Tail.
+            // Input: West
+            // Outputs:
+            //   - North: Head (First char, Digit, or Element)
+            //   - South: Tail (Remaining chars, Digits, or Elements)
+            // Examples:
+            //   "abc" -> "a" (N) + "bc" (S)
+            //   123   -> 12 (N)  + 3 (S)  <-- Wait, logic below is N=Div, S=Mod
+            // Logic Check:
+            //   Int(n) >= 10: North = n/10, South = n%10.
+            //   So 123 -> 12 (N), 3 (S). Correct.
+
             if let Some(val) = w_sig {
                 let (head, tail) = match val {
                     Value::Str(s) => {
@@ -155,7 +251,7 @@ pub fn apply_alchemy_runes(
                     _ => (None, None),
                 };
 
-                // Output North
+                // Output North (Head)
                 if let Some(h) = head {
                     if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
                         if next_signals[ny][nx].is_none() {
@@ -164,7 +260,7 @@ pub fn apply_alchemy_runes(
                         }
                     }
                 }
-                // Output South
+                // Output South (Tail)
                 if let Some(t) = tail {
                     if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
                         if next_signals[sy][sx].is_none() {
@@ -173,8 +269,8 @@ pub fn apply_alchemy_runes(
                         }
                     }
                 }
-                // Light up self if successful? Or maybe not needed if outputs are set.
-                // Let's light up self to show activity.
+
+                // Light up self to indicate activity
                 if next_signals[y][x].is_none() {
                     next_signals[y][x] = Some(Value::Int(1));
                     changes = true;
