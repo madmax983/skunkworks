@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **atomic-groove**: Specimen condemned. Diagnosis: Documentation Void, Terminal Genericism. Grace period: 24 hours. Salvation requires README and unique audio mechanics.
+- **code-acoustics**: Specimen condemned. Diagnosis: Terminal Redundancy. Superseded by `echo-cavern`. Grace period: 24 hours.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -168,7 +168,7 @@
 - **cargo-jenga**: Documentation void. Stagnant implementation. Failed to improve during grace period. Moved to graveyard.
 - **cellular-beats**: Documentation void. Generic Game of Life implementation. Failed to improve during grace period. Moved to graveyard.
 - **code-kaleidoscope**: Documentation void. Generic visualization. Failed to improve during grace period. Biomass returned to the void.
-- **clockwork-cpu**: Documentation void (`README.md` missing). Failed to improve during grace period.
+- **clockwork-cpu**: Specimen executed. Documentation void (`README.md` missing). Failed to improve during grace period. Moved to graveyard.
 - **call-fern**: Documentation void. Generic recursive visualization. Failed to improve during grace period.
 - **digital-koi**: Documentation void. Generic Boids implementation. Weak system integration. Failed to improve during grace period.
 - **word-collider**: Documentation void. Generic physics demo. Lacks connection to repository themes. Failed to improve during grace period.
@@ -205,3 +205,4 @@
 - **hanging-abacus**: Specimen executed. Documentation Void. Deceptive Naming. Redundant with `soroban-specter`. Grace period expired. Moved to graveyard.
 - **wasm-runes**: Specimen executed. Documentation Void. Skeletal Implementation. Moved to graveyard.
 - **neural-beatbox**: Specimen executed. Documentation Void. Redundant with `neuro-beats`. Grace period expired. Moved to graveyard.
+- **atomic-groove**: Specimen executed. Diagnosis: Documentation Void, Terminal Genericism. Grace period expired. Moved to graveyard.
