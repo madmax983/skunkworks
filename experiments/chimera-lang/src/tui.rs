@@ -9678,6 +9678,8 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  Σ (Sigma) - Sum Neighbors"),
         Line::from("  ☿ (Mercury) - Transmute Self"),
         Line::from("  ♀ (Venus) - Transmute Neighbors"),
+        Line::from("  { - Inject OpCode (W->N:S)"),
+        Line::from("  } - Extract OpCode (W:N->E)"),
         Line::from(" "),
         Line::from("Controls:"),
         Line::from("  Type to place operators."),
