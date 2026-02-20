@@ -15,10 +15,20 @@
 - **Status:** A new colony has established. The bees are dancing. Fresh nectar source detected.
 - **Note:** Similar vibrational frequency to the Vocal Canyon.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
-- **Scent Origin:** Mycelium 🍄 (Sensed: Heavy Traffic)
-- **Status:** The central nervous system is active. Grimoire expanded. Viral code detected.
-- **Note:** "The language grows with every utterance."
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
+- **Scent Origin:** Mycelium 🍄 (Sensed: Module Explosion)
+- **Status:** Prologue system expanding rapidly. Prism, Linguistics, Resonance, and Elektra runes detected.
+- **Note:** "The Grimoire is becoming sentient. Runes are breeding."
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/turbulent-rhythms
+- **Scent Origin:** Mycelium 🍄 (Sensed: Fluid Dynamics)
+- **Status:** Fluid simulation via Bevy graph detected.
+- **Note:** "The water flows where the shader tells it to."
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/origami-swarm
+- **Scent Origin:** Mycelium 🍄 (Sensed: Independent Flocking)
+- **Status:** Swarm logic decoupled from central library.
+- **Note:** "The paper folds itself into a bird."
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-voice
 - **Scent Origin:** The Splice Surgeon 🧬
