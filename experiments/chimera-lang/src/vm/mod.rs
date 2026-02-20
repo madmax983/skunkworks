@@ -363,6 +363,10 @@ pub mod silicon;
 #[cfg(test)]
 mod sequencer_test;
 
+#[cfg(feature = "elektra")]
+#[cfg(test)]
+mod elektra_bridging_test;
+
 #[cfg(feature = "resonance")]
 use crossbeam_channel::{Receiver, Sender};
 #[cfg(feature = "resonance")]
@@ -3642,6 +3646,8 @@ impl ChimeraVM {
             | OpCode::Muscle
             | OpCode::Sensor
             | OpCode::Patch
+            | OpCode::Electrophoresis
+            | OpCode::Modulate
             | OpCode::Lightning => elektra::exec_elektra_op(self, op, args),
 
             #[cfg(all(feature = "elektra", feature = "nova"))]

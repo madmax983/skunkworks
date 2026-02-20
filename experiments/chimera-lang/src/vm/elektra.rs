@@ -16,6 +16,11 @@ fn get_conductivity(val: &Value) -> f32 {
                 || s.starts_with("T:")
                 || s.starts_with("M:")
                 || s.starts_with("S:")
+                || s == "~"
+                || s == "!"
+                || s == "?"
+                || s == "&"
+                || s == "|"
             {
                 CONDUCTIVITY_WIRE
             } else {
@@ -52,8 +57,78 @@ pub fn exec_elektra_op(
         OpCode::Muscle => exec_component_placement(vm, "M"),
         OpCode::Sensor => exec_component_placement(vm, "S"),
         OpCode::Patch => exec_patch(vm),
+        OpCode::Electrophoresis => exec_electrophoresis(vm),
+        OpCode::Modulate => exec_modulate(vm),
         _ => None,
     }
+}
+
+fn exec_modulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if let Some(Value::Int(res)) = vm.stack.pop() {
+        let (y, x) = vm.context_loc;
+        // Scale resistance? Or raw value?
+        // Let's treat it as a multiplier or raw value.
+        // If resistance < 0, it's a component. Don't overwrite unless we mean to.
+        // Let's assume Modulate sets positive resistance.
+        let r = res.max(0) as f32;
+        vm.resistance_grid[y][x] = r;
+        vm.output
+            .push(format!("MODULATE: Resistance set to {:.2} at {},{}", r, x, y));
+    }
+    None
+}
+
+fn exec_electrophoresis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    let (cy, cx) = vm.context_loc;
+    let cv = vm.voltage_grid[cy][cx];
+
+    // Find neighbor with lowest voltage
+    let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+    let mut min_v = cv;
+    let mut target = None;
+
+    for (dy, dx) in neighbors {
+        if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+            let cond = get_conductivity(&vm.grid[ny][nx]);
+            if cond > CONDUCTIVITY_DEFAULT {
+                let nv = vm.voltage_grid[ny][nx];
+                if nv < min_v {
+                    min_v = nv;
+                    target = Some((ny, nx));
+                }
+            }
+        }
+    }
+
+    if let Some((ny, nx)) = target {
+        // Move Context
+        vm.context_loc = (ny, nx);
+        vm.output.push(format!(
+            "ELECTROPHORESIS: Moved to {},{} (V: {:.2})",
+            nx, ny, min_v
+        ));
+
+        // Move Organelle if active
+        #[cfg(feature = "nova")]
+        {
+            if let Some(kind) = &vm.active_organelle_kind {
+                // Find and move the specific organelle
+                // We don't have direct ref, but we know it's at old (cy, cx)
+                // However, there could be multiple.
+                // We iterate and move the first one found at old loc.
+                for org in vm.organelles.iter_mut() {
+                    if org.context_loc == (cy, cx) && org.kind == *kind {
+                        org.context_loc = (ny, nx);
+                        break;
+                    }
+                }
+            }
+        }
+    } else {
+        vm.output.push("ELECTROPHORESIS: Stagnant field".to_string());
+    }
+
+    None
 }
 
 fn exec_patch(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
