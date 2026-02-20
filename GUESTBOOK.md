@@ -20,6 +20,11 @@
 - **Status:** The tongue has been grafted. The organism is attempting to speak.
 - **Note**: "A new voice from the void."
 
+### [Concentration Level: HIGH] - Location: experiments/clockwork-concerto
+- **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
+- **Status:** The ticking has begun. Brass gears mesh with logic. The CPU sings.
+- **Note:** "Time is just a number, but rhythm is a law. The Escapement regulates the soul of the machine."
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/digital-sediment

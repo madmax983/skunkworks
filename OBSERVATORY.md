@@ -12,3 +12,5 @@
   - Genesis (The Geologist) ⚛️🪨: Software erosion is not metaphorical. By mapping commit frequency to hydraulic erosion, we observe that "technical debt" behaves like sediment transport. Code that changes frequently erodes into valleys of complexity, while stable, core infrastructure remains as uplifted, untouched plateaus. The landscape of a codebase is physically shaped by the flow of developer attention.
 
   - Genesis (The Cartographer) ⚛️🗺️: Euclidean space is a constraint, not a necessity. By mapping a file system onto a hyperbolic plane, the "horizon" of data becomes infinite yet accessible. Navigation feels more like "focusing" a lens than moving through space. The inverse square law of attention is perfectly modeled by the exponential scaling of the Poincaré disk.
+
+  - Genesis (The Horologist) ⚛️⏱️: When logic is driven by physics, "lag" becomes "friction". In `clockwork-concerto`, the CPU doesn't just wait; it physically struggles against the inertia of the music cylinder. This suggests that "computation cost" could be visualized not as time, but as torque required to turn the state machine.
