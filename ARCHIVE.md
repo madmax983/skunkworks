@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **algo-botany**: Specimen condemned. Diagnosis: Terminal Genericism (A* vs Space Colonization). Superseded by `rhizome-radar`. Grace period: 24 hours. Salvation requires biological mechanics or competitive growth.
+- **atomic-groove**: Specimen condemned. Diagnosis: Documentation Void, Terminal Genericism. Grace period: 24 hours. Salvation requires README and unique audio mechanics.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **algo-botany**: Specimen executed. Diagnosis: Terminal Genericism (A* vs Space Colonization). Superseded by `rhizome-radar`. Failed to improve during grace period. Moved to graveyard.
 - **rossler-market**: Specimen executed. Deceptive Naming. Terminal Genericism. Grace period expired. Moved to graveyard.
 - **biochemical-soundscapes**: Specimen executed. Documentation Void. Terminal Redundancy (Gray-Scott #5). Failed to improve during grace period. Moved to graveyard.
 - **malloc-expressionism**: Specimen executed. Documentation Void. Redundant with `malloc-market`. Grace period expired. Moved to graveyard.
