@@ -8,6 +8,8 @@ Chimera is a bio-inspired, stack-based esoteric programming language. It simulat
 
 Run the Story Demo to see the engine in action:
 
+> **Note**: This demo requires the `nova` feature (enabled by default).
+
 ```bash
 cargo run --example story_demo
 ```
@@ -263,14 +265,52 @@ fn main() {
     let genes = vec![
         Gene { op: OpCode::Push, args: vec![Nucleotide::String("Hello".to_string())] },
         Gene { op: OpCode::Print, args: vec![] },
+        // Note: For integers, use Nucleotide::Number(n)
+        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] },
+        Gene { op: OpCode::Print, args: vec![] },
     ];
     let dna = Dna { helix: Helix { strands: vec![Strand { genes }] } };
     let mut vm = ChimeraVM::new(dna);
 
-    vm.step(); // Execute Push
-    vm.step(); // Execute Print
+    vm.step(); // Push "Hello"
+    vm.step(); // Print "Hello"
+    vm.step(); // Push 42
+    vm.step(); // Print 42
 
     // The VM captures output in `vm.output` (Vec<String>) instead of printing to stdout.
+    for line in &vm.output {
+        println!("{}", line);
+    }
+}
+```
+
+### Running ChimeraScript from Rust
+
+You can also parse and run ChimeraScript code directly using the compiler:
+
+```rust
+use chimera_lang::{prelude::*, compiler};
+
+fn main() {
+    let source = r#"
+        strand main {
+            "Hello from Script" print
+            42 print
+        }
+    "#;
+
+    // Compile the source string into DNA
+    // The second argument is an optional path for imports (None here)
+    let dna = compiler::compile(source, None).expect("Failed to compile");
+
+    let mut vm = ChimeraVM::new(dna);
+
+    // Run until halted or for a max number of steps
+    for _ in 0..100 {
+        if vm.halted { break; }
+        vm.step();
+    }
+
     for line in &vm.output {
         println!("{}", line);
     }
