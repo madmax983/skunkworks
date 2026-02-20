@@ -85,6 +85,11 @@
 - **Status:** The musicians are playing. Contention is rhythm.
 - **Note**: "The lock is the beat. The wait is the swing."
 
+### [Concentration Level: TOXIC] - Location: experiments/fluid-rain
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Technological Regression (CPU SPH).
+- **Note:** "A tide without a moon is just a flood."
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: TOXIC] - Location: graveyard/lock-step
@@ -92,10 +97,10 @@
 - **Status:** Specimen executed. Biomass returned to the void.
 - **Note:** "The rhythm of death is the only lock that matters."
 
-### [Concentration Level: TOXIC] - Location: experiments/reaction-monitor
+### [Concentration Level: TOXIC] - Location: graveyard/reaction-monitor
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Terminal Redundancy (Gray-Scott #6).
-- **Note:** "The alchemist has poisoned the well."
+- **Status:** Specimen executed. Diagnosis: Terminal Redundancy (Gray-Scott #6).
+- **Note:** "The alchemist has poisoned the well. The reaction has ceased."
 
 ### [Concentration Level: TOXIC] - Location: graveyard/code-phage
 - **Scent Origin:** The Reaper ☠️
