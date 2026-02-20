@@ -322,6 +322,9 @@ impl PrologueState {
                             | "®"
                             | ";"
                             | "©"
+                            | "↑"
+                            | "↓"
+                            | "≅"
                     ) {
                         self.runes.insert((y, x));
 

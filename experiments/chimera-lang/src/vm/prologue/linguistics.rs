@@ -85,18 +85,79 @@ pub fn apply_linguistics_runes(
                     next_signals[y][x] = Some(res);
                     changes = true;
                 }
-            } else if let (Some(Value::Str(_s1)), Some(Value::Str(_s2))) = (w_sig, n_sig) {
-                 // Fallback: If West is String, concat with North (using empty delim implied or just direct concat)
-                 // But rune implies Join. If North is delim, we might expect Concat.
-                 // Let's support simple string concat if West is String.
-                 // Actually, if West is String, Join with Delim doesn't make much sense unless we interpret West as a list of chars?
-                 // Let's strict to List. Or maybe "Concat" behavior if West is Str.
-                 // "Concat" behavior: West + Delim + (Wait, where is the other string?)
-                 // Let's keep it strictly Join for List.
+            }
+        }
+        "↑" => {
+            // Shift Up: West (String) -> Self (Upper)
+            if let Some(val) = w_sig {
+                let s = match val {
+                    Value::Str(s) => s.clone(),
+                    _ => format!("{}", val),
+                };
+                let res = Value::Str(s.to_uppercase());
+                if next_signals[y][x] != Some(res.clone()) {
+                    next_signals[y][x] = Some(res);
+                    changes = true;
+                }
+            }
+        }
+        "↓" => {
+             // Shift Down: West (String) -> Self (Lower)
+            if let Some(val) = w_sig {
+                let s = match val {
+                    Value::Str(s) => s.clone(),
+                    _ => format!("{}", val),
+                };
+                let res = Value::Str(s.to_lowercase());
+                if next_signals[y][x] != Some(res.clone()) {
+                    next_signals[y][x] = Some(res);
+                    changes = true;
+                }
+            }
+        }
+        "≅" => {
+            // Approx Equal: West (A), North (B) -> Self (Distance)
+            if let (Some(w_val), Some(n_val)) = (w_sig, n_sig) {
+                let s1 = match w_val {
+                    Value::Str(s) => s.clone(),
+                    _ => format!("{}", w_val),
+                };
+                let s2 = match n_val {
+                    Value::Str(s) => s.clone(),
+                    _ => format!("{}", n_val),
+                };
+
+                let dist = levenshtein_distance(&s1, &s2);
+                let res = Value::Int(dist as i64);
+                if next_signals[y][x] != Some(res.clone()) {
+                    next_signals[y][x] = Some(res);
+                    changes = true;
+                }
             }
         }
         _ => {}
     }
 
     changes
+}
+
+fn levenshtein_distance(a: &str, b: &str) -> usize {
+    let len_a = a.chars().count();
+    let len_b = b.chars().count();
+    // Use 2 rows for space optimization if needed, but matrix is fine for small strings
+    let mut matrix = vec![vec![0; len_b + 1]; len_a + 1];
+
+    for i in 0..=len_a { matrix[i][0] = i; }
+    for j in 0..=len_b { matrix[0][j] = j; }
+
+    for (i, ca) in a.chars().enumerate() {
+        for (j, cb) in b.chars().enumerate() {
+            let cost = if ca == cb { 0 } else { 1 };
+            matrix[i + 1][j + 1] = std::cmp::min(
+                std::cmp::min(matrix[i][j + 1] + 1, matrix[i + 1][j] + 1),
+                matrix[i][j] + cost,
+            );
+        }
+    }
+    matrix[len_a][len_b]
 }
