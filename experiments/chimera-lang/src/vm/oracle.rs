@@ -16,6 +16,44 @@ pub struct Omen {
 
 type Subst = HashMap<String, Value>;
 
+pub fn process_omens(vm: &mut ChimeraVM) -> usize {
+    let mut triggered_count = 0;
+    let omens_snapshot = vm.omens.clone();
+
+    for omen in omens_snapshot {
+        let mut solutions = Vec::new();
+        solve(
+            &[omen.condition.clone()],
+            HashMap::new(),
+            &vm.knowledge_base,
+            vm,
+            &mut solutions,
+            0,
+        );
+
+        if !solutions.is_empty() {
+            triggered_count += 1;
+            vm.output
+                .push(format!("DIVINATE: Omen fulfilled! {}", omen.condition));
+
+            match omen.effect {
+                Value::Int(n) => {
+                    if n >= 0 {
+                        vm.ip = (n as usize, 0);
+                    }
+                }
+                Value::Str(ref s) => {
+                    if let Ok(op) = s.parse::<OpCode>() {
+                        let _ = vm.execute_gene_inner(op, &[]);
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+    triggered_count
+}
+
 pub fn exec_oracle_op(
     vm: &mut ChimeraVM,
     op: OpCode,
@@ -154,41 +192,8 @@ pub fn exec_oracle_op(
             None
         }
         OpCode::Divinate => {
-            let mut triggered_count = 0;
-            let omens_snapshot = vm.omens.clone();
-
-            for omen in omens_snapshot {
-                let mut solutions = Vec::new();
-                solve(
-                    &[omen.condition.clone()],
-                    HashMap::new(),
-                    &vm.knowledge_base,
-                    vm,
-                    &mut solutions,
-                    0,
-                );
-
-                if !solutions.is_empty() {
-                    triggered_count += 1;
-                    vm.output
-                        .push(format!("DIVINATE: Omen fulfilled! {}", omen.condition));
-
-                    match omen.effect {
-                        Value::Int(n) => {
-                            if n >= 0 {
-                                vm.ip = (n as usize, 0);
-                            }
-                        }
-                        Value::Str(ref s) => {
-                            if let Ok(op) = s.parse::<OpCode>() {
-                                let _ = vm.execute_gene_inner(op, &[]);
-                            }
-                        }
-                        _ => {}
-                    }
-                }
-            }
-            vm.stack.push(Value::Int(triggered_count));
+            let count = process_omens(vm);
+            vm.stack.push(Value::Int(count as i64));
             None
         }
         OpCode::Seek => {
