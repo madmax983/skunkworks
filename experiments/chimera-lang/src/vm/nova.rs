@@ -653,7 +653,11 @@ fn exec_brainfuck(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             }
             '+' => tape[ptr] = tape[ptr].wrapping_add(1),
             '-' => tape[ptr] = tape[ptr].wrapping_sub(1),
-            '.' => output_bytes.push(tape[ptr]),
+            '.' => {
+                if output_bytes.len() < crate::vm::MAX_BRAINFUCK_OUTPUT {
+                    output_bytes.push(tape[ptr]);
+                }
+            }
             ',' => {
                 tape[ptr] = input_chars.pop_front().unwrap_or(0);
             }

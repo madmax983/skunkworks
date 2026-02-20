@@ -80,6 +80,12 @@ pub const MAX_REFLEXES: usize = 256;
 #[cfg(feature = "nova")]
 pub const MAX_CHORD_REGISTRY: usize = 256;
 pub const MAX_TUI_EVENTS: usize = 64;
+#[cfg(feature = "nova")]
+pub const MAX_MEMES: usize = 64;
+#[cfg(feature = "nova")]
+pub const MAX_VIRUSES: usize = 64;
+#[cfg(feature = "nova")]
+pub const MAX_BRAINFUCK_OUTPUT: usize = 1024;
 
 #[cfg(feature = "nova")]
 pub mod akashic;
