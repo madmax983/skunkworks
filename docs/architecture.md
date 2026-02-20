@@ -192,6 +192,61 @@ classDiagram
     GhostReplayer ..> GhostEvent : Deserializes
 ```
 
+### GPU Compute Architecture (ADR 045)
+
+Standardized pattern for high-performance cellular automata using WGPU Compute Shaders.
+
+```mermaid
+classDiagram
+    direction TB
+    class State {
+        +wgpu::Device device
+        +wgpu::Queue queue
+        +ComputePipeline pipeline
+        +Uniforms uniforms
+        +frame_count u64
+        +update()
+        +render()
+    }
+
+    class ComputePipeline {
+        +wgpu::BindGroup bind_groups
+        +wgpu::Buffer cell_buffers[2]
+        +dispatch()
+    }
+
+    class Uniforms {
+        +f32 time
+        +u32 grid_size
+        +f32 params
+    }
+
+    State *-- ComputePipeline : Owns
+    State *-- Uniforms : Updates
+    ComputePipeline o-- "2" Buffer : Ping-Pong
+```
+
+```mermaid
+sequenceDiagram
+    participant State
+    participant GPU as WGPU Queue
+    participant Ping as Buffer A
+    participant Pong as Buffer B
+
+    Note over State: Frame N (Even)
+    State->>GPU: dispatch(Ping -> Pong)
+    GPU->>Ping: Read State
+    GPU->>Pong: Write Next State
+
+    State->>GPU: render(Pong)
+    GPU->>Pong: Vertex Pulling
+
+    Note over State: Frame N+1 (Odd)
+    State->>GPU: dispatch(Pong -> Ping)
+    GPU->>Pong: Read State
+    GPU->>Ping: Write Next State
+```
+
 ## Shared Domain Logic
 
 Specialized libraries that encapsulate specific domain knowledge or data structures, reused across multiple experiments.
