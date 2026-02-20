@@ -168,7 +168,7 @@ struct TransmutationWrite {
 }
 
 struct SignalContext {
-    next_signals: Vec<Vec<u8>>,
+    next_signals: [[u8; GRID_SIZE]; GRID_SIZE],
     grid_writes: Vec<GridWrite>,
     dna_writes: Vec<DnaWrite>,
     dna_opcode_writes: Vec<DnaOpCodeWrite>,
@@ -206,7 +206,7 @@ struct PhageCloneRequest {
 pub fn process_signals(vm: &mut ChimeraVM) {
     let size = GRID_SIZE;
     let mut ctx = SignalContext {
-        next_signals: vec![vec![0u8; size]; size],
+        next_signals: [[0u8; GRID_SIZE]; GRID_SIZE],
         grid_writes: Vec::new(),
         dna_writes: Vec::new(),
         dna_opcode_writes: Vec::new(),
@@ -635,7 +635,9 @@ pub fn process_signals(vm: &mut ChimeraVM) {
     }
 
     // 3. Update Signal State
-    vm.signal_grid = ctx.next_signals;
+    for (y, row) in ctx.next_signals.iter().enumerate() {
+        vm.signal_grid[y].copy_from_slice(row);
+    }
 
     // 3.5 Apply Resonance, Entropy & Mutations
     for w in ctx.resonance_writes {
@@ -1437,7 +1439,7 @@ fn propagate_directional(
     dy: i64,
     dx: i64,
     signal: u8,
-    next_signals: &mut [Vec<u8>],
+    next_signals: &mut [[u8; GRID_SIZE]; GRID_SIZE],
 ) {
     if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
         next_signals[ny][nx] = next_signals[ny][nx].saturating_add(signal);
