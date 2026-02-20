@@ -289,6 +289,10 @@ impl PbdSystem {
         target_len: f32,
         stiffness: f32,
     ) {
+        if p1 >= particles.len() || p2 >= particles.len() {
+            return;
+        }
+
         let pos1 = particles[p1].pos;
         let pos2 = particles[p2].pos;
         let w1 = particles[p1].inv_mass;
@@ -299,9 +303,12 @@ impl PbdSystem {
 
         let delta = pos1 - pos2;
         let len = delta.length();
-        if len == 0.0 {
+        if len < f32::EPSILON {
             return;
-        } // Avoid division by zero
+        } // Avoid division by zero and numeric instability
+
+        // Clamp stiffness to ensure stability (0.0 to 1.0)
+        let stiffness = stiffness.clamp(0.0, 1.0);
 
         let diff = (len - target_len) / len;
         let correction = delta * diff * stiffness / (w1 + w2);
@@ -416,7 +423,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn test_invalid_indices_panic() {
         let mut system = PbdSystem::new();
         let p1 = system.add_particle(Vec3::ZERO, 1.0);
@@ -429,6 +435,7 @@ mod tests {
             stiffness: 1.0,
         });
 
+        // Should not panic anymore
         system.step(0.1, 1);
     }
 
@@ -443,5 +450,30 @@ mod tests {
 
         // Should not move
         assert_eq!(system.particles[p1].pos, Vec3::ZERO);
+    }
+
+    #[test]
+    fn test_stiffness_explosion() {
+        let mut system = PbdSystem::new();
+        let p1 = system.add_particle(Vec3::ZERO, 1.0);
+        let p2 = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
+
+        // Add a constraint with MAX stiffness
+        system.constraints.push(Constraint::Distance {
+            p1,
+            p2,
+            rest_length: 0.5, // Pull them closer
+            stiffness: f32::MAX,
+        });
+
+        // Step simulation multiple times
+        for _ in 0..10 {
+            system.step(0.1, 1);
+        }
+
+        let pos1 = system.particles[p1].pos;
+
+        // It should remain finite due to clamping
+        assert!(pos1.is_finite());
     }
 }
