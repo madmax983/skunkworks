@@ -151,6 +151,8 @@ pub enum ViewMode {
     ChaosCartridge,
     #[cfg(feature = "nova")]
     Prologue,
+    #[cfg(feature = "nova")]
+    Lexicon,
     Sequencer,
     Mutagen,
 }
@@ -983,6 +985,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Prologue = app_state.view_mode {
                 render_prologue(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Lexicon = app_state.view_mode {
+                render_lexicon(f, vm, app_state);
                 return;
             }
 
@@ -2054,6 +2062,19 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Lexicon => {
+                                    let val = if app_state.input_buffer.len() == 1 {
+                                        crate::vm::Value::Str(app_state.input_buffer.clone())
+                                    } else {
+                                        parse_grid_value(&app_state.input_buffer)
+                                    };
+                                    let (x, y) = app_state.grid_cursor;
+                                    vm.grid[y][x] = val;
+                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                                 ViewMode::Evolution => {
                                     if let Ok(val) = app_state.input_buffer.parse::<i64>() {
                                         app_state.evolution_state.challenge =
@@ -2588,7 +2609,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::ChaosCartridge => ViewMode::Prologue,
                             #[cfg(feature = "nova")]
-                            ViewMode::Prologue => ViewMode::Sequencer,
+                            ViewMode::Prologue => ViewMode::Lexicon,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Lexicon => ViewMode::Sequencer,
                             ViewMode::Sequencer => ViewMode::Mutagen,
                             ViewMode::Mutagen => ViewMode::Genome,
                         };
@@ -2607,6 +2630,8 @@ where
                     KeyCode::Char('#') => app_state.view_mode = ViewMode::Akashic,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('\\') => app_state.view_mode = ViewMode::Prologue,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('6') => app_state.view_mode = ViewMode::Lexicon,
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
                     #[cfg(feature = "silicon")]
                     KeyCode::Char('F') => app_state.view_mode = ViewMode::Foundry,
@@ -5083,6 +5108,74 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .borders(Borders::ALL)
             .title("Territory Info"),
     );
+    f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_lexicon(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let mut style = Style::default();
+            let val = &vm.grid[y][x];
+            let s = match val {
+                crate::vm::Value::Str(s) => s.chars().next().unwrap_or(' ').to_string(),
+                crate::vm::Value::Int(n) => n.to_string(),
+                _ => ".".to_string(),
+            };
+
+            // Colorize letters
+            if let crate::vm::Value::Str(_) = val {
+                style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
+            } else if let crate::vm::Value::Int(n) = val {
+                if *n != 0 {
+                    style = style.fg(Color::Cyan);
+                } else {
+                    style = style.fg(Color::DarkGray);
+                }
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(format!("{:^3.3}", s), style));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Lexicon (Spell Casting)"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Info
+    let info = vec![
+        Line::from("LEXICON GRIMOIRE"),
+        Line::from(" "),
+        Line::from("Cast Spells by writing words:"),
+        Line::from("  FIRE, HEAL, VOID, LIFE"),
+        Line::from("  DIE, WARP, TIME, SOUL"),
+        Line::from("  CHAOS, ORDER, GROW, HUNT"),
+        Line::from("  SEEK, SCAN, ECHO, BOMB"),
+        Line::from("  NULL, LOVE, HATE"),
+        Line::from(" "),
+        Line::from("Mechanics:"),
+        Line::from("  Spells consume letters (turn to 0)."),
+        Line::from("  Can be Horizontal or Vertical."),
+        Line::from("  Overlapping spells are possible."),
+    ];
+
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Known Spells"));
     f.render_widget(info_widget, chunks[1]);
 }
 

@@ -73,6 +73,7 @@ pub mod epigenetics;
 pub mod evolution;
 pub mod hypnagogia;
 pub mod io;
+pub mod lexicon;
 pub mod linguistics;
 pub mod list;
 pub mod logic;
@@ -364,6 +365,9 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
     if !vm.prologue_state.active {
         return;
     }
+
+    // 0. Lexicon (Word Spells) - Priority over Runes
+    lexicon::process_lexicon(vm);
 
     // 1. Scan Grid for Topology (Runes)
     let grid_snapshot = vm.grid.clone(); // Clone for read access
