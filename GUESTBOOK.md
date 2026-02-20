@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/hyper-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The 4th Dimension is breathing. The Boids are flocking in hyperspace.
+- **Note**: "The universe expands when the CPU works hard."
+
 ### [Concentration Level: HIGH] - Location: experiments/neuro-syncopation
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The brain is syncing. The threads are locking.
