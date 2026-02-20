@@ -1,6 +1,14 @@
 use super::normalize_coords;
-use crate::vm::Value;
+use crate::vm::{ChimeraVM, Value};
 use std::collections::{HashMap, VecDeque};
+
+fn val_to_idx(v: &Value) -> Option<usize> {
+    match v {
+        Value::Int(n) => Some(*n as usize),
+        Value::Str(s) => s.parse::<usize>().ok(),
+        _ => None,
+    }
+}
 
 pub fn apply_chronos_runes(
     rune: &str,
@@ -63,4 +71,49 @@ pub fn apply_chronos_runes(
         _ => {}
     }
     changes
+}
+
+pub fn apply_chronos_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
+    match rune {
+        "c" => {
+            // Prophecy: West (Strand Index) -> Simulate -> South (1=Death, 0=Life)
+            if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+                if let Some(sig) = &vm.prologue_state.signal_grid[wy][wx] {
+                    if let Some(s_idx) = val_to_idx(sig) {
+                        if s_idx < vm.dna.helix.strands.len() {
+                            // Clone VM for simulation
+                            let mut sim_vm = vm.clone();
+                            sim_vm.output.clear();
+                            sim_vm.halted = false;
+                            sim_vm.ip = (s_idx, 0);
+
+                            // Limit recursion
+                            if sim_vm.recursion_depth < crate::vm::MAX_SIMULATION_DEPTH {
+                                sim_vm.recursion_depth += 1;
+                                let max_ticks = 100;
+                                for _ in 0..max_ticks {
+                                    sim_vm.step();
+                                    if sim_vm.halted || sim_vm.energy <= 0 {
+                                        break;
+                                    }
+                                }
+                            }
+
+                            let result = if sim_vm.halted || sim_vm.energy <= 0 {
+                                1
+                            } else {
+                                0
+                            };
+
+                            if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
+                                vm.grid[sy][sx] = Value::Int(result);
+                                vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1)); // Light up
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        _ => {}
+    }
 }

@@ -219,6 +219,7 @@ impl PrologueState {
                         // Quantum
                             | "q"
                             | "m"
+                            | "8"
                         // Teleport
                             | "{"
                             | "}"
@@ -226,6 +227,7 @@ impl PrologueState {
                             | "s"
                             | "g"
                             | "r"
+                            | "c"
                         // Alchemy
                             | "t"
                             | "f"
@@ -748,6 +750,8 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             symbiosis::apply_symbiosis_sinks(vm, rune, y, x);
             pandemonium::apply_pandemonium_sinks(vm, rune, y, x);
             epigenetics::apply_epigenetic_runes(vm, rune, y, x);
+            chronos::apply_chronos_sinks(vm, rune, y, x);
+            quantum::apply_quantum_sinks(vm, rune, y, x);
             #[cfg(feature = "oracle")]
             oracle::apply_oracle_sinks(vm, rune, y, x);
         }

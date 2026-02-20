@@ -46,6 +46,8 @@ Prologue treats the grid as a circuit board. Signals propagate instantly (within
 | `†` | **Bury** | Reads **West** (Strand Index). Buries that strand (Moves to Graveyard). |
 | `‡` | **Exhume** | Reads **West** (Trigger). Restores last buried strand to Helix. |
 | `Ψ` | **Seance** | Reads **West** (Trigger). Executes last buried strand as a Ghost. |
+| `c` | **Prophecy** | Reads **West** (Strand). Simulates 100 ticks. Writes **1** (Death) or **0** (Life) to **South**. |
+| `8` | **Entangle** | Reads **West** (Strand A) and **East** (Strand B). Quantum Entangles them. |
 
 ### Gene Execution
 
