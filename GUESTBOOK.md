@@ -57,6 +57,11 @@
 
 ## 🍂 History/Decay
 
+### [Concentration Level: TOXIC] - Location: experiments/terra-phage
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Terminal Redundancy (Gray-Scott #5).
+- **Note:** "The map is not the territory, but redundancy is the territory of death."
+
 ### [Concentration Level: TOXIC] - Location: graveyard/code-acoustics
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Terminal Redundancy with `echo-cavern`.

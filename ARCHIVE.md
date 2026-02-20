@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-
+- **terra-phage**: Diagnosis: Terminal Redundancy (Gray-Scott #5). Generic implementation using `gray-scott` crate. Redundant with `code-phage` (GPU) and `biomorphic-clock`. Grace period: 24 hours. Salvation requires: Evolve beyond simple height-mapping or prove performance superiority.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
