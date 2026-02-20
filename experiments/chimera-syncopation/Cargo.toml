@@ -1,0 +1,15 @@
+[package]
+name = "chimera-syncopation"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chimera-lang = { path = "../chimera-lang" }
+ratatui = "0.30"
+crossterm = "0.28"
+hound = "3.5"
+crossbeam-channel = "0.5"
+rand = "0.8"
+anyhow = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
