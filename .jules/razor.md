@@ -126,3 +126,8 @@
 **Bloat:** Manual TUI setup/teardown boilerplate in `experiments/dependency-karst/src/main.rs`.
 **Cut:** Replaced with `tui_shared::Tui` RAII wrapper.
 **Saved:** ~15 lines of sensitive terminal handling code.
+
+## [Reduction]
+**Bloat:** `tui-shared/widgets.rs` contained `LogList` and `Button` widgets that were only used by a single experiment (`harmonic-engine`).
+**Cut:** Moved widgets to `experiments/harmonic-engine`, removed unused `Button` methods (`hovered`, `clicked`) and `LogList::block`.
+**Saved:** 1 module in shared crate, ~40 lines of unused code, enforced encapsulation.
