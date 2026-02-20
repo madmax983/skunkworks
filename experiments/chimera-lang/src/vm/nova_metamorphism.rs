@@ -6,6 +6,10 @@ use crate::opcode::OpCode;
 use rand::Rng;
 
 pub fn process_metamorphism(vm: &mut ChimeraVM) {
+    if !vm.metamorphism_enabled {
+        return;
+    }
+
     // Thresholds
     let pressure_threshold = 20;
     let heat_threshold = 100;

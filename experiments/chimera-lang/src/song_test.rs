@@ -149,6 +149,7 @@ mod tests {
         };
 
         let mut vm = ChimeraVM::new(dna);
+        vm.metamorphism_enabled = false;
         vm.energy = 1000;
 
         // Execute steps

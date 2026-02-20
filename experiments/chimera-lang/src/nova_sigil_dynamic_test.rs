@@ -61,6 +61,7 @@ mod tests {
     #[test]
     fn test_dynamic_sigil_lifecycle() {
         let mut vm = make_vm();
+        vm.metamorphism_enabled = false;
         vm.energy = 1000; // Plenty of energy
 
         // Setup Grid Pattern for Inscription

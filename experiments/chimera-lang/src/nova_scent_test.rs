@@ -11,6 +11,7 @@ mod tests {
             },
         };
         let mut vm = ChimeraVM::new(dna);
+        vm.metamorphism_enabled = false;
         vm.context_loc = (8, 8); // Ensure center
         vm
     }

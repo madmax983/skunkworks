@@ -11,6 +11,7 @@ fn test_darwin_rune() {
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
+    vm.metamorphism_enabled = false;
     vm.prologue_state.active = true;
 
     // Setup Darwinian Circuit
