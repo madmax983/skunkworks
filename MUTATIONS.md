@@ -1334,4 +1334,24 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A Roguelike where entities (items/enemies) are qubits in a quantum system.
 - **Novel trait**: Dynamic Entanglement. Merging and splitting quantum systems based on player interaction (CNOT gates).
 - **Status**: experiments/quantum-rogue
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### chemical-specter
+- **Parents**: Gray-Scott Patterns + Audio Synthesis
+- **Concept**: Reaction-Diffusion simulation where chemical parameters (Feed/Kill) are modulated by an audio oscillator, and the pattern modulates the audio.
+- **Novel trait**: Synesthetic Feedback Loop. The pattern sings, and the song shapes the pattern.
+- **Status**: experiments/chemical-specter
+- **Evaluation**: Compiles. Verified.
+
+### rossler-market
+- **Parents**: market-sim + rossler-attractor
+- **Concept**: Market simulation driven by Rossler Attractor.
+- **Status**: experiments/rossler-market
+- **Evaluation**: Compiles but CONDEMNED. "The market has no agents."
+
+### chimera-groove
+- **Parents**: experiments/chimera-lang + experiments/atomic-groove
+- **Concept**: "Rhythmic Genetic Programming". ChimeraVM agents that must synchronize their execution with a global metronome.
+- **Novel trait**: Phase-Locked Evolution. Access to global rhythm phase via registers allows agents to time their actions to the beat.
+- **Status**: experiments/chimera-groove
+- **Evaluation**: Implementation in progress.

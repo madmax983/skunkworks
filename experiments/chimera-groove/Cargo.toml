@@ -1,0 +1,12 @@
+[package]
+name = "chimera-groove"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chimera-lang = { path = "../chimera-lang" }
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+hound = "3.5"
+rand = "0.8"
