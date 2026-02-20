@@ -1335,3 +1335,24 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Dynamic Entanglement. Merging and splitting quantum systems based on player interaction (CNOT gates).
 - **Status**: experiments/quantum-rogue
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
+
+### lithosphere-termites
+- **Parents**: experiments/lithosphere-git + experiments/thermo-termites
+- **Concept**: "Active Geo-Engineering". Termites (Builders) mine and build structures on a terrain driven by hydraulic erosion and git history.
+- **Novel trait**: The struggle between Entropic Erosion (Git Commits) and Stigmergic Construction (Termites).
+- **Status**: experiments/lithosphere-termites
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.
+
+### chemical-specter
+- **Parents**: experiments/gray-scott + experiments/audio-synthesis
+- **Concept**: Reaction-Diffusion simulation modulated by audio.
+- **Novel trait**: Synesthetic Feedback Loop. Ghost beats modulate the reaction.
+- **Status**: experiments/chemical-specter
+- **Evaluation**: Compiles. Verified in GUESTBOOK.
+
+### lithosphere-git
+- **Parents**: experiments/geologic-git + experiments/hydraulic-erosion
+- **Concept**: Hydraulic erosion simulation on git history terrain.
+- **Novel trait**: The mountains are growing from commits, the valleys are carved by churn.
+- **Status**: experiments/lithosphere-git
+- **Evaluation**: Compiles. Verified in GUESTBOOK.
