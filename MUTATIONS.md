@@ -1335,3 +1335,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Dynamic Entanglement. Merging and splitting quantum systems based on player interaction (CNOT gates).
 - **Status**: experiments/quantum-rogue
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
+
+### code-ballet
+- **Parents**: experiments/sys-dance + experiments/syntax-spider
+- **Concept**: Procedurally animated ragdoll traversing a stage generated from file system structure.
+- **Novel trait**: Choreographic Navigation. Codebase traversal visualized as a performance.
+- **Status**: experiments/code-ballet
+- **Evaluation**: Compiles. Dancer is leaping.
