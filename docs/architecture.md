@@ -454,6 +454,72 @@ classDiagram
     note for GrayScott "Implements 3x3 Laplacian Convolution"
 ```
 
+### Neuro Simulation (crates/neuro-sim)
+
+Provides a high-level network simulation layer for spiking neural networks, managing synaptic connectivity and propagation delays (ADR 043).
+
+```mermaid
+classDiagram
+    direction TB
+    class Network {
+        +Vec~Izhikevich~ neurons
+        +Vec~Synapse~ synapses
+        +Vec~bool~ spikes
+        +step(external_inputs)
+        +is_spiking(index) bool
+    }
+
+    class Synapse {
+        +usize from
+        +usize to
+        +f32 weight
+        +usize delay
+    }
+
+    class Izhikevich {
+        <<Library: synaptic-physics>>
+        +update()
+    }
+
+    Network *-- Synapse : Contains
+    Network *-- Izhikevich : Contains
+    Synapse ..> Izhikevich : Connects
+```
+
+### Physics PBD (crates/physics-pbd)
+
+Implements a Position Based Dynamics engine for simulating physical constraints and particle interactions (ADR 044).
+
+```mermaid
+classDiagram
+    direction TB
+    class PbdSystem {
+        +Vec~Particle~ particles
+        +Vec~Constraint~ constraints
+        +step(dt, iterations)
+        +add_particle(pos, mass) usize
+        +add_distance_constraint(p1, p2, stiffness)
+    }
+
+    class Particle {
+        +Vec3 pos
+        +Vec3 prev_pos
+        +Vec3 vel
+        +f32 inv_mass
+    }
+
+    class Constraint {
+        <<Enum>>
+        +Distance
+        +Actuator
+        +Pin
+    }
+
+    PbdSystem *-- Particle : Manages
+    PbdSystem *-- Constraint : Enforces
+    Constraint ..> Particle : Affects
+```
+
 ## Experiment: Git Harmony
 
 **Git Harmony** (formerly Git Rhythm) generates music from git diffs ("Code Singing").
