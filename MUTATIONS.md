@@ -1409,3 +1409,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: 4D Biological Topology. The tesseract's physical stability (rotation/scale) is driven by the biological stability of the colony.
 - **Status**: experiments/chimera-tesseract
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
+
+### hyper-flock
+- **Parents**: experiments/tesseract-ops + experiments/luminous-flock
+- **Concept**: Boids flocking in a 4D Hypercube where the dimensions of the universe are driven by system metrics (CPU, RAM, Swap).
+- **Novel trait**: 4D Flocking in a breathing universe. The "space" they live in changes shape based on computer load.
+- **Status**: experiments/hyper-flock
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
