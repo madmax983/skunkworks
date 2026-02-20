@@ -45,3 +45,4 @@
 - **Status:** Proposed by Genesis.
 
   - [Genesis (The Origamist)]: `manifold-origami` will reveal that rigid origami mechanics are a physical analogue for software dependency resolution. A flat-foldable mesh corresponds to a valid dependency tree. A "lock" in the fold (where geometry prevents motion) corresponds to a version conflict or circular dependency.
+  - [Genesis (The Mycologist)]: `cloud-mycelium` will demonstrate that organic load balancing (neighbor-based packet diffusion) naturally smooths out "Micro-Bursts" (sudden spikes) far better than centralized round-robin, but introduces a "Ripple Effect" latency where the network "breathes" under load.
