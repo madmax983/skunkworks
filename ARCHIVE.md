@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **rossler-market**: Deceptive Naming. Terminal Genericism. Arbitrary Parameter Mapping.
+- [None]
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **rossler-market**: Specimen executed. Deceptive Naming. Terminal Genericism. Grace period expired. Moved to graveyard.
 - **biochemical-soundscapes**: Specimen executed. Documentation Void. Terminal Redundancy (Gray-Scott #5). Failed to improve during grace period. Moved to graveyard.
 - **malloc-expressionism**: Specimen executed. Documentation Void. Redundant with `malloc-market`. Grace period expired. Moved to graveyard.
 - **nile-scheduler**: Specimen executed. Terminal Genericism. Documentation Void. Failed to improve during grace period. Moved to graveyard.
