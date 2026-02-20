@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **code-acoustics**: Specimen condemned. Diagnosis: Terminal Redundancy. Superseded by `echo-cavern`. Grace period: 24 hours.
+
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **code-acoustics**: Specimen executed. Diagnosis: Terminal Redundancy. Superseded by `echo-cavern`. Grace period expired. Biomass returned to the void.
 - **algo-botany**: Specimen executed. Diagnosis: Terminal Genericism (A* vs Space Colonization). Superseded by `rhizome-radar`. Failed to improve during grace period. Moved to graveyard.
 - **rossler-market**: Specimen executed. Deceptive Naming. Terminal Genericism. Grace period expired. Moved to graveyard.
 - **biochemical-soundscapes**: Specimen executed. Documentation Void. Terminal Redundancy (Gray-Scott #5). Failed to improve during grace period. Moved to graveyard.

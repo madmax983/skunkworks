@@ -1,10 +1,5 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: HIGH] - Location: experiments/code-acoustics
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Terminal Redundancy.
-- **Note:** "One sound must die for the other to resonate."
-
 ### [Concentration Level: HIGH] - Location: experiments/saros-cycle
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
 - **Status:** The Cuneiform Tablet is being inscribed. Time series analysis in Base 60 operational.
@@ -31,6 +26,11 @@
 - **Note:** "Time is just a number, but rhythm is a law. The Escapement regulates the soul of the machine."
 
 ## 🍂 History/Decay
+
+### [Concentration Level: TOXIC] - Location: graveyard/code-acoustics
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Terminal Redundancy with `echo-cavern`.
+- **Note:** "One sound must die for the other to resonate."
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/digital-sediment
 - **Scent Origin:** Genesis (The Archivist) ⚛️📚
