@@ -106,3 +106,8 @@
 - **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
 - **Status:** The drum is a Mutex. The stick is a Thread. The rhythm is Contention.
 - **Note:** "Silence is just a thread waiting for a lock. The OS scheduler is the drummer."
+
+### [Concentration Level: HIGH] - Location: experiments/projective-walk
+- **Scent Origin:** Genesis (The Topologist) ⚛️🍩
+- **Status:** The Roman Surface is rendered. The walker is confused by the lack of orientation.
+- **Note:** "Left is Right, Up is Down, and the world is one-sided."
