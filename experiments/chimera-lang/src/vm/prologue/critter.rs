@@ -8,6 +8,7 @@ use super::normalize_coords;
 pub enum CritterAction {
     Move(usize, usize),
     Attack(usize, usize),
+    Build(char, usize, usize),
     Split,
     Mark,
     None,
@@ -78,7 +79,7 @@ pub fn process_critter_move(
     critter: &mut CritterState,
     y: usize,
     x: usize,
-    _grid_snapshot: &[Vec<Value>],
+    grid_snapshot: &[Vec<Value>],
 ) -> CritterAction {
     // 1. Check Energy
     if critter.energy <= 0 {
@@ -155,6 +156,54 @@ pub fn process_critter_move(
         }
         'S' => CritterAction::Split,
         'M' => CritterAction::Mark,
+        '+' | '*' | 'x' | '^' | 'v' => {
+            // Build Action
+            let char_to_build = match gene_char {
+                '+' => '~',
+                '*' => '!',
+                'x' => '?',
+                '^' => '&',
+                'v' => '|',
+                _ => '~',
+            };
+
+            // Build in front
+            let (dy, dx) = match critter.direction {
+                 0 => (-1, 0),
+                 1 => (0, 1),
+                 2 => (1, 0),
+                 3 => (0, -1),
+                 _ => (0, 0),
+            };
+            if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                 CritterAction::Build(char_to_build, ny, nx)
+            } else {
+                 CritterAction::None
+            }
+        }
+        'i' => {
+            // Sense (Input): Check if path ahead is clear (empty/0).
+            // If clear, skip next gene (increment IP).
+            // If blocked, proceed to next gene.
+            let (dy, dx) = match critter.direction {
+                 0 => (-1, 0),
+                 1 => (0, 1),
+                 2 => (1, 0),
+                 3 => (0, -1),
+                 _ => (0, 0),
+            };
+
+            let is_clear = if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                 matches!(grid_snapshot[ny][nx], Value::Int(0))
+            } else {
+                 false // Out of bounds is blocked
+            };
+
+            if is_clear {
+                critter.ip = (critter.ip + 1) % critter.genes.len().max(1);
+            }
+            CritterAction::None
+        }
         '?' => {
              // Random Action
              let mut rng = rand::thread_rng();
@@ -222,7 +271,7 @@ pub fn breed(parent1: &CritterState, parent2: &CritterState) -> CritterState {
     // Mutation
     if rng.gen_bool(0.1) {
         let idx = rng.gen_range(0..child_genes.len());
-        let mutations = ['F', 'B', 'L', 'R', 'A', 'S', 'M', '?'];
+        let mutations = ['F', 'B', 'L', 'R', 'A', 'S', 'M', '?', '+', '*', 'x', '^', 'v', 'i'];
         let new_char = mutations[rng.gen_range(0..mutations.len())];
         child_genes.replace_range(idx..idx+1, &new_char.to_string());
     }
