@@ -127,6 +127,16 @@ Runes for remote action and telepathy.
 | `Ξ` | **Telekinesis** | Reads **West** (Dir), **North** (Y), **East** (X). Moves value at `grid[Y][X]` in Direction. |
 | `Σ` | **Suggestion** | Reads **West** (Val), **North** (Y), **East** (X). Writes `Val` to `grid[Y][X]`. |
 
+# Resonance 🎵
+
+Runes for audio synthesis and musical interaction.
+
+| Rune | Name | Function |
+|---|---|---|
+| `♪` | **Note** | Reads **West** (Value) as MIDI Note. Plays Tone. |
+| `♫` | **Chord** | Reads **West** (Root) and **North** (Type). Plays Chord. |
+| `🥁` | **Drum** | Reads **West** (Trigger). Plays Percussive Sound. |
+
 # Symbiotes 🧬
 
 Advanced genetic manipulation and fusion runes.
