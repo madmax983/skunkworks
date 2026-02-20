@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- [None]
+- **algo-botany**: Specimen condemned. Diagnosis: Terminal Genericism (A* vs Space Colonization). Superseded by `rhizome-radar`. Grace period: 24 hours. Salvation requires biological mechanics or competitive growth.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
