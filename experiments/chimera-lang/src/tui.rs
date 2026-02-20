@@ -1378,6 +1378,64 @@ where
                     }
                 }
 
+                #[cfg(feature = "nova")]
+                if let ViewMode::Pandemonium = app_state.view_mode {
+                    match key.code {
+                        KeyCode::Left => app_state.pandemonium_cursor.0 -= 1.0,
+                        KeyCode::Right => app_state.pandemonium_cursor.0 += 1.0,
+                        KeyCode::Up => app_state.pandemonium_cursor.1 -= 1.0,
+                        KeyCode::Down => app_state.pandemonium_cursor.1 += 1.0,
+                        KeyCode::Char('[') => {
+                            app_state.pandemonium_radius = (app_state.pandemonium_radius - 0.5).max(0.5);
+                        }
+                        KeyCode::Char(']') => app_state.pandemonium_radius += 0.5,
+                        KeyCode::Char('1') => app_state.pandemonium_selected_tool = 0,
+                        KeyCode::Char('2') => app_state.pandemonium_selected_tool = 1,
+                        KeyCode::Char('3') => app_state.pandemonium_selected_tool = 2,
+                        KeyCode::Char('4') => app_state.pandemonium_selected_tool = 3,
+                        KeyCode::Char('5') => app_state.pandemonium_selected_tool = 4,
+                        KeyCode::Char(' ') => {
+                            let (cx, cy) = app_state.pandemonium_cursor;
+                            let radius = app_state.pandemonium_radius;
+                            let mut linear_idx = 0;
+                            let mut hits = Vec::new();
+
+                            for (s_idx, strand) in vm.dna.helix.strands.iter().enumerate() {
+                                for (g_idx, _gene) in strand.genes.iter().enumerate() {
+                                    let theta = (linear_idx as f64) * 0.1;
+                                    let r = theta * 0.5;
+                                    let x = r * theta.cos();
+                                    let y = r * theta.sin();
+
+                                    let dist = ((x - cx).powi(2) + (y - cy).powi(2)).sqrt();
+                                    if dist <= radius {
+                                        hits.push((s_idx, g_idx));
+                                    }
+                                    linear_idx += 1;
+                                }
+                            }
+
+                            // Sort hits descending to avoid index shift issues on deletion
+                            hits.sort_by(|a, b| b.cmp(a));
+
+                            for (s, g) in hits {
+                                match app_state.pandemonium_selected_tool {
+                                    0 => crate::vm::pandemonium::apply_mutation(vm, s, g),
+                                    1 => crate::vm::pandemonium::apply_scramble(vm, s, g, radius),
+                                    2 => crate::vm::pandemonium::apply_purge(vm, s, g, radius),
+                                    3 => crate::vm::pandemonium::apply_duplicate(vm, s, g),
+                                    4 => crate::vm::pandemonium::apply_storm(vm, s, g, radius),
+                                    _ => {}
+                                }
+                            }
+                            app_state.status_msg = "Pandemonium Unleashed!".to_string();
+                            app_state.screen_shake = 2.0;
+                        }
+                        _ => {}
+                    }
+                    continue;
+                }
+
                 #[cfg(feature = "oracle")]
                 if app_state.query_mode {
                     match key.code {
