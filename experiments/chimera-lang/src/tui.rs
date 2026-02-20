@@ -2987,10 +2987,10 @@ where
                                 if app_state.fishing_cast {
                                     // Reel
                                     if app_state.fishing_hooked {
-                                        app_state.fishing_bobber_y -= 4.0;
+                                        app_state.fishing_bobber_y += 4.0;
                                         app_state.fishing_tension += 0.05; // Reeling increases tension
 
-                                        if app_state.fishing_bobber_y < 10.0 {
+                                        if app_state.fishing_bobber_y > 90.0 {
                                             // Caught!
                                             app_state.status_msg = "CAUGHT A FISH!".to_string();
                                             app_state.fishing_cast = false;
@@ -4929,8 +4929,17 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     ctx.print(fish_x, app_state.fishing_fish_y, fish_icon);
                 }
 
+                // Catch Zone Indicator
+                ctx.draw(&ratatui::widgets::canvas::Line {
+                    x1: 45.0,
+                    y1: 90.0,
+                    x2: 55.0,
+                    y2: 90.0,
+                    color: Color::Green,
+                });
+
                 // Instructions Overlay (Top Right)
-                ctx.print(60.0, 95.0, "SPACE: Reel (Hold)");
+                ctx.print(60.0, 95.0, "SPACE: Reel (Tap)");
             } else {
                 ctx.print(35.0, 90.0, "Press SPACE to Cast");
             }
