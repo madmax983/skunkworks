@@ -1401,4 +1401,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: "Hyper-Dimensional System Monitor". System metrics (CPU, RAM, Swap) mapped to the dimensions of a 4D Hypercube.
 - **Novel trait**: 4D System State Visualization. A healthy system is a perfect tesseract; load distorts the geometry.
 - **Status**: experiments/tesseract-ops
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Emergent behavior confirmed (Breathing Hypercube).
+
+### chimera-tesseract
+- **Parents**: experiments/tesseract-ops + experiments/chimera-lang
+- **Concept**: A 4D Hypercube where each of the 16 vertices is inhabited by a living ChimeraVM agent.
+- **Novel trait**: 4D Biological Topology. The tesseract's physical stability (rotation/scale) is driven by the biological stability of the colony.
+- **Status**: experiments/chimera-tesseract
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
