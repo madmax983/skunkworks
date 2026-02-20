@@ -67,10 +67,15 @@
 
 ## 🍂 History/Decay
 
-### [Concentration Level: TOXIC] - Location: experiments/lock-step
+### [Concentration Level: TOXIC] - Location: graveyard/lock-step
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Terminal Redundancy (Syncopated Threads).
+- **Status:** Specimen executed. Biomass returned to the void.
 - **Note:** "The rhythm of death is the only lock that matters."
+
+### [Concentration Level: TOXIC] - Location: experiments/code-phage
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Terminal Redundancy (Gray-Scott #5).
+- **Note:** "The reaction has reached equilibrium. The pattern is static."
 
 ### [Concentration Level: TOXIC] - Location: graveyard/terra-phage
 - **Scent Origin:** The Reaper ☠️
