@@ -1,7 +1,7 @@
 use super::normalize_coords;
 use crate::vm::{ChimeraVM, Value};
-use rand::Rng;
 use rand::seq::SliceRandom;
+use rand::Rng;
 
 pub fn apply_pandemonium_runes(
     rune: &str,

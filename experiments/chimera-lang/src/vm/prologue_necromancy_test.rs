@@ -41,7 +41,10 @@ fn test_necromancy_bury_exhume() {
 
     // 3. Verify Bury
     // Strand 1 should be empty (genes cleared)
-    assert!(vm.dna.helix.strands[1].genes.is_empty(), "Strand 1 should be cleared");
+    assert!(
+        vm.dna.helix.strands[1].genes.is_empty(),
+        "Strand 1 should be cleared"
+    );
     // Graveyard should have 1 strand
     assert_eq!(vm.graveyard.len(), 1, "Graveyard should have 1 strand");
     // Verify content of buried strand
@@ -67,7 +70,11 @@ fn test_necromancy_bury_exhume() {
 
     // 5. Verify Exhume
     // Graveyard should be empty
-    assert_eq!(vm.graveyard.len(), 0, "Graveyard should be empty after exhume");
+    assert_eq!(
+        vm.graveyard.len(),
+        0,
+        "Graveyard should be empty after exhume"
+    );
     // Helix should have 3 strands (0: pad, 1: cleared, 2: exhumed)
     assert_eq!(vm.dna.helix.strands.len(), 3, "Helix should have 3 strands");
     // Verify content of exhumed strand
@@ -108,7 +115,11 @@ fn test_necromancy_seance() {
     // 3. Verify Seance
     // Should have triggered interrupt to a new ghost strand
     // Helix should have 1 strand (the ghost)
-    assert_eq!(vm.dna.helix.strands.len(), 1, "Helix should have ghost strand");
+    assert_eq!(
+        vm.dna.helix.strands.len(),
+        1,
+        "Helix should have ghost strand"
+    );
 
     // IP should be set to (0, 0) due to interrupt
     assert_eq!(vm.ip, (0, 0), "IP should be interrupted to ghost strand");

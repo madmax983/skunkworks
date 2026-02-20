@@ -1,12 +1,14 @@
 use crate::ast::Dna;
 use crate::ast::Helix;
+use crate::vm::prologue::exec_prologue_tick;
 use crate::vm::ChimeraVM;
 use crate::vm::Value;
-use crate::vm::prologue::exec_prologue_tick;
 
 #[test]
 fn test_biolum_emitter() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -33,7 +35,9 @@ fn test_biolum_emitter() {
 
 #[test]
 fn test_biolum_sensor() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -60,7 +64,9 @@ fn test_biolum_sensor() {
 
 #[test]
 fn test_biolum_absorber() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 

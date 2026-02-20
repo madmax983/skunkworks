@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
     use crate::ast::{Dna, Helix};
-    use crate::vm::{ChimeraVM, Value};
     use crate::vm::prologue::exec_prologue_tick;
+    use crate::vm::{ChimeraVM, Value};
 
     #[test]
     fn test_chaos_source_rune() {
@@ -58,7 +58,9 @@ mod tests {
         let s = vm.grid[6][7].clone();
         let e = vm.grid[5][8].clone();
 
-        let changed = !matches!(n, Value::Int(0)) || !matches!(s, Value::Int(0)) || !matches!(e, Value::Int(0));
+        let changed = !matches!(n, Value::Int(0))
+            || !matches!(s, Value::Int(0))
+            || !matches!(e, Value::Int(0));
         assert!(changed, "Glitch rune should modify at least one neighbor");
     }
 

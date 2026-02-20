@@ -35,8 +35,8 @@ pub fn apply_hypnagogia_runes(
                     }
                 }
             } else {
-                 // Passive decay if no input? Or maintain?
-                 // Let's maintain for now, decay happens globally maybe.
+                // Passive decay if no input? Or maintain?
+                // Let's maintain for now, decay happens globally maybe.
             }
         }
         "☀" => {
@@ -74,41 +74,47 @@ pub fn process_dream_logic(vm: &mut ChimeraVM) {
     if intensity > 20.0 {
         // Occasional "Spark" (Visual only, implemented as ephemeral signal)
         if rng.gen_bool(0.05) {
-             let ry = rng.gen_range(0..crate::vm::GRID_SIZE);
-             let rx = rng.gen_range(0..crate::vm::GRID_SIZE);
-             if vm.prologue_state.signal_grid[ry][rx].is_none() {
-                 vm.prologue_state.signal_grid[ry][rx] = Some(Value::Int(1)); // Spark
-             }
+            let ry = rng.gen_range(0..crate::vm::GRID_SIZE);
+            let rx = rng.gen_range(0..crate::vm::GRID_SIZE);
+            if vm.prologue_state.signal_grid[ry][rx].is_none() {
+                vm.prologue_state.signal_grid[ry][rx] = Some(Value::Int(1)); // Spark
+            }
         }
     }
 
     // Level 2: REM (Medium) - Structural Changes (Wires)
     if intensity > 50.0 {
-        if rng.gen_bool(0.02) { // 2% chance per tick
+        if rng.gen_bool(0.02) {
+            // 2% chance per tick
             let ry = rng.gen_range(0..crate::vm::GRID_SIZE);
             let rx = rng.gen_range(0..crate::vm::GRID_SIZE);
             // Spawn a wire in empty space
             if matches!(vm.grid[ry][rx], Value::Int(0)) {
-                 vm.grid[ry][rx] = Value::Str("~".to_string());
-                 vm.output.push(format!("HYPNAGOGIA: Dream wire manifested at {},{}", rx, ry));
+                vm.grid[ry][rx] = Value::Str("~".to_string());
+                vm.output.push(format!(
+                    "HYPNAGOGIA: Dream wire manifested at {},{}",
+                    rx, ry
+                ));
             }
         }
     }
 
     // Level 3: Deep Sleep / Nightmare (High) - Chaos Agents
     if intensity > 80.0 {
-        if rng.gen_bool(0.01) { // 1% chance per tick
+        if rng.gen_bool(0.01) {
+            // 1% chance per tick
             let ry = rng.gen_range(0..crate::vm::GRID_SIZE);
             let rx = rng.gen_range(0..crate::vm::GRID_SIZE);
             // Spawn Chaos Agent
             if matches!(vm.grid[ry][rx], Value::Int(0)) {
-                 vm.grid[ry][rx] = Value::Str("K".to_string());
-                 vm.prologue_state.agents.push(super::PrologueAgent {
-                     x: rx,
-                     y: ry,
-                     state: Value::Int(0),
-                 });
-                 vm.output.push(format!("HYPNAGOGIA: Nightmare manifested at {},{}", rx, ry));
+                vm.grid[ry][rx] = Value::Str("K".to_string());
+                vm.prologue_state.agents.push(super::PrologueAgent {
+                    x: rx,
+                    y: ry,
+                    state: Value::Int(0),
+                });
+                vm.output
+                    .push(format!("HYPNAGOGIA: Nightmare manifested at {},{}", rx, ry));
             }
         }
     }

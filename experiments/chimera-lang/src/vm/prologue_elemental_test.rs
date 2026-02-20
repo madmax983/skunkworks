@@ -1,9 +1,9 @@
 #[cfg(test)]
 mod tests {
+    use crate::ast::{Dna, Helix};
     use crate::vm::prologue::elemental::*;
     use crate::vm::prologue::exec_prologue_tick;
     use crate::vm::{ChimeraVM, Value};
-    use crate::ast::{Dna, Helix};
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
@@ -26,11 +26,26 @@ mod tests {
 
         exec_prologue_tick(&mut vm);
 
-        assert_eq!(vm.prologue_state.signal_grid[5][0], Some(Value::Symbol(ELEM_FIRE)));
-        assert_eq!(vm.prologue_state.signal_grid[5][1], Some(Value::Symbol(ELEM_WATER)));
-        assert_eq!(vm.prologue_state.signal_grid[5][2], Some(Value::Symbol(ELEM_EARTH)));
-        assert_eq!(vm.prologue_state.signal_grid[5][3], Some(Value::Symbol(ELEM_AIR)));
-        assert_eq!(vm.prologue_state.signal_grid[5][4], Some(Value::Symbol(ELEM_AETHER)));
+        assert_eq!(
+            vm.prologue_state.signal_grid[5][0],
+            Some(Value::Symbol(ELEM_FIRE))
+        );
+        assert_eq!(
+            vm.prologue_state.signal_grid[5][1],
+            Some(Value::Symbol(ELEM_WATER))
+        );
+        assert_eq!(
+            vm.prologue_state.signal_grid[5][2],
+            Some(Value::Symbol(ELEM_EARTH))
+        );
+        assert_eq!(
+            vm.prologue_state.signal_grid[5][3],
+            Some(Value::Symbol(ELEM_AIR))
+        );
+        assert_eq!(
+            vm.prologue_state.signal_grid[5][4],
+            Some(Value::Symbol(ELEM_AETHER))
+        );
     }
 
     #[test]

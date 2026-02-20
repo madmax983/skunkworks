@@ -1,18 +1,21 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use chimera_lang::vm::{ChimeraVM, Value};
-    use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+    use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
+    use chimera_lang::vm::{ChimeraVM, Value};
 
     #[test]
     fn test_orca_hgt_injection() {
         // Setup DNA with one strand containing a dummy gene
-        let genes = vec![
-            Gene { op: OpCode::Nop, args: vec![] }
-        ];
+        let genes = vec![Gene {
+            op: OpCode::Nop,
+            args: vec![],
+        }];
         let dna = Dna {
-            helix: Helix { strands: vec![Strand { genes }] }
+            helix: Helix {
+                strands: vec![Strand { genes }],
+            },
         };
         let mut vm = ChimeraVM::new(dna);
         vm.orca_mode = true;
@@ -43,17 +46,24 @@ mod tests {
 
         // Verify DNA Modification
         let modified_gene = &vm.dna.helix.strands[0].genes[0];
-        assert_eq!(modified_gene.op, OpCode::Add, "Gene should be mutated to Add");
+        assert_eq!(
+            modified_gene.op,
+            OpCode::Add,
+            "Gene should be mutated to Add"
+        );
     }
 
     #[test]
     fn test_orca_hgt_extraction() {
         // Setup DNA with one strand containing Sub
-        let genes = vec![
-            Gene { op: OpCode::Sub, args: vec![] }
-        ];
+        let genes = vec![Gene {
+            op: OpCode::Sub,
+            args: vec![],
+        }];
         let dna = Dna {
-            helix: Helix { strands: vec![Strand { genes }] }
+            helix: Helix {
+                strands: vec![Strand { genes }],
+            },
         };
         let mut vm = ChimeraVM::new(dna);
         vm.orca_mode = true;

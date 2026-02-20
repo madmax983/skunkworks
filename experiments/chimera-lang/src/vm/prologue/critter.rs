@@ -1,8 +1,8 @@
+use super::normalize_coords;
 use crate::vm::Value;
 use rand::Rng;
 use std::fmt;
 use std::str::FromStr;
-use super::normalize_coords;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum CritterAction {
@@ -28,7 +28,12 @@ pub struct CritterState {
 
 impl CritterState {
     pub fn new(energy: i64, genes: String, ip: usize, direction: usize) -> Self {
-        Self { energy, genes, ip, direction }
+        Self {
+            energy,
+            genes,
+            ip,
+            direction,
+        }
     }
 
     pub fn default() -> Self {
@@ -47,7 +52,11 @@ impl CritterState {
 
 impl fmt::Display for CritterState {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "C:{}:{}:{}:{}", self.energy, self.genes, self.ip, self.direction)
+        write!(
+            f,
+            "C:{}:{}:{}:{}",
+            self.energy, self.genes, self.ip, self.direction
+        )
     }
 }
 
@@ -68,7 +77,12 @@ impl FromStr for CritterState {
             } else {
                 0
             };
-            Ok(Self { energy, genes, ip, direction })
+            Ok(Self {
+                energy,
+                genes,
+                ip,
+                direction,
+            })
         } else {
             Err(())
         }
@@ -88,7 +102,11 @@ pub fn process_critter_move(
 
     // 2. Execute Gene
     let gene_char = if !critter.genes.is_empty() {
-        critter.genes.chars().nth(critter.ip % critter.genes.len()).unwrap_or('R')
+        critter
+            .genes
+            .chars()
+            .nth(critter.ip % critter.genes.len())
+            .unwrap_or('R')
     } else {
         'R'
     };
@@ -100,59 +118,59 @@ pub fn process_critter_move(
     // 3. Determine action
     match gene_char {
         'F' => {
-             // Forward
-             let (dy, dx) = match critter.direction {
-                 0 => (-1, 0), // N
-                 1 => (0, 1),  // E
-                 2 => (1, 0),  // S
-                 3 => (0, -1), // W
-                 _ => (0, 0),
-             };
-             if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                 CritterAction::Move(ny, nx)
-             } else {
-                 CritterAction::None
-             }
+            // Forward
+            let (dy, dx) = match critter.direction {
+                0 => (-1, 0), // N
+                1 => (0, 1),  // E
+                2 => (1, 0),  // S
+                3 => (0, -1), // W
+                _ => (0, 0),
+            };
+            if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                CritterAction::Move(ny, nx)
+            } else {
+                CritterAction::None
+            }
         }
         'B' => {
-             // Backward
-             let (dy, dx) = match critter.direction {
-                 0 => (1, 0),  // S
-                 1 => (0, -1), // W
-                 2 => (-1, 0), // N
-                 3 => (0, 1),  // E
-                 _ => (0, 0),
-             };
-             if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                 CritterAction::Move(ny, nx)
-             } else {
-                 CritterAction::None
-             }
+            // Backward
+            let (dy, dx) = match critter.direction {
+                0 => (1, 0),  // S
+                1 => (0, -1), // W
+                2 => (-1, 0), // N
+                3 => (0, 1),  // E
+                _ => (0, 0),
+            };
+            if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                CritterAction::Move(ny, nx)
+            } else {
+                CritterAction::None
+            }
         }
         'L' => {
-             // Turn Left
-             critter.direction = (critter.direction + 3) % 4;
-             CritterAction::None
+            // Turn Left
+            critter.direction = (critter.direction + 3) % 4;
+            CritterAction::None
         }
         'R' => {
-             // Turn Right
-             critter.direction = (critter.direction + 1) % 4;
-             CritterAction::None
+            // Turn Right
+            critter.direction = (critter.direction + 1) % 4;
+            CritterAction::None
         }
         'A' => {
-             // Attack Forward
-             let (dy, dx) = match critter.direction {
-                 0 => (-1, 0),
-                 1 => (0, 1),
-                 2 => (1, 0),
-                 3 => (0, -1),
-                 _ => (0, 0),
-             };
-             if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                 CritterAction::Attack(ny, nx)
-             } else {
-                 CritterAction::None
-             }
+            // Attack Forward
+            let (dy, dx) = match critter.direction {
+                0 => (-1, 0),
+                1 => (0, 1),
+                2 => (1, 0),
+                3 => (0, -1),
+                _ => (0, 0),
+            };
+            if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                CritterAction::Attack(ny, nx)
+            } else {
+                CritterAction::None
+            }
         }
         'S' => CritterAction::Split,
         'M' => CritterAction::Mark,
@@ -169,16 +187,16 @@ pub fn process_critter_move(
 
             // Build in front
             let (dy, dx) = match critter.direction {
-                 0 => (-1, 0),
-                 1 => (0, 1),
-                 2 => (1, 0),
-                 3 => (0, -1),
-                 _ => (0, 0),
+                0 => (-1, 0),
+                1 => (0, 1),
+                2 => (1, 0),
+                3 => (0, -1),
+                _ => (0, 0),
             };
             if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                 CritterAction::Build(char_to_build, ny, nx)
+                CritterAction::Build(char_to_build, ny, nx)
             } else {
-                 CritterAction::None
+                CritterAction::None
             }
         }
         'i' => {
@@ -186,17 +204,17 @@ pub fn process_critter_move(
             // If clear, skip next gene (increment IP).
             // If blocked, proceed to next gene.
             let (dy, dx) = match critter.direction {
-                 0 => (-1, 0),
-                 1 => (0, 1),
-                 2 => (1, 0),
-                 3 => (0, -1),
-                 _ => (0, 0),
+                0 => (-1, 0),
+                1 => (0, 1),
+                2 => (1, 0),
+                3 => (0, -1),
+                _ => (0, 0),
             };
 
             let is_clear = if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                 matches!(grid_snapshot[ny][nx], Value::Int(0))
+                matches!(grid_snapshot[ny][nx], Value::Int(0))
             } else {
-                 false // Out of bounds is blocked
+                false // Out of bounds is blocked
             };
 
             if is_clear {
@@ -205,44 +223,50 @@ pub fn process_critter_move(
             CritterAction::None
         }
         '?' => {
-             // Random Action
-             let mut rng = rand::thread_rng();
-             if rng.gen_bool(0.5) {
-                 critter.direction = rng.gen_range(0..4);
-                 CritterAction::None
-             } else {
-                 let (dy, dx) = match critter.direction {
-                     0 => (-1, 0),
-                     1 => (0, 1),
-                     2 => (1, 0),
-                     3 => (0, -1),
-                     _ => (0, 0),
-                 };
-                 if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                     CritterAction::Move(ny, nx)
-                 } else {
-                     CritterAction::None
-                 }
-             }
+            // Random Action
+            let mut rng = rand::thread_rng();
+            if rng.gen_bool(0.5) {
+                critter.direction = rng.gen_range(0..4);
+                CritterAction::None
+            } else {
+                let (dy, dx) = match critter.direction {
+                    0 => (-1, 0),
+                    1 => (0, 1),
+                    2 => (1, 0),
+                    3 => (0, -1),
+                    _ => (0, 0),
+                };
+                if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    CritterAction::Move(ny, nx)
+                } else {
+                    CritterAction::None
+                }
+            }
         }
         // Legacy Support
         'N' => {
             critter.direction = 0;
             if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
-                 CritterAction::Move(ny, nx)
-            } else { CritterAction::None }
+                CritterAction::Move(ny, nx)
+            } else {
+                CritterAction::None
+            }
         }
         'E' => {
             critter.direction = 1;
             if let Some((ny, nx)) = normalize_coords(y as i64, x as i64 + 1) {
-                 CritterAction::Move(ny, nx)
-            } else { CritterAction::None }
+                CritterAction::Move(ny, nx)
+            } else {
+                CritterAction::None
+            }
         }
         'W' => {
             critter.direction = 3;
             if let Some((ny, nx)) = normalize_coords(y as i64, x as i64 - 1) {
-                 CritterAction::Move(ny, nx)
-            } else { CritterAction::None }
+                CritterAction::Move(ny, nx)
+            } else {
+                CritterAction::None
+            }
         }
         // 'S' is now Split. South legacy support removed or mapped to 'v'?
         // Assuming 'S' gene meant South in old saves, this breaks them.
@@ -271,9 +295,11 @@ pub fn breed(parent1: &CritterState, parent2: &CritterState) -> CritterState {
     // Mutation
     if rng.gen_bool(0.1) {
         let idx = rng.gen_range(0..child_genes.len());
-        let mutations = ['F', 'B', 'L', 'R', 'A', 'S', 'M', '?', '+', '*', 'x', '^', 'v', 'i'];
+        let mutations = [
+            'F', 'B', 'L', 'R', 'A', 'S', 'M', '?', '+', '*', 'x', '^', 'v', 'i',
+        ];
         let new_char = mutations[rng.gen_range(0..mutations.len())];
-        child_genes.replace_range(idx..idx+1, &new_char.to_string());
+        child_genes.replace_range(idx..idx + 1, &new_char.to_string());
     }
 
     CritterState {

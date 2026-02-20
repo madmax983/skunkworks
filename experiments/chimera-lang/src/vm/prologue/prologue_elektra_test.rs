@@ -1,6 +1,6 @@
 use crate::ast::{Dna, Helix};
-use crate::vm::{ChimeraVM, Value};
 use crate::vm::prologue::exec_prologue_tick;
+use crate::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_elektra_runes() {

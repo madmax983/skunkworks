@@ -4,8 +4,8 @@ mod tests {
     use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
     use chimera_lang::vm::ChimeraVM;
-    use strum::IntoEnumIterator;
     use proptest::prelude::*;
+    use strum::IntoEnumIterator;
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
         Dna {
@@ -57,8 +57,14 @@ mod tests {
     fn test_organelle_flood() {
         // 👺 HAVOC: Attempt to flood organelles beyond limit
         let genes = vec![
-            Gene { op: OpCode::Spawn, args: vec![Nucleotide::Number(1), Nucleotide::Number(0)] },
-            Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
+            Gene {
+                op: OpCode::Spawn,
+                args: vec![Nucleotide::Number(1), Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(0)],
+            },
         ];
 
         let dna = Dna {
@@ -78,7 +84,10 @@ mod tests {
         }
 
         // Check if we crashed or just capped
-        assert!(vm.organelles.len() <= chimera_lang::vm::MAX_ORGANELLES, "Organelle overflow!");
+        assert!(
+            vm.organelles.len() <= chimera_lang::vm::MAX_ORGANELLES,
+            "Organelle overflow!"
+        );
     }
 
     #[test]
@@ -97,13 +106,31 @@ mod tests {
 
         // VM Code: Bind port, Recv loop
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(port as i64)] },
-            Gene { op: OpCode::HiveBind, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(port as i64)],
+            },
+            Gene {
+                op: OpCode::HiveBind,
+                args: vec![],
+            },
             // Loop
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(port as i64)] },
-            Gene { op: OpCode::HiveRecv, args: vec![] },
-            Gene { op: OpCode::Drop, args: vec![] }, // Discard result
-            Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(2)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(port as i64)],
+            },
+            Gene {
+                op: OpCode::HiveRecv,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Drop,
+                args: vec![],
+            }, // Discard result
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(2)],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));

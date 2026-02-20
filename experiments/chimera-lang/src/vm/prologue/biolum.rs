@@ -42,19 +42,37 @@ pub fn apply_biolum_sinks(vm: &mut crate::vm::ChimeraVM, rune: &str, y: usize, x
                 if intensity > 0 {
                     let n_sig = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
                         vm.prologue_state.signal_grid[ny][nx].clone()
-                    } else { None };
+                    } else {
+                        None
+                    };
 
                     let e_sig = if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
                         vm.prologue_state.signal_grid[ey][ex].clone()
-                    } else { None };
+                    } else {
+                        None
+                    };
 
                     let s_sig = if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
                         vm.prologue_state.signal_grid[sy][sx].clone()
-                    } else { None };
+                    } else {
+                        None
+                    };
 
-                    let r = if let Some(Value::Int(v)) = n_sig { v.clamp(0, 255) as u8 } else { 255 };
-                    let g = if let Some(Value::Int(v)) = e_sig { v.clamp(0, 255) as u8 } else { 255 };
-                    let b = if let Some(Value::Int(v)) = s_sig { v.clamp(0, 255) as u8 } else { 255 };
+                    let r = if let Some(Value::Int(v)) = n_sig {
+                        v.clamp(0, 255) as u8
+                    } else {
+                        255
+                    };
+                    let g = if let Some(Value::Int(v)) = e_sig {
+                        v.clamp(0, 255) as u8
+                    } else {
+                        255
+                    };
+                    let b = if let Some(Value::Int(v)) = s_sig {
+                        v.clamp(0, 255) as u8
+                    } else {
+                        255
+                    };
 
                     let i = intensity.clamp(0, 255);
 
@@ -70,7 +88,7 @@ pub fn apply_biolum_sinks(vm: &mut crate::vm::ChimeraVM, rune: &str, y: usize, x
                     vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
                 }
             }
-        },
+        }
         "Ω" => {
             // Ω (Omega) - Light Absorber
             // West: Intensity to absorb
@@ -88,7 +106,7 @@ pub fn apply_biolum_sinks(vm: &mut crate::vm::ChimeraVM, rune: &str, y: usize, x
                     vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
                 }
             }
-        },
+        }
         _ => {}
     }
 }

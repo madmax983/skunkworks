@@ -44,7 +44,12 @@ mod tests {
             println!("{}", line);
         }
 
-        assert!(size <= MAX_GRAVEYARD_SIZE, "Graveyard size {} exceeded limit {}", size, MAX_GRAVEYARD_SIZE);
+        assert!(
+            size <= MAX_GRAVEYARD_SIZE,
+            "Graveyard size {} exceeded limit {}",
+            size,
+            MAX_GRAVEYARD_SIZE
+        );
         assert_eq!(size, MAX_GRAVEYARD_SIZE, "Graveyard should be full");
     }
 }

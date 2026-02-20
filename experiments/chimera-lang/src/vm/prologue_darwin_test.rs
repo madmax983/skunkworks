@@ -1,9 +1,9 @@
 use super::*;
 use crate::ast::Dna;
 use crate::ast::Helix;
+use crate::vm::prologue::exec_prologue_tick;
 use crate::vm::ChimeraVM;
 use crate::vm::Value;
-use crate::vm::prologue::exec_prologue_tick;
 
 #[test]
 fn test_darwin_rune() {
@@ -47,7 +47,11 @@ fn test_darwin_rune() {
     exec_prologue_tick(&mut vm);
 
     let mutated = vm.output.iter().any(|s| s.contains("DARWIN: Mutation"));
-    assert!(mutated, "Darwin rune failed to trigger mutation. Logs: {:?}", vm.output);
+    assert!(
+        mutated,
+        "Darwin rune failed to trigger mutation. Logs: {:?}",
+        vm.output
+    );
 
     // Reset output
     vm.output.clear();
@@ -60,5 +64,9 @@ fn test_darwin_rune() {
     exec_prologue_tick(&mut vm);
 
     let success = vm.output.iter().any(|s| s.contains("DARWIN: Success"));
-    assert!(success, "Darwin rune failed to recognize success. Logs: {:?}", vm.output);
+    assert!(
+        success,
+        "Darwin rune failed to recognize success. Logs: {:?}",
+        vm.output
+    );
 }

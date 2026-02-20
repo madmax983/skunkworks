@@ -117,12 +117,12 @@ fn test_psionics_telekinesis() {
 
     // Object should move from (2,2) to (2,3) (East)
     match &vm.grid[2][2] {
-        Value::Int(0) => {}, // Should be empty/0
+        Value::Int(0) => {} // Should be empty/0
         val => panic!("Expected (2,2) to be empty, got {:?}", val),
     }
 
     match &vm.grid[2][3] {
-        Value::Int(100) => {},
+        Value::Int(100) => {}
         val => panic!("Expected Int(100) at (2,3), got {:?}", val),
     }
 }

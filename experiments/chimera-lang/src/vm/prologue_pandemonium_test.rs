@@ -1,12 +1,14 @@
 #[cfg(test)]
 mod tests {
     use crate::ast::{Dna, Helix};
-    use crate::vm::{ChimeraVM, Value};
     use crate::vm::prologue::exec_prologue_tick;
+    use crate::vm::{ChimeraVM, Value};
 
     #[test]
     fn test_chaos_source() {
-        let dna = Dna { helix: Helix { strands: vec![] } };
+        let dna = Dna {
+            helix: Helix { strands: vec![] },
+        };
         let mut vm = ChimeraVM::new(dna);
         vm.prologue_state.active = true;
 
@@ -26,9 +28,12 @@ mod tests {
 
         // Output: South (6,5)
         // Should be either 20 (Double) or 0 (Zero)
-        assert!(vm.prologue_state.signal_grid[6][5].is_some(), "Chaos Rune did not emit signal to South");
+        assert!(
+            vm.prologue_state.signal_grid[6][5].is_some(),
+            "Chaos Rune did not emit signal to South"
+        );
         if let Some(Value::Int(v)) = &vm.prologue_state.signal_grid[6][5] {
-             assert!(*v == 20 || *v == 0);
+            assert!(*v == 20 || *v == 0);
         } else {
             panic!("Chaos Rune did not emit Int");
         }
@@ -36,7 +41,9 @@ mod tests {
 
     #[test]
     fn test_noise_wire() {
-        let dna = Dna { helix: Helix { strands: vec![] } };
+        let dna = Dna {
+            helix: Helix { strands: vec![] },
+        };
         let mut vm = ChimeraVM::new(dna);
         vm.prologue_state.active = true;
 
@@ -53,7 +60,7 @@ mod tests {
         // Check neighbors of (5,5): (4,5), (6,5), (5,4), (5,6)
         // One of them should have 42.
 
-        let neighbors = [(4,5), (6,5), (5,4), (5,6)];
+        let neighbors = [(4, 5), (6, 5), (5, 4), (5, 6)];
         let mut found = false;
         for (y, x) in neighbors {
             if let Some(Value::Int(v)) = &vm.prologue_state.signal_grid[y][x] {
@@ -68,14 +75,19 @@ mod tests {
 
     #[test]
     fn test_chaos_sink() {
-        let dna = Dna { helix: Helix { strands: vec![] } };
+        let dna = Dna {
+            helix: Helix { strands: vec![] },
+        };
         let mut vm = ChimeraVM::new(dna);
         vm.prologue_state.active = true;
 
         // Circuit: List -> ! -> ¡
         // ¡ Scramble: Reads West (List). Output South.
 
-        let list = Value::Junction(crate::ast::JunctionType::Any, vec![Value::Int(1), Value::Int(2), Value::Int(3)]);
+        let list = Value::Junction(
+            crate::ast::JunctionType::Any,
+            vec![Value::Int(1), Value::Int(2), Value::Int(3)],
+        );
 
         // Input: West of !
         vm.grid[5][3] = list;

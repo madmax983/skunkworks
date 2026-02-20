@@ -38,6 +38,10 @@ mod tests {
 
         println!("Strands: {} -> {}", start_strands, end_strands);
 
-        assert!(end_strands <= MAX_STRANDS + 128, "Strand count exploded beyond safety margin! Got {}", end_strands);
+        assert!(
+            end_strands <= MAX_STRANDS + 128,
+            "Strand count exploded beyond safety margin! Got {}",
+            end_strands
+        );
     }
 }

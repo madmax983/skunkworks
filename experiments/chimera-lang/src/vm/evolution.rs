@@ -186,10 +186,14 @@ impl EvolutionEngine {
                 vm.step();
             }
 
-            let val = vm.stack.last().and_then(|v| match v {
-                Value::Int(n) => Some(*n),
-                _ => None,
-            }).unwrap_or(0);
+            let val = vm
+                .stack
+                .last()
+                .and_then(|v| match v {
+                    Value::Int(n) => Some(*n),
+                    _ => None,
+                })
+                .unwrap_or(0);
 
             // Stack Depth Check: Should be exactly 1
             let stack_penalty = if vm.stack.len() == 1 { 0 } else { 1000 };
@@ -285,7 +289,9 @@ mod tests {
         let mut engine = EvolutionEngine::new(seed.clone(), 20, Challenge::Target(42));
         for _ in 0..100 {
             engine.step(&vm_template);
-            if engine.best_fitness < 10 { break; }
+            if engine.best_fitness < 10 {
+                break;
+            }
         }
         assert!(engine.best_fitness < 100, "Target convergence failed");
 
@@ -295,7 +301,9 @@ mod tests {
         for _ in 0..200 {
             engine.step(&vm_template);
             // Perfect fitness is approx length of code (e.g. 5 for Push 2 Mul)
-            if engine.best_fitness < 20 { break; }
+            if engine.best_fitness < 20 {
+                break;
+            }
         }
         println!("Doubler Best Fitness: {}", engine.best_fitness);
         // We can't guarantee convergence with random mutation in unit test time, but ensure it runs

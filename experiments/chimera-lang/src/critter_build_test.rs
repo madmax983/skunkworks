@@ -22,7 +22,9 @@ mod tests {
 
         // Place Critter at (5, 5)
         vm.grid[5][5] = Value::Str("C".to_string());
-        vm.prologue_state.registers.insert((5, 5), Value::Str(critter_state));
+        vm.prologue_state
+            .registers
+            .insert((5, 5), Value::Str(critter_state));
 
         // Tick 1: Execute 'F'
         exec_prologue_tick(&mut vm);
@@ -70,7 +72,9 @@ mod tests {
         let critter_state = format!("C:{}:{}:0:1", energy, genes); // East
 
         vm.grid[5][5] = Value::Str("C".to_string());
-        vm.prologue_state.registers.insert((5, 5), Value::Str(critter_state));
+        vm.prologue_state
+            .registers
+            .insert((5, 5), Value::Str(critter_state));
 
         // Tick 1: Execute 'i'.
         // Ahead (5, 6) is empty (0).

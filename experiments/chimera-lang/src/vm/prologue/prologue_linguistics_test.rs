@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
     use crate::ast::{Dna, Helix, JunctionType};
-    use crate::vm::{ChimeraVM, Value};
     use crate::vm::prologue::exec_prologue_tick;
+    use crate::vm::{ChimeraVM, Value};
 
     #[test]
     fn test_linguistics_stringify() {
@@ -105,10 +105,10 @@ mod tests {
         //      Delim -> !
         // List -> ! -> ©
 
-        let list = Value::Junction(JunctionType::Any, vec![
-            Value::Str("x".to_string()),
-            Value::Str("y".to_string())
-        ]);
+        let list = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("x".to_string()), Value::Str("y".to_string())],
+        );
         vm.grid[5][4] = list;
         vm.grid[5][5] = Value::Str("!".to_string());
 

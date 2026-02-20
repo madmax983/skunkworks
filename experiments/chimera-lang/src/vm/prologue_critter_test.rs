@@ -1,6 +1,6 @@
 use crate::ast::{Dna, Helix};
-use crate::vm::prologue::exec_prologue_tick;
 use crate::vm::prologue::critter::CritterState;
+use crate::vm::prologue::exec_prologue_tick;
 use crate::vm::{ChimeraVM, Value};
 
 fn setup_vm() -> ChimeraVM {
@@ -21,7 +21,9 @@ fn test_critter_persistence() {
 
     // Set initial state
     let critter = CritterState::new(100, "R".to_string(), 0, 0); // Direction 0 (N)
-    vm.prologue_state.registers.insert((5, 5), critter.to_value());
+    vm.prologue_state
+        .registers
+        .insert((5, 5), critter.to_value());
 
     // Run tick
     exec_prologue_tick(&mut vm);
@@ -36,7 +38,8 @@ fn test_critter_persistence() {
                     // Check register
                     if let Some(val) = vm.prologue_state.registers.get(&(y, x)) {
                         if let Value::Str(state_str) = val {
-                            let new_critter: CritterState = state_str.parse().expect("Failed to parse critter state");
+                            let new_critter: CritterState =
+                                state_str.parse().expect("Failed to parse critter state");
                             assert!(new_critter.energy < 100, "Energy should decay");
                         } else {
                             panic!("Register value not a string");
@@ -59,13 +62,19 @@ fn test_critter_movement_legacy() {
     vm.grid[5][5] = Value::Str("C".to_string());
 
     let critter = CritterState::new(100, "E".to_string(), 0, 0);
-    vm.prologue_state.registers.insert((5, 5), critter.to_value());
+    vm.prologue_state
+        .registers
+        .insert((5, 5), critter.to_value());
 
     exec_prologue_tick(&mut vm);
 
     // Should be at 5,6
     assert_eq!(vm.grid[5][5], Value::Int(0), "Old position not cleared");
-    assert_eq!(vm.grid[5][6], Value::Str("C".to_string()), "New position not occupied");
+    assert_eq!(
+        vm.grid[5][6],
+        Value::Str("C".to_string()),
+        "New position not occupied"
+    );
 
     // Register should move
     assert!(vm.prologue_state.registers.get(&(5, 5)).is_none());
@@ -79,7 +88,9 @@ fn test_critter_movement_relative() {
     // Setup: C at 5,5 facing East (1). Gene 'F' should move East (5,6).
     vm.grid[5][5] = Value::Str("C".to_string());
     let critter = CritterState::new(100, "F".to_string(), 0, 1);
-    vm.prologue_state.registers.insert((5, 5), critter.to_value());
+    vm.prologue_state
+        .registers
+        .insert((5, 5), critter.to_value());
 
     exec_prologue_tick(&mut vm);
 
@@ -93,7 +104,9 @@ fn test_critter_turn() {
     // Setup: C at 5,5 facing North (0). Gene 'R' (Turn Right -> East 1).
     vm.grid[5][5] = Value::Str("C".to_string());
     let critter = CritterState::new(100, "R".to_string(), 0, 0);
-    vm.prologue_state.registers.insert((5, 5), critter.to_value());
+    vm.prologue_state
+        .registers
+        .insert((5, 5), critter.to_value());
 
     exec_prologue_tick(&mut vm);
 
@@ -156,8 +169,8 @@ fn test_critter_eat() {
     // Check energy increased
     if let Some(val) = vm.prologue_state.registers.get(&(5, 6)) {
         if let Value::Str(s) = val {
-             let state: CritterState = s.parse().unwrap();
-             assert!(state.energy > 100, "Critter did not gain energy");
+            let state: CritterState = s.parse().unwrap();
+            assert!(state.energy > 100, "Critter did not gain energy");
         }
     }
 }
@@ -204,14 +217,18 @@ fn test_critter_attack() {
     exec_prologue_tick(&mut vm);
 
     // Predator should be at 5,5 (Attack doesn't move). Prey should be gone (0).
-    assert_eq!(vm.grid[5][5], Value::Str("C".to_string()), "Predator moved?");
+    assert_eq!(
+        vm.grid[5][5],
+        Value::Str("C".to_string()),
+        "Predator moved?"
+    );
     assert_eq!(vm.grid[5][6], Value::Int(0), "Prey survived");
 
     // Check energy
     if let Some(val) = vm.prologue_state.registers.get(&(5, 5)) {
         if let Value::Str(s) = val {
-             let state: CritterState = s.parse().unwrap();
-             assert!(state.energy > 100, "Predator did not gain energy");
+            let state: CritterState = s.parse().unwrap();
+            assert!(state.energy > 100, "Predator did not gain energy");
         }
     }
 }

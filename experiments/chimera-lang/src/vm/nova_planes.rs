@@ -14,8 +14,8 @@ pub fn exec_planes_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
 
                     // Check if we can allocate a new plane if target doesn't exist
                     if !vm.planes.contains_key(&target_id) && vm.planes.len() >= MAX_PLANES {
-                         vm.output.push("Error: Plane limit exceeded".to_string());
-                         return;
+                        vm.output.push("Error: Plane limit exceeded".to_string());
+                        return;
                     }
 
                     // Save current grid
@@ -111,7 +111,13 @@ pub fn exec_planes_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                             if vm.planes.len() >= MAX_PLANES {
                                 vm.output.push("Error: Plane limit exceeded".to_string());
                             } else {
-                                let plane = vm.planes.entry(id).or_insert(vec![vec![Value::Int(0); GRID_SIZE]; GRID_SIZE]);
+                                let plane = vm.planes.entry(id).or_insert(vec![
+                                    vec![
+                                        Value::Int(0);
+                                        GRID_SIZE
+                                    ];
+                                    GRID_SIZE
+                                ]);
                                 plane[y as usize][x as usize] = val;
                             }
                         }

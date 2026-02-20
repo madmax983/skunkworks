@@ -39,10 +39,10 @@ pub fn apply_psionics_runes(
                         next_signals[y][x] = Some(val);
                         changes = true;
                     } else if let Some(existing) = &next_signals[y][x] {
-                         if *existing != val {
-                             next_signals[y][x] = Some(val);
-                             changes = true;
-                         }
+                        if *existing != val {
+                            next_signals[y][x] = Some(val);
+                            changes = true;
+                        }
                     }
                 }
             }
@@ -66,17 +66,25 @@ pub fn apply_psionics_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) 
 
             let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
                 vm.prologue_state.signal_grid[wy][wx].clone()
-            } else { None };
+            } else {
+                None
+            };
 
             let n_sig = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
                 vm.prologue_state.signal_grid[ny][nx].clone()
-            } else { None };
+            } else {
+                None
+            };
 
             let e_sig = if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
                 vm.prologue_state.signal_grid[ey][ex].clone()
-            } else { None };
+            } else {
+                None
+            };
 
-            if let (Some(Value::Int(dir)), Some(Value::Int(ry)), Some(Value::Int(rx))) = (w_sig, n_sig, e_sig) {
+            if let (Some(Value::Int(dir)), Some(Value::Int(ry)), Some(Value::Int(rx))) =
+                (w_sig, n_sig, e_sig)
+            {
                 if let Some((ty, tx)) = normalize_coords(ry, rx) {
                     // Move logic
                     let (dy, dx) = match dir % 4 {
@@ -93,7 +101,8 @@ pub fn apply_psionics_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) 
                             let val = vm.grid[ty][tx].clone();
                             vm.grid[ny][nx] = val;
                             vm.grid[ty][tx] = Value::Int(0);
-                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1)); // Success
+                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                            // Success
                         }
                     }
                 }
@@ -107,15 +116,21 @@ pub fn apply_psionics_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) 
 
             let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
                 vm.prologue_state.signal_grid[wy][wx].clone()
-            } else { None };
+            } else {
+                None
+            };
 
             let n_sig = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
                 vm.prologue_state.signal_grid[ny][nx].clone()
-            } else { None };
+            } else {
+                None
+            };
 
             let e_sig = if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
                 vm.prologue_state.signal_grid[ey][ex].clone()
-            } else { None };
+            } else {
+                None
+            };
 
             if let (Some(val), Some(Value::Int(ry)), Some(Value::Int(rx))) = (w_sig, n_sig, e_sig) {
                 if let Some((ty, tx)) = normalize_coords(ry, rx) {

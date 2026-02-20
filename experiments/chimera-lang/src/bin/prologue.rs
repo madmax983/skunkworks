@@ -3,7 +3,14 @@ use clap::Parser as ClapParser;
 use std::fs;
 use std::path::Path;
 
-use chimera_lang::{ast::Dna, ast::Helix, compiler, tui::{run_tui, ViewMode}, vm::ChimeraVM, ChimeraParser, Rule};
+use chimera_lang::{
+    ast::Dna,
+    ast::Helix,
+    compiler,
+    tui::{run_tui, ViewMode},
+    vm::ChimeraVM,
+    ChimeraParser, Rule,
+};
 use pest::Parser;
 
 #[cfg(feature = "resonance")]

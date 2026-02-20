@@ -4,7 +4,6 @@ mod tests {
     use crate::opcode::OpCode;
     use crate::vm::ChimeraVM;
 
-
     fn make_dna(genes: Vec<Gene>) -> Dna {
         Dna {
             helix: Helix {

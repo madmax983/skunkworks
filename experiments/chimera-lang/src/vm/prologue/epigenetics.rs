@@ -1,11 +1,11 @@
-use crate::vm::ChimeraVM;
 use crate::vm::prologue::normalize_coords;
+use crate::vm::ChimeraVM;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub enum EpigeneticMark {
     None,
-    Methylated,    // Silenced
+    Methylated,     // Silenced
     Phosphorylated, // Amplified
 }
 
@@ -29,7 +29,8 @@ pub fn apply_epigenetic_runes(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize
             match rune {
                 "." => {
                     vm.prologue_state.epigenetic_grid[sy][sx] = EpigeneticMark::Methylated;
-                    vm.prologue_state.signal_grid[y][x] = Some(crate::vm::Value::Int(1)); // Light up
+                    vm.prologue_state.signal_grid[y][x] = Some(crate::vm::Value::Int(1));
+                    // Light up
                 }
                 ":" => {
                     vm.prologue_state.epigenetic_grid[sy][sx] = EpigeneticMark::Phosphorylated;

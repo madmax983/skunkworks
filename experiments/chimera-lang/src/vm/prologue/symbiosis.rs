@@ -1,5 +1,5 @@
-use crate::vm::{ChimeraVM, Value};
 use super::normalize_coords;
+use crate::vm::{ChimeraVM, Value};
 use rand::Rng;
 
 pub fn apply_symbiosis_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
@@ -32,13 +32,14 @@ pub fn apply_symbiosis_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
             // Yank: West (Trigger) -> Pop from Stack -> Write South
             if w_sig.is_some() {
                 if let Some(val) = vm.stack.pop() {
-                     if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
+                    if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
                         vm.grid[sy][sx] = val.clone();
                         vm.prologue_state.signal_grid[y][x] = Some(val.clone()); // Light up with value
                         vm.output.push(format!("SYMBIOSIS: Yanked {:?}", val));
                     }
                 } else {
-                    vm.output.push("SYMBIOSIS: Stack Underflow on Yank".to_string());
+                    vm.output
+                        .push("SYMBIOSIS: Stack Underflow on Yank".to_string());
                 }
             }
         }
@@ -55,43 +56,55 @@ pub fn apply_symbiosis_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
                             if let Value::Str(state_str) = state_val {
                                 match state_str.parse::<super::critter::CritterState>() {
                                     Ok(mut critter) => {
-                                    let injection = match &payload {
-                                        Value::Str(g) => g.clone(),
-                                        Value::Int(i) => format!("{}", i),
-                                        _ => "M".to_string(),
-                                    };
+                                        let injection = match &payload {
+                                            Value::Str(g) => g.clone(),
+                                            Value::Int(i) => format!("{}", i),
+                                            _ => "M".to_string(),
+                                        };
 
-                                    critter.genes.push_str(&injection);
-                                    let new_state = critter.to_value();
+                                        critter.genes.push_str(&injection);
+                                        let new_state = critter.to_value();
 
-                                    vm.prologue_state.registers.insert((ey, ex), new_state.clone());
+                                        vm.prologue_state
+                                            .registers
+                                            .insert((ey, ex), new_state.clone());
 
-                                    // Sync agent list
-                                    for agent in vm.prologue_state.agents.iter_mut() {
-                                        if agent.x == ex && agent.y == ey {
-                                            agent.state = new_state.clone();
-                                            break;
+                                        // Sync agent list
+                                        for agent in vm.prologue_state.agents.iter_mut() {
+                                            if agent.x == ex && agent.y == ey {
+                                                agent.state = new_state.clone();
+                                                break;
+                                            }
                                         }
-                                    }
 
-                                    mutated = true;
-                                    vm.output.push(format!("SYMBIOSIS: Parasite injected '{}' into Critter at {},{}", injection, ex, ey));
+                                        mutated = true;
+                                        vm.output.push(format!("SYMBIOSIS: Parasite injected '{}' into Critter at {},{}", injection, ex, ey));
                                     }
                                     Err(_) => {
-                                        vm.output.push(format!("SYMBIOSIS ERROR: Failed to parse critter state: {}", state_str));
+                                        vm.output.push(format!(
+                                            "SYMBIOSIS ERROR: Failed to parse critter state: {}",
+                                            state_str
+                                        ));
                                     }
                                 }
                             } else {
-                                vm.output.push("SYMBIOSIS ERROR: Register not a string".to_string());
+                                vm.output
+                                    .push("SYMBIOSIS ERROR: Register not a string".to_string());
                             }
                         } else {
-                            vm.output.push("SYMBIOSIS ERROR: Register not found".to_string());
+                            vm.output
+                                .push("SYMBIOSIS ERROR: Register not found".to_string());
                         }
                     } else if s == "@" || s == "K" || s == "H" {
-                         // Simple Agent Injection
-                         vm.prologue_state.registers.insert((ey, ex), payload.clone());
-                         mutated = true;
-                         vm.output.push(format!("SYMBIOSIS: Parasite overwrote Agent state at {},{}", ex, ey));
+                        // Simple Agent Injection
+                        vm.prologue_state
+                            .registers
+                            .insert((ey, ex), payload.clone());
+                        mutated = true;
+                        vm.output.push(format!(
+                            "SYMBIOSIS: Parasite overwrote Agent state at {},{}",
+                            ex, ey
+                        ));
                     }
                 }
 
@@ -103,12 +116,18 @@ pub fn apply_symbiosis_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
                                 Value::Int(id) => {
                                     org.genome_id = *id as u64;
                                     mutated = true;
-                                    vm.output.push(format!("SYMBIOSIS: Parasite switched Organelle genome to {}", id));
+                                    vm.output.push(format!(
+                                        "SYMBIOSIS: Parasite switched Organelle genome to {}",
+                                        id
+                                    ));
                                 }
                                 Value::Str(code) => {
                                     org.traits.push(code.clone());
                                     mutated = true;
-                                    vm.output.push(format!("SYMBIOSIS: Parasite added trait '{}'", code));
+                                    vm.output.push(format!(
+                                        "SYMBIOSIS: Parasite added trait '{}'",
+                                        code
+                                    ));
                                 }
                                 _ => {}
                             }
@@ -135,34 +154,40 @@ pub fn apply_symbiosis_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
                     let mut e_state = vm.prologue_state.registers.get(&(ey, ex)).cloned();
 
                     if let (Some(Value::Str(ws)), Some(Value::Str(es))) = (&w_state, &e_state) {
-                         if let (Ok(mut wc), Ok(mut ec)) = (ws.parse::<super::critter::CritterState>(), es.parse::<super::critter::CritterState>()) {
-                             // Osmosis: Equalize Energy
-                             let total_energy = wc.energy + ec.energy;
-                             wc.energy = total_energy / 2;
-                             ec.energy = total_energy - wc.energy;
+                        if let (Ok(mut wc), Ok(mut ec)) = (
+                            ws.parse::<super::critter::CritterState>(),
+                            es.parse::<super::critter::CritterState>(),
+                        ) {
+                            // Osmosis: Equalize Energy
+                            let total_energy = wc.energy + ec.energy;
+                            wc.energy = total_energy / 2;
+                            ec.energy = total_energy - wc.energy;
 
-                             // Swap a gene
-                             if !wc.genes.is_empty() && !ec.genes.is_empty() {
-                                 let mut rng = rand::thread_rng();
-                                 let idx_w = rng.gen_range(0..wc.genes.len());
-                                 let idx_e = rng.gen_range(0..ec.genes.len());
+                            // Swap a gene
+                            if !wc.genes.is_empty() && !ec.genes.is_empty() {
+                                let mut rng = rand::thread_rng();
+                                let idx_w = rng.gen_range(0..wc.genes.len());
+                                let idx_e = rng.gen_range(0..ec.genes.len());
 
-                                 let mut w_chars: Vec<char> = wc.genes.chars().collect();
-                                 let mut e_chars: Vec<char> = ec.genes.chars().collect();
+                                let mut w_chars: Vec<char> = wc.genes.chars().collect();
+                                let mut e_chars: Vec<char> = ec.genes.chars().collect();
 
-                                 let tmp = w_chars[idx_w];
-                                 w_chars[idx_w] = e_chars[idx_e];
-                                 e_chars[idx_e] = tmp;
+                                let tmp = w_chars[idx_w];
+                                w_chars[idx_w] = e_chars[idx_e];
+                                e_chars[idx_e] = tmp;
 
-                                 wc.genes = w_chars.into_iter().collect();
-                                 ec.genes = e_chars.into_iter().collect();
-                             }
+                                wc.genes = w_chars.into_iter().collect();
+                                ec.genes = e_chars.into_iter().collect();
+                            }
 
-                             w_state = Some(wc.to_value());
-                             e_state = Some(ec.to_value());
+                            w_state = Some(wc.to_value());
+                            e_state = Some(ec.to_value());
 
-                             vm.output.push(format!("SYMBIOSIS: Osmosis between Critters at {},{} and {},{}", wx, wy, ex, ey));
-                         }
+                            vm.output.push(format!(
+                                "SYMBIOSIS: Osmosis between Critters at {},{} and {},{}",
+                                wx, wy, ex, ey
+                            ));
+                        }
                     }
 
                     if let Some(s) = w_state {
@@ -190,48 +215,55 @@ pub fn apply_symbiosis_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
         }
         "x" => {
             // Xenograft: Swap positions West <-> East
-             if let (Some((wy, wx)), Some((ey, ex))) = (west_coords, east_coords) {
-                 let w_val = vm.grid[wy][wx].clone();
-                 let e_val = vm.grid[ey][ex].clone();
+            if let (Some((wy, wx)), Some((ey, ex))) = (west_coords, east_coords) {
+                let w_val = vm.grid[wy][wx].clone();
+                let e_val = vm.grid[ey][ex].clone();
 
-                 if !matches!(w_val, Value::Int(0)) && !matches!(e_val, Value::Int(0)) {
-                     // Swap Grid
-                     vm.grid[wy][wx] = e_val;
-                     vm.grid[ey][ex] = w_val;
+                if !matches!(w_val, Value::Int(0)) && !matches!(e_val, Value::Int(0)) {
+                    // Swap Grid
+                    vm.grid[wy][wx] = e_val;
+                    vm.grid[ey][ex] = w_val;
 
-                     // Swap Registers
-                     let w_reg = vm.prologue_state.registers.remove(&(wy, wx));
-                     let e_reg = vm.prologue_state.registers.remove(&(ey, ex));
+                    // Swap Registers
+                    let w_reg = vm.prologue_state.registers.remove(&(wy, wx));
+                    let e_reg = vm.prologue_state.registers.remove(&(ey, ex));
 
-                     if let Some(r) = w_reg { vm.prologue_state.registers.insert((ey, ex), r); }
-                     if let Some(r) = e_reg { vm.prologue_state.registers.insert((wy, wx), r); }
+                    if let Some(r) = w_reg {
+                        vm.prologue_state.registers.insert((ey, ex), r);
+                    }
+                    if let Some(r) = e_reg {
+                        vm.prologue_state.registers.insert((wy, wx), r);
+                    }
 
-                     // Swap Agents in List
-                     for agent in vm.prologue_state.agents.iter_mut() {
-                         if agent.x == wx && agent.y == wy {
-                             agent.x = ex;
-                             agent.y = ey;
-                         } else if agent.x == ex && agent.y == ey {
-                             agent.x = wx;
-                             agent.y = wy;
-                         }
-                     }
+                    // Swap Agents in List
+                    for agent in vm.prologue_state.agents.iter_mut() {
+                        if agent.x == wx && agent.y == wy {
+                            agent.x = ex;
+                            agent.y = ey;
+                        } else if agent.x == ex && agent.y == ey {
+                            agent.x = wx;
+                            agent.y = wy;
+                        }
+                    }
 
-                     #[cfg(feature = "nova")]
-                     {
-                         for org in vm.organelles.iter_mut() {
-                             if org.context_loc == (wy, wx) {
-                                 org.context_loc = (ey, ex);
-                             } else if org.context_loc == (ey, ex) {
-                                 org.context_loc = (wy, wx);
-                             }
-                         }
-                     }
+                    #[cfg(feature = "nova")]
+                    {
+                        for org in vm.organelles.iter_mut() {
+                            if org.context_loc == (wy, wx) {
+                                org.context_loc = (ey, ex);
+                            } else if org.context_loc == (ey, ex) {
+                                org.context_loc = (wy, wx);
+                            }
+                        }
+                    }
 
-                     vm.output.push(format!("SYMBIOSIS: Xenograft swap {},{} <-> {},{}", wx, wy, ex, ey));
-                     vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
-                 }
-             }
+                    vm.output.push(format!(
+                        "SYMBIOSIS: Xenograft swap {},{} <-> {},{}",
+                        wx, wy, ex, ey
+                    ));
+                    vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                }
+            }
         }
         #[cfg(feature = "nova")]
         "w" => {
@@ -241,7 +273,8 @@ pub fn apply_symbiosis_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
                 if let Err(e) = vm.akashic.save() {
                     vm.output.push(format!("SYMBIOSIS ERROR: {}", e));
                 } else {
-                    vm.output.push(format!("SYMBIOSIS: Wrote Akashic '{}'", key));
+                    vm.output
+                        .push(format!("SYMBIOSIS: Wrote Akashic '{}'", key));
                     vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
                 }
             }
@@ -257,7 +290,8 @@ pub fn apply_symbiosis_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
                         vm.output.push(format!("SYMBIOSIS: Read Akashic '{}'", key));
                     }
                 } else {
-                    vm.output.push(format!("SYMBIOSIS: Akashic Key '{}' not found", key));
+                    vm.output
+                        .push(format!("SYMBIOSIS: Akashic Key '{}' not found", key));
                 }
             }
         }

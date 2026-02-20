@@ -118,7 +118,9 @@ mod tests {
 
         // Register Critter
         let critter = CritterState::default(); // genes="R"
-        vm.prologue_state.registers.insert((5, 6), critter.to_value());
+        vm.prologue_state
+            .registers
+            .insert((5, 6), critter.to_value());
 
         exec_prologue_tick(&mut vm);
 
@@ -127,7 +129,11 @@ mod tests {
             if let Value::Str(s) = val {
                 let c: CritterState = s.parse().unwrap();
                 // Default "R", injected "G" -> "RG"
-                assert!(c.genes.contains('G'), "Critter genes '{}' should contain 'G'", c.genes);
+                assert!(
+                    c.genes.contains('G'),
+                    "Critter genes '{}' should contain 'G'",
+                    c.genes
+                );
             } else {
                 panic!("Critter state invalid");
             }
@@ -169,14 +175,28 @@ mod tests {
         let reg_at_6 = vm.prologue_state.registers.get(&(5, 6)).unwrap();
 
         // Extract string directly to avoid quotes from Value::Display
-        let s4_str = if let Value::Str(s) = reg_at_4 { s } else { panic!("Not a string") };
-        let s6_str = if let Value::Str(s) = reg_at_6 { s } else { panic!("Not a string") };
+        let s4_str = if let Value::Str(s) = reg_at_4 {
+            s
+        } else {
+            panic!("Not a string")
+        };
+        let s6_str = if let Value::Str(s) = reg_at_6 {
+            s
+        } else {
+            panic!("Not a string")
+        };
 
         let s4: CritterState = s4_str.parse().expect("Failed to parse s4");
         let s6: CritterState = s6_str.parse().expect("Failed to parse s6");
 
         // Check energy (expect 1 tick cost: 200 -> 199, 100 -> 99)
-        assert!(s4.energy >= 199, "Critter at West should now be C2 (200 -> 199)");
-        assert!(s6.energy >= 99, "Critter at East should now be C1 (100 -> 99)");
+        assert!(
+            s4.energy >= 199,
+            "Critter at West should now be C2 (200 -> 199)"
+        );
+        assert!(
+            s6.energy >= 99,
+            "Critter at East should now be C1 (100 -> 99)"
+        );
     }
 }

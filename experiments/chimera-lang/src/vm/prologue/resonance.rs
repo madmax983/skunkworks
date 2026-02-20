@@ -31,37 +31,51 @@ pub fn apply_resonance_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
                         duration_ms: 200,
                     });
 
-                    vm.output.push(format!("RESONANCE: Note {} ({:.1}Hz) at {},{}", note, freq, x, y));
+                    vm.output.push(format!(
+                        "RESONANCE: Note {} ({:.1}Hz) at {},{}",
+                        note, freq, x, y
+                    ));
                 } else {
-                    vm.output.push(format!("RESONANCE: Note {} (No Audio) at {},{}", note, x, y));
+                    vm.output.push(format!(
+                        "RESONANCE: Note {} (No Audio) at {},{}",
+                        note, x, y
+                    ));
                 }
 
                 #[cfg(not(feature = "resonance"))]
                 {
-                    vm.output.push(format!("RESONANCE: Note {} (No Audio Feature) at {},{}", note, x, y));
+                    vm.output.push(format!(
+                        "RESONANCE: Note {} (No Audio Feature) at {},{}",
+                        note, x, y
+                    ));
                 }
             }
         }
         "♫" => {
             // Chord: Root (West), Type (North)
             if let Some(Value::Int(root)) = w_sig {
-                 let type_sig = if let Some((ny, nx)) = super::normalize_coords(y as i64 - 1, x as i64) {
-                    vm.prologue_state.signal_grid[ny][nx].clone()
-                } else {
-                    None
-                };
+                let type_sig =
+                    if let Some((ny, nx)) = super::normalize_coords(y as i64 - 1, x as i64) {
+                        vm.prologue_state.signal_grid[ny][nx].clone()
+                    } else {
+                        None
+                    };
 
-                let chord_type = if let Some(Value::Int(t)) = type_sig { t } else { 0 }; // Default Major
+                let chord_type = if let Some(Value::Int(t)) = type_sig {
+                    t
+                } else {
+                    0
+                }; // Default Major
 
                 vm.prologue_state.signal_grid[y][x] = Some(Value::Int(root));
 
                 #[cfg(feature = "resonance")]
                 if let Some(tx) = &vm.audio_tx {
                     let offsets = match chord_type {
-                        1 => vec![0, 3, 7], // Minor
+                        1 => vec![0, 3, 7],     // Minor
                         2 => vec![0, 4, 7, 11], // Maj7
                         3 => vec![0, 3, 7, 10], // Min7
-                        _ => vec![0, 4, 7], // Major
+                        _ => vec![0, 4, 7],     // Major
                     };
 
                     for off in offsets {
@@ -75,41 +89,52 @@ pub fn apply_resonance_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
                             duration_ms: 500,
                         });
                     }
-                    vm.output.push(format!("RESONANCE: Chord {} Type {} at {},{}", root, chord_type, x, y));
+                    vm.output.push(format!(
+                        "RESONANCE: Chord {} Type {} at {},{}",
+                        root, chord_type, x, y
+                    ));
                 } else {
-                     vm.output.push(format!("RESONANCE: Chord {} Type {} (No Audio) at {},{}", root, chord_type, x, y));
+                    vm.output.push(format!(
+                        "RESONANCE: Chord {} Type {} (No Audio) at {},{}",
+                        root, chord_type, x, y
+                    ));
                 }
 
                 #[cfg(not(feature = "resonance"))]
                 {
-                    vm.output.push(format!("RESONANCE: Chord {} Type {} (No Audio Feature) at {},{}", root, chord_type, x, y));
+                    vm.output.push(format!(
+                        "RESONANCE: Chord {} Type {} (No Audio Feature) at {},{}",
+                        root, chord_type, x, y
+                    ));
                 }
             }
         }
         "🥁" => {
-             if let Some(Value::Int(trig)) = w_sig {
+            if let Some(Value::Int(trig)) = w_sig {
                 if trig > 0 {
                     vm.prologue_state.signal_grid[y][x] = Some(Value::Int(trig));
 
                     #[cfg(feature = "resonance")]
                     if let Some(tx) = &vm.audio_tx {
-                         // Simple pluck
-                         let _ = tx.send(AudioCommand::Pluck {
+                        // Simple pluck
+                        let _ = tx.send(AudioCommand::Pluck {
                             x,
                             y,
                             strength: 1.0,
                         });
                         vm.output.push(format!("RESONANCE: Drum at {},{}", x, y));
                     } else {
-                        vm.output.push(format!("RESONANCE: Drum (No Audio) at {},{}", x, y));
+                        vm.output
+                            .push(format!("RESONANCE: Drum (No Audio) at {},{}", x, y));
                     }
 
                     #[cfg(not(feature = "resonance"))]
                     {
-                        vm.output.push(format!("RESONANCE: Drum (No Audio Feature) at {},{}", x, y));
+                        vm.output
+                            .push(format!("RESONANCE: Drum (No Audio Feature) at {},{}", x, y));
                     }
                 }
-             }
+            }
         }
         _ => {}
     }
