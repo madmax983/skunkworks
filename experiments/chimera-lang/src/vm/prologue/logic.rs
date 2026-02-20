@@ -1,6 +1,28 @@
+//! # Boolean Logic Gates
+//!
+//! This module implements standard logic gates for the Prologue signal grid.
+//!
+//! Runes:
+//! - `&`: AND Gate
+//! - `|`: OR Gate
+//! - `+`: XOR Gate
+//! - `I`: IF Gate (Conditional Forwarding)
+
 use super::normalize_coords;
 use crate::vm::Value;
 
+/// Applies logic gate rules at the given coordinate.
+///
+/// Reads signals from cardinal directions and outputs to `next_signals` (Self).
+///
+/// # Logic
+///
+/// - `&` (AND): Output 1 if West AND East have signals.
+/// - `|` (OR): Output 1 if West OR East have signals.
+/// - `+` (XOR): Output 1 if exactly one of West OR East has a signal.
+/// - `I` (IF): Output North's value if West's value is non-zero.
+///
+/// Returns `true` if a new signal was generated.
 pub fn apply_logic_runes(
     rune: &str,
     y: usize,

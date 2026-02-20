@@ -1381,6 +1381,15 @@ impl ChimeraVM {
         }
     }
 
+    /// Updates the environmental simulation layers.
+    ///
+    /// This simulation runs every tick (unless frozen) and handles:
+    /// - **Waste**: Accumulation from metabolic processes.
+    /// - **Diffusion**: Spreading of Hormones, Waste, Light, Mutagen, and Entropy.
+    /// - **Scent**: Tracking pheromone trails.
+    /// - **Fluid Dynamics**: Updating liquid flow and pressure.
+    /// - **Mutation**: Triggering random genetic changes if local Toxicity or Radiation is high.
+    /// - **Reality Decay**: Triggering Glitches if local Entropy is critical.
     #[cfg(feature = "nova")]
     fn process_environment(&mut self) {
         let (cy, cx) = self.context_loc;
@@ -4173,6 +4182,14 @@ impl ChimeraVM {
         }
     }
 
+    /// Executes a spatial grid operation.
+    ///
+    /// These enzymes allow the organism to interact with its Petri Dish memory.
+    ///
+    /// - `GRead`/`GWrite`: Direct cell access.
+    /// - `Radiate`: Writes a value to a circular area (Area of Effect).
+    /// - `Siphon`: Consumes values from a circular area, summing them up.
+    /// - `Virus`: Executes code found in the grid (Code injection).
     fn exec_grid_op(&mut self, op: OpCode) -> Option<(usize, usize)> {
         match op {
             OpCode::GRead => {
@@ -4334,6 +4351,14 @@ impl ChimeraVM {
         None
     }
 
+    /// Executes a biological function enzyme.
+    ///
+    /// These operations define the organism's metabolism and self-modification capabilities.
+    ///
+    /// - `Photosynthesize`: Generates small amounts of Energy from nothing (Sunlight).
+    /// - `Consume`: Converts top-of-stack Data into Energy.
+    /// - `Genome`: Introspection (pushes current DNA to stack).
+    /// - `Transcribe`: Epigenetic modification (rewrites arguments of genes at runtime).
     fn exec_bio_op(&mut self, op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
         match op {
             OpCode::Photosynthesize => {
