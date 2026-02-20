@@ -1362,4 +1362,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Biological ecosystem living on and consuming the "sediment" of decaying code.
 - **Novel trait**: Bio-Entropic Feedback Loop. The code is food. A healthy ecosystem means a destroyed codebase.
 - **Status**: experiments/primordial-sediment
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### chimera-voice
+- **Parents**: experiments/chimera-lang + experiments/vocal-canyon
+- **Concept**: A "Living Synthesizer" where the vocal tract is controlled by a genetic program. The "tongue" is the memory grid of the organism.
+- **Novel trait**: Evolving Phonemes. The code learns to speak.
+- **Status**: experiments/chimera-voice
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
