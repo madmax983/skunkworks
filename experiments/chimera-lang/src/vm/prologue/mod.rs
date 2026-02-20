@@ -304,6 +304,8 @@ impl PrologueState {
                         // Oracle
                             | "¶"
                             | "λ"
+                            | "¥"
+                            | "∃"
                         // Psionics
                             | "Θ"
                             | "Ξ"
@@ -377,6 +379,14 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
 
     // 7. Hypnagogia (Dream Logic)
     hypnagogia::process_dream_logic(vm);
+
+    // 8. Oracle (Omens)
+    #[cfg(feature = "oracle")]
+    {
+        if !vm.omens.is_empty() {
+            crate::vm::oracle::process_omens(vm);
+        }
+    }
 }
 
 /// Prepares the signal grid for the current tick.

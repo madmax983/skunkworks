@@ -64,6 +64,43 @@ pub fn apply_oracle_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
         }
         _ => {}
     }
+
+    match rune {
+        "¥" => {
+            // Retract: West (Fact) -> Remove from KB
+            if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+                if let Some(fact) = &vm.prologue_state.signal_grid[wy][wx] {
+                    if let Some(pos) = vm.knowledge_base.iter().position(|x| x == fact) {
+                        vm.knowledge_base.remove(pos);
+                        vm.output.push(format!("PROLOGUE: Retracted {}", fact));
+                        vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                    }
+                }
+            }
+        }
+        "∃" => {
+            // Omen: West (Condition), North (Effect) -> Register Omen
+            if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+                if let Some(condition) = &vm.prologue_state.signal_grid[wy][wx] {
+                    if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+                        if let Some(effect) = &vm.prologue_state.signal_grid[ny][nx] {
+                            let omen = oracle::Omen {
+                                condition: condition.clone(),
+                                effect: effect.clone(),
+                            };
+                            vm.omens.push(omen);
+                            vm.output.push(format!(
+                                "PROLOGUE: Omen Registered: {} -> {}",
+                                condition, effect
+                            ));
+                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                        }
+                    }
+                }
+            }
+        }
+        _ => {}
+    }
 }
 
 #[cfg(not(feature = "oracle"))]
