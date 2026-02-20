@@ -127,6 +127,16 @@ Runes for remote action and telepathy.
 | `Ξ` | **Telekinesis** | Reads **West** (Dir), **North** (Y), **East** (X). Moves value at `grid[Y][X]` in Direction. |
 | `Σ` | **Suggestion** | Reads **West** (Val), **North** (Y), **East** (X). Writes `Val` to `grid[Y][X]`. |
 
+# Symbiotes 🧬
+
+Advanced genetic manipulation and fusion runes.
+
+| Rune | Name | Function |
+|---|---|---|
+| `p` | **Parasite** | Reads **West** (Gene/Strand). Injects it into **East** Agent. |
+| `o` | **Osmosis** | Reads **West** and **East** Agents. Swaps Resources/Genes. |
+| `x` | **Xenograft**| Swaps **West** and **East** Agents. Triggers Mutation. |
+
 # Prologue II: Signal Grid (Orca Mode) 🐋
 
 Enabled via `OpCode::Orca` or TUI toggle. This is a concurrent cellular automata system inspired by Orca.

@@ -97,4 +97,86 @@ mod tests {
 
         assert_eq!(vm.grid[11][5], Value::Int(100));
     }
+
+    #[test]
+    fn test_parasite_rune() {
+        use crate::vm::prologue::critter::CritterState;
+        let mut vm = setup_vm();
+
+        // Setup: "G" -> ! -> ~ -> p -> C
+        // 5,2: "G" (Payload)
+        // 5,3: "!" (Source)
+        // 5,4: "~" (Wire)
+        // 5,5: "p" (Parasite)
+        // 5,6: "C" (Target)
+
+        vm.grid[5][2] = Value::Str("G".to_string());
+        vm.grid[5][3] = Value::Str("!".to_string());
+        vm.grid[5][4] = Value::Str("~".to_string());
+        vm.grid[5][5] = Value::Str("p".to_string());
+        vm.grid[5][6] = Value::Str("C".to_string());
+
+        // Register Critter
+        let critter = CritterState::default(); // genes="R"
+        vm.prologue_state.registers.insert((5, 6), critter.to_value());
+
+        exec_prologue_tick(&mut vm);
+
+        // Check Critter state in Registers
+        if let Some(val) = vm.prologue_state.registers.get(&(5, 6)) {
+            if let Value::Str(s) = val {
+                let c: CritterState = s.parse().unwrap();
+                // Default "R", injected "G" -> "RG"
+                assert!(c.genes.contains('G'), "Critter genes '{}' should contain 'G'", c.genes);
+            } else {
+                panic!("Critter state invalid");
+            }
+        } else {
+            panic!("Critter register missing");
+        }
+    }
+
+    #[test]
+    fn test_xenograft_rune() {
+        use crate::vm::prologue::critter::CritterState;
+        let mut vm = setup_vm();
+
+        // Setup: C1 x C2
+        // 5,4: "C" (Critter 1)
+        // 5,5: "x" (Xenograft)
+        // 5,6: "C" (Critter 2)
+
+        vm.grid[5][4] = Value::Str("C".to_string());
+        vm.grid[5][5] = Value::Str("x".to_string());
+        vm.grid[5][6] = Value::Str("C".to_string());
+
+        let mut c1 = CritterState::default();
+        c1.energy = 100;
+        c1.genes = "Z".to_string(); // Nop to prevent moving
+        let mut c2 = CritterState::default();
+        c2.energy = 200;
+        c2.genes = "Z".to_string(); // Nop
+
+        vm.prologue_state.registers.insert((5, 4), c1.to_value());
+        vm.prologue_state.registers.insert((5, 6), c2.to_value());
+
+        exec_prologue_tick(&mut vm);
+
+        // Check Swap
+        // C1 should be at 5,6. C2 at 5,4.
+
+        let reg_at_4 = vm.prologue_state.registers.get(&(5, 4)).unwrap();
+        let reg_at_6 = vm.prologue_state.registers.get(&(5, 6)).unwrap();
+
+        // Extract string directly to avoid quotes from Value::Display
+        let s4_str = if let Value::Str(s) = reg_at_4 { s } else { panic!("Not a string") };
+        let s6_str = if let Value::Str(s) = reg_at_6 { s } else { panic!("Not a string") };
+
+        let s4: CritterState = s4_str.parse().expect("Failed to parse s4");
+        let s6: CritterState = s6_str.parse().expect("Failed to parse s6");
+
+        // Check energy (expect 1 tick cost: 200 -> 199, 100 -> 99)
+        assert!(s4.energy >= 199, "Critter at West should now be C2 (200 -> 199)");
+        assert!(s6.energy >= 99, "Critter at East should now be C1 (100 -> 99)");
+    }
 }

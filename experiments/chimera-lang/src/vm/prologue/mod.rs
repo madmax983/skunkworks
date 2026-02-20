@@ -270,6 +270,9 @@ impl PrologueState {
                             | "y"
                             | "w"
                             | "j"
+                            | "x"
+                            | "p"
+                            | "o"
                         // Pandemonium
                             | "¿"
                             | "¡"
