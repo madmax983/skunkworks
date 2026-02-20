@@ -57,3 +57,10 @@
 ## 2025-05-27 - Nova Resource Exhaustion (DoS)
 **Threat:** The `Broadcast` (Ether), `Reflex`, `Harmonize` (Chord Registry), and `TuiMod` (Event Queue) operations in `experiments/chimera-lang/src/vm/nova.rs` allowed unbounded allocation of resources via HashMap/Vec growth. A malicious program could loop these instructions to consume infinite memory (OOM DoS).
 **Defense:** Introduced `MAX_ETHER_CHANNELS` (1024), `MAX_REFLEXES` (256), `MAX_CHORD_REGISTRY` (256), and `MAX_TUI_EVENTS` (64) constants in `vm/mod.rs` and enforced them in `vm/nova.rs`.
+
+## 2026-06-15 - Unbounded Planes & Unsafe GL Scissor
+**Threat:** The `OpCode::Dimension` and `OpCode::DWrite` operations in `experiments/chimera-lang/src/vm/nova_planes.rs` allowed creating an unbounded number of 2D planes (`vm.planes`), enabling memory exhaustion (DoS).
+**Defense:** Introduced `MAX_PLANES` (64) constant in `vm/mod.rs` and enforced it in `exec_planes_op` and `OpCode::DWrite` logic. Verified with `warden_planes_dos_test.rs`.
+
+**Threat:** `safe_gl::with_scissor` in `experiments/chimera-tardis/src/safe_gl.rs` passed user-controlled dimensions to `glScissor` without clamping when no parent scissor existed. Passing negative values is potentially unsafe/UB depending on driver behavior.
+**Defense:** Added `.max(0)` clamping to width and height in `with_scissor` to ensure non-negative values are passed to OpenGL. Verified with `warden_gl_test.rs`.

@@ -338,6 +338,8 @@ mod synaptic_lattice_test;
 mod glitch_test;
 mod warden_oom_test;
 mod warden_graveyard_test;
+#[cfg(all(test, feature = "nova"))]
+mod warden_planes_dos_test;
 
 #[cfg(test)]
 mod critter_build_test;
