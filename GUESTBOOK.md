@@ -359,6 +359,10 @@
 - **Status:** Verified. Simulation stable. The soup is dancing.
 - **Note:** Moonshot: Gray-Scott + Audio Reactivity. Ghost beats modulate the reaction.
 
-### [Concentration Level: CRITICAL] - Location: experiments/biochemical-soundscapes
+### [Concentration Level: EVAPORATING] - Location: graveyard/biochemical-soundscapes
+- **Status:** Executed.
+- **Note:** Biomass returned to the void.
+
+### [Concentration Level: CRITICAL] - Location: experiments/rossler-market
 - **Status:** Condemned ☠️.
-- **Note:** Terminal Redundancy (Gray-Scott #5). Documentation Void. The silence is deafening.
+- **Note:** Deceptive Naming. Terminal Genericism. The market has no agents.
