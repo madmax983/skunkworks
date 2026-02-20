@@ -88,6 +88,7 @@ pub mod elektra;
 pub mod oracle;
 pub mod psionics;
 pub mod resonance;
+pub mod prism;
 
 /// An autonomous agent wandering the Prologue grid.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -310,6 +311,11 @@ impl PrologueState {
                             | "♪"
                             | "♫"
                             | "🥁"
+                        // Prism
+                            | "▲"
+                            | "▼"
+                            | "🧬"
+                            | "⚛"
                     ) {
                         self.runes.insert((y, x));
 
@@ -600,6 +606,9 @@ fn apply_propagation_rune(
         return true;
     }
     if psionics::apply_psionics_runes(rune, y, x, current_signals, next_signals, grid) {
+        return true;
+    }
+    if prism::apply_prism_runes(rune, y, x, current_signals, next_signals, dna) {
         return true;
     }
     false
