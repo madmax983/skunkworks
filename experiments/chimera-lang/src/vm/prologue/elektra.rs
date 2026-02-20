@@ -19,8 +19,8 @@ pub fn apply_elektra_runes(
     };
 
     match rune {
-        "⚡" => {
-            // Bolt: Source voltage. Reads West signal (Intensity) or defaults to 100V.
+        "⚡" | "+" => {
+            // Bolt/Battery: Source voltage. Reads West signal (Intensity) or defaults to 100V.
             let volts = if let Some(Value::Int(v)) = w_sig {
                 v as f32
             } else {
@@ -31,7 +31,7 @@ pub fn apply_elektra_runes(
             resistance_grid[y][x] = -1.0;
             voltage_grid[y][x] = volts;
         }
-        "≡" => {
+        "≡" | "_" => {
             // Ground: Sink voltage.
             // Always set resistance to Ground (-2.0)
             resistance_grid[y][x] = -2.0;
@@ -48,6 +48,14 @@ pub fn apply_elektra_runes(
                         changes = true;
                     }
                 }
+            }
+        }
+        // Passive components (Diodes, Transistors, Resistors) rely on the physics engine (vm/elektra.rs)
+        // interpreting the grid value. Prologue just ensures they are recognized as runes.
+        "♒" | "▸" | "▾" | "◂" | "▴" | "¥" => {
+            // Ensure they are not treated as fixed sources/sinks if they were previously
+            if resistance_grid[y][x] < 0.0 {
+                resistance_grid[y][x] = 1.0;
             }
         }
         _ => {}

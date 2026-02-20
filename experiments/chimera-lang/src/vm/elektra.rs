@@ -21,6 +21,16 @@ fn get_conductivity(val: &Value) -> f32 {
                 || s == "?"
                 || s == "&"
                 || s == "|"
+                || s == "+"
+                || s == "_"
+                || s == "⚡"
+                || s == "≡"
+                || s == "♒"
+                || s == "▸"
+                || s == "▾"
+                || s == "◂"
+                || s == "▴"
+                || s == "¥"
             {
                 CONDUCTIVITY_WIRE
             } else {
@@ -572,6 +582,20 @@ fn get_component_multiplier(
         } else if let Some(stripped) = s.strip_prefix("T:") {
             let dir = stripped.parse::<i64>().unwrap_or(0);
             mult *= check_transistor(dir, y, x, neighbor_y, neighbor_x, vm);
+        } else if s == "♒" {
+             // Resistor: Reduces conductivity to neighbors significantly
+             mult *= 0.01;
+        } else if s == "▸" {
+             mult *= check_diode(1, y, x, neighbor_y, neighbor_x, vm);
+        } else if s == "▾" {
+             mult *= check_diode(2, y, x, neighbor_y, neighbor_x, vm);
+        } else if s == "◂" {
+             mult *= check_diode(3, y, x, neighbor_y, neighbor_x, vm);
+        } else if s == "▴" {
+             mult *= check_diode(0, y, x, neighbor_y, neighbor_x, vm);
+        } else if s == "¥" {
+             // Transistor (Base North = 0)
+             mult *= check_transistor(0, y, x, neighbor_y, neighbor_x, vm);
         }
     }
 
@@ -584,6 +608,18 @@ fn get_component_multiplier(
         } else if let Some(stripped) = s.strip_prefix("T:") {
             let dir = stripped.parse::<i64>().unwrap_or(0);
             mult *= check_transistor(dir, neighbor_y, neighbor_x, y, x, vm);
+        } else if s == "♒" {
+             mult *= 0.01;
+        } else if s == "▸" {
+             mult *= check_diode(1, neighbor_y, neighbor_x, y, x, vm);
+        } else if s == "▾" {
+             mult *= check_diode(2, neighbor_y, neighbor_x, y, x, vm);
+        } else if s == "◂" {
+             mult *= check_diode(3, neighbor_y, neighbor_x, y, x, vm);
+        } else if s == "▴" {
+             mult *= check_diode(0, neighbor_y, neighbor_x, y, x, vm);
+        } else if s == "¥" {
+             mult *= check_transistor(0, neighbor_y, neighbor_x, y, x, vm);
         }
     }
 
@@ -604,6 +640,8 @@ fn check_diode(dir: i64, y: usize, x: usize, ny: usize, nx: usize, vm: &ChimeraV
     if ry == dy && rx == dx {
         // Forward (Cathode) - Block reverse current
         if vm.voltage_grid[y][x] < vm.voltage_grid[ny][nx] {
+            // Panic to debug? No, println
+            // println!("DEBUG: Diode Block FWD! y,x: {},{} V_self: {} V_neighbor: {}", y, x, vm.voltage_grid[y][x], vm.voltage_grid[ny][nx]);
             return 0.001;
         }
     } else if ry == -dy && rx == -dx {

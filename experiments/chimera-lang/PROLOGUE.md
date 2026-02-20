@@ -168,6 +168,21 @@ Runes for string manipulation and text processing.
 | `;` | **Split** | Reads **West** (String) and **North** (Delimiter). Outputs List (Junction) to **Self**. |
 | `©` | **Join** | Reads **West** (List) and **North** (Delimiter). Outputs String to **Self**. |
 
+# Elektra II: Circuit Revolution ⚡
+
+Advanced circuit simulation on the grid. Runes form physical electrical components that interact with the `voltage_grid`.
+
+| Rune | Name | Function |
+|---|---|---|
+| `+` | **Battery** | Voltage Source (100V). |
+| `_` | **Ground** | Ground Sink (0V). |
+| `♒` | **Resistor**| High Resistance. Drops voltage. |
+| `▸` | **Diode R** | Allows current West -> East. |
+| `▾` | **Diode D** | Allows current North -> South. |
+| `◂` | **Diode L** | Allows current East -> West. |
+| `▴` | **Diode U** | Allows current South -> North. |
+| `¥` | **Transistor**| NPN Switch. **Base** (North) controls flow **West** -> **South**. |
+
 # Prologue II: Signal Grid (Orca Mode) 🐋
 
 Enabled via `OpCode::Orca` or TUI toggle. This is a concurrent cellular automata system inspired by Orca.
