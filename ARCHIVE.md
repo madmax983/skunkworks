@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **reaction-monitor**: Diagnosis: Terminal Redundancy (Gray-Scott #6). Conceptual Stagnation. Grace period: 24 hours.
+- **fluid-rain**: Diagnosis: Technological Regression / ADR 045 Violation. Naive O(N^2) CPU SPH. Grace period: 24 hours.
+- [Experiment name]: [Diagnosis]
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **reaction-monitor**: Specimen executed. Diagnosis: Terminal Redundancy (Gray-Scott #6). Conceptual Stagnation. Grace period expired. Moved to graveyard.
 - **code-phage**: Specimen executed. Diagnosis: Terminal Redundancy (Gray-Scott #5). Generic Implementation. Grace period expired. Moved to graveyard.
 - **lock-step**: Specimen executed. Diagnosis: Terminal Redundancy (Syncopated Threads). Inferior Implementation. Dead Code. Grace period expired. Moved to graveyard.
 - **terra-phage**: Specimen executed. Diagnosis: Terminal Redundancy (Gray-Scott #5). Grace period expired. Biomass returned to the void.
@@ -55,10 +57,7 @@
 - **kinetic-folds**: Specimen executed. Documentation Void. Generic XPBD implementation. Failed to improve during grace period. Moved to graveyard.
 - **git-etymologist**: Specimen executed. Documentation Void. Deceptive naming. Failed to improve during grace period. Moved to graveyard.
 - **fluid-specter**: Specimen executed. Documentation Void. Generic implementation. Redundant with `hydro-soundscapes`. Failed to improve during grace period. Moved to graveyard.
-- **heap-market**: Specimen executed. Documentation void. Redundant with `swap-meet`. Generic implementation. Failed to improve during grace period. Moved to graveyard.
-- **heap-market**: Specimen executed. Documentation Void. Redundant with `swap-meet`. Failed to improve during grace period. Moved to graveyard.
-- **heap-market**: Specimen executed. Documentation void. Redundant with `swap-meet`. Generic implementation. Failed to improve during grace period. Moved to graveyard.
-- **heap-market**: Documentation Void. Redundant with `swap-meet`. Generic implementation. Grace period expired. Moved to graveyard.
+- **heap-market**: Specimen executed. Documentation void. Redundant with `swap-meet`. Generic implementation. Zombie status confirmed and cleaned. Moved to graveyard.
 - **foveated-code**: Specimen executed. Documentation void. Workspace exclusion. Generic TUI. Failed to improve during grace period. Moved to graveyard.
 - **net-groove**: Specimen executed. Documentation void. Logic rot. Grace period expired. Moved to graveyard.
 - **magnetic-echo**: Specimen executed. Terminal compilation failure (workspace exclusion). Documentation void. Redundant with `ferrous-sector`. Grace period expired. Moved to graveyard.
@@ -88,7 +87,6 @@
 - **digital-retina**: Specimen executed. Documentation void. Redundant with `biomimetic-synth`. Sketch Rot. Moved to graveyard.
 - **cipher-gears**: Specimen executed. Documentation void. Generic implementation (Enigma clone). Redundant with other cipher experiments. Grace period expired. Moved to graveyard.
 - **hertzian-shimmer**: Specimen executed. Documentation void. Fragile dependencies (cpal/alsa). Redundant with `cymatic-ocean`. Grace period expired. Moved to graveyard.
-- **cipher-gears**: Specimen executed. Generic implementation (Enigma clone). Documentation void. Failed to improve during grace period. Moved to graveyard.
 - **celestial-cantata**: Specimen executed. Redundant with `harmony-of-spheres`. Documentation void. Failed to improve during grace period. Moved to graveyard.
 - **git-climber**: Specimen executed. Documentation void. Fragile stack (Bevy/Rapier) for simple viz. Skeletal implementation. Grace period expired. Moved to graveyard.
 - **beat-reactor**: Specimen executed. Documentation void. Skeletal implementation. Failed to improve during grace period. Moved to graveyard.
