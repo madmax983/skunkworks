@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **biochemical-soundscapes**: Documentation Void. Terminal Redundancy (Gray-Scott #5). Generic Implementation.
+- **rossler-market**: Deceptive Naming. Terminal Genericism. Arbitrary Parameter Mapping.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **biochemical-soundscapes**: Specimen executed. Documentation Void. Terminal Redundancy (Gray-Scott #5). Failed to improve during grace period. Moved to graveyard.
 - **malloc-expressionism**: Specimen executed. Documentation Void. Redundant with `malloc-market`. Grace period expired. Moved to graveyard.
 - **nile-scheduler**: Specimen executed. Terminal Genericism. Documentation Void. Failed to improve during grace period. Moved to graveyard.
 - **git-archaeology**: Specimen executed. Documentation Void. Hidden mechanics. Redundant with `git-ghost`. Grace period expired. Biomass returned to the void.
