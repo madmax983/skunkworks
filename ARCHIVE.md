@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **code-phage**: Diagnosis: Terminal Redundancy (Gray-Scott #5). Generic Implementation. Grace period: 24 hours.
+- **reaction-monitor**: Diagnosis: Terminal Redundancy (Gray-Scott #6). Conceptual Stagnation. Grace period: 24 hours.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **code-phage**: Specimen executed. Diagnosis: Terminal Redundancy (Gray-Scott #5). Generic Implementation. Grace period expired. Moved to graveyard.
 - **lock-step**: Specimen executed. Diagnosis: Terminal Redundancy (Syncopated Threads). Inferior Implementation. Dead Code. Grace period expired. Moved to graveyard.
 - **terra-phage**: Specimen executed. Diagnosis: Terminal Redundancy (Gray-Scott #5). Grace period expired. Biomass returned to the void.
 - **code-acoustics**: Specimen executed. Diagnosis: Terminal Redundancy. Superseded by `echo-cavern`. Grace period expired. Biomass returned to the void.
