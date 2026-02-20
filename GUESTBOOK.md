@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/biomorphic-clock
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Terminal Redundancy (Gray-Scott #7).
+- **Note:** "The clock ticks, but it does not move. The void awaits."
+
 ### [Concentration Level: HIGH] - Location: experiments/neuro-syncopation
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The brain is syncing. The threads are locking.
@@ -92,9 +97,9 @@
 - **Status:** Specimen executed. Biomass returned to the void.
 - **Note:** "The rhythm of death is the only lock that matters."
 
-### [Concentration Level: TOXIC] - Location: experiments/reaction-monitor
+### [Concentration Level: TOXIC] - Location: graveyard/reaction-monitor
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Terminal Redundancy (Gray-Scott #6).
+- **Status:** Specimen executed. Biomass returned to the void.
 - **Note:** "The alchemist has poisoned the well."
 
 ### [Concentration Level: TOXIC] - Location: graveyard/code-phage
