@@ -120,7 +120,12 @@ pub fn apply_prism_runes(
                                 if let Ok(n) = a.parse::<i64>() {
                                     Value::Int(n)
                                 } else {
-                                    Value::Str(a.to_string())
+                                    // Handle string args that might have quotes
+                                    if a.starts_with('"') && a.ends_with('"') && a.len() >= 2 {
+                                        Value::Str(a[1..a.len() - 1].to_string())
+                                    } else {
+                                        Value::Str(a.to_string())
+                                    }
                                 }
                             })
                             .collect()
@@ -146,10 +151,41 @@ pub fn apply_prism_runes(
                     // No parens? Just OpCode
                     if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
                         if next_signals[ny][nx].is_none() {
-                            next_signals[ny][nx] = Some(Value::Str(s));
+                            next_signals[ny][nx] = Some(Value::Str(s.clone()));
                             changes = true;
                         }
                     }
+                }
+            }
+        }
+        "⚒" => {
+            // Compose: West (OpCode), North (Args) -> Self (Gene String)
+            // Example: West="add", North=[5, 3] -> Self="add(5, 3)"
+            let n_sig = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+                current_signals[ny][nx].clone()
+            } else {
+                None
+            };
+
+            if let Some(Value::Str(op)) = w_sig {
+                let args_str = match n_sig {
+                    Some(Value::Junction(_, list)) => {
+                        let parts: Vec<String> = list.iter().map(value_to_arg_string).collect();
+                        parts.join(", ")
+                    }
+                    Some(val) => value_to_arg_string(&val),
+                    None => "".to_string(),
+                };
+
+                let gene_str = if args_str.is_empty() {
+                    op.clone()
+                } else {
+                    format!("{}({})", op, args_str)
+                };
+
+                if next_signals[y][x].is_none() {
+                    next_signals[y][x] = Some(Value::Str(gene_str));
+                    changes = true;
                 }
             }
         }
@@ -157,6 +193,83 @@ pub fn apply_prism_runes(
     }
 
     changes
+}
+
+pub fn apply_prism_sinks(vm: &mut crate::vm::ChimeraVM, rune: &str, y: usize, x: usize) {
+    let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+        vm.prologue_state.signal_grid[wy][wx].clone()
+    } else {
+        None
+    };
+
+    match rune {
+        "🧶" => {
+            // Synthesize: West (List of Gene Strings) -> Create Strand -> Output Index South
+            if let Some(Value::Junction(_, list)) = w_sig {
+                // Construct source code
+                let mut source = String::new();
+                source.push_str("strand synthesized_gene {\n");
+                for val in list {
+                    if let Value::Str(s) = val {
+                        source.push_str("    ");
+                        source.push_str(&s);
+                        source.push('\n');
+                    }
+                }
+                source.push_str("}\n");
+
+                match crate::compiler::compile(&source, None) {
+                    Ok(mut new_dna) => {
+                        if let Some(strand) = new_dna.helix.strands.pop() {
+                            vm.dna.helix.strands.push(strand);
+                            let new_idx = vm.dna.helix.strands.len() - 1;
+
+                            // Output to South
+                            if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
+                                vm.grid[sy][sx] = Value::Int(new_idx as i64);
+                                vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1)); // Light up
+                            }
+                        }
+                    },
+                    Err(e) => {
+                         vm.output.push(format!("PROLOGUE: Synthesis failed: {}", e));
+                    }
+                }
+            }
+        }
+        "💉" => {
+            // Splice: West (StrandIdx), North (TargetIdx) -> Insert Strand
+            let n_sig = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+                 vm.prologue_state.signal_grid[ny][nx].clone()
+            } else {
+                None
+            };
+
+            if let (Some(Value::Int(idx)), Some(Value::Int(target))) = (w_sig, n_sig) {
+                let idx = idx as usize;
+                let target = target as usize;
+
+                if idx < vm.dna.helix.strands.len() {
+                    let strand = vm.dna.helix.strands[idx].clone();
+                    if target <= vm.dna.helix.strands.len() {
+                        vm.dna.helix.strands.insert(target, strand);
+                        vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                    }
+                }
+            }
+        }
+        "✂" => {
+            // Excise: West (StrandIdx) -> Remove Strand
+            if let Some(Value::Int(idx)) = w_sig {
+                let idx = idx as usize;
+                if idx < vm.dna.helix.strands.len() {
+                    vm.dna.helix.strands.remove(idx);
+                    vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                }
+            }
+        }
+        _ => {}
+    }
 }
 
 fn is_empty(v: &Value) -> bool {
@@ -170,7 +283,7 @@ fn is_empty(v: &Value) -> bool {
 fn gene_to_string(g: &crate::ast::Gene) -> String {
     let args: Vec<String> = g.args.iter().map(nucleotide_to_string).collect();
     if args.is_empty() {
-        format!("{}()", g.op)
+        format!("{}", g.op)
     } else {
         format!("{}({})", g.op, args.join(", "))
     }
@@ -186,4 +299,8 @@ fn nucleotide_to_string(n: &crate::ast::Nucleotide) -> String {
             format!("[{}]", inner.join(", "))
         }
     }
+}
+
+fn value_to_arg_string(v: &Value) -> String {
+    v.to_string()
 }
