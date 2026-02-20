@@ -937,6 +937,25 @@ fn parse_junction(
     Ok(Nucleotide::Junction(t, vals))
 }
 
+/// Parses a string input using a Babel Grammar defined as a Nucleotide structure.
+///
+/// This recursive descent parser interprets the `grammar` AST to consume the `input` string.
+/// It returns the resulting Abstract Syntax Tree (AST) as a `Nucleotide` and the number of characters consumed.
+///
+/// # Grammar Structure
+///
+/// The grammar is defined using `Nucleotide::Junction(Any, [Type, Args...])`.
+///
+/// | Type | Arguments | Description |
+/// |---|---|---|
+/// | `"Match"` | `[Pattern]` | Matches a literal string prefix. |
+/// | `"Regex"` | `[Pattern]` | Matches a regex pattern at the start. |
+/// | `"Seq"` | `[P1, P2, ...]` | Matches a sequence of parsers in order. |
+/// | `"Alt"` | `[P1, P2, ...]` | Matches the first successful parser (Ordered Choice). |
+/// | `"Many"` | `[P]` | Matches parser `P` zero or more times. |
+/// | `"Opt"` | `[P]` | Matches parser `P` optionally (0 or 1). |
+/// | `"Int"` | `[P]` | Matches `P` and converts the result to an Integer. |
+/// | `"Map"` | `[P, Template]` | Matches `P` and transforms the result using `resolve_template`. |
 fn babel_parse(grammar: &Nucleotide, input: &str) -> Result<(Nucleotide, usize)> {
     use crate::ast::JunctionType;
 
@@ -1060,6 +1079,14 @@ fn babel_parse(grammar: &Nucleotide, input: &str) -> Result<(Nucleotide, usize)>
     }
 }
 
+/// Flattens a Babel AST (Nucleotide tree) into a linear sequence of Genes.
+///
+/// This converts the recursive tree structure output by `babel_parse` into executable code.
+///
+/// - `Junction(All)`: Children are flattened sequentially (Code Block).
+/// - `Junction(Any)`: Treated as a function call `[Op, Arg1, Arg2...]`.
+/// - `String`: Treated as an OpCode or pushed as a String literal.
+/// - `Number`: Pushed as an Int literal.
 fn flatten_ast(ast: &Nucleotide) -> Result<Vec<Gene>> {
     match ast {
         Nucleotide::Junction(crate::ast::JunctionType::All, children) => {
@@ -1108,6 +1135,13 @@ fn flatten_ast(ast: &Nucleotide) -> Result<Vec<Gene>> {
     }
 }
 
+/// Resolves variable substitutions in a Template using the result of a match.
+///
+/// Used by the `Map` parser type to transform the CST into an AST.
+///
+/// - `?N`: Replaces with the Nth child of `match_res` (1-based index).
+/// - `?0`: Replaces with `match_res` itself.
+/// - Recursive: Traverses into Junctions to replace nested variables.
 fn resolve_template(template: &Nucleotide, match_res: &Nucleotide) -> Nucleotide {
     match template {
         Nucleotide::String(s) if s.starts_with('?') => {

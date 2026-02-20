@@ -4,15 +4,30 @@
 
 Chimera is a bio-inspired, stack-based esoteric programming language. It simulates a biological cell with DNA, enzymes, and metabolism.
 
+## 🗺️ Documentation Map
+
+*   **[PROLOGUE.md](PROLOGUE.md)**: The manual for the **Rune Logic** system (Digital Circuits on the Grid).
+*   **[GRIMOIRE.md](GRIMOIRE.md)**: Advanced documentation for **Nova** features (Time Travel, Quantum, Metaphysics).
+*   **[src/lib.rs](src/lib.rs)**: The architectural overview of the Rust codebase (The "Book of Chimera").
+
 ## 🚀 Quick Start
 
-Run the Story Demo to see the engine in action:
+Run the Story Demo to see the engine in action. This demo initializes a VM, compiles a sample ChimeraScript, and runs a TUI (Text User Interface) simulation where you can observe the organism's lifecycle.
 
 > **Note**: This demo requires the `nova` feature (enabled by default).
 
 ```bash
-cargo run --example story_demo
+cargo run -p chimera-lang --example story_demo
 ```
+
+**Expected Output:**
+You will see a TUI with multiple panes:
+- **Genome**: The executing code.
+- **Grid**: The 16x16 Petri dish where cells move and interact.
+- **Microscope**: Details of the currently selected cell.
+- **Log**: Output from `print()` enzymes.
+
+Press `Space` to step the simulation, or `C` to toggle Chaos Mode.
 
 ## Core Concepts
 
