@@ -1376,11 +1376,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Bees foraging on the Poincaré Disk. The "Waggle Dance" communicates vector information (angle/distance) in hyperbolic space.
 - **Novel trait**: Hyperbolic Waggle Dance. Distance is encoded exponentially.
 - **Status**: experiments/hyperbolic-bees
-- **Evaluation**: Failed compilation (alsa-sys missing). Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles (Fixed). Implemented by The Splice Surgeon.
 
 ### liquidity-bridge
 - **Parents**: experiments/biomimetic-bridge + experiments/market-swarm
 - **Concept**: Ants (Liquidity Providers) building structural bridges across the Spread (Gap) between Bids and Asks. High volatility shakes the bridge.
 - **Novel trait**: Biological Liquidity Provision. Visualizing the "Spread" as a physical chasm that must be bridged.
 - **Status**: experiments/liquidity-bridge
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified Logic.
+- **Evaluation**: Compiles (Warning). Implemented by The Splice Surgeon. Verified Logic.
+
+### ferro-file
+- **Parents**: experiments/ising-tide + experiments/miller-fs
+- **Concept**: "Magnetic Filesystem". Files are magnetic dipoles in a 3D lattice, interacting via Ising model dynamics.
+- **Novel trait**: Data Magnetism. Files act as spins; empty space is vacuum.
+- **Status**: experiments/ferro-file
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
