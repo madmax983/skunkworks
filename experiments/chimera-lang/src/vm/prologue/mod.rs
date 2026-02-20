@@ -319,6 +319,10 @@ impl PrologueState {
                             | "▼"
                             | "🧬"
                             | "⚛"
+                            | "⚒"
+                            | "🧶"
+                            | "💉"
+                            | "✂"
                         // Linguistics
                             | "\""
                             | "®"
@@ -834,6 +838,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             oracle::apply_oracle_sinks(vm, rune, y, x);
             psionics::apply_psionics_sinks(vm, rune, y, x);
             resonance::apply_resonance_sinks(vm, rune, y, x);
+            prism::apply_prism_sinks(vm, rune, y, x);
         }
     }
 }

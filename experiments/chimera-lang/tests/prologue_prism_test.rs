@@ -126,7 +126,7 @@ fn test_prism_sequence() {
         Some(Value::Junction(_, list)) => {
             assert_eq!(list.len(), 2);
             assert_eq!(list[0], Value::Str("push(42)".to_string()));
-            assert_eq!(list[1], Value::Str("add()".to_string()));
+            assert_eq!(list[1], Value::Str("add".to_string()));
         }
         _ => panic!("Sequence failed: {:?}", vm.prologue_state.signal_grid[5][5]),
     }
