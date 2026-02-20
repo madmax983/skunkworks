@@ -159,4 +159,27 @@ mod tests {
 
         assert!(angle_big > angle_small, "Big file should get more angle");
     }
+
+    #[test]
+    fn test_nodes_within_disk() {
+        // Create a deep tree to test that even deep nodes are inside
+        let mut root = mock_dir(1000);
+        let mut curr = &mut root;
+        // Depth 10
+        for _ in 0..10 {
+            let child = mock_dir(100);
+            curr.children.push(child);
+            curr = &mut curr.children[0];
+        }
+
+        let layout = layout_tree(root);
+
+        fn check_node(n: &LayoutNode) {
+            assert!(n.pos.norm() < 1.0, "Node at {:?} is outside disk!", n.pos);
+            for child in &n.children {
+                check_node(child);
+            }
+        }
+        check_node(&layout);
+    }
 }

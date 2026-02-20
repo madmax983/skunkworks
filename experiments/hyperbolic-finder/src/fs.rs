@@ -1,5 +1,5 @@
 use anyhow::Result;
-use git2::{Repository, Status};
+use git2::Repository;
 use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -57,6 +57,7 @@ pub struct DirNode {
     pub file_type: FileType,
     pub children: Vec<DirNode>,
     /// Size of the file itself (bytes). For directories, typically 4096.
+    #[allow(dead_code)]
     pub self_size: u64,
     /// Total size of this node + all recursive children (bytes).
     pub total_size: u64,

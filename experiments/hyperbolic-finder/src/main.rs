@@ -105,10 +105,20 @@ async fn main() -> anyhow::Result<()> {
         }
 
         // --- Animation ---
-        let diff = target_center - view_center;
-        if diff.norm() > 0.0001 {
+        // Use hyperbolic interpolation for smoother movement near edges
+        // We calculate the relative target position from the current view
+        let rel_target = mobius_sub(target_center, view_center);
+
+        if rel_target.norm() > 0.001 {
             if !is_dragging {
-                view_center = view_center + diff * 0.1;
+                // Move 10% of the way in hyperbolic space
+                // This corresponds to moving along the geodesic
+                // Note: mobius_add(step, view_center) maps the local step back to world space relative to view_center
+                // But we must be careful with order.
+                // mobius_add(a, b) = (a+b)/(1+b'a).
+                // If we want to apply translation T_view_center to step, we do mobius_add(step, view_center).
+                let step = rel_target * 0.1;
+                view_center = mobius_add(step, view_center);
             }
         } else if let Some(path) = navigating_to.take() {
             // We reached the target! Switch context.
@@ -187,14 +197,21 @@ async fn main() -> anyhow::Result<()> {
         // Right Click to go Up
         if is_mouse_button_released(MouseButton::Right) {
             if let Some(parent) = current_path.parent() {
-                let parent_buf = parent.to_path_buf();
-                git_map = get_repo_statuses(&parent_buf);
-                if let Ok(new_root) = get_view_root(&parent_buf, 5, &git_map) {
-                    current_path = parent_buf;
-                    fs_root = new_root;
-                    layout_root = layout_tree(fs_root.clone());
-                    target_center = Point::new(0.0, 0.0);
-                    view_center = Point::new(0.0, 0.0);
+                // Find ".." node to animate to it
+                if let Some(parent_node) = layout_root.children.iter().find(|c| c.node.name == "..") {
+                     target_center = parent_node.pos;
+                     navigating_to = Some(parent.to_path_buf());
+                } else {
+                     // Fallback if ".." not found (shouldn't happen usually)
+                     let parent_buf = parent.to_path_buf();
+                     git_map = get_repo_statuses(&parent_buf);
+                     if let Ok(new_root) = get_view_root(&parent_buf, 5, &git_map) {
+                        current_path = parent_buf;
+                        fs_root = new_root;
+                        layout_root = layout_tree(fs_root.clone());
+                        target_center = Point::new(0.0, 0.0);
+                        view_center = Point::new(0.0, 0.0);
+                     }
                 }
             }
         }
