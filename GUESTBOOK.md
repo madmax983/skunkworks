@@ -86,3 +86,8 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Zombie resurrected and re-buried.
 - **Note:** "Time has run out."
+
+### [Concentration Level: HIGH] - Location: experiments/tidal-tactics
+- **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
+- **Status:** The tide is rising. Terrain is malleable. War is wet.
+- **Note:** "Shallow water equations are just a pipe dream until you simulate them."
