@@ -887,6 +887,23 @@ fn process_critter_logic(
                         .insert((y, x), updated_agent.state.clone());
                     return Some((updated_agent, None));
                 }
+                critter::CritterAction::Build(c, ny, nx) => {
+                    // Build rune at target
+                    let safe_to_build = match &vm.grid[ny][nx] {
+                        Value::Int(0) => true,
+                        Value::Str(s) => s == ".",
+                        _ => false,
+                    };
+
+                    if safe_to_build {
+                        vm.grid[ny][nx] = Value::Str(c.to_string());
+                    }
+
+                    vm.prologue_state
+                        .registers
+                        .insert((y, x), updated_agent.state.clone());
+                    return Some((updated_agent, None));
+                }
                 critter::CritterAction::Mark => {
                     // Mark forward
                     let (dy, dx) = match critter.direction {
