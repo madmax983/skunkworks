@@ -83,6 +83,7 @@ pub mod elemental;
 pub mod hypnagogia;
 pub mod elektra;
 pub mod oracle;
+pub mod psionics;
 
 /// An autonomous agent wandering the Prologue grid.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -290,6 +291,10 @@ impl PrologueState {
                         // Oracle
                             | "¶"
                             | "λ"
+                        // Psionics
+                            | "Θ"
+                            | "Ξ"
+                            | "Σ"
                     ) {
                         self.runes.insert((y, x));
 
@@ -560,6 +565,9 @@ fn apply_propagation_rune(
     if elemental::apply_elemental_runes(rune, y, x, current_signals, next_signals) {
         return true;
     }
+    if psionics::apply_psionics_runes(rune, y, x, current_signals, next_signals, grid) {
+        return true;
+    }
     false
 }
 
@@ -754,6 +762,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             quantum::apply_quantum_sinks(vm, rune, y, x);
             #[cfg(feature = "oracle")]
             oracle::apply_oracle_sinks(vm, rune, y, x);
+            psionics::apply_psionics_sinks(vm, rune, y, x);
         }
     }
 }

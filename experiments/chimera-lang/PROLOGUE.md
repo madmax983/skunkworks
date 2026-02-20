@@ -117,6 +117,16 @@ Introduces elemental forces to the grid.
 *   Water + Earth -> **Mud**
 *   Fire + Air -> **Plasma**
 
+# Psionics 🧠
+
+Runes for remote action and telepathy.
+
+| Rune | Name | Function |
+|---|---|---|
+| `Θ` | **Telepathy** | Reads **West** (Y) and **North** (X). Outputs value at `grid[Y][X]` to **Self**. |
+| `Ξ` | **Telekinesis** | Reads **West** (Dir), **North** (Y), **East** (X). Moves value at `grid[Y][X]` in Direction. |
+| `Σ` | **Suggestion** | Reads **West** (Val), **North** (Y), **East** (X). Writes `Val` to `grid[Y][X]`. |
+
 # Prologue II: Signal Grid (Orca Mode) 🐋
 
 Enabled via `OpCode::Orca` or TUI toggle. This is a concurrent cellular automata system inspired by Orca.
