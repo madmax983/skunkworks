@@ -12027,6 +12027,10 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     "∿" => style = style.fg(Color::Cyan).add_modifier(Modifier::BOLD),
                     "¶" => style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD),
                     "λ" => style = style.fg(Color::LightMagenta).add_modifier(Modifier::BOLD | Modifier::UNDERLINED),
+                    "\"" => style = style.fg(Color::Green).add_modifier(Modifier::BOLD),
+                    "®" => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD | Modifier::UNDERLINED),
+                    ";" => style = style.fg(Color::Cyan).add_modifier(Modifier::BOLD),
+                    "©" => style = style.fg(Color::Blue).add_modifier(Modifier::BOLD),
                     _ => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
                 }
             } else {

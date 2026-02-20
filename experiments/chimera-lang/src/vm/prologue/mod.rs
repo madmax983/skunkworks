@@ -71,6 +71,7 @@ pub mod evolution;
 pub mod io;
 pub mod list;
 pub mod logic;
+pub mod linguistics;
 pub mod math;
 pub mod necromancy;
 pub mod optics;
@@ -310,6 +311,11 @@ impl PrologueState {
                             | "♪"
                             | "♫"
                             | "🥁"
+                        // Linguistics
+                            | "\""
+                            | "®"
+                            | ";"
+                            | "©"
                     ) {
                         self.runes.insert((y, x));
 
@@ -542,6 +548,16 @@ fn apply_propagation_rune(
         return true;
     }
     if logic::apply_logic_runes(rune, y, x, current_signals, next_signals) {
+        return true;
+    }
+    if linguistics::apply_linguistics_runes(
+        rune,
+        y,
+        x,
+        current_signals,
+        next_signals,
+        grid,
+    ) {
         return true;
     }
     if io::apply_io_runes(
@@ -1183,3 +1199,6 @@ mod prologue_oracle_test;
 
 #[cfg(test)]
 mod prologue_resonance_test;
+
+#[cfg(test)]
+mod prologue_linguistics_test;

@@ -173,3 +173,14 @@ Enabled via `OpCode::Orca` or TUI toggle. This is a concurrent cellular automata
 | `C` | **Clock** | Outputs time-based modulo values. |
 | `M` | **Mutate** | Mutates target strand or value. |
 | `Q` | **Query** | Reads value at offset. |
+
+# Linguistics 📖
+
+Runes for text processing and grammar manipulation.
+
+| Rune | Name | Function |
+|---|---|---|
+| `"` | **Quote** | **West** (Quote): Capture Range. **West** (Val): Stringify. |
+| `®` | **Regex** | Reads **West** (Text) and **North** (Pattern). Outputs List of matches. |
+| `;` | **Parse** | Reads **West** (Text) and **North** (Delimiter). Splits into List. |
+| `©` | **Concat** | Reads **West** (List/Str) and **North** (Sep). Joins them. |
