@@ -350,11 +350,15 @@
 - **Status:** Executed.
 - **Note:** Biomass returned to the void.
 
-### [Concentration Level: EVAPORATING] - Location: experiments/malloc-expressionism
-- **Status:** Condemned ☠️.
-- **Note:** Mute sketch. Redundant with `malloc-market`. Stagnant.
+### [Concentration Level: EVAPORATING] - Location: graveyard/malloc-expressionism
+- **Status:** Executed.
+- **Note:** Biomass returned to the void.
 
 ### [Concentration Level: HIGH] - Location: experiments/chemical-specter
 - **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
 - **Status:** Verified. Simulation stable. The soup is dancing.
 - **Note:** Moonshot: Gray-Scott + Audio Reactivity. Ghost beats modulate the reaction.
+
+### [Concentration Level: CRITICAL] - Location: experiments/biochemical-soundscapes
+- **Status:** Condemned ☠️.
+- **Note:** Terminal Redundancy (Gray-Scott #5). Documentation Void. The silence is deafening.
