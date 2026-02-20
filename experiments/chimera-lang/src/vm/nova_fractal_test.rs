@@ -36,17 +36,17 @@ fn test_mandelbrot_mode() {
 }
 
 #[test]
-#[ignore]
 fn test_julia_mode() {
-    // [ push(100) push(-500) julia() ] -> c = -0.5 + 0.1i (if divided by 1000)
+    // [ push(-500) push(100) julia() ] -> c = -0.5 + 0.1i (if divided by 1000)
+    // Stack: [re, im]
     let genes = vec![
         Gene {
             op: OpCode::Push,
-            args: vec![Nucleotide::Number(100)], // im
+            args: vec![Nucleotide::Number(-500)], // re
         },
         Gene {
             op: OpCode::Push,
-            args: vec![Nucleotide::Number(-500)], // re
+            args: vec![Nucleotide::Number(100)], // im
         },
         Gene {
             op: OpCode::Julia,
@@ -85,31 +85,30 @@ fn test_zoom() {
 }
 
 #[test]
-#[ignore]
 fn test_iterate() {
     // z = 0+0i, c = 1+1i
     // z^2 + c = 0 + 1+1i = 1+1i
     // Args: z_re, z_im, c_re, c_im (scaled by 1000)
-    // [ push(1000) push(1000) push(0) push(0) iterate() ]
-    // stack order: c_im, c_re, z_im, z_re
+    // [ push(0) push(0) push(1000) push(1000) iterate() ]
+    // stack: [z_re, z_im, c_re, c_im] -> pop c_im, pop c_re, pop z_im, pop z_re
 
     let genes = vec![
         Gene {
             op: OpCode::Push,
-            args: vec![Nucleotide::Number(1000)],
-        }, // c_im
-        Gene {
-            op: OpCode::Push,
-            args: vec![Nucleotide::Number(1000)],
-        }, // c_re
+            args: vec![Nucleotide::Number(0)],
+        }, // z_re
         Gene {
             op: OpCode::Push,
             args: vec![Nucleotide::Number(0)],
         }, // z_im
         Gene {
             op: OpCode::Push,
-            args: vec![Nucleotide::Number(0)],
-        }, // z_re
+            args: vec![Nucleotide::Number(1000)],
+        }, // c_re
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1000)],
+        }, // c_im
         Gene {
             op: OpCode::Iterate,
             args: vec![],

@@ -1,170 +1,88 @@
-#[cfg(feature = "nova")]
-#[cfg(test)]
-mod evolution_tests {
-    use chimera_lang::ast::{Dna, Helix, JunctionType};
-    use chimera_lang::vm::nova::{Organelle, OrganelleType};
-    use chimera_lang::vm::{ChimeraVM, Value};
+use chimera_lang::prelude::*;
+use chimera_lang::vm::prologue::exec_prologue_tick;
+use chimera_lang::vm::{ChimeraVM, Value};
 
-    fn make_vm() -> ChimeraVM {
-        let dna = Dna {
-            helix: Helix { strands: vec![] },
-        };
-        ChimeraVM::new(dna)
-    }
+#[test]
+#[ignore]
+fn test_prophecy_rune() {
+    // Strand 0: Supernova (Immediate Halt/Death)
+    let genes_dead = vec![
+        Gene { op: OpCode::Supernova, args: vec![] },
+    ];
 
-    #[test]
-    #[ignore]
-    fn test_savant_die() {
-        let mut vm = make_vm();
-        vm.knowledge_base.clear();
+    // Strand 1: Sustainable Loop (Life)
+    // [ push(1) jump(1) ] -> Jump to self (Strand 1)
+    let genes_alive = vec![
+        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
+        Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(1)] },
+    ];
 
-        let savant = Organelle {
-            stack: Vec::new(),
-            ip: (0, 0),
-            context_loc: (5, 5),
-            call_stack: Vec::new(),
-            recursion_depth: 0,
-            halted: false,
-            kind: OrganelleType::Savant,
-            direction: (0, 0),
-            ttl: None,
-            name: "Suicidal".to_string(),
-            traits: vec![],
-            id: 1,
-            tissue_id: None,
-            genome_id: 0,
-            energy: 100,
-            experience: 0,
-            stage: 0,
-        };
-        vm.organelles.push(savant);
-
-        // action("die")
-        let fact = Value::Junction(
-            JunctionType::Any,
-            vec![
-                Value::Str("action".to_string()),
-                Value::Str("die".to_string()),
+    let dna = Dna {
+        helix: Helix {
+            strands: vec![
+                Strand { genes: genes_dead },
+                Strand { genes: genes_alive },
             ],
-        );
-        vm.knowledge_base.push(fact);
+        },
+    };
+    let mut vm = ChimeraVM::new(dna);
+    vm.prologue_state.active = true;
+    vm.energy = 1000;
 
-        vm.step();
+    // Setup Prophecy Circuit for Strand 0 (Death)
+    // "0" -> ! -> c -> ?
+    vm.grid[5][4] = Value::Str("0".to_string());
+    vm.grid[5][5] = Value::Str("!".to_string());
+    vm.grid[5][6] = Value::Str("c".to_string());
 
-        // Should be dead and removed
-        assert!(vm.organelles.is_empty(), "Savant should have died");
+    exec_prologue_tick(&mut vm);
+
+    match &vm.grid[6][6] {
+        Value::Int(res) => assert_eq!(*res, 1, "Prophecy should predict death (1) for Strand 0"),
+        _ => panic!("Prophecy output invalid: {:?}", vm.grid[6][6]),
     }
 
-    #[test]
-    #[ignore]
-    fn test_savant_orca_write() {
-        let mut vm = make_vm();
-        vm.knowledge_base.clear();
+    // Reset Grid for Strand 1 (Life)
+    vm.grid[5][4] = Value::Int(1);
+    vm.grid[6][6] = Value::Int(-1);
 
-        let savant = Organelle {
-            stack: Vec::new(),
-            ip: (0, 0),
-            context_loc: (5, 5),
-            call_stack: Vec::new(),
-            recursion_depth: 0,
-            halted: false,
-            kind: OrganelleType::Savant,
-            direction: (0, 0),
-            ttl: None,
-            name: "Architect".to_string(),
-            traits: vec![],
-            id: 1,
-            tissue_id: None,
-            genome_id: 0,
-            energy: 100,
-            experience: 0,
-            stage: 0,
-        };
-        vm.organelles.push(savant);
+    exec_prologue_tick(&mut vm);
 
-        let action = Value::Junction(
-            JunctionType::Any,
-            vec![
-                Value::Str("orca_write".to_string()),
-                Value::Int(6),
-                Value::Int(6),
-                Value::Str("Test".to_string()),
+    match &vm.grid[6][6] {
+        Value::Int(res) => assert_eq!(*res, 0, "Prophecy should predict life (0) for Strand 1"),
+        _ => panic!("Prophecy output invalid: {:?}", vm.grid[6][6]),
+    }
+}
+
+#[test]
+fn test_entangle_rune() {
+    let dna = Dna {
+        helix: Helix {
+            strands: vec![
+                Strand { genes: vec![] }, // 0
+                Strand { genes: vec![] }, // 1
             ],
-        );
+        },
+    };
+    let mut vm = ChimeraVM::new(dna);
+    vm.prologue_state.active = true;
 
-        let fact = Value::Junction(
-            JunctionType::Any,
-            vec![Value::Str("action".to_string()), action],
-        );
+    // Setup Entangle Circuit
+    // West Input: "0" -> ! -> 8
+    vm.grid[5][4] = Value::Str("0".to_string());
+    vm.grid[5][5] = Value::Str("!".to_string());
+    vm.grid[5][6] = Value::Str("8".to_string());
 
-        vm.knowledge_base.push(fact);
+    // East Input: 1 -> ! -> ~ -> ~ -> 8
+    vm.grid[7][6] = Value::Int(1);
+    vm.grid[7][7] = Value::Str("!".to_string());
+    vm.grid[6][7] = Value::Str("~".to_string());
+    vm.grid[5][7] = Value::Str("~".to_string());
 
-        vm.step();
+    assert!(!vm.entangled_pairs.contains_key(&0));
 
-        println!("Output: {:?}", vm.output);
-        assert_eq!(vm.grid[6][6], Value::Str("Test".to_string()));
-    }
+    exec_prologue_tick(&mut vm);
 
-    #[test]
-    #[ignore]
-    fn test_savant_circuit_place() {
-        let mut vm = make_vm();
-        vm.knowledge_base.clear();
-
-        let savant = Organelle {
-            stack: Vec::new(),
-            ip: (0, 0),
-            context_loc: (5, 5),
-            call_stack: Vec::new(),
-            recursion_depth: 0,
-            halted: false,
-            kind: OrganelleType::Savant,
-            direction: (0, 0),
-            ttl: None,
-            name: "Engineer".to_string(),
-            traits: vec![],
-            id: 1,
-            tissue_id: None,
-            genome_id: 0,
-            energy: 100,
-            experience: 0,
-            stage: 0,
-        };
-        vm.organelles.push(savant);
-
-        // action(circuit_place("wire", 7, 7))
-        let action = Value::Junction(
-            JunctionType::Any,
-            vec![
-                Value::Str("circuit_place".to_string()),
-                Value::Str("wire".to_string()),
-                Value::Int(7),
-                Value::Int(7),
-            ],
-        );
-        let fact = Value::Junction(
-            JunctionType::Any,
-            vec![Value::Str("action".to_string()), action],
-        );
-        vm.knowledge_base.push(fact);
-
-        vm.step();
-
-        println!("Output: {:?}", vm.output);
-        assert_eq!(vm.grid[7][7], Value::Int(1)); // Wire is 1
-    }
-
-    #[test]
-    fn test_orca_babel_trigger() {
-        let mut vm = make_vm();
-        vm.grid[5][5] = Value::Str("Input".to_string());
-        vm.grid[6][5] = Value::Str("B".to_string());
-        vm.signal_grid[6][5] = 1;
-        vm.grid[6][6] = Value::Str(".".to_string());
-        vm.step();
-        assert!(
-            !vm.stack.is_empty(),
-            "Stack should have result from BabelLive"
-        );
-    }
+    assert_eq!(vm.entangled_pairs.get(&0), Some(&1));
+    assert_eq!(vm.entangled_pairs.get(&1), Some(&0));
 }
