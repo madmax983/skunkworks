@@ -11946,6 +11946,11 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     "z" => style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD),
                     "h" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
                     "." | ":" | "," => style = style.fg(Color::LightCyan).add_modifier(Modifier::BOLD),
+                    "⚡" => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD | Modifier::RAPID_BLINK),
+                    "≡" => style = style.fg(Color::Blue).add_modifier(Modifier::BOLD),
+                    "∿" => style = style.fg(Color::Cyan).add_modifier(Modifier::BOLD),
+                    "¶" => style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD),
+                    "λ" => style = style.fg(Color::LightMagenta).add_modifier(Modifier::BOLD | Modifier::UNDERLINED),
                     _ => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
                 }
             } else {

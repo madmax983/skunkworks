@@ -81,6 +81,8 @@ pub mod void;
 pub mod epigenetics;
 pub mod elemental;
 pub mod hypnagogia;
+pub mod elektra;
+pub mod oracle;
 
 /// An autonomous agent wandering the Prologue grid.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -279,6 +281,13 @@ impl PrologueState {
                         // Hypnagogia
                             | "☾"
                             | "☀"
+                        // Elektra
+                            | "⚡"
+                            | "≡"
+                            | "∿"
+                        // Oracle
+                            | "¶"
+                            | "λ"
                     ) {
                         self.runes.insert((y, x));
 
@@ -401,6 +410,11 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
             }
 
             if let Value::Str(s) = &grid[*y][*x] {
+                #[cfg(feature = "elektra")]
+                let (v_grid, r_grid) = (&mut vm.voltage_grid, &mut vm.resistance_grid);
+                #[cfg(not(feature = "elektra"))]
+                let (v_grid, r_grid) = (&mut vec![], &mut vec![]);
+
                 if apply_propagation_rune(
                     s,
                     *y,
@@ -417,6 +431,8 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     grid,
                     &vm.light_grid,
                     &mut vm.prologue_state.dream_intensity,
+                    v_grid,
+                    r_grid,
                 ) {
                     changes = true;
                 }
@@ -449,7 +465,22 @@ fn apply_propagation_rune(
     grid: &[Vec<Value>],
     light_grid: &[Vec<i64>],
     dream_intensity: &mut f32,
+    voltage_grid: &mut Vec<Vec<f32>>,
+    resistance_grid: &mut Vec<Vec<f32>>,
 ) -> bool {
+    #[cfg(feature = "elektra")]
+    if elektra::apply_elektra_runes(
+        rune,
+        y,
+        x,
+        current_signals,
+        next_signals,
+        voltage_grid,
+        resistance_grid,
+    ) {
+        return true;
+    }
+
     if hypnagogia::apply_hypnagogia_runes(
         rune,
         y,
@@ -717,6 +748,8 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             symbiosis::apply_symbiosis_sinks(vm, rune, y, x);
             pandemonium::apply_pandemonium_sinks(vm, rune, y, x);
             epigenetics::apply_epigenetic_runes(vm, rune, y, x);
+            #[cfg(feature = "oracle")]
+            oracle::apply_oracle_sinks(vm, rune, y, x);
         }
     }
 }
@@ -1074,3 +1107,11 @@ mod tests {
         assert!(output.contains("PROLOGUE: Sink at 5,7 received Int(42)"));
     }
 }
+
+#[cfg(feature = "elektra")]
+#[cfg(test)]
+mod prologue_elektra_test;
+
+#[cfg(feature = "oracle")]
+#[cfg(test)]
+mod prologue_oracle_test;
