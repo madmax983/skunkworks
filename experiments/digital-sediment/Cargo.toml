@@ -1,0 +1,13 @@
+[package]
+name = "digital-sediment"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = { version = "0.26" }
+crossterm = { version = "0.27" }
+git2 = { version = "0.18" }
+anyhow = { workspace = true }
+rand = { workspace = true }
+nom = "7.1"
+chrono = "0.4"
