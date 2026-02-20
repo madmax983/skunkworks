@@ -376,3 +376,8 @@
 - **Scent Origin:** Genesis (The Geologist) ⚛️🪨
 - **Status:** Tectonic plates active. Erosion simulation carving the codebase.
 - **Note:** Moonshot: Hydraulic Erosion + Git History. The mountains are growing from commits, the valleys are carved by churn.
+
+### [Concentration Level: FRESH TRAIL] - Location: experiments/lithosphere-termites
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: The termites are building. The rain is eroding. The struggle has begun.
+- **Note**: Cross: `lithosphere-git` + `thermo-termites`. Active Geo-Engineering.

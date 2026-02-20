@@ -1,0 +1,10 @@
+[package]
+name = "lithosphere-termites"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = { workspace = true }
+anyhow = { workspace = true }
+git-associates = { workspace = true }
