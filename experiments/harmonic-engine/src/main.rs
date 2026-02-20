@@ -1,12 +1,13 @@
 use crossterm::event::{self, Event, KeyCode};
-use harmonic_engine::{audio::MusicBox, physics::PhysicsWorld};
+use harmonic_engine::{
+    audio::MusicBox,
+    physics::PhysicsWorld,
+    widgets::{Button, ButtonState, ButtonStyle, LogList},
+};
 use nalgebra::Vector2;
 use ratatui::{prelude::*, widgets::*};
 use std::{error::Error, time::Duration};
-use tui_shared::{
-    widgets::{Button, ButtonState, ButtonStyle, LogList},
-    Tui,
-};
+use tui_shared::Tui;
 
 fn main() -> Result<(), Box<dyn Error>> {
     // Setup Terminal

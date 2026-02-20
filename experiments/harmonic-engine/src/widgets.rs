@@ -30,7 +30,7 @@ use ratatui::{
 /// # Example
 ///
 /// ```
-/// use tui_shared::widgets::LogList;
+/// use harmonic_engine::widgets::LogList;
 /// use ratatui::widgets::Widget;
 /// use ratatui::layout::Rect;
 /// use ratatui::buffer::Buffer;
@@ -57,21 +57,6 @@ impl<'a> LogList<'a> {
         Self { items, block: None }
     }
 
-    /// Sets the block for the widget (e.g., borders and title).
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use tui_shared::widgets::LogList;
-    /// use ratatui::widgets::{Block, Borders};
-    ///
-    /// let widget = LogList::new(vec![]).block(Block::default().borders(Borders::ALL));
-    /// ```
-    pub fn block(mut self, block: Block<'a>) -> Self {
-        self.block = Some(block);
-        self
-    }
-
     /// Helper to set a block with a title and all borders.
     ///
     /// This is a convenience method equivalent to creating a block with `Borders::ALL`
@@ -80,7 +65,7 @@ impl<'a> LogList<'a> {
     /// # Example
     ///
     /// ```
-    /// use tui_shared::widgets::LogList;
+    /// use harmonic_engine::widgets::LogList;
     ///
     /// let widget = LogList::new(vec![]).with_title("Events");
     /// ```
@@ -161,7 +146,7 @@ pub enum ButtonStyle {
 /// # Example
 ///
 /// ```
-/// use tui_shared::widgets::{Button, ButtonStyle, ButtonState};
+/// use harmonic_engine::widgets::{Button, ButtonStyle, ButtonState};
 /// use ratatui::widgets::Widget;
 /// use ratatui::layout::Rect;
 /// use ratatui::buffer::Buffer;
@@ -198,41 +183,6 @@ impl<'a> Button<'a> {
         }
     }
 
-    /// Sets the hovered state of the button.
-    ///
-    /// If the button is [`ButtonState::Disabled`], this call is ignored.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// # use tui_shared::widgets::Button;
-    /// let btn = Button::new("Hover Me").hovered(true);
-    /// ```
-    pub fn hovered(mut self, hovered: bool) -> Self {
-        if self.state != ButtonState::Disabled {
-            self.state = if hovered {
-                ButtonState::Hovered
-            } else {
-                ButtonState::Normal
-            };
-        }
-        self
-    }
-
-    /// Sets the clicked state of the button.
-    ///
-    /// If the button is [`ButtonState::Disabled`], this call is ignored.
-    pub fn clicked(mut self, clicked: bool) -> Self {
-        if self.state != ButtonState::Disabled {
-            self.state = if clicked {
-                ButtonState::Clicked
-            } else {
-                self.state
-            };
-        }
-        self
-    }
-
     /// Explicitly sets the button's state.
     pub fn state(mut self, state: ButtonState) -> Self {
         self.state = state;
@@ -252,7 +202,7 @@ impl<'a> Button<'a> {
     /// # Example
     ///
     /// ```
-    /// # use tui_shared::widgets::Button;
+    /// # use harmonic_engine::widgets::Button;
     /// let btn = Button::new("Delete").icon("🗑️");
     /// ```
     pub fn icon(mut self, icon: impl Into<String>) -> Self {

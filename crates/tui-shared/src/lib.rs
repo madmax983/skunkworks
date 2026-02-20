@@ -57,8 +57,6 @@ use crossterm::{
 use ratatui::{backend::CrosstermBackend, Terminal};
 use std::io::{self, Stdout};
 
-pub mod widgets;
-
 /// A RAII wrapper for the Ratatui Terminal.
 ///
 /// This struct handles the initialization and cleanup of the terminal environment.
