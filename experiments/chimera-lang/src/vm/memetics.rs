@@ -72,6 +72,10 @@ pub fn exec_memetics_op(
                             vm.output.push("BIOHACK: Strand limit exceeded".to_string());
                             return None;
                         }
+                        if vm.virus_library.len() >= crate::vm::MAX_VIRUSES {
+                            vm.output.push("BIOHACK: Virus library full".to_string());
+                            return None;
+                        }
 
                         let meme = &vm.meme_pool.memes[meme_idx];
 
@@ -148,6 +152,12 @@ pub fn exec_memetics_op(
 
                     let s_idx = vm.ip.0;
                     if s_idx < vm.dna.helix.strands.len() {
+                        if vm.meme_pool.memes.len() >= crate::vm::MAX_MEMES {
+                            vm.output.push("CONCEIVE: Meme pool full".to_string());
+                            vm.stack.push(Value::Int(-1));
+                            return None;
+                        }
+
                         let strand = &vm.dna.helix.strands[s_idx];
                         let start_gene = vm.ip.1;
                         // Copy genes from current IP onwards
@@ -342,6 +352,11 @@ pub fn exec_memetics_op(
                         2 => VirusMode::RewriteDNA,
                         _ => VirusMode::Overwrite,
                     };
+
+                    if vm.virus_library.len() >= crate::vm::MAX_VIRUSES {
+                        vm.output.push("INFECT: Virus library full".to_string());
+                        return None;
+                    }
 
                     let mut rng = rand::thread_rng();
                     let color = (

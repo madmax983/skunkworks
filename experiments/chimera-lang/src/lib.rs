@@ -343,3 +343,4 @@ mod warden_planes_dos_test;
 
 #[cfg(test)]
 mod critter_build_test;
+mod warden_resources_test;

@@ -872,6 +872,10 @@ pub fn flatten_cst(cst: &Value) -> String {
 }
 
 pub fn compile_cst(vm: &mut ChimeraVM, cst: Value, handler_idx: usize) -> Option<usize> {
+    if vm.dna.helix.strands.len() >= crate::vm::MAX_STRANDS {
+        return None;
+    }
+
     let mut genes = Vec::new();
     if compile_cst_recursive(&cst, &mut genes, handler_idx, 0).is_err() {
         return None;
@@ -887,7 +891,7 @@ fn compile_cst_recursive(
     handler_idx: usize,
     depth: usize,
 ) -> Result<(), ()> {
-    if depth > 500 {
+    if depth > crate::vm::MAX_RECURSION_DEPTH {
         return Err(());
     }
     match val {

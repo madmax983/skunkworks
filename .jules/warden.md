@@ -64,3 +64,7 @@
 
 **Threat:** `safe_gl::with_scissor` in `experiments/chimera-tardis/src/safe_gl.rs` passed user-controlled dimensions to `glScissor` without clamping when no parent scissor existed. Passing negative values is potentially unsafe/UB depending on driver behavior.
 **Defense:** Added `.max(0)` clamping to width and height in `with_scissor` to ensure non-negative values are passed to OpenGL. Verified with `warden_gl_test.rs`.
+
+## 2026-10-23 - Unbounded Resource Consumption (DoS)
+**Threat:** Malicious Chimera programs could exhaust memory via unbounded creation of Memes (`OpCode::Conceive`), Viruses (`OpCode::Infect`), or Strands (`compile_cst`), or via unbounded Brainfuck output.
+**Defense:** Introduced `MAX_MEMES` (64), `MAX_VIRUSES` (64), and `MAX_BRAINFUCK_OUTPUT` (1024). Enforced these limits in `memetics.rs`, `babel.rs` (checking `MAX_STRANDS` and recursion depth), and `nova.rs`. Added regression test `warden_resources_test.rs`.
