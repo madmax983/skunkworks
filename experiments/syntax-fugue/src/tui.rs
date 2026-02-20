@@ -7,7 +7,7 @@ use crossterm::{
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
-    style::{Color, Style},
+    style::{Color, Style, Modifier},
     text::{Line, Span},
     widgets::{Block, Borders, Paragraph, Wrap},
     Terminal,
@@ -15,13 +15,14 @@ use ratatui::{
 use std::io::{self, Stdout};
 use std::time::Duration;
 
-use crate::parser::Voice;
+use crate::parser::{Voice, VoiceType};
 
 pub struct VoiceState {
     pub voice: Voice,
     pub current_token_idx: usize,
     pub last_play_time: std::time::Instant,
     pub started: bool,
+    pub start_delay: Duration,
 }
 
 pub struct TuiApp {
@@ -31,12 +32,20 @@ pub struct TuiApp {
 }
 
 impl TuiApp {
-    pub fn new(voices: Vec<Voice>) -> Result<Self> {
+    pub fn new(mut voices: Vec<Voice>) -> Result<Self> {
         enable_raw_mode()?;
         let mut stdout = io::stdout();
         execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
         let backend = CrosstermBackend::new(stdout);
         let terminal = Terminal::new(backend)?;
+
+        // Sort voices: Soprano -> Alto -> Tenor -> Bass
+        voices.sort_by_key(|v| match v.voice_type {
+            VoiceType::Soprano => 0,
+            VoiceType::Alto => 1,
+            VoiceType::Tenor => 2,
+            VoiceType::Bass => 3,
+        });
 
         let voice_states = voices
             .into_iter()
@@ -45,6 +54,7 @@ impl TuiApp {
                 current_token_idx: 0,
                 last_play_time: std::time::Instant::now(),
                 started: false,
+                start_delay: Duration::ZERO,
             })
             .collect();
 
@@ -72,72 +82,53 @@ impl TuiApp {
                 .collect();
 
             let chunks = Layout::default()
-                .direction(Direction::Horizontal)
+                .direction(Direction::Vertical) // Stack tracks vertically
                 .constraints(constraints)
                 .split(size);
 
             for (i, state) in self.voices.iter().enumerate() {
-                let title = format!("Voice {}: {}", i + 1, state.voice.name);
+                let type_label = match state.voice.voice_type {
+                    VoiceType::Soprano => "SOPRANO",
+                    VoiceType::Alto => "ALTO",
+                    VoiceType::Tenor => "TENOR",
+                    VoiceType::Bass => "BASS",
+                };
 
-                let mut current_line_spans = Vec::new();
-                let mut char_count = 0;
-                let mut current_line_chars = 0;
-                let mut current_token_line = 0;
+                let title = format!("[ {} | {} ]", type_label, state.voice.name);
 
-                let panel_width = chunks[i].width.saturating_sub(2) as usize; // remove borders
-                if panel_width == 0 {
-                    continue;
-                } // Too small
+                let mut spans = Vec::new();
+
+                // Only render a window of tokens around the current one to save performance/space?
+                // Or just render all and let Paragraph handle it?
+                // Paragraph with Wrap can be heavy if text is huge.
+                // Let's render all for now.
 
                 for (j, token) in state.voice.tokens.iter().enumerate() {
                     let mut style = Style::default().fg(token.color);
-                    let token_len = token.text.len() + 1; // +1 for space
-
-                    // Simple wrap logic simulation to find line of current token
-                    if current_line_chars + token_len > panel_width {
-                        current_line_chars = 0;
-                        // Logic for wrapping: if token fits on next line, good.
-                        // ratatui wrap trims? assuming yes.
-                        // But actually if token is longer than width, it splits.
-                        // Let's assume standard word wrap.
-                        char_count += token_len; // rough estimate
-                                                 // Every time we wrap, we increment line count?
-                                                 // Actually, we just need to know which line the token STARTS on.
-                    }
-
-                    // Update current line char count for wrapping logic
-                    if current_line_chars + token_len > panel_width {
-                        current_line_chars = 0;
-                    }
-                    current_line_chars += token_len;
 
                     if j == state.current_token_idx {
-                        style = style.bg(Color::White).fg(Color::Black);
-                        // Use char_count for rough vertical position if wrapping fails?
-                        // Actually, let's trust char_count / panel_width as primary heuristic
-                        // since we don't track exact line breaks of Paragraph widget easily.
-                        current_token_line = char_count / panel_width;
+                        style = style.bg(Color::White).fg(Color::Black).add_modifier(Modifier::BOLD);
+                    } else if j < state.current_token_idx {
+                        // Dim past tokens
+                        style = style.add_modifier(Modifier::DIM);
                     }
 
-                    char_count += token_len;
-
-                    current_line_spans.push(Span::styled(format!("{} ", token.text), style));
+                    spans.push(Span::styled(format!("{} ", token.text), style));
                 }
 
-                let lines = vec![Line::from(current_line_spans)];
+                let line = Line::from(spans);
 
-                // Ensure scroll keeps current line in middle
-                let height = chunks[i].height.saturating_sub(2) as usize;
-                let scroll_y = if current_token_line > height / 2 {
-                    (current_token_line - height / 2) as u16
-                } else {
-                    0
-                };
+                // Auto-scroll logic needs to know where the active token is.
+                // Since we wrap, it's hard to know exactly.
+                // But since we use Vertical layout, each track has full width.
+                // So wrapping is less frequent.
 
-                let paragraph = Paragraph::new(lines)
+                let paragraph = Paragraph::new(vec![line])
                     .block(Block::default().title(title).borders(Borders::ALL))
-                    .wrap(Wrap { trim: true })
-                    .scroll((scroll_y, 0));
+                    .wrap(Wrap { trim: true });
+                    // .scroll() // We'd need to calculate scroll.
+                    // For now, let's rely on the fact that tracks are short enough or we just see the start.
+                    // Ideally we should scroll.
 
                 f.render_widget(paragraph, chunks[i]);
             }

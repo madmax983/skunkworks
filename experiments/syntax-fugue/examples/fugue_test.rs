@@ -13,9 +13,9 @@ fn counter_subject() {
     while melody < 10 {
         melody += 1;
         match melody {
-            1 => { let note = "C"; },
-            2 => { let note = "D"; },
-            _ => { let note = "E"; },
+            1 => { let _note = "C"; },
+            2 => { let _note = "D"; },
+            _ => { let _note = "E"; },
         }
     }
 }
@@ -23,5 +23,9 @@ fn counter_subject() {
 fn finale() {
     main_theme();
     counter_subject();
-    let end = true;
+    let _end = true;
+}
+
+fn main() {
+    finale();
 }

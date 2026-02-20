@@ -1,8 +1,10 @@
 use anyhow::Result;
-use hound;
 use std::f32::consts::PI;
 
-#[derive(Debug, Clone, Copy)]
+#[cfg(feature = "audio")]
+use rodio::{OutputStream, OutputStreamHandle, Source};
+
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Waveform {
     Sine,
     Square,
@@ -74,6 +76,11 @@ impl SynthSource {
             0.0
         };
 
+        // Clip amplitude to 0 if time is beyond duration (though Iterator handles this too)
+        if t > total_duration {
+            return 0.0;
+        }
+
         raw_sample * amp * self.volume
     }
 }
@@ -112,22 +119,53 @@ impl Iterator for SynthSource {
     }
 }
 
+#[cfg(feature = "audio")]
+impl Source for SynthSource {
+    fn current_frame_len(&self) -> Option<usize> {
+        None
+    }
+    fn channels(&self) -> u16 {
+        1
+    }
+    fn sample_rate(&self) -> u32 {
+        self.sample_rate
+    }
+    fn total_duration(&self) -> Option<std::time::Duration> {
+        Some(std::time::Duration::from_secs_f32(self.duration_samples as f32 / self.sample_rate as f32))
+    }
+}
+
 pub struct AudioEngine {
     active_voices: Vec<SynthSource>,
     master_buffer: Vec<f32>,
     pub current_amplitude: f32, // For visualization
     sample_rate: u32,
-    samples_per_tick: usize, // e.g., 60 FPS -> 44100 / 60
+
+    #[cfg(feature = "audio")]
+    _stream: Option<OutputStream>,
+    #[cfg(feature = "audio")]
+    stream_handle: Option<OutputStreamHandle>,
 }
 
 impl AudioEngine {
     pub fn new() -> Result<Self> {
+        #[cfg(feature = "audio")]
+        let (stream, stream_handle) = {
+            match OutputStream::try_default() {
+                Ok((s, h)) => (Some(s), Some(h)),
+                Err(_) => (None, None), // Fallback if no audio device
+            }
+        };
+
         Ok(Self {
             active_voices: Vec::new(),
             master_buffer: Vec::new(),
             current_amplitude: 0.0,
             sample_rate: 44100,
-            samples_per_tick: 44100 / 60, // ~735 samples per update
+            #[cfg(feature = "audio")]
+            _stream: stream,
+            #[cfg(feature = "audio")]
+            stream_handle,
         })
     }
 
@@ -137,21 +175,22 @@ impl AudioEngine {
 
     pub fn play_synth_note(&mut self, _voice_idx: usize, frequency: f32, duration: f32, volume: f32, waveform: Waveform, adsr: Adsr) {
         let source = SynthSource::new(frequency, duration, volume, waveform, adsr);
+
+        // Push to active voices for VISUALIZATION and WAV recording
+        // We clone the source? SynthSource is not cloneable easily (stateful iterator).
+        // So we create two sources?
+
+        // Create a copy for Realtime Audio
+        #[cfg(feature = "audio")]
+        if let Some(handle) = &self.stream_handle {
+             let realtime_source = SynthSource::new(frequency, duration, volume, waveform, adsr);
+             if let Err(e) = handle.play_raw(realtime_source) {
+                 eprintln!("Audio playback error: {}", e);
+             }
+        }
+
+        // Push original to active_voices for offline rendering / visualization
         self.active_voices.push(source);
-    }
-
-    pub fn play_note(&mut self, voice_idx: usize, frequency: f32, duration: f32, volume: f32) {
-        self.play_synth_note(voice_idx, frequency, duration, volume, Waveform::Sine, Adsr::default());
-    }
-
-    pub fn is_voice_busy(&self, _voice_idx: usize) -> bool {
-        // In virtual engine, we can check if any voice is active,
-        // but the caller uses this to check if a specific voice finished.
-        // Since we mix everything into one buffer, we don't track by index easily unless we store map.
-        // For now, let's just return false to let the TUI advance freely,
-        // or true if we want to block?
-        // Let's return false so TUI dictates the pace based on token duration.
-        false
     }
 
     // Called every frame by TUI loop
@@ -173,8 +212,7 @@ impl AudioEngine {
             });
 
             // Hard limiter
-            if sample_sum > 1.0 { sample_sum = 1.0; }
-            if sample_sum < -1.0 { sample_sum = -1.0; }
+            sample_sum = sample_sum.clamp(-1.0, 1.0);
 
             self.master_buffer.push(sample_sum);
             if sample_sum.abs() > tick_max_amp {
