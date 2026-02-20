@@ -1387,11 +1387,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Ants (Liquidity Providers) building structural bridges across the Spread (Gap) between Bids and Asks. High volatility shakes the bridge.
 - **Novel trait**: Biological Liquidity Provision. Visualizing the "Spread" as a physical chasm that must be bridged.
 - **Status**: experiments/liquidity-bridge
-- **Evaluation**: Compiles (Warning). Implemented by The Splice Surgeon. Verified Logic.
+- **Evaluation**: Compiles (Warning). Implemented by The Splice Surgeon. Verified in GUESTBOOK.
 
 ### ferro-file
 - **Parents**: experiments/ising-tide + experiments/miller-fs
 - **Concept**: "Magnetic Filesystem". Files are magnetic dipoles in a 3D lattice, interacting via Ising model dynamics.
 - **Novel trait**: Data Magnetism. Files act as spins; empty space is vacuum.
 - **Status**: experiments/ferro-file
-- **Evaluation**: Compiles (Warnings). Implemented by The Splice Surgeon. Tests passed.
+- **Evaluation**: Compiles (Warnings). Implemented by The Splice Surgeon. Verified in GUESTBOOK.
+
+### tesseract-ops
+- **Parents**: experiments/tesseract-time + experiments/system-attractor
+- **Concept**: "Hyper-Dimensional System Monitor". System metrics (CPU, RAM, Swap) mapped to the dimensions of a 4D Hypercube.
+- **Novel trait**: 4D System State Visualization. A healthy system is a perfect tesseract; load distorts the geometry.
+- **Status**: experiments/tesseract-ops
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
