@@ -20,35 +20,22 @@ pub fn apply_elektra_runes(
 
     match rune {
         "⚡" => {
-            // Bolt: Source voltage. Reads West signal (Intensity).
-            if let Some(Value::Int(v)) = w_sig {
-                if v > 0 {
-                    // Set resistance to Source (-1.0) and Voltage to v
-                    resistance_grid[y][x] = -1.0;
-                    voltage_grid[y][x] = v as f32;
-                    // No output signal, effect is on voltage grid
-                } else {
-                    // Turn off source
-                    if resistance_grid[y][x] == -1.0 {
-                        resistance_grid[y][x] = 1.0; // Reset to default air?
-                    }
-                }
-            }
+            // Bolt: Source voltage. Reads West signal (Intensity) or defaults to 100V.
+            let volts = if let Some(Value::Int(v)) = w_sig {
+                v as f32
+            } else {
+                100.0
+            };
+
+            // Set resistance to Source (-1.0) and Voltage to v
+            resistance_grid[y][x] = -1.0;
+            voltage_grid[y][x] = volts;
         }
         "≡" => {
             // Ground: Sink voltage.
             // Always set resistance to Ground (-2.0)
             resistance_grid[y][x] = -2.0;
             voltage_grid[y][x] = 0.0;
-
-            // If there is voltage nearby, emit signal South?
-            // "Reads Voltage at Self"
-            // Since we ground it, V at self is 0. But we can read current?
-            // Or maybe it reads voltage BEFORE grounding?
-            // The voltage grid simulation step happens separately.
-
-            // Let's say Ground rune just establishes the Ground node.
-            // Use ∿ for sensing.
         }
         "∿" => {
             // Sine: Sense Voltage.

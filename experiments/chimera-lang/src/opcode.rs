@@ -438,6 +438,19 @@ pub enum OpCode {
     #[cfg(feature = "elektra")]
     Patch,
 
+    /// **[Elektra]** Moves the organism based on the local voltage gradient (Electrophoresis).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    /// **Effect:** Moves towards lower voltage potential.
+    #[cfg(feature = "elektra")]
+    Electrophoresis,
+
+    /// **[Elektra]** Modifies the electrical resistance of the current grid cell.
+    ///
+    /// **Stack:** `[ ..., resistance ] -> [ ... ]`
+    #[cfg(feature = "elektra")]
+    Modulate,
+
     // Nova Features
     /// **[Nova]** Expands an L-System axiom using rules and iterations.
     ///
