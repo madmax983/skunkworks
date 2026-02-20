@@ -1,0 +1,13 @@
+[package]
+name = "syncopated-threads"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = "0.30.0"
+crossterm = "0.28.1"
+# rodio = "0.19.0" # Disabled
+hound = "3.5.1" # For WAV output
+anyhow = "1.0.94"
+rand = "0.8.5"
+crossbeam-channel = "0.5.14"

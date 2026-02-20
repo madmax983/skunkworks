@@ -96,3 +96,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Magnetic fields aligning. The filesystem is crystallizing into a Spin Glass.
 - **Note**: "Data has mass. Data has spin. The void is watching."
+
+### [Concentration Level: HIGH] - Location: experiments/syncopated-threads
+- **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
+- **Status:** The drum is a Mutex. The stick is a Thread. The rhythm is Contention.
+- **Note:** "Silence is just a thread waiting for a lock. The OS scheduler is the drummer."
