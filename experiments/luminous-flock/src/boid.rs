@@ -1,4 +1,3 @@
-use flocking::PhysicsState;
 use locus::Vec2;
 use rand::Rng;
 use ratatui::style::Color;
@@ -41,7 +40,9 @@ impl Dna {
 
 #[derive(Clone, Debug)]
 pub struct Boid {
-    pub physics: PhysicsState,
+    pub position: Vec2,
+    pub velocity: Vec2,
+    pub acceleration: Vec2,
     pub dna: Dna,
     // Firefly state
     pub phase: f64,
@@ -54,11 +55,10 @@ impl Boid {
         let angle = rng.gen_range(0.0..TAU);
         let dna = Dna::random();
 
-        let mut physics = PhysicsState::new(x, y);
-        physics.velocity = Vec2::new(angle.cos() * dna.max_speed, angle.sin() * dna.max_speed);
-
         Self {
-            physics,
+            position: Vec2::new(x, y),
+            velocity: Vec2::new(angle.cos() * dna.max_speed, angle.sin() * dna.max_speed),
+            acceleration: Vec2::zero(),
             dna,
             phase: rng.r#gen::<f64>(),
             flash_timer: 0,
@@ -66,28 +66,31 @@ impl Boid {
     }
 
     pub fn position(&self) -> Vec2 {
-        self.physics.position
+        self.position
     }
 
     pub fn apply_force(&mut self, force: Vec2) {
-        self.physics.apply_force(force);
+        self.acceleration += force;
     }
 
     pub fn update_physics(&mut self, width: f64, height: f64) {
-        self.physics.update(self.dna.max_speed);
+        self.velocity += self.acceleration;
+        self.velocity = self.velocity.limit(self.dna.max_speed);
+        self.position += self.velocity;
+        self.acceleration = Vec2::zero();
 
         // Wrap around edges
-        if self.physics.position.x < 0.0 {
-            self.physics.position.x += width;
+        if self.position.x < 0.0 {
+            self.position.x += width;
         }
-        if self.physics.position.x >= width {
-            self.physics.position.x -= width;
+        if self.position.x >= width {
+            self.position.x -= width;
         }
-        if self.physics.position.y < 0.0 {
-            self.physics.position.y += height;
+        if self.position.y < 0.0 {
+            self.position.y += height;
         }
-        if self.physics.position.y >= height {
-            self.physics.position.y -= height;
+        if self.position.y >= height {
+            self.position.y -= height;
         }
     }
 

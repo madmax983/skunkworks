@@ -1,5 +1,6 @@
 use crate::boid::Boid;
-use flocking::{FlockingParams, PhysicsState, compute_force};
+use flocking::{FlockingParams, compute_force};
+use locus::Vec2;
 use std::f64::consts::PI;
 
 pub struct World {
@@ -26,7 +27,8 @@ impl World {
         let count = self.boids.len();
 
         // Extract physics states for the flocking algorithm
-        let physics_states: Vec<PhysicsState> = self.boids.iter().map(|b| b.physics).collect();
+        let positions: Vec<Vec2> = self.boids.iter().map(|b| b.position).collect();
+        let velocities: Vec<Vec2> = self.boids.iter().map(|b| b.velocity).collect();
 
         let mut forces = Vec::with_capacity(count);
         let mut phase_nudges = vec![0.0; count];
@@ -43,7 +45,7 @@ impl World {
                 cohesion_weight: boid.dna.cohesion_weight,
             };
 
-            let flocking_force = compute_force(&physics_states, i, &params);
+            let flocking_force = compute_force(&positions, &velocities, i, &params);
             forces.push(flocking_force);
 
             // 2. Calculate Firefly Phase Nudge

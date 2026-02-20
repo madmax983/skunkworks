@@ -2,7 +2,7 @@ use crate::boid::Boid;
 use crate::fissure::Fissure;
 use crate::git::{CommitData, GitScanner};
 use crate::strata::Strata;
-use flocking::{compute_force, FlockingParams, PhysicsState};
+use flocking::{compute_force, FlockingParams};
 use locus::Vec2;
 use rand::Rng;
 
@@ -120,13 +120,14 @@ impl World {
 
         // Update Boids
         let count = self.boids.len();
-        let physics_states: Vec<PhysicsState> = self.boids.iter().map(|b| b.physics).collect();
+        let positions: Vec<Vec2> = self.boids.iter().map(|b| b.position).collect();
+        let velocities: Vec<Vec2> = self.boids.iter().map(|b| b.velocity).collect();
         let mut forces = Vec::with_capacity(count);
 
         // Calculate forces
         for (i, boid) in self.boids.iter().enumerate() {
             let p1 = boid.position();
-            let v1 = boid.physics.velocity;
+            let v1 = boid.velocity;
             let dna = &boid.dna;
 
             let mut fissure_attract = Vec2::zero();
@@ -142,7 +143,7 @@ impl World {
                 cohesion_weight: dna.cohesion_weight,
             };
 
-            let flocking_force = compute_force(&physics_states, i, &params);
+            let flocking_force = compute_force(&positions, &velocities, i, &params);
 
             // Fissure Attraction
             // Find nearest ACTIVE fissure within view
