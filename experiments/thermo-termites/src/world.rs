@@ -163,6 +163,22 @@ impl World {
         self.step += 1;
     }
 
+    pub fn get_average_server_temp(&self) -> f32 {
+        let mut total_heat = 0.0;
+        let mut count = 0;
+        for cell in &self.grid {
+            if matches!(cell.material, Material::Server) {
+                total_heat += cell.heat;
+                count += 1;
+            }
+        }
+        if count == 0 {
+            0.0
+        } else {
+            total_heat / count as f32
+        }
+    }
+
     fn update_grid_physics(&mut self) {
         let width = WIDTH;
         let height = HEIGHT;
@@ -192,7 +208,7 @@ impl World {
             }
 
             // Physics Constants
-            let diffusion = 0.20;
+            let diffusion = 0.10; // Reduced diffusion to make convection more important
             let wall_insulation = 0.05;
             let cooling = 0.001; // Global cooling
             let evap = 0.02; // Pheromone evaporation
@@ -201,25 +217,30 @@ impl World {
             let max_heat = 1000.0;
 
             // --- Heat Diffusion ---
-            if matches!(cell.material, Material::Server) {
-                cell.heat = (current_heats[i] + heat_gen).min(max_heat);
+            // Servers generate heat but also diffuse it
+            let heat_source = if matches!(cell.material, Material::Server) {
+                heat_gen
             } else {
-                let top = current_heats[i - width];
-                let bottom = current_heats[i + width];
-                let left = current_heats[i - 1];
-                let right = current_heats[i + 1];
+                0.0
+            };
 
-                let avg = (top + bottom + left + right) * 0.25;
-                let diff = avg - current_heats[i];
+            let top = current_heats[i - width];
+            let bottom = current_heats[i + width];
+            let left = current_heats[i - 1];
+            let right = current_heats[i + 1];
 
-                let diff_rate = if matches!(cell.material, Material::Wall) {
-                    diffusion * wall_insulation
-                } else {
-                    diffusion
-                };
+            let avg = (top + bottom + left + right) * 0.25;
+            let diff = avg - current_heats[i];
 
-                cell.heat = (current_heats[i] + diff * diff_rate) * (1.0 - cooling);
-            }
+            let diff_rate = if matches!(cell.material, Material::Wall) {
+                diffusion * wall_insulation
+            } else {
+                diffusion
+            };
+
+            // Apply diffusion and source
+            cell.heat = (current_heats[i] + heat_source + diff * diff_rate) * (1.0 - cooling);
+            cell.heat = cell.heat.clamp(0.0, max_heat);
 
             // --- Pheromone Diffusion ---
             let top_p = current_pheros[i - width];
@@ -246,7 +267,6 @@ impl World {
         });
 
         // 2. Sequential Interaction (Scatter & Heat Exchange)
-        // We do this sequentially to allow safe mutable access to both Grid and Agents
         let mut rng = rand::thread_rng();
         for agent in &mut self.agents {
             // Bounds Check
@@ -260,106 +280,105 @@ impl World {
             if idx < self.grid.len() {
                 let cell = &mut self.grid[idx];
 
-                if matches!(agent.kind, AgentKind::Air) {
-                    // Scatter Density & Velocity
-                    cell.air_density += 1.0;
-                    cell.air_vx += agent.vx;
-                    cell.air_vy += agent.vy;
+                match agent.kind {
+                    AgentKind::Air => {
+                        // Scatter Density & Velocity
+                        cell.air_density += 1.0;
+                        cell.air_vx += agent.vx;
+                        cell.air_vy += agent.vy;
 
-                    // Heat Exchange
-                    if matches!(cell.material, Material::Server) {
-                        agent.heat += 5.0; // Pick up heat
-                        cell.heat -= 0.1;
-                    } else if matches!(cell.material, Material::Wall) {
-                        // Deposit Heat into Wall (Pheromone Trigger)
-                        if agent.heat > 50.0 {
-                            cell.pheromone = (cell.pheromone + 1.0).min(100.0);
-                            agent.heat *= 0.9; // Lose heat to wall
-                        }
-                        // Bounce logic is handled in movement phase, but we can lose energy here
-                        agent.vx *= 0.9;
-                        agent.vy *= 0.9;
-                    } else {
-                        // Exchange with Air Cell
-                        // Cell Heat represents "Ambient Temp"
-                        let eq_heat = (cell.heat + agent.heat) * 0.5;
-                        let transfer = (eq_heat - agent.heat) * 0.1;
-                        agent.heat += transfer;
-                        // Cell heat also changes, but air mass is small?
-                        // Let's say Cell Heat is dominant or equal mass for simplicity
-                        cell.heat -= transfer;
-                    }
-                } else if matches!(agent.kind, AgentKind::Termite) {
-                    // --- Termite Construction Logic ---
-                    // Read Grid State (Copying values to avoid borrow issues)
-                    let current_mat = self.grid[idx].material;
-                    let current_phero = self.grid[idx].pheromone;
+                        // Heat Exchange
+                        // Use a balanced exchange equation
+                        let k = 0.5; // Thermal conductivity constant
+                        let transfer = (cell.heat - agent.heat) * k;
 
-                    // Check Neighbors (Simple 4-way)
-                    let mut wall_neighbors = 0;
-                    let neighbors = [
-                        if ix > 0 { Some(idx - 1) } else { None },
-                        if ix < WIDTH - 1 { Some(idx + 1) } else { None },
-                        if iy > 0 { Some(idx - WIDTH) } else { None },
-                        if iy < HEIGHT - 1 {
-                            Some(idx + WIDTH)
+                        if matches!(cell.material, Material::Server) {
+                            // Server heats up agent actively
+                            // Server generates heat in physics step, here it gives it to agents
+                            // Assume server maintains high temp, or we just pull from it
+                            agent.heat += 5.0;
+                            cell.heat -= 1.0; // Cooling the server!
+                        } else if matches!(cell.material, Material::Wall) {
+                            // Wall interaction
+                            // If Agent is hot, deposit Pheromone (Heat Trace)
+                            if agent.heat > 40.0 {
+                                cell.pheromone = (cell.pheromone + 2.0).min(100.0);
+                                agent.heat *= 0.95; // Wall absorbs some heat
+                            }
+                            // Wall is insulating, small transfer
+                            // But wall can heat up agent if wall is hot
+                            let wall_transfer = (cell.heat - agent.heat) * 0.05;
+                            agent.heat += wall_transfer;
+                            cell.heat -= wall_transfer;
                         } else {
-                            None
-                        },
-                    ];
-
-                    for n_idx in neighbors.into_iter().flatten() {
-                        if matches!(self.grid[n_idx].material, Material::Wall) {
-                            wall_neighbors += 1;
+                            // Air-Air (Cell is ambient air)
+                            agent.heat += transfer;
+                            cell.heat -= transfer;
                         }
                     }
+                    AgentKind::Termite => {
+                        // --- Termite Construction Logic ---
+                        let current_mat = self.grid[idx].material;
+                        let current_phero = self.grid[idx].pheromone;
+                        let flow_speed = (self.grid[idx].air_vx.powi(2) + self.grid[idx].air_vy.powi(2)).sqrt();
 
-                    if agent.carrying {
-                        // Wants to Drop (Build)
-                        // Rule: Build if near existing wall (extend) AND Pheromone is High (Active Vent)
-                        // OR Randomly drop if very high pheromone (New nucleation)
-                        if matches!(current_mat, Material::Empty) {
-                            let should_drop = if wall_neighbors > 0 {
-                                // Extend existing wall
-                                // Bias towards High Pheromone (Heat Trace)
-                                if current_phero > 10.0 {
-                                    rng.gen_bool(0.2)
-                                } else {
-                                    rng.gen_bool(0.001) // Low chance to build in cold areas
-                                }
-                            } else {
-                                // Start new wall?
-                                if current_phero > 50.0 {
-                                    rng.gen_bool(0.01) // Nucleate on hot spots
-                                } else {
-                                    false
-                                }
-                            };
-
-                            if should_drop {
-                                self.grid[idx].material = Material::Wall;
-                                agent.carrying = false;
+                        // Count Wall Neighbors
+                        let mut wall_neighbors = 0;
+                        let neighbors = [
+                            if ix > 0 { Some(idx - 1) } else { None },
+                            if ix < WIDTH - 1 { Some(idx + 1) } else { None },
+                            if iy > 0 { Some(idx - WIDTH) } else { None },
+                            if iy < HEIGHT - 1 { Some(idx + WIDTH) } else { None },
+                        ];
+                        for n_idx in neighbors.into_iter().flatten() {
+                            if matches!(self.grid[n_idx].material, Material::Wall) {
+                                wall_neighbors += 1;
                             }
                         }
-                    } else {
-                        // Wants to Pick (Erode)
-                        // Rule: Pick if Wall is Cold (Low Pheromone) OR Isolated (Noise)
-                        if matches!(current_mat, Material::Wall) {
-                            let should_pick = if current_phero < 5.0 {
-                                // Cold Wall -> Erode
-                                if wall_neighbors <= 1 {
-                                    rng.gen_bool(0.5) // Prune isolated
-                                } else {
-                                    rng.gen_bool(0.05) // Slowly erode solid cold walls
-                                }
-                            } else {
-                                // Hot Wall -> Keep
-                                rng.gen_bool(0.0001) // Very rare accidental damage
-                            };
 
-                            if should_pick {
-                                self.grid[idx].material = Material::Empty;
-                                agent.carrying = true;
+                        if agent.carrying {
+                            // Carrying Dirt -> Look to Build
+                            if matches!(current_mat, Material::Empty) {
+                                // Rule: Build if Pheromone is High (Heat path) AND Flow is NOT too strong
+                                // We want to guide flow, not block it.
+                                // Avoid building if Pheromone is TOO high (Stagnation/Encapsulation)
+
+                                let build_prob = if current_phero > 20.0 && current_phero < 85.0 {
+                                     // Sweet spot for building fins/chimneys
+                                     if flow_speed < 0.5 { 0.1 } else { 0.01 }
+                                } else if wall_neighbors > 0 && current_phero < 85.0 {
+                                    // Extend existing walls slightly, but not in super hot zones
+                                    0.001
+                                } else {
+                                    0.0
+                                };
+
+                                if rng.gen_bool(build_prob) {
+                                    self.grid[idx].material = Material::Wall;
+                                    agent.carrying = false;
+                                }
+                            }
+                        } else {
+                            // Empty -> Look to Pick
+                            if matches!(current_mat, Material::Wall) {
+                                // Rule: Pick if Flow is blocked
+                                // Or if Pheromone is Low (Cold, useless wall)
+                                // Or if Pheromone is TOO HIGH (Stagnation - open a vent!)
+
+                                let pick_prob = if current_phero > 90.0 {
+                                    // Emergency Venting!
+                                    0.1
+                                } else if current_phero < 5.0 {
+                                    if wall_neighbors <= 1 { 0.5 } else { 0.05 } // Clean up cold/noise
+                                } else {
+                                    // Moderate Hot Wall - Keep it
+                                    0.001
+                                };
+
+                                if rng.gen_bool(pick_prob) {
+                                    self.grid[idx].material = Material::Empty;
+                                    agent.carrying = true;
+                                }
                             }
                         }
                     }
@@ -368,29 +387,25 @@ impl World {
         }
 
         // 3. Parallel Movement Update
-        // Split borrows: Grid is Read-Only, Agents are Mutable
         let grid = &self.grid;
         let agents = &mut self.agents;
 
         agents.par_iter_mut().for_each(|agent| {
+            let ix = agent.x as usize;
+            let iy = agent.y as usize;
+            let idx = iy * WIDTH + ix;
+
             match agent.kind {
                 AgentKind::Air => {
-                    let ix = agent.x as usize;
-                    let iy = agent.y as usize;
-                    let idx = iy * WIDTH + ix;
-
                     // Physics Forces
                     if idx < grid.len() {
                         let cell = &grid[idx];
-
-                        // Buoyancy: Hot air rises (Gravity is +Y, so Up is -Y)
-                        // Buoyancy Force = (AgentTemp - AmbientTemp) * k
-                        let ambient_temp = cell.heat.max(10.0); // Use cell temp as ambient
-                        let buoyancy = (agent.heat - ambient_temp) * 0.005;
+                        // Buoyancy
+                        let ambient_temp = cell.heat.max(10.0);
+                        let buoyancy = (agent.heat - ambient_temp) * 0.05; // Even stronger buoyancy
                         agent.vy -= buoyancy;
 
-                        // Pressure: Move from High Density to Low Density
-                        // Look at neighbors
+                        // Pressure/Flow
                         if ix > 0 && ix < WIDTH - 1 && iy > 0 && iy < HEIGHT - 1 {
                             let left = grid[idx - 1].air_density;
                             let right = grid[idx + 1].air_density;
@@ -398,17 +413,15 @@ impl World {
                             let bottom = grid[idx + WIDTH].air_density;
 
                             let dx = left - right;
-                            let dy = top - bottom; // Higher density top pushes down (+Y)
+                            let dy = top - bottom;
 
-                            // Pressure Strength
-                            let k_p = 0.05;
+                            let k_p = 0.1;
                             agent.vx += dx * k_p;
                             agent.vy += dy * k_p;
                         }
                     }
 
-                    // Wall Collision (Bounce)
-                    // We need to check next position
+                    // Update Position & Bounce
                     let next_x = agent.x + agent.vx;
                     let next_y = agent.y + agent.vy;
                     let next_ix = next_x.clamp(0.0, width - 1.0) as usize;
@@ -416,20 +429,17 @@ impl World {
                     let next_idx = next_iy * WIDTH + next_ix;
 
                     if next_idx < grid.len() && matches!(grid[next_idx].material, Material::Wall) {
-                        // Reflect
                         agent.vx *= -0.8;
                         agent.vy *= -0.8;
-                        // Don't move into wall
                     } else {
                         agent.x = next_x;
                         agent.y = next_y;
                     }
 
-                    // Damping / Drag
                     agent.vx *= 0.98;
                     agent.vy *= 0.98;
 
-                    // Bounds
+                     // Bounds
                     if agent.x <= 0.0 || agent.x >= width - 1.0 {
                         agent.vx *= -1.0;
                         agent.x = agent.x.clamp(0.0, width - 1.0);
@@ -440,13 +450,46 @@ impl World {
                     }
                 }
                 AgentKind::Termite => {
-                    // PERF: Only initialize RNG for Termites (avoiding TLS overhead for 50k Air agents)
                     let mut rng = rand::thread_rng();
-                    // Simple Random Walk for now (Placeholder for Step 4)
-                    agent.vx += rng.gen_range(-0.5..0.5);
-                    agent.vy += rng.gen_range(-0.5..0.5);
-                    agent.vx *= 0.9;
-                    agent.vy *= 0.9;
+                    // Gradient Sensing
+                    // Sample random neighbor to see if it's better
+                    let sample_angle = rng.gen_range(0.0..std::f32::consts::TAU);
+                    let sample_dist = 5.0;
+                    let sx = (agent.x + sample_angle.cos() * sample_dist).clamp(0.0, width - 1.0) as usize;
+                    let sy = (agent.y + sample_angle.sin() * sample_dist).clamp(0.0, height - 1.0) as usize;
+                    let s_idx = sy * WIDTH + sx;
+
+                    // Current Pheromone/Heat
+                    let current_phero = grid[idx].pheromone;
+                    let target_phero = grid[s_idx].pheromone;
+
+                    // Decision:
+                    // If Carrying: Go to Higher Pheromone
+                    // If Empty: Go to Lower Pheromone (find cold dirt)
+                    let better = if agent.carrying {
+                        target_phero > current_phero
+                    } else {
+                        target_phero < current_phero
+                    };
+
+                    if better {
+                        // Turn towards sample
+                        agent.vx += sample_angle.cos() * 0.1;
+                        agent.vy += sample_angle.sin() * 0.1;
+                    } else {
+                        // Random walk / Turn away
+                        agent.vx += rng.gen_range(-0.2..0.2);
+                        agent.vy += rng.gen_range(-0.2..0.2);
+                    }
+
+                    // Limit speed
+                    let speed = (agent.vx.powi(2) + agent.vy.powi(2)).sqrt();
+                    if speed > 1.0 {
+                        agent.vx /= speed;
+                        agent.vy /= speed;
+                    }
+
+                    // Move
                     agent.x = (agent.x + agent.vx).clamp(1.0, width - 2.0);
                     agent.y = (agent.y + agent.vy).clamp(1.0, height - 2.0);
                 }
