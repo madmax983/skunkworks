@@ -36,3 +36,8 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Condemned. Documentation void.
 - **Note:** "Silence is not empty; it is a waiting room for death."
+
+### [Concentration Level: HIGH] - Location: experiments/cloud-mycelium
+- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
+- **Status:** Spores released. The forest is balancing the load.
+- **Note:** "When the cloud rains, the fungus grows. Serverless is just mycelium without caps."

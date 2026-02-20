@@ -1,0 +1,17 @@
+[package]
+name = "cloud-mycelium"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "cloud_mycelium"
+path = "src/lib.rs"
+
+[[bin]]
+name = "cloud-mycelium"
+path = "src/main.rs"
+
+[dependencies]
+macroquad = "0.4"
+rand = { workspace = true }
+glam = "0.27"
