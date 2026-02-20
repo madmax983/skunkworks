@@ -1369,11 +1369,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A "Living Synthesizer" where the vocal tract is controlled by a genetic program. The "tongue" is the memory grid of the organism.
 - **Novel trait**: Evolving Phonemes. The code learns to speak.
 - **Status**: experiments/chimera-voice
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles (Warnings: Audio disabled). Implemented by The Splice Surgeon.
 
 ### hyperbolic-bees
 - **Parents**: experiments/waggle-dance + experiments/hyperbolic-finder
 - **Concept**: Bees foraging on the Poincaré Disk. The "Waggle Dance" communicates vector information (angle/distance) in hyperbolic space.
 - **Novel trait**: Hyperbolic Waggle Dance. Distance is encoded exponentially.
 - **Status**: experiments/hyperbolic-bees
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Failed compilation (alsa-sys missing). Implemented by The Splice Surgeon.
+
+### liquidity-bridge
+- **Parents**: experiments/biomimetic-bridge + experiments/market-swarm
+- **Concept**: Ants (Liquidity Providers) building structural bridges across the Spread (Gap) between Bids and Asks. High volatility shakes the bridge.
+- **Novel trait**: Biological Liquidity Provision. Visualizing the "Spread" as a physical chasm that must be bridged.
+- **Status**: experiments/liquidity-bridge
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified Logic.
