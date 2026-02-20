@@ -1,9 +1,7 @@
-mod world;
-
 use ::rand::Rng;
 use clap::Parser;
 use macroquad::prelude::*;
-use world::{AgentKind, Material, World, HEIGHT, WIDTH}; // Use the external rand crate trait
+use thermo_termites::world::{self, AgentKind, Material, World, HEIGHT, WIDTH}; // Use the external rand crate trait
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -185,6 +183,13 @@ async fn main() {
             WHITE,
         );
         draw_text(&format!("Step: {}", world.step), 10.0, 60.0, 20.0, WHITE);
+        draw_text(
+            &format!("Avg Server Temp: {:.1}", world.get_average_server_temp()),
+            10.0,
+            80.0,
+            20.0,
+            WHITE,
+        );
         draw_text(
             "1:Heat 2:Phero 3:Vel T:Termites A:Air Space:Pause",
             10.0,
