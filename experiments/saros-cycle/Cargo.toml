@@ -1,0 +1,12 @@
+[package]
+name = "saros-cycle"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = { version = "0.30", features = ["all-widgets"] }
+crossterm = "0.28"
+anyhow = "1.0"
+rand = "0.8"
+tui-shared = { path = "../../crates/tui-shared" }
+unicode-width = "0.1"
