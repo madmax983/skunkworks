@@ -51,8 +51,12 @@ impl Network {
         }
 
         for syn in &self.synapses {
-            if self.spikes[syn.from] {
-                inputs[syn.to] += syn.weight;
+            if let Some(&spiked) = self.spikes.get(syn.from) {
+                if spiked {
+                    if let Some(input) = inputs.get_mut(syn.to) {
+                        *input += syn.weight;
+                    }
+                }
             }
         }
 
@@ -81,6 +85,25 @@ impl Default for Network {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_invalid_synapse_is_ignored() {
+        let mut network = Network::new();
+        let a = network.add_neuron();
+        // Add synapse pointing to invalid neuron index 99
+        network.add_synapse(a, 99, 1.0);
+
+        // Force a spike
+        network.neurons[a].v = 40.0;
+
+        // First step: neuron spikes, `spikes[a]` becomes true
+        network.step(&[]);
+
+        // Second step: synapse sees spike, but should ignore invalid destination
+        network.step(&[]);
+
+        // If we reached here without panic, the test passes.
+    }
 
     #[test]
     fn test_inhibition() {

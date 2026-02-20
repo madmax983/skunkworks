@@ -122,6 +122,10 @@ pub struct FlockingParams {
 /// pre-filtered list of potential neighbors, or accept the O(N) cost per agent (O(N^2) total).
 #[must_use]
 pub fn compute_force(others: &[PhysicsState], my_idx: usize, params: &FlockingParams) -> Vec2 {
+    if my_idx >= others.len() {
+        return Vec2::zero();
+    }
+
     let me = &others[my_idx];
     let mut separation = Vec2::zero();
     let mut alignment = Vec2::zero();
@@ -203,6 +207,22 @@ pub fn compute_force(others: &[PhysicsState], my_idx: usize, params: &FlockingPa
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_compute_force_safe_on_invalid_index() {
+        let params = FlockingParams {
+            view_radius: 10.0,
+            separation_radius: 5.0,
+            max_speed: 1.0,
+            max_force: 0.1,
+            separation_weight: 1.0,
+            alignment_weight: 1.0,
+            cohesion_weight: 1.0,
+        };
+        // This should not panic anymore
+        let force = compute_force(&[], 0, &params);
+        assert_eq!(force, Vec2::zero());
+    }
 
     #[test]
     fn test_physics_update() {
