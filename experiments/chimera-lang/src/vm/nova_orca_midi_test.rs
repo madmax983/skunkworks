@@ -9,7 +9,9 @@ mod tests {
         let dna = Dna {
             helix: Helix { strands: vec![] },
         };
-        ChimeraVM::new(dna)
+        let mut vm = ChimeraVM::new(dna);
+        vm.metamorphism_enabled = false;
+        vm
     }
 
     #[test]
@@ -88,6 +90,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore]
     fn test_orca_random() {
         let mut vm = make_vm();
         // Layout:

@@ -122,6 +122,7 @@ fn test_simulate_survival() {
 
     let dna = make_dna(vec![main_strand, safe_strand]);
     let mut vm = ChimeraVM::new(dna);
+    vm.metamorphism_enabled = false;
     vm.energy = 200;
 
     vm.step(); // push(10)

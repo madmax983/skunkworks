@@ -796,6 +796,8 @@ pub struct ChimeraVM {
     pub akashic: akashic::AkashicRecords,
     #[cfg(feature = "nova")]
     pub prologue_state: prologue::PrologueState,
+    #[cfg(feature = "nova")]
+    pub metamorphism_enabled: bool,
     pub visual_effects: Vec<VisualEffect>,
     pub tui_events: Vec<TuiEvent>,
 }
@@ -1177,6 +1179,8 @@ impl ChimeraVM {
             akashic: akashic::AkashicRecords::new(),
             #[cfg(feature = "nova")]
             prologue_state: prologue::PrologueState::new(),
+            #[cfg(feature = "nova")]
+            metamorphism_enabled: true,
             visual_effects: Vec::new(),
             tui_events: Vec::new(),
         }

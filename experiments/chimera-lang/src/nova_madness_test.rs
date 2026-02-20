@@ -45,6 +45,9 @@ fn test_meme_spreading() {
     // Loop until s1 has genes to ensure infection
     let mut infected = false;
     for _ in 0..100 {
+        // Replenish energy to prevent starvation
+        vm.energy = 1000;
+
         // Reset strand 0 to ensure stability (prevent self-infection from breaking offsets)
         vm.dna.helix.strands[0] = Strand {
             genes: genes.clone(),
