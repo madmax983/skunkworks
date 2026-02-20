@@ -55,7 +55,7 @@ pub fn with_scissor<F: FnOnce((i32, i32, i32, i32))>(
     let (final_x, final_y, final_w, final_h) = if let Some(p) = parent {
         intersect_rect((x, y, w, h), p)
     } else {
-        (x, y, w, h)
+        (x, y, w.max(0), h.max(0))
     };
 
     unsafe {

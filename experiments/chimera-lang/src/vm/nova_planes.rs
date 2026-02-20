@@ -1,6 +1,6 @@
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
-use crate::vm::{ChimeraVM, Value, GRID_SIZE};
+use crate::vm::{ChimeraVM, Value, GRID_SIZE, MAX_PLANES};
 
 pub fn exec_planes_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
     match op {
@@ -10,6 +10,12 @@ pub fn exec_planes_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     if target_id == vm.current_plane {
                         // No op
                         return;
+                    }
+
+                    // Check if we can allocate a new plane if target doesn't exist
+                    if !vm.planes.contains_key(&target_id) && vm.planes.len() >= MAX_PLANES {
+                         vm.output.push("Error: Plane limit exceeded".to_string());
+                         return;
                     }
 
                     // Save current grid
@@ -96,11 +102,19 @@ pub fn exec_planes_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                         vm.grid[y as usize][x as usize] = val;
                     } else {
                         // Access stored plane or create it
-                        let plane = vm
-                            .planes
-                            .entry(id)
-                            .or_insert_with(|| vec![vec![Value::Int(0); GRID_SIZE]; GRID_SIZE]);
-                        plane[y as usize][x as usize] = val;
+                        let has_plane = vm.planes.contains_key(&id);
+                        if has_plane {
+                            if let Some(plane) = vm.planes.get_mut(&id) {
+                                plane[y as usize][x as usize] = val;
+                            }
+                        } else {
+                            if vm.planes.len() >= MAX_PLANES {
+                                vm.output.push("Error: Plane limit exceeded".to_string());
+                            } else {
+                                let plane = vm.planes.entry(id).or_insert(vec![vec![Value::Int(0); GRID_SIZE]; GRID_SIZE]);
+                                plane[y as usize][x as usize] = val;
+                            }
+                        }
                     }
                 } else {
                     vm.output
