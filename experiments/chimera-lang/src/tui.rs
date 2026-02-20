@@ -4693,30 +4693,6 @@ fn render_signals(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn draw_tension_gauge<'a>(title: &'a str, ratio: f64) -> Gauge<'a> {
-    let (tension_color, label) = if ratio < 0.5 {
-        (Color::Green, "SAFE")
-    } else if ratio < 0.75 {
-        (Color::Yellow, "CAUTION")
-    } else if ratio < 0.9 {
-        (Color::LightRed, "DANGER")
-    } else {
-        (Color::Red, "CRITICAL")
-    };
-
-    let gauge = Gauge::default()
-        .block(Block::default().borders(Borders::ALL).title(title))
-        .gauge_style(Style::default().fg(tension_color).bg(Color::DarkGray))
-        .use_unicode(true)
-        .ratio(ratio.clamp(0.0, 1.0));
-
-    if ratio >= 1.0 {
-        gauge.label("SNAP! (100%)")
-    } else {
-        gauge.label(format!("{} ({:.0}%)", label, ratio * 100.0))
-    }
-}
-
 #[cfg(feature = "nova")]
 fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
@@ -4753,29 +4729,38 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 height: 50.0,
                 color: Color::Cyan,
             });
-            // Top Sky (Darker)
+            // Deep Sky
             ctx.draw(&Rectangle {
                 x: 0.0,
-                y: 75.0,
+                y: 80.0,
                 width: 100.0,
-                height: 25.0,
+                height: 20.0,
                 color: Color::Blue,
             });
 
             // Water Gradient
+            // Surface
             ctx.draw(&Rectangle {
                 x: 0.0,
-                y: 0.0,
+                y: 40.0,
                 width: 100.0,
-                height: 50.0,
+                height: 10.0,
+                color: Color::LightBlue,
+            });
+            // Mid
+            ctx.draw(&Rectangle {
+                x: 0.0,
+                y: 20.0,
+                width: 100.0,
+                height: 20.0,
                 color: Color::Blue,
             });
-            // Deep Water
+            // Deep
             ctx.draw(&Rectangle {
                 x: 0.0,
                 y: 0.0,
                 width: 100.0,
-                height: 25.0,
+                height: 20.0,
                 color: Color::DarkGray,
             });
 
@@ -4839,12 +4824,6 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     "⚪"
                 };
                 ctx.print(bobber_x, app_state.fishing_bobber_y, bobber_icon);
-                // Center detail
-                ctx.print(
-                    bobber_x - 0.5,
-                    app_state.fishing_bobber_y - 0.5,
-                    if app_state.fishing_hooked { "!" } else { "." },
-                );
 
                 if app_state.fishing_hooked {
                     // Splash particles
@@ -4858,27 +4837,27 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     }
 
                     // Water churn
-                    ctx.print(bobber_x - 2.0, app_state.fishing_bobber_y, "~");
-                    ctx.print(bobber_x + 2.0, app_state.fishing_bobber_y, "~");
+                    ctx.print(bobber_x - 2.0, app_state.fishing_bobber_y, "≈");
+                    ctx.print(bobber_x + 2.0, app_state.fishing_bobber_y, "≈");
                 }
 
                 // Fish (Icon)
                 if app_state.fishing_fish_y > 0.0 && app_state.fishing_fish_y < 100.0 {
                     let fish_icon = if app_state.fishing_tension > 0.8 {
                         "🦈"
+                    } else if app_state.fishing_tension > 0.5 {
+                        "🐠"
                     } else {
                         "🐟"
                     };
                     // Fish tries to align with bobber X somewhat, or fights away?
-                    // Let's keep it independent X for now (49.0 originally)
-                    // But maybe shift it slightly based on tension (fight)
                     let fish_x = 49.0
                         + (app_state.fishing_tension * 10.0 * ((vm.tick_counter % 5) as f64 - 2.0));
                     ctx.print(fish_x, app_state.fishing_fish_y, fish_icon);
                 }
 
                 // Instructions Overlay (Top Right)
-                ctx.print(60.0, 90.0, "SPACE: Reel (Hold)");
+                ctx.print(60.0, 95.0, "SPACE: Reel (Hold)");
             } else {
                 ctx.print(35.0, 90.0, "Press SPACE to Cast");
             }
@@ -4888,8 +4867,29 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     // Tension Bar
     let tension = app_state.fishing_tension;
-    let gauge = draw_tension_gauge("Line Tension", tension);
-    f.render_widget(gauge, chunks[1]);
+    let (tension_color, label) = if tension < 0.3 {
+        (Color::Green, "RELAXED")
+    } else if tension < 0.6 {
+        (Color::Yellow, "TENSION")
+    } else if tension < 0.85 {
+        (Color::LightRed, "STRAIN")
+    } else {
+        (Color::Red, "BREAKING!")
+    };
+
+    let gauge = Gauge::default()
+        .block(Block::default().borders(Borders::ALL).title("Line Tension"))
+        .gauge_style(Style::default().fg(tension_color).bg(Color::DarkGray))
+        .use_unicode(true)
+        .ratio(tension.clamp(0.0, 1.0));
+
+    let label_text = if tension >= 1.0 {
+        "SNAP! (100%)".to_string()
+    } else {
+        format!("{} ({:.0}%)", label, tension * 100.0)
+    };
+
+    f.render_widget(gauge.label(label_text), chunks[1]);
 
     let info = Paragraph::new("Space: Cast/Reel | Wait for bite...")
         .block(Block::default().borders(Borders::ALL));
