@@ -75,6 +75,7 @@ pub mod hypnagogia;
 pub mod io;
 pub mod lexicon;
 pub mod linguistics;
+pub mod memetics;
 pub mod list;
 pub mod logic;
 pub mod math;
@@ -332,6 +333,12 @@ impl PrologueState {
                             | "↑"
                             | "↓"
                             | "≅"
+                        // Memetics
+                            | "ι"
+                            | "κ"
+                            | "ε"
+                            | "σ"
+                            | "φ"
                     ) {
                         self.runes.insert((y, x));
 
@@ -639,6 +646,9 @@ fn apply_propagation_rune(
     if prism::apply_prism_runes(rune, y, x, current_signals, next_signals, dna) {
         return true;
     }
+    if memetics::apply_memetic_runes(rune, y, x, current_signals, next_signals, grid) {
+        return true;
+    }
     if linguistics::apply_linguistics_runes(rune, y, x, current_signals, next_signals) {
         return true;
     }
@@ -843,6 +853,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             psionics::apply_psionics_sinks(vm, rune, y, x);
             resonance::apply_resonance_sinks(vm, rune, y, x);
             prism::apply_prism_sinks(vm, rune, y, x);
+            memetics::apply_memetic_sinks(vm, rune, y, x);
         }
     }
 }
