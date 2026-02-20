@@ -123,6 +123,9 @@ pub struct PrologueState {
     /// Hypnagogia: Dream Intensity (0.0 - 100.0).
     #[serde(default)]
     pub dream_intensity: f32,
+    /// Scratch buffer for signal propagation (Double Buffering).
+    #[serde(skip, default)]
+    pub scratch_signal_grid: Vec<Vec<Option<Value>>>,
 }
 
 fn default_epigenetic_grid() -> Vec<Vec<epigenetics::EpigeneticMark>> {
@@ -144,6 +147,7 @@ impl PrologueState {
             history: HashMap::new(),
             epigenetic_grid: vec![vec![epigenetics::EpigeneticMark::None; GRID_SIZE]; GRID_SIZE],
             dream_intensity: 0.0,
+            scratch_signal_grid: vec![vec![None; GRID_SIZE]; GRID_SIZE],
         }
     }
 
@@ -406,9 +410,23 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
     let runes: Vec<(usize, usize)> = vm.prologue_state.runes.iter().cloned().collect();
     let tick = vm.tick_counter;
 
+    // Ensure scratch buffer is ready (in case of serialization/deserialization)
+    if vm.prologue_state.scratch_signal_grid.len() != GRID_SIZE {
+        vm.prologue_state.scratch_signal_grid = vec![vec![None; GRID_SIZE]; GRID_SIZE];
+    }
+
     for _ in 0..max_iterations {
         let mut changes = false;
-        let mut next_signals = vm.prologue_state.signal_grid.clone();
+        // Swap out the scratch buffer to use as next state
+        let mut next_signals = std::mem::take(&mut vm.prologue_state.scratch_signal_grid);
+
+        // Ensure proper sizing (std::mem::take replaces with default empty Vec)
+        if next_signals.len() != GRID_SIZE {
+            next_signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
+        }
+
+        // Copy current state to next state (reusing allocation)
+        next_signals.clone_from(&vm.prologue_state.signal_grid);
 
         for (y, x) in &runes {
             // Epigenetic Check: Methylation stops propagation
@@ -445,7 +463,12 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                 }
             }
         }
-        vm.prologue_state.signal_grid = next_signals;
+        // Swap buffers: next_signals becomes the new signal_grid
+        std::mem::swap(&mut vm.prologue_state.signal_grid, &mut next_signals);
+
+        // Return the used buffer (now containing old state) to scratch for reuse
+        vm.prologue_state.scratch_signal_grid = next_signals;
+
         if !changes {
             break;
         }
