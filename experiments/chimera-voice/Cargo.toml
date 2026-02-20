@@ -1,0 +1,19 @@
+[package]
+name = "chimera-voice"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+anyhow = "1.0"
+parking_lot = "0.12"
+rand = "0.8"
+chimera-lang = { path = "../chimera-lang", features = ["nova"] }
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = ["audio"]
+audio = ["dep:cpal"]
