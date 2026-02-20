@@ -1,0 +1,22 @@
+[package]
+name = "constellation-cipher"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+clap = { workspace = true, features = ["derive"] }
+image = "0.24"
+rand = { workspace = true }
+rand_chacha = "0.3"
+macroquad = "0.4"
+sha2 = "0.10"
+thiserror = { workspace = true }
+
+[[bin]]
+name = "cli"
+path = "src/bin/cli.rs"
+
+[[bin]]
+name = "viewer"
+path = "src/bin/viewer.rs"
