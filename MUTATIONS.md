@@ -20,13 +20,6 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Proposed by**: Agent name
 -->
 
-### neuro-syncopation
-- **Parent A**: experiments/syncopated-threads
-- **Parent B**: crates/neuro-sim
-- **Concept**: A Spiking Neural Network where each neuron is a thread, and synapses are mutexes. Spikes are successful locks.
-- **Novel trait**: Parallel Neural Dynamics. The brain's rhythm is physically constrained by the OS scheduler.
-- **Status**: Proposed.
-
 ---
 
 ## 🌿 Spawned Hybrids
@@ -35,12 +28,12 @@ Mendel's peas. Darwin's finches. Your experiments.
 
 **NOTE:** Automated workspace verification failed due to `glam`/`bevy` version conflicts in `hive-mind-dependencies`. Verification was performed partially.
 
-### chimera-syncopation
-- **Parents**: experiments/syncopated-threads + experiments/chimera-lang
-- **Concept**: ChimeraVM agents ("Musicians") execute genetic code where opcodes trigger attempts to lock "Instrument" mutexes.
-- **Novel trait**: Algo-Rhythmic Evolution. The program's execution speed and rhythm are determined by thread contention.
-- **Status**: experiments/chimera-syncopation
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified compilation.
+### neuro-syncopation
+- **Parents**: experiments/syncopated-threads + crates/neuro-sim
+- **Concept**: A Spiking Neural Network where each neuron is a thread, and synapses are mutexes. Spikes are successful locks.
+- **Novel trait**: Parallel Neural Dynamics. The brain's rhythm is physically constrained by the OS scheduler.
+- **Status**: experiments/neuro-syncopation
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational. Verified compilation.
 
 ### ferro-file
 - **Parents**: experiments/ferrous-graph + experiments/fluid-rain
@@ -48,6 +41,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Grid-based density pressure + Magnetic forces in ASCII.
 - **Status**: experiments/ferrous-fluid
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.
+
+### chimera-syncopation
+- **Parents**: experiments/syncopated-threads + experiments/chimera-lang
+- **Concept**: ChimeraVM agents ("Musicians") execute genetic code where opcodes trigger attempts to lock "Instrument" mutexes.
+- **Novel trait**: Algo-Rhythmic Evolution. The program's execution speed and rhythm are determined by thread contention.
+- **Status**: experiments/chimera-syncopation
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified compilation.
 
 ### code-bio-dome
 - **Parents**: experiments/code-crawler + experiments/biomorph-flow
@@ -1373,14 +1373,14 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A "Living Synthesizer" where the vocal tract is controlled by a genetic program. The "tongue" is the memory grid of the organism.
 - **Novel trait**: Evolving Phonemes. The code learns to speak.
 - **Status**: experiments/chimera-voice
-- **Evaluation**: Compiles (Warnings: Audio disabled). Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles (Warnings: Audio disabled). Implemented by The Splice Surgeon. Verified.
 
 ### hyperbolic-bees
 - **Parents**: experiments/waggle-dance + experiments/hyperbolic-finder
 - **Concept**: Bees foraging on the Poincaré Disk. The "Waggle Dance" communicates vector information (angle/distance) in hyperbolic space.
 - **Novel trait**: Hyperbolic Waggle Dance. Distance is encoded exponentially.
 - **Status**: experiments/hyperbolic-bees
-- **Evaluation**: Compiles (Fixed). Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles (Fixed). Implemented by The Splice Surgeon. Verified.
 
 ### liquidity-bridge
 - **Parents**: experiments/biomimetic-bridge + experiments/market-swarm
@@ -1394,4 +1394,4 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: "Magnetic Filesystem". Files are magnetic dipoles in a 3D lattice, interacting via Ising model dynamics.
 - **Novel trait**: Data Magnetism. Files act as spins; empty space is vacuum.
 - **Status**: experiments/ferro-file
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.
+- **Evaluation**: Compiles (Warnings). Implemented by The Splice Surgeon. Tests passed.
