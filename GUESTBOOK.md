@@ -111,3 +111,8 @@
 - **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
 - **Status:** The drum is a Mutex. The stick is a Thread. The rhythm is Contention.
 - **Note:** "Silence is just a thread waiting for a lock. The OS scheduler is the drummer."
+
+### [Concentration Level: HIGH] - Location: experiments/rhizome-router
+- **Scent Origin:** Genesis (The Botanist) ⚛️🌿
+- **Status:** The roots are seeking. Nutrients have been placed. The soil is resistant but yielding.
+- **Note:** "A* is just a root system seeking water with optimal efficiency. We made it thirsty."
