@@ -1,13 +1,13 @@
 use macroquad::prelude::*;
 
-mod pbd;
 mod mesh;
+mod pbd;
 mod phonology;
 
-use pbd::PbdSystem;
+use ::rand::{thread_rng, Rng};
 use mesh::Mesh as OrigamiMesh;
-use phonology::{Word, Rule, GrimmsLaw, VowelShift};
-use ::rand::{Rng, thread_rng};
+use pbd::PbdSystem;
+use phonology::{GrimmsLaw, Rule, VowelShift, Word};
 
 fn conf() -> Conf {
     Conf {
@@ -25,7 +25,8 @@ async fn main() {
     let mut system = PbdSystem::new();
     let mut origami = OrigamiMesh::new();
 
-    let initial_text = "In the beginning was the Word, and the Word was with God, and the Word was God.";
+    let initial_text =
+        "In the beginning was the Word, and the Word was with God, and the Word was God.";
 
     // Generate Pattern
     let rows = 12;
@@ -54,10 +55,10 @@ async fn main() {
             fold_rho = (fold_rho - 0.01).max(0.0);
         }
         if is_key_pressed(KeyCode::R) {
-             system = PbdSystem::new();
-             origami.generate_miura_ori(&mut system, rows, cols, initial_text);
-             fold_rho = 0.0;
-             mutated_indices.clear();
+            system = PbdSystem::new();
+            origami.generate_miura_ori(&mut system, rows, cols, initial_text);
+            fold_rho = 0.0;
+            mutated_indices.clear();
         }
 
         // Camera
@@ -86,13 +87,17 @@ async fn main() {
             let collision_threshold = 0.5; // Tuning needed based on 'a' size (1.0)
 
             // Calculate centroids first
-            let centroids: Vec<Vec3> = origami.cells.iter().map(|cell| {
-                let p0 = system.particles[cell.indices[0]].pos;
-                let p1 = system.particles[cell.indices[1]].pos;
-                let p2 = system.particles[cell.indices[2]].pos;
-                let p3 = system.particles[cell.indices[3]].pos;
-                (p0 + p1 + p2 + p3) / 4.0
-            }).collect();
+            let centroids: Vec<Vec3> = origami
+                .cells
+                .iter()
+                .map(|cell| {
+                    let p0 = system.particles[cell.indices[0]].pos;
+                    let p1 = system.particles[cell.indices[1]].pos;
+                    let p2 = system.particles[cell.indices[2]].pos;
+                    let p3 = system.particles[cell.indices[3]].pos;
+                    (p0 + p1 + p2 + p3) / 4.0
+                })
+                .collect();
 
             // Check pairs
             for i in 0..origami.cells.len() {
@@ -111,22 +116,26 @@ async fn main() {
                     if dist < collision_threshold {
                         // Collision!
                         // Mutate content
-                        if let (Some(c1), Some(c2)) = (origami.cells[i].content, origami.cells[j].content) {
+                        if let (Some(c1), Some(c2)) =
+                            (origami.cells[i].content, origami.cells[j].content)
+                        {
                             // Convert to word "c1c2"
                             let s = format!("{}{}", c1, c2);
                             let mut w = Word::new(&s);
 
                             // Apply rules
-                            let rules: Vec<Box<dyn Rule>> = vec![
-                                Box::new(GrimmsLaw),
-                                Box::new(VowelShift),
-                            ];
+                            let rules: Vec<Box<dyn Rule>> =
+                                vec![Box::new(GrimmsLaw), Box::new(VowelShift)];
                             let rule_idx = rng.gen_range(0..rules.len());
 
                             if rules[rule_idx].apply(&mut w, &mut rng) {
                                 // Apply changes back
-                                if w.phonemes.len() >= 1 { origami.cells[i].content = Some(w.phonemes[0].symbol); }
-                                if w.phonemes.len() >= 2 { origami.cells[j].content = Some(w.phonemes[1].symbol); }
+                                if w.phonemes.len() >= 1 {
+                                    origami.cells[i].content = Some(w.phonemes[0].symbol);
+                                }
+                                if w.phonemes.len() >= 2 {
+                                    origami.cells[j].content = Some(w.phonemes[1].symbol);
+                                }
 
                                 mutated_indices.push(i);
                                 mutated_indices.push(j);
@@ -197,7 +206,7 @@ async fn main() {
                     base_color.r * intensity,
                     base_color.g * intensity,
                     base_color.b * intensity,
-                    1.0
+                    1.0,
                 );
 
                 mq_mesh.vertices.push(Vertex {
@@ -244,7 +253,7 @@ async fn main() {
 
                     // Check depth (z > 0 means in front of camera plane)
                     if screen_pos.z > 0.0 {
-                         draw_text(&c.to_string(), x, y, 20.0, WHITE);
+                        draw_text(&c.to_string(), x, y, 20.0, WHITE);
                     }
                 }
             }
@@ -252,15 +261,31 @@ async fn main() {
 
         // UI
         draw_text("🧬 Origami Lexicon", 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Fold (Rho): {:.2}", fold_rho), 20.0, 60.0, 20.0, WHITE);
+        draw_text(
+            &format!("Fold (Rho): {:.2}", fold_rho),
+            20.0,
+            60.0,
+            20.0,
+            WHITE,
+        );
         draw_text("Use UP/DOWN arrows to fold/unfold.", 20.0, 80.0, 20.0, GRAY);
-        draw_text("Folding causes distant words to touch and mutate.", 20.0, 100.0, 20.0, GRAY);
+        draw_text(
+            "Folding causes distant words to touch and mutate.",
+            20.0,
+            100.0,
+            20.0,
+            GRAY,
+        );
 
         // Show reconstructed text
-        let current_text: String = origami.cells.iter()
-            .filter_map(|c| c.content)
-            .collect();
-        draw_text(&format!("Text: {:.50}...", current_text), 20.0, screen_height() - 30.0, 20.0, WHITE);
+        let current_text: String = origami.cells.iter().filter_map(|c| c.content).collect();
+        draw_text(
+            &format!("Text: {:.50}...", current_text),
+            20.0,
+            screen_height() - 30.0,
+            20.0,
+            WHITE,
+        );
 
         next_frame().await
     }

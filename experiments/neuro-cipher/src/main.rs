@@ -156,20 +156,30 @@ impl CipherCreature {
         let actuators_per_col = MESH_ROWS + 1;
 
         for col in 0..(MESH_COLS - 1) {
-             let start_idx = col * actuators_per_col;
-             let mut total_strain = 0.0;
-             for j in 0..actuators_per_col {
-                 if let Some(act_idx) = self.actuators_v.get(start_idx + j) {
-                     if let Constraint::Actuator { p1, p2, min_len, max_len, factor, .. } = self.system.constraints[*act_idx] {
-                         let current_len = self.system.particles[p1].pos.distance(self.system.particles[p2].pos);
-                         let target = min_len + (max_len - min_len) * factor;
-                         total_strain += (current_len - target).abs();
-                     }
-                 }
-             }
-             if col < self.sensor_neurons.len() {
-                 inputs[self.sensor_neurons[col]] = total_strain * 5.0;
-             }
+            let start_idx = col * actuators_per_col;
+            let mut total_strain = 0.0;
+            for j in 0..actuators_per_col {
+                if let Some(act_idx) = self.actuators_v.get(start_idx + j) {
+                    if let Constraint::Actuator {
+                        p1,
+                        p2,
+                        min_len,
+                        max_len,
+                        factor,
+                        ..
+                    } = self.system.constraints[*act_idx]
+                    {
+                        let current_len = self.system.particles[p1]
+                            .pos
+                            .distance(self.system.particles[p2].pos);
+                        let target = min_len + (max_len - min_len) * factor;
+                        total_strain += (current_len - target).abs();
+                    }
+                }
+            }
+            if col < self.sensor_neurons.len() {
+                inputs[self.sensor_neurons[col]] = total_strain * 5.0;
+            }
         }
 
         self.brain.step(&inputs);
@@ -178,17 +188,34 @@ impl CipherCreature {
         for col in 0..(MESH_COLS - 1) {
             if col < self.motor_neurons.len() {
                 let neuron_idx = self.motor_neurons[col];
-                let target_factor = if self.brain.is_spiking(neuron_idx) { 0.0 } else { 1.0 };
+                let target_factor = if self.brain.is_spiking(neuron_idx) {
+                    0.0
+                } else {
+                    1.0
+                };
 
                 let start_idx = col * actuators_per_col;
                 for j in 0..actuators_per_col {
                     if let Some(act_idx) = self.actuators_v.get(start_idx + j) {
-                         if let Constraint::Actuator { p1, p2, min_len, max_len, factor, stiffness } = self.system.constraints[*act_idx] {
-                             let new_factor = factor + (target_factor - factor) * 0.1;
-                             self.system.constraints[*act_idx] = Constraint::Actuator {
-                                 p1, p2, min_len, max_len, factor: new_factor, stiffness
-                             };
-                         }
+                        if let Constraint::Actuator {
+                            p1,
+                            p2,
+                            min_len,
+                            max_len,
+                            factor,
+                            stiffness,
+                        } = self.system.constraints[*act_idx]
+                        {
+                            let new_factor = factor + (target_factor - factor) * 0.1;
+                            self.system.constraints[*act_idx] = Constraint::Actuator {
+                                p1,
+                                p2,
+                                min_len,
+                                max_len,
+                                factor: new_factor,
+                                stiffness,
+                            };
+                        }
                     }
                 }
             }
@@ -201,20 +228,20 @@ impl CipherCreature {
     fn draw(&self) {
         // Draw StarMap (Background Plane)
         if let Some(tex) = &self.target_texture {
-             let mesh_width = (MESH_COLS as f32) * 2.0;
-             let mesh_height = (MESH_ROWS as f32) * 2.0;
+            let mesh_width = (MESH_COLS as f32) * 2.0;
+            let mesh_height = (MESH_ROWS as f32) * 2.0;
 
-             // Draw a quad with the texture below the mesh
-             draw_texture_ex(
-                 tex,
-                 -mesh_width / 2.0,
-                 -mesh_height / 2.0,
-                 WHITE,
-                 DrawTextureParams {
-                     dest_size: Some(vec2(mesh_width, mesh_height)),
-                     ..Default::default()
-                 },
-             );
+            // Draw a quad with the texture below the mesh
+            draw_texture_ex(
+                tex,
+                -mesh_width / 2.0,
+                -mesh_height / 2.0,
+                WHITE,
+                DrawTextureParams {
+                    dest_size: Some(vec2(mesh_width, mesh_height)),
+                    ..Default::default()
+                },
+            );
         }
 
         // Build Mesh
@@ -246,9 +273,24 @@ impl CipherCreature {
 
             let start_idx = mesh.vertices.len() as u16;
 
-            mesh.vertices.push(Vertex { position: v1, uv: Vec2::ZERO, color: color_bytes, normal: normal_v4 });
-            mesh.vertices.push(Vertex { position: v2, uv: Vec2::ZERO, color: color_bytes, normal: normal_v4 });
-            mesh.vertices.push(Vertex { position: v3, uv: Vec2::ZERO, color: color_bytes, normal: normal_v4 });
+            mesh.vertices.push(Vertex {
+                position: v1,
+                uv: Vec2::ZERO,
+                color: color_bytes,
+                normal: normal_v4,
+            });
+            mesh.vertices.push(Vertex {
+                position: v2,
+                uv: Vec2::ZERO,
+                color: color_bytes,
+                normal: normal_v4,
+            });
+            mesh.vertices.push(Vertex {
+                position: v3,
+                uv: Vec2::ZERO,
+                color: color_bytes,
+                normal: normal_v4,
+            });
 
             mesh.indices.push(start_idx);
             mesh.indices.push(start_idx + 1);
@@ -318,7 +360,9 @@ fn generate_miura_ori(rows: usize, cols: usize) -> (PbdSystem, Vec<u16>, Vec<usi
         for j in 0..=rows {
             let p_left = (i - 1) * (rows + 1) + j;
             let p_right = (i + 1) * (rows + 1) + j;
-            let dist = system.particles[p_left].pos.distance(system.particles[p_right].pos);
+            let dist = system.particles[p_left]
+                .pos
+                .distance(system.particles[p_right].pos);
             let folded_dist = dist * 0.1;
             system.add_actuator_constraint(p_left, p_right, folded_dist, dist, 0.2);
             actuators_v.push(system.constraints.len() - 1);
@@ -330,7 +374,9 @@ fn generate_miura_ori(rows: usize, cols: usize) -> (PbdSystem, Vec<u16>, Vec<usi
         for j in 1..rows {
             let p_top = i * (rows + 1) + (j - 1);
             let p_bottom = i * (rows + 1) + (j + 1);
-            let dist = system.particles[p_top].pos.distance(system.particles[p_bottom].pos);
+            let dist = system.particles[p_top]
+                .pos
+                .distance(system.particles[p_bottom].pos);
             let folded_dist = dist * 0.1;
             system.add_actuator_constraint(p_top, p_bottom, folded_dist, dist, 0.2);
             actuators_h.push(system.constraints.len() - 1);
@@ -362,8 +408,8 @@ async fn main() {
 
         // Mouse interaction
         if is_mouse_button_down(MouseButton::Left) {
-             let idx = ::rand::thread_rng().gen_range(0..creature.brain.neurons.len());
-             creature.brain.neurons[idx].v += 50.0;
+            let idx = ::rand::thread_rng().gen_range(0..creature.brain.neurons.len());
+            creature.brain.neurons[idx].v += 50.0;
         }
 
         creature.update(0.016);
@@ -373,8 +419,20 @@ async fn main() {
 
         // UI
         draw_text("NEURO-CIPHER", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Focus/Score: {:.2}", creature.score), 10.0, 50.0, 20.0, GREEN);
-        draw_text("The Neural Network folds the mesh to reveal the StarMap", 10.0, 70.0, 20.0, GRAY);
+        draw_text(
+            &format!("Focus/Score: {:.2}", creature.score),
+            10.0,
+            50.0,
+            20.0,
+            GREEN,
+        );
+        draw_text(
+            "The Neural Network folds the mesh to reveal the StarMap",
+            10.0,
+            70.0,
+            20.0,
+            GRAY,
+        );
 
         // Visualize Brain
         let start_x = 10.0;
@@ -384,7 +442,11 @@ async fn main() {
         for (i, neuron) in creature.brain.neurons.iter().enumerate() {
             let x = start_x + (i % 20) as f32 * spacing;
             let y = start_y + (i / 20) as f32 * spacing;
-            let color = if neuron.v > 0.0 { GREEN } else { Color::new(0.2, 0.2, 0.2, 1.0) };
+            let color = if neuron.v > 0.0 {
+                GREEN
+            } else {
+                Color::new(0.2, 0.2, 0.2, 1.0)
+            };
             draw_circle(x, y, 5.0, color);
         }
 

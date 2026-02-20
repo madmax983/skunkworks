@@ -26,7 +26,13 @@ impl Mesh {
         }
     }
 
-    pub fn generate_miura_ori(&mut self, system: &mut PbdSystem, rows: usize, cols: usize, text: &str) {
+    pub fn generate_miura_ori(
+        &mut self,
+        system: &mut PbdSystem,
+        rows: usize,
+        cols: usize,
+        text: &str,
+    ) {
         self.rows = rows;
         self.cols = cols;
         self.indices.clear();
@@ -52,11 +58,7 @@ impl Mesh {
                 let cx = (cols as f32 * a) / 2.0;
                 let cz = (rows as f32 * b) / 2.0;
 
-                let y_bias = if (i + j) % 2 == 0 {
-                    0.1
-                } else {
-                    -0.1
-                };
+                let y_bias = if (i + j) % 2 == 0 { 0.1 } else { -0.1 };
 
                 system.add_particle(vec3(x - cx, y_bias, z - cz), 1.0);
             }
@@ -103,7 +105,7 @@ impl Mesh {
         }
 
         // Edges (Grid lines)
-         for i in 0..=rows {
+        for i in 0..=rows {
             for j in 0..=cols {
                 let p = idx(i, j);
                 if j < cols {
@@ -113,7 +115,7 @@ impl Mesh {
                     system.add_distance_constraint(p, idx(i + 1, j), stiffness);
                 }
             }
-         }
+        }
 
         // 3. Bending Constraints
         let bend_stiffness = 0.2;
@@ -140,16 +142,21 @@ impl Mesh {
         }
 
         // Pin center
-        let center = idx(rows/2, cols/2);
+        let center = idx(rows / 2, cols / 2);
         let p_center = system.particles[center].pos;
         system.add_pin_constraint(center, p_center);
     }
 
     pub fn update_folds(&self, system: &mut PbdSystem, rho: f32) {
         for &(idx, _sign) in &self.bending_indices {
-             if let Constraint::Bending { flat_length, target_length, .. } = &mut system.constraints[idx] {
-                 *target_length = *flat_length * (1.0 - rho * 0.5);
-             }
+            if let Constraint::Bending {
+                flat_length,
+                target_length,
+                ..
+            } = &mut system.constraints[idx]
+            {
+                *target_length = *flat_length * (1.0 - rho * 0.5);
+            }
         }
     }
 }

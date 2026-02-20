@@ -1,5 +1,5 @@
-use thermo_termites::world::{World, Agent, WIDTH, HEIGHT};
 use rand::Rng;
+use thermo_termites::world::{Agent, World, HEIGHT, WIDTH};
 
 #[test]
 fn test_termite_cooling_efficiency() {
@@ -16,7 +16,7 @@ fn test_termite_cooling_efficiency() {
     println!("Running for {} steps...", steps);
     for i in 0..steps {
         if i % 100 == 0 {
-             // Optional progress log
+            // Optional progress log
         }
         control.update();
         experiment.update();
@@ -31,7 +31,12 @@ fn test_termite_cooling_efficiency() {
 
     // 5. Assert
     // We expect termites to make it cooler
-    assert!(t_experiment < t_control, "Termites failed to cool the servers! Control: {}, Exp: {}", t_control, t_experiment);
+    assert!(
+        t_experiment < t_control,
+        "Termites failed to cool the servers! Control: {}, Exp: {}",
+        t_control,
+        t_experiment
+    );
 }
 
 fn setup_world(world: &mut World, add_termites: bool) {

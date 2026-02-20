@@ -27,7 +27,11 @@ fn test_load_transfer() {
     // Check if load decreased on m1
     let load_decreased = world.mushrooms[m1].load < 150.0;
 
-    assert!(load_decreased, "Source load should decrease (Current: {})", world.mushrooms[m1].load);
+    assert!(
+        load_decreased,
+        "Source load should decrease (Current: {})",
+        world.mushrooms[m1].load
+    );
     // Note: Packet might not spawn if transfer amount is < epsilon, but with 50 excess and 0.1 dt, it should be 25.
     assert!(packet_exists, "Packet should be spawned to transfer load");
 }

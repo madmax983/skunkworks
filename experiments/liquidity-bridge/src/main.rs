@@ -1,24 +1,24 @@
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
-    Frame, Terminal,
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     symbols::Marker,
     widgets::{
-        Block, Borders, Paragraph,
         canvas::{Canvas, Points},
+        Block, Borders, Paragraph,
     },
+    Frame, Terminal,
 };
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
-mod market;
 mod ants;
+mod market;
 
-use market::{Grid, Particle, Terrain};
 use ants::AntColony;
+use market::{Grid, Particle, Terrain};
 
 struct App {
     grid: Grid,
@@ -91,12 +91,13 @@ impl App {
         use rand::Rng;
         let mut rng = rand::thread_rng();
         if rng.gen_bool(0.1) {
-             let x = rng.gen_range(0..self.grid.width);
-             self.grid.set_particle(x, self.grid.height - 1, Particle::Bid(0));
+            let x = rng.gen_range(0..self.grid.width);
+            self.grid
+                .set_particle(x, self.grid.height - 1, Particle::Bid(0));
         }
         if rng.gen_bool(0.1) {
-             let x = rng.gen_range(0..self.grid.width);
-             self.grid.set_particle(x, 0, Particle::Ask(0));
+            let x = rng.gen_range(0..self.grid.width);
+            self.grid.set_particle(x, 0, Particle::Ask(0));
         }
 
         // 4. Volatility dynamics
@@ -153,10 +154,7 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result
 fn ui(f: &mut Frame, app: &mut App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Min(0),
-            Constraint::Length(1),
-        ])
+        .constraints([Constraint::Min(0), Constraint::Length(1)])
         .split(f.area());
 
     // Prepare buffers
@@ -197,13 +195,17 @@ fn ui(f: &mut Frame, app: &mut App) {
 
     // Ants overlay
     for ant in &app.ants.ants {
-         let render_y = (app.grid.height - 1 - ant.y) as f64;
-         let render_x = ant.x as f64;
-         app.ant_buf.push((render_x, render_y));
+        let render_y = (app.grid.height - 1 - ant.y) as f64;
+        let render_x = ant.x as f64;
+        app.ant_buf.push((render_x, render_y));
     }
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" Liquidity Bridge "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Liquidity Bridge "),
+        )
         .x_bounds([0.0, app.grid.width as f64])
         .y_bounds([0.0, app.grid.height as f64])
         .marker(Marker::Block)

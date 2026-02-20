@@ -66,7 +66,18 @@ async fn main() {
 
         // Background scrolling text
         if time - last_spawn_time > 3.0 {
-            let words = ["FLOW", "FLUID", "CHAOS", "VORTEX", "TURBULENCE", "RUST", "MACROQUAD", "SIMULATION", "GENESIS", "MOONSHOT"];
+            let words = [
+                "FLOW",
+                "FLUID",
+                "CHAOS",
+                "VORTEX",
+                "TURBULENCE",
+                "RUST",
+                "MACROQUAD",
+                "SIMULATION",
+                "GENESIS",
+                "MOONSHOT",
+            ];
             let word = words[rand::gen_range(0, words.len())];
             let y = rand::gen_range(10.0, HEIGHT as f32 - 10.0);
             // Move left
@@ -134,19 +145,31 @@ async fn main() {
         }
 
         if show_particles {
-             for p in particle_system.particles() {
-                 let x = p.position.x * cell_w;
-                 let y = p.position.y * cell_h;
-                 // Draw char
-                 draw_text(&p.char.to_string(), x, y, cell_h * 1.5, p.color);
-             }
+            for p in particle_system.particles() {
+                let x = p.position.x * cell_w;
+                let y = p.position.y * cell_h;
+                // Draw char
+                draw_text(&p.char.to_string(), x, y, cell_h * 1.5, p.color);
+            }
         }
 
         // Draw UI
         draw_text("Typographic Turbulence", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Particles: {}", particle_system.count()), 10.0, 60.0, 20.0, WHITE);
+        draw_text(
+            &format!("Particles: {}", particle_system.count()),
+            10.0,
+            60.0,
+            20.0,
+            WHITE,
+        );
         draw_text("Type to spawn text. Mouse to stir.", 10.0, 80.0, 20.0, GRAY);
-        draw_text("F: Toggle Fluid | P: Toggle Particles", 10.0, 100.0, 20.0, GRAY);
+        draw_text(
+            "F: Toggle Fluid | P: Toggle Particles",
+            10.0,
+            100.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }

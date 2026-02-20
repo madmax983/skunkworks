@@ -10,7 +10,12 @@ pub struct Attractor {
 
 impl Attractor {
     pub fn new(pos: Vec3, sigma: f32, rho: f32, beta: f32) -> Self {
-        Self { pos, sigma, rho, beta }
+        Self {
+            pos,
+            sigma,
+            rho,
+            beta,
+        }
     }
 
     /// Calculate the derivative at a given state
@@ -135,8 +140,16 @@ mod tests {
         let lle = monitor.get_lle(dt);
         println!("LLE: {}", lle);
 
-        assert!(lle > 0.8, "LLE should be close to 0.9 for Lorenz, got {}", lle);
-        assert!(lle < 1.0, "LLE should be close to 0.9 for Lorenz, got {}", lle);
+        assert!(
+            lle > 0.8,
+            "LLE should be close to 0.9 for Lorenz, got {}",
+            lle
+        );
+        assert!(
+            lle < 1.0,
+            "LLE should be close to 0.9 for Lorenz, got {}",
+            lle
+        );
     }
 
     #[test]
@@ -156,6 +169,10 @@ mod tests {
         let lle = monitor.get_lle(dt);
         println!("Stable LLE: {}", lle);
 
-        assert!(lle < 0.1, "LLE should be small or negative for stable parameters, got {}", lle);
+        assert!(
+            lle < 0.1,
+            "LLE should be small or negative for stable parameters, got {}",
+            lle
+        );
     }
 }

@@ -1,7 +1,7 @@
-use neuro_sim::Network;
 use crate::physics::{DistanceConstraint, PhysicsWorld, VerletPoint};
 use ::rand::Rng;
 use macroquad::prelude::*;
+use neuro_sim::Network;
 
 pub struct ContourCreature {
     pub left_points: Vec<usize>,
@@ -133,7 +133,7 @@ impl ContourCreature {
 
         let total_ms = dt * 1000.0;
         let steps = (total_ms / 1.0).ceil() as usize; // 1ms steps
-        // let sub_dt = total_ms / steps as f32; // Unused as neuro-sim assumes 1.0
+                                                      // let sub_dt = total_ms / steps as f32; // Unused as neuro-sim assumes 1.0
 
         for _ in 0..steps {
             self.cpg.step(&inputs);

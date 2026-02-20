@@ -1,7 +1,7 @@
 mod shaders;
 
 use macroquad::prelude::*;
-use shaders::{VERTEX_SHADER, FRAGMENT_SHADER_SIM, FRAGMENT_SHADER_RENDER};
+use shaders::{FRAGMENT_SHADER_RENDER, FRAGMENT_SHADER_SIM, VERTEX_SHADER};
 
 fn window_conf() -> Conf {
     Conf {
@@ -45,7 +45,8 @@ async fn main() {
             ],
             ..Default::default()
         },
-    ).unwrap();
+    )
+    .unwrap();
 
     let material_render = load_material(
         ShaderSource::Glsl {
@@ -57,7 +58,8 @@ async fn main() {
             uniforms: vec![],
             ..Default::default()
         },
-    ).unwrap();
+    )
+    .unwrap();
 
     // Initial State
     let mut feed = 0.0545;
@@ -94,13 +96,21 @@ async fn main() {
         let beat = ((beat_raw + 1.0) * 0.5).powf(8.0); // Spiky beat
 
         // --- Input ---
-        if is_key_down(KeyCode::Up) { feed += 0.0001; }
-        if is_key_down(KeyCode::Down) { feed -= 0.0001; }
-        if is_key_down(KeyCode::Right) { kill += 0.0001; }
-        if is_key_down(KeyCode::Left) { kill -= 0.0001; }
+        if is_key_down(KeyCode::Up) {
+            feed += 0.0001;
+        }
+        if is_key_down(KeyCode::Down) {
+            feed -= 0.0001;
+        }
+        if is_key_down(KeyCode::Right) {
+            kill += 0.0001;
+        }
+        if is_key_down(KeyCode::Left) {
+            kill -= 0.0001;
+        }
 
         if is_key_pressed(KeyCode::R) {
-             let cam = Camera2D {
+            let cam = Camera2D {
                 render_target: Some(active_target.clone()),
                 zoom: vec2(1.0, 1.0),
                 target: vec2(0.0, 0.0),
@@ -134,26 +144,32 @@ async fn main() {
             // Macroquad render targets are usually upside down compared to screen?
             // But if we just pass through UVs, it should be consistent.
             // Draw a quad covering -1..1
-            draw_texture_ex(&active_target.texture, -1.0, -1.0, WHITE, DrawTextureParams {
-                dest_size: Some(vec2(2.0, 2.0)),
-                ..Default::default()
-            });
+            draw_texture_ex(
+                &active_target.texture,
+                -1.0,
+                -1.0,
+                WHITE,
+                DrawTextureParams {
+                    dest_size: Some(vec2(2.0, 2.0)),
+                    ..Default::default()
+                },
+            );
 
             gl_use_default_material();
 
             // Mouse Interaction (Adding Chemical V)
             if is_mouse_button_down(MouseButton::Left) {
-                 let (mx, my) = mouse_position();
-                 let sw = screen_width();
-                 let sh = screen_height();
+                let (mx, my) = mouse_position();
+                let sw = screen_width();
+                let sh = screen_height();
 
-                 // Map screen mouse to simulation space (-1..1)
-                 // Note: Mouse Y is 0 at top, Screen H at bottom.
-                 // Camera Y is -1 at bottom, 1 at top.
-                 let nx = (mx / sw) * 2.0 - 1.0;
-                 let ny = 1.0 - (my / sh) * 2.0;
+                // Map screen mouse to simulation space (-1..1)
+                // Note: Mouse Y is 0 at top, Screen H at bottom.
+                // Camera Y is -1 at bottom, 1 at top.
+                let nx = (mx / sw) * 2.0 - 1.0;
+                let ny = 1.0 - (my / sh) * 2.0;
 
-                 draw_circle(nx, ny, 0.05, Color::new(0.0, 1.0, 0.0, 1.0));
+                draw_circle(nx, ny, 0.05, Color::new(0.0, 1.0, 0.0, 1.0));
             }
 
             set_default_camera();
@@ -172,18 +188,42 @@ async fn main() {
         // Draw to screen (Upside down issue?)
         // RenderTargets are usually inverted in Y when drawn to screen compared to internal.
         // Let's draw normally and see.
-        draw_texture_ex(&active_target.texture, 0.0, 0.0, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(screen_width(), screen_height())),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &active_target.texture,
+            0.0,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(screen_width(), screen_height())),
+                ..Default::default()
+            },
+        );
 
         gl_use_default_material();
 
         // UI
         draw_text("Chemical Specter ⚛️", 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Feed: {:.4} | Kill: {:.4}", feed, kill), 20.0, 60.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("Beat: {:.2}", beat), 20.0, 80.0, 20.0, if beat > 0.5 { RED } else { GRAY });
-        draw_text("Arrows: Modulate | Click: Add Catalyst | R: Reset", 20.0, screen_height() - 20.0, 20.0, GRAY);
+        draw_text(
+            &format!("Feed: {:.4} | Kill: {:.4}", feed, kill),
+            20.0,
+            60.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            &format!("Beat: {:.2}", beat),
+            20.0,
+            80.0,
+            20.0,
+            if beat > 0.5 { RED } else { GRAY },
+        );
+        draw_text(
+            "Arrows: Modulate | Click: Add Catalyst | R: Reset",
+            20.0,
+            screen_height() - 20.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }

@@ -59,7 +59,7 @@ fn run_app<B: ratatui::backend::Backend>(
     height: usize,
 ) -> Result<()>
 where
-    <B as ratatui::backend::Backend>::Error: Send + Sync + 'static
+    <B as ratatui::backend::Backend>::Error: Send + Sync + 'static,
 {
     let mut last_tick = Instant::now();
     let tick_rate = Duration::from_millis(50); // 20 FPS
@@ -136,36 +136,36 @@ fn render_brain_grid(
             let color = if state.spiked {
                 Color::White // Flash white on spike
             } else if state.contention_events > 0 {
-                 // Decay contention display?
-                 // Since we don't clear contention_events in the loop (we just increment),
-                 // this will eventually stay permanently on.
-                 // Ideally we should visualize *recent* contention.
-                 // But for now, let's just color by voltage.
+                // Decay contention display?
+                // Since we don't clear contention_events in the loop (we just increment),
+                // this will eventually stay permanently on.
+                // Ideally we should visualize *recent* contention.
+                // But for now, let's just color by voltage.
 
-                 // Map -90..30 to Hue?
-                 // -90 -> Blue
-                 // -65 -> Cyan/Green
-                 // -40 -> Yellow
-                 // 30 -> Red
-                 if v < -60.0 {
-                     Color::Blue
-                 } else if v < -40.0 {
-                     Color::Cyan
-                 } else if v < 0.0 {
-                     Color::Yellow
-                 } else {
-                     Color::Red
-                 }
+                // Map -90..30 to Hue?
+                // -90 -> Blue
+                // -65 -> Cyan/Green
+                // -40 -> Yellow
+                // 30 -> Red
+                if v < -60.0 {
+                    Color::Blue
+                } else if v < -40.0 {
+                    Color::Cyan
+                } else if v < 0.0 {
+                    Color::Yellow
+                } else {
+                    Color::Red
+                }
             } else {
-                 if v < -60.0 {
-                     Color::Blue
-                 } else if v < -40.0 {
-                     Color::Cyan
-                 } else if v < 0.0 {
-                     Color::Yellow
-                 } else {
-                     Color::Red
-                 }
+                if v < -60.0 {
+                    Color::Blue
+                } else if v < -40.0 {
+                    Color::Cyan
+                } else if v < 0.0 {
+                    Color::Yellow
+                } else {
+                    Color::Red
+                }
             };
 
             // Use block character
@@ -175,7 +175,6 @@ fn render_brain_grid(
         rows.push(ratatui::text::Line::from(row_spans));
     }
 
-    let p = Paragraph::new(rows)
-        .block(Block::default().borders(Borders::ALL).title("Cortex"));
+    let p = Paragraph::new(rows).block(Block::default().borders(Borders::ALL).title("Cortex"));
     f.render_widget(p, area);
 }

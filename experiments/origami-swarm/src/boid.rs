@@ -1,7 +1,7 @@
-use neuro_sim::Network;
-use physics_pbd::{Constraint, PbdSystem};
 use ::rand::Rng;
 use macroquad::prelude::*;
+use neuro_sim::Network;
+use physics_pbd::{Constraint, PbdSystem};
 
 const SIM_STEPS: usize = 2;
 

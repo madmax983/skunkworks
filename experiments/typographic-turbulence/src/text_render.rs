@@ -1,5 +1,5 @@
-use rusttype::{Font, Scale, Point};
-use crate::lbm::{FluidSim, WIDTH, HEIGHT};
+use crate::lbm::{FluidSim, HEIGHT, WIDTH};
+use rusttype::{Font, Point, Scale};
 
 pub struct FloatingText {
     pub text: String,
@@ -48,7 +48,7 @@ impl TextManager {
             if text.x > WIDTH as f32 {
                 text.x = -approx_width;
             } else if text.x < -approx_width {
-                 text.x = WIDTH as f32;
+                text.x = WIDTH as f32;
             }
         }
 
@@ -60,7 +60,10 @@ impl TextManager {
             let scale = Scale::uniform(text.scale);
             let v_metrics = self.font.v_metrics(scale);
 
-            let start = Point { x: text.x, y: text.y + v_metrics.ascent };
+            let start = Point {
+                x: text.x,
+                y: text.y + v_metrics.ascent,
+            };
 
             for glyph in self.font.layout(&text.text, scale, start) {
                 if let Some(bb) = glyph.pixel_bounding_box() {

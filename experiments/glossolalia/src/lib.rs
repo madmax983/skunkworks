@@ -1,2 +1,2 @@
-pub mod phonology;
 pub mod lexicon;
+pub mod phonology;

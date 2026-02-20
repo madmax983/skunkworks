@@ -157,8 +157,10 @@ impl QubitSystem {
 
         // Let's assume self is lower bits (0..N-1) and other is higher bits (N..N+M-1).
 
-        for j in 0..other.state.len() { // High bits
-            for i in 0..self.state.len() { // Low bits
+        for j in 0..other.state.len() {
+            // High bits
+            for i in 0..self.state.len() {
+                // Low bits
                 new_state.push(self.state[i] * other.state[j]);
             }
         }
@@ -214,8 +216,14 @@ impl QuantumManager {
     }
 
     pub fn entangle(&mut self, id1: usize, id2: usize) -> Result<()> {
-        let (sys1_id, idx1) = *self.entity_map.get(&id1).ok_or(anyhow!("Entity 1 not found"))?;
-        let (sys2_id, idx2) = *self.entity_map.get(&id2).ok_or(anyhow!("Entity 2 not found"))?;
+        let (sys1_id, idx1) = *self
+            .entity_map
+            .get(&id1)
+            .ok_or(anyhow!("Entity 1 not found"))?;
+        let (sys2_id, idx2) = *self
+            .entity_map
+            .get(&id2)
+            .ok_or(anyhow!("Entity 2 not found"))?;
 
         if sys1_id == sys2_id {
             // Already in same system, just apply CNOT
@@ -276,7 +284,10 @@ impl QuantumManager {
     }
 
     pub fn measure(&mut self, entity_id: usize) -> Result<bool> {
-        let (sys_id, qubit_idx) = *self.entity_map.get(&entity_id).ok_or(anyhow!("Entity not found"))?;
+        let (sys_id, qubit_idx) = *self
+            .entity_map
+            .get(&entity_id)
+            .ok_or(anyhow!("Entity not found"))?;
 
         let result_bit = if let Some(sys) = self.systems.get_mut(&sys_id) {
             let results = sys.measure();
@@ -298,7 +309,10 @@ impl QuantumManager {
     /// Splits a system into individual 1-qubit systems based on current state.
     /// Should only be called after measurement (state is collapsed).
     fn dissolve_system(&mut self, sys_id: usize) -> Result<()> {
-        let sys = self.systems.remove(&sys_id).ok_or(anyhow!("System not found"))?;
+        let sys = self
+            .systems
+            .remove(&sys_id)
+            .ok_or(anyhow!("System not found"))?;
 
         // Find the collapsed value for each qubit
         let mut collapsed_idx = 0;

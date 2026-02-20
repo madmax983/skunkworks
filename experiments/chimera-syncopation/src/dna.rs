@@ -8,21 +8,36 @@ pub fn generate_rhythm_dna(instrument_id: usize, sustain: i64, rest: i64) -> Dna
 
     let genes = vec![
         // Gene 0: Push play command
-        Gene { op: OpCode::Push, args: vec![Nucleotide::String(play_cmd)] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String(play_cmd)],
+        },
         // Gene 1: Print (Signal Host)
-        Gene { op: OpCode::Print, args: vec![] },
+        Gene {
+            op: OpCode::Print,
+            args: vec![],
+        },
         // Gene 2: Push sleep command
-        Gene { op: OpCode::Push, args: vec![Nucleotide::String(sleep_cmd)] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String(sleep_cmd)],
+        },
         // Gene 3: Print (Signal Host)
-        Gene { op: OpCode::Print, args: vec![] },
+        Gene {
+            op: OpCode::Print,
+            args: vec![],
+        },
         // Gene 4: Jump to start (0)
-        Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
+        Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(0)],
+        },
     ];
 
     Dna {
         helix: Helix {
             strands: vec![Strand { genes }],
-        }
+        },
     }
 }
 
@@ -59,18 +74,33 @@ pub fn generate_jazz_dna(instrument_count: usize) -> Dna {
         let play_cmd = format!("PLAY:{}:{}", inst, dur);
         let sleep_cmd = format!("SLEEP:{}", rest);
 
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::String(play_cmd)] });
-        genes.push(Gene { op: OpCode::Print, args: vec![] });
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::String(sleep_cmd)] });
-        genes.push(Gene { op: OpCode::Print, args: vec![] });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String(play_cmd)],
+        });
+        genes.push(Gene {
+            op: OpCode::Print,
+            args: vec![],
+        });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String(sleep_cmd)],
+        });
+        genes.push(Gene {
+            op: OpCode::Print,
+            args: vec![],
+        });
     }
 
     // Loop back to start
-    genes.push(Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] });
+    genes.push(Gene {
+        op: OpCode::Jump,
+        args: vec![Nucleotide::Number(0)],
+    });
 
     Dna {
         helix: Helix {
             strands: vec![Strand { genes }],
-        }
+        },
     }
 }

@@ -320,7 +320,8 @@ impl World {
                         // --- Termite Construction Logic ---
                         let current_mat = self.grid[idx].material;
                         let current_phero = self.grid[idx].pheromone;
-                        let flow_speed = (self.grid[idx].air_vx.powi(2) + self.grid[idx].air_vy.powi(2)).sqrt();
+                        let flow_speed =
+                            (self.grid[idx].air_vx.powi(2) + self.grid[idx].air_vy.powi(2)).sqrt();
 
                         // Count Wall Neighbors
                         let mut wall_neighbors = 0;
@@ -328,7 +329,11 @@ impl World {
                             if ix > 0 { Some(idx - 1) } else { None },
                             if ix < WIDTH - 1 { Some(idx + 1) } else { None },
                             if iy > 0 { Some(idx - WIDTH) } else { None },
-                            if iy < HEIGHT - 1 { Some(idx + WIDTH) } else { None },
+                            if iy < HEIGHT - 1 {
+                                Some(idx + WIDTH)
+                            } else {
+                                None
+                            },
                         ];
                         for n_idx in neighbors.into_iter().flatten() {
                             if matches!(self.grid[n_idx].material, Material::Wall) {
@@ -344,8 +349,12 @@ impl World {
                                 // Avoid building if Pheromone is TOO high (Stagnation/Encapsulation)
 
                                 let build_prob = if current_phero > 20.0 && current_phero < 85.0 {
-                                     // Sweet spot for building fins/chimneys
-                                     if flow_speed < 0.5 { 0.1 } else { 0.01 }
+                                    // Sweet spot for building fins/chimneys
+                                    if flow_speed < 0.5 {
+                                        0.1
+                                    } else {
+                                        0.01
+                                    }
                                 } else if wall_neighbors > 0 && current_phero < 85.0 {
                                     // Extend existing walls slightly, but not in super hot zones
                                     0.001
@@ -369,7 +378,11 @@ impl World {
                                     // Emergency Venting!
                                     0.1
                                 } else if current_phero < 5.0 {
-                                    if wall_neighbors <= 1 { 0.5 } else { 0.05 } // Clean up cold/noise
+                                    if wall_neighbors <= 1 {
+                                        0.5
+                                    } else {
+                                        0.05
+                                    } // Clean up cold/noise
                                 } else {
                                     // Moderate Hot Wall - Keep it
                                     0.001
@@ -439,7 +452,7 @@ impl World {
                     agent.vx *= 0.98;
                     agent.vy *= 0.98;
 
-                     // Bounds
+                    // Bounds
                     if agent.x <= 0.0 || agent.x >= width - 1.0 {
                         agent.vx *= -1.0;
                         agent.x = agent.x.clamp(0.0, width - 1.0);
@@ -455,8 +468,10 @@ impl World {
                     // Sample random neighbor to see if it's better
                     let sample_angle = rng.gen_range(0.0..std::f32::consts::TAU);
                     let sample_dist = 5.0;
-                    let sx = (agent.x + sample_angle.cos() * sample_dist).clamp(0.0, width - 1.0) as usize;
-                    let sy = (agent.y + sample_angle.sin() * sample_dist).clamp(0.0, height - 1.0) as usize;
+                    let sx = (agent.x + sample_angle.cos() * sample_dist).clamp(0.0, width - 1.0)
+                        as usize;
+                    let sy = (agent.y + sample_angle.sin() * sample_dist).clamp(0.0, height - 1.0)
+                        as usize;
                     let s_idx = sy * WIDTH + sx;
 
                     // Current Pheromone/Heat

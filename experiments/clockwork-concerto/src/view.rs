@@ -1,4 +1,7 @@
-use crate::{mechanism::{EscapeWheel, Anchor}, cpu::{CpuState, Program}};
+use crate::{
+    cpu::{CpuState, Program},
+    mechanism::{Anchor, EscapeWheel},
+};
 use bevy::prelude::*;
 use bevy_prototype_lyon::prelude::*;
 use std::f32::consts::PI;
@@ -7,7 +10,14 @@ pub struct ViewPlugin;
 
 impl Plugin for ViewPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (spawn_gear_visuals, spawn_anchor_visuals, draw_cylinder_system));
+        app.add_systems(
+            Update,
+            (
+                spawn_gear_visuals,
+                spawn_anchor_visuals,
+                draw_cylinder_system,
+            ),
+        );
     }
 }
 
@@ -74,14 +84,44 @@ fn spawn_anchor_visuals(mut commands: Commands, query: Query<Entity, Added<Ancho
 
         commands.entity(entity).with_children(|parent| {
             // Left Pallet
-            draw_rect(parent, Vec2::new(-1.5, -2.0), 0.5, Vec2::new(0.4, 0.4), color);
+            draw_rect(
+                parent,
+                Vec2::new(-1.5, -2.0),
+                0.5,
+                Vec2::new(0.4, 0.4),
+                color,
+            );
             // Right Pallet
-            draw_rect(parent, Vec2::new(1.5, -2.0), -0.5, Vec2::new(0.4, 0.4), color);
+            draw_rect(
+                parent,
+                Vec2::new(1.5, -2.0),
+                -0.5,
+                Vec2::new(0.4, 0.4),
+                color,
+            );
             // Arms
-            draw_rect(parent, Vec2::new(-2.5, -1.5), 0.5, Vec2::new(0.4, 4.0), color);
-            draw_rect(parent, Vec2::new(2.5, -1.5), -0.5, Vec2::new(0.4, 4.0), color);
+            draw_rect(
+                parent,
+                Vec2::new(-2.5, -1.5),
+                0.5,
+                Vec2::new(0.4, 4.0),
+                color,
+            );
+            draw_rect(
+                parent,
+                Vec2::new(2.5, -1.5),
+                -0.5,
+                Vec2::new(0.4, 4.0),
+                color,
+            );
             // Rod
-            draw_rect(parent, Vec2::new(0.0, -8.0), 0.0, Vec2::new(0.4, 16.0), color);
+            draw_rect(
+                parent,
+                Vec2::new(0.0, -8.0),
+                0.0,
+                Vec2::new(0.4, 16.0),
+                color,
+            );
             // Bob
             parent.spawn((
                 ShapeBundle {
@@ -120,14 +160,12 @@ fn draw_rect(parent: &mut ChildBuilder, pos: Vec2, angle: f32, size: Vec2, color
     ));
 }
 
-fn draw_cylinder_system(
-    mut gizmos: Gizmos,
-    cpu_query: Query<&CpuState>,
-    program: Res<Program>,
-) {
+fn draw_cylinder_system(mut gizmos: Gizmos, cpu_query: Query<&CpuState>, program: Res<Program>) {
     if let Ok(state) = cpu_query.get_single() {
         let prog_len = program.0.len();
-        if prog_len == 0 { return; }
+        if prog_len == 0 {
+            return;
+        }
 
         // Draw Cylinder at (-15, 0)
         let pos = Vec2::new(-15.0, 0.0);
@@ -145,8 +183,8 @@ fn draw_cylinder_system(
 
             let color = match instr {
                 crate::cpu::Instruction::Note(_) => Color::srgb(0.0, 1.0, 0.0), // Green for Note
-                crate::cpu::Instruction::Jmp(_) => Color::srgb(1.0, 0.0, 0.0), // Red for Jump
-                _ => Color::srgb(0.5, 0.5, 0.5), // Gray
+                crate::cpu::Instruction::Jmp(_) => Color::srgb(1.0, 0.0, 0.0),  // Red for Jump
+                _ => Color::srgb(0.5, 0.5, 0.5),                                // Gray
             };
 
             gizmos.circle_2d(pin_pos, 0.5, color);
@@ -154,6 +192,10 @@ fn draw_cylinder_system(
         }
 
         // Draw "Play Head" (Comb)
-        gizmos.line_2d(pos + Vec2::new(radius, -2.0), pos + Vec2::new(radius + 2.0, 0.0), Color::srgb(1.0, 0.84, 0.0));
+        gizmos.line_2d(
+            pos + Vec2::new(radius, -2.0),
+            pos + Vec2::new(radius + 2.0, 0.0),
+            Color::srgb(1.0, 0.84, 0.0),
+        );
     }
 }

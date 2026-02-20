@@ -1,6 +1,6 @@
+use crate::phonology::{GrimmsLaw, Phoneme, Rule, VowelShift, Word};
 use glam::Vec3;
 use rand::Rng;
-use crate::phonology::{Phoneme, Word, Rule, GrimmsLaw, VowelShift};
 
 #[derive(Debug, Clone)]
 pub struct LexicalNode {
@@ -64,16 +64,16 @@ impl LexicalString {
                 mutation_threshold: 50.0, // Energy threshold
             }
         } else {
-             // Handle single char word?
-             let nodes = vec![LexicalNode::new(start, true, word.phonemes[0].clone())];
-             Self {
+            // Handle single char word?
+            let nodes = vec![LexicalNode::new(start, true, word.phonemes[0].clone())];
+            Self {
                 nodes,
                 word,
                 rest_length: 1.0,
                 tension,
                 damping,
                 mutation_threshold: 50.0,
-             }
+            }
         }
     }
 
@@ -84,7 +84,9 @@ impl LexicalString {
 
     fn update_physics(&mut self, dt: f32) {
         let len = self.nodes.len();
-        if len < 2 { return; }
+        if len < 2 {
+            return;
+        }
 
         let mut forces = vec![Vec3::ZERO; len];
 
@@ -124,7 +126,11 @@ impl LexicalString {
 
     fn check_mutation(&mut self) {
         // Calculate total kinetic energy
-        let total_ke: f32 = self.nodes.iter().map(|n| 0.5 * n.mass * n.vel.length_squared()).sum();
+        let total_ke: f32 = self
+            .nodes
+            .iter()
+            .map(|n| 0.5 * n.mass * n.vel.length_squared())
+            .sum();
 
         // If energy is high, trigger mutation
         if total_ke > self.mutation_threshold {
@@ -138,10 +144,7 @@ impl LexicalString {
 
     fn mutate(&mut self) {
         let mut rng = rand::thread_rng();
-        let rules: Vec<Box<dyn Rule>> = vec![
-            Box::new(GrimmsLaw),
-            Box::new(VowelShift),
-        ];
+        let rules: Vec<Box<dyn Rule>> = vec![Box::new(GrimmsLaw), Box::new(VowelShift)];
 
         let rule_idx = rng.gen_range(0..rules.len());
         let changed = rules[rule_idx].apply(&mut self.word, &mut rng);
@@ -154,7 +157,8 @@ impl LexicalString {
                     if self.nodes[i].phoneme != *p {
                         self.nodes[i].phoneme = p.clone();
                         self.nodes[i].mutated = true; // Flag for rendering
-                        self.nodes[i].mass = if p.is_vowel() { 0.5 } else { 1.5 }; // Update mass
+                        self.nodes[i].mass = if p.is_vowel() { 0.5 } else { 1.5 };
+                        // Update mass
                     }
                 }
             }

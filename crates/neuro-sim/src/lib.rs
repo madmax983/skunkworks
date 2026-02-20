@@ -169,7 +169,8 @@ mod tests {
         assert!(
             v_after < v_before_impact - 0.1,
             "Post-synaptic neuron should be inhibited by spike (Before: {}, After: {})",
-            v_before_impact, v_after
+            v_before_impact,
+            v_after
         );
     }
 

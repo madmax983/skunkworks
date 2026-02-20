@@ -1,4 +1,4 @@
-use crate::map::{Map, WIDTH, HEIGHT};
+use crate::map::{Map, HEIGHT, WIDTH};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum UnitType {
@@ -80,7 +80,10 @@ impl GameState {
     #[allow(dead_code)]
     pub fn try_select_unit(&mut self, x: usize, y: usize) {
         // Simple selection: find first unit at x,y
-        self.selected_unit = self.units.iter().position(|u| u.x == x && u.y == y && u.team == Team::Player);
+        self.selected_unit = self
+            .units
+            .iter()
+            .position(|u| u.x == x && u.y == y && u.team == Team::Player);
     }
 
     pub fn try_move_selected(&mut self, tx: usize, ty: usize) -> bool {

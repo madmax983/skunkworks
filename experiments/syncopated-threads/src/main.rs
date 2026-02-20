@@ -3,13 +3,13 @@ mod model;
 mod threads;
 mod tui;
 
-use std::sync::{Arc, Mutex, atomic::AtomicBool};
-use std::time::Duration;
-use crossbeam_channel::unbounded;
 use crate::audio::{start_audio_thread, AudioCommand};
-use crate::model::{RhythmParams, Instrument};
+use crate::model::{Instrument, RhythmParams};
 use crate::threads::spawn_rhythm_thread;
 use crate::tui::run_tui;
+use crossbeam_channel::unbounded;
+use std::sync::{atomic::AtomicBool, Arc, Mutex};
+use std::time::Duration;
 
 fn main() -> anyhow::Result<()> {
     // 1. Audio

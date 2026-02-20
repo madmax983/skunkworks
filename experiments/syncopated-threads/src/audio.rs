@@ -87,7 +87,6 @@ impl AudioSource for Hat {
     }
 }
 
-
 pub fn start_audio_thread(receiver: Receiver<AudioCommand>) -> thread::JoinHandle<()> {
     thread::spawn(move || {
         let spec = WavSpec {
@@ -96,7 +95,8 @@ pub fn start_audio_thread(receiver: Receiver<AudioCommand>) -> thread::JoinHandl
             bits_per_sample: 16,
             sample_format: hound::SampleFormat::Int,
         };
-        let mut writer = WavWriter::create("syncopated_rhythm.wav", spec).expect("Failed to create WAV file");
+        let mut writer =
+            WavWriter::create("syncopated_rhythm.wav", spec).expect("Failed to create WAV file");
 
         let mut active_sounds: Vec<Box<dyn AudioSource>> = Vec::new();
         let start_time = Instant::now();
@@ -140,7 +140,9 @@ pub fn start_audio_thread(receiver: Receiver<AudioCommand>) -> thread::JoinHandl
                     // Hard clipper
                     sample = sample.max(-1.0).min(1.0);
 
-                    writer.write_sample((sample * i16::MAX as f32) as i16).unwrap();
+                    writer
+                        .write_sample((sample * i16::MAX as f32) as i16)
+                        .unwrap();
                 }
                 samples_written += samples_to_write;
             }

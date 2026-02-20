@@ -1,4 +1,4 @@
-use crate::lbm::{FluidSim, WIDTH, HEIGHT};
+use crate::lbm::{FluidSim, HEIGHT, WIDTH};
 use macroquad::color::hsl_to_rgb;
 use macroquad::prelude::*;
 
@@ -84,11 +84,11 @@ impl ParticleSystem {
                 p.color = hsl_to_rgb(hue, 1.0, lightness);
 
                 // Check kill conditions
-                p.lifetime > p.max_lifetime ||
-                p.position.x > (WIDTH - 1) as f32 ||
-                p.position.y > (HEIGHT - 1) as f32 ||
-                p.position.x < 0.0 ||
-                p.position.y < 0.0
+                p.lifetime > p.max_lifetime
+                    || p.position.x > (WIDTH - 1) as f32
+                    || p.position.y > (HEIGHT - 1) as f32
+                    || p.position.x < 0.0
+                    || p.position.y < 0.0
             };
 
             if dead {

@@ -1,6 +1,6 @@
 mod safe_gl;
-mod world;
 mod warden_gl_test;
+mod world;
 
 use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use chimera_lang::opcode::OpCode;

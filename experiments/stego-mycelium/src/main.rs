@@ -1,10 +1,10 @@
 use macroquad::prelude::*;
 
-mod substrate;
 mod fungus;
+mod substrate;
 
-use substrate::StegoSubstrate;
 use fungus::HyphaeNetwork;
+use substrate::StegoSubstrate;
 
 const GRID_WIDTH: usize = 300;
 const GRID_HEIGHT: usize = 200;
@@ -16,7 +16,7 @@ async fn main() {
     substrate.embed_message(message);
 
     // Start near (10, height/2)
-    let start_pos = IVec2::new(10, (GRID_HEIGHT/2) as i32);
+    let start_pos = IVec2::new(10, (GRID_HEIGHT / 2) as i32);
     let mut fungus = HyphaeNetwork::new(GRID_WIDTH, GRID_HEIGHT, start_pos);
 
     loop {
@@ -49,13 +49,19 @@ async fn main() {
         let chars_per_line = (screen_width() / 12.0) as usize;
         let chars = decoded.chars().collect::<Vec<char>>();
         for chunk in chars.chunks(chars_per_line) {
-             let line: String = chunk.iter().collect();
-             draw_text(&format!("> {}", line), 10., y, 20., YELLOW);
-             y += 20.;
+            let line: String = chunk.iter().collect();
+            draw_text(&format!("> {}", line), 10., y, 20., YELLOW);
+            y += 20.;
         }
 
         // Visualize "tips" count
-        draw_text(&format!("Tips: {}", fungus.active_tips.len()), screen_width() - 100., 20., 20., GRAY);
+        draw_text(
+            &format!("Tips: {}", fungus.active_tips.len()),
+            screen_width() - 100.,
+            20.,
+            20.,
+            GRAY,
+        );
 
         next_frame().await
     }

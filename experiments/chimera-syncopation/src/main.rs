@@ -4,16 +4,16 @@ mod model;
 mod musician;
 mod tui;
 
-use anyhow::Result;
-use chimera_lang::vm::ChimeraVM;
-use crossbeam_channel::unbounded;
-use std::sync::{Arc, Mutex, atomic::AtomicBool};
-use std::thread;
 use crate::audio::start_audio_thread;
-use crate::dna::{generate_rhythm_dna, generate_jazz_dna};
+use crate::dna::{generate_jazz_dna, generate_rhythm_dna};
 use crate::model::Instrument;
 use crate::musician::Musician;
 use crate::tui::run_tui;
+use anyhow::Result;
+use chimera_lang::vm::ChimeraVM;
+use crossbeam_channel::unbounded;
+use std::sync::{atomic::AtomicBool, Arc, Mutex};
+use std::thread;
 
 fn main() -> Result<()> {
     // 1. Audio
@@ -45,7 +45,7 @@ fn main() -> Result<()> {
         instruments.clone(),
         audio_sender.clone(),
         state_sender.clone(),
-        running.clone()
+        running.clone(),
     );
     handles.push(thread::spawn(move || kick_musician.run()));
 
@@ -58,7 +58,7 @@ fn main() -> Result<()> {
         instruments.clone(),
         audio_sender.clone(),
         state_sender.clone(),
-        running.clone()
+        running.clone(),
     );
     handles.push(thread::spawn(move || snare_musician.run()));
 
@@ -71,7 +71,7 @@ fn main() -> Result<()> {
         instruments.clone(),
         audio_sender.clone(),
         state_sender.clone(),
-        running.clone()
+        running.clone(),
     );
     handles.push(thread::spawn(move || hat_musician.run()));
 
@@ -84,7 +84,7 @@ fn main() -> Result<()> {
         instruments.clone(),
         audio_sender.clone(),
         state_sender.clone(),
-        running.clone()
+        running.clone(),
     );
     handles.push(thread::spawn(move || jazz_musician.run()));
 

@@ -133,15 +133,15 @@ impl CodeParser {
                         "loop" | "for" | "while" => {
                             next_context_hint = Some(ContextType::Loop);
                             waveform = Waveform::Triangle;
-                        },
+                        }
                         "if" | "match" | "else" => {
                             next_context_hint = Some(ContextType::Condition);
                             waveform = Waveform::Square;
-                        },
+                        }
                         "pub" | "fn" | "struct" | "enum" | "impl" => {
-                             // Structural keywords
-                             duration_mod *= 1.5;
-                        },
+                            // Structural keywords
+                            duration_mod *= 1.5;
+                        }
                         _ => {}
                     }
 
@@ -199,13 +199,15 @@ impl CodeParser {
                     let inner_context = next_context_hint.take().unwrap_or(
                         match (current_context, group.delimiter()) {
                             (_, Delimiter::Brace) => ContextType::Block,
-                            _ => current_context
-                        }
+                            _ => current_context,
+                        },
                     );
 
                     // Propagate context for special types like Struct/Enum
                     let effective_context = match current_context {
-                        ContextType::Struct | ContextType::Enum | ContextType::Impl => current_context,
+                        ContextType::Struct | ContextType::Enum | ContextType::Impl => {
+                            current_context
+                        }
                         _ => inner_context,
                     };
 
@@ -316,8 +318,7 @@ fn map_hash_to_pitch(hash: u64) -> f32 {
     // Pentatonic scale mapping (C Major Pentatonic)
     // C4, D4, E4, G4, A4
     let scale = [
-        261.63, 293.66, 329.63, 392.00, 440.00,
-        523.25, 587.33, 659.25, 783.99, 880.00,
+        261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 783.99, 880.00,
     ];
     let idx = (hash as usize) % scale.len();
     scale[idx]
@@ -340,7 +341,7 @@ mod tests {
         let ident_token = tokens.iter().find(|t| t.text == "Point").unwrap();
 
         match ident_token.waveform {
-            Waveform::Sine => {}, // Struct context defaults to Sine
+            Waveform::Sine => {} // Struct context defaults to Sine
             _ => panic!("Expected Sine for Struct"),
         }
     }

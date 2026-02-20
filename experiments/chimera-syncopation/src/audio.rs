@@ -1,9 +1,9 @@
+use crate::model::AudioCommand;
 use crossbeam_channel::{Receiver, TryRecvError};
 use hound::{WavSpec, WavWriter};
 use std::f32::consts::PI;
 use std::thread;
 use std::time::{Duration, Instant};
-use crate::model::AudioCommand;
 
 trait AudioSource: Send {
     fn next_sample(&mut self) -> Option<f32>;
@@ -80,7 +80,6 @@ impl AudioSource for Hat {
     }
 }
 
-
 pub fn start_audio_thread(receiver: Receiver<AudioCommand>) -> thread::JoinHandle<()> {
     thread::spawn(move || {
         let spec = WavSpec {
@@ -89,7 +88,8 @@ pub fn start_audio_thread(receiver: Receiver<AudioCommand>) -> thread::JoinHandl
             bits_per_sample: 16,
             sample_format: hound::SampleFormat::Int,
         };
-        let mut writer = WavWriter::create("chimera_syncopation.wav", spec).expect("Failed to create WAV file");
+        let mut writer =
+            WavWriter::create("chimera_syncopation.wav", spec).expect("Failed to create WAV file");
 
         let mut active_sounds: Vec<Box<dyn AudioSource>> = Vec::new();
         let start_time = Instant::now();
@@ -104,7 +104,7 @@ pub fn start_audio_thread(receiver: Receiver<AudioCommand>) -> thread::JoinHandl
                         AudioCommand::Play(0) => active_sounds.push(Box::new(KickDrum::new())),
                         AudioCommand::Play(1) => active_sounds.push(Box::new(SnareDrum::new())),
                         AudioCommand::Play(2) => active_sounds.push(Box::new(Hat::new())),
-                        AudioCommand::Play(_) => {}, // Ignore unknown
+                        AudioCommand::Play(_) => {} // Ignore unknown
                         AudioCommand::Stop => return,
                     },
                     Err(TryRecvError::Empty) => break,
@@ -134,7 +134,9 @@ pub fn start_audio_thread(receiver: Receiver<AudioCommand>) -> thread::JoinHandl
                     // Hard clipper
                     sample = sample.clamp(-1.0, 1.0);
 
-                    writer.write_sample((sample * i16::MAX as f32) as i16).unwrap();
+                    writer
+                        .write_sample((sample * i16::MAX as f32) as i16)
+                        .unwrap();
                 }
                 samples_written += samples_to_write;
             }

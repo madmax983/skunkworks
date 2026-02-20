@@ -32,7 +32,10 @@ impl RepoHandler {
             let commit = self.repo.find_commit(id)?;
             let time = commit.time();
             let timestamp = time.seconds();
-            let datetime = Utc.timestamp_opt(timestamp, 0).single().unwrap_or(Utc::now());
+            let datetime = Utc
+                .timestamp_opt(timestamp, 0)
+                .single()
+                .unwrap_or(Utc::now());
 
             commits.push(CommitInfo {
                 id: id.to_string(),

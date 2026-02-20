@@ -1,12 +1,12 @@
-use macroquad::prelude::*;
 use chimera_lang::prelude::Value;
+use macroquad::prelude::*;
 
 mod audio;
 mod state;
 mod vm_adapter;
 
-use crate::state::SharedState;
 use crate::audio::start_audio;
+use crate::state::SharedState;
 use crate::vm_adapter::{init_vm, update_state};
 
 #[macroquad::main("Chimera Voice")]
@@ -18,7 +18,7 @@ async fn main() {
         Ok(s) => {
             println!("Audio started successfully.");
             Some(s)
-        },
+        }
         Err(e) => {
             eprintln!("Failed to start audio: {}", e);
             None
@@ -87,8 +87,20 @@ async fn main() {
         }
 
         // UI
-        draw_text(format!("Freq: {:.1} Hz", freq).as_str(), 10.0, 20.0, 20.0, WHITE);
-        draw_text(format!("Energy: {}", vm.energy).as_str(), 10.0, 40.0, 20.0, WHITE);
+        draw_text(
+            format!("Freq: {:.1} Hz", freq).as_str(),
+            10.0,
+            20.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            format!("Energy: {}", vm.energy).as_str(),
+            10.0,
+            40.0,
+            20.0,
+            WHITE,
+        );
         draw_text("Space: Reset VM", 10.0, screen_h - 20.0, 20.0, WHITE);
 
         if is_key_pressed(KeyCode::Space) {

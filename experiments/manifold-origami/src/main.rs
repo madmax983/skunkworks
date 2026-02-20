@@ -1,10 +1,10 @@
 use macroquad::prelude::*;
 
-mod pbd;
 mod mesh;
+mod pbd;
 
-use pbd::PbdSystem;
 use mesh::Mesh as OrigamiMesh;
+use pbd::PbdSystem;
 
 fn conf() -> Conf {
     Conf {
@@ -43,9 +43,9 @@ async fn main() {
             fold_rho = (fold_rho - 0.01).max(0.0);
         }
         if is_key_pressed(KeyCode::R) {
-             system = PbdSystem::new();
-             origami.generate_miura_ori(&mut system, 12, 12);
-             fold_rho = 0.0;
+            system = PbdSystem::new();
+            origami.generate_miura_ori(&mut system, 12, 12);
+            fold_rho = 0.0;
         }
 
         // Camera
@@ -93,8 +93,8 @@ async fn main() {
 
         for i in (0..origami.indices.len()).step_by(3) {
             let idx0 = origami.indices[i] as usize;
-            let idx1 = origami.indices[i+1] as usize;
-            let idx2 = origami.indices[i+2] as usize;
+            let idx1 = origami.indices[i + 1] as usize;
+            let idx2 = origami.indices[i + 2] as usize;
 
             let v0 = system.particles[idx0].pos;
             let v1 = system.particles[idx1].pos;
@@ -116,7 +116,7 @@ async fn main() {
                 base_color.r * intensity,
                 base_color.g * intensity,
                 base_color.b * intensity,
-                1.0
+                1.0,
             );
             let color_bytes: [u8; 4] = color.into();
 
@@ -127,19 +127,19 @@ async fn main() {
                 position: v0,
                 uv: Vec2::ZERO,
                 color: color_bytes,
-                normal: Vec4::ZERO
+                normal: Vec4::ZERO,
             });
             mq_mesh.vertices.push(Vertex {
                 position: v1,
                 uv: Vec2::ZERO,
                 color: color_bytes,
-                normal: Vec4::ZERO
+                normal: Vec4::ZERO,
             });
             mq_mesh.vertices.push(Vertex {
                 position: v2,
                 uv: Vec2::ZERO,
                 color: color_bytes,
-                normal: Vec4::ZERO
+                normal: Vec4::ZERO,
             });
             mq_mesh.indices.push(base_idx);
             mq_mesh.indices.push(base_idx + 1);
@@ -157,8 +157,20 @@ async fn main() {
 
         // UI
         draw_text("Genesis: Manifold Origami", 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Fold (Rho): {:.2}", fold_rho), 20.0, 60.0, 20.0, WHITE);
-        draw_text("Controls: Arrow UP/DOWN to fold. Mouse Drag to Rotate. R to Reset.", 20.0, 90.0, 20.0, GRAY);
+        draw_text(
+            &format!("Fold (Rho): {:.2}", fold_rho),
+            20.0,
+            60.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "Controls: Arrow UP/DOWN to fold. Mouse Drag to Rotate. R to Reset.",
+            20.0,
+            90.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }

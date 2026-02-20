@@ -14,7 +14,8 @@ impl CipherReveal for Memory {
 
         // Probability of reveal proportional to amount
         let mut rng = rand::thread_rng();
-        if rng.gen::<f32>() > amount * 0.8 { // Slightly easier to reveal than destroy
+        if rng.gen::<f32>() > amount * 0.8 {
+            // Slightly easier to reveal than destroy
             return;
         }
 
@@ -31,9 +32,9 @@ impl CipherReveal for Memory {
         // Or just let the StarMap handle it.
         // If amount is high, maybe make it brighter (overexposed)
         if amount > 0.8 {
-             for c in 0..3 {
-                 visible_pixel[c] = visible_pixel[c].saturating_add(20);
-             }
+            for c in 0..3 {
+                visible_pixel[c] = visible_pixel[c].saturating_add(20);
+            }
         }
     }
 
@@ -57,9 +58,17 @@ impl CipherReveal for Memory {
                 // Add thickness/spread randomness
                 let mut rng = rand::thread_rng();
                 if rng.gen_bool(0.4) {
-                    self.reveal((x0 + 1).min(self.width as i32 - 1) as u32, y0 as u32, amount * 0.6);
+                    self.reveal(
+                        (x0 + 1).min(self.width as i32 - 1) as u32,
+                        y0 as u32,
+                        amount * 0.6,
+                    );
                     self.reveal(x0.saturating_sub(1) as u32, y0 as u32, amount * 0.6);
-                    self.reveal(x0 as u32, (y0 + 1).min(self.height as i32 - 1) as u32, amount * 0.6);
+                    self.reveal(
+                        x0 as u32,
+                        (y0 + 1).min(self.height as i32 - 1) as u32,
+                        amount * 0.6,
+                    );
                     self.reveal(x0 as u32, y0.saturating_sub(1) as u32, amount * 0.6);
                 }
             }

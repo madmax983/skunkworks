@@ -1,8 +1,8 @@
 use anyhow::Result;
-use git_associates::{GitModel, Commit};
+use git_associates::{Commit, GitModel};
+use std::collections::hash_map::DefaultHasher;
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
-use std::collections::hash_map::DefaultHasher;
 
 #[derive(Debug, Clone)]
 pub enum GeologicalEvent {
@@ -90,8 +90,11 @@ impl HistoryStream {
         }
     }
 
-    pub fn next_events(&mut self, mapper: &mut FileMapper) -> Option<(Vec<GeologicalEvent>, String, String)> {
-         if let Some(commit) = self.next() {
+    pub fn next_events(
+        &mut self,
+        mapper: &mut FileMapper,
+    ) -> Option<(Vec<GeologicalEvent>, String, String)> {
+        if let Some(commit) = self.next() {
             let mut events = Vec::new();
             for file in &commit.files {
                 let (x, y) = mapper.get_coordinate(&file.path);
@@ -108,13 +111,13 @@ impl HistoryStream {
                 // Even insertions cause weathering (disturbance)
                 let intensity = ((file.deletions + file.insertions) as f32).min(100.0) * 0.05;
                 if intensity > 0.0 {
-                     events.push(GeologicalEvent::Weathering { x, y, intensity });
+                    events.push(GeologicalEvent::Weathering { x, y, intensity });
                 }
             }
             Some((events, commit.short_hash.clone(), commit.message.clone()))
-         } else {
-             None
-         }
+        } else {
+            None
+        }
     }
 
     pub fn reset(&mut self) {

@@ -47,7 +47,7 @@ impl Terrain {
         let idx = self.get_index(x, y);
         self.heightmap[idx] += amount;
         if self.heightmap[idx] < 0.0 {
-             self.heightmap[idx] = 0.0;
+            self.heightmap[idx] = 0.0;
         }
     }
 
@@ -123,7 +123,8 @@ impl Terrain {
             let diff = height_new - height_old;
 
             // Update capacity
-            let capacity = (-diff).max(min_sediment_capacity) * speed * water * sediment_capacity_factor;
+            let capacity =
+                (-diff).max(min_sediment_capacity) * speed * water * sediment_capacity_factor;
 
             // Erode or Deposit
             if sediment > capacity || diff > 0.0 {
@@ -132,13 +133,13 @@ impl Terrain {
                 let amount = amount.min(sediment); // Don't deposit more than we have
                 sediment -= amount;
                 self.deposit(x - dir_x, y - dir_y, amount); // Deposit at previous step (or current?)
-                // Standard algorithm deposits at current location usually, but uses bilinear weights
-                // Let's use a simple deposit helper
+                                                            // Standard algorithm deposits at current location usually, but uses bilinear weights
+                                                            // Let's use a simple deposit helper
             } else {
                 // Erode
                 let amount = (capacity - sediment) * erode_speed;
                 let amount = amount.min(-diff); // Don't dig a hole deeper than the delta
-                 if amount > 0.0 {
+                if amount > 0.0 {
                     sediment += amount;
                     self.erode_ground(x - dir_x, y - dir_y, amount);
                 }
@@ -181,10 +182,7 @@ impl Terrain {
         let h01 = self.get_height(idx_x, idx_y + 1);
         let h11 = self.get_height(idx_x + 1, idx_y + 1);
 
-        h00 * (1.0 - u) * (1.0 - v) +
-        h10 * u * (1.0 - v) +
-        h01 * (1.0 - u) * v +
-        h11 * u * v
+        h00 * (1.0 - u) * (1.0 - v) + h10 * u * (1.0 - v) + h01 * (1.0 - u) * v + h11 * u * v
     }
 
     fn deposit(&mut self, x: f32, y: f32, amount: f32) {
@@ -218,13 +216,17 @@ impl Terrain {
     }
 
     fn add_height_at(&mut self, x: usize, y: usize, amount: f32) {
-        if x >= self.width || y >= self.height { return; }
+        if x >= self.width || y >= self.height {
+            return;
+        }
         let idx = self.get_index(x, y);
         self.heightmap[idx] += amount;
     }
 
     fn add_sediment_at(&mut self, x: usize, y: usize, amount: f32) {
-        if x >= self.width || y >= self.height { return; }
+        if x >= self.width || y >= self.height {
+            return;
+        }
         let idx = self.get_index(x, y);
         self.sediment[idx] += amount;
     }
@@ -288,7 +290,7 @@ mod tests {
             for y in 0..10 {
                 let dx = x as f32 - 5.0;
                 let dy = y as f32 - 5.0;
-                terrain.set_height(x, y, dx*dx + dy*dy);
+                terrain.set_height(x, y, dx * dx + dy * dy);
             }
         }
 

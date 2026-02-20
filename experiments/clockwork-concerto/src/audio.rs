@@ -1,5 +1,5 @@
-use bevy::prelude::*;
 use crate::cpu::NoteEvent;
+use bevy::prelude::*;
 
 pub struct AudioPlugin;
 

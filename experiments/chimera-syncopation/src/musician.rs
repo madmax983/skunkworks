@@ -1,9 +1,12 @@
+use crate::model::{AudioCommand, Instrument, ThreadState};
 use chimera_lang::vm::ChimeraVM;
-use std::sync::{Arc, atomic::{AtomicBool, Ordering}};
-use std::time::Duration;
 use crossbeam_channel::Sender;
-use crate::model::{ThreadState, AudioCommand, Instrument};
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc,
+};
 use std::thread;
+use std::time::Duration;
 
 pub struct Musician {
     id: usize,
@@ -52,7 +55,7 @@ impl Musician {
                         Command::Sleep { dur } => {
                             let _ = self.state_sender.send((self.id, ThreadState::Sleeping));
                             thread::sleep(Duration::from_millis(dur));
-                        },
+                        }
                     }
                 }
             }
@@ -68,24 +71,28 @@ impl Musician {
 
     fn parse_command(&self, line: &str) -> Option<Command> {
         let parts: Vec<&str> = line.split(':').collect();
-        if parts.is_empty() { return None; }
+        if parts.is_empty() {
+            return None;
+        }
 
         match parts[0] {
             "PLAY" if parts.len() == 3 => {
                 let inst = parts[1].parse().ok()?;
                 let dur = parts[2].parse().ok()?;
                 Some(Command::Play { inst, dur })
-            },
+            }
             "SLEEP" if parts.len() == 2 => {
                 let dur = parts[1].parse().ok()?;
                 Some(Command::Sleep { dur })
-            },
-            _ => None
+            }
+            _ => None,
         }
     }
 
     fn play(&mut self, inst_idx: usize, duration: u64) {
-        if inst_idx >= self.instruments.len() { return; }
+        if inst_idx >= self.instruments.len() {
+            return;
+        }
 
         let instrument = &self.instruments[inst_idx];
 
@@ -101,7 +108,7 @@ impl Musician {
 
                 // Reward
                 self.vm.energy += 5;
-            },
+            }
             Err(_) => {
                 // Contention
                 let _ = self.state_sender.send((self.id, ThreadState::Waiting));

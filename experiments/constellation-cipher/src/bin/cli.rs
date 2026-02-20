@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
-use constellation_cipher::{encode, decode};
+use constellation_cipher::{decode, encode};
 use std::fs;
 use std::path::PathBuf;
 
@@ -55,18 +55,29 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
-        Commands::Encode { input, output, key, width, height } => {
-            let data = fs::read(&input).with_context(|| format!("Failed to read input file {:?}", input))?;
+        Commands::Encode {
+            input,
+            output,
+            key,
+            width,
+            height,
+        } => {
+            let data = fs::read(&input)
+                .with_context(|| format!("Failed to read input file {:?}", input))?;
             println!("Encoding {} bytes...", data.len());
             let img = encode(&data, &key, width, height)?;
-            img.save(&output).with_context(|| format!("Failed to save image {:?}", output))?;
+            img.save(&output)
+                .with_context(|| format!("Failed to save image {:?}", output))?;
             println!("Encoded successfully to {:?}", output);
         }
         Commands::Decode { input, output, key } => {
-            let img = image::open(&input).with_context(|| format!("Failed to open image {:?}", input))?.to_rgba8();
+            let img = image::open(&input)
+                .with_context(|| format!("Failed to open image {:?}", input))?
+                .to_rgba8();
             println!("Decoding...");
             let data = decode(&img, &key)?;
-            fs::write(&output, &data).with_context(|| format!("Failed to write output file {:?}", output))?;
+            fs::write(&output, &data)
+                .with_context(|| format!("Failed to write output file {:?}", output))?;
             println!("Decoded {} bytes successfully to {:?}", data.len(), output);
         }
     }

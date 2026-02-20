@@ -7,7 +7,7 @@ pub struct MechanismPlugin;
 impl Plugin for MechanismPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<TickEvent>()
-           .add_systems(Update, detect_tick_system);
+            .add_systems(Update, detect_tick_system);
     }
 }
 

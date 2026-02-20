@@ -14,7 +14,10 @@ impl Eq for Node {}
 impl Ord for Node {
     fn cmp(&self, other: &Self) -> Ordering {
         // Reverse for Min-Heap
-        other.cost.partial_cmp(&self.cost).unwrap_or(Ordering::Equal)
+        other
+            .cost
+            .partial_cmp(&self.cost)
+            .unwrap_or(Ordering::Equal)
     }
 }
 
@@ -44,7 +47,10 @@ impl HyphaeNetwork {
 
         let start_idx = (start.y as usize) * width + (start.x as usize);
         cost_map[start_idx] = 0.0;
-        open_set.push(Node { pos: start, cost: 0.0 });
+        open_set.push(Node {
+            pos: start,
+            cost: 0.0,
+        });
 
         Self {
             width,
@@ -73,16 +79,24 @@ impl HyphaeNetwork {
 
                 // Neighbors (8-way)
                 let neighbors = [
-                    IVec2::new(1, 0), IVec2::new(-1, 0),
-                    IVec2::new(0, 1), IVec2::new(0, -1),
-                    IVec2::new(1, 1), IVec2::new(-1, -1),
-                    IVec2::new(1, -1), IVec2::new(-1, 1),
+                    IVec2::new(1, 0),
+                    IVec2::new(-1, 0),
+                    IVec2::new(0, 1),
+                    IVec2::new(0, -1),
+                    IVec2::new(1, 1),
+                    IVec2::new(-1, -1),
+                    IVec2::new(1, -1),
+                    IVec2::new(-1, 1),
                 ];
 
                 for &offset in &neighbors {
                     let next_pos = node.pos + offset;
 
-                    if next_pos.x < 0 || next_pos.y < 0 || next_pos.x >= self.width as i32 || next_pos.y >= self.height as i32 {
+                    if next_pos.x < 0
+                        || next_pos.y < 0
+                        || next_pos.x >= self.width as i32
+                        || next_pos.y >= self.height as i32
+                    {
                         continue;
                     }
 
@@ -91,7 +105,11 @@ impl HyphaeNetwork {
                         continue;
                     }
 
-                    let move_cost = if offset.x != 0 && offset.y != 0 { 1.414 } else { 1.0 };
+                    let move_cost = if offset.x != 0 && offset.y != 0 {
+                        1.414
+                    } else {
+                        1.0
+                    };
                     let cell_cost = substrate.get_cost(next_pos.x, next_pos.y);
 
                     let new_cost = node.cost + move_cost * cell_cost;
@@ -99,7 +117,10 @@ impl HyphaeNetwork {
                     if new_cost < self.cost_map[next_idx] {
                         self.cost_map[next_idx] = new_cost;
                         self.parent[next_idx] = Some(node.pos);
-                        self.open_set.push(Node { pos: next_pos, cost: new_cost });
+                        self.open_set.push(Node {
+                            pos: next_pos,
+                            cost: new_cost,
+                        });
                     }
                 }
             } else {
@@ -187,14 +208,26 @@ impl HyphaeNetwork {
                 let idx = y * self.width + x;
                 if self.visited[idx] {
                     // Draw pixel
-                    draw_rectangle(x as f32 * cell_w, y as f32 * cell_h, cell_w, cell_h, Color::new(0.8, 1.0, 0.8, 0.3));
+                    draw_rectangle(
+                        x as f32 * cell_w,
+                        y as f32 * cell_h,
+                        cell_w,
+                        cell_h,
+                        Color::new(0.8, 1.0, 0.8, 0.3),
+                    );
                 }
             }
         }
 
         // Draw Tips
         for tip in &self.active_tips {
-            draw_rectangle(tip.x as f32 * cell_w, tip.y as f32 * cell_h, cell_w, cell_h, GREEN);
+            draw_rectangle(
+                tip.x as f32 * cell_w,
+                tip.y as f32 * cell_h,
+                cell_w,
+                cell_h,
+                GREEN,
+            );
         }
     }
 }

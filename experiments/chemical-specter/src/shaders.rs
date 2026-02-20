@@ -1,4 +1,3 @@
-
 pub const VERTEX_SHADER: &str = r#"
 #version 100
 attribute vec3 position;

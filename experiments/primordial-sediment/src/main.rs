@@ -1,6 +1,6 @@
+mod biology;
 mod git;
 mod physics;
-mod biology;
 
 use anyhow::Result;
 use crossterm::{
@@ -8,11 +8,12 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use rand::Rng;
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
-    style::{Color, Style, Modifier},
-    text::{Span, Line},
+    style::{Color, Modifier, Style},
+    text::{Line, Span},
     widgets::{Block, Borders, Paragraph, Wrap},
     Terminal,
 };
@@ -20,7 +21,6 @@ use std::{
     io,
     time::{Duration, Instant},
 };
-use rand::Rng;
 
 use git::RepoHandler;
 use physics::{FluidSolver, Species};
@@ -37,10 +37,13 @@ impl App {
         // Try to load own source code or README
         let commits = repo.list_commits(1)?;
         let content = if !commits.is_empty() {
-             repo.get_file_content(&commits[0].id, "experiments/primordial-sediment/src/main.rs")
-                 .unwrap_or_else(|_| include_str!("main.rs").to_string())
+            repo.get_file_content(
+                &commits[0].id,
+                "experiments/primordial-sediment/src/main.rs",
+            )
+            .unwrap_or_else(|_| include_str!("main.rs").to_string())
         } else {
-             include_str!("main.rs").to_string()
+            include_str!("main.rs").to_string()
         };
 
         let text_buffer: Vec<Vec<char>> = content.lines().map(|l| l.chars().collect()).collect();
@@ -58,7 +61,7 @@ impl App {
             fluid.add_particle(
                 rng.gen_range(0.0..width),
                 rng.gen_range(0.0..height),
-                Species::Algae
+                Species::Algae,
             );
         }
 
@@ -67,7 +70,7 @@ impl App {
             fluid.add_particle(
                 rng.gen_range(0.0..width),
                 rng.gen_range(0.0..height),
-                Species::Grazer
+                Species::Grazer,
             );
         }
 
@@ -76,14 +79,11 @@ impl App {
             fluid.add_particle(
                 rng.gen_range(0.0..width),
                 rng.gen_range(0.0..height),
-                Species::Predator
+                Species::Predator,
             );
         }
 
-        Ok(Self {
-            text_buffer,
-            fluid,
-        })
+        Ok(Self { text_buffer, fluid })
     }
 
     fn update(&mut self) {
@@ -91,7 +91,8 @@ impl App {
 
         // 1. Natural Entropy (Bit Rot)
         // Occasional random bit flip or decay
-        if rng.gen_bool(0.1) { // 10% chance per tick
+        if rng.gen_bool(0.1) {
+            // 10% chance per tick
             if !self.text_buffer.is_empty() {
                 let row = rng.gen_range(0..self.text_buffer.len());
                 if !self.text_buffer[row].is_empty() {
@@ -189,13 +190,16 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
         let r = p.y.round() as usize;
         let c = p.x.round() as usize;
         // Simple overwrite priority
-        particle_map.entry((r, c)).and_modify(|e: &mut Species| {
-            if *e == Species::Algae && p.species != Species::Algae {
-                *e = p.species;
-            } else if *e == Species::Grazer && p.species == Species::Predator {
-                *e = p.species;
-            }
-        }).or_insert(p.species);
+        particle_map
+            .entry((r, c))
+            .and_modify(|e: &mut Species| {
+                if *e == Species::Algae && p.species != Species::Algae {
+                    *e = p.species;
+                } else if *e == Species::Grazer && p.species == Species::Predator {
+                    *e = p.species;
+                }
+            })
+            .or_insert(p.species);
     }
 
     let mut lines = Vec::new();
@@ -208,7 +212,11 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
         let len = line_chars.len().max(100); // minimal width
 
         for c_idx in 0..len {
-            let char_at = if c_idx < line_chars.len() { line_chars[c_idx] } else { ' ' };
+            let char_at = if c_idx < line_chars.len() {
+                line_chars[c_idx]
+            } else {
+                ' '
+            };
 
             if let Some(species) = particle_map.get(&(r, c_idx)) {
                 let (symbol, color) = match species {
@@ -216,18 +224,32 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
                     Species::Grazer => ('●', Color::Cyan),
                     Species::Predator => ('▲', Color::Red),
                 };
-                spans.push(Span::styled(symbol.to_string(), Style::default().fg(color).add_modifier(Modifier::BOLD)));
+                spans.push(Span::styled(
+                    symbol.to_string(),
+                    Style::default().fg(color).add_modifier(Modifier::BOLD),
+                ));
             } else {
                 // Decay color?
-                let color = if char_at == '░' || char_at == '▒' { Color::DarkGray } else { Color::Gray };
-                spans.push(Span::styled(char_at.to_string(), Style::default().fg(color)));
+                let color = if char_at == '░' || char_at == '▒' {
+                    Color::DarkGray
+                } else {
+                    Color::Gray
+                };
+                spans.push(Span::styled(
+                    char_at.to_string(),
+                    Style::default().fg(color),
+                ));
             }
         }
         lines.push(Line::from(spans));
     }
 
     let p = Paragraph::new(lines)
-        .block(Block::default().borders(Borders::ALL).title(" Primordial Sediment: Life in the Code "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Primordial Sediment: Life in the Code "),
+        )
         .wrap(Wrap { trim: false });
 
     f.render_widget(p, chunks[0]);
@@ -236,9 +258,24 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
     let stats = format!(
         "Particles: {} | Algae: {} | Grazer: {} | Predator: {} | q: Quit",
         app.fluid.particles.len(),
-        app.fluid.particles.iter().filter(|p| p.species == Species::Algae).count(),
-        app.fluid.particles.iter().filter(|p| p.species == Species::Grazer).count(),
-        app.fluid.particles.iter().filter(|p| p.species == Species::Predator).count(),
+        app.fluid
+            .particles
+            .iter()
+            .filter(|p| p.species == Species::Algae)
+            .count(),
+        app.fluid
+            .particles
+            .iter()
+            .filter(|p| p.species == Species::Grazer)
+            .count(),
+        app.fluid
+            .particles
+            .iter()
+            .filter(|p| p.species == Species::Predator)
+            .count(),
     );
-    f.render_widget(Paragraph::new(stats).style(Style::default().bg(Color::Blue).fg(Color::White)), chunks[1]);
+    f.render_widget(
+        Paragraph::new(stats).style(Style::default().bg(Color::Blue).fg(Color::White)),
+        chunks[1],
+    );
 }

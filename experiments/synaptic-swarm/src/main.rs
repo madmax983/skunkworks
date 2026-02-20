@@ -1,9 +1,9 @@
-mod brain;
 mod agent;
+mod brain;
 
-use macroquad::prelude::*;
 use agent::{Agent, NeighborInfo};
-use brain::{N_SENSORY, N_INTER, N_MOTOR, N_TOTAL};
+use brain::{N_INTER, N_MOTOR, N_SENSORY, N_TOTAL};
+use macroquad::prelude::*;
 
 const AGENT_COUNT: usize = 50;
 const SIDEBAR_WIDTH: f32 = 300.0;
@@ -36,14 +36,24 @@ async fn main() {
 
         for i in 0..agents.len() {
             for j in 0..agents.len() {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
 
                 let mut diff = agents[j].pos - agents[i].pos;
                 // Toroidal wrapping distance
-                if diff.x > sw / 2.0 { diff.x -= sw; }
-                if diff.x < -sw / 2.0 { diff.x += sw; }
-                if diff.y > sh / 2.0 { diff.y -= sh; }
-                if diff.y < -sh / 2.0 { diff.y += sh; }
+                if diff.x > sw / 2.0 {
+                    diff.x -= sw;
+                }
+                if diff.x < -sw / 2.0 {
+                    diff.x += sw;
+                }
+                if diff.y > sh / 2.0 {
+                    diff.y -= sh;
+                }
+                if diff.y < -sh / 2.0 {
+                    diff.y += sh;
+                }
 
                 let dist = diff.length();
 
@@ -64,11 +74,19 @@ async fn main() {
                 let mut rel_angle = angle_target - angle_forward;
 
                 // Normalize to -PI..PI
-                while rel_angle > std::f32::consts::PI { rel_angle -= 2.0 * std::f32::consts::PI; }
-                while rel_angle < -std::f32::consts::PI { rel_angle += 2.0 * std::f32::consts::PI; }
+                while rel_angle > std::f32::consts::PI {
+                    rel_angle -= 2.0 * std::f32::consts::PI;
+                }
+                while rel_angle < -std::f32::consts::PI {
+                    rel_angle += 2.0 * std::f32::consts::PI;
+                }
 
-                if dist < 150.0 { // interaction radius
-                    all_neighbors[i].push(NeighborInfo { dist, angle: rel_angle });
+                if dist < 150.0 {
+                    // interaction radius
+                    all_neighbors[i].push(NeighborInfo {
+                        dist,
+                        angle: rel_angle,
+                    });
                 }
             }
         }
@@ -182,8 +200,8 @@ fn draw_brain(agent: &Agent, x: f32, y: f32, w: f32, h: f32) {
 
                 // Flash if spiked recently (trace is high)
                 if brain.traces[i] > 0.5 {
-                     let flash_color = if weight > 0.0 { BLUE } else { RED };
-                     draw_line(start.x, start.y, end.x, end.y, thickness * 2.0, flash_color);
+                    let flash_color = if weight > 0.0 { BLUE } else { RED };
+                    draw_line(start.x, start.y, end.x, end.y, thickness * 2.0, flash_color);
                 }
             }
         }
@@ -210,13 +228,13 @@ fn draw_brain(agent: &Agent, x: f32, y: f32, w: f32, h: f32) {
                 1 => "Ang",
                 2 => "Vel",
                 3 => "Rnd",
-                _ => "S"
+                _ => "S",
             }
         } else if i >= N_SENSORY + N_INTER {
             match i - (N_SENSORY + N_INTER) {
                 0 => "Thrust",
                 1 => "Turn",
-                _ => "M"
+                _ => "M",
             }
         } else {
             ""

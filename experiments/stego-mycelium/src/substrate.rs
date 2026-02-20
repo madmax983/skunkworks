@@ -17,7 +17,7 @@ impl StegoSubstrate {
                 // Gradient
                 let r = (x as f32 / width as f32 * 254.0) as u8;
                 let g = (y as f32 / height as f32 * 254.0) as u8;
-                let b = ((x+y) as f32 / (width+height) as f32 * 254.0) as u8;
+                let b = ((x + y) as f32 / (width + height) as f32 * 254.0) as u8;
 
                 // Zero out LSBs
                 let r = r & !1;
@@ -62,7 +62,7 @@ impl StegoSubstrate {
                 let py = y + (b as usize % 2); // Stagger slightly
 
                 if px < self.width && py < self.height {
-                     let p = self.image_data.get_pixel(px as u32, py as u32);
+                    let p = self.image_data.get_pixel(px as u32, py as u32);
                     let mut r = (p.r * 255.0) as u8;
                     // Force LSB to 1 if bit is 1.
                     // If bit is 0, we leave it as 0 (which matches cover).
@@ -88,7 +88,11 @@ impl StegoSubstrate {
                     let mut b_val = (p.b * 255.0) as u8;
                     b_val |= 1;
 
-                    self.image_data.set_pixel(px as u32, py as u32, Color::from_rgba(r, (p.g*255.0) as u8, b_val, 255));
+                    self.image_data.set_pixel(
+                        px as u32,
+                        py as u32,
+                        Color::from_rgba(r, (p.g * 255.0) as u8, b_val, 255),
+                    );
                 }
                 x += 1;
             }

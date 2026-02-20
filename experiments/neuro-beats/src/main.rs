@@ -141,7 +141,7 @@ async fn main() {
 
             // If active, draw a circle at destination
             if is_active {
-                 draw_circle(end.x, end.y, 5.0, YELLOW);
+                draw_circle(end.x, end.y, 5.0, YELLOW);
             }
         }
 

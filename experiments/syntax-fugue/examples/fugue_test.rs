@@ -13,9 +13,15 @@ fn counter_subject() {
     while melody < 10 {
         melody += 1;
         match melody {
-            1 => { let _note = "C"; },
-            2 => { let _note = "D"; },
-            _ => { let _note = "E"; },
+            1 => {
+                let _note = "C";
+            }
+            2 => {
+                let _note = "D";
+            }
+            _ => {
+                let _note = "E";
+            }
         }
     }
 }

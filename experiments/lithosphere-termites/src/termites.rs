@@ -72,7 +72,7 @@ impl TermiteColony {
 
                 // Deposit Logic
                 let h = terrain.get_height(ix, iy);
-                let slope = (gx*gx + gy*gy).sqrt();
+                let slope = (gx * gx + gy * gy).sqrt();
 
                 let should_deposit = if slope < 0.1 && h > 1.0 {
                     rng.gen_bool(0.1) // Top of hill
@@ -87,7 +87,6 @@ impl TermiteColony {
                     terrain.deposit_sediment(ix, iy, amount);
                     agent.carrying = 0.0;
                 }
-
             } else {
                 // Empty: Move Downhill (against gradient)
                 agent.vx -= gx * 0.5;
@@ -107,7 +106,7 @@ impl TermiteColony {
             }
 
             // 3. Physics Update
-            let speed = (agent.vx*agent.vx + agent.vy*agent.vy).sqrt();
+            let speed = (agent.vx * agent.vx + agent.vy * agent.vy).sqrt();
             if speed > 1.0 {
                 agent.vx /= speed;
                 agent.vy /= speed;
@@ -121,10 +120,22 @@ impl TermiteColony {
             agent.vy *= 0.9;
 
             // Bounds
-            if agent.x < 0.0 { agent.x = 0.0; agent.vx *= -1.0; }
-            if agent.x >= width { agent.x = width - 0.01; agent.vx *= -1.0; }
-            if agent.y < 0.0 { agent.y = 0.0; agent.vy *= -1.0; }
-            if agent.y >= height { agent.y = height - 0.01; agent.vy *= -1.0; }
+            if agent.x < 0.0 {
+                agent.x = 0.0;
+                agent.vx *= -1.0;
+            }
+            if agent.x >= width {
+                agent.x = width - 0.01;
+                agent.vx *= -1.0;
+            }
+            if agent.y < 0.0 {
+                agent.y = 0.0;
+                agent.vy *= -1.0;
+            }
+            if agent.y >= height {
+                agent.y = height - 0.01;
+                agent.vy *= -1.0;
+            }
         }
     }
 }

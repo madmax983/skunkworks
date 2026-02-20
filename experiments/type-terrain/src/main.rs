@@ -52,7 +52,11 @@ async fn main() {
         let fast_speed = 5.0; // Shift for speed
         let rot_speed = 0.02;
 
-        let move_speed = if is_key_down(KeyCode::LeftShift) { fast_speed } else { speed };
+        let move_speed = if is_key_down(KeyCode::LeftShift) {
+            fast_speed
+        } else {
+            speed
+        };
 
         if !typing_mode {
             if is_key_down(KeyCode::W) {
@@ -163,16 +167,58 @@ async fn main() {
         let line_h = 25.0;
 
         draw_text(&format!("FPS: {}", get_fps()), 10.0, ui_y, 30.0, WHITE);
-        draw_text(&format!("Terrain: {}", current_text), 10.0, ui_y + line_h, 30.0, YELLOW);
+        draw_text(
+            &format!("Terrain: {}", current_text),
+            10.0,
+            ui_y + line_h,
+            30.0,
+            YELLOW,
+        );
 
         if typing_mode {
-            draw_rectangle(0.0, ui_y + line_h * 2.0 - 20.0, screen_width(), 40.0, Color::new(0.0, 0.0, 0.0, 0.8));
-            draw_text(&format!("Type new text: {}_", input_text), 10.0, ui_y + line_h * 2.0, 30.0, WHITE);
+            draw_rectangle(
+                0.0,
+                ui_y + line_h * 2.0 - 20.0,
+                screen_width(),
+                40.0,
+                Color::new(0.0, 0.0, 0.0, 0.8),
+            );
+            draw_text(
+                &format!("Type new text: {}_", input_text),
+                10.0,
+                ui_y + line_h * 2.0,
+                30.0,
+                WHITE,
+            );
         } else {
-            draw_text("WASD+Arrows to move/look. Shift for speed.", 10.0, ui_y + line_h * 2.0, 20.0, LIGHTGRAY);
-            draw_text("SPACE: Toggle Erosion", 10.0, ui_y + line_h * 3.0, 20.0, if erosion_active { GREEN } else { RED });
-            draw_text("ENTER: Change Text", 10.0, ui_y + line_h * 4.0, 20.0, LIGHTGRAY);
-            draw_text(&format!("Erosion Steps: {}", total_erosion_steps), 10.0, ui_y + line_h * 5.0, 20.0, SKYBLUE);
+            draw_text(
+                "WASD+Arrows to move/look. Shift for speed.",
+                10.0,
+                ui_y + line_h * 2.0,
+                20.0,
+                LIGHTGRAY,
+            );
+            draw_text(
+                "SPACE: Toggle Erosion",
+                10.0,
+                ui_y + line_h * 3.0,
+                20.0,
+                if erosion_active { GREEN } else { RED },
+            );
+            draw_text(
+                "ENTER: Change Text",
+                10.0,
+                ui_y + line_h * 4.0,
+                20.0,
+                LIGHTGRAY,
+            );
+            draw_text(
+                &format!("Erosion Steps: {}", total_erosion_steps),
+                10.0,
+                ui_y + line_h * 5.0,
+                20.0,
+                SKYBLUE,
+            );
         }
 
         next_frame().await

@@ -1,5 +1,5 @@
-use bevy::prelude::*;
 use crate::mechanism::TickEvent;
+use bevy::prelude::*;
 
 #[derive(Component, Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CpuPhase {
@@ -46,8 +46,8 @@ pub struct CpuPlugin;
 impl Plugin for CpuPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<NoteEvent>()
-           .init_resource::<Program>()
-           .add_systems(Update, cpu_tick_system);
+            .init_resource::<Program>()
+            .add_systems(Update, cpu_tick_system);
     }
 }
 

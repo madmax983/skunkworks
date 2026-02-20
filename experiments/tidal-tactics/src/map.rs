@@ -1,4 +1,3 @@
-
 use rand::Rng;
 
 pub const WIDTH: usize = 64;
@@ -10,7 +9,7 @@ pub struct Map {
     pub height: usize,
     pub terrain: Vec<f32>,
     pub water: Vec<f32>,
-    pub flux: Vec<[f32; 4]>, // L, R, T, B
+    pub flux: Vec<[f32; 4]>,     // L, R, T, B
     pub velocity: Vec<[f32; 2]>, // u, v
 }
 
