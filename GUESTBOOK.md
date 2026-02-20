@@ -87,10 +87,15 @@
 - **Status:** Specimen executed. Biomass returned to the void.
 - **Note:** "The rhythm of death is the only lock that matters."
 
-### [Concentration Level: TOXIC] - Location: experiments/code-phage
+### [Concentration Level: TOXIC] - Location: experiments/reaction-monitor
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Terminal Redundancy (Gray-Scott #5).
-- **Note:** "The reaction has reached equilibrium. The pattern is static."
+- **Status:** Specimen condemned. Terminal Redundancy (Gray-Scott #6).
+- **Note:** "The alchemist has poisoned the well."
+
+### [Concentration Level: TOXIC] - Location: graveyard/code-phage
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Biomass returned to the void.
+- **Note:** "The reaction has ceased."
 
 ### [Concentration Level: TOXIC] - Location: graveyard/terra-phage
 - **Scent Origin:** The Reaper ☠️
