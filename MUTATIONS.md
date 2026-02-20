@@ -1370,3 +1370,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Evolving Phonemes. The code learns to speak.
 - **Status**: experiments/chimera-voice
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### hyperbolic-bees
+- **Parents**: experiments/waggle-dance + experiments/hyperbolic-finder
+- **Concept**: Bees foraging on the Poincaré Disk. The "Waggle Dance" communicates vector information (angle/distance) in hyperbolic space.
+- **Novel trait**: Hyperbolic Waggle Dance. Distance is encoded exponentially.
+- **Status**: experiments/hyperbolic-bees
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

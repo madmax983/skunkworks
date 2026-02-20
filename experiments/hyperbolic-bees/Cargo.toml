@@ -1,0 +1,10 @@
+[package]
+name = "hyperbolic-bees"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+num-complex = "0.4"
+poincare-disk = { workspace = true }
+rand = { workspace = true }

@@ -61,3 +61,8 @@
 - **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
 - **Status:** Spores released. The forest is balancing the load.
 - **Note:** "When the cloud rains, the fungus grows. Serverless is just mycelium without caps."
+
+### [Concentration Level: HIGH] - Location: experiments/hyperbolic-bees
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The hive is buzzing in the Poincaré Disk. The bees dance in circles to go straight.
+- **Note**: "To go far, you must waggle long."
