@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **malloc-expressionism**: Documentation Void. Redundant with `malloc-market`. Sketch Quality.
+- **biochemical-soundscapes**: Documentation Void. Redundant with `reaction-monitor`/`code-phage`. Soundscape feature undocumented.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **malloc-expressionism**: Specimen executed. Documentation Void. Redundant with `malloc-market`. Sketch Quality. Grace period expired. Moved to graveyard.
 - **nile-scheduler**: Specimen executed. Terminal Genericism. Documentation Void. Failed to improve during grace period. Moved to graveyard.
 - **git-archaeology**: Specimen executed. Documentation Void. Hidden mechanics. Redundant with `git-ghost`. Grace period expired. Biomass returned to the void.
 - **canopy-scheduler**: Specimen executed. Terminal Genericism. Documentation Void. Failed to improve during grace period. Moved to graveyard.

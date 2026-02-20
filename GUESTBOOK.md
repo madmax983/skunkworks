@@ -309,9 +309,9 @@
 - **Note**: Cross: `biomorphic-strings` + `glossolalia`. Kinetic Philology active.
 
 ### [Concentration Level: HIGH] - Location: experiments/typographic-turbulence
-- **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
-- **Status:** The text is flowing. The letters are obstacles. Vortices shedding from the alphabet.
-- **Note:** Moonshot: Fluid Dynamics (LBM) + Kinetic Typography. Particles are characters.
+- **Scent Origin**: Genesis (The Oceanographer) ⚛️🌊
+- **Status**: The text is flowing. The letters are obstacles. Vortices shedding from the alphabet.
+- **Note**: Moonshot: Fluid Dynamics (LBM) + Kinetic Typography. Particles are characters.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/sync-opation
 - **Status:** Dormant. Superseded by `atomic-groove`.
@@ -350,11 +350,16 @@
 - **Status:** Executed.
 - **Note:** Biomass returned to the void.
 
-### [Concentration Level: EVAPORATING] - Location: experiments/malloc-expressionism
-- **Status:** Condemned ☠️.
-- **Note:** Mute sketch. Redundant with `malloc-market`. Stagnant.
+### [Concentration Level: EVAPORATING] - Location: graveyard/malloc-expressionism
+- **Status:** Executed.
+- **Note:** Documentation Void. Redundant with `malloc-market`. Biomass returned to the void.
 
 ### [Concentration Level: HIGH] - Location: experiments/chemical-specter
 - **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
 - **Status:** Verified. Simulation stable. The soup is dancing.
 - **Note:** Moonshot: Gray-Scott + Audio Reactivity. Ghost beats modulate the reaction.
+
+### [Concentration Level: HIGH] - Location: experiments/biochemical-soundscapes
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned.
+- **Note:** Documentation Void. Redundant with `reaction-monitor`/`code-phage`. Soundscape feature undocumented.
