@@ -12,3 +12,11 @@ ratatui = "0.26"
 crossterm = "0.27"
 anyhow = "1.0"
 rand = "0.8"
+
+[dependencies.rodio]
+version = "0.17"
+optional = true
+
+[features]
+default = []
+audio = ["dep:rodio"]
