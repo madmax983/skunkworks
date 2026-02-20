@@ -1356,3 +1356,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: The mountains are growing from commits, the valleys are carved by churn.
 - **Status**: experiments/lithosphere-git
 - **Evaluation**: Compiles. Verified in GUESTBOOK.
+
+### primordial-sediment
+- **Parents**: experiments/digital-sediment + experiments/primordial-soup
+- **Concept**: Biological ecosystem living on and consuming the "sediment" of decaying code.
+- **Novel trait**: Bio-Entropic Feedback Loop. The code is food. A healthy ecosystem means a destroyed codebase.
+- **Status**: experiments/primordial-sediment
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

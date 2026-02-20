@@ -1,0 +1,12 @@
+[package]
+name = "primordial-sediment"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = { version = "0.26" }
+crossterm = { version = "0.27" }
+git2 = { version = "0.18" }
+anyhow = { workspace = true }
+rand = { workspace = true }
+chrono = "0.4"
