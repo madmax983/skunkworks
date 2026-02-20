@@ -85,6 +85,12 @@ struct DnaWrite {
     val: Nucleotide,
 }
 
+struct DnaOpCodeWrite {
+    strand_idx: usize,
+    gene_idx: usize,
+    op: OpCode,
+}
+
 struct DnaAppend {
     strand_idx: usize,
     gene: crate::ast::Gene,
@@ -165,6 +171,7 @@ struct SignalContext {
     next_signals: Vec<Vec<u8>>,
     grid_writes: Vec<GridWrite>,
     dna_writes: Vec<DnaWrite>,
+    dna_opcode_writes: Vec<DnaOpCodeWrite>,
     dna_appends: Vec<DnaAppend>,
     resonance_writes: Vec<ResonanceWrite>,
     voltage_writes: Vec<VoltageWrite>,
@@ -202,6 +209,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         next_signals: vec![vec![0u8; size]; size],
         grid_writes: Vec::new(),
         dna_writes: Vec::new(),
+        dna_opcode_writes: Vec::new(),
         dna_appends: Vec::new(),
         resonance_writes: Vec::new(),
         voltage_writes: Vec::new(),
@@ -453,6 +461,8 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 'Π' => exec_pi(vm, y, x, signal, &mut ctx),
                 #[cfg(feature = "oracle")]
                 'λ' => exec_lambda(vm, y, x, signal, &mut ctx),
+                '{' => exec_inject(vm, y, x, signal, &mut ctx),
+                '}' => exec_extract(vm, y, x, signal, &mut ctx),
                 _ => {
                     if let Value::Str(s) = val {
                         if let Ok(op) = s.parse::<OpCode>() {
@@ -591,6 +601,15 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 } else {
                     gene.args.push(w.val);
                 }
+            }
+        }
+    }
+
+    for w in ctx.dna_opcode_writes {
+        if w.strand_idx < vm.dna.helix.strands.len() {
+            let strand = &mut vm.dna.helix.strands[w.strand_idx];
+            if w.gene_idx < strand.genes.len() {
+                strand.genes[w.gene_idx].op = w.op;
             }
         }
     }
@@ -1360,6 +1379,53 @@ fn exec_synthesize(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut Sig
                 gene_idx: g_idx as usize,
                 val: Nucleotide::Number(val),
             });
+        }
+    }
+}
+
+fn exec_extract(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // }: Extract OpCode
+    // West: Strand, North: Index -> East: OpCode String
+    if let (Some(s_idx), Some(g_idx)) = (peek(vm, y, x, 0, -1), peek(vm, y, x, -1, 0)) {
+        let s = s_idx as usize;
+        let g = g_idx as usize;
+        if s < vm.dna.helix.strands.len() {
+            let strand = &vm.dna.helix.strands[s];
+            if g < strand.genes.len() {
+                let op_str = strand.genes[g].op.to_string();
+                if let Some((ey, ex)) = vm.normalize_coords(y as i64, x as i64 + 1) {
+                    ctx.grid_writes.push(GridWrite {
+                        y: ey,
+                        x: ex,
+                        val: Value::Str(op_str),
+                    });
+                }
+            }
+        }
+    }
+}
+
+fn exec_inject(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // {: Inject OpCode
+    // West: OpCode String, North: Strand, South: Index
+    if let (Some(s_idx), Some(g_idx)) = (peek(vm, y, x, -1, 0), peek(vm, y, x, 1, 0)) {
+        if let Some((wy, wx)) = vm.normalize_coords(y as i64, x as i64 - 1) {
+            if let Value::Str(op_str) = &vm.grid[wy][wx] {
+                use std::str::FromStr;
+                if let Ok(op) = OpCode::from_str(op_str) {
+                    ctx.dna_opcode_writes.push(DnaOpCodeWrite {
+                        strand_idx: s_idx as usize,
+                        gene_idx: g_idx as usize,
+                        op,
+                    });
+                }
+            }
         }
     }
 }
