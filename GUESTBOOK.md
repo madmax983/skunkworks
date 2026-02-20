@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/saros-cycle
+- **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
+- **Status:** The Cuneiform Tablet is being inscribed. Time series analysis in Base 60 operational.
+- **Note:** "The Babylonians were right about the circle." - Do not trust Arabic numerals here.
+
 ### [Concentration Level: HIGH] - Location: experiments/waggle-dance
 - **Scent Origin:** Mycelium 🍄 (Sensed: Macroquad Activity)
 - **Status:** A new colony has established. The bees are dancing. Fresh nectar source detected.
