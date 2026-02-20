@@ -33,7 +33,7 @@ fn find_free_spot(
     rng: &mut ChaCha20Rng,
     width: u32,
     height: u32,
-    occupied: &mut [bool]
+    occupied: &mut [bool],
 ) -> Result<(u32, u32)> {
     let max_attempts = 1000;
     for _ in 0..max_attempts {
@@ -147,7 +147,12 @@ pub fn recover_stars(img: &RgbaImage, key: &str) -> Result<Vec<Star>> {
         let pixel = img.get_pixel(x, y);
         let b = color_to_byte(*pixel);
         len_bytes[i] = b;
-        stars.push(Star { x, y, byte: b, color: *pixel });
+        stars.push(Star {
+            x,
+            y,
+            byte: b,
+            color: *pixel,
+        });
     }
     let len = u32::from_be_bytes(len_bytes) as usize;
 
@@ -156,7 +161,12 @@ pub fn recover_stars(img: &RgbaImage, key: &str) -> Result<Vec<Star>> {
         let (x, y) = find_free_spot(&mut rng, width, height, &mut occupied)?;
         let pixel = img.get_pixel(x, y);
         let b = color_to_byte(*pixel);
-        stars.push(Star { x, y, byte: b, color: *pixel });
+        stars.push(Star {
+            x,
+            y,
+            byte: b,
+            color: *pixel,
+        });
     }
 
     Ok(stars)

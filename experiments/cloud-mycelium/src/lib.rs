@@ -60,7 +60,10 @@ impl World {
         // Connect to nearby mushrooms (simple distance based connection for now)
         // In a real moonshot, this would be dynamic growth.
         // For now, let's just connect to the nearest 2 neighbors to form a graph.
-        let mut distances: Vec<(usize, f32)> = self.mushrooms.iter().enumerate()
+        let mut distances: Vec<(usize, f32)> = self
+            .mushrooms
+            .iter()
+            .enumerate()
             .take(index) // Don't connect to self
             .map(|(i, m)| (i, m.pos.distance(pos)))
             .collect();
@@ -80,7 +83,11 @@ impl World {
         if !self.mushrooms[i].connections.contains(&j) {
             self.mushrooms[i].connections.push(j);
             self.mushrooms[j].connections.push(i);
-            self.hyphae.push(Hypha { from: i, to: j, flow: 0.0 });
+            self.hyphae.push(Hypha {
+                from: i,
+                to: j,
+                flow: 0.0,
+            });
         }
     }
 
@@ -126,7 +133,9 @@ impl World {
 
                 for &neighbor_idx in &self.mushrooms[i].connections {
                     let neighbor_load = self.mushrooms[neighbor_idx].load;
-                    if neighbor_load < self.mushrooms[neighbor_idx].capacity && neighbor_load < min_load {
+                    if neighbor_load < self.mushrooms[neighbor_idx].capacity
+                        && neighbor_load < min_load
+                    {
                         min_load = neighbor_load;
                         best_neighbor = Some(neighbor_idx);
                     }

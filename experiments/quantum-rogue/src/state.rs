@@ -1,6 +1,6 @@
+use crate::quantum::{Gate, QuantumManager};
 use rand::Rng;
 use ratatui::style::Color;
-use crate::quantum::{Gate, QuantumManager};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Tile {
@@ -47,14 +47,14 @@ impl GameState {
         let mut grid = vec![vec![Tile::Wall; width]; height];
 
         // Simple Room Carving (for now just a box)
-        for y in 1..height-1 {
-            for x in 1..width-1 {
+        for y in 1..height - 1 {
+            for x in 1..width - 1 {
                 grid[y][x] = Tile::Empty;
             }
         }
 
         // Place Exit
-        grid[height/2][width-2] = Tile::Exit;
+        grid[height / 2][width - 2] = Tile::Exit;
 
         let mut quantum = QuantumManager::new();
         let mut entities = Vec::new();
@@ -62,8 +62,8 @@ impl GameState {
 
         // Spawn Qubits
         for _ in 0..20 {
-            let x = rng.gen_range(2..width-2);
-            let y = rng.gen_range(2..height-2);
+            let x = rng.gen_range(2..width - 2);
+            let y = rng.gen_range(2..height - 2);
 
             // Random State: 0, 1, or Superposition
             let id = next_entity_id;
@@ -185,12 +185,14 @@ impl GameState {
 
     pub fn find_nearest_qubits(&self, n: usize) -> Vec<usize> {
         // Simple distance check
-        let mut dists: Vec<(usize, f64)> = self.entities.iter()
+        let mut dists: Vec<(usize, f64)> = self
+            .entities
+            .iter()
             .filter(|e| e.is_qubit)
             .map(|e| {
                 let dx = e.x as f64 - self.player.x as f64;
                 let dy = e.y as f64 - self.player.y as f64;
-                (e.id, dx*dx + dy*dy)
+                (e.id, dx * dx + dy * dy)
             })
             .collect();
 

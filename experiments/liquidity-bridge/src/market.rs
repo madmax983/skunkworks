@@ -32,9 +32,7 @@ pub enum Particle {
     Ask(usize),
 
     /// The remnant of a successful transaction.
-    Trade {
-        age: u8,
-    },
+    Trade { age: u8 },
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -204,8 +202,8 @@ impl Grid {
 
                 // Check if target is accessible (Terrain check) AND empty
                 if self.can_move_into(n_idx)
-                   && !self.updated[n_idx]
-                   && matches!(self.cells[n_idx].particle, Particle::Empty)
+                    && !self.updated[n_idx]
+                    && matches!(self.cells[n_idx].particle, Particle::Empty)
                 {
                     self.cells[n_idx].particle = particle;
                     self.cells[current_idx].particle = Particle::Empty;
@@ -279,7 +277,7 @@ impl Grid {
             // Terrain Check
             if !self.can_move_into(target_idx) {
                 // Blocked by Gap
-                 self.try_move_sideways(idx, x, y, Particle::Ask(owner), rng);
+                self.try_move_sideways(idx, x, y, Particle::Ask(owner), rng);
                 return None;
             }
 
@@ -376,7 +374,7 @@ mod tests {
         // Bid should be blocked by Gap at y=5, so it stays at y=6 (or moves sideways)
         // Check row 5 is still empty
         match grid.get_particle(5, 5) {
-            Particle::Empty => {},
+            Particle::Empty => {}
             _ => panic!("Bid crossed the Gap!"),
         }
     }
@@ -401,7 +399,7 @@ mod tests {
 
         // Bid should move into the Bridge at (5, 5)
         match grid.get_particle(5, 5) {
-            Particle::Bid(1) => {}, // Success
+            Particle::Bid(1) => {} // Success
             _ => {
                 // It might have been blocked if update order was weird, but let's see.
                 // Or maybe it moved sideways?
@@ -410,7 +408,10 @@ mod tests {
                 // If Bid moves sideways, it fails test.
                 // But process_bid prefers UP if possible.
                 // UP is (5,5). Terrain is Bridge. Allowed.
-                panic!("Bid failed to cross the Bridge! Particle at (5,5): {:?}", grid.get_particle(5, 5));
+                panic!(
+                    "Bid failed to cross the Bridge! Particle at (5,5): {:?}",
+                    grid.get_particle(5, 5)
+                );
             }
         }
     }

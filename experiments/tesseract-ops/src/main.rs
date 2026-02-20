@@ -112,11 +112,19 @@ impl SystemMonitor {
 
             let total_mem = self.sys.total_memory() as f32;
             let used_mem = self.sys.used_memory() as f32;
-            self.target_mem = if total_mem > 0.0 { used_mem / total_mem } else { 0.0 };
+            self.target_mem = if total_mem > 0.0 {
+                used_mem / total_mem
+            } else {
+                0.0
+            };
 
             let total_swap = self.sys.total_swap() as f32;
             let used_swap = self.sys.used_swap() as f32;
-            self.target_swap = if total_swap > 0.0 { used_swap / total_swap } else { 0.0 };
+            self.target_swap = if total_swap > 0.0 {
+                used_swap / total_swap
+            } else {
+                0.0
+            };
 
             let load = System::load_average();
             self.target_load = (load.one as f32 / 4.0).clamp(0.0, 1.0);
@@ -183,12 +191,24 @@ async fn main() {
         angle_yw += dt * base_speed * 0.7 * speed_mult;
 
         // Input Camera
-        if is_key_down(KeyCode::Left) { cam_angle_y += 2.0 * dt; }
-        if is_key_down(KeyCode::Right) { cam_angle_y -= 2.0 * dt; }
-        if is_key_down(KeyCode::Up) { cam_angle_x += 2.0 * dt; }
-        if is_key_down(KeyCode::Down) { cam_angle_x -= 2.0 * dt; }
-        if is_key_down(KeyCode::W) { cam_dist -= 5.0 * dt; }
-        if is_key_down(KeyCode::S) { cam_dist += 5.0 * dt; }
+        if is_key_down(KeyCode::Left) {
+            cam_angle_y += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_angle_y -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_angle_x += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_angle_x -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 5.0 * dt;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 5.0 * dt;
+        }
 
         let cam_pos = vec3(
             cam_dist * cam_angle_x.cos() * cam_angle_y.sin(),
@@ -244,19 +264,43 @@ async fn main() {
 
         // Draw Vertices as spheres
         for v in &base_verts {
-             let p = transform(*v);
-             // Size based on load
-             let size = 0.05 + monitor.load_avg * 0.1;
-             draw_sphere(p, size, None, WHITE);
+            let p = transform(*v);
+            // Size based on load
+            let size = 0.05 + monitor.load_avg * 0.1;
+            draw_sphere(p, size, None, WHITE);
         }
 
         set_default_camera();
         draw_text("Tesseract Ops", 10.0, 20.0, 30.0, WHITE);
 
-        draw_text(&format!("CPU (X-Scale): {:.0}%", monitor.cpu_usage * 100.0), 10.0, 50.0, 20.0, RED);
-        draw_text(&format!("MEM (Y-Scale): {:.0}%", monitor.mem_usage * 100.0), 10.0, 70.0, 20.0, BLUE);
-        draw_text(&format!("SWP (Z-Scale): {:.0}%", monitor.swap_usage * 100.0), 10.0, 90.0, 20.0, YELLOW);
-        draw_text(&format!("LOD (Rotation): {:.2}", monitor.load_avg * 4.0), 10.0, 110.0, 20.0, GREEN);
+        draw_text(
+            &format!("CPU (X-Scale): {:.0}%", monitor.cpu_usage * 100.0),
+            10.0,
+            50.0,
+            20.0,
+            RED,
+        );
+        draw_text(
+            &format!("MEM (Y-Scale): {:.0}%", monitor.mem_usage * 100.0),
+            10.0,
+            70.0,
+            20.0,
+            BLUE,
+        );
+        draw_text(
+            &format!("SWP (Z-Scale): {:.0}%", monitor.swap_usage * 100.0),
+            10.0,
+            90.0,
+            20.0,
+            YELLOW,
+        );
+        draw_text(
+            &format!("LOD (Rotation): {:.2}", monitor.load_avg * 4.0),
+            10.0,
+            110.0,
+            20.0,
+            GREEN,
+        );
 
         next_frame().await
     }

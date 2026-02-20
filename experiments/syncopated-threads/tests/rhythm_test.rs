@@ -25,7 +25,11 @@ fn test_thread_contention() {
         let _guard = instrument_clone2.lock().unwrap();
         let duration = lock_start.elapsed();
         // Should have waited at least 400ms (500 - 100)
-        assert!(duration >= Duration::from_millis(390), "Wait was too short: {:?}", duration);
+        assert!(
+            duration >= Duration::from_millis(390),
+            "Wait was too short: {:?}",
+            duration
+        );
     });
 
     t1.join().unwrap();

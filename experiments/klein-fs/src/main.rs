@@ -1,11 +1,11 @@
 use macroquad::prelude::*;
 use std::f32::consts::PI;
 
-mod math;
 mod fs;
+mod math;
 
-use math::klein_bottle;
 use fs::scan_directory;
+use math::klein_bottle;
 
 const U_SCALE: f32 = 0.2; // How fast u advances per file
 const V_SCALE: f32 = 0.1; // How fast v advances per file
@@ -29,7 +29,9 @@ async fn main() {
         let (_, mw_y) = mouse_wheel();
         if mw_y != 0.0 {
             scroll_idx -= mw_y; // Scroll down = positive increment
-            if scroll_idx < 0.0 { scroll_idx = 0.0; }
+            if scroll_idx < 0.0 {
+                scroll_idx = 0.0;
+            }
             if scroll_idx > (files.len().saturating_sub(1)) as f32 {
                 scroll_idx = (files.len().saturating_sub(1)) as f32;
             }
@@ -46,8 +48,12 @@ async fn main() {
         }
 
         // Zoom
-        if is_key_down(KeyCode::W) { cam_dist -= 0.1; }
-        if is_key_down(KeyCode::S) { cam_dist += 0.1; }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 0.1;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 0.1;
+        }
         cam_dist = cam_dist.clamp(2.0, 50.0);
 
         // Calculate focus point on the surface
@@ -63,7 +69,7 @@ async fn main() {
         let cam_offset = vec3(
             cam_dist * cam_rot_x.sin() * cam_rot_y.cos(),
             cam_dist * cam_rot_x.cos(),
-            cam_dist * cam_rot_x.sin() * cam_rot_y.sin()
+            cam_dist * cam_rot_x.sin() * cam_rot_y.sin(),
         );
         let cam_pos = focus_pos + cam_offset;
 
@@ -115,7 +121,13 @@ async fn main() {
                 // Color by depth
                 let hue = (files[i].depth as f32 * 0.2) % 1.0;
                 // Simple hue to rgb approx
-                if hue < 0.3 { GREEN } else if hue < 0.6 { BLUE } else { PURPLE }
+                if hue < 0.3 {
+                    GREEN
+                } else if hue < 0.6 {
+                    BLUE
+                } else {
+                    PURPLE
+                }
             };
 
             let size = if is_focused { 0.15 } else { 0.05 };
@@ -135,15 +147,33 @@ async fn main() {
         if !files.is_empty() {
             let current_idx = scroll_idx.round() as usize;
             if let Some(file) = files.get(current_idx) {
-                draw_text(&format!("File [{}/{}]: {}", current_idx + 1, files.len(), file.name), 20.0, 30.0, 30.0, WHITE);
-                draw_text(&format!("Path: {}", file.path.display()), 20.0, 60.0, 20.0, LIGHTGRAY);
+                draw_text(
+                    &format!("File [{}/{}]: {}", current_idx + 1, files.len(), file.name),
+                    20.0,
+                    30.0,
+                    30.0,
+                    WHITE,
+                );
+                draw_text(
+                    &format!("Path: {}", file.path.display()),
+                    20.0,
+                    60.0,
+                    20.0,
+                    LIGHTGRAY,
+                );
                 draw_text(&format!("Depth: {}", file.depth), 20.0, 85.0, 20.0, GRAY);
             }
         } else {
-             draw_text("No files found.", 20.0, 30.0, 30.0, RED);
+            draw_text("No files found.", 20.0, 30.0, 30.0, RED);
         }
 
-        draw_text("Scroll: Navigate | Drag: Rotate Camera", 20.0, screen_height() - 20.0, 20.0, DARKGRAY);
+        draw_text(
+            "Scroll: Navigate | Drag: Rotate Camera",
+            20.0,
+            screen_height() - 20.0,
+            20.0,
+            DARKGRAY,
+        );
 
         next_frame().await
     }

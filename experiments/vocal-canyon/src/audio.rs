@@ -1,6 +1,6 @@
 use anyhow::Result;
-use std::sync::Arc;
 use rand::Rng;
+use std::sync::Arc;
 
 #[cfg(feature = "audio")]
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
@@ -154,7 +154,9 @@ impl VocalTract {
 #[cfg(feature = "audio")]
 pub fn start_audio(state: Arc<SharedState>) -> Result<AudioStream> {
     let host = cpal::default_host();
-    let device = host.default_output_device().ok_or(anyhow::anyhow!("No output device found"))?;
+    let device = host
+        .default_output_device()
+        .ok_or(anyhow::anyhow!("No output device found"))?;
     let config = device.default_output_config()?;
 
     match config.sample_format() {
@@ -171,7 +173,11 @@ pub fn start_audio(_state: Arc<SharedState>) -> Result<AudioStream> {
 }
 
 #[cfg(feature = "audio")]
-fn run<T>(device: &cpal::Device, config: &cpal::StreamConfig, state: Arc<SharedState>) -> Result<AudioStream>
+fn run<T>(
+    device: &cpal::Device,
+    config: &cpal::StreamConfig,
+    state: Arc<SharedState>,
+) -> Result<AudioStream>
 where
     T: cpal::Sample + cpal::FromSample<f32>,
 {

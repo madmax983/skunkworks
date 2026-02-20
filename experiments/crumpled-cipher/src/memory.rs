@@ -1,5 +1,5 @@
-use image::{Rgba, RgbaImage};
 use crate::starmap::StarMap;
+use image::{Rgba, RgbaImage};
 
 pub struct Memory {
     pub width: u32,
@@ -29,7 +29,7 @@ impl Memory {
 
         // Fill hidden layer with void
         for p in hidden_layer.pixels_mut() {
-             *p = Rgba([5, 5, 15, 255]);
+            *p = Rgba([5, 5, 15, 255]);
         }
 
         // Paste generated starmap

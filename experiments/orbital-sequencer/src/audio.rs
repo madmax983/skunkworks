@@ -7,9 +7,7 @@ pub struct AudioEngine {
 
 impl AudioEngine {
     pub fn new() -> Self {
-        Self {
-            sounds: Vec::new(),
-        }
+        Self { sounds: Vec::new() }
     }
 
     pub async fn init(&mut self) {
@@ -17,8 +15,7 @@ impl AudioEngine {
         // Frequencies: 261.63, 293.66, 329.63, 392.00, 440.00
         // And higher octave.
         let frequencies = [
-            261.63, 293.66, 329.63, 392.00, 440.00,
-            523.25, 587.33, 659.25, 783.99, 880.00
+            261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 783.99, 880.00,
         ];
 
         for freq in frequencies {
@@ -32,7 +29,9 @@ impl AudioEngine {
     }
 
     pub fn play_note(&self, index: usize) {
-        if self.sounds.is_empty() { return; }
+        if self.sounds.is_empty() {
+            return;
+        }
         let sound = &self.sounds[index % self.sounds.len()];
         play_sound(
             sound,

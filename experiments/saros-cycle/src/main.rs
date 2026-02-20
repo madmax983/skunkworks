@@ -1,5 +1,5 @@
-mod sexagesimal;
 mod series;
+mod sexagesimal;
 
 use std::time::Duration;
 
@@ -15,8 +15,8 @@ use ratatui::{
 };
 use tui_shared::Tui;
 
-use sexagesimal::Sexagesimal;
 use series::TimeSeries;
+use sexagesimal::Sexagesimal;
 
 struct App {
     data: TimeSeries,
@@ -105,7 +105,11 @@ impl App {
     }
 
     fn render_tablet(&self, f: &mut Frame, area: ratatui::layout::Rect) {
-        let items: Vec<ListItem> = self.data.data.iter().enumerate()
+        let items: Vec<ListItem> = self
+            .data
+            .data
+            .iter()
+            .enumerate()
             .skip(self.scroll_offset)
             .map(|(i, val)| {
                 let idx_sex = Sexagesimal::from_u64(i as u64);
@@ -118,25 +122,43 @@ impl App {
             .collect();
 
         let list = List::new(items)
-            .block(Block::default().borders(Borders::ALL).title("Cuneiform Tablet"))
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title("Cuneiform Tablet"),
+            )
             .highlight_style(Style::default().add_modifier(ratatui::style::Modifier::BOLD));
 
         f.render_widget(list, area);
     }
 
     fn render_chart(&self, f: &mut Frame, area: ratatui::layout::Rect) {
-        let raw_data: Vec<(f64, f64)> = self.data.data.iter().enumerate()
+        let raw_data: Vec<(f64, f64)> = self
+            .data
+            .data
+            .iter()
+            .enumerate()
             .map(|(i, val)| (i as f64, val.to_f64()))
             .collect();
 
-        let sma_data: Vec<(f64, f64)> = self.sma.data.iter().enumerate()
+        let sma_data: Vec<(f64, f64)> = self
+            .sma
+            .data
+            .iter()
+            .enumerate()
             .map(|(i, val)| ((i + self.window_size - 1) as f64, val.to_f64()))
             .collect();
 
         let x_labels = vec![
-            Span::styled(" ", Style::default().add_modifier(ratatui::style::Modifier::BOLD)),
+            Span::styled(
+                " ",
+                Style::default().add_modifier(ratatui::style::Modifier::BOLD),
+            ),
             Span::raw(format!("{}", Sexagesimal::from_u64(50))),
-            Span::styled(format!("{}", Sexagesimal::from_u64(100)), Style::default().add_modifier(ratatui::style::Modifier::BOLD)),
+            Span::styled(
+                format!("{}", Sexagesimal::from_u64(100)),
+                Style::default().add_modifier(ratatui::style::Modifier::BOLD),
+            ),
         ];
 
         let datasets = vec![
@@ -147,7 +169,10 @@ impl App {
                 .style(Style::default().fg(Color::Cyan))
                 .data(&raw_data),
             Dataset::default()
-                .name(format!("SMA({})", Sexagesimal::from_u64(self.window_size as u64)))
+                .name(format!(
+                    "SMA({})",
+                    Sexagesimal::from_u64(self.window_size as u64)
+                ))
                 .marker(symbols::Marker::Braille)
                 .graph_type(GraphType::Line)
                 .style(Style::default().fg(Color::Yellow))
@@ -155,21 +180,29 @@ impl App {
         ];
 
         let chart = Chart::new(datasets)
-            .block(Block::default().borders(Borders::ALL).title("Saros Cycle Analysis"))
-            .x_axis(Axis::default()
-                .title("Time (t)")
-                .style(Style::default().fg(Color::Gray))
-                .bounds([0.0, 100.0])
-                .labels(x_labels))
-            .y_axis(Axis::default()
-                .title("Magnitude")
-                .style(Style::default().fg(Color::Gray))
-                .bounds([0.0, 25.0]) // Sine wave scaled [0, 20]
-                .labels(vec![
-                    Span::raw(" "), // empty
-                    Span::raw(format!("{}", Sexagesimal::from_u64(10))),
-                    Span::raw(format!("{}", Sexagesimal::from_u64(20))),
-                ]));
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title("Saros Cycle Analysis"),
+            )
+            .x_axis(
+                Axis::default()
+                    .title("Time (t)")
+                    .style(Style::default().fg(Color::Gray))
+                    .bounds([0.0, 100.0])
+                    .labels(x_labels),
+            )
+            .y_axis(
+                Axis::default()
+                    .title("Magnitude")
+                    .style(Style::default().fg(Color::Gray))
+                    .bounds([0.0, 25.0]) // Sine wave scaled [0, 20]
+                    .labels(vec![
+                        Span::raw(" "), // empty
+                        Span::raw(format!("{}", Sexagesimal::from_u64(10))),
+                        Span::raw(format!("{}", Sexagesimal::from_u64(20))),
+                    ]),
+            );
 
         f.render_widget(chart, area);
     }

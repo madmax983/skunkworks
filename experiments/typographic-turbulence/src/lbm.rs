@@ -287,7 +287,7 @@ impl FluidSim {
     }
 
     pub fn get_curl(&self, x: f32, y: f32) -> f32 {
-         let x = x.clamp(0.0, (WIDTH - 1) as f32);
+        let x = x.clamp(0.0, (WIDTH - 1) as f32);
         let y = y.clamp(0.0, (HEIGHT - 1) as f32);
 
         let x0 = x.floor() as usize;

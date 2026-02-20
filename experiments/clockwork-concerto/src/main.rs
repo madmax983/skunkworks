@@ -1,7 +1,7 @@
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::*;
 use bevy_prototype_lyon::prelude::*;
-use clockwork_concerto::{mechanism, cpu, audio, view};
+use bevy_rapier2d::prelude::*;
+use clockwork_concerto::{audio, cpu, mechanism, view};
 
 fn main() {
     App::new()
@@ -58,7 +58,7 @@ fn setup(mut commands: Commands) {
         program.push(cpu::Instruction::Note(note));
         // Add wait instructions (NOPs)
         for _ in 0..4 {
-             program.push(cpu::Instruction::Load(0, 0)); // NOP effectively
+            program.push(cpu::Instruction::Load(0, 0)); // NOP effectively
         }
     }
     program.push(cpu::Instruction::Jmp(0)); // Loop

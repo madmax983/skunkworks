@@ -11,7 +11,10 @@ impl EntropyEngine {
         let mut rng = rand::thread_rng();
         let mut corrupted = String::with_capacity(text.len());
 
-        let corruption_chars = ['░', '▒', '▓', '█', '?', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '{', '}', '[', ']', '|', '\\', ':', ';', '"', '\'', '<', '>', ',', '.', '/', '`', '~'];
+        let corruption_chars = [
+            '░', '▒', '▓', '█', '?', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+',
+            '{', '}', '[', ']', '|', '\\', ':', ';', '"', '\'', '<', '>', ',', '.', '/', '`', '~',
+        ];
 
         for c in text.chars() {
             if c.is_whitespace() {
@@ -27,18 +30,19 @@ impl EntropyEngine {
                 match mutation_type {
                     0..=4 => {
                         // Replace with random glitch char
-                        let random_char = corruption_chars[rng.gen_range(0..corruption_chars.len())];
+                        let random_char =
+                            corruption_chars[rng.gen_range(0..corruption_chars.len())];
                         corrupted.push(random_char);
                     }
                     5..=7 => {
                         // "Rot" - fade to block
-                         let block_char = match decay_factor {
-                             d if d > 0.8 => '█',
-                             d if d > 0.6 => '▓',
-                             d if d > 0.4 => '▒',
-                             _ => '░',
-                         };
-                         corrupted.push(block_char);
+                        let block_char = match decay_factor {
+                            d if d > 0.8 => '█',
+                            d if d > 0.6 => '▓',
+                            d if d > 0.4 => '▒',
+                            _ => '░',
+                        };
+                        corrupted.push(block_char);
                     }
                     8 => {
                         // Bit flip (case swap)

@@ -1,6 +1,6 @@
-use std::collections::{HashMap, HashSet};
-use crate::phonology::{Word, Rule};
+use crate::phonology::{Rule, Word};
 use rand::RngCore;
+use std::collections::{HashMap, HashSet};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum TokenType {
@@ -28,10 +28,9 @@ pub struct Lexicon {
 impl Lexicon {
     pub fn new(code: &str) -> Self {
         let keywords_list = vec![
-            "fn", "let", "mut", "pub", "struct", "enum", "impl", "use", "mod",
-            "return", "if", "else", "match", "for", "while", "loop", "break",
-            "continue", "as", "const", "static", "trait", "type", "unsafe",
-            "where", "crate", "super", "self", "Self", "true", "false"
+            "fn", "let", "mut", "pub", "struct", "enum", "impl", "use", "mod", "return", "if",
+            "else", "match", "for", "while", "loop", "break", "continue", "as", "const", "static",
+            "trait", "type", "unsafe", "where", "crate", "super", "self", "Self", "true", "false",
         ];
         let keywords: HashSet<String> = keywords_list.into_iter().map(|s| s.to_string()).collect();
 
@@ -68,7 +67,10 @@ impl Lexicon {
                         break;
                     }
                 }
-                tokens.push(Token { content: s, token_type: TokenType::Whitespace });
+                tokens.push(Token {
+                    content: s,
+                    token_type: TokenType::Whitespace,
+                });
             } else if c.is_alphabetic() || c == '_' {
                 let mut s = String::new();
                 while let Some(&ch) = chars.peek() {
@@ -84,7 +86,10 @@ impl Lexicon {
                 } else {
                     TokenType::Identifier
                 };
-                tokens.push(Token { content: s, token_type });
+                tokens.push(Token {
+                    content: s,
+                    token_type,
+                });
             } else if c == '"' {
                 // String literal
                 let mut s = String::new();
@@ -97,19 +102,25 @@ impl Lexicon {
                         break;
                     }
                 }
-                tokens.push(Token { content: s, token_type: TokenType::Literal });
+                tokens.push(Token {
+                    content: s,
+                    token_type: TokenType::Literal,
+                });
             } else if c.is_digit(10) {
-                 // Numeric literal
-                 let mut s = String::new();
-                 while let Some(&ch) = chars.peek() {
-                     if ch.is_digit(10) || ch == '.' || ch == '_' {
-                         s.push(ch);
-                         chars.next();
-                     } else {
-                         break;
-                     }
-                 }
-                 tokens.push(Token { content: s, token_type: TokenType::Literal });
+                // Numeric literal
+                let mut s = String::new();
+                while let Some(&ch) = chars.peek() {
+                    if ch.is_digit(10) || ch == '.' || ch == '_' {
+                        s.push(ch);
+                        chars.next();
+                    } else {
+                        break;
+                    }
+                }
+                tokens.push(Token {
+                    content: s,
+                    token_type: TokenType::Literal,
+                });
             } else if c == '/' {
                 // Check for comment
                 chars.next(); // consume first /
@@ -125,18 +136,30 @@ impl Lexicon {
                                 break;
                             }
                         }
-                        tokens.push(Token { content: s, token_type: TokenType::Comment });
+                        tokens.push(Token {
+                            content: s,
+                            token_type: TokenType::Comment,
+                        });
                     } else {
-                         tokens.push(Token { content: "/".to_string(), token_type: TokenType::Symbol });
+                        tokens.push(Token {
+                            content: "/".to_string(),
+                            token_type: TokenType::Symbol,
+                        });
                     }
                 } else {
-                    tokens.push(Token { content: "/".to_string(), token_type: TokenType::Symbol });
+                    tokens.push(Token {
+                        content: "/".to_string(),
+                        token_type: TokenType::Symbol,
+                    });
                 }
             } else {
                 // Symbol
                 let s = c.to_string();
                 chars.next();
-                tokens.push(Token { content: s, token_type: TokenType::Symbol });
+                tokens.push(Token {
+                    content: s,
+                    token_type: TokenType::Symbol,
+                });
             }
         }
         tokens

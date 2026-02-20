@@ -38,7 +38,12 @@ mod tests {
         let p1 = klein_bottle(PI, 2.0 * PI);
 
         let diff = p0 - p1;
-        assert!(diff.length() < 1e-4, "Expected v-periodicity: {:?} vs {:?}", p0, p1);
+        assert!(
+            diff.length() < 1e-4,
+            "Expected v-periodicity: {:?} vs {:?}",
+            p0,
+            p1
+        );
 
         // For u, it connects with a twist. u=0 and u=2*PI should meet but maybe with sign flip in some terms?
         // At v=0, sin(v)=0, sin(2v)=0.

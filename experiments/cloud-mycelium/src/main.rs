@@ -1,6 +1,6 @@
-use macroquad::prelude::*;
+use ::rand::Rng;
 use cloud_mycelium::World;
-use ::rand::Rng; // Disambiguate to use the rand crate
+use macroquad::prelude::*; // Disambiguate to use the rand crate
 
 #[derive(Clone)]
 struct RainDrop {
@@ -44,12 +44,13 @@ async fn main() {
 
         // Update Rain
         // Spawn Rain
-        if storm_mode || rng.gen_bool(0.1) { // 10% chance per frame normally, 100% in storm
-             let x = rng.gen_range(0.0..screen_width());
-             rain.push(RainDrop {
-                 pos: vec2(x, -10.0),
-                 speed: rng.gen_range(200.0..400.0),
-             });
+        if storm_mode || rng.gen_bool(0.1) {
+            // 10% chance per frame normally, 100% in storm
+            let x = rng.gen_range(0.0..screen_width());
+            rain.push(RainDrop {
+                pos: vec2(x, -10.0),
+                speed: rng.gen_range(200.0..400.0),
+            });
         }
 
         let mut dead_rain = Vec::new();
@@ -60,7 +61,8 @@ async fn main() {
             for mushroom in world.mushrooms.iter_mut() {
                 // We need to access mushroom position which is Vec2 (glam)
                 let m_pos = vec2(mushroom.pos.x, mushroom.pos.y);
-                if drop.pos.distance(m_pos) < 20.0 { // Radius 20
+                if drop.pos.distance(m_pos) < 20.0 {
+                    // Radius 20
                     mushroom.load += 10.0;
                     dead_rain.push(i);
                     break;
@@ -94,7 +96,14 @@ async fn main() {
             let pulse = (get_time() * 2.0).sin() as f32 * 0.5 + 0.5;
             let alpha = 0.2 + pulse * 0.3;
 
-            draw_line(start.x, start.y, end.x, end.y, 2.0, Color::new(0.8, 0.8, 1.0, alpha));
+            draw_line(
+                start.x,
+                start.y,
+                end.x,
+                end.y,
+                2.0,
+                Color::new(0.8, 0.8, 1.0, alpha),
+            );
         }
 
         // Draw Packets
@@ -105,17 +114,24 @@ async fn main() {
         // Draw Rain
         let cyan = Color::new(0.0, 1.0, 1.0, 1.0);
         for drop in &rain {
-            draw_line(drop.pos.x, drop.pos.y, drop.pos.x, drop.pos.y + 10.0, 1.0, cyan);
+            draw_line(
+                drop.pos.x,
+                drop.pos.y,
+                drop.pos.x,
+                drop.pos.y + 10.0,
+                1.0,
+                cyan,
+            );
         }
 
         // Draw Mushrooms
         for mushroom in &world.mushrooms {
             let ratio = (mushroom.load / mushroom.capacity).clamp(0.0, 1.0);
             let color = Color::new(
-                ratio, // R increases with load
+                ratio,       // R increases with load
                 1.0 - ratio, // G decreases with load
                 0.2,
-                1.0
+                1.0,
             );
 
             // Radius pulses with load
@@ -131,25 +147,29 @@ async fn main() {
                 mushroom.pos.x - 10.0,
                 mushroom.pos.y + 5.0,
                 20.0,
-                BLACK
+                BLACK,
             );
         }
 
         // UI
         draw_text("Cloud Mycelium", 20.0, 30.0, 30.0, WHITE);
         draw_text(
-            &format!("Mushrooms: {} | Packets: {}", world.mushrooms.len(), world.packets.len()),
+            &format!(
+                "Mushrooms: {} | Packets: {}",
+                world.mushrooms.len(),
+                world.packets.len()
+            ),
             20.0,
             60.0,
             20.0,
-            GRAY
+            GRAY,
         );
         draw_text(
             "Click: Spawn | Space: Storm | R: Reset",
             20.0,
             90.0,
             20.0,
-            GRAY
+            GRAY,
         );
 
         next_frame().await

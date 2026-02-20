@@ -7,6 +7,7 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use quantum::Gate;
 use ratatui::{
     backend::{Backend, CrosstermBackend},
     layout::{Constraint, Direction, Layout},
@@ -16,8 +17,10 @@ use ratatui::{
     Terminal,
 };
 use state::{GameState, Tile};
-use std::{io, time::{Duration, Instant}};
-use quantum::Gate;
+use std::{
+    io,
+    time::{Duration, Instant},
+};
 
 fn main() -> Result<()> {
     enable_raw_mode()?;
@@ -32,10 +35,7 @@ fn main() -> Result<()> {
     let res = run_app(&mut terminal, &mut game);
 
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
 
     if let Err(err) = res {
@@ -134,8 +134,11 @@ fn ui(f: &mut ratatui::Frame, game: &GameState) {
         .split(f.area());
 
     // Title / Score
-    let title = Paragraph::new(format!(" QUANTUM ROGUE | Score: {} | Inventory: {:?}", game.player.score, game.player.inventory))
-        .block(Block::default().borders(Borders::ALL));
+    let title = Paragraph::new(format!(
+        " QUANTUM ROGUE | Score: {} | Inventory: {:?}",
+        game.player.score, game.player.inventory
+    ))
+    .block(Block::default().borders(Borders::ALL));
     f.render_widget(title, chunks[0]);
 
     // Grid
@@ -148,10 +151,15 @@ fn ui(f: &mut ratatui::Frame, game: &GameState) {
             if x == game.player.x && y == game.player.y {
                 spans.push(Span::styled("@", Style::default().fg(Color::Yellow)));
             } else if let Some(e) = game.entities.iter().find(|e| e.x == x && e.y == y) {
-                spans.push(Span::styled(e.glyph.to_string(), Style::default().fg(e.color)));
+                spans.push(Span::styled(
+                    e.glyph.to_string(),
+                    Style::default().fg(e.color),
+                ));
             } else {
                 match game.grid[y][x] {
-                    Tile::Wall => spans.push(Span::styled("#", Style::default().fg(Color::DarkGray))),
+                    Tile::Wall => {
+                        spans.push(Span::styled("#", Style::default().fg(Color::DarkGray)))
+                    }
                     Tile::Exit => spans.push(Span::styled("E", Style::default().fg(Color::Green))),
                     Tile::Empty => spans.push(Span::styled(".", Style::default().fg(Color::Gray))),
                 }
@@ -162,7 +170,8 @@ fn ui(f: &mut ratatui::Frame, game: &GameState) {
 
     // We need to render lines into a Paragraph? Or Canvas?
     // Paragraph is easier for grid logic if lines match height.
-    let grid_widget = Paragraph::new(lines).block(Block::default().borders(Borders::ALL).title(" Map "));
+    let grid_widget =
+        Paragraph::new(lines).block(Block::default().borders(Borders::ALL).title(" Map "));
     f.render_widget(grid_widget, chunks[1]);
 
     // Status

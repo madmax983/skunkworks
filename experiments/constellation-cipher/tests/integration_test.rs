@@ -1,4 +1,4 @@
-use constellation_cipher::{encode, decode};
+use constellation_cipher::{decode, encode};
 
 #[test]
 fn test_round_trip_text() {

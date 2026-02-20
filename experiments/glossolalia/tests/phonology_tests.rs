@@ -1,6 +1,6 @@
-use glossolalia::phonology::{Word, Rule, GrimmsLaw, VowelShift, Phoneme, Voice, Manner, Place};
-use rand::SeedableRng;
+use glossolalia::phonology::{GrimmsLaw, Manner, Phoneme, Place, Rule, Voice, VowelShift, Word};
 use rand::rngs::StdRng;
+use rand::SeedableRng;
 
 #[test]
 fn test_phoneme_parsing() {

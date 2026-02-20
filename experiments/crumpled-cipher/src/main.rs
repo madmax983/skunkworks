@@ -2,8 +2,8 @@ use macroquad::prelude::*;
 use origami::{MiuraOri, MiuraParams, Orientation};
 
 mod cipher;
-mod memory;
 mod glyph;
+mod memory;
 mod starmap;
 
 use cipher::CipherReveal;
@@ -104,7 +104,9 @@ async fn main() {
         // memory.erode(); // No erosion, just reveal
 
         // --- Update Visuals ---
-        mq_image.bytes.copy_from_slice(memory.visible_layer.as_raw());
+        mq_image
+            .bytes
+            .copy_from_slice(memory.visible_layer.as_raw());
         texture.update(&mq_image);
 
         // Update Mesh
@@ -137,13 +139,37 @@ async fn main() {
                 let u3 = i as f32 / cols as f32;
                 let v3_uv = (j + 1) as f32 / rows as f32;
 
-                vertices.push(Vertex { position: v0, uv: vec2(u0, v0_uv), color: [255, 255, 255, 255], normal: vec4(0., 1., 0., 0.) });
-                vertices.push(Vertex { position: v1, uv: vec2(u1, v1_uv), color: [255, 255, 255, 255], normal: vec4(0., 1., 0., 0.) });
-                vertices.push(Vertex { position: v2, uv: vec2(u2, v2_uv), color: [255, 255, 255, 255], normal: vec4(0., 1., 0., 0.) });
-                vertices.push(Vertex { position: v3, uv: vec2(u3, v3_uv), color: [255, 255, 255, 255], normal: vec4(0., 1., 0., 0.) });
+                vertices.push(Vertex {
+                    position: v0,
+                    uv: vec2(u0, v0_uv),
+                    color: [255, 255, 255, 255],
+                    normal: vec4(0., 1., 0., 0.),
+                });
+                vertices.push(Vertex {
+                    position: v1,
+                    uv: vec2(u1, v1_uv),
+                    color: [255, 255, 255, 255],
+                    normal: vec4(0., 1., 0., 0.),
+                });
+                vertices.push(Vertex {
+                    position: v2,
+                    uv: vec2(u2, v2_uv),
+                    color: [255, 255, 255, 255],
+                    normal: vec4(0., 1., 0., 0.),
+                });
+                vertices.push(Vertex {
+                    position: v3,
+                    uv: vec2(u3, v3_uv),
+                    color: [255, 255, 255, 255],
+                    normal: vec4(0., 1., 0., 0.),
+                });
 
-                indices.push(idx + 0); indices.push(idx + 1); indices.push(idx + 3);
-                indices.push(idx + 1); indices.push(idx + 2); indices.push(idx + 3);
+                indices.push(idx + 0);
+                indices.push(idx + 1);
+                indices.push(idx + 3);
+                indices.push(idx + 1);
+                indices.push(idx + 2);
+                indices.push(idx + 3);
                 idx += 4;
             }
         }
@@ -176,8 +202,20 @@ async fn main() {
 
         // UI
         draw_text("Crumpled Cipher 🦢🗝️", 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Extension: {:.1}%", extension * 100.0), 20.0, 50.0, 20.0, YELLOW);
-        draw_text("UP/DOWN: Fold/Unfold to Reveal | Mouse: Orbit", 20.0, 70.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Extension: {:.1}%", extension * 100.0),
+            20.0,
+            50.0,
+            20.0,
+            YELLOW,
+        );
+        draw_text(
+            "UP/DOWN: Fold/Unfold to Reveal | Mouse: Orbit",
+            20.0,
+            70.0,
+            20.0,
+            LIGHTGRAY,
+        );
         draw_text("The truth is in the fold.", 20.0, 90.0, 16.0, SKYBLUE);
 
         next_frame().await

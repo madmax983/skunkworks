@@ -1,5 +1,5 @@
+use crate::brain::{Brain, N_INTER, N_SENSORY};
 use macroquad::prelude::*;
-use crate::brain::{Brain, N_SENSORY, N_INTER};
 
 const MAX_SPEED: f32 = 4.0;
 const MAX_FORCE: f32 = 0.1;
@@ -69,7 +69,7 @@ impl Agent {
         // 3. Process Actuators
         // Use traces (calcium/activity level) for smooth movement
         let motor_start = N_SENSORY + N_INTER;
-        let t1 = self.brain.traces[motor_start];     // Thrust Trace
+        let t1 = self.brain.traces[motor_start]; // Thrust Trace
         let t2 = self.brain.traces[motor_start + 1]; // Turn Trace
 
         // Map trace (0.0 to ~2.0) to force
@@ -118,14 +118,23 @@ impl Agent {
         self.acc = Vec2::ZERO;
 
         // Wrap around screen
-        if self.pos.x < 0.0 { self.pos.x = screen_w; }
-        if self.pos.x > screen_w { self.pos.x = 0.0; }
-        if self.pos.y < 0.0 { self.pos.y = screen_h; }
-        if self.pos.y > screen_h { self.pos.y = 0.0; }
+        if self.pos.x < 0.0 {
+            self.pos.x = screen_w;
+        }
+        if self.pos.x > screen_w {
+            self.pos.x = 0.0;
+        }
+        if self.pos.y < 0.0 {
+            self.pos.y = screen_h;
+        }
+        if self.pos.y > screen_h {
+            self.pos.y = 0.0;
+        }
 
         // Update Color based on brain activity
         // Average voltage of all neurons
-        let avg_v: f32 = self.brain.neurons.iter().map(|n| n.v).sum::<f32>() / self.brain.neurons.len() as f32;
+        let avg_v: f32 =
+            self.brain.neurons.iter().map(|n| n.v).sum::<f32>() / self.brain.neurons.len() as f32;
         // Map -65 to 30 -> 0 to 1
         let excitement = ((avg_v + 65.0) / 95.0).clamp(0.0, 1.0);
         self.color = Color::new(1.0, 1.0 - excitement, 1.0 - excitement, 1.0); // White to Red

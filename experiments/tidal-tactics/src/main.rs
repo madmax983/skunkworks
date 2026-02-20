@@ -1,10 +1,10 @@
-mod map;
 mod fluid;
 mod game;
+mod map;
 
+use game::{GameState, Team, TurnPhase, UnitType};
 use macroquad::prelude::*;
-use game::{GameState, TurnPhase, UnitType, Team};
-use map::{WIDTH, HEIGHT};
+use map::{HEIGHT, WIDTH};
 
 #[macroquad::main("Tidal Tactics")]
 async fn main() {
@@ -34,8 +34,8 @@ async fn main() {
         match game.phase {
             TurnPhase::PlayerInput => {
                 if is_key_pressed(KeyCode::Space) {
-                     game.end_turn();
-                     flow_timer = 5.0;
+                    game.end_turn();
+                    flow_timer = 5.0;
                 }
 
                 if is_mouse_button_pressed(MouseButton::Left) {
@@ -46,7 +46,9 @@ async fn main() {
 
                         if gx < WIDTH && gy < HEIGHT {
                             // Try to select unit first
-                            if let Some(idx) = game.units.iter().position(|u| u.x == gx && u.y == gy) {
+                            if let Some(idx) =
+                                game.units.iter().position(|u| u.x == gx && u.y == gy)
+                            {
                                 // Select if it's player's unit (or just view info)
                                 game.selected_unit = Some(idx);
                             } else {
@@ -73,17 +75,17 @@ async fn main() {
 
                 // Right click to modify terrain/water (Debug/God Mode or actual gameplay?)
                 // Let's keep the God Mode controls for fun
-                 if is_mouse_button_down(MouseButton::Right) {
-                     let (mx, my) = mouse_position();
-                     if mx < map_w {
+                if is_mouse_button_down(MouseButton::Right) {
+                    let (mx, my) = mouse_position();
+                    if mx < map_w {
                         let gx = (mx / cell_size) as usize;
                         let gy = (my / cell_size) as usize;
                         if gx < WIDTH && gy < HEIGHT {
                             let idx = gy * WIDTH + gx;
                             game.map.water[idx] += 10.0 * dt;
                         }
-                     }
-                 }
+                    }
+                }
             }
             TurnPhase::FlowSimulation => {
                 // Update Fluid
@@ -99,7 +101,8 @@ async fn main() {
                     let target_water = (tide_level - terrain).max(0.0);
                     // Smoothly approach target water level
                     let current_water = game.map.water[idx];
-                    game.map.water[idx] = current_water + (target_water - current_water) * 5.0 * sim_dt;
+                    game.map.water[idx] =
+                        current_water + (target_water - current_water) * 5.0 * sim_dt;
                 }
 
                 fluid::step(&mut game.map, sim_dt);
@@ -137,46 +140,68 @@ async fn main() {
                     Color::new(0.5, 0.5, 0.5, 1.0)
                 };
                 let shade = 0.5 + (h / 10.0).clamp(0.0, 0.5);
-                draw_rectangle(tx, ty, cell_size, cell_size,
-                    Color::new(color.r * shade, color.g * shade, color.b * shade, 1.0));
+                draw_rectangle(
+                    tx,
+                    ty,
+                    cell_size,
+                    cell_size,
+                    Color::new(color.r * shade, color.g * shade, color.b * shade, 1.0),
+                );
 
                 // Water
                 let w = game.map.water[idx];
                 if w > 0.01 {
                     let depth_factor = (w / 10.0).clamp(0.0, 1.0);
                     let alpha = 0.4 + 0.5 * depth_factor;
-                    draw_rectangle(tx, ty, cell_size, cell_size, Color::new(0.0, 0.2, 1.0, alpha));
+                    draw_rectangle(
+                        tx,
+                        ty,
+                        cell_size,
+                        cell_size,
+                        Color::new(0.0, 0.2, 1.0, alpha),
+                    );
                 }
 
                 // Selection Highlight
                 if let Some(sel_idx) = game.selected_unit {
-                     let u = &game.units[sel_idx];
-                     if u.x == x && u.y == y {
-                         draw_rectangle_lines(tx, ty, cell_size, cell_size, 2.0, YELLOW);
-                     }
+                    let u = &game.units[sel_idx];
+                    if u.x == x && u.y == y {
+                        draw_rectangle_lines(tx, ty, cell_size, cell_size, 2.0, YELLOW);
+                    }
                 }
             }
         }
 
         // Render Units
         for unit in &game.units {
-             let tx = map_offset_x + unit.x as f32 * cell_size;
-             let ty = map_offset_y + unit.y as f32 * cell_size;
-             let color = match unit.team {
-                 Team::Player => BLUE,
-                 Team::Enemy => RED,
-             };
-             // Draw circle for unit
-             draw_circle(tx + cell_size/2.0, ty + cell_size/2.0, cell_size/3.0, color);
+            let tx = map_offset_x + unit.x as f32 * cell_size;
+            let ty = map_offset_y + unit.y as f32 * cell_size;
+            let color = match unit.team {
+                Team::Player => BLUE,
+                Team::Enemy => RED,
+            };
+            // Draw circle for unit
+            draw_circle(
+                tx + cell_size / 2.0,
+                ty + cell_size / 2.0,
+                cell_size / 3.0,
+                color,
+            );
 
-             // Draw Type icon (simple letter)
-             let label = match unit.unit_type {
-                 UnitType::Tank => "T",
-                 UnitType::Hovercraft => "H",
-                 UnitType::Engineer => "E",
-             };
-             // Center text? approximation
-             draw_text(label, tx + cell_size/3.0, ty + cell_size/1.5, cell_size/2.0, WHITE);
+            // Draw Type icon (simple letter)
+            let label = match unit.unit_type {
+                UnitType::Tank => "T",
+                UnitType::Hovercraft => "H",
+                UnitType::Engineer => "E",
+            };
+            // Center text? approximation
+            draw_text(
+                label,
+                tx + cell_size / 3.0,
+                ty + cell_size / 1.5,
+                cell_size / 2.0,
+                WHITE,
+            );
         }
 
         // UI Panel
@@ -188,23 +213,47 @@ async fn main() {
             TurnPhase::FlowSimulation => "Flowing...",
         };
         draw_text(phase_text, map_w + 10.0, 60.0, 20.0, WHITE);
-        draw_text(&format!("Turn: {}", game.turn), map_w + 10.0, 45.0, 20.0, WHITE);
+        draw_text(
+            &format!("Turn: {}", game.turn),
+            map_w + 10.0,
+            45.0,
+            20.0,
+            WHITE,
+        );
 
         if game.phase == TurnPhase::PlayerInput {
-             draw_rectangle(map_w + 10.0, 80.0, 100.0, 30.0, DARKGRAY);
-             draw_text("End Turn", map_w + 20.0, 100.0, 20.0, WHITE);
-             draw_text("(Space)", map_w + 20.0, 125.0, 15.0, GRAY);
+            draw_rectangle(map_w + 10.0, 80.0, 100.0, 30.0, DARKGRAY);
+            draw_text("End Turn", map_w + 20.0, 100.0, 20.0, WHITE);
+            draw_text("(Space)", map_w + 20.0, 125.0, 15.0, GRAY);
         }
 
         if let Some(idx) = game.selected_unit {
             let u = &game.units[idx];
-            draw_text(&format!("Unit: {:?}", u.unit_type), map_w + 10.0, 150.0, 20.0, WHITE);
-            draw_text(&format!("Moves: {}", u.moves_left), map_w + 10.0, 170.0, 20.0, WHITE);
+            draw_text(
+                &format!("Unit: {:?}", u.unit_type),
+                map_w + 10.0,
+                150.0,
+                20.0,
+                WHITE,
+            );
+            draw_text(
+                &format!("Moves: {}", u.moves_left),
+                map_w + 10.0,
+                170.0,
+                20.0,
+                WHITE,
+            );
 
             // Check water depth at unit pos
             let idx = u.y * WIDTH + u.x;
             let depth = game.map.water[idx];
-            draw_text(&format!("Depth: {:.1}", depth), map_w + 10.0, 190.0, 20.0, WHITE);
+            draw_text(
+                &format!("Depth: {:.1}", depth),
+                map_w + 10.0,
+                190.0,
+                20.0,
+                WHITE,
+            );
 
             if depth > 0.5 && u.unit_type == UnitType::Tank {
                 draw_text("WARNING: DROWNING", map_w + 10.0, 210.0, 20.0, RED);

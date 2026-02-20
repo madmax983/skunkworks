@@ -14,7 +14,8 @@ pub struct Metrics {
 
 impl Metrics {
     pub fn set_level(&self, level: f32) {
-        self.output_level_bits.store(level.to_bits(), Ordering::Relaxed);
+        self.output_level_bits
+            .store(level.to_bits(), Ordering::Relaxed);
     }
     pub fn get_level(&self) -> f32 {
         f32::from_bits(self.output_level_bits.load(Ordering::Relaxed))

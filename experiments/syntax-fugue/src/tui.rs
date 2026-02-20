@@ -7,7 +7,7 @@ use crossterm::{
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
-    style::{Color, Style, Modifier},
+    style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Paragraph, Wrap},
     Terminal,
@@ -107,7 +107,10 @@ impl TuiApp {
                     let mut style = Style::default().fg(token.color);
 
                     if j == state.current_token_idx {
-                        style = style.bg(Color::White).fg(Color::Black).add_modifier(Modifier::BOLD);
+                        style = style
+                            .bg(Color::White)
+                            .fg(Color::Black)
+                            .add_modifier(Modifier::BOLD);
                     } else if j < state.current_token_idx {
                         // Dim past tokens
                         style = style.add_modifier(Modifier::DIM);
@@ -126,9 +129,9 @@ impl TuiApp {
                 let paragraph = Paragraph::new(vec![line])
                     .block(Block::default().title(title).borders(Borders::ALL))
                     .wrap(Wrap { trim: true });
-                    // .scroll() // We'd need to calculate scroll.
-                    // For now, let's rely on the fact that tracks are short enough or we just see the start.
-                    // Ideally we should scroll.
+                // .scroll() // We'd need to calculate scroll.
+                // For now, let's rely on the fact that tracks are short enough or we just see the start.
+                // Ideally we should scroll.
 
                 f.render_widget(paragraph, chunks[i]);
             }

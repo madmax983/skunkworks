@@ -257,13 +257,20 @@ impl Market {
         // 3. Process Orders (Sequential)
         // Sort by price (highest bid first)
         let mut sorted_orders = orders;
-        sorted_orders.sort_by(|a, b| b.price.partial_cmp(&a.price).unwrap_or(std::cmp::Ordering::Equal));
+        sorted_orders.sort_by(|a, b| {
+            b.price
+                .partial_cmp(&a.price)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
 
         let mut successful_transactions = 0;
         let mut total_transaction_value = 0.0;
 
         for order in sorted_orders {
-            if self.heap.allocate(order.size, order.agent_id, order.price, order.duration) {
+            if self
+                .heap
+                .allocate(order.size, order.agent_id, order.price, order.duration)
+            {
                 if let Some(agent) = self.agents.get_mut(order.agent_id) {
                     agent.budget -= order.price * order.size as f64; // Price is per unit? Or total? Let's say price is per unit.
                     agent.owned_blocks += 1;

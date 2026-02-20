@@ -1,5 +1,5 @@
-mod git;
 mod entropy;
+mod git;
 mod recovery;
 
 use anyhow::Result;
@@ -12,14 +12,18 @@ use ratatui::{
     backend::{Backend, CrosstermBackend},
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
-    text::{Span, Line},
+    text::{Line, Span},
     widgets::{Block, Borders, List, ListItem, ListState, Paragraph, Wrap},
     Terminal,
 };
-use std::{error::Error, io, time::{Duration, Instant}};
+use std::{
+    error::Error,
+    io,
+    time::{Duration, Instant},
+};
 
-use git::{CommitInfo, RepoHandler};
 use entropy::EntropyEngine;
+use git::{CommitInfo, RepoHandler};
 use recovery::RecoveryEngine;
 
 struct App {
@@ -44,7 +48,8 @@ impl App {
         // Initial file load
         let filepath = "README.md".to_string(); // Default file to view
         let file_content = if !commits.is_empty() {
-            repo.get_file_content(&commits[0].id, &filepath).unwrap_or_default()
+            repo.get_file_content(&commits[0].id, &filepath)
+                .unwrap_or_default()
         } else {
             String::new()
         };
@@ -104,7 +109,10 @@ impl App {
         if let Some(i) = self.list_state.selected() {
             let commit_id = &self.commits[i].id;
             // Try to find README.md or src/main.rs or src/lib.rs
-            let content = self.repo.get_file_content(commit_id, &self.filepath).unwrap_or_else(|_| "File not found".to_string());
+            let content = self
+                .repo
+                .get_file_content(commit_id, &self.filepath)
+                .unwrap_or_else(|_| "File not found".to_string());
             self.file_content = content;
         }
     }
@@ -202,20 +210,30 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
             // But list is rendered by index.
             // Let's just use white for now.
             let style = if i == app.list_state.selected().unwrap_or(0) {
-                 Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+                Style::default()
+                    .fg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD)
             } else {
-                 Style::default().fg(Color::Gray)
+                Style::default().fg(Color::Gray)
             };
 
             ListItem::new(Line::from(vec![
-                Span::styled(format!("{} ", &commit.id[..7]), Style::default().fg(Color::Cyan)),
+                Span::styled(
+                    format!("{} ", &commit.id[..7]),
+                    Style::default().fg(Color::Cyan),
+                ),
                 Span::raw(&commit.message),
-            ])).style(style)
+            ]))
+            .style(style)
         })
         .collect();
 
     let list = List::new(items)
-        .block(Block::default().borders(Borders::ALL).title(" Sediment Layers "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Sediment Layers "),
+        )
         .highlight_style(Style::default().add_modifier(Modifier::BOLD))
         .highlight_symbol(">> ");
 
@@ -243,20 +261,26 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
         let mut current_spans = Vec::new();
 
         for (text, recovered) in tokens {
-             let parts: Vec<&str> = text.split('\n').collect();
-             for (j, part) in parts.iter().enumerate() {
-                 if j > 0 {
-                     lines.push(Line::from(current_spans.clone()));
-                     current_spans.clear();
-                 }
-                 if !part.is_empty() {
-                     if recovered {
-                         current_spans.push(Span::styled(part.to_string(), Style::default().fg(Color::Green)));
-                     } else {
-                         current_spans.push(Span::styled(part.to_string(), Style::default().fg(Color::DarkGray)));
-                     }
-                 }
-             }
+            let parts: Vec<&str> = text.split('\n').collect();
+            for (j, part) in parts.iter().enumerate() {
+                if j > 0 {
+                    lines.push(Line::from(current_spans.clone()));
+                    current_spans.clear();
+                }
+                if !part.is_empty() {
+                    if recovered {
+                        current_spans.push(Span::styled(
+                            part.to_string(),
+                            Style::default().fg(Color::Green),
+                        ));
+                    } else {
+                        current_spans.push(Span::styled(
+                            part.to_string(),
+                            Style::default().fg(Color::DarkGray),
+                        ));
+                    }
+                }
+            }
         }
         if !current_spans.is_empty() {
             lines.push(Line::from(current_spans));
@@ -264,11 +288,18 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
         lines
     } else {
         let corrupted = EntropyEngine::corrupt(&app.file_content, decay_factor);
-        corrupted.lines().map(|l| Line::from(l.to_string())).collect()
+        corrupted
+            .lines()
+            .map(|l| Line::from(l.to_string()))
+            .collect()
     };
 
     let paragraph = Paragraph::new(content_text)
-        .block(Block::default().borders(Borders::ALL).title(format!(" Excavation Site (Decay: {:.2}) ", decay_factor)))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(format!(" Excavation Site (Decay: {:.2}) ", decay_factor)),
+        )
         .wrap(Wrap { trim: false });
 
     f.render_widget(paragraph, chunks[1]);

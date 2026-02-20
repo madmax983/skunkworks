@@ -1,5 +1,5 @@
-use synaptic_physics::Izhikevich;
 use rand::Rng;
+use synaptic_physics::Izhikevich;
 
 pub const N_SENSORY: usize = 4;
 pub const N_INTER: usize = 4;
@@ -41,7 +41,9 @@ impl Brain {
         let mut weights = vec![vec![0.0; N_TOTAL]; N_TOTAL];
         for i in 0..N_TOTAL {
             for j in 0..N_TOTAL {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
                 // Sparse connectivity (30%)
                 if rng.gen::<f32>() < 0.3 {
                     // Small random weights
@@ -93,7 +95,11 @@ impl Brain {
         // 1. Update Neurons
         let mut spiked_indices = Vec::new();
         for (i, neuron) in self.neurons.iter_mut().enumerate() {
-            let input = if i < inputs.len() { inputs[i] * 10.0 } else { 0.0 };
+            let input = if i < inputs.len() {
+                inputs[i] * 10.0
+            } else {
+                0.0
+            };
             let (_, spiked) = neuron.update(dt, input);
             if spiked {
                 spiked_indices.push(i);
@@ -103,8 +109,10 @@ impl Brain {
         // 3. Handle Spikes (Synaptic Transmission + STDP)
         for &i in &spiked_indices {
             self.traces[i] += 1.0; // Update trace *after* spike? Or before? Usually peak is at spike.
-            // Cap trace at some value?
-            if self.traces[i] > 2.0 { self.traces[i] = 2.0; }
+                                   // Cap trace at some value?
+            if self.traces[i] > 2.0 {
+                self.traces[i] = 2.0;
+            }
 
             // Synaptic Transmission
             for j in 0..N_TOTAL {
@@ -138,8 +146,8 @@ impl Brain {
             // This is causal for j->i. So we strengthen j->i. (LTP)
             for j in 0..N_TOTAL {
                 if self.traces[j] > 0.1 {
-                     let change = self.learning_rate * self.traces[j];
-                     self.weights[j][i] += change; // Note index: weight FROM j TO i
+                    let change = self.learning_rate * self.traces[j];
+                    self.weights[j][i] += change; // Note index: weight FROM j TO i
                 }
             }
         }

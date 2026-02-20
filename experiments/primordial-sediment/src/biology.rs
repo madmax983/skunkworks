@@ -59,16 +59,24 @@ impl FluidSolver {
 
         // 2. Predation (Grazer eats Algae, Predator eats Grazer)
         for i in 0..self.particles.len() {
-            if dead_flags[i] { continue; }
-            if self.particles[i].species == Species::Algae { continue; } // Algae don't hunt
+            if dead_flags[i] {
+                continue;
+            }
+            if self.particles[i].species == Species::Algae {
+                continue;
+            } // Algae don't hunt
 
             for j in 0..self.particles.len() {
-                if i == j { continue; }
-                if dead_flags[j] { continue; }
+                if i == j {
+                    continue;
+                }
+                if dead_flags[j] {
+                    continue;
+                }
 
                 let dx = self.particles[j].x - self.particles[i].x;
                 let dy = self.particles[j].y - self.particles[i].y;
-                let r2 = dx*dx + dy*dy;
+                let r2 = dx * dx + dy * dy;
 
                 if r2 < h2 {
                     let predator = self.particles[i].species;
@@ -95,10 +103,12 @@ impl FluidSolver {
         // 3. Reproduction
         let mut rng = rand::thread_rng();
         for (i, p) in self.particles.iter_mut().enumerate() {
-            if dead_flags[i] { continue; }
+            if dead_flags[i] {
+                continue;
+            }
 
             let reproduce_threshold = match p.species {
-                Species::Algae => 50.0,   // Fast reproduction if code is abundant
+                Species::Algae => 50.0, // Fast reproduction if code is abundant
                 Species::Grazer => 150.0,
                 Species::Predator => 300.0,
             };
@@ -135,22 +145,27 @@ impl FluidSolver {
             let overflow = self.particles.len() - 1000;
             for _ in 0..overflow {
                 if !self.particles.is_empty() {
-                    self.particles.swap_remove(rng.gen_range(0..self.particles.len()));
+                    self.particles
+                        .swap_remove(rng.gen_range(0..self.particles.len()));
                 }
             }
         }
 
         // Auto-seed Algae if extinct (Spontaneous Generation from "Rot")
-        let algae_count = self.particles.iter().filter(|p| p.species == Species::Algae).count();
+        let algae_count = self
+            .particles
+            .iter()
+            .filter(|p| p.species == Species::Algae)
+            .count();
         if algae_count < 5 {
-             // Spawn some algae at random locations
-             for _ in 0..5 {
-                 self.add_particle(
-                     rng.gen_range(0.0..width),
-                     rng.gen_range(0.0..height),
-                     Species::Algae
-                 );
-             }
+            // Spawn some algae at random locations
+            for _ in 0..5 {
+                self.add_particle(
+                    rng.gen_range(0.0..width),
+                    rng.gen_range(0.0..height),
+                    Species::Algae,
+                );
+            }
         }
     }
 }

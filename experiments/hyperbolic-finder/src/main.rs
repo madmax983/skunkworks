@@ -198,20 +198,21 @@ async fn main() -> anyhow::Result<()> {
         if is_mouse_button_released(MouseButton::Right) {
             if let Some(parent) = current_path.parent() {
                 // Find ".." node to animate to it
-                if let Some(parent_node) = layout_root.children.iter().find(|c| c.node.name == "..") {
-                     target_center = parent_node.pos;
-                     navigating_to = Some(parent.to_path_buf());
+                if let Some(parent_node) = layout_root.children.iter().find(|c| c.node.name == "..")
+                {
+                    target_center = parent_node.pos;
+                    navigating_to = Some(parent.to_path_buf());
                 } else {
-                     // Fallback if ".." not found (shouldn't happen usually)
-                     let parent_buf = parent.to_path_buf();
-                     git_map = get_repo_statuses(&parent_buf);
-                     if let Ok(new_root) = get_view_root(&parent_buf, 5, &git_map) {
+                    // Fallback if ".." not found (shouldn't happen usually)
+                    let parent_buf = parent.to_path_buf();
+                    git_map = get_repo_statuses(&parent_buf);
+                    if let Ok(new_root) = get_view_root(&parent_buf, 5, &git_map) {
                         current_path = parent_buf;
                         fs_root = new_root;
                         layout_root = layout_tree(fs_root.clone());
                         target_center = Point::new(0.0, 0.0);
                         view_center = Point::new(0.0, 0.0);
-                     }
+                    }
                 }
             }
         }

@@ -107,30 +107,29 @@ fn main() -> Result<()> {
                 }
             }
 
-            if play_next
-                && state.current_token_idx < state.voice.tokens.len() {
-                    let token = &state.voice.tokens[state.current_token_idx];
+            if play_next && state.current_token_idx < state.voice.tokens.len() {
+                let token = &state.voice.tokens[state.current_token_idx];
 
-                    // Skip tokens with <= 0 duration (if any)
-                    if token.duration > 0.0 {
-                        audio.play_synth_note(
-                            i,
-                            token.pitch,
-                            token.duration,
-                            token.velocity,
-                            token.waveform,
-                            token.adsr
-                        );
-                        state.last_play_time = loop_start;
-                    } else {
-                        // Immediate skip
-                        state.current_token_idx += 1;
-                        // Loop again? For simplicity, just wait next frame or use recursion.
-                        // But since 16ms is fast enough, next frame is fine usually.
-                        // Unless we have many 0-duration tokens.
-                        // Let's assume parser handles duration >= 0.1s.
-                    }
+                // Skip tokens with <= 0 duration (if any)
+                if token.duration > 0.0 {
+                    audio.play_synth_note(
+                        i,
+                        token.pitch,
+                        token.duration,
+                        token.velocity,
+                        token.waveform,
+                        token.adsr,
+                    );
+                    state.last_play_time = loop_start;
+                } else {
+                    // Immediate skip
+                    state.current_token_idx += 1;
+                    // Loop again? For simplicity, just wait next frame or use recursion.
+                    // But since 16ms is fast enough, next frame is fine usually.
+                    // Unless we have many 0-duration tokens.
+                    // Let's assume parser handles duration >= 0.1s.
                 }
+            }
         }
 
         // Render TUI

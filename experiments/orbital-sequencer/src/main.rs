@@ -1,11 +1,11 @@
+mod audio;
 mod physics;
 mod sequencer;
-mod audio;
 
+use audio::AudioEngine;
 use macroquad::prelude::*;
 use physics::{Body, Universe};
 use sequencer::Sequencer;
-use audio::AudioEngine;
 
 const TRAIL_LENGTH: usize = 200;
 
@@ -21,14 +21,7 @@ async fn main() {
     universe.use_newtonian = false; // Start with Keplerian (Stable Rhythms)
 
     // Star
-    universe.add_body(Body::new(
-        0,
-        Vec2::ZERO,
-        Vec2::ZERO,
-        10000.0,
-        20.0,
-        YELLOW,
-    ));
+    universe.add_body(Body::new(0, Vec2::ZERO, Vec2::ZERO, 10000.0, 20.0, YELLOW));
 
     // Planets
     let radii = [150.0, 250.0, 350.0, 450.0, 550.0];
@@ -63,7 +56,7 @@ async fn main() {
 
     loop {
         let dt = get_frame_time(); // Time since last frame
-        // Clamp dt to avoid explosion on lag spikes
+                                   // Clamp dt to avoid explosion on lag spikes
         let dt = dt.min(0.1);
 
         // Input Handling
@@ -71,7 +64,9 @@ async fn main() {
             // Reset
             // Re-init universe bodies... (Simplified: just reload scene or manually reset)
             // For now, let's just clear trails.
-            for t in &mut trails { t.clear(); }
+            for t in &mut trails {
+                t.clear();
+            }
         }
 
         if is_key_pressed(KeyCode::K) {
@@ -79,13 +74,21 @@ async fn main() {
         }
 
         if is_key_pressed(KeyCode::C) {
-             for t in &mut trails { t.clear(); }
+            for t in &mut trails {
+                t.clear();
+            }
         }
 
         // Camera Pan/Zoom
-        if is_key_down(KeyCode::Up) { camera_zoom *= 1.01; }
-        if is_key_down(KeyCode::Down) { camera_zoom *= 0.99; }
-        if is_key_down(KeyCode::Left) { camera_target.x -= 10.0 / camera_zoom; } // Inverted logic? No.
+        if is_key_down(KeyCode::Up) {
+            camera_zoom *= 1.01;
+        }
+        if is_key_down(KeyCode::Down) {
+            camera_zoom *= 0.99;
+        }
+        if is_key_down(KeyCode::Left) {
+            camera_target.x -= 10.0 / camera_zoom;
+        } // Inverted logic? No.
 
         let mouse_pos = mouse_position();
 
@@ -133,17 +136,22 @@ async fn main() {
         }
 
         // Trails
-        if get_frame_time() > 0.0 { // Throttle?
-             for body in &universe.bodies {
-                if body.id >= trails.len() { continue; }
+        if get_frame_time() > 0.0 {
+            // Throttle?
+            for body in &universe.bodies {
+                if body.id >= trails.len() {
+                    continue;
+                }
                 let trail = &mut trails[body.id];
-                if trail.is_empty() || (*trail.last().unwrap() - body.position).length_squared() > 10.0 {
+                if trail.is_empty()
+                    || (*trail.last().unwrap() - body.position).length_squared() > 10.0
+                {
                     trail.push(body.position);
                     if trail.len() > TRAIL_LENGTH {
                         trail.remove(0);
                     }
                 }
-             }
+            }
         }
 
         // Sequencer
@@ -175,8 +183,10 @@ async fn main() {
             if i < trails.len() {
                 for j in 0..trails[i].len().saturating_sub(1) {
                     draw_line(
-                        trails[i][j].x, trails[i][j].y,
-                        trails[i][j+1].x, trails[i][j+1].y,
+                        trails[i][j].x,
+                        trails[i][j].y,
+                        trails[i][j + 1].x,
+                        trails[i][j + 1].y,
                         1.0,
                         Color::new(body.color.r, body.color.g, body.color.b, 0.5),
                     );
@@ -191,7 +201,13 @@ async fn main() {
                     trigger_timers[i] -= dt;
                     color = WHITE;
                     // Draw ring
-                    draw_circle_lines(body.position.x, body.position.y, body.radius * 2.0, 2.0, WHITE);
+                    draw_circle_lines(
+                        body.position.x,
+                        body.position.y,
+                        body.radius * 2.0,
+                        2.0,
+                        WHITE,
+                    );
                 }
             }
 
@@ -201,8 +217,24 @@ async fn main() {
         // UI
         set_default_camera();
         draw_text("Orbital Sequencer", 20.0, 30.0, 30.0, WHITE);
-        draw_text(if universe.use_newtonian { "Mode: Newtonian (Chaos)" } else { "Mode: Keplerian (Stable)" }, 20.0, 60.0, 20.0, LIGHTGRAY);
-        draw_text("Drag planets to change orbit. K to toggle mode. C to clear trails.", 20.0, 80.0, 20.0, GRAY);
+        draw_text(
+            if universe.use_newtonian {
+                "Mode: Newtonian (Chaos)"
+            } else {
+                "Mode: Keplerian (Stable)"
+            },
+            20.0,
+            60.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            "Drag planets to change orbit. K to toggle mode. C to clear trails.",
+            20.0,
+            80.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }

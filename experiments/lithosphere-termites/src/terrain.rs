@@ -41,19 +41,25 @@ impl Terrain {
     // --- Termite Interaction Methods ---
 
     pub fn add_height(&mut self, x: usize, y: usize, amount: f32) {
-        if x >= self.width || y >= self.height { return; }
+        if x >= self.width || y >= self.height {
+            return;
+        }
         let idx = self.get_index(x, y);
         self.heightmap[idx] += amount;
     }
 
     pub fn remove_height(&mut self, x: usize, y: usize, amount: f32) {
-        if x >= self.width || y >= self.height { return; }
+        if x >= self.width || y >= self.height {
+            return;
+        }
         let idx = self.get_index(x, y);
         self.heightmap[idx] = (self.heightmap[idx] - amount).max(0.0);
     }
 
     pub fn deposit_sediment(&mut self, x: usize, y: usize, amount: f32) {
-        if x >= self.width || y >= self.height { return; }
+        if x >= self.width || y >= self.height {
+            return;
+        }
         let idx = self.get_index(x, y);
         self.sediment[idx] += amount;
         // Sediment eventually becomes rock (height)
@@ -61,7 +67,9 @@ impl Terrain {
     }
 
     pub fn take_sediment(&mut self, x: usize, y: usize, amount: f32) -> f32 {
-        if x >= self.width || y >= self.height { return 0.0; }
+        if x >= self.width || y >= self.height {
+            return 0.0;
+        }
         let idx = self.get_index(x, y);
 
         // Take from sediment first, then height
@@ -82,7 +90,7 @@ impl Terrain {
     }
 
     pub fn get_gradient(&self, x: usize, y: usize) -> (f32, f32) {
-         self.calculate_gradient(x as f32, y as f32)
+        self.calculate_gradient(x as f32, y as f32)
     }
 
     // -----------------------------------
@@ -96,7 +104,7 @@ impl Terrain {
         let idx = self.get_index(x, y);
         self.heightmap[idx] += amount;
         if self.heightmap[idx] < 0.0 {
-             self.heightmap[idx] = 0.0;
+            self.heightmap[idx] = 0.0;
         }
     }
 
@@ -172,7 +180,8 @@ impl Terrain {
             let diff = height_new - height_old;
 
             // Update capacity
-            let capacity = (-diff).max(min_sediment_capacity) * speed * water * sediment_capacity_factor;
+            let capacity =
+                (-diff).max(min_sediment_capacity) * speed * water * sediment_capacity_factor;
 
             // Erode or Deposit
             if sediment > capacity || diff > 0.0 {
@@ -185,7 +194,7 @@ impl Terrain {
                 // Erode
                 let amount = (capacity - sediment) * erode_speed;
                 let amount = amount.min(-diff); // Don't dig a hole deeper than the delta
-                 if amount > 0.0 {
+                if amount > 0.0 {
                     sediment += amount;
                     self.erode_ground(x - dir_x, y - dir_y, amount);
                 }
@@ -234,10 +243,7 @@ impl Terrain {
         let h01 = self.get_height(idx_x, idx_y + 1);
         let h11 = self.get_height(idx_x + 1, idx_y + 1);
 
-        h00 * (1.0 - u) * (1.0 - v) +
-        h10 * u * (1.0 - v) +
-        h01 * (1.0 - u) * v +
-        h11 * u * v
+        h00 * (1.0 - u) * (1.0 - v) + h10 * u * (1.0 - v) + h01 * (1.0 - u) * v + h11 * u * v
     }
 
     fn deposit(&mut self, x: f32, y: f32, amount: f32) {
@@ -271,13 +277,17 @@ impl Terrain {
     }
 
     fn add_height_at(&mut self, x: usize, y: usize, amount: f32) {
-        if x >= self.width || y >= self.height { return; }
+        if x >= self.width || y >= self.height {
+            return;
+        }
         let idx = self.get_index(x, y);
         self.heightmap[idx] += amount;
     }
 
     fn add_sediment_at(&mut self, x: usize, y: usize, amount: f32) {
-        if x >= self.width || y >= self.height { return; }
+        if x >= self.width || y >= self.height {
+            return;
+        }
         let idx = self.get_index(x, y);
         self.sediment[idx] += amount;
     }

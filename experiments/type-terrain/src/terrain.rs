@@ -89,7 +89,8 @@ impl FontTerrain {
                     let mut sum = 0.0;
                     for dy in -1..=1 {
                         for dx in -1..=1 {
-                            sum += heightmap[((y as i32 + dy) as usize) * width + ((x as i32 + dx) as usize)];
+                            sum += heightmap
+                                [((y as i32 + dy) as usize) * width + ((x as i32 + dx) as usize)];
                         }
                     }
                     next_map[y * width + x] = sum / 9.0;
@@ -215,9 +216,9 @@ impl FontTerrain {
                 } else {
                     // Moving uphill (can happen due to inertia) -> Deposit everything
                     let amount = sediment.min(-diff); // Fill the hole
-                     self.heightmap[idx] += amount;
-                     self.sediment_map[idx] += amount;
-                     sediment -= amount;
+                    self.heightmap[idx] += amount;
+                    self.sediment_map[idx] += amount;
+                    sediment -= amount;
                 }
 
                 // Update speed and water
@@ -250,8 +251,8 @@ impl FontTerrain {
                 // Normal = T_z x T_x
 
                 let _tx = vec3(2.0, h_r - h_l, 0.0); // Wait, y is up in my mesh generator? Yes.
-                // In my mesh generator: position = (x, height, y) -> so y is UP.
-                // So terrain grid is XZ plane.
+                                                     // In my mesh generator: position = (x, height, y) -> so y is UP.
+                                                     // So terrain grid is XZ plane.
 
                 // Vector along X axis: (2, h_r - h_l, 0)
                 // Vector along Z axis: (0, h_d - h_u, 2)
@@ -299,11 +300,11 @@ impl FontTerrain {
                 let mut color = if height < 0.2 {
                     Color::new(0.2, 0.3, 0.4, 1.0) // Dark blueish
                 } else if height < 0.5 {
-                     Color::new(0.2, 0.5, 0.2, 1.0) // Grass
+                    Color::new(0.2, 0.5, 0.2, 1.0) // Grass
                 } else if height < 1.5 {
-                     Color::new(0.5, 0.5, 0.5, 1.0) // Rock
+                    Color::new(0.5, 0.5, 0.5, 1.0) // Rock
                 } else {
-                     Color::new(0.9, 0.9, 1.0, 1.0) // Snow
+                    Color::new(0.9, 0.9, 1.0, 1.0) // Snow
                 };
 
                 // Slope influence: steep = rock

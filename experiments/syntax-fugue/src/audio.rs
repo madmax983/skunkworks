@@ -98,11 +98,17 @@ impl Iterator for SynthSource {
 
         let raw_sample = match self.waveform {
             Waveform::Sine => phase.sin(),
-            Waveform::Square => if phase.sin() >= 0.0 { 1.0 } else { -1.0 },
+            Waveform::Square => {
+                if phase.sin() >= 0.0 {
+                    1.0
+                } else {
+                    -1.0
+                }
+            }
             Waveform::Saw => {
                 let p = (t * self.freq) % 1.0;
                 2.0 * p - 1.0
-            },
+            }
             Waveform::Triangle => {
                 let p = (t * self.freq) % 1.0;
                 if p < 0.5 {
@@ -131,7 +137,9 @@ impl Source for SynthSource {
         self.sample_rate
     }
     fn total_duration(&self) -> Option<std::time::Duration> {
-        Some(std::time::Duration::from_secs_f32(self.duration_samples as f32 / self.sample_rate as f32))
+        Some(std::time::Duration::from_secs_f32(
+            self.duration_samples as f32 / self.sample_rate as f32,
+        ))
     }
 }
 
@@ -173,7 +181,15 @@ impl AudioEngine {
         // No-op for virtual engine
     }
 
-    pub fn play_synth_note(&mut self, _voice_idx: usize, frequency: f32, duration: f32, volume: f32, waveform: Waveform, adsr: Adsr) {
+    pub fn play_synth_note(
+        &mut self,
+        _voice_idx: usize,
+        frequency: f32,
+        duration: f32,
+        volume: f32,
+        waveform: Waveform,
+        adsr: Adsr,
+    ) {
         let source = SynthSource::new(frequency, duration, volume, waveform, adsr);
 
         // Push to active voices for VISUALIZATION and WAV recording
@@ -183,10 +199,10 @@ impl AudioEngine {
         // Create a copy for Realtime Audio
         #[cfg(feature = "audio")]
         if let Some(handle) = &self.stream_handle {
-             let realtime_source = SynthSource::new(frequency, duration, volume, waveform, adsr);
-             if let Err(e) = handle.play_raw(realtime_source) {
-                 eprintln!("Audio playback error: {}", e);
-             }
+            let realtime_source = SynthSource::new(frequency, duration, volume, waveform, adsr);
+            if let Err(e) = handle.play_raw(realtime_source) {
+                eprintln!("Audio playback error: {}", e);
+            }
         }
 
         // Push original to active_voices for offline rendering / visualization

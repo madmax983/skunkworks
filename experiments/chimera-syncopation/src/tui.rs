@@ -1,4 +1,6 @@
+use crate::model::ThreadState;
 use anyhow::Result;
+use crossbeam_channel::Receiver;
 use crossterm::{
     event::{self, Event, KeyCode},
     execute,
@@ -8,13 +10,11 @@ use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
-    widgets::{Block, Borders, Paragraph, Table, Row},
+    widgets::{Block, Borders, Paragraph, Row, Table},
     Terminal,
 };
-use std::io::{stdout};
+use std::io::stdout;
 use std::time::Duration;
-use crossbeam_channel::Receiver;
-use crate::model::ThreadState;
 
 pub fn run_tui(state_receiver: Receiver<(usize, ThreadState)>, thread_count: usize) -> Result<()> {
     enable_raw_mode()?;

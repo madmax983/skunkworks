@@ -1,14 +1,14 @@
 mod lattice;
 
+use lattice::Crystal;
+use std::path::Path;
+use wgpu::util::DeviceExt;
 use winit::{
     event::*,
     event_loop::EventLoop,
-    window::WindowBuilder,
     keyboard::{KeyCode, PhysicalKey},
+    window::WindowBuilder,
 };
-use wgpu::util::DeviceExt;
-use lattice::Crystal;
-use std::path::Path;
 
 const GRID_SIZE: u32 = 64;
 const WORKGROUP_SIZE: u32 = 64;
@@ -63,10 +63,7 @@ impl Camera {
         let view = cgmath::Matrix4::look_at_rh(self.eye, self.target, self.up);
         let proj = cgmath::perspective(cgmath::Deg(self.fovy), self.aspect, self.znear, self.zfar);
         let correction = cgmath::Matrix4::new(
-            1.0, 0.0, 0.0, 0.0,
-            0.0, 1.0, 0.0, 0.0,
-            0.0, 0.0, 0.5, 0.0,
-            0.0, 0.0, 0.5, 1.0,
+            1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.5, 1.0,
         );
         correction * proj * view
     }
@@ -104,7 +101,11 @@ impl CameraController {
 
     fn process_events(&mut self, event: &WindowEvent) -> bool {
         match event {
-            WindowEvent::MouseInput { state, button: MouseButton::Right, .. } => {
+            WindowEvent::MouseInput {
+                state,
+                button: MouseButton::Right,
+                ..
+            } => {
                 self.is_drag_rotate = *state == ElementState::Pressed;
                 true
             }
@@ -117,7 +118,9 @@ impl CameraController {
                         self.radius -= pos.y as f32 * self.speed * 0.1;
                     }
                 }
-                if self.radius < 1.0 { self.radius = 1.0; }
+                if self.radius < 1.0 {
+                    self.radius = 1.0;
+                }
                 true
             }
             _ => false,
@@ -130,8 +133,12 @@ impl CameraController {
                 self.lon -= delta.0 as f32 * self.speed;
                 self.lat -= delta.1 as f32 * self.speed;
 
-                if self.lat > 89.0 { self.lat = 89.0; }
-                if self.lat < -89.0 { self.lat = -89.0; }
+                if self.lat > 89.0 {
+                    self.lat = 89.0;
+                }
+                if self.lat < -89.0 {
+                    self.lat = -89.0;
+                }
             }
         }
     }
@@ -176,35 +183,18 @@ struct State {
 
 const VERTICES: &[f32] = &[
     // Front face
-    -0.5, -0.5,  0.5,  0.0,  0.0,  1.0,
-     0.5, -0.5,  0.5,  0.0,  0.0,  1.0,
-     0.5,  0.5,  0.5,  0.0,  0.0,  1.0,
-    -0.5,  0.5,  0.5,  0.0,  0.0,  1.0,
-    // Back face
-    -0.5, -0.5, -0.5,  0.0,  0.0, -1.0,
-    -0.5,  0.5, -0.5,  0.0,  0.0, -1.0,
-     0.5,  0.5, -0.5,  0.0,  0.0, -1.0,
-     0.5, -0.5, -0.5,  0.0,  0.0, -1.0,
-    // Top face
-    -0.5,  0.5, -0.5,  0.0,  1.0,  0.0,
-    -0.5,  0.5,  0.5,  0.0,  1.0,  0.0,
-     0.5,  0.5,  0.5,  0.0,  1.0,  0.0,
-     0.5,  0.5, -0.5,  0.0,  1.0,  0.0,
-    // Bottom face
-    -0.5, -0.5, -0.5,  0.0, -1.0,  0.0,
-     0.5, -0.5, -0.5,  0.0, -1.0,  0.0,
-     0.5, -0.5,  0.5,  0.0, -1.0,  0.0,
-    -0.5, -0.5,  0.5,  0.0, -1.0,  0.0,
-    // Right face
-     0.5, -0.5, -0.5,  1.0,  0.0,  0.0,
-     0.5,  0.5, -0.5,  1.0,  0.0,  0.0,
-     0.5,  0.5,  0.5,  1.0,  0.0,  0.0,
-     0.5, -0.5,  0.5,  1.0,  0.0,  0.0,
-    // Left face
-    -0.5, -0.5, -0.5, -1.0,  0.0,  0.0,
-    -0.5, -0.5,  0.5, -1.0,  0.0,  0.0,
-    -0.5,  0.5,  0.5, -1.0,  0.0,  0.0,
-    -0.5,  0.5, -0.5, -1.0,  0.0,  0.0,
+    -0.5, -0.5, 0.5, 0.0, 0.0, 1.0, 0.5, -0.5, 0.5, 0.0, 0.0, 1.0, 0.5, 0.5, 0.5, 0.0, 0.0, 1.0,
+    -0.5, 0.5, 0.5, 0.0, 0.0, 1.0, // Back face
+    -0.5, -0.5, -0.5, 0.0, 0.0, -1.0, -0.5, 0.5, -0.5, 0.0, 0.0, -1.0, 0.5, 0.5, -0.5, 0.0, 0.0,
+    -1.0, 0.5, -0.5, -0.5, 0.0, 0.0, -1.0, // Top face
+    -0.5, 0.5, -0.5, 0.0, 1.0, 0.0, -0.5, 0.5, 0.5, 0.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.0, 1.0, 0.0,
+    0.5, 0.5, -0.5, 0.0, 1.0, 0.0, // Bottom face
+    -0.5, -0.5, -0.5, 0.0, -1.0, 0.0, 0.5, -0.5, -0.5, 0.0, -1.0, 0.0, 0.5, -0.5, 0.5, 0.0, -1.0,
+    0.0, -0.5, -0.5, 0.5, 0.0, -1.0, 0.0, // Right face
+    0.5, -0.5, -0.5, 1.0, 0.0, 0.0, 0.5, 0.5, -0.5, 1.0, 0.0, 0.0, 0.5, 0.5, 0.5, 1.0, 0.0, 0.0,
+    0.5, -0.5, 0.5, 1.0, 0.0, 0.0, // Left face
+    -0.5, -0.5, -0.5, -1.0, 0.0, 0.0, -0.5, -0.5, 0.5, -1.0, 0.0, 0.0, -0.5, 0.5, 0.5, -1.0, 0.0,
+    0.0, -0.5, 0.5, -0.5, -1.0, 0.0, 0.0,
 ];
 
 const INDICES: &[u16] = &[
@@ -227,25 +217,31 @@ impl State {
 
         let surface = instance.create_surface(window.clone()).unwrap();
 
-        let adapter = instance.request_adapter(
-            &wgpu::RequestAdapterOptions {
+        let adapter = instance
+            .request_adapter(&wgpu::RequestAdapterOptions {
                 power_preference: wgpu::PowerPreference::HighPerformance,
                 compatible_surface: Some(&surface),
                 force_fallback_adapter: false,
-            },
-        ).await.unwrap();
+            })
+            .await
+            .unwrap();
 
-        let (device, queue) = adapter.request_device(
-            &wgpu::DeviceDescriptor {
-                required_features: wgpu::Features::empty(),
-                required_limits: wgpu::Limits::default(),
-                label: None,
-            },
-            None,
-        ).await.unwrap();
+        let (device, queue) = adapter
+            .request_device(
+                &wgpu::DeviceDescriptor {
+                    required_features: wgpu::Features::empty(),
+                    required_limits: wgpu::Limits::default(),
+                    label: None,
+                },
+                None,
+            )
+            .await
+            .unwrap();
 
         let surface_caps = surface.get_capabilities(&adapter);
-        let surface_format = surface_caps.formats.iter()
+        let surface_format = surface_caps
+            .formats
+            .iter()
             .copied()
             .find(|f| f.is_srgb())
             .unwrap_or(surface_caps.formats[0]);
@@ -273,7 +269,13 @@ impl State {
 
         let mut rng = rand::thread_rng();
         use rand::Rng;
-        let mut initial_cells = vec![Cell { spin: 0.0, state: 0.0 }; num_cells];
+        let mut initial_cells = vec![
+            Cell {
+                spin: 0.0,
+                state: 0.0
+            };
+            num_cells
+        ];
 
         for atom in &crystal.atoms {
             // Map atom position to grid index
@@ -291,13 +293,17 @@ impl State {
         let cell_buffer_a = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Cell Buffer A"),
             contents: bytemuck::cast_slice(&initial_cells),
-            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
+            usage: wgpu::BufferUsages::STORAGE
+                | wgpu::BufferUsages::VERTEX
+                | wgpu::BufferUsages::COPY_DST,
         });
 
         let cell_buffer_b = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Cell Buffer B"),
             contents: bytemuck::cast_slice(&initial_cells),
-            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
+            usage: wgpu::BufferUsages::STORAGE
+                | wgpu::BufferUsages::VERTEX
+                | wgpu::BufferUsages::COPY_DST,
         });
 
         let cell_buffers = [cell_buffer_a, cell_buffer_b];
@@ -325,7 +331,12 @@ impl State {
         });
 
         let camera = Camera {
-            eye: (GRID_SIZE as f32 * 1.5, GRID_SIZE as f32 * 1.5, GRID_SIZE as f32 * 1.5).into(),
+            eye: (
+                GRID_SIZE as f32 * 1.5,
+                GRID_SIZE as f32 * 1.5,
+                GRID_SIZE as f32 * 1.5,
+            )
+                .into(),
             target: (0.0, 0.0, 0.0).into(),
             up: cgmath::Vector3::unit_y(),
             aspect: config.width as f32 / config.height as f32,
@@ -349,35 +360,36 @@ impl State {
 
         // --- BIND GROUPS ---
 
-        let compute_bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            entries: &[
-                wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: true },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
+        let compute_bind_group_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                entries: &[
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 0,
+                        visibility: wgpu::ShaderStages::COMPUTE,
+                        ty: wgpu::BindingType::Buffer {
+                            ty: wgpu::BufferBindingType::Storage { read_only: true },
+                            has_dynamic_offset: false,
+                            min_binding_size: None,
+                        },
+                        count: None,
                     },
-                    count: None,
-                },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 1,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: false },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 1,
+                        visibility: wgpu::ShaderStages::COMPUTE,
+                        ty: wgpu::BindingType::Buffer {
+                            ty: wgpu::BufferBindingType::Storage { read_only: false },
+                            has_dynamic_offset: false,
+                            min_binding_size: None,
+                        },
+                        count: None,
                     },
-                    count: None,
-                },
-            ],
-            label: Some("compute_bind_group_layout"),
-        });
+                ],
+                label: Some("compute_bind_group_layout"),
+            });
 
-        let uniform_bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            entries: &[
-                wgpu::BindGroupLayoutEntry {
+        let uniform_bind_group_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                entries: &[wgpu::BindGroupLayoutEntry {
                     binding: 0,
                     visibility: wgpu::ShaderStages::COMPUTE | wgpu::ShaderStages::VERTEX,
                     ty: wgpu::BindingType::Buffer {
@@ -386,16 +398,21 @@ impl State {
                         min_binding_size: None,
                     },
                     count: None,
-                },
-            ],
-            label: Some("uniform_bind_group_layout"),
-        });
+                }],
+                label: Some("uniform_bind_group_layout"),
+            });
 
         let compute_bind_group_0 = device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &compute_bind_group_layout,
             entries: &[
-                wgpu::BindGroupEntry { binding: 0, resource: cell_buffers[0].as_entire_binding() },
-                wgpu::BindGroupEntry { binding: 1, resource: cell_buffers[1].as_entire_binding() },
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: cell_buffers[0].as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: cell_buffers[1].as_entire_binding(),
+                },
             ],
             label: Some("compute_bind_group_0"),
         });
@@ -403,23 +420,30 @@ impl State {
         let compute_bind_group_1 = device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &compute_bind_group_layout,
             entries: &[
-                wgpu::BindGroupEntry { binding: 0, resource: cell_buffers[1].as_entire_binding() },
-                wgpu::BindGroupEntry { binding: 1, resource: cell_buffers[0].as_entire_binding() },
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: cell_buffers[1].as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: cell_buffers[0].as_entire_binding(),
+                },
             ],
             label: Some("compute_bind_group_1"),
         });
 
         let uniform_bind_group_compute = device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &uniform_bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry { binding: 0, resource: uniform_buffer.as_entire_binding() },
-            ],
+            entries: &[wgpu::BindGroupEntry {
+                binding: 0,
+                resource: uniform_buffer.as_entire_binding(),
+            }],
             label: Some("uniform_bind_group_compute"),
         });
 
-        let camera_bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            entries: &[
-                wgpu::BindGroupLayoutEntry {
+        let camera_bind_group_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                entries: &[wgpu::BindGroupLayoutEntry {
                     binding: 0,
                     visibility: wgpu::ShaderStages::VERTEX | wgpu::ShaderStages::FRAGMENT,
                     ty: wgpu::BindingType::Buffer {
@@ -428,22 +452,22 @@ impl State {
                         min_binding_size: None,
                     },
                     count: None,
-                },
-            ],
-            label: Some("camera_bind_group_layout"),
-        });
+                }],
+                label: Some("camera_bind_group_layout"),
+            });
 
         let camera_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &camera_bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry { binding: 0, resource: camera_buffer.as_entire_binding() },
-            ],
+            entries: &[wgpu::BindGroupEntry {
+                binding: 0,
+                resource: camera_buffer.as_entire_binding(),
+            }],
             label: Some("camera_bind_group"),
         });
 
-        let render_cell_bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            entries: &[
-                wgpu::BindGroupLayoutEntry {
+        let render_cell_bind_group_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                entries: &[wgpu::BindGroupLayoutEntry {
                     binding: 0,
                     visibility: wgpu::ShaderStages::VERTEX,
                     ty: wgpu::BindingType::Buffer {
@@ -452,34 +476,36 @@ impl State {
                         min_binding_size: None,
                     },
                     count: None,
-                },
-            ],
-            label: Some("render_cell_bind_group_layout"),
-        });
+                }],
+                label: Some("render_cell_bind_group_layout"),
+            });
 
         let render_cell_bind_group_0 = device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &render_cell_bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry { binding: 0, resource: cell_buffers[0].as_entire_binding() },
-            ],
+            entries: &[wgpu::BindGroupEntry {
+                binding: 0,
+                resource: cell_buffers[0].as_entire_binding(),
+            }],
             label: Some("render_cell_bind_group_0"),
         });
 
         let render_cell_bind_group_1 = device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &render_cell_bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry { binding: 0, resource: cell_buffers[1].as_entire_binding() },
-            ],
+            entries: &[wgpu::BindGroupEntry {
+                binding: 0,
+                resource: cell_buffers[1].as_entire_binding(),
+            }],
             label: Some("render_cell_bind_group_1"),
         });
 
         let shader = device.create_shader_module(wgpu::include_wgsl!("shader.wgsl"));
 
-        let compute_pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            label: Some("Compute Pipeline Layout"),
-            bind_group_layouts: &[&compute_bind_group_layout, &uniform_bind_group_layout],
-            push_constant_ranges: &[],
-        });
+        let compute_pipeline_layout =
+            device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                label: Some("Compute Pipeline Layout"),
+                bind_group_layouts: &[&compute_bind_group_layout, &uniform_bind_group_layout],
+                push_constant_ranges: &[],
+            });
 
         let compute_pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
             label: Some("Compute Pipeline"),
@@ -488,15 +514,16 @@ impl State {
             entry_point: "compute_main",
         });
 
-        let render_pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            label: Some("Render Pipeline Layout"),
-            bind_group_layouts: &[
-                &camera_bind_group_layout,
-                &render_cell_bind_group_layout,
-                &uniform_bind_group_layout,
-            ],
-            push_constant_ranges: &[],
-        });
+        let render_pipeline_layout =
+            device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                label: Some("Render Pipeline Layout"),
+                bind_group_layouts: &[
+                    &camera_bind_group_layout,
+                    &render_cell_bind_group_layout,
+                    &uniform_bind_group_layout,
+                ],
+                push_constant_ranges: &[],
+            });
 
         let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Vertex Buffer"),
@@ -516,24 +543,22 @@ impl State {
             vertex: wgpu::VertexState {
                 module: &shader,
                 entry_point: "vs_main",
-                buffers: &[
-                    wgpu::VertexBufferLayout {
-                        array_stride: 6 * 4,
-                        step_mode: wgpu::VertexStepMode::Vertex,
-                        attributes: &[
-                            wgpu::VertexAttribute {
-                                offset: 0,
-                                shader_location: 0,
-                                format: wgpu::VertexFormat::Float32x3,
-                            },
-                            wgpu::VertexAttribute {
-                                offset: 3 * 4,
-                                shader_location: 1,
-                                format: wgpu::VertexFormat::Float32x3,
-                            },
-                        ],
-                    },
-                ],
+                buffers: &[wgpu::VertexBufferLayout {
+                    array_stride: 6 * 4,
+                    step_mode: wgpu::VertexStepMode::Vertex,
+                    attributes: &[
+                        wgpu::VertexAttribute {
+                            offset: 0,
+                            shader_location: 0,
+                            format: wgpu::VertexFormat::Float32x3,
+                        },
+                        wgpu::VertexAttribute {
+                            offset: 3 * 4,
+                            shader_location: 1,
+                            format: wgpu::VertexFormat::Float32x3,
+                        },
+                    ],
+                }],
             },
             fragment: Some(wgpu::FragmentState {
                 module: &shader,
@@ -566,9 +591,10 @@ impl State {
 
         let uniform_bind_group_render = device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &uniform_bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry { binding: 0, resource: uniform_buffer.as_entire_binding() },
-            ],
+            entries: &[wgpu::BindGroupEntry {
+                binding: 0,
+                resource: uniform_buffer.as_entire_binding(),
+            }],
             label: Some("uniform_bind_group_render"),
         });
 
@@ -625,57 +651,57 @@ impl State {
                         ..
                     },
                 ..
-            } => {
-                match keycode {
-                    KeyCode::ArrowUp => {
-                        self.uniforms.temperature += 0.1;
-                        println!("Temperature: {:.1}", self.uniforms.temperature);
-                        true
-                    }
-                    KeyCode::ArrowDown => {
-                        self.uniforms.temperature -= 0.1;
-                        if self.uniforms.temperature < 0.0 { self.uniforms.temperature = 0.0; }
-                        println!("Temperature: {:.1}", self.uniforms.temperature);
-                        true
-                    }
-                    KeyCode::ArrowRight => {
-                        self.uniforms.field += 0.1;
-                        println!("Field: {:.1}", self.uniforms.field);
-                        true
-                    }
-                    KeyCode::ArrowLeft => {
-                        self.uniforms.field -= 0.1;
-                        println!("Field: {:.1}", self.uniforms.field);
-                        true
-                    }
-                    KeyCode::Digit1 => {
-                        self.uniforms.lattice_type = 0;
-                        println!("Lattice: Simple Cubic");
-                        true
-                    }
-                    KeyCode::Digit2 => {
-                        self.uniforms.lattice_type = 1;
-                        println!("Lattice: BCC (Topology)");
-                        true
-                    }
-                    KeyCode::Digit3 => {
-                        self.uniforms.lattice_type = 2;
-                        println!("Lattice: FCC (Topology)");
-                        true
-                    }
-                    KeyCode::Space => {
-                        if self.uniforms.brush_strength > 0.0 {
-                            self.uniforms.brush_strength = 0.0;
-                            println!("Brush: OFF");
-                        } else {
-                            self.uniforms.brush_strength = 5.0;
-                            println!("Brush: ON");
-                        }
-                        true
-                    }
-                    _ => false,
+            } => match keycode {
+                KeyCode::ArrowUp => {
+                    self.uniforms.temperature += 0.1;
+                    println!("Temperature: {:.1}", self.uniforms.temperature);
+                    true
                 }
-            }
+                KeyCode::ArrowDown => {
+                    self.uniforms.temperature -= 0.1;
+                    if self.uniforms.temperature < 0.0 {
+                        self.uniforms.temperature = 0.0;
+                    }
+                    println!("Temperature: {:.1}", self.uniforms.temperature);
+                    true
+                }
+                KeyCode::ArrowRight => {
+                    self.uniforms.field += 0.1;
+                    println!("Field: {:.1}", self.uniforms.field);
+                    true
+                }
+                KeyCode::ArrowLeft => {
+                    self.uniforms.field -= 0.1;
+                    println!("Field: {:.1}", self.uniforms.field);
+                    true
+                }
+                KeyCode::Digit1 => {
+                    self.uniforms.lattice_type = 0;
+                    println!("Lattice: Simple Cubic");
+                    true
+                }
+                KeyCode::Digit2 => {
+                    self.uniforms.lattice_type = 1;
+                    println!("Lattice: BCC (Topology)");
+                    true
+                }
+                KeyCode::Digit3 => {
+                    self.uniforms.lattice_type = 2;
+                    println!("Lattice: FCC (Topology)");
+                    true
+                }
+                KeyCode::Space => {
+                    if self.uniforms.brush_strength > 0.0 {
+                        self.uniforms.brush_strength = 0.0;
+                        println!("Brush: OFF");
+                    } else {
+                        self.uniforms.brush_strength = 5.0;
+                        println!("Brush: ON");
+                    }
+                    true
+                }
+                _ => false,
+            },
             _ => false,
         }
     }
@@ -687,15 +713,26 @@ impl State {
 
         self.camera_controller.update_camera(&mut self.camera);
         self.camera_uniform.view_proj = self.camera.build_view_projection_matrix().into();
-        self.camera_uniform.position = [self.camera.eye.x, self.camera.eye.y, self.camera.eye.z, 1.0];
+        self.camera_uniform.position =
+            [self.camera.eye.x, self.camera.eye.y, self.camera.eye.z, 1.0];
 
-        self.queue.write_buffer(&self.camera_buffer, 0, bytemuck::cast_slice(&[self.camera_uniform]));
-        self.queue.write_buffer(&self.uniform_buffer, 0, bytemuck::cast_slice(&[self.uniforms]));
+        self.queue.write_buffer(
+            &self.camera_buffer,
+            0,
+            bytemuck::cast_slice(&[self.camera_uniform]),
+        );
+        self.queue.write_buffer(
+            &self.uniform_buffer,
+            0,
+            bytemuck::cast_slice(&[self.uniforms]),
+        );
     }
 
     fn render(&mut self) -> Result<(), wgpu::SurfaceError> {
         let output = self.surface.get_current_texture()?;
-        let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());
+        let view = output
+            .texture
+            .create_view(&wgpu::TextureViewDescriptor::default());
 
         let depth_texture = self.device.create_texture(&wgpu::TextureDescriptor {
             size: wgpu::Extent3d {
@@ -713,9 +750,11 @@ impl State {
         });
         let depth_view = depth_texture.create_view(&wgpu::TextureViewDescriptor::default());
 
-        let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-            label: Some("Render Encoder"),
-        });
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("Render Encoder"),
+            });
 
         {
             let mut compute_pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
@@ -787,8 +826,8 @@ fn main() {
 
     let mut state = pollster::block_on(State::new(window.clone()));
 
-    event_loop.run(move |event, elwt| {
-        match event {
+    event_loop
+        .run(move |event, elwt| match event {
             Event::WindowEvent {
                 ref event,
                 window_id,
@@ -828,6 +867,6 @@ fn main() {
                 state.window.request_redraw();
             }
             _ => {}
-        }
-    }).unwrap();
+        })
+        .unwrap();
 }

@@ -4,8 +4,8 @@ use std::sync::Arc;
 mod audio;
 mod state;
 
-use crate::state::SharedState;
 use crate::audio::start_audio;
+use crate::state::SharedState;
 
 #[macroquad::main("Vocal Canyon")]
 async fn main() {
@@ -19,7 +19,7 @@ async fn main() {
         Ok(s) => {
             println!("Audio started successfully.");
             Some(s)
-        },
+        }
         Err(e) => {
             eprintln!("Failed to start audio: {}", e);
             None
@@ -56,18 +56,26 @@ async fn main() {
 
         // Smoothing (Right Click)
         if is_mouse_button_down(MouseButton::Right) {
-             let idx = (mouse_pos.0 / segment_width) as usize;
-             // Apply smoothing kernel around mouse
-             let radius = 2;
-             let start = idx.saturating_sub(radius);
-             let end = (idx + radius + 1).min(num_areas);
+            let idx = (mouse_pos.0 / segment_width) as usize;
+            // Apply smoothing kernel around mouse
+            let radius = 2;
+            let start = idx.saturating_sub(radius);
+            let end = (idx + radius + 1).min(num_areas);
 
-             // Simple averaging
-             for i in start..end {
-                 let prev = if i > 0 { params.areas[i-1] } else { params.areas[i] };
-                 let next = if i < num_areas - 1 { params.areas[i+1] } else { params.areas[i] };
-                 params.areas[i] = (prev + params.areas[i] + next) / 3.0;
-             }
+            // Simple averaging
+            for i in start..end {
+                let prev = if i > 0 {
+                    params.areas[i - 1]
+                } else {
+                    params.areas[i]
+                };
+                let next = if i < num_areas - 1 {
+                    params.areas[i + 1]
+                } else {
+                    params.areas[i]
+                };
+                params.areas[i] = (prev + params.areas[i] + next) / 3.0;
+            }
         }
 
         // Controls
@@ -116,9 +124,31 @@ async fn main() {
         }
 
         // Draw UI
-        draw_text(format!("Frequency: {:.1} Hz", frequency).as_str(), 10.0, 30.0, 20.0, WHITE);
-        draw_text(if is_speaking { "Speaking (SPACE to stop)" } else { "Silent (SPACE to start)" }, 10.0, 50.0, 20.0, WHITE);
-        draw_text("Left Click: Carve | Right Click: Smooth | Up/Down: Pitch", 10.0, screen_h - 10.0, 20.0, WHITE);
+        draw_text(
+            format!("Frequency: {:.1} Hz", frequency).as_str(),
+            10.0,
+            30.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            if is_speaking {
+                "Speaking (SPACE to stop)"
+            } else {
+                "Silent (SPACE to start)"
+            },
+            10.0,
+            50.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "Left Click: Carve | Right Click: Smooth | Up/Down: Pitch",
+            10.0,
+            screen_h - 10.0,
+            20.0,
+            WHITE,
+        );
 
         next_frame().await
     }

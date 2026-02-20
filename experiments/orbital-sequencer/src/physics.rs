@@ -12,7 +12,14 @@ pub struct Body {
 }
 
 impl Body {
-    pub fn new(id: usize, position: Vec2, velocity: Vec2, mass: f32, radius: f32, color: Color) -> Self {
+    pub fn new(
+        id: usize,
+        position: Vec2,
+        velocity: Vec2,
+        mass: f32,
+        radius: f32,
+        color: Color,
+    ) -> Self {
         Self {
             id,
             position,
@@ -79,11 +86,15 @@ impl Universe {
             if self.use_newtonian {
                 // Full N-body gravity
                 for j in 0..self.bodies.len() {
-                    if i == j { continue; }
+                    if i == j {
+                        continue;
+                    }
                     let other = &self.bodies[j];
                     let diff = other.position - self.bodies[i].position;
                     let dist_sq = diff.length_squared();
-                    if dist_sq < 0.0001 { continue; } // Softening/Avoiding singularity
+                    if dist_sq < 0.0001 {
+                        continue;
+                    } // Softening/Avoiding singularity
                     let dist = dist_sq.sqrt();
                     let force_mag = self.g_const * other.mass / dist_sq;
                     acc += diff / dist * force_mag;
@@ -165,7 +176,14 @@ mod tests {
         let r = 100.0;
         let v = (universe.g_const * 1000.0 / r).sqrt();
 
-        universe.add_body(Body::new(1, Vec2::new(r, 0.0), Vec2::new(0.0, v), 1.0, 5.0, RED));
+        universe.add_body(Body::new(
+            1,
+            Vec2::new(r, 0.0),
+            Vec2::new(0.0, v),
+            1.0,
+            5.0,
+            RED,
+        ));
 
         // Initial Energy
         let initial_energy = universe.total_energy();
@@ -183,7 +201,10 @@ mod tests {
         // Energy should be conserved (Velocity Verlet is symplectic)
         let final_energy = universe.total_energy();
 
-        println!("Initial Energy: {}, Final Energy: {}", initial_energy, final_energy);
+        println!(
+            "Initial Energy: {}, Final Energy: {}",
+            initial_energy, final_energy
+        );
         println!("Initial Radius: {}, Final Radius: {}", r, dist);
 
         // Allow small error

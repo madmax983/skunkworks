@@ -1,9 +1,5 @@
 use nom::{
-    branch::alt,
-    bytes::complete::tag,
-    character::complete::anychar,
-    combinator::map,
-    multi::many0,
+    branch::alt, bytes::complete::tag, character::complete::anychar, combinator::map, multi::many0,
     IResult,
 };
 
@@ -71,12 +67,7 @@ impl RecoveryEngine {
             map(anychar, |c: char| (c.to_string(), false))(input)
         }
 
-        let mut parser = many0(alt((
-            keywords,
-            types,
-            symbols,
-            fallback
-        )));
+        let mut parser = many0(alt((keywords, types, symbols, fallback)));
 
         match parser(text) {
             Ok((_, tokens)) => tokens,

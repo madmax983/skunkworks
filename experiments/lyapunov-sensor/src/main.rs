@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use chaos::{Attractor, LyapunovMonitor};
+use macroquad::prelude::*;
 use monitor::SystemMonitor;
 
 mod chaos;
@@ -50,10 +50,18 @@ async fn main() {
         }
 
         // Input
-        if is_key_down(KeyCode::Left) { cam_angle -= 0.02; }
-        if is_key_down(KeyCode::Right) { cam_angle += 0.02; }
-        if is_key_down(KeyCode::Up) { cam_dist -= 1.0; }
-        if is_key_down(KeyCode::Down) { cam_dist += 1.0; }
+        if is_key_down(KeyCode::Left) {
+            cam_angle -= 0.02;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_angle += 0.02;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_dist -= 1.0;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_dist += 1.0;
+        }
         cam_dist = cam_dist.clamp(10.0, 300.0);
 
         // Render
@@ -76,13 +84,18 @@ async fn main() {
             ..Default::default()
         });
 
-        draw_grid(20, 5.0, Color::new(0.2, 0.2, 0.2, 1.0), Color::new(0.1, 0.1, 0.1, 1.0));
+        draw_grid(
+            20,
+            5.0,
+            Color::new(0.2, 0.2, 0.2, 1.0),
+            Color::new(0.1, 0.1, 0.1, 1.0),
+        );
 
         // Draw Trail
         // We draw segments.
         for i in 0..trail.len().saturating_sub(1) {
             let (p1, div1) = trail[i];
-            let (p2, _) = trail[i+1];
+            let (p2, _) = trail[i + 1];
 
             // Color based on divergence
             // Local divergence can be positive (expanding) or negative (contracting).
@@ -122,17 +135,47 @@ async fn main() {
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 40.0, 20.0, GRAY);
 
         let avg_lle = monitor.get_lle(DT);
-        draw_text(&format!("LLE (Global): {:.4}", avg_lle), 10.0, 70.0, 20.0, GOLD);
-        draw_text(&format!("LLE (Local):  {:.4}", monitor.current_divergence), 10.0, 90.0, 20.0, GOLD);
+        draw_text(
+            &format!("LLE (Global): {:.4}", avg_lle),
+            10.0,
+            70.0,
+            20.0,
+            GOLD,
+        );
+        draw_text(
+            &format!("LLE (Local):  {:.4}", monitor.current_divergence),
+            10.0,
+            90.0,
+            20.0,
+            GOLD,
+        );
 
-        draw_text(&format!("CPU: {:.1}% -> Rho: {:.1}", system_monitor.cpu_usage, rho), 10.0, 120.0, 20.0, GREEN);
-        draw_text(&format!("MEM: {:.1}% -> Beta: {:.2}", system_monitor.mem_usage, beta), 10.0, 140.0, 20.0, BLUE);
+        draw_text(
+            &format!("CPU: {:.1}% -> Rho: {:.1}", system_monitor.cpu_usage, rho),
+            10.0,
+            120.0,
+            20.0,
+            GREEN,
+        );
+        draw_text(
+            &format!("MEM: {:.1}% -> Beta: {:.2}", system_monitor.mem_usage, beta),
+            10.0,
+            140.0,
+            20.0,
+            BLUE,
+        );
 
         // Stability Status
         let status = if avg_lle > 0.1 { "CHAOS" } else { "STABLE" };
         let status_color = if avg_lle > 0.1 { RED } else { BLUE };
         let status_text_width = measure_text(status, None, 40, 1.0).width;
-        draw_text(status, screen_width() - status_text_width - 20.0, 50.0, 40.0, status_color);
+        draw_text(
+            status,
+            screen_width() - status_text_width - 20.0,
+            50.0,
+            40.0,
+            status_color,
+        );
 
         // Help
         draw_text("Arrows: Camera", 10.0, screen_height() - 20.0, 16.0, GRAY);

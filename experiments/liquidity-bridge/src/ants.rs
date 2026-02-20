@@ -1,5 +1,5 @@
-use rand::Rng;
 use crate::market::{Grid, Terrain};
+use rand::Rng;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum State {
@@ -63,7 +63,7 @@ impl AntColony {
                         grid.set_terrain(ant.x, ant.y, Terrain::Gap);
                     } else {
                         // Reinforce
-                         grid.set_terrain(ant.x, ant.y, Terrain::Bridge);
+                        grid.set_terrain(ant.x, ant.y, Terrain::Bridge);
                     }
                 }
                 State::Foraging => {

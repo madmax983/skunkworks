@@ -1,5 +1,5 @@
-use chimera_lang::prelude::*;
 use crate::state::SharedState;
+use chimera_lang::prelude::*;
 use rand::Rng;
 
 pub fn init_vm() -> ChimeraVM {

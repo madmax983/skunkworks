@@ -119,10 +119,10 @@ impl Sexagesimal {
         if int_len_self != int_len_other {
             // Wait, 00 vs 0? implementation detail. Let's assume normalized.
             // But from_u64 might leave minimal.
-             // Compare from most significant
-             // Actually, simplest is to compare corresponding powers.
-             // Let's assume normalized (no trailing zeros in integer part, except if zero).
-             return int_len_self.cmp(&int_len_other);
+            // Compare from most significant
+            // Actually, simplest is to compare corresponding powers.
+            // Let's assume normalized (no trailing zeros in integer part, except if zero).
+            return int_len_self.cmp(&int_len_other);
         }
 
         for i in (0..int_len_self).rev() {
@@ -334,7 +334,7 @@ impl fmt::Display for Sexagesimal {
 
         // Print integer part in reverse (Big Endian)
         if self.integer.is_empty() {
-             write!(f, " ")?;
+            write!(f, " ")?;
         } else {
             for (i, digit) in self.integer.iter().rev().enumerate() {
                 if i > 0 {
@@ -385,7 +385,7 @@ mod tests {
     #[test]
     fn test_display_fraction() {
         let s = Sexagesimal::from_f64(1.5); // 1 + 30/60
-        // "𒐕;𒌋𒌋𒌋" (1 ; 30)
+                                            // "𒐕;𒌋𒌋𒌋" (1 ; 30)
         assert_eq!(format!("{}", s), "𒐕;𒌋𒌋𒌋");
     }
 
@@ -418,9 +418,9 @@ mod tests {
         let a = Sexagesimal::from_u64(60); // 1:0
         let b = Sexagesimal::from_u64(1); // 1
         let c = a - b; // 59
-        // 59 is 5 tens (𒌋𒌋𒌋𒌋𒌋) and 9 ones (𒐕𒐕𒐕𒐕𒐕𒐕𒐕𒐕𒐕)
-        // My render_digit prints tens then ones.
-        // 59 -> "𒌋𒌋𒌋𒌋𒌋𒐕𒐕𒐕𒐕𒐕𒐕𒐕𒐕𒐕"
+                       // 59 is 5 tens (𒌋𒌋𒌋𒌋𒌋) and 9 ones (𒐕𒐕𒐕𒐕𒐕𒐕𒐕𒐕𒐕)
+                       // My render_digit prints tens then ones.
+                       // 59 -> "𒌋𒌋𒌋𒌋𒌋𒐕𒐕𒐕𒐕𒐕𒐕𒐕𒐕𒐕"
         let expected_59 = "𒌋𒌋𒌋𒌋𒌋𒐕𒐕𒐕𒐕𒐕𒐕𒐕𒐕𒐕";
         assert_eq!(format!("{}", c), expected_59);
     }
@@ -430,7 +430,7 @@ mod tests {
         let a = Sexagesimal::from_u64(1);
         let b = Sexagesimal::from_f64(0.5); // 30/60
         let c = a - b; // 0.5
-        // 30/60 -> ;30 -> " ;𒌋𒌋𒌋" (space for zero integer part)
+                       // 30/60 -> ;30 -> " ;𒌋𒌋𒌋" (space for zero integer part)
         assert_eq!(format!("{}", c), " ;𒌋𒌋𒌋");
     }
 

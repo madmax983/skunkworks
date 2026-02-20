@@ -1,8 +1,11 @@
-use std::sync::{Arc, atomic::{AtomicBool, Ordering}};
-use std::thread;
-use crossbeam_channel::Sender;
 use crate::audio::AudioCommand;
-use crate::model::{ThreadState, RhythmParams, Instrument};
+use crate::model::{Instrument, RhythmParams, ThreadState};
+use crossbeam_channel::Sender;
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc,
+};
+use std::thread;
 
 pub fn spawn_rhythm_thread(
     id: usize,
