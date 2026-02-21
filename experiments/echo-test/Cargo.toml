@@ -1,0 +1,8 @@
+[package]
+name = "echo-test"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tui-shared = { path = "../../crates/tui-shared" }
+ratatui = "0.30"

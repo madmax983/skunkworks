@@ -2395,10 +2395,10 @@ impl ChimeraVM {
         if !time_frozen && self.chaos_mode {
             let mut rng = rand::thread_rng();
             #[cfg(feature = "nova")]
-            let chance =
+            let chance: f64 =
                 0.1 * self.biome_grid[self.context_loc.0][self.context_loc.1].mutation_rate();
             #[cfg(not(feature = "nova"))]
-            let chance = 0.1;
+            let chance: f64 = 0.1;
 
             if rng.gen_bool(chance.clamp(0.0, 1.0)) {
                 self.mutate();
@@ -3185,6 +3185,7 @@ impl ChimeraVM {
             | OpCode::Cipher
             | OpCode::Pangram => nova::exec_nova_op(self, op, args),
 
+            #[cfg(feature = "nova")]
             OpCode::Transposon => self.exec_transposon(),
 
             #[cfg(feature = "nova")]

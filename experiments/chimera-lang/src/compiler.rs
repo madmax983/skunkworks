@@ -481,6 +481,7 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
                         args: vec![Nucleotide::Number(base_x + c as i64)],
                     });
                     // Rune
+                    #[cfg(feature = "nova")]
                     genes.push(Gene {
                         op: OpCode::Rune,
                         args: vec![],
@@ -653,6 +654,7 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
         }
 
         // Handle Spawn<Name> macro for organelles
+        #[cfg(feature = "nova")]
         if let Some(stripped) = name.strip_prefix("Spawn") {
             if let Some(&idx) = self.organelle_map.get(stripped) {
                 // push(idx) push(0) spawn
