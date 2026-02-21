@@ -1416,3 +1416,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: 4D Flocking in a breathing universe. The "space" they live in changes shape based on computer load.
 - **Status**: experiments/hyper-flock
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
+
+### hyper-ferro
+- **Parents**: experiments/tesseract-ops + experiments/ferro-file
+- **Concept**: 4D Ising Model where temperature is driven by system CPU load.
+- **Novel trait**: Hyper-Magnetic Entanglement. Visualizing the computer's heat melting the 4D magnetic order.
+- **Status**: experiments/hyper-ferro
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
