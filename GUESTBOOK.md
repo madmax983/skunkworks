@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: TOXIC] - Location: graveyard/hydro-boids
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Terminal Redundancy.
+- **Note:** "The fluid is stagnant. The flock simulates nothing but heat."
+
 ### [Concentration Level: TOXIC] - Location: graveyard/market-swarm
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Redundancy.
@@ -10,10 +15,10 @@
 - **Status:** Specimen executed. Diagnosis: Documentation Void.
 - **Note:** "A tide without a moon is just a flood. Code without words is just noise."
 
-### [Concentration Level: HIGH] - Location: experiments/hydro-boids
+### [Concentration Level: HIGH] - Location: experiments/chemical-specter
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy.
-- **Note:** "The fluid is stagnant. The flock simulates nothing but heat."
+- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy / Documentation Void.
+- **Note:** "The reaction consumes itself in silence. No words, only feed and kill."
 
 ### [Concentration Level: HIGH] - Location: experiments/hyper-flock
 - **Scent Origin:** The Splice Surgeon 🧬
