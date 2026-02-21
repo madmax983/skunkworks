@@ -148,6 +148,9 @@ pub struct PrologueState {
     /// Logos Engine (Grammar System).
     #[serde(default = "default_logos_engine")]
     pub logos_engine: logos::LogosEngine,
+    /// Orca Mode: Enables omni-directional signal flow and alternative rune behavior.
+    #[serde(default)]
+    pub orca_mode: bool,
     /// Scratch buffer for signal propagation (Double Buffering).
     #[serde(skip, default)]
     pub scratch_signal_grid: Vec<Vec<Option<Value>>>,
@@ -179,6 +182,7 @@ impl PrologueState {
             dream_intensity: 0.0,
             library: HashMap::new(),
             logos_engine: logos::LogosEngine::new(),
+            orca_mode: false,
             scratch_signal_grid: vec![vec![None; GRID_SIZE]; GRID_SIZE],
         }
     }
@@ -581,6 +585,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     &mut vm.energy,
                     &vm.chroma_grid,
                     &mut vm.prologue_state.logos_engine,
+                    vm.prologue_state.orca_mode,
                 ) {
                     changes = true;
                 }
@@ -624,6 +629,7 @@ fn apply_propagation_rune(
     energy: &mut i64,
     chroma_grid: &[Vec<crate::vm::ChromaCell>],
     logos_engine: &mut logos::LogosEngine,
+    orca_mode: bool,
 ) -> bool {
     #[cfg(feature = "elektra")]
     if elektra::apply_elektra_runes(
@@ -654,7 +660,7 @@ fn apply_propagation_rune(
     if construct::apply_construct_runes(rune, y, x, current_signals, next_delayed, grid) {
         return true;
     }
-    if topology::apply_topology_runes(rune, y, x, current_signals, next_signals, next_delayed) {
+    if topology::apply_topology_runes(rune, y, x, current_signals, next_signals, next_delayed, orca_mode) {
         return true;
     }
     if math::apply_math_runes(rune, y, x, current_signals, next_signals) {
@@ -672,6 +678,7 @@ fn apply_propagation_rune(
         next_signals,
         ether,
         registers,
+        orca_mode,
     ) {
         return true;
     }
@@ -782,22 +789,26 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     match rune {
         "?" => {
             // Sink
-            // Check neighbors for signal
-            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+            // Check neighbors for signal (and Self)
+            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1), (0, 0)];
+            let mut found_signals = Vec::new();
+
             for (dy, dx) in neighbors {
                 if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                    let sig_opt = vm.prologue_state.signal_grid[ny][nx].clone();
+                    if let Some(sig) = &vm.prologue_state.signal_grid[ny][nx] {
+                        found_signals.push(sig.clone());
+                    }
+                }
+            }
 
-                    if let Some(sig) = sig_opt {
-                        vm.output
-                            .push(format!("PROLOGUE: Sink at {},{} received {:?}", x, y, sig));
-                        vm.prologue_state.signal_grid[y][x] = Some(sig.clone()); // Light up
+            for sig in found_signals {
+                vm.output
+                    .push(format!("PROLOGUE: Sink at {},{} received {:?}", x, y, sig));
+                // vm.prologue_state.signal_grid[y][x] = Some(sig.clone()); // Light up - Removed to prevent feedback loop
 
-                        if let Value::Str(name) = sig {
-                            if let Some(&idx) = vm.dictionary.get(&name) {
-                                vm.interrupt(idx);
-                            }
-                        }
+                if let Value::Str(name) = sig {
+                    if let Some(&idx) = vm.dictionary.get(&name) {
+                        vm.interrupt(idx);
                     }
                 }
             }

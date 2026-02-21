@@ -8,6 +8,7 @@ pub fn apply_topology_runes(
     current_signals: &[Vec<Option<Value>>],
     next_signals: &mut Vec<Vec<Option<Value>>>,
     next_delayed: &mut Vec<Vec<Option<Value>>>,
+    orca_mode: bool,
 ) -> bool {
     let mut changes = false;
     match rune {
@@ -40,12 +41,45 @@ pub fn apply_topology_runes(
             }
         }
         "*" => {
-            // Splitter: Input North -> Output Self
-            if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
-                if let Some(sig) = &current_signals[ny][nx] {
+            if orca_mode {
+                // Bang: Input Any -> Output All Neighbors
+                let mut triggered = false;
+                let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+
+                // Check if triggered
+                for (dy, dx) in neighbors {
+                    if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                        if current_signals[ny][nx].is_some() {
+                            triggered = true;
+                            break;
+                        }
+                    }
+                }
+
+                if triggered {
+                    // Fire to all neighbors
+                    for (dy, dx) in neighbors {
+                        if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                            if next_signals[ny][nx].is_none() {
+                                next_signals[ny][nx] = Some(Value::Int(1));
+                                changes = true;
+                            }
+                        }
+                    }
+                    // Also light up self? Usually Bangs flash.
                     if next_signals[y][x].is_none() {
-                        next_signals[y][x] = Some(sig.clone());
+                        next_signals[y][x] = Some(Value::Int(1));
                         changes = true;
+                    }
+                }
+            } else {
+                // Splitter: Input North -> Output Self
+                if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+                    if let Some(sig) = &current_signals[ny][nx] {
+                        if next_signals[y][x].is_none() {
+                            next_signals[y][x] = Some(sig.clone());
+                            changes = true;
+                        }
                     }
                 }
             }

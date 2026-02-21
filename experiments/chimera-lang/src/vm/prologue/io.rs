@@ -13,6 +13,7 @@ pub fn apply_io_runes(
     next_signals: &mut Vec<Vec<Option<Value>>>,
     ether: &mut HashMap<i64, VecDeque<Value>>,
     registers: &mut HashMap<(usize, usize), Value>,
+    orca_mode: bool,
 ) -> bool {
     let mut changes = false;
     let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
@@ -46,23 +47,51 @@ pub fn apply_io_runes(
             }
         }
         "N" => {
-            // West -> North
-            if let Some(sig) = w_sig {
-                if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
-                    if next_signals[ny][nx].is_none() {
-                        next_signals[ny][nx] = Some(sig);
-                        changes = true;
+            if orca_mode {
+                // North: South -> North
+                if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
+                    if let Some(sig) = &current_signals[sy][sx] {
+                        if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+                            if next_signals[ny][nx].is_none() {
+                                next_signals[ny][nx] = Some(sig.clone());
+                                changes = true;
+                            }
+                        }
+                    }
+                }
+            } else {
+                // West -> North
+                if let Some(sig) = w_sig {
+                    if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+                        if next_signals[ny][nx].is_none() {
+                            next_signals[ny][nx] = Some(sig);
+                            changes = true;
+                        }
                     }
                 }
             }
         }
         "S" => {
-            // West -> South
-            if let Some(sig) = w_sig {
-                if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
-                    if next_signals[sy][sx].is_none() {
-                        next_signals[sy][sx] = Some(sig);
-                        changes = true;
+            if orca_mode {
+                // South: North -> South
+                if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+                    if let Some(sig) = &current_signals[ny][nx] {
+                        if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
+                            if next_signals[sy][sx].is_none() {
+                                next_signals[sy][sx] = Some(sig.clone());
+                                changes = true;
+                            }
+                        }
+                    }
+                }
+            } else {
+                // West -> South
+                if let Some(sig) = w_sig {
+                    if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
+                        if next_signals[sy][sx].is_none() {
+                            next_signals[sy][sx] = Some(sig);
+                            changes = true;
+                        }
                     }
                 }
             }
