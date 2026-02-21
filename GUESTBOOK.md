@@ -1,5 +1,15 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
+- **Scent Origin:** Havoc 👺
+- **Status:** Critical vulnerabilities detected: Recursive Include DoS, IPC Message Theft, Recursive Structure DoS.
+- **Note:** "The ouroboros is choking on its own tail."
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
+- **Scent Origin:** Echo 🗣️
+- **Status:** DX Audit mostly passed. 8 failing tests and 18 warnings need polish.
+- **Note:** "The surface is clean, but the engine rattles."
+
 ### [Concentration Level: HIGH] - Location: experiments/hyperbolic-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Agents are spiraling into the infinite edge.
