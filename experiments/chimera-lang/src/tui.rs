@@ -1451,6 +1451,50 @@ where
                     continue;
                 }
 
+                #[cfg(feature = "nova")]
+                if let ViewMode::Weaver = app_state.view_mode {
+                    let mut handled = true;
+                    match key.code {
+                        KeyCode::Char('S') => {
+                            // Stitch: Weave Strands
+                            // Stack Args: [A, B, Pattern]
+                            vm.stack.push(crate::vm::Value::Int(app_state.lab_parent_a as i64));
+                            vm.stack.push(crate::vm::Value::Int(app_state.lab_parent_b as i64));
+                            vm.stack.push(crate::vm::Value::Str(app_state.input_buffer.clone()));
+
+                            // Execute Weave OpCode
+                            let _ = vm.execute_gene_inner(crate::opcode::OpCode::Weave, &[]);
+
+                            // Check result (Weave pushes new strand index or error)
+                            if let Some(res) = vm.stack.pop() {
+                                app_state.status_msg = format!("Weaver Result: {}", res);
+                                // If successful (Int), switch to it?
+                                if let crate::vm::Value::Int(idx) = res {
+                                    app_state.selected_strand = idx as usize;
+                                }
+                            }
+                            app_state.screen_shake = 1.0;
+                        }
+                        KeyCode::Char('R') => {
+                            // Randomize Pattern
+                            use rand::Rng;
+                            let mut rng = rand::thread_rng();
+                            let len = rng.gen_range(8..32);
+                            let chars = ['A', 'B', 'X', '0'];
+                            let pattern: String =
+                                (0..len).map(|_| chars[rng.gen_range(0..4)]).collect();
+                            app_state.input_buffer = pattern;
+                            app_state.status_msg = "Weaver: Chaos Pattern Generated".to_string();
+                        }
+                        _ => {
+                            handled = false;
+                        }
+                    }
+                    if handled {
+                        continue;
+                    }
+                }
+
                 #[cfg(feature = "oracle")]
                 if app_state.query_mode {
                     match key.code {
