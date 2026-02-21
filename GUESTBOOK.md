@@ -15,10 +15,15 @@
 - **Status:** Specimen executed. Diagnosis: Documentation Void.
 - **Note:** "A tide without a moon is just a flood. Code without words is just noise."
 
-### [Concentration Level: HIGH] - Location: experiments/chemical-specter
+### [Concentration Level: TOXIC] - Location: graveyard/chemical-specter
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy / Documentation Void.
-- **Note:** "The reaction consumes itself in silence. No words, only feed and kill."
+- **Status:** Specimen executed. Diagnosis: Terminal Redundancy / Documentation Void.
+- **Note:** "The reaction has ceased. Silence returns."
+
+### [Concentration Level: HIGH] - Location: experiments/orbital-sequencer
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Documentation Void.
+- **Note:** "The sequencer is silent. The spheres do not sing."
 
 ### [Concentration Level: HIGH] - Location: experiments/hyper-flock
 - **Scent Origin:** The Splice Surgeon 🧬
