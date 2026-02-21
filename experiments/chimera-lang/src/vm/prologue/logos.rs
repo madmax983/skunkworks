@@ -1,4 +1,6 @@
 use super::normalize_coords;
+use crate::ast::{Dna, Nucleotide};
+use crate::opcode::OpCode;
 use crate::vm::Value;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -9,6 +11,7 @@ pub enum GrammarRule {
     Sequence(Vec<GrammarRule>),
     Choice(Vec<GrammarRule>),
     Reference(String),
+    WeightedChoice(Vec<(u32, GrammarRule)>),
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -29,14 +32,105 @@ impl LogosEngine {
         }
     }
 
-    fn parse_rule_def(&self, def: &str) -> Result<GrammarRule, String> {
-        let choices: Vec<&str> = def.split('|').map(|s| s.trim()).collect();
-        if choices.len() > 1 {
-            let mut rules = Vec::new();
-            for c in choices {
-                rules.push(self.parse_rule_def(c)?);
+    pub fn define_rule_from_dna(&mut self, name: &str, dna: &Dna, strand_idx: usize) {
+        if let Ok(rule) = self.dna_to_grammar(dna, strand_idx) {
+            self.rules.insert(name.to_string(), rule);
+        }
+    }
+
+    fn dna_to_grammar(&self, dna: &Dna, strand_idx: usize) -> Result<GrammarRule, String> {
+        if strand_idx >= dna.helix.strands.len() {
+            return Err("Invalid strand index".to_string());
+        }
+
+        let strand = &dna.helix.strands[strand_idx];
+        let mut rules = Vec::new();
+
+        for gene in &strand.genes {
+            let rule = match &gene.op {
+                OpCode::Push => {
+                    if let Some(arg) = gene.args.first() {
+                        match arg {
+                            Nucleotide::String(s) => GrammarRule::Literal(s.clone()),
+                            Nucleotide::Number(n) => GrammarRule::Literal(n.to_string()),
+                            _ => GrammarRule::Literal("".to_string()),
+                        }
+                    } else {
+                        GrammarRule::Literal("".to_string())
+                    }
+                }
+                OpCode::Call | OpCode::Exec => {
+                    if let Some(Nucleotide::Number(idx)) = gene.args.first() {
+                        // Naming convention: "strand_N"
+                        GrammarRule::Reference(format!("strand_{}", idx))
+                    } else {
+                        GrammarRule::Literal("?".to_string())
+                    }
+                }
+                OpCode::Adhere => {
+                    // Placeholder for future sequence separator logic
+                    GrammarRule::Literal("".to_string())
+                }
+                OpCode::Divergence => {
+                    // Placeholder for future choice logic
+                    GrammarRule::Literal(gene.op.to_string())
+                }
+                _ => GrammarRule::Literal(gene.op.to_string()),
+            };
+
+            // Filter out empty literals if any
+            if let GrammarRule::Literal(s) = &rule {
+                if s.is_empty() { continue; }
             }
-            return Ok(GrammarRule::Choice(rules));
+            rules.push(rule);
+        }
+
+        if rules.is_empty() {
+            Ok(GrammarRule::Literal("".to_string()))
+        } else if rules.len() == 1 {
+            Ok(rules[0].clone())
+        } else {
+            Ok(GrammarRule::Sequence(rules))
+        }
+    }
+
+    fn parse_rule_def(&self, def: &str) -> Result<GrammarRule, String> {
+        // Simple weighted check: "10:A | 1:B"
+        if def.contains('|') {
+            let parts: Vec<&str> = def.split('|').map(|s| s.trim()).collect();
+            let mut weighted = false;
+            let mut weights = Vec::new();
+            let mut choices = Vec::new();
+
+            for p in &parts {
+                if let Some(idx) = p.find(':') {
+                    if let Ok(w) = p[..idx].trim().parse::<u32>() {
+                        weighted = true;
+                        weights.push(w);
+                        choices.push(p[idx+1..].trim());
+                    } else {
+                        choices.push(*p);
+                        weights.push(1);
+                    }
+                } else {
+                    choices.push(*p);
+                    weights.push(1);
+                }
+            }
+
+            if weighted {
+                let mut rules = Vec::new();
+                for (w, c) in weights.into_iter().zip(choices.into_iter()) {
+                    rules.push((w, self.parse_rule_def(c)?));
+                }
+                return Ok(GrammarRule::WeightedChoice(rules));
+            } else {
+                let mut rules = Vec::new();
+                for c in choices {
+                    rules.push(self.parse_rule_def(c)?);
+                }
+                return Ok(GrammarRule::Choice(rules));
+            }
         }
 
         let seq: Vec<&str> = def.split_whitespace().collect();
@@ -80,9 +174,12 @@ impl LogosEngine {
             GrammarRule::Literal(s) => Ok(s.clone()),
             GrammarRule::Sequence(rules) => {
                 let mut result = String::new();
-                for (i, r) in rules.iter().enumerate() {
-                    if i > 0 { result.push(' '); }
-                    result.push_str(&self.generate_from_rule(r, depth + 1)?);
+                for r in rules {
+                    let s = self.generate_from_rule(r, depth + 1)?;
+                    if !s.is_empty() {
+                        if !result.is_empty() && !result.ends_with(' ') { result.push(' '); }
+                        result.push_str(&s);
+                    }
                 }
                 Ok(result)
             }
@@ -94,6 +191,22 @@ impl LogosEngine {
                 } else {
                     Err("Empty choice".to_string())
                 }
+            }
+            GrammarRule::WeightedChoice(choices) => {
+                use rand::Rng;
+                let mut rng = rand::thread_rng();
+                let total_weight: u32 = choices.iter().map(|(w, _)| w).sum();
+                if total_weight == 0 { return Err("Total weight is 0".to_string()); }
+
+                let mut pick = rng.gen_range(0..total_weight);
+                for (w, r) in choices {
+                    if pick < *w {
+                        return self.generate_from_rule(r, depth + 1);
+                    }
+                    pick -= w;
+                }
+                // Should not reach here
+                self.generate_from_rule(&choices.last().unwrap().1, depth + 1)
             }
             GrammarRule::Reference(name) => {
                 if let Some(r) = self.rules.get(name) {
@@ -150,6 +263,15 @@ impl LogosEngine {
                 }
                 Err("No choice matched".to_string())
             }
+            GrammarRule::WeightedChoice(choices) => {
+                // For parsing, ignore weights, try all
+                for (_, r) in choices {
+                    if let Ok((val, next_pos)) = self.parse_from_rule(r, tokens, pos, depth + 1) {
+                        return Ok((val, next_pos));
+                    }
+                }
+                Err("No choice matched".to_string())
+            }
             GrammarRule::Reference(name) => {
                 if let Some(r) = self.rules.get(name) {
                     self.parse_from_rule(r, tokens, pos, depth + 1)
@@ -168,6 +290,7 @@ pub fn apply_logos_runes(
     current_signals: &[Vec<Option<Value>>],
     next_signals: &mut Vec<Vec<Option<Value>>>,
     logos_engine: &mut LogosEngine,
+    dna: &Dna,
 ) -> bool {
     let mut changes = false;
 
@@ -187,23 +310,45 @@ pub fn apply_logos_runes(
         "Γ" => {
             // Gamma: Define Rule
             // West: Name (String)
-            // North: Definition (String)
-            if let (Some(Value::Str(name)), Some(Value::Str(def))) = (w_sig, n_sig) {
-                logos_engine.define_rule(name, def);
-                // Ack
-                if next_signals[y][x].is_none() {
-                    next_signals[y][x] = Some(Value::Int(1));
-                    changes = true;
+            // North: Definition (String) OR Strand Index (Int)
+            if let Some(Value::Str(name)) = w_sig {
+                if let Some(val) = n_sig {
+                    match val {
+                        Value::Str(def) => {
+                            logos_engine.define_rule(name, def);
+                            if next_signals[y][x].is_none() {
+                                next_signals[y][x] = Some(Value::Int(1));
+                                changes = true;
+                            }
+                        },
+                        Value::Int(idx) => {
+                            if *idx >= 0 {
+                                logos_engine.define_rule_from_dna(name, dna, *idx as usize);
+                                if next_signals[y][x].is_none() {
+                                    next_signals[y][x] = Some(Value::Int(1));
+                                    changes = true;
+                                }
+                            }
+                        }
+                        _ => {}
+                    }
                 }
             }
         }
         "»" => {
             // Speak / Generate
             // West: Rule Name
+            // North: Mode ("GRID") -> Used to signal intent, output is still string.
             // Output: Self (Generated String)
             if let Some(Value::Str(name)) = w_sig {
-                // If North has Seed/Arg?
                 if let Ok(gen) = logos_engine.generate(name) {
+
+                    // Note: If North is "GRID", the intent is to write to the grid.
+                    // However, we are in the propagation phase and cannot modify the grid directly.
+                    // We output the string, and a downstream Sink (like `$` or specialized Logic)
+                    // would need to consume it. Or the user can pipe it.
+                    // For now, we just respect the signal generation.
+
                     let res = Value::Str(gen);
                     if next_signals[y][x] != Some(res.clone()) {
                         next_signals[y][x] = Some(res);
@@ -219,7 +364,7 @@ pub fn apply_logos_runes(
             // Output: Self (AST / Junction)
             if let (Some(Value::Str(input)), Some(Value::Str(name))) = (w_sig, n_sig) {
                 if let Ok(ast) = logos_engine.parse_input(name, input) {
-                    if next_signals[y][x] != Some(ast.clone()) {
+                    if next_signals[y][x].is_none() {
                         next_signals[y][x] = Some(ast);
                         changes = true;
                     }

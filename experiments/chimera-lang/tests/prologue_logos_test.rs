@@ -1,6 +1,7 @@
-use chimera_lang::ast::{Dna, Helix};
+use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
 use chimera_lang::vm::{ChimeraVM, Value};
 use chimera_lang::vm::prologue::exec_prologue_tick;
+use chimera_lang::opcode::OpCode;
 
 fn setup_signal(vm: &mut ChimeraVM, val: Value, target_y: usize, target_x: usize, from_dir: &str) {
     match from_dir {
@@ -116,5 +117,63 @@ fn test_logos_generation() {
         assert_eq!(*val, Value::Str("hi".to_string()));
     } else {
         panic!("Sigma (») did not emit output");
+    }
+}
+
+#[test]
+fn test_logos_dna_definition() {
+    // Setup DNA: Strand 0 dummy, Strand 1 has genes [Push("A"), Push("B")]
+    // We use Strand 1 because Int(0) is considered Empty Signal by the VM circuit logic.
+    let genes = vec![
+        Gene { op: OpCode::Push, args: vec![Nucleotide::String("A".to_string())] },
+        Gene { op: OpCode::Push, args: vec![Nucleotide::String("B".to_string())] },
+    ];
+    let dna = Dna { helix: Helix { strands: vec![Strand { genes: vec![] }, Strand { genes }] } };
+    let mut vm = ChimeraVM::new(dna);
+    vm.prologue_state.active = true;
+
+    // Define from DNA: Γ at (5,5)
+    // West: Name "gene_rule"
+    // North: Strand Index 1
+    vm.grid[5][5] = Value::Str("Γ".to_string());
+
+    setup_signal(&mut vm, Value::Str("gene_rule".to_string()), 5, 5, "WEST");
+    setup_signal(&mut vm, Value::Int(1), 5, 5, "NORTH");
+
+    exec_prologue_tick(&mut vm);
+
+    // Verify Rule Created
+    let engine = &vm.prologue_state.logos_engine;
+    assert!(engine.rules.contains_key("gene_rule"), "Rule 'gene_rule' not found in {:?}", engine.rules.keys());
+
+    // Generate from it to verify structure
+    if let Ok(gen) = engine.generate("gene_rule") {
+        assert_eq!(gen, "A B");
+    } else {
+        panic!("Failed to generate from DNA-defined rule");
+    }
+}
+
+#[test]
+fn test_logos_weighted_choice() {
+    let dna = Dna { helix: Helix { strands: vec![] } };
+    let mut vm = ChimeraVM::new(dna);
+    vm.prologue_state.active = true;
+
+    // Define Weighted Rule: "10:\"Common\" | 1:\"Rare\""
+    // Using quoted strings to ensure they are interpreted as Literals, not References.
+    vm.grid[5][5] = Value::Str("Γ".to_string());
+    setup_signal(&mut vm, Value::Str("loot".to_string()), 5, 5, "WEST");
+    setup_signal(&mut vm, Value::Str("10:\"Common\" | 1:\"Rare\"".to_string()), 5, 5, "NORTH");
+
+    exec_prologue_tick(&mut vm);
+
+    // Generate multiple times to statistical check (probabilistic, so looseness required)
+    // We just verify it generates *something* valid
+    let engine = &vm.prologue_state.logos_engine;
+    if let Ok(gen) = engine.generate("loot") {
+        assert!(gen == "Common" || gen == "Rare", "Generated unexpected: {}", gen);
+    } else {
+        panic!("Failed to generate from weighted choice");
     }
 }
