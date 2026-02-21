@@ -36,8 +36,18 @@ pub fn value_to_nucleotide(v: &Value, depth: usize) -> Option<Nucleotide> {
 
 /// Reshuffles the entire DNA based on the current Grid state.
 ///
+/// This is the ultimate self-modification enzyme. The organism treats the
+/// world (Grid) as its genetic code, rebooting itself from the environment.
+///
 /// **OpCode:** `Metamorphosis`
 /// **Effect:** Clears DNA, reads Grid as DNA, resets Energy to 50, IP to (0,0), Stack to [].
+///
+/// # The Algorithm
+/// 1. Scan Grid row by row.
+/// 2. Convert each cell (`Int`, `Str`) into a Gene.
+/// 3. Compile new Strands.
+/// 4. Wipe all state (Stack, Telomeres, Epigenome).
+/// 5. Rebirth.
 pub fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let rows = vm.grid.len();
     let cols = if rows > 0 { vm.grid[0].len() } else { 0 };

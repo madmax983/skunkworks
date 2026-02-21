@@ -2,6 +2,33 @@
 //! # Nova Extension 🌌
 //!
 //! The `Nova` module implements advanced biological and physics-defying capabilities for the Chimera VM.
+//! It transforms the VM from a simple execution engine into a complex, evolving ecosystem.
+//!
+//! ## 📖 The Book of Nova
+//!
+//! In the beginning, there was only the Grid and the Stack. Then came **Nova**, bringing life,
+//! time travel, and entropy to the machine.
+//!
+//! ### 1. The Living Machine (Organelles)
+//! Unlike standard threads, **Organelles** are semi-autonomous agents that live on the Grid.
+//! They have their own purpose:
+//! - **Mitochondria** generate energy.
+//! - **Ribosomes** execute code found on the grid (spatial programming).
+//! - **Chloroplasts** harvest light.
+//! - **The Void** consumes matter to fuel entropy.
+//!
+//! ### 2. The Fabric of Reality (Phases)
+//! An organism can shift its physical state:
+//! - **Corporeal**: Solid. Respects walls.
+//! - **Ethereal**: Ghost-like. Passes through walls but cannot touch matter.
+//! - **Crystalline**: Frozen. Immune to time and mutation, but immobile.
+//! - **Flux**: Chaos energy. Fast, unstable, consuming immense power.
+//!
+//! ### 3. The Flow of Time (Chronos)
+//! Nova allows manipulation of the execution timeline:
+//! - **Spores** act as save states, preserving the VM state in a dormant seed.
+//! - **Prophecy** allows looking into the future to avoid death.
+//! - **Time Loops** reset the state while keeping memory.
 //!
 //! ## Key Features
 //!
@@ -50,7 +77,7 @@ pub enum OrganelleType {
     /// Consumes `waste_grid` to produce energy.
     Lysosome,
     /// Reads the grid cell at its location and executes it as an instruction.
-    /// Acts as a "living read head".
+    /// Acts as a "living read head" on the grid.
     Ribosome,
     /// Consumes the grid cell (turns it to 0) and moves randomly (Brownian motion).
     Void,
@@ -58,7 +85,7 @@ pub enum OrganelleType {
     Alchemist,
     /// Grows procedurally based on L-System rules.
     Seed,
-    /// Sings a song repeatedly.
+    /// Sings a song repeatedly, triggering global effects via Chorus chords.
     Choir,
     /// Moves randomly and triggers random glitches or entropy.
     Wisp,
@@ -76,6 +103,18 @@ pub enum OrganelleType {
 ///
 /// Organelles run in parallel to the main organism (sequentially in the loop, but logically parallel).
 /// They have their own stack, IP, and location, but share the organism's Energy and DNA.
+///
+/// # Examples
+///
+/// ```ignore
+/// // Spawning a Mitochondria at (5, 5)
+/// let organelle = Organelle {
+///     kind: OrganelleType::Mitochondria,
+///     context_loc: (5, 5),
+///     // ... other fields default
+/// };
+/// vm.organelles.push(organelle);
+/// ```
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Organelle {
     /// The organelle's private stack.
@@ -90,18 +129,28 @@ pub struct Organelle {
     pub recursion_depth: usize,
     /// Execution state. If true, the organelle is removed or stops processing.
     pub halted: bool,
-    /// The specialization type (e.g., Chloroplast).
+    /// The specialization type (e.g., Chloroplast, Mitochondria).
     pub kind: OrganelleType,
     /// Movement vector (dy, dx) used by some organelles (e.g. Ribosome, Void).
     pub direction: (i8, i8),
+    /// Time To Live. If `Some(0)`, the organelle dies.
     pub ttl: Option<usize>,
+    /// Display name (flavor text).
     pub name: String,
+    /// List of acquired traits or buffs.
     pub traits: Vec<String>,
+    /// Unique identifier for this organelle.
     pub id: u64,
+    /// ID of the tissue/colony this organelle belongs to (for Metazoan behavior).
     pub tissue_id: Option<usize>,
+    /// Hash of the source genome (for identification).
     pub genome_id: u64,
+    /// Internal energy reserve (currently unused/vestigial).
+    /// Organelles draw from the main VM `energy` pool.
     pub energy: i64,
+    /// Accumulated experience points (for leveling up behavior).
     pub experience: i64,
+    /// Growth stage (0=Larva, 1=Adult, etc.).
     pub stage: u8,
 }
 
@@ -452,8 +501,18 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> Option<usize> {
 
 /// Runs a predictive simulation to see if the current path leads to death.
 ///
+/// This creates a clone of the VM and runs it forward in time for `ticks` cycles.
+/// If the clone halts (runs out of energy), the prophecy returns 1 (Death).
+///
 /// **OpCode:** `Prophecy`
 /// **Stack:** `[ ..., ticks ] -> [ ..., result (1=Death, 0=Life) ]`
+///
+/// # Examples
+///
+/// ```rust
+/// // Check if we survive the next 100 ticks
+/// // push(100) prophecy() brz(panic)
+/// ```
 #[allow(clippy::needless_range_loop)]
 fn exec_prophecy(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: ticks (top)
@@ -535,6 +594,9 @@ pub fn exec_lisp_eval(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 /// Runs a sandboxed simulation of a specific strand.
+///
+/// Useful for testing code safely before integrating it into the main genome.
+/// The simulation runs in a cloned environment; changes do not affect the real world.
 ///
 /// **OpCode:** `Simulate`
 /// **Stack:** `[ ..., strand_idx, ticks ] -> [ ..., top_val, final_energy, status ]`
@@ -1209,6 +1271,17 @@ fn organelle_type_from_int(t: i64) -> (OrganelleType, (i8, i8)) {
     }
 }
 
+/// Spawns a new Organelle to execute a strand in parallel.
+///
+/// **OpCode:** `Spawn`
+/// **Stack:** `[ ..., type, strand_idx ] -> [ ... ]`
+///
+/// # Organelle Types
+/// - 1: Chloroplast (Light -> Energy)
+/// - 2: Mitochondria (Passive Energy)
+/// - 3: Lysosome (Waste -> Energy)
+/// - 4: Ribosome (Grid Execution)
+/// - 5: Void (Consumption)
 fn exec_spawn(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: type, strand_idx (bottom)
     let t = vm.pop_int("spawn")?;
@@ -1404,6 +1477,17 @@ fn exec_conjugate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Enters a "Dream State" to safely test mutations.
+///
+/// The VM clones itself and forces a mutation on the target strand.
+/// It then runs the simulation for `ticks`.
+///
+/// - If **Energy increases**: The dream is "realized" (mutation accepted).
+/// - If **Energy decreases**: The dream is forgotten (mutation discarded).
+/// - If **Entropy is high**: A Nightmare occurs (bad mutation forced).
+///
+/// **OpCode:** `Dream`
+/// **Stack:** `[ ..., ticks, strand_idx ] -> [ ..., result ]`
 fn exec_dream(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: ticks, strand_idx (bottom)
     let ticks = vm.pop_int("dream")?;
