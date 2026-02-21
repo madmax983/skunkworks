@@ -1,97 +1,160 @@
 mod audio;
-mod sim;
-mod ui;
+mod musician;
+mod tui;
 
 use anyhow::Result;
-use crossterm::event::{self, Event, KeyCode};
-use sim::Musician;
-use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::{Arc, Mutex};
-use std::time::Duration;
+use audio::{AudioEngine, Voice};
+use crossterm::{
+    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyModifiers},
+    execute,
+    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+};
+use musician::{Beacon, Musician};
+use ratatui::{backend::CrosstermBackend, Terminal};
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc, Mutex,
+};
+use std::{io, time::Duration};
+use tui::{draw_ui, TuiState};
 
 fn main() -> Result<()> {
-    // 1. Setup Audio
-    let (audio_tx, audio_rx) = crossbeam::channel::unbounded();
-    let audio_engine = audio::AudioEngine::new(audio_rx)?;
+    // Audio Setup
+    // AudioEngine::new might fail in CI/Sandbox if no audio device.
+    // We try to handle it gracefully by allowing simulation mode (via features) or just failing if strict.
+    // Since we refactored audio.rs to have a fallback simulation mode via cfg, this should be fine
+    // provided the feature flags are set correctly.
+    // If 'audio' feature is enabled but fails (e.g. no device), it returns Err.
+    // We can't easily fallback to simulation at runtime if it's compile-time cfg.
+    // But we can just let it fail and print error.
+    let (audio_engine, tx, current_time) = match AudioEngine::new() {
+        Ok(res) => res,
+        Err(e) => {
+            eprintln!("Failed to initialize audio: {}", e);
+            return Err(e);
+        }
+    };
 
-    // 2. Setup Simulation
-    let instrument = Arc::new(Mutex::new(()));
+    let sample_rate = audio_engine.sample_rate();
+
+    // Prevent audio engine from being dropped
+    #[allow(unused_variables)]
+    let _audio_engine = audio_engine;
+
+    // Shared Resource for Synchronization (The "Drum Circle Center")
+    // Threads contend for this lock.
+    let shared_resource = Arc::new(Mutex::new(()));
     let running = Arc::new(AtomicBool::new(true));
 
-    // Tuning: A Minor Pentatonic Scale
-    // Intervals: Prime numbers for maximum phasing (in ms)
+    // Musicians configuration
+    // (Name, Period(ms), Voice, WorkLoad(iters), Drift(ms))
     let configs = vec![
-        (307u64, 220.0f32, "Bass"),     // A3
-        (401u64, 261.63f32, "Tenor"),   // C4
-        (503u64, 293.66f32, "Alto"),    // D4
-        (601u64, 329.63f32, "Soprano"), // E4
-        (701u64, 392.00f32, "Lead"),    // G4
-        (809u64, 440.00f32, "Air"),     // A4
+        ("Kick", 500, Voice::Kick, 1000, 0),   // Anchor: 120 BPM, stable
+        ("Snare", 666, Voice::Snare, 2000, 5), // Polyrhythm 3:4ish, slight drift
+        ("HiHat", 250, Voice::Hihat, 500, 15), // Fast, jittery (human feel)
+        ("Perc", 400, Voice::Clave, 3000, 2),  // 150 BPM, contends moderately
+        ("Bass", 1500, Voice::Synth(0), 10000, 0), // Slow, Heavy work (blocks others)
+        ("Pad", 1103, Voice::Synth(7), 5000, 10), // Prime period, moderate work
+        ("Glitch", 293, Voice::Synth(12), 100, 50), // Fast prime, very jittery
     ];
 
-    let mut musicians = Vec::new();
+    let mut names = Vec::new();
+    let mut periods = Vec::new();
+    let mut voices = Vec::new();
+    let mut beacons = Vec::new();
     let mut handles = Vec::new();
 
-    for (id, (interval, freq, name)) in configs.into_iter().enumerate() {
-        let musician = Musician::new(id, name.to_string());
+    for (id, (name, period, voice, work, drift)) in configs.into_iter().enumerate() {
+        let beacon = Arc::new(Beacon::new());
+        beacons.push(beacon.clone());
+        names.push(name.to_string());
+        periods.push(period);
+        voices.push(voice);
 
-        let handle = sim::spawn_musician(
-            &musician,
-            interval,
-            freq,
-            audio_tx.clone(),
-            instrument.clone(),
+        let musician = Musician::new(
+            id,
+            name.to_string(),
+            period,
+            voice,
+            tx.clone(),
+            sample_rate,
+            current_time.clone(),
+            shared_resource.clone(),
             running.clone(),
+            beacon,
+            work,
+            drift,
         );
 
-        musicians.push(musician);
-        handles.push(handle);
+        handles.push(musician.spawn());
     }
 
-    // 3. Setup UI
-    let mut tui = tui_shared::Tui::init()?;
+    // TUI Setup
+    // Use a guard to ensure cleanup even on panic?
+    // Rust doesn't have try-finally, but Drop trait handles it.
+    // For now, standard pattern.
+    enable_raw_mode()?;
+    let mut stdout = io::stdout();
+    execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
+    let backend = CrosstermBackend::new(stdout);
+    let mut terminal = Terminal::new(backend)?;
 
-    // 4. Main Loop
+    let tui_state = TuiState {
+        musician_names: names,
+        musician_periods: periods,
+        musician_voices: voices,
+        beacons,
+        current_time,
+        sample_rate,
+    };
+
+    let tick_rate = Duration::from_millis(32); // ~30 FPS
+    let mut last_tick = std::time::Instant::now();
+
     loop {
-        tui.terminal.draw(|f| {
-            ui::draw(f, &musicians);
-        })?;
+        terminal.draw(|f| draw_ui(f, &tui_state))?;
 
-        // Poll for events
-        if event::poll(Duration::from_millis(16))? {
-            match event::read()? {
-                Event::Key(key) => {
-                    if key.code == KeyCode::Char('q') || key.code == KeyCode::Esc {
-                        break;
-                    }
+        let timeout = tick_rate
+            .checked_sub(last_tick.elapsed())
+            .unwrap_or_else(|| Duration::from_secs(0));
+
+        if crossterm::event::poll(timeout)? {
+            if let Event::Key(key) = event::read()? {
+                match key.code {
+                    KeyCode::Char('q') => break,
+                    KeyCode::Char('c') if key.modifiers.contains(KeyModifiers::CONTROL) => break,
+                    _ => {}
                 }
-                _ => {}
             }
+        }
+
+        if last_tick.elapsed() >= tick_rate {
+            last_tick = std::time::Instant::now();
+        }
+
+        // Check if we should stop (external signal?)
+        if !running.load(Ordering::Relaxed) {
+            break;
         }
     }
 
-    // 5. Cleanup
-    // Signal threads to stop
+    // Cleanup
     running.store(false, Ordering::Relaxed);
 
-    // Drop TUI to restore terminal before printing logs (optional, but good)
-    drop(tui);
+    // Restore terminal
+    disable_raw_mode()?;
+    execute!(
+        terminal.backend_mut(),
+        LeaveAlternateScreen,
+        DisableMouseCapture
+    )?;
+    terminal.show_cursor()?;
 
-    println!("Shutting down simulation...");
+    println!("Session ended. Threads are winding down...");
 
-    // Join musician threads
-    for handle in handles {
-        let _ = handle.join();
-    }
-    println!("Musicians stopped.");
-
-    // Drop audio_tx to signal audio engine to finish draining
-    drop(audio_tx);
-
-    // Join audio engine
-    println!("Finalizing audio...");
-    audio_engine.join()?;
-    println!("Audio saved to 'thread_frequency_output.wav'.");
+    // We don't join threads because they might be sleeping or stuck in loops.
+    // The OS will clean them up on exit.
+    // If we wanted to be clean, we'd join, but `running` flag should stop them eventually.
 
     Ok(())
 }

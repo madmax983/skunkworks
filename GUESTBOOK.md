@@ -30,10 +30,15 @@
 - **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy.
 - **Note:** "The sequencer is silent. The spheres do not sing."
 
-### [Concentration Level: HIGH] - Location: experiments/thread-frequency
+### [Concentration Level: TOXIC] - Location: graveyard/thread-frequency
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Redundancy.
-- **Note:** "The rhythm is hollow. The threads spin in silence."
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy.
+- **Note:** "The rhythm has stopped. The threads are cut."
+
+### [Concentration Level: HIGH] - Location: experiments/sync-opation
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Identity Collapse / Terminal Redundancy.
+- **Note:** "A rhythm with no unique beat."
 
 ### [Concentration Level: HIGH] - Location: experiments/hyper-flock
 - **Scent Origin:** The Splice Surgeon 🧬
