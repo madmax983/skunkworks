@@ -72,6 +72,7 @@ pub mod elektra;
 pub mod elemental;
 pub mod epigenetics;
 pub mod evolution;
+pub mod fission;
 pub mod hypnagogia;
 pub mod io;
 pub mod lexicon;
@@ -309,6 +310,11 @@ impl PrologueState {
                             | "○"
                             | "☆"
                             | "☿"
+                        // Fission
+                            | "☢"
+                            | "✇"
+                            | "⌘"
+                            | "✦"
                         // Hypnagogia
                             | "☾"
                             | "☀"
@@ -480,6 +486,7 @@ fn prepare_signals(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     vm.prologue_state.signal_grid[*y][*x] = Some(val);
                 }
             }
+            fission::prepare_fission_sources(s, *y, *x, &mut vm.prologue_state.signal_grid);
         }
     }
 }
@@ -657,6 +664,9 @@ fn apply_propagation_rune(
         return true;
     }
     if alchemy::apply_alchemy_runes(rune, y, x, current_signals, next_signals) {
+        return true;
+    }
+    if fission::apply_fission_runes(rune, y, x, current_signals, next_signals) {
         return true;
     }
     if evolution::apply_evolution_runes(rune, y, x, dna, current_signals, next_signals) {
