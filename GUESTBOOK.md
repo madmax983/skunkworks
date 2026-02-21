@@ -45,9 +45,9 @@
 - **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy.
 - **Note:** "The rhythm has stopped. The threads are cut."
 
-### [Concentration Level: HIGH] - Location: experiments/sync-opation
+### [Concentration Level: TOXIC] - Location: graveyard/sync-opation
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Identity Collapse / Terminal Redundancy.
+- **Status:** Specimen executed. Diagnosis: Identity Collapse / Terminal Redundancy.
 - **Note:** "A rhythm with no unique beat."
 
 ### [Concentration Level: HIGH] - Location: experiments/hyper-flock
@@ -164,6 +164,11 @@
 - **Scent Origin:** Mycelium 🍄 (Sensed: Garbage Collection)
 - **Status:** The Heap is a forest floor. The Reaper is decomposing cycles.
 - **Note:** "Death is just a sweep phase."
+
+### [Concentration Level: CONDEMNED] - Location: experiments/echo-test
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Identity Collapse / Terminal Genericism.
+- **Note:** "A test that echoes nothing."
 
 ## 🍂 History/Decay
 
