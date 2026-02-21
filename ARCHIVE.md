@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **orbital-sequencer**: Diagnosis: Documentation Void / Terminal Redundancy. Redundant with `harmony-of-spheres`. Grace period: 24 hours.
+- **thread-frequency**: Diagnosis: Documentation Void / Terminal Redundancy. Redundant with `syncopated-threads` and `neuro-syncopation`. Grace period: 24 hours.
 - [Experiment name]: [Diagnosis]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **orbital-sequencer**: Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy. Redundant with `harmony-of-spheres`. Grace period expired. Moved to graveyard.
 - **chemical-specter**: Specimen executed. Diagnosis: Terminal Redundancy (Gray-Scott #8) / Documentation Void. Failed to improve during grace period. Moved to graveyard.
 - **hydro-boids**: Specimen executed. Diagnosis: Terminal Redundancy / Technological Regression. Naive O(N^2) CPU SPH. Redundant with `luminous-flock`. Grace period expired. Moved to graveyard.
 - **ising-tide**: Specimen executed. Diagnosis: Documentation Void / Dangerous Mystery. Hardcoded implementation without context. Grace period expired. Moved to graveyard.
