@@ -4,6 +4,8 @@ use crate::vm::Value;
 use anyhow::{anyhow, Result};
 use std::str::FromStr;
 
+const MAX_LISP_DEPTH: usize = 256;
+
 #[derive(Debug, Clone)]
 pub enum SExpr {
     Atom(String),
@@ -15,14 +17,17 @@ pub fn parse(input: &str) -> Result<Vec<SExpr>> {
     let mut exprs = Vec::new();
     let mut idx = 0;
     while idx < tokens.len() {
-        let (expr, next_idx) = parse_expr(&tokens, idx)?;
+        let (expr, next_idx) = parse_expr(&tokens, idx, 0)?;
         exprs.push(expr);
         idx = next_idx;
     }
     Ok(exprs)
 }
 
-pub fn sexpr_to_value(expr: &SExpr) -> Result<Value> {
+fn sexpr_to_value_inner(expr: &SExpr, depth: usize) -> Result<Value> {
+    if depth > MAX_LISP_DEPTH {
+        return Err(anyhow!("Recursion limit exceeded"));
+    }
     match expr {
         SExpr::Atom(s) => {
             if let Ok(n) = s.parse::<i64>() {
@@ -36,13 +41,15 @@ pub fn sexpr_to_value(expr: &SExpr) -> Result<Value> {
         SExpr::List(items) => {
             let mut vals = Vec::new();
             for item in items {
-                vals.push(sexpr_to_value(item)?);
+                vals.push(sexpr_to_value_inner(item, depth + 1)?);
             }
-            // Wrap lists as Junctions. Babel grammars expect Junction(Any, [Type, ...args])
-            // e.g. (Seq "A" "B") -> Junction(Any, ["Seq", "A", "B"])
             Ok(Value::Junction(JunctionType::Any, vals))
         }
     }
+}
+
+pub fn sexpr_to_value(expr: &SExpr) -> Result<Value> {
+    sexpr_to_value_inner(expr, 0)
 }
 
 fn tokenize(input: &str) -> Vec<String> {
@@ -107,7 +114,10 @@ fn tokenize(input: &str) -> Vec<String> {
     tokens
 }
 
-fn parse_expr(tokens: &[String], start: usize) -> Result<(SExpr, usize)> {
+fn parse_expr(tokens: &[String], start: usize, depth: usize) -> Result<(SExpr, usize)> {
+    if depth > MAX_LISP_DEPTH {
+        return Err(anyhow!("Recursion limit exceeded"));
+    }
     if start >= tokens.len() {
         return Err(anyhow!("Unexpected EOF"));
     }
@@ -116,7 +126,7 @@ fn parse_expr(tokens: &[String], start: usize) -> Result<(SExpr, usize)> {
         let mut list = Vec::new();
         let mut idx = start + 1;
         while idx < tokens.len() && tokens[idx] != ")" {
-            let (expr, next_idx) = parse_expr(tokens, idx)?;
+            let (expr, next_idx) = parse_expr(tokens, idx, depth + 1)?;
             list.push(expr);
             idx = next_idx;
         }
@@ -147,7 +157,7 @@ pub fn compile(source: &str) -> Result<Dna> {
                         // name is items[1]
                         let mut genes = Vec::new();
                         for item in items.iter().skip(2) {
-                            genes.extend(compile_expr(item)?);
+                            genes.extend(compile_expr(item, 0)?);
                         }
                         strands.push(Strand { genes });
                     } else {
@@ -168,7 +178,7 @@ pub fn compile_fragment(source: &str) -> Result<Vec<Gene>> {
     let exprs = parse(source)?;
     let mut genes = Vec::new();
     for expr in exprs {
-        genes.extend(compile_expr(&expr)?);
+        genes.extend(compile_expr(&expr, 0)?);
     }
     Ok(genes)
 }
@@ -262,7 +272,10 @@ fn is_immediate(op: &OpCode) -> bool {
     }
 }
 
-fn compile_as_data(expr: &SExpr) -> Result<Nucleotide> {
+fn compile_as_data(expr: &SExpr, depth: usize) -> Result<Nucleotide> {
+    if depth > MAX_LISP_DEPTH {
+        return Err(anyhow!("Recursion limit exceeded"));
+    }
     match expr {
         SExpr::Atom(s) => {
             if let Ok(n) = s.parse::<i64>() {
@@ -276,14 +289,17 @@ fn compile_as_data(expr: &SExpr) -> Result<Nucleotide> {
         SExpr::List(items) => {
             let mut nucleos = Vec::new();
             for item in items {
-                nucleos.push(compile_as_data(item)?);
+                nucleos.push(compile_as_data(item, depth + 1)?);
             }
             Ok(Nucleotide::Junction(JunctionType::Any, nucleos))
         }
     }
 }
 
-fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
+fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
+    if depth > MAX_LISP_DEPTH {
+        return Err(anyhow!("Recursion limit exceeded"));
+    }
     match expr {
         SExpr::Atom(s) => {
             if let Ok(n) = s.parse::<i64>() {
@@ -319,7 +335,7 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
                         if items.len() != 2 {
                             return Err(anyhow!("quote requires exactly one argument"));
                         }
-                        let data = compile_as_data(&items[1])?;
+                        let data = compile_as_data(&items[1], depth + 1)?;
                         return Ok(vec![Gene {
                             op: OpCode::Push,
                             args: vec![data],
@@ -329,11 +345,11 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
                         if items.len() < 2 {
                             return Err(anyhow!("rule requires at least a head"));
                         }
-                        let head = compile_as_data(&items[1])?;
+                        let head = compile_as_data(&items[1], depth + 1)?;
 
                         let mut body_terms = Vec::new();
                         for item in items.iter().skip(2) {
-                            body_terms.push(compile_as_data(item)?);
+                            body_terms.push(compile_as_data(item, depth + 1)?);
                         }
                         let body = Nucleotide::Junction(JunctionType::All, body_terms);
 
@@ -357,7 +373,7 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
                         if items.len() != 2 {
                             return Err(anyhow!("assert requires exactly one argument"));
                         }
-                        let fact = compile_as_data(&items[1])?;
+                        let fact = compile_as_data(&items[1], depth + 1)?;
                         return Ok(vec![
                             Gene {
                                 op: OpCode::Push,
@@ -373,7 +389,7 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
                         if items.len() != 2 {
                             return Err(anyhow!("retract requires exactly one argument"));
                         }
-                        let fact = compile_as_data(&items[1])?;
+                        let fact = compile_as_data(&items[1], depth + 1)?;
                         return Ok(vec![
                             Gene {
                                 op: OpCode::Push,
@@ -391,11 +407,11 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
                         }
                         // (query goal1 goal2...) -> implicit AND (All)
                         let goal = if items.len() == 2 {
-                            compile_as_data(&items[1])?
+                            compile_as_data(&items[1], depth + 1)?
                         } else {
                             let mut goals = Vec::new();
                             for item in items.iter().skip(1) {
-                                goals.push(compile_as_data(item)?);
+                                goals.push(compile_as_data(item, depth + 1)?);
                             }
                             Nucleotide::Junction(JunctionType::All, goals)
                         };
@@ -417,7 +433,7 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
                             return Err(anyhow!("seq requires at least one argument"));
                         }
                         for item in items.iter().skip(1) {
-                            genes.extend(compile_expr(item)?);
+                            genes.extend(compile_expr(item, depth + 1)?);
                         }
                         genes.push(Gene {
                             op: OpCode::Push,
@@ -436,7 +452,7 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
                             return Err(anyhow!("alt requires at least one argument"));
                         }
                         for item in items.iter().skip(1) {
-                            genes.extend(compile_expr(item)?);
+                            genes.extend(compile_expr(item, depth + 1)?);
                         }
                         genes.push(Gene {
                             op: OpCode::Push,
@@ -452,7 +468,7 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
                         if items.len() != 2 {
                             return Err(anyhow!("match requires exactly one argument"));
                         }
-                        let mut genes = compile_expr(&items[1])?;
+                        let mut genes = compile_expr(&items[1], depth + 1)?;
                         genes.push(Gene {
                             op: OpCode::ParserMatch,
                             args: vec![],
@@ -463,7 +479,7 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
                         if items.len() != 2 {
                             return Err(anyhow!("regex requires exactly one argument"));
                         }
-                        let mut genes = compile_expr(&items[1])?;
+                        let mut genes = compile_expr(&items[1], depth + 1)?;
                         genes.push(Gene {
                             op: OpCode::ParserRegex,
                             args: vec![],
@@ -474,7 +490,7 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
                         if items.len() != 2 {
                             return Err(anyhow!("many requires exactly one argument"));
                         }
-                        let mut genes = compile_expr(&items[1])?;
+                        let mut genes = compile_expr(&items[1], depth + 1)?;
                         genes.push(Gene {
                             op: OpCode::ParserMany,
                             args: vec![],
@@ -485,7 +501,7 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
                         if items.len() != 2 {
                             return Err(anyhow!("opt requires exactly one argument"));
                         }
-                        let mut genes = compile_expr(&items[1])?;
+                        let mut genes = compile_expr(&items[1], depth + 1)?;
                         genes.push(Gene {
                             op: OpCode::ParserOpt,
                             args: vec![],
@@ -497,8 +513,8 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
                             return Err(anyhow!("parse requires (parse grammar input)"));
                         }
                         let mut genes = Vec::new();
-                        genes.extend(compile_expr(&items[1])?);
-                        genes.extend(compile_expr(&items[2])?);
+                        genes.extend(compile_expr(&items[1], depth + 1)?);
+                        genes.extend(compile_expr(&items[2], depth + 1)?);
                         genes.push(Gene {
                             op: OpCode::Parse,
                             args: vec![],
@@ -509,7 +525,7 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
                         if items.len() != 2 {
                             return Err(anyhow!("generate requires exactly one argument"));
                         }
-                        let mut genes = compile_expr(&items[1])?;
+                        let mut genes = compile_expr(&items[1], depth + 1)?;
                         genes.push(Gene {
                             op: OpCode::Generate,
                             args: vec![],
@@ -547,7 +563,7 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
                         // Stack Op: (op arg1 arg2) -> arg1 arg2 op
                         let mut genes = Vec::new();
                         for arg in items.iter().skip(1) {
-                            genes.extend(compile_expr(arg)?);
+                            genes.extend(compile_expr(arg, depth + 1)?);
                         }
                         genes.push(Gene { op, args: vec![] });
                         return Ok(genes);
@@ -557,7 +573,7 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
 
             let mut genes = Vec::new();
             for item in items {
-                genes.extend(compile_expr(item)?);
+                genes.extend(compile_expr(item, depth + 1)?);
             }
             Ok(genes)
         }
