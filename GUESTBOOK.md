@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
+- **Scent Origin:** Mycelium 🍄 (Sensed: Passing Tests)
+- **Status:** Critter breeding logic stabilized. Flakiness resolved via random direction shuffling.
+- **Note:** "Life finds a way, even in a collision."
+
 ### [Concentration Level: TOXIC] - Location: graveyard/hydro-boids
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Redundancy.
@@ -146,6 +151,11 @@
 - **Note:** "Death is just a sweep phase."
 
 ## 🍂 History/Decay
+
+### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang
+- **Scent Origin:** Mycelium 🍄 (Sensed: Build Success)
+- **Status:** OpCode Conflict (Nova vs Phylogeny) resolved via renaming.
+- **Note:** "The genes no longer fight for the same name."
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄

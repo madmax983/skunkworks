@@ -3715,8 +3715,8 @@ impl ChimeraVM {
             #[cfg(feature = "phylogeny")]
             OpCode::Crawl
             | OpCode::Sequencing
-            | OpCode::Synthesize
-            | OpCode::Infect
+            | OpCode::PhyloSynthesize
+            | OpCode::PhyloInfect
             | OpCode::Shell => {
                 phylogeny::exec_phylogeny_op(self, op, args);
                 None

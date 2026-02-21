@@ -948,28 +948,34 @@ fn process_critter_logic(
                         if s == "C" && (ny != y || nx != x) {
                             // Collided with another Critter -> Breed
                             let mut rng = rand::thread_rng();
-                            let spawn_dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-                            let (dy, dx) = spawn_dirs[rng.gen_range(0..4)];
-                            if let Some((sy, sx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                                if matches!(vm.grid[sy][sx], Value::Int(0)) {
-                                    let other_state = vm
-                                        .prologue_state
-                                        .registers
-                                        .get(&(ny, nx))
-                                        .and_then(|v| {
-                                            if let Value::Str(s) = v {
-                                                s.parse().ok()
-                                            } else {
-                                                None
-                                            }
-                                        })
-                                        .unwrap_or(critter::CritterState::default());
+                            let mut spawn_dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+                            // Shuffle to maintain randomness
+                            use rand::seq::SliceRandom;
+                            spawn_dirs.shuffle(&mut rng);
 
-                                    let child = critter::breed(&critter, &other_state);
-                                    vm.grid[sy][sx] = Value::Str("C".to_string());
-                                    vm.prologue_state
-                                        .registers
-                                        .insert((sy, sx), child.to_value());
+                            for (dy, dx) in spawn_dirs {
+                                if let Some((sy, sx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                                    if matches!(vm.grid[sy][sx], Value::Int(0)) {
+                                        let other_state = vm
+                                            .prologue_state
+                                            .registers
+                                            .get(&(ny, nx))
+                                            .and_then(|v| {
+                                                if let Value::Str(s) = v {
+                                                    s.parse().ok()
+                                                } else {
+                                                    None
+                                                }
+                                            })
+                                            .unwrap_or(critter::CritterState::default());
+
+                                        let child = critter::breed(&critter, &other_state);
+                                        vm.grid[sy][sx] = Value::Str("C".to_string());
+                                        vm.prologue_state
+                                            .registers
+                                            .insert((sy, sx), child.to_value());
+                                        break; // Spawned one child, stop
+                                    }
                                 }
                             }
                             blocked = true;

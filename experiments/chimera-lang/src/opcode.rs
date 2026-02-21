@@ -2049,12 +2049,12 @@ pub enum OpCode {
     ///
     /// **Stack:** `[ ..., path_string, content_string ] -> [ ... ]`
     #[cfg(feature = "phylogeny")]
-    Synthesize,
+    PhyloSynthesize,
     /// **[Phylogeny]** Appends content to a file (Infection).
     ///
     /// **Stack:** `[ ..., path_string, content_string ] -> [ ... ]`
     #[cfg(feature = "phylogeny")]
-    Infect,
+    PhyloInfect,
     /// **[Phylogeny]** Executes a system command (Shell).
     ///
     /// **Stack:** `[ ..., command_string ] -> [ ..., output_string ]`
