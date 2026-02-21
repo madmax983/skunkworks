@@ -312,6 +312,8 @@ impl PrologueState {
                             | "⚡"
                             | "≡"
                             | "∿"
+                            | "🔌"
+                            | "💡"
                         // Oracle
                             | "¶"
                             | "λ"
@@ -533,6 +535,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     &mut vm.prologue_state.dream_intensity,
                     v_grid,
                     r_grid,
+                    &mut vm.energy,
                 ) {
                     changes = true;
                 }
@@ -572,16 +575,20 @@ fn apply_propagation_rune(
     dream_intensity: &mut f32,
     voltage_grid: &mut Vec<Vec<f32>>,
     resistance_grid: &mut Vec<Vec<f32>>,
+    energy: &mut i64,
 ) -> bool {
     #[cfg(feature = "elektra")]
     if elektra::apply_elektra_runes(
         rune,
         y,
         x,
+        tick,
         current_signals,
         next_signals,
         voltage_grid,
         resistance_grid,
+        energy,
+        registers,
     ) {
         return true;
     }
