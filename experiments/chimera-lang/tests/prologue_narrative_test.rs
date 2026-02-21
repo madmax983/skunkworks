@@ -19,7 +19,7 @@ fn test_narrative_incipit() {
 
     assert_eq!(
         vm.prologue_state.signal_grid[5][6],
-        Some(Value::Str("Hero".to_string()))
+        Some(Value::Str("Love".to_string()))
     );
 }
 
