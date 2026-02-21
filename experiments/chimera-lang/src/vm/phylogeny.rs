@@ -130,7 +130,7 @@ pub fn exec_phylogeny_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     .push("Error: Stack underflow for sequencing".to_string());
             }
         }
-        OpCode::Synthesize => {
+        OpCode::PhyloSynthesize => {
             if vm.stack.len() >= 2 {
                 let content_val = vm.stack.pop().unwrap();
                 let path_val = vm.stack.pop().unwrap();
@@ -153,7 +153,7 @@ pub fn exec_phylogeny_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     .push("Error: Stack underflow for synthesize".to_string());
             }
         }
-        OpCode::Infect => {
+        OpCode::PhyloInfect => {
             if vm.stack.len() >= 2 {
                 let content_val = vm.stack.pop().unwrap();
                 let path_val = vm.stack.pop().unwrap();
