@@ -2002,6 +2002,7 @@ impl ChimeraVM {
             Value::Junction(t, vals) => self.stack.push(Value::Junction(t, vals)),
             Value::Superposition(s) => self.stack.push(Value::Superposition(s)),
             Value::Symbol(id) => self.stack.push(Value::Symbol(id)),
+            Value::Color(r, g, b) => self.stack.push(Value::Color(r, g, b)),
             Value::Str(s) => match s.as_str() {
                 ">" => organelle.direction = (0, 1),
                 "<" => organelle.direction = (0, -1),
@@ -4378,6 +4379,10 @@ impl ChimeraVM {
                                 self.output
                                     .push("Error: Virus cannot execute symbol".to_string());
                             }
+                            Value::Color(_, _, _) => {
+                                self.output
+                                    .push("Error: Virus cannot execute color".to_string());
+                            }
                         }
                     }
                 } else {
@@ -4425,6 +4430,10 @@ impl ChimeraVM {
                         }
                         Value::Symbol(_) => {
                             self.output.push("Error: Cannot consume symbol".to_string());
+                        }
+                        Value::Color(r, g, b) => {
+                            let e = (r as i64 + g as i64 + b as i64) / 3;
+                            self.energy = self.energy.saturating_add(e);
                         }
                     }
                 } else {

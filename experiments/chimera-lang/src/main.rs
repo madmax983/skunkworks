@@ -104,6 +104,7 @@ fn main() -> Result<()> {
                     ("Superposition", comfy_table::Color::Yellow)
                 }
                 chimera_lang::vm::Value::Symbol(_) => ("Symbol", comfy_table::Color::Magenta),
+                chimera_lang::vm::Value::Color(_, _, _) => ("Color", comfy_table::Color::Green),
             };
 
             let val_str = format!("{}", val);

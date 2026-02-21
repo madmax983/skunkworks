@@ -31,6 +31,7 @@ pub fn value_to_nucleotide(v: &Value, depth: usize) -> Option<Nucleotide> {
         }
         Value::Superposition(_) => None, // Cannot compile superposition to static AST
         Value::Symbol(_) => None,        // Symbols are runtime values, cannot persist to static AST
+        Value::Color(_, _, _) => None,
     }
 }
 
@@ -79,6 +80,9 @@ pub fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 }
                 Value::Symbol(_) => {
                     x += 1; // Skip symbols
+                }
+                Value::Color(_, _, _) => {
+                    x += 1; // Skip colors
                 }
                 Value::Str(s) => {
                     let op = s.parse().unwrap_or(OpCode::Unknown(s.clone()));
@@ -874,6 +878,9 @@ pub fn exec_incubate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                                 k += 1; // Skip
                             }
                             Value::Symbol(_) => {
+                                k += 1; // Skip
+                            }
+                            Value::Color(_, _, _) => {
                                 k += 1; // Skip
                             }
                             Value::Str(s) => {

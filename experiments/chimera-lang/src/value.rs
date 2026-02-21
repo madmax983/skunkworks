@@ -20,6 +20,8 @@ pub enum Value {
     Superposition(Vec<(Value, f64)>),
     /// An abstract symbol ID. Used by Semiotics features.
     Symbol(u64),
+    /// A 24-bit RGB Color. Used for Chromatics and Visuals.
+    Color(u8, u8, u8),
 }
 
 impl Eq for Value {}
@@ -42,6 +44,11 @@ impl std::hash::Hash for Value {
                 }
             }
             Value::Symbol(id) => id.hash(state),
+            Value::Color(r, g, b) => {
+                r.hash(state);
+                g.hash(state);
+                b.hash(state);
+            }
         }
     }
 }
@@ -77,6 +84,7 @@ impl std::fmt::Display for Value {
                 write!(f, ")")
             }
             Value::Symbol(id) => write!(f, "§{:x}", id),
+            Value::Color(r, g, b) => write!(f, "#[{:02X},{:02X},{:02X}]", r, g, b),
         }
     }
 }
@@ -88,7 +96,7 @@ impl Value {
     /// - Junction/Superposition: 1 + max(children.depth())
     pub fn depth(&self) -> usize {
         match self {
-            Value::Int(_) | Value::Str(_) | Value::Symbol(_) => 0,
+            Value::Int(_) | Value::Str(_) | Value::Symbol(_) | Value::Color(_, _, _) => 0,
             Value::Junction(_, vals) => 1 + vals.iter().map(|v| v.depth()).max().unwrap_or(0),
             Value::Superposition(states) => {
                 1 + states.iter().map(|(v, _)| v.depth()).max().unwrap_or(0)

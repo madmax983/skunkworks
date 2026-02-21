@@ -961,6 +961,7 @@ fn compile_cst_recursive(
                 args: vec![Nucleotide::String(format!("§{:x}", id))],
             });
         }
+        Value::Color(_, _, _) => return Err(()),
     }
     Ok(())
 }
