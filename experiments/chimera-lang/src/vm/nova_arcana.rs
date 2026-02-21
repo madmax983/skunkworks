@@ -160,11 +160,8 @@ pub fn process_fate(vm: &mut ChimeraVM) {
                 }
             }
             Arcana::TheEmperor => {
-                // Authority: Reduce Red Tape
-                let (cy, cx) = vm.context_loc;
-                if vm.bureaucracy_grid[cy][cx] > 0 {
-                    vm.bureaucracy_grid[cy][cx] = vm.bureaucracy_grid[cy][cx].saturating_sub(5);
-                }
+                // Authority: Gain energy
+                vm.energy = vm.energy.saturating_add(5);
             }
             Arcana::TheHierophant => {
                 // Tradition: Faith

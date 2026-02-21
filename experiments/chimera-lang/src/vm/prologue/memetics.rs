@@ -34,22 +34,22 @@ pub fn apply_memetic_runes(
     match rune {
         "ι" => {
             // Iota: Meme Source (Reads West GRID Value)
-             if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+            if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
                 let val = &grid[wy][wx];
-                 // Emit only if non-empty
-                 let is_empty = match val {
-                     Value::Int(0) => true,
-                     Value::Str(s) => s.is_empty(),
-                     _ => false,
-                 };
+                // Emit only if non-empty
+                let is_empty = match val {
+                    Value::Int(0) => true,
+                    Value::Str(s) => s.is_empty(),
+                    _ => false,
+                };
 
-                 if !is_empty {
-                     if next_signals[y][x] != Some(val.clone()) {
+                if !is_empty {
+                    if next_signals[y][x] != Some(val.clone()) {
                         next_signals[y][x] = Some(val.clone());
                         changes = true;
                     }
-                 }
-             }
+                }
+            }
         }
         "ε" => {
             // Epsilon: Evolve (Mutate)
@@ -73,15 +73,21 @@ pub fn apply_memetic_runes(
             // Reads West (Signal). If West contains North (Signal), block.
             if let Some(w_val) = w_sig {
                 let allow = if let Some(n_val) = n_sig {
-                    let w_str = match w_val { Value::Str(s) => s.clone(), _ => format!("{}", w_val) };
-                    let n_str = match n_val { Value::Str(s) => s.clone(), _ => format!("{}", n_val) };
+                    let w_str = match w_val {
+                        Value::Str(s) => s.clone(),
+                        _ => format!("{}", w_val),
+                    };
+                    let n_str = match n_val {
+                        Value::Str(s) => s.clone(),
+                        _ => format!("{}", n_val),
+                    };
                     !w_str.contains(&n_str)
                 } else {
                     true
                 };
 
                 if allow {
-                     if next_signals[y][x] != Some(w_val.clone()) {
+                    if next_signals[y][x] != Some(w_val.clone()) {
                         next_signals[y][x] = Some(w_val.clone());
                         changes = true;
                     }
@@ -104,12 +110,14 @@ pub fn apply_memetic_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
         "σ" => {
             // Spread: West (Signal) -> Grid Neighbors
             // Check signal at West
-             if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+            if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
                 if let Some(sig) = &vm.prologue_state.signal_grid[wy][wx] {
                     // Spread to 8 neighbors
-                     for dy in -1..=1 {
+                    for dy in -1..=1 {
                         for dx in -1..=1 {
-                            if dy == 0 && dx == 0 { continue; }
+                            if dy == 0 && dx == 0 {
+                                continue;
+                            }
                             if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
                                 // Overwrite? Or only empty? Let's overwrite.
                                 vm.grid[ny][nx] = sig.clone();
@@ -118,7 +126,7 @@ pub fn apply_memetic_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                     }
                     vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1)); // Light up
                 }
-             }
+            }
         }
         "κ" => {
             // Imitate: Neighbors (Grid) -> Self (Grid)
@@ -126,14 +134,19 @@ pub fn apply_memetic_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
 
             for dy in -1..=1 {
                 for dx in -1..=1 {
-                    if dy == 0 && dx == 0 { continue; }
-                     if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                         if let Value::Str(s) = &vm.grid[ny][nx] {
-                             if best_meme.as_ref().map_or(true, |current| s.len() > current.len()) {
-                                 best_meme = Some(s.clone());
-                             }
-                         }
-                     }
+                    if dy == 0 && dx == 0 {
+                        continue;
+                    }
+                    if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                        if let Value::Str(s) = &vm.grid[ny][nx] {
+                            if best_meme
+                                .as_ref()
+                                .map_or(true, |current| s.len() > current.len())
+                            {
+                                best_meme = Some(s.clone());
+                            }
+                        }
+                    }
                 }
             }
 
@@ -155,17 +168,20 @@ fn mutate_string(s: &str) -> String {
     let mutation_type = rng.gen_range(0..3); // 0=Sub, 1=Ins, 2=Del
 
     match mutation_type {
-        0 => { // Substitution
+        0 => {
+            // Substitution
             let idx = rng.gen_range(0..chars.len());
             let new_char = rng.gen_range(32u8..127u8) as char;
             chars[idx] = new_char;
         }
-        1 => { // Insertion
+        1 => {
+            // Insertion
             let idx = rng.gen_range(0..=chars.len());
             let new_char = rng.gen_range(32u8..127u8) as char;
             chars.insert(idx, new_char);
         }
-        2 => { // Deletion
+        2 => {
+            // Deletion
             if !chars.is_empty() {
                 let idx = rng.gen_range(0..chars.len());
                 chars.remove(idx);

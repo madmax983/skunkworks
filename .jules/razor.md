@@ -131,3 +131,13 @@
 **Bloat:** `tui-shared/widgets.rs` contained `LogList` and `Button` widgets that were only used by a single experiment (`harmonic-engine`).
 **Cut:** Moved widgets to `experiments/harmonic-engine`, removed unused `Button` methods (`hovered`, `clicked`) and `LogList::block`.
 **Saved:** 1 module in shared crate, ~40 lines of unused code, enforced encapsulation.
+
+## [Reduction]
+**Bloat:** `experiments/market-swarm` was condemned for "Terminal Redundancy" (Chimera #4) and Conceptual Incoherence.
+**Cut:** Deleted the entire experiment.
+**Saved:** 1 Experiment, 1 directory, reduced workspace clutter.
+
+## [Reduction]
+**Bloat:** `nova_bureaucracy` in `chimera-lang`. "Joke Feature" adding a 16x16 `bureaucracy_grid`, 4 OpCodes (`RedTape`, `Form`, `Sign`, `Permit`), and complex VM state.
+**Cut:** Deleted module, tests, VM state, and OpCodes.
+**Saved:** ~200 lines of code, 1 16x16 grid (256 * 8 bytes + overhead), 4 OpCodes, reduced VM complexity.

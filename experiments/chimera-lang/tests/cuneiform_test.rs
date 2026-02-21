@@ -1,11 +1,13 @@
-use chimera_lang::ast::{Dna, Helix, Strand, Gene};
+use chimera_lang::ast::{Dna, Gene, Helix, Strand};
+use chimera_lang::opcode::OpCode;
 use chimera_lang::vm::prologue::exec_prologue_tick;
 use chimera_lang::vm::{ChimeraVM, Value};
-use chimera_lang::opcode::OpCode;
 
 #[test]
 fn test_cuneiform_retract() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -38,8 +40,17 @@ fn test_cuneiform_omen() {
     // Setup 2 strands to detect jump
     // Strand 0: Nop
     // Strand 1: Nop (Target)
-    let strand = Strand { genes: vec![Gene { op: OpCode::Nop, args: vec![] }] };
-    let dna = Dna { helix: Helix { strands: vec![strand.clone(), strand.clone()] } };
+    let strand = Strand {
+        genes: vec![Gene {
+            op: OpCode::Nop,
+            args: vec![],
+        }],
+    };
+    let dna = Dna {
+        helix: Helix {
+            strands: vec![strand.clone(), strand.clone()],
+        },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
