@@ -25,7 +25,7 @@ fn main() {
     // (3,4): $ (Scribe) - Reads West (3,3), writes South (4,4).
 
     // Coordinates:
-    let acc_pos = (4, 4);
+    let _acc_pos = (4, 4);
 
     vm.grid[4][4] = Value::Int(1);
     vm.grid[5][4] = Value::Str("!".to_string());

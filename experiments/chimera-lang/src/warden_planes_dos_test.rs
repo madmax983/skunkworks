@@ -2,7 +2,7 @@
 mod tests {
     use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use crate::opcode::OpCode;
-    use crate::vm::{ChimeraVM, Value, GRID_SIZE, MAX_PLANES};
+    use crate::vm::{ChimeraVM, MAX_PLANES};
 
     #[test]
     fn test_planes_unbounded_allocation() {
