@@ -90,7 +90,7 @@ pub fn apply_echo_runes(
 
                 // Advance index ONLY once per tick
                 if echo.playing && !echo.buffer.is_empty() {
-                     echo.index += 1;
+                    echo.index += 1;
                 }
 
                 echo.last_tick = tick;
@@ -106,7 +106,11 @@ pub fn apply_echo_runes(
                 // Here we incremented inside `if echo.last_tick != tick`.
                 // So `echo.index` is already next. We should use `index - 1`.
 
-                let current_idx = if echo.index == 0 { len - 1 } else { echo.index - 1 };
+                let current_idx = if echo.index == 0 {
+                    len - 1
+                } else {
+                    echo.index - 1
+                };
 
                 let idx = if echo.reversed {
                     len - 1 - (current_idx % len)

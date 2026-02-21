@@ -157,6 +157,7 @@ pub enum ViewMode {
     Narrative,
     Sequencer,
     Mutagen,
+    Forge,
 }
 
 enum InputMode {
@@ -272,6 +273,16 @@ pub(crate) struct AppState {
     pub(crate) virus_design_mode: usize, // 0=Overwrite, 1=RewriteGrid, 2=RewriteDNA
     #[cfg(feature = "nova")]
     pub(crate) virus_design_focus: u8, // 0=Name, 1=Pattern, 2=Rate, 3=Payload, 4=Mode
+    #[cfg(feature = "nova")]
+    pub(crate) forge_selected_rule: String,
+    #[cfg(feature = "nova")]
+    pub(crate) forge_editor_buffer: String,
+    #[cfg(feature = "nova")]
+    pub(crate) forge_test_input: String,
+    #[cfg(feature = "nova")]
+    pub(crate) forge_test_output: String,
+    #[cfg(feature = "nova")]
+    pub(crate) forge_focus: u8, // 0=List, 1=Editor, 2=TestInput
     pub(crate) evolution_state: EvolutionState,
     pub(crate) sequencer_state: SequencerState,
     pub(crate) matrix_rain: MatrixRain,
@@ -424,6 +435,16 @@ impl AppState {
             virus_design_mode: 0,
             #[cfg(feature = "nova")]
             virus_design_focus: 0,
+            #[cfg(feature = "nova")]
+            forge_selected_rule: String::new(),
+            #[cfg(feature = "nova")]
+            forge_editor_buffer: String::new(),
+            #[cfg(feature = "nova")]
+            forge_test_input: String::new(),
+            #[cfg(feature = "nova")]
+            forge_test_output: String::new(),
+            #[cfg(feature = "nova")]
+            forge_focus: 0,
             evolution_state: EvolutionState::new(),
             sequencer_state: SequencerState::new(),
             matrix_rain: MatrixRain::new(),
@@ -1012,6 +1033,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Forge = app_state.view_mode {
+                render_forge(f, vm, app_state);
+                return;
+            }
+
             render_genome_and_grid(f, vm, app_state);
 
             if vm.glitch_level > 0.01 {
@@ -1327,11 +1354,63 @@ where
                             {
                                 app_state.virus_design_mode -= 1;
                             }
+                            #[cfg(feature = "nova")]
+                            if let ViewMode::Forge = app_state.view_mode {
+                                if app_state.forge_focus == 0 {
+                                    // Move selection up
+                                    let keys: Vec<_> = vm
+                                        .prologue_state
+                                        .logos_engine
+                                        .rules
+                                        .keys()
+                                        .cloned()
+                                        .collect();
+                                    let mut sorted_keys = keys;
+                                    sorted_keys.sort();
+                                    if let Some(pos) = sorted_keys
+                                        .iter()
+                                        .position(|k| *k == app_state.forge_selected_rule)
+                                    {
+                                        if pos > 0 {
+                                            app_state.forge_selected_rule =
+                                                sorted_keys[pos - 1].clone();
+                                        }
+                                    } else if !sorted_keys.is_empty() {
+                                        app_state.forge_selected_rule = sorted_keys[0].clone();
+                                    }
+                                }
+                            }
                         }
                         KeyCode::Down => {
                             if app_state.virus_design_focus == 4 && app_state.virus_design_mode < 2
                             {
                                 app_state.virus_design_mode += 1;
+                            }
+                            #[cfg(feature = "nova")]
+                            if let ViewMode::Forge = app_state.view_mode {
+                                if app_state.forge_focus == 0 {
+                                    // Move selection down
+                                    let keys: Vec<_> = vm
+                                        .prologue_state
+                                        .logos_engine
+                                        .rules
+                                        .keys()
+                                        .cloned()
+                                        .collect();
+                                    let mut sorted_keys = keys;
+                                    sorted_keys.sort();
+                                    if let Some(pos) = sorted_keys
+                                        .iter()
+                                        .position(|k| *k == app_state.forge_selected_rule)
+                                    {
+                                        if pos + 1 < sorted_keys.len() {
+                                            app_state.forge_selected_rule =
+                                                sorted_keys[pos + 1].clone();
+                                        }
+                                    } else if !sorted_keys.is_empty() {
+                                        app_state.forge_selected_rule = sorted_keys[0].clone();
+                                    }
+                                }
                             }
                         }
                         KeyCode::Char('S') => {
@@ -2304,6 +2383,40 @@ where
                                         app_state.input_buffer.clear();
                                     }
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Forge => {
+                                    if app_state.forge_focus == 1 {
+                                        // Define Rule
+                                        if !app_state.forge_selected_rule.is_empty() {
+                                            vm.prologue_state.logos_engine.define_rule(
+                                                &app_state.forge_selected_rule,
+                                                &app_state.forge_editor_buffer,
+                                            );
+                                            app_state.status_msg = format!(
+                                                "Forge: Rule '{}' updated.",
+                                                app_state.forge_selected_rule
+                                            );
+                                        }
+                                    } else if app_state.forge_focus == 2 {
+                                        // Test Rule
+                                        if !app_state.forge_selected_rule.is_empty() {
+                                            match vm.prologue_state.logos_engine.parse_input(
+                                                &app_state.forge_selected_rule,
+                                                &app_state.forge_test_input,
+                                            ) {
+                                                Ok(val) => {
+                                                    app_state.forge_test_output =
+                                                        format!("Success: {}", val);
+                                                }
+                                                Err(e) => {
+                                                    app_state.forge_test_output =
+                                                        format!("Error: {}", e);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    app_state.input_mode = InputMode::Normal;
+                                }
                                 _ => {}
                             }
                         }
@@ -2323,7 +2436,15 @@ where
                         KeyCode::Char(c) =>
                         {
                             #[cfg(feature = "nova")]
-                            if let ViewMode::Genesis = app_state.view_mode {
+                            if let ViewMode::Forge = app_state.view_mode {
+                                if app_state.forge_focus == 1 {
+                                    app_state.forge_editor_buffer.push(c);
+                                } else if app_state.forge_focus == 2 {
+                                    app_state.forge_test_input.push(c);
+                                } else if app_state.forge_focus == 0 {
+                                    app_state.forge_selected_rule.push(c);
+                                }
+                            } else if let ViewMode::Genesis = app_state.view_mode {
                                 if app_state.genesis_focus == 0 {
                                     app_state.genesis_editor_buffer.push(c);
                                 } else if app_state.genesis_focus == 1 {
@@ -2351,7 +2472,15 @@ where
                         KeyCode::Backspace =>
                         {
                             #[cfg(feature = "nova")]
-                            if let ViewMode::Genesis = app_state.view_mode {
+                            if let ViewMode::Forge = app_state.view_mode {
+                                if app_state.forge_focus == 1 {
+                                    app_state.forge_editor_buffer.pop();
+                                } else if app_state.forge_focus == 2 {
+                                    app_state.forge_test_input.pop();
+                                } else if app_state.forge_focus == 0 {
+                                    app_state.forge_selected_rule.pop();
+                                }
+                            } else if let ViewMode::Genesis = app_state.view_mode {
                                 if app_state.genesis_focus == 0 {
                                     app_state.genesis_editor_buffer.pop();
                                 } else if app_state.genesis_focus == 1 {
@@ -2433,6 +2562,12 @@ where
                         #[cfg(feature = "nova")]
                         if let ViewMode::Genesis = app_state.view_mode {
                             app_state.genesis_focus = (app_state.genesis_focus + 1) % 3;
+                            return Ok(());
+                        }
+
+                        #[cfg(feature = "nova")]
+                        if let ViewMode::Forge = app_state.view_mode {
+                            app_state.forge_focus = (app_state.forge_focus + 1) % 3;
                             return Ok(());
                         }
 
@@ -2670,6 +2805,11 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Narrative => ViewMode::Sequencer,
                             ViewMode::Sequencer => ViewMode::Mutagen,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Mutagen => ViewMode::Forge,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Forge => ViewMode::Genome,
+                            #[cfg(not(feature = "nova"))]
                             ViewMode::Mutagen => ViewMode::Genome,
                         };
                     }
@@ -5063,7 +5203,11 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let gauge_style = Style::default()
         .fg(tension_color)
         .bg(Color::DarkGray)
-        .add_modifier(if tension > 0.8 { Modifier::BOLD | Modifier::RAPID_BLINK } else { Modifier::empty() });
+        .add_modifier(if tension > 0.8 {
+            Modifier::BOLD | Modifier::RAPID_BLINK
+        } else {
+            Modifier::empty()
+        });
 
     let gauge = Gauge::default()
         .block(Block::default().borders(Borders::ALL).title("Line Tension"))
@@ -12391,6 +12535,102 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let info_widget =
         Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Logic Engine"));
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_forge(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(30), Constraint::Percentage(70)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    // Left: Rule List
+    let mut items = Vec::new();
+    let mut keys: Vec<_> = vm.prologue_state.logos_engine.rules.keys().collect();
+    keys.sort();
+
+    for key in keys {
+        let style = if *key == app_state.forge_selected_rule {
+            Style::default()
+                .fg(Color::Yellow)
+                .add_modifier(Modifier::BOLD)
+        } else {
+            Style::default().fg(Color::Cyan)
+        };
+        items.push(ListItem::new(key.clone()).style(style));
+    }
+
+    if items.is_empty() {
+        items.push(ListItem::new("No Rules defined."));
+    }
+
+    let list_block = Block::default()
+        .borders(Borders::ALL)
+        .title("Grammar Rules")
+        .border_style(if app_state.forge_focus == 0 {
+            Style::default().fg(Color::Yellow)
+        } else {
+            Style::default()
+        });
+
+    f.render_widget(List::new(items).block(list_block), chunks[0]);
+
+    // Right: Editor & Testbed
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
+        .split(chunks[1]);
+
+    // Editor
+    let editor_block = Block::default()
+        .borders(Borders::ALL)
+        .title("Rule Definition (Enter to Commit)")
+        .border_style(if app_state.forge_focus == 1 {
+            Style::default().fg(Color::Yellow)
+        } else {
+            Style::default()
+        });
+
+    let editor_content = if app_state.forge_editor_buffer.is_empty() {
+        // Show current definition if empty buffer?
+        if let Some(rule) = vm
+            .prologue_state
+            .logos_engine
+            .rules
+            .get(&app_state.forge_selected_rule)
+        {
+            format!("{:?}", rule)
+        } else {
+            "Select or Create Rule...".to_string()
+        }
+    } else {
+        app_state.forge_editor_buffer.clone()
+    };
+
+    f.render_widget(
+        Paragraph::new(editor_content)
+            .block(editor_block)
+            .wrap(ratatui::widgets::Wrap { trim: false }),
+        right_chunks[0],
+    );
+
+    // Testbed
+    let test_block = Block::default()
+        .borders(Borders::ALL)
+        .title("Test Input (Enter to Test)")
+        .border_style(if app_state.forge_focus == 2 {
+            Style::default().fg(Color::Yellow)
+        } else {
+            Style::default()
+        });
+
+    let test_text = vec![
+        Line::from(format!("Input: {}", app_state.forge_test_input)),
+        Line::from("---"),
+        Line::from(format!("Output: {}", app_state.forge_test_output)),
+    ];
+
+    f.render_widget(Paragraph::new(test_text).block(test_block), right_chunks[1]);
 }
 
 fn render_mutagen(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {

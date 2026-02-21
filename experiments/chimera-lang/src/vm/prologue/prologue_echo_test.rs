@@ -20,12 +20,13 @@ fn test_echo_record_playback() {
     exec_prologue_tick(&mut vm);
 
     // Verify recording is ON
-    assert!(vm
-        .prologue_state
-        .echoes
-        .get(&(5, 5))
-        .expect("Echo buffer missing")
-        .recording);
+    assert!(
+        vm.prologue_state
+            .echoes
+            .get(&(5, 5))
+            .expect("Echo buffer missing")
+            .recording
+    );
 
     // 3. Record Sequence (Signal West)
     let sequence = vec![10, 20, 30];
