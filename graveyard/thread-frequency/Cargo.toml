@@ -8,6 +8,12 @@ anyhow = { workspace = true }
 crossterm = { workspace = true }
 rand = { workspace = true }
 ratatui = { workspace = true }
-tui-shared = { workspace = true }
-crossbeam = "0.8"
-hound = "3.5"
+crossbeam-channel = "0.5"
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = []
+audio = ["dep:cpal"]

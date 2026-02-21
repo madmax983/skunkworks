@@ -1,183 +1,261 @@
-use anyhow::Result;
-use crossbeam::channel::{Receiver, TryRecvError};
-use hound::{WavSpec, WavWriter};
-use std::thread;
-use std::time::{Duration, Instant};
+#[cfg(feature = "audio")]
+use crossbeam_channel::Receiver;
+use crossbeam_channel::Sender;
+use std::cmp::Ordering;
+use std::sync::Arc;
 
-const SAMPLE_RATE: u32 = 44100;
-
-#[derive(Debug, Clone, Copy)]
-pub enum AudioEvent {
-    NoteOn { freq: f32, duration: f32 },
-    NoteOff { freq: f32 },
-    Contention, // Kick
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Voice {
+    Kick,
+    Snare,
+    Hihat,
+    Clave,
+    Synth(u32),
 }
 
-struct Voice {
-    freq: f32,
-    phase: f32,
-    envelope: f32,
-    decay_rate: f32,
-    active: bool,
-    is_noise: bool,
+#[derive(Debug, Clone)]
+pub struct RhythmEvent {
+    pub timestamp: u64,
+    pub voice: Voice,
+    pub volume: f32,
+    pub source_id: usize,
 }
 
-impl Voice {
-    fn new_note(freq: f32, duration: f32) -> Self {
-        let decay_rate = 1.0 / (duration * SAMPLE_RATE as f32);
-        Self {
-            freq,
-            phase: 0.0,
-            envelope: 1.0,
-            decay_rate,
-            active: true,
-            is_noise: false,
-        }
-    }
-
-    fn new_noise() -> Self {
-        let duration = 0.2;
-        let decay_rate = 1.0 / (duration * SAMPLE_RATE as f32);
-        Self {
-            freq: 0.0,
-            phase: 0.0,
-            envelope: 1.0,
-            decay_rate,
-            active: true,
-            is_noise: true,
-        }
-    }
-
-    fn process(&mut self) -> f32 {
-        if !self.active {
-            return 0.0;
-        }
-
-        let output = if self.is_noise {
-            let noise: f32 = rand::random::<f32>() * 2.0 - 1.0;
-            noise * self.envelope
-        } else {
-            let value = (self.phase * 2.0 * std::f32::consts::PI).sin();
-            self.phase = (self.phase + self.freq / SAMPLE_RATE as f32) % 1.0;
-            value * self.envelope
-        };
-
-        self.envelope -= self.decay_rate;
-        if self.envelope <= 0.0 {
-            self.active = false;
-            self.envelope = 0.0;
-        }
-
-        output
+impl Ord for RhythmEvent {
+    fn cmp(&self, other: &Self) -> Ordering {
+        // Reverse order for Min-Heap behavior (if needed), but we use BinaryHeap which is Max-Heap by default.
+        // If we want smallest timestamp first, we reverse order.
+        other.timestamp.cmp(&self.timestamp)
     }
 }
+impl PartialOrd for RhythmEvent {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl PartialEq for RhythmEvent {
+    fn eq(&self, other: &Self) -> bool {
+        self.timestamp == other.timestamp
+    }
+}
+impl Eq for RhythmEvent {}
 
 pub struct AudioEngine {
-    handle: Option<thread::JoinHandle<()>>,
+    pub sample_rate: u32,
+    #[cfg(feature = "audio")]
+    _stream: cpal::Stream,
+    #[cfg(not(feature = "audio"))]
+    _simulation_thread: std::thread::JoinHandle<()>,
+}
+
+#[cfg(feature = "audio")]
+struct ActiveVoice {
+    voice: Voice,
+    start_sample: u64,
+    volume: f32,
+    phase: f32,
+}
+
+#[cfg(feature = "audio")]
+struct AudioState {
+    current_sample: u64,
+    events: std::collections::BinaryHeap<RhythmEvent>,
+    receiver: Receiver<RhythmEvent>,
+    active_voices: Vec<ActiveVoice>,
+    sample_rate: f32,
+}
+
+#[cfg(feature = "audio")]
+fn synthesize_voice(v: &mut ActiveVoice, age: f32, sample_rate: f32) -> (f32, bool) {
+    use std::f32::consts::TAU;
+    match v.voice {
+        Voice::Kick => {
+            let freq = 150.0 * (-age * 20.0).exp().max(0.3);
+            v.phase += freq / sample_rate * TAU;
+            if v.phase > TAU {
+                v.phase -= TAU;
+            }
+
+            let amp = (-age * 5.0).exp();
+            let signal = v.phase.sin();
+            // Add some click
+            let click = if age < 0.005 {
+                (rand::random::<f32>() * 2.0 - 1.0) * 0.5
+            } else {
+                0.0
+            };
+
+            ((signal + click) * amp * v.volume, amp > 0.001)
+        }
+        Voice::Snare => {
+            let amp = (-age * 15.0).exp();
+            let tone_freq = 180.0;
+            v.phase += tone_freq / sample_rate * TAU;
+            if v.phase > TAU {
+                v.phase -= TAU;
+            }
+            let tone = v.phase.sin();
+            let noise = rand::random::<f32>() * 2.0 - 1.0;
+
+            ((tone * 0.3 + noise * 0.7) * amp * v.volume, amp > 0.001)
+        }
+        Voice::Hihat => {
+            let amp = (-age * 40.0).exp();
+            let noise = rand::random::<f32>() * 2.0 - 1.0;
+            (noise * amp * v.volume * 0.5, amp > 0.001)
+        }
+        Voice::Clave => {
+            let amp = (-age * 30.0).exp();
+            let freq = 2500.0;
+            v.phase += freq / sample_rate * TAU;
+            if v.phase > TAU {
+                v.phase -= TAU;
+            }
+            (v.phase.sin() * amp * v.volume * 0.3, amp > 0.001)
+        }
+        Voice::Synth(note) => {
+            let amp = (-age * 3.0).exp();
+            let freq = 220.0 * (2.0f32).powf(note as f32 / 12.0);
+            v.phase += freq / sample_rate * TAU;
+            if v.phase > TAU {
+                v.phase -= TAU;
+            }
+
+            let mod_idx = 2.0 * (-age).exp();
+            let signal = (v.phase + (v.phase * 2.0).sin() * mod_idx).sin();
+
+            (signal * amp * v.volume * 0.4, amp > 0.001)
+        }
+    }
 }
 
 impl AudioEngine {
-    pub fn new(receiver: Receiver<AudioEvent>) -> Result<Self> {
-        let spec = WavSpec {
-            channels: 1,
-            sample_rate: SAMPLE_RATE,
-            bits_per_sample: 16,
-            sample_format: hound::SampleFormat::Int,
+    pub fn sample_rate(&self) -> u32 {
+        self.sample_rate
+    }
+
+    #[cfg(feature = "audio")]
+    pub fn new() -> anyhow::Result<(Self, Sender<RhythmEvent>, Arc<std::sync::atomic::AtomicU64>)> {
+        use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+        use std::collections::BinaryHeap;
+
+        let host = cpal::default_host();
+        let device = host
+            .default_output_device()
+            .ok_or_else(|| anyhow::anyhow!("No audio output device found"))?;
+        let config = device.default_output_config()?;
+        let sample_rate = config.sample_rate().0;
+        let channels = config.channels() as usize;
+
+        let (tx, rx) = crossbeam_channel::unbounded();
+        let current_sample_atomic = Arc::new(std::sync::atomic::AtomicU64::new(0));
+        let current_sample_atomic_clone = current_sample_atomic.clone();
+
+        let mut state = AudioState {
+            current_sample: 0,
+            events: BinaryHeap::new(),
+            receiver: rx,
+            active_voices: Vec::new(),
+            sample_rate: sample_rate as f32,
         };
 
-        let writer = WavWriter::create("thread_frequency_output.wav", spec)?;
+        let err_fn = |err| eprintln!("an error occurred on stream: {}", err);
 
-        let handle = thread::spawn(move || {
-            let mut writer = writer;
-            let mut voices: Vec<Voice> = Vec::with_capacity(32);
-            let start_time = Instant::now();
-            let mut samples_written: u64 = 0;
-            let mut disconnected = false;
+        let stream = match config.sample_format() {
+            cpal::SampleFormat::F32 => device.build_output_stream(
+                &config.into(),
+                move |output: &mut [f32], _: &cpal::OutputCallbackInfo| {
+                    // Receive new events
+                    while let Ok(event) = state.receiver.try_recv() {
+                        state.events.push(event);
+                    }
 
-            loop {
-                // 1. Drain events
-                loop {
-                    match receiver.try_recv() {
-                        Ok(event) => {
-                            match event {
-                                AudioEvent::NoteOn { freq, duration } => {
-                                    voices.push(Voice::new_note(freq, duration));
-                                }
-                                AudioEvent::NoteOff { freq: _ } => {
-                                    // Ignore
-                                }
-                                AudioEvent::Contention => {
-                                    voices.push(Voice::new_noise());
-                                }
+                    for frame in output.chunks_mut(channels) {
+                        let now = state.current_sample;
+
+                        // Trigger events scheduled for 'now'
+                        while let Some(evt) = state.events.peek() {
+                            if evt.timestamp <= now {
+                                let evt = state.events.pop().unwrap();
+                                state.active_voices.push(ActiveVoice {
+                                    voice: evt.voice,
+                                    start_sample: now, // Start NOW, ignoring lateness
+                                    volume: evt.volume,
+                                    phase: 0.0,
+                                });
+                            } else {
+                                break;
                             }
                         }
-                        Err(TryRecvError::Empty) => break,
-                        Err(TryRecvError::Disconnected) => {
-                            disconnected = true;
-                            break;
-                        }
-                    }
-                }
 
-                // If disconnected and voices empty, we are done
-                if disconnected && voices.is_empty() {
-                    break;
-                }
+                        // Mix voices
+                        let mut mix_sample = 0.0;
+                        let sr = state.sample_rate;
 
-                // 2. Determine how many samples to write
-                let elapsed = start_time.elapsed();
-                let target_samples = (elapsed.as_secs_f64() * SAMPLE_RATE as f64) as u64;
+                        state.active_voices.retain_mut(|v| {
+                            let age = (now - v.start_sample) as f32 / sr;
+                            let (s, keep) = synthesize_voice(v, age, sr);
+                            mix_sample += s;
+                            keep
+                        });
 
-                if target_samples > samples_written {
-                    let mut needed = (target_samples - samples_written) as usize;
+                        mix_sample = mix_sample.tanh(); // Limiter
 
-                    // Cap needed to avoid freezing if system lags
-                    if needed > SAMPLE_RATE as usize {
-                        needed = SAMPLE_RATE as usize;
-                    }
-
-                    for _ in 0..needed {
-                        let mut sample = 0.0;
-                        for voice in &mut voices {
-                            sample += voice.process();
+                        for sample_out in frame.iter_mut() {
+                            *sample_out = mix_sample;
                         }
 
-                        // Soft clip
-                        sample = sample.clamp(-1.0, 1.0);
-
-                        let amplitude = i16::MAX as f32;
-                        let sample_i16 = (sample * amplitude * 0.8) as i16;
-
-                        if let Err(e) = writer.write_sample(sample_i16) {
-                            eprintln!("Error writing sample: {}", e);
-                            return;
-                        }
+                        state.current_sample += 1;
                     }
-                    samples_written += needed as u64;
 
-                    // Bulk cleanup
-                    voices.retain(|v| v.active);
+                    current_sample_atomic_clone
+                        .store(state.current_sample, std::sync::atomic::Ordering::Relaxed);
+                },
+                err_fn,
+                None,
+            )?,
+            _ => return Err(anyhow::anyhow!("Unsupported sample format")),
+        };
 
-                } else {
-                    thread::sleep(Duration::from_millis(5));
-                }
-            }
+        stream.play()?;
 
-            // Finalize
-            if let Err(e) = writer.finalize() {
-                eprintln!("Error finalizing wav: {}", e);
-            } else {
-                println!("Audio finalized successfully.");
+        Ok((
+            AudioEngine {
+                sample_rate,
+                _stream: stream,
+            },
+            tx,
+            current_sample_atomic,
+        ))
+    }
+
+    #[cfg(not(feature = "audio"))]
+    pub fn new() -> anyhow::Result<(Self, Sender<RhythmEvent>, Arc<std::sync::atomic::AtomicU64>)> {
+        let (tx, rx) = crossbeam_channel::unbounded();
+        let current_sample_atomic = Arc::new(std::sync::atomic::AtomicU64::new(0));
+        let current_sample_atomic_clone = current_sample_atomic.clone();
+        let sample_rate = 44100;
+
+        let handle = std::thread::spawn(move || {
+            let start = std::time::Instant::now();
+            loop {
+                std::thread::sleep(std::time::Duration::from_millis(16));
+                let elapsed = start.elapsed().as_secs_f64();
+                let samples = (elapsed * sample_rate as f64) as u64;
+                current_sample_atomic_clone.store(samples, std::sync::atomic::Ordering::Relaxed);
+
+                // Drain events so the channel doesn't fill up memory
+                while let Ok(_) = rx.try_recv() {}
             }
         });
 
-        Ok(Self { handle: Some(handle) })
-    }
-
-    pub fn join(mut self) -> Result<()> {
-        if let Some(handle) = self.handle.take() {
-            handle.join().map_err(|e| anyhow::anyhow!("Audio thread panicked: {:?}", e))?;
-        }
-        Ok(())
+        Ok((
+            AudioEngine {
+                sample_rate: sample_rate as u32,
+                _simulation_thread: handle,
+            },
+            tx,
+            current_sample_atomic,
+        ))
     }
 }
