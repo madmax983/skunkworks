@@ -79,6 +79,7 @@ pub mod lexicon;
 pub mod linguistics;
 pub mod list;
 pub mod logic;
+pub mod logos;
 pub mod math;
 pub mod memetics;
 pub mod narrative;
@@ -141,9 +142,16 @@ pub struct PrologueState {
     /// Narrative Library (Book Rune Storage).
     #[serde(default)]
     pub library: HashMap<String, Value>,
+    /// Logos Engine (Grammar System).
+    #[serde(default = "default_logos_engine")]
+    pub logos_engine: logos::LogosEngine,
     /// Scratch buffer for signal propagation (Double Buffering).
     #[serde(skip, default)]
     pub scratch_signal_grid: Vec<Vec<Option<Value>>>,
+}
+
+fn default_logos_engine() -> logos::LogosEngine {
+    logos::LogosEngine::new()
 }
 
 fn default_epigenetic_grid() -> Vec<Vec<epigenetics::EpigeneticMark>> {
@@ -166,6 +174,7 @@ impl PrologueState {
             epigenetic_grid: vec![vec![epigenetics::EpigeneticMark::None; GRID_SIZE]; GRID_SIZE],
             dream_intensity: 0.0,
             library: HashMap::new(),
+            logos_engine: logos::LogosEngine::new(),
             scratch_signal_grid: vec![vec![None; GRID_SIZE]; GRID_SIZE],
         }
     }
@@ -375,6 +384,10 @@ impl PrologueState {
                             | "🔵"
                             // Siren
                             | "♬"
+                            // Logos
+                            | "Γ"
+                            | "«"
+                            | "»"
                     ) {
                         self.runes.insert((y, x));
 
@@ -561,6 +574,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     r_grid,
                     &mut vm.energy,
                     &vm.chroma_grid,
+                    &mut vm.prologue_state.logos_engine,
                 ) {
                     changes = true;
                 }
@@ -602,6 +616,7 @@ fn apply_propagation_rune(
     resistance_grid: &mut Vec<Vec<f32>>,
     energy: &mut i64,
     chroma_grid: &[Vec<crate::vm::ChromaCell>],
+    logos_engine: &mut logos::LogosEngine,
 ) -> bool {
     #[cfg(feature = "elektra")]
     if elektra::apply_elektra_runes(
@@ -715,6 +730,9 @@ fn apply_propagation_rune(
         return true;
     }
     if chroma::apply_chroma_runes(rune, y, x, current_signals, next_signals, chroma_grid) {
+        return true;
+    }
+    if logos::apply_logos_runes(rune, y, x, current_signals, next_signals, logos_engine) {
         return true;
     }
     false
