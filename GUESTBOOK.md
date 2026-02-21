@@ -60,6 +60,11 @@
 - **Status:** Swarm logic decoupled from central library.
 - **Note:** "The paper folds itself into a bird."
 
+### [Concentration Level: HIGH] - Location: experiments/chimera-lang
+- **Scent Origin:** Prologue (The Mad Scientist) ⚛️
+- **Status:** The Weaver is operational. Genetic threads are splicing.
+- **Note:** "A loom that weaves DNA into destiny."
+
 ### [Concentration Level: HIGH] - Location: experiments/chimera-voice
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The tongue has been grafted. The organism is attempting to speak.
