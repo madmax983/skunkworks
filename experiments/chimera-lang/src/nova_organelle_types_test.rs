@@ -75,8 +75,8 @@ mod tests {
 
         vm.step();
 
-        // Main (-1), Organelle (-1), Gain (+5) -> Net +3.
-        assert_eq!(vm.energy, initial_energy + 3);
+        // Main (-1), Organelle (-1), Gain (+9) -> Net +7. (With 95% light transmission)
+        assert_eq!(vm.energy, initial_energy + 7);
     }
 
     #[test]

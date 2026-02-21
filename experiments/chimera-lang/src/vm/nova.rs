@@ -291,8 +291,8 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
             let moisture = vm.moisture_grid[y][x];
             let cloud_opacity = (moisture as i64).clamp(0, 50); // Up to 50% block
 
-            // Blur and strong decay (50% base + cloud)
-            let transmission = 50 - cloud_opacity; // 50% -> 0% transmission relative to input
+            // Blur and decay (95% base + cloud)
+            let transmission = 95 - cloud_opacity; // 95% -> 45% transmission relative to input
                                                    // Wait, previous was / 2 (50%).
                                                    // New logic: (sum / count) * transmission / 100?
                                                    // If transmission is 50 (clear sky), it matches previous.
