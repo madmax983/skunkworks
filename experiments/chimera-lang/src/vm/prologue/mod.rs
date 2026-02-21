@@ -64,6 +64,7 @@ use std::collections::{HashMap, HashSet, VecDeque};
 pub mod alchemy;
 pub mod biolum;
 pub mod chaos;
+pub mod chroma;
 pub mod chronos;
 pub mod construct;
 pub mod critter;
@@ -358,6 +359,13 @@ impl PrologueState {
                             | "ω"
                             | "✍"
                             | "📖"
+                        // Chroma
+                            | "🎨"
+                            | "🖌"
+                            | "👁"
+                            | "🔴"
+                            | "🟢"
+                            | "🔵"
                     ) {
                         self.runes.insert((y, x));
 
@@ -539,6 +547,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     v_grid,
                     r_grid,
                     &mut vm.energy,
+                    &vm.chroma_grid,
                 ) {
                     changes = true;
                 }
@@ -579,6 +588,7 @@ fn apply_propagation_rune(
     voltage_grid: &mut Vec<Vec<f32>>,
     resistance_grid: &mut Vec<Vec<f32>>,
     energy: &mut i64,
+    chroma_grid: &[Vec<crate::vm::ChromaCell>],
 ) -> bool {
     #[cfg(feature = "elektra")]
     if elektra::apply_elektra_runes(
@@ -686,6 +696,9 @@ fn apply_propagation_rune(
         return true;
     }
     if narrative::apply_narrative_runes(rune, y, x, current_signals, next_signals) {
+        return true;
+    }
+    if chroma::apply_chroma_runes(rune, y, x, current_signals, next_signals, chroma_grid) {
         return true;
     }
     false
@@ -892,6 +905,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             prism::apply_prism_sinks(vm, rune, y, x);
             memetics::apply_memetic_sinks(vm, rune, y, x);
             narrative::apply_narrative_sinks(vm, rune, y, x);
+            chroma::apply_chroma_sinks(vm, rune, y, x);
         }
     }
 }
@@ -1287,3 +1301,6 @@ mod prologue_linguistics_test;
 
 #[cfg(test)]
 mod prologue_critter_behavior_test;
+
+#[cfg(test)]
+mod prologue_chroma_test;

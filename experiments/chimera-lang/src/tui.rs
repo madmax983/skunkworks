@@ -6704,6 +6704,9 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                 crate::vm::Value::Symbol(id) => {
                     (format!("§{:x}", id), Style::default().fg(Color::Magenta))
                 }
+                crate::vm::Value::Color(r, g, b) => {
+                    ("█".to_string(), Style::default().fg(Color::Rgb(*r, *g, *b)))
+                }
                 crate::vm::Value::Int(n) => {
                     #[cfg(feature = "silicon")]
                     if vm.silicon_mode {
@@ -12183,6 +12186,10 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             let mut s = match val {
                 crate::vm::Value::Str(s) => s.clone(),
                 crate::vm::Value::Int(n) => n.to_string(),
+                crate::vm::Value::Color(r, g, b) => {
+                    style = style.fg(Color::Rgb(*r, *g, *b));
+                    "█".to_string()
+                }
                 _ => ".".to_string(),
             };
 
