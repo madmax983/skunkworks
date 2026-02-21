@@ -93,6 +93,8 @@ pub mod teleport;
 pub mod topology;
 pub mod virology;
 pub mod void;
+#[cfg(feature = "biophysics")]
+pub mod neural;
 
 /// An autonomous agent wandering the Prologue grid.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -200,6 +202,8 @@ impl PrologueState {
                         // Biology
                             | "O"
                             | "G"
+                        // Neural
+                            | "♦"
                         // Control
                             | "E"
                             | "D"
@@ -390,14 +394,23 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
     let grid_snapshot = vm.grid.clone(); // Clone for read access
     vm.prologue_state.scan_grid_rules(&grid_snapshot);
 
+    #[cfg(feature = "biophysics")]
+    neural::scan_neural_grid(vm);
+
     // 2. Clear Signals & Apply Delays & 3. Source Emission
     prepare_signals(vm, &grid_snapshot);
+
+    #[cfg(feature = "biophysics")]
+    neural::fire_neurons(vm);
 
     // 4. Propagation (Wires ~ and Gates & | + * # % ^)
     process_signal_propagation(vm, &grid_snapshot);
 
     // 5. Sink Consumption / Actions (?, $, M, O)
     process_sinks(vm, &grid_snapshot);
+
+    #[cfg(feature = "biophysics")]
+    neural::integrate_neurons(vm);
 
     // 6. Agents (@)
     process_agents(vm, &grid_snapshot);

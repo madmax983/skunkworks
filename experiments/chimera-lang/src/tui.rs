@@ -3516,12 +3516,12 @@ where
                                 {
                                     if pos + 1 < neurons_sorted.len() {
                                         app_state.selected_neuron_coords =
-                                            Some(neurons_sorted[pos + 1]);
+                                            Some(*neurons_sorted[pos + 1]);
                                         app_state.voltage_history.clear(); // Reset history on switch
                                     }
                                 }
                             } else if !neurons_sorted.is_empty() {
-                                app_state.selected_neuron_coords = Some(neurons_sorted[0]);
+                                app_state.selected_neuron_coords = Some(*neurons_sorted[0]);
                             }
                         }
                         #[cfg(feature = "nova")]
@@ -3643,12 +3643,12 @@ where
                                 {
                                     if pos > 0 {
                                         app_state.selected_neuron_coords =
-                                            Some(neurons_sorted[pos - 1]);
+                                            Some(*neurons_sorted[pos - 1]);
                                         app_state.voltage_history.clear();
                                     }
                                 }
                             } else if !neurons_sorted.is_empty() {
-                                app_state.selected_neuron_coords = Some(neurons_sorted[0]);
+                                app_state.selected_neuron_coords = Some(*neurons_sorted[0]);
                             }
                         }
                         #[cfg(feature = "nova")]
