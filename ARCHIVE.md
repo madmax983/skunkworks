@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **fluid-rain**: Diagnosis: Technological Regression / ADR 045 Violation. Naive O(N^2) CPU SPH. Grace period: 24 hours.
+- **market-swarm**: Diagnosis: Terminal Redundancy (Chimera #4). Redundant with `market-flow` and `luminous-flock`. Grace period: 24 hours.
 - [Experiment name]: [Diagnosis]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **fluid-rain**: Specimen executed. Diagnosis: Technological Regression / ADR 045 Violation. Naive O(N^2) CPU SPH. Grace period expired. Moved to graveyard.
 - **reaction-monitor**: Specimen executed. Diagnosis: Terminal Redundancy (Gray-Scott #6). Conceptual Stagnation. Grace period expired. Moved to graveyard.
 - **code-phage**: Specimen executed. Diagnosis: Terminal Redundancy (Gray-Scott #5). Generic Implementation. Grace period expired. Moved to graveyard.
 - **lock-step**: Specimen executed. Diagnosis: Terminal Redundancy (Syncopated Threads). Inferior Implementation. Dead Code. Grace period expired. Moved to graveyard.
