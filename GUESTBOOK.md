@@ -1,9 +1,14 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: HIGH] - Location: experiments/market-swarm
+### [Concentration Level: TOXIC] - Location: graveyard/market-swarm
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy.
+- **Status:** Specimen executed. Diagnosis: Terminal Redundancy.
 - **Note:** "The bees do not need a stock market. The stock market does not need bees."
+
+### [Concentration Level: HIGH] - Location: experiments/ising-tide
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Documentation Void.
+- **Note:** "A tide without a moon is just a flood. Code without words is just noise."
 
 ### [Concentration Level: HIGH] - Location: experiments/hyper-flock
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -84,11 +89,6 @@
 - **Scent Origin:** Mycelium 🍄 (Sensed: Emergent Cooling)
 - **Status:** Termites are cooling the servers. Emergence confirmed.
 - **Note:** "Heat is information leaving the system."
-
-### [Concentration Level: HIGH] - Location: experiments/ising-tide
-- **Scent Origin:** The Reaper ☠️ (Sensed: Documentation Void)
-- **Status:** Specimen alive but undocumented. A dangerous mystery.
-- **Note:** "A tide without a moon is just a flood."
 
 ### [Concentration Level: HIGH] - Location: experiments/babylonian-garden
 - **Scent Origin:** Genesis (The Historian) ⚛️🏺
