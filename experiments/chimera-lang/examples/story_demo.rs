@@ -1,10 +1,15 @@
 #[cfg(feature = "nova")]
 use chimera_lang::prelude::*;
+#[cfg(feature = "nova")]
+use chimera_lang::tui::{run_tui, ViewMode};
 
 #[cfg(feature = "nova")]
 fn main() {
     println!("🗣️ Echo's Story Demo");
-    run_demo();
+    if let Err(e) = run_demo() {
+        eprintln!("Error: {}", e);
+        std::process::exit(1);
+    }
 }
 
 #[cfg(not(feature = "nova"))]
@@ -14,7 +19,7 @@ fn main() {
 }
 
 #[cfg(feature = "nova")]
-fn run_demo() {
+fn run_demo() -> anyhow::Result<()> {
     // 1. Initialize empty VM
     let dna = Dna {
         helix: Helix { strands: vec![] },
@@ -56,24 +61,12 @@ fn run_demo() {
 
     vm.dna.helix.strands.push(reader_strand);
 
-    println!("🧪 Incubating narrative...");
+    println!("🧪 Incubating narrative... Launching TUI.");
+    println!("(Press Space to Step, Q to Quit)");
 
-    // Run the VM
-    let mut steps = 0;
-    while !vm.halted && steps < 20 {
-        vm.step();
-        steps += 1;
-    }
+    // Launch TUI
+    // We start in Grid view to see the story elements we just wrote
+    run_tui(vm, Some(ViewMode::Grid))?;
 
-    println!("📜 Output Log:");
-    for line in &vm.output {
-        println!("  {}", line);
-    }
-
-    // Verify results
-    if vm.output.iter().any(|s| s.contains("10")) {
-        println!("✅ Success: The story was told (10 was printed)!");
-    } else {
-        println!("⚠️  Warning: The story was not told.");
-    }
+    Ok(())
 }
