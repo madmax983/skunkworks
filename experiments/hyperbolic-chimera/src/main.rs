@@ -16,7 +16,7 @@ use ratatui::{
         canvas::{Canvas, Circle, Line as CanvasLine},
         Block, Borders, Paragraph,
     },
-    Terminal, Frame,
+    Frame, Terminal,
 };
 use std::time::{Duration, Instant};
 use world::World;
@@ -71,14 +71,22 @@ fn ui(f: &mut Frame, world: &World) {
     // Status Bar
     let status = Paragraph::new(Line::from(vec![
         Span::styled("Hyperbolic Chimera", Style::default().fg(Color::Cyan)),
-        Span::raw(format!(" | Agents: {} | Score: {}", world.agents.len(), world.score)),
+        Span::raw(format!(
+            " | Agents: {} | Score: {}",
+            world.agents.len(),
+            world.score
+        )),
         Span::raw(" | Press 'q' to quit"),
     ]));
     f.render_widget(status, status_area);
 
     // Main Canvas
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Poincaré Disk"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Poincaré Disk"),
+        )
         .x_bounds([-1.1, 1.1])
         .y_bounds([-1.1, 1.1])
         .paint(|ctx| {
@@ -92,10 +100,32 @@ fn ui(f: &mut Frame, world: &World) {
 
             // Draw Grid Lines (Hyperbolic Geodesics) - Optional visual flair
             // Draw some concentric circles (Euclidean circles centered at 0 correspond to hyperbolic circles)
-            ctx.draw(&Circle { x: 0.0, y: 0.0, radius: 0.5, color: Color::DarkGray });
-            ctx.draw(&Circle { x: 0.0, y: 0.0, radius: 0.8, color: Color::DarkGray });
-            ctx.draw(&CanvasLine { x1: -1.0, y1: 0.0, x2: 1.0, y2: 0.0, color: Color::DarkGray });
-            ctx.draw(&CanvasLine { x1: 0.0, y1: -1.0, x2: 0.0, y2: 1.0, color: Color::DarkGray });
+            ctx.draw(&Circle {
+                x: 0.0,
+                y: 0.0,
+                radius: 0.5,
+                color: Color::DarkGray,
+            });
+            ctx.draw(&Circle {
+                x: 0.0,
+                y: 0.0,
+                radius: 0.8,
+                color: Color::DarkGray,
+            });
+            ctx.draw(&CanvasLine {
+                x1: -1.0,
+                y1: 0.0,
+                x2: 1.0,
+                y2: 0.0,
+                color: Color::DarkGray,
+            });
+            ctx.draw(&CanvasLine {
+                x1: 0.0,
+                y1: -1.0,
+                x2: 0.0,
+                y2: 1.0,
+                color: Color::DarkGray,
+            });
 
             // Draw Food
             for food in &world.food {

@@ -660,7 +660,15 @@ fn apply_propagation_rune(
     if construct::apply_construct_runes(rune, y, x, current_signals, next_delayed, grid) {
         return true;
     }
-    if topology::apply_topology_runes(rune, y, x, current_signals, next_signals, next_delayed, orca_mode) {
+    if topology::apply_topology_runes(
+        rune,
+        y,
+        x,
+        current_signals,
+        next_signals,
+        next_delayed,
+        orca_mode,
+    ) {
         return true;
     }
     if math::apply_math_runes(rune, y, x, current_signals, next_signals) {

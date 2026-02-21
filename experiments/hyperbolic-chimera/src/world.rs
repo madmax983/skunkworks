@@ -46,7 +46,7 @@ impl World {
                 op: OpCode::GWrite,
                 args: vec![],
             });
-             // Gene 4: GWrite Speed (0, 1)
+            // Gene 4: GWrite Speed (0, 1)
             genes.push(Gene {
                 op: OpCode::Push,
                 args: vec![Nucleotide::Number(50)], // Speed val
@@ -126,7 +126,9 @@ impl World {
 
         // Check Collisions
         for agent in &mut self.agents {
-            if agent.vm.halted { continue; }
+            if agent.vm.halted {
+                continue;
+            }
 
             let mut eaten_indices = Vec::new();
             for (i, f) in self.food.iter().enumerate() {
@@ -152,7 +154,7 @@ impl World {
 
         // Respawn if extinct
         if self.agents.is_empty() {
-             // Re-seed? For now just game over state or let loop handle it.
+            // Re-seed? For now just game over state or let loop handle it.
         }
     }
 }

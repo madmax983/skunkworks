@@ -47,7 +47,7 @@ use pest::Parser;
 use rand::seq::SliceRandom;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{HashSet, VecDeque};
 
 /// The physical state of the organism, affecting movement and mutation.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
@@ -236,6 +236,59 @@ fn diffuse_scalar_grid<F>(
     }
 }
 
+fn diffuse_vector_grid<const N: usize>(
+    source: &mut [Vec<[i64; N]>],
+    biomes: &[Vec<Biome>],
+    wind: &[Vec<(i8, i8)>],
+    membranes: &[Vec<u8>],
+    topology: &crate::vm::Topology,
+) {
+    let size = crate::vm::GRID_SIZE;
+    let mut buffer = [[[0i64; N]; crate::vm::GRID_SIZE]; crate::vm::GRID_SIZE];
+
+    for y in 0..size {
+        for x in 0..size {
+            let inertia = biomes[y][x].diffusion_inertia();
+            let weight_center = 10;
+            let mut sums = [0i128; N];
+
+            for i in 0..N {
+                sums[i] = (source[y][x][i] as i128) * (inertia as i128) * weight_center;
+            }
+
+            let mut total_weight = (inertia as i128) * weight_center;
+
+            for (dy, dx, mask) in NEIGHBOR_DIRECTIONS {
+                if (membranes[y][x] & mask) != 0 {
+                    continue;
+                }
+
+                if let Some((ny, nx)) = topology.normalize(y as i64 + dy, x as i64 + dx, size, size)
+                {
+                    let (w_dy, w_dx) = wind[ny][nx];
+                    let flow = -(w_dy as i128 * dy as i128 + w_dx as i128 * dx as i128);
+                    let weight = (10 + flow).max(0);
+
+                    for i in 0..N {
+                        sums[i] += (source[ny][nx][i] as i128) * weight;
+                    }
+                    total_weight += weight;
+                }
+            }
+
+            if total_weight > 0 {
+                for i in 0..N {
+                    buffer[y][x][i] = (sums[i] / total_weight) as i64;
+                }
+            }
+        }
+    }
+
+    for y in 0..size {
+        source[y][..size].copy_from_slice(&buffer[y][..size]);
+    }
+}
+
 /// Simulates the diffusion of chemical signals (hormones) across the grid.
 ///
 /// Uses a simple cellular automaton model: each cell becomes the average of itself
@@ -255,49 +308,13 @@ fn diffuse_scalar_grid<F>(
 ///
 /// Optimized to avoid intermediate Vec allocations.
 pub fn diffuse_hormones(vm: &mut ChimeraVM) {
-    let mut buffer = [[[0i64; 3]; 16]; 16];
-    for y in 0..16 {
-        for x in 0..16 {
-            let inertia = vm.biome_grid[y][x].diffusion_inertia();
-            let weight_center = 10;
-            let mut sums = [
-                (vm.hormone_grid[y][x][0] as i128) * (inertia as i128) * weight_center,
-                (vm.hormone_grid[y][x][1] as i128) * (inertia as i128) * weight_center,
-                (vm.hormone_grid[y][x][2] as i128) * (inertia as i128) * weight_center,
-            ];
-            let mut total_weight = (inertia as i128) * weight_center;
-
-            // Manual neighbor iteration to calculate wind bias
-            for (dy, dx, mask) in NEIGHBOR_DIRECTIONS {
-                if (vm.membranes[y][x] & mask) != 0 {
-                    continue;
-                }
-                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-                    let (w_dy, w_dx) = vm.wind_grid[ny][nx];
-                    // Wind flow from neighbor (ny, nx) to here (y, x).
-                    // Vector from neighbor to here is (-dy, -dx).
-                    // Dot product: w_dy * (-dy) + w_dx * (-dx)
-                    let flow = -(w_dy as i128 * dy as i128 + w_dx as i128 * dx as i128);
-                    let weight = (10 + flow).max(0); // Base 10
-
-                    for c in 0..3 {
-                        sums[c] += (vm.hormone_grid[ny][nx][c] as i128) * weight;
-                    }
-                    total_weight += weight;
-                }
-            }
-
-            if total_weight > 0 {
-                for c in 0..3 {
-                    buffer[y][x][c] = (sums[c] / total_weight) as i64;
-                }
-            }
-        }
-    }
-    for y in 0..16 {
-        // Optimization: Use copy_from_slice (memcpy).
-        vm.hormone_grid[y][..16].copy_from_slice(&buffer[y][..16]);
-    }
+    diffuse_vector_grid(
+        &mut vm.hormone_grid,
+        &vm.biome_grid,
+        &vm.wind_grid,
+        &vm.membranes,
+        &vm.topology,
+    );
 }
 
 /// Simulates the diffusion of metabolic waste products.
@@ -497,6 +514,59 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> Option<usize> {
     None
 }
 
+/// Runs a sandboxed simulation of the VM.
+///
+/// # Arguments
+/// * `vm` - The current VM state (will be cloned).
+/// * `ticks` - Maximum number of ticks to run.
+/// * `setup_fn` - A closure to configure the cloned VM (e.g., set IP, mutate).
+///
+/// # Returns
+/// * `Option<ChimeraVM>` - The final state of the simulated VM, or None if limits exceeded.
+fn run_sandboxed_simulation<F>(vm: &mut ChimeraVM, ticks: i64, setup_fn: F) -> Option<ChimeraVM>
+where
+    F: FnOnce(&mut ChimeraVM),
+{
+    if ticks <= 0 {
+        vm.output
+            .push("Error: Invalid ticks for simulation".to_string());
+        return None;
+    }
+
+    if vm.recursion_depth >= crate::vm::MAX_SIMULATION_DEPTH {
+        vm.output
+            .push("Error: Simulation depth limit exceeded".to_string());
+        return None;
+    }
+    if vm.recursion_depth >= crate::vm::MAX_RECURSION_DEPTH {
+        vm.output
+            .push("Error: Recursion limit exceeded".to_string());
+        return None;
+    }
+
+    let safe_ticks = ticks.min(1000);
+
+    // Clone VM
+    let mut sim_vm = vm.clone();
+
+    // Inherit and increment recursion depth to prevent infinite loops
+    sim_vm.recursion_depth += 1;
+
+    sim_vm.output.clear();
+    sim_vm.halted = false;
+
+    setup_fn(&mut sim_vm);
+
+    for _ in 0..safe_ticks {
+        sim_vm.step();
+        if sim_vm.halted {
+            break;
+        }
+    }
+
+    Some(sim_vm)
+}
+
 /// Runs a predictive simulation to see if the current path leads to death.
 ///
 /// This creates a clone of the VM and runs it forward in time for `ticks` cycles.
@@ -516,60 +586,28 @@ fn exec_prophecy(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: ticks (top)
     let ticks = vm.pop_int("prophecy")?;
 
-    if ticks <= 0 {
-        vm.output
-            .push("Error: Invalid ticks for prophecy".to_string());
-        return None;
-    }
+    if let Some(sim_vm) = run_sandboxed_simulation(vm, ticks, |sim_vm| {
+        // Advance IP to avoid infinite recursion (executing prophecy again)
+        // We assume standard sequential flow (IP.1 + 1)
+        sim_vm.ip.1 += 1;
+    }) {
+        if vm.energy <= 0 {
+            // If already dead, prophecy is 1
+            vm.stack.push(Value::Int(1));
+        } else {
+            // Result: 1 if Dead (halted), 0 if Alive
+            let result = if sim_vm.halted { 1 } else { 0 };
+            vm.stack.push(Value::Int(result));
 
-    let safe_ticks = ticks.min(1000);
-
-    // Clone VM
-    let mut sim_vm = vm.clone();
-
-    // Inherit and increment recursion depth to prevent infinite prophecy loops
-    sim_vm.recursion_depth += 1;
-    if sim_vm.recursion_depth > crate::vm::MAX_SIMULATION_DEPTH {
-        vm.output
-            .push("Error: Simulation depth limit exceeded in prophecy".to_string());
-        return None;
-    }
-    if sim_vm.recursion_depth > crate::vm::MAX_RECURSION_DEPTH {
-        vm.output
-            .push("Error: Recursion limit exceeded in prophecy".to_string());
-        return None;
-    }
-
-    sim_vm.output.clear(); // Silence output
-    sim_vm.halted = false; // Ensure it can run (unless already dead?)
-
-    // Advance IP to avoid infinite recursion (executing prophecy again)
-    // We assume standard sequential flow (IP.1 + 1)
-    sim_vm.ip.1 += 1;
-
-    if vm.energy <= 0 {
-        // If already dead, prophecy is 1
-        vm.stack.push(Value::Int(1));
-    } else {
-        // Run simulation loop
-        for _ in 0..safe_ticks {
-            sim_vm.step();
-            if sim_vm.halted {
-                break;
-            }
+            // Cost
+            let safe_ticks = ticks.min(1000);
+            let cost = 50 + (safe_ticks / 2);
+            vm.energy = vm.energy.saturating_sub(cost);
+            vm.output.push(format!(
+                "PROPHECY: Predicted {} (1=Death, 0=Life) in {} ticks",
+                result, safe_ticks
+            ));
         }
-
-        // Result: 1 if Dead (halted), 0 if Alive
-        let result = if sim_vm.halted { 1 } else { 0 };
-        vm.stack.push(Value::Int(result));
-
-        // Cost
-        let cost = 50 + (safe_ticks / 2);
-        vm.energy = vm.energy.saturating_sub(cost);
-        vm.output.push(format!(
-            "PROPHECY: Predicted {} (1=Death, 0=Life) in {} ticks",
-            result, safe_ticks
-        ));
     }
 
     None
@@ -605,151 +643,38 @@ fn exec_simulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
     let idx = s_idx as usize;
 
-    if idx >= vm.dna.helix.strands.len() || ticks <= 0 {
+    if idx >= vm.dna.helix.strands.len() {
         vm.output
             .push("Error: Invalid args for simulate".to_string());
         return None;
     }
 
-    if vm.recursion_depth > crate::vm::MAX_SIMULATION_DEPTH {
-        vm.output
-            .push("Error: Simulation depth limit exceeded".to_string());
-        return None;
+    if let Some(sim_vm) = run_sandboxed_simulation(vm, ticks, |sim_vm| {
+        sim_vm.ip = (idx, 0);
+    }) {
+        // Collect Results
+        // 1. Top of stack (or 0 if empty)
+        let top_val = sim_vm.stack.last().cloned().unwrap_or(Value::Int(0));
+        // 2. Final Energy
+        let energy = sim_vm.energy;
+        // 3. Status (1 = Alive, 0 = Halted/Dead)
+        let status = if sim_vm.halted { 0 } else { 1 };
+
+        // Push results to original VM stack
+        vm.stack.push(top_val);
+        vm.stack.push(Value::Int(energy));
+        vm.stack.push(Value::Int(status));
+
+        // Deduct Energy Cost: Base cost + duration cost
+        let safe_ticks = ticks.min(1000);
+        let cost = safe_ticks.saturating_add(50);
+        vm.energy = vm.energy.saturating_sub(cost);
+
+        vm.output.push(format!(
+            "SIMULATE: Ran strand {} for {} ticks. Status: {}",
+            idx, safe_ticks, status
+        ));
     }
-    if vm.recursion_depth > crate::vm::MAX_RECURSION_DEPTH {
-        vm.output
-            .push("Error: Recursion limit exceeded".to_string());
-        return None;
-    }
-
-    // Cap ticks to prevent DoS
-    let safe_ticks = ticks.min(1000);
-
-    // Fork VM
-    // Cloning `vm` clones everything, which provides an accurate snapshot.
-    let mut sim_vm = vm.clone();
-
-    // Setup simulation context
-    sim_vm.ip = (idx, 0);
-    sim_vm.output.clear(); // Silence output
-    sim_vm.halted = false;
-
-    // Run simulation loop
-    for _ in 0..safe_ticks {
-        sim_vm.step();
-        if sim_vm.halted {
-            break;
-        }
-    }
-
-    // Collect Results
-    // 1. Top of stack (or 0 if empty)
-    let top_val = sim_vm.stack.last().cloned().unwrap_or(Value::Int(0));
-    // 2. Final Energy
-    let energy = sim_vm.energy;
-    // 3. Status (1 = Alive, 0 = Halted/Dead)
-    let status = if sim_vm.halted { 0 } else { 1 };
-
-    // Push results to original VM stack
-    vm.stack.push(top_val);
-    vm.stack.push(Value::Int(energy));
-    vm.stack.push(Value::Int(status));
-
-    // Deduct Energy Cost: Base cost + duration cost
-    let cost = safe_ticks.saturating_add(50);
-    vm.energy = vm.energy.saturating_sub(cost);
-
-    vm.output.push(format!(
-        "SIMULATE: Ran strand {} for {} ticks. Status: {}",
-        idx, safe_ticks, status
-    ));
-
-    None
-}
-
-/// Executes a Brainfuck program string with input.
-///
-/// **OpCode:** `Brainfuck`
-/// **Stack:** `[ ..., bf_code, input ] -> [ ..., output ]`
-fn exec_brainfuck(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    // stack: bf_code_string, input_string (top)
-    let input = vm.pop_str("brainfuck")?;
-    let code = vm.pop_str("brainfuck")?;
-
-    let code_chars: Vec<char> = code.chars().collect();
-    let mut input_chars: VecDeque<u8> = input.bytes().collect::<VecDeque<_>>();
-    let mut output_bytes: Vec<u8> = Vec::new();
-
-    let mut tape = vec![0u8; 30000];
-    let mut ptr = 0;
-    let mut pc = 0;
-    let mut cycles = 0;
-    let max_cycles = 10000; // Safety limit
-
-    // Precompute jump targets
-    let mut jumps = HashMap::new();
-    let mut loop_stack = Vec::new();
-    for (i, &c) in code_chars.iter().enumerate() {
-        if c == '[' {
-            loop_stack.push(i);
-        } else if c == ']' {
-            if let Some(start) = loop_stack.pop() {
-                jumps.insert(start, i);
-                jumps.insert(i, start);
-            }
-        }
-    }
-
-    while pc < code_chars.len() && cycles < max_cycles {
-        match code_chars[pc] {
-            '>' => {
-                if ptr < tape.len() - 1 {
-                    ptr += 1;
-                } else {
-                    ptr = 0;
-                } // Wrap
-            }
-            '<' => {
-                if ptr > 0 {
-                    ptr -= 1;
-                } else {
-                    ptr = tape.len() - 1;
-                } // Wrap
-            }
-            '+' => tape[ptr] = tape[ptr].wrapping_add(1),
-            '-' => tape[ptr] = tape[ptr].wrapping_sub(1),
-            '.' => {
-                if output_bytes.len() < crate::vm::MAX_BRAINFUCK_OUTPUT {
-                    output_bytes.push(tape[ptr]);
-                }
-            }
-            ',' => {
-                tape[ptr] = input_chars.pop_front().unwrap_or(0);
-            }
-            '[' => {
-                if tape[ptr] == 0 {
-                    if let Some(&target) = jumps.get(&pc) {
-                        pc = target;
-                    }
-                }
-            }
-            ']' => {
-                if tape[ptr] != 0 {
-                    if let Some(&target) = jumps.get(&pc) {
-                        pc = target;
-                    }
-                }
-            }
-            _ => {} // Ignore non-BF chars
-        }
-        pc += 1;
-        cycles += 1;
-    }
-
-    let output_str = String::from_utf8_lossy(&output_bytes).to_string();
-    vm.stack.push(Value::Str(output_str));
-    vm.energy = vm.energy.saturating_sub((cycles / 100) as i64);
-    vm.output.push(format!("BRAINFUCK: Ran {} cycles", cycles));
 
     None
 }
@@ -881,7 +806,11 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Chaos => super::nova_flux::exec_chaos(vm),
         OpCode::Orca => {
             vm.prologue_state.orca_mode = !vm.prologue_state.orca_mode;
-            let status = if vm.prologue_state.orca_mode { "ON" } else { "OFF" };
+            let status = if vm.prologue_state.orca_mode {
+                "ON"
+            } else {
+                "OFF"
+            };
             vm.output.push(format!("PROLOGUE: Orca Mode {}", status));
             None
         }
@@ -894,7 +823,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::SenseGlyph => exec_sense_glyph(vm),
         OpCode::Sing => exec_sing(vm),
         OpCode::Listen => exec_listen(vm),
-        OpCode::Brainfuck => exec_brainfuck(vm),
+        OpCode::Brainfuck => super::nova_brainfuck::exec_brainfuck(vm),
         OpCode::Spawn => super::nova_biology::exec_spawn(vm),
         OpCode::Entropy => exec_entropy(vm),
         OpCode::Stabilize => exec_stabilize(vm),
@@ -1265,98 +1194,81 @@ fn exec_dream(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
     let idx = s_idx as usize;
 
-    if idx >= vm.dna.helix.strands.len() || ticks <= 0 {
+    if idx >= vm.dna.helix.strands.len() {
         vm.output.push("Error: Invalid args for dream".to_string());
         return None;
     }
 
-    if vm.recursion_depth > crate::vm::MAX_SIMULATION_DEPTH {
-        vm.output
-            .push("Error: Simulation depth limit exceeded".to_string());
-        return None;
-    }
+    let mut mutation_desc = String::new();
+    let mut mutated_strand = None;
 
-    // Cap ticks
-    let safe_ticks = ticks.min(1000);
+    if let Some(dream_vm) = run_sandboxed_simulation(vm, ticks, |sim_vm| {
+        // Force a mutation
+        sim_vm.mutate();
+        mutation_desc = sim_vm
+            .output
+            .last()
+            .cloned()
+            .unwrap_or_else(|| "Unknown Mutation".to_string());
 
-    // Clone VM
-    let mut dream_vm = vm.clone();
-
-    // Force a mutation
-    dream_vm.mutate();
-    let mutation_desc = dream_vm
-        .output
-        .last()
-        .cloned()
-        .unwrap_or_else(|| "Unknown Mutation".to_string());
-
-    // Capture mutated strand
-    let mutated_strand = if idx < dream_vm.dna.helix.strands.len() {
-        Some(dream_vm.dna.helix.strands[idx].clone())
-    } else {
-        None
-    };
-
-    // Run simulation
-    dream_vm.ip = (idx, 0);
-    dream_vm.output.clear();
-    dream_vm.halted = false;
-
-    for _ in 0..safe_ticks {
-        dream_vm.step();
-        if dream_vm.halted {
-            break;
+        // Capture mutated strand
+        if idx < sim_vm.dna.helix.strands.len() {
+            mutated_strand = Some(sim_vm.dna.helix.strands[idx].clone());
         }
-    }
 
-    // Evaluate
-    let mut success = dream_vm.energy > vm.energy;
+        // Setup simulation
+        sim_vm.ip = (idx, 0);
+    }) {
+        // Evaluate
+        let mut success = dream_vm.energy > vm.energy;
 
-    // Nightmare Check
-    let (cy, cx) = vm.context_loc;
-    let entropy = vm.entropy_grid[cy][cx];
-    let is_nightmare = entropy > 50;
+        // Nightmare Check
+        let (cy, cx) = vm.context_loc;
+        let entropy = vm.entropy_grid[cy][cx];
+        let is_nightmare = entropy > 50;
 
-    if is_nightmare {
-        success = true; // Nightmares are forced
-        vm.output
-            .push("NIGHTMARE: The Void invades the dream...".to_string());
-    }
-
-    // Pay Cost (Base 50 + ticks/2)
-    let cost = 50 + (safe_ticks / 2);
-
-    let trace = crate::vm::dream::DreamTrace::new(
-        0,
-        idx,
-        safe_ticks as usize,
-        cost,
-        dream_vm.energy,
-        if dream_vm.halted { 0 } else { 1 },
-        mutation_desc,
-        mutated_strand,
-        success,
-        is_nightmare,
-        dream_vm.output.clone(),
-        None,
-    );
-    vm.dream_traces.push(trace);
-
-    if success {
-        // Adopt DNA
-        vm.dna = dream_vm.dna;
-        vm.stack.push(Value::Int(1)); // Success
         if is_nightmare {
-            vm.output.push("DREAM: Nightmare realized!".to_string());
-        } else {
-            vm.output.push("DREAM: Mutation accepted".to_string());
+            success = true; // Nightmares are forced
+            vm.output
+                .push("NIGHTMARE: The Void invades the dream...".to_string());
         }
-    } else {
-        vm.stack.push(Value::Int(0)); // Failure
-        vm.output.push("DREAM: Mutation discarded".to_string());
-    }
 
-    vm.energy = vm.energy.saturating_sub(cost);
+        // Pay Cost (Base 50 + ticks/2)
+        let safe_ticks = ticks.min(1000);
+        let cost = 50 + (safe_ticks / 2);
+
+        let trace = crate::vm::dream::DreamTrace::new(
+            0,
+            idx,
+            safe_ticks as usize,
+            cost,
+            dream_vm.energy,
+            if dream_vm.halted { 0 } else { 1 },
+            mutation_desc,
+            mutated_strand,
+            success,
+            is_nightmare,
+            dream_vm.output.clone(),
+            None,
+        );
+        vm.dream_traces.push(trace);
+
+        if success {
+            // Adopt DNA
+            vm.dna = dream_vm.dna;
+            vm.stack.push(Value::Int(1)); // Success
+            if is_nightmare {
+                vm.output.push("DREAM: Nightmare realized!".to_string());
+            } else {
+                vm.output.push("DREAM: Mutation accepted".to_string());
+            }
+        } else {
+            vm.stack.push(Value::Int(0)); // Failure
+            vm.output.push("DREAM: Mutation discarded".to_string());
+        }
+
+        vm.energy = vm.energy.saturating_sub(cost);
+    }
 
     None
 }

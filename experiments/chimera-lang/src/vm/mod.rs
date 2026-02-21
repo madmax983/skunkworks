@@ -178,6 +178,8 @@ pub mod nova_botany;
 #[cfg(test)]
 mod nova_botany_test;
 #[cfg(feature = "nova")]
+pub mod nova_brainfuck;
+#[cfg(feature = "nova")]
 pub mod nova_cambrian;
 #[cfg(feature = "nova")]
 pub mod nova_cartography;
