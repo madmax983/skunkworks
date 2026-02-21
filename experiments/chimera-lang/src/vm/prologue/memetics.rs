@@ -1,5 +1,5 @@
 use super::normalize_coords;
-use crate::vm::{ChimeraVM, Value};
+use crate::vm::{ChimeraVM, Value, MAX_STRING_LEN};
 use rand::Rng;
 
 /// Applies Memetic Runes during the signal propagation phase.
@@ -147,6 +147,9 @@ pub fn apply_memetic_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
 }
 
 fn mutate_string(s: &str) -> String {
+    if s.len() >= MAX_STRING_LEN {
+        return s.to_string();
+    }
     let mut chars: Vec<char> = s.chars().collect();
     if chars.is_empty() {
         return "a".to_string();

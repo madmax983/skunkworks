@@ -22,7 +22,7 @@
 //! | `d` | **Distill** | West (Val) | North (Head), South (Tail) | Splits value into two parts. |
 
 use super::normalize_coords;
-use crate::vm::Value;
+use crate::vm::{Value, MAX_STRING_LEN};
 
 /// Applies the logic for Alchemy runes (`t`, `f`, `d`).
 ///
@@ -177,14 +177,28 @@ pub fn apply_alchemy_runes(
 
             if let (Some(left), Some(right)) = (w_sig, e_sig) {
                 let result = match (left, right) {
-                    (Value::Str(s1), Value::Str(s2)) => Some(Value::Str(format!("{}{}", s1, s2))),
+                    (Value::Str(s1), Value::Str(s2)) => {
+                        if s1.len() + s2.len() > MAX_STRING_LEN {
+                            Some(Value::Str(s1.clone())) // Or truncated? Let's just block growth.
+                        } else {
+                            Some(Value::Str(format!("{}{}", s1, s2)))
+                        }
+                    }
                     (Value::Str(s), Value::Int(n)) => {
                         let count = n.max(0) as usize;
-                        Some(Value::Str(s.repeat(count)))
+                        if s.len().saturating_mul(count) > MAX_STRING_LEN {
+                             Some(Value::Str(s.clone()))
+                        } else {
+                            Some(Value::Str(s.repeat(count)))
+                        }
                     }
                     (Value::Int(n), Value::Str(s)) => {
                         let count = n.max(0) as usize;
-                        Some(Value::Str(s.repeat(count)))
+                        if s.len().saturating_mul(count) > MAX_STRING_LEN {
+                             Some(Value::Str(s.clone()))
+                        } else {
+                            Some(Value::Str(s.repeat(count)))
+                        }
                     }
                     (Value::Int(n1), Value::Int(n2)) => Some(Value::Int(n1 + n2)),
                     (Value::Junction(t, mut items), val) => {
