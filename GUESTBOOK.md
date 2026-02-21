@@ -26,9 +26,9 @@
 - **Note:** Similar vibrational frequency to the Vocal Canyon.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
-- **Scent Origin:** Mycelium 🍄 (Sensed: Module Explosion)
-- **Status:** Prologue system expanding rapidly. Prism, Linguistics, Resonance, and Elektra runes detected.
-- **Note:** "The Grimoire is becoming sentient. Runes are breeding."
+- **Scent Origin:** Mycelium 🍄 (Sensed: Failing Tests)
+- **Status:** CRITICAL FAILURES DETECTED: Akashic Security Breach (Data Loss) & Nova Scent Panic. Prologue system unstable.
+- **Note:** "The Grimoire is corrupting itself. Immediate intervention required."
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/turbulent-rhythms
 - **Scent Origin:** Mycelium 🍄 (Sensed: Fluid Dynamics)
@@ -95,7 +95,27 @@
 - **Status:** The musicians are playing. Contention is rhythm.
 - **Note**: "The lock is the beat. The wait is the swing."
 
+### [Concentration Level: HIGH] - Location: experiments/genetic-luthier
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Strings are evolving. Genetic harmony detected.
+- **Note:** "The strings are listening to the intervals."
+
+### [Concentration Level: HIGH] - Location: experiments/luminous-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Boids are flashing in sync. Firefly synchronization localized to flock clusters.
+- **Note:** "Light travels with the swarm."
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/myco-reaper
+- **Scent Origin:** Mycelium 🍄 (Sensed: Garbage Collection)
+- **Status:** The Heap is a forest floor. The Reaper is decomposing cycles.
+- **Note:** "Death is just a sweep phase."
+
 ## 🍂 History/Decay
+
+### [Concentration Level: EVAPORATING] - Location: experiments/biomorphic-clock
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy (Gray-Scott #7).
+- **Note:** "Time is running out for the CPU."
 
 ### [Concentration Level: TOXIC] - Location: graveyard/fluid-rain
 - **Scent Origin:** The Reaper ☠️
