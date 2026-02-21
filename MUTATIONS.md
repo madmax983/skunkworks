@@ -1464,4 +1464,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: ChimeraVM agents inhabiting a 4D Hypercube where the metric space is distorted by system metrics (CPU/RAM).
 - **Novel trait**: Relativistic Metabolism. Movement cost and distance are determined by the host computer's stress.
 - **Status**: experiments/hyper-chimera
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### hyperbolic-chimera
+- **Parents**: experiments/chimera-lang + experiments/hyperbolic-dungeon
+- **Concept**: ChimeraVM agents inhabiting the Poincaré Disk.
+- **Novel trait**: Hyperbolic Navigation. Agents evolve strategies to navigate exponentially expanding space.
+- **Status**: experiments/hyperbolic-chimera
 - **Evaluation**: In Progress.
