@@ -1471,11 +1471,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: ChimeraVM agents inhabiting the Poincaré Disk.
 - **Novel trait**: Hyperbolic Navigation. Agents evolve strategies to navigate exponentially expanding space.
 - **Status**: experiments/hyperbolic-chimera
-- **Evaluation**: In Progress.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified in GUESTBOOK (Agents spiraling verified).
 
 ### hyper-mold
 - **Parents**: experiments/myco-diffusion + experiments/tesseract-ops
 - **Concept**: Slime mold agents (Physarum) navigating a 4D Hypercube, depositing pheromones in a 4D space distorted by system metrics.
 - **Novel trait**: 4D Bio-Computation. The mold solves 4D mazes created by the computer's workload.
 - **Status**: experiments/hyper-mold
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified in GUESTBOOK (Pheromones leaking across W-axis).
+
+### chimera-hologram
+- **Parents**: experiments/chimera-lang + experiments/holographic-brain
+- **Concept**: ChimeraVM agents ("Light Beings") projecting their existence into a holographic interference field.
+- **Novel trait**: Distributed Existence. Agents are wave patterns; their position is recovered via Inverse FFT.
+- **Status**: experiments/chimera-hologram
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Emergent Trait: Ghosting and Interference Artifacts.
