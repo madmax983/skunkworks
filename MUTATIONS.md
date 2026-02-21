@@ -1431,30 +1431,16 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/hyper-bridge
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
 
-### chimera-tesseract
-- **Parents**: experiments/tesseract-ops + experiments/chimera-lang
-- **Concept**: A 4D Hypercube where each of the 16 vertices is inhabited by a living ChimeraVM agent.
-- **Novel trait**: 4D Biological Topology. The tesseract's physical stability (rotation/scale) is driven by the biological stability of the colony.
-- **Status**: experiments/chimera-tesseract
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified in GUESTBOOK.
-
-### hyper-flock
-- **Parents**: experiments/tesseract-ops + experiments/luminous-flock
-- **Concept**: Boids flocking in a 4D Hypercube where the dimensions of the universe are driven by system metrics (CPU, RAM, Swap).
-- **Novel trait**: 4D Flocking in a breathing universe. The "space" they live in changes shape based on computer load.
-- **Status**: experiments/hyper-flock
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified in GUESTBOOK.
-
-### hyper-ferro
-- **Parents**: experiments/tesseract-ops + experiments/ferro-file
-- **Concept**: 4D Ising Model where temperature is driven by system CPU load.
-- **Novel trait**: Hyper-Magnetic Entanglement. Visualizing the computer's heat melting the 4D magnetic order.
-- **Status**: experiments/hyper-ferro
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified in GUESTBOOK.
-
 ### hyper-garden
 - **Parents**: experiments/tesseract-ops + experiments/babylonian-garden
 - **Concept**: 4D Procedural Plants grown from Git History in a Hypercube. The "weather" (distortion) is driven by system metrics.
 - **Novel trait**: 4D L-System Turtle. Plants grow into the W-axis based on CPU load.
 - **Status**: experiments/hyper-garden
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
+
+### hyper-pollination
+- **Parents**: experiments/hyper-garden + experiments/hyper-flock
+- **Concept**: A 4D ecosystem where procedurally generated plants (Git History) are pollinated by flocking boids (System Processes?). The entire universe breathes and distorts based on real-time system metrics (CPU, Memory, Swap, Load).
+- **Novel trait**: 4D Pollination & Color Diffusion. Boids transfer color traits between plants in a 4D space distorted by system metrics.
+- **Status**: experiments/hyper-pollination
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
