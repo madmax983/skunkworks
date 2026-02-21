@@ -329,6 +329,9 @@ mod warden_phylogeny_test;
 mod havoc_recursive_prophecy;
 
 #[cfg(all(test, feature = "nova"))]
+mod nova_prophecy_test;
+
+#[cfg(all(test, feature = "nova"))]
 mod havoc_ipc_bomb;
 
 #[cfg(all(test, feature = "nova", feature = "biophysics"))]
