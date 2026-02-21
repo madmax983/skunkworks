@@ -79,7 +79,7 @@ impl Network {
             // Long range random connection
             let target = rng.gen_range(0..count);
             if target != i {
-                 synapses[i].push(Synapse {
+                synapses[i].push(Synapse {
                     target_index: target,
                     weight: 10.0,
                     spikes: Vec::new(),
@@ -142,21 +142,21 @@ impl Network {
         let positions: Vec<Vec4D> = self.neurons.iter().map(|n| n.position).collect();
 
         for source_idx in spiked_indices {
-             let source_pos = positions[source_idx];
-             // Now we access synapses mutably
-             for synapse in self.synapses[source_idx].iter_mut() {
-                 let target_pos = positions[synapse.target_index];
+            let source_pos = positions[source_idx];
+            // Now we access synapses mutably
+            for synapse in self.synapses[source_idx].iter_mut() {
+                let target_pos = positions[synapse.target_index];
 
-                 // Calculate Distorted Distance
-                 let diff = target_pos.sub(source_pos);
-                 let distorted_diff = diff.scale_dim(sx, sy, sz, sw);
-                 let distance = distorted_diff.length();
+                // Calculate Distorted Distance
+                let diff = target_pos.sub(source_pos);
+                let distorted_diff = diff.scale_dim(sx, sy, sz, sw);
+                let distance = distorted_diff.length();
 
-                 let delay = distance / signal_speed;
+                let delay = distance / signal_speed;
 
-                 // Store (delay, initial_distance) for visualization
-                 synapse.spikes.push((delay, distance));
-             }
+                // Store (delay, initial_distance) for visualization
+                synapse.spikes.push((delay, distance));
+            }
         }
     }
 }

@@ -227,11 +227,18 @@ pub fn exec_memetics_op(
                             }
 
                             // Append to target strand
-                            vm.dna.helix.strands[target_idx].genes.extend(new_genes);
-                            vm.output.push(format!(
-                                "PROPAGATE: Infected Strand {} with Meme {}",
-                                target_idx, meme_idx
-                            ));
+                            let current_len = vm.dna.helix.strands[target_idx].genes.len();
+                            if current_len + new_genes.len() <= crate::vm::MAX_GENES_PER_STRAND {
+                                vm.dna.helix.strands[target_idx].genes.extend(new_genes);
+                                vm.output.push(format!(
+                                    "PROPAGATE: Infected Strand {} with Meme {}",
+                                    target_idx, meme_idx
+                                ));
+                            } else {
+                                vm.output.push(
+                                    "PROPAGATE: Infection failed (Gene Limit Exceeded)".to_string(),
+                                );
+                            }
                         } else {
                             vm.output
                                 .push("PROPAGATE: Infection failed (Resisted)".to_string());
@@ -465,11 +472,19 @@ pub fn exec_memetics_op(
                                         // Note: multiple organelles might share a genome. This affects all of them.
                                         let g_id = org.genome_id as usize;
                                         if g_id < vm.dna.helix.strands.len() {
-                                            vm.dna.helix.strands[g_id]
-                                                .genes
-                                                .extend(payload_genes.clone());
-                                            mutation_count += 1;
-                                            vm.output.push(format!("TRANSDUCTION: Virus {} injected Strand {} into Organelle {} (Genome {})", state.virus_id, payload_idx, org.name, g_id));
+                                            let current_len =
+                                                vm.dna.helix.strands[g_id].genes.len();
+                                            if current_len + payload_genes.len()
+                                                <= crate::vm::MAX_GENES_PER_STRAND
+                                            {
+                                                vm.dna.helix.strands[g_id]
+                                                    .genes
+                                                    .extend(payload_genes.clone());
+                                                mutation_count += 1;
+                                                vm.output.push(format!("TRANSDUCTION: Virus {} injected Strand {} into Organelle {} (Genome {})", state.virus_id, payload_idx, org.name, g_id));
+                                            } else {
+                                                vm.output.push(format!("TRANSDUCTION: Virus {} failed (Gene Limit Exceeded) for Genome {}", state.virus_id, g_id));
+                                            }
                                         }
                                     }
                                 }

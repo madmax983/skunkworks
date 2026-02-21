@@ -34,12 +34,12 @@ async fn main() {
         // Let's cap dt.
         let sim_dt = dt.min(0.1);
         network.update(sim_dt * 1000.0, &monitor); // Network uses ms, dt is seconds.
-        // Wait, Izhikevich usually uses ms. dt=1.0 is 1ms.
-        // If I pass seconds * 1000, that's ms.
-        // If frame time is 0.016s (60fps), that's 16ms per frame.
-        // That's a lot of simulation steps if internal is 1ms.
-        // Network::update handles integration.
-        // If I pass 16.0, it simulates 16ms. This is good for real-time behavior.
+                                                   // Wait, Izhikevich usually uses ms. dt=1.0 is 1ms.
+                                                   // If I pass seconds * 1000, that's ms.
+                                                   // If frame time is 0.016s (60fps), that's 16ms per frame.
+                                                   // That's a lot of simulation steps if internal is 1ms.
+                                                   // Network::update handles integration.
+                                                   // If I pass 16.0, it simulates 16ms. This is good for real-time behavior.
 
         // 3. Rotate 4D Space
         let base_speed = 0.1;
@@ -114,45 +114,87 @@ async fn main() {
             // Draw Synapses
             if let Some(synapses) = network.synapses.get(i) {
                 for synapse in synapses {
-                     let p2 = transform(network.neurons[synapse.target_index].position);
+                    let p2 = transform(network.neurons[synapse.target_index].position);
 
-                     // Draw Line
-                     draw_line_3d(p1, p2, Color::new(0.3, 0.3, 0.3, 0.1));
+                    // Draw Line
+                    draw_line_3d(p1, p2, Color::new(0.3, 0.3, 0.3, 0.1));
 
-                     // Draw Spikes
-                     let speed = 5.0; // Must match network.rs
-                     for (timer, initial_dist) in &synapse.spikes {
-                         // t goes from 0.0 (start) to 1.0 (end)
-                         // timer goes from duration to 0.0
-                         // duration = initial_dist / speed
-                         let duration = initial_dist / speed;
-                         if duration > 0.0 {
-                             let t = (1.0 - (timer / duration)).clamp(0.0, 1.0);
-                             let spike_pos = p1 + (p2 - p1) * t;
-                             draw_sphere(spike_pos, 0.03, None, YELLOW);
-                         }
-                     }
+                    // Draw Spikes
+                    let speed = 5.0; // Must match network.rs
+                    for (timer, initial_dist) in &synapse.spikes {
+                        // t goes from 0.0 (start) to 1.0 (end)
+                        // timer goes from duration to 0.0
+                        // duration = initial_dist / speed
+                        let duration = initial_dist / speed;
+                        if duration > 0.0 {
+                            let t = (1.0 - (timer / duration)).clamp(0.0, 1.0);
+                            let spike_pos = p1 + (p2 - p1) * t;
+                            draw_sphere(spike_pos, 0.03, None, YELLOW);
+                        }
+                    }
                 }
             }
         }
 
         // Draw Tesseract Bounds
-        draw_tesseract_wireframe(Vec4D::new(2.0, 2.0, 2.0, 2.0), angle_xw, angle_yw, angle_zw, sx, sy, sz, sw);
+        draw_tesseract_wireframe(
+            Vec4D::new(2.0, 2.0, 2.0, 2.0),
+            angle_xw,
+            angle_yw,
+            angle_zw,
+            sx,
+            sy,
+            sz,
+            sw,
+        );
 
         set_default_camera();
         draw_text("Hyper-Neuron", 10.0, 20.0, 30.0, WHITE);
         draw_text("4D SNN driven by System Metrics", 10.0, 40.0, 20.0, GRAY);
 
-        draw_text(&format!("CPU: {:.0}% (X-Stretch)", monitor.cpu_usage * 100.0), 10.0, 70.0, 20.0, RED);
-        draw_text(&format!("MEM: {:.0}% (Y-Stretch)", monitor.mem_usage * 100.0), 10.0, 90.0, 20.0, BLUE);
-        draw_text(&format!("SWAP: {:.0}% (Z-Stretch)", monitor.swap_usage * 100.0), 10.0, 110.0, 20.0, GREEN);
-        draw_text(&format!("LOAD: {:.2} (W-Oscillation)", monitor.load_avg), 10.0, 130.0, 20.0, YELLOW);
+        draw_text(
+            &format!("CPU: {:.0}% (X-Stretch)", monitor.cpu_usage * 100.0),
+            10.0,
+            70.0,
+            20.0,
+            RED,
+        );
+        draw_text(
+            &format!("MEM: {:.0}% (Y-Stretch)", monitor.mem_usage * 100.0),
+            10.0,
+            90.0,
+            20.0,
+            BLUE,
+        );
+        draw_text(
+            &format!("SWAP: {:.0}% (Z-Stretch)", monitor.swap_usage * 100.0),
+            10.0,
+            110.0,
+            20.0,
+            GREEN,
+        );
+        draw_text(
+            &format!("LOAD: {:.2} (W-Oscillation)", monitor.load_avg),
+            10.0,
+            130.0,
+            20.0,
+            YELLOW,
+        );
 
         next_frame().await
     }
 }
 
-fn draw_tesseract_wireframe(bounds: Vec4D, axw: f32, ayw: f32, azw: f32, sx: f32, sy: f32, sz: f32, sw: f32) {
+fn draw_tesseract_wireframe(
+    bounds: Vec4D,
+    axw: f32,
+    ayw: f32,
+    azw: f32,
+    sx: f32,
+    sy: f32,
+    sz: f32,
+    sw: f32,
+) {
     let mut verts = Vec::new();
     for i in 0..16 {
         let x = if i & 1 != 0 { bounds.x } else { -bounds.x };

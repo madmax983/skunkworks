@@ -68,3 +68,7 @@
 ## 2026-10-23 - Unbounded Resource Consumption (DoS)
 **Threat:** Malicious Chimera programs could exhaust memory via unbounded creation of Memes (`OpCode::Conceive`), Viruses (`OpCode::Infect`), or Strands (`compile_cst`), or via unbounded Brainfuck output.
 **Defense:** Introduced `MAX_MEMES` (64), `MAX_VIRUSES` (64), and `MAX_BRAINFUCK_OUTPUT` (1024). Enforced these limits in `memetics.rs`, `babel.rs` (checking `MAX_STRANDS` and recursion depth), and `nova.rs`. Added regression test `warden_resources_test.rs`.
+
+## 2026-12-12 - Unbounded Gene Growth (OOM DoS)
+**Threat:** `OpCode::Propagate` and `OpCode::Outbreak` (Transduction) in `experiments/chimera-lang` allowed appending genes to existing strands without checking for length limits. A malicious virus could repeatedly infect a strand, causing it to grow indefinitely until OOM.
+**Defense:** Introduced `MAX_GENES_PER_STRAND` (4096) constant in `vm/mod.rs`. Enforced this limit in `memetics.rs` before extending any strand. Added `warden_gene_dos_test.rs` to verify the fix.

@@ -87,6 +87,7 @@ pub const MAX_VIRUSES: usize = 64;
 #[cfg(feature = "nova")]
 pub const MAX_BRAINFUCK_OUTPUT: usize = 1024;
 pub const MAX_STRING_LEN: usize = 65536;
+pub const MAX_GENES_PER_STRAND: usize = 4096;
 
 #[cfg(feature = "nova")]
 pub mod akashic;

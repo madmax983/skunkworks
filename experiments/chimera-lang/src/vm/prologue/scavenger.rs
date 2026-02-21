@@ -1,8 +1,8 @@
 use super::normalize_coords;
+use crate::vm::prologue::epigenetics::EpigeneticMark;
+use crate::vm::prologue::PrologueAgent;
 use crate::vm::ChimeraVM;
 use crate::vm::Value;
-use crate::vm::prologue::PrologueAgent;
-use crate::vm::prologue::epigenetics::EpigeneticMark;
 use rand::Rng;
 
 pub fn apply_scavenger_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
@@ -13,7 +13,8 @@ pub fn apply_scavenger_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
                 if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
                     vm.grid[sy][sx] = Value::Str("♻".to_string());
                     vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
-                    vm.output.push(format!("SCAVENGER: Agent spawned at {},{}", sx, sy));
+                    vm.output
+                        .push(format!("SCAVENGER: Agent spawned at {},{}", sx, sy));
                 }
             }
         }
