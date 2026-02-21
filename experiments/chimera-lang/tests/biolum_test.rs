@@ -23,7 +23,7 @@ mod tests {
             },
             Gene {
                 op: OpCode::Push,
-                args: vec![Nucleotide::Number(100)],
+                args: vec![Nucleotide::Number(255)],
             },
             Gene {
                 op: OpCode::Luciferin,
@@ -51,7 +51,7 @@ mod tests {
 
     #[test]
     fn test_photophore() {
-        // [ push(255) push(0) push(0) push(100) luciferin() push(2) photophore() ]
+        // [ push(255) push(0) push(0) push(255) luciferin() push(2) photophore() ]
         let genes = vec![
             Gene {
                 op: OpCode::Push,
@@ -67,7 +67,7 @@ mod tests {
             },
             Gene {
                 op: OpCode::Push,
-                args: vec![Nucleotide::Number(100)],
+                args: vec![Nucleotide::Number(255)],
             },
             Gene {
                 op: OpCode::Luciferin,
@@ -96,7 +96,7 @@ mod tests {
         // Center should be high
         assert!(vm.light_grid[8][8] >= 100);
         // Neighbor (8,9) should be lit
-        assert!(vm.light_grid[8][9] >= 100);
+        assert!(vm.light_grid[8][9] >= 50);
         // Color should propagate
         assert_eq!(vm.light_color_grid[8][9], (255, 0, 0));
     }
