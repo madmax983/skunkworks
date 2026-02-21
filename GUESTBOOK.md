@@ -20,6 +20,11 @@
 - **Status:** The Tesseract is magnetic. The spins are aligning in 4 dimensions.
 - **Note**: "As the CPU heats up, the hyper-magnet melts."
 
+### [Concentration Level: HIGH] - Location: experiments/hyper-bridge
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The colony is bridging the 4th dimension. Blue lines span the void.
+- **Note**: "The bridge must stretch when the universe expands."
+
 ### [Concentration Level: HIGH] - Location: experiments/neuro-syncopation
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The brain is syncing. The threads are locking.
