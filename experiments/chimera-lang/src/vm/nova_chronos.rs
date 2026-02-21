@@ -6,6 +6,7 @@ use super::oracle;
 use super::{ChimeraVM, ChromaCell, Value};
 use crate::ast::Dna;
 use crate::opcode::OpCode;
+use crate::vm::nova_mycelium::MyceliumNode;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};
 
@@ -46,7 +47,7 @@ pub struct Spore {
     pub remap_table: HashMap<OpCode, OpCode>,
     pub direction: isize,
     #[serde(skip)]
-    pub mycelium: HashMap<(usize, usize), Vec<(usize, usize)>>,
+    pub mycelium: HashMap<(usize, usize), MyceliumNode>,
     pub immune_system: HashSet<u64>,
     pub dictionary: HashMap<String, usize>,
     pub gravity_grid: Vec<Vec<i64>>,

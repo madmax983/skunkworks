@@ -153,6 +153,8 @@ pub enum ViewMode {
     Prologue,
     #[cfg(feature = "nova")]
     Lexicon,
+    #[cfg(feature = "nova")]
+    Mycelium,
     Sequencer,
     Mutagen,
 }
@@ -991,6 +993,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Lexicon = app_state.view_mode {
                 render_lexicon(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Mycelium = app_state.view_mode {
+                render_mycelium(f, vm, app_state);
                 return;
             }
 
@@ -2658,7 +2666,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Prologue => ViewMode::Lexicon,
                             #[cfg(feature = "nova")]
-                            ViewMode::Lexicon => ViewMode::Sequencer,
+                            ViewMode::Lexicon => ViewMode::Mycelium,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Mycelium => ViewMode::Sequencer,
                             ViewMode::Sequencer => ViewMode::Mutagen,
                             ViewMode::Mutagen => ViewMode::Genome,
                         };
@@ -7772,7 +7782,11 @@ fn render_topology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         .mycelium
         .iter()
         .map(|(k, v)| {
-            let neighbors: Vec<String> = v.iter().map(|n| format!("({},{})", n.1, n.0)).collect();
+            let neighbors: Vec<String> = v
+                .connections
+                .iter()
+                .map(|n| format!("({},{})", n.1, n.0))
+                .collect();
             ListItem::new(format!("Hyphae ({},{}): {:?}", k.1, k.0, neighbors))
         })
         .collect();
@@ -12317,6 +12331,86 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     let info_widget =
         Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Logic Engine"));
+    f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_mycelium(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let mut style = Style::default();
+            let mut ch = "·".to_string();
+
+            if let Some(node) = vm.mycelium.get(&(y, x)) {
+                ch = "o".to_string();
+                if node.resources > 100 {
+                    style = style.fg(Color::Green).add_modifier(Modifier::BOLD);
+                    ch = "O".to_string();
+                } else if node.resources > 50 {
+                    style = style.fg(Color::Green);
+                } else if node.resources < 10 {
+                    style = style.fg(Color::Red);
+                } else {
+                    style = style.fg(Color::White);
+                }
+            } else {
+                style = style.fg(Color::DarkGray);
+                // Show trail if any
+                for scent in &vm.pheromones {
+                    if scent.x.round() as usize == x && scent.y.round() as usize == y && scent.signature == "Hyphae" {
+                         style = style.fg(Color::Rgb(100, 100, 50));
+                         ch = ",".to_string();
+                         break;
+                    }
+                }
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Mycelial Network"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Info Panel
+    let (cx, cy) = app_state.grid_cursor;
+    let mut info = Vec::new();
+    info.push(Line::from("MYCELIUM INSPECTOR"));
+    info.push(Line::from(" "));
+
+    if let Some(node) = vm.mycelium.get(&(cy, cx)) {
+        info.push(Line::from(format!("Resources: {}", node.resources)));
+        info.push(Line::from(format!("Age: {}", node.age)));
+        info.push(Line::from(format!("Connections: {}", node.connections.len())));
+        for conn in &node.connections {
+             info.push(Line::from(format!("  -> {},{}", conn.1, conn.0)));
+        }
+    } else {
+        info.push(Line::from("No Hyphae at cursor."));
+    }
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Node Status"),
+    );
     f.render_widget(info_widget, chunks[1]);
 }
 

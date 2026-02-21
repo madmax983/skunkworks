@@ -255,6 +255,8 @@ pub mod nova_market;
 #[cfg(feature = "nova")]
 pub mod nova_metamorphism;
 #[cfg(feature = "nova")]
+pub mod nova_mycelium;
+#[cfg(feature = "nova")]
 pub mod nova_metamorphosis;
 #[cfg(feature = "nova")]
 pub mod nova_metazoa;
@@ -699,7 +701,7 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub direction: isize,
     #[cfg(feature = "nova")]
-    pub mycelium: HashMap<(usize, usize), Vec<(usize, usize)>>,
+    pub mycelium: HashMap<(usize, usize), nova_mycelium::MyceliumNode>,
     #[cfg(feature = "nova")]
     pub immune_system: HashSet<u64>,
     #[cfg(feature = "nova")]
@@ -2268,6 +2270,7 @@ impl ChimeraVM {
             nova_flux::process_flux(self);
             nova_metamorphism::process_metamorphism(self);
             nova_metamorphosis::process_organelle_growth(self);
+            nova_mycelium::process_mycelium(self);
             if self.orca_mode {
                 nova_signals::process_signals(self);
             }

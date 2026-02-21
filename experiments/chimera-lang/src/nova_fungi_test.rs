@@ -101,8 +101,8 @@ mod tests {
         assert!(vm.mycelium.contains_key(&(8, 8)));
         assert!(vm.mycelium.contains_key(&(8, 9)));
         // Check connection
-        let neighbors = vm.mycelium.get(&(8, 9)).unwrap();
-        assert!(neighbors.contains(&(8, 8)));
+        let node = vm.mycelium.get(&(8, 9)).unwrap();
+        assert!(node.connections.contains(&(8, 8)));
     }
 
     #[test]

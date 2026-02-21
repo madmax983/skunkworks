@@ -923,10 +923,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         }
         OpCode::Glitch => exec_glitch(vm),
         OpCode::Scramble => exec_scramble(vm),
-        OpCode::Hyphae => exec_hyphae(vm),
-        OpCode::Connect => exec_connect(vm),
-        OpCode::Transport => exec_transport(vm),
-        OpCode::SporeCloud => exec_spore_cloud(vm),
+        OpCode::Hyphae => super::nova_mycelium::exec_hyphae(vm),
+        OpCode::Connect => super::nova_mycelium::exec_connect(vm),
+        OpCode::Transport => super::nova_mycelium::exec_transport(vm),
+        OpCode::SporeCloud => super::nova_mycelium::exec_spore_cloud(vm),
         OpCode::Signal => {
             super::ipc::signal(vm);
             None
@@ -3258,148 +3258,6 @@ fn exec_scramble(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     vm.stack.shuffle(&mut rng);
     vm.energy = vm.energy.saturating_sub(10);
     vm.output.push("SCRAMBLE: Stack shuffled".to_string());
-    None
-}
-
-fn exec_hyphae(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    let (cy, cx) = vm.context_loc;
-    if let std::collections::hash_map::Entry::Vacant(e) = vm.mycelium.entry((cy, cx)) {
-        e.insert(Vec::new());
-        vm.energy = vm.energy.saturating_sub(20);
-        vm.output.push(format!("HYPHAE: Sprouted at {},{}", cx, cy));
-    } else {
-        vm.output
-            .push(format!("HYPHAE: Node already exists at {},{}", cx, cy));
-    }
-    None
-}
-
-fn exec_connect(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    if vm.stack.len() >= 2 {
-        let x_val = vm.stack.pop().unwrap();
-        let y_val = vm.stack.pop().unwrap();
-        if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
-            if let Some((ty, tx)) = vm.normalize_coords(y, x) {
-                let (cy, cx) = vm.context_loc;
-                if vm.mycelium.contains_key(&(cy, cx)) && vm.mycelium.contains_key(&(ty, tx)) {
-                    vm.mycelium.get_mut(&(cy, cx)).unwrap().push((ty, tx));
-                    vm.mycelium.get_mut(&(ty, tx)).unwrap().push((cy, cx));
-                    vm.energy = vm.energy.saturating_sub(10);
-                    vm.output.push(format!(
-                        "CONNECT: Mycelium linked {},{} <-> {},{}",
-                        cx, cy, tx, ty
-                    ));
-                } else {
-                    vm.output
-                        .push("CONNECT: Both ends must be Hyphae".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Coordinates out of bounds for connect".to_string());
-            }
-        } else {
-            vm.output
-                .push("Error: Type mismatch for connect".to_string());
-        }
-    } else {
-        vm.output
-            .push("Error: Stack underflow for connect".to_string());
-    }
-    None
-}
-
-fn exec_transport(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    if vm.stack.len() >= 3 {
-        let x_val = vm.stack.pop().unwrap();
-        let y_val = vm.stack.pop().unwrap();
-        let val = vm.stack.pop().unwrap();
-
-        if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
-            if let Some((ty, tx)) = vm.normalize_coords(y, x) {
-                let (cy, cx) = vm.context_loc;
-
-                let mut queue = VecDeque::new();
-                let mut visited = HashSet::new();
-                queue.push_back((cy, cx));
-                visited.insert((cy, cx));
-
-                let mut found = false;
-                while let Some(curr) = queue.pop_front() {
-                    if curr == (ty, tx) {
-                        found = true;
-                        break;
-                    }
-                    if let Some(neighbors) = vm.mycelium.get(&curr) {
-                        for &next in neighbors {
-                            if !visited.contains(&next) {
-                                visited.insert(next);
-                                queue.push_back(next);
-                            }
-                        }
-                    }
-                }
-
-                if found {
-                    vm.grid[ty][tx] = val;
-                    vm.energy = vm.energy.saturating_sub(5);
-                    vm.output
-                        .push(format!("TRANSPORT: Sent value to {},{}", tx, ty));
-                } else {
-                    vm.output
-                        .push("TRANSPORT: No mycelial path found".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Coordinates out of bounds for transport".to_string());
-            }
-        } else {
-            vm.output
-                .push("Error: Type mismatch for transport".to_string());
-        }
-    } else {
-        vm.output
-            .push("Error: Stack underflow for transport".to_string());
-    }
-    None
-}
-
-fn exec_spore_cloud(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    if vm.stack.len() >= 2 {
-        let dens_val = vm.stack.pop().unwrap();
-        let rad_val = vm.stack.pop().unwrap();
-        if let (Value::Int(r), Value::Int(d)) = (rad_val, dens_val) {
-            let (cy, cx) = vm.context_loc;
-            let mut rng = rand::thread_rng();
-
-            let mut count = 0;
-            crate::vm::iterate_circle(
-                #[cfg(feature = "nova")]
-                vm.topology,
-                cx as i64,
-                cy as i64,
-                r,
-                |tx, ty| {
-                    if rng.gen_range(0..100) < d {
-                        if let std::collections::hash_map::Entry::Vacant(e) =
-                            vm.mycelium.entry((ty, tx))
-                        {
-                            e.insert(Vec::new());
-                            count += 1;
-                        }
-                    }
-                },
-            );
-            vm.energy = vm.energy.saturating_sub(count * 5);
-            vm.output
-                .push(format!("SPORE_CLOUD: Sprouted {} hyphae", count));
-        } else {
-            vm.output
-                .push("Error: Type mismatch for spore_cloud".to_string());
-        }
-    } else {
-        vm.output
-            .push("Error: Stack underflow for spore_cloud".to_string());
-    }
     None
 }
 
