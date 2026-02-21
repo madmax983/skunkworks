@@ -76,6 +76,7 @@ pub mod io;
 pub mod lexicon;
 pub mod linguistics;
 pub mod memetics;
+pub mod narrative;
 pub mod list;
 pub mod logic;
 pub mod math;
@@ -131,6 +132,9 @@ pub struct PrologueState {
     /// Hypnagogia: Dream Intensity (0.0 - 100.0).
     #[serde(default)]
     pub dream_intensity: f32,
+    /// Narrative Library (Book Rune Storage).
+    #[serde(default)]
+    pub library: HashMap<String, Value>,
     /// Scratch buffer for signal propagation (Double Buffering).
     #[serde(skip, default)]
     pub scratch_signal_grid: Vec<Vec<Option<Value>>>,
@@ -155,6 +159,7 @@ impl PrologueState {
             history: HashMap::new(),
             epigenetic_grid: vec![vec![epigenetics::EpigeneticMark::None; GRID_SIZE]; GRID_SIZE],
             dream_intensity: 0.0,
+            library: HashMap::new(),
             scratch_signal_grid: vec![vec![None; GRID_SIZE]; GRID_SIZE],
         }
     }
@@ -339,6 +344,11 @@ impl PrologueState {
                             | "ε"
                             | "σ"
                             | "φ"
+                        // Narrative
+                            | "α"
+                            | "ω"
+                            | "✍"
+                            | "📖"
                     ) {
                         self.runes.insert((y, x));
 
@@ -652,6 +662,9 @@ fn apply_propagation_rune(
     if linguistics::apply_linguistics_runes(rune, y, x, current_signals, next_signals) {
         return true;
     }
+    if narrative::apply_narrative_runes(rune, y, x, current_signals, next_signals) {
+        return true;
+    }
     false
 }
 
@@ -854,6 +867,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             resonance::apply_resonance_sinks(vm, rune, y, x);
             prism::apply_prism_sinks(vm, rune, y, x);
             memetics::apply_memetic_sinks(vm, rune, y, x);
+            narrative::apply_narrative_sinks(vm, rune, y, x);
         }
     }
 }
