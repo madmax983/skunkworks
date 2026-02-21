@@ -84,7 +84,8 @@ pub fn process_lexicon(vm: &mut ChimeraVM) {
         // Let's just burn it all.
 
         // Visual Feedback
-        vm.output.push(format!("LEXICON: Casting {} at {},{}", op, x, y));
+        vm.output
+            .push(format!("LEXICON: Casting {} at {},{}", op, x, y));
 
         // Consume Reagents (Turn to 0)
         if horizontal {

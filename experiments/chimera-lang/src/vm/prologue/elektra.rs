@@ -83,7 +83,7 @@ pub fn apply_elektra_runes(
             // Bio-Light: Consumes Voltage -> Adds 5 Energy
             // Also need to limit to once per tick?
             // Yes, otherwise we generate infinite energy in the loop.
-             let last_active = if let Some(Value::Int(t)) = registers.get(&(y, x)) {
+            let last_active = if let Some(Value::Int(t)) = registers.get(&(y, x)) {
                 *t as u64
             } else {
                 u64::MAX

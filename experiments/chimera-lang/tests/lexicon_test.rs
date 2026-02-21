@@ -1,5 +1,5 @@
-use chimera_lang::vm::{ChimeraVM, Value};
 use chimera_lang::ast::{Dna, Helix};
+use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_lexicon_spell_casting() {
@@ -27,7 +27,10 @@ fn test_lexicon_spell_casting() {
 
     // Check log
     let output = vm.output.join("\n");
-    assert!(output.to_lowercase().contains("lexicon: casting fire"), "Should cast FIRE");
+    assert!(
+        output.to_lowercase().contains("lexicon: casting fire"),
+        "Should cast FIRE"
+    );
 }
 
 #[test]
@@ -53,5 +56,10 @@ fn test_lexicon_vertical() {
     assert_eq!(vm.grid[3][0], Value::Int(0));
 
     let output = vm.output.join("\n");
-    assert!(output.to_lowercase().contains("lexicon: casting photosynthesize"), "Should cast HEAL");
+    assert!(
+        output
+            .to_lowercase()
+            .contains("lexicon: casting photosynthesize"),
+        "Should cast HEAL"
+    );
 }

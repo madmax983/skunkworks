@@ -113,12 +113,13 @@ impl Turtle {
             }
 
             // Re-normalize direction to prevent scaling drift
-            let len = (self.state.dir.x * self.state.dir.x +
-                       self.state.dir.y * self.state.dir.y +
-                       self.state.dir.z * self.state.dir.z +
-                       self.state.dir.w * self.state.dir.w).sqrt();
+            let len = (self.state.dir.x * self.state.dir.x
+                + self.state.dir.y * self.state.dir.y
+                + self.state.dir.z * self.state.dir.z
+                + self.state.dir.w * self.state.dir.w)
+                .sqrt();
             if len > 0.0001 {
-               self.state.dir = self.state.dir * (1.0 / len);
+                self.state.dir = self.state.dir * (1.0 / len);
             }
         }
         lines

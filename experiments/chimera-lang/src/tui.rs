@@ -1458,9 +1458,12 @@ where
                         KeyCode::Char('S') => {
                             // Stitch: Weave Strands
                             // Stack Args: [A, B, Pattern]
-                            vm.stack.push(crate::vm::Value::Int(app_state.lab_parent_a as i64));
-                            vm.stack.push(crate::vm::Value::Int(app_state.lab_parent_b as i64));
-                            vm.stack.push(crate::vm::Value::Str(app_state.input_buffer.clone()));
+                            vm.stack
+                                .push(crate::vm::Value::Int(app_state.lab_parent_a as i64));
+                            vm.stack
+                                .push(crate::vm::Value::Int(app_state.lab_parent_b as i64));
+                            vm.stack
+                                .push(crate::vm::Value::Str(app_state.input_buffer.clone()));
 
                             // Execute Weave OpCode
                             let _ = vm.execute_gene_inner(crate::opcode::OpCode::Weave, &[]);
@@ -5083,8 +5086,8 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("Controls: Space (Cast/Reel)"),
     ];
 
-    let info = Paragraph::new(info_text)
-        .block(Block::default().borders(Borders::ALL).title("Tackle Box"));
+    let info =
+        Paragraph::new(info_text).block(Block::default().borders(Borders::ALL).title("Tackle Box"));
     f.render_widget(info, chunks[2]);
 }
 

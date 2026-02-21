@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use ::rand::Rng;
+use macroquad::prelude::*;
 use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
 
 // --- Vec4 Math (from tesseract-ops) ---
@@ -119,11 +119,19 @@ impl SystemMonitor {
             self.target_cpu = self.sys.global_cpu_info().cpu_usage() / 100.0;
             let total_mem = self.sys.total_memory() as f32;
             let used_mem = self.sys.used_memory() as f32;
-            self.target_mem = if total_mem > 0.0 { used_mem / total_mem } else { 0.0 };
+            self.target_mem = if total_mem > 0.0 {
+                used_mem / total_mem
+            } else {
+                0.0
+            };
 
             let total_swap = self.sys.total_swap() as f32;
             let used_swap = self.sys.used_swap() as f32;
-            self.target_swap = if total_swap > 0.0 { used_swap / total_swap } else { 0.0 };
+            self.target_swap = if total_swap > 0.0 {
+                used_swap / total_swap
+            } else {
+                0.0
+            };
 
             let load = System::load_average();
             self.target_load = (load.one as f32 / 4.0).clamp(0.0, 1.0);
@@ -158,7 +166,7 @@ struct Edge {
 
 struct Ant {
     edge_idx: usize,
-    progress: f32, // 0.0 to 1.0
+    progress: f32,  // 0.0 to 1.0
     direction: f32, // 1.0 or -1.0
     carrying: bool,
 }
@@ -175,7 +183,12 @@ impl World {
         let (verts, base_edges) = generate_tesseract_base();
         let mut edges = Vec::new();
         for (u, v) in base_edges {
-            edges.push(Edge { u, v, ty: EdgeType::Base, age: 0.0 });
+            edges.push(Edge {
+                u,
+                v,
+                ty: EdgeType::Base,
+                age: 0.0,
+            });
         }
 
         // Spawn ants
@@ -184,7 +197,11 @@ impl World {
             ants.push(Ant {
                 edge_idx: ::rand::thread_rng().gen_range(0..edges.len()),
                 progress: ::rand::thread_rng().gen_range(0.0..1.0),
-                direction: if ::rand::thread_rng().gen_bool(0.5) { 1.0 } else { -1.0 },
+                direction: if ::rand::thread_rng().gen_bool(0.5) {
+                    1.0
+                } else {
+                    -1.0
+                },
                 carrying: false,
             });
         }
@@ -212,7 +229,7 @@ impl World {
         // But for distance checks, we need the distorted shape.
         let get_distorted_pos = |idx: usize| -> Vec4 {
             let v = self.vertices[idx];
-             v.scale_dim(sx, sy, sz, 1.0 + sw)
+            v.scale_dim(sx, sy, sz, 1.0 + sw)
         };
 
         // 2. Update Ants
@@ -235,7 +252,11 @@ impl World {
             if ant.progress >= 1.0 || ant.progress <= 0.0 {
                 // Reached a node
                 let current_edge = &self.edges[ant.edge_idx];
-                let current_node = if ant.progress >= 1.0 { current_edge.v } else { current_edge.u };
+                let current_node = if ant.progress >= 1.0 {
+                    current_edge.v
+                } else {
+                    current_edge.u
+                };
 
                 // Decide next move
                 let mut connected_edges = Vec::new();
@@ -249,8 +270,8 @@ impl World {
 
                 if connected_edges.is_empty() {
                     // Trapped? Respawn
-                     ants_to_respawn.push(i);
-                     continue;
+                    ants_to_respawn.push(i);
+                    continue;
                 }
 
                 // Bridge Building Logic
@@ -266,7 +287,9 @@ impl World {
                     let mut min_dist = f32::MAX;
 
                     for (vi, _) in self.vertices.iter().enumerate() {
-                        if vi == current_node { continue; }
+                        if vi == current_node {
+                            continue;
+                        }
 
                         // Check if already connected (simple check)
                         let mut connected = false;
@@ -309,16 +332,17 @@ impl World {
                 }
 
                 if !bridged {
-                    let (next_edge, dir) = connected_edges[::rand::thread_rng().gen_range(0..connected_edges.len())];
+                    let (next_edge, dir) =
+                        connected_edges[::rand::thread_rng().gen_range(0..connected_edges.len())];
                     ant.edge_idx = next_edge;
                     ant.direction = dir; // 1.0 or -1.0
                     ant.progress = if dir > 0.0 { 0.0 } else { 1.0 };
                 } else {
-                     // If bridged, the ant effectively waits/builds this frame.
-                     // Next frame it will be at the node again and might pick the new bridge.
-                     ant.progress = ant.progress.clamp(0.0, 1.0);
-                     // Flip direction to stay at node?
-                     // Just Clamp.
+                    // If bridged, the ant effectively waits/builds this frame.
+                    // Next frame it will be at the node again and might pick the new bridge.
+                    ant.progress = ant.progress.clamp(0.0, 1.0);
+                    // Flip direction to stay at node?
+                    // Just Clamp.
                 }
             }
         }
@@ -346,7 +370,12 @@ impl World {
 
         for (i, edge) in self.edges.iter_mut().enumerate() {
             if edge.ty == EdgeType::Base {
-                edges_to_keep.push(Edge { u: edge.u, v: edge.v, ty: edge.ty, age: 0.0 });
+                edges_to_keep.push(Edge {
+                    u: edge.u,
+                    v: edge.v,
+                    ty: edge.ty,
+                    age: 0.0,
+                });
                 index_map[i] = current_idx;
                 current_idx += 1;
             } else {
@@ -357,7 +386,12 @@ impl World {
                 let dist = pos_u.distance(&pos_v);
 
                 if edge.age < max_age && dist < 4.0 {
-                    edges_to_keep.push(Edge { u: edge.u, v: edge.v, ty: edge.ty, age: edge.age });
+                    edges_to_keep.push(Edge {
+                        u: edge.u,
+                        v: edge.v,
+                        ty: edge.ty,
+                        age: edge.age,
+                    });
                     index_map[i] = current_idx;
                     current_idx += 1;
                 } else {
@@ -435,12 +469,24 @@ async fn main() {
         angle_zw += dt * base_speed * 0.3;
 
         // Input Camera
-        if is_key_down(KeyCode::Left) { cam_angle_y += 2.0 * dt; }
-        if is_key_down(KeyCode::Right) { cam_angle_y -= 2.0 * dt; }
-        if is_key_down(KeyCode::Up) { cam_angle_x += 2.0 * dt; }
-        if is_key_down(KeyCode::Down) { cam_angle_x -= 2.0 * dt; }
-        if is_key_down(KeyCode::W) { cam_dist -= 5.0 * dt; }
-        if is_key_down(KeyCode::S) { cam_dist += 5.0 * dt; }
+        if is_key_down(KeyCode::Left) {
+            cam_angle_y += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_angle_y -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_angle_x += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_angle_x -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 5.0 * dt;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 5.0 * dt;
+        }
 
         let cam_pos = vec3(
             cam_dist * cam_angle_x.cos() * cam_angle_y.sin(),
@@ -523,9 +569,27 @@ async fn main() {
 
         set_default_camera();
         draw_text("Hyper-Bridge", 10.0, 20.0, 30.0, WHITE);
-        draw_text(&format!("Ants: {}", world.ants.len()), 10.0, 50.0, 20.0, YELLOW);
-        draw_text(&format!("Bridges: {}", world.edges.len() - 32), 10.0, 70.0, 20.0, Color::new(0.0, 1.0, 1.0, 1.0));
-        draw_text(&format!("CPU: {:.0}%", monitor.cpu_usage * 100.0), 10.0, 90.0, 20.0, RED);
+        draw_text(
+            &format!("Ants: {}", world.ants.len()),
+            10.0,
+            50.0,
+            20.0,
+            YELLOW,
+        );
+        draw_text(
+            &format!("Bridges: {}", world.edges.len() - 32),
+            10.0,
+            70.0,
+            20.0,
+            Color::new(0.0, 1.0, 1.0, 1.0),
+        );
+        draw_text(
+            &format!("CPU: {:.0}%", monitor.cpu_usage * 100.0),
+            10.0,
+            90.0,
+            20.0,
+            RED,
+        );
 
         next_frame().await
     }

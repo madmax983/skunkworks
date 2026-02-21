@@ -7,7 +7,7 @@ use crate::value::Value;
 #[cfg(feature = "nova")]
 use crate::vm::nova::{Organelle, OrganelleType};
 #[cfg(feature = "nova")]
-use crate::vm::ChimeraVM;
+use crate::vm::{iterate_circle, ChimeraVM};
 #[cfg(feature = "nova")]
 use serde::{Deserialize, Serialize};
 
@@ -333,43 +333,22 @@ pub fn exec_inscribe(
                 let mut pattern = Vec::new();
 
                 // Scan circular area
-                let coords = vm.get_circular_coords(cx as i64, cy as i64, radius);
-
-                for (tx, ty) in coords {
-                    let val = &vm.grid[ty][tx];
-                    if !matches!(val, Value::Int(0)) {
-                        // Calculate relative offset
-                        // Handle topology wrapping if needed?
-                        // For simplicity, we store relative coordinates derived from linear difference.
-                        // Ideally we should use modular difference for torus.
-                        // But get_circular_coords returns absolute coords.
-
-                        // Let's rely on simple difference and assume local coherence.
-                        // Or better: In `get_circular_coords`, we iterated dx, dy.
-                        // But we don't have that here easily without re-calculating.
-
-                        // Let's recalc relative offsets.
-                        let dy = (ty as i64) - (cy as i64);
-                        let dx = (tx as i64) - (cx as i64);
-
-                        // We must handle wrapping if we want the sigil to be portable across boundaries.
-                        // But standard subtraction is fine if the pattern is "local".
-                        // Wait, if (cy, cx) is (0,0) and (ty, tx) is (15, 15) via wrapping?
-                        // get_circular_coords logic:
-                        // "for y in 0..GRID_SIZE ... let dy = y - cy ... if dist_sq <= r_sq"
-                        // This uses minimal linear distance on a plane (mostly).
-                        // It does NOT handle wrapping logic for distance calculation unless we implemented it there.
-                        // Looking at `get_circular_coords` in `vm/mod.rs`:
-                        // It iterates 0..16, subtracts, checks dist.
-                        // This implies it only finds neighbors that are "linearly" close.
-                        // So (0,0) neighbors are (0,1), (1,0) etc. (15,15) is far away (dist 15).
-                        // So Torus wrapping is ignored in `get_circular_coords` for Plane/Torus mixed logic.
-
-                        // So simple subtraction is correct for the coords returned by `get_circular_coords`.
-
-                        pattern.push((dy, dx, val.clone()));
-                    }
-                }
+                iterate_circle(
+                    #[cfg(feature = "nova")]
+                    vm.topology,
+                    cx as i64,
+                    cy as i64,
+                    radius,
+                    |tx, ty| {
+                        let val = &vm.grid[ty][tx];
+                        if !matches!(val, Value::Int(0)) {
+                            // Calculate relative offset
+                            let dy = (ty as i64) - (cy as i64);
+                            let dx = (tx as i64) - (cx as i64);
+                            pattern.push((dy, dx, val.clone()));
+                        }
+                    },
+                );
 
                 if !pattern.is_empty() {
                     let sigil = Sigil {

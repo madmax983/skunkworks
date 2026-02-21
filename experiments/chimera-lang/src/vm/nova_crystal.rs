@@ -29,22 +29,27 @@ fn exec_nucleate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 fn exec_accrete(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(Value::Int(r)) = vm.stack.pop() {
         let (cy, cx) = vm.context_loc;
-        let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
         let mut absorbed_sum = 0;
-
-        for (x, y) in coords {
-            // Don't absorb self
-            if x == cx && y == cy {
-                continue;
-            }
-
-            if let Value::Int(ref mut n) = &mut vm.grid[y][x] {
-                if *n > 0 {
-                    absorbed_sum += *n;
-                    *n = 0;
+        crate::vm::iterate_circle(
+            #[cfg(feature = "nova")]
+            vm.topology,
+            cx as i64,
+            cy as i64,
+            r,
+            |x, y| {
+                // Don't absorb self
+                if x == cx && y == cy {
+                    return;
                 }
-            }
-        }
+
+                if let Value::Int(ref mut n) = &mut vm.grid[y][x] {
+                    if *n > 0 {
+                        absorbed_sum += *n;
+                        *n = 0;
+                    }
+                }
+            },
+        );
 
         if let Value::Int(ref mut current) = &mut vm.grid[cy][cx] {
             *current = current.saturating_add(absorbed_sum);

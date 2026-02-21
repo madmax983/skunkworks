@@ -3,7 +3,9 @@ use chimera_lang::vm::prologue::exec_prologue_tick;
 
 #[test]
 fn test_genetic_engineering_compose() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -38,7 +40,9 @@ fn test_genetic_engineering_compose() {
 
 #[test]
 fn test_genetic_engineering_synthesize() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -48,7 +52,7 @@ fn test_genetic_engineering_synthesize() {
 
     let gene_list = vec![
         Value::Str("push(5)".to_string()),
-        Value::Str("add".to_string())
+        Value::Str("add".to_string()),
     ];
 
     // 5,4: List
@@ -81,7 +85,9 @@ fn test_genetic_engineering_synthesize() {
 #[test]
 fn test_genetic_engineering_excise() {
     // Start with 3 strands (0, 1, 2)
-    let mut dna = Dna { helix: Helix { strands: vec![] } };
+    let mut dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     // Add dummy strands
     use chimera_lang::ast::Strand;
     dna.helix.strands.push(Strand { genes: vec![] }); // Index 0
@@ -105,7 +111,9 @@ fn test_genetic_engineering_excise() {
 
 #[test]
 fn test_genetic_engineering_splice() {
-    let mut dna = Dna { helix: Helix { strands: vec![] } };
+    let mut dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     use chimera_lang::ast::Strand;
     dna.helix.strands.push(Strand { genes: vec![] }); // 0
     dna.helix.strands.push(Strand { genes: vec![] }); // 1

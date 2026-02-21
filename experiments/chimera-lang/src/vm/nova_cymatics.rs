@@ -10,7 +10,6 @@ pub fn exec_sift(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) {
         if let Value::Int(r) = val {
             if r > 0 {
                 let (cy, cx) = vm.context_loc;
-                let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
                 let width = 16; // GRID_SIZE
 
                 // We need audio snapshot.
@@ -25,47 +24,54 @@ pub fn exec_sift(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) {
                 let mut moved_count: i64 = 0;
 
                 // Process coordinates
-                for (tx, ty) in coords {
-                    // Skip empty cells
-                    if matches!(vm.grid[ty][tx], Value::Int(0)) {
-                        continue;
-                    }
+                crate::vm::iterate_circle(
+                    #[cfg(feature = "nova")]
+                    vm.topology,
+                    cx as i64,
+                    cy as i64,
+                    r,
+                    |tx, ty| {
+                        // Skip empty cells
+                        if matches!(vm.grid[ty][tx], Value::Int(0)) {
+                            return;
+                        }
 
-                    let curr_idx = ty * width + tx;
-                    let curr_amp = vm.audio_snapshot.pressure[curr_idx].abs();
+                        let curr_idx = ty * width + tx;
+                        let curr_amp = vm.audio_snapshot.pressure[curr_idx].abs();
 
-                    let mut best_amp = curr_amp;
-                    let mut best_pos = None;
+                        let mut best_amp = curr_amp;
+                        let mut best_pos = None;
 
-                    // Check neighbors
-                    for dy in -1..=1 {
-                        for dx in -1..=1 {
-                            if dy == 0 && dx == 0 {
-                                continue;
-                            }
-                            if let Some((ny, nx)) =
-                                vm.normalize_coords(ty as i64 + dy, tx as i64 + dx)
-                            {
-                                // Must be empty
-                                if matches!(vm.grid[ny][nx], Value::Int(0)) {
-                                    let n_idx = ny * width + nx;
-                                    let n_amp = vm.audio_snapshot.pressure[n_idx].abs();
-                                    // Move towards LOWER amplitude (node)
-                                    if n_amp < best_amp {
-                                        best_amp = n_amp;
-                                        best_pos = Some((ny, nx));
+                        // Check neighbors
+                        for dy in -1..=1 {
+                            for dx in -1..=1 {
+                                if dy == 0 && dx == 0 {
+                                    continue;
+                                }
+                                if let Some((ny, nx)) =
+                                    vm.normalize_coords(ty as i64 + dy, tx as i64 + dx)
+                                {
+                                    // Must be empty
+                                    if matches!(vm.grid[ny][nx], Value::Int(0)) {
+                                        let n_idx = ny * width + nx;
+                                        let n_amp = vm.audio_snapshot.pressure[n_idx].abs();
+                                        // Move towards LOWER amplitude (node)
+                                        if n_amp < best_amp {
+                                            best_amp = n_amp;
+                                            best_pos = Some((ny, nx));
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
 
-                    if let Some((ny, nx)) = best_pos {
-                        vm.grid[ny][nx] = vm.grid[ty][tx].clone();
-                        vm.grid[ty][tx] = Value::Int(0);
-                        moved_count += 1;
-                    }
-                }
+                        if let Some((ny, nx)) = best_pos {
+                            vm.grid[ny][nx] = vm.grid[ty][tx].clone();
+                            vm.grid[ty][tx] = Value::Int(0);
+                            moved_count += 1;
+                        }
+                    },
+                );
 
                 vm.energy = vm.energy.saturating_sub(moved_count / 2 + 5);
                 vm.output

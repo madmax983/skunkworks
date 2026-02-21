@@ -71,7 +71,9 @@ impl AkashicRecords {
 
     pub fn save(&self) -> Result<(), String> {
         if self.corrupted {
-            return Err("Cannot save: Akashic Record is corrupted on disk. Fix manually.".to_string());
+            return Err(
+                "Cannot save: Akashic Record is corrupted on disk. Fix manually.".to_string(),
+            );
         }
 
         let content = serde_json::to_string_pretty(self).map_err(|e| e.to_string())?;

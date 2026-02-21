@@ -6,16 +6,22 @@ pub fn exec_claim(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(Value::Int(radius)) = vm.stack.pop() {
         let (cy, cx) = vm.context_loc;
         let owner = vm.ip.0;
-        let coords = vm.get_circular_coords(cx as i64, cy as i64, radius);
 
         let mut success = 0;
-        for (x, y) in coords {
-            // Can only claim if empty or already owned by self
-            if vm.sovereignty_grid[y][x].is_none() || vm.sovereignty_grid[y][x] == Some(owner) {
-                vm.sovereignty_grid[y][x] = Some(owner);
-                success += 1;
-            }
-        }
+        crate::vm::iterate_circle(
+            #[cfg(feature = "nova")]
+            vm.topology,
+            cx as i64,
+            cy as i64,
+            radius,
+            |x, y| {
+                // Can only claim if empty or already owned by self
+                if vm.sovereignty_grid[y][x].is_none() || vm.sovereignty_grid[y][x] == Some(owner) {
+                    vm.sovereignty_grid[y][x] = Some(owner);
+                    success += 1;
+                }
+            },
+        );
 
         // Cost: 10 per cell claimed
         vm.energy = vm.energy.saturating_sub(success as i64 * 10);

@@ -98,16 +98,22 @@ pub fn exec_harvest(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         if let Value::Int(r) = val {
             if r > 0 {
                 let (cy, cx) = vm.context_loc;
-                let coords = vm.get_circular_coords(cx as i64, cy as i64, r as i64);
                 let mut s = String::new();
-                for (x, y) in coords {
-                    if let Value::Int(v) = &vm.grid[y][x] {
-                        s.push_str(&v.to_string());
-                    } else {
-                        s.push('?');
-                    }
-                    s.push(',');
-                }
+                crate::vm::iterate_circle(
+                    #[cfg(feature = "nova")]
+                    vm.topology,
+                    cx as i64,
+                    cy as i64,
+                    r as i64,
+                    |x, y| {
+                        if let Value::Int(v) = &vm.grid[y][x] {
+                            s.push_str(&v.to_string());
+                        } else {
+                            s.push('?');
+                        }
+                        s.push(',');
+                    },
+                );
                 vm.stack.push(Value::Str(s));
                 vm.energy = vm.energy.saturating_sub(10);
             } else {

@@ -227,12 +227,13 @@ pub fn apply_prism_sinks(vm: &mut crate::vm::ChimeraVM, rune: &str, y: usize, x:
                             // Output to South
                             if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
                                 vm.grid[sy][sx] = Value::Int(new_idx as i64);
-                                vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1)); // Light up
+                                vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                                // Light up
                             }
                         }
-                    },
+                    }
                     Err(e) => {
-                         vm.output.push(format!("PROLOGUE: Synthesis failed: {}", e));
+                        vm.output.push(format!("PROLOGUE: Synthesis failed: {}", e));
                     }
                 }
             }
@@ -240,7 +241,7 @@ pub fn apply_prism_sinks(vm: &mut crate::vm::ChimeraVM, rune: &str, y: usize, x:
         "💉" => {
             // Splice: West (StrandIdx), North (TargetIdx) -> Insert Strand
             let n_sig = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
-                 vm.prologue_state.signal_grid[ny][nx].clone()
+                vm.prologue_state.signal_grid[ny][nx].clone()
             } else {
                 None
             };

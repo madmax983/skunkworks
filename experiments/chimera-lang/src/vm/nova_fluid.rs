@@ -240,10 +240,16 @@ pub fn exec_storm(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Opti
     }
 
     let (cy, cx) = vm.context_loc;
-    let coords = vm.get_circular_coords(cx as i64, cy as i64, rad);
-    for (tx, ty) in coords {
-        vm.moisture_grid[ty][tx] = vm.moisture_grid[ty][tx].saturating_add(int);
-    }
+    crate::vm::iterate_circle(
+        #[cfg(feature = "nova")]
+        vm.topology,
+        cx as i64,
+        cy as i64,
+        rad,
+        |tx, ty| {
+            vm.moisture_grid[ty][tx] = vm.moisture_grid[ty][tx].saturating_add(int);
+        },
+    );
     vm.energy = vm.energy.saturating_sub(int / 2 + rad);
     vm.output
         .push(format!("STORM: Rain intensity {} at {},{}", int, cx, cy));
@@ -313,12 +319,18 @@ pub fn exec_dry(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option
     }
 
     let (cy, cx) = vm.context_loc;
-    let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
     let mut removed = 0;
-    for (tx, ty) in coords {
-        removed += vm.moisture_grid[ty][tx];
-        vm.moisture_grid[ty][tx] = 0;
-    }
+    crate::vm::iterate_circle(
+        #[cfg(feature = "nova")]
+        vm.topology,
+        cx as i64,
+        cy as i64,
+        r,
+        |tx, ty| {
+            removed += vm.moisture_grid[ty][tx];
+            vm.moisture_grid[ty][tx] = 0;
+        },
+    );
     vm.energy = vm.energy.saturating_sub(r * 2);
     vm.output.push(format!("DRY: Removed {} moisture", removed));
     None

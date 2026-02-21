@@ -1,6 +1,6 @@
+use ::rand::Rng;
 use macroquad::prelude::*;
 use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
-use ::rand::Rng;
 
 const GRID_SIZE: usize = 4; // 4x4x4x4 = 256 nodes
 
@@ -110,11 +110,19 @@ impl SystemMonitor {
 
             let total_mem = self.sys.total_memory() as f32;
             let used_mem = self.sys.used_memory() as f32;
-            self.target_mem = if total_mem > 0.0 { used_mem / total_mem } else { 0.0 };
+            self.target_mem = if total_mem > 0.0 {
+                used_mem / total_mem
+            } else {
+                0.0
+            };
 
             let total_swap = self.sys.total_swap() as f32;
             let used_swap = self.sys.used_swap() as f32;
-            self.target_swap = if total_swap > 0.0 { used_swap / total_swap } else { 0.0 };
+            self.target_swap = if total_swap > 0.0 {
+                used_swap / total_swap
+            } else {
+                0.0
+            };
 
             let load = System::load_average();
             self.target_load = (load.one as f32 / 4.0).clamp(0.0, 1.0);
@@ -175,19 +183,23 @@ impl HyperLattice {
             let mut neighbors_sum = 0;
 
             let dirs = [
-                (1,0,0,0), (-1,0,0,0),
-                (0,1,0,0), (0,-1,0,0),
-                (0,0,1,0), (0,0,-1,0),
-                (0,0,0,1), (0,0,0,-1)
+                (1, 0, 0, 0),
+                (-1, 0, 0, 0),
+                (0, 1, 0, 0),
+                (0, -1, 0, 0),
+                (0, 0, 1, 0),
+                (0, 0, -1, 0),
+                (0, 0, 0, 1),
+                (0, 0, 0, -1),
             ];
 
             for (dx, dy, dz, dw) in dirs {
-                 let nx = (x as isize + dx).rem_euclid(size) as usize;
-                 let ny = (y as isize + dy).rem_euclid(size) as usize;
-                 let nz = (z as isize + dz).rem_euclid(size) as usize;
-                 let nw = (w as isize + dw).rem_euclid(size) as usize;
-                 let n_idx = self.index(nx, ny, nz, nw);
-                 neighbors_sum += self.spins[n_idx] as i32;
+                let nx = (x as isize + dx).rem_euclid(size) as usize;
+                let ny = (y as isize + dy).rem_euclid(size) as usize;
+                let nz = (z as isize + dz).rem_euclid(size) as usize;
+                let nw = (w as isize + dw).rem_euclid(size) as usize;
+                let n_idx = self.index(nx, ny, nz, nw);
+                neighbors_sum += self.spins[n_idx] as i32;
             }
 
             let delta_e = 2.0 * (s as f32) * (neighbors_sum as f32); // dE = 2 * s * H_local
@@ -228,16 +240,32 @@ async fn main() {
         angle_zw += dt * rot_speed * 0.2;
 
         // Input Camera
-        if is_key_down(KeyCode::Left) { cam_angle_y += 2.0 * dt; }
-        if is_key_down(KeyCode::Right) { cam_angle_y -= 2.0 * dt; }
-        if is_key_down(KeyCode::Up) { cam_angle_x += 2.0 * dt; }
-        if is_key_down(KeyCode::Down) { cam_angle_x -= 2.0 * dt; }
-        if is_key_down(KeyCode::W) { cam_dist -= 5.0 * dt; }
-        if is_key_down(KeyCode::S) { cam_dist += 5.0 * dt; }
+        if is_key_down(KeyCode::Left) {
+            cam_angle_y += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_angle_y -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_angle_x += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_angle_x -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 5.0 * dt;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 5.0 * dt;
+        }
 
         // Temp control
-        if is_key_down(KeyCode::Equal) { temp_offset += dt * 5.0; }
-        if is_key_down(KeyCode::Minus) { temp_offset -= dt * 5.0; }
+        if is_key_down(KeyCode::Equal) {
+            temp_offset += dt * 5.0;
+        }
+        if is_key_down(KeyCode::Minus) {
+            temp_offset -= dt * 5.0;
+        }
 
         // Ising Update
         // Temp base = 2.0 + CPU usage * 10.0 + offset
@@ -272,14 +300,17 @@ async fn main() {
         let offset = size_f / 2.0 - 0.5;
 
         let transform = |idx: usize| -> Vec3 {
-            let (x,y,z,w) = lattice.coords(idx);
+            let (x, y, z, w) = lattice.coords(idx);
             let vx = (x as f32 - offset) / (size_f * 0.5);
             let vy = (y as f32 - offset) / (size_f * 0.5);
             let vz = (z as f32 - offset) / (size_f * 0.5);
             let vw = (w as f32 - offset) / (size_f * 0.5);
 
             let v = Vec4::new(vx, vy, vz, vw).scale_dim(1.0, 1.0, 1.0, scale_w);
-            let v = v.rotate_xw(angle_xw).rotate_yw(angle_yw).rotate_zw(angle_zw);
+            let v = v
+                .rotate_xw(angle_xw)
+                .rotate_yw(angle_yw)
+                .rotate_zw(angle_zw);
             v.project_to_3d(4.0)
         };
 
@@ -299,13 +330,17 @@ async fn main() {
         }
 
         // Draw Edges (Only along positive axes to avoid doubles)
-        let dirs = [(1,0,0,0), (0,1,0,0), (0,0,1,0), (0,0,0,1)];
+        let dirs = [(1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1)];
         for i in 0..lattice.spins.len() {
-            let (x,y,z,w) = lattice.coords(i);
+            let (x, y, z, w) = lattice.coords(i);
 
-            for (dx,dy,dz,dw) in dirs {
-                if x+dx < GRID_SIZE && y+dy < GRID_SIZE && z+dz < GRID_SIZE && w+dw < GRID_SIZE {
-                    let j = lattice.index(x+dx, y+dy, z+dz, w+dw);
+            for (dx, dy, dz, dw) in dirs {
+                if x + dx < GRID_SIZE
+                    && y + dy < GRID_SIZE
+                    && z + dz < GRID_SIZE
+                    && w + dw < GRID_SIZE
+                {
+                    let j = lattice.index(x + dx, y + dy, z + dz, w + dw);
                     let p1 = transform(i);
                     let p2 = transform(j);
 
@@ -323,9 +358,27 @@ async fn main() {
         set_default_camera();
 
         draw_text("HYPER-FERRO", 10.0, 20.0, 30.0, WHITE);
-        draw_text(&format!("Temp: {:.2} (CPU: {:.0}%)", temp, monitor.cpu_usage * 100.0), 10.0, 50.0, 20.0, RED);
-        draw_text(&format!("Lattice Scale (Mem): {:.2}", scale_w), 10.0, 70.0, 20.0, BLUE);
-        draw_text(&format!("Rotation (Swap/Load): {:.2}", rot_speed), 10.0, 90.0, 20.0, GREEN);
+        draw_text(
+            &format!("Temp: {:.2} (CPU: {:.0}%)", temp, monitor.cpu_usage * 100.0),
+            10.0,
+            50.0,
+            20.0,
+            RED,
+        );
+        draw_text(
+            &format!("Lattice Scale (Mem): {:.2}", scale_w),
+            10.0,
+            70.0,
+            20.0,
+            BLUE,
+        );
+        draw_text(
+            &format!("Rotation (Swap/Load): {:.2}", rot_speed),
+            10.0,
+            90.0,
+            20.0,
+            GREEN,
+        );
         draw_text("Controls: +/- Temp, Arrows Camera", 10.0, 110.0, 20.0, GRAY);
 
         next_frame().await

@@ -1,11 +1,13 @@
+use chimera_lang::ast::{Dna, Helix};
 use chimera_lang::prelude::*;
 use chimera_lang::vm::prologue::exec_prologue_tick;
 use chimera_lang::vm::Value;
-use chimera_lang::ast::{Dna, Helix};
 
 #[test]
 fn test_memetic_source() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -24,7 +26,9 @@ fn test_memetic_source() {
 
 #[test]
 fn test_memetic_evolve() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -48,7 +52,9 @@ fn test_memetic_evolve() {
 
 #[test]
 fn test_memetic_censor() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -69,7 +75,11 @@ fn test_memetic_censor() {
 
     // φ should BLOCK because "BadWord" contains "Bad"
     let result = vm.prologue_state.signal_grid[5][6].clone();
-    assert!(result.is_none(), "Expected censorship to block signal, got {:?}", result);
+    assert!(
+        result.is_none(),
+        "Expected censorship to block signal, got {:?}",
+        result
+    );
 
     // Test Passing Case
     // Change Filter to "Good"
@@ -82,7 +92,9 @@ fn test_memetic_censor() {
 
 #[test]
 fn test_memetic_spread() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -106,7 +118,9 @@ fn test_memetic_spread() {
 
 #[test]
 fn test_memetic_imitate() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 

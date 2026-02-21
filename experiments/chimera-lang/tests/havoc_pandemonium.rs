@@ -1,5 +1,5 @@
-use chimera_lang::vm::{ChimeraVM, Value};
 use chimera_lang::ast::{Dna, Helix};
+use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_fuse_explosion_capped() {
@@ -7,7 +7,9 @@ fn test_fuse_explosion_capped() {
     // Verifies that string length is capped at MAX_STRING_LEN (65536).
 
     // Setup VM
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -43,9 +45,16 @@ fn test_fuse_explosion_capped() {
 
     // Assert limit
     if let Value::Str(final_s) = &vm.grid[5][3] {
-        assert!(final_s.len() <= 65536, "String exceeded limit! Len: {}", final_s.len());
+        assert!(
+            final_s.len() <= 65536,
+            "String exceeded limit! Len: {}",
+            final_s.len()
+        );
         // Also assert it grew large enough to hit the limit (unless it started huge)
-        assert!(final_s.len() >= 65536, "String didn't reach limit (growth failure?)");
+        assert!(
+            final_s.len() >= 65536,
+            "String didn't reach limit (growth failure?)"
+        );
     } else {
         panic!("Final result was not a string");
     }

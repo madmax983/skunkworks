@@ -1,10 +1,10 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use crate::vm::{ChimeraVM, MAX_BRAINFUCK_OUTPUT, MAX_MEMES, MAX_VIRUSES};
     use crate::ast::{Dna, Helix, Strand};
     use crate::opcode::OpCode;
     use crate::vm::Value;
+    use crate::vm::{ChimeraVM, MAX_BRAINFUCK_OUTPUT, MAX_MEMES, MAX_VIRUSES};
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
@@ -37,8 +37,14 @@ mod tests {
         // Execute Conceive
         // Note: Conceive usually needs genes in the strand to conceptualize.
         // We need to add some genes to strand 0.
-        vm.dna.helix.strands[0].genes.push(crate::ast::Gene { op: OpCode::Nop, args: vec![] });
-        vm.dna.helix.strands[0].genes.push(crate::ast::Gene { op: OpCode::Nop, args: vec![] });
+        vm.dna.helix.strands[0].genes.push(crate::ast::Gene {
+            op: OpCode::Nop,
+            args: vec![],
+        });
+        vm.dna.helix.strands[0].genes.push(crate::ast::Gene {
+            op: OpCode::Nop,
+            args: vec![],
+        });
 
         vm.execute_gene_inner(OpCode::Conceive, &[]);
 
@@ -54,7 +60,7 @@ mod tests {
         for _ in 0..MAX_VIRUSES {
             vm.virus_library.push(crate::vm::memetics::Virus {
                 name: "Filler".to_string(),
-                color: (0,0,0),
+                color: (0, 0, 0),
                 pattern: "".to_string(),
                 mutation_rate: 0,
                 payload: None,

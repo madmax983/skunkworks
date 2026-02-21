@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use ::rand::Rng;
+use macroquad::prelude::*;
 use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
 
 // --- 4D Math ---
@@ -26,12 +26,7 @@ impl Vec4 {
     }
 
     pub fn scale_dim(&self, sx: f32, sy: f32, sz: f32, sw: f32) -> Self {
-        Self::new(
-            self.x * sx,
-            self.y * sy,
-            self.z * sz,
-            self.w * sw,
-        )
+        Self::new(self.x * sx, self.y * sy, self.z * sz, self.w * sw)
     }
 
     pub fn add(&self, other: Vec4) -> Self {
@@ -284,7 +279,9 @@ impl Boid4D {
             rng.gen_range(-1.0..1.0),
             rng.gen_range(-1.0..1.0),
             rng.gen_range(-1.0..1.0),
-        ).normalize().scale(0.03);
+        )
+        .normalize()
+        .scale(0.03);
 
         Self {
             position: pos,
@@ -294,7 +291,8 @@ impl Boid4D {
         }
     }
 
-    pub fn update(&mut self, bounds: Vec4) { // bounds defines the scale of the tesseract
+    pub fn update(&mut self, bounds: Vec4) {
+        // bounds defines the scale of the tesseract
         self.velocity += self.acceleration;
         self.velocity = self.velocity.limit(self.dna.max_speed);
         self.position += self.velocity;
@@ -405,7 +403,9 @@ impl Boid4D {
     }
 
     fn seek(&self, target: Vec4) -> Vec4 {
-        let desired = (target - self.position).normalize().scale(self.dna.max_speed);
+        let desired = (target - self.position)
+            .normalize()
+            .scale(self.dna.max_speed);
         let steer = desired - self.velocity;
         steer.limit(self.dna.max_force)
     }
@@ -455,12 +455,24 @@ async fn main() {
         }
 
         // Camera Input
-        if is_key_down(KeyCode::Left) { cam_angle_y += 2.0 * dt; }
-        if is_key_down(KeyCode::Right) { cam_angle_y -= 2.0 * dt; }
-        if is_key_down(KeyCode::Up) { cam_angle_x += 2.0 * dt; }
-        if is_key_down(KeyCode::Down) { cam_angle_x -= 2.0 * dt; }
-        if is_key_down(KeyCode::W) { cam_dist -= 5.0 * dt; }
-        if is_key_down(KeyCode::S) { cam_dist += 5.0 * dt; }
+        if is_key_down(KeyCode::Left) {
+            cam_angle_y += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_angle_y -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_angle_x += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_angle_x -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 5.0 * dt;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 5.0 * dt;
+        }
 
         let cam_pos = vec3(
             cam_dist * cam_angle_x.cos() * cam_angle_y.sin(),
@@ -505,12 +517,42 @@ async fn main() {
         draw_tesseract_wireframe(bounds, angle_xw, angle_yw, angle_zw);
 
         set_default_camera();
-        draw_text("Hyper-Flock: 4D Boids driven by System Load", 10.0, 20.0, 30.0, WHITE);
+        draw_text(
+            "Hyper-Flock: 4D Boids driven by System Load",
+            10.0,
+            20.0,
+            30.0,
+            WHITE,
+        );
         draw_text(&format!("Boids: {}", boids.len()), 10.0, 50.0, 20.0, WHITE);
-        draw_text(&format!("CPU(X): {:.0}%", monitor.cpu_usage * 100.0), 10.0, 70.0, 20.0, RED);
-        draw_text(&format!("MEM(Y): {:.0}%", monitor.mem_usage * 100.0), 10.0, 90.0, 20.0, BLUE);
-        draw_text(&format!("SWP(Z): {:.0}%", monitor.swap_usage * 100.0), 10.0, 110.0, 20.0, YELLOW);
-        draw_text(&format!("LOD(W): {:.2}", monitor.load_avg), 10.0, 130.0, 20.0, GREEN);
+        draw_text(
+            &format!("CPU(X): {:.0}%", monitor.cpu_usage * 100.0),
+            10.0,
+            70.0,
+            20.0,
+            RED,
+        );
+        draw_text(
+            &format!("MEM(Y): {:.0}%", monitor.mem_usage * 100.0),
+            10.0,
+            90.0,
+            20.0,
+            BLUE,
+        );
+        draw_text(
+            &format!("SWP(Z): {:.0}%", monitor.swap_usage * 100.0),
+            10.0,
+            110.0,
+            20.0,
+            YELLOW,
+        );
+        draw_text(
+            &format!("LOD(W): {:.2}", monitor.load_avg),
+            10.0,
+            130.0,
+            20.0,
+            GREEN,
+        );
 
         next_frame().await
     }

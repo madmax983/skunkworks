@@ -1,9 +1,9 @@
 #[cfg(feature = "biophysics")]
 use super::normalize_coords;
 #[cfg(feature = "biophysics")]
-use crate::vm::{ChimeraVM, Value};
-#[cfg(feature = "biophysics")]
 use crate::vm::neuron::Neuron;
+#[cfg(feature = "biophysics")]
+use crate::vm::{ChimeraVM, Value};
 
 #[cfg(feature = "biophysics")]
 pub fn scan_neural_grid(vm: &mut ChimeraVM) {
@@ -15,7 +15,8 @@ pub fn scan_neural_grid(vm: &mut ChimeraVM) {
             if s == "♦" {
                 if !vm.neurons.contains_key(&(y, x)) {
                     vm.neurons.insert((y, x), Neuron::new());
-                    vm.output.push(format!("NEURAL: New Neuron formed at {},{}", x, y));
+                    vm.output
+                        .push(format!("NEURAL: New Neuron formed at {},{}", x, y));
                 }
                 active_neurons.insert((y, x));
             }
@@ -27,7 +28,8 @@ pub fn scan_neural_grid(vm: &mut ChimeraVM) {
     for coord in existing_neurons {
         if !active_neurons.contains(&coord) {
             vm.neurons.remove(&coord);
-            vm.output.push(format!("NEURAL: Neuron decayed at {},{}", coord.1, coord.0));
+            vm.output
+                .push(format!("NEURAL: Neuron decayed at {},{}", coord.1, coord.0));
         }
     }
 }
@@ -77,7 +79,7 @@ pub fn fire_neurons(vm: &mut ChimeraVM) {
     for (y, x, v) in voltages {
         let brightness = ((v + 65.0) * 2.0).clamp(0.0, 50.0) as i64;
         if brightness > 0 {
-             vm.light_grid[y][x] = vm.light_grid[y][x].max(brightness);
+            vm.light_grid[y][x] = vm.light_grid[y][x].max(brightness);
         }
     }
 }
