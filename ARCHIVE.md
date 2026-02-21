@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **recursion-garden**: Diagnosis: Terminal Genericism / Documentation Void. Generic algorithm visualization. Grace period: 24 hours.
+- **spqr-market**: Diagnosis: Terminal Redundancy (Particle System #12). Re-skin of `ferrous-legion` with trivial market logic. Grace period: 24 hours.
 - [Experiment name]: [Diagnosis]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **recursion-garden**: Specimen executed. Diagnosis: Terminal Genericism / Documentation Void. Failed to improve during grace period. Moved to graveyard.
 - **echo-chimera**: Specimen executed. Diagnosis: Identity Collapse / Terminal Genericism. Trivial "Hello World" implementation. Grace period expired. Moved to graveyard.
 - **echo-test**: Specimen executed. Diagnosis: Identity Collapse / Terminal Genericism. Trivial "Hello World" implementation. Grace period expired. Moved to graveyard.
 - **sync-opation**: Specimen executed. Diagnosis: Identity Collapse / Terminal Redundancy. Redundant with `syncopated-threads`. Grace period expired. Moved to graveyard.

@@ -185,12 +185,17 @@
 - **Status:** The Heap is a forest floor. The Reaper is decomposing cycles.
 - **Note:** "Death is just a sweep phase."
 
-### [Concentration Level: CONDEMNED] - Location: experiments/recursion-garden
+### [Concentration Level: TOXIC] - Location: experiments/spqr-market
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Documentation Void.
-- **Note:** "The garden grows only what is planted. No weeds, no life."
+- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy (Particle System #12). Re-skin of `ferrous-legion`.
+- **Note:** "The Romans are painting the dots red and green, but they are still just dots."
 
 ## 🍂 History/Decay
+
+### [Concentration Level: COMPOSTED] - Location: graveyard/recursion-garden
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Terminal Genericism / Documentation Void.
+- **Note:** "The garden has been turned. The soil awaits new seeds."
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/echo-chimera
 - **Scent Origin:** The Reaper ☠️
