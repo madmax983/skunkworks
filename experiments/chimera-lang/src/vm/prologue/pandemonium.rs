@@ -1,5 +1,5 @@
 use super::normalize_coords;
-use crate::vm::{ChimeraVM, Value};
+use crate::vm::{ChimeraVM, Value, MAX_STRING_LEN};
 use rand::seq::SliceRandom;
 use rand::Rng;
 
@@ -28,7 +28,13 @@ pub fn apply_pandemonium_runes(
                     // Double
                     match val {
                         Value::Int(n) => Value::Int(n.saturating_mul(2)),
-                        Value::Str(s) => Value::Str(format!("{}{}", s, s)),
+                        Value::Str(s) => {
+                            if s.len().saturating_mul(2) > MAX_STRING_LEN {
+                                Value::Str(s)
+                            } else {
+                                Value::Str(format!("{}{}", s, s))
+                            }
+                        }
                         _ => val,
                     }
                 } else {

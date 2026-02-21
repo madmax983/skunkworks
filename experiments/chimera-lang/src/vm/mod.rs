@@ -86,6 +86,7 @@ pub const MAX_MEMES: usize = 64;
 pub const MAX_VIRUSES: usize = 64;
 #[cfg(feature = "nova")]
 pub const MAX_BRAINFUCK_OUTPUT: usize = 1024;
+pub const MAX_STRING_LEN: usize = 65536;
 
 #[cfg(feature = "nova")]
 pub mod akashic;
