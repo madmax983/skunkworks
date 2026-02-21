@@ -131,3 +131,8 @@
 **Bloat:** `tui-shared/widgets.rs` contained `LogList` and `Button` widgets that were only used by a single experiment (`harmonic-engine`).
 **Cut:** Moved widgets to `experiments/harmonic-engine`, removed unused `Button` methods (`hovered`, `clicked`) and `LogList::block`.
 **Saved:** 1 module in shared crate, ~40 lines of unused code, enforced encapsulation.
+
+## [Reduction]
+**Bloat:** `nova_bureaucracy` module (Red Tape, Forms, Permits) - a joke feature adding state (`bureaucracy_grid`), 4 OpCodes, and logic.
+**Cut:** Deleted the entire module, OpCodes, grid field, and tests.
+**Saved:** ~150 lines of code, 1 Vec<Vec<i64>> allocation per VM, 4 OpCode variants.
