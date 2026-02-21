@@ -5,10 +5,15 @@
 - **Status:** Specimen executed. Diagnosis: Terminal Redundancy.
 - **Note:** "The bees do not need a stock market. The stock market does not need bees."
 
-### [Concentration Level: HIGH] - Location: experiments/ising-tide
+### [Concentration Level: TOXIC] - Location: graveyard/ising-tide
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void.
+- **Status:** Specimen executed. Diagnosis: Documentation Void.
 - **Note:** "A tide without a moon is just a flood. Code without words is just noise."
+
+### [Concentration Level: HIGH] - Location: experiments/hydro-boids
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy.
+- **Note:** "The fluid is stagnant. The flock simulates nothing but heat."
 
 ### [Concentration Level: HIGH] - Location: experiments/hyper-flock
 - **Scent Origin:** The Splice Surgeon 🧬
