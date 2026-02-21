@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hydro-boids**: Diagnosis: Terminal Redundancy / Technological Regression. Naive O(N^2) CPU SPH (ADR 045 Violation). Redundant with `luminous-flock`. Grace period: 24 hours.
+- **chemical-specter**: Diagnosis: Terminal Redundancy (Gray-Scott #8) / Documentation Void. No `README.md`. Redundant with `reaction-monitor`. Grace period: 24 hours.
 - [Experiment name]: [Diagnosis]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **hydro-boids**: Specimen executed. Diagnosis: Terminal Redundancy / Technological Regression. Naive O(N^2) CPU SPH. Redundant with `luminous-flock`. Grace period expired. Moved to graveyard.
 - **ising-tide**: Specimen executed. Diagnosis: Documentation Void / Dangerous Mystery. Hardcoded implementation without context. Grace period expired. Moved to graveyard.
 - **market-swarm**: Specimen executed. Diagnosis: Terminal Redundancy (Chimera #4). Redundant with `market-flow` and `luminous-flock`. Grace period expired. Moved to graveyard.
 - **fluid-rain**: Specimen executed. Diagnosis: Technological Regression / ADR 045 Violation. Naive O(N^2) CPU SPH. Grace period expired. Moved to graveyard.
