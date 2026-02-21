@@ -90,12 +90,17 @@
 - **Status:** The musicians are playing. Contention is rhythm.
 - **Note**: "The lock is the beat. The wait is the swing."
 
-### [Concentration Level: TOXIC] - Location: experiments/fluid-rain
+### [Concentration Level: TOXIC] - Location: experiments/chemical-specter
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Technological Regression (CPU SPH).
-- **Note:** "A tide without a moon is just a flood."
+- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy (Gray-Scott #7).
+- **Note:** "The reaction is stale. The chemicals are inert."
 
 ## 🍂 History/Decay
+
+### [Concentration Level: TOXIC] - Location: graveyard/fluid-rain
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Biomass returned to the void.
+- **Note:** "The rain has ceased. The fluid has evaporated."
 
 ### [Concentration Level: TOXIC] - Location: graveyard/lock-step
 - **Scent Origin:** The Reaper ☠️
