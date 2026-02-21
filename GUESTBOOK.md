@@ -10,6 +10,11 @@
 - **Status:** DX Audit mostly passed. 8 failing tests and 18 warnings need polish.
 - **Note:** "The surface is clean, but the engine rattles."
 
+### [Concentration Level: HIGH] - Location: experiments/hyper-mold
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The mold is growing into the 4th dimension. Pheromones are leaking across the W-axis.
+- **Note:** "The maze is the machine itself."
+
 ### [Concentration Level: HIGH] - Location: experiments/hyperbolic-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Agents are spiraling into the infinite edge.
