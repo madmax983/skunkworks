@@ -1,15 +1,19 @@
 use super::normalize_coords;
 use crate::vm::Value;
+use std::collections::HashMap;
 
 #[cfg(feature = "elektra")]
 pub fn apply_elektra_runes(
     rune: &str,
     y: usize,
     x: usize,
+    tick: u64,
     current_signals: &[Vec<Option<Value>>],
     next_signals: &mut Vec<Vec<Option<Value>>>,
     voltage_grid: &mut Vec<Vec<f32>>,
     resistance_grid: &mut Vec<Vec<f32>>,
+    energy: &mut i64,
+    registers: &mut HashMap<(usize, usize), Value>,
 ) -> bool {
     let mut changes = false;
     let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
@@ -50,6 +54,50 @@ pub fn apply_elektra_runes(
                 }
             }
         }
+        "🔌" => {
+            // Bio-Generator: Consumes 1 Energy -> Sets 100V
+            // We use registers to ensure we only consume energy once per tick.
+            let last_active = if let Some(Value::Int(t)) = registers.get(&(y, x)) {
+                *t as u64
+            } else {
+                u64::MAX
+            };
+
+            if last_active != tick {
+                if *energy >= 1 {
+                    *energy -= 1;
+                    registers.insert((y, x), Value::Int(tick as i64));
+                    voltage_grid[y][x] = 100.0;
+                    resistance_grid[y][x] = -1.0; // Source
+                } else {
+                    // Not enough energy, acts as high resistance
+                    resistance_grid[y][x] = 1000.0;
+                }
+            } else {
+                // Already paid this tick
+                voltage_grid[y][x] = 100.0;
+                resistance_grid[y][x] = -1.0;
+            }
+        }
+        "💡" => {
+            // Bio-Light: Consumes Voltage -> Adds 5 Energy
+            // Also need to limit to once per tick?
+            // Yes, otherwise we generate infinite energy in the loop.
+             let last_active = if let Some(Value::Int(t)) = registers.get(&(y, x)) {
+                *t as u64
+            } else {
+                u64::MAX
+            };
+
+            if last_active != tick {
+                let v = voltage_grid[y][x];
+                if v > 50.0 {
+                    *energy += 5;
+                    registers.insert((y, x), Value::Int(tick as i64));
+                }
+            }
+            resistance_grid[y][x] = 100.0; // Load
+        }
         _ => {}
     }
     changes
@@ -60,10 +108,13 @@ pub fn apply_elektra_runes(
     _rune: &str,
     _y: usize,
     _x: usize,
+    _tick: u64,
     _current_signals: &[Vec<Option<Value>>],
     _next_signals: &mut Vec<Vec<Option<Value>>>,
     _voltage_grid: &mut Vec<Vec<f32>>,
     _resistance_grid: &mut Vec<Vec<f32>>,
+    _energy: &mut i64,
+    _registers: &mut HashMap<(usize, usize), Value>,
 ) -> bool {
     false
 }
