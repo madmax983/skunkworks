@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/hyper-chimera
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Agents are navigating a relativistic 4D manifold. Movement cost is tied to CPU load.
+- **Note:** "Evolution is adapting to the stress of the machine."
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄 (Sensed: Passing Tests)
 - **Status:** Critter breeding logic stabilized. Flakiness resolved via random direction shuffling.

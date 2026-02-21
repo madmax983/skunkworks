@@ -1457,4 +1457,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: ChimeraVM agents inhabiting a non-orientable surface (Klein Bottle).
 - **Novel trait**: Chiral Mutation. When an agent crosses the topological twist, its handedness flips.
 - **Status**: experiments/chimera-klein
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Chiral Mutation Verified.
+
+### hyper-chimera
+- **Parents**: experiments/hyper-neuron + experiments/chimera-lang
+- **Concept**: ChimeraVM agents inhabiting a 4D Hypercube where the metric space is distorted by system metrics (CPU/RAM).
+- **Novel trait**: Relativistic Metabolism. Movement cost and distance are determined by the host computer's stress.
+- **Status**: experiments/hyper-chimera
+- **Evaluation**: In Progress.
