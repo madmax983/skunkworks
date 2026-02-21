@@ -1,0 +1,13 @@
+[package]
+name = "chimera-hologram"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chimera-lang = { path = "../chimera-lang" }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+rand = { workspace = true }
+rustfft = "6.2"
+num-complex = "0.4"
