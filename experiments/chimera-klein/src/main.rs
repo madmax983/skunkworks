@@ -42,27 +42,62 @@ impl Agent {
 
         let genes = vec![
             // Move North (dy=-1, dx=0)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(-1)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Migrate, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(-1)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Migrate,
+                args: vec![],
+            },
             // Move East (dy=0, dx=1)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Migrate, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Migrate,
+                args: vec![],
+            },
             // Move South (dy=1, dx=0)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Migrate, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Migrate,
+                args: vec![],
+            },
             // Move West (dy=0, dx=-1)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(-1)] },
-            Gene { op: OpCode::Migrate, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(-1)],
+            },
+            Gene {
+                op: OpCode::Migrate,
+                args: vec![],
+            },
             // Loop
-            Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(0)],
+            },
         ];
 
         let dna = Dna {
@@ -80,7 +115,10 @@ impl Agent {
         Self {
             vm,
             pos: vec2(u, v),
-            vel: vec2(macroquad::rand::gen_range(-0.01, 0.01), macroquad::rand::gen_range(-0.01, 0.01)),
+            vel: vec2(
+                macroquad::rand::gen_range(-0.01, 0.01),
+                macroquad::rand::gen_range(-0.01, 0.01),
+            ),
             handedness: true,
             color: GREEN,
         }
@@ -172,12 +210,24 @@ async fn main() {
         }
 
         // Camera Input
-        if is_key_down(KeyCode::Left) { cam_angle_y += 0.02; }
-        if is_key_down(KeyCode::Right) { cam_angle_y -= 0.02; }
-        if is_key_down(KeyCode::Up) { cam_angle_x += 0.02; }
-        if is_key_down(KeyCode::Down) { cam_angle_x -= 0.02; }
-        if is_key_down(KeyCode::W) { cam_dist -= 0.1; }
-        if is_key_down(KeyCode::S) { cam_dist += 0.1; }
+        if is_key_down(KeyCode::Left) {
+            cam_angle_y += 0.02;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_angle_y -= 0.02;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_angle_x += 0.02;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_angle_x -= 0.02;
+        }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 0.1;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 0.1;
+        }
 
         let cam_pos = vec3(
             cam_dist * cam_angle_x.cos() * cam_angle_y.sin(),
@@ -218,8 +268,20 @@ async fn main() {
         set_default_camera();
 
         draw_text("Chimera Klein", 10.0, 20.0, 30.0, WHITE);
-        draw_text("Green = Right Handed | Orange = Left Handed", 10.0, 50.0, 20.0, GRAY);
-        draw_text(&format!("Agents: {}", agents.len()), 10.0, 70.0, 20.0, WHITE);
+        draw_text(
+            "Green = Right Handed | Orange = Left Handed",
+            10.0,
+            50.0,
+            20.0,
+            GRAY,
+        );
+        draw_text(
+            &format!("Agents: {}", agents.len()),
+            10.0,
+            70.0,
+            20.0,
+            WHITE,
+        );
 
         next_frame().await
     }

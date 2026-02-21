@@ -161,7 +161,8 @@ pub fn process_fate(vm: &mut ChimeraVM) {
             }
             Arcana::TheEmperor => {
                 // Authority: Order established
-                vm.output.push("FATE: The Emperor demands order.".to_string());
+                vm.output
+                    .push("FATE: The Emperor demands order.".to_string());
             }
             Arcana::TheHierophant => {
                 // Tradition: Faith

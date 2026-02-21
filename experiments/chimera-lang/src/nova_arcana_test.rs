@@ -75,5 +75,4 @@ mod tests {
 
         assert!(vm.energy > initial_energy);
     }
-
 }
