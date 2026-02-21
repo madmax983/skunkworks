@@ -1,4 +1,4 @@
-# 👺 Havoc Report: Recursive Include Stack Overflow
+# 👺 Havoc Report: Recursive Include Stack Overflow [FIXED]
 
 ## 🧨 The Trigger
 The `preprocess` function in `compiler.rs` blindly follows `include` directives without checking for cycles or recursion depth. This allows a trivial Denial of Service (DoS) attack via two files that include each other.
@@ -16,13 +16,14 @@ fatal runtime error: stack overflow, aborting
 
 Or run the included test:
 ```bash
-cargo test --test repro_recursion
+cargo test --test regression_recursive_include
 ```
 
-## 😈 Havoc's Note
-You assumed the file system was a Directed Acyclic Graph. You were wrong. Recursion is infinite if you let it be.
+## 🔧 The Fix
+Implemented `MAX_INCLUDE_DEPTH` check (32) and cycle detection using a `visited` set in `compiler.rs`.
+Verified by `tests/regression_recursive_include.rs`.
 
-# 👺 Havoc Report: IPC Message Theft via Lock Re-locking
+# 👺 Havoc Report: IPC Message Theft via Lock Re-locking [FIXED]
 
 ## 🧨 The Trigger
 The `ipc::receive` function in `vm/ipc.rs` iterates over all files in the channel directory, including files that are already locked (ending in `.lock`). It attempts to rename any file it finds by appending `.lock`.
@@ -44,12 +45,11 @@ Run the included test:
 cargo test --test havoc_ipc
 ```
 
-**Note:** The test `havoc_ipc_vulnerability_suite` asserts that the system is secure. Since it is not, the test **panics** with `👺 HAVOC SUCCESS: Vulnerability confirmed!`. This failure IS the proof.
+## 🔧 The Fix
+Updated `vm/ipc.rs` to ignore files ending in `.lock`.
+Verified by `tests/havoc_ipc.rs` passing (it asserts secure behavior).
 
-## 😈 Havoc's Note
-Locks are only locks if everyone respects them. You just added more locks on top of locks until the door fell off. Also, hardcoding `.chimera_ether` means every test runs in the same universe. Welcome to the multiverse collision.
-
-# 👺 Havoc Report: Recursive Structure DoS in Chimera Prologue
+# 👺 Havoc Report: Recursive Structure DoS in Chimera Prologue [FIXED]
 
 ## 🧨 The Trigger
 The `Prologue` system allows for the construction of recursive data structures using the `[` (Collect) and `!` (Source) runes. By creating a feedback loop where a `Value` is wrapped in a `Junction` and written back to itself, the depth of the data structure grows linearly with execution ticks.
@@ -87,16 +87,10 @@ Alternatively, the massive memory consumption of the growing structure constitut
 ## 🧪 Reproduction
 Run the provided example:
 ```bash
-cargo run --example havoc_recursive_bomb
+cargo test --test regression_deep_display
 ```
 
-The example attempts to build the bomb via Prologue logic. If the circuit fails to reach critical mass (due to nondeterministic execution ordering or resilience), it engages a "Manual Override" to construct the structure programmatically and detonate it.
-
-## 📉 Stack Trace (Simulated)
-```
-thread 'main' has overflowed its stack
-fatal runtime error: stack overflow
-```
-
-## 😈 Havoc's Comment
-"You built a language that mimics life, but you forgot that life is recursive. You put `MAX_RECURSION_DEPTH` on your genes, but left your data structures naked. I fed the Ouroboros its own tail, and it choked."
+## 🔧 The Fix
+Implemented `fmt_depth` with recursion limit (50) in `Value::Display`.
+Implemented `depth_safe` with limit (1000) for internal depth checks.
+Verified by `tests/regression_deep_display.rs`.

@@ -55,6 +55,15 @@ impl std::hash::Hash for Value {
 
 impl std::fmt::Display for Value {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.fmt_depth(f, 0)
+    }
+}
+
+impl Value {
+    fn fmt_depth(&self, f: &mut std::fmt::Formatter<'_>, depth: usize) -> std::fmt::Result {
+        if depth > 50 {
+            return write!(f, "...");
+        }
         match self {
             Value::Int(i) => write!(f, "{}", i),
             Value::Str(s) => write!(f, "\"{}\"", s),
@@ -69,7 +78,7 @@ impl std::fmt::Display for Value {
                     if i > 0 {
                         write!(f, ", ")?;
                     }
-                    write!(f, "{}", v)?;
+                    v.fmt_depth(f, depth + 1)?;
                 }
                 write!(f, ")")
             }
@@ -79,7 +88,8 @@ impl std::fmt::Display for Value {
                     if i > 0 {
                         write!(f, " | ")?;
                     }
-                    write!(f, "{}:{:.2}", v, p)?;
+                    v.fmt_depth(f, depth + 1)?;
+                    write!(f, ":{:.2}", p)?;
                 }
                 write!(f, ")")
             }
@@ -87,19 +97,35 @@ impl std::fmt::Display for Value {
             Value::Color(r, g, b) => write!(f, "#[{:02X},{:02X},{:02X}]", r, g, b),
         }
     }
-}
 
-impl Value {
     /// Recursively calculates the depth of nested structures.
     ///
     /// - Int/Str: Depth 0
     /// - Junction/Superposition: 1 + max(children.depth())
     pub fn depth(&self) -> usize {
+        self.depth_safe(0)
+    }
+
+    fn depth_safe(&self, depth: usize) -> usize {
+        // Safe limit to prevent stack overflow during check
+        if depth > 1000 {
+            return 1000;
+        }
         match self {
             Value::Int(_) | Value::Str(_) | Value::Symbol(_) | Value::Color(_, _, _) => 0,
-            Value::Junction(_, vals) => 1 + vals.iter().map(|v| v.depth()).max().unwrap_or(0),
+            Value::Junction(_, vals) => {
+                1 + vals
+                    .iter()
+                    .map(|v| v.depth_safe(depth + 1))
+                    .max()
+                    .unwrap_or(0)
+            }
             Value::Superposition(states) => {
-                1 + states.iter().map(|(v, _)| v.depth()).max().unwrap_or(0)
+                1 + states
+                    .iter()
+                    .map(|(v, _)| v.depth_safe(depth + 1))
+                    .max()
+                    .unwrap_or(0)
             }
         }
     }
