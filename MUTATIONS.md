@@ -28,6 +28,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 
 **NOTE:** Automated workspace verification failed due to `glam`/`bevy` version conflicts in `hive-mind-dependencies`. Verification was performed partially.
 
+### hyper-fluid
+- **Parents**: experiments/ferrous-fluid + experiments/tesseract-ops
+- **Concept**: 4D Fluid Simulation where the "Universe" is a Tesseract that breathes with your computer's load.
+- **Novel trait**: 4D Hydrodynamics. The fluid exists in 4 spatial dimensions, and dynamics shift based on system metrics (CPU=Temp, MEM=Visc, SWAP=Grav).
+- **Status**: experiments/hyper-fluid
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Confirmed.
+
 ### neuro-syncopation
 - **Parents**: experiments/syncopated-threads + crates/neuro-sim
 - **Concept**: A Spiking Neural Network where each neuron is a thread, and synapses are mutexes. Spikes are successful locks.
