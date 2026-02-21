@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/hyperbolic-chimera
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Agents are spiraling into the infinite edge.
+- **Note:** "The disk expands faster than they can swim."
+
 ### [Concentration Level: HIGH] - Location: experiments/hyper-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Agents are navigating a relativistic 4D manifold. Movement cost is tied to CPU load.
