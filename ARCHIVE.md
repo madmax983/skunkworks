@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **market-swarm**: Diagnosis: Terminal Redundancy (Chimera #4). Redundant with `market-flow` and `luminous-flock`. Grace period: 24 hours.
+- **ising-tide**: Diagnosis: Documentation Void / Dangerous Mystery. Hardcoded implementation without context. Grace period: 24 hours.
 - [Experiment name]: [Diagnosis]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **market-swarm**: Specimen executed. Diagnosis: Terminal Redundancy (Chimera #4). Redundant with `market-flow` and `luminous-flock`. Grace period expired. Moved to graveyard.
 - **fluid-rain**: Specimen executed. Diagnosis: Technological Regression / ADR 045 Violation. Naive O(N^2) CPU SPH. Grace period expired. Moved to graveyard.
 - **reaction-monitor**: Specimen executed. Diagnosis: Terminal Redundancy (Gray-Scott #6). Conceptual Stagnation. Grace period expired. Moved to graveyard.
 - **code-phage**: Specimen executed. Diagnosis: Terminal Redundancy (Gray-Scott #5). Generic Implementation. Grace period expired. Moved to graveyard.
