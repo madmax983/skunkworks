@@ -1,0 +1,19 @@
+WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
+COMMENT = _{ "#" ~ (!"\n" ~ ANY)* ~ "\n" }
+
+score = { SOI ~ (stmt)* ~ EOI }
+
+stmt = {
+    pluck |
+    oscillate |
+    move_cmd |
+    wait
+}
+
+pluck = { "pluck" ~ "(" ~ float ~ ")" }
+oscillate = { "oscillate" ~ "(" ~ float ~ "," ~ float ~ ")" }
+move_cmd = { "move" ~ "(" ~ int ~ "," ~ int ~ ")" }
+wait = { "wait" ~ "(" ~ int ~ ")" }
+
+int = @{ "-"? ~ ASCII_DIGIT+ }
+float = @{ "-"? ~ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT+)? }
