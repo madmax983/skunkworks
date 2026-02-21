@@ -11,9 +11,9 @@ use crossbeam_channel::unbounded;
 #[cfg(feature = "resonance")]
 use resonance_audio::audio::AudioModel;
 #[cfg(feature = "resonance")]
-use std::thread;
+use rodio::OutputStream;
 #[cfg(feature = "resonance")]
-use std::time::Duration;
+use chimera_lang::audio_source::RodioAudioSource;
 
 #[derive(ClapParser)]
 #[command(author, version, about, long_about = None)]
@@ -47,6 +47,15 @@ fn main() -> Result<()> {
 
     let (dna, grid, orca_mode) = if extension == "pro" {
         chimera_lang::prologue_compiler::compile(&unparsed_file, path.parent())?
+    } else if extension == "score" {
+        #[cfg(feature = "resonance")]
+        {
+            (chimera_lang::acoustic_compiler::compile(&unparsed_file)?, None, None)
+        }
+        #[cfg(not(feature = "resonance"))]
+        {
+            return Err(anyhow::anyhow!("Resonance feature disabled. Cannot compile score."));
+        }
     } else {
         let dna = if extension == "chs" {
             compiler::compile(&unparsed_file, path.parent())?
@@ -79,26 +88,43 @@ fn main() -> Result<()> {
     }
 
     #[cfg(feature = "resonance")]
-    {
+    // Create stream handle outside to keep it alive. We assume default device exists.
+    // If not, this might panic, which is acceptable for an experimental feature.
+    let (_stream, stream_handle) = match OutputStream::try_default() {
+        Ok(s) => (Some(s.0), Some(s.1)),
+        Err(e) => {
+            eprintln!("Warning: Failed to initialize audio output: {}", e);
+            (None, None)
+        }
+    };
+
+    #[cfg(feature = "resonance")]
+    let _sink = if let Some(handle) = stream_handle.as_ref() {
         let (cmd_tx, cmd_rx) = unbounded();
         let (snap_tx, snap_rx) = unbounded();
 
         vm.set_audio_tx(cmd_tx);
         vm.set_snapshot_rx(snap_rx);
 
-        // Spawn Audio Simulation Thread
-        thread::spawn(move || {
-            let mut model = AudioModel::new(16, 16, cmd_rx, snap_tx);
-            // Simulate 44100Hz audio in chunks
-            // Process 735 samples (approx 16.6ms of audio) every ~16ms to keep real-time speed.
-            let chunk_size = 735;
-            let mut buffer = vec![0.0; chunk_size];
-            loop {
-                model.process(&mut buffer);
-                thread::sleep(Duration::from_millis(16));
+        // Initialize Audio Model with recording_tx = None
+        // Grid size matches VM (16x16)
+        let model = AudioModel::new(16, 16, cmd_rx, snap_tx, None);
+        let source = RodioAudioSource::new(model);
+
+        match rodio::Sink::try_new(handle) {
+            Ok(sink) => {
+                sink.append(source);
+                sink.play();
+                Some(sink)
+            },
+            Err(e) => {
+                eprintln!("Warning: Failed to create audio sink: {}", e);
+                None
             }
-        });
-    }
+        }
+    } else {
+        None
+    };
 
     if cli.headless {
         while !vm.halted {
@@ -130,7 +156,6 @@ fn main() -> Result<()> {
             let val_str = format!("{}", val);
             let mut val_cell = comfy_table::Cell::new(&val_str);
 
-            // Mosaic Philosophy: "Colorize 'True' as Green."
             if val_str == "1" || val_str.to_lowercase() == "true" {
                 val_cell = val_cell.fg(comfy_table::Color::Green);
             } else if val_str == "0" || val_str.to_lowercase() == "false" {

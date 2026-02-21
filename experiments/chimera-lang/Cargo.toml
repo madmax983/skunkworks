@@ -15,7 +15,7 @@ elektra = []
 git = []
 phylogeny = []
 hive = []
-resonance = ["dep:resonance-audio", "dep:crossbeam-channel"]
+resonance = ["dep:resonance-audio", "dep:crossbeam-channel", "dep:rodio"]
 
 [dependencies]
 regex = "1.10"
@@ -35,6 +35,7 @@ strum = "0.26"
 strum_macros = "0.26"
 poincare-disk = { path = "../../crates/poincare-disk" }
 comfy-table = "7.2.2"
+rodio = { version = "0.17", optional = true }
 
 [[example]]
 name = "story_demo"
