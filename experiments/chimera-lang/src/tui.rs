@@ -4946,9 +4946,9 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 let mut bobber_x = 50.0;
                 if app_state.fishing_hooked {
                     let shake_mag = if app_state.fishing_tension > 0.5 {
-                        1.5
+                        2.0
                     } else {
-                        0.5
+                        0.8
                     };
                     // Simple pseudo-random shake using tick
                     let offset = ((vm.tick_counter % 3) as f64 - 1.0) * shake_mag;
@@ -4968,7 +4968,7 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     ctx.print(bobber_x + 1.0, app_state.fishing_bobber_y, right);
                 }
 
-                // Fishing Line
+                // Fishing Line (Rod Bending Animation)
                 let line_color = if app_state.fishing_tension > 0.8 {
                     Color::Red
                 } else if app_state.fishing_tension > 0.5 {
@@ -4977,9 +4977,12 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     Color::White
                 };
 
+                // Rod tip dips when tension is high
+                let rod_tip_y = 100.0 - (app_state.fishing_tension * 5.0);
+
                 ctx.draw(&ratatui::widgets::canvas::Line {
                     x1: 50.0,
-                    y1: 100.0, // Top center (approx rod tip)
+                    y1: rod_tip_y,
                     x2: bobber_x,
                     y2: app_state.fishing_bobber_y,
                     color: line_color,
@@ -4993,15 +4996,16 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 };
                 ctx.print(bobber_x, app_state.fishing_bobber_y, bobber_icon);
 
+                // Splash Effect
                 if app_state.fishing_hooked {
                     // Splash particles
                     let t = vm.tick_counter;
                     if t % 2 == 0 {
-                        ctx.print(bobber_x - 3.0, app_state.fishing_bobber_y + 1.0, ".");
+                        ctx.print(bobber_x - 3.0, app_state.fishing_bobber_y + 1.0, "💦");
                         ctx.print(bobber_x + 3.0, app_state.fishing_bobber_y + 2.0, ".");
                     } else {
                         ctx.print(bobber_x - 2.0, app_state.fishing_bobber_y + 2.0, "°");
-                        ctx.print(bobber_x + 4.0, app_state.fishing_bobber_y + 1.0, ".");
+                        ctx.print(bobber_x + 4.0, app_state.fishing_bobber_y + 1.0, "💦");
                     }
 
                     // Water churn
@@ -5042,28 +5046,35 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     f.render_widget(canvas, chunks[0]);
 
-    // Tension Bar
+    // Tension Bar (Gradient & Feedback)
     let tension = app_state.fishing_tension;
-    let (tension_color, label) = if tension < 0.3 {
-        (Color::Green, "RELAXED")
-    } else if tension < 0.6 {
-        (Color::Yellow, "TENSION")
-    } else if tension < 0.85 {
-        (Color::LightRed, "STRAIN")
+    let (tension_color, label, symbol) = if tension < 0.3 {
+        (Color::Green, "RELAXED", "🟢")
+    } else if tension < 0.5 {
+        (Color::LightGreen, "PULLING", "🎣")
+    } else if tension < 0.7 {
+        (Color::Yellow, "STRAIN", "⚠️")
+    } else if tension < 0.9 {
+        (Color::LightRed, "CRITICAL", "🔥")
     } else {
-        (Color::Red, "BREAKING!")
+        (Color::Red, "BREAKING!", "💥")
     };
+
+    let gauge_style = Style::default()
+        .fg(tension_color)
+        .bg(Color::DarkGray)
+        .add_modifier(if tension > 0.8 { Modifier::BOLD | Modifier::RAPID_BLINK } else { Modifier::empty() });
 
     let gauge = Gauge::default()
         .block(Block::default().borders(Borders::ALL).title("Line Tension"))
-        .gauge_style(Style::default().fg(tension_color).bg(Color::DarkGray))
+        .gauge_style(gauge_style)
         .use_unicode(true)
         .ratio(tension.clamp(0.0, 1.0));
 
     let label_text = if tension >= 1.0 {
         "SNAP! (100%)".to_string()
     } else {
-        format!("{} ({:.0}%)", label, tension * 100.0)
+        format!("{} {} ({:.1}%)", symbol, label, tension * 100.0)
     };
 
     f.render_widget(gauge.label(label_text), chunks[1]);

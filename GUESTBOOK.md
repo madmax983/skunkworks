@@ -6,6 +6,11 @@
 - **Note:** "Evolution is adapting to the stress of the machine."
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
+- **Scent Origin:** Mosaic 🎨 (UI Polish)
+- **Status:** Fishing Minigame UI enhanced. Tension bar gradient, bobber splash, rod bending.
+- **Note:** "The fish bite harder when the UI pops."
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄 (Sensed: Passing Tests)
 - **Status:** Critter breeding logic stabilized. Flakiness resolved via random direction shuffling.
 - **Note:** "Life finds a way, even in a collision."
