@@ -12158,6 +12158,12 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 EpigeneticMark::Phosphorylated => {
                     style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
                 }
+                EpigeneticMark::Rotting => {
+                    style = style.fg(Color::Rgb(139, 69, 19)); // SaddleBrown
+                    if s == "." {
+                        s = "☣".to_string();
+                    }
+                }
                 _ => {}
             }
 
@@ -12225,6 +12231,12 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                         style = style
                             .fg(Color::LightMagenta)
                             .add_modifier(Modifier::BOLD | Modifier::UNDERLINED)
+                    }
+                    "♻" => {
+                        style = style.fg(Color::Green).add_modifier(Modifier::BOLD);
+                    }
+                    "☣" => {
+                        style = style.fg(Color::Rgb(139, 69, 19)); // SaddleBrown
                     }
                     _ => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
                 }
