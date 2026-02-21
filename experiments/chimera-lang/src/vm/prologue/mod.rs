@@ -93,6 +93,7 @@ pub mod psionics;
 pub mod quantum;
 pub mod resonance;
 pub mod scavenger;
+pub mod siren;
 pub mod symbiosis;
 pub mod teleport;
 pub mod topology;
@@ -372,14 +373,19 @@ impl PrologueState {
                             | "🔴"
                             | "🟢"
                             | "🔵"
+                            // Siren
+                            | "♬"
                     ) {
                         self.runes.insert((y, x));
 
-                        if s == "@" || s == "K" || s == "H" || s == "C" || s == "♻" {
+                        if s == "@" || s == "K" || s == "H" || s == "C" || s == "♻" || s == "♬"
+                        {
                             // Try to retrieve persistent state
                             let state = self.registers.get(&(y, x)).cloned().unwrap_or_else(|| {
                                 if s == "C" {
                                     critter::CritterState::default().to_value()
+                                } else if s == "♬" {
+                                    siren::SirenState::default().to_value()
                                 } else {
                                     Value::Int(0)
                                 }
@@ -954,7 +960,9 @@ fn process_critter_logic(
                             spawn_dirs.shuffle(&mut rng);
 
                             for (dy, dx) in spawn_dirs {
-                                if let Some((sy, sx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                                if let Some((sy, sx)) =
+                                    normalize_coords(y as i64 + dy, x as i64 + dx)
+                                {
                                     if matches!(vm.grid[sy][sx], Value::Int(0)) {
                                         let other_state = vm
                                             .prologue_state
@@ -1209,6 +1217,14 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
             process_hunter_logic(vm, &agent, grid_snapshot)
         } else if current_type == "♻" {
             scavenger::process_scavenger_logic(vm, &agent, grid_snapshot)
+        } else if current_type == "♬" {
+            match siren::process_siren_logic(vm, &agent, grid_snapshot) {
+                Some((updated_agent, t)) => {
+                    agent = updated_agent;
+                    t
+                }
+                None => continue,
+            }
         } else {
             process_seeker_logic(vm, &agent, grid_snapshot)
         };
@@ -1226,7 +1242,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
             vm.grid[ny][nx] = Value::Str(current_type.clone());
 
             // Move Registers
-            if current_type == "C" {
+            if current_type == "C" || current_type == "♬" {
                 vm.prologue_state.registers.remove(&(y, x));
                 vm.prologue_state
                     .registers

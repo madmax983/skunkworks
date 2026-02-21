@@ -168,6 +168,35 @@ Runes for string manipulation and text processing.
 | `;` | **Split** | Reads **West** (String) and **North** (Delimiter). Outputs List (Junction) to **Self**. |
 | `©` | **Join** | Reads **West** (List) and **North** (Delimiter). Outputs String to **Self**. |
 
+# Siren: Genomic Music 🧜‍♀️
+
+A musical agent that treats the grid as a sequencer.
+The Siren (`♬`) moves constantly in a direction, playing notes and executing musical commands found in the cells it traverses.
+
+| Command | Function |
+|---|---|
+| `A`..`G` | **Play Note** (Major). |
+| `a`..`g` | **Play Note** (Sharp `#`). |
+| `0`..`9` | **Set Octave** (Relative to base, 5=Default). |
+| `^` / `v` | **Octave Shift** Up / Down. |
+| `>` / `<` | **Velocity** Increase / Decrease. |
+| `!` | **Accent** (Max Velocity). |
+| `~` | **Rest** (Sustain). |
+| `h/j/k/l` | **Change Direction** (Left, Down, Up, Right). |
+| `N/S/W` | **Explicit Direction** (North, South, West). |
+| `*` | **Random Direction**. |
+| `w` | **Cycle Waveform** (Sine, Square, Saw, Tri, Noise). |
+
+Example:
+```
+  ♬ -> A -> B -> C -> N
+                      |
+                      v
+                      G
+                      |
+                      v
+```
+
 # Prologue II: Signal Grid (Orca Mode) 🐋
 
 Enabled via `OpCode::Orca` or TUI toggle. This is a concurrent cellular automata system inspired by Orca.
