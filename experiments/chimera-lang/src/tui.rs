@@ -5053,8 +5053,38 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     f.render_widget(gauge.label(label_text), chunks[1]);
 
-    let info = Paragraph::new("Space: Cast/Reel | Wait for bite...")
-        .block(Block::default().borders(Borders::ALL));
+    // Dashboard Info
+    let depth = if app_state.fishing_bobber_y < 50.0 {
+        format!("Depth: {:.1}m", 50.0 - app_state.fishing_bobber_y)
+    } else {
+        format!("Air: {:.1}m", app_state.fishing_bobber_y - 50.0)
+    };
+
+    let status = if app_state.fishing_hooked {
+        Span::styled(
+            "FISH ON!",
+            Style::default()
+                .fg(Color::Red)
+                .add_modifier(Modifier::BOLD | Modifier::RAPID_BLINK),
+        )
+    } else if app_state.fishing_cast {
+        Span::styled("Waiting...", Style::default().fg(Color::Cyan))
+    } else {
+        Span::styled("Ready", Style::default().fg(Color::Green))
+    };
+
+    let info_text = vec![
+        Line::from(vec![
+            Span::raw("Status: "),
+            status,
+            Span::raw(" | "),
+            Span::raw(depth),
+        ]),
+        Line::from("Controls: Space (Cast/Reel)"),
+    ];
+
+    let info = Paragraph::new(info_text)
+        .block(Block::default().borders(Borders::ALL).title("Tackle Box"));
     f.render_widget(info, chunks[2]);
 }
 

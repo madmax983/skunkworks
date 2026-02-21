@@ -25,6 +25,8 @@ pub struct AkashicRecords {
     pub karma: i64,
     #[serde(default)]
     pub memories: HashMap<String, Spore>,
+    #[serde(skip)]
+    pub corrupted: bool,
 }
 
 #[cfg(feature = "nova")]
@@ -34,6 +36,7 @@ impl AkashicRecords {
             storage: HashMap::new(),
             karma: 0,
             memories: HashMap::new(),
+            corrupted: true,
         })
     }
 
@@ -61,11 +64,16 @@ impl AkashicRecords {
                 storage: HashMap::new(),
                 karma: 0,
                 memories: HashMap::new(),
+                corrupted: false,
             }),
         }
     }
 
     pub fn save(&self) -> Result<(), String> {
+        if self.corrupted {
+            return Err("Cannot save: Akashic Record is corrupted on disk. Fix manually.".to_string());
+        }
+
         let content = serde_json::to_string_pretty(self).map_err(|e| e.to_string())?;
 
         if content.len() as u64 > MAX_AKASHIC_SIZE {

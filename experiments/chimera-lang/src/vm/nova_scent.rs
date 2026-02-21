@@ -150,8 +150,8 @@ fn exec_track(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
             if total_weight > 0.0 {
                 // Normalize roughly
-                let final_dx = (sum_dx / total_weight * 5.0).clamp(-1.0, 1.0).round() as i64;
-                let final_dy = (sum_dy / total_weight * 5.0).clamp(-1.0, 1.0).round() as i64;
+                let final_dx = (sum_dx / total_weight * 2.0).clamp(-1.0, 1.0).round() as i64;
+                let final_dy = (sum_dy / total_weight * 2.0).clamp(-1.0, 1.0).round() as i64;
 
                 vm.stack.push(Value::Int(final_dx));
                 vm.stack.push(Value::Int(final_dy));

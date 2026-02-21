@@ -1,4 +1,3 @@
-use super::*;
 use crate::ast::Dna;
 use crate::ast::Helix;
 use crate::vm::prologue::exec_prologue_tick;

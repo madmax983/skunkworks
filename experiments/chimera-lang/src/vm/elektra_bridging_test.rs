@@ -1,10 +1,10 @@
 #[cfg(all(test, feature = "elektra"))]
 mod tests {
-    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
+    use crate::ast::{Dna, Helix, Strand};
     use crate::opcode::OpCode;
     use crate::vm::elektra::update_circuit;
     use crate::vm::prologue::exec_prologue_tick;
-    use crate::vm::{ChimeraVM, Value, GRID_SIZE};
+    use crate::vm::{ChimeraVM, Value};
 
     fn make_empty_vm() -> ChimeraVM {
         let dna = Dna {
