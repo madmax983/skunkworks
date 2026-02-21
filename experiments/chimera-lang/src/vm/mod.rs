@@ -162,6 +162,8 @@ pub mod nova_bestiary;
 #[cfg(test)]
 mod nova_bestiary_test;
 #[cfg(feature = "nova")]
+pub mod nova_biology;
+#[cfg(feature = "nova")]
 pub mod nova_biolum;
 #[cfg(feature = "nova")]
 pub mod nova_biome;
@@ -287,12 +289,16 @@ mod nova_paleontology_test;
 #[cfg(test)]
 mod nova_phage_test;
 #[cfg(feature = "nova")]
+pub mod nova_physics;
+#[cfg(feature = "nova")]
 pub mod nova_planes;
 #[cfg(feature = "nova")]
 pub mod nova_pocket;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_pocket_test;
+#[cfg(feature = "nova")]
+pub mod nova_quantum;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_quantum_scribe_test;
