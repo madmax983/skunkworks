@@ -5213,7 +5213,9 @@ fn render_narrative(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         items.push(ListItem::new("Library is empty.").style(Style::default().fg(Color::DarkGray)));
     } else {
         for (key, val) in &vm.prologue_state.library {
-            items.push(ListItem::new(format!("{}: {}", key, val)).style(Style::default().fg(Color::Cyan)));
+            items.push(
+                ListItem::new(format!("{}: {}", key, val)).style(Style::default().fg(Color::Cyan)),
+            );
         }
     }
 
@@ -5236,11 +5238,8 @@ fn render_narrative(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  📖 (Book) - Library Read/Write"),
     ];
 
-    let info_widget = Paragraph::new(info).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Legend"),
-    );
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Legend"));
     f.render_widget(info_widget, chunks[1]);
 }
 

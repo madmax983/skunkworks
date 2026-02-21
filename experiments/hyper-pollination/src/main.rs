@@ -40,7 +40,7 @@ fn harvest_plants() -> Vec<Plant> {
 
     // Fallback if no git or empty output
     if lines_iter.is_empty() {
-         let lsystem = LSystem::new("X", vec![('X', "F-[[X]+X]+F[+FX]-X"), ('F', "FF")]);
+        let lsystem = LSystem::new("X", vec![('X', "F-[[X]+X]+F[+FX]-X"), ('F', "FF")]);
         let instructions = lsystem.expand(4);
         let mut turtle = Turtle::new(
             Vec4D::new(0.0, -2.0, 0.0, 0.0),
@@ -222,13 +222,13 @@ async fn main() {
 
             for plant in &plants {
                 for tip in &plant.tips {
-                     // Check if roughly close to optimize
-                     let d = boid.position.distance_squared(*tip);
-                     if d < nearest_dist {
-                         nearest_dist = d;
-                         target = Some(*tip);
-                         target_color = plant.color;
-                     }
+                    // Check if roughly close to optimize
+                    let d = boid.position.distance_squared(*tip);
+                    if d < nearest_dist {
+                        nearest_dist = d;
+                        target = Some(*tip);
+                        target_color = plant.color;
+                    }
                 }
             }
 
@@ -257,20 +257,57 @@ async fn main() {
         }
 
         // Draw Tesseract Bounds
-        draw_tesseract_wireframe(Vec4D::new(3.0, 3.0, 3.0, 3.0), angle_xw, angle_yw, angle_zw, sx, sy, sz, sw);
+        draw_tesseract_wireframe(
+            Vec4D::new(3.0, 3.0, 3.0, 3.0),
+            angle_xw,
+            angle_yw,
+            angle_zw,
+            sx,
+            sy,
+            sz,
+            sw,
+        );
 
         set_default_camera();
         draw_text("Hyper-Pollination", 10.0, 20.0, 30.0, WHITE);
         draw_text("4D Ecosystem driven by Git & CPU", 10.0, 40.0, 20.0, GRAY);
 
-        draw_text(&format!("CPU: {:.0}%", monitor.cpu_usage * 100.0), 10.0, 70.0, 20.0, RED);
-        draw_text(&format!("MEM: {:.0}%", monitor.mem_usage * 100.0), 10.0, 90.0, 20.0, BLUE);
-        draw_text(&format!("Boids: {}", boids.len()), 10.0, 110.0, 20.0, YELLOW);
+        draw_text(
+            &format!("CPU: {:.0}%", monitor.cpu_usage * 100.0),
+            10.0,
+            70.0,
+            20.0,
+            RED,
+        );
+        draw_text(
+            &format!("MEM: {:.0}%", monitor.mem_usage * 100.0),
+            10.0,
+            90.0,
+            20.0,
+            BLUE,
+        );
+        draw_text(
+            &format!("Boids: {}", boids.len()),
+            10.0,
+            110.0,
+            20.0,
+            YELLOW,
+        );
 
         // Draw Plant Info
         let mut y = 140.0;
         for plant in &plants {
-            draw_text(&format!("{}: {}", &plant.hash[0..7.min(plant.hash.len())], plant.message), 10.0, y, 15.0, plant.color);
+            draw_text(
+                &format!(
+                    "{}: {}",
+                    &plant.hash[0..7.min(plant.hash.len())],
+                    plant.message
+                ),
+                10.0,
+                y,
+                15.0,
+                plant.color,
+            );
             y += 20.0;
         }
 
@@ -278,7 +315,16 @@ async fn main() {
     }
 }
 
-fn draw_tesseract_wireframe(bounds: Vec4D, axw: f32, ayw: f32, azw: f32, sx: f32, sy: f32, sz: f32, sw: f32) {
+fn draw_tesseract_wireframe(
+    bounds: Vec4D,
+    axw: f32,
+    ayw: f32,
+    azw: f32,
+    sx: f32,
+    sy: f32,
+    sz: f32,
+    sw: f32,
+) {
     let mut verts = Vec::new();
     for i in 0..16 {
         let x = if i & 1 != 0 { bounds.x } else { -bounds.x };

@@ -1,6 +1,6 @@
 use super::normalize_coords;
-use crate::vm::Value;
 use crate::ast::JunctionType;
+use crate::vm::Value;
 
 pub fn apply_prism_runes(
     rune: &str,
@@ -66,8 +66,7 @@ pub fn apply_prism_runes(
 
             if !collected.is_empty() {
                 if next_signals[y][x].is_none() {
-                    next_signals[y][x] =
-                        Some(Value::Junction(JunctionType::Any, collected));
+                    next_signals[y][x] = Some(Value::Junction(JunctionType::Any, collected));
                     changes = true;
                 }
             }
@@ -85,8 +84,7 @@ pub fn apply_prism_runes(
                         .collect();
 
                     if next_signals[y][x].is_none() {
-                        next_signals[y][x] =
-                            Some(Value::Junction(JunctionType::Any, gene_strs));
+                        next_signals[y][x] = Some(Value::Junction(JunctionType::Any, gene_strs));
                         changes = true;
                     }
                 }
@@ -141,8 +139,7 @@ pub fn apply_prism_runes(
 
                     if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
                         if next_signals[sy][sx].is_none() {
-                            next_signals[sy][sx] =
-                                Some(Value::Junction(JunctionType::Any, args));
+                            next_signals[sy][sx] = Some(Value::Junction(JunctionType::Any, args));
                             changes = true;
                         }
                     }

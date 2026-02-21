@@ -1,6 +1,6 @@
 use crate::math::Vec4D;
-use macroquad::color::Color;
 use ::rand::Rng;
+use macroquad::color::Color;
 
 #[derive(Clone, Debug)]
 pub struct Dna {

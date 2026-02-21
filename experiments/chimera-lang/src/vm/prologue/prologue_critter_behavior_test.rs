@@ -24,7 +24,9 @@ mod tests {
 
         // Start at (5, 5)
         vm.grid[5][5] = Value::Str("C".to_string());
-        vm.prologue_state.registers.insert((5, 5), Value::Str(critter_state));
+        vm.prologue_state
+            .registers
+            .insert((5, 5), Value::Str(critter_state));
 
         // Tick 1: 'N' -> Move North to (4, 5)
         exec_prologue_tick(&mut vm);
@@ -53,7 +55,9 @@ mod tests {
 
         // Place at (5, 5)
         vm.grid[5][5] = Value::Str("C".to_string());
-        vm.prologue_state.registers.insert((5, 5), Value::Str(critter_state));
+        vm.prologue_state
+            .registers
+            .insert((5, 5), Value::Str(critter_state));
 
         exec_prologue_tick(&mut vm);
 
@@ -96,16 +100,18 @@ mod tests {
         let critter_state = format!("C:{}:S:0:0", start_energy);
 
         vm.grid[5][5] = Value::Str("C".to_string());
-        vm.prologue_state.registers.insert((5, 5), Value::Str(critter_state));
+        vm.prologue_state
+            .registers
+            .insert((5, 5), Value::Str(critter_state));
 
         exec_prologue_tick(&mut vm);
 
         // Should not split.
         // Energy: 40 - 1 (metabolic) = 39.
         if let Value::Str(s) = vm.prologue_state.registers.get(&(5, 5)).unwrap() {
-             let parts: Vec<&str> = s.split(':').collect();
-             let energy: i64 = parts[1].parse().unwrap();
-             assert_eq!(energy, 39);
+            let parts: Vec<&str> = s.split(':').collect();
+            let energy: i64 = parts[1].parse().unwrap();
+            assert_eq!(energy, 39);
         }
 
         // Check neighbors empty
@@ -126,13 +132,19 @@ mod tests {
 
         // Place Predator at (5, 5)
         vm.grid[5][5] = Value::Str("C".to_string());
-        vm.prologue_state.registers.insert((5, 5), Value::Str(pred_state));
+        vm.prologue_state
+            .registers
+            .insert((5, 5), Value::Str(pred_state));
 
         // Place Victim (Seeker @) at (5, 6)
         vm.grid[5][6] = Value::Str("@".to_string());
-        vm.prologue_state.agents.push(crate::vm::prologue::PrologueAgent {
-            x: 6, y: 5, state: Value::Int(0)
-        });
+        vm.prologue_state
+            .agents
+            .push(crate::vm::prologue::PrologueAgent {
+                x: 6,
+                y: 5,
+                state: Value::Int(0),
+            });
 
         exec_prologue_tick(&mut vm);
 
@@ -141,9 +153,9 @@ mod tests {
 
         // Predator Energy: 100 - 1 (meta) + 30 (eat) = 129.
         if let Value::Str(s) = vm.prologue_state.registers.get(&(5, 5)).unwrap() {
-             let parts: Vec<&str> = s.split(':').collect();
-             let energy: i64 = parts[1].parse().unwrap();
-             assert_eq!(energy, 129, "Predator should gain energy");
+            let parts: Vec<&str> = s.split(':').collect();
+            let energy: i64 = parts[1].parse().unwrap();
+            assert_eq!(energy, 129, "Predator should gain energy");
         }
     }
 
@@ -157,7 +169,9 @@ mod tests {
         let state = format!("C:{}:{}:0:1", energy, genes);
 
         vm.grid[5][5] = Value::Str("C".to_string());
-        vm.prologue_state.registers.insert((5, 5), Value::Str(state));
+        vm.prologue_state
+            .registers
+            .insert((5, 5), Value::Str(state));
 
         exec_prologue_tick(&mut vm);
 
@@ -184,7 +198,9 @@ mod tests {
         let state = format!("C:{}:{}:0:1", energy, genes); // East
 
         vm.grid[5][5] = Value::Str("C".to_string());
-        vm.prologue_state.registers.insert((5, 5), Value::Str(state));
+        vm.prologue_state
+            .registers
+            .insert((5, 5), Value::Str(state));
 
         exec_prologue_tick(&mut vm);
 
@@ -192,15 +208,25 @@ mod tests {
         // This test ensures it dies when energy starts at 0.
 
         vm.grid[6][6] = Value::Str("C".to_string());
-        vm.prologue_state.registers.insert((6, 6), Value::Str("C:0:F:0:0".to_string()));
+        vm.prologue_state
+            .registers
+            .insert((6, 6), Value::Str("C:0:F:0:0".to_string()));
         // Manually add to agents list because we skipped `scan_grid_rules`
-        vm.prologue_state.agents.push(crate::vm::prologue::PrologueAgent {
-            x: 6, y: 6, state: Value::Str("C:0:F:0:0".to_string())
-        });
+        vm.prologue_state
+            .agents
+            .push(crate::vm::prologue::PrologueAgent {
+                x: 6,
+                y: 6,
+                state: Value::Str("C:0:F:0:0".to_string()),
+            });
 
         exec_prologue_tick(&mut vm);
 
-        assert_eq!(vm.grid[6][6], Value::Int(0), "Critter with 0 energy should die");
+        assert_eq!(
+            vm.grid[6][6],
+            Value::Int(0),
+            "Critter with 0 energy should die"
+        );
     }
 
     #[test]
@@ -210,12 +236,16 @@ mod tests {
         // C1 at (5, 5) moving East ("F", Dir 1)
         let s1 = "C:100:F:0:1".to_string();
         vm.grid[5][5] = Value::Str("C".to_string());
-        vm.prologue_state.registers.insert((5, 5), Value::Str(s1.clone()));
+        vm.prologue_state
+            .registers
+            .insert((5, 5), Value::Str(s1.clone()));
 
         // C2 at (5, 7) moving West ("F", Dir 3)
         let s2 = "C:100:F:0:3".to_string();
         vm.grid[5][7] = Value::Str("C".to_string());
-        vm.prologue_state.registers.insert((5, 7), Value::Str(s2.clone()));
+        vm.prologue_state
+            .registers
+            .insert((5, 7), Value::Str(s2.clone()));
 
         exec_prologue_tick(&mut vm);
 
@@ -223,7 +253,11 @@ mod tests {
         // C2 tries to move to (5, 6), collides, breeds, and stays at (5, 7).
 
         assert_eq!(vm.grid[5][6], Value::Str("C".to_string()), "C1 moved");
-        assert_eq!(vm.grid[5][7], Value::Str("C".to_string()), "C2 blocked/stayed");
+        assert_eq!(
+            vm.grid[5][7],
+            Value::Str("C".to_string()),
+            "C2 blocked/stayed"
+        );
 
         // Check for child in adjacent empty cell
         let possible_locs = [(4, 7), (6, 7), (5, 8)];
