@@ -153,6 +153,8 @@ pub enum ViewMode {
     Prologue,
     #[cfg(feature = "nova")]
     Lexicon,
+    #[cfg(feature = "nova")]
+    Narrative,
     Sequencer,
     Mutagen,
 }
@@ -991,6 +993,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Lexicon = app_state.view_mode {
                 render_lexicon(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Narrative = app_state.view_mode {
+                render_narrative(f, vm, app_state);
                 return;
             }
 
@@ -2658,7 +2666,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Prologue => ViewMode::Lexicon,
                             #[cfg(feature = "nova")]
-                            ViewMode::Lexicon => ViewMode::Sequencer,
+                            ViewMode::Lexicon => ViewMode::Narrative,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Narrative => ViewMode::Sequencer,
                             ViewMode::Sequencer => ViewMode::Mutagen,
                             ViewMode::Mutagen => ViewMode::Genome,
                         };
@@ -2679,6 +2689,8 @@ where
                     KeyCode::Char('\\') => app_state.view_mode = ViewMode::Prologue,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('6') => app_state.view_mode = ViewMode::Lexicon,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('N') => app_state.view_mode = ViewMode::Narrative,
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
                     #[cfg(feature = "silicon")]
                     KeyCode::Char('F') => app_state.view_mode = ViewMode::Foundry,
@@ -2900,7 +2912,7 @@ where
                     #[cfg(feature = "nova")]
                     KeyCode::Char('v') => app_state.view_mode = ViewMode::Virology,
                     #[cfg(feature = "nova")]
-                    KeyCode::Char('N') => app_state.view_mode = ViewMode::BioMesh,
+                    KeyCode::Char('B') => app_state.view_mode = ViewMode::BioMesh,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('X') => app_state.view_mode = ViewMode::Reactor,
                     #[cfg(feature = "nova")]
@@ -5184,6 +5196,50 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Block::default()
             .borders(Borders::ALL)
             .title("Territory Info"),
+    );
+    f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_narrative(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    // Library List
+    let mut items = Vec::new();
+    if vm.prologue_state.library.is_empty() {
+        items.push(ListItem::new("Library is empty.").style(Style::default().fg(Color::DarkGray)));
+    } else {
+        for (key, val) in &vm.prologue_state.library {
+            items.push(ListItem::new(format!("{}: {}", key, val)).style(Style::default().fg(Color::Cyan)));
+        }
+    }
+
+    let list = List::new(items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Prologue Library (The Book 📖)"),
+    );
+    f.render_widget(list, chunks[0]);
+
+    // Info
+    let info = vec![
+        Line::from("NARRATIVE ENGINE"),
+        Line::from(" "),
+        Line::from("Runes:"),
+        Line::from("  α (Alpha) - Incipit (Seed -> Theme)"),
+        Line::from("  ω (Omega) - Terminus (Story -> Outcome)"),
+        Line::from("  ✍ (Hand) - Revision (Edit)"),
+        Line::from("  ? (Twist) - Plot Twist"),
+        Line::from("  📖 (Book) - Library Read/Write"),
+    ];
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Legend"),
     );
     f.render_widget(info_widget, chunks[1]);
 }

@@ -1,5 +1,6 @@
 use super::normalize_coords;
 use crate::vm::Value;
+use crate::ast::JunctionType;
 
 pub fn apply_prism_runes(
     rune: &str,
@@ -66,7 +67,7 @@ pub fn apply_prism_runes(
             if !collected.is_empty() {
                 if next_signals[y][x].is_none() {
                     next_signals[y][x] =
-                        Some(Value::Junction(crate::ast::JunctionType::Any, collected));
+                        Some(Value::Junction(JunctionType::Any, collected));
                     changes = true;
                 }
             }
@@ -85,7 +86,7 @@ pub fn apply_prism_runes(
 
                     if next_signals[y][x].is_none() {
                         next_signals[y][x] =
-                            Some(Value::Junction(crate::ast::JunctionType::Any, gene_strs));
+                            Some(Value::Junction(JunctionType::Any, gene_strs));
                         changes = true;
                     }
                 }
@@ -95,63 +96,53 @@ pub fn apply_prism_runes(
             // Decompose: West (Gene String) -> North (OpCode), South (Args)
             if let Some(Value::Str(s)) = w_sig {
                 // Simple parsing: Name(Arg1, Arg2)
-                if let Some(paren_idx) = s.find('(') {
-                    let op_name = &s[..paren_idx];
-                    // Safer parsing for closing paren
+                let (op_name, args_str) = if let Some(paren_idx) = s.find('(') {
+                    let op = &s[..paren_idx];
                     let end_idx = if s.ends_with(')') {
                         s.len() - 1
                     } else {
                         s.len()
                     };
-                    let args_str = if paren_idx + 1 < end_idx {
+                    let args = if paren_idx + 1 < end_idx {
                         &s[paren_idx + 1..end_idx]
                     } else {
                         ""
                     };
+                    (op, args)
+                } else {
+                    (s.as_str(), "")
+                };
 
-                    // Parse args? "1, 2" -> [1, 2]
-                    let args: Vec<Value> = if args_str.trim().is_empty() {
-                        Vec::new()
-                    } else {
-                        args_str
-                            .split(',')
-                            .map(|a| {
-                                let a = a.trim();
-                                if let Ok(n) = a.parse::<i64>() {
-                                    Value::Int(n)
-                                } else {
-                                    // Handle string args that might have quotes
-                                    if a.starts_with('"') && a.ends_with('"') && a.len() >= 2 {
-                                        Value::Str(a[1..a.len() - 1].to_string())
-                                    } else {
-                                        Value::Str(a.to_string())
-                                    }
-                                }
-                            })
-                            .collect()
-                    };
-
-                    // Output OpCode to North
-                    if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
-                        if next_signals[ny][nx].is_none() {
-                            next_signals[ny][nx] = Some(Value::Str(op_name.to_string()));
-                            changes = true;
-                        }
+                // Output OpCode to North
+                if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+                    if next_signals[ny][nx].is_none() {
+                        next_signals[ny][nx] = Some(Value::Str(op_name.to_string()));
+                        changes = true;
                     }
+                }
 
-                    // Output Args to South
+                // Output Args to South
+                if !args_str.trim().is_empty() {
+                    let args: Vec<Value> = args_str
+                        .split(',')
+                        .map(|a| {
+                            let a = a.trim();
+                            if let Ok(n) = a.parse::<i64>() {
+                                Value::Int(n)
+                            } else {
+                                if a.starts_with('"') && a.ends_with('"') && a.len() >= 2 {
+                                    Value::Str(a[1..a.len() - 1].to_string())
+                                } else {
+                                    Value::Str(a.to_string())
+                                }
+                            }
+                        })
+                        .collect();
+
                     if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
                         if next_signals[sy][sx].is_none() {
                             next_signals[sy][sx] =
-                                Some(Value::Junction(crate::ast::JunctionType::Any, args));
-                            changes = true;
-                        }
-                    }
-                } else {
-                    // No parens? Just OpCode
-                    if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
-                        if next_signals[ny][nx].is_none() {
-                            next_signals[ny][nx] = Some(Value::Str(s.clone()));
+                                Some(Value::Junction(JunctionType::Any, args));
                             changes = true;
                         }
                     }

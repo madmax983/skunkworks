@@ -7,6 +7,7 @@ use crate::vm::{ChimeraVM, Value};
 /// *   `α` (Alpha) - **Incipit**: Reads West (Seed). Generates Theme (East).
 /// *   `ω` (Omega) - **Terminus**: Reads West (Story). Collapses to Outcome (East).
 /// *   `✍` (Hand) - **Revision**: Reads West (Story) + North (Edit). Outputs Edited (East).
+/// *   `?` (Twist) - **Plot Twist**: Reads West (Story). Introduces random event (East).
 pub fn apply_narrative_runes(
     rune: &str,
     y: usize,
@@ -39,13 +40,11 @@ pub fn apply_narrative_runes(
                     _ => 0,
                 };
 
-                let theme = match seed.abs() % 5 {
-                    0 => "Hero",
-                    1 => "Shadow",
-                    2 => "Journey",
-                    3 => "Treasure",
-                    _ => "Home",
-                };
+                let themes = [
+                    "Hero", "Shadow", "Journey", "Treasure", "Home", "Love", "War", "Time",
+                ];
+                let idx = (seed.abs() as usize) % themes.len();
+                let theme = themes[idx];
 
                 let res = Value::Str(theme.to_string());
 
@@ -66,6 +65,8 @@ pub fn apply_narrative_runes(
                     "Victory"
                 } else if story.contains("Journey") && story.contains("Home") {
                     "Return"
+                } else if story.contains("Love") && story.contains("War") {
+                    "Tragedy"
                 } else {
                     "Entropy"
                 };
@@ -88,6 +89,7 @@ pub fn apply_narrative_runes(
                     "up" => story.to_uppercase(),
                     "low" => story.to_lowercase(),
                     "cut" => story.chars().take(story.len() / 2).collect(),
+                    "len" => format!("{}", story.len()),
                     _ => story.clone(),
                 };
 
@@ -96,6 +98,22 @@ pub fn apply_narrative_runes(
                 if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
                     if next_signals[ey][ex] != Some(res.clone()) {
                         next_signals[ey][ex] = Some(res);
+                        changes = true;
+                    }
+                }
+            }
+        }
+        "?" => {
+            // Twist: West (Story) -> East (Twist)
+            if let Some(Value::Str(story)) = w_sig {
+                let twists = [" suddenly died", " woke up", " found a key", " was a dream"];
+                // Deterministic pseudorandom based on story hash or length
+                let idx = story.len() % twists.len();
+                let twist = format!("{}{}", story, twists[idx]);
+
+                if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
+                    if next_signals[ey][ex].is_none() {
+                        next_signals[ey][ex] = Some(Value::Str(twist));
                         changes = true;
                     }
                 }
@@ -133,11 +151,13 @@ pub fn apply_narrative_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
             if mode == 1 {
                 // WRITE: Key (West) + Value (South)
                 if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
-                    // Read from signal grid or main grid? Let's say Signal Grid for uniformity.
+                    // Read from signal grid
                     if let Some(val) = &vm.prologue_state.signal_grid[sy][sx] {
                         vm.prologue_state.library.insert(key.clone(), val.clone());
-                        vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
-                        // Ack
+                        vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1)); // Ack
+                                                                                   // Log
+                        vm.output
+                            .push(format!("NARRATIVE: Wrote '{}' to Library.", key));
                     }
                 }
             } else {
