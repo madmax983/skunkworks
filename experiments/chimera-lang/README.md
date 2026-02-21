@@ -246,14 +246,14 @@ You can run legacy DNA files (`.dna`) or new ChimeraScript files (`.chs`).
 > **Note**: For non-interactive environments (CI, scripts), append the `--headless` flag.
 
 ```bash
-# Basic usage with standard DNA files
-cargo run --release -- --input sample.dna
+# Basic usage with standard DNA files (from repository root)
+cargo run -p chimera-lang --release -- --input experiments/chimera-lang/sample.dna
 
 # Running complex examples like Genesis
-cargo run --release -- --input examples/genesis.chs
+cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples/genesis.chs
 
 # Headless mode (no TUI)
-cargo run --release -- --input examples/genesis.chs --headless
+cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples/genesis.chs --headless
 ```
 
 ## Nova Features

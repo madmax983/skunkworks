@@ -196,7 +196,9 @@ fn map_op(s: &str) -> Option<OpCode> {
         "push" => Some(OpCode::Push),
         "jump" => Some(OpCode::Jump),
         "brz" => Some(OpCode::Brz),
+        #[cfg(feature = "nova")]
         "call" => Some(OpCode::Call),
+        #[cfg(feature = "nova")]
         "spawn" => Some(OpCode::Spawn),
         "consume" => Some(OpCode::Consume),
         "photosynthesize" => Some(OpCode::Photosynthesize),
@@ -331,6 +333,7 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
 
             if let SExpr::Atom(head) = &items[0] {
                 match head.as_str() {
+                    #[cfg(feature = "nova")]
                     "quote" => {
                         if items.len() != 2 {
                             return Err(anyhow!("quote requires exactly one argument"));
@@ -341,6 +344,7 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
                             args: vec![data],
                         }]);
                     }
+                    #[cfg(feature = "oracle")]
                     "rule" => {
                         if items.len() < 2 {
                             return Err(anyhow!("rule requires at least a head"));
@@ -369,6 +373,7 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
                             },
                         ]);
                     }
+                    #[cfg(feature = "oracle")]
                     "assert" => {
                         if items.len() != 2 {
                             return Err(anyhow!("assert requires exactly one argument"));
@@ -385,6 +390,7 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
                             },
                         ]);
                     }
+                    #[cfg(feature = "oracle")]
                     "retract" => {
                         if items.len() != 2 {
                             return Err(anyhow!("retract requires exactly one argument"));
@@ -401,6 +407,7 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
                             },
                         ]);
                     }
+                    #[cfg(feature = "oracle")]
                     "query" => {
                         if items.len() < 2 {
                             return Err(anyhow!("query requires at least one goal"));
@@ -426,6 +433,7 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
                             },
                         ]);
                     }
+                    #[cfg(feature = "nova")]
                     "seq" => {
                         let mut genes = Vec::new();
                         let count = items.len() - 1;
@@ -445,6 +453,7 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
                         });
                         return Ok(genes);
                     }
+                    #[cfg(feature = "nova")]
                     "alt" => {
                         let mut genes = Vec::new();
                         let count = items.len() - 1;
@@ -464,6 +473,7 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
                         });
                         return Ok(genes);
                     }
+                    #[cfg(feature = "nova")]
                     "match" => {
                         if items.len() != 2 {
                             return Err(anyhow!("match requires exactly one argument"));
@@ -475,6 +485,7 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
                         });
                         return Ok(genes);
                     }
+                    #[cfg(feature = "nova")]
                     "regex" => {
                         if items.len() != 2 {
                             return Err(anyhow!("regex requires exactly one argument"));
@@ -486,6 +497,7 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
                         });
                         return Ok(genes);
                     }
+                    #[cfg(feature = "nova")]
                     "many" => {
                         if items.len() != 2 {
                             return Err(anyhow!("many requires exactly one argument"));
@@ -497,6 +509,7 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
                         });
                         return Ok(genes);
                     }
+                    #[cfg(feature = "nova")]
                     "opt" => {
                         if items.len() != 2 {
                             return Err(anyhow!("opt requires exactly one argument"));
@@ -508,6 +521,7 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
                         });
                         return Ok(genes);
                     }
+                    #[cfg(feature = "nova")]
                     "parse" => {
                         if items.len() != 3 {
                             return Err(anyhow!("parse requires (parse grammar input)"));
@@ -521,6 +535,7 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
                         });
                         return Ok(genes);
                     }
+                    #[cfg(feature = "nova")]
                     "generate" => {
                         if items.len() != 2 {
                             return Err(anyhow!("generate requires exactly one argument"));
