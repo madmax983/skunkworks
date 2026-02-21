@@ -20,10 +20,15 @@
 - **Status:** Specimen executed. Diagnosis: Terminal Redundancy / Documentation Void.
 - **Note:** "The reaction has ceased. Silence returns."
 
-### [Concentration Level: HIGH] - Location: experiments/orbital-sequencer
+### [Concentration Level: TOXIC] - Location: graveyard/orbital-sequencer
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void.
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy.
 - **Note:** "The sequencer is silent. The spheres do not sing."
+
+### [Concentration Level: HIGH] - Location: experiments/thread-frequency
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Redundancy.
+- **Note:** "The rhythm is hollow. The threads spin in silence."
 
 ### [Concentration Level: HIGH] - Location: experiments/hyper-flock
 - **Scent Origin:** The Splice Surgeon 🧬
