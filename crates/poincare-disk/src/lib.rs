@@ -103,6 +103,7 @@ pub type Point = Complex<f64>;
 /// let result = mobius_add(z, a);
 /// assert_eq!(result, a);
 /// ```
+#[doc(alias = "hyperbolic_translation")]
 pub fn mobius_add(z: Point, a: Point) -> Point {
     // If 'a' is outside the disk, this is an invalid translation.
     if a.norm_sqr() >= 1.0 {
@@ -132,6 +133,7 @@ pub fn mobius_add(z: Point, a: Point) -> Point {
 /// let result = mobius_sub(a, a);
 /// assert!(result.norm() < 1e-10);
 /// ```
+#[doc(alias = "hyperbolic_inverse_translation")]
 pub fn mobius_sub(z: Point, a: Point) -> Point {
     if a.norm_sqr() >= 1.0 {
         return z;
@@ -422,6 +424,27 @@ impl Geodesic {
     ///
     /// Returns `None` if the geodesic is a straight line passing through the origin.
     ///
+    /// # Theory
+    ///
+    /// A geodesic in the Poincaré disk is a circular arc that intersects the boundary unit circle orthogonally.
+    /// Let the center of this arc be $c = (x, y)$ and its radius be $R$.
+    ///
+    /// 1.  **Orthogonality condition**: Two circles are orthogonal if $d^2 = R^2 + r^2$, where $d$ is the distance between centers and $r$ is the radius of the other circle.
+    ///     Here, the unit circle is centered at $(0,0)$ with radius $r=1$.
+    ///     So, $|c|^2 = R^2 + 1$.
+    ///
+    /// 2.  **Point on circle**: For any point $p$ on the geodesic, $|p - c|^2 = R^2$.
+    ///     Expanding this: $|p|^2 - 2\text{Re}(p\bar{c}) + |c|^2 = R^2$.
+    ///
+    /// Substituting $|c|^2 = R^2 + 1$:
+    /// $$ |p|^2 - 2\text{Re}(p\bar{c}) + R^2 + 1 = R^2 $$
+    /// $$ |p|^2 - 2\text{Re}(p\bar{c}) + 1 = 0 $$
+    ///
+    /// This gives us a linear equation for the coordinates $(x, y)$ of $c$:
+    /// $$ 2x p_x + 2y p_y = 1 + |p|^2 $$
+    ///
+    /// With two points $p_1$ and $p_2$, we have a system of two linear equations which can be solved for $x$ and $y$.
+    ///
     /// # Examples
     ///
     /// ```
@@ -440,9 +463,7 @@ impl Geodesic {
         let x2 = self.p2.re;
         let y2 = self.p2.im;
 
-        // Condition for circle passing through p and orthogonal to unit circle:
-        // |p|^2 - 2 Re(p conj(c)) + 1 = 0
-        // which simplifies to: 2*x*x_i + 2*y*y_i = 1 + |p_i|^2
+        // Condition derived above: 2*x*x_i + 2*y*y_i = 1 + |p_i|^2
 
         let d1 = 1.0 + x1 * x1 + y1 * y1;
         let d2 = 1.0 + x2 * x2 + y2 * y2;
@@ -495,7 +516,35 @@ pub struct TilingConsts {
 impl TilingConsts {
     /// Calculates constants for the $\{4, 5\}$ tiling.
     ///
-    /// This is an "order-5 square tiling". It consists of squares where 5 squares meet at every vertex.
+    /// This is an "order-5 square tiling". It consists of squares ($p=4$) where 5 squares meet at every vertex ($q=5$).
+    ///
+    /// # Theory
+    ///
+    /// To calculate the dimensions, we consider a fundamental right-angled triangle formed by:
+    /// *   The center of a polygon (angle $A = \pi/p$).
+    /// *   A vertex of the polygon (angle $B = \pi/q$).
+    /// *   The midpoint of an edge (angle $C = \pi/2$).
+    ///
+    /// Let the side lengths be:
+    /// *   $r$ (inradius): Center to edge midpoint.
+    /// *   $R$ (circumradius): Center to vertex.
+    /// *   $l$ (half-edge): Vertex to edge midpoint.
+    ///
+    /// Using the Hyperbolic Law of Cosines for angles ($\cos C = -\cos A \cos B + \sin A \sin B \cosh c$):
+    ///
+    /// 1.  **For side $l$ (opposite $A$):**
+    ///     $$ \cos(\pi/p) = \sin(\pi/q) \cosh(l) \implies \cosh(l) = \frac{\cos(\pi/p)}{\sin(\pi/q)} $$
+    ///
+    /// 2.  **For side $r$ (opposite $B$):**
+    ///     $$ \cos(\pi/q) = \sin(\pi/p) \cosh(r) \implies \cosh(r) = \frac{\cos(\pi/q)}{\sin(\pi/p)} $$
+    ///
+    /// 3.  **For side $R$ (hypotenuse):**
+    ///     $$ \cosh(R) = \cosh(r) \cosh(l) $$
+    ///
+    /// Finally, we convert these hyperbolic distances to Euclidean distances in the Poincaré disk using $r_{euclid} = \tanh(r_{hyperbolic} / 2)$.
+    ///
+    /// *   `neighbor_offset` corresponds to moving $2r$ (distance between centers), so the Mobius translation is $\tanh(r)$.
+    /// *   `vertex_offset` corresponds to $R$, so Euclidean distance is $\tanh(R/2)$.
     ///
     /// # Examples
     ///
@@ -509,48 +558,32 @@ impl TilingConsts {
         let p = 4.0;
         let q = 5.0;
 
-        // The hyperbolic distance 'd' between centers of adjacent p-gons sharing an edge is given by:
-        // cosh(d/2) = cos(pi/q) / sin(pi/p)
-        let cos_pi_q = (PI / q).cos();
-        let sin_pi_p = (PI / p).sin();
-        let cosh_half_d = cos_pi_q / sin_pi_p;
-        let half_d = cosh_half_d.acosh();
-        // Convert hyperbolic distance to Euclidean distance in the disk model
-        // r_euclid = tanh(r_hyperbolic / 2)
-        // Here half_d is already r_hyperbolic/2 relative to the midpoint of the edge.
-        // Wait, neighbor_offset is the move from center to center. So distance is d.
-        // The Mobius translation magnitude 'a' corresponds to tanh(d/2).
-        let neighbor_offset = half_d.tanh();
+        let pi_p = PI / p;
+        let pi_q = PI / q;
 
-        // Vertex distance R (circumradius)
-        // Right hyperbolic triangle with angles: pi/p (center), pi/q (vertex), pi/2 (edge midpoint).
-        // Let 'R' be hypotenuse (center to vertex).
-        // Let 'r' be inradius (center to edge midpoint) = half_d.
-        // Let 'l' be half-edge length.
-        //
-        // Rule: cosh(R) = cosh(r) * cosh(l)
-        // We need 'l'.
-        // Relation: cos(pi/p) = sin(pi/q) * cosh(l)  (from spherical law of cosines for angles... wait, dual?)
-        // Let's stick to standard hyperbolic formulas.
-        // cos(C) = -cos(A)cos(B) + sin(A)sin(B)cosh(c)
-        // For dual triangle (edge lengths become angles):
-        // cosh(R) = cot(pi/p) * cot(pi/q)
-        //
-        // Let's re-verify the existing implementation logic, which was:
-        // cosh_r = cos(pi/q) / sin(pi/p)  <-- This matches cosh(inradius)
-        // cosh_half_edge = cos(pi/p) / sin(pi/q)
-        // cosh_radius = cosh_r * cosh_half_edge
+        let sin_pi_p = pi_p.sin();
+        let cos_pi_p = pi_p.cos();
+        let sin_pi_q = pi_q.sin();
+        let cos_pi_q = pi_q.cos();
 
+        // Calculate hyperbolic cosine of inradius (r) and half-edge (l)
         let cosh_r = cos_pi_q / sin_pi_p;
+        let cosh_l = cos_pi_p / sin_pi_q;
 
-        let sin_pi_q = (PI / q).sin();
-        let cos_pi_p = (PI / p).cos();
-        let cosh_half_edge = cos_pi_p / sin_pi_q;
+        // Calculate hyperbolic inradius (r)
+        let inradius_hyperbolic = cosh_r.acosh();
 
-        let cosh_radius = cosh_r * cosh_half_edge;
-        let radius = cosh_radius.acosh();
-        // Convert R to Euclidean distance from origin
-        let vertex_offset = (radius / 2.0).tanh(); // Corrected formula: Euclidean r = tanh(hyperbolic R / 2)
+        // Calculate hyperbolic circumradius (R)
+        let cosh_circumradius = cosh_r * cosh_l;
+        let circumradius_hyperbolic = cosh_circumradius.acosh();
+
+        // neighbor_offset: Euclidean translation to move 2*r (center to center)
+        // displacement = tanh( (2*r) / 2 ) = tanh(r)
+        let neighbor_offset = inradius_hyperbolic.tanh();
+
+        // vertex_offset: Euclidean distance of vertex from center
+        // dist = tanh( R / 2 )
+        let vertex_offset = (circumradius_hyperbolic / 2.0).tanh();
 
         Self {
             neighbor_offset,
@@ -566,7 +599,11 @@ impl TilingConsts {
 ///
 /// # Arguments
 ///
-/// *   `direction`: An index `0..4` representing the neighbor direction (Right, Up, Left, Down).
+/// *   `direction`: An index `0..4` representing the neighbor direction:
+///     *   `0` = Right ($0$ rad)
+///     *   `1` = Up ($\pi/2$ rad)
+///     *   `2` = Left ($\pi$ rad)
+///     *   `3` = Down ($3\pi/2$ rad)
 /// *   `consts`: Tiling constants (usually from `new_4_5`).
 ///
 /// # Examples
