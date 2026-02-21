@@ -732,7 +732,7 @@ fn apply_propagation_rune(
     if chroma::apply_chroma_runes(rune, y, x, current_signals, next_signals, chroma_grid) {
         return true;
     }
-    if logos::apply_logos_runes(rune, y, x, current_signals, next_signals, logos_engine) {
+    if logos::apply_logos_runes(rune, y, x, current_signals, next_signals, logos_engine, dna) {
         return true;
     }
     false
