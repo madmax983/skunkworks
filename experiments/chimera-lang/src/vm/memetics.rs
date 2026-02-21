@@ -677,11 +677,18 @@ pub fn exec_memetics_op(
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(r) = val {
                     let (cy, cx) = vm.context_loc;
-                    let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
-                    let count = coords.len();
-                    for (tx, ty) in coords {
-                        vm.viral_grid[ty][tx] = None;
-                    }
+                    let mut count = 0;
+                    crate::vm::iterate_circle(
+                        #[cfg(feature = "nova")]
+                        vm.topology,
+                        cx as i64,
+                        cy as i64,
+                        r,
+                        |tx, ty| {
+                            vm.viral_grid[ty][tx] = None;
+                            count += 1;
+                        },
+                    );
                     vm.energy = vm.energy.saturating_sub(count as i64);
                     vm.output.push(format!("SANITIZE: Cleared {} cells", count));
                 } else {

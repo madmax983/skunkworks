@@ -443,6 +443,77 @@ pub enum PatchTarget {
     MutationRate,
 }
 
+/// Helper to map grid coordinates to the Poincaré disk.
+/// Extracted from ChimeraVM to allow static usage without borrowing self.
+pub fn map_grid_to_disk(y: i64, x: i64) -> Point {
+    let center = (GRID_SIZE as f64 - 1.0) / 2.0;
+    // Scale so that the corner (max extent) is at distance 0.95
+    // Max dist from center is sqrt(center^2 + center^2) = center * sqrt(2)
+    let max_dist = center * 2.0_f64.sqrt();
+    let scale = 0.95 / max_dist;
+
+    let dx = (x as f64 - center) * scale;
+    let dy = (y as f64 - center) * scale;
+
+    Point::new(dx, dy)
+}
+
+/// Iterates over grid coordinates within radius `r` of `(cx, cy)`.
+///
+/// This avoids allocating a `Vec` for coordinates, which is critical for performance
+/// in high-frequency operations like `Radiate` and `Siphon`.
+pub fn iterate_circle<F>(
+    #[cfg(feature = "nova")] topology: Topology,
+    cx: i64,
+    cy: i64,
+    r: i64,
+    mut f: F,
+) where
+    F: FnMut(usize, usize),
+{
+    #[cfg(feature = "nova")]
+    if topology == Topology::Hyperbolic {
+        let center_p = map_grid_to_disk(cy, cx);
+        // r is integer grid radius. Convert to hyperbolic distance?
+        // Center is dense, edge is sparse.
+        // Let's assume r=1 means "distance to neighbor at center".
+        // Center neighbor distance is approx 0.13 (scale=0.126).
+        // So hyper_r = r * 0.15 ?
+        // Let's just use r as a generous bounds.
+        let hyper_r = (r as f64) * 0.5;
+
+        for y in 0..GRID_SIZE {
+            for x in 0..GRID_SIZE {
+                let p = map_grid_to_disk(y as i64, x as i64);
+                let dist = hyperbolic_dist(center_p, p);
+                if dist <= hyper_r {
+                    f(x, y);
+                }
+            }
+        }
+        return;
+    }
+
+    let r_sq = (r as i128).saturating_mul(r as i128);
+
+    let min_y = (cy.saturating_sub(r)).clamp(0, GRID_SIZE as i64) as usize;
+    let max_y = (cy.saturating_add(r).saturating_add(1)).clamp(0, GRID_SIZE as i64) as usize;
+    let min_x = (cx.saturating_sub(r)).clamp(0, GRID_SIZE as i64) as usize;
+    let max_x = (cx.saturating_add(r).saturating_add(1)).clamp(0, GRID_SIZE as i64) as usize;
+
+    for y in min_y..max_y {
+        for x in min_x..max_x {
+            let dx = (x as i64).saturating_sub(cx) as i128;
+            let dy = (y as i64).saturating_sub(cy) as i128;
+            let dist_sq = dx.saturating_mul(dx).saturating_add(dy.saturating_mul(dy));
+
+            if dist_sq <= r_sq {
+                f(x, y);
+            }
+        }
+    }
+}
+
 impl std::fmt::Display for ChimeraVM {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut table = Table::new();
@@ -1301,16 +1372,7 @@ impl ChimeraVM {
 
     /// Maps grid coordinates to the Poincaré disk range [-0.95, 0.95].
     pub fn grid_to_disk(&self, y: i64, x: i64) -> Point {
-        let center = (GRID_SIZE as f64 - 1.0) / 2.0;
-        // Scale so that the corner (max extent) is at distance 0.95
-        // Max dist from center is sqrt(center^2 + center^2) = center * sqrt(2)
-        let max_dist = center * 2.0_f64.sqrt();
-        let scale = 0.95 / max_dist;
-
-        let dx = (x as f64 - center) * scale;
-        let dy = (y as f64 - center) * scale;
-
-        Point::new(dx, dy)
+        map_grid_to_disk(y, x)
     }
 
     /// Maps a point in the Poincaré disk back to grid coordinates.
@@ -2583,57 +2645,18 @@ impl ChimeraVM {
     ///
     /// Optimized to iterate only within the bounding box of the circle, rather than the entire grid.
     /// Also pre-allocates the vector to avoid re-allocations.
-    pub(crate) fn get_circular_coords(&self, cx: i64, cy: i64, r: i64) -> Vec<(usize, usize)> {
-        let mut coords = Vec::new();
-
-        #[cfg(feature = "nova")]
-        if self.topology == Topology::Hyperbolic {
-            let center_p = self.grid_to_disk(cy, cx);
-            // r is integer grid radius. Convert to hyperbolic distance?
-            // Center is dense, edge is sparse.
-            // Let's assume r=1 means "distance to neighbor at center".
-            // Center neighbor distance is approx 0.13 (scale=0.126).
-            // So hyper_r = r * 0.15 ?
-            // Let's just use r as a generous bounds.
-            let hyper_r = (r as f64) * 0.5;
-
-            for y in 0..GRID_SIZE {
-                for x in 0..GRID_SIZE {
-                    let p = self.grid_to_disk(y as i64, x as i64);
-                    let dist = hyperbolic_dist(center_p, p);
-                    if dist <= hyper_r {
-                        coords.push((x, y));
-                    }
-                }
-            }
-            return coords;
-        }
-
-        let r_sq = (r as i128).saturating_mul(r as i128);
-
-        let min_y = (cy.saturating_sub(r)).clamp(0, GRID_SIZE as i64) as usize;
-        let max_y = (cy.saturating_add(r).saturating_add(1)).clamp(0, GRID_SIZE as i64) as usize;
-        let min_x = (cx.saturating_sub(r)).clamp(0, GRID_SIZE as i64) as usize;
-        let max_x = (cx.saturating_add(r).saturating_add(1)).clamp(0, GRID_SIZE as i64) as usize;
-
-        // Pre-allocate to avoid re-allocations.
-        // We use a safe upper bound: the bounding box area, clamped to total grid size.
-        let width = max_x.saturating_sub(min_x);
-        let height = max_y.saturating_sub(min_y);
-        let cap = width.saturating_mul(height).min(GRID_SIZE * GRID_SIZE);
-        coords.reserve(cap);
-
-        for y in min_y..max_y {
-            for x in min_x..max_x {
-                let dx = (x as i64).saturating_sub(cx) as i128;
-                let dy = (y as i64).saturating_sub(cy) as i128;
-                let dist_sq = dx.saturating_mul(dx).saturating_add(dy.saturating_mul(dy));
-
-                if dist_sq <= r_sq {
-                    coords.push((x, y));
-                }
-            }
-        }
+    pub fn get_circular_coords(&self, cx: i64, cy: i64, r: i64) -> Vec<(usize, usize)> {
+        let mut coords = Vec::with_capacity(
+            (r.saturating_mul(r).saturating_mul(4) as usize).min(GRID_SIZE * GRID_SIZE),
+        );
+        iterate_circle(
+            #[cfg(feature = "nova")]
+            self.topology,
+            cx,
+            cy,
+            r,
+            |x, y| coords.push((x, y)),
+        );
         coords
     }
 
@@ -4249,11 +4272,18 @@ impl ChimeraVM {
                     let val = self.stack.pop().unwrap();
 
                     if let (Value::Int(x), Value::Int(y), Value::Int(r)) = (x_val, y_val, r_val) {
-                        let coords = self.get_circular_coords(x, y, r);
-                        let count = coords.len();
-                        for (cx, cy) in coords {
-                            self.grid[cy][cx] = val.clone();
-                        }
+                        let mut count = 0;
+                        iterate_circle(
+                            #[cfg(feature = "nova")]
+                            self.topology,
+                            x,
+                            y,
+                            r,
+                            |cx, cy| {
+                                self.grid[cy][cx] = val.clone();
+                                count += 1;
+                            },
+                        );
                         self.energy = self.energy.saturating_sub((count / 2) as i64);
                         self.output.push(format!(
                             "RADIATE: Affected {} cells at {},{} r={}",
@@ -4275,15 +4305,22 @@ impl ChimeraVM {
                     let r_val = self.stack.pop().unwrap();
 
                     if let (Value::Int(x), Value::Int(y), Value::Int(r)) = (x_val, y_val, r_val) {
-                        let coords = self.get_circular_coords(x, y, r);
-                        let count = coords.len();
+                        let mut count = 0;
                         let mut sum: i64 = 0;
-                        for (cx, cy) in coords {
-                            if let Value::Int(n) = self.grid[cy][cx] {
-                                sum = sum.saturating_add(n);
-                            }
-                            self.grid[cy][cx] = Value::Int(0);
-                        }
+                        iterate_circle(
+                            #[cfg(feature = "nova")]
+                            self.topology,
+                            x,
+                            y,
+                            r,
+                            |cx, cy| {
+                                if let Value::Int(n) = self.grid[cy][cx] {
+                                    sum = sum.saturating_add(n);
+                                }
+                                self.grid[cy][cx] = Value::Int(0);
+                                count += 1;
+                            },
+                        );
                         self.stack.push(Value::Int(sum));
                         self.energy = self.energy.saturating_sub(5);
                         self.output

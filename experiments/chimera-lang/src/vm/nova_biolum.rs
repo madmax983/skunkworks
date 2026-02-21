@@ -60,15 +60,22 @@ pub fn exec_photophore(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 let color = vm.light_color_grid[cy][cx];
 
                 if intensity > 0 {
-                    let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
-                    let count = coords.len();
-                    for (tx, ty) in coords {
-                        vm.light_grid[ty][tx] = vm.light_grid[ty][tx].saturating_add(intensity);
-                        // Propagate color
-                        // If target has no light, take source color.
-                        // If target has light, maybe blend? For now, source overwrites to simulate "projection".
-                        vm.light_color_grid[ty][tx] = color;
-                    }
+                    let mut count = 0;
+                    crate::vm::iterate_circle(
+                        #[cfg(feature = "nova")]
+                        vm.topology,
+                        cx as i64,
+                        cy as i64,
+                        r,
+                        |tx, ty| {
+                            vm.light_grid[ty][tx] = vm.light_grid[ty][tx].saturating_add(intensity);
+                            // Propagate color
+                            // If target has no light, take source color.
+                            // If target has light, maybe blend? For now, source overwrites to simulate "projection".
+                            vm.light_color_grid[ty][tx] = color;
+                            count += 1;
+                        },
+                    );
                     vm.energy = vm.energy.saturating_sub((count / 2) as i64);
                     vm.output.push(format!(
                         "PHOTOPHORE: Projected light radius {} from {},{}",

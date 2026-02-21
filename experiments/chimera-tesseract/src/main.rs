@@ -31,10 +31,7 @@ impl HyperAgent {
         // Give some initial energy
         vm.energy = 100;
 
-        Self {
-            vm,
-            color: WHITE,
-        }
+        Self { vm, color: WHITE }
     }
 
     fn update(&mut self) {
@@ -155,7 +152,7 @@ async fn main() {
                 (c1.r + c2.r) * 0.5,
                 (c1.g + c2.g) * 0.5,
                 (c1.b + c2.b) * 0.5,
-                0.5 // Transparent
+                0.5, // Transparent
             );
 
             draw_line_3d(p1, p2, edge_color);

@@ -1,10 +1,12 @@
-use chimera_lang::vm::{ChimeraVM, Value};
 use chimera_lang::ast::{Dna, Helix};
 use chimera_lang::vm::prologue::exec_prologue_tick;
+use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_narrative_incipit() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -15,12 +17,17 @@ fn test_narrative_incipit() {
 
     exec_prologue_tick(&mut vm);
 
-    assert_eq!(vm.prologue_state.signal_grid[5][6], Some(Value::Str("Hero".to_string())));
+    assert_eq!(
+        vm.prologue_state.signal_grid[5][6],
+        Some(Value::Str("Hero".to_string()))
+    );
 }
 
 #[test]
 fn test_narrative_terminus() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -31,12 +38,17 @@ fn test_narrative_terminus() {
 
     exec_prologue_tick(&mut vm);
 
-    assert_eq!(vm.prologue_state.signal_grid[5][6], Some(Value::Str("Conflict".to_string())));
+    assert_eq!(
+        vm.prologue_state.signal_grid[5][6],
+        Some(Value::Str("Conflict".to_string()))
+    );
 }
 
 #[test]
 fn test_narrative_revision() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -51,12 +63,17 @@ fn test_narrative_revision() {
 
     exec_prologue_tick(&mut vm);
 
-    assert_eq!(vm.prologue_state.signal_grid[5][6], Some(Value::Str("HELLO".to_string())));
+    assert_eq!(
+        vm.prologue_state.signal_grid[5][6],
+        Some(Value::Str("HELLO".to_string()))
+    );
 }
 
 #[test]
 fn test_narrative_library() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -80,12 +97,19 @@ fn test_narrative_library() {
     exec_prologue_tick(&mut vm);
 
     // Check if written to library
-    assert_eq!(vm.prologue_state.library.get("key"), Some(&Value::Str("val".to_string())));
+    assert_eq!(
+        vm.prologue_state.library.get("key"),
+        Some(&Value::Str("val".to_string()))
+    );
 
     // Step 2: Read
-    let mut vm2 = ChimeraVM::new(Dna { helix: Helix { strands: vec![] } });
+    let mut vm2 = ChimeraVM::new(Dna {
+        helix: Helix { strands: vec![] },
+    });
     vm2.prologue_state.active = true;
-    vm2.prologue_state.library.insert("key".to_string(), Value::Str("val".to_string()));
+    vm2.prologue_state
+        .library
+        .insert("key".to_string(), Value::Str("val".to_string()));
 
     // Key (West): "key"
     vm2.grid[5][3] = Value::Str("key".to_string());
@@ -100,9 +124,20 @@ fn test_narrative_library() {
     exec_prologue_tick(&mut vm2);
 
     // Debugging assertions
-    assert_eq!(vm2.prologue_state.signal_grid[5][4], Some(Value::Str("key".to_string())), "West Signal Missing");
-    assert_eq!(vm2.prologue_state.signal_grid[4][5], Some(Value::Int(2)), "North Signal Missing");
+    assert_eq!(
+        vm2.prologue_state.signal_grid[5][4],
+        Some(Value::Str("key".to_string())),
+        "West Signal Missing"
+    );
+    assert_eq!(
+        vm2.prologue_state.signal_grid[4][5],
+        Some(Value::Int(2)),
+        "North Signal Missing"
+    );
 
     // Should emit "val" to Self (5,5)
-    assert_eq!(vm2.prologue_state.signal_grid[5][5], Some(Value::Str("val".to_string())));
+    assert_eq!(
+        vm2.prologue_state.signal_grid[5][5],
+        Some(Value::Str("val".to_string()))
+    );
 }

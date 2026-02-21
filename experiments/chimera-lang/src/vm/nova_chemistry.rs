@@ -1,7 +1,7 @@
 #[cfg(feature = "nova")]
 use crate::ast::JunctionType;
 #[cfg(feature = "nova")]
-use crate::vm::{ChimeraVM, Value};
+use crate::vm::{iterate_circle, ChimeraVM, Value};
 
 #[cfg(feature = "nova")]
 pub fn exec_mix(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
@@ -10,8 +10,6 @@ pub fn exec_mix(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         if let Value::Int(r) = val {
             if r > 0 {
                 let (cy, cx) = vm.context_loc;
-                let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
-
                 let mut ingredients = Vec::new();
 
                 // If center already has a dish, keep it as base?
@@ -19,17 +17,24 @@ pub fn exec_mix(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 // Let's mix everything.
 
                 // Collect and Clear neighbors (excluding center for now)
-                for &(tx, ty) in &coords {
-                    if tx == cx && ty == cy {
-                        continue;
-                    } // Skip center for a moment
+                iterate_circle(
+                    #[cfg(feature = "nova")]
+                    vm.topology,
+                    cx as i64,
+                    cy as i64,
+                    r,
+                    |tx, ty| {
+                        if tx == cx && ty == cy {
+                            return;
+                        } // Skip center for a moment
 
-                    let val = vm.grid[ty][tx].clone();
-                    if !matches!(val, Value::Int(0)) {
-                        ingredients.push(val);
-                        vm.grid[ty][tx] = Value::Int(0);
-                    }
-                }
+                        let val = vm.grid[ty][tx].clone();
+                        if !matches!(val, Value::Int(0)) {
+                            ingredients.push(val);
+                            vm.grid[ty][tx] = Value::Int(0);
+                        }
+                    },
+                );
 
                 // Add center content
                 let center_val = vm.grid[cy][cx].clone();
@@ -179,45 +184,71 @@ pub fn exec_splash(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
                 // Calculate target center
                 if let Some((ty, tx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
-                    let targets = vm.get_circular_coords(tx as i64, ty as i64, r);
-
                     vm.output
                         .push(format!("SPLASH: Threw {} at {},{}", solution_name, tx, ty));
 
                     match solution_name.as_str() {
                         "Acid" => {
-                            for (tx, ty) in targets {
-                                vm.grid[ty][tx] = Value::Int(0); // Destroy
-                                                                 // Damage walls?
-                                vm.membranes[ty][tx] = 0;
-                            }
+                            iterate_circle(
+                                #[cfg(feature = "nova")]
+                                vm.topology,
+                                tx as i64,
+                                ty as i64,
+                                r,
+                                |tx, ty| {
+                                    vm.grid[ty][tx] = Value::Int(0); // Destroy
+                                                                     // Damage walls?
+                                    vm.membranes[ty][tx] = 0;
+                                },
+                            );
                             vm.output
                                 .push("SPLASH: Acid melted everything!".to_string());
                         }
                         "Elixir" => {
-                            for (tx, ty) in targets {
-                                if let Value::Int(n) = &mut vm.grid[ty][tx] {
-                                    *n = n.saturating_add(potency);
-                                }
-                            }
+                            iterate_circle(
+                                #[cfg(feature = "nova")]
+                                vm.topology,
+                                tx as i64,
+                                ty as i64,
+                                r,
+                                |tx, ty| {
+                                    if let Value::Int(n) = &mut vm.grid[ty][tx] {
+                                        *n = n.saturating_add(potency);
+                                    }
+                                },
+                            );
                             vm.energy = vm.energy.saturating_add(potency);
                             vm.output
                                 .push("SPLASH: Elixir revitalized the area!".to_string());
                         }
                         "Mutagen" => {
-                            for (tx, ty) in targets {
-                                vm.mutagen_grid[ty][tx] =
-                                    vm.mutagen_grid[ty][tx].saturating_add(potency);
-                            }
+                            iterate_circle(
+                                #[cfg(feature = "nova")]
+                                vm.topology,
+                                tx as i64,
+                                ty as i64,
+                                r,
+                                |tx, ty| {
+                                    vm.mutagen_grid[ty][tx] =
+                                        vm.mutagen_grid[ty][tx].saturating_add(potency);
+                                },
+                            );
                             // Trigger mutation?
                             vm.mutate();
                             vm.output.push("SPLASH: Mutagen released!".to_string());
                         }
                         "Steam" => {
-                            for (tx, ty) in targets {
-                                vm.moisture_grid[ty][tx] =
-                                    vm.moisture_grid[ty][tx].saturating_add(potency);
-                            }
+                            iterate_circle(
+                                #[cfg(feature = "nova")]
+                                vm.topology,
+                                tx as i64,
+                                ty as i64,
+                                r,
+                                |tx, ty| {
+                                    vm.moisture_grid[ty][tx] =
+                                        vm.moisture_grid[ty][tx].saturating_add(potency);
+                                },
+                            );
                             vm.output.push("SPLASH: Steam cloud formed!".to_string());
                         }
                         _ => {

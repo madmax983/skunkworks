@@ -283,12 +283,18 @@ pub fn exec_time_warp(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             if r > 0 {
                 let factor = f.clamp(0, 10) as u8;
                 let (cy, cx) = vm.context_loc;
-                let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
-                let count = coords.len();
-
-                for (tx, ty) in coords {
-                    vm.time_grid[ty][tx] = factor;
-                }
+                let mut count = 0;
+                crate::vm::iterate_circle(
+                    #[cfg(feature = "nova")]
+                    vm.topology,
+                    cx as i64,
+                    cy as i64,
+                    r,
+                    |tx, ty| {
+                        vm.time_grid[ty][tx] = factor;
+                        count += 1;
+                    },
+                );
 
                 let cost_multiplier = if factor == 0 { 2 } else { factor as i64 };
                 vm.energy = vm

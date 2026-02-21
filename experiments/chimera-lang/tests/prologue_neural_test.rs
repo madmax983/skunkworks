@@ -1,12 +1,14 @@
 #![cfg(feature = "biophysics")]
 
 use chimera_lang::ast::{Dna, Helix, Strand};
-use chimera_lang::vm::{ChimeraVM, Value};
 use chimera_lang::vm::prologue::exec_prologue_tick;
+use chimera_lang::vm::{ChimeraVM, Value};
 
 fn make_vm() -> ChimeraVM {
     let dna = Dna {
-        helix: Helix { strands: vec![Strand { genes: vec![] }] },
+        helix: Helix {
+            strands: vec![Strand { genes: vec![] }],
+        },
     };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
@@ -22,7 +24,10 @@ fn test_neural_creation() {
 
     exec_prologue_tick(&mut vm);
 
-    assert!(vm.neurons.contains_key(&(5, 5)), "Neuron should be created at (5,5)");
+    assert!(
+        vm.neurons.contains_key(&(5, 5)),
+        "Neuron should be created at (5,5)"
+    );
 }
 
 #[test]
@@ -37,7 +42,10 @@ fn test_neural_decay() {
     // Remove rune
     vm.grid[5][5] = Value::Int(0);
     exec_prologue_tick(&mut vm);
-    assert!(!vm.neurons.contains_key(&(5, 5)), "Neuron should be removed after rune is gone");
+    assert!(
+        !vm.neurons.contains_key(&(5, 5)),
+        "Neuron should be removed after rune is gone"
+    );
 }
 
 #[test]
@@ -68,7 +76,11 @@ fn test_neural_firing() {
     exec_prologue_tick(&mut vm);
 
     // Check signal grid
-    assert_eq!(vm.prologue_state.signal_grid[5][5], Some(Value::Int(1)), "Neuron should emit signal");
+    assert_eq!(
+        vm.prologue_state.signal_grid[5][5],
+        Some(Value::Int(1)),
+        "Neuron should emit signal"
+    );
 }
 
 #[test]

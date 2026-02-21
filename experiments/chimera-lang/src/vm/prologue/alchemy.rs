@@ -187,7 +187,7 @@ pub fn apply_alchemy_runes(
                     (Value::Str(s), Value::Int(n)) => {
                         let count = n.max(0) as usize;
                         if s.len().saturating_mul(count) > MAX_STRING_LEN {
-                             Some(Value::Str(s.clone()))
+                            Some(Value::Str(s.clone()))
                         } else {
                             Some(Value::Str(s.repeat(count)))
                         }
@@ -195,7 +195,7 @@ pub fn apply_alchemy_runes(
                     (Value::Int(n), Value::Str(s)) => {
                         let count = n.max(0) as usize;
                         if s.len().saturating_mul(count) > MAX_STRING_LEN {
-                             Some(Value::Str(s.clone()))
+                            Some(Value::Str(s.clone()))
                         } else {
                             Some(Value::Str(s.repeat(count)))
                         }

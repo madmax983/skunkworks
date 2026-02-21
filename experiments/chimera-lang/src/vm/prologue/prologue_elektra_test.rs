@@ -77,6 +77,12 @@ fn test_bio_voltaics() {
     assert_eq!(vm.resistance_grid[5][6], 100.0); // Load
 
     // Verify registers
-    assert_eq!(vm.prologue_state.registers.get(&(5, 5)), Some(&Value::Int(2)));
-    assert_eq!(vm.prologue_state.registers.get(&(5, 6)), Some(&Value::Int(2)));
+    assert_eq!(
+        vm.prologue_state.registers.get(&(5, 5)),
+        Some(&Value::Int(2))
+    );
+    assert_eq!(
+        vm.prologue_state.registers.get(&(5, 6)),
+        Some(&Value::Int(2))
+    );
 }

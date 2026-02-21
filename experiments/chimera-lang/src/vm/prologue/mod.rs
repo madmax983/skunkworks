@@ -75,12 +75,14 @@ pub mod hypnagogia;
 pub mod io;
 pub mod lexicon;
 pub mod linguistics;
-pub mod memetics;
-pub mod narrative;
 pub mod list;
 pub mod logic;
 pub mod math;
+pub mod memetics;
+pub mod narrative;
 pub mod necromancy;
+#[cfg(feature = "biophysics")]
+pub mod neural;
 pub mod optics;
 pub mod oracle;
 pub mod pandemonium;
@@ -93,8 +95,6 @@ pub mod teleport;
 pub mod topology;
 pub mod virology;
 pub mod void;
-#[cfg(feature = "biophysics")]
-pub mod neural;
 
 /// An autonomous agent wandering the Prologue grid.
 #[derive(Debug, Clone, Serialize, Deserialize)]

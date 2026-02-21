@@ -50,7 +50,7 @@ pub fn apply_narrative_runes(
                 let res = Value::Str(theme.to_string());
 
                 if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
-                     if next_signals[ey][ex] != Some(res.clone()) {
+                    if next_signals[ey][ex] != Some(res.clone()) {
                         next_signals[ey][ex] = Some(res);
                         changes = true;
                     }
@@ -73,7 +73,7 @@ pub fn apply_narrative_runes(
                 let res = Value::Str(outcome.to_string());
 
                 if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
-                     if next_signals[ey][ex] != Some(res.clone()) {
+                    if next_signals[ey][ex] != Some(res.clone()) {
                         next_signals[ey][ex] = Some(res);
                         changes = true;
                     }
@@ -94,7 +94,7 @@ pub fn apply_narrative_runes(
                 let res = Value::Str(edited);
 
                 if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
-                     if next_signals[ey][ex] != Some(res.clone()) {
+                    if next_signals[ey][ex] != Some(res.clone()) {
                         next_signals[ey][ex] = Some(res);
                         changes = true;
                     }
@@ -124,7 +124,7 @@ pub fn apply_narrative_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
         };
 
         let n_sig = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
-             vm.prologue_state.signal_grid[ny][nx].clone()
+            vm.prologue_state.signal_grid[ny][nx].clone()
         } else {
             None
         };
@@ -132,13 +132,14 @@ pub fn apply_narrative_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
         if let (Some(Value::Str(key)), Some(Value::Int(mode))) = (w_sig, n_sig) {
             if mode == 1 {
                 // WRITE: Key (West) + Value (South)
-                 if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
-                     // Read from signal grid or main grid? Let's say Signal Grid for uniformity.
-                     if let Some(val) = &vm.prologue_state.signal_grid[sy][sx] {
-                         vm.prologue_state.library.insert(key.clone(), val.clone());
-                         vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1)); // Ack
-                     }
-                 }
+                if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
+                    // Read from signal grid or main grid? Let's say Signal Grid for uniformity.
+                    if let Some(val) = &vm.prologue_state.signal_grid[sy][sx] {
+                        vm.prologue_state.library.insert(key.clone(), val.clone());
+                        vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                        // Ack
+                    }
+                }
             } else {
                 // READ: Key (West) -> Emit to Self
                 if let Some(val) = vm.prologue_state.library.get(&key) {

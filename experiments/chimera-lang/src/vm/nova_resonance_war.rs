@@ -17,19 +17,25 @@ pub fn exec_resonate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             vm.resonance_grid[cy][cx] = (freq, amp);
 
             // Diffusion/Radiation to immediate neighbors (radius 1)
-            let neighbors = vm.get_circular_coords(cx as i64, cy as i64, 1);
-            for (nx, ny) in neighbors {
-                if (nx, ny) != (cx, cy) {
-                    // Simple interference model: Overwrite if incoming is significantly stronger
-                    let (_curr_freq, curr_amp) = vm.resonance_grid[ny][nx];
-                    // Decayed amplitude at neighbor
-                    let spread_amp = amp * 0.5;
+            crate::vm::iterate_circle(
+                #[cfg(feature = "nova")]
+                vm.topology,
+                cx as i64,
+                cy as i64,
+                1,
+                |nx, ny| {
+                    if (nx, ny) != (cx, cy) {
+                        // Simple interference model: Overwrite if incoming is significantly stronger
+                        let (_curr_freq, curr_amp) = vm.resonance_grid[ny][nx];
+                        // Decayed amplitude at neighbor
+                        let spread_amp = amp * 0.5;
 
-                    if curr_amp < spread_amp {
-                        vm.resonance_grid[ny][nx] = (freq, spread_amp);
+                        if curr_amp < spread_amp {
+                            vm.resonance_grid[ny][nx] = (freq, spread_amp);
+                        }
                     }
-                }
-            }
+                },
+            );
 
             // Energy Cost
             vm.energy = vm.energy.saturating_sub(5 + (amp_int / 10));
@@ -132,18 +138,24 @@ pub fn exec_dampen(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         if let (Value::Int(radius), Value::Int(amount)) = (radius_val, amount_val) {
             if radius > 0 {
                 let (cy, cx) = vm.context_loc;
-                let coords = vm.get_circular_coords(cx as i64, cy as i64, radius as i64);
                 let amp_reduction = amount as f32;
 
                 let mut count = 0;
-                for (nx, ny) in coords {
-                    let (freq, amp) = vm.resonance_grid[ny][nx];
-                    if amp > 0.0 {
-                        let new_amp = (amp - amp_reduction).max(0.0);
-                        vm.resonance_grid[ny][nx] = (freq, new_amp);
-                        count += 1;
-                    }
-                }
+                crate::vm::iterate_circle(
+                    #[cfg(feature = "nova")]
+                    vm.topology,
+                    cx as i64,
+                    cy as i64,
+                    radius as i64,
+                    |nx, ny| {
+                        let (freq, amp) = vm.resonance_grid[ny][nx];
+                        if amp > 0.0 {
+                            let new_amp = (amp - amp_reduction).max(0.0);
+                            vm.resonance_grid[ny][nx] = (freq, new_amp);
+                            count += 1;
+                        }
+                    },
+                );
 
                 vm.energy = vm.energy.saturating_sub(radius * 2);
                 vm.output.push(format!(

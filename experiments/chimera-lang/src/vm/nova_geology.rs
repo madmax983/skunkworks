@@ -68,16 +68,22 @@ fn exec_quake(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 fn exec_erode(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(Value::Int(r)) = vm.stack.pop() {
         let (cy, cx) = vm.context_loc;
-        let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
         let mut count = 0;
-        for (x, y) in coords {
-            if let Value::Int(ref mut n) = &mut vm.grid[y][x] {
-                if *n > 0 {
-                    *n -= 1;
-                    count += 1;
+        crate::vm::iterate_circle(
+            #[cfg(feature = "nova")]
+            vm.topology,
+            cx as i64,
+            cy as i64,
+            r,
+            |x, y| {
+                if let Value::Int(ref mut n) = &mut vm.grid[y][x] {
+                    if *n > 0 {
+                        *n -= 1;
+                        count += 1;
+                    }
                 }
-            }
-        }
+            },
+        );
         vm.energy = vm.energy.saturating_sub(count / 2 + 5);
         vm.output.push(format!("ERODE: Weathered {} cells", count));
     } else {
@@ -89,16 +95,22 @@ fn exec_erode(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 fn exec_sediment(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(Value::Int(r)) = vm.stack.pop() {
         let (cy, cx) = vm.context_loc;
-        let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
         let mut count = 0;
-        for (x, y) in coords {
-            if let Value::Int(ref mut n) = &mut vm.grid[y][x] {
-                if *n < 100 {
-                    *n += 1;
-                    count += 1;
+        crate::vm::iterate_circle(
+            #[cfg(feature = "nova")]
+            vm.topology,
+            cx as i64,
+            cy as i64,
+            r,
+            |x, y| {
+                if let Value::Int(ref mut n) = &mut vm.grid[y][x] {
+                    if *n < 100 {
+                        *n += 1;
+                        count += 1;
+                    }
                 }
-            }
-        }
+            },
+        );
         vm.energy = vm.energy.saturating_sub(count / 2 + 5);
         vm.output
             .push(format!("SEDIMENT: Deposited on {} cells", count));

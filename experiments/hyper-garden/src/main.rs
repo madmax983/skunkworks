@@ -61,7 +61,7 @@ fn harvest_plants() -> Vec<Plant> {
             // Axiom and Rules
             let axiom = "X";
             let x_rule = format!("F-[[X]+X]+F[+FX]-X"); // Standard plant-like
-            // Mix in the generated rule
+                                                        // Mix in the generated rule
             let f_rule = rule_str;
 
             let rules = vec![('X', x_rule.as_str()), ('F', f_rule.as_str())];
@@ -97,7 +97,12 @@ fn harvest_plants() -> Vec<Plant> {
     if plants.is_empty() {
         let lsystem = LSystem::new("X", vec![('X', "F-[[X]+X]+F[+FX]-X"), ('F', "FF")]);
         let instructions = lsystem.expand(4);
-        let mut turtle = Turtle::new(Vec4::new(0.0, -2.0, 0.0, 0.0), Vec4::new(0.0, 1.0, 0.0, 0.0), 0.1, 25.0f32.to_radians());
+        let mut turtle = Turtle::new(
+            Vec4::new(0.0, -2.0, 0.0, 0.0),
+            Vec4::new(0.0, 1.0, 0.0, 0.0),
+            0.1,
+            25.0f32.to_radians(),
+        );
         let lines = turtle.interpret(&instructions);
         plants.push(Plant {
             hash: "000000".to_string(),
@@ -206,14 +211,35 @@ async fn main() {
         // Draw HUD
         set_default_camera();
         draw_text("Hyper Garden", 10.0, 20.0, 30.0, WHITE);
-        draw_text(&format!("CPU: {:.0}%", monitor.cpu_usage * 100.0), 10.0, 50.0, 20.0, RED);
-        draw_text(&format!("MEM: {:.0}%", monitor.mem_usage * 100.0), 10.0, 70.0, 20.0, BLUE);
+        draw_text(
+            &format!("CPU: {:.0}%", monitor.cpu_usage * 100.0),
+            10.0,
+            50.0,
+            20.0,
+            RED,
+        );
+        draw_text(
+            &format!("MEM: {:.0}%", monitor.mem_usage * 100.0),
+            10.0,
+            70.0,
+            20.0,
+            BLUE,
+        );
 
         // Show current plant info
         let y_start = 100.0;
         for (i, plant) in plants.iter().enumerate() {
-             draw_text(&format!("{}: {}", plant.hash.chars().take(7).collect::<String>(), plant.message),
-             10.0, y_start + i as f32 * 20.0, 15.0, plant.color);
+            draw_text(
+                &format!(
+                    "{}: {}",
+                    plant.hash.chars().take(7).collect::<String>(),
+                    plant.message
+                ),
+                10.0,
+                y_start + i as f32 * 20.0,
+                15.0,
+                plant.color,
+            );
         }
 
         next_frame().await

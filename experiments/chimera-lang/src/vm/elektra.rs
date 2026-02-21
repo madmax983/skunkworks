@@ -1,4 +1,4 @@
-use super::{ChimeraVM, Value, GRID_SIZE};
+use super::{iterate_circle, ChimeraVM, Value, GRID_SIZE};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use crate::vm::VisualEffect;
@@ -312,18 +312,24 @@ fn exec_shock(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let p_val = vm.stack.pop().unwrap();
     if let (Value::Int(r), Value::Int(p)) = (r_val, p_val) {
         let (cy, cx) = vm.context_loc;
-        let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
-        for (x, y) in coords {
-            if vm.resistance_grid[y][x] < 0.0 {
-                vm.resistance_grid[y][x] = 1.0;
-                vm.output.push(format!("SHOCK: Blown fuse at {},{}", x, y));
-            }
-            vm.visual_effects.push(VisualEffect::Spark {
-                loc: (y, x),
-                color: (255, 100, 100),
-                ttl: 2,
-            });
-        }
+        iterate_circle(
+            #[cfg(feature = "nova")]
+            vm.topology,
+            cx as i64,
+            cy as i64,
+            r,
+            |x, y| {
+                if vm.resistance_grid[y][x] < 0.0 {
+                    vm.resistance_grid[y][x] = 1.0;
+                    vm.output.push(format!("SHOCK: Blown fuse at {},{}", x, y));
+                }
+                vm.visual_effects.push(VisualEffect::Spark {
+                    loc: (y, x),
+                    color: (255, 100, 100),
+                    ttl: 2,
+                });
+            },
+        );
         vm.output.push(format!("SHOCK: Discharged {} power", p));
     }
     None
@@ -349,40 +355,52 @@ fn exec_tesla_coil(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let p_val = vm.stack.pop().unwrap();
     if let (Value::Int(r), Value::Int(p)) = (r_val, p_val) {
         let (cy, cx) = vm.context_loc;
-        let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
 
         vm.output.push(format!(
             "TESLA COIL: Discharging {} power radius {} at {},{}",
             p, r, cx, cy
         ));
 
-        for (x, y) in &coords {
-            vm.visual_effects.push(VisualEffect::Lightning {
-                from: (cy, cx),
-                to: (*y, *x),
-                color: (200, 200, 255),
-                ttl: 3,
-            });
+        let discharge = vm.voltage_grid[cy][cx] >= p as f32;
+        if discharge {
+            vm.voltage_grid[cy][cx] -= p as f32;
         }
 
-        if vm.voltage_grid[cy][cx] >= p as f32 {
-            vm.voltage_grid[cy][cx] -= p as f32;
+        let mut hit_count = 0;
 
+        iterate_circle(
             #[cfg(feature = "nova")]
-            {
-                let mut hit_count = 0;
-                for (x, y) in coords {
-                    for org in vm.organelles.iter_mut() {
-                        if org.context_loc == (y, x) {
-                            org.halted = true;
-                            hit_count += 1;
+            vm.topology,
+            cx as i64,
+            cy as i64,
+            r,
+            |x, y| {
+                vm.visual_effects.push(VisualEffect::Lightning {
+                    from: (cy, cx),
+                    to: (y, x),
+                    color: (200, 200, 255),
+                    ttl: 3,
+                });
+
+                if discharge {
+                    #[cfg(feature = "nova")]
+                    {
+                        for org in vm.organelles.iter_mut() {
+                            if org.context_loc == (y, x) {
+                                org.halted = true;
+                                hit_count += 1;
+                            }
                         }
                     }
                 }
-                if hit_count > 0 {
-                    vm.output
-                        .push(format!("TESLA COIL: Fried {} organelles", hit_count));
-                }
+            },
+        );
+
+        if discharge {
+            #[cfg(feature = "nova")]
+            if hit_count > 0 {
+                vm.output
+                    .push(format!("TESLA COIL: Fried {} organelles", hit_count));
             }
         } else {
             vm.output

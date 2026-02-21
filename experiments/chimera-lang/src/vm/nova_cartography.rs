@@ -24,13 +24,11 @@ fn exec_scan(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let mut values = Vec::new();
 
         let r = radius.clamp(0, 10); // Limit radius to avoid excessive cost
-        let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
-
-        for (x, y) in coords {
+        crate::vm::iterate_circle(vm.topology, cx as i64, cy as i64, r, |x, y| {
             if !matches!(vm.grid[y][x], Value::Int(0)) {
                 values.push(vm.grid[y][x].clone());
             }
-        }
+        });
 
         // Cost based on area
         vm.energy = vm.energy.saturating_sub(r * r);
