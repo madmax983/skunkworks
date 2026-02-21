@@ -1133,6 +1133,10 @@ classDiagram
         +Vec~Vec~Option~Value~~~ signal_grid
         +Vec~Vec~Option~Value~~~ delayed_signals
         +HashMap~i64, Value~ teleport_channels
+        +HashMap~String, Value~ library
+        +Vec~Vec~EpigeneticMark~~ epigenetic_grid
+        +f32 dream_intensity
+        +HashMap~Pos, Deque~Value~~ history
     }
 
     class PrologueModules {
@@ -1145,6 +1149,10 @@ classDiagram
         +alchemy
         +chronos
         +virology
+        +narrative
+        +memetics
+        +epigenetics
+        +hypnagogia
     }
 
     ChimeraVM *-- PrologueState : Owns
