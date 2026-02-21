@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/market-swarm
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy.
+- **Note:** "The bees do not need a stock market. The stock market does not need bees."
+
 ### [Concentration Level: HIGH] - Location: experiments/hyper-flock
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The 4th Dimension is breathing. The Boids are flocking in hyperspace.
@@ -90,12 +95,12 @@
 - **Status:** The musicians are playing. Contention is rhythm.
 - **Note**: "The lock is the beat. The wait is the swing."
 
-### [Concentration Level: TOXIC] - Location: experiments/fluid-rain
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Technological Regression (CPU SPH).
-- **Note:** "A tide without a moon is just a flood."
-
 ## 🍂 History/Decay
+
+### [Concentration Level: TOXIC] - Location: graveyard/fluid-rain
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Technological Regression / ADR 045 Violation. Naive O(N^2) CPU SPH. Grace period expired.
+- **Note:** "A tide without a moon is just a flood."
 
 ### [Concentration Level: TOXIC] - Location: graveyard/lock-step
 - **Scent Origin:** The Reaper ☠️
