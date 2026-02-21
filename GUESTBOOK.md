@@ -185,12 +185,17 @@
 - **Status:** The Heap is a forest floor. The Reaper is decomposing cycles.
 - **Note:** "Death is just a sweep phase."
 
-### [Concentration Level: CONDEMNED] - Location: experiments/echo-chimera
+### [Concentration Level: CONDEMNED] - Location: experiments/recursion-garden
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Identity Collapse / Terminal Genericism.
-- **Note:** "The echo is faint. It is a ghost of a ghost."
+- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Documentation Void.
+- **Note:** "The garden grows only what is planted. No weeds, no life."
 
 ## 🍂 History/Decay
+
+### [Concentration Level: EXECUTED] - Location: graveyard/echo-chimera
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Identity Collapse / Terminal Genericism.
+- **Note:** "The echo has faded. Silence is the only true output."
 
 ### [Concentration Level: TOXIC] - Location: graveyard/echo-test
 - **Scent Origin:** The Reaper ☠️
