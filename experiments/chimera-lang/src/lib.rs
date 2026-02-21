@@ -80,6 +80,7 @@ pub struct ChimeraParser;
 
 pub mod ast;
 pub mod compiler;
+pub mod prologue_compiler;
 pub mod lisp;
 pub mod matrix_rain;
 pub mod opcode;

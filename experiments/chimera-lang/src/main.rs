@@ -45,18 +45,38 @@ fn main() -> Result<()> {
         .and_then(std::ffi::OsStr::to_str)
         .unwrap_or("");
 
-    let dna = if extension == "chs" {
-        compiler::compile(&unparsed_file, path.parent())?
-    } else if extension == "lisp" || extension == "cl" {
-        chimera_lang::lisp::compile(&unparsed_file)?
+    let (dna, grid, orca_mode) = if extension == "pro" {
+        chimera_lang::prologue_compiler::compile(&unparsed_file, path.parent())?
     } else {
-        let dna_pair = ChimeraParser::parse(Rule::dna, &unparsed_file)?
-            .next()
-            .ok_or_else(|| anyhow::anyhow!("No DNA found"))?;
-        Dna::try_from_pair(dna_pair).map_err(|e| anyhow::anyhow!("DNA parse error: {}", e))?
+        let dna = if extension == "chs" {
+            compiler::compile(&unparsed_file, path.parent())?
+        } else if extension == "lisp" || extension == "cl" {
+            chimera_lang::lisp::compile(&unparsed_file)?
+        } else {
+            let dna_pair = ChimeraParser::parse(Rule::dna, &unparsed_file)?
+                .next()
+                .ok_or_else(|| anyhow::anyhow!("No DNA found"))?;
+            Dna::try_from_pair(dna_pair).map_err(|e| anyhow::anyhow!("DNA parse error: {}", e))?
+        };
+        (dna, None, None)
     };
 
     let mut vm = ChimeraVM::new(dna);
+
+    if let Some(g) = grid {
+        vm.grid = g;
+        #[cfg(feature = "nova")]
+        {
+            vm.prologue_state.active = true;
+        }
+    }
+
+    if let Some(orca) = orca_mode {
+        #[cfg(feature = "nova")]
+        {
+            vm.prologue_state.orca_mode = orca;
+        }
+    }
 
     #[cfg(feature = "resonance")]
     {
