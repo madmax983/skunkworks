@@ -1443,4 +1443,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A 4D ecosystem where procedurally generated plants (Git History) are pollinated by flocking boids (System Processes?). The entire universe breathes and distorts based on real-time system metrics (CPU, Memory, Swap, Load).
 - **Novel trait**: 4D Pollination & Color Diffusion. Boids transfer color traits between plants in a 4D space distorted by system metrics.
 - **Status**: experiments/hyper-pollination
+- **Evaluation**: Compiles. Verified by The Splice Surgeon. Pheromones detected in GUESTBOOK.
+
+### hyper-neuron
+- **Parents**: experiments/hyper-pollination + crates/synaptic-physics
+- **Concept**: A Spiking Neural Network (Izhikevich Model) visualized in a 4D Hypercube where the network topology and signal delays are distorted by system metrics.
+- **Novel trait**: Hyper-Neuroplasticity. The "brain's" physical structure (and thus its thinking patterns) expands and contracts based on CPU load.
+- **Status**: experiments/hyper-neuron
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.

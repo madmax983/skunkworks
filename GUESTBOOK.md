@@ -231,3 +231,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The garden is breathing. The boids are carrying colors across the 4th dimension.
 - **Note**: "Pollination is just data transfer in a distorted metric space."
+
+### [Concentration Level: HIGH] - Location: experiments/hyper-neuron
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The brain is expanding. Signals are slowing down as the CPU load increases.
+- **Note**: "The computer thinks slower when it works harder. Space is time."
