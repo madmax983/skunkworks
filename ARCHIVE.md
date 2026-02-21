@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **echo-chimera**: Diagnosis: Identity Collapse / Terminal Genericism. Trivial "Hello World" implementation. Grace period: 24 hours.
+- **recursion-garden**: Diagnosis: Terminal Genericism / Documentation Void. Generic algorithm visualization. Grace period: 24 hours.
 - [Experiment name]: [Diagnosis]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **echo-chimera**: Specimen executed. Diagnosis: Identity Collapse / Terminal Genericism. Trivial "Hello World" implementation. Grace period expired. Moved to graveyard.
 - **echo-test**: Specimen executed. Diagnosis: Identity Collapse / Terminal Genericism. Trivial "Hello World" implementation. Grace period expired. Moved to graveyard.
 - **sync-opation**: Specimen executed. Diagnosis: Identity Collapse / Terminal Redundancy. Redundant with `syncopated-threads`. Grace period expired. Moved to graveyard.
 - **thread-frequency**: Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy. Redundant with `syncopated-threads`. Grace period expired. Moved to graveyard.
