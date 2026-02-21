@@ -101,6 +101,7 @@ pub mod teleport;
 pub mod topology;
 pub mod virology;
 pub mod void;
+pub mod forth;
 
 /// An autonomous agent wandering the Prologue grid.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -111,6 +112,9 @@ pub struct PrologueAgent {
     pub y: usize,
     /// Internal state memory
     pub state: Value,
+    /// Stack memory for Forth Interpreter
+    #[serde(default)]
+    pub stack: Vec<Value>,
 }
 
 /// The entire state of the Prologue system.
@@ -397,13 +401,25 @@ impl PrologueState {
                             | "Γ"
                             | "«"
                             | "»"
+                            // Forth
+                            | "₣"
                     ) {
                         self.runes.insert((y, x));
 
-                        if s == "@" || s == "K" || s == "H" || s == "C" || s == "♻" || s == "♬"
+                        if s == "@"
+                            || s == "K"
+                            || s == "H"
+                            || s == "C"
+                            || s == "♻"
+                            || s == "♬"
+                            || s == "₣"
                         {
                             // Try to retrieve persistent state
-                            let state = self.registers.get(&(y, x)).cloned().unwrap_or_else(|| {
+                            let raw_state =
+                                self.registers.get(&(y, x)).cloned().unwrap_or(Value::Int(0));
+                            let (state, stack) = unpack_agent_data(raw_state);
+
+                            let final_state = if matches!(state, Value::Int(0)) {
                                 if s == "C" {
                                     critter::CritterState::default().to_value()
                                 } else if s == "♬" {
@@ -411,8 +427,16 @@ impl PrologueState {
                                 } else {
                                     Value::Int(0)
                                 }
+                            } else {
+                                state
+                            };
+
+                            self.agents.push(PrologueAgent {
+                                x,
+                                y,
+                                state: final_state,
+                                stack,
                             });
-                            self.agents.push(PrologueAgent { x, y, state });
                         }
                     }
                 }
@@ -1264,6 +1288,14 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 }
                 None => continue,
             }
+        } else if current_type == "₣" {
+            match forth::process_forth_agent(vm, &agent, grid_snapshot) {
+                Some((updated_agent, t)) => {
+                    agent = updated_agent;
+                    t
+                }
+                None => continue,
+            }
         } else {
             process_seeker_logic(vm, &agent, grid_snapshot)
         };
@@ -1281,23 +1313,55 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
             vm.grid[ny][nx] = Value::Str(current_type.clone());
 
             // Move Registers
-            if current_type == "C" || current_type == "♬" {
+            if current_type == "C" || current_type == "♬" || current_type == "₣" {
                 vm.prologue_state.registers.remove(&(y, x));
                 vm.prologue_state
                     .registers
-                    .insert((ny, nx), agent.state.clone());
+                    .insert((ny, nx), pack_agent_data(agent.state.clone(), agent.stack.clone()));
             }
 
             new_agents.push(PrologueAgent {
                 x: nx,
                 y: ny,
                 state: agent.state,
+                stack: agent.stack,
             });
         } else {
             new_agents.push(agent);
         }
     }
     vm.prologue_state.agents = new_agents;
+}
+
+fn pack_agent_data(state: Value, stack: Vec<Value>) -> Value {
+    if stack.is_empty() {
+        state
+    } else {
+        Value::Junction(
+            crate::ast::JunctionType::All,
+            vec![
+                state,
+                Value::Junction(crate::ast::JunctionType::All, stack),
+            ],
+        )
+    }
+}
+
+fn unpack_agent_data(val: Value) -> (Value, Vec<Value>) {
+    match val {
+        Value::Junction(crate::ast::JunctionType::All, mut list) => {
+            if list.len() == 2 {
+                // Assume [State, Stack]
+                let stack_val = list.pop().unwrap();
+                let state_val = list.pop().unwrap();
+                if let Value::Junction(crate::ast::JunctionType::All, stack) = stack_val {
+                    return (state_val, stack);
+                }
+            }
+            (Value::Junction(crate::ast::JunctionType::All, list), vec![])
+        }
+        v => (v, vec![]),
+    }
 }
 
 fn is_empty_val(v: &Value) -> bool {
@@ -1369,6 +1433,9 @@ mod prologue_resonance_test;
 
 #[cfg(test)]
 mod prologue_linguistics_test;
+
+#[cfg(test)]
+mod prologue_forth_test;
 
 #[cfg(test)]
 mod prologue_critter_behavior_test;

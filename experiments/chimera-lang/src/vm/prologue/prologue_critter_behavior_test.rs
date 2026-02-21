@@ -144,6 +144,7 @@ mod tests {
                 x: 6,
                 y: 5,
                 state: Value::Int(0),
+                stack: Vec::new(),
             });
 
         exec_prologue_tick(&mut vm);
@@ -218,6 +219,7 @@ mod tests {
                 x: 6,
                 y: 6,
                 state: Value::Str("C:0:F:0:0".to_string()),
+                stack: Vec::new(),
             });
 
         exec_prologue_tick(&mut vm);

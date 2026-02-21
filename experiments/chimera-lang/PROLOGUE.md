@@ -98,6 +98,24 @@ Agents are autonomous cursors.
   ?       (Sink receives "func" -> Executes Strand "func")
 ```
 
+# The Interpreter (Forth Agent) ₣
+
+A stack-based mobile interpreter that traverses the grid, executing runes as instructions.
+
+| Rune | Name | Function |
+|---|---|---|
+| `₣` | **Interpreter** | Moves East (default). Reads grid cells. |
+
+### Instruction Set
+
+*   **Movement**: `N`, `S`, `E`, `W` set direction.
+*   **Stack**: `"` (Dup), `_` (Drop), `\` (Swap).
+*   **Math**: `+`, `-`, `*`, `/`, `%`.
+*   **IO**: `!` (Pop -> Signal), `?` (Consume Signal -> Push), `.` (Pop -> Log).
+*   **Literals**: Integers and Strings are pushed to the stack.
+
+The Interpreter is **non-destructive**. It moves *over* other runes without erasing them, temporarily replacing them with itself. It blocks if it encounters another Agent.
+
 # Data Alchemy ⚗️
 
 Runes for transforming, combining, and inspecting raw data values (Integers, Strings, Lists).
