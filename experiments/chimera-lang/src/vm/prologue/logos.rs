@@ -2,12 +2,14 @@ use super::normalize_coords;
 use crate::ast::{Dna, Nucleotide};
 use crate::opcode::OpCode;
 use crate::vm::Value;
+use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum GrammarRule {
     Literal(String),
+    Regex(String),
     Sequence(Vec<GrammarRule>),
     Choice(Vec<GrammarRule>),
     Reference(String),
@@ -80,7 +82,9 @@ impl LogosEngine {
 
             // Filter out empty literals if any
             if let GrammarRule::Literal(s) = &rule {
-                if s.is_empty() { continue; }
+                if s.is_empty() {
+                    continue;
+                }
             }
             rules.push(rule);
         }
@@ -104,10 +108,12 @@ impl LogosEngine {
 
             for p in &parts {
                 if let Some(idx) = p.find(':') {
+                    // Check if it's a weight (number)
+                    // careful not to match ":regex" if we add that later, but here weights are u32
                     if let Ok(w) = p[..idx].trim().parse::<u32>() {
                         weighted = true;
                         weights.push(w);
-                        choices.push(p[idx+1..].trim());
+                        choices.push(p[idx + 1..].trim());
                     } else {
                         choices.push(*p);
                         weights.push(1);
@@ -145,13 +151,15 @@ impl LogosEngine {
         if !def.is_empty() {
             self.parse_single_token(def)
         } else {
-             Err("Empty rule definition".to_string())
+            Err("Empty rule definition".to_string())
         }
     }
 
     fn parse_single_token(&self, token: &str) -> Result<GrammarRule, String> {
         if token.starts_with('"') && token.ends_with('"') && token.len() >= 2 {
-            Ok(GrammarRule::Literal(token[1..token.len()-1].to_string()))
+            Ok(GrammarRule::Literal(token[1..token.len() - 1].to_string()))
+        } else if token.starts_with('/') && token.ends_with('/') && token.len() >= 2 {
+            Ok(GrammarRule::Regex(token[1..token.len() - 1].to_string()))
         } else {
             Ok(GrammarRule::Reference(token.to_string()))
         }
@@ -172,12 +180,15 @@ impl LogosEngine {
 
         match rule {
             GrammarRule::Literal(s) => Ok(s.clone()),
+            GrammarRule::Regex(p) => Ok(format!("<{}>", p)), // Placeholder generation for regex
             GrammarRule::Sequence(rules) => {
                 let mut result = String::new();
                 for r in rules {
                     let s = self.generate_from_rule(r, depth + 1)?;
                     if !s.is_empty() {
-                        if !result.is_empty() && !result.ends_with(' ') { result.push(' '); }
+                        if !result.is_empty() && !result.ends_with(' ') {
+                            result.push(' ');
+                        }
                         result.push_str(&s);
                     }
                 }
@@ -196,7 +207,9 @@ impl LogosEngine {
                 use rand::Rng;
                 let mut rng = rand::thread_rng();
                 let total_weight: u32 = choices.iter().map(|(w, _)| w).sum();
-                if total_weight == 0 { return Err("Total weight is 0".to_string()); }
+                if total_weight == 0 {
+                    return Err("Total weight is 0".to_string());
+                }
 
                 let mut pick = rng.gen_range(0..total_weight);
                 for (w, r) in choices {
@@ -226,14 +239,29 @@ impl LogosEngine {
             if consumed == tokens.len() {
                 Ok(val)
             } else {
-                Err(format!("Incomplete parse. Consumed {} of {} tokens.", consumed, tokens.len()))
+                // Try parsing full string as one token if tokenization failed to match
+                // Actually, our current split_whitespace approach is lossy.
+                // Regex matching works better on the full string.
+                // But `parse_from_rule` takes `tokens`.
+                // Let's stick to token-based for now unless we refactor to string slices.
+                Err(format!(
+                    "Incomplete parse. Consumed {} of {} tokens.",
+                    consumed,
+                    tokens.len()
+                ))
             }
         } else {
-             Err(format!("Rule '{}' not found", rule_name))
+            Err(format!("Rule '{}' not found", rule_name))
         }
     }
 
-    fn parse_from_rule(&self, rule: &GrammarRule, tokens: &[&str], pos: usize, depth: usize) -> Result<(Value, usize), String> {
+    fn parse_from_rule(
+        &self,
+        rule: &GrammarRule,
+        tokens: &[&str],
+        pos: usize,
+        depth: usize,
+    ) -> Result<(Value, usize), String> {
         if depth > 100 {
             return Err("Recursion limit exceeded during parse".to_string());
         }
@@ -245,15 +273,31 @@ impl LogosEngine {
                     Err(format!("Expected '{}', found '{:?}'", s, tokens.get(pos)))
                 }
             }
+            GrammarRule::Regex(pattern) => {
+                if pos < tokens.len() {
+                    let re = Regex::new(pattern).map_err(|e| format!("Invalid regex: {}", e))?;
+                    if re.is_match(tokens[pos]) {
+                        Ok((Value::Str(tokens[pos].to_string()), pos + 1))
+                    } else {
+                        Err(format!("Regex {} did not match '{}'", pattern, tokens[pos]))
+                    }
+                } else {
+                    Err("Unexpected EOF".to_string())
+                }
+            }
             GrammarRule::Sequence(rules) => {
                 let mut current_pos = pos;
                 let mut results = Vec::new();
                 for r in rules {
-                    let (val, next_pos) = self.parse_from_rule(r, tokens, current_pos, depth + 1)?;
+                    let (val, next_pos) =
+                        self.parse_from_rule(r, tokens, current_pos, depth + 1)?;
                     results.push(val);
                     current_pos = next_pos;
                 }
-                Ok((Value::Junction(crate::ast::JunctionType::All, results), current_pos))
+                Ok((
+                    Value::Junction(crate::ast::JunctionType::All, results),
+                    current_pos,
+                ))
             }
             GrammarRule::Choice(rules) => {
                 for r in rules {
@@ -320,7 +364,7 @@ pub fn apply_logos_runes(
                                 next_signals[y][x] = Some(Value::Int(1));
                                 changes = true;
                             }
-                        },
+                        }
                         Value::Int(idx) => {
                             if *idx >= 0 {
                                 logos_engine.define_rule_from_dna(name, dna, *idx as usize);
@@ -342,7 +386,6 @@ pub fn apply_logos_runes(
             // Output: Self (Generated String)
             if let Some(Value::Str(name)) = w_sig {
                 if let Ok(gen) = logos_engine.generate(name) {
-
                     // Note: If North is "GRID", the intent is to write to the grid.
                     // However, we are in the propagation phase and cannot modify the grid directly.
                     // We output the string, and a downstream Sink (like `$` or specialized Logic)

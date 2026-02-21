@@ -1,7 +1,7 @@
-use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
-use chimera_lang::vm::{ChimeraVM, Value};
-use chimera_lang::vm::prologue::exec_prologue_tick;
+use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use chimera_lang::opcode::OpCode;
+use chimera_lang::vm::prologue::exec_prologue_tick;
+use chimera_lang::vm::{ChimeraVM, Value};
 
 fn setup_signal(vm: &mut ChimeraVM, val: Value, target_y: usize, target_x: usize, from_dir: &str) {
     match from_dir {
@@ -27,7 +27,9 @@ fn setup_signal(vm: &mut ChimeraVM, val: Value, target_y: usize, target_x: usize
 
 #[test]
 fn test_logos_grammar_definition() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -42,7 +44,10 @@ fn test_logos_grammar_definition() {
     exec_prologue_tick(&mut vm);
 
     // Verify Ack signal at (5,5)
-    assert!(vm.prologue_state.signal_grid[5][5].is_some(), "Gamma should emit ack signal");
+    assert!(
+        vm.prologue_state.signal_grid[5][5].is_some(),
+        "Gamma should emit ack signal"
+    );
 
     // Verify Rule in Engine
     let engine = &vm.prologue_state.logos_engine;
@@ -53,14 +58,16 @@ fn test_logos_grammar_definition() {
     match rule {
         chimera_lang::vm::prologue::logos::GrammarRule::Choice(opts) => {
             assert_eq!(opts.len(), 2);
-        },
+        }
         _ => panic!("Expected Choice rule"),
     }
 }
 
 #[test]
 fn test_logos_parsing() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -87,7 +94,7 @@ fn test_logos_parsing() {
                 assert_eq!(list.len(), 2);
                 assert_eq!(list[0], Value::Str("hello".to_string()));
                 assert_eq!(list[1], Value::Str("world".to_string()));
-            },
+            }
             _ => panic!("Expected Junction output, got {:?}", val),
         }
     } else {
@@ -97,12 +104,16 @@ fn test_logos_parsing() {
 
 #[test]
 fn test_logos_generation() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
     // Pre-define rule
-    vm.prologue_state.logos_engine.define_rule("greeting", "\"hi\"");
+    vm.prologue_state
+        .logos_engine
+        .define_rule("greeting", "\"hi\"");
 
     // Test Generate: » (Right Guillemet) at (5,5)
     // West: Rule "greeting"
@@ -125,10 +136,20 @@ fn test_logos_dna_definition() {
     // Setup DNA: Strand 0 dummy, Strand 1 has genes [Push("A"), Push("B")]
     // We use Strand 1 because Int(0) is considered Empty Signal by the VM circuit logic.
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::String("A".to_string())] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::String("B".to_string())] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String("A".to_string())],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String("B".to_string())],
+        },
     ];
-    let dna = Dna { helix: Helix { strands: vec![Strand { genes: vec![] }, Strand { genes }] } };
+    let dna = Dna {
+        helix: Helix {
+            strands: vec![Strand { genes: vec![] }, Strand { genes }],
+        },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -144,7 +165,11 @@ fn test_logos_dna_definition() {
 
     // Verify Rule Created
     let engine = &vm.prologue_state.logos_engine;
-    assert!(engine.rules.contains_key("gene_rule"), "Rule 'gene_rule' not found in {:?}", engine.rules.keys());
+    assert!(
+        engine.rules.contains_key("gene_rule"),
+        "Rule 'gene_rule' not found in {:?}",
+        engine.rules.keys()
+    );
 
     // Generate from it to verify structure
     if let Ok(gen) = engine.generate("gene_rule") {
@@ -156,7 +181,9 @@ fn test_logos_dna_definition() {
 
 #[test]
 fn test_logos_weighted_choice() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -164,7 +191,13 @@ fn test_logos_weighted_choice() {
     // Using quoted strings to ensure they are interpreted as Literals, not References.
     vm.grid[5][5] = Value::Str("Γ".to_string());
     setup_signal(&mut vm, Value::Str("loot".to_string()), 5, 5, "WEST");
-    setup_signal(&mut vm, Value::Str("10:\"Common\" | 1:\"Rare\"".to_string()), 5, 5, "NORTH");
+    setup_signal(
+        &mut vm,
+        Value::Str("10:\"Common\" | 1:\"Rare\"".to_string()),
+        5,
+        5,
+        "NORTH",
+    );
 
     exec_prologue_tick(&mut vm);
 
@@ -172,7 +205,11 @@ fn test_logos_weighted_choice() {
     // We just verify it generates *something* valid
     let engine = &vm.prologue_state.logos_engine;
     if let Ok(gen) = engine.generate("loot") {
-        assert!(gen == "Common" || gen == "Rare", "Generated unexpected: {}", gen);
+        assert!(
+            gen == "Common" || gen == "Rare",
+            "Generated unexpected: {}",
+            gen
+        );
     } else {
         panic!("Failed to generate from weighted choice");
     }
