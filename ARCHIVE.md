@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **sync-opation**: Diagnosis: Identity Collapse / Terminal Redundancy. Redundant with `syncopated-threads`. Grace period: 24 hours.
+- **echo-test**: Diagnosis: Identity Collapse / Terminal Genericism. Trivial "Hello World" implementation. Grace period: 24 hours.
 - [Experiment name]: [Diagnosis]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **sync-opation**: Specimen executed. Diagnosis: Identity Collapse / Terminal Redundancy. Redundant with `syncopated-threads`. Grace period expired. Moved to graveyard.
 - **thread-frequency**: Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy. Redundant with `syncopated-threads`. Grace period expired. Moved to graveyard.
 - **orbital-sequencer**: Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy. Redundant with `harmony-of-spheres`. Grace period expired. Moved to graveyard.
 - **chemical-specter**: Specimen executed. Diagnosis: Terminal Redundancy (Gray-Scott #8) / Documentation Void. Failed to improve during grace period. Moved to graveyard.
