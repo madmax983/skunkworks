@@ -15,9 +15,6 @@ mod tests {
 
     #[test]
     fn test_akashic_record() {
-        // Clean up any existing file
-        let _ = fs::remove_file(".chimera_akashic.json");
-
         // 1. Write to Record
         // [ push("test_key") push(42) akashic_write() ]
         let write_genes = vec![
@@ -36,6 +33,8 @@ mod tests {
         ];
 
         let mut vm1 = ChimeraVM::new(make_dna(write_genes));
+        let path = vm1.akashic.file_path.clone();
+
         while !vm1.halted && vm1.ip.0 < 1 {
             vm1.step();
         }
@@ -54,6 +53,9 @@ mod tests {
         ];
 
         let mut vm2 = ChimeraVM::new(make_dna(read_genes));
+        // Force vm2 to load from vm1's unique path
+        vm2.akashic = crate::vm::akashic::AkashicRecords::load_from(&path).unwrap();
+
         while !vm2.halted && vm2.ip.0 < 1 {
             vm2.step();
         }
@@ -62,6 +64,6 @@ mod tests {
         assert_eq!(vm2.stack[0], Value::Int(42));
 
         // Cleanup
-        let _ = fs::remove_file(".chimera_akashic.json");
+        let _ = fs::remove_file(path);
     }
 }
