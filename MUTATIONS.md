@@ -885,7 +885,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Slime mold agents navigating a reaction-diffusion landscape modulated by audio rhythms.
 - **Novel trait**: The feedback loop where agents create the landscape that sustains/directs them, which is destabilized by the music.
 - **Status**: experiments/myco-diffusion
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Confirmed.
 
 ### chimera-maat
 - **Parents**: experiments/chimera-lang + experiments/maat-engine
@@ -1472,3 +1472,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Hyperbolic Navigation. Agents evolve strategies to navigate exponentially expanding space.
 - **Status**: experiments/hyperbolic-chimera
 - **Evaluation**: In Progress.
+
+### hyper-mold
+- **Parents**: experiments/myco-diffusion + experiments/tesseract-ops
+- **Concept**: Slime mold agents (Physarum) navigating a 4D Hypercube, depositing pheromones in a 4D space distorted by system metrics.
+- **Novel trait**: 4D Bio-Computation. The mold solves 4D mazes created by the computer's workload.
+- **Status**: experiments/hyper-mold
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
