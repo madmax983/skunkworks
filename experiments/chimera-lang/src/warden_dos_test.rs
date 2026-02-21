@@ -219,8 +219,7 @@ mod tests {
         }
 
         // Should be capped (e.g., 256 or 1024)
-        // Currently unsafe, so this assertion expects failure if we assume it's uncapped
-        // But since this is Red Phase, we assert the SAFE condition, and it should fail.
+        // Limits are enforced in src/vm/nova.rs
         assert!(
             vm.ether.len() <= 1024,
             "Ether channels should be capped. Got {}",

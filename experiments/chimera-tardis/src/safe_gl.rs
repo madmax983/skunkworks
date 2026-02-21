@@ -52,7 +52,11 @@ pub fn with_scissor<F: FnOnce((i32, i32, i32, i32))>(
     parent: Option<(i32, i32, i32, i32)>,
     f: F,
 ) {
-    let (final_x, final_y, final_w, final_h) = if let Some(p) = parent {
+    // Sanitize parent to ensure safety for ScopedScissor.
+    // Negative width/height can cause Undefined Behavior in glScissor.
+    let safe_parent = parent.map(|(px, py, pw, ph)| (px, py, pw.max(0), ph.max(0)));
+
+    let (final_x, final_y, final_w, final_h) = if let Some(p) = safe_parent {
         intersect_rect((x, y, w, h), p)
     } else {
         (x, y, w.max(0), h.max(0))
@@ -63,7 +67,9 @@ pub fn with_scissor<F: FnOnce((i32, i32, i32, i32))>(
         gl::glScissor(final_x, final_y, final_w, final_h);
     }
 
-    let _guard = ScopedScissor { parent };
+    let _guard = ScopedScissor {
+        parent: safe_parent,
+    };
     f((final_x, final_y, final_w, final_h));
 }
 
