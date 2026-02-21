@@ -100,7 +100,7 @@ pub fn exec_photophore(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 #[allow(clippy::needless_range_loop)]
 pub fn diffuse_light_color(vm: &mut ChimeraVM) {
     let size = 16;
-    let mut buffer = vec![vec![(0u8, 0u8, 0u8); size]; size];
+    let mut buffer = [[(0u8, 0u8, 0u8); 16]; 16];
 
     for y in 0..size {
         for x in 0..size {
@@ -114,10 +114,10 @@ pub fn diffuse_light_color(vm: &mut ChimeraVM) {
 
             let inertia = vm.biome_grid[y][x].diffusion_inertia();
 
-            let mut r_acc: i64 = mr as i64 * my_light * inertia as i64;
-            let mut g_acc: i64 = mg as i64 * my_light * inertia as i64;
-            let mut b_acc: i64 = mb as i64 * my_light * inertia as i64;
-            let mut weight_acc: i64 = my_light * inertia as i64;
+            let mut r_acc: i64 = mr as i64 * my_light * inertia;
+            let mut g_acc: i64 = mg as i64 * my_light * inertia;
+            let mut b_acc: i64 = mb as i64 * my_light * inertia;
+            let mut weight_acc: i64 = my_light * inertia;
 
             for (dy, dx, mask) in NEIGHBOR_DIRECTIONS {
                 if (vm.membranes[y][x] & mask) != 0 {
@@ -151,5 +151,7 @@ pub fn diffuse_light_color(vm: &mut ChimeraVM) {
         }
     }
 
-    vm.light_color_grid = buffer;
+    for y in 0..size {
+        vm.light_color_grid[y].copy_from_slice(&buffer[y]);
+    }
 }
