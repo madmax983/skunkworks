@@ -68,6 +68,7 @@ pub mod chroma;
 pub mod chronos;
 pub mod construct;
 pub mod critter;
+pub mod echo;
 pub mod elektra;
 pub mod elemental;
 pub mod epigenetics;
@@ -131,6 +132,8 @@ pub struct PrologueState {
     pub registers: HashMap<(usize, usize), Value>,
     /// Teleportation channels.
     pub teleport_channels: HashMap<i64, Value>,
+    /// Echo buffers for recording/playback.
+    pub echoes: HashMap<(usize, usize), echo::EchoBuffer>,
     /// Historical data for time-travel runes.
     pub history: HashMap<(usize, usize), VecDeque<Value>>,
     /// Epigenetic layer (Methylation/Phosphorylation).
@@ -170,6 +173,7 @@ impl PrologueState {
             agents: Vec::new(),
             registers: HashMap::new(),
             teleport_channels: HashMap::new(),
+            echoes: HashMap::new(),
             history: HashMap::new(),
             epigenetic_grid: vec![vec![epigenetics::EpigeneticMark::None; GRID_SIZE]; GRID_SIZE],
             dream_intensity: 0.0,
@@ -233,6 +237,7 @@ impl PrologueState {
                             | "J"
                             | "C"
                             | "("
+                            | ")"
                             | "N"
                             | "W"
                             | "K"
@@ -566,6 +571,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     &mut vm.ether,
                     &mut vm.prologue_state.registers,
                     &mut vm.prologue_state.teleport_channels,
+                    &mut vm.prologue_state.echoes,
                     &mut vm.prologue_state.history,
                     grid,
                     &vm.light_grid,
@@ -608,6 +614,7 @@ fn apply_propagation_rune(
     ether: &mut HashMap<i64, VecDeque<Value>>,
     registers: &mut HashMap<(usize, usize), Value>,
     teleport_channels: &mut HashMap<i64, Value>,
+    echoes: &mut HashMap<(usize, usize), echo::EchoBuffer>,
     history: &mut HashMap<(usize, usize), VecDeque<Value>>,
     grid: &[Vec<Value>],
     light_grid: &[Vec<i64>],
@@ -682,6 +689,9 @@ fn apply_propagation_rune(
         return true;
     }
     if chronos::apply_chronos_runes(rune, y, x, current_signals, next_signals, history) {
+        return true;
+    }
+    if echo::apply_echo_runes(rune, y, x, current_signals, next_signals, echoes, tick) {
         return true;
     }
     if alchemy::apply_alchemy_runes(rune, y, x, current_signals, next_signals) {
@@ -1354,3 +1364,6 @@ mod prologue_critter_behavior_test;
 
 #[cfg(test)]
 mod prologue_chroma_test;
+
+#[cfg(test)]
+mod prologue_echo_test;
