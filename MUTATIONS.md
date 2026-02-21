@@ -1423,3 +1423,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Hyper-Magnetic Entanglement. Visualizing the computer's heat melting the 4D magnetic order.
 - **Status**: experiments/hyper-ferro
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### hyper-bridge
+- **Parents**: experiments/biomimetic-bridge + experiments/tesseract-ops
+- **Concept**: Ants traversing the edges of a 4D Hypercube, building new bridges to reinforce the structure as it expands under system load.
+- **Novel trait**: 4D Structural Engineering. The colony adapts the topology of the hypercube to handle stress.
+- **Status**: experiments/hyper-bridge
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
