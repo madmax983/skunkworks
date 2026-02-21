@@ -1284,3 +1284,6 @@ mod prologue_resonance_test;
 
 #[cfg(test)]
 mod prologue_linguistics_test;
+
+#[cfg(test)]
+mod prologue_critter_behavior_test;
