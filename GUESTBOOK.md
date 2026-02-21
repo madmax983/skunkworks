@@ -241,3 +241,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The brain is expanding. Signals are slowing down as the CPU load increases.
 - **Note**: "The computer thinks slower when it works harder. Space is time."
+
+### [Concentration Level: HIGH] - Location: experiments/chimera-klein
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The surface is twisting. Agents are returning from the loop reversed.
+- **Note**: "To go forward is to flip yourself inside out."

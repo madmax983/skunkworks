@@ -1450,4 +1450,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A Spiking Neural Network (Izhikevich Model) visualized in a 4D Hypercube where the network topology and signal delays are distorted by system metrics.
 - **Novel trait**: Hyper-Neuroplasticity. The "brain's" physical structure (and thus its thinking patterns) expands and contracts based on CPU load.
 - **Status**: experiments/hyper-neuron
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified in GUESTBOOK. Hybrid Vigor Confirmed.
+
+### chimera-klein
+- **Parents**: experiments/klein-life + experiments/chimera-lang
+- **Concept**: ChimeraVM agents inhabiting a non-orientable surface (Klein Bottle).
+- **Novel trait**: Chiral Mutation. When an agent crosses the topological twist, its handedness flips.
+- **Status**: experiments/chimera-klein
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
