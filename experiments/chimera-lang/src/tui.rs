@@ -12458,6 +12458,9 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     "☣" => {
                         style = style.fg(Color::Rgb(139, 69, 19)); // SaddleBrown
                     }
+                    "₣" => {
+                        style = style.fg(Color::White).add_modifier(Modifier::BOLD);
+                    }
                     _ => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
                 }
             } else {
@@ -12513,6 +12516,46 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         }
     }
     info.push(Line::from(format!("Active Signals: {}", signal_count)));
+
+    // Check for Agent at Cursor
+    let (cx, cy) = app_state.grid_cursor;
+    if let Some(agent) = vm
+        .prologue_state
+        .agents
+        .iter()
+        .find(|a| a.x == cx && a.y == cy)
+    {
+        info.push(Line::from(" "));
+        info.push(Line::from(Span::styled(
+            "SELECTED AGENT",
+            Style::default()
+                .fg(Color::Yellow)
+                .add_modifier(Modifier::BOLD),
+        )));
+
+        let type_str = if let crate::vm::Value::Str(s) = &vm.grid[cy][cx] {
+            s.clone()
+        } else {
+            "?".to_string()
+        };
+
+        info.push(Line::from(format!("Type: {}", type_str)));
+
+        if type_str == "₣" {
+            info.push(Line::from("Forth Stack:"));
+            for (i, val) in agent.stack.iter().rev().take(10).enumerate() {
+                info.push(Line::from(format!(" {}: {}", i, val)));
+            }
+            if agent.stack.len() > 10 {
+                info.push(Line::from(" ..."));
+            }
+            if agent.stack.is_empty() {
+                info.push(Line::from(" (Empty)"));
+            }
+        } else {
+            info.push(Line::from(format!("State: {}", agent.state)));
+        }
+    }
 
     info.push(Line::from(" "));
     info.push(Line::from("Rules:"));

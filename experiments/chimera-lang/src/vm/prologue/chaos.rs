@@ -86,6 +86,7 @@ pub fn apply_chaos_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                             x: rx,
                             y: ry,
                             state: Value::Int(0),
+                            stack: Vec::new(),
                         });
                         // Light up self
                         vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));

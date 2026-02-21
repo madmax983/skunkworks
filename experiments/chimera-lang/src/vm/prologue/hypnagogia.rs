@@ -112,6 +112,7 @@ pub fn process_dream_logic(vm: &mut ChimeraVM) {
                     x: rx,
                     y: ry,
                     state: Value::Int(0),
+                    stack: Vec::new(),
                 });
                 vm.output
                     .push(format!("HYPNAGOGIA: Nightmare manifested at {},{}", rx, ry));
