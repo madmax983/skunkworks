@@ -150,9 +150,6 @@ mod nova_biolum_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_blackbox_test;
 #[cfg(all(test, feature = "nova"))]
-#[cfg(all(test, feature = "nova"))]
-mod nova_bureaucracy_test;
-#[cfg(all(test, feature = "nova"))]
 mod nova_camouflage_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_cartography_test;
