@@ -879,6 +879,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Metamorphosis => super::nova_genetics::exec_metamorphosis(vm),
         OpCode::Genesis => super::nova_genetics::exec_genesis(vm),
         OpCode::Chaos => super::nova_flux::exec_chaos(vm),
+        OpCode::Orca => {
+            vm.prologue_state.orca_mode = !vm.prologue_state.orca_mode;
+            let status = if vm.prologue_state.orca_mode { "ON" } else { "OFF" };
+            vm.output.push(format!("PROLOGUE: Orca Mode {}", status));
+            None
+        }
         OpCode::Synthesize => super::catalyst::synthesize(vm),
         OpCode::Catalyze => super::catalyst::catalyze(vm),
         OpCode::Piet => exec_piet(vm),
