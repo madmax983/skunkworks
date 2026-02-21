@@ -7,6 +7,7 @@ pub enum EpigeneticMark {
     None,
     Methylated,     // Silenced
     Phosphorylated, // Amplified
+    Rotting,        // Decaying (Energy Source for Scavengers)
 }
 
 impl Default for EpigeneticMark {
@@ -38,6 +39,10 @@ pub fn apply_epigenetic_runes(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize
                 }
                 "," => {
                     vm.prologue_state.epigenetic_grid[sy][sx] = EpigeneticMark::None;
+                    vm.prologue_state.signal_grid[y][x] = Some(crate::vm::Value::Int(1));
+                }
+                "☣" => {
+                    vm.prologue_state.epigenetic_grid[sy][sx] = EpigeneticMark::Rotting;
                     vm.prologue_state.signal_grid[y][x] = Some(crate::vm::Value::Int(1));
                 }
                 _ => {}

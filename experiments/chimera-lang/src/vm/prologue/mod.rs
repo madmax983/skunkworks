@@ -88,6 +88,7 @@ pub mod prism;
 pub mod psionics;
 pub mod quantum;
 pub mod resonance;
+pub mod scavenger;
 pub mod symbiosis;
 pub mod teleport;
 pub mod topology;
@@ -298,6 +299,8 @@ impl PrologueState {
                             | "."
                             | ":"
                             | ","
+                            | "☣"
+                            | "♻"
                         // Elemental
                             | "Δ"
                             | "∇"
@@ -358,7 +361,7 @@ impl PrologueState {
                     ) {
                         self.runes.insert((y, x));
 
-                        if s == "@" || s == "K" || s == "H" || s == "C" {
+                        if s == "@" || s == "K" || s == "H" || s == "C" || s == "♻" {
                             // Try to retrieve persistent state
                             let state = self.registers.get(&(y, x)).cloned().unwrap_or_else(|| {
                                 if s == "C" {
@@ -879,6 +882,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             symbiosis::apply_symbiosis_sinks(vm, rune, y, x);
             pandemonium::apply_pandemonium_sinks(vm, rune, y, x);
             epigenetics::apply_epigenetic_runes(vm, rune, y, x);
+            scavenger::apply_scavenger_sinks(vm, rune, y, x);
             chronos::apply_chronos_sinks(vm, rune, y, x);
             quantum::apply_quantum_sinks(vm, rune, y, x);
             #[cfg(feature = "oracle")]
@@ -1173,6 +1177,8 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
             process_chaos_logic(vm, &agent, grid_snapshot)
         } else if current_type == "H" {
             process_hunter_logic(vm, &agent, grid_snapshot)
+        } else if current_type == "♻" {
+            scavenger::process_scavenger_logic(vm, &agent, grid_snapshot)
         } else {
             process_seeker_logic(vm, &agent, grid_snapshot)
         };
