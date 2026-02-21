@@ -7,6 +7,8 @@ use crate::ast::Nucleotide;
 #[cfg(feature = "nova")]
 use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
+use rand::Rng;
+#[cfg(feature = "nova")]
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "nova")]
 use std::collections::HashMap;
@@ -19,6 +21,15 @@ use std::io::{Read, Write};
 const AKASHIC_FILE: &str = ".chimera_akashic.json";
 
 #[cfg(feature = "nova")]
+fn is_test_env() -> bool {
+    cfg!(test)
+        || std::env::var("CHIMERA_TEST").is_ok()
+        || std::env::current_exe()
+            .map(|p| p.to_string_lossy().contains("deps/chimera_lang-"))
+            .unwrap_or(false)
+}
+
+#[cfg(feature = "nova")]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AkashicRecords {
     pub storage: HashMap<String, Value>,
@@ -27,6 +38,8 @@ pub struct AkashicRecords {
     pub memories: HashMap<String, Spore>,
     #[serde(skip)]
     pub corrupted: bool,
+    #[serde(skip)]
+    pub file_path: String,
 }
 
 #[cfg(feature = "nova")]
@@ -37,11 +50,31 @@ impl AkashicRecords {
             karma: 0,
             memories: HashMap::new(),
             corrupted: true,
+            file_path: if is_test_env() {
+                format!(
+                    ".chimera_akashic_test_{}.json",
+                    rand::thread_rng().gen::<u64>()
+                )
+            } else {
+                AKASHIC_FILE.to_string()
+            },
         })
     }
 
     pub fn load() -> Result<Self, String> {
-        match std::fs::File::open(AKASHIC_FILE) {
+        let file_path = if is_test_env() {
+            format!(
+                ".chimera_akashic_test_{}.json",
+                rand::thread_rng().gen::<u64>()
+            )
+        } else {
+            AKASHIC_FILE.to_string()
+        };
+        Self::load_from(&file_path)
+    }
+
+    pub fn load_from(file_path: &str) -> Result<Self, String> {
+        match std::fs::File::open(file_path) {
             Ok(mut file) => {
                 // Check size
                 if let Ok(metadata) = file.metadata() {
@@ -55,7 +88,10 @@ impl AkashicRecords {
 
                 let mut content = String::new();
                 if file.read_to_string(&mut content).is_ok() {
-                    serde_json::from_str(&content).map_err(|e| format!("Parse Error: {}", e))
+                    let mut records: Self = serde_json::from_str(&content)
+                        .map_err(|e| format!("Parse Error: {}", e))?;
+                    records.file_path = file_path.to_string();
+                    Ok(records)
                 } else {
                     Err("Read Error".to_string())
                 }
@@ -65,6 +101,7 @@ impl AkashicRecords {
                 karma: 0,
                 memories: HashMap::new(),
                 corrupted: false,
+                file_path: file_path.to_string(),
             }),
         }
     }
@@ -76,13 +113,19 @@ impl AkashicRecords {
             );
         }
 
+        let path = if self.file_path.is_empty() {
+            AKASHIC_FILE
+        } else {
+            &self.file_path
+        };
+
         let content = serde_json::to_string_pretty(self).map_err(|e| e.to_string())?;
 
         if content.len() as u64 > MAX_AKASHIC_SIZE {
             return Err(format!("Akashic Record limit exceeded"));
         }
 
-        let temp_file = format!("{}.tmp", AKASHIC_FILE);
+        let temp_file = format!("{}.tmp", path);
         {
             let mut file = OpenOptions::new()
                 .write(true)
@@ -94,7 +137,7 @@ impl AkashicRecords {
                 .map_err(|e| e.to_string())?;
             file.sync_all().map_err(|e| e.to_string())?;
         }
-        std::fs::rename(&temp_file, AKASHIC_FILE).map_err(|e| e.to_string())
+        std::fs::rename(&temp_file, path).map_err(|e| e.to_string())
     }
 }
 
