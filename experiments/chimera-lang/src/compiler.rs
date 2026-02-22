@@ -528,8 +528,44 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
             Rule::oracle_block => self.parse_oracle_block(inner),
             #[cfg(not(feature = "oracle"))]
             Rule::oracle_block => return Err(anyhow!("Oracle feature is disabled")),
+            Rule::hyper_op => self.parse_hyper_op(inner),
+            Rule::cross_op => self.parse_meta_op(inner, OpCode::Cross),
+            Rule::reduce_op => self.parse_meta_op(inner, OpCode::Reduce),
+            Rule::zip_op => self.parse_meta_op(inner, OpCode::ZipWith),
             _ => unreachable!("Unexpected instruction rule: {:?}", inner.as_rule()),
         }
+    }
+
+    fn parse_hyper_op(&self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
+        let mut parts = inner.into_inner();
+        let op_symbol = parts.next().unwrap().as_str();
+        let op = match op_symbol {
+            "+" => OpCode::HyperAdd,
+            "-" => OpCode::HyperSub,
+            "*" => OpCode::HyperMul,
+            "/" => OpCode::HyperDiv,
+            _ => return Err(anyhow!("Unsupported hyper operator: {}", op_symbol)),
+        };
+        Ok(vec![Gene { op, args: vec![] }])
+    }
+
+    fn parse_meta_op(
+        &self,
+        inner: pest::iterators::Pair<'i, Rule>,
+        opcode: OpCode,
+    ) -> Result<Vec<Gene>> {
+        let mut parts = inner.into_inner();
+        let op_symbol = parts.next().unwrap().as_str();
+        Ok(vec![
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String(op_symbol.to_string())],
+            },
+            Gene {
+                op: opcode,
+                args: vec![],
+            },
+        ])
     }
 
     fn parse_apply_map(&self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {

@@ -187,6 +187,12 @@ Links the Holographic genetics with the physical Grid.
 *   `supernova()`: Explodes current strand, scattering genes on grid.
 *   `singularity()`: Merges all strands into one.
 
+### Raku Features (Nova)
+*   `>>+<<`, `>>-<<`, `>>*<<`, `>>/<<`: Hyper-operators for element-wise arithmetic on lists.
+*   `[+]`, `[*]`, etc.: Reduction (Fold) operators.
+*   `X+`, `X*`, etc.: Cross-product with operator.
+*   `Z+`, `Z*`, etc.: Zip with operator.
+
 ### Babel-19 (Semantic Grid)
 The Babel system now allows for "Live Parsing" of the grid as executable code.
 *   **Semantic Actions**: Embed ChimeraScript in grid cells using `{ code }`.
