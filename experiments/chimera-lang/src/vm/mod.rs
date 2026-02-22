@@ -90,6 +90,7 @@ pub const MAX_VOID_BUFFER_SIZE: usize = 1024;
 pub const MAX_BRAINFUCK_OUTPUT: usize = 1024;
 pub const MAX_STRING_LEN: usize = 65536;
 pub const MAX_GENES_PER_STRAND: usize = 4096;
+pub const MAX_FRACTAL_ITER: usize = 1000;
 
 #[cfg(feature = "nova")]
 pub mod akashic;
