@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **polyrhythmic-cylinder**: Diagnosis: Terminal Stagnation / Documentation Void. Grace period: 24 hours.
+- **hyper-chimera**: Diagnosis: Identity Crisis / Terminal Redundancy (False Hybrid). Documentation Void. Grace period: 24 hours.
 - [Experiment name]: [Diagnosis]
 
 ## Abandoned Work
@@ -223,3 +223,4 @@
 - **wasm-runes**: Specimen executed. Documentation Void. Skeletal Implementation. Moved to graveyard.
 - **neural-beatbox**: Specimen executed. Documentation Void. Redundant with `neuro-beats`. Grace period expired. Moved to graveyard.
 - **atomic-groove**: Specimen executed. Diagnosis: Documentation Void, Terminal Genericism. Grace period expired. Moved to graveyard.
+- **polyrhythmic-cylinder**: Specimen executed. Diagnosis: Terminal Stagnation / Documentation Void. Grace period expired. Moved to graveyard.
