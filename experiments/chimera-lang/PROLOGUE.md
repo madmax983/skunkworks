@@ -126,6 +126,32 @@ The Forth Agent can directly interact with the Chimera VM's genetic code, allowi
 
 The Interpreter is **non-destructive**. It moves *over* other runes without erasing them, temporarily replacing them with itself. It blocks if it encounters another Agent.
 
+# Zeta: Wire Lisp (ζ)
+
+The **Zeta Agent** (`ζ`) brings the power of Lisp to the grid. Unlike the Forth agent which executes cells step-by-step, the Zeta Agent scans the connected wire network to read complete S-Expressions.
+
+| Rune | Name | Function |
+|---|---|---|
+| `ζ` | **Zeta** | Moves East (default). Scans wires for S-Expressions. |
+
+### Wire Reading
+
+When the Zeta Agent activates, it scans in its facing direction (default East), following wires (`~`) to find tokens.
+
+*   **Delimiters**: `( ... )`, `[ ... ]`, `{ ... }`.
+*   **Atoms**: Integers, Strings, and OpCodes found on the path.
+*   **Structure**: The sequence of tokens is reconstructed into a Lisp string and evaluated.
+
+**Example:**
+```
+  ζ ~ ( ~ + ~ 1 ~ 2 ~ )
+```
+1.  **Scan**: `(`, `+`, `1`, `2`, `)`
+2.  **Compile**: `( + 1 2 )` -> `[Push(1), Push(2), Add]`
+3.  **Execute**: Pushes `3` to the Agent's stack.
+
+This allows for complex, nested logic to be laid out spatially using wires.
+
 # Data Alchemy ⚗️
 
 Runes for transforming, combining, and inspecting raw data values (Integers, Strings, Lists).
