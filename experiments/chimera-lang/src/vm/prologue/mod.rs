@@ -361,6 +361,8 @@ impl PrologueState {
                             | "∿"
                             | "🔌"
                             | "💡"
+                            | "🔋"
+                            | "♒"
                         // Oracle
                             | "¶"
                             | "λ"
@@ -601,9 +603,9 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
 
             if let Value::Str(s) = &grid[*y][*x] {
                 #[cfg(feature = "elektra")]
-                let (v_grid, r_grid) = (&mut vm.voltage_grid, &mut vm.resistance_grid);
+                let (v_grid, r_grid, c_grid) = (&mut vm.voltage_grid, &mut vm.resistance_grid, &mut vm.capacitance_grid);
                 #[cfg(not(feature = "elektra"))]
-                let (v_grid, r_grid) = (&mut vec![], &mut vec![]);
+                let (v_grid, r_grid, c_grid) = (&mut vec![], &mut vec![], &mut vec![]);
 
                 if apply_propagation_rune(
                     s,
@@ -625,6 +627,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     &mut vm.prologue_state.dream_intensity,
                     v_grid,
                     r_grid,
+                    c_grid,
                     &mut vm.energy,
                     &vm.chroma_grid,
                     &mut vm.prologue_state.logos_engine,
@@ -677,6 +680,7 @@ fn apply_propagation_rune(
     dream_intensity: &mut f32,
     voltage_grid: &mut Vec<Vec<f32>>,
     resistance_grid: &mut Vec<Vec<f32>>,
+    capacitance_grid: &mut Vec<Vec<f32>>,
     energy: &mut i64,
     chroma_grid: &[Vec<crate::vm::ChromaCell>],
     logos_engine: &mut logos::LogosEngine,
@@ -699,6 +703,7 @@ fn apply_propagation_rune(
         next_signals,
         voltage_grid,
         resistance_grid,
+        capacitance_grid,
         energy,
         registers,
     ) {

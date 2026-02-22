@@ -451,6 +451,18 @@ pub enum OpCode {
     #[cfg(feature = "elektra")]
     Modulate,
 
+    /// **[Elektra]** Creates a Capacitor (Energy Storage) on the grid.
+    ///
+    /// **Stack:** `[ ..., capacitance, y, x ] -> [ ... ]`
+    #[cfg(feature = "elektra")]
+    Capacitor,
+
+    /// **[Elektra]** Creates a Memristor (Memory Resistor) on the grid.
+    ///
+    /// **Stack:** `[ ..., initial_memristance, y, x ] -> [ ... ]`
+    #[cfg(feature = "elektra")]
+    Memristor,
+
     // Nova Features
     /// **[Nova]** Expands an L-System axiom using rules and iterations.
     ///

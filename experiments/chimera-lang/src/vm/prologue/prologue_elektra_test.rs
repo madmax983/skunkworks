@@ -86,3 +86,22 @@ fn test_bio_voltaics() {
         Some(&Value::Int(2))
     );
 }
+
+#[test]
+fn test_advanced_components() {
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
+    let mut vm = ChimeraVM::new(dna);
+    vm.prologue_state.active = true;
+
+    // Test Capacitor 🔋
+    vm.grid[5][5] = Value::Str("🔋".to_string());
+    exec_prologue_tick(&mut vm);
+    assert_eq!(vm.capacitance_grid[5][5], 100.0);
+
+    // Test Memristor ♒
+    vm.grid[6][6] = Value::Str("♒".to_string());
+    exec_prologue_tick(&mut vm);
+    assert_eq!(vm.resistance_grid[6][6], 50.0);
+}

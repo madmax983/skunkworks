@@ -16,11 +16,15 @@ fn get_conductivity(val: &Value) -> f32 {
                 || s.starts_with("T:")
                 || s.starts_with("M:")
                 || s.starts_with("S:")
+                || s.starts_with("C:")
+                || s.starts_with("R:")
                 || s == "~"
                 || s == "!"
                 || s == "?"
                 || s == "&"
                 || s == "|"
+                || s == "🔋"
+                || s == "♒"
             {
                 CONDUCTIVITY_WIRE
             } else {
@@ -56,6 +60,8 @@ pub fn exec_elektra_op(
         OpCode::Transistor => exec_component_placement(vm, "T"),
         OpCode::Muscle => exec_component_placement(vm, "M"),
         OpCode::Sensor => exec_component_placement(vm, "S"),
+        OpCode::Capacitor => exec_capacitor(vm),
+        OpCode::Memristor => exec_memristor(vm),
         OpCode::Patch => exec_patch(vm),
         OpCode::Electrophoresis => exec_electrophoresis(vm),
         OpCode::Modulate => exec_modulate(vm),
@@ -63,13 +69,31 @@ pub fn exec_elektra_op(
     }
 }
 
+fn exec_capacitor(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if let Some(Value::Int(c_val)) = vm.stack.pop() {
+        let (y, x) = vm.context_loc;
+        let c = c_val.max(1) as f32;
+        vm.capacitance_grid[y][x] = c;
+        vm.grid[y][x] = Value::Str(format!("C:{}", c));
+        vm.output.push(format!("CAPACITOR: {:.1}F at {},{}", c, x, y));
+    }
+    None
+}
+
+fn exec_memristor(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if let Some(Value::Int(r_val)) = vm.stack.pop() {
+        let (y, x) = vm.context_loc;
+        let r = r_val.max(1) as f32;
+        vm.resistance_grid[y][x] = r;
+        vm.grid[y][x] = Value::Str(format!("R:{}", r));
+        vm.output.push(format!("MEMRISTOR: {:.1}Ω at {},{}", r, x, y));
+    }
+    None
+}
+
 fn exec_modulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(Value::Int(res)) = vm.stack.pop() {
         let (y, x) = vm.context_loc;
-        // Scale resistance? Or raw value?
-        // Let's treat it as a multiplier or raw value.
-        // If resistance < 0, it's a component. Don't overwrite unless we mean to.
-        // Let's assume Modulate sets positive resistance.
         let r = res.max(0) as f32;
         vm.resistance_grid[y][x] = r;
         vm.output.push(format!(
@@ -103,21 +127,15 @@ fn exec_electrophoresis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     }
 
     if let Some((ny, nx)) = target {
-        // Move Context
         vm.context_loc = (ny, nx);
         vm.output.push(format!(
             "ELECTROPHORESIS: Moved to {},{} (V: {:.2})",
             nx, ny, min_v
         ));
 
-        // Move Organelle if active
         #[cfg(feature = "nova")]
         {
             if let Some(kind) = &vm.active_organelle_kind {
-                // Find and move the specific organelle
-                // We don't have direct ref, but we know it's at old (cy, cx)
-                // However, there could be multiple.
-                // We iterate and move the first one found at old loc.
                 for org in vm.organelles.iter_mut() {
                     if org.context_loc == (cy, cx) && org.kind == *kind {
                         org.context_loc = (ny, nx);
@@ -147,7 +165,6 @@ fn exec_patch(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         (source_val, y_val, x_val, target_val)
     {
         if source_type == 0 {
-            // Voltage
             if let Some((ny, nx)) = vm.normalize_coords(y, x) {
                 let target = match target_id {
                     0 => Some(crate::vm::PatchTarget::EnergyRegen),
@@ -563,6 +580,7 @@ fn exec_component_placement(vm: &mut ChimeraVM, type_prefix: &str) -> Option<(us
                 "T" => "TRANSISTOR",
                 "M" => "MUSCLE",
                 "S" => "SENSOR",
+                "C" => "CAPACITOR",
                 _ => "COMPONENT",
             };
 
@@ -677,6 +695,12 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
                 if let Some(stripped) = s.strip_prefix("S:") {
                     let mode = stripped.parse::<i64>().unwrap_or(0);
                     update_sensor(vm, y, x, mode);
+                } else if let Some(stripped) = s.strip_prefix("C:") {
+                    let c = stripped.parse::<f32>().unwrap_or(1.0);
+                    vm.capacitance_grid[y][x] = c;
+                } else if let Some(_stripped) = s.strip_prefix("R:") {
+                    // Memristor initial setup or persistence handled by resistance_grid state
+                    // We don't overwrite resistance here if it's dynamic
                 }
             }
         }
@@ -692,24 +716,43 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
                     continue;
                 }
 
-                let base_cond = get_conductivity(&vm.grid[y][x]);
+                let base_cond = if let Value::Str(s) = &vm.grid[y][x] {
+                    if s.starts_with("R:") {
+                        1.0 / vm.resistance_grid[y][x].max(0.001)
+                    } else {
+                        get_conductivity(&vm.grid[y][x])
+                    }
+                } else {
+                    get_conductivity(&vm.grid[y][x])
+                };
 
                 if base_cond <= 0.001 {
-                    next_voltage[y][x] = vm.voltage_grid[y][x] * 0.9;
+                    next_voltage[y][x] = vm.voltage_grid[y][x] * 0.9; // Decay
                     continue;
                 }
 
                 let mut v_sum = 0.0;
                 let mut weight_sum = 0.0;
+                let mut total_flux = 0.0;
 
                 let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
                 for (dy, dx) in neighbors {
                     if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
                         let neighbor_r = vm.resistance_grid[ny][nx];
+                        // If negative resistance (Source/Ground), treat as very conductive (Source)
                         let neighbor_cond = if neighbor_r < 0.0 {
                             10.0
                         } else {
-                            get_conductivity(&vm.grid[ny][nx])
+                            // If Memristor (R:...), use dynamic resistance
+                            if let Value::Str(s) = &vm.grid[ny][nx] {
+                                if s.starts_with("R:") {
+                                    1.0 / neighbor_r.max(0.001)
+                                } else {
+                                    get_conductivity(&vm.grid[ny][nx])
+                                }
+                            } else {
+                                get_conductivity(&vm.grid[ny][nx])
+                            }
                         };
 
                         if neighbor_cond <= 0.001 {
@@ -717,16 +760,36 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
                         }
 
                         let mult = get_component_multiplier(vm, y, x, ny, nx);
-                        let effective_cond =
-                            (base_cond * neighbor_cond) / (base_cond + neighbor_cond) * mult;
+                        let effective_cond = (base_cond * neighbor_cond) / (base_cond + neighbor_cond) * mult;
 
-                        v_sum += vm.voltage_grid[ny][nx] * effective_cond;
+                        let v_neighbor = vm.voltage_grid[ny][nx];
+                        v_sum += v_neighbor * effective_cond;
                         weight_sum += effective_cond;
+
+                        total_flux += (v_neighbor - vm.voltage_grid[y][x]).abs() * effective_cond;
+                    }
+                }
+
+                // Memristor Logic: Update resistance based on flux
+                if let Value::Str(s) = &vm.grid[y][x] {
+                    if s.starts_with("R:") {
+                        let mut r = vm.resistance_grid[y][x];
+                        // Current decreases resistance (training)
+                        // Lack of current increases resistance (forgetting)
+                        if total_flux > 0.1 {
+                            r = (r - 0.5).max(1.0);
+                        } else {
+                            r = (r + 0.1).min(100.0);
+                        }
+                        vm.resistance_grid[y][x] = r;
                     }
                 }
 
                 if weight_sum > 0.0 {
-                    next_voltage[y][x] = v_sum / weight_sum;
+                    let v_target = v_sum / weight_sum;
+                    let cap = vm.capacitance_grid[y][x].max(1.0);
+                    let rate = 1.0 / cap;
+                    next_voltage[y][x] = vm.voltage_grid[y][x] + (v_target - vm.voltage_grid[y][x]) * rate;
                 } else {
                     next_voltage[y][x] = vm.voltage_grid[y][x] * 0.95;
                 }
