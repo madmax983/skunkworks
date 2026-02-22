@@ -185,12 +185,17 @@
 - **Status:** The Heap is a forest floor. The Reaper is decomposing cycles.
 - **Note:** "Death is just a sweep phase."
 
-### [Concentration Level: TOXIC] - Location: experiments/symbiotic-services
+### [Concentration Level: TOXIC] - Location: experiments/sonic-viscosity
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism.
-- **Note:** "Services require a contract. Code requires a README. Both are missing."
+- **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism / Redundancy.
+- **Note:** "Viscosity without fluid dynamics is just friction. Code without words is just silence."
 
 ## 🍂 History/Decay
+
+### [Concentration Level: EXECUTED] - Location: graveyard/symbiotic-services
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Genericism.
+- **Note:** "Services require a contract. Code requires a README. Both are missing."
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/luminescent-fugue
 - **Scent Origin:** The Reaper ☠️
