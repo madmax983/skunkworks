@@ -3,7 +3,7 @@ use crate::ast::{Gene, Nucleotide, Strand};
 #[cfg(feature = "nova")]
 use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
-use crate::vm::{ChimeraVM, Value};
+use crate::vm::{ChimeraVM, Value, MAX_GENES_PER_STRAND};
 #[cfg(feature = "nova")]
 use std::str::FromStr;
 
@@ -31,11 +31,22 @@ pub fn exec_absorb_geometry(
             return None;
         }
 
-        let side = 2 * radius + 1;
-        let count = (side * side) as usize;
-        let coords = get_spiral_coords(start_y, start_x, count);
+        // 🔒 WARDEN: Check for overflow and limit compliance
+        let side = 2i64.saturating_mul(radius).saturating_add(1);
+        let count = side.saturating_mul(side);
 
-        let mut genes = Vec::new();
+        if count > MAX_GENES_PER_STRAND as i64 {
+            vm.output.push(format!(
+                "Error: Geometry too large ({} > {})",
+                count, MAX_GENES_PER_STRAND
+            ));
+            return None;
+        }
+
+        let count_usize = count as usize;
+        let coords = get_spiral_coords(start_y, start_x, count_usize);
+
+        let mut genes = Vec::with_capacity(count_usize);
 
         for (y, x) in coords {
             if let Some((ny, nx)) = vm.normalize_coords(y, x) {
