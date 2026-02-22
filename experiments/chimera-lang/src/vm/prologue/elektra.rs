@@ -133,6 +133,16 @@ pub fn apply_elektra_runes(
             }
             // If initialized, do nothing (let update_circuit modify resistance_grid).
         }
+        "⇝" => {
+            // Variable Resistor: Reads West signal.
+            // Resistance = 100.0 - Signal. (Min 1.0)
+            let sig = if let Some(Value::Int(v)) = w_sig {
+                v.clamp(0, 99) as f32
+            } else {
+                0.0
+            };
+            resistance_grid[y][x] = (100.0 - sig).max(1.0);
+        }
         _ => {}
     }
     changes

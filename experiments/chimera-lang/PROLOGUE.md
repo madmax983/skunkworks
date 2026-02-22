@@ -235,6 +235,31 @@ Example:
                       v
 ```
 
+# Neural Logic 🧠
+
+Runes for simulating neural networks and learning systems directly on the grid.
+
+| Rune | Name | Function |
+|---|---|---|
+| `♦` | **Neuron** | Accumulates signals. Fires when threshold reached. |
+| `•` | **Synapse** | Weighted connection. Reads **West**, Applies Weight, Emits **East**. |
+| `°` | **Learning**| Hebbian Teacher. Reads **West**. Increases weight of adjacent Synapses. |
+
+# Elektra: Circuit Logic ⚡
+
+Runes for interfacing with the Elektra circuit simulator.
+
+| Rune | Name | Function |
+|---|---|---|
+| `⚡` | **Bolt** | **Source**. Sets high voltage if powered. |
+| `≡` | **Ground** | **Sink**. Sets ground (0V). |
+| `∿` | **Sine** | **Sensor**. Reads local voltage -> Signal South. |
+| `🔌` | **Gen** | **Generator**. Consumes Energy -> Voltage. |
+| `💡` | **Lamp** | **Load**. Consumes Voltage -> Energy. |
+| `🔋` | **Capacitor**| Sets local capacitance. |
+| `♒` | **Memristor**| Variable Resistance based on flux. |
+| `⇝` | **Varistor** | **Variable Resistor**. Reads **West** (Signal) -> Sets Resistance (Inv). |
+
 # Prologue II: Signal Grid (Orca Mode) 🐋
 
 Enabled via `OpCode::Orca` or TUI toggle. This is a concurrent cellular automata system inspired by Orca.

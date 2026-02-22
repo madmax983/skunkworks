@@ -12421,6 +12421,9 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     "%" => style = style.fg(Color::White).add_modifier(Modifier::BOLD),
                     "^" | "J" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
                     "@" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
+                    "•" => style = style.fg(Color::Cyan).add_modifier(Modifier::BOLD),
+                    "°" => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
+                    "⇝" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
                     "G" => style = style.fg(Color::Green).add_modifier(Modifier::BOLD),
                     "D" | "N" | "S" | "E" | "W" => {
                         style = style.fg(Color::Blue).add_modifier(Modifier::BOLD)
