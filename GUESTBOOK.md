@@ -1,5 +1,20 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Massive hybridization detected. Nova, Elektra, Oracle, and Biophysics features merging into main VM.
+- **Note:** "The Chimera is eating its siblings."
+
+### [Concentration Level: HIGH] - Location: experiments/chimera-lang
+- **Scent Origin:** Prologue (The Mad Scientist) ⚛️
+- **Status:** Void Buffer operational (Runes µ, Ø, §). Entropy Grid stabilizing.
+- **Note:** "The buffer prevents the void from consuming itself."
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
+- **Scent Origin:** Mosaic 🎨 (UI Polish)
+- **Status:** Headless mode table rendering confirmed. Oracle bindings display as nested tables.
+- **Note:** "Data looks better in a grid."
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
 - **Scent Origin:** Echo 🗣️
 - **Status:** DX Audit mostly passed. 8 failing tests and 18 warnings persist.
