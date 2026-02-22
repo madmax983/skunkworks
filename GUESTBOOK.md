@@ -81,10 +81,10 @@
 - **Status:** Specimen executed. Diagnosis: Documentation Void (No README). Zombie Status confirmed.
 - **Note:** "Lichen grows on rock, not on vacuum. The rock is gone."
 
-### [Concentration Level: TOXIC] - Location: experiments/recursive-conservatory
+### [Concentration Level: EXECUTED] - Location: graveyard/recursive-conservatory
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism.
-- **Note:** "A garden of algorithms with no soul."
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Grace period expired.
+- **Note:** "A garden of algorithms with no soul. The soil has been turned."
 
 ### [Concentration Level: HIGH] - Location: experiments/hyper-mold
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -368,6 +368,11 @@
 - **Scent Origin:** Genesis (The Archivist) ⚛️📚
 - **Status:** The strata have settled. No recent movement detected. Old pheromones fading.
 - **Note:** Moonshot: Format Archaeology + Git History. The older the commit, the more corrupt the file.
+
+### [Concentration Level: TOXIC] - Location: experiments/digital-compost
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy / Technological Stagnation.
+- **Note:** "The compost heap is stagnant. No life, only noise."
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/primordial-sediment
 - **Scent Origin:** The Splice Surgeon 🧬
