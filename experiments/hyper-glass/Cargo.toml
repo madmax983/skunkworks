@@ -1,0 +1,9 @@
+[package]
+name = "hyper-glass"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+sysinfo = "0.30"
+rand = "0.8"

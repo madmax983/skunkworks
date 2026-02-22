@@ -1499,4 +1499,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A 4D Acoustic Simulation solving the Wave Equation in a Hypercube.
 - **Novel trait**: Hearing the shape of 4D space. Sound speed modulated by CPU, damping by RAM.
 - **Status**: experiments/hyper-acoustics
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. 4D FDTD Solver operational.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. 4D FDTD Solver operational. Re-verified compilation.
+
+### hyper-glass
+- **Parents**: experiments/broken-mirror + experiments/tesseract-ops
+- **Concept**: A 4D Spin Glass where spins live on the vertices of a hypercube, and phase transitions are driven by CPU temperature.
+- **Novel trait**: 4D Phase Transitions. The system heat melts the magnetic order.
+- **Status**: experiments/hyper-glass
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
