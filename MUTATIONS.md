@@ -1492,7 +1492,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A 4D Fluid Simulation where the "medium" is distorted by real-time system metrics (CPU=Agitation, RAM=Viscosity, Swap=Gravity).
 - **Novel trait**: 4D Hydrodynamics driven by computer metabolism.
 - **Status**: experiments/hyper-fluid
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+- **Evaluation**: Compiles (Warnings). Implemented by The Splice Surgeon. Verified.
 
 ### hyper-acoustics
 - **Parents**: experiments/tesseract-ops + experiments/resonant-chamber
@@ -1507,3 +1507,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: 4D Phase Transitions. The system heat melts the magnetic order.
 - **Status**: experiments/hyper-glass
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### hyper-market
+- **Parents**: experiments/market-sim + experiments/hyper-glass
+- **Concept**: A 4D Visualization of a Continuous Double Auction (CDA) market. Orders (Bids/Asks) are particles in a Hypercube.
+- **Novel trait**: 4D Volatility. System CPU load drives the "temperature" of the market, causing orders to jitter and crash.
+- **Status**: experiments/hyper-market
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Confirmed.
