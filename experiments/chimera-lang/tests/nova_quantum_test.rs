@@ -36,7 +36,7 @@ fn test_quantum_jump() {
         }],
     };
 
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![strand0, strand1],
         },
@@ -105,7 +105,7 @@ fn test_spirit_message() {
         ],
     };
 
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![strand0],
         },

@@ -4,7 +4,7 @@ use chimera_lang::vm::prologue::exec_prologue_tick;
 
 #[test]
 fn test_pandemonium_gamble() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -38,7 +38,7 @@ fn test_pandemonium_gamble() {
 
 #[test]
 fn test_pandemonium_flux() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -74,7 +74,7 @@ fn test_pandemonium_flux() {
 
 #[test]
 fn test_pandemonium_scramble() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

@@ -74,7 +74,7 @@ mod tests {
             ],
         };
 
-        let mut vm = ChimeraVM::new(Dna {
+        let mut vm = ChimeraVM::new(Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![s0, s1],
             },
@@ -204,7 +204,7 @@ mod tests {
             ],
         };
 
-        let mut vm = ChimeraVM::new(Dna {
+        let mut vm = ChimeraVM::new(Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![s0, s1],
             },

@@ -6,7 +6,7 @@ mod tests {
 
     #[test]
     fn test_construct_capture_and_paste() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -63,7 +63,7 @@ mod tests {
 
     #[test]
     fn test_construct_dimensions() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);

@@ -89,7 +89,7 @@ pub fn compile(source: &str) -> Result<Dna> {
         }
     }
 
-    Ok(Dna {
+    Ok(Dna { evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },

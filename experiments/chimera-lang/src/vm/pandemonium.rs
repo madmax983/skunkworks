@@ -175,7 +175,7 @@ mod tests {
                 args: vec![Nucleotide::Number(3)],
             },
         ];
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes }],
             },

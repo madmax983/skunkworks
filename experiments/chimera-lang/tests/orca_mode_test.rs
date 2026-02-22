@@ -5,7 +5,7 @@ use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_orca_mode_toggle() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -22,7 +22,7 @@ fn test_orca_mode_toggle() {
 
 #[test]
 fn test_orca_bang() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -54,7 +54,7 @@ fn test_orca_bang() {
 
 #[test]
 fn test_orca_directional() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

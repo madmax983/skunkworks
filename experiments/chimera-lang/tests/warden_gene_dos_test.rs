@@ -6,7 +6,7 @@ mod tests {
     use chimera_lang::vm::{ChimeraVM, Value, MAX_GENES_PER_STRAND};
 
     fn make_dna() -> Dna {
-        Dna {
+        Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes: vec![] }],
             },

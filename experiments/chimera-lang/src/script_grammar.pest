@@ -1,7 +1,7 @@
 WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
 COMMENT = _{ ("//" ~ (!"\n" ~ ANY)*) | ("/*" ~ (!"*/" ~ ANY)* ~ "*/") | ("#" ~ (!"\n" ~ ANY)*) }
 
-program = { SOI ~ (include_stmt | macro_def | map_def | strand_def | organelle_def | grammar_def | chimera_def)* ~ EOI }
+program = { SOI ~ (include_stmt | macro_def | map_def | strand_def | organelle_def | grammar_def | chimera_def | evolution_def)* ~ EOI }
 
 include_stmt = { "include" ~ string }
 
@@ -37,6 +37,15 @@ action_block = { "{" ~ (!"}" ~ ANY)* ~ "}" }
 transform_block = { "{" ~ (!"}" ~ ANY)* ~ "}" }
 
 chimera_def = { "chimera" ~ identifier ~ "{" ~ "grammar" ~ ":" ~ argument ~ "boot" ~ ":" ~ block ~ "}" }
+
+evolution_def = { "evolution" ~ identifier ~ "{" ~ evolution_prop* ~ "}" }
+evolution_prop = {
+    ( "population" ~ ":" ~ number ) |
+    ( "mutation_rate" ~ ":" ~ float ) |
+    ( "target" ~ ":" ~ number ) |
+    ( "fitness" ~ block )
+}
+float = @{ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ }
 
 instruction = {
     block |

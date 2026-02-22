@@ -6,7 +6,7 @@ mod tests {
     use crate::vm::{ChimeraVM, Chirality, Value};
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
-        Dna {
+        Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes }],
             },
@@ -121,7 +121,7 @@ mod tests {
             }],
         };
 
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![strand0, strand1],
             },

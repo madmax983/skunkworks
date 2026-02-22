@@ -24,7 +24,7 @@
 //!
 //! See [`compile`] for usage details.
 
-use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
+use crate::ast::{Dna, EvolutionConfig, Gene, Helix, JunctionType, Nucleotide, Strand};
 use crate::opcode::OpCode;
 use anyhow::{anyhow, Result};
 use pest::Parser;
@@ -187,6 +187,7 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
     let mut grammar_map: HashMap<String, DefinedGrammar> = HashMap::new();
     let mut organelle_map: HashMap<String, usize> = HashMap::new();
     let mut grid_maps: HashMap<String, Vec<String>> = HashMap::new();
+    let mut evolution_config: Option<EvolutionConfig> = None;
 
     for pair in program.clone().into_inner() {
         match pair.as_rule() {
@@ -341,6 +342,87 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                 }
                 strands_ast.push(Strand { genes });
             }
+            Rule::evolution_def => {
+                let mut inner = pair.into_inner();
+                let _name = inner.next().unwrap(); // skip identifier
+
+                let mut pop_size = 50;
+                let mut mut_rate = "0.1".to_string();
+                let mut fitness_idx = None;
+                let mut target = None;
+
+                for prop in inner {
+                    let mut prop_parts = prop.into_inner();
+                    // Each part is (key ~ ":" ~ val)
+                    // But pest returns flat children of prop
+                    // e.g. "population", ":", "number"
+                    // Wait, `evolution_prop` rule has alternatives.
+                    // The first token is the keyword.
+                    let key_token = prop_parts.next().unwrap();
+                    match key_token.as_str() {
+                        "population" => {
+                            let _colon = prop_parts.next();
+                            let val_str = prop_parts.next().unwrap().as_str();
+                            pop_size = val_str.parse().unwrap_or(50);
+                        }
+                        "mutation_rate" => {
+                            let _colon = prop_parts.next();
+                            mut_rate = prop_parts.next().unwrap().as_str().to_string();
+                        }
+                        "target" => {
+                            let _colon = prop_parts.next();
+                            let val_str = prop_parts.next().unwrap().as_str();
+                            target = val_str.parse().ok();
+                        }
+                        "fitness" => {
+                            let block_pair = prop_parts.next().unwrap();
+                            // Compile block.
+                            // We need to parse this block into genes, then put it into anonymous strands.
+                            // We can use parse_instructions on the block?
+                            // But `instruction` rule has `block` as a choice.
+                            // We need to create a `CompilerContext` and call `parse_block` directly or wrap it.
+                            // Actually `block` is an instruction type.
+                            // Let's manually invoke parse_block via parse_instructions context manually.
+
+                            // Wait, `parse_instruction` expects an `instruction` pair.
+                            // `block` is a rule inside `instruction`.
+                            // But here we have `block` pair directly from `evolution_prop`.
+                            // We need `CompilerContext::parse_block`.
+
+                            let mut ctx = CompilerContext {
+                                strand_map: &strand_map,
+                                macro_map: &macro_map,
+                                grammar_map: &grammar_map,
+                                organelle_map: &organelle_map,
+                                grid_maps: &grid_maps,
+                                anonymous_strands: &mut anonymous_strands,
+                                depth: 0,
+                            };
+
+                            // parse_block returns [Push(idx)].
+                            // It takes `Rule::block` pair.
+                            let genes = ctx.parse_block(block_pair)?;
+                            if let Some(Gene {
+                                op: OpCode::Push,
+                                args,
+                            }) = genes.first()
+                            {
+                                if let Some(Nucleotide::Number(idx)) = args.first() {
+                                    fitness_idx = Some(*idx as usize);
+                                }
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+
+                evolution_config = Some(EvolutionConfig {
+                    population_size: pop_size,
+                    mutation_rate: mut_rate,
+                    fitness_strand_idx: fitness_idx,
+                    target_value: target,
+                });
+            }
             _ => {}
         }
     }
@@ -352,6 +434,7 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
         helix: Helix {
             strands: strands_ast,
         },
+        evolution_config,
     })
 }
 

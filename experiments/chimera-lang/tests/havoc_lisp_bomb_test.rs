@@ -27,7 +27,7 @@ fn test_lisp_recursion_bomb() {
         },
     ];
 
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },

@@ -26,7 +26,7 @@ fn test_prism_cascade() {
         args: vec![Nucleotide::Number(1)],
     }];
 
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes: genes_0 }, Strand { genes: genes_1 }],
         },

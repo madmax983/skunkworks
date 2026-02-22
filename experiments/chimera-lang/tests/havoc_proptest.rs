@@ -58,7 +58,7 @@ fn strand_strategy() -> impl Strategy<Value = Strand> {
 }
 
 fn dna_strategy() -> impl Strategy<Value = Dna> {
-    prop::collection::vec(strand_strategy(), 1..5).prop_map(|strands| Dna {
+    prop::collection::vec(strand_strategy(), 1..5).prop_map(|strands| Dna { evolution_config: None,
         helix: Helix { strands },
     })
 }

@@ -44,7 +44,7 @@ mod tests {
 
         file.write_all(b"]]}").unwrap(); // Close array and object
 
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);

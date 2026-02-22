@@ -85,7 +85,7 @@ fn test_retroscope() {
         },
     ];
 
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },

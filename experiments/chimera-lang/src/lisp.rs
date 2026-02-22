@@ -178,6 +178,7 @@ pub fn compile(source: &str) -> Result<Dna> {
 
     Ok(Dna {
         helix: Helix { strands },
+        evolution_config: None,
     })
 }
 

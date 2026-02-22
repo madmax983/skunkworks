@@ -4,7 +4,7 @@ use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_narrative_incipit() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -25,7 +25,7 @@ fn test_narrative_incipit() {
 
 #[test]
 fn test_narrative_terminus() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -46,7 +46,7 @@ fn test_narrative_terminus() {
 
 #[test]
 fn test_narrative_revision() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -71,7 +71,7 @@ fn test_narrative_revision() {
 
 #[test]
 fn test_narrative_library() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -103,7 +103,7 @@ fn test_narrative_library() {
     );
 
     // Step 2: Read
-    let mut vm2 = ChimeraVM::new(Dna {
+    let mut vm2 = ChimeraVM::new(Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     });
     vm2.prologue_state.active = true;

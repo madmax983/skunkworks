@@ -5,7 +5,7 @@ use chimera_lang::vm::{ChimeraVM, Value};
 #[test]
 fn test_psionics_telepathy() {
     // Θ (Theta) = Telepathy: Reads West (Y), North (X) -> Output Self (Value at grid[Y][X])
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -46,7 +46,7 @@ fn test_psionics_telepathy() {
 #[test]
 fn test_psionics_suggestion() {
     // Σ (Sigma) = Suggestion: West (Val), North (Y), East (X) -> Write Val to grid[Y][X]
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -85,7 +85,7 @@ fn test_psionics_suggestion() {
 fn test_psionics_telekinesis() {
     // Ξ (Xi) = Telekinesis: West (Dir), North (Y), East (X) -> Move grid[Y][X] in Dir
     // Dir: 0=N, 1=E, 2=S, 3=W
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

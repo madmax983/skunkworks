@@ -5,7 +5,7 @@ mod tests {
 
     #[test]
     fn test_hydra_pump() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -24,7 +24,7 @@ mod tests {
 
     #[test]
     fn test_hydra_flow() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -58,7 +58,7 @@ mod tests {
 
     #[test]
     fn test_hydra_wall() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);

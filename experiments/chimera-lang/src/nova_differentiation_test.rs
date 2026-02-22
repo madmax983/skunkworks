@@ -81,7 +81,7 @@ mod tests {
         }
         strands.push(strand99);
 
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands },
         };
         let mut vm = ChimeraVM::new(dna);

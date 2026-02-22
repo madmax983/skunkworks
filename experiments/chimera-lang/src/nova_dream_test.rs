@@ -48,7 +48,7 @@ fn test_dream_execution() {
         ],
     };
 
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![strand_main, strand_dream],
         },

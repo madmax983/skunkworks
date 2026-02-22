@@ -7,7 +7,7 @@ mod tests {
 
     fn make_dna(strands: Vec<Vec<Gene>>) -> Dna {
         let strands = strands.into_iter().map(|genes| Strand { genes }).collect();
-        Dna {
+        Dna { evolution_config: None,
             helix: Helix { strands },
         }
     }

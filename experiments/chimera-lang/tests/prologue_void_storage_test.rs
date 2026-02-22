@@ -3,7 +3,7 @@ use chimera_lang::vm::prologue::exec_prologue_tick;
 use chimera_lang::vm::{ChimeraVM, Value};
 
 fn make_vm() -> ChimeraVM {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes: vec![] }],
         },

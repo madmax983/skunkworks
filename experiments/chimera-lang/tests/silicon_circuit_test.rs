@@ -6,7 +6,7 @@ mod tests {
     use chimera_lang::vm::{ChimeraVM, Value};
 
     fn make_dna(strands: Vec<Strand>) -> Dna {
-        Dna {
+        Dna { evolution_config: None,
             helix: Helix { strands },
         }
     }

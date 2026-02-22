@@ -6,7 +6,7 @@ use crate::vm::Value;
 
 #[test]
 fn test_chroma_palette() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -41,7 +41,7 @@ fn test_chroma_palette() {
 
 #[test]
 fn test_chroma_extraction() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -76,7 +76,7 @@ fn test_chroma_extraction() {
 
 #[test]
 fn test_chroma_brush() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -105,7 +105,7 @@ fn test_chroma_brush() {
 
 #[test]
 fn test_chroma_eye() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

@@ -3,7 +3,7 @@ use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value};
 
 fn make_dna(genes: Vec<Gene>) -> Dna {
-    Dna {
+    Dna { evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },
@@ -99,7 +99,7 @@ fn test_brz_any() {
             args: vec![Nucleotide::Number(200)],
         }],
     };
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![strand0, strand1],
         },
@@ -140,7 +140,7 @@ fn test_brz_all() {
             args: vec![Nucleotide::Number(200)],
         }],
     };
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![strand0, strand1],
         },
@@ -172,7 +172,7 @@ fn test_brz_all_success() {
         ],
     };
     let strand1 = Strand { genes: vec![] };
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![strand0, strand1],
         },

@@ -5,7 +5,7 @@ use crate::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_echo_record_playback() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -83,7 +83,7 @@ fn test_echo_record_playback() {
 
 #[test]
 fn test_echo_reverse() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

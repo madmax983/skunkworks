@@ -4,7 +4,7 @@ use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_zeta_agent_lisp() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -68,7 +68,7 @@ fn test_zeta_agent_lisp() {
 
 #[test]
 fn test_zeta_agent_bracket_list() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

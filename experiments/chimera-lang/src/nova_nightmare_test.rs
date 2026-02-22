@@ -5,7 +5,7 @@ mod tests {
     use crate::vm::ChimeraVM;
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
-        Dna {
+        Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes }],
             },

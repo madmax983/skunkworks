@@ -5,7 +5,7 @@ mod tests {
     use crate::vm::{microscope, ChimeraVM, Value};
 
     fn make_empty_dna() -> Dna {
-        Dna {
+        Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes: vec![] }],
             },
