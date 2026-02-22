@@ -1563,3 +1563,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Crystallographic Intelligence. Agents live in SC/BCC/FCC lattices.
 - **Status**: experiments/chimera-lattice
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational.
+
+### chimera-genesis
+- **Parents**: experiments/chimera-lang + experiments/klein-life
+- **Concept**: A Cellular Automaton where every cell's update rule is a ChimeraVM genetic program.
+- **Novel trait**: Programmable Cellular Physics. The "laws of physics" are the code.
+- **Status**: experiments/chimera-genesis
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational. Tests passed.
