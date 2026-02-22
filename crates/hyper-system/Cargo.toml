@@ -1,5 +1,5 @@
 [package]
-name = "hyper-glass"
+name = "hyper-system"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,4 +7,3 @@ edition = "2021"
 macroquad = "0.4"
 sysinfo = "0.30"
 rand = "0.8"
-hyper-system = { workspace = true }

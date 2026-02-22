@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 macroquad = "0.4"
 sysinfo = "0.30"
+hyper-system = { workspace = true }
