@@ -4,8 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-ratatui = "0.28"
-crossterm = "0.28"
-anyhow = "1.0"
-rand = "0.8"
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+rand = { workspace = true }
 glam = "0.24"
+tui-shared = { workspace = true }

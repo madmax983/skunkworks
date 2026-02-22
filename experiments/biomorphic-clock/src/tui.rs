@@ -1,22 +1,16 @@
 use anyhow::Result;
-use crossterm::{
-    event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
-    backend::{Backend, CrosstermBackend},
+    backend::CrosstermBackend,
     style::{Color, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Paragraph},
     Frame, Terminal,
 };
-use std::{
-    io,
-    time::{Duration, Instant},
-};
+use std::time::{Duration, Instant};
+use std::io::Stdout;
 
-use biomorphic_clock::simulation::Grid;
+use crate::simulation::Grid;
 
 pub struct App {
     pub grid: Grid,
@@ -52,32 +46,12 @@ impl App {
     }
 }
 
-pub fn run_app(mut app: App) -> Result<()> {
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
-
-    let res = run_loop(&mut terminal, &mut app);
-
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
-
-    if let Err(err) = res {
-        println!("{:?}", err)
-    }
-
-    Ok(())
-}
-
-fn run_loop<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> Result<()> {
+pub fn run_app(terminal: &mut Terminal<CrosstermBackend<Stdout>>, mut app: App) -> Result<()> {
     let tick_rate = Duration::from_millis(16); // ~60 FPS target
     let mut last_tick = Instant::now();
 
     loop {
-        terminal.draw(|f| ui(f, app))?;
+        terminal.draw(|f| ui(f, &app))?;
 
         let timeout = tick_rate
             .checked_sub(last_tick.elapsed())
