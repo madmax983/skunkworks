@@ -20,10 +20,9 @@ use ratatui::{
     Terminal,
 };
 
-mod phonology;
 mod physics;
 
-use physics::LexicalString;
+use physics::{is_vowel, LexicalString};
 
 fn main() -> Result<()> {
     enable_raw_mode()?;
@@ -91,7 +90,7 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result
                     for node in &string.nodes {
                         let color = if node.mutated {
                             Color::Green // Highlight mutated
-                        } else if node.phoneme.is_vowel() {
+                        } else if is_vowel(node.char) {
                             Color::Red
                         } else {
                             Color::Cyan
@@ -101,7 +100,7 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result
                             node.pos.x as f64,
                             node.pos.y as f64,
                             Span::styled(
-                                node.phoneme.symbol.to_string(),
+                                node.char.to_string(),
                                 Style::default().fg(color),
                             ),
                         );
@@ -122,7 +121,7 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result
                 ]),
                 Line::from(vec![Span::raw(format!(
                     "Current Word: {} | Nodes: {} | Mass: {:.1}",
-                    string.word.to_string(),
+                    string,
                     string.nodes.len(),
                     string.nodes.iter().map(|n| n.mass).sum::<f32>()
                 ))]),
