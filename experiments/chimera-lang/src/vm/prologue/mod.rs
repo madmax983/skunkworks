@@ -104,6 +104,7 @@ pub mod void;
 pub mod forth;
 pub mod hyper;
 pub mod rhythm;
+pub mod sequencer;
 
 /// An autonomous agent wandering the Prologue grid.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -423,13 +424,15 @@ impl PrologueState {
                             | "⇪" | "↻" | "⌖" | "▣"
                             // Rhythm
                             | "⏱️" | "🎹" | "🎚️"
+                            // Sequencer
+                            | "🔍" | "✏" | "🗑" | "➕"
                     ) {
                         self.runes.insert((y, x));
 
                         if s == "@"
                             || s == "K"
                             || s == "H"
-                            || s == "C"
+                            || (s == "C" && !self.orca_mode)
                             || s == "♻"
                             || s == "♬"
                             || s == "₣"
@@ -723,7 +726,7 @@ fn apply_propagation_rune(
     if construct::apply_construct_runes(rune, y, x, current_signals, next_delayed, grid) {
         return true;
     }
-    if topology::apply_topology_runes(rune, y, x, current_signals, next_signals, next_delayed, orca_mode) {
+    if topology::apply_topology_runes(rune, y, x, tick, current_signals, next_signals, next_delayed, orca_mode) {
         return true;
     }
     if math::apply_math_runes(rune, y, x, current_signals, next_signals) {
@@ -829,6 +832,9 @@ fn apply_propagation_rune(
         audio_tx,
         output,
     ) {
+        return true;
+    }
+    if sequencer::apply_sequencer_runes(rune, y, x, dna, current_signals, next_signals) {
         return true;
     }
     false
@@ -1040,6 +1046,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             memetics::apply_memetic_sinks(vm, rune, y, x);
             narrative::apply_narrative_sinks(vm, rune, y, x);
             chroma::apply_chroma_sinks(vm, rune, y, x);
+            sequencer::apply_sequencer_sinks(vm, rune, y, x);
         }
     }
 }
