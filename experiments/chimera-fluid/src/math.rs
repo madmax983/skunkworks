@@ -22,6 +22,7 @@ impl Vec4 {
         }
     }
 
+    #[allow(dead_code)]
     pub fn scale_dim(&self, sx: f32, sy: f32, sz: f32, sw: f32) -> Self {
         Self {
             x: self.x * sx,
@@ -54,6 +55,7 @@ impl Vec4 {
         }
     }
 
+    #[allow(dead_code)]
     pub fn rotate_zw(&self, theta: f32) -> Self {
         let c = theta.cos();
         let s = theta.sin();
@@ -73,6 +75,7 @@ impl Vec4 {
         vec3(self.x * scale, self.y * scale, self.z * scale)
     }
 
+    #[allow(dead_code)]
     pub fn normalize(&self) -> Self {
         let len = (self.x * self.x + self.y * self.y + self.z * self.z + self.w * self.w).sqrt();
         if len > 0.0 {

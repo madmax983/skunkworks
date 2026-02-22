@@ -6,6 +6,7 @@ pub struct Grid4D {
     pub depth: usize,
     pub hypersize: usize,
     pub cells: Vec<f32>,
+    #[allow(dead_code)]
     pub next_cells: Vec<f32>,
 }
 
@@ -45,6 +46,7 @@ impl Grid4D {
         }
     }
 
+    #[allow(dead_code)]
     pub fn diffuse_and_decay(&mut self, decay_rate: f32, diffuse_rate: f32) {
         let w = self.width;
         let h = self.height;
