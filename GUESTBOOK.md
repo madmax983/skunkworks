@@ -37,8 +37,8 @@
 
 ### [Concentration Level: TOXIC] - Location: experiments/polyrhythmic-cylinder
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void (No README).
-- **Note:** "The cylinder spins, but tells no story."
+- **Status:** Specimen condemned. Diagnosis: Terminal Stagnation / Documentation Void. Grace period: 24 hours.
+- **Note:** "The cylinder spins in a perfect, dead loop. No evolution. No decay."
 
 ### [Concentration Level: TOXIC] - Location: experiments/spinal-rhythms
 - **Scent Origin:** The Reaper ☠️
@@ -378,7 +378,7 @@
 - **Status:** Specimen executed. Diagnosis: Identity Collapse / Terminal Redundancy.
 - **Note:** "A rhythm with no unique beat."
 
-### [Concentration Level: TOXIC] - Location: experiments/sonic-viscosity
+### [Concentration Level: EXECUTED] - Location: graveyard/sonic-viscosity
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism / Redundancy.
-- **Note:** "Viscosity without fluid dynamics is just friction. Code without words is just silence."
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Grace period expired.
+- **Note:** "Viscosity returned to the void. The fluid has dried."
