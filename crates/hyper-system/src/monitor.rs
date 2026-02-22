@@ -1,14 +1,46 @@
+//! System monitoring utilities for real-time visualization.
+//!
+//! This module provides the [`SystemMonitor`] struct, which gathers system metrics
+//! (CPU, RAM, Swap) and interpolates them over time. This is particularly useful
+//! for "Hyper" series experiments where simulation parameters are driven by
+//! system load.
+
 use macroquad::prelude::*;
 use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
 
+/// A real-time system resource monitor.
+///
+/// `SystemMonitor` tracks CPU, memory, swap usage, and load average.
+/// It uses linear interpolation (lerp) to smooth out sudden spikes, providing
+/// values suitable for driving fluid visual animations.
+///
+/// # Metrics
+/// All public metric fields (`cpu_usage`, `mem_usage`, etc.) are normalized
+/// to a range of **0.0 to 1.0**, where 1.0 represents 100% usage.
+///
+/// # Examples
+///
+/// ```no_run
+/// use hyper_system::monitor::SystemMonitor;
+///
+/// let mut monitor = SystemMonitor::new();
+/// // Call update inside your main loop
+/// monitor.update();
+/// println!("CPU Usage: {:.2}%", monitor.cpu_usage * 100.0);
+/// ```
 pub struct SystemMonitor {
     sys: System,
+    /// Timestamp of the last successful system poll (in seconds).
     pub last_update: f64,
-    // Metrics (0.0 - 1.0)
+    /// Current interpolated CPU usage (0.0 - 1.0).
     pub cpu_usage: f32,
+    /// Current interpolated memory usage (0.0 - 1.0).
     pub mem_usage: f32,
+    /// Current interpolated swap usage (0.0 - 1.0).
     pub swap_usage: f32,
+    /// Current interpolated load average (0.0 - 1.0), normalized against a load of 4.0.
     pub load_avg: f32,
+
     // Target metrics for interpolation
     target_cpu: f32,
     target_mem: f32,
@@ -17,6 +49,9 @@ pub struct SystemMonitor {
 }
 
 impl SystemMonitor {
+    /// Creates a new `SystemMonitor` instance.
+    ///
+    /// Initializes the underlying system information gatherer.
     pub fn new() -> Self {
         Self {
             sys: System::new_with_specifics(
@@ -36,6 +71,12 @@ impl SystemMonitor {
         }
     }
 
+    /// Updates the system metrics.
+    ///
+    /// This method should be called once per frame. It performs two tasks:
+    /// 1. **Polling:** Every 1.0 second, it queries the OS for fresh metrics.
+    /// 2. **Interpolation:** Every frame, it smooths the current values towards
+    ///    the latest polled targets using `macroquad::get_frame_time()`.
     pub fn update(&mut self) {
         let now = get_time();
         if now - self.last_update > 1.0 {
@@ -62,6 +103,7 @@ impl SystemMonitor {
             };
 
             let load = System::load_average();
+            // Normalize load average assuming 4 cores is "full load" for visual purposes
             self.target_load = (load.one as f32 / 4.0).clamp(0.0, 1.0);
         }
 
