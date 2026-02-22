@@ -1556,3 +1556,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Immutable History. Persistence is a function of age.
 - **Status**: experiments/chimera-cuneiform
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### chimera-lattice
+- **Parents**: experiments/lattice-brain + experiments/chimera-lang
+- **Concept**: ChimeraVM agents inhabiting a 3D Crystal Lattice Brain.
+- **Novel trait**: Crystallographic Intelligence. Agents live in SC/BCC/FCC lattices.
+- **Status**: experiments/chimera-lattice
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational.
