@@ -716,6 +716,10 @@ fn apply_propagation_rune(
     #[cfg(not(feature = "resonance"))] audio_tx: &Option<()>,
     output: &mut Vec<String>,
 ) -> bool {
+    if chroma::apply_chroma_runes(rune, y, x, current_signals, next_signals, chroma_grid) {
+        return true;
+    }
+
     #[cfg(feature = "elektra")]
     if elektra::apply_elektra_runes(
         rune,
@@ -844,9 +848,6 @@ fn apply_propagation_rune(
         return true;
     }
     if narrative::apply_narrative_runes(rune, y, x, current_signals, next_signals) {
-        return true;
-    }
-    if chroma::apply_chroma_runes(rune, y, x, current_signals, next_signals, chroma_grid) {
         return true;
     }
     if logos::apply_logos_runes(rune, y, x, current_signals, next_signals, logos_engine, dna) {

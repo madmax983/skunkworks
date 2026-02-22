@@ -319,3 +319,41 @@ Runes for 4D Hypercube manipulation and Hyperspace traversal.
 *   Agents can move to W!=0 using `⇪`.
 *   At W!=0, agents are "Ghosts" (visible in Tesseract view, but may interact differently).
 *   Coordinates are (Y, X, Z, W).
+
+# Prism Language (Spectral Logic) 🌈
+
+The Prism Language adds a layer of color-based semantics to the grid.
+Standard runes behave differently depending on the **Color** of the cell they occupy.
+
+This allows for dense, multi-modal logic where the same circuit topology can perform different functions based on its spectral state.
+
+## Activation
+
+Colors can be painted onto the grid using the `🖌` (Brush) rune or emitted by bioluminescent sources.
+
+## Spectral Semantics
+
+When a standard rune is colored, its function is modulated by the dominant color channel (R, G, B).
+
+### Red (Energy / Force) 🔴
+*   `+` **Amplified Add**: Multiplies the sum of inputs by 2. `(A + B) * 2`.
+*   `*` **Explosive Split**: Propagates the input signal to **All Cardinal Neighbors** (N, S, E, W), overriding normal directionality.
+
+### Green (Life / Growth) 🟢
+*   `+` **Genetic Crossover**: Splices two string inputs. Takes the first half of West and the second half of East. `Head(A) + Tail(B)`.
+*   `*` **Spore**: (Experimental) Spawns an agent/spore based on input.
+
+### Blue (Logic / Time) 🔵
+*   `+` **Logical AND**: Performs a boolean AND on integer inputs. Output is 1 only if both inputs are non-zero.
+*   `*` **Time Dilation**: Acts as a logical NOT/Inverter on the signal existence. (If signal present -> 0, else -> 1).
+
+## Runes
+
+| Rune | Name | Function |
+|---|---|---|
+| `🎨` | **Palette** | Mixes R(West), G(North), B(East) signals into a Color Value. |
+| `🖌` | **Brush** | Reads Color (West) and Paints the Grid Cell to the South. |
+| `👁` | **Eye** | Reads the Color of the current cell and emits it as a signal. |
+| `🔴` | **Extract R** | Extracts Red channel from West signal. |
+| `🟢` | **Extract G** | Extracts Green channel from West signal. |
+| `🔵` | **Extract B** | Extracts Blue channel from West signal. |
