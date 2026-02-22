@@ -158,6 +158,8 @@ pub enum ViewMode {
     Sequencer,
     Mutagen,
     Forge,
+    #[cfg(feature = "nova")]
+    Tesseract,
 }
 
 enum InputMode {
@@ -1036,6 +1038,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Forge = app_state.view_mode {
                 render_forge(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Tesseract = app_state.view_mode {
+                render_tesseract(f, vm, app_state);
                 return;
             }
 
@@ -2808,7 +2816,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Mutagen => ViewMode::Forge,
                             #[cfg(feature = "nova")]
-                            ViewMode::Forge => ViewMode::Genome,
+                            ViewMode::Forge => ViewMode::Tesseract,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Tesseract => ViewMode::Genome,
                             #[cfg(not(feature = "nova"))]
                             ViewMode::Mutagen => ViewMode::Genome,
                         };
@@ -12764,6 +12774,101 @@ fn render_mutagen(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Block::default()
             .borders(Borders::ALL)
             .title("Genetic Sequencer"),
+    );
+    f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_tesseract(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    let canvas = Canvas::default()
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Tesseract (4D Hypercube)"),
+        )
+        .x_bounds([0.0, 16.0])
+        .y_bounds([0.0, 16.0])
+        .paint(|ctx| {
+            // Draw 2D Grid Base
+            for y in 0..16 {
+                for x in 0..16 {
+                    let val = &vm.grid[y][x];
+                    if let crate::vm::Value::Int(n) = val {
+                        if *n != 0 {
+                            ctx.draw(&Rectangle {
+                                x: x as f64,
+                                y: 15.0 - y as f64,
+                                width: 1.0,
+                                height: 1.0,
+                                color: Color::DarkGray,
+                            });
+                        }
+                    }
+                }
+            }
+
+            // Draw Hyper-Agents
+            for ((y, x), (z, w)) in &vm.prologue_state.hyper_state.extra_dims {
+                // Projection: Simple isometric-like offset for Z and W
+                // x' = x + z*0.2 + w*0.1
+                // y' = y + z*0.1 - w*0.2
+
+                let dx = (*z as f64) * 0.2 + (*w as f64) * 0.1;
+                let dy = (*z as f64) * 0.1 - (*w as f64) * 0.2;
+
+                let px = *x as f64 + dx;
+                let py = 15.0 - *y as f64 + dy; // Invert Y for canvas
+
+                // Color based on W (Hyper-depth)
+                let color = if *w > 0 {
+                    Color::Magenta
+                } else if *w < 0 {
+                    Color::Cyan
+                } else {
+                    Color::Yellow
+                };
+
+                ctx.draw(&ratatui::widgets::canvas::Line {
+                    x1: *x as f64 + 0.5,
+                    y1: 15.0 - *y as f64 + 0.5,
+                    x2: px + 0.5,
+                    y2: py + 0.5,
+                    color: Color::Gray,
+                });
+
+                ctx.print(px + 0.5, py + 0.5, "♦");
+            }
+        });
+
+    f.render_widget(canvas, chunks[0]);
+
+    // Info Panel
+    let mut info = Vec::new();
+    info.push(Line::from("HYPERSPACE NAVIGATOR"));
+    info.push(Line::from(" "));
+    info.push(Line::from(format!(
+        "Rotation: {:.1}",
+        vm.prologue_state.hyper_state.rotation
+    )));
+    info.push(Line::from(format!(
+        "Projection: {}",
+        vm.prologue_state.hyper_state.projection_mode
+    )));
+    info.push(Line::from(" "));
+    info.push(Line::from("Active Hyper-Agents:"));
+    for ((y, x), (z, w)) in &vm.prologue_state.hyper_state.extra_dims {
+        info.push(Line::from(format!("  ({}, {}) -> Z:{} W:{}", x, y, z, w)));
+    }
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("4D Coordinates"),
     );
     f.render_widget(info_widget, chunks[1]);
 }

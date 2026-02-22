@@ -102,6 +102,7 @@ pub mod topology;
 pub mod virology;
 pub mod void;
 pub mod forth;
+pub mod hyper;
 
 /// An autonomous agent wandering the Prologue grid.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -158,6 +159,9 @@ pub struct PrologueState {
     /// Void Buffer: Global LIFO storage for Void runes.
     #[serde(default)]
     pub void_buffer: VecDeque<Value>,
+    /// Hyper State (4D Coordinates)
+    #[serde(default)]
+    pub hyper_state: hyper::HyperState,
     /// Scratch buffer for signal propagation (Double Buffering).
     #[serde(skip, default)]
     pub scratch_signal_grid: Vec<Vec<Option<Value>>>,
@@ -191,6 +195,7 @@ impl PrologueState {
             logos_engine: logos::LogosEngine::new(),
             orca_mode: false,
             void_buffer: VecDeque::new(),
+            hyper_state: hyper::HyperState::default(),
             scratch_signal_grid: vec![vec![None; GRID_SIZE]; GRID_SIZE],
         }
     }
@@ -407,6 +412,8 @@ impl PrologueState {
                             | "»"
                             // Forth
                             | "₣"
+                            // Hyper
+                            | "⇪" | "↻" | "⌖" | "▣"
                     ) {
                         self.runes.insert((y, x));
 
@@ -615,6 +622,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     &vm.chroma_grid,
                     &mut vm.prologue_state.logos_engine,
                     vm.prologue_state.orca_mode,
+                    &mut vm.prologue_state.hyper_state,
                 ) {
                     changes = true;
                 }
@@ -660,6 +668,7 @@ fn apply_propagation_rune(
     chroma_grid: &[Vec<crate::vm::ChromaCell>],
     logos_engine: &mut logos::LogosEngine,
     orca_mode: bool,
+    hyper_state: &mut hyper::HyperState,
 ) -> bool {
     #[cfg(feature = "elektra")]
     if elektra::apply_elektra_runes(
@@ -780,6 +789,9 @@ fn apply_propagation_rune(
         return true;
     }
     if logos::apply_logos_runes(rune, y, x, current_signals, next_signals, logos_engine, dna) {
+        return true;
+    }
+    if hyper::apply_hyper_runes(rune, y, x, current_signals, next_signals, hyper_state) {
         return true;
     }
     false

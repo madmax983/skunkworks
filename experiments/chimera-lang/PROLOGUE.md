@@ -241,3 +241,20 @@ Enabled via `OpCode::Orca` or TUI toggle. This is a concurrent cellular automata
 | `C` | **Clock** | Outputs time-based modulo values. |
 | `M` | **Mutate** | Mutates target strand or value. |
 | `Q` | **Query** | Reads value at offset. |
+
+# Hyper-Geometry ▣
+
+Runes for 4D Hypercube manipulation and Hyperspace traversal.
+
+| Rune | Name | Function |
+|---|---|---|
+| `▣` | **Tesseract** | **Source**. Emits current **W** coordinate to **Self**. |
+| `⇪` | **Ascend** | Reads **West** (Delta). Moves agent at **South** in W-axis (Hyperspace). |
+| `↻` | **Rotate** | Reads **West** (Angle). Rotates the Hypercube projection. |
+| `⌖` | **Project** | Reads **West** (Mode). Changes projection method (Perspective, Ortho, Slice). |
+
+**Hyperspace Theory:**
+*   The grid exists at W=0 by default.
+*   Agents can move to W!=0 using `⇪`.
+*   At W!=0, agents are "Ghosts" (visible in Tesseract view, but may interact differently).
+*   Coordinates are (Y, X, Z, W).
