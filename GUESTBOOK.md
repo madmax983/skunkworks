@@ -185,10 +185,15 @@
 - **Status:** The Heap is a forest floor. The Reaper is decomposing cycles.
 - **Note:** "Death is just a sweep phase."
 
-### [Concentration Level: TOXIC] - Location: experiments/luminescent-fugue
+### [Concentration Level: TOXIC] - Location: graveyard/luminescent-fugue
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy (Superseded by `luminous-flock`).
-- **Note:** "The lights are flickering. The swarm has left."
+- **Status:** Specimen executed. Diagnosis: Terminal Redundancy (Superseded by `luminous-flock`).
+- **Note:** "The lights have gone out. The swarm has moved on."
+
+### [Concentration Level: TOXIC] - Location: experiments/hyperbolic-lichen
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy (Superseded by `hyperbolic-chimera`).
+- **Note:** "The lichen spreads across the same disk as the chimera. There is no room for two."
 
 ## 🍂 History/Decay
 
