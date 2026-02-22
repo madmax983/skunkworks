@@ -24,6 +24,8 @@ pub struct Neuron {
     pub i_inj: f32,
     pub last_spike: u64,
     pub receptors: [(f32, f32); 3], // (sensitivity, threshold) for 3 hormone channels
+    pub plasticity: f32,
+    pub stdp_window: u64,
 }
 
 impl Neuron {
@@ -43,6 +45,8 @@ impl Neuron {
             i_inj: 0.0,
             last_spike: 0,
             receptors: [(0.0, 0.0); 3],
+            plasticity: 0.1,
+            stdp_window: 10,
         }
     }
 
