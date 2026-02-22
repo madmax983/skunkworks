@@ -22,7 +22,7 @@ use rodio::OutputStream;
 use chimera_lang::audio_source::RodioAudioSource;
 
 #[derive(ClapParser)]
-#[command(author, version, about, long_about = None)]
+#[command(author, version, about, long_about = "A bio-inspired, stack-based esoteric programming language virtual machine.")]
 struct Cli {
     #[arg(short, long)]
     input: String,
@@ -133,11 +133,17 @@ fn main() -> Result<()> {
     };
 
     if cli.headless {
+        let mut steps = 0;
         while !vm.halted {
             vm.step();
+            steps += 1;
         }
 
-        println!("Execution complete.");
+        println!("✨ Execution Complete");
+        println!("--------------------------------------------------");
+        println!("Total Steps:  {}", steps);
+        println!("Final Energy: {}", vm.energy);
+        println!("--------------------------------------------------");
 
         let mut table = comfy_table::Table::new();
         table
@@ -217,10 +223,10 @@ fn main() -> Result<()> {
             ]);
         }
 
-        println!("Final Stack (Top -> Bottom):");
+        println!("📚 Final Stack (Top -> Bottom):");
         println!("{table}");
 
-        println!("Output Log:");
+        println!("📜 Output Log:");
         for line in vm.output {
             println!("  {}", line);
         }

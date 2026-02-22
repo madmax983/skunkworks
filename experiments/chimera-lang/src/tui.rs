@@ -292,6 +292,115 @@ pub(crate) struct AppState {
     pub(crate) chaos_mode: bool,
 }
 
+fn get_view_mode_name(mode: ViewMode) -> &'static str {
+    match mode {
+        ViewMode::Genome => "GENOME",
+        ViewMode::Grid => "GRID",
+        ViewMode::Microscope => "MICROSCOPE",
+        #[cfg(feature = "biophysics")]
+        ViewMode::Cortex => "CORTEX",
+        #[cfg(feature = "resonance")]
+        ViewMode::Resonance => "RESONANCE",
+        #[cfg(feature = "nova")]
+        ViewMode::Grimoire => "GRIMOIRE",
+        #[cfg(feature = "nova")]
+        ViewMode::Laboratory => "LABORATORY",
+        #[cfg(feature = "nova")]
+        ViewMode::Topology => "TOPOLOGY",
+        #[cfg(feature = "nova")]
+        ViewMode::Graveyard => "GRAVEYARD",
+        #[cfg(feature = "nova")]
+        ViewMode::PianoRoll => "PIANO ROLL",
+        #[cfg(feature = "nova")]
+        ViewMode::Retina => "RETINA",
+        #[cfg(feature = "nova")]
+        ViewMode::Quantum => "QUANTUM",
+        #[cfg(feature = "nova")]
+        ViewMode::Dream => "DREAM CATCHER",
+        #[cfg(feature = "nova")]
+        ViewMode::Phylogeny => "PHYLOGENY",
+        #[cfg(feature = "nova")]
+        ViewMode::Alchemy => "THE ALCHEMIST'S TABLE",
+        #[cfg(feature = "nova")]
+        ViewMode::Memetics => "MEMETICS",
+        #[cfg(feature = "nova")]
+        ViewMode::Egregore => "THE EGREGORE",
+        #[cfg(feature = "nova")]
+        ViewMode::Bestiary => "BESTIARY",
+        #[cfg(feature = "nova")]
+        ViewMode::Kaleidoscope => "KALEIDOSCOPE",
+        #[cfg(feature = "nova")]
+        ViewMode::Void => "VOID (ENTROPY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Signals => "SIGNALS & TRAILS",
+        #[cfg(feature = "nova")]
+        ViewMode::Sovereignty => "SOVEREIGNTY (TERRITORY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Spectrogram => "SPECTROGRAM (RESONANCE)",
+        #[cfg(feature = "nova")]
+        ViewMode::Market => "MARKET (EXCHANGE)",
+        #[cfg(feature = "nova")]
+        ViewMode::Ballistics => "BALLISTICS (TRAJECTORY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Scent => "SCENT (OLFACTORY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Fishing => "FISHING (MINIGAME)",
+        #[cfg(feature = "nova")]
+        ViewMode::Arena => "ARENA (COLOSSEUM)",
+        #[cfg(feature = "nova")]
+        ViewMode::Garden => "THE GARDEN OF EDEN (Cellular Automata)",
+        #[cfg(feature = "nova")]
+        ViewMode::Orca => "ORCA (SIGNAL GRID)",
+        ViewMode::Heatmap => "HEATMAP",
+        #[cfg(feature = "silicon")]
+        ViewMode::Schematic => "SCHEMATIC",
+        #[cfg(feature = "elektra")]
+        ViewMode::Elektra => "ELEKTRA (ANALOG SIMULATION)",
+        #[cfg(feature = "nova")]
+        ViewMode::Babel => "BABEL (REGEX LAB)",
+        #[cfg(feature = "nova")]
+        ViewMode::Strings => "COSMIC STRINGS (VIBRATION)",
+        #[cfg(feature = "nova")]
+        ViewMode::Quipu => "QUIPU (TOPOLOGICAL MEMORY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Hydra => "HYDRA (FLUIDIC LOGIC)",
+        #[cfg(feature = "nova")]
+        ViewMode::Chronos => "CHRONOS (TIME DILATION & HISTORY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Logos => "LOGOS (LOGIC CHEMISTRY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Pandemonium => "PANDEMONIUM REACTOR (GENOMIC CHAOS)",
+        ViewMode::BioticChaos => "BIOTIC CHAOS (COUPLED MAP LATTICE)",
+        ViewMode::Catalyst => "CATALYST CHAMBER (DIRECTED EVOLUTION)",
+        #[cfg(feature = "nova")]
+        ViewMode::Hyperspace => "HYPERSPACE (RECURSION TUNNEL)",
+        #[cfg(feature = "nova")]
+        ViewMode::Hologram => "HOLOGRAPHIC PLATE (INTERFERENCE)",
+        #[cfg(feature = "nova")]
+        ViewMode::Weaver => "THE WEAVER",
+        #[cfg(feature = "nova")]
+        ViewMode::Terminal => "CHIMERIC TERMINAL",
+        #[cfg(feature = "silicon")]
+        ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Attractor => "STRANGE ATTRACTOR (DYNAMICS)",
+        #[cfg(feature = "nova")]
+        ViewMode::Virology => "VIROLOGY LAB",
+        #[cfg(feature = "nova")]
+        ViewMode::BioMesh => "BIOMESH",
+        #[cfg(feature = "nova")]
+        ViewMode::Crispr => "CRISPR EDITOR",
+        #[cfg(feature = "nova")]
+        ViewMode::Reactor => "REACTOR CHAMBER",
+        #[cfg(feature = "nova")]
+        ViewMode::Biolum => "BIOLUMINESCENCE",
+        ViewMode::Evolution => "EVOLUTION CHAMBER",
+        #[cfg(feature = "nova")]
+        ViewMode::Ecology => "GENETIC ECOLOGY",
+        _ => "UNKNOWN MODE",
+    }
+}
+
 pub(crate) struct EvolutionState {
     pub(crate) engine: Option<crate::vm::evolution::EvolutionEngine>,
     pub(crate) challenge: crate::vm::evolution::Challenge,
@@ -477,21 +586,30 @@ impl AppState {
     }
 }
 
-fn panel_block<'a>(title: &'a str, active: bool) -> Block<'a> {
+fn panel_block<'a>(title: &'a str, active: bool, footer: Option<&'a str>) -> Block<'a> {
     let border_style = if active {
         Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
     } else {
         Style::default().fg(Color::Cyan)
     };
 
-    Block::default()
+    let mut block = Block::default()
         .borders(Borders::ALL)
         .title(Span::styled(title, if active {
             Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
         } else {
             Style::default().fg(Color::White)
         }))
-        .border_style(border_style)
+        .border_style(border_style);
+
+    if let Some(footer_text) = footer {
+        block = block.title_bottom(Span::styled(
+            footer_text,
+            Style::default().fg(Color::DarkGray),
+        ));
+    }
+
+    block
 }
 
 pub fn run_tui(mut vm: ChimeraVM, initial_view: Option<ViewMode>) -> Result<()> {
@@ -5042,7 +5160,7 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         )
         .split(app_state.get_render_area(f.area()));
 
-    let mut block = panel_block("Fishing Minigame", app_state.fishing_hooked);
+    let mut block = panel_block("Fishing Minigame", app_state.fishing_hooked, None);
 
     // Flash background if tension is critical
     if app_state.fishing_tension > 0.9 && vm.tick_counter % 4 < 2 {
@@ -5236,7 +5354,7 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         });
 
     let gauge = Gauge::default()
-        .block(panel_block("Line Tension", tension > 0.5))
+        .block(panel_block("Line Tension", tension > 0.5, None))
         .gauge_style(gauge_style)
         .use_unicode(true)
         .ratio(tension.clamp(0.0, 1.0));
@@ -6391,7 +6509,7 @@ fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         "Microscope: Cell ({}, {}) - Value: {}",
         cx, cy, data.value
     ))
-    .block(panel_block("Inspection", true));
+    .block(panel_block("Inspection", true, None));
     f.render_widget(header, chunks[0]);
 
     let main_split = Layout::default()
@@ -6737,128 +6855,26 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
     }
 
     let chaos_status = if vm.chaos_mode { "ON" } else { "OFF" };
-    let mode_str = match app_state.view_mode {
-        ViewMode::Genome => "GENOME",
-        ViewMode::Grid => "GRID",
-        ViewMode::Microscope => "MICROSCOPE",
-        #[cfg(feature = "biophysics")]
-        ViewMode::Cortex => "CORTEX",
-        #[cfg(feature = "resonance")]
-        ViewMode::Resonance => "RESONANCE",
-        #[cfg(feature = "nova")]
-        ViewMode::Grimoire => "GRIMOIRE",
-        #[cfg(feature = "nova")]
-        ViewMode::Laboratory => "LABORATORY",
-        #[cfg(feature = "nova")]
-        ViewMode::Topology => "TOPOLOGY",
-        #[cfg(feature = "nova")]
-        ViewMode::Graveyard => "GRAVEYARD",
-        #[cfg(feature = "nova")]
-        ViewMode::PianoRoll => "PIANO ROLL",
-        #[cfg(feature = "nova")]
-        ViewMode::Retina => "RETINA",
-        #[cfg(feature = "nova")]
-        ViewMode::Quantum => "QUANTUM",
-        #[cfg(feature = "nova")]
-        ViewMode::Dream => "DREAM CATCHER",
-        #[cfg(feature = "nova")]
-        ViewMode::Phylogeny => "PHYLOGENY",
-        #[cfg(feature = "nova")]
-        ViewMode::Alchemy => "THE ALCHEMIST'S TABLE",
-        #[cfg(feature = "nova")]
-        ViewMode::Memetics => "MEMETICS",
-        #[cfg(feature = "nova")]
-        ViewMode::Egregore => "THE EGREGORE",
-        #[cfg(feature = "nova")]
-        ViewMode::Bestiary => "BESTIARY",
-        #[cfg(feature = "nova")]
-        ViewMode::Kaleidoscope => "KALEIDOSCOPE",
-        #[cfg(feature = "nova")]
-        ViewMode::Void => "VOID (ENTROPY)",
-        #[cfg(feature = "nova")]
-        ViewMode::Signals => "SIGNALS & TRAILS",
-        #[cfg(feature = "nova")]
-        ViewMode::Sovereignty => "SOVEREIGNTY (TERRITORY)",
-        #[cfg(feature = "nova")]
-        ViewMode::Spectrogram => "SPECTROGRAM (RESONANCE)",
-        #[cfg(feature = "nova")]
-        ViewMode::Market => "MARKET (EXCHANGE)",
-        #[cfg(feature = "nova")]
-        ViewMode::Ballistics => "BALLISTICS (TRAJECTORY)",
-        #[cfg(feature = "nova")]
-        ViewMode::Scent => "SCENT (OLFACTORY)",
-        #[cfg(feature = "nova")]
-        ViewMode::Fishing => "FISHING (MINIGAME)",
-        #[cfg(feature = "nova")]
-        ViewMode::Arena => "ARENA (COLOSSEUM)",
-        #[cfg(feature = "nova")]
-        ViewMode::Garden => "THE GARDEN OF EDEN (Cellular Automata)",
-        #[cfg(feature = "nova")]
-        ViewMode::Orca => "ORCA (SIGNAL GRID)",
-        ViewMode::Heatmap => "HEATMAP",
-        #[cfg(feature = "silicon")]
-        ViewMode::Schematic => "SCHEMATIC",
-        #[cfg(feature = "elektra")]
-        ViewMode::Elektra => "ELEKTRA (ANALOG SIMULATION)",
-        #[cfg(feature = "nova")]
-        ViewMode::Babel => "BABEL (REGEX LAB)",
-        #[cfg(feature = "nova")]
-        ViewMode::Strings => "COSMIC STRINGS (VIBRATION)",
-        #[cfg(feature = "nova")]
-        ViewMode::Quipu => "QUIPU (TOPOLOGICAL MEMORY)",
-        #[cfg(feature = "nova")]
-        ViewMode::Hydra => "HYDRA (FLUIDIC LOGIC)",
-        #[cfg(feature = "nova")]
-        ViewMode::Chronos => "CHRONOS (TIME DILATION & HISTORY)",
-        #[cfg(feature = "nova")]
-        ViewMode::Logos => "LOGOS (LOGIC CHEMISTRY)",
-        #[cfg(feature = "nova")]
-        ViewMode::Pandemonium => "PANDEMONIUM REACTOR (GENOMIC CHAOS)",
-        ViewMode::BioticChaos => "BIOTIC CHAOS (COUPLED MAP LATTICE)",
-        ViewMode::Catalyst => "CATALYST CHAMBER (DIRECTED EVOLUTION)",
-        #[cfg(feature = "nova")]
-        ViewMode::Hyperspace => "HYPERSPACE (RECURSION TUNNEL)",
-        #[cfg(feature = "nova")]
-        ViewMode::Hologram => "HOLOGRAPHIC PLATE (INTERFERENCE)",
-        #[cfg(feature = "nova")]
-        ViewMode::Weaver => "THE WEAVER",
-        #[cfg(feature = "nova")]
-        ViewMode::Terminal => "CHIMERIC TERMINAL",
-        #[cfg(feature = "silicon")]
-        ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
-        #[cfg(feature = "nova")]
-        ViewMode::Attractor => "STRANGE ATTRACTOR (DYNAMICS)",
-        #[cfg(feature = "nova")]
-        ViewMode::Virology => "VIROLOGY LAB",
-        #[cfg(feature = "nova")]
-        ViewMode::BioMesh => "BIOMESH",
-        #[cfg(feature = "nova")]
-        ViewMode::Crispr => "CRISPR EDITOR",
-        #[cfg(feature = "nova")]
-        ViewMode::Reactor => "REACTOR CHAMBER",
-        #[cfg(feature = "nova")]
-        ViewMode::Biolum => "BIOLUMINESCENCE",
-        ViewMode::Evolution => "EVOLUTION CHAMBER",
-        #[cfg(feature = "nova")]
-        ViewMode::Ecology => "GENETIC ECOLOGY",
-        _ => "UNKNOWN MODE",
-    };
+    let mode_str = get_view_mode_name(app_state.view_mode);
 
-    let title = match app_state.input_mode {
-                InputMode::Normal => format!(
-                    "{} (Tab: Switch View, Space: Step, M: Mutate, C: Chaos[{}], Madness[{:.2}], I: Inject, Arrows: Nav, Enter: Edit, Q: Quit)",
-                    mode_str, chaos_status, vm.glitch_level
-                ),
-                InputMode::Editing => format!(
-                    "EDITING {} (Enter: Commit, Esc: Cancel) - {}",
-                    mode_str, app_state.input_buffer
-                ),
-                InputMode::Injection => "INJECTION (Enter: Splice, Esc: Cancel)".to_string(),
-            };
+    let (title, footer) = match app_state.input_mode {
+        InputMode::Normal => (
+            format!("{} [Chaos: {} | Madness: {:.2}]", mode_str, chaos_status, vm.glitch_level),
+            Some("Tab: Switch View, Space: Step, M: Mutate, C: Chaos, I: Inject, Arrows: Nav, Enter: Edit, Q: Quit"),
+        ),
+        InputMode::Editing => (
+            format!("EDITING {} - {}", mode_str, app_state.input_buffer),
+            Some("Enter: Commit, Esc: Cancel"),
+        ),
+        InputMode::Injection => (
+            "INJECTION".to_string(),
+            Some("Enter: Splice, Esc: Cancel"),
+        ),
+    };
 
     // Highlight the active block borders/title
     let genome_list = List::new(strand_items).block(
-        panel_block(&title, app_state.view_mode == ViewMode::Genome)
+        panel_block(&title, app_state.view_mode == ViewMode::Genome, footer)
     );
     f.render_widget(genome_list, left_chunks[0]);
 
