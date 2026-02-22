@@ -12478,6 +12478,9 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     "₣" => {
                         style = style.fg(Color::White).add_modifier(Modifier::BOLD);
                     }
+                    "⏱️" | "🥁" | "🎹" | "🎚️" => {
+                        style = style.fg(Color::LightCyan).add_modifier(Modifier::BOLD);
+                    }
                     _ => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
                 }
             } else {
@@ -12533,6 +12536,13 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         }
     }
     info.push(Line::from(format!("Active Signals: {}", signal_count)));
+
+    // Rhythm Status
+    info.push(Line::from(format!(
+        "Rhythm: {} BPM (Int: {})",
+        vm.prologue_state.rhythm_state.bpm,
+        vm.prologue_state.rhythm_state.beat_interval
+    )));
 
     // Check for Agent at Cursor
     let (cx, cy) = app_state.grid_cursor;
@@ -12591,6 +12601,7 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     info.push(Line::from("  [ ] Collect/Scatter"));
     info.push(Line::from("  U/V Head/Tail, F/T Filter/Take"));
     info.push(Line::from("  k Chaos Src, z Glitch, h Havoc"));
+    info.push(Line::from("  ⏱️ Clock, 🥁 Drum, 🎹 Key, 🎚️ Fader"));
 
     let info_widget =
         Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Logic Engine"));
