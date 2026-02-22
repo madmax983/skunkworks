@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/chimera-pollination
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Agents are foraging in 4D. Pollen exchange detected.
+- **Note:** "The garden is alive with volition."
+
 ### [Concentration Level: HIGH] - Location: experiments/chimera-fluid
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Agents are swimming in 4D. The current is strong.
