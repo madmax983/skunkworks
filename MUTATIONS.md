@@ -1514,3 +1514,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: 4D Volatility. System CPU load drives the "temperature" of the market, causing orders to jitter and crash.
 - **Status**: experiments/hyper-market
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Confirmed.
+
+### chimera-glass
+- **Parents**: experiments/hyper-glass + experiments/chimera-lang
+- **Concept**: A 4D Spin Glass inhabited by ChimeraVM agents that act as "Maxwell's Demons".
+- **Novel trait**: Biological Annealing. Agents feed on the energy released by flipping spins to lower local frustration.
+- **Status**: experiments/chimera-glass
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Agents are actively cooling the hypercube.
