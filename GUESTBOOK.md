@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/chimera-cam
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The cams are spinning. The puppet is dancing to the genetic code.
+- **Note:** "The gene shapes the machine."
+
 ### [Concentration Level: FRESH] - Location: experiments/chimera-pollination
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Agents are foraging in 4D. Pollen exchange detected.
