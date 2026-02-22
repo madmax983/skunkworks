@@ -1,6 +1,6 @@
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
-use crate::vm::{ChimeraVM, ChromaCell, Value};
+use crate::vm::{ChimeraVM, ChromaCell, Value, MAX_FRACTAL_ITER};
 
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub enum FractalMode {
@@ -47,7 +47,9 @@ pub fn exec_fractal_op(
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(n) = val {
                     vm.fractal.mode = FractalMode::Mandelbrot;
-                    vm.fractal.max_iter = n.max(1) as usize;
+                    // 🔒 WARDEN: Cap iteration count to prevent DoS
+                    let safe_iter = (n.max(1) as usize).min(MAX_FRACTAL_ITER);
+                    vm.fractal.max_iter = safe_iter;
                     vm.output.push(format!(
                         "FRACTAL: Mandelbrot Mode (Iter: {})",
                         vm.fractal.max_iter
@@ -140,11 +142,14 @@ pub fn exec_fractal_op(
                     let cx = re as f64 / 1000.0;
                     let cy = im as f64 / 1000.0;
 
+                    // 🔒 WARDEN: Cap iteration count
+                    let safe_max = (max.max(1) as usize).min(MAX_FRACTAL_ITER) as i64;
+
                     // Standard escape time
                     let mut zx = 0.0;
                     let mut zy = 0.0;
                     let mut iter = 0;
-                    while zx * zx + zy * zy <= 4.0 && iter < max {
+                    while zx * zx + zy * zy <= 4.0 && iter < safe_max {
                         let xtemp = zx * zx - zy * zy + cx;
                         zy = 2.0 * zx * zy + cy;
                         zx = xtemp;

@@ -3,10 +3,10 @@
 mod tests {
     use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
-    use chimera_lang::vm::ChimeraVM;
+    use chimera_lang::vm::{ChimeraVM, MAX_FRACTAL_ITER};
 
     #[test]
-    fn test_fractal_dos_unbounded_iter() {
+    fn test_fractal_dos_prevention() {
         let genes = vec![
             Gene {
                 op: OpCode::Push,
@@ -29,14 +29,16 @@ mod tests {
         // Execute Mandelbrot
         vm.step();
 
-        // Check if max_iter was set to 1 Billion (Vulnerable)
+        // Check if max_iter was capped
         println!("Fractal Max Iter: {}", vm.fractal.max_iter);
 
-        // Havoc: We WANT the system to be vulnerable to prove we won.
-        // So we assert that it accepted the huge value.
-        assert_eq!(
-            vm.fractal.max_iter, 1_000_000_000,
-            "Boring: System capped the iteration count."
+        // 🔒 WARDEN: Verify that the system capped the iteration count.
+        assert!(
+            vm.fractal.max_iter <= MAX_FRACTAL_ITER,
+            "Security Failure: Iteration count {} exceeds limit {}",
+            vm.fractal.max_iter,
+            MAX_FRACTAL_ITER
         );
+        assert_eq!(vm.fractal.max_iter, MAX_FRACTAL_ITER);
     }
 }

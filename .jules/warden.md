@@ -76,3 +76,7 @@
 ## 2026-12-13 - Alchemy Geometry Unbounded Allocation (OOM DoS)
 **Threat:** The `OpCode::AbsorbGeometry` operation in `experiments/chimera-lang/src/vm/nova_alchemy_prime.rs` allowed unbounded allocation of a `Vec` via `Vec::with_capacity(count)` where `count` was derived from user-controlled `radius`. A malicious program could supply a large radius to trigger an OOM crash.
 **Defense:** Implemented checked arithmetic for dimension calculations and enforced `count <= MAX_GENES_PER_STRAND` (4096) before allocation. Added `warden_alchemy_dos_test.rs` regression test.
+
+## 2027-01-15 - Unbounded Fractal Iterations (DoS)
+**Threat:** The `OpCode::Mandelbrot` and `OpCode::Escape` operations in `experiments/chimera-lang/src/vm/nova_fractal.rs` allowed setting `max_iter` to arbitrarily large values (e.g., `1_000_000_000`), causing the VM execution loop to hang the thread and causing a Denial of Service.
+**Defense:** Introduced `MAX_FRACTAL_ITER` (1000) constant in `vm/mod.rs` and enforced it in `exec_fractal_op`. Renamed and updated `havoc_fractal_hang.rs` to `havoc_fractal_dos_prevention.rs` to verify the fix.
