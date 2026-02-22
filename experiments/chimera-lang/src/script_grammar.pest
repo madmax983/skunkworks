@@ -14,7 +14,27 @@ strand_def = { "strand" ~ identifier ~ "{" ~ instruction* ~ "}" }
 
 organelle_def = { "organelle" ~ identifier ~ "{" ~ instruction* ~ "}" }
 
-grammar_def = { "grammar" ~ identifier ~ "{" ~ argument ~ "}" }
+grammar_def = { "grammar" ~ identifier ~ "{" ~ grammar_content ~ "}" }
+grammar_content = { grammar_rule_def* }
+grammar_rule_def = { rule_type ~ identifier ~ "{" ~ rule_expr ~ "}" ~ ( "->" ~ transform_block )? }
+rule_type = { "rule" | "token" | "regex" }
+
+rule_expr = { rule_choice }
+rule_choice = { rule_seq ~ ( "|" ~ rule_seq )* }
+rule_seq = { rule_term+ }
+rule_term = {
+    string |
+    regex_literal |
+    rule_ref |
+    group |
+    action_block
+}
+
+regex_literal = @{ "/" ~ (!"/" ~ ANY)* ~ "/" }
+rule_ref = { identifier }
+group = { "(" ~ rule_expr ~ ")" }
+action_block = { "{" ~ (!"}" ~ ANY)* ~ "}" }
+transform_block = { "{" ~ (!"}" ~ ANY)* ~ "}" }
 
 chimera_def = { "chimera" ~ identifier ~ "{" ~ "grammar" ~ ":" ~ argument ~ "boot" ~ ":" ~ block ~ "}" }
 
