@@ -36,6 +36,7 @@ strum_macros = "0.26"
 poincare-disk = { path = "../../crates/poincare-disk" }
 comfy-table = "7.2.2"
 rodio = { version = "0.17", optional = true }
+hyper-system = { path = "../../crates/hyper-system", default-features = false }
 
 [[example]]
 name = "story_demo"

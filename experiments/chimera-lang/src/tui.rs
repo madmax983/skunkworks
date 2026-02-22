@@ -11,6 +11,8 @@ use crossterm::{
 use pest::Parser;
 #[cfg(feature = "nova")]
 use rand::Rng;
+#[cfg(feature = "nova")]
+use hyper_system::math::Vec4;
 use ratatui::widgets::canvas::{Canvas, Rectangle};
 use ratatui::{
     backend::CrosstermBackend,
@@ -12859,15 +12861,12 @@ fn render_tesseract(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
             // Draw Hyper-Agents
             for ((y, x), (z, w)) in &vm.prologue_state.hyper_state.extra_dims {
-                // Projection: Simple isometric-like offset for Z and W
-                // x' = x + z*0.2 + w*0.1
-                // y' = y + z*0.1 - w*0.2
+                // Projection: Use hyper-system's stereographic projection
+                let v = Vec4::new(*x as f32, *y as f32, *z as f32, *w as f32);
+                let p3 = v.project_to_3d(5.0); // Camera W distance
 
-                let dx = (*z as f64) * 0.2 + (*w as f64) * 0.1;
-                let dy = (*z as f64) * 0.1 - (*w as f64) * 0.2;
-
-                let px = *x as f64 + dx;
-                let py = 15.0 - *y as f64 + dy; // Invert Y for canvas
+                let px = p3.x as f64;
+                let py = 15.0 - p3.y as f64; // Invert Y for canvas
 
                 // Color based on W (Hyper-depth)
                 let color = if *w > 0 {
