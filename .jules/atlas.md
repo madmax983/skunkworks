@@ -95,3 +95,9 @@
 **Blueprint:** Created `crates/physics-pbd` for PBD logic and `crates/neuro-sim` for SNN logic (wrapping `synaptic-physics`). Refactored all 3 experiments to use these shared crates.
 **Stability:** Centralized physics and neural logic. Enforced `Clone` on `PbdSystem` to satisfy requirements.
 **Verification:** Verified with `cargo check` for all affected crates and `cargo test` for `neuro-sim`.
+
+## [Hyper System Extraction]
+**Tangle:** The Copy-Paste - `experiments/hyper-glass`, `hyper-market`, `hyper-acoustics`, `tesseract-ops`, `hyper-flock`, and `hyper-ferro` all implemented identical 4D `Vec4` math and `SystemMonitor` logic (using `sysinfo`).
+**Blueprint:** Extracted `Vec4` and `SystemMonitor` to a new shared crate `crates/hyper-system`.
+**Stability:** Centralized 4D math and system monitoring logic. Enforced single source of truth for "Hyper" series experiments.
+**Verification:** Verified with `cargo check` for all 6 affected experiments and `cargo test` for the new crate.

@@ -3,12 +3,12 @@ use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
 
 pub struct SystemMonitor {
     sys: System,
-    last_update: f64,
+    pub last_update: f64,
     // Metrics (0.0 - 1.0)
     pub cpu_usage: f32,
     pub mem_usage: f32,
     pub swap_usage: f32,
-    pub load_avg: f32, // Normalized somewhat
+    pub load_avg: f32,
     // Target metrics for interpolation
     target_cpu: f32,
     target_mem: f32,
@@ -74,5 +74,11 @@ impl SystemMonitor {
         self.mem_usage = lerp(self.mem_usage, self.target_mem, speed);
         self.swap_usage = lerp(self.swap_usage, self.target_swap, speed);
         self.load_avg = lerp(self.load_avg, self.target_load, speed);
+    }
+}
+
+impl Default for SystemMonitor {
+    fn default() -> Self {
+        Self::new()
     }
 }
