@@ -1,0 +1,12 @@
+[package]
+name = "chimera-fluid"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+sysinfo = "0.30"
+rayon = "1.8"
+rand = { workspace = true }
+glam = "0.27"
+chimera-lang = { path = "../chimera-lang", features = ["nova"] }
