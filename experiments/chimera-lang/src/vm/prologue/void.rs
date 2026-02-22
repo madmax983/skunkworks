@@ -37,9 +37,11 @@ pub fn apply_void_runes(
                     let w_sig = &current_signals[wy][wx];
                     if !is_empty_signal(w_sig) {
                         if let Some(val) = w_sig {
-                            void_buffer.push_back(val.clone());
-                            next_signals[y][x] = Some(Value::Int(1)); // Signal activation
-                            changes = true;
+                            if void_buffer.len() < crate::vm::MAX_VOID_BUFFER_SIZE {
+                                void_buffer.push_back(val.clone());
+                                next_signals[y][x] = Some(Value::Int(1)); // Signal activation
+                                changes = true;
+                            }
                         }
                     }
                 }
