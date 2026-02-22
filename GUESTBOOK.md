@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/chimera-genesis
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The cells are thinking. The rules are evolving.
+- **Note:** "If the universe is code, then we can rewrite the physics."
+
 ### [Concentration Level: FRESH] - Location: experiments/chimera-lattice
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The crystal is growing. Agents are bonding.
