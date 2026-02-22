@@ -223,6 +223,10 @@ impl PbdSystem {
     /// system.step(0.016, 10);
     /// ```
     pub fn step(&mut self, dt: f32, iterations: usize) {
+        if dt <= f32::EPSILON {
+            return;
+        }
+
         // Integrate
         for p in &mut self.particles {
             if p.inv_mass == 0.0 {
@@ -475,5 +479,72 @@ mod tests {
 
         // It should remain finite due to clamping
         assert!(pos1.is_finite());
+    }
+
+    #[test]
+    fn test_actuator_constraint() {
+        let mut system = PbdSystem::new();
+        let p1 = system.add_particle(Vec3::new(0.0, 0.0, 0.0), 1.0);
+        let p2 = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
+
+        // Add actuator expanding from 1.0 to 2.0
+        // Currently at 1.0. Factor 1.0 means target = 2.0.
+        system.constraints.push(Constraint::Actuator {
+            p1,
+            p2,
+            min_len: 1.0,
+            max_len: 2.0,
+            factor: 1.0,
+            stiffness: 1.0,
+        });
+
+        // Step
+        system.step(0.1, 10);
+
+        let dist = system.particles[p1].pos.distance(system.particles[p2].pos);
+        // Should expand towards 2.0
+        assert!(dist > 1.0);
+        assert!((dist - 2.0).abs() < 0.1);
+
+        // Test contraction
+        system.constraints[0] = Constraint::Actuator {
+            p1,
+            p2,
+            min_len: 1.0,
+            max_len: 2.0,
+            factor: 0.0, // Target 1.0
+            stiffness: 1.0,
+        };
+
+        system.step(0.1, 10);
+        let dist = system.particles[p1].pos.distance(system.particles[p2].pos);
+        // Should contract towards 1.0
+        assert!((dist - 1.0).abs() < 0.1);
+    }
+
+    #[test]
+    fn test_step_zero_dt() {
+        let mut system = PbdSystem::new();
+        let p1 = system.add_particle(Vec3::ZERO, 1.0);
+        system.particles[p1].vel = Vec3::new(1.0, 0.0, 0.0);
+
+        // Should simply return and not update anything or panic
+        system.step(0.0, 1);
+
+        let vel = system.particles[p1].vel;
+        assert!(!vel.is_nan(), "Velocity should not be NaN");
+        assert_eq!(vel, Vec3::new(1.0, 0.0, 0.0)); // Velocity remains unchanged
+    }
+
+    #[test]
+    fn test_step_negative_dt() {
+        let mut system = PbdSystem::new();
+        let p1 = system.add_particle(Vec3::ZERO, 1.0);
+
+        // Should return early
+        system.step(-0.1, 1);
+
+        let pos = system.particles[p1].pos;
+        assert_eq!(pos, Vec3::ZERO);
     }
 }
