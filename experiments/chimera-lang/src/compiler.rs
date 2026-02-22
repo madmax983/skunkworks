@@ -24,7 +24,7 @@
 //!
 //! See [`compile`] for usage details.
 
-use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
+use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand, JunctionType};
 use crate::opcode::OpCode;
 use anyhow::{anyhow, Result};
 use pest::Parser;
@@ -50,6 +50,13 @@ const MAX_INCLUDE_DEPTH: usize = 32;
 const MAX_PARSE_DEPTH: usize = 256;
 /// Maximum nesting level of brackets `{ [ (` in source code.
 const MAX_NESTING_DEPTH: usize = 200;
+
+/// Represents a defined grammar for parsing polyglot blocks.
+#[derive(Debug, Clone)]
+struct DefinedGrammar {
+    rules: HashMap<String, Nucleotide>,
+    entry_point: String,
+}
 
 /// Validates that the source code does not exceed the nesting limit.
 ///
@@ -84,17 +91,6 @@ fn check_nesting_depth(source: &str, limit: usize) -> Result<()> {
 }
 
 /// Recursively processes `#include` statements in the source code.
-///
-/// # Security
-///
-/// - Checks for circular dependencies (using `visited`).
-/// - Enforces `MAX_INCLUDE_DEPTH`.
-/// - Prevents Path Traversal attacks (`../`) by verifying that the resolved path
-///   is within the `base_path` sandbox.
-///
-/// # Returns
-///
-/// A single string containing the expanded source code.
 fn preprocess(
     source: &str,
     base_path: Option<&Path>,
@@ -135,14 +131,12 @@ fn preprocess(
             path.clone()
         };
 
-        // Security Check: Ensure the resolved path is within the base directory
         let effective_base = if bp.as_os_str().is_empty() {
             Path::new(".")
         } else {
             bp
         };
 
-        // Fail Closed: If we can't determine the canonical base path, we must deny access.
         let canonical_base = effective_base.canonicalize().map_err(|e| {
             anyhow!(
                 "Security Error: Failed to resolve base path {:?}: {}",
@@ -175,41 +169,6 @@ fn preprocess(
 }
 
 /// Compiles ChimeraScript source code into DNA.
-///
-/// This is the main entry point for the compiler.
-///
-/// # Arguments
-///
-/// * `source` - The ChimeraScript source code string.
-/// * `base_path` - Optional path for resolving `#include` directives. Usually the directory of the source file.
-///
-/// # Errors
-///
-/// Returns an error if:
-/// - Parsing fails (Syntax Error).
-/// - An unknown opcode is used (if not defined in grammar).
-/// - Recursion depth limits are exceeded.
-/// - File inclusion fails (I/O or Security).
-///
-/// # Example
-///
-/// ```rust
-/// use chimera_lang::compiler::compile;
-/// use chimera_lang::opcode::OpCode;
-///
-/// let src = r#"
-/// strand main {
-///     push(10)
-///     push(20)
-///     add
-/// }
-/// "#;
-///
-/// let dna = compile(src, None).expect("Compilation failed");
-/// assert_eq!(dna.helix.strands.len(), 1);
-/// let genes = &dna.helix.strands[0].genes;
-/// assert_eq!(genes[2].op, OpCode::Add);
-/// ```
 pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
     // Phase 1: Preprocessing (Includes)
     let mut visited = HashSet::new();
@@ -225,7 +184,7 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
     // Pass 1: Collect strand names and macros
     let mut strand_map: HashMap<String, usize> = HashMap::new();
     let mut macro_map: HashMap<String, pest::iterators::Pairs<Rule>> = HashMap::new();
-    let mut grammar_map: HashMap<String, Nucleotide> = HashMap::new();
+    let mut grammar_map: HashMap<String, DefinedGrammar> = HashMap::new();
     let mut organelle_map: HashMap<String, usize> = HashMap::new();
     let mut grid_maps: HashMap<String, Vec<String>> = HashMap::new();
 
@@ -237,11 +196,9 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                 let content_pair = inner.next().unwrap();
                 let content = content_pair.as_str();
 
-                // Trim leading newline (after {) and trailing whitespace
                 let trimmed = content.trim_matches(|c| c == '\n' || c == '\r');
                 let lines: Vec<&str> = trimmed.lines().collect();
 
-                // Calculate minimum indentation
                 let min_indent = lines
                     .iter()
                     .filter(|l| !l.trim().is_empty())
@@ -293,15 +250,16 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
             Rule::macro_def => {
                 let mut inner = pair.into_inner();
                 let name = inner.next().unwrap().as_str();
-                // Store the instructions (rest of inner)
                 macro_map.insert(name.to_string(), inner);
             }
             Rule::grammar_def => {
                 let mut inner = pair.into_inner();
-                let name = inner.next().unwrap().as_str();
-                let arg_pair = inner.next().unwrap();
-                let grammar_struct = parse_argument(arg_pair, &strand_map, 0)?;
-                grammar_map.insert(name.to_string(), grammar_struct);
+                let name_pair = inner.next().ok_or(anyhow!("Missing grammar name"))?;
+                let name = name_pair.as_str();
+                let content_pair = inner.next().ok_or(anyhow!("Missing grammar content"))?;
+
+                let grammar = parse_grammar_def(content_pair)?;
+                grammar_map.insert(name.to_string(), grammar);
             }
             _ => {}
         }
@@ -397,24 +355,136 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
     })
 }
 
+fn parse_grammar_def(pair: pest::iterators::Pair<Rule>) -> Result<DefinedGrammar> {
+    let mut rules = HashMap::new();
+    let mut entry_point = String::new();
+
+    for rule_def in pair.into_inner() {
+        if rule_def.as_rule() == Rule::grammar_rule_def {
+            let mut parts = rule_def.into_inner();
+            let _type = parts.next().ok_or(anyhow!("Missing rule type"))?.as_str();
+            let name = parts.next().ok_or(anyhow!("Missing rule name"))?.as_str().to_string();
+            let expr = parts.next().ok_or(anyhow!("Missing rule expression"))?;
+            let transform = parts.next();
+
+            if entry_point.is_empty() {
+                entry_point = name.clone();
+            }
+
+            let parser_node = parse_rule_expr(expr)?;
+
+            // If transform exists, wrap in Map
+            let final_node = if let Some(t) = transform {
+                let s = t.as_str();
+                // Strip { and }
+                let template_str = s[1..s.len()-1].trim();
+                Nucleotide::Junction(JunctionType::Any, vec![
+                    Nucleotide::String("Map".to_string()),
+                    parser_node,
+                    Nucleotide::String(template_str.to_string())
+                ])
+            } else {
+                parser_node
+            };
+
+            rules.insert(name, final_node);
+        }
+    }
+
+    Ok(DefinedGrammar {
+        rules,
+        entry_point,
+    })
+}
+
+fn parse_rule_expr(pair: pest::iterators::Pair<Rule>) -> Result<Nucleotide> {
+    // rule_expr = { rule_choice }
+    // rule_choice = { rule_seq ~ ( "|" ~ rule_seq )* }
+
+    let choice_pair = pair.into_inner().next().unwrap(); // rule_choice
+    let mut choices = Vec::new();
+
+    for seq_pair in choice_pair.into_inner() {
+        choices.push(parse_rule_seq(seq_pair)?);
+    }
+
+    if choices.len() == 1 {
+        Ok(choices[0].clone())
+    } else {
+        let mut args = vec![Nucleotide::String("Alt".to_string())];
+        args.extend(choices);
+        Ok(Nucleotide::Junction(JunctionType::Any, args))
+    }
+}
+
+fn parse_rule_seq(pair: pest::iterators::Pair<Rule>) -> Result<Nucleotide> {
+    // rule_seq = { rule_term+ }
+    let mut terms = Vec::new();
+    for term_pair in pair.into_inner() {
+        terms.push(parse_rule_term(term_pair)?);
+    }
+
+    if terms.len() == 1 {
+        Ok(terms[0].clone())
+    } else {
+        let mut args = vec![Nucleotide::String("Seq".to_string())];
+        args.extend(terms);
+        Ok(Nucleotide::Junction(JunctionType::Any, args))
+    }
+}
+
+fn parse_rule_term(pair: pest::iterators::Pair<Rule>) -> Result<Nucleotide> {
+    let inner = pair.into_inner().next().unwrap();
+    match inner.as_rule() {
+        Rule::string => {
+            let s = inner.as_str();
+            let content = s[1..s.len()-1].to_string();
+            Ok(Nucleotide::Junction(JunctionType::Any, vec![
+                Nucleotide::String("Match".to_string()),
+                Nucleotide::String(content)
+            ]))
+        },
+        Rule::regex_literal => {
+            let s = inner.as_str();
+            let content = s[1..s.len()-1].to_string(); // strip / /
+            Ok(Nucleotide::Junction(JunctionType::Any, vec![
+                Nucleotide::String("Regex".to_string()),
+                Nucleotide::String(content)
+            ]))
+        },
+        Rule::rule_ref => {
+            let name = inner.as_str().to_string();
+            Ok(Nucleotide::Junction(JunctionType::Any, vec![
+                Nucleotide::String("Ref".to_string()),
+                Nucleotide::String(name)
+            ]))
+        },
+        Rule::group => {
+            let expr = inner.into_inner().next().unwrap();
+            parse_rule_expr(expr)
+        },
+        Rule::action_block => {
+             // For now, treat action block as a Map on the preceding term?
+             // But here it is a term itself.
+             // Maybe it consumes nothing and produces a value?
+             // Not supported yet.
+             Ok(Nucleotide::Junction(JunctionType::Any, vec![
+                 Nucleotide::String("Match".to_string()),
+                 Nucleotide::String("".to_string())
+             ]))
+        }
+        _ => Err(anyhow!("Unknown rule term: {:?}", inner.as_rule()))
+    }
+}
+
 /// Internal state used during the gene generation phase.
-///
-/// Holds symbol tables (strand names, macros) and accumulates anonymous
-/// strands (created by blocks `{ ... }`).
 struct CompilerContext<'a, 'i> {
-    /// Maps strand names to their index in the Helix.
     strand_map: &'a HashMap<String, usize>,
-    /// Maps macro names to their CST nodes (lazy expansion).
     macro_map: &'a HashMap<String, pest::iterators::Pairs<'i, Rule>>,
-    /// Maps grammar definitions to their Nucleotide structure.
-    grammar_map: &'a HashMap<String, Nucleotide>,
-    /// Maps organelle type names to strand indices.
+    grammar_map: &'a HashMap<String, DefinedGrammar>,
     organelle_map: &'a HashMap<String, usize>,
-    /// Maps grid layout names to their content (rows of strings).
     grid_maps: &'a HashMap<String, Vec<String>>,
-    /// Accumulates anonymous code blocks (lambdas) generated during compilation.
     anonymous_strands: &'a mut Vec<Strand>,
-    /// Current recursion depth for macro expansion and block nesting.
     depth: usize,
 }
 
@@ -459,29 +529,21 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
             let mut genes = Vec::new();
             for (r, row) in rows.iter().enumerate() {
                 for (c, ch) in row.chars().enumerate() {
-                    // Skip whitespace? No, spaces might be significant (overwrite with space?)
-                    // Usually spaces in ASCII art are 'empty'.
-                    // Let's decide: if space, do nothing.
                     if ch == ' ' {
                         continue;
                     }
-
-                    // Push char code
                     genes.push(Gene {
                         op: OpCode::Push,
                         args: vec![Nucleotide::Number(ch as i64)],
                     });
-                    // Push Y
                     genes.push(Gene {
                         op: OpCode::Push,
                         args: vec![Nucleotide::Number(base_y + r as i64)],
                     });
-                    // Push X
                     genes.push(Gene {
                         op: OpCode::Push,
                         args: vec![Nucleotide::Number(base_x + c as i64)],
                     });
-                    // Rune
                     #[cfg(feature = "nova")]
                     genes.push(Gene {
                         op: OpCode::Rune,
@@ -507,7 +569,7 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
     }
 
     fn parse_chaos_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
-        let block = inner.into_inner().next().unwrap(); // chaos -> block
+        let block = inner.into_inner().next().unwrap();
         let mut genes = Vec::new();
 
         genes.push(Gene {
@@ -654,11 +716,9 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
             return Ok(macro_genes);
         }
 
-        // Handle Spawn<Name> macro for organelles
         #[cfg(feature = "nova")]
         if let Some(stripped) = name.strip_prefix("Spawn") {
             if let Some(&idx) = self.organelle_map.get(stripped) {
-                // push(idx) push(0) spawn
                 return Ok(vec![
                     Gene {
                         op: OpCode::Push,
@@ -667,7 +727,7 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
                     Gene {
                         op: OpCode::Push,
                         args: vec![Nucleotide::Number(0)],
-                    }, // Type 0 = Worker (Default)
+                    },
                     Gene {
                         op: OpCode::Spawn,
                         args: vec![],
@@ -781,14 +841,21 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
             .get(grammar_name)
             .ok_or(anyhow!("Unknown grammar: {}", grammar_name))?;
 
-        let (ast, consumed) = babel_parse(grammar, content)?;
+        let entry_rule = grammar.rules.get(&grammar.entry_point)
+            .ok_or(anyhow!("Entry point '{}' not found in grammar", grammar.entry_point))?;
+
+        let (ast, consumed) = babel_parse(entry_rule, content, &grammar.rules)?;
+
+        // Simple trim check for trailing whitespace?
+        // babel_parse is greedy based on rules.
+        // If content has trailing spaces and grammar doesn't consume them, consumed < len.
         if consumed != content.len() {
-            // Warn or error on partial match?
-            // For now, let's treat as error to ensure correctness
-            // But content might have trailing whitespace? babel_parse should handle that?
-            // babel_parse is strict.
-            // Let's trim content before passing?
-            // content is from `nested_text` which is atomic but captures spaces.
+             // For robustness, ignore trailing whitespace?
+             let remainder = &content[consumed..];
+             if !remainder.trim().is_empty() {
+                 return Err(anyhow!("Incomplete parse. Consumed {}/{} chars. Remainder: '{}'",
+                     consumed, content.len(), remainder));
+             }
         }
 
         flatten_ast(&ast)
@@ -848,7 +915,7 @@ fn parse_instructions(
     pair: pest::iterators::Pair<Rule>,
     strand_map: &HashMap<String, usize>,
     macro_map: &HashMap<String, pest::iterators::Pairs<Rule>>,
-    grammar_map: &HashMap<String, Nucleotide>,
+    grammar_map: &HashMap<String, DefinedGrammar>,
     organelle_map: &HashMap<String, usize>,
     grid_maps: &HashMap<String, Vec<String>>,
     anonymous_strands: &mut Vec<Strand>,
@@ -883,7 +950,6 @@ fn parse_literal(
         Rule::number => Ok(Nucleotide::Number(inner.as_str().parse()?)),
         Rule::string => {
             let s = inner.as_str();
-            // Remove quotes
             Ok(Nucleotide::String(s[1..s.len() - 1].to_string()))
         }
         _ => unreachable!("Unexpected literal rule"),
@@ -903,13 +969,11 @@ fn parse_argument(
         Rule::literal => parse_literal(inner, strand_map),
         Rule::identifier | Rule::variable => {
             let id = inner.as_str();
-            // Try to resolve as strand index (only if identifier)
             if inner.as_rule() == Rule::identifier {
                 if let Some(&idx) = strand_map.get(id) {
                     return Ok(Nucleotide::Number(idx as i64));
                 }
             }
-            // Keep as string if variable (starts with ?) to work with Oracle
             if inner.as_rule() == Rule::variable {
                 Ok(Nucleotide::String(id.to_string()))
             } else {
@@ -956,34 +1020,17 @@ fn parse_junction(
     Ok(Nucleotide::Junction(t, vals))
 }
 
-/// Parses a string input using a Babel Grammar defined as a Nucleotide structure.
-///
-/// This recursive descent parser interprets the `grammar` AST to consume the `input` string.
-/// It returns the resulting Abstract Syntax Tree (AST) as a `Nucleotide` and the number of characters consumed.
-///
-/// # Grammar Structure
-///
-/// The grammar is defined using `Nucleotide::Junction(Any, [Type, Args...])`.
-///
-/// | Type | Arguments | Description |
-/// |---|---|---|
-/// | `"Match"` | `[Pattern]` | Matches a literal string prefix. |
-/// | `"Regex"` | `[Pattern]` | Matches a regex pattern at the start. |
-/// | `"Seq"` | `[P1, P2, ...]` | Matches a sequence of parsers in order. |
-/// | `"Alt"` | `[P1, P2, ...]` | Matches the first successful parser (Ordered Choice). |
-/// | `"Many"` | `[P]` | Matches parser `P` zero or more times. |
-/// | `"Opt"` | `[P]` | Matches parser `P` optionally (0 or 1). |
-/// | `"Int"` | `[P]` | Matches `P` and converts the result to an Integer. |
-/// | `"Map"` | `[P, Template]` | Matches `P` and transforms the result using `resolve_template`. |
-fn babel_parse(grammar: &Nucleotide, input: &str) -> Result<(Nucleotide, usize)> {
+fn babel_parse(
+    grammar: &Nucleotide,
+    input: &str,
+    rule_set: &HashMap<String, Nucleotide>
+) -> Result<(Nucleotide, usize)> {
     use crate::ast::JunctionType;
 
     if let Nucleotide::Junction(JunctionType::Any, args) = grammar {
         if args.is_empty() {
             return Err(anyhow!("Empty grammar node"));
         }
-        // Identifier is first arg (e.g., Match("..."))
-        // If it was parsed as data_call, it became Junction(Any, ["Match", "..."])
         if let Nucleotide::String(type_str) = &args[0] {
             match type_str.as_str() {
                 "Match" => {
@@ -1016,7 +1063,7 @@ fn babel_parse(grammar: &Nucleotide, input: &str) -> Result<(Nucleotide, usize)>
                     let mut total_consumed = 0;
                     let mut results = Vec::new();
                     for parser in args.iter().skip(1) {
-                        let (res, consumed) = babel_parse(parser, &input[total_consumed..])?;
+                        let (res, consumed) = babel_parse(parser, &input[total_consumed..], rule_set)?;
                         results.push(res);
                         total_consumed += consumed;
                     }
@@ -1027,7 +1074,7 @@ fn babel_parse(grammar: &Nucleotide, input: &str) -> Result<(Nucleotide, usize)>
                 }
                 "Alt" => {
                     for parser in args.iter().skip(1) {
-                        if let Ok((res, consumed)) = babel_parse(parser, input) {
+                        if let Ok((res, consumed)) = babel_parse(parser, input, rule_set) {
                             return Ok((res, consumed));
                         }
                     }
@@ -1040,7 +1087,7 @@ fn babel_parse(grammar: &Nucleotide, input: &str) -> Result<(Nucleotide, usize)>
                     let p = &args[1];
                     let mut results = Vec::new();
                     let mut total_consumed = 0;
-                    while let Ok((res, consumed)) = babel_parse(p, &input[total_consumed..]) {
+                    while let Ok((res, consumed)) = babel_parse(p, &input[total_consumed..], rule_set) {
                         if consumed == 0 {
                             break;
                         }
@@ -1057,7 +1104,7 @@ fn babel_parse(grammar: &Nucleotide, input: &str) -> Result<(Nucleotide, usize)>
                         return Err(anyhow!("Opt requires parser"));
                     }
                     let p = &args[1];
-                    if let Ok((res, consumed)) = babel_parse(p, input) {
+                    if let Ok((res, consumed)) = babel_parse(p, input, rule_set) {
                         Ok((res, consumed))
                     } else {
                         Ok((Nucleotide::Junction(JunctionType::All, Vec::new()), 0))
@@ -1068,7 +1115,7 @@ fn babel_parse(grammar: &Nucleotide, input: &str) -> Result<(Nucleotide, usize)>
                         return Err(anyhow!("Int requires parser"));
                     }
                     let p = &args[1];
-                    let (res, consumed) = babel_parse(p, input)?;
+                    let (res, consumed) = babel_parse(p, input, rule_set)?;
                     if let Nucleotide::String(s) = res {
                         if let Ok(n) = s.parse::<i64>() {
                             return Ok((Nucleotide::Number(n), consumed));
@@ -1082,9 +1129,25 @@ fn babel_parse(grammar: &Nucleotide, input: &str) -> Result<(Nucleotide, usize)>
                     }
                     let parser = &args[1];
                     let template = &args[2];
-                    let (res, consumed) = babel_parse(parser, input)?;
+                    let (res, consumed) = babel_parse(parser, input, rule_set)?;
                     let mapped = resolve_template(template, &res);
                     Ok((mapped, consumed))
+                }
+                "Ref" => {
+                    if args.len() < 2 { return Err(anyhow!("Ref requires name")); }
+                    if let Nucleotide::String(name) = &args[1] {
+                        if let Some(rule) = rule_set.get(name) {
+                            // Max recursion depth check? babel_parse is recursive.
+                            // We rely on stack overflow protection? Or pass depth?
+                            // For safety, maybe we should pass depth.
+                            // But here we just recurse.
+                            babel_parse(rule, input, rule_set)
+                        } else {
+                            Err(anyhow!("Unknown rule reference: {}", name))
+                        }
+                    } else {
+                        Err(anyhow!("Invalid Ref name"))
+                    }
                 }
                 _ => Err(anyhow!("Unknown grammar type: {}", type_str)),
             }
@@ -1098,14 +1161,6 @@ fn babel_parse(grammar: &Nucleotide, input: &str) -> Result<(Nucleotide, usize)>
     }
 }
 
-/// Flattens a Babel AST (Nucleotide tree) into a linear sequence of Genes.
-///
-/// This converts the recursive tree structure output by `babel_parse` into executable code.
-///
-/// - `Junction(All)`: Children are flattened sequentially (Code Block).
-/// - `Junction(Any)`: Treated as a function call `[Op, Arg1, Arg2...]`.
-/// - `String`: Treated as an OpCode or pushed as a String literal.
-/// - `Number`: Pushed as an Int literal.
 fn flatten_ast(ast: &Nucleotide) -> Result<Vec<Gene>> {
     match ast {
         Nucleotide::Junction(crate::ast::JunctionType::All, children) => {
@@ -1116,10 +1171,8 @@ fn flatten_ast(ast: &Nucleotide) -> Result<Vec<Gene>> {
             Ok(genes)
         }
         Nucleotide::Junction(crate::ast::JunctionType::Any, children) => {
-            // Handle explicit call structure: [OpName, Arg1, Arg2]
             if !children.is_empty() {
                 if let Nucleotide::String(op_name) = &children[0] {
-                    // Try to parse as OpCode
                     if let Ok(op) = OpCode::from_str(op_name) {
                         let mut args = Vec::new();
                         for child in children.iter().skip(1) {
@@ -1129,7 +1182,6 @@ fn flatten_ast(ast: &Nucleotide) -> Result<Vec<Gene>> {
                     }
                 }
             }
-            // Fallback: Flatten children sequentially
             let mut genes = Vec::new();
             for child in children {
                 genes.extend(flatten_ast(child)?);
@@ -1138,8 +1190,25 @@ fn flatten_ast(ast: &Nucleotide) -> Result<Vec<Gene>> {
         }
         Nucleotide::String(s) => {
             if let Ok(op) = OpCode::from_str(s) {
-                Ok(vec![Gene { op, args: vec![] }])
+                if let OpCode::Unknown(_) = op {
+                    // Not a known opcode, push as string literal
+                    // Check if it looks like a number
+                    if let Ok(n) = s.parse::<i64>() {
+                        Ok(vec![Gene {
+                            op: OpCode::Push,
+                            args: vec![Nucleotide::Number(n)],
+                        }])
+                    } else {
+                        Ok(vec![Gene {
+                            op: OpCode::Push,
+                            args: vec![Nucleotide::String(s.clone())],
+                        }])
+                    }
+                } else {
+                    Ok(vec![Gene { op, args: vec![] }])
+                }
             } else {
+                // Should not happen with strum default, but safe fallback
                 Ok(vec![Gene {
                     op: OpCode::Push,
                     args: vec![Nucleotide::String(s.clone())],
@@ -1154,36 +1223,41 @@ fn flatten_ast(ast: &Nucleotide) -> Result<Vec<Gene>> {
     }
 }
 
-/// Resolves variable substitutions in a Template using the result of a match.
-///
-/// Used by the `Map` parser type to transform the CST into an AST.
-///
-/// - `?N`: Replaces with the Nth child of `match_res` (1-based index).
-/// - `?0`: Replaces with `match_res` itself.
-/// - Recursive: Traverses into Junctions to replace nested variables.
 fn resolve_template(template: &Nucleotide, match_res: &Nucleotide) -> Nucleotide {
     match template {
-        Nucleotide::String(s) if s.starts_with('?') => {
-            // Variable ?1, ?2 etc
-            if let Ok(idx) = s[1..].parse::<usize>() {
-                // 1-based index convention usually? Or 0?
-                // Let's assume 1-based to match Babel vars ?1
-                let i = idx.saturating_sub(1);
-                match match_res {
-                    Nucleotide::Junction(_, children) => {
-                        if i < children.len() {
-                            return children[i].clone();
-                        }
-                    }
-                    _ => {
-                        if i == 0 {
-                            return match_res.clone();
-                        }
-                    }
+        Nucleotide::String(s) => {
+            // Split by whitespace to allow list construction e.g. "?1 ?3"
+            let parts: Vec<&str> = s.split_whitespace().collect();
+            if parts.len() > 1 {
+                let mut resolved_parts = Vec::new();
+                for part in parts {
+                    let sub_template = Nucleotide::String(part.to_string());
+                    resolved_parts.push(resolve_template(&sub_template, match_res));
                 }
-                // Fallback: return as is if not found
-                return template.clone();
+                return Nucleotide::Junction(crate::ast::JunctionType::All, resolved_parts);
             }
+
+            if s.starts_with('?') {
+                if let Ok(idx) = s[1..].parse::<usize>() {
+                    let i = idx.saturating_sub(1);
+                    match match_res {
+                        Nucleotide::Junction(crate::ast::JunctionType::All, children) => {
+                            if i < children.len() {
+                                return children[i].clone();
+                            }
+                        }
+                        _ => {
+                            if i == 0 {
+                                return match_res.clone();
+                            }
+                        }
+                    }
+                    // If index out of bounds, ignore? or return empty?
+                    // For now return original to be safe/debuggable
+                    return template.clone();
+                }
+            }
+            // Literal string
             template.clone()
         }
         Nucleotide::Junction(t, args) => {
