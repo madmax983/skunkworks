@@ -1521,3 +1521,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Biological Annealing. Agents feed on the energy released by flipping spins to lower local frustration.
 - **Status**: experiments/chimera-glass
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Agents are actively cooling the hypercube.
+
+### chimera-acoustics
+- **Parents**: experiments/hyper-acoustics + experiments/chimera-lang
+- **Concept**: Acoustic Grazers inhabiting a 4D FDTD wave simulation. Agents "sing" (emit pressure) and "eat" (dampen pressure) to survive.
+- **Novel trait**: Bio-Acoustic Ecology in 4D. The soundscape is the food source.
+- **Status**: experiments/chimera-acoustics
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified compilation.

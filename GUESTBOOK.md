@@ -388,3 +388,8 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Stagnation / Documentation Void. Grace period expired.
 - **Note:** "The cylinder spins in a perfect, dead loop. Now it spins in the void."
+
+### [Concentration Level: HIGH] - Location: experiments/chimera-acoustics
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The hive is singing in 4D. Consumption is resonance.
+- **Note:** "Bio-Acoustic Ecology established. Agents are grazing on the waveform."
