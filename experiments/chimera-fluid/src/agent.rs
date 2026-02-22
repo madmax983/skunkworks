@@ -13,6 +13,7 @@ pub struct Agent {
     pub bio_energy: f32,
     pub color: Color,
     pub age: u32,
+    #[allow(dead_code)]
     pub id: u64,
 }
 
