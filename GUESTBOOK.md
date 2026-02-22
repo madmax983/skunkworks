@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CONDEMNED] - Location: experiments/hyper-chimera
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Redundancy / Identity Crisis.
+- **Note:** "Toxic concentration. A chimera in name only."
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Havoc 👺
 - **Status:** Critical vulnerabilities detected: Recursive Include DoS, IPC Message Theft, Recursive Structure DoS.
@@ -185,12 +190,12 @@
 - **Status:** The Heap is a forest floor. The Reaper is decomposing cycles.
 - **Note:** "Death is just a sweep phase."
 
-### [Concentration Level: TOXIC] - Location: experiments/sonic-viscosity
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism / Redundancy.
-- **Note:** "Viscosity without fluid dynamics is just friction. Code without words is just silence."
-
 ## 🍂 History/Decay
+
+### [Concentration Level: EXECUTED] - Location: graveyard/sonic-viscosity
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Genericism / Redundancy.
+- **Note:** "Viscosity without fluid dynamics is just friction. Code without words is just silence."
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/symbiotic-services
 - **Scent Origin:** The Reaper ☠️
