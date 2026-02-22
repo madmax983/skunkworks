@@ -303,6 +303,10 @@ pub mod nova_quantum;
 #[cfg(test)]
 mod nova_quantum_scribe_test;
 #[cfg(feature = "nova")]
+pub mod nova_raku;
+#[cfg(all(test, feature = "nova"))]
+mod nova_raku_test;
+#[cfg(feature = "nova")]
 pub mod nova_quipu;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -3801,6 +3805,18 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             OpCode::ProjectGeometry => nova_alchemy_prime::exec_project_geometry(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::HyperAdd
+            | OpCode::HyperSub
+            | OpCode::HyperMul
+            | OpCode::HyperDiv
+            | OpCode::Reduce
+            | OpCode::Cross
+            | OpCode::ZipWith => {
+                nova_raku::exec_raku_op(self, op, args);
+                None
+            }
 
             OpCode::Unknown(name) => self.handle_unknown_opcode(&name),
             _ => {

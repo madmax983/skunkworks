@@ -50,8 +50,18 @@ instruction = {
     call |
     arrow_jump |
     question_branch |
+    hyper_op |
+    cross_op |
+    reduce_op |
+    zip_op |
     simple_op
 }
+
+hyper_op = { ">>" ~ op_symbol ~ "<<" }
+cross_op = { "X" ~ op_symbol }
+reduce_op = { "[" ~ op_symbol ~ "]" }
+zip_op = { "Z" ~ op_symbol }
+op_symbol = { "+" | "-" | "*" | "/" | "%" | "&" | "|" | "^" }
 
 apply_map_stmt = { "apply_map" ~ "(" ~ string ~ "," ~ number ~ "," ~ number ~ ")" }
 

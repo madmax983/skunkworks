@@ -2662,6 +2662,43 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Escape,
 
+    // Raku Features (Hyper-Operators)
+    /// **[Raku]** Element-wise addition of two lists.
+    ///
+    /// **Stack:** `[ ..., list_a, list_b ] -> [ ..., list_result ]`
+    #[cfg(feature = "nova")]
+    HyperAdd,
+    /// **[Raku]** Element-wise subtraction.
+    ///
+    /// **Stack:** `[ ..., list_a, list_b ] -> [ ..., list_result ]`
+    #[cfg(feature = "nova")]
+    HyperSub,
+    /// **[Raku]** Element-wise multiplication.
+    ///
+    /// **Stack:** `[ ..., list_a, list_b ] -> [ ..., list_result ]`
+    #[cfg(feature = "nova")]
+    HyperMul,
+    /// **[Raku]** Element-wise division.
+    ///
+    /// **Stack:** `[ ..., list_a, list_b ] -> [ ..., list_result ]`
+    #[cfg(feature = "nova")]
+    HyperDiv,
+    /// **[Raku]** Reduces a list using an operator (Fold).
+    ///
+    /// **Stack:** `[ ..., list, op_str ] -> [ ..., result ]`
+    #[cfg(feature = "nova")]
+    Reduce,
+    /// **[Raku]** Cross-product of two lists with an operator.
+    ///
+    /// **Stack:** `[ ..., list_a, list_b, op_str ] -> [ ..., list_result ]`
+    #[cfg(feature = "nova")]
+    Cross,
+    /// **[Raku]** Zips two lists with an operator.
+    ///
+    /// **Stack:** `[ ..., list_a, list_b, op_str ] -> [ ..., list_result ]`
+    #[cfg(feature = "nova")]
+    ZipWith,
+
     /// No Operation. Does nothing.
     Nop,
 
