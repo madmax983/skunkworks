@@ -1,23 +1,104 @@
+//! # Neuro Sim
+//!
+//! A high-level Spiking Neural Network (SNN) simulation crate powered by [`synaptic_physics`].
+//!
+//! This crate provides a [`Network`] abstraction that manages a collection of [`Izhikevich`] neurons
+//! connected by [`Synapse`]s. It handles spike propagation, synaptic delays, and weights.
+//!
+//! ## The Model
+//!
+//! - **Neurons**: Uses the Izhikevich model (via `synaptic_physics`) which balances biological plausibility with performance.
+//! - **Synapses**: Directed connections with:
+//!     - **Weight**: Strength of the connection (positive = excitatory, negative = inhibitory).
+//!     - **Delay**: Discrete time steps before a spike reaches the target.
+//! - **Time**: Discrete steps. By convention, 1 step $\approx$ 1ms (though this is adjustable via interpretation).
+//!
+//! ## Hero's Journey: Building a Brain
+//!
+//! ```rust
+//! use neuro_sim::Network;
+//!
+//! // 1. Create a blank network
+//! let mut brain = Network::new();
+//!
+//! // 2. Add two neurons
+//! let sensory = brain.add_neuron(); // Neuron 0
+//! let motor = brain.add_neuron();   // Neuron 1
+//!
+//! // 3. Connect them (Sensory -> Motor)
+//! //    Weight: 15.0 (Strong excitation)
+//! //    Delay: 0 (Immediate effect in next step)
+//! brain.add_synapse(sensory, motor, 15.0);
+//!
+//! // 4. Simulate!
+//! // We'll inject current into the sensory neuron to make it fire.
+//! for t in 0..10 {
+//!     // Input: 20.0 units to Neuron 0, 0.0 to Neuron 1
+//!     brain.step(&[20.0, 0.0]);
+//!
+//!     if brain.is_spiking(sensory) {
+//!         println!("t={}: Sensory Neuron Spiked! ⚡", t);
+//!     }
+//!     if brain.is_spiking(motor) {
+//!         println!("t={}: Motor Neuron Responded! 🦾", t);
+//!     }
+//! }
+//! ```
+
 use synaptic_physics::Izhikevich;
 
+/// A connection between two neurons.
+///
+/// When the `from` neuron spikes, a signal travels along this synapse.
+/// After `delay` steps, the `weight` is added to the `to` neuron's input current.
 #[derive(Clone, Debug)]
 pub struct Synapse {
+    /// Index of the source neuron.
     pub from: usize,
+    /// Index of the target neuron.
     pub to: usize,
+    /// Strength of the connection.
+    /// * Positive > 0: Excitatory (EPSP).
+    /// * Negative < 0: Inhibitory (IPSP).
     pub weight: f32,
+    /// Transmission delay in simulation steps.
+    /// * 0: The spike affects the target in the *very next* step.
+    /// * N: The spike affects the target in N+1 steps.
     pub delay: usize,
+    /// Queue of spikes currently traveling along this synapse.
+    /// Values represent "remaining steps until arrival".
     pub spikes_in_transit: Vec<usize>,
-    pub active: bool, // For visualization (did it fire this step?)
+    /// Visualization state: did this synapse deliver a spike in the most recent step?
+    pub active: bool,
 }
 
+/// A network of neurons and synapses.
+///
+/// This is the main container for the simulation. It owns all neurons and synapses
+/// and orchestrates the update loop.
 #[derive(Clone, Debug)]
 pub struct Network {
+    /// The collection of neurons in the network.
     pub neurons: Vec<Izhikevich>,
+    /// The collection of connections between neurons.
     pub synapses: Vec<Synapse>,
+    /// A cache of which neurons spiked in the *previous* step.
+    ///
+    /// This is used to decouple the update order: synapses read from this
+    /// frozen state to determine if they should initiate a new signal.
     pub spikes: Vec<bool>,
 }
 
 impl Network {
+    /// Creates a new, empty network.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use neuro_sim::Network;
+    /// let net = Network::new();
+    /// assert_eq!(net.neurons.len(), 0);
+    /// ```
     pub fn new() -> Self {
         Self {
             neurons: Vec::new(),
@@ -26,16 +107,47 @@ impl Network {
         }
     }
 
+    /// Adds a default Izhikevich neuron (Regular Spiking) to the network.
+    ///
+    /// # Returns
+    ///
+    /// The index (`usize`) of the newly created neuron. Use this index to connect synapses.
     pub fn add_neuron(&mut self) -> usize {
         self.neurons.push(Izhikevich::new());
         self.spikes.push(false);
         self.neurons.len() - 1
     }
 
+    /// Adds a synapse with zero delay (immediate effect).
+    ///
+    /// # Arguments
+    ///
+    /// * `from` - Index of source neuron.
+    /// * `to` - Index of target neuron.
+    /// * `weight` - Connection strength.
     pub fn add_synapse(&mut self, from: usize, to: usize, weight: f32) {
         self.add_synapse_with_delay(from, to, weight, 0);
     }
 
+    /// Adds a synapse with a specified delay.
+    ///
+    /// # Arguments
+    ///
+    /// * `delay` - The number of steps the signal takes to travel.
+    ///   * 0: Arrives in step T+1 (if spike at T).
+    ///   * 1: Arrives in step T+2.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use neuro_sim::Network;
+    /// let mut net = Network::new();
+    /// let n1 = net.add_neuron();
+    /// let n2 = net.add_neuron();
+    ///
+    /// // Spike at T=0 reaches n2 at T=11
+    /// net.add_synapse_with_delay(n1, n2, 10.0, 10);
+    /// ```
     pub fn add_synapse_with_delay(&mut self, from: usize, to: usize, weight: f32, delay: usize) {
         self.synapses.push(Synapse {
             from,
@@ -47,6 +159,20 @@ impl Network {
         });
     }
 
+    /// Advances the simulation by one time step.
+    ///
+    /// The update cycle is:
+    /// 1. **Inputs**: Apply external current and clear buffers.
+    /// 2. **Synapses**:
+    ///    - Check if source neurons spiked *last* step.
+    ///    - Advance spikes in transit.
+    ///    - Deliver spikes that arrived (t=0) to target neurons.
+    /// 3. **Neurons**: Update membrane potential and check for new spikes.
+    ///
+    /// # Arguments
+    ///
+    /// * `external_inputs` - A slice of currents to inject into neurons matching the index.
+    ///   If the slice is shorter than the neuron count, remaining neurons receive 0.0.
     pub fn step(&mut self, external_inputs: &[f32]) {
         // 1. Collect inputs for this step
         let mut inputs = vec![0.0; self.neurons.len()];
@@ -99,10 +225,12 @@ impl Network {
         }
     }
 
+    /// Checks if a specific neuron spiked in the most recent step.
     pub fn is_spiking(&self, index: usize) -> bool {
         self.spikes.get(index).cloned().unwrap_or(false)
     }
 
+    /// Checks if a specific synapse was active (delivered a spike) in the most recent step.
     pub fn get_synapse_activity(&self, index: usize) -> bool {
         self.synapses.get(index).map(|s| s.active).unwrap_or(false)
     }
