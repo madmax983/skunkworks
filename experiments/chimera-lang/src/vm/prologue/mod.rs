@@ -1307,6 +1307,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
     // We iterate agents from state (snapshot) and update grid.
     let agents = vm.prologue_state.agents.clone();
     let mut new_agents = Vec::new();
+    let mut written_cells = HashSet::new();
 
     for mut agent in agents {
         let (y, x) = (agent.y, agent.x);
@@ -1352,22 +1353,28 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
 
         if let Some((ny, nx)) = target {
             // Move agent
-            // Clear old pos
-            if let Value::Str(s) = &vm.grid[y][x] {
-                // Only clear if it matches our agent type (avoid clearing overwrites?)
-                if s == &current_type {
-                    vm.grid[y][x] = Value::Int(0);
-                }
-            }
-            // Set new pos
+            // Set new pos FIRST (Sequential Update)
             vm.grid[ny][nx] = Value::Str(current_type.clone());
+            written_cells.insert((ny, nx));
 
             // Move Registers
             if current_type == "C" || current_type == "♬" || current_type == "₣" {
-                vm.prologue_state.registers.remove(&(y, x));
                 vm.prologue_state
                     .registers
                     .insert((ny, nx), pack_agent_data(agent.state.clone(), agent.stack.clone()));
+            }
+
+            // Clear old pos ONLY if not written to by another agent
+            if !written_cells.contains(&(y, x)) {
+                if let Value::Str(s) = &vm.grid[y][x] {
+                    // Only clear if it matches our agent type (avoid clearing overwrites from unrelated things)
+                    if s == &current_type {
+                        vm.grid[y][x] = Value::Int(0);
+                    }
+                }
+                if current_type == "C" || current_type == "♬" || current_type == "₣" {
+                    vm.prologue_state.registers.remove(&(y, x));
+                }
             }
 
             new_agents.push(PrologueAgent {
