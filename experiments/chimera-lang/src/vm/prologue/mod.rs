@@ -101,6 +101,7 @@ pub mod teleport;
 pub mod topology;
 pub mod virology;
 pub mod void;
+pub mod zeta;
 pub mod forth;
 pub mod hyper;
 pub mod rhythm;
@@ -423,6 +424,8 @@ impl PrologueState {
                             | "»"
                             // Forth
                             | "₣"
+                            // Zeta (Wire Lisp)
+                            | "ζ"
                             // Hyper
                             | "⇪" | "↻" | "⌖" | "▣"
                             // Rhythm
@@ -439,6 +442,7 @@ impl PrologueState {
                             || s == "♻"
                             || s == "♬"
                             || s == "₣"
+                            || s == "ζ"
                         {
                             // Try to retrieve persistent state
                             let raw_state =
@@ -450,6 +454,12 @@ impl PrologueState {
                                     critter::CritterState::default().to_value()
                                 } else if s == "♬" {
                                     siren::SirenState::default().to_value()
+                                } else if s == "ζ" {
+                                    // Zeta defaults to East (0, 1)
+                                    Value::Junction(
+                                        crate::ast::JunctionType::All,
+                                        vec![Value::Int(0), Value::Int(1)],
+                                    )
                                 } else {
                                     Value::Int(0)
                                 }
@@ -1374,6 +1384,14 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 }
                 None => continue,
             }
+        } else if current_type == "ζ" {
+            match zeta::process_zeta_agent(vm, &agent, grid_snapshot) {
+                Some((updated_agent, t)) => {
+                    agent = updated_agent;
+                    t
+                }
+                None => continue,
+            }
         } else {
             process_seeker_logic(vm, &agent, grid_snapshot)
         };
@@ -1385,7 +1403,8 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
             written_cells.insert((ny, nx));
 
             // Move Registers
-            if current_type == "C" || current_type == "♬" || current_type == "₣" {
+            if current_type == "C" || current_type == "♬" || current_type == "₣" || current_type == "ζ"
+            {
                 vm.prologue_state
                     .registers
                     .insert((ny, nx), pack_agent_data(agent.state.clone(), agent.stack.clone()));
@@ -1399,7 +1418,11 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                         vm.grid[y][x] = Value::Int(0);
                     }
                 }
-                if current_type == "C" || current_type == "♬" || current_type == "₣" {
+                if current_type == "C"
+                    || current_type == "♬"
+                    || current_type == "₣"
+                    || current_type == "ζ"
+                {
                     vm.prologue_state.registers.remove(&(y, x));
                 }
             }

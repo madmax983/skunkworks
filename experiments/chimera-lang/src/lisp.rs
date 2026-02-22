@@ -70,7 +70,7 @@ fn tokenize(input: &str) -> Vec<String> {
             }
         } else {
             match c {
-                '(' | ')' => {
+                '(' | ')' | '[' | ']' | '{' | '}' => {
                     if !current.is_empty() {
                         tokens.push(current.clone());
                         current.clear();
@@ -122,20 +122,27 @@ fn parse_expr(tokens: &[String], start: usize, depth: usize) -> Result<(SExpr, u
         return Err(anyhow!("Unexpected EOF"));
     }
     let token = &tokens[start];
-    if token == "(" {
+    if token == "(" || token == "[" || token == "{" {
         let mut list = Vec::new();
         let mut idx = start + 1;
-        while idx < tokens.len() && tokens[idx] != ")" {
+        let closer = match token.as_str() {
+            "(" => ")",
+            "[" => "]",
+            "{" => "}",
+            _ => ")",
+        };
+
+        while idx < tokens.len() && tokens[idx] != closer {
             let (expr, next_idx) = parse_expr(tokens, idx, depth + 1)?;
             list.push(expr);
             idx = next_idx;
         }
         if idx >= tokens.len() {
-            return Err(anyhow!("Unclosed list"));
+            return Err(anyhow!("Unclosed list, expected {}", closer));
         }
         Ok((SExpr::List(list), idx + 1))
-    } else if token == ")" {
-        Err(anyhow!("Unexpected )"))
+    } else if token == ")" || token == "]" || token == "}" {
+        Err(anyhow!("Unexpected closer {}", token))
     } else {
         Ok((SExpr::Atom(token.clone()), start + 1))
     }
