@@ -14,6 +14,7 @@ pub enum GrammarRule {
     Choice(Vec<GrammarRule>),
     Reference(String),
     WeightedChoice(Vec<(u32, GrammarRule)>),
+    Whitespace,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -48,7 +49,10 @@ impl LogosEngine {
         let strand = &dna.helix.strands[strand_idx];
         let mut rules = Vec::new();
 
-        for gene in &strand.genes {
+        for (i, gene) in strand.genes.iter().enumerate() {
+            if i > 0 {
+                rules.push(GrammarRule::Whitespace);
+            }
             let rule = match &gene.op {
                 OpCode::Push => {
                     if let Some(arg) = gene.args.first() {
@@ -142,7 +146,10 @@ impl LogosEngine {
         let seq: Vec<&str> = def.split_whitespace().collect();
         if seq.len() > 1 {
             let mut rules = Vec::new();
-            for s in seq {
+            for (i, s) in seq.iter().enumerate() {
+                if i > 0 {
+                    rules.push(GrammarRule::Whitespace);
+                }
                 rules.push(self.parse_single_token(s)?);
             }
             return Ok(GrammarRule::Sequence(rules));
@@ -181,16 +188,12 @@ impl LogosEngine {
         match rule {
             GrammarRule::Literal(s) => Ok(s.clone()),
             GrammarRule::Regex(p) => Ok(format!("<{}>", p)), // Placeholder generation for regex
+            GrammarRule::Whitespace => Ok(" ".to_string()),
             GrammarRule::Sequence(rules) => {
                 let mut result = String::new();
                 for r in rules {
                     let s = self.generate_from_rule(r, depth + 1)?;
-                    if !s.is_empty() {
-                        if !result.is_empty() && !result.ends_with(' ') {
-                            result.push(' ');
-                        }
-                        result.push_str(&s);
-                    }
+                    result.push_str(&s);
                 }
                 Ok(result)
             }
@@ -233,21 +236,14 @@ impl LogosEngine {
 
     pub fn parse_input(&self, rule_name: &str, input: &str) -> Result<Value, String> {
         if let Some(rule) = self.rules.get(rule_name) {
-            let tokens: Vec<&str> = input.split_whitespace().collect();
-            // We need a helper that takes tokens and position
-            let (val, consumed) = self.parse_from_rule(rule, &tokens, 0, 0)?;
-            if consumed == tokens.len() {
-                Ok(val)
+            let (val_opt, consumed) = self.parse_from_rule(rule, input, 0, 0)?;
+            if consumed == input.len() {
+                Ok(val_opt.unwrap_or(Value::Str("".to_string())))
             } else {
-                // Try parsing full string as one token if tokenization failed to match
-                // Actually, our current split_whitespace approach is lossy.
-                // Regex matching works better on the full string.
-                // But `parse_from_rule` takes `tokens`.
-                // Let's stick to token-based for now unless we refactor to string slices.
                 Err(format!(
-                    "Incomplete parse. Consumed {} of {} tokens.",
+                    "Incomplete parse. Consumed {} of {} chars.",
                     consumed,
-                    tokens.len()
+                    input.len()
                 ))
             }
         } else {
@@ -258,59 +254,70 @@ impl LogosEngine {
     fn parse_from_rule(
         &self,
         rule: &GrammarRule,
-        tokens: &[&str],
+        input: &str,
         pos: usize,
         depth: usize,
-    ) -> Result<(Value, usize), String> {
+    ) -> Result<(Option<Value>, usize), String> {
         if depth > 100 {
             return Err("Recursion limit exceeded during parse".to_string());
         }
         match rule {
             GrammarRule::Literal(s) => {
-                if pos < tokens.len() && tokens[pos] == s {
-                    Ok((Value::Str(s.clone()), pos + 1))
+                if input[pos..].starts_with(s) {
+                    Ok((Some(Value::Str(s.clone())), pos + s.len()))
                 } else {
-                    Err(format!("Expected '{}', found '{:?}'", s, tokens.get(pos)))
+                    Err(format!("Expected literal '{}'", s))
                 }
             }
             GrammarRule::Regex(pattern) => {
-                if pos < tokens.len() {
-                    let re = Regex::new(pattern).map_err(|e| format!("Invalid regex: {}", e))?;
-                    if re.is_match(tokens[pos]) {
-                        Ok((Value::Str(tokens[pos].to_string()), pos + 1))
-                    } else {
-                        Err(format!("Regex {} did not match '{}'", pattern, tokens[pos]))
-                    }
+                let anchored = if pattern.starts_with('^') {
+                    pattern.to_string()
                 } else {
-                    Err("Unexpected EOF".to_string())
+                    format!("^{}", pattern)
+                };
+                let re = Regex::new(&anchored).map_err(|e| format!("Invalid regex: {}", e))?;
+                if let Some(mat) = re.find(&input[pos..]) {
+                    let m = mat.as_str();
+                    Ok((Some(Value::Str(m.to_string())), pos + m.len()))
+                } else {
+                    Err(format!("Regex {} did not match", pattern))
+                }
+            }
+            GrammarRule::Whitespace => {
+                let re = Regex::new(r"^\s+").unwrap();
+                if let Some(mat) = re.find(&input[pos..]) {
+                    Ok((None, pos + mat.as_str().len()))
+                } else {
+                    Err("Expected whitespace".to_string())
                 }
             }
             GrammarRule::Sequence(rules) => {
                 let mut current_pos = pos;
                 let mut results = Vec::new();
                 for r in rules {
-                    let (val, next_pos) =
-                        self.parse_from_rule(r, tokens, current_pos, depth + 1)?;
-                    results.push(val);
+                    let (val_opt, next_pos) =
+                        self.parse_from_rule(r, input, current_pos, depth + 1)?;
+                    if let Some(val) = val_opt {
+                        results.push(val);
+                    }
                     current_pos = next_pos;
                 }
                 Ok((
-                    Value::Junction(crate::ast::JunctionType::All, results),
+                    Some(Value::Junction(crate::ast::JunctionType::All, results)),
                     current_pos,
                 ))
             }
             GrammarRule::Choice(rules) => {
                 for r in rules {
-                    if let Ok((val, next_pos)) = self.parse_from_rule(r, tokens, pos, depth + 1) {
+                    if let Ok((val, next_pos)) = self.parse_from_rule(r, input, pos, depth + 1) {
                         return Ok((val, next_pos));
                     }
                 }
                 Err("No choice matched".to_string())
             }
             GrammarRule::WeightedChoice(choices) => {
-                // For parsing, ignore weights, try all
                 for (_, r) in choices {
-                    if let Ok((val, next_pos)) = self.parse_from_rule(r, tokens, pos, depth + 1) {
+                    if let Ok((val, next_pos)) = self.parse_from_rule(r, input, pos, depth + 1) {
                         return Ok((val, next_pos));
                     }
                 }
@@ -318,7 +325,7 @@ impl LogosEngine {
             }
             GrammarRule::Reference(name) => {
                 if let Some(r) = self.rules.get(name) {
-                    self.parse_from_rule(r, tokens, pos, depth + 1)
+                    self.parse_from_rule(r, input, pos, depth + 1)
                 } else {
                     Err(format!("Rule '{}' not found", name))
                 }
