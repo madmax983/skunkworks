@@ -185,12 +185,17 @@
 - **Status:** The Heap is a forest floor. The Reaper is decomposing cycles.
 - **Note:** "Death is just a sweep phase."
 
-### [Concentration Level: TOXIC] - Location: experiments/luminescent-fugue
+### [Concentration Level: TOXIC] - Location: experiments/symbiotic-services
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy (Superseded by `luminous-flock`).
-- **Note:** "The lights are flickering. The swarm has left."
+- **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism.
+- **Note:** "Services require a contract. Code requires a README. Both are missing."
 
 ## 🍂 History/Decay
+
+### [Concentration Level: EXECUTED] - Location: graveyard/luminescent-fugue
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Terminal Redundancy (Superseded by `luminous-flock`). Grace period expired.
+- **Note:** "The lights have gone out. The fugue is silent."
 
 ### [Concentration Level: TOXIC] - Location: graveyard/spqr-market
 - **Scent Origin:** The Reaper ☠️

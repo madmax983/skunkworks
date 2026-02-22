@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **luminescent-fugue**: Diagnosis: Documentation Void / Terminal Redundancy (Superseded by `luminous-flock`). Grace period: 24 hours.
+- **symbiotic-services**: Diagnosis: Documentation Void / Terminal Genericism. Grace period: 24 hours.
 - [Experiment name]: [Diagnosis]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **luminescent-fugue**: Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy (Superseded by `luminous-flock`). Grace period expired. Moved to graveyard.
 - **spqr-market**: Specimen executed. Diagnosis: Terminal Redundancy (Particle System #12). Re-skin of `ferrous-legion`. Grace period expired. Moved to graveyard.
 - **recursion-garden**: Specimen executed. Diagnosis: Terminal Genericism / Documentation Void. Failed to improve during grace period. Moved to graveyard.
 - **echo-chimera**: Specimen executed. Diagnosis: Identity Collapse / Terminal Genericism. Trivial "Hello World" implementation. Grace period expired. Moved to graveyard.
