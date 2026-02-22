@@ -106,6 +106,7 @@ pub mod forth;
 pub mod hyper;
 pub mod rhythm;
 pub mod sequencer;
+pub mod chromatin;
 
 /// An autonomous agent wandering the Prologue grid.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -168,6 +169,9 @@ pub struct PrologueState {
     /// Rhythm State (Sequencer/Clock)
     #[serde(default)]
     pub rhythm_state: rhythm::RhythmState,
+    /// Chromatin State (Constraint Solver)
+    #[serde(default)]
+    pub chromatin_state: chromatin::ChromatinState,
     /// Scratch buffer for signal propagation (Double Buffering).
     #[serde(skip, default)]
     pub scratch_signal_grid: Vec<Vec<Option<Value>>>,
@@ -203,6 +207,7 @@ impl PrologueState {
             void_buffer: VecDeque::new(),
             hyper_state: hyper::HyperState::default(),
             rhythm_state: rhythm::RhythmState::default(),
+            chromatin_state: chromatin::ChromatinState::default(),
             scratch_signal_grid: vec![vec![None; GRID_SIZE]; GRID_SIZE],
         }
     }
@@ -531,6 +536,11 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
         if !vm.omens.is_empty() {
             crate::vm::oracle::process_omens(vm);
         }
+    }
+
+    // 9. Chromatin (Constraint Solver)
+    if vm.prologue_state.chromatin_state.active {
+        chromatin::ChromatinSolver::solve(&mut vm.prologue_state.chromatin_state, &mut vm.grid);
     }
 }
 

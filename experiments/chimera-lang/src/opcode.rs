@@ -1134,6 +1134,12 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Rune,
 
+    /// **[Prologue]** Configures the Chromatin Constraint Solver.
+    ///
+    /// **Stack:** `[ ..., constraint_string ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Chromatin,
+
     // Chaos Cartridge Features (Programmable Physics)
     /// **[Chaos]** Defines a new alchemical recipe.
     ///

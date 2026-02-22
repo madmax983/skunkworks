@@ -3391,6 +3391,9 @@ impl ChimeraVM {
             | OpCode::BioHack => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
+            OpCode::Chromatin => prologue::chromatin::apply_chromatin_op(self, op, args),
+
+            #[cfg(feature = "nova")]
             OpCode::ChaosDefine
             | OpCode::ChaosScramble
             | OpCode::ChaosInvoke

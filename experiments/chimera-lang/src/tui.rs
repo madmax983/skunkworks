@@ -160,6 +160,8 @@ pub enum ViewMode {
     Forge,
     #[cfg(feature = "nova")]
     Tesseract,
+    #[cfg(feature = "nova")]
+    Chromatin,
 }
 
 enum InputMode {
@@ -1061,6 +1063,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Tesseract = app_state.view_mode {
                 render_tesseract(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Chromatin = app_state.view_mode {
+                render_chromatin(f, vm, app_state);
                 return;
             }
 
@@ -2222,6 +2230,18 @@ where
                                     app_state.input_buffer.clear();
                                 }
                                 #[cfg(feature = "nova")]
+                                ViewMode::Chromatin => {
+                                    // Allow defining constraints via input buffer
+                                    let input = app_state.input_buffer.clone();
+                                    if !input.is_empty() {
+                                        vm.stack.push(crate::vm::Value::Str(input));
+                                        crate::vm::prologue::chromatin::apply_chromatin_op(vm, crate::opcode::OpCode::Chromatin, &[]);
+                                        app_state.status_msg = "Constraints Applied.".to_string();
+                                    }
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "nova")]
                                 ViewMode::Lexicon => {
                                     let val = if app_state.input_buffer.len() == 1 {
                                         crate::vm::Value::Str(app_state.input_buffer.clone())
@@ -2824,7 +2844,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::ChaosCartridge => ViewMode::Prologue,
                             #[cfg(feature = "nova")]
-                            ViewMode::Prologue => ViewMode::Lexicon,
+                            ViewMode::Prologue => ViewMode::Chromatin,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Chromatin => ViewMode::Lexicon,
                             #[cfg(feature = "nova")]
                             ViewMode::Lexicon => ViewMode::Narrative,
                             #[cfg(feature = "nova")]
@@ -5377,6 +5399,81 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Block::default()
             .borders(Borders::ALL)
             .title("Territory Info"),
+    );
+    f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_chromatin(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    // Grid Visualization with Constraint Overlays
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = &vm.grid[y][x];
+            let mut style = Style::default();
+
+            // Highlight based on constraint status?
+            // For now just show grid normally
+            let s = match val {
+                crate::vm::Value::Str(s) => s.clone(),
+                crate::vm::Value::Int(n) => n.to_string(),
+                _ => ".".to_string(),
+            };
+
+            if s != "." && s != "0" {
+                style = style.fg(Color::Cyan);
+            } else {
+                style = style.fg(Color::DarkGray);
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            let display = format!("{:^3.3}", s);
+            line_spans.push(Span::styled(display, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let status = if vm.prologue_state.chromatin_state.active { "ACTIVE" } else { "PAUSED" };
+    let temp = vm.prologue_state.chromatin_state.temperature;
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default().borders(Borders::ALL).title(format!("Chromatin Layout ({}) T={:.1}", status, temp)),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Info Panel: Constraints
+    let mut info = Vec::new();
+    info.push(Line::from("CONSTRAINTS"));
+    info.push(Line::from(" "));
+
+    for c in &vm.prologue_state.chromatin_state.constraints {
+        let s = match c {
+            crate::vm::prologue::chromatin::Constraint::Adjacent(a, b) => format!("Adj({}, {})", a, b),
+            crate::vm::prologue::chromatin::Constraint::Distance(a, b, d) => format!("Dist({}, {}, {})", a, b, d),
+            crate::vm::prologue::chromatin::Constraint::Row(a, r) => format!("Row({}, {})", a, r),
+            crate::vm::prologue::chromatin::Constraint::Col(a, c) => format!("Col({}, {})", a, c),
+        };
+        info.push(Line::from(s));
+    }
+
+    if vm.prologue_state.chromatin_state.constraints.is_empty() {
+        info.push(Line::from("No active constraints."));
+        info.push(Line::from("Use 'Chromatin(string)' to define."));
+        info.push(Line::from("e.g. \"adj(@,!) row(!,5)\""));
+    }
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default().borders(Borders::ALL).title("Solver State"),
     );
     f.render_widget(info_widget, chunks[1]);
 }
