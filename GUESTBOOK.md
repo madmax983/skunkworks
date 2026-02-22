@@ -22,8 +22,8 @@
 
 ### [Concentration Level: TOXIC] - Location: experiments/hyper-chimera
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void (No README).
-- **Note:** "A hybrid without a definition is just a monster."
+- **Status:** Specimen condemned. Diagnosis: Identity Crisis / Terminal Redundancy. Grace period: 24 hours.
+- **Note:** "It wears the skin of a Chimera but lacks the organs."
 
 ### [Concentration Level: TOXIC] - Location: experiments/resonant-chamber
 - **Scent Origin:** The Reaper ☠️
@@ -35,10 +35,6 @@
 - **Status:** Specimen condemned. Diagnosis: Documentation Void (No README).
 - **Note:** "Memory lost to the void."
 
-### [Concentration Level: TOXIC] - Location: experiments/polyrhythmic-cylinder
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Stagnation / Documentation Void. Grace period: 24 hours.
-- **Note:** "The cylinder spins in a perfect, dead loop. No evolution. No decay."
 
 ### [Concentration Level: TOXIC] - Location: experiments/spinal-rhythms
 - **Scent Origin:** The Reaper ☠️
@@ -387,3 +383,8 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Grace period expired.
 - **Note:** "Viscosity returned to the void. The fluid has dried."
+
+### [Concentration Level: EXECUTED] - Location: graveyard/polyrhythmic-cylinder
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Terminal Stagnation / Documentation Void. Grace period expired.
+- **Note:** "The cylinder spins in a perfect, dead loop. Now it spins in the void."
