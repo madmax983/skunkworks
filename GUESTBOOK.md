@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/chimera-fluid
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Agents are swimming in 4D. The current is strong.
+- **Note:** "Hydrodynamic Locomotion established. They are fighting the Swap gravity."
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Massive hybridization detected. Nova, Elektra, Oracle, and Biophysics features merging into main VM.
