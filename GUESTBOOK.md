@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/chimera-lattice
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The crystal is growing. Agents are bonding.
+- **Note:** "Intelligence has a lattice structure."
+
 ### [Concentration Level: FRESH] - Location: experiments/chimera-cuneiform
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The clay is drying. Agents are writing prophecies before the flood.

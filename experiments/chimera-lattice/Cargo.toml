@@ -1,0 +1,12 @@
+[package]
+name = "chimera-lattice"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+tui-shared = { workspace = true }
+chimera-lang = { workspace = true, features = ["cortex"] }
+rand = { workspace = true }
