@@ -28,6 +28,7 @@ use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use crate::opcode::OpCode;
 use anyhow::{anyhow, Result};
 use pest::Parser;
+use strum::IntoEnumIterator;
 use pest_derive::Parser;
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
@@ -683,6 +684,14 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
         }
 
         let op = OpCode::from_str(name).map_err(|_| anyhow!("Unknown opcode: {}", name))?;
+        if let OpCode::Unknown(_) = &op {
+            if let Some(suggestion) = suggest_opcode(name) {
+                eprintln!(
+                    "Warning: Unknown enzyme '{}'. Did you mean '{}'?",
+                    name, suggestion
+                );
+            }
+        }
         Ok(vec![Gene { op, args: vec![] }])
     }
 
@@ -712,6 +721,14 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
         let args_pair = parts.next().unwrap();
 
         let op = OpCode::from_str(name).map_err(|_| anyhow!("Unknown opcode: {}", name))?;
+        if let OpCode::Unknown(_) = &op {
+            if let Some(suggestion) = suggest_opcode(name) {
+                eprintln!(
+                    "Warning: Unknown enzyme '{}'. Did you mean '{}'?",
+                    name, suggestion
+                );
+            }
+        }
         let mut args = Vec::new();
 
         for arg_pair in args_pair.into_inner() {
@@ -1178,6 +1195,47 @@ fn resolve_template(template: &Nucleotide, match_res: &Nucleotide) -> Nucleotide
         }
         _ => template.clone(),
     }
+}
+
+fn levenshtein(a: &str, b: &str) -> usize {
+    let len_a = a.len();
+    let len_b = b.len();
+    if len_a < len_b {
+        return levenshtein(b, a);
+    }
+    let mut cache: Vec<usize> = (0..=len_b).collect();
+    for (i, ca) in a.chars().enumerate() {
+        let mut prev_dist = i + 1;
+        for (j, cb) in b.chars().enumerate() {
+            let cost = if ca == cb { 0 } else { 1 };
+            let dist = std::cmp::min(
+                std::cmp::min(prev_dist + 1, cache[j + 1] + 1),
+                cache[j] + cost,
+            );
+            cache[j] = prev_dist;
+            prev_dist = dist;
+        }
+        cache[len_b] = prev_dist;
+    }
+    cache[len_b]
+}
+
+fn suggest_opcode(name: &str) -> Option<String> {
+    let mut best_match = None;
+    let mut min_dist = 3; // Max distance allowed
+
+    for op in OpCode::iter() {
+        if let OpCode::Unknown(_) = op {
+            continue;
+        }
+        let op_str = op.as_ref();
+        let dist = levenshtein(name, op_str);
+        if dist < min_dist {
+            min_dist = dist;
+            best_match = Some(op_str.to_string());
+        }
+    }
+    best_match
 }
 
 #[cfg(test)]
