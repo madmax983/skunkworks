@@ -193,38 +193,55 @@ fn diffuse_scalar_grid<F>(
     topology: &crate::vm::Topology,
     decay_fn: F,
 ) where
-    F: Fn(usize, usize, &Biome) -> i128,
+    F: Fn(usize, usize, &Biome) -> i64,
 {
     let size = crate::vm::GRID_SIZE;
+    debug_assert!(
+        size.is_power_of_two(),
+        "Grid size must be power of 2 for bitwise wrapping"
+    );
+    let size_mask = (size - 1) as i64;
+    let is_torus = *topology == crate::vm::Topology::Torus;
     let mut buffer = [[0i64; crate::vm::GRID_SIZE]; crate::vm::GRID_SIZE];
 
     for y in 0..size {
         for x in 0..size {
             let inertia = biomes[y][x].diffusion_inertia();
             let weight_center = 10;
-            let mut sum = (source[y][x] as i128) * (inertia as i128) * weight_center;
-            let mut total_weight = (inertia as i128) * weight_center;
+            // Use i64 for accumulation (safe as values are bounded)
+            let mut sum = source[y][x]
+                .saturating_mul(inertia)
+                .saturating_mul(weight_center);
+            let mut total_weight = inertia.saturating_mul(weight_center);
 
             for (dy, dx, mask) in NEIGHBOR_DIRECTIONS {
                 if (membranes[y][x] & mask) != 0 {
                     continue;
                 }
 
-                if let Some((ny, nx)) = topology.normalize(y as i64 + dy, x as i64 + dx, size, size)
-                {
+                let neighbor = if is_torus {
+                    Some((
+                        ((y as i64 + dy) & size_mask) as usize,
+                        ((x as i64 + dx) & size_mask) as usize,
+                    ))
+                } else {
+                    topology.normalize(y as i64 + dy, x as i64 + dx, size, size)
+                };
+
+                if let Some((ny, nx)) = neighbor {
                     let (w_dy, w_dx) = wind[ny][nx];
                     // Wind flow from neighbor (ny, nx) to here (y, x).
-                    let flow = -(w_dy as i128 * dy as i128 + w_dx as i128 * dx as i128);
+                    let flow = -((w_dy as i64) * dy + (w_dx as i64) * dx);
                     let weight = (10 + flow).max(0);
 
-                    sum += (source[ny][nx] as i128) * weight;
-                    total_weight += weight;
+                    sum = sum.saturating_add(source[ny][nx].saturating_mul(weight));
+                    total_weight = total_weight.saturating_add(weight);
                 }
             }
 
             let decay = decay_fn(y, x, &biomes[y][x]);
             if total_weight > 0 {
-                buffer[y][x] = ((sum / total_weight) * decay / 100) as i64;
+                buffer[y][x] = (sum / total_weight) * decay / 100;
             }
         }
     }
@@ -256,40 +273,66 @@ fn diffuse_scalar_grid<F>(
 /// Optimized to avoid intermediate Vec allocations.
 pub fn diffuse_hormones(vm: &mut ChimeraVM) {
     let mut buffer = [[[0i64; 3]; 16]; 16];
+    let size = crate::vm::GRID_SIZE as i64;
+    debug_assert!(
+        (crate::vm::GRID_SIZE).is_power_of_two(),
+        "Grid size must be power of 2 for bitwise wrapping"
+    );
+    let size_mask = size - 1;
+    let is_torus = vm.topology == crate::vm::Topology::Torus;
+
     for y in 0..16 {
         for x in 0..16 {
             let inertia = vm.biome_grid[y][x].diffusion_inertia();
             let weight_center = 10;
+            // Use i64 for accumulation
             let mut sums = [
-                (vm.hormone_grid[y][x][0] as i128) * (inertia as i128) * weight_center,
-                (vm.hormone_grid[y][x][1] as i128) * (inertia as i128) * weight_center,
-                (vm.hormone_grid[y][x][2] as i128) * (inertia as i128) * weight_center,
+                vm.hormone_grid[y][x][0]
+                    .saturating_mul(inertia)
+                    .saturating_mul(weight_center),
+                vm.hormone_grid[y][x][1]
+                    .saturating_mul(inertia)
+                    .saturating_mul(weight_center),
+                vm.hormone_grid[y][x][2]
+                    .saturating_mul(inertia)
+                    .saturating_mul(weight_center),
             ];
-            let mut total_weight = (inertia as i128) * weight_center;
+            let mut total_weight = inertia.saturating_mul(weight_center);
 
             // Manual neighbor iteration to calculate wind bias
             for (dy, dx, mask) in NEIGHBOR_DIRECTIONS {
                 if (vm.membranes[y][x] & mask) != 0 {
                     continue;
                 }
-                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+
+                let neighbor = if is_torus {
+                    Some((
+                        ((y as i64 + dy) & size_mask) as usize,
+                        ((x as i64 + dx) & size_mask) as usize,
+                    ))
+                } else {
+                    vm.normalize_coords(y as i64 + dy, x as i64 + dx)
+                };
+
+                if let Some((ny, nx)) = neighbor {
                     let (w_dy, w_dx) = vm.wind_grid[ny][nx];
                     // Wind flow from neighbor (ny, nx) to here (y, x).
                     // Vector from neighbor to here is (-dy, -dx).
                     // Dot product: w_dy * (-dy) + w_dx * (-dx)
-                    let flow = -(w_dy as i128 * dy as i128 + w_dx as i128 * dx as i128);
+                    let flow = -((w_dy as i64) * dy + (w_dx as i64) * dx);
                     let weight = (10 + flow).max(0); // Base 10
 
                     for c in 0..3 {
-                        sums[c] += (vm.hormone_grid[ny][nx][c] as i128) * weight;
+                        sums[c] =
+                            sums[c].saturating_add(vm.hormone_grid[ny][nx][c].saturating_mul(weight));
                     }
-                    total_weight += weight;
+                    total_weight = total_weight.saturating_add(weight);
                 }
             }
 
             if total_weight > 0 {
                 for c in 0..3 {
-                    buffer[y][x][c] = (sums[c] / total_weight) as i64;
+                    buffer[y][x][c] = sums[c] / total_weight;
                 }
             }
         }
@@ -311,7 +354,7 @@ pub fn diffuse_waste(vm: &mut ChimeraVM) {
         &vm.wind_grid,
         &vm.membranes,
         &vm.topology,
-        |_, _, b| b.decay_rate() as i128,
+        |_, _, b| b.decay_rate(),
     );
 }
 
@@ -366,7 +409,7 @@ pub fn diffuse_mutagen(vm: &mut ChimeraVM) {
         &vm.wind_grid,
         &vm.membranes,
         &vm.topology,
-        |_, _, b| b.decay_rate() as i128 * 9 / 10,
+        |_, _, b| b.decay_rate() * 9 / 10,
     );
 }
 
