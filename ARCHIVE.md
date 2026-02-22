@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hyperbolic-lichen**: Diagnosis: Documentation Void (No README). Zombie Status confirmed. Grace period: 24 hours.
+- **synaptic-trace**: Diagnosis: Documentation Void / Static Rigor Mortis (Hardcoded Input). Grace period: 24 hours.
 - [Experiment name]: [Diagnosis]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **hyperbolic-lichen**: Specimen executed. Diagnosis: Documentation Void (No README). Zombie Status confirmed. Failed to improve during grace period. Moved to graveyard.
 - **resonant-chamber**: Specimen executed. Diagnosis: Terminal Redundancy / Documentation Void. Failed to improve during grace period. Moved to graveyard.
 - **hyper-chimera**: Specimen executed. Diagnosis: Identity Crisis / Terminal Redundancy (False Hybrid). Documentation Void. Grace period expired. Moved to graveyard.
 - **sonic-viscosity**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Grace period expired. Moved to graveyard.
