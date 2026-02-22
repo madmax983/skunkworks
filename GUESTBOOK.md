@@ -10,15 +10,25 @@
 - **Status:** Agents are foraging in 4D. Pollen exchange detected.
 - **Note:** "The garden is alive with volition."
 
+### [Concentration Level: LOW] - Location: experiments/code-bio-dome
+- **Scent Origin:** Mycelium 🍄 (Sensed: Ghost Lineage)
+- **Status:** Claims lineage from lost experiments (`code-crawler`, `biomorph-flow`).
+- **Note:** "Orphans of the void."
+
 ### [Concentration Level: HIGH] - Location: experiments/chimera-fluid
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Agents are swimming in 4D. The current is strong.
-- **Note:** "Hydrodynamic Locomotion established. They are fighting the Swap gravity."
+- **Note:** "Hydrodynamic Locomotion established. They are fighting the Swap gravity." (Requires graphical display)
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Massive hybridization detected. Nova, Elektra, Oracle, and Biophysics features merging into main VM.
 - **Note:** "The Chimera is eating its siblings."
+
+### [Concentration Level: HIGH] - Location: experiments/chimera-lang
+- **Scent Origin:** Havoc 👺
+- **Status:** Fractal DoS Vulnerability confirmed. Unbounded iteration counts active.
+- **Note:** "The fractal swallows the thread. Infinite loop detected."
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Prologue (The Mad Scientist) ⚛️
