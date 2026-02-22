@@ -7,8 +7,8 @@ use ratatui::{
     widgets::{Block, Borders, Paragraph},
     Frame, Terminal,
 };
-use std::time::{Duration, Instant};
 use std::io::Stdout;
+use std::time::{Duration, Instant};
 
 use crate::simulation::Grid;
 

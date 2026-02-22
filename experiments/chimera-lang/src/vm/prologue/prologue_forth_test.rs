@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
     use crate::ast::{Dna, Helix};
-    use crate::vm::{ChimeraVM, Value};
     use crate::vm::prologue::exec_prologue_tick;
+    use crate::vm::{ChimeraVM, Value};
 
     #[test]
     fn test_forth_agent_math() {
@@ -24,7 +24,7 @@ mod tests {
         // Initialize Agent with NOP (_) underfoot to avoid pushing initial 0
         let state = Value::Junction(
             crate::ast::JunctionType::All,
-            vec![Value::Int(0), Value::Int(1), Value::Str("_".to_string())]
+            vec![Value::Int(0), Value::Int(1), Value::Str("_".to_string())],
         );
         // We need pack_agent_data but it is not public? It is in mod.rs but not pub.
         // It is defined as `fn pack_agent_data`. Not `pub fn`.
@@ -62,33 +62,58 @@ mod tests {
         exec_prologue_tick(&mut vm);
 
         // After Tick 1: Agent should be at 5,6.
-        let agent = vm.prologue_state.agents.iter().find(|a| a.x == 6 && a.y == 5).expect("Agent should move to 5,6");
+        let agent = vm
+            .prologue_state
+            .agents
+            .iter()
+            .find(|a| a.x == 6 && a.y == 5)
+            .expect("Agent should move to 5,6");
         // Stack should be empty (it moved onto 10, but hasn't PROCESSED 10 yet. It processes what it is standing on).
         // At start of Tick 1, it stood on ¶.
         assert!(agent.stack.is_empty());
 
         // Tick 2: Stands on 10. Reads 10. Pushes 10. Moves to 5,7.
         exec_prologue_tick(&mut vm);
-        let agent = vm.prologue_state.agents.iter().find(|a| a.x == 7 && a.y == 5).expect("Agent should move to 5,7");
+        let agent = vm
+            .prologue_state
+            .agents
+            .iter()
+            .find(|a| a.x == 7 && a.y == 5)
+            .expect("Agent should move to 5,7");
         assert_eq!(agent.stack.len(), 1);
         assert_eq!(agent.stack[0], Value::Int(10));
 
         // Tick 3: Stands on 20. Pushes 20. Moves to 5,8.
         exec_prologue_tick(&mut vm);
-        let agent = vm.prologue_state.agents.iter().find(|a| a.x == 8 && a.y == 5).expect("Agent should move to 5,8");
+        let agent = vm
+            .prologue_state
+            .agents
+            .iter()
+            .find(|a| a.x == 8 && a.y == 5)
+            .expect("Agent should move to 5,8");
         assert_eq!(agent.stack.len(), 2);
         assert_eq!(agent.stack[0], Value::Int(10));
         assert_eq!(agent.stack[1], Value::Int(20));
 
         // Tick 4: Stands on +. Adds. Pushes 30. Moves to 5,9.
         exec_prologue_tick(&mut vm);
-        let agent = vm.prologue_state.agents.iter().find(|a| a.x == 9 && a.y == 5).expect("Agent should move to 5,9");
+        let agent = vm
+            .prologue_state
+            .agents
+            .iter()
+            .find(|a| a.x == 9 && a.y == 5)
+            .expect("Agent should move to 5,9");
         assert_eq!(agent.stack.len(), 1);
         assert_eq!(agent.stack[0], Value::Int(30));
 
         // Tick 5: Stands on .. Log 30. Moves to 5,10.
         exec_prologue_tick(&mut vm);
-        let agent = vm.prologue_state.agents.iter().find(|a| a.x == 10 && a.y == 5).expect("Agent should move to 5,10");
+        let agent = vm
+            .prologue_state
+            .agents
+            .iter()
+            .find(|a| a.x == 10 && a.y == 5)
+            .expect("Agent should move to 5,10");
         assert!(agent.stack.is_empty());
 
         // Check output

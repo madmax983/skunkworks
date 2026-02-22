@@ -74,6 +74,8 @@ pub mod elemental;
 pub mod epigenetics;
 pub mod evolution;
 pub mod fission;
+pub mod forth;
+pub mod hyper;
 pub mod hypnagogia;
 pub mod io;
 pub mod lexicon;
@@ -94,7 +96,9 @@ pub mod prism;
 pub mod psionics;
 pub mod quantum;
 pub mod resonance;
+pub mod rhythm;
 pub mod scavenger;
+pub mod sequencer;
 pub mod siren;
 pub mod symbiosis;
 pub mod teleport;
@@ -102,10 +106,6 @@ pub mod topology;
 pub mod virology;
 pub mod void;
 pub mod zeta;
-pub mod forth;
-pub mod hyper;
-pub mod rhythm;
-pub mod sequencer;
 
 /// An autonomous agent wandering the Prologue grid.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -445,8 +445,11 @@ impl PrologueState {
                             || s == "ζ"
                         {
                             // Try to retrieve persistent state
-                            let raw_state =
-                                self.registers.get(&(y, x)).cloned().unwrap_or(Value::Int(0));
+                            let raw_state = self
+                                .registers
+                                .get(&(y, x))
+                                .cloned()
+                                .unwrap_or(Value::Int(0));
                             let (state, stack) = unpack_agent_data(raw_state);
 
                             let final_state = if matches!(state, Value::Int(0)) {
@@ -619,7 +622,11 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
 
             if let Value::Str(s) = &grid[*y][*x] {
                 #[cfg(feature = "elektra")]
-                let (v_grid, r_grid, c_grid) = (&mut vm.voltage_grid, &mut vm.resistance_grid, &mut vm.capacitance_grid);
+                let (v_grid, r_grid, c_grid) = (
+                    &mut vm.voltage_grid,
+                    &mut vm.resistance_grid,
+                    &mut vm.capacitance_grid,
+                );
                 #[cfg(not(feature = "elektra"))]
                 let (v_grid, r_grid, c_grid) = (&mut vec![], &mut vec![], &mut vec![]);
 
@@ -703,10 +710,10 @@ fn apply_propagation_rune(
     orca_mode: bool,
     hyper_state: &mut hyper::HyperState,
     rhythm_state: &mut rhythm::RhythmState,
-    #[cfg(feature = "resonance")]
-    audio_tx: &Option<crossbeam_channel::Sender<resonance_audio::audio::AudioCommand>>,
-    #[cfg(not(feature = "resonance"))]
-    audio_tx: &Option<()>,
+    #[cfg(feature = "resonance")] audio_tx: &Option<
+        crossbeam_channel::Sender<resonance_audio::audio::AudioCommand>,
+    >,
+    #[cfg(not(feature = "resonance"))] audio_tx: &Option<()>,
     output: &mut Vec<String>,
 ) -> bool {
     #[cfg(feature = "elektra")]
@@ -727,14 +734,7 @@ fn apply_propagation_rune(
     }
 
     #[cfg(feature = "biophysics")]
-    if neural::apply_neural_runes(
-        rune,
-        y,
-        x,
-        current_signals,
-        next_signals,
-        registers,
-    ) {
+    if neural::apply_neural_runes(rune, y, x, current_signals, next_signals, registers) {
         return true;
     }
 
@@ -751,7 +751,16 @@ fn apply_propagation_rune(
     if construct::apply_construct_runes(rune, y, x, current_signals, next_delayed, grid) {
         return true;
     }
-    if topology::apply_topology_runes(rune, y, x, tick, current_signals, next_signals, next_delayed, orca_mode) {
+    if topology::apply_topology_runes(
+        rune,
+        y,
+        x,
+        tick,
+        current_signals,
+        next_signals,
+        next_delayed,
+        orca_mode,
+    ) {
         return true;
     }
     if math::apply_math_runes(rune, y, x, current_signals, next_signals) {
@@ -1403,11 +1412,15 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
             written_cells.insert((ny, nx));
 
             // Move Registers
-            if current_type == "C" || current_type == "♬" || current_type == "₣" || current_type == "ζ"
+            if current_type == "C"
+                || current_type == "♬"
+                || current_type == "₣"
+                || current_type == "ζ"
             {
-                vm.prologue_state
-                    .registers
-                    .insert((ny, nx), pack_agent_data(agent.state.clone(), agent.stack.clone()));
+                vm.prologue_state.registers.insert(
+                    (ny, nx),
+                    pack_agent_data(agent.state.clone(), agent.stack.clone()),
+                );
             }
 
             // Clear old pos ONLY if not written to by another agent
@@ -1446,10 +1459,7 @@ fn pack_agent_data(state: Value, stack: Vec<Value>) -> Value {
     } else {
         Value::Junction(
             crate::ast::JunctionType::All,
-            vec![
-                state,
-                Value::Junction(crate::ast::JunctionType::All, stack),
-            ],
+            vec![state, Value::Junction(crate::ast::JunctionType::All, stack)],
         )
     }
 }

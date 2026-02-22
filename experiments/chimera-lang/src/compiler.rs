@@ -24,17 +24,17 @@
 //!
 //! See [`compile`] for usage details.
 
-use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand, JunctionType};
+use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
 use crate::opcode::OpCode;
 use anyhow::{anyhow, Result};
 use pest::Parser;
-use strum::IntoEnumIterator;
 use pest_derive::Parser;
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
+use strum::IntoEnumIterator;
 
 /// The Pest parser for ChimeraScript.
 ///
@@ -363,7 +363,11 @@ fn parse_grammar_def(pair: pest::iterators::Pair<Rule>) -> Result<DefinedGrammar
         if rule_def.as_rule() == Rule::grammar_rule_def {
             let mut parts = rule_def.into_inner();
             let _type = parts.next().ok_or(anyhow!("Missing rule type"))?.as_str();
-            let name = parts.next().ok_or(anyhow!("Missing rule name"))?.as_str().to_string();
+            let name = parts
+                .next()
+                .ok_or(anyhow!("Missing rule name"))?
+                .as_str()
+                .to_string();
             let expr = parts.next().ok_or(anyhow!("Missing rule expression"))?;
             let transform = parts.next();
 
@@ -377,12 +381,15 @@ fn parse_grammar_def(pair: pest::iterators::Pair<Rule>) -> Result<DefinedGrammar
             let final_node = if let Some(t) = transform {
                 let s = t.as_str();
                 // Strip { and }
-                let template_str = s[1..s.len()-1].trim();
-                Nucleotide::Junction(JunctionType::Any, vec![
-                    Nucleotide::String("Map".to_string()),
-                    parser_node,
-                    Nucleotide::String(template_str.to_string())
-                ])
+                let template_str = s[1..s.len() - 1].trim();
+                Nucleotide::Junction(
+                    JunctionType::Any,
+                    vec![
+                        Nucleotide::String("Map".to_string()),
+                        parser_node,
+                        Nucleotide::String(template_str.to_string()),
+                    ],
+                )
             } else {
                 parser_node
             };
@@ -391,10 +398,7 @@ fn parse_grammar_def(pair: pest::iterators::Pair<Rule>) -> Result<DefinedGrammar
         }
     }
 
-    Ok(DefinedGrammar {
-        rules,
-        entry_point,
-    })
+    Ok(DefinedGrammar { rules, entry_point })
 }
 
 fn parse_rule_expr(pair: pest::iterators::Pair<Rule>) -> Result<Nucleotide> {
@@ -438,42 +442,54 @@ fn parse_rule_term(pair: pest::iterators::Pair<Rule>) -> Result<Nucleotide> {
     match inner.as_rule() {
         Rule::string => {
             let s = inner.as_str();
-            let content = s[1..s.len()-1].to_string();
-            Ok(Nucleotide::Junction(JunctionType::Any, vec![
-                Nucleotide::String("Match".to_string()),
-                Nucleotide::String(content)
-            ]))
-        },
+            let content = s[1..s.len() - 1].to_string();
+            Ok(Nucleotide::Junction(
+                JunctionType::Any,
+                vec![
+                    Nucleotide::String("Match".to_string()),
+                    Nucleotide::String(content),
+                ],
+            ))
+        }
         Rule::regex_literal => {
             let s = inner.as_str();
-            let content = s[1..s.len()-1].to_string(); // strip / /
-            Ok(Nucleotide::Junction(JunctionType::Any, vec![
-                Nucleotide::String("Regex".to_string()),
-                Nucleotide::String(content)
-            ]))
-        },
+            let content = s[1..s.len() - 1].to_string(); // strip / /
+            Ok(Nucleotide::Junction(
+                JunctionType::Any,
+                vec![
+                    Nucleotide::String("Regex".to_string()),
+                    Nucleotide::String(content),
+                ],
+            ))
+        }
         Rule::rule_ref => {
             let name = inner.as_str().to_string();
-            Ok(Nucleotide::Junction(JunctionType::Any, vec![
-                Nucleotide::String("Ref".to_string()),
-                Nucleotide::String(name)
-            ]))
-        },
+            Ok(Nucleotide::Junction(
+                JunctionType::Any,
+                vec![
+                    Nucleotide::String("Ref".to_string()),
+                    Nucleotide::String(name),
+                ],
+            ))
+        }
         Rule::group => {
             let expr = inner.into_inner().next().unwrap();
             parse_rule_expr(expr)
-        },
-        Rule::action_block => {
-             // For now, treat action block as a Map on the preceding term?
-             // But here it is a term itself.
-             // Maybe it consumes nothing and produces a value?
-             // Not supported yet.
-             Ok(Nucleotide::Junction(JunctionType::Any, vec![
-                 Nucleotide::String("Match".to_string()),
-                 Nucleotide::String("".to_string())
-             ]))
         }
-        _ => Err(anyhow!("Unknown rule term: {:?}", inner.as_rule()))
+        Rule::action_block => {
+            // For now, treat action block as a Map on the preceding term?
+            // But here it is a term itself.
+            // Maybe it consumes nothing and produces a value?
+            // Not supported yet.
+            Ok(Nucleotide::Junction(
+                JunctionType::Any,
+                vec![
+                    Nucleotide::String("Match".to_string()),
+                    Nucleotide::String("".to_string()),
+                ],
+            ))
+        }
+        _ => Err(anyhow!("Unknown rule term: {:?}", inner.as_rule())),
     }
 }
 
@@ -841,8 +857,10 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
             .get(grammar_name)
             .ok_or(anyhow!("Unknown grammar: {}", grammar_name))?;
 
-        let entry_rule = grammar.rules.get(&grammar.entry_point)
-            .ok_or(anyhow!("Entry point '{}' not found in grammar", grammar.entry_point))?;
+        let entry_rule = grammar.rules.get(&grammar.entry_point).ok_or(anyhow!(
+            "Entry point '{}' not found in grammar",
+            grammar.entry_point
+        ))?;
 
         let (ast, consumed) = babel_parse(entry_rule, content, &grammar.rules)?;
 
@@ -850,12 +868,16 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
         // babel_parse is greedy based on rules.
         // If content has trailing spaces and grammar doesn't consume them, consumed < len.
         if consumed != content.len() {
-             // For robustness, ignore trailing whitespace?
-             let remainder = &content[consumed..];
-             if !remainder.trim().is_empty() {
-                 return Err(anyhow!("Incomplete parse. Consumed {}/{} chars. Remainder: '{}'",
-                     consumed, content.len(), remainder));
-             }
+            // For robustness, ignore trailing whitespace?
+            let remainder = &content[consumed..];
+            if !remainder.trim().is_empty() {
+                return Err(anyhow!(
+                    "Incomplete parse. Consumed {}/{} chars. Remainder: '{}'",
+                    consumed,
+                    content.len(),
+                    remainder
+                ));
+            }
         }
 
         flatten_ast(&ast)
@@ -1023,7 +1045,7 @@ fn parse_junction(
 fn babel_parse(
     grammar: &Nucleotide,
     input: &str,
-    rule_set: &HashMap<String, Nucleotide>
+    rule_set: &HashMap<String, Nucleotide>,
 ) -> Result<(Nucleotide, usize)> {
     use crate::ast::JunctionType;
 
@@ -1063,7 +1085,8 @@ fn babel_parse(
                     let mut total_consumed = 0;
                     let mut results = Vec::new();
                     for parser in args.iter().skip(1) {
-                        let (res, consumed) = babel_parse(parser, &input[total_consumed..], rule_set)?;
+                        let (res, consumed) =
+                            babel_parse(parser, &input[total_consumed..], rule_set)?;
                         results.push(res);
                         total_consumed += consumed;
                     }
@@ -1087,7 +1110,9 @@ fn babel_parse(
                     let p = &args[1];
                     let mut results = Vec::new();
                     let mut total_consumed = 0;
-                    while let Ok((res, consumed)) = babel_parse(p, &input[total_consumed..], rule_set) {
+                    while let Ok((res, consumed)) =
+                        babel_parse(p, &input[total_consumed..], rule_set)
+                    {
                         if consumed == 0 {
                             break;
                         }
@@ -1134,7 +1159,9 @@ fn babel_parse(
                     Ok((mapped, consumed))
                 }
                 "Ref" => {
-                    if args.len() < 2 { return Err(anyhow!("Ref requires name")); }
+                    if args.len() < 2 {
+                        return Err(anyhow!("Ref requires name"));
+                    }
                     if let Nucleotide::String(name) = &args[1] {
                         if let Some(rule) = rule_set.get(name) {
                             // Max recursion depth check? babel_parse is recursive.

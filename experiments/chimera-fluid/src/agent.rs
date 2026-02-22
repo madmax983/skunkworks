@@ -1,8 +1,8 @@
 use crate::math::Vec4;
+use ::rand::Rng;
 use chimera_lang::prelude::*;
 use macroquad::prelude::*;
 use std::collections::VecDeque;
-use ::rand::Rng;
 
 #[derive(Clone)]
 pub struct Agent {
@@ -86,19 +86,39 @@ impl Agent {
         // Channel 1-4: Gradient X, Y, Z, W
 
         let sens_density = (density * 100.0) as i64;
-        self.vm.ether.entry(0).or_insert(VecDeque::new()).push_back(Value::Int(sens_density));
+        self.vm
+            .ether
+            .entry(0)
+            .or_insert(VecDeque::new())
+            .push_back(Value::Int(sens_density));
 
         let sens_dx = (gradient.x * 100.0) as i64;
-        self.vm.ether.entry(1).or_insert(VecDeque::new()).push_back(Value::Int(sens_dx));
+        self.vm
+            .ether
+            .entry(1)
+            .or_insert(VecDeque::new())
+            .push_back(Value::Int(sens_dx));
 
         let sens_dy = (gradient.y * 100.0) as i64;
-        self.vm.ether.entry(2).or_insert(VecDeque::new()).push_back(Value::Int(sens_dy));
+        self.vm
+            .ether
+            .entry(2)
+            .or_insert(VecDeque::new())
+            .push_back(Value::Int(sens_dy));
 
         let sens_dz = (gradient.z * 100.0) as i64;
-        self.vm.ether.entry(3).or_insert(VecDeque::new()).push_back(Value::Int(sens_dz));
+        self.vm
+            .ether
+            .entry(3)
+            .or_insert(VecDeque::new())
+            .push_back(Value::Int(sens_dz));
 
         let sens_dw = (gradient.w * 100.0) as i64;
-        self.vm.ether.entry(4).or_insert(VecDeque::new()).push_back(Value::Int(sens_dw));
+        self.vm
+            .ether
+            .entry(4)
+            .or_insert(VecDeque::new())
+            .push_back(Value::Int(sens_dw));
 
         // Limit queues
         for i in 0..5 {
@@ -130,22 +150,30 @@ impl Agent {
 
         if let Some(queue) = self.vm.ether.get_mut(&5) {
             while let Some(val) = queue.pop_front() {
-                if let Value::Int(v) = val { force.x += (v as f32) * 0.1; }
+                if let Value::Int(v) = val {
+                    force.x += (v as f32) * 0.1;
+                }
             }
         }
         if let Some(queue) = self.vm.ether.get_mut(&6) {
             while let Some(val) = queue.pop_front() {
-                if let Value::Int(v) = val { force.y += (v as f32) * 0.1; }
+                if let Value::Int(v) = val {
+                    force.y += (v as f32) * 0.1;
+                }
             }
         }
         if let Some(queue) = self.vm.ether.get_mut(&7) {
             while let Some(val) = queue.pop_front() {
-                if let Value::Int(v) = val { force.z += (v as f32) * 0.1; }
+                if let Value::Int(v) = val {
+                    force.z += (v as f32) * 0.1;
+                }
             }
         }
         if let Some(queue) = self.vm.ether.get_mut(&8) {
             while let Some(val) = queue.pop_front() {
-                if let Value::Int(v) = val { force.w += (v as f32) * 0.1; }
+                if let Value::Int(v) = val {
+                    force.w += (v as f32) * 0.1;
+                }
             }
         }
 

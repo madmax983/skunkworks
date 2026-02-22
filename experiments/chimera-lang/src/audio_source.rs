@@ -18,7 +18,7 @@ impl RodioAudioSource {
         Self {
             model,
             buffer: vec![0.0; 512], // Standard buffer size
-            pos: 512, // Force initial fill
+            pos: 512,               // Force initial fill
         }
     }
 }

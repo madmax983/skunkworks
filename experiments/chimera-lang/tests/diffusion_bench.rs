@@ -1,13 +1,15 @@
 #[cfg(test)]
 mod tests {
-    use chimera_lang::vm::ChimeraVM;
     use chimera_lang::ast::{Dna, Helix};
     use chimera_lang::vm::nova;
+    use chimera_lang::vm::ChimeraVM;
     use std::time::Instant;
 
     #[test]
     fn bench_diffusion() {
-        let dna = Dna { helix: Helix { strands: vec![] } };
+        let dna = Dna {
+            helix: Helix { strands: vec![] },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         // Setup some state

@@ -84,10 +84,12 @@ pub fn apply_sequencer_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
                                         let strand = &mut vm.dna.helix.strands[s_idx];
                                         if g_idx < strand.genes.len() {
                                             strand.genes[g_idx] = new_gene.clone();
-                                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1)); // Success
+                                            vm.prologue_state.signal_grid[y][x] =
+                                                Some(Value::Int(1)); // Success
                                         } else if g_idx == strand.genes.len() {
                                             strand.genes.push(new_gene.clone());
-                                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                                            vm.prologue_state.signal_grid[y][x] =
+                                                Some(Value::Int(1));
                                         }
                                     }
                                 }
@@ -116,7 +118,8 @@ pub fn apply_sequencer_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
                                         let strand = &mut vm.dna.helix.strands[s_idx];
                                         if g_idx <= strand.genes.len() {
                                             strand.genes.insert(g_idx, new_gene.clone());
-                                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                                            vm.prologue_state.signal_grid[y][x] =
+                                                Some(Value::Int(1));
                                         }
                                     }
                                 }

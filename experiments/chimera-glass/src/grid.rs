@@ -80,10 +80,10 @@ impl SpinGrid4D {
 
         let old_theta = self.spins[idx];
         let e_old = -(old_theta.cos() * neighbor_sum_cos + old_theta.sin() * neighbor_sum_sin)
-                    - field_strength * old_theta.cos();
+            - field_strength * old_theta.cos();
 
         let e_new = -(new_theta.cos() * neighbor_sum_cos + new_theta.sin() * neighbor_sum_sin)
-                    - field_strength * new_theta.cos();
+            - field_strength * new_theta.cos();
 
         e_new - e_old
     }

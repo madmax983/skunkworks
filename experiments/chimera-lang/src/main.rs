@@ -13,13 +13,13 @@ use chimera_lang::{
 use std::path::Path;
 
 #[cfg(feature = "resonance")]
+use chimera_lang::audio_source::RodioAudioSource;
+#[cfg(feature = "resonance")]
 use crossbeam_channel::unbounded;
 #[cfg(feature = "resonance")]
 use resonance_audio::audio::AudioModel;
 #[cfg(feature = "resonance")]
 use rodio::OutputStream;
-#[cfg(feature = "resonance")]
-use chimera_lang::audio_source::RodioAudioSource;
 
 #[derive(ClapParser)]
 #[command(author, version, about, long_about = None)]
@@ -56,11 +56,17 @@ fn main() -> Result<()> {
     } else if extension == "score" {
         #[cfg(feature = "resonance")]
         {
-            (chimera_lang::acoustic_compiler::compile(&unparsed_file)?, None, None)
+            (
+                chimera_lang::acoustic_compiler::compile(&unparsed_file)?,
+                None,
+                None,
+            )
         }
         #[cfg(not(feature = "resonance"))]
         {
-            return Err(anyhow::anyhow!("Resonance feature disabled. Cannot compile score."));
+            return Err(anyhow::anyhow!(
+                "Resonance feature disabled. Cannot compile score."
+            ));
         }
     } else {
         let dna = if extension == "chs" {
@@ -122,7 +128,7 @@ fn main() -> Result<()> {
                 sink.append(source);
                 sink.play();
                 Some(sink)
-            },
+            }
             Err(e) => {
                 eprintln!("Warning: Failed to create audio sink: {}", e);
                 None
@@ -157,13 +163,14 @@ fn main() -> Result<()> {
 
             let val_str = if let Value::Junction(JunctionType::All, items) = val {
                 // Check if this looks like a list of bindings from Oracle (List of [Key, Value])
-                let is_binding_list = !items.is_empty() && items.iter().all(|item| {
-                    if let Value::Junction(JunctionType::All, b_args) = item {
-                        b_args.len() == 2 && matches!(b_args[0], Value::Str(_))
-                    } else {
-                        false
-                    }
-                });
+                let is_binding_list = !items.is_empty()
+                    && items.iter().all(|item| {
+                        if let Value::Junction(JunctionType::All, b_args) = item {
+                            b_args.len() == 2 && matches!(b_args[0], Value::Str(_))
+                        } else {
+                            false
+                        }
+                    });
 
                 if is_binding_list {
                     let mut inner = comfy_table::Table::new();

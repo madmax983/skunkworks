@@ -479,18 +479,25 @@ impl AppState {
 
 fn panel_block<'a>(title: &'a str, active: bool) -> Block<'a> {
     let border_style = if active {
-        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+        Style::default()
+            .fg(Color::Yellow)
+            .add_modifier(Modifier::BOLD)
     } else {
         Style::default().fg(Color::Cyan)
     };
 
     Block::default()
         .borders(Borders::ALL)
-        .title(Span::styled(title, if active {
-            Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
-        } else {
-            Style::default().fg(Color::White)
-        }))
+        .title(Span::styled(
+            title,
+            if active {
+                Style::default()
+                    .fg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD)
+            } else {
+                Style::default().fg(Color::White)
+            },
+        ))
         .border_style(border_style)
 }
 
@@ -6857,9 +6864,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
             };
 
     // Highlight the active block borders/title
-    let genome_list = List::new(strand_items).block(
-        panel_block(&title, app_state.view_mode == ViewMode::Genome)
-    );
+    let genome_list =
+        List::new(strand_items).block(panel_block(&title, app_state.view_mode == ViewMode::Genome));
     f.render_widget(genome_list, left_chunks[0]);
 
     // Petri Dish (Grid)
@@ -12549,8 +12555,7 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     // Rhythm Status
     info.push(Line::from(format!(
         "Rhythm: {} BPM (Int: {})",
-        vm.prologue_state.rhythm_state.bpm,
-        vm.prologue_state.rhythm_state.beat_interval
+        vm.prologue_state.rhythm_state.bpm, vm.prologue_state.rhythm_state.beat_interval
     )));
 
     // Check for Agent at Cursor

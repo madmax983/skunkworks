@@ -1,6 +1,6 @@
 use super::{normalize_coords, PrologueAgent};
-use crate::vm::{ChimeraVM, Value};
 use crate::lisp::compile_fragment;
+use crate::vm::{ChimeraVM, Value};
 
 /// The Zeta Agent (ζ) executes Lisp-like expressions found on the grid.
 ///
@@ -88,7 +88,7 @@ pub fn process_zeta_agent(
     if let Some((ny, nx)) = target {
         // Check if destination is blocked by another agent
         if let Value::Str(s) = &grid_snapshot[ny][nx] {
-             if matches!(s.as_str(), "@" | "K" | "H" | "C" | "♻" | "♬" | "₣" | "ζ") {
+            if matches!(s.as_str(), "@" | "K" | "H" | "C" | "♻" | "♬" | "₣" | "ζ") {
                 // Blocked - Turn Randomly? Or Reverse?
                 // Let's reverse for now.
                 updated_agent.state = Value::Junction(
@@ -140,8 +140,8 @@ fn scan_wire_path(
                         // Hit another agent or self (loop), stop
                         break;
                     } else if !s.is_empty() {
-                         // Likely an atom (OpCode or String)
-                         tokens.push(s.clone());
+                        // Likely an atom (OpCode or String)
+                        tokens.push(s.clone());
                     } else {
                         // Empty string - stop
                         break;

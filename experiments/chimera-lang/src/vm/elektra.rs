@@ -75,7 +75,8 @@ fn exec_capacitor(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let c = c_val.max(1) as f32;
         vm.capacitance_grid[y][x] = c;
         vm.grid[y][x] = Value::Str(format!("C:{}", c));
-        vm.output.push(format!("CAPACITOR: {:.1}F at {},{}", c, x, y));
+        vm.output
+            .push(format!("CAPACITOR: {:.1}F at {},{}", c, x, y));
     }
     None
 }
@@ -86,7 +87,8 @@ fn exec_memristor(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let r = r_val.max(1) as f32;
         vm.resistance_grid[y][x] = r;
         vm.grid[y][x] = Value::Str(format!("R:{}", r));
-        vm.output.push(format!("MEMRISTOR: {:.1}Ω at {},{}", r, x, y));
+        vm.output
+            .push(format!("MEMRISTOR: {:.1}Ω at {},{}", r, x, y));
     }
     None
 }
@@ -760,7 +762,8 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
                         }
 
                         let mult = get_component_multiplier(vm, y, x, ny, nx);
-                        let effective_cond = (base_cond * neighbor_cond) / (base_cond + neighbor_cond) * mult;
+                        let effective_cond =
+                            (base_cond * neighbor_cond) / (base_cond + neighbor_cond) * mult;
 
                         let v_neighbor = vm.voltage_grid[ny][nx];
                         v_sum += v_neighbor * effective_cond;
@@ -789,7 +792,8 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
                     let v_target = v_sum / weight_sum;
                     let cap = vm.capacitance_grid[y][x].max(1.0);
                     let rate = 1.0 / cap;
-                    next_voltage[y][x] = vm.voltage_grid[y][x] + (v_target - vm.voltage_grid[y][x]) * rate;
+                    next_voltage[y][x] =
+                        vm.voltage_grid[y][x] + (v_target - vm.voltage_grid[y][x]) * rate;
                 } else {
                     next_voltage[y][x] = vm.voltage_grid[y][x] * 0.95;
                 }

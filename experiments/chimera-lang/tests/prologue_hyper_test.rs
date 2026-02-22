@@ -1,15 +1,20 @@
 use chimera_lang::ast::{Dna, Helix};
-use chimera_lang::vm::{ChimeraVM, Value};
 use chimera_lang::vm::prologue::exec_prologue_tick;
+use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_hyper_tesseract_source() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
     // Manually inject a hyper coord for testing source emission
-    vm.prologue_state.hyper_state.extra_dims.insert((5, 5), (0, 42));
+    vm.prologue_state
+        .hyper_state
+        .extra_dims
+        .insert((5, 5), (0, 42));
 
     // Setup Tesseract at 5,5
     vm.grid[5][5] = Value::Str("▣".to_string());
@@ -22,7 +27,9 @@ fn test_hyper_tesseract_source() {
 
 #[test]
 fn test_hyper_step() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -44,7 +51,9 @@ fn test_hyper_step() {
 
 #[test]
 fn test_hyper_rotate() {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 

@@ -1,5 +1,5 @@
-use crossbeam_channel::Receiver;
 use anyhow::Result;
+use crossbeam_channel::Receiver;
 
 #[cfg(feature = "audio")]
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};

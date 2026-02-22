@@ -1,4 +1,4 @@
-use crate::agent::{Agent, mutate_dna};
+use crate::agent::{mutate_dna, Agent};
 use crate::tablet::Tablet;
 use rand::thread_rng;
 
@@ -56,9 +56,12 @@ impl Simulation {
 
     fn repopulate(&mut self) {
         // Simple elitism
-        self.agents.sort_by(|a, b| b.energy.partial_cmp(&a.energy).unwrap());
+        self.agents
+            .sort_by(|a, b| b.energy.partial_cmp(&a.energy).unwrap());
         let survivors_count = self.agents.len() / 2;
-        if survivors_count == 0 { return; } // Extinction event
+        if survivors_count == 0 {
+            return;
+        } // Extinction event
 
         let mut new_agents = Vec::new();
         let mut rng = thread_rng();
@@ -66,7 +69,11 @@ impl Simulation {
         // Top 50% reproduce
         for i in 0..survivors_count {
             let parent = &self.agents[i];
-            let mut child = Agent::new(self.agents.len() as u64 + i as u64, self.tablet.width, self.tablet.height);
+            let mut child = Agent::new(
+                self.agents.len() as u64 + i as u64,
+                self.tablet.width,
+                self.tablet.height,
+            );
 
             child.dna = mutate_dna(&parent.dna, &mut rng);
             child.vm = chimera_lang::prelude::ChimeraVM::new(child.dna.clone());

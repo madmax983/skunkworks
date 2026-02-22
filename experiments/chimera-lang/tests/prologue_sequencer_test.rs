@@ -43,7 +43,11 @@ fn test_sequencer_read() {
     }
 
     let output = vm.output.join("\n");
-    assert!(output.contains("push(42)"), "Output should contain gene string: {}", output);
+    assert!(
+        output.contains("push(42)"),
+        "Output should contain gene string: {}",
+        output
+    );
 }
 
 #[test]

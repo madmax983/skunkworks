@@ -1,6 +1,6 @@
 use chimera_lang::ast::{Dna, Helix};
-use chimera_lang::vm::{ChimeraVM, Value};
 use chimera_lang::vm::prologue::exec_prologue_tick;
+use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_zeta_agent_lisp() {
@@ -46,11 +46,16 @@ fn test_zeta_agent_lisp() {
 
     // Find the agent. It should have moved to 5,6 (onto the wire)
     // agents list is in prologue_state.agents
-    let agent = vm.prologue_state.agents.iter().find(|a| {
-        // It might be at 5,6 or 5,5 depending on move logic
-        // If it moved, it is at 5,6
-        a.y == 5 && (a.x == 5 || a.x == 6)
-    }).expect("Agent not found");
+    let agent = vm
+        .prologue_state
+        .agents
+        .iter()
+        .find(|a| {
+            // It might be at 5,6 or 5,5 depending on move logic
+            // If it moved, it is at 5,6
+            a.y == 5 && (a.x == 5 || a.x == 6)
+        })
+        .expect("Agent not found");
 
     // Check stack
     assert_eq!(agent.stack.len(), 1, "Stack should have 1 item");
@@ -84,7 +89,12 @@ fn test_zeta_agent_bracket_list() {
 
     exec_prologue_tick(&mut vm);
 
-    let agent = vm.prologue_state.agents.iter().find(|a| a.y == 5).expect("Agent not found");
+    let agent = vm
+        .prologue_state
+        .agents
+        .iter()
+        .find(|a| a.y == 5)
+        .expect("Agent not found");
 
     assert_eq!(agent.stack.len(), 1);
     if let Value::Int(v) = agent.stack[0] {

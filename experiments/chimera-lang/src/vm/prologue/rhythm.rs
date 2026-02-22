@@ -1,9 +1,9 @@
 use crate::vm::Value;
-use serde::{Deserialize, Serialize};
-#[cfg(feature = "resonance")]
-use resonance_audio::audio::AudioCommand;
 #[cfg(feature = "resonance")]
 use crossbeam_channel::Sender;
+#[cfg(feature = "resonance")]
+use resonance_audio::audio::AudioCommand;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RhythmState {
@@ -39,30 +39,31 @@ pub fn apply_rhythm_runes(
     current_signals: &[Vec<Option<Value>>],
     next_signals: &mut Vec<Vec<Option<Value>>>,
     rhythm_state: &mut RhythmState,
-    #[cfg(feature = "resonance")]
-    audio_tx: &Option<Sender<AudioCommand>>,
-    #[cfg(not(feature = "resonance"))]
-    _audio_tx: &Option<()>,
+    #[cfg(feature = "resonance")] audio_tx: &Option<Sender<AudioCommand>>,
+    #[cfg(not(feature = "resonance"))] _audio_tx: &Option<()>,
     output: &mut Vec<String>,
 ) -> bool {
     let mut change = false;
     match rune {
-        "⏱️" => { // Clock
+        "⏱️" => {
+            // Clock
             // Emits signal on beat
             let interval = rhythm_state.beat_interval;
             if interval > 0 && tick % interval == 0 {
-                 next_signals[y][x] = Some(Value::Int(1));
-                 change = true;
+                next_signals[y][x] = Some(Value::Int(1));
+                change = true;
             }
         }
-        "🥁" => { // Drum
+        "🥁" => {
+            // Drum
             // Reads West. If signal, Play Drum.
             if let Some((wy, wx)) = super::normalize_coords(y as i64, x as i64 - 1) {
                 if current_signals[wy][wx].is_some() {
                     #[cfg(feature = "resonance")]
                     if let Some(tx) = audio_tx {
                         let _ = tx.send(AudioCommand::Tone {
-                            x, y,
+                            x,
+                            y,
                             frequency: 60.0, // Low freq for kick
                             strength: 1.0,
                             duration_ms: 100,
@@ -74,9 +75,10 @@ pub fn apply_rhythm_runes(
                 }
             }
         }
-        "🎹" => { // Keys
-             // Reads West (Note)
-             if let Some((wy, wx)) = super::normalize_coords(y as i64, x as i64 - 1) {
+        "🎹" => {
+            // Keys
+            // Reads West (Note)
+            if let Some((wy, wx)) = super::normalize_coords(y as i64, x as i64 - 1) {
                 if let Some(val) = &current_signals[wy][wx] {
                     // Parse note
                     let freq = match val {
@@ -87,7 +89,8 @@ pub fn apply_rhythm_runes(
                     if let Some(tx) = audio_tx {
                         let hz = 440.0 * 2.0f32.powf((freq - 69.0) / 12.0);
                         let _ = tx.send(AudioCommand::Tone {
-                            x, y,
+                            x,
+                            y,
                             frequency: hz,
                             strength: 0.8,
                             duration_ms: 200,
@@ -96,11 +99,12 @@ pub fn apply_rhythm_runes(
                     next_signals[y][x] = Some(val.clone());
                     change = true;
                 }
-             }
+            }
         }
-        "🎚️" => { // Fader
+        "🎚️" => {
+            // Fader
             // Reads West (Value) -> Sets BPM
-             if let Some((wy, wx)) = super::normalize_coords(y as i64, x as i64 - 1) {
+            if let Some((wy, wx)) = super::normalize_coords(y as i64, x as i64 - 1) {
                 if let Some(Value::Int(n)) = &current_signals[wy][wx] {
                     if *n > 0 {
                         rhythm_state.bpm = *n as u64;
@@ -110,7 +114,7 @@ pub fn apply_rhythm_runes(
                         rhythm_state.beat_interval = (600 / *n).max(1) as u64;
                     }
                 }
-             }
+            }
         }
         _ => {}
     }
