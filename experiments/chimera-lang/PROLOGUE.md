@@ -276,6 +276,14 @@ Enabled via `OpCode::Orca` or TUI toggle. This is a concurrent cellular automata
 | `C` | **Clock** | Outputs time-based modulo values. |
 | `M` | **Mutate** | Mutates target strand or value. |
 | `Q` | **Query** | Reads value at offset. |
+| `¶` | **Sigil** | Trigger named strand if pattern matches. |
+| `µ` | **Vacuum** | Inverts emptiness (West 0 -> South 1). |
+| `Ø` | **Void In** | Pushes West to Void Buffer. |
+| `§` | **Void Out** | Pops from Void Buffer to South. |
+| `▣` | **Tesseract** | Emits W coordinate. |
+| `⇪` | **Ascend** | Modifies W coordinate of South cell. |
+| `↻` | **Rotate** | Rotates Hypercube projection. |
+| `⌖` | **Project** | Changes Projection mode. |
 
 # Hyper-Geometry ▣
 

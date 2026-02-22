@@ -191,6 +191,22 @@ struct SignalContext {
     #[cfg(feature = "oracle")]
     knowledge_writes: Vec<KnowledgeWrite>,
     transmutation_writes: Vec<TransmutationWrite>,
+    void_pushes: Vec<Value>,
+    void_pops: Vec<(usize, usize)>,
+    hyper_writes: Vec<HyperWrite>,
+}
+
+struct HyperWrite {
+    y: usize,
+    x: usize,
+    op: HyperOp,
+}
+
+enum HyperOp {
+    Ascend(i64),
+    Rotate(f64),
+    Project(u8),
+    Tesseract,
 }
 
 struct PhageUpdate {
@@ -229,6 +245,9 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         #[cfg(feature = "oracle")]
         knowledge_writes: Vec::new(),
         transmutation_writes: Vec::new(),
+        void_pushes: Vec::new(),
+        void_pops: Vec::new(),
+        hyper_writes: Vec::new(),
     };
 
     // 0. Process Phages
@@ -280,7 +299,11 @@ pub fn process_signals(vm: &mut ChimeraVM) {
 
             let is_uppercase = c.is_uppercase(); // Use Unicode uppercase
             let is_bang = c == '*';
-            let is_special = matches!(c, '@' | '^' | 'Ψ' | 'ψ' | 'Φ' | 'φ' | 'Ω' | 'ω' | '☿' | '♀');
+            let is_special = matches!(
+                c,
+                '@' | '^' | 'Ψ' | 'ψ' | 'Φ' | 'φ' | 'Ω' | 'ω' | '☿' | '♀' | '¶' | 'µ' | 'Ø' | '§'
+                    | '▣' | '⇪' | '↻' | '⌖'
+            );
             let active = signal > 0 || is_uppercase || is_bang || is_special;
 
             if !active {
@@ -451,7 +474,14 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 'Ψ' | 'ψ' => exec_psi(vm, y, x, signal, &mut ctx),
                 'Φ' | 'φ' => exec_phi(vm, y, x, signal, &mut ctx),
                 'Ω' | 'ω' => exec_omega(vm, y, x, signal, &mut ctx),
-                '§' => exec_sigil(vm, y, x, signal, &mut ctx),
+                '¶' => exec_sigil(vm, y, x, signal, &mut ctx),
+                'µ' => exec_vacuum(vm, y, x, signal, &mut ctx),
+                'Ø' => exec_void_in(vm, y, x, signal, &mut ctx),
+                '§' => exec_void_out(vm, y, x, signal, &mut ctx),
+                '▣' => exec_tesseract(vm, y, x, signal, &mut ctx),
+                '⇪' => exec_ascend(vm, y, x, signal, &mut ctx),
+                '↻' => exec_rotate(vm, y, x, signal, &mut ctx),
+                '⌖' => exec_project(vm, y, x, signal, &mut ctx),
                 'ƒ' => exec_function_op(vm, y, x, signal, &mut ctx),
                 'Γ' => exec_gamma(vm, y, x, signal, &mut ctx),
                 'Σ' => exec_sigma(vm, y, x, &mut ctx),
@@ -741,12 +771,99 @@ pub fn process_signals(vm: &mut ChimeraVM) {
     // 3.75 Apply MIDI
     vm.midi_messages.extend(ctx.midi_events);
 
+    // 3.8 Apply Void Ops
+    for val in ctx.void_pushes {
+        if vm.prologue_state.void_buffer.len() < crate::vm::MAX_VOID_BUFFER_SIZE {
+            vm.prologue_state.void_buffer.push_back(val);
+        }
+    }
+    for (y, x) in ctx.void_pops {
+        if let Some(val) = vm.prologue_state.void_buffer.pop_back() {
+            vm.grid[y][x] = val;
+        }
+    }
+
+    // 3.9 Apply Hyper Ops
+    for w in ctx.hyper_writes {
+        match w.op {
+            HyperOp::Ascend(delta) => {
+                let entry = vm.prologue_state.hyper_state.extra_dims.entry((w.y, w.x)).or_insert((0, 0));
+                entry.1 += delta;
+            }
+            HyperOp::Rotate(angle) => {
+                vm.prologue_state.hyper_state.rotation = (vm.prologue_state.hyper_state.rotation + angle) % 360.0;
+            }
+            HyperOp::Project(mode) => {
+                vm.prologue_state.hyper_state.projection_mode = mode;
+            }
+            HyperOp::Tesseract => {
+                let w_val = if let Some((_, w)) = vm.prologue_state.hyper_state.extra_dims.get(&(w.y, w.x)) {
+                    *w
+                } else {
+                    0
+                };
+                vm.grid[w.y][w.x] = Value::Int(w_val);
+            }
+        }
+    }
+
     // 4. Execution Phase
     for (op, args) in ctx.executions {
         if let Some(target) = vm.execute_gene_inner(op.clone(), &args) {
             vm.ip = target;
         }
     }
+}
+
+fn exec_vacuum(vm: &ChimeraVM, y: usize, x: usize, _signal: u8, ctx: &mut SignalContext) {
+    let val = peek(vm, y, x, 0, -1).unwrap_or(0);
+    if val == 0 {
+        if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+             ctx.grid_writes.push(GridWrite { y: sy, x: sx, val: Value::Int(1) });
+        }
+    }
+}
+
+fn exec_void_in(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 { return; }
+    if let Some(val) = peek_value(vm, y, x, 0, -1) {
+        ctx.void_pushes.push(val);
+    }
+}
+
+fn exec_void_out(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 { return; }
+    if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+        ctx.void_pops.push((sy, sx));
+    }
+}
+
+fn exec_tesseract(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal > 0 {
+        if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+            ctx.hyper_writes.push(HyperWrite { y: sy, x: sx, op: HyperOp::Tesseract });
+        }
+    }
+}
+
+fn exec_ascend(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 { return; }
+    let delta = peek(vm, y, x, 0, -1).unwrap_or(1);
+    if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+        ctx.hyper_writes.push(HyperWrite { y: sy, x: sx, op: HyperOp::Ascend(delta) });
+    }
+}
+
+fn exec_rotate(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 { return; }
+    let angle = peek(vm, y, x, 0, -1).unwrap_or(90) as f64;
+    ctx.hyper_writes.push(HyperWrite { y, x, op: HyperOp::Rotate(angle) });
+}
+
+fn exec_project(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 { return; }
+    let mode = peek(vm, y, x, 0, -1).unwrap_or(0) as u8;
+    ctx.hyper_writes.push(HyperWrite { y, x, op: HyperOp::Project(mode) });
 }
 
 fn exec_midi_note(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
