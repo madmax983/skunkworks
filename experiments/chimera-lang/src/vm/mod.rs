@@ -742,6 +742,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "elektra")]
     pub resistance_grid: Vec<Vec<f32>>,
     #[cfg(feature = "elektra")]
+    pub capacitance_grid: Vec<Vec<f32>>,
+    #[cfg(feature = "elektra")]
     pub patch_bay: HashMap<(usize, usize), PatchTarget>,
     #[cfg(feature = "nova")]
     pub last_gene: Option<crate::ast::Gene>,
@@ -1120,6 +1122,8 @@ impl ChimeraVM {
             current_grid: vec![vec![0.0; GRID_SIZE]; GRID_SIZE],
             #[cfg(feature = "elektra")]
             resistance_grid: vec![vec![1.0; GRID_SIZE]; GRID_SIZE], // Default resistance 1.0 (Air/Void might be high?)
+            #[cfg(feature = "elektra")]
+            capacitance_grid: vec![vec![1.0; GRID_SIZE]; GRID_SIZE], // Default capacitance
             #[cfg(feature = "elektra")]
             patch_bay: HashMap::new(),
             #[cfg(feature = "nova")]

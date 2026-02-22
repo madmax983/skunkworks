@@ -12,6 +12,7 @@ pub fn apply_elektra_runes(
     next_signals: &mut Vec<Vec<Option<Value>>>,
     voltage_grid: &mut Vec<Vec<f32>>,
     resistance_grid: &mut Vec<Vec<f32>>,
+    capacitance_grid: &mut Vec<Vec<f32>>,
     energy: &mut i64,
     registers: &mut HashMap<(usize, usize), Value>,
 ) -> bool {
@@ -98,6 +99,40 @@ pub fn apply_elektra_runes(
             }
             resistance_grid[y][x] = 100.0; // Load
         }
+        "🔋" => {
+            // Capacitor: Set Capacitance to 100.0
+            capacitance_grid[y][x] = 100.0;
+        }
+        "♒" => {
+            // Memristor: Set Resistance to 50.0 (initial)
+            // But if it's dynamic, we shouldn't overwrite it every tick if it drifts.
+            // However, scan_grid happens every tick.
+            // If we set it here, we reset it.
+            // We should only set it if it's not already set? Or let update_circuit handle persistence.
+            // update_circuit handles Memristor logic if cell string starts with R:.
+            // But here the cell string is "♒".
+            // So we need to map "♒" to Memristor behavior.
+            // We can set resistance here, but we need registers to store state if we want persistence across ticks,
+            // OR we rely on resistance_grid preserving value (which it does).
+            // But if we write resistance_grid[y][x] = 50.0 here every tick, we clamp it.
+            // Solution: Check if we initialized it this tick? No.
+            // Check if value is default?
+
+            // Actually, `prepare_signals` clears `signal_grid`, but `resistance_grid` persists in `vm`.
+            // But `scan_grid_rules` runs every tick. `apply_elektra_runes` runs every tick.
+
+            // If I write `resistance_grid[y][x] = 50.0`, I reset any training.
+            // I should use `registers` to track if initialized.
+            // Or just check if resistance is exactly default (1.0)? But what if it trained to 1.0?
+
+            // Better approach: Use registers.
+            let initialized = registers.contains_key(&(y, x));
+            if !initialized {
+                resistance_grid[y][x] = 50.0;
+                registers.insert((y, x), Value::Int(1));
+            }
+            // If initialized, do nothing (let update_circuit modify resistance_grid).
+        }
         _ => {}
     }
     changes
@@ -113,6 +148,7 @@ pub fn apply_elektra_runes(
     _next_signals: &mut Vec<Vec<Option<Value>>>,
     _voltage_grid: &mut Vec<Vec<f32>>,
     _resistance_grid: &mut Vec<Vec<f32>>,
+    _capacitance_grid: &mut Vec<Vec<f32>>,
     _energy: &mut i64,
     _registers: &mut HashMap<(usize, usize), Value>,
 ) -> bool {

@@ -8874,7 +8874,13 @@ fn render_elektra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     .add_modifier(Modifier::BOLD);
                 "-".to_string() // Ground
             } else if let crate::vm::Value::Str(s) = &vm.grid[y][x] {
-                if s.starts_with("D:") {
+                if s.starts_with("C:") {
+                    style = style.fg(Color::Cyan).add_modifier(Modifier::BOLD);
+                    "C".to_string()
+                } else if s.starts_with("R:") {
+                    style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD);
+                    "R".to_string()
+                } else if s.starts_with("D:") {
                     style = style.fg(Color::White).add_modifier(Modifier::BOLD);
                     let dir = s.trim_start_matches("D:").parse::<i64>().unwrap_or(0);
                     match dir {
