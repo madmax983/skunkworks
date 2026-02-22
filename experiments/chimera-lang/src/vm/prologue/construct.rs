@@ -1,6 +1,7 @@
 use super::normalize_coords;
 use crate::ast::JunctionType;
 use crate::vm::Value;
+use serde_json;
 
 pub fn apply_construct_runes(
     rune: &str,
@@ -77,14 +78,29 @@ pub fn apply_construct_runes(
 pub fn apply_construct_sinks(vm: &mut crate::vm::ChimeraVM, rune: &str, y: usize, x: usize) {
     match rune {
         "Π" => {
-            // Prototyper: West (Blueprint) -> Grid (East)
+            // Prototyper: West (Blueprint/String) -> Grid (East)
             let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
                 vm.prologue_state.signal_grid[wy][wx].clone()
             } else {
                 None
             };
 
-            if let Some(Value::Junction(JunctionType::Dish, rows)) = w_sig {
+            let maybe_dish = match w_sig {
+                Some(Value::Junction(JunctionType::Dish, rows)) => Some(rows),
+                Some(Value::Str(s)) => {
+                    // Try to parse JSON
+                    if let Ok(Value::Junction(JunctionType::Dish, rows)) =
+                        serde_json::from_str::<Value>(&s)
+                    {
+                        Some(rows)
+                    } else {
+                        None
+                    }
+                }
+                _ => None,
+            };
+
+            if let Some(rows) = maybe_dish {
                 // Paste
                 let h = rows.len() as i64;
                 let start_y = (y as i64) - (h / 2);
