@@ -155,6 +155,9 @@ pub struct PrologueState {
     /// Orca Mode: Enables omni-directional signal flow and alternative rune behavior.
     #[serde(default)]
     pub orca_mode: bool,
+    /// Void Buffer: Global LIFO storage for Void runes.
+    #[serde(default)]
+    pub void_buffer: VecDeque<Value>,
     /// Scratch buffer for signal propagation (Double Buffering).
     #[serde(skip, default)]
     pub scratch_signal_grid: Vec<Vec<Option<Value>>>,
@@ -187,6 +190,7 @@ impl PrologueState {
             library: HashMap::new(),
             logos_engine: logos::LogosEngine::new(),
             orca_mode: false,
+            void_buffer: VecDeque::new(),
             scratch_signal_grid: vec![vec![None; GRID_SIZE]; GRID_SIZE],
         }
     }
@@ -601,6 +605,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     &mut vm.prologue_state.teleport_channels,
                     &mut vm.prologue_state.echoes,
                     &mut vm.prologue_state.history,
+                    &mut vm.prologue_state.void_buffer,
                     grid,
                     &vm.light_grid,
                     &mut vm.prologue_state.dream_intensity,
@@ -645,6 +650,7 @@ fn apply_propagation_rune(
     teleport_channels: &mut HashMap<i64, Value>,
     echoes: &mut HashMap<(usize, usize), echo::EchoBuffer>,
     history: &mut HashMap<(usize, usize), VecDeque<Value>>,
+    void_buffer: &mut VecDeque<Value>,
     grid: &[Vec<Value>],
     light_grid: &[Vec<i64>],
     dream_intensity: &mut f32,
@@ -734,7 +740,7 @@ fn apply_propagation_rune(
     if evolution::apply_evolution_runes(rune, y, x, dna, current_signals, next_signals) {
         return true;
     }
-    if void::apply_void_runes(rune, y, x, current_signals, next_signals) {
+    if void::apply_void_runes(rune, y, x, current_signals, next_signals, void_buffer) {
         return true;
     }
     if virology::apply_virology_runes(rune, y, x, current_signals, next_signals) {

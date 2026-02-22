@@ -145,6 +145,16 @@ Introduces elemental forces to the grid.
 *   Water + Earth -> **Mud**
 *   Fire + Air -> **Plasma**
 
+# Void Alchemy 🕳️
+
+Runes for interacting with the Void Buffer (Global LIFO Storage).
+
+| Rune | Name | Function |
+|---|---|---|
+| `µ` | **Vacuum** | Detects Emptiness. **West** (Empty) -> **Self** (1). |
+| `Ø` | **Void In** | **Consumes** West Signal -> Pushes to **Void Buffer**. |
+| `§` | **Void Out** | **Pops** from **Void Buffer** -> Outputs to **Self**. |
+
 # Psionics 🧠
 
 Runes for remote action and telepathy.

@@ -1,5 +1,6 @@
 use super::normalize_coords;
 use crate::vm::Value;
+use std::collections::VecDeque;
 
 pub fn apply_void_runes(
     rune: &str,
@@ -7,6 +8,7 @@ pub fn apply_void_runes(
     x: usize,
     current_signals: &[Vec<Option<Value>>],
     next_signals: &mut Vec<Vec<Option<Value>>>,
+    void_buffer: &mut VecDeque<Value>,
 ) -> bool {
     let mut changes = false;
 
@@ -25,50 +27,31 @@ pub fn apply_void_runes(
                     next_signals[y][x] = Some(Value::Int(1));
                     changes = true;
                 }
-            } else {
-                // If West is NOT empty, we output nothing (or 0?)
-                // Prologue generally uses presence of signal as True.
-                // Vacuum detects *absence*.
-                // If absence -> 1. If presence -> None (or 0).
             }
         }
         "Ø" => {
-            // Void Anchor: N, S, E, W (All Empty) -> Self (1)
-            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-            let mut all_empty = true;
-            for (dy, dx) in neighbors {
-                if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                    if !is_empty_signal(&current_signals[ny][nx]) {
-                        all_empty = false;
-                        break;
+            // Void In: West (Value) -> Push to Void Buffer.
+            // Only fires if we haven't already fired in this tick (checked via next_signals).
+            if next_signals[y][x].is_none() {
+                if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+                    let w_sig = &current_signals[wy][wx];
+                    if !is_empty_signal(w_sig) {
+                        if let Some(val) = w_sig {
+                            void_buffer.push_back(val.clone());
+                            next_signals[y][x] = Some(Value::Int(1)); // Signal activation
+                            changes = true;
+                        }
                     }
-                }
-            }
-            if all_empty {
-                if next_signals[y][x].is_none() {
-                    next_signals[y][x] = Some(Value::Int(1));
-                    changes = true;
                 }
             }
         }
         "§" => {
-            // Singularity: Consumes all neighbor signals.
-            // Always active itself? Or only active if it consumed something?
-            // "Attracts agents and consumes signals".
-            // Let's make it always emit 1 (as a beacon) and consume neighbors.
+            // Void Out: Pop from Void Buffer -> Self.
+            // Only fires if we haven't already fired.
             if next_signals[y][x].is_none() {
-                next_signals[y][x] = Some(Value::Int(1));
-                changes = true;
-            }
-
-            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-            for (dy, dx) in neighbors {
-                if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                    // Clear neighbor in next_signals
-                    if next_signals[ny][nx].is_some() {
-                        next_signals[ny][nx] = None;
-                        changes = true;
-                    }
+                if let Some(val) = void_buffer.pop_back() {
+                    next_signals[y][x] = Some(val);
+                    changes = true;
                 }
             }
         }
