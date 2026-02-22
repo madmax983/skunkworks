@@ -2,6 +2,7 @@ use super::normalize_coords;
 use crate::ast::JunctionType;
 use crate::vm::Value;
 use regex::Regex;
+use serde_json;
 
 pub fn apply_linguistics_runes(
     rune: &str,
@@ -31,6 +32,13 @@ pub fn apply_linguistics_runes(
             if let Some(val) = w_sig {
                 let new_val = match val {
                     Value::Str(s) => Value::Str(s.clone()),
+                    Value::Junction(JunctionType::Dish, _) => {
+                        if let Ok(json) = serde_json::to_string(val) {
+                            Value::Str(json)
+                        } else {
+                            Value::Str(format!("{}", val))
+                        }
+                    }
                     _ => Value::Str(format!("{}", val)),
                 };
 
