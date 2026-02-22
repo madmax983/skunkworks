@@ -1,4 +1,6 @@
 use super::{normalize_coords, PrologueAgent};
+use crate::ast::{Gene, Nucleotide, Strand};
+use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value};
 
 pub fn process_forth_agent(
@@ -64,20 +66,6 @@ pub fn process_forth_agent(
                 // IO
                 "!" => { // Emit: Pop stack -> Signal Grid
                     if let Some(val) = updated_agent.stack.pop() {
-                        // We can't write to signal_grid directly here as it's not passed mutably.
-                        // But we have mutable access to VM? Yes.
-                        // wait, `process_agents` takes `vm: &mut ChimeraVM`.
-                        // But `process_agents` is called after `process_signal_propagation`.
-                        // Writing to signal_grid now might be cleared next tick or used by other agents?
-                        // `prepare_signals` clears it at start of next tick.
-                        // So writing now is fine for other agents to see in THIS tick phase (Agents phase).
-                        // Or next tick?
-                        // Actually, `process_agents` runs after `process_sinks`.
-                        // So signals emitted now won't be seen by Sinks until NEXT tick?
-                        // `prepare_signals` clears `signal_grid` but applies `delayed_signals`.
-                        // So we should write to `delayed_signals`.
-
-                        // Accessing vm.prologue_state.delayed_signals
                         vm.prologue_state.delayed_signals[y][x] = Some(val);
                     }
                 }
@@ -89,6 +77,97 @@ pub fn process_forth_agent(
                 "." => { // Log: Pop -> Output
                     if let Some(val) = updated_agent.stack.pop() {
                         vm.output.push(format!("₣ {}: {}", updated_agent.stack.len(), val));
+                    }
+                }
+
+                // Host Operations (Genetic Engineering)
+                "r" => { // Read Gene: [strand, gene] -> [op, arg]
+                    if updated_agent.stack.len() >= 2 {
+                        let gene_idx_val = updated_agent.stack.pop().unwrap();
+                        let strand_idx_val = updated_agent.stack.pop().unwrap();
+                        if let (Value::Int(si), Value::Int(gi)) = (strand_idx_val, gene_idx_val) {
+                            if si >= 0 && (si as usize) < vm.dna.helix.strands.len() {
+                                let strand = &vm.dna.helix.strands[si as usize];
+                                if gi >= 0 && (gi as usize) < strand.genes.len() {
+                                    let gene = &strand.genes[gi as usize];
+                                    let op_str = gene.op.to_string();
+                                    let arg_val = if let Some(arg) = gene.args.first() {
+                                        match arg {
+                                            Nucleotide::Number(n) => *n,
+                                            _ => 0
+                                        }
+                                    } else { 0 };
+                                    updated_agent.stack.push(Value::Str(op_str));
+                                    updated_agent.stack.push(Value::Int(arg_val));
+                                } else {
+                                    updated_agent.stack.push(Value::Int(0)); // Fail
+                                    updated_agent.stack.push(Value::Int(0));
+                                }
+                            } else {
+                                updated_agent.stack.push(Value::Int(0));
+                                updated_agent.stack.push(Value::Int(0));
+                            }
+                        }
+                    }
+                }
+                "w" => { // Write Gene: [strand, gene, op, arg] -> []
+                    if updated_agent.stack.len() >= 4 {
+                        let arg_val = updated_agent.stack.pop().unwrap();
+                        let op_val = updated_agent.stack.pop().unwrap();
+                        let gene_idx_val = updated_agent.stack.pop().unwrap();
+                        let strand_idx_val = updated_agent.stack.pop().unwrap();
+
+                        if let (Value::Int(si), Value::Int(gi), Value::Str(op_s), Value::Int(arg_i)) =
+                            (strand_idx_val, gene_idx_val, op_val, arg_val) {
+
+                            if si >= 0 && (si as usize) < vm.dna.helix.strands.len() {
+                                let strand = &mut vm.dna.helix.strands[si as usize];
+                                // Auto-extend strand if needed? Or strict? Strict for now.
+                                if gi >= 0 && (gi as usize) < strand.genes.len() {
+                                    if let Ok(op) = op_s.parse::<OpCode>() {
+                                        strand.genes[gi as usize] = Gene {
+                                            op,
+                                            args: vec![Nucleotide::Number(arg_i)]
+                                        };
+                                        vm.output.push(format!("₣ Scribe: Replaced strand {} gene {}", si, gi));
+                                    }
+                                } else if gi as usize == strand.genes.len() {
+                                    // Append
+                                    if let Ok(op) = op_s.parse::<OpCode>() {
+                                        strand.genes.push(Gene {
+                                            op,
+                                            args: vec![Nucleotide::Number(arg_i)]
+                                        });
+                                        vm.output.push(format!("₣ Scribe: Appended to strand {}", si));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                "x" => { // Execute Strand: [strand] -> [] (Trigger Interrupt)
+                    if let Some(Value::Int(si)) = updated_agent.stack.pop() {
+                        if si >= 0 {
+                            vm.interrupt(si as usize);
+                        }
+                    }
+                }
+                "n" => { // New Strand: [] -> [new_strand_idx]
+                    vm.dna.helix.strands.push(Strand { genes: vec![] });
+                    let idx = vm.dna.helix.strands.len() - 1;
+                    updated_agent.stack.push(Value::Int(idx as i64));
+                    vm.output.push(format!("₣ Genesis: Created strand {}", idx));
+                }
+                "l" => { // Length: [strand] -> [len] (-1 for helix len)
+                    if let Some(Value::Int(idx)) = updated_agent.stack.pop() {
+                        if idx < 0 {
+                            updated_agent.stack.push(Value::Int(vm.dna.helix.strands.len() as i64));
+                        } else if (idx as usize) < vm.dna.helix.strands.len() {
+                            let len = vm.dna.helix.strands[idx as usize].genes.len();
+                            updated_agent.stack.push(Value::Int(len as i64));
+                        } else {
+                            updated_agent.stack.push(Value::Int(-1));
+                        }
                     }
                 }
 

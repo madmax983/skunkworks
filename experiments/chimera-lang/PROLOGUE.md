@@ -114,6 +114,16 @@ A stack-based mobile interpreter that traverses the grid, executing runes as ins
 *   **IO**: `!` (Pop -> Signal), `?` (Consume Signal -> Push), `.` (Pop -> Log).
 *   **Literals**: Integers and Strings are pushed to the stack.
 
+### Host Operations (Genetic Engineering)
+
+The Forth Agent can directly interact with the Chimera VM's genetic code, allowing the grid to reprogram the organism.
+
+*   `r`: **Read Gene**. Pops `strand`, `gene`. Pushes `op_string`, `arg`.
+*   `w`: **Write Gene**. Pops `arg`, `op_string`, `gene`, `strand`. Writes to DNA.
+*   `x`: **Execute**. Pops `strand`. Triggers immediate execution (Interrupt).
+*   `n`: **New Strand**. Creates a new empty strand. Pushes `new_strand_idx`.
+*   `l`: **Length**. Pops `strand` (-1 for Helix). Pushes length.
+
 The Interpreter is **non-destructive**. It moves *over* other runes without erasing them, temporarily replacing them with itself. It blocks if it encounters another Agent.
 
 # Data Alchemy ⚗️
