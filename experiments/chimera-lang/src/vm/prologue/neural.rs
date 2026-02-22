@@ -4,6 +4,8 @@ use super::normalize_coords;
 use crate::vm::neuron::Neuron;
 #[cfg(feature = "biophysics")]
 use crate::vm::{ChimeraVM, Value, GRID_SIZE};
+#[cfg(feature = "biophysics")]
+use std::collections::HashMap;
 
 #[cfg(feature = "biophysics")]
 pub fn scan_neural_grid(vm: &mut ChimeraVM) {
@@ -19,6 +21,11 @@ pub fn scan_neural_grid(vm: &mut ChimeraVM) {
                         .push(format!("NEURAL: New Neuron formed at {},{}", x, y));
                 }
                 active_neurons.insert((y, x));
+            } else if s == "•" {
+                // Synapse Rune: Default weight 100 if not present
+                if !vm.prologue_state.registers.contains_key(&(y, x)) {
+                    vm.prologue_state.registers.insert((y, x), Value::Int(100));
+                }
             }
         }
     }
@@ -31,6 +38,85 @@ pub fn scan_neural_grid(vm: &mut ChimeraVM) {
                 .push(format!("NEURAL: Neuron decayed at {},{}", coord.1, coord.0));
         }
     }
+}
+
+#[cfg(feature = "biophysics")]
+pub fn apply_neural_runes(
+    rune: &str,
+    y: usize,
+    x: usize,
+    current_signals: &[Vec<Option<Value>>],
+    next_signals: &mut Vec<Vec<Option<Value>>>,
+    registers: &mut HashMap<(usize, usize), Value>,
+) -> bool {
+    let mut changes = false;
+    let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+        current_signals[wy][wx].clone()
+    } else {
+        None
+    };
+
+    // Guard against multiple executions in the same tick (propagation loop)
+    if next_signals[y][x].is_some() {
+        return false;
+    }
+
+    match rune {
+        "•" => {
+            // Synapse: Reads West signal, applies weight, outputs Self (to be read by East neighbor).
+            // Weight is stored in registers (default 100).
+            if let Some(val) = w_sig {
+                let weight = if let Some(Value::Int(w)) = registers.get(&(y, x)) {
+                    *w
+                } else {
+                    100
+                };
+
+                let weighted_val = match val {
+                    Value::Int(n) => Value::Int(n * weight / 100),
+                    // For strings, we can't really multiply, so we pass through if weight > 50
+                    _ => {
+                        if weight > 50 {
+                            val
+                        } else {
+                            Value::Int(0)
+                        }
+                    }
+                };
+
+                next_signals[y][x] = Some(weighted_val);
+                changes = true;
+            }
+        }
+        "°" => {
+            // Learning: Reads West signal. If active, increases weight of adjacent Synapses.
+            if let Some(val) = w_sig {
+                let active = match val {
+                    Value::Int(n) => n > 0,
+                    Value::Str(s) => !s.is_empty(),
+                    _ => false,
+                };
+
+                if active {
+                    let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+                    for (dy, dx) in neighbors {
+                        if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                            if let Some(Value::Int(w)) = registers.get_mut(&(ny, nx)) {
+                                *w = (*w + 10).clamp(0, 500); // Increase weight, cap at 500%
+                            }
+                        }
+                    }
+                    // Light up self
+                    if next_signals[y][x].is_none() {
+                        next_signals[y][x] = Some(Value::Int(1));
+                        changes = true;
+                    }
+                }
+            }
+        }
+        _ => {}
+    }
+    changes
 }
 
 #[cfg(feature = "biophysics")]

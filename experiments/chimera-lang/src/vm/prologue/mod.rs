@@ -244,6 +244,8 @@ impl PrologueState {
                             | "G"
                         // Neural
                             | "♦"
+                            | "•"
+                            | "°"
                         // Control
                             | "E"
                             | "D"
@@ -364,6 +366,7 @@ impl PrologueState {
                             | "💡"
                             | "🔋"
                             | "♒"
+                            | "⇝"
                         // Oracle
                             | "¶"
                             | "λ"
@@ -708,6 +711,18 @@ fn apply_propagation_rune(
         resistance_grid,
         capacitance_grid,
         energy,
+        registers,
+    ) {
+        return true;
+    }
+
+    #[cfg(feature = "biophysics")]
+    if neural::apply_neural_runes(
+        rune,
+        y,
+        x,
+        current_signals,
+        next_signals,
         registers,
     ) {
         return true;
