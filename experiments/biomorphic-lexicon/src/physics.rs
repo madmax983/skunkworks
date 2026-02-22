@@ -1,4 +1,3 @@
-use crate::phonology::{GrimmsLaw, Phoneme, Rule, VowelShift, Word};
 use glam::Vec3;
 use rand::Rng;
 
@@ -9,21 +8,21 @@ pub struct LexicalNode {
     pub force: Vec3,
     pub fixed: bool,
     pub mass: f32,
-    pub phoneme: Phoneme,
+    pub char: char,
     pub mutated: bool, // For visual feedback
 }
 
 impl LexicalNode {
-    pub fn new(pos: Vec3, fixed: bool, phoneme: Phoneme) -> Self {
+    pub fn new(pos: Vec3, fixed: bool, c: char) -> Self {
         // Mass depends on phoneme type: Vowels light, Consonants heavy
-        let mass = if phoneme.is_vowel() { 0.5 } else { 1.5 };
+        let mass = if is_vowel(c) { 0.5 } else { 1.5 };
         Self {
             pos,
             vel: Vec3::ZERO,
             force: Vec3::ZERO,
             fixed,
             mass,
-            phoneme,
+            char: c,
             mutated: false,
         }
     }
@@ -31,7 +30,6 @@ impl LexicalNode {
 
 pub struct LexicalString {
     pub nodes: Vec<LexicalNode>,
-    pub word: Word, // Source of truth for phonemes
     pub rest_length: f32,
     pub tension: f32,
     pub damping: f32,
@@ -40,24 +38,23 @@ pub struct LexicalString {
 
 impl LexicalString {
     pub fn new(text: &str, start: Vec3, end: Vec3, tension: f32, damping: f32) -> Self {
-        let word = Word::new(text);
-        let len = word.phonemes.len();
+        let chars: Vec<char> = text.chars().collect();
+        let len = chars.len();
         let mut nodes = Vec::with_capacity(len);
 
         if len > 1 {
             let step = (end - start) / (len - 1) as f32;
             let rest_length = step.length();
 
-            for (i, p) in word.phonemes.iter().enumerate() {
+            for (i, &c) in chars.iter().enumerate() {
                 let pos = start + step * i as f32;
                 // Fix the ends
                 let fixed = i == 0 || i == len - 1;
-                nodes.push(LexicalNode::new(pos, fixed, p.clone()));
+                nodes.push(LexicalNode::new(pos, fixed, c));
             }
 
             Self {
                 nodes,
-                word,
                 rest_length,
                 tension,
                 damping,
@@ -65,10 +62,9 @@ impl LexicalString {
             }
         } else {
             // Handle single char word?
-            let nodes = vec![LexicalNode::new(start, true, word.phonemes[0].clone())];
+            let nodes = vec![LexicalNode::new(start, true, chars[0])];
             Self {
                 nodes,
-                word,
                 rest_length: 1.0,
                 tension,
                 damping,
@@ -144,22 +140,27 @@ impl LexicalString {
 
     fn mutate(&mut self) {
         let mut rng = rand::thread_rng();
-        let rules: Vec<Box<dyn Rule>> = vec![Box::new(GrimmsLaw), Box::new(VowelShift)];
 
-        let rule_idx = rng.gen_range(0..rules.len());
-        let changed = rules[rule_idx].apply(&mut self.word, &mut rng);
+        // Pick a random node to mutate
+        let len = self.nodes.len();
+        if len == 0 { return; }
 
-        if changed {
-            // Sync nodes to word
-            // Assuming length hasn't changed (Grimm's Law / Vowel Shift are 1:1)
-            for (i, p) in self.word.phonemes.iter().enumerate() {
-                if i < self.nodes.len() {
-                    if self.nodes[i].phoneme != *p {
-                        self.nodes[i].phoneme = p.clone();
-                        self.nodes[i].mutated = true; // Flag for rendering
-                        self.nodes[i].mass = if p.is_vowel() { 0.5 } else { 1.5 };
-                        // Update mass
-                    }
+        // Maybe mutate multiple? Or just one? Original logic mutated the *word* via rule.
+        // Let's iterate and mutate with small chance
+        for node in &mut self.nodes {
+            if rng.gen_bool(0.1) {
+                let old_char = node.char;
+                let new_char = if is_vowel(old_char) {
+                    mutate_vowel(old_char)
+                } else {
+                    mutate_consonant(old_char)
+                };
+
+                if new_char != old_char {
+                    node.char = new_char;
+                    node.mutated = true;
+                    // Update mass
+                    node.mass = if is_vowel(new_char) { 0.5 } else { 1.5 };
                 }
             }
         }
@@ -184,5 +185,91 @@ impl LexicalString {
         for node in &mut self.nodes {
             node.mutated = false;
         }
+    }
+}
+
+pub fn is_vowel(c: char) -> bool {
+    matches!(c.to_ascii_lowercase(), 'a' | 'e' | 'i' | 'o' | 'u' | 'y')
+}
+
+fn mutate_consonant(c: char) -> char {
+    match c.to_ascii_lowercase() {
+        // Voiceless Stop -> Voiceless Fricative (Grimm's Law simplified)
+        'p' => 'f',
+        't' => 's', // or 'θ'
+        'k' => 'h',
+        // Voiced Stop -> Voiceless Stop
+        'b' => 'p',
+        'd' => 't',
+        'g' => 'k',
+        // Fricatives -> Maybe change place?
+        'f' => 'v', // Voicing
+        's' => 'z',
+        _ => c,
+    }
+}
+
+fn mutate_vowel(c: char) -> char {
+    match c.to_ascii_lowercase() {
+        // Great Vowel Shift simplified
+        'a' => 'e',
+        'e' => 'i',
+        'i' => 'o', // approximate
+        'o' => 'u',
+        'u' => 'a',
+        _ => c,
+    }
+}
+
+impl std::fmt::Display for LexicalString {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for node in &self.nodes {
+            write!(f, "{}", node.char)?;
+        }
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_is_vowel() {
+        assert!(is_vowel('a'));
+        assert!(is_vowel('E'));
+        assert!(!is_vowel('b'));
+    }
+
+    #[test]
+    fn test_mutate_consonant() {
+        // Grimm's law examples
+        assert_eq!(mutate_consonant('p'), 'f');
+        assert_eq!(mutate_consonant('t'), 's');
+        assert_eq!(mutate_consonant('k'), 'h');
+        assert_eq!(mutate_consonant('b'), 'p');
+        assert_eq!(mutate_consonant('d'), 't');
+        assert_eq!(mutate_consonant('g'), 'k');
+        // No change
+        assert_eq!(mutate_consonant('m'), 'm');
+    }
+
+    #[test]
+    fn test_mutate_vowel() {
+        assert_eq!(mutate_vowel('a'), 'e');
+        assert_eq!(mutate_vowel('e'), 'i');
+        assert_eq!(mutate_vowel('i'), 'o');
+        assert_eq!(mutate_vowel('o'), 'u');
+        assert_eq!(mutate_vowel('u'), 'a');
+    }
+
+    #[test]
+    fn test_lexical_string_creation() {
+        let s = LexicalString::new("test", Vec3::ZERO, Vec3::X, 1.0, 0.1);
+        assert_eq!(s.nodes.len(), 4);
+        assert_eq!(s.to_string(), "test");
+        assert!(s.nodes[0].fixed);
+        assert!(s.nodes[3].fixed);
+        assert!(!s.nodes[1].fixed);
     }
 }
