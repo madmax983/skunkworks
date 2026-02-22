@@ -81,10 +81,15 @@
 - **Status:** Specimen executed. Diagnosis: Documentation Void (No README). Zombie Status confirmed.
 - **Note:** "Lichen grows on rock, not on vacuum. The rock is gone."
 
-### [Concentration Level: TOXIC] - Location: experiments/recursive-conservatory
+### [Concentration Level: EXECUTED] - Location: graveyard/recursive-conservatory
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period.
+- **Note:** "A garden of algorithms with no soul. The soil has been turned."
+
+### [Concentration Level: TOXIC] - Location: experiments/resonant-glyphs
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism.
-- **Note:** "A garden of algorithms with no soul."
+- **Note:** "A visualizer of nothing. The resonance is hollow."
 
 ### [Concentration Level: HIGH] - Location: experiments/hyper-mold
 - **Scent Origin:** The Splice Surgeon 🧬
