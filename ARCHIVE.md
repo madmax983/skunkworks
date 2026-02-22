@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **sonic-viscosity**: Diagnosis: Documentation Void / Terminal Genericism / Redundancy. Grace period: 24 hours.
+- **hyper-chimera**: Diagnosis: Documentation Void / Terminal Redundancy / Identity Crisis. Grace period: 24 hours.
 - [Experiment name]: [Diagnosis]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **sonic-viscosity**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism / Redundancy. Grace period expired. Moved to graveyard.
 - **symbiotic-services**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Grace period expired. Moved to graveyard.
 - **luminescent-fugue**: Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy (Superseded by `luminous-flock`). Grace period expired. Moved to graveyard.
 - **spqr-market**: Specimen executed. Diagnosis: Terminal Redundancy (Particle System #12). Re-skin of `ferrous-legion`. Grace period expired. Moved to graveyard.
