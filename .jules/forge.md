@@ -15,3 +15,7 @@
 **[Logic Duplication in Grid Iteration]**
 **Learning:** Logic for calculating cell properties (e.g. conductivity) was duplicated inside multiple nested loops, making it hard to change the property definition globally.
 **Action:** Extract property calculation into a pure helper function (`get_conductivity`) before iterating.
+
+**[Feature Flag Blindness]
+**Learning:** Logic that lives behind feature flags (e.g., `#[cfg(feature = "audio")]`) can rot silently if refactors are only checked with default features.
+**Action:** Always verify refactors by running `cargo check` with all feature combinations or check the CI configuration to ensure coverage.

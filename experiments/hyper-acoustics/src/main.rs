@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use crossbeam_channel::{bounded, unbounded};
+use macroquad::prelude::*;
 use std::time::Instant;
 
 mod audio;
@@ -67,7 +67,6 @@ impl Vec4 {
     }
 }
 
-
 #[macroquad::main("Hyper Acoustics")]
 async fn main() {
     let (cmd_tx, cmd_rx) = unbounded();
@@ -130,11 +129,17 @@ async fn main() {
         // Auto Pluck every few seconds if quiet?
         // Or random plucks based on Swap (Gravity/Random events)
         if rand::gen_range(0.0, 1.0) < monitor.swap_usage * 0.1 {
-             let x = rand::gen_range(1, GRID_SIZE - 1);
-             let y = rand::gen_range(1, GRID_SIZE - 1);
-             let z = rand::gen_range(1, GRID_SIZE - 1);
-             let w = rand::gen_range(1, GRID_SIZE - 1);
-             let _ = cmd_tx.send(AudioCommand::Pluck { x, y, z, w, strength: 1.0 });
+            let x = rand::gen_range(1, GRID_SIZE - 1);
+            let y = rand::gen_range(1, GRID_SIZE - 1);
+            let z = rand::gen_range(1, GRID_SIZE - 1);
+            let w = rand::gen_range(1, GRID_SIZE - 1);
+            let _ = cmd_tx.send(AudioCommand::Pluck {
+                x,
+                y,
+                z,
+                w,
+                strength: 1.0,
+            });
         }
 
         // Receive Snapshot
@@ -144,11 +149,17 @@ async fn main() {
 
         // Input
         if is_mouse_button_pressed(MouseButton::Left) {
-             let x = rand::gen_range(1, GRID_SIZE - 1);
-             let y = rand::gen_range(1, GRID_SIZE - 1);
-             let z = rand::gen_range(1, GRID_SIZE - 1);
-             let w = rand::gen_range(1, GRID_SIZE - 1);
-             let _ = cmd_tx.send(AudioCommand::Pluck { x, y, z, w, strength: 2.0 });
+            let x = rand::gen_range(1, GRID_SIZE - 1);
+            let y = rand::gen_range(1, GRID_SIZE - 1);
+            let z = rand::gen_range(1, GRID_SIZE - 1);
+            let w = rand::gen_range(1, GRID_SIZE - 1);
+            let _ = cmd_tx.send(AudioCommand::Pluck {
+                x,
+                y,
+                z,
+                w,
+                strength: 2.0,
+            });
         }
 
         // 4D Rotation (Auto rotate based on load)
@@ -157,12 +168,24 @@ async fn main() {
         angle_zw += dt * (0.05 + monitor.load_avg * 0.2);
 
         // Camera Control
-         if is_key_down(KeyCode::Left) { cam_angle_y += 2.0 * dt; }
-        if is_key_down(KeyCode::Right) { cam_angle_y -= 2.0 * dt; }
-        if is_key_down(KeyCode::Up) { cam_angle_x += 2.0 * dt; }
-        if is_key_down(KeyCode::Down) { cam_angle_x -= 2.0 * dt; }
-        if is_key_down(KeyCode::W) { cam_dist -= 5.0 * dt; }
-        if is_key_down(KeyCode::S) { cam_dist += 5.0 * dt; }
+        if is_key_down(KeyCode::Left) {
+            cam_angle_y += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_angle_y -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_angle_x += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_angle_x -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 5.0 * dt;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 5.0 * dt;
+        }
 
         let cam_pos = vec3(
             cam_dist * cam_angle_x.cos() * cam_angle_y.sin(),
@@ -182,7 +205,9 @@ async fn main() {
         // Draw Grid Points
         if let Some(snap) = &snapshot {
             for (i, point) in grid_points.iter().enumerate() {
-                if i >= snap.u.len() { break; }
+                if i >= snap.u.len() {
+                    break;
+                }
                 let pressure = snap.u[i];
                 let energy = pressure.abs();
 
@@ -197,9 +222,11 @@ async fn main() {
 
                     // Color based on pressure
                     let color = if pressure > 0.0 {
-                        Color::new(1.0, 1.0 - pressure.min(1.0), 1.0 - pressure.min(1.0), 1.0) // Reddish
+                        Color::new(1.0, 1.0 - pressure.min(1.0), 1.0 - pressure.min(1.0), 1.0)
+                    // Reddish
                     } else {
-                        Color::new(1.0 - energy.min(1.0), 1.0 - energy.min(1.0), 1.0, 1.0) // Bluish
+                        Color::new(1.0 - energy.min(1.0), 1.0 - energy.min(1.0), 1.0, 1.0)
+                        // Bluish
                     };
 
                     draw_sphere(pos3d, 0.02 + energy * 0.05, None, color);
@@ -211,9 +238,27 @@ async fn main() {
 
         // UI
         draw_text("Hyper Acoustics", 10.0, 20.0, 30.0, WHITE);
-        draw_text(&format!("CPU: {:.2} (Speed)", monitor.cpu_usage), 10.0, 50.0, 20.0, RED);
-        draw_text(&format!("RAM: {:.2} (Damping)", monitor.mem_usage), 10.0, 70.0, 20.0, BLUE);
-        draw_text(&format!("Cells: {}^4 = {}", GRID_SIZE, GRID_SIZE.pow(4)), 10.0, 90.0, 20.0, GRAY);
+        draw_text(
+            &format!("CPU: {:.2} (Speed)", monitor.cpu_usage),
+            10.0,
+            50.0,
+            20.0,
+            RED,
+        );
+        draw_text(
+            &format!("RAM: {:.2} (Damping)", monitor.mem_usage),
+            10.0,
+            70.0,
+            20.0,
+            BLUE,
+        );
+        draw_text(
+            &format!("Cells: {}^4 = {}", GRID_SIZE, GRID_SIZE.pow(4)),
+            10.0,
+            90.0,
+            20.0,
+            GRAY,
+        );
         draw_text("Left Click to Pluck 4D Space", 10.0, 110.0, 20.0, YELLOW);
 
         next_frame().await;
