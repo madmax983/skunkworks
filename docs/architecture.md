@@ -247,6 +247,28 @@ sequenceDiagram
     GPU->>Ping: Write Next State
 ```
 
+### Hyper System (crates/hyper-system)
+
+The `hyper-system` crate provides shared 4D math and system metric monitoring for the "Hyper" series experiments (ADR 050).
+
+```mermaid
+classDiagram
+    direction TB
+    class SystemMonitor {
+        +System sys
+        +f32 cpu_usage
+        +f32 mem_usage
+        +update()
+        +new() SystemMonitor
+    }
+    class Vec4 {
+        +f32 x, y, z, w
+        +project_to_3d() Vec3
+        +rotate_xw(theta) Vec4
+    }
+    SystemMonitor ..> System : Wraps sysinfo
+```
+
 ## Shared Domain Logic
 
 Specialized libraries that encapsulate specific domain knowledge or data structures, reused across multiple experiments.
