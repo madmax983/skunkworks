@@ -1492,4 +1492,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A 4D Fluid Simulation where the "medium" is distorted by real-time system metrics (CPU=Agitation, RAM=Viscosity, Swap=Gravity).
 - **Novel trait**: 4D Hydrodynamics driven by computer metabolism.
 - **Status**: experiments/hyper-fluid
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### hyper-acoustics
+- **Parents**: experiments/tesseract-ops + experiments/resonant-chamber
+- **Concept**: A 4D Acoustic Simulation solving the Wave Equation in a Hypercube.
+- **Novel trait**: Hearing the shape of 4D space. Sound speed modulated by CPU, damping by RAM.
+- **Status**: experiments/hyper-acoustics
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. 4D FDTD Solver operational.
