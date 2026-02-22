@@ -1486,3 +1486,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Distributed Existence. Agents are wave patterns; their position is recovered via Inverse FFT.
 - **Status**: experiments/chimera-hologram
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Emergent Trait: Ghosting and Interference Artifacts.
+
+### hyper-fluid
+- **Parents**: experiments/ferrous-fluid + experiments/tesseract-ops
+- **Concept**: A 4D Fluid Simulation where the "medium" is distorted by real-time system metrics (CPU=Agitation, RAM=Viscosity, Swap=Gravity).
+- **Novel trait**: 4D Hydrodynamics driven by computer metabolism.
+- **Status**: experiments/hyper-fluid
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
