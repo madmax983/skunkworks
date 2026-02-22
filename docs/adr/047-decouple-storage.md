@@ -1,7 +1,7 @@
 # 047. Decouple Storage from Core
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 Circular dependencies were causing build failures, specifically when the `Core` module attempted to reference types defined in `Storage` that simultaneously depended back on `Core` definitions. This tight coupling made it impossible to compile them independently and complicated testing.

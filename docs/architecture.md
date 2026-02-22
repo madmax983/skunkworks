@@ -1159,6 +1159,14 @@ classDiagram
         +Vec~Vec~EpigeneticMark~~ epigenetic_grid
         +f32 dream_intensity
         +HashMap~Pos, Deque~Value~~ history
+        +Vec~PrologueAgent~ agents
+    }
+
+    class PrologueAgent {
+        +usize x
+        +usize y
+        +Value state
+        +Vec~Value~ stack
     }
 
     class PrologueModules {
@@ -1178,6 +1186,7 @@ classDiagram
     }
 
     ChimeraVM *-- PrologueState : Owns
+    PrologueState *-- PrologueAgent : Manages
     ChimeraVM ..> PrologueModules : Delegates to
 ```
 
@@ -1499,4 +1508,68 @@ classDiagram
     ChimeraCircuit *-- BioAgent : Owns
     BioAgent *-- ChimeraVM : Wraps
     BioAgent ..> CircuitGenerator : Senses
+```
+
+## Experiment: Hyper Acoustics (ADR 049)
+
+**Hyper Acoustics** simulates 4D acoustics via an FDTD solver where simulation parameters are modulated by system metrics.
+
+### 4D Wave Simulation
+
+The simulation runs on a 4D grid (x, y, z, w) and supports headless execution for audio generation.
+
+```mermaid
+classDiagram
+    direction TB
+    class AudioSystem {
+        +cpal::Stream stream
+        +thread::JoinHandle thread
+    }
+
+    class PhysicsGrid4D {
+        +usize size
+        +Vec~f32~ u
+        +Vec~f32~ u_prev
+        +Vec~f32~ u_next
+        +step(c2, damping)
+        +pluck(x, y, z, w, strength)
+    }
+
+    class AudioCommand {
+        <<Enum>>
+        +Pluck
+        +SetParams
+    }
+
+    AudioSystem *-- PhysicsGrid4D : Owns (via Closure)
+    AudioSystem ..> AudioCommand : Consumes
+```
+
+## Experiment: Chimera Hologram (ADR 028)
+
+**Chimera Hologram** visualizes genetic information as holographic interference patterns using Fast Fourier Transforms (FFT).
+
+### Holographic Memory
+
+The system stores information in the frequency domain, allowing for distributed storage and fuzzy retrieval.
+
+```mermaid
+classDiagram
+    direction TB
+    class HolographicMemory {
+        +usize width
+        +usize height
+        +Vec~Complex~ memory
+        +record(object_grid, alpha)
+        +reconstruct() Vec~f64~
+    }
+
+    class FftPlanner {
+        <<Library: rustfft>>
+        +plan_fft_forward()
+        +plan_fft_inverse()
+    }
+
+    HolographicMemory ..> FftPlanner : Uses
+    note for HolographicMemory "Stores accumulated interference patterns"
 ```
