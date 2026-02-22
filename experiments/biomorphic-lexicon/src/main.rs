@@ -1,12 +1,7 @@
-use std::io::stdout;
 use std::time::{Duration, Instant};
 
 use anyhow::Result;
-use crossterm::{
-    event::{self, Event, KeyCode},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
+use crossterm::event::{self, Event, KeyCode};
 use glam::Vec3;
 use ratatui::{
     backend::CrosstermBackend,
@@ -19,23 +14,16 @@ use ratatui::{
     },
     Terminal,
 };
+use tui_shared::Tui;
 
 mod physics;
 
 use physics::{is_vowel, LexicalString};
 
 fn main() -> Result<()> {
-    enable_raw_mode()?;
-    let mut stdout = stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = Tui::init()?;
 
-    let res = run_app(&mut terminal);
-
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
+    let res = run_app(&mut tui.terminal);
 
     if let Err(err) = res {
         println!("{:?}", err);

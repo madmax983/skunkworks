@@ -9,3 +9,4 @@ crossterm = { workspace = true }
 anyhow = { workspace = true }
 rand = { workspace = true }
 glam = "0.24"
+tui-shared = { workspace = true }
