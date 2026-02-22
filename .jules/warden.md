@@ -72,3 +72,7 @@
 ## 2026-12-12 - Unbounded Gene Growth (OOM DoS)
 **Threat:** `OpCode::Propagate` and `OpCode::Outbreak` (Transduction) in `experiments/chimera-lang` allowed appending genes to existing strands without checking for length limits. A malicious virus could repeatedly infect a strand, causing it to grow indefinitely until OOM.
 **Defense:** Introduced `MAX_GENES_PER_STRAND` (4096) constant in `vm/mod.rs`. Enforced this limit in `memetics.rs` before extending any strand. Added `warden_gene_dos_test.rs` to verify the fix.
+
+## 2026-12-13 - Alchemy Geometry Unbounded Allocation (OOM DoS)
+**Threat:** The `OpCode::AbsorbGeometry` operation in `experiments/chimera-lang/src/vm/nova_alchemy_prime.rs` allowed unbounded allocation of a `Vec` via `Vec::with_capacity(count)` where `count` was derived from user-controlled `radius`. A malicious program could supply a large radius to trigger an OOM crash.
+**Defense:** Implemented checked arithmetic for dimension calculations and enforced `count <= MAX_GENES_PER_STRAND` (4096) before allocation. Added `warden_alchemy_dos_test.rs` regression test.
