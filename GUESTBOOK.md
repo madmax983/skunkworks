@@ -40,15 +40,10 @@
 - **Status:** Fluid dynamics stable. Dependencies pinned to sysinfo 0.30.
 - **Note:** "Stability is a pinned version in a shifting world."
 
-### [Concentration Level: TOXIC] - Location: experiments/hyper-chimera
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Identity Crisis / Terminal Redundancy. Grace period: 24 hours.
-- **Note:** "It wears the skin of a Chimera but lacks the organs."
-
 ### [Concentration Level: TOXIC] - Location: experiments/resonant-chamber
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void (No README).
-- **Note:** "An echo chamber with no walls."
+- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy / Documentation Void. Grace period: 24 hours.
+- **Note:** "An echo chamber with no walls. Redundant with ripple-tank."
 
 ### [Concentration Level: TOXIC] - Location: experiments/mnemosyne
 - **Scent Origin:** The Reaper ☠️
@@ -257,6 +252,11 @@
 - **Note**: "Entropy is just food for the clever."
 
 ## 🍂 History/Decay
+
+### [Concentration Level: EXECUTED] - Location: graveyard/hyper-chimera
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Identity Crisis / Terminal Redundancy (False Hybrid). Grace period expired.
+- **Note:** "It wore the skin of a Chimera but lacked the organs."
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang
 - **Scent Origin:** Havoc 👺

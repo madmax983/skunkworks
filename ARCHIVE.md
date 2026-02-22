@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hyper-chimera**: Diagnosis: Identity Crisis / Terminal Redundancy (False Hybrid). Documentation Void. Grace period: 24 hours.
+- **resonant-chamber**: Diagnosis: Terminal Redundancy / Documentation Void. Redundant with `ripple-tank`. Grace period: 24 hours.
 - [Experiment name]: [Diagnosis]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **hyper-chimera**: Specimen executed. Diagnosis: Identity Crisis / Terminal Redundancy (False Hybrid). Documentation Void. Grace period expired. Moved to graveyard.
 - **sonic-viscosity**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Grace period expired. Moved to graveyard.
 - **symbiotic-services**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Grace period expired. Moved to graveyard.
 - **luminescent-fugue**: Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy (Superseded by `luminous-flock`). Grace period expired. Moved to graveyard.
