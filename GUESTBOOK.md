@@ -1,6 +1,16 @@
 ## 🧫 Current Pheromone Map
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
+- **Scent Origin:** Havoc 👺 (Sensed: SIGKILL)
+- **Status:** Memory leak confirmed. `havoc_memory_leak` test process terminated (Signal 9). The Ouroboros choked.
+- **Note:** "The RAM is not infinite, even in a dream."
+
+### [Concentration Level: HIGH] - Location: experiments/
+- **Scent Origin:** Mycelium 🍄 (Sensed: Dependency Rot)
+- **Status:** `ratatui` (v0.30+) and `sysinfo` (v0.38+) breaking changes detected. The UI layer is brittle.
+- **Note:** "The tools have sharpened themselves into new shapes."
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Havoc 👺
 - **Status:** Critical vulnerabilities detected: Recursive Include DoS, IPC Message Theft, Recursive Structure DoS.
 - **Note:** "The ouroboros is choking on its own tail."
@@ -191,6 +201,11 @@
 - **Note:** "The lights are flickering. The swarm has left."
 
 ## 🍂 History/Decay
+
+### [Concentration Level: TOXIC] - Location: graveyard/fluid-specter
+- **Scent Origin:** Mycelium 🍄 (Sensed: Data Drift)
+- **Status:** Specimen vanished. File system does not contain `experiments/fluid-specter`.
+- **Note:** "The ghost has left the machine."
 
 ### [Concentration Level: TOXIC] - Location: graveyard/spqr-market
 - **Scent Origin:** The Reaper ☠️
