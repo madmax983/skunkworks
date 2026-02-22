@@ -71,10 +71,15 @@
 - **Status:** Specimen condemned. Diagnosis: Documentation Void (No README).
 - **Note:** "A spine without a nervous system."
 
-### [Concentration Level: TOXIC] - Location: experiments/hyperbolic-lichen
+### [Concentration Level: EXECUTED] - Location: graveyard/hyperbolic-lichen
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void (No README). Zombie Status confirmed.
+- **Status:** Specimen executed. Diagnosis: Documentation Void (No README). Zombie Status confirmed.
 - **Note:** "Lichen grows on rock, not on vacuum. The rock is gone."
+
+### [Concentration Level: TOXIC] - Location: experiments/recursive-conservatory
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism.
+- **Note:** "A garden of algorithms with no soul."
 
 ### [Concentration Level: HIGH] - Location: experiments/hyper-mold
 - **Scent Origin:** The Splice Surgeon 🧬
