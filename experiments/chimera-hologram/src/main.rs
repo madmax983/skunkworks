@@ -29,11 +29,7 @@ impl Agent {
         let mut vm = ChimeraVM::new(dna);
         // Seed the stack with an initial direction value
         vm.stack.push(Value::Int(0));
-        Self {
-            vm,
-            x,
-            y,
-        }
+        Self { vm, x, y }
     }
 
     fn update(&mut self, width: usize, height: usize) {
@@ -41,10 +37,15 @@ impl Agent {
         self.vm.step();
 
         // Use top of stack as direction driver
-        let dir_val = self.vm.stack.last().and_then(|v| match v {
-            Value::Int(i) => Some(*i),
-            _ => None,
-        }).unwrap_or(0);
+        let dir_val = self
+            .vm
+            .stack
+            .last()
+            .and_then(|v| match v {
+                Value::Int(i) => Some(*i),
+                _ => None,
+            })
+            .unwrap_or(0);
 
         // Map integer to direction (0=Up, 1=Right, 2=Down, 3=Left)
         // But modulate with some randomness
@@ -65,7 +66,7 @@ impl Agent {
 
         // 20% chance of random brownian motion overriding DNA
         let (dx, dy) = if rng.gen_bool(0.2) {
-             (rng.gen_range(-1..=1), rng.gen_range(-1..=1))
+            (rng.gen_range(-1..=1), rng.gen_range(-1..=1))
         } else {
             (dx, dy)
         };
@@ -80,9 +81,18 @@ fn generate_dna() -> Dna {
     // [ Push(1), Add, Jump(0) ]
     // Assumes stack has an initial integer (seeded in Agent::new).
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-        Gene { op: OpCode::Add, args: vec![] }, // Consumes 1 and StackTop, pushes Result
-        Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] }, // Jump to start of strand 0
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        },
+        Gene {
+            op: OpCode::Add,
+            args: vec![],
+        }, // Consumes 1 and StackTop, pushes Result
+        Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(0)],
+        }, // Jump to start of strand 0
     ];
 
     Dna {
@@ -121,10 +131,7 @@ fn main() -> Result<()> {
 
     // Restore Terminal
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
 
     if let Err(err) = res {
@@ -155,7 +162,7 @@ where
                 .constraints(
                     [
                         Constraint::Length(3), // Title
-                        Constraint::Min(10), // Hologram
+                        Constraint::Min(10),   // Hologram
                         Constraint::Length(3), // Info
                     ]
                     .as_ref(),
@@ -186,30 +193,47 @@ where
                         s.push('🧬');
                     } else {
                         let idx = y * width + x;
-                        let val = if idx < reconstruction.len() { reconstruction[idx] } else { 0.0 };
+                        let val = if idx < reconstruction.len() {
+                            reconstruction[idx]
+                        } else {
+                            0.0
+                        };
 
-                        let c = if val > 0.8 { '█' }
-                        else if val > 0.6 { '▓' }
-                        else if val > 0.4 { '▒' }
-                        else if val > 0.2 { '░' }
-                        else if val > 0.05 { '.' }
-                        else { ' ' };
+                        let c = if val > 0.8 {
+                            '█'
+                        } else if val > 0.6 {
+                            '▓'
+                        } else if val > 0.4 {
+                            '▒'
+                        } else if val > 0.2 {
+                            '░'
+                        } else if val > 0.05 {
+                            '.'
+                        } else {
+                            ' '
+                        };
                         s.push(c);
                     }
                 }
                 s.push('\n');
             }
 
-            let holo_view = Paragraph::new(s)
-                .block(Block::default().title("Reconstructed Field").borders(Borders::ALL));
+            let holo_view = Paragraph::new(s).block(
+                Block::default()
+                    .title("Reconstructed Field")
+                    .borders(Borders::ALL),
+            );
             f.render_widget(holo_view, chunks[1]);
 
             // Info
             let total_energy: i64 = agents.iter().map(|a| a.vm.energy).sum();
-            let info = Paragraph::new(format!("Agents: {} | Total Bio-Energy: {}", agents.len(), total_energy))
-                 .block(Block::default().borders(Borders::ALL));
+            let info = Paragraph::new(format!(
+                "Agents: {} | Total Bio-Energy: {}",
+                agents.len(),
+                total_energy
+            ))
+            .block(Block::default().borders(Borders::ALL));
             f.render_widget(info, chunks[2]);
-
         })?;
 
         // Input

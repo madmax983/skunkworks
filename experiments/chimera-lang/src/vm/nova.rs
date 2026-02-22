@@ -323,8 +323,8 @@ pub fn diffuse_hormones(vm: &mut ChimeraVM) {
                     let weight = (10 + flow).max(0); // Base 10
 
                     for c in 0..3 {
-                        sums[c] =
-                            sums[c].saturating_add(vm.hormone_grid[ny][nx][c].saturating_mul(weight));
+                        sums[c] = sums[c]
+                            .saturating_add(vm.hormone_grid[ny][nx][c].saturating_mul(weight));
                     }
                     total_weight = total_weight.saturating_add(weight);
                 }
@@ -924,7 +924,11 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Chaos => super::nova_flux::exec_chaos(vm),
         OpCode::Orca => {
             vm.prologue_state.orca_mode = !vm.prologue_state.orca_mode;
-            let status = if vm.prologue_state.orca_mode { "ON" } else { "OFF" };
+            let status = if vm.prologue_state.orca_mode {
+                "ON"
+            } else {
+                "OFF"
+            };
             vm.output.push(format!("PROLOGUE: Orca Mode {}", status));
             None
         }

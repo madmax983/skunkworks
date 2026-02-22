@@ -1,4 +1,4 @@
-use rand::{Rng, thread_rng};
+use rand::{thread_rng, Rng};
 
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Particle {
@@ -85,7 +85,9 @@ impl Grid4D {
                 for y in 0..self.height {
                     for x in 0..self.width {
                         let i = self.idx(x, y, z, w);
-                        if self.updated[i] { continue; }
+                        if self.updated[i] {
+                            continue;
+                        }
 
                         if let Particle::Bid(id) = self.cells[i] {
                             self.active_bids += 1;
@@ -103,7 +105,9 @@ impl Grid4D {
                 for y in (0..self.height).rev() {
                     for x in 0..self.width {
                         let i = self.idx(x, y, z, w);
-                        if self.updated[i] { continue; }
+                        if self.updated[i] {
+                            continue;
+                        }
 
                         if let Particle::Ask(id) = self.cells[i] {
                             self.active_asks += 1;
@@ -126,7 +130,17 @@ impl Grid4D {
         }
     }
 
-    fn process_bid(&mut self, x: usize, y: usize, z: usize, w: usize, idx: usize, id: usize, volatility: f32, rng: &mut impl Rng) {
+    fn process_bid(
+        &mut self,
+        x: usize,
+        y: usize,
+        z: usize,
+        w: usize,
+        idx: usize,
+        id: usize,
+        volatility: f32,
+        rng: &mut impl Rng,
+    ) {
         // Goal: Move to Y-1
         if y > 0 {
             // Check direct path
@@ -137,14 +151,23 @@ impl Grid4D {
                 Particle::Empty => {
                     // Move
                     self.move_particle(idx, target_idx, Particle::Bid(id));
-                },
+                }
                 Particle::Ask(_) => {
                     // Trade!
                     self.execute_trade(idx, target_idx);
-                },
+                }
                 _ => {
                     // Blocked. Try sideways or random jump based on volatility.
-                    self.try_move_sideways_or_jump(x, y, z, w, idx, Particle::Bid(id), volatility, rng);
+                    self.try_move_sideways_or_jump(
+                        x,
+                        y,
+                        z,
+                        w,
+                        idx,
+                        Particle::Bid(id),
+                        volatility,
+                        rng,
+                    );
                 }
             }
         } else {
@@ -155,7 +178,17 @@ impl Grid4D {
         }
     }
 
-    fn process_ask(&mut self, x: usize, y: usize, z: usize, w: usize, idx: usize, id: usize, volatility: f32, rng: &mut impl Rng) {
+    fn process_ask(
+        &mut self,
+        x: usize,
+        y: usize,
+        z: usize,
+        w: usize,
+        idx: usize,
+        id: usize,
+        volatility: f32,
+        rng: &mut impl Rng,
+    ) {
         // Goal: Move to Y+1
         if y < self.height - 1 {
             let target_y = y + 1;
@@ -164,14 +197,23 @@ impl Grid4D {
             match self.cells[target_idx] {
                 Particle::Empty => {
                     self.move_particle(idx, target_idx, Particle::Ask(id));
-                },
+                }
                 Particle::Bid(_) => {
                     // Trade!
                     self.execute_trade(idx, target_idx);
-                },
+                }
                 _ => {
                     // Blocked.
-                    self.try_move_sideways_or_jump(x, y, z, w, idx, Particle::Ask(id), volatility, rng);
+                    self.try_move_sideways_or_jump(
+                        x,
+                        y,
+                        z,
+                        w,
+                        idx,
+                        Particle::Ask(id),
+                        volatility,
+                        rng,
+                    );
                 }
             }
         } else {
@@ -197,7 +239,17 @@ impl Grid4D {
         self.trade_count += 1;
     }
 
-    fn try_move_sideways_or_jump(&mut self, x: usize, y: usize, z: usize, w: usize, idx: usize, p: Particle, volatility: f32, rng: &mut impl Rng) {
+    fn try_move_sideways_or_jump(
+        &mut self,
+        x: usize,
+        y: usize,
+        z: usize,
+        w: usize,
+        idx: usize,
+        p: Particle,
+        volatility: f32,
+        rng: &mut impl Rng,
+    ) {
         // Sideways: Change X, Z, or W.
         // 6 neighbors in 3 dimensions (X+-1, Z+-1, W+-1).
 
@@ -208,19 +260,31 @@ impl Grid4D {
             // Attempt to move to a random neighbor in X, Z, W
             let mut neighbors = Vec::with_capacity(6);
 
-            if x > 0 { neighbors.push((x-1, y, z, w)); }
-            if x < self.width - 1 { neighbors.push((x+1, y, z, w)); }
+            if x > 0 {
+                neighbors.push((x - 1, y, z, w));
+            }
+            if x < self.width - 1 {
+                neighbors.push((x + 1, y, z, w));
+            }
 
-            if z > 0 { neighbors.push((x, y, z-1, w)); }
-            if z < self.depth - 1 { neighbors.push((x, y, z+1, w)); }
+            if z > 0 {
+                neighbors.push((x, y, z - 1, w));
+            }
+            if z < self.depth - 1 {
+                neighbors.push((x, y, z + 1, w));
+            }
 
-            if w > 0 { neighbors.push((x, y, z, w-1)); }
-            if w < self.hypersize - 1 { neighbors.push((x, y, z, w+1)); }
+            if w > 0 {
+                neighbors.push((x, y, z, w - 1));
+            }
+            if w < self.hypersize - 1 {
+                neighbors.push((x, y, z, w + 1));
+            }
 
             if let Some(&(nx, ny, nz, nw)) = neighbors.get(rng.gen_range(0..neighbors.len())) {
                 let n_idx = self.idx(nx, ny, nz, nw);
                 if !self.updated[n_idx] && matches!(self.cells[n_idx], Particle::Empty) {
-                     self.move_particle(idx, n_idx, p);
+                    self.move_particle(idx, n_idx, p);
                 }
             }
         }
@@ -284,7 +348,7 @@ mod tests {
 
         // (0, 0, 0, 0) should be Trade
         match grid.cells[grid.idx(0, 0, 0, 0)] {
-            Particle::Trade { .. } => {},
+            Particle::Trade { .. } => {}
             _ => panic!("Expected Trade at 0,0,0,0"),
         }
 

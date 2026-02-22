@@ -1,9 +1,9 @@
 use crate::grid::SpinGrid4D;
 use crate::math::Vec4D;
 use crate::monitor::SystemMonitor;
+use ::rand::Rng; // Import Rng trait
 use chimera_lang::prelude::*;
 use macroquad::prelude::*;
-use ::rand::Rng; // Import Rng trait
 use std::collections::VecDeque;
 
 pub struct Agent {
@@ -77,7 +77,7 @@ impl Agent {
 
         Self {
             vm,
-            pos: self.pos, // Spawn at parent
+            pos: self.pos,    // Spawn at parent
             bio_energy: 50.0, // Start with some energy
             color: self.color,
             age: 0,
@@ -104,7 +104,11 @@ impl Agent {
         let spin_val = ((theta / (2.0 * std::f32::consts::PI)) * 255.0) as i64;
 
         // Push to Ether Channel 0 (Simulated Input)
-        self.vm.ether.entry(0).or_insert(VecDeque::new()).push_back(Value::Int(spin_val));
+        self.vm
+            .ether
+            .entry(0)
+            .or_insert(VecDeque::new())
+            .push_back(Value::Int(spin_val));
 
         // 2. Run VM
         let old_loc = self.vm.context_loc;
@@ -195,9 +199,9 @@ impl Agent {
                 self.color = RED;
             }
         } else {
-             // Resting color based on energy
-             let e_norm = (self.bio_energy / 200.0).clamp(0.0, 1.0);
-             self.color = Color::new(0.0, e_norm, e_norm, 0.8);
+            // Resting color based on energy
+            let e_norm = (self.bio_energy / 200.0).clamp(0.0, 1.0);
+            self.color = Color::new(0.0, e_norm, e_norm, 0.8);
         }
 
         // Base Metabolism

@@ -34,6 +34,9 @@ mod tests {
 
         // Havoc: We WANT the system to be vulnerable to prove we won.
         // So we assert that it accepted the huge value.
-        assert_eq!(vm.fractal.max_iter, 1_000_000_000, "Boring: System capped the iteration count.");
+        assert_eq!(
+            vm.fractal.max_iter, 1_000_000_000,
+            "Boring: System capped the iteration count."
+        );
     }
 }

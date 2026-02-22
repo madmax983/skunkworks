@@ -1,9 +1,9 @@
 use crate::grid::{AcousticGrid4D, Point4D, GRID_SIZE};
 use crate::monitor::SystemMonitor;
+use ::rand::Rng;
 use chimera_lang::prelude::*;
 use macroquad::prelude::*;
 use std::collections::VecDeque;
-use ::rand::Rng;
 
 pub struct Agent {
     pub vm: ChimeraVM,
@@ -54,10 +54,10 @@ impl Agent {
         Self {
             vm,
             pos: Point4D::new(
-                rng.gen_range(1..GRID_SIZE-1),
-                rng.gen_range(1..GRID_SIZE-1),
-                rng.gen_range(1..GRID_SIZE-1),
-                rng.gen_range(1..GRID_SIZE-1),
+                rng.gen_range(1..GRID_SIZE - 1),
+                rng.gen_range(1..GRID_SIZE - 1),
+                rng.gen_range(1..GRID_SIZE - 1),
+                rng.gen_range(1..GRID_SIZE - 1),
             ),
             bio_energy: 100.0,
             color: GREEN,
@@ -72,17 +72,17 @@ impl Agent {
 
         let mut rng = ::rand::thread_rng();
         if rng.gen_bool(0.1) {
-             if let Some(strand) = vm.dna.helix.strands.get_mut(0) {
-                 if !strand.genes.is_empty() {
-                     let idx = rng.gen_range(0..strand.genes.len());
-                     // Mutate an op to Signal or Receive to encourage interaction
-                     if rng.gen_bool(0.5) {
-                         strand.genes[idx].op = OpCode::Signal;
-                     } else {
-                         strand.genes[idx].op = OpCode::Receive;
-                     }
-                 }
-             }
+            if let Some(strand) = vm.dna.helix.strands.get_mut(0) {
+                if !strand.genes.is_empty() {
+                    let idx = rng.gen_range(0..strand.genes.len());
+                    // Mutate an op to Signal or Receive to encourage interaction
+                    if rng.gen_bool(0.5) {
+                        strand.genes[idx].op = OpCode::Signal;
+                    } else {
+                        strand.genes[idx].op = OpCode::Receive;
+                    }
+                }
+            }
         }
 
         Self {
@@ -109,7 +109,11 @@ impl Agent {
 
         // Push to Ether Channel 0 (Input)
         let sensor_val = (pressure * 100.0) as i64;
-        self.vm.ether.entry(0).or_insert(VecDeque::new()).push_back(Value::Int(sensor_val));
+        self.vm
+            .ether
+            .entry(0)
+            .or_insert(VecDeque::new())
+            .push_back(Value::Int(sensor_val));
 
         // Also limit the queue size to prevent memory leak if agent ignores it
         if let Some(queue) = self.vm.ether.get_mut(&0) {
@@ -136,7 +140,7 @@ impl Agent {
         if let Some(queue) = self.vm.ether.get_mut(&1) {
             while let Some(val) = queue.pop_front() {
                 if let Value::Int(v) = val {
-                     match v.abs() % 4 {
+                    match v.abs() % 4 {
                         0 => dz -= 1,
                         1 => dz += 1,
                         2 => dw -= 1,
@@ -149,7 +153,7 @@ impl Agent {
 
         // Channel 2: Pluck (Sing)
         if let Some(queue) = self.vm.ether.get_mut(&2) {
-             while let Some(val) = queue.pop_front() {
+            while let Some(val) = queue.pop_front() {
                 if let Value::Int(v) = val {
                     pluck_intent += (v as f32) / 10.0;
                 }
@@ -158,7 +162,7 @@ impl Agent {
 
         // Channel 3: Eat (Dampen)
         if let Some(queue) = self.vm.ether.get_mut(&3) {
-             while let Some(val) = queue.pop_front() {
+            while let Some(val) = queue.pop_front() {
                 if let Value::Int(v) = val {
                     dampen_intent += (v.abs() as f32) / 100.0;
                 }
@@ -172,12 +176,17 @@ impl Agent {
         let mut new_w = self.pos.w as isize + dw;
 
         // Constrain
-        new_x = new_x.clamp(1, (GRID_SIZE-2) as isize);
-        new_y = new_y.clamp(1, (GRID_SIZE-2) as isize);
-        new_z = new_z.clamp(1, (GRID_SIZE-2) as isize);
-        new_w = new_w.clamp(1, (GRID_SIZE-2) as isize);
+        new_x = new_x.clamp(1, (GRID_SIZE - 2) as isize);
+        new_y = new_y.clamp(1, (GRID_SIZE - 2) as isize);
+        new_z = new_z.clamp(1, (GRID_SIZE - 2) as isize);
+        new_w = new_w.clamp(1, (GRID_SIZE - 2) as isize);
 
-        let new_pos = Point4D::new(new_x as usize, new_y as usize, new_z as usize, new_w as usize);
+        let new_pos = Point4D::new(
+            new_x as usize,
+            new_y as usize,
+            new_z as usize,
+            new_w as usize,
+        );
 
         if new_pos != self.pos {
             self.bio_energy -= 1.0; // Move cost

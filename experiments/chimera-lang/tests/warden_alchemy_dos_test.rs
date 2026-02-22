@@ -62,20 +62,24 @@ mod tests {
         vm.stack.push(Value::Int(0));
         vm.stack.push(Value::Int(0));
 
-        chimera_lang::vm::nova_alchemy_prime::exec_absorb_geometry(&mut vm, OpCode::AbsorbGeometry, &[]);
+        chimera_lang::vm::nova_alchemy_prime::exec_absorb_geometry(
+            &mut vm,
+            OpCode::AbsorbGeometry,
+            &[],
+        );
 
         // Without fix: It allocates 4M items and succeeds (or creates a huge strand).
         // With fix: It should push an error to output and NOT create a strand.
 
         let last_msg = vm.output.last().cloned().unwrap_or_default();
         if !last_msg.contains("Error") {
-             // If no error, check strand length
-             let strand_count = vm.dna.helix.strands.len();
-             // It started with 1 strand. Should still be 1 if failed, or 2 if success.
-             // If success, we have a DoS vector.
-             if strand_count > 1 {
-                 panic!("Vulnerability confirmed: Created oversized strand from radius 1000");
-             }
+            // If no error, check strand length
+            let strand_count = vm.dna.helix.strands.len();
+            // It started with 1 strand. Should still be 1 if failed, or 2 if success.
+            // If success, we have a DoS vector.
+            if strand_count > 1 {
+                panic!("Vulnerability confirmed: Created oversized strand from radius 1000");
+            }
         }
     }
 }

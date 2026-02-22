@@ -1,6 +1,6 @@
+use ::rand::Rng;
 use hyper_system::math::Vec4;
 use hyper_system::monitor::SystemMonitor;
-use ::rand::Rng;
 use macroquad::prelude::*;
 
 // --- Boid Logic ---

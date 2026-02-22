@@ -30,9 +30,17 @@ fn test_void_overflow_protection() {
     println!("Void Buffer Size: {}", vm.prologue_state.void_buffer.len());
 
     // Security Limit Check: Should be capped at MAX_VOID_BUFFER (1024)
-    assert!(vm.prologue_state.void_buffer.len() <= 1024, "Buffer overflowed limit! Size: {}", vm.prologue_state.void_buffer.len());
+    assert!(
+        vm.prologue_state.void_buffer.len() <= 1024,
+        "Buffer overflowed limit! Size: {}",
+        vm.prologue_state.void_buffer.len()
+    );
     // In fact, since we pushed 2000 times, it should be exactly capped.
     // If it's less, the test setup might be wrong (Source not firing every tick?).
     // But since ! (Source) fires every tick, it should hit the cap.
-    assert_eq!(vm.prologue_state.void_buffer.len(), 1024, "Buffer was not capped at exact limit");
+    assert_eq!(
+        vm.prologue_state.void_buffer.len(),
+        1024,
+        "Buffer was not capped at exact limit"
+    );
 }

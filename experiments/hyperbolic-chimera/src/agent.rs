@@ -1,5 +1,5 @@
-use chimera_lang::vm::{ChimeraVM, Value};
 use chimera_lang::ast::Dna;
+use chimera_lang::vm::{ChimeraVM, Value};
 use num_complex::Complex;
 use poincare_disk::{mobius_add, Point};
 use ratatui::style::Color;

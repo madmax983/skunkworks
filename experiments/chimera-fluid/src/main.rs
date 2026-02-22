@@ -1,13 +1,13 @@
 use macroquad::prelude::*;
 use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
 
-mod math;
-mod grid;
 mod agent;
+mod grid;
+mod math;
 
-use math::Vec4;
-use grid::Grid4D;
 use agent::Agent;
+use grid::Grid4D;
+use math::Vec4;
 
 // --- Constants ---
 const NUM_PARTICLES: usize = 2000;
@@ -220,12 +220,15 @@ async fn main() {
             let mut force = gravity;
 
             // Agitation (Random kicks)
-            force = force.add(Vec4::new(
-                rand::gen_range(-1.0, 1.0),
-                rand::gen_range(-1.0, 1.0),
-                rand::gen_range(-1.0, 1.0),
-                rand::gen_range(-1.0, 1.0),
-            ).scale(agitation_strength));
+            force = force.add(
+                Vec4::new(
+                    rand::gen_range(-1.0, 1.0),
+                    rand::gen_range(-1.0, 1.0),
+                    rand::gen_range(-1.0, 1.0),
+                    rand::gen_range(-1.0, 1.0),
+                )
+                .scale(agitation_strength),
+            );
 
             // Pressure (Repulsion from high density)
             let gx = map_coord(p.pos.x);
@@ -235,13 +238,33 @@ async fn main() {
 
             // Simple gradient check (central difference)
             // X Gradient
-            let dx = grid.get(gx + 1, gy, gz, gw) - if gx > 0 { grid.get(gx - 1, gy, gz, gw) } else { 0.0 };
+            let dx = grid.get(gx + 1, gy, gz, gw)
+                - if gx > 0 {
+                    grid.get(gx - 1, gy, gz, gw)
+                } else {
+                    0.0
+                };
             // Y Gradient
-            let dy = grid.get(gx, gy + 1, gz, gw) - if gy > 0 { grid.get(gx, gy - 1, gz, gw) } else { 0.0 };
+            let dy = grid.get(gx, gy + 1, gz, gw)
+                - if gy > 0 {
+                    grid.get(gx, gy - 1, gz, gw)
+                } else {
+                    0.0
+                };
             // Z Gradient
-            let dz = grid.get(gx, gy, gz + 1, gw) - if gz > 0 { grid.get(gx, gy, gz - 1, gw) } else { 0.0 };
+            let dz = grid.get(gx, gy, gz + 1, gw)
+                - if gz > 0 {
+                    grid.get(gx, gy, gz - 1, gw)
+                } else {
+                    0.0
+                };
             // W Gradient
-            let dw = grid.get(gx, gy, gz, gw + 1) - if gw > 0 { grid.get(gx, gy, gz, gw - 1) } else { 0.0 };
+            let dw = grid.get(gx, gy, gz, gw + 1)
+                - if gw > 0 {
+                    grid.get(gx, gy, gz, gw - 1)
+                } else {
+                    0.0
+                };
 
             let gradient = Vec4::new(dx, dy, dz, dw);
             // Push away from high density
@@ -259,67 +282,126 @@ async fn main() {
 
             // Boundary Constraints (Hypercube [-1.5, 1.5])
             let bounds = 1.5;
-            if p.pos.x < -bounds || p.pos.x > bounds { p.vel.x *= -0.8; p.pos.x = p.pos.x.clamp(-bounds, bounds); }
-            if p.pos.y < -bounds || p.pos.y > bounds { p.vel.y *= -0.8; p.pos.y = p.pos.y.clamp(-bounds, bounds); }
-            if p.pos.z < -bounds || p.pos.z > bounds { p.vel.z *= -0.8; p.pos.z = p.pos.z.clamp(-bounds, bounds); }
-            if p.pos.w < -bounds || p.pos.w > bounds { p.vel.w *= -0.8; p.pos.w = p.pos.w.clamp(-bounds, bounds); }
+            if p.pos.x < -bounds || p.pos.x > bounds {
+                p.vel.x *= -0.8;
+                p.pos.x = p.pos.x.clamp(-bounds, bounds);
+            }
+            if p.pos.y < -bounds || p.pos.y > bounds {
+                p.vel.y *= -0.8;
+                p.pos.y = p.pos.y.clamp(-bounds, bounds);
+            }
+            if p.pos.z < -bounds || p.pos.z > bounds {
+                p.vel.z *= -0.8;
+                p.pos.z = p.pos.z.clamp(-bounds, bounds);
+            }
+            if p.pos.w < -bounds || p.pos.w > bounds {
+                p.vel.w *= -0.8;
+                p.pos.w = p.pos.w.clamp(-bounds, bounds);
+            }
         }
 
         // Update Active Agents
         for agent in &mut agents {
-             // Calculate Local Gradient
-             let gx = map_coord(agent.pos.x);
-             let gy = map_coord(agent.pos.y);
-             let gz = map_coord(agent.pos.z);
-             let gw = map_coord(agent.pos.w);
+            // Calculate Local Gradient
+            let gx = map_coord(agent.pos.x);
+            let gy = map_coord(agent.pos.y);
+            let gz = map_coord(agent.pos.z);
+            let gw = map_coord(agent.pos.w);
 
-             let density = grid.get(gx, gy, gz, gw);
+            let density = grid.get(gx, gy, gz, gw);
 
-             let dx = grid.get(gx + 1, gy, gz, gw) - if gx > 0 { grid.get(gx - 1, gy, gz, gw) } else { 0.0 };
-             let dy = grid.get(gx, gy + 1, gz, gw) - if gy > 0 { grid.get(gx, gy - 1, gz, gw) } else { 0.0 };
-             let dz = grid.get(gx, gy, gz + 1, gw) - if gz > 0 { grid.get(gx, gy, gz - 1, gw) } else { 0.0 };
-             let dw = grid.get(gx, gy, gz, gw + 1) - if gw > 0 { grid.get(gx, gy, gz, gw - 1) } else { 0.0 };
-             let gradient = Vec4::new(dx, dy, dz, dw);
+            let dx = grid.get(gx + 1, gy, gz, gw)
+                - if gx > 0 {
+                    grid.get(gx - 1, gy, gz, gw)
+                } else {
+                    0.0
+                };
+            let dy = grid.get(gx, gy + 1, gz, gw)
+                - if gy > 0 {
+                    grid.get(gx, gy - 1, gz, gw)
+                } else {
+                    0.0
+                };
+            let dz = grid.get(gx, gy, gz + 1, gw)
+                - if gz > 0 {
+                    grid.get(gx, gy, gz - 1, gw)
+                } else {
+                    0.0
+                };
+            let dw = grid.get(gx, gy, gz, gw + 1)
+                - if gw > 0 {
+                    grid.get(gx, gy, gz, gw - 1)
+                } else {
+                    0.0
+                };
+            let gradient = Vec4::new(dx, dy, dz, dw);
 
-             // Passive Physics (Drag & Pressure)
-             let mut passive_force = gravity;
-             // Push away from high density (Pressure)
-             passive_force = passive_force.add(gradient.scale(-pressure_strength));
-             // Agitation
-             passive_force = passive_force.add(Vec4::new(
-                rand::gen_range(-1.0, 1.0),
-                rand::gen_range(-1.0, 1.0),
-                rand::gen_range(-1.0, 1.0),
-                rand::gen_range(-1.0, 1.0),
-             ).scale(agitation_strength));
+            // Passive Physics (Drag & Pressure)
+            let mut passive_force = gravity;
+            // Push away from high density (Pressure)
+            passive_force = passive_force.add(gradient.scale(-pressure_strength));
+            // Agitation
+            passive_force = passive_force.add(
+                Vec4::new(
+                    rand::gen_range(-1.0, 1.0),
+                    rand::gen_range(-1.0, 1.0),
+                    rand::gen_range(-1.0, 1.0),
+                    rand::gen_range(-1.0, 1.0),
+                )
+                .scale(agitation_strength),
+            );
 
-             agent.acc = passive_force;
+            agent.acc = passive_force;
 
-             // Active Logic (Brain)
-             agent.update(density, gradient, dt);
+            // Active Logic (Brain)
+            agent.update(density, gradient, dt);
 
-             // Integration
-             agent.vel = agent.vel.add(agent.acc.scale(dt));
-             agent.vel = agent.vel.scale(viscosity_damping); // Damping
-             agent.pos = agent.pos.add(agent.vel.scale(dt));
+            // Integration
+            agent.vel = agent.vel.add(agent.acc.scale(dt));
+            agent.vel = agent.vel.scale(viscosity_damping); // Damping
+            agent.pos = agent.pos.add(agent.vel.scale(dt));
 
-             // Boundary Constraints
-             let bounds = 1.5;
-             if agent.pos.x < -bounds || agent.pos.x > bounds { agent.vel.x *= -0.8; agent.pos.x = agent.pos.x.clamp(-bounds, bounds); }
-             if agent.pos.y < -bounds || agent.pos.y > bounds { agent.vel.y *= -0.8; agent.pos.y = agent.pos.y.clamp(-bounds, bounds); }
-             if agent.pos.z < -bounds || agent.pos.z > bounds { agent.vel.z *= -0.8; agent.pos.z = agent.pos.z.clamp(-bounds, bounds); }
-             if agent.pos.w < -bounds || agent.pos.w > bounds { agent.vel.w *= -0.8; agent.pos.w = agent.pos.w.clamp(-bounds, bounds); }
+            // Boundary Constraints
+            let bounds = 1.5;
+            if agent.pos.x < -bounds || agent.pos.x > bounds {
+                agent.vel.x *= -0.8;
+                agent.pos.x = agent.pos.x.clamp(-bounds, bounds);
+            }
+            if agent.pos.y < -bounds || agent.pos.y > bounds {
+                agent.vel.y *= -0.8;
+                agent.pos.y = agent.pos.y.clamp(-bounds, bounds);
+            }
+            if agent.pos.z < -bounds || agent.pos.z > bounds {
+                agent.vel.z *= -0.8;
+                agent.pos.z = agent.pos.z.clamp(-bounds, bounds);
+            }
+            if agent.pos.w < -bounds || agent.pos.w > bounds {
+                agent.vel.w *= -0.8;
+                agent.pos.w = agent.pos.w.clamp(-bounds, bounds);
+            }
         }
 
         // --- Rendering ---
 
         // Input Camera
-        if is_key_down(KeyCode::Left) { cam_angle_y += 2.0 * dt; }
-        if is_key_down(KeyCode::Right) { cam_angle_y -= 2.0 * dt; }
-        if is_key_down(KeyCode::Up) { cam_angle_x += 2.0 * dt; }
-        if is_key_down(KeyCode::Down) { cam_angle_x -= 2.0 * dt; }
-        if is_key_down(KeyCode::W) { cam_dist -= 5.0 * dt; }
-        if is_key_down(KeyCode::S) { cam_dist += 5.0 * dt; }
+        if is_key_down(KeyCode::Left) {
+            cam_angle_y += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_angle_y -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_angle_x += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_angle_x -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 5.0 * dt;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 5.0 * dt;
+        }
 
         // Auto-Rotate 4D
         let rot_speed = 0.2 * (1.0 + monitor.load_avg);
@@ -362,10 +444,10 @@ async fn main() {
             let pos_3d = transform(p.pos);
             let w_norm = (p.pos.w + 1.5) / 3.0;
             let color = Color::new(
-                0.2 + w_norm * 0.3, // R
+                0.2 + w_norm * 0.3,            // R
                 0.5 + monitor.cpu_usage * 0.5, // G (Agitation)
                 1.0 - monitor.mem_usage * 0.5, // B (Viscosity)
-                0.5 // More transparent
+                0.5,                           // More transparent
             );
             draw_sphere(pos_3d, 0.03, None, color);
         }
@@ -381,10 +463,34 @@ async fn main() {
         // UI Overlay
         draw_text("Chimera Fluid", 10.0, 20.0, 30.0, WHITE);
         draw_text(&format!("Agents: {}", NUM_AGENTS), 10.0, 40.0, 20.0, YELLOW);
-        draw_text(&format!("CPU (Agitation): {:.0}%", monitor.cpu_usage * 100.0), 10.0, 60.0, 20.0, GREEN);
-        draw_text(&format!("MEM (Viscosity): {:.0}%", monitor.mem_usage * 100.0), 10.0, 80.0, 20.0, BLUE);
-        draw_text(&format!("SWP (Gravity):   {:.0}%", monitor.swap_usage * 100.0), 10.0, 100.0, 20.0, RED);
-        draw_text(&format!("Particles: {}", NUM_PARTICLES), 10.0, 120.0, 20.0, GRAY);
+        draw_text(
+            &format!("CPU (Agitation): {:.0}%", monitor.cpu_usage * 100.0),
+            10.0,
+            60.0,
+            20.0,
+            GREEN,
+        );
+        draw_text(
+            &format!("MEM (Viscosity): {:.0}%", monitor.mem_usage * 100.0),
+            10.0,
+            80.0,
+            20.0,
+            BLUE,
+        );
+        draw_text(
+            &format!("SWP (Gravity):   {:.0}%", monitor.swap_usage * 100.0),
+            10.0,
+            100.0,
+            20.0,
+            RED,
+        );
+        draw_text(
+            &format!("Particles: {}", NUM_PARTICLES),
+            10.0,
+            120.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }

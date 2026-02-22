@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
     use chimera_lang::ast::{Dna, Helix};
-    use chimera_lang::vm::{ChimeraVM, Value};
     use chimera_lang::vm::prologue::exec_prologue_tick;
+    use chimera_lang::vm::{ChimeraVM, Value};
 
     #[test]
     fn test_prologue_quine_cycle() {
@@ -52,7 +52,10 @@ mod tests {
         //   - B emits Dish to delayed_signals[5][4].
         exec_prologue_tick(&mut vm);
 
-        assert!(vm.prologue_state.delayed_signals[5][4].is_some(), "B did not fire");
+        assert!(
+            vm.prologue_state.delayed_signals[5][4].is_some(),
+            "B did not fire"
+        );
 
         // Step 2:
         // - prepare_signals: delayed[5][4] -> signal_grid[5][4] (Dish).
@@ -66,9 +69,17 @@ mod tests {
         exec_prologue_tick(&mut vm);
 
         // Check Result at (4, 7)
-        assert_eq!(vm.grid[4][7], Value::Int(42), "Failed to teleport 42 via JSON");
+        assert_eq!(
+            vm.grid[4][7],
+            Value::Int(42),
+            "Failed to teleport 42 via JSON"
+        );
 
         // Check Result at (5, 7) - should be copy of (5, 5) which is "
-        assert_eq!(vm.grid[5][7], Value::Str("\"".to_string()), "Failed to teleport \" via JSON");
+        assert_eq!(
+            vm.grid[5][7],
+            Value::Str("\"".to_string()),
+            "Failed to teleport \" via JSON"
+        );
     }
 }

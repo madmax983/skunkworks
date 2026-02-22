@@ -3025,6 +3025,126 @@ impl ChimeraVM {
         None
     }
 
+    fn exec_havoc_op(&mut self, op: OpCode) -> Option<(usize, usize)> {
+        match op {
+            OpCode::HavocRate => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(n) => self.havoc.rate = (n as f64) / 100.0,
+                        _ => self
+                            .output
+                            .push("Error: HavocRate requires Int (0-100)".to_string()),
+                    }
+                }
+            }
+            OpCode::HavocScope => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(n) => self.havoc.scope = n as u8,
+                        _ => self
+                            .output
+                            .push("Error: HavocScope requires Int".to_string()),
+                    }
+                }
+            }
+            _ => {}
+        }
+        None
+    }
+
+    #[cfg(feature = "nova")]
+    fn exec_char_op(&mut self) -> Option<(usize, usize)> {
+        if let Some(val) = self.stack.pop() {
+            match val {
+                Value::Int(n) => {
+                    // Try to convert to char
+                    if let Some(c) = char::from_u32(n as u32) {
+                        self.stack.push(Value::Str(c.to_string()));
+                    } else {
+                        self.output.push("Error: Invalid char code".to_string());
+                        self.stack.push(Value::Str("".to_string()));
+                    }
+                }
+                _ => {
+                    self.output.push("Error: Type mismatch for Chr".to_string());
+                }
+            }
+        } else {
+            self.output
+                .push("Error: Stack underflow for Chr".to_string());
+        }
+        None
+    }
+
+    #[cfg(feature = "nova")]
+    fn exec_mutagen_op(&mut self) -> Option<(usize, usize)> {
+        if self.stack.len() >= 4 {
+            let to_val = self.stack.pop().unwrap();
+            let from_val = self.stack.pop().unwrap();
+            let prob_val = self.stack.pop().unwrap();
+            let target_val = self.stack.pop().unwrap();
+
+            if let (
+                Value::Str(to_s),
+                Value::Str(from_s),
+                Value::Int(prob_int),
+                Value::Int(target_idx),
+            ) = (to_val, from_val, prob_val, target_val)
+            {
+                if let (Ok(to_op), Ok(from_op)) = (to_s.parse::<OpCode>(), from_s.parse::<OpCode>())
+                {
+                    let prob = (prob_int as f64) / 100.0;
+                    pandemonium::apply_mutagen(self, target_idx as usize, from_op, to_op, prob);
+                } else {
+                    self.output
+                        .push("Error: Invalid OpCode string for Mutagen".to_string());
+                }
+            } else {
+                self.output
+                    .push("Error: Type mismatch for Mutagen".to_string());
+            }
+        } else {
+            self.output
+                .push("Error: Stack underflow for Mutagen".to_string());
+        }
+        None
+    }
+
+    #[cfg(feature = "oracle")]
+    fn exec_findall_op(&mut self) -> Option<(usize, usize)> {
+        if self.stack.len() >= 2 {
+            let goal = self.stack.pop().unwrap();
+            let template = self.stack.pop().unwrap();
+
+            let mut solutions = Vec::new();
+            oracle::solve(
+                &[goal],
+                HashMap::new(),
+                &self.knowledge_base,
+                self,
+                &mut solutions,
+                0,
+            );
+
+            let mut results = Vec::new();
+            for subst in solutions {
+                results.push(oracle::resolve(&template, &subst));
+            }
+
+            let new_val = Value::Junction(JunctionType::All, results);
+            if new_val.depth() > MAX_RECURSION_DEPTH {
+                self.output
+                    .push("Error: FindAll depth limit exceeded".to_string());
+            } else {
+                self.stack.push(new_val);
+            }
+        } else {
+            self.output
+                .push("Error: Stack underflow for findall".to_string());
+        }
+        None
+    }
+
     pub(crate) fn execute_gene_inner(
         &mut self,
         op: OpCode,
@@ -3057,28 +3177,7 @@ impl ChimeraVM {
             OpCode::JumpS | OpCode::BrzS => self.exec_flow_op(op, args),
             OpCode::SLen | OpCode::HelixLen | OpCode::GeneLen => self.exec_stack_op(op, args),
 
-            OpCode::HavocRate => {
-                if let Some(val) = self.stack.pop() {
-                    match val {
-                        Value::Int(n) => self.havoc.rate = (n as f64) / 100.0,
-                        _ => self
-                            .output
-                            .push("Error: HavocRate requires Int (0-100)".to_string()),
-                    }
-                }
-                None
-            }
-            OpCode::HavocScope => {
-                if let Some(val) = self.stack.pop() {
-                    match val {
-                        Value::Int(n) => self.havoc.scope = n as u8,
-                        _ => self
-                            .output
-                            .push("Error: HavocScope requires Int".to_string()),
-                    }
-                }
-                None
-            }
+            OpCode::HavocRate | OpCode::HavocScope => self.exec_havoc_op(op),
 
             #[cfg(feature = "cortex")]
             OpCode::Link | OpCode::Sever | OpCode::Spark | OpCode::Sense | OpCode::Gate => {
@@ -3410,45 +3509,7 @@ impl ChimeraVM {
             OpCode::Weave | OpCode::Unravel => nova_weaver::exec_weave_op(self, op, args),
 
             #[cfg(feature = "nova")]
-            OpCode::Mutagen => {
-                if self.stack.len() >= 4 {
-                    let to_val = self.stack.pop().unwrap();
-                    let from_val = self.stack.pop().unwrap();
-                    let prob_val = self.stack.pop().unwrap();
-                    let target_val = self.stack.pop().unwrap();
-
-                    if let (
-                        Value::Str(to_s),
-                        Value::Str(from_s),
-                        Value::Int(prob_int),
-                        Value::Int(target_idx),
-                    ) = (to_val, from_val, prob_val, target_val)
-                    {
-                        if let (Ok(to_op), Ok(from_op)) =
-                            (to_s.parse::<OpCode>(), from_s.parse::<OpCode>())
-                        {
-                            let prob = (prob_int as f64) / 100.0;
-                            pandemonium::apply_mutagen(
-                                self,
-                                target_idx as usize,
-                                from_op,
-                                to_op,
-                                prob,
-                            );
-                        } else {
-                            self.output
-                                .push("Error: Invalid OpCode string for Mutagen".to_string());
-                        }
-                    } else {
-                        self.output
-                            .push("Error: Type mismatch for Mutagen".to_string());
-                    }
-                } else {
-                    self.output
-                        .push("Error: Stack underflow for Mutagen".to_string());
-                }
-                None
-            }
+            OpCode::Mutagen => self.exec_mutagen_op(),
 
             #[cfg(feature = "nova")]
             OpCode::Scavenge => self.exec_scavenge_op(),
@@ -3535,28 +3596,7 @@ impl ChimeraVM {
             OpCode::CymaticScan => nova_hologram::exec_cymatic_scan(self, op, args),
 
             #[cfg(feature = "nova")]
-            OpCode::Chr => {
-                if let Some(val) = self.stack.pop() {
-                    match val {
-                        Value::Int(n) => {
-                            // Try to convert to char
-                            if let Some(c) = char::from_u32(n as u32) {
-                                self.stack.push(Value::Str(c.to_string()));
-                            } else {
-                                self.output.push("Error: Invalid char code".to_string());
-                                self.stack.push(Value::Str("".to_string()));
-                            }
-                        }
-                        _ => {
-                            self.output.push("Error: Type mismatch for Chr".to_string());
-                        }
-                    }
-                } else {
-                    self.output
-                        .push("Error: Stack underflow for Chr".to_string());
-                }
-                None
-            }
+            OpCode::Chr => self.exec_char_op(),
 
             #[cfg(feature = "nova")]
             OpCode::Guild => nova_guild::exec_guild(self),
@@ -3580,39 +3620,7 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "oracle")]
-            OpCode::FindAll => {
-                if self.stack.len() >= 2 {
-                    let goal = self.stack.pop().unwrap();
-                    let template = self.stack.pop().unwrap();
-
-                    let mut solutions = Vec::new();
-                    oracle::solve(
-                        &[goal],
-                        HashMap::new(),
-                        &self.knowledge_base,
-                        self,
-                        &mut solutions,
-                        0,
-                    );
-
-                    let mut results = Vec::new();
-                    for subst in solutions {
-                        results.push(oracle::resolve(&template, &subst));
-                    }
-
-                    let new_val = Value::Junction(JunctionType::All, results);
-                    if new_val.depth() > MAX_RECURSION_DEPTH {
-                        self.output
-                            .push("Error: FindAll depth limit exceeded".to_string());
-                    } else {
-                        self.stack.push(new_val);
-                    }
-                } else {
-                    self.output
-                        .push("Error: Stack underflow for findall".to_string());
-                }
-                None
-            }
+            OpCode::FindAll => self.exec_findall_op(),
 
             #[cfg(feature = "oracle")]
             OpCode::Assert

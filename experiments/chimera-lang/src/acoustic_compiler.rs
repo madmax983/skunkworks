@@ -1,9 +1,9 @@
 #![cfg(feature = "resonance")]
 use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use crate::opcode::OpCode;
+use anyhow::Result;
 use pest::Parser;
 use pest_derive::Parser;
-use anyhow::Result;
 
 #[derive(Parser)]
 #[grammar = "acoustic.pest"]

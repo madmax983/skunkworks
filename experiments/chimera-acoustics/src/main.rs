@@ -10,8 +10,8 @@ use grid::{AcousticGrid4D, Point4D, GRID_SIZE};
 use math::Vec4;
 use monitor::SystemMonitor;
 
-use macroquad::prelude::*;
 use crossbeam_channel::bounded;
+use macroquad::prelude::*;
 
 const AGENT_COUNT: usize = 32;
 
@@ -29,7 +29,9 @@ async fn main() {
 
     let mut grid = AcousticGrid4D::new();
     let mut monitor = SystemMonitor::new();
-    let mut agents: Vec<Agent> = (0..AGENT_COUNT).map(|i| Agent::new_random(i as u64)).collect();
+    let mut agents: Vec<Agent> = (0..AGENT_COUNT)
+        .map(|i| Agent::new_random(i as u64))
+        .collect();
 
     let mut cam_angle_x = 0.0f32;
     let mut cam_angle_y = 0.0f32;
@@ -104,7 +106,8 @@ async fn main() {
             // Let's sample the pressure at the center of the grid as a "Room Mic"
             // and maybe mix in agent activity?
             // Simple Room Mic at center:
-            let center_idx = grid.idx_raw(GRID_SIZE/2, GRID_SIZE/2, GRID_SIZE/2, GRID_SIZE/2);
+            let center_idx =
+                grid.idx_raw(GRID_SIZE / 2, GRID_SIZE / 2, GRID_SIZE / 2, GRID_SIZE / 2);
             let sample = grid.u[center_idx];
 
             // Send to audio thread
@@ -119,8 +122,8 @@ async fn main() {
 
         // Input
         if is_mouse_button_pressed(MouseButton::Left) {
-             let center = Point4D::new(GRID_SIZE/2, GRID_SIZE/2, GRID_SIZE/2, GRID_SIZE/2);
-             grid.pluck(center, 1.0);
+            let center = Point4D::new(GRID_SIZE / 2, GRID_SIZE / 2, GRID_SIZE / 2, GRID_SIZE / 2);
+            grid.pluck(center, 1.0);
         }
 
         // Rotate Space
@@ -130,12 +133,24 @@ async fn main() {
         angle_zw += dt * 0.05;
 
         // Camera Control
-        if is_key_down(KeyCode::Left) { cam_angle_y += 2.0 * dt; }
-        if is_key_down(KeyCode::Right) { cam_angle_y -= 2.0 * dt; }
-        if is_key_down(KeyCode::Up) { cam_angle_x += 2.0 * dt; }
-        if is_key_down(KeyCode::Down) { cam_angle_x -= 2.0 * dt; }
-        if is_key_down(KeyCode::W) { cam_dist -= 5.0 * dt; }
-        if is_key_down(KeyCode::S) { cam_dist += 5.0 * dt; }
+        if is_key_down(KeyCode::Left) {
+            cam_angle_y += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_angle_y -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_angle_x += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_angle_x -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 5.0 * dt;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 5.0 * dt;
+        }
 
         let cam_pos = vec3(
             cam_dist * cam_angle_x.cos() * cam_angle_y.sin(),
@@ -181,27 +196,39 @@ async fn main() {
 
         // Draw Agents
         for agent in &agents {
-             // Normalized pos -1..1
-             let fx = (agent.pos.x as f32 / (GRID_SIZE - 1) as f32) * 2.0 - 1.0;
-             let fy = (agent.pos.y as f32 / (GRID_SIZE - 1) as f32) * 2.0 - 1.0;
-             let fz = (agent.pos.z as f32 / (GRID_SIZE - 1) as f32) * 2.0 - 1.0;
-             let fw = (agent.pos.w as f32 / (GRID_SIZE - 1) as f32) * 2.0 - 1.0;
+            // Normalized pos -1..1
+            let fx = (agent.pos.x as f32 / (GRID_SIZE - 1) as f32) * 2.0 - 1.0;
+            let fy = (agent.pos.y as f32 / (GRID_SIZE - 1) as f32) * 2.0 - 1.0;
+            let fz = (agent.pos.z as f32 / (GRID_SIZE - 1) as f32) * 2.0 - 1.0;
+            let fw = (agent.pos.w as f32 / (GRID_SIZE - 1) as f32) * 2.0 - 1.0;
 
-             let mut v = Vec4::new(fx, fy, fz, fw);
-             v = v.rotate_xw(angle_xw);
-             v = v.rotate_yw(angle_yw);
-             v = v.rotate_zw(angle_zw);
-             let p3 = v.project_to_3d(4.0);
+            let mut v = Vec4::new(fx, fy, fz, fw);
+            v = v.rotate_xw(angle_xw);
+            v = v.rotate_yw(angle_yw);
+            v = v.rotate_zw(angle_zw);
+            let p3 = v.project_to_3d(4.0);
 
-             draw_sphere(p3, 0.15, None, agent.color);
+            draw_sphere(p3, 0.15, None, agent.color);
         }
 
         set_default_camera();
 
         draw_text("Chimera Acoustics", 10.0, 20.0, 30.0, WHITE);
-        draw_text(&format!("Agents: {}", agents.len()), 10.0, 50.0, 20.0, GREEN);
+        draw_text(
+            &format!("Agents: {}", agents.len()),
+            10.0,
+            50.0,
+            20.0,
+            GREEN,
+        );
         draw_text(&format!("CPU (Speed): {:.2}", c2), 10.0, 70.0, 20.0, RED);
-        draw_text(&format!("RAM (Damping): {:.2}", base_damping), 10.0, 90.0, 20.0, BLUE);
+        draw_text(
+            &format!("RAM (Damping): {:.2}", base_damping),
+            10.0,
+            90.0,
+            20.0,
+            BLUE,
+        );
 
         next_frame().await
     }

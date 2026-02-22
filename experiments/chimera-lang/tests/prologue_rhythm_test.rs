@@ -12,7 +12,9 @@ mod tests {
             args: vec![chimera_lang::ast::Nucleotide::Number(0)],
         }];
         let dna = Dna {
-            helix: Helix { strands: vec![chimera_lang::ast::Strand { genes }] },
+            helix: Helix {
+                strands: vec![chimera_lang::ast::Strand { genes }],
+            },
         };
         let mut vm = ChimeraVM::new(dna);
         vm.prologue_state.active = true;
@@ -26,14 +28,20 @@ mod tests {
         // Run 4 steps (Ticks 1, 2, 3, 4)
         for _ in 0..4 {
             vm.step();
-            assert!(vm.prologue_state.signal_grid[5][5].is_none(), "Should not emit yet");
+            assert!(
+                vm.prologue_state.signal_grid[5][5].is_none(),
+                "Should not emit yet"
+            );
         }
 
         // Tick 5
         vm.step();
         assert_eq!(vm.tick_counter, 5);
         // Default interval is 5. 5 % 5 == 0.
-        assert!(vm.prologue_state.signal_grid[5][5].is_some(), "Should emit on tick 5");
+        assert!(
+            vm.prologue_state.signal_grid[5][5].is_some(),
+            "Should emit on tick 5"
+        );
     }
 
     #[test]

@@ -24,15 +24,15 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> Color {
     let x = c * (1.0 - ((h * 6.0) % 2.0 - 1.0).abs());
     let m = l - c / 2.0;
 
-    let (r, g, b) = if h < 1.0/6.0 {
+    let (r, g, b) = if h < 1.0 / 6.0 {
         (c, x, 0.0)
-    } else if h < 2.0/6.0 {
+    } else if h < 2.0 / 6.0 {
         (x, c, 0.0)
-    } else if h < 3.0/6.0 {
+    } else if h < 3.0 / 6.0 {
         (0.0, c, x)
-    } else if h < 4.0/6.0 {
+    } else if h < 4.0 / 6.0 {
         (0.0, x, c)
-    } else if h < 5.0/6.0 {
+    } else if h < 5.0 / 6.0 {
         (x, 0.0, c)
     } else {
         (c, 0.0, x)
@@ -117,12 +117,24 @@ async fn main() {
         angle_zw += dt * 0.02;
 
         // Camera Input
-        if is_key_down(KeyCode::Left) { cam_angle_y += 2.0 * dt; }
-        if is_key_down(KeyCode::Right) { cam_angle_y -= 2.0 * dt; }
-        if is_key_down(KeyCode::Up) { cam_angle_x += 2.0 * dt; }
-        if is_key_down(KeyCode::Down) { cam_angle_x -= 2.0 * dt; }
-        if is_key_down(KeyCode::W) { cam_dist -= 5.0 * dt; }
-        if is_key_down(KeyCode::S) { cam_dist += 5.0 * dt; }
+        if is_key_down(KeyCode::Left) {
+            cam_angle_y += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_angle_y -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_angle_x += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_angle_x -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 5.0 * dt;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 5.0 * dt;
+        }
 
         let cam_pos = vec3(
             cam_dist * cam_angle_x.cos() * cam_angle_y.sin(),
@@ -184,9 +196,21 @@ async fn main() {
         set_default_camera();
 
         draw_text("Chimera Glass", 10.0, 20.0, 30.0, WHITE);
-        draw_text(&format!("Agents: {}", agents.len()), 10.0, 50.0, 20.0, GREEN);
+        draw_text(
+            &format!("Agents: {}", agents.len()),
+            10.0,
+            50.0,
+            20.0,
+            GREEN,
+        );
         draw_text(&format!("Temp (CPU): {:.2}", temp), 10.0, 70.0, 20.0, RED);
-        draw_text(&format!("Field (RAM): {:.2}", field), 10.0, 90.0, 20.0, BLUE);
+        draw_text(
+            &format!("Field (RAM): {:.2}", field),
+            10.0,
+            90.0,
+            20.0,
+            BLUE,
+        );
 
         next_frame().await
     }

@@ -1,5 +1,5 @@
-use chimera_lang::vm::Value;
 use chimera_lang::ast::JunctionType;
+use chimera_lang::vm::Value;
 
 #[test]
 fn test_deep_display_crash() {

@@ -87,10 +87,7 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result
                         ctx.print(
                             node.pos.x as f64,
                             node.pos.y as f64,
-                            Span::styled(
-                                node.char.to_string(),
-                                Style::default().fg(color),
-                            ),
+                            Span::styled(node.char.to_string(), Style::default().fg(color)),
                         );
                     }
                 });

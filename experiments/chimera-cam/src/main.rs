@@ -1,18 +1,18 @@
+use chimera_lang::opcode::OpCode;
+use chimera_lang::prelude::*;
 use macroquad::prelude::*;
 use nalgebra::Vector2 as Vec2N;
 use rapier2d::prelude::*;
-use chimera_lang::prelude::*;
-use chimera_lang::opcode::OpCode;
 
+mod genetic_design;
 mod mechanism;
 mod physics;
 mod puppet;
-mod genetic_design;
 
+use genetic_design::GeneticDesigner;
 use mechanism::Mechanism;
 use physics::PhysicsWorld;
 use puppet::Puppet;
-use genetic_design::GeneticDesigner;
 
 const POP_SIZE: usize = 12;
 const GEN_TICKS: usize = 300; // 5 seconds at 60fps frame time (simulated)
@@ -39,10 +39,18 @@ impl Agent {
 
     fn random_opcode() -> OpCode {
         let choices = [
-            OpCode::Push, OpCode::Add, OpCode::Sub, OpCode::Mul, OpCode::Div,
-            OpCode::Dup, OpCode::Swap, OpCode::Drop,
-            OpCode::Eq, OpCode::Gt, OpCode::Lt,
-            OpCode::Nop
+            OpCode::Push,
+            OpCode::Add,
+            OpCode::Sub,
+            OpCode::Mul,
+            OpCode::Div,
+            OpCode::Dup,
+            OpCode::Swap,
+            OpCode::Drop,
+            OpCode::Eq,
+            OpCode::Gt,
+            OpCode::Lt,
+            OpCode::Nop,
         ];
         let idx = macroquad::rand::gen_range(0, choices.len());
         let op = choices[idx].clone();
@@ -65,7 +73,9 @@ impl Agent {
 // Helper to mutate DNA
 fn mutate(dna: &mut Vec<OpCode>) {
     let len = dna.len();
-    if len == 0 { return; }
+    if len == 0 {
+        return;
+    }
 
     // 10% mutation rate per gene? No, simpler.
     let mutations = 1 + macroquad::rand::gen_range(0, 3);
@@ -115,7 +125,10 @@ struct Agent {
 // If `GeneticDesigner` creates `Gene { op, args: vec![] }`, `Push` will fail.
 // So `GeneticDesigner` must be smarter.
 
-fn setup_world(world: &mut PhysicsWorld, cam_shape: SharedShape) -> (RigidBodyHandle, RigidBodyHandle) {
+fn setup_world(
+    world: &mut PhysicsWorld,
+    cam_shape: SharedShape,
+) -> (RigidBodyHandle, RigidBodyHandle) {
     // 1. Setup Camshaft
     let shaft_pos = Vec2N::new(0.0, -5.0);
     let shaft = Mechanism::create_camshaft(world, shaft_pos);
@@ -200,7 +213,10 @@ async fn main() {
 
             // Sort
             population.sort_by(|a, b| b.fitness.partial_cmp(&a.fitness).unwrap());
-            println!("Gen {} Best Fitness: {:.2}", generation, population[0].fitness);
+            println!(
+                "Gen {} Best Fitness: {:.2}",
+                generation, population[0].fitness
+            );
 
             // Selection & Reproduction
             let mut new_pop = Vec::new();
@@ -243,7 +259,13 @@ async fn main() {
 
         // UI
         draw_text(&format!("Gen: {}", generation), 10.0, 30.0, 30.0, BLACK);
-        draw_text(&format!("Fit: {:.2}", population[0].fitness), 10.0, 60.0, 30.0, BLACK);
+        draw_text(
+            &format!("Fit: {:.2}", population[0].fitness),
+            10.0,
+            60.0,
+            30.0,
+            BLACK,
+        );
 
         sim_frame += 1;
         if sim_frame > GEN_TICKS {
@@ -297,10 +319,14 @@ fn draw_physics_world(world: &PhysicsWorld) {
                     // Draw Polygon (Cam)
                     // We need to transform points
                     // This is for our Cam!
-                    let points: Vec<Vec2> = poly.points().iter().map(|p| {
-                        let transformed = collider_pos * p;
-                        vec2(transformed.x, transformed.y)
-                    }).collect();
+                    let points: Vec<Vec2> = poly
+                        .points()
+                        .iter()
+                        .map(|p| {
+                            let transformed = collider_pos * p;
+                            vec2(transformed.x, transformed.y)
+                        })
+                        .collect();
 
                     // Draw polygon lines
                     if !points.is_empty() {

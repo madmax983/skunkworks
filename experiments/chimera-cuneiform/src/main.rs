@@ -1,7 +1,7 @@
-mod sexagesimal;
-mod tablet;
 mod agent;
+mod sexagesimal;
 mod simulation;
+mod tablet;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
@@ -12,8 +12,8 @@ use ratatui::{
     widgets::{Block, Borders, Paragraph},
     Frame,
 };
-use tui_shared::Tui;
 use simulation::Simulation;
+use tui_shared::Tui;
 // use sexagesimal::Sexagesimal;
 
 struct App {
@@ -112,7 +112,10 @@ impl App {
         let cycle_prog = self.sim.ticks % self.sim.flood_cycle;
         let text = format!(
             "Ticks: {} | Saros Cycle: {}/{} | Agents: {} | Survivors: ?",
-            self.sim.ticks, cycle_prog, self.sim.flood_cycle, self.sim.agents.len()
+            self.sim.ticks,
+            cycle_prog,
+            self.sim.flood_cycle,
+            self.sim.agents.len()
         );
         let p = Paragraph::new(text).block(block);
         f.render_widget(p, area);

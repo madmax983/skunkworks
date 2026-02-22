@@ -1,5 +1,5 @@
-use chimera_lang::prelude::*;
 use crate::tablet::Tablet;
+use chimera_lang::prelude::*;
 use rand::Rng;
 
 pub struct Agent {
@@ -67,10 +67,16 @@ pub fn generate_random_dna(rng: &mut impl Rng, len: usize) -> Dna {
     for _ in 0..len {
         let op_type = rng.gen_range(0..5);
         let (op, args) = match op_type {
-            0 => (OpCode::Push, vec![Nucleotide::Number(rng.gen_range(0..100))]),
+            0 => (
+                OpCode::Push,
+                vec![Nucleotide::Number(rng.gen_range(0..100))],
+            ),
             1 => (OpCode::Add, vec![]),
             2 => (OpCode::Sub, vec![]),
-            3 => (OpCode::Jump, vec![Nucleotide::Number(rng.gen_range(0..len as i64))]),
+            3 => (
+                OpCode::Jump,
+                vec![Nucleotide::Number(rng.gen_range(0..len as i64))],
+            ),
             4 => (OpCode::Dup, vec![]),
             _ => (OpCode::Nop, vec![]),
         };
@@ -102,10 +108,10 @@ pub fn mutate_dna(dna: &Dna, rng: &mut impl Rng) -> Dna {
                 };
                 strand.genes[idx].op = op;
             } else if !strand.genes[idx].args.is_empty() {
-                 match &mut strand.genes[idx].args[0] {
+                match &mut strand.genes[idx].args[0] {
                     Nucleotide::Number(n) => *n = rng.gen_range(0..100),
-                    _ => {},
-                 }
+                    _ => {}
+                }
             }
         }
     }

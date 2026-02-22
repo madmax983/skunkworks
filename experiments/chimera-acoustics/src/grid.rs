@@ -45,10 +45,7 @@ impl AcousticGrid4D {
     }
 
     pub fn idx_raw(&self, x: usize, y: usize, z: usize, w: usize) -> usize {
-        w * self.size * self.size * self.size
-            + z * self.size * self.size
-            + y * self.size
-            + x
+        w * self.size * self.size * self.size + z * self.size * self.size + y * self.size + x
     }
 
     #[inline]
@@ -98,10 +95,14 @@ impl AcousticGrid4D {
     }
 
     pub fn pluck(&mut self, p: Point4D, strength: f32) {
-        if p.x > 0 && p.x < self.size - 1 &&
-           p.y > 0 && p.y < self.size - 1 &&
-           p.z > 0 && p.z < self.size - 1 &&
-           p.w > 0 && p.w < self.size - 1
+        if p.x > 0
+            && p.x < self.size - 1
+            && p.y > 0
+            && p.y < self.size - 1
+            && p.z > 0
+            && p.z < self.size - 1
+            && p.w > 0
+            && p.w < self.size - 1
         {
             let idx = self.idx(p);
             self.u[idx] += strength;

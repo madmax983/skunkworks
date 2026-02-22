@@ -1,9 +1,9 @@
 use crate::math::Vec4D;
 use crate::monitor::SystemMonitor;
+use ::rand::Rng;
 use chimera_lang::prelude::*;
 use macroquad::prelude::*;
 use std::collections::VecDeque;
-use ::rand::Rng;
 
 #[derive(Clone, Debug)]
 pub struct Dna {
@@ -94,7 +94,9 @@ impl Agent {
             rng.gen_range(-1.0..1.0),
             rng.gen_range(-1.0..1.0),
             rng.gen_range(-1.0..1.0),
-        ).normalize().scale(dna_params.max_speed);
+        )
+        .normalize()
+        .scale(dna_params.max_speed);
 
         Self {
             vm,
@@ -108,18 +110,28 @@ impl Agent {
         }
     }
 
-    pub fn update(&mut self, agents: &[Agent], monitor: &SystemMonitor, nearest_plant_vec: Option<Vec4D>, bounds: Vec4D) {
+    pub fn update(
+        &mut self,
+        agents: &[Agent],
+        monitor: &SystemMonitor,
+        nearest_plant_vec: Option<Vec4D>,
+        bounds: Vec4D,
+    ) {
         self.age += 1;
         self.vm.energy = 1000;
 
         // --- Step 1: Calculate Flocking Inputs ---
-        let separation = self.separation(agents).scale(self.dna_params.separation_weight);
-        let alignment = self.alignment(agents).scale(self.dna_params.alignment_weight);
+        let separation = self
+            .separation(agents)
+            .scale(self.dna_params.separation_weight);
+        let alignment = self
+            .alignment(agents)
+            .scale(self.dna_params.alignment_weight);
         let cohesion = self.cohesion(agents).scale(self.dna_params.cohesion_weight);
 
         let flocking_force = separation + alignment + cohesion;
         let plant_force = if let Some(dir) = nearest_plant_vec {
-             dir.normalize().scale(self.dna_params.pollination_weight)
+            dir.normalize().scale(self.dna_params.pollination_weight)
         } else {
             Vec4D::zero()
         };
@@ -167,7 +179,7 @@ impl Agent {
             monitor.cpu_usage * 0.001,
             monitor.mem_usage * 0.001,
             monitor.swap_usage * 0.001,
-            0.0
+            0.0,
         );
         self.acc += wind_vec;
 
@@ -183,9 +195,15 @@ impl Agent {
 
     fn push_input(&mut self, channel: u64, val: i64) {
         let ch = channel as i64;
-        self.vm.ether.entry(ch).or_insert(VecDeque::new()).push_back(Value::Int(val));
-         if let Some(queue) = self.vm.ether.get_mut(&ch) {
-            if queue.len() > 5 { queue.pop_front(); }
+        self.vm
+            .ether
+            .entry(ch)
+            .or_insert(VecDeque::new())
+            .push_back(Value::Int(val));
+        if let Some(queue) = self.vm.ether.get_mut(&ch) {
+            if queue.len() > 5 {
+                queue.pop_front();
+            }
         }
     }
 
@@ -207,7 +225,9 @@ impl Agent {
         let mut steer = Vec4D::zero();
         let mut count = 0;
         for other in agents {
-            if self.id == other.id { continue; }
+            if self.id == other.id {
+                continue;
+            }
             let d_sq = self.pos.distance_squared(other.pos);
             if d_sq > 0.0 && d_sq < self.dna_params.view_radius * self.dna_params.view_radius {
                 let diff = (self.pos - other.pos).normalize().scale(1.0 / d_sq.sqrt());
@@ -229,7 +249,9 @@ impl Agent {
         let mut sum = Vec4D::zero();
         let mut count = 0;
         for other in agents {
-             if self.id == other.id { continue; }
+            if self.id == other.id {
+                continue;
+            }
             let d_sq = self.pos.distance_squared(other.pos);
             if d_sq > 0.0 && d_sq < self.dna_params.view_radius * self.dna_params.view_radius {
                 sum += other.vel;
@@ -237,7 +259,10 @@ impl Agent {
             }
         }
         if count > 0 {
-            sum = sum.scale(1.0 / count as f32).normalize().scale(self.dna_params.max_speed);
+            sum = sum
+                .scale(1.0 / count as f32)
+                .normalize()
+                .scale(self.dna_params.max_speed);
             let steer = sum - self.vel;
             return steer.limit(self.dna_params.max_force);
         }
@@ -248,7 +273,9 @@ impl Agent {
         let mut sum = Vec4D::zero();
         let mut count = 0;
         for other in agents {
-             if self.id == other.id { continue; }
+            if self.id == other.id {
+                continue;
+            }
             let d_sq = self.pos.distance_squared(other.pos);
             if d_sq > 0.0 && d_sq < self.dna_params.view_radius * self.dna_params.view_radius {
                 sum += other.pos;
@@ -263,23 +290,45 @@ impl Agent {
     }
 
     fn seek(&self, target: Vec4D) -> Vec4D {
-        let desired = (target - self.pos).normalize().scale(self.dna_params.max_speed);
+        let desired = (target - self.pos)
+            .normalize()
+            .scale(self.dna_params.max_speed);
         let steer = desired - self.vel;
         steer.limit(self.dna_params.max_force)
     }
 
     fn bounce(&mut self, bounds: Vec4D) {
-        if self.pos.x > bounds.x { self.pos.x = bounds.x; self.vel.x *= -1.0; }
-        else if self.pos.x < -bounds.x { self.pos.x = -bounds.x; self.vel.x *= -1.0; }
+        if self.pos.x > bounds.x {
+            self.pos.x = bounds.x;
+            self.vel.x *= -1.0;
+        } else if self.pos.x < -bounds.x {
+            self.pos.x = -bounds.x;
+            self.vel.x *= -1.0;
+        }
 
-        if self.pos.y > bounds.y { self.pos.y = bounds.y; self.vel.y *= -1.0; }
-        else if self.pos.y < -bounds.y { self.pos.y = -bounds.y; self.vel.y *= -1.0; }
+        if self.pos.y > bounds.y {
+            self.pos.y = bounds.y;
+            self.vel.y *= -1.0;
+        } else if self.pos.y < -bounds.y {
+            self.pos.y = -bounds.y;
+            self.vel.y *= -1.0;
+        }
 
-        if self.pos.z > bounds.z { self.pos.z = bounds.z; self.vel.z *= -1.0; }
-        else if self.pos.z < -bounds.z { self.pos.z = -bounds.z; self.vel.z *= -1.0; }
+        if self.pos.z > bounds.z {
+            self.pos.z = bounds.z;
+            self.vel.z *= -1.0;
+        } else if self.pos.z < -bounds.z {
+            self.pos.z = -bounds.z;
+            self.vel.z *= -1.0;
+        }
 
-        if self.pos.w > bounds.w { self.pos.w = bounds.w; self.vel.w *= -1.0; }
-        else if self.pos.w < -bounds.w { self.pos.w = -bounds.w; self.vel.w *= -1.0; }
+        if self.pos.w > bounds.w {
+            self.pos.w = bounds.w;
+            self.vel.w *= -1.0;
+        } else if self.pos.w < -bounds.w {
+            self.pos.w = -bounds.w;
+            self.vel.w *= -1.0;
+        }
     }
 
     pub fn pollinate(&mut self, plant_color: Color) {

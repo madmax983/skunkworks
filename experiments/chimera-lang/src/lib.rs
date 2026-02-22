@@ -78,16 +78,16 @@ use pest_derive::Parser;
 #[grammar = "grammar.pest"]
 pub struct ChimeraParser;
 
-pub mod ast;
-pub mod compiler;
-pub mod prologue_compiler;
 #[cfg(feature = "resonance")]
 pub mod acoustic_compiler;
+pub mod ast;
 #[cfg(feature = "resonance")]
 pub mod audio_source;
+pub mod compiler;
 pub mod lisp;
 pub mod matrix_rain;
 pub mod opcode;
+pub mod prologue_compiler;
 pub mod tui;
 pub mod value;
 pub mod vm;

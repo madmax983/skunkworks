@@ -48,11 +48,17 @@ async fn main() {
             let x = rand::gen_range(0, grid.width);
             let z = rand::gen_range(0, grid.depth);
             let w = rand::gen_range(0, grid.hypersize);
-            grid.set(x, grid.height - 1, z, w, Particle::Bid(rand::gen_range(0, 10000)));
+            grid.set(
+                x,
+                grid.height - 1,
+                z,
+                w,
+                Particle::Bid(rand::gen_range(0, 10000)),
+            );
         }
 
         if rand::gen_range(0.0, 1.0) < 0.2 + monitor.load_avg {
-             // Spawn Ask at Y=0 (High Price)
+            // Spawn Ask at Y=0 (High Price)
             let x = rand::gen_range(0, grid.width);
             let z = rand::gen_range(0, grid.depth);
             let w = rand::gen_range(0, grid.hypersize);
@@ -70,12 +76,24 @@ async fn main() {
         angle_zw += dt * rot_speed * 0.2;
 
         // Camera
-        if is_key_down(KeyCode::Left) { cam_angle_y += 2.0 * dt; }
-        if is_key_down(KeyCode::Right) { cam_angle_y -= 2.0 * dt; }
-        if is_key_down(KeyCode::Up) { cam_angle_x += 2.0 * dt; }
-        if is_key_down(KeyCode::Down) { cam_angle_x -= 2.0 * dt; }
-        if is_key_down(KeyCode::W) { cam_dist -= 5.0 * dt; }
-        if is_key_down(KeyCode::S) { cam_dist += 5.0 * dt; }
+        if is_key_down(KeyCode::Left) {
+            cam_angle_y += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_angle_y -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_angle_x += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_angle_x -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 5.0 * dt;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 5.0 * dt;
+        }
 
         let cam_pos = vec3(
             cam_dist * cam_angle_x.cos() * cam_angle_y.sin(),
@@ -100,7 +118,9 @@ async fn main() {
 
         // Render
         for (idx, particle) in grid.cells.iter().enumerate() {
-            if matches!(particle, Particle::Empty) { continue; }
+            if matches!(particle, Particle::Empty) {
+                continue;
+            }
 
             let point = base_points[idx]; // idx matches iteration order
 
@@ -117,7 +137,7 @@ async fn main() {
                 Particle::Trade { age } => {
                     let alpha = *age as f32 / 10.0;
                     (Color::new(1.0, 1.0, 0.0, alpha), 0.3)
-                },
+                }
                 Particle::Empty => (BLACK, 0.0),
             };
 
@@ -128,10 +148,34 @@ async fn main() {
 
         // UI
         draw_text("Hyper Market", 10.0, 20.0, 30.0, WHITE);
-        draw_text(&format!("Volatility (CPU): {:.2}", volatility), 10.0, 50.0, 20.0, RED);
-        draw_text(&format!("Liquidity (RAM): {:.2}", monitor.mem_usage), 10.0, 70.0, 20.0, BLUE);
-        draw_text(&format!("Trades: {}", grid.trade_count), 10.0, 90.0, 20.0, YELLOW);
-        draw_text(&format!("Bids: {} | Asks: {}", grid.active_bids, grid.active_asks), 10.0, 110.0, 20.0, GRAY);
+        draw_text(
+            &format!("Volatility (CPU): {:.2}", volatility),
+            10.0,
+            50.0,
+            20.0,
+            RED,
+        );
+        draw_text(
+            &format!("Liquidity (RAM): {:.2}", monitor.mem_usage),
+            10.0,
+            70.0,
+            20.0,
+            BLUE,
+        );
+        draw_text(
+            &format!("Trades: {}", grid.trade_count),
+            10.0,
+            90.0,
+            20.0,
+            YELLOW,
+        );
+        draw_text(
+            &format!("Bids: {} | Asks: {}", grid.active_bids, grid.active_asks),
+            10.0,
+            110.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }

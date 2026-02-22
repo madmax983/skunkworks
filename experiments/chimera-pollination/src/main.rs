@@ -231,7 +231,8 @@ async fn main() {
             }
 
             // Pollination Event
-            if nearest_dist < 0.2 { // Squared distance threshold
+            if nearest_dist < 0.2 {
+                // Squared distance threshold
                 if let Some(idx) = target_plant_idx {
                     let plant_color = plants[idx].color;
                     agent.pollinate(plant_color);
@@ -286,7 +287,13 @@ async fn main() {
 
         set_default_camera();
         draw_text("Chimera-Pollination", 10.0, 20.0, 30.0, WHITE);
-        draw_text("ChimeraVM Agents pollinating Git History", 10.0, 40.0, 20.0, GRAY);
+        draw_text(
+            "ChimeraVM Agents pollinating Git History",
+            10.0,
+            40.0,
+            20.0,
+            GRAY,
+        );
 
         draw_text(
             &format!("CPU: {:.0}%", monitor.cpu_usage * 100.0),

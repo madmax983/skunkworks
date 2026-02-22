@@ -143,7 +143,9 @@ impl LexicalString {
 
         // Pick a random node to mutate
         let len = self.nodes.len();
-        if len == 0 { return; }
+        if len == 0 {
+            return;
+        }
 
         // Maybe mutate multiple? Or just one? Original logic mutated the *word* via rule.
         // Let's iterate and mutate with small chance

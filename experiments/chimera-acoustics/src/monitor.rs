@@ -1,4 +1,4 @@
-use sysinfo::{System, Cpu};
+use sysinfo::{Cpu, System};
 
 pub struct SystemMonitor {
     sys: System,

@@ -64,9 +64,9 @@ impl SpinGrid4D {
             // Propose new angle: small random rotation
             // let delta_theta = (rng.gen::<f32>() - 0.5) * PI; // Large jumps
             let delta_theta = (rng.gen::<f32>() - 0.5) * 0.5; // Small jumps (Metropolis)
-            // Or just pick a completely new angle (Heat Bath / Metropolis)
-            // For XY model, usually small steps or random new angle.
-            // Let's try random new angle for faster exploration.
+                                                              // Or just pick a completely new angle (Heat Bath / Metropolis)
+                                                              // For XY model, usually small steps or random new angle.
+                                                              // Let's try random new angle for faster exploration.
             let old_theta = self.spins[idx];
             let new_theta = old_theta + delta_theta;
             // Normalize? cos handles it.
@@ -100,10 +100,10 @@ impl SpinGrid4D {
             }
 
             let e_old = -(old_theta.cos() * neighbor_sum_cos + old_theta.sin() * neighbor_sum_sin)
-                        - field_strength * old_theta.cos(); // Field aligns to 0
+                - field_strength * old_theta.cos(); // Field aligns to 0
 
             let e_new = -(new_theta.cos() * neighbor_sum_cos + new_theta.sin() * neighbor_sum_sin)
-                        - field_strength * new_theta.cos();
+                - field_strength * new_theta.cos();
 
             let d_e = e_new - e_old;
 

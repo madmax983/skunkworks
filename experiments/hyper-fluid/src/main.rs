@@ -1,12 +1,12 @@
 use macroquad::prelude::*;
-use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
 use rayon::prelude::*;
+use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
 
-mod math;
 mod grid;
+mod math;
 
-use math::Vec4;
 use grid::Grid4D;
+use math::Vec4;
 
 // --- Constants ---
 const NUM_PARTICLES: usize = 2000;
@@ -205,12 +205,15 @@ async fn main() {
             let mut force = gravity;
 
             // Agitation (Random kicks)
-            force = force.add(Vec4::new(
-                rand::gen_range(-1.0, 1.0),
-                rand::gen_range(-1.0, 1.0),
-                rand::gen_range(-1.0, 1.0),
-                rand::gen_range(-1.0, 1.0),
-            ).scale(agitation_strength));
+            force = force.add(
+                Vec4::new(
+                    rand::gen_range(-1.0, 1.0),
+                    rand::gen_range(-1.0, 1.0),
+                    rand::gen_range(-1.0, 1.0),
+                    rand::gen_range(-1.0, 1.0),
+                )
+                .scale(agitation_strength),
+            );
 
             // Pressure (Repulsion from high density)
             let gx = map_coord(p.pos.x);
@@ -223,13 +226,33 @@ async fn main() {
             // We need to map back to -1, 0, 1 directions
 
             // X Gradient
-            let dx = grid.get(gx + 1, gy, gz, gw) - if gx > 0 { grid.get(gx - 1, gy, gz, gw) } else { 0.0 };
+            let dx = grid.get(gx + 1, gy, gz, gw)
+                - if gx > 0 {
+                    grid.get(gx - 1, gy, gz, gw)
+                } else {
+                    0.0
+                };
             // Y Gradient
-            let dy = grid.get(gx, gy + 1, gz, gw) - if gy > 0 { grid.get(gx, gy - 1, gz, gw) } else { 0.0 };
+            let dy = grid.get(gx, gy + 1, gz, gw)
+                - if gy > 0 {
+                    grid.get(gx, gy - 1, gz, gw)
+                } else {
+                    0.0
+                };
             // Z Gradient
-            let dz = grid.get(gx, gy, gz + 1, gw) - if gz > 0 { grid.get(gx, gy, gz - 1, gw) } else { 0.0 };
+            let dz = grid.get(gx, gy, gz + 1, gw)
+                - if gz > 0 {
+                    grid.get(gx, gy, gz - 1, gw)
+                } else {
+                    0.0
+                };
             // W Gradient
-            let dw = grid.get(gx, gy, gz, gw + 1) - if gw > 0 { grid.get(gx, gy, gz, gw - 1) } else { 0.0 };
+            let dw = grid.get(gx, gy, gz, gw + 1)
+                - if gw > 0 {
+                    grid.get(gx, gy, gz, gw - 1)
+                } else {
+                    0.0
+                };
 
             let gradient = Vec4::new(dx, dy, dz, dw);
             // Push away from high density
@@ -247,21 +270,45 @@ async fn main() {
 
             // Boundary Constraints (Hypercube [-1.5, 1.5])
             let bounds = 1.5;
-            if p.pos.x < -bounds || p.pos.x > bounds { p.vel.x *= -0.8; p.pos.x = p.pos.x.clamp(-bounds, bounds); }
-            if p.pos.y < -bounds || p.pos.y > bounds { p.vel.y *= -0.8; p.pos.y = p.pos.y.clamp(-bounds, bounds); }
-            if p.pos.z < -bounds || p.pos.z > bounds { p.vel.z *= -0.8; p.pos.z = p.pos.z.clamp(-bounds, bounds); }
-            if p.pos.w < -bounds || p.pos.w > bounds { p.vel.w *= -0.8; p.pos.w = p.pos.w.clamp(-bounds, bounds); }
+            if p.pos.x < -bounds || p.pos.x > bounds {
+                p.vel.x *= -0.8;
+                p.pos.x = p.pos.x.clamp(-bounds, bounds);
+            }
+            if p.pos.y < -bounds || p.pos.y > bounds {
+                p.vel.y *= -0.8;
+                p.pos.y = p.pos.y.clamp(-bounds, bounds);
+            }
+            if p.pos.z < -bounds || p.pos.z > bounds {
+                p.vel.z *= -0.8;
+                p.pos.z = p.pos.z.clamp(-bounds, bounds);
+            }
+            if p.pos.w < -bounds || p.pos.w > bounds {
+                p.vel.w *= -0.8;
+                p.pos.w = p.pos.w.clamp(-bounds, bounds);
+            }
         }
 
         // --- Rendering ---
 
         // Input Camera
-        if is_key_down(KeyCode::Left) { cam_angle_y += 2.0 * dt; }
-        if is_key_down(KeyCode::Right) { cam_angle_y -= 2.0 * dt; }
-        if is_key_down(KeyCode::Up) { cam_angle_x += 2.0 * dt; }
-        if is_key_down(KeyCode::Down) { cam_angle_x -= 2.0 * dt; }
-        if is_key_down(KeyCode::W) { cam_dist -= 5.0 * dt; }
-        if is_key_down(KeyCode::S) { cam_dist += 5.0 * dt; }
+        if is_key_down(KeyCode::Left) {
+            cam_angle_y += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_angle_y -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_angle_x += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_angle_x -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 5.0 * dt;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 5.0 * dt;
+        }
 
         // Auto-Rotate 4D
         let rot_speed = 0.2 * (1.0 + monitor.load_avg);
@@ -306,10 +353,10 @@ async fn main() {
             // W goes from -1.5 to 1.5
             let w_norm = (p.pos.w + 1.5) / 3.0;
             let color = Color::new(
-                0.2 + w_norm * 0.8, // R
+                0.2 + w_norm * 0.8,            // R
                 0.5 + monitor.cpu_usage * 0.5, // G (Agitation)
                 1.0 - monitor.mem_usage * 0.5, // B (Viscosity)
-                0.8
+                0.8,
             );
 
             // Size based on Z coordinate (depth in 3D)? Or just constant.
@@ -320,10 +367,34 @@ async fn main() {
 
         // UI Overlay
         draw_text("Hyper Fluid", 10.0, 20.0, 30.0, WHITE);
-        draw_text(&format!("CPU (Agitation): {:.0}%", monitor.cpu_usage * 100.0), 10.0, 50.0, 20.0, GREEN);
-        draw_text(&format!("MEM (Viscosity): {:.0}%", monitor.mem_usage * 100.0), 10.0, 70.0, 20.0, BLUE);
-        draw_text(&format!("SWP (Gravity):   {:.0}%", monitor.swap_usage * 100.0), 10.0, 90.0, 20.0, RED);
-        draw_text(&format!("Particles: {}", NUM_PARTICLES), 10.0, 110.0, 20.0, GRAY);
+        draw_text(
+            &format!("CPU (Agitation): {:.0}%", monitor.cpu_usage * 100.0),
+            10.0,
+            50.0,
+            20.0,
+            GREEN,
+        );
+        draw_text(
+            &format!("MEM (Viscosity): {:.0}%", monitor.mem_usage * 100.0),
+            10.0,
+            70.0,
+            20.0,
+            BLUE,
+        );
+        draw_text(
+            &format!("SWP (Gravity):   {:.0}%", monitor.swap_usage * 100.0),
+            10.0,
+            90.0,
+            20.0,
+            RED,
+        );
+        draw_text(
+            &format!("Particles: {}", NUM_PARTICLES),
+            10.0,
+            110.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }
