@@ -103,6 +103,7 @@ pub mod virology;
 pub mod void;
 pub mod forth;
 pub mod hyper;
+pub mod rhythm;
 
 /// An autonomous agent wandering the Prologue grid.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -162,6 +163,9 @@ pub struct PrologueState {
     /// Hyper State (4D Coordinates)
     #[serde(default)]
     pub hyper_state: hyper::HyperState,
+    /// Rhythm State (Sequencer/Clock)
+    #[serde(default)]
+    pub rhythm_state: rhythm::RhythmState,
     /// Scratch buffer for signal propagation (Double Buffering).
     #[serde(skip, default)]
     pub scratch_signal_grid: Vec<Vec<Option<Value>>>,
@@ -196,6 +200,7 @@ impl PrologueState {
             orca_mode: false,
             void_buffer: VecDeque::new(),
             hyper_state: hyper::HyperState::default(),
+            rhythm_state: rhythm::RhythmState::default(),
             scratch_signal_grid: vec![vec![None; GRID_SIZE]; GRID_SIZE],
         }
     }
@@ -414,6 +419,8 @@ impl PrologueState {
                             | "₣"
                             // Hyper
                             | "⇪" | "↻" | "⌖" | "▣"
+                            // Rhythm
+                            | "⏱️" | "🎹" | "🎚️"
                     ) {
                         self.runes.insert((y, x));
 
@@ -623,6 +630,12 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     &mut vm.prologue_state.logos_engine,
                     vm.prologue_state.orca_mode,
                     &mut vm.prologue_state.hyper_state,
+                    &mut vm.prologue_state.rhythm_state,
+                    #[cfg(feature = "resonance")]
+                    &vm.audio_tx,
+                    #[cfg(not(feature = "resonance"))]
+                    &None,
+                    &mut vm.output,
                 ) {
                     changes = true;
                 }
@@ -669,6 +682,12 @@ fn apply_propagation_rune(
     logos_engine: &mut logos::LogosEngine,
     orca_mode: bool,
     hyper_state: &mut hyper::HyperState,
+    rhythm_state: &mut rhythm::RhythmState,
+    #[cfg(feature = "resonance")]
+    audio_tx: &Option<crossbeam_channel::Sender<resonance_audio::audio::AudioCommand>>,
+    #[cfg(not(feature = "resonance"))]
+    audio_tx: &Option<()>,
+    output: &mut Vec<String>,
 ) -> bool {
     #[cfg(feature = "elektra")]
     if elektra::apply_elektra_runes(
@@ -792,6 +811,19 @@ fn apply_propagation_rune(
         return true;
     }
     if hyper::apply_hyper_runes(rune, y, x, current_signals, next_signals, hyper_state) {
+        return true;
+    }
+    if rhythm::apply_rhythm_runes(
+        rune,
+        y,
+        x,
+        tick,
+        current_signals,
+        next_signals,
+        rhythm_state,
+        audio_tx,
+        output,
+    ) {
         return true;
     }
     false
