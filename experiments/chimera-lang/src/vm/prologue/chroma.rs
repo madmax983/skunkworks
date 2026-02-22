@@ -134,6 +134,46 @@ pub fn apply_chroma_runes(
 /// Handles `🖌` (Brush).
 pub fn apply_chroma_sinks(vm: &mut crate::vm::ChimeraVM, rune: &str, y: usize, x: usize) {
     match rune {
+        "*" => {
+            // Spectral Splitters (Side Effects)
+            // Check for Spectral Context (Color)
+            if let Some((r, g, b)) = vm.chroma_grid[y][x].fg {
+                // Determine dominant channel
+                let max = r.max(g).max(b);
+                if max > 0 {
+                    let is_red = r == max;
+                    let is_green = g == max && !is_red;
+
+                    if is_green {
+                        // Green Spore: Spawn Agent based on input (West)
+                        if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+                            if let Some(sig) = &vm.prologue_state.signal_grid[wy][wx] {
+                                // Spawn to South
+                                if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
+                                    let agent_type = match sig {
+                                        Value::Int(2) => "K", // Chaos
+                                        Value::Int(3) => "H", // Hunter
+                                        _ => "@",             // Seeker
+                                    };
+
+                                    // Only overwrite if empty or weak
+                                    let can_spawn = match &vm.grid[sy][sx] {
+                                        Value::Int(0) => true,
+                                        _ => false,
+                                    };
+
+                                    if can_spawn {
+                                        vm.grid[sy][sx] = Value::Str(agent_type.to_string());
+                                        // Light up self
+                                        vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         "🖌" => {
             // Brush: Reads West (Color), Paints South Grid Cell
             if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {

@@ -1563,3 +1563,5 @@ mod prologue_chroma_test;
 
 #[cfg(test)]
 mod prologue_echo_test;
+#[cfg(test)]
+mod prologue_green_spore_test;
