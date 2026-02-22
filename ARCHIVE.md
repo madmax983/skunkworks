@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **recursive-conservatory**: Diagnosis: Documentation Void / Terminal Genericism. Grace period: 24 hours.
+- **resonant-glyphs**: Diagnosis: Documentation Void / Terminal Genericism. Grace period: 24 hours.
 - [Experiment name]: [Diagnosis]
 
 ## Abandoned Work
@@ -227,3 +227,4 @@
 - **neural-beatbox**: Specimen executed. Documentation Void. Redundant with `neuro-beats`. Grace period expired. Moved to graveyard.
 - **atomic-groove**: Specimen executed. Diagnosis: Documentation Void, Terminal Genericism. Grace period expired. Moved to graveyard.
 - **polyrhythmic-cylinder**: Specimen executed. Diagnosis: Terminal Stagnation / Documentation Void. Grace period expired. Moved to graveyard.
+- **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
