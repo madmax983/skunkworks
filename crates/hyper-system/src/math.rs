@@ -4,7 +4,38 @@
 //! (x, y, z, w). It includes methods for arithmetic, normalization, and geometric
 //! transformations such as 4D rotation and projection into 3D space.
 
-use macroquad::prelude::*;
+#[cfg(feature = "macroquad")]
+use macroquad::prelude::Vec3 as MacroquadVec3;
+
+/// A simple 3D vector for projection results.
+///
+/// Used to avoid dependency on external crates for core math types.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Vec3 {
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+}
+
+impl Vec3 {
+    pub fn new(x: f32, y: f32, z: f32) -> Self {
+        Self { x, y, z }
+    }
+}
+
+#[cfg(feature = "macroquad")]
+impl From<Vec3> for MacroquadVec3 {
+    fn from(v: Vec3) -> Self {
+        MacroquadVec3::new(v.x, v.y, v.z)
+    }
+}
+
+#[cfg(feature = "macroquad")]
+impl From<MacroquadVec3> for Vec3 {
+    fn from(v: MacroquadVec3) -> Self {
+        Self::new(v.x, v.y, v.z)
+    }
+}
 
 /// A 4-dimensional vector with x, y, z, and w components.
 ///
@@ -237,12 +268,12 @@ impl Vec4 {
     ///
     /// # Returns
     ///
-    /// A `macroquad::math::Vec3` representing the 3D projection.
+    /// A `Vec3` representing the 3D projection.
     pub fn project_to_3d(&self, camera_w: f32) -> Vec3 {
         let w_dist = camera_w - self.w;
         // Avoid division by zero
         let scale = 2.0 / w_dist.max(0.1);
-        vec3(self.x * scale, self.y * scale, self.z * scale)
+        Vec3::new(self.x * scale, self.y * scale, self.z * scale)
     }
 }
 

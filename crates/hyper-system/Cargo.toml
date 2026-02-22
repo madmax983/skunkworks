@@ -3,7 +3,11 @@ name = "hyper-system"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+default = ["macroquad"]
+macroquad = ["dep:macroquad"]
+
 [dependencies]
-macroquad = "0.4"
+macroquad = { version = "0.4", optional = true }
 sysinfo = "0.30"
 rand = "0.8"

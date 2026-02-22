@@ -172,7 +172,7 @@ async fn main() {
                         // Bluish
                     };
 
-                    draw_sphere(pos3d, 0.02 + energy * 0.05, None, color);
+                    draw_sphere(pos3d.into(), 0.02 + energy * 0.05, None, color);
                 }
             }
         }

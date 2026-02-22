@@ -5,6 +5,7 @@
 //! for "Hyper" series experiments where simulation parameters are driven by
 //! system load.
 
+#[cfg(feature = "macroquad")]
 use macroquad::prelude::*;
 use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
 
@@ -25,7 +26,7 @@ use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
 ///
 /// let mut monitor = SystemMonitor::new();
 /// // Call update inside your main loop
-/// monitor.update();
+/// monitor.update_with_time(0.016, 100.0);
 /// println!("CPU Usage: {:.2}%", monitor.cpu_usage * 100.0);
 /// ```
 pub struct SystemMonitor {
@@ -71,14 +72,15 @@ impl SystemMonitor {
         }
     }
 
-    /// Updates the system metrics.
+    /// Updates the system metrics using explicitly provided time values.
     ///
-    /// This method should be called once per frame. It performs two tasks:
-    /// 1. **Polling:** Every 1.0 second, it queries the OS for fresh metrics.
-    /// 2. **Interpolation:** Every frame, it smooths the current values towards
-    ///    the latest polled targets using `macroquad::get_frame_time()`.
-    pub fn update(&mut self) {
-        let now = get_time();
+    /// Use this method if you are not using macroquad or want manual control over timing.
+    ///
+    /// # Arguments
+    ///
+    /// * `dt` - The time elapsed since the last frame (in seconds).
+    /// * `now` - The current timestamp (in seconds).
+    pub fn update_with_time(&mut self, dt: f32, now: f64) {
         if now - self.last_update > 1.0 {
             self.sys.refresh_cpu();
             self.sys.refresh_memory();
@@ -108,7 +110,6 @@ impl SystemMonitor {
         }
 
         // Interpolate
-        let dt = get_frame_time();
         let lerp = |a: f32, b: f32, t: f32| a + (b - a) * t;
         let speed = 2.0 * dt;
 
@@ -116,6 +117,14 @@ impl SystemMonitor {
         self.mem_usage = lerp(self.mem_usage, self.target_mem, speed);
         self.swap_usage = lerp(self.swap_usage, self.target_swap, speed);
         self.load_avg = lerp(self.load_avg, self.target_load, speed);
+    }
+
+    /// Updates the system metrics using macroquad's time functions.
+    ///
+    /// This method is only available when the `macroquad` feature is enabled.
+    #[cfg(feature = "macroquad")]
+    pub fn update(&mut self) {
+        self.update_with_time(get_frame_time(), get_time());
     }
 }
 
