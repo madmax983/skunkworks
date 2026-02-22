@@ -3,7 +3,13 @@ use clap::Parser as ClapParser;
 use pest::Parser;
 use std::fs;
 
-use chimera_lang::{ast::Dna, compiler, tui::run_tui, vm::ChimeraVM, ChimeraParser, Rule};
+use chimera_lang::{
+    ast::{Dna, JunctionType},
+    compiler,
+    tui::run_tui,
+    vm::{ChimeraVM, Value},
+    ChimeraParser, Rule,
+};
 use std::path::Path;
 
 #[cfg(feature = "resonance")]
@@ -141,26 +147,66 @@ fn main() -> Result<()> {
 
         for (i, val) in vm.stack.iter().rev().enumerate() {
             let (type_str, type_color) = match val {
-                chimera_lang::vm::Value::Int(_) => ("Integer", comfy_table::Color::Blue),
-                chimera_lang::vm::Value::Str(_) => ("String", comfy_table::Color::Cyan),
-                chimera_lang::vm::Value::Junction(_, _) => {
-                    ("Junction", comfy_table::Color::Magenta)
-                }
-                chimera_lang::vm::Value::Superposition(_) => {
-                    ("Superposition", comfy_table::Color::Yellow)
-                }
-                chimera_lang::vm::Value::Symbol(_) => ("Symbol", comfy_table::Color::Magenta),
-                chimera_lang::vm::Value::Color(_, _, _) => ("Color", comfy_table::Color::Green),
+                Value::Int(_) => ("Integer", comfy_table::Color::Blue),
+                Value::Str(_) => ("String", comfy_table::Color::Cyan),
+                Value::Junction(_, _) => ("Junction", comfy_table::Color::Magenta),
+                Value::Superposition(_) => ("Superposition", comfy_table::Color::Yellow),
+                Value::Symbol(_) => ("Symbol", comfy_table::Color::Magenta),
+                Value::Color(_, _, _) => ("Color", comfy_table::Color::Green),
             };
 
-            let val_str = format!("{}", val);
+            let val_str = if let Value::Junction(JunctionType::All, items) = val {
+                // Check if this looks like a list of bindings from Oracle (List of [Key, Value])
+                let is_binding_list = !items.is_empty() && items.iter().all(|item| {
+                    if let Value::Junction(JunctionType::All, b_args) = item {
+                        b_args.len() == 2 && matches!(b_args[0], Value::Str(_))
+                    } else {
+                        false
+                    }
+                });
+
+                if is_binding_list {
+                    let mut inner = comfy_table::Table::new();
+                    inner.load_preset(comfy_table::presets::UTF8_NO_BORDERS);
+                    inner.set_header(vec!["Key", "Value"]);
+
+                    for item in items {
+                        if let Value::Junction(_, args) = item {
+                            if let Value::Str(k) = &args[0] {
+                                let v = &args[1];
+                                let v_str = format!("{}", v);
+                                let mut v_cell = comfy_table::Cell::new(&v_str);
+
+                                if v_str == "1" || v_str.to_lowercase() == "true" {
+                                    v_cell = v_cell.fg(comfy_table::Color::Green);
+                                } else if v_str == "0" || v_str.to_lowercase() == "false" {
+                                    v_cell = v_cell.fg(comfy_table::Color::Red);
+                                } else if matches!(v, Value::Str(_)) {
+                                    v_cell = v_cell.fg(comfy_table::Color::Cyan);
+                                }
+
+                                inner.add_row(vec![
+                                    comfy_table::Cell::new(k).fg(comfy_table::Color::Yellow),
+                                    v_cell,
+                                ]);
+                            }
+                        }
+                    }
+                    inner.to_string()
+                } else {
+                    format!("{}", val)
+                }
+            } else {
+                format!("{}", val)
+            };
+
             let mut val_cell = comfy_table::Cell::new(&val_str);
 
             if val_str == "1" || val_str.to_lowercase() == "true" {
                 val_cell = val_cell.fg(comfy_table::Color::Green);
             } else if val_str == "0" || val_str.to_lowercase() == "false" {
                 val_cell = val_cell.fg(comfy_table::Color::Red);
-            } else if matches!(val, chimera_lang::vm::Value::Str(_)) {
+            } else if matches!(val, Value::Str(_)) {
                 val_cell = val_cell.fg(comfy_table::Color::Cyan);
             }
 

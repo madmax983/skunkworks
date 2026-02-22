@@ -477,6 +477,23 @@ impl AppState {
     }
 }
 
+fn panel_block<'a>(title: &'a str, active: bool) -> Block<'a> {
+    let border_style = if active {
+        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+    } else {
+        Style::default().fg(Color::Cyan)
+    };
+
+    Block::default()
+        .borders(Borders::ALL)
+        .title(Span::styled(title, if active {
+            Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+        } else {
+            Style::default().fg(Color::White)
+        }))
+        .border_style(border_style)
+}
+
 pub fn run_tui(mut vm: ChimeraVM, initial_view: Option<ViewMode>) -> Result<()> {
     enable_raw_mode()?;
     let mut stdout = io::stdout();
@@ -5025,9 +5042,7 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         )
         .split(app_state.get_render_area(f.area()));
 
-    let mut block = Block::default()
-        .borders(Borders::ALL)
-        .title("Fishing Minigame");
+    let mut block = panel_block("Fishing Minigame", app_state.fishing_hooked);
 
     // Flash background if tension is critical
     if app_state.fishing_tension > 0.9 && vm.tick_counter % 4 < 2 {
@@ -5140,22 +5155,22 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
                 // Bobber (Visual)
                 let bobber_icon = if app_state.fishing_hooked {
-                    "🔴"
+                    "🔴" // Hooked
                 } else {
-                    "⚪"
+                    "⚪" // Idle
                 };
                 ctx.print(bobber_x, app_state.fishing_bobber_y, bobber_icon);
 
                 // Splash Effect
                 if app_state.fishing_hooked {
-                    // Splash particles
+                    // Splash particles (Enhanced)
                     let t = vm.tick_counter;
                     if t % 2 == 0 {
                         ctx.print(bobber_x - 3.0, app_state.fishing_bobber_y + 1.0, "💦");
-                        ctx.print(bobber_x + 3.0, app_state.fishing_bobber_y + 2.0, ".");
+                        ctx.print(bobber_x + 3.0, app_state.fishing_bobber_y + 2.0, "∴");
                     } else {
                         ctx.print(bobber_x - 2.0, app_state.fishing_bobber_y + 2.0, "°");
-                        ctx.print(bobber_x + 4.0, app_state.fishing_bobber_y + 1.0, "💦");
+                        ctx.print(bobber_x + 4.0, app_state.fishing_bobber_y + 1.0, "∷");
                     }
 
                     // Water churn
@@ -5198,14 +5213,15 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     // Tension Bar (Gradient & Feedback)
     let tension = app_state.fishing_tension;
-    let (tension_color, label, symbol) = if tension < 0.3 {
+    // Enhanced thresholds and states
+    let (tension_color, label, symbol) = if tension < 0.2 {
         (Color::Green, "RELAXED", "🟢")
-    } else if tension < 0.5 {
-        (Color::LightGreen, "PULLING", "🎣")
-    } else if tension < 0.7 {
-        (Color::Yellow, "STRAIN", "⚠️")
-    } else if tension < 0.9 {
-        (Color::LightRed, "CRITICAL", "🔥")
+    } else if tension < 0.4 {
+        (Color::LightGreen, "TENSION", "🎣")
+    } else if tension < 0.6 {
+        (Color::Yellow, "PULLING", "⚠️")
+    } else if tension < 0.8 {
+        (Color::LightRed, "STRAIN", "🔥")
     } else {
         (Color::Red, "BREAKING!", "💥")
     };
@@ -5220,7 +5236,7 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         });
 
     let gauge = Gauge::default()
-        .block(Block::default().borders(Borders::ALL).title("Line Tension"))
+        .block(panel_block("Line Tension", tension > 0.5))
         .gauge_style(gauge_style)
         .use_unicode(true)
         .ratio(tension.clamp(0.0, 1.0));
@@ -6375,7 +6391,7 @@ fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         "Microscope: Cell ({}, {}) - Value: {}",
         cx, cy, data.value
     ))
-    .block(Block::default().borders(Borders::ALL).title("Inspection"));
+    .block(panel_block("Inspection", true));
     f.render_widget(header, chunks[0]);
 
     let main_split = Layout::default()
@@ -6840,18 +6856,9 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                 InputMode::Injection => "INJECTION (Enter: Splice, Esc: Cancel)".to_string(),
             };
 
-    let genome_block = Block::default().borders(Borders::ALL).title("Genome");
-    let genome_style = if app_state.view_mode == ViewMode::Genome {
-        Style::default()
-            .fg(Color::White)
-            .add_modifier(Modifier::BOLD)
-    } else {
-        Style::default().fg(Color::DarkGray)
-    };
-
     // Highlight the active block borders/title
     let genome_list = List::new(strand_items).block(
-        genome_block.border_style(genome_style).title(title.clone()), // Show controls in main title usually
+        panel_block(&title, app_state.view_mode == ViewMode::Genome)
     );
     f.render_widget(genome_list, left_chunks[0]);
 
