@@ -1,30 +1,111 @@
+//! Mathematical utilities for 4D vector operations.
+//!
+//! This module provides the [`Vec4`] struct, which represents a 4-dimensional vector
+//! (x, y, z, w). It includes methods for arithmetic, normalization, and geometric
+//! transformations such as 4D rotation and projection into 3D space.
+
 use macroquad::prelude::*;
 
+/// A 4-dimensional vector with x, y, z, and w components.
+///
+/// This struct is the fundamental building block for the "Hyper" series experiments,
+/// allowing for the representation of points and vectors in 4D space.
+///
+/// # Examples
+///
+/// ```
+/// use hyper_system::math::Vec4;
+///
+/// let v = Vec4::new(1.0, 2.0, 3.0, 4.0);
+/// assert_eq!(v.w, 4.0);
+/// ```
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vec4 {
+    /// The X component.
     pub x: f32,
+    /// The Y component.
     pub y: f32,
+    /// The Z component.
     pub z: f32,
+    /// The W component (the 4th dimension).
     pub w: f32,
 }
 
 impl Vec4 {
+    /// Creates a new 4D vector.
+    ///
+    /// # Arguments
+    ///
+    /// * `x` - The X component.
+    /// * `y` - The Y component.
+    /// * `z` - The Z component.
+    /// * `w` - The W component.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use hyper_system::math::Vec4;
+    /// let v = Vec4::new(0.0, 1.0, 0.0, 1.0);
+    /// ```
     pub fn new(x: f32, y: f32, z: f32, w: f32) -> Self {
         Self { x, y, z, w }
     }
 
+    /// Creates a zero vector (0, 0, 0, 0).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use hyper_system::math::Vec4;
+    /// let v = Vec4::zero();
+    /// assert_eq!(v.length(), 0.0);
+    /// ```
     pub fn zero() -> Self {
         Self::new(0.0, 0.0, 0.0, 0.0)
     }
 
+    /// Scales the vector by a scalar value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use hyper_system::math::Vec4;
+    /// let v = Vec4::new(1.0, 1.0, 1.0, 1.0);
+    /// let scaled = v.scale(2.0);
+    /// assert_eq!(scaled.x, 2.0);
+    /// assert_eq!(scaled.w, 2.0);
+    /// ```
     pub fn scale(&self, s: f32) -> Self {
         Self::new(self.x * s, self.y * s, self.z * s, self.w * s)
     }
 
+    /// Scales each dimension by a specific factor.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use hyper_system::math::Vec4;
+    /// let v = Vec4::new(1.0, 1.0, 1.0, 1.0);
+    /// let scaled = v.scale_dim(2.0, 3.0, 4.0, 5.0);
+    /// assert_eq!(scaled.x, 2.0);
+    /// assert_eq!(scaled.w, 5.0);
+    /// ```
     pub fn scale_dim(&self, sx: f32, sy: f32, sz: f32, sw: f32) -> Self {
         Self::new(self.x * sx, self.y * sy, self.z * sz, self.w * sw)
     }
 
+    /// Adds another vector to this one.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use hyper_system::math::Vec4;
+    /// let v1 = Vec4::new(1.0, 0.0, 0.0, 0.0);
+    /// let v2 = Vec4::new(0.0, 1.0, 0.0, 0.0);
+    /// let sum = v1.add(v2);
+    /// assert_eq!(sum.x, 1.0);
+    /// assert_eq!(sum.y, 1.0);
+    /// ```
     pub fn add(&self, other: Vec4) -> Self {
         Self::new(
             self.x + other.x,
@@ -34,6 +115,7 @@ impl Vec4 {
         )
     }
 
+    /// Subtracts another vector from this one.
     pub fn sub(&self, other: Vec4) -> Self {
         Self::new(
             self.x - other.x,
@@ -43,14 +125,31 @@ impl Vec4 {
         )
     }
 
+    /// Calculates the squared length (magnitude) of the vector.
+    ///
+    /// This is faster than `length()` as it avoids the square root operation.
+    /// Useful for comparisons.
     pub fn length_squared(&self) -> f32 {
         self.x * self.x + self.y * self.y + self.z * self.z + self.w * self.w
     }
 
+    /// Calculates the length (magnitude) of the vector.
     pub fn length(&self) -> f32 {
         self.length_squared().sqrt()
     }
 
+    /// Returns a normalized unit vector (length of 1.0).
+    ///
+    /// If the vector has zero length, it returns the zero vector.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use hyper_system::math::Vec4;
+    /// let v = Vec4::new(0.0, 3.0, 0.0, 4.0); // Length is 5
+    /// let n = v.normalize();
+    /// assert!((n.length() - 1.0).abs() < 1e-6);
+    /// ```
     pub fn normalize(&self) -> Self {
         let len = self.length();
         if len > 0.0 {
@@ -60,6 +159,9 @@ impl Vec4 {
         }
     }
 
+    /// Limits the magnitude of the vector to a maximum value.
+    ///
+    /// If the vector's length is greater than `max`, it is normalized and scaled to `max`.
     pub fn limit(&self, max: f32) -> Self {
         if self.length_squared() > max * max {
             self.normalize().scale(max)
@@ -68,6 +170,7 @@ impl Vec4 {
         }
     }
 
+    /// Calculates the squared Euclidean distance to another vector.
     pub fn distance_squared(&self, other: Vec4) -> f32 {
         let dx = self.x - other.x;
         let dy = self.y - other.y;
@@ -76,7 +179,14 @@ impl Vec4 {
         dx * dx + dy * dy + dz * dz + dw * dw
     }
 
-    // Rotations involving W axis
+    /// Rotates the vector in the XW plane.
+    ///
+    /// In 4D space, rotations occur in planes defined by two axes.
+    /// Rotating in the XW plane changes the X and W components while leaving Y and Z unchanged.
+    ///
+    /// # Arguments
+    ///
+    /// * `theta` - The angle of rotation in radians.
     pub fn rotate_xw(&self, theta: f32) -> Self {
         let c = theta.cos();
         let s = theta.sin();
@@ -88,6 +198,9 @@ impl Vec4 {
         }
     }
 
+    /// Rotates the vector in the YW plane.
+    ///
+    /// Changes the Y and W components.
     pub fn rotate_yw(&self, theta: f32) -> Self {
         let c = theta.cos();
         let s = theta.sin();
@@ -99,6 +212,9 @@ impl Vec4 {
         }
     }
 
+    /// Rotates the vector in the ZW plane.
+    ///
+    /// Changes the Z and W components.
     pub fn rotate_zw(&self, theta: f32) -> Self {
         let c = theta.cos();
         let s = theta.sin();
@@ -110,7 +226,18 @@ impl Vec4 {
         }
     }
 
-    // Project 4D point to 3D space
+    /// Projects the 4D point into 3D space using stereographic projection.
+    ///
+    /// This simulates a camera looking "down" from the W axis. As points move further
+    /// away in the W dimension (relative to `camera_w`), they appear smaller (perspective).
+    ///
+    /// # Arguments
+    ///
+    /// * `camera_w` - The W coordinate of the observer/camera.
+    ///
+    /// # Returns
+    ///
+    /// A `macroquad::math::Vec3` representing the 3D projection.
     pub fn project_to_3d(&self, camera_w: f32) -> Vec3 {
         let w_dist = camera_w - self.w;
         // Avoid division by zero
