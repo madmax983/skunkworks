@@ -87,6 +87,9 @@ pub struct Network {
     /// This is used to decouple the update order: synapses read from this
     /// frozen state to determine if they should initiate a new signal.
     pub spikes: Vec<bool>,
+
+    /// Internal buffer for accumulating inputs to avoid re-allocation every step.
+    input_buffer: Vec<f32>,
 }
 
 impl Network {
@@ -104,6 +107,7 @@ impl Network {
             neurons: Vec::new(),
             synapses: Vec::new(),
             spikes: Vec::new(),
+            input_buffer: Vec::new(),
         }
     }
 
@@ -175,12 +179,15 @@ impl Network {
     ///   If the slice is shorter than the neuron count, remaining neurons receive 0.0.
     pub fn step(&mut self, external_inputs: &[f32]) {
         // 1. Collect inputs for this step
-        let mut inputs = vec![0.0; self.neurons.len()];
+        if self.input_buffer.len() != self.neurons.len() {
+            self.input_buffer.resize(self.neurons.len(), 0.0);
+        }
+        self.input_buffer.fill(0.0);
 
         // Add external inputs
         for (i, val) in external_inputs.iter().enumerate() {
-            if i < inputs.len() {
-                inputs[i] += val;
+            if i < self.input_buffer.len() {
+                self.input_buffer[i] += val;
             }
         }
 
@@ -208,7 +215,7 @@ impl Network {
             });
 
             if weight_to_add != 0.0 {
-                if let Some(input) = inputs.get_mut(syn.to) {
+                if let Some(input) = self.input_buffer.get_mut(syn.to) {
                     *input += weight_to_add;
                     syn.active = true;
                 }
@@ -220,7 +227,7 @@ impl Network {
         let dt = 1.0;
 
         for (i, neuron) in self.neurons.iter_mut().enumerate() {
-            let (_, spiked) = neuron.update(dt, inputs[i]);
+            let (_, spiked) = neuron.update(dt, self.input_buffer[i]);
             self.spikes[i] = spiked;
         }
     }
