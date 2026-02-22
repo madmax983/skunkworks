@@ -3,7 +3,7 @@ use chimera_lang::opcode::OpCode;
 use chimera_lang::vm::{ChimeraVM, Value};
 
 fn make_vm_with_genes(genes: Vec<Gene>) -> ChimeraVM {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },

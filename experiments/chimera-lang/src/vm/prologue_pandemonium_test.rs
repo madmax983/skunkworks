@@ -6,7 +6,7 @@ mod tests {
 
     #[test]
     fn test_chaos_source() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -41,7 +41,7 @@ mod tests {
 
     #[test]
     fn test_noise_wire() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -75,7 +75,7 @@ mod tests {
 
     #[test]
     fn test_chaos_sink() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);

@@ -1,4 +1,4 @@
-use crate::ast::{Gene, Nucleotide, Strand};
+use crate::ast::{EvolutionConfig, Gene, Nucleotide, Strand};
 use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value};
 use rand::Rng;
@@ -9,6 +9,7 @@ pub enum Challenge {
     Doubler,
     Adder,
     Fibonacci,
+    Custom(EvolutionConfig),
 }
 
 impl Default for Challenge {
@@ -24,6 +25,7 @@ impl std::fmt::Display for Challenge {
             Challenge::Doubler => write!(f, "Doubler (x -> 2x)"),
             Challenge::Adder => write!(f, "Adder (x,y -> x+y)"),
             Challenge::Fibonacci => write!(f, "Fibonacci (n -> fib(n))"),
+            Challenge::Custom(_) => write!(f, "Custom Evolution"),
         }
     }
 }
@@ -54,6 +56,11 @@ impl EvolutionEngine {
             best_fitness: i64::MAX,
             history: Vec::new(),
         }
+    }
+
+    pub fn from_config(seed: Strand, config: EvolutionConfig) -> Self {
+        let challenge = Challenge::Custom(config.clone());
+        Self::new(seed, config.population_size, challenge)
     }
 
     pub fn step(&mut self, vm_template: &ChimeraVM) {
@@ -145,6 +152,68 @@ impl EvolutionEngine {
     }
 
     fn evaluate_fitness(vm_template: &ChimeraVM, strand: &Strand, challenge: &Challenge) -> i64 {
+        if let Challenge::Custom(config) = challenge {
+            let mut vm = vm_template.clone();
+            // Inject candidate as strand 0 (or replace existing 0)
+            // But vm_template might have other strands (e.g. fitness function).
+            // We should APPEND or REPLACE.
+            // If we replace strand 0, we might break things if fitness function expects it elsewhere.
+            // But usually strand 0 is main.
+            // Let's replace strand 0.
+            if !vm.dna.helix.strands.is_empty() {
+                vm.dna.helix.strands[0] = strand.clone();
+            } else {
+                vm.dna.helix.strands.push(strand.clone());
+            }
+
+            vm.ip = (0, 0);
+            vm.energy = 1000;
+            vm.halted = false;
+            vm.stack.clear();
+
+            // Run Candidate
+            let max_ticks = 1000;
+            for _ in 0..max_ticks {
+                if vm.halted {
+                    break;
+                }
+                vm.step();
+            }
+
+            // Run Fitness Function (if present)
+            if let Some(f_idx) = config.fitness_strand_idx {
+                if f_idx < vm.dna.helix.strands.len() {
+                    vm.ip = (f_idx, 0);
+                    vm.halted = false; // Resume
+                    for _ in 0..max_ticks {
+                        if vm.halted {
+                            break;
+                        }
+                        vm.step();
+                    }
+                }
+            }
+
+            // Result is top of stack
+            let result = vm
+                .stack
+                .pop()
+                .and_then(|v| match v {
+                    Value::Int(n) => Some(n),
+                    _ => None,
+                })
+                .unwrap_or(1000000); // Default high error
+
+            // If target_value is set and no fitness function, do simple diff
+            if config.fitness_strand_idx.is_none() {
+                if let Some(target) = config.target_value {
+                    return (result - target).abs();
+                }
+            }
+
+            return result;
+        }
+
         let mut total_error = 0;
         let test_cases = match challenge {
             Challenge::Target(n) => vec![(vec![], *n)],
@@ -167,6 +236,7 @@ impl EvolutionEngine {
                 (vec![Value::Int(6)], 8),
                 (vec![Value::Int(7)], 13),
             ],
+            Challenge::Custom(_) => vec![], // Handled above
         };
 
         for (inputs, expected) in test_cases {
@@ -278,7 +348,7 @@ mod tests {
             }],
         };
 
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![seed.clone()],
             },

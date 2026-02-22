@@ -6,7 +6,7 @@ mod tests {
 
     #[test]
     fn test_forth_agent_math() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);

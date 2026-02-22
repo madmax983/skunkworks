@@ -26,7 +26,7 @@ mod tests {
             genes: vec![make_gene("sense_light", vec![])],
         };
 
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![strand0, strand1],
             },
@@ -86,7 +86,7 @@ mod tests {
                 make_gene("jump", vec![3]),
             ],
         };
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![strand0],
             },

@@ -6,7 +6,7 @@ mod tests {
     use crate::vm::{ChimeraVM, Value};
 
     fn make_vm() -> ChimeraVM {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         ChimeraVM::new(dna)

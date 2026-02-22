@@ -510,6 +510,18 @@ pub fn run_tui(mut vm: ChimeraVM, initial_view: Option<ViewMode>) -> Result<()> 
 
     let mut app_state = AppState::new(initial_view);
 
+    // Initialize Evolution Engine if config is present
+    if let Some(config) = &vm.dna.evolution_config {
+        if let Some(strand) = vm.dna.helix.strands.first() {
+            app_state.evolution_state.engine = Some(crate::vm::evolution::EvolutionEngine::from_config(
+                strand.clone(),
+                config.clone(),
+            ));
+            app_state.evolution_state.challenge = crate::vm::evolution::Challenge::Custom(config.clone());
+            app_state.view_mode = ViewMode::Evolution; // Auto-switch to view
+        }
+    }
+
     let res = run_app(&mut terminal, &mut vm, &mut app_state);
 
     disable_raw_mode()?;
@@ -2582,6 +2594,7 @@ where
                                     Challenge::Doubler => Challenge::Adder,
                                     Challenge::Adder => Challenge::Fibonacci,
                                     Challenge::Fibonacci => Challenge::Target(42),
+                                    Challenge::Custom(_) => Challenge::Target(42), // Fallback/Cycle
                                 };
                             if let Some(engine) = &mut app_state.evolution_state.engine {
                                 engine.challenge = app_state.evolution_state.challenge.clone();

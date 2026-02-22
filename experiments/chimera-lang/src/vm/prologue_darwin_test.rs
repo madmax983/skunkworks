@@ -6,7 +6,7 @@ use crate::vm::Value;
 
 #[test]
 fn test_darwin_rune() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

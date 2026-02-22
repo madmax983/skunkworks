@@ -7,7 +7,7 @@ mod tests {
     use std::path::PathBuf;
 
     fn make_vm() -> ChimeraVM {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes: vec![] }],
             },

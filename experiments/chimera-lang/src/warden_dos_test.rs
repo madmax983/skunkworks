@@ -9,7 +9,7 @@ mod tests {
     };
 
     fn make_vm(genes: Vec<Gene>) -> ChimeraVM {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes }],
             },
@@ -275,7 +275,7 @@ mod ribosome_dos_tests {
     use crate::vm::{ChimeraVM, Value, MAX_ORGANELLES};
 
     fn make_vm() -> ChimeraVM {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes: vec![] }],
             },

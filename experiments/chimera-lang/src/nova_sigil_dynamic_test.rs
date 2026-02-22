@@ -6,7 +6,7 @@ mod tests {
     use crate::vm::{ChimeraVM, Value};
 
     fn make_vm() -> ChimeraVM {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![
                     // Strand 0: Inscribe "TestSigil" radius 1 calling Strand 1

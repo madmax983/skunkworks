@@ -1510,7 +1510,7 @@ mod tests {
 
     #[test]
     fn test_prologue_circuit() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);

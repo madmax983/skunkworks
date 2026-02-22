@@ -4,7 +4,7 @@ use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_hyper_tesseract_source() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -27,7 +27,7 @@ fn test_hyper_tesseract_source() {
 
 #[test]
 fn test_hyper_step() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -51,7 +51,7 @@ fn test_hyper_step() {
 
 #[test]
 fn test_hyper_rotate() {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

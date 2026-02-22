@@ -4,7 +4,7 @@ use chimera_lang::vm::ChimeraVM;
 use chimera_lang::vm::Value;
 
 fn make_vm(genes: Vec<Gene>) -> ChimeraVM {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },
@@ -94,7 +94,7 @@ fn test_propagate() {
 
     let strand1 = Strand { genes: vec![] };
 
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![strand0, strand1],
         },

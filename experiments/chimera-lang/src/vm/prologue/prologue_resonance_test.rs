@@ -8,7 +8,7 @@ mod tests {
 
     #[test]
     fn test_resonance_note() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -45,7 +45,7 @@ mod tests {
 
     #[test]
     fn test_resonance_chord() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -85,7 +85,7 @@ mod tests {
 
     #[test]
     fn test_resonance_drum() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);

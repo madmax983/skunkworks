@@ -3,7 +3,7 @@ use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value};
 
 fn make_vm(genes: Vec<Gene>) -> ChimeraVM {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },
@@ -68,7 +68,7 @@ fn test_exhume() {
         ],
     };
 
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![strand0, strand1],
         },
@@ -107,7 +107,7 @@ fn test_seance() {
         args: vec![],
     }];
 
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![
                 Strand {

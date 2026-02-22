@@ -10,6 +10,20 @@ use serde::{Deserialize, Serialize};
 pub struct Dna {
     /// The double-helix structure containing strands of genes.
     pub helix: Helix,
+    /// Optional configuration for evolutionary self-optimization.
+    pub evolution_config: Option<EvolutionConfig>,
+}
+
+/// Configuration for the Evolution Engine.
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub struct EvolutionConfig {
+    pub population_size: usize,
+    /// Stored as string to preserve Eq/Hash (parsed as f64 at runtime)
+    pub mutation_rate: String,
+    /// Index of the strand used as the Fitness Function
+    pub fitness_strand_idx: Option<usize>,
+    /// Simple target value (if no fitness strand provided)
+    pub target_value: Option<i64>,
 }
 
 /// A collection of DNA strands.
@@ -77,7 +91,10 @@ impl Dna {
                 let mut inner = pair.into_inner();
                 let helix_pair = inner.next().ok_or("Expected helix in DNA")?;
                 let helix = Helix::try_from_pair(helix_pair)?;
-                Ok(Dna { helix })
+                Ok(Dna {
+                    helix,
+                    evolution_config: None,
+                })
             }
             _ => Err(format!("Expected DNA rule, got {:?}", pair.as_rule())),
         }

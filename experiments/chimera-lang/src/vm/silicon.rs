@@ -71,7 +71,7 @@ use crate::opcode::OpCode;
 ///     Gene { op: OpCode::Wire, args: vec![] },
 /// ];
 ///
-/// let dna = Dna { helix: Helix { strands: vec![Strand { genes }] } };
+/// let dna = Dna { evolution_config: None, helix: Helix { strands: vec![Strand { genes }] } };
 /// let mut vm = ChimeraVM::new(dna);
 ///
 /// // Execute 3 instructions

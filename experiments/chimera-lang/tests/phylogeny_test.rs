@@ -8,7 +8,7 @@ use std::fs;
 use std::path::PathBuf;
 
 fn make_dna(genes: Vec<Gene>) -> Dna {
-    Dna {
+    Dna { evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },

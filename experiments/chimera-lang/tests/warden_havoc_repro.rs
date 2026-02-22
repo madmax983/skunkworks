@@ -11,7 +11,7 @@ fn test_sigil_strand_oob() {
             args: vec![],
         }],
     };
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![dummy_strand],
         },
@@ -66,7 +66,7 @@ fn test_sigil_strand_oob() {
 #[test]
 fn test_babel_compile_stack_overflow() {
     let dummy_strand = Strand { genes: vec![] };
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![dummy_strand],
         },

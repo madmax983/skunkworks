@@ -6,7 +6,7 @@ use crate::vm::{ChimeraVM, Value};
 use resonance_audio::audio::AudioSnapshot;
 
 fn make_vm(genes: Vec<Gene>) -> ChimeraVM {
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },

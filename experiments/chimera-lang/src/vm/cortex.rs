@@ -67,7 +67,7 @@ use crate::value::Value;
 ///     Gene { op: OpCode::Sense, args: vec![] }, // Read activation
 /// ];
 ///
-/// let dna = Dna { helix: Helix { strands: vec![Strand { genes: genes_a }, Strand { genes: genes_b }] } };
+/// let dna = Dna { evolution_config: None, helix: Helix { strands: vec![Strand { genes: genes_a }, Strand { genes: genes_b }] } };
 /// let mut vm = ChimeraVM::new(dna);
 ///
 /// // Step A: Link and Spark

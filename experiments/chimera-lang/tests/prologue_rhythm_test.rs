@@ -11,7 +11,7 @@ mod tests {
             op: chimera_lang::opcode::OpCode::Jump,
             args: vec![chimera_lang::ast::Nucleotide::Number(0)],
         }];
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![chimera_lang::ast::Strand { genes }],
             },
@@ -46,7 +46,7 @@ mod tests {
 
     #[test]
     fn test_rhythm_fader() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);

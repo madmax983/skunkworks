@@ -8,7 +8,7 @@ fn test_entropy_surge() {
         op: OpCode::EntropySurge,
         args: vec![],
     }];
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },
@@ -38,7 +38,7 @@ fn test_quantum_tunnel() {
             args: vec![],
         },
     ];
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },

@@ -593,7 +593,7 @@ impl std::fmt::Display for ChimeraVM {
 ///     Gene { op: OpCode::Push, args: vec![Nucleotide::Number(20)] },
 ///     Gene { op: OpCode::Add, args: vec![] },
 /// ];
-/// let dna = Dna { helix: Helix { strands: vec![Strand { genes }] } };
+/// let dna = Dna { evolution_config: None, helix: Helix { strands: vec![Strand { genes }] } };
 ///
 /// let mut vm = ChimeraVM::new(dna);
 ///
@@ -4708,7 +4708,7 @@ mod tests {
     use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
-        Dna {
+        Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes }],
             },
@@ -4764,7 +4764,7 @@ mod tests {
             }],
         };
 
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![strand0, strand1],
             },
@@ -4811,7 +4811,7 @@ mod tests {
             }],
         };
 
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![strand0, strand1],
             },
@@ -4869,7 +4869,7 @@ mod tests {
                 }, // 5: target to be modified
             ],
         };
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![strand0],
             },
@@ -5231,7 +5231,7 @@ mod tests {
                 args: vec![Nucleotide::Number(200)],
             }],
         };
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![strand0, strand1],
             },
@@ -5444,7 +5444,7 @@ mod sentry_ribosome_tests {
         // Setup VM with 2 strands
         // Strand 0: Empty
         // Strand 1: Empty (Target)
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes: vec![] }, Strand { genes: vec![] }],
             },

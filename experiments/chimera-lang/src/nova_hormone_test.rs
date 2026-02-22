@@ -26,7 +26,7 @@ mod tests {
             genes: vec![make_gene("push", vec![1]), make_gene("detect", vec![])],
         };
 
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![strand0, strand1],
             },
@@ -88,7 +88,7 @@ mod tests {
             ],
         };
 
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![strand0, strand1],
             },
@@ -142,7 +142,7 @@ mod tests {
                 make_gene("jump", vec![3]),
             ],
         };
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![strand0],
             },
@@ -176,7 +176,7 @@ mod tests {
                 make_gene("secrete", vec![]),
             ],
         };
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![strand0],
             },

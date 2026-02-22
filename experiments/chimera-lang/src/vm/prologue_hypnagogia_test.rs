@@ -6,7 +6,7 @@ mod tests {
 
     #[test]
     fn test_dream_intensity_increase() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -36,7 +36,7 @@ mod tests {
 
     #[test]
     fn test_dream_awaken() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -55,7 +55,7 @@ mod tests {
 
     #[test]
     fn test_dream_manifestation() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);

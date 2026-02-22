@@ -25,7 +25,7 @@ fn test_biohack_oom_prevention() {
         }, // Meme 0
     ];
 
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes: setup_genes }],
         },
@@ -124,7 +124,7 @@ fn test_scavenge_oom_prevention() {
         },
     ];
 
-    let dna = Dna {
+    let dna = Dna { evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes: loop_genes }],
         },

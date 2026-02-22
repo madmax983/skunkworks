@@ -8,7 +8,7 @@ mod tests {
 
     #[test]
     fn test_prologue_basic_circuit() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -36,7 +36,7 @@ mod tests {
 
     #[test]
     fn test_prologue_xor_gate() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -101,7 +101,7 @@ mod tests {
 
     #[test]
     fn test_prologue_splitter() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -140,7 +140,7 @@ mod tests {
 
     #[test]
     fn test_prologue_delay() {
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -204,7 +204,7 @@ mod tests {
         ];
         let strand = Strand { genes };
 
-        let dna = Dna {
+        let dna = Dna { evolution_config: None,
             helix: Helix {
                 strands: vec![strand, Strand { genes: vec![] }],
             },

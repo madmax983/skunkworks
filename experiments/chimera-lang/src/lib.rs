@@ -43,7 +43,7 @@
 //!     Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
 //! ];
 //!
-//! let dna = Dna { helix: Helix { strands: vec![Strand { genes }] } };
+//! let dna = Dna { evolution_config: None, helix: Helix { strands: vec![Strand { genes }] } };
 //! let mut vm = ChimeraVM::new(dna);
 //!
 //! // Run for 100 ticks
