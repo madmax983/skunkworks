@@ -45,9 +45,9 @@
 - **Status:** Fluid dynamics stable. Dependencies pinned to sysinfo 0.30.
 - **Note:** "Stability is a pinned version in a shifting world."
 
-### [Concentration Level: TOXIC] - Location: experiments/resonant-chamber
+### [Concentration Level: EXECUTED] - Location: graveyard/resonant-chamber
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy / Documentation Void. Grace period: 24 hours.
+- **Status:** Specimen executed. Diagnosis: Terminal Redundancy / Documentation Void.
 - **Note:** "An echo chamber with no walls. Redundant with ripple-tank."
 
 ### [Concentration Level: TOXIC] - Location: experiments/mnemosyne
@@ -63,8 +63,8 @@
 
 ### [Concentration Level: TOXIC] - Location: experiments/hyperbolic-lichen
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void (No README).
-- **Note:** "Lichen grows on rock, not on vacuum."
+- **Status:** Specimen condemned. Diagnosis: Documentation Void (No README). Zombie Status confirmed.
+- **Note:** "Lichen grows on rock, not on vacuum. The rock is gone."
 
 ### [Concentration Level: HIGH] - Location: experiments/hyper-mold
 - **Scent Origin:** The Splice Surgeon 🧬
