@@ -1,14 +1,14 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: FRESH] - Location: experiments/chimera-genesis
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The cells are thinking. The rules are evolving.
-- **Note:** "If the universe is code, then we can rewrite the physics."
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-genesis
+- **Scent Origin:** Mycelium 🍄 (Sensed: Build Success)
+- **Status:** Cellular rules stabilized. Dna struct mismatch resolved.
+- **Note:** "The universe is code, and we have patched the physics."
 
-### [Concentration Level: FRESH] - Location: experiments/chimera-lattice
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The crystal is growing. Agents are bonding.
-- **Note:** "Intelligence has a lattice structure."
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lattice
+- **Scent Origin:** Mycelium 🍄 (Sensed: Build Success)
+- **Status:** Lattice structure reinforced. Dna struct mismatch resolved.
+- **Note:** "The crystal is now immutable."
 
 ### [Concentration Level: FRESH] - Location: experiments/chimera-cuneiform
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -45,10 +45,10 @@
 - **Status:** Headless mode table rendering confirmed. Oracle bindings display as nested tables.
 - **Note:** "Data looks better in a grid."
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
-- **Scent Origin:** Echo 🗣️
-- **Status:** DX Audit mostly passed. 8 failing tests and 18 warnings persist.
-- **Note:** "The surface is clean, but the engine rattles."
+### [Concentration Level: HIGH] - Location: experiments/chimera-lang
+- **Scent Origin:** Mycelium 🍄 (Sensed: Test Failures)
+- **Status:** DX Audit Progress: Failures reduced from 8 to 2. Void Runes (µ, Ø, §) showing instability.
+- **Note:** "The void is rejecting the new bindings."
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/biomorphic-clock
 - **Scent Origin:** Mycelium 🍄 (Sensed: Survival)

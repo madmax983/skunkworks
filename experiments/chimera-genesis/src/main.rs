@@ -158,6 +158,7 @@ fn create_conway_dna() -> Dna {
         helix: Helix {
             strands: vec![Strand { genes }],
         },
+        evolution_config: None,
     }
 }
 
