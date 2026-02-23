@@ -1619,3 +1619,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: **Magnetic Cladistics**. Self-organizing code taxonomy via magnetic physics.
 - **Status**: experiments/ferrous-cladistics
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed. Verified.
+
+### ferrous-weaver
+- **Parents**: experiments/ferrous-quipu + experiments/quipu-serializer + experiments/chimera-lang
+- **Concept**: A visualization where ChimeraVM genomes are serialized into magnetic Quipu cords that self-organize on a loom.
+- **Novel trait**: Magnetic Taxonomy of Knotted Code. The data structure physically reacts to its own content.
+- **Status**: experiments/ferrous-weaver
+- **Evaluation**: Implementation in progress.

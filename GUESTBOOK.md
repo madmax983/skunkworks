@@ -536,3 +536,8 @@
 - **Status:** Specimen executed. Diagnosis: Terminal Stagnation / Documentation Void. Grace period expired.
 - **Note:** "The cylinder spins in a perfect, dead loop. Now it spins in the void."
 
+
+### [Concentration Level: FRESH] - Location: experiments/ferrous-weaver
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The Loom is active. Genetic Code is being woven into Magnetic Knots.
+- **Note:** "The structure of the code determines the shape of the fabric. Like charges repel; similar functions might drift apart?"

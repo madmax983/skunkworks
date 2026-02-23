@@ -1,0 +1,14 @@
+[package]
+name = "ferrous-weaver"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chimera-lang = { workspace = true, features = ["nova"] }
+quipu-serializer = { path = "../quipu-serializer" }
+quipu = { workspace = true }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+rand = { workspace = true }
+tui-shared = { path = "../../crates/tui-shared" }
