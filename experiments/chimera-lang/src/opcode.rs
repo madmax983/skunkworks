@@ -1134,49 +1134,6 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Rune,
 
-    // Chaos Cartridge Features (Programmable Physics)
-    /// **[Chaos]** Defines a new alchemical recipe.
-    ///
-    /// **Stack:** `[ ..., input_junction, output_str ] -> [ ... ]`
-    #[cfg(feature = "nova")]
-    ChaosDefine,
-    /// **[Chaos]** Randomizes the current physics recipes.
-    ///
-    /// **Stack:** `[ ... ] -> [ ... ]`
-    #[cfg(feature = "nova")]
-    ChaosScramble,
-    /// **[Chaos]** Manually triggers a physics transmutation tick.
-    ///
-    /// **Stack:** `[ ... ] -> [ ... ]`
-    #[cfg(feature = "nova")]
-    ChaosInvoke,
-
-    /// **[Chaos]** Triggers transmutation on Self (Mercury).
-    ///
-    /// **Stack:** `[ ... ] -> [ ... ]`
-    #[cfg(feature = "nova")]
-    Mercury,
-    /// **[Chaos]** Triggers transmutation on Neighbors (Venus).
-    ///
-    /// **Stack:** `[ ... ] -> [ ... ]`
-    #[cfg(feature = "nova")]
-    Venus,
-    /// **[Chaos]** Preserves reagents in a reaction (Salt).
-    ///
-    /// **Stack:** `[ ... ] -> [ ... ]`
-    #[cfg(feature = "nova")]
-    Salt,
-    /// **[Chaos]** Catalyzes reactions to 100% probability (Sulfur).
-    ///
-    /// **Stack:** `[ ... ] -> [ ... ]`
-    #[cfg(feature = "nova")]
-    Sulfur,
-    /// **[Chaos]** Learns a recipe from a DNA strand.
-    ///
-    /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
-    #[cfg(feature = "nova")]
-    ChaosLearn,
-
     /// **[Nova]** Triggers a Cambrian Explosion (Mass Speciation).
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`

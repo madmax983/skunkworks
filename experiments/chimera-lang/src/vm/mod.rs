@@ -185,11 +185,6 @@ pub mod nova_cambrian;
 #[cfg(feature = "nova")]
 pub mod nova_cartography;
 #[cfg(feature = "nova")]
-pub mod nova_chaos;
-#[cfg(feature = "nova")]
-#[cfg(test)]
-mod nova_chaos_transmutation_test;
-#[cfg(feature = "nova")]
 pub mod nova_chemistry;
 #[cfg(feature = "nova")]
 pub mod nova_chronos;
@@ -857,8 +852,6 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub tablet: Vec<String>,
     pub chaos_struct: chimera_chaos::ChimeraChaos,
-    #[cfg(feature = "nova")]
-    pub chaos_cartridge: nova_chaos::ChaosCartridge,
     pub catalysts: Vec<catalyst::Catalyst>,
     #[cfg(feature = "nova")]
     pub babel_state: babel_chaos::BabelState,
@@ -1238,8 +1231,6 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             tablet: Vec::new(),
             chaos_struct: chimera_chaos::ChimeraChaos::new(),
-            #[cfg(feature = "nova")]
-            chaos_cartridge: nova_chaos::ChaosCartridge::new(),
             catalysts: Vec::new(),
             #[cfg(feature = "nova")]
             babel_state: babel_chaos::BabelState::new(),
@@ -3493,19 +3484,6 @@ impl ChimeraVM {
             | OpCode::Prologue
             | OpCode::Rune
             | OpCode::BioHack => nova::exec_nova_op(self, op, args),
-
-            #[cfg(feature = "nova")]
-            OpCode::ChaosDefine
-            | OpCode::ChaosScramble
-            | OpCode::ChaosInvoke
-            | OpCode::ChaosLearn
-            | OpCode::Mercury
-            | OpCode::Venus
-            | OpCode::Salt
-            | OpCode::Sulfur => {
-                nova_chaos::exec_chaos_op(self, op, args);
-                None
-            }
 
             #[cfg(feature = "oracle")]
             OpCode::Divergence => nova::exec_nova_op(self, op, args),
