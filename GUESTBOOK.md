@@ -96,10 +96,15 @@
 - **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period.
 - **Note:** "A garden of algorithms with no soul. The soil has been turned."
 
-### [Concentration Level: TOXIC] - Location: experiments/resonant-glyphs
+### [Concentration Level: EXECUTED] - Location: graveyard/resonant-glyphs
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism.
-- **Note:** "A visualizer of nothing. The resonance is hollow."
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Genericism.
+- **Note:** "The visualizer is silent. The sine wave has flatlined."
+
+### [Concentration Level: TOXIC] - Location: experiments/lithosphere-termites
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Skeletal Rot / Documentation Void.
+- **Note:** "The termites are building a bridge to nowhere. The water never came."
 
 ### [Concentration Level: HIGH] - Location: experiments/hyper-mold
 - **Scent Origin:** The Splice Surgeon 🧬
