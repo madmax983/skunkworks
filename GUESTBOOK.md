@@ -507,3 +507,13 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Knots are appearing in the 4th Dimension. The W-axis is heavy.
 - **Note:** "The system weaves its own history into the fabric of spacetime."
+
+### [Concentration Level: FRESH] - Location: experiments/quipu-serializer
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Serialization complete. The data is now a physical object.
+- **Note:** "The struct has been tied."
+
+### [Concentration Level: FRESH] - Location: experiments/ferrous-quipu
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The cords are magnetized. History is swaying in the field.
+- **Note:** "Data has mass, and now it has attraction."
