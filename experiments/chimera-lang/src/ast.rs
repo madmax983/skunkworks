@@ -101,6 +101,51 @@ impl Dna {
     }
 }
 
+// --- DX Improvements ---
+
+impl Dna {
+    /// Creates a simple organism with a single strand of genes.
+    pub fn from_genes(genes: Vec<Gene>) -> Self {
+        Dna {
+            helix: Helix {
+                strands: vec![Strand { genes }],
+            },
+            evolution_config: None,
+        }
+    }
+}
+
+impl Gene {
+    /// Helper to construct a Gene with arguments.
+    pub fn new(op: OpCode, args: Vec<Nucleotide>) -> Self {
+        Gene { op, args }
+    }
+}
+
+impl From<OpCode> for Gene {
+    fn from(op: OpCode) -> Self {
+        Gene { op, args: vec![] }
+    }
+}
+
+impl From<i64> for Nucleotide {
+    fn from(n: i64) -> Self {
+        Nucleotide::Number(n)
+    }
+}
+
+impl From<String> for Nucleotide {
+    fn from(s: String) -> Self {
+        Nucleotide::String(s)
+    }
+}
+
+impl From<&str> for Nucleotide {
+    fn from(s: &str) -> Self {
+        Nucleotide::String(s.to_string())
+    }
+}
+
 impl Helix {
     pub fn try_from_pair(pair: Pair<Rule>) -> Result<Self, String> {
         match pair.as_rule() {
