@@ -160,6 +160,8 @@ pub enum ViewMode {
     Forge,
     #[cfg(feature = "nova")]
     Tesseract,
+    #[cfg(feature = "nova")]
+    Choir,
 }
 
 enum InputMode {
@@ -1074,6 +1076,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Tesseract = app_state.view_mode {
                 render_tesseract(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Choir = app_state.view_mode {
+                render_choir(f, vm, app_state);
                 return;
             }
 
@@ -2564,6 +2572,7 @@ where
                         && c != 'm'
                         && c != 'c'
                         && c != 'C'
+                        && c != 'K'
                         && vm.handle_input(c)
                     {
                         continue;
@@ -2571,6 +2580,18 @@ where
                 }
 
                 match key.code {
+                    KeyCode::Char('K') => {
+                        #[cfg(feature = "nova")]
+                        {
+                            if let ViewMode::Ecology = app_state.view_mode {
+                                vm.organelles.clear();
+                                app_state.status_msg = "Extinction Event.".to_string();
+                            } else {
+                                app_state.view_mode = ViewMode::Choir;
+                                app_state.status_msg = "Switched to Choir View".to_string();
+                            }
+                        }
+                    }
                     KeyCode::Char('C') => {
                         app_state.chaos_mode = !app_state.chaos_mode;
                         app_state.status_msg = format!("Chaos Mode: {}", app_state.chaos_mode);
@@ -2853,7 +2874,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Tesseract => ViewMode::Genome,
                             #[cfg(not(feature = "nova"))]
-                            ViewMode::Mutagen => ViewMode::Genome,
+                            ViewMode::Tesseract => ViewMode::Choir,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Choir => ViewMode::Genome,
                         };
                     }
                     #[cfg(feature = "nova")]
@@ -2977,13 +3000,6 @@ where
                     }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('k') => app_state.view_mode = ViewMode::Kaleidoscope,
-                    #[cfg(feature = "nova")]
-                    KeyCode::Char('K') => {
-                        if let ViewMode::Ecology = app_state.view_mode {
-                            vm.organelles.clear();
-                            app_state.status_msg = "Extinction Event.".to_string();
-                        }
-                    }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('$') => app_state.view_mode = ViewMode::Market,
                     #[cfg(feature = "nova")]
@@ -5395,6 +5411,95 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Territory Info"),
     );
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_choir(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    // Left: Active Sirens
+    let mut items = Vec::new();
+    let mut siren_count = 0;
+
+    for agent in &vm.prologue_state.agents {
+        if let Some(crate::vm::Value::Str(s)) = vm.grid.get(agent.y).and_then(|r| r.get(agent.x)) {
+            if s == "♬" {
+                siren_count += 1;
+                // Parse state format: "♬:BPM:Oct:Vel:Wave:Dir:Buffer"
+                let state_str = if let crate::vm::Value::Str(st) = &agent.state {
+                    st.clone()
+                } else {
+                    String::new()
+                };
+
+                let parts: Vec<&str> = state_str.split(':').collect();
+                let bpm = parts.get(1).unwrap_or(&"?");
+                let oct = parts.get(2).unwrap_or(&"?");
+                let buffer_str = parts.get(6).unwrap_or(&"");
+
+                let mut notes = String::new();
+                if !buffer_str.is_empty() {
+                    for n_str in buffer_str.split(',') {
+                        if let Ok(n) = n_str.parse::<u8>() {
+                            let note_names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+                            let name = note_names[(n as usize) % 12];
+                            let octave = (n / 12) as i32 - 1;
+                            notes.push_str(&format!("{}{}, ", name, octave));
+                        }
+                    }
+                }
+
+                items.push(ListItem::new(format!(
+                    "Siren @ {},{} | BPM:{} Oct:{} | Buf: [{}]",
+                    agent.x, agent.y, bpm, oct, notes.trim_end_matches(", ")
+                )).style(Style::default().fg(Color::Cyan)));
+            }
+        }
+    }
+
+    if items.is_empty() {
+        items.push(ListItem::new("No Active Sirens. Place '♬' to begin."));
+    }
+
+    let list = List::new(items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(format!("Genetic Choir ({} Voices)", siren_count)),
+    );
+    f.render_widget(list, chunks[0]);
+
+    // Right: Composition Log (Last created strands)
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(100)].as_ref())
+        .split(chunks[1]);
+
+    let mut dna_items = Vec::new();
+    let total_strands = vm.dna.helix.strands.len();
+    let start = total_strands.saturating_sub(10);
+
+    for i in start..total_strands {
+        let strand = &vm.dna.helix.strands[i];
+        let mut genes_str = String::new();
+        for (j, gene) in strand.genes.iter().enumerate() {
+            if j > 5 {
+                genes_str.push_str("...");
+                break;
+            }
+            genes_str.push_str(&format!("{} ", gene.op));
+        }
+        dna_items.push(ListItem::new(format!("Strand #{}: {}", i, genes_str)));
+    }
+
+    let dna_list = List::new(dna_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Composed DNA"),
+    );
+    f.render_widget(dna_list, right_chunks[0]);
 }
 
 #[cfg(feature = "nova")]
