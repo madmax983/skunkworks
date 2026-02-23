@@ -1647,3 +1647,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Necrotic OS Visualization. Visualizing the lifecycle of processes from execution to termination to resource reclamation.
 - **Status**: experiments/chimera-sediment
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### chimera-sandpile
+- **Parents**: experiments/chimera-lang + experiments/sandpile-scheduler
+- **Concept**: ChimeraVM agents living on an Abelian Sandpile. Agents consume/create sand (terrain), and avalanches physically transport agents.
+- **Novel trait**: Avalanche Surfing. Agent movement is driven by environmental instability (toppling).
+- **Status**: experiments/chimera-sandpile
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
