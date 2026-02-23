@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **synaptic-trace**: Diagnosis: Documentation Void / Static Rigor Mortis. Grace period: 24 hours.
+- **saros-cycle**: Diagnosis: Terminal Genericism / Trivial Implementation. Grace period: 24 hours.
 - [Experiment name]: [Diagnosis]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **synaptic-trace**: Specimen executed. Diagnosis: Documentation Void / Static Rigor Mortis. Grace period expired. Moved to graveyard.
 - **resonant-glyphs**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **hyperbolic-lichen**: Specimen executed. Diagnosis: Documentation Void (No README). Zombie Status confirmed. Grace period expired. Moved to graveyard.
 - **resonant-chamber**: Specimen executed. Diagnosis: Terminal Redundancy / Documentation Void. Failed to improve during grace period. Moved to graveyard.
