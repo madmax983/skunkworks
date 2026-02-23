@@ -1,0 +1,12 @@
+[package]
+name = "quipu-lattice"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+quipu = { workspace = true }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+tui-shared = { workspace = true }
+rand = { workspace = true }
+anyhow = { workspace = true }

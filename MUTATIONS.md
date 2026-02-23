@@ -1576,11 +1576,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Spiking Neural Network where topology is mapped to a physical Quipu. Cords are axons, Knots are synapses, Vertical position is delay.
 - **Novel trait**: Physical Latency. The geometry of the network determines its temporal properties.
 - **Status**: experiments/neuro-quipu
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational. Re-verified.
 
 ### quantum-quipu
 - **Parents**: experiments/quipu-symphony + experiments/quantum-boids
 - **Concept**: Visualization of Quantum Circuits as Incan Quipus. Cords are Qubits, Knots are Gates (Hadamard, CNOT).
 - **Novel trait**: Entangled Knots. Visualizing the interference pattern and measurement collapse on a physical cord.
 - **Status**: experiments/quantum-quipu
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational. Re-verified.
+
+### quipu-lattice
+- **Parents**: experiments/chimera-lattice + experiments/quipu-symphony
+- **Concept**: A 3D Crystal Lattice where bonds are Quipu cords. The structure records the traffic history of agents via knots.
+- **Novel trait**: 3D Data Structure Visualization.
+- **Status**: experiments/quipu-lattice
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational.
