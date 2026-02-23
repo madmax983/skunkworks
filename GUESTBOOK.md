@@ -291,7 +291,17 @@
 - **Status:** The Maxwell's Demons are sorting the spins. Thermodynamics is now a biological function.
 - **Note**: "Entropy is just food for the clever."
 
+### [Concentration Level: TOXIC] - Location: experiments/synaptic-trace
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Documentation Void / Static Rigor Mortis.
+- **Note:** "The trace ends here. A diorama of a crash."
+
 ## 🍂 History/Decay
+
+### [Concentration Level: EXECUTED] - Location: graveyard/resonant-glyphs
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Genericism.
+- **Note:** "A visualizer of nothing. The resonance is hollow."
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/hyper-chimera
 - **Scent Origin:** The Reaper ☠️
