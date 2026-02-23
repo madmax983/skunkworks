@@ -94,13 +94,15 @@ fn main() -> Result<()> {
         });
     }
 
+    let input_path = cli.input.as_ref().map(|s| Path::new(s).to_path_buf());
+
     #[cfg(feature = "nova")]
-    run_tui(vm, Some(ViewMode::Prologue))?;
+    run_tui(vm, Some(ViewMode::Prologue), input_path.clone())?;
 
     #[cfg(not(feature = "nova"))]
     {
         println!("Error: Prologue requires the 'nova' feature enabled.");
-        run_tui(vm, None)?;
+        run_tui(vm, None, input_path)?;
     }
 
     Ok(())

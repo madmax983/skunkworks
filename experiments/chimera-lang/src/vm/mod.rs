@@ -382,6 +382,9 @@ mod sequencer_test;
 #[cfg(test)]
 mod elektra_bridging_test;
 
+#[cfg(test)]
+mod hot_reload_test;
+
 #[cfg(feature = "resonance")]
 use crossbeam_channel::{Receiver, Sender};
 #[cfg(feature = "resonance")]
@@ -1270,6 +1273,38 @@ impl ChimeraVM {
             visual_effects: Vec::new(),
             tui_events: Vec::new(),
         }
+    }
+
+    /// Hot-reloads the DNA of the running VM.
+    ///
+    /// This method updates existing strands and adds new ones.
+    /// It preserves the execution state (stack, memory) but clamps the IP if the current strand shrinks.
+    pub fn patch_dna(&mut self, new_dna: Dna) {
+        let new_strands = new_dna.helix.strands;
+
+        for (i, new_strand) in new_strands.into_iter().enumerate() {
+            if i < self.dna.helix.strands.len() {
+                // Update existing strand
+                self.dna.helix.strands[i] = new_strand;
+
+                // Check if IP is in this strand
+                if self.ip.0 == i {
+                    let len = self.dna.helix.strands[i].genes.len();
+                    if self.ip.1 >= len {
+                        self.ip.1 = len.saturating_sub(1);
+                    }
+                }
+            } else {
+                // Add new strand
+                self.dna.helix.strands.push(new_strand);
+            }
+        }
+
+        // Note: We do not remove strands to avoid invalidating indices used by other parts of the system
+        // (e.g. Call Stack, Organelles, Grid references).
+        // If the new DNA has fewer strands, the old ones remain but are effectively "orphaned"
+        // unless jumped to by old code or explicitly cleared by the user.
+        // A smarter diff could clear them, but safety first.
     }
 
     pub fn inject_genes(&mut self, genes: Vec<crate::ast::Gene>) {

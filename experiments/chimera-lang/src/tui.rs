@@ -292,6 +292,9 @@ pub(crate) struct AppState {
     pub(crate) matrix_rain: MatrixRain,
     pub(crate) screen_shake: f32,
     pub(crate) chaos_mode: bool,
+    pub(crate) source_path: Option<std::path::PathBuf>,
+    pub(crate) last_modified: Option<std::time::SystemTime>,
+    pub(crate) last_check_tick: u64,
 }
 
 pub(crate) struct EvolutionState {
@@ -329,9 +332,15 @@ impl SequencerState {
 }
 
 impl AppState {
-    pub(crate) fn new(initial_view: Option<ViewMode>) -> Self {
+    pub(crate) fn new(initial_view: Option<ViewMode>, source_path: Option<std::path::PathBuf>) -> Self {
         let mut view_selector_state = ListState::default();
         view_selector_state.select(Some(0));
+        let last_modified = if let Some(path) = &source_path {
+            std::fs::metadata(path).ok().and_then(|m| m.modified().ok())
+        } else {
+            None
+        };
+
         Self {
             view_mode: initial_view.unwrap_or(ViewMode::Genome),
             show_view_selector: false,
@@ -454,6 +463,9 @@ impl AppState {
             matrix_rain: MatrixRain::new(),
             screen_shake: 0.0,
             chaos_mode: false,
+            source_path,
+            last_modified,
+            last_check_tick: 0,
         }
     }
 
@@ -503,14 +515,18 @@ fn panel_block<'a>(title: &'a str, active: bool) -> Block<'a> {
         .border_style(border_style)
 }
 
-pub fn run_tui(mut vm: ChimeraVM, initial_view: Option<ViewMode>) -> Result<()> {
+pub fn run_tui(
+    mut vm: ChimeraVM,
+    initial_view: Option<ViewMode>,
+    source_path: Option<std::path::PathBuf>,
+) -> Result<()> {
     enable_raw_mode()?;
     let mut stdout = io::stdout();
     execute!(stdout, EnterAlternateScreen)?;
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-    let mut app_state = AppState::new(initial_view);
+    let mut app_state = AppState::new(initial_view, source_path);
 
     // Initialize Evolution Engine if config is present
     if let Some(config) = &vm.dna.evolution_config {
@@ -557,6 +573,35 @@ where
     <B as ratatui::backend::Backend>::Error: Send + Sync + 'static,
 {
     loop {
+        // Hot Reload Check
+        app_state.last_check_tick = app_state.last_check_tick.wrapping_add(1);
+        if app_state.last_check_tick % 10 == 0 {
+            if let Some(path) = &app_state.source_path {
+                if let Ok(metadata) = std::fs::metadata(path) {
+                    if let Ok(modified) = metadata.modified() {
+                        let should_reload = match app_state.last_modified {
+                            Some(last) => modified > last,
+                            None => true,
+                        };
+
+                        if should_reload {
+                            if let Ok(src) = std::fs::read_to_string(path) {
+                                // Default to ChimeraScript for hot reload for now
+                                // Ideally we check extension, but compile() handles imports
+                                let parent = path.parent();
+                                if let Ok(new_dna) = crate::compiler::compile(&src, parent) {
+                                    vm.patch_dna(new_dna);
+                                    app_state.last_modified = Some(modified);
+                                    app_state.status_msg = "Hot Reloaded!".to_string();
+                                    app_state.screen_shake = 5.0;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // Process TuiEvents
         for event in vm.tui_events.drain(..) {
             match event {
