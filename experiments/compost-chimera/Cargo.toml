@@ -10,5 +10,5 @@ ratatui = { workspace = true }
 rand = "0.8"
 chrono = "0.4"
 walkdir = "2.3"
-chimera-lang = { path = "../chimera-lang" }
+chimera-lang = { workspace = true }
 tui-shared = { path = "../../crates/tui-shared" }

@@ -4,6 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-chimera-lang = { path = "../chimera-lang" }
+chimera-lang = { workspace = true }
 macroquad = "0.4"
 rand = "0.8"

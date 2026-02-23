@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 locus = { path = "../../crates/locus" }
-chimera-lang = { path = "../chimera-lang" }
+chimera-lang = { workspace = true }
 ratatui = { workspace = true }
 crossterm = { workspace = true }
 anyhow = { workspace = true }

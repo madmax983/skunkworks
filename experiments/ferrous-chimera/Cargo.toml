@@ -8,4 +8,4 @@ ratatui = { workspace = true }
 crossterm = { workspace = true }
 rand = { workspace = true }
 anyhow = { workspace = true }
-chimera-lang = { path = "../chimera-lang" }
+chimera-lang = { workspace = true }

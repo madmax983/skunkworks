@@ -12,7 +12,7 @@ rand = { workspace = true }
 ratatui = { workspace = true }
 tui-shared = { workspace = true }
 resonance-audio = { workspace = true }
-chimera-lang = { path = "../chimera-lang", features = ["nova"] }
+chimera-lang = { workspace = true, features = ["nova"] }
 
 [dependencies.cpal]
 version = "0.15"

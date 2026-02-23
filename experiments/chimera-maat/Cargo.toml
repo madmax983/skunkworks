@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-chimera-lang = { path = "../chimera-lang", features = ["nova"] }
+chimera-lang = { workspace = true, features = ["nova"] }
 maat-engine = { path = "../maat-engine" }
 ratatui = { workspace = true }
 crossterm = { workspace = true }

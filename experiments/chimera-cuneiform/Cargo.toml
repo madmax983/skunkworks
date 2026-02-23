@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-chimera-lang = { path = "../chimera-lang" }
+chimera-lang = { workspace = true }
 tui-shared = { path = "../../crates/tui-shared" }
 crossterm = "0.28"
 ratatui = { version = "0.30", features = ["all-widgets"] }

@@ -8,7 +8,7 @@ macroquad = "0.4"
 rand = "0.8"
 anyhow = "1.0"
 crossbeam-channel = "0.5"
-chimera-lang = { path = "../chimera-lang" }
+chimera-lang = { workspace = true }
 cpal = { version = "0.15", optional = true }
 
 [features]

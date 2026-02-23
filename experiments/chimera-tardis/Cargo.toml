@@ -5,4 +5,4 @@ edition = "2021"
 
 [dependencies]
 macroquad = "0.4"
-chimera-lang = { path = "../chimera-lang", features = ["nova"] }
+chimera-lang = { workspace = true, features = ["nova"] }

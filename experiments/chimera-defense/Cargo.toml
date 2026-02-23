@@ -7,4 +7,4 @@ edition = "2021"
 ratatui = { version = "0.26" }
 crossterm = { version = "0.27" }
 anyhow = "1.0"
-chimera-lang = { path = "../chimera-lang", features = ["nova"] }
+chimera-lang = { workspace = true, features = ["nova"] }

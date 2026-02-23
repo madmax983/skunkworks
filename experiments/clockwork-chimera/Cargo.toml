@@ -25,4 +25,4 @@ bevy = { version = "0.14", default-features = false, features = [
     "default_font",
 ] }
 bevy_rapier2d = "0.27"
-chimera-lang = { path = "../chimera-lang" }
+chimera-lang = { workspace = true }

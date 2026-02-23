@@ -96,6 +96,7 @@ impl Simulation {
                 helix: Helix {
                     strands: vec![Strand { genes }],
                 },
+                evolution_config: None,
             };
             let mut vm = ChimeraVM::new(dna);
             // Give initial energy so they don't die immediately

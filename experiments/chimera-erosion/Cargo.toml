@@ -9,4 +9,4 @@ rand = "0.8"
 noise = "0.9"
 
 [dependencies.chimera-lang]
-path = "../chimera-lang"
+workspace = true

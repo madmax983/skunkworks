@@ -30,8 +30,7 @@ synaptic-physics = { path = "crates/synaptic-physics" }
 tui-semantic = { path = "crates/tui-semantic" }
 tui-shared = { path = "crates/tui-shared" }
 hyper-system = { path = "crates/hyper-system" }
-# Add chimera-lang as it is likely used by others?
-chimera-lang = { path = "experiments/chimera-lang" }
+chimera-lang = { path = "crates/chimera-lang" }
 
 [profile.dev]
 opt-level = 1

@@ -7,4 +7,4 @@ edition = "2021"
 macroquad = "0.4.14"
 rayon = "1.11.0"
 rand = "0.8.5"
-chimera-lang = { path = "../chimera-lang" }
+chimera-lang = { workspace = true }

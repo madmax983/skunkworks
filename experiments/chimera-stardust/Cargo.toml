@@ -7,5 +7,5 @@ edition = "2021"
 macroquad = "0.4"
 image = "0.24"
 rand = "0.8"
-chimera-lang = { path = "../chimera-lang", features = ["nova"] }
+chimera-lang = { workspace = true, features = ["nova"] }
 stardust-compiler = { path = "../stardust-compiler" }

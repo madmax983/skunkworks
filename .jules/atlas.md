@@ -101,3 +101,9 @@
 **Blueprint:** Extracted `Vec4` and `SystemMonitor` to a new shared crate `crates/hyper-system`.
 **Stability:** Centralized 4D math and system monitoring logic. Enforced single source of truth for "Hyper" series experiments.
 **Verification:** Verified with `cargo check` for all 6 affected experiments and `cargo test` for the new crate.
+
+## [Chimera Lang Extraction]
+**Tangle:** The Sprawl - `experiments/chimera-lang` was a core dependency for ~30 other experiments but lived in `experiments/`, violating the boundary between core infrastructure and experimental consumers.
+**Blueprint:** Moved `experiments/chimera-lang` to `crates/chimera-lang`. Standardized all dependent experiments to use `chimera-lang = { workspace = true, ... }`.
+**Stability:** Enforced clear layering: `crates/` are stable foundations, `experiments/` are volatile consumers.
+**Verification:** Verified via `cargo check` and `cargo test -p chimera-lang`. Fixed a latent build error in `astral-chimera` during verification.

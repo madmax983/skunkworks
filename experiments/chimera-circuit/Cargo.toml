@@ -12,5 +12,5 @@ sha2 = "0.10"
 anyhow = "1.0"
 
 [dependencies.chimera-lang]
-path = "../chimera-lang"
+workspace = true
 features = ["nova"]
