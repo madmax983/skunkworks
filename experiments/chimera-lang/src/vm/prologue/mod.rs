@@ -103,6 +103,7 @@ pub mod psionics;
 pub mod quantum;
 pub mod resonance;
 pub mod rhythm;
+pub mod runecraft;
 pub mod scavenger;
 pub mod sequencer;
 pub mod siren;
@@ -184,6 +185,9 @@ pub struct PrologueState {
     /// Scratch buffer for signal propagation (Double Buffering).
     #[serde(skip, default)]
     pub scratch_signal_grid: Vec<Vec<Option<Value>>>,
+    /// Custom Runes (User Defined).
+    #[serde(default)]
+    pub custom_runes: HashMap<String, usize>,
 }
 
 fn default_logos_engine() -> logos::LogosEngine {
@@ -219,6 +223,7 @@ impl PrologueState {
             mycelium_network: HashSet::new(),
             mycelium_buffer: VecDeque::new(),
             scratch_signal_grid: vec![vec![None; GRID_SIZE]; GRID_SIZE],
+            custom_runes: HashMap::new(),
         }
     }
 
@@ -462,6 +467,8 @@ impl PrologueState {
                             | "🌱"
                             // Weaver
                             | "🕷"
+                            // Runecraft
+                            | "£"
                     ) {
                         self.runes.insert((y, x));
 
@@ -532,6 +539,9 @@ impl PrologueState {
                                 stack,
                             });
                         }
+                    } else if self.custom_runes.contains_key(s) {
+                        // Custom Rune
+                        self.runes.insert((y, x));
                     }
                 }
             }
@@ -1171,6 +1181,8 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             logos::apply_logos_sinks(vm, rune, y, x);
             #[cfg(feature = "biophysics")]
             neural::apply_neural_sinks(vm, rune, y, x);
+
+            runecraft::apply_runecraft_sinks(vm, rune, y, x);
         }
     }
 }
@@ -1726,3 +1738,5 @@ mod prologue_chromatin_test;
 mod prologue_neural_growth_test;
 #[cfg(test)]
 mod weaver_test;
+#[cfg(test)]
+mod prologue_runecraft_test;
