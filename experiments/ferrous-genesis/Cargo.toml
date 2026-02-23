@@ -1,0 +1,11 @@
+[package]
+name = "ferrous-genesis"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chimera-lang = { workspace = true, features = ["nova", "oracle", "elektra"] }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+anyhow = { workspace = true }
