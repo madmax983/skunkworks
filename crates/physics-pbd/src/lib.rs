@@ -307,7 +307,7 @@ impl PbdSystem {
 
         let delta = pos1 - pos2;
         let len = delta.length();
-        if len < f32::EPSILON {
+        if !len.is_finite() || len < f32::EPSILON {
             return;
         } // Avoid division by zero and numeric instability
 
@@ -547,5 +547,90 @@ mod tests {
 
         let pos = system.particles[p1].pos;
         assert_eq!(pos, Vec3::ZERO);
+    }
+
+    #[test]
+    fn test_singularity_behavior() {
+        let mut system = PbdSystem::new();
+        // Two particles at exactly the same position
+        let p1 = system.add_particle(Vec3::ZERO, 1.0);
+        let p2 = system.add_particle(Vec3::ZERO, 1.0);
+
+        // Constraint trying to push them apart to distance 1.0
+        system.constraints.push(Constraint::Distance {
+            p1,
+            p2,
+            rest_length: 1.0,
+            stiffness: 1.0,
+        });
+
+        system.step(0.1, 10);
+
+        // Due to len < EPSILON check, they should NOT move
+        let dist = system.particles[p1].pos.distance(system.particles[p2].pos);
+        assert_eq!(dist, 0.0);
+    }
+
+    #[test]
+    fn test_nan_propagation() {
+        let mut system = PbdSystem::new();
+        let p1 = system.add_particle(Vec3::ZERO, 1.0);
+        let p2 = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
+
+        // Inject NaN into p1
+        system.particles[p1].pos = Vec3::NAN;
+
+        // p1 connected to p2
+        system.add_distance_constraint(p1, p2, 1.0);
+
+        system.step(0.1, 10);
+
+        // p2 should NOT be infected if we guard against it.
+        // Currently this assertion will FAIL if the bug exists.
+        assert!(
+            system.particles[p2].pos.is_finite(),
+            "NaN propagated to p2!"
+        );
+    }
+
+    #[test]
+    fn test_zombie_constraints() {
+        let mut system = PbdSystem::new();
+        let p1 = system.add_particle(Vec3::ZERO, 1.0);
+        let p2 = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
+
+        system.add_distance_constraint(p1, p2, 1.0);
+
+        // Remove the particles (hacky: standard Vec::pop)
+        // Note: this invalidates indices p1(0) and p2(1).
+        system.particles.pop(); // Removes p2
+        system.particles.pop(); // Removes p1
+
+        // Step should not panic because solve_distance and Pin constraints
+        // internally check bounds before accessing particles.
+        system.step(0.1, 1);
+    }
+
+    #[test]
+    fn test_actuator_out_of_bounds() {
+        let mut system = PbdSystem::new();
+        let p1 = system.add_particle(Vec3::ZERO, 1.0);
+        let p2 = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
+
+        // Factor 2.0 -> target = 1.0 + (2.0-1.0)*2.0 = 3.0
+        system.constraints.push(Constraint::Actuator {
+            p1,
+            p2,
+            min_len: 1.0,
+            max_len: 2.0,
+            factor: 2.0,
+            stiffness: 1.0,
+        });
+
+        system.step(0.1, 10);
+
+        let dist = system.particles[p1].pos.distance(system.particles[p2].pos);
+        // Should expand towards 3.0
+        assert!((dist - 3.0).abs() < 0.1);
     }
 }
