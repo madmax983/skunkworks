@@ -232,7 +232,7 @@ fn main() -> Result<()> {
             println!("  {}", line);
         }
     } else {
-        run_tui(vm, None)?;
+        run_tui(vm, None, Some(path.to_path_buf()))?;
     }
 
     Ok(())
