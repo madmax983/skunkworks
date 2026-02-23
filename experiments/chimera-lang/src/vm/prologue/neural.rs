@@ -310,3 +310,97 @@ pub fn integrate_neurons(vm: &mut ChimeraVM) {
         }
     }
 }
+
+#[cfg(feature = "biophysics")]
+pub fn apply_neural_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
+    // West signal for input (Rule Name)
+    let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+        vm.prologue_state.signal_grid[wy][wx].clone()
+    } else {
+        None
+    };
+
+    match rune {
+        "🌱" => {
+            // Neural Growth: Reads West (Grammar Rule Name).
+            // Generates blueprint and executes L-System.
+            if let Some(Value::Str(name)) = w_sig {
+                if let Ok(blueprint) = vm.prologue_state.logos_engine.generate(&name) {
+                    execute_neural_l_system(vm, &blueprint, y, x);
+                    vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1)); // Activate
+                }
+            }
+        }
+        _ => {}
+    }
+}
+
+#[cfg(feature = "biophysics")]
+fn execute_neural_l_system(vm: &mut ChimeraVM, blueprint: &str, start_y: usize, start_x: usize) {
+    let mut cy = start_y;
+    let mut cx = start_x;
+    let mut dir = 1; // 0=N, 1=E, 2=S, 3=W (Start East)
+    let mut stack = Vec::new();
+
+    // Limit execution to prevent infinite loops or massive writes
+    let max_steps = 100;
+    let mut steps = 0;
+
+    for char in blueprint.chars() {
+        if steps >= max_steps {
+            break;
+        }
+        steps += 1;
+
+        match char {
+            'F' => {
+                let (dy, dx) = match dir {
+                    0 => (-1, 0),
+                    1 => (0, 1),
+                    2 => (1, 0),
+                    3 => (0, -1),
+                    _ => (0, 0),
+                };
+                if let Some((ny, nx)) = normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+                    cy = ny;
+                    cx = nx;
+                    // Draw Wire if empty
+                    if matches!(vm.grid[cy][cx], Value::Int(0)) {
+                         vm.grid[cy][cx] = Value::Str("~".to_string());
+                    }
+                }
+            }
+            '+' => dir = (dir + 1) % 4,
+            '-' => dir = (dir + 3) % 4,
+            '[' => stack.push((cy, cx, dir)),
+            ']' => {
+                if let Some((py, px, pdir)) = stack.pop() {
+                    cy = py;
+                    cx = px;
+                    dir = pdir;
+                }
+            }
+            'N' => {
+                if matches!(vm.grid[cy][cx], Value::Int(0)) || matches!(vm.grid[cy][cx], Value::Str(ref s) if s == "~") {
+                    vm.grid[cy][cx] = Value::Str("♦".to_string());
+                    // Register new neuron immediately so it works next tick
+                    if !vm.neurons.contains_key(&(cy, cx)) {
+                        vm.neurons.insert((cy, cx), Neuron::new());
+                    }
+                }
+            }
+            'S' => {
+                if matches!(vm.grid[cy][cx], Value::Int(0)) || matches!(vm.grid[cy][cx], Value::Str(ref s) if s == "~") {
+                    vm.grid[cy][cx] = Value::Str("•".to_string());
+                    vm.prologue_state.registers.insert((cy, cx), Value::Int(100)); // Default weight
+                }
+            }
+            'L' => {
+                if matches!(vm.grid[cy][cx], Value::Int(0)) || matches!(vm.grid[cy][cx], Value::Str(ref s) if s == "~") {
+                    vm.grid[cy][cx] = Value::Str("°".to_string());
+                }
+            }
+            _ => {} // Ignore other chars
+        }
+    }
+}

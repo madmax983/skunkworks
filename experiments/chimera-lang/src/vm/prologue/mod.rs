@@ -457,6 +457,8 @@ impl PrologueState {
                             | "🔍" | "✏" | "🗑" | "➕"
                             // Mycelium
                             | "🍄" | "📥" | "📤" | "🦋"
+                            // Neural Growth
+                            | "🌱"
                     ) {
                         self.runes.insert((y, x));
 
@@ -1161,6 +1163,8 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             sequencer::apply_sequencer_sinks(vm, rune, y, x);
             mycelium::apply_mycelium_sinks(vm, rune, y, x);
             logos::apply_logos_sinks(vm, rune, y, x);
+            #[cfg(feature = "biophysics")]
+            neural::apply_neural_sinks(vm, rune, y, x);
         }
     }
 }
@@ -1702,3 +1706,5 @@ mod prologue_logos_test;
 mod prologue_logic_agent_test;
 #[cfg(test)]
 mod prologue_chromatin_test;
+#[cfg(test)]
+mod prologue_neural_growth_test;
