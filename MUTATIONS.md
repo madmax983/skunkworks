@@ -1633,3 +1633,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Bio-Physical Feedback Loop. Code controls magnetism, magnetism controls topology, topology controls sensory input.
 - **Status**: experiments/ferrous-genesis
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### chimera-canopy
+- **Parents**: experiments/process-canopy + experiments/chimera-lang
+- **Concept**: Parasitic ChimeraVM agents inhabiting the OS process tree (Canopy). They feed on CPU cycles when the scheduler (Sun) shines on their host process.
+- **Novel trait**: OS Ecology. The agents' survival is tied to the real-time stability and resource usage of the host operating system.
+- **Status**: experiments/chimera-canopy
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
