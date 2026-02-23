@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **saros-cycle**: Diagnosis: Terminal Genericism / Trivial Implementation. Grace period: 24 hours.
+- **hydro-flock**: Diagnosis: Terminal Redundancy (with `hydrothermal-locks` and `luminous-flock`). Grace period: 24 hours.
 - [Experiment name]: [Diagnosis]
 
 ## Abandoned Work
@@ -12,6 +12,9 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **saros-cycle**: Specimen executed. Diagnosis: Terminal Genericism / Trivial Implementation. Grace period expired. Moved to graveyard.
+- **heap-glacier**: Specimen executed. Diagnosis: Terminal Genericism (Terrain Mesh). Redundant with `code-canyon`. Moved to graveyard.
+- **social-spores**: Specimen executed. Diagnosis: Terminal Redundancy (Particle System). Moved to graveyard.
 - **synaptic-trace**: Specimen executed. Diagnosis: Documentation Void / Static Rigor Mortis. Grace period expired. Moved to graveyard.
 - **resonant-glyphs**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **hyperbolic-lichen**: Specimen executed. Diagnosis: Documentation Void (No README). Zombie Status confirmed. Grace period expired. Moved to graveyard.
