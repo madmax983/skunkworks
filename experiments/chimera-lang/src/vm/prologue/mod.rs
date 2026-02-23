@@ -65,6 +65,7 @@ pub mod alchemy;
 pub mod biolum;
 pub mod chaos;
 pub mod chroma;
+pub mod chromatin;
 pub mod chronos;
 pub mod construct;
 pub mod critter;
@@ -360,6 +361,7 @@ impl PrologueState {
                             | ","
                             | "☣"
                             | "♻"
+                            | "χ"
                         // Elemental
                             | "Δ"
                             | "∇"
@@ -470,6 +472,7 @@ impl PrologueState {
                             || s == "P"
                             || s == "⚓"
                             || s == "∃"
+                            || s == "χ"
                         {
                             // Try to retrieve persistent state
                             let raw_state = self
@@ -501,6 +504,11 @@ impl PrologueState {
                                     Value::Junction(
                                         crate::ast::JunctionType::All,
                                         vec![Value::Str("?".to_string()), Value::Int(0), Value::Int(1)],
+                                    )
+                                } else if s == "χ" {
+                                    Value::Junction(
+                                        crate::ast::JunctionType::All,
+                                        vec![Value::Int(0), Value::Str("".to_string())],
                                     )
                                 } else {
                                     Value::Int(0)
@@ -1505,6 +1513,14 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 }
                 None => continue,
             }
+        } else if current_type == "χ" {
+            match chromatin::process_chromatin_agent(vm, &agent, grid_snapshot) {
+                Some((updated_agent, t)) => {
+                    agent = updated_agent;
+                    t
+                }
+                None => continue,
+            }
         } else {
             process_seeker_logic(vm, &agent, grid_snapshot)
         };
@@ -1523,6 +1539,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "P"
                 || current_type == "⚓"
                 || current_type == "∃"
+                || current_type == "χ"
             {
                 vm.prologue_state.registers.insert(
                     (ny, nx),
@@ -1545,6 +1562,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                     || current_type == "P"
                     || current_type == "⚓"
                     || current_type == "∃"
+                    || current_type == "χ"
                 {
                     vm.prologue_state.registers.remove(&(y, x));
                 }
@@ -1576,13 +1594,11 @@ fn pack_agent_data(state: Value, stack: Vec<Value>) -> Value {
 
 fn unpack_agent_data(val: Value) -> (Value, Vec<Value>) {
     match val {
-        Value::Junction(crate::ast::JunctionType::All, mut list) => {
+        Value::Junction(crate::ast::JunctionType::All, list) => {
             if list.len() == 2 {
                 // Assume [State, Stack]
-                let stack_val = list.pop().unwrap();
-                let state_val = list.pop().unwrap();
-                if let Value::Junction(crate::ast::JunctionType::All, stack) = stack_val {
-                    return (state_val, stack);
+                if let Value::Junction(crate::ast::JunctionType::All, ref stack) = list[1] {
+                    return (list[0].clone(), stack.clone());
                 }
             }
             (Value::Junction(crate::ast::JunctionType::All, list), vec![])
@@ -1684,3 +1700,5 @@ mod prologue_forth_v2_test;
 mod prologue_logos_test;
 #[cfg(test)]
 mod prologue_logic_agent_test;
+#[cfg(test)]
+mod prologue_chromatin_test;
