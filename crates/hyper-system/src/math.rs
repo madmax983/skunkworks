@@ -218,6 +218,20 @@ impl Vec4 {
     /// # Arguments
     ///
     /// * `theta` - The angle of rotation in radians.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use hyper_system::math::Vec4;
+    /// use std::f32::consts::PI;
+    ///
+    /// let v = Vec4::new(1.0, 0.0, 0.0, 0.0);
+    /// // Rotate 90 degrees in XW plane
+    /// let rotated = v.rotate_xw(PI / 2.0);
+    /// // v moves from X to W axis
+    /// assert!(rotated.x.abs() < 1e-6);
+    /// assert!((rotated.w - 1.0).abs() < 1e-6);
+    /// ```
     pub fn rotate_xw(&self, theta: f32) -> Self {
         self.rotate_xw_fast(theta.sin(), theta.cos())
     }
@@ -280,6 +294,17 @@ impl Vec4 {
     /// # Returns
     ///
     /// A `Vec3` representing the 3D projection.
+    ///
+    /// # Implementation Details
+    ///
+    /// The projection formula used is:
+    /// `scale = 2.0 / (camera_w - w)`
+    /// `projected = original * scale`
+    ///
+    /// - **Scale Factor (2.0)**: Acts as a field-of-view modifier.
+    /// - **Safety Clamp (0.1)**: The denominator `(camera_w - w)` is clamped to a minimum
+    ///   of `0.1` to prevent division by zero or negative projection artifacts when points
+    ///   are behind the camera.
     pub fn project_to_3d(&self, camera_w: f32) -> Vec3 {
         let w_dist = camera_w - self.w;
         // Avoid division by zero
