@@ -16,6 +16,16 @@ use std::collections::HashMap;
 use std::fs::OpenOptions;
 #[cfg(feature = "nova")]
 use std::io::{Read, Write};
+#[cfg(feature = "nova")]
+use comfy_table::modifiers::UTF8_ROUND_CORNERS;
+#[cfg(feature = "nova")]
+use comfy_table::presets::UTF8_FULL;
+#[cfg(feature = "nova")]
+use comfy_table::Color;
+#[cfg(feature = "nova")]
+use comfy_table::ContentArrangement;
+#[cfg(feature = "nova")]
+use comfy_table::Table;
 
 #[cfg(feature = "nova")]
 const AKASHIC_FILE: &str = ".chimera_akashic.json";
@@ -40,6 +50,73 @@ pub struct AkashicRecords {
     pub corrupted: bool,
     #[serde(skip)]
     pub file_path: String,
+}
+
+#[cfg(feature = "nova")]
+impl std::fmt::Display for AkashicRecords {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL)
+            .apply_modifier(UTF8_ROUND_CORNERS)
+            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_header(vec!["Attribute", "Value"]);
+
+        // Karma
+        let karma_color = if self.karma >= 0 {
+            Color::Green
+        } else {
+            Color::Red
+        };
+        table.add_row(vec![
+            comfy_table::Cell::new("Karma"),
+            comfy_table::Cell::new(self.karma).fg(karma_color),
+        ]);
+
+        // Integrity
+        let integrity_str = if self.corrupted {
+            "CORRUPTED"
+        } else {
+            "STABLE"
+        };
+        let integrity_color = if self.corrupted {
+            Color::Red
+        } else {
+            Color::Green
+        };
+        table.add_row(vec![
+            comfy_table::Cell::new("Integrity"),
+            comfy_table::Cell::new(integrity_str).fg(integrity_color),
+        ]);
+
+        // Storage Count
+        table.add_row(vec!["Records", &self.storage.len().to_string()]);
+
+        // Memories Count
+        table.add_row(vec!["Memories", &self.memories.len().to_string()]);
+
+        // Storage Detail (if any)
+        if !self.storage.is_empty() {
+            let mut sub_table = Table::new();
+            sub_table.load_preset(UTF8_FULL);
+            sub_table.set_header(vec!["Key", "Value"]);
+            for (k, v) in self.storage.iter().take(5) {
+                sub_table.add_row(vec![k, &format!("{:?}", v)]);
+            }
+            if self.storage.len() > 5 {
+                sub_table.add_row(vec![
+                    "...",
+                    &format!("{} more", self.storage.len() - 5),
+                ]);
+            }
+            table.add_row(vec![
+                comfy_table::Cell::new("Preview"),
+                comfy_table::Cell::new(sub_table),
+            ]);
+        }
+
+        write!(f, "{}", table)
+    }
 }
 
 #[cfg(feature = "nova")]
@@ -303,5 +380,42 @@ fn perform_miracle(vm: &mut ChimeraVM, id: i64) {
             vm.halted = true;
         }
         _ => {}
+    }
+}
+
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_akashic_display() {
+        let mut records = AkashicRecords::new();
+        records.karma = 100;
+        records.corrupted = false;
+        records.storage.insert("Wisdom".to_string(), Value::Int(42));
+
+        let output = format!("{}", records);
+        println!("{}", output);
+
+        // Basic Checks
+        assert!(output.contains("Attribute"));
+        assert!(output.contains("Value"));
+
+        // Karma (100)
+        assert!(output.contains("Karma"));
+        assert!(output.contains("100"));
+
+        // Integrity (STABLE)
+        assert!(output.contains("Integrity"));
+        assert!(output.contains("STABLE"));
+
+        // Storage content
+        assert!(output.contains("Wisdom"));
+        assert!(output.contains("42"));
+
+        // Table formatting characters (from comfy-table)
+        assert!(output.contains("╭"));
+        assert!(output.contains("│"));
     }
 }
