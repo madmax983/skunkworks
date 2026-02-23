@@ -92,7 +92,7 @@ pub fn exec_brew(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 {
                     if heat >= 10 {
                         product = Some("Acid");
-                        potency += 10;
+                        potency = potency.saturating_add(10);
                     } else {
                         product = Some("Steam");
                     }
@@ -101,13 +101,13 @@ pub fn exec_brew(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 {
                     if heat >= 5 {
                         product = Some("Elixir");
-                        potency += 20;
+                        potency = potency.saturating_add(20);
                     }
                 } else if ingredient_names.contains(&"Chaos".to_string())
                     && ingredient_names.contains(&"Entropy".to_string())
                 {
                     product = Some("Mutagen");
-                    potency += 30;
+                    potency = potency.saturating_add(30);
                 } else if ingredient_names.contains(&"Earth".to_string())
                     && ingredient_names.contains(&"Water".to_string())
                 {
