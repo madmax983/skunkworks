@@ -1762,7 +1762,7 @@ impl ChimeraVM {
                 }
                 2 => {
                     // Entropy Surge
-                    if let Some(_) = nova_flux::exec_entropy_surge(self) {
+                if nova_flux::exec_entropy_surge(self).is_some() {
                         self.output
                             .push("MAD SCIENTIST: Triggered ENTROPY SURGE!".to_string());
                     }
@@ -2119,21 +2119,10 @@ impl ChimeraVM {
         }
     }
 
-    /// Advances the simulation by one tick.
-    ///
-    /// The execution order is:
-    /// 1.  **Spirit Input**: Process external user input if requested (`OpCode::Spirit`).
-    /// 2.  **Egregore**: Global collective consciousness updates (if Nova enabled).
-    /// 3.  **Environment**: Diffusion of light, waste, hormones, and entropy.
-    /// 4.  **Physics**: Signal propagation, relativity, and ballistics.
-    /// 5.  **Circuitry**: Wireworld simulation (if Silicon enabled).
-    /// 6.  **Mutation**: Random bitflips if Chaos Mode is active.
-    /// 7.  **Metabolism**: Energy decay (-1 per tick) and starvation check.
-    /// 8.  **Gene Execution**: Execute the instruction at the current IP.
-    /// 9.  **Organelles**: Update all sub-processes (organelles/symbiotes).
-    pub fn step(&mut self) {
+    /// Updates the tick counter and handles history buffering.
+    fn pre_tick_updates(&mut self) -> bool {
         if self.halted {
-            return;
+            return false;
         }
 
         self.tick_counter += 1;
@@ -2157,10 +2146,15 @@ impl ChimeraVM {
                     self.stack.last().unwrap()
                 ));
             } else {
-                return; // Wait for spirit input
+                return false; // Wait for spirit input
             }
         }
 
+        true
+    }
+
+    /// Determines if time is frozen and updates energy costs.
+    fn update_time_and_energy(&mut self) -> bool {
         #[cfg(feature = "nova")]
         let time_frozen = if self.chronostasis_timer > 0 {
             self.chronostasis_timer -= 1;
@@ -2196,6 +2190,10 @@ impl ChimeraVM {
             self.energy -= 1;
         }
 
+        time_frozen
+    }
+
+    fn decay_effects(&mut self) {
         // Decay execution trail
         for val in self.execution_trail.iter_mut() {
             if *val > 0 {
@@ -2226,15 +2224,9 @@ impl ChimeraVM {
                 *ttl > 0
             }
         });
+    }
 
-        #[cfg(feature = "nova")]
-        self.handle_input_interrupts();
-
-        #[cfg(feature = "cortex")]
-        if !time_frozen {
-            self.update_cortex_state();
-        }
-
+    fn process_nova_environment(&mut self, time_frozen: bool) {
         #[cfg(feature = "nova")]
         if !time_frozen {
             let manifestation = self.egregore.tick();
@@ -2294,6 +2286,13 @@ impl ChimeraVM {
             if self.prologue_state.active {
                 prologue::exec_prologue_tick(self);
             }
+        }
+    }
+
+    fn process_subsystems(&mut self, time_frozen: bool) {
+        #[cfg(feature = "cortex")]
+        if !time_frozen {
+            self.update_cortex_state();
         }
 
         #[cfg(feature = "biophysics")]
@@ -2368,7 +2367,9 @@ impl ChimeraVM {
                 self.glitch_level = (self.glitch_level + chaos_mod).clamp(0.0, 1.0);
             }
         }
+    }
 
+    fn process_chaos_and_events(&mut self, time_frozen: bool) -> bool {
         if !time_frozen {
             let mut havoc: havoc::HavocEngine = std::mem::take(&mut self.havoc);
             havoc.tick(self);
@@ -2445,10 +2446,10 @@ impl ChimeraVM {
             }
         }
 
-        if self.check_starvation() {
-            return;
-        }
+        self.check_starvation()
+    }
 
+    fn process_buffs_and_status(&mut self) -> usize {
         #[cfg(feature = "nova")]
         {
             // Process Buffs
@@ -2477,9 +2478,14 @@ impl ChimeraVM {
         } else {
             1
         };
+
         #[cfg(not(feature = "nova"))]
         let iterations = 1;
 
+        iterations
+    }
+
+    fn execute_main_loop(&mut self, iterations: usize, time_frozen: bool) {
         for _ in 0..iterations {
             let helix_len = self.dna.helix.strands.len();
             if self.ip.0 >= helix_len {
@@ -2553,7 +2559,9 @@ impl ChimeraVM {
                 }
             }
         }
+    }
 
+    fn process_post_tick(&mut self, time_frozen: bool) {
         #[cfg(feature = "nova")]
         if !time_frozen {
             self.process_symbiotes();
@@ -2563,6 +2571,42 @@ impl ChimeraVM {
         if !time_frozen {
             self.process_organelles();
         }
+    }
+
+    /// Advances the simulation by one tick.
+    ///
+    /// The execution order is:
+    /// 1.  **Spirit Input**: Process external user input if requested (`OpCode::Spirit`).
+    /// 2.  **Egregore**: Global collective consciousness updates (if Nova enabled).
+    /// 3.  **Environment**: Diffusion of light, waste, hormones, and entropy.
+    /// 4.  **Physics**: Signal propagation, relativity, and ballistics.
+    /// 5.  **Circuitry**: Wireworld simulation (if Silicon enabled).
+    /// 6.  **Mutation**: Random bitflips if Chaos Mode is active.
+    /// 7.  **Metabolism**: Energy decay (-1 per tick) and starvation check.
+    /// 8.  **Gene Execution**: Execute the instruction at the current IP.
+    /// 9.  **Organelles**: Update all sub-processes (organelles/symbiotes).
+    pub fn step(&mut self) {
+        if !self.pre_tick_updates() {
+            return;
+        }
+
+        let time_frozen = self.update_time_and_energy();
+        self.decay_effects();
+
+        #[cfg(feature = "nova")]
+        self.handle_input_interrupts();
+
+        self.process_subsystems(time_frozen);
+        self.process_nova_environment(time_frozen);
+
+        if self.process_chaos_and_events(time_frozen) {
+            // Starved or dead
+            return;
+        }
+
+        let iterations = self.process_buffs_and_status();
+        self.execute_main_loop(iterations, time_frozen);
+        self.process_post_tick(time_frozen);
     }
 
     /// Executes a single gene operation.
@@ -3149,13 +3193,13 @@ impl ChimeraVM {
         None
     }
 
-    pub(crate) fn execute_gene_inner(
+    fn exec_core_op(
         &mut self,
         op: OpCode,
         args: &[Nucleotide],
-    ) -> Option<(usize, usize)> {
+    ) -> Option<Option<(usize, usize)>> {
         match op {
-            OpCode::Push => self.exec_stack_op(op, args),
+            OpCode::Push => Some(self.exec_stack_op(op, args)),
             OpCode::Add
             | OpCode::Sub
             | OpCode::Mul
@@ -3164,35 +3208,35 @@ impl ChimeraVM {
             | OpCode::Gt
             | OpCode::Lt => {
                 self.exec_math_op(op);
-                None
+                Some(None)
             }
-            OpCode::Dup | OpCode::Swap | OpCode::Drop => self.exec_stack_op(op, args),
+            OpCode::Dup | OpCode::Swap | OpCode::Drop => Some(self.exec_stack_op(op, args)),
             OpCode::Print => {
                 self.exec_io_op(op);
-                None
+                Some(None)
             }
-            OpCode::Jump | OpCode::Brz => self.exec_flow_op(op, args),
-            OpCode::Photosynthesize | OpCode::Consume => self.exec_bio_op(op, args),
+            OpCode::Jump | OpCode::Brz => Some(self.exec_flow_op(op, args)),
+            OpCode::Photosynthesize | OpCode::Consume => Some(self.exec_bio_op(op, args)),
             OpCode::GRead | OpCode::GWrite | OpCode::Radiate | OpCode::Siphon => {
-                self.exec_grid_op(op)
+                Some(self.exec_grid_op(op))
             }
-            OpCode::Genome | OpCode::Transcribe => self.exec_bio_op(op, args),
-            OpCode::Virus => self.exec_grid_op(op),
-            OpCode::JumpS | OpCode::BrzS => self.exec_flow_op(op, args),
-            OpCode::SLen | OpCode::HelixLen | OpCode::GeneLen => self.exec_stack_op(op, args),
+            OpCode::Genome | OpCode::Transcribe => Some(self.exec_bio_op(op, args)),
+            OpCode::Virus => Some(self.exec_grid_op(op)),
+            OpCode::JumpS | OpCode::BrzS => Some(self.exec_flow_op(op, args)),
+            OpCode::SLen | OpCode::HelixLen | OpCode::GeneLen => Some(self.exec_stack_op(op, args)),
+            OpCode::HavocRate | OpCode::HavocScope => Some(self.exec_havoc_op(op)),
+            _ => None,
+        }
+    }
 
-            OpCode::HavocRate | OpCode::HavocScope => self.exec_havoc_op(op),
-
-            #[cfg(feature = "cortex")]
-            OpCode::Link | OpCode::Sever | OpCode::Spark | OpCode::Sense | OpCode::Gate => {
-                cortex::exec_cortex_op(self, op, args);
-                None
-            }
-
-            #[cfg(feature = "nova")]
-            OpCode::Remap | OpCode::Restore | OpCode::Mirror => self.exec_prion_op(op, args),
-
-            #[cfg(feature = "nova")]
+    #[cfg(feature = "nova")]
+    fn exec_nova_dispatch(
+        &mut self,
+        op: OpCode,
+        args: &[Nucleotide],
+    ) -> Option<Option<(usize, usize)>> {
+        match op {
+            OpCode::Remap | OpCode::Restore | OpCode::Mirror => Some(self.exec_prion_op(op, args)),
             OpCode::AkashicWrite
             | OpCode::AkashicRead
             | OpCode::AkashicSave
@@ -3200,70 +3244,40 @@ impl ChimeraVM {
             | OpCode::Karma
             | OpCode::Miracle => {
                 akashic::exec_akashic_op(self, op, args);
-                None
+                Some(None)
             }
-
-            #[cfg(feature = "nova")]
             OpCode::Blackbox => {
                 let dump = self.blackbox.dump();
                 self.stack.push(Value::Str(dump));
-                None
+                Some(None)
             }
-
-            #[cfg(feature = "nova")]
-            OpCode::Invoke => nova_sigil::exec_invoke(self, op, args),
-
-            #[cfg(feature = "nova")]
-            OpCode::Inscribe => nova_sigil::exec_inscribe(self, op, args),
-
-            #[cfg(feature = "nova")]
-            OpCode::Ward => nova_ward::exec_ward(self, op, args),
-
-            #[cfg(feature = "nova")]
-            OpCode::AutoCast => nova_sigil::exec_auto_cast(self, op, args),
-
-            #[cfg(feature = "nova")]
+            OpCode::Invoke => Some(nova_sigil::exec_invoke(self, op, args)),
+            OpCode::Inscribe => Some(nova_sigil::exec_inscribe(self, op, args)),
+            OpCode::Ward => Some(nova_ward::exec_ward(self, op, args)),
+            OpCode::AutoCast => Some(nova_sigil::exec_auto_cast(self, op, args)),
             OpCode::Vaccinate | OpCode::Verify | OpCode::Audit => {
-                nova_security::exec_security_op(self, op, args)
+                Some(nova_security::exec_security_op(self, op, args))
             }
-
-            #[cfg(feature = "nova")]
             OpCode::Morph => {
                 nova_morphogenesis::exec_morph(self);
-                None
+                Some(None)
             }
-
-            #[cfg(feature = "nova")]
-            OpCode::Morphogen => nova_cambrian::exec_morphogen(self, op, args),
-            #[cfg(feature = "nova")]
-            OpCode::HoxSwitch => nova_cambrian::exec_hox_switch(self, op, args),
-            #[cfg(feature = "nova")]
-            OpCode::Adhere => nova_cambrian::exec_adhere(self, op, args),
-
-            #[cfg(feature = "nova")]
+            OpCode::Morphogen => Some(nova_cambrian::exec_morphogen(self, op, args)),
+            OpCode::HoxSwitch => Some(nova_cambrian::exec_hox_switch(self, op, args)),
+            OpCode::Adhere => Some(nova_cambrian::exec_adhere(self, op, args)),
             OpCode::Grow => {
                 nova_morphogenesis::exec_grow(self);
-                None
+                Some(None)
             }
-
-            #[cfg(feature = "nova")]
             OpCode::Plant => {
                 nova_botany::exec_plant(self);
-                None
+                Some(None)
             }
-
-            #[cfg(feature = "nova")]
-            OpCode::Signal | OpCode::Receive => nova::exec_nova_op(self, op, args),
-
-            #[cfg(feature = "nova")]
+            OpCode::Signal | OpCode::Receive => Some(nova::exec_nova_op(self, op, args)),
             OpCode::Define | OpCode::Undefine | OpCode::Dictionary => {
-                meta::exec_meta_op(self, op, args)
+                Some(meta::exec_meta_op(self, op, args))
             }
-
-            #[cfg(feature = "nova")]
-            OpCode::Operator => nova::exec_operator(self, args),
-
-            #[cfg(feature = "nova")]
+            OpCode::Operator => Some(nova::exec_operator(self, args)),
             OpCode::Grammar
             | OpCode::Parse
             | OpCode::ParserMatch
@@ -3280,24 +3294,16 @@ impl ChimeraVM {
             | OpCode::BabelCompile
             | OpCode::GridGrammar
             | OpCode::BabelLive
-            | OpCode::Ouroboros => babel::exec_babel_op(self, op, args),
-
-            #[cfg(feature = "nova")]
+            | OpCode::Ouroboros => Some(babel::exec_babel_op(self, op, args)),
             OpCode::Superpose | OpCode::Collapse | OpCode::Observe => {
-                nova::exec_nova_op(self, op, args)
+                Some(nova::exec_nova_op(self, op, args))
             }
-
-            #[cfg(feature = "nova")]
             OpCode::Levenshtein
             | OpCode::Soundex
             | OpCode::Anagram
             | OpCode::Cipher
-            | OpCode::Pangram => nova::exec_nova_op(self, op, args),
-
-            #[cfg(feature = "nova")]
-            OpCode::Transposon => self.exec_transposon(),
-
-            #[cfg(feature = "nova")]
+            | OpCode::Pangram => Some(nova::exec_nova_op(self, op, args)),
+            OpCode::Transposon => Some(self.exec_transposon()),
             OpCode::Horcrux
             | OpCode::Rebirth
             | OpCode::Resonate
@@ -3491,129 +3497,139 @@ impl ChimeraVM {
             | OpCode::Cambrian
             | OpCode::Prologue
             | OpCode::Rune
-            | OpCode::BioHack => nova::exec_nova_op(self, op, args),
-
-            #[cfg(feature = "oracle")]
-            OpCode::Divergence => nova::exec_nova_op(self, op, args),
-
-            #[cfg(feature = "nova")]
-            OpCode::Weave | OpCode::Unravel => nova_weaver::exec_weave_op(self, op, args),
-
-            #[cfg(feature = "nova")]
-            OpCode::Mutagen => self.exec_mutagen_op(),
-
-            #[cfg(feature = "nova")]
-            OpCode::Scavenge => self.exec_scavenge_op(),
-            #[cfg(feature = "nova")]
-            OpCode::Digest => self.exec_digest_op(),
-
-            #[cfg(feature = "nova")]
-            OpCode::Luciferin | OpCode::Photophore => nova::exec_nova_op(self, op, args),
-
-            #[cfg(feature = "nova")]
+            | OpCode::BioHack => Some(nova::exec_nova_op(self, op, args)),
+            OpCode::Weave | OpCode::Unravel => Some(nova_weaver::exec_weave_op(self, op, args)),
+            OpCode::Mutagen => Some(self.exec_mutagen_op()),
+            OpCode::Scavenge => Some(self.exec_scavenge_op()),
+            OpCode::Digest => Some(self.exec_digest_op()),
             OpCode::EntropySurge => {
                 nova_flux::exec_entropy_surge(self);
-                None
+                Some(None)
             }
-            #[cfg(feature = "nova")]
-            OpCode::QuantumTunnel => nova_flux::exec_quantum_tunnel(self),
-
-            #[cfg(feature = "nova")]
+            OpCode::QuantumTunnel => Some(nova_flux::exec_quantum_tunnel(self)),
             OpCode::Chain | OpCode::Curry | OpCode::Quote => {
-                nova_functional::exec_functional_op(self, op, args)
+                Some(nova_functional::exec_functional_op(self, op, args))
             }
-
-            #[cfg(feature = "nova")]
-            OpCode::Crossover => nova_genetics::exec_crossover(self),
-
-            #[cfg(feature = "nova")]
+            OpCode::Crossover => Some(nova_genetics::exec_crossover(self)),
             OpCode::Orca => {
                 self.orca_mode = !self.orca_mode;
                 let status = if self.orca_mode { "ON" } else { "OFF" };
                 self.output
                     .push(format!("ORCA: Signal Processing {}", status));
-                None
+                Some(None)
             }
-
-            #[cfg(feature = "nova")]
             OpCode::Glossolalia | OpCode::Clarify | OpCode::Confuse => {
                 babel_chaos::exec_babel_chaos_op(self, op, args);
-                None
+                Some(None)
             }
-
-            #[cfg(feature = "nova")]
             OpCode::Crucible => {
                 alchemy::exec_crucible_op(self, op, args);
-                None
+                Some(None)
             }
-
-            #[cfg(feature = "nova")]
-            OpCode::AttractorInit
-            | OpCode::AttractorStep
-            | OpCode::AttractorSurf
-            | OpCode::AttractorMap => nova_attractor::exec_attractor_op(self, op, args),
-
-            #[cfg(feature = "nova")]
-            OpCode::Mandelbrot
-            | OpCode::Julia
-            | OpCode::Zoom
-            | OpCode::Pan
-            | OpCode::Iterate
-            | OpCode::Escape => nova_fractal::exec_fractal_op(self, op, args),
-
-            #[cfg(feature = "nova")]
-            OpCode::Interfere => nova_hologram::exec_interfere(self, op, args),
-            #[cfg(feature = "nova")]
-            OpCode::Diffract => nova_hologram::exec_diffract(self, op, args),
-            #[cfg(feature = "nova")]
-            OpCode::Refract => nova_hologram::exec_refract(self, op, args),
-            #[cfg(feature = "nova")]
-            OpCode::Project => nova_hologram::exec_project(self, op, args),
-            #[cfg(feature = "nova")]
-            OpCode::Hologram => nova_hologram::exec_hologram(self, op, args),
-            #[cfg(feature = "nova")]
-            OpCode::PhaseMutate => nova_hologram::exec_phase_mutate(self, op, args),
-            #[cfg(feature = "nova")]
-            OpCode::QuantumScribe => nova_hologram::exec_quantum_scribe(self, op, args),
-            #[cfg(feature = "nova")]
-            OpCode::QuantumScan => nova_hologram::exec_quantum_scan(self, op, args),
-            #[cfg(feature = "nova")]
-            OpCode::HoloInvoke => nova_hologram::exec_holo_invoke(self, op, args),
-            #[cfg(feature = "nova")]
-            OpCode::HoloSpeak => nova_hologram::exec_holo_speak(self, op, args),
-            #[cfg(feature = "nova")]
-            OpCode::HoloSonify => nova_hologram::exec_holo_sonify(self, op, args),
-            #[cfg(feature = "nova")]
-            OpCode::CymaticScan => nova_hologram::exec_cymatic_scan(self, op, args),
-
-            #[cfg(feature = "nova")]
-            OpCode::Chr => self.exec_char_op(),
-
-            #[cfg(feature = "nova")]
-            OpCode::Guild => nova_guild::exec_guild(self),
-
-            #[cfg(feature = "nova")]
-            OpCode::Charter => nova_guild::exec_charter(self),
-
-            #[cfg(feature = "nova")]
+            OpCode::Chr => Some(self.exec_char_op()),
+            OpCode::Guild => Some(nova_guild::exec_guild(self)),
+            OpCode::Charter => Some(nova_guild::exec_charter(self)),
             OpCode::Logos => {
                 self.logos_mode = !self.logos_mode;
                 let status = if self.logos_mode { "ON" } else { "OFF" };
                 self.output
                     .push(format!("LOGOS: Logic Chemistry {}", status));
-                None
+                Some(None)
             }
-
-            #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform | OpCode::Compose => {
                 bard::exec_bard_op(self, op, args);
-                None
+                Some(None)
             }
-
+            OpCode::Scan | OpCode::Locate | OpCode::Chart | OpCode::Atlas => {
+                nova_cartography::exec_cartography_op(self, op, args);
+                Some(None)
+            }
+            OpCode::Pocket | OpCode::Unpocket => Some(nova::exec_nova_op(self, op, args)),
+            OpCode::Quake
+            | OpCode::Erode
+            | OpCode::Sediment
+            | OpCode::Tectonics
+            | OpCode::Volcano => {
+                nova_geology::exec_geology_op(self, op, args);
+                Some(None)
+            }
+            OpCode::LeySense | OpCode::LeyTap | OpCode::LeyWarp | OpCode::LeyShift => {
+                Some(nova_ley::exec_ley_op(self, op, args))
+            }
+            OpCode::Nucleate | OpCode::Accrete | OpCode::Shatter | OpCode::Anneal => {
+                nova_crystal::exec_crystal_op(self, op, args);
+                Some(None)
+            }
+            OpCode::Dimension | OpCode::DRead | OpCode::DWrite | OpCode::DMerge | OpCode::DView => {
+                nova_planes::exec_planes_op(self, op, args);
+                Some(None)
+            }
+            OpCode::StringNew
+            | OpCode::StringPluck
+            | OpCode::StringTune
+            | OpCode::StringListen => Some(nova_strings::exec_string_op(self, op, args)),
+            OpCode::Bond => Some(nova_metazoa::exec_bond(self, op, args)),
+            OpCode::Unbond => Some(nova_metazoa::exec_unbond(self, op, args)),
+            OpCode::Signify => Some(nova_metazoa::exec_signify(self, op, args)),
+            OpCode::Tissue => Some(nova_metazoa::exec_tissue(self, op, args)),
+            OpCode::MeshNet
+            | OpCode::MeshGrow
+            | OpCode::MeshPrune
+            | OpCode::MeshSend
+            | OpCode::MeshRecv => {
+                crate::vm::nova::exec_nova_op(self, op, args);
+                Some(None)
+            }
+            OpCode::Reactor | OpCode::Reaction => {
+                crate::vm::nova::exec_nova_op(self, op, args);
+                Some(None)
+            }
+            OpCode::AbsorbGeometry => Some(nova_alchemy_prime::exec_absorb_geometry(self, op, args)),
+            OpCode::ProjectGeometry => {
+                Some(nova_alchemy_prime::exec_project_geometry(self, op, args))
+            }
+            OpCode::HyperAdd
+            | OpCode::HyperSub
+            | OpCode::HyperMul
+            | OpCode::HyperDiv
+            | OpCode::Reduce
+            | OpCode::Cross
+            | OpCode::ZipWith => {
+                nova_raku::exec_raku_op(self, op, args);
+                Some(None)
+            }
             #[cfg(feature = "oracle")]
-            OpCode::FindAll => self.exec_findall_op(),
+            OpCode::Divergence => Some(nova::exec_nova_op(self, op, args)),
+            _ => None,
+        }
+    }
 
-            #[cfg(feature = "oracle")]
+    pub(crate) fn execute_gene_inner(
+        &mut self,
+        op: OpCode,
+        args: &[Nucleotide],
+    ) -> Option<(usize, usize)> {
+        if let Some(res) = self.exec_core_op(op.clone(), args) {
+            return res;
+        }
+
+        #[cfg(feature = "cortex")]
+        if matches!(
+            op,
+            OpCode::Link | OpCode::Sever | OpCode::Spark | OpCode::Sense | OpCode::Gate
+        ) {
+            cortex::exec_cortex_op(self, op, args);
+            return None;
+        }
+
+        #[cfg(feature = "nova")]
+        if let Some(res) = self.exec_nova_dispatch(op.clone(), args) {
+            return res;
+        }
+
+        #[cfg(feature = "oracle")]
+        match op {
+            OpCode::FindAll => return self.exec_findall_op(),
             OpCode::Assert
             | OpCode::Rule
             | OpCode::Retract
@@ -3623,195 +3639,140 @@ impl ChimeraVM {
             | OpCode::Seek
             | OpCode::Manifest
             | OpCode::Unify
-            | OpCode::PrologCall => oracle::exec_oracle_op(self, op, args),
+            | OpCode::PrologCall => return oracle::exec_oracle_op(self, op, args),
+            _ => {}
+        }
 
-            #[cfg(feature = "resonance")]
-            OpCode::Pluck | OpCode::Oscillate | OpCode::Hear | OpCode::Scream => {
-                resonance::exec_resonance_op(self, op, args);
-                None
-            }
+        #[cfg(feature = "resonance")]
+        if matches!(
+            op,
+            OpCode::Pluck | OpCode::Oscillate | OpCode::Hear | OpCode::Scream
+        ) {
+            resonance::exec_resonance_op(self, op, args);
+            return None;
+        }
 
-            #[cfg(all(feature = "nova", feature = "resonance"))]
+        #[cfg(all(feature = "nova", feature = "resonance"))]
+        match op {
             OpCode::Sift => {
                 nova_cymatics::exec_sift(self, op, args);
-                None
+                return None;
             }
-
-            #[cfg(all(feature = "nova", feature = "resonance"))]
             OpCode::Reshape => {
                 nova_cymatics::exec_reshape(self, op, args);
-                None
+                return None;
             }
-
-            #[cfg(feature = "biophysics")]
-            OpCode::NeuroGenesis
-            | OpCode::Stimulate
-            | OpCode::Dendrite
-            | OpCode::Axon
-            | OpCode::Receptor
-            | OpCode::NeuroCoupling
-            | OpCode::NeuroSynapse => {
-                neuron::exec_biophysics_op(self, op, args);
-                None
-            }
-
-            #[cfg(feature = "silicon")]
-            OpCode::Conduct
-            | OpCode::Wire
-            | OpCode::Pulse
-            | OpCode::Silicon
-            | OpCode::Construct
-            | OpCode::LogicGate
-            | OpCode::PinIn
-            | OpCode::PinOut
-            | OpCode::Emitter
-            | OpCode::Receiver
-            | OpCode::Latch
-            | OpCode::DAC
-            | OpCode::ADC
-            | OpCode::Trace
-            | OpCode::Fabricate => {
-                silicon::exec_silicon_op(self, op, args);
-                None
-            }
-
-            #[cfg(feature = "elektra")]
-            OpCode::Electrogenesis
-            | OpCode::Induction
-            | OpCode::WireGrowth
-            | OpCode::CircuitBreaker
-            | OpCode::Battery
-            | OpCode::Ground
-            | OpCode::SenseVolt
-            | OpCode::Shock
-            | OpCode::TeslaCoil
-            | OpCode::Diode
-            | OpCode::Transistor
-            | OpCode::Muscle
-            | OpCode::Sensor
-            | OpCode::Patch
-            | OpCode::Electrophoresis
-            | OpCode::Modulate
-            | OpCode::Lightning => elektra::exec_elektra_op(self, op, args),
-
-            #[cfg(all(feature = "elektra", feature = "nova"))]
-            OpCode::Galvanize | OpCode::Railgun => elektra::exec_elektra_op(self, op, args),
-
-            #[cfg(feature = "hive")]
-            OpCode::HiveBind | OpCode::HiveSend | OpCode::HiveRecv | OpCode::HiveClose => {
-                hive::exec_hive_op(self, op, args);
-                None
-            }
-
-            #[cfg(feature = "git")]
-            OpCode::Ancestry | OpCode::Excavate | OpCode::Evolution => {
-                git::exec_git_op(self, op, args);
-                None
-            }
-
-            #[cfg(feature = "phylogeny")]
-            OpCode::Crawl
-            | OpCode::Sequencing
-            | OpCode::PhyloSynthesize
-            | OpCode::PhyloInfect
-            | OpCode::Shell => {
-                phylogeny::exec_phylogeny_op(self, op, args);
-                None
-            }
-
-            #[cfg(feature = "nova")]
-            OpCode::Scan | OpCode::Locate | OpCode::Chart | OpCode::Atlas => {
-                nova_cartography::exec_cartography_op(self, op, args);
-                None
-            }
-
-            #[cfg(feature = "nova")]
-            OpCode::Pocket | OpCode::Unpocket => nova::exec_nova_op(self, op, args),
-
-            #[cfg(feature = "nova")]
-            OpCode::Quake
-            | OpCode::Erode
-            | OpCode::Sediment
-            | OpCode::Tectonics
-            | OpCode::Volcano => {
-                nova_geology::exec_geology_op(self, op, args);
-                None
-            }
-
-            #[cfg(feature = "nova")]
-            OpCode::LeySense | OpCode::LeyTap | OpCode::LeyWarp | OpCode::LeyShift => {
-                nova_ley::exec_ley_op(self, op, args)
-            }
-
-            #[cfg(feature = "nova")]
-            OpCode::Nucleate | OpCode::Accrete | OpCode::Shatter | OpCode::Anneal => {
-                nova_crystal::exec_crystal_op(self, op, args);
-                None
-            }
-
-            #[cfg(feature = "nova")]
-            OpCode::Dimension | OpCode::DRead | OpCode::DWrite | OpCode::DMerge | OpCode::DView => {
-                nova_planes::exec_planes_op(self, op, args);
-                None
-            }
-
-            #[cfg(feature = "nova")]
-            OpCode::StringNew | OpCode::StringPluck | OpCode::StringTune | OpCode::StringListen => {
-                nova_strings::exec_string_op(self, op, args)
-            }
-
-            #[cfg(feature = "nova")]
-            OpCode::Bond => nova_metazoa::exec_bond(self, op, args),
-            #[cfg(feature = "nova")]
-            OpCode::Unbond => nova_metazoa::exec_unbond(self, op, args),
-            #[cfg(feature = "nova")]
-            OpCode::Signify => nova_metazoa::exec_signify(self, op, args),
-            #[cfg(feature = "nova")]
-            OpCode::Tissue => nova_metazoa::exec_tissue(self, op, args),
-
-            OpCode::Nop => None,
-
-            #[cfg(feature = "nova")]
-            OpCode::MeshNet
-            | OpCode::MeshGrow
-            | OpCode::MeshPrune
-            | OpCode::MeshSend
-            | OpCode::MeshRecv => {
-                crate::vm::nova::exec_nova_op(self, op, args);
-                None
-            }
-
-            #[cfg(feature = "nova")]
-            OpCode::Reactor | OpCode::Reaction => {
-                crate::vm::nova::exec_nova_op(self, op, args);
-                None
-            }
-
-            #[cfg(feature = "nova")]
-            OpCode::AbsorbGeometry => nova_alchemy_prime::exec_absorb_geometry(self, op, args),
-
-            #[cfg(feature = "nova")]
-            OpCode::ProjectGeometry => nova_alchemy_prime::exec_project_geometry(self, op, args),
-
-            #[cfg(feature = "nova")]
-            OpCode::HyperAdd
-            | OpCode::HyperSub
-            | OpCode::HyperMul
-            | OpCode::HyperDiv
-            | OpCode::Reduce
-            | OpCode::Cross
-            | OpCode::ZipWith => {
-                nova_raku::exec_raku_op(self, op, args);
-                None
-            }
-
-            OpCode::Unknown(name) => self.handle_unknown_opcode(&name),
-            _ => {
-                self.output
-                    .push(format!("Error: Unimplemented OpCode {}", op));
-                None
-            }
+            _ => {}
         }
+
+        #[cfg(feature = "biophysics")]
+        if matches!(
+            op,
+            OpCode::NeuroGenesis
+                | OpCode::Stimulate
+                | OpCode::Dendrite
+                | OpCode::Axon
+                | OpCode::Receptor
+                | OpCode::NeuroCoupling
+                | OpCode::NeuroSynapse
+        ) {
+            neuron::exec_biophysics_op(self, op, args);
+            return None;
+        }
+
+        #[cfg(feature = "silicon")]
+        if matches!(
+            op,
+            OpCode::Conduct
+                | OpCode::Wire
+                | OpCode::Pulse
+                | OpCode::Silicon
+                | OpCode::Construct
+                | OpCode::LogicGate
+                | OpCode::PinIn
+                | OpCode::PinOut
+                | OpCode::Emitter
+                | OpCode::Receiver
+                | OpCode::Latch
+                | OpCode::DAC
+                | OpCode::ADC
+                | OpCode::Trace
+                | OpCode::Fabricate
+        ) {
+            silicon::exec_silicon_op(self, op, args);
+            return None;
+        }
+
+        #[cfg(feature = "elektra")]
+        if matches!(
+            op,
+            OpCode::Electrogenesis
+                | OpCode::Induction
+                | OpCode::WireGrowth
+                | OpCode::CircuitBreaker
+                | OpCode::Battery
+                | OpCode::Ground
+                | OpCode::SenseVolt
+                | OpCode::Shock
+                | OpCode::TeslaCoil
+                | OpCode::Diode
+                | OpCode::Transistor
+                | OpCode::Muscle
+                | OpCode::Sensor
+                | OpCode::Patch
+                | OpCode::Electrophoresis
+                | OpCode::Modulate
+                | OpCode::Lightning
+        ) {
+            return elektra::exec_elektra_op(self, op, args);
+        }
+
+        #[cfg(all(feature = "elektra", feature = "nova"))]
+        if matches!(op, OpCode::Galvanize | OpCode::Railgun) {
+            return elektra::exec_elektra_op(self, op, args);
+        }
+
+        #[cfg(feature = "hive")]
+        if matches!(
+            op,
+            OpCode::HiveBind | OpCode::HiveSend | OpCode::HiveRecv | OpCode::HiveClose
+        ) {
+            hive::exec_hive_op(self, op, args);
+            return None;
+        }
+
+        #[cfg(feature = "git")]
+        if matches!(
+            op,
+            OpCode::Ancestry | OpCode::Excavate | OpCode::Evolution
+        ) {
+            return git::exec_git_op(self, op, args);
+        }
+
+        #[cfg(feature = "phylogeny")]
+        if matches!(
+            op,
+            OpCode::Crawl
+                | OpCode::Sequencing
+                | OpCode::PhyloSynthesize
+                | OpCode::PhyloInfect
+                | OpCode::Shell
+        ) {
+            phylogeny::exec_phylogeny_op(self, op, args);
+            return None;
+        }
+
+        if let OpCode::Nop = op {
+            return None;
+        }
+
+        if let OpCode::Unknown(name) = op {
+            return self.handle_unknown_opcode(&name);
+        }
+
+        self.output
+            .push(format!("Error: Unimplemented OpCode {}", op));
+        None
     }
 
     fn binary_op<F>(stack: &mut Vec<Value>, output: &mut Vec<String>, op: F)

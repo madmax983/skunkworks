@@ -2844,8 +2844,16 @@ where
                             ViewMode::Sequencer => ViewMode::Mutagen,
                             #[cfg(feature = "nova")]
                             ViewMode::Mutagen => ViewMode::Forge,
-                            #[cfg(feature = "nova")]
-                            ViewMode::Forge => ViewMode::Tesseract,
+                            ViewMode::Forge => {
+                                #[cfg(feature = "nova")]
+                                {
+                                    ViewMode::Tesseract
+                                }
+                                #[cfg(not(feature = "nova"))]
+                                {
+                                    ViewMode::Genome
+                                }
+                            }
                             #[cfg(feature = "nova")]
                             ViewMode::Tesseract => ViewMode::Genome,
                             #[cfg(not(feature = "nova"))]
