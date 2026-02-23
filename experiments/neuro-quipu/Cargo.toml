@@ -1,0 +1,13 @@
+[package]
+name = "neuro-quipu"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+crossterm.workspace = true
+ratatui.workspace = true
+anyhow.workspace = true
+rand.workspace = true
+quipu = { path = "../../crates/quipu" }
+neuro-sim = { path = "../../crates/neuro-sim" }
+tui-shared = { path = "../../crates/tui-shared" }

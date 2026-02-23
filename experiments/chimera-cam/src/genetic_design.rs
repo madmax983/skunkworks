@@ -32,6 +32,7 @@ impl GeneticDesigner {
                     genes: strand_genes,
                 }],
             },
+            evolution_config: None,
         };
 
         let vm = ChimeraVM::new(dna.clone());

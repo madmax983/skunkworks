@@ -87,6 +87,7 @@ pub fn generate_random_dna(rng: &mut impl Rng, len: usize) -> Dna {
         helix: Helix {
             strands: vec![Strand { genes }],
         },
+        evolution_config: None,
     }
 }
 
