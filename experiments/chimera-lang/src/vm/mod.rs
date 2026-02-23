@@ -3095,6 +3095,63 @@ impl ChimeraVM {
                     }
                 }
             }
+            OpCode::Mod => {
+                if self.stack.len() < 2 {
+                    self.output.push("Error: Stack underflow".to_string());
+                } else {
+                    let b_val = self.stack.pop().unwrap();
+                    let a_val = self.stack.pop().unwrap();
+                    match (a_val, b_val) {
+                        (Value::Int(a), Value::Int(b)) => {
+                            if b == 0 {
+                                self.output.push("Error: Division by zero".to_string());
+                            } else if a == i64::MIN && b == -1 {
+                                self.output.push("Error: Division overflow".to_string());
+                            } else {
+                                self.stack.push(Value::Int(a % b));
+                            }
+                        }
+                        _ => self.output.push("Error: Type mismatch".to_string()),
+                    }
+                }
+            }
+            OpCode::BitAnd => {
+                Self::binary_op(&mut self.stack, &mut self.output, |a, b| a & b);
+            }
+            OpCode::BitOr => {
+                Self::binary_op(&mut self.stack, &mut self.output, |a, b| a | b);
+            }
+            OpCode::BitXor => {
+                Self::binary_op(&mut self.stack, &mut self.output, |a, b| a ^ b);
+            }
+            OpCode::BitNot => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(n) => self.stack.push(Value::Int(!n)),
+                        _ => self.output.push("Error: Type mismatch".to_string()),
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow".to_string());
+                }
+            }
+            OpCode::Shl => {
+                Self::binary_op(&mut self.stack, &mut self.output, |a, b| {
+                    if b >= 0 {
+                        a.wrapping_shl(b as u32)
+                    } else {
+                        a
+                    }
+                });
+            }
+            OpCode::Shr => {
+                Self::binary_op(&mut self.stack, &mut self.output, |a, b| {
+                    if b >= 0 {
+                        a.wrapping_shr(b as u32)
+                    } else {
+                        a
+                    }
+                });
+            }
             _ => {}
         }
         None
@@ -3204,6 +3261,13 @@ impl ChimeraVM {
             | OpCode::Sub
             | OpCode::Mul
             | OpCode::Div
+            | OpCode::Mod
+            | OpCode::BitAnd
+            | OpCode::BitOr
+            | OpCode::BitXor
+            | OpCode::BitNot
+            | OpCode::Shl
+            | OpCode::Shr
             | OpCode::Eq
             | OpCode::Gt
             | OpCode::Lt => {

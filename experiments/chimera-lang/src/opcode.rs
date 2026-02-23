@@ -77,6 +77,34 @@ pub enum OpCode {
     /// **Stack:** `[ ..., a, b ] -> [ ..., a / b ]`
     /// **Error:** Pushes error message if `b` is 0.
     Div,
+    /// Pops two values, computes remainder of division.
+    ///
+    /// **Stack:** `[ ..., a, b ] -> [ ..., a % b ]`
+    Mod,
+    /// Pops two values, computes bitwise AND.
+    ///
+    /// **Stack:** `[ ..., a, b ] -> [ ..., a & b ]`
+    BitAnd,
+    /// Pops two values, computes bitwise OR.
+    ///
+    /// **Stack:** `[ ..., a, b ] -> [ ..., a | b ]`
+    BitOr,
+    /// Pops two values, computes bitwise XOR.
+    ///
+    /// **Stack:** `[ ..., a, b ] -> [ ..., a ^ b ]`
+    BitXor,
+    /// Pops one value, computes bitwise NOT.
+    ///
+    /// **Stack:** `[ ..., a ] -> [ ..., !a ]`
+    BitNot,
+    /// Pops two values, shifts first left by second.
+    ///
+    /// **Stack:** `[ ..., a, b ] -> [ ..., a << b ]`
+    Shl,
+    /// Pops two values, shifts first right by second.
+    ///
+    /// **Stack:** `[ ..., a, b ] -> [ ..., a >> b ]`
+    Shr,
     /// Pops two values, checks if they are equal, and pushes 1 (true) or 0 (false).
     ///
     /// **Stack:** `[ ..., a, b ] -> [ ..., 1 if a == b else 0 ]`
