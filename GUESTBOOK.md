@@ -2,6 +2,11 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/chimera-canopy
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The forest is alive with parasites. The Sun is feeding the code.
+- **Note:** "The higher the CPU usage, the tastier the tree."
+
 ### [Concentration Level: TOXIC] - Location: experiments/git-harmonograph
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Compilation Failure / Terminal Genericism.
