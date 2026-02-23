@@ -35,7 +35,7 @@ You can define specialized agents called **Organelles** with their own DNA and t
 ```chimera
 organelle Walker {
     # Genes executed by the organelle
-    move(1, 0)
+    migrate(1, 0)
     photosynthesize
     jump(0)
 }

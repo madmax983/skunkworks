@@ -82,3 +82,25 @@ I re-ran the examples to confirm the DX status.
   - Example: `warning: use of deprecated method ratatui::prelude::Buffer::get_mut`
 
 **Action Item:** Clean up warnings to improve perceived code quality.
+
+## 🔄 Fresh Friction Points (Echo's Latest Audit)
+
+**Status:** ⚠️ **FIX REQUIRED** (And Applied)
+
+I performed a fresh audit focusing on Nova features and documentation examples.
+
+### 1. Library Usage Example Broken
+**Experiment:** Copy-pasted the "Library Usage" example from `README.md`.
+**Result:** ❌ **FAILED**
+- **Error:** `error[E0063]: missing field evolution_config in initializer of chimera_lang::ast::Dna`
+- **Cause:** The `Dna` struct requires `evolution_config: None`, but the documentation example didn't include it.
+- **Fix:** Updated `README.md` to initialize `Dna` correctly.
+
+### 2. Grimoire Documentation Incorrect
+**Experiment:** Tested the "Organelles" example from `GRIMOIRE.md`.
+**Result:** ❌ **FAILED**
+- **Error:** `Unknown enzyme: move`
+- **Cause:** `move` is not a valid enzyme. The correct enzyme is `migrate`.
+- **Fix:** Updated `GRIMOIRE.md` to replace `move` with `migrate`.
+
+**Conclusion:** Documentation was slightly out of sync with the codebase. Fixes have been applied.
