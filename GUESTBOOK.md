@@ -2,10 +2,15 @@
 
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/mnemosyne
+### [Concentration Level: TOXIC] - Location: experiments/git-harmonograph
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism.
-- **Note:** "Memory fades when not documented. The gallery is empty."
+- **Status:** Specimen condemned. Diagnosis: Compilation Failure / Terminal Genericism.
+- **Note:** "The pendulum has stopped. The math is broken."
+
+### [Concentration Level: EXECUTED] - Location: graveyard/mnemosyne
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Genericism.
+- **Note:** "Memory returned to the void. The gallery is closed."
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄 (Sensed: Instability)
