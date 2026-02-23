@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **git-harmony**: Terminal Redundancy (Superseded by `git-cantata`). Grace period: 24 hours.
+- **manifold-origami**: Documentation Void / Terminal Redundancy. Superseded by `miura-interface` and `rigid-origami`. Grace period: 24 hours.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **git-harmony**: Specimen executed. Diagnosis: Terminal Redundancy (Superseded by `git-cantata`). Grace period expired. Moved to graveyard.
 - **mnemosyne**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Grace period expired. Moved to graveyard.
 - **biomimetic-bridge**: Specimen executed. Diagnosis: Terminal Redundancy (Skeletal Rot). Redundant with `bridge-specter`. Grace period expired. Moved to graveyard.
 - **hydro-flock**: Specimen executed. Diagnosis: Terminal Redundancy (with `hydrothermal-locks` and `luminous-flock`). Grace period expired. Moved to graveyard.
