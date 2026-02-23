@@ -8,8 +8,8 @@ use std::str::FromStr;
 
 /// Represents the state of a Siren (Musical Agent).
 ///
-/// Format: "♬:BPM:Octave:Velocity:Waveform:Direction"
-/// Example: "♬:120:0:100:0:1" (BPM 120, Octave 0, Vel 100, Sine Wave, East)
+/// Format: "♬:BPM:Octave:Velocity:Waveform:Direction:Buffer"
+/// Example: "♬:120:0:100:0:1:60,62,64" (BPM 120, Octave 0, Vel 100, Sine Wave, East, Buffer[C4,D4,E4])
 #[derive(Debug, Clone)]
 pub struct SirenState {
     pub bpm: u64,
@@ -17,6 +17,7 @@ pub struct SirenState {
     pub velocity: u8,
     pub waveform: u8,     // 0=Sine, 1=Square, 2=Saw, 3=Triangle, 4=Noise
     pub direction: usize, // 0=N, 1=E, 2=S, 3=W
+    pub buffer: Vec<u8>,  // MIDI Note Buffer
 }
 
 impl SirenState {
@@ -27,6 +28,7 @@ impl SirenState {
             velocity,
             waveform,
             direction,
+            buffer: Vec::new(),
         }
     }
 
@@ -37,6 +39,7 @@ impl SirenState {
             velocity: 100,
             waveform: 0,
             direction: 1, // Start moving East
+            buffer: Vec::new(),
         }
     }
 
@@ -47,10 +50,17 @@ impl SirenState {
 
 impl fmt::Display for SirenState {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let buffer_str: String = self
+            .buffer
+            .iter()
+            .map(|b| b.to_string())
+            .collect::<Vec<String>>()
+            .join(",");
+
         write!(
             f,
-            "♬:{}:{}:{}:{}:{}",
-            self.bpm, self.octave, self.velocity, self.waveform, self.direction
+            "♬:{}:{}:{}:{}:{}:{}",
+            self.bpm, self.octave, self.velocity, self.waveform, self.direction, buffer_str
         )
     }
 }
@@ -66,12 +76,23 @@ impl FromStr for SirenState {
             let velocity = parts[3].parse().unwrap_or(100);
             let waveform = parts[4].parse().unwrap_or(0);
             let direction = parts[5].parse().unwrap_or(1);
+
+            let mut buffer = Vec::new();
+            if parts.len() > 6 && !parts[6].is_empty() {
+                for n_str in parts[6].split(',') {
+                    if let Ok(n) = n_str.parse::<u8>() {
+                        buffer.push(n);
+                    }
+                }
+            }
+
             Ok(Self {
                 bpm,
                 octave,
                 velocity,
                 waveform,
                 direction,
+                buffer,
             })
         } else {
             // Try fallback if parsing fails or old format (if any)
@@ -140,7 +161,7 @@ pub fn process_siren_logic(
                         _ => 0,
                     };
                     let midi_note = 60 + note_base + (siren_state.octave * 12);
-                    play_note(vm, midi_note as i32, &siren_state, tx, ty);
+                    play_note(vm, midi_note as i32, &mut siren_state, tx, ty);
                 }
                 'a'..='g' => {
                     let note_base = match char {
@@ -154,7 +175,7 @@ pub fn process_siren_logic(
                         _ => 0,
                     };
                     let midi_note = 60 + note_base + (siren_state.octave * 12);
-                    play_note(vm, midi_note as i32, &siren_state, tx, ty);
+                    play_note(vm, midi_note as i32, &mut siren_state, tx, ty);
                 }
                 '0'..='9' => {
                     if let Some(digit) = char.to_digit(10) {
@@ -180,12 +201,19 @@ pub fn process_siren_logic(
                     siren_state.direction = rng.gen_range(0..4);
                 }
                 'w' => siren_state.waveform = (siren_state.waveform + 1) % 5,
+                // Compose DNA
+                '✍' => {
+                    if !siren_state.buffer.is_empty() {
+                        compose_dna(vm, &siren_state.buffer);
+                        siren_state.buffer.clear();
+                    }
+                }
                 _ => {}
             }
         }
     } else if let Value::Int(n) = target_val {
         if *n > 0 && *n < 128 {
-            play_note(vm, *n as i32, &siren_state, tx, ty);
+            play_note(vm, *n as i32, &mut siren_state, tx, ty);
         }
     }
 
@@ -197,7 +225,7 @@ pub fn process_siren_logic(
     Some((updated_agent, Some((ty, tx))))
 }
 
-fn play_note(vm: &mut ChimeraVM, midi_note: i32, state: &SirenState, x: usize, y: usize) {
+fn play_note(vm: &mut ChimeraVM, midi_note: i32, state: &mut SirenState, x: usize, y: usize) {
     let freq = 440.0 * 2.0f32.powf((midi_note as f32 - 69.0) / 12.0);
 
     #[cfg(feature = "resonance")]
@@ -211,8 +239,44 @@ fn play_note(vm: &mut ChimeraVM, midi_note: i32, state: &SirenState, x: usize, y
         });
     }
 
+    // Buffer the note
+    state.buffer.push(midi_note.clamp(0, 127) as u8);
+
     vm.output.push(format!(
         "SIREN: Note {} ({:.1}Hz) Vel {} at {},{}",
         midi_note, freq, state.velocity, x, y
     ));
+}
+
+fn compose_dna(vm: &mut ChimeraVM, notes: &[u8]) {
+    use crate::ast::{Gene, Nucleotide, Strand};
+    use crate::opcode::OpCode;
+    use strum::IntoEnumIterator;
+
+    let opcodes: Vec<OpCode> = OpCode::iter().collect();
+    let opcode_count = opcodes.len();
+
+    let mut genes = Vec::new();
+
+    for note in notes {
+        let idx = *note as usize % opcode_count;
+        let op = opcodes[idx].clone();
+
+        // Simple genes with no args for now, or map velocity to args?
+        // Let's keep it simple: Just the OpCode.
+        // Maybe Push(note) if Op is Push?
+        let args = if op == OpCode::Push {
+            vec![Nucleotide::Number(*note as i64)]
+        } else {
+            vec![]
+        };
+
+        genes.push(Gene { op, args });
+    }
+
+    if !genes.is_empty() {
+        let new_strand = Strand { genes };
+        vm.dna.helix.strands.push(new_strand);
+        vm.output.push(format!("SIREN: Composed new strand with {} genes.", notes.len()));
+    }
 }
