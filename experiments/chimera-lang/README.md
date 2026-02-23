@@ -290,7 +290,10 @@ fn main() {
         Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] },
         Gene { op: OpCode::Print, args: vec![] },
     ];
-    let dna = Dna { helix: Helix { strands: vec![Strand { genes }] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![Strand { genes }] },
+        evolution_config: None,
+    };
     let mut vm = ChimeraVM::new(dna);
 
     vm.step(); // Push "Hello"
