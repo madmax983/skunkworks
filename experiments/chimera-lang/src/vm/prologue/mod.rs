@@ -81,6 +81,7 @@ pub mod hypnagogia;
 pub mod io;
 pub mod lexicon;
 pub mod linguistics;
+pub mod ligase;
 pub mod list;
 pub mod logic;
 pub mod logic_agent;
@@ -107,6 +108,7 @@ pub mod runecraft;
 pub mod scavenger;
 pub mod sequencer;
 pub mod siren;
+pub mod splicer;
 pub mod symbiosis;
 pub mod teleport;
 pub mod topology;
@@ -469,6 +471,10 @@ impl PrologueState {
                             | "🕷"
                             // Runecraft
                             | "£"
+                            // Splicer
+                            | "✂"
+                            // Ligase
+                            | "🔗"
                     ) {
                         self.runes.insert((y, x));
 
@@ -486,6 +492,8 @@ impl PrologueState {
                             || s == "∃"
                             || s == "χ"
                             || s == "🕷"
+                            || s == "✂"
+                            || s == "🔗"
                         {
                             // Try to retrieve persistent state
                             let raw_state = self
@@ -525,6 +533,8 @@ impl PrologueState {
                                     )
                                 } else if s == "🕷" {
                                     Value::Int(0) // Weaver default state (placeholder)
+                                } else if s == "✂" || s == "🔗" {
+                                    Value::Int(0)
                                 } else {
                                     Value::Int(0)
                                 }
@@ -1551,6 +1561,22 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 }
                 None => continue,
             }
+        } else if current_type == "✂" {
+            match splicer::process_splicer_agent(vm, &agent, grid_snapshot) {
+                Some((updated_agent, t)) => {
+                    agent = updated_agent;
+                    t
+                }
+                None => continue,
+            }
+        } else if current_type == "🔗" {
+            match ligase::process_ligase_agent(vm, &agent, grid_snapshot) {
+                Some((updated_agent, t)) => {
+                    agent = updated_agent;
+                    t
+                }
+                None => continue,
+            }
         } else {
             process_seeker_logic(vm, &agent, grid_snapshot)
         };
@@ -1571,6 +1597,8 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "∃"
                 || current_type == "χ"
                 || current_type == "🕷"
+                || current_type == "✂"
+                || current_type == "🔗"
             {
                 vm.prologue_state.registers.insert(
                     (ny, nx),
@@ -1595,6 +1623,8 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                     || current_type == "∃"
                     || current_type == "χ"
                     || current_type == "🕷"
+                    || current_type == "✂"
+                    || current_type == "🔗"
                 {
                     vm.prologue_state.registers.remove(&(y, x));
                 }
@@ -1740,3 +1770,5 @@ mod prologue_neural_growth_test;
 mod weaver_test;
 #[cfg(test)]
 mod prologue_runecraft_test;
+#[cfg(test)]
+mod prologue_enzymes_test;
