@@ -611,14 +611,51 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
             Rule::oracle_block => self.parse_oracle_block(inner),
             #[cfg(not(feature = "oracle"))]
             Rule::oracle_block => return Err(anyhow!("Oracle feature is disabled")),
-            Rule::hyper_op => self.parse_hyper_op(inner),
-            Rule::cross_op => self.parse_meta_op(inner, OpCode::Cross),
-            Rule::reduce_op => self.parse_meta_op(inner, OpCode::Reduce),
-            Rule::zip_op => self.parse_meta_op(inner, OpCode::ZipWith),
+            Rule::hyper_op => {
+                #[cfg(feature = "nova")]
+                {
+                    self.parse_hyper_op(inner)
+                }
+                #[cfg(not(feature = "nova"))]
+                {
+                    return Err(anyhow!("Nova feature is disabled"));
+                }
+            }
+            Rule::cross_op => {
+                #[cfg(feature = "nova")]
+                {
+                    self.parse_meta_op(inner, OpCode::Cross)
+                }
+                #[cfg(not(feature = "nova"))]
+                {
+                    return Err(anyhow!("Nova feature is disabled"));
+                }
+            }
+            Rule::reduce_op => {
+                #[cfg(feature = "nova")]
+                {
+                    self.parse_meta_op(inner, OpCode::Reduce)
+                }
+                #[cfg(not(feature = "nova"))]
+                {
+                    return Err(anyhow!("Nova feature is disabled"));
+                }
+            }
+            Rule::zip_op => {
+                #[cfg(feature = "nova")]
+                {
+                    self.parse_meta_op(inner, OpCode::ZipWith)
+                }
+                #[cfg(not(feature = "nova"))]
+                {
+                    return Err(anyhow!("Nova feature is disabled"));
+                }
+            }
             _ => unreachable!("Unexpected instruction rule: {:?}", inner.as_rule()),
         }
     }
 
+    #[cfg(feature = "nova")]
     fn parse_hyper_op(&self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
         let mut parts = inner.into_inner();
         let op_symbol = parts.next().unwrap().as_str();
