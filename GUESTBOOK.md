@@ -2,6 +2,11 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: TOXIC] - Location: experiments/mnemosyne
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism.
+- **Note:** "Memory fades when not documented. The gallery is empty."
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄 (Sensed: Instability)
 - **Status:** Test flakiness detected in `song_test`, `nova_chronos`, and `fractal`. Vulnerabilities found in `macroquad`, `git2`, `lru`.
