@@ -2122,11 +2122,7 @@ where
                                         if let Some(cord) =
                                             vm.quipu.cords.get_mut(vm.quipu.active_cord)
                                         {
-                                            // Reset cord to this value?
-                                            // Tie replaces it?
-                                            // Let's reuse tie logic by clearing first?
-                                            // Or just make tie set it. My tie logic replaces.
-                                            cord.tie(n);
+                                            *cord = n;
                                             app_state.status_msg = format!(
                                                 "Cord {} set to {}",
                                                 vm.quipu.active_cord, n
@@ -4886,7 +4882,7 @@ where
                             ViewMode::Quipu => {
                                 // Prepare buffer with current value
                                 if vm.quipu.active_cord < vm.quipu.cords.len() {
-                                    let val = vm.quipu.cords[vm.quipu.active_cord].read();
+                                    let val = vm.quipu.cords[vm.quipu.active_cord];
                                     app_state.input_buffer = val.to_string();
                                 }
                             }
@@ -10310,30 +10306,15 @@ fn render_quipu(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 // Draw Knots
                 // Top-down visually means y decreasing from 45.
                 let mut current_y = 40.0;
+                let val = *cord;
+                let s = val.abs().to_string();
 
-                for cluster in &cord.clusters {
-                    for knot in cluster {
-                        let _color = match knot {
-                            crate::vm::nova_quipu::Knot::Simple => Color::Cyan,
-                            crate::vm::nova_quipu::Knot::Long(_) => Color::Green,
-                            crate::vm::nova_quipu::Knot::FigureEight => Color::Red,
-                        };
-
-                        let symbol = match knot {
-                            crate::vm::nova_quipu::Knot::Simple => "o",
-                            crate::vm::nova_quipu::Knot::Long(_v) => "L",
-                            crate::vm::nova_quipu::Knot::FigureEight => "8",
-                        };
-
-                        ctx.print(x - 0.5, current_y, symbol);
-                        current_y -= 2.0;
-                    }
-                    // Gap between clusters
-                    current_y -= 3.0;
+                for c in s.chars() {
+                    ctx.print(x - 0.5, current_y, c.to_string());
+                    current_y -= 2.0;
                 }
 
                 // Draw Value at bottom
-                let val = cord.read();
                 ctx.print(x - 1.0, 2.0, val.to_string());
             }
         });
