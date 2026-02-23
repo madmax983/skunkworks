@@ -39,6 +39,12 @@ pub struct Boid4D {
     pub dna: Dna,
 }
 
+impl Default for Boid4D {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Boid4D {
     pub fn new() -> Self {
         let mut rng = ::rand::thread_rng();
@@ -201,7 +207,7 @@ async fn main() {
     // 4D Rotation
     let mut angle_xw = 0.0;
     let mut angle_yw = 0.0;
-    let angle_zw = 0.0;
+    let angle_zw: f32 = 0.0;
 
     loop {
         monitor.update();
@@ -224,7 +230,7 @@ async fn main() {
         // Update Boids
         // We need to clone boids for read access during update
         let old_boids = boids.clone();
-        for (_, boid) in boids.iter_mut().enumerate() {
+        for boid in boids.iter_mut() {
             boid.flock(&old_boids);
             boid.update(bounds);
         }
@@ -264,14 +270,22 @@ async fn main() {
 
         clear_background(BLACK);
 
+        // Precompute sine/cosine for this frame's rotations
+        let sin_xw = angle_xw.sin();
+        let cos_xw = angle_xw.cos();
+        let sin_yw = angle_yw.sin();
+        let cos_yw = angle_yw.cos();
+        let sin_zw = angle_zw.sin();
+        let cos_zw = angle_zw.cos();
+
         // Draw Boids
         for boid in &boids {
             // Transform 4D -> 3D
             let mut p = boid.position;
-            // Rotate in 4D first
-            p = p.rotate_xw(angle_xw);
-            p = p.rotate_yw(angle_yw);
-            p = p.rotate_zw(angle_zw);
+            // Rotate in 4D first using fast methods
+            p = p.rotate_xw_fast(sin_xw, cos_xw);
+            p = p.rotate_yw_fast(sin_yw, cos_yw);
+            p = p.rotate_zw_fast(sin_zw, cos_zw);
             // Project
             let p3 = p.project_to_3d(3.0);
 
@@ -284,12 +298,12 @@ async fn main() {
                 1.0,
             );
 
-            draw_sphere(p3, 0.05, None, color);
+            draw_sphere(p3.into(), 0.05, None, color);
         }
 
         // Draw Tesseract Bounds (Wireframe)
         // Similar to tesseract-ops but scaled by bounds
-        draw_tesseract_wireframe(bounds, angle_xw, angle_yw, angle_zw);
+        draw_tesseract_wireframe(bounds, sin_xw, cos_xw, sin_yw, cos_yw, sin_zw, cos_zw);
 
         set_default_camera();
         draw_text(
@@ -333,7 +347,15 @@ async fn main() {
     }
 }
 
-fn draw_tesseract_wireframe(bounds: Vec4, axw: f32, ayw: f32, azw: f32) {
+fn draw_tesseract_wireframe(
+    bounds: Vec4,
+    sin_xw: f32,
+    cos_xw: f32,
+    sin_yw: f32,
+    cos_yw: f32,
+    sin_zw: f32,
+    cos_zw: f32,
+) {
     let mut verts = Vec::new();
     for i in 0..16 {
         let x = if i & 1 != 0 { bounds.x } else { -bounds.x };
@@ -345,10 +367,10 @@ fn draw_tesseract_wireframe(bounds: Vec4, axw: f32, ayw: f32, azw: f32) {
 
     let transform = |v: Vec4| -> Vec3 {
         let mut v = v; // Already scaled by bounds
-        v = v.rotate_xw(axw);
-        v = v.rotate_yw(ayw);
-        v = v.rotate_zw(azw);
-        v.project_to_3d(3.0)
+        v = v.rotate_xw_fast(sin_xw, cos_xw);
+        v = v.rotate_yw_fast(sin_yw, cos_yw);
+        v = v.rotate_zw_fast(sin_zw, cos_zw);
+        v.project_to_3d(3.0).into()
     };
 
     for i in 0..16 {

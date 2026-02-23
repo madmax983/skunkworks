@@ -219,13 +219,18 @@ impl Vec4 {
     ///
     /// * `theta` - The angle of rotation in radians.
     pub fn rotate_xw(&self, theta: f32) -> Self {
-        let c = theta.cos();
-        let s = theta.sin();
+        self.rotate_xw_fast(theta.sin(), theta.cos())
+    }
+
+    /// Rotates the vector in the XW plane using precomputed sine and cosine values.
+    ///
+    /// Useful for optimizing loops where the rotation angle is constant across many vectors.
+    pub fn rotate_xw_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
         Self {
-            x: self.x * c - self.w * s,
+            x: self.x * cos_theta - self.w * sin_theta,
             y: self.y,
             z: self.z,
-            w: self.x * s + self.w * c,
+            w: self.x * sin_theta + self.w * cos_theta,
         }
     }
 
@@ -233,13 +238,16 @@ impl Vec4 {
     ///
     /// Changes the Y and W components.
     pub fn rotate_yw(&self, theta: f32) -> Self {
-        let c = theta.cos();
-        let s = theta.sin();
+        self.rotate_yw_fast(theta.sin(), theta.cos())
+    }
+
+    /// Rotates the vector in the YW plane using precomputed sine and cosine values.
+    pub fn rotate_yw_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
         Self {
             x: self.x,
-            y: self.y * c - self.w * s,
+            y: self.y * cos_theta - self.w * sin_theta,
             z: self.z,
-            w: self.y * s + self.w * c,
+            w: self.y * sin_theta + self.w * cos_theta,
         }
     }
 
@@ -247,13 +255,16 @@ impl Vec4 {
     ///
     /// Changes the Z and W components.
     pub fn rotate_zw(&self, theta: f32) -> Self {
-        let c = theta.cos();
-        let s = theta.sin();
+        self.rotate_zw_fast(theta.sin(), theta.cos())
+    }
+
+    /// Rotates the vector in the ZW plane using precomputed sine and cosine values.
+    pub fn rotate_zw_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
         Self {
             x: self.x,
             y: self.y,
-            z: self.z * c - self.w * s,
-            w: self.z * s + self.w * c,
+            z: self.z * cos_theta - self.w * sin_theta,
+            w: self.z * sin_theta + self.w * cos_theta,
         }
     }
 
@@ -326,5 +337,20 @@ mod tests {
         let scaled = v.scale(2.0);
         assert_eq!(scaled.x, 2.0);
         assert_eq!(scaled.w, 2.0);
+    }
+
+    #[test]
+    fn test_rotation_fast() {
+        let v = Vec4::new(1.0, 0.0, 0.0, 0.0);
+        let theta = std::f32::consts::PI / 2.0;
+        let sin_t = theta.sin();
+        let cos_t = theta.cos();
+
+        let rotated = v.rotate_xw(theta);
+        let rotated_fast = v.rotate_xw_fast(sin_t, cos_t);
+
+        assert!((rotated.w - 1.0).abs() < 1e-6);
+        assert!((rotated_fast.w - 1.0).abs() < 1e-6);
+        assert!((rotated.w - rotated_fast.w).abs() < 1e-6);
     }
 }
