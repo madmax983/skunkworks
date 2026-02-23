@@ -1590,7 +1590,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A 3D Crystal Lattice where bonds are Quipu cords. The structure records the traffic history of agents via knots.
 - **Novel trait**: 3D Data Structure Visualization.
 - **Status**: experiments/quipu-lattice
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational. Re-verified compilation.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational. Verified.
 
 ### hyper-quipu
 - **Parents**: experiments/tesseract-ops + experiments/quipu-symphony
@@ -1611,4 +1611,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: "Magnetic Quipu". Cords are physical chains of magnetic particles (Knots) that sway and interact.
 - **Novel trait**: **Magnetic History**. The data structure physically reacts to its own content.
 - **Status**: experiments/ferrous-quipu
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### ferrous-cladistics
+- **Parents**: experiments/ferrous-graph + experiments/code-bio-dome
+- **Concept**: A visualization where code functions are harvested from the disk (Bio-Dome) and represented as magnetic particles (Ferrous Graph). The magnetic charge/polarity is determined by the function signature (e.g., number of arguments, return type).
+- **Novel trait**: **Magnetic Cladistics**. Self-organizing code taxonomy via magnetic physics.
+- **Status**: experiments/ferrous-cladistics
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed. Verified.
