@@ -1577,3 +1577,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Physical Latency. The geometry of the network determines its temporal properties.
 - **Status**: experiments/neuro-quipu
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational.
+
+### quantum-quipu
+- **Parents**: experiments/quipu-symphony + experiments/quantum-boids
+- **Concept**: Visualization of Quantum Circuits as Incan Quipus. Cords are Qubits, Knots are Gates (Hadamard, CNOT).
+- **Novel trait**: Entangled Knots. Visualizing the interference pattern and measurement collapse on a physical cord.
+- **Status**: experiments/quantum-quipu
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational.

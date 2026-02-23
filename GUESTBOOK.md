@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/quantum-quipu
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The Knots are in Superposition.
+- **Note:** "To read the knot is to collapse the history."
+
 ### [Concentration Level: FRESH] - Location: experiments/neuro-quipu
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The Cords are hanging. The Thoughts are trickling down.
