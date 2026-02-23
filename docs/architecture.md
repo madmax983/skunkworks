@@ -575,6 +575,34 @@ classDiagram
     Constraint ..> Particle : Affects
 ```
 
+### Hyper System (crates/hyper-system)
+
+Provides shared 4D vector math and system monitoring utilities for "Hyper" series experiments (ADR 050).
+
+```mermaid
+classDiagram
+    direction TB
+    class Vec4 {
+        +f32 x, y, z, w
+        +add(Vec4) Vec4
+        +scale(f32) Vec4
+        +rotate_xw(theta) Vec4
+        +project_to_3d(camera_w) Vec3
+    }
+
+    class SystemMonitor {
+        +f32 cpu_usage
+        +f32 mem_usage
+        +f32 swap_usage
+        +f32 load_avg
+        +update_with_time(dt, now)
+        +update()
+    }
+
+    SystemMonitor ..> Vec4 : Drives (in experiments)
+    note for SystemMonitor "Interpolates metrics for smooth visuals"
+```
+
 ## Experiment: Git Harmony
 
 **Git Harmony** (formerly Git Rhythm) generates music from git diffs ("Code Singing").
