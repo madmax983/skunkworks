@@ -94,6 +94,7 @@ pub mod optics;
 pub mod oracle;
 pub mod pandemonium;
 pub mod philosopher;
+pub mod plasmid;
 pub mod prism;
 pub mod psionics;
 pub mod quantum;
@@ -314,6 +315,7 @@ impl PrologueState {
                             | "l"
                             | "n"
                             | "∞"
+                            | "Ð"
                         // Void
                             | "µ"
                             | "Ø"
@@ -458,6 +460,7 @@ impl PrologueState {
                             || s == "₣"
                             || s == "ζ"
                             || s == "Φ"
+                            || s == "P"
                         {
                             // Try to retrieve persistent state
                             let raw_state = self
@@ -1458,6 +1461,14 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 }
                 None => continue,
             }
+        } else if current_type == "P" {
+            match plasmid::process_plasmid_logic(vm, &agent, grid_snapshot) {
+                Some((updated_agent, t)) => {
+                    agent = updated_agent;
+                    t
+                }
+                None => continue,
+            }
         } else {
             process_seeker_logic(vm, &agent, grid_snapshot)
         };
@@ -1473,6 +1484,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "♬"
                 || current_type == "₣"
                 || current_type == "ζ"
+                || current_type == "P"
             {
                 vm.prologue_state.registers.insert(
                     (ny, nx),
@@ -1492,6 +1504,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                     || current_type == "♬"
                     || current_type == "₣"
                     || current_type == "ζ"
+                    || current_type == "P"
                 {
                     vm.prologue_state.registers.remove(&(y, x));
                 }
