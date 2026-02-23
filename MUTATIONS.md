@@ -1625,4 +1625,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A visualization where ChimeraVM genomes are serialized into magnetic Quipu cords that self-organize on a loom.
 - **Novel trait**: Magnetic Taxonomy of Knotted Code. The data structure physically reacts to its own content.
 - **Status**: experiments/ferrous-weaver
-- **Evaluation**: Implementation in progress.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### ferrous-genesis
+- **Parents**: experiments/chimera-genesis + experiments/ferrous-graph
+- **Concept**: Amorphous Cellular Automata. Magnetic particles executing ChimeraVM code to modulate their own magnetic properties and self-organize.
+- **Novel trait**: Bio-Physical Feedback Loop. Code controls magnetism, magnetism controls topology, topology controls sensory input.
+- **Status**: experiments/ferrous-genesis
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
