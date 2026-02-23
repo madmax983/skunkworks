@@ -353,4 +353,99 @@ mod tests {
         assert!((rotated_fast.w - 1.0).abs() < 1e-6);
         assert!((rotated.w - rotated_fast.w).abs() < 1e-6);
     }
+
+    #[test]
+    fn test_normalize_zero() {
+        let v = Vec4::zero();
+        let n = v.normalize();
+        assert_eq!(n.x, 0.0);
+        assert_eq!(n.y, 0.0);
+        assert_eq!(n.z, 0.0);
+        assert_eq!(n.w, 0.0);
+        assert_eq!(n.length(), 0.0);
+    }
+
+    #[test]
+    fn test_limit() {
+        let v = Vec4::new(10.0, 0.0, 0.0, 0.0);
+        let limited = v.limit(5.0);
+        assert!((limited.length() - 5.0).abs() < 1e-6);
+        assert_eq!(limited.x, 5.0);
+
+        let small = Vec4::new(1.0, 0.0, 0.0, 0.0);
+        let limited_small = small.limit(5.0);
+        assert_eq!(limited_small.x, 1.0);
+    }
+
+    #[test]
+    fn test_distance_squared() {
+        let v1 = Vec4::new(0.0, 0.0, 0.0, 0.0);
+        let v2 = Vec4::new(1.0, 1.0, 1.0, 1.0);
+        assert_eq!(v1.distance_squared(v2), 4.0);
+    }
+
+    #[test]
+    fn test_scale_dim() {
+        let v = Vec4::new(1.0, 1.0, 1.0, 1.0);
+        let s = v.scale_dim(2.0, 3.0, 4.0, 5.0);
+        assert_eq!(s.x, 2.0);
+        assert_eq!(s.y, 3.0);
+        assert_eq!(s.z, 4.0);
+        assert_eq!(s.w, 5.0);
+    }
+
+    #[test]
+    fn test_rotations_all_planes() {
+        let theta = std::f32::consts::PI / 2.0;
+
+        // Rotate YW: changes Y and W
+        let v_yw = Vec4::new(0.0, 1.0, 0.0, 0.0);
+        let rot_yw = v_yw.rotate_yw(theta);
+        // y' = y cos - w sin = 0 - 0 = 0
+        // w' = y sin + w cos = 1 + 0 = 1
+        assert!(rot_yw.y.abs() < 1e-6);
+        assert!((rot_yw.w - 1.0).abs() < 1e-6);
+        assert_eq!(rot_yw.x, 0.0);
+        assert_eq!(rot_yw.z, 0.0);
+
+        // Rotate ZW: changes Z and W
+        let v_zw = Vec4::new(0.0, 0.0, 1.0, 0.0);
+        let rot_zw = v_zw.rotate_zw(theta);
+        // z' = z cos - w sin = 0 - 0 = 0
+        // w' = z sin + w cos = 1 + 0 = 1
+        assert!(rot_zw.z.abs() < 1e-6);
+        assert!((rot_zw.w - 1.0).abs() < 1e-6);
+        assert_eq!(rot_zw.x, 0.0);
+        assert_eq!(rot_zw.y, 0.0);
+    }
+
+    #[test]
+    fn test_project_to_3d_basic() {
+        let v = Vec4::new(1.0, 2.0, 3.0, 0.0);
+        let camera_w = 10.0;
+        // w_dist = 10.0 - 0.0 = 10.0
+        // scale = 2.0 / 10.0 = 0.2
+        let proj = v.project_to_3d(camera_w);
+        assert!((proj.x - 0.2).abs() < 1e-6);
+        assert!((proj.y - 0.4).abs() < 1e-6);
+        assert!((proj.z - 0.6).abs() < 1e-6);
+    }
+
+    #[test]
+    fn test_project_to_3d_clamping() {
+        // Point exactly at camera
+        let v_at_cam = Vec4::new(1.0, 1.0, 1.0, 10.0);
+        let camera_w = 10.0;
+        // w_dist = 0.0 -> max(0.1) -> 0.1
+        // scale = 2.0 / 0.1 = 20.0
+        let proj = v_at_cam.project_to_3d(camera_w);
+        assert!((proj.x - 20.0).abs() < 1e-6);
+
+        // Point behind camera
+        let v_behind = Vec4::new(1.0, 1.0, 1.0, 15.0);
+        // w_dist = -5.0 -> max(0.1) -> 0.1
+        // scale = 2.0 / 0.1 = 20.0
+        let proj_behind = v_behind.project_to_3d(camera_w);
+        assert!((proj_behind.x - 20.0).abs() < 1e-6);
+    }
 }
