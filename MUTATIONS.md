@@ -1569,7 +1569,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A Cellular Automaton where every cell's update rule is a ChimeraVM genetic program.
 - **Novel trait**: Programmable Cellular Physics. The "laws of physics" are the code.
 - **Status**: experiments/chimera-genesis
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational. Tests passed.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational. Tests passed. Re-verified compilation.
 
 ### neuro-quipu
 - **Parents**: experiments/quipu-symphony + crates/neuro-sim
@@ -1590,4 +1590,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A 3D Crystal Lattice where bonds are Quipu cords. The structure records the traffic history of agents via knots.
 - **Novel trait**: 3D Data Structure Visualization.
 - **Status**: experiments/quipu-lattice
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational. Re-verified compilation.
+
+### hyper-quipu
+- **Parents**: experiments/tesseract-ops + experiments/quipu-symphony
+- **Concept**: A 4D System Monitor Quipu. Cords hang in 4D space (W-axis = Time).
+- **Novel trait**: 4D Knots. Visualizing system history as a hyper-dimensional textile.
+- **Status**: experiments/hyper-quipu
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational.

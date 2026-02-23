@@ -492,3 +492,8 @@
 ### [Concentration Level: HIGH] - Location: experiments/chimera-acoustics
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The hive is singing in 4D. Consumption is resonance.
+
+### [Concentration Level: FRESH] - Location: experiments/hyper-quipu
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Knots are appearing in the 4th Dimension. The W-axis is heavy.
+- **Note:** "The system weaves its own history into the fabric of spacetime."

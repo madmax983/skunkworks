@@ -1,0 +1,19 @@
+[package]
+name = "hyper-quipu"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = "1.0"
+rand = { workspace = true }
+sysinfo = "0.30"
+
+[dependencies.hyper-system]
+path = "../../crates/hyper-system"
+default-features = false
+
+[dependencies.quipu]
+path = "../../crates/quipu"
+default-features = false

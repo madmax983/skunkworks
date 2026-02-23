@@ -30,7 +30,7 @@ use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
 /// println!("CPU Usage: {:.2}%", monitor.cpu_usage * 100.0);
 /// ```
 pub struct SystemMonitor {
-    sys: System,
+    pub sys: System,
     /// Timestamp of the last successful system poll (in seconds).
     pub last_update: f64,
     /// Current interpolated CPU usage (0.0 - 1.0).
