@@ -12334,7 +12334,12 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
             if vm.prologue_state.signal_grid[y][x].is_some() {
                 style = style.fg(Color::Green).add_modifier(Modifier::BOLD);
-            } else if vm.prologue_state.runes.contains(&(y, x)) {
+            } else if vm.prologue_state.mycelium_network.contains(&(y, x)) {
+                // Mycelium Substrate
+                style = style.bg(Color::Rgb(101, 67, 33)); // Dark Brown
+            }
+
+            if vm.prologue_state.runes.contains(&(y, x)) {
                 // Colorize Runes
                 match s.as_str() {
                     "$" => style = style.fg(Color::Cyan).add_modifier(Modifier::BOLD),
@@ -12412,9 +12417,11 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     "⏱️" | "🥁" | "🎹" | "🎚️" => {
                         style = style.fg(Color::LightCyan).add_modifier(Modifier::BOLD);
                     }
+                    "🍄" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
+                    "📥" | "📤" | "🦋" => style = style.fg(Color::LightGreen).add_modifier(Modifier::BOLD),
                     _ => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
                 }
-            } else {
+            } else if !vm.prologue_state.mycelium_network.contains(&(y, x)) {
                 style = style.fg(Color::DarkGray);
             }
 
@@ -12473,6 +12480,19 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         "Rhythm: {} BPM (Int: {})",
         vm.prologue_state.rhythm_state.bpm, vm.prologue_state.rhythm_state.beat_interval
     )));
+
+    // Mycelium Status
+    info.push(Line::from(format!(
+        "Mycelium Nodes: {}",
+        vm.prologue_state.mycelium_network.len()
+    )));
+    info.push(Line::from(format!(
+        "Buffer: {} items",
+        vm.prologue_state.mycelium_buffer.len()
+    )));
+    if let Some(val) = vm.prologue_state.mycelium_buffer.front() {
+        info.push(Line::from(format!("  Head: {}", val)));
+    }
 
     // Check for Agent at Cursor
     let (cx, cy) = app_state.grid_cursor;

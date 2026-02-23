@@ -85,6 +85,7 @@ pub mod logic;
 pub mod logos;
 pub mod math;
 pub mod memetics;
+pub mod mycelium;
 pub mod narrative;
 pub mod necromancy;
 #[cfg(feature = "biophysics")]
@@ -168,6 +169,12 @@ pub struct PrologueState {
     /// Rhythm State (Sequencer/Clock)
     #[serde(default)]
     pub rhythm_state: rhythm::RhythmState,
+    /// Mycelium Network (Active Spores)
+    #[serde(default)]
+    pub mycelium_network: HashSet<(usize, usize)>,
+    /// Mycelium Buffer (Shared Network Storage)
+    #[serde(default)]
+    pub mycelium_buffer: VecDeque<Value>,
     /// Scratch buffer for signal propagation (Double Buffering).
     #[serde(skip, default)]
     pub scratch_signal_grid: Vec<Vec<Option<Value>>>,
@@ -203,6 +210,8 @@ impl PrologueState {
             void_buffer: VecDeque::new(),
             hyper_state: hyper::HyperState::default(),
             rhythm_state: rhythm::RhythmState::default(),
+            mycelium_network: HashSet::new(),
+            mycelium_buffer: VecDeque::new(),
             scratch_signal_grid: vec![vec![None; GRID_SIZE]; GRID_SIZE],
         }
     }
@@ -432,6 +441,8 @@ impl PrologueState {
                             | "⏱️" | "🎹" | "🎚️"
                             // Sequencer
                             | "🔍" | "✏" | "🗑" | "➕"
+                            // Mycelium
+                            | "🍄" | "📥" | "📤" | "🦋"
                     ) {
                         self.runes.insert((y, x));
 
@@ -645,6 +656,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     &mut vm.prologue_state.echoes,
                     &mut vm.prologue_state.history,
                     &mut vm.prologue_state.void_buffer,
+                    &mut vm.prologue_state.mycelium_buffer,
                     grid,
                     &vm.light_grid,
                     &mut vm.prologue_state.dream_intensity,
@@ -698,6 +710,7 @@ fn apply_propagation_rune(
     echoes: &mut HashMap<(usize, usize), echo::EchoBuffer>,
     history: &mut HashMap<(usize, usize), VecDeque<Value>>,
     void_buffer: &mut VecDeque<Value>,
+    mycelium_buffer: &mut VecDeque<Value>,
     grid: &[Vec<Value>],
     light_grid: &[Vec<i64>],
     dream_intensity: &mut f32,
@@ -870,6 +883,16 @@ fn apply_propagation_rune(
         return true;
     }
     if sequencer::apply_sequencer_runes(rune, y, x, dna, current_signals, next_signals) {
+        return true;
+    }
+    if mycelium::apply_mycelium_runes(
+        rune,
+        y,
+        x,
+        current_signals,
+        next_signals,
+        mycelium_buffer,
+    ) {
         return true;
     }
     false
@@ -1082,6 +1105,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             narrative::apply_narrative_sinks(vm, rune, y, x);
             chroma::apply_chroma_sinks(vm, rune, y, x);
             sequencer::apply_sequencer_sinks(vm, rune, y, x);
+            mycelium::apply_mycelium_sinks(vm, rune, y, x);
         }
     }
 }
@@ -1565,3 +1589,5 @@ mod prologue_chroma_test;
 mod prologue_echo_test;
 #[cfg(test)]
 mod prologue_green_spore_test;
+#[cfg(test)]
+mod prologue_mycelium_test;
