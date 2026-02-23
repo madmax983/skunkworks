@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hydro-flock**: Diagnosis: Terminal Redundancy (with `hydrothermal-locks` and `luminous-flock`). Grace period: 24 hours.
+- **biomimetic-bridge**: Diagnosis: Terminal Redundancy (Skeletal Rot). Redundant with `bridge-specter`. Grace period: 24 hours.
 - [Experiment name]: [Diagnosis]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **hydro-flock**: Specimen executed. Diagnosis: Terminal Redundancy (with `hydrothermal-locks` and `luminous-flock`). Grace period expired. Moved to graveyard.
 - **saros-cycle**: Specimen executed. Diagnosis: Terminal Genericism / Trivial Implementation. Grace period expired. Moved to graveyard.
 - **heap-glacier**: Specimen executed. Diagnosis: Terminal Genericism (Terrain Mesh). Redundant with `code-canyon`. Moved to graveyard.
 - **social-spores**: Specimen executed. Diagnosis: Terminal Redundancy (Particle System). Moved to graveyard.
