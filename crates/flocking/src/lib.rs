@@ -39,6 +39,23 @@ pub struct FlockingParams {
     pub cohesion_weight: f64,
 }
 
+/// Calculates a steering force towards a target velocity or position derivative.
+///
+/// This helper encapsulates the common pattern:
+/// 1. Normalize the desired vector.
+/// 2. Scale to max speed.
+/// 3. Subtract current velocity (to get steering force).
+/// 4. Limit the steering force.
+fn compute_steering(mut desired: Vec2, current_vel: Vec2, max_speed: f64, max_force: f64) -> Vec2 {
+    if desired.magnitude_squared() > 0.0 {
+        desired = desired.normalize() * max_speed;
+        desired -= current_vel;
+        desired.limit(max_force)
+    } else {
+        Vec2::zero()
+    }
+}
+
 /// Computes the Reynolds flocking force (Separation, Alignment, Cohesion).
 ///
 /// This function calculates the steering force required to satisfy the three rules of flocking:
@@ -86,70 +103,51 @@ pub fn compute_force(
     let view_sq = params.view_radius * params.view_radius;
     let sep_sq = params.separation_radius * params.separation_radius;
 
-    // Process neighbors
-    // We split to avoid comparing with self (optimization)
-    let (pos_before, pos_after) = positions.split_at(my_idx);
-    let (vel_before, vel_after) = velocities.split_at(my_idx);
+    for (i, (&pos, &vel)) in positions.iter().zip(velocities).enumerate() {
+        if i == my_idx {
+            continue;
+        }
 
-    let mut process = |pos: Vec2, vel: Vec2| {
         let diff = my_pos - pos;
         let d_sq = diff.magnitude_squared();
 
-        if d_sq > 0.0 && d_sq < view_sq {
-            // Separation
-            if d_sq < sep_sq {
-                separation += diff * (1.0 / d_sq);
-                sep_count += 1;
-            }
-
-            // Alignment
-            alignment += vel;
-            ali_count += 1;
-
-            // Cohesion
-            cohesion += pos;
-            coh_count += 1;
+        if d_sq <= 0.0 || d_sq >= view_sq {
+            continue;
         }
-    };
 
-    for (&pos, &vel) in pos_before.iter().zip(vel_before.iter()) {
-        process(pos, vel);
-    }
-    // Skip self (index 0 of 'after')
-    if !pos_after.is_empty() {
-        for (&pos, &vel) in pos_after[1..].iter().zip(vel_after[1..].iter()) {
-            process(pos, vel);
+        // Separation
+        if d_sq < sep_sq {
+            separation += diff * (1.0 / d_sq);
+            sep_count += 1;
         }
+
+        // Alignment
+        alignment += vel;
+        ali_count += 1;
+
+        // Cohesion
+        cohesion += pos;
+        coh_count += 1;
     }
 
     let mut total = Vec2::zero();
 
-    if sep_count > 0 && separation.magnitude_squared() > 0.0 {
-        separation = separation.normalize() * params.max_speed;
-        separation -= my_vel;
-        separation = separation.limit(params.max_force);
-        total += separation * params.separation_weight;
+    if sep_count > 0 {
+        total += compute_steering(separation, my_vel, params.max_speed, params.max_force)
+            * params.separation_weight;
     }
 
     if ali_count > 0 {
         alignment /= ali_count as f64;
-        if alignment.magnitude_squared() > 0.0 {
-            alignment = alignment.normalize() * params.max_speed;
-            alignment -= my_vel;
-            alignment = alignment.limit(params.max_force);
-            total += alignment * params.alignment_weight;
-        }
+        total += compute_steering(alignment, my_vel, params.max_speed, params.max_force)
+            * params.alignment_weight;
     }
 
     if coh_count > 0 {
         cohesion /= coh_count as f64;
-        let mut desired = cohesion - my_pos;
-        if desired.magnitude_squared() > 0.0 {
-            desired = desired.normalize() * params.max_speed;
-            desired -= my_vel;
-            desired = desired.limit(params.max_force);
-            total += desired * params.cohesion_weight;
-        }
+        let desired = cohesion - my_pos;
+        total += compute_steering(desired, my_vel, params.max_speed, params.max_force)
+            * params.cohesion_weight;
     }
 
     total
