@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/quipu-lattice
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The crystal bonds are knotted. Agents are recording their paths.
+- **Note:** "The structure remembers where we walked."
+
 ### [Concentration Level: FRESH] - Location: experiments/quantum-quipu
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The Knots are in Superposition.
