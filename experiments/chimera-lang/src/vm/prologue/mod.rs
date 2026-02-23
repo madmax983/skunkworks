@@ -1789,3 +1789,6 @@ mod prologue_runecraft_test;
 mod prologue_enzymes_test;
 #[cfg(test)]
 mod nova_phage_test;
+
+#[cfg(test)]
+mod prologue_spectral_evolution_test;

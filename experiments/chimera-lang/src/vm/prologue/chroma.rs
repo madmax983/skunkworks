@@ -223,29 +223,64 @@ fn apply_red_logic(
     next_signals: &mut Vec<Vec<Option<Value>>>,
 ) -> bool {
     // Red: Amplification, Force, Destruction
+    let w_sig = get_sig(current_signals, y, x, 0, -1);
+    let e_sig = get_sig(current_signals, y, x, 0, 1);
+
     match rune {
         "+" => {
             // Red Add: (West + East) * 2
-            let w_sig = get_sig(current_signals, y, x, 0, -1);
-            let e_sig = get_sig(current_signals, y, x, 0, 1);
             if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
                 let res = (w + e) * 2;
                 set_sig(next_signals, y, x, 1, 0, Value::Int(res));
-                true
-            } else {
-                false
             }
+            true
+        }
+        "-" => {
+            // Red Sub: Clamped Sub (Max(0, W-E))
+            if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
+                let res = (w - e).max(0);
+                set_sig(next_signals, y, x, 1, 0, Value::Int(res));
+            }
+            true
         }
         "*" => {
             // Red Split: West -> N, E, S (Explosive)
-            if let Some(val) = get_sig(current_signals, y, x, 0, -1) {
+            if let Some(val) = w_sig {
                 set_sig(next_signals, y, x, -1, 0, val.clone());
                 set_sig(next_signals, y, x, 0, 1, val.clone());
                 set_sig(next_signals, y, x, 1, 0, val);
-                true
-            } else {
-                false
             }
+            true
+        }
+        "/" => {
+            // Red Div: Fragmentation (DivRem)
+            if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
+                if e != 0 {
+                    let div = w / e;
+                    let rem = w % e;
+                    set_sig(next_signals, y, x, -1, 0, Value::Int(div)); // North
+                    set_sig(next_signals, y, x, 1, 0, Value::Int(rem));  // South
+                }
+            }
+            true
+        }
+        "%" => {
+            // Red Mod: Atomize (1 if A%B==0 else 0)
+            if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
+                if e != 0 {
+                    let res = if w % e == 0 { 1 } else { 0 };
+                    set_sig(next_signals, y, x, 1, 0, Value::Int(res));
+                }
+            }
+            true
+        }
+        "^" => {
+            // Red XOR: Annihilation (Sum if A != B, else 0)
+            if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
+                let res = if w != e { w + e } else { 0 };
+                set_sig(next_signals, y, x, 1, 0, Value::Int(res));
+            }
+            true
         }
         _ => false,
     }
@@ -259,11 +294,12 @@ fn apply_green_logic(
     next_signals: &mut Vec<Vec<Option<Value>>>,
 ) -> bool {
     // Green: Life, Growth, Crossover
+    let w_sig = get_sig(current_signals, y, x, 0, -1);
+    let e_sig = get_sig(current_signals, y, x, 0, 1);
+
     match rune {
         "+" => {
             // Green Add: Crossover (String Splicing)
-            let w_sig = get_sig(current_signals, y, x, 0, -1);
-            let e_sig = get_sig(current_signals, y, x, 0, 1);
             if let (Some(Value::Str(w)), Some(Value::Str(e))) = (w_sig, e_sig) {
                 // Unicode-safe splicing
                 let w_chars: Vec<char> = w.chars().collect();
@@ -276,19 +312,48 @@ fn apply_green_logic(
                 let new_s = format!("{}{}", head, tail);
 
                 set_sig(next_signals, y, x, 1, 0, Value::Str(new_s));
-                true
-            } else {
-                false
             }
+            true
+        }
+        "-" => {
+            // Green Sub: Pruning (Remove chars of E from W)
+             if let (Some(Value::Str(w)), Some(Value::Str(e))) = (w_sig, e_sig) {
+                 let res: String = w.chars().filter(|c| !e.contains(*c)).collect();
+                 set_sig(next_signals, y, x, 1, 0, Value::Str(res));
+             }
+             true
         }
         "*" => {
-            // Green Split: Spore (Spawn Agent?)
-             if let Some(val) = get_sig(current_signals, y, x, 0, -1) {
+            // Green Split: Spore (Clone to North and South? Or just Split value)
+             if let Some(val) = w_sig {
                 set_sig(next_signals, y, x, 0, 1, val);
-                true
-             } else {
-                 false
              }
+             true
+        }
+        "/" => {
+            // Green Div: Mitosis (Split W into two W/2 signals)
+            if let Some(Value::Int(w)) = w_sig {
+                let half = w / 2;
+                set_sig(next_signals, y, x, -1, 0, Value::Int(half)); // North
+                set_sig(next_signals, y, x, 1, 0, Value::Int(half));  // South
+            }
+            true
+        }
+        "%" => {
+            // Green Mod: Mutation (XOR with E or Mask)
+            if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
+                let res = w ^ e;
+                set_sig(next_signals, y, x, 1, 0, Value::Int(res));
+            }
+            true
+        }
+        "&" => {
+            // Green AND: Symbiosis (Max(A, B))
+             if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
+                let res = w.max(e);
+                set_sig(next_signals, y, x, 1, 0, Value::Int(res));
+            }
+            true
         }
         _ => false,
     }
@@ -302,29 +367,59 @@ fn apply_blue_logic(
     next_signals: &mut Vec<Vec<Option<Value>>>,
 ) -> bool {
     // Blue: Logic, Time, Control
+    let w_sig = get_sig(current_signals, y, x, 0, -1);
+    let e_sig = get_sig(current_signals, y, x, 0, 1);
+
     match rune {
         "+" => {
             // Blue Add: Logical AND (Bitwise or Boolean)
-            let w_sig = get_sig(current_signals, y, x, 0, -1);
-            let e_sig = get_sig(current_signals, y, x, 0, 1);
             if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
                 // If both are non-zero, output 1. Else 0.
                 let res = if w != 0 && e != 0 { 1 } else { 0 };
                 set_sig(next_signals, y, x, 1, 0, Value::Int(res));
-                true
-            } else {
-                false
             }
+            true
+        }
+        "-" => {
+            // Blue Sub: Inverse (E - W)
+            if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
+                let res = e - w;
+                set_sig(next_signals, y, x, 1, 0, Value::Int(res));
+            }
+            true
         }
         "*" => {
             // Blue Split: Delay (Time Dilation)
-             if let Some(Value::Int(w)) = get_sig(current_signals, y, x, 0, -1) {
+             if let Some(Value::Int(w)) = w_sig {
                  let res = if w == 0 { 1 } else { 0 };
                  set_sig(next_signals, y, x, 0, 1, Value::Int(res));
-                 true
-             } else {
-                 false
              }
+             true
+        }
+        "/" => {
+            // Blue Div: Filter (Pass W if W % E == 0)
+            if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
+                if e != 0 && w % e == 0 {
+                     set_sig(next_signals, y, x, 1, 0, Value::Int(w));
+                }
+            }
+            true
+        }
+        "%" => {
+            // Blue Mod: Clock (W % 12)
+            if let Some(Value::Int(w)) = w_sig {
+                let res = w % 12;
+                set_sig(next_signals, y, x, 1, 0, Value::Int(res));
+            }
+            true
+        }
+        "|" => {
+            // Blue OR: NAND
+             if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
+                let res = if w != 0 && e != 0 { 0 } else { 1 };
+                set_sig(next_signals, y, x, 1, 0, Value::Int(res));
+            }
+            true
         }
         _ => false,
     }
