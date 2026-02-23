@@ -1632,11 +1632,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Amorphous Cellular Automata. Magnetic particles executing ChimeraVM code to modulate their own magnetic properties and self-organize.
 - **Novel trait**: Bio-Physical Feedback Loop. Code controls magnetism, magnetism controls topology, topology controls sensory input.
 - **Status**: experiments/ferrous-genesis
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
 
 ### chimera-canopy
 - **Parents**: experiments/process-canopy + experiments/chimera-lang
 - **Concept**: Parasitic ChimeraVM agents inhabiting the OS process tree (Canopy). They feed on CPU cycles when the scheduler (Sun) shines on their host process.
 - **Novel trait**: OS Ecology. The agents' survival is tied to the real-time stability and resource usage of the host operating system.
 - **Status**: experiments/chimera-canopy
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### chimera-sediment
+- **Parents**: experiments/chimera-canopy + experiments/primordial-sediment
+- **Concept**: An ecosystem where active processes are Trees (Canopy) and dead processes (zombies/terminated) fall as leaves to the forest floor (Sediment), where "Detritivore" agents (ChimeraVM) break them down.
+- **Novel trait**: Necrotic OS Visualization. Visualizing the lifecycle of processes from execution to termination to resource reclamation.
+- **Status**: experiments/chimera-sediment
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
