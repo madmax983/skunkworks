@@ -28,9 +28,9 @@ pub fn process_forth_agent(
 
     match cell {
         Value::Int(n) => {
-            // Ignore 0 to avoid stack pollution on spawn?
-            // No, 0 is a valid number.
-            updated_agent.stack.push(Value::Int(*n));
+            if *n != 0 {
+                updated_agent.stack.push(Value::Int(*n));
+            }
         }
         Value::Str(s) => {
             match s.as_str() {
@@ -53,51 +53,66 @@ pub fn process_forth_agent(
                 }
 
                 // Stack Manipulation
-                "\"" => {
-                    // Dup
+                "\"" | "dup" => {
                     if let Some(val) = updated_agent.stack.last() {
                         updated_agent.stack.push(val.clone());
                     }
                 }
-                "_" => {
-                    // Drop
+                "_" | "drop" => {
                     updated_agent.stack.pop();
                 }
-                "\\" => {
-                    // Swap
+                "\\" | "swap" => {
                     let len = updated_agent.stack.len();
                     if len >= 2 {
                         updated_agent.stack.swap(len - 1, len - 2);
                     }
                 }
+                "o" | "over" => {
+                    // ( a b -- a b a )
+                    let len = updated_agent.stack.len();
+                    if len >= 2 {
+                        let val = updated_agent.stack[len - 2].clone();
+                        updated_agent.stack.push(val);
+                    }
+                }
+                "rot" => {
+                    // ( a b c -- b c a )
+                    let len = updated_agent.stack.len();
+                    if len >= 3 {
+                        let c = updated_agent.stack.remove(len - 1); // Top
+                        let b = updated_agent.stack.remove(len - 2);
+                        let a = updated_agent.stack.remove(len - 3); // Bottom of 3
+                        updated_agent.stack.push(b);
+                        updated_agent.stack.push(c);
+                        updated_agent.stack.push(a);
+                    }
+                }
 
                 // Math
-                "+" => binary_op(&mut updated_agent.stack, |a, b| a + b),
-                "-" => binary_op(&mut updated_agent.stack, |a, b| a - b),
-                "*" => binary_op(&mut updated_agent.stack, |a, b| a * b),
-                "/" => binary_op(
-                    &mut updated_agent.stack,
-                    |a, b| if b != 0 { a / b } else { 0 },
-                ),
-                "%" => binary_op(
-                    &mut updated_agent.stack,
-                    |a, b| if b != 0 { a % b } else { 0 },
-                ),
+                "+" | "add" => binary_op(&mut updated_agent.stack, |a, b| a + b),
+                "-" | "sub" => binary_op(&mut updated_agent.stack, |a, b| a - b),
+                "*" | "mul" => binary_op(&mut updated_agent.stack, |a, b| a * b),
+                "/" | "div" => {
+                    binary_op(&mut updated_agent.stack, |a, b| if b != 0 { a / b } else { 0 })
+                }
+                "%" | "mod" => {
+                    binary_op(&mut updated_agent.stack, |a, b| if b != 0 { a % b } else { 0 })
+                }
 
                 // IO
-                "!" => {
+                "!" | "emit" => {
                     // Emit: Pop stack -> Signal Grid
                     if let Some(val) = updated_agent.stack.pop() {
                         vm.prologue_state.delayed_signals[y][x] = Some(val);
                     }
                 }
-                "?" => {
+                "?" | "read" => {
                     // Consume: Read Signal -> Push Stack
                     if let Some(val) = &vm.prologue_state.signal_grid[y][x] {
                         updated_agent.stack.push(val.clone());
                     }
                 }
-                "." => {
+                "." | "print" => {
                     // Log: Pop -> Output
                     if let Some(val) = updated_agent.stack.pop() {
                         vm.output
@@ -106,7 +121,7 @@ pub fn process_forth_agent(
                 }
 
                 // Host Operations (Genetic Engineering)
-                "r" => {
+                "r" | "gene_read" => {
                     // Read Gene: [strand, gene] -> [op, arg]
                     if updated_agent.stack.len() >= 2 {
                         let gene_idx_val = updated_agent.stack.pop().unwrap();
@@ -138,7 +153,7 @@ pub fn process_forth_agent(
                         }
                     }
                 }
-                "w" => {
+                "w" | "gene_write" => {
                     // Write Gene: [strand, gene, op, arg] -> []
                     if updated_agent.stack.len() >= 4 {
                         let arg_val = updated_agent.stack.pop().unwrap();
@@ -182,7 +197,7 @@ pub fn process_forth_agent(
                         }
                     }
                 }
-                "x" => {
+                "x" | "exec" => {
                     // Execute Strand: [strand] -> [] (Trigger Interrupt)
                     if let Some(Value::Int(si)) = updated_agent.stack.pop() {
                         if si >= 0 {
@@ -190,14 +205,15 @@ pub fn process_forth_agent(
                         }
                     }
                 }
-                "n" => {
+                "n" | "new" => {
                     // New Strand: [] -> [new_strand_idx]
                     vm.dna.helix.strands.push(Strand { genes: vec![] });
                     let idx = vm.dna.helix.strands.len() - 1;
                     updated_agent.stack.push(Value::Int(idx as i64));
-                    vm.output.push(format!("₣ Genesis: Created strand {}", idx));
+                    vm.output
+                        .push(format!("₣ Genesis: Created strand {}", idx));
                 }
-                "l" => {
+                "l" | "len" => {
                     // Length: [strand] -> [len] (-1 for helix len)
                     if let Some(Value::Int(idx)) = updated_agent.stack.pop() {
                         if idx < 0 {
@@ -212,6 +228,24 @@ pub fn process_forth_agent(
                         }
                     }
                 }
+                "skip" => {
+                    // Conditional Skip: Pop (cond). If 0, skip next move (stay put? No, that's delay).
+                    // Skip usually means "Skip next instruction".
+                    // Since instructions are spatial, we need to skip the next cell.
+                    // This means jumping over it (moving 2 steps).
+                    if let Some(Value::Int(0)) = updated_agent.stack.pop() {
+                        // Move an extra step in current direction
+                        if let Some((_ny, _nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                            // Update current pos logic so the final move is from (ny, nx)
+                            // But we are in "process underfoot". The move happens at step 4.
+                            // We can just add to dy/dx? No, that changes direction.
+                            // We need to change the *starting point* of the next move or the *magnitude*.
+                            // Let's multiply dy, dx by 2 for this turn only.
+                            dy *= 2;
+                            dx *= 2;
+                        }
+                    }
+                }
 
                 // Literals (Numbers in strings)
                 _ => {
@@ -221,6 +255,9 @@ pub fn process_forth_agent(
                         updated_agent
                             .stack
                             .push(Value::Str(s[1..s.len() - 1].to_string()));
+                    } else {
+                        // Push as string literal if unknown
+                        updated_agent.stack.push(Value::Str(s.to_string()));
                     }
                 }
             }
@@ -238,7 +275,11 @@ pub fn process_forth_agent(
                 // Blocked - Stay put
                 updated_agent.state = Value::Junction(
                     crate::ast::JunctionType::All,
-                    vec![Value::Int(dy), Value::Int(dx), underfoot],
+                    vec![
+                        Value::Int(if dy.abs() > 1 { dy / 2 } else { dy }),
+                        Value::Int(if dx.abs() > 1 { dx / 2 } else { dx }),
+                        underfoot,
+                    ],
                 );
                 return Some((updated_agent, None));
             }
@@ -250,19 +291,25 @@ pub fn process_forth_agent(
         // 2. Capture new underfoot
         let next_val = vm.grid[ny][nx].clone();
 
-        // 3. Update state
+        // 3. Update state (Reset dy/dx to normal 1-step if skipped)
+        let saved_dy = if dy.abs() > 1 { dy / 2 } else { dy };
+        let saved_dx = if dx.abs() > 1 { dx / 2 } else { dx };
+
         updated_agent.state = Value::Junction(
             crate::ast::JunctionType::All,
-            vec![Value::Int(dy), Value::Int(dx), next_val],
+            vec![Value::Int(saved_dy), Value::Int(saved_dx), next_val],
         );
 
         return Some((updated_agent, Some((ny, nx))));
     }
 
     // If blocked/no move, we stay.
+    let saved_dy = if dy.abs() > 1 { dy / 2 } else { dy };
+    let saved_dx = if dx.abs() > 1 { dx / 2 } else { dx };
+
     updated_agent.state = Value::Junction(
         crate::ast::JunctionType::All,
-        vec![Value::Int(dy), Value::Int(dx), underfoot],
+        vec![Value::Int(saved_dy), Value::Int(saved_dx), underfoot],
     );
 
     Some((updated_agent, None))
@@ -278,9 +325,7 @@ where
         if let (Value::Int(ia), Value::Int(ib)) = (a, b) {
             stack.push(Value::Int(op(ia, ib)));
         } else {
-            // Push back if fail? Or error?
-            // Forth typically crashes or does weird stuff.
-            // Let's just consume and push nothing (error).
+            // Restore? Or consume and fail? Consuming is standard for type errors in loose langs.
         }
     }
 }

@@ -382,6 +382,7 @@ impl PrologueState {
                             | "🔋"
                             | "♒"
                             | "⇝"
+                            | "⏧"
                         // Oracle
                             | "¶"
                             | "λ"
@@ -1636,3 +1637,7 @@ mod prologue_echo_test;
 mod prologue_green_spore_test;
 #[cfg(test)]
 mod prologue_mycelium_test;
+#[cfg(test)]
+mod prologue_evolution_v2_test;
+#[cfg(test)]
+mod prologue_forth_v2_test;
