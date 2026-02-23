@@ -80,3 +80,7 @@
 ## 2027-01-15 - Unbounded Fractal Iterations (DoS)
 **Threat:** The `OpCode::Mandelbrot` and `OpCode::Escape` operations in `experiments/chimera-lang/src/vm/nova_fractal.rs` allowed setting `max_iter` to arbitrarily large values (e.g., `1_000_000_000`), causing the VM execution loop to hang the thread and causing a Denial of Service.
 **Defense:** Introduced `MAX_FRACTAL_ITER` (1000) constant in `vm/mod.rs` and enforced it in `exec_fractal_op`. Renamed and updated `havoc_fractal_hang.rs` to `havoc_fractal_dos_prevention.rs` to verify the fix.
+
+## 2027-02-23 - Nova Chemistry Integer Overflow Panic
+**Threat:** The `exec_brew` operation in `experiments/chimera-lang/src/vm/nova_chemistry.rs` used unchecked addition (`+=`) to calculate potion potency. If the input heat or potency accumulated to `i64::MAX`, this would cause a panic in debug builds (DoS) or wrapping in release builds.
+**Defense:** Replaced unchecked addition with `.saturating_add()` to ensure safety and prevent panic/wrapping. Verified with `warden_overflow_test.rs`.

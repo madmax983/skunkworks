@@ -5504,3 +5504,6 @@ mod prologue_necromancy_test;
 mod prologue_pandemonium_test;
 #[cfg(test)]
 mod prologue_symbiosis_test;
+
+#[cfg(test)]
+mod warden_overflow_test;
