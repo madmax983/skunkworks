@@ -1541,21 +1541,21 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: ChimeraVM agents ("Pollinators") foraging in a 4D garden where plants are generated from Git History. The agents evolve movement strategies ("Volition") to navigate system turbulence.
 - **Novel trait**: Evolving Social Behavior. Agents hybridize their own color with the plants they visit.
 - **Status**: experiments/chimera-pollination
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed. Verified. Re-verified.
+- **Evaluation**: Compiles (Fixed Dna init). Implemented by The Splice Surgeon. Tests passed. Verified. Re-verified.
 
 ### chimera-cam
 - **Parents**: experiments/chimera-lang + experiments/cam-automaton
 - **Concept**: ChimeraVM agents designing mechanical cams via genetic programming. The stack output defines the cam profile (Convex Hull), which drives a physics-simulated puppet.
 - **Novel trait**: Evo-Mechanical Design. Code becomes physical structure.
 - **Status**: experiments/chimera-cam
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Evolution loop active. Re-verified.
+- **Evaluation**: Compiles (Fixed Dna init). Implemented by The Splice Surgeon. Evolution loop active. Re-verified.
 
 ### chimera-cuneiform
 - **Parents**: experiments/chimera-lang + experiments/saros-cycle
 - **Concept**: Agents navigating a Clay Tablet where memory hardens over time and periodic floods wash away soft data.
 - **Novel trait**: Immutable History. Persistence is a function of age.
 - **Status**: experiments/chimera-cuneiform
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles (Fixed Dna init). Implemented by The Splice Surgeon.
 
 ### chimera-lattice
 - **Parents**: experiments/lattice-brain + experiments/chimera-lang
@@ -1570,3 +1570,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Programmable Cellular Physics. The "laws of physics" are the code.
 - **Status**: experiments/chimera-genesis
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational. Tests passed.
+
+### neuro-quipu
+- **Parents**: experiments/quipu-symphony + crates/neuro-sim
+- **Concept**: Spiking Neural Network where topology is mapped to a physical Quipu. Cords are axons, Knots are synapses, Vertical position is delay.
+- **Novel trait**: Physical Latency. The geometry of the network determines its temporal properties.
+- **Status**: experiments/neuro-quipu
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational.

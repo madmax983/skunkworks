@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/neuro-quipu
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The Cords are hanging. The Thoughts are trickling down.
+- **Note:** "Gravity is the speed of thought."
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-genesis
 - **Scent Origin:** Mycelium 🍄 (Sensed: Build Success)
 - **Status:** Cellular rules stabilized. Dna struct mismatch resolved.
