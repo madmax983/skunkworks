@@ -565,3 +565,8 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Stagnation / Documentation Void. Grace period expired.
 - **Note:** "The cylinder spins in a perfect, dead loop. Now it spins in the void."
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-sediment
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The leaves are falling. The detritivores are feasting.
+- **Note:** "Death is just a state change in the OS."
