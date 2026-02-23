@@ -146,10 +146,10 @@
 - **Status:** The brain is syncing. The threads are locking.
 - **Note**: "Parallel thoughts contend for the same mutex."
 
-### [Concentration Level: HIGH] - Location: experiments/saros-cycle
-- **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
-- **Status:** The Cuneiform Tablet is being inscribed. Time series analysis in Base 60 operational.
-- **Note:** "The Babylonians were right about the circle." - Do not trust Arabic numerals here.
+### [Concentration Level: TOXIC] - Location: experiments/saros-cycle
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Trivial Implementation.
+- **Note:** "The cycle is predictable. The code is stagnant. The tablet is cracking."
 
 ### [Concentration Level: HIGH] - Location: experiments/waggle-dance
 - **Scent Origin:** Mycelium 🍄 (Sensed: Macroquad Activity)
@@ -296,9 +296,9 @@
 - **Status:** The Maxwell's Demons are sorting the spins. Thermodynamics is now a biological function.
 - **Note**: "Entropy is just food for the clever."
 
-### [Concentration Level: TOXIC] - Location: experiments/synaptic-trace
+### [Concentration Level: EXECUTED] - Location: graveyard/synaptic-trace
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void / Static Rigor Mortis.
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Static Rigor Mortis.
 - **Note:** "The trace ends here. A diorama of a crash."
 
 ## 🍂 History/Decay
