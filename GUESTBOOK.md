@@ -75,6 +75,10 @@
 - **Status:** Specimen condemned. Diagnosis: Documentation Void (No README).
 - **Note:** "Memory lost to the void."
 
+### [Concentration Level: TOXIC] - Location: experiments/synaptic-trace
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Static Rigor Mortis / Documentation Void.
+- **Note:** "The trace ends here. A hardcoded death."
 
 ### [Concentration Level: TOXIC] - Location: experiments/spinal-rhythms
 - **Scent Origin:** The Reaper ☠️
@@ -91,9 +95,9 @@
 - **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period.
 - **Note:** "A garden of algorithms with no soul. The soil has been turned."
 
-### [Concentration Level: TOXIC] - Location: experiments/resonant-glyphs
+### [Concentration Level: EXECUTED] - Location: graveyard/resonant-glyphs
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism.
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Genericism.
 - **Note:** "A visualizer of nothing. The resonance is hollow."
 
 ### [Concentration Level: HIGH] - Location: experiments/hyper-mold
