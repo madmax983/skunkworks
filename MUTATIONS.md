@@ -1598,3 +1598,17 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: 4D Knots. Visualizing system history as a hyper-dimensional textile.
 - **Status**: experiments/hyper-quipu
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational.
+
+### quipu-serializer
+- **Parents**: crates/quipu + serde (External)
+- **Concept**: A library and TUI to serialize Rust structs into Quipu knots.
+- **Novel trait**: Physical Serialization. Data is not stored in bits, but in knots.
+- **Status**: experiments/quipu-serializer
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### ferrous-quipu
+- **Parents**: experiments/quipu-symphony + experiments/ferrous-graph
+- **Concept**: "Magnetic Quipu". Cords are physical chains of magnetic particles (Knots) that sway and interact.
+- **Novel trait**: **Magnetic History**. The data structure physically reacts to its own content.
+- **Status**: experiments/ferrous-quipu
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

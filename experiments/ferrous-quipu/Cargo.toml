@@ -1,0 +1,16 @@
+[package]
+name = "ferrous-quipu"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+quipu = { workspace = true }
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+ratatui = { workspace = true }
+tui-shared = { workspace = true }
+
+[features]
+default = []
+audio = ["quipu/audio"]
