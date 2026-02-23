@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- [Experiment name]: [Diagnosis]
+- **mnemosyne**: Documentation Void / Terminal Genericism. Grace period: 24 hours.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
