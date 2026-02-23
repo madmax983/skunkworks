@@ -267,6 +267,31 @@ pub fn apply_evolution_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
                 }
             }
         }
+        "Ð" => {
+            // Reverse Transcriptase: West (String Code) -> Append to Current Strand
+            if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+                if let Some(Value::Str(code)) = &vm.prologue_state.signal_grid[wy][wx] {
+                    // Try to parse code as Gene
+                    let op = code
+                        .parse()
+                        .unwrap_or(crate::opcode::OpCode::Unknown(code.clone()));
+                    let gene = crate::ast::Gene {
+                        op,
+                        args: vec![], // For now, only op
+                    };
+
+                    let s_idx = vm.ip.0;
+                    if s_idx < vm.dna.helix.strands.len() {
+                        vm.dna.helix.strands[s_idx].genes.push(gene);
+                        vm.output.push(format!(
+                            "PROLOGUE: Reverse Transcriptase wrote '{}' to Strand {}",
+                            code, s_idx
+                        ));
+                        vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                    }
+                }
+            }
+        }
         _ => {}
     }
 }

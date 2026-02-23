@@ -357,3 +357,23 @@ When a standard rune is colored, its function is modulated by the dominant color
 | `🔴` | **Extract R** | Extracts Red channel from West signal. |
 | `🟢` | **Extract G** | Extracts Green channel from West signal. |
 | `🔵` | **Extract B** | Extracts Blue channel from West signal. |
+
+# Plasmid: The Genetic Vector (P) 🧬
+
+A mobile agent dedicated to **Horizontal Gene Transfer**.
+
+| Rune | Name | Function |
+|---|---|---|
+| `P` | **Plasmid** | Moves randomly. Absorbs signals from `!` sources. Injects payloads into other agents. |
+
+## Behavior
+*   **Absorption**: `P` adjacent to `!` (West) absorbs the signal.
+*   **Conjugation**: `P` adjacent to another agent injects the payload.
+    *   **Critters (`C`)**: Appends payload as a Gene.
+    *   **Others**: Overwrites state.
+
+# Evolutionary Runes 🧬
+
+| Rune | Name | Function |
+|---|---|---|
+| `Ð` | **Reverse Transcriptase** | Reads **West** (String Signal). Compiles it into a **Gene** and appends it to the current DNA strand. |
