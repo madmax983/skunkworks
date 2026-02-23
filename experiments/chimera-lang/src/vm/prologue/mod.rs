@@ -94,6 +94,7 @@ pub mod optics;
 pub mod oracle;
 pub mod pandemonium;
 pub mod philosopher;
+pub mod pilot;
 pub mod plasmid;
 pub mod prism;
 pub mod psionics;
@@ -441,6 +442,8 @@ impl PrologueState {
                             | "γ"
                             // Forth
                             | "₣"
+                            // Pilot
+                            | "⚓"
                             // Zeta (Wire Lisp)
                             | "ζ"
                             // Hyper
@@ -464,6 +467,7 @@ impl PrologueState {
                             || s == "ζ"
                             || s == "Φ"
                             || s == "P"
+                            || s == "⚓"
                         {
                             // Try to retrieve persistent state
                             let raw_state = self
@@ -486,6 +490,11 @@ impl PrologueState {
                                     )
                                 } else if s == "Φ" {
                                     Value::Str("exist".to_string())
+                                } else if s == "⚓" {
+                                    Value::Junction(
+                                        crate::ast::JunctionType::All,
+                                        vec![Value::Int(0), Value::Int(1), Value::Int(0)],
+                                    )
                                 } else {
                                     Value::Int(0)
                                 }
@@ -1473,6 +1482,14 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 }
                 None => continue,
             }
+        } else if current_type == "⚓" {
+            match pilot::process_pilot_logic(vm, &agent, grid_snapshot) {
+                Some((updated_agent, t)) => {
+                    agent = updated_agent;
+                    t
+                }
+                None => continue,
+            }
         } else {
             process_seeker_logic(vm, &agent, grid_snapshot)
         };
@@ -1489,6 +1506,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "₣"
                 || current_type == "ζ"
                 || current_type == "P"
+                || current_type == "⚓"
             {
                 vm.prologue_state.registers.insert(
                     (ny, nx),
@@ -1509,6 +1527,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                     || current_type == "₣"
                     || current_type == "ζ"
                     || current_type == "P"
+                    || current_type == "⚓"
                 {
                     vm.prologue_state.registers.remove(&(y, x));
                 }
