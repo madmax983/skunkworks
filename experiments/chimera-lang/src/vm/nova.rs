@@ -2123,6 +2123,12 @@ fn exec_map(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let func_val = vm.stack.pop().unwrap();
         let target_val = vm.stack.pop().unwrap();
 
+        if target_val.depth() >= crate::vm::MAX_RECURSION_DEPTH {
+            vm.output
+                .push("Error: Input too deep for Map".to_string());
+            return None;
+        }
+
         let inputs = match target_val {
             Value::Junction(_, vals) => vals,
             scalar => vec![scalar],
@@ -2186,6 +2192,12 @@ fn exec_fold(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let init_val = vm.stack.pop().unwrap();
         let target_val = vm.stack.pop().unwrap();
 
+        if target_val.depth() >= crate::vm::MAX_RECURSION_DEPTH || init_val.depth() >= crate::vm::MAX_RECURSION_DEPTH {
+            vm.output
+                .push("Error: Input too deep for Fold".to_string());
+            return None;
+        }
+
         let inputs = match target_val {
             Value::Junction(_, vals) => vals,
             scalar => vec![scalar],
@@ -2235,6 +2247,12 @@ fn exec_filter(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let func_val = vm.stack.pop().unwrap();
         let target_val = vm.stack.pop().unwrap();
+
+        if target_val.depth() >= crate::vm::MAX_RECURSION_DEPTH {
+            vm.output
+                .push("Error: Input too deep for Filter".to_string());
+            return None;
+        }
 
         let inputs = match target_val {
             Value::Junction(_, vals) => vals,
@@ -2297,6 +2315,18 @@ fn exec_zip(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
         let val_b = vm.stack.pop().unwrap();
         let val_a = vm.stack.pop().unwrap();
+
+        if val_a.depth() >= crate::vm::MAX_RECURSION_DEPTH || val_b.depth() >= crate::vm::MAX_RECURSION_DEPTH {
+            vm.output
+                .push("Error: Input too deep for Zip".to_string());
+            return None;
+        }
+
+        if val_a.complexity() + val_b.complexity() > crate::vm::MAX_COMPLEXITY {
+            vm.output
+                .push("Error: Input too complex for Zip".to_string());
+            return None;
+        }
 
         let inputs_a = match val_a {
             Value::Junction(_, vals) => vals,

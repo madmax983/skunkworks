@@ -91,6 +91,7 @@ pub const MAX_BRAINFUCK_OUTPUT: usize = 1024;
 pub const MAX_STRING_LEN: usize = 65536;
 pub const MAX_GENES_PER_STRAND: usize = 4096;
 pub const MAX_FRACTAL_ITER: usize = 1000;
+pub const MAX_COMPLEXITY: usize = 10000;
 
 #[cfg(feature = "nova")]
 pub mod akashic;
@@ -2947,6 +2948,13 @@ impl ChimeraVM {
                 if len <= 0 || len > 1024 * 1024 {
                     self.output
                         .push(format!("Error: Invalid Digest length {} (Max 1MB)", len));
+                    self.stack.push(Value::Int(-1));
+                    return None;
+                }
+
+                if offset < 0 {
+                    self.output
+                        .push(format!("Error: Invalid Digest offset {}", offset));
                     self.stack.push(Value::Int(-1));
                     return None;
                 }

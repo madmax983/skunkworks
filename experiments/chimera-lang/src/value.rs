@@ -129,4 +129,24 @@ impl Value {
             }
         }
     }
+
+    /// Calculates the total number of nodes in the value tree.
+    pub fn complexity(&self) -> usize {
+        self.complexity_safe(0)
+    }
+
+    fn complexity_safe(&self, depth: usize) -> usize {
+        if depth > 1000 {
+            return 1000;
+        }
+        match self {
+            Value::Int(_) | Value::Str(_) | Value::Symbol(_) | Value::Color(_, _, _) => 1,
+            Value::Junction(_, vals) => {
+                1 + vals.iter().map(|v| v.complexity_safe(depth + 1)).sum::<usize>()
+            }
+            Value::Superposition(states) => {
+                1 + states.iter().map(|(v, _)| v.complexity_safe(depth + 1)).sum::<usize>()
+            }
+        }
+    }
 }
