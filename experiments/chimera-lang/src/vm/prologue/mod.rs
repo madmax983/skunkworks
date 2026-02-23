@@ -111,6 +111,7 @@ pub mod teleport;
 pub mod topology;
 pub mod virology;
 pub mod void;
+pub mod weaver;
 pub mod zeta;
 
 /// An autonomous agent wandering the Prologue grid.
@@ -459,6 +460,8 @@ impl PrologueState {
                             | "🍄" | "📥" | "📤" | "🦋"
                             // Neural Growth
                             | "🌱"
+                            // Weaver
+                            | "🕷"
                     ) {
                         self.runes.insert((y, x));
 
@@ -475,6 +478,7 @@ impl PrologueState {
                             || s == "⚓"
                             || s == "∃"
                             || s == "χ"
+                            || s == "🕷"
                         {
                             // Try to retrieve persistent state
                             let raw_state = self
@@ -512,6 +516,8 @@ impl PrologueState {
                                         crate::ast::JunctionType::All,
                                         vec![Value::Int(0), Value::Str("".to_string())],
                                     )
+                                } else if s == "🕷" {
+                                    Value::Int(0) // Weaver default state (placeholder)
                                 } else {
                                     Value::Int(0)
                                 }
@@ -1525,6 +1531,14 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 }
                 None => continue,
             }
+        } else if current_type == "🕷" {
+            match weaver::process_weaver_agent(vm, &agent, grid_snapshot) {
+                Some((updated_agent, t)) => {
+                    agent = updated_agent;
+                    t
+                }
+                None => continue,
+            }
         } else {
             process_seeker_logic(vm, &agent, grid_snapshot)
         };
@@ -1544,6 +1558,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "⚓"
                 || current_type == "∃"
                 || current_type == "χ"
+                || current_type == "🕷"
             {
                 vm.prologue_state.registers.insert(
                     (ny, nx),
@@ -1567,6 +1582,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                     || current_type == "⚓"
                     || current_type == "∃"
                     || current_type == "χ"
+                    || current_type == "🕷"
                 {
                     vm.prologue_state.registers.remove(&(y, x));
                 }
@@ -1706,5 +1722,7 @@ mod prologue_logos_test;
 mod prologue_logic_agent_test;
 #[cfg(test)]
 mod prologue_chromatin_test;
-#[cfg(test)]
+#[cfg(all(test, feature = "biophysics"))]
 mod prologue_neural_growth_test;
+#[cfg(test)]
+mod weaver_test;

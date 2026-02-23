@@ -1,0 +1,132 @@
+use super::normalize_coords;
+use crate::ast::{Gene, JunctionType, Nucleotide, Strand};
+use crate::opcode::OpCode;
+use crate::vm::{ChimeraVM, Value, MAX_STRANDS};
+
+/// The Weaver Agent (🕷) traverses the grid and synthesizes DNA from Blueprints.
+///
+/// It looks for a "Blueprint" signal from the West (usually provided by a `B` rune or manually).
+/// It compiles the blueprint's grid structure into a linear sequence of genes (a Strand).
+///
+/// # DNA Synthesis Logic
+/// The Weaver scans the blueprint in reading order (Row by Row, Left to Right).
+/// It maps recognized Runes to their `OpCode` equivalents.
+///
+/// - Logic: `&` -> `BitAnd`, `|` -> `BitOr`, `+` -> `BitXor`
+/// - Math: `A` -> `Add`, `S` -> `Sub`, `M` -> `Mul`, `D` -> `Div`, `%` -> `Mod`
+/// - Values: `Integer(n)` -> `Push(n)`
+/// - Flow: `!` (Input) -> `Nop` (Assumes args on stack), `?` (Output) -> `Nop`
+///
+pub fn process_weaver_agent(
+    vm: &mut ChimeraVM,
+    agent: &super::PrologueAgent,
+    grid_snapshot: &[Vec<Value>],
+) -> Option<(super::PrologueAgent, Option<(usize, usize)>)> {
+    let (y, x) = (agent.y, agent.x);
+    let mut updated_agent = agent.clone();
+
+    // 1. Scan West for Blueprint Signal
+    // We need to check the *signal grid*, but process_weaver_agent receives *grid_snapshot* (physical grid).
+    // The signal grid is in vm.prologue_state.signal_grid.
+    // However, agents usually interact with the physical grid or local signals.
+    // Let's check the physical grid for a neighbor that might be emitting a signal,
+    // OR check the signal grid at (y, x-1).
+
+    let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+        vm.prologue_state.signal_grid[wy][wx].clone()
+    } else {
+        None
+    };
+
+    if let Some(Value::Junction(JunctionType::Dish, rows)) = w_sig {
+        // Found a Blueprint!
+        let mut genes = Vec::new();
+        let mut valid_synthesis = false;
+
+        for row in rows {
+            if let Value::Junction(JunctionType::Dish, cells) = row {
+                for cell in cells {
+                    match cell {
+                        Value::Int(n) => {
+                            if n != 0 {
+                                genes.push(Gene {
+                                    op: OpCode::Push,
+                                    args: vec![Nucleotide::Number(n)],
+                                });
+                                valid_synthesis = true;
+                            }
+                        }
+                        Value::Str(s) => {
+                            let op = match s.as_str() {
+                                "&" => Some(OpCode::BitAnd),
+                                "|" => Some(OpCode::BitOr),
+                                "+" => Some(OpCode::BitXor), // XOR in Prologue
+                                "A" => Some(OpCode::Add),
+                                "S" => Some(OpCode::Sub),
+                                "M" => Some(OpCode::Mul),
+                                "D" => Some(OpCode::Div),
+                                "%" => Some(OpCode::Mod),
+                                "!" => None, // Input (Implicit)
+                                "?" => None, // Output (Implicit)
+                                "~" => None, // Wire (Implicit)
+                                _ => None,
+                            };
+
+                            if let Some(opcode) = op {
+                                genes.push(Gene {
+                                    op: opcode,
+                                    args: vec![],
+                                });
+                                valid_synthesis = true;
+                            } else if let Ok(parsed_op) = s.parse::<OpCode>() {
+                                // Direct OpCode support (e.g. "push", "dup")
+                                genes.push(Gene {
+                                    op: parsed_op,
+                                    args: vec![],
+                                });
+                                valid_synthesis = true;
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+            }
+        }
+
+        if valid_synthesis {
+            if vm.dna.helix.strands.len() < MAX_STRANDS {
+                vm.dna.helix.strands.push(Strand { genes });
+                let new_idx = vm.dna.helix.strands.len() - 1;
+                vm.output.push(format!("WEAVER: Synthesized Strand {}", new_idx));
+
+                // Emitting success signal to Self
+                // Note: We can't easily modify signal_grid here as we don't have mutable ref to it
+                // in the presence of immutable borrow for `grid_snapshot` if passed from `process_agents`.
+                // BUT `process_agents` passes `vm` mutably and `grid_snapshot` separately.
+                // So we can modify `vm.prologue_state`.
+                vm.prologue_state.signal_grid[y][x] = Some(Value::Int(new_idx as i64));
+            } else {
+                vm.output.push("WEAVER: Strand limit reached".to_string());
+            }
+        }
+    }
+
+    // 2. Move Logic (Wander or Seek Blueprint)
+    // If we just synthesized, maybe rest?
+    // For now, random walk or stay.
+    // Let's move randomly to find more work.
+    let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+    let mut rng = rand::thread_rng();
+    use rand::Rng;
+    let (dy, dx) = neighbors[rng.gen_range(0..4)];
+
+    let target = normalize_coords(y as i64 + dy, x as i64 + dx);
+
+    if let Some((ny, nx)) = target {
+         if let Value::Int(0) = &grid_snapshot[ny][nx] {
+             return Some((updated_agent, Some((ny, nx))));
+         }
+    }
+
+    Some((updated_agent, None))
+}
