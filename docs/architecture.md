@@ -1601,3 +1601,103 @@ classDiagram
     HolographicMemory ..> FftPlanner : Uses
     note for HolographicMemory "Stores accumulated interference patterns"
 ```
+
+## Experiment: Process Canopy (ADR 051)
+
+**Process Canopy** visualizes the OS process table as a procedurally generated forest, where CPU usage drives growth and scheduling affects sunlight exposure.
+
+### Bio-Digital Isomorphism
+
+The system maps process metrics to tree geometry and the scheduler to a moving sun.
+
+```mermaid
+classDiagram
+    direction TB
+    class Monitor {
+        +sys: System
+        +fetch_processes() Vec~Process~
+    }
+    class Tree {
+        +ProcessStats stats
+        +LSystem structure
+        +draw(is_scheduled)
+        +grow(cpu_usage)
+    }
+    class Sun {
+        +ScheduleMode mode
+        +update(dt)
+        +is_shining_on(Tree) bool
+    }
+    class ScheduleMode {
+        <<Enum>>
+        +RoundRobin
+        +Priority
+    }
+
+    Monitor --> Tree : Spawns from Process
+    Sun --> Tree : Affects (Photosynthesis)
+    Sun ..> ScheduleMode : Configured by
+```
+
+## Experiment: Sys Dance (ADR 051)
+
+**Sys Dance** visualizes real-time system performance (RAM, CPU, Swap) as a procedurally animated dancer using Laban Movement Analysis parameters.
+
+### Choreographic pipeline
+
+System metrics are translated into Laban parameters (Effort, Space) which drive an Inverse Kinematics rig.
+
+```mermaid
+classDiagram
+    direction LR
+    class SystemMonitor {
+        +sys: System
+        +update()
+    }
+    class LabanState {
+        +Effort effort
+        +Space space
+        +update(monitor)
+    }
+    class Choreographer {
+        +plan_moves(laban) -> Pose
+    }
+    class IKSystem {
+        +solve(limbs, target)
+    }
+    class Skeleton {
+        +Torso
+        +Limbs
+    }
+
+    SystemMonitor --> LabanState : Drives
+    LabanState --> Choreographer : Informs
+    Choreographer --> IKSystem : Targets
+    IKSystem --> Skeleton : Animates
+```
+
+## Experiment: Ferrous Genesis (ADR 051)
+
+**Ferrous Genesis** implements an "Amorphous Cellular Automaton" where particles executing ChimeraVM bytecode modulate their magnetism to self-organize in continuous space.
+
+### Feedback Loop
+
+Particles read the local magnetic field via the VM, execute logic to determine their desired state, and emit magnetism back into the field.
+
+```mermaid
+sequenceDiagram
+    participant Universe
+    participant Body
+    participant VM as ChimeraVM
+    participant Platter as MagneticField
+
+    loop Physics Step
+        Universe->>Body: step(dt)
+        Body->>VM: execute_dna()
+        VM->>Platter: read_magnetism(local_pos)
+        VM->>VM: process_logic(Homeostasis)
+        VM->>Platter: emit_magnetism(heat)
+        Platter-->>Body: apply_force(magnetic)
+        Body->>Universe: update_position(velocity)
+    end
+```
