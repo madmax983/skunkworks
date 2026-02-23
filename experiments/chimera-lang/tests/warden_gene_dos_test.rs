@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
-    use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
+    use chimera_lang::ast::{Dna, Gene, Helix, Strand};
     use chimera_lang::opcode::OpCode;
-    use chimera_lang::vm::memetics::{Meme, MemePool};
+    use chimera_lang::vm::memetics::Meme;
     use chimera_lang::vm::{ChimeraVM, Value, MAX_GENES_PER_STRAND};
 
     fn make_dna() -> Dna {

@@ -12790,7 +12790,7 @@ fn render_tesseract(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 let py = 15.0 - p3.y as f64; // Invert Y for canvas
 
                 // Color based on W (Hyper-depth)
-                let color = if *w > 0 {
+                let _color = if *w > 0 {
                     Color::Magenta
                 } else if *w < 0 {
                     Color::Cyan

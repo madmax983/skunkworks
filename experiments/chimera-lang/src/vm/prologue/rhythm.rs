@@ -81,7 +81,7 @@ pub fn apply_rhythm_runes(
             if let Some((wy, wx)) = super::normalize_coords(y as i64, x as i64 - 1) {
                 if let Some(val) = &current_signals[wy][wx] {
                     // Parse note
-                    let freq = match val {
+                    let _freq = match val {
                         Value::Int(n) => *n as f32,
                         _ => 60.0, // Middle C
                     };

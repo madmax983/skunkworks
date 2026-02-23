@@ -2,7 +2,7 @@
 mod tests {
     use chimera_lang::compiler::compile;
     use std::fs;
-    use std::path::Path;
+
 
     #[test]
     fn test_recursive_include_cycle() {

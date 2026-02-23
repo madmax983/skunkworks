@@ -1,4 +1,4 @@
-use chimera_lang::vm::prologue::logos::{GrammarRule, LogosEngine};
+use chimera_lang::vm::prologue::logos::LogosEngine;
 use chimera_lang::vm::Value;
 
 #[test]

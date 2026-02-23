@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/chimera-lang
+- **Scent Origin:** Mycelium 🍄 (Sensed: Flaky Tests & Compiler Warnings)
+- **Status:** Test failures (Prism, Siphon, Logos) investigated; reproduction scripts pass in isolation. Environment interference suspected. 18+ compiler warnings resolved via `cargo fix`.
+- **Note:** "The genes are stable, but the petri dish is shaking."
+
 ### [Concentration Level: HIGH] - Location: experiments/quipu-lattice
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The crystal bonds are knotted. Agents are recording their paths.
