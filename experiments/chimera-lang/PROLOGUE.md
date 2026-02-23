@@ -377,3 +377,20 @@ A mobile agent dedicated to **Horizontal Gene Transfer**.
 | Rune | Name | Function |
 |---|---|---|
 | `Ð` | **Reverse Transcriptase** | Reads **West** (String Signal). Compiles it into a **Gene** and appends it to the current DNA strand. |
+
+# Mycelium 🍄
+
+A distributed fungal network that shares a global buffer and grows organically.
+
+| Rune | Name | Function |
+|---|---|---|
+| `🍄` | **Spore** | **Growth Node**. Consumes Nutrients (`Int > 10`) to spawn new Spores. Accesses Global Mycelium Buffer. |
+| `📥` | **Inject** | **Wire**. Propagates signal. Sinks into Buffer. |
+| `📤` | **Extract** | **Wire**. Reads from Buffer. Emits signal. |
+| `🦋` | **Metamorph**| **Sink**. Consumes buffer item to mutate agent at location. |
+
+## Mechanics
+
+*   **Global Buffer**: All Spores share a single FIFO queue (`VecDeque`).
+*   **Nutrient Growth**: If a Spore is adjacent to a grid cell with `Int(n)` where `n >= 10`, it consumes 10 units and spawns a new Spore in an adjacent empty cell.
+*   **Spore Dispersal**: If the buffer contains >= 10 items, there is a 1% chance per tick for a Spore to consume 5 items and teleport-spawn a new Spore anywhere on the grid.

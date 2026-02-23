@@ -66,7 +66,7 @@ fn run_demo() -> anyhow::Result<()> {
 
     // Launch TUI
     // We start in Grid view to see the story elements we just wrote
-    run_tui(vm, Some(ViewMode::Grid))?;
+    run_tui(vm, Some(ViewMode::Grid), None)?;
 
     Ok(())
 }
