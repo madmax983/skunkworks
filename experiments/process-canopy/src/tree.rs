@@ -51,6 +51,25 @@ impl Tree {
         }
     }
 
+    pub fn contains(&self, point: Vec2) -> bool {
+        let mb = self.stats.memory as f32 / 1024.0 / 1024.0;
+        let root_radius = (mb.sqrt() * 0.5).clamp(2.0, 20.0);
+
+        // Check base circle (generous hit area)
+        if self.position.distance(point) < root_radius.max(15.0) {
+            return true;
+        }
+
+        // Check vertical column for foliage (approximate)
+        let height_est = 150.0 * self.scale;
+        let width_est = 30.0 * self.scale;
+
+        let dx = (point.x - self.position.x).abs();
+        let dy = self.position.y - point.y; // positive up
+
+        dx < width_est && dy > 0.0 && dy < height_est
+    }
+
     pub fn draw(&self, is_scheduled: bool) {
         // Calculate iterations based on CPU usage? Or just fixed?
         // Let's use fixed for stability, but thickness based on CPU?

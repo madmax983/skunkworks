@@ -7,7 +7,7 @@ pub struct Sun {
     pub mode: ScheduleMode,
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone, Copy)]
 pub enum ScheduleMode {
     RoundRobin,
     Priority,
@@ -37,23 +37,31 @@ impl Sun {
     }
 
     pub fn draw(&self) {
-        draw_circle(self.position.x, self.position.y, 30.0, YELLOW);
-        // Draw rays
-        draw_line(
-            self.position.x,
-            self.position.y,
-            self.position.x,
-            screen_height(),
-            2.0,
-            Color::new(1.0, 1.0, 0.0, 0.3),
-        );
+        // Core
+        draw_circle(self.position.x, self.position.y, 25.0, YELLOW);
 
-        // Glow
+        // Inner Glow
         draw_circle(
             self.position.x,
             self.position.y,
-            50.0,
-            Color::new(1.0, 1.0, 0.0, 0.1),
+            40.0,
+            Color::new(1.0, 0.9, 0.5, 0.4),
+        );
+
+        // Outer Glow
+        draw_circle(
+            self.position.x,
+            self.position.y,
+            60.0,
+            Color::new(1.0, 0.8, 0.2, 0.2),
+        );
+
+        // Scheduling Ray (Searchlight)
+        draw_triangle(
+            vec2(self.position.x, self.position.y),
+            vec2(self.position.x - 40.0, screen_height()),
+            vec2(self.position.x + 40.0, screen_height()),
+            Color::new(1.0, 1.0, 0.8, 0.1),
         );
     }
 
