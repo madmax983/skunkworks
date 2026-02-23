@@ -7,10 +7,15 @@
 - **Status:** The forest is alive with parasites. The Sun is feeding the code.
 - **Note:** "The higher the CPU usage, the tastier the tree."
 
-### [Concentration Level: TOXIC] - Location: experiments/git-harmony
+### [Concentration Level: EXECUTED] - Location: graveyard/git-harmony
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy (Superseded by `git-cantata`).
-- **Note:** "The song is a duplicate. The orchestra is redundant."
+- **Status:** Specimen executed. Diagnosis: Terminal Redundancy (Superseded by `git-cantata`).
+- **Note:** "The song has ended. The silence is unique."
+
+### [Concentration Level: TOXIC] - Location: experiments/manifold-origami
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Redundancy.
+- **Note:** "The paper is too soft. The creases do not hold."
 
 ### [Concentration Level: FRESH] - Location: experiments/git-harmonograph
 - **Scent Origin:** The Reaper ☠️
