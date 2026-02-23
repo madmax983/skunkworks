@@ -48,8 +48,9 @@ pub fn apply_elektra_runes(
             let v = voltage_grid[y][x];
             if v.abs() > 0.1 {
                 if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
-                    if next_signals[sy][sx].is_none() {
-                        next_signals[sy][sx] = Some(Value::Int(v as i64));
+                    let new_val = Some(Value::Int(v as i64));
+                    if next_signals[sy][sx] != new_val {
+                        next_signals[sy][sx] = new_val;
                         changes = true;
                     }
                 }
@@ -82,8 +83,6 @@ pub fn apply_elektra_runes(
         }
         "💡" => {
             // Bio-Light: Consumes Voltage -> Adds 5 Energy
-            // Also need to limit to once per tick?
-            // Yes, otherwise we generate infinite energy in the loop.
             let last_active = if let Some(Value::Int(t)) = registers.get(&(y, x)) {
                 *t as u64
             } else {
@@ -105,33 +104,11 @@ pub fn apply_elektra_runes(
         }
         "♒" => {
             // Memristor: Set Resistance to 50.0 (initial)
-            // But if it's dynamic, we shouldn't overwrite it every tick if it drifts.
-            // However, scan_grid happens every tick.
-            // If we set it here, we reset it.
-            // We should only set it if it's not already set? Or let update_circuit handle persistence.
-            // update_circuit handles Memristor logic if cell string starts with R:.
-            // But here the cell string is "♒".
-            // So we need to map "♒" to Memristor behavior.
-            // We can set resistance here, but we need registers to store state if we want persistence across ticks,
-            // OR we rely on resistance_grid preserving value (which it does).
-            // But if we write resistance_grid[y][x] = 50.0 here every tick, we clamp it.
-            // Solution: Check if we initialized it this tick? No.
-            // Check if value is default?
-
-            // Actually, `prepare_signals` clears `signal_grid`, but `resistance_grid` persists in `vm`.
-            // But `scan_grid_rules` runs every tick. `apply_elektra_runes` runs every tick.
-
-            // If I write `resistance_grid[y][x] = 50.0`, I reset any training.
-            // I should use `registers` to track if initialized.
-            // Or just check if resistance is exactly default (1.0)? But what if it trained to 1.0?
-
-            // Better approach: Use registers.
             let initialized = registers.contains_key(&(y, x));
             if !initialized {
                 resistance_grid[y][x] = 50.0;
                 registers.insert((y, x), Value::Int(1));
             }
-            // If initialized, do nothing (let update_circuit modify resistance_grid).
         }
         "⇝" => {
             // Variable Resistor: Reads West signal.
@@ -142,6 +119,36 @@ pub fn apply_elektra_runes(
                 0.0
             };
             resistance_grid[y][x] = (100.0 - sig).max(1.0);
+        }
+        "⏧" => {
+            // Switch / Transistor:
+            // Gate (North): Controls flow.
+            // Source (West): Input Signal.
+            // Drain (East): Output Signal.
+            let n_sig = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+                current_signals[ny][nx].clone()
+            } else {
+                None
+            };
+
+            let gate_open = match n_sig {
+                Some(Value::Int(n)) => n != 0,
+                Some(Value::Str(s)) => !s.is_empty(),
+                _ => false,
+            };
+
+            if gate_open {
+                // Pass West to East
+                if let Some(val) = w_sig {
+                    if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
+                        let new_val = Some(val);
+                        if next_signals[ey][ex] != new_val {
+                            next_signals[ey][ex] = new_val;
+                            changes = true;
+                        }
+                    }
+                }
+            }
         }
         _ => {}
     }

@@ -22,11 +22,6 @@ pub fn apply_evolution_runes(
     } else {
         None
     };
-    let _e_sig = if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
-        current_signals[ey][ex].clone()
-    } else {
-        None
-    };
 
     match rune {
         "l" => {
@@ -65,7 +60,71 @@ pub fn apply_evolution_runes(
 pub fn apply_evolution_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     match rune {
         "G" => {
-            // Genesis: North (Code), West (Config) -> Self (Strand Index)
+            // Genesis:
+            // Mode 1: West (Length) -> Read Grid East -> Strand (Incubation)
+            // Mode 2: North (Code String) -> Strand (Compilation)
+
+            let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+                vm.prologue_state.signal_grid[wy][wx].clone()
+            } else {
+                None
+            };
+
+            if let Some(Value::Int(len)) = w_sig {
+                if len > 0 {
+                    // Mode 1: Incubate from Grid
+                    let mut source = String::new();
+                    source.push_str("strand incubated {\n");
+
+                    for i in 1..=len {
+                        if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + i) {
+                            let cell = &vm.grid[ey][ex];
+                            match cell {
+                                Value::Str(s) => {
+                                    // Append raw string (e.g. "add", "push", "dup")
+                                    // If empty string, ignore?
+                                    if !s.is_empty() {
+                                        source.push_str(&format!("{}\n", s));
+                                    }
+                                }
+                                Value::Int(n) => {
+                                    // Implicit push
+                                    source.push_str(&format!("{}\n", n));
+                                }
+                                _ => {}
+                            }
+                        }
+                    }
+                    source.push_str("}\n");
+
+                    match crate::compiler::compile(&source, None) {
+                        Ok(mut new_dna) => {
+                            if let Some(strand) = new_dna.helix.strands.pop() {
+                                if vm.dna.helix.strands.len() < MAX_STRANDS {
+                                    vm.dna.helix.strands.push(strand);
+                                    let idx = vm.dna.helix.strands.len() - 1;
+                                    vm.output.push(format!(
+                                        "PROLOGUE: Incubated Strand {} from Grid",
+                                        idx
+                                    ));
+                                    vm.prologue_state.signal_grid[y][x] =
+                                        Some(Value::Int(idx as i64));
+                                } else {
+                                    vm.output.push(
+                                        "PROLOGUE: Incubation failed (MAX_STRANDS)".to_string(),
+                                    );
+                                }
+                            }
+                        }
+                        Err(e) => {
+                            vm.output.push(format!("PROLOGUE: Incubation failed: {}", e));
+                        }
+                    }
+                    return; // Skip Mode 2
+                }
+            }
+
+            // Mode 2: North (Code) -> Self (Strand Index)
             let code_to_compile = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
                 if let Some(Value::Str(s)) = &vm.prologue_state.signal_grid[ny][nx] {
                     Some(s.clone())
