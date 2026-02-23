@@ -38,7 +38,55 @@ pub fn process_weaver_agent(
         None
     };
 
-    if let Some(Value::Junction(JunctionType::Dish, rows)) = w_sig {
+    if let Some(Value::Int(n)) = w_sig {
+        // Reverse Translation: Decompile Strand n to Grid (East)
+        let strand_idx = n as usize;
+        if strand_idx < vm.dna.helix.strands.len() {
+            let genes = vm.dna.helix.strands[strand_idx].genes.clone();
+            vm.output
+                .push(format!("WEAVER: Decompiling Strand {}", strand_idx));
+
+            // Write genes linearly to East
+            let mut write_offset = 1;
+            for gene in genes {
+                if let Some((ty, tx)) = normalize_coords(y as i64, x as i64 + write_offset) {
+                    let val = match gene.op {
+                        OpCode::Push => {
+                            if let Some(arg) = gene.args.first() {
+                                match arg {
+                                    Nucleotide::Number(num) => Value::Int(*num),
+                                    Nucleotide::String(s) => Value::Str(s.clone()),
+                                    _ => Value::Int(0),
+                                }
+                            } else {
+                                Value::Int(0)
+                            }
+                        }
+                        OpCode::BitAnd => Value::Str("&".to_string()),
+                        OpCode::BitOr => Value::Str("|".to_string()),
+                        OpCode::BitXor => Value::Str("+".to_string()),
+                        OpCode::Add => Value::Str("A".to_string()),
+                        OpCode::Sub => Value::Str("S".to_string()),
+                        OpCode::Mul => Value::Str("M".to_string()),
+                        OpCode::Div => Value::Str("D".to_string()),
+                        OpCode::Mod => Value::Str("%".to_string()),
+                        _ => Value::Str(format!("{:?}", gene.op).to_lowercase()),
+                    };
+
+                    vm.grid[ty][tx] = val;
+                    write_offset += 1;
+                } else {
+                    break; // End of grid
+                }
+            }
+
+            // Signal completion
+            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+
+            // Do not move
+            return Some((updated_agent, None));
+        }
+    } else if let Some(Value::Junction(JunctionType::Dish, rows)) = w_sig {
         // Found a Blueprint!
         let mut genes = Vec::new();
         let mut valid_synthesis = false;
@@ -105,6 +153,9 @@ pub fn process_weaver_agent(
                 // BUT `process_agents` passes `vm` mutably and `grid_snapshot` separately.
                 // So we can modify `vm.prologue_state`.
                 vm.prologue_state.signal_grid[y][x] = Some(Value::Int(new_idx as i64));
+
+                // Do not move
+                return Some((updated_agent, None));
             } else {
                 vm.output.push("WEAVER: Strand limit reached".to_string());
             }
