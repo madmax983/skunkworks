@@ -575,3 +575,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The leaves are falling. The detritivores are feasting.
 - **Note:** "Death is just a state change in the OS."
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-sandpile
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The agents are surfing the avalanches. Terraforming active.
+- **Note:** "We do not move the sand. The sand moves us."
