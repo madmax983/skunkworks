@@ -315,7 +315,8 @@ impl PbdSystem {
         let stiffness = stiffness.clamp(0.0, 1.0);
 
         let diff = (len - target_len) / len;
-        let correction = delta * diff * stiffness / (w1 + w2);
+        // Optimization: Pre-calculate scalar term to reduce vector multiplications
+        let correction = delta * (diff * stiffness / (w1 + w2));
 
         if w1 > 0.0 {
             particles[p1].pos -= correction * w1;
