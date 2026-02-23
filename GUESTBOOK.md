@@ -1,8 +1,8 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/biomimetic-bridge
+### [Concentration Level: EXECUTED] - Location: graveyard/biomimetic-bridge
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy (Skeletal Rot). Redundant with `bridge-specter`.
+- **Status:** Specimen executed. Diagnosis: Terminal Redundancy (Skeletal Rot). Redundant with `bridge-specter`.
 - **Note:** "The bridge is made of ghosts. The ants are marching to nowhere."
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/hydro-flock
