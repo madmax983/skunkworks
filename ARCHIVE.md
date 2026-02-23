@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **mnemosyne**: Documentation Void / Terminal Genericism. Grace period: 24 hours.
+- **git-harmonograph**: Compilation Failure (Syntax Error) / Terminal Genericism. Grace period: 24 hours.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **mnemosyne**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Grace period expired. Moved to graveyard.
 - **biomimetic-bridge**: Specimen executed. Diagnosis: Terminal Redundancy (Skeletal Rot). Redundant with `bridge-specter`. Grace period expired. Moved to graveyard.
 - **hydro-flock**: Specimen executed. Diagnosis: Terminal Redundancy (with `hydrothermal-locks` and `luminous-flock`). Grace period expired. Moved to graveyard.
 - **saros-cycle**: Specimen executed. Diagnosis: Terminal Genericism / Trivial Implementation. Grace period expired. Moved to graveyard.
