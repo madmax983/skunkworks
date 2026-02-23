@@ -1,0 +1,13 @@
+[package]
+name = "quantum-quipu"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow.workspace = true
+crossterm.workspace = true
+ratatui.workspace = true
+rand.workspace = true
+num-complex = "0.4"
+tui-shared.workspace = true
+quipu.workspace = true
