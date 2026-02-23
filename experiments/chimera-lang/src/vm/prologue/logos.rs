@@ -1,10 +1,12 @@
 use super::normalize_coords;
 use crate::ast::{Dna, Nucleotide};
 use crate::opcode::OpCode;
-use crate::vm::Value;
+use crate::vm::{ChimeraVM, Value};
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use rand::Rng;
+use rand::seq::SliceRandom;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum GrammarRule {
@@ -38,6 +40,12 @@ impl LogosEngine {
     pub fn define_rule_from_dna(&mut self, name: &str, dna: &Dna, strand_idx: usize) {
         if let Ok(rule) = self.dna_to_grammar(dna, strand_idx) {
             self.rules.insert(name.to_string(), rule);
+        }
+    }
+
+    pub fn mutate_rule(&mut self, name: &str) {
+        if let Some(rule) = self.rules.get_mut(name) {
+            mutate_grammar_rule(rule);
         }
     }
 
@@ -187,7 +195,34 @@ impl LogosEngine {
 
         match rule {
             GrammarRule::Literal(s) => Ok(s.clone()),
-            GrammarRule::Regex(p) => Ok(format!("<{}>", p)), // Placeholder generation for regex
+            GrammarRule::Regex(p) => {
+                // Enhanced random generation for basic regex patterns
+                let mut rng = rand::thread_rng();
+                if p.contains("\\d") {
+                    // Replace one instance of \d with a digit
+                    let d = rng.gen_range(0..10).to_string();
+                    Ok(p.replace("\\d", &d)) // Simple replace
+                } else if p.contains("\\w") {
+                    let c = rng.gen_range(b'a'..=b'z') as char;
+                    Ok(p.replace("\\w", &c.to_string()))
+                } else if p == "." {
+                     let c = rng.gen_range(b'a'..=b'z') as char;
+                     Ok(c.to_string())
+                } else if p.starts_with("[") && p.ends_with("]") {
+                    // Character class [abc]
+                    let content = &p[1..p.len()-1];
+                    // Pick random char from content (ignoring ranges for simplicity)
+                    let chars: Vec<char> = content.chars().collect();
+                    if let Some(c) = chars.choose(&mut rng) {
+                        Ok(c.to_string())
+                    } else {
+                        Ok("".to_string())
+                    }
+                } else {
+                    // Fallback to placeholder if too complex
+                    Ok(format!("<{}>", p))
+                }
+            },
             GrammarRule::Whitespace => Ok(" ".to_string()),
             GrammarRule::Sequence(rules) => {
                 let mut result = String::new();
@@ -198,7 +233,6 @@ impl LogosEngine {
                 Ok(result)
             }
             GrammarRule::Choice(rules) => {
-                use rand::seq::SliceRandom;
                 let mut rng = rand::thread_rng();
                 if let Some(r) = rules.choose(&mut rng) {
                     self.generate_from_rule(r, depth + 1)
@@ -207,7 +241,6 @@ impl LogosEngine {
                 }
             }
             GrammarRule::WeightedChoice(choices) => {
-                use rand::Rng;
                 let mut rng = rand::thread_rng();
                 let total_weight: u32 = choices.iter().map(|(w, _)| w).sum();
                 if total_weight == 0 {
@@ -334,6 +367,52 @@ impl LogosEngine {
     }
 }
 
+fn mutate_grammar_rule(rule: &mut GrammarRule) {
+    let mut rng = rand::thread_rng();
+    match rule {
+        GrammarRule::Literal(s) => {
+            if !s.is_empty() && rng.gen_bool(0.3) {
+                // Change a char
+                let idx = rng.gen_range(0..s.len());
+                let new_char = rng.gen_range(b'a'..=b'z') as char;
+                let mut chars: Vec<char> = s.chars().collect();
+                if idx < chars.len() {
+                    chars[idx] = new_char;
+                    *s = chars.into_iter().collect();
+                }
+            } else if rng.gen_bool(0.3) {
+                // Append
+                 let new_char = rng.gen_range(b'a'..=b'z') as char;
+                 s.push(new_char);
+            } else if !s.is_empty() {
+                // Truncate
+                s.pop();
+            }
+        }
+        GrammarRule::Sequence(rules) => {
+            if rng.gen_bool(0.5) && !rules.is_empty() {
+                // Remove random element
+                let idx = rng.gen_range(0..rules.len());
+                rules.remove(idx);
+            } else {
+                // Add random literal or whitespace
+                if rng.gen_bool(0.5) {
+                    rules.push(GrammarRule::Whitespace);
+                } else {
+                    let c = rng.gen_range(b'a'..=b'z') as char;
+                    rules.push(GrammarRule::Literal(c.to_string()));
+                }
+            }
+        }
+        GrammarRule::Choice(rules) => {
+             // Add a new random choice branch
+             let c = rng.gen_range(b'a'..=b'z') as char;
+             rules.push(GrammarRule::Literal(c.to_string()));
+        }
+        _ => {}
+    }
+}
+
 pub fn apply_logos_runes(
     rune: &str,
     y: usize,
@@ -389,16 +468,11 @@ pub fn apply_logos_runes(
         "»" => {
             // Speak / Generate
             // West: Rule Name
-            // North: Mode ("GRID") -> Used to signal intent, output is still string.
             // Output: Self (Generated String)
             if let Some(Value::Str(name)) = w_sig {
+                // Debug: println!("Logos Generate: {}", name);
                 if let Ok(gen) = logos_engine.generate(name) {
-                    // Note: If North is "GRID", the intent is to write to the grid.
-                    // However, we are in the propagation phase and cannot modify the grid directly.
-                    // We output the string, and a downstream Sink (like `$` or specialized Logic)
-                    // would need to consume it. Or the user can pipe it.
-                    // For now, we just respect the signal generation.
-
+                    // Debug: println!("Gen Result: {}", gen);
                     let res = Value::Str(gen);
                     if next_signals[y][x] != Some(res.clone()) {
                         next_signals[y][x] = Some(res);
@@ -425,4 +499,83 @@ pub fn apply_logos_runes(
     }
 
     changes
+}
+
+pub fn apply_logos_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
+    // West signal for input
+    let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+        vm.prologue_state.signal_grid[wy][wx].clone()
+    } else {
+        None
+    };
+
+    match rune {
+        "η" => {
+            // Eta: Eval/Execute
+            // West: String (Code) or Junction (AST)
+            if let Some(val) = w_sig {
+                match val {
+                    Value::Str(s) => {
+                        // Compile and execute
+                        match crate::compiler::compile(&s, None) {
+                            Ok(dna) => {
+                                if let Some(strand) = dna.helix.strands.first() {
+                                    for gene in &strand.genes {
+                                        vm.execute_gene_inner(gene.op.clone(), &gene.args);
+                                    }
+                                    vm.output.push(format!("LOGOS: η Executed '{}'", s));
+                                    vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                                }
+                            }
+                            Err(e) => {
+                                vm.output.push(format!("LOGOS: η Compile Error: {}", e));
+                            }
+                        }
+                    }
+                    Value::Junction(_, items) => {
+                        // AST execution (recursive flattening)
+                        execute_junction_ast(vm, items);
+                        vm.output.push("LOGOS: η Executed AST".to_string());
+                        vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                    }
+                    _ => {}
+                }
+            }
+        }
+        "γ" => {
+            // Gamma (Lowercase): Meta-Mutate Grammar
+            // West: Rule Name
+            if let Some(Value::Str(name)) = w_sig {
+                vm.prologue_state.logos_engine.mutate_rule(&name);
+                vm.output.push(format!("LOGOS: γ Mutated Rule '{}'", name));
+                vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+            }
+        }
+        _ => {}
+    }
+}
+
+fn execute_junction_ast(vm: &mut ChimeraVM, items: Vec<Value>) {
+    for item in items {
+        match item {
+            Value::Str(s) => {
+                // Try to parse as OpCode
+                if let Ok(op) = s.parse::<OpCode>() {
+                    vm.execute_gene_inner(op, &[]);
+                } else {
+                    // Push string literal
+                    vm.stack.push(Value::Str(s));
+                }
+            }
+            Value::Int(n) => {
+                vm.stack.push(Value::Int(n));
+            }
+            Value::Junction(_, sub_items) => {
+                execute_junction_ast(vm, sub_items);
+            }
+            v => {
+                vm.stack.push(v);
+            }
+        }
+    }
 }
