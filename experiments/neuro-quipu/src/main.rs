@@ -28,7 +28,7 @@ struct AppState {
     cords: Vec<Cord>,
     beads: Vec<Bead>,
     synapse_map: HashMap<(usize, usize), usize>, // (CordIdx, ClusterIdx) -> SynapseIdx
-    neuron_positions: Vec<(f64, f64)>, // For rendering layout
+    neuron_positions: Vec<(f64, f64)>,           // For rendering layout
     paused: bool,
     tick_rate: Duration,
     last_tick: Instant,
@@ -71,7 +71,9 @@ impl AppState {
             let num_targets = rng.gen_range(2..4);
             for _ in 0..num_targets {
                 let target = rng.gen_range(0..num_neurons);
-                if i == target { continue; }
+                if i == target {
+                    continue;
+                }
 
                 // Delay determines Knot Position (Y)
                 // We want knots distributed along the cord
@@ -117,7 +119,9 @@ impl AppState {
     }
 
     fn update(&mut self) {
-        if self.paused { return; }
+        if self.paused {
+            return;
+        }
 
         self.iteration += 1;
 
@@ -217,7 +221,11 @@ fn ui(f: &mut Frame, state: &AppState) {
     f.render_widget(title, chunks[0]);
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Cords (Axons)"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Cords (Axons)"),
+        )
         .x_bounds([0.0, state.cords.len() as f64])
         .y_bounds([0.0, CORD_LENGTH as f64])
         .paint(|ctx| {
@@ -239,14 +247,16 @@ fn ui(f: &mut Frame, state: &AppState) {
 
                 // Draw Knots
                 for (cluster_idx, cluster) in cord.clusters.iter().enumerate() {
-                    if cluster.is_empty() { continue; }
+                    if cluster.is_empty() {
+                        continue;
+                    }
 
                     let y_logic = cluster_idx as f64;
                     let y_visual = height - y_logic;
 
                     // Draw Knot Blob
                     let color = if state.net.get_synapse_activity(
-                        *state.synapse_map.get(&(i, cluster_idx)).unwrap_or(&999)
+                        *state.synapse_map.get(&(i, cluster_idx)).unwrap_or(&999),
                     ) {
                         Color::Red // Firing!
                     } else {
@@ -255,7 +265,7 @@ fn ui(f: &mut Frame, state: &AppState) {
 
                     let mut radius = 0.1;
                     for k in cluster {
-                         match k {
+                        match k {
                             Knot::Simple => radius += 0.05,
                             Knot::Long(_) => radius += 0.1,
                             Knot::FigureEight => radius += 0.15,
@@ -263,7 +273,7 @@ fn ui(f: &mut Frame, state: &AppState) {
                     }
 
                     ctx.draw(&Rectangle {
-                        x: x - radius/2.0,
+                        x: x - radius / 2.0,
                         y: y_visual - 0.1,
                         width: radius,
                         height: 0.2,
@@ -290,7 +300,8 @@ fn ui(f: &mut Frame, state: &AppState) {
         });
     f.render_widget(canvas, chunks[1]);
 
-    let info = format!("Neurons: {} | Synapses: {} | Spikes: {} | Tick: {}",
+    let info = format!(
+        "Neurons: {} | Synapses: {} | Spikes: {} | Tick: {}",
         state.net.neurons.len(),
         state.net.synapses.len(),
         state.net.spikes.iter().filter(|&&s| s).count(),

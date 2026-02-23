@@ -190,7 +190,8 @@ impl Universe {
                 let dist_sq = delta.length_squared().max(10.0); // Allow closer approach
 
                 // Repulsion (Physical volume)
-                let repulse = (g_repulse * self.bodies[i].mass.sqrt() * self.bodies[j].mass.sqrt()) / dist_sq;
+                let repulse =
+                    (g_repulse * self.bodies[i].mass.sqrt() * self.bodies[j].mass.sqrt()) / dist_sq;
 
                 // Coulomb (Magnetic Charge)
                 // Force = k * q1 * q2 / dist^2
@@ -255,10 +256,26 @@ impl Universe {
                 self.platter.magnetize(x, y, mag_write * mag_factor * dt);
 
                 // Read from platter (Gradient)
-                let left = if x > 0 { self.platter.get_magnetism(x - 1, y) } else { 0.0 };
-                let right = if x < self.platter.width - 1 { self.platter.get_magnetism(x + 1, y) } else { 0.0 };
-                let down = if y > 0 { self.platter.get_magnetism(x, y - 1) } else { 0.0 };
-                let up = if y < self.platter.height - 1 { self.platter.get_magnetism(x, y + 1) } else { 0.0 };
+                let left = if x > 0 {
+                    self.platter.get_magnetism(x - 1, y)
+                } else {
+                    0.0
+                };
+                let right = if x < self.platter.width - 1 {
+                    self.platter.get_magnetism(x + 1, y)
+                } else {
+                    0.0
+                };
+                let down = if y > 0 {
+                    self.platter.get_magnetism(x, y - 1)
+                } else {
+                    0.0
+                };
+                let up = if y < self.platter.height - 1 {
+                    self.platter.get_magnetism(x, y + 1)
+                } else {
+                    0.0
+                };
 
                 let grad_x = (right - left) * 0.5;
                 let grad_y = (up - down) * 0.5;
@@ -275,11 +292,11 @@ impl Universe {
 
             // Trail
             if rand::random::<u8>() % 20 == 0 {
-                 let p = body.pos;
-                 body.trail.push(p);
-                 if body.trail.len() > 10 {
-                     body.trail.remove(0);
-                 }
+                let p = body.pos;
+                body.trail.push(p);
+                if body.trail.len() > 10 {
+                    body.trail.remove(0);
+                }
             }
         }
 

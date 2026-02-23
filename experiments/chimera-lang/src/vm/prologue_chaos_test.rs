@@ -6,7 +6,8 @@ mod tests {
 
     #[test]
     fn test_chaos_source_rune() {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -31,7 +32,8 @@ mod tests {
 
     #[test]
     fn test_glitch_rune() {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -66,7 +68,8 @@ mod tests {
 
     #[test]
     fn test_havoc_rune() {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);

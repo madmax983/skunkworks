@@ -1,19 +1,17 @@
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
+use quipu::{Cord, Knot};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
-    style::{Color},
+    style::Color,
     widgets::{
         canvas::{Canvas, Line, Rectangle},
         Block, Borders, Paragraph,
     },
     Frame,
 };
-use std::{
-    time::{Duration, Instant},
-};
+use std::time::{Duration, Instant};
 use tui_shared::Tui;
-use quipu::{Cord, Knot};
 
 mod simulation;
 use simulation::StateVector;
@@ -265,7 +263,11 @@ fn ui(f: &mut Frame, state: &AppState) {
         .split(f.area());
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Quantum Quipu: Entangled Knots"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Quantum Quipu: Entangled Knots"),
+        )
         .x_bounds([0.0, NUM_QUBITS as f64])
         .y_bounds([0.0, (CIRCUIT_DEPTH + 1) as f64])
         .paint(|ctx| {
@@ -292,18 +294,22 @@ fn ui(f: &mut Frame, state: &AppState) {
                     let y_end = (CIRCUIT_DEPTH - step) as f64;
 
                     let prob = if let Some(m_val) = state.measurements[q] {
-                         if let Some(m_step) = state.measured_at_step[q] {
-                             if step > m_step {
-                                 if m_val { 1.0 } else { 0.0 }
-                             } else {
-                                 // Safely access static_probs
-                                 *state.static_probs[q].get(step).unwrap_or(&0.0)
-                             }
-                         } else {
-                             *state.static_probs[q].get(step).unwrap_or(&0.0)
-                         }
+                        if let Some(m_step) = state.measured_at_step[q] {
+                            if step > m_step {
+                                if m_val {
+                                    1.0
+                                } else {
+                                    0.0
+                                }
+                            } else {
+                                // Safely access static_probs
+                                *state.static_probs[q].get(step).unwrap_or(&0.0)
+                            }
+                        } else {
+                            *state.static_probs[q].get(step).unwrap_or(&0.0)
+                        }
                     } else {
-                         *state.static_probs[q].get(step).unwrap_or(&0.0)
+                        *state.static_probs[q].get(step).unwrap_or(&0.0)
                     };
 
                     let color = if prob < 0.1 {
@@ -324,35 +330,35 @@ fn ui(f: &mut Frame, state: &AppState) {
 
                     // Draw Gate at bottom of segment (except last segment)
                     if step < CIRCUIT_DEPTH {
-                         let cord_idx = (CIRCUIT_DEPTH - 1).saturating_sub(step);
-                         if let Some(cluster) = state.cords[q].clusters.get(cord_idx) {
-                             if let Some(knot) = cluster.first() {
-                                 let gate = QuantumGate::from_knot(knot);
-                                 let symbol_color = Color::Yellow;
+                        let cord_idx = (CIRCUIT_DEPTH - 1).saturating_sub(step);
+                        if let Some(cluster) = state.cords[q].clusters.get(cord_idx) {
+                            if let Some(knot) = cluster.first() {
+                                let gate = QuantumGate::from_knot(knot);
+                                let symbol_color = Color::Yellow;
 
-                                 // Draw symbol
-                                 ctx.draw(&Rectangle {
-                                     x: x_center - 0.1,
-                                     y: y_end + 0.2, // Near top of NEXT segment / Bottom of current
-                                     width: 0.2,
-                                     height: 0.2,
-                                     color: symbol_color,
-                                 });
+                                // Draw symbol
+                                ctx.draw(&Rectangle {
+                                    x: x_center - 0.1,
+                                    y: y_end + 0.2, // Near top of NEXT segment / Bottom of current
+                                    width: 0.2,
+                                    height: 0.2,
+                                    color: symbol_color,
+                                });
 
-                                 if gate == QuantumGate::CNOT {
-                                     let target = (q + 1) % NUM_QUBITS;
-                                     let tx_center = target as f64 + 0.5;
-                                     // Link to target
-                                     ctx.draw(&Line {
-                                         x1: x_center,
-                                         y1: y_end + 0.3,
-                                         x2: tx_center,
-                                         y2: y_end + 0.3,
-                                         color: Color::Green,
-                                     });
-                                 }
-                             }
-                         }
+                                if gate == QuantumGate::CNOT {
+                                    let target = (q + 1) % NUM_QUBITS;
+                                    let tx_center = target as f64 + 0.5;
+                                    // Link to target
+                                    ctx.draw(&Line {
+                                        x1: x_center,
+                                        y1: y_end + 0.3,
+                                        x2: tx_center,
+                                        y2: y_end + 0.3,
+                                        color: Color::Green,
+                                    });
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -361,7 +367,9 @@ fn ui(f: &mut Frame, state: &AppState) {
     f.render_widget(canvas, chunks[0]);
 
     // Info
-    let probs_text: String = state.static_probs.iter()
+    let probs_text: String = state
+        .static_probs
+        .iter()
         .enumerate()
         .map(|(i, p)| format!("Q{}: {:.2}", i, p.last().unwrap_or(&0.0)))
         .collect::<Vec<_>>()
@@ -370,7 +378,11 @@ fn ui(f: &mut Frame, state: &AppState) {
     let info_text = format!(
         "Playhead: {:.2} | Measurements: {:?} | Final Probs: {}",
         state.playhead_y,
-        state.measurements.iter().map(|m| m.map(|b| if b {1} else {0})).collect::<Vec<_>>(),
+        state
+            .measurements
+            .iter()
+            .map(|m| m.map(|b| if b { 1 } else { 0 }))
+            .collect::<Vec<_>>(),
         probs_text
     );
     let info = Paragraph::new(info_text).block(Block::default().borders(Borders::ALL));

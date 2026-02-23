@@ -8,7 +8,8 @@ mod tests {
     use std::time::Duration;
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
-        Dna { evolution_config: None,
+        Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes }],
             },

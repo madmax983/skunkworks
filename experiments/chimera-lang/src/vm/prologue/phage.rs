@@ -1,5 +1,5 @@
 use super::{normalize_coords, PrologueAgent};
-use crate::ast::{Nucleotide};
+use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value};
 use rand::Rng;
@@ -63,14 +63,28 @@ fn mutate_strand(vm: &mut ChimeraVM, s_idx: usize, rng: &mut impl Rng) {
         0 => {
             // Flip OpCode
             let ops = [
-                OpCode::Add, OpCode::Sub, OpCode::Mul, OpCode::Div,
-                OpCode::Push, OpCode::Dup, OpCode::Swap, OpCode::Drop,
-                OpCode::Print, OpCode::Jump, OpCode::Brz,
-                OpCode::Incubate, OpCode::Mitosis, OpCode::Apoptosis,
-                OpCode::Photosynthesize, OpCode::Consume,
+                OpCode::Add,
+                OpCode::Sub,
+                OpCode::Mul,
+                OpCode::Div,
+                OpCode::Push,
+                OpCode::Dup,
+                OpCode::Swap,
+                OpCode::Drop,
+                OpCode::Print,
+                OpCode::Jump,
+                OpCode::Brz,
+                OpCode::Incubate,
+                OpCode::Mitosis,
+                OpCode::Apoptosis,
+                OpCode::Photosynthesize,
+                OpCode::Consume,
             ];
             let new_op = ops[rng.gen_range(0..ops.len())].clone();
-            vm.output.push(format!("PHAGE: Mutated Strand {} Gene {} ({} -> {})", s_idx, g_idx, gene.op, new_op));
+            vm.output.push(format!(
+                "PHAGE: Mutated Strand {} Gene {} ({} -> {})",
+                s_idx, g_idx, gene.op, new_op
+            ));
             gene.op = new_op;
         }
         1 => {
@@ -82,21 +96,30 @@ fn mutate_strand(vm: &mut ChimeraVM, s_idx: usize, rng: &mut impl Rng) {
                     Nucleotide::Number(n) => {
                         let old_n = *n;
                         *n = rng.gen_range(0..100);
-                        vm.output.push(format!("PHAGE: Mutated Strand {} Gene {} Arg {} ({} -> {})", s_idx, g_idx, a_idx, old_n, n));
+                        vm.output.push(format!(
+                            "PHAGE: Mutated Strand {} Gene {} Arg {} ({} -> {})",
+                            s_idx, g_idx, a_idx, old_n, n
+                        ));
                     }
                     Nucleotide::String(s) => {
-                         // Rotate string
-                         if !s.is_empty() {
-                             let c = s.remove(0);
-                             s.push(c);
-                             vm.output.push(format!("PHAGE: Mutated Strand {} Gene {} Arg {} (Rotated to '{}')", s_idx, g_idx, a_idx, s));
-                         }
+                        // Rotate string
+                        if !s.is_empty() {
+                            let c = s.remove(0);
+                            s.push(c);
+                            vm.output.push(format!(
+                                "PHAGE: Mutated Strand {} Gene {} Arg {} (Rotated to '{}')",
+                                s_idx, g_idx, a_idx, s
+                            ));
+                        }
                     }
                     _ => {}
                 }
             } else {
                 // If no args, maybe add one? Or switch to Shuffle.
-                vm.output.push(format!("PHAGE: No args to mutate in Strand {} Gene {}", s_idx, g_idx));
+                vm.output.push(format!(
+                    "PHAGE: No args to mutate in Strand {} Gene {}",
+                    s_idx, g_idx
+                ));
             }
         }
         2 => {

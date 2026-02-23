@@ -40,22 +40,37 @@ pub fn process_pilot_logic(
         Value::Str(s) => {
             match s.as_str() {
                 // Movement Control (Changes Direction)
-                "N" => { dy = -1; dx = 0; }
-                "S" => { dy = 1; dx = 0; }
-                "E" => { dy = 0; dx = 1; }
-                "W" => { dy = 0; dx = -1; }
-                "[" => { // Turn Left (Relative to current facing?) or Absolute? Let's do Absolute rotation.
+                "N" => {
+                    dy = -1;
+                    dx = 0;
+                }
+                "S" => {
+                    dy = 1;
+                    dx = 0;
+                }
+                "E" => {
+                    dy = 0;
+                    dx = 1;
+                }
+                "W" => {
+                    dy = 0;
+                    dx = -1;
+                }
+                "[" => {
+                    // Turn Left (Relative to current facing?) or Absolute? Let's do Absolute rotation.
                     // N(-1,0) -> W(0,-1) -> S(1,0) -> E(0,1) -> N
                     let temp = dy;
                     dy = -dx;
                     dx = temp;
                 }
-                "]" => { // Turn Right
+                "]" => {
+                    // Turn Right
                     let temp = dy;
                     dy = dx;
                     dx = -temp;
                 }
-                "R" => { // Reverse
+                "R" => {
+                    // Reverse
                     dy = -dy;
                     dx = -dx;
                 }
@@ -64,8 +79,14 @@ pub fn process_pilot_logic(
                 "+" | "add" => binary_op(&mut updated_agent.stack, |a, b| a + b),
                 "-" | "sub" => binary_op(&mut updated_agent.stack, |a, b| a - b),
                 "*" | "mul" => binary_op(&mut updated_agent.stack, |a, b| a * b),
-                "/" | "div" => binary_op(&mut updated_agent.stack, |a, b| if b != 0 { a / b } else { 0 }),
-                "%" | "mod" => binary_op(&mut updated_agent.stack, |a, b| if b != 0 { a % b } else { 0 }),
+                "/" | "div" => binary_op(
+                    &mut updated_agent.stack,
+                    |a, b| if b != 0 { a / b } else { 0 },
+                ),
+                "%" | "mod" => binary_op(
+                    &mut updated_agent.stack,
+                    |a, b| if b != 0 { a % b } else { 0 },
+                ),
                 "&" | "and" => binary_op(&mut updated_agent.stack, |a, b| a & b),
                 "|" | "or" => binary_op(&mut updated_agent.stack, |a, b| a | b),
                 "^" | "xor" => binary_op(&mut updated_agent.stack, |a, b| a ^ b),
@@ -79,7 +100,9 @@ pub fn process_pilot_logic(
                         updated_agent.stack.push(val.clone());
                     }
                 }
-                "drop" => { updated_agent.stack.pop(); }
+                "drop" => {
+                    updated_agent.stack.pop();
+                }
                 "swap" => {
                     let len = updated_agent.stack.len();
                     if len >= 2 {
@@ -102,9 +125,9 @@ pub fn process_pilot_logic(
                     }
                 }
                 "." | "print" => {
-                     if let Some(val) = updated_agent.stack.pop() {
+                    if let Some(val) = updated_agent.stack.pop() {
                         vm.output.push(format!("⚓ Pilot: {}", val));
-                     }
+                    }
                 }
 
                 // Grid Interaction
@@ -112,18 +135,18 @@ pub fn process_pilot_logic(
                     // Pop direction, Read neighbor
                     // 0=N, 1=E, 2=S, 3=W
                     if let Some(Value::Int(dir)) = updated_agent.stack.pop() {
-                         let (oy, ox) = match dir {
-                             0 => (-1, 0),
-                             1 => (0, 1),
-                             2 => (1, 0),
-                             3 => (0, -1),
-                             _ => (0, 0),
-                         };
-                         if let Some((ny, nx)) = normalize_coords(y as i64 + oy, x as i64 + ox) {
-                             updated_agent.stack.push(grid_snapshot[ny][nx].clone());
-                         } else {
-                             updated_agent.stack.push(Value::Int(0));
-                         }
+                        let (oy, ox) = match dir {
+                            0 => (-1, 0),
+                            1 => (0, 1),
+                            2 => (1, 0),
+                            3 => (0, -1),
+                            _ => (0, 0),
+                        };
+                        if let Some((ny, nx)) = normalize_coords(y as i64 + oy, x as i64 + ox) {
+                            updated_agent.stack.push(grid_snapshot[ny][nx].clone());
+                        } else {
+                            updated_agent.stack.push(Value::Int(0));
+                        }
                     }
                 }
                 "p" | "put" => {
@@ -144,7 +167,9 @@ pub fn process_pilot_logic(
                                 // Let's allow overwrite for now, except special agents
                                 let target_cell = &vm.grid[ny][nx];
                                 let is_special = match target_cell {
-                                    Value::Str(s) => matches!(s.as_str(), "@" | "K" | "H" | "C" | "⚓"),
+                                    Value::Str(s) => {
+                                        matches!(s.as_str(), "@" | "K" | "H" | "C" | "⚓")
+                                    }
                                     _ => false,
                                 };
                                 if !is_special {
@@ -168,7 +193,9 @@ pub fn process_pilot_logic(
                     if let Ok(n) = s.parse::<i64>() {
                         updated_agent.stack.push(Value::Int(n));
                     } else if s.len() >= 2 && s.starts_with('"') && s.ends_with('"') {
-                         updated_agent.stack.push(Value::Str(s[1..s.len()-1].to_string()));
+                        updated_agent
+                            .stack
+                            .push(Value::Str(s[1..s.len() - 1].to_string()));
                     } else {
                         // Unknown string instruction - treat as literal string push
                         updated_agent.stack.push(Value::Str(s.clone()));
@@ -184,8 +211,11 @@ pub fn process_pilot_logic(
 
     if let Some((ny, nx)) = target {
         // Check Collision
-         if let Value::Str(s) = &grid_snapshot[ny][nx] {
-            if matches!(s.as_str(), "@" | "K" | "H" | "C" | "♻" | "♬" | "₣" | "⚓" | "P" | "ζ") {
+        if let Value::Str(s) = &grid_snapshot[ny][nx] {
+            if matches!(
+                s.as_str(),
+                "@" | "K" | "H" | "C" | "♻" | "♬" | "₣" | "⚓" | "P" | "ζ"
+            ) {
                 // Blocked - Stay put
                 updated_agent.state = Value::Junction(
                     crate::ast::JunctionType::All,

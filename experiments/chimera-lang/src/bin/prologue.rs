@@ -62,7 +62,8 @@ fn main() -> Result<()> {
         }
     } else {
         // Default empty DNA
-        Dna { evolution_config: None,
+        Dna {
+            evolution_config: None,
             helix: Helix { strands: vec![] },
         }
     };

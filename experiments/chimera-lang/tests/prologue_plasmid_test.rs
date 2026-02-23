@@ -1,6 +1,6 @@
 use chimera_lang::ast::{Dna, Helix};
-use chimera_lang::vm::{ChimeraVM, Value};
 use chimera_lang::vm::prologue::exec_prologue_tick;
+use chimera_lang::vm::{ChimeraVM, Value};
 
 fn setup_vm() -> ChimeraVM {
     let dna = Dna {
@@ -141,7 +141,10 @@ fn test_reverse_transcriptase() {
     vm.grid[5][5] = Value::Str("Ð".to_string());
 
     // Add an empty strand 0
-    vm.dna.helix.strands.push(chimera_lang::ast::Strand { genes: vec![] });
+    vm.dna
+        .helix
+        .strands
+        .push(chimera_lang::ast::Strand { genes: vec![] });
     vm.ip = (0, 0);
 
     // Tick 1
@@ -149,5 +152,8 @@ fn test_reverse_transcriptase() {
 
     // Check DNA
     assert_eq!(vm.dna.helix.strands[0].genes.len(), 1, "Should have 1 gene");
-    assert_eq!(vm.dna.helix.strands[0].genes[0].op, chimera_lang::opcode::OpCode::Push);
+    assert_eq!(
+        vm.dna.helix.strands[0].genes[0].op,
+        chimera_lang::opcode::OpCode::Push
+    );
 }

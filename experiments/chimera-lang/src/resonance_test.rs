@@ -6,7 +6,8 @@ use crossbeam_channel::unbounded;
 use resonance_audio::audio::AudioCommand;
 
 fn make_dna(genes: Vec<Gene>) -> Dna {
-    Dna { evolution_config: None,
+    Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },

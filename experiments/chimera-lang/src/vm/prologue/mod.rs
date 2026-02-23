@@ -80,8 +80,8 @@ pub mod hyper;
 pub mod hypnagogia;
 pub mod io;
 pub mod lexicon;
-pub mod linguistics;
 pub mod ligase;
+pub mod linguistics;
 pub mod list;
 pub mod logic;
 pub mod logic_agent;
@@ -96,8 +96,8 @@ pub mod neural;
 pub mod optics;
 pub mod oracle;
 pub mod pandemonium;
-pub mod philosopher;
 pub mod phage;
+pub mod philosopher;
 pub mod pilot;
 pub mod plasmid;
 pub mod prism;
@@ -527,7 +527,11 @@ impl PrologueState {
                                 } else if s == "∃" {
                                     Value::Junction(
                                         crate::ast::JunctionType::All,
-                                        vec![Value::Str("?".to_string()), Value::Int(0), Value::Int(1)],
+                                        vec![
+                                            Value::Str("?".to_string()),
+                                            Value::Int(0),
+                                            Value::Int(1),
+                                        ],
                                     )
                                 } else if s == "χ" {
                                     Value::Junction(
@@ -954,14 +958,7 @@ fn apply_propagation_rune(
     if sequencer::apply_sequencer_runes(rune, y, x, dna, current_signals, next_signals) {
         return true;
     }
-    if mycelium::apply_mycelium_runes(
-        rune,
-        y,
-        x,
-        current_signals,
-        next_signals,
-        mycelium_buffer,
-    ) {
+    if mycelium::apply_mycelium_runes(rune, y, x, current_signals, next_signals, mycelium_buffer) {
         return true;
     }
     false
@@ -1008,7 +1005,9 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                             if let Some(Value::Str(goal)) = &vm.prologue_state.signal_grid[ny][nx] {
                                 if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
                                     vm.grid[sy][sx] = Value::Str("Φ".to_string());
-                                    vm.prologue_state.registers.insert((sy, sx), Value::Str(goal.clone()));
+                                    vm.prologue_state
+                                        .registers
+                                        .insert((sy, sx), Value::Str(goal.clone()));
                                     vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
                                 }
                             }
@@ -1712,7 +1711,8 @@ mod tests {
 
     #[test]
     fn test_prologue_circuit() {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -1764,28 +1764,28 @@ mod prologue_critter_behavior_test;
 mod prologue_chroma_test;
 
 #[cfg(test)]
+mod nova_phage_test;
+#[cfg(test)]
+mod prologue_chromatin_test;
+#[cfg(test)]
 mod prologue_echo_test;
 #[cfg(test)]
-mod prologue_green_spore_test;
-#[cfg(test)]
-mod prologue_mycelium_test;
+mod prologue_enzymes_test;
 #[cfg(test)]
 mod prologue_evolution_v2_test;
 #[cfg(test)]
 mod prologue_forth_v2_test;
 #[cfg(test)]
-mod prologue_logos_test;
+mod prologue_green_spore_test;
 #[cfg(test)]
 mod prologue_logic_agent_test;
 #[cfg(test)]
-mod prologue_chromatin_test;
+mod prologue_logos_test;
+#[cfg(test)]
+mod prologue_mycelium_test;
 #[cfg(all(test, feature = "biophysics"))]
 mod prologue_neural_growth_test;
 #[cfg(test)]
-mod weaver_test;
-#[cfg(test)]
 mod prologue_runecraft_test;
 #[cfg(test)]
-mod prologue_enzymes_test;
-#[cfg(test)]
-mod nova_phage_test;
+mod weaver_test;

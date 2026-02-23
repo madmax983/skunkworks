@@ -66,9 +66,13 @@ fn test_forth_skip() {
 
     // Check agent stack state
     // We can inspect agent directly if we find it.
-    let agent = vm.prologue_state.agents.iter().find(|a|
-        if let Value::Str(s) = &vm.grid[a.y][a.x] { s == "₣" } else { false }
-    );
+    let agent = vm.prologue_state.agents.iter().find(|a| {
+        if let Value::Str(s) = &vm.grid[a.y][a.x] {
+            s == "₣"
+        } else {
+            false
+        }
+    });
 
     // Agent should have "pass" on stack, but NOT "fail".
     if let Some(a) = agent {

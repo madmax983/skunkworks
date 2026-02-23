@@ -71,6 +71,8 @@ pub const MAX_POCKET_RADIUS: i64 = 32;
 pub const MAX_AKASHIC_SIZE: u64 = 10 * 1024 * 1024; // 10MB
 #[cfg(feature = "nova")]
 pub const MAX_STRINGS: usize = 256;
+pub const MAX_STACK_SIZE: usize = 4096;
+pub const MAX_PIET_STEPS: usize = 1000;
 #[cfg(feature = "nova")]
 pub const MAX_GRAVEYARD_SIZE: usize = 256;
 #[cfg(feature = "nova")]
@@ -300,14 +302,14 @@ pub mod nova_quantum;
 #[cfg(test)]
 mod nova_quantum_scribe_test;
 #[cfg(feature = "nova")]
-pub mod nova_raku;
-#[cfg(all(test, feature = "nova"))]
-mod nova_raku_test;
-#[cfg(feature = "nova")]
 pub mod nova_quipu;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_quipu_test;
+#[cfg(feature = "nova")]
+pub mod nova_raku;
+#[cfg(all(test, feature = "nova"))]
+mod nova_raku_test;
 #[cfg(feature = "nova")]
 pub mod nova_reactor;
 #[cfg(feature = "nova")]
@@ -1797,7 +1799,7 @@ impl ChimeraVM {
                 }
                 2 => {
                     // Entropy Surge
-                if nova_flux::exec_entropy_surge(self).is_some() {
+                    if nova_flux::exec_entropy_surge(self).is_some() {
                         self.output
                             .push("MAD SCIENTIST: Triggered ENTROPY SURGE!".to_string());
                     }
@@ -3285,11 +3287,7 @@ impl ChimeraVM {
         None
     }
 
-    fn exec_core_op(
-        &mut self,
-        op: OpCode,
-        args: &[Nucleotide],
-    ) -> Option<Option<(usize, usize)>> {
+    fn exec_core_op(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<Option<(usize, usize)>> {
         match op {
             OpCode::Push => Some(self.exec_stack_op(op, args)),
             OpCode::Add
@@ -3663,10 +3661,9 @@ impl ChimeraVM {
                 nova_planes::exec_planes_op(self, op, args);
                 Some(None)
             }
-            OpCode::StringNew
-            | OpCode::StringPluck
-            | OpCode::StringTune
-            | OpCode::StringListen => Some(nova_strings::exec_string_op(self, op, args)),
+            OpCode::StringNew | OpCode::StringPluck | OpCode::StringTune | OpCode::StringListen => {
+                Some(nova_strings::exec_string_op(self, op, args))
+            }
             OpCode::Bond => Some(nova_metazoa::exec_bond(self, op, args)),
             OpCode::Unbond => Some(nova_metazoa::exec_unbond(self, op, args)),
             OpCode::Signify => Some(nova_metazoa::exec_signify(self, op, args)),
@@ -3683,7 +3680,9 @@ impl ChimeraVM {
                 crate::vm::nova::exec_nova_op(self, op, args);
                 Some(None)
             }
-            OpCode::AbsorbGeometry => Some(nova_alchemy_prime::exec_absorb_geometry(self, op, args)),
+            OpCode::AbsorbGeometry => {
+                Some(nova_alchemy_prime::exec_absorb_geometry(self, op, args))
+            }
             OpCode::ProjectGeometry => {
                 Some(nova_alchemy_prime::exec_project_geometry(self, op, args))
             }
@@ -3841,10 +3840,7 @@ impl ChimeraVM {
         }
 
         #[cfg(feature = "git")]
-        if matches!(
-            op,
-            OpCode::Ancestry | OpCode::Excavate | OpCode::Evolution
-        ) {
+        if matches!(op, OpCode::Ancestry | OpCode::Excavate | OpCode::Evolution) {
             return git::exec_git_op(self, op, args);
         }
 
@@ -3988,6 +3984,10 @@ impl ChimeraVM {
     fn exec_stack_op(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
         match op {
             OpCode::Push => {
+                if self.stack.len() >= MAX_STACK_SIZE {
+                    self.output.push("Error: Stack overflow (Push)".to_string());
+                    return None;
+                }
                 if let Some(arg) = args.first() {
                     fn nuc_to_val(n: &Nucleotide, depth: usize) -> Option<Value> {
                         if depth > MAX_RECURSION_DEPTH {
@@ -4020,6 +4020,10 @@ impl ChimeraVM {
                 }
             }
             OpCode::Dup => {
+                if self.stack.len() >= MAX_STACK_SIZE {
+                    self.output.push("Error: Stack overflow (Dup)".to_string());
+                    return None;
+                }
                 if let Some(val) = self.stack.last() {
                     let v: Value = Clone::clone(val);
                     self.stack.push(v);
@@ -4038,13 +4042,27 @@ impl ChimeraVM {
                 self.stack.pop();
             }
             OpCode::SLen => {
+                if self.stack.len() >= MAX_STACK_SIZE {
+                    self.output.push("Error: Stack overflow (SLen)".to_string());
+                    return None;
+                }
                 self.stack.push(Value::Int(self.stack.len() as i64));
             }
             OpCode::HelixLen => {
+                if self.stack.len() >= MAX_STACK_SIZE {
+                    self.output
+                        .push("Error: Stack overflow (HelixLen)".to_string());
+                    return None;
+                }
                 self.stack
                     .push(Value::Int(self.dna.helix.strands.len() as i64));
             }
             OpCode::GeneLen => {
+                // Note: GeneLen pops one, then pushes one (if valid).
+                // So stack size doesn't increase overall.
+                // But strictly speaking, it pushes.
+                // However, pop() reduces len by 1. So it's safe if it pops first.
+                // Wait, if stack is FULL, pop reduces it to MAX-1, push restores to MAX. Safe.
                 if let Some(val) = self.stack.pop() {
                     match val {
                         Value::Int(idx) => {
@@ -4293,6 +4311,11 @@ impl ChimeraVM {
                     let y_val = self.stack.pop().unwrap();
                     if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
                         if self.is_valid_coord(y, x) {
+                            if self.stack.len() >= MAX_STACK_SIZE {
+                                self.output
+                                    .push("Error: Stack overflow (GRead)".to_string());
+                                return None;
+                            }
                             self.stack.push(self.grid[y as usize][x as usize].clone());
                         } else {
                             self.output
@@ -4392,6 +4415,11 @@ impl ChimeraVM {
                                 count += 1;
                             },
                         );
+                        if self.stack.len() >= MAX_STACK_SIZE {
+                            self.output
+                                .push("Error: Stack overflow (Siphon)".to_string());
+                            return None;
+                        }
                         self.stack.push(Value::Int(sum));
                         self.energy = self.energy.saturating_sub(5);
                         self.output
@@ -4427,7 +4455,14 @@ impl ChimeraVM {
                     if let Some((y, x)) = coords {
                         let val = self.grid[*y as usize][*x as usize].clone();
                         match val {
-                            Value::Int(n) => self.stack.push(Value::Int(n)),
+                            Value::Int(n) => {
+                                if self.stack.len() >= MAX_STACK_SIZE {
+                                    self.output
+                                        .push("Error: Stack overflow (Virus)".to_string());
+                                    return None;
+                                }
+                                self.stack.push(Value::Int(n));
+                            }
                             Value::Str(s) => {
                                 let old_loc = self.context_loc;
                                 self.context_loc = (*y as usize, *x as usize);
@@ -4513,6 +4548,11 @@ impl ChimeraVM {
             OpCode::Genome => {
                 if self.ip.0 < self.dna.helix.strands.len() {
                     let strand = &self.dna.helix.strands[self.ip.0];
+                    if self.stack.len() + 1 + strand.genes.len() > MAX_STACK_SIZE {
+                        self.output
+                            .push("Error: Stack overflow (Genome)".to_string());
+                        return None;
+                    }
                     self.stack.push(Value::Int(strand.genes.len() as i64));
                     for gene in &strand.genes {
                         self.stack.push(Value::Str(gene.op.to_string()));
@@ -4754,7 +4794,8 @@ mod tests {
     use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
-        Dna { evolution_config: None,
+        Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes }],
             },
@@ -4810,7 +4851,8 @@ mod tests {
             }],
         };
 
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![strand0, strand1],
             },
@@ -4857,7 +4899,8 @@ mod tests {
             }],
         };
 
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![strand0, strand1],
             },
@@ -4915,7 +4958,8 @@ mod tests {
                 }, // 5: target to be modified
             ],
         };
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![strand0],
             },
@@ -5277,7 +5321,8 @@ mod tests {
                 args: vec![Nucleotide::Number(200)],
             }],
         };
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![strand0, strand1],
             },
@@ -5490,7 +5535,8 @@ mod sentry_ribosome_tests {
         // Setup VM with 2 strands
         // Strand 0: Empty
         // Strand 1: Empty (Target)
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes: vec![] }, Strand { genes: vec![] }],
             },

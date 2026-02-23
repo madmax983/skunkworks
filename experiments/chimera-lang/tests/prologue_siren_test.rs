@@ -4,7 +4,8 @@ use chimera_lang::vm::Value;
 
 #[test]
 fn test_siren_lookahead_sequencer() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -58,7 +59,8 @@ fn test_siren_lookahead_sequencer() {
 
 #[test]
 fn test_siren_direction_change() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

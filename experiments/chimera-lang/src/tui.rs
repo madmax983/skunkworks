@@ -8,11 +8,11 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+#[cfg(feature = "nova")]
+use hyper_system::math::Vec4;
 use pest::Parser;
 #[cfg(feature = "nova")]
 use rand::Rng;
-#[cfg(feature = "nova")]
-use hyper_system::math::Vec4;
 use ratatui::widgets::canvas::{Canvas, Rectangle};
 use ratatui::{
     backend::CrosstermBackend,
@@ -332,7 +332,10 @@ impl SequencerState {
 }
 
 impl AppState {
-    pub(crate) fn new(initial_view: Option<ViewMode>, source_path: Option<std::path::PathBuf>) -> Self {
+    pub(crate) fn new(
+        initial_view: Option<ViewMode>,
+        source_path: Option<std::path::PathBuf>,
+    ) -> Self {
         let mut view_selector_state = ListState::default();
         view_selector_state.select(Some(0));
         let last_modified = if let Some(path) = &source_path {
@@ -531,11 +534,11 @@ pub fn run_tui(
     // Initialize Evolution Engine if config is present
     if let Some(config) = &vm.dna.evolution_config {
         if let Some(strand) = vm.dna.helix.strands.first() {
-            app_state.evolution_state.engine = Some(crate::vm::evolution::EvolutionEngine::from_config(
-                strand.clone(),
-                config.clone(),
-            ));
-            app_state.evolution_state.challenge = crate::vm::evolution::Challenge::Custom(config.clone());
+            app_state.evolution_state.engine = Some(
+                crate::vm::evolution::EvolutionEngine::from_config(strand.clone(), config.clone()),
+            );
+            app_state.evolution_state.challenge =
+                crate::vm::evolution::Challenge::Custom(config.clone());
             app_state.view_mode = ViewMode::Evolution; // Auto-switch to view
         }
     }
@@ -5489,7 +5492,9 @@ fn render_choir(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 if !buffer_str.is_empty() {
                     for n_str in buffer_str.split(',') {
                         if let Ok(n) = n_str.parse::<u8>() {
-                            let note_names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+                            let note_names = [
+                                "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B",
+                            ];
                             let name = note_names[(n as usize) % 12];
                             let octave = (n / 12) as i32 - 1;
                             notes.push_str(&format!("{}{}, ", name, octave));
@@ -5497,10 +5502,17 @@ fn render_choir(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     }
                 }
 
-                items.push(ListItem::new(format!(
-                    "Siren @ {},{} | BPM:{} Oct:{} | Buf: [{}]",
-                    agent.x, agent.y, bpm, oct, notes.trim_end_matches(", ")
-                )).style(Style::default().fg(Color::Cyan)));
+                items.push(
+                    ListItem::new(format!(
+                        "Siren @ {},{} | BPM:{} Oct:{} | Buf: [{}]",
+                        agent.x,
+                        agent.y,
+                        bpm,
+                        oct,
+                        notes.trim_end_matches(", ")
+                    ))
+                    .style(Style::default().fg(Color::Cyan)),
+                );
             }
         }
     }
@@ -5539,11 +5551,8 @@ fn render_choir(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         dna_items.push(ListItem::new(format!("Strand #{}: {}", i, genes_str)));
     }
 
-    let dna_list = List::new(dna_items).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Composed DNA"),
-    );
+    let dna_list =
+        List::new(dna_items).block(Block::default().borders(Borders::ALL).title("Composed DNA"));
     f.render_widget(dna_list, right_chunks[0]);
 }
 
@@ -12557,7 +12566,9 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                         style = style.fg(Color::LightCyan).add_modifier(Modifier::BOLD);
                     }
                     "🍄" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
-                    "📥" | "📤" | "🦋" => style = style.fg(Color::LightGreen).add_modifier(Modifier::BOLD),
+                    "📥" | "📤" | "🦋" => {
+                        style = style.fg(Color::LightGreen).add_modifier(Modifier::BOLD)
+                    }
                     _ => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
                 }
             } else if !vm.prologue_state.mycelium_network.contains(&(y, x)) {

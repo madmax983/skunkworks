@@ -117,7 +117,8 @@ pub fn apply_evolution_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
                             }
                         }
                         Err(e) => {
-                            vm.output.push(format!("PROLOGUE: Incubation failed: {}", e));
+                            vm.output
+                                .push(format!("PROLOGUE: Incubation failed: {}", e));
                         }
                     }
                     return; // Skip Mode 2

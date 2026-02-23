@@ -13,10 +13,8 @@ fn main() {
     let genes = vec![
         // Use .into() for simple Nucleotide conversion
         Gene::new(OpCode::Push, vec![42.into()]),
-
         // Use .into() for OpCodes with no arguments
         OpCode::Print.into(),
-
         // Strings work too
         Gene::new(OpCode::Push, vec!["Hello World".into()]),
         OpCode::Print.into(),

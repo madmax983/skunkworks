@@ -144,7 +144,8 @@ mod tests {
 
     // Helper to create a dummy VM
     fn make_vm() -> ChimeraVM {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes: vec![] }],
             },

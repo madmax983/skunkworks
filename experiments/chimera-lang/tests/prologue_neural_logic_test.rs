@@ -6,7 +6,8 @@ mod tests {
 
     #[test]
     fn test_neural_synapse() {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -54,7 +55,8 @@ mod tests {
 
     #[test]
     fn test_neural_learning() {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -87,7 +89,8 @@ mod tests {
     #[cfg(feature = "elektra")]
     #[test]
     fn test_varistor() {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);

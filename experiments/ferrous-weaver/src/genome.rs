@@ -31,7 +31,7 @@ pub fn generate_random_dna(num_strands: usize, max_len: usize) -> Dna {
                 14 => OpCode::Recombine,
                 15 => OpCode::Entropy,
                 16 => OpCode::Lumine,
-                17 => OpCode::Knot, // Requires Nova
+                17 => OpCode::Knot,  // Requires Nova
                 18 => OpCode::Weave, // Requires Nova
                 _ => OpCode::Nop,
             };

@@ -145,7 +145,9 @@ pub fn process_philosopher_logic(
                                             "west" => (0, -1),
                                             _ => (0, 0),
                                         };
-                                        if let Some((ny, nx)) = normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+                                        if let Some((ny, nx)) =
+                                            normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                                        {
                                             if matches!(vm.grid[ny][nx], Value::Int(0)) {
                                                 move_target = Some((ny, nx));
                                                 // vm.output.push(format!("PHILOSOPHER: Moving {}", dir));
@@ -166,7 +168,9 @@ pub fn process_philosopher_logic(
                                             "west" => (0, -1),
                                             _ => (0, 0),
                                         };
-                                        if let Some((ny, nx)) = normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+                                        if let Some((ny, nx)) =
+                                            normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                                        {
                                             vm.grid[ny][nx] = val.clone();
                                             vm.output.push(format!("PHILOSOPHER: Wrote {:?}", val));
                                         }

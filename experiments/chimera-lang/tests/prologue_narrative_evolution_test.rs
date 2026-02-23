@@ -4,7 +4,8 @@ use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_narrative_twist() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -30,7 +31,8 @@ fn test_narrative_twist() {
 
 #[test]
 fn test_narrative_revision_len() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

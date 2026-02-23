@@ -7,7 +7,8 @@ use crate::vm::{ChimeraVM, Value};
 
 #[cfg(feature = "nova")]
 fn make_dna(strands: Vec<Strand>) -> Dna {
-    Dna { evolution_config: None,
+    Dna {
+        evolution_config: None,
         helix: Helix { strands },
     }
 }

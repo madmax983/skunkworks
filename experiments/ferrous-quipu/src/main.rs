@@ -1,8 +1,10 @@
 mod physics;
 mod platter;
 
+use crate::physics::{Body, Universe};
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
+use quipu::{Cord, Knot};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
@@ -17,12 +19,10 @@ use std::{
     time::{Duration, Instant},
 };
 use tui_shared::Tui;
-use quipu::{Cord, Knot};
-use crate::physics::{Body, Universe};
 
 struct AppState {
     universe: Universe,
-    playhead_y: f32, // -100 to 100 (Physical Y)
+    playhead_y: f32,   // -100 to 100 (Physical Y)
     playhead_dir: f32, // -1 (Down)
     triggered_bodies: HashSet<usize>,
     last_update: Instant,
@@ -59,13 +59,13 @@ impl AppState {
             let mut cord = Cord::new();
             let clusters = rand::random::<u8>() % 5 + 3; // 3 to 7 clusters
             for _ in 0..clusters {
-                 let k_type = rand::random::<u8>() % 3;
-                 let knots = match k_type {
-                     0 => vec![Knot::Simple],
-                     1 => vec![Knot::Long(rand::random::<u8>() % 8 + 2)],
-                     _ => vec![Knot::FigureEight],
-                 };
-                 cord.clusters.push(knots);
+                let k_type = rand::random::<u8>() % 3;
+                let knots = match k_type {
+                    0 => vec![Knot::Simple],
+                    1 => vec![Knot::Long(rand::random::<u8>() % 8 + 2)],
+                    _ => vec![Knot::FigureEight],
+                };
+                cord.clusters.push(knots);
             }
             self.cords.push(cord.clone());
 
@@ -79,7 +79,9 @@ impl AppState {
             // Iterate reverse (High powers/Top to Low powers/Bottom) to build chain downwards
             let mut depth = 1;
             for (_c_idx, cluster) in cord.clusters.iter().enumerate().rev() {
-                if cluster.is_empty() { continue; }
+                if cluster.is_empty() {
+                    continue;
+                }
 
                 // Determine properties from Knot type
                 let k = &cluster[0];
@@ -128,11 +130,13 @@ fn main() -> Result<()> {
 
         // Check Triggers
         for (id, body) in state.universe.bodies.iter().enumerate() {
-            if body.fixed { continue; }
+            if body.fixed {
+                continue;
+            }
 
             let dist = (body.pos.y - state.playhead_y).abs();
             if dist < 2.0 && !state.triggered_bodies.contains(&id) {
-                 state.triggered_bodies.insert(id);
+                state.triggered_bodies.insert(id);
             }
         }
 
@@ -165,7 +169,11 @@ fn ui(f: &mut Frame, state: &AppState) {
         .split(f.area());
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Ferrous Quipu | Magnetic Cords"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Ferrous Quipu | Magnetic Cords"),
+        )
         .x_bounds([-100.0, 100.0])
         .y_bounds([-100.0, 100.0])
         .paint(|ctx| {
@@ -177,8 +185,16 @@ fn ui(f: &mut Frame, state: &AppState) {
                     if mag > 0.2 {
                         let px = x as f64 - 100.0;
                         let py = y as f64 - 100.0;
-                        let color = if mag > 0.5 { Color::Red } else { Color::DarkGray };
-                         ctx.print(px, py, ratatui::text::Span::styled(".", Style::default().fg(color)));
+                        let color = if mag > 0.5 {
+                            Color::Red
+                        } else {
+                            Color::DarkGray
+                        };
+                        ctx.print(
+                            px,
+                            py,
+                            ratatui::text::Span::styled(".", Style::default().fg(color)),
+                        );
                     }
                 }
             }
@@ -225,9 +241,14 @@ fn ui(f: &mut Frame, state: &AppState) {
 
     f.render_widget(canvas, chunks[0]);
 
-    let info = Paragraph::new(format!("Cords: {} | Bodies: {} | Playhead Y: {:.1} | Speed: {:.1}",
-        state.cords.len(), state.universe.bodies.len(), state.playhead_y, state.playhead_dir))
-        .style(Style::default().fg(Color::Gray))
-        .block(Block::default().borders(Borders::ALL));
+    let info = Paragraph::new(format!(
+        "Cords: {} | Bodies: {} | Playhead Y: {:.1} | Speed: {:.1}",
+        state.cords.len(),
+        state.universe.bodies.len(),
+        state.playhead_y,
+        state.playhead_dir
+    ))
+    .style(Style::default().fg(Color::Gray))
+    .block(Block::default().borders(Borders::ALL));
     f.render_widget(info, chunks[1]);
 }

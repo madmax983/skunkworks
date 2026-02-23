@@ -11,7 +11,8 @@ fn make_vm() -> ChimeraVM {
         op: OpCode::Photosynthesize,
         args: vec![],
     }];
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },

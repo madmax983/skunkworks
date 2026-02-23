@@ -4,7 +4,8 @@ mod tests {
     use chimera_lang::prelude::*;
 
     fn make_vm(genes: Vec<Gene>) -> ChimeraVM {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes }],
             },
@@ -86,7 +87,8 @@ mod tests {
             ],
         };
 
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![s0, s1, s2],
             },
@@ -148,7 +150,8 @@ mod tests {
             ],
         };
 
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![s0, s1],
             },
@@ -204,7 +207,8 @@ mod tests {
             ],
         };
 
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![s0, s1, s2],
             },

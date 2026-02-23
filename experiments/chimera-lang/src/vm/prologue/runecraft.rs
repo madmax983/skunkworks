@@ -37,14 +37,22 @@ fn apply_definition_rune(vm: &mut ChimeraVM, y: usize, x: usize) {
         match val {
             Value::Int(idx) => {
                 if idx >= 0 {
-                    vm.prologue_state.custom_runes.insert(char_str.clone(), idx as usize);
-                    vm.output.push(format!("RUNECRAFT: Defined Custom Rune '{}' -> Strand {}", char_str, idx));
+                    vm.prologue_state
+                        .custom_runes
+                        .insert(char_str.clone(), idx as usize);
+                    vm.output.push(format!(
+                        "RUNECRAFT: Defined Custom Rune '{}' -> Strand {}",
+                        char_str, idx
+                    ));
                     vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
                 }
             }
             Value::Str(code) => {
                 // Future expansion: Compile code string to new strand
-                vm.output.push(format!("RUNECRAFT: Define Code '{}' -> '{}' (Not implemented yet)", char_str, code));
+                vm.output.push(format!(
+                    "RUNECRAFT: Define Code '{}' -> '{}' (Not implemented yet)",
+                    char_str, code
+                ));
             }
             _ => {}
         }
@@ -55,9 +63,13 @@ fn execute_custom_rune(vm: &mut ChimeraVM, rune: &str, idx: usize, y: usize, x: 
     // Execute the strand via interrupt
     if idx < vm.dna.helix.strands.len() {
         vm.interrupt(idx);
-        vm.output.push(format!("RUNECRAFT: Executed Custom Rune '{}'", rune));
+        vm.output
+            .push(format!("RUNECRAFT: Executed Custom Rune '{}'", rune));
         vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1)); // Signal activation
     } else {
-        vm.output.push(format!("RUNECRAFT: Failed to execute '{}' (Invalid Strand {})", rune, idx));
+        vm.output.push(format!(
+            "RUNECRAFT: Failed to execute '{}' (Invalid Strand {})",
+            rune, idx
+        ));
     }
 }

@@ -1,7 +1,7 @@
+use crate::sediment::SedimentParticle;
+use ::rand::Rng;
 use chimera_lang::prelude::*;
 use macroquad::prelude::*;
-use ::rand::Rng;
-use crate::sediment::SedimentParticle;
 
 #[derive(Clone, Debug)]
 pub enum DetritivoreState {
@@ -27,8 +27,13 @@ impl Detritivore {
         ];
 
         let strand = Strand { genes };
-        let helix = Helix { strands: vec![strand] };
-        let dna = Dna { evolution_config: None, helix };
+        let helix = Helix {
+            strands: vec![strand],
+        };
+        let dna = Dna {
+            evolution_config: None,
+            helix,
+        };
 
         let mut vm = ChimeraVM::new(dna);
         vm.energy = 50;
@@ -44,7 +49,12 @@ impl Detritivore {
         }
     }
 
-    pub fn update(&mut self, dt: f32, sediment: &mut Vec<SedimentParticle>, ground_level: f32) -> Option<Detritivore> {
+    pub fn update(
+        &mut self,
+        dt: f32,
+        sediment: &mut Vec<SedimentParticle>,
+        ground_level: f32,
+    ) -> Option<Detritivore> {
         let mut child = None;
 
         // Metabolism
@@ -76,20 +86,20 @@ impl Detritivore {
                 sediment.remove(idx);
             }
         } else {
-             // Random wander
-             let mut rng = ::rand::thread_rng();
-             if rng.gen_bool(0.02) {
-                 let target = vec2(rng.gen_range(0.0..screen_width()), ground_level - 10.0);
-                 self.state = DetritivoreState::Moving(target);
-             }
+            // Random wander
+            let mut rng = ::rand::thread_rng();
+            if rng.gen_bool(0.02) {
+                let target = vec2(rng.gen_range(0.0..screen_width()), ground_level - 10.0);
+                self.state = DetritivoreState::Moving(target);
+            }
 
-             if let DetritivoreState::Moving(target) = self.state {
-                 let dir = (target - self.position).normalize_or_zero();
-                 self.position += dir * 30.0 * dt;
-                 if self.position.distance(target) < 5.0 {
-                     self.state = DetritivoreState::Foraging;
-                 }
-             }
+            if let DetritivoreState::Moving(target) = self.state {
+                let dir = (target - self.position).normalize_or_zero();
+                self.position += dir * 30.0 * dt;
+                if self.position.distance(target) < 5.0 {
+                    self.state = DetritivoreState::Foraging;
+                }
+            }
         }
 
         // Clamp to ground
@@ -117,13 +127,27 @@ impl Detritivore {
     pub fn draw(&self) {
         draw_circle(self.position.x, self.position.y, self.size, self.color);
         // Antennae
-        draw_line(self.position.x, self.position.y, self.position.x - 5.0, self.position.y - 10.0, 1.0, self.color);
-        draw_line(self.position.x, self.position.y, self.position.x + 5.0, self.position.y - 10.0, 1.0, self.color);
+        draw_line(
+            self.position.x,
+            self.position.y,
+            self.position.x - 5.0,
+            self.position.y - 10.0,
+            1.0,
+            self.color,
+        );
+        draw_line(
+            self.position.x,
+            self.position.y,
+            self.position.x + 5.0,
+            self.position.y - 10.0,
+            1.0,
+            self.color,
+        );
 
         // Energy Indicator
         if self.energy > 0 {
-             let ratio = self.energy as f32 / 100.0;
-             draw_circle(self.position.x, self.position.y, self.size * ratio, WHITE);
+            let ratio = self.energy as f32 / 100.0;
+            draw_circle(self.position.x, self.position.y, self.size * ratio, WHITE);
         }
     }
 }

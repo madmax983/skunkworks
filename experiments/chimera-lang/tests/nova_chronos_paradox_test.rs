@@ -96,7 +96,8 @@ fn test_paradox_loop() {
         ],
     };
 
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![strand_main, strand_paradox, strand_end],
         },

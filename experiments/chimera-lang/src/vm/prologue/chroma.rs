@@ -283,12 +283,12 @@ fn apply_green_logic(
         }
         "*" => {
             // Green Split: Spore (Spawn Agent?)
-             if let Some(val) = get_sig(current_signals, y, x, 0, -1) {
+            if let Some(val) = get_sig(current_signals, y, x, 0, -1) {
                 set_sig(next_signals, y, x, 0, 1, val);
                 true
-             } else {
-                 false
-             }
+            } else {
+                false
+            }
         }
         _ => false,
     }
@@ -318,13 +318,13 @@ fn apply_blue_logic(
         }
         "*" => {
             // Blue Split: Delay (Time Dilation)
-             if let Some(Value::Int(w)) = get_sig(current_signals, y, x, 0, -1) {
-                 let res = if w == 0 { 1 } else { 0 };
-                 set_sig(next_signals, y, x, 0, 1, Value::Int(res));
-                 true
-             } else {
-                 false
-             }
+            if let Some(Value::Int(w)) = get_sig(current_signals, y, x, 0, -1) {
+                let res = if w == 0 { 1 } else { 0 };
+                set_sig(next_signals, y, x, 0, 1, Value::Int(res));
+                true
+            } else {
+                false
+            }
         }
         _ => false,
     }
@@ -332,13 +332,7 @@ fn apply_blue_logic(
 
 // Helpers
 
-fn get_sig(
-    signals: &[Vec<Option<Value>>],
-    y: usize,
-    x: usize,
-    dy: i64,
-    dx: i64,
-) -> Option<Value> {
+fn get_sig(signals: &[Vec<Option<Value>>], y: usize, x: usize, dy: i64, dx: i64) -> Option<Value> {
     if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
         signals[ny][nx].clone()
     } else {

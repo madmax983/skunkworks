@@ -7,7 +7,8 @@ mod tests {
     #[test]
     fn test_forth_host_engineering() {
         // 1. Initialize VM with empty DNA
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);

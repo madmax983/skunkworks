@@ -1538,8 +1538,16 @@ fn exec_alchemy_op(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 fn exec_piet(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
-        if let Value::Int(steps) = val {
+        if let Value::Int(mut steps) = val {
             if steps > 0 {
+                if steps > crate::vm::MAX_PIET_STEPS as i64 {
+                    steps = crate::vm::MAX_PIET_STEPS as i64;
+                    vm.output.push(format!(
+                        "PIET: Clamped steps to MAX ({})",
+                        crate::vm::MAX_PIET_STEPS
+                    ));
+                }
+
                 if vm.piet_state.is_none() {
                     vm.piet_state = Some(super::piet::init_piet(vm));
                 }
@@ -2124,8 +2132,7 @@ fn exec_map(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let target_val = vm.stack.pop().unwrap();
 
         if target_val.depth() >= crate::vm::MAX_RECURSION_DEPTH {
-            vm.output
-                .push("Error: Input too deep for Map".to_string());
+            vm.output.push("Error: Input too deep for Map".to_string());
             return None;
         }
 
@@ -2192,9 +2199,10 @@ fn exec_fold(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let init_val = vm.stack.pop().unwrap();
         let target_val = vm.stack.pop().unwrap();
 
-        if target_val.depth() >= crate::vm::MAX_RECURSION_DEPTH || init_val.depth() >= crate::vm::MAX_RECURSION_DEPTH {
-            vm.output
-                .push("Error: Input too deep for Fold".to_string());
+        if target_val.depth() >= crate::vm::MAX_RECURSION_DEPTH
+            || init_val.depth() >= crate::vm::MAX_RECURSION_DEPTH
+        {
+            vm.output.push("Error: Input too deep for Fold".to_string());
             return None;
         }
 
@@ -2316,9 +2324,10 @@ fn exec_zip(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let val_b = vm.stack.pop().unwrap();
         let val_a = vm.stack.pop().unwrap();
 
-        if val_a.depth() >= crate::vm::MAX_RECURSION_DEPTH || val_b.depth() >= crate::vm::MAX_RECURSION_DEPTH {
-            vm.output
-                .push("Error: Input too deep for Zip".to_string());
+        if val_a.depth() >= crate::vm::MAX_RECURSION_DEPTH
+            || val_b.depth() >= crate::vm::MAX_RECURSION_DEPTH
+        {
+            vm.output.push("Error: Input too deep for Zip".to_string());
             return None;
         }
 

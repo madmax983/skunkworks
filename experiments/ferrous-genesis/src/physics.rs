@@ -188,7 +188,8 @@ impl Universe {
                 let dir = delta.normalize_or_zero();
 
                 // Repulsion (Pauli exclusion principle-ish)
-                let repulse = (g_repulse * self.bodies[i].mass.sqrt() * self.bodies[j].mass.sqrt()) / dist_sq;
+                let repulse =
+                    (g_repulse * self.bodies[i].mass.sqrt() * self.bodies[j].mass.sqrt()) / dist_sq;
                 let f_repulse = -dir * repulse;
 
                 forces[i] += f_repulse;
@@ -223,7 +224,11 @@ impl Universe {
             // Map pos to grid
             let gx = (body.pos.x + 100.0) as i32;
             let gy = (body.pos.y + 100.0) as i32;
-            let local_mag = if gx >= 0 && gx < self.platter.width as i32 && gy >= 0 && gy < self.platter.height as i32 {
+            let local_mag = if gx >= 0
+                && gx < self.platter.width as i32
+                && gy >= 0
+                && gy < self.platter.height as i32
+            {
                 self.platter.get_magnetism(gx as usize, gy as usize)
             } else {
                 0.0
@@ -281,7 +286,7 @@ impl Universe {
             body.pos += body.vel * dt;
 
             // Trail
-             if rand::random::<u8>() % 10 == 0 {
+            if rand::random::<u8>() % 10 == 0 {
                 body.trail.push(body.pos);
                 if body.trail.len() > 20 {
                     body.trail.remove(0);
@@ -291,10 +296,14 @@ impl Universe {
             // Write to Platter
             let gx = (body.pos.x + 100.0) as i32;
             let gy = (body.pos.y + 100.0) as i32;
-            if gx >= 0 && gx < self.platter.width as i32 && gy >= 0 && gy < self.platter.height as i32 {
-                 // Write amount based on deviation from neutral
-                 let intensity = (body.magnetism - 0.5).abs() * mag_write * dt;
-                 self.platter.magnetize(gx as usize, gy as usize, intensity);
+            if gx >= 0
+                && gx < self.platter.width as i32
+                && gy >= 0
+                && gy < self.platter.height as i32
+            {
+                // Write amount based on deviation from neutral
+                let intensity = (body.magnetism - 0.5).abs() * mag_write * dt;
+                self.platter.magnetize(gx as usize, gy as usize, intensity);
             }
         }
 

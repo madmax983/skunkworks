@@ -6,7 +6,8 @@ mod tests {
     use resonance_audio::audio::AudioCommand;
 
     fn make_vm(genes: Vec<Gene>) -> ChimeraVM {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes }],
             },

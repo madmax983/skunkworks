@@ -1,10 +1,13 @@
 use crate::ast::{Dna, Helix};
-use crate::vm::{ChimeraVM, Value};
 use crate::vm::prologue::exec_prologue_tick;
+use crate::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_neural_growth() {
-    let dna = Dna { evolution_config: None, helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        evolution_config: None,
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -12,7 +15,9 @@ fn test_neural_growth() {
     // "Grow": Move, Neuron, Move, Synapse, Move, Neuron
     // F N F S F N
     // Note: Logos requires literals to be quoted, otherwise they are treated as references.
-    vm.prologue_state.logos_engine.define_rule("Grow", "\"F\" \"N\" \"F\" \"S\" \"F\" \"N\"");
+    vm.prologue_state
+        .logos_engine
+        .define_rule("Grow", "\"F\" \"N\" \"F\" \"S\" \"F\" \"N\"");
 
     // Setup Grid
     // (5, 3): "Grow" (Rule Name)
@@ -40,11 +45,29 @@ fn test_neural_growth() {
     let cell_7 = &vm.grid[5][7];
     let cell_8 = &vm.grid[5][8];
 
-    assert_eq!(*cell_6, Value::Str("♦".to_string()), "Expected Neuron at (5, 6)");
-    assert_eq!(*cell_7, Value::Str("•".to_string()), "Expected Synapse at (5, 7)");
-    assert_eq!(*cell_8, Value::Str("♦".to_string()), "Expected Neuron at (5, 8)");
+    assert_eq!(
+        *cell_6,
+        Value::Str("♦".to_string()),
+        "Expected Neuron at (5, 6)"
+    );
+    assert_eq!(
+        *cell_7,
+        Value::Str("•".to_string()),
+        "Expected Synapse at (5, 7)"
+    );
+    assert_eq!(
+        *cell_8,
+        Value::Str("♦".to_string()),
+        "Expected Neuron at (5, 8)"
+    );
 
     // Verify Neurons were registered in the VM
-    assert!(vm.neurons.contains_key(&(5, 6)), "Neuron not registered at (5, 6)");
-    assert!(vm.neurons.contains_key(&(5, 8)), "Neuron not registered at (5, 8)");
+    assert!(
+        vm.neurons.contains_key(&(5, 6)),
+        "Neuron not registered at (5, 6)"
+    );
+    assert!(
+        vm.neurons.contains_key(&(5, 8)),
+        "Neuron not registered at (5, 8)"
+    );
 }

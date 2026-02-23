@@ -33,21 +33,45 @@ fn create_homeostasis_dna() -> Dna {
             // So Top is Self. Bottom is Local.
 
             // 1. Check LocalMag (Under Self)
-            Gene { op: OpCode::Swap, args: vec![] }, // [Self, Local]
-            Gene { op: OpCode::Dup, args: vec![] },  // [Self, Local, Local]
-
+            Gene {
+                op: OpCode::Swap,
+                args: vec![],
+            }, // [Self, Local]
+            Gene {
+                op: OpCode::Dup,
+                args: vec![],
+            }, // [Self, Local, Local]
             // 2. Is Local > 60?
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(60)] }, // [Self, Local, Local, 60]
-            Gene { op: OpCode::Gt, args: vec![] }, // [Self, Local, IsHot]
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(60)],
+            }, // [Self, Local, Local, 60]
+            Gene {
+                op: OpCode::Gt,
+                args: vec![],
+            }, // [Self, Local, IsHot]
             // 3. If NOT Hot (0), Jump to Strand 1 (Check Cold)
-            Gene { op: OpCode::Brz, args: vec![Nucleotide::Number(1)] },
-
+            Gene {
+                op: OpCode::Brz,
+                args: vec![Nucleotide::Number(1)],
+            },
             // 4. If Hot (1), We are here. Cool down (20).
-            Gene { op: OpCode::Drop, args: vec![] }, // [Self, Local] -> [Self]
-            Gene { op: OpCode::Drop, args: vec![] }, // [Self] -> []
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(20)] },
-            Gene { op: OpCode::Ret, args: vec![] },
+            Gene {
+                op: OpCode::Drop,
+                args: vec![],
+            }, // [Self, Local] -> [Self]
+            Gene {
+                op: OpCode::Drop,
+                args: vec![],
+            }, // [Self] -> []
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(20)],
+            },
+            Gene {
+                op: OpCode::Ret,
+                args: vec![],
+            },
         ],
     };
 
@@ -55,20 +79,41 @@ fn create_homeostasis_dna() -> Dna {
     let s1 = Strand {
         genes: vec![
             // Stack: [Self, Local]
-            Gene { op: OpCode::Dup, args: vec![] }, // [Self, Local, Local]
-
+            Gene {
+                op: OpCode::Dup,
+                args: vec![],
+            }, // [Self, Local, Local]
             // Is Local < 40?
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(40)] },
-            Gene { op: OpCode::Lt, args: vec![] }, // [Self, Local, IsCold]
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(40)],
+            },
+            Gene {
+                op: OpCode::Lt,
+                args: vec![],
+            }, // [Self, Local, IsCold]
             // If NOT Cold (0), Jump to Strand 2 (Stay)
-            Gene { op: OpCode::Brz, args: vec![Nucleotide::Number(2)] },
-
+            Gene {
+                op: OpCode::Brz,
+                args: vec![Nucleotide::Number(2)],
+            },
             // If Cold (1), Heat up (80).
-            Gene { op: OpCode::Drop, args: vec![] },
-            Gene { op: OpCode::Drop, args: vec![] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(80)] },
-            Gene { op: OpCode::Ret, args: vec![] },
+            Gene {
+                op: OpCode::Drop,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Drop,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(80)],
+            },
+            Gene {
+                op: OpCode::Ret,
+                args: vec![],
+            },
         ],
     };
 
@@ -76,8 +121,14 @@ fn create_homeostasis_dna() -> Dna {
     let s2 = Strand {
         genes: vec![
             // Stack: [Self, Local]
-            Gene { op: OpCode::Drop, args: vec![] }, // [Self]
-            Gene { op: OpCode::Ret, args: vec![] },
+            Gene {
+                op: OpCode::Drop,
+                args: vec![],
+            }, // [Self]
+            Gene {
+                op: OpCode::Ret,
+                args: vec![],
+            },
         ],
     };
 
@@ -118,7 +169,7 @@ fn main() -> Result<()> {
 
 fn run_app<B: Backend>(terminal: &mut Terminal<B>) -> Result<()>
 where
-    <B as Backend>::Error: Send + Sync + 'static
+    <B as Backend>::Error: Send + Sync + 'static,
 {
     // Initialize Universe
     let mut universe = Universe::new();
@@ -151,7 +202,11 @@ where
                 .split(size);
 
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title("Ferrous Genesis: Amorphous CA"))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title("Ferrous Genesis: Amorphous CA"),
+                )
                 .x_bounds([-100.0 * zoom, 100.0 * zoom])
                 .y_bounds([-100.0 * zoom, 100.0 * zoom])
                 .paint(|ctx| {
@@ -191,22 +246,29 @@ where
                         // Body
                         let symbol = if body.mass > 20.0 { "O" } else { "o" };
                         // Color is updated in physics step based on magnetism
-                        ctx.print(body.pos.x as f64, body.pos.y as f64, Span::styled(symbol, Style::default().fg(body.color)));
+                        ctx.print(
+                            body.pos.x as f64,
+                            body.pos.y as f64,
+                            Span::styled(symbol, Style::default().fg(body.color)),
+                        );
                     }
                 });
 
             f.render_widget(canvas, chunks[0]);
 
             let status = if paused { "PAUSED" } else { "RUNNING" };
-            let footer = Paragraph::new(format!("Controls: [Q] Quit | [Space] Pause | [+/-] Zoom | Status: {}", status))
-                .style(Style::default().fg(Color::White).bg(Color::DarkGray));
+            let footer = Paragraph::new(format!(
+                "Controls: [Q] Quit | [Space] Pause | [+/-] Zoom | Status: {}",
+                status
+            ))
+            .style(Style::default().fg(Color::White).bg(Color::DarkGray));
             f.render_widget(footer, chunks[1]);
         })?;
 
         // Input
         if event::poll(Duration::from_millis(10))? {
             if let Event::Key(key) = event::read()? {
-                 if key.kind == event::KeyEventKind::Press {
+                if key.kind == event::KeyEventKind::Press {
                     match key.code {
                         KeyCode::Char('q') => return Ok(()),
                         KeyCode::Char(' ') => paused = !paused,
@@ -214,7 +276,7 @@ where
                         KeyCode::Char('-') => zoom *= 1.1,
                         _ => {}
                     }
-                 }
+                }
             }
         }
 

@@ -15,11 +15,7 @@ pub fn process_chromatin_agent(
     if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
         if let Value::Junction(_, ref list) = grid_snapshot[ny][nx] {
             if list.len() >= 2 {
-                let func = if let Value::Int(n) = list[0] {
-                    n
-                } else {
-                    0
-                };
+                let func = if let Value::Int(n) = list[0] { n } else { 0 };
                 let target = if let Value::Str(ref s) = list[1] {
                     s.clone()
                 } else {
@@ -46,11 +42,7 @@ pub fn process_chromatin_agent(
     // Parse State: [Function, Target]
     let (func, target) = match &current_agent.state {
         Value::Junction(_, list) if list.len() >= 2 => {
-            let f = if let Value::Int(n) = list[0] {
-                n
-            } else {
-                0
-            };
+            let f = if let Value::Int(n) = list[0] { n } else { 0 };
             let t = if let Value::Str(s) = &list[1] {
                 s.clone()
             } else {
@@ -104,7 +96,10 @@ pub fn process_chromatin_agent(
                         vm.prologue_state.epigenetic_grid[ny][nx] = mark;
                         // Light up
                         vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
-                        vm.output.push(format!("CHROMATIN: Applied {:?} to {} at {},{}", mark, target, nx, ny));
+                        vm.output.push(format!(
+                            "CHROMATIN: Applied {:?} to {} at {},{}",
+                            mark, target, nx, ny
+                        ));
                     }
                 }
             }
