@@ -437,6 +437,8 @@ impl PrologueState {
                             | "Γ"
                             | "«"
                             | "»"
+                            | "η"
+                            | "γ"
                             // Forth
                             | "₣"
                             // Zeta (Wire Lisp)
@@ -1134,6 +1136,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             chroma::apply_chroma_sinks(vm, rune, y, x);
             sequencer::apply_sequencer_sinks(vm, rune, y, x);
             mycelium::apply_mycelium_sinks(vm, rune, y, x);
+            logos::apply_logos_sinks(vm, rune, y, x);
         }
     }
 }
@@ -1641,3 +1644,5 @@ mod prologue_mycelium_test;
 mod prologue_evolution_v2_test;
 #[cfg(test)]
 mod prologue_forth_v2_test;
+#[cfg(test)]
+mod prologue_logos_test;
