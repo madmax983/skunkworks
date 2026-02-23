@@ -27,3 +27,7 @@
 **[Topology Quirks in Testing]**
 **Learning:** `ChimeraVM` defaults to `Topology::Torus`, which makes "out of bounds" testing tricky for coordinate-based logic like `exec_splash`. Tests relying on boundaries must explicitly set `vm.topology = Topology::Plane`.
 **Action:** When testing grid operations, always check the default topology and override it if boundary conditions are being tested.
+
+**[NaN Propagation in PBD]**
+**Learning:** In Position Based Dynamics, a single `NaN` particle position can infect the entire system because `delta.length()` returns `NaN`, and `NaN < EPSILON` is false, bypassing zero-division checks.
+**Action:** Always check `!len.is_finite()` in distance constraints to prevent NaN propagation.
