@@ -3,8 +3,6 @@
 #[cfg(feature = "biophysics")]
 use super::neuron::Neuron;
 #[cfg(feature = "nova")]
-use super::nova_chaos;
-#[cfg(feature = "nova")]
 use super::nova_sigil;
 #[cfg(feature = "oracle")]
 use super::oracle;
@@ -160,13 +158,6 @@ struct KnowledgeWrite {
     fact: Value,
 }
 
-struct TransmutationWrite {
-    y: usize,
-    x: usize,
-    output: String,
-    consumed: Vec<(usize, usize)>,
-}
-
 struct SignalContext {
     next_signals: [[u8; GRID_SIZE]; GRID_SIZE],
     grid_writes: Vec<GridWrite>,
@@ -190,7 +181,6 @@ struct SignalContext {
     midi_events: Vec<MidiEvent>,
     #[cfg(feature = "oracle")]
     knowledge_writes: Vec<KnowledgeWrite>,
-    transmutation_writes: Vec<TransmutationWrite>,
 }
 
 struct PhageUpdate {
@@ -228,7 +218,6 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         midi_events: Vec::new(),
         #[cfg(feature = "oracle")]
         knowledge_writes: Vec::new(),
-        transmutation_writes: Vec::new(),
     };
 
     // 0. Process Phages
@@ -280,7 +269,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
 
             let is_uppercase = c.is_uppercase(); // Use Unicode uppercase
             let is_bang = c == '*';
-            let is_special = matches!(c, '@' | '^' | 'Ψ' | 'ψ' | 'Φ' | 'φ' | 'Ω' | 'ω' | '☿' | '♀');
+            let is_special = matches!(c, '@' | '^' | 'Ψ' | 'ψ' | 'Φ' | 'φ' | 'Ω' | 'ω');
             let active = signal > 0 || is_uppercase || is_bang || is_special;
 
             if !active {
@@ -455,8 +444,6 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 'ƒ' => exec_function_op(vm, y, x, signal, &mut ctx),
                 'Γ' => exec_gamma(vm, y, x, signal, &mut ctx),
                 'Σ' => exec_sigma(vm, y, x, &mut ctx),
-                '☿' => exec_mercury(vm, y, x, signal, &mut ctx),
-                '♀' => exec_venus(vm, y, x, signal, &mut ctx),
                 #[cfg(feature = "oracle")]
                 'Π' => exec_pi(vm, y, x, signal, &mut ctx),
                 #[cfg(feature = "oracle")]
@@ -570,17 +557,6 @@ pub fn process_signals(vm: &mut ChimeraVM) {
     for w in ctx.grid_writes {
         vm.grid[w.y][w.x] = w.val;
     }
-
-    for w in ctx.transmutation_writes {
-        vm.grid[w.y][w.x] = Value::Str(w.output);
-        for (cy, cx) in w.consumed {
-            vm.grid[cy][cx] = Value::Int(0);
-        }
-    }
-
-    // 2.1 Apply Chaos Physics
-    #[cfg(feature = "nova")]
-    super::nova_chaos::process_chaos_physics(vm);
 
     // 2.2 Apply Voltage Writes
     #[cfg(feature = "elektra")]
@@ -1800,37 +1776,6 @@ fn exec_babel_signal(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut S
                 ctx.executions
                     .push((OpCode::Push, vec![Nucleotide::String(input_str)]));
                 ctx.executions.push((OpCode::BabelLive, vec![]));
-            }
-        }
-    }
-}
-
-fn exec_mercury(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
-    if signal > 0 {
-        if let Some((out, consumed)) = nova_chaos::check_local_transmutation(vm, y, x) {
-            ctx.transmutation_writes.push(TransmutationWrite {
-                y,
-                x,
-                output: out,
-                consumed,
-            });
-        }
-    }
-}
-
-fn exec_venus(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
-    if signal > 0 {
-        let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-        for (dy, dx) in neighbors {
-            if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-                if let Some((out, consumed)) = nova_chaos::check_local_transmutation(vm, ny, nx) {
-                    ctx.transmutation_writes.push(TransmutationWrite {
-                        y: ny,
-                        x: nx,
-                        output: out,
-                        consumed,
-                    });
-                }
             }
         }
     }
