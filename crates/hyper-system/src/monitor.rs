@@ -19,15 +19,41 @@ use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
 /// All public metric fields (`cpu_usage`, `mem_usage`, etc.) are normalized
 /// to a range of **0.0 to 1.0**, where 1.0 represents 100% usage.
 ///
+/// # Behavior
+///
+/// - **Polling Frequency**: The underlying system metrics are refreshed at most
+///   once every **1.0 second**. This prevents excessive overhead from system calls.
+/// - **Smoothing**: Between polls, the public values are interpolated towards the
+///   latest system values using an exponential moving average. The smoothing speed
+///   is proportional to `2.0 * dt`.
+/// - **Load Average**: The load average is normalized against a baseline of **4 cores**.
+///   A load average of 4.0 results in a value of 1.0. This is a heuristic for
+///   visualization purposes and may saturate on machines with more cores.
+///
 /// # Examples
 ///
 /// ```no_run
 /// use hyper_system::monitor::SystemMonitor;
+/// use std::thread;
+/// use std::time::Duration;
 ///
 /// let mut monitor = SystemMonitor::new();
-/// // Call update inside your main loop
-/// monitor.update_with_time(0.016, 100.0);
-/// println!("CPU Usage: {:.2}%", monitor.cpu_usage * 100.0);
+///
+/// // Simulate a loop
+/// let dt: f32 = 0.016; // 60 FPS
+/// let mut time: f64 = 0.0;
+///
+/// for _ in 0..100 {
+///     time += dt as f64;
+///     // Update the monitor with the current frame time
+///     monitor.update_with_time(dt, time);
+///
+///     // Use the smoothed values for visualization
+///     println!("Smoothed CPU: {:.2}%", monitor.cpu_usage * 100.0);
+///
+///     // In a real app, you would sleep or wait for vsync here
+///     // thread::sleep(Duration::from_secs_f32(dt));
+/// }
 /// ```
 pub struct SystemMonitor {
     pub sys: System,
@@ -80,6 +106,14 @@ impl SystemMonitor {
     ///
     /// * `dt` - The time elapsed since the last frame (in seconds).
     /// * `now` - The current timestamp (in seconds).
+    ///
+    /// # Implementation Details
+    ///
+    /// This method performs two tasks:
+    /// 1. **Poll**: Checks if 1 second has passed since `last_update`. If so, it refreshes
+    ///    system stats via `sysinfo` and updates the internal "target" values.
+    /// 2. **Interpolate**: Smoothly moves the public fields (`cpu_usage`, etc.) towards
+    ///    the target values using the formula: `current = lerp(current, target, 2.0 * dt)`.
     pub fn update_with_time(&mut self, dt: f32, now: f64) {
         if now - self.last_update > 1.0 {
             self.sys.refresh_cpu();
@@ -122,6 +156,7 @@ impl SystemMonitor {
     /// Updates the system metrics using macroquad's time functions.
     ///
     /// This method is only available when the `macroquad` feature is enabled.
+    /// It automatically calls [`get_frame_time()`] and [`get_time()`].
     #[cfg(feature = "macroquad")]
     pub fn update(&mut self) {
         self.update_with_time(get_frame_time(), get_time());
