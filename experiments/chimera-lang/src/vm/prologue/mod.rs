@@ -93,6 +93,7 @@ pub mod neural;
 pub mod optics;
 pub mod oracle;
 pub mod pandemonium;
+pub mod philosopher;
 pub mod prism;
 pub mod psionics;
 pub mod quantum;
@@ -328,6 +329,8 @@ impl PrologueState {
                             | "Φ"
                             | "Λ"
                             | "Ω"
+                        // Philosopher
+                            | "🎓"
                         // Chaos
                             | "k"
                             | "z"
@@ -454,6 +457,7 @@ impl PrologueState {
                             || s == "♬"
                             || s == "₣"
                             || s == "ζ"
+                            || s == "Φ"
                         {
                             // Try to retrieve persistent state
                             let raw_state = self
@@ -474,6 +478,8 @@ impl PrologueState {
                                         crate::ast::JunctionType::All,
                                         vec![Value::Int(0), Value::Int(1)],
                                     )
+                                } else if s == "Φ" {
+                                    Value::Str("exist".to_string())
                                 } else {
                                     Value::Int(0)
                                 }
@@ -930,6 +936,24 @@ fn process_sinks(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
 /// Handles `?` (Sink), `$` (Scribe), `M` (Mutate), `O` (Organelle), etc.
 fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     match rune {
+        "🎓" => {
+            // Graduate: West (@), North (Goal) -> South (Φ)
+            if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+                if let Value::Str(s) = &vm.grid[wy][wx] {
+                    if s == "@" {
+                        if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+                            if let Some(Value::Str(goal)) = &vm.prologue_state.signal_grid[ny][nx] {
+                                if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
+                                    vm.grid[sy][sx] = Value::Str("Φ".to_string());
+                                    vm.prologue_state.registers.insert((sy, sx), Value::Str(goal.clone()));
+                                    vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         "?" => {
             // Sink
             // Check neighbors for signal (and Self)
@@ -1412,6 +1436,14 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
             }
         } else if current_type == "₣" {
             match forth::process_forth_agent(vm, &agent, grid_snapshot) {
+                Some((updated_agent, t)) => {
+                    agent = updated_agent;
+                    t
+                }
+                None => continue,
+            }
+        } else if current_type == "Φ" {
+            match philosopher::process_philosopher_logic(vm, &agent, grid_snapshot) {
                 Some((updated_agent, t)) => {
                     agent = updated_agent;
                     t
