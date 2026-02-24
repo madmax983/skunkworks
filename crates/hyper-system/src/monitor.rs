@@ -9,6 +9,16 @@
 use macroquad::prelude::*;
 use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
 
+const UPDATE_INTERVAL: f64 = 1.0;
+const INITIAL_UPDATE_TIMESTAMP: f64 = -2.0;
+const LERP_SPEED_MULTIPLIER: f32 = 2.0;
+const MAX_LOAD_NORMALIZATION: f32 = 4.0;
+const PERCENTAGE_NORMALIZATION: f32 = 100.0;
+
+fn lerp(a: f32, b: f32, t: f32) -> f32 {
+    a + (b - a) * t
+}
+
 /// A real-time system resource monitor.
 ///
 /// `SystemMonitor` tracks CPU, memory, swap usage, and load average.
@@ -86,19 +96,11 @@ impl SystemMonitor {
     /// The first call to `update` will likely report 0% CPU usage as `sysinfo` needs two data points
     /// to calculate the delta. Meaningful data usually appears after the first 1-second interval.
     pub fn new() -> Self {
-        let mut sys = System::new_with_specifics(
-            RefreshKind::new()
-                .with_cpu(CpuRefreshKind::everything())
-                .with_memory(MemoryRefreshKind::everything()),
-        );
-        // Initial refresh to establish baseline for CPU usage
-        sys.refresh_cpu();
-
         Self {
-            sys,
+            sys: Self::init_system(),
             // Initialize to a negative value to force an immediate update on the first frame (t=0)
             // if the user passes t=0.0.
-            last_update: -2.0,
+            last_update: INITIAL_UPDATE_TIMESTAMP,
             cpu_usage: 0.0,
             mem_usage: 0.0,
             swap_usage: 0.0,
@@ -108,6 +110,53 @@ impl SystemMonitor {
             target_swap: 0.0,
             target_load: 0.0,
         }
+    }
+
+    fn init_system() -> System {
+        let mut sys = System::new_with_specifics(
+            RefreshKind::new()
+                .with_cpu(CpuRefreshKind::everything())
+                .with_memory(MemoryRefreshKind::everything()),
+        );
+        // Initial refresh to establish baseline for CPU usage
+        sys.refresh_cpu();
+        sys
+    }
+
+    fn poll_system_metrics(&mut self) {
+        self.sys.refresh_cpu();
+        self.sys.refresh_memory();
+
+        self.target_cpu = self.sys.global_cpu_info().cpu_usage() / PERCENTAGE_NORMALIZATION;
+
+        let total_mem = self.sys.total_memory() as f32;
+        let used_mem = self.sys.used_memory() as f32;
+        self.target_mem = if total_mem > 0.0 {
+            used_mem / total_mem
+        } else {
+            0.0
+        };
+
+        let total_swap = self.sys.total_swap() as f32;
+        let used_swap = self.sys.used_swap() as f32;
+        self.target_swap = if total_swap > 0.0 {
+            used_swap / total_swap
+        } else {
+            0.0
+        };
+
+        let load = System::load_average();
+        // Normalize load average assuming 4 cores is "full load" for visual purposes
+        self.target_load = (load.one as f32 / MAX_LOAD_NORMALIZATION).clamp(0.0, 1.0);
+    }
+
+    fn interpolate_metrics(&mut self, dt: f32) {
+        let speed = LERP_SPEED_MULTIPLIER * dt;
+
+        self.cpu_usage = lerp(self.cpu_usage, self.target_cpu, speed);
+        self.mem_usage = lerp(self.mem_usage, self.target_mem, speed);
+        self.swap_usage = lerp(self.swap_usage, self.target_swap, speed);
+        self.load_avg = lerp(self.load_avg, self.target_load, speed);
     }
 
     /// Updates the system metrics using explicitly provided time values.
@@ -133,42 +182,12 @@ impl SystemMonitor {
     /// Therefore, valid CPU metrics will only appear after the *second* poll (usually at t=1.0s).
     /// Before that, `cpu_usage` will interpolate towards 0.0.
     pub fn update_with_time(&mut self, dt: f32, now: f64) {
-        if now - self.last_update > 1.0 {
-            self.sys.refresh_cpu();
-            self.sys.refresh_memory();
+        if now - self.last_update > UPDATE_INTERVAL {
+            self.poll_system_metrics();
             self.last_update = now;
-
-            self.target_cpu = self.sys.global_cpu_info().cpu_usage() / 100.0;
-
-            let total_mem = self.sys.total_memory() as f32;
-            let used_mem = self.sys.used_memory() as f32;
-            self.target_mem = if total_mem > 0.0 {
-                used_mem / total_mem
-            } else {
-                0.0
-            };
-
-            let total_swap = self.sys.total_swap() as f32;
-            let used_swap = self.sys.used_swap() as f32;
-            self.target_swap = if total_swap > 0.0 {
-                used_swap / total_swap
-            } else {
-                0.0
-            };
-
-            let load = System::load_average();
-            // Normalize load average assuming 4 cores is "full load" for visual purposes
-            self.target_load = (load.one as f32 / 4.0).clamp(0.0, 1.0);
         }
 
-        // Interpolate
-        let lerp = |a: f32, b: f32, t: f32| a + (b - a) * t;
-        let speed = 2.0 * dt;
-
-        self.cpu_usage = lerp(self.cpu_usage, self.target_cpu, speed);
-        self.mem_usage = lerp(self.mem_usage, self.target_mem, speed);
-        self.swap_usage = lerp(self.swap_usage, self.target_swap, speed);
-        self.load_avg = lerp(self.load_avg, self.target_load, speed);
+        self.interpolate_metrics(dt);
     }
 
     /// Updates the system metrics using macroquad's time functions.
