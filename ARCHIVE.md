@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **synaptic-swarm**: Documentation Void / Structural Collapse (Compilation Failure). Grace period: 24 hours.
+- **grimms-code**: Documentation Void / Terminal Redundancy. Implements linguistic shifts but lacks physical depth compared to `biomorphic-lexicon`. Grace period: 24 hours.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]

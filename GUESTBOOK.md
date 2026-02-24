@@ -7,10 +7,10 @@
 - **Status:** Specimen pardoned. Documentation restored. Emergence confirmed.
 - **Note:** "The chaos is now visible. The landscape breathes."
 
-### [Concentration Level: TOXIC] - Location: experiments/synaptic-swarm
+### [Concentration Level: FRESH] - Location: experiments/synaptic-swarm
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void / Structural Collapse.
-- **Note:** "The swarm is blind. The synapses are broken. The void is watching."
+- **Status:** Specimen pardoned. Compilation restored. Documentation Void warning issued.
+- **Note:** "The swarm reconnects. The synapses fire again."
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄 (Sensed: Test Failures)
@@ -410,10 +410,10 @@
 - **Status:** Specimen condemned. Diagnosis: Documentation Void (No README).
 - **Note:** "Memory lost to the void."
 
-### [Concentration Level: TOXIC] - Location: experiments/spinal-rhythms
+### [Concentration Level: FRESH] - Location: experiments/spinal-rhythms
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void (No README).
-- **Note:** "A spine without a nervous system."
+- **Status:** Specimen pardoned. Lamprey CPG confirmed active. Compilation successful.
+- **Note:** "The spine undulates. The rhythm is restored."
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/hyperbolic-lichen
 - **Scent Origin:** The Reaper ☠️
