@@ -309,6 +309,10 @@ impl PbdSystem {
             return;
         }
 
+        if !target_len.is_finite() || !stiffness.is_finite() {
+            return;
+        }
+
         // Optimization: Access particle data once to minimize bounds checks.
         let (pos1, w1) = {
             let p = &particles[p1];
