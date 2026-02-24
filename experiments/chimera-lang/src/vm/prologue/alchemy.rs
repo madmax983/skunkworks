@@ -17,12 +17,13 @@
 //!
 //! | Rune | Name | Input | Output | Description |
 //! |---|---|---|---|---|
-//! | `t` | **Transmute** | West (Val), North (Mode) | Self | Converts types based on Mode (0=Str, 1=Int, 2=Type, 3=Len). |
+//! | `t` | **Transmute** | West (Val), North (Mode) | Self | Converts types based on Mode (0=Str, 1=Int, 2=Type, 3=Len, 4=Liq, 5=Sol). |
 //! | `f` | **Fuse** | West (A), East (B) | Self | Combines A and B (Concat, Add, Push). |
 //! | `d` | **Distill** | West (Val) | North (Head), South (Tail) | Splits value into two parts. |
 
 use super::normalize_coords;
 use crate::vm::{Value, MAX_STRING_LEN};
+use crate::ast::JunctionType;
 
 /// Applies the logic for Alchemy runes (`t`, `f`, `d`).
 ///
@@ -101,6 +102,8 @@ pub fn apply_alchemy_runes(
             //   1: To Int (Parse)
             //   2: Type ID (0=Int, 1=Str, 2=List, 3=Quantum)
             //   3: Length (String len or List len)
+            //   4: Liquefy (Str -> List<Int>)
+            //   5: Solidify (List<Int> -> Str)
 
             if let Some(val) = w_sig {
                 let mode = match n_sig {
@@ -151,6 +154,37 @@ pub fn apply_alchemy_runes(
                             Value::Str(s) => Some(Value::Int(s.len() as i64)),
                             Value::Junction(_, items) => Some(Value::Int(items.len() as i64)),
                             _ => Some(Value::Int(0)),
+                        }
+                    }
+                    4 => {
+                        // Mode 4: Liquefy (Str -> List of Char Codes)
+                        match val {
+                            Value::Str(s) => {
+                                let chars: Vec<Value> =
+                                    s.chars().map(|c| Value::Int(c as i64)).collect();
+                                Some(Value::Junction(JunctionType::All, chars))
+                            }
+                            _ => None,
+                        }
+                    }
+                    5 => {
+                        // Mode 5: Solidify (List of Char Codes -> Str)
+                        match val {
+                            Value::Junction(_, items) => {
+                                let mut s = String::new();
+                                for item in items {
+                                    if let Value::Int(n) = item {
+                                        if let Some(c) = std::char::from_u32(n as u32) {
+                                            s.push(c);
+                                        }
+                                    }
+                                }
+                                if s.len() > MAX_STRING_LEN {
+                                    s.truncate(MAX_STRING_LEN);
+                                }
+                                Some(Value::Str(s))
+                            }
+                            _ => None,
                         }
                     }
                     _ => None, // Invalid Mode
@@ -294,4 +328,55 @@ pub fn apply_alchemy_runes(
         _ => {}
     }
     changes
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::vm::GRID_SIZE;
+
+    #[test]
+    fn test_liquefy_and_solidify() {
+        // Test Mode 4: Liquefy
+        let mut signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
+        let mut next = vec![vec![None; GRID_SIZE]; GRID_SIZE];
+
+        // Setup:
+        // (y,x) = (1,1) is Rune 't'
+        // West (1,0) = "ABC"
+        // North (0,1) = 4 (Liquefy)
+        signals[1][0] = Some(Value::Str("ABC".to_string()));
+        signals[0][1] = Some(Value::Int(4));
+
+        apply_alchemy_runes("t", 1, 1, &signals, &mut next);
+
+        let res = next[1][1].clone().expect("Should produce result");
+        if let Value::Junction(JunctionType::All, items) = res {
+            assert_eq!(items.len(), 3);
+            assert_eq!(items[0], Value::Int(65)); // A
+            assert_eq!(items[1], Value::Int(66)); // B
+            assert_eq!(items[2], Value::Int(67)); // C
+        } else {
+            panic!("Expected Junction");
+        }
+
+        // Test Mode 5: Solidify
+        // West (1,0) = List[65, 66, 67]
+        // North (0,1) = 5 (Solidify)
+        signals[1][0] = Some(Value::Junction(
+            JunctionType::All,
+            vec![Value::Int(65), Value::Int(66), Value::Int(67)],
+        ));
+        signals[0][1] = Some(Value::Int(5));
+        next[1][1] = None; // Reset output
+
+        apply_alchemy_runes("t", 1, 1, &signals, &mut next);
+
+        let res = next[1][1].clone().expect("Should produce result");
+        if let Value::Str(s) = res {
+            assert_eq!(s, "ABC");
+        } else {
+            panic!("Expected String");
+        }
+    }
 }
