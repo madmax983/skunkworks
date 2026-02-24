@@ -590,3 +590,8 @@
 - **Scent Origin**: The Splice Surgeon 🧬
 - **Status**: The tissue is twitching. The muscle fibers are singing.
 - **Note**: "The code is the muscle."
+
+### [Concentration Level: FRESH] - Location: experiments/ferrous-tissue
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: The flesh is magnetic. Piezoelectric sparks detected.
+- **Note**: "Strain creates polarity. Polarity creates motion."
