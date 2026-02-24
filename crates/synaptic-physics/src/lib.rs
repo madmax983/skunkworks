@@ -53,6 +53,9 @@
 use rand::Rng;
 use std::fmt;
 
+/// Number of internal substeps for numerical integration stability.
+const SUBSTEPS: usize = 2;
+
 /// The Izhikevich neuron model.
 ///
 /// This struct holds the state variables (`v`, `u`) and parameters (`a`, `b`, `c`, `d`) defining the neuron's behavior.
@@ -257,7 +260,7 @@ impl Izhikevich {
     ///
     /// # Parameters
     ///
-    /// * `dt`: The time step size (e.g., 0.1 or 1.0). Small steps improve accuracy.
+    /// * `dt`: The time step size (e.g., 0.1 or 1.0). Small steps improve accuracy. Must be non-negative.
     /// * `extra_current`: Continuous input current ($I$) applied during this step (e.g., from sensory input).
     ///
     /// # Returns
@@ -269,7 +272,8 @@ impl Izhikevich {
     ///
     /// # Panics
     ///
-    /// This function does not panic, but passing `NaN` or `Inf` for `dt` or `extra_current` will propagate those values to the neuron state.
+    /// This function does not panic in release mode, but passing `NaN` or `Inf` for `dt` or `extra_current` will propagate those values to the neuron state.
+    /// In debug mode, it may panic if `dt < 0.0` or `tau <= 0.0`.
     ///
     /// # Examples
     ///
@@ -285,16 +289,18 @@ impl Izhikevich {
     /// }
     /// ```
     pub fn update(&mut self, dt: f32, extra_current: f32) -> (f32, bool) {
+        debug_assert!(dt >= 0.0, "Time step must be non-negative");
+        debug_assert!(self.tau > 0.0, "Tau must be positive");
+
         // Internal substeps for numerical stability
-        let substeps = 2;
-        let dt_sub = dt / substeps as f32;
+        let dt_sub = dt / SUBSTEPS as f32;
         let mut spiked = false;
 
         // Decay the injected current
         // e^(-dt / tau)
         let decay = (-dt_sub / self.tau).exp();
 
-        for _ in 0..substeps {
+        for _ in 0..SUBSTEPS {
             self.current_decay *= decay;
 
             let total_current = extra_current + self.current_decay;
@@ -325,6 +331,7 @@ impl Default for Izhikevich {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rand::Rng;
 
     #[test]
     fn test_neuron_update() {
@@ -389,12 +396,10 @@ mod tests {
         n.inject(100.0);
 
         let dt = 1.0;
-        let substeps = 2;
-        let dt_sub = dt / substeps as f32;
 
-        // Expected decay factor per substep
-        let decay_factor = (-dt_sub / n.tau).exp();
-        let expected = 100.0 * decay_factor * decay_factor; // 2 substeps
+        // Expected decay factor: exp(-dt / tau)
+        // This holds regardless of substeps because (exp(-dt/N))^N = exp(-dt)
+        let expected = 100.0 * (-dt / n.tau).exp();
 
         n.update(dt, 0.0);
 
@@ -427,5 +432,48 @@ mod tests {
         let s = format!("{}", n);
         assert!(s.contains("Izhikevich(v="));
         assert!(s.contains("mV"));
+    }
+
+    #[test]
+    fn test_stability_random_walk() {
+        let mut rng = rand::thread_rng();
+        let mut n = Izhikevich::new();
+        let dt = 0.5;
+
+        // Run for 1000 steps with random noise
+        for _ in 0..1000 {
+            let noise = rng.gen_range(-5.0..5.0);
+            let (v, _) = n.update(dt, noise);
+
+            // Bounds check for numerical explosion
+            // Izhikevich model can spike to +30, but u can drift.
+            // Extreme divergence would result in +/- Inf or very large numbers.
+            // We set generous bounds to catch "explosion".
+            assert!(v < 200.0, "Voltage exploded positively: {}", v);
+            assert!(v > -200.0, "Voltage exploded negatively: {}", v);
+            assert!(n.u < 200.0, "Recovery variable u exploded positively: {}", n.u);
+            assert!(n.u > -200.0, "Recovery variable u exploded negatively: {}", n.u);
+        }
+    }
+
+    #[test]
+    fn test_zero_tau_decay() {
+        let mut n = Izhikevich::new();
+        n.tau = 0.0000001; // Effectively zero
+        n.inject(100.0);
+
+        // With tau -> 0, decay should be instant.
+        // exp(-dt / 0) -> exp(-inf) -> 0.0
+        n.update(1.0, 0.0);
+
+        assert!(n.current_decay < 0.0001, "Current should have decayed instantly");
+    }
+
+    #[test]
+    #[should_panic(expected = "Time step must be non-negative")]
+    #[cfg(debug_assertions)]
+    fn test_negative_dt_panic() {
+        let mut n = Izhikevich::new();
+        n.update(-0.1, 0.0);
     }
 }
