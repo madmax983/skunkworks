@@ -359,6 +359,7 @@ pub mod nova_weaver;
 mod nova_weaver_test;
 pub mod oracle;
 pub mod pandemonium;
+pub mod paradox;
 #[cfg(feature = "phylogeny")]
 pub mod phylogeny;
 #[cfg(feature = "nova")]
@@ -891,6 +892,7 @@ pub struct ChimeraVM {
     pub prologue_state: prologue::PrologueState,
     #[cfg(feature = "nova")]
     pub metamorphism_enabled: bool,
+    pub paradox: paradox::Paradox,
     pub visual_effects: Vec<VisualEffect>,
     pub tui_events: Vec<TuiEvent>,
 }
@@ -1270,6 +1272,7 @@ impl ChimeraVM {
             prologue_state: prologue::PrologueState::new(),
             #[cfg(feature = "nova")]
             metamorphism_enabled: true,
+            paradox: paradox::Paradox::new(),
             visual_effects: Vec::new(),
             tui_events: Vec::new(),
         }
@@ -2630,6 +2633,11 @@ impl ChimeraVM {
 
         #[cfg(feature = "nova")]
         self.handle_input_interrupts();
+
+        // Separate paradox state to appease borrow checker
+        let mut paradox = std::mem::take(&mut self.paradox);
+        paradox.tick(self);
+        self.paradox = paradox;
 
         self.process_subsystems(time_frozen);
         self.process_nova_environment(time_frozen);
