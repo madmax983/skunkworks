@@ -59,16 +59,11 @@ pub fn compile(
                             if y >= GRID_SIZE {
                                 break;
                             }
-                            // Only process non-empty lines if we want to support blank lines as spacers?
-                            // But usually ASCII grid is contiguous.
-                            // If line is empty, it's an empty row in grid.
-
-                            let tokens: Vec<&str> = line.split_whitespace().collect();
-                            for (x, token) in tokens.iter().enumerate() {
+                            let row = parse_grid_line(line);
+                            for (x, val) in row.into_iter().enumerate() {
                                 if x >= GRID_SIZE {
                                     break;
                                 }
-                                let val = parse_grid_value(token);
                                 new_grid[y][x] = val;
                             }
                         }
@@ -125,12 +120,89 @@ pub fn compile(
     Ok((final_dna, grid, orca_mode, custom_runes))
 }
 
-fn parse_grid_value(s: &str) -> Value {
-    if let Ok(i) = s.parse::<i64>() {
-        Value::Int(i)
-    } else if s == "." {
-        Value::Int(0)
-    } else {
-        Value::Str(s.to_string())
+fn parse_grid_line(line: &str) -> Vec<Value> {
+    let mut row = Vec::new();
+    let mut chars = line.chars().peekable();
+
+    while let Some(&c) = chars.peek() {
+        if c.is_whitespace() {
+            chars.next();
+            continue;
+        }
+
+        if c == '"' {
+            // Parse String
+            chars.next(); // consume opening quote
+            let mut s = String::new();
+            while let Some(&next_c) = chars.peek() {
+                if next_c == '"' {
+                    chars.next(); // consume closing quote
+                    break;
+                }
+                s.push(chars.next().unwrap());
+            }
+            row.push(Value::Str(s));
+        } else if c.is_digit(10) || c == '-' {
+             // Parse Number or potential single char '-' rune
+             // To distinguish '-' (math) from -5 (number), we peek ahead.
+             // If '-' is followed by digit, it's a number.
+
+             let mut is_number = false;
+             if c == '-' {
+                 let mut temp = chars.clone();
+                 temp.next(); // skip '-'
+                 if let Some(nc) = temp.peek() {
+                     if nc.is_digit(10) {
+                         is_number = true;
+                     }
+                 }
+             } else {
+                 is_number = true;
+             }
+
+             if is_number {
+                 let mut s = String::new();
+                 s.push(chars.next().unwrap());
+                 while let Some(&next_c) = chars.peek() {
+                     if next_c.is_digit(10) {
+                         s.push(chars.next().unwrap());
+                     } else {
+                         break;
+                     }
+                 }
+                 if let Ok(n) = s.parse::<i64>() {
+                     row.push(Value::Int(n));
+                 } else {
+                     row.push(Value::Str(s));
+                 }
+             } else {
+                 // It's a '-' rune
+                 row.push(Value::Str(chars.next().unwrap().to_string()));
+             }
+        } else if c.is_alphabetic() {
+            // Identifier (might be multi-char like "func")
+            // BUT: Single char runes are common (A, S, M, O).
+            // Logic: If it looks like a word (>1 char), treat as String.
+            // If single char, treat as String (Rune).
+            let mut s = String::new();
+            s.push(chars.next().unwrap());
+            while let Some(&next_c) = chars.peek() {
+                if next_c.is_alphanumeric() || next_c == '_' {
+                    s.push(chars.next().unwrap());
+                } else {
+                    break;
+                }
+            }
+            row.push(Value::Str(s));
+        } else {
+            // Single Char Rune (Symbols like !, ?, ~, &)
+            let c = chars.next().unwrap();
+            if c == '.' {
+                row.push(Value::Int(0));
+            } else {
+                row.push(Value::Str(c.to_string()));
+            }
+        }
     }
+    row
 }

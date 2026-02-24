@@ -74,6 +74,7 @@ pub mod elektra;
 pub mod elemental;
 pub mod epigenetics;
 pub mod evolution;
+pub mod genetics;
 pub mod fission;
 pub mod forth;
 pub mod hyper;
@@ -480,6 +481,8 @@ impl PrologueState {
                             | "🦠"
                             // Ribozyme
                             | "🛠"
+                            // Genetics (Hybridize)
+                            | "⨁"
                     ) {
                         self.runes.insert((y, x));
 
