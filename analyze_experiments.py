@@ -1,92 +1,38 @@
-
 import os
-import pathlib
 
 def analyze_experiments():
-    root = pathlib.Path("experiments")
-    results = []
+    root = "experiments"
+    weak_candidates = []
 
-    if not root.exists():
-        print("No experiments directory found.")
+    if not os.path.exists(root):
+        print(f"Directory {root} does not exist.")
         return
 
-    for item in root.iterdir():
-        if item.is_dir():
-            score = 100
-            name = item.name
+    for exp in sorted(os.listdir(root)):
+        path = os.path.join(root, exp)
+        if not os.path.isdir(path):
+            continue
 
-            # Check README
-            readme = item / "README.md"
-            if not readme.exists():
-                score -= 50
-                readme_status = "MISSING"
-            else:
-                try:
-                    content = readme.read_text()
-                    if len(content) < 100:
-                        score -= 20
-                        readme_status = "WEAK"
-                    else:
-                        readme_status = "OK"
-                except:
-                    score -= 50
-                    readme_status = "UNREADABLE"
+        has_readme = os.path.exists(os.path.join(path, "README.md"))
+        has_cargo = os.path.exists(os.path.join(path, "Cargo.toml"))
 
-            # Check Src
-            src_main = item / "src" / "main.rs"
-            src_lib = item / "src" / "lib.rs"
-            has_code = False
-            loc = 0
+        src_path = os.path.join(path, "src")
+        rs_files = 0
+        if os.path.exists(src_path):
+            for _, _, files in os.walk(src_path):
+                rs_files += sum(1 for f in files if f.endswith(".rs"))
 
-            if src_main.exists():
-                has_code = True
-                try:
-                    loc = len(src_main.read_text().splitlines())
-                except:
-                    pass
-            elif src_lib.exists():
-                has_code = True
-                try:
-                    loc = len(src_lib.read_text().splitlines())
-                except:
-                    pass
-
-            if not has_code:
-                score -= 50
-                code_status = "MISSING"
-            else:
-                if loc < 50:
-                    score -= 30
-                    code_status = "SKELETAL"
-                elif loc < 200:
-                    score -= 10
-                    code_status = "THIN"
-                else:
-                    code_status = "OK"
-
-            # Check Cargo
-            cargo = item / "Cargo.toml"
-            if not cargo.exists():
-                score -= 50
-                cargo_status = "MISSING"
-            else:
-                cargo_status = "OK"
-
-            results.append({
-                "name": name,
-                "score": score,
-                "readme": readme_status,
-                "code": code_status,
-                "loc": loc
+        if not has_readme or rs_files <= 1:
+            weak_candidates.append({
+                "name": exp,
+                "has_readme": has_readme,
+                "rs_files": rs_files,
+                "has_cargo": has_cargo
             })
 
-    # Sort by score ascending (worst first)
-    results.sort(key=lambda x: x["score"])
-
-    print(f"{'NAME':<30} {'SCORE':<10} {'README':<10} {'CODE':<10} {'LOC':<5}")
-    print("-" * 70)
-    for r in results[:15]:  # Show bottom 15
-        print(f"{r['name']:<30} {r['score']:<10} {r['readme']:<10} {r['code']:<10} {r['loc']:<5}")
+    print(f"Found {len(weak_candidates)} weak candidates:")
+    for c in weak_candidates:
+        print(f"{c['name']}: README={c['has_readme']}, RS_FILES={c['rs_files']}, CARGO={c['has_cargo']}")
 
 if __name__ == "__main__":
     analyze_experiments()

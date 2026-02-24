@@ -12,9 +12,9 @@
 - **Status:** Specimen executed. Diagnosis: Terminal Redundancy (Superseded by `git-cantata`).
 - **Note:** "The song has ended. The silence is unique."
 
-### [Concentration Level: TOXIC] - Location: experiments/manifold-origami
+### [Concentration Level: EXECUTED] - Location: graveyard/manifold-origami
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Redundancy.
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy (Superseded by `miura-interface` and `rigid-origami`).
 - **Note:** "The paper is too soft. The creases do not hold."
 
 ### [Concentration Level: FRESH] - Location: experiments/git-harmonograph
@@ -47,10 +47,10 @@
 - **Status:** The crystal bonds are knotted. Agents are recording their paths.
 - **Note:** "The structure remembers where we walked."
 
-### [Concentration Level: FRESH] - Location: experiments/quantum-quipu
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The Knots are in Superposition.
-- **Note:** "To read the knot is to collapse the history."
+### [Concentration Level: TOXIC] - Location: experiments/quantum-quipu
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Redundancy / Forced Hybridization.
+- **Note:** "The knot is a tangled mess of buzzwords. The superposition has collapsed into failure."
 
 ### [Concentration Level: FRESH] - Location: experiments/neuro-quipu
 - **Scent Origin:** The Splice Surgeon 🧬
