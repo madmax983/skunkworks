@@ -162,6 +162,8 @@ pub enum ViewMode {
     Tesseract,
     #[cfg(feature = "nova")]
     Choir,
+    #[cfg(feature = "nova")]
+    Paradox,
 }
 
 enum InputMode {
@@ -287,6 +289,8 @@ pub(crate) struct AppState {
     pub(crate) forge_test_output: String,
     #[cfg(feature = "nova")]
     pub(crate) forge_focus: u8, // 0=List, 1=Editor, 2=TestInput
+    #[cfg(feature = "nova")]
+    pub(crate) paradox_editor_buffer: String,
     pub(crate) evolution_state: EvolutionState,
     pub(crate) sequencer_state: SequencerState,
     pub(crate) matrix_rain: MatrixRain,
@@ -458,6 +462,8 @@ impl AppState {
             forge_test_output: String::new(),
             #[cfg(feature = "nova")]
             forge_focus: 0,
+            #[cfg(feature = "nova")]
+            paradox_editor_buffer: String::new(),
             evolution_state: EvolutionState::new(),
             sequencer_state: SequencerState::new(),
             matrix_rain: MatrixRain::new(),
@@ -1127,6 +1133,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Choir = app_state.view_mode {
                 render_choir(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Paradox = app_state.view_mode {
+                render_paradox(f, vm, app_state);
                 return;
             }
 
@@ -1848,6 +1860,21 @@ where
                     match key.code {
                         KeyCode::Enter => {
                             match app_state.view_mode {
+                                #[cfg(feature = "nova")]
+                                ViewMode::Paradox => {
+                                    if !app_state.paradox_editor_buffer.is_empty() {
+                                        match vm.paradox.parse_rule(&app_state.paradox_editor_buffer) {
+                                            Ok(_) => {
+                                                app_state.status_msg = "Paradox Rule Compiled.".to_string();
+                                                app_state.paradox_editor_buffer.clear();
+                                            }
+                                            Err(e) => {
+                                                app_state.status_msg = format!("Error: {}", e);
+                                            }
+                                        }
+                                    }
+                                    app_state.input_mode = InputMode::Normal;
+                                }
                                 ViewMode::Genome => {
                                     // Genome Editing Logic
                                     match ChimeraParser::parse(Rule::gene, &app_state.input_buffer)
@@ -2523,7 +2550,9 @@ where
                         KeyCode::Char(c) =>
                         {
                             #[cfg(feature = "nova")]
-                            if let ViewMode::Forge = app_state.view_mode {
+                            if let ViewMode::Paradox = app_state.view_mode {
+                                app_state.paradox_editor_buffer.push(c);
+                            } else if let ViewMode::Forge = app_state.view_mode {
                                 if app_state.forge_focus == 1 {
                                     app_state.forge_editor_buffer.push(c);
                                 } else if app_state.forge_focus == 2 {
@@ -2559,7 +2588,9 @@ where
                         KeyCode::Backspace =>
                         {
                             #[cfg(feature = "nova")]
-                            if let ViewMode::Forge = app_state.view_mode {
+                            if let ViewMode::Paradox = app_state.view_mode {
+                                app_state.paradox_editor_buffer.pop();
+                            } else if let ViewMode::Forge = app_state.view_mode {
                                 if app_state.forge_focus == 1 {
                                     app_state.forge_editor_buffer.pop();
                                 } else if app_state.forge_focus == 2 {
@@ -2921,7 +2952,9 @@ where
                             #[cfg(not(feature = "nova"))]
                             ViewMode::Tesseract => ViewMode::Choir,
                             #[cfg(feature = "nova")]
-                            ViewMode::Choir => ViewMode::Genome,
+                            ViewMode::Choir => ViewMode::Paradox,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Paradox => ViewMode::Genome,
                         };
                     }
                     #[cfg(feature = "nova")]
@@ -5468,6 +5501,55 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Territory Info"),
     );
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_paradox(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    // Left: Editor
+    let editor_block = Block::default()
+        .borders(Borders::ALL)
+        .title("Paradox Rule Editor (Enter to Compile, Esc to Exit)")
+        .border_style(Style::default().fg(Color::Yellow));
+
+    let editor_text = if app_state.paradox_editor_buffer.is_empty() {
+        "Type rule here... e.g. 'rule Test triggers always do log Hello'"
+    } else {
+        app_state.paradox_editor_buffer.as_str()
+    };
+
+    f.render_widget(
+        Paragraph::new(editor_text)
+            .block(editor_block)
+            .wrap(ratatui::widgets::Wrap { trim: false }),
+        chunks[0],
+    );
+
+    // Right: Active Rules
+    let mut items = Vec::new();
+    if vm.paradox.rules.is_empty() {
+        items.push(ListItem::new("No Paradox Rules active."));
+    } else {
+        for (i, rule) in vm.paradox.rules.iter().enumerate() {
+            items.push(ListItem::new(format!("#{}: {}", i, rule.name)).style(Style::default().fg(Color::Cyan)));
+            items.push(ListItem::new(format!("  Trigger: {:?}", rule.trigger)).style(Style::default().fg(Color::DarkGray)));
+            for action in &rule.actions {
+                items.push(ListItem::new(format!("  Do: {:?}", action)).style(Style::default().fg(Color::Green)));
+            }
+            items.push(ListItem::new(""));
+        }
+    }
+
+    let list = List::new(items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Active Laws of Physics"),
+    );
+    f.render_widget(list, chunks[1]);
 }
 
 #[cfg(feature = "nova")]
