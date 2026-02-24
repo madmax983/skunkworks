@@ -1240,6 +1240,89 @@ sequenceDiagram
     VM->>VM: process_agents()
 ```
 
+### Nova Feature: Ribozyme (ADR 052)
+
+The Ribozyme system introduces functional programming capabilities and a Lisp parser.
+
+```mermaid
+classDiagram
+    direction TB
+    class ChimeraVM {
+        +eval(code: String)
+    }
+
+    class LispParser {
+        +parse(input: String) Result~Vec~SExpr~~
+        +compile(exprs: Vec~SExpr~) Result~Dna~
+    }
+
+    class OpCode {
+        <<Enum>>
+        +Eval
+        +Map
+        +Fold
+        +Filter
+        +Zip
+    }
+
+    ChimeraVM ..> LispParser : Uses (for Eval)
+    ChimeraVM ..> OpCode : Executes
+```
+
+### Nova Feature: Babel (ADR 053)
+
+The Babel system implements parser combinators within the VM for dynamic grammar definition.
+
+```mermaid
+classDiagram
+    direction TB
+    class BabelState {
+        +HashMap~String, Parser~ grammars
+        +f32 integrity
+        +parse(parser, input) Result~Ast~
+    }
+
+    class Parser {
+        <<Enum>>
+        +Match(String)
+        +Regex(String)
+        +Seq(Vec~Parser~)
+        +Alt(Vec~Parser~)
+        +Many(Box~Parser~)
+    }
+
+    class ChimeraVM {
+        +BabelState babel_state
+    }
+
+    ChimeraVM *-- BabelState : Owns
+    BabelState *-- Parser : Manages
+```
+
+### Nova Feature: Akashic Records (ADR 054)
+
+The Akashic system provides persistent storage for the VM.
+
+```mermaid
+classDiagram
+    direction TB
+    class AkashicRecords {
+        +PathBuf file_path
+        +HashMap~String, Value~ memory
+        +load()
+        +save()
+        +write(key, value)
+        +read(key) Value
+    }
+
+    class ChimeraVM {
+        +AkashicRecords akashic
+    }
+
+    ChimeraVM *-- AkashicRecords : Owns
+    AkashicRecords ..> FileSystem : Persists to
+```
+
 ### Experiment: Tectonic Git (ADR 023)
 
 **Tectonic Git** visualizes the repository history as geological strata, using code analysis to determine stability.
