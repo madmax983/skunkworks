@@ -172,6 +172,7 @@ impl Vec4 {
     /// Returns a normalized unit vector (length of 1.0).
     ///
     /// If the vector has zero length, it returns the zero vector.
+    /// Uses robust normalization to handle very large or small components.
     ///
     /// # Examples
     ///
@@ -182,9 +183,17 @@ impl Vec4 {
     /// assert!((n.length() - 1.0).abs() < 1e-6);
     /// ```
     pub fn normalize(&self) -> Self {
-        let len = self.length();
-        if len > 0.0 {
-            self.scale(1.0 / len)
+        // Robust normalization avoiding overflow/underflow
+        let m = self.x.abs().max(self.y.abs()).max(self.z.abs()).max(self.w.abs());
+        if m > 0.0 && m.is_finite() {
+            let s = 1.0 / m;
+            let scaled = self.scale(s);
+            let len = scaled.length();
+            if len > 0.0 {
+                scaled.scale(1.0 / len)
+            } else {
+                Self::zero()
+            }
         } else {
             Self::zero()
         }
@@ -309,7 +318,28 @@ impl Vec4 {
         let w_dist = camera_w - self.w;
         // Avoid division by zero
         let scale = 2.0 / w_dist.max(0.1);
-        Vec3::new(self.x * scale, self.y * scale, self.z * scale)
+
+        let safe_mul = |val: f32, s: f32| {
+            let res = val * s;
+            if res.is_finite() {
+                res
+            } else {
+                // Clamp overflow or handle NaN
+                if res > 0.0 {
+                    f32::MAX
+                } else if res < 0.0 {
+                    f32::MIN
+                } else {
+                    0.0
+                }
+            }
+        };
+
+        Vec3::new(
+            safe_mul(self.x, scale),
+            safe_mul(self.y, scale),
+            safe_mul(self.z, scale),
+        )
     }
 }
 
