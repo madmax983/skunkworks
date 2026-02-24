@@ -83,6 +83,7 @@ pub mod io;
 pub mod lexicon;
 pub mod linguistics;
 pub mod ligase;
+pub mod library;
 pub mod list;
 pub mod logic;
 pub mod logic_agent;
@@ -109,6 +110,7 @@ pub mod rhythm;
 pub mod ribozyme;
 pub mod runecraft;
 pub mod scavenger;
+pub mod scholar;
 pub mod sequencer;
 pub mod siren;
 pub mod splicer;
@@ -438,6 +440,8 @@ impl PrologueState {
                             | "ω"
                             | "✍"
                             | "📖"
+                            | "📚"
+                            | "🔖"
                         // Chroma
                             | "🎨"
                             | "🖌"
@@ -504,6 +508,7 @@ impl PrologueState {
                             || s == "🔗"
                             || s == "🦠"
                             || s == "🛠"
+                            || s == "🎓"
                         {
                             // Try to retrieve persistent state
                             let raw_state = self
@@ -549,6 +554,11 @@ impl PrologueState {
                                     Value::Int(0)
                                 } else if s == "🛠" {
                                     Value::Int(0)
+                                } else if s == "🎓" {
+                                    Value::Junction(
+                                        crate::ast::JunctionType::All,
+                                        vec![Value::Int(0), Value::Int(0), Value::Int(0), Value::Int(0)],
+                                    )
                                 } else {
                                     Value::Int(0)
                                 }
@@ -1231,6 +1241,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             #[cfg(feature = "biophysics")]
             neural::apply_neural_sinks(vm, rune, y, x);
 
+            library::apply_library_sinks(vm, rune, y, x);
             runecraft::apply_runecraft_sinks(vm, rune, y, x);
         }
     }
@@ -1632,6 +1643,14 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 }
                 None => continue,
             }
+        } else if current_type == "🎓" {
+            match scholar::process_scholar_logic(vm, &agent, grid_snapshot) {
+                Some((updated_agent, t)) => {
+                    agent = updated_agent;
+                    t
+                }
+                None => continue,
+            }
         } else {
             process_seeker_logic(vm, &agent, grid_snapshot)
         };
@@ -1656,6 +1675,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "🔗"
                 || current_type == "🦠"
                 || current_type == "🛠"
+                || current_type == "🎓"
             {
                 vm.prologue_state.registers.insert(
                     (ny, nx),
@@ -1684,6 +1704,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                     || current_type == "🔗"
                     || current_type == "🦠"
                     || current_type == "🛠"
+                    || current_type == "🎓"
                 {
                     vm.prologue_state.registers.remove(&(y, x));
                 }
@@ -1696,6 +1717,27 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 stack: agent.stack,
             });
         } else {
+            // Even if not moving, we must update registers if state changed
+            if current_type == "C"
+                || current_type == "♬"
+                || current_type == "₣"
+                || current_type == "ζ"
+                || current_type == "P"
+                || current_type == "⚓"
+                || current_type == "∃"
+                || current_type == "χ"
+                || current_type == "🕷"
+                || current_type == "✂"
+                || current_type == "🔗"
+                || current_type == "🦠"
+                || current_type == "🛠"
+                || current_type == "🎓"
+            {
+                vm.prologue_state.registers.insert(
+                    (y, x),
+                    pack_agent_data(agent.state.clone(), agent.stack.clone()),
+                );
+            }
             new_agents.push(agent);
         }
     }
@@ -1839,3 +1881,6 @@ mod ribozyme_agent_test;
 
 #[cfg(test)]
 mod prologue_spectral_evolution_test;
+
+#[cfg(test)]
+mod prologue_library_test;
