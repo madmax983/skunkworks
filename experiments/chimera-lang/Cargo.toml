@@ -25,6 +25,7 @@ pest_derive = "2.7"
 clap = { version = "4.4", features = ["derive"] }
 anyhow = { workspace = true }
 ratatui = { workspace = true }
+tui-shared = { workspace = true }
 crossterm = { workspace = true }
 rand = "0.8"
 crossbeam-channel = { version = "0.5", optional = true }

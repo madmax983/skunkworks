@@ -49,6 +49,8 @@
 //! }
 //! ```
 
+pub mod widgets;
+
 use crossterm::{
     event::{DisableMouseCapture, EnableMouseCapture},
     execute,

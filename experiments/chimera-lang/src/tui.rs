@@ -14,6 +14,8 @@ use rand::Rng;
 #[cfg(feature = "nova")]
 use hyper_system::math::Vec4;
 use ratatui::widgets::canvas::{Canvas, Rectangle};
+#[cfg(feature = "nova")]
+use tui_shared::widgets::{Button, TensionBar};
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
@@ -5284,6 +5286,11 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         block = block.style(Style::default().bg(Color::Red));
     }
 
+    let scene_chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Min(0), Constraint::Length(6)])
+        .split(chunks[0]);
+
     let canvas = Canvas::default()
         .block(block)
         .x_bounds([0.0, 100.0])
@@ -5341,40 +5348,6 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 ctx.print(rx, ry, ch);
             }
 
-            // Draw Custom Tension Bar
-            let tension = app_state.fishing_tension;
-            let bar_height = tension * 80.0;
-            let bar_color = if tension > 0.8 {
-                Color::Red
-            } else if tension > 0.5 {
-                Color::Yellow
-            } else {
-                Color::Green
-            };
-
-            // Bar Background
-            ctx.draw(&Rectangle {
-                x: 95.0,
-                y: 10.0,
-                width: 3.0,
-                height: 80.0,
-                color: Color::DarkGray,
-            });
-            // Bar Fill
-            let mut shake_x = 0.0;
-            if tension > 0.8 {
-                use rand::Rng;
-                let mut rng = rand::thread_rng();
-                shake_x = rng.gen_range(-0.5..0.5);
-            }
-            ctx.draw(&Rectangle {
-                x: 95.0 + shake_x,
-                y: 10.0,
-                width: 3.0,
-                height: bar_height,
-                color: bar_color,
-            });
-            ctx.print(94.0, 5.0, "TENSION");
 
             if app_state.fishing_cast {
                 // Bobber X Animation (Shake when hooked)
@@ -5480,7 +5453,8 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             }
         });
 
-    f.render_widget(canvas, chunks[0]);
+    f.render_widget(canvas, scene_chunks[0]);
+    f.render_widget(TensionBar::new(app_state.fishing_tension), scene_chunks[1]);
 
     // Controls Row (Buttons)
     let control_chunks = Layout::default()
@@ -5488,13 +5462,16 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
         .split(chunks[1]);
 
-    crate::ui::Button::new("CAST (Enter)")
-        .active(!app_state.fishing_cast)
-        .render(f, control_chunks[0]);
+    f.render_widget(
+        Button::new("CAST (Enter)").active(!app_state.fishing_cast),
+        control_chunks[0],
+    );
 
-    crate::ui::Button::new("REEL (Space)")
-        .active(app_state.fishing_cast && app_state.fishing_tension > 0.0) // Highlight when reeling
-        .render(f, control_chunks[1]);
+    f.render_widget(
+        Button::new("REEL (Space)")
+            .active(app_state.fishing_cast && app_state.fishing_tension > 0.0), // Highlight when reeling
+        control_chunks[1],
+    );
 
     // Dashboard Info
     let depth = if app_state.fishing_bobber_y < 50.0 {
