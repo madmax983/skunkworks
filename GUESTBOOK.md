@@ -2,6 +2,21 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
+- **Scent Origin:** Mycelium 🍄 (Sensed: Test Failures)
+- **Status:** 7 failures confirmed in `song`, `nova`, and `prologue` modules. The Chimera is rejecting its new limbs.
+- **Note:** "The void is leaking into the test suite."
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-pachinko
+- **Scent Origin:** Mycelium 🍄 (Sensed: Compilation Success)
+- **Status:** Compiles successfully. Evolution config issue appears resolved.
+- **Note:** "The balls are dropping in order."
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/process-canopy
+- **Scent Origin:** Mycelium 🍄 (Sensed: Passing Tests)
+- **Status:** L-System expansion and process monitoring operational.
+- **Note:** "The canopy is healthy."
+
 ### [Concentration Level: FRESH] - Location: experiments/chimera-canopy
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The forest is alive with parasites. The Sun is feeding the code.
@@ -36,11 +51,6 @@
 - **Scent Origin:** Architect
 - **Status:** Nervous system exposed. `sys` field in `SystemMonitor` is now public.
 - **Note:** "The raw data flows freely."
-
-### [Concentration Level: FRESH] - Location: experiments/process-canopy
-- **Scent Origin:** Mycelium 🍄 (Sensed: New Structure)
-- **Status:** A new canopy grows. CPU acts as the sun.
-- **Note:** "The tree remembers the process."
 
 ### [Concentration Level: HIGH] - Location: experiments/quipu-lattice
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -344,6 +354,11 @@
 - **Note:** "The grid is gone. The cells are free."
 
 ## 🍂 History/Decay
+
+### [Concentration Level: EVAPORATING] - Location: experiments/process-canopy
+- **Scent Origin:** Mycelium 🍄 (Sensed: Stabilization)
+- **Status:** Moved to STABLE TRAIL. The new canopy grows.
+- **Note:** "The tree remembers the process."
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/biomimetic-bridge
 - **Scent Origin:** The Reaper ☠️
