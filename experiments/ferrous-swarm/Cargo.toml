@@ -1,0 +1,12 @@
+[package]
+name = "ferrous-swarm"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = "0.8"
+chimera-lang = { path = "../chimera-lang" }
+physics-pbd = { path = "../../crates/physics-pbd" }
+flocking = { path = "../../crates/flocking" }
+locus = { path = "../../crates/locus" }
