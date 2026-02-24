@@ -339,6 +339,7 @@ impl PrologueState {
                             | "µ"
                             | "Ø"
                             | "§"
+                            | "ꝏ"
                         // Construct
                             | "B"
                             | "Π"
@@ -775,6 +776,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     &mut vm.prologue_state.history,
                     &mut vm.prologue_state.void_buffer,
                     &mut vm.prologue_state.mycelium_buffer,
+                    &mut vm.void_rifts,
                     grid,
                     &vm.light_grid,
                     &mut vm.prologue_state.dream_intensity,
@@ -829,6 +831,7 @@ fn apply_propagation_rune(
     history: &mut HashMap<(usize, usize), VecDeque<Value>>,
     void_buffer: &mut VecDeque<Value>,
     mycelium_buffer: &mut VecDeque<Value>,
+    void_rifts: &mut Vec<crate::vm::nova_void::VoidRift>,
     grid: &[Vec<Value>],
     light_grid: &[Vec<i64>],
     dream_intensity: &mut f32,
@@ -948,7 +951,15 @@ fn apply_propagation_rune(
     if evolution::apply_evolution_runes(rune, y, x, dna, current_signals, next_signals) {
         return true;
     }
-    if void::apply_void_runes(rune, y, x, current_signals, next_signals, void_buffer) {
+    if void::apply_void_runes(
+        rune,
+        y,
+        x,
+        current_signals,
+        next_signals,
+        void_buffer,
+        void_rifts,
+    ) {
         return true;
     }
     if virology::apply_virology_runes(rune, y, x, current_signals, next_signals) {

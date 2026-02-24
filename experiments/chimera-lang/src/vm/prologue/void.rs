@@ -1,6 +1,7 @@
 use super::normalize_coords;
 use crate::vm::Value;
 use std::collections::VecDeque;
+use crate::vm::nova_void::VoidRift;
 
 pub fn apply_void_runes(
     rune: &str,
@@ -9,6 +10,7 @@ pub fn apply_void_runes(
     current_signals: &[Vec<Option<Value>>],
     next_signals: &mut Vec<Vec<Option<Value>>>,
     void_buffer: &mut VecDeque<Value>,
+    void_rifts: &mut Vec<VoidRift>,
 ) -> bool {
     let mut changes = false;
 
@@ -49,10 +51,30 @@ pub fn apply_void_runes(
         }
         "§" => {
             // Void Out: Pop from Void Buffer -> Self.
-            // Only fires if we haven't already fired.
+            // If buffer empty, check for local Rift to drain.
             if next_signals[y][x].is_none() {
                 if let Some(val) = void_buffer.pop_back() {
                     next_signals[y][x] = Some(val);
+                    changes = true;
+                } else {
+                    // Buffer empty, check for Rift at (y, x)
+                    if let Some(rift) = void_rifts.iter_mut().find(|r| r.location == (y, x)) {
+                        if rift.severity > 0 {
+                            rift.severity = rift.severity.saturating_sub(1);
+                            // Emit Rift Power (Severity)
+                            next_signals[y][x] = Some(Value::Int(rift.severity as i64));
+                            changes = true;
+                        }
+                    }
+                }
+            }
+        }
+        "ꝏ" => {
+            // Infinity: Peek Void Buffer (Non-destructive).
+            // LIFO Top is back().
+            if next_signals[y][x].is_none() {
+                if let Some(val) = void_buffer.back() {
+                    next_signals[y][x] = Some(val.clone());
                     changes = true;
                 }
             }
