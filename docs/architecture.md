@@ -1784,3 +1784,62 @@ sequenceDiagram
         Body->>Universe: update_position(velocity)
     end
 ```
+
+## Nova Feature: Paradox System (ADR 055)
+
+The Paradox system allows defining physics-like rules that trigger global or local effects based on environmental conditions.
+
+### Class Structure
+
+```mermaid
+classDiagram
+    class ChimeraVM {
+        +Paradox paradox
+        +step()
+    }
+    class Paradox {
+        +Vec~Rule~ rules
+        +tick(vm)
+        +parse_rule(str)
+    }
+    class Rule {
+        +Trigger trigger
+        +Vec~Action~ actions
+    }
+    class Trigger {
+        <<Enum>>
+        +Always
+        +Signal(String)
+    }
+    class Action {
+        <<Enum>>
+        +Log
+        +Set
+        +Glitch
+    }
+    ChimeraVM *-- Paradox : Owns
+    Paradox *-- Rule : Contains
+    Rule *-- Trigger : Uses
+    Rule *-- Action : Uses
+```
+
+### Execution Cycle
+
+```mermaid
+sequenceDiagram
+    participant VM
+    participant Paradox
+
+    VM->>VM: pre_tick_updates()
+    VM->>Paradox: take()
+    VM->>Paradox: tick(VM)
+    loop Every Rule
+        Paradox->>Paradox: Check Trigger
+        opt Triggered
+            Paradox->>VM: Apply Actions (Set/Glitch)
+        end
+    end
+    Paradox-->>VM: return ownership
+    VM->>VM: process_environment()
+    VM->>VM: execute_dna()
+```
