@@ -286,6 +286,14 @@ impl PbdSystem {
         }
     }
 
+    /// Solves a distance constraint between two particles.
+    ///
+    /// This function is marked `#[inline]` because it is called in a tight loop (iterations * constraints),
+    /// and function call overhead can be significant.
+    ///
+    /// The particle data is accessed using block-scoped re-borrowing to encourage the compiler
+    /// to perform a single bounds check per particle, rather than one per field access.
+    #[inline]
     fn solve_distance(
         particles: &mut [Particle],
         p1: usize,
@@ -297,10 +305,16 @@ impl PbdSystem {
             return;
         }
 
-        let pos1 = particles[p1].pos;
-        let pos2 = particles[p2].pos;
-        let w1 = particles[p1].inv_mass;
-        let w2 = particles[p2].inv_mass;
+        // Optimization: Access particle data once to minimize bounds checks.
+        let (pos1, w1) = {
+            let p = &particles[p1];
+            (p.pos, p.inv_mass)
+        };
+        let (pos2, w2) = {
+            let p = &particles[p2];
+            (p.pos, p.inv_mass)
+        };
+
         if w1 + w2 == 0.0 {
             return;
         }
