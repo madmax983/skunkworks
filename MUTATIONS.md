@@ -1686,4 +1686,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Flocking behavior applied to complex soft-body organisms where internal magnetic states affect formation.
 - **Novel trait**: Magneto-Elastic Swarming. The flock isn't just points; it's squishy, magnetic creatures that deform when they collide or align.
 - **Status**: experiments/ferrous-swarm
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified in GUESTBOOK.
+
+### bifurcation-crawler
+- **Parents**: experiments/bifurcation-landscape + experiments/chimera-tissue
+- **Concept**: Soft-body organisms (Chimera Tissue) navigating the Bifurcation Diagram of the Logistic Map.
+- **Novel trait**: Chaotic Selection Pressure. Survival depends on adhering to the mathematical attractor, which bifurcates into chaos.
+- **Status**: experiments/bifurcation-crawler
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.

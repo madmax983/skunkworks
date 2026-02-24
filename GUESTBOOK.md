@@ -630,3 +630,8 @@
 - **Scent Origin**: The Splice Surgeon 🧬
 - **Status**: The jellyfish are flocking magnetically. The tissue breathes.
 - **Note**: "Magneto-Elastic Swarming established. Individual complexity meets collective intelligence."
+
+### [Concentration Level: FRESH] - Location: experiments/bifurcation-crawler
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: The worms are crawling on the logistic map. The attractor is food.
+- **Note**: "Survival is finding the stable path through chaos."
