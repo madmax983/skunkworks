@@ -93,6 +93,17 @@ pub fn apply_construct_sinks(vm: &mut crate::vm::ChimeraVM, rune: &str, y: usize
                         serde_json::from_str::<Value>(&s)
                     {
                         Some(rows)
+                    } else if let Some(rows) = vm.prologue_state.schematic_library.get(&*s) {
+                        // Fallback: Check Library
+                        // Need to convert Vec<Vec<Value>> to Junction(Dish, [Junction(Dish, [...])]) format?
+                        // Actually, schematic_library stores Vec<Vec<Value>>.
+                        // We need to match what `maybe_dish` expects: `Vec<Value>`.
+                        // The existing code expects `rows` to be `Vec<Value>`, where each item is `Value::Junction(JunctionType::Dish, cells)`.
+
+                        let formatted_rows: Vec<Value> = rows.iter().map(|row| {
+                            Value::Junction(JunctionType::Dish, row.clone())
+                        }).collect();
+                        Some(formatted_rows)
                     } else {
                         None
                     }

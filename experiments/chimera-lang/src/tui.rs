@@ -4,7 +4,7 @@ use crate::vm::ChimeraVM;
 use crate::{ChimeraParser, Rule};
 use anyhow::Result;
 use crossterm::{
-    event::{self, Event, KeyCode},
+    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, MouseEventKind},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
@@ -162,6 +162,8 @@ pub enum ViewMode {
     Tesseract,
     #[cfg(feature = "nova")]
     Choir,
+    #[cfg(feature = "nova")]
+    Workbench,
 }
 
 enum InputMode {
@@ -295,6 +297,10 @@ pub(crate) struct AppState {
     pub(crate) source_path: Option<std::path::PathBuf>,
     pub(crate) last_modified: Option<std::time::SystemTime>,
     pub(crate) last_check_tick: u64,
+    #[cfg(feature = "nova")]
+    pub(crate) workbench_grid: Vec<Vec<crate::vm::Value>>,
+    #[cfg(feature = "nova")]
+    pub(crate) workbench_name: String,
 }
 
 pub(crate) struct EvolutionState {
@@ -466,6 +472,10 @@ impl AppState {
             source_path,
             last_modified,
             last_check_tick: 0,
+            #[cfg(feature = "nova")]
+            workbench_grid: vec![vec![crate::vm::Value::Int(0); 16]; 16],
+            #[cfg(feature = "nova")]
+            workbench_name: String::from("NewSchematic"),
         }
     }
 
@@ -522,7 +532,7 @@ pub fn run_tui(
 ) -> Result<()> {
     enable_raw_mode()?;
     let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
+    execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
@@ -543,7 +553,7 @@ pub fn run_tui(
     let res = run_app(&mut terminal, &mut vm, &mut app_state);
 
     disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen, DisableMouseCapture)?;
     terminal.show_cursor()?;
 
     if let Err(err) = res {
@@ -1130,6 +1140,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Workbench = app_state.view_mode {
+                render_workbench(f, vm, app_state);
+                return;
+            }
+
             render_genome_and_grid(f, vm, app_state);
 
             if vm.glitch_level > 0.01 {
@@ -1157,7 +1173,28 @@ where
         })?;
 
         if event::poll(std::time::Duration::from_millis(100))? {
-            if let Event::Key(key) = event::read()? {
+            let event = event::read()?;
+            match event {
+                Event::Mouse(mouse) => {
+                    #[cfg(feature = "nova")]
+                    if app_state.view_mode == ViewMode::Workbench {
+                        if mouse.kind == MouseEventKind::Down(crossterm::event::MouseButton::Left) {
+                            // Workbench is at 0,0 (modulo borders)
+                            // Cell width is 4 (3 chars + 1 space)
+                            let grid_x = (mouse.column as isize - 1) / 4;
+                            let grid_y = (mouse.row as isize - 1);
+
+                            if grid_x >= 0 && grid_x < 16 && grid_y >= 0 && grid_y < 16 {
+                                app_state.grid_cursor = (grid_x as usize, grid_y as usize);
+
+                                if let Some(c) = app_state.palette_char {
+                                    app_state.workbench_grid[grid_y as usize][grid_x as usize] = crate::vm::Value::Str(c.to_string());
+                                }
+                            }
+                        }
+                    }
+                }
+                Event::Key(key) => {
                 if app_state.show_view_selector {
                     let views = get_all_views();
                     let mut list_state = app_state.view_selector_state.borrow_mut();
@@ -2471,6 +2508,13 @@ where
                                     }
                                 }
                                 #[cfg(feature = "nova")]
+                                ViewMode::Workbench => {
+                                    app_state.workbench_name = app_state.input_buffer.clone();
+                                    app_state.status_msg = format!("Renamed to '{}'", app_state.workbench_name);
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "nova")]
                                 ViewMode::Forge => {
                                     if app_state.forge_focus == 1 {
                                         // Define Rule
@@ -2625,6 +2669,34 @@ where
                 }
 
                 match key.code {
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('S') if app_state.view_mode == ViewMode::Workbench => {
+                        vm.prologue_state.schematic_library.insert(
+                            app_state.workbench_name.clone(),
+                            app_state.workbench_grid.clone(),
+                        );
+                        app_state.status_msg = format!("Saved schematic '{}'", app_state.workbench_name);
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('L') if app_state.view_mode == ViewMode::Workbench => {
+                        if let Some(grid) = vm.prologue_state.schematic_library.get(&app_state.workbench_name) {
+                            app_state.workbench_grid = grid.clone();
+                            app_state.status_msg = format!("Loaded schematic '{}'", app_state.workbench_name);
+                        } else {
+                            app_state.status_msg = "Schematic not found.".to_string();
+                        }
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('C') if app_state.view_mode == ViewMode::Workbench => {
+                        app_state.workbench_grid = vec![vec![crate::vm::Value::Int(0); 16]; 16];
+                        app_state.status_msg = "Workbench cleared.".to_string();
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Enter if app_state.view_mode == ViewMode::Workbench => {
+                        app_state.input_buffer = app_state.workbench_name.clone();
+                        app_state.input_mode = InputMode::Editing;
+                        app_state.status_msg = "Rename Schematic".to_string();
+                    }
                     KeyCode::Char('K') => {
                         #[cfg(feature = "nova")]
                         {
@@ -2921,7 +2993,9 @@ where
                             #[cfg(not(feature = "nova"))]
                             ViewMode::Tesseract => ViewMode::Choir,
                             #[cfg(feature = "nova")]
-                            ViewMode::Choir => ViewMode::Genome,
+                            ViewMode::Choir => ViewMode::Workbench,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Workbench => ViewMode::Genome,
                         };
                     }
                     #[cfg(feature = "nova")]
@@ -4965,6 +5039,8 @@ where
                     _ => {}
                 }
             }
+            _ => {}
+            }
         }
     }
 }
@@ -5625,6 +5701,7 @@ fn render_lexicon(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             }
 
             line_spans.push(Span::styled(format!("{:^3.3}", s), style));
+            line_spans.push(Span::raw(" "));
         }
         grid_lines.push(Line::from(line_spans));
     }
@@ -12165,6 +12242,7 @@ fn render_genesis(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             };
 
             line_spans.push(Span::styled(format!("{:^3.3}", s), style));
+            line_spans.push(Span::raw(" "));
         }
         grid_lines.push(Line::from(line_spans));
     }
@@ -12973,6 +13051,73 @@ fn render_tesseract(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Block::default()
             .borders(Borders::ALL)
             .title("4D Coordinates"),
+    );
+    f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_workbench(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    // Grid Editor
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = &app_state.workbench_grid[y][x];
+            let mut style = Style::default();
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            let s = match val {
+                crate::vm::Value::Str(s) => s.chars().next().unwrap_or(' ').to_string(),
+                crate::vm::Value::Int(n) => n.to_string(),
+                _ => "?".to_string(),
+            };
+
+            // Highlight non-empty
+            if s != "0" && s != " " {
+                style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
+            } else {
+                style = style.fg(Color::DarkGray);
+            }
+
+            line_spans.push(Span::styled(format!("{:^3.3}", s), style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(format!("Workbench: {}", app_state.workbench_name)),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Controls
+    let info = vec![
+        Line::from("SCHEMATIC DESIGNER"),
+        Line::from(" "),
+        Line::from(format!("Name: {}", app_state.workbench_name)),
+        Line::from(" "),
+        Line::from("Controls:"),
+        Line::from("  Click/Type: Place Rune"),
+        Line::from("  S: Save to Library"),
+        Line::from("  L: Load from Library"),
+        Line::from("  C: Clear Grid"),
+        Line::from("  Enter: Rename"),
+    ];
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Tools"),
     );
     f.render_widget(info_widget, chunks[1]);
 }

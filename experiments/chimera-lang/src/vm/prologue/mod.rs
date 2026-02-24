@@ -192,6 +192,9 @@ pub struct PrologueState {
     /// Custom Runes (User Defined).
     #[serde(default)]
     pub custom_runes: HashMap<String, usize>,
+    /// Schematic Library (Saved Grid Patterns).
+    #[serde(default)]
+    pub schematic_library: HashMap<String, Vec<Vec<Value>>>,
 }
 
 fn default_logos_engine() -> logos::LogosEngine {
@@ -228,6 +231,7 @@ impl PrologueState {
             mycelium_buffer: VecDeque::new(),
             scratch_signal_grid: vec![vec![None; GRID_SIZE]; GRID_SIZE],
             custom_runes: HashMap::new(),
+            schematic_library: HashMap::new(),
         }
     }
 
@@ -1836,3 +1840,6 @@ mod ribozyme_agent_test;
 
 #[cfg(test)]
 mod prologue_spectral_evolution_test;
+
+#[cfg(test)]
+mod prologue_workbench_test;
