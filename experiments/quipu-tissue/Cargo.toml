@@ -1,0 +1,13 @@
+[package]
+name = "quipu-tissue"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+physics-pbd = { path = "../../crates/physics-pbd" }
+chimera-lang = { path = "../../experiments/chimera-lang" }
+quipu = { path = "../../crates/quipu" }
+rand = "0.8"
+log = "0.4"
+env_logger = "0.10"
