@@ -1015,6 +1015,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Reactor => super::nova_reactor::exec_reactor(vm),
         OpCode::Reaction => super::nova_reactor::exec_reaction(vm),
         OpCode::Cambrian => super::nova_ecology::cambrian_explosion(vm),
+        OpCode::Forge | OpCode::Speak | OpCode::Etymology => exec_verbum_op(vm, op, args),
         OpCode::Supernova => exec_supernova(vm),
         OpCode::Singularity => exec_singularity(vm),
         OpCode::Eval => exec_eval(vm),
@@ -1995,6 +1996,94 @@ fn exec_void_op(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     vm.organelles.push(organelle);
     vm.energy = vm.energy.saturating_sub(50);
     vm.output.push(format!("VOID: Spawned at {},{}", cx, cy));
+    None
+}
+
+fn exec_verbum_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+    match op {
+        OpCode::Forge => {
+            if vm.stack.len() >= 2 {
+                let strand_val = vm.stack.pop().unwrap();
+                let name_val = vm.stack.pop().unwrap();
+                if let (Value::Str(name), Value::Int(idx)) = (name_val, strand_val) {
+                    let s_idx = idx as usize;
+                    if s_idx < vm.dna.helix.strands.len() {
+                        let genes = vm.dna.helix.strands[s_idx].genes.clone();
+                        // For simplicity, parent is empty for now.
+                        match vm.verbum_forge.forge(name.clone(), genes, vec![]) {
+                            Ok(id) => {
+                                vm.stack.push(Value::Int(id as i64));
+                                vm.output.push(format!("FORGE: Created word '{}'", name));
+                            }
+                            Err(e) => {
+                                vm.output.push(format!("FORGE ERROR: {}", e));
+                                vm.stack.push(Value::Int(-1));
+                            }
+                        }
+                    } else {
+                        vm.output.push("FORGE: Invalid strand index".to_string());
+                    }
+                } else {
+                    vm.output.push("FORGE: Type mismatch".to_string());
+                }
+            } else {
+                vm.output.push("FORGE: Stack underflow".to_string());
+            }
+        }
+        OpCode::Speak => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Str(name) = val {
+                    let word_data = if let Some(word) = vm.verbum_forge.get(&name) {
+                        Some((word.genes.clone(), word.cost))
+                    } else {
+                        None
+                    };
+
+                    if let Some((genes, cost)) = word_data {
+                        if vm.energy < cost {
+                            vm.output.push(format!("SPEAK: Insufficient energy for '{}'", name));
+                        } else {
+                            vm.energy -= cost;
+                            vm.output.push(format!("SPEAK: Uttered '{}'", name));
+                            let strand = crate::ast::Strand { genes };
+                            execute_ephemeral_strand(vm, &strand);
+                        }
+                    } else {
+                        vm.output.push(format!("SPEAK ERROR: Word '{}' unknown", name));
+                    }
+                } else {
+                    vm.output.push("SPEAK: Type mismatch".to_string());
+                }
+            } else {
+                vm.output.push("SPEAK: Stack underflow".to_string());
+            }
+        }
+        OpCode::Etymology => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Str(name) = val {
+                    if let Some(word) = vm.verbum_forge.get(&name) {
+                        let op_strings: Vec<Value> = word
+                            .genes
+                            .iter()
+                            .map(|g| Value::Str(g.op.to_string()))
+                            .collect();
+                        vm.stack.push(Value::Junction(
+                            crate::ast::JunctionType::All,
+                            op_strings,
+                        ));
+                    } else {
+                        vm.output.push(format!("ETYMOLOGY: Unknown word '{}'", name));
+                        vm.stack.push(Value::Int(0));
+                    }
+                } else {
+                    vm.output.push("ETYMOLOGY: Type mismatch".to_string());
+                }
+            } else {
+                vm.output.push("ETYMOLOGY: Stack underflow".to_string());
+            }
+        }
+        _ => {}
+    }
     None
 }
 

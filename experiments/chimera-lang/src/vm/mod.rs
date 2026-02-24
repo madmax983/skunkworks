@@ -379,6 +379,11 @@ pub mod retina;
 mod savant_execution_test;
 #[cfg(feature = "silicon")]
 pub mod silicon;
+#[cfg(feature = "nova")]
+pub mod verbum;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod verbum_test;
 
 #[cfg(feature = "elektra")]
 #[cfg(test)]
@@ -899,6 +904,8 @@ pub struct ChimeraVM {
     pub prologue_state: prologue::PrologueState,
     #[cfg(feature = "nova")]
     pub metamorphism_enabled: bool,
+    #[cfg(feature = "nova")]
+    pub verbum_forge: verbum::VerbumForge,
     pub paradox: paradox::Paradox,
     pub visual_effects: Vec<VisualEffect>,
     pub tui_events: Vec<TuiEvent>,
@@ -1281,6 +1288,8 @@ impl ChimeraVM {
             prologue_state: prologue::PrologueState::new(),
             #[cfg(feature = "nova")]
             metamorphism_enabled: true,
+            #[cfg(feature = "nova")]
+            verbum_forge: verbum::VerbumForge::new(),
             paradox: paradox::Paradox::new(),
             visual_effects: Vec::new(),
             tui_events: Vec::new(),
@@ -3613,7 +3622,10 @@ impl ChimeraVM {
             | OpCode::Cambrian
             | OpCode::Prologue
             | OpCode::Rune
-            | OpCode::BioHack => Some(nova::exec_nova_op(self, op, args)),
+            | OpCode::BioHack
+            | OpCode::Forge
+            | OpCode::Speak
+            | OpCode::Etymology => Some(nova::exec_nova_op(self, op, args)),
             #[cfg(feature = "nova")]
             OpCode::Codex => {
                 if let Some(Value::Int(id)) = self.stack.pop() {

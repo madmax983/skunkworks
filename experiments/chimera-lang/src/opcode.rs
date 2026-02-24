@@ -1156,6 +1156,23 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Codex,
 
+    // Verbum Features (The Word)
+    /// **[Nova]** Forges a new Word from a strand.
+    ///
+    /// **Stack:** `[ ..., name_str, strand_idx ] -> [ ..., word_id ]`
+    #[cfg(feature = "nova")]
+    Forge,
+    /// **[Nova]** Speaks a Word by name (Verbum).
+    ///
+    /// **Stack:** `[ ..., name_str ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Speak,
+    /// **[Nova]** Pushes the genes of a Word to the stack.
+    ///
+    /// **Stack:** `[ ..., name_str ] -> [ ..., gene_junction ]`
+    #[cfg(feature = "nova")]
+    Etymology,
+
     // Prologue Features (Rune Logic)
     /// **[Prologue]** Toggles Prologue Language mode.
     ///
