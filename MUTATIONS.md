@@ -1654,3 +1654,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Avalanche Surfing. Agent movement is driven by environmental instability (toppling).
 - **Status**: experiments/chimera-sandpile
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### chimera-tissue
+- **Parents**: experiments/chimera-genesis + physics-pbd
+- **Concept**: A "Programmable Matter" simulation where a 2D soft-body mesh is driven by a colony of ChimeraVM agents.
+- **Novel trait**: Muscle-driven locomotion. Cells contract fibers based on genetic code.
+- **Status**: experiments/chimera-tissue
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
