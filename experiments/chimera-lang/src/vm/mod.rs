@@ -111,6 +111,11 @@ pub mod catalyst;
 pub mod chimera_chaos;
 #[cfg(feature = "nova")]
 pub mod cladistics;
+#[cfg(feature = "nova")]
+pub mod codex;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod codex_test;
 pub mod cortex;
 pub mod dream;
 #[cfg(feature = "nova")]
@@ -798,6 +803,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub cladistics: cladistics::Cladistics,
     #[cfg(feature = "nova")]
+    pub codex: codex::Codex,
+    #[cfg(feature = "nova")]
     pub crucible: alchemy::Crucible,
     #[cfg(feature = "nova")]
     pub meme_pool: memetics::MemePool,
@@ -1177,6 +1184,8 @@ impl ChimeraVM {
             tick_counter: 0,
             #[cfg(feature = "nova")]
             cladistics: cladistics::Cladistics::new(),
+            #[cfg(feature = "nova")]
+            codex: codex::Codex::new(),
             #[cfg(feature = "nova")]
             crucible: alchemy::Crucible::new(),
             #[cfg(feature = "nova")]
@@ -3605,6 +3614,19 @@ impl ChimeraVM {
             | OpCode::Prologue
             | OpCode::Rune
             | OpCode::BioHack => Some(nova::exec_nova_op(self, op, args)),
+            #[cfg(feature = "nova")]
+            OpCode::Codex => {
+                if let Some(Value::Int(id)) = self.stack.pop() {
+                    if let Some(spell) = self.codex.get_spell(id as usize) {
+                        codex::exec_spell(self, &spell);
+                    } else {
+                        self.output.push(format!("Error: Invalid Codex spell ID {}", id));
+                    }
+                } else {
+                    self.output.push("Error: Codex requires spell ID (Int)".to_string());
+                }
+                Some(None)
+            }
             OpCode::Weave | OpCode::Unravel => Some(nova_weaver::exec_weave_op(self, op, args)),
             OpCode::Mutagen => Some(self.exec_mutagen_op()),
             OpCode::Scavenge => Some(self.exec_scavenge_op()),
