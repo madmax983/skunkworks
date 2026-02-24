@@ -16,7 +16,7 @@ pub fn apply_runecraft_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
 
 fn apply_definition_rune(vm: &mut ChimeraVM, y: usize, x: usize) {
     // West: Rune Char (String)
-    // North: Strand Index (Int)
+    // North: Strand Index (Int) or Code (String)
 
     let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
         vm.prologue_state.signal_grid[wy][wx].clone()
@@ -32,8 +32,6 @@ fn apply_definition_rune(vm: &mut ChimeraVM, y: usize, x: usize) {
 
     if let (Some(Value::Str(char_str)), Some(val)) = (w_sig, n_sig) {
         // "Runes" are typically single char in Prologue, but strings are fine.
-        // Let's stick to whatever String they give.
-
         match val {
             Value::Int(idx) => {
                 if idx >= 0 {
@@ -43,8 +41,27 @@ fn apply_definition_rune(vm: &mut ChimeraVM, y: usize, x: usize) {
                 }
             }
             Value::Str(code) => {
-                // Future expansion: Compile code string to new strand
-                vm.output.push(format!("RUNECRAFT: Define Code '{}' -> '{}' (Not implemented yet)", char_str, code));
+                // Compile code string to new strand
+                match crate::compiler::compile(&code, None) {
+                    Ok(mut dna) => {
+                        // Take strands from compiled DNA and append to Helix
+                        let start_idx = vm.dna.helix.strands.len();
+                        vm.dna.helix.strands.append(&mut dna.helix.strands);
+
+                        // Register the FIRST new strand to the rune
+                        // (Usually compilation produces 1 main strand, maybe more)
+                        if vm.dna.helix.strands.len() > start_idx {
+                            vm.prologue_state.custom_runes.insert(char_str.clone(), start_idx);
+                            vm.output.push(format!("RUNECRAFT: Compiled & Defined Custom Rune '{}' -> Strand {}", char_str, start_idx));
+                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                        } else {
+                             vm.output.push(format!("RUNECRAFT: Compilation produced no strands for '{}'", char_str));
+                        }
+                    },
+                    Err(e) => {
+                        vm.output.push(format!("RUNECRAFT: Compilation Failed for '{}': {}", char_str, e));
+                    }
+                }
             }
             _ => {}
         }
@@ -54,6 +71,8 @@ fn apply_definition_rune(vm: &mut ChimeraVM, y: usize, x: usize) {
 fn execute_custom_rune(vm: &mut ChimeraVM, rune: &str, idx: usize, y: usize, x: usize) {
     // Execute the strand via interrupt
     if idx < vm.dna.helix.strands.len() {
+        // We set context_loc so enzymes like `g_read` know where they were triggered from
+        vm.context_loc = (y, x);
         vm.interrupt(idx);
         vm.output.push(format!("RUNECRAFT: Executed Custom Rune '{}'", rune));
         vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1)); // Signal activation
