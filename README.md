@@ -51,12 +51,12 @@ The `experiments/` directory contains the artifacts:
 ```
 experiments/
 ├── neuro-terminal/          # Neural network visualization
-├── git-harmony/             # Git history as music
+├── git-cantata/             # Git history as generative music and art
 ├── cymatic-ocean/           # GPU-accelerated wave simulation
 ├── market-flow/             # Financial market simulation
-├── fluid-specter/           # Fluid dynamics visualization
+├── soroban-specter/         # Market simulation with coupled fluid dynamics
 ├── system-bio-dome/         # Chaotic reaction-diffusion
-├── trace-tardis/            # Recursive stack trace visualization
+├── chimera-tardis/          # Recursive stack trace visualization
 ├── thermo-termites/         # Termite simulation with thermodynamics
 └── ...                      # More experiments emerge hourly
 ```
@@ -83,7 +83,7 @@ cargo build --workspace
 
 # Run a specific experiment
 cargo run -p neuro-terminal
-cargo run -p git-harmony
+cargo run -p git-cantata
 
 # List all workspace members
 cargo metadata --no-deps | grep name
