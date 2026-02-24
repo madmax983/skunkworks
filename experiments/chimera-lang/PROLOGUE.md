@@ -162,6 +162,22 @@ Runes for transforming, combining, and inspecting raw data values (Integers, Str
 | `f` | **Fuse** | Reads **West** (A) and **East** (B). Combines them (Concat, Add, Push). |
 | `d` | **Distill** | Reads **West** (Value). Splits into **North** (Head) and **South** (Tail). |
 
+# The Alchemist (⚗)
+
+A mobile agent that gathers ingredients and transmutes them using Alchemical Recipes.
+
+| Rune | Name | Function |
+|---|---|---|
+| `⚗` | **Alchemist** | Moves, Gathers, Transmutes. |
+
+### Behavior
+*   **Gather**: Moves onto adjacent simple values (Integers, Strings) and collects them into its **Crucible**.
+*   **Transmute**: Automatically checks its Crucible for valid recipes.
+*   **Recipes**:
+    *   `[Int(A), Int(B)]` -> `Int(A+B)` (Sum)
+    *   `[Str(A), Str(B)]` -> `Str(A+B)` (Concat)
+    *   `[Str(S), Int(N)]` -> `Str(S*N)` (Repeat)
+
 # Elemental Alchemy ⚗️
 
 Introduces elemental forces to the grid.

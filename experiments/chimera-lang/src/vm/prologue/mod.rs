@@ -62,6 +62,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};
 
 pub mod alchemy;
+pub mod alchemist;
 pub mod architect;
 pub mod biolum;
 pub mod chaos;
@@ -498,6 +499,8 @@ impl PrologueState {
                             | "⨁"
                             // Mesmerist
                             | "🌀"
+                            // Alchemist
+                            | "⚗"
                     ) {
                         self.runes.insert((y, x));
 
@@ -508,6 +511,7 @@ impl PrologueState {
                             || s == "♻"
                             || s == "♬"
                             || s == "🌀"
+                            || s == "⚗"
                             || s == "₣"
                             || s == "ζ"
                             || s == "Φ"
@@ -580,6 +584,8 @@ impl PrologueState {
                                             Value::Int(0),
                                         ],
                                     )
+                                } else if s == "⚗" {
+                                    alchemist::AlchemistState::default().to_value()
                                 } else {
                                     Value::Int(0)
                                 }
@@ -1723,6 +1729,14 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 Some(t) => Some(t),
                 None => None,
             }
+        } else if current_type == "⚗" {
+            match alchemist::process_alchemist_logic(vm, &agent, grid_snapshot) {
+                Some((updated_agent, t)) => {
+                    agent = updated_agent;
+                    t
+                }
+                None => continue,
+            }
         } else {
             process_seeker_logic(vm, &agent, grid_snapshot)
         };
@@ -1749,6 +1763,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "🛠"
                 || current_type == "🎓"
                 || current_type == "🌀"
+                || current_type == "⚗"
             {
                 vm.prologue_state.registers.insert(
                     (ny, nx),
@@ -1779,6 +1794,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                     || current_type == "🛠"
                     || current_type == "🎓"
                     || current_type == "🌀"
+                    || current_type == "⚗"
                 {
                     vm.prologue_state.registers.remove(&(y, x));
                 }
@@ -1807,6 +1823,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "🛠"
                 || current_type == "🎓"
                 || current_type == "🌀"
+                || current_type == "⚗"
             {
                 vm.prologue_state.registers.insert(
                     (y, x),
@@ -1964,3 +1981,4 @@ mod architect_test;
 mod mesmerist_test;
 #[cfg(test)]
 mod prologue_library_test;
+#[cfg(test)] mod alchemist_test;
