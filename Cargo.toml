@@ -25,7 +25,6 @@ origami = { path = "crates/origami" }
 poincare-disk = { path = "crates/poincare-disk" }
 quipu = { path = "crates/quipu" }
 resonance-audio = { path = "crates/resonance-audio" }
-soroban = { path = "crates/soroban" }
 synaptic-physics = { path = "crates/synaptic-physics" }
 tui-semantic = { path = "crates/tui-semantic" }
 tui-shared = { path = "crates/tui-shared" }

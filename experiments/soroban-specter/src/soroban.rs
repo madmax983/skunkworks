@@ -29,7 +29,8 @@
 //! ## Example
 //!
 //! ```
-//! use soroban::Soroban;
+//! // use soroban::Soroban; // Now local module
+//! use crate::soroban::Soroban;
 //!
 //! let mut s = Soroban::new();
 //!
@@ -98,7 +99,7 @@ impl From<u64> for Soroban {
     /// # Examples
     ///
     /// ```
-    /// use soroban::Soroban;
+    /// use crate::soroban::Soroban;
     /// let s = Soroban::from(123);
     /// assert_eq!(s.value(), 123);
     /// ```
@@ -134,7 +135,7 @@ impl Soroban {
     /// # Examples
     ///
     /// ```
-    /// use soroban::Soroban;
+    /// use crate::soroban::Soroban;
     /// let mut s = Soroban::new();
     /// s.add(5);
     /// assert_eq!(s.value(), 5);
@@ -179,7 +180,7 @@ impl Soroban {
     /// # Examples
     ///
     /// ```
-    /// use soroban::Soroban;
+    /// use crate::soroban::Soroban;
     /// let mut s = Soroban::new();
     /// s += 10;
     /// s -= 3; // Use SubAssign trait (10 - 3 = 7)
@@ -465,5 +466,19 @@ mod tests {
                 s.value()
             );
         }
+    }
+
+    #[test]
+    fn test_set_value_clamped() {
+        let mut c = Column::default();
+        // Should NOT panic, but clamp to 9
+        c.set_value(10);
+        assert_eq!(c.value(), 9);
+
+        c.set_value(255);
+        assert_eq!(c.value(), 9);
+
+        c.set_value(5);
+        assert_eq!(c.value(), 5);
     }
 }
