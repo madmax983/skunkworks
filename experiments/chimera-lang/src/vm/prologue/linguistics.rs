@@ -1,6 +1,6 @@
 use super::normalize_coords;
 use crate::ast::JunctionType;
-use crate::vm::Value;
+use crate::vm::{Value, MAX_COMPLEX_STRING_LEN};
 use regex::Regex;
 use serde_json;
 
@@ -138,6 +138,16 @@ pub fn apply_linguistics_runes(
                     _ => format!("{}", n_val),
                 };
 
+                // 🔒 WARDEN: DoS Protection
+                if s1.len() > MAX_COMPLEX_STRING_LEN || s2.len() > MAX_COMPLEX_STRING_LEN {
+                    // Do not produce output (silence) or output Error code (-1)
+                    // Silence is safer.
+                    // But if we want to signal error, maybe -1?
+                    // Previous behavior was crash/hang. Silence is fine.
+                    // If we return, we skip update.
+                    return false;
+                }
+
                 let dist = levenshtein_distance(&s1, &s2);
                 let res = Value::Int(dist as i64);
                 if next_signals[y][x] != Some(res.clone()) {
@@ -152,27 +162,43 @@ pub fn apply_linguistics_runes(
     changes
 }
 
-fn levenshtein_distance(a: &str, b: &str) -> usize {
-    let len_a = a.chars().count();
-    let len_b = b.chars().count();
-    // Use 2 rows for space optimization if needed, but matrix is fine for small strings
-    let mut matrix = vec![vec![0; len_b + 1]; len_a + 1];
+fn levenshtein_distance(s1: &str, s2: &str) -> usize {
+    let s1_chars: Vec<char> = s1.chars().collect();
+    let s2_chars: Vec<char> = s2.chars().collect();
+    let n = s1_chars.len();
+    let m = s2_chars.len();
 
-    for i in 0..=len_a {
-        matrix[i][0] = i;
+    if n == 0 {
+        return m;
     }
-    for j in 0..=len_b {
-        matrix[0][j] = j;
+    if m == 0 {
+        return n;
     }
 
-    for (i, ca) in a.chars().enumerate() {
-        for (j, cb) in b.chars().enumerate() {
-            let cost = if ca == cb { 0 } else { 1 };
-            matrix[i + 1][j + 1] = std::cmp::min(
-                std::cmp::min(matrix[i][j + 1] + 1, matrix[i + 1][j] + 1),
-                matrix[i][j] + cost,
+    // Optimization: Use 2 rows to reduce memory from O(N*M) to O(min(N,M))
+    let (short, long) = if n < m {
+        (&s1_chars, &s2_chars)
+    } else {
+        (&s2_chars, &s1_chars)
+    };
+
+    let min_len = short.len();
+    let max_len = long.len();
+
+    let mut prev_row: Vec<usize> = (0..=min_len).collect();
+    let mut curr_row: Vec<usize> = vec![0; min_len + 1];
+
+    for i in 1..=max_len {
+        curr_row[0] = i;
+        for j in 1..=min_len {
+            let cost = if long[i - 1] == short[j - 1] { 0 } else { 1 };
+            curr_row[j] = std::cmp::min(
+                std::cmp::min(curr_row[j - 1] + 1, prev_row[j] + 1),
+                prev_row[j - 1] + cost,
             );
         }
+        prev_row.clone_from(&curr_row);
     }
-    matrix[len_a][len_b]
+
+    prev_row[min_len]
 }

@@ -451,8 +451,16 @@ mod tests {
             // We set generous bounds to catch "explosion".
             assert!(v < 200.0, "Voltage exploded positively: {}", v);
             assert!(v > -200.0, "Voltage exploded negatively: {}", v);
-            assert!(n.u < 200.0, "Recovery variable u exploded positively: {}", n.u);
-            assert!(n.u > -200.0, "Recovery variable u exploded negatively: {}", n.u);
+            assert!(
+                n.u < 200.0,
+                "Recovery variable u exploded positively: {}",
+                n.u
+            );
+            assert!(
+                n.u > -200.0,
+                "Recovery variable u exploded negatively: {}",
+                n.u
+            );
         }
     }
 
@@ -466,7 +474,10 @@ mod tests {
         // exp(-dt / 0) -> exp(-inf) -> 0.0
         n.update(1.0, 0.0);
 
-        assert!(n.current_decay < 0.0001, "Current should have decayed instantly");
+        assert!(
+            n.current_decay < 0.0001,
+            "Current should have decayed instantly"
+        );
     }
 
     #[test]

@@ -89,6 +89,7 @@ pub const MAX_VOID_BUFFER_SIZE: usize = 1024;
 #[cfg(feature = "nova")]
 pub const MAX_BRAINFUCK_OUTPUT: usize = 1024;
 pub const MAX_STRING_LEN: usize = 65536;
+pub const MAX_COMPLEX_STRING_LEN: usize = 1024; // Lower limit for O(N^2) or O(N log N) ops
 pub const MAX_GENES_PER_STRAND: usize = 4096;
 pub const MAX_FRACTAL_ITER: usize = 1000;
 pub const MAX_COMPLEXITY: usize = 10000;

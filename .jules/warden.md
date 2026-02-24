@@ -88,3 +88,7 @@
 ## 2027-05-29 - Nova Fluid Wind Vector Overflow
 **Threat:** The `process_fluid` function in `experiments/chimera-lang/src/vm/nova_fluid.rs` accumulated wind vectors using `i8` arithmetic. If multiple cells directed wind to a single target cell, the `i8` accumulator could overflow, causing a panic in debug builds (DoS) or wrapping behavior in release builds.
 **Defense:** Promoted the wind vector accumulator to `(i32, i32)` to allow safe accumulation of contributions from all neighbors. The final result is clamped to `[-MAX_WIND, MAX_WIND]` and cast back to `i8` for storage, ensuring stability and preventing panic.
+
+## 2027-06-19 - Linguistics Unbounded Memory Allocation (OOM DoS)
+**Threat:** The `Levenshtein` OpCode and `≅` (Approx Equal) Rune in `experiments/chimera-lang` allocated memory proportional to $N \times M$ where $N$ and $M$ are string lengths. A malicious program providing large strings (e.g. 65k chars) could trigger massive allocations (e.g. 34GB), causing Out of Memory (OOM) DoS.
+**Defense:** Introduced `MAX_COMPLEX_STRING_LEN` (1024) limit for $O(N^2)$ and $O(N \log N)$ linguistics operations. Optimized `levenshtein` implementation to use $O(\min(N, M))$ memory (2 rows) instead of $O(N \times M)$ matrix. Verified with `warden_linguistics_dos_test.rs`.

@@ -1,6 +1,6 @@
 #![cfg(feature = "nova")]
 
-use super::{ChimeraVM, Value};
+use super::{ChimeraVM, Value, MAX_COMPLEX_STRING_LEN};
 
 /// Calculates the Levenshtein distance between two strings.
 ///
@@ -12,6 +12,16 @@ pub fn exec_levenshtein(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let s1_val = vm.stack.pop().unwrap();
 
         if let (Value::Str(s1), Value::Str(s2)) = (s1_val, s2_val) {
+            // 🔒 WARDEN: DoS Protection
+            if s1.len() > MAX_COMPLEX_STRING_LEN || s2.len() > MAX_COMPLEX_STRING_LEN {
+                vm.output.push(format!(
+                    "Error: String too long for levenshtein (Max {})",
+                    MAX_COMPLEX_STRING_LEN
+                ));
+                // Do not push result
+                return None;
+            }
+
             let dist = levenshtein(&s1, &s2);
             vm.stack.push(Value::Int(dist as i64));
             vm.energy = vm.energy.saturating_sub(dist as i64); // Cost proportional to diff
@@ -33,6 +43,13 @@ pub fn exec_levenshtein(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 pub fn exec_soundex(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Str(s) = val {
+            if s.len() > MAX_COMPLEX_STRING_LEN {
+                vm.output.push(format!(
+                    "Error: String too long for soundex (Max {})",
+                    MAX_COMPLEX_STRING_LEN
+                ));
+                return None;
+            }
             let code = soundex(&s);
             vm.stack.push(Value::Str(code));
             vm.energy = vm.energy.saturating_sub(5);
@@ -57,6 +74,13 @@ pub fn exec_anagram(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let s1_val = vm.stack.pop().unwrap();
 
         if let (Value::Str(s1), Value::Str(s2)) = (s1_val, s2_val) {
+            if s1.len() > MAX_COMPLEX_STRING_LEN || s2.len() > MAX_COMPLEX_STRING_LEN {
+                vm.output.push(format!(
+                    "Error: String too long for anagram (Max {})",
+                    MAX_COMPLEX_STRING_LEN
+                ));
+                return None;
+            }
             let is_ana = is_anagram(&s1, &s2);
             vm.stack.push(Value::Int(if is_ana { 1 } else { 0 }));
             vm.energy = vm.energy.saturating_sub(10);
@@ -81,6 +105,12 @@ pub fn exec_cipher(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let shift_val = vm.stack.pop().unwrap();
 
         if let (Value::Int(shift), Value::Str(s)) = (shift_val, s_val) {
+            // Cipher is linear O(N), so MAX_STRING_LEN (65536) is fine, but sticking to complex limit is safer default
+            if s.len() > super::MAX_STRING_LEN {
+                vm.output
+                    .push("Error: String too long for cipher".to_string());
+                return None;
+            }
             let shifted = caesar_cipher(&s, shift as i8);
             vm.stack.push(Value::Str(shifted));
             vm.energy = vm.energy.saturating_sub(5);
@@ -102,6 +132,11 @@ pub fn exec_cipher(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 pub fn exec_pangram(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Str(s) = val {
+            if s.len() > super::MAX_STRING_LEN {
+                vm.output
+                    .push("Error: String too long for pangram".to_string());
+                return None;
+            }
             let is_pan = is_pangram(&s);
             vm.stack.push(Value::Int(if is_pan { 1 } else { 0 }));
             vm.energy = vm.energy.saturating_sub(15);
@@ -131,30 +166,32 @@ fn levenshtein(s1: &str, s2: &str) -> usize {
         return n;
     }
 
-    let mut dp = vec![vec![0; m + 1]; n + 1];
+    // Optimization: Use 2 rows to reduce memory from O(N*M) to O(min(N,M))
+    let (short, long) = if n < m {
+        (&s1_chars, &s2_chars)
+    } else {
+        (&s2_chars, &s1_chars)
+    };
 
-    for (i, row) in dp.iter_mut().enumerate() {
-        row[0] = i;
-    }
-    for (j, val) in dp[0].iter_mut().enumerate() {
-        *val = j;
-    }
+    let min_len = short.len();
+    let max_len = long.len();
 
-    for i in 1..=n {
-        for j in 1..=m {
-            let cost = if s1_chars[i - 1] == s2_chars[j - 1] {
-                0
-            } else {
-                1
-            };
-            dp[i][j] = std::cmp::min(
-                std::cmp::min(dp[i - 1][j] + 1, dp[i][j - 1] + 1),
-                dp[i - 1][j - 1] + cost,
+    let mut prev_row: Vec<usize> = (0..=min_len).collect();
+    let mut curr_row: Vec<usize> = vec![0; min_len + 1];
+
+    for i in 1..=max_len {
+        curr_row[0] = i;
+        for j in 1..=min_len {
+            let cost = if long[i - 1] == short[j - 1] { 0 } else { 1 };
+            curr_row[j] = std::cmp::min(
+                std::cmp::min(curr_row[j - 1] + 1, prev_row[j] + 1),
+                prev_row[j - 1] + cost,
             );
         }
+        prev_row.clone_from(&curr_row);
     }
 
-    dp[n][m]
+    prev_row[min_len]
 }
 
 fn soundex(s: &str) -> String {
@@ -198,9 +235,6 @@ fn soundex(s: &str) -> String {
             code.push(digit);
             last_digit = digit;
         } else if digit == '0' {
-            // For standard soundex, vowels (0) separate consonants, effectively resetting last_digit check
-            // BUT ONLY IF it's not H or W.
-            // H and W are ignored completely in step 4 check.
             match c {
                 'H' | 'W' => {} // Ignore, keep last_digit
                 _ => {

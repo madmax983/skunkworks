@@ -42,11 +42,15 @@ impl fmt::Display for AlchemistState {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // We need to serialize values. Simple values only for now.
         // Complex values (Lists) might be tricky, so we'll flatten or ignore for now.
-        let items: Vec<String> = self.crucible.iter().map(|v| match v {
-            Value::Int(n) => format!("I{}", n),
-            Value::Str(s) => format!("S{}", s.replace(',', "\\,")), // Escape commas? Simple for now.
-            _ => "U".to_string(), // Unknown/Unsupported
-        }).collect();
+        let items: Vec<String> = self
+            .crucible
+            .iter()
+            .map(|v| match v {
+                Value::Int(n) => format!("I{}", n),
+                Value::Str(s) => format!("S{}", s.replace(',', "\\,")), // Escape commas? Simple for now.
+                _ => "U".to_string(),                                   // Unknown/Unsupported
+            })
+            .collect();
 
         write!(f, "⚗:{}:{}:{}", self.mode, self.direction, items.join(","))
     }
@@ -114,7 +118,8 @@ pub fn process_alchemist_logic(
             if matches!(vm.grid[ty][tx], Value::Int(0)) {
                 vm.grid[ty][tx] = result;
                 state.crucible.clear();
-                vm.output.push(format!("ALCHEMIST: Transmuted recipe at {},{}", x, y));
+                vm.output
+                    .push(format!("ALCHEMIST: Transmuted recipe at {},{}", x, y));
             }
         }
     }
@@ -156,17 +161,20 @@ pub fn process_alchemist_logic(
                 // Let's assume we pick up anything.
 
                 if state.crucible.len() < 5 {
-                     state.crucible.push(target_val.clone());
-                     // Consume it (it becomes empty space for us to move into next tick)
-                     // But we can't modify grid_snapshot.
-                     // We modify vm.grid.
-                     vm.grid[ny][nx] = Value::Int(0); // Consumed
+                    state.crucible.push(target_val.clone());
+                    // Consume it (it becomes empty space for us to move into next tick)
+                    // But we can't modify grid_snapshot.
+                    // We modify vm.grid.
+                    vm.grid[ny][nx] = Value::Int(0); // Consumed
 
-                     // Move into the now empty spot?
-                     // Yes.
-                     moved = true;
-                     new_pos = Some((ny, nx));
-                     vm.output.push(format!("ALCHEMIST: Gathered {:?} at {},{}", target_val, nx, ny));
+                    // Move into the now empty spot?
+                    // Yes.
+                    moved = true;
+                    new_pos = Some((ny, nx));
+                    vm.output.push(format!(
+                        "ALCHEMIST: Gathered {:?} at {},{}",
+                        target_val, nx, ny
+                    ));
                 } else {
                     // Crucible full. Turn or Eject?
                     // Turn randomly.
@@ -211,7 +219,7 @@ fn check_recipes(crucible: &[Value]) -> Option<Value> {
         if let (Value::Str(s), Value::Int(n)) = (&crucible[0], &crucible[1]) {
             return Some(Value::Str(s.repeat((*n).max(0) as usize)));
         }
-         if let (Value::Int(n), Value::Str(s)) = (&crucible[0], &crucible[1]) {
+        if let (Value::Int(n), Value::Str(s)) = (&crucible[0], &crucible[1]) {
             return Some(Value::Str(s.repeat((*n).max(0) as usize)));
         }
     }
