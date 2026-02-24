@@ -84,3 +84,7 @@
 ## 2027-02-23 - Nova Chemistry Integer Overflow Panic
 **Threat:** The `exec_brew` operation in `experiments/chimera-lang/src/vm/nova_chemistry.rs` used unchecked addition (`+=`) to calculate potion potency. If the input heat or potency accumulated to `i64::MAX`, this would cause a panic in debug builds (DoS) or wrapping in release builds.
 **Defense:** Replaced unchecked addition with `.saturating_add()` to ensure safety and prevent panic/wrapping. Verified with `warden_overflow_test.rs`.
+
+## 2027-05-29 - Nova Fluid Wind Vector Overflow
+**Threat:** The `process_fluid` function in `experiments/chimera-lang/src/vm/nova_fluid.rs` accumulated wind vectors using `i8` arithmetic. If multiple cells directed wind to a single target cell, the `i8` accumulator could overflow, causing a panic in debug builds (DoS) or wrapping behavior in release builds.
+**Defense:** Promoted the wind vector accumulator to `(i32, i32)` to allow safe accumulation of contributions from all neighbors. The final result is clamped to `[-MAX_WIND, MAX_WIND]` and cast back to `i8` for storage, ensuring stability and preventing panic.
