@@ -1,12 +1,55 @@
+//! # Origami 🦢
+//!
+//! A library for generating procedural origami meshes, specifically the **Miura-ori** fold.
+//!
+//! The Miura-ori is a method of folding a flat surface such as a sheet of paper into a smaller area.
+//! It consists of a tessellated pattern of parallelograms and is known for its property of
+//! having a single degree of freedom—meaning the entire structure can be expanded or contracted
+//! with a single motion.
+//!
+//! ## Core Concepts
+//!
+//! *   **[`MiuraOri`]**: The main generator struct. It takes parameters and a grid size, and produces meshes.
+//! *   **[`MiuraParams`]**: Configuration for the geometric properties of the fold (unit cell dimensions, angle).
+//! *   **Extension Factor**: A value from 0.0 (collapsed) to 1.0 (fully expanded) that drives the simulation.
+//!
+//! ## Example
+//!
+//! ```
+//! use origami::{MiuraOri, MiuraParams, Orientation};
+//!
+//! // Define the fold parameters
+//! let params = MiuraParams {
+//!     a: 1.0,      // Side length A
+//!     b: 1.0,      // Side length B
+//!     gamma: 1.4,  // Fold angle (radians)
+//!     orientation: Orientation::Horizontal,
+//! };
+//!
+//! // Create a 10x10 grid generator
+//! let origami = MiuraOri::new(params, (10, 10));
+//!
+//! // Generate the mesh at 50% expansion
+//! let mesh = origami.generate_mesh(0.5);
+//!
+//! assert_eq!(mesh.vertices.len(), 11 * 11); // (cols+1) * (rows+1)
+//! ```
+
 use macroquad::prelude::*;
 
+/// Orientation of the fold pattern.
+///
+/// The Miura-ori pattern is anisotropic. The "zig-zag" happens along one axis,
+/// creating different structural properties and visual appearances.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Orientation {
-    /// Zig-zag along X axis (rows shift). Height map is stripes along Y.
-    /// Used by origami-constellation.
+    /// Zig-zag along X axis (rows shift). Height map forms stripes along Y.
+    ///
+    /// Commonly used when the compression is desired along the horizontal axis.
     Horizontal,
-    /// Zig-zag along Y axis (cols shift). Height map is checkerboard.
-    /// Used by rigid-origami and origami-spores.
+    /// Zig-zag along Y axis (cols shift). Height map forms a checkerboard pattern.
+    ///
+    /// Used when compression is desired along the vertical axis.
     Vertical,
 }
 
@@ -16,35 +59,72 @@ impl Default for Orientation {
     }
 }
 
+/// Geometric parameters for the Miura-ori unit cell.
+///
+/// A Miura-ori pattern is defined by a repeating parallelogram unit cell.
 #[derive(Clone, Copy, Debug)]
 pub struct MiuraParams {
+    /// Length of the edge `a` of the unit cell.
     pub a: f32,
+    /// Length of the edge `b` of the unit cell.
     pub b: f32,
-    pub gamma: f32, // in radians
+    /// The angle `gamma` of the unit cell (in radians).
+    ///
+    /// This defines the "shear" of the pattern.
+    pub gamma: f32,
+    /// The orientation of the zig-zag pattern.
     pub orientation: Orientation,
 }
 
+/// A single vertex in the generated origami mesh.
 pub struct OrigamiVertex {
+    /// 3D position of the vertex.
     pub pos: Vec3,
+    /// UV Texture coordinates (0.0 - 1.0).
     pub uv: Vec2,
 }
 
+/// A complete mesh generated from the origami pattern.
+///
+/// Contains vertices and indices suitable for rendering with `macroquad` or other engines.
 pub struct OrigamiMesh {
+    /// List of vertices.
     pub vertices: Vec<OrigamiVertex>,
+    /// List of indices forming triangles.
     pub indices: Vec<u16>,
 }
 
+/// The generator for Miura-ori patterns.
+///
+/// Use this struct to calculate the geometry of a folded sheet at various stages of expansion.
 pub struct MiuraOri {
+    /// The geometric parameters of the fold.
     pub params: MiuraParams,
+    /// The dimensions of the grid (cols, rows).
     pub grid_size: (usize, usize),
 }
 
 impl MiuraOri {
+    /// Creates a new Miura-ori generator.
+    ///
+    /// # Arguments
+    ///
+    /// * `params` - The geometric parameters ([`MiuraParams`]).
+    /// * `grid_size` - A tuple `(cols, rows)` defining the number of unit cells in X and Y.
     pub fn new(params: MiuraParams, grid_size: (usize, usize)) -> Self {
         Self { params, grid_size }
     }
 
-    /// Generates the full mesh (vertices with UVs + indices)
+    /// Generates the full mesh (vertices with UVs + indices).
+    ///
+    /// # Arguments
+    ///
+    /// * `extension_factor` - A value between `0.0` (fully collapsed) and `1.0` (fully expanded).
+    ///   Clamped to `[0.001, 1.0]` internally to avoid singularities.
+    ///
+    /// # Returns
+    ///
+    /// An [`OrigamiMesh`] containing the vertex data and index buffer for rendering.
     pub fn generate_mesh(&self, extension_factor: f32) -> OrigamiMesh {
         let (vertices_pos, _, _) = self.calculate_positions(extension_factor);
         let (cols, rows) = self.grid_size;
@@ -82,7 +162,9 @@ impl MiuraOri {
         OrigamiMesh { vertices, indices }
     }
 
-    /// Generates just the grid of vertex positions (row-major order)
+    /// Generates just the grid of vertex positions (row-major order).
+    ///
+    /// Useful if you only need the physics/geometry points and not a renderable mesh.
     pub fn generate_grid(&self, extension_factor: f32) -> Vec<Vec3> {
         self.calculate_positions(extension_factor).0
     }
