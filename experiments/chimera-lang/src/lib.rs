@@ -89,6 +89,7 @@ pub mod matrix_rain;
 pub mod opcode;
 pub mod prologue_compiler;
 pub mod tui;
+pub mod ui;
 pub mod value;
 pub mod vm;
 

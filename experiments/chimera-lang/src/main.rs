@@ -33,6 +33,52 @@ struct Cli {
     headless: bool,
 }
 
+fn format_oracle_result(val: &Value) -> Option<String> {
+    if let Value::Junction(JunctionType::All, items) = val {
+        // Check if this looks like a list of bindings from Oracle (List of [Key, Value])
+        let is_binding_list = !items.is_empty()
+            && items.iter().all(|item| {
+                if let Value::Junction(JunctionType::All, b_args) = item {
+                    b_args.len() == 2 && matches!(b_args[0], Value::Str(_))
+                } else {
+                    false
+                }
+            });
+
+        if is_binding_list {
+            let mut table = comfy_table::Table::new();
+            table.load_preset(comfy_table::presets::UTF8_NO_BORDERS);
+            table.set_header(vec!["Key", "Value"]);
+
+            for item in items {
+                if let Value::Junction(_, args) = item {
+                    if let Value::Str(k) = &args[0] {
+                        let v = &args[1];
+                        let v_str = format!("{}", v);
+                        let mut v_cell = comfy_table::Cell::new(&v_str);
+
+                        // Colorize
+                        if v_str == "1" || v_str.eq_ignore_ascii_case("true") {
+                            v_cell = v_cell.fg(comfy_table::Color::Green);
+                        } else if v_str == "0" || v_str.eq_ignore_ascii_case("false") {
+                            v_cell = v_cell.fg(comfy_table::Color::Red);
+                        } else if matches!(v, Value::Str(_)) {
+                            v_cell = v_cell.fg(comfy_table::Color::Cyan);
+                        }
+
+                        table.add_row(vec![
+                            comfy_table::Cell::new(k).fg(comfy_table::Color::Yellow),
+                            v_cell,
+                        ]);
+                    }
+                }
+            }
+            return Some(table.to_string());
+        }
+    }
+    None
+}
+
 fn main() -> Result<()> {
     let cli = Cli::parse();
     let unparsed_file = fs::read_to_string(&cli.input)?;
@@ -164,51 +210,7 @@ fn main() -> Result<()> {
                 Value::Color(_, _, _) => ("Color", comfy_table::Color::Green),
             };
 
-            let val_str = if let Value::Junction(JunctionType::All, items) = val {
-                // Check if this looks like a list of bindings from Oracle (List of [Key, Value])
-                let is_binding_list = !items.is_empty()
-                    && items.iter().all(|item| {
-                        if let Value::Junction(JunctionType::All, b_args) = item {
-                            b_args.len() == 2 && matches!(b_args[0], Value::Str(_))
-                        } else {
-                            false
-                        }
-                    });
-
-                if is_binding_list {
-                    let mut inner = comfy_table::Table::new();
-                    inner.load_preset(comfy_table::presets::UTF8_NO_BORDERS);
-                    inner.set_header(vec!["Key", "Value"]);
-
-                    for item in items {
-                        if let Value::Junction(_, args) = item {
-                            if let Value::Str(k) = &args[0] {
-                                let v = &args[1];
-                                let v_str = format!("{}", v);
-                                let mut v_cell = comfy_table::Cell::new(&v_str);
-
-                                if v_str == "1" || v_str.to_lowercase() == "true" {
-                                    v_cell = v_cell.fg(comfy_table::Color::Green);
-                                } else if v_str == "0" || v_str.to_lowercase() == "false" {
-                                    v_cell = v_cell.fg(comfy_table::Color::Red);
-                                } else if matches!(v, Value::Str(_)) {
-                                    v_cell = v_cell.fg(comfy_table::Color::Cyan);
-                                }
-
-                                inner.add_row(vec![
-                                    comfy_table::Cell::new(k).fg(comfy_table::Color::Yellow),
-                                    v_cell,
-                                ]);
-                            }
-                        }
-                    }
-                    inner.to_string()
-                } else {
-                    format!("{}", val)
-                }
-            } else {
-                format!("{}", val)
-            };
+            let val_str = format_oracle_result(val).unwrap_or_else(|| format!("{}", val));
 
             let mut val_cell = comfy_table::Cell::new(&val_str);
 
