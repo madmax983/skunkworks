@@ -164,6 +164,8 @@ pub enum ViewMode {
     Choir,
     #[cfg(feature = "nova")]
     Paradox,
+    #[cfg(feature = "nova")]
+    Codex,
 }
 
 enum InputMode {
@@ -291,6 +293,8 @@ pub(crate) struct AppState {
     pub(crate) forge_focus: u8, // 0=List, 1=Editor, 2=TestInput
     #[cfg(feature = "nova")]
     pub(crate) paradox_editor_buffer: String,
+    #[cfg(feature = "nova")]
+    pub(crate) codex_selected_spell: usize,
     pub(crate) evolution_state: EvolutionState,
     pub(crate) sequencer_state: SequencerState,
     pub(crate) matrix_rain: MatrixRain,
@@ -464,6 +468,8 @@ impl AppState {
             forge_focus: 0,
             #[cfg(feature = "nova")]
             paradox_editor_buffer: String::new(),
+            #[cfg(feature = "nova")]
+            codex_selected_spell: 0,
             evolution_state: EvolutionState::new(),
             sequencer_state: SequencerState::new(),
             matrix_rain: MatrixRain::new(),
@@ -1142,6 +1148,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Codex = app_state.view_mode {
+                render_codex(f, vm, app_state);
+                return;
+            }
+
             render_genome_and_grid(f, vm, app_state);
 
             if vm.glitch_level > 0.01 {
@@ -1327,6 +1339,31 @@ where
                         }
                         KeyCode::Backspace => {
                             app_state.terminal_input.pop();
+                        }
+                        _ => {}
+                    }
+                    continue;
+                }
+
+                #[cfg(feature = "nova")]
+                if let ViewMode::Codex = app_state.view_mode {
+                    match key.code {
+                        KeyCode::Up => {
+                            if app_state.codex_selected_spell > 0 {
+                                app_state.codex_selected_spell -= 1;
+                            }
+                        }
+                        KeyCode::Down => {
+                            if app_state.codex_selected_spell + 1 < vm.codex.spells.len() {
+                                app_state.codex_selected_spell += 1;
+                            }
+                        }
+                        KeyCode::Enter => {
+                            if let Some(spell) = vm.codex.get_spell(app_state.codex_selected_spell) {
+                                crate::vm::codex::exec_spell(vm, &spell);
+                                app_state.screen_shake = 2.0;
+                                app_state.status_msg = format!("Cast Spell: {}", spell.name);
+                            }
                         }
                         _ => {}
                     }
@@ -2954,7 +2991,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Choir => ViewMode::Paradox,
                             #[cfg(feature = "nova")]
-                            ViewMode::Paradox => ViewMode::Genome,
+                            ViewMode::Paradox => ViewMode::Codex,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Codex => ViewMode::Genome,
                         };
                     }
                     #[cfg(feature = "nova")]
@@ -13069,4 +13108,57 @@ fn render_tesseract(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("4D Coordinates"),
     );
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_codex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(40), Constraint::Percentage(60)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    // Spell List
+    let mut items = Vec::new();
+    for (i, spell) in vm.codex.spells.iter().enumerate() {
+        let style = if i == app_state.codex_selected_spell {
+            Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+        } else {
+            Style::default().fg(Color::Cyan)
+        };
+        items.push(ListItem::new(format!("{}: {} ({} Energy)", i, spell.name, spell.cost)).style(style));
+    }
+
+    let list = List::new(items).block(Block::default().borders(Borders::ALL).title("The Codex"));
+    f.render_widget(list, chunks[0]);
+
+    // Details
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(chunks[1]);
+
+    if let Some(spell) = vm.codex.spells.get(app_state.codex_selected_spell) {
+        let details = vec![
+            Line::from(vec![
+                Span::styled(format!("Spell: {}", spell.name), Style::default().add_modifier(Modifier::BOLD)),
+            ]),
+            Line::from(format!("Cost: {}", spell.cost)),
+            Line::from(""),
+            Line::from("Description:"),
+            Line::from(spell.description.as_str()),
+        ];
+        let p = Paragraph::new(details).block(Block::default().borders(Borders::ALL).title("Incantation"));
+        f.render_widget(p, right_chunks[0]);
+    }
+
+    // Help
+    let help = vec![
+        Line::from("Controls:"),
+        Line::from("  Up/Down: Select Spell"),
+        Line::from("  Enter: Cast Spell"),
+        Line::from(" "),
+        Line::from("Warning: Spells consume Energy and may have unpredictable effects."),
+    ];
+    let help_p = Paragraph::new(help).block(Block::default().borders(Borders::ALL).title("Grimoire Guide"));
+    f.render_widget(help_p, right_chunks[1]);
 }

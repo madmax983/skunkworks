@@ -1150,6 +1150,12 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     TuiMod,
 
+    /// **[Nova]** Interacts with the Genetic Codex (Spellbook).
+    ///
+    /// **Stack:** `[ ..., spell_id ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Codex,
+
     // Prologue Features (Rune Logic)
     /// **[Prologue]** Toggles Prologue Language mode.
     ///
