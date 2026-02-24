@@ -857,7 +857,14 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A Pachinko board where the "pins" are living ChimeraVM agents that gain energy from collisions and evolve to catch more packets.
 - **Novel trait**: Evo-Pachinko. The board layout self-organizes through natural selection.
 - **Status**: experiments/chimera-pachinko
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Re-verified.
+- **Evaluation**: Compiles (Fixed). Implemented by The Splice Surgeon. Re-verified.
+
+### quipu-tissue
+- **Parents**: crates/quipu + experiments/chimera-tissue
+- **Concept**: "Living Quipu". A soft-body simulation of Inca Quipu cords where knots are living ChimeraVM agents.
+- **Novel trait**: Physical Data Weight. The value of the knot determines its mass, and agents manipulate cord tension to fight gravity.
+- **Status**: experiments/quipu-tissue
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
 
 ### etymological-mycelium
 - **Parents**: experiments/git-etymologist + experiments/chaotic-mycelium

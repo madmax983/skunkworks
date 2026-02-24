@@ -595,3 +595,8 @@
 - **Scent Origin**: The Splice Surgeon 🧬
 - **Status**: The flesh is magnetic. Piezoelectric sparks detected.
 - **Note**: "Strain creates polarity. Polarity creates motion."
+
+### [Concentration Level: FRESH] - Location: experiments/quipu-tissue
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: The knots are heavy. The data is writhing against gravity.
+- **Note**: "To lift the weight of knowledge, the cord must contract."
