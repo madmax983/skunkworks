@@ -2,14 +2,14 @@ mod monitor;
 mod scavenger;
 mod sediment;
 
-use macroquad::prelude::*;
-use monitor::ProcessMonitor;
-use scavenger::{create_scavenger_dna, MagneticScavenger};
-use sediment::SedimentParticle;
-use physics_pbd::{Constraint, PbdSystem};
+use chimera_lang::prelude::*;
 use flocking::{compute_force, FlockingParams};
 use locus::Vec2 as LocusVec2;
-use chimera_lang::prelude::*;
+use macroquad::prelude::*;
+use monitor::ProcessMonitor;
+use physics_pbd::{Constraint, PbdSystem};
+use scavenger::{create_scavenger_dna, MagneticScavenger};
+use sediment::SedimentParticle;
 
 #[macroquad::main("Magnetic Sediment")]
 async fn main() {
@@ -76,19 +76,23 @@ async fn main() {
 
             // Magnetic Repulsion/Attraction with other Scavengers
             for (j, other) in scavengers.iter().enumerate() {
-                 if i == j { continue; }
-                 let other_pos = other.center_pos(&system);
-                 let dist_sq = my_pos.distance_squared(other_pos).max(1.0);
-                 if dist_sq > 2500.0 { continue; } // Optimization
+                if i == j {
+                    continue;
+                }
+                let other_pos = other.center_pos(&system);
+                let dist_sq = my_pos.distance_squared(other_pos).max(1.0);
+                if dist_sq > 2500.0 {
+                    continue;
+                } // Optimization
 
-                 let other_mag = other.magnetism - 0.5;
+                let other_mag = other.magnetism - 0.5;
 
-                 // Like poles repel, Opposites attract?
-                 // Force = k * m1 * m2 / r^2
-                 // If m1, m2 have same sign, product is positive. If positive force means repel:
-                 let force_mag = (my_mag * other_mag * mag_strength) / dist_sq;
-                 let dir = (my_pos - other_pos).normalize_or_zero();
-                 forces[i] += dir * force_mag;
+                // Like poles repel, Opposites attract?
+                // Force = k * m1 * m2 / r^2
+                // If m1, m2 have same sign, product is positive. If positive force means repel:
+                let force_mag = (my_mag * other_mag * mag_strength) / dist_sq;
+                let dir = (my_pos - other_pos).normalize_or_zero();
+                forces[i] += dir * force_mag;
             }
 
             // Attraction to Sediment
@@ -97,10 +101,11 @@ async fn main() {
                 let s_pos = vec3(s.pos.x, s.pos.y, 0.0);
                 let dist_sq = my_pos.distance_squared(s_pos).max(1.0);
                 if dist_sq < 10000.0 {
-                     // Attraction force proportional to sediment mass and scavenger magnetism magnitude
-                     let attraction = (s.magnetic_charge * my_mag.abs() * sediment_attraction) / dist_sq;
-                     let dir = (s_pos - my_pos).normalize_or_zero();
-                     forces[i] += dir * attraction;
+                    // Attraction force proportional to sediment mass and scavenger magnetism magnitude
+                    let attraction =
+                        (s.magnetic_charge * my_mag.abs() * sediment_attraction) / dist_sq;
+                    let dir = (s_pos - my_pos).normalize_or_zero();
+                    forces[i] += dir * attraction;
                 }
             }
         }
@@ -109,14 +114,14 @@ async fn main() {
         let mut eaten_indices = Vec::new(); // indices of sediment to remove
 
         for (i, scavenger) in scavengers.iter_mut().enumerate() {
-             // Apply Force
-             let center_idx = scavenger.particle_indices[0];
-             let inv_mass = system.particles[center_idx].inv_mass;
-             if inv_mass > 0.0 {
-                 system.particles[center_idx].vel += forces[i] * dt * inv_mass;
-             }
+            // Apply Force
+            let center_idx = scavenger.particle_indices[0];
+            let inv_mass = system.particles[center_idx].inv_mass;
+            if inv_mass > 0.0 {
+                system.particles[center_idx].vel += forces[i] * dt * inv_mass;
+            }
 
-             // VM & Physics Logic (same as ferrous-swarm)
+            // VM & Physics Logic (same as ferrous-swarm)
             // Sense: Strain
             let mut total_strain = 0.0;
             for &c_idx in &scavenger.actuators {
@@ -136,8 +141,13 @@ async fn main() {
                 0.0
             };
 
-            scavenger.vm.stack.push(chimera_lang::vm::Value::Int((avg_strain * 100.0) as i64));
-            scavenger.vm.stack.push(chimera_lang::vm::Value::Int((scavenger.magnetism * 100.0) as i64));
+            scavenger
+                .vm
+                .stack
+                .push(chimera_lang::vm::Value::Int((avg_strain * 100.0) as i64));
+            scavenger.vm.stack.push(chimera_lang::vm::Value::Int(
+                (scavenger.magnetism * 100.0) as i64,
+            ));
 
             for _ in 0..50 {
                 scavenger.vm.step();
@@ -179,11 +189,12 @@ async fn main() {
             let my_pos = system.particles[center_idx].pos;
             for (s_idx, s) in sediment.iter().enumerate() {
                 let s_pos = vec3(s.pos.x, s.pos.y, 0.0);
-                if my_pos.distance(s_pos) < 10.0 { // Eat radius
-                     if !eaten_indices.contains(&s_idx) {
-                         eaten_indices.push(s_idx);
-                         scavenger.energy += s.mass * 10.0;
-                     }
+                if my_pos.distance(s_pos) < 10.0 {
+                    // Eat radius
+                    if !eaten_indices.contains(&s_idx) {
+                        eaten_indices.push(s_idx);
+                        scavenger.energy += s.mass * 10.0;
+                    }
                 }
             }
         }
@@ -203,10 +214,9 @@ async fn main() {
 
         // 6. Draw Scavengers
         for scavenger in &scavengers {
-             // Draw Tentacles
+            // Draw Tentacles
             for &c_idx in &scavenger.actuators {
-                if let Constraint::Actuator { p1, p2, factor, .. } = system.constraints[c_idx]
-                {
+                if let Constraint::Actuator { p1, p2, factor, .. } = system.constraints[c_idx] {
                     let pos1 = system.particles[p1].pos;
                     let pos2 = system.particles[p2].pos;
                     let thickness = 0.05 * factor + 0.05;
@@ -220,16 +230,42 @@ async fn main() {
 
         // Wrap Around
         for p in &mut system.particles {
-            if p.pos.x > width { p.pos.x -= width; }
-            if p.pos.x < 0.0 { p.pos.x += width; }
-            if p.pos.y > height { p.pos.y -= height; }
-            if p.pos.y < 0.0 { p.pos.y += height; }
+            if p.pos.x > width {
+                p.pos.x -= width;
+            }
+            if p.pos.x < 0.0 {
+                p.pos.x += width;
+            }
+            if p.pos.y > height {
+                p.pos.y -= height;
+            }
+            if p.pos.y < 0.0 {
+                p.pos.y += height;
+            }
         }
 
         draw_text("Magnetic Sediment", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Processes: {}", monitor.known_pids.len()), 10.0, 50.0, 20.0, GREEN);
-        draw_text(&format!("Sediment: {}", sediment.len()), 10.0, 70.0, 20.0, GRAY);
-        draw_text(&format!("Scavengers: {}", scavengers.len()), 10.0, 90.0, 20.0, RED);
+        draw_text(
+            &format!("Processes: {}", monitor.known_pids.len()),
+            10.0,
+            50.0,
+            20.0,
+            GREEN,
+        );
+        draw_text(
+            &format!("Sediment: {}", sediment.len()),
+            10.0,
+            70.0,
+            20.0,
+            GRAY,
+        );
+        draw_text(
+            &format!("Scavengers: {}", scavengers.len()),
+            10.0,
+            90.0,
+            20.0,
+            RED,
+        );
 
         next_frame().await
     }

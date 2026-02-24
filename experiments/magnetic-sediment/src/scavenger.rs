@@ -14,11 +14,7 @@ pub struct MagneticScavenger {
 }
 
 impl MagneticScavenger {
-    pub fn new(
-        system: &mut PbdSystem,
-        pos: Vec2,
-        dna: Dna,
-    ) -> Self {
+    pub fn new(system: &mut PbdSystem, pos: Vec2, dna: Dna) -> Self {
         let center_pos = vec3(pos.x, pos.y, 0.0);
         let center_idx = system.add_particle(center_pos, 1.0); // Mass 1.0
         let mut particle_indices = vec![center_idx];

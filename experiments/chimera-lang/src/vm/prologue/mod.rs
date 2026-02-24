@@ -61,8 +61,8 @@ use rand::Rng;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};
 
-pub mod alchemy;
 pub mod alchemist;
+pub mod alchemy;
 pub mod architect;
 pub mod biolum;
 pub mod chaos;
@@ -1950,6 +1950,7 @@ mod prologue_chromatin_test;
 mod prologue_echo_test;
 #[cfg(test)]
 mod prologue_enzymes_test;
+
 #[cfg(test)]
 mod prologue_evolution_v2_test;
 #[cfg(test)]
@@ -1976,9 +1977,10 @@ mod ribozyme_agent_test;
 mod prologue_spectral_evolution_test;
 
 #[cfg(test)]
+mod alchemist_test;
+#[cfg(test)]
 mod architect_test;
 #[cfg(test)]
 mod mesmerist_test;
 #[cfg(test)]
 mod prologue_library_test;
-#[cfg(test)] mod alchemist_test;
