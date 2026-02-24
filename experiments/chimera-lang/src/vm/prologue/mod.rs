@@ -91,6 +91,7 @@ pub mod logic_agent;
 pub mod logos;
 pub mod math;
 pub mod memetics;
+pub mod mesmerist;
 pub mod mycelium;
 pub mod narrative;
 pub mod necromancy;
@@ -495,6 +496,8 @@ impl PrologueState {
                             | "🛠"
                             // Genetics (Hybridize)
                             | "⨁"
+                            // Mesmerist
+                            | "🌀"
                     ) {
                         self.runes.insert((y, x));
 
@@ -504,6 +507,7 @@ impl PrologueState {
                             || (s == "C" && !self.orca_mode)
                             || s == "♻"
                             || s == "♬"
+                            || s == "🌀"
                             || s == "₣"
                             || s == "ζ"
                             || s == "Φ"
@@ -685,6 +689,9 @@ fn prepare_signals(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                 }
             }
             fission::prepare_fission_sources(s, *y, *x, &mut vm.prologue_state.signal_grid);
+            if s == "🌀" {
+                mesmerist::emit_gaze(vm, *y, *x);
+            }
         }
     }
 }
@@ -1531,6 +1538,44 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
     for mut agent in agents {
         let (y, x) = (agent.y, agent.x);
 
+        // Receptivity: Check for Instruction Signals (Mesmerism)
+        let code_to_run = if let Some(Value::Str(code)) = &vm.prologue_state.signal_grid[y][x] {
+            if code.len() > 1 && !code.starts_with('~') && !code.starts_with('!') {
+                Some(code.clone())
+            } else {
+                None
+            }
+        } else {
+            None
+        };
+
+        if let Some(code) = code_to_run {
+            // Attempt to compile and execute on agent's stack
+            // Wrap in strand for compiler
+            let wrapped_code = format!("strand mesmer {{ {} }}", code);
+            // Debugging
+            // println!("DEBUG: Agent at {},{} sees code: {}", x, y, code);
+            match crate::compiler::compile(&wrapped_code, None) {
+                Ok(dna) => {
+                    if let Some(strand) = dna.helix.strands.first() {
+                        let mut agent_stack = std::mem::take(&mut agent.stack);
+                        std::mem::swap(&mut vm.stack, &mut agent_stack);
+
+                        for gene in &strand.genes {
+                            let _ = vm.execute_gene_inner(gene.op.clone(), &gene.args);
+                        }
+
+                        std::mem::swap(&mut vm.stack, &mut agent_stack);
+                        agent.stack = agent_stack;
+                        vm.output.push(format!("MESMERISM: Agent at {},{} executed '{}'", x, y, code));
+                    }
+                }
+                Err(e) => {
+                    vm.output.push(format!("MESMERISM ERROR: Compile failed for '{}': {}", code, e));
+                }
+            }
+        }
+
         let mut current_type = "@".to_string();
         if let Value::Str(s) = &grid_snapshot[y][x] {
             current_type = s.clone();
@@ -1662,6 +1707,11 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 }
                 None => continue,
             }
+        } else if current_type == "🌀" {
+            match mesmerist::process_mesmerist_logic(vm, &agent, grid_snapshot) {
+                Some(t) => Some(t),
+                None => None,
+            }
         } else {
             process_seeker_logic(vm, &agent, grid_snapshot)
         };
@@ -1687,6 +1737,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "🦠"
                 || current_type == "🛠"
                 || current_type == "🎓"
+                || current_type == "🌀"
             {
                 vm.prologue_state.registers.insert(
                     (ny, nx),
@@ -1716,6 +1767,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                     || current_type == "🦠"
                     || current_type == "🛠"
                     || current_type == "🎓"
+                    || current_type == "🌀"
                 {
                     vm.prologue_state.registers.remove(&(y, x));
                 }
@@ -1743,6 +1795,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "🦠"
                 || current_type == "🛠"
                 || current_type == "🎓"
+                || current_type == "🌀"
             {
                 vm.prologue_state.registers.insert(
                     (y, x),
@@ -1897,3 +1950,5 @@ mod prologue_spectral_evolution_test;
 mod prologue_library_test;
 #[cfg(test)]
 mod architect_test;
+#[cfg(test)]
+mod mesmerist_test;

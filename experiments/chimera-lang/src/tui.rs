@@ -12777,6 +12777,7 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     }
                     "🍄" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
                     "📥" | "📤" | "🦋" => style = style.fg(Color::LightGreen).add_modifier(Modifier::BOLD),
+                    "🌀" => style = style.fg(Color::LightMagenta).add_modifier(Modifier::BOLD | Modifier::SLOW_BLINK),
                     _ => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
                 }
             } else if !vm.prologue_state.mycelium_network.contains(&(y, x)) {
