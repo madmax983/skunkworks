@@ -1004,6 +1004,31 @@ fn process_sinks(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
 ///
 /// Handles `?` (Sink), `$` (Scribe), `M` (Mutate), `O` (Organelle), etc.
 fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
+    if let Some(&strand_idx) = vm.prologue_state.custom_runes.get(rune) {
+        let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+        let mut triggered = false;
+
+        for (dy, dx) in neighbors {
+            if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                 if vm.prologue_state.signal_grid[ny][nx].is_some() {
+                     triggered = true;
+                     break;
+                 }
+            }
+        }
+
+        if triggered {
+            // Prevent re-triggering if already executing this strand
+            if vm.ip.0 != strand_idx {
+                vm.context_loc = (y, x);
+                vm.interrupt(strand_idx);
+                vm.output.push(format!("RUNECRAFT: Executed Custom Rune '{}'", rune));
+                vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+            }
+        }
+        return;
+    }
+
     match rune {
         "🎓" => {
             // Graduate: West (@), North (Goal) -> South (Φ)

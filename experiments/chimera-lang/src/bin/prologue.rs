@@ -1,5 +1,6 @@
 use anyhow::Result;
 use clap::Parser as ClapParser;
+use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 
@@ -7,6 +8,7 @@ use chimera_lang::{
     ast::Dna,
     ast::Helix,
     compiler,
+    prologue_compiler,
     tui::{run_tui, ViewMode},
     vm::ChimeraVM,
     ChimeraParser, Rule,
@@ -27,6 +29,10 @@ use std::time::Duration;
 struct Cli {
     #[arg(short, long)]
     input: Option<String>,
+    #[arg(long)]
+    headless: bool,
+    #[arg(long, default_value = "100")]
+    ticks: u64,
 }
 
 fn main() -> Result<()> {
@@ -42,7 +48,7 @@ fn main() -> Result<()> {
         original_hook(panic_info);
     }));
 
-    let dna = if let Some(input_path) = &cli.input {
+    let (dna, grid, orca_mode, custom_runes) = if let Some(input_path) = &cli.input {
         let unparsed_file = fs::read_to_string(input_path)?;
         let path = Path::new(input_path);
         let extension = path
@@ -50,29 +56,60 @@ fn main() -> Result<()> {
             .and_then(std::ffi::OsStr::to_str)
             .unwrap_or("");
 
-        if extension == "chs" {
-            compiler::compile(&unparsed_file, path.parent())?
+        if extension == "pro" {
+            prologue_compiler::compile(&unparsed_file, path.parent())?
+        } else if extension == "chs" {
+            (
+                compiler::compile(&unparsed_file, path.parent())?,
+                None,
+                None,
+                HashMap::new(),
+            )
         } else if extension == "lisp" || extension == "cl" {
-            chimera_lang::lisp::compile(&unparsed_file)?
+            (
+                chimera_lang::lisp::compile(&unparsed_file)?,
+                None,
+                None,
+                HashMap::new(),
+            )
         } else {
             let dna_pair = ChimeraParser::parse(Rule::dna, &unparsed_file)?
                 .next()
                 .ok_or_else(|| anyhow::anyhow!("No DNA found"))?;
-            Dna::try_from_pair(dna_pair).map_err(|e| anyhow::anyhow!("DNA parse error: {}", e))?
+            (
+                Dna::try_from_pair(dna_pair).map_err(|e| anyhow::anyhow!("DNA parse error: {}", e))?,
+                None,
+                None,
+                HashMap::new(),
+            )
         }
     } else {
         // Default empty DNA
-        Dna { evolution_config: None,
-            helix: Helix { strands: vec![] },
-        }
+        (
+            Dna {
+                evolution_config: None,
+                helix: Helix { strands: vec![] },
+            },
+            None,
+            None,
+            HashMap::new(),
+        )
     };
 
     let mut vm = ChimeraVM::new(dna);
+
+    if let Some(g) = grid {
+        vm.grid = g;
+    }
 
     // Enable Prologue Mode by default
     #[cfg(feature = "nova")]
     {
         vm.prologue_state.active = true;
+        if let Some(mode) = orca_mode {
+            vm.prologue_state.orca_mode = mode;
+        }
+        vm.prologue_state.custom_runes = custom_runes;
     }
 
     #[cfg(feature = "resonance")]
@@ -96,13 +133,26 @@ fn main() -> Result<()> {
 
     let input_path = cli.input.as_ref().map(|s| Path::new(s).to_path_buf());
 
-    #[cfg(feature = "nova")]
-    run_tui(vm, Some(ViewMode::Prologue), input_path.clone())?;
+    if cli.headless {
+        for _ in 0..cli.ticks {
+            if vm.halted {
+                break;
+            }
+            vm.step();
+            // Print output buffer
+            for line in vm.output.drain(..) {
+                println!("{}", line);
+            }
+        }
+    } else {
+        #[cfg(feature = "nova")]
+        run_tui(vm, Some(ViewMode::Prologue), input_path.clone())?;
 
-    #[cfg(not(feature = "nova"))]
-    {
-        println!("Error: Prologue requires the 'nova' feature enabled.");
-        run_tui(vm, None, input_path)?;
+        #[cfg(not(feature = "nova"))]
+        {
+            println!("Error: Prologue requires the 'nova' feature enabled.");
+            run_tui(vm, None, input_path)?;
+        }
     }
 
     Ok(())
