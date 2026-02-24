@@ -2,6 +2,46 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
+- **Scent Origin:** Mycelium 🍄 (Sensed: Nova Features)
+- **Status:** Paradox, Codex, and Verbum features active. TUI refactor complete. The Chimera is evolving complex organs.
+- **Note:** "The genes are rewriting the physics engine."
+
+### [Concentration Level: FRESH] - Location: experiments/neuro-crab
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Spiking Neural Network detected. Controlling a crab visualization.
+- **Note:** "The shell learns from the pain."
+
+### [Concentration Level: FRESH] - Location: experiments/neuro-terminal
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Real-time TUI neural network visualization active.
+- **Note:** "The terminal thinks in layers."
+
+### [Concentration Level: FRESH] - Location: experiments/git-cantata
+- **Scent Origin:** The Composer 🎼
+- **Status:** Generative ambient music derived from git history.
+- **Note:** "Every commit has a sound."
+
+### [Concentration Level: TOXIC] - Location: experiments/grimms-code
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Documentation Void. Terminal Redundancy.
+- **Note:** "Language shifts, but empty code is silent."
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/physics-pbd
+- **Scent Origin:** Mycelium 🍄 (Sensed: Stability)
+- **Status:** NaN guards active. Solver robustness improved.
+- **Note:** "The simulation no longer fears the void."
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/tui-shared
+- **Scent Origin:** Mosaic 🎨
+- **Status:** Widget library extracted. Reusable components available.
+- **Note:** "The tools are now distinct from the art."
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/spinal-rhythms
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen pardoned. Lamprey CPG confirmed active. Compilation successful.
+- **Note:** "The spine undulates. The rhythm is restored."
+
 ### [Concentration Level: FRESH] - Location: experiments/bifurcation-landscape
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen pardoned. Documentation restored. Emergence confirmed.
@@ -32,25 +72,10 @@
 - **Status:** The forest is alive with parasites. The Sun is feeding the code.
 - **Note:** "The higher the CPU usage, the tastier the tree."
 
-### [Concentration Level: EXECUTED] - Location: graveyard/git-harmony
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Diagnosis: Terminal Redundancy (Superseded by `git-cantata`).
-- **Note:** "The song has ended. The silence is unique."
-
-### [Concentration Level: EXECUTED] - Location: graveyard/manifold-origami
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy (Superseded by `miura-interface` and `rigid-origami`).
-- **Note:** "The paper is too soft. The creases do not hold."
-
 ### [Concentration Level: FRESH] - Location: experiments/git-harmonograph
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen pardoned. Compilation restored.
 - **Note:** "The pendulum swings again. The syntax is healed."
-
-### [Concentration Level: EXECUTED] - Location: graveyard/mnemosyne
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Genericism.
-- **Note:** "Memory returned to the void. The gallery is closed."
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄 (Sensed: Instability)
@@ -66,16 +91,6 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The crystal bonds are knotted. Agents are recording their paths.
 - **Note:** "The structure remembers where we walked."
-
-### [Concentration Level: EXECUTED] - Location: graveyard/quantum-quipu
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Diagnosis: Documentation Void. Failed to improve during grace period.
-- **Note:** "The knot is cut. The string falls silent."
-
-### [Concentration Level: EXECUTED] - Location: graveyard/chronos-observatory
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Genericism.
-- **Note:** "The observatory is closed. The stars have gone out."
 
 ### [Concentration Level: FRESH] - Location: experiments/neuro-quipu
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -363,12 +378,72 @@
 - **Status:** Amorphous Cellular Automata active. Particles are swimming in their own magnetic fields.
 - **Note:** "The grid is gone. The cells are free."
 
+### [Concentration Level: FRESH] - Location: experiments/chimera-sediment
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The leaves are falling. The detritivores are feasting.
+- **Note:** "Death is just a state change in the OS."
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-sandpile
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The agents are surfing the avalanches. Terraforming active.
+- **Note:** "We do not move the sand. The sand moves us."
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-tissue
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: The tissue is twitching. The muscle fibers are singing.
+- **Note**: "The code is the muscle."
+
+### [Concentration Level: FRESH] - Location: experiments/ferrous-tissue
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: The flesh is magnetic. Piezoelectric sparks detected.
+- **Note**: "Strain creates polarity. Polarity creates motion."
+
+### [Concentration Level: FRESH] - Location: experiments/quipu-tissue
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: The knots are heavy. The data is writhing against gravity.
+- **Note**: "To lift the weight of knowledge, the cord must contract."
+
+### [Concentration Level: FRESH] - Location: experiments/ferrous-swarm
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: The jellyfish are flocking magnetically. The tissue breathes.
+- **Note**: "Magneto-Elastic Swarming established. Individual complexity meets collective intelligence."
+
+### [Concentration Level: FRESH] - Location: experiments/bifurcation-crawler
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: The worms are crawling on the logistic map. The attractor is food.
+- **Note**: "Survival is finding the stable path through chaos."
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/process-canopy
 - **Scent Origin:** Mycelium 🍄 (Sensed: Stabilization)
 - **Status:** Moved to STABLE TRAIL. The new canopy grows.
 - **Note:** "The tree remembers the process."
+
+### [Concentration Level: EXECUTED] - Location: graveyard/git-harmony
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Terminal Redundancy (Superseded by `git-cantata`).
+- **Note:** "The song has ended. The silence is unique."
+
+### [Concentration Level: EXECUTED] - Location: graveyard/manifold-origami
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy (Superseded by `miura-interface` and `rigid-origami`).
+- **Note:** "The paper is too soft. The creases do not hold."
+
+### [Concentration Level: EXECUTED] - Location: graveyard/mnemosyne
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Genericism.
+- **Note:** "Memory returned to the void. The gallery is closed."
+
+### [Concentration Level: EXECUTED] - Location: graveyard/quantum-quipu
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Documentation Void. Failed to improve during grace period.
+- **Note:** "The knot is cut. The string falls silent."
+
+### [Concentration Level: EXECUTED] - Location: graveyard/chronos-observatory
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Genericism.
+- **Note:** "The observatory is closed. The stars have gone out."
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/biomimetic-bridge
 - **Scent Origin:** The Reaper ☠️
@@ -409,11 +484,6 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Documentation Void (No README).
 - **Note:** "Memory lost to the void."
-
-### [Concentration Level: FRESH] - Location: experiments/spinal-rhythms
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen pardoned. Lamprey CPG confirmed active. Compilation successful.
-- **Note:** "The spine undulates. The rhythm is restored."
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/hyperbolic-lichen
 - **Scent Origin:** The Reaper ☠️
@@ -600,38 +670,3 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Stagnation / Documentation Void. Grace period expired.
 - **Note:** "The cylinder spins in a perfect, dead loop. Now it spins in the void."
-
-### [Concentration Level: FRESH] - Location: experiments/chimera-sediment
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The leaves are falling. The detritivores are feasting.
-- **Note:** "Death is just a state change in the OS."
-
-### [Concentration Level: FRESH] - Location: experiments/chimera-sandpile
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The agents are surfing the avalanches. Terraforming active.
-- **Note:** "We do not move the sand. The sand moves us."
-
-### [Concentration Level: FRESH] - Location: experiments/chimera-tissue
-- **Scent Origin**: The Splice Surgeon 🧬
-- **Status**: The tissue is twitching. The muscle fibers are singing.
-- **Note**: "The code is the muscle."
-
-### [Concentration Level: FRESH] - Location: experiments/ferrous-tissue
-- **Scent Origin**: The Splice Surgeon 🧬
-- **Status**: The flesh is magnetic. Piezoelectric sparks detected.
-- **Note**: "Strain creates polarity. Polarity creates motion."
-
-### [Concentration Level: FRESH] - Location: experiments/quipu-tissue
-- **Scent Origin**: The Splice Surgeon 🧬
-- **Status**: The knots are heavy. The data is writhing against gravity.
-- **Note**: "To lift the weight of knowledge, the cord must contract."
-
-### [Concentration Level: FRESH] - Location: experiments/ferrous-swarm
-- **Scent Origin**: The Splice Surgeon 🧬
-- **Status**: The jellyfish are flocking magnetically. The tissue breathes.
-- **Note**: "Magneto-Elastic Swarming established. Individual complexity meets collective intelligence."
-
-### [Concentration Level: FRESH] - Location: experiments/bifurcation-crawler
-- **Scent Origin**: The Splice Surgeon 🧬
-- **Status**: The worms are crawling on the logistic map. The attractor is food.
-- **Note**: "Survival is finding the stable path through chaos."
