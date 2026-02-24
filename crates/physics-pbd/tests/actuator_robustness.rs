@@ -1,4 +1,4 @@
-use macroquad::prelude::Vec3;
+use glam::Vec3;
 use physics_pbd::PbdSystem;
 
 #[test]

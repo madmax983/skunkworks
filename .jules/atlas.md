@@ -55,7 +55,7 @@
 **Verification:** `cargo check` and `cargo test` passed.
 
 ## [Market Simulation Extraction]
-**Tangle:** The Copy-Paste - `experiments/market-flow`, `experiments/market-rogue`, `experiments/market-swarm`, and `experiments/chimera-market` all implemented nearly identical `Grid` and `Particle` logic for market simulation.
+**Tangle:** The Copy-Paste - `experiments/market-flow`, `experiments/market-rogue`, `experiments/market-swarm`, and `experiments/chimera-market` all implemented identical `Grid` and `Particle` logic for market simulation.
 **Blueprint:** Extracted `Grid`, `Particle`, and `TradeEvent` to `crates/market-sim`. Standardized `Particle` to use the more capable version (with owner ID) from `chimera-market`.
 **Stability:** Centralized market physics logic.
 **Verification:** `cargo check` passed for all 4 experiments. `cargo test` passed for `market-rogue`.
@@ -101,3 +101,9 @@
 **Blueprint:** Extracted `Vec4` and `SystemMonitor` to a new shared crate `crates/hyper-system`.
 **Stability:** Centralized 4D math and system monitoring logic. Enforced single source of truth for "Hyper" series experiments.
 **Verification:** Verified with `cargo check` for all 6 affected experiments and `cargo test` for the new crate.
+
+## [Physics PBD Decoupling]
+**Tangle:** The Leak - `physics-pbd` depended on `macroquad` (a game engine) just for vector math, forcing all consumers to pull in heavy graphics dependencies.
+**Blueprint:** Replaced `macroquad` with `glam` in `crates/physics-pbd`.
+**Stability:** Decoupled physics logic from rendering, enabling use in TUI/server contexts.
+**Verification:** Verified `experiments/bifurcation-crawler` and `experiments/chimera-tissue` still compile (due to `macroquad` re-exporting `glam`).

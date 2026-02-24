@@ -3,7 +3,7 @@
 //! A simple Position Based Dynamics (PBD) physics engine for 2D/3D applications.
 //!
 //! This crate provides a `PbdSystem` struct that manages particles and constraints.
-//! It is designed to be easy to use with `macroquad`, utilizing `glam` types (via `macroquad::prelude::Vec3`).
+//! It is designed to be lightweight and uses `glam` types for vector math.
 //!
 //! ## Key Concepts
 //!
@@ -15,7 +15,7 @@
 //!
 //! ```
 //! use physics_pbd::{PbdSystem, Constraint};
-//! use macroquad::prelude::Vec3;
+//! use glam::Vec3;
 //!
 //! let mut system = PbdSystem::new();
 //!
@@ -30,7 +30,7 @@
 //! system.step(0.016, 5);
 //! ```
 
-use macroquad::prelude::*;
+use glam::Vec3;
 
 /// A point mass in the physics simulation.
 #[derive(Debug, Clone, Copy)]
@@ -119,7 +119,7 @@ impl PbdSystem {
     /// # Example
     /// ```
     /// use physics_pbd::PbdSystem;
-    /// use macroquad::prelude::Vec3;
+    /// use glam::Vec3;
     ///
     /// let mut system = PbdSystem::new();
     /// let idx = system.add_particle(Vec3::new(0.0, 10.0, 0.0), 1.0);
@@ -147,7 +147,7 @@ impl PbdSystem {
     /// # Example
     /// ```
     /// use physics_pbd::PbdSystem;
-    /// use macroquad::prelude::Vec3;
+    /// use glam::Vec3;
     ///
     /// let mut system = PbdSystem::new();
     /// let p1 = system.add_particle(Vec3::ZERO, 1.0);
@@ -169,7 +169,7 @@ impl PbdSystem {
     /// # Example
     /// ```
     /// use physics_pbd::PbdSystem;
-    /// use macroquad::prelude::Vec3;
+    /// use glam::Vec3;
     ///
     /// let mut system = PbdSystem::new();
     /// let p1 = system.add_particle(Vec3::ZERO, 1.0);
@@ -199,7 +199,7 @@ impl PbdSystem {
     /// # Example
     /// ```
     /// use physics_pbd::PbdSystem;
-    /// use macroquad::prelude::Vec3;
+    /// use glam::Vec3;
     ///
     /// let mut system = PbdSystem::new();
     /// let p = system.add_particle(Vec3::ZERO, 1.0);
