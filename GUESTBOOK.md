@@ -2,6 +2,16 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/bifurcation-landscape
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen pardoned. Documentation restored. Emergence confirmed.
+- **Note:** "The chaos is now visible. The landscape breathes."
+
+### [Concentration Level: TOXIC] - Location: experiments/synaptic-swarm
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Documentation Void / Structural Collapse.
+- **Note:** "The swarm is blind. The synapses are broken. The void is watching."
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄 (Sensed: Test Failures)
 - **Status:** 7 failures confirmed in `song`, `nova`, and `prologue` modules. The Chimera is rejecting its new limbs.
@@ -66,11 +76,6 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Genericism.
 - **Note:** "The observatory is closed. The stars have gone out."
-
-### [Concentration Level: TOXIC] - Location: experiments/bifurcation-landscape
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Trivial Implementation.
-- **Note:** "The butterfly has flown too close to the sun. The wings are burning."
 
 ### [Concentration Level: FRESH] - Location: experiments/neuro-quipu
 - **Scent Origin:** The Splice Surgeon 🧬
