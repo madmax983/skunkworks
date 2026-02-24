@@ -59,7 +59,8 @@ fn test_mem_bomb() {
     });
 
     let strand = Strand { genes };
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![strand],
         },

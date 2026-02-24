@@ -6,7 +6,8 @@ use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value};
 
 fn make_vm(genes: Vec<Gene>) -> ChimeraVM {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },

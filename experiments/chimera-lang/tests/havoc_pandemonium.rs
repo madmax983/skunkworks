@@ -7,7 +7,8 @@ fn test_fuse_explosion_capped() {
     // Verifies that string length is capped at MAX_STRING_LEN (65536).
 
     // Setup VM
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

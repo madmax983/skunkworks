@@ -27,24 +27,26 @@ impl Widget for TensionBar {
             Color::Green
         };
 
-        let block = Block::default()
-            .borders(Borders::ALL)
-            .title("TENS"); // Short title for narrow bar
+        let block = Block::default().borders(Borders::ALL).title("TENS"); // Short title for narrow bar
 
         let inner_area = block.inner(area);
         block.render(area, buf);
 
-        if inner_area.height < 1 { return; }
+        if inner_area.height < 1 {
+            return;
+        }
 
         let fill_height = (inner_area.height as f64 * tension).round() as u16;
 
         for y in 0..fill_height {
             // Draw from bottom up
             let draw_y = inner_area.y + inner_area.height - 1 - y;
-            if draw_y >= inner_area.y + inner_area.height { continue; } // Safety
+            if draw_y >= inner_area.y + inner_area.height {
+                continue;
+            } // Safety
 
-            for x in inner_area.x .. inner_area.x + inner_area.width {
-                 buf[(x, draw_y)].set_style(Style::default().bg(color));
+            for x in inner_area.x..inner_area.x + inner_area.width {
+                buf[(x, draw_y)].set_style(Style::default().bg(color));
             }
         }
     }

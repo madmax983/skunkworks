@@ -21,7 +21,8 @@ fn main() {
 #[cfg(feature = "nova")]
 fn run_demo() -> anyhow::Result<()> {
     // 1. Initialize empty VM
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

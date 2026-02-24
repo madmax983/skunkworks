@@ -92,12 +92,14 @@ pub fn process_forth_agent(
                 "+" | "add" => binary_op(&mut updated_agent.stack, |a, b| a + b),
                 "-" | "sub" => binary_op(&mut updated_agent.stack, |a, b| a - b),
                 "*" | "mul" => binary_op(&mut updated_agent.stack, |a, b| a * b),
-                "/" | "div" => {
-                    binary_op(&mut updated_agent.stack, |a, b| if b != 0 { a / b } else { 0 })
-                }
-                "%" | "mod" => {
-                    binary_op(&mut updated_agent.stack, |a, b| if b != 0 { a % b } else { 0 })
-                }
+                "/" | "div" => binary_op(
+                    &mut updated_agent.stack,
+                    |a, b| if b != 0 { a / b } else { 0 },
+                ),
+                "%" | "mod" => binary_op(
+                    &mut updated_agent.stack,
+                    |a, b| if b != 0 { a % b } else { 0 },
+                ),
 
                 // IO
                 "!" | "emit" => {
@@ -210,8 +212,7 @@ pub fn process_forth_agent(
                     vm.dna.helix.strands.push(Strand { genes: vec![] });
                     let idx = vm.dna.helix.strands.len() - 1;
                     updated_agent.stack.push(Value::Int(idx as i64));
-                    vm.output
-                        .push(format!("₣ Genesis: Created strand {}", idx));
+                    vm.output.push(format!("₣ Genesis: Created strand {}", idx));
                 }
                 "l" | "len" => {
                     // Length: [strand] -> [len] (-1 for helix len)

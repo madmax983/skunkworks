@@ -266,8 +266,14 @@ impl Universe {
             body.pos += body.vel * dt;
 
             // Keep within bounds roughly
-             if body.pos.x.abs() > 100.0 { body.vel.x *= -0.5; body.pos.x = body.pos.x.signum() * 100.0; }
-             if body.pos.y.abs() > 100.0 { body.vel.y *= -0.5; body.pos.y = body.pos.y.signum() * 100.0; }
+            if body.pos.x.abs() > 100.0 {
+                body.vel.x *= -0.5;
+                body.pos.x = body.pos.x.signum() * 100.0;
+            }
+            if body.pos.y.abs() > 100.0 {
+                body.vel.y *= -0.5;
+                body.pos.y = body.pos.y.signum() * 100.0;
+            }
 
             if rand::random::<u8>() % 10 == 0 {
                 body.trail.push(body.pos);

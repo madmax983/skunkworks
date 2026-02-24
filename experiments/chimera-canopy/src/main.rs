@@ -1,15 +1,15 @@
 mod lsystem;
 mod monitor;
+mod parasite;
 mod simulation;
 mod tree;
-mod parasite;
 
 use macroquad::prelude::*;
 use monitor::fetch_processes;
+use parasite::Parasite;
 use simulation::{ScheduleMode, Sun};
 use sysinfo::System;
 use tree::Tree;
-use parasite::Parasite;
 
 #[macroquad::main("Chimera Canopy")]
 async fn main() {
@@ -71,8 +71,8 @@ async fn main() {
         // UPDATE PARASITES
         // Spawn more if low
         if parasites.len() < 5 {
-             let x = rand::gen_range(0.0, screen_width());
-             parasites.push(Parasite::new(vec2(x, screen_height() - 20.0)));
+            let x = rand::gen_range(0.0, screen_width());
+            parasites.push(Parasite::new(vec2(x, screen_height() - 20.0)));
         }
 
         for parasite in &mut parasites {
@@ -82,8 +82,20 @@ async fn main() {
         draw_sky_gradient();
 
         // Draw Ground / Soil
-        draw_rectangle(0.0, screen_height() - 20.0, screen_width(), 20.0, Color::new(0.4, 0.3, 0.2, 1.0));
-        draw_rectangle(0.0, screen_height() - 20.0, screen_width(), 5.0, Color::new(0.2, 0.5, 0.2, 1.0));
+        draw_rectangle(
+            0.0,
+            screen_height() - 20.0,
+            screen_width(),
+            20.0,
+            Color::new(0.4, 0.3, 0.2, 1.0),
+        );
+        draw_rectangle(
+            0.0,
+            screen_height() - 20.0,
+            screen_width(),
+            5.0,
+            Color::new(0.2, 0.5, 0.2, 1.0),
+        );
 
         // Mouse Interaction
         let mouse_pos = Vec2::from(mouse_position());
@@ -92,7 +104,9 @@ async fn main() {
         // Draw Trees
         for tree in &trees {
             let is_scheduled = sun.is_shining_on(tree);
-            let is_hovered = hovered_tree.map(|t| t.stats.pid == tree.stats.pid).unwrap_or(false);
+            let is_hovered = hovered_tree
+                .map(|t| t.stats.pid == tree.stats.pid)
+                .unwrap_or(false);
 
             tree.draw(is_scheduled);
 
@@ -103,7 +117,7 @@ async fn main() {
 
             // Highlight hovered tree
             if is_hovered {
-                 draw_circle_lines(tree.position.x, tree.position.y, 30.0, 2.0, WHITE);
+                draw_circle_lines(tree.position.x, tree.position.y, 30.0, 2.0, WHITE);
             }
         }
 
@@ -146,10 +160,20 @@ fn draw_hud(sys: &System, mode: ScheduleMode, hovered_tree: Option<&Tree>, paras
         20.0,
         85.0,
         20.0,
-        if used_mem / total_mem > 0.8 { RED } else { GOLD },
+        if used_mem / total_mem > 0.8 {
+            RED
+        } else {
+            GOLD
+        },
     );
 
-    draw_text(&format!("Parasites: {}", parasite_count), 150.0, 35.0, 20.0, GREEN);
+    draw_text(
+        &format!("Parasites: {}", parasite_count),
+        150.0,
+        35.0,
+        20.0,
+        GREEN,
+    );
 
     // Scheduler Mode
     let mode_str = match mode {
@@ -176,13 +200,43 @@ fn draw_hud(sys: &System, mode: ScheduleMode, hovered_tree: Option<&Tree>, paras
 
         let tooltip_y = tree.position.y - 120.0;
 
-        draw_rectangle(tooltip_x, tooltip_y, 200.0, 100.0, Color::new(0.0, 0.0, 0.0, 0.8));
+        draw_rectangle(
+            tooltip_x,
+            tooltip_y,
+            200.0,
+            100.0,
+            Color::new(0.0, 0.0, 0.0, 0.8),
+        );
         draw_rectangle_lines(tooltip_x, tooltip_y, 200.0, 100.0, 1.0, WHITE);
 
-        draw_text(&tree.stats.name, tooltip_x + 10.0, tooltip_y + 20.0, 20.0, WHITE);
-        draw_text(&format!("PID: {}", tree.stats.pid), tooltip_x + 10.0, tooltip_y + 40.0, 16.0, LIGHTGRAY);
-        draw_text(&format!("CPU: {:.1}%", tree.stats.cpu_usage), tooltip_x + 10.0, tooltip_y + 60.0, 16.0, GOLD);
-        draw_text(&format!("MEM: {} MB", tree.stats.memory / 1024 / 1024), tooltip_x + 10.0, tooltip_y + 80.0, 16.0, SKYBLUE);
+        draw_text(
+            &tree.stats.name,
+            tooltip_x + 10.0,
+            tooltip_y + 20.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            &format!("PID: {}", tree.stats.pid),
+            tooltip_x + 10.0,
+            tooltip_y + 40.0,
+            16.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            &format!("CPU: {:.1}%", tree.stats.cpu_usage),
+            tooltip_x + 10.0,
+            tooltip_y + 60.0,
+            16.0,
+            GOLD,
+        );
+        draw_text(
+            &format!("MEM: {} MB", tree.stats.memory / 1024 / 1024),
+            tooltip_x + 10.0,
+            tooltip_y + 80.0,
+            16.0,
+            SKYBLUE,
+        );
     } else {
         draw_text(
             "Top 20 Processes (Hover to Inspect)",

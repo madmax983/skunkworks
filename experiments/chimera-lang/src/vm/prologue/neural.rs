@@ -366,7 +366,7 @@ fn execute_neural_l_system(vm: &mut ChimeraVM, blueprint: &str, start_y: usize, 
                     cx = nx;
                     // Draw Wire if empty
                     if matches!(vm.grid[cy][cx], Value::Int(0)) {
-                         vm.grid[cy][cx] = Value::Str("~".to_string());
+                        vm.grid[cy][cx] = Value::Str("~".to_string());
                     }
                 }
             }
@@ -381,7 +381,9 @@ fn execute_neural_l_system(vm: &mut ChimeraVM, blueprint: &str, start_y: usize, 
                 }
             }
             'N' => {
-                if matches!(vm.grid[cy][cx], Value::Int(0)) || matches!(vm.grid[cy][cx], Value::Str(ref s) if s == "~") {
+                if matches!(vm.grid[cy][cx], Value::Int(0))
+                    || matches!(vm.grid[cy][cx], Value::Str(ref s) if s == "~")
+                {
                     vm.grid[cy][cx] = Value::Str("♦".to_string());
                     // Register new neuron immediately so it works next tick
                     if !vm.neurons.contains_key(&(cy, cx)) {
@@ -390,13 +392,19 @@ fn execute_neural_l_system(vm: &mut ChimeraVM, blueprint: &str, start_y: usize, 
                 }
             }
             'S' => {
-                if matches!(vm.grid[cy][cx], Value::Int(0)) || matches!(vm.grid[cy][cx], Value::Str(ref s) if s == "~") {
+                if matches!(vm.grid[cy][cx], Value::Int(0))
+                    || matches!(vm.grid[cy][cx], Value::Str(ref s) if s == "~")
+                {
                     vm.grid[cy][cx] = Value::Str("•".to_string());
-                    vm.prologue_state.registers.insert((cy, cx), Value::Int(100)); // Default weight
+                    vm.prologue_state
+                        .registers
+                        .insert((cy, cx), Value::Int(100)); // Default weight
                 }
             }
             'L' => {
-                if matches!(vm.grid[cy][cx], Value::Int(0)) || matches!(vm.grid[cy][cx], Value::Str(ref s) if s == "~") {
+                if matches!(vm.grid[cy][cx], Value::Int(0))
+                    || matches!(vm.grid[cy][cx], Value::Str(ref s) if s == "~")
+                {
                     vm.grid[cy][cx] = Value::Str("°".to_string());
                 }
             }

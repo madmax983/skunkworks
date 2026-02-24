@@ -4,7 +4,8 @@ use crate::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_elektra_runes() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -39,7 +40,8 @@ fn test_elektra_runes() {
 
 #[test]
 fn test_bio_voltaics() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -89,7 +91,8 @@ fn test_bio_voltaics() {
 
 #[test]
 fn test_advanced_components() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

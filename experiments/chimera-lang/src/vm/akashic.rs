@@ -7,16 +7,6 @@ use crate::ast::Nucleotide;
 #[cfg(feature = "nova")]
 use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
-use rand::Rng;
-#[cfg(feature = "nova")]
-use serde::{Deserialize, Serialize};
-#[cfg(feature = "nova")]
-use std::collections::HashMap;
-#[cfg(feature = "nova")]
-use std::fs::OpenOptions;
-#[cfg(feature = "nova")]
-use std::io::{Read, Write};
-#[cfg(feature = "nova")]
 use comfy_table::modifiers::UTF8_ROUND_CORNERS;
 #[cfg(feature = "nova")]
 use comfy_table::presets::UTF8_FULL;
@@ -26,6 +16,16 @@ use comfy_table::Color;
 use comfy_table::ContentArrangement;
 #[cfg(feature = "nova")]
 use comfy_table::Table;
+#[cfg(feature = "nova")]
+use rand::Rng;
+#[cfg(feature = "nova")]
+use serde::{Deserialize, Serialize};
+#[cfg(feature = "nova")]
+use std::collections::HashMap;
+#[cfg(feature = "nova")]
+use std::fs::OpenOptions;
+#[cfg(feature = "nova")]
+use std::io::{Read, Write};
 
 #[cfg(feature = "nova")]
 const AKASHIC_FILE: &str = ".chimera_akashic.json";
@@ -104,10 +104,7 @@ impl std::fmt::Display for AkashicRecords {
                 sub_table.add_row(vec![k, &format!("{:?}", v)]);
             }
             if self.storage.len() > 5 {
-                sub_table.add_row(vec![
-                    "...",
-                    &format!("{} more", self.storage.len() - 5),
-                ]);
+                sub_table.add_row(vec!["...", &format!("{} more", self.storage.len() - 5)]);
             }
             table.add_row(vec![
                 comfy_table::Cell::new("Preview"),

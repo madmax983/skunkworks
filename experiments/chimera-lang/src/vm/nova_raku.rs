@@ -26,7 +26,8 @@ where
     F: Fn(i64, i64) -> i64,
 {
     if vm.stack.len() < 2 {
-        vm.output.push("Error: Stack underflow for Hyper op".to_string());
+        vm.output
+            .push("Error: Stack underflow for Hyper op".to_string());
         return;
     }
     let b = vm.stack.pop().unwrap();
@@ -48,15 +49,24 @@ where
     let mut results = Vec::new();
 
     for i in 0..max_len {
-        let va = if a_list.len() == 1 { &a_list[0] } else { &a_list[i] };
-        let vb = if b_list.len() == 1 { &b_list[0] } else { &b_list[i] };
+        let va = if a_list.len() == 1 {
+            &a_list[0]
+        } else {
+            &a_list[i]
+        };
+        let vb = if b_list.len() == 1 {
+            &b_list[0]
+        } else {
+            &b_list[i]
+        };
 
         if let (Value::Int(ia), Value::Int(ib)) = (va, vb) {
             results.push(Value::Int(op_fn(*ia, *ib)));
         } else {
             // Fallback for non-integers? Just push 0 or skip?
             // Raku would probably coerce or error.
-            vm.output.push("Error: Type mismatch in Hyper op".to_string());
+            vm.output
+                .push("Error: Type mismatch in Hyper op".to_string());
             results.push(Value::Int(0));
         }
     }
@@ -66,7 +76,8 @@ where
 
 fn exec_reduce(vm: &mut ChimeraVM) {
     if vm.stack.len() < 2 {
-        vm.output.push("Error: Stack underflow for Reduce".to_string());
+        vm.output
+            .push("Error: Stack underflow for Reduce".to_string());
         return;
     }
     let op_val = vm.stack.pop().unwrap();
@@ -86,19 +97,22 @@ fn exec_reduce(vm: &mut ChimeraVM) {
             if let Some(res) = apply_op(&acc, &list[i], &op_str) {
                 acc = res;
             } else {
-                vm.output.push(format!("Error: Invalid reduce step with {}", op_str));
+                vm.output
+                    .push(format!("Error: Invalid reduce step with {}", op_str));
                 return;
             }
         }
         vm.stack.push(acc);
     } else {
-        vm.output.push("Error: Reduce expects operator string".to_string());
+        vm.output
+            .push("Error: Reduce expects operator string".to_string());
     }
 }
 
 fn exec_cross(vm: &mut ChimeraVM) {
     if vm.stack.len() < 3 {
-        vm.output.push("Error: Stack underflow for Cross".to_string());
+        vm.output
+            .push("Error: Stack underflow for Cross".to_string());
         return;
     }
     let op_val = vm.stack.pop().unwrap();
@@ -121,13 +135,15 @@ fn exec_cross(vm: &mut ChimeraVM) {
         }
         vm.stack.push(Value::Junction(JunctionType::All, results));
     } else {
-        vm.output.push("Error: Cross expects operator string".to_string());
+        vm.output
+            .push("Error: Cross expects operator string".to_string());
     }
 }
 
 fn exec_zip_with(vm: &mut ChimeraVM) {
     if vm.stack.len() < 3 {
-        vm.output.push("Error: Stack underflow for ZipWith".to_string());
+        vm.output
+            .push("Error: Stack underflow for ZipWith".to_string());
         return;
     }
     let op_val = vm.stack.pop().unwrap();
@@ -149,7 +165,8 @@ fn exec_zip_with(vm: &mut ChimeraVM) {
         }
         vm.stack.push(Value::Junction(JunctionType::All, results));
     } else {
-        vm.output.push("Error: ZipWith expects operator string".to_string());
+        vm.output
+            .push("Error: ZipWith expects operator string".to_string());
     }
 }
 

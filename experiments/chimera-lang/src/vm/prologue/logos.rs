@@ -2,11 +2,11 @@ use super::normalize_coords;
 use crate::ast::{Dna, Nucleotide};
 use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value};
+use rand::seq::SliceRandom;
+use rand::Rng;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use rand::Rng;
-use rand::seq::SliceRandom;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum GrammarRule {
@@ -206,11 +206,11 @@ impl LogosEngine {
                     let c = rng.gen_range(b'a'..=b'z') as char;
                     Ok(p.replace("\\w", &c.to_string()))
                 } else if p == "." {
-                     let c = rng.gen_range(b'a'..=b'z') as char;
-                     Ok(c.to_string())
+                    let c = rng.gen_range(b'a'..=b'z') as char;
+                    Ok(c.to_string())
                 } else if p.starts_with("[") && p.ends_with("]") {
                     // Character class [abc]
-                    let content = &p[1..p.len()-1];
+                    let content = &p[1..p.len() - 1];
                     // Pick random char from content (ignoring ranges for simplicity)
                     let chars: Vec<char> = content.chars().collect();
                     if let Some(c) = chars.choose(&mut rng) {
@@ -222,7 +222,7 @@ impl LogosEngine {
                     // Fallback to placeholder if too complex
                     Ok(format!("<{}>", p))
                 }
-            },
+            }
             GrammarRule::Whitespace => Ok(" ".to_string()),
             GrammarRule::Sequence(rules) => {
                 let mut result = String::new();
@@ -382,8 +382,8 @@ fn mutate_grammar_rule(rule: &mut GrammarRule) {
                 }
             } else if rng.gen_bool(0.3) {
                 // Append
-                 let new_char = rng.gen_range(b'a'..=b'z') as char;
-                 s.push(new_char);
+                let new_char = rng.gen_range(b'a'..=b'z') as char;
+                s.push(new_char);
             } else if !s.is_empty() {
                 // Truncate
                 s.pop();
@@ -405,9 +405,9 @@ fn mutate_grammar_rule(rule: &mut GrammarRule) {
             }
         }
         GrammarRule::Choice(rules) => {
-             // Add a new random choice branch
-             let c = rng.gen_range(b'a'..=b'z') as char;
-             rules.push(GrammarRule::Literal(c.to_string()));
+            // Add a new random choice branch
+            let c = rng.gen_range(b'a'..=b'z') as char;
+            rules.push(GrammarRule::Literal(c.to_string()));
         }
         _ => {}
     }

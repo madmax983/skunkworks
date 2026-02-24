@@ -51,7 +51,8 @@ mod tests {
             }],
         };
 
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![main_strand, effect_strand],
             },
@@ -142,7 +143,8 @@ mod tests {
             ],
         };
 
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![main_strand, effect_strand],
             },

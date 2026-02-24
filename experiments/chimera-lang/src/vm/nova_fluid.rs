@@ -168,12 +168,10 @@ pub fn process_fluid(vm: &mut ChimeraVM) {
             } else {
                 vm.moisture_grid[y][x] = new_moisture[y][x].min(MAX_MOISTURE);
                 // Clamp accumulated wind back to i8 limits
-                vm.wind_grid[y][x].0 = new_wind[y][x]
-                    .0
-                    .clamp(-MAX_WIND as i32, MAX_WIND as i32) as i8;
-                vm.wind_grid[y][x].1 = new_wind[y][x]
-                    .1
-                    .clamp(-MAX_WIND as i32, MAX_WIND as i32) as i8;
+                vm.wind_grid[y][x].0 =
+                    new_wind[y][x].0.clamp(-MAX_WIND as i32, MAX_WIND as i32) as i8;
+                vm.wind_grid[y][x].1 =
+                    new_wind[y][x].1.clamp(-MAX_WIND as i32, MAX_WIND as i32) as i8;
             }
         }
     }

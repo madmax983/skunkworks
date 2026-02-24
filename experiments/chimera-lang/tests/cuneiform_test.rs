@@ -5,7 +5,8 @@ use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_cuneiform_retract() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -46,7 +47,8 @@ fn test_cuneiform_omen() {
             args: vec![],
         }],
     };
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![strand.clone(), strand.clone()],
         },

@@ -5,7 +5,8 @@ use crate::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_epigenetic_methylation() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -40,7 +41,8 @@ fn test_epigenetic_methylation() {
 
 #[test]
 fn test_epigenetic_rune_application() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -66,7 +68,8 @@ fn test_epigenetic_rune_application() {
 
 #[test]
 fn test_phosphorylation_amplify() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

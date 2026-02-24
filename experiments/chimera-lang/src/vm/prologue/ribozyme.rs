@@ -47,10 +47,7 @@ pub fn process_ribozyme_agent(
                     for val in list {
                         if let Value::Str(s) = val {
                             if let Ok(op) = s.parse::<OpCode>() {
-                                genes.push(crate::ast::Gene {
-                                    op,
-                                    args: vec![],
-                                });
+                                genes.push(crate::ast::Gene { op, args: vec![] });
                             }
                         }
                     }
@@ -58,10 +55,7 @@ pub fn process_ribozyme_agent(
                 }
                 Value::Str(s) => {
                     if let Ok(op) = s.parse::<OpCode>() {
-                        vec![crate::ast::Gene {
-                            op,
-                            args: vec![],
-                        }]
+                        vec![crate::ast::Gene { op, args: vec![] }]
                     } else {
                         vec![]
                     }

@@ -10,12 +10,12 @@
 //! The organisms breathe (contract) and change magnetic polarity based on strain,
 //! affecting how they cluster and swarm.
 
-use macroquad::prelude::*;
-use chimera_lang::prelude::*;
-use physics_pbd::{PbdSystem, Constraint};
-use flocking::{FlockingParams, compute_force};
-use locus::Vec2 as LocusVec2;
 use ::rand::Rng;
+use chimera_lang::prelude::*;
+use flocking::{compute_force, FlockingParams};
+use locus::Vec2 as LocusVec2;
+use macroquad::prelude::*;
+use physics_pbd::{Constraint, PbdSystem};
 
 struct Jellyfish {
     vm: ChimeraVM,
@@ -51,8 +51,8 @@ impl Swarm {
         let dna = create_dna();
 
         for _ in 0..count {
-            let x = ::rand::thread_rng().gen_range(-width/2.0..width/2.0);
-            let y = ::rand::thread_rng().gen_range(-height/2.0..height/2.0);
+            let x = ::rand::thread_rng().gen_range(-width / 2.0..width / 2.0);
+            let y = ::rand::thread_rng().gen_range(-height / 2.0..height / 2.0);
             let center_pos = vec3(x, y, 0.0);
 
             let center_idx = system.add_particle(center_pos, 1.0); // Mass 1.0
@@ -77,14 +77,21 @@ impl Swarm {
                 // Connect to neighbor tentacle (Structural, to keep shape)
                 if i > 0 {
                     let prev = particle_indices[i]; // actually i+1 is current, i is prev in list
-                    system.add_distance_constraint(prev, p_idx, (radius * 2.0 * (std::f32::consts::PI / num_tentacles as f32).sin()));
+                    system.add_distance_constraint(
+                        prev,
+                        p_idx,
+                        (radius * 2.0 * (std::f32::consts::PI / num_tentacles as f32).sin()),
+                    );
                 }
             }
             // Close loop for rim
-             let first = particle_indices[1];
-             let last = particle_indices[num_tentacles];
-             system.add_distance_constraint(first, last, (radius * 2.0 * (std::f32::consts::PI / num_tentacles as f32).sin()));
-
+            let first = particle_indices[1];
+            let last = particle_indices[num_tentacles];
+            system.add_distance_constraint(
+                first,
+                last,
+                (radius * 2.0 * (std::f32::consts::PI / num_tentacles as f32).sin()),
+            );
 
             let r = ::rand::thread_rng().gen_range(0.4..0.9);
             let g = ::rand::thread_rng().gen_range(0.4..0.9);
@@ -142,12 +149,16 @@ impl Swarm {
             // We only check neighbors within view radius to save time? Or simple N^2 for small N.
             // Let's do N^2 for N=50 is fine.
             for (j, other) in self.jellyfish.iter().enumerate() {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
                 let p1 = jelly.center_pos(&self.system);
                 let p2 = other.center_pos(&self.system);
 
                 let dist_sq = p1.distance_squared(p2).max(1.0);
-                if dist_sq > 2500.0 { continue; } // Optimization: ignore far away
+                if dist_sq > 2500.0 {
+                    continue;
+                } // Optimization: ignore far away
 
                 let m1 = jelly.magnetism - 0.5;
                 let m2 = other.magnetism - 0.5;
@@ -185,17 +196,27 @@ impl Swarm {
             // Sense: Strain
             let mut total_strain = 0.0;
             for &c_idx in &jelly.actuators {
-                if let Constraint::Actuator { p1, p2, max_len, .. } = self.system.constraints[c_idx] {
-                     let pos1 = self.system.particles[p1].pos;
-                     let pos2 = self.system.particles[p2].pos;
-                     let dist = pos1.distance(pos2);
-                     total_strain += dist / max_len;
+                if let Constraint::Actuator {
+                    p1, p2, max_len, ..
+                } = self.system.constraints[c_idx]
+                {
+                    let pos1 = self.system.particles[p1].pos;
+                    let pos2 = self.system.particles[p2].pos;
+                    let dist = pos1.distance(pos2);
+                    total_strain += dist / max_len;
                 }
             }
-            let avg_strain = if !jelly.actuators.is_empty() { total_strain / jelly.actuators.len() as f32 } else { 0.0 };
+            let avg_strain = if !jelly.actuators.is_empty() {
+                total_strain / jelly.actuators.len() as f32
+            } else {
+                0.0
+            };
 
             jelly.vm.stack.push(Value::Int((avg_strain * 100.0) as i64));
-            jelly.vm.stack.push(Value::Int((jelly.magnetism * 100.0) as i64));
+            jelly
+                .vm
+                .stack
+                .push(Value::Int((jelly.magnetism * 100.0) as i64));
 
             for _ in 0..50 {
                 jelly.vm.step();
@@ -216,7 +237,10 @@ impl Swarm {
                     _ => 0.5,
                 };
                 for &c_idx in &jelly.actuators {
-                    if let Constraint::Actuator { factor: ref mut f, .. } = &mut self.system.constraints[c_idx] {
+                    if let Constraint::Actuator {
+                        factor: ref mut f, ..
+                    } = &mut self.system.constraints[c_idx]
+                    {
                         *f = factor;
                     }
                 }
@@ -237,10 +261,18 @@ impl Swarm {
 
         // 5. Wrap Around World
         for p in &mut self.system.particles {
-            if p.pos.x > self.width / 2.0 { p.pos.x -= self.width; }
-            if p.pos.x < -self.width / 2.0 { p.pos.x += self.width; }
-            if p.pos.y > self.height / 2.0 { p.pos.y -= self.height; }
-            if p.pos.y < -self.height / 2.0 { p.pos.y += self.height; }
+            if p.pos.x > self.width / 2.0 {
+                p.pos.x -= self.width;
+            }
+            if p.pos.x < -self.width / 2.0 {
+                p.pos.x += self.width;
+            }
+            if p.pos.y > self.height / 2.0 {
+                p.pos.y -= self.height;
+            }
+            if p.pos.y < -self.height / 2.0 {
+                p.pos.y += self.height;
+            }
         }
     }
 
@@ -248,12 +280,13 @@ impl Swarm {
         for jelly in &self.jellyfish {
             // Draw Tentacles (Muscles)
             for &c_idx in &jelly.actuators {
-                 if let Constraint::Actuator { p1, p2, factor, .. } = self.system.constraints[c_idx] {
+                if let Constraint::Actuator { p1, p2, factor, .. } = self.system.constraints[c_idx]
+                {
                     let pos1 = self.system.particles[p1].pos;
                     let pos2 = self.system.particles[p2].pos;
                     let thickness = 0.05 * factor + 0.05;
                     draw_line(pos1.x, pos1.y, pos2.x, pos2.y, thickness, jelly.color);
-                 }
+                }
             }
 
             // Draw Body (Center)
@@ -263,7 +296,7 @@ impl Swarm {
             // Draw Magnetism Indicator
             // Dot: White if magnetic (either pole)
             if (jelly.magnetism - 0.5).abs() > 0.1 {
-                 draw_circle(center.x, center.y, 0.1, WHITE);
+                draw_circle(center.x, center.y, 0.1, WHITE);
             }
         }
     }
@@ -278,44 +311,96 @@ fn create_dna() -> Dna {
         // Stack: [Strain, SelfMag]
 
         // --- Calculate NewMag ---
-        Gene { op: OpCode::Dup, args: vec![] }, // [Strain, SelfMag, SelfMag]
-
+        Gene {
+            op: OpCode::Dup,
+            args: vec![],
+        }, // [Strain, SelfMag, SelfMag]
         // Mag Drift: NewMag = (SelfMag + 1) % 100
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-        Gene { op: OpCode::Add, args: vec![] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-        Gene { op: OpCode::Mod, args: vec![] }, // [Strain, SelfMag, NewMag]
-
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        },
+        Gene {
+            op: OpCode::Add,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(100)],
+        },
+        Gene {
+            op: OpCode::Mod,
+            args: vec![],
+        }, // [Strain, SelfMag, NewMag]
         // Arrange Stack for Contraction
-        Gene { op: OpCode::Swap, args: vec![] }, // [Strain, NewMag, SelfMag]
-        Gene { op: OpCode::Drop, args: vec![] }, // [Strain, NewMag]
-        Gene { op: OpCode::Swap, args: vec![] }, // [NewMag, Strain]
-
+        Gene {
+            op: OpCode::Swap,
+            args: vec![],
+        }, // [Strain, NewMag, SelfMag]
+        Gene {
+            op: OpCode::Drop,
+            args: vec![],
+        }, // [Strain, NewMag]
+        Gene {
+            op: OpCode::Swap,
+            args: vec![],
+        }, // [NewMag, Strain]
         // --- Calculate Contraction ---
         // Stack: [NewMag, Strain]
         // If Strain > 50 (Stretched), Contract (20). Else Relax (100).
-        Gene { op: OpCode::Dup, args: vec![] }, // [NewMag, Strain, Strain]
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(50)] },
-        Gene { op: OpCode::Gt, args: vec![] }, // [NewMag, Strain, IsStretched]
-
+        Gene {
+            op: OpCode::Dup,
+            args: vec![],
+        }, // [NewMag, Strain, Strain]
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(50)],
+        },
+        Gene {
+            op: OpCode::Gt,
+            args: vec![],
+        }, // [NewMag, Strain, IsStretched]
         // Map Bool(0/1) to Factor(100/20)
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(80)] },
-        Gene { op: OpCode::Mul, args: vec![] }, // [NewMag, Strain, Offset]
-
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-        Gene { op: OpCode::Swap, args: vec![] }, // [NewMag, Strain, 100, Offset]
-        Gene { op: OpCode::Sub, args: vec![] }, // [NewMag, Strain, Contraction]
-
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(80)],
+        },
+        Gene {
+            op: OpCode::Mul,
+            args: vec![],
+        }, // [NewMag, Strain, Offset]
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(100)],
+        },
+        Gene {
+            op: OpCode::Swap,
+            args: vec![],
+        }, // [NewMag, Strain, 100, Offset]
+        Gene {
+            op: OpCode::Sub,
+            args: vec![],
+        }, // [NewMag, Strain, Contraction]
         // Cleanup Strain
-        Gene { op: OpCode::Swap, args: vec![] }, // [NewMag, Contraction, Strain]
-        Gene { op: OpCode::Drop, args: vec![] }, // [NewMag, Contraction]
-
+        Gene {
+            op: OpCode::Swap,
+            args: vec![],
+        }, // [NewMag, Contraction, Strain]
+        Gene {
+            op: OpCode::Drop,
+            args: vec![],
+        }, // [NewMag, Contraction]
         // Final Return Order
-        Gene { op: OpCode::Swap, args: vec![] }, // [Contraction, NewMag]
+        Gene {
+            op: OpCode::Swap,
+            args: vec![],
+        }, // [Contraction, NewMag]
     ];
 
     Dna {
-        helix: Helix { strands: vec![Strand { genes }] },
+        helix: Helix {
+            strands: vec![Strand { genes }],
+        },
         evolution_config: None,
     }
 }
@@ -328,11 +413,18 @@ async fn main() {
     let cam_target = vec2(0.0, 0.0);
 
     loop {
-        if is_key_down(KeyCode::Up) { cam_zoom += 0.5; }
-        if is_key_down(KeyCode::Down) { cam_zoom -= 0.5; }
+        if is_key_down(KeyCode::Up) {
+            cam_zoom += 0.5;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_zoom -= 0.5;
+        }
 
         set_camera(&Camera2D {
-            zoom: vec2(1.0 / cam_zoom, 1.0 / cam_zoom * screen_width() / screen_height()),
+            zoom: vec2(
+                1.0 / cam_zoom,
+                1.0 / cam_zoom * screen_width() / screen_height(),
+            ),
             target: cam_target,
             ..Default::default()
         });
@@ -349,7 +441,13 @@ async fn main() {
         set_default_camera();
         draw_text("Ferrous Swarm", 10.0, 30.0, 30.0, WHITE);
         draw_text("Magnetic Soft-Body Flocking", 10.0, 50.0, 20.0, SKYBLUE);
-        draw_text(&format!("Population: {}", swarm.jellyfish.len()), 10.0, 70.0, 20.0, GRAY);
+        draw_text(
+            &format!("Population: {}", swarm.jellyfish.len()),
+            10.0,
+            70.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }

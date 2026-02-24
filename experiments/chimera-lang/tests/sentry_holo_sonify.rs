@@ -5,7 +5,8 @@ mod tests {
     use chimera_lang::vm::{ChimeraVM, MidiEvent};
 
     fn make_vm() -> ChimeraVM {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         ChimeraVM::new(dna)
@@ -24,7 +25,8 @@ mod tests {
             op: OpCode::HoloSonify,
             args: vec![],
         };
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes: vec![gene] }],
             },
@@ -66,7 +68,8 @@ mod tests {
             op: OpCode::CymaticScan,
             args: vec![],
         };
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes: vec![gene] }],
             },

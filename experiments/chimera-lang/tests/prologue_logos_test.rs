@@ -27,7 +27,8 @@ fn setup_signal(vm: &mut ChimeraVM, val: Value, target_y: usize, target_x: usize
 
 #[test]
 fn test_logos_grammar_definition() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -65,7 +66,8 @@ fn test_logos_grammar_definition() {
 
 #[test]
 fn test_logos_parsing() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -104,7 +106,8 @@ fn test_logos_parsing() {
 
 #[test]
 fn test_logos_generation() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -145,7 +148,8 @@ fn test_logos_dna_definition() {
             args: vec![Nucleotide::String("B".to_string())],
         },
     ];
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes: vec![] }, Strand { genes }],
         },
@@ -181,7 +185,8 @@ fn test_logos_dna_definition() {
 
 #[test]
 fn test_logos_weighted_choice() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

@@ -22,11 +22,13 @@ fn test_phage_mutation() {
         Gene {
             op: OpCode::Add,
             args: vec![],
-        }
+        },
     ];
     let dna = Dna {
         helix: Helix {
-            strands: vec![Strand { genes: genes.clone() }],
+            strands: vec![Strand {
+                genes: genes.clone(),
+            }],
         },
         evolution_config: None,
     };
@@ -47,7 +49,10 @@ fn test_phage_mutation() {
     let output = vm.output.join("\n");
     println!("VM Output:\n{}", output);
 
-    assert!(output.contains("PHAGE"), "Phage agent did not log any activity");
+    assert!(
+        output.contains("PHAGE"),
+        "Phage agent did not log any activity"
+    );
 
     // Verify that the agent is still alive (moved or stayed)
     // It consumes the grid cell it moves to, so (5,5) might be empty and (5,6) might be Phage, or similar.

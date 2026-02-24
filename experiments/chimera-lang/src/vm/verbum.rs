@@ -47,7 +47,9 @@ impl VerbumForge {
         }
 
         let mut cost = genes.len() as i64 * 5; // Base cost
-        if cost == 0 { cost = 1; }
+        if cost == 0 {
+            cost = 1;
+        }
 
         let rarity = match genes.len() {
             0..=5 => Rarity::Common,

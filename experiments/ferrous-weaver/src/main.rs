@@ -1,9 +1,12 @@
+mod genome;
 mod physics;
 mod platter;
-mod genome;
 
+use crate::physics::{Body, Universe};
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
+use quipu::{Cord, Knot};
+use quipu_serializer::ser::to_quipu;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
@@ -18,13 +21,10 @@ use std::{
     time::{Duration, Instant},
 };
 use tui_shared::Tui;
-use quipu::{Cord, Knot};
-use crate::physics::{Body, Universe};
-use quipu_serializer::ser::to_quipu;
 
 struct AppState {
     universe: Universe,
-    playhead_y: f32, // -100 to 100 (Physical Y)
+    playhead_y: f32,   // -100 to 100 (Physical Y)
     playhead_dir: f32, // -1 (Down)
     triggered_bodies: HashSet<usize>,
     last_update: Instant,
@@ -79,7 +79,9 @@ impl AppState {
             // Iterate reverse (High powers/Top to Low powers/Bottom) to build chain downwards
             let mut depth = 1;
             for (_c_idx, cluster) in cord.clusters.iter().enumerate().rev() {
-                if cluster.is_empty() { continue; }
+                if cluster.is_empty() {
+                    continue;
+                }
 
                 let mut total_mass = 0.0;
                 let mut total_charge = 0.0;
@@ -90,11 +92,11 @@ impl AppState {
                         Knot::Simple => {
                             total_mass += 1.0;
                             total_charge += 1.0; // Positive Charge
-                        },
+                        }
                         Knot::Long(v) => {
                             total_mass += *v as f32;
                             total_charge -= *v as f32; // Negative Charge
-                        },
+                        }
                         Knot::FigureEight => {
                             total_mass += 1.5;
                             // Neutral charge
@@ -103,7 +105,9 @@ impl AppState {
                     knot_count += 1;
                 }
 
-                if knot_count == 0 { continue; }
+                if knot_count == 0 {
+                    continue;
+                }
 
                 let y = anchor_y - (depth as f32 * 15.0); // Initial position
                 depth += 1;
@@ -132,33 +136,43 @@ impl AppState {
 
             // Subsidiaries (One level deep)
             for sub in &cord.subsidiaries {
-                 let sub_prev_id = prev_id; // Attach to end of main cord
-                 let mut sub_prev = sub_prev_id;
-                 let mut sub_depth = 1;
+                let sub_prev_id = prev_id; // Attach to end of main cord
+                let mut sub_prev = sub_prev_id;
+                let mut sub_depth = 1;
 
-                 for cluster in sub.clusters.iter().enumerate().rev().map(|(_, c)| c) {
-                     if cluster.is_empty() { continue; }
-                     let mut total_mass = 0.0;
-                     let mut total_charge = 0.0;
-                     for k in cluster {
-                         match k {
-                             Knot::Simple => { total_mass += 1.0; total_charge += 1.0; }
-                             Knot::Long(v) => { total_mass += *v as f32; total_charge -= *v as f32; }
-                             Knot::FigureEight => { total_mass += 1.5; }
-                         }
-                     }
+                for cluster in sub.clusters.iter().enumerate().rev().map(|(_, c)| c) {
+                    if cluster.is_empty() {
+                        continue;
+                    }
+                    let mut total_mass = 0.0;
+                    let mut total_charge = 0.0;
+                    for k in cluster {
+                        match k {
+                            Knot::Simple => {
+                                total_mass += 1.0;
+                                total_charge += 1.0;
+                            }
+                            Knot::Long(v) => {
+                                total_mass += *v as f32;
+                                total_charge -= *v as f32;
+                            }
+                            Knot::FigureEight => {
+                                total_mass += 1.5;
+                            }
+                        }
+                    }
 
-                     let parent_pos = self.universe.bodies[sub_prev].pos;
-                     let y = parent_pos.y - 15.0;
-                     let sub_x = parent_pos.x + (rand::random::<f32>() - 0.5) * 2.0;
+                    let parent_pos = self.universe.bodies[sub_prev].pos;
+                    let y = parent_pos.y - 15.0;
+                    let sub_x = parent_pos.x + (rand::random::<f32>() - 0.5) * 2.0;
 
-                     let color = Color::Cyan; // Differentiate subsidiaries
-                     let body = Body::new(sub_x, y, total_mass, 2.0, total_charge, color);
-                     let id = self.universe.add_body(body);
-                     self.universe.add_edge(sub_prev, id);
-                     sub_prev = id;
-                     sub_depth += 1;
-                 }
+                    let color = Color::Cyan; // Differentiate subsidiaries
+                    let body = Body::new(sub_x, y, total_mass, 2.0, total_charge, color);
+                    let id = self.universe.add_body(body);
+                    self.universe.add_edge(sub_prev, id);
+                    sub_prev = id;
+                    sub_depth += 1;
+                }
             }
         }
     }
@@ -188,11 +202,13 @@ fn main() -> Result<()> {
 
         // Check Triggers
         for (id, body) in state.universe.bodies.iter().enumerate() {
-            if body.fixed { continue; }
+            if body.fixed {
+                continue;
+            }
 
             let dist = (body.pos.y - state.playhead_y).abs();
             if dist < 2.0 && !state.triggered_bodies.contains(&id) {
-                 state.triggered_bodies.insert(id);
+                state.triggered_bodies.insert(id);
             }
         }
 
@@ -225,7 +241,11 @@ fn ui(f: &mut Frame, state: &AppState) {
         .split(f.area());
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Ferrous Weaver | Magnetic DNA Loom"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Ferrous Weaver | Magnetic DNA Loom"),
+        )
         .x_bounds([-100.0, 100.0])
         .y_bounds([-100.0, 100.0])
         .paint(|ctx| {
@@ -237,8 +257,16 @@ fn ui(f: &mut Frame, state: &AppState) {
                     if mag > 0.2 {
                         let px = x as f64 - 100.0;
                         let py = y as f64 - 100.0;
-                        let color = if mag > 0.5 { Color::Red } else { Color::DarkGray };
-                         ctx.print(px, py, ratatui::text::Span::styled(".", Style::default().fg(color)));
+                        let color = if mag > 0.5 {
+                            Color::Red
+                        } else {
+                            Color::DarkGray
+                        };
+                        ctx.print(
+                            px,
+                            py,
+                            ratatui::text::Span::styled(".", Style::default().fg(color)),
+                        );
                     }
                 }
             }
@@ -288,9 +316,14 @@ fn ui(f: &mut Frame, state: &AppState) {
 
     f.render_widget(canvas, chunks[0]);
 
-    let info = Paragraph::new(format!("Cords: {} | Bodies: {} | Playhead Y: {:.1} | Speed: {:.1}",
-        state.cords.len(), state.universe.bodies.len(), state.playhead_y, state.playhead_dir))
-        .style(Style::default().fg(Color::Gray))
-        .block(Block::default().borders(Borders::ALL));
+    let info = Paragraph::new(format!(
+        "Cords: {} | Bodies: {} | Playhead Y: {:.1} | Speed: {:.1}",
+        state.cords.len(),
+        state.universe.bodies.len(),
+        state.playhead_y,
+        state.playhead_dir
+    ))
+    .style(Style::default().fg(Color::Gray))
+    .block(Block::default().borders(Borders::ALL));
     f.render_widget(info, chunks[1]);
 }

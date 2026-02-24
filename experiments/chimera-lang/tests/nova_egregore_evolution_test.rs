@@ -18,7 +18,8 @@ fn test_egregore_evolution() {
         },
     ];
 
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },
@@ -57,7 +58,8 @@ fn test_egregore_sacrifice() {
         args: vec![],
     }];
 
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },

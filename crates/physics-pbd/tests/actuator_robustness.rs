@@ -1,5 +1,5 @@
-use physics_pbd::PbdSystem;
 use macroquad::prelude::Vec3;
+use physics_pbd::PbdSystem;
 
 #[test]
 fn test_actuator_nan_injection_robustness() {

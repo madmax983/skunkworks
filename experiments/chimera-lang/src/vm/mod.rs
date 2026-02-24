@@ -305,14 +305,14 @@ pub mod nova_quantum;
 #[cfg(test)]
 mod nova_quantum_scribe_test;
 #[cfg(feature = "nova")]
-pub mod nova_raku;
-#[cfg(all(test, feature = "nova"))]
-mod nova_raku_test;
-#[cfg(feature = "nova")]
 pub mod nova_quipu;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_quipu_test;
+#[cfg(feature = "nova")]
+pub mod nova_raku;
+#[cfg(all(test, feature = "nova"))]
+mod nova_raku_test;
 #[cfg(feature = "nova")]
 pub mod nova_reactor;
 #[cfg(feature = "nova")]
@@ -1818,7 +1818,7 @@ impl ChimeraVM {
                 }
                 2 => {
                     // Entropy Surge
-                if nova_flux::exec_entropy_surge(self).is_some() {
+                    if nova_flux::exec_entropy_surge(self).is_some() {
                         self.output
                             .push("MAD SCIENTIST: Triggered ENTROPY SURGE!".to_string());
                     }
@@ -3311,11 +3311,7 @@ impl ChimeraVM {
         None
     }
 
-    fn exec_core_op(
-        &mut self,
-        op: OpCode,
-        args: &[Nucleotide],
-    ) -> Option<Option<(usize, usize)>> {
+    fn exec_core_op(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<Option<(usize, usize)>> {
         match op {
             OpCode::Push => Some(self.exec_stack_op(op, args)),
             OpCode::Add
@@ -3632,10 +3628,12 @@ impl ChimeraVM {
                     if let Some(spell) = self.codex.get_spell(id as usize) {
                         codex::exec_spell(self, &spell);
                     } else {
-                        self.output.push(format!("Error: Invalid Codex spell ID {}", id));
+                        self.output
+                            .push(format!("Error: Invalid Codex spell ID {}", id));
                     }
                 } else {
-                    self.output.push("Error: Codex requires spell ID (Int)".to_string());
+                    self.output
+                        .push("Error: Codex requires spell ID (Int)".to_string());
                 }
                 Some(None)
             }
@@ -3705,10 +3703,9 @@ impl ChimeraVM {
                 nova_planes::exec_planes_op(self, op, args);
                 Some(None)
             }
-            OpCode::StringNew
-            | OpCode::StringPluck
-            | OpCode::StringTune
-            | OpCode::StringListen => Some(nova_strings::exec_string_op(self, op, args)),
+            OpCode::StringNew | OpCode::StringPluck | OpCode::StringTune | OpCode::StringListen => {
+                Some(nova_strings::exec_string_op(self, op, args))
+            }
             OpCode::Bond => Some(nova_metazoa::exec_bond(self, op, args)),
             OpCode::Unbond => Some(nova_metazoa::exec_unbond(self, op, args)),
             OpCode::Signify => Some(nova_metazoa::exec_signify(self, op, args)),
@@ -3725,7 +3722,9 @@ impl ChimeraVM {
                 crate::vm::nova::exec_nova_op(self, op, args);
                 Some(None)
             }
-            OpCode::AbsorbGeometry => Some(nova_alchemy_prime::exec_absorb_geometry(self, op, args)),
+            OpCode::AbsorbGeometry => {
+                Some(nova_alchemy_prime::exec_absorb_geometry(self, op, args))
+            }
             OpCode::ProjectGeometry => {
                 Some(nova_alchemy_prime::exec_project_geometry(self, op, args))
             }
@@ -3883,10 +3882,7 @@ impl ChimeraVM {
         }
 
         #[cfg(feature = "git")]
-        if matches!(
-            op,
-            OpCode::Ancestry | OpCode::Excavate | OpCode::Evolution
-        ) {
+        if matches!(op, OpCode::Ancestry | OpCode::Excavate | OpCode::Evolution) {
             return git::exec_git_op(self, op, args);
         }
 
@@ -4796,7 +4792,8 @@ mod tests {
     use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
-        Dna { evolution_config: None,
+        Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes }],
             },
@@ -4852,7 +4849,8 @@ mod tests {
             }],
         };
 
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![strand0, strand1],
             },
@@ -4899,7 +4897,8 @@ mod tests {
             }],
         };
 
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![strand0, strand1],
             },
@@ -4957,7 +4956,8 @@ mod tests {
                 }, // 5: target to be modified
             ],
         };
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![strand0],
             },
@@ -5319,7 +5319,8 @@ mod tests {
                 args: vec![Nucleotide::Number(200)],
             }],
         };
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![strand0, strand1],
             },
@@ -5532,7 +5533,8 @@ mod sentry_ribosome_tests {
         // Setup VM with 2 strands
         // Strand 0: Empty
         // Strand 1: Empty (Target)
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes: vec![] }, Strand { genes: vec![] }],
             },

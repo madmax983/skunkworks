@@ -62,7 +62,8 @@ fn test_viral_rewrite_grid() {
         },
     ];
 
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![
                 Strand { genes }, // Strand 0: Infect
@@ -151,7 +152,8 @@ fn test_viral_rewrite_dna() {
         },
     ];
 
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![
                 Strand {

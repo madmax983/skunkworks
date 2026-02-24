@@ -46,7 +46,8 @@ pub fn process_logic_agent(
                     // Attempt Unification
                     if let Some(bindings) = unify(&goal, &fact) {
                         // Success!
-                        vm.output.push(format!("∃ Logic: Unified {:?} with {:?}", goal, fact));
+                        vm.output
+                            .push(format!("∃ Logic: Unified {:?} with {:?}", goal, fact));
                         for (var, val) in bindings {
                             vm.output.push(format!("  {} = {:?}", var, val));
                         }
@@ -64,7 +65,10 @@ pub fn process_logic_agent(
                         return Some((updated_agent, Some((ny, nx))));
                     } else {
                         // Failure
-                         vm.output.push(format!("∃ Logic: Failed to unify {:?} with {:?}", goal, fact));
+                        vm.output.push(format!(
+                            "∃ Logic: Failed to unify {:?} with {:?}",
+                            goal, fact
+                        ));
                     }
                 }
             }
@@ -77,7 +81,10 @@ pub fn process_logic_agent(
     if let Some((ny, nx)) = target {
         // Check if destination is blocked by another agent
         if let Value::Str(s) = &grid_snapshot[ny][nx] {
-            if matches!(s.as_str(), "@" | "K" | "H" | "C" | "♻" | "♬" | "₣" | "ζ" | "∃") {
+            if matches!(
+                s.as_str(),
+                "@" | "K" | "H" | "C" | "♻" | "♬" | "₣" | "ζ" | "∃"
+            ) {
                 // Blocked - Reverse
                 updated_agent.state = Value::Junction(
                     crate::ast::JunctionType::All,
@@ -195,7 +202,7 @@ fn unify_recursive(goal: &Value, fact: &Value, bindings: &mut HashMap<String, Va
             }
         }
         if s == "_" {
-             return true; // Wildcard matches anything
+            return true; // Wildcard matches anything
         }
     }
 

@@ -14,7 +14,12 @@ pub struct PrologueParser;
 pub fn compile(
     source: &str,
     base_path: Option<&Path>,
-) -> Result<(Dna, Option<Vec<Vec<Value>>>, Option<bool>, HashMap<String, usize>)> {
+) -> Result<(
+    Dna,
+    Option<Vec<Vec<Value>>>,
+    Option<bool>,
+    HashMap<String, usize>,
+)> {
     let mut pairs = PrologueParser::parse(Rule::program, source)?;
 
     let mut grid = None;
@@ -73,7 +78,10 @@ pub fn compile(
                         let content = inner.into_inner().next().unwrap().as_str();
                         let compiled_dna = crate::compiler::compile(content, base_path)?;
                         if let Some(existing_dna) = dna.as_mut() {
-                            existing_dna.helix.strands.extend(compiled_dna.helix.strands);
+                            existing_dna
+                                .helix
+                                .strands
+                                .extend(compiled_dna.helix.strands);
                             if existing_dna.evolution_config.is_none() {
                                 existing_dna.evolution_config = compiled_dna.evolution_config;
                             }
@@ -91,11 +99,16 @@ pub fn compile(
                             let content = definition_body.into_inner().next().unwrap().as_str();
 
                             // Wrap content in a strand definition for the compiler
-                            let wrapped_content = format!("strand rune_{} {{ {} }}", custom_runes.len(), content);
-                            let compiled_def = crate::compiler::compile(&wrapped_content, base_path)?;
+                            let wrapped_content =
+                                format!("strand rune_{} {{ {} }}", custom_runes.len(), content);
+                            let compiled_def =
+                                crate::compiler::compile(&wrapped_content, base_path)?;
 
                             if dna.is_none() {
-                                dna = Some(Dna { evolution_config: None, helix: crate::ast::Helix { strands: vec![] } });
+                                dna = Some(Dna {
+                                    evolution_config: None,
+                                    helix: crate::ast::Helix { strands: vec![] },
+                                });
                             }
 
                             if let Some(main_dna) = dna.as_mut() {
@@ -143,42 +156,42 @@ fn parse_grid_line(line: &str) -> Vec<Value> {
             }
             row.push(Value::Str(s));
         } else if c.is_digit(10) || c == '-' {
-             // Parse Number or potential single char '-' rune
-             // To distinguish '-' (math) from -5 (number), we peek ahead.
-             // If '-' is followed by digit, it's a number.
+            // Parse Number or potential single char '-' rune
+            // To distinguish '-' (math) from -5 (number), we peek ahead.
+            // If '-' is followed by digit, it's a number.
 
-             let mut is_number = false;
-             if c == '-' {
-                 let mut temp = chars.clone();
-                 temp.next(); // skip '-'
-                 if let Some(nc) = temp.peek() {
-                     if nc.is_digit(10) {
-                         is_number = true;
-                     }
-                 }
-             } else {
-                 is_number = true;
-             }
+            let mut is_number = false;
+            if c == '-' {
+                let mut temp = chars.clone();
+                temp.next(); // skip '-'
+                if let Some(nc) = temp.peek() {
+                    if nc.is_digit(10) {
+                        is_number = true;
+                    }
+                }
+            } else {
+                is_number = true;
+            }
 
-             if is_number {
-                 let mut s = String::new();
-                 s.push(chars.next().unwrap());
-                 while let Some(&next_c) = chars.peek() {
-                     if next_c.is_digit(10) {
-                         s.push(chars.next().unwrap());
-                     } else {
-                         break;
-                     }
-                 }
-                 if let Ok(n) = s.parse::<i64>() {
-                     row.push(Value::Int(n));
-                 } else {
-                     row.push(Value::Str(s));
-                 }
-             } else {
-                 // It's a '-' rune
-                 row.push(Value::Str(chars.next().unwrap().to_string()));
-             }
+            if is_number {
+                let mut s = String::new();
+                s.push(chars.next().unwrap());
+                while let Some(&next_c) = chars.peek() {
+                    if next_c.is_digit(10) {
+                        s.push(chars.next().unwrap());
+                    } else {
+                        break;
+                    }
+                }
+                if let Ok(n) = s.parse::<i64>() {
+                    row.push(Value::Int(n));
+                } else {
+                    row.push(Value::Str(s));
+                }
+            } else {
+                // It's a '-' rune
+                row.push(Value::Str(chars.next().unwrap().to_string()));
+            }
         } else if c.is_alphabetic() {
             // Identifier (might be multi-char like "func")
             // BUT: Single char runes are common (A, S, M, O).

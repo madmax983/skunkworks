@@ -6,7 +6,8 @@ mod tests {
 
     #[test]
     fn test_linguistics_stringify() {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -29,7 +30,8 @@ mod tests {
 
     #[test]
     fn test_linguistics_regex() {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -61,7 +63,8 @@ mod tests {
 
     #[test]
     fn test_linguistics_split() {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -95,7 +98,8 @@ mod tests {
 
     #[test]
     fn test_linguistics_join() {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -130,7 +134,8 @@ mod tests {
 
     #[test]
     fn test_linguistics_shift_case() {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -165,7 +170,8 @@ mod tests {
 
     #[test]
     fn test_linguistics_levenshtein() {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);

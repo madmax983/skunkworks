@@ -7,7 +7,8 @@ mod tests {
     use crate::vm::{ChimeraVM, MAX_BRAINFUCK_OUTPUT, MAX_MEMES, MAX_VIRUSES};
 
     fn make_vm() -> ChimeraVM {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes: vec![] }],
             },

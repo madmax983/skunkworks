@@ -259,7 +259,7 @@ fn apply_red_logic(
                     let div = w / e;
                     let rem = w % e;
                     set_sig(next_signals, y, x, -1, 0, Value::Int(div)); // North
-                    set_sig(next_signals, y, x, 1, 0, Value::Int(rem));  // South
+                    set_sig(next_signals, y, x, 1, 0, Value::Int(rem)); // South
                 }
             }
             true
@@ -317,25 +317,25 @@ fn apply_green_logic(
         }
         "-" => {
             // Green Sub: Pruning (Remove chars of E from W)
-             if let (Some(Value::Str(w)), Some(Value::Str(e))) = (w_sig, e_sig) {
-                 let res: String = w.chars().filter(|c| !e.contains(*c)).collect();
-                 set_sig(next_signals, y, x, 1, 0, Value::Str(res));
-             }
-             true
+            if let (Some(Value::Str(w)), Some(Value::Str(e))) = (w_sig, e_sig) {
+                let res: String = w.chars().filter(|c| !e.contains(*c)).collect();
+                set_sig(next_signals, y, x, 1, 0, Value::Str(res));
+            }
+            true
         }
         "*" => {
             // Green Split: Spore (Clone to North and South? Or just Split value)
-             if let Some(val) = w_sig {
+            if let Some(val) = w_sig {
                 set_sig(next_signals, y, x, 0, 1, val);
-             }
-             true
+            }
+            true
         }
         "/" => {
             // Green Div: Mitosis (Split W into two W/2 signals)
             if let Some(Value::Int(w)) = w_sig {
                 let half = w / 2;
                 set_sig(next_signals, y, x, -1, 0, Value::Int(half)); // North
-                set_sig(next_signals, y, x, 1, 0, Value::Int(half));  // South
+                set_sig(next_signals, y, x, 1, 0, Value::Int(half)); // South
             }
             true
         }
@@ -349,7 +349,7 @@ fn apply_green_logic(
         }
         "&" => {
             // Green AND: Symbiosis (Max(A, B))
-             if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
+            if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
                 let res = w.max(e);
                 set_sig(next_signals, y, x, 1, 0, Value::Int(res));
             }
@@ -390,17 +390,17 @@ fn apply_blue_logic(
         }
         "*" => {
             // Blue Split: Delay (Time Dilation)
-             if let Some(Value::Int(w)) = w_sig {
-                 let res = if w == 0 { 1 } else { 0 };
-                 set_sig(next_signals, y, x, 0, 1, Value::Int(res));
-             }
-             true
+            if let Some(Value::Int(w)) = w_sig {
+                let res = if w == 0 { 1 } else { 0 };
+                set_sig(next_signals, y, x, 0, 1, Value::Int(res));
+            }
+            true
         }
         "/" => {
             // Blue Div: Filter (Pass W if W % E == 0)
             if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
                 if e != 0 && w % e == 0 {
-                     set_sig(next_signals, y, x, 1, 0, Value::Int(w));
+                    set_sig(next_signals, y, x, 1, 0, Value::Int(w));
                 }
             }
             true
@@ -415,7 +415,7 @@ fn apply_blue_logic(
         }
         "|" => {
             // Blue OR: NAND
-             if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
+            if let (Some(Value::Int(w)), Some(Value::Int(e))) = (w_sig, e_sig) {
                 let res = if w != 0 && e != 0 { 0 } else { 1 };
                 set_sig(next_signals, y, x, 1, 0, Value::Int(res));
             }
@@ -427,13 +427,7 @@ fn apply_blue_logic(
 
 // Helpers
 
-fn get_sig(
-    signals: &[Vec<Option<Value>>],
-    y: usize,
-    x: usize,
-    dy: i64,
-    dx: i64,
-) -> Option<Value> {
+fn get_sig(signals: &[Vec<Option<Value>>], y: usize, x: usize, dy: i64, dx: i64) -> Option<Value> {
     if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
         signals[ny][nx].clone()
     } else {

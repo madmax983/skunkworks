@@ -7,7 +7,8 @@ use crate::vm::{ChimeraVM, Value};
 
 #[cfg(test)]
 fn make_dna(genes: Vec<Gene>) -> Dna {
-    Dna { evolution_config: None,
+    Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },
@@ -76,7 +77,8 @@ fn test_audit() {
         }],
     };
 
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![strand0, strand1],
         },

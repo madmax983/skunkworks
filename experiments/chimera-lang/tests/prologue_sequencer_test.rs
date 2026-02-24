@@ -4,7 +4,8 @@ use chimera_lang::vm::prologue::exec_prologue_tick;
 use chimera_lang::vm::{ChimeraVM, Value};
 
 fn make_dna(genes: Vec<Gene>) -> Dna {
-    Dna { evolution_config: None,
+    Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },

@@ -4,7 +4,8 @@ use crate::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_oracle_runes() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

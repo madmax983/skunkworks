@@ -2041,7 +2041,8 @@ fn exec_verbum_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Optio
 
                     if let Some((genes, cost)) = word_data {
                         if vm.energy < cost {
-                            vm.output.push(format!("SPEAK: Insufficient energy for '{}'", name));
+                            vm.output
+                                .push(format!("SPEAK: Insufficient energy for '{}'", name));
                         } else {
                             vm.energy -= cost;
                             vm.output.push(format!("SPEAK: Uttered '{}'", name));
@@ -2049,7 +2050,8 @@ fn exec_verbum_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Optio
                             execute_ephemeral_strand(vm, &strand);
                         }
                     } else {
-                        vm.output.push(format!("SPEAK ERROR: Word '{}' unknown", name));
+                        vm.output
+                            .push(format!("SPEAK ERROR: Word '{}' unknown", name));
                     }
                 } else {
                     vm.output.push("SPEAK: Type mismatch".to_string());
@@ -2067,12 +2069,11 @@ fn exec_verbum_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Optio
                             .iter()
                             .map(|g| Value::Str(g.op.to_string()))
                             .collect();
-                        vm.stack.push(Value::Junction(
-                            crate::ast::JunctionType::All,
-                            op_strings,
-                        ));
+                        vm.stack
+                            .push(Value::Junction(crate::ast::JunctionType::All, op_strings));
                     } else {
-                        vm.output.push(format!("ETYMOLOGY: Unknown word '{}'", name));
+                        vm.output
+                            .push(format!("ETYMOLOGY: Unknown word '{}'", name));
                         vm.stack.push(Value::Int(0));
                     }
                 } else {
@@ -2213,8 +2214,7 @@ fn exec_map(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let target_val = vm.stack.pop().unwrap();
 
         if target_val.depth() >= crate::vm::MAX_RECURSION_DEPTH {
-            vm.output
-                .push("Error: Input too deep for Map".to_string());
+            vm.output.push("Error: Input too deep for Map".to_string());
             return None;
         }
 
@@ -2281,9 +2281,10 @@ fn exec_fold(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let init_val = vm.stack.pop().unwrap();
         let target_val = vm.stack.pop().unwrap();
 
-        if target_val.depth() >= crate::vm::MAX_RECURSION_DEPTH || init_val.depth() >= crate::vm::MAX_RECURSION_DEPTH {
-            vm.output
-                .push("Error: Input too deep for Fold".to_string());
+        if target_val.depth() >= crate::vm::MAX_RECURSION_DEPTH
+            || init_val.depth() >= crate::vm::MAX_RECURSION_DEPTH
+        {
+            vm.output.push("Error: Input too deep for Fold".to_string());
             return None;
         }
 
@@ -2405,9 +2406,10 @@ fn exec_zip(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let val_b = vm.stack.pop().unwrap();
         let val_a = vm.stack.pop().unwrap();
 
-        if val_a.depth() >= crate::vm::MAX_RECURSION_DEPTH || val_b.depth() >= crate::vm::MAX_RECURSION_DEPTH {
-            vm.output
-                .push("Error: Input too deep for Zip".to_string());
+        if val_a.depth() >= crate::vm::MAX_RECURSION_DEPTH
+            || val_b.depth() >= crate::vm::MAX_RECURSION_DEPTH
+        {
+            vm.output.push("Error: Input too deep for Zip".to_string());
             return None;
         }
 

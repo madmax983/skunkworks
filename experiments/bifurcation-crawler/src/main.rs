@@ -1,26 +1,55 @@
-use macroquad::prelude::*;
 use chimera_lang::prelude::*;
+use macroquad::prelude::*;
 use physics_pbd::PbdSystem;
 
-mod logistic;
 mod agent;
+mod logistic;
 
-use logistic::LogisticMap;
 use agent::Crawler;
+use logistic::LogisticMap;
 
 fn create_simple_dna() -> Dna {
     // Simple oscillator like in chimera-tissue
     let genes = vec![
-        Gene { op: OpCode::Dup, args: vec![] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(50)] },
-        Gene { op: OpCode::Gt, args: vec![] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-        Gene { op: OpCode::Swap, args: vec![] },
-        Gene { op: OpCode::Sub, args: vec![] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-        Gene { op: OpCode::Mul, args: vec![] },
+        Gene {
+            op: OpCode::Dup,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(50)],
+        },
+        Gene {
+            op: OpCode::Gt,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        },
+        Gene {
+            op: OpCode::Swap,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Sub,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(100)],
+        },
+        Gene {
+            op: OpCode::Mul,
+            args: vec![],
+        },
     ];
-    Dna { helix: Helix { strands: vec![Strand { genes }] }, evolution_config: None }
+    Dna {
+        helix: Helix {
+            strands: vec![Strand { genes }],
+        },
+        evolution_config: None,
+    }
 }
 
 #[macroquad::main("Bifurcation Crawler")]
@@ -43,16 +72,16 @@ async fn main() {
     loop {
         // Input: Move Head?
         if is_key_down(KeyCode::Right) {
-             system.particles[crawler.particle_indices[0]].vel.x += 2.0;
+            system.particles[crawler.particle_indices[0]].vel.x += 2.0;
         }
         if is_key_down(KeyCode::Left) {
-             system.particles[crawler.particle_indices[0]].vel.x -= 2.0;
+            system.particles[crawler.particle_indices[0]].vel.x -= 2.0;
         }
         if is_key_down(KeyCode::Up) {
-             system.particles[crawler.particle_indices[0]].vel.y += 2.0;
+            system.particles[crawler.particle_indices[0]].vel.y += 2.0;
         }
         if is_key_down(KeyCode::Down) {
-             system.particles[crawler.particle_indices[0]].vel.y -= 2.0;
+            system.particles[crawler.particle_indices[0]].vel.y -= 2.0;
         }
 
         // Physics Step
@@ -63,10 +92,22 @@ async fn main() {
             p.vel *= 0.90; // Drag
 
             // Keep in bounds
-            if p.pos.x < 0.0 { p.pos.x = 0.0; p.vel.x = 0.0; }
-            if p.pos.x > world_width { p.pos.x = world_width; p.vel.x = 0.0; }
-            if p.pos.y < 0.0 { p.pos.y = 0.0; p.vel.y = 0.0; }
-            if p.pos.y > world_height { p.pos.y = world_height; p.vel.y = 0.0; }
+            if p.pos.x < 0.0 {
+                p.pos.x = 0.0;
+                p.vel.x = 0.0;
+            }
+            if p.pos.x > world_width {
+                p.pos.x = world_width;
+                p.vel.x = 0.0;
+            }
+            if p.pos.y < 0.0 {
+                p.pos.y = 0.0;
+                p.vel.y = 0.0;
+            }
+            if p.pos.y > world_height {
+                p.pos.y = world_height;
+                p.vel.y = 0.0;
+            }
         }
 
         // Agent Update
@@ -103,27 +144,33 @@ async fn main() {
 
         // Draw Particles (mapped to screen)
         for i in 0..system.particles.len() {
-             let p = system.particles[i];
-             let sx = (p.pos.x / world_width) * screen_width();
-             let sy = (1.0 - (p.pos.y / world_height)) * screen_height();
-             draw_circle(sx, sy, 5.0, WHITE);
+            let p = system.particles[i];
+            let sx = (p.pos.x / world_width) * screen_width();
+            let sy = (1.0 - (p.pos.y / world_height)) * screen_height();
+            draw_circle(sx, sy, 5.0, WHITE);
         }
 
         // Draw Constraints
         for c in &system.constraints {
             if let physics_pbd::Constraint::Actuator { p1, p2, .. } = c {
-                 let pos1 = system.particles[*p1].pos;
-                 let pos2 = system.particles[*p2].pos;
-                 let sx1 = (pos1.x / world_width) * screen_width();
-                 let sy1 = (1.0 - (pos1.y / world_height)) * screen_height();
-                 let sx2 = (pos2.x / world_width) * screen_width();
-                 let sy2 = (1.0 - (pos2.y / world_height)) * screen_height();
-                 draw_line(sx1, sy1, sx2, sy2, 3.0, crawler.color);
+                let pos1 = system.particles[*p1].pos;
+                let pos2 = system.particles[*p2].pos;
+                let sx1 = (pos1.x / world_width) * screen_width();
+                let sy1 = (1.0 - (pos1.y / world_height)) * screen_height();
+                let sx2 = (pos2.x / world_width) * screen_width();
+                let sy2 = (1.0 - (pos2.y / world_height)) * screen_height();
+                draw_line(sx1, sy1, sx2, sy2, 3.0, crawler.color);
             }
         }
 
         // UI
-        draw_text(&format!("Energy: {:.1}", crawler.energy), 10.0, 20.0, 30.0, WHITE);
+        draw_text(
+            &format!("Energy: {:.1}", crawler.energy),
+            10.0,
+            20.0,
+            30.0,
+            WHITE,
+        );
         draw_text(&format!("R: {:.4}", r), 10.0, 50.0, 20.0, GRAY);
 
         next_frame().await

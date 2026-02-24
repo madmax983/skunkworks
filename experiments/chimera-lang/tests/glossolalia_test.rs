@@ -35,7 +35,8 @@ fn test_glossolalia_generate() {
         },
     ];
 
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },
@@ -77,7 +78,8 @@ fn test_glossolalia_scribe() {
         },
     ];
 
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },
@@ -104,7 +106,8 @@ fn test_oracle_generate() {
     use chimera_lang::vm::oracle;
     use std::collections::HashMap;
 
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let vm = ChimeraVM::new(dna);

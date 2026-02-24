@@ -1,14 +1,14 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use chimera_lang::vm::{ChimeraVM, Value};
     use chimera_lang::ast::{Dna, Helix, Strand};
-    use chimera_lang::vm::paradox::{Paradox, Trigger, Action};
+    use chimera_lang::vm::paradox::{Action, Paradox, Trigger};
+    use chimera_lang::vm::{ChimeraVM, Value};
 
     fn make_empty_vm() -> ChimeraVM {
         let dna = Dna {
             evolution_config: None,
-            helix: Helix { strands: vec![] }
+            helix: Helix { strands: vec![] },
         };
         ChimeraVM::new(dna)
     }
@@ -22,7 +22,7 @@ mod tests {
         let rule = &paradox.rules[0];
         assert_eq!(rule.name, "Test");
         match &rule.trigger {
-            Trigger::Always => {},
+            Trigger::Always => {}
             _ => panic!("Expected Trigger::Always"),
         }
         match &rule.actions[0] {
@@ -45,7 +45,7 @@ mod tests {
         // Check grid at context_loc (8,8)
         let (cy, cx) = vm.context_loc;
         match vm.grid[cy][cx] {
-            Value::Int(42) => {},
+            Value::Int(42) => {}
             _ => panic!("Expected 42 at context_loc"),
         }
     }

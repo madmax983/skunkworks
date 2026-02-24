@@ -1,8 +1,8 @@
-use macroquad::prelude::*;
 use clap::Parser;
+use macroquad::prelude::*;
 
-mod grid;
 mod agent;
+mod grid;
 mod world;
 
 use world::World;
@@ -66,10 +66,16 @@ async fn main() {
 
         let texture = Texture2D::from_image(&image);
         texture.set_filter(FilterMode::Nearest);
-        draw_texture_ex(&texture, 0.0, 0.0, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(window_width, window_height)),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &texture,
+            0.0,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(window_width, window_height)),
+                ..Default::default()
+            },
+        );
 
         // Draw Agents
         for agent in &world.agents {
@@ -78,11 +84,17 @@ async fn main() {
             let sy = (ay as f32 / args.height as f32) * window_height;
             let size = scale * 0.8;
 
-            draw_circle(sx + size/2.0, sy + size/2.0, size/2.0, WHITE);
+            draw_circle(sx + size / 2.0, sy + size / 2.0, size / 2.0, WHITE);
         }
 
         // Draw UI
-        draw_text(&format!("Agents: {}", world.agents.len()), 10.0, 20.0, 20.0, WHITE);
+        draw_text(
+            &format!("Agents: {}", world.agents.len()),
+            10.0,
+            20.0,
+            20.0,
+            WHITE,
+        );
         draw_text("R: Reset", 10.0, 40.0, 20.0, WHITE);
 
         next_frame().await;

@@ -37,7 +37,10 @@ fn test_incubate_grid() {
     }
 
     // Expect new strand
-    assert!(vm.dna.helix.strands.len() >= 1, "Should create at least 1 strand");
+    assert!(
+        vm.dna.helix.strands.len() >= 1,
+        "Should create at least 1 strand"
+    );
     let strand = &vm.dna.helix.strands[0];
 
     // Check genes

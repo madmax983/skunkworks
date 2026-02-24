@@ -22,8 +22,8 @@
 //! | `d` | **Distill** | West (Val) | North (Head), South (Tail) | Splits value into two parts. |
 
 use super::normalize_coords;
-use crate::vm::{Value, MAX_STRING_LEN};
 use crate::ast::JunctionType;
+use crate::vm::{Value, MAX_STRING_LEN};
 
 /// Applies the logic for Alchemy runes (`t`, `f`, `d`).
 ///

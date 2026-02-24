@@ -1,6 +1,6 @@
-use macroquad::prelude::*;
 use chimera_lang::prelude::*;
-use physics_pbd::{PbdSystem};
+use macroquad::prelude::*;
+use physics_pbd::PbdSystem;
 
 pub struct Crawler {
     pub vm: ChimeraVM,
@@ -28,7 +28,7 @@ impl Crawler {
         // Add Actuators (Muscles) between segments
         for i in 0..4 {
             let p1 = particle_indices[i];
-            let p2 = particle_indices[i+1];
+            let p2 = particle_indices[i + 1];
             // Min/Max/Stiffness
             system.add_actuator_constraint(p1, p2, 0.02, 0.10, 0.8);
             let c_idx = system.constraints.len() - 1;
@@ -59,7 +59,9 @@ impl Crawler {
         let strain = self.calculate_strain(system);
 
         self.vm.stack.clear();
-        self.vm.stack.push(Value::Int((chaos_factor * 100.0) as i64));
+        self.vm
+            .stack
+            .push(Value::Int((chaos_factor * 100.0) as i64));
         self.vm.stack.push(Value::Int(self.energy as i64));
         self.vm.stack.push(Value::Int((strain * 100.0) as i64));
 
@@ -74,7 +76,7 @@ impl Crawler {
 
         for (i, &c_idx) in self.actuator_indices.iter().enumerate() {
             let factor = if let Some(val) = self.vm.stack.pop() {
-                 match val {
+                match val {
                     Value::Int(n) => (n as f32 / 100.0).clamp(0.0, 1.0),
                     _ => 0.5,
                 }
@@ -83,7 +85,10 @@ impl Crawler {
             };
 
             // Apply to constraint
-             if let physics_pbd::Constraint::Actuator { factor: ref mut f, .. } = &mut system.constraints[c_idx] {
+            if let physics_pbd::Constraint::Actuator {
+                factor: ref mut f, ..
+            } = &mut system.constraints[c_idx]
+            {
                 *f = factor;
             }
         }
@@ -96,7 +101,10 @@ impl Crawler {
     fn calculate_strain(&self, system: &PbdSystem) -> f32 {
         let mut total = 0.0;
         for &c_idx in &self.actuator_indices {
-             if let physics_pbd::Constraint::Actuator { p1, p2, max_len, .. } = &system.constraints[c_idx] {
+            if let physics_pbd::Constraint::Actuator {
+                p1, p2, max_len, ..
+            } = &system.constraints[c_idx]
+            {
                 let pos1 = system.particles[*p1].pos;
                 let pos2 = system.particles[*p2].pos;
                 total += pos1.distance(pos2) / max_len;

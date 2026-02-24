@@ -41,7 +41,8 @@ pub fn process_splicer_agent(
                 // Signal success
                 vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
 
-                vm.output.push(format!("SPLICER: Split list at {},{}", wx, wy));
+                vm.output
+                    .push(format!("SPLICER: Split list at {},{}", wx, wy));
 
                 // Do not move if active
                 return Some((current_agent, None));

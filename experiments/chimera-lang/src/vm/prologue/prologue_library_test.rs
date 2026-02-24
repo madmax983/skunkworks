@@ -1,6 +1,6 @@
 use crate::ast::{Dna, Helix};
-use crate::vm::{ChimeraVM, Value};
 use crate::vm::prologue::exec_prologue_tick;
+use crate::vm::{ChimeraVM, Value};
 
 fn create_vm() -> ChimeraVM {
     let dna = Dna {
@@ -65,7 +65,10 @@ fn test_library_write_read() {
     // Agents run step 6.
     // At end of tick, signal_grid holds sink outputs.
 
-    assert_eq!(vm.prologue_state.signal_grid[5][5], Some(Value::Str("Ancient Knowledge".to_string())));
+    assert_eq!(
+        vm.prologue_state.signal_grid[5][5],
+        Some(Value::Str("Ancient Knowledge".to_string()))
+    );
 }
 
 #[test]
@@ -136,7 +139,9 @@ fn test_scholar_agent() {
 
     // Place Book
     vm.grid[5][6] = Value::Str("📖".to_string());
-    vm.prologue_state.library.insert("Lore".to_string(), Value::Int(100));
+    vm.prologue_state
+        .library
+        .insert("Lore".to_string(), Value::Int(100));
 
     // Place Scholar
     vm.grid[5][5] = Value::Str("🎓".to_string());
@@ -157,7 +162,7 @@ fn test_scholar_agent() {
         if let Value::Int(mode) = list[1] {
             assert_eq!(mode, 1);
         } else {
-             panic!("Mode not int");
+            panic!("Mode not int");
         }
     } else {
         panic!("Invalid state format");

@@ -69,7 +69,9 @@ impl Paradox {
                                     }
                                 }
                             }
-                            if found { break; }
+                            if found {
+                                break;
+                            }
                         }
                     }
                     found
@@ -85,7 +87,9 @@ impl Paradox {
                         Action::Set(dx, dy, val) => {
                             let (cy, cx) = vm.context_loc;
                             // normalize_coords handles topology
-                            if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+                            if let Some((ny, nx)) =
+                                vm.normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                            {
                                 vm.grid[ny][nx] = val.clone();
                             }
                         }
@@ -103,7 +107,9 @@ impl Paradox {
         // Example: "rule Test triggers always do log Hello"
         let parts: Vec<&str> = input.split_whitespace().collect();
         if parts.len() < 5 {
-            return Err("Invalid rule format. Usage: rule NAME triggers TRIGGER do ACTION".to_string());
+            return Err(
+                "Invalid rule format. Usage: rule NAME triggers TRIGGER do ACTION".to_string(),
+            );
         }
 
         if parts[0] != "rule" {
@@ -111,11 +117,17 @@ impl Paradox {
         }
 
         let name = parts[1].to_string();
-        let trigger_idx = parts.iter().position(|&x| x == "triggers").ok_or("Missing 'triggers'")?;
-        let do_idx = parts.iter().position(|&x| x == "do").ok_or("Missing 'do'")?;
+        let trigger_idx = parts
+            .iter()
+            .position(|&x| x == "triggers")
+            .ok_or("Missing 'triggers'")?;
+        let do_idx = parts
+            .iter()
+            .position(|&x| x == "do")
+            .ok_or("Missing 'do'")?;
 
         if trigger_idx > do_idx {
-             return Err("triggers must come before do".to_string());
+            return Err("triggers must come before do".to_string());
         }
 
         let trigger_str = parts[trigger_idx + 1];
@@ -132,8 +144,11 @@ impl Paradox {
                 Action::Log(msg)
             }
             "glitch" => {
-                let amount = parts.get(do_idx + 2).ok_or("Missing glitch amount")?
-                    .parse::<f32>().map_err(|_| "Invalid glitch amount")?;
+                let amount = parts
+                    .get(do_idx + 2)
+                    .ok_or("Missing glitch amount")?
+                    .parse::<f32>()
+                    .map_err(|_| "Invalid glitch amount")?;
                 Action::Glitch(amount)
             }
             "set" => {

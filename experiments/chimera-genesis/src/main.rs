@@ -81,10 +81,10 @@ impl GenesisGrid {
 
                 // Pop result
                 if let Some(res) = cell.vm.stack.pop() {
-                     match res {
-                         Value::Int(n) if n > 0 => next_states[idx] = true,
-                         _ => next_states[idx] = false,
-                     }
+                    match res {
+                        Value::Int(n) if n > 0 => next_states[idx] = true,
+                        _ => next_states[idx] = false,
+                    }
                 } else {
                     next_states[idx] = false;
                 }
@@ -106,7 +106,9 @@ impl GenesisGrid {
         // Moore Neighborhood (8)
         for dy in -1..=1 {
             for dx in -1..=1 {
-                if dx == 0 && dy == 0 { continue; }
+                if dx == 0 && dy == 0 {
+                    continue;
+                }
                 let nx = (x as isize + dx).rem_euclid(self.width as isize) as usize;
                 let ny = (y as isize + dy).rem_euclid(self.height as isize) as usize;
                 neighbors.push(self.cells[ny * self.width + nx].state);
@@ -121,37 +123,96 @@ fn create_conway_dna() -> Dna {
     let genes = vec![
         // 1. Store Self state to VM Grid (0,0)
         // Stack at start: [N1..N8, Self, 0, 0] (Top is 0)
-        Gene { op: OpCode::GWrite, args: vec![] },
+        Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        },
         // Stack now: [N1..N8] (Top is N8)
 
         // 2. Sum Neighbors (Consumes 8 values, pushes 1 sum)
-        Gene { op: OpCode::Add, args: vec![] },
-        Gene { op: OpCode::Add, args: vec![] },
-        Gene { op: OpCode::Add, args: vec![] },
-        Gene { op: OpCode::Add, args: vec![] },
-        Gene { op: OpCode::Add, args: vec![] },
-        Gene { op: OpCode::Add, args: vec![] },
-        Gene { op: OpCode::Add, args: vec![] }, // Sum (S) on stack
-
+        Gene {
+            op: OpCode::Add,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Add,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Add,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Add,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Add,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Add,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Add,
+            args: vec![],
+        }, // Sum (S) on stack
         // 3. Logic: Is3 || (Is2 && Self)
-        Gene { op: OpCode::Dup, args: vec![] }, // [S, S]
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(3)] }, // [S, S, 3]
-        Gene { op: OpCode::Eq, args: vec![] }, // [S, Is3]
-        Gene { op: OpCode::Swap, args: vec![] }, // [Is3, S]
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] }, // [Is3, S, 2]
-        Gene { op: OpCode::Eq, args: vec![] }, // [Is3, Is2]
-
+        Gene {
+            op: OpCode::Dup,
+            args: vec![],
+        }, // [S, S]
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(3)],
+        }, // [S, S, 3]
+        Gene {
+            op: OpCode::Eq,
+            args: vec![],
+        }, // [S, Is3]
+        Gene {
+            op: OpCode::Swap,
+            args: vec![],
+        }, // [Is3, S]
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(2)],
+        }, // [Is3, S, 2]
+        Gene {
+            op: OpCode::Eq,
+            args: vec![],
+        }, // [Is3, Is2]
         // Retrieve Self from Grid(0,0)
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // [Is3, Is2, 0]
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // [Is3, Is2, 0, 0]
-        Gene { op: OpCode::GRead, args: vec![] }, // [Is3, Is2, Self]
-
-        Gene { op: OpCode::Mul, args: vec![] }, // [Is3, Is2 && Self] (Simulate AND)
-        Gene { op: OpCode::Add, args: vec![] }, // [Is3 + (Is2 && Self)] (Simulate OR)
-
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }, // [Is3, Is2, 0]
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }, // [Is3, Is2, 0, 0]
+        Gene {
+            op: OpCode::GRead,
+            args: vec![],
+        }, // [Is3, Is2, Self]
+        Gene {
+            op: OpCode::Mul,
+            args: vec![],
+        }, // [Is3, Is2 && Self] (Simulate AND)
+        Gene {
+            op: OpCode::Add,
+            args: vec![],
+        }, // [Is3 + (Is2 && Self)] (Simulate OR)
         // Result > 0?
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-        Gene { op: OpCode::Gt, args: vec![] }, // > 0 -> 1 (True)
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        },
+        Gene {
+            op: OpCode::Gt,
+            args: vec![],
+        }, // > 0 -> 1 (True)
     ];
 
     Dna {
@@ -194,7 +255,12 @@ fn main() -> Result<()> {
 
             // Header
             let header = Paragraph::new(Line::from(vec![
-                Span::styled("Chimera Genesis 🧬", Style::default().fg(Color::Cyan).add_modifier(ratatui::style::Modifier::BOLD)),
+                Span::styled(
+                    "Chimera Genesis 🧬",
+                    Style::default()
+                        .fg(Color::Cyan)
+                        .add_modifier(ratatui::style::Modifier::BOLD),
+                ),
                 Span::raw(" - Evolutionary Cellular Automata"),
             ]));
             f.render_widget(header, chunks[0]);
@@ -207,7 +273,11 @@ fn main() -> Result<()> {
                     let idx = y * grid.width + x;
                     let cell = &grid.cells[idx];
                     let ch = if cell.state { "██" } else { "  " };
-                    let color = if cell.state { Color::Green } else { Color::DarkGray };
+                    let color = if cell.state {
+                        Color::Green
+                    } else {
+                        Color::DarkGray
+                    };
                     spans.push(Span::styled(ch, Style::default().fg(color)));
                 }
                 lines.push(Line::from(spans));
@@ -219,7 +289,10 @@ fn main() -> Result<()> {
 
             // Footer
             let status = if paused { "PAUSED" } else { "RUNNING" };
-            let footer = Paragraph::new(format!("Q: Quit | R: Reset | Space: Pause | Status: {}", status));
+            let footer = Paragraph::new(format!(
+                "Q: Quit | R: Reset | Space: Pause | Status: {}",
+                status
+            ));
             f.render_widget(footer, chunks[2]);
         })?;
 
@@ -281,7 +354,10 @@ mod tests {
 
         assert!(grid.cells[center].state, "Center should survive");
         assert!(grid.cells[center - 1].state, "Left neighbor should be born");
-        assert!(grid.cells[center + 1].state, "Right neighbor should be born");
+        assert!(
+            grid.cells[center + 1].state,
+            "Right neighbor should be born"
+        );
         assert!(!grid.cells[center - 5].state, "Top should die");
         assert!(!grid.cells[center + 5].state, "Bottom should die");
     }

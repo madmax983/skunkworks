@@ -82,14 +82,12 @@ fn nucleotide_strategy() -> impl Strategy<Value = Nucleotide> {
     ];
 
     leaf.prop_recursive(
-        8,  // Deeper than standard 4
+        8,   // Deeper than standard 4
         256, // More nodes
-        20, // Items per collection
+        20,  // Items per collection
         |inner| {
-            prop_oneof![
-                prop::collection::vec(inner, 0..20)
-                    .prop_map(|v| Nucleotide::Junction(JunctionType::Any, v)),
-            ]
+            prop_oneof![prop::collection::vec(inner, 0..20)
+                .prop_map(|v| Nucleotide::Junction(JunctionType::Any, v)),]
         },
     )
 }

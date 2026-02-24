@@ -145,7 +145,8 @@ pub fn process_weaver_agent(
             if vm.dna.helix.strands.len() < MAX_STRANDS {
                 vm.dna.helix.strands.push(Strand { genes });
                 let new_idx = vm.dna.helix.strands.len() - 1;
-                vm.output.push(format!("WEAVER: Synthesized Strand {}", new_idx));
+                vm.output
+                    .push(format!("WEAVER: Synthesized Strand {}", new_idx));
 
                 // Emitting success signal to Self
                 // Note: We can't easily modify signal_grid here as we don't have mutable ref to it
@@ -174,9 +175,9 @@ pub fn process_weaver_agent(
     let target = normalize_coords(y as i64 + dy, x as i64 + dx);
 
     if let Some((ny, nx)) = target {
-         if let Value::Int(0) = &grid_snapshot[ny][nx] {
-             return Some((updated_agent, Some((ny, nx))));
-         }
+        if let Value::Int(0) = &grid_snapshot[ny][nx] {
+            return Some((updated_agent, Some((ny, nx))));
+        }
     }
 
     Some((updated_agent, None))

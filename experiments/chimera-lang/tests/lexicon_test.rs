@@ -3,7 +3,8 @@ use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_lexicon_spell_casting() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -35,7 +36,8 @@ fn test_lexicon_spell_casting() {
 
 #[test]
 fn test_lexicon_vertical() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

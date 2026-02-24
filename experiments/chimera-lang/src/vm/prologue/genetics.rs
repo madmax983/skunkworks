@@ -54,7 +54,8 @@ pub fn apply_hybridize_rune(vm: &mut ChimeraVM, y: usize, x: usize) {
                     ));
                 }
             } else {
-                vm.output.push("GENETICS: Hybridization failed (MAX_STRANDS limit reached)".to_string());
+                vm.output
+                    .push("GENETICS: Hybridization failed (MAX_STRANDS limit reached)".to_string());
             }
         }
     }

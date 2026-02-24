@@ -3,7 +3,8 @@ use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value};
 
 fn make_dna(strands: Vec<Strand>) -> Dna {
-    Dna { evolution_config: None,
+    Dna {
+        evolution_config: None,
         helix: Helix { strands },
     }
 }
@@ -271,7 +272,8 @@ mod tests {
             op: OpCode::Nop,
             args: vec![],
         }];
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes }],
             },

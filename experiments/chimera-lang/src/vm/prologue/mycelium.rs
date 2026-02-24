@@ -32,7 +32,7 @@ pub fn apply_mycelium_runes(
 
             // So 📥 Propagation: Just acts as a wire/indicator?
             if w_sig.is_some() {
-                 if next_signals[y][x].is_none() {
+                if next_signals[y][x].is_none() {
                     next_signals[y][x] = Some(Value::Int(1));
                     changes = true;
                 }
@@ -43,7 +43,7 @@ pub fn apply_mycelium_runes(
             // Reads from buffer front (Peek)
             if !mycelium_buffer.is_empty() {
                 if let Some(val) = mycelium_buffer.front() {
-                     if next_signals[y][x].is_none() {
+                    if next_signals[y][x].is_none() {
                         next_signals[y][x] = Some(val.clone());
                         changes = true;
                     }
@@ -85,11 +85,11 @@ pub fn apply_mycelium_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) 
 
             if w_sig.is_some() {
                 if let Some(val) = vm.prologue_state.mycelium_buffer.pop_front() {
-                     if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
+                    if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
                         vm.grid[sy][sx] = val.clone();
                         vm.output.push(format!("MYCELIUM: Extracted {:?}", val));
                         vm.prologue_state.signal_grid[y][x] = Some(val);
-                     }
+                    }
                 }
             }
         }
@@ -174,15 +174,16 @@ pub fn apply_mycelium_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) 
                     if agent.x == x && agent.y == y {
                         // Mutate agent state using buffer?
                         if let Some(dna) = vm.prologue_state.mycelium_buffer.front() {
-                             // Apply DNA/Value to agent
-                             agent.state = dna.clone();
-                             mutated = true;
-                             vm.output.push(format!("MYCELIUM: Metamorphosis of Agent at {},{}", x, y));
+                            // Apply DNA/Value to agent
+                            agent.state = dna.clone();
+                            mutated = true;
+                            vm.output
+                                .push(format!("MYCELIUM: Metamorphosis of Agent at {},{}", x, y));
                         }
                     }
                 }
                 if mutated {
-                     vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                    vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
                 }
             }
         }

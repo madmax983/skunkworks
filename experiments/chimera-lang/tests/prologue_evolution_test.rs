@@ -5,7 +5,8 @@ use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_chaos_rune() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -29,7 +30,8 @@ fn test_chaos_rune() {
 
 #[test]
 fn test_register_rune() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -87,7 +89,8 @@ fn test_crossover_rune() {
         }],
     };
 
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![s0, s1],
         },

@@ -20,7 +20,8 @@ fn test_chemotaxis_gradient() {
             args: vec![],
         },
     ];
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },
@@ -64,7 +65,8 @@ fn test_chemotaxis_none() {
             args: vec![],
         },
     ];
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },

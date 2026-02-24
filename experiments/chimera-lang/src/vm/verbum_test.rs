@@ -16,14 +16,14 @@ mod tests {
     #[test]
     fn test_forge_and_invoke_manual() {
         let mut vm = ChimeraVM::new(make_empty_dna());
-        let genes = vec![
-            Gene {
-                op: OpCode::Push,
-                args: vec![Nucleotide::Number(42)],
-            },
-        ];
+        let genes = vec![Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(42)],
+        }];
 
-        let res = vm.verbum_forge.forge("Life".to_string(), genes.clone(), vec![]);
+        let res = vm
+            .verbum_forge
+            .forge("Life".to_string(), genes.clone(), vec![]);
         assert!(res.is_ok());
         let id = res.unwrap();
 
@@ -39,7 +39,7 @@ mod tests {
 
         vm.energy -= cost;
         for gene in genes {
-             let _ = vm.execute_gene_inner(gene.op, &gene.args);
+            let _ = vm.execute_gene_inner(gene.op, &gene.args);
         }
 
         assert_eq!(vm.energy, 5);
@@ -50,22 +50,34 @@ mod tests {
     #[test]
     fn test_opcode_forge() {
         let strand = Strand {
-            genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-            ]
+            genes: vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            }],
         };
 
         let forge_strand = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::String("Magic".to_string())] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-                Gene { op: OpCode::Forge, args: vec![] },
-            ]
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::String("Magic".to_string())],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(0)],
+                },
+                Gene {
+                    op: OpCode::Forge,
+                    args: vec![],
+                },
+            ],
         };
 
         let dna = Dna {
             evolution_config: None,
-            helix: Helix { strands: vec![strand, forge_strand] },
+            helix: Helix {
+                strands: vec![strand, forge_strand],
+            },
         };
         let mut vm = ChimeraVM::new(dna);
         vm.ip = (1, 0);
@@ -85,14 +97,25 @@ mod tests {
     #[test]
     fn test_opcode_speak() {
         let mut vm = ChimeraVM::new(make_empty_dna());
-        let genes = vec![Gene { op: OpCode::Push, args: vec![Nucleotide::Number(123)] }];
-        vm.verbum_forge.forge("Test".to_string(), genes, vec![]).unwrap();
+        let genes = vec![Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(123)],
+        }];
+        vm.verbum_forge
+            .forge("Test".to_string(), genes, vec![])
+            .unwrap();
 
         let invoke_strand = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::String("Test".to_string())] },
-                Gene { op: OpCode::Speak, args: vec![] },
-            ]
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::String("Test".to_string())],
+                },
+                Gene {
+                    op: OpCode::Speak,
+                    args: vec![],
+                },
+            ],
         };
         vm.dna.helix.strands.push(invoke_strand);
         vm.energy = 100;
@@ -101,23 +124,34 @@ mod tests {
         vm.step(); // Speak
 
         if vm.stack.len() != 1 || vm.stack[0] != Value::Int(123) {
-             println!("VM Output: {:?}", vm.output);
-             println!("Stack: {:?}", vm.stack);
-             panic!("Speak failed");
+            println!("VM Output: {:?}", vm.output);
+            println!("Stack: {:?}", vm.stack);
+            panic!("Speak failed");
         }
     }
 
     #[test]
     fn test_etymology() {
         let mut vm = ChimeraVM::new(make_empty_dna());
-        let genes = vec![Gene { op: OpCode::Add, args: vec![] }];
-        vm.verbum_forge.forge("Sum".to_string(), genes, vec![]).unwrap();
+        let genes = vec![Gene {
+            op: OpCode::Add,
+            args: vec![],
+        }];
+        vm.verbum_forge
+            .forge("Sum".to_string(), genes, vec![])
+            .unwrap();
 
         let etym_strand = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::String("Sum".to_string())] },
-                Gene { op: OpCode::Etymology, args: vec![] },
-            ]
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::String("Sum".to_string())],
+                },
+                Gene {
+                    op: OpCode::Etymology,
+                    args: vec![],
+                },
+            ],
         };
         vm.dna.helix.strands.push(etym_strand);
 

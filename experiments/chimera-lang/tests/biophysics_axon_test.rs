@@ -16,7 +16,8 @@ mod tests {
             }],
         };
 
-        Dna { evolution_config: None,
+        Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![strand0, strand1],
             },

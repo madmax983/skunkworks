@@ -126,7 +126,10 @@ impl PbdSystem {
     /// assert_eq!(idx, 0);
     /// ```
     pub fn add_particle(&mut self, pos: Vec3, mass: f32) -> usize {
-        assert!(mass >= 0.0 && mass.is_finite(), "Mass must be non-negative and finite");
+        assert!(
+            mass >= 0.0 && mass.is_finite(),
+            "Mass must be non-negative and finite"
+        );
         let idx = self.particles.len();
         self.particles.push(Particle {
             pos,

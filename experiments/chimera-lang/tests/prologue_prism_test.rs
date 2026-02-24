@@ -11,7 +11,8 @@ use chimera_lang::vm::{ChimeraVM, Value};
 #[cfg(feature = "nova")]
 fn test_prism_disperse() {
     // ▲: List -> N, E, S
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -56,7 +57,8 @@ fn test_prism_disperse() {
 #[cfg(feature = "nova")]
 fn test_prism_converge() {
     // ▼: N, E, S -> List
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -108,7 +110,8 @@ fn test_prism_sequence() {
             args: vec![],
         },
     ];
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },
@@ -136,7 +139,8 @@ fn test_prism_sequence() {
 #[cfg(feature = "nova")]
 fn test_prism_decompose() {
     // ⚛: "push(42)" -> N="push", S=[42]
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

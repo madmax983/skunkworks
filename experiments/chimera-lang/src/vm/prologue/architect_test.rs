@@ -12,14 +12,8 @@ fn test_architect_rotate() {
     vm.prologue_state.active = true;
 
     // Blueprint: [[1, 2], [3, 4]]
-    let row1 = Value::Junction(
-        JunctionType::Dish,
-        vec![Value::Int(1), Value::Int(2)],
-    );
-    let row2 = Value::Junction(
-        JunctionType::Dish,
-        vec![Value::Int(3), Value::Int(4)],
-    );
+    let row1 = Value::Junction(JunctionType::Dish, vec![Value::Int(1), Value::Int(2)]);
+    let row2 = Value::Junction(JunctionType::Dish, vec![Value::Int(3), Value::Int(4)]);
     let blueprint = Value::Junction(JunctionType::Dish, vec![row1, row2]);
 
     // Setup:
@@ -56,13 +50,7 @@ fn test_architect_rotate() {
     // Calling function directly is better for unit test.
     let mut next_signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
 
-    architect::apply_architect_runes(
-        "⟳",
-        5,
-        5,
-        &vm.prologue_state.signal_grid,
-        &mut next_signals,
-    );
+    architect::apply_architect_runes("⟳", 5, 5, &vm.prologue_state.signal_grid, &mut next_signals);
 
     let result = next_signals[5][5].clone();
     assert!(result.is_some());
@@ -74,12 +62,16 @@ fn test_architect_rotate() {
         if let Value::Junction(JunctionType::Dish, r1) = &rows[0] {
             assert_eq!(r1[0], Value::Int(3));
             assert_eq!(r1[1], Value::Int(1));
-        } else { panic!("Row 1 format error"); }
+        } else {
+            panic!("Row 1 format error");
+        }
 
         if let Value::Junction(JunctionType::Dish, r2) = &rows[1] {
             assert_eq!(r2[0], Value::Int(4));
             assert_eq!(r2[1], Value::Int(2));
-        } else { panic!("Row 2 format error"); }
+        } else {
+            panic!("Row 2 format error");
+        }
     } else {
         panic!("Result is not a Blueprint");
     }
@@ -97,9 +89,18 @@ fn test_architect_life() {
     // 0 1 0
     // 0 1 0
     // 0 1 0
-    let row1 = Value::Junction(JunctionType::Dish, vec![Value::Int(0), Value::Int(1), Value::Int(0)]);
-    let row2 = Value::Junction(JunctionType::Dish, vec![Value::Int(0), Value::Int(1), Value::Int(0)]);
-    let row3 = Value::Junction(JunctionType::Dish, vec![Value::Int(0), Value::Int(1), Value::Int(0)]);
+    let row1 = Value::Junction(
+        JunctionType::Dish,
+        vec![Value::Int(0), Value::Int(1), Value::Int(0)],
+    );
+    let row2 = Value::Junction(
+        JunctionType::Dish,
+        vec![Value::Int(0), Value::Int(1), Value::Int(0)],
+    );
+    let row3 = Value::Junction(
+        JunctionType::Dish,
+        vec![Value::Int(0), Value::Int(1), Value::Int(0)],
+    );
     let blueprint = Value::Junction(JunctionType::Dish, vec![row1, row2, row3]);
 
     vm.grid[5][5] = Value::Str("▓".to_string());
@@ -107,13 +108,7 @@ fn test_architect_life() {
 
     let mut next_signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
 
-    architect::apply_architect_runes(
-        "▓",
-        5,
-        5,
-        &vm.prologue_state.signal_grid,
-        &mut next_signals,
-    );
+    architect::apply_architect_runes("▓", 5, 5, &vm.prologue_state.signal_grid, &mut next_signals);
 
     let result = next_signals[5][5].clone();
     assert!(result.is_some());

@@ -5,7 +5,10 @@ use crate::vm::ChimeraVM;
 use crate::vm::Value;
 
 fn setup_vm() -> ChimeraVM {
-    let dna = Dna { evolution_config: None, helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        evolution_config: None,
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
     vm
@@ -67,7 +70,10 @@ fn test_spectral_red_logic() {
     if let Some(Value::Int(res)) = &vm.prologue_state.signal_grid[6][6] {
         assert_eq!(*res, 5, "Red Sub failed");
     } else {
-        panic!("Red Sub no signal: {:?}", vm.prologue_state.signal_grid[6][6]);
+        panic!(
+            "Red Sub no signal: {:?}",
+            vm.prologue_state.signal_grid[6][6]
+        );
     }
 
     // 2. Red XOR (^) -> Annihilation (10 + 5 = 15)

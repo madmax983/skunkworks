@@ -1,11 +1,14 @@
 use crate::ast::{Dna, Helix};
 use crate::vm::prologue::epigenetics::EpigeneticMark;
-use crate::vm::{ChimeraVM, Value};
 use crate::vm::prologue::exec_prologue_tick;
+use crate::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_chromatin_silencing() {
-    let dna = Dna { evolution_config: None, helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        evolution_config: None,
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -16,7 +19,10 @@ fn test_chromatin_silencing() {
 
     // Verify Source works initially
     exec_prologue_tick(&mut vm);
-    assert!(vm.prologue_state.signal_grid[6][5].is_some(), "Wire should receive signal initially");
+    assert!(
+        vm.prologue_state.signal_grid[6][5].is_some(),
+        "Wire should receive signal initially"
+    );
 
     // Spawn Chromatin Agent (χ) at (5, 6) targeted at '!' (at 5, 5)
     // State: [0, "!"] -> 0 = Methylate (Silence)
@@ -34,7 +40,11 @@ fn test_chromatin_silencing() {
 
     // Check Methylation
     let mark = vm.prologue_state.epigenetic_grid[5][5];
-    assert_eq!(mark, EpigeneticMark::Methylated, "Source '!' should be methylated");
+    assert_eq!(
+        mark,
+        EpigeneticMark::Methylated,
+        "Source '!' should be methylated"
+    );
 
     // Run tick - Source should be silenced
     exec_prologue_tick(&mut vm);
@@ -42,12 +52,18 @@ fn test_chromatin_silencing() {
     // Check if wire received signal
     // With '!' methylated, it should NOT emit.
     let signal = &vm.prologue_state.signal_grid[6][5];
-    assert!(signal.is_none(), "Wire should NOT receive signal when source is silenced");
+    assert!(
+        signal.is_none(),
+        "Wire should NOT receive signal when source is silenced"
+    );
 }
 
 #[test]
 fn test_chromatin_amplifying() {
-    let dna = Dna { evolution_config: None, helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        evolution_config: None,
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.prologue_state.active = true;
 
@@ -65,5 +81,9 @@ fn test_chromatin_amplifying() {
     exec_prologue_tick(&mut vm);
 
     let mark = vm.prologue_state.epigenetic_grid[5][5];
-    assert_eq!(mark, EpigeneticMark::Phosphorylated, "Gate '&' should be phosphorylated");
+    assert_eq!(
+        mark,
+        EpigeneticMark::Phosphorylated,
+        "Gate '&' should be phosphorylated"
+    );
 }

@@ -72,7 +72,12 @@ where
         // Actually, maybe random is better to get variety across the repo.
         // But for now, let's take every Kth element to spread it out.
         let step = all_signatures.len() / limit;
-        all_signatures.iter().step_by(step).take(limit).cloned().collect()
+        all_signatures
+            .iter()
+            .step_by(step)
+            .take(limit)
+            .cloned()
+            .collect()
     } else {
         all_signatures
     };
@@ -100,8 +105,7 @@ where
             _ => Color::White,
         };
 
-        let body = Body::new(pos_x, pos_y, mass, radius, color)
-            .with_signature(sig.clone());
+        let body = Body::new(pos_x, pos_y, mass, radius, color).with_signature(sig.clone());
 
         universe.add_body(body);
     }

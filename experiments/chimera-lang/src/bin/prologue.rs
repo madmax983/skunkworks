@@ -7,8 +7,7 @@ use std::path::Path;
 use chimera_lang::{
     ast::Dna,
     ast::Helix,
-    compiler,
-    prologue_compiler,
+    compiler, prologue_compiler,
     tui::{run_tui, ViewMode},
     vm::ChimeraVM,
     ChimeraParser, Rule,
@@ -77,7 +76,8 @@ fn main() -> Result<()> {
                 .next()
                 .ok_or_else(|| anyhow::anyhow!("No DNA found"))?;
             (
-                Dna::try_from_pair(dna_pair).map_err(|e| anyhow::anyhow!("DNA parse error: {}", e))?,
+                Dna::try_from_pair(dna_pair)
+                    .map_err(|e| anyhow::anyhow!("DNA parse error: {}", e))?,
                 None,
                 None,
                 HashMap::new(),
