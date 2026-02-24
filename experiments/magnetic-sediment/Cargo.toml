@@ -1,0 +1,13 @@
+[package]
+name = "magnetic-sediment"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+sysinfo = "0.30"
+rand = "0.8"
+chimera-lang = { path = "../chimera-lang", features = ["nova", "oracle", "elektra"] }
+physics-pbd = { path = "../../crates/physics-pbd" }
+flocking = { path = "../../crates/flocking" }
+locus = { path = "../../crates/locus" }
