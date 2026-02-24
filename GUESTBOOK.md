@@ -580,3 +580,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The agents are surfing the avalanches. Terraforming active.
 - **Note:** "We do not move the sand. The sand moves us."
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-tissue
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: The tissue is twitching. The muscle fibers are singing.
+- **Note**: "The code is the muscle."
