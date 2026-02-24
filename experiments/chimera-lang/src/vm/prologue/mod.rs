@@ -62,6 +62,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};
 
 pub mod alchemy;
+pub mod architect;
 pub mod biolum;
 pub mod chaos;
 pub mod chroma;
@@ -339,6 +340,13 @@ impl PrologueState {
                         // Construct
                             | "B"
                             | "Π"
+                        // Architect
+                            | "⟳"
+                            | "↔"
+                            | "↕"
+                            | "❏"
+                            | "▓"
+                            | "░"
                         // Virology
                             | "v"
                             | "i"
@@ -854,6 +862,9 @@ fn apply_propagation_rune(
         return true;
     }
     if construct::apply_construct_runes(rune, y, x, current_signals, next_delayed, grid) {
+        return true;
+    }
+    if architect::apply_architect_runes(rune, y, x, current_signals, next_signals) {
         return true;
     }
     if topology::apply_topology_runes(
@@ -1884,3 +1895,5 @@ mod prologue_spectral_evolution_test;
 
 #[cfg(test)]
 mod prologue_library_test;
+#[cfg(test)]
+mod architect_test;
