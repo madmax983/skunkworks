@@ -126,6 +126,7 @@ impl PbdSystem {
     /// assert_eq!(idx, 0);
     /// ```
     pub fn add_particle(&mut self, pos: Vec3, mass: f32) -> usize {
+        assert!(mass >= 0.0 && mass.is_finite(), "Mass must be non-negative and finite");
         let idx = self.particles.len();
         self.particles.push(Particle {
             pos,
@@ -260,6 +261,9 @@ impl PbdSystem {
                         factor,
                         stiffness,
                     } => {
+                        if !factor.is_finite() {
+                            continue;
+                        }
                         let target_len = min_len + (max_len - min_len) * factor;
                         Self::solve_distance(particles, *p1, *p2, target_len, *stiffness);
                     }
@@ -315,7 +319,7 @@ impl PbdSystem {
             (p.pos, p.inv_mass)
         };
 
-        if w1 + w2 == 0.0 {
+        if (w1 + w2).abs() < f32::EPSILON || !(w1 + w2).is_finite() {
             return;
         }
 
@@ -646,5 +650,49 @@ mod tests {
         let dist = system.particles[p1].pos.distance(system.particles[p2].pos);
         // Should expand towards 3.0
         assert!((dist - 3.0).abs() < 0.1);
+    }
+
+    #[test]
+    #[should_panic(expected = "Mass must be non-negative and finite")]
+    fn test_negative_mass_panic() {
+        let mut system = PbdSystem::new();
+        system.add_particle(Vec3::ZERO, -1.0);
+    }
+
+    #[test]
+    fn test_nan_mass_robustness() {
+        let mut system = PbdSystem::new();
+        let p1 = system.add_particle(Vec3::ZERO, 1.0); // Normal mass to start
+        let p2 = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
+
+        // Manually inject NaN into inv_mass to bypass add_particle check
+        // and verify solver robustness
+        system.particles[p1].inv_mass = f32::NAN;
+
+        system.add_distance_constraint(p1, p2, 1.0);
+        system.step(0.1, 10);
+
+        // p2 should remain finite
+        assert!(system.particles[p2].pos.is_finite());
+    }
+
+    #[test]
+    fn test_actuator_nan_factor_robustness() {
+        let mut system = PbdSystem::new();
+        let p1 = system.add_particle(Vec3::ZERO, 1.0);
+        let p2 = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
+
+        system.add_actuator_constraint(p1, p2, 1.0, 2.0, 1.0);
+
+        // Inject NaN factor
+        if let Constraint::Actuator { factor, .. } = &mut system.constraints[0] {
+            *factor = f32::NAN;
+        }
+
+        system.step(0.1, 10);
+
+        // Should be safe
+        assert!(system.particles[p1].pos.is_finite());
+        assert!(system.particles[p2].pos.is_finite());
     }
 }
