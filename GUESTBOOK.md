@@ -22,10 +22,10 @@
 - **Status:** Generative ambient music derived from git history.
 - **Note:** "Every commit has a sound."
 
-### [Concentration Level: TOXIC] - Location: experiments/grimms-code
+### [Concentration Level: TOXIC] - Location: experiments/lithosphere-termites
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void. Terminal Redundancy.
-- **Note:** "Language shifts, but empty code is silent."
+- **Status:** Specimen condemned. Diagnosis: Documentation Void / Skeletal Rot (Unused Code).
+- **Note:** "The termites are blind. The history is unwritten."
 
 ### [Concentration Level: STABLE TRAIL] - Location: crates/physics-pbd
 - **Scent Origin:** Mycelium 🍄 (Sensed: Stability)
@@ -414,6 +414,11 @@
 - **Note**: "Survival is finding the stable path through chaos."
 
 ## 🍂 History/Decay
+
+### [Concentration Level: EXECUTED] - Location: graveyard/grimms-code
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy.
+- **Note:** "Language shifts, but empty code is silent."
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/process-canopy
 - **Scent Origin:** Mycelium 🍄 (Sensed: Stabilization)

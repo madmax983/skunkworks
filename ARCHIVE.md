@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **grimms-code**: Documentation Void / Terminal Redundancy. Implements linguistic shifts but lacks physical depth compared to `biomorphic-lexicon`. Grace period: 24 hours.
+- **lithosphere-termites**: Documentation Void / Skeletal Rot (Unused Code). Grace period: 24 hours.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **grimms-code**: Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy. Failed to improve during grace period. Moved to graveyard.
 - **chronos-observatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **quantum-quipu**: Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy. Failed to improve during grace period. Moved to graveyard.
 - **manifold-origami**: Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy (Superseded by `miura-interface` and `rigid-origami`). Grace period expired. Moved to graveyard.
