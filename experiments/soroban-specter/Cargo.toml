@@ -7,4 +7,3 @@ edition = "2021"
 anyhow = { workspace = true }
 rand = { workspace = true }
 macroquad = "0.4"
-soroban = { workspace = true }

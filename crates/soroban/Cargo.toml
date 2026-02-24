@@ -1,8 +1,0 @@
-[package]
-name = "soroban"
-version = "0.1.0"
-edition = "2021"
-description = "A library for Soroban (Japanese Abacus) arithmetic."
-license = "MIT"
-
-[dependencies]

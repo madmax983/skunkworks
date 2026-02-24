@@ -1,5 +1,6 @@
 mod fluid;
 mod market;
+mod soroban;
 
 use fluid::FluidSolver;
 use macroquad::prelude::*;
@@ -247,13 +248,11 @@ async fn main() -> anyhow::Result<()> {
                     } else {
                         -5.0
                     } // Down / Up
+                } else if change.active {
+                    -5.0
                 } else {
-                    if change.active {
-                        -5.0
-                    } else {
-                        5.0
-                    } // Up / Down
-                };
+                    5.0
+                }; // Up / Down
 
                 fluid.add_velocity(fx, fy, 0.0, vy);
             }
