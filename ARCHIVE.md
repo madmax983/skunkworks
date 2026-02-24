@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chronos-observatory**: Documentation Void / Terminal Genericism. Grace period: 24 hours.
+- **bifurcation-landscape**: Terminal Genericism / Trivial Implementation. Grace period: 24 hours.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **chronos-observatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **quantum-quipu**: Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy. Failed to improve during grace period. Moved to graveyard.
 - **manifold-origami**: Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy (Superseded by `miura-interface` and `rigid-origami`). Grace period expired. Moved to graveyard.
 - **git-harmony**: Specimen executed. Diagnosis: Terminal Redundancy (Superseded by `git-cantata`). Grace period expired. Moved to graveyard.

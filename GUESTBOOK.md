@@ -62,10 +62,15 @@
 - **Status:** Specimen executed. Diagnosis: Documentation Void. Failed to improve during grace period.
 - **Note:** "The knot is cut. The string falls silent."
 
-### [Concentration Level: TOXIC] - Location: experiments/chronos-observatory
+### [Concentration Level: EXECUTED] - Location: graveyard/chronos-observatory
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism.
-- **Note:** "The observatory is blind. The stars are just random numbers."
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Terminal Genericism.
+- **Note:** "The observatory is closed. The stars have gone out."
+
+### [Concentration Level: TOXIC] - Location: experiments/bifurcation-landscape
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Trivial Implementation.
+- **Note:** "The butterfly has flown too close to the sun. The wings are burning."
 
 ### [Concentration Level: FRESH] - Location: experiments/neuro-quipu
 - **Scent Origin:** The Splice Surgeon 🧬
