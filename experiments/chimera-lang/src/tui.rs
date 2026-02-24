@@ -170,6 +170,8 @@ pub enum ViewMode {
     Codex,
     #[cfg(feature = "nova")]
     Verbum,
+    #[cfg(feature = "nova")]
+    Opera,
 }
 
 enum InputMode {
@@ -1161,6 +1163,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Verbum = app_state.view_mode {
                 render_verbum(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Opera = app_state.view_mode {
+                render_opera(f, vm, app_state);
                 return;
             }
 
@@ -3081,7 +3089,10 @@ where
                             ViewMode::Paradox => ViewMode::Codex,
                             #[cfg(feature = "nova")]
                             ViewMode::Codex => ViewMode::Verbum,
-                            ViewMode::Verbum => ViewMode::Genome,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Verbum => ViewMode::Opera,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Opera => ViewMode::Genome,
                         };
                     }
                     #[cfg(feature = "nova")]
@@ -3348,8 +3359,12 @@ where
                                 crate::opcode::OpCode::Refract,
                                 &[],
                             );
+                        } else if let ViewMode::Orca = app_state.view_mode {
+                            app_state.view_mode = ViewMode::Opera;
+                            app_state.status_msg = "Switched to Opera View".to_string();
                         } else {
                             app_state.view_mode = ViewMode::Orca;
+                            app_state.status_msg = "Switched to Orca View".to_string();
                         }
                     }
                     #[cfg(feature = "nova")]
@@ -13307,4 +13322,108 @@ fn render_verbum(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     ];
     let help_p = Paragraph::new(help).block(Block::default().borders(Borders::ALL).title("Lexical Guide"));
     f.render_widget(help_p, right_chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_opera(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    // Opera Grid
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = &vm.grid[y][x];
+            let mut style = Style::default();
+            let mut ch = "·".to_string();
+
+            if let crate::vm::Value::Str(s) = val {
+                if s == "𝄞" {
+                    ch = "𝄞".to_string();
+                    style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
+                } else if s == "𝄇" || s == "♯" || s == "♭" || s == "♮" {
+                    ch = s.clone();
+                    style = style.fg(Color::Cyan);
+                } else {
+                    ch = s.chars().next().unwrap_or(' ').to_string();
+                     style = style.fg(Color::DarkGray);
+                }
+            } else if let crate::vm::Value::Int(n) = val {
+                if *n > 0 {
+                    ch = format!("{}", n % 10);
+                    style = style.fg(Color::Green);
+                }
+            }
+
+            // Highlight Signal
+            if vm.prologue_state.signal_grid[y][x].is_some() {
+                 style = style.bg(Color::White).fg(Color::Black);
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Opera House (Grid)"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Right: Score & Status
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(chunks[1]);
+
+    // Status
+    let key_name = match vm.prologue_state.opera_state.key {
+        0 => "C",
+        1 => "C#",
+        2 => "D",
+        3 => "D#",
+        4 => "E",
+        5 => "F",
+        6 => "F#",
+        7 => "G",
+        8 => "G#",
+        9 => "A",
+        10 => "A#",
+        11 => "B",
+        _ => "?",
+    };
+
+    let info = vec![
+        Line::from("THE GENETIC OPERA"),
+        Line::from(" "),
+        Line::from(format!("Tempo: {} BPM", vm.prologue_state.opera_state.tempo)),
+        Line::from(format!("Key:   {} ({})", key_name, vm.prologue_state.opera_state.key)),
+        Line::from(" "),
+        Line::from("Runes:"),
+        Line::from("  𝄞  Conductor (Agent)"),
+        Line::from("  𝄇  Repeat (Loop)"),
+        Line::from("  ♯  Sharp (Key +1)"),
+        Line::from("  ♭  Flat (Key -1)"),
+        Line::from("  ♮  Natural (Reset)"),
+    ];
+    let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Maestro"));
+    f.render_widget(info_widget, right_chunks[0]);
+
+    // History
+    let mut history_items = Vec::new();
+    for msg in &vm.prologue_state.opera_state.history {
+        history_items.push(ListItem::new(msg.clone()).style(Style::default().fg(Color::Magenta)));
+    }
+    let history_list = List::new(history_items).block(Block::default().borders(Borders::ALL).title("Score (History)"));
+    f.render_widget(history_list, right_chunks[1]);
 }

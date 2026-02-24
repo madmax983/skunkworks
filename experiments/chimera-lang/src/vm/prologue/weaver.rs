@@ -23,7 +23,7 @@ pub fn process_weaver_agent(
     grid_snapshot: &[Vec<Value>],
 ) -> Option<(super::PrologueAgent, Option<(usize, usize)>)> {
     let (y, x) = (agent.y, agent.x);
-    let mut updated_agent = agent.clone();
+    let updated_agent = agent.clone();
 
     // 1. Scan West for Blueprint Signal
     // We need to check the *signal grid*, but process_weaver_agent receives *grid_snapshot* (physical grid).

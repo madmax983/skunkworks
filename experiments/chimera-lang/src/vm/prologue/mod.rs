@@ -97,6 +97,7 @@ pub mod narrative;
 pub mod necromancy;
 #[cfg(feature = "biophysics")]
 pub mod neural;
+pub mod opera;
 pub mod optics;
 pub mod oracle;
 pub mod pandemonium;
@@ -191,6 +192,9 @@ pub struct PrologueState {
     /// Mycelium Buffer (Shared Network Storage)
     #[serde(default)]
     pub mycelium_buffer: VecDeque<Value>,
+    /// Opera State (Genetic Music)
+    #[serde(default = "default_opera_state")]
+    pub opera_state: opera::OperaState,
     /// Scratch buffer for signal propagation (Double Buffering).
     #[serde(skip, default)]
     pub scratch_signal_grid: Vec<Vec<Option<Value>>>,
@@ -205,6 +209,10 @@ fn default_logos_engine() -> logos::LogosEngine {
 
 fn default_epigenetic_grid() -> Vec<Vec<epigenetics::EpigeneticMark>> {
     vec![vec![epigenetics::EpigeneticMark::None; GRID_SIZE]; GRID_SIZE]
+}
+
+fn default_opera_state() -> opera::OperaState {
+    opera::OperaState::new()
 }
 
 impl PrologueState {
@@ -231,6 +239,7 @@ impl PrologueState {
             rhythm_state: rhythm::RhythmState::default(),
             mycelium_network: HashSet::new(),
             mycelium_buffer: VecDeque::new(),
+            opera_state: opera::OperaState::new(),
             scratch_signal_grid: vec![vec![None; GRID_SIZE]; GRID_SIZE],
             custom_runes: HashMap::new(),
         }
@@ -498,6 +507,9 @@ impl PrologueState {
                             | "⨁"
                             // Mesmerist
                             | "🌀"
+                            // Conductor (Opera)
+                            | "𝄞"
+                            | "𝄇" | "♯" | "♭" | "♮"
                     ) {
                         self.runes.insert((y, x));
 
@@ -508,6 +520,7 @@ impl PrologueState {
                             || s == "♻"
                             || s == "♬"
                             || s == "🌀"
+                            || s == "𝄞"
                             || s == "₣"
                             || s == "ζ"
                             || s == "Φ"
@@ -571,6 +584,8 @@ impl PrologueState {
                                         crate::ast::JunctionType::All,
                                         vec![Value::Int(0), Value::Int(0), Value::Int(0), Value::Int(0)],
                                     )
+                                } else if s == "𝄞" {
+                                    Value::Int(0) // Conductor default state
                                 } else {
                                     Value::Int(0)
                                 }
@@ -772,6 +787,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     vm.prologue_state.orca_mode,
                     &mut vm.prologue_state.hyper_state,
                     &mut vm.prologue_state.rhythm_state,
+                    &mut vm.prologue_state.opera_state,
                     #[cfg(feature = "resonance")]
                     &vm.audio_tx,
                     #[cfg(not(feature = "resonance"))]
@@ -826,6 +842,7 @@ fn apply_propagation_rune(
     orca_mode: bool,
     hyper_state: &mut hyper::HyperState,
     rhythm_state: &mut rhythm::RhythmState,
+    _opera_state: &mut opera::OperaState,
     #[cfg(feature = "resonance")] audio_tx: &Option<
         crossbeam_channel::Sender<resonance_audio::audio::AudioCommand>,
     >,
@@ -1010,8 +1027,10 @@ fn apply_propagation_rune(
 /// They do not propagate signals further in the same tick (usually).
 fn process_sinks(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
     let runes: Vec<(usize, usize)> = vm.prologue_state.runes.iter().cloned().collect();
+    // println!("DEBUG: Processing {} sinks", runes.len());
 
     for (y, x) in &runes {
+        // println!("DEBUG: Sink at {},{}", x, y);
         if let Value::Str(s) = &grid[*y][*x] {
             let mark = vm.prologue_state.epigenetic_grid[*y][*x];
             if mark == epigenetics::EpigeneticMark::Methylated {
@@ -1261,6 +1280,9 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
 
             library::apply_library_sinks(vm, rune, y, x);
             runecraft::apply_runecraft_sinks(vm, rune, y, x);
+
+            // Opera Runes as Sinks (State Change)
+            opera::apply_opera_runes(rune, y, x, &mut vm.prologue_state.opera_state, &mut vm.prologue_state.signal_grid);
         }
     }
 }
@@ -1712,6 +1734,14 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 Some(t) => Some(t),
                 None => None,
             }
+        } else if current_type == "𝄞" {
+            match opera::process_conductor_logic(vm, &agent, grid_snapshot) {
+                Some((updated_agent, t)) => {
+                    agent = updated_agent;
+                    t
+                }
+                None => continue,
+            }
         } else {
             process_seeker_logic(vm, &agent, grid_snapshot)
         };
@@ -1738,6 +1768,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "🛠"
                 || current_type == "🎓"
                 || current_type == "🌀"
+                || current_type == "𝄞"
             {
                 vm.prologue_state.registers.insert(
                     (ny, nx),
@@ -1768,6 +1799,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                     || current_type == "🛠"
                     || current_type == "🎓"
                     || current_type == "🌀"
+                    || current_type == "𝄞"
                 {
                     vm.prologue_state.registers.remove(&(y, x));
                 }
@@ -1796,6 +1828,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "🛠"
                 || current_type == "🎓"
                 || current_type == "🌀"
+                || current_type == "𝄞"
             {
                 vm.prologue_state.registers.insert(
                     (y, x),
@@ -1952,3 +1985,4 @@ mod prologue_library_test;
 mod architect_test;
 #[cfg(test)]
 mod mesmerist_test;
+#[cfg(test)] mod prologue_opera_test;

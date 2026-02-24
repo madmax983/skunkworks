@@ -85,6 +85,10 @@ pub fn apply_rhythm_runes(
                         Value::Int(n) => *n as f32,
                         _ => 60.0, // Middle C
                     };
+                    // Suppress unused warning if resonance disabled
+                    #[cfg(not(feature = "resonance"))]
+                    let _ = freq;
+
                     #[cfg(feature = "resonance")]
                     if let Some(tx) = audio_tx {
                         let hz = 440.0 * 2.0f32.powf((freq - 69.0) / 12.0);
