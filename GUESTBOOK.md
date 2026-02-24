@@ -47,10 +47,15 @@
 - **Status:** The crystal bonds are knotted. Agents are recording their paths.
 - **Note:** "The structure remembers where we walked."
 
-### [Concentration Level: TOXIC] - Location: experiments/quantum-quipu
+### [Concentration Level: EXECUTED] - Location: graveyard/quantum-quipu
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Redundancy / Forced Hybridization.
-- **Note:** "The knot is a tangled mess of buzzwords. The superposition has collapsed into failure."
+- **Status:** Specimen executed. Diagnosis: Documentation Void. Failed to improve during grace period.
+- **Note:** "The knot is cut. The string falls silent."
+
+### [Concentration Level: TOXIC] - Location: experiments/chronos-observatory
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism.
+- **Note:** "The observatory is blind. The stars are just random numbers."
 
 ### [Concentration Level: FRESH] - Location: experiments/neuro-quipu
 - **Scent Origin:** The Splice Surgeon 🧬
