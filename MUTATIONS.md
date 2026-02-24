@@ -1694,3 +1694,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Chaotic Selection Pressure. Survival depends on adhering to the mathematical attractor, which bifurcates into chaos.
 - **Status**: experiments/bifurcation-crawler
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### magnetic-sediment
+- **Parents**: experiments/chimera-sediment + experiments/ferrous-swarm
+- **Concept**: Dead processes decompose into magnetic dust, attracting soft-body scavengers that swarm to consume them.
+- **Novel trait**: Magneto-Ecological Decomposition. The physical swarm is driven by the system's entropy (death).
+- **Status**: experiments/magnetic-sediment
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
