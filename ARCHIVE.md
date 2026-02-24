@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **bifurcation-landscape**: Terminal Genericism / Trivial Implementation. Grace period: 24 hours.
+- **synaptic-swarm**: Documentation Void / Structural Collapse (Compilation Failure). Grace period: 24 hours.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
