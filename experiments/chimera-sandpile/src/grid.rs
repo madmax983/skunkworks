@@ -49,7 +49,8 @@ impl SandGrid {
         let current_cells = &self.cells;
 
         // Parallel update calculation
-        let toppled_indices: Vec<usize> = self.next_cells
+        let toppled_indices: Vec<usize> = self
+            .next_cells
             .par_iter_mut()
             .enumerate()
             .map(|(i, next_cell)| {

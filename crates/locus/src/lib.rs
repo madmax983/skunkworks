@@ -741,13 +741,17 @@ impl Topology {
         let w = width as i64;
         let h = height as i64;
 
+        // Optimization: Fast path for in-bounds coordinates.
+        // For all topologies, if the coordinates are within the grid bounds,
+        // no wrapping or twisting is needed. This avoids expensive division/modulo operations.
+        if x >= 0 && x < w && y >= 0 && y < h {
+            return Some((y as usize, x as usize));
+        }
+
         match self {
             Topology::Plane | Topology::Hyperbolic => {
-                if x >= 0 && x < w && y >= 0 && y < h {
-                    Some((y as usize, x as usize))
-                } else {
-                    None
-                }
+                // If we reached here, coordinates are out of bounds.
+                None
             }
             Topology::Torus => {
                 let ny = y.rem_euclid(h);

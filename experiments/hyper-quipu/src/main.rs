@@ -4,10 +4,7 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use hyper_system::{
-    math::Vec4,
-    monitor::SystemMonitor,
-};
+use hyper_system::{math::Vec4, monitor::SystemMonitor};
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
@@ -114,7 +111,9 @@ impl App {
 
         // Add knots
         for (i, cpu) in cpus.iter().enumerate() {
-            if i >= self.cords.len() { break; }
+            if i >= self.cords.len() {
+                break;
+            }
 
             let load = cpu.cpu_usage() / 100.0; // Normalize to 0.0 - 1.0
             let cord = &mut self.cords[i];

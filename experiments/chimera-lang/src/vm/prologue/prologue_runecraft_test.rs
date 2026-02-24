@@ -1,13 +1,16 @@
 #[cfg(test)]
 mod tests {
-    use crate::vm::ChimeraVM;
-    use crate::vm::Value;
-    use crate::ast::{Dna, Helix, Strand, Gene};
+    use crate::ast::{Dna, Gene, Helix, Strand};
     use crate::opcode::OpCode;
     use crate::vm::prologue::exec_prologue_tick;
+    use crate::vm::ChimeraVM;
+    use crate::vm::Value;
 
     fn create_vm() -> ChimeraVM {
-        let dna = Dna { evolution_config: None, helix: Helix { strands: vec![] } };
+        let dna = Dna {
+            evolution_config: None,
+            helix: Helix { strands: vec![] },
+        };
         let mut vm = ChimeraVM::new(dna);
         vm.prologue_state.active = true;
         vm
@@ -48,8 +51,14 @@ mod tests {
 
         // 1. Add a Strand 1: "Hello World" print
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![crate::ast::Nucleotide::String("Runs!".to_string())] },
-            Gene { op: OpCode::Print, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![crate::ast::Nucleotide::String("Runs!".to_string())],
+            },
+            Gene {
+                op: OpCode::Print,
+                args: vec![],
+            },
         ];
         vm.dna.helix.strands.push(Strand { genes });
 
@@ -60,8 +69,8 @@ mod tests {
         vm.grid[5][5] = Value::Str("R".to_string());
         vm.grid[5][4] = Value::Int(1);
         vm.grid[5][4] = Value::Str("!".to_string()); // Source emitting to East (towards R)
-        // Wait, ! reads from West and emits to Self.
-        // So ! at 5,4 needs input at 5,3.
+                                                     // Wait, ! reads from West and emits to Self.
+                                                     // So ! at 5,4 needs input at 5,3.
         vm.grid[5][3] = Value::Int(1);
 
         // Or simpler: put signal directly on signal_grid manually for test

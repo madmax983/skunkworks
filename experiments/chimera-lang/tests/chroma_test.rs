@@ -1,12 +1,13 @@
 #[cfg(test)]
 mod tests {
-    use chimera_lang::vm::ChromaCell;
-    use chimera_lang::vm::{ChimeraVM, Value};
     use chimera_lang::ast::{Dna, Helix};
     use chimera_lang::vm::prologue::exec_prologue_tick;
+    use chimera_lang::vm::ChromaCell;
+    use chimera_lang::vm::{ChimeraVM, Value};
 
     fn make_vm() -> ChimeraVM {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -40,7 +41,10 @@ mod tests {
         // Result at South (6,5) should be (5+5)*2 = 20
         match &vm.prologue_state.signal_grid[6][5] {
             Some(Value::Int(n)) => assert_eq!(*n, 20, "Expected Red Amplification (20), got {}", n),
-            _ => panic!("Expected signal at output, got {:?}", vm.prologue_state.signal_grid[6][5]),
+            _ => panic!(
+                "Expected signal at output, got {:?}",
+                vm.prologue_state.signal_grid[6][5]
+            ),
         }
     }
 
@@ -67,8 +71,11 @@ mod tests {
         match &vm.prologue_state.signal_grid[6][5] {
             Some(Value::Str(s)) => {
                 assert_eq!(s, "AABB");
-            },
-            _ => panic!("Expected string signal, got {:?}", vm.prologue_state.signal_grid[6][5]),
+            }
+            _ => panic!(
+                "Expected string signal, got {:?}",
+                vm.prologue_state.signal_grid[6][5]
+            ),
         }
     }
 
@@ -94,7 +101,10 @@ mod tests {
 
         match &vm.prologue_state.signal_grid[6][5] {
             Some(Value::Int(n)) => assert_eq!(*n, 1, "Expected Blue Logic AND (1), got {}", n),
-            _ => panic!("Expected signal, got {:?}", vm.prologue_state.signal_grid[6][5]),
+            _ => panic!(
+                "Expected signal, got {:?}",
+                vm.prologue_state.signal_grid[6][5]
+            ),
         }
     }
 }

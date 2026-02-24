@@ -37,9 +37,10 @@ pub fn process_plasmid_logic(
             if s == "!" {
                 // Check signal grid at (wy, wx)
                 if let Some(sig) = &vm.prologue_state.signal_grid[wy][wx] {
-                     // Update Agent State with Payload
+                    // Update Agent State with Payload
                     current_agent.state = sig.clone();
-                    vm.output.push(format!("PLASMID: Absorbed payload {:?}", sig));
+                    vm.output
+                        .push(format!("PLASMID: Absorbed payload {:?}", sig));
                 }
             }
         }
@@ -65,11 +66,13 @@ pub fn process_plasmid_logic(
                     }
 
                     if s == "C" {
-                         // Inject into Critter
+                        // Inject into Critter
                         let target_state = vm.prologue_state.registers.get(&(ny, nx)).cloned();
 
                         if let Some(Value::Str(state_str)) = target_state {
-                            if let Ok(mut critter) = state_str.parse::<super::critter::CritterState>() {
+                            if let Ok(mut critter) =
+                                state_str.parse::<super::critter::CritterState>()
+                            {
                                 let gene = match &payload {
                                     Value::Str(g) => g.clone(),
                                     Value::Int(i) => format!("{}", i),
@@ -78,13 +81,21 @@ pub fn process_plasmid_logic(
                                 critter.genes.push_str(&gene);
                                 let new_state = critter.to_value();
                                 vm.prologue_state.registers.insert((ny, nx), new_state);
-                                vm.output.push(format!("PLASMID: Conjugated gene '{}' into Critter at {},{}", gene, nx, ny));
+                                vm.output.push(format!(
+                                    "PLASMID: Conjugated gene '{}' into Critter at {},{}",
+                                    gene, nx, ny
+                                ));
                             }
                         }
                     } else {
                         // Overwrite simple agent state
-                        vm.prologue_state.registers.insert((ny, nx), payload.clone());
-                         vm.output.push(format!("PLASMID: Conjugated payload into {} at {},{}", s, nx, ny));
+                        vm.prologue_state
+                            .registers
+                            .insert((ny, nx), payload.clone());
+                        vm.output.push(format!(
+                            "PLASMID: Conjugated payload into {} at {},{}",
+                            s, nx, ny
+                        ));
                     }
                 }
             }
@@ -98,7 +109,7 @@ pub fn process_plasmid_logic(
         if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
             // Can only move to empty space or Wire
             if let Value::Int(0) = &grid_snapshot[ny][nx] {
-                 possible_moves.push((ny, nx));
+                possible_moves.push((ny, nx));
             } else if let Value::Str(s) = &grid_snapshot[ny][nx] {
                 if s == "~" {
                     possible_moves.push((ny, nx));

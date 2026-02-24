@@ -4,7 +4,8 @@ use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_void_overflow_protection() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes: vec![] }],
         },

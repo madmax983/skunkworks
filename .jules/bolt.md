@@ -9,3 +9,7 @@
 **[Performance]**
 **Learning:** Replacing `sqrt` + `div` with `rsqrt` (`length_recip`) + `mul` was slower (regression ~5%). Division is heavily optimized in modern CPUs and `rsqrt` precision/latency might not be better.
 **Action:** Always benchmark `div -> mul` optimizations; they are not guaranteed wins.
+
+**[Unchecked PBD Regression]**
+**Learning:** Attempted to optimize `physics-pbd` constraint solver using `unsafe { get_unchecked }` to skip bounds checks. Resulted in NO performance gain (or slight regression) compared to safe indexing, likely due to compiler already optimizing bounds checks or poor interaction with `#[inline]`.
+**Action:** Do not reach for `unsafe` purely for array indexing unless the profiler explicitly points to bounds checks as a bottleneck AND benchmarks prove the win. Safe Rust is fast enough.

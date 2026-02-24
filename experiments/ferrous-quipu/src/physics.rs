@@ -285,12 +285,12 @@ impl Universe {
 
             // Trail
             if rand::random::<u8>() % 20 == 0 {
-                 // Clone pos to avoid borrow checker issues? No, Vec2 is Copy.
-                 let p = body.pos;
-                 body.trail.push(p);
-                 if body.trail.len() > 10 {
-                     body.trail.remove(0);
-                 }
+                // Clone pos to avoid borrow checker issues? No, Vec2 is Copy.
+                let p = body.pos;
+                body.trail.push(p);
+                if body.trail.len() > 10 {
+                    body.trail.remove(0);
+                }
             }
         }
 

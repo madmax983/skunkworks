@@ -277,6 +277,9 @@ fn compose_dna(vm: &mut ChimeraVM, notes: &[u8]) {
     if !genes.is_empty() {
         let new_strand = Strand { genes };
         vm.dna.helix.strands.push(new_strand);
-        vm.output.push(format!("SIREN: Composed new strand with {} genes.", notes.len()));
+        vm.output.push(format!(
+            "SIREN: Composed new strand with {} genes.",
+            notes.len()
+        ));
     }
 }

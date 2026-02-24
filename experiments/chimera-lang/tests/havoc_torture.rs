@@ -8,7 +8,8 @@ mod tests {
     use strum::IntoEnumIterator;
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
-        Dna { evolution_config: None,
+        Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes }],
             },
@@ -67,7 +68,8 @@ mod tests {
             },
         ];
 
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes }],
             },

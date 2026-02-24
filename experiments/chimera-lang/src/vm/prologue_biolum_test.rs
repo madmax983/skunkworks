@@ -6,7 +6,8 @@ use crate::vm::Value;
 
 #[test]
 fn test_biolum_emitter() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -35,7 +36,8 @@ fn test_biolum_emitter() {
 
 #[test]
 fn test_biolum_sensor() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -64,7 +66,8 @@ fn test_biolum_sensor() {
 
 #[test]
 fn test_biolum_absorber() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

@@ -5,7 +5,8 @@ use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_superpose_depth_limit_enforced() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

@@ -142,10 +142,16 @@ impl Value {
         match self {
             Value::Int(_) | Value::Str(_) | Value::Symbol(_) | Value::Color(_, _, _) => 1,
             Value::Junction(_, vals) => {
-                1 + vals.iter().map(|v| v.complexity_safe(depth + 1)).sum::<usize>()
+                1 + vals
+                    .iter()
+                    .map(|v| v.complexity_safe(depth + 1))
+                    .sum::<usize>()
             }
             Value::Superposition(states) => {
-                1 + states.iter().map(|(v, _)| v.complexity_safe(depth + 1)).sum::<usize>()
+                1 + states
+                    .iter()
+                    .map(|(v, _)| v.complexity_safe(depth + 1))
+                    .sum::<usize>()
             }
         }
     }

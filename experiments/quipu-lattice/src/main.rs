@@ -172,7 +172,8 @@ impl QuipuLattice {
             for j in (i + 1)..n {
                 let p1 = lattice.points[i];
                 let p2 = lattice.points[j];
-                let dist_sq = (p1[0] - p2[0]).powi(2) + (p1[1] - p2[1]).powi(2) + (p1[2] - p2[2]).powi(2);
+                let dist_sq =
+                    (p1[0] - p2[0]).powi(2) + (p1[1] - p2[1]).powi(2) + (p1[2] - p2[2]).powi(2);
 
                 let threshold = match l_type {
                     LatticeType::SimpleCubic => 1.1,
@@ -194,7 +195,7 @@ impl QuipuLattice {
         let mut agents = Vec::with_capacity(num_agents);
         let mut rng = rand::thread_rng();
         for _ in 0..num_agents {
-             agents.push(Agent::new(rng.gen_range(0..n)));
+            agents.push(Agent::new(rng.gen_range(0..n)));
         }
 
         Self {
@@ -230,11 +231,11 @@ impl QuipuLattice {
                     } else {
                         // Pick a random neighbor
                         if let Some(neighbors) = self.adj.get(agent.node_idx) {
-                             if !neighbors.is_empty() {
-                                 let target = neighbors[rng.gen_range(0..neighbors.len())];
-                                 agent.target_node_idx = Some(target);
-                                 agent.progress = 0.0;
-                             }
+                            if !neighbors.is_empty() {
+                                let target = neighbors[rng.gen_range(0..neighbors.len())];
+                                agent.target_node_idx = Some(target);
+                                agent.progress = 0.0;
+                            }
                         }
                     }
                 }
@@ -255,10 +256,10 @@ impl QuipuLattice {
                                 let new_val = cord.value() + 1;
                                 // Limit to avoid massive cords
                                 if new_val < 999 {
-                                     *cord = Cord::from(new_val);
+                                    *cord = Cord::from(new_val);
                                 } else {
-                                     // Reset on overflow to keep it dynamic
-                                     *cord = Cord::from(0);
+                                    // Reset on overflow to keep it dynamic
+                                    *cord = Cord::from(0);
                                 }
                             }
                         }
@@ -336,7 +337,7 @@ impl App {
             KeyCode::Char('-') => self.camera.zoom /= 1.1,
             KeyCode::Char(' ') => self.change_lattice(),
             KeyCode::Char('r') => {
-                 self.sim = QuipuLattice::new(self.sim.lattice_type, 2); // Reset
+                self.sim = QuipuLattice::new(self.sim.lattice_type, 2); // Reset
             }
             _ => {}
         }
@@ -354,22 +355,9 @@ impl App {
 
         // Render Lists
         enum Item {
-            Agent {
-                x: f64,
-                y: f64,
-                state: AgentState,
-            },
-            Knot {
-                x: f64,
-                y: f64,
-                symbol: String,
-            },
-            Line {
-                x1: f64,
-                y1: f64,
-                x2: f64,
-                y2: f64,
-            },
+            Agent { x: f64, y: f64, state: AgentState },
+            Knot { x: f64, y: f64, symbol: String },
+            Line { x1: f64, y1: f64, x2: f64, y2: f64 },
         }
 
         let mut items = Vec::new();
@@ -386,12 +374,7 @@ impl App {
                 let avg_z = (z1 + z2) / 2.0;
 
                 // Draw line
-                items.push((
-                    avg_z,
-                    Item::Line {
-                        x1, y1, x2, y2,
-                    },
-                ));
+                items.push((avg_z, Item::Line { x1, y1, x2, y2 }));
 
                 // Draw Knots along the line
                 // Cord clusters: [Units, Tens, Hundreds...]
@@ -426,23 +409,30 @@ impl App {
 
         // 2. Agents
         for agent in &self.sim.agents {
-             let p1 = &self.sim.lattice.points[agent.node_idx];
-             // Interpolate if moving
-             let pos = if let Some(target) = agent.target_node_idx {
-                 let p2 = &self.sim.lattice.points[target];
-                 let t = agent.progress;
-                 [
-                     p1[0] + (p2[0] - p1[0]) * t,
-                     p1[1] + (p2[1] - p1[1]) * t,
-                     p1[2] + (p2[2] - p1[2]) * t,
-                 ]
-             } else {
-                 *p1
-             };
+            let p1 = &self.sim.lattice.points[agent.node_idx];
+            // Interpolate if moving
+            let pos = if let Some(target) = agent.target_node_idx {
+                let p2 = &self.sim.lattice.points[target];
+                let t = agent.progress;
+                [
+                    p1[0] + (p2[0] - p1[0]) * t,
+                    p1[1] + (p2[1] - p1[1]) * t,
+                    p1[2] + (p2[2] - p1[2]) * t,
+                ]
+            } else {
+                *p1
+            };
 
-             if let Some((x, y, z)) = self.camera.project(&pos, width, height) {
-                 items.push((z - 0.5, Item::Agent { x, y, state: agent.state })); // In front of everything
-             }
+            if let Some((x, y, z)) = self.camera.project(&pos, width, height) {
+                items.push((
+                    z - 0.5,
+                    Item::Agent {
+                        x,
+                        y,
+                        state: agent.state,
+                    },
+                )); // In front of everything
+            }
         }
 
         // Sort by Z (painter's algorithm)
@@ -472,15 +462,13 @@ impl App {
                             ctx.print(*x, *y, Span::styled(sym, Style::default().fg(color)));
                         }
                         Item::Knot { x, y, symbol, .. } => {
-                             ctx.print(*x, *y, Span::styled(symbol.clone(), Style::default().fg(Color::Yellow)));
+                            ctx.print(
+                                *x,
+                                *y,
+                                Span::styled(symbol.clone(), Style::default().fg(Color::Yellow)),
+                            );
                         }
-                        Item::Line {
-                            x1,
-                            y1,
-                            x2,
-                            y2,
-                            ..
-                        } => {
+                        Item::Line { x1, y1, x2, y2, .. } => {
                             ctx.draw(&Line {
                                 x1: *x1,
                                 y1: *y1,
@@ -497,7 +485,8 @@ impl App {
 
         let status = format!(
             "Lattice: {:?} | Agents: {} | [Space]: Switch | [R]: Reset | [Arrows]: Rotate/Zoom",
-            self.sim.lattice_type, self.sim.agents.len()
+            self.sim.lattice_type,
+            self.sim.agents.len()
         );
 
         f.render_widget(

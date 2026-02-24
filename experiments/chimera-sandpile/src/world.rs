@@ -1,5 +1,5 @@
-use crate::grid::SandGrid;
 use crate::agent::Agent;
+use crate::grid::SandGrid;
 use rand::prelude::*;
 use rayon::prelude::*;
 use std::collections::HashSet;
@@ -23,7 +23,10 @@ impl World {
 
         let mut agents = Vec::new();
         for i in 0..agent_count {
-            agents.push(Agent::new((rng.gen_range(0..width), rng.gen_range(0..height)), i as u64));
+            agents.push(Agent::new(
+                (rng.gen_range(0..width), rng.gen_range(0..height)),
+                i as u64,
+            ));
         }
 
         Self {
@@ -49,7 +52,8 @@ impl World {
         // Since `grid` is &mut SandGrid, we can convert it to &SandGrid.
         let grid_view = &*grid;
 
-        let updates: Vec<(usize, usize, i32)> = agents.par_iter_mut()
+        let updates: Vec<(usize, usize, i32)> = agents
+            .par_iter_mut()
             .map(|agent| {
                 let (ax, ay) = agent.pos;
                 let start_x = ax.saturating_sub(8);
@@ -72,15 +76,18 @@ impl World {
                 let changes = agent.sync_output(&local_view);
 
                 // Map local changes to global
-                changes.into_iter().filter_map(|(lx, ly, delta)| {
-                    let gx = start_x + lx;
-                    let gy = start_y + ly;
-                    if gx < width && gy < height {
-                        Some((gx, gy, delta))
-                    } else {
-                        None
-                    }
-                }).collect::<Vec<_>>()
+                changes
+                    .into_iter()
+                    .filter_map(|(lx, ly, delta)| {
+                        let gx = start_x + lx;
+                        let gy = start_y + ly;
+                        if gx < width && gy < height {
+                            Some((gx, gy, delta))
+                        } else {
+                            None
+                        }
+                    })
+                    .collect::<Vec<_>>()
             })
             .flatten()
             .collect();

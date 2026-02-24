@@ -1,17 +1,17 @@
+mod detritivore;
 mod lsystem;
 mod monitor;
+mod sediment;
 mod simulation;
 mod tree;
-mod detritivore;
-mod sediment;
 
+use detritivore::Detritivore;
 use macroquad::prelude::*;
 use monitor::fetch_processes;
+use sediment::SedimentParticle;
 use simulation::{ScheduleMode, Sun};
 use sysinfo::System;
 use tree::Tree;
-use detritivore::Detritivore;
-use sediment::SedimentParticle;
 
 #[macroquad::main("Chimera Sediment")]
 async fn main() {
@@ -82,8 +82,8 @@ async fn main() {
         // UPDATE DETRITIVORES
         // Spawn more if low
         if detritivores.len() < 5 {
-             let x = rand::gen_range(0.0, screen_width());
-             detritivores.push(Detritivore::new(vec2(x, ground_level)));
+            let x = rand::gen_range(0.0, screen_width());
+            detritivores.push(Detritivore::new(vec2(x, ground_level)));
         }
 
         let mut new_detritivores = Vec::new();
@@ -103,7 +103,13 @@ async fn main() {
         draw_sky_gradient();
 
         // Draw Ground
-        draw_rectangle(0.0, screen_height() - 20.0, screen_width(), 20.0, Color::new(0.3, 0.2, 0.1, 1.0));
+        draw_rectangle(
+            0.0,
+            screen_height() - 20.0,
+            screen_width(),
+            20.0,
+            Color::new(0.3, 0.2, 0.1, 1.0),
+        );
 
         // Draw Sediment (Behind trees?)
         for p in &sediment {
@@ -117,7 +123,9 @@ async fn main() {
         // Draw Trees
         for tree in &trees {
             let is_scheduled = sun.is_shining_on(tree);
-            let is_hovered = hovered_tree.map(|t| t.stats.pid == tree.stats.pid).unwrap_or(false);
+            let is_hovered = hovered_tree
+                .map(|t| t.stats.pid == tree.stats.pid)
+                .unwrap_or(false);
 
             tree.draw(is_scheduled);
 
@@ -125,7 +133,7 @@ async fn main() {
                 draw_circle(tree.position.x, tree.position.y, 5.0, GOLD);
             }
             if is_hovered {
-                 draw_circle_lines(tree.position.x, tree.position.y, 30.0, 2.0, WHITE);
+                draw_circle_lines(tree.position.x, tree.position.y, 30.0, 2.0, WHITE);
             }
         }
 
@@ -137,7 +145,13 @@ async fn main() {
         sun.draw();
 
         // Draw UI
-        draw_hud(&sys, sun.mode, hovered_tree, detritivores.len(), sediment.len());
+        draw_hud(
+            &sys,
+            sun.mode,
+            hovered_tree,
+            detritivores.len(),
+            sediment.len(),
+        );
 
         next_frame().await
     }
@@ -170,7 +184,13 @@ fn update_forest(sys: &mut System, trees: &mut Vec<Tree>, sediment: &mut Vec<Sed
     }
 }
 
-fn draw_hud(sys: &System, mode: ScheduleMode, hovered_tree: Option<&Tree>, detritivore_count: usize, sediment_count: usize) {
+fn draw_hud(
+    sys: &System,
+    mode: ScheduleMode,
+    hovered_tree: Option<&Tree>,
+    detritivore_count: usize,
+    sediment_count: usize,
+) {
     draw_rectangle(10.0, 10.0, 260.0, 120.0, Color::new(0.0, 0.0, 0.0, 0.5));
     draw_rectangle_lines(10.0, 10.0, 260.0, 120.0, 2.0, WHITE);
 
@@ -192,11 +212,27 @@ fn draw_hud(sys: &System, mode: ScheduleMode, hovered_tree: Option<&Tree>, detri
         20.0,
         85.0,
         20.0,
-        if used_mem / total_mem > 0.8 { RED } else { GOLD },
+        if used_mem / total_mem > 0.8 {
+            RED
+        } else {
+            GOLD
+        },
     );
 
-    draw_text(&format!("Detritivores: {}", detritivore_count), 20.0, 105.0, 20.0, GREEN);
-    draw_text(&format!("Sediment: {}", sediment_count), 150.0, 105.0, 20.0, BROWN);
+    draw_text(
+        &format!("Detritivores: {}", detritivore_count),
+        20.0,
+        105.0,
+        20.0,
+        GREEN,
+    );
+    draw_text(
+        &format!("Sediment: {}", sediment_count),
+        150.0,
+        105.0,
+        20.0,
+        BROWN,
+    );
 
     let mode_str = match mode {
         ScheduleMode::RoundRobin => "Round Robin",
@@ -220,21 +256,45 @@ fn draw_hud(sys: &System, mode: ScheduleMode, hovered_tree: Option<&Tree>, detri
 
         let tooltip_y = tree.position.y - 120.0;
 
-        draw_rectangle(tooltip_x, tooltip_y, 200.0, 100.0, Color::new(0.0, 0.0, 0.0, 0.8));
+        draw_rectangle(
+            tooltip_x,
+            tooltip_y,
+            200.0,
+            100.0,
+            Color::new(0.0, 0.0, 0.0, 0.8),
+        );
         draw_rectangle_lines(tooltip_x, tooltip_y, 200.0, 100.0, 1.0, WHITE);
 
-        draw_text(&tree.stats.name, tooltip_x + 10.0, tooltip_y + 20.0, 20.0, WHITE);
-        draw_text(&format!("PID: {}", tree.stats.pid), tooltip_x + 10.0, tooltip_y + 40.0, 16.0, LIGHTGRAY);
-        draw_text(&format!("CPU: {:.1}%", tree.stats.cpu_usage), tooltip_x + 10.0, tooltip_y + 60.0, 16.0, GOLD);
-        draw_text(&format!("MEM: {} MB", tree.stats.memory / 1024 / 1024), tooltip_x + 10.0, tooltip_y + 80.0, 16.0, SKYBLUE);
-    } else {
         draw_text(
-            "Top 20 Processes (Canopy)",
+            &tree.stats.name,
+            tooltip_x + 10.0,
+            tooltip_y + 20.0,
             20.0,
-            175.0,
-            20.0,
+            WHITE,
+        );
+        draw_text(
+            &format!("PID: {}", tree.stats.pid),
+            tooltip_x + 10.0,
+            tooltip_y + 40.0,
+            16.0,
             LIGHTGRAY,
         );
+        draw_text(
+            &format!("CPU: {:.1}%", tree.stats.cpu_usage),
+            tooltip_x + 10.0,
+            tooltip_y + 60.0,
+            16.0,
+            GOLD,
+        );
+        draw_text(
+            &format!("MEM: {} MB", tree.stats.memory / 1024 / 1024),
+            tooltip_x + 10.0,
+            tooltip_y + 80.0,
+            16.0,
+            SKYBLUE,
+        );
+    } else {
+        draw_text("Top 20 Processes (Canopy)", 20.0, 175.0, 20.0, LIGHTGRAY);
     }
 }
 

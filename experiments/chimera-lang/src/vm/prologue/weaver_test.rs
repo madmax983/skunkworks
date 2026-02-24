@@ -5,7 +5,8 @@ use crate::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_weaver_synthesis() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -66,7 +67,11 @@ fn test_weaver_synthesis() {
         println!("{}", line);
     }
 
-    assert_eq!(vm.dna.helix.strands.len(), 1, "Weaver should have synthesized a strand");
+    assert_eq!(
+        vm.dna.helix.strands.len(),
+        1,
+        "Weaver should have synthesized a strand"
+    );
 
     let strand = &vm.dna.helix.strands[0];
     assert_eq!(strand.genes.len(), 3);

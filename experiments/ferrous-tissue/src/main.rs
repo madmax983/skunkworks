@@ -1,7 +1,7 @@
-use macroquad::prelude::*;
-use chimera_lang::prelude::*;
-use physics_pbd::{PbdSystem, Constraint};
 use ::rand::Rng;
+use chimera_lang::prelude::*;
+use macroquad::prelude::*;
+use physics_pbd::{Constraint, PbdSystem};
 
 struct Cell {
     vm: ChimeraVM,
@@ -30,7 +30,7 @@ impl Tissue {
                 let pos = vec3(
                     x as f32 * 0.5 - (width as f32 * 0.25),
                     y as f32 * 0.5 - (height as f32 * 0.25),
-                    0.0
+                    0.0,
                 );
                 let idx = system.add_particle(pos, 1.0);
                 particle_indices.push(idx);
@@ -145,10 +145,10 @@ impl Tissue {
 
         // Apply forces to velocity
         for (i, force) in forces.into_iter().enumerate() {
-             let inv_mass = self.system.particles[i].inv_mass;
-             if inv_mass > 0.0 {
+            let inv_mass = self.system.particles[i].inv_mass;
+            if inv_mass > 0.0 {
                 self.system.particles[i].vel += force * dt * inv_mass;
-             }
+            }
         }
 
         // 2. Physics Step
@@ -165,7 +165,10 @@ impl Tissue {
 
             if count > 0 {
                 for &c_idx in &cell.actuators {
-                    if let Constraint::Actuator { p1, p2, max_len, .. } = system.constraints[c_idx] {
+                    if let Constraint::Actuator {
+                        p1, p2, max_len, ..
+                    } = system.constraints[c_idx]
+                    {
                         let pos1 = system.particles[p1].pos;
                         let pos2 = system.particles[p2].pos;
                         let dist = pos1.distance(pos2);
@@ -179,7 +182,9 @@ impl Tissue {
             }
 
             // Sense: Magnetism (Self)
-            cell.vm.stack.push(Value::Int((cell.magnetism * 100.0) as i64));
+            cell.vm
+                .stack
+                .push(Value::Int((cell.magnetism * 100.0) as i64));
 
             // Run VM
             for _ in 0..50 {
@@ -190,7 +195,7 @@ impl Tissue {
             // Expect stack: [..., Contraction, Magnetism] (Top is Magnetism)
 
             if let Some(val_mag) = cell.vm.stack.pop() {
-                 let mag = match val_mag {
+                let mag = match val_mag {
                     Value::Int(n) => (n as f32 / 100.0).clamp(0.0, 1.0),
                     _ => 0.5,
                 };
@@ -204,7 +209,10 @@ impl Tissue {
                 };
 
                 for &c_idx in &cell.actuators {
-                    if let Constraint::Actuator { factor: ref mut f, .. } = &mut system.constraints[c_idx] {
+                    if let Constraint::Actuator {
+                        factor: ref mut f, ..
+                    } = &mut system.constraints[c_idx]
+                    {
                         *f = factor;
                     }
                 }
@@ -247,7 +255,7 @@ impl Tissue {
 
             // Draw field indicator (Inner dot)
             if (cell.magnetism - 0.5).abs() > 0.1 {
-                 draw_circle(pos.x, pos.y, 0.05, WHITE);
+                draw_circle(pos.x, pos.y, 0.05, WHITE);
             }
         }
     }
@@ -268,30 +276,68 @@ fn create_dna() -> Dna {
 
         // --- Calculate Contraction based on Magnetism ---
         // Contraction = 100 - SelfMag
-        Gene { op: OpCode::Dup, args: vec![] }, // [Strain, SelfMag, SelfMag]
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-        Gene { op: OpCode::Swap, args: vec![] },
-        Gene { op: OpCode::Sub, args: vec![] }, // [Strain, SelfMag, Contraction]
-
+        Gene {
+            op: OpCode::Dup,
+            args: vec![],
+        }, // [Strain, SelfMag, SelfMag]
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(100)],
+        },
+        Gene {
+            op: OpCode::Swap,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Sub,
+            args: vec![],
+        }, // [Strain, SelfMag, Contraction]
         // Stack: [Strain, SelfMag, Contraction]
         // Goal: [Contraction, NewMag]
 
         // Move Contraction deep.
-        Gene { op: OpCode::Swap, args: vec![] }, // [Strain, Contraction, SelfMag]
-        Gene { op: OpCode::Drop, args: vec![] }, // [Strain, Contraction]
-        Gene { op: OpCode::Swap, args: vec![] }, // [Contraction, Strain]
-
+        Gene {
+            op: OpCode::Swap,
+            args: vec![],
+        }, // [Strain, Contraction, SelfMag]
+        Gene {
+            op: OpCode::Drop,
+            args: vec![],
+        }, // [Strain, Contraction]
+        Gene {
+            op: OpCode::Swap,
+            args: vec![],
+        }, // [Contraction, Strain]
         // --- Calculate NewMag based on Strain ---
         // If Strain > 50, Mag = 100, else 0.
-
-        Gene { op: OpCode::Dup, args: vec![] }, // [Contraction, Strain, Strain]
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(50)] },
-        Gene { op: OpCode::Gt, args: vec![] }, // [Contraction, Strain, Strain > 50 ? 1 : 0]
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-        Gene { op: OpCode::Mul, args: vec![] }, // [Contraction, Strain, MagVal]
-
-        Gene { op: OpCode::Swap, args: vec![] }, // [Contraction, MagVal, Strain]
-        Gene { op: OpCode::Drop, args: vec![] }, // [Contraction, MagVal]
+        Gene {
+            op: OpCode::Dup,
+            args: vec![],
+        }, // [Contraction, Strain, Strain]
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(50)],
+        },
+        Gene {
+            op: OpCode::Gt,
+            args: vec![],
+        }, // [Contraction, Strain, Strain > 50 ? 1 : 0]
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(100)],
+        },
+        Gene {
+            op: OpCode::Mul,
+            args: vec![],
+        }, // [Contraction, Strain, MagVal]
+        Gene {
+            op: OpCode::Swap,
+            args: vec![],
+        }, // [Contraction, MagVal, Strain]
+        Gene {
+            op: OpCode::Drop,
+            args: vec![],
+        }, // [Contraction, MagVal]
     ];
 
     Dna {
@@ -310,11 +356,18 @@ async fn main() {
     let cam_target = vec2(0.0, 0.0);
 
     loop {
-        if is_key_down(KeyCode::Up) { cam_zoom += 1.0; }
-        if is_key_down(KeyCode::Down) { cam_zoom -= 1.0; }
+        if is_key_down(KeyCode::Up) {
+            cam_zoom += 1.0;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_zoom -= 1.0;
+        }
 
         set_camera(&Camera2D {
-            zoom: vec2(1.0 / cam_zoom, 1.0 / cam_zoom * screen_width() / screen_height()),
+            zoom: vec2(
+                1.0 / cam_zoom,
+                1.0 / cam_zoom * screen_width() / screen_height(),
+            ),
             target: cam_target,
             ..Default::default()
         });

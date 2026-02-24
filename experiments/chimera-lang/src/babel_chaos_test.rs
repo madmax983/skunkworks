@@ -5,7 +5,8 @@ use crate::vm::babel_chaos;
 
 #[test]
 fn test_babel_chaos_integrity() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -26,7 +27,8 @@ fn test_babel_chaos_integrity() {
 
 #[test]
 fn test_babel_chaos_map() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

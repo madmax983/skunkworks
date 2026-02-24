@@ -6,7 +6,8 @@ mod tests {
     use crate::vm::{ChimeraVM, Value};
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
-        Dna { evolution_config: None,
+        Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes }],
             },
@@ -169,7 +170,8 @@ mod tests {
         };
         let s1 = Strand { genes: vec![] };
 
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![s0, s1],
             },
@@ -206,7 +208,8 @@ mod tests {
             ],
         };
         let s1_2 = Strand { genes: vec![] };
-        let dna2 = Dna { evolution_config: None,
+        let dna2 = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![s0_2, s1_2],
             },
@@ -492,7 +495,8 @@ mod tests {
                 args: vec![Nucleotide::Number(99)],
             }],
         };
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![s0, s1],
             },
@@ -561,7 +565,8 @@ mod tests {
             ],
         };
 
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![target_strand, guide_match, guide_fail, guide_empty, runner],
             },
@@ -655,7 +660,8 @@ mod tests {
                 args: vec![Nucleotide::Number(1)],
             }],
         };
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![s0, s1],
             },

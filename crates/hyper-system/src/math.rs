@@ -191,7 +191,12 @@ impl Vec4 {
     /// ```
     pub fn normalize(&self) -> Self {
         // Robust normalization avoiding overflow/underflow
-        let m = self.x.abs().max(self.y.abs()).max(self.z.abs()).max(self.w.abs());
+        let m = self
+            .x
+            .abs()
+            .max(self.y.abs())
+            .max(self.z.abs())
+            .max(self.w.abs());
         if m > 0.0 && m.is_finite() {
             let s = 1.0 / m;
             let scaled = self.scale(s);

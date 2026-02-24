@@ -13,31 +13,78 @@ impl Agent {
 
         // Randomly choose behavior
         let dna = if rng.gen_bool(0.5) {
-             // "Builder": Adds sand (Radiate value 1)
-             vec![
-                 Gene { op: OpCode::Photosynthesize, args: vec![] },
-                 Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Val
-                 Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Radius
-                 Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }, // Y (Center)
-                 Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }, // X (Center)
-                 Gene { op: OpCode::Radiate, args: vec![] },
-                 Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
-             ]
+            // "Builder": Adds sand (Radiate value 1)
+            vec![
+                Gene {
+                    op: OpCode::Photosynthesize,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                }, // Val
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                }, // Radius
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(8)],
+                }, // Y (Center)
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(8)],
+                }, // X (Center)
+                Gene {
+                    op: OpCode::Radiate,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Jump,
+                    args: vec![Nucleotide::Number(0)],
+                },
+            ]
         } else {
-             // "Eater": Removes sand (Siphon)
-             vec![
-                 Gene { op: OpCode::Photosynthesize, args: vec![] },
-                 Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Radius
-                 Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }, // Y
-                 Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }, // X
-                 Gene { op: OpCode::Siphon, args: vec![] },
-                 Gene { op: OpCode::Drop, args: vec![] }, // Discard result
-                 Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
-             ]
+            // "Eater": Removes sand (Siphon)
+            vec![
+                Gene {
+                    op: OpCode::Photosynthesize,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                }, // Radius
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(8)],
+                }, // Y
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(8)],
+                }, // X
+                Gene {
+                    op: OpCode::Siphon,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Drop,
+                    args: vec![],
+                }, // Discard result
+                Gene {
+                    op: OpCode::Jump,
+                    args: vec![Nucleotide::Number(0)],
+                },
+            ]
         };
 
-        let helix = Helix { strands: vec![Strand { genes: dna }] };
-        let dna_struct = Dna { evolution_config: None, helix };
+        let helix = Helix {
+            strands: vec![Strand { genes: dna }],
+        };
+        let dna_struct = Dna {
+            evolution_config: None,
+            helix,
+        };
 
         Self {
             vm: ChimeraVM::new(dna_struct),

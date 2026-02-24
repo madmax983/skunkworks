@@ -6,7 +6,8 @@ fn main() {
     println!("👺 Havoc: Initializing Recursive Depth Charge...");
 
     // 1. Setup VM
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

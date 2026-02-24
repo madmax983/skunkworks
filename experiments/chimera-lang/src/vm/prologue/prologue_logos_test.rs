@@ -1,12 +1,15 @@
 #[cfg(test)]
 mod tests {
-    use crate::vm::ChimeraVM;
-    use crate::vm::Value;
     use crate::ast::{Dna, Helix};
     use crate::vm::prologue::exec_prologue_tick;
+    use crate::vm::ChimeraVM;
+    use crate::vm::Value;
 
     fn create_vm() -> ChimeraVM {
-        let dna = Dna { evolution_config: None, helix: Helix { strands: vec![] } };
+        let dna = Dna {
+            evolution_config: None,
+            helix: Helix { strands: vec![] },
+        };
         let mut vm = ChimeraVM::new(dna);
         vm.prologue_state.active = true;
         vm
@@ -32,7 +35,11 @@ mod tests {
         exec_prologue_tick(&mut vm);
 
         // Verify Rule Exists
-        assert!(vm.prologue_state.logos_engine.rules.contains_key("greeting"));
+        assert!(vm
+            .prologue_state
+            .logos_engine
+            .rules
+            .contains_key("greeting"));
 
         // 2. Generate
         // Clear signals (implicit in next tick, but we change grid)
@@ -90,6 +97,9 @@ mod tests {
         let gen = vm.prologue_state.logos_engine.generate("foo").unwrap();
         println!("Mutated 'bar' to '{}'", gen);
 
-        assert!(vm.output.iter().any(|s| s.contains("LOGOS: γ Mutated Rule 'foo'")));
+        assert!(vm
+            .output
+            .iter()
+            .any(|s| s.contains("LOGOS: γ Mutated Rule 'foo'")));
     }
 }

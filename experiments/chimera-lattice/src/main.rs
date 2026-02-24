@@ -164,10 +164,10 @@ impl ChimeraAgent {
         // ChimeraVM doesn't have a public peek easily accessible, but stack is public.
 
         let output = if let Some(val) = self.vm.stack.last() {
-             match val {
-                 Value::Int(n) => *n as f64,
-                 _ => 0.0,
-             }
+            match val {
+                Value::Int(n) => *n as f64,
+                _ => 0.0,
+            }
         } else {
             0.0
         };
@@ -217,8 +217,8 @@ impl LatticeColony {
         // DNA: [ Input, Push(10), Add, Output ] -> This is naive.
         // Let's give them random DNA from a pool.
         for _ in 0..n {
-             let dna = Self::generate_random_dna();
-             agents.push(ChimeraAgent::new(dna));
+            let dna = Self::generate_random_dna();
+            agents.push(ChimeraAgent::new(dna));
         }
 
         // Calculate Adjacency (Nearest Neighbors)
@@ -228,7 +228,8 @@ impl LatticeColony {
             for j in (i + 1)..n {
                 let p1 = lattice.points[i];
                 let p2 = lattice.points[j];
-                let dist_sq = (p1[0] - p2[0]).powi(2) + (p1[1] - p2[1]).powi(2) + (p1[2] - p2[2]).powi(2);
+                let dist_sq =
+                    (p1[0] - p2[0]).powi(2) + (p1[1] - p2[1]).powi(2) + (p1[2] - p2[2]).powi(2);
 
                 // Threshold depends on lattice type.
                 // SC: dist = 1.0 (sq=1.0)
@@ -265,10 +266,7 @@ impl LatticeColony {
             let (op, args) = match rng.gen_range(0..5) {
                 0 => (OpCode::Add, vec![]),
                 1 => (OpCode::Sub, vec![]),
-                2 => (
-                    OpCode::Push,
-                    vec![Nucleotide::Number(rng.gen_range(0..10))],
-                ),
+                2 => (OpCode::Push, vec![Nucleotide::Number(rng.gen_range(0..10))]),
                 3 => (OpCode::Dup, vec![]),
                 4 => (OpCode::Drop, vec![]),
                 _ => (OpCode::Nop, vec![]),
@@ -461,13 +459,7 @@ impl App {
                             };
                             ctx.print(*x, *y, Span::styled(sym, Style::default().fg(color)));
                         }
-                        Item::Edge {
-                            x1,
-                            y1,
-                            x2,
-                            y2,
-                            ..
-                        } => {
+                        Item::Edge { x1, y1, x2, y2, .. } => {
                             ctx.draw(&Line {
                                 x1: *x1,
                                 y1: *y1,
@@ -484,7 +476,8 @@ impl App {
 
         let status = format!(
             "Lattice: {:?} | Agents: {} | [Space]: Switch | [I]: Inject | [Arrows]: Move",
-            self.colony.lattice_type, self.colony.agents.len()
+            self.colony.lattice_type,
+            self.colony.agents.len()
         );
 
         f.render_widget(

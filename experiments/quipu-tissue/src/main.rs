@@ -1,8 +1,8 @@
-use macroquad::prelude::*;
-use chimera_lang::prelude::*;
-use physics_pbd::{PbdSystem, Constraint};
-use quipu::{Cord, Knot};
 use ::rand::Rng;
+use chimera_lang::prelude::*;
+use macroquad::prelude::*;
+use physics_pbd::{Constraint, PbdSystem};
+use quipu::{Cord, Knot};
 
 const SEGMENT_LENGTH: f32 = 0.5;
 const KNOT_MASS_SCALE: f32 = 0.5;
@@ -106,7 +106,13 @@ impl QuipuWorld {
 
                 // Add Actuator Constraint (Muscle) to previous particle
                 // This allows the knot to "climb" or "contract" the cord
-                self.physics.add_actuator_constraint(prev_idx, p_idx, 0.1, SEGMENT_LENGTH * 1.5, 0.5);
+                self.physics.add_actuator_constraint(
+                    prev_idx,
+                    p_idx,
+                    0.1,
+                    SEGMENT_LENGTH * 1.5,
+                    0.5,
+                );
 
                 // Create VM for this knot
                 let vm = ChimeraVM::new(create_knot_dna(knot.value()));
@@ -177,7 +183,8 @@ impl QuipuWorld {
                 // Find constraints attached to this particle
                 for c in &mut physics.constraints {
                     if let Constraint::Actuator { p2, factor, .. } = c {
-                        if *p2 == p_idx { // If this is the bottom particle of the segment
+                        if *p2 == p_idx {
+                            // If this is the bottom particle of the segment
                             *factor = contract_factor;
                         }
                     }
@@ -198,7 +205,7 @@ impl QuipuWorld {
         // Draw Main Cord
         for i in 0..self.main_cord.len() - 1 {
             let p1 = self.physics.particles[self.main_cord[i]].pos;
-            let p2 = self.physics.particles[self.main_cord[i+1]].pos;
+            let p2 = self.physics.particles[self.main_cord[i + 1]].pos;
             draw_line(p1.x, p1.y, p2.x, p2.y, 0.1, BEIGE);
         }
 
@@ -234,10 +241,18 @@ fn create_knot_dna(_value: u8) -> Dna {
 
     let genes = vec![
         // Stack: [Velocity]
-        Gene { op: OpCode::Dup, args: vec![] }, // [Vel, Vel]
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // [Vel, Vel, 0]
-        Gene { op: OpCode::Lt, args: vec![] }, // [Vel, Vel < 0 ? 1 : 0]
-
+        Gene {
+            op: OpCode::Dup,
+            args: vec![],
+        }, // [Vel, Vel]
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }, // [Vel, Vel, 0]
+        Gene {
+            op: OpCode::Lt,
+            args: vec![],
+        }, // [Vel, Vel < 0 ? 1 : 0]
         // If falling (< 0), push 0 (Contract). Else push 100 (Relax).
         // Wait, Actuator factor 0.0 = min_len (Contracted). 1.0 = max_len (Relaxed).
         // If falling, we want to contract to pull up? Or relax to fall?
@@ -249,12 +264,26 @@ fn create_knot_dna(_value: u8) -> Dna {
         // We want Factor 1.0 (100).
 
         // Map 1 -> 0, 0 -> 100
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // [Vel, IsFalling, 1]
-        Gene { op: OpCode::Swap, args: vec![] }, // [Vel, 1, IsFalling]
-        Gene { op: OpCode::Sub, args: vec![] }, // [Vel, 1 - IsFalling] (0 if falling, 1 if stable)
-
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] }, // [Vel, Res, 100]
-        Gene { op: OpCode::Mul, args: vec![] }, // [Vel, Res * 100]
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        }, // [Vel, IsFalling, 1]
+        Gene {
+            op: OpCode::Swap,
+            args: vec![],
+        }, // [Vel, 1, IsFalling]
+        Gene {
+            op: OpCode::Sub,
+            args: vec![],
+        }, // [Vel, 1 - IsFalling] (0 if falling, 1 if stable)
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(100)],
+        }, // [Vel, Res, 100]
+        Gene {
+            op: OpCode::Mul,
+            args: vec![],
+        }, // [Vel, Res * 100]
     ];
 
     Dna {
@@ -274,12 +303,24 @@ async fn main() {
     let mut cam_target = vec2(0.0, 5.0);
 
     loop {
-        if is_key_down(KeyCode::Up) { cam_zoom += 0.5; }
-        if is_key_down(KeyCode::Down) { cam_zoom -= 0.5; }
-        if is_key_down(KeyCode::Left) { cam_target.x -= 0.5; }
-        if is_key_down(KeyCode::Right) { cam_target.x += 0.5; }
-        if is_key_down(KeyCode::W) { cam_target.y += 0.5; }
-        if is_key_down(KeyCode::S) { cam_target.y -= 0.5; }
+        if is_key_down(KeyCode::Up) {
+            cam_zoom += 0.5;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_zoom -= 0.5;
+        }
+        if is_key_down(KeyCode::Left) {
+            cam_target.x -= 0.5;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_target.x += 0.5;
+        }
+        if is_key_down(KeyCode::W) {
+            cam_target.y += 0.5;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_target.y -= 0.5;
+        }
 
         // Reset
         if is_key_pressed(KeyCode::R) {
@@ -287,7 +328,10 @@ async fn main() {
         }
 
         set_camera(&Camera2D {
-            zoom: vec2(1.0 / cam_zoom, 1.0 / cam_zoom * screen_width() / screen_height()),
+            zoom: vec2(
+                1.0 / cam_zoom,
+                1.0 / cam_zoom * screen_width() / screen_height(),
+            ),
             target: cam_target,
             ..Default::default()
         });
@@ -301,9 +345,27 @@ async fn main() {
         world.draw();
 
         set_default_camera();
-        draw_text("Quipu Tissue: Biological Data Structure", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Knots: {}", world.knots.len()), 10.0, 50.0, 20.0, GRAY);
-        draw_text("Controls: Arrows/WASD to move, R to reset", 10.0, 70.0, 20.0, GRAY);
+        draw_text(
+            "Quipu Tissue: Biological Data Structure",
+            10.0,
+            30.0,
+            30.0,
+            WHITE,
+        );
+        draw_text(
+            &format!("Knots: {}", world.knots.len()),
+            10.0,
+            50.0,
+            20.0,
+            GRAY,
+        );
+        draw_text(
+            "Controls: Arrows/WASD to move, R to reset",
+            10.0,
+            70.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }

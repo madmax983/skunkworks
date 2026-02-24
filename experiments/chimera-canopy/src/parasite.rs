@@ -1,8 +1,8 @@
+use crate::tree::Tree;
+use ::rand::Rng;
 use chimera_lang::prelude::*;
 use macroquad::prelude::*;
-use ::rand::Rng;
 use sysinfo::Pid;
-use crate::tree::Tree;
 
 #[derive(Clone, Debug)]
 pub enum ParasiteState {
@@ -29,8 +29,13 @@ impl Parasite {
         ];
 
         let strand = Strand { genes };
-        let helix = Helix { strands: vec![strand] };
-        let dna = Dna { evolution_config: None, helix };
+        let helix = Helix {
+            strands: vec![strand],
+        };
+        let dna = Dna {
+            evolution_config: None,
+            helix,
+        };
 
         let mut vm = ChimeraVM::new(dna);
         vm.energy = 100;
@@ -78,11 +83,11 @@ impl Parasite {
                     if self.energy > 200 {
                         let mut rng = ::rand::thread_rng();
                         if rng.gen_bool(0.01) {
-                             self.state = ParasiteState::Jumping(vec2(rng.gen_range(-100.0..100.0), -200.0));
-                             self.energy -= 50;
+                            self.state =
+                                ParasiteState::Jumping(vec2(rng.gen_range(-100.0..100.0), -200.0));
+                            self.energy -= 50;
                         }
                     }
-
                 } else {
                     // Host died
                     self.state = ParasiteState::Falling(vec2(0.0, 0.0));
@@ -109,17 +114,17 @@ impl Parasite {
                     if vel.length() < 10.0 {
                         // Respawns or just crawls?
                         // Let's make them jump again eventually
-                         if rand::gen_range(0, 100) < 5 {
-                             vel = vec2(rand::gen_range(-50.0, 50.0), -300.0);
-                         }
+                        if rand::gen_range(0, 100) < 5 {
+                            vel = vec2(rand::gen_range(-50.0, 50.0), -300.0);
+                        }
                     }
                 }
 
                 // Update state with new velocity
                 if vel.y > 0.0 {
-                     self.state = ParasiteState::Falling(vel);
+                    self.state = ParasiteState::Falling(vel);
                 } else {
-                     self.state = ParasiteState::Jumping(vel);
+                    self.state = ParasiteState::Jumping(vel);
                 }
             }
         }
@@ -130,7 +135,14 @@ impl Parasite {
         // Draw energy bar?
         if self.energy > 0 {
             let bar_len = (self.energy as f32 / 10.0).clamp(0.0, 20.0);
-            draw_line(self.position.x - 10.0, self.position.y - 10.0, self.position.x - 10.0 + bar_len, self.position.y - 10.0, 2.0, GREEN);
+            draw_line(
+                self.position.x - 10.0,
+                self.position.y - 10.0,
+                self.position.x - 10.0 + bar_len,
+                self.position.y - 10.0,
+                2.0,
+                GREEN,
+            );
         }
     }
 }

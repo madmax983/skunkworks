@@ -1,6 +1,6 @@
 use chimera_lang::ast::{Dna, Helix};
-use chimera_lang::vm::{ChimeraVM, Value, GRID_SIZE};
 use chimera_lang::vm::prologue::exec_prologue_tick;
+use chimera_lang::vm::{ChimeraVM, Value, GRID_SIZE};
 
 fn create_vm() -> ChimeraVM {
     let dna = Dna {
@@ -26,8 +26,16 @@ fn test_pilot_movement() {
     // Default velocity is (0, 1) -> East.
     // So it should move to (5, 6).
 
-    assert_eq!(vm.grid[5][5], Value::Int(0), "Old position should be empty (0)");
-    assert_eq!(vm.grid[5][6], Value::Str("⚓".to_string()), "Pilot should be at (5, 6)");
+    assert_eq!(
+        vm.grid[5][5],
+        Value::Int(0),
+        "Old position should be empty (0)"
+    );
+    assert_eq!(
+        vm.grid[5][6],
+        Value::Str("⚓".to_string()),
+        "Pilot should be at (5, 6)"
+    );
 }
 
 #[test]
@@ -80,6 +88,9 @@ fn test_pilot_interaction_and_restoration() {
     if let Some(Value::Int(v)) = &vm.prologue_state.delayed_signals[5][9] {
         assert_eq!(*v, 8, "Delayed signal should contain emitted 8");
     } else {
-        panic!("Delayed signal not found at (5,9). Found: {:?}", vm.prologue_state.delayed_signals[5][9]);
+        panic!(
+            "Delayed signal not found at (5,9). Found: {:?}",
+            vm.prologue_state.delayed_signals[5][9]
+        );
     }
 }

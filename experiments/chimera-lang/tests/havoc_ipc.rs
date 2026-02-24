@@ -6,7 +6,8 @@ use std::fs;
 use std::path::Path;
 
 fn make_empty_dna() -> Dna {
-    Dna { evolution_config: None,
+    Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     }
 }

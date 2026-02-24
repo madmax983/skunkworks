@@ -25,12 +25,13 @@ pub fn process_scholar_logic(
             let ty = if let Value::Int(n) = list[2] { n } else { 0 };
             let tx = if let Value::Int(n) = list[3] { n } else { 0 };
             (xp, mode, ty, tx)
-        },
+        }
         _ => (0, 0, 0, 0),
     };
 
     match mode {
-        0 => { // WANDER / SEEK
+        0 => {
+            // WANDER / SEEK
             // Look for Books
             if let Some((by, bx)) = find_nearest_rune(grid_snapshot, y, x, "📖") {
                 // Move towards it
@@ -48,8 +49,9 @@ pub fn process_scholar_logic(
             // Random wander
             let (ny, nx) = random_move(y, x, grid_snapshot);
             return Some((updated_agent, Some((ny, nx))));
-        },
-        1 => { // READ
+        }
+        1 => {
+            // READ
             let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
             let mut found_book = false;
             for (dy, dx) in neighbors {
@@ -64,21 +66,27 @@ pub fn process_scholar_logic(
                                     _ => 5,
                                 };
                                 let new_xp = xp + gained;
-                                vm.output.push(format!("🎓 Scholar: Gained {} XP (Total: {})", gained, new_xp));
+                                vm.output.push(format!(
+                                    "🎓 Scholar: Gained {} XP (Total: {})",
+                                    gained, new_xp
+                                ));
 
                                 if new_xp > 50 {
-                                     updated_agent.state = pack_state(0, 2, 0, 0); // Graduate
+                                    updated_agent.state = pack_state(0, 2, 0, 0);
+                                // Graduate
                                 } else {
-                                     updated_agent.state = pack_state(new_xp, 0, 0, 0); // Wander
+                                    updated_agent.state = pack_state(new_xp, 0, 0, 0);
+                                    // Wander
                                 }
                             } else {
                                 // Inject delayed signal to Book (Request)
                                 // Only if we are West of Book (Inputs are directional)
                                 if nx == x + 1 && ny == y {
-                                     // We are West
-                                     if let Some(key) = vm.prologue_state.library.keys().next() {
-                                          vm.prologue_state.delayed_signals[y][x] = Some(Value::Str(key.clone()));
-                                     }
+                                    // We are West
+                                    if let Some(key) = vm.prologue_state.library.keys().next() {
+                                        vm.prologue_state.delayed_signals[y][x] =
+                                            Some(Value::Str(key.clone()));
+                                    }
                                 }
                             }
                             found_book = true;
@@ -88,19 +96,20 @@ pub fn process_scholar_logic(
                 }
             }
             if !found_book {
-                 updated_agent.state = pack_state(xp, 0, 0, 0);
+                updated_agent.state = pack_state(xp, 0, 0, 0);
             }
             return Some((updated_agent, None));
-        },
-        2 => { // GRADUATE
+        }
+        2 => {
+            // GRADUATE
             let (ny, nx) = random_move(y, x, grid_snapshot);
             if matches!(grid_snapshot[ny][nx], Value::Int(0)) {
-                 vm.grid[y][x] = Value::Str("Φ".to_string()); // Leave a Philosopher Stone behind
-                 updated_agent.state = pack_state(0, 0, 0, 0);
-                 return Some((updated_agent, Some((ny, nx))));
+                vm.grid[y][x] = Value::Str("Φ".to_string()); // Leave a Philosopher Stone behind
+                updated_agent.state = pack_state(0, 0, 0, 0);
+                return Some((updated_agent, Some((ny, nx))));
             }
             return Some((updated_agent, Some((ny, nx))));
-        },
+        }
         _ => {}
     }
 
@@ -110,43 +119,59 @@ pub fn process_scholar_logic(
 fn pack_state(xp: i64, mode: i64, ty: i64, tx: i64) -> Value {
     Value::Junction(
         crate::ast::JunctionType::All,
-        vec![Value::Int(xp), Value::Int(mode), Value::Int(ty), Value::Int(tx)],
+        vec![
+            Value::Int(xp),
+            Value::Int(mode),
+            Value::Int(ty),
+            Value::Int(tx),
+        ],
     )
 }
 
-fn find_nearest_rune(grid: &[Vec<Value>], y: usize, x: usize, rune: &str) -> Option<(usize, usize)> {
+fn find_nearest_rune(
+    grid: &[Vec<Value>],
+    y: usize,
+    x: usize,
+    rune: &str,
+) -> Option<(usize, usize)> {
     for r in 1..6 {
         for dy in -(r as i64)..=r as i64 {
             for dx in -(r as i64)..=r as i64 {
-                 if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                      if let Value::Str(s) = &grid[ny][nx] {
-                           if s == rune {
-                               return Some((ny, nx));
-                           }
-                      }
-                 }
+                if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    if let Value::Str(s) = &grid[ny][nx] {
+                        if s == rune {
+                            return Some((ny, nx));
+                        }
+                    }
+                }
             }
         }
     }
     None
 }
 
-fn move_towards(y: usize, x: usize, ty: usize, tx: usize, grid: &[Vec<Value>]) -> Option<(usize, usize)> {
+fn move_towards(
+    y: usize,
+    x: usize,
+    ty: usize,
+    tx: usize,
+    grid: &[Vec<Value>],
+) -> Option<(usize, usize)> {
     let dy = (ty as i64 - y as i64).signum();
     let dx = (tx as i64 - x as i64).signum();
 
     if dy != 0 {
         if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64) {
-             if is_walkable(grid, ny, nx) {
-                 return Some((ny, nx));
-             }
+            if is_walkable(grid, ny, nx) {
+                return Some((ny, nx));
+            }
         }
     }
     if dx != 0 {
         if let Some((ny, nx)) = normalize_coords(y as i64, x as i64 + dx) {
-             if is_walkable(grid, ny, nx) {
-                 return Some((ny, nx));
-             }
+            if is_walkable(grid, ny, nx) {
+                return Some((ny, nx));
+            }
         }
     }
     None
@@ -161,9 +186,9 @@ fn random_move(y: usize, x: usize, grid: &[Vec<Value>]) -> (usize, usize) {
 
     for (dy, dx) in dirs {
         if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-             if is_walkable(grid, ny, nx) {
-                 return (ny, nx);
-             }
+            if is_walkable(grid, ny, nx) {
+                return (ny, nx);
+            }
         }
     }
     (y, x)

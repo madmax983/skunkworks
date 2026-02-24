@@ -171,7 +171,10 @@ fn rotate_grid(grid: &[Vec<Value>]) -> Vec<Vec<Value>> {
 fn merge_grids(base: &[Vec<Value>], overlay: &[Vec<Value>]) -> Vec<Vec<Value>> {
     let h = base.len().max(overlay.len());
     let w = if h > 0 {
-        base.first().map(|r| r.len()).unwrap_or(0).max(overlay.first().map(|r| r.len()).unwrap_or(0))
+        base.first()
+            .map(|r| r.len())
+            .unwrap_or(0)
+            .max(overlay.first().map(|r| r.len()).unwrap_or(0))
     } else {
         0
     };
@@ -228,9 +231,9 @@ fn apply_life_step(grid: &[Vec<Value>]) -> Vec<Vec<Value>> {
                     let nr = r as i64 + dr;
                     let nc = c as i64 + dc;
                     if nr >= 0 && nr < h as i64 && nc >= 0 && nc < w as i64 {
-                         if is_alive(&grid[nr as usize][nc as usize]) {
-                             live_neighbors += 1;
-                         }
+                        if is_alive(&grid[nr as usize][nc as usize]) {
+                            live_neighbors += 1;
+                        }
                     }
                 }
             }

@@ -71,7 +71,7 @@ impl Tree {
                 self.color.r * 0.8,
                 self.color.g * 0.8,
                 self.color.b * 0.8,
-                1.0
+                1.0,
             );
 
             particles.push(SedimentParticle::new(pos, color, size));

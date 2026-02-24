@@ -1,7 +1,7 @@
-use crate::vm::ChimeraVM;
-use serde::{Deserialize, Serialize};
-use rand::Rng;
 use crate::opcode::OpCode;
+use crate::vm::ChimeraVM;
+use rand::Rng;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Spell {
@@ -32,7 +32,8 @@ impl Codex {
                 Spell {
                     name: "Time Echo".to_string(),
                     cost: 100,
-                    description: "Creates a copy of the strand that executes 1 tick later.".to_string(),
+                    description: "Creates a copy of the strand that executes 1 tick later."
+                        .to_string(),
                 },
                 Spell {
                     name: "Transmute".to_string(),
@@ -55,7 +56,10 @@ impl Codex {
 
 pub fn exec_spell(vm: &mut ChimeraVM, spell: &Spell) {
     if vm.energy < spell.cost {
-        vm.output.push(format!("CODEX: Not enough energy for {} (Need {})", spell.name, spell.cost));
+        vm.output.push(format!(
+            "CODEX: Not enough energy for {} (Need {})",
+            spell.name, spell.cost
+        ));
         return;
     }
 
@@ -89,7 +93,8 @@ pub fn exec_spell(vm: &mut ChimeraVM, spell: &Spell) {
             }
             #[cfg(not(feature = "nova"))]
             {
-                vm.output.push("CODEX: Chroma Shift requires Nova feature.".to_string());
+                vm.output
+                    .push("CODEX: Chroma Shift requires Nova feature.".to_string());
             }
         }
         "Time Echo" => {

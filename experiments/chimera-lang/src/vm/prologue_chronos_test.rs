@@ -6,7 +6,8 @@ mod tests {
 
     #[test]
     fn test_chronos_delay_line() {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -41,7 +42,8 @@ mod tests {
 
     #[test]
     fn test_chronos_reverse() {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix { strands: vec![] },
         };
         let mut vm = ChimeraVM::new(dna);

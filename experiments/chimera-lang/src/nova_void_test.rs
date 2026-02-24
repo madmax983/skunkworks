@@ -4,7 +4,8 @@ use crate::vm::nova::OrganelleType;
 use crate::vm::{ChimeraVM, Value};
 
 fn make_dna(strands: Vec<Strand>) -> Dna {
-    Dna { evolution_config: None,
+    Dna {
+        evolution_config: None,
         helix: Helix { strands },
     }
 }

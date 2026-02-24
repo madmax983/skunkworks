@@ -1,12 +1,15 @@
 #[cfg(test)]
 mod tests {
-    use chimera_lang::vm::ChimeraVM;
     use chimera_lang::ast::{Dna, Helix, Strand};
     use chimera_lang::vm::nova_fluid;
+    use chimera_lang::vm::ChimeraVM;
 
     #[test]
     fn test_wind_accumulation_overflow() {
-        let dna = Dna { evolution_config: None, helix: Helix { strands: vec![] } };
+        let dna = Dna {
+            evolution_config: None,
+            helix: Helix { strands: vec![] },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         // Target cell: (8, 8)

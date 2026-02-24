@@ -4,7 +4,8 @@ use crate::vm::prologue::exec_prologue_tick;
 use crate::vm::{ChimeraVM, Value};
 
 fn setup_vm() -> ChimeraVM {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

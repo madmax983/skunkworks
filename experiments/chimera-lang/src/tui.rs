@@ -8,14 +8,12 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+#[cfg(feature = "nova")]
+use hyper_system::math::Vec4;
 use pest::Parser;
 #[cfg(feature = "nova")]
 use rand::Rng;
-#[cfg(feature = "nova")]
-use hyper_system::math::Vec4;
 use ratatui::widgets::canvas::{Canvas, Rectangle};
-#[cfg(feature = "nova")]
-use tui_shared::widgets::{Button, TensionBar};
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
@@ -25,6 +23,8 @@ use ratatui::{
     Frame, Terminal,
 };
 use std::io;
+#[cfg(feature = "nova")]
+use tui_shared::widgets::{Button, TensionBar};
 
 #[allow(dead_code)]
 const GOLDEN_FREQUENCIES: [f32; 4] = [161.8, 261.6, 432.0, 528.0];
@@ -344,7 +344,10 @@ impl SequencerState {
 }
 
 impl AppState {
-    pub(crate) fn new(initial_view: Option<ViewMode>, source_path: Option<std::path::PathBuf>) -> Self {
+    pub(crate) fn new(
+        initial_view: Option<ViewMode>,
+        source_path: Option<std::path::PathBuf>,
+    ) -> Self {
         let mut view_selector_state = ListState::default();
         view_selector_state.select(Some(0));
         let last_modified = if let Some(path) = &source_path {
@@ -547,11 +550,11 @@ pub fn run_tui(
     // Initialize Evolution Engine if config is present
     if let Some(config) = &vm.dna.evolution_config {
         if let Some(strand) = vm.dna.helix.strands.first() {
-            app_state.evolution_state.engine = Some(crate::vm::evolution::EvolutionEngine::from_config(
-                strand.clone(),
-                config.clone(),
-            ));
-            app_state.evolution_state.challenge = crate::vm::evolution::Challenge::Custom(config.clone());
+            app_state.evolution_state.engine = Some(
+                crate::vm::evolution::EvolutionEngine::from_config(strand.clone(), config.clone()),
+            );
+            app_state.evolution_state.challenge =
+                crate::vm::evolution::Challenge::Custom(config.clone());
             app_state.view_mode = ViewMode::Evolution; // Auto-switch to view
         }
     }
@@ -1228,7 +1231,10 @@ where
                 if let ViewMode::Verbum = app_state.view_mode {
                     // Reuse alchemy_strand_idx as the selected word ID
                     // Clone basic info to avoid holding borrow on VM
-                    let mut words: Vec<(usize, String)> = vm.verbum_forge.words.values()
+                    let mut words: Vec<(usize, String)> = vm
+                        .verbum_forge
+                        .words
+                        .values()
                         .map(|w| (w.id, w.name.clone()))
                         .collect();
                     words.sort_by_key(|w| w.0);
@@ -1236,7 +1242,10 @@ where
                     match key.code {
                         KeyCode::Up => {
                             // Find current index
-                            if let Some(pos) = words.iter().position(|w| w.0 == app_state.alchemy_strand_idx) {
+                            if let Some(pos) = words
+                                .iter()
+                                .position(|w| w.0 == app_state.alchemy_strand_idx)
+                            {
                                 if pos > 0 {
                                     app_state.alchemy_strand_idx = words[pos - 1].0;
                                 }
@@ -1245,7 +1254,10 @@ where
                             }
                         }
                         KeyCode::Down => {
-                            if let Some(pos) = words.iter().position(|w| w.0 == app_state.alchemy_strand_idx) {
+                            if let Some(pos) = words
+                                .iter()
+                                .position(|w| w.0 == app_state.alchemy_strand_idx)
+                            {
                                 if pos + 1 < words.len() {
                                     app_state.alchemy_strand_idx = words[pos + 1].0;
                                 }
@@ -1254,7 +1266,9 @@ where
                             }
                         }
                         KeyCode::Enter => {
-                            if let Some(word) = words.iter().find(|w| w.0 == app_state.alchemy_strand_idx) {
+                            if let Some(word) =
+                                words.iter().find(|w| w.0 == app_state.alchemy_strand_idx)
+                            {
                                 let name = word.1.clone();
                                 // Get word data first (immut borrow)
                                 let word_data = vm.verbum_forge.get_word_data(&name);
@@ -1269,7 +1283,8 @@ where
                                         app_state.status_msg = format!("Invoked Word: {}", name);
                                         app_state.screen_shake = 1.0;
                                     } else {
-                                        app_state.status_msg = format!("Not enough energy to speak '{}'", name);
+                                        app_state.status_msg =
+                                            format!("Not enough energy to speak '{}'", name);
                                     }
                                 } else {
                                     app_state.status_msg = format!("Word '{}' fading...", name);
@@ -1446,7 +1461,8 @@ where
                             }
                         }
                         KeyCode::Enter => {
-                            if let Some(spell) = vm.codex.get_spell(app_state.codex_selected_spell) {
+                            if let Some(spell) = vm.codex.get_spell(app_state.codex_selected_spell)
+                            {
                                 crate::vm::codex::exec_spell(vm, &spell);
                                 app_state.screen_shake = 2.0;
                                 app_state.status_msg = format!("Cast Spell: {}", spell.name);
@@ -1987,9 +2003,13 @@ where
                                 #[cfg(feature = "nova")]
                                 ViewMode::Paradox => {
                                     if !app_state.paradox_editor_buffer.is_empty() {
-                                        match vm.paradox.parse_rule(&app_state.paradox_editor_buffer) {
+                                        match vm
+                                            .paradox
+                                            .parse_rule(&app_state.paradox_editor_buffer)
+                                        {
                                             Ok(_) => {
-                                                app_state.status_msg = "Paradox Rule Compiled.".to_string();
+                                                app_state.status_msg =
+                                                    "Paradox Rule Compiled.".to_string();
                                                 app_state.paradox_editor_buffer.clear();
                                             }
                                             Err(e) => {
@@ -5348,7 +5368,6 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 ctx.print(rx, ry, ch);
             }
 
-
             if app_state.fishing_cast {
                 // Bobber X Animation (Shake when hooked)
                 let mut bobber_x = 50.0;
@@ -5404,11 +5423,15 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 };
                 // Bob animation
                 let bob_offset = if !app_state.fishing_hooked {
-                     (vm.tick_counter as f64 * 0.2).sin() * 2.0
+                    (vm.tick_counter as f64 * 0.2).sin() * 2.0
                 } else {
                     0.0
                 };
-                ctx.print(bobber_x, app_state.fishing_bobber_y + bob_offset, bobber_icon);
+                ctx.print(
+                    bobber_x,
+                    app_state.fishing_bobber_y + bob_offset,
+                    bobber_icon,
+                );
 
                 // Splash Effect
                 if app_state.fishing_hooked {
@@ -5637,10 +5660,19 @@ fn render_paradox(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         items.push(ListItem::new("No Paradox Rules active."));
     } else {
         for (i, rule) in vm.paradox.rules.iter().enumerate() {
-            items.push(ListItem::new(format!("#{}: {}", i, rule.name)).style(Style::default().fg(Color::Cyan)));
-            items.push(ListItem::new(format!("  Trigger: {:?}", rule.trigger)).style(Style::default().fg(Color::DarkGray)));
+            items.push(
+                ListItem::new(format!("#{}: {}", i, rule.name))
+                    .style(Style::default().fg(Color::Cyan)),
+            );
+            items.push(
+                ListItem::new(format!("  Trigger: {:?}", rule.trigger))
+                    .style(Style::default().fg(Color::DarkGray)),
+            );
             for action in &rule.actions {
-                items.push(ListItem::new(format!("  Do: {:?}", action)).style(Style::default().fg(Color::Green)));
+                items.push(
+                    ListItem::new(format!("  Do: {:?}", action))
+                        .style(Style::default().fg(Color::Green)),
+                );
             }
             items.push(ListItem::new(""));
         }
@@ -5685,7 +5717,9 @@ fn render_choir(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 if !buffer_str.is_empty() {
                     for n_str in buffer_str.split(',') {
                         if let Ok(n) = n_str.parse::<u8>() {
-                            let note_names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+                            let note_names = [
+                                "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B",
+                            ];
                             let name = note_names[(n as usize) % 12];
                             let octave = (n / 12) as i32 - 1;
                             notes.push_str(&format!("{}{}, ", name, octave));
@@ -5693,10 +5727,17 @@ fn render_choir(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     }
                 }
 
-                items.push(ListItem::new(format!(
-                    "Siren @ {},{} | BPM:{} Oct:{} | Buf: [{}]",
-                    agent.x, agent.y, bpm, oct, notes.trim_end_matches(", ")
-                )).style(Style::default().fg(Color::Cyan)));
+                items.push(
+                    ListItem::new(format!(
+                        "Siren @ {},{} | BPM:{} Oct:{} | Buf: [{}]",
+                        agent.x,
+                        agent.y,
+                        bpm,
+                        oct,
+                        notes.trim_end_matches(", ")
+                    ))
+                    .style(Style::default().fg(Color::Cyan)),
+                );
             }
         }
     }
@@ -5735,11 +5776,8 @@ fn render_choir(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         dna_items.push(ListItem::new(format!("Strand #{}: {}", i, genes_str)));
     }
 
-    let dna_list = List::new(dna_items).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Composed DNA"),
-    );
+    let dna_list =
+        List::new(dna_items).block(Block::default().borders(Borders::ALL).title("Composed DNA"));
     f.render_widget(dna_list, right_chunks[0]);
 }
 
@@ -12753,8 +12791,14 @@ fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                         style = style.fg(Color::LightCyan).add_modifier(Modifier::BOLD);
                     }
                     "🍄" => style = style.fg(Color::Red).add_modifier(Modifier::BOLD),
-                    "📥" | "📤" | "🦋" => style = style.fg(Color::LightGreen).add_modifier(Modifier::BOLD),
-                    "🌀" => style = style.fg(Color::LightMagenta).add_modifier(Modifier::BOLD | Modifier::SLOW_BLINK),
+                    "📥" | "📤" | "🦋" => {
+                        style = style.fg(Color::LightGreen).add_modifier(Modifier::BOLD)
+                    }
+                    "🌀" => {
+                        style = style
+                            .fg(Color::LightMagenta)
+                            .add_modifier(Modifier::BOLD | Modifier::SLOW_BLINK)
+                    }
                     _ => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
                 }
             } else if !vm.prologue_state.mycelium_network.contains(&(y, x)) {
@@ -13194,11 +13238,15 @@ fn render_codex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let mut items = Vec::new();
     for (i, spell) in vm.codex.spells.iter().enumerate() {
         let style = if i == app_state.codex_selected_spell {
-            Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+            Style::default()
+                .fg(Color::Yellow)
+                .add_modifier(Modifier::BOLD)
         } else {
             Style::default().fg(Color::Cyan)
         };
-        items.push(ListItem::new(format!("{}: {} ({} Energy)", i, spell.name, spell.cost)).style(style));
+        items.push(
+            ListItem::new(format!("{}: {} ({} Energy)", i, spell.name, spell.cost)).style(style),
+        );
     }
 
     let list = List::new(items).block(Block::default().borders(Borders::ALL).title("The Codex"));
@@ -13212,15 +13260,17 @@ fn render_codex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     if let Some(spell) = vm.codex.spells.get(app_state.codex_selected_spell) {
         let details = vec![
-            Line::from(vec![
-                Span::styled(format!("Spell: {}", spell.name), Style::default().add_modifier(Modifier::BOLD)),
-            ]),
+            Line::from(vec![Span::styled(
+                format!("Spell: {}", spell.name),
+                Style::default().add_modifier(Modifier::BOLD),
+            )]),
             Line::from(format!("Cost: {}", spell.cost)),
             Line::from(""),
             Line::from("Description:"),
             Line::from(spell.description.as_str()),
         ];
-        let p = Paragraph::new(details).block(Block::default().borders(Borders::ALL).title("Incantation"));
+        let p = Paragraph::new(details)
+            .block(Block::default().borders(Borders::ALL).title("Incantation"));
         f.render_widget(p, right_chunks[0]);
     }
 
@@ -13232,7 +13282,11 @@ fn render_codex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from(" "),
         Line::from("Warning: Spells consume Energy and may have unpredictable effects."),
     ];
-    let help_p = Paragraph::new(help).block(Block::default().borders(Borders::ALL).title("Grimoire Guide"));
+    let help_p = Paragraph::new(help).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Grimoire Guide"),
+    );
     f.render_widget(help_p, right_chunks[1]);
 }
 
@@ -13249,8 +13303,11 @@ fn render_verbum(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     words.sort_by_key(|w| w.id);
 
     for word in &words {
-        let style = if word.id == app_state.alchemy_strand_idx { // Reuse alchemy index for selection
-            Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+        let style = if word.id == app_state.alchemy_strand_idx {
+            // Reuse alchemy index for selection
+            Style::default()
+                .fg(Color::Yellow)
+                .add_modifier(Modifier::BOLD)
         } else {
             match word.rarity {
                 crate::vm::verbum::Rarity::Common => Style::default().fg(Color::White),
@@ -13268,7 +13325,11 @@ fn render_verbum(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         items.push(ListItem::new("The Lexicon is empty."));
     }
 
-    let list = List::new(items).block(Block::default().borders(Borders::ALL).title("The Verbum Forge"));
+    let list = List::new(items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("The Verbum Forge"),
+    );
     f.render_widget(list, chunks[0]);
 
     // Details
@@ -13279,9 +13340,10 @@ fn render_verbum(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     if let Some(word) = words.iter().find(|w| w.id == app_state.alchemy_strand_idx) {
         let mut details = vec![
-            Line::from(vec![
-                Span::styled(format!("Word: {}", word.name), Style::default().add_modifier(Modifier::BOLD)),
-            ]),
+            Line::from(vec![Span::styled(
+                format!("Word: {}", word.name),
+                Style::default().add_modifier(Modifier::BOLD),
+            )]),
             Line::from(format!("Rarity: {:?}", word.rarity)),
             Line::from(format!("Power Cost: {}", word.cost)),
             Line::from(""),
@@ -13292,7 +13354,8 @@ fn render_verbum(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             details.push(Line::from(format!("  {}", gene.op)));
         }
 
-        let p = Paragraph::new(details).block(Block::default().borders(Borders::ALL).title("Etymology"));
+        let p = Paragraph::new(details)
+            .block(Block::default().borders(Borders::ALL).title("Etymology"));
         f.render_widget(p, right_chunks[0]);
     }
 
@@ -13305,6 +13368,10 @@ fn render_verbum(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from(" "),
         Line::from("Use 'Forge(name, strand)' op to create programmatically."),
     ];
-    let help_p = Paragraph::new(help).block(Block::default().borders(Borders::ALL).title("Lexical Guide"));
+    let help_p = Paragraph::new(help).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Lexical Guide"),
+    );
     f.render_widget(help_p, right_chunks[1]);
 }

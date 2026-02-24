@@ -24,7 +24,8 @@ fn test_prophecy_rune() {
         },
     ];
 
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes: genes_dead }, Strand { genes: genes_alive }],
         },
@@ -60,7 +61,8 @@ fn test_prophecy_rune() {
 
 #[test]
 fn test_entangle_rune() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![
                 Strand { genes: vec![] }, // 0

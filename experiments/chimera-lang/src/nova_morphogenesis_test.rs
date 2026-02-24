@@ -6,7 +6,8 @@ mod tests {
     use crate::vm::{ChimeraVM, Value};
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
-        Dna { evolution_config: None,
+        Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes }],
             },
@@ -55,7 +56,8 @@ mod tests {
         // Iterations: 2
         // Expansion: A -> AB -> ABA
 
-        let mut vm = ChimeraVM::new(Dna { evolution_config: None,
+        let mut vm = ChimeraVM::new(Dna {
+            evolution_config: None,
             helix: Helix { strands: vec![] },
         });
 

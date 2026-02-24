@@ -4,7 +4,8 @@ use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_fission_reactor_chain() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

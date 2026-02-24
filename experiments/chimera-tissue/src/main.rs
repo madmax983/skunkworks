@@ -1,7 +1,7 @@
-use macroquad::prelude::*;
+use ::rand::Rng;
 use chimera_lang::prelude::*;
-use physics_pbd::{PbdSystem, Constraint};
-use ::rand::Rng; // Disambiguate rand
+use macroquad::prelude::*;
+use physics_pbd::{Constraint, PbdSystem}; // Disambiguate rand
 
 struct Cell {
     vm: ChimeraVM,
@@ -29,7 +29,7 @@ impl Tissue {
                 let pos = vec3(
                     x as f32 * 0.5 - (width as f32 * 0.25),
                     y as f32 * 0.5 - (height as f32 * 0.25),
-                    0.0
+                    0.0,
                 );
                 let idx = system.add_particle(pos, 1.0);
                 particle_indices.push(idx);
@@ -131,7 +131,10 @@ impl Tissue {
 
             if count > 0 {
                 for &c_idx in &cell.actuators {
-                    if let Constraint::Actuator { p1, p2, max_len, .. } = system.constraints[c_idx] {
+                    if let Constraint::Actuator {
+                        p1, p2, max_len, ..
+                    } = system.constraints[c_idx]
+                    {
                         let pos1 = system.particles[p1].pos;
                         let pos2 = system.particles[p2].pos;
                         let dist = pos1.distance(pos2);
@@ -161,7 +164,10 @@ impl Tissue {
 
                 // Apply to actuators
                 for &c_idx in &cell.actuators {
-                    if let Constraint::Actuator { factor: ref mut f, .. } = &mut system.constraints[c_idx] {
+                    if let Constraint::Actuator {
+                        factor: ref mut f, ..
+                    } = &mut system.constraints[c_idx]
+                    {
                         *f = factor;
                     }
                 }
@@ -215,20 +221,42 @@ fn create_dna() -> Dna {
 
     let genes = vec![
         // Stack: [Strain]
-        Gene { op: OpCode::Dup, args: vec![] }, // [Strain, Strain]
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(50)] }, // [Strain, Strain, 50]
-        Gene { op: OpCode::Gt, args: vec![] }, // [Strain, Strain > 50 ? 1 : 0]
-
+        Gene {
+            op: OpCode::Dup,
+            args: vec![],
+        }, // [Strain, Strain]
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(50)],
+        }, // [Strain, Strain, 50]
+        Gene {
+            op: OpCode::Gt,
+            args: vec![],
+        }, // [Strain, Strain > 50 ? 1 : 0]
         // If > 50, we want 0 (Contract). If <= 50, we want 100 (Relax).
         // Current Stack Top: 1 (True) or 0 (False)
 
         // Let's implement logic: Output = (1 - IsStretched) * 100
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // [Strain, IsStr, 1]
-        Gene { op: OpCode::Swap, args: vec![] }, // [Strain, 1, IsStr]
-        Gene { op: OpCode::Sub, args: vec![] }, // [Strain, 1 - IsStr] (Now 0 if stretched, 1 if relaxed)
-
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] }, // [Strain, Result, 100]
-        Gene { op: OpCode::Mul, args: vec![] }, // [Strain, Result * 100]
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        }, // [Strain, IsStr, 1]
+        Gene {
+            op: OpCode::Swap,
+            args: vec![],
+        }, // [Strain, 1, IsStr]
+        Gene {
+            op: OpCode::Sub,
+            args: vec![],
+        }, // [Strain, 1 - IsStr] (Now 0 if stretched, 1 if relaxed)
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(100)],
+        }, // [Strain, Result, 100]
+        Gene {
+            op: OpCode::Mul,
+            args: vec![],
+        }, // [Strain, Result * 100]
     ];
 
     Dna {
@@ -248,11 +276,18 @@ async fn main() {
     let cam_target = vec2(0.0, 0.0);
 
     loop {
-        if is_key_down(KeyCode::Up) { cam_zoom += 1.0; }
-        if is_key_down(KeyCode::Down) { cam_zoom -= 1.0; }
+        if is_key_down(KeyCode::Up) {
+            cam_zoom += 1.0;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_zoom -= 1.0;
+        }
 
         set_camera(&Camera2D {
-            zoom: vec2(1.0 / cam_zoom, 1.0 / cam_zoom * screen_width() / screen_height()),
+            zoom: vec2(
+                1.0 / cam_zoom,
+                1.0 / cam_zoom * screen_width() / screen_height(),
+            ),
             target: cam_target,
             ..Default::default()
         });

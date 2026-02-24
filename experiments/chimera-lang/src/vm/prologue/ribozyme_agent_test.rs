@@ -4,7 +4,8 @@ use crate::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_ribozyme_agent() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -49,10 +50,9 @@ fn test_ribozyme_agent() {
 
             // Maybe we can use `Dup` (10, 10) and `Add` (20)?
             // That works! 10 * 2 = 10 + 10.
-
             Value::Str("dup".to_string()),
             Value::Str("add".to_string()),
-        ]
+        ],
     );
     vm.grid[4][5] = enzyme;
 

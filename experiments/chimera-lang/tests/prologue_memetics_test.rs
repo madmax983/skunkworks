@@ -5,7 +5,8 @@ use chimera_lang::vm::Value;
 
 #[test]
 fn test_memetic_source() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -26,7 +27,8 @@ fn test_memetic_source() {
 
 #[test]
 fn test_memetic_evolve() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -52,7 +54,8 @@ fn test_memetic_evolve() {
 
 #[test]
 fn test_memetic_censor() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -92,7 +95,8 @@ fn test_memetic_censor() {
 
 #[test]
 fn test_memetic_spread() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -118,7 +122,8 @@ fn test_memetic_spread() {
 
 #[test]
 fn test_memetic_imitate() {
-    let dna = Dna { evolution_config: None,
+    let dna = Dna {
+        evolution_config: None,
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);

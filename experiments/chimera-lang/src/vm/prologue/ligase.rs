@@ -30,10 +30,7 @@ pub fn process_ligase_agent(
 
         if has_n && has_s {
             // Join
-            let new_list = Value::Junction(
-                JunctionType::Any,
-                vec![n_val.clone(), s_val.clone()],
-            );
+            let new_list = Value::Junction(JunctionType::Any, vec![n_val.clone(), s_val.clone()]);
 
             // Write to East
             if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {

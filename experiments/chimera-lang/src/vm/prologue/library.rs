@@ -46,12 +46,14 @@ fn apply_book_rune(vm: &mut ChimeraVM, y: usize, x: usize) {
         };
 
         match mode {
-            0 => { // READ
+            0 => {
+                // READ
                 if let Some(val) = vm.prologue_state.library.get(&key) {
                     vm.prologue_state.signal_grid[y][x] = Some(val.clone());
                 }
-            },
-            1 => { // WRITE
+            }
+            1 => {
+                // WRITE
                 // South: Value (From Signal Grid)
                 if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
                     if let Some(val) = &vm.prologue_state.signal_grid[sy][sx] {
@@ -60,8 +62,9 @@ fn apply_book_rune(vm: &mut ChimeraVM, y: usize, x: usize) {
                         vm.output.push(format!("LIBRARY: Wrote '{}'", key));
                     }
                 }
-            },
-            2 => { // EXEC
+            }
+            2 => {
+                // EXEC
                 if let Some(val) = vm.prologue_state.library.get(&key) {
                     if let Value::Str(code) = val {
                         match crate::compiler::compile(code, None) {
@@ -71,19 +74,23 @@ fn apply_book_rune(vm: &mut ChimeraVM, y: usize, x: usize) {
                                 vm.dna.helix.strands.append(&mut dna.helix.strands);
 
                                 if vm.dna.helix.strands.len() > start_idx {
-                                    vm.output.push(format!("LIBRARY: Executing '{}' (Strand {})", key, start_idx));
+                                    vm.output.push(format!(
+                                        "LIBRARY: Executing '{}' (Strand {})",
+                                        key, start_idx
+                                    ));
                                     vm.context_loc = (y, x);
                                     vm.interrupt(start_idx);
                                     vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
                                 }
-                            },
+                            }
                             Err(e) => {
-                                vm.output.push(format!("LIBRARY: Exec Failed '{}': {}", key, e));
+                                vm.output
+                                    .push(format!("LIBRARY: Exec Failed '{}': {}", key, e));
                             }
                         }
                     }
                 }
-            },
+            }
             _ => {}
         }
     }
@@ -119,7 +126,7 @@ fn apply_bookmark_rune(vm: &mut ChimeraVM, y: usize, x: usize) {
 
     if let Some(Value::Str(key)) = w_sig {
         if vm.prologue_state.library.contains_key(&key) {
-             vm.prologue_state.signal_grid[y][x] = Some(Value::Str(key));
+            vm.prologue_state.signal_grid[y][x] = Some(Value::Str(key));
         }
     }
 }

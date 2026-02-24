@@ -30,13 +30,21 @@ impl LogisticMap {
                     // Accumulate brightness
                     let existing = image.get_pixel(px as u32, py);
                     let brightness = (existing.g + 0.1).min(1.0);
-                    image.set_pixel(px as u32, py, Color::new(0.0, brightness, existing.b + 0.05, 1.0));
+                    image.set_pixel(
+                        px as u32,
+                        py,
+                        Color::new(0.0, brightness, existing.b + 0.05, 1.0),
+                    );
                 }
             }
         }
 
         let texture = Texture2D::from_image(&image);
-        Self { texture, min_r, max_r }
+        Self {
+            texture,
+            min_r,
+            max_r,
+        }
     }
 
     /// Calculate distance to the nearest attractor point for a given (r, x)

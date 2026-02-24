@@ -5,7 +5,8 @@ mod tests {
     use crate::vm::{ChimeraVM, Topology, Value};
 
     fn make_empty_vm() -> ChimeraVM {
-        let dna = Dna { evolution_config: None,
+        let dna = Dna {
+            evolution_config: None,
             helix: Helix {
                 strands: vec![Strand { genes: vec![] }],
             },
