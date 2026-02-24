@@ -5112,7 +5112,7 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         .constraints(
             [
                 Constraint::Min(0),
-                Constraint::Length(3), // Tension Bar
+                Constraint::Length(3), // Controls
                 Constraint::Length(3), // Info
             ]
             .as_ref(),
@@ -5183,6 +5183,41 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 ctx.print(rx, ry, ch);
             }
 
+            // Draw Custom Tension Bar
+            let tension = app_state.fishing_tension;
+            let bar_height = tension * 80.0;
+            let bar_color = if tension > 0.8 {
+                Color::Red
+            } else if tension > 0.5 {
+                Color::Yellow
+            } else {
+                Color::Green
+            };
+
+            // Bar Background
+            ctx.draw(&Rectangle {
+                x: 95.0,
+                y: 10.0,
+                width: 3.0,
+                height: 80.0,
+                color: Color::DarkGray,
+            });
+            // Bar Fill
+            let mut shake_x = 0.0;
+            if tension > 0.8 {
+                use rand::Rng;
+                let mut rng = rand::thread_rng();
+                shake_x = rng.gen_range(-0.5..0.5);
+            }
+            ctx.draw(&Rectangle {
+                x: 95.0 + shake_x,
+                y: 10.0,
+                width: 3.0,
+                height: bar_height,
+                color: bar_color,
+            });
+            ctx.print(94.0, 5.0, "TENSION");
+
             if app_state.fishing_cast {
                 // Bobber X Animation (Shake when hooked)
                 let mut bobber_x = 50.0;
@@ -5232,11 +5267,17 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
                 // Bobber (Visual)
                 let bobber_icon = if app_state.fishing_hooked {
-                    "🔴" // Hooked
+                    "⦿" // Hooked
                 } else {
-                    "⚪" // Idle
+                    "●" // Idle
                 };
-                ctx.print(bobber_x, app_state.fishing_bobber_y, bobber_icon);
+                // Bob animation
+                let bob_offset = if !app_state.fishing_hooked {
+                     (vm.tick_counter as f64 * 0.2).sin() * 2.0
+                } else {
+                    0.0
+                };
+                ctx.print(bobber_x, app_state.fishing_bobber_y + bob_offset, bobber_icon);
 
                 // Splash Effect
                 if app_state.fishing_hooked {
@@ -5278,53 +5319,24 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     y2: 90.0,
                     color: Color::Green,
                 });
-
-                // Instructions Overlay (Top Right)
-                ctx.print(60.0, 95.0, "SPACE: Reel (Tap)");
-            } else {
-                ctx.print(35.0, 90.0, "Press SPACE to Cast");
             }
         });
 
     f.render_widget(canvas, chunks[0]);
 
-    // Tension Bar (Gradient & Feedback)
-    let tension = app_state.fishing_tension;
-    // Enhanced thresholds and states
-    let (tension_color, label, symbol) = if tension < 0.2 {
-        (Color::Green, "RELAXED", "🟢")
-    } else if tension < 0.4 {
-        (Color::LightGreen, "TENSION", "🎣")
-    } else if tension < 0.6 {
-        (Color::Yellow, "PULLING", "⚠️")
-    } else if tension < 0.8 {
-        (Color::LightRed, "STRAIN", "🔥")
-    } else {
-        (Color::Red, "BREAKING!", "💥")
-    };
+    // Controls Row (Buttons)
+    let control_chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(chunks[1]);
 
-    let gauge_style = Style::default()
-        .fg(tension_color)
-        .bg(Color::DarkGray)
-        .add_modifier(if tension > 0.8 {
-            Modifier::BOLD | Modifier::RAPID_BLINK
-        } else {
-            Modifier::empty()
-        });
+    crate::ui::Button::new("CAST (Enter)")
+        .active(!app_state.fishing_cast)
+        .render(f, control_chunks[0]);
 
-    let gauge = Gauge::default()
-        .block(panel_block("Line Tension", tension > 0.5))
-        .gauge_style(gauge_style)
-        .use_unicode(true)
-        .ratio(tension.clamp(0.0, 1.0));
-
-    let label_text = if tension >= 1.0 {
-        "SNAP! (100%)".to_string()
-    } else {
-        format!("{} {} ({:.1}%)", symbol, label, tension * 100.0)
-    };
-
-    f.render_widget(gauge.label(label_text), chunks[1]);
+    crate::ui::Button::new("REEL (Space)")
+        .active(app_state.fishing_cast && app_state.fishing_tension > 0.0) // Highlight when reeling
+        .render(f, control_chunks[1]);
 
     // Dashboard Info
     let depth = if app_state.fishing_bobber_y < 50.0 {
