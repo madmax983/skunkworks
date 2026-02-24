@@ -3,6 +3,13 @@
 //! This module provides the [`Vec4`] struct, which represents a 4-dimensional vector
 //! (x, y, z, w). It includes methods for arithmetic, normalization, and geometric
 //! transformations such as 4D rotation and projection into 3D space.
+//!
+//! # 4D to 3D Projection
+//!
+//! The [`Vec4::project_to_3d`] method implements a stereographic-like projection.
+//! Imagine a 4D camera positioned on the W-axis. As objects move further away in W
+//! (relative to the camera), they shrink in X, Y, and Z. This creates the illusion of
+//! 4D depth when projected onto a 3D "retina" (which is then rendered to a 2D screen).
 
 #[cfg(feature = "macroquad")]
 use macroquad::prelude::Vec3 as MacroquadVec3;
@@ -304,13 +311,30 @@ impl Vec4 {
     ///
     /// A `Vec3` representing the 3D projection.
     ///
+    /// # Examples
+    ///
+    /// ```
+    /// use hyper_system::math::Vec4;
+    ///
+    /// // A point "far away" in the W dimension (w=0) relative to camera (w=10)
+    /// let far = Vec4::new(1.0, 1.0, 1.0, 0.0);
+    /// // A point "close" to the camera (w=8)
+    /// let close = Vec4::new(1.0, 1.0, 1.0, 8.0);
+    ///
+    /// let p_far = far.project_to_3d(10.0);
+    /// let p_close = close.project_to_3d(10.0);
+    ///
+    /// // The closer point appears larger (projected further out)
+    /// assert!(p_close.x > p_far.x);
+    /// ```
+    ///
     /// # Implementation Details
     ///
     /// The projection formula used is:
     /// `scale = 2.0 / (camera_w - w)`
     /// `projected = original * scale`
     ///
-    /// - **Scale Factor (2.0)**: Acts as a field-of-view modifier.
+    /// - **Scale Factor (2.0)**: Acts as a field-of-view modifier (Zoom).
     /// - **Safety Clamp (0.1)**: The denominator `(camera_w - w)` is clamped to a minimum
     ///   of `0.1` to prevent division by zero or negative projection artifacts when points
     ///   are behind the camera.

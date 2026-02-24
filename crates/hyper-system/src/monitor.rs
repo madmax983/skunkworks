@@ -43,16 +43,16 @@ use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
 /// let dt: f32 = 0.016; // 60 FPS
 /// let mut time: f64 = 0.0;
 ///
-/// for _ in 0..100 {
+/// for _ in 0..120 {
 ///     time += dt as f64;
-///     // Update the monitor with the current frame time
+///     // Update the monitor with the current frame time.
+///     // Note: Meaningful CPU data starts appearing around t=1.0s.
 ///     monitor.update_with_time(dt, time);
 ///
-///     // Use the smoothed values for visualization
-///     println!("Smoothed CPU: {:.2}%", monitor.cpu_usage * 100.0);
-///
-///     // In a real app, you would sleep or wait for vsync here
-///     // thread::sleep(Duration::from_secs_f32(dt));
+///     if time > 1.1 {
+///         // Should have valid data now
+///         assert!(monitor.mem_usage >= 0.0);
+///     }
 /// }
 /// ```
 pub struct SystemMonitor {
@@ -79,14 +79,26 @@ impl SystemMonitor {
     /// Creates a new `SystemMonitor` instance.
     ///
     /// Initializes the underlying system information gatherer.
+    ///
+    /// # Performance Note
+    ///
+    /// This function triggers an initial CPU refresh to set a baseline for differential usage calculation.
+    /// The first call to `update` will likely report 0% CPU usage as `sysinfo` needs two data points
+    /// to calculate the delta. Meaningful data usually appears after the first 1-second interval.
     pub fn new() -> Self {
+        let mut sys = System::new_with_specifics(
+            RefreshKind::new()
+                .with_cpu(CpuRefreshKind::everything())
+                .with_memory(MemoryRefreshKind::everything()),
+        );
+        // Initial refresh to establish baseline for CPU usage
+        sys.refresh_cpu();
+
         Self {
-            sys: System::new_with_specifics(
-                RefreshKind::new()
-                    .with_cpu(CpuRefreshKind::everything())
-                    .with_memory(MemoryRefreshKind::everything()),
-            ),
-            last_update: 0.0,
+            sys,
+            // Initialize to a negative value to force an immediate update on the first frame (t=0)
+            // if the user passes t=0.0.
+            last_update: -2.0,
             cpu_usage: 0.0,
             mem_usage: 0.0,
             swap_usage: 0.0,
@@ -114,6 +126,12 @@ impl SystemMonitor {
     ///    system stats via `sysinfo` and updates the internal "target" values.
     /// 2. **Interpolate**: Smoothly moves the public fields (`cpu_usage`, etc.) towards
     ///    the target values using the formula: `current = lerp(current, target, 2.0 * dt)`.
+    ///
+    /// # Cold Start
+    ///
+    /// Calculating CPU usage requires comparing two snapshots of system state.
+    /// Therefore, valid CPU metrics will only appear after the *second* poll (usually at t=1.0s).
+    /// Before that, `cpu_usage` will interpolate towards 0.0.
     pub fn update_with_time(&mut self, dt: f32, now: f64) {
         if now - self.last_update > 1.0 {
             self.sys.refresh_cpu();
