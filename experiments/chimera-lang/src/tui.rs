@@ -10019,7 +10019,7 @@ fn render_void(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let (cx, cy) = app_state.grid_cursor;
     let local_entropy = vm.entropy_grid[cy][cx];
 
-    let info_text = vec![
+    let mut info_text = vec![
         Line::from("THE VOID"),
         Line::from(" "),
         Line::from(format!("Local Entropy: {} / 100", local_entropy)),
@@ -10029,7 +10029,20 @@ fn render_void(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  - Void Organelles (Ø) generate Entropy"),
         Line::from("  - stabilize(n) reduces Entropy"),
         Line::from("  - disintegrate(y, x) creates Entropy"),
+        Line::from(" "),
+        Line::from("Void Buffer (LIFO):"),
     ];
+
+    if vm.prologue_state.void_buffer.is_empty() {
+        info_text.push(Line::from("  (Empty)"));
+    } else {
+        for (i, val) in vm.prologue_state.void_buffer.iter().rev().take(10).enumerate() {
+            info_text.push(Line::from(format!("  [{}] {}", i, val)));
+        }
+        if vm.prologue_state.void_buffer.len() > 10 {
+            info_text.push(Line::from("  ..."));
+        }
+    }
 
     let info_widget =
         Paragraph::new(info_text).block(Block::default().borders(Borders::ALL).title("Status"));
