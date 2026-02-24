@@ -10,8 +10,6 @@ const TSUNAMI_MOISTURE_ADD: i64 = 50;
 const AEOLUS_COST: i64 = 5;
 const TSUNAMI_BASE_COST: i64 = 15;
 
-type WindVector = (i8, i8);
-
 fn calculate_decay(w_dy: i8, w_dx: i8, moisture: i64) -> (i8, i8, i64) {
     let decayed_dy = (w_dy as f32 * WIND_DECAY) as i8;
     let decayed_dx = (w_dx as f32 * WIND_DECAY) as i8;
@@ -100,7 +98,8 @@ pub fn process_sensors(vm: &mut ChimeraVM) {
 pub fn process_fluid(vm: &mut ChimeraVM) {
     let size = super::GRID_SIZE;
     let mut new_moisture = vec![vec![0i64; size]; size];
-    let mut new_wind: Vec<Vec<WindVector>> = vec![vec![(0i8, 0i8); size]; size];
+    // Use i32 to prevent overflow during accumulation
+    let mut new_wind: Vec<Vec<(i32, i32)>> = vec![vec![(0, 0); size]; size];
 
     // Helper to check for walls
     let is_solid = |vm: &ChimeraVM, y: usize, x: usize| -> bool {
@@ -138,14 +137,14 @@ pub fn process_fluid(vm: &mut ChimeraVM) {
             if let Some((ny, nx)) = vm.normalize_coords(target_y, target_x) {
                 if is_solid(vm, ny, nx) {
                     // Hit a wall: Reflect wind
-                    new_wind[y][x].0 -= decayed_dy;
-                    new_wind[y][x].1 -= decayed_dx;
+                    new_wind[y][x].0 -= decayed_dy as i32;
+                    new_wind[y][x].1 -= decayed_dx as i32;
                     // Moisture stays here
                     new_moisture[y][x] = new_moisture[y][x].saturating_add(decayed_moisture);
                 } else {
                     // Advection: Move wind and moisture to target
-                    new_wind[ny][nx].0 += decayed_dy;
-                    new_wind[ny][nx].1 += decayed_dx;
+                    new_wind[ny][nx].0 += decayed_dy as i32;
+                    new_wind[ny][nx].1 += decayed_dx as i32;
 
                     let moved = decayed_moisture / 2;
                     let stayed = decayed_moisture - moved;
@@ -168,8 +167,13 @@ pub fn process_fluid(vm: &mut ChimeraVM) {
                 vm.wind_grid[y][x] = (0, 0);
             } else {
                 vm.moisture_grid[y][x] = new_moisture[y][x].min(MAX_MOISTURE);
-                vm.wind_grid[y][x].0 = new_wind[y][x].0.clamp(-MAX_WIND, MAX_WIND);
-                vm.wind_grid[y][x].1 = new_wind[y][x].1.clamp(-MAX_WIND, MAX_WIND);
+                // Clamp accumulated wind back to i8 limits
+                vm.wind_grid[y][x].0 = new_wind[y][x]
+                    .0
+                    .clamp(-MAX_WIND as i32, MAX_WIND as i32) as i8;
+                vm.wind_grid[y][x].1 = new_wind[y][x]
+                    .1
+                    .clamp(-MAX_WIND as i32, MAX_WIND as i32) as i8;
             }
         }
     }
