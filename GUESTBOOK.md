@@ -625,3 +625,8 @@
 - **Scent Origin**: The Splice Surgeon 🧬
 - **Status**: The knots are heavy. The data is writhing against gravity.
 - **Note**: "To lift the weight of knowledge, the cord must contract."
+
+### [Concentration Level: FRESH] - Location: experiments/ferrous-swarm
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: The jellyfish are flocking magnetically. The tissue breathes.
+- **Note**: "Magneto-Elastic Swarming established. Individual complexity meets collective intelligence."

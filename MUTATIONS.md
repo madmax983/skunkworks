@@ -251,6 +251,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Benefit**: Same data, radically different insights
 -->
 
+### Flocking Injection
+- **Pattern**: Inject flocking behavior (Separation, Alignment, Cohesion) into complex entity simulations.
+- **Example**: Apply flocking forces to soft-body organisms or magnetic particles.
+- **Benefit**: Emergent swarm intelligence from complex individual physics.
+
 ### code-concerto
 - **Parents**: experiments/struct-soup + experiments/harmony-of-spheres
 - **Concept**: Rust AST nodes mapped to musical structures (Structs=Chords, Fn=Melody).
@@ -1675,3 +1680,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Emergent Piezoelectricity. Mechanical strain creates magnetic fields, and magnetic fields cause mechanical contraction.
 - **Status**: experiments/ferrous-tissue
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified compilation.
+
+### ferrous-swarm
+- **Parents**: experiments/ferrous-tissue + experiments/luminous-flock
+- **Concept**: Flocking behavior applied to complex soft-body organisms where internal magnetic states affect formation.
+- **Novel trait**: Magneto-Elastic Swarming. The flock isn't just points; it's squishy, magnetic creatures that deform when they collide or align.
+- **Status**: experiments/ferrous-swarm
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
