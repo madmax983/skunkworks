@@ -166,6 +166,8 @@ pub enum ViewMode {
     Paradox,
     #[cfg(feature = "nova")]
     Codex,
+    #[cfg(feature = "nova")]
+    Verbum,
 }
 
 enum InputMode {
@@ -1154,6 +1156,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Verbum = app_state.view_mode {
+                render_verbum(f, vm, app_state);
+                return;
+            }
+
             render_genome_and_grid(f, vm, app_state);
 
             if vm.glitch_level > 0.01 {
@@ -1208,6 +1216,83 @@ where
                                 app_state.view_mode = views[selected].0;
                             }
                             app_state.show_view_selector = false;
+                        }
+                        _ => {}
+                    }
+                    continue;
+                }
+
+                #[cfg(feature = "nova")]
+                if let ViewMode::Verbum = app_state.view_mode {
+                    // Reuse alchemy_strand_idx as the selected word ID
+                    // Clone basic info to avoid holding borrow on VM
+                    let mut words: Vec<(usize, String)> = vm.verbum_forge.words.values()
+                        .map(|w| (w.id, w.name.clone()))
+                        .collect();
+                    words.sort_by_key(|w| w.0);
+
+                    match key.code {
+                        KeyCode::Up => {
+                            // Find current index
+                            if let Some(pos) = words.iter().position(|w| w.0 == app_state.alchemy_strand_idx) {
+                                if pos > 0 {
+                                    app_state.alchemy_strand_idx = words[pos - 1].0;
+                                }
+                            } else if !words.is_empty() {
+                                app_state.alchemy_strand_idx = words[0].0;
+                            }
+                        }
+                        KeyCode::Down => {
+                            if let Some(pos) = words.iter().position(|w| w.0 == app_state.alchemy_strand_idx) {
+                                if pos + 1 < words.len() {
+                                    app_state.alchemy_strand_idx = words[pos + 1].0;
+                                }
+                            } else if !words.is_empty() {
+                                app_state.alchemy_strand_idx = words[0].0;
+                            }
+                        }
+                        KeyCode::Enter => {
+                            if let Some(word) = words.iter().find(|w| w.0 == app_state.alchemy_strand_idx) {
+                                let name = word.1.clone();
+                                // Get word data first (immut borrow)
+                                let word_data = vm.verbum_forge.get_word_data(&name);
+
+                                if let Some((genes, cost)) = word_data {
+                                    if vm.energy >= cost {
+                                        vm.energy -= cost;
+                                        // Execute manually
+                                        for gene in genes {
+                                            let _ = vm.execute_gene_inner(gene.op, &gene.args);
+                                        }
+                                        app_state.status_msg = format!("Invoked Word: {}", name);
+                                        app_state.screen_shake = 1.0;
+                                    } else {
+                                        app_state.status_msg = format!("Not enough energy to speak '{}'", name);
+                                    }
+                                } else {
+                                    app_state.status_msg = format!("Word '{}' fading...", name);
+                                }
+                            }
+                        }
+                        KeyCode::Char('F') => {
+                            // Forge from current strand (simple random name for now)
+                            use rand::Rng;
+                            let mut rng = rand::thread_rng();
+                            let s_idx = app_state.selected_strand;
+                            if s_idx < vm.dna.helix.strands.len() {
+                                let genes = vm.dna.helix.strands[s_idx].genes.clone();
+                                let suffix = rng.gen_range(100..999);
+                                let name = format!("Word{}", suffix);
+                                match vm.verbum_forge.forge(name.clone(), genes, vec![]) {
+                                    Ok(_) => {
+                                        app_state.status_msg = format!("Forged: {}", name);
+                                        app_state.screen_shake = 2.0;
+                                    }
+                                    Err(e) => {
+                                        app_state.status_msg = format!("Forge Error: {}", e);
+                                    }
+                                }
+                            }
                         }
                         _ => {}
                     }
@@ -2993,7 +3078,8 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Paradox => ViewMode::Codex,
                             #[cfg(feature = "nova")]
-                            ViewMode::Codex => ViewMode::Genome,
+                            ViewMode::Codex => ViewMode::Verbum,
+                            ViewMode::Verbum => ViewMode::Genome,
                         };
                     }
                     #[cfg(feature = "nova")]
@@ -13078,6 +13164,15 @@ fn render_tesseract(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     color: Color::Gray,
                 });
 
+                // Use color for the point
+                ctx.draw(&ratatui::widgets::canvas::Line {
+                    x1: px + 0.5 - 0.1,
+                    y1: py + 0.5 - 0.1,
+                    x2: px + 0.5 + 0.1,
+                    y2: py + 0.5 + 0.1,
+                    color,
+                });
+
                 ctx.print(px + 0.5, py + 0.5, "♦");
             }
         });
@@ -13160,5 +13255,78 @@ fn render_codex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("Warning: Spells consume Energy and may have unpredictable effects."),
     ];
     let help_p = Paragraph::new(help).block(Block::default().borders(Borders::ALL).title("Grimoire Guide"));
+    f.render_widget(help_p, right_chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_verbum(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(40), Constraint::Percentage(60)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    // Word List
+    let mut items = Vec::new();
+    let mut words: Vec<_> = vm.verbum_forge.words.values().collect();
+    words.sort_by_key(|w| w.id);
+
+    for word in &words {
+        let style = if word.id == app_state.alchemy_strand_idx { // Reuse alchemy index for selection
+            Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+        } else {
+            match word.rarity {
+                crate::vm::verbum::Rarity::Common => Style::default().fg(Color::White),
+                crate::vm::verbum::Rarity::Uncommon => Style::default().fg(Color::Green),
+                crate::vm::verbum::Rarity::Rare => Style::default().fg(Color::Blue),
+                crate::vm::verbum::Rarity::Epic => Style::default().fg(Color::Magenta),
+                crate::vm::verbum::Rarity::Legendary => Style::default().fg(Color::Yellow),
+                crate::vm::verbum::Rarity::Mythic => Style::default().fg(Color::Red),
+            }
+        };
+        items.push(ListItem::new(format!("{}: {}", word.id, word.name)).style(style));
+    }
+
+    if items.is_empty() {
+        items.push(ListItem::new("The Lexicon is empty."));
+    }
+
+    let list = List::new(items).block(Block::default().borders(Borders::ALL).title("The Verbum Forge"));
+    f.render_widget(list, chunks[0]);
+
+    // Details
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
+        .split(chunks[1]);
+
+    if let Some(word) = words.iter().find(|w| w.id == app_state.alchemy_strand_idx) {
+        let mut details = vec![
+            Line::from(vec![
+                Span::styled(format!("Word: {}", word.name), Style::default().add_modifier(Modifier::BOLD)),
+            ]),
+            Line::from(format!("Rarity: {:?}", word.rarity)),
+            Line::from(format!("Power Cost: {}", word.cost)),
+            Line::from(""),
+            Line::from("Meaning (Genes):"),
+        ];
+
+        for gene in &word.genes {
+            details.push(Line::from(format!("  {}", gene.op)));
+        }
+
+        let p = Paragraph::new(details).block(Block::default().borders(Borders::ALL).title("Etymology"));
+        f.render_widget(p, right_chunks[0]);
+    }
+
+    // Help
+    let help = vec![
+        Line::from("Controls:"),
+        Line::from("  Up/Down: Select Word"),
+        Line::from("  Enter: Invoke Word"),
+        Line::from("  F: Forge new word from current Strand"),
+        Line::from(" "),
+        Line::from("Use 'Forge(name, strand)' op to create programmatically."),
+    ];
+    let help_p = Paragraph::new(help).block(Block::default().borders(Borders::ALL).title("Lexical Guide"));
     f.render_widget(help_p, right_chunks[1]);
 }
