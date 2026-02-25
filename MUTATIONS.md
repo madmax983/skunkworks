@@ -1708,3 +1708,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Genetic Mycelial Architecture. The code determines the branching and direction of the network.
 - **Status**: experiments/chimera-mycelium
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Genetic logic operational.
+
+### ferrous-mycelium
+- **Parents**: experiments/ferrous-genesis + experiments/chimera-mycelium
+- **Concept**: "Magnetotropic Fungi". Fungal hyphae composed of magnetic particles growing through a medium that records magnetic field intensity.
+- **Novel trait**: Magnetotropism. The organism constructs its own magnetic lattice via feedback loops between growth and field strength.
+- **Status**: experiments/ferrous-mycelium
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified compilation.
