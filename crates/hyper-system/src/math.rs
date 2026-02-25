@@ -4,19 +4,42 @@
 //! (x, y, z, w). It includes methods for arithmetic, normalization, and geometric
 //! transformations such as 4D rotation and projection into 3D space.
 //!
+//! # The Hyper Coordinate System
+//!
+//! In the "Hyper" series of experiments, we visualize 4D space using a stereographic projection.
+//!
+//! - **X, Y, Z**: Standard 3D spatial dimensions.
+//! - **W**: The 4th dimension, often visualized as "scale" or "inflation" when projected.
+//!
 //! # 4D to 3D Projection
 //!
 //! The [`Vec4::project_to_3d`] method implements a stereographic-like projection.
-//! Imagine a 4D camera positioned on the W-axis. As objects move further away in W
-//! (relative to the camera), they shrink in X, Y, and Z. This creates the illusion of
-//! 4D depth when projected onto a 3D "retina" (which is then rendered to a 2D screen).
+//! Imagine a 4D camera positioned on the W-axis at `camera_w`.
+//!
+//! 1. **Perspective Divide**: As objects move further away in W (relative to the camera),
+//!    the difference `(camera_w - w)` increases.
+//! 2. **Scaling**: We divide the X, Y, and Z components by this difference.
+//!
+//! This creates the illusion of 4D depth when projected onto a 3D "retina" (which is then
+//! rendered to a 2D screen). Objects "closer" to the camera in W appear larger, and objects
+//! "further away" appear smaller.
 
 #[cfg(feature = "macroquad")]
 use macroquad::prelude::Vec3 as MacroquadVec3;
 
 /// A simple 3D vector for projection results.
 ///
-/// Used to avoid dependency on external crates for core math types.
+/// Used to avoid dependency on external crates for core math types like `glam` or `nalgebra`
+/// in the core logic, keeping the dependency tree light.
+///
+/// # Examples
+///
+/// ```
+/// use hyper_system::math::Vec3;
+///
+/// let v = Vec3::new(1.0, 2.0, 3.0);
+/// assert_eq!(v.z, 3.0);
+/// ```
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vec3 {
     pub x: f32,
@@ -214,6 +237,24 @@ impl Vec4 {
     /// Limits the magnitude of the vector to a maximum value.
     ///
     /// If the vector's length is greater than `max`, it is normalized and scaled to `max`.
+    /// Otherwise, it returns the original vector.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use hyper_system::math::Vec4;
+    ///
+    /// let v = Vec4::new(10.0, 0.0, 0.0, 0.0);
+    /// let limited = v.limit(5.0);
+    ///
+    /// assert_eq!(limited.x, 5.0);
+    /// assert_eq!(limited.length(), 5.0);
+    ///
+    /// // A vector shorter than the limit is unchanged
+    /// let small = Vec4::new(1.0, 0.0, 0.0, 0.0);
+    /// let limited_small = small.limit(5.0);
+    /// assert_eq!(limited_small.x, 1.0);
+    /// ```
     pub fn limit(&self, max: f32) -> Self {
         if self.length_squared() > max * max {
             self.normalize().scale(max)
@@ -223,6 +264,21 @@ impl Vec4 {
     }
 
     /// Calculates the squared Euclidean distance to another vector.
+    ///
+    /// This is faster than calculating the exact distance because it avoids the square root.
+    /// Useful for distance comparisons (e.g., checking if a point is within a radius).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use hyper_system::math::Vec4;
+    ///
+    /// let v1 = Vec4::new(0.0, 0.0, 0.0, 0.0);
+    /// let v2 = Vec4::new(1.0, 1.0, 1.0, 1.0);
+    ///
+    /// // 1^2 + 1^2 + 1^2 + 1^2 = 4
+    /// assert_eq!(v1.distance_squared(v2), 4.0);
+    /// ```
     pub fn distance_squared(&self, other: Vec4) -> f32 {
         let dx = self.x - other.x;
         let dy = self.y - other.y;
@@ -271,7 +327,26 @@ impl Vec4 {
 
     /// Rotates the vector in the YW plane.
     ///
-    /// Changes the Y and W components.
+    /// In 4D space, this rotation affects the Y and W components, leaving X and Z unchanged.
+    ///
+    /// # Arguments
+    ///
+    /// * `theta` - The angle of rotation in radians.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use hyper_system::math::Vec4;
+    /// use std::f32::consts::PI;
+    ///
+    /// let v = Vec4::new(0.0, 1.0, 0.0, 0.0);
+    /// // Rotate 90 degrees in YW plane
+    /// let rotated = v.rotate_yw(PI / 2.0);
+    ///
+    /// // v moves from Y to W axis
+    /// assert!(rotated.y.abs() < 1e-6);
+    /// assert!((rotated.w - 1.0).abs() < 1e-6);
+    /// ```
     pub fn rotate_yw(&self, theta: f32) -> Self {
         self.rotate_yw_fast(theta.sin(), theta.cos())
     }
@@ -288,7 +363,26 @@ impl Vec4 {
 
     /// Rotates the vector in the ZW plane.
     ///
-    /// Changes the Z and W components.
+    /// In 4D space, this rotation affects the Z and W components, leaving X and Y unchanged.
+    ///
+    /// # Arguments
+    ///
+    /// * `theta` - The angle of rotation in radians.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use hyper_system::math::Vec4;
+    /// use std::f32::consts::PI;
+    ///
+    /// let v = Vec4::new(0.0, 0.0, 1.0, 0.0);
+    /// // Rotate 90 degrees in ZW plane
+    /// let rotated = v.rotate_zw(PI / 2.0);
+    ///
+    /// // v moves from Z to W axis
+    /// assert!(rotated.z.abs() < 1e-6);
+    /// assert!((rotated.w - 1.0).abs() < 1e-6);
+    /// ```
     pub fn rotate_zw(&self, theta: f32) -> Self {
         self.rotate_zw_fast(theta.sin(), theta.cos())
     }
