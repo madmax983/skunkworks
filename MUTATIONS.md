@@ -1728,4 +1728,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A Miura-ori mesh where vertices are magnetic particles driven by ChimeraVM agents.
 - **Novel trait**: Magneto-Mechanical Folding. The sheet folds itself based on the magnetic polarity of its vertices.
 - **Status**: experiments/ferrous-fold
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Re-verified compilation. Hybrid Vigor Confirmed.
+
+### hyper-tissue
+- **Parents**: experiments/chimera-tissue + experiments/tesseract-ops
+- **Concept**: A 4D Soft-Body Simulation where muscles contract in 4 dimensions, driven by genetic code and CPU load.
+- **Novel trait**: Hyper-Elasticity. The tissue can fold into the 4th dimension.
+- **Status**: experiments/hyper-tissue
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. 4D Physics Solver operational.
