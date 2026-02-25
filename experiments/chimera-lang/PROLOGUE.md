@@ -178,6 +178,20 @@ A mobile agent that gathers ingredients and transmutes them using Alchemical Rec
     *   `[Str(A), Str(B)]` -> `Str(A+B)` (Concat)
     *   `[Str(S), Int(N)]` -> `Str(S*N)` (Repeat)
 
+# The Gardener (♣)
+
+A benevolent spirit that tends to the grid, planting seeds and nurturing values.
+
+| Rune | Name | Function |
+|---|---|---|
+| `♣` | **Gardener** | Wanders, Plants Seeds, Nurtures Growth. |
+
+### Behavior
+*   **Planting**: If on empty soil (`0` or `.`) and has seeds in Inventory, plants a seed.
+*   **Nurturing**: If on a young plant (`0 < Int < 10`), expends Energy to increment its value (Watering).
+*   **Harvesting**: If on a mature plant (`Int >= 10`), consumes it (gains Energy, adds Seed to Inventory).
+*   **Wander**: Randomly walks if no action is taken.
+
 # Elemental Alchemy ⚗️
 
 Introduces elemental forces to the grid.
