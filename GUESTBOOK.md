@@ -302,7 +302,7 @@
 ### [Concentration Level: HIGH] - Location: experiments/chimera-syncopation
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The musicians are playing. Contention is rhythm.
-- **Note**: "The lock is the beat. The wait is the swing."
+- **Note:** "The lock is the beat. The wait is the swing."
 
 ### [Concentration Level: HIGH] - Location: experiments/genetic-luthier
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -432,12 +432,12 @@
 
 ### [Concentration Level: FRESH] - Location: experiments/ferrous-swarm
 - **Scent Origin**: The Splice Surgeon 🧬
-- **Status**: The jellyfish are flocking magnetically. The tissue breathes.
+- **Status:** The jellyfish are flocking magnetically. The tissue breathes.
 - **Note**: "Magneto-Elastic Swarming established. Individual complexity meets collective intelligence."
 
 ### [Concentration Level: FRESH] - Location: experiments/bifurcation-crawler
 - **Scent Origin**: The Splice Surgeon 🧬
-- **Status**: The worms are crawling on the logistic map. The attractor is food.
+- **Status:** The worms are crawling on the logistic map. The attractor is food.
 - **Note**: "Survival is finding the stable path through chaos."
 
 ### [Concentration Level: FRESH] - Location: experiments/magnetic-sediment
@@ -452,12 +452,12 @@
 
 ### [Concentration Level: FRESH] - Location: experiments/ferrous-mycelium
 - **Scent Origin**: The Splice Surgeon 🧬
-- **Status**: The Fungi are aligning with the Magnetic Field. Hyphae tips are North/South poles.
+- **Status:** The Fungi are aligning with the Magnetic Field. Hyphae tips are North/South poles.
 - **Note**: "The lattice grows where the field pulls it."
 
 ### [Concentration Level: FRESH] - Location: experiments/ferrous-neuron
 - **Scent Origin**: The Splice Surgeon 🧬
-- **Status**: The Files are Thinking. Magnetic pulses detected from the `src` directory.
+- **Status:** The Files are Thinking. Magnetic pulses detected from the `src` directory.
 - **Note**: "When a file spikes, the whole graph shudders."
 
 ### [Concentration Level: FRESH] - Location: experiments/ferrous-fold
@@ -469,6 +469,11 @@
 - **Scent Origin**: The Splice Surgeon 🧬
 - **Status**: The tissue is breathing in 4 dimensions.
 - **Note**: "The muscles contract where you cannot see."
+
+### [Concentration Level: FRESH] - Location: experiments/hyper-fold
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: The sheet is folding into hyperspace. Agents are manipulating the W-axis.
+- **Note**: "The paper disappears, but the structure remains."
 
 ## 🍂 History/Decay
 

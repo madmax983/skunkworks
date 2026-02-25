@@ -1736,3 +1736,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Hyper-Elasticity. The tissue can fold into the 4th dimension.
 - **Status**: experiments/hyper-tissue
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. 4D Physics Solver operational.
+
+### hyper-fold
+- **Parents**: experiments/hyper-tissue + experiments/ferrous-fold
+- **Concept**: A 4D "Hyper-Origami" simulation where a Miura-ori sheet exists in 4D space and folds into the 4th dimension based on "Hyper-Magnetic" forces controlled by ChimeraVM agents.
+- **Novel trait**: 4D Origami. Folding across the W-axis.
+- **Status**: experiments/hyper-fold
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. 4D magnetic folding logic operational.
