@@ -2037,6 +2037,13 @@ pub enum OpCode {
     #[cfg(feature = "oracle")]
     PrologCall,
 
+    /// **[Oracle]** Toggles the Regulatory Censor (Genetic Regulation via Logic).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    /// **Effect:** If enabled, every gene execution is checked against the Knowledge Base for `censor(Op)`.
+    #[cfg(feature = "oracle")]
+    Censor,
+
     // Git Features (Repository Interaction)
     /// **[Git]** Pushes a list of recent commit hashes to the stack.
     ///
