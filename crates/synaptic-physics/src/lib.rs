@@ -296,16 +296,26 @@ impl Izhikevich {
         let dt_sub = dt / SUBSTEPS as f32;
         let mut spiked = false;
 
-        // Decay the injected current
-        // e^(-dt / tau)
-        let decay = (-dt_sub / self.tau).exp();
+        // Optimization: Only compute exponential decay if there is current to decay.
+        // This avoids expensive exp() calls in the common case where current_decay is zero.
+        let decay = if self.current_decay.abs() > 1.0e-6 {
+             (-dt_sub / self.tau).exp()
+        } else {
+             1.0
+        };
 
         for _ in 0..SUBSTEPS {
-            self.current_decay *= decay;
+            if self.current_decay.abs() > 1.0e-6 {
+                self.current_decay *= decay;
+            } else {
+                self.current_decay = 0.0;
+            }
 
             let total_current = extra_current + self.current_decay;
 
-            let dv = 0.04 * self.v * self.v + 5.0 * self.v + 140.0 - self.u + total_current;
+            // Optimization: Factor out self.v to save one multiplication
+            // 0.04 * v^2 + 5v = v * (0.04 * v + 5.0)
+            let dv = self.v * (0.04 * self.v + 5.0) + 140.0 - self.u + total_current;
             self.v += dv * dt_sub;
 
             let du = self.a * (self.b * self.v - self.u);
@@ -486,5 +496,16 @@ mod tests {
     fn test_negative_dt_panic() {
         let mut n = Izhikevich::new();
         n.update(-0.1, 0.0);
+    }
+
+    #[test]
+    fn bench_neuron_update() {
+        let mut n = Izhikevich::new();
+        let start = std::time::Instant::now();
+        for i in 0..10_000_000 {
+             let dt = 0.1 + (i % 100) as f32 * 0.001;
+             n.update(std::hint::black_box(dt), 10.0);
+        }
+        println!("Time taken: {:?}", start.elapsed());
     }
 }
