@@ -8108,10 +8108,15 @@ fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
 #[cfg(feature = "nova")]
 fn render_memetics(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
-    let chunks = Layout::default()
-        .direction(Direction::Horizontal)
+    let main_chunks = Layout::default()
+        .direction(Direction::Vertical)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
         .split(app_state.get_render_area(f.area()));
+
+    let top_chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(main_chunks[0]);
 
     // Left: Meme Pool
     let mut meme_items = Vec::new();
@@ -8132,7 +8137,7 @@ fn render_memetics(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     }
     let meme_list =
         List::new(meme_items).block(Block::default().borders(Borders::ALL).title("Meme Pool"));
-    f.render_widget(meme_list, chunks[0]);
+    f.render_widget(meme_list, top_chunks[0]);
 
     // Right: Dialect (Shibboleths)
     // Show dialect for CURRENT strand (ip.0)
@@ -8159,7 +8164,59 @@ fn render_memetics(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .borders(Borders::ALL)
             .title(format!("Dialect (Strand {})", s_idx)),
     );
-    f.render_widget(dialect_list, chunks[1]);
+    f.render_widget(dialect_list, top_chunks[1]);
+
+    // Bottom: Infection Map (Viral Grid)
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let mut style = Style::default();
+            let mut ch = "·".to_string();
+
+            let mut state_opt = None;
+            if y < vm.viral_grid.len() && x < vm.viral_grid[y].len() {
+                state_opt = vm.viral_grid[y][x].as_ref();
+            }
+
+            if let Some(state) = state_opt {
+                // Color based on virus
+                if state.virus_id < vm.virus_library.len() {
+                    let virus = &vm.virus_library[state.virus_id];
+                    style = style.fg(Color::Rgb(virus.color.0, virus.color.1, virus.color.2));
+                } else {
+                    style = style.fg(Color::Red);
+                }
+
+                // Intensity based on infection level
+                if state.infection_level > 80 {
+                    style = style.add_modifier(Modifier::BOLD);
+                    ch = "☣".to_string();
+                } else if state.infection_level > 50 {
+                    ch = "x".to_string();
+                } else {
+                    ch = ".".to_string();
+                }
+            } else {
+                style = style.fg(Color::DarkGray);
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Viral Infection Map"),
+    );
+    f.render_widget(grid_widget, main_chunks[1]);
 }
 
 #[cfg(feature = "nova")]

@@ -7,7 +7,7 @@ pub fn process_shuttle_agent(
     agent: &PrologueAgent,
     grid_snapshot: &[Vec<Value>],
 ) -> Option<(PrologueAgent, Option<(usize, usize)>)> {
-    let mut updated_agent = agent.clone();
+    let updated_agent = agent.clone();
     let (y, x) = (agent.y, agent.x);
 
     // Unpack State: [dy, dx, Payload, Underfoot]
@@ -29,7 +29,16 @@ pub fn process_shuttle_agent(
     let current_cell = &underfoot;
     if let Value::Str(s) = current_cell {
         match s.as_str() {
-            "+" => payload = op_warp(vm, y, x, &payload, |a, b| a + b),
+            "+" => {
+                if find_warp(vm, y, x).is_some() {
+                    payload = op_warp(vm, y, x, &payload, |a, b| a + b);
+                } else {
+                    return Some((
+                        update_state(updated_agent, dx, -dy, payload, underfoot),
+                        Some((y, x)),
+                    ));
+                }
+            }
             "-" => payload = op_warp(vm, y, x, &payload, |a, b| a - b),
             "*" => payload = op_warp(vm, y, x, &payload, |a, b| a * b),
             "%" => payload = op_warp(vm, y, x, &payload, |a, b| if b != 0 { a % b } else { 0 }),
