@@ -1693,11 +1693,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Soft-body organisms (Chimera Tissue) navigating the Bifurcation Diagram of the Logistic Map.
 - **Novel trait**: Chaotic Selection Pressure. Survival depends on adhering to the mathematical attractor, which bifurcates into chaos.
 - **Status**: experiments/bifurcation-crawler
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified compilation.
 
 ### magnetic-sediment
 - **Parents**: experiments/chimera-sediment + experiments/ferrous-swarm
 - **Concept**: Dead processes decompose into magnetic dust, attracting soft-body scavengers that swarm to consume them.
 - **Novel trait**: Magneto-Ecological Decomposition. The physical swarm is driven by the system's entropy (death).
 - **Status**: experiments/magnetic-sediment
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified compilation.
+
+### chimera-mycelium
+- **Parents**: experiments/chimera-lang + experiments/chaotic-mycelium
+- **Concept**: ChimeraVM agents growing as fungal hyphae on a chaotic substrate.
+- **Novel trait**: Genetic Mycelial Architecture. The code determines the branching and direction of the network.
+- **Status**: experiments/chimera-mycelium
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Genetic logic operational.
