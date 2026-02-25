@@ -37,12 +37,20 @@ impl<'a> Widget for Button<'a> {
         let mut block_style = Style::default().fg(Color::Gray);
 
         if self.is_hovered {
-            block_style = block_style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
-            style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
+            // Hover: Distinct Dark Gray background
+            style = style
+                .bg(Color::DarkGray)
+                .fg(Color::White)
+                .add_modifier(Modifier::BOLD);
+            block_style = block_style.fg(Color::White).add_modifier(Modifier::BOLD);
         }
 
         if self.is_active {
-            style = style.bg(Color::Yellow).fg(Color::Black);
+            // Active (Click): High contrast Yellow
+            style = style
+                .bg(Color::Yellow)
+                .fg(Color::Black)
+                .add_modifier(Modifier::BOLD);
             block_style = block_style.fg(Color::Yellow);
         }
 

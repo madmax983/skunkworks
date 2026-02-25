@@ -2,6 +2,7 @@ use ratatui::{
     buffer::Buffer,
     layout::Rect,
     style::{Color, Style},
+    symbols::block,
     widgets::{Block, Borders, Widget},
 };
 
@@ -19,34 +20,71 @@ impl Widget for TensionBar {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let tension = self.tension.clamp(0.0, 1.0);
 
-        let color = if tension > 0.8 {
-            Color::Red
-        } else if tension > 0.5 {
-            Color::Yellow
+        // Gradient Calculation: Green -> Yellow -> Red
+        let (r, g, b) = if tension < 0.5 {
+            // Green (0, 255, 0) to Yellow (255, 255, 0)
+            let t = tension * 2.0;
+            ((255.0 * t) as u8, 255, 0)
         } else {
-            Color::Green
+            // Yellow (255, 255, 0) to Red (255, 0, 0)
+            let t = (tension - 0.5) * 2.0;
+            (255, (255.0 * (1.0 - t)) as u8, 0)
         };
+        let color = Color::Rgb(r, g, b);
 
-        let block = Block::default().borders(Borders::ALL).title("TENS"); // Short title for narrow bar
-
-        let inner_area = block.inner(area);
-        block.render(area, buf);
+        let container = Block::default().borders(Borders::ALL).title("TENS");
+        let inner_area = container.inner(area);
+        container.render(area, buf);
 
         if inner_area.height < 1 {
             return;
         }
 
-        let fill_height = (inner_area.height as f64 * tension).round() as u16;
+        let precise_height = inner_area.height as f64 * tension;
+        let full_blocks = precise_height.floor() as u16;
+        let remainder = precise_height - full_blocks as f64;
 
-        for y in 0..fill_height {
-            // Draw from bottom up
+        // Draw full blocks
+        for y in 0..full_blocks {
             let draw_y = inner_area.y + inner_area.height - 1 - y;
             if draw_y >= inner_area.y + inner_area.height {
                 continue;
-            } // Safety
+            }
 
             for x in inner_area.x..inner_area.x + inner_area.width {
-                buf[(x, draw_y)].set_style(Style::default().bg(color));
+                let cell = &mut buf[(x, draw_y)];
+                cell.set_symbol(block::FULL);
+                cell.set_fg(color);
+            }
+        }
+
+        // Draw partial block
+        if remainder > 0.0 && full_blocks < inner_area.height {
+            let draw_y = inner_area.y + inner_area.height - 1 - full_blocks;
+
+            // Lower blocks grow from bottom
+            let symbol = if remainder < 0.125 {
+                block::ONE_EIGHTH
+            } else if remainder < 0.25 {
+                block::ONE_QUARTER
+            } else if remainder < 0.375 {
+                block::THREE_EIGHTHS
+            } else if remainder < 0.5 {
+                block::HALF
+            } else if remainder < 0.625 {
+                block::FIVE_EIGHTHS
+            } else if remainder < 0.75 {
+                block::THREE_QUARTERS
+            } else if remainder < 0.875 {
+                block::SEVEN_EIGHTHS
+            } else {
+                block::FULL
+            };
+
+            for x in inner_area.x..inner_area.x + inner_area.width {
+                let cell = &mut buf[(x, draw_y)];
+                cell.set_symbol(symbol);
+                cell.set_fg(color);
             }
         }
     }

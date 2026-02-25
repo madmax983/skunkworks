@@ -55,6 +55,10 @@ impl std::hash::Hash for Value {
 
 impl std::fmt::Display for Value {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // Attempt to render as a table for complex Junctions
+        if let Some(table_str) = self.as_table_string() {
+            return write!(f, "\n{}", table_str);
+        }
         self.fmt_depth(f, 0)
     }
 }
@@ -96,6 +100,61 @@ impl Value {
             Value::Symbol(id) => write!(f, "§{:x}", id),
             Value::Color(r, g, b) => write!(f, "#[{:02X},{:02X},{:02X}]", r, g, b),
         }
+    }
+
+    /// Tries to format the Value as a pretty table if it's a Junction of Junctions.
+    fn as_table_string(&self) -> Option<String> {
+        if let Value::Junction(_, rows) = self {
+            // Heuristic: Must be a list of Junctions to be a table
+            if rows.is_empty() {
+                return None;
+            }
+
+            // Check first row to establish column count
+            let cols_len = if let Value::Junction(_, cols) = &rows[0] {
+                cols.len()
+            } else {
+                return None; // Not a table (list of primitives?)
+            };
+
+            if cols_len == 0 { return None; }
+
+            // Validate that most rows look like rows?
+            // Actually let's just try to build it.
+            // Only convert if depth is exactly 2 (Junction -> Junctions -> Primitives)
+            // or we want to allow nested values in cells (which display fine).
+
+            let mut table = comfy_table::Table::new();
+            table.load_preset(comfy_table::presets::UTF8_FULL);
+            // Compact mode for CLI dashboard feel
+            table.apply_modifier(comfy_table::modifiers::UTF8_ROUND_CORNERS);
+
+            for row_val in rows {
+                if let Value::Junction(_, cells) = row_val {
+                    let row_cells: Vec<comfy_table::Cell> = cells.iter().map(|v| {
+                        // Special formatting for boolean-like values
+                        match v {
+                            Value::Str(s) if s.eq_ignore_ascii_case("true") => {
+                                comfy_table::Cell::new("True").fg(comfy_table::Color::Green)
+                            }
+                            Value::Str(s) if s.eq_ignore_ascii_case("false") => {
+                                comfy_table::Cell::new("False").fg(comfy_table::Color::Red)
+                            }
+                            // Maybe Int(1)/Int(0)?
+                            // Value::Int(1) => comfy_table::Cell::new("1").fg(comfy_table::Color::Green),
+                            // Value::Int(0) => comfy_table::Cell::new("0").fg(comfy_table::Color::Red),
+                            _ => comfy_table::Cell::new(v.to_string()),
+                        }
+                    }).collect();
+                    table.add_row(row_cells);
+                } else {
+                    return None; // Mixed structure
+                }
+            }
+
+            return Some(table.to_string());
+        }
+        None
     }
 
     /// Recursively calculates the depth of nested structures.
