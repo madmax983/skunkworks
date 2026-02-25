@@ -96,3 +96,7 @@
 ## 2027-06-25 - Ferrous Mycelium Race Condition
 **Threat:** The `Hypha` struct in `experiments/ferrous-mycelium/src/organism.rs` used a `static mut ID_COUNTER` to generate unique IDs. Accessing `static mut` is `unsafe` and causes a data race in multi-threaded environments (UB), violating memory safety guarantees.
 **Defense:** Replaced `static mut` with `std::sync::atomic::AtomicU64` and used `fetch_add(1, Ordering::Relaxed)` to safely generate unique IDs without `unsafe` blocks. Added `test_id_uniqueness` to verify behavior.
+
+## 2027-07-15 - Evolution Engine Zero Population Panic
+**Threat:** The `EvolutionEngine` in `experiments/chimera-lang/src/vm/evolution.rs` would panic with "index out of bounds" if initialized with a population size of 0 (via malicious configuration or direct API use). This occurred because `tournament_select` attempted to access an empty pool.
+**Defense:** Updated `EvolutionEngine::new` to clamp `population_size` to `max(1)`, ensuring the population is never empty. Also hardened the parser in `compiler.rs` to correctly handle evolution properties using named rules, fixing a bug where configurations like `population: 0` were ignored (defaulting to 50) due to silent literal consumption in Pest.

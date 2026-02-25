@@ -353,30 +353,32 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                 let mut target = None;
 
                 for prop in inner {
-                    let mut prop_parts = prop.into_inner();
-                    // Each part is (key ~ ":" ~ val)
-                    // But pest returns flat children of prop
-                    // e.g. "population", ":", "number"
-                    // Wait, `evolution_prop` rule has alternatives.
-                    // The first token is the keyword.
-                    let key_token = prop_parts.next().unwrap();
-                    match key_token.as_str() {
-                        "population" => {
-                            let _colon = prop_parts.next();
-                            let val_str = prop_parts.next().unwrap().as_str();
+                    // prop is evolution_prop
+                    // Its only child is one of the specific property rules
+                    let child = prop.into_inner().next().unwrap();
+                    match child.as_rule() {
+                        Rule::evo_population => {
+                            // "population" ~ ":" ~ number
+                            let mut parts = child.into_inner();
+                            let val_str = parts.next().unwrap().as_str(); // number
                             pop_size = val_str.parse().unwrap_or(50);
                         }
-                        "mutation_rate" => {
-                            let _colon = prop_parts.next();
-                            mut_rate = prop_parts.next().unwrap().as_str().to_string();
+                        Rule::evo_mutation_rate => {
+                            // "mutation_rate" ~ ":" ~ float
+                            let mut parts = child.into_inner();
+                            let val_str = parts.next().unwrap().as_str(); // float
+                            mut_rate = val_str.to_string();
                         }
-                        "target" => {
-                            let _colon = prop_parts.next();
-                            let val_str = prop_parts.next().unwrap().as_str();
+                        Rule::evo_target => {
+                            // "target" ~ ":" ~ number
+                            let mut parts = child.into_inner();
+                            let val_str = parts.next().unwrap().as_str(); // number
                             target = val_str.parse().ok();
                         }
-                        "fitness" => {
-                            let block_pair = prop_parts.next().unwrap();
+                        Rule::evo_fitness => {
+                            // "fitness" ~ block
+                            let mut parts = child.into_inner();
+                            let block_pair = parts.next().unwrap();
                             let mut ctx = CompilerContext {
                                 strand_map: &strand_map,
                                 macro_map: &macro_map,
@@ -398,8 +400,10 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                                 }
                             }
                         }
-                        "strategy" => {
-                            let block_pair = prop_parts.next().unwrap();
+                        Rule::evo_strategy => {
+                            // "strategy" ~ block
+                            let mut parts = child.into_inner();
+                            let block_pair = parts.next().unwrap();
                             let mut ctx = CompilerContext {
                                 strand_map: &strand_map,
                                 macro_map: &macro_map,
