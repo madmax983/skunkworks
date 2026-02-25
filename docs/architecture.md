@@ -247,6 +247,32 @@ sequenceDiagram
     GPU->>Ping: Write Next State
 ```
 
+### Storage Decoupling (ADR 006)
+
+Refactoring to decouple storage from core logic to resolve circular dependencies.
+
+#### Core vs Storage
+
+```mermaid
+classDiagram
+  class Core
+  class Storage
+  Core --> Storage : Uses (Trait Bound)
+  %% Removed the circular dependency arrow
+```
+
+#### Storage Flow
+
+```mermaid
+sequenceDiagram
+    participant C as Core
+    participant S as Storage
+
+    Note over C,S: Decoupled via Trait (ADR 006)
+    C->>S: save_state(data)
+    S-->>C: Result<Ok>
+```
+
 ## Shared Domain Logic
 
 Specialized libraries that encapsulate specific domain knowledge or data structures, reused across multiple experiments.
@@ -823,53 +849,6 @@ sequenceDiagram
     Phy-->>VM: push(String(stdout))
 ```
 
-## Core Architecture Changes (ADR 006)
-
-Refactoring to decouple storage from core logic to resolve circular dependencies.
-
-### Core vs Storage
-
-```mermaid
-classDiagram
-  class Core
-  class Storage
-  Core --> Storage : Uses (Trait Bound)
-  %% Removed the circular dependency arrow
-```
-
-### Storage Flow
-
-```mermaid
-sequenceDiagram
-    participant C as Core
-    participant S as Storage
-
-    Note over C,S: Decoupled via Trait (ADR 006)
-    C->>S: save_state(data)
-    S-->>C: Result<Ok>
-```
-
-## Storage Decoupling (ADR 047)
-
-Proposed changes to verify and reinforce the decoupling of the storage module.
-
-```mermaid
-classDiagram
-  class Core
-  class Storage
-  Core --> Storage : Uses (Trait Bound)
-  %% Removed the circular dependency arrow
-```
-
-```mermaid
-sequenceDiagram
-    participant C as Core
-    participant S as Storage
-
-    Note over C,S: Decoupled via Trait (ADR 047)
-    C->>S: save_state(data)
-    S-->>C: Result<Ok>
-```
 
 ### Chimera Feature: Sovereignty (ADR 018)
 
