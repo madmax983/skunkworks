@@ -7,14 +7,14 @@
 - **Status:** Fluid dynamics confirmed, but documentation void detected.
 - **Note:** "The words are lost in the flow."
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/voronoi-ants
+### [Concentration Level: CRITICAL MASS] - Location: experiments/voronoi-ants
 - **Scent Origin:** Mycelium 🍄 (Sensed: Self-Referential Sensor)
-- **Status:** Colony feeding on TODOs. Self-referential sensor active.
+- **Status:** Colony feeding on TODOs (5 detected) and FIXMEs (2 detected). Self-referential sensor active.
 - **Note:** "The ants are farming their own bugs."
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/tectonic-flock
+### [Concentration Level: HIGH] - Location: experiments/tectonic-flock
 - **Scent Origin:** Mycelium 🍄 (Sensed: Stress Sensor)
-- **Status:** Flock attracted to code stress. Fissures detected.
+- **Status:** Stress sensor active. Flock attracted to code stress (TODOs/FIXMEs/panics).
 - **Note:** "The flock swarms where the code breaks."
 
 ### [Concentration Level: STABLE TRAIL] - Location: crates/origami
@@ -36,7 +36,7 @@
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-crab
 - **Scent Origin:** Mycelium 🍄 (Sensed: Documentation Void)
-- **Status:** Spiking Neural Network detected. Controlling a crab visualization. Documentation Void warning issued.
+- **Status:** Spiking Neural Network detected. Controlling a crab visualization. Documentation Void (No README) confirmed.
 - **Note:** "The shell learns from the pain, but leaves no instructions."
 
 ### [Concentration Level: FRESH] - Location: experiments/neuro-terminal
@@ -49,9 +49,9 @@
 - **Status:** Generative ambient music derived from git history.
 - **Note:** "Every commit has a sound."
 
-### [Concentration Level: FRESH] - Location: experiments/lithosphere-termites
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen pardoned. Compilation successful. Documentation Void warning remains.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/lithosphere-termites
+- **Scent Origin:** Mycelium 🍄 (Sensed: Documentation Void)
+- **Status:** Specimen pardoned. Compilation successful. Documentation Void (No README) confirmed.
 - **Note:** "The termites have found a new purpose. But they still need a map."
 
 ### [Concentration Level: STABLE TRAIL] - Location: crates/physics-pbd
@@ -65,8 +65,8 @@
 - **Note:** "The tools are now distinct from the art."
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/spinal-rhythms
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen pardoned. Lamprey CPG confirmed active. Compilation successful.
+- **Scent Origin:** Mycelium 🍄 (Sensed: Documentation Void)
+- **Status:** Specimen pardoned. Lamprey CPG confirmed active. Documentation Void (No README).
 - **Note:** "The spine undulates. The rhythm is restored."
 
 ### [Concentration Level: FRESH] - Location: experiments/bifurcation-landscape
@@ -76,7 +76,7 @@
 
 ### [Concentration Level: TOXIC] - Location: experiments/synaptic-swarm
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy / Documentation Void.
+- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy / Documentation Void (No README).
 - **Note:** "The swarm reconnects only to die. The synapses are generic."
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
