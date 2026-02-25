@@ -157,6 +157,166 @@ impl Value {
         None
     }
 
+    /// Applies a binary operation recursively to Values.
+    ///
+    /// Handles:
+    /// - (Int, Int) -> Int
+    /// - (Junction, Scalar) -> Junction (map)
+    /// - (Scalar, Junction) -> Junction (map)
+    /// - (Junction, Junction) -> Junction (cross product)
+    /// - (Superposition, Scalar) -> Superposition (map)
+    /// - (Scalar, Superposition) -> Superposition (map)
+    /// - (Superposition, Superposition) -> Superposition (cross product)
+    ///
+    /// Returns `None` if recursion depth exceeds `max_depth` or result size exceeds `max_size`.
+    pub fn apply_binary_op<F>(
+        self,
+        other: Value,
+        op: F,
+        max_depth: usize,
+        max_size: usize,
+    ) -> Option<Value>
+    where
+        F: Fn(i64, i64) -> i64 + Copy,
+    {
+        self.apply_binary_op_recursive(other, op, 0, max_depth, max_size)
+    }
+
+    fn apply_binary_op_recursive<F>(
+        self,
+        other: Value,
+        op: F,
+        depth: usize,
+        max_depth: usize,
+        max_size: usize,
+    ) -> Option<Value>
+    where
+        F: Fn(i64, i64) -> i64 + Copy,
+    {
+        if depth > max_depth {
+            return None;
+        }
+        match (self, other) {
+            (Value::Int(ia), Value::Int(ib)) => Some(Value::Int(op(ia, ib))),
+            (Value::Junction(t, vals), scalar @ Value::Int(_)) => {
+                let mut res = Vec::new();
+                for v in vals {
+                    if res.len() >= max_size {
+                        return None;
+                    }
+                    if let Some(r) = v.apply_binary_op_recursive(
+                        scalar.clone(),
+                        op,
+                        depth + 1,
+                        max_depth,
+                        max_size,
+                    ) {
+                        res.push(r);
+                    } else {
+                        return None;
+                    }
+                }
+                Some(Value::Junction(t, res))
+            }
+            (scalar @ Value::Int(_), Value::Junction(t, vals)) => {
+                let mut res = Vec::new();
+                for v in vals {
+                    if res.len() >= max_size {
+                        return None;
+                    }
+                    if let Some(r) = scalar.clone().apply_binary_op_recursive(
+                        v,
+                        op,
+                        depth + 1,
+                        max_depth,
+                        max_size,
+                    ) {
+                        res.push(r);
+                    } else {
+                        return None;
+                    }
+                }
+                Some(Value::Junction(t, res))
+            }
+            (Value::Junction(ta, va), Value::Junction(_tb, vb)) => {
+                // Cross product, defaulting to type of A
+                let mut res = Vec::new();
+                for xa in va {
+                    for xb in &vb {
+                        if res.len() >= max_size {
+                            return None;
+                        }
+                        if let Some(r) = xa.clone().apply_binary_op_recursive(
+                            xb.clone(),
+                            op,
+                            depth + 1,
+                            max_depth,
+                            max_size,
+                        ) {
+                            res.push(r);
+                        }
+                    }
+                }
+                Some(Value::Junction(ta, res))
+            }
+            (Value::Superposition(states), scalar @ Value::Int(_)) => {
+                let mut res = Vec::new();
+                for (v, p) in states {
+                    if let Some(r) = v.apply_binary_op_recursive(
+                        scalar.clone(),
+                        op,
+                        depth + 1,
+                        max_depth,
+                        max_size,
+                    ) {
+                        res.push((r, p));
+                    } else {
+                        return None;
+                    }
+                }
+                Some(Value::Superposition(res))
+            }
+            (scalar @ Value::Int(_), Value::Superposition(states)) => {
+                let mut res = Vec::new();
+                for (v, p) in states {
+                    if let Some(r) = scalar.clone().apply_binary_op_recursive(
+                        v,
+                        op,
+                        depth + 1,
+                        max_depth,
+                        max_size,
+                    ) {
+                        res.push((r, p));
+                    } else {
+                        return None;
+                    }
+                }
+                Some(Value::Superposition(res))
+            }
+            (Value::Superposition(states_a), Value::Superposition(states_b)) => {
+                let mut res = Vec::new();
+                for (va, pa) in states_a {
+                    for (vb, pb) in &states_b {
+                        if res.len() >= max_size {
+                            return None;
+                        }
+                        if let Some(r) = va.clone().apply_binary_op_recursive(
+                            vb.clone(),
+                            op,
+                            depth + 1,
+                            max_depth,
+                            max_size,
+                        ) {
+                            res.push((r, pa * pb));
+                        }
+                    }
+                }
+                Some(Value::Superposition(res))
+            }
+            _ => None,
+        }
+    }
+
     /// Recursively calculates the depth of nested structures.
     ///
     /// - Int/Str: Depth 0
@@ -215,3 +375,85 @@ impl Value {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_apply_binary_op_int() {
+        let a = Value::Int(10);
+        let b = Value::Int(20);
+        let res = a.apply_binary_op(b, |x, y| x + y, 100, 1024).unwrap();
+        assert_eq!(res, Value::Int(30));
+    }
+
+    #[test]
+    fn test_apply_binary_op_junction_scalar() {
+        // Junction(Any, [1, 2]) + 3 = Junction(Any, [4, 5])
+        let a = Value::Junction(JunctionType::Any, vec![Value::Int(1), Value::Int(2)]);
+        let b = Value::Int(3);
+        let res = a.apply_binary_op(b, |x, y| x + y, 100, 1024).unwrap();
+        assert_eq!(res, Value::Junction(JunctionType::Any, vec![Value::Int(4), Value::Int(5)]));
+    }
+
+    #[test]
+    fn test_apply_binary_op_scalar_junction() {
+        // 3 + Junction(Any, [1, 2]) = Junction(Any, [4, 5])
+        let a = Value::Int(3);
+        let b = Value::Junction(JunctionType::Any, vec![Value::Int(1), Value::Int(2)]);
+        let res = a.apply_binary_op(b, |x, y| x + y, 100, 1024).unwrap();
+        assert_eq!(res, Value::Junction(JunctionType::Any, vec![Value::Int(4), Value::Int(5)]));
+    }
+
+    #[test]
+    fn test_apply_binary_op_junction_junction() {
+        // Junction(Any, [1, 2]) + Junction(All, [10, 20])
+        // = Junction(Any, [11, 21, 12, 22])
+        let a = Value::Junction(JunctionType::Any, vec![Value::Int(1), Value::Int(2)]);
+        let b = Value::Junction(JunctionType::All, vec![Value::Int(10), Value::Int(20)]);
+        let res = a.apply_binary_op(b, |x, y| x + y, 100, 1024).unwrap();
+
+        match res {
+            Value::Junction(JunctionType::Any, vals) => {
+                assert_eq!(vals.len(), 4);
+                assert!(vals.contains(&Value::Int(11)));
+                assert!(vals.contains(&Value::Int(21)));
+                assert!(vals.contains(&Value::Int(12)));
+                assert!(vals.contains(&Value::Int(22)));
+            }
+            _ => panic!("Expected Junction(Any, ...)"),
+        }
+    }
+
+    #[test]
+    fn test_limit_exceeded() {
+        let a = Value::Junction(JunctionType::Any, vec![Value::Int(1); 10]);
+        let b = Value::Junction(JunctionType::Any, vec![Value::Int(2); 10]);
+        // 10 * 10 = 100 elements, limit 50
+        let res = a.apply_binary_op(b, |x, y| x + y, 100, 50);
+        assert!(res.is_none());
+    }
+}
+
+    #[test]
+    fn test_apply_binary_op_junction_junction_partial_failure() {
+        // Junction(Any, [1, "a"]) + Junction(Any, [2])
+        // 1 + 2 = 3
+        // "a" + 2 = Error (None)
+        // Result should be Junction(Any, [3]) (skipping failure)
+
+        let a = Value::Junction(JunctionType::Any, vec![Value::Int(1), Value::Str("a".to_string())]);
+        let b = Value::Junction(JunctionType::Any, vec![Value::Int(2)]);
+
+        // We need an op that fails for Str
+        let res = a.apply_binary_op(b, |x, y| x + y, 100, 1024).unwrap();
+
+        match res {
+            Value::Junction(JunctionType::Any, vals) => {
+                assert_eq!(vals.len(), 1);
+                assert_eq!(vals[0], Value::Int(3));
+            }
+            _ => panic!("Expected Junction(Any, [3])"),
+        }
+    }
