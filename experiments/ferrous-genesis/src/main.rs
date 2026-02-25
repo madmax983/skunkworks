@@ -1,23 +1,17 @@
 use anyhow::Result;
 use chimera_lang::prelude::*;
-use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
+use crossterm::event::{self, Event, KeyCode};
 use ratatui::{
-    backend::{Backend, CrosstermBackend},
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
-    text::{Line, Span},
+    text::Span,
     widgets::{
         canvas::{Canvas, Line as CanvasLine},
         Block, Borders, Paragraph,
     },
-    Terminal,
 };
-use std::io;
 use std::time::{Duration, Instant};
+use tui_shared::Tui;
 
 mod physics;
 mod platter;
@@ -142,23 +136,13 @@ fn create_homeostasis_dna() -> Dna {
 
 fn main() -> Result<()> {
     // Setup Terminal
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = Tui::init()?;
 
     // Run Logic
-    let res = run_app(&mut terminal);
+    let res = run_app(&mut tui);
 
     // Restore Terminal
-    disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen,
-        DisableMouseCapture
-    )?;
-    terminal.show_cursor()?;
+    tui.exit()?;
 
     if let Err(err) = res {
         println!("{:?}", err);
@@ -167,19 +151,16 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn run_app<B: Backend>(terminal: &mut Terminal<B>) -> Result<()>
-where
-    <B as Backend>::Error: Send + Sync + 'static,
-{
+fn run_app(tui: &mut Tui) -> Result<()> {
     // Initialize Universe
     let mut universe = Universe::new();
     let dna = create_homeostasis_dna();
 
     // Spawn 50 Particles
     for _ in 0..50 {
-        let x = (rand::random::<f32>() - 0.5) * 100.0;
-        let y = (rand::random::<f32>() - 0.5) * 100.0;
-        let mass = 10.0 + rand::random::<f32>() * 20.0;
+        let x = (rand::random::<f64>() - 0.5) * 100.0;
+        let y = (rand::random::<f64>() - 0.5) * 100.0;
+        let mass = 10.0 + rand::random::<f64>() * 20.0;
         let radius = mass.sqrt();
         let color = Color::Cyan; // Initial color
 
@@ -193,7 +174,7 @@ where
     let mut paused = false;
 
     loop {
-        terminal.draw(|f| {
+        tui.terminal.draw(|f| {
             let size = f.area();
 
             let chunks = Layout::default()
@@ -235,10 +216,10 @@ where
                         // Trail
                         for i in 0..body.trail.len().saturating_sub(1) {
                             ctx.draw(&CanvasLine {
-                                x1: body.trail[i].x as f64,
-                                y1: body.trail[i].y as f64,
-                                x2: body.trail[i + 1].x as f64,
-                                y2: body.trail[i + 1].y as f64,
+                                x1: body.trail[i].x,
+                                y1: body.trail[i].y,
+                                x2: body.trail[i + 1].x,
+                                y2: body.trail[i + 1].y,
                                 color: Color::DarkGray,
                             });
                         }
@@ -247,8 +228,8 @@ where
                         let symbol = if body.mass > 20.0 { "O" } else { "o" };
                         // Color is updated in physics step based on magnetism
                         ctx.print(
-                            body.pos.x as f64,
-                            body.pos.y as f64,
+                            body.pos.x,
+                            body.pos.y,
                             Span::styled(symbol, Style::default().fg(body.color)),
                         );
                     }

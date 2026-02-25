@@ -1,61 +1,5 @@
+use locus::Vec2;
 use rand::Rng;
-
-#[derive(Clone, Copy, Debug)]
-pub struct Vec2 {
-    pub x: f32,
-    pub y: f32,
-}
-
-impl Vec2 {
-    pub const ZERO: Self = Self { x: 0.0, y: 0.0 };
-    pub fn new(x: f32, y: f32) -> Self {
-        Self { x, y }
-    }
-    pub fn length_squared(self) -> f32 {
-        self.x * self.x + self.y * self.y
-    }
-    pub fn length(self) -> f32 {
-        self.length_squared().sqrt()
-    }
-    pub fn normalize_or_zero(self) -> Self {
-        let len = self.length();
-        if len > 0.0 {
-            Self {
-                x: self.x / len,
-                y: self.y / len,
-            }
-        } else {
-            Self::ZERO
-        }
-    }
-}
-impl std::ops::Add for Vec2 {
-    type Output = Self;
-    fn add(self, rhs: Self) -> Self {
-        Self {
-            x: self.x + rhs.x,
-            y: self.y + rhs.y,
-        }
-    }
-}
-impl std::ops::Sub for Vec2 {
-    type Output = Self;
-    fn sub(self, rhs: Self) -> Self {
-        Self {
-            x: self.x - rhs.x,
-            y: self.y - rhs.y,
-        }
-    }
-}
-impl std::ops::Mul<f32> for Vec2 {
-    type Output = Self;
-    fn mul(self, rhs: f32) -> Self {
-        Self {
-            x: self.x * rhs,
-            y: self.y * rhs,
-        }
-    }
-}
 
 pub struct Particle {
     pub pos: Vec2,
@@ -64,33 +8,33 @@ pub struct Particle {
 }
 
 impl Particle {
-    pub fn new(x: f32, y: f32) -> Self {
+    pub fn new(x: f64, y: f64) -> Self {
         Self {
             pos: Vec2::new(x, y),
-            vel: Vec2::ZERO,
-            acc: Vec2::ZERO,
+            vel: Vec2::zero(),
+            acc: Vec2::zero(),
         }
     }
 }
 
 pub struct Magnet {
     pub pos: Vec2,
-    pub strength: f32,
+    pub strength: f64,
     pub polarity: bool, // true = North (Pull), false = South (Push/Complex)
 }
 
 pub struct Universe {
     pub particles: Vec<Particle>,
     pub magnets: Vec<Magnet>,
-    pub width: f32,
-    pub height: f32,
-    grid: Vec<f32>, // Density grid
+    pub width: f64,
+    pub height: f64,
+    grid: Vec<f64>, // Density grid
     grid_w: usize,
     grid_h: usize,
 }
 
 impl Universe {
-    pub fn new(width: f32, height: f32) -> Self {
+    pub fn new(width: f64, height: f64) -> Self {
         let mut particles = Vec::new();
         let mut rng = rand::thread_rng();
 
@@ -116,7 +60,7 @@ impl Universe {
         }
     }
 
-    pub fn add_magnet(&mut self, x: f32, y: f32, polarity: bool) {
+    pub fn add_magnet(&mut self, x: f64, y: f64, polarity: bool) {
         self.magnets.push(Magnet {
             pos: Vec2::new(x, y),
             strength: 2000.0,
@@ -124,7 +68,7 @@ impl Universe {
         });
     }
 
-    pub fn update(&mut self, dt: f32) {
+    pub fn update(&mut self, dt: f64) {
         let gravity = Vec2::new(0.0, -20.0);
         let damping = 0.96;
 
@@ -148,10 +92,10 @@ impl Universe {
             // Magnetism
             for mag in &self.magnets {
                 let delta = mag.pos - self.particles[i].pos;
-                let dist_sq = delta.length_squared();
+                let dist_sq = delta.magnitude_squared();
 
                 if dist_sq > 1.0 {
-                    let dir = delta.normalize_or_zero();
+                    let dir = delta.normalize();
                     let mag_force = (mag.strength / dist_sq).min(200.0);
 
                     if mag.polarity {
@@ -222,7 +166,7 @@ mod tests {
 
         // Place particle high up
         u.particles[0].pos = Vec2::new(50.0, 90.0);
-        u.particles[0].vel = Vec2::ZERO;
+        u.particles[0].vel = Vec2::zero();
 
         let initial_y = u.particles[0].pos.y;
 

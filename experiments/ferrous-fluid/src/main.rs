@@ -1,40 +1,20 @@
 mod physics;
 
 use anyhow::Result;
-use crossterm::{
-    event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use physics::Universe;
 use ratatui::{
-    backend::{Backend, CrosstermBackend},
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     widgets::{canvas::Canvas, Block, Borders, Paragraph},
-    Terminal,
 };
-use std::{
-    io,
-    time::{Duration, Instant},
-};
+use std::time::{Duration, Instant};
+use tui_shared::Tui;
 
 fn main() -> Result<()> {
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen, event::EnableMouseCapture)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
-
-    let res = run_app(&mut terminal);
-
-    disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen,
-        event::DisableMouseCapture
-    )?;
-    terminal.show_cursor()?;
+    let mut tui = Tui::init()?;
+    let res = run_app(&mut tui);
+    tui.exit()?;
 
     if let Err(err) = res {
         println!("{:?}", err)
@@ -43,10 +23,7 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn run_app<B: Backend>(terminal: &mut Terminal<B>) -> Result<()>
-where
-    <B as Backend>::Error: Send + Sync + 'static,
-{
+fn run_app(tui: &mut Tui) -> Result<()> {
     // 200x100 world
     let mut universe = Universe::new(200.0, 100.0);
     let mut last_tick = Instant::now();
@@ -56,7 +33,7 @@ where
     universe.add_magnet(100.0, 50.0, true);
 
     loop {
-        terminal.draw(|f| {
+        tui.terminal.draw(|f| {
             let chunks = Layout::default()
                 .direction(Direction::Vertical)
                 .constraints([Constraint::Min(0), Constraint::Length(3)])
@@ -64,14 +41,14 @@ where
 
             let canvas = Canvas::default()
                 .block(Block::default().borders(Borders::ALL).title(" Ferrous Fluid "))
-                .x_bounds([0.0, universe.width as f64])
-                .y_bounds([0.0, universe.height as f64]) // 0 at bottom
+                .x_bounds([0.0, universe.width])
+                .y_bounds([0.0, universe.height]) // 0 at bottom
                 .paint(|ctx| {
                     // Draw Particles
                     for p in &universe.particles {
                         ctx.print(
-                            p.pos.x as f64,
-                            p.pos.y as f64,
+                            p.pos.x,
+                            p.pos.y,
                             ratatui::text::Span::styled("·", Style::default().fg(Color::Cyan)),
                         );
                     }
@@ -81,8 +58,8 @@ where
                         let color = if mag.polarity { Color::Red } else { Color::Blue };
                         let label = if mag.polarity { "N" } else { "S" };
                         ctx.print(
-                            mag.pos.x as f64,
-                            mag.pos.y as f64,
+                            mag.pos.x,
+                            mag.pos.y,
                             ratatui::text::Span::styled(label, Style::default().fg(color).bg(Color::White)),
                         );
                     }
@@ -150,7 +127,7 @@ where
         }
 
         if last_tick.elapsed() >= tick_rate {
-            universe.update(0.05); // Fixed time step
+            universe.update(0.05); // Fixed time step, keeping as f64 (literals are f64 by default)
             last_tick = Instant::now();
         }
     }
