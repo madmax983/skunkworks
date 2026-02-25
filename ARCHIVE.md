@@ -1,5 +1,4 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **lithosphere-termites**: Documentation Void / Skeletal Rot (Unused Code). Grace period: 24 hours.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
