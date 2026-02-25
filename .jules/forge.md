@@ -19,3 +19,7 @@
 **[Feature Flag Blindness]
 **Learning:** Logic that lives behind feature flags (e.g., `#[cfg(feature = "audio")]`) can rot silently if refactors are only checked with default features.
 **Action:** Always verify refactors by running `cargo check` with all feature combinations or check the CI configuration to ensure coverage.
+
+**[Large Match Arms]**
+**Learning:** Extracting complex logic from `match` arms into private helper functions (e.g., `solve_actuator`) significantly improves the readability of the main loop and reduces cognitive load.
+**Action:** When a `match` arm exceeds 5-10 lines or contains control flow (like `if/else` or `panic!`), extract it into a named helper function.
