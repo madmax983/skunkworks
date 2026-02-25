@@ -1,0 +1,21 @@
+WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
+COMMENT = _{ "#" ~ (!"\n" ~ ANY)* }
+
+program = { SOI ~ stmt* ~ EOI }
+
+stmt = { protein_def | gene_def }
+
+protein_def = { "protein" ~ identifier ~ "{" ~ protein_body ~ "}" }
+protein_body = { (decay_def)* }
+decay_def = { "decay" ~ ":" ~ number }
+
+gene_def = { "gene" ~ identifier ~ "{" ~ gene_body ~ "}" }
+gene_body = { (promote_def | repress_def | action_def)* }
+
+promote_def = { "promote" ~ ":" ~ identifier ~ number? }
+repress_def = { "repress" ~ ":" ~ identifier ~ number? }
+action_def = { "action" ~ ":" ~ string }
+
+identifier = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
+number = @{ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT+)? }
+string = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }

@@ -1653,6 +1653,24 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     SenseBiome,
 
+    // Cistron Features (Gene Regulation)
+    /// **[Cistron]** Registers a protein promoter/repressor rule.
+    ///
+    /// **Stack:** `[ ..., gene_name, tf_name, mode, weight ] -> [ ... ]`
+    /// **Mode:** 0=Promote, 1=Repress.
+    #[cfg(feature = "cistron")]
+    Regulate,
+    /// **[Cistron]** Synthesizes a protein concentration.
+    ///
+    /// **Stack:** `[ ..., protein_name, amount ] -> [ ... ]`
+    #[cfg(feature = "cistron")]
+    SynthesizeProtein,
+    /// **[Cistron]** Reads a protein concentration.
+    ///
+    /// **Stack:** `[ ..., protein_name ] -> [ ..., amount ]`
+    #[cfg(feature = "cistron")]
+    SenseProtein,
+
     /// **[Nova]** Remaps an OpCode to another OpCode at runtime.
     ///
     /// **Stack:** `[ ..., from_op_str, to_op_str ] -> [ ... ]`

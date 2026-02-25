@@ -83,6 +83,8 @@ pub mod acoustic_compiler;
 pub mod ast;
 #[cfg(feature = "resonance")]
 pub mod audio_source;
+#[cfg(feature = "cistron")]
+pub mod cistron_compiler;
 pub mod compiler;
 pub mod lisp;
 pub mod matrix_rain;

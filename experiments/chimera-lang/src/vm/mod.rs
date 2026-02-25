@@ -110,6 +110,8 @@ pub mod bard;
 pub mod blackbox;
 pub mod catalyst;
 pub mod chimera_chaos;
+#[cfg(feature = "cistron")]
+pub mod cistron;
 #[cfg(feature = "nova")]
 pub mod cladistics;
 #[cfg(feature = "nova")]
@@ -914,6 +916,8 @@ pub struct ChimeraVM {
     pub tui_events: Vec<TuiEvent>,
     #[cfg(feature = "oracle")]
     pub regulatory_mode: bool,
+    #[cfg(feature = "cistron")]
+    pub cistron_state: cistron::CistronState,
 }
 
 impl ChimeraVM {
@@ -1300,6 +1304,8 @@ impl ChimeraVM {
             tui_events: Vec::new(),
             #[cfg(feature = "oracle")]
             regulatory_mode: false,
+            #[cfg(feature = "cistron")]
+            cistron_state: cistron::CistronState::new(),
         }
     }
 
@@ -2575,6 +2581,20 @@ impl ChimeraVM {
                 self.active_organelle_kind = None;
             }
 
+            #[cfg(feature = "cistron")]
+            {
+                // Check Gene Regulatory Network
+                let strand_key = format!("Strand_{}", self.ip.0);
+                if let Some(&expression) = self.cistron_state.gene_expression.get(&strand_key) {
+                    let mut rng = rand::thread_rng();
+                    // Expression 1.0 = Run. Expression 0.0 = Skip.
+                    if rng.gen_bool(1.0 - expression) {
+                        self.ip.1 += 1;
+                        continue;
+                    }
+                }
+            }
+
             // Clone gene info to release borrow on self.dna
             let (gene_op, gene_args) = {
                 let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
@@ -2666,6 +2686,11 @@ impl ChimeraVM {
 
         self.process_subsystems(time_frozen);
         self.process_nova_environment(time_frozen);
+
+        #[cfg(feature = "cistron")]
+        if !time_frozen {
+            self.cistron_state.step();
+        }
 
         if self.process_chaos_and_events(time_frozen) {
             // Starved or dead
@@ -3887,6 +3912,15 @@ impl ChimeraVM {
                 | OpCode::Fabricate
         ) {
             silicon::exec_silicon_op(self, op, args);
+            return None;
+        }
+
+        #[cfg(feature = "cistron")]
+        if matches!(
+            op,
+            OpCode::Regulate | OpCode::SynthesizeProtein | OpCode::SenseProtein
+        ) {
+            cistron::exec_cistron_op(self, op, args);
             return None;
         }
 
