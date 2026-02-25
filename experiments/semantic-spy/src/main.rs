@@ -29,7 +29,7 @@ use std::{
     env,
     io::{self, Read},
 };
-use tui_semantic::Snapshot;
+use tui_shared::semantic::Snapshot;
 
 /// Application state for the TUI.
 ///
@@ -94,7 +94,7 @@ impl App {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tui_semantic::Entity;
+    use tui_shared::semantic::Entity;
 
     #[test]
     fn test_app_navigation() {

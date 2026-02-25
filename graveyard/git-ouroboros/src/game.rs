@@ -1,7 +1,7 @@
 use crate::git::{Commit, GitHistory};
 use rand::Rng;
 use std::collections::VecDeque;
-use tui_semantic::{Entity, Snapshot};
+use tui_shared::semantic::{Entity, Snapshot};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Point {
@@ -343,7 +343,7 @@ mod tests {
 
         // Check Metrics
         match snapshot.metrics.get("score") {
-            Some(tui_semantic::PropValue::Int(v)) => assert_eq!(*v, 0),
+            Some(tui_shared::semantic::PropValue::Int(v)) => assert_eq!(*v, 0),
             _ => panic!("Score metric missing or wrong type"),
         }
 
@@ -373,7 +373,7 @@ mod tests {
 
         // Verify Food Props
         match food.props.get("commit_author") {
-            Some(tui_semantic::PropValue::Text(s)) => assert_eq!(s, "Nova"),
+            Some(tui_shared::semantic::PropValue::Text(s)) => assert_eq!(s, "Nova"),
             _ => panic!("commit_author missing or wrong type"),
         }
     }

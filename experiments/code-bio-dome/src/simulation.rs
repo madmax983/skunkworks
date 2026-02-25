@@ -1,6 +1,6 @@
 use crate::harvester::FunctionSignature;
 use rand::Rng;
-use tui_semantic::{Entity, Snapshot};
+use tui_shared::semantic::{Entity, Snapshot};
 
 #[derive(Clone, Debug)]
 pub struct Creature {

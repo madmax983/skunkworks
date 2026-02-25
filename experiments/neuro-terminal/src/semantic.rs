@@ -1,7 +1,7 @@
 #[cfg(feature = "nova")]
 use crate::App;
 #[cfg(feature = "nova")]
-use tui_semantic::{Action, Entity, Region, Snapshot};
+use tui_shared::semantic::{Action, Entity, Region, Snapshot};
 
 #[cfg(feature = "nova")]
 pub fn create_snapshot(app: &App) -> Snapshot {
