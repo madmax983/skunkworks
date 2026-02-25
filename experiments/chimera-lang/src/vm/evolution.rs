@@ -200,7 +200,11 @@ impl EvolutionEngine {
         Strand { genes: new_genes }
     }
 
-    pub fn evaluate_fitness(vm_template: &ChimeraVM, strand: &Strand, challenge: &Challenge) -> i64 {
+    pub fn evaluate_fitness(
+        vm_template: &ChimeraVM,
+        strand: &Strand,
+        challenge: &Challenge,
+    ) -> i64 {
         if let Challenge::Custom(config) = challenge {
             let mut vm = vm_template.clone();
             // Inject candidate as strand 0 (or replace existing 0)
@@ -478,8 +482,10 @@ pub fn exec_evo_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Opti
                     let mut rng = rand::thread_rng();
                     EvolutionEngine::mutate_strand(strand, &mut rng);
                 } else {
-                    vm.output
-                        .push(format!("Error: EvoMutate index {} out of buffer bounds", idx));
+                    vm.output.push(format!(
+                        "Error: EvoMutate index {} out of buffer bounds",
+                        idx
+                    ));
                 }
             }
         }
@@ -568,16 +574,37 @@ mod tests {
         // 5. EvoReplace
 
         let strategy_genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::EvoLoad, args: vec![] }, // Stack: [0]
-            Gene { op: OpCode::Drop, args: vec![] },    // Stack: []
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::EvoSave, args: vec![] }, // Buffer has 1 item
-            Gene { op: OpCode::EvoReplace, args: vec![] }, // Population now has 1 item
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::EvoLoad,
+                args: vec![],
+            }, // Stack: [0]
+            Gene {
+                op: OpCode::Drop,
+                args: vec![],
+            }, // Stack: []
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::EvoSave,
+                args: vec![],
+            }, // Buffer has 1 item
+            Gene {
+                op: OpCode::EvoReplace,
+                args: vec![],
+            }, // Population now has 1 item
         ];
 
         let seed = Strand {
-            genes: vec![Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] }],
+            genes: vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(42)],
+            }],
         };
 
         // Construct DNA with strategy at index 1
@@ -590,7 +617,12 @@ mod tests {
                 target_value: Some(42),
             }),
             helix: Helix {
-                strands: vec![seed.clone(), Strand { genes: strategy_genes }],
+                strands: vec![
+                    seed.clone(),
+                    Strand {
+                        genes: strategy_genes,
+                    },
+                ],
             },
         };
 
