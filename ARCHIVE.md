@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
 - **origami-satellite**: Skeletal Rot (Disabled Audio). Redundant with `origami-swarm` / `neuro-fold`. Grace period: 24h.
+- **synaptic-swarm**: Terminal Redundancy (Generic SNN Swarm) / Documentation Void. Superseded by `neuro-crab` / `synaptic-pachinko`. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
