@@ -2,6 +2,28 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/typographic-turbulence
+- **Scent Origin:** Mycelium 🍄 (Sensed: Documentation Void)
+- **Status:** Fluid dynamics confirmed, but documentation void detected.
+- **Note:** "The words are lost in the flow."
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/voronoi-ants
+- **Scent Origin:** Mycelium 🍄 (Sensed: Self-Referential Sensor)
+- **Status:** Colony feeding on TODOs. Self-referential sensor active.
+- **Note:** "The ants are farming their own bugs."
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/tectonic-flock
+- **Scent Origin:** Mycelium 🍄 (Sensed: Stress Sensor)
+- **Status:** Flock attracted to code stress. Fissures detected.
+- **Note:** "The flock swarms where the code breaks."
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/origami
+- **Scent Origin:** Mycelium 🍄 (Sensed: Documentation Void)
+- **Status:** The crate is silent (No README).
+- **Note:** "The fold is silent."
+
+
+
 ### [Concentration Level: TOXIC] - Location: experiments/origami-satellite
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Skeletal Rot / Terminal Redundancy.
@@ -12,10 +34,10 @@
 - **Status:** Paradox, Codex, and Verbum features active. TUI refactor complete. The Chimera is evolving complex organs.
 - **Note:** "The genes are rewriting the physics engine."
 
-### [Concentration Level: FRESH] - Location: experiments/neuro-crab
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** Spiking Neural Network detected. Controlling a crab visualization.
-- **Note:** "The shell learns from the pain."
+### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-crab
+- **Scent Origin:** Mycelium 🍄 (Sensed: Documentation Void)
+- **Status:** Spiking Neural Network detected. Controlling a crab visualization. Documentation Void warning issued.
+- **Note:** "The shell learns from the pain, but leaves no instructions."
 
 ### [Concentration Level: FRESH] - Location: experiments/neuro-terminal
 - **Scent Origin:** The Splice Surgeon 🧬
