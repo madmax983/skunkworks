@@ -104,3 +104,24 @@ I performed a fresh audit focusing on Nova features and documentation examples.
 - **Fix:** Updated `GRIMOIRE.md` to replace `move` with `migrate`.
 
 **Conclusion:** Documentation was slightly out of sync with the codebase. Fixes have been applied.
+
+## 🔄 Echo's Audit: Feature Flags & Compilation (Latest)
+
+**Status:** ⚠️ **WARNING**
+
+I audited the project for resilience against configuration changes.
+
+### 1. Examples Verification
+**Action:** Verified "Library Usage" and "Running ChimeraScript from Rust" examples from `README.md`.
+**Result:** ✅ **PASSED**
+- Both examples compiled and ran successfully without modification.
+- The `evolution_config` fix mentioned in previous audits appears to be applied and working.
+
+### 2. Feature Flag Dependency
+**Experiment:** Attempted to run the project without default features.
+**Command:** `cargo run -p chimera-lang --example story_demo --no-default-features`
+**Result:** ❌ **FAILED**
+- **Error:** `error[E0599]: no variant or associated item named `Tesseract` found for enum `ViewMode``
+- **Observation:** The codebase unconditionally references items (like `ViewMode::Tesseract` and `ChimeraVM::normalize_coords`) that are gated behind the `nova` feature.
+- **Impact:** Users trying to use a minimal version of the library (e.g., for embedded or size-constrained environments) will face compilation errors instead of a clean, reduced API.
+- **Recommendation:** Ensure that code paths using feature-gated items are themselves gated or that the items are available (perhaps as no-ops) when features are disabled.
