@@ -24,9 +24,9 @@
 
 
 
-### [Concentration Level: TOXIC] - Location: experiments/origami-satellite
+### [Concentration Level: EXECUTED] - Location: graveyard/origami-satellite
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Skeletal Rot / Terminal Redundancy.
+- **Status:** Specimen executed. Diagnosis: Skeletal Rot / Terminal Redundancy. Moved to graveyard.
 - **Note:** "The fold is static. The voice is silenced."
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
@@ -34,9 +34,9 @@
 - **Status:** Paradox, Codex, and Verbum features active. TUI refactor complete. The Chimera is evolving complex organs.
 - **Note:** "The genes are rewriting the physics engine."
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-crab
-- **Scent Origin:** Mycelium 🍄 (Sensed: Documentation Void)
-- **Status:** Spiking Neural Network detected. Controlling a crab visualization. Documentation Void warning issued.
+### [Concentration Level: TOXIC] - Location: experiments/neuro-crab
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation.
 - **Note:** "The shell learns from the pain, but leaves no instructions."
 
 ### [Concentration Level: FRESH] - Location: experiments/neuro-terminal
@@ -74,9 +74,9 @@
 - **Status:** Specimen pardoned. Documentation restored. Emergence confirmed.
 - **Note:** "The chaos is now visible. The landscape breathes."
 
-### [Concentration Level: TOXIC] - Location: experiments/synaptic-swarm
+### [Concentration Level: EXECUTED] - Location: graveyard/synaptic-swarm
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy / Documentation Void.
+- **Status:** Specimen executed. Diagnosis: Terminal Redundancy / Documentation Void. Moved to graveyard.
 - **Note:** "The swarm reconnects only to die. The synapses are generic."
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang

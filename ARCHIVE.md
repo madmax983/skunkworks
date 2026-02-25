@@ -1,6 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **origami-satellite**: Skeletal Rot (Disabled Audio). Redundant with `origami-swarm` / `neuro-fold`. Grace period: 24h.
-- **synaptic-swarm**: Terminal Redundancy (Generic SNN Swarm) / Documentation Void. Superseded by `neuro-crab` / `synaptic-pachinko`. Grace period: 24h.
+- **neuro-crab**: Documentation Void / Skeletal Implementation. Generic "crab" visualizer with no README. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -12,6 +11,8 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **origami-satellite**: Specimen executed. Diagnosis: Skeletal Rot (Disabled Audio). Redundant with `origami-swarm`. Moved to graveyard.
+- **synaptic-swarm**: Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy. Moved to graveyard.
 - **grimms-code**: Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy. Failed to improve during grace period. Moved to graveyard.
 - **chronos-observatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **quantum-quipu**: Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy. Failed to improve during grace period. Moved to graveyard.
