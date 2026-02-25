@@ -22,10 +22,10 @@
 - **Status:** Generative ambient music derived from git history.
 - **Note:** "Every commit has a sound."
 
-### [Concentration Level: TOXIC] - Location: experiments/lithosphere-termites
+### [Concentration Level: FRESH] - Location: experiments/lithosphere-termites
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void / Skeletal Rot (Unused Code).
-- **Note:** "The termites are blind. The history is unwritten."
+- **Status:** Specimen pardoned. Compilation successful. Documentation Void warning remains.
+- **Note:** "The termites have found a new purpose. But they still need a map."
 
 ### [Concentration Level: STABLE TRAIL] - Location: crates/physics-pbd
 - **Scent Origin:** Mycelium 🍄 (Sensed: Stability)
