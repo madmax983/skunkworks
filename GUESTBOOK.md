@@ -2,6 +2,11 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: TOXIC] - Location: experiments/origami-satellite
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Skeletal Rot / Terminal Redundancy.
+- **Note:** "The fold is static. The voice is silenced."
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄 (Sensed: Nova Features)
 - **Status:** Paradox, Codex, and Verbum features active. TUI refactor complete. The Chimera is evolving complex organs.
