@@ -912,6 +912,8 @@ pub struct ChimeraVM {
     pub paradox: paradox::Paradox,
     pub visual_effects: Vec<VisualEffect>,
     pub tui_events: Vec<TuiEvent>,
+    #[cfg(feature = "oracle")]
+    pub regulatory_mode: bool,
 }
 
 impl ChimeraVM {
@@ -1296,6 +1298,8 @@ impl ChimeraVM {
             paradox: paradox::Paradox::new(),
             visual_effects: Vec::new(),
             tui_events: Vec::new(),
+            #[cfg(feature = "oracle")]
+            regulatory_mode: false,
         }
     }
 
@@ -2673,6 +2677,32 @@ impl ChimeraVM {
         self.process_post_tick(time_frozen);
     }
 
+    #[cfg(feature = "oracle")]
+    fn consult_oracle(&self, op: &OpCode) -> bool {
+        if !self.regulatory_mode {
+            return false;
+        }
+
+        let op_name = op.to_string();
+        // Query: censor("op_name")
+        let goal = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("censor".to_string()), Value::Str(op_name)],
+        );
+
+        let mut solutions = Vec::new();
+        oracle::solve(
+            &[goal],
+            HashMap::new(),
+            &self.knowledge_base,
+            self,
+            &mut solutions,
+            0,
+        );
+
+        !solutions.is_empty()
+    }
+
     /// Executes a single gene operation.
     ///
     /// Returns `Some((new_strand, new_gene))` if a jump occurred, or `None` to continue sequentially.
@@ -2682,6 +2712,12 @@ impl ChimeraVM {
     /// Runtime errors (stack underflow, type mismatch, division by zero) are silent:
     /// they push an error message to `self.output` and return gracefully, mimicking biological resilience.
     fn execute_gene(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
+        #[cfg(feature = "oracle")]
+        if self.consult_oracle(&op) {
+            self.output.push(format!("CENSORED: {}", op));
+            return None;
+        }
+
         // Record execution count (Lazy resize)
         if self.gene_execution_counts.len() <= self.ip.0 {
             self.gene_execution_counts.resize(self.ip.0 + 1, Vec::new());
@@ -3788,7 +3824,8 @@ impl ChimeraVM {
             | OpCode::Seek
             | OpCode::Manifest
             | OpCode::Unify
-            | OpCode::PrologCall => return oracle::exec_oracle_op(self, op, args),
+            | OpCode::PrologCall
+            | OpCode::Censor => return oracle::exec_oracle_op(self, op, args),
             _ => {}
         }
 

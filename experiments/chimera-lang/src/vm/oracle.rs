@@ -306,6 +306,16 @@ pub fn exec_oracle_op(
             }
             None
         }
+        OpCode::Censor => {
+            vm.regulatory_mode = !vm.regulatory_mode;
+            let status = if vm.regulatory_mode {
+                "ENABLED"
+            } else {
+                "DISABLED"
+            };
+            vm.output.push(format!("CENSOR: Regulatory System {}", status));
+            None
+        }
         OpCode::PrologCall => {
             if let Some(query_val) = vm.stack.pop() {
                 let query_str = match &query_val {
