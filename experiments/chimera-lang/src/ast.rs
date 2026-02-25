@@ -22,6 +22,8 @@ pub struct EvolutionConfig {
     pub mutation_rate: String,
     /// Index of the strand used as the Fitness Function
     pub fitness_strand_idx: Option<usize>,
+    /// Index of the strand used as the Evolutionary Strategy
+    pub strategy_strand_idx: Option<usize>,
     /// Simple target value (if no fitness strand provided)
     pub target_value: Option<i64>,
 }

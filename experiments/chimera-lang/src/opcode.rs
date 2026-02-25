@@ -1179,6 +1179,55 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Etymology,
 
+    // Meta-Evolution Features
+    /// **[Evo]** Pushes the current population size.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., size ]`
+    #[cfg(feature = "nova")]
+    EvoPopSize,
+    /// **[Evo]** Loads a strand from the population by index.
+    ///
+    /// **Stack:** `[ ..., index ] -> [ ..., strand_id ]`
+    /// **Effect:** Pushes an opaque ID (index) for the strand.
+    #[cfg(feature = "nova")]
+    EvoLoad,
+    /// **[Evo]** Stores a strand from the stack (genes) into the buffer.
+    ///
+    /// **Stack:** `[ ..., gene_junction ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    EvoStore,
+    /// **[Evo]** Calculates fitness of a strand.
+    ///
+    /// **Stack:** `[ ..., strand_id ] -> [ ..., fitness_score ]`
+    #[cfg(feature = "nova")]
+    EvoScore,
+    /// **[Evo]** Breeds two strands (Crossover).
+    ///
+    /// **Stack:** `[ ..., strand_id_a, strand_id_b ] -> [ ..., new_strand_id ]`
+    /// **Effect:** Creates child in buffer and returns its ID.
+    #[cfg(feature = "nova")]
+    EvoBreed,
+    /// **[Evo]** Mutates a strand in place (in the buffer).
+    ///
+    /// **Stack:** `[ ..., strand_id ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    EvoMutate,
+    /// **[Evo]** Replaces the main population with the buffer.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    EvoReplace,
+    /// **[Evo]** Clears the evolution buffer.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    EvoClear,
+    /// **[Evo]** Saves a strand from population to buffer (Clone).
+    ///
+    /// **Stack:** `[ ..., pop_idx ] -> [ ..., buf_idx ]`
+    #[cfg(feature = "nova")]
+    EvoSave,
+
     // Prologue Features (Rune Logic)
     /// **[Prologue]** Toggles Prologue Language mode.
     ///

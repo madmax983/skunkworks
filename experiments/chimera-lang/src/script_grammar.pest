@@ -43,7 +43,8 @@ evolution_prop = {
     ( "population" ~ ":" ~ number ) |
     ( "mutation_rate" ~ ":" ~ float ) |
     ( "target" ~ ":" ~ number ) |
-    ( "fitness" ~ block )
+    ( "fitness" ~ block ) |
+    ( "strategy" ~ block )
 }
 float = @{ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ }
 
