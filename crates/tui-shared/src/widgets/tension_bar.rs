@@ -6,11 +6,51 @@ use ratatui::{
     widgets::{Block, Borders, Widget},
 };
 
+/// A vertical progress bar that visualizes "tension" or "stress" levels.
+///
+/// The `TensionBar` renders a gradient-colored bar that fills from bottom to top.
+/// It uses fractional block characters for high-resolution rendering, ensuring
+/// smooth transitions between integer values.
+///
+/// # Visual Style
+///
+/// - **Gradient**: The color shifts dynamically based on the tension value:
+///   - **0.0 - 0.5**: Green → Yellow
+///   - **0.5 - 1.0**: Yellow → Red
+/// - **Precision**: Uses `ratatui`'s partial block symbols (e.g., `▂`, `▃`, `▄`) to represent
+///   fractional values, allowing for smoother animations than standard full-block bars.
+///
+/// # Examples
+///
+/// ```
+/// use tui_shared::widgets::TensionBar;
+/// use ratatui::{layout::Rect, buffer::Buffer, widgets::Widget};
+///
+/// // Create a bar with 75% tension (Red-ish)
+/// let widget = TensionBar::new(0.75);
+///
+/// // In a real app, you'd render this to a frame
+/// let mut buffer = Buffer::empty(Rect::new(0, 0, 10, 10));
+/// widget.render(Rect::new(0, 0, 10, 10), &mut buffer);
+/// ```
 pub struct TensionBar {
     tension: f64,
 }
 
 impl TensionBar {
+    /// Creates a new `TensionBar` with the specified tension level.
+    ///
+    /// # Arguments
+    ///
+    /// * `tension` - A value between 0.0 (empty) and 1.0 (full). Values outside this range
+    ///   are clamped.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::widgets::TensionBar;
+    /// let bar = TensionBar::new(0.5); // Half-full, Yellow
+    /// ```
     pub fn new(tension: f64) -> Self {
         Self { tension }
     }
