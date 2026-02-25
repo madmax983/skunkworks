@@ -1,0 +1,12 @@
+[package]
+name = "hyper-fold"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+chimera-lang = { path = "../chimera-lang" }
+hyper-system = { path = "../../crates/hyper-system" }
+origami = { path = "../../crates/origami" }
+rand = "0.8"
+glam = "0.27"
