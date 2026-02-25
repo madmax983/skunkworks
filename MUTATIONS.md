@@ -1714,4 +1714,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: "Magnetotropic Fungi". Fungal hyphae composed of magnetic particles growing through a medium that records magnetic field intensity.
 - **Novel trait**: Magnetotropism. The organism constructs its own magnetic lattice via feedback loops between growth and field strength.
 - **Status**: experiments/ferrous-mycelium
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified compilation. Re-verified by Splice Surgeon.
+
+### ferrous-neuron
+- **Parents**: experiments/ferrous-graph + crates/synaptic-physics
+- **Concept**: A "Mobile Neural Network" where neurons are magnetic particles representing files. Spiking triggers magnetic pulses that reshape the graph topology.
+- **Novel trait**: Magneto-Neuroplasticity. The brain's physical structure adapts to its firing patterns.
+- **Status**: experiments/ferrous-neuron
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified compilation.
