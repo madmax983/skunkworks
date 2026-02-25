@@ -299,7 +299,7 @@ fn draw(f: &mut Frame, app: &mut App) {
                     app.trades_buf
                         .push((x as f64, (app.grid.height - 1 - y) as f64));
                 }
-                Particle::Empty => {}
+                Particle::Empty | Particle::Wall => {}
             }
         }
     }

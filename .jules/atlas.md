@@ -107,3 +107,9 @@
 **Blueprint:** Replaced `macroquad` with `glam` in `crates/physics-pbd`.
 **Stability:** Decoupled physics logic from rendering, enabling use in TUI/server contexts.
 **Verification:** Verified `experiments/bifurcation-crawler` and `experiments/chimera-tissue` still compile (due to `macroquad` re-exporting `glam`).
+
+## [Market Sim Consolidation]
+**Tangle:** The Copy-Paste - `thermo-market` duplicated `market-sim` logic just to add a `Wall` particle type.
+**Blueprint:** Added `Particle::Wall` to `crates/market-sim` and refactored `thermo-market` to use the shared crate. Updated `market-rogue` and `market-flow` to handle the new variant.
+**Stability:** Enforced single source of truth for market physics. Reduced code duplication.
+**Verification:** Verified with `cargo test` for `market-sim` and `cargo check` for all affected experiments.
