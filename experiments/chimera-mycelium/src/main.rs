@@ -1,12 +1,12 @@
-use macroquad::prelude::*;
 use ::rand::thread_rng;
 use ::rand::Rng;
+use macroquad::prelude::*;
 
-mod chaos;
 mod agent;
+mod chaos;
 
-use chaos::ChaosSubstrate;
 use agent::{Agent, AgentAction};
+use chaos::ChaosSubstrate;
 
 const GRID_WIDTH: usize = 300;
 const GRID_HEIGHT: usize = 200;
@@ -65,8 +65,11 @@ async fn main() {
             match action {
                 AgentAction::Move(new_pos) => {
                     // Check bounds
-                    if new_pos.x >= 0 && new_pos.x < GRID_WIDTH as i32 &&
-                       new_pos.y >= 0 && new_pos.y < GRID_HEIGHT as i32 {
+                    if new_pos.x >= 0
+                        && new_pos.x < GRID_WIDTH as i32
+                        && new_pos.y >= 0
+                        && new_pos.y < GRID_HEIGHT as i32
+                    {
                         network.push((agent.pos, new_pos));
                         agent.pos = new_pos;
                     } else {
@@ -76,8 +79,11 @@ async fn main() {
                 }
                 AgentAction::Branch(new_pos) => {
                     if current_agent_count + new_agents.len() < MAX_AGENTS {
-                        if new_pos.x >= 0 && new_pos.x < GRID_WIDTH as i32 &&
-                           new_pos.y >= 0 && new_pos.y < GRID_HEIGHT as i32 {
+                        if new_pos.x >= 0
+                            && new_pos.x < GRID_WIDTH as i32
+                            && new_pos.y >= 0
+                            && new_pos.y < GRID_HEIGHT as i32
+                        {
                             let mut child = agent.clone();
                             child.pos = new_pos;
                             child.mutate(); // Evolve
@@ -117,24 +123,36 @@ async fn main() {
         // Draw Network
         // We draw lines in screen space
         for (start, end) in &network {
-            let x1 = start.x as f32 * cell_w + cell_w/2.0;
-            let y1 = start.y as f32 * cell_h + cell_h/2.0;
-            let x2 = end.x as f32 * cell_w + cell_w/2.0;
-            let y2 = end.y as f32 * cell_h + cell_h/2.0;
+            let x1 = start.x as f32 * cell_w + cell_w / 2.0;
+            let y1 = start.y as f32 * cell_h + cell_h / 2.0;
+            let x2 = end.x as f32 * cell_w + cell_w / 2.0;
+            let y2 = end.y as f32 * cell_h + cell_h / 2.0;
             draw_line(x1, y1, x2, y2, 1.0, Color::new(1.0, 1.0, 1.0, 0.5));
         }
 
         // Draw Agents (Tips)
         for agent in &agents {
-            let x = agent.pos.x as f32 * cell_w + cell_w/2.0;
-            let y = agent.pos.y as f32 * cell_h + cell_h/2.0;
+            let x = agent.pos.x as f32 * cell_w + cell_w / 2.0;
+            let y = agent.pos.y as f32 * cell_h + cell_h / 2.0;
             draw_circle(x, y, 2.0, RED);
         }
 
         // --- UI ---
         draw_rectangle(0., 0., screen_w, 40., Color::new(0., 0., 0., 0.7));
-        draw_text(&format!("Agents: {}", agents.len()), 10.0, 25.0, 20.0, WHITE);
-        draw_text(&format!("Sequence: {}", sequence), 150.0, 25.0, 20.0, YELLOW);
+        draw_text(
+            &format!("Agents: {}", agents.len()),
+            10.0,
+            25.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            &format!("Sequence: {}", sequence),
+            150.0,
+            25.0,
+            20.0,
+            YELLOW,
+        );
 
         next_frame().await
     }

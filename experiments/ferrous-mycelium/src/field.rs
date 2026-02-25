@@ -80,9 +80,15 @@ impl MagneticField {
     }
 
     pub fn draw(&self) {
-        draw_texture_ex(&self.texture, 0.0, 0.0, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(screen_width(), screen_height())),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &self.texture,
+            0.0,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(screen_width(), screen_height())),
+                ..Default::default()
+            },
+        );
     }
 }

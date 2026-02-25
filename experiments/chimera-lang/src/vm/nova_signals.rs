@@ -450,6 +450,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 'λ' => exec_lambda(vm, y, x, signal, &mut ctx),
                 '{' => exec_inject(vm, y, x, signal, &mut ctx),
                 '}' => exec_extract(vm, y, x, signal, &mut ctx),
+                '⚛' => exec_reactor_rune(vm, y, x, signal, &mut ctx),
                 _ => {
                     if let Value::Str(s) = val {
                         if let Ok(op) = s.parse::<OpCode>() {
@@ -721,6 +722,74 @@ pub fn process_signals(vm: &mut ChimeraVM) {
     for (op, args) in ctx.executions {
         if let Some(target) = vm.execute_gene_inner(op.clone(), &args) {
             vm.ip = target;
+        }
+    }
+}
+
+fn exec_reactor_rune(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // Reactor: ⚛
+    // Inputs: West (Atom A), East (Atom B)
+    // Outputs: South (Fusion), North (Waste)
+
+    if let (Some(a), Some(b)) = (peek(vm, y, x, 0, -1), peek(vm, y, x, 0, 1)) {
+        let sum = a.wrapping_add(b);
+
+        // Critical Mass Check (Meltdown)
+        if sum > 99 {
+            // MELTDOWN!
+            // 1. Turn self into Slag (#)
+            ctx.grid_writes.push(GridWrite {
+                y,
+                x,
+                val: Value::Str("#".to_string()),
+            });
+
+            // 2. Bang Neighbors
+            let neighbors = [
+                (-1, 0),
+                (1, 0),
+                (0, -1),
+                (0, 1),
+                (-1, -1),
+                (-1, 1),
+                (1, -1),
+                (1, 1),
+            ];
+            for (dy, dx) in neighbors {
+                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    ctx.next_signals[ny][nx] = ctx.next_signals[ny][nx].saturating_add(10); // Heavy signal
+
+                    // 3. Mutate Neighbors (Radiation)
+                    // If neighbor has a strand index (is a reference), mutate it.
+                    if let Some(s_idx) = peek(vm, y, x, dy, dx) {
+                        ctx.mutation_requests.push(MutationRequest {
+                            strand_idx: s_idx as usize,
+                        });
+                    }
+                }
+            }
+        } else {
+            // Stable Fusion
+            // Result -> South
+            if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+                ctx.grid_writes.push(GridWrite {
+                    y: sy,
+                    x: sx,
+                    val: Value::Str(val_to_char(sum).to_string()),
+                });
+            }
+
+            // Waste -> North (Result % 10)
+            if let Some((ny, nx)) = vm.normalize_coords(y as i64 - 1, x as i64) {
+                ctx.grid_writes.push(GridWrite {
+                    y: ny,
+                    x: nx,
+                    val: Value::Str(val_to_char(sum % 10).to_string()),
+                });
+            }
         }
     }
 }

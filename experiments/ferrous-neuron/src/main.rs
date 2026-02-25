@@ -13,7 +13,7 @@ use crossterm::{
 use ratatui::{
     backend::{Backend, CrosstermBackend},
     layout::{Constraint, Direction, Layout},
-    style::{Color, Style, Modifier},
+    style::{Color, Modifier, Style},
     text::Span,
     widgets::{
         canvas::{Canvas, Line},

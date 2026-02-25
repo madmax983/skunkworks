@@ -1,8 +1,8 @@
 use macroquad::prelude::*;
 
-mod physics;
 mod field;
 mod organism;
+mod physics;
 
 use field::MagneticField;
 use organism::{Hypha, HyphaAction};
@@ -71,7 +71,7 @@ async fn main() {
 
         // Respawn if extinct
         if hyphae.is_empty() {
-             for i in 0..5 {
+            for i in 0..5 {
                 let angle = (i as f32 / 5.0) * std::f32::consts::PI * 2.0;
                 let pos = vec2(screen_width() / 2.0, screen_height() / 2.0);
                 let vel = vec2(angle.cos(), angle.sin()) * 50.0;
@@ -88,11 +88,21 @@ async fn main() {
         // Draw Hyphae Tips
         for hypha in &hyphae {
             // Color based on magnetism?
-            let color = if hypha.magnetism < 0.5 { SKYBLUE } else { MAGENTA };
+            let color = if hypha.magnetism < 0.5 {
+                SKYBLUE
+            } else {
+                MAGENTA
+            };
             draw_circle(hypha.pos.x, hypha.pos.y, 2.0, color);
         }
 
-        draw_text(&format!("Hyphae: {}", hyphae.len()), 10.0, 20.0, 20.0, WHITE);
+        draw_text(
+            &format!("Hyphae: {}", hyphae.len()),
+            10.0,
+            20.0,
+            20.0,
+            WHITE,
+        );
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 40.0, 20.0, WHITE);
 
         next_frame().await;

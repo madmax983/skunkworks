@@ -10,7 +10,11 @@ pub const DECAY_RATE: f32 = 0.99;
 pub fn calculate_magnetic_force(pos1: Vec2, pos2: Vec2, m1: f32, m2: f32) -> Vec2 {
     let delta = pos2 - pos1;
     let dist_sq = delta.length_squared().max(10.0);
-    let dir = if delta.length_squared() > 0.0 { delta.normalize() } else { Vec2::ZERO };
+    let dir = if delta.length_squared() > 0.0 {
+        delta.normalize()
+    } else {
+        Vec2::ZERO
+    };
 
     // Like poles repel, opposite attract.
     // m is 0.0 to 1.0. Neutral is 0.5.

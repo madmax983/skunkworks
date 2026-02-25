@@ -134,17 +134,19 @@ impl Widget for TensionBar {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use ratatui::{backend::TestBackend, Terminal, buffer::Buffer, layout::Rect};
+    use ratatui::{backend::TestBackend, buffer::Buffer, layout::Rect, Terminal};
 
     fn render_tension(tension: f64, width: u16, height: u16) -> Buffer {
         let backend = TestBackend::new(width, height);
         let mut terminal = Terminal::new(backend).unwrap();
 
-        terminal.draw(|f| {
-            let area = Rect::new(0, 0, width, height);
-            let widget = TensionBar::new(tension);
-            f.render_widget(widget, area);
-        }).unwrap();
+        terminal
+            .draw(|f| {
+                let area = Rect::new(0, 0, width, height);
+                let widget = TensionBar::new(tension);
+                f.render_widget(widget, area);
+            })
+            .unwrap();
 
         terminal.backend().buffer().clone()
     }
@@ -200,7 +202,11 @@ mod tests {
         // Expect block::HALF.
         let buffer = render_tension(0.0625, 10, 10);
         let cell = &buffer[(1, 8)]; // Bottom row
-        assert_eq!(cell.symbol(), block::HALF, "Expected HALF block for 0.5 remainder");
+        assert_eq!(
+            cell.symbol(),
+            block::HALF,
+            "Expected HALF block for 0.5 remainder"
+        );
 
         // Case 2: 4.5 blocks (HALF)
         // Tension 9/16 = 0.5625. Height 8. Fill = 4.5.
@@ -209,14 +215,22 @@ mod tests {
         // y=8,7,6,5 are FULL.
         // y=4 is HALF.
         assert_eq!(buffer[(1, 5)].symbol(), block::FULL);
-        assert_eq!(buffer[(1, 4)].symbol(), block::HALF, "Expected HALF block at top for 0.5 remainder");
+        assert_eq!(
+            buffer[(1, 4)].symbol(),
+            block::HALF,
+            "Expected HALF block at top for 0.5 remainder"
+        );
 
         // Case 3: Exactly 0.125 blocks (ONE_EIGHTH)
         // Tension 1/64 = 0.015625. Height 8. Fill = 0.125.
         // Remainder = 0.125.
         let buffer = render_tension(0.015625, 10, 10);
         let cell = &buffer[(1, 8)];
-        assert_eq!(cell.symbol(), block::ONE_EIGHTH, "Expected ONE_EIGHTH block for 0.125 remainder");
+        assert_eq!(
+            cell.symbol(),
+            block::ONE_EIGHTH,
+            "Expected ONE_EIGHTH block for 0.125 remainder"
+        );
     }
 
     #[test]

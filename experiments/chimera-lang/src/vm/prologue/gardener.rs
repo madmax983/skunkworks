@@ -54,13 +54,7 @@ impl GardenerState {
 impl fmt::Display for GardenerState {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let inv_str: Vec<String> = self.inventory.iter().map(|v| v.to_string()).collect();
-        write!(
-            f,
-            "♣:{}:{}:{}",
-            self.energy,
-            self.mode,
-            inv_str.join(",")
-        )
+        write!(f, "♣:{}:{}:{}", self.energy, self.mode, inv_str.join(","))
     }
 }
 
@@ -104,7 +98,8 @@ pub fn process_gardener_logic(
 
     // Parse State
     let mut state = if let Value::Str(s) = &agent.state {
-        s.parse::<GardenerState>().unwrap_or(GardenerState::default())
+        s.parse::<GardenerState>()
+            .unwrap_or(GardenerState::default())
     } else {
         GardenerState::default()
     };
@@ -138,33 +133,33 @@ pub fn process_gardener_logic(
     if state.mode == 0 && !state.inventory.is_empty() {
         // Planting Mode
         for (dy, dx) in neighbors {
-             if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                 let cell = &grid_snapshot[ny][nx];
-                 if matches!(cell, Value::Int(0)) || matches!(cell, Value::Str(s) if s == ".") {
-                     // Found Soil
-                     if let Some(seed) = state.inventory.pop_front() {
-                         action = GardenerAction::Plant(ny, nx, seed);
-                         break;
-                     }
-                 }
-             }
+            if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                let cell = &grid_snapshot[ny][nx];
+                if matches!(cell, Value::Int(0)) || matches!(cell, Value::Str(s) if s == ".") {
+                    // Found Soil
+                    if let Some(seed) = state.inventory.pop_front() {
+                        action = GardenerAction::Plant(ny, nx, seed);
+                        break;
+                    }
+                }
+            }
         }
     } else {
         // Tending Mode (or empty inventory)
         for (dy, dx) in neighbors {
-             if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                 let cell = &grid_snapshot[ny][nx];
-                 if let Value::Int(n) = cell {
-                     if *n > 0 {
-                         if *n >= 10 {
-                             action = GardenerAction::Harvest(ny, nx);
-                         } else {
-                             action = GardenerAction::Nurture(ny, nx);
-                         }
-                         break;
-                     }
-                 }
-             }
+            if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                let cell = &grid_snapshot[ny][nx];
+                if let Value::Int(n) = cell {
+                    if *n > 0 {
+                        if *n >= 10 {
+                            action = GardenerAction::Harvest(ny, nx);
+                        } else {
+                            action = GardenerAction::Nurture(ny, nx);
+                        }
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -206,10 +201,10 @@ pub fn process_gardener_logic(
             state.energy -= 5;
         }
         GardenerAction::Nurture(ny, nx) => {
-             if let Value::Int(n) = _vm.grid[ny][nx] {
-                 _vm.grid[ny][nx] = Value::Int(n + 1);
-                 state.energy -= 2;
-             }
+            if let Value::Int(n) = _vm.grid[ny][nx] {
+                _vm.grid[ny][nx] = Value::Int(n + 1);
+                state.energy -= 2;
+            }
         }
         GardenerAction::Harvest(ny, nx) => {
             if let Value::Int(n) = _vm.grid[ny][nx] {
@@ -217,7 +212,7 @@ pub fn process_gardener_logic(
                 state.energy += n * 2;
                 // Add seed back
                 state.inventory.push_back(Value::Int(1)); // Simple seed
-                // Clear grid
+                                                          // Clear grid
                 _vm.grid[ny][nx] = Value::Int(0);
             }
         }

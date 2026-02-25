@@ -1,7 +1,7 @@
-use macroquad::prelude::*;
-use chimera_lang::prelude::*;
 use ::rand::prelude::*;
 use ::rand::seq::SliceRandom;
+use chimera_lang::prelude::*;
+use macroquad::prelude::*;
 use std::sync::atomic::{AtomicU64, Ordering};
 
 static AGENT_ID_COUNTER: AtomicU64 = AtomicU64::new(0);
@@ -51,36 +51,74 @@ impl Agent {
         // We will generate random genes for step 2.
         let mut genes = vec![
             // Push coordinates for GRead (0,0)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // Y
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // X
-            Gene { op: OpCode::GRead, args: vec![] }, // Stack: [ChaosVal]
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // Y
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // X
+            Gene {
+                op: OpCode::GRead,
+                args: vec![],
+            }, // Stack: [ChaosVal]
         ];
 
         // Random processing
         for _ in 0..5 {
             let ops = [OpCode::Add, OpCode::Sub, OpCode::Mul, OpCode::BitXor];
             let op = ops.choose(&mut rng).unwrap().clone();
-            genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(rng.gen_range(1..10))] });
+            genes.push(Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(rng.gen_range(1..10))],
+            });
             genes.push(Gene { op, args: vec![] });
         }
 
         // Output Direction
-        genes.push(Gene { op: OpCode::Dup, args: vec![] }); // Keep value for Branch logic
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }); // Y
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }); // X
-        genes.push(Gene { op: OpCode::GWrite, args: vec![] }); // Write Dir
+        genes.push(Gene {
+            op: OpCode::Dup,
+            args: vec![],
+        }); // Keep value for Branch logic
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }); // Y
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        }); // X
+        genes.push(Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        }); // Write Dir
 
         // Output Branch Probability
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }); // Y
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] }); // X
-        genes.push(Gene { op: OpCode::GWrite, args: vec![] }); // Write Branch
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }); // Y
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(2)],
+        }); // X
+        genes.push(Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        }); // Write Branch
 
         // Jump Loop
-        genes.push(Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] });
+        genes.push(Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(0)],
+        });
 
         Dna {
             evolution_config: None,
-            helix: Helix { strands: vec![Strand { genes }] },
+            helix: Helix {
+                strands: vec![Strand { genes }],
+            },
         }
     }
 
@@ -112,14 +150,14 @@ impl Agent {
         };
 
         let dirs = [
-            IVec2::new(0, -1), // N
-            IVec2::new(1, -1), // NE
-            IVec2::new(1, 0),  // E
-            IVec2::new(1, 1),  // SE
-            IVec2::new(0, 1),  // S
-            IVec2::new(-1, 1), // SW
-            IVec2::new(-1, 0), // W
-            IVec2::new(-1, -1),// NW
+            IVec2::new(0, -1),  // N
+            IVec2::new(1, -1),  // NE
+            IVec2::new(1, 0),   // E
+            IVec2::new(1, 1),   // SE
+            IVec2::new(0, 1),   // S
+            IVec2::new(-1, 1),  // SW
+            IVec2::new(-1, 0),  // W
+            IVec2::new(-1, -1), // NW
         ];
 
         let move_dir = dirs[dir_idx];
@@ -144,8 +182,8 @@ impl Agent {
         }
 
         if do_branch && self.energy > 50.0 {
-             self.energy -= 25.0; // Branch cost
-             return AgentAction::Branch(self.pos + move_dir);
+            self.energy -= 25.0; // Branch cost
+            return AgentAction::Branch(self.pos + move_dir);
         }
 
         // Always try to move if alive

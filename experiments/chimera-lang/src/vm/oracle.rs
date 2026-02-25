@@ -313,7 +313,8 @@ pub fn exec_oracle_op(
             } else {
                 "DISABLED"
             };
-            vm.output.push(format!("CENSOR: Regulatory System {}", status));
+            vm.output
+                .push(format!("CENSOR: Regulatory System {}", status));
             None
         }
         OpCode::PrologCall => {

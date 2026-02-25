@@ -1,11 +1,11 @@
 mod physics;
 
+use ::rand::Rng;
 use chimera_lang::prelude::*;
 use hyper_system::math::Vec4;
 use hyper_system::monitor::SystemMonitor;
 use macroquad::prelude::*;
 use physics::{Constraint4D, PbdSystem4D};
-use ::rand::Rng;
 
 const GRID_SIZE: usize = 3;
 const SPACING: f32 = 2.0;
@@ -69,12 +69,11 @@ impl Tissue4D {
         // Create Constraints and Cells
         let mut cell_actuators = vec![Vec::new(); particle_indices.len()];
 
-        let add_actuator =
-            |p1_idx: usize, p2_idx: usize, sys: &mut PbdSystem4D| -> usize {
-                let c_idx = sys.constraints.len();
-                sys.add_actuator_constraint(p1_idx, p2_idx, SPACING * 0.5, SPACING * 1.5, 0.5);
-                c_idx
-            };
+        let add_actuator = |p1_idx: usize, p2_idx: usize, sys: &mut PbdSystem4D| -> usize {
+            let c_idx = sys.constraints.len();
+            sys.add_actuator_constraint(p1_idx, p2_idx, SPACING * 0.5, SPACING * 1.5, 0.5);
+            c_idx
+        };
 
         for w in 0..GRID_SIZE {
             for z in 0..GRID_SIZE {
@@ -167,10 +166,7 @@ impl Tissue4D {
             if count > 0 {
                 for &c_idx in &cell.actuators {
                     if let Constraint4D::Actuator {
-                        p1,
-                        p2,
-                        max_len,
-                        ..
+                        p1, p2, max_len, ..
                     } = constraints[c_idx]
                     {
                         let pos1 = particles[p1].pos;
@@ -185,8 +181,8 @@ impl Tissue4D {
                 cell.vm.stack.push(Value::Int((cpu_load * 100.0) as i64));
                 cell.vm.stack.push(Value::Int((avg_strain * 100.0) as i64));
             } else {
-                 cell.vm.stack.push(Value::Int(0));
-                 cell.vm.stack.push(Value::Int(0));
+                cell.vm.stack.push(Value::Int(0));
+                cell.vm.stack.push(Value::Int(0));
             }
 
             // 2. Think
@@ -272,16 +268,30 @@ fn create_dna() -> Dna {
     // Stack: [Strain, CpuLoad]
     let genes = vec![
         // Calculate Target = 100 - Strain + CpuLoad
-        Gene { op: OpCode::Add, args: vec![] }, // [Strain + CpuLoad]
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] }, // [Sum, 100]
-        Gene { op: OpCode::Swap, args: vec![] }, // [100, Sum]
-        Gene { op: OpCode::Sub, args: vec![] }, // [100 - Sum] -> Output Factor
-        // If Sum is high (high strain + high load), Output is low (Contract)
-        // If Sum is low, Output is high (Relax)
+        Gene {
+            op: OpCode::Add,
+            args: vec![],
+        }, // [Strain + CpuLoad]
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(100)],
+        }, // [Sum, 100]
+        Gene {
+            op: OpCode::Swap,
+            args: vec![],
+        }, // [100, Sum]
+        Gene {
+            op: OpCode::Sub,
+            args: vec![],
+        }, // [100 - Sum] -> Output Factor
+           // If Sum is high (high strain + high load), Output is low (Contract)
+           // If Sum is low, Output is high (Relax)
     ];
 
     Dna {
-        helix: Helix { strands: vec![Strand { genes }] },
+        helix: Helix {
+            strands: vec![Strand { genes }],
+        },
         evolution_config: None,
     }
 }
@@ -327,15 +337,15 @@ async fn main() {
         // Rotate all particles in XW plane over time
         let rotation_speed = 0.5 * dt;
         for p in &mut tissue.system.particles {
-             if p.inv_mass > 0.0 {
-                 // Rotate position relative to origin?
-                 // No, just apply force? No, let's rotate the View (Projection) implicitly
-                 // by rotating the particles in 4D space
-                 let p_new = p.pos.rotate_xw(rotation_speed);
-                 p.pos = p_new;
-                 // Also rotate velocity to conserve momentum direction relative to rotation?
-                 // Simple rotation is fine for visualization
-             }
+            if p.inv_mass > 0.0 {
+                // Rotate position relative to origin?
+                // No, just apply force? No, let's rotate the View (Projection) implicitly
+                // by rotating the particles in 4D space
+                let p_new = p.pos.rotate_xw(rotation_speed);
+                p.pos = p_new;
+                // Also rotate velocity to conserve momentum direction relative to rotation?
+                // Simple rotation is fine for visualization
+            }
         }
 
         tissue.update(dt);
@@ -343,13 +353,7 @@ async fn main() {
 
         set_default_camera();
         draw_text("Hyper Tissue 4D", 10.0, 30.0, 30.0, WHITE);
-        draw_text(
-            &format!("FPS: {}", get_fps()),
-            10.0,
-            50.0,
-            20.0,
-            GRAY,
-        );
+        draw_text(&format!("FPS: {}", get_fps()), 10.0, 50.0, 20.0, GRAY);
         draw_text(
             &format!("CPU Load: {:.2}%", tissue.monitor.cpu_usage * 100.0),
             10.0,
@@ -357,7 +361,7 @@ async fn main() {
             20.0,
             RED,
         );
-         draw_text(
+        draw_text(
             "Left Click + Drag to Rotate 3D View",
             10.0,
             90.0,

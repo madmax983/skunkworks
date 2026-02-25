@@ -81,7 +81,6 @@ pub mod forth;
 pub mod gardener;
 pub mod genetics;
 pub mod hyper;
-pub mod oneiric;
 pub mod io;
 pub mod lexicon;
 pub mod library;
@@ -99,6 +98,7 @@ pub mod narrative;
 pub mod necromancy;
 #[cfg(feature = "biophysics")]
 pub mod neural;
+pub mod oneiric;
 pub mod optics;
 pub mod oracle;
 pub mod pandemonium;
@@ -899,14 +899,7 @@ fn apply_propagation_rune(
         return true;
     }
 
-    if oneiric::apply_oneiric_runes(
-        rune,
-        y,
-        x,
-        current_signals,
-        next_signals,
-        oneiric_grid,
-    ) {
+    if oneiric::apply_oneiric_runes(rune, y, x, current_signals, next_signals, oneiric_grid) {
         return true;
     }
     if construct::apply_construct_runes(rune, y, x, current_signals, next_delayed, grid) {
@@ -2029,9 +2022,9 @@ mod prologue_neural_growth_test;
 #[cfg(test)]
 mod prologue_runecraft_test;
 #[cfg(test)]
-mod weaver_test;
-#[cfg(test)]
 mod weave_test;
+#[cfg(test)]
+mod weaver_test;
 
 #[cfg(test)]
 mod ribozyme_agent_test;
@@ -2046,6 +2039,6 @@ mod architect_test;
 #[cfg(test)]
 mod mesmerist_test;
 #[cfg(test)]
-mod prologue_library_test;
-#[cfg(test)]
 mod phonetics_test;
+#[cfg(test)]
+mod prologue_library_test;

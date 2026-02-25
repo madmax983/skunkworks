@@ -1,7 +1,7 @@
 use super::normalize_coords;
+use crate::vm::nova_void::VoidRift;
 use crate::vm::Value;
 use std::collections::VecDeque;
-use crate::vm::nova_void::VoidRift;
 
 pub fn apply_void_runes(
     rune: &str,

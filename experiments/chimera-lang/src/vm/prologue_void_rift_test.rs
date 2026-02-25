@@ -1,7 +1,7 @@
 use crate::ast::{Dna, Helix};
+use crate::vm::nova_void::VoidRift;
 use crate::vm::prologue::exec_prologue_tick;
 use crate::vm::{ChimeraVM, Value};
-use crate::vm::nova_void::VoidRift;
 
 fn setup_vm() -> ChimeraVM {
     let dna = Dna {

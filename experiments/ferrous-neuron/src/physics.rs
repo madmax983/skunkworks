@@ -1,7 +1,7 @@
 use crate::platter::Platter;
+use rand::Rng;
 use ratatui::style::Color;
 use synaptic_physics::Izhikevich;
-use rand::Rng;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Vec2 {
@@ -252,8 +252,11 @@ impl Universe {
                     repulsion_mult = 5.0;
                 }
 
-                let force =
-                    (g_repulse * repulsion_mult * self.bodies[i].mass.sqrt() * self.bodies[j].mass.sqrt()) / dist_sq;
+                let force = (g_repulse
+                    * repulsion_mult
+                    * self.bodies[i].mass.sqrt()
+                    * self.bodies[j].mass.sqrt())
+                    / dist_sq;
                 let dir = delta.normalize_or_zero();
 
                 let f_vec = -dir * force;
@@ -272,11 +275,12 @@ impl Universe {
 
             // Spiking neurons pull tighter on their synapses (Hebbian contraction?)
             let mut attract_mult = 1.0;
-             if self.bodies[i].is_spiking && self.bodies[j].is_spiking {
-                 attract_mult = 2.0; // Fire together, Wire together (physically)
-             }
+            if self.bodies[i].is_spiking && self.bodies[j].is_spiking {
+                attract_mult = 2.0; // Fire together, Wire together (physically)
+            }
 
-            let force = (g_edge * attract_mult * self.bodies[i].mass * self.bodies[j].mass) / dist_sq;
+            let force =
+                (g_edge * attract_mult * self.bodies[i].mass * self.bodies[j].mass) / dist_sq;
             let dir = delta.normalize_or_zero();
 
             let f_vec = dir * force;

@@ -55,7 +55,10 @@ impl PbdSystem4D {
     }
 
     pub fn add_distance_constraint(&mut self, p1: usize, p2: usize, stiff: f32) {
-        let dist = self.particles[p1].pos.distance_squared(self.particles[p2].pos).sqrt();
+        let dist = self.particles[p1]
+            .pos
+            .distance_squared(self.particles[p2].pos)
+            .sqrt();
         self.constraints.push(Constraint4D::Distance {
             p1,
             p2,
@@ -217,12 +220,18 @@ mod tests {
 
         // Target length 1.0
         system.constraints.push(Constraint4D::Distance {
-            p1, p2, rest_length: 1.0, stiffness: 1.0
+            p1,
+            p2,
+            rest_length: 1.0,
+            stiffness: 1.0,
         });
 
         system.step(0.1, 10);
 
-        let dist = system.particles[p1].pos.distance_squared(system.particles[p2].pos).sqrt();
+        let dist = system.particles[p1]
+            .pos
+            .distance_squared(system.particles[p2].pos)
+            .sqrt();
         assert!((dist - 1.0).abs() < 0.1);
     }
 }

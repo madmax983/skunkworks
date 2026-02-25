@@ -1,7 +1,7 @@
 use crate::platter::Platter;
 use chimera_lang::prelude::*;
-use ratatui::style::Color;
 use locus::Vec2;
+use ratatui::style::Color;
 
 #[derive(Debug, Clone)]
 pub struct Body {
@@ -81,7 +81,7 @@ impl Universe {
                 let p2 = self.bodies[j].pos;
                 let delta = p2 - p1;
                 let dist_sq = delta.magnitude_squared().max(25.0); // Minimal distance to avoid singularities
-                // Safe normalization: returns zero vector if magnitude is zero (overlapping particles)
+                                                                   // Safe normalization: returns zero vector if magnitude is zero (overlapping particles)
                 let dir = delta.normalize();
 
                 // Repulsion (Pauli exclusion principle-ish)

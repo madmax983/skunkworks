@@ -1755,7 +1755,8 @@ pub fn exec_genesis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 pub fn exec_self_replicate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.energy < 100 {
-        vm.output.push("SELF_REPLICATE: Insufficient energy".to_string());
+        vm.output
+            .push("SELF_REPLICATE: Insufficient energy".to_string());
         vm.stack.push(Value::Int(0));
         return None;
     }
@@ -1764,7 +1765,8 @@ pub fn exec_self_replicate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let lab_dir = vm.sandbox_root.join("viral_lab");
 
     if let Err(e) = std::fs::create_dir_all(&lab_dir) {
-        vm.output.push(format!("SELF_REPLICATE: Failed to create lab: {}", e));
+        vm.output
+            .push(format!("SELF_REPLICATE: Failed to create lab: {}", e));
         vm.stack.push(Value::Int(0));
         return None;
     }
@@ -1777,11 +1779,13 @@ pub fn exec_self_replicate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     match std::fs::write(&path, script) {
         Ok(_) => {
             vm.energy -= 100;
-            vm.output.push(format!("SELF_REPLICATE: Spoced to {}", path.display()));
+            vm.output
+                .push(format!("SELF_REPLICATE: Spoced to {}", path.display()));
             vm.stack.push(Value::Int(1));
         }
         Err(e) => {
-            vm.output.push(format!("SELF_REPLICATE: Write failed: {}", e));
+            vm.output
+                .push(format!("SELF_REPLICATE: Write failed: {}", e));
             vm.stack.push(Value::Int(0));
         }
     }
@@ -1792,7 +1796,7 @@ fn helix_to_script(helix: &crate::ast::Helix) -> String {
     let mut s = String::new();
     // Helper duplicate
     fn format_nuc(n: &Nucleotide, depth: usize) -> String {
-       if depth > crate::vm::MAX_RECURSION_DEPTH {
+        if depth > crate::vm::MAX_RECURSION_DEPTH {
             return "...".to_string();
         }
         match n {
@@ -1805,10 +1809,8 @@ fn helix_to_script(helix: &crate::ast::Helix) -> String {
                     crate::ast::JunctionType::All => "all",
                     crate::ast::JunctionType::Dish => "dish",
                 };
-                let args_str: Vec<String> = args
-                    .iter()
-                    .map(|arg| format_nuc(arg, depth + 1))
-                    .collect();
+                let args_str: Vec<String> =
+                    args.iter().map(|arg| format_nuc(arg, depth + 1)).collect();
                 format!("{}({})", t_str, args_str.join(" "))
             }
         }
