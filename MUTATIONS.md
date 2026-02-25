@@ -1722,3 +1722,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Magneto-Neuroplasticity. The brain's physical structure adapts to its firing patterns.
 - **Status**: experiments/ferrous-neuron
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified compilation.
+
+### ferrous-fold
+- **Parents**: experiments/ferrous-tissue + crates/origami
+- **Concept**: A Miura-ori mesh where vertices are magnetic particles driven by ChimeraVM agents.
+- **Novel trait**: Magneto-Mechanical Folding. The sheet folds itself based on the magnetic polarity of its vertices.
+- **Status**: experiments/ferrous-fold
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Prediction: High.
