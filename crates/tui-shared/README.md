@@ -6,13 +6,22 @@ This crate provides a RAII (Resource Acquisition Is Initialization) wrapper arou
 
 ## Installation
 
-Add this to your `Cargo.toml`:
+Add this to your `Cargo.toml`. Note that you must also include `ratatui` as a dependency to use its widgets and layout types.
+
+If you are working within the `skunkworks` workspace (e.g., adding a new experiment):
 
 ```toml
 [dependencies]
-tui-shared = { path = "crates/tui-shared" }
-# or if using workspace:
 tui-shared = { workspace = true }
+ratatui = { workspace = true }
+```
+
+If you are using this crate in a standalone project, point to the local path:
+
+```toml
+[dependencies]
+tui-shared = { path = "path/to/crates/tui-shared" } # e.g. "../../crates/tui-shared"
+ratatui = "0.30"
 ```
 
 ## Usage
