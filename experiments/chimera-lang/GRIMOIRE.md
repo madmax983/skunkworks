@@ -66,6 +66,10 @@ The **Nova** expansion adds metaphysical and quantum capabilities.
 *   `void_rift(y, x)`: Tear a hole in the grid.
 *   `entropy_surge()`: Increase global chaos.
 
+### Phonetics (New!)
+*   **Phonetic Transmutation**: Words have physical weight.
+    *   `Æ` Rune: Converts words into elements (`Δ` Fire, `∇` Water, `◊` Earth, `○` Air) based on their phonetic structure (Vowels, Liquids, Plosives, Fricatives).
+
 ## 🕹️ Interface (Prologue)
 
 The TUI is your laboratory.

@@ -103,6 +103,7 @@ pub mod oracle;
 pub mod pandemonium;
 pub mod phage;
 pub mod philosopher;
+pub mod phonetics;
 pub mod pilot;
 pub mod plasmid;
 pub mod prism;
@@ -446,6 +447,7 @@ impl PrologueState {
                             | "ε"
                             | "σ"
                             | "φ"
+                            | "Æ"
                         // Narrative
                             | "α"
                             | "ω"
@@ -1283,6 +1285,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
 
             library::apply_library_sinks(vm, rune, y, x);
             runecraft::apply_runecraft_sinks(vm, rune, y, x);
+            phonetics::apply_phonetic_sinks(vm, rune, y, x);
         }
     }
 }
@@ -1995,3 +1998,5 @@ mod architect_test;
 mod mesmerist_test;
 #[cfg(test)]
 mod prologue_library_test;
+#[cfg(test)]
+mod phonetics_test;

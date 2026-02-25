@@ -410,3 +410,20 @@ A distributed fungal network that shares a global buffer and grows organically.
 *   **Global Buffer**: All Spores share a single FIFO queue (`VecDeque`).
 *   **Nutrient Growth**: If a Spore is adjacent to a grid cell with `Int(n)` where `n >= 10`, it consumes 10 units and spawns a new Spore in an adjacent empty cell.
 *   **Spore Dispersal**: If the buffer contains >= 10 items, there is a 1% chance per tick for a Spore to consume 5 items and teleport-spawn a new Spore anywhere on the grid.
+
+# Phonetics (Nova) 🗣️
+
+The Phonetics system treats words as physical entities composed of phonemes.
+
+| Rune | Name | Function |
+|---|---|---|
+| `Æ` | **Phonetic Transmutation** | Reads **West** (String). Transmutes to Element (`Δ`, `∇`, `◊`, `○`) at **South** based on phonetic composition. |
+
+### Transmutation Logic
+
+The dominant phoneme group determines the resulting element:
+
+*   **Fire** (`Δ`): Vowels (A, E, I, O, U, Y)
+*   **Earth** (`◊`): Plosives (B, P, T, D, K, G, C, Q)
+*   **Air** (`○`): Fricatives (F, V, S, Z, H, J, X)
+*   **Water** (`∇`): Liquids/Nasals (L, R, M, N, W)
