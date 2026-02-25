@@ -194,6 +194,8 @@ pub mod nova_cartography;
 #[cfg(feature = "nova")]
 pub mod nova_chemistry;
 #[cfg(feature = "nova")]
+pub mod nova_chromatin;
+#[cfg(feature = "nova")]
 pub mod nova_chronos;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -2703,18 +2705,15 @@ impl ChimeraVM {
         self.recursion_depth += 1;
 
         #[cfg(feature = "nova")]
-        let effective_op = {
+        let (effective_op, effective_args) = {
             let mut final_op = if let Some(dialect) = self.dialects.get(&self.ip.0) {
                 if let Some(mapped) = dialect.get(&op) {
-                    let m: OpCode = (*mapped).clone();
-                    m
+                    (*mapped).clone()
                 } else {
-                    let o: OpCode = self.remap_table.get(&op).unwrap_or(&op).clone();
-                    o
+                    self.remap_table.get(&op).unwrap_or(&op).clone()
                 }
             } else {
-                let o: OpCode = self.remap_table.get(&op).unwrap_or(&op).clone();
-                o
+                self.remap_table.get(&op).unwrap_or(&op).clone()
             };
 
             // Babel Drift
@@ -2729,12 +2728,21 @@ impl ChimeraVM {
                     }
                 }
             }
-            final_op
+
+            let mut final_args = args.to_vec();
+            if let Some((new_op, new_args)) =
+                nova_chromatin::apply_chromatin_effect(self, final_op.clone(), &final_args)
+            {
+                final_op = new_op;
+                final_args = new_args;
+            }
+
+            (final_op, final_args)
         };
         #[cfg(not(feature = "nova"))]
-        let effective_op = op;
+        let (effective_op, effective_args) = (op, args.to_vec());
 
-        let result = self.execute_gene_inner(effective_op.clone(), args);
+        let result = self.execute_gene_inner(effective_op.clone(), &effective_args);
         self.recursion_depth -= 1;
 
         // Track last executed gene for Memetics
