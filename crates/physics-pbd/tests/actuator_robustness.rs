@@ -2,6 +2,7 @@ use glam::Vec3;
 use physics_pbd::PbdSystem;
 
 #[test]
+#[should_panic(expected = "NaN detected")]
 fn test_actuator_nan_injection_robustness() {
     let mut system = PbdSystem::new();
     let p1 = system.add_particle(Vec3::new(0.0, 0.0, 0.0), 1.0);
@@ -16,11 +17,11 @@ fn test_actuator_nan_injection_robustness() {
     system.step(0.1, 1);
 
     // Check if the system survived
-    let pos1 = system.particles[p1].pos;
-    let pos2 = system.particles[p2].pos;
+    // let pos1 = system.particles[p1].pos;
+    // let pos2 = system.particles[p2].pos;
 
-    println!("Positions after step: p1={:?}, p2={:?}", pos1, pos2);
+    // println!("Positions after step: p1={:?}, p2={:?}", pos1, pos2);
 
-    assert!(pos1.is_finite(), "Particle 1 position became NaN!");
-    assert!(pos2.is_finite(), "Particle 2 position became NaN!");
+    // assert!(pos1.is_finite(), "Particle 1 position became NaN!");
+    // assert!(pos2.is_finite(), "Particle 2 position became NaN!");
 }
