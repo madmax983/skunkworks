@@ -1752,3 +1752,86 @@ pub fn exec_genesis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     }
     None
 }
+
+pub fn exec_self_replicate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if vm.energy < 100 {
+        vm.output.push("SELF_REPLICATE: Insufficient energy".to_string());
+        vm.stack.push(Value::Int(0));
+        return None;
+    }
+
+    let script = helix_to_script(&vm.dna.helix);
+    let lab_dir = vm.sandbox_root.join("viral_lab");
+
+    if let Err(e) = std::fs::create_dir_all(&lab_dir) {
+        vm.output.push(format!("SELF_REPLICATE: Failed to create lab: {}", e));
+        vm.stack.push(Value::Int(0));
+        return None;
+    }
+
+    let mut rng = rand::thread_rng();
+    let id: u32 = rng.gen();
+    let filename = format!("replica_{}_{}.chs", vm.tick_counter, id);
+    let path = lab_dir.join(filename);
+
+    match std::fs::write(&path, script) {
+        Ok(_) => {
+            vm.energy -= 100;
+            vm.output.push(format!("SELF_REPLICATE: Spoced to {}", path.display()));
+            vm.stack.push(Value::Int(1));
+        }
+        Err(e) => {
+            vm.output.push(format!("SELF_REPLICATE: Write failed: {}", e));
+            vm.stack.push(Value::Int(0));
+        }
+    }
+    None
+}
+
+fn helix_to_script(helix: &crate::ast::Helix) -> String {
+    let mut s = String::new();
+    // Helper duplicate
+    fn format_nuc(n: &Nucleotide, depth: usize) -> String {
+       if depth > crate::vm::MAX_RECURSION_DEPTH {
+            return "...".to_string();
+        }
+        match n {
+            Nucleotide::Number(i) => i.to_string(),
+            Nucleotide::String(s) => format!("\"{}\"", s),
+            Nucleotide::Identifier(s) => s.clone(),
+            Nucleotide::Junction(t, args) => {
+                let t_str = match t {
+                    crate::ast::JunctionType::Any => "any",
+                    crate::ast::JunctionType::All => "all",
+                    crate::ast::JunctionType::Dish => "dish",
+                };
+                let args_str: Vec<String> = args
+                    .iter()
+                    .map(|arg| format_nuc(arg, depth + 1))
+                    .collect();
+                format!("{}({})", t_str, args_str.join(" "))
+            }
+        }
+    }
+
+    for (i, strand) in helix.strands.iter().enumerate() {
+        s.push_str(&format!("strand strand_{} {{\n", i));
+        for gene in &strand.genes {
+            s.push_str("    ");
+            s.push_str(gene.op.as_ref());
+            if !gene.args.is_empty() {
+                s.push('(');
+                for (j, arg) in gene.args.iter().enumerate() {
+                    if j > 0 {
+                        s.push_str(" ");
+                    }
+                    s.push_str(&format_nuc(arg, 0));
+                }
+                s.push(')');
+            }
+            s.push('\n');
+        }
+        s.push_str("}\n\n");
+    }
+    s
+}
