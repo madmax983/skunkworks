@@ -1302,7 +1302,160 @@ classDiagram
     AkashicRecords ..> FileSystem : Persists to
 ```
 
-### Experiment: Tectonic Git (ADR 023)
+### Nova Feature: Paradox System (ADR 055)
+
+The Paradox system allows defining physics-like rules that trigger global or local effects based on environmental conditions.
+
+### Class Structure
+
+```mermaid
+classDiagram
+    class ChimeraVM {
+        +Paradox paradox
+        +step()
+    }
+    class Paradox {
+        +Vec~Rule~ rules
+        +tick(vm)
+        +parse_rule(str)
+    }
+    class Rule {
+        +Trigger trigger
+        +Vec~Action~ actions
+    }
+    class Trigger {
+        <<Enum>>
+        +Always
+        +Signal(String)
+    }
+    class Action {
+        <<Enum>>
+        +Log
+        +Set
+        +Glitch
+    }
+    ChimeraVM *-- Paradox : Owns
+    Paradox *-- Rule : Contains
+    Rule *-- Trigger : Uses
+    Rule *-- Action : Uses
+```
+
+### Execution Cycle
+
+```mermaid
+sequenceDiagram
+    participant VM
+    participant Paradox
+
+    VM->>VM: pre_tick_updates()
+    VM->>Paradox: take()
+    VM->>Paradox: tick(VM)
+    loop Every Rule
+        Paradox->>Paradox: Check Trigger
+        opt Triggered
+            Paradox->>VM: Apply Actions (Set/Glitch)
+        end
+    end
+    Paradox-->>VM: return ownership
+    VM->>VM: process_environment()
+    VM->>VM: execute_dna()
+```
+
+### Nova Feature: BioMesh Network (ADR 056)
+
+The BioMesh system provides a graph-based overlay network on top of the grid for efficient packet routing.
+
+```mermaid
+classDiagram
+    direction TB
+    class BioMeshState {
+        +HashMap~Pos, BioMeshNode~ nodes
+    }
+
+    class BioMeshNode {
+        +u64 id
+        +VecDeque~Value~ buffer
+        +Vec~Pos~ connections
+    }
+
+    class ChimeraVM {
+        +BioMeshState biomesh
+    }
+
+    ChimeraVM *-- BioMeshState : Owns
+    BioMeshState *-- BioMeshNode : Contains
+```
+
+```mermaid
+sequenceDiagram
+    participant VM
+    participant Mesh as BioMeshState
+    participant NodeA
+    participant NodeB
+
+    Note over VM: OpCode::MeshSend(TargetID, Value)
+    VM->>Mesh: Find path (BFS) from NodeA to NodeB(TargetID)
+    Mesh->>Mesh: Calculate Route...
+    alt Path Found
+        Mesh->>NodeB: buffer.push(Value)
+        Mesh-->>VM: Success (0 Ticks)
+    else No Path
+        Mesh-->>VM: Failure
+    end
+```
+
+### Nova Feature: Linguistics System (ADR 057)
+
+The Linguistics system integrates string analysis algorithms directly into the VM.
+
+```mermaid
+classDiagram
+    direction TB
+    class ChimeraVM {
+        +exec_gene()
+    }
+
+    class Linguistics {
+        <<Module>>
+        +levenshtein(s1, s2) usize
+        +soundex(s) String
+        +is_anagram(s1, s2) bool
+        +is_pangram(s) bool
+    }
+
+    ChimeraVM ..> Linguistics : Calls via OpCodes
+    note for Linguistics "Enforces MAX_COMPLEX_STRING_LEN"
+```
+
+### Nova Feature: Procedural Botany (ADR 058)
+
+The Botany system implements L-System interpretation for procedural geometry generation via a specialized Organelle.
+
+```mermaid
+sequenceDiagram
+    participant VM
+    participant Seed as Organelle (Seed)
+    participant Grid
+
+    Note over VM: OpCode::Plant(Axiom, Rules)
+    VM->>Seed: Spawn(Axiom, Rules)
+
+    loop Every Tick
+        Seed->>Seed: Expand String (L-System)
+        Seed->>Seed: Interpret Chars (Turtle)
+
+        alt Char = 'F' (Forward)
+            Seed->>Grid: Write '#'
+            Seed->>Seed: Move Position
+        else Char = '+' (Turn)
+            Seed->>Seed: Rotate Direction
+        else Char = '[' (Branch)
+            Seed->>Seed: Push State
+        end
+    end
+```
+
+## Experiment: Tectonic Git (ADR 023)
 
 **Tectonic Git** visualizes the repository history as geological strata, using code analysis to determine stability.
 
@@ -1764,61 +1917,3 @@ sequenceDiagram
     end
 ```
 
-## Nova Feature: Paradox System (ADR 055)
-
-The Paradox system allows defining physics-like rules that trigger global or local effects based on environmental conditions.
-
-### Class Structure
-
-```mermaid
-classDiagram
-    class ChimeraVM {
-        +Paradox paradox
-        +step()
-    }
-    class Paradox {
-        +Vec~Rule~ rules
-        +tick(vm)
-        +parse_rule(str)
-    }
-    class Rule {
-        +Trigger trigger
-        +Vec~Action~ actions
-    }
-    class Trigger {
-        <<Enum>>
-        +Always
-        +Signal(String)
-    }
-    class Action {
-        <<Enum>>
-        +Log
-        +Set
-        +Glitch
-    }
-    ChimeraVM *-- Paradox : Owns
-    Paradox *-- Rule : Contains
-    Rule *-- Trigger : Uses
-    Rule *-- Action : Uses
-```
-
-### Execution Cycle
-
-```mermaid
-sequenceDiagram
-    participant VM
-    participant Paradox
-
-    VM->>VM: pre_tick_updates()
-    VM->>Paradox: take()
-    VM->>Paradox: tick(VM)
-    loop Every Rule
-        Paradox->>Paradox: Check Trigger
-        opt Triggered
-            Paradox->>VM: Apply Actions (Set/Glitch)
-        end
-    end
-    Paradox-->>VM: return ownership
-    VM->>VM: process_environment()
-    VM->>VM: execute_dna()
-```
