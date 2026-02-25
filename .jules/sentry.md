@@ -31,3 +31,7 @@
 **[NaN Propagation in PBD]**
 **Learning:** In Position Based Dynamics, a single `NaN` particle position can infect the entire system because `delta.length()` returns `NaN`, and `NaN < EPSILON` is false, bypassing zero-division checks.
 **Action:** Always check `!len.is_finite()` in distance constraints to prevent NaN propagation.
+
+**[TUI Fractional Block Logic]**
+**Learning:** When mapping a continuous value (0.0-1.0) to discrete block characters (1/8, 1/4, etc.), using strictly less `<` comparisons causes off-by-one errors for exact values like 0.5 (4/8), pushing them to the next bucket (5/8).
+**Action:** Use `<=` for threshold comparisons when mapping continuous ranges to discrete steps where the boundary value belongs to the lower bucket (e.g., 0.5 should be HALF, not FIVE_EIGHTHS).
