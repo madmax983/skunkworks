@@ -56,6 +56,91 @@ fn compute_steering(mut desired: Vec2, current_vel: Vec2, max_speed: f64, max_fo
     }
 }
 
+/// Helper struct to accumulate forces from neighbors.
+#[derive(Default)]
+struct ForceAccumulator {
+    separation: Vec2,
+    alignment: Vec2,
+    cohesion: Vec2,
+    sep_count: usize,
+    ali_count: usize,
+    coh_count: usize,
+}
+
+impl ForceAccumulator {
+    /// Accumulates influence from a single neighbor.
+    fn accumulate(
+        &mut self,
+        my_pos: Vec2,
+        neighbor_pos: Vec2,
+        neighbor_vel: Vec2,
+        params: &FlockingParams,
+    ) {
+        // Optimization: AABB (Axis-Aligned Bounding Box) early exit.
+        // We first check if the neighbor is within the square bounding box of the view radius.
+        // This avoids the more expensive Euclidean distance calculation (squaring and adding)
+        // for the vast majority of distant neighbors.
+        let dx = my_pos.x - neighbor_pos.x;
+        if dx.abs() > params.view_radius {
+            return;
+        }
+
+        let dy = my_pos.y - neighbor_pos.y;
+        if dy.abs() > params.view_radius {
+            return;
+        }
+
+        let d_sq = dx * dx + dy * dy;
+        let view_sq = params.view_radius * params.view_radius;
+
+        if d_sq <= 0.0 || d_sq >= view_sq {
+            return;
+        }
+
+        let diff = Vec2::new(dx, dy);
+        let sep_sq = params.separation_radius * params.separation_radius;
+
+        // Separation
+        if d_sq < sep_sq {
+            self.separation += diff * (1.0 / d_sq);
+            self.sep_count += 1;
+        }
+
+        // Alignment
+        self.alignment += neighbor_vel;
+        self.ali_count += 1;
+
+        // Cohesion
+        self.cohesion += neighbor_pos;
+        self.coh_count += 1;
+    }
+
+    /// Computes the final weighted steering force.
+    fn compute_final_force(self, my_pos: Vec2, my_vel: Vec2, params: &FlockingParams) -> Vec2 {
+        let mut total = Vec2::zero();
+
+        if self.sep_count > 0 {
+            total += compute_steering(self.separation, my_vel, params.max_speed, params.max_force)
+                * params.separation_weight;
+        }
+
+        if self.ali_count > 0 {
+            let alignment = self.alignment / self.ali_count as f64;
+            total += compute_steering(alignment, my_vel, params.max_speed, params.max_force)
+                * params.alignment_weight;
+        }
+
+        if self.coh_count > 0 {
+            let cohesion = self.cohesion / self.coh_count as f64;
+            let desired = cohesion - my_pos;
+            total += compute_steering(desired, my_vel, params.max_speed, params.max_force)
+                * params.cohesion_weight;
+        }
+
+        total
+    }
+}
+
 /// Computes the Reynolds flocking force (Separation, Alignment, Cohesion).
 ///
 /// This function calculates the steering force required to satisfy the three rules of flocking:
@@ -91,81 +176,16 @@ pub fn compute_force(
 
     let my_pos = positions[my_idx];
     let my_vel = velocities[my_idx];
-
-    let mut separation = Vec2::zero();
-    let mut alignment = Vec2::zero();
-    let mut cohesion = Vec2::zero();
-
-    let mut sep_count = 0;
-    let mut ali_count = 0;
-    let mut coh_count = 0;
-
-    let view_sq = params.view_radius * params.view_radius;
-    let sep_sq = params.separation_radius * params.separation_radius;
+    let mut accumulator = ForceAccumulator::default();
 
     for (i, (&pos, &vel)) in positions.iter().zip(velocities).enumerate() {
         if i == my_idx {
             continue;
         }
-
-        // Optimization: AABB (Axis-Aligned Bounding Box) early exit.
-        // We first check if the neighbor is within the square bounding box of the view radius.
-        // This avoids the more expensive Euclidean distance calculation (squaring and adding)
-        // for the vast majority of distant neighbors.
-        let dx = my_pos.x - pos.x;
-        if dx.abs() > params.view_radius {
-            continue;
-        }
-
-        let dy = my_pos.y - pos.y;
-        if dy.abs() > params.view_radius {
-            continue;
-        }
-
-        let d_sq = dx * dx + dy * dy;
-
-        if d_sq <= 0.0 || d_sq >= view_sq {
-            continue;
-        }
-
-        let diff = Vec2::new(dx, dy);
-
-        // Separation
-        if d_sq < sep_sq {
-            separation += diff * (1.0 / d_sq);
-            sep_count += 1;
-        }
-
-        // Alignment
-        alignment += vel;
-        ali_count += 1;
-
-        // Cohesion
-        cohesion += pos;
-        coh_count += 1;
+        accumulator.accumulate(my_pos, pos, vel, params);
     }
 
-    let mut total = Vec2::zero();
-
-    if sep_count > 0 {
-        total += compute_steering(separation, my_vel, params.max_speed, params.max_force)
-            * params.separation_weight;
-    }
-
-    if ali_count > 0 {
-        alignment /= ali_count as f64;
-        total += compute_steering(alignment, my_vel, params.max_speed, params.max_force)
-            * params.alignment_weight;
-    }
-
-    if coh_count > 0 {
-        cohesion /= coh_count as f64;
-        let desired = cohesion - my_pos;
-        total += compute_steering(desired, my_vel, params.max_speed, params.max_force)
-            * params.cohesion_weight;
-    }
-
-    total
+    accumulator.compute_final_force(my_pos, my_vel, params)
 }
 
 #[cfg(test)]

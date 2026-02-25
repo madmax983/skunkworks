@@ -1,12 +1,12 @@
+use hyper_system::math::Vec4;
 use macroquad::prelude::*;
 use origami::{MiuraOri, MiuraParams, Orientation};
-use hyper_system::math::Vec4;
 
-mod physics;
 mod dna;
+mod physics;
 
-use physics::PbdSystem4D;
 use dna::ChimeraAgent;
+use physics::PbdSystem4D;
 
 #[macroquad::main("Hyper-Fold")]
 async fn main() {
@@ -135,7 +135,7 @@ async fn main() {
             position: vec3(
                 20.0 * cam_angle_y.sin(),
                 10.0 + 10.0 * cam_angle_x.sin(),
-                20.0 * cam_angle_y.cos()
+                20.0 * cam_angle_y.cos(),
             ),
             target: vec3(0.0, 0.0, 0.0),
             up: vec3(0.0, 1.0, 0.0),
@@ -153,8 +153,8 @@ async fn main() {
         // Using indices from origami
         for i in (0..indices.len()).step_by(3) {
             let i0 = indices[i] as usize;
-            let i1 = indices[i+1] as usize;
-            let i2 = indices[i+2] as usize;
+            let i1 = indices[i + 1] as usize;
+            let i2 = indices[i + 2] as usize;
 
             let v0 = projected[i0];
             let v1 = projected[i1];
@@ -194,7 +194,13 @@ async fn main() {
         // UI Overlay
         set_default_camera();
         draw_text("HYPER-FOLD", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Vertices: {}", system.particles.len()), 10.0, 50.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Vertices: {}", system.particles.len()),
+            10.0,
+            50.0,
+            20.0,
+            LIGHTGRAY,
+        );
         draw_text("Drag to Rotate", 10.0, 70.0, 20.0, LIGHTGRAY);
 
         next_frame().await

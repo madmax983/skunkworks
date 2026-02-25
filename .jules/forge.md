@@ -23,3 +23,7 @@
 **[Large Match Arms]**
 **Learning:** Extracting complex logic from `match` arms into private helper functions (e.g., `solve_actuator`) significantly improves the readability of the main loop and reduces cognitive load.
 **Action:** When a `match` arm exceeds 5-10 lines or contains control flow (like `if/else` or `panic!`), extract it into a named helper function.
+
+**[God Function Refactor: Force Accumulation]**
+**Learning:** Extracting complex accumulation logic (like force sums) from tight loops into a helper struct (`ForceAccumulator`) significantly improves readability and reduces "God Function" smell.
+**Action:** When a loop body handles multiple state variables (e.g., `separation`, `alignment`, `cohesion`), extract them into a dedicated struct with an `accumulate` method.
