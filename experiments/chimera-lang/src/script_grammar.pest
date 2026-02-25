@@ -40,12 +40,18 @@ chimera_def = { "chimera" ~ identifier ~ "{" ~ "grammar" ~ ":" ~ argument ~ "boo
 
 evolution_def = { "evolution" ~ identifier ~ "{" ~ evolution_prop* ~ "}" }
 evolution_prop = {
-    ( "population" ~ ":" ~ number ) |
-    ( "mutation_rate" ~ ":" ~ float ) |
-    ( "target" ~ ":" ~ number ) |
-    ( "fitness" ~ block ) |
-    ( "strategy" ~ block )
+    evo_population |
+    evo_mutation_rate |
+    evo_target |
+    evo_fitness |
+    evo_strategy
 }
+evo_population = { "population" ~ ":" ~ number }
+evo_mutation_rate = { "mutation_rate" ~ ":" ~ float }
+evo_target = { "target" ~ ":" ~ number }
+evo_fitness = { "fitness" ~ block }
+evo_strategy = { "strategy" ~ block }
+
 float = @{ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ }
 
 instruction = {

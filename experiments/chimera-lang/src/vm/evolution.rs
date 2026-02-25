@@ -41,11 +41,13 @@ pub struct EvolutionEngine {
 
 impl EvolutionEngine {
     pub fn new(seed: Strand, population_size: usize, challenge: Challenge) -> Self {
-        let mut population = vec![seed.clone(); population_size];
+        // 🔒 WARDEN: Ensure population is at least 1 to prevent division by zero or empty selection
+        let safe_pop_size = population_size.max(1);
+        let mut population = vec![seed.clone(); safe_pop_size];
 
         // Initial diversity
         let mut rng = rand::thread_rng();
-        for i in 1..population_size {
+        for i in 1..safe_pop_size {
             Self::mutate_strand(&mut population[i], &mut rng);
         }
 
