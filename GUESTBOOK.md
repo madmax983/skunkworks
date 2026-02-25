@@ -428,6 +428,11 @@
 - **Status:** The Hyphae are executing code. The network is growing through the chaos.
 - **Note**: "The shape of the fungus is the shape of the algorithm."
 
+### [Concentration Level: FRESH] - Location: experiments/ferrous-mycelium
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: The Fungi are aligning with the Magnetic Field. Hyphae tips are North/South poles.
+- **Note**: "The lattice grows where the field pulls it."
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/grimms-code
