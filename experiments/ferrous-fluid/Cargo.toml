@@ -8,3 +8,5 @@ crossterm = { workspace = true }
 ratatui = { workspace = true }
 anyhow = { workspace = true }
 rand = { workspace = true }
+locus = { workspace = true }
+tui-shared = { workspace = true }

@@ -1,6 +1,6 @@
 #[derive(Debug, Clone)]
 pub struct Platter {
-    pub magnetism: Vec<f32>,
+    pub magnetism: Vec<f64>,
     pub width: usize,
     pub height: usize,
 }
@@ -14,14 +14,14 @@ impl Platter {
         }
     }
 
-    pub fn magnetize(&mut self, x: usize, y: usize, amount: f32) {
+    pub fn magnetize(&mut self, x: usize, y: usize, amount: f64) {
         if x < self.width && y < self.height {
             let idx = y * self.width + x;
             self.magnetism[idx] = (self.magnetism[idx] + amount).min(1.0);
         }
     }
 
-    pub fn get_magnetism(&self, x: usize, y: usize) -> f32 {
+    pub fn get_magnetism(&self, x: usize, y: usize) -> f64 {
         if x < self.width && y < self.height {
             self.magnetism[y * self.width + x]
         } else {
@@ -29,7 +29,7 @@ impl Platter {
         }
     }
 
-    pub fn decay(&mut self, rate: f32) {
+    pub fn decay(&mut self, rate: f64) {
         for m in &mut self.magnetism {
             *m *= rate;
             if *m < 0.001 {

@@ -1,131 +1,27 @@
 use crate::platter::Platter;
 use chimera_lang::prelude::*;
 use ratatui::style::Color;
-
-#[derive(Debug, Clone, Copy)]
-pub struct Vec2 {
-    pub x: f32,
-    pub y: f32,
-}
-
-impl Vec2 {
-    pub const ZERO: Self = Self { x: 0.0, y: 0.0 };
-
-    pub fn new(x: f32, y: f32) -> Self {
-        Self { x, y }
-    }
-
-    pub fn length(self) -> f32 {
-        (self.x * self.x + self.y * self.y).sqrt()
-    }
-
-    pub fn length_squared(self) -> f32 {
-        self.x * self.x + self.y * self.y
-    }
-
-    pub fn normalize_or_zero(self) -> Self {
-        let l = self.length();
-        if l == 0.0 {
-            Self::ZERO
-        } else {
-            Self {
-                x: self.x / l,
-                y: self.y / l,
-            }
-        }
-    }
-}
-
-impl std::ops::Add for Vec2 {
-    type Output = Self;
-    fn add(self, rhs: Self) -> Self {
-        Self {
-            x: self.x + rhs.x,
-            y: self.y + rhs.y,
-        }
-    }
-}
-
-impl std::ops::AddAssign for Vec2 {
-    fn add_assign(&mut self, rhs: Self) {
-        self.x += rhs.x;
-        self.y += rhs.y;
-    }
-}
-
-impl std::ops::Sub for Vec2 {
-    type Output = Self;
-    fn sub(self, rhs: Self) -> Self {
-        Self {
-            x: self.x - rhs.x,
-            y: self.y - rhs.y,
-        }
-    }
-}
-
-impl std::ops::SubAssign for Vec2 {
-    fn sub_assign(&mut self, rhs: Self) {
-        self.x -= rhs.x;
-        self.y -= rhs.y;
-    }
-}
-
-impl std::ops::Mul<f32> for Vec2 {
-    type Output = Self;
-    fn mul(self, rhs: f32) -> Self {
-        Self {
-            x: self.x * rhs,
-            y: self.y * rhs,
-        }
-    }
-}
-
-impl std::ops::MulAssign<f32> for Vec2 {
-    fn mul_assign(&mut self, rhs: f32) {
-        self.x *= rhs;
-        self.y *= rhs;
-    }
-}
-
-impl std::ops::Div<f32> for Vec2 {
-    type Output = Self;
-    fn div(self, rhs: f32) -> Self {
-        Self {
-            x: self.x / rhs,
-            y: self.y / rhs,
-        }
-    }
-}
-
-impl std::ops::Neg for Vec2 {
-    type Output = Self;
-    fn neg(self) -> Self {
-        Self {
-            x: -self.x,
-            y: -self.y,
-        }
-    }
-}
+use locus::Vec2;
 
 #[derive(Debug, Clone)]
 pub struct Body {
     pub pos: Vec2,
     pub vel: Vec2,
     pub acc: Vec2,
-    pub mass: f32,
-    pub radius: f32,
+    pub mass: f64,
+    pub radius: f64,
     pub color: Color,
-    pub magnetism: f32,
+    pub magnetism: f64,
     pub vm: ChimeraVM,
     pub trail: Vec<Vec2>,
 }
 
 impl Body {
-    pub fn new(x: f32, y: f32, mass: f32, radius: f32, color: Color, dna: Dna) -> Self {
+    pub fn new(x: f64, y: f64, mass: f64, radius: f64, color: Color, dna: Dna) -> Self {
         Self {
             pos: Vec2::new(x, y),
-            vel: Vec2::ZERO,
-            acc: Vec2::ZERO,
+            vel: Vec2::zero(),
+            acc: Vec2::zero(),
             mass,
             radius,
             color,
@@ -135,7 +31,7 @@ impl Body {
         }
     }
 
-    pub fn with_velocity(mut self, vx: f32, vy: f32) -> Self {
+    pub fn with_velocity(mut self, vx: f64, vy: f64) -> Self {
         self.vel = Vec2::new(vx, vy);
         self
     }
@@ -160,9 +56,9 @@ impl Universe {
         id
     }
 
-    pub fn step(&mut self, dt: f32) {
+    pub fn step(&mut self, dt: f64) {
         let len = self.bodies.len();
-        let mut forces = vec![Vec2::ZERO; len];
+        let mut forces = vec![Vec2::zero(); len];
         let mut next_magnetism = vec![0.0; len];
 
         // Constants
@@ -184,8 +80,9 @@ impl Universe {
                 let p1 = self.bodies[i].pos;
                 let p2 = self.bodies[j].pos;
                 let delta = p2 - p1;
-                let dist_sq = delta.length_squared().max(25.0); // Minimal distance to avoid singularities
-                let dir = delta.normalize_or_zero();
+                let dist_sq = delta.magnitude_squared().max(25.0); // Minimal distance to avoid singularities
+                // Safe normalization: returns zero vector if magnitude is zero (overlapping particles)
+                let dir = delta.normalize();
 
                 // Repulsion (Pauli exclusion principle-ish)
                 let repulse =
@@ -196,13 +93,6 @@ impl Universe {
                 forces[j] -= f_repulse;
 
                 // Magnetic Attraction/Repulsion
-                // Like poles repel, opposite attract?
-                // Let's say Magnetism is 0.0 (North) to 1.0 (South). 0.5 is Neutral.
-                // Force = (M1 - 0.5) * (M2 - 0.5) * Strength / dist_sq
-                // If both > 0.5 (South), result is positive -> Repulsion?
-                // If one > 0.5, one < 0.5 (South-North), result is negative -> Attraction?
-                // Yes, that works.
-
                 let m1 = self.bodies[i].magnetism - 0.5;
                 let m2 = self.bodies[j].magnetism - 0.5;
                 let mag_force_val = (m1 * m2 * mag_strength * 100.0) / dist_sq;
@@ -219,7 +109,7 @@ impl Universe {
 
             // Collect Inputs
             // Input 1: Neighbor Count (within radius 20.0)
-            let mut neighbor_count = 0;
+            // let mut neighbor_count = 0;
             // Input 2: Local Magnetism Field Strength (from Platter)
             // Map pos to grid
             let gx = (body.pos.x + 100.0) as i32;
@@ -233,9 +123,6 @@ impl Universe {
             } else {
                 0.0
             };
-
-            // We can't iterate bodies here efficiently due to borrow checker if we used nested loops
-            // But we can just use the platter for "environment" sensing
 
             // Let's convert inputs to Integers for VM
             let input_mag = (local_mag * 100.0) as i64;
@@ -254,7 +141,7 @@ impl Universe {
             // Read Output (Top of stack)
             if let Some(Value::Int(val)) = body.vm.stack.pop() {
                 // Clamp 0-100 -> 0.0-1.0
-                let new_mag = (val.clamp(0, 100) as f32) / 100.0;
+                let new_mag = (val.clamp(0, 100) as f64) / 100.0;
                 next_magnetism[i] = new_mag;
             } else {
                 next_magnetism[i] = body.magnetism; // No change
