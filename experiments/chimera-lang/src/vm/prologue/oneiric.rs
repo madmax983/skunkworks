@@ -60,19 +60,21 @@ pub fn apply_oneiric_runes(
             // Sun (Dream Out): Input from Oneiric Grid -> Output Self
             let intensity = oneiric_grid.cells[y][x];
             if intensity > 1.0 {
-                 if next_signals[y][x].is_none() {
+                if next_signals[y][x].is_none() {
                     next_signals[y][x] = Some(Value::Int(intensity as i64));
                     changes = true;
-                 }
-                 // Drain slightly when read
-                 oneiric_grid.cells[y][x] *= 0.8;
+                }
+                // Drain slightly when read
+                oneiric_grid.cells[y][x] *= 0.8;
             }
         }
         "☁" => {
             // Cloud (Sustain): If intensity is present, sustain it against decay.
             if oneiric_grid.cells[y][x] > 0.1 {
                 oneiric_grid.cells[y][x] += 2.0;
-                if oneiric_grid.cells[y][x] > 100.0 { oneiric_grid.cells[y][x] = 100.0; }
+                if oneiric_grid.cells[y][x] > 100.0 {
+                    oneiric_grid.cells[y][x] = 100.0;
+                }
             }
         }
         _ => {}

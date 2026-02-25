@@ -1,8 +1,8 @@
 use super::gardener::*;
-use crate::vm::Value;
-use crate::vm::prologue::PrologueAgent;
 use crate::ast::{Dna, Helix};
+use crate::vm::prologue::PrologueAgent;
 use crate::vm::ChimeraVM;
+use crate::vm::Value;
 use std::collections::VecDeque;
 
 fn make_vm() -> ChimeraVM {

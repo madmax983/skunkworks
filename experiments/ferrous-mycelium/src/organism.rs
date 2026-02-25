@@ -1,7 +1,7 @@
-use macroquad::prelude::*;
-use chimera_lang::prelude::*;
-use std::sync::atomic::{AtomicU64, Ordering};
 use crate::field::MagneticField;
+use chimera_lang::prelude::*;
+use macroquad::prelude::*;
+use std::sync::atomic::{AtomicU64, Ordering};
 
 #[derive(Clone)]
 pub struct Hypha {
@@ -50,14 +50,32 @@ impl Hypha {
 
         // Simple heuristic genome:
         // 1. GRead at 0,0 (Local B)
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }); // Y
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }); // X
-        genes.push(Gene { op: OpCode::GRead, args: vec![] });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }); // Y
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }); // X
+        genes.push(Gene {
+            op: OpCode::GRead,
+            args: vec![],
+        });
 
         // 2. GRead at 0,1 (Gradient Angle)
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }); // Y
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }); // X
-        genes.push(Gene { op: OpCode::GRead, args: vec![] });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }); // Y
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        }); // X
+        genes.push(Gene {
+            op: OpCode::GRead,
+            args: vec![],
+        });
 
         // Random Ops
         for _ in 0..10 {
@@ -67,26 +85,52 @@ impl Hypha {
                 2 => OpCode::Mul,
                 _ => OpCode::BitXor,
             };
-            genes.push(Gene { op: OpCode::Dup, args: vec![] });
+            genes.push(Gene {
+                op: OpCode::Dup,
+                args: vec![],
+            });
             genes.push(Gene { op, args: vec![] });
         }
 
         // Output Turn (0,3)
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] });
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(3)] });
-        genes.push(Gene { op: OpCode::GWrite, args: vec![] });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(3)],
+        });
+        genes.push(Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        });
 
         // Output Branch (0,5)
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] });
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] });
-        genes.push(Gene { op: OpCode::GWrite, args: vec![] });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        });
+        genes.push(Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        });
 
         // Loop
-        genes.push(Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] });
+        genes.push(Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(0)],
+        });
 
         Dna {
             evolution_config: None,
-            helix: Helix { strands: vec![Strand { genes }] },
+            helix: Helix {
+                strands: vec![Strand { genes }],
+            },
         }
     }
 
@@ -101,11 +145,17 @@ impl Hypha {
 
         // Calculate gradient (simple difference)
         let dx = 1.0;
-        let b_right = field.sample(self.pos.x / screen_width() * field.width as f32 + dx, self.pos.y / screen_height() * field.height as f32);
-        let b_down = field.sample(self.pos.x / screen_width() * field.width as f32, self.pos.y / screen_height() * field.height as f32 + dx);
+        let b_right = field.sample(
+            self.pos.x / screen_width() * field.width as f32 + dx,
+            self.pos.y / screen_height() * field.height as f32,
+        );
+        let b_down = field.sample(
+            self.pos.x / screen_width() * field.width as f32,
+            self.pos.y / screen_height() * field.height as f32 + dx,
+        );
         let grad_x = b_right - local_b;
         let grad_y = b_down - local_b;
-        let grad_len = (grad_x*grad_x + grad_y*grad_y).sqrt();
+        let grad_len = (grad_x * grad_x + grad_y * grad_y).sqrt();
 
         // VM Inputs
         // Grid[0][0] = Local B * 100
@@ -142,13 +192,13 @@ impl Hypha {
 
         // Physics: Magnetotropism
         let target_dir = if grad_len > 0.001 {
-             if self.magnetism < 0.5 {
-                 // Attracted to High B (South)
-                 vec2(grad_x, grad_y).normalize()
-             } else {
-                 // Attracted to Low B (North)
-                 -vec2(grad_x, grad_y).normalize()
-             }
+            if self.magnetism < 0.5 {
+                // Attracted to High B (South)
+                vec2(grad_x, grad_y).normalize()
+            } else {
+                // Attracted to Low B (North)
+                -vec2(grad_x, grad_y).normalize()
+            }
         } else {
             self.vel.normalize()
         };
@@ -170,10 +220,18 @@ impl Hypha {
         field.magnetize(gx, gy, mag_write);
 
         // Bounds check / Wrap
-        if self.pos.x < 0.0 { self.pos.x += screen_width(); }
-        if self.pos.x > screen_width() { self.pos.x -= screen_width(); }
-        if self.pos.y < 0.0 { self.pos.y += screen_height(); }
-        if self.pos.y > screen_height() { self.pos.y -= screen_height(); }
+        if self.pos.x < 0.0 {
+            self.pos.x += screen_width();
+        }
+        if self.pos.x > screen_width() {
+            self.pos.x -= screen_width();
+        }
+        if self.pos.y < 0.0 {
+            self.pos.y += screen_height();
+        }
+        if self.pos.y > screen_height() {
+            self.pos.y -= screen_height();
+        }
 
         // Branching
         if macroquad::rand::rand() as f32 % 100.0 < branch_prob && self.energy > 50.0 {

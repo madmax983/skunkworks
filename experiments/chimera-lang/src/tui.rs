@@ -10093,7 +10093,14 @@ fn render_void(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     if vm.prologue_state.void_buffer.is_empty() {
         info_text.push(Line::from("  (Empty)"));
     } else {
-        for (i, val) in vm.prologue_state.void_buffer.iter().rev().take(10).enumerate() {
+        for (i, val) in vm
+            .prologue_state
+            .void_buffer
+            .iter()
+            .rev()
+            .take(10)
+            .enumerate()
+        {
             info_text.push(Line::from(format!("  [{}] {}", i, val)));
         }
         if vm.prologue_state.void_buffer.len() > 10 {

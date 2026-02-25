@@ -14,8 +14,7 @@ pub fn process_shuttle_agent(
     // Default: East (0, 1), Payload 0, Underfoot Empty(0)
     let (dy, dx, mut payload, underfoot) = match &updated_agent.state {
         Value::Junction(_, list) if list.len() >= 4 => {
-            if let (Value::Int(dy), Value::Int(dx), p, u) =
-                (&list[0], &list[1], &list[2], &list[3])
+            if let (Value::Int(dy), Value::Int(dx), p, u) = (&list[0], &list[1], &list[2], &list[3])
             {
                 (*dy as i64, *dx as i64, p.clone(), u.clone())
             } else {
@@ -188,13 +187,7 @@ fn is_blocking(val: &Value) -> bool {
     // Block on walls '#' or other active agents (to prevent overlay)
     // Note: We don't block on runes like +, *, etc. as we move *over* them.
     if let Value::Str(s) = val {
-        return s == "#"
-            || s == "@"
-            || s == "K"
-            || s == "H"
-            || s == "C"
-            || s == "ð"
-            || s == "₣";
+        return s == "#" || s == "@" || s == "K" || s == "H" || s == "C" || s == "ð" || s == "₣";
     }
     false
 }

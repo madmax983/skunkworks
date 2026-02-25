@@ -1,9 +1,9 @@
 use ::rand::Rng;
 use chimera_lang::prelude::*;
+use glam::Vec3;
 use macroquad::prelude::*;
 use origami::{MiuraOri, MiuraParams, Orientation, OrigamiMesh}; // Removed OrigamiVertex
-use physics_pbd::{PbdSystem};
-use glam::Vec3;
+use physics_pbd::PbdSystem;
 
 struct Cell {
     vm: ChimeraVM,
@@ -46,8 +46,8 @@ impl FoldedTissue {
 
         for i in (0..initial_mesh.indices.len()).step_by(3) {
             let i0 = initial_mesh.indices[i] as usize;
-            let i1 = initial_mesh.indices[i+1] as usize;
-            let i2 = initial_mesh.indices[i+2] as usize;
+            let i1 = initial_mesh.indices[i + 1] as usize;
+            let i2 = initial_mesh.indices[i + 2] as usize;
 
             let p0 = particle_indices[i0];
             let p1 = particle_indices[i1];
@@ -90,8 +90,8 @@ impl FoldedTissue {
 
         // Pin the center vertex to prevent drifting away
         if !particle_indices.is_empty() {
-             let center_idx = particle_indices[particle_indices.len() / 2];
-             system.add_pin_constraint(center_idx, vec3(0.0, 0.0, 0.0));
+            let center_idx = particle_indices[particle_indices.len() / 2];
+            system.add_pin_constraint(center_idx, vec3(0.0, 0.0, 0.0));
         }
 
         FoldedTissue {
@@ -147,7 +147,9 @@ impl FoldedTissue {
 
         // 3. VM Logic & Update Visuals
         for cell in &mut self.cells {
-            cell.vm.stack.push(Value::Int((cell.magnetism * 100.0) as i64));
+            cell.vm
+                .stack
+                .push(Value::Int((cell.magnetism * 100.0) as i64));
 
             // Run VM
             for _ in 0..10 {
@@ -156,7 +158,7 @@ impl FoldedTissue {
 
             // Act: Update Magnetism
             if let Some(val) = cell.vm.stack.pop() {
-                 let target = match val {
+                let target = match val {
                     Value::Int(n) => (n as f32 / 100.0).clamp(0.0, 1.0),
                     _ => 0.5,
                 };
@@ -217,13 +219,24 @@ fn create_dna() -> Dna {
     // Causes value to flip-flop over time.
 
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-        Gene { op: OpCode::Swap, args: vec![] }, // [100, Mag]
-        Gene { op: OpCode::Sub, args: vec![] }, // [100 - Mag]
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(100)],
+        },
+        Gene {
+            op: OpCode::Swap,
+            args: vec![],
+        }, // [100, Mag]
+        Gene {
+            op: OpCode::Sub,
+            args: vec![],
+        }, // [100 - Mag]
     ];
 
     Dna {
-        helix: Helix { strands: vec![Strand { genes }] },
+        helix: Helix {
+            strands: vec![Strand { genes }],
+        },
         evolution_config: None,
     }
 }
@@ -238,12 +251,24 @@ async fn main() {
 
     loop {
         // Camera Controls
-        if is_key_down(KeyCode::Up) { cam_angle_y += 0.02; }
-        if is_key_down(KeyCode::Down) { cam_angle_y -= 0.02; }
-        if is_key_down(KeyCode::Left) { cam_angle_x -= 0.02; }
-        if is_key_down(KeyCode::Right) { cam_angle_x += 0.02; }
-        if is_key_down(KeyCode::Z) { cam_dist -= 0.5; }
-        if is_key_down(KeyCode::X) { cam_dist += 0.5; }
+        if is_key_down(KeyCode::Up) {
+            cam_angle_y += 0.02;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_angle_y -= 0.02;
+        }
+        if is_key_down(KeyCode::Left) {
+            cam_angle_x -= 0.02;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_angle_x += 0.02;
+        }
+        if is_key_down(KeyCode::Z) {
+            cam_dist -= 0.5;
+        }
+        if is_key_down(KeyCode::X) {
+            cam_dist += 0.5;
+        }
 
         let rot = Quat::from_rotation_y(cam_angle_x) * Quat::from_rotation_x(cam_angle_y);
         let pos = rot * vec3(0.0, 0.0, cam_dist);

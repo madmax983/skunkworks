@@ -320,6 +320,9 @@ mod nova_raku_test;
 pub mod nova_reactor;
 #[cfg(feature = "nova")]
 #[cfg(test)]
+mod nova_reactor_signal_test;
+#[cfg(feature = "nova")]
+#[cfg(test)]
 mod nova_reactor_test;
 #[cfg(feature = "nova")]
 pub mod nova_relativity;
@@ -5596,11 +5599,11 @@ mod prologue_elemental_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod prologue_epigenetics_test;
-#[cfg(test)]
-mod prologue_oneiric_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod prologue_necromancy_test;
+#[cfg(test)]
+mod prologue_oneiric_test;
 #[cfg(test)]
 mod prologue_pandemonium_test;
 #[cfg(test)]

@@ -117,7 +117,9 @@ impl Value {
                 return None; // Not a table (list of primitives?)
             };
 
-            if cols_len == 0 { return None; }
+            if cols_len == 0 {
+                return None;
+            }
 
             // Validate that most rows look like rows?
             // Actually let's just try to build it.
@@ -131,21 +133,24 @@ impl Value {
 
             for row_val in rows {
                 if let Value::Junction(_, cells) = row_val {
-                    let row_cells: Vec<comfy_table::Cell> = cells.iter().map(|v| {
-                        // Special formatting for boolean-like values
-                        match v {
-                            Value::Str(s) if s.eq_ignore_ascii_case("true") => {
-                                comfy_table::Cell::new("True").fg(comfy_table::Color::Green)
+                    let row_cells: Vec<comfy_table::Cell> = cells
+                        .iter()
+                        .map(|v| {
+                            // Special formatting for boolean-like values
+                            match v {
+                                Value::Str(s) if s.eq_ignore_ascii_case("true") => {
+                                    comfy_table::Cell::new("True").fg(comfy_table::Color::Green)
+                                }
+                                Value::Str(s) if s.eq_ignore_ascii_case("false") => {
+                                    comfy_table::Cell::new("False").fg(comfy_table::Color::Red)
+                                }
+                                // Maybe Int(1)/Int(0)?
+                                // Value::Int(1) => comfy_table::Cell::new("1").fg(comfy_table::Color::Green),
+                                // Value::Int(0) => comfy_table::Cell::new("0").fg(comfy_table::Color::Red),
+                                _ => comfy_table::Cell::new(v.to_string()),
                             }
-                            Value::Str(s) if s.eq_ignore_ascii_case("false") => {
-                                comfy_table::Cell::new("False").fg(comfy_table::Color::Red)
-                            }
-                            // Maybe Int(1)/Int(0)?
-                            // Value::Int(1) => comfy_table::Cell::new("1").fg(comfy_table::Color::Green),
-                            // Value::Int(0) => comfy_table::Cell::new("0").fg(comfy_table::Color::Red),
-                            _ => comfy_table::Cell::new(v.to_string()),
-                        }
-                    }).collect();
+                        })
+                        .collect();
                     table.add_row(row_cells);
                 } else {
                     return None; // Mixed structure
@@ -394,7 +399,10 @@ mod tests {
         let a = Value::Junction(JunctionType::Any, vec![Value::Int(1), Value::Int(2)]);
         let b = Value::Int(3);
         let res = a.apply_binary_op(b, |x, y| x + y, 100, 1024).unwrap();
-        assert_eq!(res, Value::Junction(JunctionType::Any, vec![Value::Int(4), Value::Int(5)]));
+        assert_eq!(
+            res,
+            Value::Junction(JunctionType::Any, vec![Value::Int(4), Value::Int(5)])
+        );
     }
 
     #[test]
@@ -403,7 +411,10 @@ mod tests {
         let a = Value::Int(3);
         let b = Value::Junction(JunctionType::Any, vec![Value::Int(1), Value::Int(2)]);
         let res = a.apply_binary_op(b, |x, y| x + y, 100, 1024).unwrap();
-        assert_eq!(res, Value::Junction(JunctionType::Any, vec![Value::Int(4), Value::Int(5)]));
+        assert_eq!(
+            res,
+            Value::Junction(JunctionType::Any, vec![Value::Int(4), Value::Int(5)])
+        );
     }
 
     #[test]
@@ -436,24 +447,27 @@ mod tests {
     }
 }
 
-    #[test]
-    fn test_apply_binary_op_junction_junction_partial_failure() {
-        // Junction(Any, [1, "a"]) + Junction(Any, [2])
-        // 1 + 2 = 3
-        // "a" + 2 = Error (None)
-        // Result should be Junction(Any, [3]) (skipping failure)
+#[test]
+fn test_apply_binary_op_junction_junction_partial_failure() {
+    // Junction(Any, [1, "a"]) + Junction(Any, [2])
+    // 1 + 2 = 3
+    // "a" + 2 = Error (None)
+    // Result should be Junction(Any, [3]) (skipping failure)
 
-        let a = Value::Junction(JunctionType::Any, vec![Value::Int(1), Value::Str("a".to_string())]);
-        let b = Value::Junction(JunctionType::Any, vec![Value::Int(2)]);
+    let a = Value::Junction(
+        JunctionType::Any,
+        vec![Value::Int(1), Value::Str("a".to_string())],
+    );
+    let b = Value::Junction(JunctionType::Any, vec![Value::Int(2)]);
 
-        // We need an op that fails for Str
-        let res = a.apply_binary_op(b, |x, y| x + y, 100, 1024).unwrap();
+    // We need an op that fails for Str
+    let res = a.apply_binary_op(b, |x, y| x + y, 100, 1024).unwrap();
 
-        match res {
-            Value::Junction(JunctionType::Any, vals) => {
-                assert_eq!(vals.len(), 1);
-                assert_eq!(vals[0], Value::Int(3));
-            }
-            _ => panic!("Expected Junction(Any, [3])"),
+    match res {
+        Value::Junction(JunctionType::Any, vals) => {
+            assert_eq!(vals.len(), 1);
+            assert_eq!(vals[0], Value::Int(3));
         }
+        _ => panic!("Expected Junction(Any, [3])"),
     }
+}

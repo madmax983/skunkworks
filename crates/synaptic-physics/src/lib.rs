@@ -299,9 +299,9 @@ impl Izhikevich {
         // Optimization: Only compute exponential decay if there is current to decay.
         // This avoids expensive exp() calls in the common case where current_decay is zero.
         let decay = if self.current_decay.abs() > 1.0e-6 {
-             (-dt_sub / self.tau).exp()
+            (-dt_sub / self.tau).exp()
         } else {
-             1.0
+            1.0
         };
 
         for _ in 0..SUBSTEPS {
@@ -503,8 +503,8 @@ mod tests {
         let mut n = Izhikevich::new();
         let start = std::time::Instant::now();
         for i in 0..10_000_000 {
-             let dt = 0.1 + (i % 100) as f32 * 0.001;
-             n.update(std::hint::black_box(dt), 10.0);
+            let dt = 0.1 + (i % 100) as f32 * 0.001;
+            n.update(std::hint::black_box(dt), 10.0);
         }
         println!("Time taken: {:?}", start.elapsed());
     }
