@@ -10,5 +10,4 @@ crossterm = "0.28"
 ratatui = "0.30"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-tui-semantic = { path = "../../crates/tui-semantic" }
 tui-shared.workspace = true

@@ -9,6 +9,5 @@ crossterm.workspace = true
 rand.workspace = true
 ratatui.workspace = true
 tui-shared.workspace = true
-tui-semantic.workspace = true
 regex = "1.10"
 walkdir = "2.4"

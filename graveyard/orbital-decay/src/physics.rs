@@ -1,5 +1,5 @@
 use rand::Rng;
-use tui_semantic::{Action, Entity, Snapshot};
+use tui_shared::semantic::{Action, Entity, Snapshot};
 
 #[derive(Clone)]
 pub struct Particle {

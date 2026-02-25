@@ -5,7 +5,7 @@ edition = "2021"
 default-run = "neuro-terminal"
 
 [features]
-nova = ["dep:tui-semantic"]
+nova = []
 
 [dependencies]
 anyhow.workspace = true
@@ -13,4 +13,3 @@ crossterm.workspace = true
 rand.workspace = true
 ratatui.workspace = true
 tui-shared.workspace = true
-tui-semantic = { workspace = true, optional = true }
