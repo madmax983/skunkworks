@@ -132,13 +132,18 @@ fn exec_tectonics(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         if let (Value::Int(dy), Value::Int(dx), Value::Int(h), Value::Int(w)) =
             (dy_val, dx_val, h_val, w_val)
         {
+            // 🔒 WARDEN: Clamp dimensions to prevent OOM/DoS
+            let max_dim = (crate::vm::GRID_SIZE * 4) as i64; // Allow some overflow but keep it reasonable
+            let safe_h = h.clamp(1, max_dim);
+            let safe_w = w.clamp(1, max_dim);
+
             let (cy, cx) = vm.context_loc;
 
             // Define plate boundaries (centered on context)
-            let start_y = (cy as i64).saturating_sub(h / 2);
-            let end_y = start_y + h;
-            let start_x = (cx as i64).saturating_sub(w / 2);
-            let end_x = start_x + w;
+            let start_y = (cy as i64).saturating_sub(safe_h / 2);
+            let end_y = start_y + safe_h;
+            let start_x = (cx as i64).saturating_sub(safe_w / 2);
+            let end_x = start_x + safe_w;
 
             // Collect cells to move
             let mut moving_cells = Vec::new();
