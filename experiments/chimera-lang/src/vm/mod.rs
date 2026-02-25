@@ -3664,6 +3664,7 @@ impl ChimeraVM {
             | OpCode::Prologue
             | OpCode::Rune
             | OpCode::BioHack
+            | OpCode::SelfReplicate
             | OpCode::Forge
             | OpCode::Speak
             | OpCode::Etymology => Some(nova::exec_nova_op(self, op, args)),

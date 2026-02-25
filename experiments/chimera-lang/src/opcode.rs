@@ -1150,6 +1150,12 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     TuiMod,
 
+    /// **[Mad Science]** Writes the current genome to a new file (Viral Replication).
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., success ]`
+    #[cfg(feature = "nova")]
+    SelfReplicate,
+
     /// **[Nova]** Interacts with the Genetic Codex (Spellbook).
     ///
     /// **Stack:** `[ ..., spell_id ] -> [ ... ]`
