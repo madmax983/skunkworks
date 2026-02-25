@@ -74,10 +74,10 @@
 - **Status:** Specimen pardoned. Documentation restored. Emergence confirmed.
 - **Note:** "The chaos is now visible. The landscape breathes."
 
-### [Concentration Level: FRESH] - Location: experiments/synaptic-swarm
+### [Concentration Level: TOXIC] - Location: experiments/synaptic-swarm
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen pardoned. Compilation restored. Documentation Void warning issued.
-- **Note:** "The swarm reconnects. The synapses fire again."
+- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy / Documentation Void.
+- **Note:** "The swarm reconnects only to die. The synapses are generic."
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄 (Sensed: Test Failures)
