@@ -92,3 +92,7 @@
 ## 2027-06-19 - Linguistics Unbounded Memory Allocation (OOM DoS)
 **Threat:** The `Levenshtein` OpCode and `≅` (Approx Equal) Rune in `experiments/chimera-lang` allocated memory proportional to $N \times M$ where $N$ and $M$ are string lengths. A malicious program providing large strings (e.g. 65k chars) could trigger massive allocations (e.g. 34GB), causing Out of Memory (OOM) DoS.
 **Defense:** Introduced `MAX_COMPLEX_STRING_LEN` (1024) limit for $O(N^2)$ and $O(N \log N)$ linguistics operations. Optimized `levenshtein` implementation to use $O(\min(N, M))$ memory (2 rows) instead of $O(N \times M)$ matrix. Verified with `warden_linguistics_dos_test.rs`.
+
+## 2027-06-25 - Ferrous Mycelium Race Condition
+**Threat:** The `Hypha` struct in `experiments/ferrous-mycelium/src/organism.rs` used a `static mut ID_COUNTER` to generate unique IDs. Accessing `static mut` is `unsafe` and causes a data race in multi-threaded environments (UB), violating memory safety guarantees.
+**Defense:** Replaced `static mut` with `std::sync::atomic::AtomicU64` and used `fetch_add(1, Ordering::Relaxed)` to safely generate unique IDs without `unsafe` blocks. Added `test_id_uniqueness` to verify behavior.

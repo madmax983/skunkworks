@@ -1,5 +1,6 @@
 use macroquad::prelude::*;
 use chimera_lang::prelude::*;
+use std::sync::atomic::{AtomicU64, Ordering};
 use crate::field::MagneticField;
 
 #[derive(Clone)]
@@ -26,16 +27,13 @@ pub enum HyphaAction {
     Die,
 }
 
-static mut ID_COUNTER: u64 = 0;
+static ID_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 impl Hypha {
     pub fn new(pos: Vec2, vel: Vec2, dna: Dna) -> Self {
         let mut vm = ChimeraVM::new(dna);
         vm.energy = 1000;
-        let id = unsafe {
-            ID_COUNTER += 1;
-            ID_COUNTER
-        };
+        let id = ID_COUNTER.fetch_add(1, Ordering::Relaxed) + 1;
         Self {
             pos,
             vel,
@@ -189,10 +187,7 @@ impl Hypha {
             child.vel = rot * self.vel;
 
             // Generate new ID
-            child.id = unsafe {
-                ID_COUNTER += 1;
-                ID_COUNTER
-            };
+            child.id = ID_COUNTER.fetch_add(1, Ordering::Relaxed) + 1;
 
             return HyphaAction::Branch(child);
         }
@@ -202,5 +197,20 @@ impl Hypha {
         }
 
         HyphaAction::None
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_id_uniqueness() {
+        let dna = Hypha::random_dna();
+        let h1 = Hypha::new(vec2(0.0, 0.0), vec2(0.0, 0.0), dna.clone());
+        let h2 = Hypha::new(vec2(0.0, 0.0), vec2(0.0, 0.0), dna.clone());
+
+        assert_ne!(h1.id, h2.id, "IDs should be unique");
+        assert!(h2.id > h1.id, "IDs should increment");
     }
 }
