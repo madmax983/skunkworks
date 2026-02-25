@@ -123,6 +123,7 @@ pub mod teleport;
 pub mod topology;
 pub mod virology;
 pub mod void;
+pub mod weave;
 pub mod weaver;
 pub mod zeta;
 
@@ -504,6 +505,8 @@ impl PrologueState {
                             | "🌀"
                             // Alchemist
                             | "⚗"
+                            // Weave
+                            | "ð" | "║"
                     ) {
                         self.runes.insert((y, x));
 
@@ -528,6 +531,7 @@ impl PrologueState {
                             || s == "🦠"
                             || s == "🛠"
                             || s == "🎓"
+                            || s == "ð"
                         {
                             // Try to retrieve persistent state
                             let raw_state = self
@@ -589,6 +593,17 @@ impl PrologueState {
                                     )
                                 } else if s == "⚗" {
                                     alchemist::AlchemistState::default().to_value()
+                                } else if s == "ð" {
+                                    // Shuttle default: East (0, 1), Payload 0, Underfoot Empty(0)
+                                    Value::Junction(
+                                        crate::ast::JunctionType::All,
+                                        vec![
+                                            Value::Int(0),
+                                            Value::Int(1),
+                                            Value::Int(0),
+                                            Value::Int(0),
+                                        ],
+                                    )
                                 } else {
                                     Value::Int(0)
                                 }
@@ -1286,6 +1301,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             library::apply_library_sinks(vm, rune, y, x);
             runecraft::apply_runecraft_sinks(vm, rune, y, x);
             phonetics::apply_phonetic_sinks(vm, rune, y, x);
+            weave::apply_weave_sinks(vm, rune, y, x);
         }
     }
 }
@@ -1751,6 +1767,14 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 }
                 None => continue,
             }
+        } else if current_type == "ð" {
+            match weave::process_shuttle_agent(vm, &agent, grid_snapshot) {
+                Some((updated_agent, t)) => {
+                    agent = updated_agent;
+                    t
+                }
+                None => continue,
+            }
         } else {
             process_seeker_logic(vm, &agent, grid_snapshot)
         };
@@ -1778,6 +1802,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "🎓"
                 || current_type == "🌀"
                 || current_type == "⚗"
+                || current_type == "ð"
             {
                 vm.prologue_state.registers.insert(
                     (ny, nx),
@@ -1809,6 +1834,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                     || current_type == "🎓"
                     || current_type == "🌀"
                     || current_type == "⚗"
+                    || current_type == "ð"
                 {
                     vm.prologue_state.registers.remove(&(y, x));
                 }
@@ -1838,6 +1864,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "🎓"
                 || current_type == "🌀"
                 || current_type == "⚗"
+                || current_type == "ð"
             {
                 vm.prologue_state.registers.insert(
                     (y, x),
@@ -1983,6 +2010,8 @@ mod prologue_neural_growth_test;
 mod prologue_runecraft_test;
 #[cfg(test)]
 mod weaver_test;
+#[cfg(test)]
+mod weave_test;
 
 #[cfg(test)]
 mod ribozyme_agent_test;
