@@ -203,4 +203,48 @@ mod tests {
             "SECURITY BREACH: Path traversal detected! Able to read ../../Cargo.toml"
         );
     }
+
+    #[test]
+    #[cfg(feature = "nova")]
+    fn test_tectonics_dos() {
+        // 👺 HAVOC: Tectonics OOM DoS
+        // 1. Set massive dimensions for Tectonics.
+        // 2. Expect allocation failure or massive loop.
+
+        let genes = vec![
+            // Tectonics expects [w, h, dx, dy] on stack.
+            // Push dy=0
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+            // Push dx=0
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+            // Push h=1,000,000
+            // Note: 1e9 might cause OOM, which kills the test runner.
+            // 1e6 is enough to cause noticeable lag (milliseconds vs seconds).
+            // Let's try 10,000,000.
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10_000_000)] },
+            // Push w=1
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
+
+            // Execute Tectonics
+            Gene { op: OpCode::Tectonics, args: vec![] },
+        ];
+
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        vm.context_loc = (0, 0); // Ensure context is valid
+
+        println!("Starting Tectonics DoS...");
+        let start = std::time::Instant::now();
+
+        // Step enough times to execute pushes and tectonics
+        for _ in 0..6 {
+             vm.step();
+        }
+
+        let duration = start.elapsed();
+        println!("Execution time: {:?}", duration);
+
+        // If it takes > 500ms, it's vulnerable (normal execution should be <1ms).
+        // 10M iterations * allocation overhead could take seconds.
+        assert!(duration.as_millis() < 500, "DoS Detected! Execution took {:?}.", duration);
+    }
 }
