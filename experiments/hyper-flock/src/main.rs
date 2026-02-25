@@ -1,5 +1,5 @@
 use ::rand::Rng;
-use hyper_system::math::Vec4;
+use hyper_system::math::{HyperVector, Vec4};
 use hyper_system::monitor::SystemMonitor;
 use macroquad::prelude::*;
 
@@ -61,7 +61,7 @@ impl Boid4D {
             rng.gen_range(-1.0..1.0),
             rng.gen_range(-1.0..1.0),
         )
-        .normalize()
+        .normalize_or_zero()
         .scale(0.03);
 
         Self {
@@ -130,7 +130,7 @@ impl Boid4D {
         for other in boids {
             let d_sq = self.position.distance_squared(other.position);
             if d_sq > 0.0 && d_sq < self.dna.view_radius * self.dna.view_radius {
-                let diff = (self.position - other.position).normalize();
+                let diff = (self.position - other.position).normalize_or_zero();
                 let diff = diff / d_sq.sqrt(); // Weight by distance
                 steer += diff;
                 count += 1;
@@ -139,7 +139,7 @@ impl Boid4D {
         if count > 0 {
             steer = steer / (count as f32);
             if steer.length_squared() > 0.0 {
-                steer = steer.normalize().scale(self.dna.max_speed);
+                steer = steer.normalize_or_zero().scale(self.dna.max_speed);
                 steer = steer - self.velocity;
                 steer = steer.limit(self.dna.max_force);
             }
@@ -159,7 +159,7 @@ impl Boid4D {
         }
         if count > 0 {
             sum = sum / (count as f32);
-            sum = sum.normalize().scale(self.dna.max_speed);
+            sum = sum.normalize_or_zero().scale(self.dna.max_speed);
             let steer = sum - self.velocity;
             return steer.limit(self.dna.max_force);
         }
@@ -185,7 +185,7 @@ impl Boid4D {
 
     fn seek(&self, target: Vec4) -> Vec4 {
         let desired = (target - self.position)
-            .normalize()
+            .normalize_or_zero()
             .scale(self.dna.max_speed);
         let steer = desired - self.velocity;
         steer.limit(self.dna.max_force)

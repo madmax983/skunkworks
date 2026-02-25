@@ -1,4 +1,4 @@
-use hyper_system::math::Vec4;
+use hyper_system::math::{HyperVector, Vec4};
 use proptest::prelude::*;
 
 proptest! {
@@ -10,7 +10,7 @@ proptest! {
         w in prop::num::f32::ANY
     ) {
         let v = Vec4::new(x, y, z, w);
-        let normalized = v.normalize();
+        let normalized = v.normalize_or_zero();
 
         // Havoc Assert: Result should not contain NaNs unless input contained NaNs.
         // Actually, even if input has NaNs, a robust system might handle it (e.g. return Zero).

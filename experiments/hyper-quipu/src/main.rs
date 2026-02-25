@@ -4,7 +4,7 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use hyper_system::{math::Vec4, monitor::SystemMonitor};
+use hyper_system::{math::{HyperVector, Vec4}, monitor::SystemMonitor};
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},

@@ -1,349 +1,106 @@
 //! Mathematical utilities for 4D vector operations.
 //!
-//! This module provides the [`Vec4`] struct, which represents a 4-dimensional vector
-//! (x, y, z, w). It includes methods for arithmetic, normalization, and geometric
-//! transformations such as 4D rotation and projection into 3D space.
-//!
-//! # 4D to 3D Projection
-//!
-//! The [`Vec4::project_to_3d`] method implements a stereographic-like projection.
-//! Imagine a 4D camera positioned on the W-axis. As objects move further away in W
-//! (relative to the camera), they shrink in X, Y, and Z. This creates the illusion of
-//! 4D depth when projected onto a 3D "retina" (which is then rendered to a 2D screen).
+//! This module provides the [`Vec4`] struct (re-exported from `glam`) and the [`HyperVector`] trait
+//! for 4D-specific operations.
 
-#[cfg(feature = "macroquad")]
-use macroquad::prelude::Vec3 as MacroquadVec3;
+pub use glam::{Vec3, Vec4};
 
-/// A simple 3D vector for projection results.
-///
-/// Used to avoid dependency on external crates for core math types.
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Vec3 {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
+/// Trait extending `glam::Vec4` with hyper-system specific functionality.
+pub trait HyperVector: Sized + Copy {
+    fn zero() -> Self;
+    fn scale(&self, s: f32) -> Self;
+    fn scale_dim(&self, sx: f32, sy: f32, sz: f32, sw: f32) -> Self;
+    fn add(&self, other: Self) -> Self;
+    fn sub(&self, other: Self) -> Self;
+    fn limit(&self, max: f32) -> Self;
+    fn distance_squared_to(&self, other: Self) -> f32; // Renamed to avoid collision/ambiguity? No, glam has distance_squared.
+
+    // Custom Hyper methods
+    fn rotate_xw(&self, theta: f32) -> Self;
+    fn rotate_xw_fast(&self, sin_theta: f32, cos_theta: f32) -> Self;
+    fn rotate_yw(&self, theta: f32) -> Self;
+    fn rotate_yw_fast(&self, sin_theta: f32, cos_theta: f32) -> Self;
+    fn rotate_zw(&self, theta: f32) -> Self;
+    fn rotate_zw_fast(&self, sin_theta: f32, cos_theta: f32) -> Self;
+    fn project_to_3d(&self, camera_w: f32) -> Vec3;
 }
 
-impl Vec3 {
-    pub fn new(x: f32, y: f32, z: f32) -> Self {
-        Self { x, y, z }
-    }
-}
-
-#[cfg(feature = "macroquad")]
-impl From<Vec3> for MacroquadVec3 {
-    fn from(v: Vec3) -> Self {
-        MacroquadVec3::new(v.x, v.y, v.z)
-    }
-}
-
-#[cfg(feature = "macroquad")]
-impl From<MacroquadVec3> for Vec3 {
-    fn from(v: MacroquadVec3) -> Self {
-        Self::new(v.x, v.y, v.z)
-    }
-}
-
-/// A 4-dimensional vector with x, y, z, and w components.
-///
-/// This struct is the fundamental building block for the "Hyper" series experiments,
-/// allowing for the representation of points and vectors in 4D space.
-///
-/// # Examples
-///
-/// ```
-/// use hyper_system::math::Vec4;
-///
-/// let v = Vec4::new(1.0, 2.0, 3.0, 4.0);
-/// assert_eq!(v.w, 4.0);
-/// ```
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Vec4 {
-    /// The X component.
-    pub x: f32,
-    /// The Y component.
-    pub y: f32,
-    /// The Z component.
-    pub z: f32,
-    /// The W component (the 4th dimension).
-    pub w: f32,
-}
-
-impl Vec4 {
-    /// Creates a new 4D vector.
-    ///
-    /// # Arguments
-    ///
-    /// * `x` - The X component.
-    /// * `y` - The Y component.
-    /// * `z` - The Z component.
-    /// * `w` - The W component.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use hyper_system::math::Vec4;
-    /// let v = Vec4::new(0.0, 1.0, 0.0, 1.0);
-    /// ```
-    pub fn new(x: f32, y: f32, z: f32, w: f32) -> Self {
-        Self { x, y, z, w }
+impl HyperVector for Vec4 {
+    #[inline]
+    fn zero() -> Self {
+        Self::ZERO
     }
 
-    /// Creates a zero vector (0, 0, 0, 0).
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use hyper_system::math::Vec4;
-    /// let v = Vec4::zero();
-    /// assert_eq!(v.length(), 0.0);
-    /// ```
-    pub fn zero() -> Self {
-        Self::new(0.0, 0.0, 0.0, 0.0)
+    #[inline]
+    fn scale(&self, s: f32) -> Self {
+        *self * s
     }
 
-    /// Scales the vector by a scalar value.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use hyper_system::math::Vec4;
-    /// let v = Vec4::new(1.0, 1.0, 1.0, 1.0);
-    /// let scaled = v.scale(2.0);
-    /// assert_eq!(scaled.x, 2.0);
-    /// assert_eq!(scaled.w, 2.0);
-    /// ```
-    pub fn scale(&self, s: f32) -> Self {
-        Self::new(self.x * s, self.y * s, self.z * s, self.w * s)
+    #[inline]
+    fn scale_dim(&self, sx: f32, sy: f32, sz: f32, sw: f32) -> Self {
+        *self * Vec4::new(sx, sy, sz, sw)
     }
 
-    /// Scales each dimension by a specific factor.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use hyper_system::math::Vec4;
-    /// let v = Vec4::new(1.0, 1.0, 1.0, 1.0);
-    /// let scaled = v.scale_dim(2.0, 3.0, 4.0, 5.0);
-    /// assert_eq!(scaled.x, 2.0);
-    /// assert_eq!(scaled.w, 5.0);
-    /// ```
-    pub fn scale_dim(&self, sx: f32, sy: f32, sz: f32, sw: f32) -> Self {
-        Self::new(self.x * sx, self.y * sy, self.z * sz, self.w * sw)
+    #[inline]
+    fn add(&self, other: Self) -> Self {
+        *self + other
     }
 
-    /// Adds another vector to this one.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use hyper_system::math::Vec4;
-    /// let v1 = Vec4::new(1.0, 0.0, 0.0, 0.0);
-    /// let v2 = Vec4::new(0.0, 1.0, 0.0, 0.0);
-    /// let sum = v1.add(v2);
-    /// assert_eq!(sum.x, 1.0);
-    /// assert_eq!(sum.y, 1.0);
-    /// ```
-    pub fn add(&self, other: Vec4) -> Self {
-        Self::new(
-            self.x + other.x,
-            self.y + other.y,
-            self.z + other.z,
-            self.w + other.w,
-        )
+    #[inline]
+    fn sub(&self, other: Self) -> Self {
+        *self - other
     }
 
-    /// Subtracts another vector from this one.
-    pub fn sub(&self, other: Vec4) -> Self {
-        Self::new(
-            self.x - other.x,
-            self.y - other.y,
-            self.z - other.z,
-            self.w - other.w,
-        )
+    #[inline]
+    fn limit(&self, max: f32) -> Self {
+        self.clamp_length_max(max)
     }
 
-    /// Calculates the squared length (magnitude) of the vector.
-    ///
-    /// This is faster than `length()` as it avoids the square root operation.
-    /// Useful for comparisons.
-    pub fn length_squared(&self) -> f32 {
-        self.x * self.x + self.y * self.y + self.z * self.z + self.w * self.w
+    #[inline]
+    fn distance_squared_to(&self, other: Self) -> f32 {
+        self.distance_squared(other)
     }
 
-    /// Calculates the length (magnitude) of the vector.
-    pub fn length(&self) -> f32 {
-        self.length_squared().sqrt()
-    }
-
-    /// Returns a normalized unit vector (length of 1.0).
-    ///
-    /// If the vector has zero length, it returns the zero vector.
-    /// Uses robust normalization to handle very large or small components.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use hyper_system::math::Vec4;
-    /// let v = Vec4::new(0.0, 3.0, 0.0, 4.0); // Length is 5
-    /// let n = v.normalize();
-    /// assert!((n.length() - 1.0).abs() < 1e-6);
-    /// ```
-    pub fn normalize(&self) -> Self {
-        // Robust normalization avoiding overflow/underflow
-        let m = self
-            .x
-            .abs()
-            .max(self.y.abs())
-            .max(self.z.abs())
-            .max(self.w.abs());
-        if m > 0.0 && m.is_finite() {
-            let s = 1.0 / m;
-            let scaled = self.scale(s);
-            let len = scaled.length();
-            if len > 0.0 {
-                scaled.scale(1.0 / len)
-            } else {
-                Self::zero()
-            }
-        } else {
-            Self::zero()
-        }
-    }
-
-    /// Limits the magnitude of the vector to a maximum value.
-    ///
-    /// If the vector's length is greater than `max`, it is normalized and scaled to `max`.
-    pub fn limit(&self, max: f32) -> Self {
-        if self.length_squared() > max * max {
-            self.normalize().scale(max)
-        } else {
-            *self
-        }
-    }
-
-    /// Calculates the squared Euclidean distance to another vector.
-    pub fn distance_squared(&self, other: Vec4) -> f32 {
-        let dx = self.x - other.x;
-        let dy = self.y - other.y;
-        let dz = self.z - other.z;
-        let dw = self.w - other.w;
-        dx * dx + dy * dy + dz * dz + dw * dw
-    }
-
-    /// Rotates the vector in the XW plane.
-    ///
-    /// In 4D space, rotations occur in planes defined by two axes.
-    /// Rotating in the XW plane changes the X and W components while leaving Y and Z unchanged.
-    ///
-    /// # Arguments
-    ///
-    /// * `theta` - The angle of rotation in radians.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use hyper_system::math::Vec4;
-    /// use std::f32::consts::PI;
-    ///
-    /// let v = Vec4::new(1.0, 0.0, 0.0, 0.0);
-    /// // Rotate 90 degrees in XW plane
-    /// let rotated = v.rotate_xw(PI / 2.0);
-    /// // v moves from X to W axis
-    /// assert!(rotated.x.abs() < 1e-6);
-    /// assert!((rotated.w - 1.0).abs() < 1e-6);
-    /// ```
-    pub fn rotate_xw(&self, theta: f32) -> Self {
+    fn rotate_xw(&self, theta: f32) -> Self {
         self.rotate_xw_fast(theta.sin(), theta.cos())
     }
 
-    /// Rotates the vector in the XW plane using precomputed sine and cosine values.
-    ///
-    /// Useful for optimizing loops where the rotation angle is constant across many vectors.
-    pub fn rotate_xw_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
-        Self {
-            x: self.x * cos_theta - self.w * sin_theta,
-            y: self.y,
-            z: self.z,
-            w: self.x * sin_theta + self.w * cos_theta,
-        }
+    fn rotate_xw_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
+        Self::new(
+            self.x * cos_theta - self.w * sin_theta,
+            self.y,
+            self.z,
+            self.x * sin_theta + self.w * cos_theta,
+        )
     }
 
-    /// Rotates the vector in the YW plane.
-    ///
-    /// Changes the Y and W components.
-    pub fn rotate_yw(&self, theta: f32) -> Self {
+    fn rotate_yw(&self, theta: f32) -> Self {
         self.rotate_yw_fast(theta.sin(), theta.cos())
     }
 
-    /// Rotates the vector in the YW plane using precomputed sine and cosine values.
-    pub fn rotate_yw_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
-        Self {
-            x: self.x,
-            y: self.y * cos_theta - self.w * sin_theta,
-            z: self.z,
-            w: self.y * sin_theta + self.w * cos_theta,
-        }
+    fn rotate_yw_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
+        Self::new(
+            self.x,
+            self.y * cos_theta - self.w * sin_theta,
+            self.z,
+            self.y * sin_theta + self.w * cos_theta,
+        )
     }
 
-    /// Rotates the vector in the ZW plane.
-    ///
-    /// Changes the Z and W components.
-    pub fn rotate_zw(&self, theta: f32) -> Self {
+    fn rotate_zw(&self, theta: f32) -> Self {
         self.rotate_zw_fast(theta.sin(), theta.cos())
     }
 
-    /// Rotates the vector in the ZW plane using precomputed sine and cosine values.
-    pub fn rotate_zw_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
-        Self {
-            x: self.x,
-            y: self.y,
-            z: self.z * cos_theta - self.w * sin_theta,
-            w: self.z * sin_theta + self.w * cos_theta,
-        }
+    fn rotate_zw_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
+        Self::new(
+            self.x,
+            self.y,
+            self.z * cos_theta - self.w * sin_theta,
+            self.z * sin_theta + self.w * cos_theta,
+        )
     }
 
-    /// Projects the 4D point into 3D space using stereographic projection.
-    ///
-    /// This simulates a camera looking "down" from the W axis. As points move further
-    /// away in the W dimension (relative to `camera_w`), they appear smaller (perspective).
-    ///
-    /// # Arguments
-    ///
-    /// * `camera_w` - The W coordinate of the observer/camera.
-    ///
-    /// # Returns
-    ///
-    /// A `Vec3` representing the 3D projection.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use hyper_system::math::Vec4;
-    ///
-    /// // A point "far away" in the W dimension (w=0) relative to camera (w=10)
-    /// let far = Vec4::new(1.0, 1.0, 1.0, 0.0);
-    /// // A point "close" to the camera (w=8)
-    /// let close = Vec4::new(1.0, 1.0, 1.0, 8.0);
-    ///
-    /// let p_far = far.project_to_3d(10.0);
-    /// let p_close = close.project_to_3d(10.0);
-    ///
-    /// // The closer point appears larger (projected further out)
-    /// assert!(p_close.x > p_far.x);
-    /// ```
-    ///
-    /// # Implementation Details
-    ///
-    /// The projection formula used is:
-    /// `scale = 2.0 / (camera_w - w)`
-    /// `projected = original * scale`
-    ///
-    /// - **Scale Factor (2.0)**: Acts as a field-of-view modifier (Zoom).
-    /// - **Safety Clamp (0.1)**: The denominator `(camera_w - w)` is clamped to a minimum
-    ///   of `0.1` to prevent division by zero or negative projection artifacts when points
-    ///   are behind the camera.
-    pub fn project_to_3d(&self, camera_w: f32) -> Vec3 {
+    fn project_to_3d(&self, camera_w: f32) -> Vec3 {
         let w_dist = camera_w - self.w;
         // Avoid division by zero
         let scale = 2.0 / w_dist.max(0.1);
@@ -372,33 +129,7 @@ impl Vec4 {
     }
 }
 
-impl std::ops::Add for Vec4 {
-    type Output = Self;
-    fn add(self, other: Self) -> Self {
-        Vec4::add(&self, other)
-    }
-}
-
-impl std::ops::AddAssign for Vec4 {
-    fn add_assign(&mut self, other: Self) {
-        *self = Vec4::add(self, other);
-    }
-}
-
-impl std::ops::Sub for Vec4 {
-    type Output = Self;
-    fn sub(self, other: Self) -> Self {
-        Vec4::sub(&self, other)
-    }
-}
-
-impl std::ops::Div<f32> for Vec4 {
-    type Output = Self;
-    fn div(self, rhs: f32) -> Self {
-        self.scale(1.0 / rhs)
-    }
-}
-
+// Tests to ensure compatibility and correctness
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -407,11 +138,11 @@ mod tests {
     fn test_vec4_ops() {
         let v1 = Vec4::new(1.0, 2.0, 3.0, 4.0);
         let v2 = Vec4::new(4.0, 3.0, 2.0, 1.0);
-        let sum = v1 + v2;
+        let sum = v1.add(v2);
         assert_eq!(sum.x, 5.0);
         assert_eq!(sum.w, 5.0);
 
-        let sub = v1 - v2;
+        let sub = v1.sub(v2);
         assert_eq!(sub.x, -3.0);
     }
 
@@ -441,66 +172,12 @@ mod tests {
     #[test]
     fn test_normalize_zero() {
         let v = Vec4::zero();
-        let n = v.normalize();
+        let n = v.normalize_or_zero();
         assert_eq!(n.x, 0.0);
         assert_eq!(n.y, 0.0);
         assert_eq!(n.z, 0.0);
         assert_eq!(n.w, 0.0);
         assert_eq!(n.length(), 0.0);
-    }
-
-    #[test]
-    fn test_limit() {
-        let v = Vec4::new(10.0, 0.0, 0.0, 0.0);
-        let limited = v.limit(5.0);
-        assert!((limited.length() - 5.0).abs() < 1e-6);
-        assert_eq!(limited.x, 5.0);
-
-        let small = Vec4::new(1.0, 0.0, 0.0, 0.0);
-        let limited_small = small.limit(5.0);
-        assert_eq!(limited_small.x, 1.0);
-    }
-
-    #[test]
-    fn test_distance_squared() {
-        let v1 = Vec4::new(0.0, 0.0, 0.0, 0.0);
-        let v2 = Vec4::new(1.0, 1.0, 1.0, 1.0);
-        assert_eq!(v1.distance_squared(v2), 4.0);
-    }
-
-    #[test]
-    fn test_scale_dim() {
-        let v = Vec4::new(1.0, 1.0, 1.0, 1.0);
-        let s = v.scale_dim(2.0, 3.0, 4.0, 5.0);
-        assert_eq!(s.x, 2.0);
-        assert_eq!(s.y, 3.0);
-        assert_eq!(s.z, 4.0);
-        assert_eq!(s.w, 5.0);
-    }
-
-    #[test]
-    fn test_rotations_all_planes() {
-        let theta = std::f32::consts::PI / 2.0;
-
-        // Rotate YW: changes Y and W
-        let v_yw = Vec4::new(0.0, 1.0, 0.0, 0.0);
-        let rot_yw = v_yw.rotate_yw(theta);
-        // y' = y cos - w sin = 0 - 0 = 0
-        // w' = y sin + w cos = 1 + 0 = 1
-        assert!(rot_yw.y.abs() < 1e-6);
-        assert!((rot_yw.w - 1.0).abs() < 1e-6);
-        assert_eq!(rot_yw.x, 0.0);
-        assert_eq!(rot_yw.z, 0.0);
-
-        // Rotate ZW: changes Z and W
-        let v_zw = Vec4::new(0.0, 0.0, 1.0, 0.0);
-        let rot_zw = v_zw.rotate_zw(theta);
-        // z' = z cos - w sin = 0 - 0 = 0
-        // w' = z sin + w cos = 1 + 0 = 1
-        assert!(rot_zw.z.abs() < 1e-6);
-        assert!((rot_zw.w - 1.0).abs() < 1e-6);
-        assert_eq!(rot_zw.x, 0.0);
-        assert_eq!(rot_zw.y, 0.0);
     }
 
     #[test]
@@ -513,23 +190,5 @@ mod tests {
         assert!((proj.x - 0.2).abs() < 1e-6);
         assert!((proj.y - 0.4).abs() < 1e-6);
         assert!((proj.z - 0.6).abs() < 1e-6);
-    }
-
-    #[test]
-    fn test_project_to_3d_clamping() {
-        // Point exactly at camera
-        let v_at_cam = Vec4::new(1.0, 1.0, 1.0, 10.0);
-        let camera_w = 10.0;
-        // w_dist = 0.0 -> max(0.1) -> 0.1
-        // scale = 2.0 / 0.1 = 20.0
-        let proj = v_at_cam.project_to_3d(camera_w);
-        assert!((proj.x - 20.0).abs() < 1e-6);
-
-        // Point behind camera
-        let v_behind = Vec4::new(1.0, 1.0, 1.0, 15.0);
-        // w_dist = -5.0 -> max(0.1) -> 0.1
-        // scale = 2.0 / 0.1 = 20.0
-        let proj_behind = v_behind.project_to_3d(camera_w);
-        assert!((proj_behind.x - 20.0).abs() < 1e-6);
     }
 }

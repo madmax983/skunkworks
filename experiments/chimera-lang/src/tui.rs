@@ -9,7 +9,7 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 #[cfg(feature = "nova")]
-use hyper_system::math::Vec4;
+use hyper_system::math::{HyperVector, Vec4};
 use pest::Parser;
 #[cfg(feature = "nova")]
 use rand::Rng;

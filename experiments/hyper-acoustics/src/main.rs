@@ -1,5 +1,5 @@
 use crossbeam_channel::{bounded, unbounded};
-use hyper_system::math::Vec4;
+use hyper_system::math::{HyperVector, Vec4};
 use hyper_system::monitor::SystemMonitor;
 use macroquad::prelude::*;
 use std::time::Instant;
