@@ -1,4 +1,4 @@
-use crate::market::{self, Particle};
+use market_sim::{Grid, Particle, DEFAULT_TRADE_AGE};
 use rand::prelude::*;
 use rayon::prelude::*;
 
@@ -84,7 +84,7 @@ impl Agent {
 pub struct World {
     pub grid: Vec<Cell>,
     pub agents: Vec<Agent>,
-    pub market: market::Grid,
+    pub market: Grid,
     pub step: u64,
     // Double buffers for physics (Reuse memory)
     current_heats: Vec<f32>,
@@ -94,7 +94,7 @@ pub struct World {
 impl World {
     pub fn new() -> Self {
         let grid = vec![Cell::default(); WIDTH * HEIGHT];
-        let market = market::Grid::new(WIDTH, HEIGHT);
+        let market = Grid::new(WIDTH, HEIGHT);
         Self {
             grid,
             agents: Vec::new(),
@@ -197,7 +197,7 @@ impl World {
     fn sync_heat_from_market(&mut self) {
         // Scan for new trades
         // New trades have age = DEFAULT_TRADE_AGE - 1
-        let new_trade_age = market::DEFAULT_TRADE_AGE - 1;
+        let new_trade_age = DEFAULT_TRADE_AGE - 1;
 
         for i in 0..self.market.cells.len() {
             if let Particle::Trade { age } = self.market.cells[i] {

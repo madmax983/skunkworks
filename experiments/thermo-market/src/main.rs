@@ -1,10 +1,9 @@
-mod market;
 mod world;
 
 use ::rand::Rng;
 use clap::Parser;
 use macroquad::prelude::*;
-use market::Particle;
+use market_sim::Particle;
 use world::{AgentKind, Material, World, HEIGHT, WIDTH};
 
 #[derive(Parser, Debug)]

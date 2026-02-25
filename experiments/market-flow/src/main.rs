@@ -167,7 +167,7 @@ fn main() -> anyhow::Result<()> {
                             app.trades_buf
                                 .push((x as f64, (app.grid.height - y - 1) as f64));
                         }
-                        Particle::Empty => {}
+                        Particle::Empty | Particle::Wall => {}
                     }
                 }
             }

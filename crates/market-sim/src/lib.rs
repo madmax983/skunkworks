@@ -82,6 +82,10 @@ pub enum Particle {
         /// How many frames this particle will persist before disappearing.
         age: u8,
     },
+
+    /// A structural barrier.
+    /// Blocks movement.
+    Wall,
 }
 
 /// A record of a successful transaction between a Buyer and a Seller.
@@ -320,6 +324,9 @@ impl Grid {
                         price: (self.height - 1 - (y - 1)) as f32,
                     });
                 }
+                Particle::Wall => {
+                    self.try_move_sideways(idx, x, y, Particle::Bid(owner), rng);
+                }
                 _ => {
                     self.try_move_sideways(idx, x, y, Particle::Bid(owner), rng);
                 }
@@ -359,6 +366,9 @@ impl Grid {
                         seller: owner,
                         price: (self.height - 1 - (y + 1)) as f32,
                     });
+                }
+                Particle::Wall => {
+                    self.try_move_sideways(idx, x, y, Particle::Ask(owner), rng);
                 }
                 _ => {
                     self.try_move_sideways(idx, x, y, Particle::Ask(owner), rng);
@@ -668,5 +678,25 @@ mod sentry_tests {
 
         // Verify original spot of Bid B is empty
         assert_eq!(grid.get(1, 2), Particle::Empty);
+    }
+
+    #[test]
+    fn test_bid_blocked_by_wall_moves_sideways() {
+        // Grid 3x3
+        let mut grid = Grid::new(3, 3);
+        // Wall at (1, 0) - Blocking Bid A
+        grid.set(1, 0, Particle::Wall);
+        // Bid A at (1, 1) - Blocked by Wall
+        grid.set(1, 1, Particle::Bid(10));
+
+        grid.update();
+
+        // Expectation:
+        // Bid A moves Sideways to (0,1) or (2,1).
+
+        // Verify Bid A moved sideways
+        let a_left = matches!(grid.get(0, 1), Particle::Bid(10));
+        let a_right = matches!(grid.get(2, 1), Particle::Bid(10));
+        assert!(a_left || a_right, "Bid A did not move sideways when blocked by Wall");
     }
 }
