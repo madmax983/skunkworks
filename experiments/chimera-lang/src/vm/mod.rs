@@ -5597,7 +5597,7 @@ mod prologue_elemental_test;
 #[cfg(test)]
 mod prologue_epigenetics_test;
 #[cfg(test)]
-mod prologue_hypnagogia_test;
+mod prologue_oneiric_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod prologue_necromancy_test;

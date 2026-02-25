@@ -81,7 +81,7 @@ pub mod forth;
 pub mod gardener;
 pub mod genetics;
 pub mod hyper;
-pub mod hypnagogia;
+pub mod oneiric;
 pub mod io;
 pub mod lexicon;
 pub mod library;
@@ -168,9 +168,9 @@ pub struct PrologueState {
     /// Epigenetic layer (Methylation/Phosphorylation).
     #[serde(default = "default_epigenetic_grid")]
     pub epigenetic_grid: Vec<Vec<epigenetics::EpigeneticMark>>,
-    /// Hypnagogia: Dream Intensity (0.0 - 100.0).
+    /// Oneiric Grid: Parallel Dream Simulation.
     #[serde(default)]
-    pub dream_intensity: f32,
+    pub oneiric_grid: oneiric::OneiricGrid,
     /// Narrative Library (Book Rune Storage).
     #[serde(default)]
     pub library: HashMap<String, Value>,
@@ -226,7 +226,7 @@ impl PrologueState {
             echoes: HashMap::new(),
             history: HashMap::new(),
             epigenetic_grid: vec![vec![epigenetics::EpigeneticMark::None; GRID_SIZE]; GRID_SIZE],
-            dream_intensity: 0.0,
+            oneiric_grid: oneiric::OneiricGrid::new(),
             library: HashMap::new(),
             logos_engine: logos::LogosEngine::new(),
             orca_mode: false,
@@ -675,8 +675,8 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
     // 6. Agents (@)
     process_agents(vm, &grid_snapshot);
 
-    // 7. Hypnagogia (Dream Logic)
-    hypnagogia::process_dream_logic(vm);
+    // 7. Oneiric Cartography (Dream Logic)
+    oneiric::process_oneiric_tick(vm);
 
     // 8. Oracle (Omens)
     #[cfg(feature = "oracle")]
@@ -802,7 +802,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     &mut vm.void_rifts,
                     grid,
                     &vm.light_grid,
-                    &mut vm.prologue_state.dream_intensity,
+                    &mut vm.prologue_state.oneiric_grid,
                     v_grid,
                     r_grid,
                     c_grid,
@@ -857,7 +857,7 @@ fn apply_propagation_rune(
     void_rifts: &mut Vec<crate::vm::nova_void::VoidRift>,
     grid: &[Vec<Value>],
     light_grid: &[Vec<i64>],
-    dream_intensity: &mut f32,
+    oneiric_grid: &mut oneiric::OneiricGrid,
     voltage_grid: &mut Vec<Vec<f32>>,
     resistance_grid: &mut Vec<Vec<f32>>,
     capacitance_grid: &mut Vec<Vec<f32>>,
@@ -899,13 +899,13 @@ fn apply_propagation_rune(
         return true;
     }
 
-    if hypnagogia::apply_hypnagogia_runes(
+    if oneiric::apply_oneiric_runes(
         rune,
         y,
         x,
         current_signals,
         next_signals,
-        dream_intensity,
+        oneiric_grid,
     ) {
         return true;
     }
