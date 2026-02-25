@@ -108,12 +108,27 @@ pub fn compute_force(
             continue;
         }
 
-        let diff = my_pos - pos;
-        let d_sq = diff.magnitude_squared();
+        // Optimization: AABB (Axis-Aligned Bounding Box) early exit.
+        // We first check if the neighbor is within the square bounding box of the view radius.
+        // This avoids the more expensive Euclidean distance calculation (squaring and adding)
+        // for the vast majority of distant neighbors.
+        let dx = my_pos.x - pos.x;
+        if dx.abs() > params.view_radius {
+            continue;
+        }
+
+        let dy = my_pos.y - pos.y;
+        if dy.abs() > params.view_radius {
+            continue;
+        }
+
+        let d_sq = dx * dx + dy * dy;
 
         if d_sq <= 0.0 || d_sq >= view_sq {
             continue;
         }
+
+        let diff = Vec2::new(dx, dy);
 
         // Separation
         if d_sq < sep_sq {
@@ -188,6 +203,36 @@ mod tests {
         };
         let force = compute_force(&[p1], &[v1], 0, &params);
         assert_eq!(force, Vec2::zero());
+    }
+
+    #[test]
+    fn bench_compute_force() {
+        let count = 1000;
+        let mut positions = Vec::with_capacity(count);
+        let mut velocities = Vec::with_capacity(count);
+        for i in 0..count {
+            positions.push(Vec2::new(i as f64, 0.0));
+            velocities.push(Vec2::new(0.0, 1.0));
+        }
+
+        let params = FlockingParams {
+            view_radius: 50.0, // Only nearby neighbors
+            separation_radius: 20.0,
+            max_speed: 5.0,
+            max_force: 1.0,
+            separation_weight: 1.0,
+            alignment_weight: 1.0,
+            cohesion_weight: 1.0,
+        };
+
+        let start = std::time::Instant::now();
+        // Compute force for all agents (N^2 roughly)
+        // But here we just call it for the first 1000 to save time in test
+        for i in 0..1000 {
+            // Use black_box equivalent?
+            let _ = compute_force(&positions, &velocities, i, &params);
+        }
+        println!("Time taken: {:?}", start.elapsed());
     }
 }
 
