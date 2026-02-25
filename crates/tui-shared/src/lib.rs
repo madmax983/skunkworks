@@ -11,6 +11,8 @@
 //!
 //! ```no_run
 //! use tui_shared::Tui;
+//! // Use re-exported ratatui for version consistency
+//! use tui_shared::ratatui::widgets::{Block, Borders};
 //! use std::io;
 //!
 //! fn main() -> io::Result<()> {
@@ -19,12 +21,25 @@
 //!
 //!     // Draw something to the terminal
 //!     tui.terminal.draw(|f| {
-//!         // ... render your widgets here ...
+//!         let block = Block::default().title("Block").borders(Borders::ALL);
+//!         f.render_widget(block, f.area());
 //!     })?;
 //!
 //!     // The terminal is automatically restored when `tui` goes out of scope
 //!     Ok(())
 //! }
+//! ```
+//!
+//! ## Re-exports
+//!
+//! This crate re-exports `ratatui` and `crossterm` so you can use the same versions.
+//!
+//! ```rust
+//! use tui_shared::ratatui::widgets::Block;
+//! use tui_shared::crossterm::event::KeyCode;
+//!
+//! let block = Block::default();
+//! let key = KeyCode::Enter;
 //! ```
 //!
 //! ## Testing
@@ -51,6 +66,9 @@
 
 pub mod semantic;
 pub mod widgets;
+
+pub use crossterm;
+pub use ratatui;
 
 use crossterm::{
     event::{DisableMouseCapture, EnableMouseCapture},
