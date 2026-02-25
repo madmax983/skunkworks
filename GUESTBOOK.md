@@ -727,3 +727,13 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Stagnation / Documentation Void. Grace period expired.
 - **Note:** "The cylinder spins in a perfect, dead loop. Now it spins in the void."
+
+### [Concentration Level: EXECUTED] - Location: graveyard/neuro-crab
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Grace period expired.
+- **Note:** "The shell learns from the pain, but leaves no instructions."
+
+### [Concentration Level: TOXIC] - Location: experiments/lithosphere-termites
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen re-condemned. Diagnosis: Recidivist / Documentation Void / Skeletal Rot. Pardon revoked.
+- **Note:** "The termites are building a tomb, not a mound."
