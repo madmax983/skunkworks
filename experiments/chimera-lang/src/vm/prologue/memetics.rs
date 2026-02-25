@@ -155,6 +155,40 @@ pub fn apply_memetic_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                 vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
             }
         }
+        "µ" => {
+            // Mu: Meme Spread (West Signal -> Neighbors)
+            if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+                if let Some(sig) = &vm.prologue_state.signal_grid[wy][wx] {
+                    let mut spread_count = 0;
+                    for dy in -1..=1 {
+                        for dx in -1..=1 {
+                            if dy == 0 && dx == 0 {
+                                continue;
+                            }
+                            if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                                match &mut vm.grid[ny][nx] {
+                                    Value::Str(_) => {
+                                        // Infect String
+                                        vm.grid[ny][nx] = sig.clone();
+                                        spread_count += 1;
+                                    }
+                                    Value::Int(n) => {
+                                        // Mutate Integer (Small deviation)
+                                        let mut rng = rand::thread_rng();
+                                        *n = n.wrapping_add(rng.gen_range(-5..=5));
+                                        spread_count += 1;
+                                    }
+                                    _ => {}
+                                }
+                            }
+                        }
+                    }
+                    if spread_count > 0 {
+                        vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                    }
+                }
+            }
+        }
         _ => {}
     }
 }
