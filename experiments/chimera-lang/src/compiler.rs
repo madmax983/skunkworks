@@ -349,6 +349,7 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                 let mut pop_size = 50;
                 let mut mut_rate = "0.1".to_string();
                 let mut fitness_idx = None;
+                let mut strategy_idx = None;
                 let mut target = None;
 
                 for prop in inner {
@@ -376,19 +377,6 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                         }
                         "fitness" => {
                             let block_pair = prop_parts.next().unwrap();
-                            // Compile block.
-                            // We need to parse this block into genes, then put it into anonymous strands.
-                            // We can use parse_instructions on the block?
-                            // But `instruction` rule has `block` as a choice.
-                            // We need to create a `CompilerContext` and call `parse_block` directly or wrap it.
-                            // Actually `block` is an instruction type.
-                            // Let's manually invoke parse_block via parse_instructions context manually.
-
-                            // Wait, `parse_instruction` expects an `instruction` pair.
-                            // `block` is a rule inside `instruction`.
-                            // But here we have `block` pair directly from `evolution_prop`.
-                            // We need `CompilerContext::parse_block`.
-
                             let mut ctx = CompilerContext {
                                 strand_map: &strand_map,
                                 macro_map: &macro_map,
@@ -399,8 +387,6 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                                 depth: 0,
                             };
 
-                            // parse_block returns [Push(idx)].
-                            // It takes `Rule::block` pair.
                             let genes = ctx.parse_block(block_pair)?;
                             if let Some(Gene {
                                 op: OpCode::Push,
@@ -412,6 +398,29 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                                 }
                             }
                         }
+                        "strategy" => {
+                            let block_pair = prop_parts.next().unwrap();
+                            let mut ctx = CompilerContext {
+                                strand_map: &strand_map,
+                                macro_map: &macro_map,
+                                grammar_map: &grammar_map,
+                                organelle_map: &organelle_map,
+                                grid_maps: &grid_maps,
+                                anonymous_strands: &mut anonymous_strands,
+                                depth: 0,
+                            };
+
+                            let genes = ctx.parse_block(block_pair)?;
+                            if let Some(Gene {
+                                op: OpCode::Push,
+                                args,
+                            }) = genes.first()
+                            {
+                                if let Some(Nucleotide::Number(idx)) = args.first() {
+                                    strategy_idx = Some(*idx as usize);
+                                }
+                            }
+                        }
                         _ => {}
                     }
                 }
@@ -420,6 +429,7 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                     population_size: pop_size,
                     mutation_rate: mut_rate,
                     fitness_strand_idx: fitness_idx,
+                    strategy_strand_idx: strategy_idx,
                     target_value: target,
                 });
             }

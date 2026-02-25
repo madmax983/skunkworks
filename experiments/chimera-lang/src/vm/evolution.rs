@@ -64,6 +64,55 @@ impl EvolutionEngine {
     }
 
     pub fn step(&mut self, vm_template: &ChimeraVM) {
+        #[cfg(feature = "nova")]
+        if let Challenge::Custom(config) = &self.challenge {
+            if let Some(strategy_idx) = config.strategy_strand_idx {
+                // Programmable Evolution Strategy
+                let mut master_vm = vm_template.clone();
+
+                // Inject population
+                master_vm.evo_state.population = self.population.clone();
+                master_vm.evo_state.buffer.clear();
+
+                // Setup execution
+                if strategy_idx < master_vm.dna.helix.strands.len() {
+                    master_vm.ip = (strategy_idx, 0);
+                    master_vm.energy = 10000; // Generous energy for meta-evolution
+                    master_vm.halted = false;
+
+                    // Run Strategy
+                    let max_meta_ticks = 10000;
+                    for _ in 0..max_meta_ticks {
+                        if master_vm.halted {
+                            break;
+                        }
+                        master_vm.step();
+                    }
+
+                    // Retrieve Population
+                    // If buffer was used to replace population (EvoReplace), retrieve from population
+                    // The EvoReplace op moves buffer to population.
+                    self.population = master_vm.evo_state.population;
+
+                    // Update Stats (Best Fitness)
+                    // We need to evaluate fitness to update history/best_fitness even if strategy handled breeding
+                    // This might be redundant if strategy did scoring, but we need it for the graph.
+                    // Let's re-evaluate best fitness of the new population.
+                    let mut best_f = i64::MAX;
+                    for strand in &self.population {
+                        let f = Self::evaluate_fitness(vm_template, strand, &self.challenge);
+                        if f < best_f {
+                            best_f = f;
+                        }
+                    }
+                    self.best_fitness = best_f;
+                    self.history.push(self.best_fitness);
+                    self.generation += 1;
+                    return;
+                }
+            }
+        }
+
         let mut results = Vec::new();
 
         // 1. Evaluate Fitness
@@ -109,7 +158,7 @@ impl EvolutionEngine {
         self.population = next_gen;
     }
 
-    fn tournament_select(pool: &[(i64, Strand)], rng: &mut impl Rng) -> Strand {
+    pub fn tournament_select(pool: &[(i64, Strand)], rng: &mut impl Rng) -> Strand {
         let k = 3; // Tournament size
         let mut best: Option<&(i64, Strand)> = None;
 
@@ -128,7 +177,7 @@ impl EvolutionEngine {
         best.unwrap().1.clone()
     }
 
-    fn crossover(a: &Strand, b: &Strand, rng: &mut impl Rng) -> Strand {
+    pub fn crossover(a: &Strand, b: &Strand, rng: &mut impl Rng) -> Strand {
         if a.genes.is_empty() || b.genes.is_empty() {
             return a.clone();
         }
@@ -151,7 +200,7 @@ impl EvolutionEngine {
         Strand { genes: new_genes }
     }
 
-    fn evaluate_fitness(vm_template: &ChimeraVM, strand: &Strand, challenge: &Challenge) -> i64 {
+    pub fn evaluate_fitness(vm_template: &ChimeraVM, strand: &Strand, challenge: &Challenge) -> i64 {
         if let Challenge::Custom(config) = challenge {
             let mut vm = vm_template.clone();
             // Inject candidate as strand 0 (or replace existing 0)
@@ -276,7 +325,7 @@ impl EvolutionEngine {
         total_error.saturating_add(len_penalty)
     }
 
-    fn mutate_strand(strand: &mut Strand, rng: &mut impl Rng) {
+    pub fn mutate_strand(strand: &mut Strand, rng: &mut impl Rng) {
         // 1. Change Op (Mutation)
         if !strand.genes.is_empty() && rng.gen_bool(0.3) {
             let idx = rng.gen_range(0..strand.genes.len());
@@ -334,6 +383,133 @@ impl EvolutionEngine {
     }
 }
 
+#[cfg(feature = "nova")]
+pub fn exec_evo_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+    match op {
+        OpCode::EvoPopSize => {
+            vm.stack
+                .push(Value::Int(vm.evo_state.population.len() as i64));
+        }
+        OpCode::EvoLoad => {
+            if let Some(Value::Int(idx)) = vm.stack.pop() {
+                if idx >= 0 && (idx as usize) < vm.evo_state.population.len() {
+                    // Push index as "Handle"
+                    // We don't push the full strand data to stack because it's complex.
+                    // We just verify it exists and push the index back (or leave it?)
+                    // Actually, Load usually means "Load to Stack".
+                    // But Strand is not a Value type (except maybe Junction?).
+                    // Let's keep it as an Index reference for other Evo Ops.
+                    // So EvoLoad checks bounds and pushes index if valid, else -1.
+                    vm.stack.push(Value::Int(idx));
+                } else {
+                    vm.stack.push(Value::Int(-1));
+                }
+            } else {
+                vm.output
+                    .push("Error: EvoLoad requires population index".to_string());
+            }
+        }
+        OpCode::EvoStore => {
+            // [ ..., gene_junction ] -> [ ... ]
+            if let Some(_val) = vm.stack.pop() {
+                // Convert Value::Junction to Strand
+                // This requires parsing the junction back to genes.
+                // Simplified: We assume the junction is a list of op strings.
+                // Or maybe we just use EvoSave to clone from population?
+                // Let's implement EvoStore later if needed. For now, warn.
+                vm.output
+                    .push("Warning: EvoStore from stack not implemented. Use EvoSave.".to_string());
+            }
+        }
+        OpCode::EvoScore => {
+            if let Some(Value::Int(idx)) = vm.stack.pop() {
+                if idx >= 0 && (idx as usize) < vm.evo_state.population.len() {
+                    let strand = vm.evo_state.population[idx as usize].clone();
+                    // We need a challenge. Where do we get it?
+                    // The VM doesn't know the challenge.
+                    // However, we can use a default or maybe store it in EvoState?
+                    // For now, let's assume a default Challenge if not provided,
+                    // OR we can pass it in via VM creation.
+                    // But VM is created in step().
+                    // Hack: We can serialize the challenge into the VM's genes or something?
+                    // Better: We assume the user wants to run the configured fitness function.
+                    // If DNA has evolution_config, use that.
+                    let challenge = if let Some(config) = &vm.dna.evolution_config {
+                        Challenge::Custom(config.clone())
+                    } else {
+                        Challenge::Target(42)
+                    };
+
+                    let score = EvolutionEngine::evaluate_fitness(vm, &strand, &challenge);
+                    vm.stack.push(Value::Int(score));
+                } else {
+                    vm.stack.push(Value::Int(-1));
+                }
+            }
+        }
+        OpCode::EvoBreed => {
+            if vm.stack.len() >= 2 {
+                let idx_b = vm.stack.pop().unwrap();
+                let idx_a = vm.stack.pop().unwrap();
+                if let (Value::Int(a), Value::Int(b)) = (idx_a, idx_b) {
+                    if a >= 0
+                        && b >= 0
+                        && (a as usize) < vm.evo_state.population.len()
+                        && (b as usize) < vm.evo_state.population.len()
+                    {
+                        let parent_a = &vm.evo_state.population[a as usize];
+                        let parent_b = &vm.evo_state.population[b as usize];
+                        let mut rng = rand::thread_rng();
+                        let child = EvolutionEngine::crossover(parent_a, parent_b, &mut rng);
+                        vm.evo_state.buffer.push(child);
+                        let child_idx = vm.evo_state.buffer.len() - 1;
+                        vm.stack.push(Value::Int(child_idx as i64));
+                    } else {
+                        vm.stack.push(Value::Int(-1));
+                    }
+                }
+            }
+        }
+        OpCode::EvoMutate => {
+            if let Some(Value::Int(idx)) = vm.stack.pop() {
+                // Mutate in BUFFER
+                if idx >= 0 && (idx as usize) < vm.evo_state.buffer.len() {
+                    let strand = &mut vm.evo_state.buffer[idx as usize];
+                    let mut rng = rand::thread_rng();
+                    EvolutionEngine::mutate_strand(strand, &mut rng);
+                } else {
+                    vm.output
+                        .push(format!("Error: EvoMutate index {} out of buffer bounds", idx));
+                }
+            }
+        }
+        OpCode::EvoReplace => {
+            if !vm.evo_state.buffer.is_empty() {
+                vm.evo_state.population = vm.evo_state.buffer.clone();
+                vm.evo_state.buffer.clear();
+                vm.output.push("EVOLUTION: Population Replaced".to_string());
+            }
+        }
+        OpCode::EvoClear => {
+            vm.evo_state.buffer.clear();
+        }
+        OpCode::EvoSave => {
+            if let Some(Value::Int(idx)) = vm.stack.pop() {
+                if idx >= 0 && (idx as usize) < vm.evo_state.population.len() {
+                    let strand = vm.evo_state.population[idx as usize].clone();
+                    vm.evo_state.buffer.push(strand);
+                    let new_idx = vm.evo_state.buffer.len() - 1;
+                    vm.stack.push(Value::Int(new_idx as i64));
+                } else {
+                    vm.stack.push(Value::Int(-1));
+                }
+            }
+        }
+        _ => {}
+    }
+    None
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -379,5 +555,55 @@ mod tests {
         println!("Doubler Best Fitness: {}", engine.best_fitness);
         // We can't guarantee convergence with random mutation in unit test time, but ensure it runs
         assert!(engine.generation == 200 || engine.best_fitness < 20);
+    }
+
+    #[test]
+    #[cfg(feature = "nova")]
+    fn test_programmable_evolution() {
+        // Strategy:
+        // 1. Get Pop Size
+        // 2. Loop (simplified: just take index 0)
+        // 3. EvoLoad(0)
+        // 4. EvoSave(0) (Clone to buffer)
+        // 5. EvoReplace
+
+        let strategy_genes = vec![
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+            Gene { op: OpCode::EvoLoad, args: vec![] }, // Stack: [0]
+            Gene { op: OpCode::Drop, args: vec![] },    // Stack: []
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+            Gene { op: OpCode::EvoSave, args: vec![] }, // Buffer has 1 item
+            Gene { op: OpCode::EvoReplace, args: vec![] }, // Population now has 1 item
+        ];
+
+        let seed = Strand {
+            genes: vec![Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] }],
+        };
+
+        // Construct DNA with strategy at index 1
+        let dna = Dna {
+            evolution_config: Some(EvolutionConfig {
+                population_size: 10,
+                mutation_rate: "0.1".to_string(),
+                fitness_strand_idx: None,
+                strategy_strand_idx: Some(1),
+                target_value: Some(42),
+            }),
+            helix: Helix {
+                strands: vec![seed.clone(), Strand { genes: strategy_genes }],
+            },
+        };
+
+        let vm_template = ChimeraVM::new(dna.clone());
+        let mut engine = EvolutionEngine::from_config(seed, dna.evolution_config.unwrap());
+
+        // Initial population size is 10
+        assert_eq!(engine.population.len(), 10);
+
+        // Run one step with strategy
+        engine.step(&vm_template);
+
+        // Strategy replaces population with buffer containing only 1 item (clone of index 0)
+        assert_eq!(engine.population.len(), 1);
     }
 }

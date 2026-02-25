@@ -443,6 +443,13 @@ pub enum Chirality {
     Right, // Dextro (Inverted)
 }
 
+#[cfg(feature = "nova")]
+#[derive(Debug, Clone, Default)]
+pub struct EvoState {
+    pub population: Vec<crate::ast::Strand>,
+    pub buffer: Vec<crate::ast::Strand>,
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum VisualEffect {
     Lightning {
@@ -917,6 +924,8 @@ pub struct ChimeraVM {
     pub tui_events: Vec<TuiEvent>,
     #[cfg(feature = "oracle")]
     pub regulatory_mode: bool,
+    #[cfg(feature = "nova")]
+    pub evo_state: EvoState,
 }
 
 impl ChimeraVM {
@@ -1303,6 +1312,8 @@ impl ChimeraVM {
             tui_events: Vec::new(),
             #[cfg(feature = "oracle")]
             regulatory_mode: false,
+            #[cfg(feature = "nova")]
+            evo_state: EvoState::default(),
         }
     }
 
@@ -3671,6 +3682,15 @@ impl ChimeraVM {
             | OpCode::Forge
             | OpCode::Speak
             | OpCode::Etymology => Some(nova::exec_nova_op(self, op, args)),
+            OpCode::EvoPopSize
+            | OpCode::EvoLoad
+            | OpCode::EvoStore
+            | OpCode::EvoScore
+            | OpCode::EvoBreed
+            | OpCode::EvoMutate
+            | OpCode::EvoReplace
+            | OpCode::EvoClear
+            | OpCode::EvoSave => Some(evolution::exec_evo_op(self, op, args)),
             #[cfg(feature = "nova")]
             OpCode::Codex => {
                 if let Some(Value::Int(id)) = self.stack.pop() {
