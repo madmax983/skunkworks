@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **neuro-crab**: Documentation Void / Skeletal Implementation. Generic "crab" visualizer with no README. Grace period: 24h.
+- **typographic-turbulence**: Documentation Void (No README). "The words are lost in the flow." Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **neuro-crab**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Moved to graveyard.
 - **origami-satellite**: Specimen executed. Diagnosis: Skeletal Rot (Disabled Audio). Redundant with `origami-swarm`. Moved to graveyard.
 - **synaptic-swarm**: Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy. Moved to graveyard.
 - **grimms-code**: Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy. Failed to improve during grace period. Moved to graveyard.
