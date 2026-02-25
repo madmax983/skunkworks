@@ -264,19 +264,12 @@ impl PbdSystem {
                         factor,
                         stiffness,
                     } => {
-                        if !factor.is_finite() {
-                            panic!("NaN detected - invalid factor");
-                        }
-                        let target_len = min_len + (max_len - min_len) * factor;
-                        Self::solve_distance(particles, *p1, *p2, target_len, *stiffness);
+                        Self::solve_actuator(
+                            particles, *p1, *p2, *min_len, *max_len, *factor, *stiffness,
+                        );
                     }
                     Constraint::Pin { p, pos } => {
-                        // Hard constraint: set position directly
-                        // But we should respect inv_mass = 0 if it's static?
-                        // Pin usually overrides dynamics.
-                        if let Some(particle) = particles.get_mut(*p) {
-                            particle.pos = *pos;
-                        }
+                        Self::solve_pin(particles, *p, *pos);
                     }
                 }
             }
@@ -290,6 +283,33 @@ impl PbdSystem {
             p.vel = (p.pos - p.prev_pos) / dt;
             // Damping
             p.vel *= 0.95;
+        }
+    }
+
+    #[inline]
+    fn solve_actuator(
+        particles: &mut [Particle],
+        p1: usize,
+        p2: usize,
+        min_len: f32,
+        max_len: f32,
+        factor: f32,
+        stiffness: f32,
+    ) {
+        if !factor.is_finite() {
+            panic!("NaN detected - invalid factor");
+        }
+        let target_len = min_len + (max_len - min_len) * factor;
+        Self::solve_distance(particles, p1, p2, target_len, stiffness);
+    }
+
+    #[inline]
+    fn solve_pin(particles: &mut [Particle], p: usize, pos: Vec3) {
+        // Hard constraint: set position directly
+        // But we should respect inv_mass = 0 if it's static?
+        // Pin usually overrides dynamics.
+        if let Some(particle) = particles.get_mut(p) {
+            particle.pos = pos;
         }
     }
 
