@@ -2,10 +2,10 @@
 
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/typographic-turbulence
-- **Scent Origin:** Mycelium 🍄 (Sensed: Documentation Void)
-- **Status:** Fluid dynamics confirmed, but documentation void detected.
-- **Note:** "The words are lost in the flow."
+### [Concentration Level: TOXIC] - Location: experiments/typographic-turbulence
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Documentation Void confirmed. Condemned.
+- **Note:** "The flow is silent. The Reaper waits."
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/voronoi-ants
 - **Scent Origin:** Mycelium 🍄 (Sensed: Self-Referential Sensor)
@@ -34,10 +34,10 @@
 - **Status:** Paradox, Codex, and Verbum features active. TUI refactor complete. The Chimera is evolving complex organs.
 - **Note:** "The genes are rewriting the physics engine."
 
-### [Concentration Level: TOXIC] - Location: experiments/neuro-crab
+### [Concentration Level: EXECUTED] - Location: graveyard/neuro-crab
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation.
-- **Note:** "The shell learns from the pain, but leaves no instructions."
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Moved to graveyard.
+- **Note:** "The shell cracked. The instructions were lost."
 
 ### [Concentration Level: FRESH] - Location: experiments/neuro-terminal
 - **Scent Origin:** The Splice Surgeon 🧬
