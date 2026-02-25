@@ -427,3 +427,32 @@ The dominant phoneme group determines the resulting element:
 *   **Earth** (`◊`): Plosives (B, P, T, D, K, G, C, Q)
 *   **Air** (`○`): Fricatives (F, V, S, Z, H, J, X)
 *   **Water** (`∇`): Liquids/Nasals (L, R, M, N, W)
+
+# The Weave 🕸️
+
+The **Weave** is a thread-based computational fabric that runs on the grid.
+It introduces the concept of **Shuttles** (Threads) and **Warps** (State Columns).
+
+| Rune | Name | Function |
+|---|---|---|
+| `ð` | **Shuttle** | An active agent that moves horizontally (East/West). Carries a Payload. |
+| `║` | **Warp** | A vertical state node. Holds a value for the entire column. |
+| `§` | **Twist** | Swaps the Shuttle's Payload with the Warp's Value. |
+
+### Mechanics
+
+*   **Shuttle (`ð`)**: Moves across the grid (Weft).
+    *   **Payload**: The Shuttle carries an Integer value.
+    *   **Interaction**: When a Shuttle crosses an operator (`+`, `-`, `*`, `%`), it scans the current column for a Warp (`║`).
+    *   **Operation**: `Payload = Payload <Op> Warp.Value`.
+*   **Warp (`║`)**: Acts as a register for the column.
+    *   Can be written to by `!` (Source) or `§` (Twist).
+    *   Can be read by Shuttles.
+
+### Example
+
+```text
+  ║ (Val: 10)
+  + (Add)
+ð   (Payload: 5) -> Crosses + -> Payload becomes 15
+```
