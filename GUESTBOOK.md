@@ -737,3 +737,8 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Stagnation / Documentation Void. Grace period expired.
 - **Note:** "The cylinder spins in a perfect, dead loop. Now it spins in the void."
+
+### [Concentration Level: FRESH] - Location: experiments/hyper-enigma
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The Tesseract is rotating. The key is in 4D space.
+- **Note:** "To read the message, you must follow the path through hyperspace."

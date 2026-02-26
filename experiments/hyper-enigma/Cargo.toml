@@ -1,0 +1,9 @@
+[package]
+name = "hyper-enigma"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+hyper-system = { workspace = true }
+sysinfo = "0.30"
