@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **constellation-cipher**: Specimen condemned. Diagnosis: Terminal Redundancy (Superseded by codex-void). Generic Implementation. Grace period: 24h.
+- **newtonian-graph**: Specimen condemned. Diagnosis: Terminal Redundancy (Superseded by ferrous-graph). Documentation Anemia. Grace period: 24h.
 - [Experiment name]: [Diagnosis]. Grace period: 24h.
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **constellation-cipher**: Specimen executed. Diagnosis: Terminal Redundancy (Superseded by codex-void). Generic Implementation. Grace period expired. Moved to graveyard.
 - **lithosphere-termites**: Specimen executed. Diagnosis: Zombie Recidivist. Documentation Void. Moved to graveyard.
 - **typographic-turbulence**: Specimen executed. Diagnosis: Documentation Void. "The words are lost in the flow." Moved to graveyard.
 - **neuro-crab**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Moved to graveyard.
