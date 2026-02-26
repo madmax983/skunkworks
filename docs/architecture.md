@@ -310,19 +310,26 @@ classDiagram
 
 ### Locus Geometry (crates/locus)
 
-Provides standard 2D vector math and topological wrapping logic for grid-based simulations (ADR 025).
+Provides standard vector math (2D, 3D, 4D), topological wrapping logic, and spatial behaviors (flocking) (ADR 025, ADR 059).
 
 ```mermaid
 classDiagram
     direction LR
     class Vec2 {
-        +f64 x
-        +f64 y
+        +f64 x, y
         +add()
         +sub()
         +magnitude()
         +normalize()
-        +reflect()
+    }
+    class Vec3 {
+        +f64 x, y, z
+        +cross(Vec3) Vec3
+    }
+    class Vec4 {
+        +f64 x, y, z, w
+        +rotate_xw()
+        +project_to_3d()
     }
 
     class Topology {
@@ -334,7 +341,14 @@ classDiagram
         +normalize(y, x) Option~y, x~
     }
 
+    class Flocking {
+        <<Module>>
+        +compute_force(agents, idx, params) Vec2
+        +FlockingParams params
+    }
+
     Topology ..> Vec2 : Complements
+    Flocking ..> Vec2 : Uses
 ```
 
 ### Market Simulation (crates/market-sim)
@@ -407,40 +421,6 @@ classDiagram
     GitModel ..> Commit : Produces
 ```
 
-### Flocking Physics (crates/flocking)
-
-Encapsulates Reynolds' flocking rules to ensure consistent Boid behavior across experiments (ADR 032).
-
-```mermaid
-classDiagram
-    direction LR
-    class PhysicsState {
-        +Vec2 position
-        +Vec2 velocity
-        +Vec2 acceleration
-        +update(max_speed)
-        +apply_force(force)
-    }
-
-    class FlockingParams {
-        +f64 view_radius
-        +f64 separation_radius
-        +f64 max_speed
-        +f64 max_force
-        +f64 separation_weight
-        +f64 alignment_weight
-        +f64 cohesion_weight
-    }
-
-    class FlockingUtils {
-        <<Module>>
-        +compute_force(agents, idx, params) Vec2
-    }
-
-    PhysicsState ..> FlockingUtils : Processed by
-    FlockingUtils ..> FlockingParams : Configured by
-    note for PhysicsState "Uses locus::Vec2"
-```
 
 ### Soroban Logic (crates/soroban)
 
@@ -603,19 +583,11 @@ classDiagram
 
 ### Hyper System (crates/hyper-system)
 
-Provides shared 4D vector math and system monitoring utilities for "Hyper" series experiments (ADR 050).
+Provides system monitoring utilities for "Hyper" series experiments, re-exporting 4D math from `locus` (ADR 050, ADR 059).
 
 ```mermaid
 classDiagram
     direction TB
-    class Vec4 {
-        +f32 x, y, z, w
-        +add(Vec4) Vec4
-        +scale(f32) Vec4
-        +rotate_xw(theta) Vec4
-        +project_to_3d(camera_w) Vec3
-    }
-
     class SystemMonitor {
         +f32 cpu_usage
         +f32 mem_usage
@@ -625,8 +597,7 @@ classDiagram
         +update()
     }
 
-    SystemMonitor ..> Vec4 : Drives (in experiments)
-    note for SystemMonitor "Interpolates metrics for smooth visuals"
+    note for SystemMonitor "Uses locus::Vec4\nInterpolates metrics for smooth visuals"
 ```
 
 ## Experiment: Git Harmony
