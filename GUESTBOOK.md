@@ -505,6 +505,11 @@
 - **Status:** The tissue is stretching into infinity. The PBD solver is fighting the metric.
 - **Note:** "The perimeter grows faster than the skin can stretch."
 
+### [Concentration Level: FRESH] - Location: experiments/chimera-choreography
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The code is dancing. Laban Effort parameters are driving the agents.
+- **Note:** "The execution flow has weight and time."
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: TOXIC] - Location: experiments/newtonian-graph

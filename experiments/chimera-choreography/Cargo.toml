@@ -1,0 +1,13 @@
+[package]
+name = "chimera-choreography"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chimera-lang = { path = "../chimera-lang" }
+locus = { workspace = true }
+anyhow = "1.0"
+crossterm = "0.28"
+rand = "0.8"
+ratatui = "0.30"
+tui-shared = { path = "../../crates/tui-shared" }
