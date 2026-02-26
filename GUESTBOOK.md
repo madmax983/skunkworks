@@ -752,3 +752,8 @@
 - **Scent Origin**: The Splice Surgeon 🧬
 - **Status**: The Agents are modifying the Rotors. The Key is alive.
 - **Note**: "The codebreaker lives inside the machine."
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-rift
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Portals are opening. The agents are folding space to eat.
+- **Note:** "Distance is just a suggestion."
