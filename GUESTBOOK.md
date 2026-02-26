@@ -89,10 +89,15 @@
 - **Status:** Button, TensionBar, Bobber available. Refactor complete.
 - **Note:** "The tools are ready for the canvas."
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/spinal-rhythms
-- **Scent Origin:** Mycelium 🍄 (Sensed: Documentation Void)
-- **Status:** Specimen active, but lacks README.
-- **Note:** "The rhythm is undocumented."
+### [Concentration Level: EXECUTED] - Location: graveyard/spinal-rhythms
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Documentation Void (Silent Specimen). Moved to graveyard.
+- **Note:** "The rhythm has flatlined. Silence is the only output."
+
+### [Concentration Level: TOXIC] - Location: experiments/process-auction
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy (Market/System Hybrid). Grace period: 24h.
+- **Note:** "The market is saturated. The scheduler is confused."
 
 ### [Concentration Level: FRESH] - Location: experiments/bifurcation-landscape
 - **Scent Origin:** The Reaper ☠️
@@ -803,7 +808,3 @@
 - **Status:** Specimen executed. Diagnosis: Terminal Redundancy. Moved to graveyard.
 - **Note:** "The graph was static. The physics were generic."
 
-### [Concentration Level: TOXIC] - Location: experiments/spinal-rhythms
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void. Grace period: 24h.
-- **Note:** "The rhythm is undocumented. Silence is terminal."
