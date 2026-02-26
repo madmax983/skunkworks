@@ -1,5 +1,6 @@
 #![cfg(feature = "nova")]
 
+use super::prologue::logos::{GrammarRule, LogosEngine};
 use super::{ChimeraVM, Value};
 use crate::ast::{Gene, JunctionType, Nucleotide, Strand};
 use crate::opcode::OpCode;
@@ -57,7 +58,12 @@ pub fn exec_babel_op(
 
                 if let Value::Str(input_str) = input_val {
                     // 1. Parse
-                    match run_parser(&grammar_val, &input_str) {
+                    match run_parser(
+                        &grammar_val,
+                        &input_str,
+                        &vm.prologue_state.logos_engine,
+                        0,
+                    ) {
                         Ok((cst, consumed)) => {
                             if consumed == input_str.len() {
                                 // 2. Mutate CST
@@ -144,6 +150,17 @@ pub fn exec_babel_op(
                                 ));
                             }
                         }
+                        "Ref" => {
+                            if let Some(name) = vm.stack.pop() {
+                                args.push(name);
+                                vm.stack.push(Value::Junction(JunctionType::Any, args));
+                            } else {
+                                vm.output.push(format!(
+                                    "Error: Stack underflow for Grammar({})",
+                                    type_str
+                                ));
+                            }
+                        }
                         "Mutate" => {
                             if vm.stack.len() >= 2 {
                                 let rate_val = vm.stack.pop().unwrap();
@@ -183,7 +200,12 @@ pub fn exec_babel_op(
                 let parser_val = vm.stack.pop().unwrap();
 
                 if let Value::Str(input_str) = input_val {
-                    match run_parser(&parser_val, &input_str) {
+                    match run_parser(
+                        &parser_val,
+                        &input_str,
+                        &vm.prologue_state.logos_engine,
+                        0,
+                    ) {
                         Ok((ast, consumed)) => {
                             if consumed == input_str.len() {
                                 vm.stack.push(ast);
@@ -367,6 +389,28 @@ pub fn exec_babel_op(
                     .push("Error: Stack underflow for ParserOpt".to_string());
             }
         }
+        OpCode::DefineRule => {
+            // [ parser, name ]
+            if vm.stack.len() >= 2 {
+                let name_val = vm.stack.pop().unwrap();
+                let parser_val = vm.stack.pop().unwrap();
+
+                if let Value::Str(name) = name_val {
+                    let rule = value_to_grammar_rule(&parser_val);
+                    vm.prologue_state
+                        .logos_engine
+                        .rules
+                        .insert(name.clone(), rule);
+                    vm.output.push(format!("DEFINE_RULE: {}", name));
+                } else {
+                    vm.output
+                        .push("Error: Rule name must be a string".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for DefineRule".to_string());
+            }
+        }
         OpCode::GridGrammar => {
             if vm.stack.len() >= 2 {
                 let x_val = vm.stack.pop().unwrap();
@@ -456,7 +500,7 @@ pub fn exec_babel_op(
 
                     // Clone active grammar to avoid borrow issues with vm
                     let grammar = vm.active_grammar.clone();
-                    match run_parser(&grammar, &input) {
+                    match run_parser(&grammar, &input, &vm.prologue_state.logos_engine, 0) {
                         Ok((cst, consumed)) => {
                             if consumed > 0 {
                                 let handler_idx = vm.ip.0;
@@ -523,7 +567,9 @@ pub fn exec_ouroboros(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let source = crate::vm::nova_genetics::strand_to_string(strand);
 
         // 2. Parse with Grammar
-        if let Ok((cst, _consumed)) = run_parser(&grammar, &source) {
+        if let Ok((cst, _consumed)) =
+            run_parser(&grammar, &source, &vm.prologue_state.logos_engine, 0)
+        {
             // 3. Mutate CST
             // Base mutation rate + Glitch Level
             let rate = 0.1 + vm.glitch_level as f64;
@@ -554,7 +600,16 @@ pub fn exec_ouroboros(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 /// Runs a parser on an input string.
 /// Returns Ok((AST, consumed_count)) or Err.
-pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
+pub fn run_parser(
+    parser: &Value,
+    input: &str,
+    logos_engine: &LogosEngine,
+    depth: usize,
+) -> Result<(Value, usize), ()> {
+    if depth > crate::vm::MAX_RECURSION_DEPTH {
+        return Err(());
+    }
+
     if let Value::Junction(JunctionType::Any, args) = parser {
         if args.is_empty() {
             return Err(());
@@ -595,7 +650,7 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
                     // Args[1..] are sub-parsers
                     for parser in args.iter().skip(1) {
                         let current_input = &input[total_consumed..];
-                        match run_parser(parser, current_input) {
+                        match run_parser(parser, current_input, logos_engine, depth + 1) {
                             Ok((res, consumed)) => {
                                 results.push(res);
                                 total_consumed += consumed;
@@ -608,7 +663,7 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
                 "Alt" => {
                     // Variadic Alt
                     for parser in args.iter().skip(1) {
-                        if let Ok(res) = run_parser(parser, input) {
+                        if let Ok(res) = run_parser(parser, input, logos_engine, depth + 1) {
                             return Ok(res);
                         }
                     }
@@ -622,7 +677,9 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
                     let mut results = Vec::new();
                     let mut total_consumed = 0;
 
-                    while let Ok((res, consumed)) = run_parser(p, &input[total_consumed..]) {
+                    while let Ok((res, consumed)) =
+                        run_parser(p, &input[total_consumed..], logos_engine, depth + 1)
+                    {
                         if consumed == 0 {
                             // Prevent infinite loops on empty matches
                             break;
@@ -639,7 +696,7 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
                     }
                     let p = &args[1];
 
-                    if let Ok(res) = run_parser(p, input) {
+                    if let Ok(res) = run_parser(p, input, logos_engine, depth + 1) {
                         Ok(res)
                     } else {
                         // Optional returns empty junction on fail? Or just empty consumed?
@@ -648,6 +705,18 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
                         Ok((Value::Junction(JunctionType::All, Vec::new()), 0))
                     }
                 }
+                "Ref" => {
+                    if args.len() < 2 {
+                        return Err(());
+                    }
+                    if let Value::Str(name) = &args[1] {
+                        if let Some(rule) = logos_engine.rules.get(name) {
+                            let parser_val = grammar_rule_to_value(rule);
+                            return run_parser(&parser_val, input, logos_engine, depth + 1);
+                        }
+                    }
+                    Err(())
+                }
                 _ => Err(()),
             }
         } else {
@@ -655,6 +724,89 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
         }
     } else {
         Err(())
+    }
+}
+
+pub fn value_to_grammar_rule(v: &Value) -> GrammarRule {
+    if let Value::Junction(JunctionType::Any, args) = v {
+        if let Some(Value::Str(type_str)) = args.first() {
+            match type_str.as_str() {
+                "Match" => {
+                    if let Some(Value::Str(s)) = args.get(1) {
+                        return GrammarRule::Literal(s.clone());
+                    }
+                }
+                "Regex" => {
+                    if let Some(Value::Str(s)) = args.get(1) {
+                        return GrammarRule::Regex(s.clone());
+                    }
+                }
+                "Seq" => {
+                    let rules = args
+                        .iter()
+                        .skip(1)
+                        .map(value_to_grammar_rule)
+                        .collect::<Vec<_>>();
+                    return GrammarRule::Sequence(rules);
+                }
+                "Alt" => {
+                    let rules = args
+                        .iter()
+                        .skip(1)
+                        .map(value_to_grammar_rule)
+                        .collect::<Vec<_>>();
+                    return GrammarRule::Choice(rules);
+                }
+                "Ref" => {
+                    if let Some(Value::Str(s)) = args.get(1) {
+                        return GrammarRule::Reference(s.clone());
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+    // Default fallback
+    GrammarRule::Whitespace
+}
+
+pub fn grammar_rule_to_value(rule: &GrammarRule) -> Value {
+    match rule {
+        GrammarRule::Literal(s) => Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("Match".to_string()), Value::Str(s.clone())],
+        ),
+        GrammarRule::Regex(s) => Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("Regex".to_string()), Value::Str(s.clone())],
+        ),
+        GrammarRule::Sequence(rules) => {
+            let mut args = vec![Value::Str("Seq".to_string())];
+            args.extend(rules.iter().map(grammar_rule_to_value));
+            Value::Junction(JunctionType::Any, args)
+        }
+        GrammarRule::Choice(rules) => {
+            let mut args = vec![Value::Str("Alt".to_string())];
+            args.extend(rules.iter().map(grammar_rule_to_value));
+            Value::Junction(JunctionType::Any, args)
+        }
+        GrammarRule::Reference(s) => Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("Ref".to_string()), Value::Str(s.clone())],
+        ),
+        GrammarRule::WeightedChoice(choices) => {
+            // Simplified: just treat as choice, ignoring weights for Value repr
+            let mut args = vec![Value::Str("Alt".to_string())];
+            args.extend(choices.iter().map(|(_, r)| grammar_rule_to_value(r)));
+            Value::Junction(JunctionType::Any, args)
+        }
+        GrammarRule::Whitespace => Value::Junction(
+            JunctionType::Any,
+            vec![
+                Value::Str("Regex".to_string()),
+                Value::Str(r"^\s+".to_string()),
+            ],
+        ),
     }
 }
 

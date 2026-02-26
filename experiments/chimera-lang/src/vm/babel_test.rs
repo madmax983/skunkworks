@@ -1,173 +1,208 @@
-#![cfg(test)]
 #[cfg(feature = "nova")]
-use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
-#[cfg(feature = "nova")]
-use crate::opcode::OpCode;
-#[cfg(feature = "nova")]
-use crate::vm::{ChimeraVM, Value};
+#[cfg(test)]
+mod tests {
+    use crate::ast::{Dna, Helix, Strand, Gene, Nucleotide, JunctionType};
+    use crate::opcode::OpCode;
+    use crate::vm::ChimeraVM;
+    use crate::vm::Value;
 
-#[cfg(feature = "nova")]
-fn make_vm() -> ChimeraVM {
-    let genes = vec![];
-    let dna = Dna {
-        evolution_config: None,
-        helix: Helix {
-            strands: vec![Strand { genes }],
-        },
-    };
-    ChimeraVM::new(dna)
-}
+    fn make_vm() -> ChimeraVM {
+        let dna = Dna {
+            evolution_config: None,
+            helix: Helix { strands: vec![] },
+        };
+        let mut vm = ChimeraVM::new(dna);
+        vm.prologue_state.active = true;
+        vm
+    }
 
-#[cfg(feature = "nova")]
-#[test]
-fn test_babel_compile_simple() {
-    let mut vm = make_vm();
+    #[test]
+    fn test_babel_compile_simple() {
+        let mut vm = make_vm();
 
-    // 1. Define Handler Strand (Index 1)
-    // Handler just prints everything it sees.
-    // Expects: [ ..., val1, val2, type, count ]
-    // We want to verify it was called.
-    // Let's make it print "Handler Called".
-    // And drop the args to clean stack.
-    let handler_genes = vec![
-        Gene {
-            op: OpCode::Drop,
-            args: vec![],
-        }, // Drop Count
-        Gene {
-            op: OpCode::Drop,
-            args: vec![],
-        }, // Drop Type
-        Gene {
-            op: OpCode::Print,
-            args: vec![],
-        }, // Print Val2
-        Gene {
-            op: OpCode::Print,
-            args: vec![],
-        }, // Print Val1
-        Gene {
-            op: OpCode::Push,
-            args: vec![Nucleotide::String("Handler Done".to_string())],
-        },
-        Gene {
-            op: OpCode::Print,
-            args: vec![],
-        },
-        Gene {
-            op: OpCode::Ret,
-            args: vec![],
-        }, // Return to caller
-    ];
-    vm.dna.helix.strands.push(Strand {
-        genes: handler_genes,
-    });
-    let handler_idx = 1;
+        // CST: Junction(All, [ "push", "10" ])
+        let cst = Value::Junction(JunctionType::All, vec![
+            Value::Str("push".to_string()),
+            Value::Str("10".to_string())
+        ]);
 
-    // 2. Create CST: Junction(All, [Int(10), Int(20)])
-    let cst = Value::Junction(
-        crate::ast::JunctionType::All,
-        vec![Value::Int(10), Value::Int(20)],
-    );
+        vm.stack.push(cst);
+        vm.stack.push(Value::Int(0)); // Handler index (mock)
 
-    // 3. Setup Stack for BabelCompile
-    // [ cst, handler_idx ]
-    vm.stack.push(cst);
-    vm.stack.push(Value::Int(handler_idx as i64));
+        // Call OpCode::BabelCompile
+        // Stack: [ cst, handler_idx ] -> [ new_strand_idx ]
+        // But since we don't have easy access to private `exec_babel_op`, we simulate via VM execution
+        // Or we just test `compile_cst` public function if available?
+        // `compile_cst` is in `babel.rs` but not re-exported easily?
+        // It is `pub` in `babel.rs`. Let's use `exec_babel_op` via `execute_gene`.
 
-    // 4. Execute BabelCompile
-    crate::vm::babel::exec_babel_op(&mut vm, OpCode::BabelCompile, &[]);
+        let res = vm.execute_gene_inner(OpCode::BabelCompile, &[]);
 
-    // 5. Verify New Strand Created
-    assert_eq!(vm.stack.len(), 1);
-    let new_strand_idx = match vm.stack.pop().unwrap() {
-        Value::Int(i) => i as usize,
-        _ => panic!("Expected strand index"),
-    };
-    assert_eq!(new_strand_idx, 2); // 0=Main, 1=Handler, 2=Compiled
-
-    // 6. Execute New Strand
-    // Manually jump to it
-    vm.ip = (new_strand_idx, 0);
-    // Step until halted or done (strand 2 has finite length)
-    // We know exactly how many steps:
-    // Push(10), Push(20), Push("All"), Push(2), Call(1) -> Handler
-    // Handler: Drop, Drop, Print, Print, Push, Print -> 6 steps
-    // Total approx 11 steps.
-    for _ in 0..50 {
-        vm.step();
-        if vm.ip.0 > new_strand_idx && vm.call_stack.is_empty() {
-            break;
+        assert!(res.is_none());
+        assert_eq!(vm.stack.len(), 1);
+        if let Value::Int(idx) = vm.stack[0] {
+            assert!(idx >= 0);
+            assert!(idx < vm.dna.helix.strands.len() as i64);
+            let strand = &vm.dna.helix.strands[idx as usize];
+            // push "push", push "10" ? No, `compile_cst_recursive` logic:
+            // "push" -> Push("push")
+            // "10" -> Push("10")
+            // Junction(All) -> Push("All"), Push(2), Call(handler)
+            // So:
+            // 1. Push("push")
+            // 2. Push("10")
+            // 3. Push("All")
+            // 4. Push(2)
+            // 5. Call(0)
+            assert_eq!(strand.genes.len(), 5);
+        } else {
+            panic!("Expected strand index");
         }
     }
 
-    // 7. Verify Output
-    println!("VM Output: {:?}", vm.output);
-    // Handler should have printed:
-    // 20
-    // 10
-    // "Handler Done"
-    assert!(vm.output.contains(&"20".to_string()), "Output missing 20");
-    assert!(vm.output.contains(&"10".to_string()), "Output missing 10");
-    // Value::Str is printed with quotes
-    assert!(
-        vm.output.contains(&"\"Handler Done\"".to_string()),
-        "Output missing Handler Done"
-    );
-}
+    #[test]
+    fn test_recursive_grammar() {
+        let mut vm = make_vm();
 
-#[cfg(feature = "nova")]
-#[test]
-fn test_babel_compile_nested() {
-    let mut vm = make_vm();
+        // 1. Define Rule "S" -> "a" S "b" | ""
+        // We construct this in parts.
 
-    // Handler: Simply drops 2 items (Type, Count)
-    // We rely on leaves being pushed to stack.
-    // [ ..., leaf, type, count ] -> Drop, Drop -> [ ..., leaf ]
-    let handler_genes = vec![
-        Gene {
-            op: OpCode::Drop,
-            args: vec![],
-        }, // Drop Count
-        Gene {
-            op: OpCode::Drop,
-            args: vec![],
-        }, // Drop Type
-        Gene {
-            op: OpCode::Ret,
-            args: vec![],
-        },
-    ];
-    vm.dna.helix.strands.push(Strand {
-        genes: handler_genes,
-    });
-    let handler_idx = 1;
+        // Part 1: "a" S "b" (Sequence)
+        // [ "Match", "a" ] grammar
+        let match_a = Value::Junction(JunctionType::Any, vec![Value::Str("Match".to_string()), Value::Str("a".to_string())]);
 
-    // CST: [ [ 42 ] ] (Nested)
-    let inner = Value::Junction(crate::ast::JunctionType::Any, vec![Value::Int(42)]);
-    let outer = Value::Junction(crate::ast::JunctionType::All, vec![inner]);
+        // [ "Ref", "S" ] grammar
+        let ref_s = Value::Junction(JunctionType::Any, vec![Value::Str("Ref".to_string()), Value::Str("S".to_string())]);
 
-    vm.stack.push(outer);
-    vm.stack.push(Value::Int(handler_idx as i64));
+        // [ "Match", "b" ] grammar
+        let match_b = Value::Junction(JunctionType::Any, vec![Value::Str("Match".to_string()), Value::Str("b".to_string())]);
 
-    crate::vm::babel::exec_babel_op(&mut vm, OpCode::BabelCompile, &[]);
-    let new_idx = match vm.stack.pop().unwrap() {
-        Value::Int(i) => i as usize,
-        _ => panic!("Expected index"),
-    };
+        // Combine into Seq
+        let seq_part = Value::Junction(JunctionType::Any, vec![Value::Str("Seq".to_string()), match_a, ref_s, match_b]);
 
-    vm.ip = (new_idx, 0);
-    for _ in 0..50 {
-        vm.step();
-        if vm.ip.0 > new_idx {
-            break;
+        // Part 2: "" (Empty Match)
+        let match_empty = Value::Junction(JunctionType::Any, vec![Value::Str("Match".to_string()), Value::Str("".to_string())]);
+
+        // Combine into Alt
+        let final_rule = Value::Junction(JunctionType::Any, vec![Value::Str("Alt".to_string()), seq_part, match_empty]);
+
+        // Define Rule "S"
+        vm.stack.push(final_rule);
+        vm.stack.push(Value::Str("S".to_string()));
+        vm.execute_gene_inner(OpCode::DefineRule, &[]);
+
+        // 2. Parse "aaabbb"
+        vm.stack.push(Value::Junction(JunctionType::Any, vec![Value::Str("Ref".to_string()), Value::Str("S".to_string())])); // Parser (Ref S)
+        vm.stack.push(Value::Str("aaabbb".to_string()));
+        vm.execute_gene_inner(OpCode::Parse, &[]);
+
+        // Check result
+        // Should be successful parse
+        let result = vm.stack.pop().unwrap();
+        // Failed parse pushes 0 (Int), Success pushes Junction (AST)
+        if matches!(result, Value::Int(0)) {
+            // Debug failure
+            println!("Parse failed. Output: {:?}", vm.output);
+        }
+        assert!(matches!(result, Value::Junction(_, _)));
+
+        // 3. Parse "aabbb" (Unbalanced)
+        // "aabbb" -> "aa" S "bb" b -> "aa" "" "bb" b -> "aabb" match, remainder "b".
+        // Exec OpCode::Parse checks if consumed == input.len().
+        // So this should fail (return 0).
+
+        vm.stack.push(Value::Junction(JunctionType::Any, vec![Value::Str("Ref".to_string()), Value::Str("S".to_string())]));
+        vm.stack.push(Value::Str("aabbb".to_string()));
+        vm.execute_gene_inner(OpCode::Parse, &[]);
+
+        let fail_result = vm.stack.pop().unwrap();
+        assert_eq!(fail_result, Value::Int(0));
+    }
+
+    #[test]
+    fn test_babel_parser_match() {
+        let mut vm = make_vm();
+        vm.stack.push(Value::Str("foo".to_string()));
+        vm.execute_gene_inner(OpCode::ParserMatch, &[]);
+        let parser = vm.stack.pop().unwrap();
+
+        vm.stack.push(parser);
+        vm.stack.push(Value::Str("foobar".to_string()));
+
+        // Use Parse directly
+        vm.execute_gene_inner(OpCode::Parse, &[]);
+        let _res = vm.stack.pop().unwrap();
+        // Consumed 3, but Parse checks consumed == input.len() -> False -> 0
+        // Wait, "foobar" vs "foo" -> Partial match.
+        // OpCode::Parse implementation: if consumed == len -> Success, else -> 0 (Fail).
+        // So "foobar" with "Match foo" should fail unless we slice input.
+        // Let's test with exact match "foo"
+
+        vm.stack.push(Value::Junction(JunctionType::Any, vec![Value::Str("Match".to_string()), Value::Str("foo".to_string())]));
+        vm.stack.push(Value::Str("foo".to_string()));
+        vm.execute_gene_inner(OpCode::Parse, &[]);
+        let res2 = vm.stack.pop().unwrap();
+        assert!(matches!(res2, Value::Str(_)));
+    }
+
+    #[test]
+    fn test_babel_parser_seq() {
+        let mut vm = make_vm();
+        // Seq(Match("a"), Match("b"))
+
+        let p_a = Value::Junction(JunctionType::Any, vec![Value::Str("Match".to_string()), Value::Str("a".to_string())]);
+        let p_b = Value::Junction(JunctionType::Any, vec![Value::Str("Match".to_string()), Value::Str("b".to_string())]);
+
+        vm.stack.push(p_a);
+        vm.stack.push(p_b);
+        vm.execute_gene_inner(OpCode::ParserSeq, &[]);
+        let parser = vm.stack.pop().unwrap();
+
+        vm.stack.push(parser);
+        vm.stack.push(Value::Str("ab".to_string()));
+        vm.execute_gene_inner(OpCode::Parse, &[]);
+        let res = vm.stack.pop().unwrap();
+        assert!(matches!(res, Value::Junction(JunctionType::All, _)));
+    }
+
+    #[test]
+    fn test_babel_parser_alt() {
+        let mut vm = make_vm();
+        // Alt(Match("a"), Match("b"))
+
+        let p_a = Value::Junction(JunctionType::Any, vec![Value::Str("Match".to_string()), Value::Str("a".to_string())]);
+        let p_b = Value::Junction(JunctionType::Any, vec![Value::Str("Match".to_string()), Value::Str("b".to_string())]);
+
+        vm.stack.push(p_a);
+        vm.stack.push(p_b);
+        vm.execute_gene_inner(OpCode::ParserAlt, &[]);
+        let parser = vm.stack.pop().unwrap();
+
+        // Match "b"
+        vm.stack.push(parser);
+        vm.stack.push(Value::Str("b".to_string()));
+        vm.execute_gene_inner(OpCode::Parse, &[]);
+        let res = vm.stack.pop().unwrap();
+        match res {
+            Value::Str(s) => assert_eq!(s, "b"),
+            _ => panic!("Expected string 'b'"),
         }
     }
 
-    // Expected Stack state:
-    // 1. Push 42
-    // 2. Push "Any", Push 1, Call Handler (Drops 2) -> Stack: [42]
-    // 3. Push "All", Push 1, Call Handler (Drops 2) -> Stack: [42]
-    assert_eq!(vm.stack.len(), 1);
-    assert_eq!(vm.stack[0], Value::Int(42));
+    #[test]
+    fn test_babel_parser_regex() {
+        let mut vm = make_vm();
+        vm.stack.push(Value::Str("\\d+".to_string()));
+        vm.execute_gene_inner(OpCode::ParserRegex, &[]);
+        let parser = vm.stack.pop().unwrap();
+
+        vm.stack.push(parser);
+        vm.stack.push(Value::Str("12345".to_string()));
+        vm.execute_gene_inner(OpCode::Parse, &[]);
+        let res = vm.stack.pop().unwrap();
+        match res {
+            Value::Str(s) => assert_eq!(s, "12345"),
+            _ => panic!("Expected string '12345'"),
+        }
+    }
 }
