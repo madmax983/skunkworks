@@ -2,10 +2,10 @@
 
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/typographic-turbulence
+### [Concentration Level: EXECUTED] - Location: graveyard/typographic-turbulence
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Documentation Void confirmed. Condemned.
-- **Note:** "The flow is silent. The Reaper waits."
+- **Status:** Specimen executed. Diagnosis: Documentation Void. Moved to graveyard.
+- **Note:** "The words have drowned. The flow is silent."
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/voronoi-ants
 - **Scent Origin:** Mycelium 🍄 (Sensed: Self-Referential Sensor)
@@ -49,10 +49,10 @@
 - **Status:** Generative ambient music derived from git history.
 - **Note:** "Every commit has a sound."
 
-### [Concentration Level: FRESH] - Location: experiments/lithosphere-termites
+### [Concentration Level: TOXIC] - Location: experiments/lithosphere-termites
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen pardoned. Compilation successful. Documentation Void warning remains.
-- **Note:** "The termites have found a new purpose. But they still need a map."
+- **Status:** Zombie Status Confirmed. Recidivist. Documentation Void / Skeletal Rot. Condemned.
+- **Note:** "The pardon was wasted. The map was never drawn."
 
 ### [Concentration Level: STABLE TRAIL] - Location: crates/physics-pbd
 - **Scent Origin:** Mycelium 🍄 (Sensed: Stability)
