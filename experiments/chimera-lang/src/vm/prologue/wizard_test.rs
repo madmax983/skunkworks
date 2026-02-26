@@ -1,6 +1,6 @@
+use crate::ast::{Dna, Helix};
 use crate::vm::prologue::exec_prologue_tick;
 use crate::vm::{ChimeraVM, Value};
-use crate::ast::{Dna, Helix};
 
 #[test]
 fn test_wizard_spawn_and_move() {
@@ -17,7 +17,10 @@ fn test_wizard_spawn_and_move() {
     exec_prologue_tick(&mut vm);
 
     // Wizard should be registered (It might have moved, so just check existence of agent with correct state type or just any agent if we assume it's the only one)
-    assert!(!vm.prologue_state.agents.is_empty(), "Wizard agent should exist in state");
+    assert!(
+        !vm.prologue_state.agents.is_empty(),
+        "Wizard agent should exist in state"
+    );
 
     // Check if it's nearby (at most 1 step away)
     let wizard = &vm.prologue_state.agents[0];
@@ -52,7 +55,9 @@ fn test_wizard_polymorph() {
     vm.grid[5][6] = Value::Str("@".to_string());
 
     // Force Wizard State to have high Mana
-    vm.prologue_state.registers.insert((5, 5), Value::Str("🧙:100:100:0".to_string()));
+    vm.prologue_state
+        .registers
+        .insert((5, 5), Value::Str("🧙:100:100:0".to_string()));
 
     // Run ticks until something happens (probabilistic)
     // We can't guarantee immediate polymorph, but we can check if it happens eventually
@@ -75,8 +80,10 @@ fn test_wizard_polymorph() {
 
         // Reset setup if Wizard moved away without casting
         if vm.grid[5][5] != Value::Str("🧙".to_string()) {
-             vm.grid[5][5] = Value::Str("🧙".to_string());
-             vm.prologue_state.registers.insert((5, 5), Value::Str("🧙:100:100:0".to_string()));
+            vm.grid[5][5] = Value::Str("🧙".to_string());
+            vm.prologue_state
+                .registers
+                .insert((5, 5), Value::Str("🧙:100:100:0".to_string()));
         }
     }
 
@@ -107,7 +114,9 @@ fn test_wizard_alchemy() {
     vm.grid[5][6] = Value::Int(42);
 
     // Give Mana
-    vm.prologue_state.registers.insert((5, 5), Value::Str("🧙:100:100:0".to_string()));
+    vm.prologue_state
+        .registers
+        .insert((5, 5), Value::Str("🧙:100:100:0".to_string()));
 
     let mut transmuted = false;
     for _ in 0..50 {

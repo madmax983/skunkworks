@@ -13,3 +13,7 @@
 **[Unchecked PBD Regression]**
 **Learning:** Attempted to optimize `physics-pbd` constraint solver using `unsafe { get_unchecked }` to skip bounds checks. Resulted in NO performance gain (or slight regression) compared to safe indexing, likely due to compiler already optimizing bounds checks or poor interaction with `#[inline]`.
 **Action:** Do not reach for `unsafe` purely for array indexing unless the profiler explicitly points to bounds checks as a bottleneck AND benchmarks prove the win. Safe Rust is fast enough.
+
+**[Performance]**
+**Learning:** Checking for self-interaction (`i == my_idx` or `ptr::eq`) inside a hot loop prevents vectorization and adds branch overhead. Loop splitting (iterating `0..i` and `i+1..N`) removes the branch entirely, yielding ~40% speedup in N-body simulations.
+**Action:** Use loop splitting for pairwise interactions instead of `if i == j continue`.

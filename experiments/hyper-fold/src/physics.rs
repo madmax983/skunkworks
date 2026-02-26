@@ -122,7 +122,9 @@ impl PbdSystem4D {
                 let diff = p_j.pos - p_i.pos;
                 let dist_sq = diff.length_squared();
 
-                if dist_sq < 0.01 { continue; } // Avoid singularity
+                if dist_sq < 0.01 {
+                    continue;
+                } // Avoid singularity
 
                 let dist = dist_sq.sqrt();
                 let dir = diff / dist; // Direction from i to j
@@ -132,7 +134,10 @@ impl PbdSystem4D {
                 // Opposite to Repel (Force away from j for i)
                 let p_i_mag = p_i.magnetic_polarity;
                 let p_j_mag = p_j.magnetic_polarity;
-                let alignment = p_i_mag.x * p_j_mag.x + p_i_mag.y * p_j_mag.y + p_i_mag.z * p_j_mag.z + p_i_mag.w * p_j_mag.w;
+                let alignment = p_i_mag.x * p_j_mag.x
+                    + p_i_mag.y * p_j_mag.y
+                    + p_i_mag.z * p_j_mag.z
+                    + p_i_mag.w * p_j_mag.w;
 
                 // Force magnitude scales with alignment and inverse square distance
                 let force_mag = strength * alignment / dist_sq;
@@ -173,7 +178,9 @@ impl PbdSystem4D {
 
             // Floor constraint (Y > -5.0)? Or maybe let it float.
             // Let's add a simple bounds check to keep it visible
-            if p.pos.y < -10.0 { p.pos.y = -10.0; }
+            if p.pos.y < -10.0 {
+                p.pos.y = -10.0;
+            }
         }
 
         // Constraints

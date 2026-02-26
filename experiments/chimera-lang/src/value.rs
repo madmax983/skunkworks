@@ -145,8 +145,12 @@ impl Value {
                                     comfy_table::Cell::new("False").fg(comfy_table::Color::Red)
                                 }
                                 // Polish: Treat 1/0 as boolean flags in table view
-                                Value::Int(1) => comfy_table::Cell::new("1").fg(comfy_table::Color::Green),
-                                Value::Int(0) => comfy_table::Cell::new("0").fg(comfy_table::Color::Red),
+                                Value::Int(1) => {
+                                    comfy_table::Cell::new("1").fg(comfy_table::Color::Green)
+                                }
+                                Value::Int(0) => {
+                                    comfy_table::Cell::new("0").fg(comfy_table::Color::Red)
+                                }
                                 _ => comfy_table::Cell::new(v.to_string()),
                             }
                         })

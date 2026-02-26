@@ -1,4 +1,3 @@
-
 #[cfg(test)]
 mod tests {
     use chimera_lang::compiler::compile;
@@ -15,6 +14,10 @@ mod tests {
         }
         "#;
         let result = compile(src, None);
-        assert!(result.is_ok(), "Failed to compile evolution block: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "Failed to compile evolution block: {:?}",
+            result.err()
+        );
     }
 }

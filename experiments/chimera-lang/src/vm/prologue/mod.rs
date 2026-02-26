@@ -2094,8 +2094,8 @@ mod mesmerist_test;
 #[cfg(test)]
 mod phonetics_test;
 #[cfg(test)]
+mod prologue_genesis_test;
+#[cfg(test)]
 mod prologue_library_test;
 #[cfg(test)]
 mod wizard_test;
-#[cfg(test)]
-mod prologue_genesis_test;

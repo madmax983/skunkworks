@@ -1,10 +1,10 @@
 #[cfg(test)]
 #[cfg(feature = "nova")]
 mod tests {
-    use chimera_lang::ast::{Dna, Helix, Gene, Strand};
+    use chimera_lang::ast::{Dna, Gene, Helix, Strand};
     use chimera_lang::opcode::OpCode;
-    use chimera_lang::vm::{ChimeraVM, Value};
     use chimera_lang::vm::nova_ballistics::Projectile;
+    use chimera_lang::vm::{ChimeraVM, Value};
 
     #[test]
     fn test_nan_teleport_safety() {
@@ -13,13 +13,16 @@ mod tests {
         // REALITY: It teleports to x=0 and destroys the grid cell. This test FAILS if the bug exists.
 
         // DNA with infinite loop to prevent halting
-        let genes = vec![
-            Gene { op: OpCode::Jump, args: vec![chimera_lang::ast::Nucleotide::Number(0)] },
-        ];
+        let genes = vec![Gene {
+            op: OpCode::Jump,
+            args: vec![chimera_lang::ast::Nucleotide::Number(0)],
+        }];
 
         let dna = Dna {
             evolution_config: None,
-            helix: Helix { strands: vec![Strand { genes }] },
+            helix: Helix {
+                strands: vec![Strand { genes }],
+            },
         };
         let mut vm = ChimeraVM::new(dna);
         vm.relativity_mode = true;
@@ -50,6 +53,10 @@ mod tests {
         println!("Grid[5][0] is {:?}", vm.grid[5][0]);
 
         // Assert Safety
-        assert_eq!(vm.grid[5][0], Value::Int(99), "TELEPORT ATTACK: Grid cell (5,0) was destroyed by NaN projectile!");
+        assert_eq!(
+            vm.grid[5][0],
+            Value::Int(99),
+            "TELEPORT ATTACK: Grid cell (5,0) was destroyed by NaN projectile!"
+        );
     }
 }

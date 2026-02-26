@@ -1,10 +1,12 @@
-
 #[cfg(test)]
 mod tests {
+    use chimera_lang::ast::{Dna, EvolutionConfig, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::compiler::compile;
-    use chimera_lang::vm::{ChimeraVM, evolution::{EvolutionEngine, Challenge}};
-    use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide, EvolutionConfig};
     use chimera_lang::opcode::OpCode;
+    use chimera_lang::vm::{
+        evolution::{Challenge, EvolutionEngine},
+        ChimeraVM,
+    };
 
     #[test]
     fn test_evolution_zero_population_config_parse() {
@@ -26,7 +28,10 @@ mod tests {
             // If parser is fixed, this should be 0.
             // If parser is buggy, it defaults to 50.
             // We expect it to be 0 now.
-            assert_eq!(config.population_size, 0, "Parser failed to read population: 0");
+            assert_eq!(
+                config.population_size, 0,
+                "Parser failed to read population: 0"
+            );
 
             let seed = dna.helix.strands[0].clone();
             let vm = ChimeraVM::new(dna.clone());
@@ -36,7 +41,11 @@ mod tests {
             engine.step(&vm);
 
             // Verify clamping happened
-            assert_eq!(engine.population.len(), 1, "Engine did not clamp population size to 1");
+            assert_eq!(
+                engine.population.len(),
+                1,
+                "Engine did not clamp population size to 1"
+            );
         } else {
             panic!("Failed to parse evolution config");
         }
@@ -55,7 +64,9 @@ mod tests {
 
         let dna = Dna {
             evolution_config: None,
-            helix: Helix { strands: vec![seed.clone()] },
+            helix: Helix {
+                strands: vec![seed.clone()],
+            },
         };
         let vm = ChimeraVM::new(dna);
 
@@ -66,6 +77,10 @@ mod tests {
         engine.step(&vm);
 
         // Verify clamping
-        assert_eq!(engine.population.len(), 1, "Engine did not clamp population size to 1");
+        assert_eq!(
+            engine.population.len(),
+            1,
+            "Engine did not clamp population size to 1"
+        );
     }
 }

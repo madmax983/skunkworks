@@ -5426,7 +5426,7 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 let bobber = Bobber::new(
                     bobber_x,
                     app_state.fishing_bobber_y + bob_offset,
-                    app_state.fishing_hooked
+                    app_state.fishing_hooked,
                 );
                 bobber.draw(ctx);
 

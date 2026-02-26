@@ -1,5 +1,5 @@
 use super::normalize_coords;
-use crate::ast::{JunctionType, Nucleotide, Gene};
+use crate::ast::{Gene, JunctionType, Nucleotide};
 use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value, MAX_STRANDS};
 use std::str::FromStr;
@@ -26,7 +26,7 @@ pub fn apply_genesis_rune(
 
     // Check outputs first to avoid re-triggering if already set
     if next_signals[y][x].is_some() {
-         return false;
+        return false;
     }
 
     let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
@@ -70,10 +70,13 @@ pub fn apply_genesis_rune(
                 }
             }
         } else {
-             println!("DEBUG: Genesis failed to parse OpCode: {}", op_str);
+            println!("DEBUG: Genesis failed to parse OpCode: {}", op_str);
         }
     } else {
-        println!("DEBUG: Genesis missing inputs at {},{}: W={:?} N={:?}", x, y, w_sig, n_sig);
+        println!(
+            "DEBUG: Genesis missing inputs at {},{}: W={:?} N={:?}",
+            x, y, w_sig, n_sig
+        );
     }
 
     changes
@@ -110,7 +113,8 @@ pub fn apply_ligation_rune(vm: &mut ChimeraVM, y: usize, x: usize) {
                 if let (Value::Str(op_str), Value::Junction(_, args_list)) = (&list[0], &list[1]) {
                     if let Ok(op) = OpCode::from_str(op_str) {
                         // Convert Value Args to Nucleotides
-                        let nucleotides: Vec<Nucleotide> = args_list.iter().map(value_to_nucleotide).collect();
+                        let nucleotides: Vec<Nucleotide> =
+                            args_list.iter().map(value_to_nucleotide).collect();
 
                         let gene = Gene {
                             op,
@@ -129,7 +133,8 @@ pub fn apply_ligation_rune(vm: &mut ChimeraVM, y: usize, x: usize) {
                                 vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
                             }
 
-                            vm.output.push(format!("GENETICS: Ligated {} to Strand {}", op_str, s_idx));
+                            vm.output
+                                .push(format!("GENETICS: Ligated {} to Strand {}", op_str, s_idx));
                         } else {
                             println!("DEBUG: Ligation failed: Invalid strand index {}", s_idx);
                         }
@@ -140,7 +145,10 @@ pub fn apply_ligation_rune(vm: &mut ChimeraVM, y: usize, x: usize) {
             }
         }
     } else {
-        println!("DEBUG: Ligation missing inputs at {},{}: W={:?} N={:?}", x, y, w_sig, n_sig);
+        println!(
+            "DEBUG: Ligation missing inputs at {},{}: W={:?} N={:?}",
+            x, y, w_sig, n_sig
+        );
     }
 }
 
@@ -151,7 +159,7 @@ fn value_to_nucleotide(v: &Value) -> Nucleotide {
         Value::Junction(t, list) => {
             let nucleos = list.iter().map(value_to_nucleotide).collect();
             Nucleotide::Junction(*t, nucleos)
-        },
+        }
         _ => Nucleotide::Number(0),
     }
 }

@@ -92,6 +92,6 @@ fn test_compile_acoustic_loop() {
     // loop { play(20) } -> Push(20), Note, Jump(0)
 
     let len = looper.genes.len();
-    assert_eq!(looper.genes[len-1].op, OpCode::Jump);
-    assert_eq!(looper.genes[len-1].args[0], Nucleotide::Number(0)); // Jumps to self
+    assert_eq!(looper.genes[len - 1].op, OpCode::Jump);
+    assert_eq!(looper.genes[len - 1].args[0], Nucleotide::Number(0)); // Jumps to self
 }

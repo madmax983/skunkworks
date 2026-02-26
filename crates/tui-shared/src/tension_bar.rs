@@ -47,7 +47,10 @@ impl<'a> TensionBar<'a> {
     /// * `tension` - A value between 0.0 (empty) and 1.0 (full). Values outside this range
     ///   are clamped.
     pub fn new(tension: f64) -> Self {
-        Self { tension, block: None }
+        Self {
+            tension,
+            block: None,
+        }
     }
 
     /// Sets a custom block for the widget.
@@ -75,9 +78,9 @@ impl<'a> Widget for TensionBar<'a> {
         };
         let color = Color::Rgb(r, g, b);
 
-        let block = self.block.unwrap_or_else(|| {
-            Block::default().borders(Borders::ALL).title("TENSION")
-        });
+        let block = self
+            .block
+            .unwrap_or_else(|| Block::default().borders(Borders::ALL).title("TENSION"));
 
         let inner_area = block.inner(area);
         block.render(area, buf);
