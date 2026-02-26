@@ -98,15 +98,27 @@ pub fn process_automaton_agent(
         return Some((agent.clone(), None));
     }
 
-    // Convert program to Vec<char> for O(1) random access
-    let program_chars: Vec<char> = state.program.chars().collect();
-    let program_len = program_chars.len();
+    // Optimization: Avoid collecting Vec<char> (O(N) alloc) every tick.
+    // Instead, iterate to find PC (O(PC)). Since we execute one instruction per tick,
+    // this avoids the massive allocation overhead for large programs.
 
-    // Fetch Instruction
-    let instruction = program_chars.get(state.pc % program_len.max(1)).cloned().unwrap_or(' ');
+    let program_char_count = state.program.chars().count(); // O(N), but zero-alloc.
 
-    // Advance PC (unless loop logic overrides it)
-    state.pc = (state.pc + 1) % program_len.max(1);
+    // Ensure PC is within bounds (wrapping logic from original implementation)
+    // Note: We update state.pc here for the execution context
+    state.pc %= program_char_count.max(1);
+
+    // 1. Find byte offset and char at current PC
+    // Using `char_indices().nth(pc)` is O(PC), but strictly cheaper than O(N) alloc.
+    let (current_byte_offset, instruction) = state
+        .program
+        .char_indices()
+        .nth(state.pc)
+        .map(|(i, c)| (i, c))
+        .unwrap_or((0, ' '));
+
+    // Advance PC (default behavior)
+    let mut next_pc = (state.pc + 1) % program_char_count.max(1);
 
     let mut move_target = None;
     let mut updated_agent = agent.clone();
@@ -234,49 +246,61 @@ pub fn process_automaton_agent(
             // Jump Forward if Zero
             if state.memory == 0 {
                 let mut depth = 1;
-                while depth > 0 {
-                    if state.pc >= program_len {
-                        break;
-                    }
-                    let c = program_chars.get(state.pc).cloned().unwrap_or(' ');
+                // Scan forward from current position
+                // Note: current_byte_offset points to '[', so we skip it first?
+                // Iterating from byte_offset includes current char.
+                // We want to find matching ']'.
+                // If we use char_indices from current offset:
+                let rest = &state.program[current_byte_offset..];
+                let mut chars = rest.char_indices();
+                chars.next(); // Skip the current '['
+
+                let mut steps = 0;
+                for (_, c) in chars {
+                    steps += 1;
                     if c == '[' {
                         depth += 1;
                     } else if c == ']' {
                         depth -= 1;
                     }
-                    state.pc += 1;
+                    if depth == 0 {
+                        break;
+                    }
                 }
+                // Update PC
+                next_pc = (state.pc + steps + 1) % program_char_count.max(1);
             }
         }
         ']' => {
             // Jump Back if Non-Zero
             if state.memory != 0 {
-                let mut scan_pc = if state.pc == 0 {
-                    program_len.saturating_sub(1)
-                } else {
-                    state.pc - 1
-                };
                 let mut depth = 1;
-
-                loop {
-                    if scan_pc == 0 {
-                        // Hit start of program - abort jump to avoid underflow
-                        break;
-                    }
-                    scan_pc -= 1;
-
-                    let c = program_chars.get(scan_pc).cloned().unwrap_or(' ');
+                // Scan backward from current position
+                // We need chars BEFORE current_byte_offset
+                let prefix = &state.program[..current_byte_offset];
+                let mut steps = 0;
+                // Iterate in reverse
+                for c in prefix.chars().rev() {
+                    steps += 1;
                     if c == ']' {
                         depth += 1;
                     } else if c == '[' {
                         depth -= 1;
                     }
-
                     if depth == 0 {
                         // Found matching [
-                        state.pc = scan_pc;
+                        // Calculate new PC
+                        // If we stepped back 'steps' chars, new pc is current - steps
+                        next_pc = state.pc.saturating_sub(steps);
                         break;
                     }
+                }
+                if depth > 0 && state.pc > 0 {
+                    // Loop wrapped or not found? Original logic aborts if hitting 0.
+                    // If not found, we just continue (fall through to next instruction).
+                    // Or we assume wrap around?
+                    // Original code: `if scan_pc == 0 { break }`.
+                    // So if we don't find it, we don't jump.
                 }
             }
         }
@@ -294,6 +318,9 @@ pub fn process_automaton_agent(
              move_target = None;
          }
     }
+
+    // Commit PC update
+    state.pc = next_pc;
 
     updated_agent.state = state.to_value();
     Some((updated_agent, move_target))
