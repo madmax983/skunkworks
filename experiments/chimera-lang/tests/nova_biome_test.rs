@@ -73,8 +73,8 @@ mod tests {
         // So we just need center to have different inertia.
         vm_swamp.hormone_grid[8][8][0] = 100;
 
-        chimera_lang::vm::nova::diffuse_hormones(&mut vm_plains);
-        chimera_lang::vm::nova::diffuse_hormones(&mut vm_swamp);
+        chimera_lang::vm::nova_diffusion::diffuse_hormones(&mut vm_plains);
+        chimera_lang::vm::nova_diffusion::diffuse_hormones(&mut vm_swamp);
 
         let plains_val = vm_plains.hormone_grid[8][8][0];
         let swamp_val = vm_swamp.hormone_grid[8][8][0];

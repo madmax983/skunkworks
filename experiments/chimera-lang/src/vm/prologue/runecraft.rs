@@ -161,11 +161,13 @@ fn apply_anvil_rune(vm: &mut ChimeraVM, y: usize, x: usize) {
                         vm.prologue_state.signal_grid[sy][sx] = Some(Value::Int(start_idx as i64));
                     }
 
-                    vm.output.push(format!("ANVIL: Forged strand {}", start_idx));
+                    vm.output
+                        .push(format!("ANVIL: Forged strand {}", start_idx));
                     // Self-activate to show success
                     vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
                 } else {
-                     vm.output.push("ANVIL: Compilation produced no strands".to_string());
+                    vm.output
+                        .push("ANVIL: Compilation produced no strands".to_string());
                 }
             }
             Err(e) => {

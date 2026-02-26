@@ -152,7 +152,6 @@ pub struct Organelle {
     pub stage: u8,
 }
 
-
 pub fn check_chorus_chords(vm: &mut ChimeraVM) -> Option<usize> {
     let buffer: Vec<&str> = vm.chorus_buffer.iter().map(|s| s.as_str()).collect();
     let len = buffer.len();
@@ -263,8 +262,6 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> Option<usize> {
 
     None
 }
-
-
 
 /// Executes a Nova-specific OpCode.
 ///
@@ -735,7 +732,6 @@ fn exec_conjugate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
-
 /// Converts a direction vector (dy, dx) into a bitmask for membrane checking.
 ///
 /// Mappings:
@@ -752,7 +748,6 @@ pub fn get_direction_mask(dy: i64, dx: i64) -> Option<u8> {
         _ => None,
     }
 }
-
 
 fn exec_harmonize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
@@ -1545,7 +1540,9 @@ fn exec_map(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     if let Ok(mut pairs) = ChimeraParser::parse(Rule::strand, s) {
                         let pair = pairs.next().unwrap();
                         match crate::ast::Strand::try_from_pair(pair) {
-                            Ok(strand) => super::nova_simulation::execute_ephemeral_strand(vm, &strand),
+                            Ok(strand) => {
+                                super::nova_simulation::execute_ephemeral_strand(vm, &strand)
+                            }
                             Err(e) => vm.output.push(format!("MAP ERROR: {}", e)),
                         }
                     } else {

@@ -23,16 +23,30 @@ pub fn apply_altar_runes(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     let w_pos = normalize_coords(y as i64, x as i64 - 1);
     let e_pos = normalize_coords(y as i64, x as i64 + 1);
 
-    if let (Some((ny, nx)), Some((sy, sx)), Some((wy, wx)), Some((ey, ex))) = (n_pos, s_pos, w_pos, e_pos) {
+    if let (Some((ny, nx)), Some((sy, sx)), Some((wy, wx)), Some((ey, ex))) =
+        (n_pos, s_pos, w_pos, e_pos)
+    {
         let n_val = &vm.grid[ny][nx];
         let s_val = &vm.grid[sy][sx];
         let w_val = &vm.grid[wy][wx];
         let e_val = &vm.grid[ey][ex];
 
-        let has_fire = match n_val { Value::Str(s) => s == "Δ", _ => false };
-        let has_water = match s_val { Value::Str(s) => s == "∇", _ => false };
-        let has_earth = match w_val { Value::Str(s) => s == "◊", _ => false };
-        let has_air = match e_val { Value::Str(s) => s == "○", _ => false };
+        let has_fire = match n_val {
+            Value::Str(s) => s == "Δ",
+            _ => false,
+        };
+        let has_water = match s_val {
+            Value::Str(s) => s == "∇",
+            _ => false,
+        };
+        let has_earth = match w_val {
+            Value::Str(s) => s == "◊",
+            _ => false,
+        };
+        let has_air = match e_val {
+            Value::Str(s) => s == "○",
+            _ => false,
+        };
 
         if has_fire && has_water && has_earth && has_air {
             // Consume Elements
@@ -50,26 +64,43 @@ pub fn apply_altar_runes(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             // Also grant massive energy
             vm.energy = vm.energy.saturating_add(500);
 
-            vm.output.push(format!("ALTAR: Elemental Convergence at {},{}! Spirit Summoned.", x, y));
+            vm.output.push(format!(
+                "ALTAR: Elemental Convergence at {},{}! Spirit Summoned.",
+                x, y
+            ));
             return;
         }
     }
 
     // Check for Void Ritual
     // Pattern: Surrounded by Void (Ø)
-    if let (Some((ny, nx)), Some((sy, sx)), Some((wy, wx)), Some((ey, ex))) = (n_pos, s_pos, w_pos, e_pos) {
+    if let (Some((ny, nx)), Some((sy, sx)), Some((wy, wx)), Some((ey, ex))) =
+        (n_pos, s_pos, w_pos, e_pos)
+    {
         let n_val = &vm.grid[ny][nx];
         let s_val = &vm.grid[sy][sx];
         let w_val = &vm.grid[wy][wx];
         let e_val = &vm.grid[ey][ex];
 
-        let n_void = match n_val { Value::Str(s) => s == "Ø", _ => false };
-        let s_void = match s_val { Value::Str(s) => s == "Ø", _ => false };
-        let w_void = match w_val { Value::Str(s) => s == "Ø", _ => false };
-        let e_void = match e_val { Value::Str(s) => s == "Ø", _ => false };
+        let n_void = match n_val {
+            Value::Str(s) => s == "Ø",
+            _ => false,
+        };
+        let s_void = match s_val {
+            Value::Str(s) => s == "Ø",
+            _ => false,
+        };
+        let w_void = match w_val {
+            Value::Str(s) => s == "Ø",
+            _ => false,
+        };
+        let e_void = match e_val {
+            Value::Str(s) => s == "Ø",
+            _ => false,
+        };
 
         if n_void && s_void && w_void && e_void {
-             // Consume Voids
+            // Consume Voids
             vm.grid[ny][nx] = Value::Int(0);
             vm.grid[sy][sx] = Value::Int(0);
             vm.grid[wy][wx] = Value::Int(0);
@@ -78,7 +109,10 @@ pub fn apply_altar_runes(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             // Effect: Open Rift (Value::Str("ꝏ")) or just clear area
             vm.grid[y][x] = Value::Str("ꝏ".to_string()); // Infinity/Portal
 
-            vm.output.push(format!("ALTAR: Void Ritual at {},{}! The Abyss Gazes Back.", x, y));
+            vm.output.push(format!(
+                "ALTAR: Void Ritual at {},{}! The Abyss Gazes Back.",
+                x, y
+            ));
         }
     }
 }

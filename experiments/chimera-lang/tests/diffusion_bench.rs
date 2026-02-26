@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use chimera_lang::ast::{Dna, Helix};
-    use chimera_lang::vm::nova;
+    use chimera_lang::vm::nova_diffusion;
     use chimera_lang::vm::ChimeraVM;
     use std::time::Instant;
 
@@ -23,8 +23,8 @@ mod tests {
 
         let start = Instant::now();
         for _ in 0..10_000 {
-            nova::diffuse_hormones(&mut vm);
-            nova::diffuse_waste(&mut vm);
+            nova_diffusion::diffuse_hormones(&mut vm);
+            nova_diffusion::diffuse_waste(&mut vm);
         }
         let duration = start.elapsed();
         println!("Diffusion 10k iters took: {:?}", duration);

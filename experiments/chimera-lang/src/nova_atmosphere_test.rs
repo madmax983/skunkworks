@@ -129,7 +129,7 @@ mod tests {
         vm.hormone_grid[cy][cx][0] = 1000;
 
         // Run physics manually
-        crate::vm::nova::diffuse_hormones(&mut vm);
+        crate::vm::nova_diffusion::diffuse_hormones(&mut vm);
 
         let west = vm.hormone_grid[cy][cx - 1][0];
         let east = vm.hormone_grid[cy][cx + 1][0];
@@ -152,7 +152,7 @@ mod tests {
         // Case 1: Clear Sky
         vm.light_grid[cy][cx] = 1000;
         // Run light diffusion
-        crate::vm::nova::diffuse_light(&mut vm);
+        crate::vm::nova_diffusion::diffuse_light(&mut vm);
         let clear_val = vm.light_grid[cy][cx];
 
         // Case 2: Cloudy
@@ -160,7 +160,7 @@ mod tests {
         vm2.context_loc = (cy, cx);
         vm2.light_grid[cy][cx] = 1000;
         vm2.moisture_grid[cy][cx] = 50; // Max opacity
-        crate::vm::nova::diffuse_light(&mut vm2);
+        crate::vm::nova_diffusion::diffuse_light(&mut vm2);
         let cloudy_val = vm2.light_grid[cy][cx];
 
         assert!(

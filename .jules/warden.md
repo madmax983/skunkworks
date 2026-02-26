@@ -100,3 +100,7 @@
 ## 2027-07-15 - Evolution Engine Zero Population Panic
 **Threat:** The `EvolutionEngine` in `experiments/chimera-lang/src/vm/evolution.rs` would panic with "index out of bounds" if initialized with a population size of 0 (via malicious configuration or direct API use). This occurred because `tournament_select` attempted to access an empty pool.
 **Defense:** Updated `EvolutionEngine::new` to clamp `population_size` to `max(1)`, ensuring the population is never empty. Also hardened the parser in `compiler.rs` to correctly handle evolution properties using named rules, fixing a bug where configurations like `population: 0` were ignored (defaulting to 50) due to silent literal consumption in Pest.
+
+## 2027-08-15 - Babel Live Parse Infinite Loop (DoS)
+**Threat:** The inner loops in `nova_babel_live::exec_live_parse` (for string, regex, and action parsing) lacked iteration limits. A malicious grid configuration (e.g. toroidal wrapping without a terminating character) could cause an infinite loop, hanging the VM thread (DoS).
+**Defense:** Added `loop_safety` counter to limit inner parsing loops to 256 iterations (matching `GRID_SIZE` squared). Verified with `warden_babel_dos.rs`.
