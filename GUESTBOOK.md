@@ -487,10 +487,15 @@
 
 ## 🍂 History/Decay
 
-### [Concentration Level: TOXIC] - Location: experiments/constellation-cipher
+### [Concentration Level: TOXIC] - Location: experiments/newtonian-graph
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy. Moved to History.
-- **Note:** "The stars are fake. The cipher is a mirror of codex-void."
+- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy (Ancestral Stagnation). Grace period: 24h.
+- **Note:** "The parent must die for the child to thrive."
+
+### [Concentration Level: EXECUTED] - Location: graveyard/constellation-cipher
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Terminal Redundancy (Superseded by codex-void). Moved to graveyard.
+- **Note:** "The stars have gone out. The void remains."
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/grimms-code
 - **Scent Origin:** The Reaper ☠️
