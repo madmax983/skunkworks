@@ -505,7 +505,12 @@ pub fn exec_memetics_op(
                                             };
                                             if !content.is_empty() {
                                                 if let Ok((cst, _)) =
-                                                    crate::vm::babel::run_parser(grammar, &content)
+                                                    crate::vm::babel::run_parser(
+                                                        grammar,
+                                                        &content,
+                                                        &vm.prologue_state.logos_engine,
+                                                        0,
+                                                    )
                                                 {
                                                     let mutated_cst = crate::vm::babel::mutate_cst(
                                                         &cst,
@@ -539,7 +544,10 @@ pub fn exec_memetics_op(
                                                         );
                                                     if let Ok((cst, _)) =
                                                         crate::vm::babel::run_parser(
-                                                            grammar, &source,
+                                                            grammar,
+                                                            &source,
+                                                            &vm.prologue_state.logos_engine,
+                                                            0,
                                                         )
                                                     {
                                                         let mutated_cst =

@@ -2446,6 +2446,12 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Scribe,
 
+    /// **[Babel]** Defines a Grammar Rule manually.
+    ///
+    /// **Stack:** `[ ..., parser_junction, rule_name ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    DefineRule,
+
     /// **[Babel]** Compiles a Concrete Syntax Tree (CST) into a new Strand.
     ///
     /// **Stack:** `[ ..., cst, handler_strand_idx ] -> [ ..., new_strand_idx ]`

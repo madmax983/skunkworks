@@ -3480,6 +3480,7 @@ impl ChimeraVM {
             | OpCode::BabelCompile
             | OpCode::GridGrammar
             | OpCode::BabelLive
+            | OpCode::DefineRule
             | OpCode::Ouroboros => Some(babel::exec_babel_op(self, op, args)),
             OpCode::Superpose | OpCode::Collapse | OpCode::Observe => {
                 Some(nova::exec_nova_op(self, op, args))

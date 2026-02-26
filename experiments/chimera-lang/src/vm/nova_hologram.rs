@@ -453,7 +453,12 @@ pub fn exec_holo_invoke(
 
             if vm.stack.len() > start_stack_depth {
                 let grammar = vm.stack.pop().unwrap();
-                match crate::vm::babel::run_parser(&grammar, &input_string) {
+                match crate::vm::babel::run_parser(
+                    &grammar,
+                    &input_string,
+                    &vm.prologue_state.logos_engine,
+                    0,
+                ) {
                     Ok((ast, consumed)) => {
                         vm.output
                             .push(format!("HOLO_INVOKE: Parsed {} chars", consumed));
