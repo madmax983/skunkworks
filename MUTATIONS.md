@@ -1770,4 +1770,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A soft-body simulation (Tissue) where the nodes exist in the Poincaré Disk model of hyperbolic space.
 - **Novel trait**: Non-Euclidean Elasticity. The tissue experiences exponential strain as it expands towards the boundary.
 - **Status**: experiments/hyperbolic-tissue
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hyperbolic PBD solver operational.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hyperbolic PBD solver operational. Verified.
+
+### chimera-choreography
+- **Parents**: experiments/chimera-lang + experiments/laban-rover
+- **Concept**: ChimeraVM agents ("Dancers") executing genetic code where opcodes trigger movement changes based on Laban Effort parameters.
+- **Novel trait**: Choreographic Programming. The execution flow is a dance.
+- **Status**: experiments/chimera-choreography
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Dancers are moving based on Laban Effort.
