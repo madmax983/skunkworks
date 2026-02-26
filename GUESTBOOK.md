@@ -792,3 +792,13 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Portals are opening. The agents are folding space to eat.
 - **Note:** "Distance is just a suggestion."
+
+### [Concentration Level: EXECUTED] - Location: graveyard/newtonian-graph
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Terminal Redundancy. Moved to graveyard.
+- **Note:** "The graph was static. The physics were generic."
+
+### [Concentration Level: TOXIC] - Location: experiments/spinal-rhythms
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Documentation Void. Grace period: 24h.
+- **Note:** "The rhythm is undocumented. Silence is terminal."
