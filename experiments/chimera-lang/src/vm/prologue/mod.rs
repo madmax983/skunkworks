@@ -83,6 +83,7 @@ pub mod fission;
 pub mod forth;
 pub mod gardener;
 pub mod genetics;
+pub mod glitch;
 pub mod hyper;
 pub mod io;
 pub mod lexicon;
@@ -525,6 +526,8 @@ impl PrologueState {
                             | "👹"
                             // Astral
                             | "★"
+                            // Glitch
+                            | "👾" | "≋"
                     ) {
                         self.runes.insert((y, x));
 
@@ -556,6 +559,7 @@ impl PrologueState {
                             || s == "👹"
                             || s == "★"
                             || s == "🤖"
+                            || s == "👾"
                         {
                             // Try to retrieve persistent state
                             let raw_state = self
@@ -638,6 +642,8 @@ impl PrologueState {
                                     astral::AstralState::default().to_value()
                                 } else if s == "🤖" {
                                     automaton::AutomatonState::default().to_value()
+                                } else if s == "👾" {
+                                    glitch::GlitchState::default().to_value()
                                 } else {
                                     Value::Int(0)
                                 }
@@ -1065,6 +1071,9 @@ fn apply_propagation_rune(
         return true;
     }
     if mycelium::apply_mycelium_runes(rune, y, x, current_signals, next_signals, mycelium_buffer) {
+        return true;
+    }
+    if glitch::apply_glitch_runes(rune, y, x, current_signals, next_signals) {
         return true;
     }
     false
@@ -1857,6 +1866,14 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 }
                 None => continue,
             }
+        } else if current_type == "👾" {
+            match glitch::process_glitch_agent(vm, &agent, grid_snapshot) {
+                Some((updated_agent, t)) => {
+                    agent = updated_agent;
+                    t
+                }
+                None => continue,
+            }
         } else {
             process_seeker_logic(vm, &agent, grid_snapshot)
         };
@@ -1891,6 +1908,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "👹"
                 || current_type == "★"
                 || current_type == "🤖"
+                || current_type == "👾"
             {
                 vm.prologue_state.registers.insert(
                     (ny, nx),
@@ -1929,6 +1947,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                     || current_type == "👹"
                     || current_type == "★"
                     || current_type == "🤖"
+                    || current_type == "👾"
                 {
                     vm.prologue_state.registers.remove(&(y, x));
                 }
@@ -1965,6 +1984,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "👹"
                 || current_type == "★"
                 || current_type == "🤖"
+                || current_type == "👾"
             {
                 vm.prologue_state.registers.insert(
                     (y, x),
@@ -2136,3 +2156,5 @@ mod prologue_genesis_test;
 mod prologue_library_test;
 #[cfg(test)]
 mod wizard_test;
+#[cfg(test)]
+mod glitch_test;
