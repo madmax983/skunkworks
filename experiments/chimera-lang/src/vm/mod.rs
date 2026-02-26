@@ -149,6 +149,12 @@ mod neurochem_test;
 pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
+pub mod nova_diffusion;
+#[cfg(feature = "nova")]
+pub mod nova_simulation;
+#[cfg(feature = "nova")]
+pub mod nova_brainfuck;
+#[cfg(feature = "nova")]
 pub mod nova_alchemy_prime;
 #[cfg(feature = "nova")]
 pub mod nova_arcana;
@@ -1537,11 +1543,11 @@ impl ChimeraVM {
         let (cy, cx) = self.context_loc;
         self.waste_grid[cy][cx] += 10;
 
-        nova::diffuse_hormones(self);
-        nova::diffuse_waste(self);
-        nova::diffuse_light(self);
-        nova::diffuse_mutagen(self);
-        nova::diffuse_entropy(self);
+        nova_diffusion::diffuse_hormones(self);
+        nova_diffusion::diffuse_waste(self);
+        nova_diffusion::diffuse_light(self);
+        nova_diffusion::diffuse_mutagen(self);
+        nova_diffusion::diffuse_entropy(self);
         nova_scent::process_scents(self);
 
         nova_fluid::process_hydra_components(self);

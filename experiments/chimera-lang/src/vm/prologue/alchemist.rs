@@ -1,5 +1,5 @@
 use super::normalize_coords;
-use crate::vm::{ChimeraVM, Value, GRID_SIZE};
+use crate::vm::{ChimeraVM, Value};
 use rand::Rng;
 use std::fmt;
 use std::str::FromStr;
@@ -136,7 +136,7 @@ pub fn process_alchemist_logic(
 
     let next_pos = normalize_coords(y as i64 + dy, x as i64 + dx);
 
-    let mut moved = false;
+    let _moved = false;
     let mut new_pos = None;
 
     if let Some((ny, nx)) = next_pos {
@@ -144,7 +144,7 @@ pub fn process_alchemist_logic(
         match target_val {
             Value::Int(0) => {
                 // Empty space, move there
-                moved = true;
+                // moved = true;
                 new_pos = Some((ny, nx));
             }
             Value::Int(_) | Value::Str(_) => {
@@ -169,7 +169,7 @@ pub fn process_alchemist_logic(
 
                     // Move into the now empty spot?
                     // Yes.
-                    moved = true;
+                    // moved = true;
                     new_pos = Some((ny, nx));
                     vm.output.push(format!(
                         "ALCHEMIST: Gathered {:?} at {},{}",
