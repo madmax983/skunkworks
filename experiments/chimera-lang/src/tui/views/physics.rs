@@ -1,19 +1,15 @@
-use rand::Rng;
-use crate::tui::panel_block;
 use crate::vm::ChimeraVM;
 use crate::tui::state::AppState;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Gauge, List, ListItem, Paragraph, Row, Table},
+    widgets::{Block, Borders, List, ListItem, Paragraph},
     Frame,
 };
 use ratatui::widgets::canvas::{Canvas, Rectangle};
 #[cfg(feature = "nova")]
 use hyper_system::math::Vec4;
-#[cfg(feature = "nova")]
-use tui_shared::{Bobber, Button, TensionBar};
 
 #[cfg(feature = "nova")]
 pub(crate) fn render_topology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {

@@ -8,14 +8,9 @@ use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Gauge, List, ListItem, Paragraph, Row, Table},
+    widgets::{Block, Borders, List, ListItem, Paragraph},
     Frame,
 };
-use ratatui::widgets::canvas::{Canvas, Rectangle};
-#[cfg(feature = "nova")]
-use hyper_system::math::Vec4;
-#[cfg(feature = "nova")]
-use tui_shared::{Bobber, Button, TensionBar};
 
 pub(crate) fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let main_chunks = Layout::default()

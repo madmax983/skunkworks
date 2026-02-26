@@ -1,8 +1,4 @@
 use crate::matrix_rain::MatrixRain;
-#[cfg(feature = "nova")]
-use hyper_system::math::Vec4;
-#[cfg(feature = "nova")]
-use rand::Rng;
 use ratatui::widgets::ListState;
 
 #[derive(Debug, PartialEq, Clone, Copy)]

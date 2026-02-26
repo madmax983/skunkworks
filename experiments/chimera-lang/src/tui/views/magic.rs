@@ -1,20 +1,13 @@
 use crate::tui::GRIMOIRE_TEXT;
-use rand::Rng;
-use crate::tui::panel_block;
 use crate::vm::ChimeraVM;
 use crate::tui::state::AppState;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Gauge, List, ListItem, Paragraph, Row, Table},
+    widgets::{Block, Borders, List, ListItem, Paragraph},
     Frame,
 };
-use ratatui::widgets::canvas::{Canvas, Rectangle};
-#[cfg(feature = "nova")]
-use hyper_system::math::Vec4;
-#[cfg(feature = "nova")]
-use tui_shared::{Bobber, Button, TensionBar};
 
 #[cfg(feature = "nova")]
 pub(crate) fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
@@ -275,71 +268,6 @@ pub(crate) fn render_graveyard(f: &mut Frame, vm: &mut ChimeraVM, app_state: &Ap
     f.render_widget(help_para, chunks[1]);
 }
 
-pub(crate) fn render_wisdom(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
-    let chunks = Layout::default()
-        .direction(Direction::Horizontal)
-        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(app_state.get_render_area(f.area()));
-
-    // Left: Knowledge Base (Facts & Rules)
-    let mut kb_items = Vec::new();
-    if vm.knowledge_base.is_empty() {
-        kb_items.push(ListItem::new("Knowledge Base is empty."));
-    } else {
-        for (i, fact) in vm.knowledge_base.iter().enumerate() {
-            kb_items.push(
-                ListItem::new(format!("{}: {}", i, fact)).style(Style::default().fg(Color::Cyan)),
-            );
-        }
-    }
-    let kb_list = List::new(kb_items).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Knowledge Base (Facts & Rules)"),
-    );
-    f.render_widget(kb_list, chunks[0]);
-
-    // Right: Omens & Query Results
-    let right_chunks = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(chunks[1]);
-
-    // Omens
-    let mut omen_items = Vec::new();
-    if vm.omens.is_empty() {
-        omen_items.push(ListItem::new("No active prophecies (Omens)."));
-    } else {
-        for (i, omen) in vm.omens.iter().enumerate() {
-            omen_items.push(
-                ListItem::new(format!("{}: If {} Then {}", i, omen.condition, omen.effect))
-                    .style(Style::default().fg(Color::Yellow)),
-            );
-        }
-    }
-    let omen_list = List::new(omen_items).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Prophecies (Omens)"),
-    );
-    f.render_widget(omen_list, right_chunks[0]);
-
-    // Query Results
-    let mut result_items = Vec::new();
-    if app_state.query_results.is_empty() {
-        result_items.push(ListItem::new("No query results. Press '/' to query."));
-    } else {
-        for res in &app_state.query_results {
-            result_items.push(ListItem::new(res.clone()).style(Style::default().fg(Color::Green)));
-        }
-    }
-    let result_list = List::new(result_items).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title(format!("Query: {}", app_state.query_input)),
-    );
-    f.render_widget(result_list, right_chunks[1]);
-}
 
 #[cfg(feature = "nova")]
 pub(crate) fn render_codex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {

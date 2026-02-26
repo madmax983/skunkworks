@@ -1,5 +1,3 @@
-use rand::Rng;
-use crate::tui::panel_block;
 pub mod bio;
 pub mod core;
 pub mod magic;

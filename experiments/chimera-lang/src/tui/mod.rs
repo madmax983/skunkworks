@@ -1,5 +1,4 @@
 use crate::ast::Gene;
-use crate::matrix_rain::MatrixRain;
 use crate::vm::ChimeraVM;
 use crate::{ChimeraParser, Rule};
 use anyhow::Result;
@@ -8,23 +7,14 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-#[cfg(feature = "nova")]
-use hyper_system::math::Vec4;
 use pest::Parser;
-#[cfg(feature = "nova")]
-use rand::Rng;
-use ratatui::widgets::canvas::{Canvas, Rectangle};
 use ratatui::{
     backend::CrosstermBackend,
-    layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
-    text::{Line, Span},
-    widgets::{Block, Borders, Gauge, List, ListItem, ListState, Paragraph, Row, Table},
-    Frame, Terminal,
+    text::Span,
+    widgets::{Block, Borders, Paragraph}, Terminal,
 };
 use std::io;
-#[cfg(feature = "nova")]
-use tui_shared::{Bobber, Button, TensionBar};
 
 #[allow(dead_code)]
 pub(crate) const GOLDEN_FREQUENCIES: [f32; 4] = [161.8, 261.6, 432.0, 528.0];
