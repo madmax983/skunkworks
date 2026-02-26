@@ -1,4 +1,5 @@
 use super::normalize_coords;
+use crate::ast::JunctionType;
 use crate::vm::{ChimeraVM, Value};
 
 pub fn apply_runecraft_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
@@ -8,7 +9,13 @@ pub fn apply_runecraft_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
         return;
     }
 
-    // 2. Check for Custom Rune Execution
+    // 2. Check for The Anvil ⚒
+    if rune == "⚒" {
+        apply_anvil_rune(vm, y, x);
+        return;
+    }
+
+    // 3. Check for Custom Rune Execution
     if let Some(&idx) = vm.prologue_state.custom_runes.get(rune) {
         execute_custom_rune(vm, rune, idx, y, x);
     }
@@ -98,5 +105,72 @@ fn execute_custom_rune(vm: &mut ChimeraVM, rune: &str, idx: usize, y: usize, x: 
             "RUNECRAFT: Failed to execute '{}' (Invalid Strand {})",
             rune, idx
         ));
+    }
+}
+
+fn apply_anvil_rune(vm: &mut ChimeraVM, y: usize, x: usize) {
+    // The Anvil ⚒
+    // Input (West): Blueprint (Junction of Dish rows)
+    // Action: Flatten to source, Compile, Append to DNA.
+    // Output (South): New Strand Index.
+
+    let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+        vm.prologue_state.signal_grid[wy][wx].clone()
+    } else {
+        None
+    };
+
+    if let Some(Value::Junction(JunctionType::Dish, rows)) = w_sig {
+        // Flatten Blueprint to Source String
+        let mut source_parts = Vec::new();
+
+        for row in rows {
+            if let Value::Junction(JunctionType::Dish, cells) = row {
+                for cell in cells {
+                    match cell {
+                        Value::Int(n) => source_parts.push(n.to_string()),
+                        Value::Str(s) => {
+                            if !s.is_empty() && s != "." {
+                                source_parts.push(s);
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+            }
+        }
+
+        if source_parts.is_empty() {
+            vm.output.push("ANVIL: Empty blueprint".to_string());
+            return;
+        }
+
+        let body = source_parts.join(" ");
+        let strand_name = format!("forged_{}_{}_{}", vm.tick_counter, x, y);
+        let source_code = format!("strand {} {{ {} }}", strand_name, body);
+
+        match crate::compiler::compile(&source_code, None) {
+            Ok(mut dna) => {
+                let start_idx = vm.dna.helix.strands.len();
+                if !dna.helix.strands.is_empty() {
+                    // Append new strands
+                    vm.dna.helix.strands.append(&mut dna.helix.strands);
+
+                    // Emit signal South
+                    if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
+                        vm.prologue_state.signal_grid[sy][sx] = Some(Value::Int(start_idx as i64));
+                    }
+
+                    vm.output.push(format!("ANVIL: Forged strand {}", start_idx));
+                    // Self-activate to show success
+                    vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                } else {
+                     vm.output.push("ANVIL: Compilation produced no strands".to_string());
+                }
+            }
+            Err(e) => {
+                vm.output.push(format!("ANVIL: Compilation Failed: {}", e));
+            }
+        }
     }
 }
