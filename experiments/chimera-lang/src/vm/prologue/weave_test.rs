@@ -63,9 +63,9 @@ fn test_weave_circuit() {
         .registers
         .get(&(5, 7))
         .expect("Agent not in registers");
-    // Unpack: Junction(All, [dy, dx, Payload, Underfoot])
+    // Unpack: Junction(All, [dy, dx, Payload, Underfoot, Tension])
     if let Value::Junction(_, list) = reg {
-        assert_eq!(list.len(), 4);
+        assert_eq!(list.len(), 5);
         assert_eq!(list[2], Value::Int(10), "Payload should be 10");
     } else {
         panic!("Invalid agent state format: {:?}", reg);

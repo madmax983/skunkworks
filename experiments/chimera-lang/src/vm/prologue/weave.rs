@@ -2,6 +2,7 @@ use super::{normalize_coords, PrologueAgent};
 use crate::vm::{ChimeraVM, Value, GRID_SIZE};
 
 /// The Shuttle Agent (ð) weaves through the grid, interacting with Warps (║).
+/// Now upgraded with "Loom" Logic (Tension & Knots).
 pub fn process_shuttle_agent(
     vm: &mut ChimeraVM,
     agent: &PrologueAgent,
@@ -10,30 +11,70 @@ pub fn process_shuttle_agent(
     let updated_agent = agent.clone();
     let (y, x) = (agent.y, agent.x);
 
-    // Unpack State: [dy, dx, Payload, Underfoot]
-    // Default: East (0, 1), Payload 0, Underfoot Empty(0)
-    let (dy, dx, mut payload, underfoot) = match &updated_agent.state {
-        Value::Junction(_, list) if list.len() >= 4 => {
-            if let (Value::Int(dy), Value::Int(dx), p, u) = (&list[0], &list[1], &list[2], &list[3])
+    // Unpack State: [dy, dx, Payload, Underfoot, Tension]
+    // Default: East (0, 1), Payload 0, Underfoot Empty(0), Tension 0
+    let (dy, dx, mut payload, underfoot, mut tension) = match &updated_agent.state {
+        Value::Junction(_, list) if list.len() >= 5 => {
+            if let (Value::Int(dy), Value::Int(dx), p, u, Value::Int(t)) =
+                (&list[0], &list[1], &list[2], &list[3], &list[4])
             {
-                (*dy as i64, *dx as i64, p.clone(), u.clone())
+                (*dy as i64, *dx as i64, p.clone(), u.clone(), *t)
             } else {
-                (0, 1, Value::Int(0), Value::Int(0))
+                (0, 1, Value::Int(0), Value::Int(0), 0)
             }
         }
-        _ => (0, 1, Value::Int(0), Value::Int(0)),
+        Value::Junction(_, list) if list.len() == 4 => {
+            // Backward compatibility for old agents
+            if let (Value::Int(dy), Value::Int(dx), p, u) = (&list[0], &list[1], &list[2], &list[3])
+            {
+                (*dy as i64, *dx as i64, p.clone(), u.clone(), 0)
+            } else {
+                (0, 1, Value::Int(0), Value::Int(0), 0)
+            }
+        }
+        _ => (0, 1, Value::Int(0), Value::Int(0), 0),
     };
 
     // 1. Interact with Underfoot (the cell we are currently standing on)
     let current_cell = &underfoot;
     if let Value::Str(s) = current_cell {
         match s.as_str() {
+            // Loom Logic
+            "(" => tension += 1,
+            ")" => tension -= 1,
+            "8" => {
+                // Knot: Interaction based on Tension
+                if tension > 0 {
+                    // High Tension: Push Payload to Warp (Write)
+                    if let Some((wy, wx)) = find_warp(vm, y, x) {
+                        vm.prologue_state
+                            .registers
+                            .insert((wy, wx), payload.clone());
+                    }
+                    tension = 0; // Snap/Reset
+                } else if tension < 0 {
+                    // Low Tension: Pull Warp to Payload (Read)
+                    if let Some((wy, wx)) = find_warp(vm, y, x) {
+                        payload = vm
+                            .prologue_state
+                            .registers
+                            .get(&(wy, wx))
+                            .cloned()
+                            .unwrap_or(Value::Int(0));
+                    }
+                    tension = 0; // Relax/Reset
+                } else {
+                    // Zero Tension: No-op (Pass through)
+                }
+            }
+
+            // Legacy Arithmetic Logic (Direct Ops)
             "+" => {
                 if find_warp(vm, y, x).is_some() {
                     payload = op_warp(vm, y, x, &payload, |a, b| a + b);
                 } else {
                     return Some((
-                        update_state(updated_agent, dx, -dy, payload, underfoot),
+                        update_state(updated_agent, dx, -dy, payload, underfoot, tension),
                         Some((y, x)),
                     ));
                 }
@@ -41,7 +82,10 @@ pub fn process_shuttle_agent(
             "-" => payload = op_warp(vm, y, x, &payload, |a, b| a - b),
             "*" => payload = op_warp(vm, y, x, &payload, |a, b| a * b),
             "%" => payload = op_warp(vm, y, x, &payload, |a, b| if b != 0 { a % b } else { 0 }),
+
+            // Legacy Data Ops
             "§" => {
+                // Twist: Swap
                 if let Some((wy, wx)) = find_warp(vm, y, x) {
                     let warp_val = vm
                         .prologue_state
@@ -56,6 +100,7 @@ pub fn process_shuttle_agent(
                 }
             }
             "!" => {
+                // Force Write
                 if let Some((wy, wx)) = find_warp(vm, y, x) {
                     vm.prologue_state
                         .registers
@@ -63,6 +108,7 @@ pub fn process_shuttle_agent(
                 }
             }
             "?" => {
+                // Force Read
                 if let Some((wy, wx)) = find_warp(vm, y, x) {
                     payload = vm
                         .prologue_state
@@ -72,27 +118,29 @@ pub fn process_shuttle_agent(
                         .unwrap_or(Value::Int(0));
                 }
             }
+
+            // Movement Control
             "^" => {
                 return Some((
-                    update_state(updated_agent, -1, 0, payload, underfoot),
+                    update_state(updated_agent, -1, 0, payload, underfoot, tension),
                     Some((y, x)),
                 ))
             }
             "v" => {
                 return Some((
-                    update_state(updated_agent, 1, 0, payload, underfoot),
+                    update_state(updated_agent, 1, 0, payload, underfoot, tension),
                     Some((y, x)),
                 ))
             }
             "<" => {
                 return Some((
-                    update_state(updated_agent, 0, -1, payload, underfoot),
+                    update_state(updated_agent, 0, -1, payload, underfoot, tension),
                     Some((y, x)),
                 ))
             }
             ">" => {
                 return Some((
-                    update_state(updated_agent, 0, 1, payload, underfoot),
+                    update_state(updated_agent, 0, 1, payload, underfoot, tension),
                     Some((y, x)),
                 ))
             }
@@ -106,7 +154,7 @@ pub fn process_shuttle_agent(
         if is_blocking(&grid_snapshot[ny][nx]) {
             // Bounce
             return Some((
-                update_state(updated_agent, -dy, -dx, payload, underfoot),
+                update_state(updated_agent, -dy, -dx, payload, underfoot, tension),
                 None,
             ));
         }
@@ -119,13 +167,13 @@ pub fn process_shuttle_agent(
         let next_underfoot = vm.grid[ny][nx].clone();
 
         return Some((
-            update_state(updated_agent, dy, dx, payload, next_underfoot),
+            update_state(updated_agent, dy, dx, payload, next_underfoot, tension),
             Some((ny, nx)),
         ));
     }
 
     Some((
-        update_state(updated_agent, -dy, -dx, payload, underfoot),
+        update_state(updated_agent, -dy, -dx, payload, underfoot, tension),
         None,
     ))
 }
@@ -146,10 +194,17 @@ fn update_state(
     dx: i64,
     payload: Value,
     underfoot: Value,
+    tension: i64,
 ) -> PrologueAgent {
     agent.state = Value::Junction(
         crate::ast::JunctionType::All,
-        vec![Value::Int(dy), Value::Int(dx), payload, underfoot],
+        vec![
+            Value::Int(dy),
+            Value::Int(dx),
+            payload,
+            underfoot,
+            Value::Int(tension),
+        ],
     );
     agent
 }
@@ -187,6 +242,8 @@ fn is_blocking(val: &Value) -> bool {
     // Block on walls '#' or other active agents (to prevent overlay)
     // Note: We don't block on runes like +, *, etc. as we move *over* them.
     if let Value::Str(s) = val {
+        // We added '8' (Knot) which is a Rune, so we don't block on it.
+        // We block on Walls (#), Agents, etc.
         return s == "#" || s == "@" || s == "K" || s == "H" || s == "C" || s == "ð" || s == "₣";
     }
     false
