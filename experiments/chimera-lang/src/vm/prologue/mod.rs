@@ -65,6 +65,7 @@ pub mod alchemist;
 pub mod alchemy;
 pub mod altar;
 pub mod architect;
+pub mod astral;
 pub mod biolum;
 pub mod chaos;
 pub mod chroma;
@@ -520,6 +521,8 @@ impl PrologueState {
                             | "💤"
                             // Nightmare
                             | "👹"
+                            // Astral
+                            | "★"
                     ) {
                         self.runes.insert((y, x));
 
@@ -549,6 +552,7 @@ impl PrologueState {
                             || s == "🧙"
                             || s == "💤"
                             || s == "👹"
+                            || s == "★"
                         {
                             // Try to retrieve persistent state
                             let raw_state = self
@@ -627,6 +631,8 @@ impl PrologueState {
                                     wizard::WizardState::default().to_value()
                                 } else if s == "💤" || s == "👹" {
                                     Value::Int(0)
+                                } else if s == "★" {
+                                    astral::AstralState::default().to_value()
                                 } else {
                                     Value::Int(0)
                                 }
@@ -1830,6 +1836,14 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 }
                 None => continue,
             }
+        } else if current_type == "★" {
+            match astral::process_astral_agent(vm, &agent, grid_snapshot) {
+                Some((updated_agent, t)) => {
+                    agent = updated_agent;
+                    t
+                }
+                None => continue,
+            }
         } else {
             process_seeker_logic(vm, &agent, grid_snapshot)
         };
@@ -1862,6 +1876,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "🧙"
                 || current_type == "💤"
                 || current_type == "👹"
+                || current_type == "★"
             {
                 vm.prologue_state.registers.insert(
                     (ny, nx),
@@ -1898,6 +1913,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                     || current_type == "🧙"
                     || current_type == "💤"
                     || current_type == "👹"
+                    || current_type == "★"
                 {
                     vm.prologue_state.registers.remove(&(y, x));
                 }
@@ -1932,6 +1948,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "🧙"
                 || current_type == "💤"
                 || current_type == "👹"
+                || current_type == "★"
             {
                 vm.prologue_state.registers.insert(
                     (y, x),
