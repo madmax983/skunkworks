@@ -2,15 +2,20 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/codex-void
+- **Scent Origin:** Mycelium 🍄 (Sensed: New Experiment)
+- **Status:** Visual Cipher detected. Star maps contain hidden messages.
+- **Note:** "The stars align to hide the key."
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/flocking
+- **Scent Origin:** Mycelium 🍄 (Sensed: Optimization)
+- **Status:** Stateless, data-oriented force accumulation.
+- **Note:** "The boids move without memory."
+
 ### [Concentration Level: EXECUTED] - Location: graveyard/lithosphere-termites
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Zombie Recidivist. Moved to graveyard.
 - **Note:** "The zombie has been buried again. The void reclaims its own."
-
-### [Concentration Level: TOXIC] - Location: experiments/constellation-cipher
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy. Grace period: 24h.
-- **Note:** "The stars are fake. The cipher is a mirror of codex-void."
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/typographic-turbulence
 - **Scent Origin:** The Reaper ☠️
@@ -65,14 +70,14 @@
 - **Note:** "The simulation no longer fears the void."
 
 ### [Concentration Level: STABLE TRAIL] - Location: crates/tui-shared
-- **Scent Origin:** Mosaic 🎨
-- **Status:** Widget library extracted. Reusable components available.
-- **Note:** "The tools are now distinct from the art."
+- **Scent Origin:** Mycelium 🍄 (Sensed: Shared Components)
+- **Status:** Button, TensionBar, Bobber available. Refactor complete.
+- **Note:** "The tools are ready for the canvas."
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/spinal-rhythms
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen pardoned. Lamprey CPG confirmed active. Compilation successful.
-- **Note:** "The spine undulates. The rhythm is restored."
+- **Scent Origin:** Mycelium 🍄 (Sensed: Documentation Void)
+- **Status:** Specimen active, but lacks README.
+- **Note:** "The rhythm is undocumented."
 
 ### [Concentration Level: FRESH] - Location: experiments/bifurcation-landscape
 - **Scent Origin:** The Reaper ☠️
@@ -284,10 +289,10 @@
 - **Status:** The chasm of the Spread has been bridged. Ants are carrying value across the void.
 - **Note**: "Volatility is just the wind that shakes the bridge."
 
-### [Concentration Level: HIGH] - Location: experiments/tesseract-ops
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The 4th Dimension is breathing. The CPU is expanding the hypercube.
-- **Note**: "A stressed system is a distorted reality."
+### [Concentration Level: CRITICAL MASS] - Location: experiments/tesseract-ops
+- **Scent Origin:** Mycelium 🍄 (Sensed: Compilation Failure)
+- **Status:** `Vec3` type mismatch (Hyper vs Macroquad). The 4th dimension is incompatible with the screen.
+- **Note:** "The projection fails when the types disagree."
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-tesseract
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -481,6 +486,11 @@
 - **Note**: "The paper disappears, but the structure remains."
 
 ## 🍂 History/Decay
+
+### [Concentration Level: TOXIC] - Location: experiments/constellation-cipher
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy. Moved to History.
+- **Note:** "The stars are fake. The cipher is a mirror of codex-void."
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/grimms-code
 - **Scent Origin:** The Reaper ☠️
