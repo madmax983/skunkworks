@@ -1764,3 +1764,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Bio-Spatial Manipulation. Agents evolve to fold space to reach food.
 - **Status**: experiments/chimera-rift
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Evo-Portals operational.
+
+### hyperbolic-tissue
+- **Parents**: experiments/chimera-tissue + experiments/hyperbolic-chimera
+- **Concept**: A soft-body simulation (Tissue) where the nodes exist in the Poincaré Disk model of hyperbolic space.
+- **Novel trait**: Non-Euclidean Elasticity. The tissue experiences exponential strain as it expands towards the boundary.
+- **Status**: experiments/hyperbolic-tissue
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hyperbolic PBD solver operational.

@@ -485,6 +485,11 @@
 - **Status**: The sheet is folding into hyperspace. Agents are manipulating the W-axis.
 - **Note**: "The paper disappears, but the structure remains."
 
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-tissue
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The tissue is stretching into infinity. The PBD solver is fighting the metric.
+- **Note:** "The perimeter grows faster than the skin can stretch."
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: TOXIC] - Location: experiments/newtonian-graph
