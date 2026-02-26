@@ -4,8 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-ratatui = { workspace = true }
-crossterm = { workspace = true }
-rand = { workspace = true }
-anyhow = { workspace = true }
-chimera-lang = { path = "../chimera-lang" }
+anyhow.workspace = true
+crossterm.workspace = true
+ratatui.workspace = true
+rand.workspace = true
+chimera-lang.workspace = true
+locus.workspace = true
+ferrous-core.workspace = true

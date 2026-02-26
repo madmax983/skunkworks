@@ -1,128 +1,24 @@
-use crate::platter::Platter;
+use ferrous_core::Platter;
 use ratatui::style::Color;
-
-#[derive(Debug, Clone, Copy)]
-pub struct Vec2 {
-    pub x: f32,
-    pub y: f32,
-}
-
-impl Vec2 {
-    pub const ZERO: Self = Self { x: 0.0, y: 0.0 };
-
-    pub fn new(x: f32, y: f32) -> Self {
-        Self { x, y }
-    }
-
-    pub fn length(self) -> f32 {
-        (self.x * self.x + self.y * self.y).sqrt()
-    }
-
-    pub fn length_squared(self) -> f32 {
-        self.x * self.x + self.y * self.y
-    }
-
-    pub fn normalize_or_zero(self) -> Self {
-        let l = self.length();
-        if l == 0.0 {
-            Self::ZERO
-        } else {
-            Self {
-                x: self.x / l,
-                y: self.y / l,
-            }
-        }
-    }
-}
-
-impl std::ops::Add for Vec2 {
-    type Output = Self;
-    fn add(self, rhs: Self) -> Self {
-        Self {
-            x: self.x + rhs.x,
-            y: self.y + rhs.y,
-        }
-    }
-}
-
-impl std::ops::AddAssign for Vec2 {
-    fn add_assign(&mut self, rhs: Self) {
-        self.x += rhs.x;
-        self.y += rhs.y;
-    }
-}
-
-impl std::ops::Sub for Vec2 {
-    type Output = Self;
-    fn sub(self, rhs: Self) -> Self {
-        Self {
-            x: self.x - rhs.x,
-            y: self.y - rhs.y,
-        }
-    }
-}
-
-impl std::ops::SubAssign for Vec2 {
-    fn sub_assign(&mut self, rhs: Self) {
-        self.x -= rhs.x;
-        self.y -= rhs.y;
-    }
-}
-
-impl std::ops::Mul<f32> for Vec2 {
-    type Output = Self;
-    fn mul(self, rhs: f32) -> Self {
-        Self {
-            x: self.x * rhs,
-            y: self.y * rhs,
-        }
-    }
-}
-
-impl std::ops::MulAssign<f32> for Vec2 {
-    fn mul_assign(&mut self, rhs: f32) {
-        self.x *= rhs;
-        self.y *= rhs;
-    }
-}
-
-impl std::ops::Div<f32> for Vec2 {
-    type Output = Self;
-    fn div(self, rhs: f32) -> Self {
-        Self {
-            x: self.x / rhs,
-            y: self.y / rhs,
-        }
-    }
-}
-
-impl std::ops::Neg for Vec2 {
-    type Output = Self;
-    fn neg(self) -> Self {
-        Self {
-            x: -self.x,
-            y: -self.y,
-        }
-    }
-}
+pub use locus::Vec2;
 
 #[derive(Debug, Clone)]
 pub struct Body {
     pub pos: Vec2,
     pub vel: Vec2,
     pub acc: Vec2,
-    pub mass: f32,
-    pub radius: f32,
+    pub mass: f64,
+    pub radius: f64,
     pub color: Color,
     pub trail: Vec<Vec2>,
 }
 
 impl Body {
-    pub fn new(x: f32, y: f32, mass: f32, radius: f32, color: Color) -> Self {
+    pub fn new(x: f64, y: f64, mass: f64, radius: f64, color: Color) -> Self {
         Self {
             pos: Vec2::new(x, y),
-            vel: Vec2::ZERO,
-            acc: Vec2::ZERO,
+            vel: Vec2::zero(),
+            acc: Vec2::zero(),
             mass,
             radius,
             color,
@@ -130,7 +26,7 @@ impl Body {
         }
     }
 
-    pub fn with_velocity(mut self, vx: f32, vy: f32) -> Self {
+    pub fn with_velocity(mut self, vx: f64, vy: f64) -> Self {
         self.vel = Vec2::new(vx, vy);
         self
     }
@@ -161,9 +57,9 @@ impl Universe {
         self.edges.push((source, target));
     }
 
-    pub fn step(&mut self, dt: f32) {
+    pub fn step(&mut self, dt: f64) {
         let len = self.bodies.len();
-        let mut forces = vec![Vec2::ZERO; len];
+        let mut forces = vec![Vec2::zero(); len];
 
         // Constants
         let g_edge = 10000.0;
@@ -182,11 +78,11 @@ impl Universe {
                 let p1 = self.bodies[i].pos;
                 let p2 = self.bodies[j].pos;
                 let delta = p2 - p1;
-                let dist_sq = delta.length_squared().max(100.0);
+                let dist_sq = delta.magnitude_squared().max(100.0);
 
                 let force =
                     (g_repulse * self.bodies[i].mass.sqrt() * self.bodies[j].mass.sqrt()) / dist_sq;
-                let dir = delta.normalize_or_zero();
+                let dir = delta.normalize();
 
                 let f_vec = -dir * force;
 
@@ -200,10 +96,10 @@ impl Universe {
             let p1 = self.bodies[i].pos;
             let p2 = self.bodies[j].pos;
             let delta = p2 - p1;
-            let dist_sq = delta.length_squared().max(100.0);
+            let dist_sq = delta.magnitude_squared().max(100.0);
 
             let force = (g_edge * self.bodies[i].mass * self.bodies[j].mass) / dist_sq;
-            let dir = delta.normalize_or_zero();
+            let dir = delta.normalize();
 
             let f_vec = dir * force;
             forces[i] += f_vec;

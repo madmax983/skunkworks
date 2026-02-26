@@ -1,5 +1,4 @@
 mod physics;
-mod platter;
 mod scanner;
 
 use std::io;
@@ -66,15 +65,15 @@ where
 
     // 2. Universe
     let mut universe = Universe::new();
-    let center = Vec2::ZERO;
+    let center = Vec2::zero();
 
     for node in &graph.nodes {
-        let id = node.id as f32;
+        let id = node.id as f64;
         let angle = id * 0.5;
         let dist = 50.0 + id * 5.0; // Compact for TUI
         let pos = Vec2::new(angle.cos() * dist, angle.sin() * dist);
 
-        let mass = node.mass.max(10.0);
+        let mass = node.mass.max(10.0) as f64;
         let radius = mass.sqrt() * 0.5;
 
         let color = if node.name == "mod" {
@@ -86,7 +85,7 @@ where
         };
 
         // Tangential kick
-        let to_center = (center - pos).normalize_or_zero();
+        let to_center = (center - pos).normalize();
         let tangent = Vec2::new(-to_center.y, to_center.x);
         let orbital_speed = 30.0;
 
@@ -101,7 +100,7 @@ where
 
     // 3. Loop
     let mut zoom = 1.0;
-    let mut pan = Vec2::ZERO;
+    let mut pan = Vec2::zero();
     let tick_rate = Duration::from_millis(16);
     let mut last_tick = Instant::now();
 
@@ -121,12 +120,12 @@ where
                     graph.edges.len()
                 )))
                 .x_bounds([
-                    pan.x as f64 - 100.0 * zoom as f64,
-                    pan.x as f64 + 100.0 * zoom as f64,
+                    pan.x - 100.0 * zoom,
+                    pan.x + 100.0 * zoom,
                 ])
                 .y_bounds([
-                    pan.y as f64 - 100.0 * zoom as f64,
-                    pan.y as f64 + 100.0 * zoom as f64,
+                    pan.y - 100.0 * zoom,
+                    pan.y + 100.0 * zoom,
                 ])
                 .paint(|ctx| {
                     // Draw Platter (Magnetism)
@@ -155,10 +154,10 @@ where
                         let p1 = universe.bodies[i].pos;
                         let p2 = universe.bodies[j].pos;
                         ctx.draw(&Line {
-                            x1: p1.x as f64,
-                            y1: p1.y as f64,
-                            x2: p2.x as f64,
-                            y2: p2.y as f64,
+                            x1: p1.x,
+                            y1: p1.y,
+                            x2: p2.x,
+                            y2: p2.y,
                             color: Color::DarkGray,
                         });
                     }
@@ -168,10 +167,10 @@ where
                         // Trail
                         for i in 0..body.trail.len().saturating_sub(1) {
                             ctx.draw(&Line {
-                                x1: body.trail[i].x as f64,
-                                y1: body.trail[i].y as f64,
-                                x2: body.trail[i + 1].x as f64,
-                                y2: body.trail[i + 1].y as f64,
+                                x1: body.trail[i].x,
+                                y1: body.trail[i].y,
+                                x2: body.trail[i + 1].x,
+                                y2: body.trail[i + 1].y,
                                 color: Color::Gray,
                             });
                         }
@@ -179,8 +178,8 @@ where
                         // Point
                         let symbol = if body.radius > 5.0 { "O" } else { "o" };
                         ctx.print(
-                            body.pos.x as f64,
-                            body.pos.y as f64,
+                            body.pos.x,
+                            body.pos.y,
                             Span::styled(symbol, Style::default().fg(body.color)),
                         );
                     }
@@ -204,7 +203,7 @@ where
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char('r') => {
                         zoom = 1.0;
-                        pan = Vec2::ZERO;
+                        pan = Vec2::zero();
                     }
                     KeyCode::Char('+') => zoom *= 0.9,
                     KeyCode::Char('-') => zoom *= 1.1,
