@@ -98,11 +98,15 @@ pub fn process_automaton_agent(
         return Some((agent.clone(), None));
     }
 
+    // Convert program to Vec<char> for O(1) random access
+    let program_chars: Vec<char> = state.program.chars().collect();
+    let program_len = program_chars.len();
+
     // Fetch Instruction
-    let instruction = state.program.chars().nth(state.pc % state.program.len()).unwrap_or(' ');
+    let instruction = program_chars.get(state.pc % program_len.max(1)).cloned().unwrap_or(' ');
 
     // Advance PC (unless loop logic overrides it)
-    state.pc = (state.pc + 1) % state.program.len().max(1);
+    state.pc = (state.pc + 1) % program_len.max(1);
 
     let mut move_target = None;
     let mut updated_agent = agent.clone();
@@ -231,10 +235,10 @@ pub fn process_automaton_agent(
             if state.memory == 0 {
                 let mut depth = 1;
                 while depth > 0 {
-                    if state.pc >= state.program.len() {
+                    if state.pc >= program_len {
                         break;
                     }
-                    let c = state.program.chars().nth(state.pc).unwrap_or(' ');
+                    let c = program_chars.get(state.pc).cloned().unwrap_or(' ');
                     if c == '[' {
                         depth += 1;
                     } else if c == ']' {
@@ -248,7 +252,7 @@ pub fn process_automaton_agent(
             // Jump Back if Non-Zero
             if state.memory != 0 {
                 let mut scan_pc = if state.pc == 0 {
-                    state.program.len().saturating_sub(1)
+                    program_len.saturating_sub(1)
                 } else {
                     state.pc - 1
                 };
@@ -261,7 +265,7 @@ pub fn process_automaton_agent(
                     }
                     scan_pc -= 1;
 
-                    let c = state.program.chars().nth(scan_pc).unwrap_or(' ');
+                    let c = program_chars.get(scan_pc).cloned().unwrap_or(' ');
                     if c == ']' {
                         depth += 1;
                     } else if c == '[' {
