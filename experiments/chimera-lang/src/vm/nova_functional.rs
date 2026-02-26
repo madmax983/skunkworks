@@ -1,6 +1,6 @@
 #![cfg(feature = "nova")]
 
-use super::{ChimeraVM, Value, MAX_STRANDS};
+use super::{ChimeraVM, Value, MAX_STRANDS, MAX_GENES_PER_STRAND};
 use crate::ast::{Gene, Nucleotide, Strand};
 use crate::opcode::OpCode;
 
@@ -76,6 +76,16 @@ fn exec_chain(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let genes_f = vm.dna.helix.strands[f_idx].genes.clone();
     let genes_g = vm.dna.helix.strands[g_idx].genes.clone();
 
+    // 🔒 WARDEN: Check length limit
+    let new_len = genes_f.len() + genes_g.len();
+    if new_len > MAX_GENES_PER_STRAND {
+        vm.output.push(format!(
+            "CHAIN ERROR: Result length {} exceeds limit {}",
+            new_len, MAX_GENES_PER_STRAND
+        ));
+        return None;
+    }
+
     let mut new_genes = genes_f;
     new_genes.extend(genes_g);
 
@@ -122,6 +132,16 @@ fn exec_curry(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if helix_len >= MAX_STRANDS {
         vm.output
             .push("CURRY ERROR: Strand limit exceeded".to_string());
+        return None;
+    }
+
+    // 🔒 WARDEN: Check length limit (+1 for push)
+    let current_len = vm.dna.helix.strands[s_idx].genes.len();
+    if current_len + 1 > MAX_GENES_PER_STRAND {
+        vm.output.push(format!(
+            "CURRY ERROR: Result length {} exceeds limit {}",
+            current_len + 1, MAX_GENES_PER_STRAND
+        ));
         return None;
     }
 
