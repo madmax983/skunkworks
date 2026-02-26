@@ -1,42 +1,100 @@
-//! # Flocking 🕊️
+//! # The Flock's Mind 🕊️
 //!
-//! A lightweight implementation of Reynolds' Flocking algorithm (Boids).
+//! Flocking is the art of simulating complex group behavior from simple individual rules.
+//! This module implements Craig Reynolds' "Boids" algorithm.
 //!
-//! This module provides the `compute_force` function to calculate steering vectors
-//! based on Separation, Alignment, and Cohesion rules.
+//! ## The Three Laws
 //!
-//! Unlike previous versions, this crate is stateless and data-oriented.
-//! It operates on raw slices of positions and velocities, allowing the consumer
-//! to manage their own physics state (e.g., using specific integration methods or
-//! data layouts).
+//! 1.  **Separation ("Personal Space")**: Steer to avoid crowding local flockmates.
+//!     *   *Too close? Back off.*
+//! 2.  **Alignment ("Peer Pressure")**: Steer towards the average heading of local flockmates.
+//!     *   *Everyone going left? I'll go left too.*
+//! 3.  **Cohesion ("Group Hug")**: Steer to move toward the average position of local flockmates.
+//!     *   *Don't get left behind.*
+//!
+//! ## The Minimal Simulation
+//!
+//! ```rust
+//! use locus::flocking::{compute_force, FlockingParams};
+//! use locus::Vec2;
+//!
+//! // 1. Setup the flock
+//! let mut positions = vec![Vec2::new(0.0, 0.0), Vec2::new(5.0, 5.0)];
+//! let mut velocities = vec![Vec2::new(1.0, 0.0), Vec2::new(0.0, 1.0)];
+//!
+//! // 2. Define the rules
+//! let params = FlockingParams {
+//!     view_radius: 50.0,
+//!     separation_radius: 10.0,
+//!     max_speed: 2.0,
+//!     max_force: 0.1,
+//!     separation_weight: 1.5, // Strong desire for personal space
+//!     alignment_weight: 1.0,  // Moderate desire to align
+//!     cohesion_weight: 1.0,   // Moderate desire to stay together
+//! };
+//!
+//! // 3. The Loop (Simulate one frame)
+//! // Note: In a real sim, you'd calculate ALL forces before applying them to avoid order bias.
+//! let forces: Vec<Vec2> = (0..positions.len())
+//!     .map(|i| compute_force(&positions, &velocities, i, &params))
+//!     .collect();
+//!
+//! for (i, force) in forces.iter().enumerate() {
+//!     velocities[i] += *force; // Apply steering
+//!     velocities[i] = velocities[i].limit(params.max_speed); // Cap speed
+//!     positions[i] += velocities[i]; // Move
+//! }
+//! ```
 
 use crate::vec2::Vec2;
 
 /// Configuration parameters for the flocking simulation.
 ///
-/// These values control the behavior and emergence of the flock.
+/// These values act as the "DNA" of the flock, determining whether it behaves like
+/// a swarm of angry bees, a school of fish, or a herd of sheep.
 #[derive(Clone, Copy, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct FlockingParams {
     /// The radius within which an agent can "see" neighbors.
-    /// Only neighbors within this distance influence Cohesion and Alignment.
+    ///
+    /// *   **Effect**: Controls the scale of the flock. Large values create massive, connected super-flocks.
+    ///     Small values create fragmented, local clusters.
+    /// *   **Performance**: Smaller is faster (fewer checks per agent).
     pub view_radius: f64,
+
     /// The radius within which an agent tries to avoid crowding.
-    /// Only neighbors within this distance influence Separation.
+    ///
+    /// *   **Effect**: Defines the "personal bubble". Agents inside this radius will actively steer away.
     pub separation_radius: f64,
+
     /// The maximum speed an agent can travel per tick.
+    ///
+    /// *   **Effect**: Caps the chaos. Without this, agents would accelerate infinitely.
     pub max_speed: f64,
+
     /// The maximum steering force an agent can apply to change direction.
-    /// This limits how sharply an agent can turn.
+    ///
+    /// *   **Effect**: Agility.
+    ///     *   **Low**: Agents turn like battleships (smooth, sweeping arcs).
+    ///     *   **High**: Agents turn like flies (twitchy, instant direction changes).
     pub max_force: f64,
+
     /// The weight multiplier for the Separation force.
-    /// Higher values make agents spread out more aggressively.
+    ///
+    /// *   **High**: "Gas-like" behavior. Agents spread out to fill space.
+    /// *   **Low**: "Liquid-like" behavior. Agents tolerate crowding.
     pub separation_weight: f64,
+
     /// The weight multiplier for the Alignment force.
-    /// Higher values make agents move in the same direction as neighbors.
+    ///
+    /// *   **High**: "Rigid" motion. The flock moves as a solid unit.
+    /// *   **Low**: "Chaotic" motion. Agents ignore their neighbor's direction.
     pub alignment_weight: f64,
+
     /// The weight multiplier for the Cohesion force.
-    /// Higher values make agents clump together more tightly.
+    ///
+    /// *   **High**: "Solid-like" attraction. The flock collapses into a tight ball.
+    /// *   **Low**: The flock is loose and may break apart easily.
     pub cohesion_weight: f64,
 }
 
