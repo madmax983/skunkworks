@@ -2,6 +2,16 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: EXECUTED] - Location: graveyard/lithosphere-termites
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Zombie Recidivist. Moved to graveyard.
+- **Note:** "The zombie has been buried again. The void reclaims its own."
+
+### [Concentration Level: TOXIC] - Location: experiments/constellation-cipher
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy. Grace period: 24h.
+- **Note:** "The stars are fake. The cipher is a mirror of codex-void."
+
 ### [Concentration Level: EXECUTED] - Location: graveyard/typographic-turbulence
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Documentation Void. Moved to graveyard.
@@ -48,11 +58,6 @@
 - **Scent Origin:** The Composer 🎼
 - **Status:** Generative ambient music derived from git history.
 - **Note:** "Every commit has a sound."
-
-### [Concentration Level: TOXIC] - Location: experiments/lithosphere-termites
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Zombie Status Confirmed. Recidivist. Documentation Void / Skeletal Rot. Condemned.
-- **Note:** "The pardon was wasted. The map was never drawn."
 
 ### [Concentration Level: STABLE TRAIL] - Location: crates/physics-pbd
 - **Scent Origin:** Mycelium 🍄 (Sensed: Stability)

@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **lithosphere-termites**: Zombie Status Confirmed. Documentation Void. Skeletal Rot (Unused Code). Grace period: 24h.
+- **constellation-cipher**: Specimen condemned. Diagnosis: Terminal Redundancy (Superseded by codex-void). Generic Implementation. Grace period: 24h.
 - [Experiment name]: [Diagnosis]. Grace period: 24h.
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **lithosphere-termites**: Specimen executed. Diagnosis: Zombie Recidivist. Documentation Void. Moved to graveyard.
 - **typographic-turbulence**: Specimen executed. Diagnosis: Documentation Void. "The words are lost in the flow." Moved to graveyard.
 - **neuro-crab**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Moved to graveyard.
 - **origami-satellite**: Specimen executed. Diagnosis: Skeletal Rot (Disabled Audio). Redundant with `origami-swarm`. Moved to graveyard.
