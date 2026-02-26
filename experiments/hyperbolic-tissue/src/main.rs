@@ -3,7 +3,7 @@ use macroquad::prelude::*;
 use num_complex::Complex;
 
 mod physics;
-use physics::{PbdSystem, Point, hyperbolic_distance};
+use physics::{hyperbolic_distance, PbdSystem, Point};
 
 const TISSUE_SIZE: usize = 6;
 const INITIAL_SCALE: f32 = 0.1;
@@ -105,7 +105,10 @@ impl Tissue {
 
         // Pin center
         let center_idx = (TISSUE_SIZE / 2) * TISSUE_SIZE + (TISSUE_SIZE / 2);
-        system.add_pin_constraint(particle_indices[center_idx], system.points[particle_indices[center_idx]]);
+        system.add_pin_constraint(
+            particle_indices[center_idx],
+            system.points[particle_indices[center_idx]],
+        );
 
         Tissue { system, cells }
     }
@@ -124,7 +127,15 @@ impl Tissue {
             let mut count = 0;
 
             for &c_idx in &cell.actuators {
-                if let physics::Constraint::Actuator { p1, p2, min_dist, max_dist, factor, .. } = system.constraints[c_idx] {
+                if let physics::Constraint::Actuator {
+                    p1,
+                    p2,
+                    min_dist,
+                    max_dist,
+                    factor,
+                    ..
+                } = system.constraints[c_idx]
+                {
                     let curr = hyperbolic_distance(system.points[p1], system.points[p2]);
                     let target = min_dist + (max_dist - min_dist) * factor;
                     let strain = curr / target; // > 1 stretched
@@ -133,10 +144,15 @@ impl Tissue {
                 }
             }
 
-            let avg_strain = if count > 0 { total_strain / count as f32 } else { 1.0 };
+            let avg_strain = if count > 0 {
+                total_strain / count as f32
+            } else {
+                1.0
+            };
 
             // Sense Radius (Distance from origin)
-            let radius = hyperbolic_distance(system.points[cell.particle_idx], Complex::new(0.0, 0.0));
+            let radius =
+                hyperbolic_distance(system.points[cell.particle_idx], Complex::new(0.0, 0.0));
 
             // Push inputs
             // Stack: [Radius, Strain]
@@ -156,7 +172,9 @@ impl Tissue {
                 };
 
                 for &c_idx in &cell.actuators {
-                    if let physics::Constraint::Actuator { factor, .. } = &mut system.constraints[c_idx] {
+                    if let physics::Constraint::Actuator { factor, .. } =
+                        &mut system.constraints[c_idx]
+                    {
                         *factor = out;
                     }
                 }
@@ -180,12 +198,12 @@ impl Tissue {
         for constraint in &self.system.constraints {
             let (p1, p2, color) = match constraint {
                 physics::Constraint::Actuator { p1, p2, factor, .. } => {
-                     let c = Color::new(1.0 - factor, *factor, 0.2, 0.8);
-                     (p1, p2, c)
-                },
+                    let c = Color::new(1.0 - factor, *factor, 0.2, 0.8);
+                    (p1, p2, c)
+                }
                 physics::Constraint::Distance { p1, p2, .. } => {
                     (p1, p2, Color::new(0.5, 0.5, 0.5, 0.3))
-                },
+                }
                 _ => continue,
             };
 
@@ -209,7 +227,9 @@ fn draw_hyperbolic_segment(u: Point, v: Point, color: Color) {
     // Map u to origin
     let one = Complex::new(1.0, 0.0);
     let den = one - u.conj() * v;
-    if den.norm() < 1e-6 { return; }
+    if den.norm() < 1e-6 {
+        return;
+    }
 
     let v_prime = (v - u) / den;
     let dist = 2.0 * v_prime.norm().atanh();
@@ -231,9 +251,9 @@ fn draw_hyperbolic_segment(u: Point, v: Point, color: Color) {
         let d_t = t * dist;
         let mag = (d_t / 2.0).tanh();
         let p_prime = if v_prime.norm() > 1e-6 {
-             (v_prime / v_prime.norm()) * mag
+            (v_prime / v_prime.norm()) * mag
         } else {
-             Complex::new(0.0, 0.0)
+            Complex::new(0.0, 0.0)
         };
 
         // Map back
@@ -264,28 +284,84 @@ fn create_dna() -> Dna {
     // 13. Mul -> [Result]
 
     let genes = vec![
-        Gene { op: OpCode::Swap, args: vec![] },
-        Gene { op: OpCode::Dup, args: vec![] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] },
-        Gene { op: OpCode::Gt, args: vec![] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-        Gene { op: OpCode::Swap, args: vec![] },
-        Gene { op: OpCode::Sub, args: vec![] },
-        Gene { op: OpCode::Swap, args: vec![] },
-        Gene { op: OpCode::Drop, args: vec![] },
-        Gene { op: OpCode::Swap, args: vec![] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(50)] },
-        Gene { op: OpCode::Gt, args: vec![] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-        Gene { op: OpCode::Swap, args: vec![] },
-        Gene { op: OpCode::Sub, args: vec![] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-        Gene { op: OpCode::Mul, args: vec![] },
-        Gene { op: OpCode::Mul, args: vec![] },
+        Gene {
+            op: OpCode::Swap,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Dup,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(8)],
+        },
+        Gene {
+            op: OpCode::Gt,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        },
+        Gene {
+            op: OpCode::Swap,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Sub,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Swap,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Drop,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Swap,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(50)],
+        },
+        Gene {
+            op: OpCode::Gt,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        },
+        Gene {
+            op: OpCode::Swap,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Sub,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(100)],
+        },
+        Gene {
+            op: OpCode::Mul,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Mul,
+            args: vec![],
+        },
     ];
 
     Dna {
-        helix: Helix { strands: vec![Strand { genes }] },
+        helix: Helix {
+            strands: vec![Strand { genes }],
+        },
         evolution_config: None,
     }
 }

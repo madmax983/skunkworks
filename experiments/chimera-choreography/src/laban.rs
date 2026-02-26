@@ -16,15 +16,31 @@ impl LabanEffort {
         }
     }
 
-    pub fn is_strong(&self) -> bool { self.weight < 0.5 }
-    pub fn is_light(&self) -> bool { self.weight >= 0.5 }
+    pub fn is_strong(&self) -> bool {
+        self.weight < 0.5
+    }
+    pub fn is_light(&self) -> bool {
+        self.weight >= 0.5
+    }
 
-    pub fn is_sudden(&self) -> bool { self.time < 0.5 }
-    pub fn is_sustained(&self) -> bool { self.time >= 0.5 }
+    pub fn is_sudden(&self) -> bool {
+        self.time < 0.5
+    }
+    pub fn is_sustained(&self) -> bool {
+        self.time >= 0.5
+    }
 
-    pub fn is_direct(&self) -> bool { self.space < 0.5 }
-    pub fn is_indirect(&self) -> bool { self.space >= 0.5 }
+    pub fn is_direct(&self) -> bool {
+        self.space < 0.5
+    }
+    pub fn is_indirect(&self) -> bool {
+        self.space >= 0.5
+    }
 
-    pub fn is_bound(&self) -> bool { self.flow < 0.5 }
-    pub fn is_free(&self) -> bool { self.flow >= 0.5 }
+    pub fn is_bound(&self) -> bool {
+        self.flow < 0.5
+    }
+    pub fn is_free(&self) -> bool {
+        self.flow >= 0.5
+    }
 }

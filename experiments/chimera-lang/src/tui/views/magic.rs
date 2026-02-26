@@ -1,6 +1,6 @@
+use crate::tui::state::AppState;
 use crate::tui::GRIMOIRE_TEXT;
 use crate::vm::ChimeraVM;
-use crate::tui::state::AppState;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
@@ -267,7 +267,6 @@ pub(crate) fn render_graveyard(f: &mut Frame, vm: &mut ChimeraVM, app_state: &Ap
         Paragraph::new(help_text).block(Block::default().borders(Borders::ALL).title("Necromancy"));
     f.render_widget(help_para, chunks[1]);
 }
-
 
 #[cfg(feature = "nova")]
 pub(crate) fn render_codex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {

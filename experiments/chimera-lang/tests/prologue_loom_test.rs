@@ -18,12 +18,19 @@ fn test_loom_push_to_warp() {
 
     vm.grid[5][5] = Value::Str("ð".to_string());
     // Initial State: [0, 1, Payload=10, Underfoot=0, Tension=0]
-    vm.prologue_state.registers.insert((5, 5), Value::Junction(
-        JunctionType::All,
-        vec![
-            Value::Int(0), Value::Int(1), Value::Int(10), Value::Int(0), Value::Int(0)
-        ]
-    ));
+    vm.prologue_state.registers.insert(
+        (5, 5),
+        Value::Junction(
+            JunctionType::All,
+            vec![
+                Value::Int(0),
+                Value::Int(1),
+                Value::Int(10),
+                Value::Int(0),
+                Value::Int(0),
+            ],
+        ),
+    );
 
     vm.grid[5][6] = Value::Str("(".to_string());
     vm.grid[5][7] = Value::Str("8".to_string());
@@ -84,12 +91,19 @@ fn test_loom_pull_from_warp() {
 
     vm.grid[5][5] = Value::Str("ð".to_string());
     // Initial State: [0, 1, Payload=0, Underfoot=0, Tension=0]
-    vm.prologue_state.registers.insert((5, 5), Value::Junction(
-        JunctionType::All,
-        vec![
-            Value::Int(0), Value::Int(1), Value::Int(0), Value::Int(0), Value::Int(0)
-        ]
-    ));
+    vm.prologue_state.registers.insert(
+        (5, 5),
+        Value::Junction(
+            JunctionType::All,
+            vec![
+                Value::Int(0),
+                Value::Int(1),
+                Value::Int(0),
+                Value::Int(0),
+                Value::Int(0),
+            ],
+        ),
+    );
 
     vm.grid[5][6] = Value::Str(")".to_string());
     vm.grid[5][7] = Value::Str("8".to_string());

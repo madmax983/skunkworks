@@ -3,6 +3,7 @@ mod laban;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
+use dancer::Dancer;
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Style},
@@ -14,9 +15,8 @@ use ratatui::{
     },
     Frame,
 };
-use tui_shared::Tui;
 use std::time::{Duration, Instant};
-use dancer::Dancer;
+use tui_shared::Tui;
 
 struct App {
     dancers: Vec<Dancer>,
@@ -109,7 +109,11 @@ fn draw_canvas(f: &mut Frame, app: &App, area: Rect) {
     let r = app.view_scale;
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Chimera Choreography"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Chimera Choreography"),
+        )
         .x_bounds([-r, r])
         .y_bounds([-r, r])
         .marker(symbols::Marker::Braille)
@@ -120,13 +124,25 @@ fn draw_canvas(f: &mut Frame, app: &App, area: Rect) {
                 // Strong = Bold (Bright), Light = Dim (Dark)
 
                 let color = if dancer.effort.is_free() {
-                    if dancer.effort.is_strong() { Color::Cyan } else { Color::Blue }
+                    if dancer.effort.is_strong() {
+                        Color::Cyan
+                    } else {
+                        Color::Blue
+                    }
                 } else {
-                    if dancer.effort.is_strong() { Color::Magenta } else { Color::Red }
+                    if dancer.effort.is_strong() {
+                        Color::Magenta
+                    } else {
+                        Color::Red
+                    }
                 };
 
                 // Draw dancer as a point or line indicating velocity
-                ctx.print(dancer.pos.x as f64, dancer.pos.y as f64, Span::styled("💃", Style::default().fg(color)));
+                ctx.print(
+                    dancer.pos.x as f64,
+                    dancer.pos.y as f64,
+                    Span::styled("💃", Style::default().fg(color)),
+                );
 
                 // Velocity line
                 let end = dancer.pos + dancer.vel * 0.2; // scale vector for visibility

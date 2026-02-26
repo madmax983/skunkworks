@@ -58,12 +58,7 @@ pub fn exec_babel_op(
 
                 if let Value::Str(input_str) = input_val {
                     // 1. Parse
-                    match run_parser(
-                        &grammar_val,
-                        &input_str,
-                        &vm.prologue_state.logos_engine,
-                        0,
-                    ) {
+                    match run_parser(&grammar_val, &input_str, &vm.prologue_state.logos_engine, 0) {
                         Ok((cst, consumed)) => {
                             if consumed == input_str.len() {
                                 // 2. Mutate CST
@@ -200,12 +195,7 @@ pub fn exec_babel_op(
                 let parser_val = vm.stack.pop().unwrap();
 
                 if let Value::Str(input_str) = input_val {
-                    match run_parser(
-                        &parser_val,
-                        &input_str,
-                        &vm.prologue_state.logos_engine,
-                        0,
-                    ) {
+                    match run_parser(&parser_val, &input_str, &vm.prologue_state.logos_engine, 0) {
                         Ok((ast, consumed)) => {
                             if consumed == input_str.len() {
                                 vm.stack.push(ast);

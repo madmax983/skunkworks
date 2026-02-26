@@ -504,14 +504,12 @@ pub fn exec_memetics_op(
                                                 _ => String::new(),
                                             };
                                             if !content.is_empty() {
-                                                if let Ok((cst, _)) =
-                                                    crate::vm::babel::run_parser(
-                                                        grammar,
-                                                        &content,
-                                                        &vm.prologue_state.logos_engine,
-                                                        0,
-                                                    )
-                                                {
+                                                if let Ok((cst, _)) = crate::vm::babel::run_parser(
+                                                    grammar,
+                                                    &content,
+                                                    &vm.prologue_state.logos_engine,
+                                                    0,
+                                                ) {
                                                     let mutated_cst = crate::vm::babel::mutate_cst(
                                                         &cst,
                                                         virus.mutation_rate as f64 / 100.0,

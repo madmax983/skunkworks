@@ -1,5 +1,6 @@
-use crate::vm::ChimeraVM;
 use crate::tui::state::AppState;
+use crate::vm::ChimeraVM;
+use ratatui::widgets::canvas::{Canvas, Rectangle};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
@@ -7,7 +8,6 @@ use ratatui::{
     widgets::{Block, Borders, Gauge, List, ListItem, Paragraph},
     Frame,
 };
-use ratatui::widgets::canvas::{Canvas, Rectangle};
 
 #[cfg(feature = "resonance")]
 pub(crate) fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {

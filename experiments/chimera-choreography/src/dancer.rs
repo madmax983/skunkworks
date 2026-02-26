@@ -1,6 +1,6 @@
+use crate::laban::LabanEffort;
 use chimera_lang::prelude::*;
 use locus::Vec2;
-use crate::laban::LabanEffort;
 use rand::Rng;
 
 pub struct Dancer {
@@ -20,41 +20,73 @@ impl Dancer {
 
         // Genes to manipulate grid (Laban parameters at 0,0 to 0,3)
         for _ in 0..30 {
-             let r = rng.gen_range(0..10);
-             match r {
-                 0..=2 => {
-                     // Push random number (0-100)
-                     genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(rng.gen_range(0..100))] });
-                 },
-                 3 => {
-                     // Write to random grid location (0-3 are Laban params)
-                     genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(rng.gen_range(0..4))] }); // x
-                     genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }); // y
-                     genes.push(Gene { op: OpCode::GWrite, args: vec![] });
-                 },
-                 4 => {
-                     // Math
-                     genes.push(Gene { op: OpCode::Add, args: vec![] });
-                 },
-                 5 => {
-                     // Sub
-                     genes.push(Gene { op: OpCode::Sub, args: vec![] });
-                 },
-                 6 => {
-                     // Photosynthesize (keep alive)
-                     genes.push(Gene { op: OpCode::Photosynthesize, args: vec![] });
-                 },
-                 7 => {
-                     // Duplicate
-                     genes.push(Gene { op: OpCode::Dup, args: vec![] });
-                 },
-                 _ => {}
-             }
+            let r = rng.gen_range(0..10);
+            match r {
+                0..=2 => {
+                    // Push random number (0-100)
+                    genes.push(Gene {
+                        op: OpCode::Push,
+                        args: vec![Nucleotide::Number(rng.gen_range(0..100))],
+                    });
+                }
+                3 => {
+                    // Write to random grid location (0-3 are Laban params)
+                    genes.push(Gene {
+                        op: OpCode::Push,
+                        args: vec![Nucleotide::Number(rng.gen_range(0..4))],
+                    }); // x
+                    genes.push(Gene {
+                        op: OpCode::Push,
+                        args: vec![Nucleotide::Number(0)],
+                    }); // y
+                    genes.push(Gene {
+                        op: OpCode::GWrite,
+                        args: vec![],
+                    });
+                }
+                4 => {
+                    // Math
+                    genes.push(Gene {
+                        op: OpCode::Add,
+                        args: vec![],
+                    });
+                }
+                5 => {
+                    // Sub
+                    genes.push(Gene {
+                        op: OpCode::Sub,
+                        args: vec![],
+                    });
+                }
+                6 => {
+                    // Photosynthesize (keep alive)
+                    genes.push(Gene {
+                        op: OpCode::Photosynthesize,
+                        args: vec![],
+                    });
+                }
+                7 => {
+                    // Duplicate
+                    genes.push(Gene {
+                        op: OpCode::Dup,
+                        args: vec![],
+                    });
+                }
+                _ => {}
+            }
         }
         // Jump back to 0
-        genes.push(Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] });
+        genes.push(Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(0)],
+        });
 
-        let dna = Dna { evolution_config: None, helix: Helix { strands: vec![Strand { genes }] } };
+        let dna = Dna {
+            evolution_config: None,
+            helix: Helix {
+                strands: vec![Strand { genes }],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         // Pre-seed grid with random Laban values
@@ -121,11 +153,11 @@ impl Dancer {
 
         // Time: Sudden vs Sustained
         if self.effort.is_sudden() {
-             if rng.gen_bool(0.2) {
-                 force *= 5.0; // JERK
-             } else {
-                 force *= 0.1; // Pause
-             }
+            if rng.gen_bool(0.2) {
+                force *= 5.0; // JERK
+            } else {
+                force *= 0.1; // Pause
+            }
         }
 
         self.vel += force * (dt as f64);
@@ -139,7 +171,7 @@ impl Dancer {
         // Cap speed
         let max_speed = if self.effort.is_sudden() { 100.0 } else { 30.0 };
         if self.vel.magnitude() > max_speed {
-             self.vel = self.vel.normalize() * max_speed;
+            self.vel = self.vel.normalize() * max_speed;
         }
 
         self.pos += self.vel * (dt as f64);

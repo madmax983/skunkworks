@@ -9,10 +9,10 @@ use std::str::FromStr;
 /// Example: "A:0:1:0:^>v<"
 #[derive(Debug, Clone)]
 pub struct AutomatonState {
-    pub pc: usize,      // Program Counter
-    pub dir: usize,     // 0=N, 1=E, 2=S, 3=W
-    pub memory: i64,    // Internal Register/Clipboard
-    pub program: String,// The Code
+    pub pc: usize,       // Program Counter
+    pub dir: usize,      // 0=N, 1=E, 2=S, 3=W
+    pub memory: i64,     // Internal Register/Clipboard
+    pub program: String, // The Code
 }
 
 impl AutomatonState {
@@ -89,7 +89,8 @@ pub fn process_automaton_agent(
 ) -> Option<(super::PrologueAgent, Option<(usize, usize)>)> {
     let (y, x) = (agent.y, agent.x);
     let mut state = if let Value::Str(s) = &agent.state {
-        s.parse::<AutomatonState>().unwrap_or(AutomatonState::default())
+        s.parse::<AutomatonState>()
+            .unwrap_or(AutomatonState::default())
     } else {
         AutomatonState::default()
     };
@@ -305,18 +306,18 @@ pub fn process_automaton_agent(
             }
         }
         '!' => {
-             vm.output.push(format!("AUTOMATON: {}", state.memory));
+            vm.output.push(format!("AUTOMATON: {}", state.memory));
         }
         _ => {}
     }
 
     // Check collision for movement
     if let Some((ny, nx)) = move_target {
-         let dest_val = &grid_snapshot[ny][nx];
-         if !matches!(dest_val, Value::Int(0)) {
-             // Blocked
-             move_target = None;
-         }
+        let dest_val = &grid_snapshot[ny][nx];
+        if !matches!(dest_val, Value::Int(0)) {
+            // Blocked
+            move_target = None;
+        }
     }
 
     // Commit PC update
