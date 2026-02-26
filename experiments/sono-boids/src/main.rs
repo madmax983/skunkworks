@@ -1,7 +1,7 @@
 use anyhow::Result;
 use crossbeam_channel::{bounded, Receiver, Sender};
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
-use flocking::{compute_force, FlockingParams};
+use locus::flocking::{compute_force, FlockingParams};
 use locus::Vec2;
 use rand::Rng;
 use ratatui::{

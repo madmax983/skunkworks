@@ -10,12 +10,13 @@
 //! to manage their own physics state (e.g., using specific integration methods or
 //! data layouts).
 
-use locus::Vec2;
+use crate::vec2::Vec2;
 
 /// Configuration parameters for the flocking simulation.
 ///
 /// These values control the behavior and emergence of the flock.
 #[derive(Clone, Copy, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct FlockingParams {
     /// The radius within which an agent can "see" neighbors.
     /// Only neighbors within this distance influence Cohesion and Alignment.
@@ -93,7 +94,7 @@ fn compute_steering(mut desired: Vec2, current_vel: Vec2, max_speed: f64, max_fo
 /// # Examples
 ///
 /// ```rust
-/// use flocking::{compute_force, FlockingParams};
+/// use locus::flocking::{compute_force, FlockingParams};
 /// use locus::Vec2;
 ///
 /// let positions = vec![Vec2::new(0.0, 0.0), Vec2::new(1.0, 0.0)];

@@ -1,6 +1,6 @@
 use crate::boid::{Boid, ENTANGLEMENT_RADIUS, PERCEPTION_RADIUS};
 use crate::qubit::apply_cnot_approx;
-use flocking::{compute_force, FlockingParams};
+use locus::flocking::{compute_force, FlockingParams};
 use locus::Vec2;
 use rand::Rng;
 

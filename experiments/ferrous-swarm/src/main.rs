@@ -12,7 +12,7 @@
 
 use ::rand::Rng;
 use chimera_lang::prelude::*;
-use flocking::{compute_force, FlockingParams};
+use locus::flocking::{compute_force, FlockingParams};
 use locus::Vec2 as LocusVec2;
 use macroquad::prelude::*;
 use physics_pbd::{Constraint, PbdSystem};

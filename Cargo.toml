@@ -17,7 +17,6 @@ thiserror = "2.0"
 tokio = { version = "1.0", features = ["full"] }
 git2 = "0.18"
 locus = { path = "crates/locus" }
-flocking = { path = "crates/flocking" }
 git-associates = { path = "crates/git-associates" }
 gray-scott = { path = "crates/gray-scott" }
 market-sim = { path = "crates/market-sim" }
