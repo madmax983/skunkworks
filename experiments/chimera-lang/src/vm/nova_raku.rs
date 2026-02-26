@@ -1,7 +1,7 @@
 use crate::ast::{JunctionType, Nucleotide};
 use crate::opcode::OpCode;
 use crate::value::Value;
-use crate::vm::ChimeraVM;
+use crate::vm::{ChimeraVM, MAX_JUNCTION_SIZE};
 
 pub fn exec_raku_op(
     vm: &mut ChimeraVM,
@@ -42,10 +42,24 @@ where
             a_list.len(),
             b_list.len()
         ));
+        // Push identity/empty to balance stack (-2 + 1 = -1)
+        vm.stack.push(Value::Junction(JunctionType::All, vec![]));
         return;
     }
 
     let max_len = std::cmp::max(a_list.len(), b_list.len());
+
+    // 🔒 WARDEN: Check output size limit
+    if max_len > MAX_JUNCTION_SIZE {
+        vm.output.push(format!(
+            "Error: Hyper result size {} exceeds limit {}",
+            max_len, MAX_JUNCTION_SIZE
+        ));
+        // Push error value
+        vm.stack.push(Value::Junction(JunctionType::All, vec![]));
+        return;
+    }
+
     let mut results = Vec::new();
 
     for i in 0..max_len {
@@ -99,6 +113,9 @@ fn exec_reduce(vm: &mut ChimeraVM) {
             } else {
                 vm.output
                     .push(format!("Error: Invalid reduce step with {}", op_str));
+                // Restore partial acc or error?
+                // Just push current acc to be safe.
+                vm.stack.push(acc);
                 return;
             }
         }
@@ -106,6 +123,8 @@ fn exec_reduce(vm: &mut ChimeraVM) {
     } else {
         vm.output
             .push("Error: Reduce expects operator string".to_string());
+        // Balance stack
+        vm.stack.push(Value::Int(0));
     }
 }
 
@@ -122,6 +141,19 @@ fn exec_cross(vm: &mut ChimeraVM) {
     if let Value::Str(op_str) = op_val {
         let a_list = as_list(a);
         let b_list = as_list(b);
+
+        // 🔒 WARDEN: Check output size limit (a_len * b_len)
+        let projected_size = a_list.len().saturating_mul(b_list.len());
+        if projected_size > MAX_JUNCTION_SIZE {
+            vm.output.push(format!(
+                "Error: Cross product size {} exceeds limit {}",
+                projected_size, MAX_JUNCTION_SIZE
+            ));
+            // Push empty junction
+            vm.stack.push(Value::Junction(JunctionType::All, vec![]));
+            return;
+        }
+
         let mut results = Vec::new();
 
         for va in &a_list {
@@ -137,6 +169,8 @@ fn exec_cross(vm: &mut ChimeraVM) {
     } else {
         vm.output
             .push("Error: Cross expects operator string".to_string());
+        // Balance stack
+        vm.stack.push(Value::Junction(JunctionType::All, vec![]));
     }
 }
 
@@ -154,6 +188,18 @@ fn exec_zip_with(vm: &mut ChimeraVM) {
         let a_list = as_list(a);
         let b_list = as_list(b);
         let min_len = std::cmp::min(a_list.len(), b_list.len());
+
+        // 🔒 WARDEN: Check output size limit
+        if min_len > MAX_JUNCTION_SIZE {
+            vm.output.push(format!(
+                "Error: ZipWith result size {} exceeds limit {}",
+                min_len, MAX_JUNCTION_SIZE
+            ));
+            // Push empty
+            vm.stack.push(Value::Junction(JunctionType::All, vec![]));
+            return;
+        }
+
         let mut results = Vec::new();
 
         for i in 0..min_len {
@@ -167,6 +213,8 @@ fn exec_zip_with(vm: &mut ChimeraVM) {
     } else {
         vm.output
             .push("Error: ZipWith expects operator string".to_string());
+        // Balance stack
+        vm.stack.push(Value::Junction(JunctionType::All, vec![]));
     }
 }
 
