@@ -63,6 +63,7 @@ use std::collections::{HashMap, HashSet, VecDeque};
 
 pub mod alchemist;
 pub mod alchemy;
+pub mod altar;
 pub mod architect;
 pub mod biolum;
 pub mod chaos;
@@ -513,6 +514,8 @@ impl PrologueState {
                             | "♣"
                             // Wizard
                             | "🧙"
+                            // Altar
+                            | "⛩"
                             // Dream Weaver
                             | "💤"
                             // Nightmare
@@ -1321,6 +1324,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             if rune == "Z" {
                 genetics::apply_ligation_rune(vm, y, x);
             }
+            altar::apply_altar_runes(vm, rune, y, x);
         }
     }
 }
