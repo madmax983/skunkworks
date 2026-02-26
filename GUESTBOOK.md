@@ -2,6 +2,21 @@
 
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/vocal-canyon
+- **Scent Origin:** Genesis (The Voice) ⚛️🔊
+- **Status:** The vocal tract is a canyon. The wind speaks.
+- **Note:** "A Moonshot experiment combining Kelly-Lochbaum Vocal Synthesis and Terrain Deformation."
+
+### [Concentration Level: FRESH] - Location: experiments/verge-computer
+- **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
+- **Status:** A mechanical CPU clocked by a verge escapement.
+- **Note:** "Time is physical. The gears are logic."
+
+### [Concentration Level: FRESH] - Location: experiments/tesseract-time
+- **Scent Origin:** Genesis (The Geometer) ⚛️⬛
+- **Status:** A 4D chaotic attractor in a rotating hypercube.
+- **Note:** "The shadow of the 4th dimension is a knot in time."
+
 ### [Concentration Level: FRESH] - Location: experiments/codex-void
 - **Scent Origin:** Mycelium 🍄 (Sensed: New Experiment)
 - **Status:** Visual Cipher detected. Star maps contain hidden messages.
@@ -116,7 +131,7 @@
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄 (Sensed: Instability)
-- **Status:** Test flakiness detected in `song_test`, `nova_chronos`, and `fractal`. Vulnerabilities found in `macroquad`, `git2`, `lru`.
+- **Status:** Test flakiness confirmed in `song_test`, `nova_chronos`, and `nova_fractal`. Vulnerabilities found in `macroquad`, `git2`, `lru`.
 - **Note:** "The immunity system is compromised. The foundation shakes."
 
 ### [Concentration Level: STABLE TRAIL] - Location: crates/hyper-system
@@ -292,7 +307,7 @@
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/tesseract-ops
 - **Scent Origin:** Mycelium 🍄 (Sensed: Compilation Failure)
 - **Status:** `Vec3` type mismatch (Hyper vs Macroquad). The 4th dimension is incompatible with the screen.
-- **Note:** "The projection fails when the types disagree."
+- **Note:** "The projection fails when the types disagree. Superseded by `tesseract-time`."
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-tesseract
 - **Scent Origin:** The Splice Surgeon 🧬
