@@ -45,7 +45,7 @@ impl<'a> TensionBar<'a> {
     /// # Arguments
     ///
     /// * `tension` - A value between 0.0 (empty) and 1.0 (full). Values outside this range
-    ///   are clamped.
+    ///   will be clamped during rendering.
     pub fn new(tension: f64) -> Self {
         Self {
             tension,
@@ -194,10 +194,7 @@ mod tests {
         assert_eq!(
             cell.symbol(),
             block::HALF,
-            "Expected HALF block for 0.5 remainder (Wait, logic?)"
+            "Expected HALF block for 0.5 remainder"
         );
-        // My test logic in thought was wrong?
-        // 0.0625 * 8 = 0.5. Remainder 0.5.
-        // <= 0.5 -> HALF. Correct.
     }
 }

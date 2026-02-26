@@ -287,6 +287,43 @@ impl Vec4 {
         dx * dx + dy * dy + dz * dz + dw * dw
     }
 
+    /// Rotates the vector in the XY plane.
+    ///
+    /// In 3D (and 4D), this is a rotation around the Z axis (and W axis).
+    /// It affects the X and Y components.
+    ///
+    /// # Arguments
+    ///
+    /// * `theta` - The angle of rotation in radians.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use hyper_system::math::Vec4;
+    /// use std::f32::consts::PI;
+    ///
+    /// let v = Vec4::new(1.0, 0.0, 0.0, 0.0);
+    /// // Rotate 90 degrees in XY plane
+    /// let rotated = v.rotate_xy(PI / 2.0);
+    ///
+    /// // v moves from X to Y axis
+    /// assert!(rotated.x.abs() < 1e-6);
+    /// assert!((rotated.y - 1.0).abs() < 1e-6);
+    /// ```
+    pub fn rotate_xy(&self, theta: f32) -> Self {
+        self.rotate_xy_fast(theta.sin(), theta.cos())
+    }
+
+    /// Rotates the vector in the XY plane using precomputed sine and cosine values.
+    pub fn rotate_xy_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
+        Self {
+            x: self.x * cos_theta - self.y * sin_theta,
+            y: self.x * sin_theta + self.y * cos_theta,
+            z: self.z,
+            w: self.w,
+        }
+    }
+
     /// Rotates the vector in the XW plane.
     ///
     /// In 4D space, rotations occur in planes defined by two axes.
@@ -325,6 +362,44 @@ impl Vec4 {
         }
     }
 
+    /// Rotates the vector in the XZ plane.
+    ///
+    /// In 3D (and 4D), this is a rotation around the Y axis (and W axis).
+    /// It affects the X and Z components.
+    ///
+    /// # Arguments
+    ///
+    /// * `theta` - The angle of rotation in radians.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use hyper_system::math::Vec4;
+    /// use std::f32::consts::PI;
+    ///
+    /// let v = Vec4::new(1.0, 0.0, 0.0, 0.0);
+    /// // Rotate 90 degrees in XZ plane
+    /// let rotated = v.rotate_xz(PI / 2.0);
+    ///
+    /// // v moves from X to Z axis (Note: typical Y-axis rotation direction might flip sign,
+    /// // but here we use standard 2D rotation on (x, z))
+    /// assert!(rotated.x.abs() < 1e-6);
+    /// assert!((rotated.z - 1.0).abs() < 1e-6);
+    /// ```
+    pub fn rotate_xz(&self, theta: f32) -> Self {
+        self.rotate_xz_fast(theta.sin(), theta.cos())
+    }
+
+    /// Rotates the vector in the XZ plane using precomputed sine and cosine values.
+    pub fn rotate_xz_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
+        Self {
+            x: self.x * cos_theta - self.z * sin_theta,
+            y: self.y,
+            z: self.x * sin_theta + self.z * cos_theta,
+            w: self.w,
+        }
+    }
+
     /// Rotates the vector in the YW plane.
     ///
     /// In 4D space, this rotation affects the Y and W components, leaving X and Z unchanged.
@@ -358,6 +433,43 @@ impl Vec4 {
             y: self.y * cos_theta - self.w * sin_theta,
             z: self.z,
             w: self.y * sin_theta + self.w * cos_theta,
+        }
+    }
+
+    /// Rotates the vector in the YZ plane.
+    ///
+    /// In 3D (and 4D), this is a rotation around the X axis (and W axis).
+    /// It affects the Y and Z components.
+    ///
+    /// # Arguments
+    ///
+    /// * `theta` - The angle of rotation in radians.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use hyper_system::math::Vec4;
+    /// use std::f32::consts::PI;
+    ///
+    /// let v = Vec4::new(0.0, 1.0, 0.0, 0.0);
+    /// // Rotate 90 degrees in YZ plane
+    /// let rotated = v.rotate_yz(PI / 2.0);
+    ///
+    /// // v moves from Y to Z axis
+    /// assert!(rotated.y.abs() < 1e-6);
+    /// assert!((rotated.z - 1.0).abs() < 1e-6);
+    /// ```
+    pub fn rotate_yz(&self, theta: f32) -> Self {
+        self.rotate_yz_fast(theta.sin(), theta.cos())
+    }
+
+    /// Rotates the vector in the YZ plane using precomputed sine and cosine values.
+    pub fn rotate_yz_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
+        Self {
+            x: self.x,
+            y: self.y * cos_theta - self.z * sin_theta,
+            z: self.y * sin_theta + self.z * cos_theta,
+            w: self.w,
         }
     }
 
@@ -575,6 +687,36 @@ mod tests {
     #[test]
     fn test_rotations_all_planes() {
         let theta = std::f32::consts::PI / 2.0;
+
+        // Rotate XY: changes X and Y
+        let v_xy = Vec4::new(1.0, 0.0, 0.0, 0.0);
+        let rot_xy = v_xy.rotate_xy(theta);
+        // x' = x cos - y sin = 0 - 0 = 0
+        // y' = x sin + y cos = 1 + 0 = 1
+        assert!(rot_xy.x.abs() < 1e-6);
+        assert!((rot_xy.y - 1.0).abs() < 1e-6);
+        assert_eq!(rot_xy.z, 0.0);
+        assert_eq!(rot_xy.w, 0.0);
+
+        // Rotate XZ: changes X and Z
+        let v_xz = Vec4::new(1.0, 0.0, 0.0, 0.0);
+        let rot_xz = v_xz.rotate_xz(theta);
+        // x' = x cos - z sin = 0 - 0 = 0
+        // z' = x sin + z cos = 1 + 0 = 1
+        assert!(rot_xz.x.abs() < 1e-6);
+        assert!((rot_xz.z - 1.0).abs() < 1e-6);
+        assert_eq!(rot_xz.y, 0.0);
+        assert_eq!(rot_xz.w, 0.0);
+
+        // Rotate YZ: changes Y and Z
+        let v_yz = Vec4::new(0.0, 1.0, 0.0, 0.0);
+        let rot_yz = v_yz.rotate_yz(theta);
+        // y' = y cos - z sin = 0 - 0 = 0
+        // z' = y sin + z cos = 1 + 0 = 1
+        assert!(rot_yz.y.abs() < 1e-6);
+        assert!((rot_yz.z - 1.0).abs() < 1e-6);
+        assert_eq!(rot_yz.x, 0.0);
+        assert_eq!(rot_yz.w, 0.0);
 
         // Rotate YW: changes Y and W
         let v_yw = Vec4::new(0.0, 1.0, 0.0, 0.0);
