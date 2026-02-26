@@ -20,7 +20,7 @@ use ratatui::{
 /// # Examples
 ///
 /// ```
-/// use tui_shared::widgets::Button;
+/// use tui_shared::Button;
 /// use ratatui::{layout::Rect, buffer::Buffer, widgets::Widget};
 ///
 /// // Create a button that is currently being hovered

@@ -24,7 +24,7 @@ use ratatui::{
 };
 use std::io;
 #[cfg(feature = "nova")]
-use tui_shared::widgets::{Button, TensionBar};
+use tui_shared::{Button, TensionBar};
 
 #[allow(dead_code)]
 const GOLDEN_FREQUENCIES: [f32; 4] = [161.8, 261.6, 432.0, 528.0];

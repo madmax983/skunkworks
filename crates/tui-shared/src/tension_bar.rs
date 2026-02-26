@@ -23,7 +23,7 @@ use ratatui::{
 /// # Examples
 ///
 /// ```
-/// use tui_shared::widgets::TensionBar;
+/// use tui_shared::TensionBar;
 /// use ratatui::{layout::Rect, buffer::Buffer, widgets::Widget};
 ///
 /// // Create a bar with 75% tension (Red-ish)
@@ -48,7 +48,7 @@ impl TensionBar {
     /// # Examples
     ///
     /// ```
-    /// use tui_shared::widgets::TensionBar;
+    /// use tui_shared::TensionBar;
     /// let bar = TensionBar::new(0.5); // Half-full, Yellow
     /// ```
     pub fn new(tension: f64) -> Self {
