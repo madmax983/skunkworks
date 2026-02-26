@@ -970,6 +970,9 @@ fn apply_propagation_rune(
     if fission::apply_fission_runes(rune, y, x, current_signals, next_signals) {
         return true;
     }
+    if genetics::apply_genesis_rune(y, x, current_signals, next_signals) {
+        return true;
+    }
     if evolution::apply_evolution_runes(rune, y, x, dna, current_signals, next_signals) {
         return true;
     }
@@ -1307,6 +1310,9 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             runecraft::apply_runecraft_sinks(vm, rune, y, x);
             phonetics::apply_phonetic_sinks(vm, rune, y, x);
             weave::apply_weave_sinks(vm, rune, y, x);
+            if rune == "Z" {
+                genetics::apply_ligation_rune(vm, y, x);
+            }
         }
     }
 }
@@ -2061,3 +2067,5 @@ mod phonetics_test;
 mod prologue_library_test;
 #[cfg(test)]
 mod wizard_test;
+#[cfg(test)]
+mod prologue_genesis_test;
