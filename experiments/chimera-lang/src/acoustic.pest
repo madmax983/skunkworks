@@ -1,19 +1,46 @@
 WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
-COMMENT = _{ "#" ~ (!"\n" ~ ANY)* ~ "\n" }
+COMMENT = _{ ("//" ~ (!"\n" ~ ANY)*) | ("/*" ~ (!"*/" ~ ANY)* ~ "*/") }
 
-score = { SOI ~ (stmt)* ~ EOI }
+score = { SOI ~ "score" ~ identifier ~ "{" ~ item* ~ "}" ~ EOI }
+
+item = { config_stmt | instrument_def | track_def }
+
+config_stmt = { "tempo" ~ int }
+
+instrument_def = { "instrument" ~ identifier ~ "{" ~ method_def* ~ "}" }
+
+method_def = { "def" ~ identifier ~ block }
+
+track_def = { "track" ~ identifier ~ block }
+
+block = { "{" ~ stmt* ~ "}" }
 
 stmt = {
-    pluck |
-    oscillate |
-    move_cmd |
-    wait
+    call_stmt |
+    op_stmt |
+    play_stmt |
+    rest_stmt |
+    repeat_stmt |
+    loop_stmt |
+    if_stmt |
+    cmd_stmt
 }
 
-pluck = { "pluck" ~ "(" ~ float ~ ")" }
-oscillate = { "oscillate" ~ "(" ~ float ~ "," ~ float ~ ")" }
-move_cmd = { "move" ~ "(" ~ int ~ "," ~ int ~ ")" }
-wait = { "wait" ~ "(" ~ int ~ ")" }
+call_stmt = { "call" ~ identifier ~ "(" ~ args? ~ ")" }
+op_stmt = { "op" ~ "(" ~ identifier ~ ("," ~ args)? ~ ")" }
+play_stmt = { "play" ~ "(" ~ args? ~ ")" }
+rest_stmt = { "rest" ~ "(" ~ args? ~ ")" }
+cmd_stmt = { identifier ~ "(" ~ args? ~ ")" }
 
+repeat_stmt = { "repeat" ~ "(" ~ int ~ ")" ~ block }
+loop_stmt = { "loop" ~ block }
+if_stmt = { "if" ~ "(" ~ condition ~ ")" ~ block }
+
+args = { arg ~ ("," ~ arg)* }
+arg = { float | int | string | identifier }
+
+identifier = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_" | ".")* }
 int = @{ "-"? ~ ASCII_DIGIT+ }
-float = @{ "-"? ~ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT+)? }
+float = @{ "-"? ~ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ }
+string = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+condition = { identifier }
