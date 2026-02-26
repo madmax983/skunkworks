@@ -137,12 +137,30 @@ impl Agent {
         // Create random DNA
         let mut genes = Vec::new();
         // A simple genome that tries to produce a number
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(rand::gen_range(0, 100))] });
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(rand::gen_range(0, 100))] });
-        genes.push(Gene { op: OpCode::Add, args: vec![] }); // Sum
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] });
-        genes.push(Gene { op: OpCode::Mod, args: vec![] }); // Mod 10
-        genes.push(Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] }); // Loop
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(rand::gen_range(0, 100))],
+        });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(rand::gen_range(0, 100))],
+        });
+        genes.push(Gene {
+            op: OpCode::Add,
+            args: vec![],
+        }); // Sum
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(10)],
+        });
+        genes.push(Gene {
+            op: OpCode::Mod,
+            args: vec![],
+        }); // Mod 10
+        genes.push(Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(0)],
+        }); // Loop
 
         let dna = Dna {
             evolution_config: None,
@@ -156,7 +174,12 @@ impl Agent {
             position: vertices[start_idx],
             target_idx: start_idx,
             speed: rand::gen_range(0.5, 2.0),
-            color: Color::from_rgba(rand::gen_range(100, 255), rand::gen_range(100, 255), rand::gen_range(100, 255), 255),
+            color: Color::from_rgba(
+                rand::gen_range(100, 255),
+                rand::gen_range(100, 255),
+                rand::gen_range(100, 255),
+                255,
+            ),
         }
     }
 
@@ -271,12 +294,24 @@ async fn main() {
         }
 
         // Camera Control
-        if is_key_down(KeyCode::Left) { cam_angle_y += 2.0 * dt; }
-        if is_key_down(KeyCode::Right) { cam_angle_y -= 2.0 * dt; }
-        if is_key_down(KeyCode::Up) { cam_angle_x += 2.0 * dt; }
-        if is_key_down(KeyCode::Down) { cam_angle_x -= 2.0 * dt; }
-        if is_key_down(KeyCode::W) { cam_dist -= 5.0 * dt; }
-        if is_key_down(KeyCode::S) { cam_dist += 5.0 * dt; }
+        if is_key_down(KeyCode::Left) {
+            cam_angle_y += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_angle_y -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_angle_x += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_angle_x -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 5.0 * dt;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 5.0 * dt;
+        }
 
         let cam_pos = macroquad::math::vec3(
             cam_dist * cam_angle_x.cos() * cam_angle_y.sin(),
@@ -344,7 +379,13 @@ async fn main() {
         // UI
         draw_text("CHIMERA ENIGMA", 20.0, 30.0, 40.0, WHITE);
         draw_text("Bio-Encryption Active", 20.0, 60.0, 20.0, GREEN);
-        draw_text(&format!("Total Key Energy: {:.2}", total_energy), 20.0, 80.0, 20.0, GRAY);
+        draw_text(
+            &format!("Total Key Energy: {:.2}", total_energy),
+            20.0,
+            80.0,
+            20.0,
+            GRAY,
+        );
 
         let mut y = 120.0;
         for (din, dout) in &enigma.history {

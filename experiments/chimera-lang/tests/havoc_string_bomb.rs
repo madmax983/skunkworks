@@ -49,7 +49,12 @@ mod tests {
         // Verify safety
         if let Some(Value::Str(s)) = vm.stack.last() {
             println!("Final String Length: {}", s.len());
-            assert!(s.len() <= MAX_STRING_LEN, "BUFFER OVERFLOW: String length {} exceeded MAX {}", s.len(), MAX_STRING_LEN);
+            assert!(
+                s.len() <= MAX_STRING_LEN,
+                "BUFFER OVERFLOW: String length {} exceeded MAX {}",
+                s.len(),
+                MAX_STRING_LEN
+            );
         } else {
             panic!("Stack empty or invalid type");
         }

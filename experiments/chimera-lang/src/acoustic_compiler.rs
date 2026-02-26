@@ -91,7 +91,7 @@ pub fn compile(source: &str) -> Result<Dna> {
 fn compile_block(
     block_pair: pest::iterators::Pair<Rule>,
     symbols: &HashMap<String, usize>,
-    current_strand_name: &str
+    current_strand_name: &str,
 ) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
 
@@ -113,7 +113,8 @@ fn compile_block(
                         }
 
                         // Find target index
-                        let target_idx = symbols.get(target_name)
+                        let target_idx = symbols
+                            .get(target_name)
                             .ok_or_else(|| anyhow!("Unknown track/method: {}", target_name))?;
 
                         // Use Call opcode (if exists) or Jump logic?
@@ -148,10 +149,7 @@ fn compile_block(
                             }
                         }
 
-                        genes.push(Gene {
-                            op: op_code,
-                            args,
-                        });
+                        genes.push(Gene { op: op_code, args });
                     }
                     Rule::play_stmt => {
                         // play(note, duration, velocity?)
@@ -179,8 +177,8 @@ fn compile_block(
                         });
                     }
                     Rule::cmd_stmt => {
-                         // Generic command: name(args)
-                         // Treat as OpCode if valid, else error
+                        // Generic command: name(args)
+                        // Treat as OpCode if valid, else error
                         let mut parts = inner.into_inner();
                         let cmd_name = parts.next().unwrap().as_str();
 
@@ -190,18 +188,19 @@ fn compile_block(
                         // But wait, user might use "push" or "Push".
                         // Let's assume user uses correct casing or we map standard ones.
 
-                        let op_code = OpCode::from_str(cmd_name)
-                             .or_else(|_| {
-                                 // Try Capitalized
-                                 let mut c = cmd_name.chars();
-                                 match c.next() {
-                                     None => Err(anyhow!("Empty command")),
-                                     Some(f) => {
-                                         let cap = f.to_uppercase().collect::<String>() + c.as_str();
-                                         OpCode::from_str(&cap).map_err(|_| anyhow!("Unknown command/OpCode: {}", cmd_name))
-                                     }
-                                 }
-                             })?;
+                        let op_code = OpCode::from_str(cmd_name).or_else(|_| {
+                            // Try Capitalized
+                            let mut c = cmd_name.chars();
+                            match c.next() {
+                                None => Err(anyhow!("Empty command")),
+                                Some(f) => {
+                                    let cap = f.to_uppercase().collect::<String>() + c.as_str();
+                                    OpCode::from_str(&cap).map_err(|_| {
+                                        anyhow!("Unknown command/OpCode: {}", cmd_name)
+                                    })
+                                }
+                            }
+                        })?;
 
                         // Arguments handling:
                         // Some OpCodes take arguments in Gene (Immediate), others take from Stack.
@@ -234,24 +233,35 @@ fn compile_block(
                         // For generic `cmd_stmt`, we will assume STACK-BASED arguments unless it's a known Immediate Op.
                         // Known Immediates: Push, Jump, Brz, Call.
 
-                        let is_immediate = matches!(op_code, OpCode::Push | OpCode::Jump | OpCode::Brz | OpCode::Call | OpCode::Harmonize | OpCode::Choir);
+                        let is_immediate = matches!(
+                            op_code,
+                            OpCode::Push
+                                | OpCode::Jump
+                                | OpCode::Brz
+                                | OpCode::Call
+                                | OpCode::Harmonize
+                                | OpCode::Choir
+                        );
 
                         if is_immediate {
-                             let mut args = Vec::new();
-                             if let Some(args_pair) = parts.next() {
-                                 for arg in args_pair.into_inner() {
-                                     args.push(compile_arg(arg)?);
-                                 }
-                             }
-                             genes.push(Gene { op: op_code, args });
+                            let mut args = Vec::new();
+                            if let Some(args_pair) = parts.next() {
+                                for arg in args_pair.into_inner() {
+                                    args.push(compile_arg(arg)?);
+                                }
+                            }
+                            genes.push(Gene { op: op_code, args });
                         } else {
-                             // Stack based: Push args first
-                             if let Some(args_pair) = parts.next() {
-                                 for arg in args_pair.into_inner() {
-                                     genes.push(compile_arg_push(arg, symbols)?);
-                                 }
-                             }
-                             genes.push(Gene { op: op_code, args: vec![] });
+                            // Stack based: Push args first
+                            if let Some(args_pair) = parts.next() {
+                                for arg in args_pair.into_inner() {
+                                    genes.push(compile_arg_push(arg, symbols)?);
+                                }
+                            }
+                            genes.push(Gene {
+                                op: op_code,
+                                args: vec![],
+                            });
                         }
                     }
                     Rule::repeat_stmt => {
@@ -259,8 +269,8 @@ fn compile_block(
                         let mut parts = inner.into_inner();
                         let count_pair = parts.next().unwrap();
                         let count_str = count_pair.as_str(); // "repeat" ~ "(" ~ int ~ ")"
-                        // Wait, parse tree structure for repeat_stmt is: "repeat", "(", int, ")", block.
-                        // Pest structure: repeat_stmt -> [int, block].
+                                                             // Wait, parse tree structure for repeat_stmt is: "repeat", "(", int, ")", block.
+                                                             // Pest structure: repeat_stmt -> [int, block].
 
                         let count: usize = count_str.parse()?;
                         let block_pair = parts.next().unwrap();
@@ -284,10 +294,10 @@ fn compile_block(
                         genes.extend(block_genes);
 
                         if let Some(&my_idx) = symbols.get(current_strand_name) {
-                             genes.push(Gene {
+                            genes.push(Gene {
                                 op: OpCode::Jump,
                                 args: vec![Nucleotide::Number(my_idx as i64)],
-                             });
+                            });
                         } else {
                             // Should not happen if logic is correct
                             return Err(anyhow!("Current strand not found in symbol table"));
@@ -312,22 +322,20 @@ fn compile_arg(pair: pest::iterators::Pair<Rule>) -> Result<Nucleotide> {
                     Ok(Nucleotide::Number(v))
                 }
                 Rule::float => {
-                     // Chimera uses Int or String mostly. Float support in Nucleotide?
-                     // Value::Float exists? Value enum in `value.rs`.
-                     // Nucleotide only has Number(i64).
-                     // We must convert float to scaled int (fixed point) or string?
-                     // `acoustic_compiler` original used scaled int (x 100).
-                     let v: f64 = inner.as_str().parse()?;
-                     Ok(Nucleotide::Number((v * 100.0) as i64))
+                    // Chimera uses Int or String mostly. Float support in Nucleotide?
+                    // Value::Float exists? Value enum in `value.rs`.
+                    // Nucleotide only has Number(i64).
+                    // We must convert float to scaled int (fixed point) or string?
+                    // `acoustic_compiler` original used scaled int (x 100).
+                    let v: f64 = inner.as_str().parse()?;
+                    Ok(Nucleotide::Number((v * 100.0) as i64))
                 }
                 Rule::string => {
                     let s = inner.as_str();
                     // Remove quotes
-                    Ok(Nucleotide::String(s[1..s.len()-1].to_string()))
+                    Ok(Nucleotide::String(s[1..s.len() - 1].to_string()))
                 }
-                Rule::identifier => {
-                    Ok(Nucleotide::String(inner.as_str().to_string()))
-                }
+                Rule::identifier => Ok(Nucleotide::String(inner.as_str().to_string())),
                 _ => Err(anyhow!("Unknown arg type")),
             }
         }
@@ -335,7 +343,10 @@ fn compile_arg(pair: pest::iterators::Pair<Rule>) -> Result<Nucleotide> {
     }
 }
 
-fn compile_arg_push(pair: pest::iterators::Pair<Rule>, symbols: &HashMap<String, usize>) -> Result<Gene> {
+fn compile_arg_push(
+    pair: pest::iterators::Pair<Rule>,
+    symbols: &HashMap<String, usize>,
+) -> Result<Gene> {
     // Compile an argument into a Push instruction.
     // If identifier, check if it's a track name -> Push Index.
 

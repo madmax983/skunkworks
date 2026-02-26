@@ -196,7 +196,7 @@ fn decide_action(
                 }
             }
             Value::Int(_) => {
-                 return WizardAction::CastAlchemy(ty, tx);
+                return WizardAction::CastAlchemy(ty, tx);
             }
             _ => {}
         }
@@ -229,26 +229,30 @@ fn cast_polymorph(vm: &mut ChimeraVM, y: usize, x: usize) {
     let types = ["@", "K", "H", "C", "♻", "Φ"];
     let new_type = types[rng.gen_range(0..types.len())];
     vm.grid[y][x] = Value::Str(new_type.to_string());
-    vm.output.push(format!("🧙 POLYMORPH: Agent at {},{} turned into {}", x, y, new_type));
+    vm.output.push(format!(
+        "🧙 POLYMORPH: Agent at {},{} turned into {}",
+        x, y, new_type
+    ));
     // Note: This doesn't update the PrologueState registers immediately, but the next scan cycle will pick it up.
     // However, if we want to be clean, we should probably clear the old register.
     vm.prologue_state.registers.remove(&(y, x));
 }
 
 fn cast_alchemy(vm: &mut ChimeraVM, y: usize, x: usize) {
-     let val = vm.grid[y][x].clone();
-     match val {
-         Value::Int(n) => {
-             // Transmute Int -> String
-             vm.grid[y][x] = Value::Str(n.to_string());
-         }
-         Value::Str(s) => {
-             // Transmute String -> Int (Length)
-             vm.grid[y][x] = Value::Int(s.len() as i64);
-         }
-         _ => {}
-     }
-     vm.output.push(format!("🧙 ALCHEMY: Transmuted cell at {},{}", x, y));
+    let val = vm.grid[y][x].clone();
+    match val {
+        Value::Int(n) => {
+            // Transmute Int -> String
+            vm.grid[y][x] = Value::Str(n.to_string());
+        }
+        Value::Str(s) => {
+            // Transmute String -> Int (Length)
+            vm.grid[y][x] = Value::Int(s.len() as i64);
+        }
+        _ => {}
+    }
+    vm.output
+        .push(format!("🧙 ALCHEMY: Transmuted cell at {},{}", x, y));
 }
 
 fn cast_short_circuit(vm: &mut ChimeraVM, y: usize, x: usize) {
@@ -258,15 +262,17 @@ fn cast_short_circuit(vm: &mut ChimeraVM, y: usize, x: usize) {
     } else {
         vm.grid[y][x] = Value::Str("!".to_string());
     }
-     vm.output.push(format!("🧙 SHORT CIRCUIT: Fried cell at {},{}", x, y));
+    vm.output
+        .push(format!("🧙 SHORT CIRCUIT: Fried cell at {},{}", x, y));
 }
 
 fn cast_babel(vm: &mut ChimeraVM, y: usize, x: usize) {
     if let Value::Str(mut s) = vm.grid[y][x].clone() {
-         let mut rng = rand::thread_rng();
-         let noise = ["bla", "glitch", "?", "#", "error"];
-         s.push_str(noise[rng.gen_range(0..noise.len())]);
-         vm.grid[y][x] = Value::Str(s);
-         vm.output.push(format!("🧙 BABEL: Corrupted text at {},{}", x, y));
+        let mut rng = rand::thread_rng();
+        let noise = ["bla", "glitch", "?", "#", "error"];
+        s.push_str(noise[rng.gen_range(0..noise.len())]);
+        vm.grid[y][x] = Value::Str(s);
+        vm.output
+            .push(format!("🧙 BABEL: Corrupted text at {},{}", x, y));
     }
 }

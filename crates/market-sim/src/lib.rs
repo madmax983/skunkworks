@@ -697,6 +697,9 @@ mod sentry_tests {
         // Verify Bid A moved sideways
         let a_left = matches!(grid.get(0, 1), Particle::Bid(10));
         let a_right = matches!(grid.get(2, 1), Particle::Bid(10));
-        assert!(a_left || a_right, "Bid A did not move sideways when blocked by Wall");
+        assert!(
+            a_left || a_right,
+            "Bid A did not move sideways when blocked by Wall"
+        );
     }
 }

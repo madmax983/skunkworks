@@ -1,8 +1,5 @@
 use crossterm::event::{self, Event, KeyCode};
-use harmonic_engine::{
-    audio::MusicBox,
-    physics::PhysicsWorld,
-};
+use harmonic_engine::{audio::MusicBox, physics::PhysicsWorld};
 use nalgebra::Vector2;
 use ratatui::{prelude::*, widgets::*};
 use std::{error::Error, time::Duration};

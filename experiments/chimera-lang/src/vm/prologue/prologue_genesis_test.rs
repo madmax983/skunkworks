@@ -1,10 +1,10 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use crate::ast::{Dna, Helix, JunctionType, Strand, Gene, Nucleotide};
-    use crate::vm::{ChimeraVM, Value, GRID_SIZE};
-    use crate::vm::prologue::exec_prologue_tick;
+    use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
     use crate::opcode::OpCode;
+    use crate::vm::prologue::exec_prologue_tick;
+    use crate::vm::{ChimeraVM, Value, GRID_SIZE};
 
     #[test]
     fn test_genesis_rune() {
@@ -32,12 +32,12 @@ mod tests {
 
         // Connect inputs with Source '!'
         vm.grid[5][3] = Value::Str("!".to_string()); // Source for "push" (at 5,3 pushing to 5,4)
-        // Wait, '!' source emits West value to Self.
-        // So:
-        // 5,2: "push"
-        // 5,3: "!" (emits "push" to 5,3 signal grid)
-        // 5,4: "~" (wire carries to 5,5)
-        // 5,5: "G"
+                                                     // Wait, '!' source emits West value to Self.
+                                                     // So:
+                                                     // 5,2: "push"
+                                                     // 5,3: "!" (emits "push" to 5,3 signal grid)
+                                                     // 5,4: "~" (wire carries to 5,5)
+                                                     // 5,5: "G"
 
         // Pre-load signals into delayed_signals so they persist past prepare_signals
         vm.prologue_state.delayed_signals[5][4] = Some(Value::Str("push".to_string()));
@@ -68,10 +68,10 @@ mod tests {
                         Value::Junction(JunctionType::All, args) => {
                             assert_eq!(args.len(), 1);
                             assert_eq!(args[0], Value::Int(123));
-                        },
+                        }
                         _ => panic!("Expected Args Junction, got {:?}", list[1]),
                     }
-                },
+                }
                 _ => panic!("Expected Gene Tuple Junction, got {:?}", val),
             }
         }
@@ -88,7 +88,9 @@ mod tests {
         let strand = Strand { genes: vec![] };
         let dna = Dna {
             evolution_config: None,
-            helix: Helix { strands: vec![strand] },
+            helix: Helix {
+                strands: vec![strand],
+            },
         };
         let mut vm = ChimeraVM::new(dna);
         vm.prologue_state.active = true;
@@ -98,8 +100,8 @@ mod tests {
             JunctionType::All,
             vec![
                 Value::Str("add".to_string()),
-                Value::Junction(JunctionType::All, vec![])
-            ]
+                Value::Junction(JunctionType::All, vec![]),
+            ],
         );
 
         // Pre-load signals into delayed_signals

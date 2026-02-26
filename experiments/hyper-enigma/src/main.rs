@@ -144,12 +144,24 @@ async fn main() {
         }
 
         // Camera Control
-        if is_key_down(KeyCode::Left) { cam_angle_y += 2.0 * dt; }
-        if is_key_down(KeyCode::Right) { cam_angle_y -= 2.0 * dt; }
-        if is_key_down(KeyCode::Up) { cam_angle_x += 2.0 * dt; }
-        if is_key_down(KeyCode::Down) { cam_angle_x -= 2.0 * dt; }
-        if is_key_down(KeyCode::W) { cam_dist -= 5.0 * dt; }
-        if is_key_down(KeyCode::S) { cam_dist += 5.0 * dt; }
+        if is_key_down(KeyCode::Left) {
+            cam_angle_y += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_angle_y -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_angle_x += 2.0 * dt;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_angle_x -= 2.0 * dt;
+        }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 5.0 * dt;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 5.0 * dt;
+        }
 
         let cam_pos = macroquad::math::vec3(
             cam_dist * cam_angle_x.cos() * cam_angle_y.sin(),
@@ -218,7 +230,13 @@ async fn main() {
         let rx = 500.0;
         let mut ry = 30.0;
         for i in 0..6 {
-            draw_text(&format!("Rotor {}: {:.2}", i, state.rotors[i]), rx, ry, 20.0, WHITE);
+            draw_text(
+                &format!("Rotor {}: {:.2}", i, state.rotors[i]),
+                rx,
+                ry,
+                20.0,
+                WHITE,
+            );
             ry += 25.0;
         }
 

@@ -1,8 +1,8 @@
-use chimera_lang::vm::{ChimeraVM, Value};
+use crate::physics::Particle4D;
 use chimera_lang::ast::{Dna, Gene, Nucleotide};
 use chimera_lang::opcode::OpCode;
+use chimera_lang::vm::{ChimeraVM, Value};
 use hyper_system::math::Vec4;
-use crate::physics::Particle4D;
 use rand::Rng;
 
 pub struct ChimeraAgent {
@@ -25,11 +25,26 @@ impl ChimeraAgent {
         // mul()    // -> [Strain * 2]
 
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::GRead, args: vec![] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-            Gene { op: OpCode::Mul, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(2)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::GRead,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(2)],
+            },
+            Gene {
+                op: OpCode::Mul,
+                args: vec![],
+            },
         ];
 
         let dna = Dna::from_genes(genes);
@@ -68,7 +83,11 @@ impl ChimeraAgent {
             }
         }
 
-        let avg_w = if count > 0 { neighbor_w_sum / count as f32 } else { 0.0 };
+        let avg_w = if count > 0 {
+            neighbor_w_sum / count as f32
+        } else {
+            0.0
+        };
         let strain = (w - avg_w).abs();
 
         // Write inputs to Grid
@@ -87,7 +106,9 @@ impl ChimeraAgent {
 
         // Run a few steps
         for _ in 0..10 {
-            if self.vm.halted { break; }
+            if self.vm.halted {
+                break;
+            }
             self.vm.step();
         }
 

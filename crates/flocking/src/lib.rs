@@ -47,10 +47,22 @@ pub struct FlockingParams {
 /// 3. Subtract current velocity (to get steering force).
 /// 4. Limit the steering force.
 fn compute_steering(mut desired: Vec2, current_vel: Vec2, max_speed: f64, max_force: f64) -> Vec2 {
-    if desired.magnitude_squared() > 0.0 {
-        desired = desired.normalize() * max_speed;
+    let d_sq = desired.magnitude_squared();
+    if d_sq > 0.0 {
+        // Optimization: Normalize and scale in one go: desired * (max_speed / mag)
+        // 1 div, 1 sqrt, 2 muls (vs 2 divs, 1 sqrt, 2 muls in standard normalize)
+        let mag = d_sq.sqrt();
+        desired *= max_speed / mag;
+
         desired -= current_vel;
-        desired.limit(max_force)
+
+        // Optimization: Limit logic inlined to avoid redundant sqrt/divs
+        let s_sq = desired.magnitude_squared();
+        if s_sq > max_force * max_force {
+            let s_mag = s_sq.sqrt();
+            desired *= max_force / s_mag;
+        }
+        desired
     } else {
         Vec2::zero()
     }
@@ -103,15 +115,21 @@ pub fn compute_force(
     let view_sq = params.view_radius * params.view_radius;
     let sep_sq = params.separation_radius * params.separation_radius;
 
-    for (i, (&pos, &vel)) in positions.iter().zip(velocities).enumerate() {
-        if i == my_idx {
-            continue;
-        }
+    // Pre-check weights to avoid accumulation for disabled behaviors.
+    let do_sep = params.separation_weight.abs() > 0.0;
+    let do_ali = params.alignment_weight.abs() > 0.0;
+    let do_coh = params.cohesion_weight.abs() > 0.0;
 
-        // Optimization: AABB (Axis-Aligned Bounding Box) early exit.
-        // We first check if the neighbor is within the square bounding box of the view radius.
-        // This avoids the more expensive Euclidean distance calculation (squaring and adding)
-        // for the vast majority of distant neighbors.
+    // Loop Splitting: We split the slices at `my_idx` to iterate over left and right neighbors separately.
+    // This avoids checking `i == my_idx` inside the hot loop.
+    let (left_pos, right_pos) = positions.split_at(my_idx);
+    let (left_vel, right_vel) = velocities.split_at(my_idx);
+
+    // Process left neighbors (0..my_idx)
+    for (pos, vel) in left_pos.iter().zip(left_vel) {
+        let pos = *pos;
+        let vel = *vel;
+
         let dx = my_pos.x - pos.x;
         if dx.abs() > params.view_radius {
             continue;
@@ -130,19 +148,62 @@ pub fn compute_force(
 
         let diff = Vec2::new(dx, dy);
 
-        // Separation
-        if d_sq < sep_sq {
+        if do_sep && d_sq < sep_sq {
             separation += diff * (1.0 / d_sq);
             sep_count += 1;
         }
 
-        // Alignment
-        alignment += vel;
-        ali_count += 1;
+        if do_ali {
+            alignment += vel;
+            ali_count += 1;
+        }
 
-        // Cohesion
-        cohesion += pos;
-        coh_count += 1;
+        if do_coh {
+            cohesion += pos;
+            coh_count += 1;
+        }
+    }
+
+    // Process right neighbors (my_idx+1..len)
+    // right_pos[0] is self, so skip it.
+    if right_pos.len() > 1 {
+        for (pos, vel) in right_pos[1..].iter().zip(&right_vel[1..]) {
+            let pos = *pos;
+            let vel = *vel;
+
+            let dx = my_pos.x - pos.x;
+            if dx.abs() > params.view_radius {
+                continue;
+            }
+
+            let dy = my_pos.y - pos.y;
+            if dy.abs() > params.view_radius {
+                continue;
+            }
+
+            let d_sq = dx * dx + dy * dy;
+
+            if d_sq <= 0.0 || d_sq >= view_sq {
+                continue;
+            }
+
+            let diff = Vec2::new(dx, dy);
+
+            if do_sep && d_sq < sep_sq {
+                separation += diff * (1.0 / d_sq);
+                sep_count += 1;
+            }
+
+            if do_ali {
+                alignment += vel;
+                ali_count += 1;
+            }
+
+            if do_coh {
+                cohesion += pos;
+                coh_count += 1;
+            }
+        }
     }
 
     let mut total = Vec2::zero();
@@ -233,6 +294,33 @@ mod tests {
             let _ = compute_force(&positions, &velocities, i, &params);
         }
         println!("Time taken: {:?}", start.elapsed());
+    }
+
+    #[test]
+    fn bench_compute_force_only_cohesion() {
+        let count = 1000;
+        let mut positions = Vec::with_capacity(count);
+        let mut velocities = Vec::with_capacity(count);
+        for i in 0..count {
+            positions.push(Vec2::new(i as f64, 0.0));
+            velocities.push(Vec2::new(0.0, 1.0));
+        }
+
+        let params = FlockingParams {
+            view_radius: 50.0,
+            separation_radius: 20.0,
+            max_speed: 5.0,
+            max_force: 1.0,
+            separation_weight: 0.0, // Disabled
+            alignment_weight: 0.0,  // Disabled
+            cohesion_weight: 1.0,
+        };
+
+        let start = std::time::Instant::now();
+        for i in 0..1000 {
+            let _ = compute_force(&positions, &velocities, i, &params);
+        }
+        println!("Time taken (only cohesion): {:?}", start.elapsed());
     }
 }
 
