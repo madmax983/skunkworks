@@ -39,7 +39,7 @@
 //! - **Quantum Entanglement**: Linked strands that share mutations.
 //! - **Phases of Matter**: Shift between Corporeal, Ethereal (pass walls), Crystalline (immobile), and Flux (fast).
 
-use super::{nova_biome::Biome, ChimeraVM, Value};
+use super::{ChimeraVM, Value};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use crate::{ChimeraParser, Rule};
@@ -47,7 +47,7 @@ use pest::Parser;
 use rand::seq::SliceRandom;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{HashSet, VecDeque};
 
 /// The physical state of the organism, affecting movement and mutation.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
@@ -152,282 +152,6 @@ pub struct Organelle {
     pub stage: u8,
 }
 
-/// Pre-calculated neighbor offsets (dy, dx) and their corresponding bitmasks.
-///
-/// Optimization: Used to avoid repeated calls to `get_direction_mask` inside hot loops.
-/// Mappings: N=1, S=2, E=4, W=8.
-const NEIGHBOR_DIRECTIONS: [(i64, i64, u8); 4] = [
-    (-1, 0, 1), // N
-    (1, 0, 2),  // S
-    (0, -1, 8), // W
-    (0, 1, 4),  // E
-];
-
-fn get_open_neighbors(
-    vm: &ChimeraVM,
-    y: usize,
-    x: usize,
-) -> impl Iterator<Item = (usize, usize)> + '_ {
-    NEIGHBOR_DIRECTIONS
-        .into_iter()
-        .filter_map(move |(dy, dx, mask)| {
-            if (vm.membranes[y][x] & mask) != 0 {
-                None
-            } else {
-                vm.normalize_coords(y as i64 + dy, x as i64 + dx)
-            }
-        })
-}
-
-/// Generic diffusion logic for scalar grids (i64).
-///
-/// Applies inertia, wind flow, and decay.
-///
-/// **Optimization:** Uses a stack-allocated buffer `[[i64; GRID_SIZE]; GRID_SIZE]` to avoid
-/// repeated heap allocations (`Vec<Vec<i64>>`) every tick.
-fn diffuse_scalar_grid<F>(
-    source: &mut [Vec<i64>],
-    biomes: &[Vec<Biome>],
-    wind: &[Vec<(i8, i8)>],
-    membranes: &[Vec<u8>],
-    topology: &crate::vm::Topology,
-    decay_fn: F,
-) where
-    F: Fn(usize, usize, &Biome) -> i64,
-{
-    let size = crate::vm::GRID_SIZE;
-    debug_assert!(
-        size.is_power_of_two(),
-        "Grid size must be power of 2 for bitwise wrapping"
-    );
-    let size_mask = (size - 1) as i64;
-    let is_torus = *topology == crate::vm::Topology::Torus;
-    let mut buffer = [[0i64; crate::vm::GRID_SIZE]; crate::vm::GRID_SIZE];
-
-    for y in 0..size {
-        for x in 0..size {
-            let inertia = biomes[y][x].diffusion_inertia();
-            let weight_center = 10;
-            // Use i64 for accumulation (safe as values are bounded)
-            let mut sum = source[y][x]
-                .saturating_mul(inertia)
-                .saturating_mul(weight_center);
-            let mut total_weight = inertia.saturating_mul(weight_center);
-
-            for (dy, dx, mask) in NEIGHBOR_DIRECTIONS {
-                if (membranes[y][x] & mask) != 0 {
-                    continue;
-                }
-
-                let neighbor = if is_torus {
-                    Some((
-                        ((y as i64 + dy) & size_mask) as usize,
-                        ((x as i64 + dx) & size_mask) as usize,
-                    ))
-                } else {
-                    topology.normalize(y as i64 + dy, x as i64 + dx, size, size)
-                };
-
-                if let Some((ny, nx)) = neighbor {
-                    let (w_dy, w_dx) = wind[ny][nx];
-                    // Wind flow from neighbor (ny, nx) to here (y, x).
-                    let flow = -((w_dy as i64) * dy + (w_dx as i64) * dx);
-                    let weight = (10 + flow).max(0);
-
-                    sum = sum.saturating_add(source[ny][nx].saturating_mul(weight));
-                    total_weight = total_weight.saturating_add(weight);
-                }
-            }
-
-            let decay = decay_fn(y, x, &biomes[y][x]);
-            if total_weight > 0 {
-                buffer[y][x] = (sum / total_weight) * decay / 100;
-            }
-        }
-    }
-
-    for y in 0..size {
-        // Optimization: Use copy_from_slice (memcpy) instead of element-wise loop.
-        // We slice by `size` to ensure lengths match and avoid panics if vectors are oversized.
-        source[y][..size].copy_from_slice(&buffer[y][..size]);
-    }
-}
-
-/// Simulates the diffusion of chemical signals (hormones) across the grid.
-///
-/// Uses a simple cellular automaton model: each cell becomes the average of itself
-/// and its open neighbors (neighbors not blocked by membranes).
-///
-/// # Examples
-///
-/// ```ignore
-/// // Inside VM step loop
-/// nova::diffuse_hormones(&mut vm);
-/// ```
-#[allow(clippy::needless_range_loop)]
-/// Simulates the diffusion of chemical signals (hormones) across the grid.
-///
-/// Uses a simple cellular automaton model: each cell becomes the average of itself
-/// and its open neighbors (neighbors not blocked by membranes).
-///
-/// Optimized to avoid intermediate Vec allocations.
-pub fn diffuse_hormones(vm: &mut ChimeraVM) {
-    let mut buffer = [[[0i64; 3]; 16]; 16];
-    let size = crate::vm::GRID_SIZE as i64;
-    debug_assert!(
-        (crate::vm::GRID_SIZE).is_power_of_two(),
-        "Grid size must be power of 2 for bitwise wrapping"
-    );
-    let size_mask = size - 1;
-    let is_torus = vm.topology == crate::vm::Topology::Torus;
-
-    for y in 0..16 {
-        for x in 0..16 {
-            let inertia = vm.biome_grid[y][x].diffusion_inertia();
-            let weight_center = 10;
-            // Use i64 for accumulation
-            let mut sums = [
-                vm.hormone_grid[y][x][0]
-                    .saturating_mul(inertia)
-                    .saturating_mul(weight_center),
-                vm.hormone_grid[y][x][1]
-                    .saturating_mul(inertia)
-                    .saturating_mul(weight_center),
-                vm.hormone_grid[y][x][2]
-                    .saturating_mul(inertia)
-                    .saturating_mul(weight_center),
-            ];
-            let mut total_weight = inertia.saturating_mul(weight_center);
-
-            // Manual neighbor iteration to calculate wind bias
-            for (dy, dx, mask) in NEIGHBOR_DIRECTIONS {
-                if (vm.membranes[y][x] & mask) != 0 {
-                    continue;
-                }
-
-                let neighbor = if is_torus {
-                    Some((
-                        ((y as i64 + dy) & size_mask) as usize,
-                        ((x as i64 + dx) & size_mask) as usize,
-                    ))
-                } else {
-                    vm.normalize_coords(y as i64 + dy, x as i64 + dx)
-                };
-
-                if let Some((ny, nx)) = neighbor {
-                    let (w_dy, w_dx) = vm.wind_grid[ny][nx];
-                    // Wind flow from neighbor (ny, nx) to here (y, x).
-                    // Vector from neighbor to here is (-dy, -dx).
-                    // Dot product: w_dy * (-dy) + w_dx * (-dx)
-                    let flow = -((w_dy as i64) * dy + (w_dx as i64) * dx);
-                    let weight = (10 + flow).max(0); // Base 10
-
-                    for c in 0..3 {
-                        sums[c] = sums[c]
-                            .saturating_add(vm.hormone_grid[ny][nx][c].saturating_mul(weight));
-                    }
-                    total_weight = total_weight.saturating_add(weight);
-                }
-            }
-
-            if total_weight > 0 {
-                for c in 0..3 {
-                    buffer[y][x][c] = sums[c] / total_weight;
-                }
-            }
-        }
-    }
-    for y in 0..16 {
-        // Optimization: Use copy_from_slice (memcpy).
-        vm.hormone_grid[y][..16].copy_from_slice(&buffer[y][..16]);
-    }
-}
-
-/// Simulates the diffusion of metabolic waste products.
-///
-/// Waste accumulates and spreads. High concentrations trigger damage/mutation.
-#[allow(clippy::needless_range_loop)]
-pub fn diffuse_waste(vm: &mut ChimeraVM) {
-    diffuse_scalar_grid(
-        &mut vm.waste_grid,
-        &vm.biome_grid,
-        &vm.wind_grid,
-        &vm.membranes,
-        &vm.topology,
-        |_, _, b| b.decay_rate(),
-    );
-}
-
-/// Simulates the diffusion and decay of light.
-///
-/// Light spreads but decays rapidly (50% per tick), simulating absorption and scattering.
-/// Chloroplasts harvest energy from this grid.
-#[allow(clippy::needless_range_loop)]
-pub fn diffuse_light(vm: &mut ChimeraVM) {
-    super::nova_biolum::diffuse_light_color(vm);
-    let mut buffer = [[0i64; 16]; 16];
-    for y in 0..16 {
-        for x in 0..16 {
-            let inertia = vm.biome_grid[y][x].diffusion_inertia();
-            let mut sum = (vm.light_grid[y][x] as i128) * (inertia as i128);
-            let mut count = inertia;
-
-            for (ny, nx) in get_open_neighbors(vm, y, x) {
-                sum += vm.light_grid[ny][nx] as i128;
-                count += 1;
-            }
-
-            // Light interacts with Clouds (Moisture)
-            let moisture = vm.moisture_grid[y][x];
-            let cloud_opacity = (moisture as i64).clamp(0, 50); // Up to 50% block
-
-            // Blur and decay (95% base + cloud)
-            let transmission = 95 - cloud_opacity; // 95% -> 45% transmission relative to input
-                                                   // Wait, previous was / 2 (50%).
-                                                   // New logic: (sum / count) * transmission / 100?
-                                                   // If transmission is 50 (clear sky), it matches previous.
-                                                   // If transmission is 0 (thick cloud), light dies.
-
-            buffer[y][x] = ((sum / count as i128) * transmission as i128 / 100) as i64;
-        }
-    }
-    for y in 0..16 {
-        // Optimization: Use copy_from_slice (memcpy).
-        vm.light_grid[y][..16].copy_from_slice(&buffer[y][..16]);
-    }
-}
-
-/// Simulates the diffusion of mutagenic radiation.
-///
-/// Mutagen spreads and decays slowly (90% retained per tick).
-/// High levels cause random DNA mutations.
-#[allow(clippy::needless_range_loop)]
-pub fn diffuse_mutagen(vm: &mut ChimeraVM) {
-    diffuse_scalar_grid(
-        &mut vm.mutagen_grid,
-        &vm.biome_grid,
-        &vm.wind_grid,
-        &vm.membranes,
-        &vm.topology,
-        |_, _, b| b.decay_rate() * 9 / 10,
-    );
-}
-
-/// Simulates the diffusion of entropy.
-///
-/// Entropy spreads and decays slowly.
-/// High levels cause Reality Decay (glitches).
-#[allow(clippy::needless_range_loop)]
-pub fn diffuse_entropy(vm: &mut ChimeraVM) {
-    diffuse_scalar_grid(
-        &mut vm.entropy_grid,
-        &vm.biome_grid,
-        &vm.wind_grid,
-        &vm.membranes,
-        &vm.topology,
-        |_, _, _| 95,
-    );
-}
 
 pub fn check_chorus_chords(vm: &mut ChimeraVM) -> Option<usize> {
     let buffer: Vec<&str> = vm.chorus_buffer.iter().map(|s| s.as_str()).collect();
@@ -540,262 +264,7 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> Option<usize> {
     None
 }
 
-/// Runs a predictive simulation to see if the current path leads to death.
-///
-/// This creates a clone of the VM and runs it forward in time for `ticks` cycles.
-/// If the clone halts (runs out of energy), the prophecy returns 1 (Death).
-///
-/// **OpCode:** `Prophecy`
-/// **Stack:** `[ ..., ticks ] -> [ ..., result (1=Death, 0=Life) ]`
-///
-/// # Examples
-///
-/// ```rust
-/// // Check if we survive the next 100 ticks
-/// // push(100) prophecy() brz(panic)
-/// ```
-#[allow(clippy::needless_range_loop)]
-fn exec_prophecy(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    // stack: ticks (top)
-    let ticks = vm.pop_int("prophecy")?;
 
-    if ticks <= 0 {
-        vm.output
-            .push("Error: Invalid ticks for prophecy".to_string());
-        return None;
-    }
-
-    let safe_ticks = ticks.min(1000);
-
-    // Clone VM
-    let mut sim_vm = vm.clone();
-
-    // Inherit and increment recursion depth to prevent infinite prophecy loops
-    sim_vm.recursion_depth += 1;
-    if sim_vm.recursion_depth > crate::vm::MAX_SIMULATION_DEPTH {
-        vm.output
-            .push("Error: Simulation depth limit exceeded in prophecy".to_string());
-        return None;
-    }
-    if sim_vm.recursion_depth > crate::vm::MAX_RECURSION_DEPTH {
-        vm.output
-            .push("Error: Recursion limit exceeded in prophecy".to_string());
-        return None;
-    }
-
-    sim_vm.output.clear(); // Silence output
-    sim_vm.halted = false; // Ensure it can run (unless already dead?)
-
-    // Advance IP to avoid infinite recursion (executing prophecy again)
-    // We assume standard sequential flow (IP.1 + 1)
-    sim_vm.ip.1 += 1;
-
-    if vm.energy <= 0 {
-        // If already dead, prophecy is 1
-        vm.stack.push(Value::Int(1));
-    } else {
-        // Run simulation loop
-        for _ in 0..safe_ticks {
-            sim_vm.step();
-            if sim_vm.halted {
-                break;
-            }
-        }
-
-        // Result: 1 if Dead (halted), 0 if Alive
-        let result = if sim_vm.halted { 1 } else { 0 };
-        vm.stack.push(Value::Int(result));
-
-        // Cost
-        let cost = 50 + (safe_ticks / 2);
-        vm.energy = vm.energy.saturating_sub(cost);
-        vm.output.push(format!(
-            "PROPHECY: Predicted {} (1=Death, 0=Life) in {} ticks",
-            result, safe_ticks
-        ));
-    }
-
-    None
-}
-
-pub fn exec_lisp_eval(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    let s = vm.pop_str("lisp_eval")?;
-
-    match crate::lisp::compile_fragment(&s) {
-        Ok(genes) => {
-            let strand = crate::ast::Strand { genes };
-            execute_ephemeral_strand(vm, &strand);
-            vm.output.push("LISP_EVAL: Success".to_string());
-        }
-        Err(e) => {
-            vm.output.push(format!("LISP_EVAL ERROR: {}", e));
-        }
-    }
-    None
-}
-
-/// Runs a sandboxed simulation of a specific strand.
-///
-/// Useful for testing code safely before integrating it into the main genome.
-/// The simulation runs in a cloned environment; changes do not affect the real world.
-///
-/// **OpCode:** `Simulate`
-/// **Stack:** `[ ..., strand_idx, ticks ] -> [ ..., top_val, final_energy, status ]`
-fn exec_simulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    // stack: ticks, strand_idx (bottom)
-    let ticks = vm.pop_int("simulate")?;
-    let s_idx = vm.pop_int("simulate")?;
-
-    let idx = s_idx as usize;
-
-    if idx >= vm.dna.helix.strands.len() || ticks <= 0 {
-        vm.output
-            .push("Error: Invalid args for simulate".to_string());
-        return None;
-    }
-
-    if vm.recursion_depth > crate::vm::MAX_SIMULATION_DEPTH {
-        vm.output
-            .push("Error: Simulation depth limit exceeded".to_string());
-        return None;
-    }
-    if vm.recursion_depth > crate::vm::MAX_RECURSION_DEPTH {
-        vm.output
-            .push("Error: Recursion limit exceeded".to_string());
-        return None;
-    }
-
-    // Cap ticks to prevent DoS
-    let safe_ticks = ticks.min(1000);
-
-    // Fork VM
-    // Cloning `vm` clones everything, which provides an accurate snapshot.
-    let mut sim_vm = vm.clone();
-
-    // Setup simulation context
-    sim_vm.ip = (idx, 0);
-    sim_vm.output.clear(); // Silence output
-    sim_vm.halted = false;
-
-    // Run simulation loop
-    for _ in 0..safe_ticks {
-        sim_vm.step();
-        if sim_vm.halted {
-            break;
-        }
-    }
-
-    // Collect Results
-    // 1. Top of stack (or 0 if empty)
-    let top_val = sim_vm.stack.last().cloned().unwrap_or(Value::Int(0));
-    // 2. Final Energy
-    let energy = sim_vm.energy;
-    // 3. Status (1 = Alive, 0 = Halted/Dead)
-    let status = if sim_vm.halted { 0 } else { 1 };
-
-    // Push results to original VM stack
-    vm.stack.push(top_val);
-    vm.stack.push(Value::Int(energy));
-    vm.stack.push(Value::Int(status));
-
-    // Deduct Energy Cost: Base cost + duration cost
-    let cost = safe_ticks.saturating_add(50);
-    vm.energy = vm.energy.saturating_sub(cost);
-
-    vm.output.push(format!(
-        "SIMULATE: Ran strand {} for {} ticks. Status: {}",
-        idx, safe_ticks, status
-    ));
-
-    None
-}
-
-/// Executes a Brainfuck program string with input.
-///
-/// **OpCode:** `Brainfuck`
-/// **Stack:** `[ ..., bf_code, input ] -> [ ..., output ]`
-fn exec_brainfuck(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    // stack: bf_code_string, input_string (top)
-    let input = vm.pop_str("brainfuck")?;
-    let code = vm.pop_str("brainfuck")?;
-
-    let code_chars: Vec<char> = code.chars().collect();
-    let mut input_chars: VecDeque<u8> = input.bytes().collect::<VecDeque<_>>();
-    let mut output_bytes: Vec<u8> = Vec::new();
-
-    let mut tape = vec![0u8; 30000];
-    let mut ptr = 0;
-    let mut pc = 0;
-    let mut cycles = 0;
-    let max_cycles = 10000; // Safety limit
-
-    // Precompute jump targets
-    let mut jumps = HashMap::new();
-    let mut loop_stack = Vec::new();
-    for (i, &c) in code_chars.iter().enumerate() {
-        if c == '[' {
-            loop_stack.push(i);
-        } else if c == ']' {
-            if let Some(start) = loop_stack.pop() {
-                jumps.insert(start, i);
-                jumps.insert(i, start);
-            }
-        }
-    }
-
-    while pc < code_chars.len() && cycles < max_cycles {
-        match code_chars[pc] {
-            '>' => {
-                if ptr < tape.len() - 1 {
-                    ptr += 1;
-                } else {
-                    ptr = 0;
-                } // Wrap
-            }
-            '<' => {
-                if ptr > 0 {
-                    ptr -= 1;
-                } else {
-                    ptr = tape.len() - 1;
-                } // Wrap
-            }
-            '+' => tape[ptr] = tape[ptr].wrapping_add(1),
-            '-' => tape[ptr] = tape[ptr].wrapping_sub(1),
-            '.' => {
-                if output_bytes.len() < crate::vm::MAX_BRAINFUCK_OUTPUT {
-                    output_bytes.push(tape[ptr]);
-                }
-            }
-            ',' => {
-                tape[ptr] = input_chars.pop_front().unwrap_or(0);
-            }
-            '[' => {
-                if tape[ptr] == 0 {
-                    if let Some(&target) = jumps.get(&pc) {
-                        pc = target;
-                    }
-                }
-            }
-            ']' => {
-                if tape[ptr] != 0 {
-                    if let Some(&target) = jumps.get(&pc) {
-                        pc = target;
-                    }
-                }
-            }
-            _ => {} // Ignore non-BF chars
-        }
-        pc += 1;
-        cycles += 1;
-    }
-
-    let output_str = String::from_utf8_lossy(&output_bytes).to_string();
-    vm.stack.push(Value::Str(output_str));
-    vm.energy = vm.energy.saturating_sub((cycles / 100) as i64);
-    vm.output.push(format!("BRAINFUCK: Ran {} cycles", cycles));
-
-    None
-}
 
 /// Executes a Nova-specific OpCode.
 ///
@@ -842,9 +311,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::SonicClaim => super::nova_resonance_war::exec_sonic_claim(vm),
         OpCode::Dampen => super::nova_resonance_war::exec_dampen(vm),
         OpCode::ListenFreq => super::nova_resonance_war::exec_listen_freq(vm),
-        OpCode::Prophecy => exec_prophecy(vm),
+        OpCode::Prophecy => super::nova_simulation::exec_prophecy(vm),
         OpCode::EgregoreLink => super::nova_egregore::exec_egregore_link(vm),
-        OpCode::Lucid => exec_lucid(vm),
+        OpCode::Lucid => super::nova_simulation::exec_lucid(vm),
         OpCode::ChronosSplice => super::nova_genetics::exec_chronos_splice(vm),
         OpCode::Claim => super::nova_sovereignty::exec_claim(vm),
         OpCode::Cede => super::nova_sovereignty::exec_cede(vm),
@@ -937,12 +406,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Catalyze => super::catalyst::catalyze(vm),
         OpCode::Piet => exec_piet(vm),
         OpCode::Chronostasis => super::nova_chronos::exec_chronostasis(vm),
-        OpCode::Simulate => exec_simulate(vm),
+        OpCode::Simulate => super::nova_simulation::exec_simulate(vm),
         OpCode::SensePigment => exec_sense_pigment(vm),
         OpCode::SenseGlyph => exec_sense_glyph(vm),
         OpCode::Sing => exec_sing(vm),
         OpCode::Listen => exec_listen(vm),
-        OpCode::Brainfuck => exec_brainfuck(vm),
+        OpCode::Brainfuck => super::nova_brainfuck::exec_brainfuck(vm),
         OpCode::Spawn => super::nova_biology::exec_spawn(vm),
         OpCode::Entropy => exec_entropy(vm),
         OpCode::Stabilize => exec_stabilize(vm),
@@ -987,7 +456,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Gravitate => super::nova_physics::exec_gravitate(vm),
         OpCode::Lumine => exec_lumine(vm),
         OpCode::SenseLight => exec_sense_light(vm),
-        OpCode::Dream => exec_dream(vm),
+        OpCode::Dream => super::nova_simulation::exec_dream(vm),
         OpCode::Chemotaxis => super::nova_biology::exec_chemotaxis(vm),
         OpCode::Identity => super::nova_biology::exec_identity(vm),
         OpCode::Differentiate => super::nova_biology::exec_differentiate(vm),
@@ -995,7 +464,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Rift => super::nova_physics::exec_rift(vm),
         OpCode::Seal => super::nova_physics::exec_seal(vm),
         OpCode::Sonar => exec_sonar(vm),
-        OpCode::LispEval => exec_lisp_eval(vm),
+        OpCode::LispEval => super::nova_simulation::exec_lisp_eval(vm),
         OpCode::Broadcast => exec_broadcast(vm),
         OpCode::Tune => exec_tune(vm),
         OpCode::Isomerize => super::nova_physics::exec_isomerize(vm),
@@ -1197,36 +666,6 @@ pub fn glob_match(pattern: &str, target: &str) -> bool {
     }
 }
 
-pub fn execute_ephemeral_strand(vm: &mut ChimeraVM, strand: &crate::ast::Strand) {
-    if vm.recursion_depth > crate::vm::MAX_RECURSION_DEPTH {
-        vm.output
-            .push("Error: Recursion limit exceeded in ephemeral execution".to_string());
-        return;
-    }
-    vm.recursion_depth += 1;
-
-    for gene in &strand.genes {
-        let result = vm.execute_gene_inner(gene.op.clone(), &gene.args);
-        if let Some(target) = result {
-            vm.ip = target;
-            // Jump occurred! Stop ephemeral execution and let the main loop continue from new IP.
-            break;
-        }
-    }
-
-    vm.recursion_depth -= 1;
-}
-
-fn execute_strand_sync(vm: &mut ChimeraVM, strand_idx: usize) {
-    if strand_idx < vm.dna.helix.strands.len() {
-        let strand = vm.dna.helix.strands[strand_idx].clone();
-        execute_ephemeral_strand(vm, &strand);
-    } else {
-        vm.output
-            .push("Error: Invalid strand index for sync execution".to_string());
-    }
-}
-
 fn exec_conjugate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: direction (0=R, 1=D, 2=L, 3=U), y, x, strand_idx (bottom)
     let dir = vm.pop_int("conjugate")?;
@@ -1296,119 +735,6 @@ fn exec_conjugate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
-/// Enters a "Dream State" to safely test mutations.
-///
-/// The VM clones itself and forces a mutation on the target strand.
-/// It then runs the simulation for `ticks`.
-///
-/// - If **Energy increases**: The dream is "realized" (mutation accepted).
-/// - If **Energy decreases**: The dream is forgotten (mutation discarded).
-/// - If **Entropy is high**: A Nightmare occurs (bad mutation forced).
-///
-/// **OpCode:** `Dream`
-/// **Stack:** `[ ..., ticks, strand_idx ] -> [ ..., result ]`
-fn exec_dream(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    // stack: ticks, strand_idx (bottom)
-    let ticks = vm.pop_int("dream")?;
-    let s_idx = vm.pop_int("dream")?;
-
-    let idx = s_idx as usize;
-
-    if idx >= vm.dna.helix.strands.len() || ticks <= 0 {
-        vm.output.push("Error: Invalid args for dream".to_string());
-        return None;
-    }
-
-    if vm.recursion_depth > crate::vm::MAX_SIMULATION_DEPTH {
-        vm.output
-            .push("Error: Simulation depth limit exceeded".to_string());
-        return None;
-    }
-
-    // Cap ticks
-    let safe_ticks = ticks.min(1000);
-
-    // Clone VM
-    let mut dream_vm = vm.clone();
-
-    // Force a mutation
-    dream_vm.mutate();
-    let mutation_desc = dream_vm
-        .output
-        .last()
-        .cloned()
-        .unwrap_or_else(|| "Unknown Mutation".to_string());
-
-    // Capture mutated strand
-    let mutated_strand = if idx < dream_vm.dna.helix.strands.len() {
-        Some(dream_vm.dna.helix.strands[idx].clone())
-    } else {
-        None
-    };
-
-    // Run simulation
-    dream_vm.ip = (idx, 0);
-    dream_vm.output.clear();
-    dream_vm.halted = false;
-
-    for _ in 0..safe_ticks {
-        dream_vm.step();
-        if dream_vm.halted {
-            break;
-        }
-    }
-
-    // Evaluate
-    let mut success = dream_vm.energy > vm.energy;
-
-    // Nightmare Check
-    let (cy, cx) = vm.context_loc;
-    let entropy = vm.entropy_grid[cy][cx];
-    let is_nightmare = entropy > 50;
-
-    if is_nightmare {
-        success = true; // Nightmares are forced
-        vm.output
-            .push("NIGHTMARE: The Void invades the dream...".to_string());
-    }
-
-    // Pay Cost (Base 50 + ticks/2)
-    let cost = 50 + (safe_ticks / 2);
-
-    let trace = crate::vm::dream::DreamTrace::new(
-        0,
-        idx,
-        safe_ticks as usize,
-        cost,
-        dream_vm.energy,
-        if dream_vm.halted { 0 } else { 1 },
-        mutation_desc,
-        mutated_strand,
-        success,
-        is_nightmare,
-        dream_vm.output.clone(),
-        None,
-    );
-    vm.dream_traces.push(trace);
-
-    if success {
-        // Adopt DNA
-        vm.dna = dream_vm.dna;
-        vm.stack.push(Value::Int(1)); // Success
-        if is_nightmare {
-            vm.output.push("DREAM: Nightmare realized!".to_string());
-        } else {
-            vm.output.push("DREAM: Mutation accepted".to_string());
-        }
-    } else {
-        vm.stack.push(Value::Int(0)); // Failure
-        vm.output.push("DREAM: Mutation discarded".to_string());
-    }
-
-    vm.energy = vm.energy.saturating_sub(cost);
-
-    None
-}
 
 /// Converts a direction vector (dy, dx) into a bitmask for membrane checking.
 ///
@@ -1427,22 +753,6 @@ pub fn get_direction_mask(dy: i64, dx: i64) -> Option<u8> {
     }
 }
 
-fn exec_lucid(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    let amount = vm.pop_int("lucid")?;
-
-    if amount > 0 {
-        let cost = amount;
-        if vm.energy >= cost {
-            vm.energy -= cost;
-            let (cy, cx) = vm.context_loc;
-            vm.entropy_grid[cy][cx] = vm.entropy_grid[cy][cx].saturating_sub(amount).max(0);
-            vm.output.push("LUCIDITY: Clarity restored.".to_string());
-        } else {
-            vm.output.push("LUCID: Insufficient energy".to_string());
-        }
-    }
-    None
-}
 
 fn exec_harmonize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 2 {
@@ -2048,7 +1358,7 @@ fn exec_verbum_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Optio
                             vm.energy -= cost;
                             vm.output.push(format!("SPEAK: Uttered '{}'", name));
                             let strand = crate::ast::Strand { genes };
-                            execute_ephemeral_strand(vm, &strand);
+                            super::nova_simulation::execute_ephemeral_strand(vm, &strand);
                         }
                     } else {
                         vm.output
@@ -2187,7 +1497,7 @@ fn exec_eval(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     let pair = pairs.next().unwrap();
                     match crate::ast::Strand::try_from_pair(pair) {
                         Ok(strand) => {
-                            execute_ephemeral_strand(vm, &strand);
+                            super::nova_simulation::execute_ephemeral_strand(vm, &strand);
                             vm.output.push("EVAL: Success".to_string());
                         }
                         Err(e) => {
@@ -2235,7 +1545,7 @@ fn exec_map(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     if let Ok(mut pairs) = ChimeraParser::parse(Rule::strand, s) {
                         let pair = pairs.next().unwrap();
                         match crate::ast::Strand::try_from_pair(pair) {
-                            Ok(strand) => execute_ephemeral_strand(vm, &strand),
+                            Ok(strand) => super::nova_simulation::execute_ephemeral_strand(vm, &strand),
                             Err(e) => vm.output.push(format!("MAP ERROR: {}", e)),
                         }
                     } else {
@@ -2243,7 +1553,7 @@ fn exec_map(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     }
                 }
                 Value::Int(idx) => {
-                    execute_strand_sync(vm, *idx as usize);
+                    super::nova_simulation::execute_strand_sync(vm, *idx as usize);
                 }
                 _ => {
                     vm.output
@@ -2305,12 +1615,12 @@ fn exec_fold(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     if let Ok(mut pairs) = ChimeraParser::parse(Rule::strand, s) {
                         let pair = pairs.next().unwrap();
                         if let Ok(strand) = crate::ast::Strand::try_from_pair(pair) {
-                            execute_ephemeral_strand(vm, &strand);
+                            super::nova_simulation::execute_ephemeral_strand(vm, &strand);
                         }
                     }
                 }
                 Value::Int(idx) => {
-                    execute_strand_sync(vm, *idx as usize);
+                    super::nova_simulation::execute_strand_sync(vm, *idx as usize);
                 }
                 _ => {}
             }
@@ -2360,12 +1670,12 @@ fn exec_filter(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     if let Ok(mut pairs) = ChimeraParser::parse(Rule::strand, s) {
                         let pair = pairs.next().unwrap();
                         if let Ok(strand) = crate::ast::Strand::try_from_pair(pair) {
-                            execute_ephemeral_strand(vm, &strand);
+                            super::nova_simulation::execute_ephemeral_strand(vm, &strand);
                         }
                     }
                 }
                 Value::Int(idx) => {
-                    execute_strand_sync(vm, *idx as usize);
+                    super::nova_simulation::execute_strand_sync(vm, *idx as usize);
                 }
                 _ => {}
             }

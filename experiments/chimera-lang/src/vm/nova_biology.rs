@@ -535,14 +535,8 @@ pub fn exec_exhume(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 pub fn exec_seance(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(strand) = vm.graveyard.last() {
-        // We need to access execute_ephemeral_strand which is in nova.rs
-        // This is a problem. nova_biology depends on nova execution logic.
-        // We can expose execute_ephemeral_strand as pub in nova.rs and call it.
-        // Or duplicate it? No, duplication is bad.
-        // Let's assume crate::vm::nova::execute_ephemeral_strand is public.
-        // I will need to make it public in the next step.
         let ghost_strand = strand.clone();
-        crate::vm::nova::execute_ephemeral_strand(vm, &ghost_strand);
+        crate::vm::nova_simulation::execute_ephemeral_strand(vm, &ghost_strand);
         vm.energy = vm.energy.saturating_sub(15);
         vm.output.push("SEANCE: Communed with the dead".to_string());
     } else {

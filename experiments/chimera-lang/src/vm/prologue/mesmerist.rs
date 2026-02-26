@@ -1,5 +1,5 @@
 use super::normalize_coords;
-use crate::vm::{ChimeraVM, Value, GRID_SIZE};
+use crate::vm::{ChimeraVM, Value};
 
 /// Projects the Mesmerist's gaze as signals on the grid.
 ///
