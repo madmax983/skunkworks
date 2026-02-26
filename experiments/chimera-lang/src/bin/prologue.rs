@@ -121,7 +121,7 @@ fn main() -> Result<()> {
         vm.set_snapshot_rx(snap_rx);
 
         thread::spawn(move || {
-            let mut model = AudioModel::new(16, 16, cmd_rx, snap_tx);
+            let mut model = AudioModel::new(16, 16, cmd_rx, snap_tx, None);
             let chunk_size = 735;
             let mut buffer = vec![0.0; chunk_size];
             loop {
