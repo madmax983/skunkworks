@@ -273,7 +273,15 @@ impl Topology {
                 if wrap_y % 2 != 0 {
                     // Crossed pole: reflect Y and shift X
                     ny = (h - 1) - ny;
-                    nx = (nx + w / 2) % w;
+                    // Avoid overflow: (nx + w/2) can exceed i64::MAX if w is large.
+                    // Instead of % w, we use a conditional add/sub.
+                    // Since nx < w and w/2 < w, the max value is < 2w, so one subtraction is enough.
+                    let shift = w / 2;
+                    if nx < w - shift {
+                        nx += shift;
+                    } else {
+                        nx -= w - shift;
+                    }
                 }
 
                 Some((ny as usize, nx as usize))

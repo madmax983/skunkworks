@@ -171,6 +171,7 @@ impl Vec2 {
     /// assert_eq!(v2.limit(5.0), Vec2::new(3.0, 0.0));
     /// ```
     pub fn limit(&self, max: f64) -> Self {
+        let max = max.abs();
         if self.magnitude_squared() > max * max {
             self.normalize() * max
         } else {
