@@ -1757,3 +1757,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Evolutionary Cryptography. The key evolves in real-time as agents mutate and modify the rotors.
 - **Status**: experiments/chimera-enigma
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified compilation.
+
+### chimera-rift
+- **Parents**: experiments/chimera-lang + experiments/impossible-explorer
+- **Concept**: ChimeraVM agents in a 2D maze that can spawn portals to bypass walls.
+- **Novel trait**: Bio-Spatial Manipulation. Agents evolve to fold space to reach food.
+- **Status**: experiments/chimera-rift
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Evo-Portals operational.
