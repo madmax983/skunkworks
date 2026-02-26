@@ -1,6 +1,8 @@
 use super::{normalize_coords, PrologueAgent};
 use crate::vm::{ChimeraVM, Value};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
+#[cfg(feature = "oracle")]
+use crate::vm::oracle;
 
 /// The Logic Agent (∃) performs unification on the grid.
 ///
@@ -35,6 +37,70 @@ pub fn process_logic_agent(
         }
         _ => (Value::Str("?".to_string()), 0, 1),
     };
+
+    // 1.5 Gate Mode Check (Oracle Integration)
+    #[cfg(feature = "oracle")]
+    {
+        let mut found_vars = HashSet::new();
+        collect_vars(&goal, &mut found_vars);
+
+        let gate_vars = ["?N", "?S", "?E", "?W"];
+        let is_gate_mode = gate_vars.iter().any(|v| found_vars.contains(*v));
+
+        if is_gate_mode {
+            let mut subst = HashMap::new();
+            let mut unbound_outputs = Vec::new();
+
+            // Gather Inputs from Grid
+            let neighbors = [
+                ("?N", -1, 0),
+                ("?S", 1, 0),
+                ("?E", 0, 1),
+                ("?W", 0, -1),
+            ];
+
+            for (var, ndy, ndx) in neighbors {
+                if found_vars.contains(var) {
+                    let mut val = Value::Int(0);
+                    if let Some((ny, nx)) = normalize_coords(y as i64 + ndy, x as i64 + ndx) {
+                        val = grid_snapshot[ny][nx].clone();
+                    }
+
+                    if !is_empty_val(&val) {
+                        subst.insert(var.to_string(), val);
+                    } else {
+                        unbound_outputs.push((var, ndy, ndx));
+                    }
+                }
+            }
+
+            // Solve
+            let mut solutions = Vec::new();
+            oracle::solve(
+                &[goal.clone()],
+                subst,
+                &vm.knowledge_base,
+                vm,
+                &mut solutions,
+                0
+            );
+
+            // Apply Outputs
+            if let Some(sol) = solutions.first() {
+                // If inputs provided, we likely want the first solution that satisfies them.
+                // We write back any variables that were unbound (Empty on grid) but are now bound.
+                for (var, ndy, ndx) in unbound_outputs {
+                    if let Some(bound_val) = sol.get(var) {
+                        if let Some((ny, nx)) = normalize_coords(y as i64 + ndy, x as i64 + ndx) {
+                            // Write to VM Grid directly
+                            vm.grid[ny][nx] = bound_val.clone();
+                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1)); // Light up
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     // 2. Scan ahead for Facts
     if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
@@ -102,6 +168,20 @@ pub fn process_logic_agent(
         vec![goal, Value::Int(-dy), Value::Int(-dx)],
     );
     Some((updated_agent, None))
+}
+
+fn collect_vars(val: &Value, vars: &mut HashSet<String>) {
+    match val {
+        Value::Str(s) if s.starts_with('?') => {
+            vars.insert(s.clone());
+        }
+        Value::Junction(_, list) => {
+            for item in list {
+                collect_vars(item, vars);
+            }
+        }
+        _ => {}
+    }
 }
 
 /// Scans a Fact structure `(...)` from the grid in the given direction.
