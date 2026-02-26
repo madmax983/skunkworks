@@ -442,6 +442,28 @@ The dominant phoneme group determines the resulting element:
 *   **Air** (`○`): Fricatives (F, V, S, Z, H, J, X)
 *   **Water** (`∇`): Liquids/Nasals (L, R, M, N, W)
 
+# Narrative (Nova) 📜
+
+Runes for procedurally generating and manipulating narrative structures.
+
+| Rune | Name | Function |
+|---|---|---|
+| `α` | **Incipit** | Reads **West** (Seed). Generates a Story Theme (East). |
+| `ω` | **Terminus** | Reads **West** (Story). Collapses it into an Outcome (East). |
+| `✍` | **Revision** | Reads **West** (Story) and **North** (Edit Mode). Outputs Edited Text (East). |
+| `?` | **Twist** | Reads **West** (Story). Appends a random plot twist (East). *Also acts as Sink.* |
+| `📖` | **Library** | **Sink**. Accesses persistent narrative storage. |
+| | | *Read*: Reads **West** (Key). Emits Value to Self. |
+| | | *Write*: Reads **West** (Key) and **South** (Value). Writes to Library. Requires **North** Mode=1. |
+
+### Revision Modes
+The `✍` rune accepts an edit mode string from the North:
+*   `"rev"`: Reverses text.
+*   `"up"`: Uppercase.
+*   `"low"`: Lowercase.
+*   `"cut"`: Truncates to half length.
+*   `"len"`: Returns length as string.
+
 # The Weave 🕸️
 
 The **Weave** is a thread-based computational fabric that runs on the grid.

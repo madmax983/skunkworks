@@ -6,6 +6,7 @@ use chimera_lang::tui::{run_tui, ViewMode};
 #[cfg(feature = "nova")]
 fn main() {
     println!("🗣️ Echo's Story Demo");
+    println!("(Note: This demo uses genetic incubation. For Narrative Runes like α and ω, see `examples/narrative_runes.rs`)");
     if let Err(e) = run_demo() {
         eprintln!("Error: {}", e);
         std::process::exit(1);
