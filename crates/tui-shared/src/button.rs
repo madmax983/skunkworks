@@ -94,6 +94,8 @@ impl<'a> Button<'a> {
     }
 
     /// Adds an icon to the left of the label.
+    ///
+    /// The icon is prepended to the label text with a space separator.
     pub fn icon(mut self, icon: impl Into<String>) -> Self {
         self.icon = Some(icon.into());
         self
@@ -105,18 +107,15 @@ impl<'a> Button<'a> {
         self
     }
 
-    /// Backward compatibility method for consumers expecting `active(bool)`.
+    /// Toggles the button's "active" appearance.
     ///
-    /// Maps `true` to `ButtonStyle::Warning` (Highlighted) and `false` to `ButtonStyle::Outline` (Dim).
-    /// This preserves the "Active" vs "Inactive" look from the legacy implementation.
+    /// This is a convenience method for legacy compatibility or simple toggle states.
+    ///
+    /// - `true`: Sets style to [`ButtonStyle::Warning`] (High visibility/Yellow) to represent an active state.
+    /// - `false`: Sets style to [`ButtonStyle::Outline`] (Low visibility/Gray) to represent an inactive state.
     pub fn active(mut self, is_active: bool) -> Self {
         if is_active {
             self.style_variant = ButtonStyle::Warning;
-            // Legacy "active" meant "Yellow Background".
-            // In our new Warning style, Normal is Yellow FG, Hovered is Yellow BG.
-            // Let's force it to look "active" (highlighted) by using Hovered state if we want BG?
-            // Or just rely on Warning Normal being distinct enough.
-            // Let's stick to Normal state but Warning style.
         } else {
             self.style_variant = ButtonStyle::Outline;
         }
@@ -278,5 +277,29 @@ mod tests {
 
         let cell_text = &buffer[(9, 1)];
         assert_eq!(cell_text.symbol(), "D");
+    }
+
+    #[test]
+    fn test_active_mapping() {
+        let active_btn = Button::new("On").active(true);
+        // We can't access style_variant directly since it's private,
+        // so we render it and check the color which maps to the style.
+        // Warning Normal -> Yellow fg, Black bg
+
+        let area = Rect::new(0, 0, 10, 3);
+        let mut buffer = Buffer::empty(area);
+        active_btn.render(area, &mut buffer);
+
+        let cell = &buffer[(0, 0)];
+        assert_eq!(cell.fg, Color::Black);
+        assert_eq!(cell.bg, Color::Yellow);
+
+        let inactive_btn = Button::new("Off").active(false);
+        // Outline Normal -> Gray fg, Reset bg
+        let mut buffer = Buffer::empty(area);
+        inactive_btn.render(area, &mut buffer);
+        let cell = &buffer[(0, 0)];
+        assert_eq!(cell.fg, Color::Gray);
+        assert_eq!(cell.bg, Color::Reset);
     }
 }
