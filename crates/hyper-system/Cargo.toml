@@ -5,12 +5,13 @@ edition = "2021"
 
 [features]
 default = ["macroquad"]
-macroquad = ["dep:macroquad"]
+macroquad = ["dep:macroquad", "locus/macroquad"]
 
 [dependencies]
 macroquad = { version = "0.4", optional = true }
 sysinfo = "0.30"
 rand = "0.8"
+locus = { path = "../locus" }
 
 [dev-dependencies]
 proptest = "1.0"

@@ -3,7 +3,7 @@ mod scavenger;
 mod sediment;
 
 use chimera_lang::prelude::*;
-use flocking::{compute_force, FlockingParams};
+use locus::flocking::{compute_force, FlockingParams};
 use locus::Vec2 as LocusVec2;
 use macroquad::prelude::*;
 use monitor::ProcessMonitor;

@@ -5,7 +5,6 @@ edition = "2024"
 
 [dependencies]
 locus = { workspace = true }
-flocking = { workspace = true }
 anyhow.workspace = true
 crossterm.workspace = true
 rand.workspace = true

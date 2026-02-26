@@ -2,7 +2,7 @@ use crate::boid::Boid;
 use crate::fissure::Fissure;
 use crate::git::{CommitData, GitScanner};
 use crate::strata::Strata;
-use flocking::{compute_force, FlockingParams};
+use locus::flocking::{compute_force, FlockingParams};
 use locus::Vec2;
 use rand::Rng;
 

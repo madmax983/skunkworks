@@ -1,71 +1,4 @@
-//! Mathematical utilities for 4D vector operations.
-//!
-//! This module provides the [`Vec4`] struct, which represents a 4-dimensional vector
-//! (x, y, z, w). It includes methods for arithmetic, normalization, and geometric
-//! transformations such as 4D rotation and projection into 3D space.
-//!
-//! # The Hyper Coordinate System
-//!
-//! In the "Hyper" series of experiments, we visualize 4D space using a stereographic projection.
-//!
-//! - **X, Y, Z**: Standard 3D spatial dimensions.
-//! - **W**: The 4th dimension, often visualized as "scale" or "inflation" when projected.
-//!
-//! # 4D to 3D Projection
-//!
-//! The [`Vec4::project_to_3d`] method implements a stereographic-like projection.
-//! Imagine a 4D camera positioned on the W-axis at `camera_w`.
-//!
-//! 1. **Perspective Divide**: As objects move further away in W (relative to the camera),
-//!    the difference `(camera_w - w)` increases.
-//! 2. **Scaling**: We divide the X, Y, and Z components by this difference.
-//!
-//! This creates the illusion of 4D depth when projected onto a 3D "retina" (which is then
-//! rendered to a 2D screen). Objects "closer" to the camera in W appear larger, and objects
-//! "further away" appear smaller.
-
-#[cfg(feature = "macroquad")]
-use macroquad::prelude::Vec3 as MacroquadVec3;
-
-/// A simple 3D vector for projection results.
-///
-/// Used to avoid dependency on external crates for core math types like `glam` or `nalgebra`
-/// in the core logic, keeping the dependency tree light.
-///
-/// # Examples
-///
-/// ```
-/// use hyper_system::math::Vec3;
-///
-/// let v = Vec3::new(1.0, 2.0, 3.0);
-/// assert_eq!(v.z, 3.0);
-/// ```
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Vec3 {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
-}
-
-impl Vec3 {
-    pub fn new(x: f32, y: f32, z: f32) -> Self {
-        Self { x, y, z }
-    }
-}
-
-#[cfg(feature = "macroquad")]
-impl From<Vec3> for MacroquadVec3 {
-    fn from(v: Vec3) -> Self {
-        MacroquadVec3::new(v.x, v.y, v.z)
-    }
-}
-
-#[cfg(feature = "macroquad")]
-impl From<MacroquadVec3> for Vec3 {
-    fn from(v: MacroquadVec3) -> Self {
-        Self::new(v.x, v.y, v.z)
-    }
-}
+use crate::vec3::Vec3;
 
 /// A 4-dimensional vector with x, y, z, and w components.
 ///
@@ -75,12 +8,13 @@ impl From<MacroquadVec3> for Vec3 {
 /// # Examples
 ///
 /// ```
-/// use hyper_system::math::Vec4;
+/// use locus::vec4::Vec4;
 ///
 /// let v = Vec4::new(1.0, 2.0, 3.0, 4.0);
 /// assert_eq!(v.w, 4.0);
 /// ```
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Vec4 {
     /// The X component.
     pub x: f32,
@@ -105,7 +39,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use hyper_system::math::Vec4;
+    /// use locus::vec4::Vec4;
     /// let v = Vec4::new(0.0, 1.0, 0.0, 1.0);
     /// ```
     pub fn new(x: f32, y: f32, z: f32, w: f32) -> Self {
@@ -117,7 +51,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use hyper_system::math::Vec4;
+    /// use locus::vec4::Vec4;
     /// let v = Vec4::zero();
     /// assert_eq!(v.length(), 0.0);
     /// ```
@@ -130,7 +64,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use hyper_system::math::Vec4;
+    /// use locus::vec4::Vec4;
     /// let v = Vec4::new(1.0, 1.0, 1.0, 1.0);
     /// let scaled = v.scale(2.0);
     /// assert_eq!(scaled.x, 2.0);
@@ -145,7 +79,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use hyper_system::math::Vec4;
+    /// use locus::vec4::Vec4;
     /// let v = Vec4::new(1.0, 1.0, 1.0, 1.0);
     /// let scaled = v.scale_dim(2.0, 3.0, 4.0, 5.0);
     /// assert_eq!(scaled.x, 2.0);
@@ -160,7 +94,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use hyper_system::math::Vec4;
+    /// use locus::vec4::Vec4;
     /// let v1 = Vec4::new(1.0, 0.0, 0.0, 0.0);
     /// let v2 = Vec4::new(0.0, 1.0, 0.0, 0.0);
     /// let sum = v1.add(v2);
@@ -207,7 +141,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use hyper_system::math::Vec4;
+    /// use locus::vec4::Vec4;
     /// let v = Vec4::new(0.0, 3.0, 0.0, 4.0); // Length is 5
     /// let n = v.normalize();
     /// assert!((n.length() - 1.0).abs() < 1e-6);
@@ -242,7 +176,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use hyper_system::math::Vec4;
+    /// use locus::vec4::Vec4;
     ///
     /// let v = Vec4::new(10.0, 0.0, 0.0, 0.0);
     /// let limited = v.limit(5.0);
@@ -271,7 +205,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use hyper_system::math::Vec4;
+    /// use locus::vec4::Vec4;
     ///
     /// let v1 = Vec4::new(0.0, 0.0, 0.0, 0.0);
     /// let v2 = Vec4::new(1.0, 1.0, 1.0, 1.0);
@@ -299,7 +233,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use hyper_system::math::Vec4;
+    /// use locus::vec4::Vec4;
     /// use std::f32::consts::PI;
     ///
     /// let v = Vec4::new(1.0, 0.0, 0.0, 0.0);
@@ -336,7 +270,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use hyper_system::math::Vec4;
+    /// use locus::vec4::Vec4;
     /// use std::f32::consts::PI;
     ///
     /// let v = Vec4::new(1.0, 0.0, 0.0, 0.0);
@@ -374,7 +308,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use hyper_system::math::Vec4;
+    /// use locus::vec4::Vec4;
     /// use std::f32::consts::PI;
     ///
     /// let v = Vec4::new(1.0, 0.0, 0.0, 0.0);
@@ -411,7 +345,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use hyper_system::math::Vec4;
+    /// use locus::vec4::Vec4;
     /// use std::f32::consts::PI;
     ///
     /// let v = Vec4::new(0.0, 1.0, 0.0, 0.0);
@@ -448,7 +382,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use hyper_system::math::Vec4;
+    /// use locus::vec4::Vec4;
     /// use std::f32::consts::PI;
     ///
     /// let v = Vec4::new(0.0, 1.0, 0.0, 0.0);
@@ -484,7 +418,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use hyper_system::math::Vec4;
+    /// use locus::vec4::Vec4;
     /// use std::f32::consts::PI;
     ///
     /// let v = Vec4::new(0.0, 0.0, 1.0, 0.0);
@@ -525,7 +459,7 @@ impl Vec4 {
     /// # Examples
     ///
     /// ```
-    /// use hyper_system::math::Vec4;
+    /// use locus::vec4::Vec4;
     ///
     /// // A point "far away" in the W dimension (w=0) relative to camera (w=10)
     /// let far = Vec4::new(1.0, 1.0, 1.0, 0.0);
