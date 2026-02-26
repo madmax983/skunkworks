@@ -1,6 +1,6 @@
 use crate::agent::Agent;
 use crate::physics::Vec2;
-use crate::platter::Platter;
+use ferrous_core::Platter;
 
 pub struct Universe {
     pub agents: Vec<Agent>,
@@ -19,7 +19,7 @@ impl Universe {
         self.agents.push(agent);
     }
 
-    pub fn step(&mut self, dt: f32) {
+    pub fn step(&mut self, dt: f64) {
         let mag_write = 5.0;
         let decay_rate = 0.99;
 
@@ -64,7 +64,7 @@ impl Universe {
             agent.body.vel += agent.body.acc * dt;
             agent.body.vel *= 0.90; // Drag
             agent.body.pos += agent.body.vel * dt;
-            agent.body.acc = Vec2::ZERO; // Reset acc
+            agent.body.acc = Vec2::zero(); // Reset acc
 
             // Bounds check / Wrap around
             if agent.body.pos.x < -100.0 {

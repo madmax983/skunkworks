@@ -4,9 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-crossterm = { workspace = true }
-ratatui = { workspace = true }
-anyhow = { workspace = true }
-rand = { workspace = true }
-locus = { workspace = true }
-tui-shared = { workspace = true }
+anyhow.workspace = true
+crossterm.workspace = true
+ratatui.workspace = true
+rand.workspace = true
+tui-shared.workspace = true
+locus.workspace = true
+ferrous-core.workspace = true

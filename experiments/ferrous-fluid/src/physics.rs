@@ -1,3 +1,4 @@
+use ferrous_core::Platter;
 use locus::Vec2;
 use rand::Rng;
 
@@ -28,9 +29,7 @@ pub struct Universe {
     pub magnets: Vec<Magnet>,
     pub width: f64,
     pub height: f64,
-    grid: Vec<f64>, // Density grid
-    grid_w: usize,
-    grid_h: usize,
+    pub platter: Platter, // Replaces raw grid
 }
 
 impl Universe {
@@ -54,9 +53,7 @@ impl Universe {
             magnets: Vec::new(),
             width,
             height,
-            grid: vec![0.0; grid_w * grid_h],
-            grid_w,
-            grid_h,
+            platter: Platter::new(grid_w, grid_h),
         }
     }
 
@@ -72,17 +69,15 @@ impl Universe {
         let gravity = Vec2::new(0.0, -20.0);
         let damping = 0.96;
 
-        // 1. Clear Grid
-        self.grid.fill(0.0);
+        // 1. Clear Grid (Platter)
+        self.platter.magnetism.fill(0.0);
 
         // 2. Populate Grid (Density)
         for p in &self.particles {
-            let gx = p.pos.x.round() as isize;
-            let gy = p.pos.y.round() as isize;
-            if gx >= 0 && gx < self.grid_w as isize && gy >= 0 && gy < self.grid_h as isize {
-                self.grid[gy as usize * self.grid_w + gx as usize] += 1.0;
-                // Smear to neighbors for smoother gradients?
-            }
+            let gx = p.pos.x.round() as usize;
+            let gy = p.pos.y.round() as usize;
+            // Use accumulate to add density (unbounded)
+            self.platter.accumulate(gx, gy, 1.0);
         }
 
         // 3. Update Particles
@@ -106,21 +101,20 @@ impl Universe {
                 }
             }
 
-            // Fluid Pressure (from Grid)
+            // Fluid Pressure (from Platter)
             let p_pos = self.particles[i].pos;
-            let gx = p_pos.x.round() as isize;
-            let gy = p_pos.y.round() as isize;
+            let gx = p_pos.x.round() as usize;
+            let gy = p_pos.y.round() as usize;
 
-            if gx > 0
-                && gx < (self.grid_w as isize - 1)
-                && gy > 0
-                && gy < (self.grid_h as isize - 1)
-            {
-                let idx = gy as usize * self.grid_w + gx as usize;
-
+            if gx > 0 && gx < (self.platter.width - 1) && gy > 0 && gy < (self.platter.height - 1) {
                 // Gradient
-                let dx = self.grid[idx + 1] - self.grid[idx - 1];
-                let dy = self.grid[idx + self.grid_w] - self.grid[idx - self.grid_w];
+                let left = self.platter.get_magnetism(gx - 1, gy);
+                let right = self.platter.get_magnetism(gx + 1, gy);
+                let down = self.platter.get_magnetism(gx, gy - 1);
+                let up = self.platter.get_magnetism(gx, gy + 1);
+
+                let dx = right - left;
+                let dy = up - down;
 
                 let pressure_force = Vec2::new(-dx, -dy) * 50.0; // Push away from high density
                 force = force + pressure_force;

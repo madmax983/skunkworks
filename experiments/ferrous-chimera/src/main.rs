@@ -1,6 +1,5 @@
 mod agent;
 mod physics;
-mod platter;
 mod universe;
 
 use std::io;
@@ -61,6 +60,7 @@ fn random_dna() -> Dna {
         helix: Helix {
             strands: vec![Strand { genes }],
         },
+        evolution_config: None,
     }
 }
 
@@ -111,7 +111,7 @@ where
 
     // 3. Loop
     let mut zoom = 1.0;
-    let mut pan = Vec2::ZERO;
+    let mut pan = Vec2::zero();
     let tick_rate = Duration::from_millis(16);
     let mut last_tick = Instant::now();
 
@@ -199,7 +199,7 @@ where
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char('r') => {
                         zoom = 1.0;
-                        pan = Vec2::ZERO;
+                        pan = Vec2::zero();
                     }
                     KeyCode::Char('+') => zoom *= 0.9,
                     KeyCode::Char('-') => zoom *= 1.1,
