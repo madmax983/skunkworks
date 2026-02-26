@@ -89,6 +89,29 @@ fn compute_steering(mut desired: Vec2, current_vel: Vec2, max_speed: f64, max_fo
 /// # Panics
 ///
 /// Panics if `positions` and `velocities` have different lengths.
+///
+/// # Examples
+///
+/// ```rust
+/// use flocking::{compute_force, FlockingParams};
+/// use locus::Vec2;
+///
+/// let positions = vec![Vec2::new(0.0, 0.0), Vec2::new(1.0, 0.0)];
+/// let velocities = vec![Vec2::zero(), Vec2::zero()];
+/// let params = FlockingParams {
+///     view_radius: 10.0,
+///     separation_radius: 5.0,
+///     max_speed: 1.0,
+///     max_force: 0.1,
+///     separation_weight: 1.0,
+///     alignment_weight: 0.0,
+///     cohesion_weight: 0.0,
+/// };
+///
+/// // Calculate force for the first agent
+/// let force = compute_force(&positions, &velocities, 0, &params);
+/// assert!(force.x < 0.0); // Should be pushed away from the neighbor at (1,0)
+/// ```
 #[must_use]
 pub fn compute_force(
     positions: &[Vec2],
@@ -140,13 +163,21 @@ pub fn compute_force(
             continue;
         }
 
-        let d_sq = dx * dx + dy * dy;
+        let mut d_sq = dx * dx + dy * dy;
 
-        if d_sq <= 0.0 || d_sq >= view_sq {
+        if d_sq >= view_sq {
             continue;
         }
 
-        let diff = Vec2::new(dx, dy);
+        let diff = if d_sq <= f64::EPSILON {
+            // Handle overlap: push away based on index to ensure separation.
+            // Left neighbors have index < my_idx, so we push Right (+x).
+            // (my_idx > neighbor_idx)
+            d_sq = 0.01; // Avoid division by zero
+            Vec2::new(1.0, 0.0)
+        } else {
+            Vec2::new(dx, dy)
+        };
 
         if do_sep && d_sq < sep_sq {
             separation += diff * (1.0 / d_sq);
@@ -181,13 +212,21 @@ pub fn compute_force(
                 continue;
             }
 
-            let d_sq = dx * dx + dy * dy;
+            let mut d_sq = dx * dx + dy * dy;
 
-            if d_sq <= 0.0 || d_sq >= view_sq {
+            if d_sq >= view_sq {
                 continue;
             }
 
-            let diff = Vec2::new(dx, dy);
+            let diff = if d_sq <= f64::EPSILON {
+                // Handle overlap: push away based on index.
+                // Right neighbors have index > my_idx, so we push Left (-x).
+                // (my_idx < neighbor_idx)
+                d_sq = 0.01;
+                Vec2::new(-1.0, 0.0)
+            } else {
+                Vec2::new(dx, dy)
+            };
 
             if do_sep && d_sq < sep_sq {
                 separation += diff * (1.0 / d_sq);
@@ -408,5 +447,45 @@ mod extended_tests {
         // Force should be steering UP (+y) to match velocity
         assert_eq!(force.x, 0.0);
         assert!(force.y > 0.0);
+    }
+
+    #[test]
+    fn test_overlapping_agents_should_separate() {
+        let p1 = Vec2::new(0.0, 0.0);
+        let v1 = Vec2::zero();
+        let p2 = Vec2::new(0.0, 0.0);
+        let v2 = Vec2::zero();
+
+        let positions = vec![p1, p2];
+        let velocities = vec![v1, v2];
+
+        let params = FlockingParams {
+            separation_weight: 1.0,
+            ..default_params()
+        };
+
+        // Compute force for agent 0
+        let force0 = compute_force(&positions, &velocities, 0, &params);
+
+        // Compute force for agent 1
+        let force1 = compute_force(&positions, &velocities, 1, &params);
+
+        // They should push apart. Ideally in opposite directions.
+        // At least one should be non-zero.
+        assert!(
+            force0.magnitude_squared() > 0.0 || force1.magnitude_squared() > 0.0,
+            "Agents at exactly same position should separate, but got force0={:?}, force1={:?}",
+            force0,
+            force1
+        );
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_panic_on_mismatched_lengths() {
+        let positions = vec![Vec2::zero()];
+        let velocities = vec![];
+        let params = default_params();
+        let _ = compute_force(&positions, &velocities, 0, &params);
     }
 }
