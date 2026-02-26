@@ -144,9 +144,9 @@ impl Value {
                                 Value::Str(s) if s.eq_ignore_ascii_case("false") => {
                                     comfy_table::Cell::new("False").fg(comfy_table::Color::Red)
                                 }
-                                // Maybe Int(1)/Int(0)?
-                                // Value::Int(1) => comfy_table::Cell::new("1").fg(comfy_table::Color::Green),
-                                // Value::Int(0) => comfy_table::Cell::new("0").fg(comfy_table::Color::Red),
+                                // Polish: Treat 1/0 as boolean flags in table view
+                                Value::Int(1) => comfy_table::Cell::new("1").fg(comfy_table::Color::Green),
+                                Value::Int(0) => comfy_table::Cell::new("0").fg(comfy_table::Color::Red),
                                 _ => comfy_table::Cell::new(v.to_string()),
                             }
                         })

@@ -24,7 +24,7 @@ use ratatui::{
 };
 use std::io;
 #[cfg(feature = "nova")]
-use tui_shared::{Button, TensionBar};
+use tui_shared::{Bobber, Button, TensionBar};
 
 #[allow(dead_code)]
 const GOLDEN_FREQUENCIES: [f32; 4] = [161.8, 261.6, 432.0, 528.0];
@@ -5404,6 +5404,13 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     Color::White
                 };
 
+                // Bob animation
+                let bob_offset = if !app_state.fishing_hooked {
+                    (vm.tick_counter as f64 * 0.2).sin() * 2.0
+                } else {
+                    0.0
+                };
+
                 // Rod tip dips when tension is high
                 let rod_tip_y = 100.0 - (app_state.fishing_tension * 5.0);
 
@@ -5411,44 +5418,17 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     x1: 50.0,
                     y1: rod_tip_y,
                     x2: bobber_x,
-                    y2: app_state.fishing_bobber_y,
+                    y2: app_state.fishing_bobber_y + bob_offset,
                     color: line_color,
                 });
 
-                // Bobber (Visual)
-                let bobber_icon = if app_state.fishing_hooked {
-                    "⦿" // Hooked
-                } else {
-                    "●" // Idle
-                };
-                // Bob animation
-                let bob_offset = if !app_state.fishing_hooked {
-                    (vm.tick_counter as f64 * 0.2).sin() * 2.0
-                } else {
-                    0.0
-                };
-                ctx.print(
+                // Draw Bobber using Component
+                let bobber = Bobber::new(
                     bobber_x,
                     app_state.fishing_bobber_y + bob_offset,
-                    bobber_icon,
+                    app_state.fishing_hooked
                 );
-
-                // Splash Effect
-                if app_state.fishing_hooked {
-                    // Splash particles (Enhanced)
-                    let t = vm.tick_counter;
-                    if t % 2 == 0 {
-                        ctx.print(bobber_x - 3.0, app_state.fishing_bobber_y + 1.0, "💦");
-                        ctx.print(bobber_x + 3.0, app_state.fishing_bobber_y + 2.0, "∴");
-                    } else {
-                        ctx.print(bobber_x - 2.0, app_state.fishing_bobber_y + 2.0, "°");
-                        ctx.print(bobber_x + 4.0, app_state.fishing_bobber_y + 1.0, "∷");
-                    }
-
-                    // Water churn
-                    ctx.print(bobber_x - 2.0, app_state.fishing_bobber_y, "≈");
-                    ctx.print(bobber_x + 2.0, app_state.fishing_bobber_y, "≈");
-                }
+                bobber.draw(ctx);
 
                 // Fish (Icon)
                 if app_state.fishing_fish_y > 0.0 && app_state.fishing_fish_y < 100.0 {
