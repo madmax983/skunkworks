@@ -730,6 +730,90 @@ fn check_dynamic_predicates(
                         return true;
                     }
                 }
+                "math_add" => {
+                    // math_add(A, B, Res)
+                    if args.len() == 4 {
+                        let val_a = resolve(&args[1], subst);
+                        let val_b = resolve(&args[2], subst);
+                        let arg_res = &args[3];
+
+                        if let (Value::Int(a), Value::Int(b)) = (val_a, val_b) {
+                            let res = Value::Int(a + b);
+                            if let Some(new_subst) = unify(arg_res, &res, subst) {
+                                solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+                            }
+                        }
+                        return true;
+                    }
+                }
+                "math_sub" => {
+                    // math_sub(A, B, Res)
+                    if args.len() == 4 {
+                        let val_a = resolve(&args[1], subst);
+                        let val_b = resolve(&args[2], subst);
+                        let arg_res = &args[3];
+
+                        if let (Value::Int(a), Value::Int(b)) = (val_a, val_b) {
+                            let res = Value::Int(a - b);
+                            if let Some(new_subst) = unify(arg_res, &res, subst) {
+                                solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+                            }
+                        }
+                        return true;
+                    }
+                }
+                "math_mul" => {
+                    // math_mul(A, B, Res)
+                    if args.len() == 4 {
+                        let val_a = resolve(&args[1], subst);
+                        let val_b = resolve(&args[2], subst);
+                        let arg_res = &args[3];
+
+                        if let (Value::Int(a), Value::Int(b)) = (val_a, val_b) {
+                            let res = Value::Int(a * b);
+                            if let Some(new_subst) = unify(arg_res, &res, subst) {
+                                solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+                            }
+                        }
+                        return true;
+                    }
+                }
+                "math_div" => {
+                    // math_div(A, B, Res)
+                    if args.len() == 4 {
+                        let val_a = resolve(&args[1], subst);
+                        let val_b = resolve(&args[2], subst);
+                        let arg_res = &args[3];
+
+                        if let (Value::Int(a), Value::Int(b)) = (val_a, val_b) {
+                            if b != 0 {
+                                let res = Value::Int(a / b);
+                                if let Some(new_subst) = unify(arg_res, &res, subst) {
+                                    solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
+                "math_mod" => {
+                    // math_mod(A, B, Res)
+                    if args.len() == 4 {
+                        let val_a = resolve(&args[1], subst);
+                        let val_b = resolve(&args[2], subst);
+                        let arg_res = &args[3];
+
+                        if let (Value::Int(a), Value::Int(b)) = (val_a, val_b) {
+                            if b != 0 {
+                                let res = Value::Int(a % b);
+                                if let Some(new_subst) = unify(arg_res, &res, subst) {
+                                    solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
                 "voltage" => {
                     // voltage(X, Y, V)
                     #[cfg(feature = "elektra")]
