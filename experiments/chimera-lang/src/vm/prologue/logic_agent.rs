@@ -1,8 +1,8 @@
 use super::{normalize_coords, PrologueAgent};
-use crate::vm::{ChimeraVM, Value};
-use std::collections::{HashMap, HashSet};
 #[cfg(feature = "oracle")]
 use crate::vm::oracle;
+use crate::vm::{ChimeraVM, Value};
+use std::collections::{HashMap, HashSet};
 
 /// The Logic Agent (∃) performs unification on the grid.
 ///
@@ -52,12 +52,7 @@ pub fn process_logic_agent(
             let mut unbound_outputs = Vec::new();
 
             // Gather Inputs from Grid
-            let neighbors = [
-                ("?N", -1, 0),
-                ("?S", 1, 0),
-                ("?E", 0, 1),
-                ("?W", 0, -1),
-            ];
+            let neighbors = [("?N", -1, 0), ("?S", 1, 0), ("?E", 0, 1), ("?W", 0, -1)];
 
             for (var, ndy, ndx) in neighbors {
                 if found_vars.contains(var) {
@@ -82,7 +77,7 @@ pub fn process_logic_agent(
                 &vm.knowledge_base,
                 vm,
                 &mut solutions,
-                0
+                0,
             );
 
             // Apply Outputs
@@ -94,7 +89,8 @@ pub fn process_logic_agent(
                         if let Some((ny, nx)) = normalize_coords(y as i64 + ndy, x as i64 + ndx) {
                             // Write to VM Grid directly
                             vm.grid[ny][nx] = bound_val.clone();
-                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1)); // Light up
+                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                            // Light up
                         }
                     }
                 }

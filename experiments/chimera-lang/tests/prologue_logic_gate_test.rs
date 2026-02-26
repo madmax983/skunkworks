@@ -1,6 +1,6 @@
 use chimera_lang::ast::{Dna, Helix, JunctionType};
-use chimera_lang::vm::{ChimeraVM, Value};
 use chimera_lang::vm::prologue::exec_prologue_tick;
+use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_logic_agent_gate_mode() {
@@ -47,14 +47,7 @@ fn test_logic_agent_gate_mode() {
     );
 
     // State: [Goal, Dy=0, Dx=0]
-    let state = Value::Junction(
-        JunctionType::All,
-        vec![
-            goal,
-            Value::Int(0),
-            Value::Int(0),
-        ],
-    );
+    let state = Value::Junction(JunctionType::All, vec![goal, Value::Int(0), Value::Int(0)]);
 
     // We need to inject the agent into the state manually or let scan_grid_rules do it.
     // But scan_grid_rules initializes with default state.
@@ -81,7 +74,10 @@ fn test_logic_agent_gate_mode() {
     if let Value::Int(val) = output {
         assert_eq!(*val, 1, "Logic Gate should output 1");
     } else {
-        panic!("Logic Gate output not found or incorrect type: {:?}", output);
+        panic!(
+            "Logic Gate output not found or incorrect type: {:?}",
+            output
+        );
     }
 }
 
@@ -113,21 +109,11 @@ fn test_logic_agent_math_gate() {
         ],
     );
 
-    let state = Value::Junction(
-        JunctionType::All,
-        vec![
-            goal,
-            Value::Int(0),
-            Value::Int(0),
-        ],
-    );
+    let state = Value::Junction(JunctionType::All, vec![goal, Value::Int(0), Value::Int(0)]);
 
     let packed = Value::Junction(
         JunctionType::All,
-        vec![
-            state,
-            Value::Junction(JunctionType::All, vec![]),
-        ],
+        vec![state, Value::Junction(JunctionType::All, vec![])],
     );
     vm.prologue_state.registers.insert((5, 5), packed);
 

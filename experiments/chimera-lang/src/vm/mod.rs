@@ -149,12 +149,6 @@ mod neurochem_test;
 pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
-pub mod nova_diffusion;
-#[cfg(feature = "nova")]
-pub mod nova_simulation;
-#[cfg(feature = "nova")]
-pub mod nova_brainfuck;
-#[cfg(feature = "nova")]
 pub mod nova_alchemy_prime;
 #[cfg(feature = "nova")]
 pub mod nova_arcana;
@@ -194,6 +188,8 @@ pub mod nova_botany;
 #[cfg(test)]
 mod nova_botany_test;
 #[cfg(feature = "nova")]
+pub mod nova_brainfuck;
+#[cfg(feature = "nova")]
 pub mod nova_cambrian;
 #[cfg(feature = "nova")]
 pub mod nova_cartography;
@@ -216,6 +212,8 @@ mod nova_chronos_test;
 pub mod nova_crystal;
 #[cfg(all(feature = "nova", feature = "resonance"))]
 pub mod nova_cymatics;
+#[cfg(feature = "nova")]
+pub mod nova_diffusion;
 #[cfg(feature = "nova")]
 pub mod nova_ecology;
 #[cfg(feature = "nova")]
@@ -352,6 +350,8 @@ pub mod nova_sigil;
 mod nova_sigil_integration_test;
 #[cfg(feature = "nova")]
 pub mod nova_signals;
+#[cfg(feature = "nova")]
+pub mod nova_simulation;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_siren_test;

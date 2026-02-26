@@ -107,9 +107,9 @@ mod tests {
         vm.hormone_grid[5][5][0] = 10000;
 
         for _ in 0..10 {
-            crate::vm::nova::diffuse_waste(&mut vm);
-            crate::vm::nova::diffuse_light(&mut vm);
-            crate::vm::nova::diffuse_hormones(&mut vm);
+            crate::vm::nova_diffusion::diffuse_waste(&mut vm);
+            crate::vm::nova_diffusion::diffuse_light(&mut vm);
+            crate::vm::nova_diffusion::diffuse_hormones(&mut vm);
         }
 
         // Check values have diffused
@@ -130,7 +130,7 @@ mod tests {
 
         // Run diffusion 100 times
         for _ in 0..100 {
-            crate::vm::nova::diffuse_waste(&mut vm);
+            crate::vm::nova_diffusion::diffuse_waste(&mut vm);
         }
 
         // Assert values spread but didn't explode or vanish

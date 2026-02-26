@@ -2,8 +2,8 @@
 #[cfg(test)]
 mod tests {
     use chimera_lang::ast::{Dna, Helix, JunctionType};
-    use chimera_lang::vm::{ChimeraVM, Value};
     use chimera_lang::vm::prologue::exec_prologue_tick;
+    use chimera_lang::vm::{ChimeraVM, Value};
 
     #[test]
     fn test_anvil_compilation() {
@@ -55,20 +55,20 @@ mod tests {
         assert_eq!(vm.dna.helix.strands.len(), 1);
         let genes = &vm.dna.helix.strands[0].genes;
         assert_eq!(genes.len(), 2); // push, 42 (as push(42))
-        // Wait, "42" as string compiles to push(42) if number-like?
-        // Let's verify the genes.
-        // "push 42" -> push, push(42). Wait, "push 42" is two tokens.
-        // push -> Push (no args yet? no, push takes 1 arg)
-        // 42 -> Push(42)
-        // The compiler parses "push 42" as:
-        // push (takes 1 arg? No, push takes 1 arg in OpCode, but in ChimeraScript...
-        // `push(42)` is explicit.
-        // `42` compiles to `push(42)`.
-        // `push` compiles to `push`?
-        // OpCode::Push expects 1 arg. `parse_simple_op` adds empty args if not macro.
-        // So `push` alone becomes `push()`. This is invalid execution-wise (stack underflow/error) but valid compile-wise.
-        // `42` becomes `push(42)`.
-        // So we get `push()`, `push(42)`.
+                                    // Wait, "42" as string compiles to push(42) if number-like?
+                                    // Let's verify the genes.
+                                    // "push 42" -> push, push(42). Wait, "push 42" is two tokens.
+                                    // push -> Push (no args yet? no, push takes 1 arg)
+                                    // 42 -> Push(42)
+                                    // The compiler parses "push 42" as:
+                                    // push (takes 1 arg? No, push takes 1 arg in OpCode, but in ChimeraScript...
+                                    // `push(42)` is explicit.
+                                    // `42` compiles to `push(42)`.
+                                    // `push` compiles to `push`?
+                                    // OpCode::Push expects 1 arg. `parse_simple_op` adds empty args if not macro.
+                                    // So `push` alone becomes `push()`. This is invalid execution-wise (stack underflow/error) but valid compile-wise.
+                                    // `42` becomes `push(42)`.
+                                    // So we get `push()`, `push(42)`.
 
         // Let's make the blueprint valid: "42"
         // That compiles to `push(42)`.
@@ -100,7 +100,10 @@ mod tests {
         exec_prologue_tick(&mut vm);
 
         println!("{}", vm.output.join("\n"));
-        assert!(vm.output.iter().any(|s| s.contains("ANVIL: Forged strand 0")));
+        assert!(vm
+            .output
+            .iter()
+            .any(|s| s.contains("ANVIL: Forged strand 0")));
 
         let genes = &vm.dna.helix.strands[0].genes;
         assert_eq!(genes.len(), 2);

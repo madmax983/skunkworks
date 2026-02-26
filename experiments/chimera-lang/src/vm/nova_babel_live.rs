@@ -1,5 +1,3 @@
-#![cfg(feature = "nova")]
-
 use crate::vm::{ChimeraVM, Value};
 use regex::Regex;
 
@@ -50,7 +48,13 @@ pub fn exec_live_parse(vm: &mut ChimeraVM, start_y: usize, start_x: usize, input
                         }
 
                         let mut matched = true;
+                        let mut loop_safety = 0;
                         loop {
+                            loop_safety += 1;
+                            if loop_safety > 256 {
+                                matched = false;
+                                break;
+                            }
                             vm.babel_live_trace.push((temp_y, temp_x));
                             if let Value::Str(ref char_s) = vm.grid[temp_y][temp_x] {
                                 if char_s == "\"" {
@@ -104,7 +108,12 @@ pub fn exec_live_parse(vm: &mut ChimeraVM, start_y: usize, start_x: usize, input
                             break;
                         }
 
+                        let mut loop_safety = 0;
                         loop {
+                            loop_safety += 1;
+                            if loop_safety > 256 {
+                                break;
+                            }
                             vm.babel_live_trace.push((temp_y, temp_x));
                             if let Value::Str(ref char_s) = vm.grid[temp_y][temp_x] {
                                 if char_s == "]" {
@@ -156,7 +165,12 @@ pub fn exec_live_parse(vm: &mut ChimeraVM, start_y: usize, start_x: usize, input
                             break;
                         }
 
+                        let mut loop_safety = 0;
                         loop {
+                            loop_safety += 1;
+                            if loop_safety > 256 {
+                                break;
+                            }
                             vm.babel_live_trace.push((temp_y, temp_x));
                             if let Value::Str(ref char_s) = vm.grid[temp_y][temp_x] {
                                 if char_s == "}" {
