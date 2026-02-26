@@ -190,6 +190,7 @@ impl Vec4 {
     /// assert_eq!(limited_small.x, 1.0);
     /// ```
     pub fn limit(&self, max: f32) -> Self {
+        let max = max.abs();
         if self.length_squared() > max * max {
             self.normalize().scale(max)
         } else {
