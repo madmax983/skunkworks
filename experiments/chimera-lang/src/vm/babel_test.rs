@@ -1,7 +1,7 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use crate::ast::{Dna, Helix, Strand, Gene, Nucleotide, JunctionType};
+    use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
     use crate::opcode::OpCode;
     use crate::vm::ChimeraVM;
     use crate::vm::Value;
@@ -21,10 +21,10 @@ mod tests {
         let mut vm = make_vm();
 
         // CST: Junction(All, [ "push", "10" ])
-        let cst = Value::Junction(JunctionType::All, vec![
-            Value::Str("push".to_string()),
-            Value::Str("10".to_string())
-        ]);
+        let cst = Value::Junction(
+            JunctionType::All,
+            vec![Value::Str("push".to_string()), Value::Str("10".to_string())],
+        );
 
         vm.stack.push(cst);
         vm.stack.push(Value::Int(0)); // Handler index (mock)
@@ -69,22 +69,40 @@ mod tests {
 
         // Part 1: "a" S "b" (Sequence)
         // [ "Match", "a" ] grammar
-        let match_a = Value::Junction(JunctionType::Any, vec![Value::Str("Match".to_string()), Value::Str("a".to_string())]);
+        let match_a = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("Match".to_string()), Value::Str("a".to_string())],
+        );
 
         // [ "Ref", "S" ] grammar
-        let ref_s = Value::Junction(JunctionType::Any, vec![Value::Str("Ref".to_string()), Value::Str("S".to_string())]);
+        let ref_s = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("Ref".to_string()), Value::Str("S".to_string())],
+        );
 
         // [ "Match", "b" ] grammar
-        let match_b = Value::Junction(JunctionType::Any, vec![Value::Str("Match".to_string()), Value::Str("b".to_string())]);
+        let match_b = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("Match".to_string()), Value::Str("b".to_string())],
+        );
 
         // Combine into Seq
-        let seq_part = Value::Junction(JunctionType::Any, vec![Value::Str("Seq".to_string()), match_a, ref_s, match_b]);
+        let seq_part = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("Seq".to_string()), match_a, ref_s, match_b],
+        );
 
         // Part 2: "" (Empty Match)
-        let match_empty = Value::Junction(JunctionType::Any, vec![Value::Str("Match".to_string()), Value::Str("".to_string())]);
+        let match_empty = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("Match".to_string()), Value::Str("".to_string())],
+        );
 
         // Combine into Alt
-        let final_rule = Value::Junction(JunctionType::Any, vec![Value::Str("Alt".to_string()), seq_part, match_empty]);
+        let final_rule = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("Alt".to_string()), seq_part, match_empty],
+        );
 
         // Define Rule "S"
         vm.stack.push(final_rule);
@@ -92,7 +110,10 @@ mod tests {
         vm.execute_gene_inner(OpCode::DefineRule, &[]);
 
         // 2. Parse "aaabbb"
-        vm.stack.push(Value::Junction(JunctionType::Any, vec![Value::Str("Ref".to_string()), Value::Str("S".to_string())])); // Parser (Ref S)
+        vm.stack.push(Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("Ref".to_string()), Value::Str("S".to_string())],
+        )); // Parser (Ref S)
         vm.stack.push(Value::Str("aaabbb".to_string()));
         vm.execute_gene_inner(OpCode::Parse, &[]);
 
@@ -111,7 +132,10 @@ mod tests {
         // Exec OpCode::Parse checks if consumed == input.len().
         // So this should fail (return 0).
 
-        vm.stack.push(Value::Junction(JunctionType::Any, vec![Value::Str("Ref".to_string()), Value::Str("S".to_string())]));
+        vm.stack.push(Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("Ref".to_string()), Value::Str("S".to_string())],
+        ));
         vm.stack.push(Value::Str("aabbb".to_string()));
         vm.execute_gene_inner(OpCode::Parse, &[]);
 
@@ -138,7 +162,13 @@ mod tests {
         // So "foobar" with "Match foo" should fail unless we slice input.
         // Let's test with exact match "foo"
 
-        vm.stack.push(Value::Junction(JunctionType::Any, vec![Value::Str("Match".to_string()), Value::Str("foo".to_string())]));
+        vm.stack.push(Value::Junction(
+            JunctionType::Any,
+            vec![
+                Value::Str("Match".to_string()),
+                Value::Str("foo".to_string()),
+            ],
+        ));
         vm.stack.push(Value::Str("foo".to_string()));
         vm.execute_gene_inner(OpCode::Parse, &[]);
         let res2 = vm.stack.pop().unwrap();
@@ -150,8 +180,14 @@ mod tests {
         let mut vm = make_vm();
         // Seq(Match("a"), Match("b"))
 
-        let p_a = Value::Junction(JunctionType::Any, vec![Value::Str("Match".to_string()), Value::Str("a".to_string())]);
-        let p_b = Value::Junction(JunctionType::Any, vec![Value::Str("Match".to_string()), Value::Str("b".to_string())]);
+        let p_a = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("Match".to_string()), Value::Str("a".to_string())],
+        );
+        let p_b = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("Match".to_string()), Value::Str("b".to_string())],
+        );
 
         vm.stack.push(p_a);
         vm.stack.push(p_b);
@@ -170,8 +206,14 @@ mod tests {
         let mut vm = make_vm();
         // Alt(Match("a"), Match("b"))
 
-        let p_a = Value::Junction(JunctionType::Any, vec![Value::Str("Match".to_string()), Value::Str("a".to_string())]);
-        let p_b = Value::Junction(JunctionType::Any, vec![Value::Str("Match".to_string()), Value::Str("b".to_string())]);
+        let p_a = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("Match".to_string()), Value::Str("a".to_string())],
+        );
+        let p_b = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("Match".to_string()), Value::Str("b".to_string())],
+        );
 
         vm.stack.push(p_a);
         vm.stack.push(p_b);

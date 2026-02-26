@@ -12,7 +12,8 @@ use ratatui::{
     backend::CrosstermBackend,
     style::{Color, Modifier, Style},
     text::Span,
-    widgets::{Block, Borders, Paragraph}, Terminal,
+    widgets::{Block, Borders, Paragraph},
+    Terminal,
 };
 use std::io;
 
@@ -4696,26 +4697,9 @@ fn apply_glitch_fx(buffer: &mut ratatui::buffer::Buffer, intensity: f32) {
     }
 }
 
-
 #[cfg(feature = "nova")]
-
-
-
-
-
-
-
-
-
-
-
-
 #[cfg(feature = "oracle")]
 #[allow(dead_code)]
-
-
-
-
 
 pub(crate) fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
     let mut views = vec![
@@ -4790,18 +4774,6 @@ pub(crate) fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
     }
     views
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 #[cfg(feature = "nova")]
 pub(crate) fn layout_tree_node(

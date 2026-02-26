@@ -1,6 +1,6 @@
 use chimera_lang::ast::{Dna, Helix};
-use chimera_lang::vm::{ChimeraVM, Value};
 use chimera_lang::vm::prologue::exec_prologue_tick;
+use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_automaton_agent() {
@@ -14,10 +14,9 @@ fn test_automaton_agent() {
     // Setup Automaton at (5, 5)
     // Program: "+W" (Inc Memory -> 1, Write Forward)
     vm.grid[5][5] = Value::Str("🤖".to_string());
-    vm.prologue_state.registers.insert(
-        (5, 5),
-        Value::Str("A:0:1:0:+W".to_string())
-    );
+    vm.prologue_state
+        .registers
+        .insert((5, 5), Value::Str("A:0:1:0:+W".to_string()));
 
     exec_prologue_tick(&mut vm);
     exec_prologue_tick(&mut vm);
@@ -42,10 +41,9 @@ fn test_automaton_loop() {
     // Setup Automaton at (10, 10)
     // Program: "+++[-]" (Set 3, Decrement until 0)
     vm.grid[10][10] = Value::Str("🤖".to_string());
-    vm.prologue_state.registers.insert(
-        (10, 10),
-        Value::Str("A:0:1:0:+++[-]".to_string())
-    );
+    vm.prologue_state
+        .registers
+        .insert((10, 10), Value::Str("A:0:1:0:+++[-]".to_string()));
 
     // Run EXACTLY 12 ticks
     for i in 0..12 {
@@ -54,13 +52,13 @@ fn test_automaton_loop() {
         let grid_val = &vm.grid[10][10];
         let reg_val = vm.prologue_state.registers.get(&(10, 10));
 
-        println!("Tick {}: Grid={:?} Reg={:?}", i+1, grid_val, reg_val);
+        println!("Tick {}: Grid={:?} Reg={:?}", i + 1, grid_val, reg_val);
 
         if !matches!(grid_val, Value::Str(s) if s == "🤖") {
-             panic!("Agent disappeared from grid at tick {}!", i+1);
+            panic!("Agent disappeared from grid at tick {}!", i + 1);
         }
         if reg_val.is_none() {
-             panic!("Registers lost at tick {}!", i+1);
+            panic!("Registers lost at tick {}!", i + 1);
         }
     }
 

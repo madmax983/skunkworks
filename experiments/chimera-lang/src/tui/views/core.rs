@@ -1,9 +1,9 @@
-use crate::tui::state::{ViewMode, InputMode};
-use crate::tui::views::{render_palette, render_view_selector};
-use rand::Rng;
 use crate::tui::panel_block;
-use crate::vm::ChimeraVM;
 use crate::tui::state::AppState;
+use crate::tui::state::{InputMode, ViewMode};
+use crate::tui::views::{render_palette, render_view_selector};
+use crate::vm::ChimeraVM;
+use rand::Rng;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},

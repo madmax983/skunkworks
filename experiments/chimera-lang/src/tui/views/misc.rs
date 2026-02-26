@@ -1,7 +1,8 @@
 use crate::tui::get_all_views;
 use crate::tui::panel_block;
-use crate::vm::ChimeraVM;
 use crate::tui::state::AppState;
+use crate::vm::ChimeraVM;
+use ratatui::widgets::canvas::{Canvas, Rectangle};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
@@ -9,7 +10,6 @@ use ratatui::{
     widgets::{Block, Borders, Gauge, List, ListItem, Paragraph},
     Frame,
 };
-use ratatui::widgets::canvas::{Canvas, Rectangle};
 #[cfg(feature = "nova")]
 use tui_shared::{Bobber, Button, TensionBar};
 
@@ -372,8 +372,6 @@ pub(crate) fn render_semiotics(f: &mut Frame, vm: &mut ChimeraVM, app_state: &Ap
     f.render_widget(map_list, chunks[1]);
 }
 
-
-
 pub(crate) fn render_palette(f: &mut Frame, app_state: &AppState) {
     let area = app_state.get_render_area(f.area());
     let width = 30;
@@ -639,8 +637,6 @@ pub(crate) fn render_arena(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSta
     );
     f.render_widget(logs_list, chunks[1]);
 }
-
-
 
 #[cfg(feature = "nova")]
 pub(crate) fn render_egregore(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {

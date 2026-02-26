@@ -1,6 +1,6 @@
 use chimera_lang::ast::{Dna, Helix};
-use chimera_lang::vm::{ChimeraVM, Value};
 use chimera_lang::vm::prologue::exec_prologue_tick;
+use chimera_lang::vm::{ChimeraVM, Value};
 use std::time::Instant;
 
 #[test]
@@ -29,10 +29,9 @@ fn test_automaton_jump_performance() {
     program.push(']');
 
     let state_str = format!("A:0:1:0:{}", program);
-    vm.prologue_state.registers.insert(
-        (y, x),
-        Value::Str(state_str)
-    );
+    vm.prologue_state
+        .registers
+        .insert((y, x), Value::Str(state_str));
 
     println!("Starting execution with program length {}", program.len());
     let start = Instant::now();
@@ -50,5 +49,8 @@ fn test_automaton_jump_performance() {
 
     // We set a lenient threshold of 500ms.
     // If it takes longer, we consider it a DoS vulnerability.
-    assert!(duration.as_millis() < 500, "Automaton jump took too long! Potential DoS vulnerability.");
+    assert!(
+        duration.as_millis() < 500,
+        "Automaton jump took too long! Potential DoS vulnerability."
+    );
 }

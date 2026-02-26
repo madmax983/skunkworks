@@ -40,12 +40,38 @@ impl AstralState {
     pub fn from_value(val: &Value) -> Self {
         if let Value::Junction(_, list) = val {
             if list.len() >= 5 {
-                let vx = if let Value::Int(i) = list[0] { i as f64 / 1000.0 } else { 0.0 };
-                let vy = if let Value::Int(i) = list[1] { i as f64 / 1000.0 } else { 0.0 };
-                let px = if let Value::Int(i) = list[2] { i as f64 / 1000.0 } else { -1.0 };
-                let py = if let Value::Int(i) = list[3] { i as f64 / 1000.0 } else { -1.0 };
-                let mass = if let Value::Int(i) = list[4] { i as f64 / 1000.0 } else { 1.0 };
-                return Self { vx, vy, px, py, mass };
+                let vx = if let Value::Int(i) = list[0] {
+                    i as f64 / 1000.0
+                } else {
+                    0.0
+                };
+                let vy = if let Value::Int(i) = list[1] {
+                    i as f64 / 1000.0
+                } else {
+                    0.0
+                };
+                let px = if let Value::Int(i) = list[2] {
+                    i as f64 / 1000.0
+                } else {
+                    -1.0
+                };
+                let py = if let Value::Int(i) = list[3] {
+                    i as f64 / 1000.0
+                } else {
+                    -1.0
+                };
+                let mass = if let Value::Int(i) = list[4] {
+                    i as f64 / 1000.0
+                } else {
+                    1.0
+                };
+                return Self {
+                    vx,
+                    vy,
+                    px,
+                    py,
+                    mass,
+                };
             }
         }
         Self::default()
@@ -82,10 +108,18 @@ pub fn process_astral_agent(
     state.py += state.vy;
 
     // Handle Bounds (Wrap)
-    if state.px < 0.0 { state.px += GRID_SIZE as f64; }
-    if state.px >= GRID_SIZE as f64 { state.px -= GRID_SIZE as f64; }
-    if state.py < 0.0 { state.py += GRID_SIZE as f64; }
-    if state.py >= GRID_SIZE as f64 { state.py -= GRID_SIZE as f64; }
+    if state.px < 0.0 {
+        state.px += GRID_SIZE as f64;
+    }
+    if state.px >= GRID_SIZE as f64 {
+        state.px -= GRID_SIZE as f64;
+    }
+    if state.py < 0.0 {
+        state.py += GRID_SIZE as f64;
+    }
+    if state.py >= GRID_SIZE as f64 {
+        state.py -= GRID_SIZE as f64;
+    }
 
     // Snap to Grid
     let nx = state.px.round() as usize % GRID_SIZE;
@@ -122,9 +156,10 @@ fn calculate_gravity(px: f64, py: f64, grid: &[Vec<Value>]) -> (f64, f64) {
                 // Handle Toroidal wrapping for shortest distance?
                 // Let's keep it simple Euclidean for now, or maybe limit range.
                 // Distance squared
-                let dist_sq = dx*dx + dy*dy;
+                let dist_sq = dx * dx + dy * dy;
 
-                if dist_sq > 0.1 { // Avoid singularity
+                if dist_sq > 0.1 {
+                    // Avoid singularity
                     let force = 0.01 * mass / dist_sq; // G * M / r^2
                     let dist = dist_sq.sqrt();
 
@@ -142,9 +177,9 @@ fn calculate_gravity(px: f64, py: f64, grid: &[Vec<Value>]) -> (f64, f64) {
 fn get_rune_mass(val: &Value) -> f64 {
     match val {
         Value::Str(s) => match s.as_str() {
-            "*" => 50.0,  // Black Hole / Heavy Star
-            "!" => 10.0,  // Source
-            "?" => 10.0,  // Sink
+            "*" => 50.0,            // Black Hole / Heavy Star
+            "!" => 10.0,            // Source
+            "?" => 10.0,            // Sink
             "&" | "|" | "+" => 5.0, // Gates
             "@" | "K" | "H" => 2.0, // Other Agents
             _ => 0.0,

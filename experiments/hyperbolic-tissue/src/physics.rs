@@ -59,7 +59,7 @@ pub enum Constraint {
         p1: usize,
         p2: usize,
         _base_dist: f32, // Renamed to suppress warning
-        factor: f32, // 0.0 (Contract) to 1.0 (Relax)
+        factor: f32,     // 0.0 (Contract) to 1.0 (Relax)
         min_dist: f32,
         max_dist: f32,
         stiffness: f32,
@@ -94,13 +94,31 @@ impl PbdSystem {
         self.points.len() - 1
     }
 
-    pub fn add_distance_constraint(&mut self, p1: usize, p2: usize, dist: f32, stiffness: f32) -> usize {
+    pub fn add_distance_constraint(
+        &mut self,
+        p1: usize,
+        p2: usize,
+        dist: f32,
+        stiffness: f32,
+    ) -> usize {
         let idx = self.constraints.len();
-        self.constraints.push(Constraint::Distance { p1, p2, target_dist: dist, stiffness });
+        self.constraints.push(Constraint::Distance {
+            p1,
+            p2,
+            target_dist: dist,
+            stiffness,
+        });
         idx
     }
 
-    pub fn add_actuator_constraint(&mut self, p1: usize, p2: usize, min: f32, max: f32, stiffness: f32) -> usize {
+    pub fn add_actuator_constraint(
+        &mut self,
+        p1: usize,
+        p2: usize,
+        min: f32,
+        max: f32,
+        stiffness: f32,
+    ) -> usize {
         let idx = self.constraints.len();
         self.constraints.push(Constraint::Actuator {
             p1,
@@ -127,10 +145,23 @@ impl PbdSystem {
             for i in 0..self.constraints.len() {
                 let constraint = self.constraints[i].clone(); // Clone to avoid borrow issues
                 match constraint {
-                    Constraint::Distance { p1, p2, target_dist, stiffness } => {
+                    Constraint::Distance {
+                        p1,
+                        p2,
+                        target_dist,
+                        stiffness,
+                    } => {
                         self.solve_distance(p1, p2, target_dist, stiffness);
                     }
-                    Constraint::Actuator { p1, p2, factor, min_dist, max_dist, stiffness, .. } => {
+                    Constraint::Actuator {
+                        p1,
+                        p2,
+                        factor,
+                        min_dist,
+                        max_dist,
+                        stiffness,
+                        ..
+                    } => {
                         let target = min_dist + (max_dist - min_dist) * factor;
                         self.solve_distance(p1, p2, target, stiffness);
                     }
