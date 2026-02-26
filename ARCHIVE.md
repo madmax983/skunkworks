@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **typographic-turbulence**: Documentation Void (No README). "The words are lost in the flow." Grace period: 24h.
+- **lithosphere-termites**: Zombie Status Confirmed. Documentation Void. Skeletal Rot (Unused Code). Grace period: 24h.
+- [Experiment name]: [Diagnosis]. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **typographic-turbulence**: Specimen executed. Diagnosis: Documentation Void. "The words are lost in the flow." Moved to graveyard.
 - **neuro-crab**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Moved to graveyard.
 - **origami-satellite**: Specimen executed. Diagnosis: Skeletal Rot (Disabled Audio). Redundant with `origami-swarm`. Moved to graveyard.
 - **synaptic-swarm**: Specimen executed. Diagnosis: Documentation Void / Terminal Redundancy. Moved to graveyard.
