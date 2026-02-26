@@ -3,8 +3,19 @@ use macroquad::prelude::Vec3 as MacroquadVec3;
 
 /// A simple 3D vector for projection results.
 ///
-/// Used to avoid dependency on external crates for core math types like `glam` or `nalgebra`
-/// in the core logic, keeping the dependency tree light.
+/// This struct primarily serves as the output type for 4D->3D projections (e.g., from [`super::Vec4`]).
+/// It is intentionally minimal, avoiding the heavy machinery of full linear algebra libraries
+/// like `glam` or `nalgebra` to keep the `locus` crate lightweight and fast to compile.
+///
+/// # Why not use `[f32; 3]`?
+///
+/// Using a named struct provides type safety and clearer semantics (x, y, z accessors)
+/// than raw arrays or tuples.
+///
+/// # Interoperability
+///
+/// If the `macroquad` feature is enabled, this type implements `From` and `Into` for
+/// `macroquad::prelude::Vec3`, allowing seamless integration with that game engine.
 ///
 /// # Examples
 ///
@@ -17,12 +28,22 @@ use macroquad::prelude::Vec3 as MacroquadVec3;
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Vec3 {
+    /// The X component.
     pub x: f32,
+    /// The Y component.
     pub y: f32,
+    /// The Z component.
     pub z: f32,
 }
 
 impl Vec3 {
+    /// Creates a new 3D vector.
+    ///
+    /// # Arguments
+    ///
+    /// * `x` - The X component.
+    /// * `y` - The Y component.
+    /// * `z` - The Z component.
     pub fn new(x: f32, y: f32, z: f32) -> Self {
         Self { x, y, z }
     }

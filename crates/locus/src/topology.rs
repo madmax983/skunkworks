@@ -1,3 +1,13 @@
+//! # The Map Room 🗺️
+//!
+//! `Topology` is the rulebook for how your world connects. It defines whether the edge of the map
+//! is a cliff (Plane), a portal to the other side (Torus), or a mind-bending twist (Klein Bottle).
+//!
+//! Understanding your topology is crucial for:
+//! - **Movement**: Knowing where an entity ends up when it crosses a boundary.
+//! - **Distance**: Calculating the shortest path between two points (e.g., on a sphere).
+//! - **Simulation**: Creating closed systems without artificial walls.
+
 /// Represents the topology of a grid or space.
 ///
 /// Determines how coordinates wrap or bound at the edges. This allows for simulating
@@ -23,7 +33,7 @@
 #[doc(alias = "wrapping")]
 #[doc(alias = "boundary")]
 pub enum Topology {
-    /// **Plane**: A standard bounded grid.
+    /// **Plane**: The "Flat Earth".
     ///
     /// Edges are hard walls. Coordinates outside `[0, width)` or `[0, height)` are invalid.
     ///
@@ -34,13 +44,13 @@ pub enum Topology {
     /// ```
     Plane,
 
-    /// **Torus**: Wraps both X and Y.
+    /// **Torus**: The "Arcade Loop".
+    ///
+    /// Wraps both X and Y. Walking off the right edge brings you to the left,
+    /// and walking off the bottom brings you to the top.
     ///
     /// * `x` wraps to `x % width`
     /// * `y` wraps to `y % height`
-    ///
-    /// This simulates a world where walking off the right edge brings you to the left,
-    /// and walking off the bottom brings you to the top.
     ///
     /// ```text
     ///    ^
@@ -49,11 +59,21 @@ pub enum Topology {
     ///    |
     ///    v (Wraps vertically)
     /// ```
+    ///
+    /// # The "Pac-Man Effect"
+    ///
+    /// ```
+    /// use locus::Topology;
+    /// let topo = Topology::Torus;
+    /// // Walking off the right edge (x=10) of a width-10 map wraps to x=0.
+    /// assert_eq!(topo.normalize(5, 10, 10, 10), Some((5, 0)));
+    /// ```
     Torus,
 
-    /// **Horizontal Cylinder**: Wraps X (Horizontal), Bounded Y (Vertical).
+    /// **Horizontal Cylinder**: The "Infinite Tube".
     ///
-    /// The grid forms a tube running horizontally.
+    /// Wraps X (Horizontal), Bounded Y (Vertical).
+    ///
     /// * `x` wraps around.
     /// * `y` is bounded (hard walls at top/bottom).
     ///
@@ -66,9 +86,10 @@ pub enum Topology {
     /// ```
     CylinderH,
 
-    /// **Vertical Cylinder**: Bounded X (Horizontal), Wraps Y (Vertical).
+    /// **Vertical Cylinder**: The "Infinite Scroll".
     ///
-    /// The grid forms a tube running vertically.
+    /// Bounded X (Horizontal), Wraps Y (Vertical).
+    ///
     /// * `x` is bounded (hard walls at left/right).
     /// * `y` wraps around.
     ///
@@ -83,9 +104,10 @@ pub enum Topology {
     /// ```
     CylinderV,
 
-    /// **Klein Bottle**: Wraps X normally. Wraps Y with a twist in X.
+    /// **Klein Bottle**: The "Twisted Tube".
     ///
-    /// A non-orientable surface.
+    /// A non-orientable surface. Wraps X normally. Wraps Y with a twist in X.
+    ///
     /// * `x` wraps normally (`x % width`).
     /// * `y` wraps (`y % height`), but if it wraps, `x` is mirrored: `x' = (width - 1) - x`.
     ///
@@ -98,9 +120,10 @@ pub enum Topology {
     /// ```
     Klein,
 
-    /// **Möbius Strip**: Wraps X with a twist, Bounded Y.
+    /// **Möbius Strip**: The "Twisted Path".
     ///
-    /// A non-orientable surface with a boundary.
+    /// A non-orientable surface with a boundary. Wraps X with a twist, Bounded Y.
+    ///
     /// * If `x` wraps (off left/right), `y` is mirrored: `y' = (height - 1) - y`.
     /// * `y` is bounded (cannot wrap).
     ///
@@ -113,19 +136,23 @@ pub enum Topology {
     /// ```
     Mobius,
 
-    /// **Hyperbolic**: Poincaré Disk model mapping.
+    /// **Hyperbolic**: The "Infinite Disk".
     ///
-    /// Typically handled externally or treated as bounded.
+    /// Poincaré Disk model mapping. Typically handled externally or treated as bounded.
     Hyperbolic,
 
-    /// **Sphere**: Wraps X, Bounded Y with Antipodal Shift.
+    /// **Sphere**: The "Globe".
+    ///
+    /// Wraps X, Bounded Y with Antipodal Shift.
     ///
     /// * `x` wraps normally (`x % width`).
     /// * `y` wraps (`y % height`), but if it crosses a pole, `x` shifts by `width / 2`
     ///   and `y` is reflected.
     Sphere,
 
-    /// **Real Projective Plane**: Wraps both X and Y with a twist.
+    /// **Real Projective Plane**: The "Double Twist".
+    ///
+    /// Wraps both X and Y with a twist.
     ///
     /// * If `x` wraps, `y` is mirrored: `y' = (height - 1) - y`.
     /// * If `y` wraps, `x` is mirrored: `x' = (width - 1) - x`.
@@ -138,6 +165,11 @@ impl Topology {
     /// This function takes arbitrary signed coordinates (which may be negative or
     /// larger than the grid dimensions) and maps them to a valid `(row, col)` index
     /// within the grid, if possible.
+    ///
+    /// # Warning: Coordinate Systems ⚠️
+    ///
+    /// This function expects Matrix/Grid coordinates: `(row, col)` which corresponds to `(y, x)`.
+    /// This is the reverse of standard Cartesian `(x, y)`.
     ///
     /// # Returns
     ///
