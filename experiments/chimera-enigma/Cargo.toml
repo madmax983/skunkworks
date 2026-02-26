@@ -1,0 +1,10 @@
+[package]
+name = "chimera-enigma"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+chimera-lang = { path = "../chimera-lang", features = ["nova"] }
+hyper-system = { path = "../../crates/hyper-system" }
+rand = "0.8"

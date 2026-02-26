@@ -1750,3 +1750,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Hyper-Rotational Cryptography. The key is the state of a 4D object.
 - **Status**: experiments/hyper-enigma
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tesseract-Ops compilation failure fixed in hybrid.
+
+### chimera-enigma
+- **Parents**: experiments/hyper-enigma + experiments/chimera-lang
+- **Concept**: "Bio-Encryption". A 4D Enigma Machine where the encryption key is the dynamic state of a population of ChimeraVM agents living on the Tesseract.
+- **Novel trait**: Evolutionary Cryptography. The key evolves in real-time as agents mutate and modify the rotors.
+- **Status**: experiments/chimera-enigma
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified compilation.
