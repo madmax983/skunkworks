@@ -1413,7 +1413,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: "Hyper-Dimensional System Monitor". System metrics (CPU, RAM, Swap) mapped to the dimensions of a 4D Hypercube.
 - **Novel trait**: 4D System State Visualization. A healthy system is a perfect tesseract; load distorts the geometry.
 - **Status**: experiments/tesseract-ops
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Emergent behavior confirmed (Breathing Hypercube).
+- **Evaluation**: Fails compilation (Vec3 mismatch). Implemented by The Splice Surgeon. Emergent behavior confirmed (Breathing Hypercube).
 
 ### chimera-tesseract
 - **Parents**: experiments/tesseract-ops + experiments/chimera-lang
@@ -1742,4 +1742,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A 4D "Hyper-Origami" simulation where a Miura-ori sheet exists in 4D space and folds into the 4th dimension based on "Hyper-Magnetic" forces controlled by ChimeraVM agents.
 - **Novel trait**: 4D Origami. Folding across the W-axis.
 - **Status**: experiments/hyper-fold
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. 4D magnetic folding logic operational.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. 4D magnetic folding logic operational. Verified compilation.
+
+### hyper-enigma
+- **Parents**: experiments/tesseract-ops + experiments/clockwork-cipher
+- **Concept**: A 4D Enigma Machine where encryption is driven by the rotation of a Tesseract.
+- **Novel trait**: Hyper-Rotational Cryptography. The key is the state of a 4D object.
+- **Status**: experiments/hyper-enigma
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tesseract-Ops compilation failure fixed in hybrid.
