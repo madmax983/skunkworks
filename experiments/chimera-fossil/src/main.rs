@@ -323,13 +323,13 @@ fn run_cli_list() -> Result<()> {
     let mut table = comfy_table::Table::new();
     table
         .load_preset(comfy_table::presets::UTF8_FULL)
-        .set_header(vec!["Hash", "Date", "Author", "Message", "Verified"]);
+        .set_header(vec!["Hash", "Date", "Author", "Message", "Entropy", "Verified"]);
 
     for commit in commits {
         // Simulate a "Verified" status based on commit hash or message properties
         // For visual demonstration of "True" as Green
         let is_verified = commit.hash.chars().next().unwrap_or('0').is_numeric(); // Arbitrary check
-        let verified_str = if is_verified { "True" } else { "False" };
+        let verified_str = if is_verified { "✔" } else { "✘" };
 
         let verified_cell = if is_verified {
             comfy_table::Cell::new(verified_str).fg(comfy_table::Color::Green)
@@ -337,11 +337,27 @@ fn run_cli_list() -> Result<()> {
             comfy_table::Cell::new(verified_str).fg(comfy_table::Color::Red)
         };
 
+        // Calculate Entropy (Mock)
+        use std::hash::{Hash, Hasher};
+        let mut hasher = std::collections::hash_map::DefaultHasher::new();
+        commit.hash.hash(&mut hasher);
+        let entropy_val = (hasher.finish() % 100) as u8;
+
+        let entropy_cell = comfy_table::Cell::new(format!("{}%", entropy_val));
+        let entropy_cell = if entropy_val > 70 {
+            entropy_cell.fg(comfy_table::Color::Red)
+        } else if entropy_val > 30 {
+            entropy_cell.fg(comfy_table::Color::Yellow)
+        } else {
+            entropy_cell.fg(comfy_table::Color::Green)
+        };
+
         table.add_row(vec![
             comfy_table::Cell::new(&commit.hash[0..7]),
             comfy_table::Cell::new(commit.date.to_string()),
             comfy_table::Cell::new(&commit.author),
             comfy_table::Cell::new(&commit.message),
+            entropy_cell,
             verified_cell,
         ]);
     }

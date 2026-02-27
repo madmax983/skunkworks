@@ -34,6 +34,8 @@ pub enum ButtonStyle {
     Danger,
     /// A warning or high-attention button (Yellow).
     Warning,
+    /// A success or completion button (Green).
+    Success,
 }
 
 /// A reusable Button component for TUI applications.
@@ -134,7 +136,7 @@ impl<'a> Widget for Button<'a> {
                 (Color::Black, Color::Blue, Modifier::BOLD)
             }
             (ButtonStyle::Primary, ButtonState::Hovered) => {
-                (Color::Black, Color::LightBlue, Modifier::BOLD)
+                (Color::Black, Color::Cyan, Modifier::BOLD) // Brighter blue/cyan
             }
             (ButtonStyle::Primary, ButtonState::Clicked) => {
                 (Color::White, Color::Blue, Modifier::BOLD)
@@ -145,7 +147,7 @@ impl<'a> Widget for Button<'a> {
                 (Color::White, Color::DarkGray, Modifier::empty())
             }
             (ButtonStyle::Secondary, ButtonState::Hovered) => {
-                (Color::White, Color::Gray, Modifier::empty())
+                (Color::Black, Color::Gray, Modifier::empty()) // Brighter
             }
             (ButtonStyle::Secondary, ButtonState::Clicked) => {
                 (Color::Black, Color::White, Modifier::BOLD)
@@ -156,7 +158,7 @@ impl<'a> Widget for Button<'a> {
                 (Color::Gray, Color::Reset, Modifier::empty())
             }
             (ButtonStyle::Outline, ButtonState::Hovered) => {
-                (Color::White, Color::Reset, Modifier::BOLD)
+                (Color::White, Color::Reset, Modifier::BOLD | Modifier::UNDERLINED)
             }
             (ButtonStyle::Outline, ButtonState::Clicked) => {
                 (Color::Green, Color::Reset, Modifier::BOLD)
@@ -167,7 +169,7 @@ impl<'a> Widget for Button<'a> {
                 (Color::White, Color::Red, Modifier::BOLD)
             }
             (ButtonStyle::Danger, ButtonState::Hovered) => {
-                (Color::White, Color::LightRed, Modifier::BOLD)
+                (Color::White, Color::LightRed, Modifier::BOLD) // Lighter red
             }
             (ButtonStyle::Danger, ButtonState::Clicked) => (
                 Color::Black,
@@ -175,15 +177,26 @@ impl<'a> Widget for Button<'a> {
                 Modifier::BOLD | Modifier::REVERSED,
             ),
 
-            // Warning (Yellow) - Mimics old "Active" look
+            // Warning (Yellow)
             (ButtonStyle::Warning, ButtonState::Normal) => {
                 (Color::Black, Color::Yellow, Modifier::BOLD)
             }
             (ButtonStyle::Warning, ButtonState::Hovered) => {
-                (Color::Black, Color::LightYellow, Modifier::BOLD)
+                (Color::Black, Color::LightYellow, Modifier::BOLD) // Lighter yellow
             }
             (ButtonStyle::Warning, ButtonState::Clicked) => {
                 (Color::White, Color::Yellow, Modifier::BOLD)
+            }
+
+            // Success (Green)
+            (ButtonStyle::Success, ButtonState::Normal) => {
+                (Color::Black, Color::Green, Modifier::BOLD)
+            }
+            (ButtonStyle::Success, ButtonState::Hovered) => {
+                (Color::Black, Color::LightGreen, Modifier::BOLD)
+            }
+            (ButtonStyle::Success, ButtonState::Clicked) => {
+                (Color::White, Color::Green, Modifier::BOLD)
             }
         };
 
@@ -301,5 +314,21 @@ mod tests {
         let cell = &buffer[(0, 0)];
         assert_eq!(cell.fg, Color::Gray);
         assert_eq!(cell.bg, Color::Reset);
+    }
+
+    #[test]
+    fn test_button_success_rendering() {
+        let button = Button::new("Go")
+            .style_variant(ButtonStyle::Success)
+            .state(ButtonState::Normal);
+
+        let area = Rect::new(0, 0, 10, 3);
+        let mut buffer = Buffer::empty(area);
+
+        button.render(area, &mut buffer);
+
+        let cell = &buffer[(0, 0)];
+        assert_eq!(cell.fg, Color::Black);
+        assert_eq!(cell.bg, Color::Green);
     }
 }
