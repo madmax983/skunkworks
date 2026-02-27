@@ -91,7 +91,17 @@ pub(crate) fn render_foundry(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
                                 .add_modifier(Modifier::BOLD),
                         )
                     } else {
-                        ("?".to_string(), Style::default().fg(Color::White))
+                        match s.as_str() {
+                            "♨" => (
+                                "♨".to_string(),
+                                Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
+                            ),
+                            "Ϡ" => (
+                                "Ϡ".to_string(),
+                                Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD),
+                            ),
+                            _ => ("?".to_string(), Style::default().fg(Color::White)),
+                        }
                     }
                 }
                 _ => ("?".to_string(), Style::default().fg(Color::White)),
