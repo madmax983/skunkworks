@@ -6,6 +6,7 @@ use std::path::Path;
 
 use crate::ast::Dna;
 use crate::vm::{Value, GRID_SIZE};
+use crate::vm::prologue::AlchemyRule;
 
 #[derive(Parser)]
 #[grammar = "prologue_grammar.pest"]
@@ -19,6 +20,7 @@ pub fn compile(
     Option<Vec<Vec<Value>>>,
     Option<bool>,
     HashMap<String, usize>,
+    Vec<AlchemyRule>,
 )> {
     let mut pairs = PrologueParser::parse(Rule::program, source)?;
 
@@ -26,6 +28,7 @@ pub fn compile(
     let mut dna: Option<Dna> = None;
     let mut orca_mode = None;
     let mut custom_runes = HashMap::new();
+    let mut alchemy_book = Vec::new();
 
     let program = pairs.next().ok_or_else(|| anyhow!("Empty program"))?;
 
@@ -120,6 +123,55 @@ pub fn compile(
                             }
                         }
                     }
+                    Rule::alchemy_section => {
+                        for rule in inner.into_inner() {
+                            if let Rule::alchemy_rule = rule.as_rule() {
+                                let mut rule_inner = rule.into_inner();
+                                let ingredients_pair = rule_inner.next().unwrap();
+                                let result_pair = rule_inner.next().unwrap();
+
+                                let mut ingredients = Vec::new();
+                                for term in ingredients_pair.into_inner() {
+                                    let inner = term.into_inner().next().unwrap();
+                                    match inner.as_rule() {
+                                        Rule::string_literal => {
+                                            let s = inner.as_str();
+                                            ingredients.push(Value::Str(s[1..s.len() - 1].to_string()));
+                                        }
+                                        Rule::number_literal => {
+                                            if let Ok(n) = inner.as_str().parse::<i64>() {
+                                                ingredients.push(Value::Int(n));
+                                            }
+                                        }
+                                        _ => {}
+                                    }
+                                }
+
+                                let result = {
+                                    let inner = result_pair.into_inner().next().unwrap();
+                                    match inner.as_rule() {
+                                        Rule::string_literal => {
+                                            let s = inner.as_str();
+                                            Value::Str(s[1..s.len() - 1].to_string())
+                                        }
+                                        Rule::number_literal => {
+                                            if let Ok(n) = inner.as_str().parse::<i64>() {
+                                                Value::Int(n)
+                                            } else {
+                                                Value::Int(0)
+                                            }
+                                        }
+                                        _ => Value::Int(0),
+                                    }
+                                };
+
+                                alchemy_book.push(AlchemyRule {
+                                    ingredients,
+                                    result,
+                                });
+                            }
+                        }
+                    }
                     _ => {}
                 }
             }
@@ -130,7 +182,7 @@ pub fn compile(
 
     let final_dna = dna.ok_or_else(|| anyhow!("No DNA section found"))?;
 
-    Ok((final_dna, grid, orca_mode, custom_runes))
+    Ok((final_dna, grid, orca_mode, custom_runes, alchemy_book))
 }
 
 fn parse_grid_line(line: &str) -> Vec<Value> {

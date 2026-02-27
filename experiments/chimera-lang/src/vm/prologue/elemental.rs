@@ -1,5 +1,6 @@
 use super::normalize_coords;
 use crate::vm::Value;
+use crate::vm::prologue::AlchemyRule;
 
 pub const ELEM_FIRE: u64 = 0x1F525; // 🔥
 pub const ELEM_WATER: u64 = 0x1F4A7; // 💧
@@ -18,6 +19,7 @@ pub fn apply_elemental_runes(
     x: usize,
     current_signals: &[Vec<Option<Value>>],
     next_signals: &mut Vec<Vec<Option<Value>>>,
+    alchemy_book: &[AlchemyRule],
 ) -> bool {
     let mut changes = false;
 
@@ -63,47 +65,64 @@ pub fn apply_elemental_runes(
             // "Last Write Wins" applies generally, but here we want to Combine.
 
             let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-            let mut elements = Vec::new();
+            let mut ingredients = Vec::new();
 
             for (dy, dx) in neighbors {
                 if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
                     if let Some(val) = &current_signals[ny][nx] {
-                        if let Value::Symbol(id) = val {
-                            elements.push(*id);
-                        }
+                        ingredients.push(val.clone());
                     }
                 }
             }
 
-            if !elements.is_empty() {
-                // Determine Result
-                // Naive combination: Pairwise
+            if !ingredients.is_empty() {
                 let mut result = None;
 
-                // Priority: Fire + Water -> Steam
-                if elements.contains(&ELEM_FIRE) && elements.contains(&ELEM_WATER) {
-                    result = Some(ELEM_STEAM);
-                } else if elements.contains(&ELEM_FIRE) && elements.contains(&ELEM_EARTH) {
-                    result = Some(ELEM_LAVA);
-                } else if elements.contains(&ELEM_WATER) && elements.contains(&ELEM_EARTH) {
-                    result = Some(ELEM_MUD);
-                } else if elements.contains(&ELEM_FIRE) && elements.contains(&ELEM_AIR) {
-                    result = Some(ELEM_PLASMA);
-                } else if elements.contains(&ELEM_FIRE) {
-                    result = Some(ELEM_FIRE);
-                } else if elements.contains(&ELEM_WATER) {
-                    result = Some(ELEM_WATER);
-                } else if elements.contains(&ELEM_EARTH) {
-                    result = Some(ELEM_EARTH);
-                } else if elements.contains(&ELEM_AIR) {
-                    result = Some(ELEM_AIR);
-                } else if elements.contains(&ELEM_AETHER) {
-                    result = Some(ELEM_AETHER);
+                // 1. Check Dynamic Hermetic Rules
+                for rule in alchemy_book {
+                    // Check if rule.ingredients is a subset of current ingredients
+                    // Note: This is a simple subset check. Does not handle counts perfectly (e.g. 2 Fires).
+                    // For now, assuming distinct ingredient types or simple presence.
+                    let all_match = rule.ingredients.iter().all(|req| ingredients.contains(req));
+                    if all_match {
+                        result = Some(rule.result.clone());
+                        break;
+                    }
                 }
 
-                if let Some(res_id) = result {
-                    if next_signals[y][x] != Some(Value::Symbol(res_id)) {
-                        next_signals[y][x] = Some(Value::Symbol(res_id));
+                // 2. Fallback to Hardcoded Elemental Rules (if no dynamic match)
+                if result.is_none() {
+                    let mut elements = Vec::new();
+                    for val in &ingredients {
+                        if let Value::Symbol(id) = val {
+                            elements.push(*id);
+                        }
+                    }
+
+                    if elements.contains(&ELEM_FIRE) && elements.contains(&ELEM_WATER) {
+                        result = Some(Value::Symbol(ELEM_STEAM));
+                    } else if elements.contains(&ELEM_FIRE) && elements.contains(&ELEM_EARTH) {
+                        result = Some(Value::Symbol(ELEM_LAVA));
+                    } else if elements.contains(&ELEM_WATER) && elements.contains(&ELEM_EARTH) {
+                        result = Some(Value::Symbol(ELEM_MUD));
+                    } else if elements.contains(&ELEM_FIRE) && elements.contains(&ELEM_AIR) {
+                        result = Some(Value::Symbol(ELEM_PLASMA));
+                    } else if elements.contains(&ELEM_FIRE) {
+                        result = Some(Value::Symbol(ELEM_FIRE));
+                    } else if elements.contains(&ELEM_WATER) {
+                        result = Some(Value::Symbol(ELEM_WATER));
+                    } else if elements.contains(&ELEM_EARTH) {
+                        result = Some(Value::Symbol(ELEM_EARTH));
+                    } else if elements.contains(&ELEM_AIR) {
+                        result = Some(Value::Symbol(ELEM_AIR));
+                    } else if elements.contains(&ELEM_AETHER) {
+                        result = Some(Value::Symbol(ELEM_AETHER));
+                    }
+                }
+
+                if let Some(res_val) = result {
+                    if next_signals[y][x] != Some(res_val.clone()) {
+                        next_signals[y][x] = Some(res_val);
                         changes = true;
                     }
                 }

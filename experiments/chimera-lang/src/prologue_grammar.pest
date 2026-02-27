@@ -3,7 +3,7 @@ COMMENT = _{ ("//" ~ (!"\n" ~ ANY)*) | ("/*" ~ (!"*/" ~ ANY)* ~ "*/") | ("#" ~ (
 
 program = { SOI ~ section* ~ EOI }
 
-section = { config_section | grid_section | dna_section | definitions_section }
+section = { config_section | grid_section | dna_section | definitions_section | alchemy_section }
 
 config_section = { "config" ~ "{" ~ config_entry* ~ "}" }
 config_entry = { identifier ~ ":" ~ value }
@@ -18,6 +18,15 @@ definitions_section = { "definitions" ~ "{" ~ definition_entry* ~ "}" }
 definition_entry = { rune_char ~ ":" ~ definition_body }
 rune_char = @{ !WHITESPACE ~ ANY }
 definition_body = { "{" ~ nested_text ~ "}" }
+
+alchemy_section = { "alchemy" ~ "{" ~ alchemy_rule* ~ "}" }
+alchemy_rule = { alchemy_ingredients ~ "->" ~ alchemy_result }
+alchemy_ingredients = { alchemy_term ~ ("+" ~ alchemy_term)* }
+alchemy_term = { string_literal | number_literal }
+alchemy_result = { string_literal | number_literal }
+
+string_literal = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+number_literal = @{ ASCII_DIGIT+ }
 
 nested_text = { ( "{" ~ nested_text ~ "}" | !("{" | "}") ~ ANY )* }
 
