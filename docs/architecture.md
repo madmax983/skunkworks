@@ -247,7 +247,7 @@ sequenceDiagram
     GPU->>Ping: Write Next State
 ```
 
-### Storage Decoupling (ADR 012)
+### Storage Decoupling (ADR 061)
 
 Refactoring to decouple storage from core logic to resolve circular dependencies.
 
@@ -258,7 +258,7 @@ classDiagram
   class Core
   class Storage
   Core --> Storage : Uses (Trait Bound)
-  %% Removed the circular dependency arrow (Ref: ADR 012)
+  %% Removed the circular dependency arrow
 ```
 
 #### Storage Flow
@@ -268,7 +268,7 @@ sequenceDiagram
     participant C as Core
     participant S as Storage
 
-    Note over C,S: Decoupled via Trait (ADR 012)
+    Note over C,S: Decoupled via Trait (ADR 061)
     C->>S: save_state(data)
     S-->>C: Result<Ok>
 ```
