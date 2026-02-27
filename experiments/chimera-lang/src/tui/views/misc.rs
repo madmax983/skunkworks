@@ -213,9 +213,10 @@ pub(crate) fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
 
     let status = if app_state.fishing_hooked {
         Span::styled(
-            "FISH ON!",
+            " FISH ON! ",
             Style::default()
-                .fg(Color::Red)
+                .bg(Color::Red)
+                .fg(Color::White)
                 .add_modifier(Modifier::BOLD | Modifier::RAPID_BLINK),
         )
     } else if app_state.fishing_cast {
@@ -618,9 +619,23 @@ pub(crate) fn render_arena(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSta
     }
 
     if arena.combatants.is_empty() {
-        let center = Paragraph::new("Press 'S' to Start (Auto-Draft)")
-            .alignment(ratatui::layout::Alignment::Center);
-        f.render_widget(center, chunks[0]);
+        // Use Button for Call-to-Action
+        let center = Button::new("Start Auto-Draft (S)")
+            .style_variant(tui_shared::ButtonStyle::Primary)
+            .active(true);
+        // Button fills its area, so we center the area
+        let area = chunks[0];
+        let btn_width = 30;
+        let btn_height = 3;
+        let x = area.x + (area.width.saturating_sub(btn_width)) / 2;
+        let y = area.y + (area.height.saturating_sub(btn_height)) / 2;
+        let btn_area = ratatui::layout::Rect {
+            x,
+            y,
+            width: btn_width,
+            height: btn_height,
+        };
+        f.render_widget(center, btn_area);
     }
 
     // Bottom: Logs

@@ -162,6 +162,15 @@ impl std::fmt::Display for Fossil {
 
         table.add_row(vec![Cell::new("Pristine?"), bool_cell]);
 
+        let status = if integrity > 90.0 {
+            "🦖 (Pristine)"
+        } else if integrity > 50.0 {
+            "🦎 (Decaying)"
+        } else {
+            "💀 (Dust)"
+        };
+        table.add_row(vec![Cell::new("Status"), Cell::new(status)]);
+
         write!(f, "{}", table)
     }
 }

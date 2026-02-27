@@ -588,10 +588,32 @@ pub(crate) fn render_evolution(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &A
             f.render_widget(list, chunks[1]);
         }
     } else {
-        let center = Paragraph::new("Evolution Engine Offline.\nSelect a Strand in Genome View and press 'E' to initialize.")
-            .alignment(ratatui::layout::Alignment::Center)
-            .block(Block::default().borders(Borders::ALL));
-        f.render_widget(center, app_state.get_render_area(f.area()));
+        let area = app_state.get_render_area(f.area());
+        let btn_width = 40;
+        let btn_height = 3;
+        let x = area.x + (area.width.saturating_sub(btn_width)) / 2;
+        let y = area.y + (area.height.saturating_sub(btn_height)) / 2;
+        let btn_area = ratatui::layout::Rect {
+            x,
+            y,
+            width: btn_width,
+            height: btn_height,
+        };
+
+        #[cfg(feature = "nova")]
+        f.render_widget(
+            tui_shared::Button::new("Initialize Evolution Engine (E)")
+                .style_variant(tui_shared::ButtonStyle::Warning),
+            btn_area,
+        );
+
+        #[cfg(not(feature = "nova"))]
+        f.render_widget(
+            Paragraph::new("Evolution Engine Offline (Enable 'nova' feature)")
+                .alignment(ratatui::layout::Alignment::Center)
+                .block(Block::default().borders(Borders::ALL)),
+            btn_area,
+        );
     }
 }
 

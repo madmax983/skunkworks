@@ -34,6 +34,10 @@ impl Bobber {
             ctx.print(self.x + 3.0, self.y + 2.0, "∴");
             ctx.print(self.x - 2.0, self.y + 2.0, "°");
             ctx.print(self.x + 4.0, self.y + 1.0, "∷");
+            // Extra splash particles
+            ctx.print(self.x - 4.0, self.y, "*");
+            ctx.print(self.x + 5.0, self.y, "o");
+            ctx.print(self.x, self.y + 3.0, "!");
         } else {
             // Gentle ripples for idle state
             ctx.print(self.x - 2.0, self.y, "≈");
