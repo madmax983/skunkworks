@@ -68,4 +68,34 @@ mod tests {
              panic!("HAVOC FAILED: Precision was preserved unexpectedly?");
         }
     }
+
+    #[test]
+    fn havoc_vec2_limit_overflow() {
+        // [HAVOC] Vec2::limit bypass via squared overflow.
+        // We choose a max value such that max is finite, but max*max overflows to Infinity.
+        // max = 1e155 -> max*max = 1e310 > f64::MAX (approx 1.8e308).
+        let max = 1.0e155;
+
+        // We choose a vector with magnitude > max, but still finite.
+        // v = (2.0e155, 0.0) -> magnitude = 2.0e155.
+        // magnitude_squared = 4.0e310 (Infinity).
+        let v = Vec2::new(2.0e155, 0.0);
+
+        // The implementation of limit() checks:
+        // if self.magnitude_squared() > max * max { ... }
+        //
+        // Here:
+        // self.magnitude_squared() is Infinity.
+        // max * max is Infinity.
+        // Infinity > Infinity is FALSE.
+        //
+        // So the check fails, and the vector is returned AS IS.
+        let limited = v.limit(max);
+
+        // Verify that the limit SUCCEEDED (i.e., magnitude is limited to max).
+        // Since the bug exists, this assertion will fail.
+        if limited.magnitude() > max * 1.001 {
+             panic!("HAVOC SUCCESS: Limit failed to clamp magnitude ({} > {})", limited.magnitude(), max);
+        }
+    }
 }
