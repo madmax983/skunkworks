@@ -33,14 +33,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 ## 🌿 Spawned Hybrids
 
 <!-- Experiments that resulted from cross-pollination -->
-<<<<<<< SEARCH
-### ferrous-swarm
-- **Parents**: experiments/ferrous-tissue + experiments/luminous-flock
-- **Concept**: Flocking behavior applied to complex soft-body organisms where internal magnetic states affect formation.
-- **Novel trait**: Magneto-Elastic Swarming. The flock isn't just points; it's squishy, magnetic creatures that deform when they collide or align.
-- **Status**: experiments/ferrous-swarm
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified in GUESTBOOK.
-=======
+
 ### ferrous-swarm
 - **Parents**: experiments/ferrous-tissue + experiments/luminous-flock
 - **Concept**: Flocking behavior applied to complex soft-body organisms where internal magnetic states affect formation.
@@ -54,4 +47,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Non-Euclidean Swarm Intelligence. Flocking rules (Separation/Alignment/Cohesion) adapted to hyperbolic metrics.
 - **Status**: experiments/hyperbolic-swarm
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
->>>>>>> REPLACE
+
+### ferrous-hologram
+- **Parents**: experiments/ferrous-fluid + experiments/hologram-text
+- **Concept**: Magnetic particles generate a field that is transformed via FFT into the frequency domain, filtered, and inverse-transformed to create a "Ghost Potential" force.
+- **Novel trait**: Spectral Resonance Feedback. The swarm organizes based on the resonance of its own structure in the frequency domain.
+- **Status**: experiments/ferrous-hologram
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
