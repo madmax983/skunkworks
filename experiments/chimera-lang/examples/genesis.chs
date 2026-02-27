@@ -1,48 +1,112 @@
-# Genesis.chs - The First Spark of ChimeraScript
+# Genesis: The Standard Library of Chimera 🧬
+# Defines core macros, utilities, and demonstrates advanced features.
+
+# --- Core Logic ---
+
+macro IF {
+    # Expects: [condition] on stack
+    # Usage: <cond> IF(true_strand, false_strand)
+    # This macro is a bit tricky since we don't have direct if-else
+    # But we can use `brz` (Branch if Zero)
+    # However, `brz` takes a strand index/label.
+    # So this macro is more of a placeholder for the concept.
+    # Real if-else is done via:
+    #   <cond> brz(false_label)
+    #   ... true block ...
+    #   jump(end_label)
+    #   strand false_label { ... }
+    #   strand end_label { ... }
+}
+
+# --- Polyglot Grammars ---
+
+grammar simple_math {
+    # Defines a simple math parser: "1 + 2" -> [Push(1), Push(2), Add]
+    Map(
+        Seq(
+            Int(Regex("[0-9]+")),
+            Regex("[ \t]*\\+[ \t]*"),
+            Int(Regex("[0-9]+"))
+        ),
+        all(
+            any("push", ?1),
+            any("push", ?3),
+            any("add")
+        )
+    )
+}
+
+grammar lisp_lite {
+    # A tiny Lisp parser: (add 1 2) -> [Push(1), Push(2), Add]
+    # Uses recursive definitions (Ref) if supported, or just simple structure
+
+    # Rule for a list: (op arg1 arg2)
+    Map(
+        Seq(
+            Match("("),
+            Regex("[a-z]+"), # Op
+            Regex("[ \t]+"),
+            Int(Regex("[0-9]+")), # Arg1
+            Regex("[ \t]+"),
+            Int(Regex("[0-9]+")), # Arg2
+            Match(")")
+        ),
+        all(
+            any("push", ?4),
+            any("push", ?6),
+            any(?2)
+        )
+    )
+}
+
+# --- Chaos & Entropy ---
+
+macro DOOMSDAY {
+    chaos {
+        100
+        entropy
+        add
+        print
+    }
+}
+
+# --- Oracle Logic ---
+
+oracle {
+    fact(parent("cronus", "zeus"))
+    fact(parent("cronus", "poseidon"))
+    fact(parent("zeus", "ares"))
+
+    # Sibling rule: X is sibling of Y if Z is parent of X AND Z is parent of Y
+    rule(sibling(?x, ?y)) :- parent(?z, ?x), parent(?z, ?y)
+}
+
+# --- Main Entry Point ---
 
 strand main {
-    "Start Genesis..." print
+    "Beginning Genesis..." print
 
-    # Simple Arithmetic Test
-    5 3 add
-    dup
-    "Calculated: " print
-    print
+    # Test Polyglot
+    "Testing Polyglot Math..." print
+    polyglot simple_math { 10 + 20 }
+    print # Should be 30
 
-    # Check if result is 8. (5+3=8)
-    # sub(8, 8) -> 0
-    8 sub
+    "Testing Polyglot Lisp..." print
+    polyglot lisp_lite { (sub 50 10) }
+    print # Should be 40
 
-    # Branch if Zero (Equal) to success strand
-    brz(success)
+    # Test Chaos
+    "Invoking Chaos..." print
+    DOOMSDAY
 
-    "Math Failed!" print
-    jump(end)
-}
+    # Test Oracle
+    "Consulting the Oracle..." print
+    # Query: Who are the children of Cronus?
+    query(parent("cronus", ?child))
+    # If successful, ?child is bound.
+    # How do we access bindings? Currently `query` returns success boolean.
+    # Future expansion: `find_all` returns a list of bindings.
 
-strand success {
-    "Math Verified." print
-
-    # Spawn a child running 'child_logic'
-    # Mitosis expects target strand index on stack
-    # We use push(strand_name) to put the index on stack
-    push(child_logic)
-    mitosis
-
-    "Parent done." print
-}
-
-strand child_logic {
-    "Child active." print
-    "Photosynthesizing..." print
-    photosynthesize
-    "Child done." print
-
-    # Self-destruct
-    push(child_logic)
+    "Genesis Complete." print
     apoptosis
-}
-
-strand end {
-    "Terminating." print
 }

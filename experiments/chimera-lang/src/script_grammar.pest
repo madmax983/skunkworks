@@ -16,7 +16,10 @@ organelle_def = { "organelle" ~ identifier ~ "{" ~ instruction* ~ "}" }
 
 grammar_def = { "grammar" ~ identifier ~ "{" ~ grammar_content ~ "}" }
 grammar_content = { grammar_rule_def* }
-grammar_rule_def = { rule_type ~ identifier ~ "{" ~ rule_expr ~ "}" ~ ( "->" ~ transform_block )? }
+grammar_rule_def = {
+    (rule_type ~ identifier ~ "{" ~ rule_expr ~ "}" ~ ( "->" ~ transform_block )?) |
+    (identifier ~ "(" ~ argument_list ~ ")")
+}
 rule_type = { "rule" | "token" | "regex" }
 
 rule_expr = { rule_choice }
