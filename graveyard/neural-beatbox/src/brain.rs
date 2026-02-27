@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use synaptic_physics::Izhikevich;
+use neuro_sim::Izhikevich;
 
 #[derive(Clone, Copy, PartialEq)]
 pub enum NeuronType {

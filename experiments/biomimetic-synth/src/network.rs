@@ -1,5 +1,5 @@
 use rand::Rng;
-use synaptic_physics::Izhikevich;
+use neuro_sim::Izhikevich;
 
 #[derive(Clone, Debug)]
 pub struct Synapse {

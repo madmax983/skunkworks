@@ -1,4 +1,4 @@
-use synaptic_physics::Izhikevich;
+use neuro_sim::Izhikevich;
 
 pub struct Retina {
     pub width: usize,

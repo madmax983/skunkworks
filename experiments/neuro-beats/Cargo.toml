@@ -7,7 +7,6 @@ edition = "2021"
 macroquad = "0.4"
 rand = "0.8"
 rodio = { version = "0.19", optional = true }
-synaptic-physics = { path = "../../crates/synaptic-physics" }
 neuro-sim = { path = "../../crates/neuro-sim" }
 anyhow = "1.0"
 

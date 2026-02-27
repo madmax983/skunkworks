@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 use neuro_sim::Network;
-// use synaptic_physics::Izhikevich; // Not directly needed if we access via Network
+// use neuro_sim::Izhikevich; // Not directly needed if we access via Network
 
 mod audio;
 use audio::AudioEngine;

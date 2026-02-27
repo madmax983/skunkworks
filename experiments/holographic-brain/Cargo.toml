@@ -10,4 +10,4 @@ ratatui = { workspace = true }
 rand = { workspace = true }
 rustfft = "6.2"
 num-complex = "0.4"
-synaptic-physics = { path = "../../crates/synaptic-physics" }
+neuro-sim = { path = "../../crates/neuro-sim" }

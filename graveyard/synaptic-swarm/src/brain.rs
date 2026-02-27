@@ -1,5 +1,5 @@
 use rand::Rng;
-use synaptic_physics::Izhikevich;
+use neuro_sim::Izhikevich;
 
 pub const N_SENSORY: usize = 4;
 pub const N_INTER: usize = 4;

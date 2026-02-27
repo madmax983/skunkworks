@@ -3,10 +3,6 @@ name = "synaptic-pachinko"
 version = "0.1.0"
 edition = "2021"
 
-[features]
-default = ["audio"]
-audio = ["dep:cpal"]
-
 [dependencies]
 locus = { workspace = true }
 ratatui = { workspace = true }
@@ -17,4 +13,8 @@ tui-shared = { workspace = true }
 cpal = { version = "0.15", optional = true }
 ringbuf = "0.3"
 crossbeam-channel = "0.5"
-synaptic-physics = { workspace = true }
+neuro-sim = { path = "../../crates/neuro-sim" }
+
+[features]
+default = ["audio"]
+audio = ["dep:cpal"]

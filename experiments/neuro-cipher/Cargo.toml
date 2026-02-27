@@ -10,4 +10,3 @@ image = "0.24"
 origami = { path = "../../crates/origami" }
 physics-pbd = { path = "../../crates/physics-pbd" }
 neuro-sim = { path = "../../crates/neuro-sim" }
-synaptic-physics = { path = "../../crates/synaptic-physics" }

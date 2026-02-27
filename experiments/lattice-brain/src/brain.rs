@@ -2,7 +2,7 @@ use crate::audio::{AudioCommand, AudioEngine, Snapshot};
 use crate::lattice::{Lattice, LatticeType};
 use nalgebra::Point3;
 use rand::prelude::*;
-use synaptic_physics::Izhikevich;
+use neuro_sim::Izhikevich;
 
 pub struct Brain {
     pub lattice: Lattice,

@@ -10,8 +10,8 @@ rand = { workspace = true }
 ratatui = { workspace = true }
 tui-shared = { workspace = true }
 nalgebra = "0.33"
-synaptic-physics = { workspace = true }
 crossbeam-channel = "0.5"
+neuro-sim = { path = "../../crates/neuro-sim" }
 
 [dependencies.cpal]
 version = "0.15"
