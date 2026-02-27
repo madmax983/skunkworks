@@ -187,10 +187,18 @@ pub fn process_ecology_tick(vm: &mut ChimeraVM) {
                         let gene_idx = rng.gen_range(0..vm.dna.helix.strands[l_idx].genes.len());
                         let gene = vm.dna.helix.strands[l_idx].genes[gene_idx].clone();
 
-                        // Append to winner's strand
-                        vm.dna.helix.strands[w_idx].genes.push(gene);
-                        vm.output
-                            .push(format!("VIRAL: Gene transfer {} -> {}", l_idx, w_idx));
+                        // 🔒 WARDEN: Enforce MAX_GENES_PER_STRAND
+                        if vm.dna.helix.strands[w_idx].genes.len() < crate::vm::MAX_GENES_PER_STRAND {
+                            // Append to winner's strand
+                            vm.dna.helix.strands[w_idx].genes.push(gene);
+                            vm.output
+                                .push(format!("VIRAL: Gene transfer {} -> {}", l_idx, w_idx));
+                        } else {
+                            vm.output.push(format!(
+                                "VIRAL: Gene limit exceeded for strand {}",
+                                w_idx
+                            ));
+                        }
                     }
                 }
             }

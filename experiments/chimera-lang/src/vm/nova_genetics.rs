@@ -1,6 +1,6 @@
 #![cfg(feature = "nova")]
 
-use super::{ChimeraVM, Value, MAX_STRANDS};
+use super::{ChimeraVM, Value, MAX_GENES_PER_STRAND, MAX_STRANDS};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use crate::{ChimeraParser, Rule};
@@ -311,6 +311,17 @@ pub fn exec_frankenstein(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 }
                 if ptr_b < len_b {
                     new_genes.extend_from_slice(&genes_b[ptr_b..]);
+                }
+
+                // 🔒 WARDEN: Enforce MAX_GENES_PER_STRAND
+                if new_genes.len() > MAX_GENES_PER_STRAND {
+                    vm.output.push(format!(
+                        "FRANKENSTEIN: Result length {} exceeds limit {}",
+                        new_genes.len(),
+                        MAX_GENES_PER_STRAND
+                    ));
+                    vm.stack.push(Value::Int(-1));
+                    return None;
                 }
 
                 if vm.dna.helix.strands.len() >= MAX_STRANDS {
@@ -1101,12 +1112,20 @@ pub fn exec_ligase(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                         (strand_high, strand_low)
                     };
 
-                    strand_r.genes.append(&mut strand_d.genes);
-                    // donor genes are now empty.
+                    // 🔒 WARDEN: Enforce MAX_GENES_PER_STRAND
+                    if strand_r.genes.len() + strand_d.genes.len() <= MAX_GENES_PER_STRAND {
+                        strand_r.genes.append(&mut strand_d.genes);
+                        // donor genes are now empty.
 
-                    vm.energy = vm.energy.saturating_sub(10);
-                    vm.output
-                        .push(format!("LIGASE: Appended strand {} to {}", d_idx, r_idx));
+                        vm.energy = vm.energy.saturating_sub(10);
+                        vm.output
+                            .push(format!("LIGASE: Appended strand {} to {}", d_idx, r_idx));
+                    } else {
+                        // Deduct energy even on failure to prevent free infinite loops (DoS)
+                        vm.energy = vm.energy.saturating_sub(10);
+                        vm.output
+                            .push("LIGASE: Gene Limit Exceeded".to_string());
+                    }
                 }
             } else {
                 vm.output
