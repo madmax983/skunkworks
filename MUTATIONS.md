@@ -52,4 +52,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A chaotic double pendulum system where the "stylus" (pendulum tip) writes magnetic information to a substrate (`Platter`), which in turn exerts magnetic forces back on the pendulum.
 - **Novel trait**: Chaotic Memory Feedback Loop. The system's past chaotic motion is recorded in the magnetic field and interferes with its future motion.
 - **Status**: experiments/chaos-magnetic
+- **Evaluation**: Verified. Compiles. Implemented by The Splice Surgeon.
+
+### ferrous-strings
+- **Parents**: experiments/genetic-luthier + experiments/ferrous-fluid
+- **Concept**: Evolving strings that vibrate and emit magnetic fields, influencing a swarm of particles. The particles, in turn, affect the fitness of the strings (e.g., strings that attract more particles reproduce).
+- **Novel trait**: Acoustic-Magnetic Symbiosis. Sound waves (string vibration) become magnetic waves, guiding matter.
+- **Status**: experiments/ferrous-strings
 - **Evaluation**: In Progress.
