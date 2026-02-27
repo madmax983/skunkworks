@@ -29,7 +29,7 @@
 //! ## Usage
 //!
 //! ```rust
-//! use synaptic_physics::Izhikevich;
+//! use neuro_sim::Izhikevich;
 //!
 //! // 1. Create a neuron (e.g., Regular Spiking)
 //! let mut neuron = Izhikevich::new();
@@ -66,7 +66,7 @@ const SUBSTEPS: usize = 2;
 /// Creating a custom neuron with modified reset parameters:
 ///
 /// ```rust
-/// use synaptic_physics::Izhikevich;
+/// use neuro_sim::Izhikevich;
 ///
 /// let mut neuron = Izhikevich {
 ///     v: -65.0,
@@ -141,7 +141,7 @@ impl Izhikevich {
     /// # Examples
     ///
     /// ```rust
-    /// use synaptic_physics::Izhikevich;
+    /// use neuro_sim::Izhikevich;
     /// let neuron = Izhikevich::new();
     /// assert_eq!(neuron.a, 0.02);
     /// ```
@@ -213,7 +213,7 @@ impl Izhikevich {
     /// # Examples
     ///
     /// ```rust
-    /// use synaptic_physics::Izhikevich;
+    /// use neuro_sim::Izhikevich;
     /// use rand::thread_rng;
     ///
     /// let mut rng = thread_rng();
@@ -238,7 +238,7 @@ impl Izhikevich {
     /// # Examples
     ///
     /// ```rust
-    /// use synaptic_physics::Izhikevich;
+    /// use neuro_sim::Izhikevich;
     /// let mut neuron = Izhikevich::new();
     ///
     /// // Inject a spike event (e.g., EPSP)
@@ -278,7 +278,7 @@ impl Izhikevich {
     /// # Examples
     ///
     /// ```rust
-    /// use synaptic_physics::Izhikevich;
+    /// use neuro_sim::Izhikevich;
     /// let mut neuron = Izhikevich::new();
     ///
     /// // Advance by 1.0 unit of time with 5.0 units of input current

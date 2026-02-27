@@ -8,4 +8,3 @@ macroquad = "0.4.14"
 rand = { workspace = true }
 ttf-parser = "0.25.1"
 neuro-sim = { path = "../../crates/neuro-sim" }
-synaptic-physics = { path = "../../crates/synaptic-physics" }

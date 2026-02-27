@@ -1,1 +1,1 @@
-pub use synaptic_physics::Izhikevich;
+pub use neuro_sim::Izhikevich;

@@ -1,13 +1,13 @@
 //! # Neuro Sim
 //!
-//! A high-level Spiking Neural Network (SNN) simulation crate powered by [`synaptic_physics`].
+//! A high-level Spiking Neural Network (SNN) simulation crate powered by the [`Izhikevich`] neuron model.
 //!
 //! This crate provides a [`Network`] abstraction that manages a collection of [`Izhikevich`] neurons
 //! connected by [`Synapse`]s. It handles spike propagation, synaptic delays, and weights.
 //!
 //! ## The Model
 //!
-//! - **Neurons**: Uses the Izhikevich model (via `synaptic_physics`) which balances biological plausibility with performance.
+//! - **Neurons**: Uses the Izhikevich model which balances biological plausibility with performance.
 //! - **Synapses**: Directed connections with:
 //!     - **Weight**: Strength of the connection (positive = excitatory, negative = inhibitory).
 //!     - **Delay**: Discrete time steps before a spike reaches the target.
@@ -45,7 +45,9 @@
 //! }
 //! ```
 
-use synaptic_physics::Izhikevich;
+pub mod physics;
+
+pub use physics::Izhikevich;
 
 /// A connection between two neurons.
 ///

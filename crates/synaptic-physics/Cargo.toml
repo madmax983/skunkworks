@@ -1,8 +1,0 @@
-[package]
-name = "synaptic-physics"
-version = "0.1.0"
-edition = "2021"
-description = "Izhikevich neuron model and synaptic physics logic"
-
-[dependencies]
-rand = { workspace = true }

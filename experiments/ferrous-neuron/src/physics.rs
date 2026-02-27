@@ -1,7 +1,7 @@
 use ferrous_core::Platter;
 use rand::Rng;
 use ratatui::style::Color;
-use synaptic_physics::Izhikevich;
+use neuro_sim::Izhikevich;
 pub use locus::Vec2;
 
 #[derive(Debug, Clone)]

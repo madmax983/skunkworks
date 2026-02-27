@@ -11,6 +11,6 @@ rand.workspace = true
 locus.workspace = true
 ferrous-core.workspace = true
 git-associates.workspace = true
-synaptic-physics.workspace = true
 walkdir = "2.3"
 regex = "1.10"
+neuro-sim = { path = "../../crates/neuro-sim" }

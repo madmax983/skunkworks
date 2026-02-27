@@ -21,7 +21,7 @@ use std::{
 
 mod brain;
 mod hologram;
-// mod neuron; // Not needed if we use synaptic_physics directly in brain.rs
+// mod neuron; // Not needed if we use neuro_sim directly in brain.rs
 
 use brain::Brain;
 

@@ -5,7 +5,7 @@ use std::sync::{
 };
 use std::thread;
 use std::time::{Duration, Instant};
-use synaptic_physics::Izhikevich;
+use neuro_sim::Izhikevich;
 
 /// Shared state for visualization
 #[derive(Clone, Debug)]
