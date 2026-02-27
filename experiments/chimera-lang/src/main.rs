@@ -99,7 +99,7 @@ fn main() -> Result<()> {
         original_hook(panic_info);
     }));
 
-    let (dna, grid, orca_mode, custom_runes) = if let Some(input_path) = &cli.input {
+    let (dna, grid, orca_mode, custom_runes, alchemy_book) = if let Some(input_path) = &cli.input {
         let unparsed_file = fs::read_to_string(input_path)?;
         let path = Path::new(input_path);
         let extension = path
@@ -117,6 +117,7 @@ fn main() -> Result<()> {
                     None,
                     None,
                     HashMap::new(),
+                    Vec::new(),
                 )
             }
             #[cfg(not(feature = "resonance"))]
@@ -131,6 +132,7 @@ fn main() -> Result<()> {
                 None,
                 None,
                 HashMap::new(),
+                Vec::new(),
             )
         } else if extension == "lisp" || extension == "cl" {
             (
@@ -138,6 +140,7 @@ fn main() -> Result<()> {
                 None,
                 None,
                 HashMap::new(),
+                Vec::new(),
             )
         } else {
             let dna_pair = ChimeraParser::parse(Rule::dna, &unparsed_file)?
@@ -149,6 +152,7 @@ fn main() -> Result<()> {
                 None,
                 None,
                 HashMap::new(),
+                Vec::new(),
             )
         }
     } else {
@@ -161,6 +165,7 @@ fn main() -> Result<()> {
             None,
             None,
             HashMap::new(),
+            Vec::new(),
         )
     };
 
@@ -178,6 +183,7 @@ fn main() -> Result<()> {
             vm.prologue_state.orca_mode = mode;
         }
         vm.prologue_state.custom_runes = custom_runes;
+        vm.prologue_state.alchemy_book = alchemy_book;
     }
 
     #[cfg(feature = "resonance")]

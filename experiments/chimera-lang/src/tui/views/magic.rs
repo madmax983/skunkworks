@@ -1,5 +1,4 @@
 use crate::tui::state::AppState;
-use crate::tui::GRIMOIRE_TEXT;
 use crate::vm::ChimeraVM;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
@@ -17,7 +16,13 @@ pub(crate) fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
         .split(app_state.get_render_area(f.area()));
 
     // Left: Grimoire Text (Manual)
-    let grimoire_widget = Paragraph::new(GRIMOIRE_TEXT)
+    let grimoire_text = format!(
+        "{}\n\n{}",
+        crate::tui::GRIMOIRE_TEXT,
+        render_hermetic_rules(vm)
+    );
+
+    let grimoire_widget = Paragraph::new(grimoire_text)
         .block(
             Block::default()
                 .borders(Borders::ALL)
@@ -118,6 +123,19 @@ pub(crate) fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
     let bard_paragraph = Paragraph::new(score_text)
         .block(Block::default().borders(Borders::ALL).title("Bard (Score)"));
     f.render_widget(bard_paragraph, chunks[3]);
+}
+
+fn render_hermetic_rules(vm: &ChimeraVM) -> String {
+    if vm.prologue_state.alchemy_book.is_empty() {
+        return String::from("## Hermetic Alchemy\n\n(No dynamic rules defined)");
+    }
+
+    let mut s = String::from("## Hermetic Alchemy\n\n");
+    for (i, rule) in vm.prologue_state.alchemy_book.iter().enumerate() {
+        let ingredients: Vec<String> = rule.ingredients.iter().map(|v| format!("{}", v)).collect();
+        s.push_str(&format!("{}. {} -> {}\n", i + 1, ingredients.join(" + "), rule.result));
+    }
+    s
 }
 
 #[cfg(feature = "nova")]

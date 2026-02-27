@@ -147,6 +147,13 @@ pub struct PrologueAgent {
     pub stack: Vec<Value>,
 }
 
+/// A dynamic transmutation rule for Hermetic Alchemy.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AlchemyRule {
+    pub ingredients: Vec<Value>,
+    pub result: Value,
+}
+
 /// The entire state of the Prologue system.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PrologueState {
@@ -209,6 +216,9 @@ pub struct PrologueState {
     /// Reality State (Physics Modes).
     #[serde(default)]
     pub reality_state: weave_reality::RealityState,
+    /// Hermetic Alchemy Book (User Defined Transmutations).
+    #[serde(default)]
+    pub alchemy_book: Vec<AlchemyRule>,
 }
 
 fn default_logos_engine() -> logos::LogosEngine {
@@ -246,6 +256,7 @@ impl PrologueState {
             scratch_signal_grid: vec![vec![None; GRID_SIZE]; GRID_SIZE],
             custom_runes: HashMap::new(),
             reality_state: weave_reality::RealityState::default(),
+            alchemy_book: Vec::new(),
         }
     }
 
@@ -511,6 +522,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     effective_orca,
                     &mut vm.prologue_state.hyper_state,
                     &mut vm.prologue_state.rhythm_state,
+                    &vm.prologue_state.alchemy_book,
                     #[cfg(feature = "resonance")]
                     &vm.audio_tx,
                     #[cfg(not(feature = "resonance"))]
@@ -560,6 +572,7 @@ fn apply_propagation_rune(
     orca_mode: bool,
     hyper_state: &mut hyper::HyperState,
     rhythm_state: &mut rhythm::RhythmState,
+    alchemy_book: &[AlchemyRule],
     #[cfg(feature = "resonance")] audio_tx: &Option<
         crossbeam_channel::Sender<resonance_audio::audio::AudioCommand>,
     >,
@@ -689,7 +702,7 @@ fn apply_propagation_rune(
     if pandemonium::apply_pandemonium_runes(rune, y, x, current_signals, next_signals) {
         return true;
     }
-    if elemental::apply_elemental_runes(rune, y, x, current_signals, next_signals) {
+    if elemental::apply_elemental_runes(rune, y, x, current_signals, next_signals, alchemy_book) {
         return true;
     }
     if psionics::apply_psionics_runes(rune, y, x, current_signals, next_signals, grid) {
