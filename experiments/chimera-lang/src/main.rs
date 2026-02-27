@@ -55,7 +55,7 @@ fn format_oracle_result(val: &Value) -> Option<String> {
 
         if is_binding_list {
             let mut table = comfy_table::Table::new();
-            table.load_preset(comfy_table::presets::UTF8_NO_BORDERS);
+            table.load_preset(comfy_table::presets::UTF8_BORDERS_ONLY);
             table.set_header(vec!["Key", "Value"]);
 
             for item in items {
@@ -228,10 +228,11 @@ fn main() -> Result<()> {
         }
 
         println!("Execution complete.");
+        println!("--- Execution Summary ---");
 
         let mut table = comfy_table::Table::new();
         table
-            .load_preset(comfy_table::presets::UTF8_FULL)
+            .load_preset(comfy_table::presets::UTF8_BORDERS_ONLY)
             .set_content_arrangement(comfy_table::ContentArrangement::Dynamic)
             .set_header(vec!["Index", "Type", "Value"]);
 
@@ -249,9 +250,9 @@ fn main() -> Result<()> {
 
             let mut val_cell = comfy_table::Cell::new(&val_str);
 
-            if val_str == "1" || val_str.to_lowercase() == "true" {
+            if val_str == "1" || val_str.eq_ignore_ascii_case("true") {
                 val_cell = val_cell.fg(comfy_table::Color::Green);
-            } else if val_str == "0" || val_str.to_lowercase() == "false" {
+            } else if val_str == "0" || val_str.eq_ignore_ascii_case("false") {
                 val_cell = val_cell.fg(comfy_table::Color::Red);
             } else if matches!(val, Value::Str(_)) {
                 val_cell = val_cell.fg(comfy_table::Color::Cyan);

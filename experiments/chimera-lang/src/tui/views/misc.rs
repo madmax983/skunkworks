@@ -110,19 +110,6 @@ pub(crate) fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
                     bobber_x += offset;
                 }
 
-                // Splash / Ripple around bobber
-                if app_state.fishing_bobber_y < 50.0 {
-                    // Bobber is underwater/surface
-                    let phase = (vm.tick_counter % 6) / 2;
-                    let (left, right) = match phase {
-                        0 => ("(", ")"),
-                        1 => ("<", ">"),
-                        _ => ("{", "}"),
-                    };
-                    ctx.print(bobber_x - 2.0, app_state.fishing_bobber_y, left);
-                    ctx.print(bobber_x + 1.0, app_state.fishing_bobber_y, right);
-                }
-
                 // Fishing Line (Rod Bending Animation)
                 let line_color = if app_state.fishing_tension > 0.8 {
                     Color::Red
@@ -150,13 +137,13 @@ pub(crate) fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
                     color: line_color,
                 });
 
-                // Draw Bobber using Component
+                // Draw Bobber using Component with updated signature
                 let bobber = Bobber::new(
                     bobber_x,
                     app_state.fishing_bobber_y + bob_offset,
                     app_state.fishing_hooked,
                 );
-                bobber.draw(ctx);
+                bobber.draw(ctx, vm.tick_counter);
 
                 // Fish (Icon)
                 if app_state.fishing_fish_y > 0.0 && app_state.fishing_fish_y < 100.0 {
@@ -186,6 +173,26 @@ pub(crate) fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
 
     f.render_widget(canvas, scene_chunks[0]);
     f.render_widget(TensionBar::new(app_state.fishing_tension), scene_chunks[1]);
+
+    // Success Check: Overlay "FISH ON!" if hooked
+    if app_state.fishing_hooked {
+        let area = scene_chunks[0];
+        let popup_area = ratatui::layout::Rect {
+            x: area.x + (area.width.saturating_sub(20)) / 2,
+            y: area.y + (area.height.saturating_sub(3)) / 2,
+            width: 20,
+            height: 3,
+        };
+        // Clear background for popup
+        f.render_widget(ratatui::widgets::Clear, popup_area);
+
+        let popup = Paragraph::new("FISH ON!")
+            .style(Style::default().fg(Color::White).bg(Color::Red).add_modifier(Modifier::BOLD | Modifier::SLOW_BLINK))
+            .alignment(ratatui::layout::Alignment::Center)
+            .block(Block::default().borders(Borders::ALL).border_style(Style::default().fg(Color::Yellow)));
+
+        f.render_widget(popup, popup_area);
+    }
 
     // Controls Row (Buttons)
     let control_chunks = Layout::default()
