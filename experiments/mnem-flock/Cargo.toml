@@ -1,0 +1,11 @@
+[package]
+name = "mnem-flock"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = "0.8"
+regex = "1.10"
+walkdir = "2.4"
+locus = { path = "../../crates/locus" }
