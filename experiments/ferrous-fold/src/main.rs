@@ -2,7 +2,7 @@ use ::rand::Rng;
 use chimera_lang::prelude::*;
 use glam::Vec3;
 use macroquad::prelude::*;
-use origami::{MiuraOri, MiuraParams, Orientation, OrigamiMesh}; // Removed OrigamiVertex
+use origami::{generate_miura_mesh, MiuraParams, Orientation, OrigamiMesh};
 use physics_pbd::PbdSystem;
 
 struct Cell {
@@ -30,8 +30,7 @@ impl FoldedTissue {
             gamma: 80.0f32.to_radians(), // Sharp fold angle
             orientation: Orientation::Horizontal,
         };
-        let origami = MiuraOri::new(params, (cols, rows));
-        let initial_mesh = origami.generate_mesh(0.5); // Start half-folded
+        let initial_mesh = generate_miura_mesh(params, (cols, rows), 0.5); // Start half-folded
 
         // 2. Create Particles from Vertices
         let mut particle_indices = Vec::new();
