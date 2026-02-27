@@ -8,5 +8,4 @@
 //! - Fluid density (unbounded accumulation).
 //! - Pheromone trails (with decay).
 
-pub mod platter;
 pub use platter::Platter;

@@ -26,7 +26,7 @@ impl Platter {
     /// # Examples
     ///
     /// ```
-    /// use ferrous_core::Platter;
+    /// use platter::Platter;
     ///
     /// let p = Platter::new(10, 10);
     /// assert_eq!(p.width, 10);
@@ -50,7 +50,7 @@ impl Platter {
     /// # Examples
     ///
     /// ```
-    /// use ferrous_core::Platter;
+    /// use platter::Platter;
     ///
     /// let mut p = Platter::new(5, 5);
     /// p.magnetize(2, 2, 0.6);
@@ -75,7 +75,7 @@ impl Platter {
     /// # Examples
     ///
     /// ```
-    /// use ferrous_core::Platter;
+    /// use platter::Platter;
     ///
     /// let mut p = Platter::new(5, 5);
     /// p.accumulate(2, 2, 0.6);
@@ -98,7 +98,7 @@ impl Platter {
     /// # Examples
     ///
     /// ```
-    /// use ferrous_core::Platter;
+    /// use platter::Platter;
     ///
     /// let mut p = Platter::new(5, 5);
     /// p.accumulate(1, 1, 0.5);
@@ -122,7 +122,7 @@ impl Platter {
     /// # Examples
     ///
     /// ```
-    /// use ferrous_core::Platter;
+    /// use platter::Platter;
     ///
     /// let mut p = Platter::new(5, 5);
     /// p.accumulate(2, 2, 1.0);

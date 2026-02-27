@@ -18,6 +18,7 @@ tokio = { version = "1.0", features = ["full"] }
 git2 = "0.18"
 locus = { path = "crates/locus" }
 ferrous-core = { path = "crates/ferrous-core" }
+platter = { path = "crates/platter" }
 git-associates = { path = "crates/git-associates" }
 gray-scott = { path = "crates/gray-scott" }
 market-sim = { path = "crates/market-sim" }

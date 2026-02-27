@@ -113,3 +113,9 @@
 **Blueprint:** Added `Particle::Wall` to `crates/market-sim` and refactored `thermo-market` to use the shared crate. Updated `market-rogue` and `market-flow` to handle the new variant.
 **Stability:** Enforced single source of truth for market physics. Reduced code duplication.
 **Verification:** Verified with `cargo test` for `market-sim` and `cargo check` for all affected experiments.
+
+## [Platter Extraction]
+**Tangle:** The God Struct - `ferrous-core` contained `Platter`, a generic 2D field simulation struct, tangling it with other ferrous-specific logic.
+**Blueprint:** Extracted `Platter` into its own crate `crates/platter`. Updated `ferrous-core` to re-export it for backward compatibility.
+**Stability:** Decoupled generic simulation logic from specific implementations. High cohesion, low coupling.
+**Verification:** Verified with `cargo test -p platter` and `cargo test -p ferrous-core`. `ferrous-core` tests passed, confirming re-export works.
