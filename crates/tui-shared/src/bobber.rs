@@ -21,7 +21,12 @@ impl Bobber {
     }
 
     /// Draws the bobber and its effects onto the given Canvas context.
-    pub fn draw(&self, ctx: &mut Context) {
+    ///
+    /// # Arguments
+    ///
+    /// * `ctx` - The Ratatui Canvas Context.
+    /// * `tick` - The current simulation tick, used for animation cycles.
+    pub fn draw(&self, ctx: &mut Context, tick: u64) {
         let icon = if self.is_hooked { "🔴" } else { "⚪" };
 
         // Draw the main bobber body
@@ -42,6 +47,20 @@ impl Bobber {
             // Gentle ripples for idle state
             ctx.print(self.x - 2.0, self.y, "≈");
             ctx.print(self.x + 2.0, self.y, "≈");
+        }
+
+        // Animated Splash / Ripple around bobber based on tick
+        // This replaces manual logic previously in render_fishing
+        if self.y < 50.0 {
+            // Bobber is underwater/surface
+            let phase = (tick % 6) / 2;
+            let (left, right) = match phase {
+                0 => ("(", ")"),
+                1 => ("<", ">"),
+                _ => ("{", "}"),
+            };
+            ctx.print(self.x - 2.0, self.y, left);
+            ctx.print(self.x + 1.0, self.y, right);
         }
     }
 }
