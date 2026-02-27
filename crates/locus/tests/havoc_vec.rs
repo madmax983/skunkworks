@@ -93,9 +93,26 @@ mod tests {
         let limited = v.limit(max);
 
         // Verify that the limit SUCCEEDED (i.e., magnitude is limited to max).
-        // Since the bug exists, this assertion will fail.
-        if limited.magnitude() > max * 1.001 {
-             panic!("HAVOC SUCCESS: Limit failed to clamp magnitude ({} > {})", limited.magnitude(), max);
+        // Since the bug is fixed, this assertion should PASS.
+        // We assume safe normalization handles infinity correctly, but precision might be tricky.
+        // Using a generous tolerance because we are dealing with 1e155 numbers.
+
+        // Note: limited.magnitude() might be slightly off due to float precision at this scale,
+        // but it should be very close to max.
+        // We handle the case where magnitude itself overflows to infinity if max is finite.
+
+        // We use hypot directly because Vec2::magnitude() might overflow internally
+        // (it uses sqrt(x*x + y*y)) even if the vector itself is finite.
+        let mag = limited.x.hypot(limited.y);
+
+        if mag.is_infinite() {
+             panic!("HAVOC FAILED: Limit result has infinite magnitude! Max was {}", max);
+        }
+
+        if mag > max * 1.001 {
+             panic!("HAVOC FAILED: Limit failed to clamp magnitude ({} > {})", mag, max);
+        } else {
+             println!("HAVOC BUG FIXED: Limit successfully clamped magnitude.");
         }
     }
 }

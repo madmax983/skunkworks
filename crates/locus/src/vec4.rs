@@ -192,7 +192,8 @@ impl Vec4 {
     pub fn limit(&self, max: f32) -> Self {
         let max = max.abs();
         let sq_len = self.length_squared();
-        if sq_len > max * max {
+        // Check for infinite squared length (overflow) with finite max
+        if sq_len > max * max || (sq_len.is_infinite() && max.is_finite()) {
             // Optimization: Avoid full normalize() which does extra max/scale logic
             if sq_len.is_finite() {
                 // Common case: finite vector, just scale
