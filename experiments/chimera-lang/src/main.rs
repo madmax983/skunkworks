@@ -98,7 +98,7 @@ fn main() -> Result<()> {
         .and_then(std::ffi::OsStr::to_str)
         .unwrap_or("");
 
-    let (dna, grid, orca_mode, custom_runes) = if extension == "pro" {
+    let (dna, grid, orca_mode, custom_runes, custom_agents) = if extension == "pro" {
         chimera_lang::prologue_compiler::compile(&unparsed_file, path.parent())?
     } else if extension == "score" {
         #[cfg(feature = "resonance")]
@@ -107,6 +107,7 @@ fn main() -> Result<()> {
                 chimera_lang::acoustic_compiler::compile(&unparsed_file)?,
                 None,
                 None,
+                HashMap::new(),
                 HashMap::new(),
             )
         }
@@ -127,7 +128,7 @@ fn main() -> Result<()> {
                 .ok_or_else(|| anyhow::anyhow!("No DNA found"))?;
             Dna::try_from_pair(dna_pair).map_err(|e| anyhow::anyhow!("DNA parse error: {}", e))?
         };
-        (dna, None, None, HashMap::new())
+        (dna, None, None, HashMap::new(), HashMap::new())
     };
 
     let mut vm = ChimeraVM::new(dna);
@@ -143,6 +144,7 @@ fn main() -> Result<()> {
     #[cfg(feature = "nova")]
     {
         vm.prologue_state.custom_runes = custom_runes;
+        vm.prologue_state.custom_agents = custom_agents;
         if let Some(orca) = orca_mode {
             vm.prologue_state.orca_mode = orca;
         }

@@ -19,6 +19,7 @@ pub fn compile(
     Option<Vec<Vec<Value>>>,
     Option<bool>,
     HashMap<String, usize>,
+    HashMap<String, usize>,
 )> {
     let mut pairs = PrologueParser::parse(Rule::program, source)?;
 
@@ -26,6 +27,7 @@ pub fn compile(
     let mut dna: Option<Dna> = None;
     let mut orca_mode = None;
     let mut custom_runes = HashMap::new();
+    let mut custom_agents = HashMap::new();
 
     let program = pairs.next().ok_or_else(|| anyhow!("Empty program"))?;
 
@@ -120,6 +122,32 @@ pub fn compile(
                             }
                         }
                     }
+                    Rule::agents_section => {
+                        for entry in inner.into_inner() {
+                            let mut entry_inner = entry.into_inner();
+                            let agent_char = entry_inner.next().unwrap().as_str();
+                            let definition_body = entry_inner.next().unwrap();
+                            let content = definition_body.into_inner().next().unwrap().as_str();
+
+                            let wrapped_content =
+                                format!("strand agent_{} {{ {} }}", custom_agents.len(), content);
+                            let compiled_def =
+                                crate::compiler::compile(&wrapped_content, base_path)?;
+
+                            if dna.is_none() {
+                                dna = Some(Dna {
+                                    evolution_config: None,
+                                    helix: crate::ast::Helix { strands: vec![] },
+                                });
+                            }
+
+                            if let Some(main_dna) = dna.as_mut() {
+                                let start_idx = main_dna.helix.strands.len();
+                                main_dna.helix.strands.extend(compiled_def.helix.strands);
+                                custom_agents.insert(agent_char.to_string(), start_idx);
+                            }
+                        }
+                    }
                     _ => {}
                 }
             }
@@ -130,7 +158,7 @@ pub fn compile(
 
     let final_dna = dna.ok_or_else(|| anyhow!("No DNA section found"))?;
 
-    Ok((final_dna, grid, orca_mode, custom_runes))
+    Ok((final_dna, grid, orca_mode, custom_runes, custom_agents))
 }
 
 fn parse_grid_line(line: &str) -> Vec<Value> {

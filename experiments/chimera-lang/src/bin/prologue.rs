@@ -47,7 +47,7 @@ fn main() -> Result<()> {
         original_hook(panic_info);
     }));
 
-    let (dna, grid, orca_mode, custom_runes) = if let Some(input_path) = &cli.input {
+    let (dna, grid, orca_mode, custom_runes, custom_agents) = if let Some(input_path) = &cli.input {
         let unparsed_file = fs::read_to_string(input_path)?;
         let path = Path::new(input_path);
         let extension = path
@@ -63,12 +63,14 @@ fn main() -> Result<()> {
                 None,
                 None,
                 HashMap::new(),
+                HashMap::new(),
             )
         } else if extension == "lisp" || extension == "cl" {
             (
                 chimera_lang::lisp::compile(&unparsed_file)?,
                 None,
                 None,
+                HashMap::new(),
                 HashMap::new(),
             )
         } else {
@@ -81,6 +83,7 @@ fn main() -> Result<()> {
                 None,
                 None,
                 HashMap::new(),
+                HashMap::new(),
             )
         }
     } else {
@@ -92,6 +95,7 @@ fn main() -> Result<()> {
             },
             None,
             None,
+            HashMap::new(),
             HashMap::new(),
         )
     };
@@ -110,6 +114,7 @@ fn main() -> Result<()> {
             vm.prologue_state.orca_mode = mode;
         }
         vm.prologue_state.custom_runes = custom_runes;
+        vm.prologue_state.custom_agents = custom_agents;
     }
 
     #[cfg(feature = "resonance")]

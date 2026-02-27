@@ -197,6 +197,9 @@ pub struct PrologueState {
     /// Custom Runes (User Defined).
     #[serde(default)]
     pub custom_runes: HashMap<String, usize>,
+    /// Custom Agents (User Defined). Map Rune -> Strand Index.
+    #[serde(default)]
+    pub custom_agents: HashMap<String, usize>,
     /// Reality State (Physics Modes).
     #[serde(default)]
     pub reality_state: weave_reality::RealityState,
@@ -236,6 +239,7 @@ impl PrologueState {
             mycelium_buffer: VecDeque::new(),
             scratch_signal_grid: vec![vec![None; GRID_SIZE]; GRID_SIZE],
             custom_runes: HashMap::new(),
+            custom_agents: HashMap::new(),
             reality_state: weave_reality::RealityState::default(),
         }
     }
@@ -293,6 +297,7 @@ impl PrologueState {
             || s == "👹"
             || s == "★"
             || s == "🤖"
+            || self.custom_agents.contains_key(s)
         {
             let raw_state = self.registers.get(&(y, x)).cloned().unwrap_or(Value::Int(0));
             let (state, stack) = unpack_agent_data(raw_state);
@@ -1210,6 +1215,65 @@ fn process_seeker_logic(
     None
 }
 
+fn process_custom_agent(
+    vm: &mut ChimeraVM,
+    agent: &PrologueAgent,
+    grid_snapshot: &[Vec<Value>],
+    strand_idx: usize,
+) -> Option<(PrologueAgent, Option<(usize, usize)>)> {
+    // 1. Push Args: State, Y, X
+    vm.stack.push(agent.state.clone());
+    vm.stack.push(Value::Int(agent.y as i64));
+    vm.stack.push(Value::Int(agent.x as i64));
+
+    // 2. Execute Strand
+    if strand_idx < vm.dna.helix.strands.len() {
+        let strand = vm.dna.helix.strands[strand_idx].clone();
+        for gene in &strand.genes {
+            let _ = vm.execute_gene_inner(gene.op.clone(), &gene.args);
+        }
+    }
+
+    // 3. Pop Result: [..., dx, dy, new_state]
+    if vm.stack.len() >= 3 {
+        let new_state = vm.stack.pop().unwrap();
+        let dy_val = vm.stack.pop().unwrap();
+        let dx_val = vm.stack.pop().unwrap();
+
+        let (dy, dx) = match (dy_val, dx_val) {
+            (Value::Int(y), Value::Int(x)) => (y, x),
+            _ => (0, 0),
+        };
+
+        let mut updated_agent = agent.clone();
+        updated_agent.state = new_state;
+
+        if dy == 0 && dx == 0 {
+            return Some((updated_agent, None));
+        }
+
+        if let Some((ny, nx)) = normalize_coords(agent.y as i64 + dy, agent.x as i64 + dx) {
+            // Basic collision check: Target must be 0 or "."
+            let dest = &grid_snapshot[ny][nx];
+            let is_free = match dest {
+                Value::Int(0) => true,
+                Value::Str(s) if s == "." => true,
+                _ => false,
+            };
+
+            if is_free {
+                return Some((updated_agent, Some((ny, nx))));
+            }
+        }
+
+        // Blocked but state updated
+        return Some((updated_agent, None));
+    }
+
+    // Stack underflow or execution failure -> No change
+    Some((agent.clone(), None))
+}
+
 fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
     let agents = vm.prologue_state.agents.clone();
     let mut new_agents = Vec::new();
@@ -1262,7 +1326,15 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
             current_type = s.clone();
         }
 
-        let target = if current_type == "C" {
+        let target = if let Some(&strand_idx) = vm.prologue_state.custom_agents.get(&current_type) {
+            match process_custom_agent(vm, &agent, grid_snapshot, strand_idx) {
+                Some((updated_agent, t)) => {
+                    agent = updated_agent;
+                    t
+                }
+                None => continue,
+            }
+        } else if current_type == "C" {
             match process_critter_logic(vm, &agent, grid_snapshot) {
                 Some((updated_agent, t)) => {
                     agent = updated_agent;
@@ -1488,6 +1560,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "👹"
                 || current_type == "★"
                 || current_type == "🤖"
+                || vm.prologue_state.custom_agents.contains_key(&current_type)
             {
                 vm.prologue_state.registers.insert(
                     (ny, nx),
@@ -1524,6 +1597,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                     || current_type == "👹"
                     || current_type == "★"
                     || current_type == "🤖"
+                    || vm.prologue_state.custom_agents.contains_key(&current_type)
                 {
                     vm.prologue_state.registers.remove(&(y, x));
                 }
@@ -1559,6 +1633,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "👹"
                 || current_type == "★"
                 || current_type == "🤖"
+                || vm.prologue_state.custom_agents.contains_key(&current_type)
             {
                 vm.prologue_state.registers.insert(
                     (y, x),

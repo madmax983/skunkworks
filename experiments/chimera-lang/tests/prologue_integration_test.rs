@@ -32,7 +32,7 @@ dna {
     let result = prologue_compiler::compile(source, None);
     assert!(result.is_ok(), "Compilation failed: {:?}", result.err());
 
-    let (dna, grid, orca_mode, custom_runes) = result.unwrap();
+    let (dna, grid, orca_mode, custom_runes, _custom_agents) = result.unwrap();
 
     // Check DNA
     assert_eq!(dna.helix.strands.len(), 2, "Should have 2 strands (1 main + 1 custom rune)");
