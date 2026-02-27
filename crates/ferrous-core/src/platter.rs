@@ -7,8 +7,9 @@ pub struct Platter {
 
 impl Platter {
     pub fn new(width: usize, height: usize) -> Self {
+        let size = width.checked_mul(height).expect("Platter size overflow");
         Self {
-            magnetism: vec![0.0; width * height],
+            magnetism: vec![0.0; size],
             width,
             height,
         }
