@@ -644,107 +644,10 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
     // Pass 1: Wireworld Automata & Active Components
     for y in 0..rows {
         for x in 0..cols {
-            let current_cell = &vm.grid[y][x];
-
-            // Map values to Wireworld states for evolution of simple cells
-            // 0=Empty, 1=Conductor, 2=Head, 3=Tail
-            // Complex cells (Str) handle their own state update or stay static
-            let state = match current_cell {
-                Value::Int(1) => 1,
-                Value::Int(2) => 2,
-                Value::Int(3) => 3,
-                Value::Str(s) => {
-                    if s.starts_with("EMIT:") {
-                        let parts: Vec<&str> = s.split(':').collect();
-                        if parts.len() == 3 {
-                            if let (Ok(freq), Ok(phase)) =
-                                (parts[1].parse::<i64>(), parts[2].parse::<i64>())
-                            {
-                                let mut new_phase = phase + 1;
-                                if new_phase >= freq {
-                                    new_phase = 0;
-                                }
-                                next_grid[y][x] =
-                                    Value::Str(format!("EMIT:{}:{}", freq, new_phase));
-                            }
-                        }
-                        // Emitter handles its own next state, doesn't evolve via WW rules
-                        0
-                    } else if s.starts_with("RECV:")
-                        || s == "PIN:IN"
-                        || s == "PIN:OUT"
-                        || s.starts_with("G:")
-                        || s.starts_with("LATCH:")
-                    {
-                        // Static components (physically)
-                        0
-                    } else {
-                        0
-                    }
-                }
-                _ => 0,
-            };
-
             // Evolve simple Wireworld cells
-            if state != 0 {
-                let next_state = match state {
-                    2 => 3, // Head -> Tail
-                    3 => 1, // Tail -> Conductor
-                    1 => {
-                        // Conductor -> Head if 1 or 2 heads nearby
-                        let mut head_neighbors = 0;
-                        for dy in -1..=1 {
-                            for dx in -1..=1 {
-                                if dy == 0 && dx == 0 {
-                                    continue;
-                                }
-                                if let Some((ny, nx)) =
-                                    vm.normalize_coords(y as i64 + dy, x as i64 + dx)
-                                {
-                                    match &vm.grid[ny][nx] {
-                                        Value::Int(2) => head_neighbors += 1,
-                                        Value::Str(s) => {
-                                            if s == "PIN:IN" {
-                                                if let Some(Value::Int(val)) = vm.stack.last() {
-                                                    if *val > 0 {
-                                                        head_neighbors += 1;
-                                                    }
-                                                }
-                                            } else if s.starts_with("EMIT:") {
-                                                // Check if Emitter is firing
-                                                let parts: Vec<&str> = s.split(':').collect();
-                                                if parts.len() == 3 {
-                                                    if let (Ok(_freq), Ok(phase)) = (
-                                                        parts[1].parse::<i64>(),
-                                                        parts[2].parse::<i64>(),
-                                                    ) {
-                                                        if phase == 0 {
-                                                            // Firing phase
-                                                            head_neighbors += 1;
-                                                        }
-                                                    }
-                                                }
-                                            } else if s == "LATCH:1" {
-                                                head_neighbors += 1;
-                                            }
-                                        }
-                                        _ => {}
-                                    }
-                                }
-                            }
-                        }
-                        if head_neighbors == 1 || head_neighbors == 2 {
-                            2
-                        } else {
-                            1
-                        }
-                    }
-                    _ => state,
-                };
-
-                if next_state != state {
-                    next_grid[y][x] = Value::Int(next_state);
-                }
+            // Using logic extracted from helper function
+            if let Some(next_val) = step_cell_wireworld(vm, y, x) {
+                next_grid[y][x] = next_val;
             }
         }
     }
@@ -925,14 +828,6 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
                         if next_state != state {
                             next_grid[y][x] = Value::Str(format!("LATCH:{}", next_state));
                         }
-                        // Note: If state didn't change, the LATCH string is already preserved in next_grid clone
-                        // because LATCH strings are not evolved in Pass 1.
-                        // Wait, Pass 1:
-                        // Value::Str(s) -> if starts with EMIT ... else 0.
-                        // if state != 0, next_grid updated.
-                        // But LATCH returns 0 in Pass 1 match, so it's not updated there.
-                        // So next_grid[y][x] is still LATCH:{old_state}.
-                        // So we only update if next_state != state.
                     }
                 }
             }
@@ -948,4 +843,110 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
     for strand_idx in interrupts {
         vm.interrupt(strand_idx);
     }
+}
+
+/// Runs logic for a single Wireworld cell.
+///
+/// Returns `Some(Value)` if the cell state changes, `None` otherwise.
+/// This allows external systems (like Reality Bubbles) to run Silicon physics locally.
+pub fn step_cell_wireworld(vm: &ChimeraVM, y: usize, x: usize) -> Option<Value> {
+    let current_cell = &vm.grid[y][x];
+
+    // Map values to Wireworld states for evolution of simple cells
+    // 0=Empty, 1=Conductor, 2=Head, 3=Tail
+    // Complex cells (Str) handle their own state update or stay static
+    let state = match current_cell {
+        Value::Int(1) => 1,
+        Value::Int(2) => 2,
+        Value::Int(3) => 3,
+        Value::Str(s) => {
+            if s.starts_with("EMIT:") {
+                let parts: Vec<&str> = s.split(':').collect();
+                if parts.len() == 3 {
+                    if let (Ok(freq), Ok(phase)) =
+                        (parts[1].parse::<i64>(), parts[2].parse::<i64>())
+                    {
+                        let mut new_phase = phase + 1;
+                        if new_phase >= freq {
+                            new_phase = 0;
+                        }
+                        return Some(Value::Str(format!("EMIT:{}:{}", freq, new_phase)));
+                    }
+                }
+                // Emitter handles its own next state above
+                0
+            } else if s.starts_with("RECV:")
+                || s == "PIN:IN"
+                || s == "PIN:OUT"
+                || s.starts_with("G:")
+                || s.starts_with("LATCH:")
+            {
+                // Static components (physically)
+                0
+            } else {
+                0
+            }
+        }
+        _ => 0,
+    };
+
+    // Evolve simple Wireworld cells
+    if state != 0 {
+        let next_state = match state {
+            2 => 3, // Head -> Tail
+            3 => 1, // Tail -> Conductor
+            1 => {
+                // Conductor -> Head if 1 or 2 heads nearby
+                let mut head_neighbors = 0;
+                for dy in -1..=1 {
+                    for dx in -1..=1 {
+                        if dy == 0 && dx == 0 {
+                            continue;
+                        }
+                        if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                            match &vm.grid[ny][nx] {
+                                Value::Int(2) => head_neighbors += 1,
+                                Value::Str(s) => {
+                                    if s == "PIN:IN" {
+                                        if let Some(Value::Int(val)) = vm.stack.last() {
+                                            if *val > 0 {
+                                                head_neighbors += 1;
+                                            }
+                                        }
+                                    } else if s.starts_with("EMIT:") {
+                                        // Check if Emitter is firing
+                                        let parts: Vec<&str> = s.split(':').collect();
+                                        if parts.len() == 3 {
+                                            if let (Ok(_freq), Ok(phase)) =
+                                                (parts[1].parse::<i64>(), parts[2].parse::<i64>())
+                                            {
+                                                if phase == 0 {
+                                                    // Firing phase
+                                                    head_neighbors += 1;
+                                                }
+                                            }
+                                        }
+                                    } else if s == "LATCH:1" {
+                                        head_neighbors += 1;
+                                    }
+                                }
+                                _ => {}
+                            }
+                        }
+                    }
+                }
+                if head_neighbors == 1 || head_neighbors == 2 {
+                    2
+                } else {
+                    1
+                }
+            }
+            _ => state,
+        };
+
+        if next_state != state {
+            return Some(Value::Int(next_state));
+        }
+    }
+    None
 }

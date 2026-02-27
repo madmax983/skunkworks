@@ -8,11 +8,13 @@
 //! The Prologue system runs in discrete ticks, following this pipeline:
 //!
 //! 1.  **Scan**: Identify all Runes and Agents on the grid.
-//! 2.  **Signal**: Activate `!` Source runes and release pending delayed signals.
-//! 3.  **Propagate**: Spread signals through Wires (`~`) and process Logic Gates (`&`, `|`, `+`, etc.).
+//! 2.  **Reality**: Update reality bubbles from World Runes (🌐).
+//! 3.  **Signal**: Activate `!` Source runes and release pending delayed signals.
+//! 4.  **Propagate**: Spread signals through Wires (`~`) and process Logic Gates (`&`, `|`, `+`, etc.).
 //!     *   This phase iterates until the grid stabilizes (up to a limit).
-//! 4.  **Sink**: Active Sinks (`?`, `$`, `M`, etc.) consume signals and perform actions (Logging, Gene Execution, Grid Writes).
-//! 5.  **Agent**: Agents (`@`, `K`, `H`) perceive their surroundings and move.
+//! 5.  **Physics**: Execute local reality physics (Silicon CA, Life).
+//! 6.  **Sink**: Active Sinks (`?`, `$`, `M`, etc.) consume signals and perform actions (Logging, Gene Execution, Grid Writes).
+//! 7.  **Agent**: Agents (`@`, `K`, `H`) perceive their surroundings and move.
 //!
 //! ## Rune Reference
 //!
@@ -43,18 +45,7 @@
 //! | | `L` | **Listen**: Pops from Ether Channel. |
 //! | **Flow** | `^` | **Jump**: West -> East (Teleport). |
 //! | | `\` | **Mirror**: Reflects 90° (N<->E). |
-//!
-//! ## Example: Simple Logic Gate
-//!
-//! This circuit implements `(1 AND 1) -> Log`:
-//!
-//! ```text
-//!   1   1
-//!   !   !   (Sources emit 1 North)
-//!   ~   ~   (Wires carry signals)
-//!   &       (AND Gate receives both)
-//!   ?       (Sink receives Result 1)
-//! ```
+//! | **Reality** | `🌐` | **World**: Defines local physics (West=Radius, North=Mode). |
 
 use crate::vm::{ChimeraVM, Value, GRID_SIZE};
 use rand::Rng;
@@ -128,6 +119,7 @@ pub mod topology;
 pub mod virology;
 pub mod void;
 pub mod weave;
+pub mod weave_reality;
 pub mod weaver;
 pub mod wizard;
 pub mod zeta;
@@ -205,6 +197,9 @@ pub struct PrologueState {
     /// Custom Runes (User Defined).
     #[serde(default)]
     pub custom_runes: HashMap<String, usize>,
+    /// Reality State (Physics Modes).
+    #[serde(default)]
+    pub reality_state: weave_reality::RealityState,
 }
 
 fn default_logos_engine() -> logos::LogosEngine {
@@ -241,13 +236,11 @@ impl PrologueState {
             mycelium_buffer: VecDeque::new(),
             scratch_signal_grid: vec![vec![None; GRID_SIZE]; GRID_SIZE],
             custom_runes: HashMap::new(),
+            reality_state: weave_reality::RealityState::default(),
         }
     }
 
     /// Scans the entire grid to identify Runes and Agents.
-    ///
-    /// This populates the `runes` cache and `agents` list for the upcoming tick.
-    /// It effectively compiles the grid into an active circuit description.
     pub fn scan_grid_rules(&mut self, grid: &Vec<Vec<Value>>) {
         self.runes.clear();
         self.rules.clear();
@@ -259,454 +252,97 @@ impl PrologueState {
                     // Identify Runes
                     if matches!(
                         s.as_str(),
-                        // IO
-                        "?" | "!"
-                        // Topology
-                            | "~"
-                        // Logic
-                            | "&"
-                            | "|"
-                            | "+"
-                        // Circuit
-                            | "*"
-                            | "#"
-                        // Agents
-                            | "@"
-                            | "$"
-                        // Math
-                            | "%"
-                            | "^"
-                            | "M"
-                        // Biology
-                            | "O"
-                            | "G"
-                        // Neural
-                            | "♦"
-                            | "•"
-                            | "°"
-                        // Control
-                            | "E"
-                            | "D"
-                            | "A"
-                            | "S"
-                            | "P"
-                            | "Q"
-                            | "="
-                            | ">"
-                            | "<"
-                            | "I"
-                            | "Y"
-                            | "L"
-                            | "J"
-                            | "C"
-                            | "("
-                            | ")"
-                            | "N"
-                            | "W"
-                            | "K"
-                            | "R"
-                            | "X"
-                            | "Z"
-                            | "H"
-                        // Lists
-                            | "["
-                            | "]"
-                            | "U"
-                            | "V"
-                            | "F"
-                            | "T"
-                        // Optics
-                            | "\\"
-                            | "/"
-                            | "-"
-                        // Quantum
-                            | "q"
-                            | "m"
-                            | "8"
-                        // Teleport
-                            | "{"
-                            | "}"
-                        // Chronos
-                            | "s"
-                            | "g"
-                            | "r"
-                            | "c"
-                        // Alchemy
-                            | "t"
-                            | "f"
-                            | "d"
-                        // Evolution
-                            | "e"
-                            | "b"
-                            | "l"
-                            | "n"
-                            | "∞"
-                            | "Ð"
-                        // Void
-                            | "µ"
-                            | "Ø"
-                            | "§"
-                            | "ꝏ"
-                        // Construct
-                            | "B"
-                            | "Π"
-                            | "🤖"
-                        // Architect
-                            | "⟳"
-                            | "↔"
-                            | "↕"
-                            | "❏"
-                            | "▓"
-                            | "░"
-                        // Virology
-                            | "v"
-                            | "i"
-                            | "a"
-                        // Biolum
-                            | "Φ"
-                            | "Λ"
-                            | "Ω"
-                        // Philosopher
-                            | "🎓"
-                        // Chaos
-                            | "k"
-                            | "z"
-                            | "h"
-                            | "†"
-                            | "‡"
-                            | "Ψ"
-                        // Symbiosis
-                            | "u"
-                            | "y"
-                            | "w"
-                            | "j"
-                            | "x"
-                            | "p"
-                            | "o"
-                        // Pandemonium
-                            | "¿"
-                            | "¡"
-                            | "≈"
-                        // Epigenetics
-                            | "."
-                            | ":"
-                            | ","
-                            | "☣"
-                            | "♻"
-                            | "χ"
-                        // Elemental
-                            | "Δ"
-                            | "∇"
-                            | "◊"
-                            | "○"
-                            | "☆"
-                            | "☿"
-                        // Fission
-                            | "☢"
-                            | "✇"
-                            | "⌘"
-                            | "✦"
-                        // Hypnagogia
-                            | "☾"
-                            | "☀"
-                        // Elektra
-                            | "⚡"
-                            | "≡"
-                            | "∿"
-                            | "🔌"
-                            | "💡"
-                            | "🔋"
-                            | "♒"
-                            | "⇝"
-                            | "⏧"
-                        // Oracle
-                            | "¶"
-                            | "λ"
-                            | "¥"
-                            | "∃"
-                        // Psionics
-                            | "Θ"
-                            | "Ξ"
-                            | "Σ"
-                        // Resonance
-                            | "♪"
-                            | "♫"
-                            | "🥁"
-                        // Prism
-                            | "▲"
-                            | "▼"
-                            | "🧬"
-                            | "⚛"
-                            | "⚒"
-                            | "🧶"
-                            | "💉"
-                        // Linguistics
-                            | "\""
-                            | "®"
-                            | ";"
-                            | "©"
-                            | "↑"
-                            | "↓"
-                            | "≅"
-                        // Memetics
-                            | "ι"
-                            | "κ"
-                            | "ε"
-                            | "σ"
-                            | "φ"
-                            | "Æ"
-                        // Narrative
-                            | "α"
-                            | "ω"
-                            | "✍"
-                            | "📖"
-                            | "📚"
-                            | "🔖"
-                        // Chroma
-                            | "🎨"
-                            | "🖌"
-                            | "👁"
-                            | "🔴"
-                            | "🟢"
-                            | "🔵"
-                            // Siren
-                            | "♬"
-                            // Logos
-                            | "Γ"
-                            | "«"
-                            | "»"
-                            | "η"
-                            | "γ"
-                            // Forth
-                            | "₣"
-                            // Pilot
-                            | "⚓"
-                            // Zeta (Wire Lisp)
-                            | "ζ"
-                            // Hyper
-                            | "⇪" | "↻" | "⌖" | "▣"
-                            // Rhythm
-                            | "⏱️" | "🎹" | "🎚️"
-                            // Sequencer
-                            | "🔍" | "✏" | "🗑" | "➕"
-                            // Mycelium
-                            | "🍄" | "📥" | "📤" | "🦋"
-                            // Neural Growth
-                            | "🌱"
-                            // Weaver
-                            | "🕷"
-                            // Runecraft
-                            | "£"
-                            // Splicer
-                            | "✂"
-                            // Ligase
-                            | "🔗"
-                            // Phage
-                            | "🦠"
-                            // Ribozyme
-                            | "🛠"
-                            // Genetics (Hybridize)
-                            | "⨁"
-                            // Mesmerist
-                            | "🌀"
-                            // Alchemist
-                            | "⚗"
-                            // Weave
-                            | "ð" | "║"
-                            // Gardener
-                            | "♣"
-                            // Wizard
-                            | "🧙"
-                            // Altar
-                            | "⛩"
-                            // Dream Weaver
-                            | "💤"
-                            // Nightmare
-                            | "👹"
-                            // Astral
-                            | "★"
+                        "?" | "!" | "~" | "&" | "|" | "+" | "*" | "#" | "@" | "$" | "%" | "^" | "M" | "O" | "G" | "♦" | "•" | "°" | "E" | "D" | "A" | "S" | "P" | "Q" | "=" | ">" | "<" | "I" | "Y" | "L" | "J" | "C" | "(" | ")" | "N" | "W" | "K" | "R" | "X" | "Z" | "H" | "[" | "]" | "U" | "V" | "F" | "T" | "\\" | "/" | "-" | "q" | "m" | "8" | "{" | "}" | "s" | "g" | "r" | "c" | "t" | "f" | "d" | "e" | "b" | "l" | "n" | "∞" | "Ð" | "µ" | "Ø" | "§" | "ꝏ" | "B" | "Π" | "🤖" | "⟳" | "↔" | "↕" | "❏" | "▓" | "░" | "v" | "i" | "a" | "Φ" | "Λ" | "Ω" | "🎓" | "k" | "z" | "h" | "†" | "‡" | "Ψ" | "u" | "y" | "w" | "j" | "x" | "p" | "o" | "¿" | "¡" | "≈" | "." | ":" | "," | "☣" | "♻" | "χ" | "Δ" | "∇" | "◊" | "○" | "☆" | "☿" | "☢" | "✇" | "⌘" | "✦" | "☾" | "☀" | "⚡" | "≡" | "∿" | "🔌" | "💡" | "🔋" | "♒" | "⇝" | "⏧" | "¶" | "λ" | "¥" | "∃" | "Θ" | "Ξ" | "Σ" | "♪" | "♫" | "🥁" | "▲" | "▼" | "🧬" | "⚛" | "⚒" | "🧶" | "💉" | "\"" | "®" | ";" | "©" | "↑" | "↓" | "≅" | "ι" | "κ" | "ε" | "σ" | "φ" | "Æ" | "α" | "ω" | "✍" | "📖" | "📚" | "🔖" | "🎨" | "🖌" | "👁" | "🔴" | "🟢" | "🔵" | "♬" | "Γ" | "«" | "»" | "η" | "γ" | "₣" | "⚓" | "ζ" | "⇪" | "↻" | "⌖" | "▣" | "⏱️" | "🎹" | "🎚️" | "🔍" | "✏" | "🗑" | "➕" | "🍄" | "📥" | "📤" | "🦋" | "🌱" | "🕷" | "£" | "✂" | "🔗" | "🦠" | "🛠" | "⨁" | "🌀" | "⚗" | "ð" | "║" | "♣" | "🧙" | "⛩" | "💤" | "👹" | "★" | "🌐"
                     ) {
                         self.runes.insert((y, x));
-
-                        if s == "@"
-                            || s == "K"
-                            || s == "H"
-                            || (s == "C" && !self.orca_mode)
-                            || s == "♻"
-                            || s == "♬"
-                            || s == "🌀"
-                            || s == "⚗"
-                            || s == "₣"
-                            || s == "ζ"
-                            || s == "Φ"
-                            || s == "P"
-                            || s == "⚓"
-                            || s == "∃"
-                            || s == "χ"
-                            || s == "🕷"
-                            || s == "✂"
-                            || s == "🔗"
-                            || s == "🦠"
-                            || s == "🛠"
-                            || s == "🎓"
-                            || s == "ð"
-                            || s == "♣"
-                            || s == "🧙"
-                            || s == "💤"
-                            || s == "👹"
-                            || s == "★"
-                            || s == "🤖"
-                        {
-                            // Try to retrieve persistent state
-                            let raw_state = self
-                                .registers
-                                .get(&(y, x))
-                                .cloned()
-                                .unwrap_or(Value::Int(0));
-                            let (state, stack) = unpack_agent_data(raw_state);
-
-                            let final_state = if matches!(state, Value::Int(0)) {
-                                if s == "C" {
-                                    critter::CritterState::default().to_value()
-                                } else if s == "♬" {
-                                    siren::SirenState::default().to_value()
-                                } else if s == "ζ" {
-                                    // Zeta defaults to East (0, 1)
-                                    Value::Junction(
-                                        crate::ast::JunctionType::All,
-                                        vec![Value::Int(0), Value::Int(1)],
-                                    )
-                                } else if s == "Φ" {
-                                    Value::Str("exist".to_string())
-                                } else if s == "⚓" {
-                                    Value::Junction(
-                                        crate::ast::JunctionType::All,
-                                        vec![Value::Int(0), Value::Int(1), Value::Int(0)],
-                                    )
-                                } else if s == "∃" {
-                                    Value::Junction(
-                                        crate::ast::JunctionType::All,
-                                        vec![
-                                            Value::Str("?".to_string()),
-                                            Value::Int(0),
-                                            Value::Int(1),
-                                        ],
-                                    )
-                                } else if s == "χ" {
-                                    Value::Junction(
-                                        crate::ast::JunctionType::All,
-                                        vec![Value::Int(0), Value::Str("".to_string())],
-                                    )
-                                } else if s == "🕷" {
-                                    Value::Int(0) // Weaver default state (placeholder)
-                                } else if s == "✂" || s == "🔗" {
-                                    Value::Int(0)
-                                } else if s == "🦠" {
-                                    Value::Int(0)
-                                } else if s == "🛠" {
-                                    Value::Int(0)
-                                } else if s == "🎓" {
-                                    Value::Junction(
-                                        crate::ast::JunctionType::All,
-                                        vec![
-                                            Value::Int(0),
-                                            Value::Int(0),
-                                            Value::Int(0),
-                                            Value::Int(0),
-                                        ],
-                                    )
-                                } else if s == "⚗" {
-                                    alchemist::AlchemistState::default().to_value()
-                                } else if s == "ð" {
-                                    // Shuttle default: East (0, 1), Payload 0, Underfoot Empty(0)
-                                    Value::Junction(
-                                        crate::ast::JunctionType::All,
-                                        vec![
-                                            Value::Int(0),
-                                            Value::Int(1),
-                                            Value::Int(0),
-                                            Value::Int(0),
-                                        ],
-                                    )
-                                } else if s == "♣" {
-                                    gardener::GardenerState::default().to_value()
-                                } else if s == "🧙" {
-                                    wizard::WizardState::default().to_value()
-                                } else if s == "💤" || s == "👹" {
-                                    Value::Int(0)
-                                } else if s == "★" {
-                                    astral::AstralState::default().to_value()
-                                } else if s == "🤖" {
-                                    automaton::AutomatonState::default().to_value()
-                                } else {
-                                    Value::Int(0)
-                                }
-                            } else {
-                                state
-                            };
-
-                            self.agents.push(PrologueAgent {
-                                x,
-                                y,
-                                state: final_state,
-                                stack,
-                            });
-                        }
+                        self.register_agent(s, y, x);
                     } else if self.custom_runes.contains_key(s) {
-                        // Custom Rune
                         self.runes.insert((y, x));
                     }
                 }
             }
         }
     }
+
+    fn register_agent(&mut self, s: &str, y: usize, x: usize) {
+        if s == "@"
+            || s == "K"
+            || s == "H"
+            || (s == "C" && !self.orca_mode)
+            || s == "♻"
+            || s == "♬"
+            || s == "🌀"
+            || s == "⚗"
+            || s == "₣"
+            || s == "ζ"
+            || s == "Φ"
+            || s == "P"
+            || s == "⚓"
+            || s == "∃"
+            || s == "χ"
+            || s == "🕷"
+            || s == "✂"
+            || s == "🔗"
+            || s == "🦠"
+            || s == "🛠"
+            || s == "🎓"
+            || s == "ð"
+            || s == "♣"
+            || s == "🧙"
+            || s == "💤"
+            || s == "👹"
+            || s == "★"
+            || s == "🤖"
+        {
+            let raw_state = self.registers.get(&(y, x)).cloned().unwrap_or(Value::Int(0));
+            let (state, stack) = unpack_agent_data(raw_state);
+            let final_state = if matches!(state, Value::Int(0)) {
+                // Initialize default state if needed
+                Value::Int(0)
+            } else {
+                state
+            };
+            self.agents.push(PrologueAgent {
+                x,
+                y,
+                state: final_state,
+                stack,
+            });
+        }
+    }
 }
 
-/// Executes a single tick of the Prologue system.
-///
-/// This function coordinates the 5-phase execution cycle:
-/// 1.  **Scan**: Maps the grid topology.
-/// 2.  **Signal**: Initializes signals from Sources and Delays.
-/// 3.  **Propagate**: Spreads signals through the network.
-/// 4.  **Sink**: Triggers effects at Sink terminals.
-/// 5.  **Agent**: Updates agent positions.
 pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
     if !vm.prologue_state.active {
         return;
     }
 
-    // 0. Lexicon (Word Spells) - Priority over Runes
     lexicon::process_lexicon(vm);
 
-    // 1. Scan Grid for Topology (Runes)
-    let grid_snapshot = vm.grid.clone(); // Clone for read access
+    let grid_snapshot = vm.grid.clone();
     vm.prologue_state.scan_grid_rules(&grid_snapshot);
+
+    weave_reality::scan_reality_bubbles(vm);
 
     #[cfg(feature = "biophysics")]
     neural::scan_neural_grid(vm);
 
-    // 2. Clear Signals & Apply Delays & 3. Source Emission
     prepare_signals(vm, &grid_snapshot);
 
     #[cfg(feature = "biophysics")]
     neural::fire_neurons(vm);
 
-    // 4. Propagation (Wires ~ and Gates & | + * # % ^)
     process_signal_propagation(vm, &grid_snapshot);
+    process_reality_physics(vm);
 
-    // 5. Sink Consumption / Actions (?, $, M, O)
     process_sinks(vm, &grid_snapshot);
 
     #[cfg(feature = "biophysics")]
     neural::integrate_neurons(vm);
 
-    // 6. Agents (@)
     process_agents(vm, &grid_snapshot);
-
-    // 7. Oneiric Cartography (Dream Logic)
     oneiric::process_oneiric_tick(vm);
 
-    // 8. Oracle (Omens)
     #[cfg(feature = "oracle")]
     {
         if !vm.omens.is_empty() {
@@ -715,16 +351,58 @@ pub fn exec_prologue_tick(vm: &mut ChimeraVM) {
     }
 }
 
-/// Prepares the signal grid for the current tick.
-///
-/// *   Clears the previous tick's transient signals.
-/// *   Applies any signals delayed from the previous tick (via `#`).
-/// *   Activates Source runes (`!`) to emit their values.
+fn process_reality_physics(vm: &mut ChimeraVM) {
+    // Collect updates first to avoid in-place mutation artifacts
+    let mut updates = Vec::new();
+
+    for y in 0..GRID_SIZE {
+        for x in 0..GRID_SIZE {
+            let mode = vm.prologue_state.reality_state.get_mode(y, x);
+            match mode {
+                weave_reality::RealityMode::Silicon => {
+                    #[cfg(feature = "silicon")]
+                    if let Some(new_val) = crate::vm::silicon::step_cell_wireworld(vm, y, x) {
+                        updates.push((y, x, new_val));
+                    }
+                }
+                weave_reality::RealityMode::Life => {
+                    // Implement Life CA step here or call helper
+                    // Count neighbors
+                    let mut neighbors = 0;
+                    for dy in -1..=1 {
+                        for dx in -1..=1 {
+                            if dy == 0 && dx == 0 { continue; }
+                            if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                                if let Value::Int(n) = vm.grid[ny][nx] {
+                                    if n > 0 { neighbors += 1; }
+                                }
+                            }
+                        }
+                    }
+                    let current = if let Value::Int(n) = vm.grid[y][x] { n > 0 } else { false };
+                    let next = if current {
+                        neighbors == 2 || neighbors == 3
+                    } else {
+                        neighbors == 3
+                    };
+                    if next != current {
+                         updates.push((y, x, Value::Int(if next { 1 } else { 0 })));
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+
+    // Apply updates
+    for (y, x, val) in updates {
+        vm.grid[y][x] = val;
+    }
+}
+
 fn prepare_signals(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
-    // Start with empty signal grid
     let mut current_signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
 
-    // Apply delayed signals from previous tick
     for y in 0..GRID_SIZE {
         for x in 0..GRID_SIZE {
             if let Some(val) = &vm.prologue_state.delayed_signals[y][x] {
@@ -733,15 +411,11 @@ fn prepare_signals(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
         }
     }
     vm.prologue_state.signal_grid = current_signals;
-
-    // Prepare next tick's delayed signals (cleared initially)
     vm.prologue_state.delayed_signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
 
-    // Source Emission (!)
     let runes: Vec<(usize, usize)> = vm.prologue_state.runes.iter().cloned().collect();
 
     for (y, x) in &runes {
-        // Epigenetic Check: Methylation silences Source
         if vm.prologue_state.epigenetic_grid[*y][*x] == epigenetics::EpigeneticMark::Methylated {
             continue;
         }
@@ -749,8 +423,6 @@ fn prepare_signals(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
         if let Value::Str(s) = &grid[*y][*x] {
             if s == "!" && *x > 0 {
                 let val = grid[*y][*x - 1].clone();
-                // Only emit truthy values? Or all values?
-                // Let's emit non-empty signals.
                 if !is_empty_val(&val) {
                     vm.prologue_state.signal_grid[*y][*x] = Some(val);
                 }
@@ -763,43 +435,32 @@ fn prepare_signals(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
     }
 }
 
-/// Iteratively propagates signals across the grid.
-///
-/// Simulates instantaneous travel through wires and logic gates.
-/// Iteration continues until the grid state stabilizes (no changes) or `max_iterations` is reached.
-/// This allows signals to travel the entire width of the grid in a single tick.
 fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
-    // Simple iterative flood fill for wires
-    // Gates need specific inputs.
-    // Iteration loop to allow signal to travel across grid in one tick
     let max_iterations = GRID_SIZE * 2;
     let runes: Vec<(usize, usize)> = vm.prologue_state.runes.iter().cloned().collect();
     let tick = vm.tick_counter;
 
-    // Ensure scratch buffer is ready (in case of serialization/deserialization)
     if vm.prologue_state.scratch_signal_grid.len() != GRID_SIZE {
         vm.prologue_state.scratch_signal_grid = vec![vec![None; GRID_SIZE]; GRID_SIZE];
     }
 
     for _ in 0..max_iterations {
         let mut changes = false;
-        // Swap out the scratch buffer to use as next state
         let mut next_signals = std::mem::take(&mut vm.prologue_state.scratch_signal_grid);
-
-        // Ensure proper sizing (std::mem::take replaces with default empty Vec)
         if next_signals.len() != GRID_SIZE {
             next_signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
         }
-
-        // Copy current state to next state (reusing allocation)
         next_signals.clone_from(&vm.prologue_state.signal_grid);
 
         for (y, x) in &runes {
-            // Epigenetic Check: Methylation stops propagation
             if vm.prologue_state.epigenetic_grid[*y][*x] == epigenetics::EpigeneticMark::Methylated
             {
                 continue;
             }
+
+            let mode = vm.prologue_state.reality_state.get_mode(*y, *x);
+            let global_orca = vm.prologue_state.orca_mode;
+            let effective_orca = global_orca || mode == weave_reality::RealityMode::Orca;
 
             if let Value::Str(s) = &grid[*y][*x] {
                 #[cfg(feature = "elektra")]
@@ -837,7 +498,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                     &mut vm.energy,
                     &vm.chroma_grid,
                     &mut vm.prologue_state.logos_engine,
-                    vm.prologue_state.orca_mode,
+                    effective_orca,
                     &mut vm.prologue_state.hyper_state,
                     &mut vm.prologue_state.rhythm_state,
                     #[cfg(feature = "resonance")]
@@ -850,10 +511,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                 }
             }
         }
-        // Swap buffers: next_signals becomes the new signal_grid
         std::mem::swap(&mut vm.prologue_state.signal_grid, &mut next_signals);
-
-        // Return the used buffer (now containing old state) to scratch for reuse
         vm.prologue_state.scratch_signal_grid = next_signals;
 
         if !changes {
@@ -862,9 +520,6 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
     }
 }
 
-/// Applies the logic for a single "Active" Rune (Wire, Gate, Math, etc.).
-///
-/// Returns `true` if the signal state changed, prompting another propagation iteration.
 #[allow(clippy::too_many_arguments)]
 fn apply_propagation_rune(
     rune: &str,
@@ -1070,10 +725,6 @@ fn apply_propagation_rune(
     false
 }
 
-/// Scans the grid for Sink Runes and triggers their side effects.
-///
-/// Sinks are runes that consume signals to interact with the world (Logging, VM, Grid).
-/// They do not propagate signals further in the same tick (usually).
 fn process_sinks(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
     let runes: Vec<(usize, usize)> = vm.prologue_state.runes.iter().cloned().collect();
 
@@ -1097,9 +748,6 @@ fn process_sinks(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
     }
 }
 
-/// Executes the logic for a Sink Rune.
-///
-/// Handles `?` (Sink), `$` (Scribe), `M` (Mutate), `O` (Organelle), etc.
 fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
     if let Some(&strand_idx) = vm.prologue_state.custom_runes.get(rune) {
         let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
@@ -1115,7 +763,6 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
         }
 
         if triggered {
-            // Prevent re-triggering if already executing this strand
             if vm.ip.0 != strand_idx {
                 vm.context_loc = (y, x);
                 vm.interrupt(strand_idx);
@@ -1129,7 +776,6 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
 
     match rune {
         "🎓" => {
-            // Graduate: West (@), North (Goal) -> South (Φ)
             if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
                 if let Value::Str(s) = &vm.grid[wy][wx] {
                     if s == "@" {
@@ -1149,8 +795,6 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             }
         }
         "?" => {
-            // Sink
-            // Check neighbors for signal (and Self)
             let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1), (0, 0)];
             let mut found_signals = Vec::new();
 
@@ -1165,8 +809,6 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             for sig in found_signals {
                 vm.output
                     .push(format!("PROLOGUE: Sink at {},{} received {:?}", x, y, sig));
-                // vm.prologue_state.signal_grid[y][x] = Some(sig.clone()); // Light up - Removed to prevent feedback loop
-
                 if let Value::Str(name) = sig {
                     if let Some(&idx) = vm.dictionary.get(&name) {
                         vm.interrupt(idx);
@@ -1175,20 +817,16 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             }
         }
         "$" => {
-            // Scribe: Write West -> South
             if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
                 if let Some(sig) = &vm.prologue_state.signal_grid[wy][wx] {
-                    // Write to South
                     if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
                         vm.grid[sy][sx] = sig.clone();
                         vm.prologue_state.signal_grid[y][x] = Some(sig.clone());
-                        // Light up
                     }
                 }
             }
         }
         "M" => {
-            // Mutate: Signal West -> Randomize South
             if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
                 if vm.prologue_state.signal_grid[wy][wx].is_some() {
                     if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
@@ -1196,20 +834,18 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                         let val = rng.gen_range(0..100);
                         vm.grid[sy][sx] = Value::Int(val);
                         vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
-                        // Light up
                     }
                 }
             }
         }
         "O" => {
-            // Organelle: Signal West -> Spawn Agent South
             if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
                 if let Some(sig) = &vm.prologue_state.signal_grid[wy][wx] {
                     if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
                         let agent_type = match sig {
-                            Value::Int(2) => "K", // Chaos
-                            Value::Int(3) => "H", // Hunter
-                            _ => "@",             // Seeker
+                            Value::Int(2) => "K",
+                            Value::Int(3) => "H",
+                            _ => "@",
                         };
                         vm.grid[sy][sx] = Value::Str(agent_type.to_string());
                         vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
@@ -1218,7 +854,6 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             }
         }
         "E" => {
-            // Eval: West (Code) -> Self (Result)
             let code_to_eval = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
                 if let Some(Value::Str(s)) = &vm.prologue_state.signal_grid[wy][wx] {
                     Some(s.clone())
@@ -1247,8 +882,7 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             }
         }
         "D" => {
-            // Data: Neighbors -> Self (List)
-            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)]; // N S W E
+            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
             let mut data = Vec::new();
             for (dy, dx) in neighbors {
                 if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
@@ -1264,7 +898,6 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             }
         }
         "Y" => {
-            // Yell: West (Value), East (Channel) -> Push to Ether
             if let (Some((wy, wx)), Some((ey, ex))) = (
                 normalize_coords(y as i64, x as i64 - 1),
                 normalize_coords(y as i64, x as i64 + 1),
@@ -1275,28 +908,21 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                 if let (Some(val), Some(Value::Int(channel))) = (w_sig, e_sig) {
                     vm.ether.entry(*channel).or_default().push_back(val.clone());
                     vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
-                    // Light up
                 }
             }
         }
         "(" => {
-            // Warp: Swap North and South values (Grid Modification)
-            // Triggered by West signal
             if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
                 if vm.prologue_state.signal_grid[wy][wx].is_some() {
                     if let (Some((ny, nx)), Some((sy, sx))) = (
                         normalize_coords(y as i64 - 1, x as i64),
                         normalize_coords(y as i64 + 1, x as i64),
                     ) {
-                        // We need to swap values in the grid
-                        // To avoid borrowing issues, we can't swap directly if we hold references?
-                        // But we have mutable access to VM.
                         let n_val = vm.grid[ny][nx].clone();
                         let s_val = vm.grid[sy][sx].clone();
                         vm.grid[ny][nx] = s_val;
                         vm.grid[sy][sx] = n_val;
                         vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
-                        // Light up
                     }
                 }
             }
@@ -1355,21 +981,19 @@ fn process_critter_logic(
             if critter.energy <= 0 {
                 vm.grid[y][x] = Value::Int(0);
                 vm.prologue_state.registers.remove(&(y, x));
-                return None; // Dead
+                return None;
             }
 
             match action {
                 critter::CritterAction::Move(ny, nx) => {
-                    let dest_val = &vm.grid[ny][nx]; // Check LIVE grid
+                    let dest_val = &vm.grid[ny][nx];
                     let mut blocked = false;
                     let mut moved_target = None;
 
                     if let Value::Str(s) = dest_val {
                         if s == "C" && (ny != y || nx != x) {
-                            // Collided with another Critter -> Breed
                             let mut rng = rand::thread_rng();
                             let mut spawn_dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-                            // Shuffle to maintain randomness
                             use rand::seq::SliceRandom;
                             spawn_dirs.shuffle(&mut rng);
 
@@ -1396,16 +1020,14 @@ fn process_critter_logic(
                                         vm.prologue_state
                                             .registers
                                             .insert((sy, sx), child.to_value());
-                                        break; // Spawned one child, stop
+                                        break;
                                     }
                                 }
                             }
                             blocked = true;
                         } else if s == "!" {
-                            // Eat Food
                             critter.energy += 20;
                             updated_agent.state = critter.to_value();
-                            // Move into it (Eat)
                             moved_target = Some((ny, nx));
                         } else if !is_empty_val(dest_val) {
                             blocked = true;
@@ -1427,33 +1049,30 @@ fn process_critter_logic(
                     return Some((updated_agent, moved_target));
                 }
                 critter::CritterAction::Attack(ny, nx) => {
-                    // Kill agent at target
                     let dest_val = vm.grid[ny][nx].clone();
                     if let Value::Str(s) = dest_val {
                         if s == "@" || s == "K" || s == "H" || s == "C" {
-                            // Kill
-                            vm.grid[ny][nx] = Value::Int(0); // Corpse?
+                            vm.grid[ny][nx] = Value::Int(0);
                             if s == "C" {
                                 vm.prologue_state.registers.remove(&(ny, nx));
                             }
-                            critter.energy += 30; // Predation gain
+                            critter.energy += 30;
                             updated_agent.state = critter.to_value();
                         }
                     }
                     vm.prologue_state
                         .registers
                         .insert((y, x), updated_agent.state.clone());
-                    return Some((updated_agent, None)); // Stay put
+                    return Some((updated_agent, None));
                 }
                 critter::CritterAction::Split => {
-                    // Mitosis
                     if critter.energy > 50 {
                         let mut rng = rand::thread_rng();
                         let spawn_dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)];
                         let (dy, dx) = spawn_dirs[rng.gen_range(0..4)];
                         if let Some((sy, sx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
                             if matches!(vm.grid[sy][sx], Value::Int(0)) {
-                                let child = critter::breed(&critter, &critter); // Self-breed
+                                let child = critter::breed(&critter, &critter);
                                 vm.grid[sy][sx] = Value::Str("C".to_string());
                                 vm.prologue_state
                                     .registers
@@ -1469,7 +1088,6 @@ fn process_critter_logic(
                     return Some((updated_agent, None));
                 }
                 critter::CritterAction::Build(c, ny, nx) => {
-                    // Build rune at target
                     let safe_to_build = match &vm.grid[ny][nx] {
                         Value::Int(0) => true,
                         Value::Str(s) => s == ".",
@@ -1486,7 +1104,6 @@ fn process_critter_logic(
                     return Some((updated_agent, None));
                 }
                 critter::CritterAction::Mark => {
-                    // Mark forward
                     let (dy, dx) = match critter.direction {
                         0 => (-1, 0),
                         1 => (0, 1),
@@ -1513,7 +1130,6 @@ fn process_critter_logic(
             }
         }
     }
-    // Fallback if parsing fails or not a string (should not happen for C)
     Some((agent.clone(), None))
 }
 
@@ -1549,7 +1165,6 @@ fn process_hunter_logic(
     let (y, x) = (agent.y, agent.x);
     let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
 
-    // 1. Seek Prey
     for (dy, dx) in neighbors {
         if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
             if let Value::Str(s) = &grid_snapshot[ny][nx] {
@@ -1560,7 +1175,6 @@ fn process_hunter_logic(
         }
     }
 
-    // 2. Seek Signal
     for (dy, dx) in neighbors {
         if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
             if vm.prologue_state.signal_grid[ny][nx].is_some() {
@@ -1596,16 +1210,7 @@ fn process_seeker_logic(
     None
 }
 
-/// Updates the position of Prologue Agents (`@`, `K`, `H`, `C`).
-///
-/// Agents observe the grid (Snapshot) and move towards interesting features (Signals, Prey).
-/// This function updates both the `agents` list in the state and the `grid` itself (moving the char).
 fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
-    // Agents move towards signal
-    // We need to update agents list in state, and also update the Grid (move the '@' char)
-    // This requires mutable access to grid.
-
-    // We iterate agents from state (snapshot) and update grid.
     let agents = vm.prologue_state.agents.clone();
     let mut new_agents = Vec::new();
     let mut written_cells = HashSet::new();
@@ -1613,7 +1218,6 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
     for mut agent in agents {
         let (y, x) = (agent.y, agent.x);
 
-        // Receptivity: Check for Instruction Signals (Mesmerism)
         let code_to_run = if let Some(Value::Str(code)) = &vm.prologue_state.signal_grid[y][x] {
             if code.len() > 1 && !code.starts_with('~') && !code.starts_with('!') {
                 Some(code.clone())
@@ -1625,11 +1229,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
         };
 
         if let Some(code) = code_to_run {
-            // Attempt to compile and execute on agent's stack
-            // Wrap in strand for compiler
             let wrapped_code = format!("strand mesmer {{ {} }}", code);
-            // Debugging
-            // println!("DEBUG: Agent at {},{} sees code: {}", x, y, code);
             match crate::compiler::compile(&wrapped_code, None) {
                 Ok(dna) => {
                     if let Some(strand) = dna.helix.strands.first() {
@@ -1668,7 +1268,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                     agent = updated_agent;
                     t
                 }
-                None => continue, // Dead
+                None => continue,
             }
         } else if current_type == "K" {
             process_chaos_logic(vm, &agent, grid_snapshot)
@@ -1862,12 +1462,9 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
         };
 
         if let Some((ny, nx)) = target {
-            // Move agent
-            // Set new pos FIRST (Sequential Update)
             vm.grid[ny][nx] = Value::Str(current_type.clone());
             written_cells.insert((ny, nx));
 
-            // Move Registers
             if current_type == "C"
                 || current_type == "♬"
                 || current_type == "₣"
@@ -1898,10 +1495,8 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 );
             }
 
-            // Clear old pos ONLY if not written to by another agent
             if !written_cells.contains(&(y, x)) {
                 if let Value::Str(s) = &vm.grid[y][x] {
-                    // Only clear if it matches our agent type (avoid clearing overwrites from unrelated things)
                     if s == &current_type {
                         vm.grid[y][x] = Value::Int(0);
                     }
@@ -1941,7 +1536,6 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 stack: agent.stack,
             });
         } else {
-            // Even if not moving, we must update registers if state changed
             if current_type == "C"
                 || current_type == "♬"
                 || current_type == "₣"
@@ -1992,7 +1586,6 @@ fn unpack_agent_data(val: Value) -> (Value, Vec<Value>) {
     match val {
         Value::Junction(crate::ast::JunctionType::All, list) => {
             if list.len() == 2 {
-                // Assume [State, Stack]
                 if let Value::Junction(crate::ast::JunctionType::All, ref stack) = list[1] {
                     return (list[0].clone(), stack.clone());
                 }
@@ -2011,9 +1604,6 @@ fn is_empty_val(v: &Value) -> bool {
     }
 }
 
-/// Helper to safely convert (i64, i64) coordinates to (usize, usize).
-///
-/// Returns `None` if the coordinates are out of bounds (0..GRID_SIZE).
 pub fn normalize_coords(y: i64, x: i64) -> Option<(usize, usize)> {
     if y >= 0 && y < GRID_SIZE as i64 && x >= 0 && x < GRID_SIZE as i64 {
         Some((y as usize, x as usize))
@@ -2038,7 +1628,6 @@ mod tests {
         let mut vm = ChimeraVM::new(dna);
         vm.prologue_state.active = true;
 
-        // Setup Circuit: 42 -> ! -> ~ -> ?
         vm.grid[5][4] = Value::Int(42);
         vm.grid[5][5] = Value::Str("!".to_string());
         vm.grid[6][5] = Value::Str("~".to_string());
@@ -2046,7 +1635,6 @@ mod tests {
 
         exec_prologue_tick(&mut vm);
 
-        // Check if signal propagated to wire
         assert!(vm.prologue_state.signal_grid[6][5].is_some());
         if let Some(Value::Int(v)) = &vm.prologue_state.signal_grid[6][5] {
             assert_eq!(*v, 42);
@@ -2054,7 +1642,6 @@ mod tests {
             panic!("Wire did not carry signal 42");
         }
 
-        // Check output
         let output = vm.output.join("\n");
         assert!(output.contains("PROLOGUE: Sink at 5,7 received Int(42)"));
     }
