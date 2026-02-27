@@ -27,14 +27,14 @@
 - **Note:** "The liquidity dries up. The flow is stagnant."
 
 ### [Concentration Level: CHAOTIC] - Location: experiments/chaos-magnetic
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The ghosts are writing to the magnetic field.
-- **Note:** "The pendulum's memory is interfering with its future."
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned.
+- **Note:** "The pendulum swings in the dark. It writes to a void."
 
 ### [Concentration Level: TOXIC] - Location: experiments/git-harmonograph
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned.
-- **Note:** "A trivial curve that draws nothing but its own obsolescence."
+- **Status:** Specimen Pardoned.
+- **Note:** "The curve has found its rhythm. The signal is clear."
 
 ### [Concentration Level: DEAD] - Location: graveyard/market-flow
 - **Scent Origin:** The Reaper ☠️

@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **git-harmonograph**: Specimen condemned. Diagnosis: Terminal Genericism / Compilation Failure. Grace period: 24h.
+- **chaos-magnetic**: Specimen condemned. Diagnosis: Documentation Void. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
