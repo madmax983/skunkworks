@@ -98,6 +98,71 @@ pub struct FlockingParams {
     pub cohesion_weight: f64,
 }
 
+/// Helper struct to accumulate steering forces.
+#[derive(Default)]
+struct FlockingAccumulators {
+    separation: Vec2,
+    alignment: Vec2,
+    cohesion: Vec2,
+    sep_count: usize,
+    ali_count: usize,
+    coh_count: usize,
+}
+
+impl FlockingAccumulators {
+    fn accumulate(
+        &mut self,
+        my_pos: Vec2,
+        neighbor_pos: Vec2,
+        neighbor_vel: Vec2,
+        params: &FlockingParams,
+        overlap_bias: Vec2,
+        do_sep: bool,
+        do_ali: bool,
+        do_coh: bool,
+    ) {
+        let dx = my_pos.x - neighbor_pos.x;
+        if dx.abs() > params.view_radius {
+            return;
+        }
+
+        let dy = my_pos.y - neighbor_pos.y;
+        if dy.abs() > params.view_radius {
+            return;
+        }
+
+        let mut d_sq = dx * dx + dy * dy;
+        let view_sq = params.view_radius * params.view_radius;
+
+        if d_sq >= view_sq {
+            return;
+        }
+
+        let diff = if d_sq <= f64::EPSILON {
+            // Handle overlap: push away based on bias.
+            d_sq = 0.01; // Avoid division by zero
+            overlap_bias
+        } else {
+            Vec2::new(dx, dy)
+        };
+
+        if do_sep && d_sq < params.separation_radius * params.separation_radius {
+            self.separation += diff * (1.0 / d_sq);
+            self.sep_count += 1;
+        }
+
+        if do_ali {
+            self.alignment += neighbor_vel;
+            self.ali_count += 1;
+        }
+
+        if do_coh {
+            self.cohesion += neighbor_pos;
+            self.coh_count += 1;
+        }
+    }
+}
+
 /// Calculates a steering force towards a target velocity or position derivative.
 ///
 /// This helper encapsulates the common pattern:
@@ -186,16 +251,7 @@ pub fn compute_force(
     let my_pos = positions[my_idx];
     let my_vel = velocities[my_idx];
 
-    let mut separation = Vec2::zero();
-    let mut alignment = Vec2::zero();
-    let mut cohesion = Vec2::zero();
-
-    let mut sep_count = 0;
-    let mut ali_count = 0;
-    let mut coh_count = 0;
-
-    let view_sq = params.view_radius * params.view_radius;
-    let sep_sq = params.separation_radius * params.separation_radius;
+    let mut acc = FlockingAccumulators::default();
 
     // Pre-check weights to avoid accumulation for disabled behaviors.
     let do_sep = params.separation_weight.abs() > 0.0;
@@ -208,118 +264,38 @@ pub fn compute_force(
     let (left_vel, right_vel) = velocities.split_at(my_idx);
 
     // Process left neighbors (0..my_idx)
+    // Left neighbors have index < my_idx, so we push Right (+x).
+    let left_bias = Vec2::new(1.0, 0.0);
     for (pos, vel) in left_pos.iter().zip(left_vel) {
-        let pos = *pos;
-        let vel = *vel;
-
-        let dx = my_pos.x - pos.x;
-        if dx.abs() > params.view_radius {
-            continue;
-        }
-
-        let dy = my_pos.y - pos.y;
-        if dy.abs() > params.view_radius {
-            continue;
-        }
-
-        let mut d_sq = dx * dx + dy * dy;
-
-        if d_sq >= view_sq {
-            continue;
-        }
-
-        let diff = if d_sq <= f64::EPSILON {
-            // Handle overlap: push away based on index to ensure separation.
-            // Left neighbors have index < my_idx, so we push Right (+x).
-            // (my_idx > neighbor_idx)
-            d_sq = 0.01; // Avoid division by zero
-            Vec2::new(1.0, 0.0)
-        } else {
-            Vec2::new(dx, dy)
-        };
-
-        if do_sep && d_sq < sep_sq {
-            separation += diff * (1.0 / d_sq);
-            sep_count += 1;
-        }
-
-        if do_ali {
-            alignment += vel;
-            ali_count += 1;
-        }
-
-        if do_coh {
-            cohesion += pos;
-            coh_count += 1;
-        }
+        acc.accumulate(my_pos, *pos, *vel, params, left_bias, do_sep, do_ali, do_coh);
     }
 
     // Process right neighbors (my_idx+1..len)
     // right_pos[0] is self, so skip it.
+    // Right neighbors have index > my_idx, so we push Left (-x).
+    let right_bias = Vec2::new(-1.0, 0.0);
     if right_pos.len() > 1 {
         for (pos, vel) in right_pos[1..].iter().zip(&right_vel[1..]) {
-            let pos = *pos;
-            let vel = *vel;
-
-            let dx = my_pos.x - pos.x;
-            if dx.abs() > params.view_radius {
-                continue;
-            }
-
-            let dy = my_pos.y - pos.y;
-            if dy.abs() > params.view_radius {
-                continue;
-            }
-
-            let mut d_sq = dx * dx + dy * dy;
-
-            if d_sq >= view_sq {
-                continue;
-            }
-
-            let diff = if d_sq <= f64::EPSILON {
-                // Handle overlap: push away based on index.
-                // Right neighbors have index > my_idx, so we push Left (-x).
-                // (my_idx < neighbor_idx)
-                d_sq = 0.01;
-                Vec2::new(-1.0, 0.0)
-            } else {
-                Vec2::new(dx, dy)
-            };
-
-            if do_sep && d_sq < sep_sq {
-                separation += diff * (1.0 / d_sq);
-                sep_count += 1;
-            }
-
-            if do_ali {
-                alignment += vel;
-                ali_count += 1;
-            }
-
-            if do_coh {
-                cohesion += pos;
-                coh_count += 1;
-            }
+            acc.accumulate(my_pos, *pos, *vel, params, right_bias, do_sep, do_ali, do_coh);
         }
     }
 
     let mut total = Vec2::zero();
 
-    if sep_count > 0 {
-        total += compute_steering(separation, my_vel, params.max_speed, params.max_force)
+    if acc.sep_count > 0 {
+        total += compute_steering(acc.separation, my_vel, params.max_speed, params.max_force)
             * params.separation_weight;
     }
 
-    if ali_count > 0 {
-        alignment /= ali_count as f64;
-        total += compute_steering(alignment, my_vel, params.max_speed, params.max_force)
+    if acc.ali_count > 0 {
+        acc.alignment /= acc.ali_count as f64;
+        total += compute_steering(acc.alignment, my_vel, params.max_speed, params.max_force)
             * params.alignment_weight;
     }
 
-    if coh_count > 0 {
-        cohesion /= coh_count as f64;
-        let desired = cohesion - my_pos;
+    if acc.coh_count > 0 {
+        acc.cohesion /= acc.coh_count as f64;
+        let desired = acc.cohesion - my_pos;
         total += compute_steering(desired, my_vel, params.max_speed, params.max_force)
             * params.cohesion_weight;
     }
