@@ -45,3 +45,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The strings are singing to the swarm.
 - **Note:** "Sound becomes field. The music guides the matter."
+
+### [Concentration Level: ACTIVE] - Location: experiments/mnem-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The repair drones are operational.
+- **Note:** "The swarm seeks entropy. Decay is food. The code heals."
