@@ -2,10 +2,15 @@
 ///
 /// `Platter` provides a flat `Vec<f64>` storage mapped to 2D coordinates `(x, y)`.
 /// It supports two primary modes of modification:
-/// - [`Platter::magnetize`]: Adds a value with a hard cap at `1.0`. Useful for saturation.
+/// - [`Platter::magnetize`] (or [`Platter::saturate`]): Adds a value with a hard cap at `1.0`. Useful for saturation.
 /// - [`Platter::accumulate`]: Adds a value without a cap. Useful for density accumulation.
 ///
 /// It also includes a [`Platter::decay`] method to simulate dissipation over time.
+///
+/// # DX Audit Notes
+///
+/// - **Negative Values**: `decay` respects the sign of values but zeroes them out if their *absolute* magnitude is below `0.001`.
+/// - **Aliases**: Generic aliases like `saturate` and `get` are available for non-magnetic contexts (e.g. fluid simulation).
 #[derive(Debug, Clone)]
 pub struct Platter {
     /// The flat vector of field values.
@@ -114,10 +119,22 @@ impl Platter {
         }
     }
 
+    /// Alias for [`Platter::get_magnetism`] for generic use cases (e.g., fluid density).
+    #[inline]
+    pub fn get(&self, x: usize, y: usize) -> f64 {
+        self.get_magnetism(x, y)
+    }
+
+    /// Alias for [`Platter::magnetize`] for generic use cases (e.g., saturation).
+    #[inline]
+    pub fn saturate(&mut self, x: usize, y: usize, amount: f64) {
+        self.magnetize(x, y, amount)
+    }
+
     /// Multiplies all values in the grid by `rate`, simulating decay.
     ///
-    /// Values that fall below `0.001` are reset to `0.0` to avoid denormal numbers
-    /// and clean up the field.
+    /// Values whose absolute magnitude falls below `0.001` are reset to `0.0`
+    /// to avoid denormal numbers and clean up the field.
     ///
     /// # Examples
     ///
@@ -137,7 +154,7 @@ impl Platter {
     pub fn decay(&mut self, rate: f64) {
         for m in &mut self.magnetism {
             *m *= rate;
-            if *m < 0.001 {
+            if m.abs() < 0.001 {
                 *m = 0.0;
             }
         }
@@ -169,5 +186,37 @@ mod tests {
 
         platter.accumulate(5, 5, 0.6);
         assert!((platter.get_magnetism(5, 5) - 1.1).abs() < 1e-6); // Not clamped
+    }
+
+    #[test]
+    fn test_decay_negative_values() {
+        let mut platter = Platter::new(10, 10);
+
+        // Setup negative value
+        platter.accumulate(2, 2, -10.0);
+        assert!((platter.get(2, 2) - -10.0).abs() < 1e-6);
+
+        // Decay by 50%
+        platter.decay(0.5);
+        assert!((platter.get(2, 2) - -5.0).abs() < 1e-6);
+
+        // Decay to very small negative number (absolute value < 0.001)
+        platter.decay(0.00001);
+        assert_eq!(platter.get(2, 2), 0.0);
+    }
+
+    #[test]
+    fn test_aliases() {
+        let mut platter = Platter::new(10, 10);
+
+        // Test saturate (alias for magnetize)
+        platter.saturate(1, 1, 0.5);
+        assert!((platter.get(1, 1) - 0.5).abs() < 1e-6);
+
+        platter.saturate(1, 1, 0.6);
+        assert!((platter.get(1, 1) - 1.0).abs() < 1e-6); // Should clamp like magnetize
+
+        // Test get (alias for get_magnetism)
+        assert_eq!(platter.get(1, 1), platter.get_magnetism(1, 1));
     }
 }
