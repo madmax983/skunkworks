@@ -309,10 +309,10 @@
 - **Status:** The chasm of the Spread has been bridged. Ants are carrying value across the void.
 - **Note**: "Volatility is just the wind that shakes the bridge."
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/tesseract-ops
-- **Scent Origin:** Mycelium 🍄 (Sensed: Compilation Failure)
-- **Status:** `Vec3` type mismatch (Hyper vs Macroquad). The 4th dimension is incompatible with the screen.
-- **Note:** "The projection fails when the types disagree. Superseded by `tesseract-time`."
+### [Concentration Level: EXECUTED] - Location: graveyard/tesseract-ops
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Terminal Compilation Failure / Redundancy.
+- **Note:** "The projection has collapsed. The types never aligned."
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-tesseract
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -817,3 +817,8 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Compilation Failure / Redundancy.
 - **Note:** "The auction house has collapsed. The bidders are silent."
+
+### [Concentration Level: TOXIC] - Location: experiments/sonata-cycle
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Deceptive Physics. Grace period: 24h.
+- **Note:** "The gears spin, but they do not mesh. The song is hollow."

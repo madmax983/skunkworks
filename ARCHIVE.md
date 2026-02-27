@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **tesseract-ops**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Redundancy. Grace period: 24h.
+- **sonata-cycle**: Specimen condemned. Diagnosis: Skeletal Implementation / Deceptive Physics. Grace period: 24h.
 - [Experiment name]: [Diagnosis]. Grace period: 24h.
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **tesseract-ops**: Specimen executed. Diagnosis: Terminal Compilation Failure / Redundancy. Grace period expired. Moved to graveyard.
 - **process-auction**: Specimen executed. Diagnosis: Terminal Compilation Failure / Redundancy. Grace period expired. Moved to graveyard.
 - **spinal-rhythms**: Specimen executed. Diagnosis: Documentation Void (Silent Specimen). Grace period expired. Moved to graveyard.
 - **newtonian-graph**: Specimen executed. Diagnosis: Terminal Redundancy (Superseded by ferrous-graph). Documentation Anemia. Grace period expired. Moved to graveyard.
