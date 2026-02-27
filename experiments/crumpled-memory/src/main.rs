@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use origami::{MiuraOri, MiuraParams, Orientation};
+use origami::{generate_miura_grid, MiuraParams, Orientation};
 
 mod decay;
 mod memory;
@@ -37,7 +37,6 @@ async fn main() {
         gamma: 80.0f32.to_radians(),
         orientation: Orientation::Horizontal,
     };
-    let miura = MiuraOri::new(params, (cols, rows));
 
     // Simulation State
     let mut extension: f32 = 1.0; // 0.0 = folded, 1.0 = flat
@@ -113,7 +112,7 @@ async fn main() {
         texture.update(&mq_image);
 
         // Update Mesh
-        let grid_points = miura.generate_grid(extension);
+        let grid_points = generate_miura_grid(params, (cols, rows), extension);
 
         // Build Macroquad Mesh
         let mut vertices = Vec::with_capacity(cols * rows * 4);

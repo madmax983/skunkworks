@@ -9,14 +9,14 @@
 //!
 //! ## Core Concepts
 //!
-//! *   **[`MiuraOri`]**: The main generator struct. It takes parameters and a grid size, and produces meshes.
+//! *   **[`generate_miura_mesh`]**: The main generator function.
 //! *   **[`MiuraParams`]**: Configuration for the geometric properties of the fold (unit cell dimensions, angle).
 //! *   **Extension Factor**: A value from 0.0 (collapsed) to 1.0 (fully expanded) that drives the simulation.
 //!
 //! ## Example
 //!
 //! ```
-//! use origami::{MiuraOri, MiuraParams, Orientation};
+//! use origami::{generate_miura_mesh, MiuraParams, Orientation};
 //!
 //! // Define the fold parameters
 //! let params = MiuraParams {
@@ -26,11 +26,8 @@
 //!     orientation: Orientation::Horizontal,
 //! };
 //!
-//! // Create a 10x10 grid generator
-//! let origami = MiuraOri::new(params, (10, 10));
-//!
-//! // Generate the mesh at 50% expansion
-//! let mesh = origami.generate_mesh(0.5);
+//! // Generate the mesh at 50% expansion for a 10x10 grid
+//! let mesh = generate_miura_mesh(params, (10, 10), 0.5);
 //!
 //! assert_eq!(mesh.vertices.len(), 11 * 11); // (cols+1) * (rows+1)
 //! ```
@@ -94,186 +91,183 @@ pub struct OrigamiMesh {
     pub indices: Vec<u16>,
 }
 
-/// The generator for Miura-ori patterns.
+/// Generates the full mesh (vertices with UVs + indices).
 ///
-/// Use this struct to calculate the geometry of a folded sheet at various stages of expansion.
-pub struct MiuraOri {
-    /// The geometric parameters of the fold.
-    pub params: MiuraParams,
-    /// The dimensions of the grid (cols, rows).
-    pub grid_size: (usize, usize),
+/// # Arguments
+///
+/// * `params` - The geometric parameters ([`MiuraParams`]).
+/// * `grid_size` - A tuple `(cols, rows)` defining the number of unit cells in X and Y.
+/// * `extension_factor` - A value between `0.0` (fully collapsed) and `1.0` (fully expanded).
+///   Clamped to `[0.001, 1.0]` internally to avoid singularities.
+///
+/// # Returns
+///
+/// An [`OrigamiMesh`] containing the vertex data and index buffer for rendering.
+pub fn generate_miura_mesh(
+    params: MiuraParams,
+    grid_size: (usize, usize),
+    extension_factor: f32,
+) -> OrigamiMesh {
+    let vertices_pos = generate_miura_grid(params, grid_size, extension_factor);
+    let (cols, rows) = grid_size;
+
+    let mut vertices = Vec::with_capacity(vertices_pos.len());
+    for (idx, pos) in vertices_pos.iter().enumerate() {
+        let i = idx % (cols + 1);
+        let j = idx / (cols + 1);
+        vertices.push(OrigamiVertex {
+            pos: *pos,
+            uv: vec2(i as f32 / cols as f32, j as f32 / rows as f32),
+        });
+    }
+
+    let mut indices = Vec::new();
+    for j in 0..rows {
+        for i in 0..cols {
+            let v_cols = cols + 1;
+            let p00 = (j * v_cols + i) as u16;
+            let p10 = (j * v_cols + (i + 1)) as u16;
+            let p01 = ((j + 1) * v_cols + i) as u16;
+            let p11 = ((j + 1) * v_cols + (i + 1)) as u16;
+
+            // Two triangles
+            indices.push(p00);
+            indices.push(p10);
+            indices.push(p01);
+
+            indices.push(p10);
+            indices.push(p11);
+            indices.push(p01);
+        }
+    }
+
+    OrigamiMesh { vertices, indices }
 }
 
-impl MiuraOri {
-    /// Creates a new Miura-ori generator.
-    ///
-    /// # Arguments
-    ///
-    /// * `params` - The geometric parameters ([`MiuraParams`]).
-    /// * `grid_size` - A tuple `(cols, rows)` defining the number of unit cells in X and Y.
-    pub fn new(params: MiuraParams, grid_size: (usize, usize)) -> Self {
-        Self { params, grid_size }
+/// Generates just the grid of vertex positions (row-major order).
+///
+/// Useful if you only need the physics/geometry points and not a renderable mesh.
+///
+/// # Arguments
+///
+/// * `params` - The geometric parameters ([`MiuraParams`]).
+/// * `grid_size` - A tuple `(cols, rows)` defining the number of unit cells in X and Y.
+/// * `extension_factor` - A value between `0.0` (fully collapsed) and `1.0` (fully expanded).
+pub fn generate_miura_grid(
+    params: MiuraParams,
+    grid_size: (usize, usize),
+    extension_factor: f32,
+) -> Vec<Vec3> {
+    match params.orientation {
+        Orientation::Horizontal => calculate_horizontal(params, grid_size, extension_factor),
+        Orientation::Vertical => calculate_vertical(params, grid_size, extension_factor),
     }
+}
 
-    /// Generates the full mesh (vertices with UVs + indices).
-    ///
-    /// # Arguments
-    ///
-    /// * `extension_factor` - A value between `0.0` (fully collapsed) and `1.0` (fully expanded).
-    ///   Clamped to `[0.001, 1.0]` internally to avoid singularities.
-    ///
-    /// # Returns
-    ///
-    /// An [`OrigamiMesh`] containing the vertex data and index buffer for rendering.
-    pub fn generate_mesh(&self, extension_factor: f32) -> OrigamiMesh {
-        let (vertices_pos, _, _) = self.calculate_positions(extension_factor);
-        let (cols, rows) = self.grid_size;
+fn calculate_horizontal(
+    params: MiuraParams,
+    grid_size: (usize, usize),
+    extension_factor: f32,
+) -> Vec<Vec3> {
+    let (cols, rows) = grid_size;
+    let a = params.a;
+    let b = params.b;
+    let gamma = params.gamma;
 
-        let mut vertices = Vec::with_capacity(vertices_pos.len());
-        for (idx, pos) in vertices_pos.iter().enumerate() {
-            let i = idx % (cols + 1);
-            let j = idx / (cols + 1);
-            vertices.push(OrigamiVertex {
-                pos: *pos,
-                uv: vec2(i as f32 / cols as f32, j as f32 / rows as f32),
-            });
-        }
+    let cos_gamma = gamma.cos();
+    let theta_min = cos_gamma.asin();
+    let theta_max = std::f32::consts::FRAC_PI_2;
 
-        let mut indices = Vec::new();
-        for j in 0..rows {
-            for i in 0..cols {
-                let v_cols = cols + 1;
-                let p00 = (j * v_cols + i) as u16;
-                let p10 = (j * v_cols + (i + 1)) as u16;
-                let p01 = ((j + 1) * v_cols + i) as u16;
-                let p11 = ((j + 1) * v_cols + (i + 1)) as u16;
+    let theta = theta_min + (theta_max - theta_min) * extension_factor.clamp(0.001, 1.0);
 
-                // Two triangles
-                indices.push(p00);
-                indices.push(p10);
-                indices.push(p01);
+    let sin_theta = theta.sin();
+    let cos_theta = theta.cos();
 
-                indices.push(p10);
-                indices.push(p11);
-                indices.push(p01);
-            }
-        }
+    let sx = a * sin_theta;
+    let h_amp = a * cos_theta;
 
-        OrigamiMesh { vertices, indices }
-    }
+    let x_off = b * cos_gamma / sin_theta;
+    let sy_sq = b * b - x_off * x_off;
+    let sy = if sy_sq > 0.0 { sy_sq.sqrt() } else { 0.0 };
 
-    /// Generates just the grid of vertex positions (row-major order).
-    ///
-    /// Useful if you only need the physics/geometry points and not a renderable mesh.
-    pub fn generate_grid(&self, extension_factor: f32) -> Vec<Vec3> {
-        self.calculate_positions(extension_factor).0
-    }
+    let mut positions = Vec::with_capacity((rows + 1) * (cols + 1));
 
-    /// Internal helper to calculate positions
-    fn calculate_positions(&self, extension_factor: f32) -> (Vec<Vec3>, f32, f32) {
-        match self.params.orientation {
-            Orientation::Horizontal => self.calculate_horizontal(extension_factor),
-            Orientation::Vertical => self.calculate_vertical(extension_factor),
+    let total_w = (cols as f32) * sx + x_off;
+    let total_h = (rows as f32) * sy;
+    let cx = total_w / 2.0;
+    let cy = total_h / 2.0;
+
+    for j in 0..=rows {
+        for i in 0..=cols {
+            let x = (i as f32) * sx + ((j % 2) as f32) * x_off;
+            let y = (j as f32) * sy;
+            let z = ((i % 2) as f32) * h_amp;
+
+            positions.push(vec3(x - cx, y - cy, z));
         }
     }
 
-    fn calculate_horizontal(&self, extension_factor: f32) -> (Vec<Vec3>, f32, f32) {
-        let (cols, rows) = self.grid_size;
-        let a = self.params.a;
-        let b = self.params.b;
-        let gamma = self.params.gamma;
+    positions
+}
 
-        let cos_gamma = gamma.cos();
-        let theta_min = cos_gamma.asin();
-        let theta_max = std::f32::consts::FRAC_PI_2;
+fn calculate_vertical(
+    params: MiuraParams,
+    grid_size: (usize, usize),
+    extension_factor: f32,
+) -> Vec<Vec3> {
+    let (cols, rows) = grid_size;
+    let a = params.a;
+    let b = params.b;
+    let alpha = params.gamma; // gamma acts as alpha here
 
-        let theta = theta_min + (theta_max - theta_min) * extension_factor.clamp(0.001, 1.0);
+    // Logic ported from rigid-origami/src/kinematics.rs
 
-        let sin_theta = theta.sin();
-        let cos_theta = theta.cos();
+    let expansion = extension_factor.clamp(0.01, 1.0);
+    let l_x_max = a * alpha.sin();
+    let l_x = expansion * l_x_max;
 
-        let sx = a * sin_theta;
-        let h_amp = a * cos_theta;
+    let c1 = a * a - l_x * l_x - b * b;
+    let c2 = a * b * alpha.cos() - b * b;
+    let denominator = c1 - 2.0 * c2;
 
-        let x_off = b * cos_gamma / sin_theta;
-        let sy_sq = b * b - x_off * x_off;
-        let sy = if sy_sq > 0.0 { sy_sq.sqrt() } else { 0.0 };
-
-        let mut positions = Vec::with_capacity((rows + 1) * (cols + 1));
-
-        let total_w = (cols as f32) * sx + x_off;
-        let total_h = (rows as f32) * sy;
-        let cx = total_w / 2.0;
-        let cy = total_h / 2.0;
-
-        for j in 0..=rows {
-            for i in 0..=cols {
-                let x = (i as f32) * sx + ((j % 2) as f32) * x_off;
-                let y = (j as f32) * sy;
-                let z = ((i % 2) as f32) * h_amp;
-
-                positions.push(vec3(x - cx, y - cy, z));
-            }
-        }
-
-        (positions, total_w, total_h)
-    }
-
-    fn calculate_vertical(&self, extension_factor: f32) -> (Vec<Vec3>, f32, f32) {
-        let (cols, rows) = self.grid_size;
-        let a = self.params.a;
-        let b = self.params.b;
-        let alpha = self.params.gamma; // gamma acts as alpha here
-
-        // Logic ported from rigid-origami/src/kinematics.rs
-
-        let expansion = extension_factor.clamp(0.01, 1.0);
-        let l_x_max = a * alpha.sin();
-        let l_x = expansion * l_x_max;
-
-        let c1 = a * a - l_x * l_x - b * b;
-        let c2 = a * b * alpha.cos() - b * b;
-        let denominator = c1 - 2.0 * c2;
-
-        let (l_y, s_y, h) = if denominator.abs() < 1e-6 {
-            // Fallback/Flat
+    let (l_y, s_y, h) = if denominator.abs() < 1e-6 {
+        // Fallback/Flat
+        (b, a * alpha.cos(), 0.0)
+    } else {
+        let l_y_sq = (c2 * c2) / denominator;
+        if l_y_sq < 0.0 {
             (b, a * alpha.cos(), 0.0)
         } else {
-            let l_y_sq = (c2 * c2) / denominator;
-            if l_y_sq < 0.0 {
-                (b, a * alpha.cos(), 0.0)
+            let l_y = l_y_sq.sqrt();
+            let s_y = l_y + c2 / l_y;
+            let h_sq_4 = b * b - l_y * l_y;
+            let h = if h_sq_4 < 0.0 {
+                0.0
             } else {
-                let l_y = l_y_sq.sqrt();
-                let s_y = l_y + c2 / l_y;
-                let h_sq_4 = b * b - l_y * l_y;
-                let h = if h_sq_4 < 0.0 {
-                    0.0
-                } else {
-                    (h_sq_4 / 4.0).sqrt()
-                };
-                (l_y, s_y, h)
-            }
-        };
-
-        let mut positions = Vec::with_capacity((rows + 1) * (cols + 1));
-
-        let total_w = (cols as f32) * l_x;
-        // Approximation for centering, ignoring the zig-zag offset s_y
-        let total_h = (rows as f32) * l_y;
-        let cx = total_w / 2.0;
-        let cy = total_h / 2.0;
-
-        for j in 0..=rows {
-            for i in 0..=cols {
-                let x = i as f32 * l_x;
-                let y = j as f32 * l_y + (i % 2) as f32 * s_y;
-                let z = if (i + j) % 2 == 0 { h } else { -h };
-                positions.push(vec3(x - cx, y - cy, z));
-            }
+                (h_sq_4 / 4.0).sqrt()
+            };
+            (l_y, s_y, h)
         }
+    };
 
-        (positions, total_w, total_h)
+    let mut positions = Vec::with_capacity((rows + 1) * (cols + 1));
+
+    let total_w = (cols as f32) * l_x;
+    // Approximation for centering, ignoring the zig-zag offset s_y
+    let total_h = (rows as f32) * l_y;
+    let cx = total_w / 2.0;
+    let cy = total_h / 2.0;
+
+    for j in 0..=rows {
+        for i in 0..=cols {
+            let x = i as f32 * l_x;
+            let y = j as f32 * l_y + (i % 2) as f32 * s_y;
+            let z = if (i + j) % 2 == 0 { h } else { -h };
+            positions.push(vec3(x - cx, y - cy, z));
+        }
     }
+
+    positions
 }
 
 #[cfg(test)]
@@ -288,8 +282,7 @@ mod tests {
             gamma: 80.0f32.to_radians(),
             orientation: Orientation::Horizontal,
         };
-        let origami = MiuraOri::new(params, (2, 2));
-        let grid = origami.generate_grid(0.5);
+        let grid = generate_miura_grid(params, (2, 2), 0.5);
         let width = 3; // cols + 1
 
         // Horizontal edges (i to i+1) should be `a`
@@ -329,8 +322,7 @@ mod tests {
             gamma: 80.0f32.to_radians(),
             orientation: Orientation::Vertical,
         };
-        let origami = MiuraOri::new(params, (2, 2));
-        let grid = origami.generate_grid(0.5);
+        let grid = generate_miura_grid(params, (2, 2), 0.5);
         let width = 3;
 
         // Horizontal edges (i to i+1) should be `a`

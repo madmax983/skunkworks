@@ -1,6 +1,6 @@
 use hyper_system::math::Vec4;
 use macroquad::prelude::*;
-use origami::{MiuraOri, MiuraParams, Orientation};
+use origami::{generate_miura_grid, generate_miura_mesh, MiuraParams, Orientation};
 
 mod dna;
 mod physics;
@@ -21,12 +21,11 @@ async fn main() {
     };
     let grid_cols = 10;
     let grid_rows = 10;
-    let origami = MiuraOri::new(params, (grid_cols, grid_rows));
 
     // Generate initial 3D flat(tish) mesh
     // expansion 0.5 to allow movement
-    let initial_positions_3d = origami.generate_grid(0.8);
-    let mesh_structure = origami.generate_mesh(0.8);
+    let initial_positions_3d = generate_miura_grid(params, (grid_cols, grid_rows), 0.8);
+    let mesh_structure = generate_miura_mesh(params, (grid_cols, grid_rows), 0.8);
     let indices = mesh_structure.indices;
 
     // 2. Physics Setup
