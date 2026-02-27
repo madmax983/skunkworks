@@ -589,6 +589,23 @@ pub(crate) fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
                 _ => ".".to_string(),
             };
 
+            // Reality Mode Coloring
+            let mode = vm.prologue_state.reality_state.get_mode(y, x);
+            match mode {
+                crate::vm::prologue::weave_reality::RealityMode::Orca => {
+                    style = style.bg(Color::Rgb(0, 0, 50)); // Dark Blue for Orca
+                }
+                crate::vm::prologue::weave_reality::RealityMode::Silicon => {
+                    style = style.bg(Color::Rgb(50, 40, 30)); // Copper/Dark Grey for Silicon
+                }
+                crate::vm::prologue::weave_reality::RealityMode::Life => {
+                    style = style.bg(Color::Rgb(0, 50, 0)); // Dark Green for Life
+                }
+                crate::vm::prologue::weave_reality::RealityMode::Prologue => {
+                    // Default Black
+                }
+            }
+
             if app_state.chaos_mode {
                 use rand::Rng;
                 let mut rng = rand::thread_rng();
@@ -722,10 +739,20 @@ pub(crate) fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
                             .fg(Color::LightMagenta)
                             .add_modifier(Modifier::BOLD | Modifier::SLOW_BLINK)
                     }
+                    "🌐" => {
+                        style = style
+                            .fg(Color::LightBlue)
+                            .add_modifier(Modifier::BOLD | Modifier::SLOW_BLINK)
+                    }
                     _ => style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD),
                 }
             } else if !vm.prologue_state.mycelium_network.contains(&(y, x)) {
-                style = style.fg(Color::DarkGray);
+                // Dim runes that are not active/registered
+                if !matches!(s.as_str(), "." | "0") {
+                    style = style.fg(Color::DarkGray);
+                } else {
+                    style = style.fg(Color::DarkGray);
+                }
             }
 
             if app_state.grid_cursor == (x, y) {
@@ -837,6 +864,11 @@ pub(crate) fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
         }
     }
 
+    // Check Reality Mode at Cursor
+    let mode = vm.prologue_state.reality_state.get_mode(cy, cx);
+    info.push(Line::from(" "));
+    info.push(Line::from(format!("Reality: {:?}", mode)));
+
     info.push(Line::from(" "));
     info.push(Line::from("Rules:"));
     info.push(Line::from("  ! Source (Emits North)"));
@@ -855,6 +887,7 @@ pub(crate) fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
     info.push(Line::from("  U/V Head/Tail, F/T Filter/Take"));
     info.push(Line::from("  k Chaos Src, z Glitch, h Havoc"));
     info.push(Line::from("  ⏱️ Clock, 🥁 Drum, 🎹 Key, 🎚️ Fader"));
+    info.push(Line::from("  🌐 World (W=Rad, N=Mode: 1=Orca, 2=Silicon)"));
 
     let info_widget =
         Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Logic Engine"));
