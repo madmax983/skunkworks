@@ -40,3 +40,8 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed.
 - **Note:** "The liquidity has evaporated. The market is closed."
+
+### [Concentration Level: MAGNETIC] - Location: experiments/ferrous-strings
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The strings are singing to the swarm.
+- **Note:** "Sound becomes field. The music guides the matter."
