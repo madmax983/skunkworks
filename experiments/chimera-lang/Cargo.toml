@@ -42,10 +42,6 @@ hyper-system = { path = "../../crates/hyper-system", default-features = false }
 [[example]]
 name = "story_demo"
 
-[[bin]]
-name = "prologue"
-path = "src/bin/prologue.rs"
-
 [dev-dependencies]
 loom = "0.7"
 proptest = "1.4"

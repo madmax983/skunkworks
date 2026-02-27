@@ -5,9 +5,9 @@ use std::collections::HashMap;
 use std::fs;
 
 use chimera_lang::{
-    ast::{Dna, JunctionType},
-    compiler,
-    tui::run_tui,
+    ast::{Dna, Helix, JunctionType},
+    compiler, prologue_compiler,
+    tui::{run_tui, ViewMode},
     vm::{ChimeraVM, Value},
     ChimeraParser, Rule,
 };
@@ -21,16 +21,24 @@ use crossbeam_channel::unbounded;
 use resonance_audio::audio::AudioModel;
 #[cfg(feature = "resonance")]
 use rodio::OutputStream;
+#[cfg(feature = "resonance")]
+use std::thread;
+#[cfg(feature = "resonance")]
+use std::time::Duration;
 
 #[derive(ClapParser)]
 #[command(author, version, about, long_about = None)]
 struct Cli {
     #[arg(short, long)]
-    input: String,
+    input: Option<String>,
 
     /// Run in headless mode (no TUI)
     #[arg(long)]
     headless: bool,
+
+    /// Number of ticks to run in headless mode
+    #[arg(long, default_value = "100")]
+    ticks: u64,
 }
 
 fn format_oracle_result(val: &Value) -> Option<String> {
@@ -81,7 +89,6 @@ fn format_oracle_result(val: &Value) -> Option<String> {
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
-    let unparsed_file = fs::read_to_string(&cli.input)?;
 
     // Set a panic hook to restore the terminal if we panic
     let original_hook = std::panic::take_hook();
@@ -92,60 +99,85 @@ fn main() -> Result<()> {
         original_hook(panic_info);
     }));
 
-    let path = Path::new(&cli.input);
-    let extension = path
-        .extension()
-        .and_then(std::ffi::OsStr::to_str)
-        .unwrap_or("");
+    let (dna, grid, orca_mode, custom_runes) = if let Some(input_path) = &cli.input {
+        let unparsed_file = fs::read_to_string(input_path)?;
+        let path = Path::new(input_path);
+        let extension = path
+            .extension()
+            .and_then(std::ffi::OsStr::to_str)
+            .unwrap_or("");
 
-    let (dna, grid, orca_mode, custom_runes) = if extension == "pro" {
-        chimera_lang::prologue_compiler::compile(&unparsed_file, path.parent())?
-    } else if extension == "score" {
-        #[cfg(feature = "resonance")]
-        {
+        if extension == "pro" {
+            prologue_compiler::compile(&unparsed_file, path.parent())?
+        } else if extension == "score" {
+            #[cfg(feature = "resonance")]
+            {
+                (
+                    chimera_lang::acoustic_compiler::compile(&unparsed_file)?,
+                    None,
+                    None,
+                    HashMap::new(),
+                )
+            }
+            #[cfg(not(feature = "resonance"))]
+            {
+                return Err(anyhow::anyhow!(
+                    "Resonance feature disabled. Cannot compile score."
+                ));
+            }
+        } else if extension == "chs" {
             (
-                chimera_lang::acoustic_compiler::compile(&unparsed_file)?,
+                compiler::compile(&unparsed_file, path.parent())?,
+                None,
+                None,
+                HashMap::new(),
+            )
+        } else if extension == "lisp" || extension == "cl" {
+            (
+                chimera_lang::lisp::compile(&unparsed_file)?,
+                None,
+                None,
+                HashMap::new(),
+            )
+        } else {
+            let dna_pair = ChimeraParser::parse(Rule::dna, &unparsed_file)?
+                .next()
+                .ok_or_else(|| anyhow::anyhow!("No DNA found"))?;
+            (
+                Dna::try_from_pair(dna_pair)
+                    .map_err(|e| anyhow::anyhow!("DNA parse error: {}", e))?,
                 None,
                 None,
                 HashMap::new(),
             )
         }
-        #[cfg(not(feature = "resonance"))]
-        {
-            return Err(anyhow::anyhow!(
-                "Resonance feature disabled. Cannot compile score."
-            ));
-        }
     } else {
-        let dna = if extension == "chs" {
-            compiler::compile(&unparsed_file, path.parent())?
-        } else if extension == "lisp" || extension == "cl" {
-            chimera_lang::lisp::compile(&unparsed_file)?
-        } else {
-            let dna_pair = ChimeraParser::parse(Rule::dna, &unparsed_file)?
-                .next()
-                .ok_or_else(|| anyhow::anyhow!("No DNA found"))?;
-            Dna::try_from_pair(dna_pair).map_err(|e| anyhow::anyhow!("DNA parse error: {}", e))?
-        };
-        (dna, None, None, HashMap::new())
+        // Default empty DNA
+        (
+            Dna {
+                evolution_config: None,
+                helix: Helix { strands: vec![] },
+            },
+            None,
+            None,
+            HashMap::new(),
+        )
     };
 
     let mut vm = ChimeraVM::new(dna);
 
     if let Some(g) = grid {
         vm.grid = g;
-        #[cfg(feature = "nova")]
-        {
-            vm.prologue_state.active = true;
-        }
     }
 
+    // Enable Prologue Mode by default if Nova is active
     #[cfg(feature = "nova")]
     {
-        vm.prologue_state.custom_runes = custom_runes;
-        if let Some(orca) = orca_mode {
-            vm.prologue_state.orca_mode = orca;
+        vm.prologue_state.active = true;
+        if let Some(mode) = orca_mode {
+            vm.prologue_state.orca_mode = mode;
         }
+        vm.prologue_state.custom_runes = custom_runes;
     }
 
     #[cfg(feature = "resonance")]
@@ -188,7 +220,10 @@ fn main() -> Result<()> {
     };
 
     if cli.headless {
-        while !vm.halted {
+        for _ in 0..cli.ticks {
+            if vm.halted {
+                break;
+            }
             vm.step();
         }
 
@@ -237,7 +272,13 @@ fn main() -> Result<()> {
             println!("  {}", line);
         }
     } else {
-        run_tui(vm, None, Some(path.to_path_buf()))?;
+        let input_path = cli.input.as_ref().map(|s| Path::new(s).to_path_buf());
+
+        #[cfg(feature = "nova")]
+        run_tui(vm, Some(ViewMode::Prologue), input_path)?;
+
+        #[cfg(not(feature = "nova"))]
+        run_tui(vm, None, input_path)?;
     }
 
     Ok(())
