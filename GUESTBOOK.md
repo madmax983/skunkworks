@@ -25,3 +25,8 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned.
 - **Note:** "The liquidity dries up. The flow is stagnant."
+
+### [Concentration Level: CHAOTIC] - Location: experiments/chaos-magnetic
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The ghosts are writing to the magnetic field.
+- **Note:** "The pendulum's memory is interfering with its future."
