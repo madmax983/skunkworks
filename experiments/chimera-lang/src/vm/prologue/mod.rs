@@ -74,6 +74,7 @@ pub mod fission;
 pub mod forth;
 pub mod gardener;
 pub mod genetics;
+pub mod golem;
 pub mod hyper;
 pub mod io;
 pub mod lexicon;
@@ -123,6 +124,13 @@ pub mod weave_reality;
 pub mod weaver;
 pub mod wizard;
 pub mod zeta;
+
+// Golem Materials (Public for shared use)
+pub const MAT_HEART: &str = "🗿";
+pub const MAT_EARTH: &str = "◊";
+pub const MAT_BRICK: &str = "🧱";
+pub const MAT_WALL: &str = "#";
+pub const MAT_SHIELD: &str = "🛡️";
 
 /// An autonomous agent wandering the Prologue grid.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -252,7 +260,7 @@ impl PrologueState {
                     // Identify Runes
                     if matches!(
                         s.as_str(),
-                        "?" | "!" | "~" | "&" | "|" | "+" | "*" | "#" | "@" | "$" | "%" | "^" | "M" | "O" | "G" | "♦" | "•" | "°" | "E" | "D" | "A" | "S" | "P" | "Q" | "=" | ">" | "<" | "I" | "Y" | "L" | "J" | "C" | "(" | ")" | "N" | "W" | "K" | "R" | "X" | "Z" | "H" | "[" | "]" | "U" | "V" | "F" | "T" | "\\" | "/" | "-" | "q" | "m" | "8" | "{" | "}" | "s" | "g" | "r" | "c" | "t" | "f" | "d" | "e" | "b" | "l" | "n" | "∞" | "Ð" | "µ" | "Ø" | "§" | "ꝏ" | "B" | "Π" | "🤖" | "⟳" | "↔" | "↕" | "❏" | "▓" | "░" | "v" | "i" | "a" | "Φ" | "Λ" | "Ω" | "🎓" | "k" | "z" | "h" | "†" | "‡" | "Ψ" | "u" | "y" | "w" | "j" | "x" | "p" | "o" | "¿" | "¡" | "≈" | "." | ":" | "," | "☣" | "♻" | "χ" | "Δ" | "∇" | "◊" | "○" | "☆" | "☿" | "☢" | "✇" | "⌘" | "✦" | "☾" | "☀" | "⚡" | "≡" | "∿" | "🔌" | "💡" | "🔋" | "♒" | "⇝" | "⏧" | "¶" | "λ" | "¥" | "∃" | "Θ" | "Ξ" | "Σ" | "♪" | "♫" | "🥁" | "▲" | "▼" | "🧬" | "⚛" | "⚒" | "🧶" | "💉" | "\"" | "®" | ";" | "©" | "↑" | "↓" | "≅" | "ι" | "κ" | "ε" | "σ" | "φ" | "Æ" | "α" | "ω" | "✍" | "📖" | "📚" | "🔖" | "🎨" | "🖌" | "👁" | "🔴" | "🟢" | "🔵" | "♬" | "Γ" | "«" | "»" | "η" | "γ" | "₣" | "⚓" | "ζ" | "⇪" | "↻" | "⌖" | "▣" | "⏱️" | "🎹" | "🎚️" | "🔍" | "✏" | "🗑" | "➕" | "🍄" | "📥" | "📤" | "🦋" | "🌱" | "🕷" | "£" | "✂" | "🔗" | "🦠" | "🛠" | "⨁" | "🌀" | "⚗" | "ð" | "║" | "♣" | "🧙" | "⛩" | "💤" | "👹" | "★" | "🌐"
+                        "?" | "!" | "~" | "&" | "|" | "+" | "*" | "#" | "@" | "$" | "%" | "^" | "M" | "O" | "G" | "♦" | "•" | "°" | "E" | "D" | "A" | "S" | "P" | "Q" | "=" | ">" | "<" | "I" | "Y" | "L" | "J" | "C" | "(" | ")" | "N" | "W" | "K" | "R" | "X" | "Z" | "H" | "[" | "]" | "U" | "V" | "F" | "T" | "\\" | "/" | "-" | "q" | "m" | "8" | "{" | "}" | "s" | "g" | "r" | "c" | "t" | "f" | "d" | "e" | "b" | "l" | "n" | "∞" | "Ð" | "µ" | "Ø" | "§" | "ꝏ" | "B" | "Π" | "🤖" | "⟳" | "↔" | "↕" | "❏" | "▓" | "░" | "v" | "i" | "a" | "Φ" | "Λ" | "Ω" | "🎓" | "k" | "z" | "h" | "†" | "‡" | "Ψ" | "u" | "y" | "w" | "j" | "x" | "p" | "o" | "¿" | "¡" | "≈" | "." | ":" | "," | "☣" | "♻" | "χ" | "Δ" | "∇" | "◊" | "○" | "☆" | "☿" | "☢" | "✇" | "⌘" | "✦" | "☾" | "☀" | "⚡" | "≡" | "∿" | "🔌" | "💡" | "🔋" | "♒" | "⇝" | "⏧" | "¶" | "λ" | "¥" | "∃" | "Θ" | "Ξ" | "Σ" | "♪" | "♫" | "🥁" | "▲" | "▼" | "🧬" | "⚛" | "⚒" | "🧶" | "💉" | "\"" | "®" | ";" | "©" | "↑" | "↓" | "≅" | "ι" | "κ" | "ε" | "σ" | "φ" | "Æ" | "α" | "ω" | "✍" | "📖" | "📚" | "🔖" | "🎨" | "🖌" | "👁" | "🔴" | "🟢" | "🔵" | "♬" | "Γ" | "«" | "»" | "η" | "γ" | "₣" | "⚓" | "ζ" | "⇪" | "↻" | "⌖" | "▣" | "⏱️" | "🎹" | "🎚️" | "🔍" | "✏" | "🗑" | "➕" | "🍄" | "📥" | "📤" | "🦋" | "🌱" | "🕷" | "£" | "✂" | "🔗" | "🦠" | "🛠" | "⨁" | "🌀" | "⚗" | "ð" | "║" | "♣" | "🧙" | "⛩" | "💤" | "👹" | "★" | "🌐" | "🗿"
                     ) {
                         self.runes.insert((y, x));
                         self.register_agent(s, y, x);
@@ -293,6 +301,7 @@ impl PrologueState {
             || s == "👹"
             || s == "★"
             || s == "🤖"
+            || s == "🗿"
         {
             let raw_state = self.registers.get(&(y, x)).cloned().unwrap_or(Value::Int(0));
             let (state, stack) = unpack_agent_data(raw_state);
@@ -1457,6 +1466,14 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 }
                 None => continue,
             }
+        } else if current_type == "🗿" {
+            match golem::process_golem_logic(vm, &agent, grid_snapshot) {
+                Some((updated_agent, t)) => {
+                    agent = updated_agent;
+                    t
+                }
+                None => continue,
+            }
         } else {
             process_seeker_logic(vm, &agent, grid_snapshot)
         };
@@ -1488,6 +1505,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "👹"
                 || current_type == "★"
                 || current_type == "🤖"
+                || current_type == "🗿"
             {
                 vm.prologue_state.registers.insert(
                     (ny, nx),
@@ -1524,6 +1542,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                     || current_type == "👹"
                     || current_type == "★"
                     || current_type == "🤖"
+                    || current_type == "🗿"
                 {
                     vm.prologue_state.registers.remove(&(y, x));
                 }
@@ -1559,6 +1578,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 || current_type == "👹"
                 || current_type == "★"
                 || current_type == "🤖"
+                || current_type == "🗿"
             {
                 vm.prologue_state.registers.insert(
                     (y, x),
@@ -1723,3 +1743,5 @@ mod prologue_genesis_test;
 mod prologue_library_test;
 #[cfg(test)]
 mod wizard_test;
+#[cfg(test)]
+mod golem_test;
