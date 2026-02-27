@@ -94,10 +94,10 @@
 - **Status:** Specimen executed. Diagnosis: Documentation Void (Silent Specimen). Moved to graveyard.
 - **Note:** "The rhythm has flatlined. Silence is the only output."
 
-### [Concentration Level: TOXIC] - Location: experiments/process-auction
+### [Concentration Level: TOXIC] - Location: experiments/tesseract-ops
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy (Market/System Hybrid). Grace period: 24h.
-- **Note:** "The market is saturated. The scheduler is confused."
+- **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Redundancy. Grace period: 24h.
+- **Note:** "It speaks two geometries and understands neither."
 
 ### [Concentration Level: FRESH] - Location: experiments/bifurcation-landscape
 - **Scent Origin:** The Reaper ☠️
@@ -492,17 +492,17 @@
 
 ### [Concentration Level: FRESH] - Location: experiments/ferrous-fold
 - **Scent Origin**: The Splice Surgeon 🧬
-- **Status**: The Paper is Magnetic. The Creases are alive.
+- **Status:** The Paper is Magnetic. The Creases are alive.
 - **Note**: "The fold is not a shape, but a behavior."
 
 ### [Concentration Level: FRESH] - Location: experiments/hyper-tissue
 - **Scent Origin**: The Splice Surgeon 🧬
-- **Status**: The tissue is breathing in 4 dimensions.
+- **Status:** The tissue is breathing in 4 dimensions.
 - **Note**: "The muscles contract where you cannot see."
 
 ### [Concentration Level: FRESH] - Location: experiments/hyper-fold
 - **Scent Origin**: The Splice Surgeon 🧬
-- **Status**: The sheet is folding into hyperspace. Agents are manipulating the W-axis.
+- **Status:** The sheet is folding into hyperspace. Agents are manipulating the W-axis.
 - **Note**: "The paper disappears, but the structure remains."
 
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-tissue
@@ -808,3 +808,7 @@
 - **Status:** Specimen executed. Diagnosis: Terminal Redundancy. Moved to graveyard.
 - **Note:** "The graph was static. The physics were generic."
 
+### [Concentration Level: EXECUTED] - Location: graveyard/process-auction
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Terminal Compilation Failure / Redundancy.
+- **Note:** "The auction house has collapsed. The bidders are silent."
