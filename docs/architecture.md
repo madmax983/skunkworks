@@ -247,7 +247,7 @@ sequenceDiagram
     GPU->>Ping: Write Next State
 ```
 
-### Storage Decoupling (ADR 061)
+### Storage Decoupling (ADR 006)
 
 Refactoring to decouple storage from core logic to resolve circular dependencies.
 
@@ -268,12 +268,33 @@ sequenceDiagram
     participant C as Core
     participant S as Storage
 
-    Note over C,S: Decoupled via Trait (ADR 061)
+    Note over C,S: Decoupled via Trait (ADR 006)
     C->>S: save_state(data)
     S-->>C: Result<Ok>
 ```
 
 ## Shared Domain Logic
+
+### Platter Field Logic (crates/platter)
+
+Standardized scalar field simulation logic for magnetism, fluid density, and pheromones (ADR 062).
+
+```mermaid
+classDiagram
+    direction TB
+    class Platter {
+        +Vec~f64~ magnetism
+        +usize width
+        +usize height
+        +new(width, height)
+        +magnetize(x, y, amount)
+        +accumulate(x, y, amount)
+        +decay(rate)
+        +get(x, y) f64
+    }
+
+    note for Platter "magnetize = Clamped (1.0)\naccumulate = Unbounded\ndecay = Threshold (< 0.001 -> 0.0)"
+```
 
 Specialized libraries that encapsulate specific domain knowledge or data structures, reused across multiple experiments.
 
