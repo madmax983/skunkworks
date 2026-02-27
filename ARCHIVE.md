@@ -1,6 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **market-flow**: Specimen condemned. Diagnosis: Terminal Redundancy / Generic Implementation. Grace period: 24h.
-- [Experiment name]: [Diagnosis]. Grace period: 24h.
+- **git-harmonograph**: Specimen condemned. Diagnosis: Terminal Genericism / Compilation Failure. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -12,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **market-flow**: Specimen executed. Diagnosis: Terminal Redundancy / Generic Implementation. Grace period expired. Moved to graveyard.
 - **sonata-cycle**: Specimen executed. Diagnosis: Skeletal Implementation / Deceptive Physics. Grace period expired. Moved to graveyard.
 - **tesseract-ops**: Specimen executed. Diagnosis: Terminal Compilation Failure / Redundancy. Grace period expired. Moved to graveyard.
 - **process-auction**: Specimen executed. Diagnosis: Terminal Compilation Failure / Redundancy. Grace period expired. Moved to graveyard.
