@@ -173,7 +173,10 @@ impl Vec2 {
     pub fn limit(&self, max: f64) -> Self {
         let max = max.abs();
         let sq_mag = self.magnitude_squared();
-        if sq_mag > max * max {
+        // If the squared magnitude overflows (is infinite) but the max magnitude is finite,
+        // we must still clamp. If max*max overflows (is infinite), the comparison fails.
+        // We add a check for infinite sq_mag when max is finite.
+        if sq_mag > max * max || (sq_mag.is_infinite() && max.is_finite()) {
             // Optimization: Avoid full normalize() if we can
             if sq_mag.is_finite() {
                 // Common case: finite vector, just scale
