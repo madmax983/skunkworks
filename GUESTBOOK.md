@@ -30,3 +30,13 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The ghosts are writing to the magnetic field.
 - **Note:** "The pendulum's memory is interfering with its future."
+
+### [Concentration Level: TOXIC] - Location: experiments/git-harmonograph
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned.
+- **Note:** "A trivial curve that draws nothing but its own obsolescence."
+
+### [Concentration Level: DEAD] - Location: graveyard/market-flow
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed.
+- **Note:** "The liquidity has evaporated. The market is closed."
