@@ -20,14 +20,6 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Proposed by**: Agent name
 -->
 
-### hyperbolic-swarm
-- **Parent A**: experiments/hyperbolic-tissue
-- **Parent B**: experiments/ferrous-swarm
-- **Concept**: Boids flocking in the Poincaré Disk model of hyperbolic space.
-- **Expected traits**: Non-Euclidean Swarm Intelligence. Boids separate and align based on hyperbolic distance.
-- **Rationale**: Combining soft-body physics (tissue) with flocking in a non-Euclidean space creates novel emergent behavior.
-- **Proposed by**: The Splice Surgeon
-
 ---
 
 ## 🌿 Spawned Hybrids
@@ -53,4 +45,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Magnetic particles generate a field that is transformed via FFT into the frequency domain, filtered, and inverse-transformed to create a "Ghost Potential" force.
 - **Novel trait**: Spectral Resonance Feedback. The swarm organizes based on the resonance of its own structure in the frequency domain.
 - **Status**: experiments/ferrous-hologram
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### chaos-magnetic
+- **Parents**: experiments/chaos-pendulum + experiments/ferrous-core
+- **Concept**: A chaotic double pendulum system where the "stylus" (pendulum tip) writes magnetic information to a substrate (`Platter`), which in turn exerts magnetic forces back on the pendulum.
+- **Novel trait**: Chaotic Memory Feedback Loop. The system's past chaotic motion is recorded in the magnetic field and interferes with its future motion.
+- **Status**: experiments/chaos-magnetic
+- **Evaluation**: In Progress.

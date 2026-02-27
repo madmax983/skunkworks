@@ -1,0 +1,11 @@
+[package]
+name = "chaos-magnetic"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = "0.8"
+rayon = "1.8"
+ferrous-core = { path = "../../crates/ferrous-core" }
+locus = { path = "../../crates/locus" }
