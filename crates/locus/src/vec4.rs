@@ -191,8 +191,21 @@ impl Vec4 {
     /// ```
     pub fn limit(&self, max: f32) -> Self {
         let max = max.abs();
-        if self.length_squared() > max * max {
-            self.normalize().scale(max)
+        let sq_len = self.length_squared();
+        if sq_len > max * max {
+            // Optimization: Avoid full normalize() which does extra max/scale logic
+            if sq_len.is_finite() {
+                // Common case: finite vector, just scale
+                let len = sq_len.sqrt();
+                if len > 0.0 {
+                    self.scale(max / len)
+                } else {
+                    Self::zero()
+                }
+            } else {
+                // Edge case: Overflow or Infinity, use robust normalize
+                self.normalize().scale(max)
+            }
         } else {
             *self
         }
