@@ -1778,3 +1778,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Choreographic Programming. The execution flow is a dance.
 - **Status**: experiments/chimera-choreography
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Dancers are moving based on Laban Effort.
+
+### ferrous-choreography
+- **Parents**: experiments/ferrous-swarm + experiments/chimera-choreography
+- **Concept**: Magnetic particles ("Dancers") whose physical properties (Magnetism, Mass, Friction, Steering) are driven by Laban Effort parameters derived from their ChimeraVM DNA.
+- **Novel trait**: Magnetic Expressionism. The physics of attraction/repulsion is modulated by the "emotion" (Laban Effort) of the code.
+- **Status**: experiments/ferrous-choreography
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

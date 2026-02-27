@@ -515,6 +515,11 @@
 - **Status:** The code is dancing. Laban Effort parameters are driving the agents.
 - **Note:** "The execution flow has weight and time."
 
+### [Concentration Level: FRESH] - Location: experiments/ferrous-choreography
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The magnets are dancing. Attraction has Weight. Repulsion has Flow.
+- **Note:** "The physics engine is emoting."
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: TOXIC] - Location: experiments/newtonian-graph
