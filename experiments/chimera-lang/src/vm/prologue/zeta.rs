@@ -59,9 +59,16 @@ pub fn process_zeta_agent(
                     // Use agent stack as VM stack
                     vm.stack = agent_stack;
 
+                    // Set context location for GRead/GWrite to agent's position
+                    let old_context = vm.context_loc;
+                    vm.context_loc = (y, x);
+
                     for gene in genes {
-                        vm.execute_gene_inner(gene.op, &gene.args);
+                        let _ = vm.execute_gene_inner(gene.op, &gene.args);
                     }
+
+                    // Restore context
+                    vm.context_loc = old_context;
 
                     // Retrieve stack
                     agent_stack = std::mem::take(&mut vm.stack);

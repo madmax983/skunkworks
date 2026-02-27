@@ -26,12 +26,6 @@ pub fn process_weaver_agent(
     let updated_agent = agent.clone();
 
     // 1. Scan West for Blueprint Signal
-    // We need to check the *signal grid*, but process_weaver_agent receives *grid_snapshot* (physical grid).
-    // The signal grid is in vm.prologue_state.signal_grid.
-    // However, agents usually interact with the physical grid or local signals.
-    // Let's check the physical grid for a neighbor that might be emitting a signal,
-    // OR check the signal grid at (y, x-1).
-
     let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
         vm.prologue_state.signal_grid[wy][wx].clone()
     } else {
@@ -87,9 +81,16 @@ pub fn process_weaver_agent(
             return Some((updated_agent, None));
         }
     } else if let Some(Value::Junction(JunctionType::Dish, rows)) = w_sig {
-        // Found a Blueprint!
+        // Found a Blueprint (Junction of Junctions)!
         let mut genes = Vec::new();
         let mut valid_synthesis = false;
+
+        // Interpret the blueprint as a 2D pattern
+        // We can look for special patterns or just linearize rows
+        // Let's implement a smarter "Loom" logic:
+        // - Reads rows sequentially
+        // - If it sees "!" (Input), it binds a value from the physical grid North of the Weaver
+        // - If it sees "?" (Output), it adds a Print op
 
         for row in rows {
             if let Value::Junction(JunctionType::Dish, cells) = row {
@@ -114,8 +115,24 @@ pub fn process_weaver_agent(
                                 "M" => Some(OpCode::Mul),
                                 "D" => Some(OpCode::Div),
                                 "%" => Some(OpCode::Mod),
-                                "!" => None, // Input (Implicit)
-                                "?" => None, // Output (Implicit)
+                                "!" => {
+                                    // Bind from North
+                                    if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64)
+                                    {
+                                        let bound_val = match &grid_snapshot[ny][nx] {
+                                            Value::Int(n) => Nucleotide::Number(*n),
+                                            Value::Str(s) => Nucleotide::String(s.clone()),
+                                            _ => Nucleotide::Number(0),
+                                        };
+                                        genes.push(Gene {
+                                            op: OpCode::Push,
+                                            args: vec![bound_val],
+                                        });
+                                        valid_synthesis = true;
+                                    }
+                                    None
+                                }
+                                "?" => Some(OpCode::Print),
                                 "~" => None, // Wire (Implicit)
                                 _ => None,
                             };
@@ -149,10 +166,6 @@ pub fn process_weaver_agent(
                     .push(format!("WEAVER: Synthesized Strand {}", new_idx));
 
                 // Emitting success signal to Self
-                // Note: We can't easily modify signal_grid here as we don't have mutable ref to it
-                // in the presence of immutable borrow for `grid_snapshot` if passed from `process_agents`.
-                // BUT `process_agents` passes `vm` mutably and `grid_snapshot` separately.
-                // So we can modify `vm.prologue_state`.
                 vm.prologue_state.signal_grid[y][x] = Some(Value::Int(new_idx as i64));
 
                 // Do not move

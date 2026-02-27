@@ -794,13 +794,25 @@ pub(crate) fn render_weaver(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSt
         .split(chunks[2]);
 
     let pattern_str = &app_state.input_buffer;
-    let pattern_display = if pattern_str.is_empty() {
-        "Type pattern (Enter to edit)... e.g. ABAB".to_string()
+    let mut pattern_spans = Vec::new();
+    let display_str = if pattern_str.is_empty() {
+        "Type pattern (Enter to edit)... e.g. ABAB"
     } else {
-        pattern_str.clone()
+        pattern_str
     };
 
-    let pattern_widget = Paragraph::new(pattern_display).block(
+    for (i, c) in display_str.chars().enumerate() {
+        let style = match c.to_ascii_uppercase() {
+            'A' => Style::default().fg(Color::Green),
+            'B' => Style::default().fg(Color::Blue),
+            'X' => Style::default().fg(Color::Magenta),
+            '0' => Style::default().fg(Color::DarkGray),
+            _ => Style::default(),
+        };
+        pattern_spans.push(Span::styled(c.to_string(), style));
+    }
+
+    let pattern_widget = Paragraph::new(Line::from(pattern_spans)).block(
         Block::default()
             .borders(Borders::ALL)
             .title("Weaving Pattern (A/B/X/0)")
@@ -819,36 +831,49 @@ pub(crate) fn render_weaver(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSt
         let mut ptr_a = 0;
         let mut ptr_b = 0;
 
-        for c in pattern_str.chars() {
+        for (i, c) in pattern_str.chars().enumerate() {
+            let prefix = format!("{:03}: ", i);
             match c.to_ascii_uppercase() {
                 'A' => {
                     if ptr_a < strand_a.genes.len() {
+                        let op_str = format!("{}", strand_a.genes[ptr_a].op);
                         preview_items.push(
-                            ListItem::new(format!("{}", strand_a.genes[ptr_a].op))
+                            ListItem::new(format!("{}A -> {}", prefix, op_str))
                                 .style(Style::default().fg(Color::Green)),
                         );
                         ptr_a += 1;
+                    } else {
+                        preview_items.push(
+                            ListItem::new(format!("{}A -> (End)", prefix))
+                                .style(Style::default().fg(Color::DarkGray)),
+                        );
                     }
                 }
                 'B' => {
                     if ptr_b < strand_b.genes.len() {
+                        let op_str = format!("{}", strand_b.genes[ptr_b].op);
                         preview_items.push(
-                            ListItem::new(format!("{}", strand_b.genes[ptr_b].op))
+                            ListItem::new(format!("{}B -> {}", prefix, op_str))
                                 .style(Style::default().fg(Color::Blue)),
                         );
                         ptr_b += 1;
+                    } else {
+                        preview_items.push(
+                            ListItem::new(format!("{}B -> (End)", prefix))
+                                .style(Style::default().fg(Color::DarkGray)),
+                        );
                     }
                 }
                 'X' => {
                     preview_items.push(
-                        ListItem::new("Random(A/B)").style(Style::default().fg(Color::Magenta)),
+                        ListItem::new(format!("{}X -> Random(A/B)", prefix))
+                            .style(Style::default().fg(Color::Magenta)),
                     );
-                    // Increment both? No, random logic is complex to preview statically.
-                    // Just showing placeholder.
                 }
                 '0' => {
                     preview_items.push(
-                        ListItem::new("Nop (Skip)").style(Style::default().fg(Color::DarkGray)),
+                        ListItem::new(format!("{}0 -> Nop (Skip)", prefix))
+                            .style(Style::default().fg(Color::DarkGray)),
                     );
                 }
                 _ => {}

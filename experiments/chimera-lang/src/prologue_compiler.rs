@@ -147,12 +147,20 @@ fn parse_grid_line(line: &str) -> Vec<Value> {
             // Parse String
             chars.next(); // consume opening quote
             let mut s = String::new();
+            let mut escaped = false;
             while let Some(&next_c) = chars.peek() {
-                if next_c == '"' {
+                if escaped {
+                    s.push(chars.next().unwrap());
+                    escaped = false;
+                } else if next_c == '\\' {
+                    chars.next(); // consume backslash
+                    escaped = true;
+                } else if next_c == '"' {
                     chars.next(); // consume closing quote
                     break;
+                } else {
+                    s.push(chars.next().unwrap());
                 }
-                s.push(chars.next().unwrap());
             }
             row.push(Value::Str(s));
         } else if c.is_digit(10) || c == '-' {
