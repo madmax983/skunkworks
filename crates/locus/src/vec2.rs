@@ -172,8 +172,21 @@ impl Vec2 {
     /// ```
     pub fn limit(&self, max: f64) -> Self {
         let max = max.abs();
-        if self.magnitude_squared() > max * max {
-            self.normalize() * max
+        let sq_mag = self.magnitude_squared();
+        if sq_mag > max * max {
+            // Optimization: Avoid full normalize() if we can
+            if sq_mag.is_finite() {
+                // Common case: finite vector, just scale
+                let mag = sq_mag.sqrt();
+                if mag > 0.0 {
+                    *self * (max / mag)
+                } else {
+                    Self::zero()
+                }
+            } else {
+                // Edge case: Overflow or Infinity, use robust normalize
+                self.normalize() * max
+            }
         } else {
             *self
         }
