@@ -236,6 +236,8 @@ fn map_op(s: &str) -> Option<OpCode> {
         "radiate" => Some(OpCode::Radiate),
         "siphon" => Some(OpCode::Siphon),
         "virus" => Some(OpCode::Virus),
+        "signal" => Some(OpCode::Signal),
+        "receive" => Some(OpCode::Receive),
         #[cfg(feature = "nova")]
         "warp" => Some(OpCode::TimeWarp),
         #[cfg(feature = "nova")]
