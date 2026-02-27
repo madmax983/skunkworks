@@ -81,9 +81,13 @@ fn test_magnetize_negative_handling() {
     assert!((p.get_magnetism(1, 1) + 0.5).abs() < 1e-6); // Is -0.5
 
     // Decay handles negatives?
-    // decay: *m *= rate; if *m < 0.001 { *m = 0.0; }
-    // -0.5 * 0.5 = -0.25. -0.25 < 0.001 is TRUE. So it becomes 0.0.
-    // This effectively cleans up negative magnetism.
+    // decay: *m *= rate; if m.abs() < 0.001 { *m = 0.0; }
+    // -0.5 * 0.5 = -0.25. |-0.25| = 0.25. 0.25 < 0.001 is FALSE.
+    // It should stay as -0.25.
     p.decay(0.5);
+    assert!((p.get_magnetism(1, 1) + 0.25).abs() < 1e-6);
+
+    // If we decay to near zero
+    p.decay(0.001); // -0.25 * 0.001 = -0.00025. Abs < 0.001. Should become 0.
     assert_eq!(p.get_magnetism(1, 1), 0.0);
 }

@@ -153,10 +153,8 @@ impl Platter {
     /// ```
     pub fn decay(&mut self, rate: f64) {
         for m in &mut self.magnetism {
-            *m *= rate;
-            if m.abs() < 0.001 {
-                *m = 0.0;
-            }
+            let val = *m * rate;
+            *m = if val.abs() < 0.001 { 0.0 } else { val };
         }
     }
 }
@@ -218,5 +216,30 @@ mod tests {
 
         // Test get (alias for get_magnetism)
         assert_eq!(platter.get(1, 1), platter.get_magnetism(1, 1));
+    }
+
+    #[test]
+    fn bench_platter_decay() {
+        let width = 1000;
+        let height = 1000;
+        let mut platter = Platter::new(width, height);
+
+        // Initialize with pattern
+        for y in 0..height {
+            for x in 0..width {
+                let val = ((x + y) % 100) as f64 / 100.0;
+                platter.magnetism[y * width + x] = val;
+            }
+        }
+
+        let start = std::time::Instant::now();
+        // Run decay 100 times
+        for _ in 0..100 {
+            // Decay rate 0.99 ensures values stay non-zero for a while but some might drop below threshold
+            std::hint::black_box(platter.decay(0.99));
+        }
+        let duration = start.elapsed();
+        println!("Time taken for 100 decays of 1M elements: {:?}", duration);
+        println!("Time per decay: {:?}", duration / 100);
     }
 }
