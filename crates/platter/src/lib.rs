@@ -21,6 +21,9 @@ pub struct Platter {
     pub height: usize,
 }
 
+const DECAY_THRESHOLD: f64 = 0.001;
+const SATURATION_LIMIT: f64 = 1.0;
+
 impl Platter {
     /// Creates a new `Platter` with the specified dimensions, initialized to 0.0.
     ///
@@ -65,9 +68,8 @@ impl Platter {
     /// assert_eq!(p.get_magnetism(2, 2), 1.0);
     /// ```
     pub fn magnetize(&mut self, x: usize, y: usize, amount: f64) {
-        if x < self.width && y < self.height {
-            let idx = y * self.width + x;
-            self.magnetism[idx] = (self.magnetism[idx] + amount).min(1.0);
+        if let Some(idx) = self.get_index(x, y) {
+            self.magnetism[idx] = (self.magnetism[idx] + amount).min(SATURATION_LIMIT);
         }
     }
 
@@ -90,8 +92,7 @@ impl Platter {
     /// assert_eq!(p.get_magnetism(2, 2), 1.1);
     /// ```
     pub fn accumulate(&mut self, x: usize, y: usize, amount: f64) {
-        if x < self.width && y < self.height {
-            let idx = y * self.width + x;
+        if let Some(idx) = self.get_index(x, y) {
             self.magnetism[idx] += amount;
         }
     }
@@ -112,11 +113,9 @@ impl Platter {
     /// assert_eq!(p.get_magnetism(100, 100), 0.0); // Out of bounds
     /// ```
     pub fn get_magnetism(&self, x: usize, y: usize) -> f64 {
-        if x < self.width && y < self.height {
-            self.magnetism[y * self.width + x]
-        } else {
-            0.0
-        }
+        self.get_index(x, y)
+            .map(|idx| self.magnetism[idx])
+            .unwrap_or(0.0)
     }
 
     /// Alias for [`Platter::get_magnetism`] for generic use cases (e.g., fluid density).
@@ -154,7 +153,22 @@ impl Platter {
     pub fn decay(&mut self, rate: f64) {
         for m in &mut self.magnetism {
             let val = *m * rate;
-            *m = if val.abs() < 0.001 { 0.0 } else { val };
+            *m = if val.abs() < DECAY_THRESHOLD {
+                0.0
+            } else {
+                val
+            };
+        }
+    }
+
+    /// Helper to get the index for a given coordinate.
+    /// Returns `None` if coordinates are out of bounds.
+    #[inline]
+    fn get_index(&self, x: usize, y: usize) -> Option<usize> {
+        if x < self.width && y < self.height {
+            Some(y * self.width + x)
+        } else {
+            None
         }
     }
 }
