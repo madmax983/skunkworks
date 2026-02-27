@@ -456,42 +456,79 @@ fn parse_grammar_def(pair: pest::iterators::Pair<Rule>) -> Result<DefinedGrammar
     let mut rules = HashMap::new();
     let mut entry_point = String::new();
 
+    let strand_map = HashMap::new(); // Dummy map for grammar parsing context
+
     for rule_def in pair.into_inner() {
         if rule_def.as_rule() == Rule::grammar_rule_def {
             let mut parts = rule_def.into_inner();
-            let _type = parts.next().ok_or(anyhow!("Missing rule type"))?.as_str();
-            let name = parts
-                .next()
-                .ok_or(anyhow!("Missing rule name"))?
-                .as_str()
-                .to_string();
-            let expr = parts.next().ok_or(anyhow!("Missing rule expression"))?;
-            let transform = parts.next();
+            let first = parts.next().ok_or(anyhow!("Missing rule definition start"))?;
 
-            if entry_point.is_empty() {
-                entry_point = name.clone();
+            // Check if it's the old style: type ~ identifier ~ { ... }
+            if first.as_rule() == Rule::rule_type {
+                let _type = first.as_str();
+                let name = parts
+                    .next()
+                    .ok_or(anyhow!("Missing rule name"))?
+                    .as_str()
+                    .to_string();
+                let expr = parts.next().ok_or(anyhow!("Missing rule expression"))?;
+                let transform = parts.next();
+
+                if entry_point.is_empty() {
+                    entry_point = name.clone();
+                }
+
+                let parser_node = parse_rule_expr(expr)?;
+
+                // If transform exists, wrap in Map
+                let final_node = if let Some(t) = transform {
+                    let s = t.as_str();
+                    // Strip { and }
+                    let template_str = s[1..s.len() - 1].trim();
+                    Nucleotide::Junction(
+                        JunctionType::Any,
+                        vec![
+                            Nucleotide::String("Map".to_string()),
+                            parser_node,
+                            Nucleotide::String(template_str.to_string()),
+                        ],
+                    )
+                } else {
+                    parser_node
+                };
+
+                rules.insert(name, final_node);
+            } else if first.as_rule() == Rule::identifier {
+                // New functional style: identifier(args)
+                let name = first.as_str().to_string();
+                if entry_point.is_empty() {
+                    entry_point = name.clone();
+                }
+
+                // Skip the '('
+                let args_pair = parts.next().ok_or(anyhow!("Missing argument list for functional grammar rule"))?;
+
+                // Functional style grammar rules (e.g. `Map(...)`) are treated as anonymous rules.
+                // If this is the first rule, it becomes the entry point.
+
+                let func_name = name; // e.g. "Map"
+                let mut args = vec![Nucleotide::String(func_name)];
+
+                for arg in args_pair.into_inner() {
+                    args.push(parse_argument(arg, &strand_map, 0)?);
+                }
+
+                let rule_node = Nucleotide::Junction(JunctionType::Any, args);
+
+                let rule_name = if rules.is_empty() {
+                    entry_point = "main".to_string();
+                    "main".to_string()
+                } else {
+                    format!("rule_{}", rules.len())
+                };
+
+                rules.insert(rule_name, rule_node);
             }
-
-            let parser_node = parse_rule_expr(expr)?;
-
-            // If transform exists, wrap in Map
-            let final_node = if let Some(t) = transform {
-                let s = t.as_str();
-                // Strip { and }
-                let template_str = s[1..s.len() - 1].trim();
-                Nucleotide::Junction(
-                    JunctionType::Any,
-                    vec![
-                        Nucleotide::String("Map".to_string()),
-                        parser_node,
-                        Nucleotide::String(template_str.to_string()),
-                    ],
-                )
-            } else {
-                parser_node
-            };
-
-            rules.insert(name, final_node);
         }
     }
 

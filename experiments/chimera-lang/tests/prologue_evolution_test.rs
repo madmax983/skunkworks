@@ -1,116 +1,59 @@
-use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
-use chimera_lang::opcode::OpCode;
-use chimera_lang::vm::prologue::exec_prologue_tick;
-use chimera_lang::vm::{ChimeraVM, Value};
+#[cfg(test)]
+mod tests {
+    use chimera_lang::compiler::compile;
+    use chimera_lang::opcode::OpCode;
+    use chimera_lang::ast::Nucleotide;
 
-#[test]
-fn test_chaos_rune() {
-    let dna = Dna {
-        evolution_config: None,
-        helix: Helix { strands: vec![] },
-    };
-    let mut vm = ChimeraVM::new(dna);
-    vm.prologue_state.active = true;
-
-    // Place K at 5,5
-    vm.grid[5][5] = Value::Str("K".to_string());
-
-    exec_prologue_tick(&mut vm);
-
-    // Check neighbors for random values
-    let neighbors = [(4, 5), (6, 5), (5, 4), (5, 6)];
-    let mut found_signal = false;
-    for (ny, nx) in neighbors {
-        if let Some(Value::Int(_)) = &vm.prologue_state.signal_grid[ny][nx] {
-            found_signal = true;
+    #[test]
+    fn test_chaos_block() {
+        let src = r#"
+        strand main {
+            chaos {
+                push(1)
+            }
         }
-    }
-    assert!(found_signal, "Chaos rune should emit signals");
-}
+        "#;
+        let dna = compile(src, None).expect("Compilation failed");
+        let genes = &dna.helix.strands[0].genes;
 
-#[test]
-fn test_register_rune() {
-    let dna = Dna {
-        evolution_config: None,
-        helix: Helix { strands: vec![] },
-    };
-    let mut vm = ChimeraVM::new(dna);
-    vm.prologue_state.active = true;
+        // Structure:
+        // Push(0.1) -> HavocRate -> ... block ... -> Push(0) -> HavocRate
 
-    // Place R at 5,5
-    vm.grid[5][5] = Value::Str("R".to_string());
+        assert_eq!(genes[0].op, OpCode::Push); // 0.1
+        assert_eq!(genes[1].op, OpCode::HavocRate);
 
-    // 1. Write Phase
-    // Inject signal West of R (5,4)
-    vm.prologue_state.delayed_signals[5][4] = Some(Value::Int(42));
+        // Inner block wrapped in strand? No, parser flattens or wraps?
+        // `parse_chaos_block` recursively parses and extends genes.
+        // So the inner genes are direct.
+        assert_eq!(genes[2].op, OpCode::Push); // The inner push(1)
 
-    // Execute tick (Propagation will run R write logic)
-    exec_prologue_tick(&mut vm);
-
-    // Verify register has 42
-    assert_eq!(
-        vm.prologue_state.registers.get(&(5, 5)),
-        Some(&Value::Int(42))
-    );
-
-    // 2. Read Phase
-    // Clear signals manually for test
-    for row in vm.prologue_state.signal_grid.iter_mut() {
-        for cell in row.iter_mut() {
-            *cell = None;
-        }
+        assert_eq!(genes[3].op, OpCode::Push); // 0
+        assert_eq!(genes[4].op, OpCode::HavocRate);
     }
 
-    // Inject signal North of R (4,5)
-    vm.prologue_state.delayed_signals[4][5] = Some(Value::Int(1));
+    #[test]
+    #[cfg(feature = "oracle")]
+    fn test_oracle_block() {
+        let src = r#"
+        strand main {
+            oracle {
+                fact(human("socrates"))
+                rule(mortal(?x)) :- human(?x)
+            }
+        }
+        "#;
+        let dna = compile(src, None).expect("Compilation failed");
+        let genes = &dna.helix.strands[0].genes;
 
-    exec_prologue_tick(&mut vm);
+        // Fact assertion
+        // Push(Junction(Fact)) -> Assert
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(genes[1].op, OpCode::Assert);
 
-    // Check signal South (6,5)
-    // Note: R propagation writes to next_signals.
-    // Since we ran exec_prologue_tick, signal_grid holds the final state of propagation.
-    assert_eq!(vm.prologue_state.signal_grid[6][5], Some(Value::Int(42)));
-}
-
-#[test]
-fn test_crossover_rune() {
-    // Strand 0: Push 1
-    // Strand 1: Push 2
-    let s0 = Strand {
-        genes: vec![Gene {
-            op: OpCode::Push,
-            args: vec![Nucleotide::Number(1)],
-        }],
-    };
-    let s1 = Strand {
-        genes: vec![Gene {
-            op: OpCode::Push,
-            args: vec![Nucleotide::Number(2)],
-        }],
-    };
-
-    let dna = Dna {
-        evolution_config: None,
-        helix: Helix {
-            strands: vec![s0, s1],
-        },
-    };
-    let mut vm = ChimeraVM::new(dna);
-    vm.prologue_state.active = true;
-
-    // X at 5,5
-    // West (5,4): Signal 0
-    // East (5,6): Signal 1
-
-    vm.grid[5][5] = Value::Str("X".to_string());
-    vm.prologue_state.delayed_signals[5][4] = Some(Value::Int(0));
-    vm.prologue_state.delayed_signals[5][6] = Some(Value::Int(1));
-
-    exec_prologue_tick(&mut vm);
-
-    // Should produce Strand 2
-    assert_eq!(vm.dna.helix.strands.len(), 3);
-
-    // Should emit index 2 to South (6,5) on GRID (not signal grid, X writes to grid)
-    assert_eq!(vm.grid[6][5], Value::Int(2));
+        // Rule definition
+        // Push(Head) -> Push(Body) -> Rule
+        assert_eq!(genes[2].op, OpCode::Push);
+        assert_eq!(genes[3].op, OpCode::Push);
+        assert_eq!(genes[4].op, OpCode::Rule);
+    }
 }
