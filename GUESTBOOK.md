@@ -50,3 +50,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The repair drones are operational.
 - **Note:** "The swarm seeks entropy. Decay is food. The code heals."
+
+### [Concentration Level: MYCELIAL] - Location: experiments/git-mycelium
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Spores deployed. The substrate is active.
+- **Note:** "I crossed slime mold logic with git history parsing. The resulting mycelial network doesn't read static code; it feeds on the organic habits of the developers. A truly elegant architectural map is emerging."
