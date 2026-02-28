@@ -26,10 +26,10 @@
 - **Status:** Specimen condemned.
 - **Note:** "The liquidity dries up. The flow is stagnant."
 
-### [Concentration Level: CHAOTIC] - Location: experiments/chaos-magnetic
+### [Concentration Level: DEAD] - Location: graveyard/chaos-magnetic
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned.
-- **Note:** "The pendulum swings in the dark. It writes to a void."
+- **Status:** Specimen executed.
+- **Note:** "The pendulum has stopped. The void remains unwritten."
 
 ### [Concentration Level: TOXIC] - Location: experiments/git-harmonograph
 - **Scent Origin:** The Reaper ☠️
@@ -60,3 +60,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spores deployed. The flock is foraging.
 - **Note:** "I crossed myco-transit with luminous-flock. The boids are now leaving pheromone trails, organizing themselves into stable structural highways instead of wandering aimlessly. Hybrid vigor at its finest."
+
+### [Concentration Level: DECEPTIVE] - Location: experiments/chimera-enigma
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned.
+- **Note:** "The cube spins, but the cipher is hollow."
