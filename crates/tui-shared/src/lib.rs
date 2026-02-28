@@ -117,6 +117,19 @@ impl Tui {
     ///
     /// This function may panic if the `crossterm` execution macro fails in an unrecoverable way,
     /// though most errors are propagated as `io::Error`.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use tui_shared::Tui;
+    /// use std::io;
+    ///
+    /// fn main() -> io::Result<()> {
+    ///     let tui = Tui::init()?;
+    ///     // Terminal is now in raw mode, on the alternate screen
+    ///     Ok(())
+    /// }
+    /// ```
     pub fn init() -> io::Result<Self> {
         enable_raw_mode()?;
         let mut stdout = io::stdout();
@@ -140,6 +153,23 @@ impl Tui {
     /// # Errors
     ///
     /// Returns an `io::Error` if any of the terminal restoration operations fail.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use tui_shared::Tui;
+    /// use std::io;
+    ///
+    /// fn main() -> io::Result<()> {
+    ///     let mut tui = Tui::init()?;
+    ///
+    ///     // We can manually exit early before the `tui` variable is dropped
+    ///     tui.exit()?;
+    ///
+    ///     println!("Terminal is back to normal mode!");
+    ///     Ok(())
+    /// }
+    /// ```
     pub fn exit(&mut self) -> io::Result<()> {
         disable_raw_mode()?;
         execute!(

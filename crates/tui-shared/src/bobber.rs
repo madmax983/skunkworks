@@ -16,6 +16,18 @@ pub struct Bobber {
 
 impl Bobber {
     /// Creates a new Bobber.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::Bobber;
+    ///
+    /// // Create an idle bobber at coordinates (50.0, 50.0)
+    /// let idle_bobber = Bobber::new(50.0, 50.0, false);
+    ///
+    /// // Create a hooked bobber
+    /// let hooked_bobber = Bobber::new(50.0, 50.0, true);
+    /// ```
     pub fn new(x: f64, y: f64, is_hooked: bool) -> Self {
         Self { x, y, is_hooked }
     }
@@ -26,6 +38,29 @@ impl Bobber {
     ///
     /// * `ctx` - The Ratatui Canvas Context.
     /// * `tick` - The current simulation tick, used for animation cycles.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use tui_shared::Bobber;
+    /// use ratatui::widgets::canvas::{Canvas, Context};
+    /// use ratatui::layout::Rect;
+    /// use ratatui::buffer::Buffer;
+    /// use ratatui::widgets::Widget;
+    ///
+    /// let bobber = Bobber::new(50.0, 50.0, true);
+    /// let current_tick = 42;
+    ///
+    /// let canvas = Canvas::default()
+    ///     .x_bounds([0.0, 100.0])
+    ///     .y_bounds([0.0, 100.0])
+    ///     .paint(|ctx| {
+    ///         bobber.draw(ctx, current_tick);
+    ///     });
+    ///
+    /// let mut buffer = Buffer::empty(Rect::new(0, 0, 10, 10));
+    /// canvas.render(Rect::new(0, 0, 10, 10), &mut buffer);
+    /// ```
     pub fn draw(&self, ctx: &mut Context, tick: u64) {
         let icon = if self.is_hooked { "🔴" } else { "⚪" };
 

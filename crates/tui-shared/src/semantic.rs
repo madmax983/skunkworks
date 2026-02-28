@@ -486,7 +486,9 @@ mod tests {
         // Test Float
         let json = "3.14";
         let val: PropValue = serde_json::from_str(json).unwrap();
-        assert!(matches!(val, PropValue::Float(v) if (v - 3.14).abs() < f64::EPSILON));
+        #[allow(clippy::approx_constant)]
+        let expected = 3.14;
+        assert!(matches!(val, PropValue::Float(v) if (v - expected).abs() < f64::EPSILON));
 
         // Test Bool
         let json = "true";
