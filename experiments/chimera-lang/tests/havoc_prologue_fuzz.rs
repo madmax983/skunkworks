@@ -1,5 +1,5 @@
-use proptest::prelude::*;
 use chimera_lang::prologue_compiler;
+use proptest::prelude::*;
 
 proptest! {
     #![proptest_config(ProptestConfig::with_cases(1000))]

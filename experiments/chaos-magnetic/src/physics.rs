@@ -1,5 +1,5 @@
-use macroquad::prelude::Vec2;
 use ferrous_core::Platter;
+use macroquad::prelude::Vec2;
 
 const SUB_STEPS: usize = 20;
 
@@ -39,7 +39,14 @@ impl PendulumSystem {
         }
     }
 
-    pub fn add_node(&mut self, pos: Vec2, mass: f32, fixed: bool, name: String, magnetism: f32) -> usize {
+    pub fn add_node(
+        &mut self,
+        pos: Vec2,
+        mass: f32,
+        fixed: bool,
+        name: String,
+        magnetism: f32,
+    ) -> usize {
         self.nodes.push(Node {
             pos,
             prev_pos: pos,
@@ -66,15 +73,17 @@ impl PendulumSystem {
     }
 
     fn apply_magnetic_forces(&mut self, dt: f32, platter: &Platter, offset: Vec2, scale: f32) {
-         // Force = k * m_node * m_field / r^2?
-         // Actually, let's just say the field exerts a force proportional to its value.
-         // Field 0.0 -> 1.0. 0.5 Neutral.
-         // Node 0.0 -> 1.0. 0.5 Neutral.
+        // Force = k * m_node * m_field / r^2?
+        // Actually, let's just say the field exerts a force proportional to its value.
+        // Field 0.0 -> 1.0. 0.5 Neutral.
+        // Node 0.0 -> 1.0. 0.5 Neutral.
 
-         let mag_strength = 500.0;
+        let mag_strength = 500.0;
 
-         for node in &mut self.nodes {
-            if node.fixed { continue; }
+        for node in &mut self.nodes {
+            if node.fixed {
+                continue;
+            }
 
             // Map world pos to grid pos
             // world = grid * scale + offset
@@ -93,8 +102,12 @@ impl PendulumSystem {
             // If we just have scalar field, we need gradient to get direction.
 
             // Let's sample neighbors to get gradient
-            let dx = (platter.get_magnetism(gx + 1, gy) - platter.get_magnetism(gx.saturating_sub(1), gy)) * 0.5;
-            let dy = (platter.get_magnetism(gx, gy + 1) - platter.get_magnetism(gx, gy.saturating_sub(1))) * 0.5;
+            let dx = (platter.get_magnetism(gx + 1, gy)
+                - platter.get_magnetism(gx.saturating_sub(1), gy))
+                * 0.5;
+            let dy = (platter.get_magnetism(gx, gy + 1)
+                - platter.get_magnetism(gx, gy.saturating_sub(1)))
+                * 0.5;
 
             // Gradient points to higher values (South, 1.0).
             // If I am North (0.0), I am attracted to South. So Force = +Gradient.
@@ -118,7 +131,7 @@ impl PendulumSystem {
             // F = ma -> a = F/m
             // dx = 0.5 * a * dt^2
             node.pos += force * (dt * dt) / node.mass;
-         }
+        }
     }
 
     fn verlet(&mut self, dt: f32) {

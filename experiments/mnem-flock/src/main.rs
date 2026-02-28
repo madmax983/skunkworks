@@ -23,7 +23,10 @@ async fn main() {
 
     if graph.nodes.is_empty() {
         // Fallback dummy nodes if empty (e.g. running from wrong dir)
-        graph.add_node("Core".to_string(), "struct System { entropy: f32 }".to_string());
+        graph.add_node(
+            "Core".to_string(),
+            "struct System { entropy: f32 }".to_string(),
+        );
         graph.add_node("Render".to_string(), "fn draw() { loop {} }".to_string());
         graph.add_node("Logic".to_string(), "impl Logic for System {}".to_string());
     }
@@ -31,7 +34,12 @@ async fn main() {
     // Spawn Flock
     let num_boids = 100;
     let mut boids: Vec<Boid> = (0..num_boids)
-        .map(|_| Boid::new(rand::gen_range(0.0, screen_width()), rand::gen_range(0.0, screen_height())))
+        .map(|_| {
+            Boid::new(
+                rand::gen_range(0.0, screen_width()),
+                rand::gen_range(0.0, screen_height()),
+            )
+        })
         .collect();
 
     let mut decay_timer = 0.0;
@@ -53,11 +61,13 @@ async fn main() {
                 let (head, tail) = graph.nodes.split_at_mut(i + 1);
                 let node = &mut head[i];
                 let others = &tail; // This only covers nodes AFTER i, which is incomplete for all-to-all.
-                // A simpler way for this experiment: Update physics in one pass (copy positions), then apply.
+                                    // A simpler way for this experiment: Update physics in one pass (copy positions), then apply.
 
                 // Decay
                 node.health -= 0.001;
-                if node.health < 0.1 { node.health = 0.1; }
+                if node.health < 0.1 {
+                    node.health = 0.1;
+                }
 
                 // Physics (Wall bounce only to avoid O(N^2) borrow issues for now, or use index based lookups carefully)
                 // Let's just do wall bounce and decay in this loop, and repulsion in a separate loop if needed.
@@ -67,7 +77,7 @@ async fn main() {
             // Repulsion Pass
             let positions: Vec<(usize, Vec2)> = graph.nodes.iter().map(|n| (n.id, n.pos)).collect();
             for node in &mut graph.nodes {
-                 for (other_id, other_pos) in &positions {
+                for (other_id, other_pos) in &positions {
                     if node.id != *other_id {
                         let diff = node.pos - *other_pos;
                         let dist_sq = diff.length_squared();
@@ -78,10 +88,18 @@ async fn main() {
                 }
 
                 // Wall bounce
-                if node.pos.x < 50.0 { node.vel.x += 0.5; }
-                if node.pos.x > w - 50.0 { node.vel.x -= 0.5; }
-                if node.pos.y < 50.0 { node.vel.y += 0.5; }
-                if node.pos.y > h - 50.0 { node.vel.y -= 0.5; }
+                if node.pos.x < 50.0 {
+                    node.vel.x += 0.5;
+                }
+                if node.pos.x > w - 50.0 {
+                    node.vel.x -= 0.5;
+                }
+                if node.pos.y < 50.0 {
+                    node.vel.y += 0.5;
+                }
+                if node.pos.y > h - 50.0 {
+                    node.vel.y -= 0.5;
+                }
 
                 // Damp
                 node.vel *= 0.95;
@@ -102,7 +120,9 @@ async fn main() {
 
             // Flock Rules
             for (j, other) in old_boids.iter().enumerate() {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
 
                 let dist = boid.position.distance(other.position);
 
@@ -121,7 +141,7 @@ async fn main() {
 
                     // Firefly Coupling
                     if dist < boid.dna.coupling_radius {
-                         // Kuramoto model for phase sync
+                        // Kuramoto model for phase sync
                         let delta = (other.phase - boid.phase) * 2.0 * PI;
                         boid.phase += boid.dna.coupling_strength * delta.sin();
                     }
@@ -154,10 +174,11 @@ async fn main() {
                     // Weight attraction by how rotted it is (1.0 - health)
                     // and by distance
                     if dist < nearest_dist {
-                         nearest_dist = dist;
-                         if dist < 200.0 { // Perception range for "smell" of rot
-                             target_node = Some(nid);
-                         }
+                        nearest_dist = dist;
+                        if dist < 200.0 {
+                            // Perception range for "smell" of rot
+                            target_node = Some(nid);
+                        }
                     }
                 }
             }
@@ -200,33 +221,38 @@ async fn main() {
 
         // Apply Healing (Separate pass to avoid borrow issues)
         for boid in &boids {
-             if boid.healing {
-                 for node in &mut graph.nodes {
-                     if boid.position.distance(node.pos) < 20.0 {
-                         node.health += 0.005; // Heal
-                         if node.health > 1.0 { node.health = 1.0; }
-                     }
-                 }
-             }
+            if boid.healing {
+                for node in &mut graph.nodes {
+                    if boid.position.distance(node.pos) < 20.0 {
+                        node.health += 0.005; // Heal
+                        if node.health > 1.0 {
+                            node.health = 1.0;
+                        }
+                    }
+                }
+            }
         }
-
 
         // --- Render ---
         clear_background(BLACK);
 
         // Draw Edges
         for edge in &graph.edges {
-             let n1 = graph.nodes[edge.from].pos;
-             let n2 = graph.nodes[edge.to].pos;
-             draw_line(n1.x, n1.y, n2.x, n2.y, 1.0, DARKGRAY);
+            let n1 = graph.nodes[edge.from].pos;
+            let n2 = graph.nodes[edge.to].pos;
+            draw_line(n1.x, n1.y, n2.x, n2.y, 1.0, DARKGRAY);
         }
 
         // Draw Nodes
         for node in &graph.nodes {
             // Color based on health
-            let color = if node.health > 0.8 { GREEN }
-                       else if node.health > 0.4 { YELLOW }
-                       else { RED };
+            let color = if node.health > 0.8 {
+                GREEN
+            } else if node.health > 0.4 {
+                YELLOW
+            } else {
+                RED
+            };
 
             draw_circle_lines(node.pos.x, node.pos.y, 10.0 + node.health * 5.0, 2.0, color);
 
@@ -237,7 +263,13 @@ async fn main() {
             draw_text(&text, node.pos.x + 12.0, node.pos.y, 16.0, color);
 
             // Health bar
-            draw_rectangle(node.pos.x - 10.0, node.pos.y - 15.0, 20.0 * node.health, 3.0, color);
+            draw_rectangle(
+                node.pos.x - 10.0,
+                node.pos.y - 15.0,
+                20.0 * node.health,
+                3.0,
+                color,
+            );
         }
 
         // Draw Boids
@@ -255,7 +287,12 @@ async fn main() {
             if boid.flash_timer > 0 || boid.healing {
                 color = WHITE;
                 // Draw glow
-                draw_circle(boid.position.x, boid.position.y, size * 3.0, Color::new(1.0, 1.0, 1.0, 0.2));
+                draw_circle(
+                    boid.position.x,
+                    boid.position.y,
+                    size * 3.0,
+                    Color::new(1.0, 1.0, 1.0, 0.2),
+                );
             } else {
                 // Dim when not flashing
                 color.a = 0.5 + 0.5 * boid.phase;
@@ -266,7 +303,13 @@ async fn main() {
 
         // UI
         draw_text("Mnem-Flock: Repair Drones", 10.0, 20.0, 20.0, WHITE);
-        draw_text(format!("Entropy Active. Nodes: {}", graph.nodes.len()).as_str(), 10.0, 40.0, 16.0, GRAY);
+        draw_text(
+            format!("Entropy Active. Nodes: {}", graph.nodes.len()).as_str(),
+            10.0,
+            40.0,
+            16.0,
+            GRAY,
+        );
 
         next_frame().await
     }

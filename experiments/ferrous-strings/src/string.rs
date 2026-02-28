@@ -1,7 +1,7 @@
 use ::rand::Rng;
 use chimera_lang::prelude::*;
-use macroquad::prelude::*;
 use ferrous_core::Platter;
+use macroquad::prelude::*;
 
 pub struct FerrousString {
     // Physics / Visuals
@@ -197,7 +197,7 @@ impl FerrousString {
         if charge > 0.0 {
             color = Color::new(1.0, 1.0 - charge, 1.0 - charge, 1.0);
         } else {
-             color = Color::new(1.0 + charge, 1.0 + charge, 1.0, 1.0);
+            color = Color::new(1.0 + charge, 1.0 + charge, 1.0, 1.0);
         }
 
         for i in 1..=segments {
@@ -229,7 +229,7 @@ impl FerrousString {
         );
 
         // Fitness
-         draw_text(
+        draw_text(
             &format!("Fit: {:.2}", self.fitness),
             start.x - 20.0,
             end.y + 35.0,

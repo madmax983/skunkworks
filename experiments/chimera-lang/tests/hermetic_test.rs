@@ -26,7 +26,8 @@ fn test_hermetic_alchemy() {
     "#;
 
     // 2. Compile
-    let (dna, grid_opt, _, _, alchemy_book) = prologue_compiler::compile(source, None).expect("Compilation failed");
+    let (dna, grid_opt, _, _, alchemy_book) =
+        prologue_compiler::compile(source, None).expect("Compilation failed");
 
     // Verify book was parsed
     assert_eq!(alchemy_book.len(), 2);
@@ -110,6 +111,9 @@ fn test_hermetic_alchemy() {
     if let Some(val) = &vm.prologue_state.signal_grid[1][1] {
         assert_eq!(*val, Value::Str("Gold".to_string()));
     } else {
-        panic!("Mercury failed to transmute signals. Signals: {:?}", vm.prologue_state.signal_grid);
+        panic!(
+            "Mercury failed to transmute signals. Signals: {:?}",
+            vm.prologue_state.signal_grid
+        );
     }
 }

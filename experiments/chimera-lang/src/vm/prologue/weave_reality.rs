@@ -61,7 +61,8 @@ pub fn scan_reality_bubbles(vm: &mut ChimeraVM) {
 fn apply_reality_bubble(vm: &mut ChimeraVM, y: usize, x: usize) {
     // West: Radius
     let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
-        vm.prologue_state.signal_grid[wy][wx].clone()
+        vm.prologue_state.signal_grid[wy][wx]
+            .clone()
             .or_else(|| Some(vm.grid[wy][wx].clone()))
     } else {
         None
@@ -69,7 +70,8 @@ fn apply_reality_bubble(vm: &mut ChimeraVM, y: usize, x: usize) {
 
     // North: Mode
     let n_sig = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
-        vm.prologue_state.signal_grid[ny][nx].clone()
+        vm.prologue_state.signal_grid[ny][nx]
+            .clone()
             .or_else(|| Some(vm.grid[ny][nx].clone()))
     } else {
         None
@@ -110,7 +112,7 @@ fn apply_reality_bubble(vm: &mut ChimeraVM, y: usize, x: usize) {
             r,
             |cx, cy| {
                 vm.prologue_state.reality_state.reality_map[cy][cx] = mode;
-            }
+            },
         );
     }
 }

@@ -323,7 +323,9 @@ fn run_cli_list() -> Result<()> {
     let mut table = comfy_table::Table::new();
     table
         .load_preset(comfy_table::presets::UTF8_FULL)
-        .set_header(vec!["Hash", "Date", "Author", "Message", "Entropy", "Verified"]);
+        .set_header(vec![
+            "Hash", "Date", "Author", "Message", "Entropy", "Verified",
+        ]);
 
     for commit in commits {
         // Simulate a "Verified" status based on commit hash or message properties

@@ -35,7 +35,11 @@ dna {
     let (dna, grid, orca_mode, custom_runes, _) = result.unwrap();
 
     // Check DNA
-    assert_eq!(dna.helix.strands.len(), 2, "Should have 2 strands (1 main + 1 custom rune)");
+    assert_eq!(
+        dna.helix.strands.len(),
+        2,
+        "Should have 2 strands (1 main + 1 custom rune)"
+    );
 
     // Check main strand
     // Note: The order depends on implementation. Usually appended.
@@ -44,7 +48,7 @@ dna {
         // We can't easily check name as it's compiled away, but we can check content
         // "Booting" print -> Push("Booting"), Print
         if s.genes.len() >= 2 {
-             format!("{}", s.genes[0].op) == "push"
+            format!("{}", s.genes[0].op) == "push"
         } else {
             false
         }

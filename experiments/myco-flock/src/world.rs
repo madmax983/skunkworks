@@ -1,6 +1,6 @@
 use crate::boid::Boid;
-use locus::flocking::{compute_force, FlockingParams};
 use locus::Vec2;
+use locus::flocking::{FlockingParams, compute_force};
 use rayon::prelude::*;
 use std::f64::consts::PI;
 
@@ -119,7 +119,8 @@ impl World {
 
             if ix < self.width as usize && iy < self.height as usize {
                 let idx = iy * (self.width as usize) + ix;
-                self.trails[idx] = (self.trails[idx] + boid.dna.pheromone_deposit_amount).min(255.0);
+                self.trails[idx] =
+                    (self.trails[idx] + boid.dna.pheromone_deposit_amount).min(255.0);
             }
         }
 

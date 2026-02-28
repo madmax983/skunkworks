@@ -101,26 +101,27 @@ async fn main() {
     // Grid Center in World Space
     let grid_offset = vec2(
         -(grid_w as f32 * grid_scale) / 2.0,
-        -(grid_h as f32 * grid_scale) / 2.0 + 150.0 // Shift down
+        -(grid_h as f32 * grid_scale) / 2.0 + 150.0, // Shift down
     );
 
-    let texture = Texture2D::from_image(&Image::gen_image_color(
-        grid_w as u16,
-        grid_h as u16,
-        BLACK,
-    ));
+    let texture =
+        Texture2D::from_image(&Image::gen_image_color(grid_w as u16, grid_h as u16, BLACK));
     texture.set_filter(FilterMode::Nearest);
 
     loop {
         let dt = get_frame_time().min(0.05);
 
         // --- Input ---
-        if is_key_down(KeyCode::Up) { zoom *= 1.01; }
-        if is_key_down(KeyCode::Down) { zoom *= 0.99; }
+        if is_key_down(KeyCode::Up) {
+            zoom *= 1.01;
+        }
+        if is_key_down(KeyCode::Down) {
+            zoom *= 0.99;
+        }
         if is_key_pressed(KeyCode::R) {
             // Reset
             platter = Platter::new(grid_w, grid_h);
-             for y in 0..grid_h {
+            for y in 0..grid_h {
                 for x in 0..grid_w {
                     platter.magnetize(x, y, ::rand::thread_rng().gen_range(0.0..0.1));
                 }
@@ -169,7 +170,7 @@ async fn main() {
         for y in 0..grid_h {
             for x in 0..grid_w {
                 let mag = platter.get_magnetism(x, y); // 0.0 to 1.0
-                // Color ramp: Blue (0.0) -> Black (0.5) -> Red (1.0)
+                                                       // Color ramp: Blue (0.0) -> Black (0.5) -> Red (1.0)
                 let c = if mag < 0.5 {
                     // 0.0 -> 0.5 maps to Blue 1.0 -> 0.0
                     let b = (0.5 - mag) * 2.0;
@@ -197,10 +198,7 @@ async fn main() {
             grid_offset.y,
             WHITE,
             DrawTextureParams {
-                dest_size: Some(vec2(
-                    grid_w as f32 * grid_scale,
-                    grid_h as f32 * grid_scale,
-                )),
+                dest_size: Some(vec2(grid_w as f32 * grid_scale, grid_h as f32 * grid_scale)),
                 ..Default::default()
             },
         );
@@ -212,7 +210,7 @@ async fn main() {
             grid_w as f32 * grid_scale,
             grid_h as f32 * grid_scale,
             2.0,
-            DARKGRAY
+            DARKGRAY,
         );
 
         // 2. Draw Ghosts
@@ -222,8 +220,22 @@ async fn main() {
             let p3 = g.nodes[2].pos;
 
             let alpha = 0.1;
-            draw_line(p1.x, p1.y, p2.x, p2.y, 1.0, Color::new(0.0, 1.0, 1.0, alpha));
-            draw_line(p2.x, p2.y, p3.x, p3.y, 1.0, Color::new(0.0, 1.0, 1.0, alpha));
+            draw_line(
+                p1.x,
+                p1.y,
+                p2.x,
+                p2.y,
+                1.0,
+                Color::new(0.0, 1.0, 1.0, alpha),
+            );
+            draw_line(
+                p2.x,
+                p2.y,
+                p3.x,
+                p3.y,
+                1.0,
+                Color::new(0.0, 1.0, 1.0, alpha),
+            );
         }
 
         // 3. Draw Real System

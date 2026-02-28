@@ -4,15 +4,15 @@ mod world;
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
+    Terminal,
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     text::Span,
     widgets::{
-        canvas::{Canvas, Points},
         Block, Borders, Paragraph,
+        canvas::{Canvas, Points},
     },
-    Terminal,
 };
 use std::time::{Duration, Instant};
 use tui_shared::Tui;

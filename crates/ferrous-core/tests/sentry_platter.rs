@@ -16,7 +16,13 @@ fn test_platter_bounds_safety() {
     // Verify internal state is clean (no unexpected writes)
     for y in 0..10 {
         for x in 0..10 {
-            assert_eq!(p.get_magnetism(x, y), 0.0, "Unexpected write at {},{}", x, y);
+            assert_eq!(
+                p.get_magnetism(x, y),
+                0.0,
+                "Unexpected write at {},{}",
+                x,
+                y
+            );
         }
     }
 }
@@ -61,8 +67,15 @@ fn test_decay_threshold_edge_case() {
 
     p.decay(0.5);
 
-    assert!(p.get_magnetism(0, 0) > 0.001, "Should be > 0.001, got {}", p.get_magnetism(0, 0));
-    assert!((p.get_magnetism(1, 0) - 0.001).abs() < 1e-9, "Should be exactly 0.001");
+    assert!(
+        p.get_magnetism(0, 0) > 0.001,
+        "Should be > 0.001, got {}",
+        p.get_magnetism(0, 0)
+    );
+    assert!(
+        (p.get_magnetism(1, 0) - 0.001).abs() < 1e-9,
+        "Should be exactly 0.001"
+    );
     assert_eq!(p.get_magnetism(0, 1), 0.0, "Should be clamped to 0.0");
 }
 

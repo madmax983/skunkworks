@@ -81,13 +81,25 @@ mod tests {
         exec_prologue_tick(&mut vm);
 
         // Tail (3) -> Conductor (1)
-        assert_eq!(vm.grid[cy][cx + 1], Value::Int(1), "Tick 2: Tail should become Wire");
+        assert_eq!(
+            vm.grid[cy][cx + 1],
+            Value::Int(1),
+            "Tick 2: Tail should become Wire"
+        );
 
         // Head (2) -> Tail (3)
-        assert_eq!(vm.grid[cy][cx + 2], Value::Int(3), "Tick 2: Head should become Tail");
+        assert_eq!(
+            vm.grid[cy][cx + 2],
+            Value::Int(3),
+            "Tick 2: Head should become Tail"
+        );
 
         // Wire (1) -> Head (2)
-        assert_eq!(vm.grid[cy][cx + 3], Value::Int(2), "Tick 2: Wire should become Head");
+        assert_eq!(
+            vm.grid[cy][cx + 3],
+            Value::Int(2),
+            "Tick 2: Wire should become Head"
+        );
     }
 
     #[test]
@@ -115,6 +127,9 @@ mod tests {
         exec_prologue_tick(&mut vm);
 
         // Check if * activated (Self lighted up)
-        assert!(vm.prologue_state.signal_grid[cy][cx + 1].is_some(), "Bang should activate in Orca mode from East signal");
+        assert!(
+            vm.prologue_state.signal_grid[cy][cx + 1].is_some(),
+            "Bang should activate in Orca mode from East signal"
+        );
     }
 }

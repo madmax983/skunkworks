@@ -32,7 +32,11 @@ fn main() -> Result<()> {
     let mut sorted_files: Vec<_> = file_counts.into_iter().collect();
     sorted_files.sort_by(|a, b| b.1.cmp(&a.1)); // Sort descending
 
-    let top_files = sorted_files.into_iter().take(8).map(|(f, _)| f).collect::<Vec<_>>();
+    let top_files = sorted_files
+        .into_iter()
+        .take(8)
+        .map(|(f, _)| f)
+        .collect::<Vec<_>>();
 
     if top_files.len() < 2 {
         println!("Not enough git history to form a mycelial network. Need at least 2 highly modified files.");
@@ -77,7 +81,8 @@ fn main() -> Result<()> {
 
     let mut tui = Tui::init()?;
 
-    let (mut world, mut agents) = World::with_git_cities_and_agents(width, height, city_positions, connections);
+    let (mut world, mut agents) =
+        World::with_git_cities_and_agents(width, height, city_positions, connections);
 
     let tick_rate = Duration::from_millis(16);
     let mut last_tick = Instant::now();
@@ -93,8 +98,9 @@ fn main() -> Result<()> {
         Color::LightRed,
     ];
 
-    let mut agent_groups: Vec<Vec<(f64, f64)>> =
-        (0..world.cities.len()).map(|_| Vec::with_capacity(1500)).collect();
+    let mut agent_groups: Vec<Vec<(f64, f64)>> = (0..world.cities.len())
+        .map(|_| Vec::with_capacity(1500))
+        .collect();
     let mut trails_low = Vec::with_capacity(2048);
     let mut trails_med = Vec::with_capacity(2048);
     let mut trails_high = Vec::with_capacity(2048);
@@ -165,7 +171,12 @@ fn main() -> Result<()> {
                             color,
                         });
                         // Print city name label text
-                        ctx.print(*cx + 2.0, *cy, Line::from(world.city_names[i].clone()).style(Style::default().fg(color)));
+                        ctx.print(
+                            *cx + 2.0,
+                            *cy,
+                            Line::from(world.city_names[i].clone())
+                                .style(Style::default().fg(color)),
+                        );
 
                         ctx.draw(&Points {
                             coords: &[
@@ -198,7 +209,10 @@ fn main() -> Result<()> {
                 Span::raw("Press "),
                 Span::styled("q", Style::default().fg(Color::Yellow)),
                 Span::raw(" to quit. Commits parsed: "),
-                Span::styled(format!("{}", commits.len()), Style::default().fg(Color::Magenta)),
+                Span::styled(
+                    format!("{}", commits.len()),
+                    Style::default().fg(Color::Magenta),
+                ),
                 Span::raw(" | Agents: "),
                 Span::styled(format!("{}", agent_count), Style::default().fg(Color::Cyan)),
                 Span::raw(" | Connections formed: "),

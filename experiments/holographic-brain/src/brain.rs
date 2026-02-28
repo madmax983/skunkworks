@@ -1,6 +1,6 @@
 use crate::hologram::HolographicMemory;
-use rand::prelude::*;
 use neuro_sim::Izhikevich;
+use rand::prelude::*;
 
 pub struct Brain {
     pub width: usize,

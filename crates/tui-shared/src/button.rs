@@ -157,9 +157,11 @@ impl<'a> Widget for Button<'a> {
             (ButtonStyle::Outline, ButtonState::Normal) => {
                 (Color::Gray, Color::Reset, Modifier::empty())
             }
-            (ButtonStyle::Outline, ButtonState::Hovered) => {
-                (Color::White, Color::Reset, Modifier::BOLD | Modifier::UNDERLINED)
-            }
+            (ButtonStyle::Outline, ButtonState::Hovered) => (
+                Color::White,
+                Color::Reset,
+                Modifier::BOLD | Modifier::UNDERLINED,
+            ),
             (ButtonStyle::Outline, ButtonState::Clicked) => {
                 (Color::Green, Color::Reset, Modifier::BOLD)
             }

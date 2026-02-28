@@ -1,7 +1,7 @@
 use crate::math::Vec4D;
 use crate::monitor::SystemMonitor;
-use rand::Rng;
 use neuro_sim::Izhikevich;
+use rand::Rng;
 
 #[derive(Clone, Debug)]
 pub struct Neuron4D {

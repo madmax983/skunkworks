@@ -98,7 +98,9 @@ pub(crate) fn render_foundry(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
                             ),
                             "Ϡ" => (
                                 "Ϡ".to_string(),
-                                Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD),
+                                Style::default()
+                                    .fg(Color::Yellow)
+                                    .add_modifier(Modifier::BOLD),
                             ),
                             _ => ("?".to_string(), Style::default().fg(Color::White)),
                         }

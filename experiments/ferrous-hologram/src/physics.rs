@@ -1,7 +1,7 @@
+use crate::spectral::SpectralField;
 use ferrous_core::Platter;
 use locus::Vec2;
 use rand::Rng;
-use crate::spectral::SpectralField;
 
 pub struct Particle {
     pub pos: Vec2,
@@ -71,7 +71,8 @@ impl Universe {
         // We do this every frame? It's expensive but for TUI grid sizes (100x50) it's fine.
         // Convert Platter to Vec<f64> via iter/clone?
         // Platter.magnetism is Vec<f64>.
-        self.spectral_field.compute_spectrum(&self.platter.magnetism);
+        self.spectral_field
+            .compute_spectrum(&self.platter.magnetism);
         self.spectral_field.compute_potential();
 
         // 3. Apply Forces
@@ -99,10 +100,22 @@ impl Universe {
             p.pos = p.pos + p.vel * dt;
 
             // Boundaries
-            if p.pos.x < 0.0 { p.pos.x = 0.0; p.vel.x *= -0.8; }
-            if p.pos.x > self.width { p.pos.x = self.width; p.vel.x *= -0.8; }
-            if p.pos.y < 0.0 { p.pos.y = 0.0; p.vel.y *= -0.8; }
-            if p.pos.y > self.height { p.pos.y = self.height; p.vel.y *= -0.8; }
+            if p.pos.x < 0.0 {
+                p.pos.x = 0.0;
+                p.vel.x *= -0.8;
+            }
+            if p.pos.x > self.width {
+                p.pos.x = self.width;
+                p.vel.x *= -0.8;
+            }
+            if p.pos.y < 0.0 {
+                p.pos.y = 0.0;
+                p.vel.y *= -0.8;
+            }
+            if p.pos.y > self.height {
+                p.pos.y = self.height;
+                p.vel.y *= -0.8;
+            }
         }
     }
 }

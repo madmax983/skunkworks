@@ -1,6 +1,6 @@
 use super::normalize_coords;
-use crate::vm::Value;
 use crate::vm::prologue::AlchemyRule;
+use crate::vm::Value;
 
 pub const ELEM_FIRE: u64 = 0x1F525; // 🔥
 pub const ELEM_WATER: u64 = 0x1F4A7; // 💧
