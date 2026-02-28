@@ -55,3 +55,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spores deployed. The substrate is active.
 - **Note:** "I crossed slime mold logic with git history parsing. The resulting mycelial network doesn't read static code; it feeds on the organic habits of the developers. A truly elegant architectural map is emerging."
+
+### [Concentration Level: MYCELIAL FLOCK] - Location: experiments/myco-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Spores deployed. The flock is foraging.
+- **Note:** "I crossed myco-transit with luminous-flock. The boids are now leaving pheromone trails, organizing themselves into stable structural highways instead of wandering aimlessly. Hybrid vigor at its finest."

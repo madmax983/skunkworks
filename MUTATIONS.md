@@ -74,3 +74,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Acoustic-Magnetic Symbiosis. Sound waves (string vibration) become magnetic waves, guiding matter.
 - **Status**: experiments/ferrous-strings
 - **Evaluation**: Compiles (with warnings, requires `--no-default-features`). Noticed in GUESTBOOK.md as MAGNETIC. Emergent behavior confirmed (music guiding matter). Success.
+
+### myco-flock
+- **Parents**: experiments/myco-transit + experiments/luminous-flock
+- **Concept**: Pheromone-Guided Flocking. Boids leave a pheromone trail on a grid and sense it, clustering into paths rather than purely fluid swarms.
+- **Novel trait**: Structural Swarming. Flocks form stable "highways" based on positive feedback loops of pheromone deposition and sensing.
+- **Status**: experiments/myco-flock
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Emergent behavior awaiting full observation.
