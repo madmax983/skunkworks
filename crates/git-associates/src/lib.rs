@@ -122,7 +122,13 @@ impl GitModel {
             let short_hash = hash.chars().take(7).collect();
             let author = commit.author().name().unwrap_or("Unknown").to_string();
             let message = commit.message().unwrap_or("").trim().to_string();
-            let timestamp = Utc.timestamp_opt(commit.time().seconds(), 0).unwrap();
+
+            // chrono LocalResult::unwrap() panics if the timestamp is out of range.
+            // Using `single().unwrap_or_else(...)` provides a safe fallback (UNIX epoch).
+            let timestamp = Utc
+                .timestamp_opt(commit.time().seconds(), 0)
+                .single()
+                .unwrap_or_else(|| Utc.timestamp_opt(0, 0).unwrap());
 
             let parents: Vec<String> = commit.parents().map(|p| p.id().to_string()).collect();
 
@@ -304,5 +310,43 @@ impl GitModel {
             });
         }
         hunks
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use git2::{Repository, Signature, Time};
+
+    #[test]
+    fn should_not_panic_on_invalid_commit_timestamp() {
+        let temp_dir = std::env::temp_dir().join("git-associates-timestamp-test");
+        let _ = std::fs::remove_dir_all(&temp_dir);
+        let repo = Repository::init(&temp_dir).unwrap();
+
+        let mut index = repo.index().unwrap();
+        let oid = index.write_tree().unwrap();
+        let tree = repo.find_tree(oid).unwrap();
+
+        // A timestamp that causes chrono's Utc.timestamp_opt to return None
+        // 253402300800 seconds is the year 10000. We multiply by 2000 to exceed chrono's max.
+        let time = Time::new(253402300800 * 2000, 0);
+        let sig = Signature::new("Test Author", "test@example.com", &time).unwrap();
+
+        repo.commit(
+            Some("HEAD"),
+            &sig,
+            &sig,
+            "Invalid timestamp commit",
+            &tree,
+            &[],
+        )
+        .unwrap();
+
+        let model = GitModel::open(temp_dir).unwrap();
+
+        // This should NOT panic, but right now it will.
+        let history = model.history_with_diffs(10).unwrap();
+        assert_eq!(history.len(), 1);
     }
 }

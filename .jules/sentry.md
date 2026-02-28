@@ -35,3 +35,7 @@
 **[TUI Fractional Block Logic]**
 **Learning:** When mapping a continuous value (0.0-1.0) to discrete block characters (1/8, 1/4, etc.), using strictly less `<` comparisons causes off-by-one errors for exact values like 0.5 (4/8), pushing them to the next bucket (5/8).
 **Action:** Use `<=` for threshold comparisons when mapping continuous ranges to discrete steps where the boundary value belongs to the lower bucket (e.g., 0.5 should be HALF, not FIVE_EIGHTHS).
+
+## [Git Timestamp Panic]
+**Learning:** Using `unwrap()` on `chrono::Utc.timestamp_opt()` with a 64-bit git commit timestamp can panic if the timestamp is out-of-bounds, causing history parsing to crash.
+**Action:** Always use `.single().unwrap_or_else(...)` or a safe fallback when parsing external timestamp data.

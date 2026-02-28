@@ -1,12 +1,12 @@
-use std::process::Command;
 use std::env;
+use std::process::Command;
 
 #[test]
 fn havoc_test_value_hash_overflow() {
     // If we are the child process, cause the stack overflow
     if env::var("HAVOC_CRASH_MODE").is_ok() {
-        use chimera_lang::vm::Value;
         use chimera_lang::ast::JunctionType;
+        use chimera_lang::vm::Value;
         use std::collections::hash_map::DefaultHasher;
         use std::hash::{Hash, Hasher};
 
@@ -31,5 +31,8 @@ fn havoc_test_value_hash_overflow() {
 
     // The child should have crashed due to SIGABRT / SIGSEGV (stack overflow).
     // So the exit status should NOT be success.
-    assert!(!status.success(), "👺 Havoc: Expected stack overflow (crash), but process exited successfully!");
+    assert!(
+        !status.success(),
+        "👺 Havoc: Expected stack overflow (crash), but process exited successfully!"
+    );
 }
