@@ -109,32 +109,37 @@ struct FlockingAccumulators {
     coh_count: usize,
 }
 
+struct PrecomputedParams<'a> {
+    params: &'a FlockingParams,
+    view_sq: f64,
+    sep_sq: f64,
+    do_sep: bool,
+    do_ali: bool,
+    do_coh: bool,
+}
+
 impl FlockingAccumulators {
     fn accumulate(
         &mut self,
         my_pos: Vec2,
         neighbor_pos: Vec2,
         neighbor_vel: Vec2,
-        params: &FlockingParams,
+        pre: &PrecomputedParams,
         overlap_bias: Vec2,
-        do_sep: bool,
-        do_ali: bool,
-        do_coh: bool,
     ) {
         let dx = my_pos.x - neighbor_pos.x;
-        if dx.abs() > params.view_radius {
+        if dx.abs() > pre.params.view_radius {
             return;
         }
 
         let dy = my_pos.y - neighbor_pos.y;
-        if dy.abs() > params.view_radius {
+        if dy.abs() > pre.params.view_radius {
             return;
         }
 
         let mut d_sq = dx * dx + dy * dy;
-        let view_sq = params.view_radius * params.view_radius;
 
-        if d_sq >= view_sq {
+        if d_sq >= pre.view_sq {
             return;
         }
 
@@ -146,17 +151,17 @@ impl FlockingAccumulators {
             Vec2::new(dx, dy)
         };
 
-        if do_sep && d_sq < params.separation_radius * params.separation_radius {
+        if pre.do_sep && d_sq < pre.sep_sq {
             self.separation += diff * (1.0 / d_sq);
             self.sep_count += 1;
         }
 
-        if do_ali {
+        if pre.do_ali {
             self.alignment += neighbor_vel;
             self.ali_count += 1;
         }
 
-        if do_coh {
+        if pre.do_coh {
             self.cohesion += neighbor_pos;
             self.coh_count += 1;
         }
@@ -253,10 +258,15 @@ pub fn compute_force(
 
     let mut acc = FlockingAccumulators::default();
 
-    // Pre-check weights to avoid accumulation for disabled behaviors.
-    let do_sep = params.separation_weight.abs() > 0.0;
-    let do_ali = params.alignment_weight.abs() > 0.0;
-    let do_coh = params.cohesion_weight.abs() > 0.0;
+    // Precompute invariants for the hot loop
+    let pre = PrecomputedParams {
+        params,
+        view_sq: params.view_radius * params.view_radius,
+        sep_sq: params.separation_radius * params.separation_radius,
+        do_sep: params.separation_weight.abs() > 0.0,
+        do_ali: params.alignment_weight.abs() > 0.0,
+        do_coh: params.cohesion_weight.abs() > 0.0,
+    };
 
     // Loop Splitting: We split the slices at `my_idx` to iterate over left and right neighbors separately.
     // This avoids checking `i == my_idx` inside the hot loop.
@@ -267,7 +277,7 @@ pub fn compute_force(
     // Left neighbors have index < my_idx, so we push Right (+x).
     let left_bias = Vec2::new(1.0, 0.0);
     for (pos, vel) in left_pos.iter().zip(left_vel) {
-        acc.accumulate(my_pos, *pos, *vel, params, left_bias, do_sep, do_ali, do_coh);
+        acc.accumulate(my_pos, *pos, *vel, &pre, left_bias);
     }
 
     // Process right neighbors (my_idx+1..len)
@@ -276,7 +286,7 @@ pub fn compute_force(
     let right_bias = Vec2::new(-1.0, 0.0);
     if right_pos.len() > 1 {
         for (pos, vel) in right_pos[1..].iter().zip(&right_vel[1..]) {
-            acc.accumulate(my_pos, *pos, *vel, params, right_bias, do_sep, do_ali, do_coh);
+            acc.accumulate(my_pos, *pos, *vel, &pre, right_bias);
         }
     }
 

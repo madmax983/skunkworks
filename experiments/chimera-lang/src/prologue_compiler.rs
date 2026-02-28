@@ -5,8 +5,8 @@ use std::collections::HashMap;
 use std::path::Path;
 
 use crate::ast::Dna;
-use crate::vm::{Value, GRID_SIZE};
 use crate::vm::prologue::AlchemyRule;
+use crate::vm::{Value, GRID_SIZE};
 
 #[derive(Parser)]
 #[grammar = "prologue_grammar.pest"]
@@ -136,7 +136,8 @@ pub fn compile(
                                     match inner.as_rule() {
                                         Rule::string_literal => {
                                             let s = inner.as_str();
-                                            ingredients.push(Value::Str(s[1..s.len() - 1].to_string()));
+                                            ingredients
+                                                .push(Value::Str(s[1..s.len() - 1].to_string()));
                                         }
                                         Rule::number_literal => {
                                             if let Ok(n) = inner.as_str().parse::<i64>() {

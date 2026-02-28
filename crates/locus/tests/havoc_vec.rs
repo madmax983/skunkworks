@@ -63,9 +63,9 @@ mod tests {
 
         // Check if addition had any effect
         if sum.x == large.x {
-             println!("HAVOC: Precision loss detected. 1e17 + 0.1 == 1e17.");
+            println!("HAVOC: Precision loss detected. 1e17 + 0.1 == 1e17.");
         } else {
-             panic!("HAVOC FAILED: Precision was preserved unexpectedly?");
+            panic!("HAVOC FAILED: Precision was preserved unexpectedly?");
         }
     }
 
@@ -106,13 +106,19 @@ mod tests {
         let mag = limited.x.hypot(limited.y);
 
         if mag.is_infinite() {
-             panic!("HAVOC FAILED: Limit result has infinite magnitude! Max was {}", max);
+            panic!(
+                "HAVOC FAILED: Limit result has infinite magnitude! Max was {}",
+                max
+            );
         }
 
         if mag > max * 1.001 {
-             panic!("HAVOC FAILED: Limit failed to clamp magnitude ({} > {})", mag, max);
+            panic!(
+                "HAVOC FAILED: Limit failed to clamp magnitude ({} > {})",
+                mag, max
+            );
         } else {
-             println!("HAVOC BUG FIXED: Limit successfully clamped magnitude.");
+            println!("HAVOC BUG FIXED: Limit successfully clamped magnitude.");
         }
     }
 }

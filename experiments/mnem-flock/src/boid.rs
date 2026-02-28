@@ -1,5 +1,5 @@
+use ::rand::{thread_rng, Rng};
 use macroquad::prelude::*;
-use ::rand::{Rng, thread_rng};
 use std::f32::consts::PI;
 
 #[derive(Clone, Debug)]
@@ -37,7 +37,7 @@ impl Dna {
                 rng.gen_range(0.5..1.0),
                 rng.gen_range(0.5..1.0),
                 rng.gen_range(0.5..1.0),
-                1.0
+                1.0,
             ),
             char_representation: if rng.gen_bool(0.5) { '✦' } else { '•' },
         }

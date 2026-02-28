@@ -22,3 +22,8 @@
 **[Performance]**
 **Learning:** Checking for self-interaction (`i == my_idx` or `ptr::eq`) inside a hot loop prevents vectorization and adds branch overhead. Loop splitting (iterating `0..i` and `i+1..N`) removes the branch entirely, yielding ~40% speedup in N-body simulations.
 **Action:** Use loop splitting for pairwise interactions instead of `if i == j continue`.
+
+**[Performance]**
+**Learning:** Fixed a `clippy::too_many_arguments` warning by inlining invariants (like squared radii calculations) into an inner loop, which significantly degraded performance on a hot $O(N^2)$ path.
+**Impact:** Hoisting those invariants back out of the loop and grouping them into a single `PrecomputedParams` struct resolved the clippy warning while maintaining the performance optimization.
+**Action:** When fixing clippy warnings involving argument count, always group parameters into an options/context struct rather than pushing computations down into inner hot loops.

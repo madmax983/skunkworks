@@ -1,7 +1,7 @@
+use ::rand::Rng;
 use chimera_lang::prelude::*;
 use macroquad::prelude::*;
-use poincare_disk::{Point, mobius_add, mobius_sub, hyperbolic_dist};
-use ::rand::Rng;
+use poincare_disk::{hyperbolic_dist, mobius_add, mobius_sub, Point};
 
 #[derive(Clone, Copy)]
 pub struct FlockingParams {
@@ -127,7 +127,7 @@ impl Boid {
             if cohesion.norm() > 0.0 {
                 let desired = (cohesion / cohesion.norm()) * self.params.max_speed;
                 let steer = desired - self.vel;
-                 if steer.norm() > self.params.max_force {
+                if steer.norm() > self.params.max_force {
                     cohesion = (steer / steer.norm()) * self.params.max_force;
                 } else {
                     cohesion = steer;
@@ -136,10 +136,9 @@ impl Boid {
         }
 
         // Apply forces
-        let total_force =
-            separation * self.params.separation_weight +
-            alignment * self.params.alignment_weight +
-            cohesion * self.params.cohesion_weight;
+        let total_force = separation * self.params.separation_weight
+            + alignment * self.params.alignment_weight
+            + cohesion * self.params.cohesion_weight;
 
         self.vel = self.vel + total_force;
     }

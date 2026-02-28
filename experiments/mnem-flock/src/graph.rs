@@ -40,7 +40,10 @@ impl Graph {
             id,
             name,
             content,
-            pos: vec2(rand::gen_range(0.0, screen_width()), rand::gen_range(0.0, screen_height())),
+            pos: vec2(
+                rand::gen_range(0.0, screen_width()),
+                rand::gen_range(0.0, screen_height()),
+            ),
             vel: vec2(0.0, 0.0),
             health: 1.0,
         });

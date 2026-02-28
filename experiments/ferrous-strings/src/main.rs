@@ -1,13 +1,13 @@
-use macroquad::prelude::*;
 use ferrous_core::Platter;
+use macroquad::prelude::*;
 
 mod audio;
-mod string;
 mod particle;
+mod string;
 
 use audio::{init_audio, AudioCommand};
-use string::FerrousString;
 use particle::Particle;
+use string::FerrousString;
 
 const STRING_COUNT: usize = 8;
 const PARTICLE_COUNT: usize = 500;
@@ -50,11 +50,8 @@ async fn main() {
     let mut prev_mouse = vec2(0.0, 0.0);
 
     // Texture for Platter Heatmap
-    let texture = Texture2D::from_image(&Image::gen_image_color(
-        grid_w as u16,
-        grid_h as u16,
-        BLACK,
-    ));
+    let texture =
+        Texture2D::from_image(&Image::gen_image_color(grid_w as u16, grid_h as u16, BLACK));
     texture.set_filter(FilterMode::Nearest);
 
     loop {
@@ -86,7 +83,7 @@ async fn main() {
             if s.vibration.abs() > 0.1 {
                 // Determine grid cells under the string
                 // For simplicity, just a few points along the string
-                 let steps = 20;
+                let steps = 20;
                 let step_size = s.length / steps as f32;
 
                 for i in 0..=steps {
@@ -109,8 +106,8 @@ async fn main() {
 
             // Mouse Interaction (Plucking)
             let string_x = s.pos.x + s.vibration; // Approximate
-            // Check cross
-             let crossed = (prev_mouse.x < string_x && mouse_pos.x >= string_x)
+                                                  // Check cross
+            let crossed = (prev_mouse.x < string_x && mouse_pos.x >= string_x)
                 || (prev_mouse.x > string_x && mouse_pos.x <= string_x);
             let in_range = mouse_pos.y >= s.pos.y && mouse_pos.y <= s.pos.y + s.length;
 
@@ -147,7 +144,8 @@ async fn main() {
                 let y_max = s.pos.y + s.length;
 
                 for p in &particles {
-                    if p.pos.x >= x_min && p.pos.x <= x_max && p.pos.y >= y_min && p.pos.y <= y_max {
+                    if p.pos.x >= x_min && p.pos.x <= x_max && p.pos.y >= y_min && p.pos.y <= y_max
+                    {
                         count += 1;
                     }
                 }
@@ -158,7 +156,7 @@ async fn main() {
 
             // Apply Evolution
             for (i, s) in strings.iter_mut().enumerate() {
-                 let target_freq = BASE_FREQ * (2.0f32).powf(i as f32 / 12.0);
+                let target_freq = BASE_FREQ * (2.0f32).powf(i as f32 / 12.0);
                 s.evolve(target_freq);
             }
         }
@@ -192,10 +190,7 @@ async fn main() {
             0.0,
             WHITE,
             DrawTextureParams {
-                dest_size: Some(vec2(
-                    grid_w as f32 * grid_scale,
-                    grid_h as f32 * grid_scale,
-                )),
+                dest_size: Some(vec2(grid_w as f32 * grid_scale, grid_h as f32 * grid_scale)),
                 ..Default::default()
             },
         );
@@ -214,9 +209,18 @@ async fn main() {
         draw_text("Ferrous Strings", 10.0, 30.0, 30.0, WHITE);
         draw_text(
             "Strings vibrate -> Magnetic Field -> Particles Flow",
-            10.0, 50.0, 20.0, GRAY,
+            10.0,
+            50.0,
+            20.0,
+            GRAY,
         );
-        draw_text("Particles -> String Fitness -> Evolution", 10.0, 70.0, 20.0, GRAY);
+        draw_text(
+            "Particles -> String Fitness -> Evolution",
+            10.0,
+            70.0,
+            20.0,
+            GRAY,
+        );
         draw_text("Pluck with Mouse!", 10.0, 90.0, 20.0, YELLOW);
 
         prev_mouse = mouse_pos;

@@ -150,14 +150,9 @@ impl World {
         // This visualizes the coupling between those files.
         for (src, dst) in connections {
             let (cx, cy) = world.cities[src];
-            for _ in 0..100 { // Spawn 100 agents per connection to make it visible
-                agents.push(Agent::new(
-                    cx,
-                    cy,
-                    rng.gen_range(0.0..2.0 * PI),
-                    src,
-                    dst,
-                ));
+            for _ in 0..100 {
+                // Spawn 100 agents per connection to make it visible
+                agents.push(Agent::new(cx, cy, rng.gen_range(0.0..2.0 * PI), src, dst));
             }
         }
 

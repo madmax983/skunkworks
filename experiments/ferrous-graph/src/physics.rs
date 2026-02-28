@@ -1,6 +1,6 @@
 use ferrous_core::Platter;
-use ratatui::style::Color;
 pub use locus::Vec2;
+use ratatui::style::Color;
 
 #[derive(Debug, Clone)]
 pub struct Body {

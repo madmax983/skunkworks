@@ -106,7 +106,8 @@ pub fn apply_catalyst_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) 
                     // This mirrors `catalyze` op but on grid context
 
                     // For now, let's just log success and emit visual flash
-                    vm.output.push(format!("CATALYST: Triggered #{} at {},{}", cat_id, x, y));
+                    vm.output
+                        .push(format!("CATALYST: Triggered #{} at {},{}", cat_id, x, y));
 
                     // Flash effect
                     #[cfg(feature = "nova")]

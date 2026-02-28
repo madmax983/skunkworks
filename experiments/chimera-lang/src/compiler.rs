@@ -461,7 +461,9 @@ fn parse_grammar_def(pair: pest::iterators::Pair<Rule>) -> Result<DefinedGrammar
     for rule_def in pair.into_inner() {
         if rule_def.as_rule() == Rule::grammar_rule_def {
             let mut parts = rule_def.into_inner();
-            let first = parts.next().ok_or(anyhow!("Missing rule definition start"))?;
+            let first = parts
+                .next()
+                .ok_or(anyhow!("Missing rule definition start"))?;
 
             // Check if it's the old style: type ~ identifier ~ { ... }
             if first.as_rule() == Rule::rule_type {
@@ -506,7 +508,9 @@ fn parse_grammar_def(pair: pest::iterators::Pair<Rule>) -> Result<DefinedGrammar
                 }
 
                 // Skip the '('
-                let args_pair = parts.next().ok_or(anyhow!("Missing argument list for functional grammar rule"))?;
+                let args_pair = parts
+                    .next()
+                    .ok_or(anyhow!("Missing argument list for functional grammar rule"))?;
 
                 // Functional style grammar rules (e.g. `Map(...)`) are treated as anonymous rules.
                 // If this is the first rule, it becomes the entry point.
