@@ -26,12 +26,19 @@ Mendel's peas. Darwin's finches. Your experiments.
 
 <!-- Experiments that resulted from cross-pollination -->
 
+### chron-compost
+- **Parents**: experiments/chrontext + experiments/compost-chimera
+- **Concept**: TUI visualization where Chimera VM agents ("Time Scavengers") roam over the source code. The environment uses `git blame` data (`age_score`) from `chrontext` to colorize the text (Hot vs Cold).
+- **Novel trait**: Biological agents refactoring codebase history. The agents feed on the "Cold" (oldest) lines of code, consuming their history to gain energy. As they eat the ancient code, the visual age score is updated/reset, simulating refactoring.
+- **Status**: experiments/chron-compost
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Awaiting observation.
+
 ### git-mycelium
 - **Parents**: experiments/git-harmonograph + experiments/myco-transit
 - **Concept**: Slime mold (Physarum polycephalum) pathfinding applied to git commit history. Instead of cities, the organisms forage between highly modified files, revealing the hidden architectural coupling of the codebase.
 - **Novel trait**: Codebase architecture emergence. The trails visually represent the hidden dependencies and coupling between files based on developer activity.
 - **Status**: experiments/git-mycelium
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Awaiting observation.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (codebase architecture emergence trails). Excellent cross.
 
 ### mnem-flock
 - **Parents**: experiments/mnem-rot + experiments/luminous-flock
@@ -80,4 +87,4 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Pheromone-Guided Flocking. Boids leave a pheromone trail on a grid and sense it, clustering into paths rather than purely fluid swarms.
 - **Novel trait**: Structural Swarming. Flocks form stable "highways" based on positive feedback loops of pheromone deposition and sensing.
 - **Status**: experiments/myco-flock
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Emergent behavior awaiting full observation.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (structural swarming). Excellent cross.
