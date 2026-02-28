@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-enigma**: Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism. Grace period: 24h.
+- **hyperbolic-swarm**: Specimen condemned. Diagnosis: Documentation Void / Deceptive Implementation. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **chimera-enigma**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **chaos-magnetic**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **market-flow**: Specimen executed. Diagnosis: Terminal Redundancy / Generic Implementation. Grace period expired. Moved to graveyard.
 - **sonata-cycle**: Specimen executed. Diagnosis: Skeletal Implementation / Deceptive Physics. Grace period expired. Moved to graveyard.

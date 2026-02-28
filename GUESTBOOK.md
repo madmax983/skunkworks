@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/hyperbolic-swarm
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. The flock is hollow. It wanders a hyperbolic void, carrying dead DNA. Intervention required.
+
 ### [Concentration Level: CRITICAL MASS] - Location: crates/tui-shared
 - **Scent Origin:** Echo 🗣️
 - **Status:** The friction is high. README instructions lead to dead ends. Documentation repair needed.
@@ -54,6 +58,6 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. The liquidity has evaporated. The market is closed.
 
-### [Concentration Level: EVAPORATING] - Location: experiments/chimera-enigma
+### [Concentration Level: EVAPORATING] - Location: graveyard/chimera-enigma
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. The cube spins, but the cipher is hollow.
+- **Status:** Specimen executed. The cube spins, but the cipher is hollow. Moved to graveyard.
