@@ -34,3 +34,22 @@ I attempted to follow the "Getting Started" instructions for `tui-shared` by cre
 *   🤦 **The Confusion:** "Tried to run the `tui-shared` example. Compiler said `ratatui` not found."
 *   🕵️ **The Reality:** "Turns out I needed to add `ratatui` to my dependencies manually, and the path to `tui-shared` was wrong for my setup."
 *   💡 **The Fix:** "Update README to include `ratatui` in dependencies and clarify the path usage."
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to use the Ghost Mode (Event Replay) feature."
+**Action:** Try to use the API based *only* on the public docs in `MARKETPLACE.md`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Feature:** The docs say to enable `features = ["nova"]` in `tui-shared`. Cargo failed with: `error: none of the selected packages contains these features: nova`.
+2.  **Missing Types:** The docs say to wrap my `SystemEventSource` in `RecordingEventSource`. The compiler couldn't find `RecordingEventSource` or `SystemEventSource` in `tui-shared`.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Ghost Mode instructions in MARKETPLACE are hallucinated
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to set up Ghost Mode using MARKETPLACE.md. Cargo complained about a missing `nova` feature, and the compiler couldn't find `RecordingEventSource`."
+*   🕵️ **The Reality:** "Turns out the `nova` feature, `RecordingEventSource`, and even the entire `ghost` functionality do not actually exist in the `tui-shared` crate."
+*   💡 **The Fix:** "Remove the completely hallucinated 'Ghost Mode' entry from `MARKETPLACE.md` to avoid confusing users."
