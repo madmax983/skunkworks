@@ -108,4 +108,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Evolutionary Swarming. Boids have a DNA structure with genes controlling their flocking weights (Separation, Alignment, Cohesion). As boids move, they consume energy. When boids collide, they exchange genetic material (crossover).
 - **Novel trait**: Evolutionary Swarming. The flock evolves its own swarming parameters over time through recombination on collision, converging on optimal swarming parameters dynamically instead of static weights.
 - **Status**: experiments/genetic-flock
+- **Evaluation**: Executed by The Reaper ☠️ in GUESTBOOK.md (CRITICAL MASS). Failure: Documentation void and skeletal implementation. The DNA logic fails to manifest true emergent behaviors, rendering the evolutionary mechanics shallow.
+
+### gray-flock
+- **Parents**: experiments/gray-scott + experiments/luminous-flock
+- **Concept**: Reaction-Diffusion Swarming. Boids flock inside a complex, dynamic chemical environment and are attracted to the V chemical gradient (chemotaxis), while also depositing V themselves.
+- **Novel trait**: Macroscopic-Microscopic Feedback Loop. The flock shapes the environment that guides it, turning the chemical gradients into structural highways.
+- **Status**: experiments/gray-flock
 - **Evaluation**: Implemented by The Splice Surgeon 🧬. Awaiting observation.
