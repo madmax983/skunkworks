@@ -104,3 +104,6 @@
 ## 2027-08-15 - Babel Live Parse Infinite Loop (DoS)
 **Threat:** The inner loops in `nova_babel_live::exec_live_parse` (for string, regex, and action parsing) lacked iteration limits. A malicious grid configuration (e.g. toroidal wrapping without a terminating character) could cause an infinite loop, hanging the VM thread (DoS).
 **Defense:** Added `loop_safety` counter to limit inner parsing loops to 256 iterations (matching `GRID_SIZE` squared). Verified with `warden_babel_dos.rs`.
+## 2027-08-30 - Impossible Explorer Integer Overflow (DoS)
+**Threat:** The `intersect_rect` function in `experiments/impossible-explorer/src/main.rs` used unchecked addition (`a.0 + a.2`) which could cause integer overflow when using large coordinates, leading to a panic in debug builds (DoS) or wrapping behavior in release builds.
+**Defense:** Replaced unchecked addition and subtraction with `.saturating_add()` and `.saturating_sub()` to ensure safe coordinate clamping.

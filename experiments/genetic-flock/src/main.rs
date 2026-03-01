@@ -99,7 +99,8 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
         .constraints([Constraint::Min(0), Constraint::Length(1)])
         .split(f.area());
 
-    let avg_gen = app.world.boids.iter().map(|b| b.generation).sum::<usize>() / app.world.boids.len().max(1);
+    let avg_gen =
+        app.world.boids.iter().map(|b| b.generation).sum::<usize>() / app.world.boids.len().max(1);
 
     let canvas = Canvas::default()
         .block(
@@ -112,7 +113,11 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
         .paint(|ctx| {
             for boid in &app.world.boids {
                 // Determine visual style based on generation or energy
-                let char_str = if boid.generation > avg_gen { "✦" } else { "•" };
+                let char_str = if boid.generation > avg_gen {
+                    "✦"
+                } else {
+                    "•"
+                };
                 let color = boid.dna.color;
 
                 ctx.print(

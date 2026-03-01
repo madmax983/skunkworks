@@ -1,8 +1,8 @@
+use chimera_lang::prelude::*;
 use locus::Vec2;
 use rand::Rng;
 use ratatui::style::Color;
 use std::f64::consts::TAU;
-use chimera_lang::prelude::*;
 
 #[derive(Clone, Debug)]
 pub struct BoidDna {
@@ -71,7 +71,10 @@ impl Boid {
 
         Self {
             position: Vec2::new(x, y),
-            velocity: Vec2::new(angle.cos() * boid_dna.max_speed, angle.sin() * boid_dna.max_speed),
+            velocity: Vec2::new(
+                angle.cos() * boid_dna.max_speed,
+                angle.sin() * boid_dna.max_speed,
+            ),
             acceleration: Vec2::zero(),
             dna: boid_dna,
             chimera_dna,

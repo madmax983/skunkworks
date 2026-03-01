@@ -51,15 +51,18 @@ impl DoublePendulum {
         let num1 = -self.g * (2.0 * self.m1 + self.m2) * self.a1.sin();
         let num2 = -self.m2 * self.g * (self.a1 - 2.0 * self.a2).sin();
         let num3 = -2.0 * self.a2.sin() * self.m2;
-        let num4 = self.a2_v * self.a2_v * self.r2 + self.a1_v * self.a1_v * self.r1 * (self.a1 - self.a2).cos();
-        let den = self.r1 * (2.0 * self.m1 + self.m2 - self.m2 * (2.0 * self.a1 - 2.0 * self.a2).cos());
+        let num4 = self.a2_v * self.a2_v * self.r2
+            + self.a1_v * self.a1_v * self.r1 * (self.a1 - self.a2).cos();
+        let den =
+            self.r1 * (2.0 * self.m1 + self.m2 - self.m2 * (2.0 * self.a1 - 2.0 * self.a2).cos());
         let a1_a = (num1 + num2 + num3 * num4) / den;
 
         let num1_2 = 2.0 * (self.a1 - self.a2).sin();
         let num2_2 = self.a1_v * self.a1_v * self.r1 * (self.m1 + self.m2);
         let num3_2 = self.g * (self.m1 + self.m2) * self.a1.cos();
         let num4_2 = self.a2_v * self.a2_v * self.r2 * self.m2 * (self.a1 - self.a2).cos();
-        let den_2 = self.r2 * (2.0 * self.m1 + self.m2 - self.m2 * (2.0 * self.a1 - 2.0 * self.a2).cos());
+        let den_2 =
+            self.r2 * (2.0 * self.m1 + self.m2 - self.m2 * (2.0 * self.a1 - 2.0 * self.a2).cos());
         let a2_a = (num1_2 * (num2_2 + num3_2 + num4_2)) / den_2;
 
         self.a1_v += a1_a * dt;
