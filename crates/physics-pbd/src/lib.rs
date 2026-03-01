@@ -100,6 +100,14 @@ impl Default for PbdSystem {
 }
 
 impl PbdSystem {
+    /// Creates a new, empty physics system.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use physics_pbd::PbdSystem;
+    /// let system = PbdSystem::new();
+    /// ```
     pub fn new() -> Self {
         Self {
             particles: Vec::new(),
@@ -196,7 +204,8 @@ impl PbdSystem {
 
     /// Pins a particle to a specific position.
     ///
-    /// # Example
+    /// # Examples
+    ///
     /// ```
     /// use physics_pbd::PbdSystem;
     /// use glam::Vec3;
@@ -219,11 +228,17 @@ impl PbdSystem {
     /// # Panics
     /// Panics if any constraint references a particle index that does not exist.
     ///
-    /// # Example
+    /// # Examples
     /// ```
     /// use physics_pbd::PbdSystem;
+    /// use glam::Vec3;
     ///
     /// let mut system = PbdSystem::new();
+    /// let p1 = system.add_particle(Vec3::ZERO, 1.0);
+    /// let p2 = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
+    /// system.add_distance_constraint(p1, p2, 0.5);
+    ///
+    /// // Advance the simulation by 0.016 seconds (approx 60 FPS) with 10 solver iterations
     /// system.step(0.016, 10);
     /// ```
     pub fn step(&mut self, dt: f32, iterations: usize) {
