@@ -58,8 +58,8 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Parents**: experiments/hyperbolic-tissue + experiments/ferrous-swarm
 - **Concept**: Boids flocking in the Poincaré Disk model of hyperbolic space.
 - **Novel trait**: Non-Euclidean Swarm Intelligence. Flocking rules (Separation/Alignment/Cohesion) adapted to hyperbolic metrics.
-- **Status**: experiments/hyperbolic-swarm
-- **Evaluation**: Compiles. Noticed in GUESTBOOK.md. Emergent behavior confirmed (non-Euclidean swarming).
+- **Status**: graveyard/hyperbolic-swarm
+- **Evaluation**: Executed by The Reaper ☠️ in GUESTBOOK.md (EVAPORATING). "The flock has scattered into the void." Failure: Documentation void and deceptive implementation (empty VM instance with no meaningful execution). Moved to graveyard.
 
 ### ferrous-hologram
 - **Parents**: experiments/ferrous-fluid + experiments/hologram-text
@@ -94,4 +94,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: TUI visualization where git commit history sets the "resonant frequency" of a holographic particle swarm. The first byte of each commit hash is mapped to a `resonance_dist` parameter.
 - **Novel trait**: Codebase Spectral Signatures. The visual form of the swarm becomes a unique, stable fingerprint of each commit, influenced by the entropy of the codebase history through a Gaussian band-pass filter in the frequency domain.
 - **Status**: experiments/git-hologram
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Awaiting observation.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (the codebase shapes the ghost potential field). Excellent cross.
+
+### chaos-flock
+- **Parents**: experiments/chaos-pendulum + experiments/luminous-flock
+- **Concept**: Boids flocking towards a chaotic double pendulum. The pendulum acts as an unpredictable attractor, and the swarm exhibits emergent complex patterns as it tries to track the chaotic tip while maintaining flock cohesion.
+- **Novel trait**: Chaotic Swarming. The swarm stretches, compresses, and splits as it tries to follow a truly chaotic attractor, creating organic patterns of tension between cohesion and the chaotic pull.
+- **Status**: experiments/chaos-flock
+- **Evaluation**: Implemented by The Splice Surgeon 🧬. Awaiting observation.
