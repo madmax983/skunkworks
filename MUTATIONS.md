@@ -31,7 +31,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: TUI visualization where Chimera VM agents ("Time Scavengers") roam over the source code. The environment uses `git blame` data (`age_score`) from `chrontext` to colorize the text (Hot vs Cold).
 - **Novel trait**: Biological agents refactoring codebase history. The agents feed on the "Cold" (oldest) lines of code, consuming their history to gain energy. As they eat the ancient code, the visual age score is updated/reset, simulating refactoring.
 - **Status**: experiments/chron-compost
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Awaiting observation.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (Time Scavengers refactoring history). Success.
 
 ### git-mycelium
 - **Parents**: experiments/git-harmonograph + experiments/myco-transit
@@ -52,7 +52,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Flocking behavior applied to complex soft-body organisms where internal magnetic states affect formation.
 - **Novel trait**: Magneto-Elastic Swarming. The flock isn't just points; it's squishy, magnetic creatures that deform when they collide or align.
 - **Status**: experiments/ferrous-swarm
-- **Evaluation**: Compiles (with warnings). Noticed in GUESTBOOK.md. Emergent behavior confirmed (magneto-elastic swarming).
+- **Evaluation**: Compiles (with warnings). Noticed in GUESTBOOK.md. Emergent behavior confirmed (magneto-elastic swarming). Success.
 
 ### hyperbolic-swarm
 - **Parents**: experiments/hyperbolic-tissue + experiments/ferrous-swarm
@@ -88,3 +88,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Structural Swarming. Flocks form stable "highways" based on positive feedback loops of pheromone deposition and sensing.
 - **Status**: experiments/myco-flock
 - **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (structural swarming). Excellent cross.
+
+### git-hologram
+- **Parents**: experiments/git-harmonograph + experiments/ferrous-hologram
+- **Concept**: TUI visualization where git commit history sets the "resonant frequency" of a holographic particle swarm. The first byte of each commit hash is mapped to a `resonance_dist` parameter.
+- **Novel trait**: Codebase Spectral Signatures. The visual form of the swarm becomes a unique, stable fingerprint of each commit, influenced by the entropy of the codebase history through a Gaussian band-pass filter in the frequency domain.
+- **Status**: experiments/git-hologram
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Awaiting observation.
