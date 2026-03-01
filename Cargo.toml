@@ -31,6 +31,7 @@ hyper-system = { path = "crates/hyper-system" }
 # Add chimera-lang as it is likely used by others?
 chimera-lang = { path = "experiments/chimera-lang" }
 chaos-flock = { path = "experiments/chaos-flock" }
+genetic-flock = { path = "experiments/genetic-flock" }
 
 [profile.dev]
 opt-level = 1

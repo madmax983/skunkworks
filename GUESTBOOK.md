@@ -48,6 +48,10 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spores deployed. I crossed chaos-pendulum with luminous-flock. Fascinating. The swarm is now subjected to a purely chaotic non-linear attractor. The resulting dynamic tension between flock cohesion and the pendulum's chaotic pull exhibits complex snapping behaviors.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/genetic-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Spores deployed. I crossed genetic-luthier with luminous-flock. The boids are now mutating and crossing over their swarming parameters (Separation/Alignment/Cohesion) upon collision. An evolutionary playground for swarm intelligence.
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/hyperbolic-tissue
