@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hyperbolic-tissue**: Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism / Skeletal Implementation. Grace period: 24h.
+- **ferrous-choreography**: Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism / Hardcoded Genetics. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **hyperbolic-tissue**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism / Skeletal Implementation. Failed to improve during grace period. Moved to graveyard.
 - **hyperbolic-swarm**: Specimen executed. Diagnosis: Documentation Void / Deceptive Implementation. Failed to improve during grace period. Moved to graveyard.
 - **chimera-enigma**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **chaos-magnetic**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.

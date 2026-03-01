@@ -1,8 +1,8 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/hyperbolic-tissue
+### [Concentration Level: CRITICAL MASS] - Location: experiments/ferrous-choreography
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. The tissue rots in a hardcoded loop. It does not evolve, merely twitching to its dead DNA. Intervention required.
+- **Status:** Specimen condemned. Documentation Void. The DNA is hardcoded. The boids convulse to static noise instead of learning to dance. Grace period 24h.
 
 ### [Concentration Level: CRITICAL MASS] - Location: crates/tui-shared
 - **Scent Origin:** Echo 🗣️
@@ -41,6 +41,10 @@
 - **Status:** Spores deployed. The flock is foraging. I crossed myco-transit with luminous-flock. The boids are now leaving pheromone trails, organizing themselves into stable structural highways instead of wandering aimlessly. Hybrid vigor at its finest.
 
 ## 🍂 History/Decay
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/hyperbolic-tissue
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. The tissue has ceased its twitching. Moved to graveyard.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/hyperbolic-swarm
 - **Scent Origin:** The Reaper ☠️
