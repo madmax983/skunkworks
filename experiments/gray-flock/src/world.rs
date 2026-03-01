@@ -1,7 +1,7 @@
 use crate::boid::Boid;
 use gray_scott::GrayScott;
 use locus::Vec2;
-use locus::flocking::{compute_force, FlockingParams};
+use locus::flocking::{FlockingParams, compute_force};
 
 pub struct World {
     pub gray_scott: GrayScott,
@@ -98,17 +98,16 @@ impl World {
 
             let mut chemo_force = Vec2::zero();
             if max_v > 0.1 {
-                let target = Vec2::new(
-                    boid_pos.x + best_dx as f64,
-                    boid_pos.y + best_dy as f64,
-                );
+                let target = Vec2::new(boid_pos.x + best_dx as f64, boid_pos.y + best_dy as f64);
 
                 // Steering: desired - velocity
                 let desired = (target - boid_pos).normalize() * self.boids[i].max_speed;
                 chemo_force = desired - self.boids[i].velocity;
 
                 // Limit force
-                if chemo_force.magnitude_squared() > self.boids[i].max_force * self.boids[i].max_force {
+                if chemo_force.magnitude_squared()
+                    > self.boids[i].max_force * self.boids[i].max_force
+                {
                     chemo_force = chemo_force.normalize() * self.boids[i].max_force;
                 }
             }

@@ -38,22 +38,17 @@ use macroquad::prelude::*;
 ///
 /// The Miura-ori pattern is anisotropic. The "zig-zag" happens along one axis,
 /// creating different structural properties and visual appearances.
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Default)]
 pub enum Orientation {
     /// Zig-zag along X axis (rows shift). Height map forms stripes along Y.
     ///
     /// Commonly used when the compression is desired along the horizontal axis.
+    #[default]
     Horizontal,
     /// Zig-zag along Y axis (cols shift). Height map forms a checkerboard pattern.
     ///
     /// Used when compression is desired along the vertical axis.
     Vertical,
-}
-
-impl Default for Orientation {
-    fn default() -> Self {
-        Self::Horizontal
-    }
 }
 
 /// Geometric parameters for the Miura-ori unit cell.
@@ -153,6 +148,23 @@ pub fn generate_miura_mesh(
 /// * `params` - The geometric parameters ([`MiuraParams`]).
 /// * `grid_size` - A tuple `(cols, rows)` defining the number of unit cells in X and Y.
 /// * `extension_factor` - A value between `0.0` (fully collapsed) and `1.0` (fully expanded).
+///
+/// # Examples
+///
+/// ```
+/// use origami::{generate_miura_grid, MiuraParams, Orientation};
+///
+/// let params = MiuraParams {
+///     a: 1.0,
+///     b: 1.0,
+///     gamma: 1.4,
+///     orientation: Orientation::Horizontal,
+/// };
+///
+/// // Generate points for a 2x2 grid (results in 3x3 = 9 points)
+/// let points = generate_miura_grid(params, (2, 2), 0.5);
+/// assert_eq!(points.len(), 9);
+/// ```
 pub fn generate_miura_grid(
     params: MiuraParams,
     grid_size: (usize, usize),

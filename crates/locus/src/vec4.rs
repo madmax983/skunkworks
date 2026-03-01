@@ -111,6 +111,19 @@ impl Vec4 {
     }
 
     /// Subtracts another vector from this one.
+    ///
+    /// This is useful for finding the direction and distance from one point to another.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::vec4::Vec4;
+    /// let v1 = Vec4::new(1.0, 2.0, 3.0, 4.0);
+    /// let v2 = Vec4::new(1.0, 1.0, 1.0, 1.0);
+    /// let diff = v1.sub(v2);
+    /// assert_eq!(diff.x, 0.0);
+    /// assert_eq!(diff.w, 3.0);
+    /// ```
     pub fn sub(&self, other: Vec4) -> Self {
         Self::new(
             self.x - other.x,
@@ -124,11 +137,29 @@ impl Vec4 {
     ///
     /// This is faster than `length()` as it avoids the square root operation.
     /// Useful for comparisons.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::vec4::Vec4;
+    /// let v = Vec4::new(1.0, 1.0, 1.0, 1.0);
+    /// // 1^2 + 1^2 + 1^2 + 1^2 = 4
+    /// assert_eq!(v.length_squared(), 4.0);
+    /// ```
     pub fn length_squared(&self) -> f32 {
         self.x * self.x + self.y * self.y + self.z * self.z + self.w * self.w
     }
 
     /// Calculates the length (magnitude) of the vector.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::vec4::Vec4;
+    /// let v = Vec4::new(0.0, 3.0, 0.0, 4.0);
+    /// // sqrt(3^2 + 4^2) = 5
+    /// assert_eq!(v.length(), 5.0);
+    /// ```
     pub fn length(&self) -> f32 {
         self.length_squared().sqrt()
     }
