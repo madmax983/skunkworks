@@ -29,25 +29,49 @@ impl Eq for Value {}
 #[allow(clippy::derived_hash_with_manual_eq)]
 impl std::hash::Hash for Value {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        std::mem::discriminant(self).hash(state);
-        match self {
-            Value::Int(i) => i.hash(state),
-            Value::Str(s) => s.hash(state),
-            Value::Junction(t, vals) => {
-                t.hash(state);
-                vals.hash(state);
-            }
-            Value::Superposition(states) => {
-                for (v, p) in states {
-                    v.hash(state);
-                    p.to_bits().hash(state);
+        // Use an iterative approach with a stack to prevent stack overflow on deeply nested values
+        let mut stack = vec![self];
+
+        while let Some(current) = stack.pop() {
+            std::mem::discriminant(current).hash(state);
+            match current {
+                Value::Int(i) => i.hash(state),
+                Value::Str(s) => s.hash(state),
+                Value::Junction(t, vals) => {
+                    t.hash(state);
+                    // Hash the length to distinguish between e.g. Junction(Any, [A, B]) and Junction(Any, [A, B, C])
+                    vals.len().hash(state);
+                    // Push in reverse order so they are popped and hashed in original order
+                    for v in vals.iter().rev() {
+                        stack.push(v);
+                    }
                 }
-            }
-            Value::Symbol(id) => id.hash(state),
-            Value::Color(r, g, b) => {
-                r.hash(state);
-                g.hash(state);
-                b.hash(state);
+                Value::Superposition(states) => {
+                    states.len().hash(state);
+                    // Since Superposition contains pairs (Value, f64), we hash the probability immediately
+                    // and push the value onto the stack. We'll push in reverse order so they are processed in order.
+                    // Note: This changes the hash order slightly compared to the recursive version where
+                    // v.hash() happens before p.hash(). Since `hash` just updates the hasher state, doing it in
+                    // a different order is fine as long as it's deterministic. But to be safe and match the old logic
+                    // as closely as possible, we could push a wrapper, or just accept the slight difference.
+                    // We will just hash the probability and then push the value.
+                    // However, we want the sequence to be robust.
+                    // Actually, since we need to hash `p` AFTER `v` to exactly match old behavior:
+                    // In old code: for (v, p) in states { v.hash(state); p.to_bits().hash(state); }
+                    // To exactly match this iteratively without a custom enum for the stack is hard.
+                    // Let's just use the iterative order: we hash `p` now and push `v`, meaning `p` is hashed BEFORE `v`.
+                    // This is perfectly fine for a Hash implementation as long as it's consistent.
+                    for (v, p) in states.iter().rev() {
+                        p.to_bits().hash(state);
+                        stack.push(v);
+                    }
+                }
+                Value::Symbol(id) => id.hash(state),
+                Value::Color(r, g, b) => {
+                    r.hash(state);
+                    g.hash(state);
+                    b.hash(state);
+                }
             }
         }
     }

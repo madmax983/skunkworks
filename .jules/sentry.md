@@ -39,3 +39,7 @@
 ## [Git Timestamp Panic]
 **Learning:** Using `unwrap()` on `chrono::Utc.timestamp_opt()` with a 64-bit git commit timestamp can panic if the timestamp is out-of-bounds, causing history parsing to crash.
 **Action:** Always use `.single().unwrap_or_else(...)` or a safe fallback when parsing external timestamp data.
+
+**[Hash Trait Stack Overflow on Deeply Nested Values]**
+**Learning:** Implementing `Hash` using recursion on heavily-nested recursive types like `Value::Junction` and `Value::Superposition` is dangerous. When these inputs are passed in, standard recursion easily exhausts the stack, leading to immediate program abortion (`fatal runtime error: stack overflow`).
+**Action:** Always rewrite `std::hash::Hash` implementations iteratively using a `Vec` as a stack for deeply nested recursive variants to ensure stable operations and prevent stack overflow panics.
