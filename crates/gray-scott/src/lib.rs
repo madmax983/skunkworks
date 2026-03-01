@@ -1,6 +1,45 @@
+//! # Gray-Scott Reaction-Diffusion
+//!
+//! A high-performance simulation of the Gray-Scott reaction-diffusion system.
+//!
+//! This crate provides the [`GrayScott`] struct, which simulates two virtual
+//! chemicals (U and V) diffusing and reacting on a 2D grid. Depending on the
+//! feed and kill rates, this system can generate complex, life-like patterns
+//! such as spots, stripes, and dividing cells.
+//!
+//! ## Core Mechanism
+//!
+//! The simulation models two equations:
+//!
+//! - `dU/dt = D_u * Laplace(U) - U * V^2 + f * (1 - U)`
+//! - `dV/dt = D_v * Laplace(V) + U * V^2 - (f + k) * V`
+//!
+//! Where:
+//! - `D_u, D_v`: Diffusion rates for chemicals U and V.
+//! - `Laplace()`: The Laplacian operator (calculated via a 3x3 convolution kernel).
+//! - `U * V^2`: The reaction where two V molecules and one U molecule turn into three V molecules.
+//! - `f`: Feed rate (replenishes U).
+//! - `k`: Kill rate (removes V).
+
 #[cfg(feature = "parallel")]
 use rayon::prelude::*;
 
+/// A Reaction-Diffusion simulation based on the Gray-Scott model.
+///
+/// Simulates two virtual chemicals (U and V) reacting and diffusing on a 2D grid.
+///
+/// # Examples
+///
+/// ```
+/// use gray_scott::GrayScott;
+///
+/// let mut gs = GrayScott::new(100, 100);
+/// gs.add_chemical(50, 50, 1.0);
+///
+/// for _ in 0..10 {
+///     gs.update(0.055, 0.062, 1.0);
+/// }
+/// ```
 pub struct GrayScott {
     width: usize,
     height: usize,
@@ -8,11 +47,24 @@ pub struct GrayScott {
     v: Vec<f32>,
     next_u: Vec<f32>,
     next_v: Vec<f32>,
+    /// Diffusion rate for chemical U
     pub diff_u: f32,
+    /// Diffusion rate for chemical V
     pub diff_v: f32,
 }
 
 impl GrayScott {
+    /// Creates a new Gray-Scott simulation with the given dimensions.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gray_scott::GrayScott;
+    ///
+    /// let gs = GrayScott::new(100, 100);
+    /// assert_eq!(gs.width(), 100);
+    /// assert_eq!(gs.height(), 100);
+    /// ```
     pub fn new(width: usize, height: usize) -> Self {
         let size = width * height;
         Self {
@@ -44,10 +96,21 @@ impl GrayScott {
         &self.v
     }
 
+    /// Converts a 2D coordinate into a 1D index for the flat vectors.
     pub fn get_index(&self, x: usize, y: usize) -> usize {
         y * self.width + x
     }
 
+    /// Adds chemical V at the given coordinates, capped at 1.0.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gray_scott::GrayScott;
+    ///
+    /// let mut gs = GrayScott::new(10, 10);
+    /// gs.add_chemical(5, 5, 0.5);
+    /// ```
     pub fn add_chemical(&mut self, x: usize, y: usize, amount: f32) {
         if x >= self.width || y >= self.height {
             return;
@@ -63,6 +126,18 @@ impl GrayScott {
     /// * `feed`: The feed rate (f) - adds U.
     /// * `kill`: The kill rate (k) - removes V.
     /// * `dt`: Delta time.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gray_scott::GrayScott;
+    ///
+    /// let mut gs = GrayScott::new(10, 10);
+    /// gs.add_chemical(5, 5, 1.0); // Seed with V chemical
+    ///
+    /// // Update simulation (f=0.055, k=0.062 are typical parameters for spots)
+    /// gs.update(0.055, 0.062, 1.0);
+    /// ```
     pub fn update(&mut self, feed: f32, kill: f32, dt: f32) {
         #[cfg(feature = "parallel")]
         self.update_parallel(feed, kill, dt);
