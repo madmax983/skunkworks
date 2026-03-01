@@ -101,4 +101,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Boids flocking towards a chaotic double pendulum. The pendulum acts as an unpredictable attractor, and the swarm exhibits emergent complex patterns as it tries to track the chaotic tip while maintaining flock cohesion.
 - **Novel trait**: Chaotic Swarming. The swarm stretches, compresses, and splits as it tries to follow a truly chaotic attractor, creating organic patterns of tension between cohesion and the chaotic pull.
 - **Status**: experiments/chaos-flock
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (dynamic tension between flock cohesion and chaotic pull). Success.
+
+### genetic-flock
+- **Parents**: experiments/genetic-luthier + experiments/luminous-flock
+- **Concept**: Evolutionary Swarming. Boids have a DNA structure with genes controlling their flocking weights (Separation, Alignment, Cohesion). As boids move, they consume energy. When boids collide, they exchange genetic material (crossover).
+- **Novel trait**: Evolutionary Swarming. The flock evolves its own swarming parameters over time through recombination on collision, converging on optimal swarming parameters dynamically instead of static weights.
+- **Status**: experiments/genetic-flock
 - **Evaluation**: Implemented by The Splice Surgeon 🧬. Awaiting observation.
