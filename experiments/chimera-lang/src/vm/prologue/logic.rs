@@ -44,28 +44,22 @@ pub fn apply_logic_runes(
 
     match rune {
         "&" => {
-            if w_sig.is_some() && e_sig.is_some() {
-                if next_signals[y][x].is_none() {
-                    next_signals[y][x] = Some(Value::Int(1));
-                    changes = true;
-                }
+            if w_sig.is_some() && e_sig.is_some() && next_signals[y][x].is_none() {
+                next_signals[y][x] = Some(Value::Int(1));
+                changes = true;
             }
         }
         "|" => {
-            if w_sig.is_some() || e_sig.is_some() {
-                if next_signals[y][x].is_none() {
-                    next_signals[y][x] = Some(Value::Int(1));
-                    changes = true;
-                }
+            if (w_sig.is_some() || e_sig.is_some()) && next_signals[y][x].is_none() {
+                next_signals[y][x] = Some(Value::Int(1));
+                changes = true;
             }
         }
         "+" => {
             // XOR
-            if w_sig.is_some() ^ e_sig.is_some() {
-                if next_signals[y][x].is_none() {
-                    next_signals[y][x] = Some(Value::Int(1));
-                    changes = true;
-                }
+            if w_sig.is_some() ^ e_sig.is_some() && next_signals[y][x].is_none() {
+                next_signals[y][x] = Some(Value::Int(1));
+                changes = true;
             }
         }
         "I" => {

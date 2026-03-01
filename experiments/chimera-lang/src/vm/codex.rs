@@ -15,6 +15,12 @@ pub struct Codex {
     pub spells: Vec<Spell>,
 }
 
+impl Default for Codex {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Codex {
     pub fn new() -> Self {
         Self {

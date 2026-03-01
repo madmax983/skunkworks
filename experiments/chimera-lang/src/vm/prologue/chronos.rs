@@ -35,7 +35,7 @@ pub fn apply_chronos_runes(
         "s" => {
             // Sporulate (Save): Input West -> Self History. Output West -> Self.
             if let Some(val) = w_sig {
-                let queue = history.entry((y, x)).or_insert_with(VecDeque::new);
+                let queue = history.entry((y, x)).or_default();
                 queue.push_back(val.clone());
                 // Limit history size to prevent memory explosion
                 if queue.len() > 50 {
@@ -74,47 +74,44 @@ pub fn apply_chronos_runes(
 }
 
 pub fn apply_chronos_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
-    match rune {
-        "c" => {
-            // Prophecy: West (Strand Index) -> Simulate -> South (1=Death, 0=Life)
-            if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
-                if let Some(sig) = &vm.prologue_state.signal_grid[wy][wx] {
-                    if let Some(s_idx) = val_to_idx(sig) {
-                        if s_idx < vm.dna.helix.strands.len() {
-                            // Clone VM for simulation
-                            let mut sim_vm = vm.clone();
-                            sim_vm.output.clear();
-                            sim_vm.halted = false;
-                            sim_vm.ip = (s_idx, 0);
+    if rune == "c" {
+        // Prophecy: West (Strand Index) -> Simulate -> South (1=Death, 0=Life)
+        if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+            if let Some(sig) = &vm.prologue_state.signal_grid[wy][wx] {
+                if let Some(s_idx) = val_to_idx(sig) {
+                    if s_idx < vm.dna.helix.strands.len() {
+                        // Clone VM for simulation
+                        let mut sim_vm = vm.clone();
+                        sim_vm.output.clear();
+                        sim_vm.halted = false;
+                        sim_vm.ip = (s_idx, 0);
 
-                            // Limit recursion
-                            if sim_vm.recursion_depth < crate::vm::MAX_SIMULATION_DEPTH {
-                                sim_vm.recursion_depth += 1;
-                                let max_ticks = 100;
-                                for _ in 0..max_ticks {
-                                    sim_vm.step();
-                                    if sim_vm.halted || sim_vm.energy <= 0 {
-                                        break;
-                                    }
+                        // Limit recursion
+                        if sim_vm.recursion_depth < crate::vm::MAX_SIMULATION_DEPTH {
+                            sim_vm.recursion_depth += 1;
+                            let max_ticks = 100;
+                            for _ in 0..max_ticks {
+                                sim_vm.step();
+                                if sim_vm.halted || sim_vm.energy <= 0 {
+                                    break;
                                 }
                             }
+                        }
 
-                            let result = if sim_vm.halted || sim_vm.energy <= 0 {
-                                1
-                            } else {
-                                0
-                            };
+                        let result = if sim_vm.halted || sim_vm.energy <= 0 {
+                            1
+                        } else {
+                            0
+                        };
 
-                            if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
-                                vm.grid[sy][sx] = Value::Int(result);
-                                vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
-                                // Light up
-                            }
+                        if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
+                            vm.grid[sy][sx] = Value::Int(result);
+                            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
+                            // Light up
                         }
                     }
                 }
             }
         }
-        _ => {}
     }
 }

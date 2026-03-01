@@ -8,12 +8,11 @@ use super::nova_sigil;
 use super::oracle;
 use super::{ChimeraVM, MidiEvent, Value, GRID_SIZE};
 use crate::ast::{JunctionType, Nucleotide};
+#[cfg(feature = "resonance")]
+use crate::constants::GOLDEN_FREQUENCIES;
 use crate::opcode::OpCode;
 use rand::Rng;
 use std::collections::HashMap;
-
-#[cfg(feature = "resonance")]
-const GOLDEN_FREQUENCIES: [f32; 4] = [161.8, 261.6, 432.0, 528.0];
 
 fn char_to_val(c: char) -> Option<i64> {
     match c {
@@ -489,12 +488,11 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         for org in &vm.organelles {
             let (y, x) = org.context_loc;
             let idx = y * GRID_SIZE + x;
-            if idx < vm.audio_snapshot.pressure.len() {
-                if vm.audio_snapshot.pressure[idx].abs() > 0.8 {
-                    ctx.mutation_requests.push(MutationRequest {
-                        strand_idx: org.ip.0,
-                    });
-                }
+            if idx < vm.audio_snapshot.pressure.len() && vm.audio_snapshot.pressure[idx].abs() > 0.8
+            {
+                ctx.mutation_requests.push(MutationRequest {
+                    strand_idx: org.ip.0,
+                });
             }
         }
 
@@ -529,28 +527,28 @@ pub fn process_signals(vm: &mut ChimeraVM) {
     }
 
     for clone_req in ctx.phage_clones {
-        if clone_req.strand_idx < vm.dna.helix.strands.len() {
-            if vm.dna.helix.strands.len() < crate::vm::MAX_STRANDS {
-                let new_strand = vm.dna.helix.strands[clone_req.strand_idx].clone();
-                vm.dna.helix.strands.push(new_strand);
-                vm.telomeres.push(50);
-                #[cfg(feature = "cortex")]
-                {
-                    vm.activation_levels.push(0);
-                    vm.synapse_map.push(Vec::new());
-                }
-                let new_idx = vm.dna.helix.strands.len() - 1;
-                vm.cladistics.register_strand(
-                    new_idx,
-                    Some(clone_req.strand_idx),
-                    vm.tick_counter,
-                    "PhageInfection".to_string(),
-                );
-                vm.output.push(format!(
-                    "PHAGE: Injected strand {} as {}",
-                    clone_req.strand_idx, new_idx
-                ));
+        if clone_req.strand_idx < vm.dna.helix.strands.len()
+            && vm.dna.helix.strands.len() < crate::vm::MAX_STRANDS
+        {
+            let new_strand = vm.dna.helix.strands[clone_req.strand_idx].clone();
+            vm.dna.helix.strands.push(new_strand);
+            vm.telomeres.push(50);
+            #[cfg(feature = "cortex")]
+            {
+                vm.activation_levels.push(0);
+                vm.synapse_map.push(Vec::new());
             }
+            let new_idx = vm.dna.helix.strands.len() - 1;
+            vm.cladistics.register_strand(
+                new_idx,
+                Some(clone_req.strand_idx),
+                vm.tick_counter,
+                "PhageInfection".to_string(),
+            );
+            vm.output.push(format!(
+                "PHAGE: Injected strand {} as {}",
+                clone_req.strand_idx, new_idx
+            ));
         }
     }
 
@@ -1132,9 +1130,7 @@ fn exec_laser(vm: &ChimeraVM, y: usize, x: usize, ctx: &mut SignalContext) {
                         dx = -old_dy;
                     } else if s == "\\" {
                         // Reflect \: (0,1)->(1,0), (0,-1)->(-1,0), (1,0)->(0,1), (-1,0)->(0,-1)
-                        let old_dy = dy;
-                        dy = dx;
-                        dx = old_dy;
+                        std::mem::swap(&mut dy, &mut dx);
                     }
                 }
             } else {

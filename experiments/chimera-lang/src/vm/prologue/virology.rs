@@ -18,11 +18,9 @@ pub fn apply_virology_runes(
     match rune {
         "v" | "i" | "a" => {
             // Virus/Infect/Antibody: West (Trigger) -> Self (Active)
-            if w_sig.is_some() {
-                if next_signals[y][x].is_none() {
-                    next_signals[y][x] = Some(Value::Int(1));
-                    changes = true;
-                }
+            if w_sig.is_some() && next_signals[y][x].is_none() {
+                next_signals[y][x] = Some(Value::Int(1));
+                changes = true;
             }
         }
         _ => {}

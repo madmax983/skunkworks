@@ -15,6 +15,12 @@ struct Column {
     len: usize,
 }
 
+impl Default for MatrixRain {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl MatrixRain {
     pub fn new() -> Self {
         Self {

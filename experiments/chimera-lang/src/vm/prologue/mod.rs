@@ -1017,14 +1017,12 @@ fn apply_sink_rune(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
             }
         }
 
-        if triggered {
-            if vm.ip.0 != strand_idx {
-                vm.context_loc = (y, x);
-                vm.interrupt(strand_idx);
-                vm.output
-                    .push(format!("RUNECRAFT: Executed Custom Rune '{}'", rune));
-                vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
-            }
+        if triggered && vm.ip.0 != strand_idx {
+            vm.context_loc = (y, x);
+            vm.interrupt(strand_idx);
+            vm.output
+                .push(format!("RUNECRAFT: Executed Custom Rune '{}'", rune));
+            vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
         }
         return;
     }
@@ -1645,10 +1643,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 None => continue,
             }
         } else if current_type == "🌀" {
-            match mesmerist::process_mesmerist_logic(vm, &agent, grid_snapshot) {
-                Some(t) => Some(t),
-                None => None,
-            }
+            mesmerist::process_mesmerist_logic(vm, &agent, grid_snapshot).map(|t| t)
         } else if current_type == "⚗" {
             match alchemist::process_alchemist_logic(vm, &agent, grid_snapshot) {
                 Some((updated_agent, t)) => {

@@ -15,17 +15,18 @@ pub fn scan_neural_grid(vm: &mut ChimeraVM) {
     for (y, x) in runes {
         if let Value::Str(s) = &vm.grid[y][x] {
             if s == "♦" {
-                if !vm.neurons.contains_key(&(y, x)) {
-                    vm.neurons.insert((y, x), Neuron::new());
+                if let std::collections::hash_map::Entry::Vacant(e) = vm.neurons.entry((y, x)) {
+                    e.insert(Neuron::new());
                     vm.output
                         .push(format!("NEURAL: New Neuron formed at {},{}", x, y));
                 }
                 active_neurons.insert((y, x));
             } else if s == "•" {
                 // Synapse Rune: Default weight 100 if not present
-                if !vm.prologue_state.registers.contains_key(&(y, x)) {
-                    vm.prologue_state.registers.insert((y, x), Value::Int(100));
-                }
+                vm.prologue_state
+                    .registers
+                    .entry((y, x))
+                    .or_insert(Value::Int(100));
             }
         }
     }
@@ -270,7 +271,7 @@ pub fn integrate_neurons(vm: &mut ChimeraVM) {
 
     let mut inputs = Vec::new();
 
-    for ((y, x), _) in &vm.neurons {
+    for (y, x) in vm.neurons.keys() {
         // Check neighbors
         let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
         let mut sum_input = 0.0;
@@ -320,18 +321,15 @@ pub fn apply_neural_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
         None
     };
 
-    match rune {
-        "🌱" => {
-            // Neural Growth: Reads West (Grammar Rule Name).
-            // Generates blueprint and executes L-System.
-            if let Some(Value::Str(name)) = w_sig {
-                if let Ok(blueprint) = vm.prologue_state.logos_engine.generate(&name) {
-                    execute_neural_l_system(vm, &blueprint, y, x);
-                    vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1)); // Activate
-                }
+    if rune == "🌱" {
+        // Neural Growth: Reads West (Grammar Rule Name).
+        // Generates blueprint and executes L-System.
+        if let Some(Value::Str(name)) = w_sig {
+            if let Ok(blueprint) = vm.prologue_state.logos_engine.generate(&name) {
+                execute_neural_l_system(vm, &blueprint, y, x);
+                vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1)); // Activate
             }
         }
-        _ => {}
     }
 }
 
@@ -386,9 +384,7 @@ fn execute_neural_l_system(vm: &mut ChimeraVM, blueprint: &str, start_y: usize, 
                 {
                     vm.grid[cy][cx] = Value::Str("♦".to_string());
                     // Register new neuron immediately so it works next tick
-                    if !vm.neurons.contains_key(&(cy, cx)) {
-                        vm.neurons.insert((cy, cx), Neuron::new());
-                    }
+                    vm.neurons.entry((cy, cx)).or_insert_with(Neuron::new);
                 }
             }
             'S' => {

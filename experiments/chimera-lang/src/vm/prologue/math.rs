@@ -47,11 +47,9 @@ pub fn apply_math_runes(
         }
         "Q" => {
             if let (Some(Value::Int(w)), Some(Value::Int(e))) = (&w_sig, &e_sig) {
-                if *e != 0 {
-                    if next_signals[y][x].is_none() {
-                        next_signals[y][x] = Some(Value::Int(w.wrapping_div(*e)));
-                        changes = true;
-                    }
+                if *e != 0 && next_signals[y][x].is_none() {
+                    next_signals[y][x] = Some(Value::Int(w.wrapping_div(*e)));
+                    changes = true;
                 }
             }
         }
@@ -81,11 +79,9 @@ pub fn apply_math_runes(
         }
         "%" => {
             if let (Some(Value::Int(w)), Some(Value::Int(e))) = (&w_sig, &e_sig) {
-                if *e != 0 {
-                    if next_signals[y][x].is_none() {
-                        next_signals[y][x] = Some(Value::Int(w % e));
-                        changes = true;
-                    }
+                if *e != 0 && next_signals[y][x].is_none() {
+                    next_signals[y][x] = Some(Value::Int(w % e));
+                    changes = true;
                 }
             }
         }

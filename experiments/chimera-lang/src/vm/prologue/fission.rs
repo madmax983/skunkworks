@@ -96,11 +96,9 @@ pub fn apply_fission_runes(
         "✇" => {
             // Control Rod: Absorbs signal (Do nothing, effectively a Sink for propagation)
             // But we might want to light up self to show absorption
-            if w_sig.is_some() {
-                if next_signals[y][x].is_none() {
-                    next_signals[y][x] = Some(Value::Int(0)); // Absorbed/Inert
-                    changes = true;
-                }
+            if w_sig.is_some() && next_signals[y][x].is_none() {
+                next_signals[y][x] = Some(Value::Int(0)); // Absorbed/Inert
+                changes = true;
             }
         }
         "⌘" => {

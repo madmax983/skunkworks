@@ -24,11 +24,9 @@ pub fn apply_void_runes(
                 None
             };
 
-            if is_empty_signal(&w_sig) {
-                if next_signals[y][x].is_none() {
-                    next_signals[y][x] = Some(Value::Int(1));
-                    changes = true;
-                }
+            if is_empty_signal(&w_sig) && next_signals[y][x].is_none() {
+                next_signals[y][x] = Some(Value::Int(1));
+                changes = true;
             }
         }
         "Ø" => {

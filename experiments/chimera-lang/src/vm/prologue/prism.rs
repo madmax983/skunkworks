@@ -64,11 +64,9 @@ pub fn apply_prism_runes(
                 }
             }
 
-            if !collected.is_empty() {
-                if next_signals[y][x].is_none() {
-                    next_signals[y][x] = Some(Value::Junction(JunctionType::Any, collected));
-                    changes = true;
-                }
+            if !collected.is_empty() && next_signals[y][x].is_none() {
+                next_signals[y][x] = Some(Value::Junction(JunctionType::Any, collected));
+                changes = true;
             }
         }
         "🧬" => {
@@ -127,12 +125,10 @@ pub fn apply_prism_runes(
                             let a = a.trim();
                             if let Ok(n) = a.parse::<i64>() {
                                 Value::Int(n)
+                            } else if a.starts_with('"') && a.ends_with('"') && a.len() >= 2 {
+                                Value::Str(a[1..a.len() - 1].to_string())
                             } else {
-                                if a.starts_with('"') && a.ends_with('"') && a.len() >= 2 {
-                                    Value::Str(a[1..a.len() - 1].to_string())
-                                } else {
-                                    Value::Str(a.to_string())
-                                }
+                                Value::Str(a.to_string())
                             }
                         })
                         .collect();

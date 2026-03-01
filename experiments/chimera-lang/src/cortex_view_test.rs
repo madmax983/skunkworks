@@ -4,7 +4,7 @@ mod tests {
 
     #[test]
     fn test_cortex_view_initialization() {
-        let mut app_state = AppState::new(None);
+        let mut app_state = AppState::new(None, None);
 
         // Default is Genome
         assert_eq!(app_state.view_mode, ViewMode::Genome);

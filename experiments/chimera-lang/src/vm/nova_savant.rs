@@ -297,12 +297,9 @@ fn execute_savant_action(vm: &mut ChimeraVM, organelle: &mut Organelle, action: 
             }
         }
     } else if let Value::Str(s) = action {
-        match s.as_str() {
-            "die" => {
-                organelle.halted = true;
-                vm.output.push("SAVANT: Accepted death".to_string());
-            }
-            _ => {}
+        if s.as_str() == "die" {
+            organelle.halted = true;
+            vm.output.push("SAVANT: Accepted death".to_string());
         }
     }
 }

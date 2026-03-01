@@ -1843,7 +1843,7 @@ fn helix_to_script(helix: &crate::ast::Helix) -> String {
                 s.push('(');
                 for (j, arg) in gene.args.iter().enumerate() {
                     if j > 0 {
-                        s.push_str(" ");
+                        s.push(' ');
                     }
                     s.push_str(&format_nuc(arg, 0));
                 }

@@ -1,3 +1,5 @@
+#[cfg(feature = "resonance")]
+use crate::constants::GOLDEN_FREQUENCIES;
 use crate::tui::state::AppState;
 use crate::vm::ChimeraVM;
 use ratatui::widgets::canvas::{Canvas, Rectangle};
@@ -32,7 +34,7 @@ pub(crate) fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, app_state: &Ap
             #[cfg(feature = "nova")]
             let (freq, amp_res) = vm.resonance_grid[y][x];
             #[cfg(not(feature = "nova"))]
-            let (freq, amp_res) = (0.0, 0.0);
+            let (freq, amp_res) = (0.0_f32, 0.0_f32);
 
             let is_harmonic = if amp_res > 10.0 {
                 GOLDEN_FREQUENCIES.iter().any(|&g| (freq - g).abs() < 5.0)

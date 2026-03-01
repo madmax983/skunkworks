@@ -84,6 +84,7 @@ pub mod ast;
 #[cfg(feature = "resonance")]
 pub mod audio_source;
 pub mod compiler;
+pub mod constants;
 pub mod lisp;
 pub mod matrix_rain;
 pub mod opcode;

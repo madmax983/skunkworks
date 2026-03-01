@@ -216,7 +216,7 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
             }
         }
         OpCode::Emitter => {
-            let (f, y, x) = if _args.len() >= 1 {
+            let (f, y, x) = if !_args.is_empty() {
                 let f = match &_args[0] {
                     Nucleotide::Number(n) => *n,
                     _ => 1,
@@ -243,7 +243,7 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
             }
         }
         OpCode::Receiver => {
-            let (s, y, x) = if _args.len() >= 1 {
+            let (s, y, x) = if !_args.is_empty() {
                 let s = match &_args[0] {
                     Nucleotide::Number(n) => *n,
                     _ => 0,
@@ -271,7 +271,7 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
             }
         }
         OpCode::Latch => {
-            let (state, y, x) = if _args.len() >= 1 {
+            let (state, y, x) = if !_args.is_empty() {
                 let s = match &_args[0] {
                     Nucleotide::Number(n) => *n,
                     _ => 0,

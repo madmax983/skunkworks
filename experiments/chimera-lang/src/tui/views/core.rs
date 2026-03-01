@@ -529,12 +529,10 @@ pub(crate) fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_stat
                             } else {
                                 char_rep = "←".to_string();
                             }
+                        } else if p.vy > 0.0 {
+                            char_rep = "↓".to_string();
                         } else {
-                            if p.vy > 0.0 {
-                                char_rep = "↓".to_string();
-                            } else {
-                                char_rep = "↑".to_string();
-                            }
+                            char_rep = "↑".to_string();
                         }
                     }
                 }

@@ -27,7 +27,7 @@ pub fn process_zeta_agent(
     let (dy, dx) = match &updated_agent.state {
         Value::Junction(_, list) if list.len() >= 2 => {
             if let (Value::Int(dy), Value::Int(dx)) = (&list[0], &list[1]) {
-                (*dy as i64, *dx as i64)
+                ((*dy), (*dx))
             } else {
                 (0, 1)
             }

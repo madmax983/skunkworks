@@ -44,10 +44,8 @@ pub fn apply_chroma_runes(
                 if apply_green_logic(rune, y, x, current_signals, next_signals) {
                     return true;
                 }
-            } else if is_blue {
-                if apply_blue_logic(rune, y, x, current_signals, next_signals) {
-                    return true;
-                }
+            } else if is_blue && apply_blue_logic(rune, y, x, current_signals, next_signals) {
+                return true;
             }
         }
     }

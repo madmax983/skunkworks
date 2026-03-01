@@ -953,7 +953,7 @@ pub(crate) fn render_mutagen(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
                     ctx.draw(&ratatui::widgets::canvas::Line {
                         x1: x2,
                         y1: y,
-                        x2: x2,
+                        x2,
                         y2: y - 2.0,
                         color: Color::Magenta,
                     });
@@ -967,7 +967,7 @@ pub(crate) fn render_mutagen(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
                     ctx.draw(&ratatui::widgets::canvas::Line {
                         x1,
                         y1: y,
-                        x2: x2,
+                        x2,
                         y2: y,
                         color,
                     });

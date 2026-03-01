@@ -43,11 +43,9 @@ pub fn apply_memetic_runes(
                     _ => false,
                 };
 
-                if !is_empty {
-                    if next_signals[y][x] != Some(val.clone()) {
-                        next_signals[y][x] = Some(val.clone());
-                        changes = true;
-                    }
+                if !is_empty && next_signals[y][x] != Some(val.clone()) {
+                    next_signals[y][x] = Some(val.clone());
+                    changes = true;
                 }
             }
         }
@@ -86,11 +84,9 @@ pub fn apply_memetic_runes(
                     true
                 };
 
-                if allow {
-                    if next_signals[y][x] != Some(w_val.clone()) {
-                        next_signals[y][x] = Some(w_val.clone());
-                        changes = true;
-                    }
+                if allow && next_signals[y][x] != Some(w_val.clone()) {
+                    next_signals[y][x] = Some(w_val.clone());
+                    changes = true;
                 }
             }
         }
@@ -141,7 +137,7 @@ pub fn apply_memetic_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {
                         if let Value::Str(s) = &vm.grid[ny][nx] {
                             if best_meme
                                 .as_ref()
-                                .map_or(true, |current| s.len() > current.len())
+                                .is_none_or(|current| s.len() > current.len())
                             {
                                 best_meme = Some(s.clone());
                             }

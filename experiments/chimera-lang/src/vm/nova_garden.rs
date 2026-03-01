@@ -27,6 +27,12 @@ pub struct GardenState {
 }
 
 #[cfg(feature = "nova")]
+impl Default for GardenState {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl GardenState {
     pub fn new() -> Self {
         let mut rules = HashMap::new();
@@ -104,7 +110,7 @@ pub fn exec_harvest(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     vm.topology,
                     cx as i64,
                     cy as i64,
-                    r as i64,
+                    r,
                     |x, y| {
                         if let Value::Int(v) = &vm.grid[y][x] {
                             s.push_str(&v.to_string());
@@ -163,13 +169,13 @@ pub fn exec_evolve(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
             if *current_val > 0 {
                 // Survival
-                let rule = vm.garden.rules.get(&current_val);
-                let count = neighbor_counts.get(&current_val).unwrap_or(&0);
+                let rule = vm.garden.rules.get(current_val);
+                let count = neighbor_counts.get(current_val).unwrap_or(&0);
 
                 let survives = if let Some(r) = rule {
-                    r.survival.contains(&count)
+                    r.survival.contains(count)
                 } else if *current_val == 1 {
-                    [2, 3].contains(&count)
+                    [2, 3].contains(count)
                 } else {
                     false
                 };

@@ -45,21 +45,17 @@ pub fn process_metamorphism(vm: &mut ChimeraVM) {
         let mut changed = false;
 
         // Apply Pressure (Compression)
-        if pressure > pressure_threshold {
-            if compress_strand(strand) {
-                vm.output
-                    .push(format!("METAMORPHISM: Pressure compressed strand {}", idx));
-                changed = true;
-            }
+        if pressure > pressure_threshold && compress_strand(strand) {
+            vm.output
+                .push(format!("METAMORPHISM: Pressure compressed strand {}", idx));
+            changed = true;
         }
 
         // Apply Heat (Expansion)
         // If we just compressed, we skip expansion to avoid immediate undoing (hysteresis)
-        if !changed && heat > heat_threshold {
-            if expand_strand(strand) {
-                vm.output
-                    .push(format!("METAMORPHISM: Heat expanded strand {}", idx));
-            }
+        if !changed && heat > heat_threshold && expand_strand(strand) {
+            vm.output
+                .push(format!("METAMORPHISM: Heat expanded strand {}", idx));
         }
     }
 }

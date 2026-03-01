@@ -169,13 +169,11 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> Option<usize> {
             let buffer_slice = &buffer[len - clen..];
             let chord_slice: Vec<&str> = chord.iter().map(|s| s.as_str()).collect();
             // vm.output.push(format!("DEBUG: Checking {:?} vs {:?}", buffer_slice, chord_slice));
-            if buffer_slice == chord_slice.as_slice() {
-                if *strand_idx < vm.dna.helix.strands.len() {
-                    vm.chorus_buffer.clear();
-                    vm.output
-                        .push(format!("CHORUS: Triggered spell -> Strand {}", strand_idx));
-                    return Some(*strand_idx);
-                }
+            if buffer_slice == chord_slice.as_slice() && *strand_idx < vm.dna.helix.strands.len() {
+                vm.chorus_buffer.clear();
+                vm.output
+                    .push(format!("CHORUS: Triggered spell -> Strand {}", strand_idx));
+                return Some(*strand_idx);
             }
         }
     }
@@ -1339,11 +1337,10 @@ fn exec_verbum_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Optio
         OpCode::Speak => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Str(name) = val {
-                    let word_data = if let Some(word) = vm.verbum_forge.get(&name) {
-                        Some((word.genes.clone(), word.cost))
-                    } else {
-                        None
-                    };
+                    let word_data = vm
+                        .verbum_forge
+                        .get(&name)
+                        .map(|word| (word.genes.clone(), word.cost));
 
                     if let Some((genes, cost)) = word_data {
                         if vm.energy < cost {

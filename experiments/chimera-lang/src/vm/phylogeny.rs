@@ -71,11 +71,9 @@ pub fn exec_phylogeny_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                         match fs::read_dir(&path) {
                             Ok(entries) => {
                                 let mut files = Vec::new();
-                                for entry in entries {
-                                    if let Ok(entry) = entry {
-                                        if let Ok(name) = entry.file_name().into_string() {
-                                            files.push(Value::Str(name));
-                                        }
+                                for entry in entries.flatten() {
+                                    if let Ok(name) = entry.file_name().into_string() {
+                                        files.push(Value::Str(name));
                                     }
                                 }
                                 vm.stack

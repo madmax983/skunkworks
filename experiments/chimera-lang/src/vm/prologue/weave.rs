@@ -18,7 +18,7 @@ pub fn process_shuttle_agent(
             if let (Value::Int(dy), Value::Int(dx), p, u, Value::Int(t)) =
                 (&list[0], &list[1], &list[2], &list[3], &list[4])
             {
-                (*dy as i64, *dx as i64, p.clone(), u.clone(), *t)
+                ((*dy), (*dx), p.clone(), u.clone(), *t)
             } else {
                 (0, 1, Value::Int(0), Value::Int(0), 0)
             }
@@ -27,7 +27,7 @@ pub fn process_shuttle_agent(
             // Backward compatibility for old agents
             if let (Value::Int(dy), Value::Int(dx), p, u) = (&list[0], &list[1], &list[2], &list[3])
             {
-                (*dy as i64, *dx as i64, p.clone(), u.clone(), 0)
+                ((*dy), (*dx), p.clone(), u.clone(), 0)
             } else {
                 (0, 1, Value::Int(0), Value::Int(0), 0)
             }

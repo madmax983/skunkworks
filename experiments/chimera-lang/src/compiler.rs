@@ -80,9 +80,7 @@ fn check_nesting_depth(source: &str, limit: usize) -> Result<()> {
                 }
             }
             ')' | '}' | ']' => {
-                if depth > 0 {
-                    depth -= 1;
-                }
+                depth = depth.saturating_sub(1);
             }
             _ => {}
         }

@@ -25,6 +25,12 @@ pub struct Cladistics {
 }
 
 #[cfg(feature = "nova")]
+impl Default for Cladistics {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Cladistics {
     pub fn new() -> Self {
         Self {

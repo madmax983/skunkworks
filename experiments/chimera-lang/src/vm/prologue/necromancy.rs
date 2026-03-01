@@ -18,11 +18,9 @@ pub fn apply_necromancy_runes(
 
     match rune {
         "†" | "‡" | "Ψ" => {
-            if w_sig.is_some() {
-                if next_signals[y][x].is_none() {
-                    next_signals[y][x] = Some(Value::Int(1));
-                    return true;
-                }
+            if w_sig.is_some() && next_signals[y][x].is_none() {
+                next_signals[y][x] = Some(Value::Int(1));
+                return true;
             }
         }
         _ => {}
