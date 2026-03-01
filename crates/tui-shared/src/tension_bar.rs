@@ -15,7 +15,7 @@ use ratatui::{
 /// # Visual Style
 ///
 /// - **Gradient**: The color shifts dynamically based on the tension value:
-///   - **0.0 - 0.5**: Green → Yellow
+///   - **0.0 - 0.5**: Cyan → Yellow
 ///   - **0.5 - 1.0**: Yellow → Red
 /// - **Precision**: Uses `ratatui`'s partial block symbols (e.g., `▂`, `▃`, `▄`) to represent
 ///   fractional values, allowing for smoother animations than standard full-block bars.
@@ -66,11 +66,11 @@ impl<'a> Widget for TensionBar<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let tension = self.tension.clamp(0.0, 1.0);
 
-        // Gradient Calculation: Green -> Yellow -> Red
+        // Gradient Calculation: Cyan -> Yellow -> Red
         let (r, g, b) = if tension < 0.5 {
-            // Green (0, 255, 0) to Yellow (255, 255, 0)
+            // Cyan (0, 255, 255) to Yellow (255, 255, 0)
             let t = tension * 2.0;
-            ((255.0 * t) as u8, 255, 0)
+            ((255.0 * t) as u8, 255, (255.0 * (1.0 - t)) as u8)
         } else {
             // Yellow (255, 255, 0) to Red (255, 0, 0)
             let t = (tension - 0.5) * 2.0;

@@ -139,7 +139,7 @@ impl<'a> Widget for Button<'a> {
                 (Color::Black, Color::Cyan, Modifier::BOLD) // Brighter blue/cyan
             }
             (ButtonStyle::Primary, ButtonState::Clicked) => {
-                (Color::White, Color::Blue, Modifier::BOLD)
+                (Color::Blue, Color::White, Modifier::BOLD)
             }
 
             // Secondary (Gray)
@@ -163,7 +163,7 @@ impl<'a> Widget for Button<'a> {
                 Modifier::BOLD | Modifier::UNDERLINED,
             ),
             (ButtonStyle::Outline, ButtonState::Clicked) => {
-                (Color::Green, Color::Reset, Modifier::BOLD)
+                (Color::Black, Color::White, Modifier::BOLD)
             }
 
             // Danger (Red)
@@ -174,9 +174,9 @@ impl<'a> Widget for Button<'a> {
                 (Color::White, Color::LightRed, Modifier::BOLD) // Lighter red
             }
             (ButtonStyle::Danger, ButtonState::Clicked) => (
-                Color::Black,
                 Color::Red,
-                Modifier::BOLD | Modifier::REVERSED,
+                Color::White,
+                Modifier::BOLD,
             ),
 
             // Warning (Yellow)
@@ -187,7 +187,7 @@ impl<'a> Widget for Button<'a> {
                 (Color::Black, Color::LightYellow, Modifier::BOLD) // Lighter yellow
             }
             (ButtonStyle::Warning, ButtonState::Clicked) => {
-                (Color::White, Color::Yellow, Modifier::BOLD)
+                (Color::Yellow, Color::Black, Modifier::BOLD)
             }
 
             // Success (Green)
@@ -198,7 +198,7 @@ impl<'a> Widget for Button<'a> {
                 (Color::Black, Color::LightGreen, Modifier::BOLD)
             }
             (ButtonStyle::Success, ButtonState::Clicked) => {
-                (Color::White, Color::Green, Modifier::BOLD)
+                (Color::Green, Color::White, Modifier::BOLD)
             }
         };
 

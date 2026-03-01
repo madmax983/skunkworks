@@ -1,7 +1,7 @@
 use ratatui::{
     buffer::Buffer,
     layout::Rect,
-    style::{Color, Style},
+    style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{Block, Borders, List, ListItem, Widget},
 };
@@ -60,13 +60,13 @@ impl<'a> Widget for LogList<'a> {
             .map(|s| {
                 let s_lower = s.to_lowercase();
                 let (style, prefix) = if s_lower.contains("error") {
-                    (Style::default().fg(Color::Red), "❌ ")
+                    (Style::default().fg(Color::Red).add_modifier(Modifier::BOLD), "❌ ")
                 } else if s_lower.contains("warning") {
                     (Style::default().fg(Color::Yellow), "⚠️ ")
                 } else if s_lower.contains("note") || s_lower.contains("info") {
                     (Style::default().fg(Color::Blue), "ℹ️ ")
                 } else if s_lower.contains("success") {
-                    (Style::default().fg(Color::Green), "✅ ")
+                    (Style::default().fg(Color::Green).add_modifier(Modifier::BOLD), "✅ ")
                 } else {
                     (Style::default(), "")
                 };
