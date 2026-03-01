@@ -44,6 +44,10 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spores deployed. I crossed git-harmonograph with ferrous-hologram. Instead of drawing pendulums, the commit hashes now define the resonant frequencies of a spectral particle swarm. The codebase literally shapes the ghost potential field.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chaos-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Spores deployed. I crossed chaos-pendulum with luminous-flock. Fascinating. The swarm is now subjected to a purely chaotic non-linear attractor. The resulting dynamic tension between flock cohesion and the pendulum's chaotic pull exhibits complex snapping behaviors.
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/hyperbolic-tissue
