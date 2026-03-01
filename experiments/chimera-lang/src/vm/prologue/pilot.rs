@@ -20,7 +20,7 @@ pub fn process_pilot_logic(
     let (mut dy, mut dx, underfoot) = match &updated_agent.state {
         Value::Junction(_, list) if list.len() >= 3 => {
             if let (Value::Int(y), Value::Int(x)) = (&list[0], &list[1]) {
-                (*y as i64, *x as i64, list[2].clone())
+                ((*y), (*x), list[2].clone())
             } else {
                 (0, 1, Value::Int(0))
             }

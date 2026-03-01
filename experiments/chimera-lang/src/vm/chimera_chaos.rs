@@ -9,6 +9,12 @@ pub struct ChimeraChaos {
     pub coupling: f64,
 }
 
+impl Default for ChimeraChaos {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ChimeraChaos {
     pub fn new() -> Self {
         Self {

@@ -817,7 +817,7 @@ pub(crate) fn render_weaver(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSt
         pattern_str
     };
 
-    for (i, c) in display_str.chars().enumerate() {
+    for c in display_str.chars() {
         let style = match c.to_ascii_uppercase() {
             'A' => Style::default().fg(Color::Green),
             'B' => Style::default().fg(Color::Blue),

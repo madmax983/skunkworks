@@ -23,6 +23,12 @@ pub struct FractalState {
     // Let's store in chroma_grid for persistence.
 }
 
+impl Default for FractalState {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl FractalState {
     pub fn new() -> Self {
         Self {

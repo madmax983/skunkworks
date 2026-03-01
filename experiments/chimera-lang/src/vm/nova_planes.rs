@@ -107,19 +107,14 @@ pub fn exec_planes_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                             if let Some(plane) = vm.planes.get_mut(&id) {
                                 plane[y as usize][x as usize] = val;
                             }
+                        } else if vm.planes.len() >= MAX_PLANES {
+                            vm.output.push("Error: Plane limit exceeded".to_string());
                         } else {
-                            if vm.planes.len() >= MAX_PLANES {
-                                vm.output.push("Error: Plane limit exceeded".to_string());
-                            } else {
-                                let plane = vm.planes.entry(id).or_insert(vec![
-                                    vec![
-                                        Value::Int(0);
-                                        GRID_SIZE
-                                    ];
-                                    GRID_SIZE
-                                ]);
-                                plane[y as usize][x as usize] = val;
-                            }
+                            let plane =
+                                vm.planes
+                                    .entry(id)
+                                    .or_insert(vec![vec![Value::Int(0); GRID_SIZE]; GRID_SIZE]);
+                            plane[y as usize][x as usize] = val;
                         }
                     }
                 } else {

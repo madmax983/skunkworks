@@ -23,7 +23,7 @@ pub fn process_splicer_agent(
             if !list.is_empty() {
                 // Split List
                 let head = list[0].clone();
-                let tail = Value::Junction(j_type.clone(), list[1..].to_vec());
+                let tail = Value::Junction(*j_type, list[1..].to_vec());
 
                 // Write Head to North
                 if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {

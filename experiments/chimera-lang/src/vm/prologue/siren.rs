@@ -235,7 +235,7 @@ fn play_note(vm: &mut ChimeraVM, midi_note: i32, state: &mut SirenState, x: usiz
             y,
             frequency: freq,
             strength: state.velocity as f32 / 127.0,
-            duration_ms: (60000 / state.bpm.max(1)) as u64, // Duration based on BPM
+            duration_ms: (60000 / state.bpm.max(1)), // Duration based on BPM
         });
     }
 

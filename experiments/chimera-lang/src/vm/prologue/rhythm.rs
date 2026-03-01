@@ -49,7 +49,7 @@ pub fn apply_rhythm_runes(
             // Clock
             // Emits signal on beat
             let interval = rhythm_state.beat_interval;
-            if interval > 0 && tick % interval == 0 {
+            if interval > 0 && tick.is_multiple_of(interval) {
                 next_signals[y][x] = Some(Value::Int(1));
                 change = true;
             }
@@ -81,7 +81,8 @@ pub fn apply_rhythm_runes(
             if let Some((wy, wx)) = super::normalize_coords(y as i64, x as i64 - 1) {
                 if let Some(val) = &current_signals[wy][wx] {
                     // Parse note
-                    let _freq = match val {
+                    #[allow(unused_variables)]
+                    let freq = match val {
                         Value::Int(n) => *n as f32,
                         _ => 60.0, // Middle C
                     };

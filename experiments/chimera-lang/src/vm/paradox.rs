@@ -59,13 +59,11 @@ impl Paradox {
                     {
                         // Check Prologue signals
                         for row in &vm.prologue_state.signal_grid {
-                            for cell in row {
-                                if let Some(val) = cell {
-                                    if let Value::Str(sig) = val {
-                                        if sig == s {
-                                            found = true;
-                                            break;
-                                        }
+                            for val in row.iter().flatten() {
+                                if let Value::Str(sig) = val {
+                                    if sig == s {
+                                        found = true;
+                                        break;
                                     }
                                 }
                             }

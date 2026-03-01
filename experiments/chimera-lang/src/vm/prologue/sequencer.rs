@@ -22,29 +22,26 @@ pub fn apply_sequencer_runes(
         None
     };
 
-    match rune {
-        "🔍" => {
-            // Read Gene: West (Idx), North (StrandIdx) -> Self (GeneString)
-            if let (Some(w_val), Some(n_val)) = (w_sig, n_sig) {
-                let idx = value_to_index(&w_val);
-                let strand_idx = value_to_index(&n_val);
+    if rune == "🔍" {
+        // Read Gene: West (Idx), North (StrandIdx) -> Self (GeneString)
+        if let (Some(w_val), Some(n_val)) = (w_sig, n_sig) {
+            let idx = value_to_index(&w_val);
+            let strand_idx = value_to_index(&n_val);
 
-                if let (Some(g_idx), Some(s_idx)) = (idx, strand_idx) {
-                    if s_idx < dna.helix.strands.len() {
-                        let strand = &dna.helix.strands[s_idx];
-                        if g_idx < strand.genes.len() {
-                            let gene = &strand.genes[g_idx];
-                            let gene_str = gene_to_string(gene);
-                            if next_signals[y][x].is_none() {
-                                next_signals[y][x] = Some(Value::Str(gene_str));
-                                changes = true;
-                            }
+            if let (Some(g_idx), Some(s_idx)) = (idx, strand_idx) {
+                if s_idx < dna.helix.strands.len() {
+                    let strand = &dna.helix.strands[s_idx];
+                    if g_idx < strand.genes.len() {
+                        let gene = &strand.genes[g_idx];
+                        let gene_str = gene_to_string(gene);
+                        if next_signals[y][x].is_none() {
+                            next_signals[y][x] = Some(Value::Str(gene_str));
+                            changes = true;
                         }
                     }
                 }
             }
         }
-        _ => {}
     }
     changes
 }
@@ -110,22 +107,18 @@ pub fn apply_sequencer_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
 
                 if let (Some(g_idx), Some(s_idx)) = (idx, strand_idx) {
                     let source = format!("strand fragment {{ {} }}", gene_str);
-                    match crate::compiler::compile(&source, None) {
-                        Ok(new_dna) => {
-                            if let Some(temp_strand) = new_dna.helix.strands.first() {
-                                if let Some(new_gene) = temp_strand.genes.first() {
-                                    if s_idx < vm.dna.helix.strands.len() {
-                                        let strand = &mut vm.dna.helix.strands[s_idx];
-                                        if g_idx <= strand.genes.len() {
-                                            strand.genes.insert(g_idx, new_gene.clone());
-                                            vm.prologue_state.signal_grid[y][x] =
-                                                Some(Value::Int(1));
-                                        }
+                    if let Ok(new_dna) = crate::compiler::compile(&source, None) {
+                        if let Some(temp_strand) = new_dna.helix.strands.first() {
+                            if let Some(new_gene) = temp_strand.genes.first() {
+                                if s_idx < vm.dna.helix.strands.len() {
+                                    let strand = &mut vm.dna.helix.strands[s_idx];
+                                    if g_idx <= strand.genes.len() {
+                                        strand.genes.insert(g_idx, new_gene.clone());
+                                        vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
                                     }
                                 }
                             }
                         }
-                        Err(_) => {}
                     }
                 }
             }

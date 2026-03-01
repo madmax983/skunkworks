@@ -2,18 +2,13 @@ use crate::vm::prologue::normalize_coords;
 use crate::vm::ChimeraVM;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, Default)]
 pub enum EpigeneticMark {
+    #[default]
     None,
     Methylated,     // Silenced
     Phosphorylated, // Amplified
     Rotting,        // Decaying (Energy Source for Scavengers)
-}
-
-impl Default for EpigeneticMark {
-    fn default() -> Self {
-        Self::None
-    }
 }
 
 pub fn apply_epigenetic_runes(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize) {

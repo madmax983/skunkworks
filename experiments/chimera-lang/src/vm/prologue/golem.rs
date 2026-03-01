@@ -13,7 +13,7 @@ pub fn process_golem_logic(
     agent: &PrologueAgent,
     grid_snapshot: &[Vec<Value>],
 ) -> Option<(PrologueAgent, Option<(usize, usize)>)> {
-    let mut current_agent = agent.clone();
+    let current_agent = agent.clone();
     let (y, x) = (agent.y, agent.x);
 
     // 1. Read Signal at Heart for Direction

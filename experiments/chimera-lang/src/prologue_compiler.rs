@@ -43,15 +43,12 @@ pub fn compile(
                             let mut entry_inner = entry.into_inner();
                             let key = entry_inner.next().unwrap().as_str();
                             let val = entry_inner.next().unwrap().as_str();
-                            match key {
-                                "mode" => {
-                                    if val == "Orca" {
-                                        orca_mode = Some(true);
-                                    } else if val == "Normal" {
-                                        orca_mode = Some(false);
-                                    }
+                            if key == "mode" {
+                                if val == "Orca" {
+                                    orca_mode = Some(true);
+                                } else if val == "Normal" {
+                                    orca_mode = Some(false);
                                 }
-                                _ => {}
                             }
                         }
                     }
@@ -216,7 +213,7 @@ fn parse_grid_line(line: &str) -> Vec<Value> {
                 }
             }
             row.push(Value::Str(s));
-        } else if c.is_digit(10) || c == '-' {
+        } else if c.is_ascii_digit() || c == '-' {
             // Parse Number or potential single char '-' rune
             // To distinguish '-' (math) from -5 (number), we peek ahead.
             // If '-' is followed by digit, it's a number.
@@ -226,7 +223,7 @@ fn parse_grid_line(line: &str) -> Vec<Value> {
                 let mut temp = chars.clone();
                 temp.next(); // skip '-'
                 if let Some(nc) = temp.peek() {
-                    if nc.is_digit(10) {
+                    if nc.is_ascii_digit() {
                         is_number = true;
                     }
                 }
@@ -238,7 +235,7 @@ fn parse_grid_line(line: &str) -> Vec<Value> {
                 let mut s = String::new();
                 s.push(chars.next().unwrap());
                 while let Some(&next_c) = chars.peek() {
-                    if next_c.is_digit(10) {
+                    if next_c.is_ascii_digit() {
                         s.push(chars.next().unwrap());
                     } else {
                         break;

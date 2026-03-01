@@ -96,7 +96,7 @@ pub fn exec_absorb_geometry(
 
         vm.output
             .push(format!("ABSORB: Created strand {} from geometry", new_idx));
-        vm.energy = vm.energy.saturating_sub(10 + (count as i64 / 2));
+        vm.energy = vm.energy.saturating_sub(10 + (count / 2));
     } else {
         vm.output
             .push("Error: Invalid arguments for absorb_geometry".to_string());

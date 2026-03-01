@@ -194,10 +194,8 @@ fn merge_grids(base: &[Vec<Value>], overlay: &[Vec<Value>]) -> Vec<Vec<Value>> {
     for r in 0..overlay.len() {
         for c in 0..overlay[r].len() {
             let val = &overlay[r][c];
-            if is_alive(val) {
-                if r < h && c < w {
-                    new_grid[r][c] = val.clone();
-                }
+            if is_alive(val) && r < h && c < w {
+                new_grid[r][c] = val.clone();
             }
         }
     }
@@ -230,10 +228,13 @@ fn apply_life_step(grid: &[Vec<Value>]) -> Vec<Vec<Value>> {
                     }
                     let nr = r as i64 + dr;
                     let nc = c as i64 + dc;
-                    if nr >= 0 && nr < h as i64 && nc >= 0 && nc < w as i64 {
-                        if is_alive(&grid[nr as usize][nc as usize]) {
-                            live_neighbors += 1;
-                        }
+                    if nr >= 0
+                        && nr < h as i64
+                        && nc >= 0
+                        && nc < w as i64
+                        && is_alive(&grid[nr as usize][nc as usize])
+                    {
+                        live_neighbors += 1;
                     }
                 }
             }
@@ -245,12 +246,10 @@ fn apply_life_step(grid: &[Vec<Value>]) -> Vec<Vec<Value>> {
                 } else {
                     new_grid[r][c] = Value::Int(0); // Die (Under/Overpopulation)
                 }
+            } else if live_neighbors == 3 {
+                new_grid[r][c] = Value::Int(1); // Reproduce
             } else {
-                if live_neighbors == 3 {
-                    new_grid[r][c] = Value::Int(1); // Reproduce
-                } else {
-                    new_grid[r][c] = Value::Int(0); // Stay Dead
-                }
+                new_grid[r][c] = Value::Int(0); // Stay Dead
             }
         }
     }

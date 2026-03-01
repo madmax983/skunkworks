@@ -65,11 +65,7 @@ pub fn process_reactor(vm: &mut ChimeraVM) {
                         );
 
                         let res = if let Some(sol) = solutions.first() {
-                            if let Some(r) = sol.get("?Result") {
-                                Some(r.clone())
-                            } else {
-                                None
-                            }
+                            sol.get("?Result").cloned()
                         } else {
                             None
                         };

@@ -19,11 +19,9 @@ pub fn apply_mutation(vm: &mut ChimeraVM, strand_idx: usize, gene_idx: usize) {
                         strand.genes[gene_idx].op = op;
                     }
                 }
-            } else {
-                if !strand.genes[gene_idx].args.is_empty() {
-                    let val = rng.gen_range(0..100);
-                    strand.genes[gene_idx].args[0] = Nucleotide::Number(val);
-                }
+            } else if !strand.genes[gene_idx].args.is_empty() {
+                let val = rng.gen_range(0..100);
+                strand.genes[gene_idx].args[0] = Nucleotide::Number(val);
             }
         }
     }
@@ -137,11 +135,9 @@ pub fn apply_mutagen(
         let mut replacements = 0;
 
         for gene in &mut strand.genes {
-            if gene.op == from {
-                if rng.gen_bool(probability.clamp(0.0, 1.0)) {
-                    gene.op = to.clone();
-                    replacements += 1;
-                }
+            if gene.op == from && rng.gen_bool(probability.clamp(0.0, 1.0)) {
+                gene.op = to.clone();
+                replacements += 1;
             }
         }
 

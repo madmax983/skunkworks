@@ -186,7 +186,7 @@ pub(crate) fn render_signals(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
 
             // Background for Execution Trail
             if trail > 0 {
-                let intensity = trail as u8;
+                let intensity = trail;
                 // Fade from white (255) to dark blue
                 style = style.bg(Color::Rgb(0, 0, intensity.min(150)));
             }
@@ -310,10 +310,8 @@ pub(crate) fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &
             {
                 let biome = vm.biome_grid[y][x];
                 let (br, bg, bb) = biome.color();
-                if (br, bg, bb) != (0, 0, 0) {
-                    if style.bg.is_none() {
-                        style = style.bg(Color::Rgb(br, bg, bb));
-                    }
+                if (br, bg, bb) != (0, 0, 0) && style.bg.is_none() {
+                    style = style.bg(Color::Rgb(br, bg, bb));
                 }
             }
 
@@ -1021,7 +1019,7 @@ pub(crate) fn render_elektra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
                 let mut err = dx + dy;
 
                 loop {
-                    if x0 >= 0 && x0 < 16 && y0 >= 0 && y0 < 16 {
+                    if (0..16).contains(&x0) && (0..16).contains(&y0) {
                         overlay.insert(
                             (y0 as usize, x0 as usize),
                             ('⚡', Color::Rgb(color.0, color.1, color.2)),
@@ -1346,12 +1344,10 @@ pub(crate) fn render_hydra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSta
                     } else {
                         ch = "↑".to_string();
                     }
+                } else if wind.1 > 0 {
+                    ch = "→".to_string();
                 } else {
-                    if wind.1 > 0 {
-                        ch = "→".to_string();
-                    } else {
-                        ch = "←".to_string();
-                    }
+                    ch = "←".to_string();
                 }
             }
 

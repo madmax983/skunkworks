@@ -227,7 +227,7 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
 
             // Light interacts with Clouds (Moisture)
             let moisture = vm.moisture_grid[y][x];
-            let cloud_opacity = (moisture as i64).clamp(0, 50); // Up to 50% block
+            let cloud_opacity = moisture.clamp(0, 50); // Up to 50% block
 
             // Blur and decay (95% base + cloud)
             let transmission = 95 - cloud_opacity; // 95% -> 45% transmission relative to input

@@ -43,7 +43,7 @@ pub fn apply_genesis_rune(
 
     if let (Some(Value::Str(op_str)), Some(args_val)) = (&w_sig, &n_sig) {
         // Parse OpCode
-        if let Ok(_) = OpCode::from_str(op_str) {
+        if OpCode::from_str(op_str).is_ok() {
             // Normalize Args into a Junction List
             let args = match args_val {
                 Value::Junction(JunctionType::All, list) => list.clone(),

@@ -24,6 +24,12 @@ pub struct LogosEngine {
     pub rules: HashMap<String, GrammarRule>,
 }
 
+impl Default for LogosEngine {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl LogosEngine {
     pub fn new() -> Self {
         Self {

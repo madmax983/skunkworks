@@ -28,6 +28,12 @@ pub struct Neuron {
     pub stdp_window: u64,
 }
 
+impl Default for Neuron {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Neuron {
     pub fn new() -> Self {
         Self {
@@ -87,11 +93,9 @@ impl Neuron {
         // Decay injected current to prevent accumulation without input
         self.i_inj *= 0.99;
 
-        if self.v > 0.0 {
-            if tick > self.last_spike + 20 {
-                self.last_spike = tick;
-                return true;
-            }
+        if self.v > 0.0 && tick > self.last_spike + 20 {
+            self.last_spike = tick;
+            return true;
         }
         false
     }
@@ -107,8 +111,10 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
                 if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
                     if vm.is_valid_coord(y, x) {
                         let coord = (y as usize, x as usize);
-                        if !vm.neurons.contains_key(&coord) {
-                            vm.neurons.insert(coord, Neuron::new());
+                        if let std::collections::hash_map::Entry::Vacant(e) =
+                            vm.neurons.entry(coord)
+                        {
+                            e.insert(Neuron::new());
                             vm.energy = vm.energy.saturating_sub(20);
                             vm.output
                                 .push(format!("NEUROGENESIS: Created neuron at {},{}", x, y));
@@ -239,7 +245,7 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
                     if vm.is_valid_coord(y, x) {
                         let coord = (y as usize, x as usize);
                         if let Some(neuron) = vm.neurons.get_mut(&coord) {
-                            let channel_idx = (chan.abs() as usize) % 3;
+                            let channel_idx = (chan.unsigned_abs() as usize) % 3;
                             // Sensitivity is scaled by 10.0 (e.g., 10 = 1.0)
                             let sensitivity = sens as f32 / 10.0;
                             let threshold = thresh as f32;

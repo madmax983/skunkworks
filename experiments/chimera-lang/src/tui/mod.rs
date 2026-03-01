@@ -17,8 +17,6 @@ use ratatui::{
 };
 use std::io;
 
-#[allow(dead_code)]
-pub(crate) const GOLDEN_FREQUENCIES: [f32; 4] = [161.8, 261.6, 432.0, 528.0];
 pub(crate) const GRIMOIRE_TEXT: &str = include_str!("../../GRIMOIRE.md");
 
 pub mod state;
@@ -109,7 +107,7 @@ where
     loop {
         // Hot Reload Check
         app_state.last_check_tick = app_state.last_check_tick.wrapping_add(1);
-        if app_state.last_check_tick % 10 == 0 {
+        if app_state.last_check_tick.is_multiple_of(10) {
             if let Some(path) = &app_state.source_path {
                 if let Ok(metadata) = std::fs::metadata(path) {
                     if let Ok(modified) = metadata.modified() {
@@ -3432,10 +3430,9 @@ where
                                     // 8 items
                                     app_state.alchemy_shelf_idx += 1;
                                 }
-                            } else {
-                                if app_state.alchemy_strand_idx + 1 < vm.dna.helix.strands.len() {
-                                    app_state.alchemy_strand_idx += 1;
-                                }
+                            } else if app_state.alchemy_strand_idx + 1 < vm.dna.helix.strands.len()
+                            {
+                                app_state.alchemy_strand_idx += 1;
                             }
                         }
                         ViewMode::Heatmap => {}
@@ -3498,10 +3495,10 @@ where
                         ViewMode::Egregore => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Bestiary => {
-                            if !vm.organelles.is_empty() {
-                                if app_state.selected_organelle_index + 1 < vm.organelles.len() {
-                                    app_state.selected_organelle_index += 1;
-                                }
+                            if !vm.organelles.is_empty()
+                                && app_state.selected_organelle_index + 1 < vm.organelles.len()
+                            {
+                                app_state.selected_organelle_index += 1;
                             }
                         }
                         #[cfg(feature = "biophysics")]
@@ -3675,10 +3672,8 @@ where
                                 if app_state.alchemy_shelf_idx > 0 {
                                     app_state.alchemy_shelf_idx -= 1;
                                 }
-                            } else {
-                                if app_state.alchemy_strand_idx > 0 {
-                                    app_state.alchemy_strand_idx -= 1;
-                                }
+                            } else if app_state.alchemy_strand_idx > 0 {
+                                app_state.alchemy_strand_idx -= 1;
                             }
                         }
                         ViewMode::Heatmap => {}
@@ -4679,9 +4674,7 @@ fn apply_glitch_fx(buffer: &mut ratatui::buffer::Buffer, intensity: f32) {
                         cell.set_char(chars[rng.gen_range(0..chars.len())]);
                     }
                     1 => {
-                        let fg = cell.fg;
-                        cell.fg = cell.bg;
-                        cell.bg = fg;
+                        std::mem::swap(&mut cell.fg, &mut cell.bg);
                     }
                     2 => {
                         cell.fg = Color::DarkGray;

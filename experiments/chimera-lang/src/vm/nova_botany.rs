@@ -212,11 +212,11 @@ pub fn tick_seed(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
 #[cfg(feature = "nova")]
 fn check_rule(c: char, rule_s: &str) -> Option<String> {
     if let Some((lhs, rhs)) = rule_s.split_once('=') {
-        if lhs.trim().chars().next() == Some(c) {
+        if lhs.trim().starts_with(c) {
             return Some(rhs.trim().to_string());
         }
     } else if let Some((lhs, rhs)) = rule_s.split_once("->") {
-        if lhs.trim().chars().next() == Some(c) {
+        if lhs.trim().starts_with(c) {
             return Some(rhs.trim().to_string());
         }
     }
@@ -240,7 +240,7 @@ fn interpret_char(
             if let Value::Junction(_, kv) = pair {
                 if kv.len() >= 2 {
                     if let Value::Str(key) = &kv[0] {
-                        if key.chars().next() == Some(c) {
+                        if key.starts_with(c) {
                             // Found custom mapping
                             vm.grid[cy][cx] = kv[1].clone();
                             // Move forward by default after writing

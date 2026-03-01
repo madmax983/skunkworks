@@ -28,6 +28,12 @@ pub struct VerbumForge {
     pub next_id: usize,
 }
 
+impl Default for VerbumForge {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl VerbumForge {
     pub fn new() -> Self {
         Self {

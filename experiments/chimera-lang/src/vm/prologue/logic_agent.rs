@@ -30,7 +30,7 @@ pub fn process_logic_agent(
         Value::Junction(_, list) if list.len() >= 3 => {
             let goal = list[0].clone();
             if let (Value::Int(dy), Value::Int(dx)) = (&list[1], &list[2]) {
-                (goal, *dy as i64, *dx as i64)
+                (goal, (*dy), (*dx))
             } else {
                 (Value::Str("?".to_string()), 0, 1)
             }

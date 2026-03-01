@@ -172,9 +172,7 @@ pub fn apply_symbiosis_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
                                 let mut w_chars: Vec<char> = wc.genes.chars().collect();
                                 let mut e_chars: Vec<char> = ec.genes.chars().collect();
 
-                                let tmp = w_chars[idx_w];
-                                w_chars[idx_w] = e_chars[idx_e];
-                                e_chars[idx_e] = tmp;
+                                std::mem::swap(&mut w_chars[idx_w], &mut e_chars[idx_e]);
 
                                 wc.genes = w_chars.into_iter().collect();
                                 ec.genes = e_chars.into_iter().collect();

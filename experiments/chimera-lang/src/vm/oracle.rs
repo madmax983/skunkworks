@@ -939,7 +939,9 @@ fn check_dynamic_predicates(
                                         && nx < crate::vm::GRID_SIZE as i64
                                     {
                                         let next = (ny as usize, nx as usize);
-                                        if !came_from.contains_key(&next) {
+                                        if let std::collections::hash_map::Entry::Vacant(e) =
+                                            came_from.entry(next)
+                                        {
                                             let val = &vm.grid[next.0][next.1];
                                             let traversable = match val {
                                                 Value::Int(0) => true,
@@ -947,7 +949,7 @@ fn check_dynamic_predicates(
                                             };
 
                                             if traversable {
-                                                came_from.insert(next, Some(current));
+                                                e.insert(Some(current));
                                                 queue.push_back(next);
                                             }
                                         }

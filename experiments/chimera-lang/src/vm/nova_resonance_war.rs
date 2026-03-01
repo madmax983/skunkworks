@@ -146,7 +146,7 @@ pub fn exec_dampen(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     vm.topology,
                     cx as i64,
                     cy as i64,
-                    radius as i64,
+                    radius,
                     |nx, ny| {
                         let (freq, amp) = vm.resonance_grid[ny][nx];
                         if amp > 0.0 {

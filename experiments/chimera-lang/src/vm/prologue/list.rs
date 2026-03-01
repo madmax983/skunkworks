@@ -28,12 +28,9 @@ pub fn apply_list_runes(
                     }
                 }
             }
-            if !items.is_empty() {
-                if next_signals[y][x].is_none() {
-                    next_signals[y][x] =
-                        Some(Value::Junction(crate::ast::JunctionType::Any, items));
-                    changes = true;
-                }
+            if !items.is_empty() && next_signals[y][x].is_none() {
+                next_signals[y][x] = Some(Value::Junction(crate::ast::JunctionType::Any, items));
+                changes = true;
             }
         }
         "]" => {

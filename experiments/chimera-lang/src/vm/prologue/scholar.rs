@@ -38,11 +38,9 @@ pub fn process_scholar_logic(
                 if let Some((ny, nx)) = move_towards(y, x, by, bx, grid_snapshot) {
                     updated_agent.state = pack_state(xp, 0, by as i64, bx as i64);
                     return Some((updated_agent, Some((ny, nx))));
-                } else {
-                    if distance(y, x, by, bx) <= 1 {
-                        updated_agent.state = pack_state(xp, 1, by as i64, bx as i64); // Switch to Read
-                        return Some((updated_agent, None));
-                    }
+                } else if distance(y, x, by, bx) <= 1 {
+                    updated_agent.state = pack_state(xp, 1, by as i64, bx as i64); // Switch to Read
+                    return Some((updated_agent, None));
                 }
             }
 

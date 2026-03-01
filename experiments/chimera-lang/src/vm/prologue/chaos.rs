@@ -11,23 +11,20 @@ pub fn apply_chaos_runes(
 ) -> bool {
     let mut changes = false;
 
-    match rune {
-        "k" => {
-            // Chaos Source: Emits random value to all neighbors
-            let mut rng = rand::thread_rng();
-            let val = Value::Int(rng.gen_range(0..100));
+    if rune == "k" {
+        // Chaos Source: Emits random value to all neighbors
+        let mut rng = rand::thread_rng();
+        let val = Value::Int(rng.gen_range(0..100));
 
-            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-            for (dy, dx) in neighbors {
-                if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
-                    if next_signals[ny][nx].is_none() {
-                        next_signals[ny][nx] = Some(val.clone());
-                        changes = true;
-                    }
+        let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+        for (dy, dx) in neighbors {
+            if let Some((ny, nx)) = normalize_coords(y as i64 + dy, x as i64 + dx) {
+                if next_signals[ny][nx].is_none() {
+                    next_signals[ny][nx] = Some(val.clone());
+                    changes = true;
                 }
             }
         }
-        _ => {}
     }
     changes
 }

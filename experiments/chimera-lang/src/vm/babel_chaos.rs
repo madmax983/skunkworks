@@ -13,6 +13,12 @@ pub struct BabelState {
     pub all_ops: Vec<OpCode>,
 }
 
+impl Default for BabelState {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl BabelState {
     pub fn new() -> Self {
         Self {
@@ -47,14 +53,14 @@ impl BabelState {
                     if rng.gen_bool(0.5) {
                         format!("({})", rng.gen_range(0..100))
                     } else {
-                        format!("(\"chaos\")")
+                        "(\"chaos\")".to_string()
                     }
                 }
                 OpCode::Jump | OpCode::Brz | OpCode::JumpS | OpCode::BrzS => {
                     format!("({})", rng.gen_range(0..5))
                 }
                 // Default: empty args ()
-                _ => format!("()"),
+                _ => "()".to_string(),
             };
             parts.push(format!("{}{}", op, arg_str));
         }

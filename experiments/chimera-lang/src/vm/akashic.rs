@@ -117,6 +117,12 @@ impl std::fmt::Display for AkashicRecords {
 }
 
 #[cfg(feature = "nova")]
+impl Default for AkashicRecords {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl AkashicRecords {
     pub fn new() -> Self {
         Self::load().unwrap_or_else(|_| Self {
@@ -196,7 +202,7 @@ impl AkashicRecords {
         let content = serde_json::to_string_pretty(self).map_err(|e| e.to_string())?;
 
         if content.len() as u64 > MAX_AKASHIC_SIZE {
-            return Err(format!("Akashic Record limit exceeded"));
+            return Err("Akashic Record limit exceeded".to_string());
         }
 
         let temp_file = format!("{}.tmp", path);

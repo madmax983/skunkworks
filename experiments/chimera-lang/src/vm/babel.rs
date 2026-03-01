@@ -500,7 +500,7 @@ pub fn exec_babel_op(
                                         vm.stack.push(Value::Int(1)); // Success
                                         vm.output.push(format!(
                                             "PERCEIVE: Parsed '{}' -> Strand {}",
-                                            input[..consumed].to_string(),
+                                            &input[..consumed],
                                             new_idx
                                         ));
                                         return Some((new_idx, 0));
@@ -615,7 +615,7 @@ pub fn run_parser(
                             return Ok((Value::Str(pattern.clone()), pattern.len()));
                         }
                     }
-                    return Err(());
+                    Err(())
                 }
                 "Regex" => {
                     if args.len() < 2 {
@@ -631,7 +631,7 @@ pub fn run_parser(
                             }
                         }
                     }
-                    return Err(());
+                    Err(())
                 }
                 "Seq" => {
                     // Variadic Seq
@@ -854,10 +854,8 @@ fn generate_string_depth(parser: &Value, depth: usize) -> String {
                     }
                 }
                 "Opt" => {
-                    if args.len() >= 2 {
-                        if rng.gen_bool(0.5) {
-                            return generate_string_depth(&args[1], depth + 1);
-                        }
+                    if args.len() >= 2 && rng.gen_bool(0.5) {
+                        return generate_string_depth(&args[1], depth + 1);
                     }
                 }
                 _ => {}

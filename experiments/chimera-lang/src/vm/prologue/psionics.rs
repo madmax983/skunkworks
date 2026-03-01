@@ -13,41 +13,38 @@ pub fn apply_psionics_runes(
     grid: &[Vec<Value>],
 ) -> bool {
     let mut changes = false;
-    match rune {
-        "Θ" => {
-            // Theta: Telepathy. Read Remote.
-            // West: Y
-            // North: X
-            let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
-                current_signals[wy][wx].clone()
-            } else {
-                None
-            };
-            let n_sig = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
-                current_signals[ny][nx].clone()
-            } else {
-                None
-            };
+    if rune == "Θ" {
+        // Theta: Telepathy. Read Remote.
+        // West: Y
+        // North: X
+        let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
+            current_signals[wy][wx].clone()
+        } else {
+            None
+        };
+        let n_sig = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+            current_signals[ny][nx].clone()
+        } else {
+            None
+        };
 
-            // println!("Θ at ({}, {}): w_sig={:?}, n_sig={:?}", y, x, w_sig, n_sig);
+        // println!("Θ at ({}, {}): w_sig={:?}, n_sig={:?}", y, x, w_sig, n_sig);
 
-            if let (Some(Value::Int(ry)), Some(Value::Int(rx))) = (w_sig, n_sig) {
-                if let Some((ty, tx)) = normalize_coords(ry, rx) {
-                    let val = grid[ty][tx].clone();
-                    // println!("Θ reading ({}, {}) -> {:?}", ty, tx, val);
-                    if next_signals[y][x].is_none() {
+        if let (Some(Value::Int(ry)), Some(Value::Int(rx))) = (w_sig, n_sig) {
+            if let Some((ty, tx)) = normalize_coords(ry, rx) {
+                let val = grid[ty][tx].clone();
+                // println!("Θ reading ({}, {}) -> {:?}", ty, tx, val);
+                if next_signals[y][x].is_none() {
+                    next_signals[y][x] = Some(val);
+                    changes = true;
+                } else if let Some(existing) = &next_signals[y][x] {
+                    if *existing != val {
                         next_signals[y][x] = Some(val);
                         changes = true;
-                    } else if let Some(existing) = &next_signals[y][x] {
-                        if *existing != val {
-                            next_signals[y][x] = Some(val);
-                            changes = true;
-                        }
                     }
                 }
             }
         }
-        _ => {}
     }
     changes
 }

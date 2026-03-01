@@ -2497,7 +2497,7 @@ impl ChimeraVM {
             let mut rng = rand::thread_rng();
 
             // Throttle message
-            if self.tick_counter % 10 == 0 {
+            if self.tick_counter.is_multiple_of(10) {
                 self.output.push("ENTROPY STORM ACTIVE".to_string());
             }
 

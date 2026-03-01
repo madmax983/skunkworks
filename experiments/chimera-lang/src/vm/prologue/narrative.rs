@@ -43,7 +43,7 @@ pub fn apply_narrative_runes(
                 let themes = [
                     "Hero", "Shadow", "Journey", "Treasure", "Home", "Love", "War", "Time",
                 ];
-                let idx = (seed.abs() as usize) % themes.len();
+                let idx = (seed.unsigned_abs() as usize) % themes.len();
                 let theme = themes[idx];
 
                 let res = Value::Str(theme.to_string());
