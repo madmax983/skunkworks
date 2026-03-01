@@ -26,4 +26,8 @@
 **[Performance]**
 **Learning:** Fixed a `clippy::too_many_arguments` warning by inlining invariants (like squared radii calculations) into an inner loop, which significantly degraded performance on a hot $O(N^2)$ path.
 **Impact:** Hoisting those invariants back out of the loop and grouping them into a single `PrecomputedParams` struct resolved the clippy warning while maintaining the performance optimization.
-**Action:** When fixing clippy warnings involving argument count, always group parameters into an options/context struct rather than pushing computations down into inner hot loops.
+**Action:** When fixing clippy warnings involving argument count, always group parameters into an options/context struct rather than pushing computations down into inner hot loops.**[Avoid Allocation on Full Channel]**\n**Learning:** Checking  on crossbeam channels before creating data payloads avoids unnecessary and expensive heap allocations (, ) when the consumer is lagging.\n**Action:** Always check channel capacity before cloning heavy state payloads intended for telemetry or visualization.
+
+**[Avoid Allocation on Full Channel]**
+**Learning:** Checking `!is_full()` on crossbeam channels before creating data payloads avoids unnecessary and expensive heap allocations (`Vec::clone`, `Vec::to_vec`) when the consumer is lagging.
+**Action:** Always check channel capacity before cloning heavy state payloads intended for telemetry or visualization.

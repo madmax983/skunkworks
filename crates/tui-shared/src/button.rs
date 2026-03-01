@@ -173,11 +173,9 @@ impl<'a> Widget for Button<'a> {
             (ButtonStyle::Danger, ButtonState::Hovered) => {
                 (Color::White, Color::LightRed, Modifier::BOLD) // Lighter red
             }
-            (ButtonStyle::Danger, ButtonState::Clicked) => (
-                Color::Red,
-                Color::White,
-                Modifier::BOLD,
-            ),
+            (ButtonStyle::Danger, ButtonState::Clicked) => {
+                (Color::Red, Color::White, Modifier::BOLD)
+            }
 
             // Warning (Yellow)
             (ButtonStyle::Warning, ButtonState::Normal) => {

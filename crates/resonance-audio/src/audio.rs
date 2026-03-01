@@ -302,19 +302,24 @@ impl AudioModel {
             #[allow(clippy::manual_is_multiple_of)]
             if self.sample_counter % 735 == 0 {
                 // Ignore error if channel is full
-                let _ = self.snapshot_tx.try_send(AudioSnapshot {
-                    pressure: self.grid.u.clone(),
-                    materials: self.grid.materials.clone(),
-                    energy: self.grid.energy_map.clone(),
-                });
+                // Only clone grid if channel can receive it to avoid needless allocations
+                if !self.snapshot_tx.is_full() {
+                    let _ = self.snapshot_tx.try_send(AudioSnapshot {
+                        pressure: self.grid.u.clone(),
+                        materials: self.grid.materials.clone(),
+                        energy: self.grid.energy_map.clone(),
+                    });
+                }
             }
         }
 
         // If recording is enabled, send a copy of the output buffer
         if let Some(tx) = &self.recording_tx {
-            let buffer_copy = output.to_vec();
-            // Ignore error if receiver is dropped or full (if bounded)
-            let _ = tx.try_send(buffer_copy);
+            if !tx.is_full() {
+                let buffer_copy = output.to_vec();
+                // Ignore error if receiver is dropped or full (if bounded)
+                let _ = tx.try_send(buffer_copy);
+            }
         }
     }
 }
