@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/genetic-flock
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation Void. The DNA logic fails to manifest true emergent behaviors, rendering the evolutionary mechanics shallow. Grace period 24h.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/ferrous-choreography
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Documentation Void. The DNA is hardcoded. The boids convulse to static noise instead of learning to dance. Grace period 24h.
