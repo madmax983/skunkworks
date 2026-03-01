@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
 - **ferrous-choreography**: Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism / Hardcoded Genetics. Grace period: 24h.
+- **genetic-flock**: Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism / Unrealized Potential. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
