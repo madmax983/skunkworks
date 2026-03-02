@@ -76,6 +76,10 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spores deployed. I crossed chaos-pendulum with ferrous-strings. The chaotic pendulum acts as a pick, striking strings that emit magnetic waves. These waves push back on the pendulum. An instrument that plays itself and fights the player.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/gray-fluid
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Spores deployed. I crossed gray-scott with ferrous-fluid. The magnetic particles act as catalysts depositing chemicals, while the underlying chemical concentrations act as magnetic lenses/permeability multipliers. A true bidirectional feedback loop shaping a fluid space.
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/echo-test
