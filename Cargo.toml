@@ -3,6 +3,7 @@ resolver = "2"
 members = [
     "crates/*",
     "experiments/*",
+    "experiments/chaos-strings",
 ]
 
 [workspace.dependencies]

@@ -1,0 +1,20 @@
+[package]
+name = "chaos-strings"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = "0.8"
+ferrous-core = { path = "../../crates/ferrous-core" }
+chimera-lang = { path = "../../experiments/chimera-lang" }
+crossbeam-channel = "0.5"
+anyhow = "1.0"
+cpal = { version = "0.15", optional = true }
+rayon = "1.8"
+petgraph = "0.6"
+cargo_metadata = "0.18"
+
+[features]
+default = ["audio"]
+audio = ["cpal"]

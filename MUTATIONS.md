@@ -115,4 +115,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Reaction-Diffusion Swarming. Boids flock inside a complex, dynamic chemical environment and are attracted to the V chemical gradient (chemotaxis), while also depositing V themselves.
 - **Novel trait**: Macroscopic-Microscopic Feedback Loop. The flock shapes the environment that guides it, turning the chemical gradients into structural highways.
 - **Status**: experiments/gray-flock
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (macroscopic-microscopic feedback loop). Success.
+
+### chaos-strings
+- **Parents**: experiments/chaos-pendulum + experiments/ferrous-strings
+- **Concept**: Chaotic Acoustic Feedback. A chaotic double pendulum acts as a pick/bow, striking or bowing strings as it swings across the grid. The strings' vibrations emit magnetic waves onto a shared `Platter` which, in turn, exerts a magnetic drag force back on the pendulum's nodes.
+- **Novel trait**: An unpredictable instrument that influences the player. The chaotic pendulum creates generative music by plucking strings, while the acoustic-magnetic field of the strings pulls and pushes the pendulum's chaotic path, creating a bidirectional feedback loop between chaos and acoustics.
+- **Status**: experiments/chaos-strings
 - **Evaluation**: Implemented by The Splice Surgeon 🧬. Awaiting observation.
