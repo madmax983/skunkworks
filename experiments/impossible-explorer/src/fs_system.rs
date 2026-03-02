@@ -4,7 +4,6 @@ use std::fs;
 use std::path::Path;
 
 pub fn scan_dir(path: &Path) -> Room {
-    let mut room_size = vec3(10.0, 10.0, 10.0);
     let mut portals = Vec::new();
 
     // Count files and subdirs to determine size
@@ -31,7 +30,7 @@ pub fn scan_dir(path: &Path) -> Room {
     // Logarithmic scaling
     let content_factor = (file_count + dir_count) as f32;
     let base_size = 10.0 + content_factor.sqrt() * 2.0;
-    room_size = vec3(base_size, 8.0, base_size); // Fixed height for now
+    let room_size = vec3(base_size, 8.0, base_size); // Fixed height for now
 
     // Re-scan to place portals with known room size
     let mut portal_idx = 0;
