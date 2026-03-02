@@ -1,0 +1,14 @@
+[package]
+name = "gray-fluid"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0"
+crossterm = "0.28"
+ferrous-core = { path = "../../crates/ferrous-core" }
+gray-scott = { path = "../../crates/gray-scott" }
+locus = { path = "../../crates/locus" }
+rand = "0.8"
+ratatui = "0.30"
+tui-shared = { path = "../../crates/tui-shared" }

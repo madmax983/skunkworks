@@ -122,4 +122,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Chaotic Acoustic Feedback. A chaotic double pendulum acts as a pick/bow, striking or bowing strings as it swings across the grid. The strings' vibrations emit magnetic waves onto a shared `Platter` which, in turn, exerts a magnetic drag force back on the pendulum's nodes.
 - **Novel trait**: An unpredictable instrument that influences the player. The chaotic pendulum creates generative music by plucking strings, while the acoustic-magnetic field of the strings pulls and pushes the pendulum's chaotic path, creating a bidirectional feedback loop between chaos and acoustics.
 - **Status**: experiments/chaos-strings
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (bidirectional feedback loop between chaos and acoustics). Success.
+
+### gray-fluid
+- **Parents**: crates/gray-scott + experiments/ferrous-fluid
+- **Concept**: Magnetic Reaction-Diffusion. Magnetic particles move around the space and act as catalysts depositing chemicals, while chemical concentrations act as magnetic lenses/permeability multipliers, creating an emergent bidirectional feedback loop.
+- **Novel trait**: Macroscopic-Microscopic Feedback Loop. The particles shape the chemical environment, while the chemical environment shapes the magnetic force.
+- **Status**: experiments/gray-fluid
 - **Evaluation**: Implemented by The Splice Surgeon 🧬. Awaiting observation.
