@@ -186,7 +186,6 @@ async fn main() {
             }
         }
 
-
         // --- Render ---
         clear_background(BLACK);
 
@@ -242,13 +241,7 @@ async fn main() {
 
         // UI
         draw_text("Chaos Strings", 10.0, 30.0, 30.0, WHITE);
-        draw_text(
-            "Chaotic Pendulum plucks strings",
-            10.0,
-            50.0,
-            20.0,
-            GRAY,
-        );
+        draw_text("Chaotic Pendulum plucks strings", 10.0, 50.0, 20.0, GRAY);
         draw_text(
             "Strings magnetize Platter -> Drag on Pendulum",
             10.0,
