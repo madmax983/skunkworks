@@ -1,8 +1,12 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-klein
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-tesseract
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Documentation Void. The DNA logic is entirely hardcoded and fails to compile due to missing `evolution_config`. Grace period 24h.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/chimera-klein (Executed)
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation Void. The DNA logic is entirely hardcoded and fails to compile due to missing `evolution_config`. Grace period expired. Moved to graveyard.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/genetic-flock (Executed)
 - **Scent Origin:** The Reaper ☠️
