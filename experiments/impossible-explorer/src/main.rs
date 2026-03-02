@@ -5,7 +5,7 @@ mod world;
 use fs_system::scan_dir;
 use macroquad::prelude::*;
 use safe_gl::{clear_depth_buffer, ScopedScissor};
-use world::{Portal, Room};
+use world::Room;
 
 const MOVE_SPEED: f32 = 0.2;
 const LOOK_SPEED: f32 = 0.003;
@@ -33,7 +33,7 @@ impl FirstPersonCamera {
         let mx = mouse_delta.x;
         let my = mouse_delta.y;
 
-        self.yaw += mx * LOOK_SPEED * -1.0;
+        self.yaw += -(mx * LOOK_SPEED);
         self.pitch += my * LOOK_SPEED;
         self.pitch = self.pitch.clamp(-1.5, 1.5);
 

@@ -17,15 +17,6 @@ pub struct Room {
 }
 
 impl Room {
-    pub fn new(path: std::path::PathBuf, size: Vec3, color: Color) -> Self {
-        Self {
-            path,
-            size,
-            color,
-            portals: vec![],
-        }
-    }
-
     pub fn render_transformed(&self, pos: Vec3, rot: Quat) {
         // Floor
         draw_transformed_cube(
@@ -82,8 +73,6 @@ impl Room {
 
         // Render Portal Frames (Wireframe only for now, manual transform tricky for wires)
         for portal in &self.portals {
-            // Transform portal position
-            let p_pos = rot * portal.pos + pos;
             // Rotation of portal frame matches room rotation
             // We can draw lines manually
             // Or just draw small cubes at corners
@@ -97,10 +86,6 @@ impl Room {
                 rot,
             );
         }
-    }
-
-    pub fn render(&self) {
-        self.render_transformed(Vec3::ZERO, Quat::IDENTITY);
     }
 }
 
