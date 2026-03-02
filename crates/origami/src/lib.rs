@@ -116,7 +116,9 @@ pub fn generate_miura_mesh(
         });
     }
 
-    let mut indices = Vec::new();
+    // Optimization: Pre-allocate vector capacity to avoid reallocations.
+    // Each grid cell consists of a quad split into 2 triangles (6 indices).
+    let mut indices = Vec::with_capacity(rows * cols * 6);
     for j in 0..rows {
         for i in 0..cols {
             let v_cols = cols + 1;

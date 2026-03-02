@@ -31,3 +31,7 @@
 **[Avoid Allocation on Full Channel]**
 **Learning:** Checking `!is_full()` on crossbeam channels before creating data payloads avoids unnecessary and expensive heap allocations (`Vec::clone`, `Vec::to_vec`) when the consumer is lagging.
 **Action:** Always check channel capacity before cloning heavy state payloads intended for telemetry or visualization.
+
+**[Performance]**
+**Learning:** Initializing vectors with `Vec::new()` and subsequently pushing items causes multiple reallocations. Pre-allocating the vector using `Vec::with_capacity(size)` if the size is known beforehand significantly improves performance.
+**Action:** Always prefer `Vec::with_capacity` over `Vec::new` when the maximum or exact number of elements is known at initialization.
