@@ -490,7 +490,7 @@ pub(crate) fn render_hologram(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
             }
 
             if app_state.grid_cursor == (x, y) {
-                style = style.add_modifier(Modifier::REVERSED);
+                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
             }
 
             line_spans.push(Span::styled(ch, style));
@@ -655,7 +655,7 @@ pub(crate) fn render_chronos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
             };
 
             if app_state.grid_cursor == (x, y) {
-                style = style.add_modifier(Modifier::REVERSED);
+                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
             }
 
             line_spans.push(Span::styled(ch.to_string(), style));
@@ -772,7 +772,7 @@ pub(crate) fn render_biotic_chaos(f: &mut Frame, vm: &mut ChimeraVM, app_state: 
             style = style.fg(Color::Rgb(cr, cg, cb));
 
             if app_state.grid_cursor == (x, y) {
-                style = style.add_modifier(Modifier::REVERSED);
+                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
             }
 
             let ch = if val < 0.2 {

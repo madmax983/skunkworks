@@ -316,7 +316,7 @@ pub(crate) fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &
             }
 
             if app_state.grid_cursor == (x, y) {
-                style = style.add_modifier(Modifier::REVERSED);
+                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
             }
 
             line_spans.push(Span::styled(ch, style));
@@ -867,7 +867,7 @@ pub(crate) fn render_reactor(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
             }
 
             if app_state.grid_cursor == (x, y) {
-                style = style.add_modifier(Modifier::REVERSED);
+                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
             }
 
             let s = match val {
@@ -1152,7 +1152,7 @@ pub(crate) fn render_elektra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
             };
 
             if app_state.grid_cursor == (x, y) {
-                style = style.add_modifier(Modifier::REVERSED);
+                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
             }
 
             line_spans.push(Span::styled(ch, style));
@@ -1352,7 +1352,7 @@ pub(crate) fn render_hydra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSta
             }
 
             if app_state.grid_cursor == (x, y) {
-                style = style.add_modifier(Modifier::REVERSED);
+                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
             }
 
             line_spans.push(Span::styled(ch, style));
@@ -1425,7 +1425,7 @@ pub(crate) fn render_logos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSta
             }
 
             if app_state.grid_cursor == (x, y) {
-                style = style.add_modifier(Modifier::REVERSED);
+                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
             }
 
             // Truncate to 3 chars for grid alignment
@@ -1631,7 +1631,7 @@ pub(crate) fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
             }
 
             if app_state.grid_cursor == (x, y) {
-                style = style.add_modifier(Modifier::REVERSED);
+                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
             }
 
             line_spans.push(Span::styled(ch, style));

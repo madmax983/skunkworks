@@ -420,7 +420,7 @@ pub(crate) fn render_lexicon(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
             }
 
             if app_state.grid_cursor == (x, y) {
-                style = style.add_modifier(Modifier::REVERSED);
+                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
             }
 
             line_spans.push(Span::styled(format!("{:^3.3}", s), style));
@@ -512,7 +512,7 @@ pub(crate) fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSta
             }
 
             if app_state.grid_cursor == (x, y) {
-                style = style.add_modifier(Modifier::REVERSED);
+                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
             }
 
             let ch = match val {
