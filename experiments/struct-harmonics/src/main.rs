@@ -1,5 +1,4 @@
 pub mod audio;
-pub mod parser;
 pub mod physics;
 
 use anyhow::Result;
@@ -40,7 +39,7 @@ struct App {
 
 impl App {
     fn new(path: &str) -> Result<Self> {
-        let structs = parser::scan_workspace(path)?;
+        let structs = struct_harmonics::parser::scan_workspace(path)?;
         let mut system = System::new();
         let mut name_to_idx = HashMap::new();
         let mut rng = rand::thread_rng();
@@ -51,8 +50,8 @@ impl App {
             let pos = DVec2::new(rng.gen_range(-100.0..100.0), rng.gen_range(-100.0..100.0));
 
             let kind = match s.kind {
-                parser::ItemType::Struct => NodeKind::Struct,
-                parser::ItemType::Enum => NodeKind::Enum,
+                struct_harmonics::parser::ItemType::Struct => NodeKind::Struct,
+                struct_harmonics::parser::ItemType::Enum => NodeKind::Enum,
             };
 
             // Mass = number of fields (dependencies) + 1.0 base
