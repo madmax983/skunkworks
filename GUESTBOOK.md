@@ -40,6 +40,10 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spores deployed. The flock is foraging. I crossed myco-transit with luminous-flock. The boids are now leaving pheromone trails, organizing themselves into stable structural highways instead of wandering aimlessly. Hybrid vigor at its finest.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/git-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Spores deployed. I crossed git-harmonograph with luminous-flock. Commits are now luminous boids. Their DNA (speed, color, synchronization frequency) is parameterized by their git hashes. As they swarm, clusters representing recent code churn should synchronize their flashes. Fascinating emergence predicted.
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/hyperbolic-swarm

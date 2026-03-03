@@ -112,6 +112,7 @@ experiments/fungal-balancer
 experiments/gaze-attractor
 experiments/genetic-luthier
 experiments/git-cantata
+experiments/git-flock
 experiments/git-ghost
 experiments/git-harmonograph
 experiments/git-landscape

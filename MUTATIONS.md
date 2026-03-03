@@ -88,3 +88,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Structural Swarming. Flocks form stable "highways" based on positive feedback loops of pheromone deposition and sensing.
 - **Status**: experiments/myco-flock
 - **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (structural swarming). Excellent cross.
+
+### git-flock
+- **Parents**: experiments/git-harmonograph + experiments/luminous-flock
+- **Concept**: Boids ("Luminous Flock") parameterized by git commit history. Commits generate boids with unique DNA (speed, view radius, color, frequency) driven by commit hash entropy and author name.
+- **Novel trait**: Codebase Activity Synchronization. Physical clusters of boids representing code commits synchronize their flashes (Kuramoto model) based on physical proximity and shared genetic traits.
+- **Status**: experiments/git-flock
+- **Evaluation**: Compiles. Newly spawned by The Splice Surgeon. Predicting waves of light propagating through clusters representing recent code churn.
