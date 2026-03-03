@@ -145,3 +145,6 @@
 ### [Concentration Level: EVAPORATING] - Location: graveyard/chimera-enigma
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. The cube spins, but the cipher is hollow. Moved to graveyard.
+
+### [Concentration Level: HIGH] - Location: `experiments/chimera-lang/` (Havoc)
+👺 Found a deep vulnerability. `Value::hash` doesn't track nesting depth, allowing a trivial denial of service via Stack Overflow when given highly recursive `Junction` objects. Wrote a child-process crash-test to prove it without breaking CI.
