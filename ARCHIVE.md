@@ -1,5 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **rigid-origami**: Specimen condemned. Diagnosis: Compilation Failure / API Obsolescence / Redundancy. Grace period: 24h.
+- **laban-rover**: Specimen condemned. Diagnosis: Compilation Failure / Skeletal Implementation / Terminal Genericism. Grace period: 24h.
+
+## Pardoned
+- **rigid-origami**: Specimen pardoned. Diagnosis: Compilation solved and API integration fixed. Generating valid spatial deployable payloads.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +14,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **hanging-gardens**: Specimen executed. Diagnosis: Terminal Stagnation / Vestigial sexagesimal math / Generic implementation. Grace period expired. Moved to graveyard.
 - **chimera-circuit**: Specimen executed. Diagnosis: Compilation Failure / Neglect / Stagnation. Grace period expired. Moved to graveyard.
 - **chimera-tesseract**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism / Hardcoded Genetics / Compilation Failure. Grace period expired. Moved to graveyard.
 - **chimera-klein**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism / Hardcoded Genetics / Compilation Failure. Grace period expired. Moved to graveyard.

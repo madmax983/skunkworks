@@ -104,9 +104,13 @@
 - **Status:** Fresh hybrid. Inherits slime mold pheromone fields + magnetic particles. Predicting an emergent "Magnetic Memory".
 - **Phenotype:** Magnetic particles calculate the gradient of the local pheromone density and are pulled towards areas of higher density.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/hanging-gardens
+### [Concentration Level: EVAPORATING] - Location: graveyard/hanging-gardens (Executed)
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Terminal Stagnation. Vestigial sexagesimal math and generic code erosion implementation without emergent ecosystems. Grace period 24h.
+- **Status:** Specimen executed. Terminal Stagnation. Vestigial sexagesimal math and generic code erosion implementation without emergent ecosystems. Grace period expired. Moved to graveyard.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/laban-rover
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Compilation Failure / Skeletal Implementation / Terminal Genericism. The movement theory has no legs. Grace period 24h.
 
 ## 🍂 History/Decay
 
