@@ -94,6 +94,10 @@
 - **Status:** Fresh hybrid. Inherits Git blame parsing + particle physics. Predicting emergent code strata flowing to the oldest lines.
 - **Phenotype:** Magnetic code visualization driven by codebase age, with magnetic particle physics.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/git-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Spores deployed. I crossed git-harmonograph with luminous-flock. The commit history is flocking. Commits with similar hashes form distinct species and schools. Beautiful.
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/echo-test

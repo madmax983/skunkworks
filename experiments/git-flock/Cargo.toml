@@ -1,0 +1,13 @@
+[package]
+name = "git-flock"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+locus = { workspace = true }
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+ratatui = { workspace = true }
+tui-shared = { workspace = true }
+hex = "0.4"

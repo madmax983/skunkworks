@@ -26,6 +26,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 
 <!-- Experiments that resulted from cross-pollination -->
 
+### git-flock
+- **Parents**: experiments/git-harmonograph + experiments/luminous-flock
+- **Concept**: Git commit history represented as a flock of boids. The commit hash entropy dictates the boid's flocking parameters (speed, separation, alignment, cohesion, color), and they synchronize flashes via the Kuramoto model.
+- **Novel trait**: The git history comes alive as a flock. Tight clusters form among commits that share similar hash entropy profiles, creating visual schools of code changes.
+- **Status**: experiments/git-flock
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (commits with similar hashes cluster together in schools). Success.
+
 ### chron-compost
 - **Parents**: experiments/chrontext + experiments/compost-chimera
 - **Concept**: TUI visualization where Chimera VM agents ("Time Scavengers") roam over the source code. The environment uses `git blame` data (`age_score`) from `chrontext` to colorize the text (Hot vs Cold).
@@ -136,4 +143,4 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Magnetic Code Strata. The age of each line of code in a file creates a magnetic field. Old code attracts, new code repels.
 - **Novel trait**: The git commit history acts as a physical force field guiding magnetic particles over the text layout.
 - **Status**: experiments/chron-fluid
-- **Evaluation**: Implemented by The Splice Surgeon 🧬. Awaiting observation.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as RECOMBINANT. Emergent behavior confirmed (magnetic code strata flowing to oldest lines). Success.
