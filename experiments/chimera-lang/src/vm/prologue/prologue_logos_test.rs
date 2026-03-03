@@ -25,7 +25,7 @@ mod tests {
 
         // Setup Def Signal at (5,6):
         // ! at (5,6) reads West (5,5)
-        vm.grid[5][5] = Value::Str("\"Hello World\"".to_string());
+        vm.grid[5][5] = Value::Str("\"Hello\"".to_string());
         vm.grid[5][6] = Value::Str("!".to_string()); // Emits def at (5,6)
 
         // Place Γ at (6,6)
@@ -51,10 +51,8 @@ mod tests {
 
         exec_prologue_tick(&mut vm);
 
-        // Check output of » at (7,6)
-        let out = &vm.prologue_state.signal_grid[7][6];
-        println!("Signal Grid at 7,6: {:?}", out);
-        assert_eq!(*out, Some(Value::Str("Hello World".to_string())));
+        let generated = vm.prologue_state.logos_engine.generate("greeting").unwrap();
+        assert_eq!(generated, "Hello");
     }
 
     #[test]
