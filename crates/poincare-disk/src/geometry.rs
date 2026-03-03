@@ -1,3 +1,11 @@
+//! # Hyperbolic Geometry Primitives
+//!
+//! Provides geometric primitives such as [`Geodesic`].
+//!
+//! In the Poincaré disk model, straight lines (geodesics) appear as circular arcs
+//! that intersect the boundary of the unit disk orthogonally. This module provides
+//! tools to work with these non-Euclidean structures.
+
 use crate::types::Point;
 
 /// Represents a geodesic segment between two points in the Poincaré disk.

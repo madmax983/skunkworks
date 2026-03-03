@@ -1,3 +1,10 @@
+//! # 2-Dimensional Vectors
+//!
+//! Provides the primary [`Vec2`] physics data type and related geometric operations.
+//!
+//! Includes methods for calculating distance, reflection, rotation, magnitude,
+//! and enforcing maximum limits. Uses `f64` precision to ensure stability.
+
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 /// A simple 2D vector with `f64` components.

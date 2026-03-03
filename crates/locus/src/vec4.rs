@@ -1,3 +1,11 @@
+//! # 4-Dimensional Vectors
+//!
+//! Provides the [`Vec4`] type for calculating and transforming coordinates in 4D space.
+//!
+//! Includes utility methods for rotating along different 4D planes (e.g. `rotate_xw`,
+//! `rotate_yw`) and projecting the 4D points down to a 3-dimensional [`Vec3`] for
+//! rendering logic.
+
 use crate::vec3::Vec3;
 
 /// A 4-dimensional vector with x, y, z, and w components.

@@ -1,3 +1,14 @@
+//! # Hyperbolic Tilings
+//!
+//! Tools for calculating and applying hyperbolic tilings.
+//!
+//! A regular $\{p, q\}$ tiling consists of polygons with $p$ sides, where $q$ polygons
+//! meet at each vertex. In the hyperbolic plane, there are infinitely many possible
+//! regular tilings because the sum of angles of a triangle can be arbitrarily small.
+//!
+//! This module provides [`TilingConsts`] to help compute the distances and translations
+//! needed to draw and navigate these tilings.
+
 use crate::types::Point;
 use num_complex::Complex;
 use std::f64::consts::PI;
