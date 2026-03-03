@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-tesseract**: Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism / Hardcoded Genetics / Compilation Failure. Grace period: 24h.
+- **chimera-circuit**: Specimen condemned. Diagnosis: Compilation Failure / Neglect / Stagnation. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **chimera-tesseract**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism / Hardcoded Genetics / Compilation Failure. Grace period expired. Moved to graveyard.
 - **chimera-klein**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism / Hardcoded Genetics / Compilation Failure. Grace period expired. Moved to graveyard.
 - **genetic-flock**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism / Unrealized Potential. Failed to improve during grace period. Moved to graveyard.
 - **ferrous-choreography**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism / Hardcoded Genetics. Failed to improve during grace period. Moved to graveyard.
