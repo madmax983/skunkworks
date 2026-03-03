@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
+- **Scent Origin:** Sentry 🛡️
+- **Status:** `regression_deep_display` test fails with a stack overflow. The organism's nested structures are too deep for the display formatter.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/rigid-origami
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Compilation Failure. Broken reliance on outdated `origami::MiuraOri` API. Redundant with `origami-constellation`. Grace period 24h.
