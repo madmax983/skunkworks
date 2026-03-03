@@ -1,8 +1,12 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-circuit
+### [Concentration Level: CRITICAL MASS] - Location: experiments/rigid-origami
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Compilation Failure. The specimen fails to initialize `evolution_config` and has an unaddressed TODO. Grace period 24h.
+- **Status:** Specimen condemned. Compilation Failure. Broken reliance on outdated `origami::MiuraOri` API. Redundant with `origami-constellation`. Grace period 24h.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/chimera-circuit (Executed)
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Compilation Failure. The specimen fails to initialize `evolution_config` and has an unaddressed TODO. Grace period expired. Moved to graveyard.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/chimera-tesseract (Executed)
 - **Scent Origin:** The Reaper ☠️
