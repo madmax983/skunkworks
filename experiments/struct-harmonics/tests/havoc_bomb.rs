@@ -1,5 +1,5 @@
-use struct_harmonics::parser::scan_workspace;
 use std::fs;
+use struct_harmonics::parser::scan_workspace;
 
 #[test]
 fn havoc_bomb_test() {

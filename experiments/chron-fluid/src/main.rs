@@ -2,20 +2,20 @@ pub mod blame;
 pub mod physics;
 
 use anyhow::Result;
+use blame::BlameAnalyzer;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use physics::Universe;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
-    style::{Color, Style, Modifier},
+    style::{Color, Modifier, Style},
+    text::{Line, Span},
     widgets::{canvas::Canvas, Block, Borders, Paragraph},
-    text::{Span, Line},
 };
-use std::time::{Duration, Instant};
 use std::env;
-use std::path::Path;
-use tui_shared::Tui;
-use blame::BlameAnalyzer;
 use std::fs;
+use std::path::Path;
+use std::time::{Duration, Instant};
+use tui_shared::Tui;
 
 fn main() -> Result<()> {
     let args: Vec<String> = env::args().collect();
@@ -43,7 +43,12 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn run_app(tui: &mut Tui, title: &str, blame_info: Vec<blame::LineInfo>, content: String) -> Result<()> {
+fn run_app(
+    tui: &mut Tui,
+    title: &str,
+    blame_info: Vec<blame::LineInfo>,
+    content: String,
+) -> Result<()> {
     let lines: Vec<&str> = content.lines().collect();
     let num_lines = lines.len();
 
@@ -71,7 +76,9 @@ fn run_app(tui: &mut Tui, title: &str, blame_info: Vec<blame::LineInfo>, content
 
                 // Add a line-wide magnetic field to the platter
                 for x in 0..line.len() {
-                    universe.platter.accumulate(x, y as usize, strength_mult * 5.0);
+                    universe
+                        .platter
+                        .accumulate(x, y as usize, strength_mult * 5.0);
                 }
             }
         }
@@ -91,7 +98,11 @@ fn run_app(tui: &mut Tui, title: &str, blame_info: Vec<blame::LineInfo>, content
                 .split(f.area());
 
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title(format!(" Chron-Fluid: {} ", title)))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title(format!(" Chron-Fluid: {} ", title)),
+                )
                 .paint(|ctx| {
                     let view_height = chunks[0].height as f64;
                     // Render lines of text
@@ -114,7 +125,11 @@ fn run_app(tui: &mut Tui, title: &str, blame_info: Vec<blame::LineInfo>, content
                             let b = ((1.0 - score) * 255.0) as u8;
                             let color = Color::Rgb(r, 100, b);
 
-                            ctx.print(0.0, draw_y, Span::styled(line.to_string(), Style::default().fg(color)));
+                            ctx.print(
+                                0.0,
+                                draw_y,
+                                Span::styled(line.to_string(), Style::default().fg(color)),
+                            );
                         }
                     }
 
@@ -122,12 +137,24 @@ fn run_app(tui: &mut Tui, title: &str, blame_info: Vec<blame::LineInfo>, content
                     for p in &universe.particles {
                         let draw_y = height - p.pos.y;
                         if draw_y >= 0.0 && draw_y <= height {
-                            ctx.print(p.pos.x, draw_y, Span::styled("•", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)));
+                            ctx.print(
+                                p.pos.x,
+                                draw_y,
+                                Span::styled(
+                                    "•",
+                                    Style::default()
+                                        .fg(Color::Yellow)
+                                        .add_modifier(Modifier::BOLD),
+                                ),
+                            );
                         }
                     }
                 })
                 .x_bounds([0.0, width])
-                .y_bounds([height - scroll_y - chunks[0].height as f64, height - scroll_y]); // Scrolling bounds
+                .y_bounds([
+                    height - scroll_y - chunks[0].height as f64,
+                    height - scroll_y,
+                ]); // Scrolling bounds
 
             f.render_widget(canvas, chunks[0]);
 
