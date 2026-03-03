@@ -323,7 +323,7 @@ fn render_scene(
     }
 }
 
-fn intersect_rect(a: (i32, i32, i32, i32), b: (i32, i32, i32, i32)) -> (i32, i32, i32, i32) {
+pub fn intersect_rect(a: (i32, i32, i32, i32), b: (i32, i32, i32, i32)) -> (i32, i32, i32, i32) {
     let x1 = a.0.max(b.0);
     let y1 = a.1.max(b.1);
     let ax2 = a.0.saturating_add(a.2);
