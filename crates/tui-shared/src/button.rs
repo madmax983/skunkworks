@@ -206,7 +206,11 @@ impl<'a> Widget for Button<'a> {
             self.block = Some(Block::default().borders(Borders::ALL));
         }
 
-        let block = self.block.take().unwrap().style(style);
+        let block = self
+            .block
+            .take()
+            .unwrap_or_else(|| Block::default().borders(Borders::ALL))
+            .style(style);
         let inner_area = block.inner(area);
         block.render(area, buf);
 

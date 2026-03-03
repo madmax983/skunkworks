@@ -281,7 +281,10 @@ pub(crate) fn render_fractal(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
             let ch = cell.char.unwrap_or(' ').to_string();
 
             if app_state.grid_cursor == (x, y) {
-                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
+                style = style
+                    .fg(Color::Black)
+                    .bg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD);
             }
 
             line_spans.push(Span::styled(ch, style));

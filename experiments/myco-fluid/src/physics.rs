@@ -111,7 +111,8 @@ impl Universe {
             let gy = p.pos.y.round() as usize;
 
             if gx < self.grid_w && gy < self.grid_h {
-                self.trails[gy * self.grid_w + gx] = (self.trails[gy * self.grid_w + gx] + 0.5).min(1.0);
+                self.trails[gy * self.grid_w + gx] =
+                    (self.trails[gy * self.grid_w + gx] + 0.5).min(1.0);
             }
         }
 
