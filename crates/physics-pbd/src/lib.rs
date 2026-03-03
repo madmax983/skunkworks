@@ -216,6 +216,15 @@ impl PbdSystem {
     /// split-borrow of particles to avoid repeated array indexing and `self` borrowing overhead,
     /// significantly improving performance on large systems.
     ///
+    /// # Arguments
+    ///
+    /// * `dt` - The time step in seconds.
+    /// * `iterations` - The number of solver iterations. More iterations result in stiffer constraints and a more stable simulation, but cost more CPU time.
+    ///
+    /// # Tuning Constraints
+    ///
+    /// Constraint `stiffness` (0.0 to 1.0) interacts with `iterations`. A stiffness of 1.0 does not guarantee absolute rigidity in a single iteration if multiple constraints affect the same particle. To achieve true rigidity, increase the number of `iterations`.
+    ///
     /// # Panics
     /// Panics if any constraint references a particle index that does not exist.
     ///

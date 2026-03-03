@@ -1,6 +1,45 @@
+//! # Gray-Scott Reaction-Diffusion
+//!
+//! This crate provides a fast, parallelized implementation of the Gray-Scott
+//! reaction-diffusion system. It simulates the interaction between two virtual
+//! chemicals (`U` and `V`) on a 2D grid, producing complex, organic-looking patterns
+//! like spots, stripes, and mazes.
+//!
+//! ## Core Concepts
+//!
+//! - **Chemical U**: The "prey" chemical. It is continuously added to the system at a `feed` rate.
+//! - **Chemical V**: The "predator" chemical. It consumes `U` to reproduce, but decays over time at a `kill` rate.
+//! - **Reaction**: The core interaction is $U + 2V \rightarrow 3V$. This means 1 unit of U and 2 units of V react to form 3 units of V.
+//! - **Diffusion**: Both chemicals spread out over time, but `U` typically diffuses faster than `V`.
+//!
+//! By varying the `feed` and `kill` rates, a wide variety of patterns emerge.
+//!
+//! ## Examples
+//!
+//! ```
+//! use gray_scott::GrayScott;
+//!
+//! // Create a 100x100 simulation grid
+//! let mut gs = GrayScott::new(100, 100);
+//!
+//! // Seed a small amount of chemical V in the center
+//! gs.add_chemical(50, 50, 1.0);
+//!
+//! // Run a simulation step
+//! // Parameters (feed, kill, dt) correspond to a "Spots" pattern
+//! gs.update(0.055, 0.062, 1.0);
+//!
+//! // Access the chemical concentrations
+//! let u_concentration = gs.u()[gs.get_index(50, 50)];
+//! let v_concentration = gs.v()[gs.get_index(50, 50)];
+//! ```
+
 #[cfg(feature = "parallel")]
 use rayon::prelude::*;
 
+/// The main simulation grid and parameters for the Gray-Scott model.
+///
+/// Contains the concentrations of chemicals U and V, as well as the diffusion rates.
 pub struct GrayScott {
     width: usize,
     height: usize,
@@ -8,6 +47,7 @@ pub struct GrayScott {
     v: Vec<f32>,
     next_u: Vec<f32>,
     next_v: Vec<f32>,
+
     pub diff_u: f32,
     pub diff_v: f32,
 }
