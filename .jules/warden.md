@@ -104,3 +104,7 @@
 ## 2027-08-15 - Babel Live Parse Infinite Loop (DoS)
 **Threat:** The inner loops in `nova_babel_live::exec_live_parse` (for string, regex, and action parsing) lacked iteration limits. A malicious grid configuration (e.g. toroidal wrapping without a terminating character) could cause an infinite loop, hanging the VM thread (DoS).
 **Defense:** Added `loop_safety` counter to limit inner parsing loops to 256 iterations (matching `GRID_SIZE` squared). Verified with `warden_babel_dos.rs`.
+
+## 2027-10-25 - ScopedScissor Drop Undefined Behavior (DoS)
+**Threat:** The `ScopedScissor` struct in `experiments/impossible-explorer/src/safe_gl.rs` and `experiments/chimera-tardis/src/safe_gl.rs` restored parent OpenGL scissors by passing unvalidated width and height to `glScissor` in its `Drop` implementation. If a `ScopedScissor` was created with a parent containing negative dimensions, this would pass negative values to OpenGL on drop, causing Undefined Behavior (UB) and potentially crashing the driver.
+**Defense:** Added explicit `.max(0)` clamping to the `width` and `height` variables in both `ScopedScissor::new` and `ScopedScissor::drop` to ensure valid parameters are passed to `glScissor`.

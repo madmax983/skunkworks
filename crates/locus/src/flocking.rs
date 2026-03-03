@@ -110,6 +110,7 @@ struct FlockingAccumulators {
 }
 
 impl FlockingAccumulators {
+    #[allow(clippy::too_many_arguments)]
     fn accumulate(
         &mut self,
         my_pos: Vec2,

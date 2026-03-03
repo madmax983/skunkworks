@@ -22,7 +22,7 @@ impl ScopedScissor {
 
         unsafe {
             gl::glEnable(gl::GL_SCISSOR_TEST);
-            gl::glScissor(x, y, w, h);
+            gl::glScissor(x, y, w.max(0), h.max(0));
         }
         Self {
             parent: safe_parent,
@@ -35,7 +35,7 @@ impl Drop for ScopedScissor {
         unsafe {
             if let Some((x, y, w, h)) = self.parent {
                 gl::glEnable(gl::GL_SCISSOR_TEST);
-                gl::glScissor(x, y, w, h);
+                gl::glScissor(x, y, w.max(0), h.max(0));
             } else {
                 gl::glDisable(gl::GL_SCISSOR_TEST);
             }

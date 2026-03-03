@@ -83,6 +83,7 @@ async fn main() {
         helix: Helix {
             strands: vec![strand0, strand1],
         },
+        evolution_config: None,
     };
 
     let mut vm = ChimeraVM::new(dna);
