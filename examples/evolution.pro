@@ -14,19 +14,13 @@ grid {
 
 definitions {
     A: {
-        strand alpha {
-            "Alpha Triggered" print
-        }
+        "Alpha Triggered" print
     }
     B: {
-        strand beta {
-            "Beta Triggered" print
-        }
+        "Beta Triggered" print
     }
     £: {
-        strand custom_rune {
-            "Custom Rune £ Executed" print
-        }
+        "Custom Rune £ Executed" print
     }
 }
 

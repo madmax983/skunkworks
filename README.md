@@ -8,10 +8,10 @@ It unifies the concepts of **Cellular Automata** (Wireworld, Game of Life), **Co
 
 ## 🚀 Quick Start
 
-Run the new Evolution example to see the Prologue engine in action:
+Run the new Evolution example to see the Prologue engine in action (requires running the `chimera-lang` binary):
 
 ```bash
-cargo run -- --input examples/evolution.pro
+cargo run -p chimera-lang -- --input examples/evolution.pro
 ```
 
 This will launch the TUI (Text User Interface) showing a live simulation of:
@@ -37,9 +37,7 @@ grid {
 
 definitions {
     A: {
-        strand alpha {
-            "Alpha Triggered" print
-        }
+        "Alpha Triggered" print
     }
 }
 
