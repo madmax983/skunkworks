@@ -145,7 +145,7 @@ impl SystemMonitor {
 
         // Interpolate
         let lerp = |a: f32, b: f32, t: f32| a + (b - a) * t;
-        let speed = 2.0 * dt;
+        let speed = (2.0 * dt).clamp(0.0, 1.0);
 
         self.cpu_usage = lerp(self.cpu_usage, self.target_cpu, speed);
         self.mem_usage = lerp(self.mem_usage, self.target_mem, speed);
@@ -166,5 +166,35 @@ impl SystemMonitor {
 impl Default for SystemMonitor {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+#[cfg(test)]
+mod chaos_tests {
+    use super::*;
+    use proptest::prelude::*;
+
+    proptest! {
+        #[test]
+        fn test_metric_extrapolation_via_time_dilation(dt in 0.0f32..100.0f32, now in 0.0f64..1000.0f64) {
+            let mut monitor = SystemMonitor::new();
+
+            // Set values to force extrapolation if speed > 1.0.
+            monitor.cpu_usage = 0.5;
+            monitor.target_cpu = 1.0;
+            monitor.mem_usage = 0.5;
+            monitor.target_mem = 1.0;
+            monitor.swap_usage = 0.5;
+            monitor.target_swap = 1.0;
+            monitor.load_avg = 0.5;
+            monitor.target_load = 1.0;
+
+            monitor.update_with_time(dt, now);
+
+            assert!(monitor.cpu_usage >= 0.0 && monitor.cpu_usage <= 1.0, "CPU usage out of bounds: {}", monitor.cpu_usage);
+            assert!(monitor.mem_usage >= 0.0 && monitor.mem_usage <= 1.0, "Mem usage out of bounds: {}", monitor.mem_usage);
+            assert!(monitor.swap_usage >= 0.0 && monitor.swap_usage <= 1.0, "Swap usage out of bounds: {}", monitor.swap_usage);
+            assert!(monitor.load_avg >= 0.0 && monitor.load_avg <= 1.0, "Load avg out of bounds: {}", monitor.load_avg);
+        }
     }
 }
