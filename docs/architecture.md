@@ -1447,6 +1447,26 @@ sequenceDiagram
     end
 ```
 
+### Constants Module (ADR 063)
+
+The Constants module centralizes shared numerical values and parameters across the Chimera VM.
+
+```mermaid
+classDiagram
+    direction TB
+    class Constants {
+        +GOLDEN_FREQUENCIES: [f32; 4]
+    }
+    class TuiViewsAudio {
+        +render()
+    }
+    class VmNovaSignals {
+        +process()
+    }
+    TuiViewsAudio --> Constants : Uses
+    VmNovaSignals --> Constants : Uses
+```
+
 ## Experiment: Tectonic Git (ADR 023)
 
 **Tectonic Git** visualizes the repository history as geological strata, using code analysis to determine stability.
