@@ -1,0 +1,45 @@
+--- src/lib.rs
++++ src/lib.rs
+@@ -232,26 +232,25 @@
+                 .for_each(|(i, v)| *v = self.width - 1 - i);
+         }
+
+-        // Clone scan_x to avoid borrowing self while mutating it in the loop
+-        let scan_order = self.scan_x.clone();
++        let scan_order = std::mem::take(&mut self.scan_x);
+
+         // Pass 1: Bids (Up)
+         for y in 0..self.height {
+             for &x in &scan_order {
+                 let idx = y * self.width + x;
+                 if self.updated[idx] {
+                     continue;
+                 }
+                 if let Particle::Bid(owner) = self.cells[idx] {
+                     if let Some(event) = self.process_bid(x, y, idx, owner, &mut rng) {
+                         trade_events.push(event);
+                     }
+                 }
+             }
+         }
+
+         // Pass 2: Asks (Down)
+         for y in (0..self.height).rev() {
+             for &x in &scan_order {
+                 let idx = y * self.width + x;
+                 if self.updated[idx] {
+                     continue;
+                 }
+                 if let Particle::Ask(owner) = self.cells[idx] {
+                     if let Some(event) = self.process_ask(x, y, idx, owner, &mut rng) {
+                         trade_events.push(event);
+                     }
+                 }
+             }
+         }
+
+         // Pass 3: Stats & Cleanup
++        self.scan_x = scan_order;
+         self.update_stats_and_cleanup(trade_events.len());
+
+         trade_events

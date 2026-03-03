@@ -1,0 +1,20 @@
+--- src/lib.rs
++++ src/lib.rs
+@@ -107,7 +107,8 @@
+         revwalk.set_sorting(Sort::TIME)?;
+         revwalk.push_head()?;
+
+-        let mut commits = Vec::new();
++        // Allocate capacity based on the provided limit to avoid reallocation.
++        let mut commits = Vec::with_capacity(limit);
+
+         for oid in revwalk.take(limit) {
+             let oid = oid?;
+@@ -216,7 +217,7 @@
+         diff: &git2::Diff,
+         include_hunks: bool,
+     ) -> Result<(usize, usize, Vec<FileChange>)> {
+-        let mut files = Vec::new();
++        let mut files = Vec::with_capacity(diff.deltas().len());
+         let mut total_insertions = 0;
+         let mut total_deletions = 0;

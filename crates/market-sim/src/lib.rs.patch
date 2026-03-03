@@ -1,0 +1,25 @@
+--- crates/market-sim/src/lib.rs
++++ crates/market-sim/src/lib.rs
+@@ -232,10 +232,7 @@
+                 .for_each(|(i, v)| *v = self.width - 1 - i);
+         }
+
+-        // Clone scan_x to avoid borrowing self while mutating it in the loop
+-        let scan_order = self.scan_x.clone();
+-
+         // Pass 1: Bids (Up)
+         for y in 0..self.height {
+-            for &x in &scan_order {
++            for x_idx in 0..self.width {
++                let x = self.scan_x[x_idx];
+                 let idx = y * self.width + x;
+                 if self.updated[idx] {
+@@ -250,7 +247,8 @@
+
+         // Pass 2: Asks (Down)
+         for y in (0..self.height).rev() {
+-            for &x in &scan_order {
++            for x_idx in 0..self.width {
++                let x = self.scan_x[x_idx];
+                 let idx = y * self.width + x;
+                 if self.updated[idx] {

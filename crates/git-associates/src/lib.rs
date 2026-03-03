@@ -112,7 +112,7 @@ impl GitModel {
         revwalk.set_sorting(Sort::TIME)?;
         revwalk.push_head()?;
 
-        let mut commits = Vec::new();
+        let mut commits = Vec::with_capacity(limit);
 
         for oid in revwalk.take(limit) {
             let oid = oid?;
@@ -223,7 +223,7 @@ impl GitModel {
         diff: &git2::Diff,
         include_hunks: bool,
     ) -> Result<(usize, usize, Vec<FileChange>)> {
-        let mut files = Vec::new();
+        let mut files = Vec::with_capacity(diff.deltas().len());
         let mut total_insertions = 0;
         let mut total_deletions = 0;
 
@@ -280,13 +280,13 @@ impl GitModel {
     /// A Hunk is a contiguous block of changes in a file. This function iterates
     /// through all hunks and their lines, classifying them as Added, Removed, or Context.
     fn extract_hunks(patch: &git2::Patch) -> Vec<Hunk> {
-        let mut hunks = Vec::new();
+        let mut hunks = Vec::with_capacity(patch.num_hunks());
         for h_idx in 0..patch.num_hunks() {
             // Get the hunk header info and the number of lines in this hunk
             let Ok((hunk_info, lines_count)) = patch.hunk(h_idx) else {
                 continue;
             };
-            let mut hunk_lines = Vec::new();
+            let mut hunk_lines = Vec::with_capacity(lines_count);
             for l_idx in 0..lines_count {
                 if let Ok(line) = patch.line_in_hunk(h_idx, l_idx) {
                     let content = std::str::from_utf8(line.content())
