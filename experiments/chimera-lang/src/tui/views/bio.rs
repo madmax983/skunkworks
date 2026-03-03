@@ -376,7 +376,10 @@ pub(crate) fn render_virology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
             }
 
             if app_state.grid_cursor == (x, y) {
-                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
+                style = style
+                    .fg(Color::Black)
+                    .bg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD);
             }
 
             line_spans.push(Span::styled(ch, style));
@@ -664,7 +667,10 @@ pub(crate) fn render_ecology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
             }
 
             if app_state.grid_cursor == (x, y) {
-                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
+                style = style
+                    .fg(Color::Black)
+                    .bg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD);
             }
 
             line_spans.push(Span::styled(ch, style));
@@ -1050,7 +1056,10 @@ pub(crate) fn render_biolum(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSt
             }
 
             if app_state.grid_cursor == (x, y) {
-                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
+                style = style
+                    .fg(Color::Black)
+                    .bg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD);
             }
 
             line_spans.push(Span::styled(ch, style));
@@ -1117,7 +1126,10 @@ pub(crate) fn render_cambrian(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
             }
 
             if app_state.grid_cursor == (x, y) {
-                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
+                style = style
+                    .fg(Color::Black)
+                    .bg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD);
             }
 
             let val = &vm.grid[y][x];
@@ -1202,7 +1214,10 @@ pub(crate) fn render_garden(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSt
             }
 
             if app_state.grid_cursor == (x, y) {
-                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
+                style = style
+                    .fg(Color::Black)
+                    .bg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD);
             }
 
             line_spans.push(Span::styled(ch, style));
@@ -1298,7 +1313,10 @@ pub(crate) fn render_biomesh(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
             }
 
             if app_state.grid_cursor == (x, y) {
-                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
+                style = style
+                    .fg(Color::Black)
+                    .bg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD);
             }
 
             line_spans.push(Span::styled(ch, style));
@@ -1444,7 +1462,10 @@ pub(crate) fn render_genesis(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
             let mut style = Style::default();
 
             if app_state.grid_cursor == (x, y) {
-                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
+                style = style
+                    .fg(Color::Black)
+                    .bg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD);
             }
 
             let s = match val {
@@ -1655,7 +1676,10 @@ pub(crate) fn render_memetics(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
             }
 
             if app_state.grid_cursor == (x, y) {
-                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
+                style = style
+                    .fg(Color::Black)
+                    .bg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD);
             }
 
             line_spans.push(Span::styled(ch, style));

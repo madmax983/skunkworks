@@ -250,7 +250,8 @@ mod tests {
         // Run decay 100 times
         for _ in 0..100 {
             // Decay rate 0.99 ensures values stay non-zero for a while but some might drop below threshold
-            std::hint::black_box(platter.decay(0.99));
+            platter.decay(0.99);
+            std::hint::black_box(());
         }
         let duration = start.elapsed();
         println!("Time taken for 100 decays of 1M elements: {:?}", duration);
