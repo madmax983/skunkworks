@@ -1,6 +1,6 @@
 use crate::pbd::PbdSystem;
 use macroquad::prelude::*;
-use origami::{MiuraOri, MiuraParams, Orientation};
+use origami::{generate_miura_grid, MiuraParams, Orientation};
 
 pub struct MeshData {
     pub system: PbdSystem,
@@ -20,11 +20,9 @@ pub fn generate_miura_ori(rows: usize, cols: usize) -> MeshData {
         orientation: Orientation::Vertical,
     };
 
-    let origami = MiuraOri::new(params, (cols, rows));
-
     // Generate initial flat positions (expansion = 1.0)
-    // Note: generate_grid returns vertices in row-major order (j outer, i inner)
-    let vertices = origami.generate_grid(1.0);
+    // Note: generate_miura_grid returns vertices in row-major order (j outer, i inner)
+    let vertices = generate_miura_grid(params, (cols, rows), 1.0);
 
     for v in vertices {
         system.add_particle(v, 1.0);

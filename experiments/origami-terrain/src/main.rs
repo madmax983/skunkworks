@@ -1,7 +1,7 @@
 use ::rand::Rng;
 use gray_scott::GrayScott;
 use macroquad::prelude::*;
-use origami::{MiuraOri, MiuraParams, Orientation};
+use origami::{generate_miura_grid, MiuraParams, Orientation};
 
 const WIDTH: usize = 120;
 const HEIGHT: usize = 120;
@@ -45,7 +45,7 @@ async fn main() {
         gamma: 80.0f32.to_radians(),
         orientation: Orientation::Horizontal,
     };
-    let miura = MiuraOri::new(params, (cols, rows));
+    let grid_size = (cols, rows);
 
     // Simulation State
     let mut feed;
@@ -125,7 +125,7 @@ async fn main() {
         }
 
         // Update Mesh
-        let grid_points = miura.generate_grid(extension);
+        let grid_points = generate_miura_grid(params, grid_size, extension);
 
         // Build Mesh
         // The Miura grid points are flat (y=0 usually, or folding in y).

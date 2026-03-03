@@ -1,6 +1,6 @@
 use ::rand::Rng;
 use macroquad::prelude::*;
-use origami::{MiuraOri, MiuraParams, Orientation};
+use origami::{generate_miura_grid, MiuraParams, Orientation};
 
 #[macroquad::main("Rigid Origami")]
 async fn main() {
@@ -10,8 +10,8 @@ async fn main() {
         gamma: 80.0f32.to_radians(),
         orientation: Orientation::Vertical,
     };
-    let grid = MiuraOri::new(params, (20, 15));
-    let (cols, rows) = grid.grid_size;
+    let grid_size = (20, 15);
+    let (cols, rows) = grid_size;
 
     // Camera state
     let mut cam_yaw: f32 = 0.0;
@@ -102,7 +102,7 @@ async fn main() {
         }
 
         // 1. Calculate vertices
-        let vertices = grid.generate_grid(expansion);
+        let vertices = generate_miura_grid(params, grid_size, expansion);
 
         // 2. Build Mesh
         let mut mesh = Mesh {
