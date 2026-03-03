@@ -9,6 +9,6 @@ crossterm = { workspace = true }
 ratatui = { workspace = true }
 rand = "0.8"
 chrono = "0.4"
-git2 = "0.18"
+git2 = "0.19"
 chimera-lang = { path = "../chimera-lang" }
 tui-shared = { path = "../../crates/tui-shared" }

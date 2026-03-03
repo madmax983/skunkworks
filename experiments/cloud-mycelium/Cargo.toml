@@ -12,6 +12,6 @@ name = "cloud-mycelium"
 path = "src/main.rs"
 
 [dependencies]
-macroquad = "0.4"
+macroquad = "0.4.15"
 rand = { workspace = true }
 glam = "0.27"

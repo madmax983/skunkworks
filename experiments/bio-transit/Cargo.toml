@@ -12,7 +12,7 @@ name = "bio-transit"
 path = "src/main.rs"
 
 [dependencies]
-macroquad = "0.4"
+macroquad = "0.4.15"
 rayon = "1.8"
 rand = { workspace = true }
 glam = "0.27"

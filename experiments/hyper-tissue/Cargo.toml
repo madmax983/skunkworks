@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-macroquad = "0.4"
+macroquad = "0.4.15"
 chimera-lang = { path = "../chimera-lang" }
 hyper-system = { path = "../../crates/hyper-system" }
 rand = "0.8"

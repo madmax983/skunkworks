@@ -4,11 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-macroquad = "0.4"
+macroquad = "0.4.15"
 quipu = { path = "../../crates/quipu" }
 poincare-disk = { path = "../../crates/poincare-disk" }
 anyhow = "1.0"
-git2 = "0.18"
+git2 = "0.19"
 num-complex = "0.4"
 
 [dev-dependencies]

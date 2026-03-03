@@ -5,5 +5,5 @@ edition = "2021"
 
 [dependencies]
 chimera-lang = { path = "../chimera-lang" }
-macroquad = "0.4"
+macroquad = "0.4.15"
 rand = "0.8"

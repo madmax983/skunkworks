@@ -107,3 +107,7 @@
 ## 2027-08-30 - Impossible Explorer Integer Overflow (DoS)
 **Threat:** The `intersect_rect` function in `experiments/impossible-explorer/src/main.rs` used unchecked addition (`a.0 + a.2`) which could cause integer overflow when using large coordinates, leading to a panic in debug builds (DoS) or wrapping behavior in release builds.
 **Defense:** Replaced unchecked addition and subtraction with `.saturating_add()` and `.saturating_sub()` to ensure safe coordinate clamping.
+
+## 2027-08-30 - Multiple Unsound Dependencies (CVEs)
+**Threat:** `cargo audit` reported multiple vulnerabilities and soundness issues in dependencies: `git2 0.18.3` (RUSTSEC-2026-0008, Undefined behavior when dereferencing Buf struct), `lru 0.12.5` (RUSTSEC-2026-0002, IterMut violates Stacked Borrows, pulled via old ratatui version), and `macroquad 0.4.14` (RUSTSEC-2025-0035, Multiple soundness issues).
+**Defense:** Updated `git2` to `0.19.0`, `macroquad` to `0.4.15`, and standardized `ratatui` to the workspace version `{ workspace = true }` across all crates to resolve the vulnerable transitive `lru` version.

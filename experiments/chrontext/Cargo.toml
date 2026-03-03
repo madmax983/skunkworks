@@ -7,5 +7,5 @@ edition = "2021"
 anyhow = { workspace = true }
 crossterm = { workspace = true }
 ratatui = { workspace = true }
-git2 = "0.18"
+git2 = "0.19"
 chrono = "0.4"

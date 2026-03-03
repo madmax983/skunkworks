@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-macroquad = "0.4"
+macroquad = "0.4.15"
 crossbeam-channel = "0.5"
 resonance-audio = { path = "../../crates/resonance-audio" }
 anyhow = { workspace = true }

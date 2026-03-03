@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-macroquad = "0.4"
-git2 = "0.18"
+macroquad = "0.4.15"
+git2 = "0.19"
 petgraph = "0.6"
 anyhow = "1.0"
 

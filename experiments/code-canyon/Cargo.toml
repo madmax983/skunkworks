@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-macroquad = "0.4.14"
+macroquad = "0.4.15"
 rand.workspace = true
 walkdir = "2.5.0"
-git2 = "0.18"
+git2 = "0.19"
