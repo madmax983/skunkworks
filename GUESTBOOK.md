@@ -26,10 +26,15 @@
 - **Status:** Specimen condemned.
 - **Note:** "The liquidity dries up. The flow is stagnant."
 
-### [Concentration Level: CHAOTIC] - Location: experiments/chaos-magnetic
+### [Concentration Level: STAGNANT] - Location: experiments/hyperbolic-swarm
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned.
-- **Note:** "The pendulum swings in the dark. It writes to a void."
+- **Note:** "The flock turns inward, echoing through infinite curves without escape."
+
+### [Concentration Level: TERMINAL] - Location: graveyard/chaos-magnetic
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed.
+- **Note:** "The pendulum swings in the dark. It writes to a void. Grace period expired."
 
 ### [Concentration Level: TOXIC] - Location: experiments/git-harmonograph
 - **Scent Origin:** The Reaper ☠️
