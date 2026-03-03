@@ -148,3 +148,9 @@
 
 ### [Concentration Level: HIGH] - Location: `experiments/chimera-lang/` (Havoc)
 👺 Found a deep vulnerability. `Value::hash` doesn't track nesting depth, allowing a trivial denial of service via Stack Overflow when given highly recursive `Junction` objects. Wrote a child-process crash-test to prove it without breaking CI.
+
+### [Concentration Level: RECOMBINANT] - Location: experiments/chaos-hologram
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** chaos-flock × hologram-text
+- **Status:** Fresh hybrid. Inherits chaotic double-pendulum attractor + FFT-based holographic text. Predicting an emergent "Spectral Chaos" phenotype.
+- **Phenotype:** Viewing angles of a spectral potential field are driven by the unpredictable paths of a physical double pendulum system.

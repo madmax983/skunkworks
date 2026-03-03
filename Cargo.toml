@@ -6,6 +6,7 @@ members = [
     "experiments/chaos-strings",
     "experiments/chron-fluid",
     "experiments/myco-fluid",
+    "experiments/chaos-hologram",
 ]
 
 [workspace.dependencies]
