@@ -232,12 +232,11 @@ impl Grid {
                 .for_each(|(i, v)| *v = self.width - 1 - i);
         }
 
-        // Clone scan_x to avoid borrowing self while mutating it in the loop
-        let scan_order = self.scan_x.clone();
-
+        // Iterate over scan_x by index to avoid borrowing self while mutating it in the loop
         // Pass 1: Bids (Up)
         for y in 0..self.height {
-            for &x in &scan_order {
+            for i in 0..self.scan_x.len() {
+                let x = self.scan_x[i];
                 let idx = y * self.width + x;
                 if self.updated[idx] {
                     continue;
@@ -252,7 +251,8 @@ impl Grid {
 
         // Pass 2: Asks (Down)
         for y in (0..self.height).rev() {
-            for &x in &scan_order {
+            for i in 0..self.scan_x.len() {
+                let x = self.scan_x[i];
                 let idx = y * self.width + x;
                 if self.updated[idx] {
                     continue;
