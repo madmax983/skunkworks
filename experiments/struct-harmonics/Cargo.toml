@@ -17,3 +17,6 @@ tui-shared = { path = "../../crates/tui-shared" }
 [features]
 default = []
 audio = ["dep:rodio"]
+
+[dev-dependencies]
+tempfile = "3.26.0"
