@@ -1,6 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **ferrous-choreography**: Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism / Hardcoded Genetics. Grace period: 24h.
-- **genetic-flock**: Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism / Unrealized Potential. Grace period: 24h.
+- **bifurcation-landscape**: Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation / Absence of Hybrid Vigor. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -12,6 +11,8 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **ferrous-choreography**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism / Hardcoded Genetics. Failed to improve during grace period. Moved to graveyard.
+- **genetic-flock**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism / Unrealized Potential. Failed to improve during grace period. Moved to graveyard.
 - **hyperbolic-tissue**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism / Skeletal Implementation. Failed to improve during grace period. Moved to graveyard.
 - **hyperbolic-swarm**: Specimen executed. Diagnosis: Documentation Void / Deceptive Implementation. Failed to improve during grace period. Moved to graveyard.
 - **chimera-enigma**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
