@@ -3,7 +3,7 @@ use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 #[cfg(feature = "nova")]
 use chimera_lang::opcode::OpCode;
 #[cfg(feature = "nova")]
-use chimera_lang::vm::{ChimeraVM, MAX_GENES_PER_STRAND, Value};
+use chimera_lang::vm::{ChimeraVM, Value, MAX_GENES_PER_STRAND};
 
 #[cfg(feature = "nova")]
 fn make_simple_dna() -> Dna {
@@ -111,9 +111,12 @@ fn test_frankenstein_dos_protection() {
         // But in this test case, we construct inputs specifically to exceed max.
         // So if we are here, it means the check failed to prevent creation OR it truncated (which it shouldn't).
         if new_len > MAX_GENES_PER_STRAND {
-             // We want this test to PASS if the implementation prevents this.
-             // But if we are in this block, the implementation FAILED to prevent it.
-             panic!("Frankenstein result {} exceeded limit {}", new_len, MAX_GENES_PER_STRAND);
+            // We want this test to PASS if the implementation prevents this.
+            // But if we are in this block, the implementation FAILED to prevent it.
+            panic!(
+                "Frankenstein result {} exceeded limit {}",
+                new_len, MAX_GENES_PER_STRAND
+            );
         }
     } else {
         // Failed to create strand (safe) - This is the EXPECTED outcome for this test case.

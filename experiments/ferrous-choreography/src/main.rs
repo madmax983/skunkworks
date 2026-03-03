@@ -209,11 +209,7 @@ impl Stage {
             }
 
             // Flow: Bound (High Friction) vs Free (Low Friction)
-            let damping = if dancer.effort.is_bound() {
-                0.90
-            } else {
-                0.99
-            };
+            let damping = if dancer.effort.is_bound() { 0.90 } else { 0.99 };
             self.system.particles[p_idx].vel *= damping;
 
             // Bounds check

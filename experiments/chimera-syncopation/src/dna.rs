@@ -35,6 +35,7 @@ pub fn generate_rhythm_dna(instrument_id: usize, sustain: i64, rest: i64) -> Dna
     ];
 
     Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },
@@ -99,6 +100,7 @@ pub fn generate_jazz_dna(instrument_count: usize) -> Dna {
     });
 
     Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },

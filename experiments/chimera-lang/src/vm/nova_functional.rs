@@ -1,6 +1,6 @@
 #![cfg(feature = "nova")]
 
-use super::{ChimeraVM, Value, MAX_STRANDS, MAX_GENES_PER_STRAND};
+use super::{ChimeraVM, Value, MAX_GENES_PER_STRAND, MAX_STRANDS};
 use crate::ast::{Gene, Nucleotide, Strand};
 use crate::opcode::OpCode;
 
@@ -140,7 +140,8 @@ fn exec_curry(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if current_len + 1 > MAX_GENES_PER_STRAND {
         vm.output.push(format!(
             "CURRY ERROR: Result length {} exceeds limit {}",
-            current_len + 1, MAX_GENES_PER_STRAND
+            current_len + 1,
+            MAX_GENES_PER_STRAND
         ));
         return None;
     }

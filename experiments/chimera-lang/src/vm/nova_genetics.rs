@@ -1123,8 +1123,7 @@ pub fn exec_ligase(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     } else {
                         // Deduct energy even on failure to prevent free infinite loops (DoS)
                         vm.energy = vm.energy.saturating_sub(10);
-                        vm.output
-                            .push("LIGASE: Gene Limit Exceeded".to_string());
+                        vm.output.push("LIGASE: Gene Limit Exceeded".to_string());
                     }
                 }
             } else {

@@ -267,7 +267,9 @@ pub fn compute_force(
     // Left neighbors have index < my_idx, so we push Right (+x).
     let left_bias = Vec2::new(1.0, 0.0);
     for (pos, vel) in left_pos.iter().zip(left_vel) {
-        acc.accumulate(my_pos, *pos, *vel, params, left_bias, do_sep, do_ali, do_coh);
+        acc.accumulate(
+            my_pos, *pos, *vel, params, left_bias, do_sep, do_ali, do_coh,
+        );
     }
 
     // Process right neighbors (my_idx+1..len)
@@ -276,7 +278,9 @@ pub fn compute_force(
     let right_bias = Vec2::new(-1.0, 0.0);
     if right_pos.len() > 1 {
         for (pos, vel) in right_pos[1..].iter().zip(&right_vel[1..]) {
-            acc.accumulate(my_pos, *pos, *vel, params, right_bias, do_sep, do_ali, do_coh);
+            acc.accumulate(
+                my_pos, *pos, *vel, params, right_bias, do_sep, do_ali, do_coh,
+            );
         }
     }
 

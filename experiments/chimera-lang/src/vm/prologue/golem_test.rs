@@ -100,10 +100,10 @@ fn test_golem_complex_shape() {
     let cx = 10;
 
     vm.grid[cy][cx] = Value::Str(MAT_HEART.to_string());
-    vm.grid[cy-1][cx] = Value::Str(MAT_BRICK.to_string()); // Top
-    vm.grid[cy+1][cx] = Value::Str(MAT_BRICK.to_string()); // Bottom
-    vm.grid[cy][cx-1] = Value::Str(MAT_BRICK.to_string()); // Left
-    vm.grid[cy][cx+1] = Value::Str(MAT_BRICK.to_string()); // Right
+    vm.grid[cy - 1][cx] = Value::Str(MAT_BRICK.to_string()); // Top
+    vm.grid[cy + 1][cx] = Value::Str(MAT_BRICK.to_string()); // Bottom
+    vm.grid[cy][cx - 1] = Value::Str(MAT_BRICK.to_string()); // Left
+    vm.grid[cy][cx + 1] = Value::Str(MAT_BRICK.to_string()); // Right
 
     // Signal South (2)
     vm.prologue_state.delayed_signals[cy][cx] = Some(Value::Int(2));
@@ -111,11 +111,11 @@ fn test_golem_complex_shape() {
     exec_prologue_tick(&mut vm);
 
     // Expected New Center (11, 10)
-    assert_eq!(vm.grid[cy+1][cx], Value::Str(MAT_HEART.to_string()));
+    assert_eq!(vm.grid[cy + 1][cx], Value::Str(MAT_HEART.to_string()));
 
     // Top brick should be at (10, 10) - where heart was
     assert_eq!(vm.grid[cy][cx], Value::Str(MAT_BRICK.to_string()));
 
     // Bottom brick should be at (12, 10)
-    assert_eq!(vm.grid[cy+2][cx], Value::Str(MAT_BRICK.to_string()));
+    assert_eq!(vm.grid[cy + 2][cx], Value::Str(MAT_BRICK.to_string()));
 }

@@ -119,14 +119,8 @@ where
                     graph.nodes.len(),
                     graph.edges.len()
                 )))
-                .x_bounds([
-                    pan.x - 100.0 * zoom,
-                    pan.x + 100.0 * zoom,
-                ])
-                .y_bounds([
-                    pan.y - 100.0 * zoom,
-                    pan.y + 100.0 * zoom,
-                ])
+                .x_bounds([pan.x - 100.0 * zoom, pan.x + 100.0 * zoom])
+                .y_bounds([pan.y - 100.0 * zoom, pan.y + 100.0 * zoom])
                 .paint(|ctx| {
                     // Draw Platter (Magnetism)
                     // Sample the grid sparsely to avoid performance hit

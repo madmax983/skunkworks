@@ -19,15 +19,32 @@ mod tests {
         let v = Vec4::new(vec_val, 0.0, 0.0, 0.0);
 
         // Pre-condition check: ensure our assumptions about overflow are correct for this platform
-        assert_eq!(v.length_squared(), f32::INFINITY, "Setup failed: Vector length squared should overflow");
-        assert_eq!(max_val * max_val, f32::INFINITY, "Setup failed: Max squared should overflow");
+        assert_eq!(
+            v.length_squared(),
+            f32::INFINITY,
+            "Setup failed: Vector length squared should overflow"
+        );
+        assert_eq!(
+            max_val * max_val,
+            f32::INFINITY,
+            "Setup failed: Max squared should overflow"
+        );
 
         let limited = v.limit(max_val);
 
         // If the bug exists, limited.x will still be 3.0e20
         // We expect it to be clamped to 2.0e20
-        assert!(limited.x <= max_val, "Vec4::limit failed to clamp! Got {}, expected <= {}", limited.x, max_val);
-        assert!((limited.x - max_val).abs() < 1.0e15, "Vec4::limit result should be close to max. Got {}", limited.x);
+        assert!(
+            limited.x <= max_val,
+            "Vec4::limit failed to clamp! Got {}, expected <= {}",
+            limited.x,
+            max_val
+        );
+        assert!(
+            (limited.x - max_val).abs() < 1.0e15,
+            "Vec4::limit result should be close to max. Got {}",
+            limited.x
+        );
     }
 
     #[test]
@@ -45,6 +62,11 @@ mod tests {
 
         let limited = v.limit(max_val);
 
-        assert!(limited.x <= max_val, "Vec2::limit failed to clamp! Got {}, expected <= {}", limited.x, max_val);
+        assert!(
+            limited.x <= max_val,
+            "Vec2::limit failed to clamp! Got {}, expected <= {}",
+            limited.x,
+            max_val
+        );
     }
 }

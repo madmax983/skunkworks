@@ -133,7 +133,12 @@ fn render_hermetic_rules(vm: &ChimeraVM) -> String {
     let mut s = String::from("## Hermetic Alchemy\n\n");
     for (i, rule) in vm.prologue_state.alchemy_book.iter().enumerate() {
         let ingredients: Vec<String> = rule.ingredients.iter().map(|v| format!("{}", v)).collect();
-        s.push_str(&format!("{}. {} -> {}\n", i + 1, ingredients.join(" + "), rule.result));
+        s.push_str(&format!(
+            "{}. {} -> {}\n",
+            i + 1,
+            ingredients.join(" + "),
+            rule.result
+        ));
     }
     s
 }

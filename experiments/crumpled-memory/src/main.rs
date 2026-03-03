@@ -167,7 +167,7 @@ async fn main() {
                     normal: vec4(0., 1., 0., 0.),
                 });
 
-                indices.push(idx + 0);
+                indices.push(idx);
                 indices.push(idx + 1);
                 indices.push(idx + 3);
 

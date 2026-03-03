@@ -130,7 +130,7 @@ async fn main() {
 
                             if rules[rule_idx].apply(&mut w, &mut rng) {
                                 // Apply changes back
-                                if w.phonemes.len() >= 1 {
+                                if !w.phonemes.is_empty() {
                                     origami.cells[i].content = Some(w.phonemes[0].symbol);
                                 }
                                 if w.phonemes.len() >= 2 {
@@ -218,7 +218,7 @@ async fn main() {
             }
 
             let base_v = mq_mesh.vertices.len() as u16 - 6;
-            mq_mesh.indices.push(base_v + 0);
+            mq_mesh.indices.push(base_v);
             mq_mesh.indices.push(base_v + 1);
             mq_mesh.indices.push(base_v + 2);
             mq_mesh.indices.push(base_v + 3);

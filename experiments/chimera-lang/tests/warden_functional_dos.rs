@@ -9,7 +9,10 @@ mod tests {
         // We need a strand with > 2048 genes to chain with itself > 4096.
         let mut genes = Vec::new();
         for _ in 0..2500 {
-            genes.push(Gene { op: OpCode::Nop, args: vec![] });
+            genes.push(Gene {
+                op: OpCode::Nop,
+                args: vec![],
+            });
         }
 
         let dna = Dna {
@@ -27,7 +30,10 @@ mod tests {
         // Execute Chain
         // Inject OpCode
         vm.dna.helix.strands.push(Strand {
-            genes: vec![Gene { op: OpCode::Chain, args: vec![] }]
+            genes: vec![Gene {
+                op: OpCode::Chain,
+                args: vec![],
+            }],
         });
         // Jump to execution strand
         vm.ip = (1, 0);

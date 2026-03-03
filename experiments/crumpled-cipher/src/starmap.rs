@@ -15,7 +15,7 @@ impl StarMap {
     pub fn new(payload: &[u8], width_glyphs: u32) -> Self {
         let glyphs: Vec<Glyph> = payload.iter().map(|&b| Glyph::new(b)).collect();
         // Calculate height
-        let height_glyphs = (payload.len() as u32 + width_glyphs - 1) / width_glyphs;
+        let height_glyphs = (payload.len() as u32).div_ceil(width_glyphs);
         let spacing = SPACING;
 
         Self {

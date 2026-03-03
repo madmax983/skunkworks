@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use ferrous_core::Platter;
+use macroquad::prelude::*;
 
 #[derive(Clone, Copy)]
 pub struct Particle {
@@ -54,10 +54,18 @@ impl Particle {
         let w = screen_width();
         let h = screen_height();
 
-        if self.pos.x < 0.0 { self.pos.x += w; }
-        if self.pos.x > w { self.pos.x -= w; }
-        if self.pos.y < 0.0 { self.pos.y += h; }
-        if self.pos.y > h { self.pos.y -= h; }
+        if self.pos.x < 0.0 {
+            self.pos.x += w;
+        }
+        if self.pos.x > w {
+            self.pos.x -= w;
+        }
+        if self.pos.y < 0.0 {
+            self.pos.y += h;
+        }
+        if self.pos.y > h {
+            self.pos.y -= h;
+        }
     }
 
     pub fn draw(&self) {

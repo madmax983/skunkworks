@@ -215,7 +215,7 @@ impl Agent {
         } else {
             // Move
             let dir = diff.scale(1.0 / dist);
-            self.position = self.position + dir.scale(self.speed * dt);
+            self.position += dir.scale(self.speed * dt);
         }
     }
 }

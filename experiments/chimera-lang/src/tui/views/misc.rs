@@ -187,9 +187,18 @@ pub(crate) fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
         f.render_widget(ratatui::widgets::Clear, popup_area);
 
         let popup = Paragraph::new("FISH ON!")
-            .style(Style::default().fg(Color::White).bg(Color::Red).add_modifier(Modifier::BOLD | Modifier::SLOW_BLINK))
+            .style(
+                Style::default()
+                    .fg(Color::White)
+                    .bg(Color::Red)
+                    .add_modifier(Modifier::BOLD | Modifier::SLOW_BLINK),
+            )
             .alignment(ratatui::layout::Alignment::Center)
-            .block(Block::default().borders(Borders::ALL).border_style(Style::default().fg(Color::Yellow)));
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .border_style(Style::default().fg(Color::Yellow)),
+            );
 
         f.render_widget(popup, popup_area);
     }
