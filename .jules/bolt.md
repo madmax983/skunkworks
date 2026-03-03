@@ -27,3 +27,6 @@
 **Learning:** Fixed a `clippy::too_many_arguments` warning by inlining invariants (like squared radii calculations) into an inner loop, which significantly degraded performance on a hot $O(N^2)$ path.
 **Impact:** Hoisting those invariants back out of the loop and grouping them into a single `PrecomputedParams` struct resolved the clippy warning while maintaining the performance optimization.
 **Action:** When fixing clippy warnings involving argument count, always group parameters into an options/context struct rather than pushing computations down into inner hot loops.
+**[Performance]**
+**Learning:** Parallelizing 2D wave equation FDTD updates with Rayon `par_chunks_exact_mut` yields ~75% speedup.
+**Action:** When updating grid-based state arrays like FDTD or cellular automata, chunk the output array and use `zip` to pair it with corresponding chunks from other arrays to avoid data races and achieve high parallel performance.

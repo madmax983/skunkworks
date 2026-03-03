@@ -134,38 +134,57 @@ impl PhysicsGrid {
         let w = self.width;
         let h = self.height;
 
-        // Iterate over the interior of the grid (skipping boundaries)
-        for y in 1..h - 1 {
-            for x in 1..w - 1 {
-                let idx = y * w + x;
+        use rayon::prelude::*;
 
-                // Wall handling is implicit via c2_map[idx] == 0.0 and damping_map[idx] == 0.0,
-                // which results in val = 0.0. This allows us to skip the branch and memory lookup.
+        // Iterate over the interior of the grid (skipping boundaries) using chunks.
+        // We chunk the output slice (`u_next`) along with other buffers to parallelize.
+        // We skip the first and last row by slicing `u_next` starting at `w` and up to `h * w - w`.
+        // We also need parallel access to `energy_map`.
 
-                let up = (y - 1) * w + x;
-                let down = (y + 1) * w + x;
-                let left = y * w + (x - 1);
-                let right = y * w + (x + 1);
+        // This calculates the next state (t+1) into `u_next` and updates `energy_map`.
 
-                let u_curr = self.u[idx];
-                let u_prev = self.u_prev[idx];
-                let c2 = self.c2_map[idx];
-                let damping = self.damping_map[idx];
+        let start_idx = w;
+        let end_idx = h * w - w;
 
-                // Standard 5-point discrete Laplacian stencil
-                let laplacian =
-                    self.u[up] + self.u[down] + self.u[left] + self.u[right] - 4.0 * u_curr;
+        self.u_next[start_idx..end_idx]
+            .par_chunks_exact_mut(w)
+            .zip(self.energy_map[start_idx..end_idx].par_chunks_exact_mut(w))
+            .enumerate()
+            .for_each(|(y_offset, (u_next_row, energy_row))| {
+                let y = y_offset + 1;
 
-                // Wave equation update
-                let mut val = 2.0 * u_curr - u_prev + c2 * laplacian;
-                val *= damping;
+                let up_row = (y - 1) * w;
+                let curr_row = y * w;
+                let down_row = (y + 1) * w;
 
-                self.u_next[idx] = val;
+                for x in 1..w - 1 {
+                    let idx = curr_row + x;
 
-                // Accumulate energy with decay (for visualization)
-                self.energy_map[idx] = self.energy_map[idx] * 0.9995 + val.abs() * 0.005;
-            }
-        }
+                    let up = up_row + x;
+                    let down = down_row + x;
+                    let left = idx - 1;
+                    let right = idx + 1;
+
+                    let u_curr = self.u[idx];
+                    let u_prev = self.u_prev[idx];
+                    let c2 = self.c2_map[idx];
+                    let damping = self.damping_map[idx];
+
+                    // Standard 5-point discrete Laplacian stencil
+                    let laplacian =
+                        self.u[up] + self.u[down] + self.u[left] + self.u[right] - 4.0 * u_curr;
+
+                    // Wave equation update
+                    let mut val = 2.0 * u_curr - u_prev + c2 * laplacian;
+                    val *= damping;
+
+                    // Local row is indexed by x since the chunk has length w.
+                    u_next_row[x] = val;
+
+                    // Accumulate energy with decay (for visualization)
+                    energy_row[x] = energy_row[x] * 0.9995 + val.abs() * 0.005;
+                }
+            });
 
         // Cycle buffers:
         // t-1 (u_prev) -> recycled

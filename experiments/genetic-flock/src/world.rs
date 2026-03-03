@@ -82,10 +82,14 @@ impl World {
 
             for j in (i + 1)..count {
                 if crossover_partners[j].is_none() && self.boids[j].energy >= 50.0 {
-                    let d2 = self.boids[i].position.distance_squared(self.boids[j].position);
+                    let d2 = self.boids[i]
+                        .position
+                        .distance_squared(self.boids[j].position);
                     if d2 < crossover_radius_sq {
-                        crossover_partners[i] = Some((self.boids[j].dna.clone(), self.boids[j].chimera_dna.clone()));
-                        crossover_partners[j] = Some((self.boids[i].dna.clone(), self.boids[i].chimera_dna.clone()));
+                        crossover_partners[i] =
+                            Some((self.boids[j].dna.clone(), self.boids[j].chimera_dna.clone()));
+                        crossover_partners[j] =
+                            Some((self.boids[i].dna.clone(), self.boids[i].chimera_dna.clone()));
                         break;
                     }
                 }

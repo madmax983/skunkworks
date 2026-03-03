@@ -129,7 +129,11 @@ where
 
             // Left: Spatial (Particles)
             let canvas_spatial = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title(" Holographic Swarm "))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title(" Holographic Swarm "),
+                )
                 .x_bounds([0.0, app.universe.width])
                 .y_bounds([0.0, app.universe.height])
                 .marker(ratatui::symbols::Marker::Braille)
@@ -150,10 +154,17 @@ where
             let commit = &app.commits[app.current_index];
             let info_text = vec![
                 Line::from(Span::styled("Commit:", Style::default().fg(Color::Gray))),
-                Line::from(Span::raw(format!("{}/{}", app.current_index + 1, app.commits.len()))),
+                Line::from(Span::raw(format!(
+                    "{}/{}",
+                    app.current_index + 1,
+                    app.commits.len()
+                ))),
                 Line::from(""),
                 Line::from(Span::styled("Hash:", Style::default().fg(Color::Gray))),
-                Line::from(Span::styled(&commit.hash, Style::default().fg(Color::Yellow))),
+                Line::from(Span::styled(
+                    &commit.hash,
+                    Style::default().fg(Color::Yellow),
+                )),
                 Line::from(""),
                 Line::from(Span::styled("Author:", Style::default().fg(Color::Gray))),
                 Line::from(Span::raw(&commit.author)),
@@ -161,11 +172,17 @@ where
                 Line::from(Span::styled("Message:", Style::default().fg(Color::Gray))),
                 Line::from(Span::raw(&commit.message)),
                 Line::from(""),
-                Line::from(Span::styled("Resonance Filter:", Style::default().fg(Color::Magenta))),
+                Line::from(Span::styled(
+                    "Resonance Filter:",
+                    Style::default().fg(Color::Magenta),
+                )),
                 Line::from(Span::raw(format!("{:.2} Hz", app.resonance_dist))),
             ];
-            let info_panel = Paragraph::new(info_text)
-                .block(Block::default().borders(Borders::ALL).title(" Spectral Metadata "));
+            let info_panel = Paragraph::new(info_text).block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title(" Spectral Metadata "),
+            );
             f.render_widget(info_panel, main_chunks[1]);
 
             // Footer
