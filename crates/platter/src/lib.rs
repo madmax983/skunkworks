@@ -14,11 +14,11 @@
 #[derive(Debug, Clone)]
 pub struct Platter {
     /// The flat vector of field values.
-    pub magnetism: Vec<f64>,
+    magnetism: Vec<f64>,
     /// The width of the grid.
-    pub width: usize,
+    width: usize,
     /// The height of the grid.
-    pub height: usize,
+    height: usize,
 }
 
 const DECAY_THRESHOLD: f64 = 0.001;
@@ -37,7 +37,7 @@ impl Platter {
     /// use platter::Platter;
     ///
     /// let p = Platter::new(10, 10);
-    /// assert_eq!(p.width, 10);
+    /// assert_eq!(p.width(), 10);
     /// ```
     pub fn new(width: usize, height: usize) -> Self {
         let size = width.checked_mul(height).expect("Platter size overflow");
@@ -46,6 +46,21 @@ impl Platter {
             width,
             height,
         }
+    }
+
+    /// Returns the width of the platter.
+    pub fn width(&self) -> usize {
+        self.width
+    }
+
+    /// Returns the height of the platter.
+    pub fn height(&self) -> usize {
+        self.height
+    }
+
+    /// Returns a reference to the underlying magnetism grid.
+    pub fn magnetism(&self) -> &[f64] {
+        &self.magnetism
     }
 
     /// Adds a value to the cell at `(x, y)`, clamping the result to a maximum of `1.0`.
@@ -95,6 +110,11 @@ impl Platter {
         if let Some(idx) = self.get_index(x, y) {
             self.magnetism[idx] += amount;
         }
+    }
+
+    /// Clears the platter back to zeros.
+    pub fn clear(&mut self) {
+        self.magnetism.fill(0.0);
     }
 
     /// Retrieves the value at `(x, y)`.
@@ -242,7 +262,7 @@ mod tests {
         for y in 0..height {
             for x in 0..width {
                 let val = ((x + y) % 100) as f64 / 100.0;
-                platter.magnetism[y * width + x] = val;
+                platter.accumulate(x, y, val);
             }
         }
 
@@ -250,10 +270,28 @@ mod tests {
         // Run decay 100 times
         for _ in 0..100 {
             // Decay rate 0.99 ensures values stay non-zero for a while but some might drop below threshold
-            std::hint::black_box(platter.decay(0.99));
+            platter.decay(0.99);
+            std::hint::black_box(());
         }
         let duration = start.elapsed();
         println!("Time taken for 100 decays of 1M elements: {:?}", duration);
         println!("Time per decay: {:?}", duration / 100);
+    }
+}
+
+#[cfg(test)]
+mod warden_tests {
+    use super::*;
+
+    #[test]
+    fn test_platter_encapsulation() {
+        let p = Platter::new(10, 10);
+        // p.width = 5; // This would fail to compile now because `width` is private.
+        // p.height = 5; // This would fail to compile now because `height` is private.
+        // p.magnetism.truncate(5); // This would fail to compile now because `magnetism` is private.
+
+        assert_eq!(p.width(), 10);
+        assert_eq!(p.height(), 10);
+        assert_eq!(p.magnetism().len(), 100);
     }
 }

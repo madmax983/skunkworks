@@ -33,9 +33,9 @@ fn test_platter_zero_size() {
 
     // Should handle 0x0 gracefully
     // Accessing public fields is fine as struct fields are pub
-    assert_eq!(p.width, 0);
-    assert_eq!(p.height, 0);
-    assert_eq!(p.magnetism.len(), 0);
+    assert_eq!(p.width(), 0);
+    assert_eq!(p.height(), 0);
+    assert_eq!(p.magnetism().len(), 0);
 
     // Accessing anything should return 0.0
     assert_eq!(p.get_magnetism(0, 0), 0.0);

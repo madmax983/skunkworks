@@ -105,11 +105,11 @@ impl Head {
 
             // Move head
             self.x += 1;
-            if self.x >= platter.width {
+            if self.x >= platter.width() {
                 self.x = 0;
                 self.y += 1;
             }
-            if self.y >= platter.height {
+            if self.y >= platter.height() {
                 self.y = 0;
             }
         }
@@ -166,13 +166,13 @@ async fn main() {
             let (mx, my) = mouse_position();
             let w = screen_width();
             let h = screen_height();
-            let cell_w = w / platter.width as f32;
-            let cell_h = h / platter.height as f32;
+            let cell_w = w / platter.width() as f32;
+            let cell_h = h / platter.height() as f32;
 
             let gx = (mx / cell_w) as usize;
             let gy = (my / cell_h) as usize;
 
-            if gx < platter.width && gy < platter.height {
+            if gx < platter.width() && gy < platter.height() {
                 // Paint rainbow
                 let t = get_time() as f32;
                 let r = (t.sin() + 1.0) / 2.0;
@@ -196,11 +196,11 @@ async fn main() {
 
         let w = screen_width();
         let h = screen_height();
-        let cell_w = w / platter.width as f32;
-        let cell_h = h / platter.height as f32;
+        let cell_w = w / platter.width() as f32;
+        let cell_h = h / platter.height() as f32;
 
-        for y in 0..platter.height {
-            for x in 0..platter.width {
+        for y in 0..platter.height()() {
+            for x in 0..platter.width()() {
                 if let Some(color) = platter.read(x, y) {
                     let c = color;
                     // Render using macroquad color

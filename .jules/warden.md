@@ -107,3 +107,7 @@
 ## 2027-08-30 - Impossible Explorer Integer Overflow (DoS)
 **Threat:** The `intersect_rect` function in `experiments/impossible-explorer/src/main.rs` used unchecked addition (`a.0 + a.2`) which could cause integer overflow when using large coordinates, leading to a panic in debug builds (DoS) or wrapping behavior in release builds.
 **Defense:** Replaced unchecked addition and subtraction with `.saturating_add()` and `.saturating_sub()` to ensure safe coordinate clamping.
+
+## 2027-09-10 - Platter Grid Encapsulation Failure (DoS)
+**Threat:** The `Platter` struct in `crates/platter/src/lib.rs` exposed public fields (`width`, `height`, `magnetism`), allowing external code to modify dimensions without resizing the underlying vector. This inconsistency could cause a panic (DoS) or out-of-bounds reads/writes if `width` and `height` invariants were broken.
+**Defense:** Enforced encapsulation by making `Platter` fields private and adding read-only accessor methods (`width()`, `height()`, `magnetism()`).

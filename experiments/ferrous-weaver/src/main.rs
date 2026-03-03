@@ -251,8 +251,8 @@ fn ui(f: &mut Frame, state: &AppState) {
         .paint(|ctx| {
             // Draw Platter (Magnetism)
             let step = 4;
-            for y in (0..state.universe.platter.height).step_by(step) {
-                for x in (0..state.universe.platter.width).step_by(step) {
+            for y in (0..state.universe.platter.height()).step_by(step) {
+                for x in (0..state.universe.platter.width()).step_by(step) {
                     let mag = state.universe.platter.get_magnetism(x, y);
                     if mag > 0.2 {
                         let px = x as f64 - 100.0;

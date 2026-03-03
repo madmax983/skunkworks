@@ -233,9 +233,9 @@ impl Universe {
             let gy = (body.pos.y + 100.0) as i32;
 
             if gx >= 0
-                && gx < self.platter.width as i32
+                && gx < self.platter.width() as i32
                 && gy >= 0
-                && gy < self.platter.height as i32
+                && gy < self.platter.height() as i32
             {
                 let x = gx as usize;
                 let y = gy as usize;
@@ -249,7 +249,7 @@ impl Universe {
                 } else {
                     0.0
                 };
-                let right = if x < self.platter.width - 1 {
+                let right = if x < self.platter.width() - 1 {
                     self.platter.get_magnetism(x + 1, y)
                 } else {
                     0.0
@@ -259,7 +259,7 @@ impl Universe {
                 } else {
                     0.0
                 };
-                let up = if y < self.platter.height - 1 {
+                let up = if y < self.platter.height() - 1 {
                     self.platter.get_magnetism(x, y + 1)
                 } else {
                     0.0

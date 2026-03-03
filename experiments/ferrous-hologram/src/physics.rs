@@ -60,7 +60,7 @@ impl Universe {
         let damping = 0.98;
 
         // 1. Rasterize Particles to Platter (Spatial Domain)
-        self.platter.magnetism.fill(0.0);
+        self.platter.clear();
         for p in &self.particles {
             let gx = p.pos.x.round() as usize;
             let gy = p.pos.y.round() as usize;
@@ -72,7 +72,7 @@ impl Universe {
         // Convert Platter to Vec<f64> via iter/clone?
         // Platter.magnetism is Vec<f64>.
         self.spectral_field
-            .compute_spectrum(&self.platter.magnetism);
+            .compute_spectrum(&self.platter.magnetism());
         self.spectral_field.compute_potential();
 
         // 3. Apply Forces
