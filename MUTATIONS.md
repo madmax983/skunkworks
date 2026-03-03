@@ -129,4 +129,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Magnetic Reaction-Diffusion. Magnetic particles move around the space and act as catalysts depositing chemicals, while chemical concentrations act as magnetic lenses/permeability multipliers, creating an emergent bidirectional feedback loop.
 - **Novel trait**: Macroscopic-Microscopic Feedback Loop. The particles shape the chemical environment, while the chemical environment shapes the magnetic force.
 - **Status**: experiments/gray-fluid
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (macroscopic-microscopic feedback loop shaping a fluid space). Success.
+
+### chron-fluid
+- **Parents**: experiments/chrontext + experiments/ferrous-fluid
+- **Concept**: Magnetic Code Strata. The age of each line of code in a file creates a magnetic field. Old code attracts, new code repels.
+- **Novel trait**: The git commit history acts as a physical force field guiding magnetic particles over the text layout.
+- **Status**: experiments/chron-fluid
 - **Evaluation**: Implemented by The Splice Surgeon 🧬. Awaiting observation.
