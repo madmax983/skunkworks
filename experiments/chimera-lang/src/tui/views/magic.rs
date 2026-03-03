@@ -779,7 +779,7 @@ pub(crate) fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
             }
 
             if app_state.grid_cursor == (x, y) {
-                style = style.add_modifier(Modifier::REVERSED);
+                style = style.fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD);
             }
 
             // Truncate to 3 chars
