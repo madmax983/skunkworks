@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-klein**: Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism / Hardcoded Genetics / Compilation Failure. Grace period: 24h.
+- **laban-rover**: Specimen condemned. Diagnosis: Compilation Failure / Terminal Genericism / Skeletal Implementation. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -258,3 +258,4 @@
 - **atomic-groove**: Specimen executed. Diagnosis: Documentation Void, Terminal Genericism. Grace period expired. Moved to graveyard.
 - **polyrhythmic-cylinder**: Specimen executed. Diagnosis: Terminal Stagnation / Documentation Void. Grace period expired. Moved to graveyard.
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
+- **chimera-klein**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism / Hardcoded Genetics / Compilation Failure. Grace period expired. Still fails to compile with E0063, still has hardcoded genetics. Moved to graveyard.
