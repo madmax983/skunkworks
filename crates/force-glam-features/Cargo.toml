@@ -1,0 +1,7 @@
+[package]
+name = "force-glam-features"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+glam = { version = "0.27.0", features = ["scalar-math"] }

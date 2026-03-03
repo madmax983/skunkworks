@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 bevy_prototype_lyon = "0.12"
-bevy = { version = "0.14", default-features = false, features = [
+bevy = { version = "0.14", features = [
     "animation",
     "bevy_asset",
     "bevy_core_pipeline",
@@ -26,3 +26,4 @@ bevy = { version = "0.14", default-features = false, features = [
 ] }
 bevy_rapier2d = "0.27"
 chimera-lang = { path = "../chimera-lang" }
+glam = { version = "0.27", features = ["scalar-math"] }
