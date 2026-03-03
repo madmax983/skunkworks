@@ -41,13 +41,22 @@ pub struct PhysicsGrid {
     pub(crate) energy_map: Vec<f32>,
 }
 
+/// Represents the physical properties of a cell in the acoustic simulation grid.
+///
+/// Different materials affect how sound waves propagate through them, acting as
+/// walls, lenses, or dampeners.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Material {
+    /// Standard propagation medium ($c^2 = 0.4$, low damping).
     Air,
+    /// Absolute boundary. Sound does not enter and reflects perfectly.
     Wall,
-    Slow, // High refractive index
-    Fast, // Low refractive index
-    Void, // Absorbs everything
+    /// High refractive index ($c^2 = 0.1$). Waves travel slower here, bending towards it (like an acoustic lens).
+    Slow,
+    /// Low refractive index ($c^2 = 0.5$). Waves travel faster here.
+    Fast,
+    /// High absorption. Waves enter but lose energy extremely quickly, minimizing reflection.
+    Void,
 }
 
 impl PhysicsGrid {
