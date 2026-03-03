@@ -243,6 +243,8 @@ pub mod nova_sigil;
 #[cfg(feature = "nova")]
 pub mod nova_signals;
 #[cfg(feature = "nova")]
+pub mod symbiote;
+#[cfg(feature = "nova")]
 pub mod nova_sovereignty;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -486,6 +488,8 @@ pub struct ChimeraVM {
     pub sonar_target: Option<(usize, usize)>,
     #[cfg(feature = "nova")]
     pub symbiotes: Vec<(usize, usize)>,
+    #[cfg(feature = "nova")]
+    pub symbiote_entity: Option<symbiote::Symbiote>,
     #[cfg(any(feature = "nova", feature = "silicon"))]
     pub topology: Topology,
     #[cfg(feature = "nova")]
@@ -778,6 +782,8 @@ impl ChimeraVM {
             sonar_target: None,
             #[cfg(feature = "nova")]
             symbiotes: Vec::new(),
+            #[cfg(feature = "nova")]
+            symbiote_entity: None,
             #[cfg(any(feature = "nova", feature = "silicon"))]
             topology: Topology::Torus,
             #[cfg(feature = "nova")]
@@ -2111,6 +2117,10 @@ impl ChimeraVM {
 
         #[cfg(feature = "nova")]
         if !time_frozen {
+            if let Some(mut entity) = self.symbiote_entity.take() {
+                entity.tick(self);
+                self.symbiote_entity = Some(entity);
+            }
             self.process_symbiotes();
         }
 
@@ -3232,6 +3242,13 @@ impl ChimeraVM {
             OpCode::Tissue => nova_metazoa::exec_tissue(self, op, args),
 
             OpCode::Nop => None,
+
+            #[cfg(feature = "nova")]
+            OpCode::SpawnSymbiote => { symbiote::exec_spawn_symbiote(self); None },
+            #[cfg(feature = "nova")]
+            OpCode::FeedSymbiote => { symbiote::exec_feed_symbiote(self); None },
+            #[cfg(feature = "nova")]
+            OpCode::SymbioteOp => { symbiote::exec_symbiote_op(self); None },
 
             OpCode::Unknown(name) => self.handle_unknown_opcode(&name),
         }

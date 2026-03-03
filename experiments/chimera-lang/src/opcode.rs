@@ -2317,6 +2317,13 @@ pub enum OpCode {
     Nop,
 
     /// Unknown or invalid instruction.
+    #[cfg(feature = "nova")]
+    SpawnSymbiote,
+    #[cfg(feature = "nova")]
+    FeedSymbiote,
+    #[cfg(feature = "nova")]
+    SymbioteOp,
+
     #[strum(default)]
     Unknown(String),
 }
