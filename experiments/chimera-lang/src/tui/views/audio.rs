@@ -35,7 +35,7 @@ pub(crate) fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, app_state: &Ap
             let (freq, amp_res) = (0.0, 0.0);
 
             let is_harmonic = if amp_res > 10.0 {
-                GOLDEN_FREQUENCIES.iter().any(|&g| (freq - g).abs() < 5.0)
+                GOLDEN_FREQUENCIES.iter().any(|&g: &f32| (freq - g).abs() < 5.0)
             } else {
                 false
             };
