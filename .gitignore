@@ -3,3 +3,4 @@ Cargo.lock
 .claude/
 nul
 .chimera_akashic.json
+graveyard/*/target
