@@ -389,6 +389,7 @@ classDiagram
         +Bid(buyer_id)
         +Ask(seller_id)
         +Trade(age)
+        +Wall
     }
 
     class TradeEvent {
@@ -600,6 +601,7 @@ classDiagram
     PbdSystem *-- Particle : Manages
     PbdSystem *-- Constraint : Enforces
     Constraint ..> Particle : Affects
+    note for PbdSystem "Decoupled from macroquad, uses glam (ADR 063)"
 ```
 
 ### Hyper System (crates/hyper-system)
