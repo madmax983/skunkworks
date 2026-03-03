@@ -96,7 +96,20 @@ impl GrayScott {
         &self.v
     }
 
-    /// Converts a 2D coordinate into a 1D index for the flat vectors.
+    /// Converts a 2D coordinate `(x, y)` into a 1D index for the flat data vectors.
+    ///
+    /// This is required because the grid state is stored in a flat `Vec<f32>` to
+    /// ensure contiguous memory access, which is crucial for the performance of the
+    /// 3x3 convolution used in calculating the Laplacian.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gray_scott::GrayScott;
+    /// let gs = GrayScott::new(10, 10);
+    /// let index = gs.get_index(5, 5);
+    /// assert_eq!(index, 55);
+    /// ```
     pub fn get_index(&self, x: usize, y: usize) -> usize {
         y * self.width + x
     }
