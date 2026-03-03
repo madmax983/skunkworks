@@ -2,7 +2,7 @@ use anyhow::Result;
 use chrono::Utc;
 use git_associates::{Commit, GitModel};
 use macroquad::prelude::*;
-use origami::{MiuraOri, MiuraParams, Orientation};
+use origami::{generate_miura_grid, MiuraParams, Orientation};
 use std::f32::consts::PI;
 
 fn conf() -> Conf {
@@ -66,7 +66,7 @@ async fn main() -> Result<()> {
         gamma: 80.0f32.to_radians(),
         orientation: Orientation::Horizontal,
     };
-    let miura = MiuraOri::new(params, (cols, rows));
+    let grid_size = (cols, rows);
 
     // Camera State
     let mut cam_yaw: f32 = PI / 4.0;
@@ -131,7 +131,7 @@ async fn main() -> Result<()> {
         });
 
         // Generate Grid Points
-        let grid_points = miura.generate_grid(extension);
+        let grid_points = generate_miura_grid(params, grid_size, extension);
         let width_pts = cols + 1;
 
         // Build Exploded Mesh

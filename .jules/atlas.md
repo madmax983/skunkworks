@@ -119,3 +119,9 @@
 **Blueprint:** Extracted `Platter` into its own crate `crates/platter`. Updated `ferrous-core` to re-export it for backward compatibility.
 **Stability:** Decoupled generic simulation logic from specific implementations. High cohesion, low coupling.
 **Verification:** Verified with `cargo test -p platter` and `cargo test -p ferrous-core`. `ferrous-core` tests passed, confirming re-export works.
+
+## [Origami API Modernization]
+**Tangle:** The Leak / The Sprawl - Multiple experiments (`origami-spores`, `rigid-origami`, `origami-history`, `origami-terrain`) were failing to compile because they relied on an outdated, legacy API (`MiuraOri::new` and `.generate_grid()`) from `crates/origami` instead of the modernized, functional API (`generate_miura_grid`).
+**Blueprint:** Refactored these experiments to use the standalone functional API (`generate_miura_grid`) and `MiuraParams` directly, aligning with the architectural refactoring of the `origami` crate.
+**Stability:** Restored compilation of multiple experiments, enforcing a single source of truth for the origami mesh generation.
+**Verification:** Verified with `cargo check` across all modified crates.
