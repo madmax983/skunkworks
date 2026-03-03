@@ -26,6 +26,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 
 <!-- Experiments that resulted from cross-pollination -->
 
+### chaos-hologram
+- **Parents**: experiments/chaos-flock + experiments/hologram-text
+- **Concept**: The chaotic double-pendulum's physical state dynamically perturbs the viewing angle of an FFT-based holographic field.
+- **Novel trait**: Spectral Chaos. The system unpredictably drifts in and out of perfect spectral alignment, causing the underlying structure to break down into chaotic noise and reform spontaneously.
+- **Status**: experiments/chaos-hologram
+- **Evaluation**: Implemented by The Splice Surgeon 🧬. Awaiting observation.
+
 ### chron-compost
 - **Parents**: experiments/chrontext + experiments/compost-chimera
 - **Concept**: TUI visualization where Chimera VM agents ("Time Scavengers") roam over the source code. The environment uses `git blame` data (`age_score`) from `chrontext` to colorize the text (Hot vs Cold).
@@ -143,4 +150,4 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Pheromone-Guided Magnetic Particles. Magnetic particles act as agents that are driven by magnetic forces but also deposit a pheromone trail.
 - **Novel trait**: Magnetic Memory. Particles calculate the gradient of the local pheromone density and are pulled towards areas of higher density. The trails formed by past magnetic lines of force become stable physical structures guiding future particles.
 - **Status**: experiments/myco-fluid
-- **Evaluation**: Implemented by The Splice Surgeon 🧬. Awaiting observation.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as RECOMBINANT. Emergent behavior confirmed (magnetic memory formation). Success.
