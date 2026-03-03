@@ -98,6 +98,12 @@
 - **Status:** Fresh hybrid. Inherits Git blame parsing + particle physics. Predicting emergent code strata flowing to the oldest lines.
 - **Phenotype:** Magnetic code visualization driven by codebase age, with magnetic particle physics.
 
+### [Concentration Level: RECOMBINANT] - Location: experiments/myco-fluid
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** myco-transit × ferrous-fluid
+- **Status:** Fresh hybrid. Inherits slime mold pheromone fields + magnetic particles. Predicting an emergent "Magnetic Memory".
+- **Phenotype:** Magnetic particles calculate the gradient of the local pheromone density and are pulled towards areas of higher density.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/hanging-gardens
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Terminal Stagnation. Vestigial sexagesimal math and generic code erosion implementation without emergent ecosystems. Grace period 24h.

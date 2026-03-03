@@ -136,4 +136,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Magnetic Code Strata. The age of each line of code in a file creates a magnetic field. Old code attracts, new code repels.
 - **Novel trait**: The git commit history acts as a physical force field guiding magnetic particles over the text layout.
 - **Status**: experiments/chron-fluid
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as RECOMBINANT. Emergent behavior confirmed (magnetic code strata flowing to the oldest lines). Success.
+
+### myco-fluid
+- **Parents**: experiments/myco-transit + experiments/ferrous-fluid
+- **Concept**: Pheromone-Guided Magnetic Particles. Magnetic particles act as agents that are driven by magnetic forces but also deposit a pheromone trail.
+- **Novel trait**: Magnetic Memory. Particles calculate the gradient of the local pheromone density and are pulled towards areas of higher density. The trails formed by past magnetic lines of force become stable physical structures guiding future particles.
+- **Status**: experiments/myco-fluid
 - **Evaluation**: Implemented by The Splice Surgeon 🧬. Awaiting observation.
