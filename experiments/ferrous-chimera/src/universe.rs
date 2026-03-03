@@ -31,9 +31,9 @@ impl Universe {
 
             let mut mag_val = 0.0;
             if gx >= 0
-                && gx < self.platter.width as i32
+                && gx < self.platter.width() as i32
                 && gy >= 0
-                && gy < self.platter.height as i32
+                && gy < self.platter.height() as i32
             {
                 mag_val = self.platter.get_magnetism(gx as usize, gy as usize);
             }
@@ -92,9 +92,9 @@ impl Universe {
             let gx = (agent.body.pos.x + 100.0) as i32;
             let gy = (agent.body.pos.y + 100.0) as i32;
             if gx >= 0
-                && gx < self.platter.width as i32
+                && gx < self.platter.width() as i32
                 && gy >= 0
-                && gy < self.platter.height as i32
+                && gy < self.platter.height() as i32
             {
                 self.platter
                     .magnetize(gx as usize, gy as usize, emit * mag_write * dt);

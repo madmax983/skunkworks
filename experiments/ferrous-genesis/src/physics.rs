@@ -115,9 +115,9 @@ impl Universe {
             let gx = (body.pos.x + 100.0) as i32;
             let gy = (body.pos.y + 100.0) as i32;
             let local_mag = if gx >= 0
-                && gx < self.platter.width as i32
+                && gx < self.platter.width() as i32
                 && gy >= 0
-                && gy < self.platter.height as i32
+                && gy < self.platter.height() as i32
             {
                 self.platter.get_magnetism(gx as usize, gy as usize)
             } else {
@@ -184,9 +184,9 @@ impl Universe {
             let gx = (body.pos.x + 100.0) as i32;
             let gy = (body.pos.y + 100.0) as i32;
             if gx >= 0
-                && gx < self.platter.width as i32
+                && gx < self.platter.width() as i32
                 && gy >= 0
-                && gy < self.platter.height as i32
+                && gy < self.platter.height() as i32
             {
                 // Write amount based on deviation from neutral
                 let intensity = (body.magnetism - 0.5).abs() * mag_write * dt;

@@ -140,8 +140,8 @@ where
                 .paint(|ctx| {
                     // Draw Platter (Magnetism)
                     let step = 4; // Faster render
-                    for y in (0..universe.platter.height).step_by(step) {
-                        for x in (0..universe.platter.width).step_by(step) {
+                    for y in (0..universe.platter.height()).step_by(step) {
+                        for x in (0..universe.platter.width()).step_by(step) {
                             let mag = universe.platter.get_magnetism(x, y);
                             if mag > 0.1 {
                                 let px = x as f64 - 100.0;

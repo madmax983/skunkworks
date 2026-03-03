@@ -48,7 +48,7 @@ impl App {
                             }
                         }
                         KeyCode::Right => {
-                            if self.head_pos.0 < self.platter.width - 1 {
+                            if self.head_pos.0 < self.platter.width() - 1 {
                                 self.head_pos.0 += 1;
                             }
                         }
@@ -58,7 +58,7 @@ impl App {
                             }
                         }
                         KeyCode::Down => {
-                            if self.head_pos.1 < self.platter.height - 1 {
+                            if self.head_pos.1 < self.platter.height() - 1 {
                                 self.head_pos.1 += 1;
                             }
                         }
@@ -138,8 +138,8 @@ impl App {
             .x_bounds([0.0, 32.0])
             .y_bounds([0.0, 32.0])
             .paint(|ctx| {
-                for y in 0..self.platter.height {
-                    for x in 0..self.platter.width {
+                for y in 0..self.platter.height() {
+                    for x in 0..self.platter.width() {
                         if let Some(sector) = self.platter.get_sector(x, y) {
                             // Color based on magnetization
                             let color = if sector.magnetization > 0.8 {
