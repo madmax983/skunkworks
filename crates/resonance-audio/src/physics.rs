@@ -143,6 +143,11 @@ impl PhysicsGrid {
         let w = self.width;
         let h = self.height;
 
+        // Grid must be at least 3x3 to have an interior for the 5-point stencil
+        if w < 3 || h < 3 {
+            return;
+        }
+
         // Iterate over the interior of the grid (skipping boundaries)
         for y in 1..h - 1 {
             for x in 1..w - 1 {

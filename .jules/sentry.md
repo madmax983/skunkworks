@@ -43,3 +43,7 @@
 **[Hash Trait Stack Overflow on Deeply Nested Values]**
 **Learning:** Implementing `Hash` using recursion on heavily-nested recursive types like `Value::Junction` and `Value::Superposition` is dangerous. When these inputs are passed in, standard recursion easily exhausts the stack, leading to immediate program abortion (`fatal runtime error: stack overflow`).
 **Action:** Always rewrite `std::hash::Hash` implementations iteratively using a `Vec` as a stack for deeply nested recursive variants to ensure stable operations and prevent stack overflow panics.
+
+**[Loop Bounds Underflow Panic]**
+**Learning:** Iterating over interior grid elements using `1..w-1` causes an underflow panic when the grid width or height is 0 or 1, since unsigned `usize` subtraction will wrap around to `usize::MAX`.
+**Action:** Always use `.saturating_sub(1)` or an explicit boundary guard (e.g., `if w < 3 || h < 3`) before establishing loop bounds on `usize` variables.
