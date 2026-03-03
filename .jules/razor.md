@@ -2,7 +2,13 @@
 **Bloat:** `nova_chaos` module (Chaos Cartridge / Alchemy System) in `chimera-lang`.
 **Cut:** Deleted module, associated tests, 8 OpCodes, and integration logic in VM and TUI.
 **Saved:** ~400 lines of code / Significant cognitive load (removed a feature silo that wasn't core to the biological simulation).
+
 ## [Reduction]
 **Bloat:** `nova_quipu` module (Quipu Knot System) in `chimera-lang`.
 **Cut:** Replaced complex `Cord` struct and `Knot` enum with a simple `Vec<i64>`. Removed knot parsing/rendering logic.
 **Saved:** ~100 lines of code / Massive reduction in complexity (removed a physical simulation that was just storing integers).
+
+## [Reduction]
+**Bloat:** Separate `tui-semantic` crate.
+**Cut:** Merged the semantic data structures directly into `tui-shared` as a module (`tui_shared::semantic`). Deleted `tui-semantic`.
+**Saved:** 1 full crate, 1 workspace entry, simplified the dependency graph across multiple experiments that were already depending on `tui-shared`.

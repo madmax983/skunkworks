@@ -49,6 +49,7 @@
 //! }
 //! ```
 
+pub mod semantic;
 pub mod widgets;
 
 use crossterm::{

@@ -1,15 +1,15 @@
-//! # tui-semantic
+//! # Semantic State
 //!
 //! A bridge between TUI applications and LLMs. Apps expose their semantic state
 //! (not just pixels) so AI can understand, reason about, and interact with them.
 //!
-//! This crate is **framework-agnostic**: it provides pure data structures and does
+//! This module is **framework-agnostic**: it provides pure data structures and does
 //! not depend on `ratatui`, `crossterm`, or any specific TUI backend.
 //!
 //! ## Example
 //!
 //! ```
-//! use tui_semantic::{Snapshot, Entity};
+//! use tui_shared::semantic::{Snapshot, Entity};
 //!
 //! struct Player { x: f64, y: f64, health: i64 }
 //! struct MyApp { player: Player, score: i64 }
@@ -50,7 +50,7 @@ pub use locus::Vec2;
 /// # Examples
 ///
 /// ```
-/// use tui_semantic::Entity;
+/// use tui_shared::semantic::Entity;
 ///
 /// let player = Entity::new("hero")
 ///     .with_id("p1")
@@ -84,7 +84,7 @@ impl Entity {
     /// # Examples
     ///
     /// ```
-    /// use tui_semantic::Entity;
+    /// use tui_shared::semantic::Entity;
     /// let player = Entity::new("player");
     /// ```
     pub fn new(kind: impl Into<String>) -> Self {
@@ -112,7 +112,7 @@ impl Entity {
     /// # Examples
     ///
     /// ```
-    /// use tui_semantic::Entity;
+    /// use tui_shared::semantic::Entity;
     /// let e = Entity::new("ball").at(5.0, 5.0);
     /// ```
     pub fn at(mut self, x: f64, y: f64) -> Self {
@@ -127,7 +127,7 @@ impl Entity {
     /// # Examples
     ///
     /// ```
-    /// use tui_semantic::Entity;
+    /// use tui_shared::semantic::Entity;
     /// let e = Entity::new("bullet")
     ///     .at(10.0, 10.0)
     ///     .moving(1.0, 0.0);
@@ -148,7 +148,7 @@ impl Entity {
     /// # Examples
     ///
     /// ```
-    /// use tui_semantic::Entity;
+    /// use tui_shared::semantic::Entity;
     /// let enemy = Entity::new("orc")
     ///     .with_prop("health", 100)
     ///     .with_prop("elite", true);
@@ -221,7 +221,7 @@ impl From<String> for PropValue {
 /// # Examples
 ///
 /// ```
-/// use tui_semantic::Region;
+/// use tui_shared::semantic::Region;
 /// let chat = Region::new("chat_box", 0, 20, 80, 5)
 ///     .describe("Area where messages appear");
 /// ```
@@ -264,7 +264,7 @@ impl Region {
 /// # Examples
 ///
 /// ```
-/// use tui_semantic::{Snapshot, Entity, Action};
+/// use tui_shared::semantic::{Snapshot, Entity, Action};
 ///
 /// let snap = Snapshot::new("space-invaders")
 ///     .with_entity(Entity::new("player").at(10.0, 10.0))
@@ -303,7 +303,7 @@ impl Snapshot {
     /// # Examples
     ///
     /// ```
-    /// use tui_semantic::Snapshot;
+    /// use tui_shared::semantic::Snapshot;
     /// let snap = Snapshot::new("my-game");
     /// ```
     pub fn new(app: impl Into<String>) -> Self {
@@ -389,7 +389,7 @@ impl Snapshot {
 /// # Examples
 ///
 /// ```
-/// use tui_semantic::Action;
+/// use tui_shared::semantic::Action;
 /// let jump = Action::new("jump")
 ///     .key("space")
 ///     .describe("Make the character jump");
@@ -412,7 +412,7 @@ impl Action {
     /// # Examples
     ///
     /// ```
-    /// use tui_semantic::Action;
+    /// use tui_shared::semantic::Action;
     /// let quit = Action::new("quit");
     /// ```
     pub fn new(name: impl Into<String>) -> Self {
