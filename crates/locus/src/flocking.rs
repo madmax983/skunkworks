@@ -533,4 +533,22 @@ mod extended_tests {
         let params = default_params();
         let _ = compute_force(&positions, &velocities, 0, &params);
     }
+
+    #[test]
+    #[should_panic(expected = "assertion `left == right` failed")]
+    fn test_compute_force_mismatched_lengths_panic() {
+        let params = FlockingParams {
+            view_radius: 10.0,
+            separation_radius: 5.0,
+            max_speed: 1.0,
+            max_force: 0.1,
+            separation_weight: 1.0,
+            alignment_weight: 1.0,
+            cohesion_weight: 1.0,
+        };
+        let positions = vec![Vec2::zero(), Vec2::new(1.0, 1.0)];
+        let velocities = vec![Vec2::zero()];
+
+        let _ = compute_force(&positions, &velocities, 0, &params);
+    }
 }
