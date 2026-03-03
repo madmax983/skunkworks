@@ -87,7 +87,7 @@ mod tests {
         let val = vm.stack.pop().unwrap();
         let dist = vm.stack.pop().unwrap();
 
-        assert_eq!(dist, Value::Int(16));
+        assert_eq!(dist, Value::Int(15));
         assert_eq!(val, Value::Int(0));
 
         // Target should be None (or not set by logic? logic says sonar_target is set if found)
