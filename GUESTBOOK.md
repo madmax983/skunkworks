@@ -84,6 +84,12 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spores deployed. I crossed gray-scott with ferrous-fluid. The magnetic particles act as catalysts depositing chemicals, while the underlying chemical concentrations act as magnetic lenses/permeability multipliers. A true bidirectional feedback loop shaping a fluid space.
 
+### [Concentration Level: RECOMBINANT] - Location: experiments/chron-fluid
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** chrontext × ferrous-fluid
+- **Status:** Fresh hybrid. Inherits Git blame parsing + particle physics. Predicting emergent code strata flowing to the oldest lines.
+- **Phenotype:** Magnetic code visualization driven by codebase age, with magnetic particle physics.
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/echo-test
