@@ -1,6 +1,6 @@
 mod text_mesh;
-use text_mesh::TextMesh;
 use macroquad::prelude::*;
+use text_mesh::TextMesh;
 
 #[macroquad::main("Bezier Landscapes")]
 async fn main() {
@@ -20,14 +20,15 @@ async fn main() {
 
         v.position.x = x;
         v.position.z = -y_text; // Flip Z to match reading direction?
-        // If Text Y was Up, and we map to Z, usually Z- is forward.
-        // Let's just try.
+                                // If Text Y was Up, and we map to Z, usually Z- is forward.
+                                // Let's just try.
         v.position.y = z_text + 20.0; // Lift up so bottom is at 0
     }
 
     // 2. Apply distortion to Top Face (which is now Y=20)
     for v in &mut mesh_data.vertices {
-        if v.position.y >= 19.0 { // Top face (allow float error)
+        if v.position.y >= 19.0 {
+            // Top face (allow float error)
             // Simple wave distortion
             let noise = (v.position.x * 0.1).sin() * (v.position.z * 0.1).cos() * 5.0;
             v.position.y += noise;
@@ -62,21 +63,45 @@ async fn main() {
         let rot_speed = 2.0 * dt;
 
         // Camera Movement
-        let forward = vec3(cam_yaw.cos() * cam_pitch.cos(), cam_pitch.sin(), cam_yaw.sin() * cam_pitch.cos());
+        let forward = vec3(
+            cam_yaw.cos() * cam_pitch.cos(),
+            cam_pitch.sin(),
+            cam_yaw.sin() * cam_pitch.cos(),
+        );
         // Actually right vector: cross(forward, up)
         let right = forward.cross(vec3(0., 1., 0.)).normalize();
 
-        if is_key_down(KeyCode::W) { cam_pos += forward * speed; }
-        if is_key_down(KeyCode::S) { cam_pos -= forward * speed; }
-        if is_key_down(KeyCode::A) { cam_pos -= right * speed; }
-        if is_key_down(KeyCode::D) { cam_pos += right * speed; }
-        if is_key_down(KeyCode::Q) { cam_pos.y -= speed; }
-        if is_key_down(KeyCode::E) { cam_pos.y += speed; }
+        if is_key_down(KeyCode::W) {
+            cam_pos += forward * speed;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_pos -= forward * speed;
+        }
+        if is_key_down(KeyCode::A) {
+            cam_pos -= right * speed;
+        }
+        if is_key_down(KeyCode::D) {
+            cam_pos += right * speed;
+        }
+        if is_key_down(KeyCode::Q) {
+            cam_pos.y -= speed;
+        }
+        if is_key_down(KeyCode::E) {
+            cam_pos.y += speed;
+        }
 
-        if is_key_down(KeyCode::Left) { cam_yaw -= rot_speed; }
-        if is_key_down(KeyCode::Right) { cam_yaw += rot_speed; }
-        if is_key_down(KeyCode::Up) { cam_pitch += rot_speed; }
-        if is_key_down(KeyCode::Down) { cam_pitch -= rot_speed; }
+        if is_key_down(KeyCode::Left) {
+            cam_yaw -= rot_speed;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_yaw += rot_speed;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_pitch += rot_speed;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_pitch -= rot_speed;
+        }
 
         clear_background(SKYBLUE);
 
@@ -93,7 +118,13 @@ async fn main() {
         set_default_camera();
 
         draw_text("WASD+QE to move, Arrows to look", 10., 20., 20., BLACK);
-        draw_text(&format!("Pos: {:.1}, {:.1}, {:.1}", cam_pos.x, cam_pos.y, cam_pos.z), 10., 40., 20., BLACK);
+        draw_text(
+            &format!("Pos: {:.1}, {:.1}, {:.1}", cam_pos.x, cam_pos.y, cam_pos.z),
+            10.,
+            40.,
+            20.,
+            BLACK,
+        );
 
         next_frame().await
     }

@@ -1,5 +1,5 @@
-use bevy::prelude::*;
 use crate::monitor::SystemMonitor;
+use bevy::prelude::*;
 
 #[derive(Resource, Debug, Default)]
 pub struct LabanState {
@@ -9,10 +9,7 @@ pub struct LabanState {
     pub flow: f32,   // 0.0 (Bound) to 1.0 (Free)
 }
 
-pub fn update_laban_from_monitor(
-    monitor: Res<SystemMonitor>,
-    mut laban: ResMut<LabanState>,
-) {
+pub fn update_laban_from_monitor(monitor: Res<SystemMonitor>, mut laban: ResMut<LabanState>) {
     // RAM -> Weight
     // High RAM usage = Heavy movements (Strong Weight)
     laban.weight = monitor.ram_usage.clamp(0.0, 1.0);

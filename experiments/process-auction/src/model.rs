@@ -152,7 +152,7 @@ impl Simulation {
                         }
                     }
                     if self.processes[pid].state == ProcessState::Finished {
-                         core.current_process = None;
+                        core.current_process = None;
                     }
                 } else {
                     // Time slice expired
@@ -169,12 +169,14 @@ impl Simulation {
 
         // 3. Place Bids (Parallelized decision, Sequential placement)
         // We can't mutate grid in parallel easily, so we collect bids first.
-        let bids: Vec<(usize, usize)> = self.processes.par_iter()
+        let bids: Vec<(usize, usize)> = self
+            .processes
+            .par_iter()
             .filter(|p| p.state == ProcessState::Ready)
             .filter_map(|p| {
                 // Stochastic bidding: don't bid every frame
                 if rand::thread_rng().gen_bool(0.1) {
-                     p.decide_bid(50).map(|y| (p.id, y))
+                    p.decide_bid(50).map(|y| (p.id, y))
                 } else {
                     None
                 }
@@ -199,7 +201,7 @@ impl Simulation {
                 if rng.gen_bool(0.2) {
                     let y = rng.gen_range(0..25); // Top half (High prices)
                     let x = core.id; // Place in own column
-                     if let Particle::Empty = self.market.get(x, y) {
+                    if let Particle::Empty = self.market.get(x, y) {
                         self.market.set(x, y, Particle::Ask(core.id));
                     }
                 }

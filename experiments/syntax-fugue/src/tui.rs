@@ -60,7 +60,9 @@ impl TuiApp {
             let size = f.area();
 
             if self.voices.is_empty() {
-                let block = Block::default().title("No voices found").borders(Borders::ALL);
+                let block = Block::default()
+                    .title("No voices found")
+                    .borders(Borders::ALL);
                 f.render_widget(block, size);
                 return;
             }
@@ -83,7 +85,9 @@ impl TuiApp {
                 let mut current_token_line = 0;
 
                 let panel_width = chunks[i].width.saturating_sub(2) as usize; // remove borders
-                if panel_width == 0 { continue; } // Too small
+                if panel_width == 0 {
+                    continue;
+                } // Too small
 
                 for (j, token) in state.voice.tokens.iter().enumerate() {
                     let mut style = Style::default().fg(token.color);
@@ -91,14 +95,14 @@ impl TuiApp {
 
                     // Simple wrap logic simulation to find line of current token
                     if current_line_chars + token_len > panel_width {
-                         current_line_chars = 0;
-                         // Logic for wrapping: if token fits on next line, good.
-                         // ratatui wrap trims? assuming yes.
-                         // But actually if token is longer than width, it splits.
-                         // Let's assume standard word wrap.
-                         char_count += token_len; // rough estimate
-                         // Every time we wrap, we increment line count?
-                         // Actually, we just need to know which line the token STARTS on.
+                        current_line_chars = 0;
+                        // Logic for wrapping: if token fits on next line, good.
+                        // ratatui wrap trims? assuming yes.
+                        // But actually if token is longer than width, it splits.
+                        // Let's assume standard word wrap.
+                        char_count += token_len; // rough estimate
+                                                 // Every time we wrap, we increment line count?
+                                                 // Actually, we just need to know which line the token STARTS on.
                     }
 
                     // Update current line char count for wrapping logic
@@ -160,7 +164,8 @@ impl Drop for TuiApp {
             self.terminal.backend_mut(),
             LeaveAlternateScreen,
             DisableMouseCapture
-        ).unwrap_or(());
+        )
+        .unwrap_or(());
         self.terminal.show_cursor().unwrap_or(());
     }
 }

@@ -1,6 +1,6 @@
-use bevy::prelude::*;
 use crate::laban::LabanState;
 use crate::skeleton::IKChain;
+use bevy::prelude::*;
 use rand::Rng;
 
 #[derive(Component)]
@@ -68,7 +68,12 @@ pub fn choreograph_system(
 
                 // Simple walk cycle
                 // Left and right are 180 deg out of phase
-                let cycle_phase = limb.phase + if limb.side > 0.0 { 0.0 } else { std::f32::consts::PI };
+                let cycle_phase = limb.phase
+                    + if limb.side > 0.0 {
+                        0.0
+                    } else {
+                        std::f32::consts::PI
+                    };
                 let cycle = cycle_phase.sin();
 
                 target.x += cycle * stride;

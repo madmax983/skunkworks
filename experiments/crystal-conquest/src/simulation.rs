@@ -1,5 +1,5 @@
-use cgmath::{InnerSpace, Vector3};
 use bytemuck::{Pod, Zeroable};
+use cgmath::{InnerSpace, Vector3};
 use rand::Rng;
 
 #[repr(C)]

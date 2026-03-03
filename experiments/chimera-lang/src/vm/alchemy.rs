@@ -324,7 +324,7 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
                     // As seen, this binds i as i64 (copy).
                     // So use i directly.
                     let idx = *i as usize; // Wait, if i is i64, *i is invalid.
-                    // I will use i directly.
+                                           // I will use i directly.
 
                     if strand_a.is_none() {
                         strand_a = Some(idx);

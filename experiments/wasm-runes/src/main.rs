@@ -2,10 +2,10 @@ mod rune;
 mod stego;
 mod vm;
 
-use anyhow::{Result, Context};
+use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
+use sha2::{Digest, Sha256};
 use std::path::PathBuf;
-use sha2::{Sha256, Digest};
 
 #[derive(Parser)]
 #[command(name = "wasm-runes")]

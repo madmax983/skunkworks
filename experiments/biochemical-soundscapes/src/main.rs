@@ -1,8 +1,8 @@
 use macroquad::prelude::*;
 
+mod audio;
 mod reaction;
 mod shaders;
-mod audio;
 
 use audio::AudioEngine;
 use shaders::{FRAGMENT_SHADER_RENDER, FRAGMENT_SHADER_SIMULATE, VERTEX_SHADER};
@@ -39,13 +39,19 @@ async fn main() {
             // Let's just use default camera for target, which is pixel coords 0..w, 0..h (y down)
             // But we need to be careful.
             // Easiest is to set a camera that matches the target size.
-             ..Default::default()
+            ..Default::default()
         };
         set_camera(&cam);
         clear_background(RED);
 
         // Seed center with V=1 (Yellow = R+G = U+V)
-        draw_rectangle(w as f32 / 2.0 - 10.0, h as f32 / 2.0 - 10.0, 20.0, 20.0, YELLOW);
+        draw_rectangle(
+            w as f32 / 2.0 - 10.0,
+            h as f32 / 2.0 - 10.0,
+            20.0,
+            20.0,
+            YELLOW,
+        );
 
         set_default_camera();
     }
@@ -129,24 +135,36 @@ async fn main() {
         };
 
         // User Input
-        if is_key_down(KeyCode::Up) { feed_base += 0.0001; }
-        if is_key_down(KeyCode::Down) { feed_base -= 0.0001; }
-        if is_key_down(KeyCode::Right) { kill += 0.0001; }
-        if is_key_down(KeyCode::Left) { kill -= 0.0001; }
+        if is_key_down(KeyCode::Up) {
+            feed_base += 0.0001;
+        }
+        if is_key_down(KeyCode::Down) {
+            feed_base -= 0.0001;
+        }
+        if is_key_down(KeyCode::Right) {
+            kill += 0.0001;
+        }
+        if is_key_down(KeyCode::Left) {
+            kill -= 0.0001;
+        }
 
         let (mx, my) = mouse_position();
-        let m_click = if is_mouse_button_down(MouseButton::Left) { 1.0 } else { 0.0 };
+        let m_click = if is_mouse_button_down(MouseButton::Left) {
+            1.0
+        } else {
+            0.0
+        };
         // Map mouse to UV (0..1)
         // Screen size might not match render target size?
         // We render the texture to screen size.
         // Assuming texture fills screen.
         let m_uv_x = mx / screen_width();
         let m_uv_y = 1.0 - (my / screen_height()); // Flip Y if needed? Macroquad Y is down. GL Y is up?
-        // Macroquad texture coords: usually 0,0 top-left.
-        // But in shader with custom vertex shader?
-        // VERTEX_SHADER passes texcoord.
-        // Let's assume standard UV.
-        // If Y is flipped, we'll see interaction mismatch.
+                                                   // Macroquad texture coords: usually 0,0 top-left.
+                                                   // But in shader with custom vertex shader?
+                                                   // VERTEX_SHADER passes texcoord.
+                                                   // Let's assume standard UV.
+                                                   // If Y is flipped, we'll see interaction mismatch.
 
         // Simulation Pass
         {
@@ -183,10 +201,16 @@ async fn main() {
             sim_material.set_texture("tex", source.texture.clone());
 
             // Draw a quad covering -1..1
-            draw_texture_ex(&source.texture, -1.0, -1.0, WHITE, DrawTextureParams {
-                dest_size: Some(vec2(2.0, 2.0)),
-                ..Default::default()
-            });
+            draw_texture_ex(
+                &source.texture,
+                -1.0,
+                -1.0,
+                WHITE,
+                DrawTextureParams {
+                    dest_size: Some(vec2(2.0, 2.0)),
+                    ..Default::default()
+                },
+            );
 
             gl_use_default_material();
         }
@@ -200,16 +224,28 @@ async fn main() {
 
         // Draw to screen
         // Use NDC coordinates (-1..1) because our vertex shader ignores camera matrices
-        draw_texture_ex(&dest.texture, -1.0, -1.0, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(2.0, 2.0)),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &dest.texture,
+            -1.0,
+            -1.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(2.0, 2.0)),
+                ..Default::default()
+            },
+        );
 
         gl_use_default_material();
 
         // UI Debug
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 20.0, 30.0, WHITE);
-        draw_text(&format!("Feed: {:.4} (Base: {:.4})", feed, feed_base), 10.0, 50.0, 30.0, WHITE);
+        draw_text(
+            &format!("Feed: {:.4} (Base: {:.4})", feed, feed_base),
+            10.0,
+            50.0,
+            30.0,
+            WHITE,
+        );
         draw_text(&format!("Kill: {:.4}", kill), 10.0, 80.0, 30.0, WHITE);
         draw_text(&format!("Energy: {:.2}", energy), 10.0, 110.0, 30.0, WHITE);
 

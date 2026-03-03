@@ -1,15 +1,13 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use crate::vm::ChimeraVM;
     use crate::ast::{Dna, Helix, Strand};
     use crate::vm::nova_ecology;
+    use crate::vm::ChimeraVM;
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
-            helix: Helix {
-                strands: vec![],
-            },
+            helix: Helix { strands: vec![] },
         };
         ChimeraVM::new(dna)
     }
@@ -49,8 +47,8 @@ mod tests {
     #[test]
     fn test_scavenger_mechanics() {
         let mut vm = make_vm();
-        use crate::vm::nova::{Organelle, OrganelleType};
         use crate::value::Value;
+        use crate::vm::nova::{Organelle, OrganelleType};
 
         // Create Scavenger
         let scavenger = Organelle {
@@ -68,7 +66,9 @@ mod tests {
             id: 1,
             tissue_id: None,
             genome_id: 0,
-            energy: 10, experience: 0, stage: 0,
+            energy: 10,
+            experience: 0,
+            stage: 0,
         };
         vm.organelles.push(scavenger);
 
@@ -87,8 +87,8 @@ mod tests {
     #[test]
     fn test_radioactive_death() {
         let mut vm = make_vm();
-        use crate::vm::nova::{Organelle, OrganelleType};
         use crate::value::Value;
+        use crate::vm::nova::{Organelle, OrganelleType};
 
         // Create Radioactive Organism with 0 energy (dying)
         // Note: process_ecology_tick subtracts 1 energy at start. So 1 -> 0 -> Death.
@@ -107,7 +107,9 @@ mod tests {
             id: 1,
             tissue_id: None,
             genome_id: 0,
-            energy: 1, experience: 0, stage: 0, // Will drop to 0 in metabolism
+            energy: 1,
+            experience: 0,
+            stage: 0, // Will drop to 0 in metabolism
         };
         vm.organelles.push(mutant);
 
@@ -122,14 +124,19 @@ mod tests {
     #[test]
     fn test_viral_transfer() {
         let mut vm = make_vm();
-        use crate::vm::nova::{Organelle, OrganelleType};
-        use crate::ast::{Strand, Gene, Nucleotide};
+        use crate::ast::{Gene, Nucleotide, Strand};
         use crate::opcode::OpCode;
+        use crate::vm::nova::{Organelle, OrganelleType};
 
         // Winner Strand (0)
         vm.dna.helix.strands.push(Strand { genes: vec![] });
         // Loser Strand (1) - Has a gene
-        vm.dna.helix.strands.push(Strand { genes: vec![Gene { op: OpCode::Push, args: vec![Nucleotide::Number(99)] }] });
+        vm.dna.helix.strands.push(Strand {
+            genes: vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(99)],
+            }],
+        });
 
         let winner = Organelle {
             stack: vec![],
@@ -146,7 +153,9 @@ mod tests {
             id: 1,
             tissue_id: None,
             genome_id: 0,
-            energy: 100, experience: 0, stage: 0,
+            energy: 100,
+            experience: 0,
+            stage: 0,
         };
 
         let loser_viral = Organelle {
@@ -164,7 +173,9 @@ mod tests {
             id: 2,
             tissue_id: None,
             genome_id: 0,
-            energy: 10, experience: 0, stage: 0,
+            energy: 10,
+            experience: 0,
+            stage: 0,
         };
 
         vm.organelles.push(winner);

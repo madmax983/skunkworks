@@ -1,12 +1,12 @@
 mod agents;
+mod audio;
 mod fluid;
 mod grid;
-mod audio;
 
 use agents::FlockManager;
+use audio::AudioEngine;
 use fluid::FluidSim;
 use grid::{CellType, Grid};
-use audio::AudioEngine;
 use macroquad::prelude::*;
 
 const GRID_WIDTH: usize = 120;
@@ -51,7 +51,7 @@ async fn main() {
             for x in 0..GRID_WIDTH {
                 if let Some(cell) = grid.get(x, y) {
                     if cell.cell_type == CellType::Rock {
-                         draw_rectangle(
+                        draw_rectangle(
                             x as f32 * CELL_SIZE,
                             y as f32 * CELL_SIZE,
                             CELL_SIZE,
@@ -95,7 +95,13 @@ async fn main() {
         }
 
         // UI
-        draw_text(&format!("Boids: {}", flock.agents.len()), 10.0, 20.0, 20.0, WHITE);
+        draw_text(
+            &format!("Boids: {}", flock.agents.len()),
+            10.0,
+            20.0,
+            20.0,
+            WHITE,
+        );
         draw_text(&format!("Chem A: {:.0}", total_a), 10.0, 40.0, 20.0, WHITE);
         draw_text(&format!("Chem B: {:.0}", total_b), 10.0, 60.0, 20.0, WHITE);
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 80.0, 20.0, WHITE);

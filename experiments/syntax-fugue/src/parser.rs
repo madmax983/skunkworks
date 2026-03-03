@@ -146,7 +146,9 @@ fn map_hash_to_pitch(hash: u64) -> f32 {
     // Pentatonic scale mapping would be nicer musically
     // C Major Pentatonic: C, D, E, G, A
     // Frequencies (approx): 261, 293, 329, 392, 440
-    let scale = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25]; // C Major Scale
+    let scale = [
+        261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25,
+    ]; // C Major Scale
     let idx = (hash as usize) % scale.len();
     let octave_shift = ((hash / 100) % 3) as f32; // 0, 1, 2 octaves up
     scale[idx] * 2.0_f32.powf(octave_shift)

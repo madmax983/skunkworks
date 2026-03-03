@@ -25,7 +25,9 @@ impl Body {
     pub fn angular_velocity(&self, center: Vec2) -> f32 {
         let r_vec = self.pos - center;
         let r2 = r_vec.length_squared();
-        if r2 < 1e-6 { return 0.0; }
+        if r2 < 1e-6 {
+            return 0.0;
+        }
 
         // Cross product in 2D (z-component)
         // r x v = rx * vy - ry * vx
@@ -59,7 +61,7 @@ impl System {
 
         // Calculate forces
         for i in 0..n {
-            for j in i+1..n {
+            for j in i + 1..n {
                 let diff = self.bodies[j].pos - self.bodies[i].pos;
                 let dist_sq = diff.length_squared();
 
@@ -68,7 +70,8 @@ impl System {
                 let effective_dist_sq = dist_sq + softening;
                 let dist = effective_dist_sq.sqrt();
 
-                let f = self.g_const * self.bodies[i].mass * self.bodies[j].mass / effective_dist_sq;
+                let f =
+                    self.g_const * self.bodies[i].mass * self.bodies[j].mass / effective_dist_sq;
                 let force = diff / dist * f; // Direction is normalized diff
 
                 acc[i] += force / self.bodies[i].mass;

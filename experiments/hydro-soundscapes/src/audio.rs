@@ -48,38 +48,42 @@ impl AudioEngine {
                 let mut phase = 0.0;
                 let mut mod_phase = 0.0;
 
-                device.build_output_stream(
-                    &config.into(),
-                    move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
-                        let (base_freq, vol, modulation) = {
-                            let s = state_clone.lock().unwrap();
-                            (s.frequency, s.volume, s.modulation)
-                        };
+                device
+                    .build_output_stream(
+                        &config.into(),
+                        move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
+                            let (base_freq, vol, modulation) = {
+                                let s = state_clone.lock().unwrap();
+                                (s.frequency, s.volume, s.modulation)
+                            };
 
-                        let phase_inc = base_freq / sample_rate;
-                        let mod_freq = base_freq * 0.5; // Harmonic ratio
-                        let mod_inc = mod_freq / sample_rate;
+                            let phase_inc = base_freq / sample_rate;
+                            let mod_freq = base_freq * 0.5; // Harmonic ratio
+                            let mod_inc = mod_freq / sample_rate;
 
-                        // Scale modulation depth by frequency so it sounds consistent
-                        let mod_idx = modulation; // 0..1
+                            // Scale modulation depth by frequency so it sounds consistent
+                            let mod_idx = modulation; // 0..1
 
-                        for sample in data.iter_mut() {
-                            // FM Synthesis
-                            // Modulator
-                            let mod_val = (mod_phase * 2.0 * std::f32::consts::PI).sin() * mod_idx;
-                            // Carrier
-                            let carrier_val = ((phase + mod_val) * 2.0 * std::f32::consts::PI).sin();
+                            for sample in data.iter_mut() {
+                                // FM Synthesis
+                                // Modulator
+                                let mod_val =
+                                    (mod_phase * 2.0 * std::f32::consts::PI).sin() * mod_idx;
+                                // Carrier
+                                let carrier_val =
+                                    ((phase + mod_val) * 2.0 * std::f32::consts::PI).sin();
 
-                            *sample = carrier_val * vol;
+                                *sample = carrier_val * vol;
 
-                            phase = (phase + phase_inc) % 1.0;
-                            mod_phase = (mod_phase + mod_inc) % 1.0;
-                        }
-                    },
-                    err_fn,
-                    None,
-                ).ok()?
-            },
+                                phase = (phase + phase_inc) % 1.0;
+                                mod_phase = (mod_phase + mod_inc) % 1.0;
+                            }
+                        },
+                        err_fn,
+                        None,
+                    )
+                    .ok()?
+            }
             _ => return None,
         };
 

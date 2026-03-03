@@ -599,7 +599,9 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 id: vm.organelle_id_counter,
                 tissue_id: None,
                 genome_id: 0,
-                energy: 50, experience: 0, stage: 0,
+                energy: 50,
+                experience: 0,
+                stage: 0,
             };
             vm.organelles.push(new_org);
             vm.output

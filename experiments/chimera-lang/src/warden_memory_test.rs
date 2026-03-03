@@ -3,8 +3,8 @@
 mod tests {
     use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
     use crate::opcode::OpCode;
-    use crate::vm::ChimeraVM;
     use crate::value::Value;
+    use crate::vm::ChimeraVM;
 
     fn make_vm(genes: Vec<Gene>) -> ChimeraVM {
         let dna = Dna {

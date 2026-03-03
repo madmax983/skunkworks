@@ -1,6 +1,6 @@
-use crate::opcode::OpCode;
 use crate::ast::Nucleotide;
-use crate::vm::{ChimeraVM, Value, ChromaCell};
+use crate::opcode::OpCode;
+use crate::vm::{ChimeraVM, ChromaCell, Value};
 
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub enum FractalMode {
@@ -37,17 +37,25 @@ impl FractalState {
     }
 }
 
-pub fn exec_fractal_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_fractal_op(
+    vm: &mut ChimeraVM,
+    op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
     match op {
         OpCode::Mandelbrot => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(n) = val {
                     vm.fractal.mode = FractalMode::Mandelbrot;
                     vm.fractal.max_iter = n.max(1) as usize;
-                    vm.output.push(format!("FRACTAL: Mandelbrot Mode (Iter: {})", vm.fractal.max_iter));
+                    vm.output.push(format!(
+                        "FRACTAL: Mandelbrot Mode (Iter: {})",
+                        vm.fractal.max_iter
+                    ));
                 }
             } else {
-                vm.output.push("Error: Mandelbrot requires max_iter".to_string());
+                vm.output
+                    .push("Error: Mandelbrot requires max_iter".to_string());
             }
         }
         OpCode::Julia => {
@@ -58,7 +66,10 @@ pub fn exec_fractal_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> 
                     vm.fractal.mode = FractalMode::Julia;
                     vm.fractal.c_re = (re as f64) / 1000.0; // Scale down
                     vm.fractal.c_im = (im as f64) / 1000.0;
-                    vm.output.push(format!("FRACTAL: Julia Mode (c={:.3}+{:.3}i)", vm.fractal.c_re, vm.fractal.c_im));
+                    vm.output.push(format!(
+                        "FRACTAL: Julia Mode (c={:.3}+{:.3}i)",
+                        vm.fractal.c_re, vm.fractal.c_im
+                    ));
                 }
             }
         }
@@ -68,7 +79,10 @@ pub fn exec_fractal_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> 
                     let factor = (n as f64) / 100.0;
                     if factor > 0.0 {
                         vm.fractal.zoom *= factor;
-                        vm.output.push(format!("FRACTAL: Zoom x{:.2} (Total: {:.2})", factor, vm.fractal.zoom));
+                        vm.output.push(format!(
+                            "FRACTAL: Zoom x{:.2} (Total: {:.2})",
+                            factor, vm.fractal.zoom
+                        ));
                     }
                 }
             }
@@ -97,7 +111,9 @@ pub fn exec_fractal_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> 
                 // Let's assume standard integer arithmetic for now, or use floats if Value supported them (it doesn't).
                 // So we assume inputs are scaled by 1000.
 
-                if let (Value::Int(zr), Value::Int(zi), Value::Int(cr), Value::Int(ci)) = (zre_val, zim_val, cre_val, cim_val) {
+                if let (Value::Int(zr), Value::Int(zi), Value::Int(cr), Value::Int(ci)) =
+                    (zre_val, zim_val, cre_val, cim_val)
+                {
                     let zr_f = zr as f64 / 1000.0;
                     let zi_f = zi as f64 / 1000.0;
                     let cr_f = cr as f64 / 1000.0;
@@ -119,7 +135,8 @@ pub fn exec_fractal_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> 
                 let im_val = vm.stack.pop().unwrap();
                 let re_val = vm.stack.pop().unwrap();
 
-                if let (Value::Int(re), Value::Int(im), Value::Int(max)) = (re_val, im_val, max_val) {
+                if let (Value::Int(re), Value::Int(im), Value::Int(max)) = (re_val, im_val, max_val)
+                {
                     let cx = re as f64 / 1000.0;
                     let cy = im as f64 / 1000.0;
 
@@ -127,9 +144,9 @@ pub fn exec_fractal_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> 
                     let mut zx = 0.0;
                     let mut zy = 0.0;
                     let mut iter = 0;
-                    while zx*zx + zy*zy <= 4.0 && iter < max {
-                        let xtemp = zx*zx - zy*zy + cx;
-                        zy = 2.0*zx*zy + cy;
+                    while zx * zx + zy * zy <= 4.0 && iter < max {
+                        let xtemp = zx * zx - zy * zy + cx;
+                        zy = 2.0 * zx * zy + cy;
                         zx = xtemp;
                         iter += 1;
                     }
@@ -160,9 +177,9 @@ pub fn compute_fractal(vm: &mut ChimeraVM) {
             };
 
             let mut iter = 0;
-            while zx*zx + zy*zy <= 4.0 && iter < vm.fractal.max_iter {
-                let xtemp = zx*zx - zy*zy + cx;
-                zy = 2.0*zx*zy + cy;
+            while zx * zx + zy * zy <= 4.0 && iter < vm.fractal.max_iter {
+                let xtemp = zx * zx - zy * zy + cx;
+                zy = 2.0 * zx * zy + cy;
                 zx = xtemp;
                 iter += 1;
             }
@@ -182,7 +199,11 @@ pub fn compute_fractal(vm: &mut ChimeraVM) {
             };
 
             vm.chroma_grid[y][x] = ChromaCell {
-                char: Some(if iter == vm.fractal.max_iter { '#' } else { '.' }),
+                char: Some(if iter == vm.fractal.max_iter {
+                    '#'
+                } else {
+                    '.'
+                }),
                 fg: Some(color),
             };
         }

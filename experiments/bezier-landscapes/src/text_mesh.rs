@@ -1,11 +1,11 @@
-use rusttype::{Font, Scale, Point, PositionedGlyph, OutlineBuilder};
-use lyon::path::{Path, PathEvent};
-use lyon::path::iterator::PathIterator;
 use lyon::math::{point, Point as LyonPoint}; // LyonPoint used in type annotation
+use lyon::path::iterator::PathIterator;
+use lyon::path::{Path, PathEvent};
 use lyon::tessellation::{
-    VertexBuffers, FillTessellator, FillOptions, BuffersBuilder, FillVertex, FillVertexConstructor
+    BuffersBuilder, FillOptions, FillTessellator, FillVertex, FillVertexConstructor, VertexBuffers,
 };
 use macroquad::prelude::*;
+use rusttype::{Font, OutlineBuilder, Point, PositionedGlyph, Scale};
 
 pub struct TextMesh {
     pub vertices: Vec<Vertex>,
@@ -42,7 +42,8 @@ impl OutlineBuilder for LyonPathBuilder {
     }
 
     fn curve_to(&mut self, cx1: f32, cy1: f32, cx2: f32, cy2: f32, x: f32, y: f32) {
-        self.builder.cubic_bezier_to(point(cx1, cy1), point(cx2, cy2), point(x, y));
+        self.builder
+            .cubic_bezier_to(point(cx1, cy1), point(cx2, cy2), point(x, y));
     }
 
     fn close(&mut self) {
@@ -69,7 +70,8 @@ impl FillVertexConstructor<Vertex> for MyVertexConstructor {
 impl TextMesh {
     pub fn from_text(font_path: &str, text: &str) -> anyhow::Result<Self> {
         let font_bytes = std::fs::read(font_path)?;
-        let font = Font::try_from_bytes(&font_bytes).ok_or(anyhow::anyhow!("Error loading font"))?;
+        let font =
+            Font::try_from_bytes(&font_bytes).ok_or(anyhow::anyhow!("Error loading font"))?;
 
         let mut all_vertices = Vec::new();
         let mut all_indices = Vec::new();
@@ -78,7 +80,10 @@ impl TextMesh {
         let scale = Scale::uniform(100.0);
         let v_metrics = font.v_metrics(scale);
 
-        let start = Point { x: 0.0, y: v_metrics.ascent };
+        let start = Point {
+            x: 0.0,
+            y: v_metrics.ascent,
+        };
 
         let glyphs: Vec<PositionedGlyph> = font.layout(text, scale, start).collect();
 
@@ -91,11 +96,13 @@ impl TextMesh {
             let mut geometry: VertexBuffers<Vertex, u16> = VertexBuffers::new();
             let mut tessellator = FillTessellator::new();
 
-            tessellator.tessellate_path(
-                &path,
-                &FillOptions::default(),
-                &mut BuffersBuilder::new(&mut geometry, MyVertexConstructor)
-            ).map_err(|e| anyhow::anyhow!("Tessellation error: {:?}", e))?;
+            tessellator
+                .tessellate_path(
+                    &path,
+                    &FillOptions::default(),
+                    &mut BuffersBuilder::new(&mut geometry, MyVertexConstructor),
+                )
+                .map_err(|e| anyhow::anyhow!("Tessellation error: {:?}", e))?;
 
             for v in geometry.vertices {
                 all_vertices.push(v);
@@ -112,10 +119,30 @@ impl TextMesh {
             let mut add_wall_vertices = |p1: LyonPoint, p2: LyonPoint| {
                 let idx = all_vertices.len() as u16;
                 // Wall vertices
-                let v0 = Vertex { position: vec3(p1.x, -p1.y, 0.0), uv: vec2(0., 0.), color: GRAY.into(), normal: vec4(0.,0.,0.,0.) };
-                let v1 = Vertex { position: vec3(p2.x, -p2.y, 0.0), uv: vec2(1., 0.), color: GRAY.into(), normal: vec4(0.,0.,0.,0.) };
-                let v2 = Vertex { position: vec3(p2.x, -p2.y, -depth), uv: vec2(1., 1.), color: DARKGRAY.into(), normal: vec4(0.,0.,0.,0.) };
-                let v3 = Vertex { position: vec3(p1.x, -p1.y, -depth), uv: vec2(0., 1.), color: DARKGRAY.into(), normal: vec4(0.,0.,0.,0.) };
+                let v0 = Vertex {
+                    position: vec3(p1.x, -p1.y, 0.0),
+                    uv: vec2(0., 0.),
+                    color: GRAY.into(),
+                    normal: vec4(0., 0., 0., 0.),
+                };
+                let v1 = Vertex {
+                    position: vec3(p2.x, -p2.y, 0.0),
+                    uv: vec2(1., 0.),
+                    color: GRAY.into(),
+                    normal: vec4(0., 0., 0., 0.),
+                };
+                let v2 = Vertex {
+                    position: vec3(p2.x, -p2.y, -depth),
+                    uv: vec2(1., 1.),
+                    color: DARKGRAY.into(),
+                    normal: vec4(0., 0., 0., 0.),
+                };
+                let v3 = Vertex {
+                    position: vec3(p1.x, -p1.y, -depth),
+                    uv: vec2(0., 1.),
+                    color: DARKGRAY.into(),
+                    normal: vec4(0., 0., 0., 0.),
+                };
 
                 all_vertices.push(v0);
                 all_vertices.push(v1);

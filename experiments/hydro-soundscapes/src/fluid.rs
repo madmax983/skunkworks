@@ -29,11 +29,19 @@ impl FluidSim {
     }
 
     pub fn get_chem_a(&self, x: usize, y: usize) -> f32 {
-        if x >= self.width || y >= self.height { 0.0 } else { self.chem_a[y * self.width + x] }
+        if x >= self.width || y >= self.height {
+            0.0
+        } else {
+            self.chem_a[y * self.width + x]
+        }
     }
 
     pub fn get_chem_b(&self, x: usize, y: usize) -> f32 {
-        if x >= self.width || y >= self.height { 0.0 } else { self.chem_b[y * self.width + x] }
+        if x >= self.width || y >= self.height {
+            0.0
+        } else {
+            self.chem_b[y * self.width + x]
+        }
     }
 
     pub fn add_heat(&mut self, x: usize, y: usize, amount: f32) {
@@ -66,7 +74,11 @@ impl FluidSim {
 
         for y in 1..self.height - 1 {
             for x in 1..self.width - 1 {
-                if grid.get(x, y).map(|c| c.cell_type == CellType::Rock || c.cell_type == CellType::Chimney).unwrap_or(false) {
+                if grid
+                    .get(x, y)
+                    .map(|c| c.cell_type == CellType::Rock || c.cell_type == CellType::Chimney)
+                    .unwrap_or(false)
+                {
                     continue;
                 }
 
@@ -85,14 +97,20 @@ impl FluidSim {
 
                 let neighbors = [
                     (x, y, -1.0),
-                    (x+1, y, 0.2), (x-1, y, 0.2), (x, y+1, 0.2), (x, y-1, 0.2),
-                    (x+1, y+1, 0.05), (x-1, y-1, 0.05), (x+1, y-1, 0.05), (x-1, y+1, 0.05)
+                    (x + 1, y, 0.2),
+                    (x - 1, y, 0.2),
+                    (x, y + 1, 0.2),
+                    (x, y - 1, 0.2),
+                    (x + 1, y + 1, 0.05),
+                    (x - 1, y - 1, 0.05),
+                    (x + 1, y - 1, 0.05),
+                    (x - 1, y + 1, 0.05),
                 ];
 
                 for (nx, ny, w) in neighbors.iter() {
-                     let n_idx = ny * self.width + nx;
-                     sum_a += self.chem_a[n_idx] * w;
-                     sum_b += self.chem_b[n_idx] * w;
+                    let n_idx = ny * self.width + nx;
+                    sum_a += self.chem_a[n_idx] * w;
+                    sum_b += self.chem_b[n_idx] * w;
                 }
 
                 let reaction = u * v * v;

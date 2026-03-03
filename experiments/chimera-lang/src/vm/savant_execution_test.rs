@@ -1,9 +1,9 @@
 #[cfg(test)]
 #[cfg(feature = "nova")]
 mod tests {
-    use crate::vm::ChimeraVM;
-    use crate::ast::{Dna, Helix, Strand, Gene, Nucleotide, JunctionType};
+    use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
     use crate::opcode::OpCode;
+    use crate::vm::ChimeraVM;
     use crate::vm::Value;
 
     fn make_vm() -> ChimeraVM {
@@ -55,14 +55,26 @@ mod tests {
         // Nucleotide::Junction construction
 
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Junction(JunctionType::Any, vec![
-                Nucleotide::String("action".to_string()),
-                Nucleotide::Junction(JunctionType::Any, vec![
-                    Nucleotide::String("move".to_string()),
-                    Nucleotide::String("north".to_string())
-                ])
-            ])] },
-            Gene { op: OpCode::Assert, args: vec![] }
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Junction(
+                    JunctionType::Any,
+                    vec![
+                        Nucleotide::String("action".to_string()),
+                        Nucleotide::Junction(
+                            JunctionType::Any,
+                            vec![
+                                Nucleotide::String("move".to_string()),
+                                Nucleotide::String("north".to_string()),
+                            ],
+                        ),
+                    ],
+                )],
+            },
+            Gene {
+                op: OpCode::Assert,
+                args: vec![],
+            },
         ];
 
         let strand = Strand { genes };
@@ -84,7 +96,9 @@ mod tests {
             id: 1,
             tissue_id: None,
             genome_id: 0,
-            energy: 100, experience: 0, stage: 0,
+            energy: 100,
+            experience: 0,
+            stage: 0,
         };
 
         // Simulate tick_organelle swapping

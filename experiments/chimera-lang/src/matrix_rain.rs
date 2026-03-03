@@ -1,9 +1,5 @@
-use ratatui::{
-    layout::Rect,
-    style::Color,
-    buffer::Buffer,
-};
 use rand::Rng;
+use ratatui::{buffer::Buffer, layout::Rect, style::Color};
 
 pub struct MatrixRain {
     columns: Vec<Column>,
@@ -41,8 +37,8 @@ impl MatrixRain {
         // Spawn new columns randomly
         // Density control
         if self.columns.len() < (width as usize) && rng.gen_bool(0.05) {
-             let x = rng.gen_range(0..width);
-             self.spawn_column(x);
+            let x = rng.gen_range(0..width);
+            self.spawn_column(x);
         }
 
         // Update columns
@@ -58,7 +54,8 @@ impl MatrixRain {
         }
 
         // Remove off-screen
-        self.columns.retain(|c| (c.y as i32 - c.len as i32) < height as i32);
+        self.columns
+            .retain(|c| (c.y as i32 - c.len as i32) < height as i32);
     }
 
     fn spawn_column(&mut self, x: u16) {

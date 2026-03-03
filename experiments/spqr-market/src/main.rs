@@ -75,7 +75,11 @@ where
         let value = Roman::from_u64(val_u64);
 
         // Random Side
-        let side = if rng.gen_bool(0.5) { Side::Bid } else { Side::Ask };
+        let side = if rng.gen_bool(0.5) {
+            Side::Bid
+        } else {
+            Side::Ask
+        };
 
         // Tangential kick
         let to_center = (center - pos).normalize_or_zero();
@@ -155,16 +159,12 @@ where
                         let s = body.value.to_string();
                         // Special display for trade artifacts
                         let style = if body.side == Side::Neutral {
-                             Style::default().fg(Color::Yellow).bg(Color::Red)
+                            Style::default().fg(Color::Yellow).bg(Color::Red)
                         } else {
-                             Style::default().fg(body.color)
+                            Style::default().fg(body.color)
                         };
 
-                        ctx.print(
-                            body.pos.x as f64,
-                            body.pos.y as f64,
-                            Span::styled(s, style),
-                        );
+                        ctx.print(body.pos.x as f64, body.pos.y as f64, Span::styled(s, style));
                     }
                 });
 

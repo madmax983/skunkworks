@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use sysinfo::{System, RefreshKind, CpuRefreshKind, MemoryRefreshKind};
+use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
 
 #[derive(Resource)]
 pub struct SystemMonitor {
@@ -15,7 +15,7 @@ impl Default for SystemMonitor {
             sys: System::new_with_specifics(
                 RefreshKind::new()
                     .with_cpu(CpuRefreshKind::everything())
-                    .with_memory(MemoryRefreshKind::everything())
+                    .with_memory(MemoryRefreshKind::everything()),
             ),
             cpu_usage: 0.0,
             ram_usage: 0.0,

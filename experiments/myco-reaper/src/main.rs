@@ -1,7 +1,7 @@
 mod heap;
+use ::rand::Rng;
 use heap::Heap;
 use macroquad::prelude::*;
-use ::rand::Rng;
 
 #[derive(PartialEq)]
 enum GcMode {
@@ -28,10 +28,7 @@ async fn main() {
     let w = screen_width();
     let h = screen_height();
     for i in 0..3 {
-        let pos = vec2(
-            w / 2.0 + (i as f32 - 1.0) * 150.0,
-            h - 100.0,
-        );
+        let pos = vec2(w / 2.0 + (i as f32 - 1.0) * 150.0, h - 100.0);
         let id = heap.allocate(pos);
         // Hack: Make them roots manually since allocate() doesn't
         if let Some(node) = heap.nodes.get_mut(&id) {
@@ -80,7 +77,9 @@ async fn main() {
             last_alloc = get_time();
             // Pick a random parent to grow from
             // Prefer live nodes
-            let parents: Vec<usize> = heap.nodes.values()
+            let parents: Vec<usize> = heap
+                .nodes
+                .values()
                 .filter(|n| n.alive)
                 .map(|n| n.id)
                 .collect();
@@ -175,19 +174,40 @@ async fn main() {
                 node.pos.x - 5.0,
                 node.pos.y + 5.0,
                 15.0,
-                WHITE
+                WHITE,
             );
         }
 
         // Draw UI
         draw_text("Myco-Reaper", 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Nodes: {}", heap.nodes.len()), 20.0, 60.0, 20.0, WHITE);
-        draw_text(&format!("GC Mode: {:?}", match gc_mode {
-            GcMode::Manual => "Manual (Space/M/S)",
-            GcMode::ReferenceCounting => "Ref Counting (Continuous)",
-            GcMode::MarkAndSweep => "Mark & Sweep",
-        }), 20.0, 80.0, 20.0, WHITE);
-        draw_text("Space: Mark+Sweep | M: Mark | S: Sweep | R: Toggle RC | A: Toggle Alloc | C: Cycle", 20.0, screen_height() - 20.0, 20.0, WHITE);
+        draw_text(
+            &format!("Nodes: {}", heap.nodes.len()),
+            20.0,
+            60.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            &format!(
+                "GC Mode: {:?}",
+                match gc_mode {
+                    GcMode::Manual => "Manual (Space/M/S)",
+                    GcMode::ReferenceCounting => "Ref Counting (Continuous)",
+                    GcMode::MarkAndSweep => "Mark & Sweep",
+                }
+            ),
+            20.0,
+            80.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "Space: Mark+Sweep | M: Mark | S: Sweep | R: Toggle RC | A: Toggle Alloc | C: Cycle",
+            20.0,
+            screen_height() - 20.0,
+            20.0,
+            WHITE,
+        );
 
         next_frame().await
     }

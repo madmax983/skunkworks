@@ -1,4 +1,4 @@
-use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand, JunctionType};
+use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
 use crate::opcode::OpCode;
 use anyhow::{anyhow, Result};
 use std::str::FromStr;
@@ -240,7 +240,7 @@ fn compile_as_data(expr: &SExpr) -> Result<Nucleotide> {
             if let Ok(n) = s.parse::<i64>() {
                 Ok(Nucleotide::Number(n))
             } else if s.starts_with('"') && s.ends_with('"') {
-                Ok(Nucleotide::String(s[1..s.len()-1].to_string()))
+                Ok(Nucleotide::String(s[1..s.len() - 1].to_string()))
             } else {
                 Ok(Nucleotide::Identifier(s.clone()))
             }
@@ -259,20 +259,31 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
     match expr {
         SExpr::Atom(s) => {
             if let Ok(n) = s.parse::<i64>() {
-                Ok(vec![Gene { op: OpCode::Push, args: vec![Nucleotide::Number(n)] }])
+                Ok(vec![Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(n)],
+                }])
             } else if s.starts_with('"') && s.ends_with('"') {
-                let content = &s[1..s.len()-1];
-                Ok(vec![Gene { op: OpCode::Push, args: vec![Nucleotide::String(content.to_string())] }])
+                let content = &s[1..s.len() - 1];
+                Ok(vec![Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::String(content.to_string())],
+                }])
             } else {
                 if let Some(op) = map_op(s) {
                     Ok(vec![Gene { op, args: vec![] }])
                 } else {
-                    Ok(vec![Gene { op: OpCode::Push, args: vec![Nucleotide::String(s.clone())] }])
+                    Ok(vec![Gene {
+                        op: OpCode::Push,
+                        args: vec![Nucleotide::String(s.clone())],
+                    }])
                 }
             }
         }
         SExpr::List(items) => {
-            if items.is_empty() { return Ok(vec![]); }
+            if items.is_empty() {
+                return Ok(vec![]);
+            }
 
             if let SExpr::Atom(head) = &items[0] {
                 match head.as_str() {
@@ -489,12 +500,18 @@ fn compile_expr(expr: &SExpr) -> Result<Vec<Gene>> {
                                     if let Ok(n) = s.parse::<i64>() {
                                         args.push(Nucleotide::Number(n));
                                     } else if s.starts_with('"') {
-                                         args.push(Nucleotide::String(s[1..s.len()-1].to_string()));
+                                        args.push(Nucleotide::String(
+                                            s[1..s.len() - 1].to_string(),
+                                        ));
                                     } else {
-                                         args.push(Nucleotide::Identifier(s.clone()));
+                                        args.push(Nucleotide::Identifier(s.clone()));
                                     }
                                 }
-                                SExpr::List(_) => return Err(anyhow!("Nested expression in immediate op args not supported")),
+                                SExpr::List(_) => {
+                                    return Err(anyhow!(
+                                        "Nested expression in immediate op args not supported"
+                                    ))
+                                }
                             }
                         }
                         return Ok(vec![Gene { op, args }]);

@@ -4,8 +4,8 @@ mod world;
 use ::rand::Rng;
 use clap::Parser;
 use macroquad::prelude::*;
-use world::{AgentKind, Material, World, HEIGHT, WIDTH};
 use market::Particle;
+use world::{AgentKind, Material, World, HEIGHT, WIDTH};
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -64,12 +64,24 @@ async fn main() {
 
     loop {
         // Input Handling
-        if is_key_pressed(KeyCode::Space) { paused = !paused; }
-        if is_key_pressed(KeyCode::Key1) { view_mode = 0; }
-        if is_key_pressed(KeyCode::Key2) { view_mode = 1; }
-        if is_key_pressed(KeyCode::Key3) { view_mode = 2; }
-        if is_key_pressed(KeyCode::T) { show_termites = !show_termites; }
-        if is_key_pressed(KeyCode::A) { show_air = !show_air; }
+        if is_key_pressed(KeyCode::Space) {
+            paused = !paused;
+        }
+        if is_key_pressed(KeyCode::Key1) {
+            view_mode = 0;
+        }
+        if is_key_pressed(KeyCode::Key2) {
+            view_mode = 1;
+        }
+        if is_key_pressed(KeyCode::Key3) {
+            view_mode = 2;
+        }
+        if is_key_pressed(KeyCode::T) {
+            show_termites = !show_termites;
+        }
+        if is_key_pressed(KeyCode::A) {
+            show_air = !show_air;
+        }
 
         if !paused {
             world.update();
@@ -86,17 +98,19 @@ async fn main() {
                     Material::Wall => Color::new(0.5, 0.5, 0.5, 1.0),
                     Material::Empty => {
                         match view_mode {
-                            0 => { // Heat Map
+                            0 => {
+                                // Heat Map
                                 let h = (cell.heat / 100.0).clamp(0.0, 1.0);
                                 // Cold Blue -> Hot Red
                                 Color::new(h, 0.1, 0.2, 1.0)
                             }
-                            1 => { // Pheromone Map
+                            1 => {
+                                // Pheromone Map
                                 let p = (cell.pheromone / 50.0).clamp(0.0, 1.0);
                                 Color::new(0.0, p, 0.0, 1.0)
                             }
                             2 => BLACK,
-                            _ => BLACK
+                            _ => BLACK,
                         }
                     }
                 };
@@ -108,10 +122,14 @@ async fn main() {
                     Particle::Trade { age } => {
                         let intensity = (age as f32 / 5.0).clamp(0.2, 1.0);
                         Color::new(1.0, 1.0, 0.0, intensity)
-                    },
+                    }
                     Particle::Wall => {
                         // Market sees a wall
-                        if view_mode == 2 { WHITE } else { base_color }
+                        if view_mode == 2 {
+                            WHITE
+                        } else {
+                            base_color
+                        }
                     }
                     Particle::Empty => base_color,
                 };
@@ -130,7 +148,7 @@ async fn main() {
                         if show_air {
                             render_target.set_pixel(x, y, Color::new(0.5, 0.5, 1.0, 0.5));
                         }
-                    },
+                    }
                     AgentKind::Termite => {
                         if show_termites {
                             let color = if agent.carrying { BLUE } else { WHITE };
@@ -147,18 +165,45 @@ async fn main() {
 
         // Scale to fit window?
         let scale = (screen_height() / HEIGHT as f32).min(screen_width() / WIDTH as f32);
-        draw_texture_ex(&texture, 0.0, 0.0, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(WIDTH as f32 * scale, HEIGHT as f32 * scale)),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &texture,
+            0.0,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(WIDTH as f32 * scale, HEIGHT as f32 * scale)),
+                ..Default::default()
+            },
+        );
 
         // UI
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 20.0, 20.0, WHITE);
         draw_text(&format!("Step: {}", world.step), 10.0, 40.0, 20.0, WHITE);
-        draw_text(&format!("Trades: {}", world.market.trade_count), 10.0, 60.0, 20.0, YELLOW);
-        draw_text(&format!("Bids: {} Asks: {}", world.market.total_bids, world.market.total_asks), 10.0, 80.0, 20.0, GREEN);
+        draw_text(
+            &format!("Trades: {}", world.market.trade_count),
+            10.0,
+            60.0,
+            20.0,
+            YELLOW,
+        );
+        draw_text(
+            &format!(
+                "Bids: {} Asks: {}",
+                world.market.total_bids, world.market.total_asks
+            ),
+            10.0,
+            80.0,
+            20.0,
+            GREEN,
+        );
 
-        draw_text("1:Heat 2:Phero 3:Mkt T:Termites A:Air Space:Pause", 10.0, screen_height() - 10.0, 20.0, WHITE);
+        draw_text(
+            "1:Heat 2:Phero 3:Mkt T:Termites A:Air Space:Pause",
+            10.0,
+            screen_height() - 10.0,
+            20.0,
+            WHITE,
+        );
 
         if args.headless {
             if world.step >= max_frames {

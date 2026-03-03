@@ -1,11 +1,11 @@
 #[cfg(feature = "nova")]
 use super::{ChimeraVM, GRID_SIZE};
 #[cfg(feature = "nova")]
-use crate::value::Value;
-#[cfg(feature = "nova")]
 use crate::ast::{Gene, Nucleotide};
 #[cfg(feature = "nova")]
 use crate::opcode::OpCode;
+#[cfg(feature = "nova")]
+use crate::value::Value;
 #[cfg(feature = "nova")]
 use rand::Rng;
 #[cfg(feature = "nova")]

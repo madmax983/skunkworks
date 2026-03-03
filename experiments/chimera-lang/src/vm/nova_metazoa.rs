@@ -29,10 +29,10 @@ pub fn process_metazoan(vm: &mut ChimeraVM, organelle: &mut crate::vm::nova::Org
 
     if dy != 0 || dx != 0 {
         if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy as i64, cx as i64 + dx as i64) {
-             let mask = crate::vm::nova::get_direction_mask(dy as i64, dx as i64).unwrap_or(0);
-             if (vm.membranes[cy][cx] & mask) == 0 {
-                 organelle.context_loc = (ny, nx);
-             }
+            let mask = crate::vm::nova::get_direction_mask(dy as i64, dx as i64).unwrap_or(0);
+            if (vm.membranes[cy][cx] & mask) == 0 {
+                organelle.context_loc = (ny, nx);
+            }
         }
     }
 }

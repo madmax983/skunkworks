@@ -32,7 +32,10 @@ fn main() -> Result<()> {
     };
 
     if voices.is_empty() {
-        eprintln!("No voices found in {}. Ensure the file contains functions.", path);
+        eprintln!(
+            "No voices found in {}. Ensure the file contains functions.",
+            path
+        );
         return Ok(());
     }
 

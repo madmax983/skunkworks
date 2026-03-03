@@ -401,9 +401,9 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> Option<usize> {
                 id: vm.organelle_id_counter,
                 tissue_id: None,
                 genome_id: 0,
-                            energy: 10,
-                            experience: 0,
-                            stage: 0,
+                energy: 10,
+                experience: 0,
+                stage: 0,
             };
             vm.organelles.push(organelle);
             vm.chorus_buffer.clear();
@@ -1533,9 +1533,9 @@ fn exec_choir(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     id: vm.organelle_id_counter,
                     tissue_id: None,
                     genome_id: 0,
-                            energy: 50,
-                            experience: 0,
-                            stage: 0,
+                    energy: 50,
+                    experience: 0,
+                    stage: 0,
                 };
                 vm.organelles.push(organelle);
                 vm.energy = vm.energy.saturating_sub(50);

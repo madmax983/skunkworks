@@ -1,14 +1,16 @@
 #![cfg(feature = "nova")]
 
-use crate::vm::ChimeraVM;
 use crate::vm::nova::OrganelleType;
+use crate::vm::ChimeraVM;
 
 pub fn process_organelle_growth(vm: &mut ChimeraVM) {
     let organelles = &mut vm.organelles;
     let output = &mut vm.output;
 
     for org in organelles.iter_mut() {
-        if org.halted { continue; }
+        if org.halted {
+            continue;
+        }
 
         let threshold = 100 * (org.stage as i64 + 1);
         if org.experience >= threshold {
@@ -16,7 +18,10 @@ pub fn process_organelle_growth(vm: &mut ChimeraVM) {
             // Consume XP? Or accumulate? Usually accumulate total XP.
             // Let's keep total XP.
 
-            output.push(format!("METAMORPHOSIS: {} evolved to Stage {}", org.name, org.stage));
+            output.push(format!(
+                "METAMORPHOSIS: {} evolved to Stage {}",
+                org.name, org.stage
+            ));
 
             // Apply Stage Effects
             match org.stage {
@@ -64,7 +69,7 @@ pub fn process_organelle_growth(vm: &mut ChimeraVM) {
                 _ => {
                     // Titan?
                     if org.stage == 3 {
-                         if org.name.ends_with(" (Imago)") {
+                        if org.name.ends_with(" (Imago)") {
                             org.name = org.name.replace(" (Imago)", " (Titan)");
                         } else {
                             org.name.push_str(" (Titan)");

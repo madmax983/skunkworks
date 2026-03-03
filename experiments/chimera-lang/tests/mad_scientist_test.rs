@@ -1,7 +1,7 @@
 #[cfg(feature = "oracle")]
 #[cfg(test)]
 mod tests {
-    use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+    use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
     use chimera_lang::vm::{ChimeraVM, Value};
 
@@ -57,18 +57,24 @@ mod tests {
         use chimera_lang::ast::JunctionType;
 
         // metabolism(?E ?X)
-        let query = Value::Junction(JunctionType::Any, vec![
-            Value::Str("metabolism".to_string()),
-            Value::Str("?E".to_string()),
-            Value::Str("?X".to_string()),
-        ]);
+        let query = Value::Junction(
+            JunctionType::Any,
+            vec![
+                Value::Str("metabolism".to_string()),
+                Value::Str("?E".to_string()),
+                Value::Str("?X".to_string()),
+            ],
+        );
 
         // synthesize("energy" 0)
-        let transform = Value::Junction(JunctionType::Any, vec![
-            Value::Str("synthesize".to_string()),
-            Value::Str("energy".to_string()),
-            Value::Int(0),
-        ]);
+        let transform = Value::Junction(
+            JunctionType::Any,
+            vec![
+                Value::Str("synthesize".to_string()),
+                Value::Str("energy".to_string()),
+                Value::Int(0),
+            ],
+        );
 
         vm.stack.push(query);
         vm.stack.push(transform);
