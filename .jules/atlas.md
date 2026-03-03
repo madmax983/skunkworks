@@ -119,3 +119,9 @@
 **Blueprint:** Extracted `Platter` into its own crate `crates/platter`. Updated `ferrous-core` to re-export it for backward compatibility.
 **Stability:** Decoupled generic simulation logic from specific implementations. High cohesion, low coupling.
 **Verification:** Verified with `cargo test -p platter` and `cargo test -p ferrous-core`. `ferrous-core` tests passed, confirming re-export works.
+
+## [Platter Unification]
+**Tangle:** The Copy-Paste - `ferrous-legion`, `ferrous-genesis`, `ferrous-quipu`, `ferrous-weaver`, and `ferrous-cladistics` all contained duplicate `platter.rs` files defining a 2D scalar field simulation struct.
+**Blueprint:** Removed local `platter.rs` files and refactored these crates to depend on the shared `crates/platter` package. Addressed typing changes by mapping local `f32` inputs to the shared crate's `f64` magnitudes.
+**Stability:** Centralized the 2D field matrix simulation, removed redundant `mod platter`, reducing repetitive logic overhead across experiments. Left `klein-magnetron`'s platter untouched due to its domain-specific topological radiation decay.
+**Verification:** Built and verified each experiment via `cargo check` and unified `cargo test`.

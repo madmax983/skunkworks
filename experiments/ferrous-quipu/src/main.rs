@@ -1,5 +1,4 @@
 mod physics;
-mod platter;
 
 use crate::physics::{Body, Universe};
 use anyhow::Result;

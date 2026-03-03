@@ -1,4 +1,4 @@
-use crate::platter::Platter;
+use platter::Platter;
 use ratatui::style::Color;
 
 #[derive(Debug, Clone, Copy)]
@@ -179,7 +179,7 @@ impl Universe {
         // Magnetism constants (Platter)
         let mag_strength = 2000.0;
         let mag_write = 5.0; // How much magnetism to deposit per sec
-        let decay_rate = 0.99; // Per step
+        let decay_rate = 0.99_f64; // Per step
 
         // 1. Repulsion and Coulomb Interaction
         for i in 0..len {
@@ -253,7 +253,7 @@ impl Universe {
                 // Write to platter (Deposit)
                 // Write sign of charge? Platter is 0.0 to 1.0 usually (magnitude).
                 // Let's assume platter stores "Magnetic Potential" (scalar field).
-                self.platter.magnetize(x, y, mag_write * mag_factor * dt);
+                self.platter.magnetize(x, y, (mag_write * mag_factor * dt) as f64);
 
                 // Read from platter (Gradient)
                 let left = if x > 0 {
@@ -280,7 +280,7 @@ impl Universe {
                 let grad_x = (right - left) * 0.5;
                 let grad_y = (up - down) * 0.5;
 
-                let mag_force = Vec2::new(grad_x, grad_y) * mag_strength * mag_factor;
+                let mag_force = Vec2::new(grad_x as f32, grad_y as f32) * mag_strength * mag_factor;
                 forces[i] += mag_force;
             }
 
@@ -291,7 +291,7 @@ impl Universe {
             body.pos += body.vel * dt;
 
             // Trail
-            if rand::random::<u8>() % 20 == 0 {
+            if rand::random::<u8>().is_multiple_of(20) {
                 let p = body.pos;
                 body.trail.push(p);
                 if body.trail.len() > 10 {

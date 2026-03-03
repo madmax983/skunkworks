@@ -1,6 +1,5 @@
 mod genome;
 mod physics;
-mod platter;
 
 use crate::physics::{Body, Universe};
 use anyhow::Result;
@@ -286,7 +285,7 @@ fn ui(f: &mut Frame, state: &AppState) {
 
             // Draw Bodies
             for (id, body) in state.universe.bodies.iter().enumerate() {
-                let mut color = if state.triggered_bodies.contains(&id) {
+                let color = if state.triggered_bodies.contains(&id) {
                     Color::White // Flash
                 } else {
                     body.color

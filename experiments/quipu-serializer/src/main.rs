@@ -81,7 +81,7 @@ fn main() -> Result<()> {
                     KeyCode::Tab => {
                         app.mode = Mode::Serializer;
                     }
-                    KeyCode::Char(c) if c.is_digit(10) => {
+                    KeyCode::Char(c) if c.is_ascii_digit() => {
                         if app.calc_focus == 0 {
                             app.calc_input_a.push(c);
                         } else {
@@ -428,18 +428,16 @@ fn render_serializer(f: &mut Frame, area: Rect, app: &App) {
             text_lines.extend(cord_lines);
             text_lines.push(Line::from("")); // Spacing
         }
+    } else if app.ser_input.is_empty() {
+        text_lines.push(Line::from(Span::styled(
+            "Type JSON to see Quipu...",
+            Style::default().fg(Color::Gray),
+        )));
     } else {
-        if app.ser_input.is_empty() {
-            text_lines.push(Line::from(Span::styled(
-                "Type JSON to see Quipu...",
-                Style::default().fg(Color::Gray),
-            )));
-        } else {
-            text_lines.push(Line::from(Span::styled(
-                "Invalid JSON",
-                Style::default().fg(Color::Red),
-            )));
-        }
+        text_lines.push(Line::from(Span::styled(
+            "Invalid JSON",
+            Style::default().fg(Color::Red),
+        )));
     }
 
     f.render_widget(

@@ -30,7 +30,7 @@ where
     Ok(Quipu { cords: vec![cord] })
 }
 
-impl<'a> ser::Serializer for &'a mut Serializer {
+impl ser::Serializer for &mut Serializer {
     type Ok = Cord;
     type Error = Error;
 

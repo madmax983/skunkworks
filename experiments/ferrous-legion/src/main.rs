@@ -1,7 +1,6 @@
 mod crypto;
 mod math;
 mod physics;
-mod platter;
 mod roman;
 
 use std::io;

@@ -1,4 +1,4 @@
-use crate::platter::Platter;
+use platter::Platter;
 use crate::roman::Roman;
 use num_traits::ToPrimitive;
 use ratatui::style::Color;
@@ -183,7 +183,7 @@ impl Universe {
         // Magnetism constants
         let mag_strength = 1000.0;
         let mag_write = 10.0;
-        let decay_rate = 0.99;
+        let _decay_rate = 0.99;
 
         // 1. Repulsion (Gravity)
         for i in 0..len {
@@ -226,7 +226,7 @@ impl Universe {
                 let y = gy as usize;
 
                 // Write to platter (Trail)
-                self.platter.magnetize(x, y, mag_write * dt);
+                self.platter.magnetize(x, y, (mag_write * dt) as f64);
 
                 // Read from platter (Gradient) -> Follow trails
                 let left = if x > 0 {
@@ -253,7 +253,7 @@ impl Universe {
                 let grad_x = (right - left) * 0.5;
                 let grad_y = (up - down) * 0.5;
 
-                let mag_force = Vec2::new(grad_x, grad_y) * mag_strength;
+                let mag_force = Vec2::new(grad_x as f32, grad_y as f32) * mag_strength;
                 forces[i] += mag_force;
             }
 
@@ -281,7 +281,7 @@ impl Universe {
                 body.vel.y *= -1.0;
             }
 
-            if rand::random::<u8>() % 10 == 0 {
+            if rand::random::<u8>().is_multiple_of(10) {
                 body.trail.push(body.pos);
                 if body.trail.len() > 10 {
                     body.trail.remove(0);
@@ -290,7 +290,7 @@ impl Universe {
         }
 
         // 3. Platter Decay
-        self.platter.decay(decay_rate);
+        self.platter.decay(0.99_f64); // Slow decay
     }
 
     fn resolve_collisions(&mut self) {

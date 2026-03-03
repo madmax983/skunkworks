@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+platter = { workspace = true }
 chimera-lang = { workspace = true, features = ["nova"] }
 quipu-serializer = { path = "../quipu-serializer" }
 quipu = { workspace = true }

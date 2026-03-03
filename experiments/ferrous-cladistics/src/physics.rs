@@ -1,5 +1,5 @@
 use crate::harvester::FunctionSignature;
-use crate::platter::Platter;
+use platter::Platter;
 use ratatui::style::Color;
 
 #[derive(Debug, Clone, Copy)]
@@ -173,7 +173,7 @@ impl Universe {
         // Magnetism constants
         let mag_strength = 1500.0;
         let mag_write = 5.0; // How much magnetism to deposit per sec
-        let decay_rate = 0.99; // Per step
+        let decay_rate = 0.99_f64; // Per step
 
         // 1. Repulsion & Cladistic Attraction
         for i in 0..len {
@@ -228,7 +228,7 @@ impl Universe {
                 let y = gy as usize;
 
                 // Write to platter
-                self.platter.magnetize(x, y, mag_write * dt);
+                self.platter.magnetize(x, y, (mag_write * dt) as f64);
 
                 // Read from platter (Gradient)
                 let left = if x > 0 {
@@ -255,7 +255,7 @@ impl Universe {
                 let grad_x = (right - left) * 0.5;
                 let grad_y = (up - down) * 0.5;
 
-                let mag_force = Vec2::new(grad_x, grad_y) * mag_strength;
+                let mag_force = Vec2::new(grad_x as f32, grad_y as f32) * mag_strength;
                 forces[i] += mag_force;
             }
 
@@ -275,7 +275,7 @@ impl Universe {
                 body.pos.y = body.pos.y.signum() * 100.0;
             }
 
-            if rand::random::<u8>() % 10 == 0 {
+            if rand::random::<u8>().is_multiple_of(10) {
                 body.trail.push(body.pos);
                 if body.trail.len() > 10 {
                     body.trail.remove(0);

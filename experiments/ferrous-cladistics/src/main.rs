@@ -1,6 +1,5 @@
 mod harvester;
 mod physics;
-mod platter;
 
 use std::io;
 use std::time::{Duration, Instant};

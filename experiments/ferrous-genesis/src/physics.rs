@@ -1,4 +1,4 @@
-use crate::platter::Platter;
+use platter::Platter;
 use chimera_lang::prelude::*;
 use locus::Vec2;
 use ratatui::style::Color;
@@ -173,7 +173,7 @@ impl Universe {
             body.pos += body.vel * dt;
 
             // Trail
-            if rand::random::<u8>() % 10 == 0 {
+            if rand::random::<u8>().is_multiple_of(10) {
                 body.trail.push(body.pos);
                 if body.trail.len() > 20 {
                     body.trail.remove(0);

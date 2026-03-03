@@ -1,4 +1,4 @@
-use crate::platter::Platter;
+use platter::Platter;
 use ratatui::style::Color;
 
 #[derive(Debug, Clone, Copy)]
@@ -246,7 +246,7 @@ impl Universe {
                 let y = gy as usize;
 
                 // Write to platter
-                self.platter.magnetize(x, y, mag_write * dt);
+                self.platter.magnetize(x, y, (mag_write * dt) as f64);
 
                 // Read from platter (Gradient)
                 let left = if x > 0 {
@@ -273,7 +273,7 @@ impl Universe {
                 let grad_x = (right - left) * 0.5;
                 let grad_y = (up - down) * 0.5;
 
-                let mag_force = Vec2::new(grad_x, grad_y) * mag_strength;
+                let mag_force = Vec2::new(grad_x as f32, grad_y as f32) * mag_strength;
                 forces[i] += mag_force;
             }
 
@@ -284,7 +284,7 @@ impl Universe {
             body.pos += body.vel * dt;
 
             // Trail
-            if rand::random::<u8>() % 20 == 0 {
+            if rand::random::<u8>().is_multiple_of(20) {
                 // Clone pos to avoid borrow checker issues? No, Vec2 is Copy.
                 let p = body.pos;
                 body.trail.push(p);

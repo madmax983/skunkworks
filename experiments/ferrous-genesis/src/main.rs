@@ -14,7 +14,6 @@ use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
 mod physics;
-mod platter;
 
 use physics::{Body, Universe};
 
