@@ -212,6 +212,7 @@ impl AudioModel {
                         }
                     }
                 }
+
                 AudioCommand::Tone {
                     x,
                     y,
@@ -229,11 +230,13 @@ impl AudioModel {
                         0.0, // Initial phase
                     ));
                 }
+
                 AudioCommand::AddWall { x, y } => self.grid.add_wall(x, y),
                 AudioCommand::RemoveWall { x, y } => self.grid.remove_wall(x, y),
                 AudioCommand::PaintMaterial { x, y, material } => {
                     self.grid.set_material(x, y, material)
                 }
+
                 AudioCommand::ClearWaves => self.grid.clear_waves(),
                 AudioCommand::ClearWalls => self.grid.clear_walls(),
                 AudioCommand::MoveListener { x, y } => {
@@ -253,6 +256,7 @@ impl AudioModel {
                 if osc.phase > 2.0 * PI {
                     osc.phase -= 2.0 * PI;
                 }
+
                 let val = osc.phase.sin() * osc.strength;
 
                 // Inject into grid using precomputed idx
@@ -269,12 +273,14 @@ impl AudioModel {
                     if *remaining == 0 {
                         return false;
                     }
+
                     *remaining -= 1;
 
                     *phase += *freq * 2.0 * PI / 44100.0;
                     if *phase > 2.0 * PI {
                         *phase -= 2.0 * PI;
                     }
+
                     let val = phase.sin() * *strength;
 
                     if *x < self.grid.width && *y < self.grid.height {
@@ -283,6 +289,7 @@ impl AudioModel {
                             self.grid.u[idx] += val;
                         }
                     }
+
                     true
                 });
 
@@ -430,6 +437,122 @@ mod tests {
 
         model.process(&mut buffer);
 
+        assert_eq!(model.oscillators.len(), 0);
+    }
+
+    #[test]
+    fn test_audio_oscillator_zero_frequency() {
+        let (cmd_tx, cmd_rx) = bounded(10);
+        let (snap_tx, _snap_rx) = bounded(10);
+
+        let mut model = AudioModel::new(10, 10, cmd_rx, snap_tx, None);
+
+        cmd_tx
+            .send(AudioCommand::Oscillate {
+                x: 2,
+                y: 2,
+                frequency: 0.0,
+                strength: 1.0,
+            })
+            .unwrap();
+
+        let mut buffer = vec![0.0; 10];
+        model.process(&mut buffer);
+
+        assert_eq!(model.oscillators.len(), 1);
+        assert_eq!(model.oscillators[0].phase, 0.0);
+    }
+
+    #[test]
+    fn test_active_tone_duration_zero() {
+        let (cmd_tx, cmd_rx) = bounded(10);
+        let (snap_tx, _snap_rx) = bounded(10);
+
+        let mut model = AudioModel::new(10, 10, cmd_rx, snap_tx, None);
+
+        cmd_tx
+            .send(AudioCommand::Tone {
+                x: 2,
+                y: 2,
+                frequency: 440.0,
+                strength: 1.0,
+                duration_ms: 0,
+            })
+            .unwrap();
+
+        let mut buffer = vec![0.0; 10];
+        model.process(&mut buffer);
+
+        assert_eq!(model.active_tones.len(), 0);
+    }
+
+    #[test]
+    fn test_move_listener_out_of_bounds() {
+        let (cmd_tx, cmd_rx) = bounded(10);
+        let (snap_tx, _snap_rx) = bounded(10);
+
+        let mut model = AudioModel::new(10, 10, cmd_rx, snap_tx, None);
+
+        // Initial listener position
+        assert_eq!(model.listener_x, 5);
+        assert_eq!(model.listener_y, 5);
+
+        // Try to move out of bounds
+        cmd_tx
+            .send(AudioCommand::MoveListener { x: 20, y: 20 })
+            .unwrap();
+
+        let mut buffer = vec![0.0; 10];
+        model.process(&mut buffer);
+
+        // Listener position should not have changed
+        assert_eq!(model.listener_x, 5);
+        assert_eq!(model.listener_y, 5);
+    }
+
+    #[test]
+    fn test_paint_material_out_of_bounds() {
+        let (cmd_tx, cmd_rx) = bounded(10);
+        let (snap_tx, _snap_rx) = bounded(10);
+
+        let mut model = AudioModel::new(10, 10, cmd_rx, snap_tx, None);
+
+        // Try to paint material out of bounds
+        cmd_tx
+            .send(AudioCommand::PaintMaterial {
+                x: 20,
+                y: 20,
+                material: crate::physics::Material::Wall,
+            })
+            .unwrap();
+
+        let mut buffer = vec![0.0; 10];
+        model.process(&mut buffer);
+
+        // Should not panic
+    }
+
+    #[test]
+    fn test_oscillator_out_of_bounds() {
+        let (cmd_tx, cmd_rx) = bounded(10);
+        let (snap_tx, _snap_rx) = bounded(10);
+
+        let mut model = AudioModel::new(10, 10, cmd_rx, snap_tx, None);
+
+        // Try to add oscillator out of bounds
+        cmd_tx
+            .send(AudioCommand::Oscillate {
+                x: 20,
+                y: 20,
+                frequency: 440.0,
+                strength: 1.0,
+            })
+            .unwrap();
+
+        let mut buffer = vec![0.0; 10];
+        model.process(&mut buffer);
+
+        // Should not have added the oscillator
         assert_eq!(model.oscillators.len(), 0);
     }
 }

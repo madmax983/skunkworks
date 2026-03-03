@@ -43,3 +43,7 @@
 **[Hash Trait Stack Overflow on Deeply Nested Values]**
 **Learning:** Implementing `Hash` using recursion on heavily-nested recursive types like `Value::Junction` and `Value::Superposition` is dangerous. When these inputs are passed in, standard recursion easily exhausts the stack, leading to immediate program abortion (`fatal runtime error: stack overflow`).
 **Action:** Always rewrite `std::hash::Hash` implementations iteratively using a `Vec` as a stack for deeply nested recursive variants to ensure stable operations and prevent stack overflow panics.
+
+**[Audio Channel Non-blocking Receive]**
+**Learning:** An audio model pulling from a crossbeam channel via `try_recv()` might inadvertently block or skip events if not careful. By wrapping processing loops correctly, it must handle event application to mutable vectors seamlessly.
+**Action:** When writing tests that feed multiple `AudioCommand` objects (especially via bounded channels) check that states mutate correctly when the processing step loop consumes those channels. Always write integration-style tests that verify both bounds checks and state clearing without crashing.

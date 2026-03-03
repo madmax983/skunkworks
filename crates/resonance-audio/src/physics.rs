@@ -314,4 +314,104 @@ mod tests {
         // Damped grid should have less total "activity"
         assert!(energy_damped < energy_undamped);
     }
+
+    #[test]
+    fn test_pluck_zero_width() {
+        let mut grid = PhysicsGrid::new(0, 0);
+        // Should not panic or underflow when subtracting 1 from width/height in pluck
+        grid.pluck(0, 0, 1.0);
+    }
+
+    #[test]
+    fn test_get_out_of_bounds() {
+        let grid = PhysicsGrid::new(10, 10);
+        assert_eq!(grid.get(10, 10), 0.0); // OOB
+    }
+
+    #[test]
+    fn test_add_wall_out_of_bounds() {
+        let mut grid = PhysicsGrid::new(10, 10);
+        grid.add_wall(20, 20); // Should not panic
+    }
+
+    #[test]
+    fn test_pluck_out_of_bounds() {
+        let mut grid = PhysicsGrid::new(10, 10);
+        grid.pluck(20, 20, 1.0); // Should not panic
+    }
+
+    #[test]
+    fn test_remove_wall_out_of_bounds() {
+        let mut grid = PhysicsGrid::new(10, 10);
+        grid.remove_wall(20, 20); // Should not panic
+    }
+
+    #[test]
+    fn test_clear_walls() {
+        let mut grid = PhysicsGrid::new(10, 10);
+        grid.add_wall(5, 5);
+
+        grid.clear_walls();
+
+        grid.pluck(5, 5, 1.0);
+        assert_eq!(grid.get(5, 5), 1.0); // If it was still a wall, it wouldn't be plucked
+    }
+
+    #[test]
+    fn test_void_damping_effect() {
+        let mut grid_void = PhysicsGrid::new(10, 10);
+        for y in 0..10 {
+            for x in 0..10 {
+                if !(x == 5 && y == 5) {
+                    grid_void.set_material(x, y, Material::Void);
+                }
+            }
+        }
+        grid_void.pluck(5, 5, 1.0);
+
+        let mut grid_air = PhysicsGrid::new(10, 10);
+        grid_air.pluck(5, 5, 1.0);
+
+        for _ in 0..5 {
+            grid_void.step();
+            grid_air.step();
+        }
+
+        let val_void = grid_void.get(5, 6).abs();
+        let val_air = grid_air.get(5, 6).abs();
+
+        assert!(val_void < val_air);
+    }
+
+    #[test]
+    fn test_slow_material_effect() {
+        let mut grid_slow = PhysicsGrid::new(10, 10);
+        for y in 0..10 {
+            for x in 0..10 {
+                grid_slow.set_material(x, y, Material::Slow);
+            }
+        }
+        grid_slow.pluck(5, 5, 1.0);
+
+        let mut grid_fast = PhysicsGrid::new(10, 10);
+        for y in 0..10 {
+            for x in 0..10 {
+                grid_fast.set_material(x, y, Material::Fast);
+            }
+        }
+        grid_fast.pluck(5, 5, 1.0);
+
+        grid_slow.step();
+        grid_fast.step();
+
+        let val_slow = grid_slow.get(5, 6).abs();
+        let val_fast = grid_fast.get(5, 6).abs();
+
+        assert!(
+            val_slow < val_fast,
+            "Slow material wave magnitude {} should be less than fast {}",
+            val_slow,
+            val_fast
+        );
+    }
 }
