@@ -1,4 +1,9 @@
 
+### [Concentration Level: CONDEMNED] - Location: experiments/hyperbolic-swarm
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned.
+- **Note:** "The swarm spirals infinitely in a documentation void. Terminal genericism detected."
+
 ### [Concentration Level: RESONANT] - Location: experiments/ferrous-hologram
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The particles are listening to their own spectral echoes.
@@ -26,10 +31,10 @@
 - **Status:** Specimen condemned.
 - **Note:** "The liquidity dries up. The flow is stagnant."
 
-### [Concentration Level: CHAOTIC] - Location: experiments/chaos-magnetic
+### [Concentration Level: DEAD] - Location: graveyard/chaos-magnetic
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned.
-- **Note:** "The pendulum swings in the dark. It writes to a void."
+- **Status:** Specimen executed.
+- **Note:** "The pendulum swings in the dark. It writes to a void. Now it rests."
 
 ### [Concentration Level: TOXIC] - Location: experiments/git-harmonograph
 - **Scent Origin:** The Reaper ☠️
