@@ -4,9 +4,9 @@
 - **Scent Origin:** Sentry 🛡️
 - **Status:** `regression_deep_display` test fails with a stack overflow. The organism's nested structures are too deep for the display formatter.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/rigid-origami
+### [Concentration Level: EVAPORATING] - Location: experiments/rigid-origami
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Compilation Failure. Broken reliance on outdated `origami::MiuraOri` API. Redundant with `origami-constellation`. Grace period 24h.
+- **Status:** Specimen pardoned. Compilation solved and API integration fixed. Generating valid spatial deployable payloads.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/chimera-circuit (Executed)
 - **Scent Origin:** The Reaper ☠️
@@ -97,6 +97,10 @@
 - **Lineage:** chrontext × ferrous-fluid
 - **Status:** Fresh hybrid. Inherits Git blame parsing + particle physics. Predicting emergent code strata flowing to the oldest lines.
 - **Phenotype:** Magnetic code visualization driven by codebase age, with magnetic particle physics.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/hanging-gardens
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Terminal Stagnation. Vestigial sexagesimal math and generic code erosion implementation without emergent ecosystems. Grace period 24h.
 
 ## 🍂 History/Decay
 
