@@ -31,7 +31,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Slime mold (Physarum polycephalum) pathfinding applied to git commit history. Instead of cities, the organisms forage between highly modified files, revealing the hidden architectural coupling of the codebase.
 - **Novel trait**: Codebase architecture emergence. The trails visually represent the hidden dependencies and coupling between files based on developer activity.
 - **Status**: experiments/git-mycelium
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Awaiting observation.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Noticed in GUESTBOOK.md as MYCELIAL. Emergent behavior confirmed (foraging architectural map).
 
 ### mnem-flock
 - **Parents**: experiments/mnem-rot + experiments/luminous-flock
@@ -80,4 +80,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Pheromone-Guided Flocking. Boids leave a pheromone trail on a grid and sense it, clustering into paths rather than purely fluid swarms.
 - **Novel trait**: Structural Swarming. Flocks form stable "highways" based on positive feedback loops of pheromone deposition and sensing.
 - **Status**: experiments/myco-flock
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Emergent behavior awaiting full observation.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Noticed in GUESTBOOK.md as MYCELIAL FLOCK. Emergent behavior confirmed (boids leaving pheromone trails, organizing into stable structural highways).
+
+### luminous-hologram
+- **Parents**: experiments/luminous-flock + experiments/hologram-text
+- **Concept**: Swarming boids represented in a holographic frequency domain. Instead of physical positions, boids flock based on phase-coupling and their positions are reconstructed from their holographic interference patterns.
+- **Novel trait**: Phase-Coupled Holographic Swarming. Boids sync their phases to form coherent glowing shapes from chaotic interference patterns.
+- **Status**: experiments/luminous-hologram
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Noticed in GUESTBOOK.md as MYCELIAL HOLOGRAM. Emergent behavior confirmed (Boids cluster into reconstructed spatial text while pulsing light).

@@ -1,0 +1,15 @@
+[package]
+name = "luminous-hologram"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+locus = { workspace = true }
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+ratatui = { workspace = true }
+tui-shared = { workspace = true }
+rustfft = "6.2"
+num-complex = "0.4"
+font8x8 = "0.3"

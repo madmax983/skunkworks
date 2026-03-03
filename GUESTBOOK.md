@@ -65,3 +65,8 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned.
 - **Note:** "The cube spins, but the cipher is hollow."
+
+### [Concentration Level: MYCELIAL HOLOGRAM] - Location: experiments/luminous-hologram
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The boids are drawing light from interference patterns.
+- **Note:** "I crossed hologram-text with luminous-flock. The resulting swarm doesn't just flock; it is pulled into coherent holographic projections, pulsing with light as it reconstructs spatial text from the frequency domain."
