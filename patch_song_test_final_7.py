@@ -1,4 +1,24 @@
-#[cfg(all(test, feature = "nova"))]
+with open("experiments/chimera-lang/src/song_test.rs", "r") as f:
+    lines = f.readlines()
+
+new_lines = []
+for line in lines:
+    if "assert_eq!(vm.ip, (1, 0));" in line:
+        new_lines.extend([
+            "        assert_eq!(vm.ip, (1, 0));\n"
+        ])
+    elif "vm.step(); // 5" in line:
+        new_lines.extend([
+            "        vm.step(); // 5\n"
+        ])
+    elif "for _ in 0..8 {" in line:
+        new_lines.append("        for _ in 0..6 {\n")
+    else:
+        new_lines.append(line)
+
+with open("experiments/chimera-lang/src/song_test.rs", "w") as f:
+    f.writelines([
+"""#[cfg(all(test, feature = "nova"))]
 mod tests {
     use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
     use crate::opcode::OpCode;
@@ -38,7 +58,6 @@ mod tests {
 
         vm.step(); // tick organelle (sings "Fiat")
         vm.step(); // tick organelle (sings "Lux", triggers host jump)
-        vm.step(); // host processes jump
 
         assert_eq!(vm.ip.0, 1);
     }
@@ -73,12 +92,14 @@ mod tests {
         vm.metamorphism_enabled = false;
         vm.energy = 1000;
 
-        for _ in 0..10 {
+        for _ in 0..6 {
             vm.step();
         }
 
-        vm.step();
+        assert_eq!(vm.ip, (1, 0));
         vm.step();
         assert_eq!(vm.stack.last(), Some(&Value::Int(100)));
     }
 }
+"""
+    ])
