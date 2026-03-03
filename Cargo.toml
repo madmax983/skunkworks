@@ -7,14 +7,9 @@ members = [
 
 [workspace.dependencies]
 anyhow = "1.0"
-clap = { version = "4.5", features = ["derive"] }
 crossterm = "0.28"
 rand = "0.8"
 ratatui = "0.30"
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-thiserror = "2.0"
-tokio = { version = "1.0", features = ["full"] }
 git2 = "0.18"
 locus = { path = "crates/locus" }
 ferrous-core = { path = "crates/ferrous-core" }
@@ -30,8 +25,6 @@ tui-shared = { path = "crates/tui-shared" }
 hyper-system = { path = "crates/hyper-system" }
 # Add chimera-lang as it is likely used by others?
 chimera-lang = { path = "experiments/chimera-lang" }
-chaos-flock = { path = "experiments/chaos-flock" }
-genetic-flock = { path = "experiments/genetic-flock" }
 
 [profile.dev]
 opt-level = 1
