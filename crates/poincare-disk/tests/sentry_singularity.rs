@@ -1,4 +1,4 @@
-use poincare_disk::{Point, mobius_add};
+use poincare_disk::{mobius_add, Point};
 
 #[test]
 fn test_singularity_details() {
@@ -13,6 +13,9 @@ fn test_singularity_details() {
     let res2 = mobius_add(z2, a2);
 
     // In our mobius_add implementation, if z or a is invalid (norm_sqr >= 1.0), it returns z.
-    assert_eq!(res2.re, z2.re, "Should return z2 verbatim when z2 is outside the disk");
+    assert_eq!(
+        res2.re, z2.re,
+        "Should return z2 verbatim when z2 is outside the disk"
+    );
     assert_eq!(res2.im, z2.im);
 }

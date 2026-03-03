@@ -1,3 +1,10 @@
+//! # Poincaré Disk Types
+//!
+//! Core data types used throughout the `poincare-disk` crate.
+//!
+//! Currently, this module primarily provides the `Point` type, which represents
+//! a location in the hyperbolic plane using complex numbers in the unit disk.
+
 use num_complex::Complex;
 
 /// A point in the Poincaré disk ($|z| < 1$).

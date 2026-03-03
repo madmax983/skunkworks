@@ -13,19 +13,42 @@ mod tests {
 
         let main_strand = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Junction(JunctionType::All, chord.clone())] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-                Gene { op: OpCode::Harmonize, args: vec![] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Junction(JunctionType::All, chord)] },
-                Gene { op: OpCode::Choir, args: vec![] },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Junction(JunctionType::All, chord.clone())],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    op: OpCode::Harmonize,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Junction(JunctionType::All, chord)],
+                },
+                Gene {
+                    op: OpCode::Choir,
+                    args: vec![],
+                },
             ],
         };
 
         let effect_strand = Strand {
-            genes: vec![Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] }],
+            genes: vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(100)],
+            }],
         };
 
-        let dna = Dna { evolution_config: None, helix: Helix { strands: vec![main_strand, effect_strand] } };
+        let dna = Dna {
+            evolution_config: None,
+            helix: Helix {
+                strands: vec![main_strand, effect_strand],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
         vm.energy = 1000;
 
@@ -52,23 +75,52 @@ mod tests {
 
         let main_strand = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Junction(JunctionType::All, chord.clone())] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-                Gene { op: OpCode::Harmonize, args: vec![] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Junction(JunctionType::All, chord)] },
-                Gene { op: OpCode::Choir, args: vec![] },
-                Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Junction(JunctionType::All, chord.clone())],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    op: OpCode::Harmonize,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Junction(JunctionType::All, chord)],
+                },
+                Gene {
+                    op: OpCode::Choir,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Jump,
+                    args: vec![Nucleotide::Number(0)],
+                },
             ],
         };
 
         let effect_strand = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-                Gene { op: OpCode::Ret, args: vec![] },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(100)],
+                },
+                Gene {
+                    op: OpCode::Ret,
+                    args: vec![],
+                },
             ],
         };
 
-        let dna = Dna { evolution_config: None, helix: Helix { strands: vec![main_strand, effect_strand] } };
+        let dna = Dna {
+            evolution_config: None,
+            helix: Helix {
+                strands: vec![main_strand, effect_strand],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
         vm.metamorphism_enabled = false;
         vm.energy = 1000;

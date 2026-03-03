@@ -1,3 +1,11 @@
+//! # Git Data Models
+//!
+//! Core data structures representing git repository entities.
+//!
+//! This module provides the [`Commit`], [`CommitStats`], and [`FileChange`] types, which are
+//! used to construct an application-agnostic view of a git repository's history and diffs.
+//! These structs are designed to hold the data parsed by the `GitModel` interface.
+
 use chrono::{DateTime, Utc};
 
 /// Represents a single commit in the git history.

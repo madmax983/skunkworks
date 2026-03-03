@@ -1,3 +1,12 @@
+//! # Möbius Transformations
+//!
+//! Provides the [`Mobius`] transformation struct.
+//!
+//! A Möbius transformation is a rational function of the form $f(z) = \frac{az + b}{cz + d}$.
+//! In the context of the Poincaré disk, we are specifically interested in the subset of Möbius
+//! transformations that map the unit disk to itself (automorphisms). These correspond to the
+//! isometries (rigid motions) of the hyperbolic plane, such as translations and rotations.
+
 use crate::types::Point;
 use num_complex::Complex;
 

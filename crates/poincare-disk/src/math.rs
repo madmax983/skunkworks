@@ -1,3 +1,13 @@
+//! # Hyperbolic Mathematics
+//!
+//! Mathematical operations for the Poincaré disk.
+//!
+//! This module provides functions for calculating distances and applying
+//! hyperbolic translations (Möbius additions/subtractions) within the unit disk.
+//!
+//! These operations form the foundation for moving points around the curved
+//! hyperbolic space while keeping them bounded within $|z| < 1$.
+
 use crate::types::Point;
 
 /// Performs Möbius addition: $ (z + a) / (1 + \bar{a}z) $.

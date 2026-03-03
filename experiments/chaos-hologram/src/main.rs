@@ -2,26 +2,26 @@ use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
+use locus::Vec2;
 use ratatui::{
+    Terminal,
     backend::{Backend, CrosstermBackend},
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     widgets::{
-        canvas::{Canvas, Points},
         Block, Borders, Paragraph,
+        canvas::{Canvas, Points},
     },
-    Terminal,
 };
 use std::{io, time::Duration};
-use locus::Vec2;
 
-mod hologram;
 mod chaos;
+mod hologram;
 
-use hologram::Hologram;
 use chaos::DoublePendulum;
+use hologram::Hologram;
 
 struct App {
     hologram: Hologram,
@@ -75,10 +75,9 @@ impl App {
         let shift_x = self.reconstruction_angle_x + p.x * 0.5;
         let shift_y = self.reconstruction_angle_y + p.y * 0.5;
 
-        self.reconstruction_data = self.hologram.reconstruct(
-            shift_x as isize,
-            shift_y as isize,
-        );
+        self.reconstruction_data = self
+            .hologram
+            .reconstruct(shift_x as isize, shift_y as isize);
     }
 }
 
@@ -104,7 +103,9 @@ fn main() -> Result<()> {
 }
 
 fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<()>
-where std::io::Error: From<<B as ratatui::backend::Backend>::Error> {
+where
+    std::io::Error: From<<B as ratatui::backend::Backend>::Error>,
+{
     let tick_rate = Duration::from_millis(50);
     let mut last_tick = std::time::Instant::now();
 
@@ -165,7 +166,11 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
         app.reconstruction_angle_x + app.pendulum.p2().x * 0.5,
         app.reconstruction_angle_y + app.pendulum.p2().y * 0.5
     ))
-    .style(Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD))
+    .style(
+        Style::default()
+            .fg(Color::Cyan)
+            .add_modifier(Modifier::BOLD),
+    )
     .block(Block::default().borders(Borders::ALL));
     f.render_widget(title, chunks[0]);
 
@@ -187,15 +192,27 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
             let y = (i / app.hologram.width) as f64;
 
             // Map FFT indices to viewable coords (centered)
-            let shifted_x = if x < width / 2.0 { x + width / 2.0 } else { x - width / 2.0 };
-            let shifted_y = if y < height / 2.0 { y + height / 2.0 } else { y - height / 2.0 };
+            let shifted_x = if x < width / 2.0 {
+                x + width / 2.0
+            } else {
+                x - width / 2.0
+            };
+            let shifted_y = if y < height / 2.0 {
+                y + height / 2.0
+            } else {
+                y - height / 2.0
+            };
 
             spectrum_points.push((shifted_x, shifted_y));
         }
     }
 
     let spectrum_canvas = Canvas::default()
-        .block(Block::default().title(" FFT Spectrum ").borders(Borders::ALL))
+        .block(
+            Block::default()
+                .title(" FFT Spectrum ")
+                .borders(Borders::ALL),
+        )
         .marker(ratatui::symbols::Marker::Braille)
         .x_bounds([0.0, width])
         .y_bounds([0.0, height])
@@ -233,7 +250,11 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
 
     // Reconstruction View (Right)
     let mut recon_points = vec![];
-    let max_val = app.reconstruction_data.iter().copied().fold(0.0_f64, f64::max);
+    let max_val = app
+        .reconstruction_data
+        .iter()
+        .copied()
+        .fold(0.0_f64, f64::max);
     let threshold = max_val * 0.5;
 
     for (i, &val) in app.reconstruction_data.iter().enumerate() {
@@ -245,7 +266,11 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
     }
 
     let recon_canvas = Canvas::default()
-        .block(Block::default().title(" Reconstruction ").borders(Borders::ALL))
+        .block(
+            Block::default()
+                .title(" Reconstruction ")
+                .borders(Borders::ALL),
+        )
         .marker(ratatui::symbols::Marker::Block)
         .x_bounds([0.0, width])
         .y_bounds([0.0, height])

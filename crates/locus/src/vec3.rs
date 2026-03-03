@@ -1,3 +1,10 @@
+//! # 3-Dimensional Vectors
+//!
+//! Provides the lightweight [`Vec3`] type used by locus.
+//!
+//! This is typically the output structure returned from reducing or projecting higher
+//! dimensions (like a `Vec4`) down into a 3D coordinate.
+
 #[cfg(feature = "macroquad")]
 use macroquad::prelude::Vec3 as MacroquadVec3;
 

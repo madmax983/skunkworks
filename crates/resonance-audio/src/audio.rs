@@ -1,3 +1,11 @@
+//! # Resonance Audio Model
+//!
+//! Provides the top-level interface for interacting with the acoustic physics grid.
+//!
+//! The [`AudioModel`] coordinates the physical simulation, receives asynchronous commands
+//! (such as plucks or material changes) from the main thread, and generates the final
+//! audio output samples.
+
 /// Shared Audio Model Logic for Resonance Experiments
 use crate::physics::{Material, PhysicsGrid};
 use crossbeam_channel::{Receiver, Sender};

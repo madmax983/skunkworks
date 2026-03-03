@@ -1,4 +1,4 @@
-use font8x8::{UnicodeFonts, BASIC_FONTS};
+use font8x8::{BASIC_FONTS, UnicodeFonts};
 use num_complex::Complex;
 use rustfft::FftPlanner;
 use std::f64::consts::PI;

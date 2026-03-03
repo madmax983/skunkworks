@@ -1,3 +1,12 @@
+//! # Resonance Audio Physics
+//!
+//! Provides the underlying 2D Finite Difference Time Domain (FDTD) wave physics simulation.
+//!
+//! The [`PhysicsGrid`] is responsible for advancing the wave equation on a discrete
+//! 2D grid, taking into account different materials and their effect on wave
+//! propagation and damping. It uses a triple-buffer technique to prevent
+//! allocation during the simulation steps.
+
 /// Shared Physics Grid Logic for Resonance Experiments
 ///
 /// This module implements the Finite Difference Time Domain (FDTD) solver for the 2D wave equation.
