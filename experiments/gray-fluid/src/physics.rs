@@ -76,7 +76,7 @@ impl Universe {
         let gravity = Vec2::new(0.0, -10.0);
         let damping = 0.96;
 
-        self.platter.magnetism.fill(0.0);
+        self.platter.clear();
 
         for p in &self.particles {
             let gx = p.pos.x.round() as usize;
@@ -130,7 +130,7 @@ impl Universe {
                 }
             }
 
-            if gx > 0 && gx < (self.platter.width - 1) && gy > 0 && gy < (self.platter.height - 1) {
+            if gx > 0 && gx < (self.platter.width() - 1) && gy > 0 && gy < (self.platter.height() - 1) {
                 let left = self.platter.get_magnetism(gx - 1, gy);
                 let right = self.platter.get_magnetism(gx + 1, gy);
                 let down = self.platter.get_magnetism(gx, gy - 1);

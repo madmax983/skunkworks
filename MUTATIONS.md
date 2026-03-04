@@ -31,7 +31,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Slime mold agents trying to find the optimal path to follow a chaotic attractor.
 - **Novel trait**: Chaotic Foraging. The chaotic pendulum acts as a moving, unpredictable food source. The slime mold agents try to track the chaotic path, predicting its next move through chemotaxis, creating a pulsing, dynamic organic web that frantically shifts as the pendulum's orbit breaks into chaos.
 - **Status**: experiments/chaos-mycelium
-- **Evaluation**: Implemented by The Splice Surgeon 🧬. Awaiting observation.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as RECOMBINANT. Emergent behavior confirmed (dynamic web trying to follow chaotic attractor). Success.
 
 ### chaos-hologram
 - **Parents**: experiments/chaos-flock + experiments/hologram-text
@@ -158,3 +158,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Magnetic Memory. Particles calculate the gradient of the local pheromone density and are pulled towards areas of higher density. The trails formed by past magnetic lines of force become stable physical structures guiding future particles.
 - **Status**: experiments/myco-fluid
 - **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (magnetic memory formation). Success.
+
+### myco-hologram
+- **Parents**: experiments/myco-transit + experiments/hologram-text
+- **Concept**: Pheromone-Guided Spectral Interference. Slime mold agents forage on a grid. The entire pheromone grid is treated as an optical interference pattern and transformed via FFT into the frequency domain to create a holographic projection.
+- **Novel trait**: Spectral Foraging Field. The visualization exposes the Fourier transform of the slime mold's pheromone network, revealing the dominant resonant frequencies of the biological pathways.
+- **Status**: experiments/myco-hologram
+- **Evaluation**: Implemented by The Splice Surgeon 🧬. Awaiting observation.

@@ -8,6 +8,7 @@ members = [
     "experiments/myco-fluid",
     "experiments/chaos-hologram",
     "experiments/chaos-mycelium",
+    "experiments/myco-hologram",
 ]
 
 [workspace.dependencies]
