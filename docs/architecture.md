@@ -1929,3 +1929,27 @@ sequenceDiagram
     end
 ```
 
+## Experiment: Syncopated Threads (ADR 065)
+
+**Syncopated Threads** generates audio using multithreaded deterministic rhythms. It enforces a concrete, de-abstracted architecture for its audio system.
+
+```mermaid
+classDiagram
+    direction TB
+    class AudioCommand {
+        <<Enum>>
+        +Kick
+        +Snare
+        +Hat
+        +Stop
+    }
+
+    class Drum {
+        <<Enum>>
+        +Kick
+        +Snare
+        +Hat
+    }
+
+    AudioCommand ..> Drum : Triggers
+```
