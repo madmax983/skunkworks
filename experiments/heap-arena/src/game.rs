@@ -19,6 +19,12 @@ pub struct Player {
     pub is_dead: bool,
 }
 
+impl Default for Player {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Player {
     pub fn new() -> Self {
         Self {
@@ -165,6 +171,7 @@ impl Game {
                     self.player.can_jump = true;
                 }
 
+                #[allow(clippy::manual_is_multiple_of)]
                 if hit_hazard && self.time % 10 == 0 {
                     self.player.hp -= 5;
                     self.messages.push("OUCH! Unsafe code!".to_string());
@@ -220,8 +227,8 @@ impl Game {
                 self.projectiles.push(Projectile {
                     x: self.boss.x,
                     y: self.boss.y,
-                    vx: angle.cos() * speed * -1.0, // Left
-                    vy: angle.sin() * speed,        // Up/Down
+                    vx: -(angle.cos() * speed), // Left
+                    vy: angle.sin() * speed,    // Up/Down
                     symbol: if rng.gen_bool(0.5) { 'E' } else { '!' }, // E for Error/Exception
                 });
             }
