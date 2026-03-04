@@ -38,10 +38,10 @@ impl Lexicon {
         let mut evolved_identifiers = HashMap::new();
 
         for token in &tokens {
-            if token.token_type == TokenType::Identifier {
-                if !evolved_identifiers.contains_key(&token.content) {
-                    evolved_identifiers.insert(token.content.clone(), Word::new(&token.content));
-                }
+            if token.token_type == TokenType::Identifier
+                && !evolved_identifiers.contains_key(&token.content)
+            {
+                evolved_identifiers.insert(token.content.clone(), Word::new(&token.content));
             }
         }
 
@@ -106,11 +106,11 @@ impl Lexicon {
                     content: s,
                     token_type: TokenType::Literal,
                 });
-            } else if c.is_digit(10) {
+            } else if c.is_ascii_digit() {
                 // Numeric literal
                 let mut s = String::new();
                 while let Some(&ch) = chars.peek() {
-                    if ch.is_digit(10) || ch == '.' || ch == '_' {
+                    if ch.is_ascii_digit() || ch == '.' || ch == '_' {
                         s.push(ch);
                         chars.next();
                     } else {
@@ -179,7 +179,7 @@ impl Lexicon {
             match token.token_type {
                 TokenType::Identifier => {
                     if let Some(word) = self.evolved_identifiers.get(&token.content) {
-                        s.push_str(&word.to_string());
+                        s.push_str(&word.to_string_word());
                     } else {
                         s.push_str(&token.content);
                     }

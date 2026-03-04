@@ -99,7 +99,7 @@ async fn main() {
             let text = match token.token_type {
                 TokenType::Identifier => {
                     if let Some(word) = lexicon.evolved_identifiers.get(&token.content) {
-                        word.to_string()
+                        word.to_string_word()
                     } else {
                         token.content.clone()
                     }
@@ -115,7 +115,7 @@ async fn main() {
                     y += newlines as f32 * line_height;
                     x = start_x;
                     // Handle indentation: the text after the last newline is the indentation
-                    if let Some(last_line) = text.lines().last() {
+                    if let Some(_last_line) = text.lines().last() {
                         // But wait, split keeps the newlines?
                         // text.lines() removes newlines.
                         // If text is "\n    ", lines gives ["", "    "].

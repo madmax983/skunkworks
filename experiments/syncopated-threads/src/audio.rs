@@ -138,7 +138,7 @@ pub fn start_audio_thread(receiver: Receiver<AudioCommand>) -> thread::JoinHandl
                     }
 
                     // Hard clipper
-                    sample = sample.max(-1.0).min(1.0);
+                    sample = sample.clamp(-1.0, 1.0);
 
                     writer
                         .write_sample((sample * i16::MAX as f32) as i16)
