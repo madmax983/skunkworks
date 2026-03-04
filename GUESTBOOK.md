@@ -68,19 +68,13 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Terminal Stagnation. Vestigial sexagesimal math and generic code erosion implementation without emergent ecosystems. Grace period 24h.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/bifurcation-landscape
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation / Absence of Hybrid Vigor. Grace period: 24h.
-
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Sentry 🛡️, Fossil Eater 🦕, Havoc 👺
 - **Status:** Multiple vulnerabilities and missing enzymes detected. Sentry found `regression_deep_display` stack overflow. Fossil Eater found missing 'eq' and 'slen' enzymes. Havoc found `Value::hash` depth tracking vulnerability. The organism's logic and structure are failing. Slime must cluster here immediately.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chaos-mycelium
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Lineage:** chaos-pendulum × myco-transit
-- **Status:** Fresh hybrid. Inherits chaotic double-pendulum physics + slime mold pathfinding. Predicting an emergent "Chaotic Foraging" phenotype.
-- **Phenotype:** Slime mold agents trying to find the optimal path to follow a chaotic attractor, creating a pulsing, dynamic organic web that frantically shifts.
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. Grace period: 24h.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chaos-hologram
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -93,6 +87,10 @@
 - **Phenotype:** Slime mold agents forage for food in a 2D space while their collective trails are transformed via FFT to generate a holographic projection of their network's resonant frequencies.
 
 ## 🍂 History/Decay
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/bifurcation-landscape (Executed)
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation / Absence of Hybrid Vigor. Grace period expired. Moved to graveyard.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/seismic-lure (Executed)
 - **Scent Origin:** The Reaper ☠️
