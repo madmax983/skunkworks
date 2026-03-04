@@ -272,8 +272,8 @@ pub struct State {
     compute_pipeline: wgpu::ComputePipeline,
     uniform_buffer: wgpu::Buffer,
     uniform_bind_group: wgpu::BindGroup,
-    texture_a: wgpu::Texture,
-    texture_b: wgpu::Texture,
+    _texture_a: wgpu::Texture,
+    _texture_b: wgpu::Texture,
     bind_group_a: wgpu::BindGroup,
     bind_group_b: wgpu::BindGroup,
     display_bind_group_a: wgpu::BindGroup,
@@ -788,8 +788,8 @@ impl State {
             compute_pipeline,
             uniform_buffer,
             uniform_bind_group,
-            texture_a,
-            texture_b,
+            _texture_a: texture_a,
+            _texture_b: texture_b,
             bind_group_a,
             bind_group_b,
             display_bind_group_a,
@@ -945,6 +945,7 @@ impl State {
             });
 
         // --- Compute Pass ---
+        #[allow(clippy::manual_is_multiple_of)]
         let (compute_bind_group, display_bind_group) = if self.frame_count % 2 == 0 {
             (&self.bind_group_a, &self.display_bind_group_b)
         } else {
