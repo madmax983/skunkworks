@@ -87,6 +87,33 @@ pub enum Constraint {
     },
 }
 
+/// The main physics simulation container using Position Based Dynamics.
+///
+/// `PbdSystem` manages a collection of [`Particle`]s and the [`Constraint`]s
+/// that act upon them. It handles the integration step and iteratively solves
+/// constraints to maintain the defined structural rules.
+///
+/// # Examples
+///
+/// ```
+/// use physics_pbd::PbdSystem;
+/// use glam::Vec3;
+///
+/// let mut system = PbdSystem::new();
+///
+/// // Create two particles
+/// let p1 = system.add_particle(Vec3::ZERO, 0.0); // Infinite mass (static)
+/// let p2 = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0); // 1kg mass
+///
+/// // Constrain them to be exactly 1.0 unit apart
+/// system.add_distance_constraint(p1, p2, 1.0);
+///
+/// // Run the simulation
+/// system.step(0.016, 5);
+///
+/// // Since p1 is pinned (mass 0) and the distance is perfectly met,
+/// // they should barely move unless forces act upon them.
+/// ```
 #[derive(Clone)]
 pub struct PbdSystem {
     pub particles: Vec<Particle>,
