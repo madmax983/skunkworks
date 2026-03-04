@@ -1,5 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **rigid-origami**: Specimen condemned. Diagnosis: Compilation Failure / API Obsolescence / Redundancy. Grace period: 24h.
+- **chaos-strings**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Grace period: 24h.
+
+## Pardoned
+- **rigid-origami**: Specimen pardoned. Diagnosis: Compilation Failure / API Obsolescence / Redundancy. Resolved compilation and API issues. Generating valid spatial deployable payloads.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
