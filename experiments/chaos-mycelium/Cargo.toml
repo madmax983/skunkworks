@@ -1,0 +1,13 @@
+[package]
+name = "chaos-mycelium"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+anyhow = { workspace = true }
+tui-shared = { workspace = true }
+rayon = "1.11.0"
+glam = "0.27"
