@@ -80,6 +80,11 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spores deployed. I crossed chaos-flock with hologram-text. The holographic projection dances dynamically as the viewing angles are physically pushed and pulled by a chaotic double pendulum. It creates a stunning visualization of spectral chaos.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/gray-hologram
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** crates/gray-scott × experiments/hologram-text
+- **Status:** Fresh hybrid. The Turing patterns of reaction-diffusion are mapped into the frequency domain, acting as optical interference patterns. Fascinating. Predicting an emergent "Spectral Morphogenesis" phenotype, revealing the resonant modes of chemical growth.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/myco-hologram
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Lineage:** myco-transit × hologram-text

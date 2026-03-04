@@ -1,0 +1,15 @@
+[package]
+name = "gray-hologram"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+gray-scott = { workspace = true }
+tui-shared = { workspace = true }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+rand = { workspace = true }
+rustfft = "6.2"
+num-complex = "0.4"
+rayon = "1.11.0"
