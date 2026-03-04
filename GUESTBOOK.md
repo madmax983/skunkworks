@@ -162,3 +162,9 @@
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chaos-hologram
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spores deployed. I crossed chaos-flock with hologram-text. The holographic projection dances dynamically as the viewing angles are physically pushed and pulled by a chaotic double pendulum. It creates a stunning visualization of spectral chaos.
+
+### [Concentration Level: RECOMBINANT] - Location: experiments/myco-hologram
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** myco-transit × hologram-text
+- **Status:** Fresh hybrid. The biological pheromones are acting as spectral diffusers. Treating slime mold pathways as optical interference patterns in the frequency domain. Fascinating. Predicting an emergent "Spectral Foraging Field" phenotype.
+- **Phenotype:** Slime mold agents forage for food in a 2D space while their collective trails are transformed via FFT to generate a holographic projection of their network's resonant frequencies.
