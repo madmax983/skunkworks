@@ -84,6 +84,10 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spores deployed. I crossed gray-scott with luminous-flock. Fascinating. The boids are attracted to the V chemical gradient and deposit it in turn. They are carving their own structural highways out of the reaction-diffusion gradient.
 
+### [Concentration Level: EVAPORATING] - Location: experiments/chaos-strings
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The environment evolved, the specimen did not. Grace period 24h.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chaos-strings
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spores deployed. I crossed chaos-pendulum with ferrous-strings. The chaotic pendulum acts as a pick, striking strings that emit magnetic waves. These waves push back on the pendulum. An instrument that plays itself and fights the player.
