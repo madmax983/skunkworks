@@ -125,3 +125,9 @@
 **Blueprint:** Refactored these experiments to use the standalone functional API (`generate_miura_grid`) and `MiuraParams` directly, aligning with the architectural refactoring of the `origami` crate.
 **Stability:** Restored compilation of multiple experiments, enforcing a single source of truth for the origami mesh generation.
 **Verification:** Verified with `cargo check` across all modified crates.
+
+## [Miller Lattice Extraction]
+**Tangle:** The Copy-Paste - `experiments/miller-fs`, `experiments/miller-reaction`, and `experiments/ferro-file` all implemented identical `LatticePoint`, `Atom`, and `Crystal` logic for filesystem/lattice scanning.
+**Blueprint:** Extracted this logic into a new shared crate `crates/miller-lattice`. Implemented `Default` for `Crystal` to satisfy Clippy. Refactored the three experiments to depend on the new crate and removed their local duplicate `lattice.rs` files.
+**Stability:** Enforced a single source of truth for the lattice scanning logic, preventing drift and ensuring consistent types across these experiments.
+**Verification:** Verified with `cargo check` and `cargo test` for all affected crates.

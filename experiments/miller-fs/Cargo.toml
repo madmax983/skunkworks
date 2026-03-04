@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+miller-lattice = { path = "../../crates/miller-lattice" }
 wgpu = "0.19"
 winit = "0.29"
 cgmath = "0.18"

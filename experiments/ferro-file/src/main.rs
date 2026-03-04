@@ -1,6 +1,4 @@
-mod lattice;
-
-use lattice::Crystal;
+use miller_lattice::Crystal;
 use std::path::Path;
 use wgpu::util::DeviceExt;
 use winit::{
@@ -133,12 +131,7 @@ impl CameraController {
                 self.lon -= delta.0 as f32 * self.speed;
                 self.lat -= delta.1 as f32 * self.speed;
 
-                if self.lat > 89.0 {
-                    self.lat = 89.0;
-                }
-                if self.lat < -89.0 {
-                    self.lat = -89.0;
-                }
+                self.lat = self.lat.clamp(-89.0, 89.0);
             }
         }
     }
@@ -767,7 +760,7 @@ impl State {
             compute_pass.set_bind_group(1, &self.uniform_bind_group_compute, &[]);
 
             let num_cells = GRID_SIZE * GRID_SIZE * GRID_SIZE;
-            let workgroups = (num_cells + WORKGROUP_SIZE - 1) / WORKGROUP_SIZE;
+            let workgroups = num_cells.div_ceil(WORKGROUP_SIZE);
             compute_pass.dispatch_workgroups(workgroups, 1, 1);
         }
 
