@@ -1,6 +1,6 @@
 use crate::camera::{Camera, CameraController};
-use crate::lattice::Crystal;
 use cgmath::prelude::*;
+use miller_lattice::Crystal;
 use std::sync::Arc;
 use wgpu::util::DeviceExt;
 use winit::{

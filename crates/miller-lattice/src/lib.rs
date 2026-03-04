@@ -16,7 +16,7 @@ impl LatticePoint {
         Self { x, y, z }
     }
 
-    pub fn to_vec3(self) -> Vector3<f32> {
+    pub fn to_vec3(&self) -> Vector3<f32> {
         Vector3::new(self.x as f32, self.y as f32, self.z as f32)
     }
 }
@@ -25,11 +25,8 @@ impl LatticePoint {
 pub struct Atom {
     pub position: LatticePoint,
     pub is_dir: bool,
-    #[allow(dead_code)]
     pub name: String,
-    #[allow(dead_code)]
     pub path: PathBuf,
-    #[allow(dead_code)]
     pub normal: Vector3<i32>, // The normal of the plane this atom belongs to (or defines)
 }
 
@@ -38,6 +35,12 @@ pub struct Crystal {
     pub atoms: Vec<Atom>,
     pub bonds: Vec<(usize, usize)>, // indices into atoms
     pub lookup: HashMap<LatticePoint, usize>,
+}
+
+impl Default for Crystal {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Crystal {

@@ -1,11 +1,11 @@
 mod camera;
-mod lattice;
+
 mod reaction;
 mod state;
 
 use anyhow::Result;
-use lattice::Crystal;
 use log::{error, info};
+use miller_lattice::Crystal;
 use state::State;
 use std::path::Path;
 use std::sync::Arc;
