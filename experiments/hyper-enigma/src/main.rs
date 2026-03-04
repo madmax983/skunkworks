@@ -7,41 +7,33 @@ fn to_mq(v: Vec3) -> macroquad::math::Vec3 {
     macroquad::math::vec3(v.x, v.y, v.z)
 }
 
-trait Vec4Ext {
-    fn rotate_xy(&self, theta: f32) -> Vec4;
-    fn rotate_xz(&self, theta: f32) -> Vec4;
-    fn rotate_yz(&self, theta: f32) -> Vec4;
+pub fn rotate_xy(v: &Vec4, theta: f32) -> Vec4 {
+    let (sin, cos) = theta.sin_cos();
+    Vec4 {
+        x: v.x * cos - v.y * sin,
+        y: v.x * sin + v.y * cos,
+        z: v.z,
+        w: v.w,
+    }
 }
 
-impl Vec4Ext for Vec4 {
-    fn rotate_xy(&self, theta: f32) -> Vec4 {
-        let (sin, cos) = theta.sin_cos();
-        Vec4 {
-            x: self.x * cos - self.y * sin,
-            y: self.x * sin + self.y * cos,
-            z: self.z,
-            w: self.w,
-        }
+pub fn rotate_xz(v: &Vec4, theta: f32) -> Vec4 {
+    let (sin, cos) = theta.sin_cos();
+    Vec4 {
+        x: v.x * cos - v.z * sin,
+        y: v.y,
+        z: v.x * sin + v.z * cos,
+        w: v.w,
     }
+}
 
-    fn rotate_xz(&self, theta: f32) -> Vec4 {
-        let (sin, cos) = theta.sin_cos();
-        Vec4 {
-            x: self.x * cos - self.z * sin,
-            y: self.y,
-            z: self.x * sin + self.z * cos,
-            w: self.w,
-        }
-    }
-
-    fn rotate_yz(&self, theta: f32) -> Vec4 {
-        let (sin, cos) = theta.sin_cos();
-        Vec4 {
-            x: self.x,
-            y: self.y * cos - self.z * sin,
-            z: self.y * sin + self.z * cos,
-            w: self.w,
-        }
+pub fn rotate_yz(v: &Vec4, theta: f32) -> Vec4 {
+    let (sin, cos) = theta.sin_cos();
+    Vec4 {
+        x: v.x,
+        y: v.y * cos - v.z * sin,
+        z: v.y * sin + v.z * cos,
+        w: v.w,
     }
 }
 
@@ -183,10 +175,10 @@ async fn main() {
             let mut v = v;
             // Apply 6-plane rotation
             // 0: XY, 1: XZ, 2: XW, 3: YZ, 4: YW, 5: ZW
-            v = v.rotate_xy(state.rotors[0]);
-            v = v.rotate_xz(state.rotors[1]);
+            v = rotate_xy(&v, state.rotors[0]);
+            v = rotate_xz(&v, state.rotors[1]);
             v = v.rotate_xw(state.rotors[2]);
-            v = v.rotate_yz(state.rotors[3]);
+            v = rotate_yz(&v, state.rotors[3]);
             v = v.rotate_yw(state.rotors[4]);
             v = v.rotate_zw(state.rotors[5]);
 

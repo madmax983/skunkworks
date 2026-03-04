@@ -20,7 +20,7 @@ fn test_grimms_law_p_to_f() {
         grimms.apply(&mut word, &mut rng);
     }
 
-    let s = word.to_string();
+    let s = word.to_string_word();
     assert!(s.contains('f') || s.contains('s') || s.contains('h'));
 }
 
@@ -38,5 +38,5 @@ fn test_vowel_shift() {
     }
 
     assert!(changed);
-    assert_ne!(word.to_string(), "a");
+    assert_ne!(word.to_string_word(), "a");
 }

@@ -178,7 +178,7 @@ impl Word {
         Self { phonemes }
     }
 
-    pub fn to_string(&self) -> String {
+    pub fn to_string_word(&self) -> String {
         self.phonemes.iter().map(|p| p.symbol).collect()
     }
 }
@@ -261,7 +261,7 @@ mod tests {
         let w = Word::new("Hello");
         // h, e, l, l, o
         assert_eq!(w.phonemes.len(), 5);
-        assert_eq!(w.to_string(), "hello");
+        assert_eq!(w.to_string_word(), "hello");
     }
 
     #[test]

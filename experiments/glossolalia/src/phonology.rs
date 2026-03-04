@@ -176,7 +176,7 @@ impl Word {
         Self { phonemes }
     }
 
-    pub fn to_string(&self) -> String {
+    pub fn to_string_word(&self) -> String {
         self.phonemes.iter().map(|p| p.symbol).collect()
     }
 }

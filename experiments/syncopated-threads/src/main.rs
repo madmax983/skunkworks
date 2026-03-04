@@ -11,6 +11,7 @@ use crossbeam_channel::unbounded;
 use std::sync::{atomic::AtomicBool, Arc, Mutex};
 use std::time::Duration;
 
+#[allow(clippy::vec_init_then_push)]
 fn main() -> anyhow::Result<()> {
     // 1. Audio
     let (audio_sender, audio_receiver) = unbounded();
