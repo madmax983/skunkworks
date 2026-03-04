@@ -86,7 +86,7 @@
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/chaos-strings
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The environment evolved, the specimen did not. Grace period 24h.
+- **Status:** Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The specimen has adapted to the environment. Compilation fixed. The chaos rings true again.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chaos-strings
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -111,6 +111,10 @@
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/hanging-gardens
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Terminal Stagnation. Vestigial sexagesimal math and generic code erosion implementation without emergent ecosystems. Grace period 24h.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/seismic-lure
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy / Skeletal Rot / Deceptive Hybridization. Grace period: 24h.
 
 ## 🍂 History/Decay
 

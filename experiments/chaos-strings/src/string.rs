@@ -87,7 +87,7 @@ impl FerrousString {
         let gx = (mid_x / grid_scale) as usize;
         let gy = (mid_y / grid_scale) as usize;
 
-        let field_strength = if gx < platter.width && gy < platter.height {
+        let field_strength = if gx < platter.width() && gy < platter.height() {
             platter.get_magnetism(gx, gy) as f32
         } else {
             0.0
@@ -134,7 +134,7 @@ impl FerrousString {
             let gx = (x / grid_scale) as i32;
             let gy = (y / grid_scale) as i32;
 
-            if gx >= 0 && gy >= 0 && gx < platter.width as i32 && gy < platter.height as i32 {
+            if gx >= 0 && gy >= 0 && gx < platter.width() as i32 && gy < platter.height() as i32 {
                 // We add to the field
                 platter.magnetize(gx as usize, gy as usize, intensity as f64 * shape as f64);
             }
