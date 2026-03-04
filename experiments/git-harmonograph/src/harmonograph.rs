@@ -129,4 +129,16 @@ mod tests {
         let points = generate_points(&params, 10);
         assert_eq!(points.len(), 10);
     }
+
+    #[test]
+    #[should_panic]
+    fn test_params_from_hash_unicode_panic() {
+        // 👺 Havoc: The `from_hash` function blindly slices a `&str` by byte index.
+        // What happens when the commit hash is actually a Unicode string?
+        // (Like an Emoji, or an author decided to put Zalgo text in the hash string somehow,
+        // or a different encoding format is given).
+        // It will panic with "byte index is not a char boundary".
+        let hash = "ఒａaAᤰ🅐aଡ଼\u{9fe}𐔰ℼₐ\u{20d0}";
+        let _params = HarmonographParams::from_hash(hash);
+    }
 }
