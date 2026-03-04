@@ -275,6 +275,7 @@ fn splice_text_to_dna(text: &str) -> Dna {
     // Split large gene sequence into strands of random length?
     // Or just one big strand. One big strand is safer.
     Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },

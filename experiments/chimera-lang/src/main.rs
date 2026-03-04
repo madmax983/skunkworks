@@ -55,7 +55,8 @@ fn format_oracle_result(val: &Value) -> Option<String> {
 
         if is_binding_list {
             let mut table = comfy_table::Table::new();
-            table.load_preset(comfy_table::presets::UTF8_BORDERS_ONLY);
+            table.load_preset(comfy_table::presets::UTF8_FULL);
+            table.apply_modifier(comfy_table::modifiers::UTF8_ROUND_CORNERS);
             table.set_header(vec!["Key", "Value"]);
 
             for item in items {
@@ -238,7 +239,8 @@ fn main() -> Result<()> {
 
         let mut table = comfy_table::Table::new();
         table
-            .load_preset(comfy_table::presets::UTF8_BORDERS_ONLY)
+            .load_preset(comfy_table::presets::UTF8_FULL)
+            .apply_modifier(comfy_table::modifiers::UTF8_ROUND_CORNERS)
             .set_content_arrangement(comfy_table::ContentArrangement::Dynamic)
             .set_header(vec!["Index", "Type", "Value"]);
 
@@ -274,9 +276,17 @@ fn main() -> Result<()> {
         println!("Final Stack (Top -> Bottom):");
         println!("{table}");
 
+        use crossterm::style::{Color, Stylize};
+
         println!("Output Log:");
         for line in vm.output {
-            println!("  {}", line);
+            if line.contains("Error") || line.contains("Unknown") || line.contains("Warning") || line.contains("Failed") {
+                println!("  {}", line.with(Color::Red));
+            } else if line.contains("Success") || line.contains("Started") || line.contains("Executed") {
+                println!("  {}", line.with(Color::Green));
+            } else {
+                println!("  {}", line);
+            }
         }
     } else {
         let input_path = cli.input.as_ref().map(|s| Path::new(s).to_path_buf());
