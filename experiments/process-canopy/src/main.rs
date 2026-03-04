@@ -240,14 +240,14 @@ fn draw_sky_gradient() {
 
 fn repopulate_forest(sys: &mut System, trees: &mut Vec<Tree>) {
     let processes = fetch_processes(sys);
-    let top = processes.into_iter().take(20).collect::<Vec<_>>();
+    let top_len = processes.len().min(20);
 
     trees.clear();
-    let spacing = screen_width() / (top.len() as f32 + 1.0);
-    for (i, p) in top.iter().enumerate() {
+    let spacing = screen_width() / (top_len as f32 + 1.0);
+    for (i, p) in processes.into_iter().take(20).enumerate() {
         let x = (i as f32 + 1.0) * spacing;
         let y = screen_height() - 20.0;
-        let tree = Tree::new(p.clone(), vec2(x, y));
+        let tree = Tree::new(p, vec2(x, y));
         trees.push(tree);
     }
 }
