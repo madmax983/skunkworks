@@ -130,7 +130,11 @@ impl Universe {
                 }
             }
 
-            if gx > 0 && gx < (self.platter.width() - 1) && gy > 0 && gy < (self.platter.height() - 1) {
+            if gx > 0
+                && gx < (self.platter.width() - 1)
+                && gy > 0
+                && gy < (self.platter.height() - 1)
+            {
                 let left = self.platter.get_magnetism(gx - 1, gy);
                 let right = self.platter.get_magnetism(gx + 1, gy);
                 let down = self.platter.get_magnetism(gx, gy - 1);
