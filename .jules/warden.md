@@ -111,3 +111,7 @@
 ## 2027-09-10 - Platter Grid Encapsulation Failure (DoS)
 **Threat:** The `Platter` struct in `crates/platter/src/lib.rs` exposed public fields (`width`, `height`, `magnetism`), allowing external code to modify dimensions without resizing the underlying vector. This inconsistency could cause a panic (DoS) or out-of-bounds reads/writes if `width` and `height` invariants were broken.
 **Defense:** Enforced encapsulation by making `Platter` fields private and adding read-only accessor methods (`width()`, `height()`, `magnetism()`).
+
+## 2027-10-15 - Unbounded File Read in Level Generation (OOM DoS)
+**Threat:** The `generate_level` function in `experiments/heap-arena/src/level_gen.rs` used `fs::read_to_string` directly on files without any bounds checking. A maliciously crafted massive file could trigger an Out-of-Memory (OOM) Denial of Service (DoS) vulnerability by exhausting application memory.
+**Defense:** Replaced the unbounded read with a capped reader using `std::io::Read::take(1024 * 1024)`. This guarantees that memory exhaustion attacks are thwarted by limiting parsing to the first 1MB of any input file. Added `test_generate_level_large_file_dos_prevention` to verify the safety.

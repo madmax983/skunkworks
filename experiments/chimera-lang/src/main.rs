@@ -280,9 +280,16 @@ fn main() -> Result<()> {
 
         println!("Output Log:");
         for line in vm.output {
-            if line.contains("Error") || line.contains("Unknown") || line.contains("Warning") || line.contains("Failed") {
+            if line.contains("Error")
+                || line.contains("Unknown")
+                || line.contains("Warning")
+                || line.contains("Failed")
+            {
                 println!("  {}", line.with(Color::Red));
-            } else if line.contains("Success") || line.contains("Started") || line.contains("Executed") {
+            } else if line.contains("Success")
+                || line.contains("Started")
+                || line.contains("Executed")
+            {
                 println!("  {}", line.with(Color::Green));
             } else {
                 println!("  {}", line);

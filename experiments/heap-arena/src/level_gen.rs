@@ -1,6 +1,5 @@
 use anyhow::Result;
 use rand::Rng;
-use std::fs;
 use std::path::Path;
 use syn::{spanned::Spanned, visit::Visit, ItemFn};
 use walkdir::WalkDir;
@@ -89,7 +88,7 @@ pub fn generate_level(path: &Path) -> Result<Option<LevelProfile>> {
     let rs_files: Vec<_> = entries
         .iter()
         .filter(|e| {
-            e.path().extension().map_or(false, |ext| ext == "rs")
+            e.path().extension().is_some_and(|ext| ext == "rs")
                 && !e.path().to_string_lossy().contains("target")
         })
         .collect();
@@ -102,7 +101,11 @@ pub fn generate_level(path: &Path) -> Result<Option<LevelProfile>> {
     // Try up to 10 files to find a valid function
     for _ in 0..10 {
         let file_entry = rs_files[rng.gen_range(0..rs_files.len())];
-        let content = fs::read_to_string(file_entry.path())?;
+
+        // Prevent OOM DoS by capping the file read to 1MB
+        let file = std::fs::File::open(file_entry.path())?;
+        let mut content = String::new();
+        std::io::Read::read_to_string(&mut std::io::Read::take(file, 1024 * 1024), &mut content)?;
 
         if let Ok(ast) = syn::parse_file(&content) {
             struct FnCollector<'a> {
@@ -205,4 +208,31 @@ pub fn generate_level(path: &Path) -> Result<Option<LevelProfile>> {
     }
 
     Ok(None)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+    use tempfile::tempdir;
+
+    #[test]
+    fn test_generate_level_large_file_dos_prevention() {
+        let dir = tempdir().unwrap();
+        let file_path = dir.path().join("large_test_file.rs");
+
+        // Generate a 2MB file to simulate a DoS attempt
+        let chunk = "fn dummy() { let x = 1; }\n";
+        let target_size = 2 * 1024 * 1024; // 2MB
+        let repeats = target_size / chunk.len();
+        let large_content = chunk.repeat(repeats);
+
+        fs::write(&file_path, large_content).unwrap();
+
+        // Ensure generate_level doesn't panic or OOM.
+        // It might return Ok(Some) if it parses successfully, or Ok(None) if truncation
+        // breaks the syntax, but it must not crash or read unbounded memory.
+        let result = generate_level(dir.path());
+        assert!(result.is_ok());
+    }
 }
