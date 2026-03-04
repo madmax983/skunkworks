@@ -164,4 +164,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Pheromone-Guided Spectral Interference. Slime mold agents forage on a grid. The entire pheromone grid is treated as an optical interference pattern and transformed via FFT into the frequency domain to create a holographic projection.
 - **Novel trait**: Spectral Foraging Field. The visualization exposes the Fourier transform of the slime mold's pheromone network, revealing the dominant resonant frequencies of the biological pathways.
 - **Status**: experiments/myco-hologram
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (biological pheromones acting as spectral diffusers). Success.
+
+### gray-hologram
+- **Parents**: crates/gray-scott + experiments/hologram-text
+- **Concept**: Holographic Reaction-Diffusion. The V chemical concentration grid is treated as an optical interference pattern and transformed via FFT into a holographic projection.
+- **Novel trait**: Spectral Morphogenesis. The Turing patterns of reaction-diffusion are mapped into the frequency domain, revealing the underlying symmetries and resonant modes of chemical growth.
+- **Status**: experiments/gray-hologram
 - **Evaluation**: Implemented by The Splice Surgeon 🧬. Awaiting observation.
