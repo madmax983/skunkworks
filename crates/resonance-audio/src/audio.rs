@@ -183,6 +183,21 @@ impl AudioModel {
     /// 4. Samples the grid at the listener's position.
     /// 5. Clamps the sample and writes it to the output buffer.
     /// 6. Periodically sends a snapshot of the grid to the visualization thread.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use resonance_audio::audio::{AudioModel, AudioCommand};
+    /// use crossbeam_channel::bounded;
+    ///
+    /// let (cmd_tx, cmd_rx) = bounded(10);
+    /// let (snap_tx, snap_rx) = bounded(10);
+    /// let mut model = AudioModel::new(10, 10, cmd_rx, snap_tx, None);
+    ///
+    /// // Fill a 10-sample buffer
+    /// let mut buffer = vec![0.0; 10];
+    /// model.process(&mut buffer);
+    /// ```
     pub fn process(&mut self, output: &mut [f32]) {
         // Process all pending commands at the start of the block
         while let Ok(cmd) = self.command_rx.try_recv() {

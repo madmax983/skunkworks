@@ -17,6 +17,16 @@ pub struct Geodesic {
 
 impl Geodesic {
     /// Creates a new geodesic segment connecting `p1` and `p2`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use poincare_disk::{Geodesic, Point};
+    /// let p1 = Point::new(0.5, 0.0);
+    /// let p2 = Point::new(0.0, 0.5);
+    /// let geo = Geodesic::new(p1, p2);
+    /// assert_eq!(geo.p1.re, 0.5);
+    /// ```
     pub fn new(p1: Point, p2: Point) -> Self {
         Self { p1, p2 }
     }

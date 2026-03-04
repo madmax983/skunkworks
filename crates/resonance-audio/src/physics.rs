@@ -148,6 +148,17 @@ impl PhysicsGrid {
     /// 2. `u_prev` becomes `u` (storing state t for the next step).
     /// 3. `u` becomes `u_next` (storing state t+1 for the next step).
     /// 4. `u_next` reclaims the old `u_prev` memory to be used as scratch space in the next iteration.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use resonance_audio::physics::PhysicsGrid;
+    /// let mut grid = PhysicsGrid::new(10, 10);
+    /// grid.pluck(5, 5, 1.0);
+    /// grid.step();
+    /// // The wave has begun propagating outwards.
+    /// assert!(grid.get(5, 5) < 1.0);
+    /// ```
     pub fn step(&mut self) {
         let w = self.width;
         let h = self.height;
