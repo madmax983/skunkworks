@@ -74,7 +74,7 @@ impl Particle {
 }
 
 fn get_mag(platter: &Platter, x: i32, y: i32) -> f32 {
-    if x < 0 || y < 0 || x >= platter.width as i32 || y >= platter.height as i32 {
+    if x < 0 || y < 0 || x >= platter.width() as i32 || y >= platter.height() as i32 {
         return 0.0;
     }
     platter.get_magnetism(x as usize, y as usize) as f32

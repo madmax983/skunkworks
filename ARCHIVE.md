@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chaos-strings**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Grace period: 24h.
+- **seismic-lure**: Specimen condemned. Diagnosis: Terminal Redundancy / Skeletal Rot / Deceptive Hybridization. Grace period: 24h.
 
 ## Pardoned
+- **chaos-strings**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved compilation privacy errors and updated audio dependencies. The chaos rings true again.
 - **rigid-origami**: Specimen pardoned. Diagnosis: Compilation Failure / API Obsolescence / Redundancy. Resolved compilation and API issues. Generating valid spatial deployable payloads.
 
 ## Abandoned Work
