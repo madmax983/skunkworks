@@ -1,0 +1,13 @@
+[package]
+name = "gray-chaos"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+gray-scott = { path = "../../crates/gray-scott" }
+locus = { workspace = true }
+tui-shared = { workspace = true }
+glam = "0.27"

@@ -97,6 +97,12 @@
 - **Status:** Fresh hybrid. The visual form of the swarm is represented by its resonant frequencies. Treating boid clustering as an optical interference pattern. Fascinating. Predicting an emergent "Spectral Swarming" phenotype.
 - **Phenotype:** Boids flock in a 2D space while their collective positions act as a density field, transformed via FFT into a holographic projection of the swarm's resonant frequencies.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/gray-chaos
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** crates/gray-scott × experiments/chaos-hologram
+- **Status:** Fresh hybrid. A chaotic double pendulum acting as a catalyst for a reaction-diffusion grid. Predicting an emergent "Chaotic Morphogenesis" phenotype.
+- **Phenotype:** Bidirectional feedback loop where macroscopic chaos shapes microscopic Turing patterns, while the reaction gradients alter the chaotic orbit.
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/clockwork-cipher (Executed)
