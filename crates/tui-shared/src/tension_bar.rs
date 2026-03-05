@@ -37,6 +37,7 @@ use ratatui::{
 pub struct TensionBar<'a> {
     tension: f64,
     block: Option<Block<'a>>,
+    with_bobber: bool,
 }
 
 impl<'a> TensionBar<'a> {
@@ -50,6 +51,7 @@ impl<'a> TensionBar<'a> {
         Self {
             tension,
             block: None,
+            with_bobber: false,
         }
     }
 
@@ -58,6 +60,14 @@ impl<'a> TensionBar<'a> {
     /// Defaults to a bordered block with title "TENSION".
     pub fn block(mut self, block: Block<'a>) -> Self {
         self.block = Some(block);
+        self
+    }
+
+    /// Toggles the rendering of the bobber icon.
+    ///
+    /// When true, a "▼" bobber icon will be rendered at the current tension height.
+    pub fn with_bobber(mut self, enabled: bool) -> Self {
+        self.with_bobber = enabled;
         self
     }
 }
@@ -137,6 +147,24 @@ impl<'a> Widget for TensionBar<'a> {
                 cell.set_fg(color);
             }
         }
+
+        // Draw bobber
+        if self.with_bobber && inner_area.height > 0 {
+            // Find the Y position of the bobber
+            let bobber_y = if precise_height == 0.0 {
+                inner_area.y + inner_area.height - 1
+            } else if full_blocks >= inner_area.height {
+                inner_area.y
+            } else {
+                inner_area.y + inner_area.height - 1 - full_blocks
+            };
+
+            // Draw the bobber in the middle of the width
+            let middle_x = inner_area.x + (inner_area.width / 2);
+            let cell = &mut buf[(middle_x, bobber_y)];
+            cell.set_symbol("▼");
+            cell.set_fg(Color::White); // Ensure the bobber stands out
+        }
     }
 }
 
@@ -195,6 +223,42 @@ mod tests {
             cell.symbol(),
             block::HALF,
             "Expected HALF block for 0.5 remainder"
+        );
+    }
+
+    #[test]
+    fn test_render_with_bobber() {
+        let backend = TestBackend::new(10, 10);
+        let mut terminal = Terminal::new(backend).unwrap();
+
+        terminal
+            .draw(|f| {
+                let area = Rect::new(0, 0, 10, 10);
+                let widget = TensionBar::new(0.5).with_bobber(true);
+                f.render_widget(widget, area);
+            })
+            .unwrap();
+
+        let buffer = terminal.backend().buffer().clone();
+
+        // Find if the bobber exists anywhere in the buffer
+        let mut found_bobber = false;
+        for y in 1..9 {
+            // Inside the border
+            for x in 1..9 {
+                // Inside the border
+                let cell = &buffer[(x, y)];
+                if cell.symbol() == "▼" {
+                    found_bobber = true;
+                    // It should be exactly at the halfway mark since tension is 0.5
+                    assert_eq!(y, 4, "Bobber should be at the halfway height");
+                    break;
+                }
+            }
+        }
+        assert!(
+            found_bobber,
+            "Bobber symbol '▼' was not found in the rendered buffer"
         );
     }
 }

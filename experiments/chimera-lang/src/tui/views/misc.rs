@@ -172,7 +172,10 @@ pub(crate) fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
         });
 
     f.render_widget(canvas, scene_chunks[0]);
-    f.render_widget(TensionBar::new(app_state.fishing_tension), scene_chunks[1]);
+    f.render_widget(
+        TensionBar::new(app_state.fishing_tension).with_bobber(true),
+        scene_chunks[1],
+    );
 
     // Success Check: Overlay "FISH ON!" if hooked
     if app_state.fishing_hooked {
