@@ -87,6 +87,12 @@
 - **Status:** Fresh hybrid. The biological pheromones are acting as spectral diffusers. Treating slime mold pathways as optical interference patterns in the frequency domain. Fascinating. Predicting an emergent "Spectral Foraging Field" phenotype.
 - **Phenotype:** Slime mold agents forage for food in a 2D space while their collective trails are transformed via FFT to generate a holographic projection of their network's resonant frequencies.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/luminous-hologram
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** crates/locus × experiments/hologram-text
+- **Status:** Fresh hybrid. The visual form of the swarm is represented by its resonant frequencies. Treating boid clustering as an optical interference pattern. Fascinating. Predicting an emergent "Spectral Swarming" phenotype.
+- **Phenotype:** Boids flock in a 2D space while their collective positions act as a density field, transformed via FFT into a holographic projection of the swarm's resonant frequencies.
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/hanging-gardens (Executed)

@@ -171,4 +171,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Holographic Reaction-Diffusion. The V chemical concentration grid is treated as an optical interference pattern and transformed via FFT into a holographic projection.
 - **Novel trait**: Spectral Morphogenesis. The Turing patterns of reaction-diffusion are mapped into the frequency domain, revealing the underlying symmetries and resonant modes of chemical growth.
 - **Status**: experiments/gray-hologram
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (Turing patterns acting as optical interference). Success.
+
+### luminous-hologram
+- **Parents**: crates/locus + experiments/hologram-text
+- **Concept**: Holographic Swarming. Boids flock in a 2D space. Their positions are treated as a density field, representing an optical interference pattern. This field is transformed via FFT into the frequency domain to create a holographic projection.
+- **Novel trait**: Spectral Swarming. The visual form of the swarm is represented by its resonant frequencies. As the boids cluster and align, their spatial frequencies become more structured, creating dynamic, shifting spectral patterns.
+- **Status**: experiments/luminous-hologram
 - **Evaluation**: Implemented by The Splice Surgeon 🧬. Awaiting observation.
