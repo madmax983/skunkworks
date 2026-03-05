@@ -110,29 +110,26 @@ fn ui(f: &mut Frame, world: &World, cursor_x: f64, cursor_y: f64) {
         .paint(|ctx: &mut Context| {
             // Draw Nests
             ctx.draw(&Points {
-                coords: &world
+                coords: world
                     .nests
                     .iter()
-                    .map(|n| (n.pos.x, HEIGHT as f64 - n.pos.y))
-                    .collect::<Vec<_>>(),
+                    .map(|n| (n.pos.x, HEIGHT as f64 - n.pos.y)),
                 color: Color::Magenta,
             });
             // Draw Towers
             ctx.draw(&Points {
-                coords: &world
+                coords: world
                     .towers
                     .iter()
-                    .map(|t| (t.pos.x, HEIGHT as f64 - t.pos.y))
-                    .collect::<Vec<_>>(),
+                    .map(|t| (t.pos.x, HEIGHT as f64 - t.pos.y)),
                 color: Color::Cyan,
             });
             // Draw Enemies
             ctx.draw(&Points {
-                coords: &world
+                coords: world
                     .enemies
                     .iter()
-                    .map(|e| (e.pos.x, HEIGHT as f64 - e.pos.y))
-                    .collect::<Vec<_>>(),
+                    .map(|e| (e.pos.x, HEIGHT as f64 - e.pos.y)),
                 color: Color::Red,
             });
             // Draw Cursor
@@ -183,15 +180,18 @@ fn ui(f: &mut Frame, world: &World, cursor_x: f64, cursor_y: f64) {
     f.render_widget(status_p, chunks[2]);
 }
 
-struct Points<'a> {
-    coords: &'a [(f64, f64)],
+struct Points<I> {
+    coords: I,
     color: Color,
 }
 
-impl<'a> Shape for Points<'a> {
+impl<I> Shape for Points<I>
+where
+    I: Iterator<Item = (f64, f64)> + Clone,
+{
     fn draw(&self, painter: &mut Painter) {
-        for (x, y) in self.coords {
-            if let Some((x, y)) = painter.get_point(*x, *y) {
+        for (x, y) in self.coords.clone() {
+            if let Some((x, y)) = painter.get_point(x, y) {
                 painter.paint(x, y, self.color);
             }
         }

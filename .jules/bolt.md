@@ -8,3 +8,7 @@
 **[Removing intermediate Vec allocations on loops]
 **Learning:** Iterating directly over `processes.into_iter().take(20)` rather than calling `.collect::<Vec<_>>()` beforehand removes unnecessary heap allocations, resulting in zero-cost abstraction for taking sub-sections of collections in loops.
 **Action:** Use `.len().min(n)` to pre-calculate spacing when `.len()` of the collection isn't available from `into_iter().take(n)`, preventing the need to intermediate allocations just to compute lengths.
+
+## Iterators over Vectors for canvas Shapes
+**Learning:** `tui` canvas widgets using `Shape` (like `Points`) can accept generic iterators rather than `&[(f64, f64)]`. This avoids creating unnecessary intermediate heap allocations (`.collect::<Vec<_>>()`) every render tick when mapping coordinates (like `y` to `HEIGHT - y`).
+**Action:** Use `struct Points<I> { coords: I, color: Color }` where `I: Iterator<Item = (f64, f64)> + Clone` instead of requiring a slice, and use `.coords.clone()` inside `draw` implementation.
