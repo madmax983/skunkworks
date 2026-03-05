@@ -99,3 +99,127 @@ impl Bobber {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use ratatui::buffer::Buffer;
+    use ratatui::layout::Rect;
+    use ratatui::widgets::canvas::Canvas;
+    use ratatui::widgets::Widget;
+
+    #[test]
+    fn test_bobber_idle_rendering() {
+        let bobber = Bobber::new(5.0, 5.0, false);
+        let tick = 0;
+        let mut buffer = Buffer::empty(Rect::new(0, 0, 20, 20));
+
+        let canvas = Canvas::default()
+            .x_bounds([0.0, 10.0])
+            .y_bounds([0.0, 10.0])
+            .paint(|ctx| {
+                bobber.draw(ctx, tick);
+            });
+
+        canvas.render(Rect::new(0, 0, 20, 20), &mut buffer);
+
+        // Verify the bobber was drawn by checking for non-empty cells
+        let mut found_bobber = false;
+        let mut found_ripple = false;
+        for y in 0..20 {
+            for x in 0..20 {
+                let cell = &buffer[(x, y)];
+                if cell.symbol() == "⚪" {
+                    found_bobber = true;
+                } else if cell.symbol() == "≈" {
+                    found_ripple = true;
+                }
+            }
+        }
+
+        assert!(found_bobber, "Should render idle bobber icon");
+        assert!(found_ripple, "Should render ripples in idle state");
+    }
+
+    #[test]
+    fn test_bobber_hooked_rendering() {
+        let bobber = Bobber::new(5.0, 5.0, true);
+        let tick = 0;
+        let mut buffer = Buffer::empty(Rect::new(0, 0, 20, 20));
+
+        let canvas = Canvas::default()
+            .x_bounds([0.0, 10.0])
+            .y_bounds([0.0, 10.0])
+            .paint(|ctx| {
+                bobber.draw(ctx, tick);
+            });
+
+        canvas.render(Rect::new(0, 0, 20, 20), &mut buffer);
+
+        let mut found_bobber = false;
+        let mut found_splash = false;
+        for y in 0..20 {
+            for x in 0..20 {
+                let cell = &buffer[(x, y)];
+                if cell.symbol() == "🔴" {
+                    found_bobber = true;
+                } else if cell.symbol() == "💦" {
+                    found_splash = true;
+                }
+            }
+        }
+
+        assert!(found_bobber, "Should render hooked bobber icon");
+        assert!(found_splash, "Should render splash effect in hooked state");
+    }
+
+    #[test]
+    fn test_bobber_animation_phases() {
+        // Test with y < 50.0 to trigger animation logic
+        let mut buffer = Buffer::empty(Rect::new(0, 0, 20, 20));
+
+        for tick in 0..6 {
+            let bobber = Bobber::new(5.0, 4.0, false);
+            let canvas = Canvas::default()
+                .x_bounds([0.0, 10.0])
+                .y_bounds([0.0, 10.0])
+                .paint(|ctx| {
+                    bobber.draw(ctx, tick);
+                });
+
+            canvas.render(Rect::new(0, 0, 20, 20), &mut buffer);
+
+            // Just verify we can draw it without panicking and it hits the branches
+            let phase = (tick % 6) / 2;
+            let mut found_left = false;
+            let mut found_right = false;
+
+            let expected_left = match phase {
+                0 => "(",
+                1 => "<",
+                _ => "{",
+            };
+
+            let expected_right = match phase {
+                0 => ")",
+                1 => ">",
+                _ => "}",
+            };
+
+            for y in 0..20 {
+                for x in 0..20 {
+                    let cell = &buffer[(x, y)];
+                    if cell.symbol() == expected_left {
+                        found_left = true;
+                    }
+                    if cell.symbol() == expected_right {
+                        found_right = true;
+                    }
+                }
+            }
+
+            assert!(found_left, "Phase {} should have left animation", phase);
+            assert!(found_right, "Phase {} should have right animation", phase);
+        }
+    }
+}

@@ -2,19 +2,19 @@ use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
-    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
+    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use gray_scott::GrayScott;
 use locus::Vec2;
 use ratatui::{
-    Terminal,
     backend::{Backend, CrosstermBackend},
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     widgets::{
-        Block, Borders, Paragraph,
         canvas::{Canvas, Points},
+        Block, Borders, Paragraph,
     },
+    Terminal,
 };
 use std::{io, time::Duration};
 

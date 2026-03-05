@@ -187,3 +187,19 @@ impl Drop for Tui {
         let _ = self.exit();
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_tui_drop_calls_exit() {
+        // We cannot reliably test actual terminal setup/teardown in standard unit tests
+        // since they run concurrently and would mangle the terminal state for cargo test.
+        // However, we can assert that the Tui struct definition and Drop logic compiles
+        // and provides the expected API.
+
+        // This is a minimal compile-time assertion that Tui implements Drop.
+        assert!(std::mem::needs_drop::<Tui>());
+    }
+}

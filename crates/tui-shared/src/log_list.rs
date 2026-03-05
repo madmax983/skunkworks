@@ -139,4 +139,28 @@ mod tests {
         assert_ne!(cell.symbol(), "✅");
         assert_eq!(cell.fg, Color::Reset);
     }
+
+    #[test]
+    fn test_log_list_info_note_rendering() {
+        let items = vec![
+            "Info: Something happened".to_string(),
+            "Note: Pay attention".to_string(),
+        ];
+        let log_list = LogList::new(items).with_title("Logs");
+        let area = Rect::new(0, 0, 40, 5);
+        let mut buffer = Buffer::empty(area);
+
+        log_list.render(area, &mut buffer);
+
+        // Render with title means logs start at y=1, and x=1
+        // Check Info line
+        let cell = &buffer[(1, 1)];
+        assert_eq!(cell.symbol(), "ℹ\u{fe0f}");
+        assert_eq!(cell.fg, Color::Blue);
+
+        // Check Note line
+        let cell = &buffer[(1, 2)];
+        assert_eq!(cell.symbol(), "ℹ\u{fe0f}");
+        assert_eq!(cell.fg, Color::Blue);
+    }
 }

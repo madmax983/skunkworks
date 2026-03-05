@@ -526,4 +526,60 @@ mod tests {
         assert_eq!(entity.velocity.unwrap().y, 2.0);
         assert_eq!(entity.display.as_deref(), Some("@"));
     }
+
+    #[test]
+    fn test_from_traits_for_prop_value() {
+        let p_i32: PropValue = 42i32.into();
+        assert!(matches!(p_i32, PropValue::Int(42)));
+
+        let p_i64: PropValue = 42i64.into();
+        assert!(matches!(p_i64, PropValue::Int(42)));
+
+        let p_usize: PropValue = 42usize.into();
+        assert!(matches!(p_usize, PropValue::Int(42)));
+
+        let p_f32: PropValue = 42.42f32.into();
+        if let PropValue::Float(f) = p_f32 {
+            assert!((f - 42.42).abs() < 0.0001);
+        } else {
+            panic!("Expected float");
+        }
+
+        let p_f64: PropValue = 42.42f64.into();
+        if let PropValue::Float(f) = p_f64 {
+            assert!((f - 42.42).abs() < 0.0001);
+        } else {
+            panic!("Expected float");
+        }
+
+        let p_bool: PropValue = true.into();
+        assert!(matches!(p_bool, PropValue::Bool(true)));
+
+        let p_str: PropValue = "test".into();
+        if let PropValue::Text(s) = p_str {
+            assert_eq!(s, "test");
+        } else {
+            panic!("Expected Text");
+        }
+
+        let p_string: PropValue = String::from("test").into();
+        if let PropValue::Text(s) = p_string {
+            assert_eq!(s, "test");
+        } else {
+            panic!("Expected Text");
+        }
+    }
+
+    #[test]
+    fn test_snapshot_with_entities_and_pretty() {
+        let entity1 = Entity::new("e1");
+        let entity2 = Entity::new("e2");
+        let snap = Snapshot::new("test").with_entities(vec![entity1, entity2]);
+        assert_eq!(snap.entities.len(), 2);
+
+        let pretty = snap.to_json_pretty();
+        assert!(pretty.contains("test"));
+        assert!(pretty.contains("e1"));
+        assert!(pretty.contains("e2"));
+    }
 }
