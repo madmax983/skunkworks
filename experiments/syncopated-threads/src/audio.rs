@@ -12,10 +12,6 @@ pub enum AudioCommand {
     Stop,
 }
 
-trait AudioSource: Send {
-    fn next_sample(&mut self) -> Option<f32>;
-}
-
 struct KickDrum {
     phase: f32,
     frequency: f32,
@@ -30,9 +26,7 @@ impl KickDrum {
             envelope: 1.0,
         }
     }
-}
 
-impl AudioSource for KickDrum {
     fn next_sample(&mut self) -> Option<f32> {
         if self.envelope < 0.001 {
             return None;
@@ -53,9 +47,7 @@ impl SnareDrum {
     fn new() -> Self {
         Self { envelope: 1.0 }
     }
-}
 
-impl AudioSource for SnareDrum {
     fn next_sample(&mut self) -> Option<f32> {
         if self.envelope < 0.001 {
             return None;
@@ -74,9 +66,7 @@ impl Hat {
     fn new() -> Self {
         Self { envelope: 0.5 }
     }
-}
 
-impl AudioSource for Hat {
     fn next_sample(&mut self) -> Option<f32> {
         if self.envelope < 0.001 {
             return None;
@@ -84,6 +74,22 @@ impl AudioSource for Hat {
         let noise = (rand::random::<f32>() * 2.0 - 1.0) * self.envelope; // High pass filter would be better but simple noise is ok
         self.envelope *= 0.9; // Fast decay
         Some(noise)
+    }
+}
+
+enum Drum {
+    Kick(KickDrum),
+    Snare(SnareDrum),
+    Hat(Hat),
+}
+
+impl Drum {
+    fn next_sample(&mut self) -> Option<f32> {
+        match self {
+            Drum::Kick(d) => d.next_sample(),
+            Drum::Snare(d) => d.next_sample(),
+            Drum::Hat(d) => d.next_sample(),
+        }
     }
 }
 
@@ -98,7 +104,7 @@ pub fn start_audio_thread(receiver: Receiver<AudioCommand>) -> thread::JoinHandl
         let mut writer =
             WavWriter::create("syncopated_rhythm.wav", spec).expect("Failed to create WAV file");
 
-        let mut active_sounds: Vec<Box<dyn AudioSource>> = Vec::new();
+        let mut active_sounds: Vec<Drum> = Vec::new();
         let start_time = Instant::now();
         let mut samples_written = 0;
         let sample_rate = 44100;
@@ -108,9 +114,9 @@ pub fn start_audio_thread(receiver: Receiver<AudioCommand>) -> thread::JoinHandl
             loop {
                 match receiver.try_recv() {
                     Ok(cmd) => match cmd {
-                        AudioCommand::Kick => active_sounds.push(Box::new(KickDrum::new())),
-                        AudioCommand::Snare => active_sounds.push(Box::new(SnareDrum::new())),
-                        AudioCommand::Hat => active_sounds.push(Box::new(Hat::new())),
+                        AudioCommand::Kick => active_sounds.push(Drum::Kick(KickDrum::new())),
+                        AudioCommand::Snare => active_sounds.push(Drum::Snare(SnareDrum::new())),
+                        AudioCommand::Hat => active_sounds.push(Drum::Hat(Hat::new())),
                         AudioCommand::Stop => return,
                     },
                     Err(TryRecvError::Empty) => break,

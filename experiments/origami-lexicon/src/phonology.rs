@@ -177,78 +177,78 @@ impl Word {
         let phonemes = s.chars().filter_map(Phoneme::from_char).collect();
         Self { phonemes }
     }
+}
 
-    pub fn to_string_word(&self) -> String {
-        self.phonemes.iter().map(|p| p.symbol).collect()
+impl fmt::Display for Word {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let s: String = self.phonemes.iter().map(|p| p.symbol).collect();
+        write!(f, "{}", s)
     }
 }
 
-pub trait Rule {
-    fn apply(&self, word: &mut Word, rng: &mut dyn RngCore) -> bool;
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum Rule {
+    GrimmsLaw,
+    VowelShift,
 }
 
-// Implement some concrete rules
+impl Rule {
+    pub fn apply(&self, word: &mut Word, rng: &mut dyn RngCore) -> bool {
+        match self {
+            Rule::GrimmsLaw => {
+                let mut changed = false;
+                for i in 0..word.phonemes.len() {
+                    let p = &mut word.phonemes[i];
 
-pub struct GrimmsLaw;
-
-impl Rule for GrimmsLaw {
-    fn apply(&self, word: &mut Word, rng: &mut dyn RngCore) -> bool {
-        let mut changed = false;
-        for i in 0..word.phonemes.len() {
-            let p = &mut word.phonemes[i];
-
-            // Voiceless Stop -> Voiceless Fricative (p->f, t->θ(th), k->h/x)
-            if p.voice == Voice::Voiceless && p.manner == Manner::Stop {
-                if rng.gen_bool(0.3) {
-                    match p.place {
-                        Place::Labial => *p = Phoneme::from_char('f').unwrap(),
-                        Place::Alveolar => {
-                            *p = Phoneme::from_char('s').unwrap();
+                    // Voiceless Stop -> Voiceless Fricative (p->f, t->θ(th), k->h/x)
+                    if p.voice == Voice::Voiceless && p.manner == Manner::Stop {
+                        if rng.gen_bool(0.3) {
+                            match p.place {
+                                Place::Labial => *p = Phoneme::from_char('f').unwrap(),
+                                Place::Alveolar => {
+                                    *p = Phoneme::from_char('s').unwrap();
+                                }
+                                Place::Velar => *p = Phoneme::from_char('h').unwrap(),
+                                _ => {}
+                            }
+                            changed = true;
                         }
-                        Place::Velar => *p = Phoneme::from_char('h').unwrap(),
-                        _ => {}
                     }
-                    changed = true;
+                    // Voiced Stop -> Voiceless Stop (b->p, d->t, g->k)
+                    else if p.voice == Voice::Voiced && p.manner == Manner::Stop {
+                        if rng.gen_bool(0.3) {
+                            match p.place {
+                                Place::Labial => *p = Phoneme::from_char('p').unwrap(),
+                                Place::Alveolar => *p = Phoneme::from_char('t').unwrap(),
+                                Place::Velar => *p = Phoneme::from_char('k').unwrap(),
+                                _ => {}
+                            }
+                            changed = true;
+                        }
+                    }
                 }
+                changed
             }
-            // Voiced Stop -> Voiceless Stop (b->p, d->t, g->k)
-            else if p.voice == Voice::Voiced && p.manner == Manner::Stop {
-                if rng.gen_bool(0.3) {
-                    match p.place {
-                        Place::Labial => *p = Phoneme::from_char('p').unwrap(),
-                        Place::Alveolar => *p = Phoneme::from_char('t').unwrap(),
-                        Place::Velar => *p = Phoneme::from_char('k').unwrap(),
-                        _ => {}
+            Rule::VowelShift => {
+                let mut changed = false;
+                for p in &mut word.phonemes {
+                    if p.manner == Manner::Vowel {
+                        if rng.gen_bool(0.2) {
+                            match p.symbol {
+                                'a' => *p = Phoneme::from_char('e').unwrap(),
+                                'e' => *p = Phoneme::from_char('i').unwrap(),
+                                'i' => *p = Phoneme::from_char('o').unwrap(), // stylized shift
+                                'o' => *p = Phoneme::from_char('u').unwrap(),
+                                'u' => *p = Phoneme::from_char('a').unwrap(),
+                                _ => {}
+                            }
+                            changed = true;
+                        }
                     }
-                    changed = true;
                 }
-            }
-        }
-        changed
-    }
-}
-
-pub struct VowelShift;
-
-impl Rule for VowelShift {
-    fn apply(&self, word: &mut Word, rng: &mut dyn RngCore) -> bool {
-        let mut changed = false;
-        for p in &mut word.phonemes {
-            if p.manner == Manner::Vowel {
-                if rng.gen_bool(0.2) {
-                    match p.symbol {
-                        'a' => *p = Phoneme::from_char('e').unwrap(),
-                        'e' => *p = Phoneme::from_char('i').unwrap(),
-                        'i' => *p = Phoneme::from_char('o').unwrap(), // stylized shift
-                        'o' => *p = Phoneme::from_char('u').unwrap(),
-                        'u' => *p = Phoneme::from_char('a').unwrap(),
-                        _ => {}
-                    }
-                    changed = true;
-                }
+                changed
             }
         }
-        changed
     }
 }
 
@@ -261,7 +261,7 @@ mod tests {
         let w = Word::new("Hello");
         // h, e, l, l, o
         assert_eq!(w.phonemes.len(), 5);
-        assert_eq!(w.to_string_word(), "hello");
+        assert_eq!(w.to_string(), "hello");
     }
 
     #[test]
@@ -278,7 +278,7 @@ mod tests {
     fn test_grimms_law_change() {
         // Force random seed or just loop until change for probabilistic test
         let mut rng = rand::thread_rng();
-        let rule = GrimmsLaw;
+        let rule = Rule::GrimmsLaw;
 
         // Pater -> Father (p->f, t->s)
         // Try many times until it changes

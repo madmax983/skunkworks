@@ -1,7 +1,7 @@
 use ::rand::rngs::StdRng;
 use ::rand::SeedableRng;
 use glossolalia::lexicon::{Lexicon, TokenType};
-use glossolalia::phonology::{GrimmsLaw, Rule, VowelShift};
+use glossolalia::phonology::Rule;
 use macroquad::prelude::*;
 
 const SAMPLE_CODE: &str = r#"
@@ -45,7 +45,7 @@ async fn main() {
     let mut lexicon = Lexicon::new(SAMPLE_CODE);
     let mut rng = StdRng::seed_from_u64(42);
 
-    let rules: Vec<Box<dyn Rule>> = vec![Box::new(GrimmsLaw), Box::new(VowelShift)];
+    let rules: Vec<Rule> = vec![Rule::GrimmsLaw, Rule::VowelShift];
 
     let mut century = 0;
     let mut last_evolution = get_time();
@@ -99,7 +99,7 @@ async fn main() {
             let text = match token.token_type {
                 TokenType::Identifier => {
                     if let Some(word) = lexicon.evolved_identifiers.get(&token.content) {
-                        word.to_string_word()
+                        word.to_string()
                     } else {
                         token.content.clone()
                     }

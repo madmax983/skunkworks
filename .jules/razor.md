@@ -17,3 +17,8 @@
 **Bloat:** Single-implementation traits (`AudioSource` in `syncopated-threads` and `chimera-syncopation`, `Vec4Ext` in `hyper-enigma`, `Rule` in `origami-lexicon` and `glossolalia`).
 **Cut:** Replaced single-implementation traits with simple enums or standalone functions. Replaced dynamic dispatch `Box<dyn Trait>` with concrete enum types, de-abstracting the interface and moving implementations closer to where they are used.
 **Saved:** Multiple trait definitions, unnecessary dynamic dispatch boilerplate, cognitive load of abstract indirection.
+
+## [Reduction]
+**Bloat:** Unnecessary indirection through traits with limited, fixed implementers (`AudioSource` in `syncopated-threads`, `Rule` in `origami-lexicon` and `glossolalia`).
+**Cut:** Replaced these traits entirely with simple concrete `enum`s (`Drum` and `Rule`), implementing the required methods directly on the enums using pattern matching. Replaced dynamic dispatch (`Vec<Box<dyn Trait>>`) with direct value storage (`Vec<Enum>`). Replaced inherent `to_string_word` with idiomatic `std::fmt::Display` implementation.
+**Saved:** 3 traits, multiple lines of boilerplate (dynamic allocations), cognitive load of abstract indirection and non-standard method names.
