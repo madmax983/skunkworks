@@ -335,4 +335,115 @@ mod tests {
         assert_eq!(cell.fg, Color::Black);
         assert_eq!(cell.bg, Color::Green);
     }
+
+    #[test]
+    fn test_button_all_states_and_styles() {
+        let styles = vec![
+            ButtonStyle::Primary,
+            ButtonStyle::Secondary,
+            ButtonStyle::Outline,
+            ButtonStyle::Danger,
+            ButtonStyle::Warning,
+            ButtonStyle::Success,
+        ];
+
+        let states = [
+            ButtonState::Normal,
+            ButtonState::Hovered,
+            ButtonState::Clicked,
+            ButtonState::Disabled,
+        ];
+
+        let area = Rect::new(0, 0, 10, 3);
+
+        for style in styles {
+            for state in states.iter().copied() {
+                let button = Button::new("Test").style_variant(style).state(state);
+
+                let mut buffer = Buffer::empty(area);
+                button.render(area, &mut buffer);
+
+                let cell = &buffer[(0, 0)];
+
+                match (style, state) {
+                    (_, ButtonState::Disabled) => {
+                        assert_eq!(cell.fg, Color::DarkGray);
+                        assert_eq!(cell.bg, Color::Black);
+                    }
+                    (ButtonStyle::Primary, ButtonState::Normal) => {
+                        assert_eq!(cell.fg, Color::Black);
+                        assert_eq!(cell.bg, Color::Blue);
+                    }
+                    (ButtonStyle::Primary, ButtonState::Hovered) => {
+                        assert_eq!(cell.fg, Color::Black);
+                        assert_eq!(cell.bg, Color::Cyan);
+                    }
+                    (ButtonStyle::Primary, ButtonState::Clicked) => {
+                        assert_eq!(cell.fg, Color::Blue);
+                        assert_eq!(cell.bg, Color::White);
+                    }
+                    (ButtonStyle::Secondary, ButtonState::Normal) => {
+                        assert_eq!(cell.fg, Color::White);
+                        assert_eq!(cell.bg, Color::DarkGray);
+                    }
+                    (ButtonStyle::Secondary, ButtonState::Hovered) => {
+                        assert_eq!(cell.fg, Color::Black);
+                        assert_eq!(cell.bg, Color::Gray);
+                    }
+                    (ButtonStyle::Secondary, ButtonState::Clicked) => {
+                        assert_eq!(cell.fg, Color::Black);
+                        assert_eq!(cell.bg, Color::White);
+                    }
+                    (ButtonStyle::Outline, ButtonState::Normal) => {
+                        assert_eq!(cell.fg, Color::Gray);
+                        assert_eq!(cell.bg, Color::Reset);
+                    }
+                    (ButtonStyle::Outline, ButtonState::Hovered) => {
+                        assert_eq!(cell.fg, Color::White);
+                        assert_eq!(cell.bg, Color::Reset);
+                    }
+                    (ButtonStyle::Outline, ButtonState::Clicked) => {
+                        assert_eq!(cell.fg, Color::Black);
+                        assert_eq!(cell.bg, Color::White);
+                    }
+                    (ButtonStyle::Danger, ButtonState::Normal) => {
+                        assert_eq!(cell.fg, Color::White);
+                        assert_eq!(cell.bg, Color::Red);
+                    }
+                    (ButtonStyle::Danger, ButtonState::Hovered) => {
+                        assert_eq!(cell.fg, Color::White);
+                        assert_eq!(cell.bg, Color::LightRed);
+                    }
+                    (ButtonStyle::Danger, ButtonState::Clicked) => {
+                        assert_eq!(cell.fg, Color::Red);
+                        assert_eq!(cell.bg, Color::White);
+                    }
+                    (ButtonStyle::Warning, ButtonState::Normal) => {
+                        assert_eq!(cell.fg, Color::Black);
+                        assert_eq!(cell.bg, Color::Yellow);
+                    }
+                    (ButtonStyle::Warning, ButtonState::Hovered) => {
+                        assert_eq!(cell.fg, Color::Black);
+                        assert_eq!(cell.bg, Color::LightYellow);
+                    }
+                    (ButtonStyle::Warning, ButtonState::Clicked) => {
+                        assert_eq!(cell.fg, Color::Yellow);
+                        assert_eq!(cell.bg, Color::Black);
+                    }
+                    (ButtonStyle::Success, ButtonState::Normal) => {
+                        assert_eq!(cell.fg, Color::Black);
+                        assert_eq!(cell.bg, Color::Green);
+                    }
+                    (ButtonStyle::Success, ButtonState::Hovered) => {
+                        assert_eq!(cell.fg, Color::Black);
+                        assert_eq!(cell.bg, Color::LightGreen);
+                    }
+                    (ButtonStyle::Success, ButtonState::Clicked) => {
+                        assert_eq!(cell.fg, Color::Green);
+                        assert_eq!(cell.bg, Color::White);
+                    }
+                }
+            }
+        }
+    }
 }

@@ -47,3 +47,7 @@
 **[Loop Bounds Underflow Panic]**
 **Learning:** Iterating over interior grid elements using `1..w-1` causes an underflow panic when the grid width or height is 0 or 1, since unsigned `usize` subtraction will wrap around to `usize::MAX`.
 **Action:** Always use `.saturating_sub(1)` or an explicit boundary guard (e.g., `if w < 3 || h < 3`) before establishing loop bounds on `usize` variables.
+
+**[TUI Shared Code Coverage Improvement]**
+**Learning:** cargo-llvm-cov reveals significant gaps in testing for seemingly simple modules like enum mapping arrays, UI component animations, and implicit Drop trait implementations. Also, `clippy` catches tricky things like `f32::consts::PI` representations embedded in tests! When mapping arrays like fractions for a progress bar, loop-based tests are more thorough.
+**Action:** Next time, always start with `cargo llvm-cov` to establish a baseline, add tests iteratively to cover all branches, and verify with `clippy --all-targets --all-features` to ensure tests themselves are idiomatically correct before considering the task complete.

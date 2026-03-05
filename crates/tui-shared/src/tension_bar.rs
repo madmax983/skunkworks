@@ -189,12 +189,33 @@ mod tests {
 
     #[test]
     fn test_render_partial_blocks() {
-        let buffer = render_tension(0.0625, 10, 10);
-        let cell = &buffer[(1, 8)]; // Bottom row
-        assert_eq!(
-            cell.symbol(),
-            block::HALF,
-            "Expected HALF block for 0.5 remainder"
-        );
+        // We have height = 8 blocks for inner height.
+        // We test multiple fraction values to trigger each branch.
+        // Note: inner_height = 8.
+        // tension * 8 = precise_height
+        // precise_height = full_blocks + remainder
+
+        let cases = vec![
+            (0.0625, block::HALF),        // precise_height = 0.5 -> full=0, rem=0.5 -> HALF
+            (0.01, block::ONE_EIGHTH),    // 0.08 rem -> ONE_EIGHTH
+            (0.025, block::ONE_QUARTER),  // 0.2 rem -> ONE_QUARTER
+            (0.04, block::THREE_EIGHTHS), // 0.32 rem -> THREE_EIGHTHS
+            (0.075, block::FIVE_EIGHTHS), // 0.6 rem -> FIVE_EIGHTHS
+            (0.09, block::THREE_QUARTERS), // 0.72 rem -> THREE_QUARTERS
+            (0.10, block::SEVEN_EIGHTHS), // 0.8 rem -> SEVEN_EIGHTHS
+            (0.12, block::FULL),          // 0.96 rem -> FULL
+        ];
+
+        for (tension, expected_symbol) in cases {
+            let buffer = render_tension(tension, 10, 10);
+            let cell = &buffer[(1, 8)]; // Bottom row
+            assert_eq!(
+                cell.symbol(),
+                expected_symbol,
+                "Expected {} block for tension {}",
+                expected_symbol,
+                tension
+            );
+        }
     }
 }
