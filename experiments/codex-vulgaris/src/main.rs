@@ -49,7 +49,7 @@ where
     loop {
         terminal
             .draw(|f| ui(f, app))
-            .map_err(|e| io::Error::new(io::ErrorKind::Other, format!("{:?}", e)))?;
+            .map_err(|e| io::Error::other(format!("{:?}", e)))?;
 
         if event::poll(Duration::from_millis(250))? {
             if let Event::Key(key) = event::read()? {
