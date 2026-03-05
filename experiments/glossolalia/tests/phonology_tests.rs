@@ -1,4 +1,4 @@
-use glossolalia::phonology::{GrimmsLaw, Manner, Phoneme, Place, Rule, Voice, VowelShift, Word};
+use glossolalia::phonology::{Manner, Phoneme, Place, Rule, Voice, Word};
 use rand::rngs::StdRng;
 use rand::SeedableRng;
 
@@ -14,20 +14,20 @@ fn test_phoneme_parsing() {
 fn test_grimms_law_p_to_f() {
     let mut word = Word::new("pater");
     let mut rng = StdRng::seed_from_u64(42);
-    let grimms = GrimmsLaw;
+    let grimms = Rule::GrimmsLaw;
 
     for _ in 0..100 {
         grimms.apply(&mut word, &mut rng);
     }
 
-    let s = word.to_string_word();
+    let s = word.to_string();
     assert!(s.contains('f') || s.contains('s') || s.contains('h'));
 }
 
 #[test]
 fn test_vowel_shift() {
     let mut word = Word::new("a");
-    let shift = VowelShift;
+    let shift = Rule::VowelShift;
     let mut rng = StdRng::seed_from_u64(123);
 
     let mut changed = false;
@@ -38,5 +38,5 @@ fn test_vowel_shift() {
     }
 
     assert!(changed);
-    assert_ne!(word.to_string_word(), "a");
+    assert_ne!(word.to_string(), "a");
 }

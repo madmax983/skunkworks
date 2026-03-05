@@ -165,7 +165,7 @@ impl Lexicon {
         tokens
     }
 
-    pub fn evolve(&mut self, rules: &[Box<dyn Rule>], rng: &mut dyn RngCore) {
+    pub fn evolve(&mut self, rules: &[Rule], rng: &mut dyn RngCore) {
         for word in self.evolved_identifiers.values_mut() {
             for rule in rules {
                 rule.apply(word, rng);
@@ -179,7 +179,7 @@ impl Lexicon {
             match token.token_type {
                 TokenType::Identifier => {
                     if let Some(word) = self.evolved_identifiers.get(&token.content) {
-                        s.push_str(&word.to_string_word());
+                        s.push_str(&word.to_string());
                     } else {
                         s.push_str(&token.content);
                     }

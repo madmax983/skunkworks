@@ -7,7 +7,7 @@ mod phonology;
 use ::rand::{thread_rng, Rng};
 use mesh::Mesh as OrigamiMesh;
 use pbd::PbdSystem;
-use phonology::{GrimmsLaw, Rule, VowelShift, Word};
+use phonology::{Rule, Word};
 
 fn conf() -> Conf {
     Conf {
@@ -124,8 +124,7 @@ async fn main() {
                             let mut w = Word::new(&s);
 
                             // Apply rules
-                            let rules: Vec<Box<dyn Rule>> =
-                                vec![Box::new(GrimmsLaw), Box::new(VowelShift)];
+                            let rules: Vec<Rule> = vec![Rule::GrimmsLaw, Rule::VowelShift];
                             let rule_idx = rng.gen_range(0..rules.len());
 
                             if rules[rule_idx].apply(&mut w, &mut rng) {
