@@ -6,3 +6,7 @@
 ## 2024-05-15 - [The Ghost Example]
 **Confusion:** How to correctly instantiate complex internal geometry structures like `Geodesic` or `PhysicsGrid` without an explicit example.
 **Clarification:** Added executable doctests to `Geodesic::new`, `PhysicsGrid::step`, and `AudioModel::process` to clearly demonstrate initialization and usage.
+
+## 2024-10-31 - The Ghost "Fast" Math Methods
+**Confusion:** Users seeing `rotate_xy_fast` vs `rotate_xy` in vector libraries without understanding *why* they exist or how to use them, causing them to redundantly compute sines and cosines inside loops.
+**Clarification:** Added explicit `## Examples` to all `_fast` vector math methods demonstrating how to precompute trig values outside the loop to optimize performance.

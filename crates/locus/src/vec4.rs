@@ -303,6 +303,25 @@ impl Vec4 {
     }
 
     /// Rotates the vector in the XY plane using precomputed sine and cosine values.
+    ///
+    /// This optimization is critical when rendering a large point cloud or grid,
+    /// where computing `sin(theta)` and `cos(theta)` inside a tight loop would severely
+    /// impact performance. Precompute the trig functions once, then pass them in.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::vec4::Vec4;
+    /// use std::f32::consts::PI;
+    ///
+    /// let point = Vec4::new(1.0, 0.0, 0.0, 0.0);
+    /// let theta = PI / 2.0;
+    /// let sin_t = theta.sin();
+    /// let cos_t = theta.cos();
+    ///
+    /// let rotated = point.rotate_xy_fast(sin_t, cos_t);
+    /// assert!((rotated.y - 1.0).abs() < 1e-6);
+    /// ```
     pub fn rotate_xy_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
         Self {
             x: self.x * cos_theta - self.y * sin_theta,
@@ -341,6 +360,21 @@ impl Vec4 {
     /// Rotates the vector in the XW plane using precomputed sine and cosine values.
     ///
     /// Useful for optimizing loops where the rotation angle is constant across many vectors.
+    /// This prevents redundant trigonometry calculations on every iteration.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::vec4::Vec4;
+    /// use std::f32::consts::PI;
+    ///
+    /// let point = Vec4::new(1.0, 0.0, 0.0, 0.0);
+    /// let theta = PI / 2.0;
+    /// let (sin_t, cos_t) = theta.sin_cos();
+    ///
+    /// let rotated = point.rotate_xw_fast(sin_t, cos_t);
+    /// assert!((rotated.w - 1.0).abs() < 1e-6);
+    /// ```
     pub fn rotate_xw_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
         Self {
             x: self.x * cos_theta - self.w * sin_theta,
@@ -379,6 +413,23 @@ impl Vec4 {
     }
 
     /// Rotates the vector in the XZ plane using precomputed sine and cosine values.
+    ///
+    /// Use this variant inside high-performance loops to apply a uniform 3D/4D
+    /// rotation without the overhead of computing `sin` and `cos` for every vector.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::vec4::Vec4;
+    /// use std::f32::consts::PI;
+    ///
+    /// let point = Vec4::new(1.0, 0.0, 0.0, 0.0);
+    /// let theta = PI / 2.0;
+    /// let (sin_t, cos_t) = theta.sin_cos();
+    ///
+    /// let rotated = point.rotate_xz_fast(sin_t, cos_t);
+    /// assert!((rotated.z - 1.0).abs() < 1e-6);
+    /// ```
     pub fn rotate_xz_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
         Self {
             x: self.x * cos_theta - self.z * sin_theta,
@@ -415,6 +466,23 @@ impl Vec4 {
     }
 
     /// Rotates the vector in the YW plane using precomputed sine and cosine values.
+    ///
+    /// Precomputing the sine and cosine saves massive CPU cycles when projecting
+    /// thousands of 4D hyper-structures at once.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::vec4::Vec4;
+    /// use std::f32::consts::PI;
+    ///
+    /// let point = Vec4::new(0.0, 1.0, 0.0, 0.0);
+    /// let theta = PI / 2.0;
+    /// let (sin_t, cos_t) = theta.sin_cos();
+    ///
+    /// let rotated = point.rotate_yw_fast(sin_t, cos_t);
+    /// assert!((rotated.w - 1.0).abs() < 1e-6);
+    /// ```
     pub fn rotate_yw_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
         Self {
             x: self.x,
@@ -452,6 +520,23 @@ impl Vec4 {
     }
 
     /// Rotates the vector in the YZ plane using precomputed sine and cosine values.
+    ///
+    /// Bypassing the trigonometric calculation allows the compiler to auto-vectorize
+    /// continuous memory layouts of `Vec4` instances much more efficiently.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::vec4::Vec4;
+    /// use std::f32::consts::PI;
+    ///
+    /// let point = Vec4::new(0.0, 1.0, 0.0, 0.0);
+    /// let theta = PI / 2.0;
+    /// let (sin_t, cos_t) = theta.sin_cos();
+    ///
+    /// let rotated = point.rotate_yz_fast(sin_t, cos_t);
+    /// assert!((rotated.z - 1.0).abs() < 1e-6);
+    /// ```
     pub fn rotate_yz_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
         Self {
             x: self.x,
@@ -488,6 +573,23 @@ impl Vec4 {
     }
 
     /// Rotates the vector in the ZW plane using precomputed sine and cosine values.
+    ///
+    /// This fast-path rotation is essential for maintaining frame rates when rendering
+    /// dense 4D topologies in software.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::vec4::Vec4;
+    /// use std::f32::consts::PI;
+    ///
+    /// let point = Vec4::new(0.0, 0.0, 1.0, 0.0);
+    /// let theta = PI / 2.0;
+    /// let (sin_t, cos_t) = theta.sin_cos();
+    ///
+    /// let rotated = point.rotate_zw_fast(sin_t, cos_t);
+    /// assert!((rotated.w - 1.0).abs() < 1e-6);
+    /// ```
     pub fn rotate_zw_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
         Self {
             x: self.x,
