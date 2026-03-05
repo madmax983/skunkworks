@@ -4,3 +4,7 @@
 ## 2026-03-04 - Removed intermediate .collect() allocation
 **Learning:** Iterating directly over an `into_iter` can avoid intermediate `Vec` allocations (e.g. `collect::<Vec<_>>()`) and unnecessary cloning when elements are needed by value.
 **Action:** Use `.len()` on the original collection to calculate expected bounds, then consume the iterator directly without allocating an intermediate `Vec`.
+
+**[Removing intermediate Vec allocations on loops]
+**Learning:** Iterating directly over `processes.into_iter().take(20)` rather than calling `.collect::<Vec<_>>()` beforehand removes unnecessary heap allocations, resulting in zero-cost abstraction for taking sub-sections of collections in loops.
+**Action:** Use `.len().min(n)` to pre-calculate spacing when `.len()` of the collection isn't available from `into_iter().take(n)`, preventing the need to intermediate allocations just to compute lengths.
