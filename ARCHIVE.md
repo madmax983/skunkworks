@@ -1,4 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **gray-chaos**: Specimen condemned. Diagnosis: Documentation Void. Grace period: 24h.
 - **voronoi-ants**: Specimen condemned. Diagnosis: Skeletal Implementation / Swarm Neglect / Technical Debt Burden. Grace period: 24h.
 
 ## Pardoned
