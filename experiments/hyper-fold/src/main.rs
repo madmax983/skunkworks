@@ -1,12 +1,11 @@
 use hyper_system::math::Vec4;
+use hyper_system::physics::PbdSystem4D;
 use macroquad::prelude::*;
 use origami::{generate_miura_grid, generate_miura_mesh, MiuraParams, Orientation};
 
 mod dna;
-mod physics;
 
 use dna::ChimeraAgent;
-use physics::PbdSystem4D;
 
 #[macroquad::main("Hyper-Fold")]
 async fn main() {
@@ -29,7 +28,7 @@ async fn main() {
     let indices = mesh_structure.indices;
 
     // 2. Physics Setup
-    let mut system = PbdSystem4D::new((grid_cols, grid_rows));
+    let mut system = PbdSystem4D::new();
 
     // Create particles from 3D positions, set W=0
     // Center the mesh
@@ -117,14 +116,17 @@ async fn main() {
         for agent in &mut agents {
             let polarity = agent.update(&system.particles, (grid_cols, grid_rows));
             // Apply to particle
-            system.particles[agent.index].magnetic_polarity = polarity;
+            system.particles[agent.index].user_data = polarity;
         }
+
+        // Apply magnetic forces
+        apply_magnetic_forces(&mut system, dt);
 
         // Physics Step
         // Rotate 4D space slightly? Or just simulate
         // Let's add a global "System Load" disturbance?
         // For now, just pure physics
-        system.step(dt, 5); // 5 sub-steps
+        system.step(dt, 5, 0.99); // 5 sub-steps
 
         // Rendering
         clear_background(BLACK);
@@ -203,5 +205,49 @@ async fn main() {
         draw_text("Drag to Rotate", 10.0, 70.0, 20.0, LIGHTGRAY);
 
         next_frame().await
+    }
+}
+
+fn apply_magnetic_forces(system: &mut PbdSystem4D, dt: f32) {
+    let n = system.particles.len();
+    let strength = 5.0; // Calibration needed
+    let mut forces = vec![Vec4::zero(); n];
+
+    for i in 0..n {
+        for j in (i + 1)..n {
+            let p_i = &system.particles[i];
+            let p_j = &system.particles[j];
+
+            let diff = p_j.pos - p_i.pos;
+            let dist_sq = diff.length_squared();
+
+            if dist_sq < 0.01 {
+                continue;
+            } // Avoid singularity
+
+            let dist = dist_sq.sqrt();
+            let dir = diff / dist; // Direction from i to j
+
+            let p_i_mag = p_i.user_data;
+            let p_j_mag = p_j.user_data;
+            let alignment = p_i_mag.x * p_j_mag.x
+                + p_i_mag.y * p_j_mag.y
+                + p_i_mag.z * p_j_mag.z
+                + p_i_mag.w * p_j_mag.w;
+
+            let force_mag = strength * alignment / dist_sq;
+            let force = dir.scale(force_mag);
+
+            forces[i] = forces[i] + force;
+            forces[j] = forces[j] - force; // Newton's 3rd law
+        }
+    }
+
+    // Apply forces to velocity
+    for (i, force) in forces.iter().enumerate() {
+        let p = &mut system.particles[i];
+        if p.inv_mass > 0.0 {
+            p.vel = p.vel + force.scale(dt * p.inv_mass);
+        }
     }
 }

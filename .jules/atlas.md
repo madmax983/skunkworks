@@ -131,3 +131,9 @@
 **Blueprint:** Extracted this logic into a new shared crate `crates/miller-lattice`. Implemented `Default` for `Crystal` to satisfy Clippy. Refactored the three experiments to depend on the new crate and removed their local duplicate `lattice.rs` files.
 **Stability:** Enforced a single source of truth for the lattice scanning logic, preventing drift and ensuring consistent types across these experiments.
 **Verification:** Verified with `cargo check` and `cargo test` for all affected crates.
+
+## [Hyper-System 4D Physics Extraction]
+**Tangle:** The Copy-Paste - Both `hyper-fold` and `hyper-tissue` implemented identical `Particle4D`, `Constraint4D`, and `PbdSystem4D` structs. `Particle4D` also mixed domain concerns (e.g. `magnetic_polarity` in `hyper-fold`).
+**Blueprint:** Extracted the 4D physics types to `crates/hyper-system/src/physics.rs`. Abstracted domain-specific particle state into a generic `user_data: Vec4` field so experiments can carry state like magnetism through the physics loop without polluting the shared struct. Moved local physics application logic back to `main.rs`.
+**Stability:** High cohesion for 4D math/physics and reduced duplicate boilerplate.
+**Verification:** Verified with `cargo check` and `cargo test` across `hyper-system`, `hyper-fold`, and `hyper-tissue`. Fixes applied for Clippy `assign_op_pattern`.

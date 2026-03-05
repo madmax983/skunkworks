@@ -1,11 +1,9 @@
-mod physics;
-
 use ::rand::Rng;
 use chimera_lang::prelude::*;
 use hyper_system::math::Vec4;
 use hyper_system::monitor::SystemMonitor;
+use hyper_system::physics::{Constraint4D, PbdSystem4D};
 use macroquad::prelude::*;
-use physics::{Constraint4D, PbdSystem4D};
 
 const GRID_SIZE: usize = 3;
 const SPACING: f32 = 2.0;
@@ -71,7 +69,7 @@ impl Tissue4D {
 
         let add_actuator = |p1_idx: usize, p2_idx: usize, sys: &mut PbdSystem4D| -> usize {
             let c_idx = sys.constraints.len();
-            sys.add_actuator_constraint(p1_idx, p2_idx, SPACING * 0.5, SPACING * 1.5, 0.5);
+            sys.add_actuator_constraint(p1_idx, p2_idx, SPACING * 0.5, SPACING * 1.5, 0.5, 1.0);
             c_idx
         };
 
@@ -152,7 +150,7 @@ impl Tissue4D {
         // Or apply a "wind" force in W-axis?
 
         // Physics Step
-        self.system.step(dt, 5);
+        self.system.step(dt, 5, 0.98);
 
         // VM Logic
         let constraints = &mut self.system.constraints;
