@@ -5,6 +5,7 @@ pub enum Phoneme {
 }
 
 #[derive(Debug, Clone, PartialEq, Copy)]
+#[allow(dead_code)]
 pub enum Vowel {
     A,
     E,
@@ -18,6 +19,7 @@ pub enum Vowel {
 }
 
 #[derive(Debug, Clone, PartialEq, Copy)]
+#[allow(dead_code)]
 pub enum Consonant {
     P,
     B,
@@ -51,8 +53,8 @@ pub struct Word {
     pub original: String,
 }
 
-impl Word {
-    pub fn to_string(&self) -> String {
+impl std::fmt::Display for Word {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut s = String::new();
         for p in &self.phonemes {
             match p {
@@ -94,7 +96,7 @@ impl Word {
                 },
             }
         }
-        s
+        write!(f, "{}", s)
     }
 }
 
