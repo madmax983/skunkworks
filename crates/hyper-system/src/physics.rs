@@ -1,4 +1,4 @@
-use hyper_system::math::Vec4;
+use crate::math::Vec4;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Particle4D {
@@ -6,6 +6,7 @@ pub struct Particle4D {
     pub prev_pos: Vec4,
     pub inv_mass: f32,
     pub vel: Vec4,
+    pub user_data: Vec4, // Used for experiments like hyper-fold (magnetic_polarity)
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -50,11 +51,15 @@ impl PbdSystem4D {
             prev_pos: pos,
             inv_mass: if mass == 0.0 { 0.0 } else { 1.0 / mass },
             vel: Vec4::zero(),
+            user_data: Vec4::zero(),
         });
         idx
     }
 
     pub fn add_distance_constraint(&mut self, p1: usize, p2: usize, stiff: f32) {
+        if p1 >= self.particles.len() || p2 >= self.particles.len() {
+            return;
+        }
         let dist = self.particles[p1]
             .pos
             .distance_squared(self.particles[p2].pos)
@@ -74,13 +79,14 @@ impl PbdSystem4D {
         min_len: f32,
         max_len: f32,
         stiff: f32,
+        initial_factor: f32,
     ) {
         self.constraints.push(Constraint4D::Actuator {
             p1,
             p2,
             min_len,
             max_len,
-            factor: 1.0,
+            factor: initial_factor,
             stiffness: stiff,
         });
     }
@@ -89,7 +95,7 @@ impl PbdSystem4D {
         self.constraints.push(Constraint4D::Pin { p, pos });
     }
 
-    pub fn step(&mut self, dt: f32, iterations: usize) {
+    pub fn step(&mut self, dt: f32, iterations: usize, friction: f32) {
         if dt <= f32::EPSILON {
             return;
         }
@@ -99,8 +105,17 @@ impl PbdSystem4D {
             if p.inv_mass == 0.0 {
                 continue;
             }
+            // Apply damping/friction
+            p.vel = p.vel.scale(friction);
+
             p.prev_pos = p.pos;
-            p.pos = p.pos + p.vel.scale(dt);
+            #[allow(clippy::assign_op_pattern)]
+            {
+                p.pos = p.pos + p.vel.scale(dt);
+            }
+
+            // Optional: floor constraints or other environmental boundaries
+            // can be handled outside by iterating over particles.
         }
 
         // Constraints
@@ -144,8 +159,6 @@ impl PbdSystem4D {
                 continue;
             }
             p.vel = (p.pos - p.prev_pos) / dt;
-            // Damping
-            p.vel = p.vel.scale(0.98);
         }
     }
 
@@ -184,11 +197,23 @@ impl PbdSystem4D {
         let correction = delta.scale(diff * stiffness / (w1 + w2));
 
         if w1 > 0.0 {
-            particles[p1].pos = particles[p1].pos - correction.scale(w1);
+            #[allow(clippy::assign_op_pattern)]
+            {
+                particles[p1].pos = particles[p1].pos - correction.scale(w1);
+            }
         }
         if w2 > 0.0 {
-            particles[p2].pos = particles[p2].pos + correction.scale(w2);
+            #[allow(clippy::assign_op_pattern)]
+            {
+                particles[p2].pos = particles[p2].pos + correction.scale(w2);
+            }
         }
+    }
+}
+
+impl Default for PbdSystem4D {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -202,14 +227,10 @@ mod tests {
         let p = system.add_particle(Vec4::zero(), 1.0);
         system.particles[p].vel = Vec4::new(1.0, 0.0, 0.0, 0.0);
 
-        system.step(1.0, 1);
-
-        // Pos should be approx (1.0, 0.0, 0.0, 0.0) * 0.98 damping?
-        // Wait, integration happens first: pos = pos + vel * dt
-        // Then constraints. Then velocity update: vel = (pos - prev) / dt * 0.98
+        system.step(1.0, 1, 0.98);
 
         let pos = system.particles[p].pos;
-        assert!((pos.x - 1.0).abs() < 1e-6);
+        assert!((pos.x - 0.98).abs() < 1e-6);
     }
 
     #[test]
@@ -218,7 +239,6 @@ mod tests {
         let p1 = system.add_particle(Vec4::zero(), 1.0);
         let p2 = system.add_particle(Vec4::new(2.0, 0.0, 0.0, 0.0), 1.0);
 
-        // Target length 1.0
         system.constraints.push(Constraint4D::Distance {
             p1,
             p2,
@@ -226,7 +246,7 @@ mod tests {
             stiffness: 1.0,
         });
 
-        system.step(0.1, 10);
+        system.step(0.1, 10, 0.98);
 
         let dist = system.particles[p1]
             .pos

@@ -1,8 +1,8 @@
-use crate::physics::Particle4D;
 use chimera_lang::ast::{Dna, Gene, Nucleotide};
 use chimera_lang::opcode::OpCode;
 use chimera_lang::vm::{ChimeraVM, Value};
 use hyper_system::math::Vec4;
+use hyper_system::physics::Particle4D;
 use rand::Rng;
 
 pub struct ChimeraAgent {

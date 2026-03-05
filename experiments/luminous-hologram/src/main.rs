@@ -16,7 +16,10 @@ use ratatui::{
 };
 use std::{io, time::Duration};
 
-use locus::{flocking::{compute_force, FlockingParams}, Topology, Vec2};
+use locus::{
+    flocking::{compute_force, FlockingParams},
+    Topology, Vec2,
+};
 use rand::Rng;
 
 mod hologram;
