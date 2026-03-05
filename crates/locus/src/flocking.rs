@@ -52,6 +52,23 @@ use crate::vec2::Vec2;
 ///
 /// These values act as the "DNA" of the flock, determining whether it behaves like
 /// a swarm of angry bees, a school of fish, or a herd of sheep.
+///
+/// # Examples
+///
+/// ```
+/// use locus::flocking::FlockingParams;
+///
+/// // Create a "Swarm" profile: high separation, low alignment
+/// let swarm_params = FlockingParams {
+///     view_radius: 20.0,
+///     separation_radius: 10.0,
+///     max_speed: 3.0,
+///     max_force: 0.2,
+///     separation_weight: 2.0, // High priority on personal space
+///     alignment_weight: 0.1,  // Little interest in conforming
+///     cohesion_weight: 1.0,   // Still wants to stay near the group
+/// };
+/// ```
 #[derive(Clone, Copy, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct FlockingParams {

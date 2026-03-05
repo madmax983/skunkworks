@@ -46,11 +46,23 @@ pub struct Vec3 {
 impl Vec3 {
     /// Creates a new 3D vector.
     ///
+    /// This is useful when you need to manually construct a 3D point,
+    /// or when extracting components from a higher-dimensional structure.
+    ///
     /// # Arguments
     ///
     /// * `x` - The X component.
     /// * `y` - The Y component.
     /// * `z` - The Z component.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::vec3::Vec3;
+    ///
+    /// let point = Vec3::new(1.0, 0.0, -1.0);
+    /// assert_eq!(point.x, 1.0);
+    /// ```
     pub fn new(x: f32, y: f32, z: f32) -> Self {
         Self { x, y, z }
     }
