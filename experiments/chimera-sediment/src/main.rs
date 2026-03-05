@@ -164,13 +164,13 @@ fn update_forest(sys: &mut System, trees: &mut Vec<Tree>, sediment: &mut Vec<Sed
     let old_trees: Vec<Tree> = trees.drain(..).collect();
 
     // Build new trees (Top 20)
-    let top_20 = processes.into_iter().take(20).collect::<Vec<_>>();
-    let spacing = screen_width() / (top_20.len() as f32 + 1.0);
+    let top_20_len = processes.len().min(20);
+    let spacing = screen_width() / (top_20_len as f32 + 1.0);
 
-    for (i, p) in top_20.iter().enumerate() {
+    for (i, p) in processes.into_iter().take(20).enumerate() {
         let x = (i as f32 + 1.0) * spacing;
         let y = screen_height() - 20.0;
-        trees.push(Tree::new(p.clone(), vec2(x, y)));
+        trees.push(Tree::new(p, vec2(x, y)));
     }
 
     // Check for fallen trees (Present in old but not in new)
