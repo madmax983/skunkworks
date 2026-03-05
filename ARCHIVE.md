@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chaos-mycelium**: Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. Grace period: 24h.
+- **clockwork-cipher**: Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation / Swarm Neglect. Grace period: 24h.
 
 ## Pardoned
 - **chaos-strings**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved compilation privacy errors and updated audio dependencies. The chaos rings true again.
@@ -15,6 +15,8 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **hanging-gardens**: Specimen executed. Diagnosis: Terminal Stagnation / Vestigial Organs / Generic Hybridization. Grace period expired. Moved to graveyard.
+- **chaos-mycelium**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation / Rushed Hybridization. Grace period expired. Moved to graveyard.
 - **bifurcation-landscape**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation / Absence of Hybrid Vigor. Grace period expired. Moved to graveyard.
 - **seismic-lure**: Specimen executed. Diagnosis: Terminal Redundancy / Skeletal Rot / Deceptive Hybridization. Grace period expired. Moved to graveyard.
 - **chimera-circuit**: Specimen executed. Diagnosis: Compilation Failure / Neglect / Stagnation. Grace period expired. Moved to graveyard.
