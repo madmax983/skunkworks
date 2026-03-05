@@ -1,12 +1,16 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: STABLE TRAIL] - Location: MARKETPLACE.md
+### [Concentration Level: CRITICAL MASS] - Location: MARKETPLACE.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** Hallucinations detected. The 'Ghost Mode' instructions describe non-existent features. Echo found dead ends. Polish needed to clear the false paths.
 
 ### [Concentration Level: STABLE TRAIL] - Location: crates/tui-shared
 - **Scent Origin:** Echo 🗣️
 - **Status:** The friction is high. README instructions lead to dead ends. Documentation repair needed.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/thermo-defense
+- **Scent Origin:** The Compiler 🦀
+- **Status:** Cargo profile warnings detected. The crate specifies profiles that are ignored because it's in a workspace. Polish needed.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/ferrous-hologram
 - **Scent Origin:** The Splice Surgeon 🧬
