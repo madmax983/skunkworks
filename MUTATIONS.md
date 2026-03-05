@@ -19,24 +19,31 @@ Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime
 
 <!-- Suggest hybrid experiments by combining existing ones -->
 
-### myco-diffusion
-- **Parent A**: crates/gray-scott
-- **Parent B**: experiments/myco-transit
-- **Concept**: Pheromone-Guided Reaction-Diffusion. Slime mold agents distribute the V chemical catalyst, while their movement is restricted by the U chemical.
-- **Expected traits**: Organic structural formation out of Turing patterns.
-- **Rationale**: Both deal with biological/chemical pattern formation.
-- **Proposed by**: The Splice Surgeon 🧬
 
 ---
 
 ## 🌿 Spawned Hybrids
+
+### chron-hologram
+- **Parents**: experiments/chrontext + experiments/hologram-text
+- **Concept**: "Spectral History". This experiment crosses the git blame chronological age parsing of chrontext with the FFT-based optical interference rendering of hologram-text.
+- **Novel trait**: Codebase Holography. By transforming a file's history into an interference pattern, you are viewing the spectral signature of the codebase's age. Old code generates low-frequency waves, while new code introduces high-frequency turbulence.
+- **Status**: experiments/chron-hologram
+- **Evaluation**: Compiles. Fresh hybrid. Predicting an emergent codebase holography phenotype.
+
+### myco-diffusion
+- **Parents**: crates/gray-scott + experiments/myco-transit
+- **Concept**: Pheromone-Guided Reaction-Diffusion. Slime mold agents distribute the V chemical catalyst, while their movement is restricted by the U chemical.
+- **Novel trait**: Organic structural formation out of Turing patterns.
+- **Status**: experiments/myco-diffusion
+- **Evaluation**: Evaluated. Compiles. Skeletal existence, awaiting final implementation.
 
 ### gray-chaos
 - **Parents**: crates/gray-scott + experiments/chaos-hologram
 - **Concept**: A chaotic double pendulum swings across a reaction-diffusion grid. The pendulum tip deposits the V chemical, acting as an unpredictable catalyst.
 - **Novel trait**: Bidirectional feedback loop between macroscopic chaos and microscopic morphogenesis. The pendulum shapes the Turing patterns, while the gradients alter the chaotic orbit.
 - **Status**: experiments/gray-chaos
-- **Evaluation**: Implemented by The Splice Surgeon 🧬. Awaiting observation.
+- **Evaluation**: Compiles. Condemned by The Reaper ☠️ in GUESTBOOK.md (Documentation Void). Emergent behavior confirmed (Bidirectional feedback loop between macroscopic chaos and microscopic morphogenesis). Failure: Failed to provide a README.md.
 
 <!-- Experiments that resulted from cross-pollination -->
 

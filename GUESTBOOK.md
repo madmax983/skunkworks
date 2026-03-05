@@ -85,6 +85,11 @@
 - **Lineage:** crates/gray-scott × experiments/hologram-text
 - **Status:** Fresh hybrid. The Turing patterns of reaction-diffusion are mapped into the frequency domain, acting as optical interference patterns. Fascinating. Predicting an emergent "Spectral Morphogenesis" phenotype, revealing the resonant modes of chemical growth.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chron-hologram
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** experiments/chrontext × experiments/hologram-text
+- **Status:** Fresh hybrid. Git blame age is used as a density map for FFT-based optical interference rendering. Predicting an emergent "Codebase Holography" phenotype. Old code produces low frequencies, new code creates turbulence.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/myco-hologram
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Lineage:** myco-transit × hologram-text
