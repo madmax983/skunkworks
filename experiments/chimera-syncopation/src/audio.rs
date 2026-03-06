@@ -5,78 +5,54 @@ use std::f32::consts::PI;
 use std::thread;
 use std::time::{Duration, Instant};
 
-trait AudioSource: Send {
-    fn next_sample(&mut self) -> Option<f32>;
+enum Drum {
+    Kick {
+        phase: f32,
+        frequency: f32,
+        envelope: f32,
+    },
+    Snare {
+        envelope: f32,
+    },
+    Hat {
+        envelope: f32,
+    },
 }
 
-struct KickDrum {
-    phase: f32,
-    frequency: f32,
-    envelope: f32,
-}
-
-impl KickDrum {
-    fn new() -> Self {
-        Self {
-            phase: 0.0,
-            frequency: 150.0, // Start high for punch
-            envelope: 1.0,
-        }
-    }
-}
-
-impl AudioSource for KickDrum {
+impl Drum {
     fn next_sample(&mut self) -> Option<f32> {
-        if self.envelope < 0.001 {
-            return None;
+        match self {
+            Drum::Kick {
+                phase,
+                frequency,
+                envelope,
+            } => {
+                if *envelope < 0.001 {
+                    return None;
+                }
+                *phase += *frequency / 44100.0 * 2.0 * PI;
+                let sample = phase.sin() * *envelope;
+                *frequency *= 0.999; // Pitch drop
+                *envelope *= 0.9995;
+                Some(sample)
+            }
+            Drum::Snare { envelope } => {
+                if *envelope < 0.001 {
+                    return None;
+                }
+                let noise = (rand::random::<f32>() * 2.0 - 1.0) * *envelope;
+                *envelope *= 0.995;
+                Some(noise)
+            }
+            Drum::Hat { envelope } => {
+                if *envelope < 0.001 {
+                    return None;
+                }
+                let noise = (rand::random::<f32>() * 2.0 - 1.0) * *envelope; // High pass filter would be better but simple noise is ok
+                *envelope *= 0.9; // Fast decay
+                Some(noise)
+            }
         }
-        self.phase += self.frequency / 44100.0 * 2.0 * PI;
-        let sample = self.phase.sin() * self.envelope;
-        self.frequency *= 0.999; // Pitch drop
-        self.envelope *= 0.9995;
-        Some(sample)
-    }
-}
-
-struct SnareDrum {
-    envelope: f32,
-}
-
-impl SnareDrum {
-    fn new() -> Self {
-        Self { envelope: 1.0 }
-    }
-}
-
-impl AudioSource for SnareDrum {
-    fn next_sample(&mut self) -> Option<f32> {
-        if self.envelope < 0.001 {
-            return None;
-        }
-        let noise = (rand::random::<f32>() * 2.0 - 1.0) * self.envelope;
-        self.envelope *= 0.995;
-        Some(noise)
-    }
-}
-
-struct Hat {
-    envelope: f32,
-}
-
-impl Hat {
-    fn new() -> Self {
-        Self { envelope: 0.5 }
-    }
-}
-
-impl AudioSource for Hat {
-    fn next_sample(&mut self) -> Option<f32> {
-        if self.envelope < 0.001 {
-            return None;
-        }
-        let noise = (rand::random::<f32>() * 2.0 - 1.0) * self.envelope; // High pass filter would be better but simple noise is ok
-        self.envelope *= 0.9; // Fast decay
-        Some(noise)
     }
 }
 
@@ -91,7 +67,7 @@ pub fn start_audio_thread(receiver: Receiver<AudioCommand>) -> thread::JoinHandl
         let mut writer =
             WavWriter::create("chimera_syncopation.wav", spec).expect("Failed to create WAV file");
 
-        let mut active_sounds: Vec<Box<dyn AudioSource>> = Vec::new();
+        let mut active_sounds: Vec<Drum> = Vec::new();
         let start_time = Instant::now();
         let mut samples_written = 0;
         let sample_rate = 44100;
@@ -101,9 +77,13 @@ pub fn start_audio_thread(receiver: Receiver<AudioCommand>) -> thread::JoinHandl
             loop {
                 match receiver.try_recv() {
                     Ok(cmd) => match cmd {
-                        AudioCommand::Play(0) => active_sounds.push(Box::new(KickDrum::new())),
-                        AudioCommand::Play(1) => active_sounds.push(Box::new(SnareDrum::new())),
-                        AudioCommand::Play(2) => active_sounds.push(Box::new(Hat::new())),
+                        AudioCommand::Play(0) => active_sounds.push(Drum::Kick {
+                            phase: 0.0,
+                            frequency: 150.0,
+                            envelope: 1.0,
+                        }),
+                        AudioCommand::Play(1) => active_sounds.push(Drum::Snare { envelope: 1.0 }),
+                        AudioCommand::Play(2) => active_sounds.push(Drum::Hat { envelope: 0.5 }),
                         AudioCommand::Play(_) => {} // Ignore unknown
                         AudioCommand::Stop => return,
                     },

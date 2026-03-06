@@ -22,3 +22,8 @@
 **Bloat:** Unnecessary indirection through traits with limited, fixed implementers (`AudioSource` in `syncopated-threads`, `Rule` in `origami-lexicon` and `glossolalia`).
 **Cut:** Replaced these traits entirely with simple concrete `enum`s (`Drum` and `Rule`), implementing the required methods directly on the enums using pattern matching. Replaced dynamic dispatch (`Vec<Box<dyn Trait>>`) with direct value storage (`Vec<Enum>`). Replaced inherent `to_string_word` with idiomatic `std::fmt::Display` implementation.
 **Saved:** 3 traits, multiple lines of boilerplate (dynamic allocations), cognitive load of abstract indirection and non-standard method names.
+
+## [Reduction]
+**Bloat:** `AudioSource` trait and separate struct implementors (`KickDrum`, `SnareDrum`, `Hat`) requiring dynamic dispatch via `Box<dyn AudioSource>`.
+**Cut:** Replaced the trait with a concrete `Drum` enum and a single `next_sample` method, allowing for a simpler flat `Vec<Drum>` collection.
+**Saved:** Reduced cognitive load of trait abstraction and dynamic dispatch boilerplate.
