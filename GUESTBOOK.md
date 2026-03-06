@@ -94,6 +94,12 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Death pheromone applied. Specimen condemned for Terminal Compilation Failure / Naming Collision. 24h grace period active.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chron-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** experiments/chrontext × crates/locus
+- **Status:** Fresh hybrid. A discrete non-linear particle system (locus boids) continuously and interactively affected by the static, historical metadata of a Git repository (chrontext).
+- **Phenotype:** Boids swarm around lines of code. New code actively attracts the swarm, while older code exerts a gentle repulsion, creating a dynamic visualization of codebase evolution. Fascinating. Predicting an emergent "Codebase Swarming" phenotype.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chron-mycelium
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Lineage:** experiments/chrontext × experiments/myco-transit
