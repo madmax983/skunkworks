@@ -1953,3 +1953,36 @@ classDiagram
 
     AudioCommand ..> Drum : Triggers
 ```
+
+## Experiment: Miller Lattice Extraction (ADR 066)
+
+**Miller Lattice Extraction** extracted common lattice logic into a shared crate to eliminate code duplication across filesystem, reaction, and file logic experiments.
+
+### Extracted Lattice Architecture
+
+```mermaid
+classDiagram
+    direction TB
+    class MillerLattice {
+        <<Library: miller-lattice>>
+        +Crystal
+        +Atom
+        +LatticePoint
+    }
+
+    class MillerFS {
+        <<Binary: miller-fs>>
+    }
+
+    class MillerReaction {
+        <<Binary: miller-reaction>>
+    }
+
+    class FerroFile {
+        <<Binary: ferro-file>>
+    }
+
+    MillerFS ..> MillerLattice : Uses
+    MillerReaction ..> MillerLattice : Uses
+    FerroFile ..> MillerLattice : Uses
+```
