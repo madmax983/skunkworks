@@ -54,7 +54,7 @@ impl World {
 
         let updates: Vec<(usize, usize, i32)> = agents
             .par_iter_mut()
-            .map(|agent| {
+            .flat_map_iter(|agent| {
                 let (ax, ay) = agent.pos;
                 let start_x = ax.saturating_sub(8);
                 let start_y = ay.saturating_sub(8);
@@ -76,20 +76,16 @@ impl World {
                 let changes = agent.sync_output(&local_view);
 
                 // Map local changes to global
-                changes
-                    .into_iter()
-                    .filter_map(|(lx, ly, delta)| {
-                        let gx = start_x + lx;
-                        let gy = start_y + ly;
-                        if gx < width && gy < height {
-                            Some((gx, gy, delta))
-                        } else {
-                            None
-                        }
-                    })
-                    .collect::<Vec<_>>()
+                changes.into_iter().filter_map(move |(lx, ly, delta)| {
+                    let gx = start_x + lx;
+                    let gy = start_y + ly;
+                    if gx < width && gy < height {
+                        Some((gx, gy, delta))
+                    } else {
+                        None
+                    }
+                })
             })
-            .flatten()
             .collect();
 
         // Apply Agent Changes
