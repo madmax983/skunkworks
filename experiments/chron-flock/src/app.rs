@@ -98,7 +98,11 @@ impl App {
         let mut new_velocities = self.velocities.clone();
 
         // Compute flocking forces + code attraction
-        for (i, vel_ref) in new_velocities.iter_mut().enumerate().take(self.positions.len()) {
+        for (i, vel_ref) in new_velocities
+            .iter_mut()
+            .enumerate()
+            .take(self.positions.len())
+        {
             let mut force = compute_force(&self.positions, &self.velocities, i, &self.flock_params);
 
             // Codebase Attraction
