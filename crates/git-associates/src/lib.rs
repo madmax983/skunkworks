@@ -364,4 +364,43 @@ mod tests {
         let history = model.history_with_diffs(10).unwrap();
         assert_eq!(history.len(), 1);
     }
+
+    #[test]
+    fn test_history_without_diffs() {
+        let temp_dir = std::env::temp_dir().join("git-associates-history-test");
+        let _ = std::fs::remove_dir_all(&temp_dir);
+        let repo = Repository::init(&temp_dir).unwrap();
+
+        let mut index = repo.index().unwrap();
+        let oid = index.write_tree().unwrap();
+        let tree = repo.find_tree(oid).unwrap();
+
+        let time = Time::new(1700000000, 0);
+        let sig = Signature::new("Test Author", "test@example.com", &time).unwrap();
+
+        repo.commit(
+            Some("HEAD"),
+            &sig,
+            &sig,
+            "History without diffs commit",
+            &tree,
+            &[],
+        )
+        .unwrap();
+
+        let model = GitModel::open(temp_dir).unwrap();
+        let history = model.history(10).unwrap();
+
+        assert_eq!(history.len(), 1);
+        let commit = &history[0];
+        assert_eq!(commit.message, "History without diffs commit");
+        assert!(
+            commit.stats.is_none(),
+            "Stats should be None when compute_diffs is false"
+        );
+        assert!(
+            commit.files.is_empty(),
+            "Files should be empty when compute_diffs is false"
+        );
+    }
 }
