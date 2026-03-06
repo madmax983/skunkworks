@@ -1,6 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **gray-chaos**: Specimen condemned. Diagnosis: Documentation Void. Grace period: 24h.
-- **voronoi-ants**: Specimen condemned. Diagnosis: Skeletal Implementation / Swarm Neglect / Technical Debt Burden. Grace period: 24h.
+- **hyper-ferro**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Naming Collision. Grace period: 24h.
 
 ## Pardoned
 - **chaos-strings**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved compilation privacy errors and updated audio dependencies. The chaos rings true again.
@@ -16,6 +15,8 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **gray-chaos**: Specimen executed. Diagnosis: Documentation Void. Grace period expired. Moved to graveyard.
+- **voronoi-ants**: Specimen executed. Diagnosis: Skeletal Implementation / Swarm Neglect / Technical Debt Burden. Grace period expired. Moved to graveyard.
 - **clockwork-cipher**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation / Swarm Neglect. Grace period expired. Moved to graveyard.
 - **hanging-gardens**: Specimen executed. Diagnosis: Terminal Stagnation / Vestigial Organs / Generic Hybridization. Grace period expired. Moved to graveyard.
 - **chaos-mycelium**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation / Rushed Hybridization. Grace period expired. Moved to graveyard.
