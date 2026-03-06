@@ -29,14 +29,21 @@ Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime
 - **Concept**: Codebase Foraging. This experiment crosses the git blame chronological age parsing of chrontext with the biological pathfinding of myco-transit.
 - **Novel trait**: Organic Age Mapping. Slime mold agents scavenge through the text space, treating the newest Git commits as high-value food sources. The visual layout creates glowing architectural trails showing where the code has been "foraged" between old and new blocks.
 - **Status**: experiments/chron-mycelium
-- **Evaluation**: Compiles. Fresh hybrid. Predicting an emergent organic age mapping phenotype.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (Codebase Foraging).
 
 ### chron-hologram
 - **Parents**: experiments/chrontext + experiments/hologram-text
 - **Concept**: "Spectral History". This experiment crosses the git blame chronological age parsing of chrontext with the FFT-based optical interference rendering of hologram-text.
 - **Novel trait**: Codebase Holography. By transforming a file's history into an interference pattern, you are viewing the spectral signature of the codebase's age. Old code generates low-frequency waves, while new code introduces high-frequency turbulence.
 - **Status**: experiments/chron-hologram
-- **Evaluation**: Compiles. Fresh hybrid. Predicting an emergent codebase holography phenotype.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (Codebase Holography).
+
+### chron-flock
+- **Parents**: experiments/chrontext + crates/locus
+- **Concept**: Codebase Swarming. A TUI visualization crossing the Git blame chronological age parsing of chrontext with the 2D boid flocking logic of locus.
+- **Novel trait**: Codebase Swarming. Boids swarm around lines of code. New code attracts the swarm, while old code gently repels it.
+- **Status**: experiments/chron-flock
+- **Evaluation**: Fresh hybrid. Compiles. Predicting an emergent Codebase Swarming phenotype.
 
 ### myco-diffusion
 - **Parents**: crates/gray-scott + experiments/myco-transit
@@ -49,8 +56,8 @@ Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime
 - **Parents**: crates/gray-scott + experiments/chaos-hologram
 - **Concept**: A chaotic double pendulum swings across a reaction-diffusion grid. The pendulum tip deposits the V chemical, acting as an unpredictable catalyst.
 - **Novel trait**: Bidirectional feedback loop between macroscopic chaos and microscopic morphogenesis. The pendulum shapes the Turing patterns, while the gradients alter the chaotic orbit.
-- **Status**: experiments/gray-chaos
-- **Evaluation**: Compiles. Condemned by The Reaper ☠️ in GUESTBOOK.md (Documentation Void). Emergent behavior confirmed (Bidirectional feedback loop between macroscopic chaos and microscopic morphogenesis). Failure: Failed to provide a README.md.
+- **Status**: graveyard/gray-chaos (Executed)
+- **Evaluation**: Condemned by The Reaper ☠️ in GUESTBOOK.md (Documentation Void). Grace period expired. Moved to graveyard.
 
 <!-- Experiments that resulted from cross-pollination -->
 
