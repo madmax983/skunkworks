@@ -10,3 +10,7 @@
 ## 2024-10-31 - The Ghost "Fast" Math Methods
 **Confusion:** Users seeing `rotate_xy_fast` vs `rotate_xy` in vector libraries without understanding *why* they exist or how to use them, causing them to redundantly compute sines and cosines inside loops.
 **Clarification:** Added explicit `## Examples` to all `_fast` vector math methods demonstrating how to precompute trig values outside the loop to optimize performance.
+
+## 2024-11-20 - File System as Crystal Lattice
+**Confusion:** The purpose and usage of the `miller-lattice` crate was undocumented, making it unclear how files and directories mapped to 3D discrete space (`LatticePoint`, `Atom`, `Crystal`).
+**Clarification:** Added module-level documentation explaining the conceptual mapping of file systems to crystalline structures (directories alter growth planes, files spiral outwards). Added executable doctests to core structs to demonstrate their construction and the purpose of methods like `LatticePoint::to_vec3` for rendering.
