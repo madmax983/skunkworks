@@ -12,8 +12,13 @@ use ratatui::{
     widgets::{Block, Borders, Paragraph},
     Terminal,
 };
-use rustfft::{FftPlanner, num_complex::Complex as FftComplex};
-use std::{error::Error, io, path::Path, time::{Duration, SystemTime}};
+use rustfft::{num_complex::Complex as FftComplex, FftPlanner};
+use std::{
+    error::Error,
+    io,
+    path::Path,
+    time::{Duration, SystemTime},
+};
 
 /// "Spectral History"
 /// Combines `chrontext` (git blame) with `hologram-text` (FFT rendering).
@@ -53,7 +58,9 @@ impl App {
         let mut temp_lines = Vec::new();
 
         // Very basic file reading (could just read the raw file, but blame lines match it)
-        let blob = repo.revparse_single(format!("HEAD:{}", file_path).as_str())?.peel_to_blob()?;
+        let blob = repo
+            .revparse_single(format!("HEAD:{}", file_path).as_str())?
+            .peel_to_blob()?;
         let content = String::from_utf8_lossy(blob.content());
         let file_lines: Vec<&str> = content.lines().collect();
 
@@ -112,7 +119,8 @@ impl App {
                 // Generate 2D interference pattern from 1D FFT
                 let val_x = buffer[x].norm();
                 let val_y = buffer[y].norm();
-                let interference = (val_x * val_y * (self.phase + (x * y) as f64 * 0.01).sin()).abs();
+                let interference =
+                    (val_x * val_y * (self.phase + (x * y) as f64 * 0.01).sin()).abs();
                 self.hologram_grid[y][x] = interference;
             }
         }
@@ -130,7 +138,10 @@ fn main() -> Result<(), Box<dyn Error>> {
     // Try to open this crate's own Cargo.toml or similar to visualize
     if let Err(_) = app.analyze_repo(".", "Cargo.toml") {
         // Fallback for demo
-        app.lines.push(LineData { content: "No git repo found or Cargo.toml missing".into(), age_score: 1.0 });
+        app.lines.push(LineData {
+            content: "No git repo found or Cargo.toml missing".into(),
+            age_score: 1.0,
+        });
     }
 
     let res = run_app(&mut terminal, app);
@@ -171,11 +182,17 @@ where
                 let r = (line.age_score * 255.0) as u8;
                 let b = ((1.0 - line.age_score) * 255.0) as u8;
                 let style = Style::default().fg(Color::Rgb(r, 100, b));
-                chron_text.push(ratatui::text::Line::from(Span::styled(line.content.clone(), style)));
+                chron_text.push(ratatui::text::Line::from(Span::styled(
+                    line.content.clone(),
+                    style,
+                )));
             }
 
-            let chron_block = Paragraph::new(chron_text)
-                .block(Block::default().borders(Borders::ALL).title(" chrontext (Git Age) "));
+            let chron_block = Paragraph::new(chron_text).block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title(" chrontext (Git Age) "),
+            );
             f.render_widget(chron_block, chunks[0]);
 
             // Right side: Hologram
@@ -198,8 +215,11 @@ where
                 hologram_lines.push(ratatui::text::Line::from(Span::raw(row_str)));
             }
 
-            let hologram_block = Paragraph::new(hologram_lines)
-                .block(Block::default().borders(Borders::ALL).title(" hologram-text (Spectral Pattern) "));
+            let hologram_block = Paragraph::new(hologram_lines).block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title(" hologram-text (Spectral Pattern) "),
+            );
             f.render_widget(hologram_block, chunks[1]);
         })?;
 

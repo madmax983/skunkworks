@@ -20,7 +20,11 @@ use ratatui::{
     Terminal,
 };
 use simulation::{Agent, World};
-use std::{env, io, path::Path, time::{Duration, Instant}};
+use std::{
+    env, io,
+    path::Path,
+    time::{Duration, Instant},
+};
 
 fn main() -> Result<()> {
     let args: Vec<String> = env::args().collect();
@@ -51,7 +55,7 @@ fn main() -> Result<()> {
         // Let's create food sources at lines that are newly modified
         if info.age_score > 0.8 {
             let y = info.line_number.saturating_sub(1) as f64; // 0-indexed
-            // Distribute food across the line width
+                                                               // Distribute food across the line width
             food_sources.push((60.0, y)); // Centered approx
         }
     }
@@ -61,7 +65,8 @@ fn main() -> Result<()> {
     }
 
     let num_agents = 2000;
-    let (mut world, mut agents) = World::with_food_and_agents(width, height, num_agents, &food_sources);
+    let (mut world, mut agents) =
+        World::with_food_and_agents(width, height, num_agents, &food_sources);
 
     // Setup TUI
     enable_raw_mode()?;
@@ -70,11 +75,22 @@ fn main() -> Result<()> {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-    let res = run_app(&mut terminal, &mut world, &mut agents, width, height, file_path_str);
+    let res = run_app(
+        &mut terminal,
+        &mut world,
+        &mut agents,
+        width,
+        height,
+        file_path_str,
+    );
 
     // Restore Terminal
     disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen, DisableMouseCapture)?;
+    execute!(
+        terminal.backend_mut(),
+        LeaveAlternateScreen,
+        DisableMouseCapture
+    )?;
     terminal.show_cursor()?;
 
     if let Err(err) = res {
@@ -130,7 +146,10 @@ fn run_app(
                 .constraints([Constraint::Min(0), Constraint::Length(1)])
                 .split(f.area());
 
-            let title = format!(" 🧬 Chron-Mycelium: Slime Mold vs Git Blame [{}] ", file_name);
+            let title = format!(
+                " 🧬 Chron-Mycelium: Slime Mold vs Git Blame [{}] ",
+                file_name
+            );
 
             let canvas = Canvas::default()
                 .block(Block::default().borders(Borders::ALL).title(title))
@@ -161,7 +180,10 @@ fn run_app(
                 Span::raw("Press "),
                 Span::styled("q", Style::default().fg(Color::Yellow)),
                 Span::raw(" to quit. Agents: "),
-                Span::styled(format!("{}", agents.len()), Style::default().fg(Color::Cyan)),
+                Span::styled(
+                    format!("{}", agents.len()),
+                    Style::default().fg(Color::Cyan),
+                ),
             ]);
             f.render_widget(status, chunks[1]);
         })?;

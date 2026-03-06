@@ -121,9 +121,16 @@ impl GitModel {
             let commit = self.repo.find_commit(oid)?;
 
             let hash = oid.to_string();
-            let short_hash = hash.chars().take(7).collect();
-            let author = commit.author().name().unwrap_or("Unknown").to_string();
-            let message = commit.message().unwrap_or("").trim().to_string();
+            let short_hash = hash[..7].to_owned();
+            let author = commit
+                .author()
+                .name()
+                .map(|s| s.to_string())
+                .unwrap_or_else(|| "Unknown".to_string());
+            let message = commit
+                .message()
+                .map(|s| s.trim().to_string())
+                .unwrap_or_default();
 
             // chrono LocalResult::unwrap() panics if the timestamp is out of range.
             // Using `single().unwrap_or_else(...)` provides a safe fallback (UNIX epoch).
@@ -249,8 +256,8 @@ impl GitModel {
             let extension = Path::new(&path)
                 .extension()
                 .and_then(|e| e.to_str())
-                .unwrap_or("")
-                .to_string();
+                .map(|s| s.to_string())
+                .unwrap_or_default();
 
             // line_stats returns (context, insertions, deletions)
             let stats = patch.line_stats().unwrap_or((0, 0, 0));
@@ -298,8 +305,8 @@ impl GitModel {
             for l_idx in 0..lines_count {
                 if let Ok(line) = patch.line_in_hunk(h_idx, l_idx) {
                     let content = std::str::from_utf8(line.content())
-                        .unwrap_or("")
-                        .to_string();
+                        .map(|s| s.to_string())
+                        .unwrap_or_default();
                     // Origin character indicates the type of change:
                     // '+' = Addition, '-' = Deletion, ' ' = Context
                     match line.origin() {
@@ -312,8 +319,8 @@ impl GitModel {
             }
             hunks.push(Hunk {
                 header: std::str::from_utf8(hunk_info.header())
-                    .unwrap_or("")
-                    .to_string(),
+                    .map(|s| s.to_string())
+                    .unwrap_or_default(),
                 lines: hunk_lines,
             });
         }
