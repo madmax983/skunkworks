@@ -22,7 +22,14 @@ Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime
 
 ---
 
-## 🌿 Spawned Hybrids
+## 🌿 Attempted Crosses
+
+### chron-mycelium
+- **Parents**: experiments/chrontext + experiments/myco-transit
+- **Concept**: Codebase Foraging. This experiment crosses the git blame chronological age parsing of chrontext with the biological pathfinding of myco-transit.
+- **Novel trait**: Organic Age Mapping. Slime mold agents scavenge through the text space, treating the newest Git commits as high-value food sources. The visual layout creates glowing architectural trails showing where the code has been "foraged" between old and new blocks.
+- **Status**: experiments/chron-mycelium
+- **Evaluation**: Compiles. Fresh hybrid. Predicting an emergent organic age mapping phenotype.
 
 ### chron-hologram
 - **Parents**: experiments/chrontext + experiments/hologram-text
