@@ -27,7 +27,10 @@ impl FlightData {
     }
 
     pub fn load(path: &str) -> Result<Self> {
-        let json = fs::read_to_string(path)?;
+        use std::io::Read;
+        let file = std::fs::File::open(path)?;
+        let mut json = String::new();
+        file.take(10 * 1024 * 1024).read_to_string(&mut json)?;
         let data = serde_json::from_str(&json)?;
         Ok(data)
     }
