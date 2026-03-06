@@ -115,3 +115,7 @@
 ## 2027-10-15 - Unbounded File Read in Level Generation (OOM DoS)
 **Threat:** The `generate_level` function in `experiments/heap-arena/src/level_gen.rs` used `fs::read_to_string` directly on files without any bounds checking. A maliciously crafted massive file could trigger an Out-of-Memory (OOM) Denial of Service (DoS) vulnerability by exhausting application memory.
 **Defense:** Replaced the unbounded read with a capped reader using `std::io::Read::take(1024 * 1024)`. This guarantees that memory exhaustion attacks are thwarted by limiting parsing to the first 1MB of any input file. Added `test_generate_level_large_file_dos_prevention` to verify the safety.
+
+**2024-06-18 - [Unbounded File Read Mitigation]**
+**Threat:** OOM Denial of Service (DoS) vulnerability via unbounded `fs::read_to_string` and `io::stdin().read_to_string`. Large malicious files could cause memory exhaustion.
+**Defense:** Replaced with a capped reader using `std::io::Read::take(LIMIT)` to enforce maximum boundaries (10MB limit) prior to JSON deserialization.

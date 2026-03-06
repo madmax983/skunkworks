@@ -160,7 +160,10 @@ fn read_snapshot() -> Result<Snapshot> {
     if args.len() > 1 {
         // Read from file
         let path = &args[1];
-        json = std::fs::read_to_string(path).context("Failed to read input file")?;
+        let file = std::fs::File::open(path).context("Failed to open input file")?;
+        file.take(10 * 1024 * 1024)
+            .read_to_string(&mut json)
+            .context("Failed to read input file")?;
     } else {
         // Read from stdin
         if atty::is(atty::Stream::Stdin) {
@@ -169,6 +172,7 @@ fn read_snapshot() -> Result<Snapshot> {
             std::process::exit(1);
         }
         io::stdin()
+            .take(10 * 1024 * 1024)
             .read_to_string(&mut json)
             .context("Failed to read stdin")?;
     }
