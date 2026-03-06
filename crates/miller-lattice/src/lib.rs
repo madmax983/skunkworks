@@ -1,39 +1,116 @@
+//! # Miller Lattice
+//!
+//! A procedural generator for visualizing hierarchical data structures (like a file system)
+//! as a 3D crystalline lattice.
+//!
+//! This crate maps directories and files into 3D discrete space using Miller indices concepts.
+//! Directories represent structural branch points that alter the normal vector of the growth plane,
+//! while files and subdirectories are placed as `Atom`s around their parent node in a spiral pattern.
+//!
+//! ## Core Concepts
+//!
+//! - **[`LatticePoint`]**: A discrete integer coordinate `(x, y, z)` in 3D space.
+//! - **[`Atom`]**: A single node in the crystal representing a file or directory.
+//! - **[`Crystal`]**: The entire generated structure containing all atoms and their connectivity (bonds).
+
 use anyhow::Result;
 use cgmath::Vector3;
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::hash::{Hash, Hasher};
 use std::path::{Path, PathBuf};
 
+/// A discrete coordinate in 3D integer space.
+///
+/// This serves as the fundamental positioning system for atoms in the crystal lattice.
+/// It uses `i32` to prevent floating-point inaccuracies during structural generation.
+///
+/// # Examples
+///
+/// ```
+/// use miller_lattice::LatticePoint;
+///
+/// let pt = LatticePoint::new(1, 2, -3);
+/// assert_eq!(pt.x, 1);
+/// assert_eq!(pt.z, -3);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct LatticePoint {
+    /// The X coordinate.
     pub x: i32,
+    /// The Y coordinate.
     pub y: i32,
+    /// The Z coordinate.
     pub z: i32,
 }
 
 impl LatticePoint {
+    /// Creates a new `LatticePoint` from x, y, z coordinates.
     pub fn new(x: i32, y: i32, z: i32) -> Self {
         Self { x, y, z }
     }
 
+    /// Converts the integer coordinates into a floating-point `Vector3`.
+    ///
+    /// This is useful for passing positions to rendering pipelines or physics engines.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use miller_lattice::LatticePoint;
+    ///
+    /// let pt = LatticePoint::new(5, -2, 0);
+    /// let vec = pt.to_vec3();
+    /// assert_eq!(vec.x, 5.0);
+    /// assert_eq!(vec.y, -2.0);
+    /// ```
     pub fn to_vec3(&self) -> Vector3<f32> {
         Vector3::new(self.x as f32, self.y as f32, self.z as f32)
     }
 }
 
+/// Represents a single node (file or directory) within the crystal lattice.
+///
+/// An atom carries metadata about the file system entry it represents, including
+/// its position in the 3D grid and the normal vector that defined its placement plane.
 #[derive(Debug, Clone)]
 pub struct Atom {
+    /// The discrete 3D position of this atom in the crystal.
     pub position: LatticePoint,
+    /// Whether this atom represents a directory (`true`) or a file (`false`).
     pub is_dir: bool,
+    /// The base name of the file or directory.
     pub name: String,
+    /// The full path to the file system entry.
     pub path: PathBuf,
-    pub normal: Vector3<i32>, // The normal of the plane this atom belongs to (or defines)
+    /// The normal vector of the growth plane this atom was placed on.
+    ///
+    /// For directories, this normal dictates the orientation of its children.
+    pub normal: Vector3<i32>,
 }
 
+/// A generated 3D crystalline lattice representing a file system hierarchy.
+///
+/// `Crystal` contains the list of all [`Atom`]s (files/directories) and the structural
+/// `bonds` connecting parents to children.
+///
+/// # Examples
+///
+/// ```no_run
+/// use miller_lattice::Crystal;
+/// use std::path::Path;
+///
+/// let crystal = Crystal::build_from_path(Path::new("./src")).unwrap();
+/// println!("Generated {} atoms with {} bonds.", crystal.atoms.len(), crystal.bonds.len());
+/// ```
 #[derive(Debug)]
 pub struct Crystal {
+    /// The flattened list of all atoms in the crystal.
     pub atoms: Vec<Atom>,
-    pub bonds: Vec<(usize, usize)>, // indices into atoms
+    /// Connections between atoms, representing parent-child relationships.
+    ///
+    /// Each tuple `(parent_idx, child_idx)` contains indices pointing into the `atoms` vector.
+    pub bonds: Vec<(usize, usize)>,
+    /// Fast spatial lookup mapping a discrete coordinate to an index in the `atoms` vector.
     pub lookup: HashMap<LatticePoint, usize>,
 }
 
@@ -44,6 +121,7 @@ impl Default for Crystal {
 }
 
 impl Crystal {
+    /// Creates a new, empty Crystal.
     pub fn new() -> Self {
         Self {
             atoms: Vec::new(),
@@ -52,6 +130,20 @@ impl Crystal {
         }
     }
 
+    /// Recursively builds a crystal lattice from a given root path.
+    ///
+    /// This function performs a breadth-first traversal of the file system.
+    ///
+    /// - **Root Node**: Placed at `(0, 0, 0)`.
+    /// - **Subdirectories**: Each new directory gets a semi-deterministic,
+    ///   hash-based normal vector assigned to it, changing the "growth plane"
+    ///   for its children.
+    /// - **Files & Children**: Placed in an outward-expanding spiral around the parent,
+    ///   respecting the parent's growth plane to prevent collisions.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the root path cannot be read.
     pub fn build_from_path(root: &Path) -> Result<Self> {
         let mut crystal = Crystal::new();
         let mut occupied = HashSet::new();

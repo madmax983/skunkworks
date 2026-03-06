@@ -131,7 +131,11 @@ fn run_app(
                 .split(f.area());
 
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title(" 🧬 Git-Diffusion "))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title(" 🧬 Git-Diffusion "),
+                )
                 .x_bounds([0.0, width as f64])
                 .y_bounds([0.0, height as f64])
                 .paint(|ctx| {
@@ -152,8 +156,14 @@ fn run_app(
             let status_text = vec![
                 Line::from(vec![
                     Span::raw(" Commit: "),
-                    Span::styled(&current_commit.hash[..7], Style::default().fg(Color::Yellow)),
-                    Span::raw(format!(" - {} ({})", current_commit.message, current_commit.author)),
+                    Span::styled(
+                        &current_commit.hash[..7],
+                        Style::default().fg(Color::Yellow),
+                    ),
+                    Span::raw(format!(
+                        " - {} ({})",
+                        current_commit.message, current_commit.author
+                    )),
                 ]),
                 Line::from(vec![
                     Span::raw(" Press "),
