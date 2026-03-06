@@ -24,6 +24,13 @@ Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime
 
 ## 🌿 Attempted Crosses
 
+### git-diffusion
+- **Parents**: experiments/git-harmonograph + crates/gray-scott
+- **Concept**: Codebase Morphogenesis. Git commits act as drop points for the "V" chemical catalyst on a Gray-Scott Reaction-Diffusion grid.
+- **Novel trait**: Codebase Morphogenesis. The distinct events of commit history diffuse, react, and merge over time to create a continuous biological fingerprint of the repository's evolution.
+- **Status**: experiments/git-diffusion
+- **Evaluation**: Fresh hybrid. Compiles. Predicting an emergent "Codebase Morphogenesis" phenotype.
+
 ### chron-mycelium
 - **Parents**: experiments/chrontext + experiments/myco-transit
 - **Concept**: Codebase Foraging. This experiment crosses the git blame chronological age parsing of chrontext with the biological pathfinding of myco-transit.
@@ -43,14 +50,14 @@ Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime
 - **Concept**: Codebase Swarming. A TUI visualization crossing the Git blame chronological age parsing of chrontext with the 2D boid flocking logic of locus.
 - **Novel trait**: Codebase Swarming. Boids swarm around lines of code. New code attracts the swarm, while old code gently repels it.
 - **Status**: experiments/chron-flock
-- **Evaluation**: Fresh hybrid. Compiles. Predicting an emergent Codebase Swarming phenotype.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (Codebase Swarming phenotype successfully observed).
 
 ### myco-diffusion
 - **Parents**: crates/gray-scott + experiments/myco-transit
 - **Concept**: Pheromone-Guided Reaction-Diffusion. Slime mold agents distribute the V chemical catalyst, while their movement is restricted by the U chemical.
 - **Novel trait**: Organic structural formation out of Turing patterns.
 - **Status**: experiments/myco-diffusion
-- **Evaluation**: Evaluated. Compiles. Skeletal existence, awaiting final implementation.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (macroquad-based organic structural formation from Turing patterns).
 
 ### gray-chaos
 - **Parents**: crates/gray-scott + experiments/chaos-hologram

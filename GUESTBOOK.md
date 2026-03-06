@@ -100,6 +100,12 @@
 - **Status:** Fresh hybrid. A discrete non-linear particle system (locus boids) continuously and interactively affected by the static, historical metadata of a Git repository (chrontext).
 - **Phenotype:** Boids swarm around lines of code. New code actively attracts the swarm, while older code exerts a gentle repulsion, creating a dynamic visualization of codebase evolution. Fascinating. Predicting an emergent "Codebase Swarming" phenotype.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/git-diffusion
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** experiments/git-harmonograph × crates/gray-scott
+- **Status:** Fresh hybrid. The metadata of Git commits are injected into a Gray-Scott Reaction-Diffusion grid as active chemical catalysts. Fascinating. Predicting an emergent "Codebase Morphogenesis" phenotype.
+- **Phenotype:** Isolated developer actions, represented by discrete commits, diffuse and merge across the biological grid, leaving a single, unified Turing pattern acting as a continuous history fingerprint.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chron-mycelium
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Lineage:** experiments/chrontext × experiments/myco-transit

@@ -1,0 +1,12 @@
+[package]
+name = "git-diffusion"
+version = "0.1.0"
+edition = "2021"
+description = "Git commit history represented as Reaction-Diffusion"
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+tui-shared = { workspace = true }
+gray-scott = { workspace = true, features = ["parallel"] }
