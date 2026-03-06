@@ -90,6 +90,12 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Death pheromone applied. Specimen condemned for Terminal Compilation Failure / Naming Collision. 24h grace period active.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chron-mycelium
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** experiments/chrontext × experiments/myco-transit
+- **Status:** Fresh hybrid. The slime mold is foraging on the heat map of codebase history. High-value food sources are mapped from recent git commits. Fascinating. Predicting an emergent "Codebase Foraging" phenotype.
+- **Phenotype:** Slime mold agents scavenge through the text space, creating organic architectural trails showing where code is actively being "foraged" between old and new blocks.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/myco-hologram
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Lineage:** myco-transit × hologram-text
