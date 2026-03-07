@@ -1,0 +1,19 @@
+[package]
+name = "locust-tank"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = "0.8"
+resonance-audio = { workspace = true }
+crossbeam-channel = "0.5"
+anyhow = { workspace = true }
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = []
+audio = ["dep:cpal"]
