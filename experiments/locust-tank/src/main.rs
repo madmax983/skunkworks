@@ -1,9 +1,9 @@
 use ::rand::prelude::*;
-use macroquad::prelude::*;
 use crossbeam_channel::bounded;
-use resonance_audio::audio::{AudioCommand, AudioModel};
+use macroquad::prelude::*;
 #[cfg(feature = "audio")]
 use resonance_audio::audio::AudioSnapshot;
+use resonance_audio::audio::{AudioCommand, AudioModel};
 
 #[cfg(feature = "audio")]
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
@@ -81,7 +81,8 @@ impl World {
                     // Try to flow down the gradient (away from high pressure)
                     // We approximate by just being pushed randomly or outward
                     let mut rng = ::rand::thread_rng();
-                    let push_dir = vec2(rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0)).normalize_or_zero();
+                    let push_dir = vec2(rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0))
+                        .normalize_or_zero();
                     desire += push_dir * p * 5.0; // Repel based on pressure magnitude
                 }
             }
@@ -114,7 +115,11 @@ impl World {
         let mut rng = ::rand::thread_rng();
         plucks.shuffle(&mut rng);
         for (px, py, strength) in plucks.into_iter().take(10) {
-            let _ = cmd_tx.send(AudioCommand::Pluck { x: px, y: py, strength });
+            let _ = cmd_tx.send(AudioCommand::Pluck {
+                x: px,
+                y: py,
+                strength,
+            });
         }
     }
 }
@@ -129,7 +134,16 @@ async fn main() {
         Ok((s, _)) => (Some(s), None),
         Err(e) => {
             eprintln!("Audio init failed: {}. Running in silent mode.", e);
-            (None, Some(AudioModel::new(GRID_WIDTH, GRID_HEIGHT, cmd_rx, snap_tx.clone(), None)))
+            (
+                None,
+                Some(AudioModel::new(
+                    GRID_WIDTH,
+                    GRID_HEIGHT,
+                    cmd_rx,
+                    snap_tx.clone(),
+                    None,
+                )),
+            )
         }
     };
 
@@ -290,7 +304,16 @@ fn init_audio(
     stream.play()?;
     // We can't return model here since it's moved into the closure, but if the closure
     // is successfully created, we don't need the model for manual fallback anyway.
-    Ok((stream, AudioModel::new(0, 0, crossbeam_channel::bounded(1).1, crossbeam_channel::bounded(1).0, None)))
+    Ok((
+        stream,
+        AudioModel::new(
+            0,
+            0,
+            crossbeam_channel::bounded(1).1,
+            crossbeam_channel::bounded(1).0,
+            None,
+        ),
+    ))
 }
 
 #[cfg(test)]
