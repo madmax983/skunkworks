@@ -44,15 +44,92 @@ struct AppState {
     triggered_clusters: HashSet<(usize, usize)>, // (track_idx, cluster_idx)
 }
 
-impl AppState {
-    fn new() -> Self {
+impl Default for AppState {
+    fn default() -> Self {
         Self {
             tracks: Vec::new(),
             playhead_y: 0.0,
-            speed: 0.2, // 5 seconds per loop
+            speed: 0.2,
             playing: true,
             last_update: Instant::now(),
             triggered_clusters: HashSet::new(),
+        }
+    }
+}
+
+impl AppState {
+    fn new() -> Self {
+        Self::default()
+    }
+
+    fn process_track(
+        t_idx: usize,
+        track: &CordTrack,
+        old_y: f32,
+        playhead_y: f32,
+        triggered_clusters: &mut HashSet<(usize, usize)>,
+        #[cfg(feature = "audio")] tx: &crossbeam_channel::Sender<AudioEvent>,
+    ) {
+        let num_clusters = track.cord.clusters.len();
+        if num_clusters == 0 {
+            return;
+        }
+
+        let spacing = 1.0 / (num_clusters as f32 + 1.0);
+
+        for (c_idx, cluster) in track.cord.clusters.iter().enumerate() {
+            if cluster.is_empty() {
+                continue;
+            }
+
+            let cluster_y = 1.0 - ((c_idx as f32 + 1.0) * spacing);
+
+            let hit = if playhead_y < old_y {
+                (cluster_y > old_y && cluster_y <= 1.0)
+                    || (cluster_y >= 0.0 && cluster_y <= playhead_y)
+            } else {
+                cluster_y > old_y && cluster_y <= playhead_y
+            };
+
+            if hit && !triggered_clusters.contains(&(t_idx, c_idx)) {
+                triggered_clusters.insert((t_idx, c_idx));
+
+                #[cfg(feature = "audio")]
+                Self::trigger_sound(track, cluster, tx);
+            }
+        }
+    }
+
+    #[cfg(feature = "audio")]
+    fn trigger_sound(
+        track: &CordTrack,
+        cluster: &[Knot],
+        tx: &crossbeam_channel::Sender<AudioEvent>,
+    ) {
+        match track.sound_type {
+            TrackSound::Percussion => {
+                if let Some(k) = cluster.first() {
+                    match k {
+                        Knot::Simple => {
+                            let _ = tx.send(AudioEvent::Kick);
+                        }
+                        Knot::Long(_) => {
+                            let _ = tx.send(AudioEvent::Snare);
+                        }
+                        Knot::FigureEight => {
+                            let _ = tx.send(AudioEvent::HiHat);
+                        }
+                    }
+                }
+            }
+            TrackSound::Melodic => {
+                let mut val = 0;
+                for k in cluster {
+                    val += k.value();
+                }
+                let pitch = track.base_freq * 2.0_f32.powf(val as f32 / 12.0);
+                let _ = tx.send(AudioEvent::Pluck(pitch));
+            }
         }
     }
 
@@ -160,86 +237,15 @@ fn main() -> Result<()> {
                 // But wait, `Cord` struct: index 0 is Units (Bottom).
                 // So visually, index 0 is at Y ~ 1.0. Index N is at Y ~ 0.0.
 
-                let num_clusters = track.cord.clusters.len();
-                if num_clusters == 0 {
-                    continue;
-                }
-
-                let spacing = 1.0 / (num_clusters as f32 + 1.0);
-
-                for (c_idx, cluster) in track.cord.clusters.iter().enumerate() {
-                    if cluster.is_empty() {
-                        continue;
-                    }
-
-                    // Calculate Y position of this cluster
-                    // Rev index: Top cluster has index `len-1`.
-                    // We want Top cluster at Y = spacing.
-                    // Bottom cluster (idx 0) at Y = 1.0 - spacing.
-
-                    // Visual position (0.0 is top)
-                    // let visual_idx = (num_clusters - 1) - c_idx; // 0 for top
-                    // let cluster_y = (visual_idx as f32 + 1.0) * spacing;
-
-                    // Actually, let's just map index directly to Y for simplicity in generic cords
-                    // Let's say index 0 is top. (Reverse of Quipu logic but easier for sequencer).
-                    // No, let's stick to Quipu logic: Index 0 is Bottom (Units).
-
-                    let cluster_y = 1.0 - ((c_idx as f32 + 1.0) * spacing);
-
-                    // Check if playhead crossed this Y
-                    // Since playhead moves down (increasing Y), we check if old < y <= new
-                    // Or if we wrapped around
-
-                    let hit = if state.playhead_y < old_y {
-                        // Wrapped
-                        (cluster_y > old_y && cluster_y <= 1.0)
-                            || (cluster_y >= 0.0 && cluster_y <= state.playhead_y)
-                    } else {
-                        cluster_y > old_y && cluster_y <= state.playhead_y
-                    };
-
-                    if hit {
-                        if !state.triggered_clusters.contains(&(t_idx, c_idx)) {
-                            state.triggered_clusters.insert((t_idx, c_idx));
-
-                            // Trigger Sound
-                            #[cfg(feature = "audio")]
-                            {
-                                match track.sound_type {
-                                    TrackSound::Percussion => {
-                                        // Use first knot type to decide
-                                        if let Some(k) = cluster.first() {
-                                            match k {
-                                                Knot::Simple => {
-                                                    let _ = tx.send(AudioEvent::Kick);
-                                                }
-                                                Knot::Long(_) => {
-                                                    let _ = tx.send(AudioEvent::Snare);
-                                                }
-                                                Knot::FigureEight => {
-                                                    let _ = tx.send(AudioEvent::HiHat);
-                                                }
-                                            }
-                                        }
-                                    }
-                                    TrackSound::Melodic => {
-                                        // Sum values for pitch offset
-                                        let mut val = 0;
-                                        for k in cluster {
-                                            val += k.value();
-                                        }
-                                        // scale: pentatonic?
-                                        // simple chromatic for now: base * 2^(val/12)
-                                        let pitch =
-                                            track.base_freq * 2.0_f32.powf(val as f32 / 12.0);
-                                        let _ = tx.send(AudioEvent::Pluck(pitch));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                AppState::process_track(
+                    t_idx,
+                    track,
+                    old_y,
+                    state.playhead_y,
+                    &mut state.triggered_clusters,
+                    #[cfg(feature = "audio")]
+                    &tx,
+                );
             }
         } else {
             state.last_update = Instant::now();
