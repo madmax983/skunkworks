@@ -11,6 +11,7 @@ members = [
     "experiments/myco-hologram",
     "experiments/luminous-hologram",
     "experiments/git-diffusion",
+    "experiments/chron-diffusion",
 ]
 
 [workspace.dependencies]

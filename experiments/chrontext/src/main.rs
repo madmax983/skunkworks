@@ -1,10 +1,10 @@
-mod app;
-mod blame;
-mod ui;
+
+
+
 
 use anyhow::Result;
-use app::App;
-use blame::BlameAnalyzer;
+use chrontext::app::App;
+use chrontext::blame::BlameAnalyzer;
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
     execute,

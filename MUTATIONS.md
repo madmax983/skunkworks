@@ -29,7 +29,14 @@ Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime
 - **Concept**: Codebase Morphogenesis. Git commits act as drop points for the "V" chemical catalyst on a Gray-Scott Reaction-Diffusion grid.
 - **Novel trait**: Codebase Morphogenesis. The distinct events of commit history diffuse, react, and merge over time to create a continuous biological fingerprint of the repository's evolution.
 - **Status**: experiments/git-diffusion
-- **Evaluation**: Fresh hybrid. Compiles. Predicting an emergent "Codebase Morphogenesis" phenotype.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (Codebase Morphogenesis). Success.
+
+### chron-diffusion
+- **Parents**: experiments/chrontext + crates/gray-scott
+- **Concept**: Chronological Reaction-Diffusion. The git blame age of code lines acts as a chemical catalyst injecting the "V" chemical into a Gray-Scott reaction-diffusion grid overlaid on the text.
+- **Novel trait**: Morphogenetic Code Aging. Text acts not just as static boundaries, but as a chemically active substrate where the age of the code shapes the diffusion patterns over time, revealing the "metabolic rate" of different files.
+- **Status**: experiments/chron-diffusion
+- **Evaluation**: Fresh hybrid. Compiles. Predicting an emergent "Morphogenetic Code Aging" phenotype.
 
 ### chron-mycelium
 - **Parents**: experiments/chrontext + experiments/myco-transit
