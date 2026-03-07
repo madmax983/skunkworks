@@ -10,5 +10,5 @@ ratatui = { workspace = true }
 crossterm = { workspace = true }
 anyhow = { workspace = true }
 chrono = "0.4"
-git2 = "0.18"
+git2 = { workspace = true }
 rand = { workspace = true }

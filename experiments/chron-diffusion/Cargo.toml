@@ -9,6 +9,6 @@ crossterm = { workspace = true }
 ratatui = { workspace = true }
 tui-shared = { workspace = true }
 chrono = "0.4"
-git2 = "0.18"
+git2 = { workspace = true }
 gray-scott = { path = "../../crates/gray-scott" }
 chrontext = { path = "../chrontext" }

@@ -9,6 +9,6 @@ crossterm = { workspace = true }
 ratatui = { workspace = true }
 tui-shared = { workspace = true }
 poincare-disk = { workspace = true }
-git2 = "0.18"
+git2 = { workspace = true }
 chrono = "0.4"
 num-complex = "0.4"

@@ -1,5 +1,16 @@
 # Warden's Journal
 
+## 2027-11-01 - Dependency Vulnerabilities: git2, lru, ratatui
+**Threat:** The `cargo audit` scan revealed three `unsound` dependencies with severe vulnerabilities:
+- `git2` v0.18.3 had a memory-corruption vulnerability (RUSTSEC-2026-0008) causing undefined behavior via a null pointer in `slice::from_raw_parts`.
+- `lru` v0.12.5 had a Stacked Borrows violation (RUSTSEC-2026-0002) where `IterMut` invalidated internal pointers, risking use-after-free and undefined behavior.
+- `ratatui` v0.26.3 (and `macroquad` v0.4.14 underlying it) had multiple soundness issues due to unprincipled use of mutable statics risking use-after-free (RUSTSEC-2025-0035).
+**Defense:** Bumped the `git2` dependency version across the workspace to `v0.20.4` and replaced hardcoded vulnerable `ratatui` (v0.26) versions with the secure workspace version (`v0.30`). After updating `Cargo.toml`, running `cargo update` cleared the CVEs.
+
+## 2027-10-31 - Chimera Tardis Unbounded Room Creation (OOM DoS)
+**Threat:** The `World::from_vm` function in `experiments/chimera-tardis/src/world.rs` iterated over `vm.call_stack` to generate `Room`s. If a malicious program generated an infinitely recursive or extremely deep call stack, this unbounded allocation would cause an Out-of-Memory (OOM) Denial of Service (DoS).
+**Defense:** Added a `max_rooms = 1024` cap and used `.take(max_rooms)` on the frame iterator to restrict the maximum depth of generated rooms. Added `test_from_vm_dos_prevention` to verify bounds.
+
 ## 2024-05-24 - Unbounded Organelle Replication (DoS)
 **Threat:** The `*` (Bang) operator in `process_ribosome` spawns new organelles without checking the `MAX_ORGANELLES` limit. A malicious user (or self-replicating virus) could use this to exponentially increase the number of organelles, causing memory exhaustion (DoS).
 **Defense:** Added a check `if self.organelles.len() < MAX_ORGANELLES` before spawning new organelles in `process_ribosome`.

@@ -65,7 +65,15 @@ impl World {
         let mut frames = vm.call_stack.clone();
         frames.push(vm.ip);
 
-        for (i, frame) in frames.iter().enumerate() {
+        // Limit the number of rooms generated to prevent unbounded allocation DoS
+        // if the VM has an infinitely recursive call stack structure.
+        let max_rooms = 1024;
+        let mut frames_len = frames.len();
+        if frames_len > max_rooms {
+            frames_len = max_rooms;
+        }
+
+        for (i, frame) in frames.iter().take(max_rooms).enumerate() {
             let (strand_idx, gene_idx) = *frame;
 
             // Get op info
@@ -98,7 +106,7 @@ impl World {
             let mut portals = Vec::new();
 
             // Link to next frame
-            if i + 1 < frames.len() {
+            if i + 1 < frames_len {
                 let next_strand = frames[i + 1].0;
                 let next_hue = (next_strand as f32 * 0.61803398875) % 1.0;
                 let portal_color = hsl_to_color(next_hue, 0.8, 0.5); // Brighter portal
@@ -137,5 +145,30 @@ impl World {
         }
 
         world
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chimera_lang::ast::{Dna, Helix};
+
+    #[test]
+    fn test_from_vm_dos_prevention() {
+        let dna = Dna {
+            helix: Helix { strands: vec![] },
+            evolution_config: None,
+        };
+        let mut vm = ChimeraVM::new(dna);
+
+        // Push 5000 frames to simulate deep recursion.
+        for _ in 0..5000 {
+            vm.call_stack.push((0, 0));
+        }
+
+        let world = World::from_vm(&vm);
+
+        // We expect exactly 1024 rooms created despite 5001 total frames (5000 in stack + 1 for IP).
+        assert_eq!(world.rooms.len(), 1024);
     }
 }
