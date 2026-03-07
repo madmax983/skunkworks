@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: NEW HYBRID] - Location: experiments/chaos-ddos
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for chaos-ddos (chaos-pendulum x locust-ddos). The botnet swarm is trying to hit a swinging double pendulum. It looks like a hurricane around a strange attractor.
+
 ### [Concentration Level: CRITICAL MASS] - Location: MARKETPLACE.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** Hallucinations detected. The 'Ghost Mode' instructions describe non-existent features. Echo found dead ends. Polish needed to clear the false paths.

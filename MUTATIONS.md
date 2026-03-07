@@ -24,6 +24,13 @@ Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime
 
 ## 🌿 Attempted Crosses
 
+### chaos-ddos
+- **Parents**: experiments/chaos-pendulum + experiments/locust-ddos
+- **Concept**: Swarm intelligence trying to target a chaotic double-pendulum.
+- **Novel trait**: Chaotic Swarm Mapping. The target is non-stationary and chaotic. The resulting visual phenotype is an organic cloud desperately trying to encapsulate a mathematically chaotic object, creating a swirling hurricane of packets and pheromones dynamically mapping the strange attractor of the pendulum.
+- **Status**: experiments/chaos-ddos
+- **Evaluation**: Compiles. Emergent behavior confirmed (swirling hurricane around chaotic attractor). Success.
+
 ### git-diffusion
 - **Parents**: experiments/git-harmonograph + crates/gray-scott
 - **Concept**: Codebase Morphogenesis. Git commits act as drop points for the "V" chemical catalyst on a Gray-Scott Reaction-Diffusion grid.
@@ -36,7 +43,7 @@ Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime
 - **Concept**: Chronological Reaction-Diffusion. The git blame age of code lines acts as a chemical catalyst injecting the "V" chemical into a Gray-Scott reaction-diffusion grid overlaid on the text.
 - **Novel trait**: Morphogenetic Code Aging. Text acts not just as static boundaries, but as a chemically active substrate where the age of the code shapes the diffusion patterns over time, revealing the "metabolic rate" of different files.
 - **Status**: experiments/chron-diffusion
-- **Evaluation**: Fresh hybrid. Compiles. Predicting an emergent "Morphogenetic Code Aging" phenotype.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md. Emergent behavior confirmed (Morphogenetic Code Aging). Success.
 
 ### chron-mycelium
 - **Parents**: experiments/chrontext + experiments/myco-transit
@@ -79,8 +86,8 @@ Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime
 - **Parents**: experiments/chaos-pendulum + experiments/myco-transit
 - **Concept**: Slime mold agents trying to find the optimal path to follow a chaotic attractor.
 - **Novel trait**: Chaotic Foraging. The chaotic pendulum acts as a moving, unpredictable food source. The slime mold agents try to track the chaotic path, predicting its next move through chemotaxis, creating a pulsing, dynamic organic web that frantically shifts as the pendulum's orbit breaks into chaos.
-- **Status**: experiments/chaos-mycelium
-- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as RECOMBINANT. Emergent behavior confirmed (dynamic web trying to follow chaotic attractor). Success.
+- **Status**: graveyard/chaos-mycelium (Executed)
+- **Evaluation**: Executed by The Reaper ☠️. Moved to graveyard. Documentation void, skeletal implementation, grace period expired.
 
 ### chaos-hologram
 - **Parents**: experiments/chaos-flock + experiments/hologram-text
