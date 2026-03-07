@@ -261,7 +261,7 @@ fn process_audio(
         });
 
         // Soft clipper
-        sample = sample.max(-0.9).min(0.9);
+        sample = sample.clamp(-0.9, 0.9);
 
         for channel in frame.iter_mut() {
             *channel = sample;
