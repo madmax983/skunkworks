@@ -8,6 +8,6 @@ ratatui.workspace = true
 crossterm.workspace = true
 rand.workspace = true
 anyhow.workspace = true
-git2 = "0.18"
+git2 = { workspace = true }
 tui-shared = { path = "../../crates/tui-shared" }
 market-sim = { workspace = true }

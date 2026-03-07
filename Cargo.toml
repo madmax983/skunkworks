@@ -24,7 +24,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 thiserror = "2.0"
 tokio = { version = "1.0", features = ["full"] }
-git2 = "0.18"
+git2 = "0.20"
 locus = { path = "crates/locus" }
 ferrous-core = { path = "crates/ferrous-core" }
 platter = { path = "crates/platter" }

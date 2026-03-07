@@ -7,7 +7,7 @@ publish = false
 [dependencies]
 ratatui = { workspace = true }
 crossterm = { workspace = true }
-git2 = "0.18.3"
+git2 = { workspace = true }
 rustfft = "6.1.0"
 num-complex = "0.4"
 rand = { workspace = true }

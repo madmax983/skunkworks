@@ -11,7 +11,7 @@ ratatui.workspace = true
 tui-shared = { path = "../../crates/tui-shared" }
 git-associates = { path = "../../crates/git-associates" }
 
-git2 = "0.18"
+git2 = { workspace = true }
 rodio = { version = "0.19", optional = true }
 
 [features]

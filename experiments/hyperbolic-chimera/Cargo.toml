@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 chimera-lang = { path = "../chimera-lang" }
 poincare-disk = { path = "../../crates/poincare-disk" }
-ratatui = { version = "0.26.1", features = ["all-widgets"] }
+ratatui = { workspace = true }
 crossterm = "0.27.0"
 anyhow = "1.0"
 rand = "0.8"
