@@ -1,3 +1,13 @@
+//! # Bobber 🎣
+//!
+//! Provides the [`Bobber`] component for rendering a fishing bobber onto a `ratatui`
+//! `Canvas`.
+//!
+//! Unlike standard widgets, the `Bobber` is designed to be drawn directly onto a
+//! `Context`, allowing it to integrate with continuous 2D simulation spaces rather
+//! than strict layout grids. It visually communicates state changes (idle vs. hooked)
+//! through different icons and animated water effects.
+
 use ratatui::widgets::canvas::Context;
 
 /// A visual component representing a fishing bobber on a Canvas.

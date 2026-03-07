@@ -1,3 +1,13 @@
+//! # TUI Button 🔘
+//!
+//! Provides the [`Button`] widget for interactive terminal applications.
+//!
+//! The `Button` component handles visual styling for different interaction states
+//! (hover, click, disabled) and intent variants (primary, secondary, danger, etc.).
+//! It serves as the primary building block for creating interactive menus and forms
+//! within a TUI application, simplifying the repetitive logic of managing text colors
+//! and borders for state transitions.
+
 use ratatui::{
     buffer::Buffer,
     layout::Rect,

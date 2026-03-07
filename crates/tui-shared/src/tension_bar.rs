@@ -1,3 +1,12 @@
+//! # Tension Bar 🌡️
+//!
+//! Provides the [`TensionBar`] widget to visualize continuous stress or progress metrics.
+//!
+//! The `TensionBar` differs from standard terminal progress bars by rendering vertically
+//! using fractional block characters (`▂`, `▃`, `▄`) to create high-resolution, smooth
+//! animations even within a low-resolution terminal grid. It automatically applies a
+//! color gradient (Cyan → Yellow → Red) as the tension value increases.
+
 use ratatui::{
     buffer::Buffer,
     layout::Rect,
