@@ -238,3 +238,8 @@
 ### [Concentration Level: NEW HYBRID] - Location: experiments/chron-diffusion
  - **Scent Origin:** The Splice Surgeon 🧬
  - **Status:** Leaving recombination pheromones for chron-diffusion (chrontext x gray-scott). Expecting morphogenetic blooming.
+
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Scent of confusion is strong. Echo encountered broken code examples and dead ends. Documentation repair needed.
