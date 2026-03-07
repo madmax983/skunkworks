@@ -86,17 +86,9 @@ use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 
 #[cfg(feature = "audio")]
 struct ActiveSound {
-    kind: SoundKind,
+    kind: AudioEvent,
     t: f32, // Time in seconds
     amp: f32,
-}
-
-#[cfg(feature = "audio")]
-enum SoundKind {
-    Kick,
-    Snare,
-    HiHat,
-    Pluck(f32),
 }
 
 #[cfg(feature = "audio")]
@@ -181,28 +173,17 @@ fn process_audio(
 ) {
     // 1. Process new events
     while let Ok(event) = rx.try_recv() {
-        match event {
-            AudioEvent::Kick => active_sounds.push(ActiveSound {
-                kind: SoundKind::Kick,
-                t: 0.0,
-                amp: 0.8,
-            }),
-            AudioEvent::Snare => active_sounds.push(ActiveSound {
-                kind: SoundKind::Snare,
-                t: 0.0,
-                amp: 0.6,
-            }),
-            AudioEvent::HiHat => active_sounds.push(ActiveSound {
-                kind: SoundKind::HiHat,
-                t: 0.0,
-                amp: 0.4,
-            }),
-            AudioEvent::Pluck(f) => active_sounds.push(ActiveSound {
-                kind: SoundKind::Pluck(f),
-                t: 0.0,
-                amp: 0.5,
-            }),
-        }
+        let amp = match event {
+            AudioEvent::Kick => 0.8,
+            AudioEvent::Snare => 0.6,
+            AudioEvent::HiHat => 0.4,
+            AudioEvent::Pluck(_) => 0.5,
+        };
+        active_sounds.push(ActiveSound {
+            kind: event,
+            t: 0.0,
+            amp,
+        });
     }
 
     // 2. Generate audio
@@ -215,7 +196,7 @@ fn process_audio(
             sound.t += dt;
 
             let s = match sound.kind {
-                SoundKind::Kick => {
+                AudioEvent::Kick => {
                     // Sine sweep 120 -> 40 Hz
                     let freq = 120.0 - (80.0 * (sound.t * 8.0).min(1.0));
                     let env = (1.0 - sound.t * 5.0).max(0.0);
@@ -224,7 +205,7 @@ fn process_audio(
                     }
                     (sound.t * freq * 2.0 * std::f32::consts::PI).sin() * env * sound.amp
                 }
-                SoundKind::Snare => {
+                AudioEvent::Snare => {
                     // Noise + Tone
                     let noise =
                         (rand::random::<f32>() * 2.0 - 1.0) * (1.0 - sound.t * 10.0).max(0.0);
@@ -236,7 +217,7 @@ fn process_audio(
                     }
                     val * sound.amp
                 }
-                SoundKind::HiHat => {
+                AudioEvent::HiHat => {
                     // High freq noise
                     let noise = rand::random::<f32>() * 2.0 - 1.0;
                     let env = (1.0 - sound.t * 30.0).max(0.0);
@@ -245,7 +226,7 @@ fn process_audio(
                     }
                     noise * env * sound.amp
                 }
-                SoundKind::Pluck(freq) => {
+                AudioEvent::Pluck(freq) => {
                     // Karplus-Strong-ish or just simple plucked string (sine w/ exp decay)
                     let val = (sound.t * freq * 2.0 * std::f32::consts::PI).sin();
                     let env = (-sound.t * 4.0).exp();

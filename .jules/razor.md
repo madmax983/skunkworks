@@ -27,3 +27,13 @@
 **Bloat:** `AudioSource` trait and separate struct implementors (`KickDrum`, `SnareDrum`, `Hat`) requiring dynamic dispatch via `Box<dyn AudioSource>`.
 **Cut:** Replaced the trait with a concrete `Drum` enum and a single `next_sample` method, allowing for a simpler flat `Vec<Drum>` collection.
 **Saved:** Reduced cognitive load of trait abstraction and dynamic dispatch boilerplate.
+
+## [Reduction]
+**Bloat:** Redundant `SoundKind` enum in `quipu/src/audio.rs` that flawlessly mirrored the existing `AudioEvent` public enum.
+**Cut:** Eliminated `SoundKind` and used `AudioEvent` directly inside the `ActiveSound` struct, replacing the extra `match` mapping layer.
+**Saved:** 1 unnecessary enum definition, 1 redundant mapping layer, cognitive load of duplicate abstractions.
+
+## [Reduction]
+**Bloat:** Useless local module `atty` inside `experiments/semantic-spy/src/main.rs` wrapping an enum `Stream` (with only 1 variant) and an `is` method.
+**Cut:** Deleted the module entirely and used the standard library `std::io::IsTerminal` trait directly.
+**Saved:** 1 pointless abstraction module, 1 single-variant enum, several lines of boilerplate.

@@ -91,35 +91,6 @@ impl App {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use tui_shared::semantic::Entity;
-
-    #[test]
-    fn test_app_navigation() {
-        let snapshot = Snapshot::new("test")
-            .with_entity(Entity::new("e1"))
-            .with_entity(Entity::new("e2"))
-            .with_entity(Entity::new("e3"));
-
-        let mut app = App::new(snapshot);
-        assert_eq!(app.list_state.selected(), Some(0));
-
-        app.next();
-        assert_eq!(app.list_state.selected(), Some(1));
-
-        app.next();
-        assert_eq!(app.list_state.selected(), Some(2));
-
-        app.next();
-        assert_eq!(app.list_state.selected(), Some(0)); // Loop back
-
-        app.previous();
-        assert_eq!(app.list_state.selected(), Some(2)); // Loop back
-    }
-}
-
 /// Entry point for the application.
 ///
 /// 1. Reads the snapshot from input.
@@ -166,7 +137,8 @@ fn read_snapshot() -> Result<Snapshot> {
             .context("Failed to read input file")?;
     } else {
         // Read from stdin
-        if atty::is(atty::Stream::Stdin) {
+        use std::io::IsTerminal;
+        if std::io::stdin().is_terminal() {
             eprintln!("Usage: semantic-spy < snapshot.json");
             eprintln!("   or: cargo run --bin orbital-decay -- --semantic | semantic-spy");
             std::process::exit(1);
@@ -311,12 +283,31 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
     f.render_widget(details, details_area);
 }
 
-mod atty {
-    pub enum Stream {
-        Stdin,
-    }
-    pub fn is(_stream: Stream) -> bool {
-        use std::io::IsTerminal;
-        std::io::stdin().is_terminal()
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tui_shared::semantic::Entity;
+
+    #[test]
+    fn test_app_navigation() {
+        let snapshot = Snapshot::new("test")
+            .with_entity(Entity::new("e1"))
+            .with_entity(Entity::new("e2"))
+            .with_entity(Entity::new("e3"));
+
+        let mut app = App::new(snapshot);
+        assert_eq!(app.list_state.selected(), Some(0));
+
+        app.next();
+        assert_eq!(app.list_state.selected(), Some(1));
+
+        app.next();
+        assert_eq!(app.list_state.selected(), Some(2));
+
+        app.next();
+        assert_eq!(app.list_state.selected(), Some(0)); // Loop back
+
+        app.previous();
+        assert_eq!(app.list_state.selected(), Some(2)); // Loop back
     }
 }
