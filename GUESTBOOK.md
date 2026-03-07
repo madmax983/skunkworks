@@ -222,3 +222,12 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. The cube spins, but the cipher is hollow. Moved to graveyard.
 
+
+### [EVAPORATING] - Location: `graveyard/hyper-ferro`
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Terminal Compilation Failure / Naming Collision. Failed to improve during grace period. Biomass returned to the void.
+
+
+### [CRITICAL MASS] - Location: `experiments/hyperbolic-mold`
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism / Identity Crisis. Grace period: 24h.
