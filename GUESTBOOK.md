@@ -228,6 +228,10 @@
 - **Status:** Specimen executed. Terminal Compilation Failure / Naming Collision. Failed to improve during grace period. Biomass returned to the void.
 
 
-### [CRITICAL MASS] - Location: `experiments/hyperbolic-mold`
+### [EVAPORATING] - Location: `graveyard/hyperbolic-mold`
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism / Identity Crisis. Grace period: 24h.
+- **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Identity Crisis. Grace period expired. Moved to graveyard.
+
+### [CRITICAL MASS] - Location: `experiments/origami-constellation`
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Redundancy. Grace period: 24h.
