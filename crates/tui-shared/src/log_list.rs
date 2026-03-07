@@ -1,3 +1,12 @@
+//! # Log List 📜
+//!
+//! Provides the [`LogList`] widget for displaying system messages and activity logs.
+//!
+//! Rather than requiring manual styling for every list item, `LogList` automatically parses
+//! keywords within strings to apply appropriate severity colors (e.g. Red for "Error",
+//! Yellow for "Warning") and prefixes the messages with semantic icons (❌, ⚠️, ✅, ℹ️).
+//! It is ideal for monitoring system status in a running TUI application.
+
 use ratatui::{
     buffer::Buffer,
     layout::Rect,
