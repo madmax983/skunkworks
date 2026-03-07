@@ -1,5 +1,5 @@
 [package]
-name = "chrontext"
+name = "chron-diffusion"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,13 +7,8 @@ edition = "2021"
 anyhow = { workspace = true }
 crossterm = { workspace = true }
 ratatui = { workspace = true }
-git2 = "0.18"
+tui-shared = { workspace = true }
 chrono = "0.4"
-
-[lib]
-name = "chrontext"
-path = "src/lib.rs"
-
-[[bin]]
-name = "chrontext"
-path = "src/main.rs"
+git2 = "0.18"
+gray-scott = { path = "../../crates/gray-scott" }
+chrontext = { path = "../chrontext" }

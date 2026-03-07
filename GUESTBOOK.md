@@ -231,3 +231,6 @@
 ### [CRITICAL MASS] - Location: `experiments/hyperbolic-mold`
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism / Identity Crisis. Grace period: 24h.
+### [Concentration Level: NEW HYBRID] - Location: experiments/chron-diffusion
+ - **Scent Origin:** The Splice Surgeon 🧬
+ - **Status:** Leaving recombination pheromones for chron-diffusion (chrontext x gray-scott). Expecting morphogenetic blooming.
