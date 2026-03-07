@@ -578,4 +578,70 @@ mod tests {
         assert_eq!(c1.checked_sub(&c2).unwrap().value(), 30);
         assert!(c1.checked_sub(&c3).is_none());
     }
+
+    #[test]
+    fn test_knot_symbol() {
+        assert_eq!(Knot::Simple.symbol(), "●");
+        assert_eq!(Knot::Long(5).symbol(), "≡5");
+        assert_eq!(Knot::FigureEight.symbol(), "∞");
+    }
+
+    #[test]
+    fn test_cord_fmt_indented() {
+        // Test empty cord
+        let empty_cord = Cord::new();
+        assert_eq!(format!("{}", empty_cord).trim(), "(empty)");
+
+        // Test color printing
+        let mut red_cord = Cord::new();
+        red_cord.color = Color::Red;
+        red_cord.clusters = vec![vec![Knot::Simple]];
+        assert_eq!(format!("{}", red_cord), "[Red]\n●");
+
+        // Test zero cord
+        let zero_cord = Cord::from(0);
+        assert_eq!(format!("{}", zero_cord), "(empty)");
+
+        // Test non-empty cord with mixed knots
+        let mut mixed_cord = Cord::new();
+        mixed_cord.clusters = vec![
+            vec![Knot::FigureEight],          // Units (1)
+            vec![Knot::Long(3)],              // Tens (30)
+            vec![Knot::Simple, Knot::Simple], // Hundreds (200)
+        ];
+        // Note: clusters are printed in reverse order (hundreds, tens, units)
+        assert_eq!(format!("{}", mixed_cord), "● ●\n≡3\n∞");
+
+        // Test nested subsidiaries
+        let mut parent_cord = Cord::from(100);
+        let mut child_cord = Cord::from(10);
+        let grandchild_cord = Cord::from(1);
+        child_cord.subsidiaries.push(grandchild_cord);
+        parent_cord.subsidiaries.push(child_cord);
+
+        // Cord formatting logic:
+        // ●
+        //   |
+        //   |
+        //   ●
+        //     |
+        //     ∞
+        let expected = "●\n  |  \n  |  \n  ●\n    |  \n    ∞";
+        assert_eq!(format!("{}", parent_cord), expected);
+    }
+
+    #[test]
+    fn test_quipu_struct_methods() {
+        let mut q = Quipu::new();
+        assert!(q.cords.is_empty());
+
+        q.add_cord(Cord::from(100));
+        q.add_cord(Cord::from(42));
+        assert_eq!(q.cords.len(), 2);
+
+        let display_str = format!("{}", q);
+        assert!(display_str.contains("Quipu with 2 cords:"));
+        assert!(display_str.contains("Cord 0:\n●\n  |  \n  |  "));
+        assert!(display_str.contains("Cord 1:\n● ● ● ●\n≡2"));
+    }
 }
