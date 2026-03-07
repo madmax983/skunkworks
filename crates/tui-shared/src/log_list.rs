@@ -54,38 +54,34 @@ impl<'a> LogList<'a> {
 
 impl<'a> Widget for LogList<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
-        let items: Vec<ListItem> = self
-            .items
-            .iter()
-            .map(|s| {
-                let s_lower = s.to_lowercase();
-                let (style, prefix) = if s_lower.contains("error") {
-                    (
-                        Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
-                        "❌ ",
-                    )
-                } else if s_lower.contains("warning") {
-                    (Style::default().fg(Color::Yellow), "⚠️ ")
-                } else if s_lower.contains("note") || s_lower.contains("info") {
-                    (Style::default().fg(Color::Blue), "ℹ️ ")
-                } else if s_lower.contains("success") {
-                    (
-                        Style::default()
-                            .fg(Color::Green)
-                            .add_modifier(Modifier::BOLD),
-                        "✅ ",
-                    )
-                } else {
-                    (Style::default(), "")
-                };
+        let items = self.items.iter().map(|s| {
+            let s_lower = s.to_lowercase();
+            let (style, prefix) = if s_lower.contains("error") {
+                (
+                    Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
+                    "❌ ",
+                )
+            } else if s_lower.contains("warning") {
+                (Style::default().fg(Color::Yellow), "⚠️ ")
+            } else if s_lower.contains("note") || s_lower.contains("info") {
+                (Style::default().fg(Color::Blue), "ℹ️ ")
+            } else if s_lower.contains("success") {
+                (
+                    Style::default()
+                        .fg(Color::Green)
+                        .add_modifier(Modifier::BOLD),
+                    "✅ ",
+                )
+            } else {
+                (Style::default(), "")
+            };
 
-                let content = Line::from(vec![
-                    Span::styled(prefix, style),
-                    Span::styled(s.as_str(), style),
-                ]);
-                ListItem::new(content)
-            })
-            .collect();
+            let content = Line::from(vec![
+                Span::styled(prefix, style),
+                Span::styled(s.as_str(), style),
+            ]);
+            ListItem::new(content)
+        });
 
         let mut list = List::new(items);
         if let Some(block) = self.block {
