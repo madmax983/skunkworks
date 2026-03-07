@@ -222,4 +222,33 @@ mod tests {
             assert!(found_right, "Phase {} should have right animation", phase);
         }
     }
+
+    #[test]
+    fn test_bobber_no_animation_above_surface() {
+        // Test with y >= 50.0 to NOT trigger animation logic
+        let mut buffer = Buffer::empty(Rect::new(0, 0, 20, 20));
+        let bobber = Bobber::new(5.0, 60.0, false);
+
+        let canvas = Canvas::default()
+            .x_bounds([0.0, 10.0])
+            .y_bounds([0.0, 100.0])
+            .paint(|ctx| {
+                bobber.draw(ctx, 0);
+            });
+
+        canvas.render(Rect::new(0, 0, 20, 20), &mut buffer);
+
+        for y in 0..20 {
+            for x in 0..20 {
+                let cell = &buffer[(x, y)];
+                // It should not draw the animation phases
+                assert_ne!(cell.symbol(), "(");
+                assert_ne!(cell.symbol(), ")");
+                assert_ne!(cell.symbol(), "<");
+                assert_ne!(cell.symbol(), ">");
+                assert_ne!(cell.symbol(), "{");
+                assert_ne!(cell.symbol(), "}");
+            }
+        }
+    }
 }

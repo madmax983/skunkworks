@@ -466,14 +466,14 @@ mod tests {
         assert_eq!(entity.id.as_deref(), Some("e1"));
 
         // Check props
-        match entity.props.get("health") {
-            Some(PropValue::Int(v)) => assert_eq!(*v, 100),
-            _ => panic!("Expected health to be Int(100)"),
-        }
-        match entity.props.get("is_boss") {
-            Some(PropValue::Bool(v)) => assert!(v),
-            _ => panic!("Expected is_boss to be Bool(true)"),
-        }
+        assert!(matches!(
+            entity.props.get("health"),
+            Some(PropValue::Int(100))
+        ));
+        assert!(matches!(
+            entity.props.get("is_boss"),
+            Some(PropValue::Bool(true))
+        ));
     }
 
     #[test]
@@ -498,11 +498,7 @@ mod tests {
         // Test Text
         let json = "\"hello\"";
         let val: PropValue = serde_json::from_str(json).unwrap();
-        if let PropValue::Text(s) = val {
-            assert_eq!(s, "hello");
-        } else {
-            panic!("Expected Text");
-        }
+        assert!(matches!(val, PropValue::Text(s) if s == "hello"));
     }
 
     #[test]
@@ -539,35 +535,19 @@ mod tests {
         assert!(matches!(p_usize, PropValue::Int(42)));
 
         let p_f32: PropValue = 42.42f32.into();
-        if let PropValue::Float(f) = p_f32 {
-            assert!((f - 42.42).abs() < 0.0001);
-        } else {
-            panic!("Expected float");
-        }
+        assert!(matches!(p_f32, PropValue::Float(f) if (f - 42.42).abs() < 0.0001));
 
         let p_f64: PropValue = 42.42f64.into();
-        if let PropValue::Float(f) = p_f64 {
-            assert!((f - 42.42).abs() < 0.0001);
-        } else {
-            panic!("Expected float");
-        }
+        assert!(matches!(p_f64, PropValue::Float(f) if (f - 42.42).abs() < 0.0001));
 
         let p_bool: PropValue = true.into();
         assert!(matches!(p_bool, PropValue::Bool(true)));
 
         let p_str: PropValue = "test".into();
-        if let PropValue::Text(s) = p_str {
-            assert_eq!(s, "test");
-        } else {
-            panic!("Expected Text");
-        }
+        assert!(matches!(p_str, PropValue::Text(s) if s == "test"));
 
         let p_string: PropValue = String::from("test").into();
-        if let PropValue::Text(s) = p_string {
-            assert_eq!(s, "test");
-        } else {
-            panic!("Expected Text");
-        }
+        assert!(matches!(p_string, PropValue::Text(s) if s == "test"));
     }
 
     #[test]

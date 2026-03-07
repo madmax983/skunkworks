@@ -337,6 +337,25 @@ mod tests {
     }
 
     #[test]
+    fn test_button_custom_block() {
+        use ratatui::widgets::Borders;
+
+        let block = Block::default().title("Custom").borders(Borders::BOTTOM);
+        let button = Button::new("Test").block(block);
+
+        let area = Rect::new(0, 0, 10, 3);
+        let mut buffer = Buffer::empty(area);
+        button.render(area, &mut buffer);
+
+        // We supplied a custom block with bottom border only and title "Custom".
+        // A block with borders=BOTTOM leaves the top open, but title is rendered at top left (0, 0).
+        let cell = &buffer[(0, 0)];
+        assert_eq!(cell.symbol(), "C");
+        let cell = &buffer[(1, 0)];
+        assert_eq!(cell.symbol(), "u");
+    }
+
+    #[test]
     fn test_button_all_states_and_styles() {
         let styles = vec![
             ButtonStyle::Primary,

@@ -1,7 +1,3 @@
-
-
-
-
 use anyhow::Result;
 use chrontext::app::App;
 use chrontext::blame::BlameAnalyzer;

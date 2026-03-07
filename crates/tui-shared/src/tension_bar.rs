@@ -188,6 +188,52 @@ mod tests {
     }
 
     #[test]
+    fn test_tension_bar_custom_block() {
+        let block = Block::default()
+            .title("Custom Tension")
+            .borders(Borders::BOTTOM);
+        let widget = TensionBar::new(0.5).block(block);
+
+        let width = 10;
+        let height = 10;
+        let backend = TestBackend::new(width, height);
+        let mut terminal = Terminal::new(backend).unwrap();
+
+        terminal
+            .draw(|f| {
+                let area = Rect::new(0, 0, width, height);
+                f.render_widget(widget, area);
+            })
+            .unwrap();
+
+        let buffer = terminal.backend().buffer();
+        // Custom title rendered at top left since borders=BOTTOM means no top border, rendering title at (0, 0)
+        assert_eq!(buffer[(0, 0)].symbol(), "C");
+        assert_eq!(buffer[(1, 0)].symbol(), "u");
+        assert_eq!(buffer[(2, 0)].symbol(), "s");
+    }
+
+    #[test]
+    fn test_tension_bar_zero_height() {
+        // Test early return when inner_area.height < 1
+        let widget = TensionBar::new(1.0); // full tension
+
+        let backend = TestBackend::new(10, 2); // only 2 height, borders take 2, inner height 0
+        let mut terminal = Terminal::new(backend).unwrap();
+
+        terminal
+            .draw(|f| {
+                let area = Rect::new(0, 0, 10, 2);
+                f.render_widget(widget, area);
+            })
+            .unwrap();
+
+        let buffer = terminal.backend().buffer();
+        // Since inner height is 0, no blocks should be drawn inside (y=0 and y=1 are borders)
+        assert_ne!(buffer[(1, 1)].symbol(), block::FULL);
+    }
+
+    #[test]
     fn test_render_partial_blocks() {
         // We have height = 8 blocks for inner height.
         // We test multiple fraction values to trigger each branch.
@@ -217,5 +263,26 @@ mod tests {
                 tension
             );
         }
+    }
+
+    #[test]
+    fn test_tension_bar_out_of_bounds_draw() {
+        // Trigger condition: draw_y >= inner_area.y + inner_area.height
+        // This is theoretically guarded by full_blocks < inner_area.height and math,
+        // but we can try to force it by having tension > 1.0 (though it's clamped to 1.0)
+        // Let's ensure the clamp works properly.
+        let buffer = render_tension(2.0, 10, 10);
+        // If tension is exactly 1.0, full_blocks = 8, inner_height = 8
+        // draw_y = inner_y + inner_height - 1 - y
+        // Highest y is 7.
+        // inner_y = 1, inner_height = 8.
+        // inner_y + inner_height = 9.
+        // Highest draw_y = 1 + 8 - 1 - 7 = 1.
+        // It should never draw outside the block borders (y=0 or y=9).
+
+        // Ensure top border is preserved (not overwritten by tension blocks)
+        assert_ne!(buffer[(1, 0)].symbol(), block::FULL);
+        // Ensure bottom border is preserved
+        assert_ne!(buffer[(1, 9)].symbol(), block::FULL);
     }
 }
