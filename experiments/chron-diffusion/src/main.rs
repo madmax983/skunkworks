@@ -13,7 +13,7 @@ use ratatui::{
     widgets::{Block, Borders, Paragraph},
     Terminal,
 };
-use std::{fs, io, time::Duration, path::PathBuf};
+use std::{fs, io, path::PathBuf, time::Duration};
 
 struct App {
     _path: PathBuf,
@@ -88,7 +88,9 @@ impl App {
                 // It might not exactly match indices due to how BlameAnalyzer returns hunks.
                 // Let's just find the first blame info that covers this line (roughly).
                 // Or simply pre-map lines to age_score.
-                let age_score = self.blame_info.iter()
+                let age_score = self
+                    .blame_info
+                    .iter()
                     .find(|b| b.line_number == line_idx + 1)
                     .map(|b| b.age_score)
                     .unwrap_or(0.5); // Default to middle
@@ -113,14 +115,17 @@ impl App {
         let area = frame.area();
 
         // Handle resize
-        if area.width as usize != self.terminal_width || area.height as usize != self.terminal_height {
+        if area.width as usize != self.terminal_width
+            || area.height as usize != self.terminal_height
+        {
             self.terminal_width = area.width as usize;
             self.terminal_height = area.height as usize;
 
             // Re-init GS grid
             self.gs = GrayScott::new(self.terminal_width, self.terminal_height);
             // Seed the center
-            self.gs.add_chemical(self.terminal_width / 2, self.terminal_height / 2, 1.0);
+            self.gs
+                .add_chemical(self.terminal_width / 2, self.terminal_height / 2, 1.0);
         }
 
         let mut lines = Vec::new();
