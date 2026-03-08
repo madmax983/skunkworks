@@ -571,30 +571,28 @@ impl State {
         });
 
         // --- Instance Data ---
-        let mut instances = crystal
-            .atoms
-            .iter()
-            .map(|atom| {
-                let color = if atom.is_dir {
-                    [0.0, 0.8, 0.8, 1.0]
-                } else {
-                    [0.8, 0.2, 0.2, 1.0]
-                };
-                let scale = if atom.is_dir {
-                    [0.4, 0.4, 0.4]
-                } else {
-                    [0.2, 0.2, 0.2]
-                };
+        // ⚡ Bolt Optimization: Pre-allocate capacity for both atoms and bonds to prevent Vec reallocations.
+        let mut instances = Vec::with_capacity(crystal.atoms.len() + crystal.bonds.len());
+        instances.extend(crystal.atoms.iter().map(|atom| {
+            let color = if atom.is_dir {
+                [0.0, 0.8, 0.8, 1.0]
+            } else {
+                [0.8, 0.2, 0.2, 1.0]
+            };
+            let scale = if atom.is_dir {
+                [0.4, 0.4, 0.4]
+            } else {
+                [0.2, 0.2, 0.2]
+            };
 
-                let pos = atom.position.to_vec3();
-                InstanceRaw {
-                    model_pos: [pos.x, pos.y, pos.z],
-                    color,
-                    scale,
-                    rotation: [0.0, 0.0, 0.0, 1.0], // Identity quaternion
-                }
-            })
-            .collect::<Vec<_>>();
+            let pos = atom.position.to_vec3();
+            InstanceRaw {
+                model_pos: [pos.x, pos.y, pos.z],
+                color,
+                scale,
+                rotation: [0.0, 0.0, 0.0, 1.0], // Identity quaternion
+            }
+        }));
 
         // Add bonds
         for (start_idx, end_idx) in &crystal.bonds {
