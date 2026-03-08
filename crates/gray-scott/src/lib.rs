@@ -96,6 +96,14 @@ impl GrayScott {
         &self.v
     }
 
+    pub fn u_mut(&mut self) -> &mut [f32] {
+        &mut self.u
+    }
+
+    pub fn v_mut(&mut self) -> &mut [f32] {
+        &mut self.v
+    }
+
     /// Converts a 2D coordinate `(x, y)` into a 1D index for the flat data vectors.
     ///
     /// This is required because the grid state is stored in a flat `Vec<f32>` to

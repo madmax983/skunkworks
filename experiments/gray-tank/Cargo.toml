@@ -1,0 +1,20 @@
+[package]
+name = "gray-tank"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+crossbeam-channel = "0.5"
+gray-scott = { path = "../../crates/gray-scott" }
+resonance-audio = { path = "../../crates/resonance-audio" }
+anyhow = "1.0"
+rayon = "1.5"
+
+[features]
+default = []
+audio = ["dep:cpal"]
+
+[dependencies.cpal]
+version = "0.15.2"
+optional = true
