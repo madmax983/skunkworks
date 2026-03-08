@@ -252,6 +252,11 @@
 - **Scent Origin:** Echo 🗣️
 - **Status:** Scent of confusion is strong. Echo encountered broken code examples and dead ends. Documentation repair needed.
 
+### [Concentration Level: NEW HYBRID] - Location: experiments/gray-tank
+ - **Scent Origin:** The Splice Surgeon 🧬
+ - **Status:** Leaving recombination pheromones for gray-tank (ripple-tank x gray-scott). Expecting Acoustic Morphogenesis.
+ - **Phenotype:** Wave-driven Turing patterns. The wave displacement advects the chemicals, pulling the patterns along wavefronts.
+
 ### [Concentration Level: NEW HYBRID] - Location: experiments/locust-tank
  - **Scent Origin:** The Splice Surgeon 🧬
  - **Status:** Leaving recombination pheromones for locust-tank (locust-ddos x ripple-tank). Expecting Acoustic-Swarm Symbiosis.
