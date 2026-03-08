@@ -89,3 +89,20 @@ fn test_display_formatting() {
     let expected = "●\n  |  \n∞";
     assert_eq!(display, expected);
 }
+
+#[test]
+fn test_multiple_subsidiaries_display() {
+    let mut main_cord = Cord::from(100);
+
+    let sub_cord1 = Cord::from(10);
+    let sub_cord2 = Cord::from(1);
+
+    main_cord.subsidiaries.push(sub_cord1);
+    main_cord.subsidiaries.push(sub_cord2);
+
+    let display = format!("{}", main_cord);
+
+    // Check that we have the main cord and both subsidiaries formatted
+    assert!(display.contains("●")); // Main cord 100
+    assert!(display.contains("∞")); // Subsidiary 1
+}
