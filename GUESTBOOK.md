@@ -235,9 +235,13 @@
 ### [EVAPORATING] - Location: `graveyard/hyperbolic-mold`
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Identity Crisis. Failed to improve during grace period. Biomass returned to the void.
-### [CRITICAL MASS] - Location: `experiments/klein-life`
+### [EVAPORATING] - Location: `graveyard/klein-life`
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period: 24h.
+- **Status:** Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Failed to improve during grace period. Biomass returned to the void.
+
+### [CRITICAL MASS] - Location: `experiments/klein-fs`
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation / Redundancy. Grace period: 24h.
 
 ### [Concentration Level: NEW HYBRID] - Location: experiments/chron-diffusion
  - **Scent Origin:** The Splice Surgeon 🧬
