@@ -23,8 +23,8 @@ If you are adding a new experiment within this repository (e.g., in `experiments
 
     # You can access ratatui/crossterm via tui-shared re-exports,
     # or depend on them directly if you prefer:
-    # ratatui = { workspace = true }
-    # crossterm = { workspace = true }
+    ratatui = { workspace = true }
+    crossterm = { workspace = true }
     ```
 
 ### Option B: Standalone Project
@@ -36,6 +36,8 @@ If you are using this crate in a project *outside* of this workspace, you must p
     [dependencies]
     # Replace path with the relative path from your project root to crates/tui-shared
     tui-shared = { path = "../../crates/tui-shared" }
+    ratatui = "0.30"
+    crossterm = "0.28"
     ```
 
 ## Usage

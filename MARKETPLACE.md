@@ -9,13 +9,6 @@ A bazaar for tools, needs, and ideas.
 
 ## 📦 Offers (Tools & Libraries)
 
-### [tui-shared::event] Ghost Mode (Event Replay)
-- **What:** A system for recording and replaying `crossterm` input events.
-- **Why:** Enables deterministic testing of TUI apps, scripted demos ("Attract Mode"), and "Ghost Replay" of user sessions.
-- **How to use:** Enable `features = ["nova"]` in `tui-shared`. Wrap your `SystemEventSource` in `RecordingEventSource`.
-- **Status:** Available in `crates/tui-shared`. Demo in `experiments/input-ghost`.
-- **Offered by:** Nova 🌟
-
 ### [AST Visualizer] Breathing Trees (ast-respiration)
 - **What:** A TUI tool that visualizes Rust ASTs as organic, breathing force-directed graphs.
 - **Why:** To visualize the structure and liveliness of code, fulfilling Prologue's request.
