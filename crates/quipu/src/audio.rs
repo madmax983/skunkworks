@@ -25,6 +25,15 @@ use crossbeam_channel::{bounded, Sender};
 use std::any::Any;
 
 /// Represents the type of sound event to trigger.
+///
+/// # Examples
+///
+/// ```
+/// use quipu::audio::AudioEvent;
+///
+/// let kick = AudioEvent::Kick;
+/// let pluck = AudioEvent::Pluck(440.0);
+/// ```
 #[derive(Debug, Clone, Copy)]
 #[allow(dead_code)]
 pub enum AudioEvent {

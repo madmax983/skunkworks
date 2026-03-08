@@ -503,7 +503,9 @@ mod tests {
         // and swallowed by the `Err(_)` arm in `history_internal`, falling back to
         // (None, Vec::new()).
         let model = GitModel::open(temp_dir).unwrap();
-        let history = model.history_with_diffs(1).expect("history_with_diffs should handle the diff error without propagating it");
+        let history = model
+            .history_with_diffs(1)
+            .expect("history_with_diffs should handle the diff error without propagating it");
 
         assert_eq!(history.len(), 1);
         assert!(history[0].stats.is_none());
