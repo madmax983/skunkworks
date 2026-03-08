@@ -98,11 +98,9 @@ pub fn compile(
                             // We need the string content inside the braces
                             let content = definition_body.into_inner().next().unwrap().as_str();
 
-                            // Wrap content in a strand definition for the compiler
-                            let wrapped_content =
-                                format!("strand rune_{} {{ {} }}", custom_runes.len(), content);
+                            // The content already defines a strand (e.g., `strand alpha { ... }`)
                             let compiled_def =
-                                crate::compiler::compile(&wrapped_content, base_path)?;
+                                crate::compiler::compile(content, base_path)?;
 
                             if dna.is_none() {
                                 dna = Some(Dna {
