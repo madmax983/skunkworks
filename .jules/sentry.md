@@ -54,3 +54,6 @@
 **2024-03-08 - Testing Missing Git Objects in git2**
 **Learning:** To simulate a missing tree object in git to test error fallback paths (e.g. failing to compute a diff for a commit), you can compute the object path manually via `.git/objects/<first_2_hex>/<rest_of_hex>` and delete it using `std::fs::remove_file`. Be aware that standard `.unwrap()` chains on `git2` functions might then panic, so ensure the system under test handles `Err` safely.
 **Action:** Use manual object deletion in a temporary `git2::Repository` to test robustness and fallback logic for corrupted or sparse repositories without panicking the test suite.
+**[Coverage: Nested Struct Display]
+**Learning:** Display formatting logic for nested structs (e.g. tree structures like `Cord` with `subsidiaries`) often lacks complete line coverage if tests only assert on single items or empty lists. Testing with at least two items ensures the `idx < len - 1` inter-item formatting paths (like adding blank lines between them) are executed.
+**Action:** Always write a test case with two or more nested elements when verifying display output for recursive or hierarchical structs to ensure separator logic is covered.
