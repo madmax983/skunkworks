@@ -1,0 +1,20 @@
+[package]
+name = "chaos-tank"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rayon = "1.8"
+crossbeam-channel = "0.5"
+anyhow = { workspace = true }
+rand = { workspace = true }
+resonance-audio = { workspace = true }
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = []
+audio = ["dep:cpal"]
