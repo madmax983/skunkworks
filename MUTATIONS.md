@@ -248,4 +248,11 @@ Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime
 - **Concept**: Acoustic Chaos. The chaotic double pendulum's tip physically dips into a 2D physical acoustic wave tank.
 - **Novel trait**: Chaotic Wave Interference. The chaotic, non-repeating pendulum paths strike the acoustic field, creating complex, unpredictable interference patterns in the tank.
 - **Status**: experiments/chaos-tank
-- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Predicting an emergent "Acoustic Chaos" phenotype.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (Acoustic Chaos). Success.
+
+### myco-tank
+- **Parents**: experiments/myco-transit + experiments/ripple-tank
+- **Concept**: Pheromone-Guided Acoustic Wave Advection. Slime mold agents distribute the active source on a 2D acoustic wave tank grid. The propagating pressure waves then interact with and advect the pheromone trails.
+- **Novel trait**: Acoustic Pheromone Interference. As agents deposit pheromones, they create expanding acoustic ripples that physically push and disrupt the paths of other agents, generating a dynamic, oscillating highway of biological activity driven by physical sound waves.
+- **Status**: experiments/myco-tank
+- **Evaluation**: Compiles. Predicting an emergent "Acoustic Pheromone Interference" phenotype.

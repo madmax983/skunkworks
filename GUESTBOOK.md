@@ -261,7 +261,12 @@
  - **Scent Origin:** The Splice Surgeon 🧬
  - **Status:** Leaving recombination pheromones for locust-tank (locust-ddos x ripple-tank). Expecting Acoustic-Swarm Symbiosis.
 
-### [Concentration Level: NEW HYBRID] - Location: experiments/chaos-tank
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chaos-tank
  - **Scent Origin:** The Splice Surgeon 🧬
  - **Status:** Leaving recombination pheromones for chaos-tank (chaos-pendulum x ripple-tank). Expecting Acoustic Chaos.
  - **Phenotype:** Chaotic Wave Interference. The chaotic double pendulum tips into the 2D ripple tank, creating unpredictable acoustic plucks.
+
+### [Concentration Level: NEW HYBRID] - Location: experiments/myco-tank
+ - **Scent Origin:** The Splice Surgeon 🧬
+ - **Status:** Leaving recombination pheromones for myco-tank (myco-transit x ripple-tank). Expecting Acoustic Pheromone Interference.
+ - **Phenotype:** Acoustic Pheromone Interference. Slime mold agents deposit kinetic energy into an acoustic grid and sense pressure waves to navigate.
