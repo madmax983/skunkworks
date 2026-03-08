@@ -33,7 +33,13 @@ async fn main() {
     let _stream: Option<()> = None;
 
     let mut model = if cfg!(not(feature = "audio")) || _stream.is_none() {
-        Some(AudioModel::new(GRID_WIDTH, GRID_HEIGHT, cmd_rx, snap_tx, None))
+        Some(AudioModel::new(
+            GRID_WIDTH,
+            GRID_HEIGHT,
+            cmd_rx,
+            snap_tx,
+            None,
+        ))
     } else {
         None
     };
@@ -51,11 +57,26 @@ async fn main() {
     let center = Vec2::new(screen_width() / 2.0, screen_height() / 2.0);
 
     // Center top anchor
-    let root = sys.add_node(Vec2::new(center.x, center.y - 200.0), 1.0, true, "Root".to_string());
+    let root = sys.add_node(
+        Vec2::new(center.x, center.y - 200.0),
+        1.0,
+        true,
+        "Root".to_string(),
+    );
 
     // Double pendulum nodes
-    let node1 = sys.add_node(Vec2::new(center.x + 100.0, center.y - 100.0), 10.0, false, "N1".to_string());
-    let node2 = sys.add_node(Vec2::new(center.x + 150.0, center.y), 5.0, false, "N2".to_string());
+    let node1 = sys.add_node(
+        Vec2::new(center.x + 100.0, center.y - 100.0),
+        10.0,
+        false,
+        "N1".to_string(),
+    );
+    let node2 = sys.add_node(
+        Vec2::new(center.x + 150.0, center.y),
+        5.0,
+        false,
+        "N2".to_string(),
+    );
 
     sys.add_link(root, node1, 150.0);
     sys.add_link(node1, node2, 120.0);
@@ -94,14 +115,20 @@ async fn main() {
         // If moving fast, it plunges and plucks
         if tip_speed > 100.0 {
             // Map to grid coordinates
-            let grid_x = ((tip_pos_after.x - offset_x) / TANK_DRAW_SIZE * GRID_WIDTH as f32) as isize;
-            let grid_y = ((tip_pos_after.y - offset_y) / TANK_DRAW_SIZE * GRID_HEIGHT as f32) as isize;
+            let grid_x =
+                ((tip_pos_after.x - offset_x) / TANK_DRAW_SIZE * GRID_WIDTH as f32) as isize;
+            let grid_y =
+                ((tip_pos_after.y - offset_y) / TANK_DRAW_SIZE * GRID_HEIGHT as f32) as isize;
 
-            if grid_x >= 0 && grid_x < GRID_WIDTH as isize && grid_y >= 0 && grid_y < GRID_HEIGHT as isize {
+            if grid_x >= 0
+                && grid_x < GRID_WIDTH as isize
+                && grid_y >= 0
+                && grid_y < GRID_HEIGHT as isize
+            {
                 // Determine pluck strength based on speed, maxing out at 1.0
                 let strength = (tip_speed / 2000.0).clamp(0.0, 1.0);
                 if strength > 0.05 {
-                     let _ = cmd_tx.send(AudioCommand::Pluck {
+                    let _ = cmd_tx.send(AudioCommand::Pluck {
                         x: grid_x as usize,
                         y: grid_y as usize,
                         strength,
@@ -152,7 +179,14 @@ async fn main() {
         );
 
         // Draw tank borders
-        draw_rectangle_lines(offset_x, offset_y, TANK_DRAW_SIZE, TANK_DRAW_SIZE, 2.0, GRAY);
+        draw_rectangle_lines(
+            offset_x,
+            offset_y,
+            TANK_DRAW_SIZE,
+            TANK_DRAW_SIZE,
+            2.0,
+            GRAY,
+        );
 
         // Draw Pendulum
         for link in &sys.links {
@@ -163,7 +197,11 @@ async fn main() {
 
         for node in &sys.nodes {
             let color = if node.fixed { RED } else { YELLOW };
-            let size = if node.fixed { 8.0 } else { (node.mass * 2.0).clamp(5.0, 20.0) };
+            let size = if node.fixed {
+                8.0
+            } else {
+                (node.mass * 2.0).clamp(5.0, 20.0)
+            };
             draw_circle(node.pos.x, node.pos.y, size, color);
         }
 
@@ -174,10 +212,23 @@ async fn main() {
             20.0,
             WHITE,
         );
-        draw_text("Drag the yellow pendulum tip (L-Click) into the box.", 10.0, 45.0, 20.0, GRAY);
+        draw_text(
+            "Drag the yellow pendulum tip (L-Click) into the box.",
+            10.0,
+            45.0,
+            20.0,
+            GRAY,
+        );
 
-        let avg_pressure: f32 = current_snapshot.iter().map(|v| v.abs()).sum::<f32>() / (GRID_WIDTH * GRID_HEIGHT) as f32;
-        draw_text(&format!("Tank Energy: {:.5}", avg_pressure), 10.0, 70.0, 20.0, if avg_pressure > 0.01 { GREEN } else { DARKGRAY });
+        let avg_pressure: f32 = current_snapshot.iter().map(|v| v.abs()).sum::<f32>()
+            / (GRID_WIDTH * GRID_HEIGHT) as f32;
+        draw_text(
+            &format!("Tank Energy: {:.5}", avg_pressure),
+            10.0,
+            70.0,
+            20.0,
+            if avg_pressure > 0.01 { GREEN } else { DARKGRAY },
+        );
 
         next_frame().await
     }

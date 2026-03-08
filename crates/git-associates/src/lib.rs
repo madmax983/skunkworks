@@ -403,4 +403,110 @@ mod tests {
             "Files should be empty when compute_diffs is false"
         );
     }
+
+    #[test]
+    fn test_hunk_extraction_and_diffs() {
+        let temp_dir = std::env::temp_dir().join("git-associates-hunk-test");
+        let _ = std::fs::remove_dir_all(&temp_dir);
+        std::fs::create_dir_all(&temp_dir).unwrap();
+        let repo = Repository::init(&temp_dir).unwrap();
+
+        let file_path = temp_dir.join("context.txt");
+        std::fs::write(&file_path, "line1\nline2\nline3\nline4\nline5\n").unwrap();
+
+        let mut index = repo.index().unwrap();
+        index.add_path(std::path::Path::new("context.txt")).unwrap();
+        let oid = index.write_tree().unwrap();
+        let tree = repo.find_tree(oid).unwrap();
+        let sig = Signature::now("Test", "test@example.com").unwrap();
+
+        let parent_commit = repo
+            .commit(Some("HEAD"), &sig, &sig, "Initial commit", &tree, &[])
+            .unwrap();
+
+        // Now modify to have context, addition, and deletion
+        std::fs::write(
+            &file_path,
+            "line1\nmodified2\nline3\nline4\nnew line\nline5\n",
+        )
+        .unwrap();
+
+        index.add_path(std::path::Path::new("context.txt")).unwrap();
+        let oid = index.write_tree().unwrap();
+        let tree = repo.find_tree(oid).unwrap();
+        let parent = repo.find_commit(parent_commit).unwrap();
+
+        repo.commit(Some("HEAD"), &sig, &sig, "Second commit", &tree, &[&parent])
+            .unwrap();
+
+        let model = GitModel::open(temp_dir).unwrap();
+        let history = model.history_with_diffs(1).unwrap();
+
+        let commit = &history[0];
+        assert_eq!(commit.files.len(), 1);
+        let file = &commit.files[0];
+        assert_eq!(file.path, "context.txt");
+        assert_eq!(file.insertions, 2);
+        assert_eq!(file.deletions, 1);
+
+        let hunk = &file.hunks[0];
+        // We should have context lines, added, and removed lines
+        let mut has_context = false;
+        let mut has_added = false;
+        let mut has_removed = false;
+
+        for line in &hunk.lines {
+            match line {
+                LineChange::Context(_) => has_context = true,
+                LineChange::Added(_) => has_added = true,
+                LineChange::Removed(_) => has_removed = true,
+            }
+        }
+
+        assert!(has_context);
+        assert!(has_added);
+        assert!(has_removed);
+    }
+
+    #[test]
+    fn test_history_with_diffs_error_fallback() {
+        // By deleting a tree object from git, we can force a failure in diff computation
+        let temp_dir = std::env::temp_dir().join("git-associates-err-test");
+        let _ = std::fs::remove_dir_all(&temp_dir);
+        std::fs::create_dir_all(&temp_dir).unwrap();
+        let repo = Repository::init(&temp_dir).unwrap();
+
+        let file_path = temp_dir.join("test.txt");
+        std::fs::write(&file_path, "test").unwrap();
+
+        let mut index = repo.index().unwrap();
+        index.add_path(std::path::Path::new("test.txt")).unwrap();
+        let oid = index.write_tree().unwrap();
+        let tree = repo.find_tree(oid).unwrap();
+        let sig = Signature::now("Test", "test@example.com").unwrap();
+
+        let _commit_oid = repo
+            .commit(Some("HEAD"), &sig, &sig, "Initial commit", &tree, &[])
+            .unwrap();
+
+        // Remove the tree object to cause diff generation to fail
+        let tree_str = tree.id().to_string();
+        let tree_path = temp_dir
+            .join(".git")
+            .join("objects")
+            .join(&tree_str[0..2])
+            .join(&tree_str[2..]);
+        std::fs::remove_file(tree_path).ok(); // ok if it fails but hopefully it doesn't
+
+        // When we fetch the history, `commit.tree()` (called in `get_commit_diff`)
+        // will fail because the tree object is missing. The error should be caught
+        // and swallowed by the `Err(_)` arm in `history_internal`, falling back to
+        // (None, Vec::new()).
+        let model = GitModel::open(temp_dir).unwrap();
+        let history = model.history_with_diffs(1).expect("history_with_diffs should handle the diff error without propagating it");
+
+        assert_eq!(history.len(), 1);
+        assert!(history[0].stats.is_none());
+        assert!(history[0].files.is_empty());
+    }
 }

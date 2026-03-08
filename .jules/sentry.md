@@ -51,3 +51,6 @@
 **[TUI Shared Code Coverage Improvement]**
 **Learning:** cargo-llvm-cov reveals significant gaps in testing for seemingly simple modules like enum mapping arrays, UI component animations, and implicit Drop trait implementations. Also, `clippy` catches tricky things like `f32::consts::PI` representations embedded in tests! When mapping arrays like fractions for a progress bar, loop-based tests are more thorough.
 **Action:** Next time, always start with `cargo llvm-cov` to establish a baseline, add tests iteratively to cover all branches, and verify with `clippy --all-targets --all-features` to ensure tests themselves are idiomatically correct before considering the task complete.
+**2024-03-08 - Testing Missing Git Objects in git2**
+**Learning:** To simulate a missing tree object in git to test error fallback paths (e.g. failing to compute a diff for a commit), you can compute the object path manually via `.git/objects/<first_2_hex>/<rest_of_hex>` and delete it using `std::fs::remove_file`. Be aware that standard `.unwrap()` chains on `git2` functions might then panic, so ensure the system under test handles `Err` safely.
+**Action:** Use manual object deletion in a temporary `git2::Repository` to test robustness and fallback logic for corrupted or sparse repositories without panicking the test suite.
