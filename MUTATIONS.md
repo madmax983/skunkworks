@@ -234,11 +234,18 @@ Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime
 - **Concept**: Acoustic Morphogenesis. The 2D physical acoustic wave tank simulation creates physical displacement (pressure) that affects the diffusion of chemicals (U and V) in the Gray-Scott model.
 - **Novel trait**: Wave-driven Turing patterns. The wave displacement advects the chemicals, meaning the standing waves or ripples create flow that physically pulls the patterns along the wavefronts, altering the morphological patterns and disrupting symmetrical diffusion.
 - **Status**: experiments/gray-tank
-- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior confirmed (Acoustic Morphogenesis). Success.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (Acoustic Morphogenesis). Success.
 
 ### locust-tank
 - **Parents**: experiments/locust-ddos + experiments/ripple-tank
 - **Concept**: Acoustic-Swarm Symbiosis. The swarm intelligence agents collide with boundaries to pluck a 2D physical wave tank grid, and the acoustic pressure waves physically alter the swarm's trajectory.
 - **Novel trait**: Acoustic Swarm Foraging. The physical waves restructure the swarm into resonant clusters, treating sound pressure as a repulsive field.
 - **Status**: experiments/locust-tank
-- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior confirmed (Acoustic Swarm Foraging). Success.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (Acoustic Swarm Foraging). Success.
+
+### chaos-tank
+- **Parents**: experiments/chaos-pendulum + experiments/ripple-tank
+- **Concept**: Acoustic Chaos. The chaotic double pendulum's tip physically dips into a 2D physical acoustic wave tank.
+- **Novel trait**: Chaotic Wave Interference. The chaotic, non-repeating pendulum paths strike the acoustic field, creating complex, unpredictable interference patterns in the tank.
+- **Status**: experiments/chaos-tank
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Predicting an emergent "Acoustic Chaos" phenotype.
