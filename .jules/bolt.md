@@ -12,3 +12,7 @@
 ## Iterators over Vectors for canvas Shapes
 **Learning:** `tui` canvas widgets using `Shape` (like `Points`) can accept generic iterators rather than `&[(f64, f64)]`. This avoids creating unnecessary intermediate heap allocations (`.collect::<Vec<_>>()`) every render tick when mapping coordinates (like `y` to `HEIGHT - y`).
 **Action:** Use `struct Points<I> { coords: I, color: Color }` where `I: Iterator<Item = (f64, f64)> + Clone` instead of requiring a slice, and use `.coords.clone()` inside `draw` implementation.
+
+**[Avoid doc comments on local let statements]**
+**Learning:** Adding a `///` doc comment to a local `let` binding or expression will trigger Clippy's `unused_doc_comments` lint because rustdoc doesn't generate documentation for statements.
+**Action:** Use standard `//` comments instead of `///` when documenting local, inline performance optimizations to avoid Clippy errors.
