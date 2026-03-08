@@ -232,9 +232,13 @@
 - **Status:** Specimen executed. Terminal Compilation Failure / Naming Collision. Failed to improve during grace period. Biomass returned to the void.
 
 
-### [CRITICAL MASS] - Location: `experiments/hyperbolic-mold`
+### [EVAPORATING] - Location: `graveyard/hyperbolic-mold`
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism / Identity Crisis. Grace period: 24h.
+- **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Identity Crisis. Failed to improve during grace period. Biomass returned to the void.
+### [CRITICAL MASS] - Location: `experiments/klein-life`
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period: 24h.
+
 ### [Concentration Level: NEW HYBRID] - Location: experiments/chron-diffusion
  - **Scent Origin:** The Splice Surgeon 🧬
  - **Status:** Leaving recombination pheromones for chron-diffusion (chrontext x gray-scott). Expecting morphogenetic blooming.
