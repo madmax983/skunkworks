@@ -110,6 +110,16 @@ impl Knot {
     /// - `●`: Simple Knot
     /// - `≡N`: Long Knot (where N is the value)
     /// - `∞`: Figure-Eight Knot
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use quipu::Knot;
+    ///
+    /// assert_eq!(Knot::Simple.symbol(), "●");
+    /// assert_eq!(Knot::Long(5).symbol(), "≡5");
+    /// assert_eq!(Knot::FigureEight.symbol(), "∞");
+    /// ```
     pub fn symbol(&self) -> String {
         match self {
             Knot::Simple => "●".to_string(),
@@ -218,6 +228,15 @@ impl Cord {
     /// Calculates the total integer value of the cord.
     ///
     /// Iterates through the clusters, summing the knot values and applying the power-of-10 multiplier.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use quipu::Cord;
+    ///
+    /// let cord = Cord::from(42);
+    /// assert_eq!(cord.value(), 42);
+    /// ```
     pub fn value(&self) -> u64 {
         let mut total: u64 = 0;
         let mut multiplier: u64 = 1;
@@ -479,6 +498,15 @@ pub struct Quipu {
 
 impl Quipu {
     /// Creates a new, empty Quipu.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use quipu::Quipu;
+    ///
+    /// let q = Quipu::new();
+    /// assert_eq!(q.cords.len(), 0);
+    /// ```
     pub fn new() -> Self {
         Self::default()
     }
