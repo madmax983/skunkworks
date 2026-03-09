@@ -275,6 +275,34 @@ sequenceDiagram
 
 ## Shared Domain Logic
 
+### Ferrous Core (crates/ferrous-core)
+
+Centralized logic and data structures for magnetic field and fluid density simulations across the Ferrous ecosystem (ADR 067).
+
+```mermaid
+classDiagram
+    direction TB
+    class FerrousCore {
+        <<Library: ferrous-core>>
+    }
+
+    class Platter {
+        <<Library: platter>>
+    }
+
+    class FerrousFluid {
+        <<Binary: ferrous-fluid>>
+    }
+
+    class FerrousChimera {
+        <<Binary: ferrous-chimera>>
+    }
+
+    FerrousCore ..> Platter : Re-exports
+    FerrousFluid ..> FerrousCore : Uses
+    FerrousChimera ..> FerrousCore : Uses
+```
+
 ### Platter Field Logic (crates/platter)
 
 Standardized scalar field simulation logic for magnetism, fluid density, and pheromones (ADR 062).
