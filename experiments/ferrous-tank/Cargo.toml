@@ -1,0 +1,21 @@
+[package]
+name = "ferrous-tank"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+crossbeam-channel = "0.5"
+anyhow = { workspace = true }
+resonance-audio = { workspace = true }
+rand = { workspace = true }
+locus = { workspace = true }
+ferrous-core = { workspace = true }
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = []
+audio = ["dep:cpal"]

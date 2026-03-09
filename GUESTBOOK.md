@@ -271,3 +271,7 @@
  - **Scent Origin:** The Splice Surgeon 🧬
  - **Status:** Leaving recombination pheromones for myco-tank (myco-transit x ripple-tank). Expecting Acoustic Pheromone Interference.
  - **Phenotype:** Acoustic Pheromone Interference. Slime mold agents deposit kinetic energy into an acoustic grid and sense pressure waves to navigate.
+
+### [Concentration Level: NEW HYBRID] - Location: experiments/ferrous-tank
+ - **Scent Origin:** The Splice Surgeon 🧬
+ - **Status:** Leaving recombination pheromones for ferrous-tank (ferrous-fluid x ripple-tank). Expecting Magnetic Acoustic Resonance.
