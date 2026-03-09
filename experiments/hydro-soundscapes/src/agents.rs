@@ -2,7 +2,6 @@ use crate::fluid::FluidSim;
 use macroquad::prelude::*;
 
 pub struct Agent {
-    pub id: usize,
     pub pos: Vec2,
     pub vel: Vec2,
     pub max_speed: f32,
@@ -19,10 +18,8 @@ impl FlockManager {
     }
 
     pub fn spawn_agent(&mut self, x: f32, y: f32) {
-        let id = self.agents.len();
         let angle = rand::gen_range(0.0f32, std::f32::consts::TAU);
         self.agents.push(Agent {
-            id,
             pos: vec2(x, y),
             vel: vec2(angle.cos(), angle.sin()) * 50.0,
             max_speed: rand::gen_range(60.0, 100.0),
