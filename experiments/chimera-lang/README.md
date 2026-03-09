@@ -259,7 +259,7 @@ cargo run -p chimera-lang --release -- --input experiments/chimera-lang/sample.d
 cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples/genesis.chs
 
 # Headless mode (no TUI)
-cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples/genesis.chs --headless
+cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples/genesis.chs -- --headless
 ```
 
 ## Nova Features
@@ -342,6 +342,9 @@ fn main() {
 ```
 
 See `examples/story_demo.rs` for a full example of programmatic usage:
+
+> **REQUIRES FEATURE NOVA**
+
 ```bash
 cargo run -p chimera-lang --example story_demo
 ```
