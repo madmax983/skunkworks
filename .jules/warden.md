@@ -1,3 +1,6 @@
 **2025-01-20 - [Clamp Scissor Dimensions]**
 **Threat:** The `intersect_rect` function in `experiments/chimera-tardis/src/safe_gl.rs` allowed negative width or height values to be passed to saturating addition, potentially resulting in underflow/overflow or negative dimensions being passed to `glScissor`, which could invoke Undefined Behavior depending on driver implementation.
 **Defense:** Explicitly clamped `w` and `h` inputs via `.max(0)` before calculating the intersection bounds to ensure mathematical soundness and prevent negative `glScissor` arguments.
+**2025-05-18 - [Clamp Scissor Dimensions]**
+**Threat:** The `intersect_rect` and `with_scissor` functions in `experiments/impossible-explorer/src/main.rs`, `graveyard/alloc-tardis/src/safe_gl.rs` and `graveyard/trace-tardis/src/safe_gl.rs` allowed negative width or height values to be passed to saturating addition, potentially resulting in underflow/overflow or negative dimensions being passed to `glScissor`, which could invoke Undefined Behavior depending on driver implementation.
+**Defense:** Explicitly clamped `w` and `h` inputs via `.max(0)` before calculating the intersection bounds to ensure mathematical soundness and prevent negative `glScissor` arguments.
