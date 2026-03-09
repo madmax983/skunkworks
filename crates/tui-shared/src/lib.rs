@@ -64,11 +64,11 @@
 //! }
 //! ```
 
-pub mod bobber;
-pub mod button;
-pub mod log_list;
+pub(crate) mod bobber;
+pub(crate) mod button;
+pub(crate) mod log_list;
 pub mod semantic;
-pub mod tension_bar;
+pub(crate) mod tension_bar;
 
 pub use bobber::Bobber;
 pub use button::{Button, ButtonState, ButtonStyle};

@@ -63,7 +63,7 @@ use std::fmt;
 use std::ops::{Add, Sub};
 
 #[cfg(feature = "audio")]
-pub mod audio;
+pub(crate) mod audio;
 
 /// Represents a single knot on a Quipu cord.
 ///

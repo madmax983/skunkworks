@@ -45,7 +45,7 @@
 //! }
 //! ```
 
-pub mod physics;
+pub(crate) mod physics;
 
 pub use physics::Izhikevich;
 
