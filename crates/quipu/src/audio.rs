@@ -50,6 +50,19 @@ pub enum AudioEvent {
 /// The main engine for processing and playing audio.
 ///
 /// It handles the audio stream and processes incoming `AudioEvent`s.
+///
+/// ## Examples
+///
+/// ```no_run
+/// use quipu::audio::{AudioEngine, AudioEvent};
+///
+/// // Create the engine
+/// let engine = AudioEngine::new().expect("Failed to initialize audio");
+/// let sender = engine.get_sender();
+///
+/// // Trigger a kick drum sound
+/// sender.send(AudioEvent::Kick).unwrap();
+/// ```
 pub struct AudioEngine {
     _stream: Option<Box<dyn Any>>, // Keep stream alive
     tx: Sender<AudioEvent>,
