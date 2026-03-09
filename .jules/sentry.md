@@ -57,3 +57,6 @@
 **[Coverage: Nested Struct Display]
 **Learning:** Display formatting logic for nested structs (e.g. tree structures like `Cord` with `subsidiaries`) often lacks complete line coverage if tests only assert on single items or empty lists. Testing with at least two items ensures the `idx < len - 1` inter-item formatting paths (like adding blank lines between them) are executed.
 **Action:** Always write a test case with two or more nested elements when verifying display output for recursive or hierarchical structs to ensure separator logic is covered.
+**2023-11-20 - Unreachable Code in Math Normalization**
+**Learning:** Some floating-point boundary checks in vector limits (e.g. `sq_len.is_finite()` but `sq_len.sqrt() == 0.0`) are impossible to reach via typical operations due to `f32` underflow/overflow bounds (the `else { Self::zero() }` on `limit`).
+**Action:** When Sentry encounters mathematically unreachable `else` branches in strict floating-point comparisons (`> 0.0`), document them in the PR instead of wasting hours trying to find an impossible `NaN` injection path.

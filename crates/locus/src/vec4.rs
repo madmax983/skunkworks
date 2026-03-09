@@ -858,4 +858,52 @@ mod tests {
         let proj_behind = v_behind.project_to_3d(camera_w);
         assert!((proj_behind.x - 20.0).abs() < 1e-6);
     }
+    #[test]
+    fn test_vec4_normalize_nan() {
+        let v = Vec4::new(f32::INFINITY, 1.0, 1.0, 1.0);
+        let n = v.normalize();
+        assert_eq!(n.x, 0.0);
+        assert_eq!(n.y, 0.0);
+        assert_eq!(n.z, 0.0);
+        assert_eq!(n.w, 0.0);
+    }
+    #[test]
+    fn test_vec4_project_to_3d_non_finite() {
+        let camera_w = 10.0;
+        let v_inf = Vec4::new(f32::INFINITY, 1.0, 1.0, 0.0);
+        let proj_inf = v_inf.project_to_3d(camera_w);
+        assert_eq!(proj_inf.x, f32::MAX);
+
+        let v_neg_inf = Vec4::new(f32::NEG_INFINITY, 1.0, 1.0, 0.0);
+        let proj_neg_inf = v_neg_inf.project_to_3d(camera_w);
+        assert_eq!(proj_neg_inf.x, f32::MIN);
+
+        let v_nan = Vec4::new(f32::NAN, 1.0, 1.0, 0.0);
+        let proj_nan = v_nan.project_to_3d(camera_w);
+        assert_eq!(proj_nan.x, 0.0);
+    }
+
+    #[test]
+    fn test_vec4_math_ops_missing() {
+        let mut v = Vec4::new(1.0, 2.0, 3.0, 4.0);
+        v += Vec4::new(1.0, 1.0, 1.0, 1.0);
+        assert_eq!(v.x, 2.0);
+        assert_eq!(v.y, 3.0);
+        assert_eq!(v.z, 4.0);
+        assert_eq!(v.w, 5.0);
+
+        let v2 = Vec4::new(1.0, 1.0, 1.0, 1.0);
+        let sub = v - v2;
+        assert_eq!(sub.x, 1.0);
+        assert_eq!(sub.y, 2.0);
+        assert_eq!(sub.z, 3.0);
+        assert_eq!(sub.w, 4.0);
+
+        // Ensure Div works
+        let div = sub / 2.0;
+        assert_eq!(div.x, 0.5);
+        assert_eq!(div.y, 1.0);
+        assert_eq!(div.z, 1.5);
+        assert_eq!(div.w, 2.0);
+    }
 }
