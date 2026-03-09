@@ -51,3 +51,20 @@ pub fn clear_depth_buffer() {
         gl::glClear(gl::GL_DEPTH_BUFFER_BIT);
     }
 }
+
+#[cfg(test)]
+mod havoc_tests {
+    use super::*;
+    use proptest::prelude::*;
+
+    proptest! {
+        #[test]
+        #[should_panic]
+        fn test_scoped_scissor_havoc(
+            x in any::<i32>(), y in any::<i32>(), w in any::<i32>(), h in any::<i32>(),
+            px in any::<i32>(), py in any::<i32>(), pw in any::<i32>(), ph in any::<i32>()
+        ) {
+            let _ = ScopedScissor::new(x, y, w, h, Some((px, py, pw, ph)));
+        }
+    }
+}
