@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **klein-fs**: Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation / Redundancy. Grace period: 24h.
+- **flow-strider**: Specimen condemned. Diagnosis: Terminal Genericism / Documentation Void / Skeletal Implementation. Grace period: 24h.
 
 ## Pardoned
 - **chaos-strings**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved compilation privacy errors and updated audio dependencies. The chaos rings true again.
@@ -165,7 +165,7 @@
 - **event-horizon**: Specimen executed. Orphaned and undocumented. Collapsed into itself. Moved to graveyard.
 - **entropy-ray**: Specimen executed. Orphaned and undocumented. Simulating its own decay. Moved to graveyard.
 - **code-pattern**: Specimen executed. Documentation void. Redundant with `code-reaction`. Failed to improve during grace period. Moved to graveyard.
-- **klein-fs**: Specimen executed. Documentation void. Redundant with `klein-magnetron`/`repo-rover`. Skeletal implementation. Grace period expired. Moved to graveyard.
+- **klein-fs**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation / Redundancy. Failed to improve during grace period. Moved to graveyard.
 - **poincare-crawl**: Specimen executed. Redundant with `hyperbolic-dungeon` and `hyperbolic-space`. TUI sketch. Grace period expired. Moved to graveyard.
 - **storm-monitor**: Specimen executed. Redundant with `system-attractor`. TUI implementation offers no unique value. Grace period expired. Moved to graveyard.
 - **synaptic-choir**: Specimen executed. Terminal build failure (alsa-sys). Documentation void. Moved to graveyard.
