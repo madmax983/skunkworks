@@ -1,6 +1,7 @@
-use crate::quantum::{Gate, QuantumManager};
+use crate::quantum::{add_qubit, apply_gate, get_probability, measure, Gate, QubitSystem};
 use rand::Rng;
 use ratatui::style::Color;
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Tile {
@@ -32,10 +33,13 @@ pub struct GameState {
     pub width: usize,
     pub height: usize,
     pub grid: Vec<Vec<Tile>>,
-    pub quantum: QuantumManager,
+    pub systems: HashMap<usize, QubitSystem>,
+    pub entity_map: HashMap<usize, (usize, usize)>,
+    pub next_system_id: usize,
     pub entities: Vec<Entity>,
     pub player: Player,
     pub message: String,
+    #[allow(dead_code)]
     pub next_entity_id: usize,
 }
 
@@ -47,16 +51,18 @@ impl GameState {
         let mut grid = vec![vec![Tile::Wall; width]; height];
 
         // Simple Room Carving (for now just a box)
-        for y in 1..height - 1 {
-            for x in 1..width - 1 {
-                grid[y][x] = Tile::Empty;
+        for row in grid.iter_mut().take(height - 1).skip(1) {
+            for cell in row.iter_mut().take(width - 1).skip(1) {
+                *cell = Tile::Empty;
             }
         }
 
         // Place Exit
         grid[height / 2][width - 2] = Tile::Exit;
 
-        let mut quantum = QuantumManager::new();
+        let mut next_system_id = 0;
+        let mut systems = HashMap::new();
+        let mut entity_map = HashMap::new();
         let mut entities = Vec::new();
         let mut next_entity_id = 0;
 
@@ -71,11 +77,11 @@ impl GameState {
 
             let r = rng.gen_range(0..3);
             match r {
-                0 => quantum.add_qubit(id, false), // |0>
-                1 => quantum.add_qubit(id, true),  // |1>
+                0 => add_qubit(&mut next_system_id, &mut systems, &mut entity_map, id, false), // |0>
+                1 => add_qubit(&mut next_system_id, &mut systems, &mut entity_map, id, true),  // |1>
                 _ => {
-                    quantum.add_qubit(id, false); // Start |0>
-                    quantum.apply_gate(Gate::H, id).unwrap(); // Apply H -> |+>
+                    add_qubit(&mut next_system_id, &mut systems, &mut entity_map, id, false); // Start |0>
+                    apply_gate(&mut systems, &entity_map, Gate::H, id).unwrap(); // Apply H -> |+>
                 }
             }
 
@@ -93,7 +99,9 @@ impl GameState {
             width,
             height,
             grid,
-            quantum,
+            systems,
+            entity_map,
+            next_system_id,
             entities,
             player: Player {
                 x: 2,
@@ -110,7 +118,7 @@ impl GameState {
         // Update colors based on quantum state
         for entity in &mut self.entities {
             if entity.is_qubit {
-                let p = self.quantum.get_probability(entity.id);
+                let p = get_probability(&self.systems, &self.entity_map, entity.id);
                 if p < 0.1 {
                     entity.color = Color::Blue; // Mostly |0>
                     entity.glyph = '0';
@@ -151,7 +159,7 @@ impl GameState {
                     let entity = &self.entities[idx];
                     if entity.is_qubit {
                         // Measure!
-                        match self.quantum.measure(entity.id) {
+                        match measure(&mut self.next_system_id, &mut self.systems, &mut self.entity_map, entity.id) {
                             Ok(val) => {
                                 if val {
                                     self.message = "Measured |1>! +10 Points.".to_string();

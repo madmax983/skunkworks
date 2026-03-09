@@ -2,7 +2,9 @@
 pub enum CellType {
     Water,
     Rock,
+    #[allow(dead_code)]
     Vent(u8), // u8 is the lock ID
+    #[allow(dead_code)]
     Chimney,
 }
 
@@ -52,6 +54,7 @@ impl Grid {
         }
     }
 
+    #[allow(dead_code)]
     pub fn get_mut(&mut self, x: usize, y: usize) -> Option<&mut Cell> {
         if x >= self.width || y >= self.height {
             None
@@ -60,6 +63,7 @@ impl Grid {
         }
     }
 
+    #[allow(dead_code)]
     pub fn set_type(&mut self, x: usize, y: usize, cell_type: CellType) {
         if let Some(cell) = self.get_mut(x, y) {
             cell.cell_type = cell_type;

@@ -20,6 +20,7 @@ impl FluidSim {
         }
     }
 
+    #[allow(dead_code)]
     pub fn get_temp(&self, x: usize, y: usize) -> f32 {
         if x >= self.width || y >= self.height {
             0.0
@@ -44,6 +45,7 @@ impl FluidSim {
         }
     }
 
+    #[allow(dead_code)]
     pub fn add_heat(&mut self, x: usize, y: usize, amount: f32) {
         if x < self.width && y < self.height {
             self.temperature[y * self.width + x] += amount;
