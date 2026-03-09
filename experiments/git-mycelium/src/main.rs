@@ -22,10 +22,12 @@ fn main() -> Result<()> {
     let commits = git::get_commit_history()?;
 
     // 2. Determine "Cities" (Top 8 most modified files)
-    let mut file_counts: HashMap<String, usize> = HashMap::new();
+    // Optimization: Count borrowed strings instead of cloning every file path in every commit
+    // This removes thousands of heap allocations when processing large git histories.
+    let mut file_counts: HashMap<&String, usize> = HashMap::new();
     for commit in &commits {
         for file in &commit.files_changed {
-            *file_counts.entry(file.clone()).or_insert(0) += 1;
+            *file_counts.entry(file).or_insert(0) += 1;
         }
     }
 
@@ -56,7 +58,7 @@ fn main() -> Result<()> {
         let angle = (i as f64 / top_files.len() as f64) * 2.0 * std::f64::consts::PI;
         let x = center_x + angle.cos() * radius;
         let y = center_y + angle.sin() * radius;
-        city_positions.push((file.clone(), (x, y)));
+        city_positions.push(((*file).clone(), (x, y)));
     }
 
     // 3. Determine "Connections" (Files changed together in the same commit)
@@ -65,7 +67,7 @@ fn main() -> Result<()> {
         // Only look at files that are in our "cities" list
         let mut indices = Vec::new();
         for file in &commit.files_changed {
-            if let Some(pos) = top_files.iter().position(|f| f == file) {
+            if let Some(pos) = top_files.iter().position(|&f| f == file) {
                 indices.push(pos);
             }
         }
