@@ -99,8 +99,7 @@ pub fn compile(
                             let content = definition_body.into_inner().next().unwrap().as_str();
 
                             // The content already defines a strand (e.g., `strand alpha { ... }`)
-                            let compiled_def =
-                                crate::compiler::compile(content, base_path)?;
+                            let compiled_def = crate::compiler::compile(content, base_path)?;
 
                             if dna.is_none() {
                                 dna = Some(Dna {

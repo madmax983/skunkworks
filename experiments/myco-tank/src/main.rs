@@ -262,20 +262,8 @@ async fn main() {
         }
 
         draw_text("Myco-Tank", 10.0, 20.0, 30.0, WHITE);
-        draw_text(
-            &format!("Agents: {}", AGENT_COUNT),
-            10.0,
-            50.0,
-            20.0,
-            WHITE,
-        );
-        draw_text(
-            &format!("FPS: {}", get_fps()),
-            10.0,
-            80.0,
-            20.0,
-            WHITE,
-        );
+        draw_text(&format!("Agents: {}", AGENT_COUNT), 10.0, 50.0, 20.0, WHITE);
+        draw_text(&format!("FPS: {}", get_fps()), 10.0, 80.0, 20.0, WHITE);
 
         next_frame().await;
     }
