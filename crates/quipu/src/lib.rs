@@ -69,6 +69,20 @@ pub mod audio;
 ///
 /// Knots are the fundamental digits of the Inca number system.
 /// Their value depends on their type and position (though position is handled by [`Cord`]).
+///
+/// ## Examples
+///
+/// ```
+/// use quipu::Knot;
+///
+/// // Create a simple knot (value 1, used in tens/hundreds places)
+/// let simple = Knot::Simple;
+/// assert_eq!(simple.value(), 1);
+///
+/// // Create a long knot with 5 turns (value 5, used in units place)
+/// let long_five = Knot::Long(5);
+/// assert_eq!(long_five.value(), 5);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Knot {
     /// **Simple Knot (s)**: Value 1. Used for all positions *except* Units.
@@ -476,7 +490,7 @@ impl Sub for Cord {
 ///
 /// This acts as a database or ledger.
 ///
-/// # Example
+/// ## Examples
 ///
 /// ```
 /// use quipu::{Quipu, Cord};
