@@ -70,11 +70,11 @@
 //! assert!((dist_step_2 - expected_dist).abs() < 1e-9);
 //! ```
 
-pub mod geometry;
-pub mod math;
-pub mod tiling;
-pub mod transform;
-pub mod types;
+pub(crate) mod geometry;
+pub(crate) mod math;
+pub(crate) mod tiling;
+pub(crate) mod transform;
+pub(crate) mod types;
 
 // Re-export the public API for convenience and backward compatibility
 pub use geometry::Geodesic;
