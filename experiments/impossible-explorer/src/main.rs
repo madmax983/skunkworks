@@ -326,10 +326,10 @@ fn render_scene(
 fn intersect_rect(a: (i32, i32, i32, i32), b: (i32, i32, i32, i32)) -> (i32, i32, i32, i32) {
     let x1 = a.0.max(b.0);
     let y1 = a.1.max(b.1);
-    let ax2 = a.0.saturating_add(a.2);
-    let bx2 = b.0.saturating_add(b.2);
-    let ay2 = a.1.saturating_add(a.3);
-    let by2 = b.1.saturating_add(b.3);
+    let ax2 = a.0.saturating_add(a.2.max(0));
+    let bx2 = b.0.saturating_add(b.2.max(0));
+    let ay2 = a.1.saturating_add(a.3.max(0));
+    let by2 = b.1.saturating_add(b.3.max(0));
     let x2 = ax2.min(bx2);
     let y2 = ay2.min(by2);
 
@@ -441,5 +441,14 @@ mod tests {
         let intersection = intersect_rect(r1, r2);
         assert_eq!(intersection.0, i32::MAX - 50); // x1
         assert_eq!(intersection.2, 50); // width
+    }
+
+    #[test]
+    fn test_intersect_rect_negative_dimensions() {
+        let r1 = (0, 0, -100, 100);
+        let r2 = (50, 50, 100, -100);
+        let intersection = intersect_rect(r1, r2);
+        assert_eq!(intersection.2, 0); // width clamped
+        assert_eq!(intersection.3, 0); // height clamped
     }
 }
