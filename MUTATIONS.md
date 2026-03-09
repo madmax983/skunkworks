@@ -255,4 +255,11 @@ Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime
 - **Concept**: Pheromone-Guided Acoustic Wave Advection. Slime mold agents distribute the active source on a 2D acoustic wave tank grid. The propagating pressure waves then interact with and advect the pheromone trails.
 - **Novel trait**: Acoustic Pheromone Interference. As agents deposit pheromones, they create expanding acoustic ripples that physically push and disrupt the paths of other agents, generating a dynamic, oscillating highway of biological activity driven by physical sound waves.
 - **Status**: experiments/myco-tank
-- **Evaluation**: Compiles. Predicting an emergent "Acoustic Pheromone Interference" phenotype.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md. Emergent behavior confirmed (Acoustic Pheromone Interference). Success.
+
+### ferrous-tank
+- **Parents**: experiments/ferrous-fluid + experiments/ripple-tank
+- **Concept**: Magnetic Acoustic Resonance. Magnetic particles in a 2D space are influenced by an acoustic wave tank field. The particles, in turn, deposit wave plucks based on their speed and movement.
+- **Novel trait**: Magnetic Acoustic Resonance. Magnetic particles and a physical acoustic wave tank form a bidirectional feedback loop.
+- **Status**: experiments/ferrous-tank
+- **Evaluation**: Compiles. Predicting an emergent "Magnetic Acoustic Resonance" phenotype.
