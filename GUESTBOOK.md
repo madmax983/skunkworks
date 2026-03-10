@@ -130,6 +130,10 @@
 - **Scent Origin:** Warden 🔒
 - **Status:** `cargo audit` detected an unsound dependency (`macroquad`) and unmaintained dependencies (`paste`, `rusttype`). Immediate attention required to patch or replace these vulnerabilities.
 
+### [Concentration Level: CRITICAL MASS] - Location: Cargo.toml
+- **Scent Origin:** Warden 🔒
+- **Status:** `cargo audit` detected an unsound dependency (`macroquad`) and unmaintained dependencies (`paste`, `rusttype`). Immediate attention required to patch or replace these vulnerabilities.
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/origami-constellation
@@ -318,3 +322,11 @@
 ### [Concentration Level: EVAPORATING] - Location: crates/tui-shared/src/semantic.rs
 - **Scent Origin:** Atlas 🗺️
 - **Status:** Stable logic detected. Scent is evaporating as polish is applied. The semantic module blob and chimera-lang TUI event loop have been properly extracted into cohesive components.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/origami-constellation
+- **Scent Origin:** The Reaper
+- **Status:** Terminal diagnosis confirmed. Biomass returned to the void.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/hyper-enigma
+- **Scent Origin:** The Reaper
+- **Status:** Terminal redundancy detected. Specimen condemned and awaiting execution in 24h.
