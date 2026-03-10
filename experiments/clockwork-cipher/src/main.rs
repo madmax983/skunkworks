@@ -132,7 +132,7 @@ fn setup_scene(mut commands: Commands) {
     // Readout Text
     commands.spawn((
         TextBundle::from_section(
-            "Cipher: INITIALIZING",
+            "Cipher: INITIALIZING\nRatios: 13:17:19:23",
             TextStyle {
                 font_size: 30.0,
                 color: Color::srgb(1.0, 1.0, 1.0),
@@ -252,19 +252,39 @@ fn rotate_drive(mut query: Query<&mut ExternalForce, With<MainDrive>>, _time: Re
 
 fn update_readout(
     feeler_query: Query<(&Feeler, &Transform)>,
+    gear_query: Query<&KeyGear>,
     mut text_query: Query<&mut Text, With<CipherReadout>>,
 ) {
     let mut values = [0u8; 4];
+
+    // Fetch gear traits (teeth count) to apply to cipher generation
+    let mut gear_info = [(0, 1); 4]; // (index, teeth)
+    for gear in gear_query.iter() {
+        if gear.index < 4 {
+            gear_info[gear.index] = (gear.index, gear.teeth);
+        }
+    }
+
+    let mut display_ratios = String::new();
+    for (i, item) in gear_info.iter().enumerate() {
+        if i > 0 { display_ratios.push(':'); }
+        display_ratios.push_str(&item.1.to_string());
+    }
+
     for (feeler, transform) in feeler_query.iter() {
         let angle = transform.rotation.to_euler(EulerRot::XYZ).2;
-        // Map angle to byte.
-        values[feeler.index % 4] = (angle.abs() * 200.0) as u8;
+        let gear_teeth = gear_info[feeler.index % 4].1;
+
+        // Key Generation: Modulate arm angle by the gear's prime tooth count
+        let encoded_value = (angle.abs() * gear_teeth as f32 * 25.0) as u8;
+        values[feeler.index % 4] = encoded_value ^ (gear_teeth as u8); // XOR with prime teeth
     }
 
     if let Ok(mut text) = text_query.get_single_mut() {
         text.sections[0].value = format!(
-            "Cipher: {:02X} {:02X} {:02X} {:02X}",
-            values[0], values[1], values[2], values[3]
+            "Cipher: {:02X} {:02X} {:02X} {:02X}\nRatios: {}",
+            values[0], values[1], values[2], values[3],
+            display_ratios
         );
     }
 }

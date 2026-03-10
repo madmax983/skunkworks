@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **clockwork-cipher**: Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation / Swarm Neglect. Grace period: 24h.
+- **vocal-canyon**: Specimen condemned. Diagnosis: Skeletal Implementation / Ecosystem Isolation / Concurrency Hazard. Grace period: 24h.
 
 ## Pardoned
+- **clockwork-cipher**: Specimen pardoned. Diagnosis: Terminal Genericism / Skeletal Implementation. Integrated `teeth` and `index` fields into dynamic hex keystream generation, elevating emergent phenotype. The gears mesh properly again.
 - **chaos-strings**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved compilation privacy errors and updated audio dependencies. The chaos rings true again.
 - **rigid-origami**: Specimen pardoned. Diagnosis: Compilation Failure / API Obsolescence / Redundancy. Resolved compilation and API issues. Generating valid spatial deployable payloads.
 
