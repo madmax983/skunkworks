@@ -35,22 +35,21 @@ If you are using this crate in a project *outside* of this workspace, you must p
     ```toml
     [dependencies]
     # Replace path with the relative path from your project root to crates/tui-shared
-    tui-shared = { path = "../../crates/tui-shared" }
+    tui-shared = { path = "../crates/tui-shared" }
+
+    # You must explicitly add ratatui and crossterm to your dependencies if you use their types directly
     ratatui = "0.30"
     crossterm = "0.28"
     ```
 
 ## Usage
 
-`tui-shared` re-exports `ratatui` and `crossterm` for convenience, ensuring version compatibility.
-
 Here is a minimal example:
 
 ```rust
 use std::{io, thread, time::Duration};
 use tui_shared::Tui;
-// Use the re-exported ratatui to ensure version alignment
-use tui_shared::ratatui::{
+use ratatui::{
     layout::Alignment,
     widgets::{Block, Borders, Paragraph},
 };
