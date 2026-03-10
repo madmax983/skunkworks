@@ -24,12 +24,14 @@ impl ScopedScissor {
         let y = y.clamp(-16384, 16384);
 
         // Sanitize parent to ensure safety for Drop.
-        let safe_parent = parent.map(|(px, py, pw, ph)| (
-            px.clamp(-16384, 16384),
-            py.clamp(-16384, 16384),
-            pw.max(0),
-            ph.max(0)
-        ));
+        let safe_parent = parent.map(|(px, py, pw, ph)| {
+            (
+                px.clamp(-16384, 16384),
+                py.clamp(-16384, 16384),
+                pw.max(0),
+                ph.max(0),
+            )
+        });
 
         // Attempting to invoke GL functions without an active context will panic
         // due to missing function pointers. We catch it via test environments when possible.

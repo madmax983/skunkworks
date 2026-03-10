@@ -11,3 +11,7 @@
 ## [Refactor Wrong Self Convention]
 **Learning:** In Rust, methods starting with `to_` on types that implement `Copy` generally shouldn't take `&self` by reference. They should take `self` by value. This is caught by Clippy's `wrong_self_convention` lint. The correct naming for converting a non-Copy type by reference is `to_`, and for converting by value is `into_`. For a Copy type, taking it by value is cheap and idiomatic.
 **Action:** When defining `to_*` or `into_*` methods, consider if the type is `Copy`. If it is, use `into_*` or `to_*` and take `self` by value.
+
+## [Refactor God Functions and Deep Nesting]
+**Learning:** Functions like `App::update`, `BlameAnalyzer::analyze`, and `draw_text_pane` suffered from mixing unrelated logic (e.g. calculation of code force, rendering UI logic) causing deep nesting. Extracting well-named functions (like `calculate_text_force`, `process_hunks`, and `format_line`) significantly simplifies reading flow and makes logic testing easier.
+**Action:** When working with rendering loops or algorithms, aggressively extract block logic into smaller cohesive units to prevent pyramid-of-doom and simplify parent functions.

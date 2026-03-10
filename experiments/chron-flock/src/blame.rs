@@ -55,7 +55,16 @@ impl BlameAnalyzer {
             .blame_file(path_relative, Some(&mut opts))
             .context(format!("Failed to blame file: {:?}", path_relative))?;
 
+        let now = Utc::now().timestamp();
+        let (min_time, range) = Self::calculate_time_range(&blame, &repo);
+
         let mut lines = Vec::new();
+        Self::process_hunks(&blame, &repo, now, min_time, range, &mut lines);
+
+        Ok(lines)
+    }
+
+    fn calculate_time_range(blame: &git2::Blame, repo: &Repository) -> (i64, f64) {
         let mut min_time = i64::MAX;
         let mut max_time = i64::MIN;
         let now = Utc::now().timestamp();
@@ -88,7 +97,17 @@ impl BlameAnalyzer {
         }
 
         let range = (max_time - min_time) as f64;
+        (min_time, range)
+    }
 
+    fn process_hunks(
+        blame: &git2::Blame,
+        repo: &Repository,
+        now: i64,
+        min_time: i64,
+        range: f64,
+        lines: &mut Vec<LineInfo>,
+    ) {
         for hunk in blame.iter() {
             let commit_id = hunk.final_commit_id();
 
@@ -139,7 +158,5 @@ impl BlameAnalyzer {
                 });
             }
         }
-
-        Ok(lines)
     }
 }

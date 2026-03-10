@@ -281,7 +281,9 @@ pub fn measure(
     entity_map: &mut HashMap<usize, (usize, usize)>,
     entity_id: usize,
 ) -> Result<bool> {
-    let (sys_id, qubit_idx) = *entity_map.get(&entity_id).ok_or(anyhow!("Entity not found"))?;
+    let (sys_id, qubit_idx) = *entity_map
+        .get(&entity_id)
+        .ok_or(anyhow!("Entity not found"))?;
 
     let result_bit = if let Some(sys) = systems.get_mut(&sys_id) {
         let results = sys.measure();

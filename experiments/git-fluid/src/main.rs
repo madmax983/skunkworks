@@ -94,12 +94,19 @@ fn run_app(tui: &mut Tui) -> Result<()> {
 
                     // Draw Magnets
                     for mag in &universe.magnets {
-                        let color = if mag.polarity { Color::Red } else { Color::Blue };
+                        let color = if mag.polarity {
+                            Color::Red
+                        } else {
+                            Color::Blue
+                        };
                         let label = if mag.polarity { "N" } else { "S" };
                         ctx.print(
                             mag.pos.x,
                             mag.pos.y,
-                            ratatui::text::Span::styled(label, Style::default().fg(color).bg(Color::White)),
+                            ratatui::text::Span::styled(
+                                label,
+                                Style::default().fg(color).bg(Color::White),
+                            ),
                         );
                     }
                 });

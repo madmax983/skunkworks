@@ -162,7 +162,8 @@ async fn main() {
         for p in &world.particles {
             let screen_x = p.pos.x as f32 / WORLD_WIDTH as f32 * screen_width();
             let screen_y = p.pos.y as f32 / WORLD_HEIGHT as f32 * screen_height();
-            draw_circle(screen_x, screen_y, 2.0, Color::new(0.0, 1.0, 1.0, 1.0)); // CYAN
+            draw_circle(screen_x, screen_y, 2.0, Color::new(0.0, 1.0, 1.0, 1.0));
+            // CYAN
         }
 
         for mag in &world.magnets {
@@ -172,9 +173,31 @@ async fn main() {
             draw_circle(screen_x, screen_y, 5.0, color);
         }
 
-        draw_text("Ferrous Tank: Magnetic Acoustic Resonance", 10.0, 20.0, 30.0, WHITE);
-        draw_text(&format!("Particles: {} | Magnets: {}", PARTICLE_COUNT, world.magnets.len()), 10.0, 50.0, 20.0, WHITE);
-        draw_text("Left Click: Pluck | Right Click: Add N Magnet | Middle Click: Add S Magnet", 10.0, 80.0, 20.0, WHITE);
+        draw_text(
+            "Ferrous Tank: Magnetic Acoustic Resonance",
+            10.0,
+            20.0,
+            30.0,
+            WHITE,
+        );
+        draw_text(
+            &format!(
+                "Particles: {} | Magnets: {}",
+                PARTICLE_COUNT,
+                world.magnets.len()
+            ),
+            10.0,
+            50.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "Left Click: Pluck | Right Click: Add N Magnet | Middle Click: Add S Magnet",
+            10.0,
+            80.0,
+            20.0,
+            WHITE,
+        );
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 110.0, 20.0, WHITE);
 
         next_frame().await;
@@ -268,7 +291,11 @@ impl World {
             let gx = p_pos.x.round() as usize;
             let gy = p_pos.y.round() as usize;
 
-            if gx > 0 && gx < (self.platter.width() - 1) && gy > 0 && gy < (self.platter.height() - 1) {
+            if gx > 0
+                && gx < (self.platter.width() - 1)
+                && gy > 0
+                && gy < (self.platter.height() - 1)
+            {
                 let left = self.platter.get_magnetism(gx - 1, gy);
                 let right = self.platter.get_magnetism(gx + 1, gy);
                 let down = self.platter.get_magnetism(gx, gy - 1);
@@ -285,10 +312,26 @@ impl World {
             // --- Wave Interaction (The Hybrid Trait) ---
             if gx < GRID_WIDTH && gy < GRID_HEIGHT {
                 // Acoustic wave pushes particles based on wave gradient
-                let left_w = if gx > 0 { self.wave_heights[gy * GRID_WIDTH + (gx - 1)] } else { 0.0 };
-                let right_w = if gx < GRID_WIDTH - 1 { self.wave_heights[gy * GRID_WIDTH + (gx + 1)] } else { 0.0 };
-                let up_w = if gy > 0 { self.wave_heights[(gy - 1) * GRID_WIDTH + gx] } else { 0.0 };
-                let down_w = if gy < GRID_HEIGHT - 1 { self.wave_heights[(gy + 1) * GRID_WIDTH + gx] } else { 0.0 };
+                let left_w = if gx > 0 {
+                    self.wave_heights[gy * GRID_WIDTH + (gx - 1)]
+                } else {
+                    0.0
+                };
+                let right_w = if gx < GRID_WIDTH - 1 {
+                    self.wave_heights[gy * GRID_WIDTH + (gx + 1)]
+                } else {
+                    0.0
+                };
+                let up_w = if gy > 0 {
+                    self.wave_heights[(gy - 1) * GRID_WIDTH + gx]
+                } else {
+                    0.0
+                };
+                let down_w = if gy < GRID_HEIGHT - 1 {
+                    self.wave_heights[(gy + 1) * GRID_WIDTH + gx]
+                } else {
+                    0.0
+                };
 
                 let wave_dx = right_w - left_w;
                 let wave_dy = down_w - up_w; // In macroquad, down is +y.
@@ -297,7 +340,9 @@ impl World {
                 force = force + acoustic_force;
 
                 // Fast particles create acoustic plucks
-                if self.particles[i].vel.magnitude_squared() > 100.0 && ::rand::thread_rng().gen_bool(0.01) {
+                if self.particles[i].vel.magnitude_squared() > 100.0
+                    && ::rand::thread_rng().gen_bool(0.01)
+                {
                     updates.push((gx, gy, 0.2));
                 }
             }
