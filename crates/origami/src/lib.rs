@@ -289,6 +289,39 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_generate_miura_mesh_structure() {
+        let params = MiuraParams {
+            a: 1.0,
+            b: 1.0,
+            gamma: 80.0f32.to_radians(),
+            orientation: Orientation::Horizontal,
+        };
+        // 2x2 grid means 3x3 vertices = 9 vertices
+        // 2x2 grid = 4 quads = 8 triangles = 24 indices
+        let mesh = generate_miura_mesh(params, (2, 2), 0.5);
+
+        assert_eq!(mesh.vertices.len(), 9, "Incorrect number of vertices generated");
+        assert_eq!(mesh.indices.len(), 24, "Incorrect number of indices generated");
+
+        // Verify UV mapping bounds
+        for v in &mesh.vertices {
+            assert!(v.uv.x >= 0.0 && v.uv.x <= 1.0, "UV x out of bounds: {}", v.uv.x);
+            assert!(v.uv.y >= 0.0 && v.uv.y <= 1.0, "UV y out of bounds: {}", v.uv.y);
+        }
+
+        // Check corner UVs explicitly
+        // Row major: v0 is (0,0), v2 is (1,0), v6 is (0,1), v8 is (1,1)
+        assert_eq!(mesh.vertices[0].uv, vec2(0.0, 0.0));
+        assert_eq!(mesh.vertices[2].uv, vec2(1.0, 0.0));
+        assert_eq!(mesh.vertices[6].uv, vec2(0.0, 1.0));
+        assert_eq!(mesh.vertices[8].uv, vec2(1.0, 1.0));
+
+        // Verify the first quad indices (j=0, i=0)
+        // p00 = 0, p10 = 1, p01 = 3, p11 = 4
+        assert_eq!(mesh.indices[0..6], [0, 1, 3, 1, 4, 3]);
+    }
+
+    #[test]
     fn test_horizontal_edge_lengths() {
         let params = MiuraParams {
             a: 1.0,
