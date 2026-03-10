@@ -276,4 +276,11 @@ Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime
 - **Concept**: Magnetic Codebase Fingerprint. Git commit history drives the spawn of magnetic particles and poles in a ferrous fluid simulation.
 - **Novel trait**: Codebase history translating into magnetic fluid structures. Each commit acts as a set of magnetic poles mapped from the SHA-1 hash, pushing and pulling fluid particles around, providing a magnetic fingerprint of code evolution.
 - **Status**: experiments/git-fluid
-- **Evaluation**: Compiles. Predicting an emergent magnetic visual representation of commit history.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior confirmed (magnetic codebase fingerprint). Success.
+
+### ferrous-ddos
+- **Parents**: experiments/locust-ddos + experiments/ferrous-fluid
+- **Concept**: Magnetic Cyberwarfare. The swarm of DDoS packets are mapped as magnetic fluid particles.
+- **Novel trait**: Fluid-Dynamic Bottlenecking. Instead of simple swarm agents, the packets are magnetic fluid particles. When attacking a server, the packets compress into a high-density magnetic fluid, actively pushing against each other and visually representing the pressure wave of a DDoS attack.
+- **Status**: experiments/ferrous-ddos
+- **Evaluation**: Compiles. Predicting an emergent visualization of bottleneck pressure waves against magnetic firewalls.
