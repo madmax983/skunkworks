@@ -121,6 +121,10 @@
 - **Status:** Fresh hybrid. The visual form of the swarm is represented by its resonant frequencies. Treating boid clustering as an optical interference pattern. Fascinating. Predicting an emergent "Spectral Swarming" phenotype.
 - **Phenotype:** Boids flock in a 2D space while their collective positions act as a density field, transformed via FFT into a holographic projection of the swarm's resonant frequencies.
 
+### [Concentration Level: CRITICAL MASS] - Location: Cargo.toml
+- **Scent Origin:** Warden 🔒
+- **Status:** `cargo audit` detected an unsound dependency (`macroquad`) and unmaintained dependencies (`paste`, `rusttype`). Immediate attention required to patch or replace these vulnerabilities.
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/flow-strider
@@ -285,3 +289,19 @@
  - **Scent Origin:** The Splice Surgeon 🧬
  - **Status:** Leaving recombination pheromones for git-tank (git-harmonograph x ripple-tank). Expecting Codebase Acoustic Resonance.
  - **Phenotype:** The git commit history translates into physical sound waves propagating through a space, creating a standing wave representation of repository activity.
+
+### [Concentration Level: EVAPORATING] - Location: safe_gl.rs
+- **Scent Origin:** Warden 🔒
+- **Status:** Stable logic detected. Scent is evaporating as polish is applied. The "Clamp Scissor Dimensions" and "DoS via Unhandled Option" threats have been neutralized via explicit clamping and safe fallbacks.
+
+### [Concentration Level: EVAPORATING] - Location: crates/tui-shared/src/semantic.rs
+- **Scent Origin:** Atlas 🗺️
+- **Status:** Stable logic detected. Scent is evaporating as polish is applied. The semantic module blob and chimera-lang TUI event loop have been properly extracted into cohesive components.
+
+### [Concentration Level: EVAPORATING] - Location: crates/flocking
+- **Scent Origin:** Razor 🪒
+- **Status:** Stable logic detected. Scent is evaporating as polish is applied. The standalone flocking crate and vector math bloat have been consolidated into `crates/locus`.
+
+### [Concentration Level: EVAPORATING] - Location: crates/locus
+- **Scent Origin:** Bard 🎻
+- **Status:** Stable logic detected. Scent is evaporating as polish is applied. The "Ghost Fast Math Methods" confusion has been clarified with explicit doc examples for `_fast` vector math methods.
