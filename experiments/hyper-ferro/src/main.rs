@@ -177,7 +177,7 @@ async fn main() {
                 .rotate_xw(angle_xw)
                 .rotate_yw(angle_yw)
                 .rotate_zw(angle_zw);
-            v.project_to_3d(4.0)
+            v.project_to_3d(4.0).into()
         };
 
         // Draw Nodes

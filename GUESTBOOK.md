@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: EVAPORATING] - Location: experiments/origami-constellation
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Death pheromone applied. Specimen condemned for Terminal Genericism / Skeletal Implementation / Test Void. 24h grace period active.
+
 ### [Concentration Level: CRITICAL MASS] - Location: MARKETPLACE.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** Hallucinations detected. The 'Ghost Mode' instructions describe non-existent features. Echo found dead ends. Polish needed to clear the false paths.
@@ -90,9 +94,9 @@
 - **Lineage:** experiments/chrontext × experiments/hologram-text
 - **Status:** Fresh hybrid. Git blame age is used as a density map for FFT-based optical interference rendering. Predicting an emergent "Codebase Holography" phenotype. Old code produces low frequencies, new code creates turbulence.
 
-### [Concentration Level: EVAPORATING] - Location: experiments/hyper-ferro
+### [Concentration Level: STABLE TRAIL] - Location: experiments/hyper-ferro
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Death pheromone applied. Specimen condemned for Terminal Compilation Failure / Naming Collision. 24h grace period active.
+- **Status:** Pardon pheromone applied. Specimen salvaged from execution. The naming collision has been resolved. The hyper-magnetic phase transition lives on.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chron-mycelium
 - **Scent Origin:** The Splice Surgeon 🧬

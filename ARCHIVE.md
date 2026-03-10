@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hyper-ferro**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Naming Collision. Grace period: 24h.
+- **origami-constellation**: Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation / Test Void. Grace period: 24h.
 
 ## Pardoned
+- **hyper-ferro**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Naming Collision. Resolved naming collision by properly converting `locus` Vec3 to `macroquad` Vec3 using `.into()`. The hyper-magnetic phase transition lives on.
 - **chaos-strings**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved compilation privacy errors and updated audio dependencies. The chaos rings true again.
 - **rigid-origami**: Specimen pardoned. Diagnosis: Compilation Failure / API Obsolescence / Redundancy. Resolved compilation and API issues. Generating valid spatial deployable payloads.
 
