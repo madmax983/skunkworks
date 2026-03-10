@@ -583,3 +583,94 @@ mod tests {
         assert!(pretty.contains("e2"));
     }
 }
+
+#[cfg(test)]
+mod builder_tests {
+    use super::*;
+
+    #[test]
+    fn test_entity_builders() {
+        let e = Entity::new("player")
+            .with_id("p1")
+            .at(10.0, 20.0)
+            .moving(1.5, -0.5)
+            .display("P")
+            .with_prop("hp", 100);
+
+        assert_eq!(e.kind, "player");
+        assert_eq!(e.id.as_deref(), Some("p1"));
+        assert_eq!(e.position.unwrap(), Vec2::new(10.0, 20.0));
+        assert_eq!(e.velocity.unwrap(), Vec2::new(1.5, -0.5));
+        assert_eq!(e.display.as_deref(), Some("P"));
+
+        match e.props.get("hp") {
+            Some(PropValue::Int(v)) => assert_eq!(*v, 100),
+            _ => panic!("Expected Int"),
+        }
+    }
+
+    #[test]
+    fn test_region_builders() {
+        let r = Region::new("minimap", 10, 20, 30, 40).describe("A minimap region");
+
+        assert_eq!(r.name, "minimap");
+        assert_eq!(r.x, 10);
+        assert_eq!(r.y, 20);
+        assert_eq!(r.width, 30);
+        assert_eq!(r.height, 40);
+        assert_eq!(r.description.as_deref(), Some("A minimap region"));
+    }
+
+    #[test]
+    fn test_action_builders() {
+        let a = Action::new("jump").describe("Jump action").key("Space");
+
+        assert_eq!(a.name, "jump");
+        assert_eq!(a.description.as_deref(), Some("Jump action"));
+        assert_eq!(a.key.as_deref(), Some("Space"));
+    }
+
+    #[test]
+    fn test_snapshot_builders() {
+        let e1 = Entity::new("e1");
+        let e2 = Entity::new("e2");
+        let e3 = Entity::new("e3");
+        let r1 = Region::new("r1", 0, 0, 10, 10);
+        let a1 = Action::new("a1");
+
+        let s = Snapshot::new("test-app")
+            .with_frame(123)
+            .with_viewport(80, 24)
+            .with_entity(e1)
+            .with_entities(vec![e2, e3])
+            .with_region(r1)
+            .with_metric("score", 100)
+            .with_state("running")
+            .with_action(a1);
+
+        assert_eq!(s.app, "test-app");
+        assert_eq!(s.frame, Some(123));
+        assert_eq!(s.viewport, Some((80, 24)));
+        assert_eq!(s.entities.len(), 3);
+        assert_eq!(s.entities[0].kind, "e1");
+        assert_eq!(s.entities[1].kind, "e2");
+        assert_eq!(s.entities[2].kind, "e3");
+        assert_eq!(s.regions.len(), 1);
+        assert_eq!(s.regions[0].name, "r1");
+
+        match s.metrics.get("score") {
+            Some(PropValue::Int(v)) => assert_eq!(*v, 100),
+            _ => panic!("Expected score to be Int"),
+        }
+
+        assert_eq!(s.state.as_deref(), Some("running"));
+        assert_eq!(s.actions.len(), 1);
+        assert_eq!(s.actions[0].name, "a1");
+
+        let json = s.to_json();
+        assert!(json.contains("test-app"));
+        let pretty = s.to_json_pretty();
+        assert!(pretty.contains("test-app"));
+        assert!(pretty.contains("score"));
+    }
+}
