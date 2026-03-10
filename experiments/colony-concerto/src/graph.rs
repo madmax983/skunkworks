@@ -101,3 +101,14 @@ pub fn generate_layered_dag(layers: usize, nodes_per_layer: usize, rng: &mut imp
 
     graph
 }
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    #[should_panic(expected = "attempt to subtract with overflow")]
+    fn test_generate_layered_dag_zero_layers_panic() {
+        let mut rng = rand::thread_rng();
+        generate_layered_dag(0, 10, &mut rng);
+    }
+}
