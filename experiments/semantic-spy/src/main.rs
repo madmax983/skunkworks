@@ -27,7 +27,7 @@ use ratatui::{
 };
 use std::{
     env,
-    io::{self, Read},
+    io::{self, IsTerminal, Read},
 };
 use tui_shared::semantic::Snapshot;
 
@@ -166,7 +166,7 @@ fn read_snapshot() -> Result<Snapshot> {
             .context("Failed to read input file")?;
     } else {
         // Read from stdin
-        if atty::is(atty::Stream::Stdin) {
+        if std::io::stdin().is_terminal() {
             eprintln!("Usage: semantic-spy < snapshot.json");
             eprintln!("   or: cargo run --bin orbital-decay -- --semantic | semantic-spy");
             std::process::exit(1);
@@ -309,14 +309,4 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
         .wrap(Wrap { trim: false });
 
     f.render_widget(details, details_area);
-}
-
-mod atty {
-    pub enum Stream {
-        Stdin,
-    }
-    pub fn is(_stream: Stream) -> bool {
-        use std::io::IsTerminal;
-        std::io::stdin().is_terminal()
-    }
 }

@@ -27,3 +27,13 @@
 **Bloat:** `AudioSource` trait and separate struct implementors (`KickDrum`, `SnareDrum`, `Hat`) requiring dynamic dispatch via `Box<dyn AudioSource>`.
 **Cut:** Replaced the trait with a concrete `Drum` enum and a single `next_sample` method, allowing for a simpler flat `Vec<Drum>` collection.
 **Saved:** Reduced cognitive load of trait abstraction and dynamic dispatch boilerplate.
+
+## [Reduction]
+**Bloat:** `atty` mock module in `semantic-spy` used only to define a `Stream` enum with 1 variant (`Stdin`) to emulate deprecated behavior.
+**Cut:** Removed the entire module and enum, replacing the logic directly with `std::io::stdin().is_terminal()`.
+**Saved:** 1 enum, 1 module, several lines of boilerplate mock code.
+
+## [Reduction]
+**Bloat:** Over-engineered Manager structs in `hydro-soundscapes` (`FlockManager`) and `hydrothermal-locks` (`LockManager`, `WormManager`) that simply wrapped a single `Vec` of items.
+**Cut:** Flattened and demystified names to concrete representations (`Flock`, `Locks`, `Worms`).
+**Saved:** Unnecessary enterprise abstraction and cognitive load.
