@@ -269,4 +269,11 @@ Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime
 - **Concept**: Codebase Acoustic Resonance. Git commits act as physical plucks in a 2D acoustic wave tank grid.
 - **Novel trait**: The git commit history translates into physical sound waves propagating through a space, interfering with each other based on commit timing and size, creating a standing wave representation of repository activity.
 - **Status**: experiments/git-tank
-- **Evaluation**: Compiles. Predicting an emergent standing wave representation of codebase activity.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md. Emergent behavior confirmed (Codebase Acoustic Resonance). Success.
+
+### git-fluid
+- **Parents**: experiments/git-harmonograph + experiments/ferrous-fluid
+- **Concept**: Magnetic Codebase Fingerprint. Git commit history drives the spawn of magnetic particles and poles in a ferrous fluid simulation.
+- **Novel trait**: Codebase history translating into magnetic fluid structures. Each commit acts as a set of magnetic poles mapped from the SHA-1 hash, pushing and pulling fluid particles around, providing a magnetic fingerprint of code evolution.
+- **Status**: experiments/git-fluid
+- **Evaluation**: Compiles. Predicting an emergent magnetic visual representation of commit history.
