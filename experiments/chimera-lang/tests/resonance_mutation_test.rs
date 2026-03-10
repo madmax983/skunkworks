@@ -6,7 +6,7 @@ mod tests {
     use chimera_lang::opcode::OpCode;
     use chimera_lang::vm::nova::{Organelle, OrganelleType};
     use chimera_lang::vm::nova_signals;
-    use chimera_lang::vm::{ChimeraVM, Value};
+    use chimera_lang::vm::ChimeraVM;
 
     fn make_vm() -> ChimeraVM {
         // Use Push(0) so there is an argument to mutate

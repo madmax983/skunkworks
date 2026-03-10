@@ -100,6 +100,6 @@ mod tests {
         assert!(vm.knowledge_base.contains(&expected));
 
         // Check Mode (Toggled off)
-        assert_eq!(vm.reactor_mode, false);
+        assert!(!vm.reactor_mode);
     }
 }

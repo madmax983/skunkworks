@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use chimera_lang::ast::{Dna, EvolutionConfig, Gene, Helix, Nucleotide, Strand};
+    use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::compiler::compile;
     use chimera_lang::opcode::OpCode;
     use chimera_lang::vm::{

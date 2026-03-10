@@ -139,15 +139,14 @@ fn test_metamorphism_expansion() {
         if s1.genes.len() > 2 {
             // Expanded!
             // Should be Push(15), Push(15), Add, Jump(1) => len 4
-            if s1.genes.len() == 4 {
-                if s1.genes[0].op == OpCode::Push
+            if s1.genes.len() == 4
+                && s1.genes[0].op == OpCode::Push
                     && s1.genes[1].op == OpCode::Push
                     && s1.genes[2].op == OpCode::Add
                 {
                     changed = true;
                     break;
                 }
-            }
         }
     }
 

@@ -8,7 +8,7 @@ fn havoc_test_value_hash_overflow() {
         use chimera_lang::ast::JunctionType;
         use chimera_lang::vm::Value;
         use std::collections::hash_map::DefaultHasher;
-        use std::hash::{Hash, Hasher};
+        use std::hash::Hash;
 
         let mut v = Value::Int(42);
         for _ in 0..100_000 {

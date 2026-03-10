@@ -167,7 +167,7 @@ mod tests {
         // Stack should have [count, hash] or [0] if error
         assert!(!vm.stack.is_empty());
 
-        if let Some(val) = vm.stack.last() {
+        if let Some(_val) = vm.stack.last() {
             // It should be a string (hash) or 0 (error count)
             // If we are in a git repo, it should be a hash.
             // If not, 0.

@@ -97,7 +97,7 @@ fn test_mutate_rune() {
     // Check 7,5 is not 999
     // And is between 0..100
     if let Value::Int(v) = vm.grid[7][5] {
-        assert!(v >= 0 && v < 100);
+        assert!((0..100).contains(&v));
         assert_ne!(v, 999);
     } else {
         panic!("Mutate did not write integer");

@@ -351,7 +351,7 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
+    use crate::ast::{Dna, Helix, Strand};
     use crate::opcode::OpCode;
     use crate::value::Value;
     use crate::vm::ChimeraVM;

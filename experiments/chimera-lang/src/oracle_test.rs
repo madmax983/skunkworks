@@ -57,7 +57,7 @@ mod tests {
 
         // Stack should contain [1, Bindings]
         // bindings should be empty list if exact match
-        assert!(vm.stack.len() >= 1);
+        assert!(!vm.stack.is_empty());
         // Result (Success) is second from top or pushed before bindings?
         // Code: vm.stack.push(1); ... vm.stack.push(Bindings);
         // So Top is Bindings, Below is 1.

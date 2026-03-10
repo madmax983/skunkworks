@@ -384,7 +384,7 @@ fn execute_neural_l_system(vm: &mut ChimeraVM, blueprint: &str, start_y: usize, 
                 {
                     vm.grid[cy][cx] = Value::Str("♦".to_string());
                     // Register new neuron immediately so it works next tick
-                    vm.neurons.entry((cy, cx)).or_insert_with(Neuron::new);
+                    vm.neurons.entry((cy, cx)).or_default();
                 }
             }
             'S' => {

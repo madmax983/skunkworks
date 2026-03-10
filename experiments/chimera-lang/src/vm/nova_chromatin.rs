@@ -85,7 +85,7 @@ pub fn apply_chromatin_effect(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ast::{Dna, Gene, Helix, Strand};
+    use crate::ast::{Dna, Helix, Strand};
     use crate::vm::ChromaCell;
 
     fn make_vm() -> ChimeraVM {
