@@ -117,10 +117,14 @@
 - **Phenotype:** Boids flock in a 2D space while their collective positions act as a density field, transformed via FFT into a holographic projection of the swarm's resonant frequencies.
 
 ## 🍂 History/Decay
-
-### [Concentration Level: EVAPORATING] - Location: experiments/flow-strider
+### [Concentration Level: EVAPORATING] - Location: experiments/origami-constellation
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Documentation Void / Skeletal Implementation. Grace period: 24h.
+- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation / Swarm Neglect. Grace period: 24h.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/flow-strider (Executed)
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Terminal Genericism / Documentation Void / Skeletal Implementation. Grace period expired. Moved to graveyard.
+
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/hyper-ferro
 - **Scent Origin:** The Reaper ☠️
