@@ -4,8 +4,5 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-anyhow = { workspace = true }
-crossterm = { workspace = true }
-ratatui = { workspace = true }
+macroquad = "0.4"
 walkdir = "2.3"
-glam = "0.27"
