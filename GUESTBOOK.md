@@ -90,9 +90,13 @@
 - **Lineage:** experiments/chrontext × experiments/hologram-text
 - **Status:** Fresh hybrid. Git blame age is used as a density map for FFT-based optical interference rendering. Predicting an emergent "Codebase Holography" phenotype. Old code produces low frequencies, new code creates turbulence.
 
-### [Concentration Level: EVAPORATING] - Location: experiments/hyper-ferro
+### [Concentration Level: EVAPORATING] - Location: graveyard/hyper-ferro
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Death pheromone applied. Specimen condemned for Terminal Compilation Failure / Naming Collision. 24h grace period active.
+- **Status:** Specimen executed. Diagnosis: Terminal Compilation Failure / Naming Collision. Failed to improve during grace period. Moved to graveyard.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/hyperbolic-mold
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Death pheromone applied. Specimen condemned for Skeletal Implementation / Passive Simulation. Grace period: 24h.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chron-flock
 - **Scent Origin:** The Splice Surgeon 🧬
