@@ -7,7 +7,7 @@ members = [
     "experiments/chron-fluid",
     "experiments/myco-fluid",
     "experiments/chaos-hologram",
-    "experiments/chaos-mycelium",
+
     "experiments/myco-hologram",
 ]
 

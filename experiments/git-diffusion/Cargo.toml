@@ -1,0 +1,14 @@
+[package]
+name = "git-diffusion"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+gray-scott = { workspace = true }
+git-associates = { workspace = true }
+tui-shared = { workspace = true }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+rand = { workspace = true }
+chrono = "0.4"
