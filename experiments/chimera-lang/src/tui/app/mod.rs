@@ -30,7 +30,11 @@ where
                         };
 
                         if should_reload {
-                            if let Ok(src) = std::fs::read_to_string(path) {
+                            let mut src = String::new();
+                            if std::fs::File::open(path).and_then(|mut f| {
+                                use std::io::Read;
+                                f.take(10 * 1024 * 1024).read_to_string(&mut src)
+                            }).is_ok() {
                                 // Default to ChimeraScript for hot reload for now
                                 // Ideally we check extension, but compile() handles imports
                                 let parent = path.parent();

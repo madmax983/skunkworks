@@ -130,3 +130,6 @@
 **2024-06-18 - [Unbounded File Read Mitigation]**
 **Threat:** OOM Denial of Service (DoS) vulnerability via unbounded `fs::read_to_string` and `io::stdin().read_to_string`. Large malicious files could cause memory exhaustion.
 **Defense:** Replaced with a capped reader using `std::io::Read::take(LIMIT)` to enforce maximum boundaries (10MB limit) prior to JSON deserialization.
+## 2027-10-15 - Unbounded File Read in Chimera Lang (OOM DoS)
+**Threat:** The compiler, Akashic records logic, and VM hot-reload logic in `experiments/chimera-lang` used `std::fs::read_to_string` directly on files without bounds checking. A maliciously crafted massive file or record could trigger an Out-of-Memory (OOM) Denial of Service (DoS) vulnerability by exhausting application memory.
+**Defense:** Replaced unbounded reads with safe capped readers using `std::io::Read::take(10 * 1024 * 1024)` to strictly limit memory allocation to 10MB per load operation.

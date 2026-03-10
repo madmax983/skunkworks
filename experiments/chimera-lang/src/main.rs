@@ -101,7 +101,10 @@ fn main() -> Result<()> {
     }));
 
     let (dna, grid, orca_mode, custom_runes, alchemy_book) = if let Some(input_path) = &cli.input {
-        let unparsed_file = fs::read_to_string(input_path)?;
+        use std::io::Read;
+        let mut unparsed_file = String::new();
+        std::fs::File::open(input_path)?.take(10 * 1024 * 1024).read_to_string(&mut unparsed_file)?;
+
         let path = Path::new(input_path);
         let extension = path
             .extension()

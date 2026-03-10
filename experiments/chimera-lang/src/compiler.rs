@@ -154,7 +154,10 @@ fn preprocess(
             return Err(anyhow!("Recursive include detected: {:?}", abs_path));
         }
 
-        let content = fs::read_to_string(&path)
+        use std::io::Read;
+        let mut content = String::new();
+        std::fs::File::open(&path)
+            .and_then(|mut f| f.take(10 * 1024 * 1024).read_to_string(&mut content))
             .map_err(|e| anyhow!("Failed to include file {:?}: {}", path, e))?;
 
         let sub_expanded = preprocess(&content, Some(bp), visited, depth + 1)?;

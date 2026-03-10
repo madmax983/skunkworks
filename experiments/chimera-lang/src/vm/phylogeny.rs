@@ -104,8 +104,12 @@ pub fn exec_phylogeny_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Str(path_str) = val {
                     if let Some(path) = sanitize_path(&vm.sandbox_root, &path_str) {
-                        match fs::read_to_string(&path) {
-                            Ok(content) => {
+                        let mut content = String::new();
+                        match std::fs::File::open(&path).and_then(|mut f| {
+                            use std::io::Read;
+                            f.take(10 * 1024 * 1024).read_to_string(&mut content)
+                        }) {
+                            Ok(_) => {
                                 vm.stack.push(Value::Str(content));
                                 vm.output.push(format!("SEQUENCING: Read {}", path_str));
                             }

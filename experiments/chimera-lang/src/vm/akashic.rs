@@ -167,7 +167,8 @@ impl AkashicRecords {
                 }
 
                 let mut content = String::new();
-                if file.read_to_string(&mut content).is_ok() {
+                use std::io::Read;
+                if file.take(10 * 1024 * 1024).read_to_string(&mut content).is_ok() {
                     let mut records: Self = serde_json::from_str(&content)
                         .map_err(|e| format!("Parse Error: {}", e))?;
                     records.file_path = file_path.to_string();
