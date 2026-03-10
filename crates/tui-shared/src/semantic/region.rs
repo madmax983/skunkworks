@@ -1,14 +1,17 @@
 use serde::{Deserialize, Serialize};
 
-/// A rectangular region of interest in the UI.
+/// A named rectangular boundary on the screen indicating a specific functional area.
 ///
-/// Regions help the LLM understand the layout of the screen by defining semantic zones
-/// (e.g., "inventory panel", "chat window", "map").
+/// Regions are the "where" in your TUI story. They provide layout context to an LLM reading
+/// the [`crate::semantic::Snapshot`], acting like named bounds or panels. For instance, knowing
+/// there's an "inventory panel" helps the LLM understand *why* certain [`crate::semantic::Entity`]
+/// instances are positioned where they are.
 ///
 /// # Examples
 ///
 /// ```
 /// use tui_shared::semantic::Region;
+///
 /// let chat = Region::new("chat_box", 0, 20, 80, 5)
 ///     .describe("Area where messages appear");
 /// ```
