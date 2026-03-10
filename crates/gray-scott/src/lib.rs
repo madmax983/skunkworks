@@ -142,22 +142,41 @@ impl GrayScott {
         }
     }
 
-    /// Update the reaction-diffusion simulation.
+    /// Advances the reaction-diffusion simulation by a single time step.
     ///
-    /// * `feed`: The feed rate (f) - adds U.
-    /// * `kill`: The kill rate (k) - removes V.
-    /// * `dt`: Delta time.
+    /// The beauty of the Gray-Scott model lies in its parameter space. By tweaking the
+    /// `feed` and `kill` rates, the simulation can transition between vastly different
+    /// "ecosystems" or patterns.
+    ///
+    /// * **`feed`**: How fast the "prey" chemical (U) is replenished from the environment.
+    /// * **`kill`**: How fast the "predator" chemical (V) naturally decays or is removed.
+    /// * **`dt`**: The time delta for the integration step. Usually 1.0.
+    ///
+    /// ### The Pearson Classification
+    /// Different regions of the (feed, kill) parameter space produce predictable patterns:
+    /// * **Mitosis / Cell Division:** `f = 0.0367, k = 0.0649`
+    /// * **Coral / Labyrinths:** `f = 0.0545, k = 0.0620`
+    /// * **Pulsating Solitons:** `f = 0.025, k = 0.06`
+    /// * **Spots:** `f = 0.03, k = 0.062`
     ///
     /// # Examples
     ///
     /// ```
     /// use gray_scott::GrayScott;
     ///
-    /// let mut gs = GrayScott::new(10, 10);
-    /// gs.add_chemical(5, 5, 1.0); // Seed with V chemical
+    /// // Create a small dish and drop a single "spore" of chemical V in the center.
+    /// let mut dish = GrayScott::new(20, 20);
+    /// dish.add_chemical(10, 10, 1.0);
     ///
-    /// // Update simulation (f=0.055, k=0.062 are typical parameters for spots)
-    /// gs.update(0.055, 0.062, 1.0);
+    /// // Simulate "Cell Division" parameters over time.
+    /// let (feed, kill) = (0.0367, 0.0649);
+    ///
+    /// for _ in 0..10 {
+    ///     dish.update(feed, kill, 1.0);
+    /// }
+    ///
+    /// // The V chemical will have diffused and reacted, spreading from the center.
+    /// assert!(dish.v()[dish.get_index(10, 10)] > 0.0);
     /// ```
     pub fn update(&mut self, feed: f32, kill: f32, dt: f32) {
         #[cfg(feature = "parallel")]

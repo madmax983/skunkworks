@@ -300,13 +300,29 @@ mod tests {
         // 2x2 grid = 4 quads = 8 triangles = 24 indices
         let mesh = generate_miura_mesh(params, (2, 2), 0.5);
 
-        assert_eq!(mesh.vertices.len(), 9, "Incorrect number of vertices generated");
-        assert_eq!(mesh.indices.len(), 24, "Incorrect number of indices generated");
+        assert_eq!(
+            mesh.vertices.len(),
+            9,
+            "Incorrect number of vertices generated"
+        );
+        assert_eq!(
+            mesh.indices.len(),
+            24,
+            "Incorrect number of indices generated"
+        );
 
         // Verify UV mapping bounds
         for v in &mesh.vertices {
-            assert!(v.uv.x >= 0.0 && v.uv.x <= 1.0, "UV x out of bounds: {}", v.uv.x);
-            assert!(v.uv.y >= 0.0 && v.uv.y <= 1.0, "UV y out of bounds: {}", v.uv.y);
+            assert!(
+                v.uv.x >= 0.0 && v.uv.x <= 1.0,
+                "UV x out of bounds: {}",
+                v.uv.x
+            );
+            assert!(
+                v.uv.y >= 0.0 && v.uv.y <= 1.0,
+                "UV y out of bounds: {}",
+                v.uv.y
+            );
         }
 
         // Check corner UVs explicitly
