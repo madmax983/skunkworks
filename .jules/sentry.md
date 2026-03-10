@@ -47,3 +47,11 @@
 **[Loop Bounds Underflow Panic]**
 **Learning:** Iterating over interior grid elements using `1..w-1` causes an underflow panic when the grid width or height is 0 or 1, since unsigned `usize` subtraction will wrap around to `usize::MAX`.
 **Action:** Always use `.saturating_sub(1)` or an explicit boundary guard (e.g., `if w < 3 || h < 3`) before establishing loop bounds on `usize` variables.
+
+**[Needless Borrows for Generic Args]**
+**Learning:** Functions accepting `impl AsRef<[u8]>` like `fs::write` trigger Clippy's `needless_borrows_for_generic_args` if provided a slice reference `&[0, 159, 146]`.
+**Action:** Pass byte array literals by value directly (e.g., `fs::write(path, [0, 159, 146])`).
+
+**[Auto-generated Coverage Artifacts]**
+**Learning:** Running `cargo llvm-cov` with `--lcov` produces an `lcov.info` file in the working directory that can easily pollute a repository.
+**Action:** Always clean up `lcov.info` and similar generated coverage artifacts before preparing a commit.

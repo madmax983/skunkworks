@@ -333,3 +333,17 @@ mod tests {
         assert_eq!(gs.u.len(), 0);
     }
 }
+
+#[cfg(test)]
+mod additional_tests {
+    use super::*;
+
+    #[test]
+    fn test_gray_scott_getters() {
+        let gs = GrayScott::new(10, 20);
+        assert_eq!(gs.width(), 10);
+        assert_eq!(gs.height(), 20);
+        assert_eq!(gs.u().len(), 200);
+        assert_eq!(gs.v().len(), 200);
+    }
+}
