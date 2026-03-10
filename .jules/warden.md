@@ -8,3 +8,6 @@
 **2024-03-10 - DoS via Unhandled Option in Teleport Loop**
 **Threat:** Application crashed (Denial of Service) when teleport logic or portal render loop invoked `.unwrap()` on invalid `target_room_id` references that were missing in the world graph.
 **Defense:** Replaced `unwrap()` calls with safe fallbacks (e.g., `if let Some(room) = world.get_room(...)` or `match`) to safely skip invalid room state accesses rather than panicking.
+**2025-05-18 - [Unbounded File Read OOM Prevention]**
+**Threat:** The entrypoint in experiments/chimera-lang/src/main.rs used fs::read_to_string to blindly load user-supplied files into memory, allowing a malicious actor to perform a Denial of Service (OOM) attack by providing a massive file.
+**Defense:** Replaced raw read_to_string with a bounded reader (take(10MB)) to restrict memory allocation.
