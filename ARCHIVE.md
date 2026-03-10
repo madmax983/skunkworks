@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **klein-fs**: Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation / Redundancy. Grace period: 24h.
+- **hyper-enigma**: Specimen condemned. Diagnosis: Terminal Redundancy / Skeletal Implementation / Lack of Emergence. Inherits terminal flaws from condemned parents `tesseract-ops` and `clockwork-cipher`. Grace period: 24h.
 
 ## Pardoned
 - **chaos-strings**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved compilation privacy errors and updated audio dependencies. The chaos rings true again.
@@ -15,6 +15,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **klein-fs**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation / Redundancy. Failed to improve during grace period. Moved to graveyard.
 - **klein-life**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Failed to improve during grace period. Moved to graveyard.
 - **hyperbolic-mold**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Identity Crisis. Failed to improve during grace period. Moved to graveyard.
 - **hyper-ferro**: Specimen executed. Diagnosis: Terminal Compilation Failure / Naming Collision. Failed to improve during grace period. Moved to graveyard.

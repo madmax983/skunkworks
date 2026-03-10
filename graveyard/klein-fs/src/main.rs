@@ -1,232 +1,180 @@
+use macroquad::prelude::*;
+use std::f32::consts::PI;
+
 mod fs;
-mod renderer;
-mod topology;
+mod math;
 
-use std::path::PathBuf;
-use std::time::{Duration, Instant};
+use fs::scan_directory;
+use math::klein_bottle;
 
-use anyhow::Result;
-use crossterm::{
-    event::{self, Event, KeyCode},
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-    ExecutableCommand,
-};
-use glam::Vec3;
-use ratatui::{
-    prelude::*,
-    widgets::{canvas::Canvas, Block, Borders, Paragraph},
-};
+const U_SCALE: f32 = 0.2; // How fast u advances per file
+const V_SCALE: f32 = 0.1; // How fast v advances per file
 
-use fs::{scan_directory, FsNode};
-use renderer::{draw_nodes, draw_wireframe, Camera};
+#[macroquad::main("Klein FS")]
+async fn main() {
+    let root = std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from("."));
+    let files = scan_directory(&root);
+    let mut scroll_idx: f32 = 0.0;
 
-struct App {
-    current_path: PathBuf,
-    fs_nodes: Vec<FsNode>,
-    selected_idx: usize,
-
-    // Camera state
-    camera_angle: f32,
-    camera_height: f32,
-    camera_radius: f32,
-
-    should_quit: bool,
-}
-
-impl App {
-    fn new() -> Result<Self> {
-        let current_path = std::env::current_dir()?;
-        let fs_nodes = scan_directory(&current_path)?;
-
-        Ok(Self {
-            current_path,
-            fs_nodes,
-            selected_idx: 0,
-            camera_angle: 0.0,
-            camera_height: 1.0,
-            camera_radius: 6.0,
-            should_quit: false,
-        })
-    }
-
-    fn update_scan(&mut self) -> Result<()> {
-        match scan_directory(&self.current_path) {
-            Ok(nodes) => {
-                self.fs_nodes = nodes;
-                self.selected_idx = 0;
-            }
-            Err(e) => {
-                // In a real app we'd show an error
-                eprintln!("Error scanning: {}", e);
-            }
-        }
-        Ok(())
-    }
-
-    fn on_tick(&mut self) {
-        // Auto-rotate slowly if desired, or just smooth move
-        if !self.fs_nodes.is_empty() {
-            // Placeholder for auto-focus logic
-            let _target_node = &self.fs_nodes[self.selected_idx];
-        }
-    }
-
-    fn move_selection(&mut self, delta: i32) {
-        if self.fs_nodes.is_empty() {
-            return;
-        }
-        let len = self.fs_nodes.len();
-        self.selected_idx = (self.selected_idx as i32 + delta).rem_euclid(len as i32) as usize;
-    }
-
-    fn enter_directory(&mut self) -> Result<()> {
-        if self.fs_nodes.is_empty() {
-            return Ok(());
-        }
-        let node = &self.fs_nodes[self.selected_idx];
-        if node.is_dir {
-            self.current_path = node.path.clone();
-            self.update_scan()?;
-        }
-        Ok(())
-    }
-
-    fn go_up(&mut self) -> Result<()> {
-        if let Some(parent) = self.current_path.parent() {
-            self.current_path = parent.to_path_buf();
-            self.update_scan()?;
-        }
-        Ok(())
-    }
-}
-
-fn main() -> Result<()> {
-    // Setup terminal
-    enable_raw_mode()?;
-    std::io::stdout().execute(EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(std::io::stdout());
-    let mut terminal = Terminal::new(backend)?;
-
-    // Create app
-    let mut app = App::new()?;
-    let tick_rate = Duration::from_millis(30);
-    let mut last_tick = Instant::now();
+    // Camera params
+    let mut cam_dist: f32 = 8.0;
+    let mut cam_rot_x: f32 = PI / 2.0;
+    let mut cam_rot_y: f32 = 0.0;
 
     loop {
-        terminal.draw(|f| ui(f, &mut app))?;
+        clear_background(BLACK);
 
-        let timeout = tick_rate
-            .checked_sub(last_tick.elapsed())
-            .unwrap_or_else(|| Duration::from_secs(0));
-
-        if event::poll(timeout)? {
-            if let Event::Key(key) = event::read()? {
-                match key.code {
-                    KeyCode::Char('q') | KeyCode::Esc => app.should_quit = true,
-                    KeyCode::Left => app.camera_angle -= 0.1,
-                    KeyCode::Right => app.camera_angle += 0.1,
-                    KeyCode::Up => app.move_selection(-1),
-                    KeyCode::Down => app.move_selection(1),
-                    KeyCode::Char('w') => app.camera_height += 0.5,
-                    KeyCode::Char('s') => app.camera_height -= 0.5,
-                    KeyCode::Enter => {
-                        app.enter_directory()?;
-                    }
-                    KeyCode::Backspace => {
-                        app.go_up()?;
-                    }
-                    _ => {}
-                }
+        // Input
+        // Mouse wheel for scrolling through files
+        let (_, mw_y) = mouse_wheel();
+        if mw_y != 0.0 {
+            scroll_idx -= mw_y; // Scroll down = positive increment
+            if scroll_idx < 0.0 {
+                scroll_idx = 0.0;
+            }
+            if scroll_idx > (files.len().saturating_sub(1)) as f32 {
+                scroll_idx = (files.len().saturating_sub(1)) as f32;
             }
         }
 
-        if last_tick.elapsed() >= tick_rate {
-            app.on_tick();
-            last_tick = Instant::now();
+        // Mouse drag for camera orbit
+        if is_mouse_button_down(MouseButton::Left) {
+            let delta = mouse_delta_position();
+            cam_rot_y -= delta.x * 3.0;
+            cam_rot_x += delta.y * 3.0;
+
+            // Clamp pitch to avoid gimbal lock flip issues
+            cam_rot_x = cam_rot_x.clamp(0.1, PI - 0.1);
         }
 
-        if app.should_quit {
-            break;
+        // Zoom
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 0.1;
         }
-    }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 0.1;
+        }
+        cam_dist = cam_dist.clamp(2.0, 50.0);
 
-    // Restore terminal
-    disable_raw_mode()?;
-    std::io::stdout().execute(LeaveAlternateScreen)?;
+        // Calculate focus point on the surface
+        let u_focus = scroll_idx * U_SCALE;
+        let v_focus = scroll_idx * V_SCALE;
+        let focus_pos = klein_bottle(u_focus, v_focus);
 
-    Ok(())
-}
+        // Camera position: Sphere coords relative to focus_pos
+        // x = r * sin(theta) * cos(phi)
+        // y = r * cos(theta)
+        // z = r * sin(theta) * sin(phi)
+        // Adjusting for our coordinate system (Y-up)
+        let cam_offset = vec3(
+            cam_dist * cam_rot_x.sin() * cam_rot_y.cos(),
+            cam_dist * cam_rot_x.cos(),
+            cam_dist * cam_rot_x.sin() * cam_rot_y.sin(),
+        );
+        let cam_pos = focus_pos + cam_offset;
 
-fn ui(f: &mut Frame, app: &mut App) {
-    let chunks = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints([Constraint::Min(0), Constraint::Length(3)])
-        .split(f.area());
-
-    // Info Bar
-    let path_str = app.current_path.display().to_string();
-    let selected_name = if !app.fs_nodes.is_empty() {
-        &app.fs_nodes[app.selected_idx].name
-    } else {
-        "<empty>"
-    };
-
-    let info_text = vec![
-        Line::from(vec![
-            Span::styled("Path: ", Style::default().fg(Color::Cyan)),
-            Span::raw(&path_str),
-            Span::raw(" | Selected: "),
-            Span::styled(selected_name, Style::default().fg(Color::Yellow)),
-        ]),
-        Line::from(vec![Span::raw(
-            "Arrows: Rotate/Select | W/S: Height | Enter: Open | Backspace: Up | Q: Quit",
-        )]),
-    ];
-
-    let info = Paragraph::new(info_text).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Klein File System"),
-    );
-    f.render_widget(info, chunks[1]);
-
-    // 3D Canvas
-    let camera_pos = Vec3::new(
-        app.camera_radius * app.camera_angle.cos(),
-        app.camera_height,
-        app.camera_radius * app.camera_angle.sin(),
-    );
-    let camera = Camera::new(camera_pos, Vec3::ZERO);
-
-    let canvas_area = chunks[0];
-    let width = canvas_area.width as f32;
-    let height = canvas_area.height as f32;
-    // Aspect ratio of the viewport in characters.
-    // Characters are roughly 1x2 pixels (or 0.5 aspect).
-    // So 1 unit of X is 0.5 unit of Y visual width.
-    // To make a circle look circular, we need to correct for this?
-    // Ratatui Canvas (with Braille) is 2x4 dots per character.
-    // The canvas coordinate system is arbitrary.
-    // If we use square bounds [-1,1], [-1,1], it will look squashed if the viewport is not square.
-    // We pass aspect to projection matrix to handle FOV.
-    // aspect = width / height.
-    // Note: Terminal cells are non-square. Usually 1 cell width ~ 0.5 cell height.
-    // So visual aspect = (width * 0.5) / height?
-    // Let's assume standard font aspect ratio of 0.5.
-    let aspect = (width * 0.5) / height;
-
-    let canvas = Canvas::default()
-        .block(
-            Block::default()
-                .borders(Borders::ALL)
-                .title("Figure-8 Immersion"),
-        )
-        .x_bounds([-2.0, 2.0])
-        .y_bounds([-1.5, 1.5])
-        .paint(move |ctx| {
-            draw_wireframe(ctx, &camera, aspect);
-            draw_nodes(ctx, &camera, aspect, &app.fs_nodes, app.selected_idx);
+        set_camera(&Camera3D {
+            position: cam_pos,
+            target: focus_pos,
+            up: vec3(0., 1., 0.),
+            ..Default::default()
         });
 
-    f.render_widget(canvas, chunks[0]);
+        // Draw Static Wireframe Grid (Fundamental Domain [0, 2PI] x [0, 2PI])
+        // We draw the "canonical" Klein bottle at the origin so the user sees the shape.
+        // Wait, if files have large u, they will just wrap around this same shape.
+        let grid_steps_u = 40;
+        let grid_steps_v = 20;
+
+        for i in 0..grid_steps_u {
+            for j in 0..grid_steps_v {
+                let u = (i as f32 / grid_steps_u as f32) * 2.0 * PI;
+                let v = (j as f32 / grid_steps_v as f32) * 2.0 * PI;
+
+                let p1 = klein_bottle(u, v);
+                let p2 = klein_bottle(u + (2.0 * PI / grid_steps_u as f32), v);
+                let p3 = klein_bottle(u, v + (2.0 * PI / grid_steps_v as f32));
+
+                draw_line_3d(p1, p2, Color::new(0.2, 0.2, 0.2, 1.0));
+                draw_line_3d(p1, p3, Color::new(0.2, 0.2, 0.2, 1.0));
+            }
+        }
+
+        // Draw Files
+        // Show a window around the current scroll index
+        let window_size = 50;
+        let start_idx = (scroll_idx as isize - window_size).max(0) as usize;
+        let end_idx = (scroll_idx as isize + window_size).min(files.len() as isize) as usize;
+
+        for i in start_idx..end_idx {
+            let u = i as f32 * U_SCALE;
+            let v = i as f32 * V_SCALE;
+            let pos = klein_bottle(u, v);
+
+            let is_focused = (i as f32 - scroll_idx).abs() < 0.5;
+
+            let color = if is_focused {
+                WHITE
+            } else if files[i].is_dir {
+                YELLOW
+            } else {
+                // Color by depth
+                let hue = (files[i].depth as f32 * 0.2) % 1.0;
+                // Simple hue to rgb approx
+                if hue < 0.3 {
+                    GREEN
+                } else if hue < 0.6 {
+                    BLUE
+                } else {
+                    PURPLE
+                }
+            };
+
+            let size = if is_focused { 0.15 } else { 0.05 };
+
+            draw_sphere(pos, size, None, color);
+
+            // Draw path connection
+            if i < end_idx - 1 {
+                let next_pos = klein_bottle((i + 1) as f32 * U_SCALE, (i + 1) as f32 * V_SCALE);
+                draw_line_3d(pos, next_pos, Color::new(0.5, 0.5, 0.5, 0.5));
+            }
+        }
+
+        set_default_camera();
+
+        // UI Overlay
+        if !files.is_empty() {
+            let current_idx = scroll_idx.round() as usize;
+            if let Some(file) = files.get(current_idx) {
+                draw_text(
+                    &format!("File [{}/{}]: {}", current_idx + 1, files.len(), file.name),
+                    20.0,
+                    30.0,
+                    30.0,
+                    WHITE,
+                );
+                draw_text(
+                    &format!("Path: {}", file.path.display()),
+                    20.0,
+                    60.0,
+                    20.0,
+                    LIGHTGRAY,
+                );
+                draw_text(&format!("Depth: {}", file.depth), 20.0, 85.0, 20.0, GRAY);
+            }
+        } else {
+            draw_text("No files found.", 20.0, 30.0, 30.0, RED);
+        }
+
+        draw_text(
+            "Scroll: Navigate | Drag: Rotate Camera",
+            20.0,
+            screen_height() - 20.0,
+            20.0,
+            DARKGRAY,
+        );
+
+        next_frame().await
+    }
 }

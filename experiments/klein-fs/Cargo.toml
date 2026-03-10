@@ -1,8 +1,0 @@
-[package]
-name = "klein-fs"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-macroquad = "0.4"
-walkdir = "2.3"

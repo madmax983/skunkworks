@@ -243,9 +243,13 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Failed to improve during grace period. Biomass returned to the void.
 
-### [CRITICAL MASS] - Location: `experiments/klein-fs`
+### [EVAPORATING] - Location: `graveyard/klein-fs`
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation / Redundancy. Grace period: 24h.
+- **Status:** Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation / Redundancy. Failed to improve during grace period. Biomass returned to the void.
+
+### [CRITICAL MASS] - Location: `experiments/hyper-enigma`
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Redundancy / Skeletal Implementation / Lack of Emergence. Inherits terminal flaws from condemned parents `tesseract-ops` and `clockwork-cipher`. Grace period: 24h.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chron-diffusion
  - **Scent Origin:** The Splice Surgeon 🧬
