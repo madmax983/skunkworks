@@ -1,0 +1,11 @@
+<<<<<<< SEARCH
+        if is_key_pressed(KeyCode::Minus) {
+            if speed > 1 {
+                speed -= 1;
+            }
+        }
+=======
+        if is_key_pressed(KeyCode::Minus) && speed > 1 {
+            speed -= 1;
+        }
+>>>>>>> REPLACE

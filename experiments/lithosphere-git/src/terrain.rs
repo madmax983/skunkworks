@@ -5,6 +5,7 @@ pub struct Terrain {
     pub height: usize,
     pub heightmap: Vec<f32>,
     pub sediment: Vec<f32>, // Track accumulated sediment for visuals/mechanics
+    #[allow(dead_code)]
     pub water: Vec<f32>,    // Track water volume for visuals
 }
 
@@ -30,6 +31,7 @@ impl Terrain {
         self.heightmap[self.get_index(x, y)]
     }
 
+    #[allow(dead_code)]
     pub fn set_height(&mut self, x: usize, y: usize, val: f32) {
         if x >= self.width || y >= self.height {
             return;
@@ -99,8 +101,8 @@ impl Terrain {
             let (gx, gy) = self.calculate_gradient(x, y);
 
             // Update direction with inertia
-            dir_x = (dir_x * inertia - gx * (1.0 - inertia));
-            dir_y = (dir_y * inertia - gy * (1.0 - inertia));
+            dir_x = dir_x * inertia - gx * (1.0 - inertia);
+            dir_y = dir_y * inertia - gy * (1.0 - inertia);
 
             // Normalize direction
             let len = (dir_x * dir_x + dir_y * dir_y).sqrt();
@@ -146,7 +148,7 @@ impl Terrain {
             }
 
             speed = (speed * speed + diff * gravity).sqrt();
-            water *= (1.0 - evaporation);
+            water *= 1.0 - evaporation;
 
             if water < 0.01 {
                 break;
@@ -255,17 +257,17 @@ mod tests {
         }
 
         // Erode
-        let initial_height = terrain.get_height(5, 5);
+        let _initial_height = terrain.get_height(5, 5);
         terrain.erode(100);
 
         // Since we eroded, height should change, but it's stochastic.
         // Let's just check no panic and logic runs.
         // We can check if sediment accumulates at the bottom (x=0).
 
-        let mut total_sediment = 0.0;
+        let mut _total_sediment = 0.0;
         for x in 0..10 {
             for y in 0..10 {
-                total_sediment += terrain.sediment[terrain.get_index(x, y)];
+                _total_sediment += terrain.sediment[terrain.get_index(x, y)];
             }
         }
 

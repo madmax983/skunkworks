@@ -120,6 +120,7 @@ impl HistoryStream {
         }
     }
 
+    #[allow(dead_code)]
     pub fn reset(&mut self) {
         self.current_index = 0;
     }
@@ -145,7 +146,7 @@ mod tests {
         // This test relies on running inside a git repo (the sandbox is one)
         let stream = HistoryStream::new(".", 10);
         if let Ok(mut stream) = stream {
-            assert!(stream.commits.len() > 0);
+            assert!(!stream.commits.is_empty());
             let mut mapper = FileMapper::new(10, 10);
             if let Some((events, _hash, _msg)) = stream.next_events(&mut mapper) {
                 // We might have events or not depending on the commit
@@ -158,5 +159,14 @@ mod tests {
             // If it fails, we print error
             println!("Failed to load git history");
         }
+    }
+
+    #[test]
+    #[should_panic(expected = "attempt to calculate the remainder with a divisor of zero")]
+    fn test_file_mapping_zero_size_panic() {
+        // 👺 Havoc: The FileMapper does not guard against size 0
+        // Division by zero in modulo operation when width/height are 0
+        let mut mapper = FileMapper::new(0, 0);
+        mapper.get_coordinate("boom");
     }
 }
