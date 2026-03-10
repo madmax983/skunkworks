@@ -1,5 +1,3 @@
-#![cfg(feature = "nova")]
-
 use super::{ChimeraVM, Value};
 use rand::Rng;
 use serde::{Deserialize, Serialize};

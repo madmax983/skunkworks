@@ -1,5 +1,3 @@
-#![cfg(feature = "nova")]
-
 use super::prologue::logos::{GrammarRule, LogosEngine};
 use super::{ChimeraVM, Value};
 use crate::ast::{Gene, JunctionType, Nucleotide, Strand};

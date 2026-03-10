@@ -1,5 +1,3 @@
-#![cfg(feature = "nova")]
-
 use super::nova::Phase;
 #[cfg(feature = "oracle")]
 use super::oracle;

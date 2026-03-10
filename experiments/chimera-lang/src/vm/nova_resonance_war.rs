@@ -1,5 +1,3 @@
-#![cfg(feature = "nova")]
-
 use super::{ChimeraVM, Value};
 
 pub fn exec_resonate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {

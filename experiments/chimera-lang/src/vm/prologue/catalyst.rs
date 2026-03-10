@@ -11,7 +11,7 @@ pub fn apply_catalyst_runes(
     y: usize,
     x: usize,
     current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut Vec<Vec<Option<Value>>>,
+    next_signals: &mut [Vec<Option<Value>>],
 ) -> bool {
     let mut changes = false;
 

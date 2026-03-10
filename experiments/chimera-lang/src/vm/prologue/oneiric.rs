@@ -28,7 +28,7 @@ pub fn apply_oneiric_runes(
     y: usize,
     x: usize,
     current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut Vec<Vec<Option<Value>>>,
+    next_signals: &mut [Vec<Option<Value>>],
     oneiric_grid: &mut OneiricGrid,
 ) -> bool {
     let mut changes = false;

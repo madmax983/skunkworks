@@ -8,7 +8,7 @@ pub fn apply_construct_runes(
     y: usize,
     x: usize,
     current_signals: &[Vec<Option<Value>>],
-    delayed_signals: &mut Vec<Vec<Option<Value>>>,
+    delayed_signals: &mut [Vec<Option<Value>>],
     grid: &[Vec<Value>],
 ) -> bool {
     let mut changes = false;

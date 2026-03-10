@@ -28,7 +28,7 @@ pub fn prepare_fission_sources(
     rune: &str,
     y: usize,
     x: usize,
-    signal_grid: &mut Vec<Vec<Option<Value>>>,
+    signal_grid: &mut [Vec<Option<Value>>],
 ) {
     if rune == "✦" {
         // Emit random radiation
@@ -44,7 +44,7 @@ pub fn apply_fission_runes(
     y: usize,
     x: usize,
     current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut Vec<Vec<Option<Value>>>,
+    next_signals: &mut [Vec<Option<Value>>],
 ) -> bool {
     let mut changes = false;
 

@@ -1,5 +1,3 @@
-#![cfg(feature = "nova")]
-
 use crate::vm::nova::OrganelleType;
 use crate::vm::ChimeraVM;
 

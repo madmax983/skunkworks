@@ -1,4 +1,3 @@
-#![cfg(feature = "nova")]
 use super::{ChimeraVM, Value};
 #[cfg(feature = "nova")]
 use crate::ast::{Gene, Nucleotide};

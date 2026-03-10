@@ -1,5 +1,3 @@
-#![cfg(feature = "nova")]
-
 use super::{ChimeraVM, Value, GRID_SIZE, MAX_PROJECTILES};
 use rand::Rng;
 

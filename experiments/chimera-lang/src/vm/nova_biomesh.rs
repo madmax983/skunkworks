@@ -1,5 +1,3 @@
-#![cfg(feature = "nova")]
-
 use crate::ast::Nucleotide;
 use crate::vm::{ChimeraVM, Value};
 use std::collections::{HashMap, VecDeque};

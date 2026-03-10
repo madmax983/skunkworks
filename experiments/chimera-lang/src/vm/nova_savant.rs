@@ -1,5 +1,3 @@
-#![cfg(feature = "nova")]
-
 use crate::ast::{JunctionType, Nucleotide};
 use crate::opcode::OpCode;
 use crate::vm::nova::Organelle;

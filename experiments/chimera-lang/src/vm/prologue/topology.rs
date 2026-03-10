@@ -7,8 +7,8 @@ pub fn apply_topology_runes(
     x: usize,
     tick: u64,
     current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut Vec<Vec<Option<Value>>>,
-    next_delayed: &mut Vec<Vec<Option<Value>>>,
+    next_signals: &mut [Vec<Option<Value>>],
+    next_delayed: &mut [Vec<Option<Value>>],
     orca_mode: bool,
 ) -> bool {
     let mut changes = false;

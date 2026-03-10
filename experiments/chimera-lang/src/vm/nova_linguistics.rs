@@ -1,5 +1,3 @@
-#![cfg(feature = "nova")]
-
 use super::{ChimeraVM, Value, MAX_COMPLEX_STRING_LEN};
 
 /// Calculates the Levenshtein distance between two strings.

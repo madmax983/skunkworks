@@ -4693,7 +4693,6 @@ fn apply_glitch_fx(buffer: &mut ratatui::buffer::Buffer, intensity: f32) {
 #[cfg(feature = "nova")]
 #[cfg(feature = "oracle")]
 #[allow(dead_code)]
-
 pub(crate) fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
     let mut views = vec![
         (ViewMode::Genome, "Genome", "Tab"),

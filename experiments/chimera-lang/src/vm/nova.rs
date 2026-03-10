@@ -1,4 +1,3 @@
-#![cfg(feature = "nova")]
 //! # Nova Extension 🌌
 //!
 //! The `Nova` module implements advanced biological and physics-defying capabilities for the Chimera VM.

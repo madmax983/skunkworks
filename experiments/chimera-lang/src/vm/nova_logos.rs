@@ -1,5 +1,3 @@
-#![cfg(feature = "nova")]
-
 #[cfg(feature = "oracle")]
 use crate::ast::JunctionType;
 #[cfg(feature = "oracle")]

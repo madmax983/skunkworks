@@ -1,5 +1,3 @@
-#![cfg(feature = "nova")]
-
 use super::{ChimeraVM, Value, GRID_SIZE};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;

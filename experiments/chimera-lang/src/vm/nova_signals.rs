@@ -1,5 +1,3 @@
-#![cfg(feature = "nova")]
-
 #[cfg(feature = "biophysics")]
 use super::neuron::Neuron;
 #[cfg(feature = "nova")]

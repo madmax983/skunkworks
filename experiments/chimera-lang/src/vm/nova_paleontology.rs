@@ -1,5 +1,3 @@
-#![cfg(feature = "nova")]
-
 use super::{ChimeraVM, Value};
 use crate::ast::{Nucleotide, Strand};
 use crate::{ChimeraParser, Rule};

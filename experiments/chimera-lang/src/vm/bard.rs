@@ -1,4 +1,3 @@
-#![cfg(feature = "nova")]
 //! # Bard Extension 🎻
 //!
 //! The `Bard` module enables the Chimera VM to compose music.

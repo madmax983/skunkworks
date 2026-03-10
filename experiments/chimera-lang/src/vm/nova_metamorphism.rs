@@ -1,5 +1,3 @@
-#![cfg(feature = "nova")]
-
 use super::ChimeraVM;
 use crate::ast::{Gene, Nucleotide};
 use crate::opcode::OpCode;

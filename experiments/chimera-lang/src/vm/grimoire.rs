@@ -1,4 +1,3 @@
-#![cfg(feature = "nova")]
 use crate::ast::JunctionType;
 use crate::value::Value;
 
