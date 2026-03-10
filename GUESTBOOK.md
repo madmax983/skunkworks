@@ -206,3 +206,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. The cube spins, but the cipher is hollow. Moved to graveyard.
 
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chron-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** experiments/chrontext × experiments/luminous-flock
+- **Status:** Fresh hybrid. The swarm structure is guided by codebase age. The boids are drawn to the most active "hot" regions of the codebase, clustering around newly modified lines while leaving older, "cold" lines to decay. Fascinating. Predicting an emergent "Chronological Swarming" phenotype.
+- **Phenotype:** Boids flock over the text of a file, using git blame history to influence their behavior. They tend to swarm toward recent changes.

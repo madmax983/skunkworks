@@ -292,3 +292,4 @@ experiments/verge-computer
 experiments/vocal-canyon
 experiments/voronoi-ants
 experiments/waggle-dance
+experiments/chron-flock
