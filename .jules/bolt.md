@@ -16,3 +16,7 @@
 **[Avoid doc comments on local let statements]**
 **Learning:** Adding a `///` doc comment to a local `let` binding or expression will trigger Clippy's `unused_doc_comments` lint because rustdoc doesn't generate documentation for statements.
 **Action:** Use standard `//` comments instead of `///` when documenting local, inline performance optimizations to avoid Clippy errors.
+
+**[Removing heap allocation using fixed-size arrays]**
+**Learning:** Using `vec![...]` to define a local collection of predefined items inside a frequently called function creates a new heap allocation on every invocation. When the collection is immutable and of fixed size, this allocation is an unnecessary performance penalty.
+**Action:** Use an array literal `[...]` instead of `vec![...]` to allocate the collection directly on the stack, providing a zero-cost abstraction.
