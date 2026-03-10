@@ -6,7 +6,6 @@ pub struct Block {
     pub size: Vec3,
     pub color: Color,
     pub target_room_id: Option<usize>, // If Some, this is a portal
-    pub portal_face_normal: Vec3, // Which face is the portal (usually +Z or -Z relative to block)
 }
 
 #[derive(Clone, Debug)]
@@ -83,7 +82,7 @@ mod tests {
         world.add_room(room);
 
         assert_eq!(world.rooms.len(), 1);
-        assert_eq!(world.get_room(0).unwrap().id, 0);
+        assert_eq!(world.get_room(0).expect("Room 0 should exist").id, 0);
     }
 
     #[test]
@@ -94,7 +93,6 @@ mod tests {
             size: Vec3::ONE,
             color: GREEN,
             target_room_id: None,
-            portal_face_normal: Vec3::Z,
         };
         room.add_block(block);
         assert_eq!(room.blocks.len(), 1);
