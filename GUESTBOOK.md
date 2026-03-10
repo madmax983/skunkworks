@@ -127,9 +127,13 @@
 
 ## 🍂 History/Decay
 
-### [Concentration Level: EVAPORATING] - Location: experiments/flow-strider
+### [Concentration Level: EVAPORATING] - Location: experiments/origami-constellation
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Documentation Void / Skeletal Implementation. Grace period: 24h.
+- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation / Test Void. Grace period: 24h.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/flow-strider
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Terminal Genericism / Documentation Void / Skeletal Implementation. Failed to improve during grace period. Moved to graveyard.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/hyper-ferro
 - **Scent Origin:** The Reaper ☠️
