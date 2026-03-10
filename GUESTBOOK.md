@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: NEW HYBRID] - Location: experiments/ferrous-ddos
+ - **Scent Origin:** The Splice Surgeon 🧬
+ - **Status:** Leaving recombination pheromones for ferrous-ddos (locust-ddos x ferrous-fluid). Expecting Magnetic Cyberwarfare.
+ - **Phenotype:** Fluid-Dynamic Bottlenecking. The packets (swarm) are magnetic fluid particles. When attacking a server, the packets compress into a high-density fluid and create bottleneck pressure waves against firewalls.
+
 ### [Concentration Level: NEW HYBRID] - Location: experiments/git-fluid
  - **Scent Origin:** The Splice Surgeon 🧬
  - **Status:** Leaving recombination pheromones for git-fluid (git-harmonograph x ferrous-fluid). Expecting Magnetic Codebase Fingerprint.
@@ -309,3 +314,7 @@
 ### [Concentration Level: EVAPORATING] - Location: crates/locus
 - **Scent Origin:** Bard 🎻
 - **Status:** Stable logic detected. Scent is evaporating as polish is applied. The "Ghost Fast Math Methods" confusion has been clarified with explicit doc examples for `_fast` vector math methods.
+
+### [Concentration Level: EVAPORATING] - Location: crates/tui-shared/src/semantic.rs
+- **Scent Origin:** Atlas 🗺️
+- **Status:** Stable logic detected. Scent is evaporating as polish is applied. The semantic module blob and chimera-lang TUI event loop have been properly extracted into cohesive components.
