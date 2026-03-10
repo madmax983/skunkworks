@@ -1,38 +1,20 @@
-use std::env;
-use std::process::Command;
+use chimera_lang::vm::Value;
+use std::collections::HashMap;
 
 #[test]
-fn havoc_test_value_hash_overflow() {
-    // If we are the child process, cause the stack overflow
-    if env::var("HAVOC_CRASH_MODE").is_ok() {
-        use chimera_lang::ast::JunctionType;
-        use chimera_lang::vm::Value;
-        use std::collections::hash_map::DefaultHasher;
-        use std::hash::{Hash, Hasher};
+#[should_panic(expected = "Hash and Eq must agree!")]
+fn test_havoc_value_hash_f64_bug() {
+    let mut map: HashMap<Value, i32> = HashMap::new();
 
-        let mut v = Value::Int(42);
-        for _ in 0..100_000 {
-            v = Value::Junction(JunctionType::Any, vec![v]);
-        }
+    let v1 = Value::Superposition(vec![(Value::Int(1), 0.0)]);
+    let v2 = Value::Superposition(vec![(Value::Int(1), -0.0)]);
 
-        let mut hasher = DefaultHasher::new();
-        v.hash(&mut hasher);
-        std::process::exit(0);
+    map.insert(v1.clone(), 1);
+
+    // In Rust, 0.0 == -0.0 is true.
+    // However, 0.0.to_bits() != (-0.0_f64).to_bits().
+    // So if the hash implementation uses to_bits(), it breaks the requirement that k1 == k2 implies hash(k1) == hash(k2).
+    if v1 == v2 && map.get(&v2).is_none() {
+        panic!("Hash and Eq must agree! Found a key that is equal to an inserted key, but cannot be retrieved because hashes differ (-0.0 vs 0.0 f64 to_bits).");
     }
-
-    // Otherwise, we are the parent process. We run the test binary again, but set HAVOC_CRASH_MODE.
-    let exe = env::current_exe().unwrap();
-    let status = Command::new(exe)
-        .arg("--exact")
-        .arg("havoc_test_value_hash_overflow")
-        .env("HAVOC_CRASH_MODE", "1")
-        .status()
-        .unwrap();
-
-    // The child should have crashed due to SIGABRT / SIGSEGV (stack overflow).
-    // So the exit status should NOT be success.
-    assert!(
-        !status.success(),
-        "👺 Havoc: Expected stack overflow (crash), but process exited successfully!"
-    );
 }
