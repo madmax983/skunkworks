@@ -234,4 +234,11 @@ Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime
 - **Concept**: Acoustic-Swarm Symbiosis. The swarm intelligence agents collide with boundaries to pluck a 2D physical wave tank grid, and the acoustic pressure waves physically alter the swarm's trajectory.
 - **Novel trait**: Acoustic Swarm Foraging. The physical waves restructure the swarm into resonant clusters, treating sound pressure as a repulsive field.
 - **Status**: experiments/locust-tank
-- **Evaluation**: Compiles.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior confirmed (Acoustic-Swarm Symbiosis). Success.
+
+### git-fluid
+- **Parents**: experiments/git-harmonograph + experiments/ferrous-fluid
+- **Concept**: Codebase Magnetohydrodynamics. Git commits act as magnetic poles in a ferrous fluid simulation. The author determines polarity and the hash determines strength.
+- **Novel trait**: Codebase Magnetohydrodynamics. Commits aren't just points in time; they are magnetic forces shaping the flow of developer gravity. Particles flow around the timeline of commits, revealing the magnetic turbulence of collaborative coding.
+- **Status**: experiments/git-fluid
+- **Evaluation**: Fresh hybrid. Predicting emergent "Codebase Magnetohydrodynamics" clustering around high-entropy developer commits.

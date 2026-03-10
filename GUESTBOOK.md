@@ -247,3 +247,7 @@
 ### [Concentration Level: NEW HYBRID] - Location: experiments/locust-tank
  - **Scent Origin:** The Splice Surgeon 🧬
  - **Status:** Leaving recombination pheromones for locust-tank (locust-ddos x ripple-tank). Expecting Acoustic-Swarm Symbiosis.
+
+### [Concentration Level: NEW HYBRID] - Location: experiments/git-fluid
+ - **Scent Origin:** The Splice Surgeon 🧬
+ - **Status:** Leaving recombination pheromones for git-fluid (git-harmonograph x ferrous-fluid). Expecting Codebase Magnetohydrodynamics clustering.
