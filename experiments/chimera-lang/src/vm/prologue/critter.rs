@@ -36,7 +36,10 @@ impl CritterState {
         }
     }
 
-    pub fn default() -> Self {
+}
+
+impl Default for CritterState {
+    fn default() -> Self {
         Self {
             energy: 100,
             genes: "R".to_string(), // Random walker
@@ -44,7 +47,9 @@ impl CritterState {
             direction: 0,
         }
     }
+}
 
+impl CritterState {
     pub fn to_value(&self) -> Value {
         Value::Str(self.to_string())
     }

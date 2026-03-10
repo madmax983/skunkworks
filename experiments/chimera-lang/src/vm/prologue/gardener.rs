@@ -36,7 +36,10 @@ impl GardenerState {
         }
     }
 
-    pub fn default() -> Self {
+}
+
+impl Default for GardenerState {
+    fn default() -> Self {
         let mut inv = VecDeque::new();
         inv.push_back(Value::Int(1)); // Start with a seed
         Self {
@@ -45,7 +48,9 @@ impl GardenerState {
             inventory: inv,
         }
     }
+}
 
+impl GardenerState {
     pub fn to_value(&self) -> Value {
         Value::Str(self.to_string())
     }

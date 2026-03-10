@@ -636,6 +636,9 @@ impl std::fmt::Display for ChimeraVM {
 /// // Values are wrapped in `Value::Int`.
 /// assert_eq!(vm.stack.len(), 1);
 /// ```
+#[cfg(feature = "biophysics")]
+pub type SynapseMap = HashMap<(usize, usize), Vec<((usize, usize), f32)>>;
+
 #[derive(Clone, Debug)]
 pub struct ChimeraVM {
     /// The read-only DNA program.
@@ -760,7 +763,7 @@ pub struct ChimeraVM {
     #[cfg(feature = "biophysics")]
     pub neurons: std::collections::HashMap<(usize, usize), neuron::Neuron>,
     #[cfg(feature = "biophysics")]
-    pub biophysics_synapses: HashMap<(usize, usize), Vec<((usize, usize), f32)>>,
+    pub biophysics_synapses: SynapseMap,
     #[cfg(feature = "biophysics")]
     pub biophysics_couplings: HashMap<(usize, usize), f32>,
     #[cfg(feature = "biophysics")]

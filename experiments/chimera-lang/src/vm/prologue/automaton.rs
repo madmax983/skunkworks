@@ -25,7 +25,10 @@ impl AutomatonState {
         }
     }
 
-    pub fn default() -> Self {
+}
+
+impl Default for AutomatonState {
+    fn default() -> Self {
         Self {
             pc: 0,
             dir: 1, // East
@@ -33,7 +36,9 @@ impl AutomatonState {
             program: "W>".to_string(), // Default: Write 0, Move East
         }
     }
+}
 
+impl AutomatonState {
     pub fn to_value(&self) -> Value {
         Value::Str(self.to_string())
     }

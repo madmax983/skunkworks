@@ -12,16 +12,18 @@ use crate::vm::{Value, GRID_SIZE};
 #[grammar = "prologue_grammar.pest"]
 pub struct PrologueParser;
 
-pub fn compile(
-    source: &str,
-    base_path: Option<&Path>,
-) -> Result<(
+pub type PrologueCompilerResult = Result<(
     Dna,
     Option<Vec<Vec<Value>>>,
     Option<bool>,
     HashMap<String, usize>,
     Vec<AlchemyRule>,
-)> {
+)>;
+
+pub fn compile(
+    source: &str,
+    base_path: Option<&Path>,
+) -> PrologueCompilerResult {
     let mut pairs = PrologueParser::parse(Rule::program, source)?;
 
     let mut grid = None;
