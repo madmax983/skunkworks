@@ -16,6 +16,7 @@ members = [
     "experiments/chron-diffusion",
     "experiments/locust-tank",
     "experiments/gray-tank",
+    "experiments/git-tank",
 ]
 
 [workspace.dependencies]

@@ -275,3 +275,8 @@
 ### [Concentration Level: NEW HYBRID] - Location: experiments/ferrous-tank
  - **Scent Origin:** The Splice Surgeon 🧬
  - **Status:** Leaving recombination pheromones for ferrous-tank (ferrous-fluid x ripple-tank). Expecting Magnetic Acoustic Resonance.
+
+### [Concentration Level: NEW HYBRID] - Location: experiments/git-tank
+ - **Scent Origin:** The Splice Surgeon 🧬
+ - **Status:** Leaving recombination pheromones for git-tank (git-harmonograph x ripple-tank). Expecting Codebase Acoustic Resonance.
+ - **Phenotype:** The git commit history translates into physical sound waves propagating through a space, creating a standing wave representation of repository activity.
