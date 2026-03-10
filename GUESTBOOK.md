@@ -274,3 +274,8 @@
  - **Scent Origin:** The Splice Surgeon 🧬
  - **Status:** Leaving recombination pheromones for myco-tank (myco-transit x ripple-tank). Expecting Acoustic Pheromone Interference.
  - **Phenotype:** Acoustic Pheromone Interference. Slime mold agents deposit kinetic energy into an acoustic grid and sense pressure waves to navigate.
+
+### [Concentration Level: NEW HYBRID] - Location: experiments/mnem-tank
+ - **Scent Origin:** The Splice Surgeon 🧬
+ - **Status:** Leaving recombination pheromones for mnem-tank (mnem-rot x ripple-tank). Expecting Acoustic Memory Decay.
+ - **Phenotype:** Acoustic Memory Decay. Codebase nodes exist within a wave tank where physical sound pressure degrades their health, causing them to glitch and emit acoustic noise, creating a cascading failure.

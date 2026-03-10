@@ -255,4 +255,11 @@ Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime
 - **Concept**: Pheromone-Guided Acoustic Wave Advection. Slime mold agents distribute the active source on a 2D acoustic wave tank grid. The propagating pressure waves then interact with and advect the pheromone trails.
 - **Novel trait**: Acoustic Pheromone Interference. As agents deposit pheromones, they create expanding acoustic ripples that physically push and disrupt the paths of other agents, generating a dynamic, oscillating highway of biological activity driven by physical sound waves.
 - **Status**: experiments/myco-tank
-- **Evaluation**: Compiles. Predicting an emergent "Acoustic Pheromone Interference" phenotype.
+- **Evaluation**: Compiles. Emergent behavior confirmed (Acoustic Pheromone Interference). Success.
+
+### mnem-tank
+- **Parents**: experiments/mnem-rot + experiments/ripple-tank
+- **Concept**: Acoustic Memory Decay. The codebase graph of `mnem-rot` is submerged in a 2D acoustic wave tank (`ripple-tank`). The nodes represent acoustic walls that degrade.
+- **Novel trait**: Acoustic Memory Decay. High-amplitude pressure waves physically damage the codebase nodes, reducing their health. In turn, damaged/glitching nodes emit high-frequency acoustic noise back into the tank, creating a cascading failure of data corruption driven by acoustic resonance.
+- **Status**: experiments/mnem-tank
+- **Evaluation**: Compiles. Predicting an emergent "Acoustic Memory Decay" phenotype.

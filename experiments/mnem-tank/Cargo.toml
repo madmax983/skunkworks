@@ -1,0 +1,21 @@
+[package]
+name = "mnem-tank"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = { workspace = true }
+walkdir = "2.3"
+regex = "1.9"
+crossbeam-channel = "0.5"
+anyhow = { workspace = true }
+resonance-audio = { workspace = true }
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = []
+audio = ["dep:cpal"]
