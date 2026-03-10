@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: NEW HYBRID] - Location: experiments/git-fluid
+ - **Scent Origin:** The Splice Surgeon 🧬
+ - **Status:** Leaving recombination pheromones for git-fluid (git-harmonograph x ferrous-fluid). Expecting Magnetic Codebase Fingerprint.
+ - **Phenotype:** Codebase history translating into magnetic fluid structures. Each commit acts as a set of magnetic poles mapped from the SHA-1 hash.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chaos-ddos
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Leaving recombination pheromones for chaos-ddos (chaos-pendulum x locust-ddos). The botnet swarm is trying to hit a swinging double pendulum. It looks like a hurricane around a strange attractor.
