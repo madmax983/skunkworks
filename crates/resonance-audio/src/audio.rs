@@ -151,9 +151,26 @@ impl AudioModel {
     ///
     /// * `width` - The width of the simulation grid.
     /// * `height` - The height of the simulation grid.
-    /// * `command_rx` - The channel receiver for `AudioCommand`s.
-    /// * `snapshot_tx` - The channel sender for grid snapshots (visualization).
-    /// * `recording_tx` - Optional channel to stream raw audio samples.
+    /// * `command_rx` - The channel to receive commands like plucking or placing walls.
+    /// * `snapshot_tx` - The channel to send telemetry back to the main thread (for rendering ripples).
+    /// * `recording_tx` - Optional: If provided, raw audio buffers are duplicated here (e.g., for saving to `.wav`).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use resonance_audio::audio::{AudioModel, AudioCommand};
+    /// use crossbeam_channel::bounded;
+    ///
+    /// // Set up the communication "nerve fibers" between threads.
+    /// let (brain_to_ear, command_rx) = bounded(10);
+    /// let (snapshot_tx, ear_to_eye) = bounded(10);
+    ///
+    /// // Construct the acoustic chamber.
+    /// let mut model = AudioModel::new(100, 100, command_rx, snapshot_tx, None);
+    ///
+    /// // Ask the model to pluck a string at (50, 50).
+    /// brain_to_ear.send(AudioCommand::Pluck { x: 50, y: 50, strength: 1.0 }).unwrap();
+    /// ```
     pub fn new(
         width: usize,
         height: usize,
