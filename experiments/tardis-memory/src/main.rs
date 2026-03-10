@@ -83,7 +83,10 @@ async fn main() {
                     let target = render_targets[target_idx].clone();
                     target_idx += 1;
 
-                    let target_room = world.get_room(target_id).unwrap();
+                    let target_room = match world.get_room(target_id) {
+                        Some(room) => room,
+                        None => continue, // Safely skip if room doesn't exist
+                    };
                     let target_center = target_room.size / 2.0;
 
                     let cam_pos = Vec3::new(
@@ -197,12 +200,13 @@ fn check_teleport(world: &mut World) {
     }
 
     if let Some((target_id, _)) = teleport_target {
-        let target_room = world.get_room(target_id).unwrap();
-        let target_center = target_room.size / 2.0;
-        let entry_pos = Vec3::new(target_center.x, 2.0, target_center.z);
+        if let Some(target_room) = world.get_room(target_id) {
+            let target_center = target_room.size / 2.0;
+            let entry_pos = Vec3::new(target_center.x, 2.0, target_center.z);
 
-        world.player.current_room_id = target_id;
-        world.player.pos = entry_pos;
+            world.player.current_room_id = target_id;
+            world.player.pos = entry_pos;
+        }
     }
 }
 
@@ -236,5 +240,35 @@ fn draw_block(block: &Block, portal_texture: Option<&Texture2D>) {
     } else {
         draw_cube(block.pos, block.size, None, block.color);
         draw_cube_wires(block.pos, block.size, BLACK);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        check_teleport,
+        world::{Block, Room, World},
+    };
+    use macroquad::prelude::*;
+
+    #[test]
+    fn test_teleport_invalid_room_id_no_panic() {
+        let mut world = World::new();
+
+        let mut room = Room::new(0, Vec3::new(10.0, 10.0, 10.0), RED);
+        let block = Block {
+            pos: Vec3::ZERO,
+            size: Vec3::ONE,
+            color: GREEN,
+            target_room_id: Some(999), // Target room doesn't exist
+        };
+        room.add_block(block);
+        world.add_room(room);
+
+        // Player is at 0, 0, 0, inside the block
+        world.player.current_room_id = 0;
+        world.player.pos = Vec3::ZERO;
+
+        check_teleport(&mut world);
     }
 }

@@ -80,7 +80,6 @@ fn generate_recursive(
                 size,
                 color,
                 target_room_id: Some(inner_room_id),
-                portal_face_normal: Vec3::Z, // Default to Z face for now
             };
             current_room.add_block(block);
         } else {
@@ -90,7 +89,6 @@ fn generate_recursive(
                 size,
                 color,
                 target_room_id: None,
-                portal_face_normal: Vec3::ZERO,
             };
             current_room.add_block(block);
         }
@@ -104,11 +102,11 @@ mod tests {
     #[test]
     fn test_generation() {
         let world = generate_heap();
-        assert!(world.rooms.len() > 0);
+        assert!(!world.rooms.is_empty());
 
         // Check if root room has blocks
         // The root room is the last added, so it should be at the end or searched by ID
-        let root = world.get_room(0).unwrap();
-        assert!(root.blocks.len() > 0);
+        let root = world.get_room(0).expect("Room 0 should exist");
+        assert!(!root.blocks.is_empty());
     }
 }
