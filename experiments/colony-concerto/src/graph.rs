@@ -2,7 +2,11 @@ use petgraph::graph::{Graph, NodeIndex};
 use petgraph::Directed;
 use rand::prelude::*;
 use std::collections::HashMap;
-use std::sync::Mutex;
+
+#[cfg(not(feature = "loom"))]
+pub use std::sync::Mutex;
+#[cfg(feature = "loom")]
+pub use loom::sync::Mutex;
 
 #[derive(Debug)]
 pub struct NodeDynamicState {
@@ -91,7 +95,6 @@ pub fn generate_layered_dag(layers: usize, nodes_per_layer: usize, rng: &mut imp
     for (layer, indices) in node_indices_by_layer.iter() {
         let count = indices.len();
         // Sort indices by id to keep stable layout
-        // (Actually indices are random access, but iteration order might vary if using keys, but here it's Vec)
         for (i, &idx) in indices.iter().enumerate() {
             let node = &mut graph[idx];
             node.x = (i as f32 + 0.5) / count as f32;

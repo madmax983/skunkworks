@@ -12,7 +12,12 @@ petgraph = "0.6"
 crossbeam = "0.8"
 parking_lot = "0.12"
 cpal = { version = "0.15", optional = true }
+loom = { version = "0.7", optional = true }
 
 [features]
 default = []
 audio = ["cpal"]
+loom = ["dep:loom"]
+
+[dev-dependencies]
+loom = "0.7"
