@@ -1,5 +1,6 @@
 use glam::Vec3;
 use physics_pbd::PbdSystem;
+use proptest::prelude::*;
 
 #[test]
 fn test_havoc_dt_nan_poison() {
@@ -38,4 +39,45 @@ fn test_havoc_dt_infinity() {
         !system.particles[p1].pos.is_finite(),
         "Havoc expected position to be corrupted to Infinity!"
     );
+}
+
+#[test]
+#[should_panic(expected = "NaN detected in constraint parameters")]
+fn test_havoc_distance_nan() {
+    let mut system = physics_pbd::PbdSystem::new();
+    let p1 = system.add_particle(glam::Vec3::new(f32::MAX, 0.0, 0.0), 1.0);
+    let p2 = system.add_particle(glam::Vec3::new(-f32::MAX, 0.0, 0.0), 1.0);
+    // This will calculate `dist = Infinity` and eventually inject a NaN.
+    system.add_distance_constraint(p1, p2, 1.0);
+    system.step(0.1, 1);
+}
+
+#[test]
+#[should_panic(expected = "NaN detected in constraint parameters")]
+fn test_havoc_distance_nan_2() {
+    let mut system = physics_pbd::PbdSystem::new();
+    let p1 = system.add_particle(glam::Vec3::new(0.0, 0.0, 0.0), 1.0);
+    let p2 = system.add_particle(glam::Vec3::new(0.0, 0.0, 0.0), 1.0);
+    // Explicitly injecting NaN
+    system.add_distance_constraint(p1, p2, f32::NAN);
+    system.step(0.1, 1);
+}
+
+// 👺 HAVOC: True property testing of extreme invalid inputs.
+// We explicitly use prop_oneof over known non-finite inputs to ensure
+// proptest generates failures deterministically without exceeding rejection limits.
+proptest! {
+    #[test]
+    #[should_panic(expected = "NaN detected in constraint parameters")]
+    fn test_distance_stiffness_and_dist_fuzz(
+        dist in prop_oneof![Just(f32::NAN), Just(f32::INFINITY), Just(f32::NEG_INFINITY)],
+        stiffness in prop_oneof![Just(f32::NAN), Just(f32::INFINITY), Just(f32::NEG_INFINITY)]
+    ) {
+        let mut system = physics_pbd::PbdSystem::new();
+        let p1 = system.add_particle(glam::Vec3::new(0.0, 0.0, 0.0), 1.0);
+        let p2 = system.add_particle(glam::Vec3::new(dist, 0.0, 0.0), 1.0);
+        system.add_distance_constraint(p1, p2, stiffness);
+
+        system.step(0.1, 1);
+    }
 }
