@@ -46,6 +46,7 @@ use ratatui::{
 pub struct TensionBar<'a> {
     tension: f64,
     block: Option<Block<'a>>,
+    show_bobber: bool,
 }
 
 impl<'a> TensionBar<'a> {
@@ -59,6 +60,7 @@ impl<'a> TensionBar<'a> {
         Self {
             tension,
             block: None,
+            show_bobber: false,
         }
     }
 
@@ -67,6 +69,12 @@ impl<'a> TensionBar<'a> {
     /// Defaults to a bordered block with title "TENSION".
     pub fn block(mut self, block: Block<'a>) -> Self {
         self.block = Some(block);
+        self
+    }
+
+    /// Toggles the rendering of the bobber icon ('🔻') at the current tension height.
+    pub fn with_bobber(mut self, show: bool) -> Self {
+        self.show_bobber = show;
         self
     }
 }
@@ -145,6 +153,29 @@ impl<'a> Widget for TensionBar<'a> {
                 cell.set_symbol(symbol);
                 cell.set_fg(color);
             }
+        }
+
+        // Draw bobber
+        if self.show_bobber && inner_area.width > 0 && inner_area.height > 0 {
+            // Find tension row safely to prevent underflow
+            let mut bobber_y = if remainder == 0.0 && full_blocks > 0 {
+                // If it landed perfectly on full_blocks (e.g. 1.0), it should be on the top block drawn
+                inner_area.y + inner_area.height.saturating_sub(full_blocks)
+            } else {
+                let bottom_y = inner_area.y + inner_area.height.saturating_sub(1);
+                bottom_y.saturating_sub(full_blocks)
+            };
+
+            if bobber_y >= inner_area.y + inner_area.height {
+                bobber_y = inner_area.y + inner_area.height.saturating_sub(1);
+            } else if bobber_y < inner_area.y {
+                bobber_y = inner_area.y;
+            }
+
+            let bobber_x = inner_area.x + inner_area.width / 2;
+            let cell = &mut buf[(bobber_x, bobber_y)];
+            cell.set_symbol("🔻");
+            cell.set_fg(Color::Red);
         }
     }
 }
