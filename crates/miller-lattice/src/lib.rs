@@ -292,7 +292,7 @@ fn get_dir_normal(name: &str, parent_normal: Vector3<i32>) -> Vector3<i32> {
     let h = hasher.finish();
 
     // Set of allowed normals
-    let normals = vec![
+    let normals = [
         Vector3::new(1, 0, 0),
         Vector3::new(0, 1, 0),
         Vector3::new(0, 0, 1),
