@@ -158,6 +158,40 @@ mod tests {
     }
 
     #[test]
+    fn test_log_list_mixed_case() {
+        let items = vec![
+            "eRrOr: mixed case".to_string(),
+            "waRNing: mixed".to_string(),
+            "SuCceSS: mixed".to_string(),
+            "iNFo: mixed".to_string(),
+            "nOtE: mixed".to_string(),
+        ];
+        let log_list = LogList::new(items);
+        let area = Rect::new(0, 0, 40, 5);
+        let mut buffer = Buffer::empty(area);
+
+        log_list.render(area, &mut buffer);
+
+        assert_eq!(buffer[(0, 0)].symbol(), "❌");
+        assert_eq!(buffer[(0, 1)].symbol(), "⚠️");
+        assert_eq!(buffer[(0, 2)].symbol(), "✅");
+        assert_eq!(buffer[(0, 3)].symbol(), "ℹ\u{fe0f}");
+        assert_eq!(buffer[(0, 4)].symbol(), "ℹ\u{fe0f}");
+    }
+
+    #[test]
+    fn test_log_list_empty() {
+        let items: Vec<String> = vec![];
+        let log_list = LogList::new(items);
+        let area = Rect::new(0, 0, 40, 5);
+        let mut buffer = Buffer::empty(area);
+
+        log_list.render(area, &mut buffer);
+        // Ensure no panics and remains empty
+        assert_eq!(buffer[(0, 0)].symbol(), " ");
+    }
+
+    #[test]
     fn test_log_list_info_note_rendering() {
         let items = vec![
             "Info: Something happened".to_string(),

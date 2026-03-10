@@ -278,6 +278,28 @@ mod tests {
     }
 
     #[test]
+    fn test_button_zero_width() {
+        let button = Button::new("Zero")
+            .style_variant(ButtonStyle::Primary)
+            .state(ButtonState::Normal);
+
+        // Render into a 0-width area
+        let area = Rect::new(0, 0, 0, 0);
+        let mut buffer = Buffer::empty(area);
+        button.render(area, &mut buffer);
+        // Rendering should not panic.
+
+        // Render a button without setting a block explicitly, relying on default borders
+        let button_no_block = Button::new("NoBlock");
+        let area = Rect::new(0, 0, 10, 3);
+        let mut buffer = Buffer::empty(area);
+        button_no_block.render(area, &mut buffer);
+
+        let cell = &buffer[(0, 0)];
+        assert_eq!(cell.symbol(), "┌"); // Uses default Borders::ALL
+    }
+
+    #[test]
     fn test_button_danger_hovered() {
         let button = Button::new("Del") // Short label to fit easily
             .style_variant(ButtonStyle::Danger)

@@ -551,6 +551,24 @@ mod tests {
     }
 
     #[test]
+    fn test_semantic_empty_structs() {
+        let snap = Snapshot::new("empty");
+        let json = snap.to_json();
+
+        // Due to skip_serializing_if, empty vecs/maps/options shouldn't be present
+        assert!(!json.contains("entities"));
+        assert!(!json.contains("regions"));
+        assert!(!json.contains("metrics"));
+        assert!(!json.contains("actions"));
+        assert!(!json.contains("frame"));
+        assert!(!json.contains("state"));
+
+        let entity = Entity::new("bare");
+        let entity_json = serde_json::to_string(&entity).unwrap();
+        assert!(!entity_json.contains("props"));
+    }
+
+    #[test]
     fn test_snapshot_with_entities_and_pretty() {
         let entity1 = Entity::new("e1");
         let entity2 = Entity::new("e2");
