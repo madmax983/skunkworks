@@ -1,17 +1,25 @@
 use serde::{Deserialize, Serialize};
 
-/// An action the LLM can request.
+/// A possible user action available in the current semantic state.
 ///
-/// Actions are the verbs of your TUI. They define the affordances available to the user
-/// (and thus the LLM) at the current moment.
+/// Actions are the "verbs" of your TUI. By registering actions inside a
+/// [`crate::semantic::Snapshot`], you tell the LLM (or a blind user interpreting the structure)
+/// what affordances are currently available on the screen, like moving, selecting, or quitting.
+///
+/// If an action has an associated `key`, it also tells the system *how* to invoke it.
 ///
 /// # Examples
 ///
 /// ```
 /// use tui_shared::semantic::Action;
+///
 /// let jump = Action::new("jump")
 ///     .key("space")
 ///     .describe("Make the character jump");
+///
+/// let quit = Action::new("quit")
+///     .key("q")
+///     .describe("Exit the application without saving");
 /// ```
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Action {

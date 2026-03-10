@@ -4,8 +4,12 @@ use std::collections::HashMap;
 
 /// A semantic entity in the TUI (particle, player, enemy, UI element, etc.).
 ///
-/// Entities are the nouns of your TUI story. They represent anything that has a presence
-/// in the interface, whether it's a game character, a button, or a data point.
+/// Entities are the "nouns" of your TUI story. They represent anything that has a presence
+/// in the interface, whether it's a game character, a button, or a data point. By grouping
+/// them into a [`crate::semantic::Snapshot`], you describe the world state to an LLM.
+///
+/// Entities can have a physical location ([`Vec2`]), a velocity, a display character, and
+/// an arbitrary set of properties defined using [`PropValue`]s.
 ///
 /// # Examples
 ///
@@ -15,7 +19,8 @@ use std::collections::HashMap;
 /// let player = Entity::new("hero")
 ///     .with_id("p1")
 ///     .at(40.0, 12.0)
-///     .with_prop("hp", 100);
+///     .with_prop("hp", 100)
+///     .with_prop("status", "poisoned");
 /// ```
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Entity {
@@ -119,16 +124,24 @@ impl Entity {
     }
 }
 
-/// Property values that can be attached to entities.
+/// Dynamically typed property values that can be attached to entities.
 ///
-/// This enum allows attaching arbitrary data to entities, which is crucial for
-/// giving the LLM context about the entity's state (e.g., health, ammo, selected status).
+/// This enum allows attaching arbitrary contextual data to [`Entity`] instances using
+/// [`Entity::with_prop`]. This data is crucial for giving the LLM deeper context about
+/// the entity's state (e.g., health, ammo, selected status) beyond just its position.
+///
+/// Internally, it serializes as untagged JSON values, meaning `PropValue::Int(42)`
+/// will become simply `42` in the final snapshot, making the structure cleaner for LLMs.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum PropValue {
+    /// An integer property (e.g., health points, ammo count).
     Int(i64),
+    /// A floating-point property (e.g., mass, precise rotation angle).
     Float(f64),
+    /// A boolean property (e.g., is_selected, is_boss, is_visible).
     Bool(bool),
+    /// A textual property (e.g., "poisoned", "Red", "Level 5").
     Text(String),
 }
 

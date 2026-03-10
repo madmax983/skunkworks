@@ -10,14 +10,27 @@ use std::collections::HashMap;
 /// This is the "screenshot" of your application's logic. Instead of pixels, it captures
 /// the meaning of what's on screen. The LLM uses this to decide what to do next.
 ///
+/// A [`Snapshot`] is composed of:
+/// *   **[`Entity`]** instances representing actors/objects.
+/// *   **[`Region`]** instances defining layout areas.
+/// *   **[`Action`]** instances enumerating possible user inputs.
+/// *   High-level properties (app name, frame tick, metrics, viewport).
+///
 /// # Examples
 ///
 /// ```
-/// use tui_shared::semantic::{Snapshot, Entity, Action};
+/// use tui_shared::semantic::{Snapshot, Entity, Action, Region};
 ///
 /// let snap = Snapshot::new("space-invaders")
-///     .with_entity(Entity::new("player").at(10.0, 10.0))
-///     .with_action(Action::new("fire").key("space"));
+///     .with_frame(100)
+///     .with_viewport(80, 24)
+///     .with_region(Region::new("play_area", 0, 0, 80, 20).describe("Where aliens attack"))
+///     .with_entity(Entity::new("player").at(40.0, 18.0).with_prop("lives", 3))
+///     .with_entity(Entity::new("alien").at(10.0, 5.0).moving(1.0, 0.0))
+///     .with_metric("score", 1500)
+///     .with_action(Action::new("fire").key("space").describe("Shoot laser"))
+///     .with_action(Action::new("move_left").key("left"))
+///     .with_action(Action::new("move_right").key("right"));
 /// ```
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Snapshot {
@@ -119,12 +132,16 @@ impl Snapshot {
         self
     }
 
-    /// Serialize to JSON
+    /// Serializes the snapshot to a compact JSON string.
+    ///
+    /// This is the primary format used to send the snapshot to an LLM over a network connection.
     pub fn to_json(&self) -> String {
         serde_json::to_string(self).unwrap_or_else(|_| "{}".to_string())
     }
 
-    /// Serialize to pretty JSON
+    /// Serializes the snapshot to a pretty-printed JSON string.
+    ///
+    /// Useful for debugging and viewing the semantic state locally.
     pub fn to_json_pretty(&self) -> String {
         serde_json::to_string_pretty(self).unwrap_or_else(|_| "{}".to_string())
     }

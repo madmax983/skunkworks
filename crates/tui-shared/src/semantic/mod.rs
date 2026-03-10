@@ -1,7 +1,58 @@
 //! # Semantic Bridge
 //!
-//! A bridge between TUI applications and LLMs. Apps expose their semantic state
-//! (not just pixels) so AI can understand, reason about, and interact with them.
+//! A semantic bridge between TUI applications and Large Language Models (LLMs).
+//!
+//! When an LLM looks at a terminal screen, giving it a raw 2D array of styled characters
+//! (pixels/cells) forces it to play a guessing game. It has to infer that "a sequence
+//! of characters `[OK]` surrounded by line-drawing characters" means there is a button,
+//! or that "an `@` symbol at `(10, 5)`" is the player character. This is error-prone,
+//! fragile, and requires extensive token consumption.
+//!
+//! This module solves that problem by allowing your application to emit **semantic snapshots**.
+//! Instead of rendering cells, you render *meaning*.
+//!
+//! ## Core Concepts
+//!
+//! *   **[`Snapshot`]**: The overarching structure representing a single frame of your application state.
+//! *   **[`Entity`]**: The "nouns" of your app. This can be a player, a particle, an enemy, or a data point.
+//! *   **[`Action`]**: The "verbs" of your app. These describe the actions the LLM or user can take right now.
+//! *   **[`Region`]**: The "where". It defines spatial boundaries on the screen so the LLM understands layout.
+//!
+//! ## Example
+//!
+//! ```rust
+//! use tui_shared::semantic::{Snapshot, Entity, Action, Region};
+//!
+//! // Create a snapshot of a hypothetical game's current frame
+//! let snapshot = Snapshot::new("space_adventure")
+//!     .with_frame(42)
+//!     .with_viewport(80, 24)
+//!     .with_state("combat")
+//!     // Describe the layout
+//!     .with_region(Region::new("radar", 0, 0, 20, 10).describe("Enemy detection zone"))
+//!     // Describe the entities in the world
+//!     .with_entity(
+//!         Entity::new("player")
+//!             .with_id("p1")
+//!             .at(10.0, 10.0)
+//!             .with_prop("health", 100)
+//!             .with_prop("shield_active", true)
+//!     )
+//!     .with_entity(
+//!         Entity::new("enemy_ship")
+//!             .with_id("e1")
+//!             .at(15.0, 8.0)
+//!             .moving(-1.0, 0.5)
+//!     )
+//!     // Provide high-level metrics
+//!     .with_metric("score", 1500)
+//!     // Enumerate what the user (or LLM) can do right now
+//!     .with_action(Action::new("fire_laser").key("Space").describe("Shoot the nearest enemy"))
+//!     .with_action(Action::new("evade").key("Shift").describe("Perform an evasive maneuver"));
+//!
+//! // The LLM can easily parse this JSON and understand exactly what is happening
+//! let json = snapshot.to_json_pretty();
+//! ```
 //!
 //! This module provides pure data structures and does not depend on `ratatui`,
 //! `crossterm`, or any specific TUI backend.
