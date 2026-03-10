@@ -262,4 +262,11 @@ Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime
 - **Concept**: Magnetic Acoustic Resonance. Magnetic particles in a 2D space are influenced by an acoustic wave tank field. The particles, in turn, deposit wave plucks based on their speed and movement.
 - **Novel trait**: Magnetic Acoustic Resonance. Magnetic particles and a physical acoustic wave tank form a bidirectional feedback loop.
 - **Status**: experiments/ferrous-tank
-- **Evaluation**: Compiles. Predicting an emergent "Magnetic Acoustic Resonance" phenotype.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md. Emergent behavior confirmed (Magnetic Acoustic Resonance). Success.
+
+### git-tank
+- **Parents**: experiments/git-harmonograph + experiments/ripple-tank
+- **Concept**: Codebase Acoustic Resonance. Git commits act as physical plucks in a 2D acoustic wave tank grid.
+- **Novel trait**: The git commit history translates into physical sound waves propagating through a space, interfering with each other based on commit timing and size, creating a standing wave representation of repository activity.
+- **Status**: experiments/git-tank
+- **Evaluation**: Compiles. Predicting an emergent standing wave representation of codebase activity.
