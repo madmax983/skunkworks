@@ -96,7 +96,7 @@ impl Egregore {
     pub fn sacrifice(&mut self, amount: i64) {
         self.faith = self
             .faith
-            .saturating_add(amount.abs() as u64)
+            .saturating_add(amount.unsigned_abs())
             .min(MAX_FAITH);
         // Sacrifice drives Chaos strongly
         self.alignment = (self.alignment - 10).max(-100);
@@ -105,7 +105,7 @@ impl Egregore {
     pub fn pray(&mut self, amount: i64) {
         self.faith = self
             .faith
-            .saturating_add(amount.abs() as u64)
+            .saturating_add(amount.unsigned_abs())
             .min(MAX_FAITH);
         // Prayer drives Order moderately
         self.alignment = (self.alignment + 5).min(100);

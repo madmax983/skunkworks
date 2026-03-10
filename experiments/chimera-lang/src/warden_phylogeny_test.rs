@@ -4,7 +4,7 @@ mod tests {
     use crate::opcode::OpCode;
     use crate::vm::{ChimeraVM, Value};
     use std::fs;
-    use std::path::PathBuf;
+
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {

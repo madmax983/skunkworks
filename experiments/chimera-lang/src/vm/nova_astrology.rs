@@ -26,6 +26,12 @@ pub struct Sky {
 }
 
 #[cfg(feature = "nova")]
+impl Default for Sky {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Sky {
     pub fn new() -> Self {
         let mut rng = rand::thread_rng();
@@ -80,7 +86,7 @@ impl Sky {
         let ix = x.round() as i64;
         let iy = y.round() as i64;
 
-        if ix >= 0 && ix < 16 && iy >= 0 && iy < 16 {
+        if (0..16).contains(&ix) && (0..16).contains(&iy) {
             Some((iy as usize, ix as usize))
         } else {
             None

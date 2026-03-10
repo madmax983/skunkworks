@@ -12,7 +12,7 @@ pub fn exec_pocket(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(r) = val {
             if r >= 0 {
-                let radius = r as i64;
+                let radius = r;
                 let (cy, cx) = vm.context_loc;
                 let mut data = Vec::new();
 

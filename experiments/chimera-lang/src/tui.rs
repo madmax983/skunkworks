@@ -353,1052 +353,1082 @@ where
 
         if event::poll(std::time::Duration::from_millis(100))? {
             if let Event::Key(key) = event::read()? {
-                // Handle Spirit Request
-                #[cfg(feature = "nova")]
-                if vm.spirit_request {
-                    match key.code {
-                        KeyCode::Enter => {
-                            let val = parse_grid_value(&app_state.input_buffer);
-                            vm.spirit_value = Some(val);
-                            vm.step(); // Resume
-                            app_state.input_buffer.clear();
-                        }
-                        KeyCode::Esc => {
-                            vm.spirit_value = Some(crate::vm::Value::Int(0));
-                            vm.step();
-                            app_state.input_buffer.clear();
-                        }
-                        KeyCode::Char(c) => {
-                            app_state.input_buffer.push(c);
-                        }
-                        KeyCode::Backspace => {
-                            app_state.input_buffer.pop();
-                        }
-                        _ => {}
-                    }
-                    continue;
+                if handle_input(key, vm, app_state)? {
+                    return Ok(());
                 }
+            }
+        }
+    }
+}
 
-                // Handle Injection Mode
-                if let InputMode::Injection = app_state.input_mode {
-                    match key.code {
-                        KeyCode::Enter => {
-                            let src = format!("strand injection {{ {} }}", app_state.input_buffer);
-                            match crate::compiler::compile(&src, None) {
-                                Ok(dna) => {
-                                    if let Some(strand) = dna.helix.strands.first() {
-                                        vm.inject_genes(strand.genes.clone());
-                                        app_state.status_msg = "Injection Successful".to_string();
-                                    } else {
+fn handle_input(
+    key: crossterm::event::KeyEvent,
+    vm: &mut ChimeraVM,
+    app_state: &mut AppState,
+) -> anyhow::Result<bool> {
+    #[cfg(feature = "nova")]
+    if vm.spirit_request {
+        return handle_spirit_request(key, vm, app_state);
+    }
+
+    match app_state.input_mode {
+        InputMode::Injection => handle_injection_mode(key, vm, app_state),
+        InputMode::Editing => handle_editing_mode(key, vm, app_state),
+        InputMode::Normal => handle_normal_mode(key, vm, app_state),
+    }
+}
+
+#[cfg(feature = "nova")]
+fn handle_spirit_request(
+    key: crossterm::event::KeyEvent,
+    vm: &mut ChimeraVM,
+    app_state: &mut AppState,
+) -> anyhow::Result<bool> {
+    match key.code {
+        KeyCode::Enter => {
+            let val = parse_grid_value(&app_state.input_buffer);
+            vm.spirit_value = Some(val);
+            vm.step(); // Resume
+            app_state.input_buffer.clear();
+        }
+        KeyCode::Esc => {
+            vm.spirit_value = Some(crate::vm::Value::Int(0));
+            vm.step();
+            app_state.input_buffer.clear();
+        }
+        KeyCode::Char(c) => {
+            app_state.input_buffer.push(c);
+        }
+        KeyCode::Backspace => {
+            app_state.input_buffer.pop();
+        }
+        _ => {}
+    }
+    Ok(false)
+}
+
+fn handle_injection_mode(
+    key: crossterm::event::KeyEvent,
+    vm: &mut ChimeraVM,
+    app_state: &mut AppState,
+) -> anyhow::Result<bool> {
+    match key.code {
+        KeyCode::Enter => {
+            let src = format!("strand injection {{ {} }}", app_state.input_buffer);
+            match crate::compiler::compile(&src, None) {
+                Ok(dna) => {
+                    if let Some(strand) = dna.helix.strands.first() {
+                        vm.inject_genes(strand.genes.clone());
+                        app_state.status_msg = "Injection Successful".to_string();
+                    } else {
+                        app_state.status_msg = "Injection Failed: No genes".to_string();
+                    }
+                }
+                Err(e) => {
+                    app_state.status_msg = format!("Injection Error: {}", e);
+                }
+            }
+            app_state.input_mode = InputMode::Normal;
+            app_state.input_buffer.clear();
+        }
+        KeyCode::Esc => {
+            app_state.input_mode = InputMode::Normal;
+            app_state.input_buffer.clear();
+        }
+        KeyCode::Char(c) => {
+            app_state.input_buffer.push(c);
+        }
+        KeyCode::Backspace => {
+            app_state.input_buffer.pop();
+        }
+        _ => {}
+    }
+    Ok(false)
+}
+
+fn handle_editing_mode(
+    key: crossterm::event::KeyEvent,
+    vm: &mut ChimeraVM,
+    app_state: &mut AppState,
+) -> anyhow::Result<bool> {
+    match key.code {
+        KeyCode::Enter => {
+            match app_state.view_mode {
+                ViewMode::Genome => {
+                    // Genome Editing Logic
+                    match ChimeraParser::parse(Rule::gene, &app_state.input_buffer) {
+                        Ok(mut pairs) => {
+                            let pair = pairs.next().unwrap();
+                            match Gene::try_from_pair(pair) {
+                                Ok(gene) => {
+                                    if app_state.selected_strand < vm.dna.helix.strands.len()
+                                        && app_state.selected_gene
+                                            < vm.dna.helix.strands[app_state.selected_strand]
+                                                .genes
+                                                .len()
+                                    {
+                                        vm.dna.helix.strands[app_state.selected_strand].genes
+                                            [app_state.selected_gene] = gene;
                                         app_state.status_msg =
-                                            "Injection Failed: No genes".to_string();
+                                            "Gene updated successfully".to_string();
                                     }
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
                                 }
                                 Err(e) => {
-                                    app_state.status_msg = format!("Injection Error: {}", e);
-                                }
-                            }
-                            app_state.input_mode = InputMode::Normal;
-                            app_state.input_buffer.clear();
-                        }
-                        KeyCode::Esc => {
-                            app_state.input_mode = InputMode::Normal;
-                            app_state.input_buffer.clear();
-                        }
-                        KeyCode::Char(c) => {
-                            app_state.input_buffer.push(c);
-                        }
-                        KeyCode::Backspace => {
-                            app_state.input_buffer.pop();
-                        }
-                        _ => {}
-                    }
-                    continue;
-                }
-
-                // Handle Editing Mode
-                if let InputMode::Editing = app_state.input_mode {
-                    match key.code {
-                        KeyCode::Enter => {
-                            match app_state.view_mode {
-                                ViewMode::Genome => {
-                                    // Genome Editing Logic
-                                    match ChimeraParser::parse(Rule::gene, &app_state.input_buffer)
-                                    {
-                                        Ok(mut pairs) => {
-                                            let pair = pairs.next().unwrap();
-                                            match Gene::try_from_pair(pair) {
-                                                Ok(gene) => {
-                                                    if app_state.selected_strand
-                                                        < vm.dna.helix.strands.len()
-                                                        && app_state.selected_gene
-                                                            < vm.dna.helix.strands
-                                                                [app_state.selected_strand]
-                                                                .genes
-                                                                .len()
-                                                    {
-                                                        vm.dna.helix.strands
-                                                            [app_state.selected_strand]
-                                                            .genes[app_state.selected_gene] = gene;
-                                                        app_state.status_msg =
-                                                            "Gene updated successfully".to_string();
-                                                    }
-                                                    app_state.input_mode = InputMode::Normal;
-                                                    app_state.input_buffer.clear();
-                                                }
-                                                Err(e) => {
-                                                    app_state.status_msg =
-                                                        format!("Parse Error: {}", e);
-                                                }
-                                            }
-                                        }
-                                        Err(e) => {
-                                            app_state.status_msg = format!("Parse Error: {}", e);
-                                        }
-                                    }
-                                }
-                                ViewMode::Grid => {
-                                    // Grid Editing Logic
-                                    let val = parse_grid_value(&app_state.input_buffer);
-                                    let (x, y) = app_state.grid_cursor;
-                                    vm.grid[y][x] = val;
-                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                ViewMode::Microscope => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "biophysics")]
-                                ViewMode::Cortex => {
-                                    // No editing for Cortex view yet
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "resonance")]
-                                ViewMode::Resonance => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Grimoire => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Laboratory => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Topology => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Graveyard => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::PianoRoll => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Retina => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Quantum => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                ViewMode::Heatmap => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "silicon")]
-                                ViewMode::Schematic => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Dream => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Phylogeny => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Alchemy => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Memetics => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Egregore => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Bestiary => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Kaleidoscope => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Void => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Signals => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Sovereignty => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Spectrogram => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
+                                    app_state.status_msg = format!("Parse Error: {}", e);
                                 }
                             }
                         }
-                        KeyCode::Esc => {
-                            app_state.input_mode = InputMode::Normal;
-                            app_state.input_buffer.clear();
+                        Err(e) => {
+                            app_state.status_msg = format!("Parse Error: {}", e);
                         }
-                        KeyCode::Char(c) => {
-                            app_state.input_buffer.push(c);
-                        }
-                        KeyCode::Backspace => {
-                            app_state.input_buffer.pop();
-                        }
-                        _ => {}
                     }
-                    continue;
                 }
-
-                // Handle Normal Mode
+                ViewMode::Grid => {
+                    // Grid Editing Logic
+                    let val = parse_grid_value(&app_state.input_buffer);
+                    let (x, y) = app_state.grid_cursor;
+                    vm.grid[y][x] = val;
+                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                ViewMode::Microscope => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                #[cfg(feature = "biophysics")]
+                ViewMode::Cortex => {
+                    // No editing for Cortex view yet
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                #[cfg(feature = "resonance")]
+                ViewMode::Resonance => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
                 #[cfg(feature = "nova")]
-                if let KeyCode::Char(c) = key.code {
-                    if c != 'q' && c != ' ' && c != 'm' && c != 'c' && vm.handle_input(c) {
-                        continue;
+                ViewMode::Grimoire => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Laboratory => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Topology => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Graveyard => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::PianoRoll => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Retina => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Quantum => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                ViewMode::Heatmap => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                #[cfg(feature = "silicon")]
+                ViewMode::Schematic => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Dream => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Phylogeny => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Alchemy => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Memetics => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Egregore => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Bestiary => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Kaleidoscope => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Void => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Signals => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Sovereignty => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Spectrogram => {
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+            }
+        }
+        KeyCode::Esc => {
+            app_state.input_mode = InputMode::Normal;
+            app_state.input_buffer.clear();
+        }
+        KeyCode::Char(c) => {
+            app_state.input_buffer.push(c);
+        }
+        KeyCode::Backspace => {
+            app_state.input_buffer.pop();
+        }
+        _ => {}
+    }
+    Ok(false)
+}
+
+fn handle_normal_mode(
+    key: crossterm::event::KeyEvent,
+    vm: &mut ChimeraVM,
+    app_state: &mut AppState,
+) -> anyhow::Result<bool> {
+    #[cfg(feature = "nova")]
+    if let KeyCode::Char(c) = key.code {
+        if c != 'q' && c != ' ' && c != 'm' && c != 'c' && vm.handle_input(c) {
+            return Ok(false);
+        }
+    }
+
+    match key.code {
+        KeyCode::Tab => {
+            app_state.view_mode = match app_state.view_mode {
+                ViewMode::Genome => ViewMode::Grid,
+                ViewMode::Grid => ViewMode::Microscope,
+                ViewMode::Microscope => {
+                    #[cfg(feature = "biophysics")]
+                    {
+                        ViewMode::Cortex
+                    }
+                    #[cfg(not(feature = "biophysics"))]
+                    {
+                        #[cfg(feature = "resonance")]
+                        {
+                            ViewMode::Resonance
+                        }
+                        #[cfg(not(feature = "resonance"))]
+                        {
+                            #[cfg(feature = "nova")]
+                            {
+                                ViewMode::Grimoire
+                            }
+                            #[cfg(not(feature = "nova"))]
+                            {
+                                ViewMode::Heatmap
+                            }
+                        }
                     }
                 }
-
-                match key.code {
-                    KeyCode::Tab => {
-                        app_state.view_mode = match app_state.view_mode {
-                            ViewMode::Genome => ViewMode::Grid,
-                            ViewMode::Grid => ViewMode::Microscope,
-                            ViewMode::Microscope => {
-                                #[cfg(feature = "biophysics")]
-                                {
-                                    ViewMode::Cortex
-                                }
-                                #[cfg(not(feature = "biophysics"))]
-                                {
-                                    #[cfg(feature = "resonance")]
-                                    {
-                                        ViewMode::Resonance
-                                    }
-                                    #[cfg(not(feature = "resonance"))]
-                                    {
-                                        #[cfg(feature = "nova")]
-                                        {
-                                            ViewMode::Grimoire
-                                        }
-                                        #[cfg(not(feature = "nova"))]
-                                        {
-                                            ViewMode::Heatmap
-                                        }
-                                    }
-                                }
-                            }
-                            #[cfg(feature = "biophysics")]
-                            ViewMode::Cortex => {
-                                #[cfg(feature = "resonance")]
-                                {
-                                    ViewMode::Resonance
-                                }
-                                #[cfg(not(feature = "resonance"))]
-                                {
-                                    #[cfg(feature = "nova")]
-                                    {
-                                        ViewMode::Grimoire
-                                    }
-                                    #[cfg(not(feature = "nova"))]
-                                    {
-                                        ViewMode::Heatmap
-                                    }
-                                }
-                            }
-                            #[cfg(feature = "resonance")]
-                            ViewMode::Resonance => {
-                                #[cfg(feature = "nova")]
-                                {
-                                    ViewMode::Grimoire
-                                }
-                                #[cfg(not(feature = "nova"))]
-                                {
-                                    ViewMode::Heatmap
-                                }
-                            }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Grimoire => ViewMode::Topology,
-                            #[cfg(feature = "nova")]
-                            ViewMode::Topology => ViewMode::Graveyard,
-                            #[cfg(feature = "nova")]
-                            ViewMode::Graveyard => ViewMode::PianoRoll,
-                            #[cfg(feature = "nova")]
-                            ViewMode::PianoRoll => ViewMode::Retina,
-                            #[cfg(feature = "nova")]
-                            ViewMode::Retina => ViewMode::Quantum,
-                            #[cfg(feature = "nova")]
-                            ViewMode::Quantum => ViewMode::Dream,
-                            #[cfg(feature = "nova")]
-                            ViewMode::Dream => ViewMode::Phylogeny,
-                            #[cfg(feature = "nova")]
-                            ViewMode::Phylogeny => ViewMode::Alchemy,
-                            #[cfg(feature = "nova")]
-                            ViewMode::Alchemy => ViewMode::Memetics,
-                            #[cfg(feature = "nova")]
-                            ViewMode::Memetics => ViewMode::Egregore,
-                            #[cfg(feature = "nova")]
-                            ViewMode::Egregore => ViewMode::Bestiary,
-                            #[cfg(feature = "nova")]
-                            ViewMode::Bestiary => ViewMode::Kaleidoscope,
-                            #[cfg(feature = "nova")]
-                            ViewMode::Kaleidoscope => ViewMode::Void,
-                            #[cfg(feature = "nova")]
-                            ViewMode::Void => ViewMode::Signals,
-                            #[cfg(feature = "nova")]
-                            ViewMode::Signals => ViewMode::Sovereignty,
-                            #[cfg(feature = "nova")]
-                            ViewMode::Sovereignty => ViewMode::Spectrogram,
-                            #[cfg(feature = "nova")]
-                            ViewMode::Spectrogram => ViewMode::Heatmap,
-                            ViewMode::Heatmap => {
-                                #[cfg(feature = "silicon")]
-                                {
-                                    ViewMode::Schematic
-                                }
-                                #[cfg(not(feature = "silicon"))]
-                                {
-                                    #[cfg(feature = "nova")]
-                                    {
-                                        ViewMode::Laboratory
-                                    }
-                                    #[cfg(not(feature = "nova"))]
-                                    {
-                                        ViewMode::Genome
-                                    }
-                                }
-                            }
-                            #[cfg(feature = "silicon")]
-                            ViewMode::Schematic => {
-                                #[cfg(feature = "nova")]
-                                {
-                                    ViewMode::Laboratory
-                                }
-                                #[cfg(not(feature = "nova"))]
-                                {
-                                    ViewMode::Genome
-                                }
-                            }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Laboratory => ViewMode::Genome,
-                        };
+                #[cfg(feature = "biophysics")]
+                ViewMode::Cortex => {
+                    #[cfg(feature = "resonance")]
+                    {
+                        ViewMode::Resonance
                     }
-                    KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
-                    #[cfg(feature = "silicon")]
-                    KeyCode::Char('s') => app_state.view_mode = ViewMode::Schematic,
-                    #[cfg(feature = "nova")]
-                    KeyCode::Char('p') => app_state.view_mode = ViewMode::PianoRoll,
-                    #[cfg(feature = "nova")]
-                    KeyCode::Char('z') => app_state.view_mode = ViewMode::Bestiary,
-                    KeyCode::Char('i') => {
-                        app_state.input_mode = InputMode::Injection;
-                        app_state.input_buffer.clear();
-                    }
-                    #[cfg(feature = "nova")]
-                    KeyCode::Char('r') => {
-                        if let ViewMode::Graveyard = app_state.view_mode {
-                            match vm.resurrect_from_graveyard(app_state.selected_graveyard_strand) {
-                                Ok(idx) => {
-                                    app_state.status_msg = format!("Resurrected strand {}!", idx);
-                                    if app_state.selected_graveyard_strand >= vm.graveyard.len()
-                                        && !vm.graveyard.is_empty()
-                                    {
-                                        app_state.selected_graveyard_strand =
-                                            vm.graveyard.len() - 1;
-                                    }
-                                }
-                                Err(e) => app_state.status_msg = format!("Error: {}", e),
-                            }
-                        }
-                    }
-                    #[cfg(feature = "biophysics")]
-                    KeyCode::Char('b') => app_state.view_mode = ViewMode::Cortex,
-                    #[cfg(feature = "nova")]
-                    KeyCode::Char('a') => {
-                        if let ViewMode::Alchemy = app_state.view_mode {
-                            // Add to Crucible
-                            match app_state.alchemy_selection {
-                                0 => {
-                                    // Shelf
-                                    let elements = [
-                                        "Fire", "Water", "Earth", "Air", "Life", "Death", "Lead",
-                                        "Energy",
-                                    ];
-                                    if app_state.alchemy_shelf_idx < elements.len() {
-                                        vm.crucible.add(crate::vm::Value::Str(
-                                            elements[app_state.alchemy_shelf_idx].to_string(),
-                                        ));
-                                    }
-                                }
-                                1 => {
-                                    // Strands
-                                    if app_state.alchemy_strand_idx < vm.dna.helix.strands.len() {
-                                        vm.crucible.add(crate::vm::Value::Int(
-                                            app_state.alchemy_strand_idx as i64,
-                                        ));
-                                    }
-                                }
-                                _ => {}
-                            }
-                        }
-                    }
-                    #[cfg(feature = "nova")]
-                    KeyCode::Char('x') => {
-                        if let ViewMode::Graveyard = app_state.view_mode {
-                            if app_state.selected_graveyard_strand < vm.graveyard.len() {
-                                vm.graveyard.remove(app_state.selected_graveyard_strand);
-                                app_state.status_msg = "Exterminated strand.".to_string();
-                                if app_state.selected_graveyard_strand >= vm.graveyard.len()
-                                    && !vm.graveyard.is_empty()
-                                {
-                                    app_state.selected_graveyard_strand = vm.graveyard.len() - 1;
-                                }
-                            }
-                        } else if let ViewMode::Alchemy = app_state.view_mode {
-                            vm.crucible.clear();
-                            app_state.status_msg = "Crucible emptied.".to_string();
-                        }
-                    }
-                    #[cfg(feature = "nova")]
-                    KeyCode::Char('t') => {
-                        if let ViewMode::Alchemy = app_state.view_mode {
-                            crate::vm::alchemy::transmute_crucible(vm);
-                        }
-                    }
-                    #[cfg(feature = "nova")]
-                    KeyCode::Char('k') => app_state.view_mode = ViewMode::Kaleidoscope,
-                    KeyCode::Char('q') => return Ok(()),
-                    KeyCode::Char(' ') => {
+                    #[cfg(not(feature = "resonance"))]
+                    {
                         #[cfg(feature = "nova")]
-                        if let ViewMode::Kaleidoscope = app_state.view_mode {
-                            // Paint
-                            let (x, y) = app_state.grid_cursor;
-                            let r = match app_state.kaleidoscope_hue_idx {
-                                0 => 255,
-                                1 => 255,
-                                2 => 0,
-                                3 => 0,
-                                4 => 0,
-                                5 => 255,
-                                _ => 255,
-                            };
-                            let g = match app_state.kaleidoscope_hue_idx {
-                                0 => 0,
-                                1 => 255,
-                                2 => 255,
-                                3 => 255,
-                                4 => 0,
-                                5 => 0,
-                                _ => 255,
-                            };
-                            let b = match app_state.kaleidoscope_hue_idx {
-                                0 => 0,
-                                1 => 0,
-                                2 => 0,
-                                3 => 255,
-                                4 => 255,
-                                5 => 255,
-                                _ => 255,
-                            };
-
-                            // Adjust for lightness (Light=0, Normal=1, Dark=2)
-                            let (r, g, b) = match app_state.kaleidoscope_light_idx {
-                                0 => (r + (255 - r) / 2, g + (255 - g) / 2, b + (255 - b) / 2), // Light
-                                2 => (r / 2, g / 2, b / 2), // Dark
-                                _ => (r, g, b),             // Normal
-                            };
-
-                            vm.chroma_grid[y][x].fg = Some((r as u8, g as u8, b as u8));
-                        } else {
-                            vm.step();
+                        {
+                            ViewMode::Grimoire
                         }
                         #[cfg(not(feature = "nova"))]
-                        vm.step();
+                        {
+                            ViewMode::Heatmap
+                        }
                     }
+                }
+                #[cfg(feature = "resonance")]
+                ViewMode::Resonance => {
                     #[cfg(feature = "nova")]
-                    KeyCode::Char('s') => {
-                        if let ViewMode::Kaleidoscope = app_state.view_mode {
-                            // Step Piet
-                            if vm.piet_state.is_none() {
-                                vm.piet_state = Some(crate::vm::piet::init_piet(vm));
-                            }
-                            if let Some(mut state) = vm.piet_state.take() {
-                                crate::vm::piet::step_piet_once(vm, &mut state);
-                                vm.piet_state = Some(state);
-                            }
+                    {
+                        ViewMode::Grimoire
+                    }
+                    #[cfg(not(feature = "nova"))]
+                    {
+                        ViewMode::Heatmap
+                    }
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Grimoire => ViewMode::Topology,
+                #[cfg(feature = "nova")]
+                ViewMode::Topology => ViewMode::Graveyard,
+                #[cfg(feature = "nova")]
+                ViewMode::Graveyard => ViewMode::PianoRoll,
+                #[cfg(feature = "nova")]
+                ViewMode::PianoRoll => ViewMode::Retina,
+                #[cfg(feature = "nova")]
+                ViewMode::Retina => ViewMode::Quantum,
+                #[cfg(feature = "nova")]
+                ViewMode::Quantum => ViewMode::Dream,
+                #[cfg(feature = "nova")]
+                ViewMode::Dream => ViewMode::Phylogeny,
+                #[cfg(feature = "nova")]
+                ViewMode::Phylogeny => ViewMode::Alchemy,
+                #[cfg(feature = "nova")]
+                ViewMode::Alchemy => ViewMode::Memetics,
+                #[cfg(feature = "nova")]
+                ViewMode::Memetics => ViewMode::Egregore,
+                #[cfg(feature = "nova")]
+                ViewMode::Egregore => ViewMode::Bestiary,
+                #[cfg(feature = "nova")]
+                ViewMode::Bestiary => ViewMode::Kaleidoscope,
+                #[cfg(feature = "nova")]
+                ViewMode::Kaleidoscope => ViewMode::Void,
+                #[cfg(feature = "nova")]
+                ViewMode::Void => ViewMode::Signals,
+                #[cfg(feature = "nova")]
+                ViewMode::Signals => ViewMode::Sovereignty,
+                #[cfg(feature = "nova")]
+                ViewMode::Sovereignty => ViewMode::Spectrogram,
+                #[cfg(feature = "nova")]
+                ViewMode::Spectrogram => ViewMode::Heatmap,
+                ViewMode::Heatmap => {
+                    #[cfg(feature = "silicon")]
+                    {
+                        ViewMode::Schematic
+                    }
+                    #[cfg(not(feature = "silicon"))]
+                    {
+                        #[cfg(feature = "nova")]
+                        {
+                            ViewMode::Laboratory
+                        }
+                        #[cfg(not(feature = "nova"))]
+                        {
+                            ViewMode::Genome
                         }
                     }
+                }
+                #[cfg(feature = "silicon")]
+                ViewMode::Schematic => {
                     #[cfg(feature = "nova")]
-                    KeyCode::Char('R') => {
-                        if let ViewMode::Kaleidoscope = app_state.view_mode {
-                            vm.piet_state = None;
-                            app_state.status_msg = "Piet State Reset".to_string();
+                    {
+                        ViewMode::Laboratory
+                    }
+                    #[cfg(not(feature = "nova"))]
+                    {
+                        ViewMode::Genome
+                    }
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Laboratory => ViewMode::Genome,
+            };
+        }
+        KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
+        #[cfg(feature = "silicon")]
+        KeyCode::Char('s') => app_state.view_mode = ViewMode::Schematic,
+        #[cfg(feature = "nova")]
+        KeyCode::Char('p') => app_state.view_mode = ViewMode::PianoRoll,
+        #[cfg(feature = "nova")]
+        KeyCode::Char('z') => app_state.view_mode = ViewMode::Bestiary,
+        KeyCode::Char('i') => {
+            app_state.input_mode = InputMode::Injection;
+            app_state.input_buffer.clear();
+        }
+        #[cfg(feature = "nova")]
+        KeyCode::Char('r') => {
+            if let ViewMode::Graveyard = app_state.view_mode {
+                match vm.resurrect_from_graveyard(app_state.selected_graveyard_strand) {
+                    Ok(idx) => {
+                        app_state.status_msg = format!("Resurrected strand {}!", idx);
+                        if app_state.selected_graveyard_strand >= vm.graveyard.len()
+                            && !vm.graveyard.is_empty()
+                        {
+                            app_state.selected_graveyard_strand = vm.graveyard.len() - 1;
                         }
                     }
-                    #[cfg(feature = "nova")]
-                    KeyCode::Char('[') => {
-                        if let ViewMode::Kaleidoscope = app_state.view_mode {
-                            if app_state.kaleidoscope_hue_idx > 0 {
-                                app_state.kaleidoscope_hue_idx -= 1;
-                            } else {
-                                app_state.kaleidoscope_hue_idx = 5;
-                            }
+                    Err(e) => app_state.status_msg = format!("Error: {}", e),
+                }
+            }
+        }
+        #[cfg(feature = "biophysics")]
+        KeyCode::Char('b') => app_state.view_mode = ViewMode::Cortex,
+        #[cfg(feature = "nova")]
+        KeyCode::Char('a') => {
+            if let ViewMode::Alchemy = app_state.view_mode {
+                // Add to Crucible
+                match app_state.alchemy_selection {
+                    0 => {
+                        // Shelf
+                        let elements = [
+                            "Fire", "Water", "Earth", "Air", "Life", "Death", "Lead", "Energy",
+                        ];
+                        if app_state.alchemy_shelf_idx < elements.len() {
+                            vm.crucible.add(crate::vm::Value::Str(
+                                elements[app_state.alchemy_shelf_idx].to_string(),
+                            ));
                         }
                     }
-                    #[cfg(feature = "nova")]
-                    KeyCode::Char(']') => {
-                        if let ViewMode::Kaleidoscope = app_state.view_mode {
-                            app_state.kaleidoscope_hue_idx =
-                                (app_state.kaleidoscope_hue_idx + 1) % 6;
+                    1 => {
+                        // Strands
+                        if app_state.alchemy_strand_idx < vm.dna.helix.strands.len() {
+                            vm.crucible
+                                .add(crate::vm::Value::Int(app_state.alchemy_strand_idx as i64));
                         }
                     }
-                    #[cfg(feature = "nova")]
-                    KeyCode::Char('{') => {
-                        if let ViewMode::Kaleidoscope = app_state.view_mode {
-                            if app_state.kaleidoscope_light_idx > 0 {
-                                app_state.kaleidoscope_light_idx -= 1;
-                            } else {
-                                app_state.kaleidoscope_light_idx = 2;
-                            }
+                    _ => {}
+                }
+            }
+        }
+        #[cfg(feature = "nova")]
+        KeyCode::Char('x') => {
+            if let ViewMode::Graveyard = app_state.view_mode {
+                if app_state.selected_graveyard_strand < vm.graveyard.len() {
+                    vm.graveyard.remove(app_state.selected_graveyard_strand);
+                    app_state.status_msg = "Exterminated strand.".to_string();
+                    if app_state.selected_graveyard_strand >= vm.graveyard.len()
+                        && !vm.graveyard.is_empty()
+                    {
+                        app_state.selected_graveyard_strand = vm.graveyard.len() - 1;
+                    }
+                }
+            } else if let ViewMode::Alchemy = app_state.view_mode {
+                vm.crucible.clear();
+                app_state.status_msg = "Crucible emptied.".to_string();
+            }
+        }
+        #[cfg(feature = "nova")]
+        KeyCode::Char('t') => {
+            if let ViewMode::Alchemy = app_state.view_mode {
+                crate::vm::alchemy::transmute_crucible(vm);
+            }
+        }
+        #[cfg(feature = "nova")]
+        KeyCode::Char('k') => app_state.view_mode = ViewMode::Kaleidoscope,
+        KeyCode::Char('q') => return Ok(true),
+        KeyCode::Char(' ') => {
+            #[cfg(feature = "nova")]
+            if let ViewMode::Kaleidoscope = app_state.view_mode {
+                // Paint
+                let (x, y) = app_state.grid_cursor;
+                let r = match app_state.kaleidoscope_hue_idx {
+                    0 => 255,
+                    1 => 255,
+                    2 => 0,
+                    3 => 0,
+                    4 => 0,
+                    5 => 255,
+                    _ => 255,
+                };
+                let g = match app_state.kaleidoscope_hue_idx {
+                    0 => 0,
+                    1 => 255,
+                    2 => 255,
+                    3 => 255,
+                    4 => 0,
+                    5 => 0,
+                    _ => 255,
+                };
+                let b = match app_state.kaleidoscope_hue_idx {
+                    0 => 0,
+                    1 => 0,
+                    2 => 0,
+                    3 => 255,
+                    4 => 255,
+                    5 => 255,
+                    _ => 255,
+                };
+
+                // Adjust for lightness (Light=0, Normal=1, Dark=2)
+                let (r, g, b) = match app_state.kaleidoscope_light_idx {
+                    0 => (r + (255 - r) / 2, g + (255 - g) / 2, b + (255 - b) / 2), // Light
+                    2 => (r / 2, g / 2, b / 2),                                     // Dark
+                    _ => (r, g, b),                                                 // Normal
+                };
+
+                vm.chroma_grid[y][x].fg = Some((r as u8, g as u8, b as u8));
+            } else {
+                vm.step();
+            }
+            #[cfg(not(feature = "nova"))]
+            vm.step();
+        }
+        #[cfg(feature = "nova")]
+        KeyCode::Char('s') => {
+            if let ViewMode::Kaleidoscope = app_state.view_mode {
+                // Step Piet
+                if vm.piet_state.is_none() {
+                    vm.piet_state = Some(crate::vm::piet::init_piet(vm));
+                }
+                if let Some(mut state) = vm.piet_state.take() {
+                    crate::vm::piet::step_piet_once(vm, &mut state);
+                    vm.piet_state = Some(state);
+                }
+            }
+        }
+        #[cfg(feature = "nova")]
+        KeyCode::Char('R') => {
+            if let ViewMode::Kaleidoscope = app_state.view_mode {
+                vm.piet_state = None;
+                app_state.status_msg = "Piet State Reset".to_string();
+            }
+        }
+        #[cfg(feature = "nova")]
+        KeyCode::Char('[') => {
+            if let ViewMode::Kaleidoscope = app_state.view_mode {
+                if app_state.kaleidoscope_hue_idx > 0 {
+                    app_state.kaleidoscope_hue_idx -= 1;
+                } else {
+                    app_state.kaleidoscope_hue_idx = 5;
+                }
+            }
+        }
+        #[cfg(feature = "nova")]
+        KeyCode::Char(']') => {
+            if let ViewMode::Kaleidoscope = app_state.view_mode {
+                app_state.kaleidoscope_hue_idx = (app_state.kaleidoscope_hue_idx + 1) % 6;
+            }
+        }
+        #[cfg(feature = "nova")]
+        KeyCode::Char('{') => {
+            if let ViewMode::Kaleidoscope = app_state.view_mode {
+                if app_state.kaleidoscope_light_idx > 0 {
+                    app_state.kaleidoscope_light_idx -= 1;
+                } else {
+                    app_state.kaleidoscope_light_idx = 2;
+                }
+            }
+        }
+        #[cfg(feature = "nova")]
+        KeyCode::Char('}') => {
+            if let ViewMode::Kaleidoscope = app_state.view_mode {
+                app_state.kaleidoscope_light_idx = (app_state.kaleidoscope_light_idx + 1) % 3;
+            }
+        }
+        KeyCode::Char('m') => vm.mutate(),
+        KeyCode::Char('c') => vm.chaos_mode = !vm.chaos_mode,
+        KeyCode::Down => match app_state.view_mode {
+            ViewMode::Genome => {
+                let s_len = vm.dna.helix.strands.len();
+                if s_len > 0 {
+                    let g_len = vm.dna.helix.strands[app_state.selected_strand].genes.len();
+                    if app_state.selected_gene + 1 < g_len {
+                        app_state.selected_gene += 1;
+                    } else if app_state.selected_strand + 1 < s_len {
+                        app_state.selected_strand += 1;
+                        app_state.selected_gene = 0;
+                    }
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Kaleidoscope => {
+                if app_state.grid_cursor.1 < 15 {
+                    app_state.grid_cursor.1 += 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Void => {
+                if app_state.grid_cursor.1 < 15 {
+                    app_state.grid_cursor.1 += 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Signals => {
+                if app_state.grid_cursor.1 < 15 {
+                    app_state.grid_cursor.1 += 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Sovereignty => {
+                if app_state.grid_cursor.1 < 15 {
+                    app_state.grid_cursor.1 += 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Spectrogram => {
+                if app_state.grid_cursor.1 < 15 {
+                    app_state.grid_cursor.1 += 1;
+                }
+            }
+            ViewMode::Grid => {
+                if app_state.grid_cursor.1 < 15 {
+                    app_state.grid_cursor.1 += 1;
+                }
+            }
+            ViewMode::Microscope => {}
+            #[cfg(feature = "resonance")]
+            ViewMode::Resonance => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Graveyard => {
+                if app_state.selected_graveyard_strand + 1 < vm.graveyard.len() {
+                    app_state.selected_graveyard_strand += 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::PianoRoll => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Retina => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Quantum => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Dream => {
+                if app_state.selected_dream_trace + 1 < vm.dream_traces.len() {
+                    app_state.selected_dream_trace += 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Phylogeny => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Alchemy => {
+                if app_state.alchemy_selection == 0 {
+                    if app_state.alchemy_shelf_idx < 7 {
+                        // 8 items
+                        app_state.alchemy_shelf_idx += 1;
+                    }
+                } else if app_state.alchemy_strand_idx + 1 < vm.dna.helix.strands.len() {
+                    app_state.alchemy_strand_idx += 1;
+                }
+            }
+            ViewMode::Heatmap => {}
+            #[cfg(feature = "silicon")]
+            ViewMode::Schematic => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Laboratory => {
+                match app_state.selected_strand {
+                    // 0=A, 1=B, 2=Method
+                    0 => {
+                        if app_state.lab_parent_a > 0 {
+                            app_state.lab_parent_a -= 1;
                         }
                     }
-                    #[cfg(feature = "nova")]
-                    KeyCode::Char('}') => {
-                        if let ViewMode::Kaleidoscope = app_state.view_mode {
-                            app_state.kaleidoscope_light_idx =
-                                (app_state.kaleidoscope_light_idx + 1) % 3;
+                    1 => {
+                        if app_state.lab_parent_b > 0 {
+                            app_state.lab_parent_b -= 1;
                         }
                     }
-                    KeyCode::Char('m') => vm.mutate(),
-                    KeyCode::Char('c') => vm.chaos_mode = !vm.chaos_mode,
-                    KeyCode::Down => match app_state.view_mode {
-                        ViewMode::Genome => {
-                            let s_len = vm.dna.helix.strands.len();
-                            if s_len > 0 {
-                                let g_len =
-                                    vm.dna.helix.strands[app_state.selected_strand].genes.len();
-                                if app_state.selected_gene + 1 < g_len {
-                                    app_state.selected_gene += 1;
-                                } else if app_state.selected_strand + 1 < s_len {
-                                    app_state.selected_strand += 1;
-                                    app_state.selected_gene = 0;
+                    2 => {
+                        if app_state.lab_method > 0 {
+                            app_state.lab_method -= 1;
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Grimoire => {
+                if app_state.selected_sigil_index + 1 < vm.sigil_registry.len() {
+                    app_state.selected_sigil_index += 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Topology => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Memetics => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Egregore => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Bestiary => {
+                if !vm.organelles.is_empty()
+                    && app_state.selected_organelle_index + 1 < vm.organelles.len() {
+                        app_state.selected_organelle_index += 1;
+                    }
+            }
+            #[cfg(feature = "biophysics")]
+            ViewMode::Cortex => {
+                let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
+                neurons_sorted.sort();
+                if let Some(current) = app_state.selected_neuron_coords {
+                    if let Some(pos) = neurons_sorted.iter().position(|&c| *c == current) {
+                        if pos + 1 < neurons_sorted.len() {
+                            app_state.selected_neuron_coords = Some(*neurons_sorted[pos + 1]);
+                            app_state.voltage_history.clear(); // Reset history on switch
+                        }
+                    }
+                } else if !neurons_sorted.is_empty() {
+                    app_state.selected_neuron_coords = Some(*neurons_sorted[0]);
+                }
+            }
+        },
+        KeyCode::Up => match app_state.view_mode {
+            ViewMode::Genome => {
+                if app_state.selected_gene > 0 {
+                    app_state.selected_gene -= 1;
+                } else if app_state.selected_strand > 0 {
+                    app_state.selected_strand -= 1;
+                    let g_len = vm.dna.helix.strands[app_state.selected_strand].genes.len();
+                    if g_len > 0 {
+                        app_state.selected_gene = g_len - 1;
+                    } else {
+                        app_state.selected_gene = 0;
+                    }
+                }
+            }
+            ViewMode::Grid => {
+                if app_state.grid_cursor.1 > 0 {
+                    app_state.grid_cursor.1 -= 1;
+                }
+            }
+            ViewMode::Microscope => {}
+            #[cfg(feature = "resonance")]
+            ViewMode::Resonance => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Grimoire => {
+                if app_state.selected_sigil_index > 0 {
+                    app_state.selected_sigil_index -= 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Laboratory => {
+                let max_strand = vm.dna.helix.strands.len().saturating_sub(1);
+                match app_state.selected_strand {
+                    // 0=A, 1=B, 2=Method
+                    0 => {
+                        if app_state.lab_parent_a < max_strand {
+                            app_state.lab_parent_a += 1;
+                        }
+                    }
+                    1 => {
+                        if app_state.lab_parent_b < max_strand {
+                            app_state.lab_parent_b += 1;
+                        }
+                    }
+                    2 => {
+                        if app_state.lab_method < 2 {
+                            app_state.lab_method += 1;
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            #[cfg(feature = "biophysics")]
+            ViewMode::Cortex => {
+                let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
+                neurons_sorted.sort();
+                if let Some(current) = app_state.selected_neuron_coords {
+                    if let Some(pos) = neurons_sorted.iter().position(|&c| *c == current) {
+                        if pos > 0 {
+                            app_state.selected_neuron_coords = Some(*neurons_sorted[pos - 1]);
+                            app_state.voltage_history.clear();
+                        }
+                    }
+                } else if !neurons_sorted.is_empty() {
+                    app_state.selected_neuron_coords = Some(*neurons_sorted[0]);
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Graveyard => {
+                if app_state.selected_graveyard_strand > 0 {
+                    app_state.selected_graveyard_strand -= 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::PianoRoll => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Retina => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Quantum => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Dream => {
+                if app_state.selected_dream_trace > 0 {
+                    app_state.selected_dream_trace -= 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Phylogeny => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Alchemy => {
+                if app_state.alchemy_selection == 0 {
+                    if app_state.alchemy_shelf_idx > 0 {
+                        app_state.alchemy_shelf_idx -= 1;
+                    }
+                } else if app_state.alchemy_strand_idx > 0 {
+                    app_state.alchemy_strand_idx -= 1;
+                }
+            }
+            ViewMode::Heatmap => {}
+            #[cfg(feature = "silicon")]
+            ViewMode::Schematic => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Topology => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Memetics => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Egregore => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Bestiary => {
+                if app_state.selected_organelle_index > 0 {
+                    app_state.selected_organelle_index -= 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Kaleidoscope => {
+                if app_state.grid_cursor.1 > 0 {
+                    app_state.grid_cursor.1 -= 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Void => {
+                if app_state.grid_cursor.1 > 0 {
+                    app_state.grid_cursor.1 -= 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Signals => {
+                if app_state.grid_cursor.1 > 0 {
+                    app_state.grid_cursor.1 -= 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Sovereignty => {
+                if app_state.grid_cursor.1 > 0 {
+                    app_state.grid_cursor.1 -= 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Spectrogram => {
+                if app_state.grid_cursor.1 > 0 {
+                    app_state.grid_cursor.1 -= 1;
+                }
+            }
+        },
+        KeyCode::Right => match app_state.view_mode {
+            ViewMode::Genome => {}
+            ViewMode::Grid => {
+                if app_state.grid_cursor.0 < 15 {
+                    app_state.grid_cursor.0 += 1;
+                }
+            }
+            ViewMode::Microscope => {}
+            #[cfg(feature = "resonance")]
+            ViewMode::Resonance => {}
+            #[cfg(feature = "biophysics")]
+            ViewMode::Cortex => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Grimoire => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Topology => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Graveyard => {}
+            #[cfg(feature = "nova")]
+            ViewMode::PianoRoll => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Retina => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Quantum => {}
+            #[cfg(feature = "silicon")]
+            ViewMode::Schematic => {}
+            ViewMode::Heatmap => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Laboratory => {
+                if app_state.selected_strand < 2 {
+                    app_state.selected_strand += 1;
+                } else {
+                    app_state.selected_strand = 0;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Dream => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Phylogeny => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Alchemy => {
+                app_state.alchemy_selection = 1;
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Memetics => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Egregore => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Bestiary => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Kaleidoscope => {
+                if app_state.grid_cursor.0 < 15 {
+                    app_state.grid_cursor.0 += 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Void => {
+                if app_state.grid_cursor.0 < 15 {
+                    app_state.grid_cursor.0 += 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Signals => {
+                if app_state.grid_cursor.0 < 15 {
+                    app_state.grid_cursor.0 += 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Sovereignty => {
+                if app_state.grid_cursor.0 < 15 {
+                    app_state.grid_cursor.0 += 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Spectrogram => {
+                if app_state.grid_cursor.0 < 15 {
+                    app_state.grid_cursor.0 += 1;
+                }
+            }
+        },
+        KeyCode::Left => match app_state.view_mode {
+            ViewMode::Genome => {}
+            ViewMode::Grid => {
+                if app_state.grid_cursor.0 > 0 {
+                    app_state.grid_cursor.0 -= 1;
+                }
+            }
+            ViewMode::Microscope => {}
+            #[cfg(feature = "resonance")]
+            ViewMode::Resonance => {}
+            #[cfg(feature = "biophysics")]
+            ViewMode::Cortex => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Grimoire => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Topology => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Graveyard => {}
+            #[cfg(feature = "nova")]
+            ViewMode::PianoRoll => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Retina => {}
+            #[cfg(feature = "silicon")]
+            ViewMode::Schematic => {}
+            ViewMode::Heatmap => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Laboratory => {
+                if app_state.selected_strand > 0 {
+                    app_state.selected_strand -= 1;
+                } else {
+                    app_state.selected_strand = 2;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Quantum => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Dream => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Phylogeny => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Alchemy => {
+                app_state.alchemy_selection = 0;
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Memetics => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Egregore => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Bestiary => {}
+            #[cfg(feature = "nova")]
+            ViewMode::Kaleidoscope => {
+                if app_state.grid_cursor.0 > 0 {
+                    app_state.grid_cursor.0 -= 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Void => {
+                if app_state.grid_cursor.0 > 0 {
+                    app_state.grid_cursor.0 -= 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Signals => {
+                if app_state.grid_cursor.0 > 0 {
+                    app_state.grid_cursor.0 -= 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Sovereignty => {
+                if app_state.grid_cursor.0 > 0 {
+                    app_state.grid_cursor.0 -= 1;
+                }
+            }
+            #[cfg(feature = "nova")]
+            ViewMode::Spectrogram => {
+                if app_state.grid_cursor.0 > 0 {
+                    app_state.grid_cursor.0 -= 1;
+                }
+            }
+        },
+        KeyCode::Enter => {
+            app_state.input_mode = InputMode::Editing;
+            match app_state.view_mode {
+                #[cfg(feature = "nova")]
+                ViewMode::Phylogeny => {
+                    app_state.input_mode = InputMode::Normal;
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Alchemy => {
+                    // Prevent entering edit mode for Alchemy (uses keys instead)
+                    app_state.input_mode = InputMode::Normal;
+                }
+                ViewMode::Genome => {
+                    if app_state.selected_strand < vm.dna.helix.strands.len() {
+                        let g_len = vm.dna.helix.strands[app_state.selected_strand].genes.len();
+                        if app_state.selected_gene < g_len {
+                            let gene = &vm.dna.helix.strands[app_state.selected_strand].genes
+                                [app_state.selected_gene];
+                            let mut s = format!("{}(", gene.op);
+                            for (i, arg) in gene.args.iter().enumerate() {
+                                if i > 0 {
+                                    s.push(' ');
                                 }
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Kaleidoscope => {
-                            if app_state.grid_cursor.1 < 15 {
-                                app_state.grid_cursor.1 += 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Void => {
-                            if app_state.grid_cursor.1 < 15 {
-                                app_state.grid_cursor.1 += 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Signals => {
-                            if app_state.grid_cursor.1 < 15 {
-                                app_state.grid_cursor.1 += 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Sovereignty => {
-                            if app_state.grid_cursor.1 < 15 {
-                                app_state.grid_cursor.1 += 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Spectrogram => {
-                            if app_state.grid_cursor.1 < 15 {
-                                app_state.grid_cursor.1 += 1;
-                            }
-                        }
-                        ViewMode::Grid => {
-                            if app_state.grid_cursor.1 < 15 {
-                                app_state.grid_cursor.1 += 1;
-                            }
-                        }
-                        ViewMode::Microscope => {}
-                        #[cfg(feature = "resonance")]
-                        ViewMode::Resonance => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Graveyard => {
-                            if app_state.selected_graveyard_strand + 1 < vm.graveyard.len() {
-                                app_state.selected_graveyard_strand += 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::PianoRoll => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Retina => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Quantum => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Dream => {
-                            if app_state.selected_dream_trace + 1 < vm.dream_traces.len() {
-                                app_state.selected_dream_trace += 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Phylogeny => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Alchemy => {
-                            if app_state.alchemy_selection == 0 {
-                                if app_state.alchemy_shelf_idx < 7 {
-                                    // 8 items
-                                    app_state.alchemy_shelf_idx += 1;
-                                }
-                            } else {
-                                if app_state.alchemy_strand_idx + 1 < vm.dna.helix.strands.len() {
-                                    app_state.alchemy_strand_idx += 1;
-                                }
-                            }
-                        }
-                        ViewMode::Heatmap => {}
-                        #[cfg(feature = "silicon")]
-                        ViewMode::Schematic => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Laboratory => {
-                            match app_state.selected_strand {
-                                // 0=A, 1=B, 2=Method
-                                0 => {
-                                    if app_state.lab_parent_a > 0 {
-                                        app_state.lab_parent_a -= 1;
+                                match arg {
+                                    crate::ast::Nucleotide::Number(n) => s.push_str(&n.to_string()),
+                                    crate::ast::Nucleotide::String(str_val) => {
+                                        s.push_str(&format!("\"{}\"", str_val))
                                     }
-                                }
-                                1 => {
-                                    if app_state.lab_parent_b > 0 {
-                                        app_state.lab_parent_b -= 1;
-                                    }
-                                }
-                                2 => {
-                                    if app_state.lab_method > 0 {
-                                        app_state.lab_method -= 1;
-                                    }
-                                }
-                                _ => {}
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Grimoire => {
-                            if app_state.selected_sigil_index + 1 < vm.sigil_registry.len() {
-                                app_state.selected_sigil_index += 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Topology => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Memetics => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Egregore => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Bestiary => {
-                            if !vm.organelles.is_empty() {
-                                if app_state.selected_organelle_index + 1 < vm.organelles.len() {
-                                    app_state.selected_organelle_index += 1;
-                                }
-                            }
-                        }
-                        #[cfg(feature = "biophysics")]
-                        ViewMode::Cortex => {
-                            let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
-                            neurons_sorted.sort();
-                            if let Some(current) = app_state.selected_neuron_coords {
-                                if let Some(pos) =
-                                    neurons_sorted.iter().position(|&c| *c == current)
-                                {
-                                    if pos + 1 < neurons_sorted.len() {
-                                        app_state.selected_neuron_coords =
-                                            Some(*neurons_sorted[pos + 1]);
-                                        app_state.voltage_history.clear(); // Reset history on switch
-                                    }
-                                }
-                            } else if !neurons_sorted.is_empty() {
-                                app_state.selected_neuron_coords = Some(*neurons_sorted[0]);
-                            }
-                        }
-                    },
-                    KeyCode::Up => match app_state.view_mode {
-                        ViewMode::Genome => {
-                            if app_state.selected_gene > 0 {
-                                app_state.selected_gene -= 1;
-                            } else if app_state.selected_strand > 0 {
-                                app_state.selected_strand -= 1;
-                                let g_len =
-                                    vm.dna.helix.strands[app_state.selected_strand].genes.len();
-                                if g_len > 0 {
-                                    app_state.selected_gene = g_len - 1;
-                                } else {
-                                    app_state.selected_gene = 0;
-                                }
-                            }
-                        }
-                        ViewMode::Grid => {
-                            if app_state.grid_cursor.1 > 0 {
-                                app_state.grid_cursor.1 -= 1;
-                            }
-                        }
-                        ViewMode::Microscope => {}
-                        #[cfg(feature = "resonance")]
-                        ViewMode::Resonance => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Grimoire => {
-                            if app_state.selected_sigil_index > 0 {
-                                app_state.selected_sigil_index -= 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Laboratory => {
-                            let max_strand = vm.dna.helix.strands.len().saturating_sub(1);
-                            match app_state.selected_strand {
-                                // 0=A, 1=B, 2=Method
-                                0 => {
-                                    if app_state.lab_parent_a < max_strand {
-                                        app_state.lab_parent_a += 1;
-                                    }
-                                }
-                                1 => {
-                                    if app_state.lab_parent_b < max_strand {
-                                        app_state.lab_parent_b += 1;
-                                    }
-                                }
-                                2 => {
-                                    if app_state.lab_method < 2 {
-                                        app_state.lab_method += 1;
-                                    }
-                                }
-                                _ => {}
-                            }
-                        }
-                        #[cfg(feature = "biophysics")]
-                        ViewMode::Cortex => {
-                            let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
-                            neurons_sorted.sort();
-                            if let Some(current) = app_state.selected_neuron_coords {
-                                if let Some(pos) =
-                                    neurons_sorted.iter().position(|&c| *c == current)
-                                {
-                                    if pos > 0 {
-                                        app_state.selected_neuron_coords =
-                                            Some(*neurons_sorted[pos - 1]);
-                                        app_state.voltage_history.clear();
-                                    }
-                                }
-                            } else if !neurons_sorted.is_empty() {
-                                app_state.selected_neuron_coords = Some(*neurons_sorted[0]);
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Graveyard => {
-                            if app_state.selected_graveyard_strand > 0 {
-                                app_state.selected_graveyard_strand -= 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::PianoRoll => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Retina => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Quantum => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Dream => {
-                            if app_state.selected_dream_trace > 0 {
-                                app_state.selected_dream_trace -= 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Phylogeny => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Alchemy => {
-                            if app_state.alchemy_selection == 0 {
-                                if app_state.alchemy_shelf_idx > 0 {
-                                    app_state.alchemy_shelf_idx -= 1;
-                                }
-                            } else {
-                                if app_state.alchemy_strand_idx > 0 {
-                                    app_state.alchemy_strand_idx -= 1;
-                                }
-                            }
-                        }
-                        ViewMode::Heatmap => {}
-                        #[cfg(feature = "silicon")]
-                        ViewMode::Schematic => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Topology => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Memetics => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Egregore => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Bestiary => {
-                            if app_state.selected_organelle_index > 0 {
-                                app_state.selected_organelle_index -= 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Kaleidoscope => {
-                            if app_state.grid_cursor.1 > 0 {
-                                app_state.grid_cursor.1 -= 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Void => {
-                            if app_state.grid_cursor.1 > 0 {
-                                app_state.grid_cursor.1 -= 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Signals => {
-                            if app_state.grid_cursor.1 > 0 {
-                                app_state.grid_cursor.1 -= 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Sovereignty => {
-                            if app_state.grid_cursor.1 > 0 {
-                                app_state.grid_cursor.1 -= 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Spectrogram => {
-                            if app_state.grid_cursor.1 > 0 {
-                                app_state.grid_cursor.1 -= 1;
-                            }
-                        }
-                    },
-                    KeyCode::Right => match app_state.view_mode {
-                        ViewMode::Genome => {}
-                        ViewMode::Grid => {
-                            if app_state.grid_cursor.0 < 15 {
-                                app_state.grid_cursor.0 += 1;
-                            }
-                        }
-                        ViewMode::Microscope => {}
-                        #[cfg(feature = "resonance")]
-                        ViewMode::Resonance => {}
-                        #[cfg(feature = "biophysics")]
-                        ViewMode::Cortex => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Grimoire => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Topology => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Graveyard => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::PianoRoll => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Retina => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Quantum => {}
-                        #[cfg(feature = "silicon")]
-                        ViewMode::Schematic => {}
-                        ViewMode::Heatmap => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Laboratory => {
-                            if app_state.selected_strand < 2 {
-                                app_state.selected_strand += 1;
-                            } else {
-                                app_state.selected_strand = 0;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Dream => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Phylogeny => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Alchemy => {
-                            app_state.alchemy_selection = 1;
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Memetics => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Egregore => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Bestiary => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Kaleidoscope => {
-                            if app_state.grid_cursor.0 < 15 {
-                                app_state.grid_cursor.0 += 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Void => {
-                            if app_state.grid_cursor.0 < 15 {
-                                app_state.grid_cursor.0 += 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Signals => {
-                            if app_state.grid_cursor.0 < 15 {
-                                app_state.grid_cursor.0 += 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Sovereignty => {
-                            if app_state.grid_cursor.0 < 15 {
-                                app_state.grid_cursor.0 += 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Spectrogram => {
-                            if app_state.grid_cursor.0 < 15 {
-                                app_state.grid_cursor.0 += 1;
-                            }
-                        }
-                    },
-                    KeyCode::Left => match app_state.view_mode {
-                        ViewMode::Genome => {}
-                        ViewMode::Grid => {
-                            if app_state.grid_cursor.0 > 0 {
-                                app_state.grid_cursor.0 -= 1;
-                            }
-                        }
-                        ViewMode::Microscope => {}
-                        #[cfg(feature = "resonance")]
-                        ViewMode::Resonance => {}
-                        #[cfg(feature = "biophysics")]
-                        ViewMode::Cortex => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Grimoire => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Topology => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Graveyard => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::PianoRoll => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Retina => {}
-                        #[cfg(feature = "silicon")]
-                        ViewMode::Schematic => {}
-                        ViewMode::Heatmap => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Laboratory => {
-                            if app_state.selected_strand > 0 {
-                                app_state.selected_strand -= 1;
-                            } else {
-                                app_state.selected_strand = 2;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Quantum => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Dream => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Phylogeny => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Alchemy => {
-                            app_state.alchemy_selection = 0;
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Memetics => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Egregore => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Bestiary => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Kaleidoscope => {
-                            if app_state.grid_cursor.0 > 0 {
-                                app_state.grid_cursor.0 -= 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Void => {
-                            if app_state.grid_cursor.0 > 0 {
-                                app_state.grid_cursor.0 -= 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Signals => {
-                            if app_state.grid_cursor.0 > 0 {
-                                app_state.grid_cursor.0 -= 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Sovereignty => {
-                            if app_state.grid_cursor.0 > 0 {
-                                app_state.grid_cursor.0 -= 1;
-                            }
-                        }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Spectrogram => {
-                            if app_state.grid_cursor.0 > 0 {
-                                app_state.grid_cursor.0 -= 1;
-                            }
-                        }
-                    },
-                    KeyCode::Enter => {
-                        app_state.input_mode = InputMode::Editing;
-                        match app_state.view_mode {
-                            #[cfg(feature = "nova")]
-                            ViewMode::Phylogeny => {
-                                app_state.input_mode = InputMode::Normal;
-                            }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Alchemy => {
-                                // Prevent entering edit mode for Alchemy (uses keys instead)
-                                app_state.input_mode = InputMode::Normal;
-                            }
-                            ViewMode::Genome => {
-                                if app_state.selected_strand < vm.dna.helix.strands.len() {
-                                    let g_len =
-                                        vm.dna.helix.strands[app_state.selected_strand].genes.len();
-                                    if app_state.selected_gene < g_len {
-                                        let gene = &vm.dna.helix.strands[app_state.selected_strand]
-                                            .genes[app_state.selected_gene];
-                                        let mut s = format!("{}(", gene.op);
-                                        for (i, arg) in gene.args.iter().enumerate() {
-                                            if i > 0 {
+                                    crate::ast::Nucleotide::Identifier(id) => s.push_str(id),
+                                    crate::ast::Nucleotide::Junction(t, vals) => {
+                                        let t_str = match t {
+                                            crate::ast::JunctionType::Any => "any",
+                                            crate::ast::JunctionType::All => "all",
+                                        };
+                                        s.push_str(t_str);
+                                        s.push('(');
+                                        for (k, v) in vals.iter().enumerate() {
+                                            if k > 0 {
                                                 s.push(' ');
                                             }
-                                            match arg {
+                                            match v {
                                                 crate::ast::Nucleotide::Number(n) => {
                                                     s.push_str(&n.to_string())
                                                 }
@@ -1408,193 +1438,159 @@ where
                                                 crate::ast::Nucleotide::Identifier(id) => {
                                                     s.push_str(id)
                                                 }
-                                                crate::ast::Nucleotide::Junction(t, vals) => {
-                                                    let t_str = match t {
-                                                        crate::ast::JunctionType::Any => "any",
-                                                        crate::ast::JunctionType::All => "all",
-                                                    };
-                                                    s.push_str(t_str);
-                                                    s.push('(');
-                                                    for (k, v) in vals.iter().enumerate() {
-                                                        if k > 0 {
-                                                            s.push(' ');
-                                                        }
-                                                        match v {
-                                                            crate::ast::Nucleotide::Number(n) => {
-                                                                s.push_str(&n.to_string())
-                                                            }
-                                                            crate::ast::Nucleotide::String(
-                                                                str_val,
-                                                            ) => s.push_str(&format!(
-                                                                "\"{}\"",
-                                                                str_val
-                                                            )),
-                                                            crate::ast::Nucleotide::Identifier(
-                                                                id,
-                                                            ) => s.push_str(id),
-                                                            crate::ast::Nucleotide::Junction(
-                                                                _,
-                                                                _,
-                                                            ) => s.push_str("nested"),
-                                                        }
-                                                    }
-                                                    s.push(')');
+                                                crate::ast::Nucleotide::Junction(_, _) => {
+                                                    s.push_str("nested")
                                                 }
                                             }
                                         }
                                         s.push(')');
-                                        app_state.input_buffer = s;
                                     }
                                 }
                             }
-                            ViewMode::Grid => {
-                                let (x, y) = app_state.grid_cursor;
-                                let val = &vm.grid[y][x];
-                                match val {
-                                    crate::vm::Value::Int(n) => {
-                                        app_state.input_buffer = n.to_string()
-                                    }
-                                    crate::vm::Value::Str(s) => app_state.input_buffer = s.clone(),
-                                    _ => app_state.input_buffer = String::new(),
-                                }
-                            }
-                            ViewMode::Microscope => {
-                                app_state.input_mode = InputMode::Normal;
-                            }
-                            #[cfg(feature = "biophysics")]
-                            ViewMode::Cortex => {
-                                // Prevent entering edit mode for Cortex
-                                app_state.input_mode = InputMode::Normal;
-                            }
-                            #[cfg(feature = "resonance")]
-                            ViewMode::Resonance => {
-                                app_state.input_mode = InputMode::Normal;
-                            }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Grimoire => {
-                                app_state.input_mode = InputMode::Normal;
-                                let mut registry: Vec<_> =
-                                    vm.sigil_registry.keys().cloned().collect();
-                                registry.sort();
-                                if app_state.selected_sigil_index < registry.len() {
-                                    let key = &registry[app_state.selected_sigil_index];
-                                    if let Some(sigil) = vm.sigil_registry.get_mut(key) {
-                                        sigil.auto_cast = !sigil.auto_cast;
-                                        let status = if sigil.auto_cast {
-                                            "ENABLED"
-                                        } else {
-                                            "DISABLED"
-                                        };
-                                        app_state.status_msg =
-                                            format!("{} Auto-Cast: {}", key, status);
-                                    }
-                                }
-                            }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Laboratory => {
-                                app_state.input_mode = InputMode::Normal;
-                                let splice_op = crate::opcode::OpCode::Splice;
-                                let args = vec![
-                                    crate::ast::Nucleotide::Number(app_state.lab_parent_a as i64),
-                                    crate::ast::Nucleotide::Number(app_state.lab_parent_b as i64),
-                                    crate::ast::Nucleotide::Number(app_state.lab_method as i64),
-                                ];
-                                vm.execute_gene_inner(splice_op, &args);
-                                app_state.status_msg = format!(
-                                    "Spliced {} & {} (Method {})",
-                                    app_state.lab_parent_a,
-                                    app_state.lab_parent_b,
-                                    app_state.lab_method
-                                );
-                            }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Topology => {
-                                app_state.input_mode = InputMode::Normal;
-                            }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Graveyard => {
-                                app_state.input_mode = InputMode::Normal;
-                            }
-                            #[cfg(feature = "nova")]
-                            ViewMode::PianoRoll => {
-                                app_state.input_mode = InputMode::Normal;
-                            }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Retina => {
-                                app_state.input_mode = InputMode::Normal;
-                            }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Quantum => {
-                                app_state.input_mode = InputMode::Normal;
-                            }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Dream => {
-                                app_state.input_mode = InputMode::Normal;
-                                if app_state.selected_dream_trace < vm.dream_traces.len() {
-                                    let (target_idx, mutated_strand) = {
-                                        let trace =
-                                            &vm.dream_traces[app_state.selected_dream_trace];
-                                        (trace.strand_idx, trace.mutated_strand.clone())
-                                    };
+                            s.push(')');
+                            app_state.input_buffer = s;
+                        }
+                    }
+                }
+                ViewMode::Grid => {
+                    let (x, y) = app_state.grid_cursor;
+                    let val = &vm.grid[y][x];
+                    match val {
+                        crate::vm::Value::Int(n) => app_state.input_buffer = n.to_string(),
+                        crate::vm::Value::Str(s) => app_state.input_buffer = s.clone(),
+                        _ => app_state.input_buffer = String::new(),
+                    }
+                }
+                ViewMode::Microscope => {
+                    app_state.input_mode = InputMode::Normal;
+                }
+                #[cfg(feature = "biophysics")]
+                ViewMode::Cortex => {
+                    // Prevent entering edit mode for Cortex
+                    app_state.input_mode = InputMode::Normal;
+                }
+                #[cfg(feature = "resonance")]
+                ViewMode::Resonance => {
+                    app_state.input_mode = InputMode::Normal;
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Grimoire => {
+                    app_state.input_mode = InputMode::Normal;
+                    let mut registry: Vec<_> = vm.sigil_registry.keys().cloned().collect();
+                    registry.sort();
+                    if app_state.selected_sigil_index < registry.len() {
+                        let key = &registry[app_state.selected_sigil_index];
+                        if let Some(sigil) = vm.sigil_registry.get_mut(key) {
+                            sigil.auto_cast = !sigil.auto_cast;
+                            let status = if sigil.auto_cast {
+                                "ENABLED"
+                            } else {
+                                "DISABLED"
+                            };
+                            app_state.status_msg = format!("{} Auto-Cast: {}", key, status);
+                        }
+                    }
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Laboratory => {
+                    app_state.input_mode = InputMode::Normal;
+                    let splice_op = crate::opcode::OpCode::Splice;
+                    let args = vec![
+                        crate::ast::Nucleotide::Number(app_state.lab_parent_a as i64),
+                        crate::ast::Nucleotide::Number(app_state.lab_parent_b as i64),
+                        crate::ast::Nucleotide::Number(app_state.lab_method as i64),
+                    ];
+                    vm.execute_gene_inner(splice_op, &args);
+                    app_state.status_msg = format!(
+                        "Spliced {} & {} (Method {})",
+                        app_state.lab_parent_a, app_state.lab_parent_b, app_state.lab_method
+                    );
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Topology => {
+                    app_state.input_mode = InputMode::Normal;
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Graveyard => {
+                    app_state.input_mode = InputMode::Normal;
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::PianoRoll => {
+                    app_state.input_mode = InputMode::Normal;
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Retina => {
+                    app_state.input_mode = InputMode::Normal;
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Quantum => {
+                    app_state.input_mode = InputMode::Normal;
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Dream => {
+                    app_state.input_mode = InputMode::Normal;
+                    if app_state.selected_dream_trace < vm.dream_traces.len() {
+                        let (target_idx, mutated_strand) = {
+                            let trace = &vm.dream_traces[app_state.selected_dream_trace];
+                            (trace.strand_idx, trace.mutated_strand.clone())
+                        };
 
-                                    if let Some(strand) = mutated_strand {
-                                        // Lucid Dreaming: Inject the strand
-                                        if target_idx < vm.dna.helix.strands.len() {
-                                            vm.dna.helix.strands[target_idx] = strand;
-                                            app_state.status_msg = format!(
-                                                "LUCID DREAM: Realized mutations for strand {}",
-                                                target_idx
-                                            );
-                                        }
-                                    }
-                                }
-                            }
-                            ViewMode::Heatmap => {
-                                app_state.input_mode = InputMode::Normal;
-                            }
-                            #[cfg(feature = "silicon")]
-                            ViewMode::Schematic => {
-                                app_state.input_mode = InputMode::Normal;
-                            }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Memetics => {
-                                app_state.input_mode = InputMode::Normal;
-                            }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Egregore => {
-                                app_state.input_mode = InputMode::Normal;
-                            }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Bestiary => {
-                                app_state.input_mode = InputMode::Normal;
-                            }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Kaleidoscope => {
-                                app_state.input_mode = InputMode::Normal;
-                            }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Void => {
-                                app_state.input_mode = InputMode::Normal;
-                            }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Signals => {
-                                app_state.input_mode = InputMode::Normal;
-                            }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Sovereignty => {
-                                app_state.input_mode = InputMode::Normal;
-                            }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Spectrogram => {
-                                app_state.input_mode = InputMode::Normal;
+                        if let Some(strand) = mutated_strand {
+                            // Lucid Dreaming: Inject the strand
+                            if target_idx < vm.dna.helix.strands.len() {
+                                vm.dna.helix.strands[target_idx] = strand;
+                                app_state.status_msg = format!(
+                                    "LUCID DREAM: Realized mutations for strand {}",
+                                    target_idx
+                                );
                             }
                         }
                     }
-                    _ => {}
+                }
+                ViewMode::Heatmap => {
+                    app_state.input_mode = InputMode::Normal;
+                }
+                #[cfg(feature = "silicon")]
+                ViewMode::Schematic => {
+                    app_state.input_mode = InputMode::Normal;
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Memetics => {
+                    app_state.input_mode = InputMode::Normal;
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Egregore => {
+                    app_state.input_mode = InputMode::Normal;
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Bestiary => {
+                    app_state.input_mode = InputMode::Normal;
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Kaleidoscope => {
+                    app_state.input_mode = InputMode::Normal;
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Void => {
+                    app_state.input_mode = InputMode::Normal;
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Signals => {
+                    app_state.input_mode = InputMode::Normal;
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Sovereignty => {
+                    app_state.input_mode = InputMode::Normal;
+                }
+                #[cfg(feature = "nova")]
+                ViewMode::Spectrogram => {
+                    app_state.input_mode = InputMode::Normal;
                 }
             }
         }
+        _ => {}
     }
+    Ok(false)
 }
 
 #[cfg(feature = "nova")]
@@ -1615,7 +1611,7 @@ fn render_signals(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
             // Background for Execution Trail
             if trail > 0 {
-                let intensity = trail as u8;
+                let intensity = trail;
                 // Fade from white (255) to dark blue
                 style = style.bg(Color::Rgb(0, 0, intensity.min(150)));
             }

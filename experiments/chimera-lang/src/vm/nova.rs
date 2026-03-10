@@ -311,7 +311,7 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
 
             // Light interacts with Clouds (Moisture)
             let moisture = vm.moisture_grid[y][x];
-            let cloud_opacity = (moisture as i64).clamp(0, 50); // Up to 50% block
+            let cloud_opacity = moisture.clamp(0, 50); // Up to 50% block
 
             // Blur and strong decay (50% base + cloud)
             let transmission = 50 - cloud_opacity; // 50% -> 0% transmission relative to input
@@ -441,14 +441,13 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> Option<usize> {
             let buffer_slice = &buffer[len - clen..];
             let chord_slice: Vec<&str> = chord.iter().map(|s| s.as_str()).collect();
             // vm.output.push(format!("DEBUG: Checking {:?} vs {:?}", buffer_slice, chord_slice));
-            if buffer_slice == chord_slice.as_slice() {
-                if *strand_idx < vm.dna.helix.strands.len() {
+            if buffer_slice == chord_slice.as_slice()
+                && *strand_idx < vm.dna.helix.strands.len() {
                     vm.chorus_buffer.clear();
                     vm.output
                         .push(format!("CHORUS: Triggered spell -> Strand {}", strand_idx));
                     return Some(*strand_idx);
                 }
-            }
         }
     }
 

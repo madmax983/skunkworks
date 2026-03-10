@@ -24,6 +24,12 @@ pub struct Neuron {
     pub i_inj: f32,
 }
 
+impl Default for Neuron {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Neuron {
     pub fn new() -> Self {
         Self {
@@ -91,8 +97,8 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
                 if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
                     if vm.is_valid_coord(y, x) {
                         let coord = (y as usize, x as usize);
-                        if !vm.neurons.contains_key(&coord) {
-                            vm.neurons.insert(coord, Neuron::new());
+                        if let std::collections::hash_map::Entry::Vacant(e) = vm.neurons.entry(coord) {
+                            e.insert(Neuron::new());
                             vm.energy = vm.energy.saturating_sub(20);
                             vm.output
                                 .push(format!("NEUROGENESIS: Created neuron at {},{}", x, y));

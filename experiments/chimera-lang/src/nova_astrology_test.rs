@@ -56,7 +56,7 @@ mod tests {
         let intensity_val = vm.stack.pop().unwrap();
 
         if let (Value::Int(p), Value::Int(c)) = (intensity_val, color_val) {
-            assert!(p >= 99 && p <= 101, "Power should be approx 100, got {}", p); // Floating point tolerance
+            assert!((99..=101).contains(&p), "Power should be approx 100, got {}", p); // Floating point tolerance
             assert_eq!(c, 0xFF0000);
         } else {
             panic!("Gaze returned wrong types");

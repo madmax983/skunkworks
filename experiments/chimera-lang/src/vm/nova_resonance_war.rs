@@ -103,7 +103,7 @@ pub fn exec_dampen(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         if let (Value::Int(radius), Value::Int(amount)) = (radius_val, amount_val) {
             if radius > 0 {
                 let (cy, cx) = vm.context_loc;
-                let coords = vm.get_circular_coords(cx as i64, cy as i64, radius as i64);
+                let coords = vm.get_circular_coords(cx as i64, cy as i64, radius);
                 let amp_reduction = amount as f32;
 
                 let mut count = 0;

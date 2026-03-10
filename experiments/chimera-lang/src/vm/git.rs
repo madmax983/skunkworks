@@ -13,7 +13,7 @@ pub fn exec_git_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Opti
                 if let Value::Int(count) = val {
                     let n = count.clamp(1, 100);
                     match Command::new("git")
-                        .args(&["log", &format!("-n{}", n), "--pretty=format:%H"])
+                        .args(["log", &format!("-n{}", n), "--pretty=format:%H"])
                         .output()
                     {
                         Ok(output) => {
@@ -58,7 +58,7 @@ pub fn exec_git_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Opti
 
                 if let (Value::Str(hash), Value::Str(path)) = (hash_val, path_val) {
                     let spec = format!("{}:{}", hash, path);
-                    match Command::new("git").args(&["show", &spec]).output() {
+                    match Command::new("git").args(["show", &spec]).output() {
                         Ok(output) => {
                             if output.status.success() {
                                 let content = String::from_utf8_lossy(&output.stdout).to_string();
@@ -96,7 +96,7 @@ pub fn exec_git_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Opti
             if let Some(val) = vm.stack.pop() {
                 if let Value::Str(hash) = val {
                     match Command::new("git")
-                        .args(&["show", "--format=", &hash]) // --format= suppresses commit msg, showing only diff
+                        .args(["show", "--format=", &hash]) // --format= suppresses commit msg, showing only diff
                         .output()
                     {
                         Ok(output) => {
@@ -166,7 +166,7 @@ mod tests {
         // Stack should have [count, hash] or [0] if error
         assert!(!vm.stack.is_empty());
 
-        if let Some(val) = vm.stack.last() {
+        if let Some(_val) = vm.stack.last() {
             // It should be a string (hash) or 0 (error count)
             // If we are in a git repo, it should be a hash.
             // If not, 0.

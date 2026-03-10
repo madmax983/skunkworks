@@ -105,7 +105,7 @@ mod tests {
             vm.step();
         }
 
-        if vm.sovereignty_grid[8][8] != None {
+        if vm.sovereignty_grid[8][8].is_some() {
             println!("Output after Cede: {:?}", vm.output);
         }
         assert_eq!(vm.sovereignty_grid[8][8], None);
