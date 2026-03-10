@@ -50,43 +50,9 @@ fn draw_text_pane(f: &mut Frame, app: &mut App, area: Rect) {
     for i in start..end {
         let content = &app.content[i];
         let info = app.blame_info.get(i);
+        let is_selected = i == app.selected_line;
 
-        let bg_color = if i == app.selected_line {
-            Color::Rgb(60, 60, 60)
-        } else {
-            Color::Reset
-        };
-
-        if let Some(info) = info {
-            let fg_color = get_color(info.age_score);
-            let age_indicator = if info.age_score > 0.8 {
-                "🔥"
-            } else if info.age_score < 0.2 {
-                "❄️ "
-            } else {
-                "  "
-            };
-
-            lines.push(Line::from(vec![
-                Span::styled(
-                    format!("{} {:8} ", age_indicator, info.commit_hash),
-                    Style::default().fg(fg_color).bg(bg_color),
-                ),
-                Span::styled(
-                    format!("{:15} ", info.author.chars().take(15).collect::<String>()),
-                    Style::default().fg(Color::DarkGray).bg(bg_color),
-                ),
-                Span::styled(
-                    format!("| {} ", content.replace('\t', "    ")),
-                    Style::default().fg(fg_color).bg(bg_color),
-                ),
-            ]));
-        } else {
-            lines.push(Line::from(Span::styled(
-                content.replace('\t', "    "),
-                Style::default().fg(Color::DarkGray).bg(bg_color),
-            )));
-        }
+        lines.push(format_line(content, info, is_selected));
     }
 
     let block = Block::default()
@@ -96,6 +62,49 @@ fn draw_text_pane(f: &mut Frame, app: &mut App, area: Rect) {
 
     let paragraph = Paragraph::new(lines).block(block);
     f.render_widget(paragraph, area);
+}
+
+fn format_line<'a>(
+    content: &'a str,
+    info: Option<&'a crate::blame::LineInfo>,
+    is_selected: bool,
+) -> Line<'a> {
+    let bg_color = if is_selected {
+        Color::Rgb(60, 60, 60)
+    } else {
+        Color::Reset
+    };
+
+    let Some(info) = info else {
+        return Line::from(Span::styled(
+            content.replace('\t', "    "),
+            Style::default().fg(Color::DarkGray).bg(bg_color),
+        ));
+    };
+
+    let fg_color = get_color(info.age_score);
+    let age_indicator = if info.age_score > 0.8 {
+        "🔥"
+    } else if info.age_score < 0.2 {
+        "❄️ "
+    } else {
+        "  "
+    };
+
+    Line::from(vec![
+        Span::styled(
+            format!("{} {:8} ", age_indicator, info.commit_hash),
+            Style::default().fg(fg_color).bg(bg_color),
+        ),
+        Span::styled(
+            format!("{:15} ", info.author.chars().take(15).collect::<String>()),
+            Style::default().fg(Color::DarkGray).bg(bg_color),
+        ),
+        Span::styled(
+            format!("| {} ", content.replace('\t', "    ")),
+            Style::default().fg(fg_color).bg(bg_color),
+        ),
+    ])
 }
 
 fn draw_swarm_pane(f: &mut Frame, app: &mut App, area: Rect) {

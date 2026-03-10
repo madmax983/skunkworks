@@ -77,11 +77,24 @@ impl GameState {
 
             let r = rng.gen_range(0..3);
             match r {
-                0 => add_qubit(&mut next_system_id, &mut systems, &mut entity_map, id, false), // |0>
-                1 => add_qubit(&mut next_system_id, &mut systems, &mut entity_map, id, true),  // |1>
+                0 => add_qubit(
+                    &mut next_system_id,
+                    &mut systems,
+                    &mut entity_map,
+                    id,
+                    false,
+                ), // |0>
+                1 => add_qubit(&mut next_system_id, &mut systems, &mut entity_map, id, true), // |1>
                 _ => {
-                    add_qubit(&mut next_system_id, &mut systems, &mut entity_map, id, false); // Start |0>
-                    apply_gate(&mut systems, &entity_map, Gate::H, id).unwrap(); // Apply H -> |+>
+                    add_qubit(
+                        &mut next_system_id,
+                        &mut systems,
+                        &mut entity_map,
+                        id,
+                        false,
+                    ); // Start |0>
+                    apply_gate(&mut systems, &entity_map, Gate::H, id).unwrap();
+                    // Apply H -> |+>
                 }
             }
 
@@ -159,7 +172,12 @@ impl GameState {
                     let entity = &self.entities[idx];
                     if entity.is_qubit {
                         // Measure!
-                        match measure(&mut self.next_system_id, &mut self.systems, &mut self.entity_map, entity.id) {
+                        match measure(
+                            &mut self.next_system_id,
+                            &mut self.systems,
+                            &mut self.entity_map,
+                            entity.id,
+                        ) {
                             Ok(val) => {
                                 if val {
                                     self.message = "Measured |1>! +10 Points.".to_string();

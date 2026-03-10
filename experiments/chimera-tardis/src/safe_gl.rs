@@ -56,17 +56,24 @@ pub fn with_scissor<F: FnOnce((i32, i32, i32, i32))>(
     // Sanitize parent to ensure safety for ScopedScissor.
     // Negative width/height can cause Undefined Behavior in glScissor.
     // Explicit clamp to avoid coordinates overflowing when driver calculates bounds.
-    let safe_parent = parent.map(|(px, py, pw, ph)| (
-        px.clamp(-16384, 16384),
-        py.clamp(-16384, 16384),
-        pw.max(0),
-        ph.max(0)
-    ));
+    let safe_parent = parent.map(|(px, py, pw, ph)| {
+        (
+            px.clamp(-16384, 16384),
+            py.clamp(-16384, 16384),
+            pw.max(0),
+            ph.max(0),
+        )
+    });
 
     let (final_x, final_y, final_w, final_h) = if let Some(p) = safe_parent {
         intersect_rect((x, y, w, h), p)
     } else {
-        (x.clamp(-16384, 16384), y.clamp(-16384, 16384), w.max(0), h.max(0))
+        (
+            x.clamp(-16384, 16384),
+            y.clamp(-16384, 16384),
+            w.max(0),
+            h.max(0),
+        )
     };
 
     unsafe {

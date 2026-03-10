@@ -72,7 +72,9 @@ where
                             // Apply Hadamard to nearest qubit
                             let targets = game.find_nearest_qubits(1);
                             if let Some(&id) = targets.first() {
-                                if let Err(e) = apply_gate(&mut game.systems, &game.entity_map, Gate::H, id) {
+                                if let Err(e) =
+                                    apply_gate(&mut game.systems, &game.entity_map, Gate::H, id)
+                                {
                                     game.message = format!("Hadamard Failed: {}", e);
                                 } else {
                                     game.message = "Applied Hadamard Gate.".to_string();
@@ -86,7 +88,9 @@ where
                             // Apply Pauli-X
                             let targets = game.find_nearest_qubits(1);
                             if let Some(&id) = targets.first() {
-                                if let Err(e) = apply_gate(&mut game.systems, &game.entity_map, Gate::X, id) {
+                                if let Err(e) =
+                                    apply_gate(&mut game.systems, &game.entity_map, Gate::X, id)
+                                {
                                     game.message = format!("Pauli-X Failed: {}", e);
                                 } else {
                                     game.message = "Applied Pauli-X Gate.".to_string();
@@ -100,7 +104,13 @@ where
                             if targets.len() >= 2 {
                                 let id1 = targets[0];
                                 let id2 = targets[1];
-                                if let Err(e) = entangle(&mut game.next_system_id, &mut game.systems, &mut game.entity_map, id1, id2) {
+                                if let Err(e) = entangle(
+                                    &mut game.next_system_id,
+                                    &mut game.systems,
+                                    &mut game.entity_map,
+                                    id1,
+                                    id2,
+                                ) {
                                     game.message = format!("Entanglement Failed: {}", e);
                                 } else {
                                     game.message = "Entangled 2 Qubits!".to_string();
