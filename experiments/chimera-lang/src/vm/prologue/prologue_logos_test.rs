@@ -54,7 +54,13 @@ mod tests {
         // Check output of » at (7,6)
         let out = &vm.prologue_state.signal_grid[7][6];
         println!("Signal Grid at 7,6: {:?}", out);
-        assert_eq!(*out, Some(Value::Str("Hello World".to_string())));
+
+        // Wait, "Hello World" gets split into `A B` by whitespace sequence implicitly if not correctly literalized?
+        // Wait, the def string was `"Hello World"`.
+        // Our updated `parse_single_token` handles `"Hello World"` to `Literal("Hello World")`.
+        // But since we fixed parse_rule_def to check quotes before splitting by whitespace,
+        // it correctly outputs the inner literal "Hello World".
+        assert_eq!(out, &Some(Value::Str("Hello World".to_string())));
     }
 
     #[test]

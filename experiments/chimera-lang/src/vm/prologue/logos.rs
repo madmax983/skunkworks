@@ -157,6 +157,13 @@ impl LogosEngine {
             }
         }
 
+        // Preserve whole quoted literals instead of splitting them by whitespace.
+        if (def.starts_with('"') && def.ends_with('"'))
+            || (def.starts_with('\'') && def.ends_with('\''))
+        {
+            return self.parse_single_token(def);
+        }
+
         let seq: Vec<&str> = def.split_whitespace().collect();
         if seq.len() > 1 {
             let mut rules = Vec::new();
@@ -178,6 +185,9 @@ impl LogosEngine {
 
     fn parse_single_token(&self, token: &str) -> Result<GrammarRule, String> {
         if token.starts_with('"') && token.ends_with('"') && token.len() >= 2 {
+            Ok(GrammarRule::Literal(token[1..token.len() - 1].to_string()))
+        } else if token.starts_with('\'') && token.ends_with('\'') && token.len() >= 2 {
+            // Added support for single quotes for literals as well
             Ok(GrammarRule::Literal(token[1..token.len() - 1].to_string()))
         } else if token.starts_with('/') && token.ends_with('/') && token.len() >= 2 {
             Ok(GrammarRule::Regex(token[1..token.len() - 1].to_string()))

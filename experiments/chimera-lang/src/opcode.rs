@@ -2670,13 +2670,13 @@ pub enum OpCode {
     Reaction,
 
     // Scavenger Features (Mad Science)
-    /// **[Scavenge]** Reads raw bytes from a file and converts them into DNA.
+    /// **\[Scavenge\]** Reads raw bytes from a file and converts them into DNA.
     ///
     /// **Stack:** `[ ..., path_string, len ] -> [ ..., new_strand_idx ]`
     /// **Effect:** Reads `len` bytes from `path`, maps each byte to an OpCode, creates a new strand.
     #[cfg(feature = "nova")]
     Scavenge,
-    /// **[Scavenge]** Reads raw bytes from the running executable itself (Self-Cannibalism).
+    /// **\[Scavenge\]** Reads raw bytes from the running executable itself (Self-Cannibalism).
     ///
     /// **Stack:** `[ ..., offset, len ] -> [ ..., new_strand_idx ]`
     /// **Effect:** Reads `len` bytes from the binary at `offset`, maps to OpCodes, creates a new strand.
@@ -2739,37 +2739,37 @@ pub enum OpCode {
     Escape,
 
     // Raku Features (Hyper-Operators)
-    /// **[Raku]** Element-wise addition of two lists.
+    /// **\[Raku\]** Element-wise addition of two lists.
     ///
     /// **Stack:** `[ ..., list_a, list_b ] -> [ ..., list_result ]`
     #[cfg(feature = "nova")]
     HyperAdd,
-    /// **[Raku]** Element-wise subtraction.
+    /// **\[Raku\]** Element-wise subtraction.
     ///
     /// **Stack:** `[ ..., list_a, list_b ] -> [ ..., list_result ]`
     #[cfg(feature = "nova")]
     HyperSub,
-    /// **[Raku]** Element-wise multiplication.
+    /// **\[Raku\]** Element-wise multiplication.
     ///
     /// **Stack:** `[ ..., list_a, list_b ] -> [ ..., list_result ]`
     #[cfg(feature = "nova")]
     HyperMul,
-    /// **[Raku]** Element-wise division.
+    /// **\[Raku\]** Element-wise division.
     ///
     /// **Stack:** `[ ..., list_a, list_b ] -> [ ..., list_result ]`
     #[cfg(feature = "nova")]
     HyperDiv,
-    /// **[Raku]** Reduces a list using an operator (Fold).
+    /// **\[Raku\]** Reduces a list using an operator (Fold).
     ///
     /// **Stack:** `[ ..., list, op_str ] -> [ ..., result ]`
     #[cfg(feature = "nova")]
     Reduce,
-    /// **[Raku]** Cross-product of two lists with an operator.
+    /// **\[Raku\]** Cross-product of two lists with an operator.
     ///
     /// **Stack:** `[ ..., list_a, list_b, op_str ] -> [ ..., list_result ]`
     #[cfg(feature = "nova")]
     Cross,
-    /// **[Raku]** Zips two lists with an operator.
+    /// **\[Raku\]** Zips two lists with an operator.
     ///
     /// **Stack:** `[ ..., list_a, list_b, op_str ] -> [ ..., list_result ]`
     #[cfg(feature = "nova")]
