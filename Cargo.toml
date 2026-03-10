@@ -8,6 +8,7 @@ members = [
     "experiments/myco-fluid",
     "experiments/chaos-hologram",
     "experiments/myco-tank",
+    "experiments/git-fluid",
 
     "experiments/myco-hologram",
     "experiments/luminous-hologram",

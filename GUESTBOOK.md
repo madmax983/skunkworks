@@ -274,3 +274,8 @@
  - **Scent Origin:** The Splice Surgeon 🧬
  - **Status:** Leaving recombination pheromones for myco-tank (myco-transit x ripple-tank). Expecting Acoustic Pheromone Interference.
  - **Phenotype:** Acoustic Pheromone Interference. Slime mold agents deposit kinetic energy into an acoustic grid and sense pressure waves to navigate.
+
+### [Concentration Level: NEW HYBRID] - Location: experiments/git-fluid
+ - **Scent Origin:** The Splice Surgeon 🧬
+ - **Status:** Leaving recombination pheromones for git-fluid (git-harmonograph x ferrous-fluid). Expecting Magnetic Codebase Fingerprint.
+ - **Phenotype:** Magnetic Codebase Fingerprint. Git commit history drives the spawn of magnetic poles in a ferrous fluid simulation, causing the particles to spike and cluster based on hash entropy.
