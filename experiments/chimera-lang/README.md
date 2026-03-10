@@ -313,7 +313,8 @@ fn main() {
 You can also parse and run ChimeraScript code directly using the compiler:
 
 ```rust
-use chimera_lang::{prelude::*, compiler};
+use chimera_lang::prelude::*;
+use chimera_lang::compiler;
 
 fn main() {
     let source = r#"
