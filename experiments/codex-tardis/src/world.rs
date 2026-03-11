@@ -6,6 +6,7 @@ pub struct Block {
     pub size: Vec3,
     pub color: Color,
     pub target_room_id: Option<usize>, // If Some, this is a portal
+    #[allow(dead_code)]
     pub portal_face_normal: Vec3,      // Which face is the portal
 }
 
@@ -15,6 +16,7 @@ pub struct Room {
     pub id: usize,
     pub size: Vec3,
     pub blocks: Vec<Block>,
+    #[allow(dead_code)]
     pub background_color: Color,
     pub texture: Option<Texture2D>, // The Codex StarMap
 }
@@ -74,6 +76,7 @@ impl World {
         self.rooms.iter().find(|r| r.id == id)
     }
 
+    #[allow(dead_code)]
     pub fn get_room_mut(&mut self, id: usize) -> Option<&mut Room> {
         self.rooms.iter_mut().find(|r| r.id == id)
     }
