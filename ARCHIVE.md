@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hyper-enigma**: Specimen condemned. Diagnosis: Terminal Redundancy / Skeletal Implementation / Lack of Emergence. Grace period: 24h.
+- **vocal-canyon**: Specimen condemned. Diagnosis: Skeletal Implementation / Ecosystem Isolation / Concurrency Hazards. Grace period: 24h.
 
 ## Pardoned
 - **chaos-strings**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved compilation privacy errors and updated audio dependencies. The chaos rings true again.
@@ -15,6 +15,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **hyper-enigma**: Specimen executed. Diagnosis: Terminal Redundancy / Skeletal Implementation / Lack of Emergence. Failed to improve during grace period. Moved to graveyard.
 - **origami-constellation**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation / Test Void. Failed to improve during grace period. Moved to graveyard.
 - **flow-strider**: Specimen executed. Diagnosis: Terminal Genericism / Documentation Void / Skeletal Implementation. Failed to improve during grace period. Moved to graveyard.
 - **klein-life**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Failed to improve during grace period. Moved to graveyard.
