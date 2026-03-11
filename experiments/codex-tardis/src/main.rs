@@ -2,10 +2,12 @@ mod gen;
 mod glyph;
 mod starmap;
 mod world;
+#[cfg(test)]
+mod tests;
 
 use gen::generate_galaxy;
 use macroquad::prelude::*;
-use world::{Block, Room, World};
+use world::{Room, World};
 
 const MOVE_SPEED: f32 = 10.0;
 const LOOK_SPEED: f32 = 0.005;
@@ -134,11 +136,12 @@ fn check_teleport(world: &mut World) {
     }
 
     if let Some((target_id, _)) = teleport_target {
-        let target_room = world.get_room(target_id).unwrap();
-        let target_center = target_room.size / 2.0;
-        let entry_pos = Vec3::new(target_center.x, 2.0, target_center.z);
-        world.player.current_room_id = target_id;
-        world.player.pos = entry_pos;
+        if let Some(target_room) = world.get_room(target_id) {
+            let target_center = target_room.size / 2.0;
+            let entry_pos = Vec3::new(target_center.x, 2.0, target_center.z);
+            world.player.current_room_id = target_id;
+            world.player.pos = entry_pos;
+        }
     }
 }
 

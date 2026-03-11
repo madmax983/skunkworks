@@ -18,7 +18,7 @@ impl StarMap {
         // Calculate height
         // Ensure at least 1 row
         let len = payload.len().max(1) as u32;
-        let height_glyphs = (len + width_glyphs - 1) / width_glyphs;
+        let height_glyphs = len.div_ceil(width_glyphs);
         let spacing = SPACING;
 
         Self {
@@ -76,7 +76,7 @@ impl StarMap {
 
         for (x, y, pixel) in buffer.enumerate_pixels() {
             let [r, g, b] = pixel.0;
-            mq_image.set_pixel(x as u32, y as u32, Color::from_rgba(r, g, b, 255));
+            mq_image.set_pixel(x, y, Color::from_rgba(r, g, b, 255));
         }
 
         Texture2D::from_image(&mq_image)

@@ -45,6 +45,7 @@ impl Glyph {
         }
     }
 
+    #[allow(dead_code)]
     pub fn decode(center_x: u32, center_y: u32, img: &ImageBuffer<Rgb<u8>, Vec<u8>>) -> u8 {
         let w = img.width() as i32;
         let h = img.height() as i32;
