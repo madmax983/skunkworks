@@ -1,5 +1,5 @@
-use crate::agents::{AgentState, LockManager};
-use crate::biology::WormManager;
+use crate::agents::{AgentState, Locks};
+use crate::biology::Worms;
 use crate::fluid::FluidSim;
 use crate::grid::{CellType, Grid};
 use crate::particles::ParticleSystem;
@@ -19,9 +19,9 @@ const CELL_SIZE: f32 = 8.0;
 async fn main() {
     let mut grid = Grid::new(GRID_WIDTH, GRID_HEIGHT);
     let mut fluid = FluidSim::new(GRID_WIDTH, GRID_HEIGHT);
-    let mut locks = LockManager::new();
+    let mut locks = Locks::new();
     let mut particles = ParticleSystem::new();
-    let mut worms = WormManager::new();
+    let mut worms = Worms::new();
 
     // Add some random vents and locks
     for x in (10..GRID_WIDTH - 10).step_by(20) {

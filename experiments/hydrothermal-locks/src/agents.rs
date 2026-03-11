@@ -22,12 +22,12 @@ pub struct Lock {
     pub owner: Option<usize>, // Agent ID
 }
 
-pub struct LockManager {
+pub struct Locks {
     pub agents: Vec<Agent>,
     pub locks: Vec<Lock>,
 }
 
-impl LockManager {
+impl Locks {
     pub fn new() -> Self {
         Self {
             agents: Vec::new(),

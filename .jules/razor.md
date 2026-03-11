@@ -27,3 +27,8 @@
 **Bloat:** `AudioSource` trait and separate struct implementors (`KickDrum`, `SnareDrum`, `Hat`) requiring dynamic dispatch via `Box<dyn AudioSource>`.
 **Cut:** Replaced the trait with a concrete `Drum` enum and a single `next_sample` method, allowing for a simpler flat `Vec<Drum>` collection.
 **Saved:** Reduced cognitive load of trait abstraction and dynamic dispatch boilerplate.
+
+## [Reduction]
+**Bloat:** "Manager" structs (`FlockManager`, `LockManager`, `WormManager`) that simply wrap a pluralized collection (e.g. `Vec<Agent>`) and serve as a "God object" for operations.
+**Cut:** Renamed these "Manager" structs to concrete plural names representing the underlying collection directly (`Flock`, `Locks`, `Worms`).
+**Saved:** Flattened unnecessary structural abstraction and cognitive overhead of enterprise naming patterns, adhering strictly to KISS.
