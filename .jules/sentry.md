@@ -60,3 +60,6 @@
 **2023-11-20 - Unreachable Code in Math Normalization**
 **Learning:** Some floating-point boundary checks in vector limits (e.g. `sq_len.is_finite()` but `sq_len.sqrt() == 0.0`) are impossible to reach via typical operations due to `f32` underflow/overflow bounds (the `else { Self::zero() }` on `limit`).
 **Action:** When Sentry encounters mathematically unreachable `else` branches in strict floating-point comparisons (`> 0.0`), document them in the PR instead of wasting hours trying to find an impossible `NaN` injection path.
+**[Audio testing isolation]**
+**Learning:** `mod tests` block containing conditionals based on features (`#[cfg(feature = "audio")]`) fails when the test references items that don't exist when the feature is disabled. Conditional tests evaluating the code when the feature is off must be implemented in a file that is compiled both with and without the feature.
+**Action:** When evaluating feature toggles, keep conditional code isolated by either wrapping the test module itself inside a feature conditional (`#[cfg(all(test, feature = "audio"))]`), or properly guarding specific tests and their dependencies from the global test module context.
