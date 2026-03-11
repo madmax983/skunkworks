@@ -53,3 +53,22 @@ I attempted to follow the "Getting Started" instructions for `tui-shared` by cre
 *   🤦 **The Confusion:** "Tried to set up Ghost Mode using MARKETPLACE.md. Cargo complained about a missing `nova` feature, and the compiler couldn't find `RecordingEventSource`."
 *   🕵️ **The Reality:** "Turns out the `nova` feature, `RecordingEventSource`, and even the entire `ghost` functionality do not actually exist in the `tui-shared` crate."
 *   💡 **The Fix:** "Remove the completely hallucinated 'Ghost Mode' entry from `MARKETPLACE.md` to avoid confusing users."
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to add `Nova`'s story feature."
+**Action:** Try to use the API based *only* on the public docs/examples in `experiments/chimera-lang/README.md`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Workspace Dependency Error:** The README's `Library Usage` section tells me to copy `chimera-lang = { path = "../chimera-lang" }` into my `Cargo.toml`. When I run `cargo run` in a fresh project without a parent workspace, it fails with: `error inheriting anyhow from workspace root manifest's workspace.dependencies.anyhow`.
+2.  **Programmatic Usage Lie:** The README says "See `examples/story_demo.rs` for a full example of programmatic usage". But when I run `cargo run -p chimera-lang --example story_demo`, instead of running headlessly, it launches an interactive ratatui TUI that blocks the terminal indefinitely unless I press `Q`.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Getting Started example is broken
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `story_demo` programmatically like the docs said, but it just opened a terminal UI and hung there. And copying the `Cargo.toml` dependencies caused a workspace inheritance error."
+*   🕵️ **The Reality:** "Turns out `chimera-lang` relies heavily on workspace dependencies like `anyhow` and `ratatui` that aren't provided in the README, and `story_demo.rs` launches a blocking TUI instead of a library example."
+*   💡 **The Fix:** "Add a huge banner in README saying 'REQUIRES WORKSPACE OR EXPLICIT DEPENDENCIES' and change `story_demo` to be a real headless programmatic example (or update the text to say it launches a TUI)."
