@@ -73,14 +73,14 @@ impl ParticleSystem {
                 // Let's implement a rudimentary O(N^2) restricted to a smaller radius, or just sample 50 random other particles.
                 let mut rng = ::rand::thread_rng();
                 let num_samples = 30; // 30 random samples for local density estimation
-                let particles_ptr = self.particles.as_ptr(); // unsafe access to read other particles
+                let particles_slice = self.particles.as_slice(); // safe slice access
                 let len = self.particles.len();
 
                 for _ in 0..num_samples {
                     let j = rng.gen_range(0..len);
                     if i != j {
-                        // Safe because we only read
-                        let other_p = unsafe { &*particles_ptr.add(j) };
+                        // Safe and bounds-checked
+                        let other_p = &particles_slice[j];
                         let diff = p.position - other_p.position;
                         let dist_sq = diff.length_squared();
                         if dist_sq < 400.0 && dist_sq > 0.1 {

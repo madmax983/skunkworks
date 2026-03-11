@@ -11,3 +11,6 @@
 **2025-05-18 - [Unbounded File Read OOM Prevention]**
 **Threat:** The entrypoint in experiments/chimera-lang/src/main.rs used fs::read_to_string to blindly load user-supplied files into memory, allowing a malicious actor to perform a Denial of Service (OOM) attack by providing a massive file.
 **Defense:** Replaced raw read_to_string with a bounded reader (take(10MB)) to restrict memory allocation.
+**2025-05-18 - [Parallel Iterator Raw Pointer UB Prevention]**
+**Threat:** The `update` function in `experiments/ferrous-ddos/src/physics.rs` used an `unsafe` block and raw pointer arithmetic (`particles_ptr.add(j)`) to access elements of an array concurrently during a parallel iterator (`par_iter`). This bypasses bounds checking and can invoke Undefined Behavior if `j` somehow exceeds the bounds, or theoretically violate thread safety guarantees if the collection type or structure changes. Raw pointers obtained from `as_ptr()` sent across thread boundaries could violate `Send` and `Sync` constraints.
+**Defense:** Replaced the unsafe raw pointer arithmetic with safe slice access (`particles_slice[j]`), which safely moves an immutable slice reference across thread boundaries and enforces bounds checking at runtime.

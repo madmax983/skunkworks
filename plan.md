@@ -1,9 +1,11 @@
-1. Verify Locust Tank `experiments/locust-tank` is listed in `MUTATIONS.md` under Attempted Crosses.
-2. Select a pair for a new hybrid cross. I will cross `experiments/ripple-tank` and `crates/gray-scott` to make `experiments/gray-tank` ("Acoustic Morphogenesis"). The wave physics from ripple-tank acts as a solvent pushing/pulling chemical gradients in Gray-Scott.
-3. Check `crates/gray-scott` structure and `experiments/ripple-tank`.
-4. Implement `experiments/gray-tank`.
-5. Document lineage in `experiments/gray-tank/README.md`.
-6. Update `MUTATIONS.md` with the new cross, update predictions and evaluations.
-7. Update `GUESTBOOK.md` with recombination pheromones.
-8. Complete pre commit steps to ensure proper testing, verification, review, and reflection are done.
-9. Commit code.
+1. **Remove Unsafe Blocks in `experiments/ferrous-ddos/src/physics.rs`**
+   - The `ParticleSystem::update` function uses `unsafe` blocks to access particles via raw pointers during a parallel iteration. This is done to read other particles while iterating over them.
+   - However, since `self.particles.par_iter()` provides immutable references, we can safely access other elements without `unsafe` if we pass a reference to the slice into the closure or just index the slice safely since it's immutable. Wait, `par_iter()` borrows `self.particles`. Inside the closure, accessing `self.particles` again might not be allowed by the borrow checker if it captures `self`.
+   - To fix this cleanly, we can borrow `self.particles.as_slice()` outside the parallel iterator and move that slice reference into the closure. Since `par_iter` borrows the same data immutably, we can also have another immutable reference to the slice.
+   - We will replace `unsafe { &*particles_ptr.add(j) }` with `particles_slice[j]`.
+2. **Update `.jules/warden.md` with the Threat and Defense**
+   - Add a journal entry noting the removal of unsafe raw pointer arithmetic in parallel iterator, mitigating potential UB.
+3. **Run Pre-Commit Checks**
+   - Call `pre_commit_instructions` and follow steps.
+4. **Submit PR**
+   - Submit the branch with standard Warden format.
