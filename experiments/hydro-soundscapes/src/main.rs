@@ -3,7 +3,7 @@ mod audio;
 mod fluid;
 mod grid;
 
-use agents::FlockManager;
+use agents::Flock;
 use audio::AudioEngine;
 use fluid::FluidSim;
 use grid::{CellType, Grid};
@@ -17,7 +17,7 @@ const CELL_SIZE: f32 = 8.0;
 async fn main() {
     let grid = Grid::new(GRID_WIDTH, GRID_HEIGHT);
     let mut fluid = FluidSim::new(GRID_WIDTH, GRID_HEIGHT);
-    let mut flock = FlockManager::new();
+    let mut flock = Flock::new();
     let mut audio_engine = AudioEngine::new();
 
     // Spawn boids

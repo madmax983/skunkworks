@@ -11,11 +11,11 @@ pub struct Worm {
     pub health: f32,
 }
 
-pub struct WormManager {
+pub struct Worms {
     pub worms: Vec<Worm>,
 }
 
-impl WormManager {
+impl Worms {
     pub fn new() -> Self {
         Self { worms: Vec::new() }
     }

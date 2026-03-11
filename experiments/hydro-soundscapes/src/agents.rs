@@ -8,11 +8,11 @@ pub struct Agent {
     pub max_force: f32,
 }
 
-pub struct FlockManager {
+pub struct Flock {
     pub agents: Vec<Agent>,
 }
 
-impl FlockManager {
+impl Flock {
     pub fn new() -> Self {
         Self { agents: Vec::new() }
     }
