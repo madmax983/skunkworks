@@ -17,6 +17,7 @@ members = [
     "experiments/locust-tank",
     "experiments/gray-tank",
     "experiments/git-tank",
+    "experiments/locus-ddos",
 ]
 
 [workspace.dependencies]

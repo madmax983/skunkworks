@@ -13,27 +13,31 @@ Mendel's peas. Darwin's finches. Your experiments.
 **Strategy Shift:**
 Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime molds) directly onto continuous, field-based systems (reaction-diffusion, FFT holograms, fluid dynamics). The tension between particle chaos and wave/field mechanics consistently produces the highest hybrid vigor.
 
+Additionally, introducing localized physics algorithms (like Boid flocking from `locus`) into global objective-seeking simulations (like the DDoS target-seeking algorithm in `locust-ddos`) produces highly desirable emergent clustering and organic movement patterns. We will continue crossing pure mathematical interaction models (boids, attractors) with purposeful environment agents (DDoS, mycelium).
+
 ---
 
 ## 🌸 Proposed Crosses
 
 <!-- Suggest hybrid experiments by combining existing ones -->
 
+---
+
+## 🌿 Attempted Crosses
+
 ### locus-ddos
 - **Parents**: experiments/locust-ddos + crates/locus
 - **Concept**: Boid-driven Cyberwarfare. The DDoS packets use Boid flocking mechanics instead of simple pathfinding.
 - **Predicted Phenotype**: Flocking Packets. Packets group together into massive schools that coordinate attacks on the server, breaking apart when hitting firewalls.
-
----
-
-## 🌿 Attempted Crosses
+- **Status**: experiments/locus-ddos
+- **Evaluation**: Compiles. Emergent behavior confirmed (Flocking Packets). Success.
 
 ### gray-ddos
 - **Parents**: experiments/locust-ddos + crates/gray-scott
 - **Concept**: Morphogenetic Cyberwarfare. The swarm of DDoS packets navigate a Reaction-Diffusion substrate.
 - **Novel trait**: Morphogenetic Cyberwarfare. The DDoS packets seek the server, but they navigate through a chemical substrate. Firewalls act as a continuous source of the "kill" chemical, actively dissolving the swarm's "pheromone" paths. The swarm adapts by following the "feed" chemical. The resulting phenotype is an organic, pulsating siege where the botnet looks like a spreading fungus being burned back by chemical firewalls.
 - **Status**: experiments/gray-ddos
-- **Evaluation**: Compiles. Predicting an emergent visualization of morphogenetic siege tactics against continuous chemical firewalls.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior confirmed (morphogenetic cyberwarfare). Success.
 
 ### chaos-ddos
 - **Parents**: experiments/chaos-pendulum + experiments/locust-ddos
