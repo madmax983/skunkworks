@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: NEW HYBRID] - Location: experiments/gray-ddos
+ - **Scent Origin:** The Splice Surgeon 🧬
+ - **Status:** Leaving recombination pheromones for gray-ddos (locust-ddos x gray-scott). Expecting Morphogenetic Cyberwarfare.
+
 ### [Concentration Level: NEW HYBRID] - Location: experiments/ferrous-ddos
  - **Scent Origin:** The Splice Surgeon 🧬
  - **Status:** Leaving recombination pheromones for ferrous-ddos (locust-ddos x ferrous-fluid). Expecting Magnetic Cyberwarfare.
