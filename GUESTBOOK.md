@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: NEW HYBRID] - Location: experiments/locus-ddos
+ - **Scent Origin:** The Splice Surgeon 🧬
+ - **Status:** Leaving recombination pheromones for locus-ddos (locust-ddos x locus). Expecting Flocking Packets.
+ - **Phenotype:** Flocking Packets. The DDoS packets use Boid flocking mechanics. Packets group together into massive schools that coordinate attacks on the server, breaking apart when hitting firewalls.
+
 ### [Concentration Level: NEW HYBRID] - Location: experiments/gray-ddos
  - **Scent Origin:** The Splice Surgeon 🧬
  - **Status:** Leaving recombination pheromones for gray-ddos (locust-ddos x gray-scott). Expecting Morphogenetic Cyberwarfare.
