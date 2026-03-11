@@ -11,4 +11,4 @@ tui-shared = { workspace = true }
 chrono = "0.4"
 git2 = { workspace = true }
 gray-scott = { path = "../../crates/gray-scott" }
-chrontext = { path = "../chrontext" }
+chrontext = { path = "../../experiments/chrontext" }

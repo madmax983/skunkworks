@@ -13,7 +13,7 @@ members = [
     "experiments/myco-hologram",
     "experiments/luminous-hologram",
     "experiments/git-diffusion",
-    "experiments/chron-diffusion",
+    "graveyard/chron-diffusion",
     "experiments/locust-tank",
     "experiments/gray-tank",
     "experiments/git-tank",
