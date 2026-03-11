@@ -1,7 +1,7 @@
-use macroquad::prelude::*;
 use ::rand::Rng;
-use rayon::prelude::*;
 use gray_scott::GrayScott;
+use macroquad::prelude::*;
+use rayon::prelude::*;
 
 const WORLD_SIZE: f32 = 1000.0;
 const GRID_SIZE: usize = 200; // Resolution of the Gray-Scott grid
@@ -41,8 +41,10 @@ impl World {
         let mut absorbed = 0;
 
         // Add chemical V where server is (attractor)
-        let sx = ((server_pos.x / WORLD_SIZE) * GRID_SIZE as f32).clamp(0.0, (GRID_SIZE - 1) as f32) as usize;
-        let sy = ((server_pos.y / WORLD_SIZE) * GRID_SIZE as f32).clamp(0.0, (GRID_SIZE - 1) as f32) as usize;
+        let sx = ((server_pos.x / WORLD_SIZE) * GRID_SIZE as f32).clamp(0.0, (GRID_SIZE - 1) as f32)
+            as usize;
+        let sy = ((server_pos.y / WORLD_SIZE) * GRID_SIZE as f32).clamp(0.0, (GRID_SIZE - 1) as f32)
+            as usize;
 
         self.gs.add_chemical(sx, sy, 0.5);
 
@@ -58,8 +60,10 @@ impl World {
 
         // Add chemical V where particles are (DDoS packets act as predator chemical)
         for p in &particles.particles {
-            let px = ((p.position.x / WORLD_SIZE) * GRID_SIZE as f32).clamp(0.0, (GRID_SIZE - 1) as f32) as usize;
-            let py = ((p.position.y / WORLD_SIZE) * GRID_SIZE as f32).clamp(0.0, (GRID_SIZE - 1) as f32) as usize;
+            let px = ((p.position.x / WORLD_SIZE) * GRID_SIZE as f32)
+                .clamp(0.0, (GRID_SIZE - 1) as f32) as usize;
+            let py = ((p.position.y / WORLD_SIZE) * GRID_SIZE as f32)
+                .clamp(0.0, (GRID_SIZE - 1) as f32) as usize;
             self.gs.add_chemical(px, py, 0.05); // Deposition
         }
 
@@ -106,7 +110,11 @@ impl ParticleSystem {
         let dt = dt.min(0.05); // cap dt
 
         // Convert world firewalls to a form easy for parallel iteration
-        let firewalls: Vec<(Vec2, f32)> = world.firewalls.iter().map(|f| (f.position, f.radius)).collect();
+        let firewalls: Vec<(Vec2, f32)> = world
+            .firewalls
+            .iter()
+            .map(|f| (f.position, f.radius))
+            .collect();
         let grid_w = world.gs.width();
         let grid_h = world.gs.height();
         let u_chem = world.gs.u().to_vec(); // Copy state for read-only parallel access
@@ -121,8 +129,10 @@ impl ParticleSystem {
 
                 // Gradient ascent on chemical V (attracted to other packets and server)
                 // Gradient descent on chemical U (repelled from firewalls/neutral space)
-                let px = ((p.position.x / WORLD_SIZE) * grid_w as f32).clamp(0.0, (grid_w - 1) as f32) as isize;
-                let py = ((p.position.y / WORLD_SIZE) * grid_h as f32).clamp(0.0, (grid_h - 1) as f32) as isize;
+                let px = ((p.position.x / WORLD_SIZE) * grid_w as f32)
+                    .clamp(0.0, (grid_w - 1) as f32) as isize;
+                let py = ((p.position.y / WORLD_SIZE) * grid_h as f32)
+                    .clamp(0.0, (grid_h - 1) as f32) as isize;
 
                 let get_v = |x: isize, y: isize| -> f32 {
                     let nx = x.clamp(0, (grid_w - 1) as isize) as usize;
@@ -321,10 +331,28 @@ async fn main() {
             },
         );
 
-        draw_text("Morphogenetic Cyberwarfare (gray-ddos)", 10.0, 20.0, 20.0, WHITE);
-        draw_text("Left Click: Deploy Chemical Firewall", 10.0, 40.0, 20.0, WHITE);
+        draw_text(
+            "Morphogenetic Cyberwarfare (gray-ddos)",
+            10.0,
+            20.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "Left Click: Deploy Chemical Firewall",
+            10.0,
+            40.0,
+            20.0,
+            WHITE,
+        );
         draw_text("C: Clear Firewalls", 10.0, 60.0, 20.0, WHITE);
-        draw_text(&format!("Packets: {}", particles.particles.len()), 10.0, 80.0, 20.0, WHITE);
+        draw_text(
+            &format!("Packets: {}", particles.particles.len()),
+            10.0,
+            80.0,
+            20.0,
+            WHITE,
+        );
 
         next_frame().await
     }
