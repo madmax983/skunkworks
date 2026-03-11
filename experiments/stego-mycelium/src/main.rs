@@ -47,9 +47,17 @@ async fn main() {
         // Wrap text
         let mut y = 45.;
         let chars_per_line = (screen_width() / 12.0) as usize;
-        let chars = decoded.chars().collect::<Vec<char>>();
-        for chunk in chars.chunks(chars_per_line) {
-            let line: String = chunk.iter().collect();
+        let mut chars_iter = decoded.chars();
+        loop {
+            // Take up to chars_per_line characters, building a String directly
+            let line: String = chars_iter.by_ref().take(chars_per_line.max(1)).collect();
+
+            if line.is_empty() {
+                break;
+            }
+
+            // We avoid a `Vec<char>` allocation and chunking overhead
+            // by reading directly from the `Chars` iterator
             draw_text(&format!("> {}", line), 10., y, 20., YELLOW);
             y += 20.;
         }

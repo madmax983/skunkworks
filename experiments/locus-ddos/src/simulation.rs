@@ -162,7 +162,8 @@ impl World {
                 }
 
                 // Flocking force
-                let flock_force = compute_force(&flock_positions, &flock_velocities, i, &flock_params);
+                let flock_force =
+                    compute_force(&flock_positions, &flock_velocities, i, &flock_params);
                 desire += vec2(flock_force.x as f32, flock_force.y as f32);
 
                 // Apply steering
