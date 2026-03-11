@@ -9,7 +9,7 @@ use std::str::FromStr;
 /// Represents the state of a Siren (Musical Agent).
 ///
 /// Format: "♬:BPM:Octave:Velocity:Waveform:Direction:Buffer"
-/// Example: "♬:120:0:100:0:1:60,62,64" (BPM 120, Octave 0, Vel 100, Sine Wave, East, Buffer[C4,D4,E4])
+/// Example: "♬:120:0:100:0:1:60,62,64" (BPM 120, Octave 0, Vel 100, Sine Wave, East, Buffer\[C4,D4,E4\])
 #[derive(Debug, Clone)]
 pub struct SirenState {
     pub bpm: u64,
