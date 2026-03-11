@@ -119,7 +119,9 @@ impl ScalesOfMaat {
         Ok(allocations)
     }
 
-    fn allocate_block(timeline: &mut Vec<Option<u64>>, size: usize, id: u64) -> Option<usize> {
+    /// ⚡ Bolt: Prefer slice `&mut [T]` over `&mut Vec<T>`.
+    /// This avoids unnecessary dereferencing constraints and is more flexible for callers.
+    fn allocate_block(timeline: &mut [Option<u64>], size: usize, id: u64) -> Option<usize> {
         let mut run_start = 0;
         let mut run_len = 0;
 
@@ -130,8 +132,8 @@ impl ScalesOfMaat {
                 }
                 run_len += 1;
                 if run_len == size {
-                    for k in run_start..run_start + size {
-                        timeline[k] = Some(id);
+                    for slot in timeline.iter_mut().skip(run_start).take(size) {
+                        *slot = Some(id);
                     }
                     return Some(run_start);
                 }

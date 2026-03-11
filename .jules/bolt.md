@@ -20,3 +20,7 @@
 **[Removing heap allocation using fixed-size arrays]**
 **Learning:** Using `vec![...]` to define a local collection of predefined items inside a frequently called function creates a new heap allocation on every invocation. When the collection is immutable and of fixed size, this allocation is an unnecessary performance penalty.
 **Action:** Use an array literal `[...]` instead of `vec![...]` to allocate the collection directly on the stack, providing a zero-cost abstraction.
+
+**[ratatui::widgets::List iterator compatibility]**
+**Learning:** `ratatui::widgets::List::new` takes `IntoIterator<Item = ListItem>`, meaning it is often unnecessary to `.collect::<Vec<_>>()` iterators into a `Vec` before passing them to the UI widget per frame. This saves an intermediate heap allocation on every single frame rendering step.
+**Action:** Always pass mapped iterators directly to UI constructors like `List::new()` rather than `.collect::<Vec<_>>()`-ing them unnecessarily, especially in hot paths like `Terminal::draw`.

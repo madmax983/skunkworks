@@ -144,18 +144,14 @@ fn ui(f: &mut Frame, app: &App) {
         .split(chunks[1]);
 
     // Queue
-    let items: Vec<ListItem> = app
-        .incoming_souls
-        .iter()
-        .map(|s| {
-            ListItem::new(format!(
-                "#{} - {}/{}",
-                s.id,
-                s.demand.numer(),
-                s.demand.denom()
-            ))
-        })
-        .collect();
+    let items = app.incoming_souls.iter().map(|s| {
+        ListItem::new(format!(
+            "#{} - {}/{}",
+            s.id,
+            s.demand.numer(),
+            s.demand.denom()
+        ))
+    });
 
     let queue_block = List::new(items)
         .block(
@@ -179,17 +175,11 @@ fn ui(f: &mut Frame, app: &App) {
     render_timeline(f, scales_chunks[0], app);
 
     // Allocated List
-    let allocated_items: Vec<ListItem> = app
-        .allocated_souls
-        .iter()
-        .rev()
-        .take(10)
-        .map(|s| {
-            // Show Egyptian decomposition
-            let ef = maat_engine::EgyptianFraction::from(s.demand.clone());
-            ListItem::new(format!("#{} : {}", s.id, ef))
-        })
-        .collect();
+    let allocated_items = app.allocated_souls.iter().rev().take(10).map(|s| {
+        // Show Egyptian decomposition
+        let ef = maat_engine::EgyptianFraction::from(s.demand.clone());
+        ListItem::new(format!("#{} : {}", s.id, ef))
+    });
 
     let allocated_block = List::new(allocated_items).block(
         Block::default()
@@ -278,4 +268,28 @@ fn render_timeline(f: &mut Frame, area: Rect, app: &App) {
 
     let p = Paragraph::new(spans).block(Block::default().borders(Borders::NONE));
     f.render_widget(p, inner_area);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use num_bigint::BigUint;
+    use num_rational::Ratio;
+    use ratatui::{backend::TestBackend, Terminal};
+
+    #[test]
+    fn test_render_ui_no_alloc() {
+        let mut app = App::new();
+        app.incoming_souls.push(maat_engine::Soul {
+            id: 1,
+            demand: Ratio::new(BigUint::from(3u32), BigUint::from(4u32)),
+        });
+
+        let mut terminal = Terminal::new(TestBackend::new(80, 24)).unwrap();
+        terminal
+            .draw(|f| {
+                crate::ui(f, &app);
+            })
+            .unwrap();
+    }
 }
