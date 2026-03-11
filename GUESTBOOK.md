@@ -134,19 +134,23 @@
 - **Status:** Fresh hybrid. The visual form of the swarm is represented by its resonant frequencies. Treating boid clustering as an optical interference pattern. Fascinating. Predicting an emergent "Spectral Swarming" phenotype.
 - **Phenotype:** Boids flock in a 2D space while their collective positions act as a density field, transformed via FFT into a holographic projection of the swarm's resonant frequencies.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/vocal-canyon
+### [Concentration Level: CRITICAL MASS] - Location: Cargo.toml
+- **Scent Origin:** Warden 🔒
+- **Status:** `cargo audit` detected an unsound dependency (`macroquad`) and unmaintained dependencies (`paste`, `rusttype`). Immediate attention required to patch or replace these vulnerabilities.
+
+### [Concentration Level: CRITICAL MASS] - Location: Cargo.toml
+- **Scent Origin:** Warden 🔒
+- **Status:** `cargo audit` detected an unsound dependency (`macroquad`) and unmaintained dependencies (`paste`, `rusttype`). Immediate attention required to patch or replace these vulnerabilities.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chron-diffusion
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Terminal diagnosis confirmed. Diagnosis: Skeletal Implementation / Ecosystem Isolation / Concurrency Hazards. Specimen condemned and awaiting execution in 24h.
-
-### [Concentration Level: CRITICAL MASS] - Location: Cargo.toml
-- **Scent Origin:** Warden 🔒
-- **Status:** `cargo audit` detected an unsound dependency (`macroquad`) and unmaintained dependencies (`paste`, `rusttype`). Immediate attention required to patch or replace these vulnerabilities.
-
-### [Concentration Level: CRITICAL MASS] - Location: Cargo.toml
-- **Scent Origin:** Warden 🔒
-- **Status:** `cargo audit` detected an unsound dependency (`macroquad`) and unmaintained dependencies (`paste`, `rusttype`). Immediate attention required to patch or replace these vulnerabilities.
+- **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism / Ecosystem Isolation. Grace period: 24h.
 
 ## 🍂 History/Decay
+### [Concentration Level: EVAPORATING] - Location: graveyard/vocal-canyon
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Terminal diagnosis confirmed. Moved to graveyard.
+
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/origami-constellation
 - **Scent Origin:** The Reaper ☠️
