@@ -1,0 +1,1466 @@
+    Checking chimera-lang v0.1.0 (/app/experiments/chimera-lang)
+    Checking potential_utf v0.1.4
+   Compiling openssl-sys v0.9.112
+    Checking zerotrie v0.2.3
+    Checking gethostname v1.1.0
+   Compiling icu_normalizer_data v2.1.1
+    Checking x11rb-protocol v0.13.2
+   Compiling icu_properties_data v2.1.2
+    Checking as-raw-xcb-connection v1.0.1
+    Checking icu_provider v2.1.1
+    Checking icu_collections v2.1.1
+   Compiling libz-sys v1.1.25
+    Checking x11-dl v2.21.0
+    Checking xkbcommon-dl v0.4.2
+   Compiling libssh2-sys v0.3.1
+error: empty line after outer attribute
+    --> experiments/chimera-lang/src/tui/mod.rs:4695:1
+     |
+4695 | / #[allow(dead_code)]
+4696 | |
+     | |_^
+4697 |   pub(crate) fn get_all_views() -> Vec<(ViewMode, &'static str, &'stat...
+     |   --------------------------- the attribute applies to this function
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#empty_line_after_outer_attr
+     = note: `-D clippy::empty-line-after-outer-attr` implied by `-D warnings`
+     = help: to override `-D warnings` add `#[allow(clippy::empty_line_after_outer_attr)]`
+     = help: if the empty line is unintentional, remove it
+
+    Checking icu_properties v2.1.2
+    Checking icu_normalizer v2.1.1
+    Checking idna_adapter v1.2.1
+   Compiling libgit2-sys v0.18.3+1.9.2
+    Checking utf8_iter v1.0.4
+    Checking idna v1.1.0
+    Checking form_urlencoded v1.2.2
+    Checking url v2.5.8
+   Compiling equator-macro v0.4.2
+    Checking openssl-probe v0.1.6
+    Checking equator v0.4.2
+   Compiling typenum v1.19.0
+    Checking aligned-vec v0.6.4
+    Checking atomic-waker v1.1.2
+    Checking piper v0.2.5
+    Checking v_frame v0.3.9
+    Checking as-slice v0.2.1
+   Compiling blake3 v1.8.3
+    Checking typewit v1.14.2
+error: this function has too many arguments (8/7)
+    --> experiments/chimera-lang/src/compiler.rs:1145:1
+     |
+1145 | / fn parse_instructions(
+1146 | |     pair: pest::iterators::Pair<Rule>,
+1147 | |     strand_map: &HashMap<String, usize>,
+1148 | |     macro_map: &HashMap<String, pest::iterators::Pairs<Rule>>,
+...    |
+1153 | |     depth: usize,
+1154 | | ) -> Result<Vec<Gene>> {
+     | |______________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#too_many_arguments
+     = note: `-D clippy::too-many-arguments` implied by `-D warnings`
+     = help: to override `-D warnings` add `#[allow(clippy::too_many_arguments)]`
+
+error: stripping a prefix manually
+    --> experiments/chimera-lang/src/compiler.rs:1477:34
+     |
+1477 |                 if let Ok(idx) = s[1..].parse::<usize>() {
+     |                                  ^^^^^^
+     |
+note: the prefix was tested here
+    --> experiments/chimera-lang/src/compiler.rs:1476:13
+     |
+1476 |             if s.starts_with('?') {
+     |             ^^^^^^^^^^^^^^^^^^^^^^
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#manual_strip
+     = note: `-D clippy::manual-strip` implied by `-D warnings`
+     = help: to override `-D warnings` add `#[allow(clippy::manual_strip)]`
+help: try using the `strip_prefix` method
+     |
+1476 ~             if let Some(<stripped>) = s.strip_prefix('?') {
+1477 ~                 if let Ok(idx) = <stripped>.parse::<usize>() {
+     |
+
+   Compiling av-scenechange v0.14.1
+    Checking x11rb v0.13.2
+   Compiling built v0.8.0
+error: very complex type used. Consider factoring parts into `type` definitions
+  --> experiments/chimera-lang/src/prologue_compiler.rs:18:6
+   |
+18 |   ) -> Result<(
+   |  ______^
+19 | |     Dna,
+20 | |     Option<Vec<Vec<Value>>>,
+21 | |     Option<bool>,
+22 | |     HashMap<String, usize>,
+23 | |     Vec<AlchemyRule>,
+24 | | )> {
+   | |__^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#type_complexity
+   = note: `-D clippy::type-complexity` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::type_complexity)]`
+
+error: calls to `push` immediately after creation
+   --> experiments/chimera-lang/src/tui/views/bio.rs:991:5
+    |
+991 | /     let mut info = Vec::new();
+992 | |     info.push(Line::from("MUTAGEN CONTROLS"));
+993 | |     info.push(Line::from(" "));
+994 | |     info.push(Line::from("Arrows: Navigate"));
+995 | |     info.push(Line::from("M: Mutate Gene (Randomize)"));
+996 | |     info.push(Line::from("Tab: Switch View"));
+    | |______________________________________________^ help: consider using the `vec![]` macro: `let mut info = vec![..];`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#vec_init_then_push
+    = note: `-D clippy::vec-init-then-push` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::vec_init_then_push)]`
+
+error: this `if` has identical blocks
+   --> experiments/chimera-lang/src/tui/views/magic.rs:774:53
+    |
+774 |                   if !matches!(s.as_str(), "." | "0") {
+    |  _____________________________________________________^
+775 | |                     style = style.fg(Color::DarkGray);
+776 | |                 } else {
+    | |_________________^
+    |
+note: same as this
+   --> experiments/chimera-lang/src/tui/views/magic.rs:776:24
+    |
+776 |                   } else {
+    |  ________________________^
+777 | |                     style = style.fg(Color::DarkGray);
+778 | |                 }
+    | |_________________^
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#if_same_then_else
+    = note: `-D clippy::if-same-then-else` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::if_same_then_else)]`
+
+error: calls to `push` immediately after creation
+    --> experiments/chimera-lang/src/tui/views/magic.rs:1262:5
+     |
+1262 | /     let mut bw_spans = Vec::new();
+1263 | |     bw_spans.push(Span::raw("Special:  "));
+1264 | |     bw_spans.push(Span::styled("  ", Style::default().bg(Color::White))); //...
+1265 | |     bw_spans.push(Span::raw(" "));
+1266 | |     bw_spans.push(Span::styled("  ", Style::default().bg(Color::Black))); //...
+     | |_________________________________________________________________________^ help: consider using the `vec![]` macro: `let bw_spans = vec![..];`
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#vec_init_then_push
+
+   Compiling rav1e v0.8.1
+    Checking const_panic v0.2.15
+error: this returns a `Result<_, ()>`
+   --> experiments/chimera-lang/src/vm/babel.rs:593:1
+    |
+593 | / pub fn run_parser(
+594 | |     parser: &Value,
+595 | |     input: &str,
+596 | |     logos_engine: &LogosEngine,
+597 | |     depth: usize,
+598 | | ) -> Result<(Value, usize), ()> {
+    | |_______________________________^
+    |
+    = help: use a custom `Error` type instead
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#result_unit_err
+    = note: `-D clippy::result-unit-err` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::result_unit_err)]`
+
+error: the loop variable `i` is only used to index `new_args`
+   --> experiments/chimera-lang/src/vm/babel.rs:931:30
+    |
+931 |                     for i in 1..new_args.len() {
+    |                              ^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+    = note: `-D clippy::needless-range-loop` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::needless_range_loop)]`
+help: consider using an iterator
+    |
+931 -                     for i in 1..new_args.len() {
+931 +                     for <item> in new_args.iter_mut().skip(1) {
+    |
+
+error: the loop variable `i` is only used to index `new_args`
+   --> experiments/chimera-lang/src/vm/babel.rs:943:30
+    |
+943 |                     for i in 1..new_args.len() {
+    |                              ^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator
+    |
+943 -                     for i in 1..new_args.len() {
+943 +                     for <item> in new_args.iter_mut().skip(1) {
+    |
+
+error: this loop could be written as a `while let` loop
+    --> experiments/chimera-lang/src/vm/babel.rs:1167:9
+     |
+1167 | /         loop {
+1168 | |             if let Some(val) = self.peek(y, curr_x) {
+1169 | |                 match val {
+1170 | |                     Value::Str(s) => {
+...    |
+1186 | |         }
+     | |_________^ help: try: `while let Some(val) = self.peek(y, curr_x) { .. }`
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#while_let_loop
+     = note: `-D clippy::while-let-loop` implied by `-D warnings`
+     = help: to override `-D warnings` add `#[allow(clippy::while_let_loop)]`
+
+error: this loop could be written as a `while let` loop
+    --> experiments/chimera-lang/src/vm/babel.rs:1203:9
+     |
+1203 | /         loop {
+1204 | |             if let Some(val) = self.peek(y, curr_x) {
+1205 | |                 match val {
+1206 | |                     Value::Str(s) => {
+...    |
+1222 | |         }
+     | |_________^ help: try: `while let Some(val) = self.peek(y, curr_x) { .. }`
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#while_let_loop
+
+error: this `if let` can be collapsed into the outer `if let`
+   --> experiments/chimera-lang/src/vm/babel_chaos.rs:153:17
+    |
+153 | / ...   if let Value::Int(amount) = val {
+154 | | ...       vm.babel_state.integrity =
+155 | | ...           (vm.babel_state.integrity + (amount as f64 / 100.0)).cl...
+156 | | ...       vm.output.push(format!(
+...   |
+159 | | ...       ));
+160 | | ...   }
+    | |_______^
+    |
+help: the outer pattern can be modified to include the inner pattern
+   --> experiments/chimera-lang/src/vm/babel_chaos.rs:152:25
+    |
+152 |             if let Some(val) = vm.stack.pop() {
+    |                         ^^^ replace this binding
+153 |                 if let Value::Int(amount) = val {
+    |                        ^^^^^^^^^^^^^^^^^^ with this pattern
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#collapsible_match
+    = note: `-D clippy::collapsible-match` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::collapsible_match)]`
+
+error: the loop variable `y` is used to index `next_grid`
+  --> experiments/chimera-lang/src/vm/chimera_chaos.rs:29:18
+   |
+29 |         for y in 0..GRID_SIZE {
+   |                  ^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+   |
+29 -         for y in 0..GRID_SIZE {
+29 +         for (y, <item>) in next_grid.iter_mut().enumerate().take(GRID_SIZE) {
+   |
+
+error: the loop variable `x` is used to index `next_grid`
+  --> experiments/chimera-lang/src/vm/chimera_chaos.rs:30:22
+   |
+30 |             for x in 0..GRID_SIZE {
+   |                      ^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+   |
+30 -             for x in 0..GRID_SIZE {
+30 +             for (x, <item>) in next_grid.iter_mut().enumerate().take(GRID_SIZE) {
+   |
+
+error: the loop variable `i` is only used to index `population`
+  --> experiments/chimera-lang/src/vm/evolution.rs:50:18
+   |
+50 |         for i in 1..safe_pop_size {
+   |                  ^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator
+   |
+50 -         for i in 1..safe_pop_size {
+50 +         for <item> in population.iter_mut().take(safe_pop_size).skip(1) {
+   |
+
+error: this `if let` can be collapsed into the outer `if let`
+   --> experiments/chimera-lang/src/vm/hive.rs:137:17
+    |
+137 | / ...   if let Value::Int(port) = val {
+138 | | ...       let port = port as u16;
+139 | | ...       if vm.hive_sockets.remove(&port).is_some() {
+140 | | ...           vm.output.push(format!("HIVE: Closed port {}", port));
+...   |
+144 | | ...   }
+    | |_______^
+    |
+help: the outer pattern can be modified to include the inner pattern
+   --> experiments/chimera-lang/src/vm/hive.rs:136:25
+    |
+136 |             if let Some(val) = vm.stack.pop() {
+    |                         ^^^ replace this binding
+137 |                 if let Value::Int(port) = val {
+    |                        ^^^^^^^^^^^^^^^^ with this pattern
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#collapsible_match
+
+error: this `if let` can be collapsed into the outer `if let`
+   --> experiments/chimera-lang/src/vm/memetics.rs:262:17
+    |
+262 | /                 if let Value::Int(id) = val {
+263 | |                     let idx = id as usize;
+264 | |                     if idx < vm.meme_pool.memes.len() {
+265 | |                         vm.meme_pool.memes.remove(idx);
+...   |
+268 | |                 }
+    | |_________________^
+    |
+help: the outer pattern can be modified to include the inner pattern
+   --> experiments/chimera-lang/src/vm/memetics.rs:261:25
+    |
+261 |             if let Some(val) = vm.stack.pop() {
+    |                         ^^^ replace this binding
+262 |                 if let Value::Int(id) = val {
+    |                        ^^^^^^^^^^^^^^ with this pattern
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#collapsible_match
+
+error: this `if let` can be collapsed into the outer `if let`
+   --> experiments/chimera-lang/src/vm/nova_attractor.rs:95:17
+    |
+ 95 | / ...   if let Value::Int(mode) = val {
+ 96 | | ...       vm.attractor.mode = mode as u8;
+ 97 | | ...       vm.attractor.x = 0.1;
+ 98 | | ...       vm.attractor.y = 0.0;
+...   |
+124 | | ...           .push(format!("ATTRACTOR: Initialized Mode {}", mode));
+125 | | ...   }
+    | |_______^
+    |
+help: the outer pattern can be modified to include the inner pattern
+   --> experiments/chimera-lang/src/vm/nova_attractor.rs:94:25
+    |
+ 94 |             if let Some(val) = vm.stack.pop() {
+    |                         ^^^ replace this binding
+ 95 |                 if let Value::Int(mode) = val {
+    |                        ^^^^^^^^^^^^^^^^ with this pattern
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#collapsible_match
+
+error: this `if let` can be collapsed into the outer `if let`
+   --> experiments/chimera-lang/src/vm/nova_attractor.rs:144:17
+    |
+144 | /                 if let Value::Int(scale) = val {
+145 | |                     // Map Z to strand index
+146 | |                     // Lorenz Z is approx 0-50
+147 | |                     let z = vm.attractor.z;
+...   |
+155 | |                 }
+    | |_________________^
+    |
+help: the outer pattern can be modified to include the inner pattern
+   --> experiments/chimera-lang/src/vm/nova_attractor.rs:143:25
+    |
+143 |             if let Some(val) = vm.stack.pop() {
+    |                         ^^^ replace this binding
+144 |                 if let Value::Int(scale) = val {
+    |                        ^^^^^^^^^^^^^^^^^ with this pattern
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#collapsible_match
+
+error: this `if let` can be collapsed into the outer `if let`
+   --> experiments/chimera-lang/src/vm/nova_attractor.rs:161:17
+    |
+161 | /                 if let Value::Int(target) = val {
+162 | |                     match target {
+163 | |                         0 => {
+...   |
+181 | |                 }
+    | |_________________^
+    |
+help: the outer pattern can be modified to include the inner pattern
+   --> experiments/chimera-lang/src/vm/nova_attractor.rs:160:25
+    |
+160 |             if let Some(val) = vm.stack.pop() {
+    |                         ^^^ replace this binding
+161 |                 if let Value::Int(target) = val {
+    |                        ^^^^^^^^^^^^^^^^^^ with this pattern
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#collapsible_match
+
+error: this `if let` can be collapsed into the outer `if let`
+  --> experiments/chimera-lang/src/vm/nova_biomesh.rs:49:9
+   |
+49 | /         if let Value::Int(n) = val {
+50 | |             n as u64
+51 | |         } else {
+52 | |             0
+53 | |         }
+   | |_________^
+   |
+help: the outer pattern can be modified to include the inner pattern
+  --> experiments/chimera-lang/src/vm/nova_biomesh.rs:48:24
+   |
+48 |     } else if let Some(val) = vm.stack.pop() {
+   |                        ^^^ replace this binding
+49 |         if let Value::Int(n) = val {
+   |                ^^^^^^^^^^^^^ with this pattern
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#collapsible_match
+
+error: this `if let` can be collapsed into the outer `if let`
+  --> experiments/chimera-lang/src/vm/nova_botany.rs:12:13
+   |
+12 | /             if let Value::Junction(_, _) = first {
+13 | |                 return true;
+14 | |             }
+   | |_____________^
+   |
+help: the outer pattern can be modified to include the inner pattern
+  --> experiments/chimera-lang/src/vm/nova_botany.rs:9:21
+   |
+ 9 |         if let Some(first) = items.first() {
+   |                     ^^^^^ replace this binding
+...
+12 |             if let Value::Junction(_, _) = first {
+   |                    ^^^^^^^^^^^^^^^^^^^^^ with this pattern
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#collapsible_match
+
+error: calls to `push` immediately after creation
+  --> experiments/chimera-lang/src/vm/nova_botany.rs:63:13
+   |
+63 | /             let mut stack = Vec::new();
+64 | |             stack.push(rules_val);
+65 | |             stack.push(mapping_val);
+66 | |             stack.push(axiom_val);
+67 | |             stack.push(Value::Int(0)); // Index
+68 | |             stack.push(Value::Junction(crate::ast::JunctionType::All, Vec::new())); //...
+   | |___________________________________________________________________________________^ help: consider using the `vec![]` macro: `let stack = vec![..];`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#vec_init_then_push
+
+    Checking aligned v0.4.3
+    Checking blocking v1.6.2
+    Checking async-lock v3.4.2
+error: this call to `clone` can be replaced with `std::slice::from_ref`
+   --> experiments/chimera-lang/src/vm/nova_chronos.rs:424:21
+    |
+424 |                     &[query_val.clone()],
+    |                     ^^^^^^^^^^^^^^^^^^^^ help: try: `std::slice::from_ref(&query_val)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#cloned_ref_to_slice_refs
+    = note: `-D clippy::cloned-ref-to-slice-refs` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::cloned_ref_to_slice_refs)]`
+
+error: this `if let` can be collapsed into the outer `if let`
+  --> experiments/chimera-lang/src/vm/nova_fractal.rs:86:17
+   |
+86 | /                 if let Value::Int(n) = val {
+87 | |                     let factor = (n as f64) / 100.0;
+88 | |                     if factor > 0.0 {
+89 | |                         vm.fractal.zoom *= factor;
+...  |
+95 | |                 }
+   | |_________________^
+   |
+help: the outer pattern can be modified to include the inner pattern
+  --> experiments/chimera-lang/src/vm/nova_fractal.rs:85:25
+   |
+85 |             if let Some(val) = vm.stack.pop() {
+   |                         ^^^ replace this binding
+86 |                 if let Value::Int(n) = val {
+   |                        ^^^^^^^^^^^^^ with this pattern
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#collapsible_match
+
+error: the loop variable `y` is used to index `next_grid`
+   --> experiments/chimera-lang/src/vm/nova_garden.rs:145:14
+    |
+145 |     for y in 0..rows {
+    |              ^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+    |
+145 -     for y in 0..rows {
+145 +     for (y, <item>) in next_grid.iter_mut().enumerate().take(rows) {
+    |
+
+error: the loop variable `x` is used to index `next_grid`
+   --> experiments/chimera-lang/src/vm/nova_garden.rs:146:18
+    |
+146 |         for x in 0..cols {
+    |                  ^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+    |
+146 -         for x in 0..cols {
+146 +         for (x, <item>) in next_grid.iter_mut().enumerate().take(cols) {
+    |
+
+    Checking nom v8.0.0
+error: match expression looks like `matches!` macro
+    --> experiments/chimera-lang/src/vm/nova_genetics.rs:1675:36
+     |
+1675 |                       let is_alive = match val {
+     |  ____________________________________^
+1676 | |                         Value::Int(n) if *n > 0 => true,
+1677 | |                         _ => false,
+1678 | |                     };
+     | |_____________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#match_like_matches_macro
+     = note: `-D clippy::match-like-matches-macro` implied by `-D warnings`
+     = help: to override `-D warnings` add `#[allow(clippy::match_like_matches_macro)]`
+help: use `matches!` directly
+     |
+1675 -                     let is_alive = match val {
+1676 -                         Value::Int(n) if *n > 0 => true,
+1677 -                         _ => false,
+1678 -                     };
+1675 +                     let is_alive = matches!(val, Value::Int(n) if *n > 0);
+     |
+
+error: this `if let` can be collapsed into the outer `if let`
+  --> experiments/chimera-lang/src/vm/nova_hologram.rs:32:9
+   |
+32 | /         if let Value::Int(n) = val {
+33 | |             strand_idx = n as usize;
+34 | |         }
+   | |_________^
+   |
+help: the outer pattern can be modified to include the inner pattern
+  --> experiments/chimera-lang/src/vm/nova_hologram.rs:31:24
+   |
+31 |     } else if let Some(val) = vm.stack.pop() {
+   |                        ^^^ replace this binding
+32 |         if let Value::Int(n) = val {
+   |                ^^^^^^^^^^^^^ with this pattern
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#collapsible_match
+
+error: this `if let` can be collapsed into the outer `if let`
+   --> experiments/chimera-lang/src/vm/nova_hologram.rs:99:9
+    |
+ 99 | /         if let Value::Int(n) = val {
+100 | |             strand_idx = n as usize;
+101 | |         }
+    | |_________^
+    |
+help: the outer pattern can be modified to include the inner pattern
+   --> experiments/chimera-lang/src/vm/nova_hologram.rs:98:24
+    |
+ 98 |     } else if let Some(val) = vm.stack.pop() {
+    |                        ^^^ replace this binding
+ 99 |         if let Value::Int(n) = val {
+    |                ^^^^^^^^^^^^^ with this pattern
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#collapsible_match
+
+error: the loop variable `y` is used to index `target_plane`
+   --> experiments/chimera-lang/src/vm/nova_planes.rs:148:30
+    |
+148 |                     for y in 0..GRID_SIZE {
+    |                              ^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+    |
+148 -                     for y in 0..GRID_SIZE {
+148 +                     for (y, <item>) in target_plane.iter().enumerate().take(GRID_SIZE) {
+    |
+
+error: the loop variable `x` is used to index `target_plane`
+   --> experiments/chimera-lang/src/vm/nova_planes.rs:149:34
+    |
+149 |                         for x in 0..GRID_SIZE {
+    |                                  ^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+    |
+149 -                         for x in 0..GRID_SIZE {
+149 +                         for (x, <item>) in target_plane.iter().enumerate().take(GRID_SIZE) {
+    |
+
+error: the loop variable `i` is only used to index `list`
+   --> experiments/chimera-lang/src/vm/nova_raku.rs:110:18
+    |
+110 |         for i in 1..list.len() {
+    |                  ^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator
+    |
+110 -         for i in 1..list.len() {
+110 +         for <item> in list.iter().skip(1) {
+    |
+
+error: the loop variable `y` is used to index `new_grid`
+   --> experiments/chimera-lang/src/vm/nova_resonance_war.rs:187:14
+    |
+187 |     for y in 0..size {
+    |              ^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+    |
+187 -     for y in 0..size {
+187 +     for (y, <item>) in new_grid.iter_mut().enumerate().take(size) {
+    |
+
+error: the loop variable `x` is used to index `new_grid`
+   --> experiments/chimera-lang/src/vm/nova_resonance_war.rs:188:18
+    |
+188 |         for x in 0..size {
+    |                  ^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+    |
+188 -         for x in 0..size {
+188 +         for (x, <item>) in new_grid.iter_mut().enumerate().take(size) {
+    |
+
+    Checking core2 v0.4.0
+   Compiling arg_enum_proc_macro v0.3.4
+error: this function has too many arguments (8/7)
+    --> experiments/chimera-lang/src/vm/nova_signals.rs:1555:1
+     |
+1555 | / fn read_write_directional(
+1556 | |     vm: &ChimeraVM,
+1557 | |     y: usize,
+1558 | |     x: usize,
+...    |
+1563 | |     ctx: &mut SignalContext,
+1564 | | ) {
+     | |_^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#too_many_arguments
+
+error: clamp-like pattern without using clamp function
+   --> experiments/chimera-lang/src/vm/nova_strings.rs:106:33
+    |
+106 |                         let t = t.max(0.0).min(1.0);
+    |                                 ^^^^^^^^^^^^^^^^^^^ help: replace with clamp: `t.clamp(0.0, 1.0)`
+    |
+    = note: clamp will panic if max < min, min.is_nan(), or max.is_nan()
+    = note: clamp returns NaN if the input is NaN
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#manual_clamp
+    = note: `-D clippy::manual-clamp` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::manual_clamp)]`
+
+error: clamp-like pattern without using clamp function
+   --> experiments/chimera-lang/src/vm/nova_strings.rs:144:33
+    |
+144 |                         let t = t.max(0.0).min(1.0);
+    |                                 ^^^^^^^^^^^^^^^^^^^ help: replace with clamp: `t.clamp(0.0, 1.0)`
+    |
+    = note: clamp will panic if max < min, min.is_nan(), or max.is_nan()
+    = note: clamp returns NaN if the input is NaN
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#manual_clamp
+
+error: clamp-like pattern without using clamp function
+   --> experiments/chimera-lang/src/vm/nova_strings.rs:181:29
+    |
+181 |                     let t = t.max(0.0).min(1.0);
+    |                             ^^^^^^^^^^^^^^^^^^^ help: replace with clamp: `t.clamp(0.0, 1.0)`
+    |
+    = note: clamp will panic if max < min, min.is_nan(), or max.is_nan()
+    = note: clamp returns NaN if the input is NaN
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#manual_clamp
+
+error: this call to `clone` can be replaced with `std::slice::from_ref`
+  --> experiments/chimera-lang/src/vm/oracle.rs:26:13
+   |
+26 |             &[omen.condition.clone()],
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `std::slice::from_ref(&omen.condition)`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#cloned_ref_to_slice_refs
+
+error: this call to `clone` can be replaced with `std::slice::from_ref`
+    --> experiments/chimera-lang/src/vm/oracle.rs:1242:37
+     |
+1242 | ...                   &[arg_goal.clone()],
+     |                       ^^^^^^^^^^^^^^^^^^^ help: try: `std::slice::from_ref(arg_goal)`
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#cloned_ref_to_slice_refs
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/alchemy.rs:72:19
+   |
+72 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+   = note: `-D clippy::ptr-arg` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::ptr_arg)]`
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/architect.rs:20:19
+   |
+20 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: clamp-like pattern without using clamp function
+   --> experiments/chimera-lang/src/vm/prologue/architect.rs:112:25
+    |
+112 |                 let s = size.max(1).min(32) as usize; // Cap size
+    |                         ^^^^^^^^^^^^^^^^^^^ help: replace with clamp: `size.clamp(1, 32)`
+    |
+    = note: clamp will panic if max < min
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#manual_clamp
+
+error: the loop variable `r` is only used to index `grid`
+   --> experiments/chimera-lang/src/vm/prologue/architect.rs:262:14
+    |
+262 |     for r in 0..h {
+    |              ^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator
+    |
+262 -     for r in 0..h {
+262 +     for <item> in grid.iter_mut().take(h) {
+    |
+
+error: the loop variable `c` is only used to index `grid`
+   --> experiments/chimera-lang/src/vm/prologue/architect.rs:263:18
+    |
+263 |         for c in 0..w {
+    |                  ^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator
+    |
+263 -         for c in 0..w {
+263 +         for <item> in grid.iter_mut().take(w) {
+    |
+
+error: the loop variable `y` is used to index `grid`
+   --> experiments/chimera-lang/src/vm/prologue/astral.rs:149:14
+    |
+149 |     for y in 0..GRID_SIZE {
+    |              ^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+    |
+149 -     for y in 0..GRID_SIZE {
+149 +     for (y, <item>) in grid.iter().enumerate().take(GRID_SIZE) {
+    |
+
+error: the loop variable `x` is used to index `grid`
+   --> experiments/chimera-lang/src/vm/prologue/astral.rs:150:18
+    |
+150 |         for x in 0..GRID_SIZE {
+    |                  ^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+    |
+150 -         for x in 0..GRID_SIZE {
+150 +         for (x, <item>) in grid.iter().enumerate().take(GRID_SIZE) {
+    |
+
+error: method `default` can be confused for the standard trait method `std::default::Default::default`
+  --> experiments/chimera-lang/src/vm/prologue/automaton.rs:28:5
+   |
+28 | /     pub fn default() -> Self {
+29 | |         Self {
+30 | |             pc: 0,
+31 | |             dir: 1, // East
+...  |
+35 | |     }
+   | |_____^
+   |
+   = help: consider implementing the trait `std::default::Default` or choosing a less ambiguous method name
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#should_implement_trait
+   = note: `-D clippy::should-implement-trait` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::should_implement_trait)]`
+
+error: unnecessary map of the identity function
+   --> experiments/chimera-lang/src/vm/prologue/automaton.rs:117:23
+    |
+117 |           .nth(state.pc)
+    |  _______________________^
+118 | |         .map(|(i, c)| (i, c))
+    | |_____________________________^ help: remove the call to `map`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#map_identity
+    = note: `-D clippy::map-identity` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::map_identity)]`
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+ --> experiments/chimera-lang/src/vm/prologue/biolum.rs:9:19
+  |
+9 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+  |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+  |
+  = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/catalyst.rs:14:19
+   |
+14 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/chaos.rs:10:19
+   |
+10 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: match expression looks like `matches!` macro
+   --> experiments/chimera-lang/src/vm/prologue/chroma.rs:158:53
+    |
+158 |   ...                   let can_spawn = match &vm.grid[sy][sx] {
+    |  _______________________________________^
+159 | | ...                       Value::Int(0) => true,
+160 | | ...                       _ => false,
+161 | | ...                   };
+    | |_______________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#match_like_matches_macro
+help: use `matches!` directly
+    |
+158 -                                     let can_spawn = match &vm.grid[sy][sx] {
+159 -                                         Value::Int(0) => true,
+160 -                                         _ => false,
+161 -                                     };
+158 +                                     let can_spawn = matches!(&vm.grid[sy][sx], Value::Int(0));
+    |
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+   --> experiments/chimera-lang/src/vm/prologue/chroma.rs:437:14
+    |
+437 |     signals: &mut Vec<Vec<Option<Value>>>,
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/chronos.rs:18:19
+   |
+18 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/construct.rs:11:22
+   |
+11 |     delayed_signals: &mut Vec<Vec<Option<Value>>>,
+   |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: method `default` can be confused for the standard trait method `std::default::Default::default`
+  --> experiments/chimera-lang/src/vm/prologue/critter.rs:39:5
+   |
+39 | /     pub fn default() -> Self {
+40 | |         Self {
+41 | |             energy: 100,
+42 | |             genes: "R".to_string(), // Random walker
+...  |
+46 | |     }
+   | |_____^
+   |
+   = help: consider implementing the trait `std::default::Default` or choosing a less ambiguous method name
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#should_implement_trait
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/echo.rs:23:19
+   |
+23 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: this function has too many arguments (11/7)
+  --> experiments/chimera-lang/src/vm/prologue/elektra.rs:6:1
+   |
+ 6 | / pub fn apply_elektra_runes(
+ 7 | |     rune: &str,
+ 8 | |     y: usize,
+ 9 | |     x: usize,
+...  |
+17 | |     registers: &mut HashMap<(usize, usize), Value>,
+18 | | ) -> bool {
+   | |_________^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#too_many_arguments
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/elektra.rs:12:19
+   |
+12 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/elektra.rs:13:19
+   |
+13 |     voltage_grid: &mut Vec<Vec<f32>>,
+   |                   ^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<f32>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/elektra.rs:14:22
+   |
+14 |     resistance_grid: &mut Vec<Vec<f32>>,
+   |                      ^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<f32>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/elektra.rs:15:23
+   |
+15 |     capacitance_grid: &mut Vec<Vec<f32>>,
+   |                       ^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<f32>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/elemental.rs:21:19
+   |
+21 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/evolution.rs:12:19
+   |
+12 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+    Checking y4m v0.8.0
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/fission.rs:31:18
+   |
+31 |     signal_grid: &mut Vec<Vec<Option<Value>>>,
+   |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/fission.rs:47:19
+   |
+47 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: this `match` can be collapsed into the outer `if let`
+   --> experiments/chimera-lang/src/vm/prologue/forth.rs:138:41
+    |
+138 | / ...                   match arg {
+139 | | ...                       Nucleotide::Number(n) => *n,
+140 | | ...                       _ => 0,
+141 | | ...                   }
+    | |_______________________^
+    |
+help: the outer pattern can be modified to include the inner pattern
+   --> experiments/chimera-lang/src/vm/prologue/forth.rs:137:63
+    |
+137 | ...                   let arg_val = if let Some(arg) = gene.args.first() {
+    |                                                 ^^^ replace this binding
+138 | ...                       match arg {
+139 | ...                           Nucleotide::Number(n) => *n,
+    |                               ^^^^^^^^^^^^^^^^^^^^^ with this pattern
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#collapsible_match
+
+error: method `default` can be confused for the standard trait method `std::default::Default::default`
+  --> experiments/chimera-lang/src/vm/prologue/gardener.rs:39:5
+   |
+39 | /     pub fn default() -> Self {
+40 | |         let mut inv = VecDeque::new();
+41 | |         inv.push_back(Value::Int(1)); // Start with a seed
+42 | |         Self {
+...  |
+47 | |     }
+   | |_____^
+   |
+   = help: consider implementing the trait `std::default::Default` or choosing a less ambiguous method name
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#should_implement_trait
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/genetics.rs:23:19
+   |
+23 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/hyper.rs:37:19
+   |
+37 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/io.rs:13:19
+   |
+13 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: this `if let` can be collapsed into the outer `if let`
+  --> experiments/chimera-lang/src/vm/prologue/library.rs:69:21
+   |
+69 | /                     if let Value::Str(code) = val {
+70 | |                         match crate::compiler::compile(code, None) {
+71 | |                             Ok(mut dna) => {
+...  |
+91 | |                     }
+   | |_____________________^
+   |
+help: the outer pattern can be modified to include the inner pattern
+  --> experiments/chimera-lang/src/vm/prologue/library.rs:68:29
+   |
+68 |                 if let Some(val) = vm.prologue_state.library.get(&key) {
+   |                             ^^^ replace this binding
+69 |                     if let Value::Str(code) = val {
+   |                            ^^^^^^^^^^^^^^^^ with this pattern
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#collapsible_match
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+ --> experiments/chimera-lang/src/vm/prologue/list.rs:9:19
+  |
+9 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+  |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+  |
+  = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/logic.rs:31:19
+   |
+31 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: this call to `clone` can be replaced with `std::slice::from_ref`
+  --> experiments/chimera-lang/src/vm/prologue/logic_agent.rs:75:17
+   |
+75 |                 &[goal.clone()],
+   |                 ^^^^^^^^^^^^^^^ help: try: `std::slice::from_ref(&goal)`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#cloned_ref_to_slice_refs
+
+   Compiling pastey v0.1.1
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+   --> experiments/chimera-lang/src/vm/prologue/logos.rs:427:19
+    |
+427 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+ --> experiments/chimera-lang/src/vm/prologue/math.rs:9:19
+  |
+9 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+  |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+  |
+  = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/mycelium.rs:13:19
+   |
+13 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/narrative.rs:16:19
+   |
+16 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/necromancy.rs:10:19
+   |
+10 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/neural.rs:50:19
+   |
+50 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: the variable `steps` is used as a loop counter
+   --> experiments/chimera-lang/src/vm/prologue/neural.rs:347:5
+    |
+347 |     for char in blueprint.chars() {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: consider using: `for (steps, char) in blueprint.chars().enumerate()`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#explicit_counter_loop
+    = note: `-D clippy::explicit-counter-loop` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::explicit_counter_loop)]`
+
+error: use of `or_insert_with` to construct default value
+   --> experiments/chimera-lang/src/vm/prologue/neural.rs:387:48
+    |
+387 | ..., cx)).or_insert_with(Neuron::new);
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `or_default()`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#unwrap_or_default
+    = note: `-D clippy::unwrap-or-default` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::unwrap_or_default)]`
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/oneiric.rs:31:19
+   |
+31 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: the loop variable `y` is used to index `next_cells`
+  --> experiments/chimera-lang/src/vm/prologue/oneiric.rs:92:14
+   |
+92 |     for y in 0..GRID_SIZE {
+   |              ^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+   |
+92 -     for y in 0..GRID_SIZE {
+92 +     for (y, <item>) in next_cells.iter_mut().enumerate().take(GRID_SIZE) {
+   |
+
+error: the loop variable `x` is used to index `next_cells`
+  --> experiments/chimera-lang/src/vm/prologue/oneiric.rs:93:18
+   |
+93 |         for x in 0..GRID_SIZE {
+   |                  ^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+   |
+93 -         for x in 0..GRID_SIZE {
+93 +         for (x, <item>) in next_cells.iter_mut().enumerate().take(GRID_SIZE) {
+   |
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+ --> experiments/chimera-lang/src/vm/prologue/optics.rs:9:19
+  |
+9 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+  |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+  |
+  = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/pandemonium.rs:11:19
+   |
+11 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: this `if let` can be collapsed into the outer `if let`
+  --> experiments/chimera-lang/src/vm/prologue/pandemonium.rs:71:17
+   |
+71 | /                 if let Value::Junction(t, mut list) = val {
+72 | |                     let mut rng = rand::thread_rng();
+73 | |                     list.shuffle(&mut rng);
+74 | |                     let result = Value::Junction(t, list);
+...  |
+82 | |                 }
+   | |_________________^
+   |
+help: the outer pattern can be modified to include the inner pattern
+  --> experiments/chimera-lang/src/vm/prologue/pandemonium.rs:70:25
+   |
+70 |             if let Some(val) = input {
+   |                         ^^^ replace this binding
+71 |                 if let Value::Junction(t, mut list) = val {
+   |                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ with this pattern
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#collapsible_match
+
+error: this `if let` can be collapsed into the outer `if let`
+   --> experiments/chimera-lang/src/vm/prologue/philosopher.rs:135:17
+    |
+135 | / ...   if let Value::Junction(JunctionType::Any, args) = action {
+136 | | ...       if let Some(Value::Str(cmd)) = args.first() {
+137 | | ...           match cmd.as_str() {
+138 | | ...               "move" => {
+...   |
+191 | | ...   }
+    | |_______^
+    |
+help: the outer pattern can be modified to include the inner pattern
+   --> experiments/chimera-lang/src/vm/prologue/philosopher.rs:133:25
+    |
+133 |             if let Some(action) = sol.get("?A") {
+    |                         ^^^^^^ replace this binding
+134 |                 // Execute Action
+135 |                 if let Value::Junction(JunctionType::Any, args) = action {
+    |                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ with this pattern
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#collapsible_match
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/prism.rs:10:19
+   |
+10 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/psionics.rs:12:19
+   |
+12 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/quantum.rs:18:19
+   |
+18 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/rhythm.rs:40:19
+   |
+40 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/sequencer.rs:11:19
+   |
+11 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: method `default` can be confused for the standard trait method `std::default::Default::default`
+  --> experiments/chimera-lang/src/vm/prologue/siren.rs:35:5
+   |
+35 | /     pub fn default() -> Self {
+36 | |         Self {
+37 | |             bpm: 120,
+38 | |             octave: 0,
+...  |
+44 | |     }
+   | |_____^
+   |
+   = help: consider implementing the trait `std::default::Default` or choosing a less ambiguous method name
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#should_implement_trait
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/teleport.rs:10:19
+   |
+10 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+ --> experiments/chimera-lang/src/vm/prologue/virology.rs:9:19
+  |
+9 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+  |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+  |
+  = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/void.rs:11:19
+   |
+11 |     next_signals: &mut Vec<Vec<Option<Value>>>,
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [Vec<Option<Value>>]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: writing `&mut Vec` instead of `&mut [_]` involves a new object where a slice will do
+  --> experiments/chimera-lang/src/vm/prologue/void.rs:13:17
+   |
+13 |     void_rifts: &mut Vec<VoidRift>,
+   |                 ^^^^^^^^^^^^^^^^^^ help: change this to: `&mut [VoidRift]`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: you should consider adding a `Default` implementation for `PrologueState`
+   --> experiments/chimera-lang/src/vm/prologue/mod.rs:234:5
+    |
+234 | /     pub fn new() -> Self {
+235 | |         Self {
+236 | |             active: false,
+237 | |             runes: HashSet::new(),
+...   |
+261 | |     }
+    | |_____^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#new_without_default
+    = note: `-D clippy::new-without-default` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::new_without_default)]`
+help: try adding this
+    |
+232 + impl Default for PrologueState {
+233 +     fn default() -> Self {
+234 +         Self::new()
+235 +     }
+236 + }
+    |
+
+error: writing `&Vec` instead of `&[_]` involves a new object where a slice will do
+   --> experiments/chimera-lang/src/vm/prologue/mod.rs:264:45
+    |
+264 |     pub fn scan_grid_rules(&mut self, grid: &Vec<Vec<Value>>) {
+    |                                             ^^^^^^^^^^^^^^^^ help: change this to: `&[Vec<Value>]`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#ptr_arg
+
+error: the loop variable `y` is used to index `grid`
+   --> experiments/chimera-lang/src/vm/prologue/mod.rs:269:18
+    |
+269 |         for y in 0..GRID_SIZE {
+    |                  ^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+    |
+269 -         for y in 0..GRID_SIZE {
+269 +         for (y, <item>) in grid.iter().enumerate().take(GRID_SIZE) {
+    |
+
+error: the loop variable `x` is used to index `grid`
+   --> experiments/chimera-lang/src/vm/prologue/mod.rs:270:22
+    |
+270 |             for x in 0..GRID_SIZE {
+    |                      ^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+    |
+270 -             for x in 0..GRID_SIZE {
+270 +             for (x, <item>) in grid.iter().enumerate().take(GRID_SIZE) {
+    |
+
+error: the loop variable `y` is used to index `current_signals`
+   --> experiments/chimera-lang/src/vm/prologue/mod.rs:656:14
+    |
+656 |     for y in 0..GRID_SIZE {
+    |              ^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+    |
+656 -     for y in 0..GRID_SIZE {
+656 +     for (y, <item>) in current_signals.iter_mut().enumerate().take(GRID_SIZE) {
+    |
+
+error: the loop variable `x` is used to index `current_signals`
+   --> experiments/chimera-lang/src/vm/prologue/mod.rs:657:18
+    |
+657 |         for x in 0..GRID_SIZE {
+    |                  ^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+    |
+657 -         for x in 0..GRID_SIZE {
+657 +         for (x, <item>) in current_signals.iter_mut().enumerate().take(GRID_SIZE) {
+    |
+
+    Checking constant_time_eq v0.4.2
+    Checking event-listener v2.5.3
+error: unnecessary map of the identity function
+    --> experiments/chimera-lang/src/vm/prologue/mod.rs:1646:74
+     |
+1646 | ...id_snapshot).map(|t| t)
+     |                ^^^^^^^^^^^ help: remove the call to `map`
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#map_identity
+
+error: you seem to be trying to use `match` for an equality check. Consider using `if`
+   --> experiments/chimera-lang/src/vm/retina.rs:177:13
+    |
+177 | /             match mode {
+178 | |                 3 => {
+...   |
+188 | |                 _ => {} // Linear, Scatter, XOR don't pre-sort
+189 | |             }
+    | |_____________^
+    |
+    = note: you might want to preserve the comments from inside the `match`
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#single_match
+    = note: `-D clippy::single-match` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::single_match)]`
+help: try
+    |
+177 ~             if mode == 3 {
+178 +                 // Sort by brightness?
+179 +                 // Approximate brightness: sum of R+G+B
+180 +                 pixel_data.sort_by_key(|rgb| {
+181 +                     let r = (rgb >> 16) & 0xFF;
+182 +                     let g = (rgb >> 8) & 0xFF;
+183 +                     let b = rgb & 0xFF;
+184 +                     r + g + b
+185 +                 });
+186 +             }
+    |
+
+error: the loop variable `y` is used to index `next_grid`
+   --> experiments/chimera-lang/src/vm/silicon.rs:645:14
+    |
+645 |     for y in 0..rows {
+    |              ^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+    |
+645 -     for y in 0..rows {
+645 +     for (y, <item>) in next_grid.iter_mut().enumerate().take(rows) {
+    |
+
+error: the loop variable `x` is used to index `next_grid`
+   --> experiments/chimera-lang/src/vm/silicon.rs:646:18
+    |
+646 |         for x in 0..cols {
+    |                  ^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+    |
+646 -         for x in 0..cols {
+646 +         for (x, <item>) in next_grid.iter_mut().enumerate().take(cols) {
+    |
+
+    Checking iana-time-zone v0.1.65
+error: very complex type used. Consider factoring parts into `type` definitions
+   --> experiments/chimera-lang/src/vm/mod.rs:763:30
+    |
+763 | ...napses: HashMap<(usize, usize), Vec<((usize, usize), f32)>>,
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.94.0/index.html#type_complexity
+
+    Checking const_soft_float v0.1.4
+    Checking base64 v0.21.7
+    Checking quick-error v2.0.1
+error: could not compile `chimera-lang` (lib) due to 114 previous errors
+warning: build failed, waiting for other jobs to finish...

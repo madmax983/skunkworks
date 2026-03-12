@@ -157,13 +157,17 @@ fn read_snapshot() -> Result<Snapshot> {
     let args: Vec<String> = env::args().collect();
     let mut json = String::new();
 
+    let limit = 10 * 1024 * 1024;
     if args.len() > 1 {
         // Read from file
         let path = &args[1];
         let file = std::fs::File::open(path).context("Failed to open input file")?;
-        file.take(10 * 1024 * 1024)
+        let bytes_read = file.take(limit + 1)
             .read_to_string(&mut json)
             .context("Failed to read input file")?;
+        if bytes_read > limit as usize {
+            anyhow::bail!("Input file is too large! Maximum allowed size is 10MB.");
+        }
     } else {
         // Read from stdin
         if atty::is(atty::Stream::Stdin) {
@@ -171,10 +175,13 @@ fn read_snapshot() -> Result<Snapshot> {
             eprintln!("   or: cargo run --bin orbital-decay -- --semantic | semantic-spy");
             std::process::exit(1);
         }
-        io::stdin()
-            .take(10 * 1024 * 1024)
+        let bytes_read = io::stdin()
+            .take(limit + 1)
             .read_to_string(&mut json)
             .context("Failed to read stdin")?;
+        if bytes_read > limit as usize {
+            anyhow::bail!("Stdin input is too large! Maximum allowed size is 10MB.");
+        }
     }
 
     let snapshot: Snapshot =

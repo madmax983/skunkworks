@@ -30,7 +30,11 @@ impl FlightData {
         use std::io::Read;
         let file = std::fs::File::open(path)?;
         let mut json = String::new();
-        file.take(10 * 1024 * 1024).read_to_string(&mut json)?;
+        let limit = 10 * 1024 * 1024;
+        let bytes_read = file.take(limit + 1).read_to_string(&mut json)?;
+        if bytes_read > limit as usize {
+            anyhow::bail!("Input file is too large! Maximum allowed size is 10MB.");
+        }
         let data = serde_json::from_str(&json)?;
         Ok(data)
     }
