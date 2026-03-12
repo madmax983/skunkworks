@@ -26,20 +26,20 @@ fn test_hermetic_alchemy() {
     "#;
 
     // 2. Compile
-    let (dna, grid_opt, _, _, alchemy_book) =
+    let prog =
         prologue_compiler::compile(source, None).expect("Compilation failed");
 
     // Verify book was parsed
-    assert_eq!(alchemy_book.len(), 2);
-    assert_eq!(alchemy_book[0].result, Value::Str("Gold".to_string()));
+    assert_eq!(prog.alchemy_book.len(), 2);
+    assert_eq!(prog.alchemy_book[0].result, Value::Str("Gold".to_string()));
 
     // 3. Initialize VM
-    let mut vm = ChimeraVM::new(dna);
-    if let Some(grid) = grid_opt {
+    let mut vm = ChimeraVM::new(prog.dna);
+    if let Some(grid) = prog.grid {
         vm.grid = grid;
     }
     vm.prologue_state.active = true;
-    vm.prologue_state.alchemy_book = alchemy_book;
+    vm.prologue_state.alchemy_book = prog.alchemy_book;
 
     // 4. Verify Initial State
     // (0,0)=A, (0,1)=B, (0,2)=C

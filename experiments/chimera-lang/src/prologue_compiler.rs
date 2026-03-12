@@ -12,16 +12,18 @@ use crate::vm::{Value, GRID_SIZE};
 #[grammar = "prologue_grammar.pest"]
 pub struct PrologueParser;
 
+pub struct PrologueProgram {
+    pub dna: Dna,
+    pub grid: Option<Vec<Vec<Value>>>,
+    pub orca_mode: Option<bool>,
+    pub custom_runes: HashMap<String, usize>,
+    pub alchemy_book: Vec<AlchemyRule>,
+}
+
 pub fn compile(
     source: &str,
     base_path: Option<&Path>,
-) -> Result<(
-    Dna,
-    Option<Vec<Vec<Value>>>,
-    Option<bool>,
-    HashMap<String, usize>,
-    Vec<AlchemyRule>,
-)> {
+) -> Result<PrologueProgram> {
     let mut pairs = PrologueParser::parse(Rule::program, source)?;
 
     let mut grid = None;
@@ -177,7 +179,13 @@ pub fn compile(
 
     let final_dna = dna.ok_or_else(|| anyhow!("No DNA section found"))?;
 
-    Ok((final_dna, grid, orca_mode, custom_runes, alchemy_book))
+    Ok(PrologueProgram {
+        dna: final_dna,
+        grid,
+        orca_mode,
+        custom_runes,
+        alchemy_book,
+    })
 }
 
 fn parse_grid_line(line: &str) -> Vec<Value> {
