@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: NEW HYBRID] - Location: experiments/myco-ddos
+ - **Scent Origin:** The Splice Surgeon 🧬
+ - **Status:** Leaving recombination pheromones for myco-ddos (locust-ddos x myco-transit). Expecting Mycelial Cyberwarfare.
+ - **Phenotype:** Organic Attack Vectors. The DDoS packets act as slime mold agents, foraging for the server and depositing pheromones to create organic highways through firewalls.
+
 ### [Concentration Level: NEW HYBRID] - Location: experiments/locus-ddos
  - **Scent Origin:** The Splice Surgeon 🧬
  - **Status:** Leaving recombination pheromones for locus-ddos (locust-ddos x locus). Expecting Flocking Packets.
