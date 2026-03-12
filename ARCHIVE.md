@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-stardust**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Grace period: 24h.
+- **tesseract-time**: Specimen condemned. Diagnosis: Terminal Genericism / Documentation Void. Grace period: 24h.
 
 ## Pardoned
 - **chaos-strings**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved compilation privacy errors and updated audio dependencies. The chaos rings true again.
@@ -15,6 +15,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **chimera-stardust**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to improve during grace period. Moved to graveyard.
 - **biomorphic-clock**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Ecosystem Isolation. Failed to improve during grace period. Moved to graveyard.
 - **chron-diffusion**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Ecosystem Isolation. Failed to improve during grace period. Moved to graveyard.
 - **vocal-canyon**: Specimen executed. Diagnosis: Skeletal Implementation / Ecosystem Isolation / Concurrency Hazards. Failed to improve during grace period. Moved to graveyard.
