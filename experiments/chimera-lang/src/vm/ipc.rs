@@ -97,7 +97,8 @@ pub fn receive(vm: &mut ChimeraVM) {
                                         if bytes_read > limit as usize {
                                             // File too large, delete it
                                             let _ = fs::remove_file(lock_path);
-                                        } else if let Ok(value) = serde_json::from_slice::<Value>(&buffer)
+                                        } else if let Ok(value) =
+                                            serde_json::from_slice::<Value>(&buffer)
                                         {
                                             vm.stack.push(value);
                                             // Consume message

@@ -26,8 +26,7 @@ fn test_hermetic_alchemy() {
     "#;
 
     // 2. Compile
-    let prog =
-        prologue_compiler::compile(source, None).expect("Compilation failed");
+    let prog = prologue_compiler::compile(source, None).expect("Compilation failed");
 
     // Verify book was parsed
     assert_eq!(prog.alchemy_book.len(), 2);

@@ -20,10 +20,7 @@ pub struct PrologueProgram {
     pub alchemy_book: Vec<AlchemyRule>,
 }
 
-pub fn compile(
-    source: &str,
-    base_path: Option<&Path>,
-) -> Result<PrologueProgram> {
+pub fn compile(source: &str, base_path: Option<&Path>) -> Result<PrologueProgram> {
     let mut pairs = PrologueParser::parse(Rule::program, source)?;
 
     let mut grid = None;

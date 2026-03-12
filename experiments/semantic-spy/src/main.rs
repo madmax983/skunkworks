@@ -162,7 +162,8 @@ fn read_snapshot() -> Result<Snapshot> {
         // Read from file
         let path = &args[1];
         let file = std::fs::File::open(path).context("Failed to open input file")?;
-        let bytes_read = file.take(limit + 1)
+        let bytes_read = file
+            .take(limit + 1)
             .read_to_string(&mut json)
             .context("Failed to read input file")?;
         if bytes_read > limit as usize {

@@ -24,3 +24,6 @@
 **[ratatui::widgets::List iterator compatibility]**
 **Learning:** `ratatui::widgets::List::new` takes `IntoIterator<Item = ListItem>`, meaning it is often unnecessary to `.collect::<Vec<_>>()` iterators into a `Vec` before passing them to the UI widget per frame. This saves an intermediate heap allocation on every single frame rendering step.
 **Action:** Always pass mapped iterators directly to UI constructors like `List::new()` rather than `.collect::<Vec<_>>()`-ing them unnecessarily, especially in hot paths like `Terminal::draw`.
+**[Eliminating Vec<char> during string iterations]**
+**Learning:** [Using peekable iterators eliminates unnecessary Vec allocations while preserving logical correctness.]
+**Action:** [Use peekable iterators instead of chars().collect() when traversing strings.]

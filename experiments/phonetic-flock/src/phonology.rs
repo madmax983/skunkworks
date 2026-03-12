@@ -50,6 +50,12 @@ pub struct Evolver {
     laws: Vec<SoundLaw>,
 }
 
+impl Default for Evolver {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Evolver {
     pub fn new() -> Self {
         Self { laws: vec![] }
@@ -133,17 +139,18 @@ fn apply_vowel_shift(input: &str) -> String {
 fn apply_lenition(input: &str) -> String {
     // VcV -> VzV (Voicing of intervocalic consonants)
     // Simplified: s -> z, t -> d between vowels
-    let chars: Vec<char> = input.chars().collect();
-    if chars.is_empty() {
+    if input.is_empty() {
         return String::new();
     }
 
-    let mut out = String::new();
+    let mut out = String::with_capacity(input.len());
+    let mut chars = input.chars().peekable();
+    let mut prev = None;
 
-    for i in 0..chars.len() {
-        let c = chars[i];
-        let is_intervocalic = if i > 0 && i < chars.len() - 1 {
-            is_vowel(chars[i - 1]) && is_vowel(chars[i + 1])
+    while let Some(c) = chars.next() {
+        let next = chars.peek().copied();
+        let is_intervocalic = if let (Some(p), Some(n)) = (prev, next) {
+            is_vowel(p) && is_vowel(n)
         } else {
             false
         };
@@ -160,17 +167,19 @@ fn apply_lenition(input: &str) -> String {
         } else {
             out.push(c);
         }
+        prev = Some(c);
     }
     out
 }
 
 fn apply_loss_of_endings(input: &str) -> String {
     // Remove final vowels if word length > 3
-    if input.len() > 3 {
-        let chars: Vec<char> = input.chars().collect();
-        if let Some(&last) = chars.last() {
+    if input.chars().count() > 3 {
+        if let Some(last) = input.chars().last() {
             if is_vowel(last) {
-                return chars[0..chars.len() - 1].iter().collect();
+                let mut out = input.to_string();
+                out.pop();
+                return out;
             }
         }
     }
@@ -179,13 +188,12 @@ fn apply_loss_of_endings(input: &str) -> String {
 
 fn apply_palatalization(input: &str) -> String {
     // k, g, t, d -> ch, j, ch, j before front vowels (i, e, y)
-    let chars: Vec<char> = input.chars().collect();
-    let mut out = String::new();
-    let mut i = 0;
-    while i < chars.len() {
-        let c = chars[i];
-        let next_is_front = if i + 1 < chars.len() {
-            matches!(chars[i + 1], 'i' | 'e' | 'y' | 'I' | 'E' | 'Y')
+    let mut out = String::with_capacity(input.len());
+    let mut chars = input.chars().peekable();
+
+    while let Some(c) = chars.next() {
+        let next_is_front = if let Some(&next_c) = chars.peek() {
+            matches!(next_c, 'i' | 'e' | 'y' | 'I' | 'E' | 'Y')
         } else {
             false
         };
@@ -194,22 +202,18 @@ fn apply_palatalization(input: &str) -> String {
             match c {
                 'k' | 'K' => {
                     out.push_str(if c.is_uppercase() { "Ch" } else { "ch" });
-                    i += 1;
                     continue;
                 }
                 'g' | 'G' => {
                     out.push(if c.is_uppercase() { 'J' } else { 'j' });
-                    i += 1;
                     continue;
                 }
                 't' | 'T' => {
                     out.push_str(if c.is_uppercase() { "Ch" } else { "ch" });
-                    i += 1;
                     continue;
                 }
                 'd' | 'D' => {
                     out.push(if c.is_uppercase() { 'J' } else { 'j' });
-                    i += 1;
                     continue;
                 }
                 _ => out.push(c),
@@ -217,7 +221,6 @@ fn apply_palatalization(input: &str) -> String {
         } else {
             out.push(c);
         }
-        i += 1;
     }
     out
 }
@@ -231,36 +234,35 @@ fn apply_metathesis(input: &str) -> String {
     // Let's swap 'r' + vowel if the vowel is 'i' or 'u'.  "run" -> "urn". "ring" -> "irng" (weird but okay).
     // Or Vowel + r -> r + Vowel. "burn" -> "brun".
 
-    let chars: Vec<char> = input.chars().collect();
-    let mut out = String::new();
-    let mut i = 0;
-    while i < chars.len() {
-        let c = chars[i];
-        if i + 1 < chars.len() {
-            let next = chars[i + 1];
+    let mut out = String::with_capacity(input.len());
+    let mut chars = input.chars().peekable();
+
+    while let Some(c) = chars.next() {
+        if let Some(&next) = chars.peek() {
             // Swap 'r' + vowel -> vowel + 'r' (brid -> bird style)
             // But let's check for Vowel + r -> r + Vowel (burn -> brun)
             if is_vowel(c) && (next == 'r' || next == 'l') {
                 out.push(next);
                 out.push(c);
-                i += 2;
+                chars.next(); // Skip next char since we used it
                 continue;
             }
         }
         out.push(c);
-        i += 1;
     }
     out
 }
 
 fn apply_rhotacism(input: &str) -> String {
     // s/z -> r between vowels
-    let chars: Vec<char> = input.chars().collect();
-    let mut out = String::new();
-    for i in 0..chars.len() {
-        let c = chars[i];
-        let is_intervocalic = if i > 0 && i < chars.len() - 1 {
-            is_vowel(chars[i - 1]) && is_vowel(chars[i + 1])
+    let mut out = String::with_capacity(input.len());
+    let mut chars = input.chars().peekable();
+    let mut prev = None;
+
+    while let Some(c) = chars.next() {
+        let next = chars.peek().copied();
+        let is_intervocalic = if let (Some(p), Some(n)) = (prev, next) {
+            is_vowel(p) && is_vowel(n)
         } else {
             false
         };
@@ -272,6 +274,7 @@ fn apply_rhotacism(input: &str) -> String {
         } else {
             out.push(c);
         }
+        prev = Some(c);
     }
     out
 }
@@ -292,11 +295,11 @@ fn apply_cluster_simplification(input: &str) -> String {
 
 fn apply_h_dropping(input: &str) -> String {
     // Drop 'h' at start of word
-    if input.starts_with('h') {
-        return input[1..].to_string();
+    if let Some(stripped) = input.strip_prefix('h') {
+        return stripped.to_string();
     }
-    if input.starts_with('H') {
-        return input[1..].to_string();
+    if let Some(stripped) = input.strip_prefix('H') {
+        return stripped.to_string();
     }
     input.to_string()
 }

@@ -122,7 +122,13 @@ fn main() -> Result<()> {
 
         if extension == "pro" {
             let prog = prologue_compiler::compile(&unparsed_file, path.parent())?;
-            (prog.dna, prog.grid, prog.orca_mode, prog.custom_runes, prog.alchemy_book)
+            (
+                prog.dna,
+                prog.grid,
+                prog.orca_mode,
+                prog.custom_runes,
+                prog.alchemy_book,
+            )
         } else if extension == "score" {
             #[cfg(feature = "resonance")]
             {
