@@ -350,5 +350,4 @@ mod tests {
             || output2.iter().any(|&sample| sample != 0.0);
         assert!(has_non_zero, "Output buffer should have audio data");
     }
-
 }

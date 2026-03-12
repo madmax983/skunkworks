@@ -1,7 +1,7 @@
+use ::rand::Rng;
 use macroquad::prelude::*;
 use rayon::prelude::*;
 use std::f32::consts::PI;
-use ::rand::Rng;
 
 pub const WORLD_SIZE: f32 = 1000.0;
 pub const GRID_SCALE: usize = 5;
@@ -18,7 +18,11 @@ pub struct Agent {
 
 impl Agent {
     pub fn new(pos: Vec2, angle: f32) -> Self {
-        Self { pos, angle, state: 0 }
+        Self {
+            pos,
+            angle,
+            state: 0,
+        }
     }
 
     pub fn sense(&self, world: &World, angle_offset: f32, sensor_dist: f32) -> f32 {
@@ -72,7 +76,7 @@ impl World {
             let pos = vec2(x, y);
             let center = vec2(WORLD_SIZE / 2.0, WORLD_SIZE / 2.0);
             let dir = center - pos;
-            let angle = dir.y.atan2(dir.x) + rng.gen_range(-PI/4.0..PI/4.0);
+            let angle = dir.y.atan2(dir.x) + rng.gen_range(-PI / 4.0..PI / 4.0);
 
             agents.push(Agent::new(pos, angle));
         }
@@ -99,11 +103,34 @@ impl World {
         let w = self.grid_w;
         let h = self.grid_h;
 
-        let updates: Vec<(Vec2, f32, u8, Option<(usize, usize)>, f32)> = self.agents.par_iter().map(|agent| {
-            if agent.state == 1 {
-                // Dead: maybe respawn
-                let mut rng = ::rand::thread_rng();
-                if rng.gen_bool(0.02) {
+        let updates: Vec<(Vec2, f32, u8, Option<(usize, usize)>, f32)> = self
+            .agents
+            .par_iter()
+            .map(|agent| {
+                if agent.state == 1 {
+                    // Dead: maybe respawn
+                    let mut rng = ::rand::thread_rng();
+                    if rng.gen_bool(0.02) {
+                        let side = rng.gen_range(0..4);
+                        let (x, y) = match side {
+                            0 => (rng.gen_range(0.0..WORLD_SIZE), 0.0),
+                            1 => (rng.gen_range(0.0..WORLD_SIZE), WORLD_SIZE),
+                            2 => (0.0, rng.gen_range(0.0..WORLD_SIZE)),
+                            _ => (WORLD_SIZE, rng.gen_range(0.0..WORLD_SIZE)),
+                        };
+                        let pos = vec2(x, y);
+                        let center = vec2(WORLD_SIZE / 2.0, WORLD_SIZE / 2.0);
+                        let dir = center - pos;
+                        let angle = dir.y.atan2(dir.x) + rng.gen_range(-PI / 4.0..PI / 4.0);
+                        return (pos, angle, 0, None, 0.0);
+                    }
+                    return (agent.pos, agent.angle, 1, None, 0.0);
+                }
+
+                // Hit target?
+                let dist_target = (target - agent.pos).length();
+                if dist_target < 20.0 {
+                    let mut rng = ::rand::thread_rng();
                     let side = rng.gen_range(0..4);
                     let (x, y) = match side {
                         0 => (rng.gen_range(0.0..WORLD_SIZE), 0.0),
@@ -114,85 +141,66 @@ impl World {
                     let pos = vec2(x, y);
                     let center = vec2(WORLD_SIZE / 2.0, WORLD_SIZE / 2.0);
                     let dir = center - pos;
-                    let angle = dir.y.atan2(dir.x) + rng.gen_range(-PI/4.0..PI/4.0);
-                    return (pos, angle, 0, None, 0.0);
+                    let angle = dir.y.atan2(dir.x) + rng.gen_range(-PI / 4.0..PI / 4.0);
+                    return (pos, angle, 0, None, 1.0); // 1.0 damage
                 }
-                return (agent.pos, agent.angle, 1, None, 0.0);
-            }
 
-            // Hit target?
-            let dist_target = (target - agent.pos).length();
-            if dist_target < 20.0 {
+                // Sensing
+                let sensor_angle = PI / 4.0;
+                let sensor_dist = 15.0;
+                let turn_angle = PI / 8.0;
+
+                let left = agent.sense(self, -sensor_angle, sensor_dist);
+                let center_sense = agent.sense(self, 0.0, sensor_dist);
+                let right = agent.sense(self, sensor_angle, sensor_dist);
+
                 let mut rng = ::rand::thread_rng();
-                let side = rng.gen_range(0..4);
-                let (x, y) = match side {
-                    0 => (rng.gen_range(0.0..WORLD_SIZE), 0.0),
-                    1 => (rng.gen_range(0.0..WORLD_SIZE), WORLD_SIZE),
-                    2 => (0.0, rng.gen_range(0.0..WORLD_SIZE)),
-                    _ => (WORLD_SIZE, rng.gen_range(0.0..WORLD_SIZE)),
-                };
-                let pos = vec2(x, y);
-                let center = vec2(WORLD_SIZE / 2.0, WORLD_SIZE / 2.0);
-                let dir = center - pos;
-                let angle = dir.y.atan2(dir.x) + rng.gen_range(-PI/4.0..PI/4.0);
-                return (pos, angle, 0, None, 1.0); // 1.0 damage
-            }
+                let mut next_angle = agent.angle;
 
-            // Sensing
-            let sensor_angle = PI / 4.0;
-            let sensor_dist = 15.0;
-            let turn_angle = PI / 8.0;
-
-            let left = agent.sense(self, -sensor_angle, sensor_dist);
-            let center_sense = agent.sense(self, 0.0, sensor_dist);
-            let right = agent.sense(self, sensor_angle, sensor_dist);
-
-            let mut rng = ::rand::thread_rng();
-            let mut next_angle = agent.angle;
-
-            if center_sense > left && center_sense > right {
-                // Keep going
-            } else if center_sense < left && center_sense < right {
-                // Random turn
-                if rng.gen_bool(0.5) {
-                    next_angle += turn_angle;
-                } else {
+                if center_sense > left && center_sense > right {
+                    // Keep going
+                } else if center_sense < left && center_sense < right {
+                    // Random turn
+                    if rng.gen_bool(0.5) {
+                        next_angle += turn_angle;
+                    } else {
+                        next_angle -= turn_angle;
+                    }
+                } else if left > right {
                     next_angle -= turn_angle;
+                } else if right > left {
+                    next_angle += turn_angle;
                 }
-            } else if left > right {
-                next_angle -= turn_angle;
-            } else if right > left {
-                next_angle += turn_angle;
-            }
 
-            // Add a little random wander
-            next_angle += rng.gen_range(-0.1..0.1);
+                // Add a little random wander
+                next_angle += rng.gen_range(-0.1..0.1);
 
-            let new_pos = agent.pos + vec2(next_angle.cos(), next_angle.sin()) * SPEED;
-            let mut state = 0;
-            let mut drop_pheromone = None;
+                let new_pos = agent.pos + vec2(next_angle.cos(), next_angle.sin()) * SPEED;
+                let mut state = 0;
+                let mut drop_pheromone = None;
 
-            // Firewall collisions
-            for (fw_center, fw_radius) in firewalls {
-                if new_pos.distance(*fw_center) < *fw_radius {
-                    state = 1;
-                    break;
+                // Firewall collisions
+                for (fw_center, fw_radius) in firewalls {
+                    if new_pos.distance(*fw_center) < *fw_radius {
+                        state = 1;
+                        break;
+                    }
                 }
-            }
 
-            let px = (new_pos.x / scale).clamp(0.0, (w - 1) as f32) as usize;
-            let py = (new_pos.y / scale).clamp(0.0, (h - 1) as f32) as usize;
+                let px = (new_pos.x / scale).clamp(0.0, (w - 1) as f32) as usize;
+                let py = (new_pos.y / scale).clamp(0.0, (h - 1) as f32) as usize;
 
-            if state == 0 {
-                // Not dead, drop pheromone
-                drop_pheromone = Some((px, py));
-            } else {
-                // Dead, maybe drop "negative" pheromone?
-                // Let's just drop nothing so the trail decays and others find new paths
-            }
+                if state == 0 {
+                    // Not dead, drop pheromone
+                    drop_pheromone = Some((px, py));
+                } else {
+                    // Dead, maybe drop "negative" pheromone?
+                    // Let's just drop nothing so the trail decays and others find new paths
+                }
 
-            (new_pos, next_angle, state, drop_pheromone, 0.0)
-        }).collect();
+                (new_pos, next_angle, state, drop_pheromone, 0.0)
+            })
+            .collect();
 
         let mut total_damage = 0.0;
         for (i, (pos, angle, state, pheromone, damage)) in updates.into_iter().enumerate() {
@@ -212,22 +220,26 @@ impl World {
         // Diffuse & Decay
         let prev_pheromones = self.pheromones.clone();
 
-        self.pheromones.par_chunks_mut(w).enumerate().for_each(|(y, row)| {
-            for (x, cell) in row.iter_mut().enumerate() {
-                if y == 0 || y == h - 1 || x == 0 || x == w - 1 {
-                    continue;
-                }
-
-                let mut sum = 0.0;
-                for dy in -1..=1 {
-                    for dx in -1..=1 {
-                        let idx = ((y as isize + dy) as usize) * w + ((x as isize + dx) as usize);
-                        sum += prev_pheromones[idx];
+        self.pheromones
+            .par_chunks_mut(w)
+            .enumerate()
+            .for_each(|(y, row)| {
+                for (x, cell) in row.iter_mut().enumerate() {
+                    if y == 0 || y == h - 1 || x == 0 || x == w - 1 {
+                        continue;
                     }
+
+                    let mut sum = 0.0;
+                    for dy in -1..=1 {
+                        for dx in -1..=1 {
+                            let idx =
+                                ((y as isize + dy) as usize) * w + ((x as isize + dx) as usize);
+                            sum += prev_pheromones[idx];
+                        }
+                    }
+                    *cell = (sum / 9.0) * PHEROMONE_DECAY;
                 }
-                *cell = (sum / 9.0) * PHEROMONE_DECAY;
-            }
-        });
+            });
     }
 
     pub fn render_to_buffer(&self, buffer: &mut [u8], width: usize, height: usize) {

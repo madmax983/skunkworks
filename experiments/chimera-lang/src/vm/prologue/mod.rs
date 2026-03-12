@@ -843,7 +843,7 @@ fn apply_propagation_rune(
     if architect::apply_architect_runes(rune, y, x, current_signals, next_signals) {
         return true;
     }
-    if topology::apply_topology_runes(
+    if topology::apply_topology_runes(topology::TopologyArgs {
         rune,
         y,
         x,
@@ -852,7 +852,7 @@ fn apply_propagation_rune(
         next_signals,
         next_delayed,
         orca_mode,
-    ) {
+    }) {
         return true;
     }
     if math::apply_math_runes(rune, y, x, current_signals, next_signals) {

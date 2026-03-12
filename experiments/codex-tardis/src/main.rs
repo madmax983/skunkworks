@@ -1,9 +1,9 @@
 mod gen;
 mod glyph;
 mod starmap;
-mod world;
 #[cfg(test)]
 mod tests;
+mod world;
 
 use gen::generate_galaxy;
 use macroquad::prelude::*;
