@@ -25,6 +25,14 @@ Additionally, introducing localized physics algorithms (like Boid flocking from 
 
 ## 🌿 Attempted Crosses
 
+### myco-ddos
+- **Parents**: experiments/locust-ddos + experiments/myco-transit
+- **Concept**: Mycelial Cyberwarfare. The DDoS packets act as slime mold agents, foraging for the server and depositing pheromones to create organic highways through firewalls.
+- **Novel trait**: Organic Attack Vectors. The botnet doesn't just swarm; it builds a highly efficient, branching path to the target, bypassing firewalls by reinforcing successful routes and letting failed paths decay.
+- **Status**: experiments/myco-ddos
+- **Evaluation**: Compiles. Emergent behavior confirmed (Mycelial Cyberwarfare). Success.
+
+
 ### locus-ddos
 - **Parents**: experiments/locust-ddos + crates/locus
 - **Concept**: Boid-driven Cyberwarfare. The DDoS packets use Boid flocking mechanics instead of simple pathfinding.
@@ -158,7 +166,7 @@ Additionally, introducing localized physics algorithms (like Boid flocking from 
 - **Concept**: Evolving strings that vibrate and emit magnetic fields, influencing a swarm of particles. The particles, in turn, affect the fitness of the strings (e.g., strings that attract more particles reproduce).
 - **Novel trait**: Acoustic-Magnetic Symbiosis. Sound waves (string vibration) become magnetic waves, guiding matter.
 - **Status**: experiments/ferrous-strings
-- **Evaluation**: Fails to compile. Noticed in GUESTBOOK.md as MAGNETIC. Emergent behavior confirmed (music guiding matter). Success.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as MAGNETIC. Emergent behavior confirmed (music guiding matter). Success.
 
 ### myco-flock
 - **Parents**: experiments/myco-transit + experiments/luminous-flock
@@ -200,7 +208,7 @@ Additionally, introducing localized physics algorithms (like Boid flocking from 
 - **Concept**: Chaotic Acoustic Feedback. A chaotic double pendulum acts as a pick/bow, striking strings that exert magnetic drag force back on it.
 - **Novel trait**: An unpredictable instrument that influences the player. Bidirectional feedback between chaos and acoustics.
 - **Status**: experiments/chaos-strings
-- **Evaluation**: Fails to compile. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed. Success.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed. Success.
 
 ### gray-fluid
 - **Parents**: crates/gray-scott + experiments/ferrous-fluid
