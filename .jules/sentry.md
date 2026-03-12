@@ -63,3 +63,6 @@
 **[Audio testing isolation]**
 **Learning:** `mod tests` block containing conditionals based on features (`#[cfg(feature = "audio")]`) fails when the test references items that don't exist when the feature is disabled. Conditional tests evaluating the code when the feature is off must be implemented in a file that is compiled both with and without the feature.
 **Action:** When evaluating feature toggles, keep conditional code isolated by either wrapping the test module itself inside a feature conditional (`#[cfg(all(test, feature = "audio"))]`), or properly guarding specific tests and their dependencies from the global test module context.
+**[Integer Overflow in Tests on 32-bit Targets]
+**Learning:** Using `i64::MAX as usize + 1` causes panics on 32-bit targets because `i64::MAX` exceeds `usize::MAX`.
+**Action:** Feature-gate tests containing such boundary conditions with `#[cfg(target_pointer_width = "64")]` to ensure the test suite is portable and does not panic on smaller pointer width environments.
