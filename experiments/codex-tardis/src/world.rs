@@ -7,7 +7,7 @@ pub struct Block {
     pub color: Color,
     pub target_room_id: Option<usize>, // If Some, this is a portal
     #[allow(dead_code)]
-    pub portal_face_normal: Vec3,      // Which face is the portal
+    pub portal_face_normal: Vec3, // Which face is the portal
 }
 
 // Splice: Added texture field

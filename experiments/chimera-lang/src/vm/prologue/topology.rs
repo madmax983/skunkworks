@@ -1,17 +1,30 @@
 use super::normalize_coords;
 use crate::vm::Value;
 
-pub fn apply_topology_runes(
-    rune: &str,
-    y: usize,
-    x: usize,
-    tick: u64,
-    current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut Vec<Vec<Option<Value>>>,
-    next_delayed: &mut Vec<Vec<Option<Value>>>,
-    orca_mode: bool,
-) -> bool {
+pub struct TopologyArgs<'a> {
+    pub rune: &'a str,
+    pub y: usize,
+    pub x: usize,
+    pub tick: u64,
+    pub current_signals: &'a [Vec<Option<Value>>],
+    pub next_signals: &'a mut [Vec<Option<Value>>],
+    pub next_delayed: &'a mut [Vec<Option<Value>>],
+    pub orca_mode: bool,
+}
+
+pub fn apply_topology_runes(args: TopologyArgs<'_>) -> bool {
     let mut changes = false;
+    let TopologyArgs {
+        rune,
+        y,
+        x,
+        tick,
+        current_signals,
+        next_signals,
+        next_delayed,
+        orca_mode,
+    } = args;
+
     match rune {
         "~" => {
             // Wires: OR of all neighbors
