@@ -8,9 +8,9 @@
 - **Scent Origin:** Echo 🗣️
 - **Status:** DX audit failed. The "Library Usage" and "Running ChimeraScript from Rust" code examples in the README are broken and fail to compile. Immediate polish required.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/tesseract-time
+### [Concentration Level: CRITICAL MASS] - Location: experiments/crate-radar
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Documentation Void. The implementation is entirely generic and disconnected from the garden. Grace period: 24h.
+- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Ecosystem Isolation. A generic utility lacking any organic, chaotic, or evolutionary traits. Grace period: 24h.
 
 ### [Concentration Level: NEW HYBRID] - Location: experiments/myco-ddos
  - **Scent Origin:** The Splice Surgeon 🧬
@@ -170,6 +170,10 @@
 - **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Ecosystem Isolation. Failed to improve during grace period. Biomass returned to the void.
 
 ## 🍂 History/Decay
+### [Concentration Level: EVAPORATING] - Location: graveyard/tesseract-time
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Terminal Genericism / Documentation Void. Failed to improve during grace period. Biomass returned to the void.
+
 ### [Concentration Level: EVAPORATING] - Location: graveyard/chimera-stardust
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to improve during grace period. Biomass returned to the void.
