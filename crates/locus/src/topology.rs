@@ -344,6 +344,52 @@ mod topology_tests {
     use super::*;
 
     #[test]
+    fn test_topology_out_of_bounds() {
+        let width = 10;
+        let height = 10;
+
+        let plane = Topology::Plane;
+        assert_eq!(plane.normalize(-1, 0, width, height), None);
+        assert_eq!(plane.normalize(0, -1, width, height), None);
+        assert_eq!(plane.normalize(10, 0, width, height), None);
+        assert_eq!(plane.normalize(0, 10, width, height), None);
+
+        let hyper = Topology::Hyperbolic;
+        assert_eq!(hyper.normalize(-1, 0, width, height), None);
+        assert_eq!(hyper.normalize(0, -1, width, height), None);
+        assert_eq!(hyper.normalize(10, 0, width, height), None);
+        assert_eq!(hyper.normalize(0, 10, width, height), None);
+
+        let cyl_h = Topology::CylinderH;
+        // x wraps, y is bounded
+        assert_eq!(cyl_h.normalize(-1, 0, width, height), None);
+        assert_eq!(cyl_h.normalize(10, 0, width, height), None);
+        assert_eq!(cyl_h.normalize(5, -1, width, height), Some((5, 9))); // x=-1 wraps to 9
+        assert_eq!(cyl_h.normalize(5, 10, width, height), Some((5, 0))); // x=10 wraps to 0
+
+        let cyl_v = Topology::CylinderV;
+        // y wraps, x is bounded
+        assert_eq!(cyl_v.normalize(0, -1, width, height), None);
+        assert_eq!(cyl_v.normalize(0, 10, width, height), None);
+        assert_eq!(cyl_v.normalize(-1, 5, width, height), Some((9, 5))); // y=-1 wraps to 9
+        assert_eq!(cyl_v.normalize(10, 5, width, height), Some((0, 5))); // y=10 wraps to 0
+    }
+
+    #[test]
+    fn test_topology_invalid_dimensions() {
+        let topo = Topology::Torus;
+        assert_eq!(topo.normalize(0, 0, 0, 10), None);
+        assert_eq!(topo.normalize(0, 0, 10, 0), None);
+        assert_eq!(topo.normalize(0, 0, 0, 0), None);
+
+        #[cfg(target_pointer_width = "64")]
+        {
+            assert_eq!(topo.normalize(0, 0, i64::MAX as usize + 1, 10), None);
+            assert_eq!(topo.normalize(0, 0, 10, i64::MAX as usize + 1), None);
+        }
+    }
+
+    #[test]
     fn test_klein_wrapping() {
         let topo = Topology::Klein;
         let width = 10;
@@ -400,6 +446,29 @@ mod topology_tests {
         // twist y: 9 - 12 = -3.
         // -3 out of bounds. -> None.
         assert_eq!(topo.normalize(12, 10, width, height), None);
+    }
+
+    #[test]
+    fn test_mobius_out_of_bounds() {
+        let topo = Topology::Mobius;
+        let width = 10;
+        let height = 10;
+
+        // Normal wrapping (even wrap) but y is out of bounds
+        // x = 5 (no wrap). y = -1 (out of bounds).
+        assert_eq!(topo.normalize(-1, 5, width, height), None);
+        // x = 5 (no wrap). y = 10 (out of bounds).
+        assert_eq!(topo.normalize(10, 5, width, height), None);
+
+        // Twisted wrapping (odd wrap) but twisted_y goes out of bounds
+        // x = 10 (1 wrap, twist y). y = 10.
+        // twisted_y = 9 - 10 = -1 (out of bounds).
+        assert_eq!(topo.normalize(10, 10, width, height), None);
+
+        // Test extreme y value causing checked_sub to fail
+        // x = 10 (1 wrap, twist y). y = i64::MIN.
+        // twisted_y = 9 - i64::MIN (overflows).
+        assert_eq!(topo.normalize(i64::MIN, 10, width, height), None);
     }
 
     #[test]
