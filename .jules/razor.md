@@ -32,3 +32,8 @@
 **Bloat:** "Manager" structs (`FlockManager`, `LockManager`, `WormManager`) that simply wrap a pluralized collection (e.g. `Vec<Agent>`) and serve as a "God object" for operations.
 **Cut:** Renamed these "Manager" structs to concrete plural names representing the underlying collection directly (`Flock`, `Locks`, `Worms`).
 **Saved:** Flattened unnecessary structural abstraction and cognitive overhead of enterprise naming patterns, adhering strictly to KISS.
+
+## [Reduction]
+**Bloat:** Complex 5-element tuple return type `Result<(Dna, Option<Vec<Vec<Value>>>, Option<bool>, HashMap<String, usize>, Vec<AlchemyRule>)>` in `prologue_compiler::compile` and nested generic type `HashMap<(usize, usize), Vec<((usize, usize), f32)>>` in `ChimeraVM`.
+**Cut:** Encapsulated tuple return type into a structured `PrologueProgram` struct, and extracted the nested collection into a public `SynapseMap` type alias.
+**Saved:** Multiple lines of confusing destructuring boilerplate, cognitive load of keeping track of tuple indices and deep generic parameter types.

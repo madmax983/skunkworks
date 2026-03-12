@@ -147,6 +147,9 @@ pub mod microscope;
 mod neurochem_test;
 #[cfg(feature = "biophysics")]
 pub mod neuron;
+
+#[cfg(feature = "biophysics")]
+pub type SynapseMap = HashMap<(usize, usize), Vec<((usize, usize), f32)>>;
 pub mod nova;
 #[cfg(feature = "nova")]
 pub mod nova_alchemy_prime;
@@ -760,7 +763,7 @@ pub struct ChimeraVM {
     #[cfg(feature = "biophysics")]
     pub neurons: std::collections::HashMap<(usize, usize), neuron::Neuron>,
     #[cfg(feature = "biophysics")]
-    pub biophysics_synapses: HashMap<(usize, usize), Vec<((usize, usize), f32)>>,
+    pub biophysics_synapses: SynapseMap,
     #[cfg(feature = "biophysics")]
     pub biophysics_couplings: HashMap<(usize, usize), f32>,
     #[cfg(feature = "biophysics")]
