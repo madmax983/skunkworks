@@ -17,3 +17,6 @@
 **2025-10-24 - [Bounded Reader Validation DoS Prevention]**
 **Threat:** Using `.take(LIMIT)` on `Read` traits to bound incoming payload lengths failed to prevent memory exhaustion (OOM DoS) or silent truncation bugs because the number of bytes read was never checked against the limit. Truncated payloads could cause unexpected bugs when parsed.
 **Defense:** Checked the returned length of `read_to_string` or `read_to_end` against the limit after using `.take(LIMIT + 1)`. Replaced implicit truncation with an explicit `anyhow::bail!` or fallback. Fixed in `experiments/semantic-spy/src/main.rs`, `experiments/cargo-rocket/src/recorder.rs`, `experiments/chimera-lang/src/main.rs`, and `experiments/chimera-lang/src/vm/ipc.rs`.
+**2025-05-18 - [Bounded Reader Validation DoS Prevention]**
+**Threat:** Using `.take(LIMIT)` on `Read` traits to bound incoming payload lengths failed to prevent memory exhaustion (OOM DoS) or silent truncation bugs because the number of bytes read was never checked against the limit. Truncated payloads could cause unexpected bugs when parsed.
+**Defense:** Checked the returned length of `read_to_string` or `read_to_end` against the limit after using `.take(LIMIT + 1)`. Replaced implicit truncation with an explicit `continue` to try another file. Fixed in `experiments/heap-arena/src/level_gen.rs`.
