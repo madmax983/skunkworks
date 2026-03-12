@@ -115,7 +115,15 @@ pub struct FlockingParams {
     pub cohesion_weight: f64,
 }
 
-/// Helper struct to accumulate steering forces.
+/// Helper struct to accumulate raw steering vectors before normalization.
+///
+/// Instead of allocating a `Vec<Vec2>` for every neighbor an agent sees, we maintain
+/// running totals. This drastically reduces heap allocations and keeps the hot loop
+/// cache-friendly.
+///
+/// - `separation`: The sum of vectors pointing *away* from nearby neighbors.
+/// - `alignment`: The sum of the velocities of nearby neighbors.
+/// - `cohesion`: The sum of the positions of nearby neighbors.
 #[derive(Default)]
 struct FlockingAccumulators {
     separation: Vec2,
@@ -126,6 +134,11 @@ struct FlockingAccumulators {
     coh_count: usize,
 }
 
+/// Precomputed invariant parameters for the inner loop.
+///
+/// Evaluating distances requires calculating squared radii. Computing `view_radius * view_radius`
+/// inside a loop of 10,000 agents results in millions of redundant multiplications.
+/// This struct hoists those invariants out of the loop.
 struct PrecomputedParams<'a> {
     params: &'a FlockingParams,
     view_sq: f64,
@@ -136,6 +149,11 @@ struct PrecomputedParams<'a> {
 }
 
 impl FlockingAccumulators {
+    /// Processes a single neighbor and accumulates the relevant steering forces.
+    ///
+    /// This method performs early-exit boundary checks (Manhattan distance) before
+    /// committing to the more expensive Euclidean distance check (multiplication).
+    /// If the neighbor is within range, their influence is added to the running totals.
     fn accumulate(
         &mut self,
         my_pos: Vec2,
@@ -187,11 +205,18 @@ impl FlockingAccumulators {
 
 /// Calculates a steering force towards a target velocity or position derivative.
 ///
-/// This helper encapsulates the common pattern:
-/// 1. Normalize the desired vector.
-/// 2. Scale to max speed.
-/// 3. Subtract current velocity (to get steering force).
-/// 4. Limit the steering force.
+/// This helper encapsulates the common pattern from Reynolds' algorithm:
+/// Steer = Desired - Current.
+///
+/// To reach a target, the agent desires to move at `max_speed` in that direction.
+/// However, the agent's inertia (`current_vel`) resists this change. The difference
+/// between the two is the required steering force, which is then capped by `max_force`.
+///
+/// # Optimizations
+///
+/// Instead of calling `.normalize()` (which does 2 divides, 1 sqrt, 2 muls) followed by `.scale()`
+/// and `.limit()`, this function manually computes and factors the squares to minimize
+/// floating-point operations inside the core `f64` arithmetic loop.
 fn compute_steering(mut desired: Vec2, current_vel: Vec2, max_speed: f64, max_force: f64) -> Vec2 {
     let d_sq = desired.magnitude_squared();
     if d_sq > 0.0 {
