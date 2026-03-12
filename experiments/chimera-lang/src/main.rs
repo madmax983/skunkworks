@@ -104,11 +104,12 @@ fn main() -> Result<()> {
         use std::io::Read;
         let mut f = fs::File::open(input_path)?;
         let mut unparsed_file = String::new();
+        let limit = 10 * 1024 * 1024;
         let bytes_read = f
             .by_ref()
-            .take((10 * 1024 * 1024) + 1)
+            .take(limit + 1)
             .read_to_string(&mut unparsed_file)?;
-        if bytes_read > 10 * 1024 * 1024 {
+        if bytes_read > limit as usize {
             return Err(anyhow::anyhow!(
                 "File is too large! Maximum allowed size is 10MB."
             ));

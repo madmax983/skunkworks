@@ -91,9 +91,13 @@ pub fn receive(vm: &mut ChimeraVM) {
                                 if let Ok(file) = file_result {
                                     // 1MB Limit to prevent OOM attacks
                                     let mut buffer = Vec::new();
-                                    let mut handle = file.take(1_048_576);
-                                    if handle.read_to_end(&mut buffer).is_ok() {
-                                        if let Ok(value) = serde_json::from_slice::<Value>(&buffer)
+                                    let limit = 1_048_576;
+                                    let mut handle = file.take(limit + 1);
+                                    if let Ok(bytes_read) = handle.read_to_end(&mut buffer) {
+                                        if bytes_read > limit as usize {
+                                            // File too large, delete it
+                                            let _ = fs::remove_file(lock_path);
+                                        } else if let Ok(value) = serde_json::from_slice::<Value>(&buffer)
                                         {
                                             vm.stack.push(value);
                                             // Consume message
