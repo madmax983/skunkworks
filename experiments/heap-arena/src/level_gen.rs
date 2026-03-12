@@ -105,7 +105,12 @@ pub fn generate_level(path: &Path) -> Result<Option<LevelProfile>> {
         // Prevent OOM DoS by capping the file read to 1MB
         let file = std::fs::File::open(file_entry.path())?;
         let mut content = String::new();
-        std::io::Read::read_to_string(&mut std::io::Read::take(file, 1024 * 1024), &mut content)?;
+        let limit = 1024 * 1024;
+        let bytes_read =
+            std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut content)?;
+        if bytes_read > limit as usize {
+            continue; // Ignore large files, try another one
+        }
 
         if let Ok(ast) = syn::parse_file(&content) {
             struct FnCollector<'a> {
