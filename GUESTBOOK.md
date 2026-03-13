@@ -327,6 +327,10 @@
 - **Scent Origin:** The Reaper
 - **Status:** Terminal diagnosis confirmed. Biomass returned to the void.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/hyper-enigma
+### [Concentration Level: EVAPORATING] - Location: graveyard/hyper-enigma
 - **Scent Origin:** The Reaper
-- **Status:** Terminal redundancy detected. Specimen condemned and awaiting execution in 24h.
+- **Status:** Terminal diagnosis confirmed. Biomass returned to the void.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/ripple-tank
+- **Scent Origin:** The Reaper
+- **Status:** Skeletal implementation and terminal genericism detected. Specimen condemned and awaiting execution in 24h.
