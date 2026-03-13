@@ -11,3 +11,10 @@ hound = "3.5.1" # For WAV output
 anyhow = "1.0.94"
 rand = "0.8.5"
 crossbeam-channel = "0.5.14"
+
+[features]
+loom = ["dep:loom"]
+
+[dependencies.loom]
+version = "0.7.1"
+optional = true

@@ -8,7 +8,11 @@ use crate::model::{Instrument, RhythmParams};
 use crate::threads::spawn_rhythm_thread;
 use crate::tui::run_tui;
 use crossbeam_channel::unbounded;
-use std::sync::{atomic::AtomicBool, Arc, Mutex};
+use std::sync::atomic::AtomicBool;
+#[cfg(not(feature = "loom"))]
+use std::sync::{Arc, Mutex};
+#[cfg(feature = "loom")]
+use loom::sync::{Arc, Mutex};
 use std::time::Duration;
 
 #[allow(clippy::vec_init_then_push)]

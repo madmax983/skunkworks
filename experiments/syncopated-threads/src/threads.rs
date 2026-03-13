@@ -1,10 +1,12 @@
 use crate::audio::AudioCommand;
 use crate::model::{Instrument, RhythmParams, ThreadState};
 use crossbeam_channel::Sender;
-use std::sync::{
-    atomic::{AtomicBool, Ordering},
-    Arc,
-};
+use std::sync::atomic::{AtomicBool, Ordering};
+#[cfg(not(feature = "loom"))]
+use std::sync::Arc;
+#[cfg(feature = "loom")]
+use loom::sync::Arc;
+
 use std::thread;
 
 pub fn spawn_rhythm_thread(

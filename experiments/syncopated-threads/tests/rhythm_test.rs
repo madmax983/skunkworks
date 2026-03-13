@@ -1,4 +1,7 @@
+#[cfg(not(feature = "loom"))]
 use std::sync::{Arc, Mutex};
+#[cfg(feature = "loom")]
+use loom::sync::{Arc, Mutex};
 use std::thread;
 use std::time::{Duration, Instant};
 // use syncopated_threads::model::ThreadState; // This would fail compilation if I uncommented it, but I can't run cargo test if it doesn't compile at all?
