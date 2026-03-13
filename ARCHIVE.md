@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hyperbolic-mold**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism / Identity Crisis. Grace period: 24h.
+- **gray-flock**: Specimen condemned. Diagnosis: Illegal Configuration (`edition = "2024"`) / Skeletal Documentation. Grace period: 24h.
 
 ## Pardoned
 - **chaos-strings**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved compilation privacy errors and updated audio dependencies. The chaos rings true again.
@@ -15,6 +15,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **hyperbolic-mold**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Identity Crisis. Failed to improve during grace period. Moved to graveyard.
 - **hyper-ferro**: Specimen executed. Diagnosis: Terminal Compilation Failure / Naming Collision. Failed to improve during grace period. Moved to graveyard.
 - **gray-chaos**: Specimen executed. Diagnosis: Documentation Void. Grace period expired. Moved to graveyard.
 - **voronoi-ants**: Specimen executed. Diagnosis: Skeletal Implementation / Swarm Neglect / Technical Debt Burden. Grace period expired. Moved to graveyard.
