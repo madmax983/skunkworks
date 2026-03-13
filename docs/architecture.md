@@ -470,7 +470,6 @@ classDiagram
     GitModel ..> Commit : Produces
 ```
 
-
 ### Soroban Logic (crates/soroban)
 
 The `soroban` crate encapsulates the logic of the Japanese Abacus, modeling state as physical bead positions rather than just integer values (ADR 034).
@@ -688,7 +687,6 @@ classDiagram
     note for Synthesizer "Maps file hash -> Frequency\nMaps DiffType -> Color"
 ```
 
-
 ## Experiment: Chimera Lang (ADR 008)
 
 **Chimera Lang** is a bio-inspired, stack-based esoteric programming language with an optional "Nova" expansion for advanced biological simulation.
@@ -723,6 +721,30 @@ classDiagram
     ChimeraVM *-- Dna : Owns
     ChimeraVM *-- PetriDish : Owns
     ExternalApp ..> ChimeraVM : Embeds
+```
+
+### VM Core Execution Extraction (ADR 068)
+
+To break up a massive monolithic `mod.rs`, the core execution logic of the Chimera VM is extracted into a dedicated `ops.rs` module. The `ChimeraVM` struct acts as the state manager and delegates execution.
+
+```mermaid
+classDiagram
+    direction TB
+    class ChimeraVM {
+        +State state
+        +step()
+        +execute_gene()
+    }
+
+    class Ops {
+        <<Module>>
+        +execute_math(vm)
+        +execute_logic(vm)
+        +execute_biology(vm)
+    }
+
+    ChimeraVM --> Ops : Delegates execution
+    Ops --> ChimeraVM : Modifies state
 ```
 
 ### Nova Feature: Endocrine Cycle
@@ -868,7 +890,6 @@ sequenceDiagram
     OS-->>Phy: Output(stdout, stderr)
     Phy-->>VM: push(String(stdout))
 ```
-
 
 ### Chimera Feature: Sovereignty (ADR 018)
 
