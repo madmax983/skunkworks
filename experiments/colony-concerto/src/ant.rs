@@ -1,15 +1,15 @@
+use crate::audio::SoundEvent;
+use crossbeam::channel::Sender;
+#[cfg(loom)]
+use loom::thread;
 use petgraph::graph::NodeIndex;
 use petgraph::Direction;
 use rand::prelude::*;
 #[cfg(not(loom))]
 use std::thread;
-#[cfg(loom)]
-use loom::thread;
 use std::time::Duration;
-use crate::audio::SoundEvent;
-use crossbeam::channel::Sender;
 
-use crate::graph::{DepGraph, Arc};
+use crate::graph::{Arc, DepGraph};
 
 pub struct Ant {
     id: usize,

@@ -1,7 +1,7 @@
 #![cfg(loom)]
 
-use loom::sync::Mutex;
 use loom::sync::Arc;
+use loom::sync::Mutex;
 use loom::thread;
 
 use colony_concerto::graph::{Node, NodeDynamicState};
@@ -42,6 +42,9 @@ fn test_node_contention() {
         // The threads might race to get the lock, but only the first one to acquire it will set the builder_id and progress
         // Wait, if both try to set it...
         // Actually, we want to prove it's fragile. Let's make it panic!
-        assert!(state.builder_id.is_none(), "Havoc: This should fail because a thread grabbed the mutex!");
+        assert!(
+            state.builder_id.is_none(),
+            "Havoc: This should fail because a thread grabbed the mutex!"
+        );
     });
 }
