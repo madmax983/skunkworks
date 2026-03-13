@@ -41,51 +41,56 @@ struct Cli {
     ticks: u64,
 }
 
-fn format_oracle_result(val: &Value) -> Option<String> {
-    if let Value::Junction(JunctionType::All, items) = val {
-        // Check if this looks like a list of bindings from Oracle (List of [Key, Value])
-        let is_binding_list = !items.is_empty()
-            && items.iter().all(|item| {
-                if let Value::Junction(JunctionType::All, b_args) = item {
-                    b_args.len() == 2 && matches!(b_args[0], Value::Str(_))
-                } else {
-                    false
-                }
-            });
+struct OracleResultWrapper<'a>(pub &'a Value);
 
-        if is_binding_list {
-            let mut table = comfy_table::Table::new();
-            table.load_preset(comfy_table::presets::UTF8_FULL);
-            table.apply_modifier(comfy_table::modifiers::UTF8_ROUND_CORNERS);
-            table.set_header(vec!["Key", "Value"]);
+impl<'a> std::fmt::Display for OracleResultWrapper<'a> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let val = self.0;
+        if let Value::Junction(JunctionType::All, items) = val {
+            // Check if this looks like a list of bindings from Oracle (List of [Key, Value])
+            let is_binding_list = !items.is_empty()
+                && items.iter().all(|item| {
+                    if let Value::Junction(JunctionType::All, b_args) = item {
+                        b_args.len() == 2 && matches!(b_args[0], Value::Str(_))
+                    } else {
+                        false
+                    }
+                });
 
-            for item in items {
-                if let Value::Junction(_, args) = item {
-                    if let Value::Str(k) = &args[0] {
-                        let v = &args[1];
-                        let v_str = format!("{}", v);
-                        let mut v_cell = comfy_table::Cell::new(&v_str);
+            if is_binding_list {
+                let mut table = comfy_table::Table::new();
+                table.load_preset(comfy_table::presets::UTF8_FULL);
+                table.apply_modifier(comfy_table::modifiers::UTF8_ROUND_CORNERS);
+                table.set_header(vec!["Key", "Value"]);
 
-                        // Colorize
-                        if v_str == "1" || v_str.eq_ignore_ascii_case("true") {
-                            v_cell = v_cell.fg(comfy_table::Color::Green);
-                        } else if v_str == "0" || v_str.eq_ignore_ascii_case("false") {
-                            v_cell = v_cell.fg(comfy_table::Color::Red);
-                        } else if matches!(v, Value::Str(_)) {
-                            v_cell = v_cell.fg(comfy_table::Color::Cyan);
+                for item in items {
+                    if let Value::Junction(_, args) = item {
+                        if let Value::Str(k) = &args[0] {
+                            let v = &args[1];
+                            let v_str = format!("{}", v);
+                            let mut v_cell = comfy_table::Cell::new(&v_str);
+
+                            // Colorize
+                            if v_str == "1" || v_str.eq_ignore_ascii_case("true") {
+                                v_cell = v_cell.fg(comfy_table::Color::Green);
+                            } else if v_str == "0" || v_str.eq_ignore_ascii_case("false") {
+                                v_cell = v_cell.fg(comfy_table::Color::Red);
+                            } else if matches!(v, Value::Str(_)) {
+                                v_cell = v_cell.fg(comfy_table::Color::Cyan);
+                            }
+
+                            table.add_row(vec![
+                                comfy_table::Cell::new(k).fg(comfy_table::Color::Yellow),
+                                v_cell,
+                            ]);
                         }
-
-                        table.add_row(vec![
-                            comfy_table::Cell::new(k).fg(comfy_table::Color::Yellow),
-                            v_cell,
-                        ]);
                     }
                 }
+                return write!(f, "{}", table);
             }
-            return Some(table.to_string());
         }
+        write!(f, "{}", val)
     }
-    None
 }
 
 fn main() -> Result<()> {
@@ -254,7 +259,7 @@ fn main() -> Result<()> {
                 Value::Color(_, _, _) => ("Color", comfy_table::Color::Green),
             };
 
-            let val_str = format_oracle_result(val).unwrap_or_else(|| format!("{}", val));
+            let val_str = format!("{}", OracleResultWrapper(val));
 
             let mut val_cell = comfy_table::Cell::new(&val_str);
 
