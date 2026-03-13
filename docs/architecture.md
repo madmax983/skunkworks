@@ -1495,6 +1495,63 @@ classDiagram
     VmNovaSignals --> Constants : Uses
 ```
 
+### Nova Feature: Narrative & Memetics (ADR 046)
+
+The Narrative and Memetics system treats strings as active agents capable of mutation and evolution, enabling computational narratology directly on the grid.
+
+```mermaid
+classDiagram
+    direction TB
+    class NarrativePhysics {
+        +runes: Incipit, Terminus, Revision
+        +generate_seed()
+        +resolve_outcome()
+    }
+
+    class Library {
+        <<Global Persistent Store>>
+        +HashMap~String, String~ books
+        +publish()
+        +read()
+    }
+
+    class Memetics {
+        +runes: Source, Evolve, Censor, Spread, Imitate
+        +mutate_string()
+        +broadcast()
+    }
+
+    class PrologueState {
+        +Library library
+    }
+
+    PrologueState *-- Library : Owns
+    NarrativePhysics ..> Library : Uses
+    Memetics ..> PrologueState : Senses & Modifies
+```
+
+### Nova Feature: Compiler Security Hardening (ADR 048)
+
+Enforces strict compile-time limits on recursion and file access to prevent denial-of-service (DoS) and path traversal vulnerabilities during pre-processing.
+
+```mermaid
+stateDiagram-v2
+    state Preprocessor {
+        [*] --> ParseInclude : Encounter #include
+        ParseInclude --> CheckDepth
+        CheckDepth --> SandboxCheck : Depth < MAX_INCLUDE_DEPTH
+        CheckDepth --> Error : Depth >= Limit
+
+        SandboxCheck --> CycleCheck : Path inside base_path
+        SandboxCheck --> Error : Path escaped sandbox
+
+        CycleCheck --> Success : Path not visited
+        CycleCheck --> Error : Circular dependency detected
+
+        Success --> [*]
+    }
+```
+
 ## Experiment: Tectonic Git (ADR 023)
 
 **Tectonic Git** visualizes the repository history as geological strata, using code analysis to determine stability.
@@ -1797,9 +1854,9 @@ classDiagram
 
 **Hyper Acoustics** simulates 4D acoustics via an FDTD solver where simulation parameters are modulated by system metrics.
 
-### 4D Wave Simulation
+### 4D Wave Simulation and Audio Backend
 
-The simulation runs on a 4D grid (x, y, z, w) and supports headless execution for audio generation.
+The simulation runs on a 4D grid (x, y, z, w) and supports headless execution for audio generation, meaning it falls back to a deterministic thread loop if no audio device is present.
 
 ```mermaid
 classDiagram
@@ -1807,6 +1864,8 @@ classDiagram
     class AudioSystem {
         +cpal::Stream stream
         +thread::JoinHandle thread
+        +start_cpal()
+        +start_headless()
     }
 
     class PhysicsGrid4D {
@@ -1824,8 +1883,14 @@ classDiagram
         +SetParams
     }
 
+    class SystemMetrics {
+        +f32 cpu_load
+        +f32 ram_usage
+    }
+
     AudioSystem *-- PhysicsGrid4D : Owns (via Closure)
     AudioSystem ..> AudioCommand : Consumes
+    PhysicsGrid4D ..> SystemMetrics : Modulates c2 & damping
 ```
 
 ## Experiment: Chimera Hologram (ADR 028)
