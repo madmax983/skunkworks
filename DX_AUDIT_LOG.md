@@ -72,3 +72,21 @@ I attempted to follow the "Getting Started" instructions for `tui-shared` by cre
 *   🤦 **The Confusion:** "Tried to run the `story_demo` programmatically like the docs said, but it just opened a terminal UI and hung there. And copying the `Cargo.toml` dependencies caused a workspace inheritance error."
 *   🕵️ **The Reality:** "Turns out `chimera-lang` relies heavily on workspace dependencies like `anyhow` and `ratatui` that aren't provided in the README, and `story_demo.rs` launches a blocking TUI instead of a library example."
 *   💡 **The Fix:** "Add a huge banner in README saying 'REQUIRES WORKSPACE OR EXPLICIT DEPENDENCIES' and change `story_demo` to be a real headless programmatic example (or update the text to say it launches a TUI)."
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to add `Nova`'s story feature."
+**Action:** Try to use the API based *only* on the public docs/examples.
+
+## 🚧 Stumble - The Friction Points
+
+1. **Missing Feature:** Tried to run the `story_demo`. Compiler said `NarrativeGenerator` not found.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Getting Started example is broken
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `story_demo`. Compiler said `NarrativeGenerator` not found."
+*   🕵️ **The Reality:** "Turns out I needed to enable feature `nova`."
+*   💡 **The Fix:** "Add a huge banner in README saying 'REQUIRES FEATURE NOVA'."
