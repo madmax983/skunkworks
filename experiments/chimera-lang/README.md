@@ -274,7 +274,13 @@ Add to your `Cargo.toml`:
 ```toml
 [dependencies]
 # Note: Adjust path to point to the chimera-lang directory relative to your project
-chimera-lang = { path = "../chimera-lang" }
+chimera-lang = { path = "../experiments/chimera-lang" }
+
+# You must also explicitly add these dependencies since the example code below uses them:
+anyhow = "1.0"
+ratatui = "0.30"
+crossterm = "0.28"
+tui-shared = { path = "../crates/tui-shared" }
 ```
 
 Example `main.rs`:
@@ -342,7 +348,8 @@ fn main() {
 }
 ```
 
-See `examples/story_demo.rs` for a full example of programmatic usage:
+See `examples/story_demo.rs` for a full example of programmatic usage.
+> **Note**: `story_demo` launches a blocking interactive TUI, not a headless background script!
 
 > **REQUIRES FEATURE NOVA**
 
