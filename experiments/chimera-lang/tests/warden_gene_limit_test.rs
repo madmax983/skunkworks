@@ -1,5 +1,5 @@
 #[cfg(feature = "nova")]
-use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
+use chimera_lang::ast::{Dna, Gene, Helix, Strand};
 #[cfg(feature = "nova")]
 use chimera_lang::opcode::OpCode;
 #[cfg(feature = "nova")]

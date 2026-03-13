@@ -3,7 +3,7 @@ mod tests {
     use crate::ast::JunctionType;
     use crate::vm::Value;
     use std::collections::hash_map::DefaultHasher;
-    use std::hash::{Hash, Hasher};
+    use std::hash::Hash;
 
     #[test]
     fn test_value_hash_recursion_blowup() {

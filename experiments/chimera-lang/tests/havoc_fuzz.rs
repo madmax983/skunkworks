@@ -1,8 +1,7 @@
 use chimera_lang::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
 use chimera_lang::opcode::OpCode;
-use chimera_lang::vm::{ChimeraVM, Value};
+use chimera_lang::vm::ChimeraVM;
 use proptest::prelude::*;
-use std::str::FromStr;
 
 // Expanded OpCode Strategy
 fn opcode_strategy() -> impl Strategy<Value = OpCode> {

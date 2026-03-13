@@ -1,5 +1,5 @@
 use crate::ast::{Dna, Helix};
-use crate::vm::prologue::{exec_prologue_tick, MAT_BRICK, MAT_HEART, MAT_WALL};
+use crate::vm::prologue::{exec_prologue_tick, MAT_BRICK, MAT_HEART};
 use crate::vm::{ChimeraVM, Value};
 
 #[test]

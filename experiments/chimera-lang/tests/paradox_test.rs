@@ -1,7 +1,7 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use chimera_lang::ast::{Dna, Helix, Strand};
+    use chimera_lang::ast::{Dna, Helix};
     use chimera_lang::vm::paradox::{Action, Paradox, Trigger};
     use chimera_lang::vm::{ChimeraVM, Value};
 

@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use chimera_lang::ast::{Dna, Helix, Strand};
+    use chimera_lang::ast::{Dna, Helix};
     use chimera_lang::vm::nova_fluid;
     use chimera_lang::vm::ChimeraVM;
 
