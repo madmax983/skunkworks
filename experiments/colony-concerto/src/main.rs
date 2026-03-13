@@ -3,7 +3,6 @@ mod audio;
 mod graph;
 
 use crossbeam::channel::unbounded;
-use std::sync::Arc;
 use std::time::{Duration, Instant};
 
 use crossterm::{
@@ -23,7 +22,7 @@ use ratatui::{
 
 use crate::ant::Ant;
 use crate::audio::AudioEngine;
-use crate::graph::{generate_layered_dag, DepGraph};
+use crate::graph::{generate_layered_dag, DepGraph, Arc};
 
 fn main() -> anyhow::Result<()> {
     // Setup TUI
