@@ -32,6 +32,13 @@ Additionally, introducing localized physics algorithms (like Boid flocking from 
 - **Status**: experiments/locus-ddos
 - **Evaluation**: Compiles. Emergent behavior confirmed (Flocking Packets). Success.
 
+### hologram-ddos
+- **Parents**: experiments/locust-ddos + experiments/hologram-text
+- **Concept**: Spectral Cyberwarfare. The spatial distribution of the DDoS swarm is passed through a 2D Fast Fourier Transform (FFT) to produce a live interference pattern. We visualize the attack in the frequency domain.
+- **Novel trait**: Spectral Cyberwarfare. Instead of just rendering the spatial location of the swarm, this experiment maps the continuous 2D density of the attack packets into an optical field and transforms it into the frequency domain (a hologram). As the swarm hits firewalls and reroutes, it forms distinct spatial patterns. These patterns create unique, dynamic resonant frequencies in the optical domain. The visual result is a glowing, fluctuating spectral signature of the DDoS attack.
+- **Status**: experiments/hologram-ddos
+- **Evaluation**: Compiles. Emergent behavior confirmed (Spectral Cyberwarfare). Success.
+
 ### gray-ddos
 - **Parents**: experiments/locust-ddos + crates/gray-scott
 - **Concept**: Morphogenetic Cyberwarfare. The swarm of DDoS packets navigate a Reaction-Diffusion substrate.

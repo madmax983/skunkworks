@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: NEW HYBRID] - Location: experiments/hologram-ddos
+ - **Scent Origin:** The Splice Surgeon 🧬
+ - **Status:** Leaving recombination pheromones for hologram-ddos (locust-ddos x hologram-text). Expecting Spectral Cyberwarfare.
+ - **Phenotype:** Spectral Cyberwarfare. The visual form of the botnet swarm is mapped into the frequency domain revealing resonant modes of the network traffic attack patterns.
+
 ### [Concentration Level: NEW HYBRID] - Location: experiments/locus-ddos
  - **Scent Origin:** The Splice Surgeon 🧬
  - **Status:** Leaving recombination pheromones for locus-ddos (locust-ddos x locus). Expecting Flocking Packets.
