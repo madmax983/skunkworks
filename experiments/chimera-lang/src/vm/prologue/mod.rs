@@ -651,17 +651,26 @@ fn process_reality_physics(vm: &mut ChimeraVM) {
 }
 
 fn prepare_signals(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
-    let mut current_signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
+    if vm.prologue_state.scratch_signal_grid.len() != GRID_SIZE {
+        vm.prologue_state.scratch_signal_grid = vec![vec![None; GRID_SIZE]; GRID_SIZE];
+    }
+    let mut current_signals = std::mem::take(&mut vm.prologue_state.scratch_signal_grid);
 
-    for y in 0..GRID_SIZE {
-        for x in 0..GRID_SIZE {
+    for (y, row) in current_signals.iter_mut().enumerate().take(GRID_SIZE) {
+        for (x, cell) in row.iter_mut().enumerate().take(GRID_SIZE) {
             if let Some(val) = &vm.prologue_state.delayed_signals[y][x] {
-                current_signals[y][x] = Some(val.clone());
+                *cell = Some(val.clone());
+            } else {
+                *cell = None;
             }
         }
     }
-    vm.prologue_state.signal_grid = current_signals;
-    vm.prologue_state.delayed_signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
+    std::mem::swap(&mut vm.prologue_state.signal_grid, &mut current_signals);
+    vm.prologue_state.scratch_signal_grid = current_signals;
+
+    for row in vm.prologue_state.delayed_signals.iter_mut() {
+        row.fill(None);
+    }
 
     let runes: Vec<(usize, usize)> = vm.prologue_state.runes.iter().cloned().collect();
 
@@ -700,7 +709,9 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
         if next_signals.len() != GRID_SIZE {
             next_signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
         }
-        next_signals.clone_from(&vm.prologue_state.signal_grid);
+        for (y, row) in next_signals.iter_mut().enumerate().take(GRID_SIZE) {
+            row.clone_from_slice(&vm.prologue_state.signal_grid[y]);
+        }
 
         for (y, x) in &runes {
             if vm.prologue_state.epigenetic_grid[*y][*x] == epigenetics::EpigeneticMark::Methylated

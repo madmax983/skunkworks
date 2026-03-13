@@ -1,18 +1,3 @@
-**Avoid .clone() by indexing on self.vec**
-**Learning:** Iterating over `&self.vec` retains an immutable borrow on `self` for the whole loop body, preventing calls to `&mut self` methods. However, `.clone()` is an unnecessary heap allocation.
-**Action:** Use `for i in 0..self.vec.len() { let val = self.vec[i]; self.process(val); }`. By indexing, the borrow on `self` is immediately dropped after retrieving the value, satisfying the borrow checker without a clone.
-## 2026-03-04 - Removed intermediate .collect() allocation
-**Learning:** Iterating directly over an `into_iter` can avoid intermediate `Vec` allocations (e.g. `collect::<Vec<_>>()`) and unnecessary cloning when elements are needed by value.
-**Action:** Use `.len()` on the original collection to calculate expected bounds, then consume the iterator directly without allocating an intermediate `Vec`.
-
-**[Removing intermediate Vec allocations on loops]
-**Learning:** Iterating directly over `processes.into_iter().take(20)` rather than calling `.collect::<Vec<_>>()` beforehand removes unnecessary heap allocations, resulting in zero-cost abstraction for taking sub-sections of collections in loops.
-**Action:** Use `.len().min(n)` to pre-calculate spacing when `.len()` of the collection isn't available from `into_iter().take(n)`, preventing the need to intermediate allocations just to compute lengths.
-
-## Iterators over Vectors for canvas Shapes
-**Learning:** `tui` canvas widgets using `Shape` (like `Points`) can accept generic iterators rather than `&[(f64, f64)]`. This avoids creating unnecessary intermediate heap allocations (`.collect::<Vec<_>>()`) every render tick when mapping coordinates (like `y` to `HEIGHT - y`).
-**Action:** Use `struct Points<I> { coords: I, color: Color }` where `I: Iterator<Item = (f64, f64)> + Clone` instead of requiring a slice, and use `.coords.clone()` inside `draw` implementation.
-
-**[Avoid doc comments on local let statements]**
-**Learning:** Adding a `///` doc comment to a local `let` binding or expression will trigger Clippy's `unused_doc_comments` lint because rustdoc doesn't generate documentation for statements.
-**Action:** Use standard `//` comments instead of `///` when documenting local, inline performance optimizations to avoid Clippy errors.
+**Memory Optimizations using slice operations**
+**Learning:** Reusing existing pre-allocated data structures and using `.clone_from_slice()` or using `fill(None)` instead of allocating a fresh grid performs drastically better for hot simulation loops like game grids. Replacing `vec![vec![None; GRID_SIZE]; GRID_SIZE]` with a cached memory block that is taken, refilled and restored avoids thousands of inner-loop heap allocations.
+**Action:** When working on grid systems passing state back and forth, ensure vectors are taken, filled, and reused, rather than instantiating new vectors per frame.
