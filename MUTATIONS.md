@@ -24,6 +24,13 @@ Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime
 
 ## 🌿 Attempted Crosses
 
+### locust-diffusion
+- **Parents**: experiments/locust-ddos + crates/gray-scott
+- **Concept**: Reaction-Diffusion Cyberwarfare. The server emits the "V" chemical (catalyst), which diffuses outward. The firewalls emit "U" chemical (inhibitor). The DDoS packets (locusts) treat the chemical gradients as continuous scalar fields for navigation, seeking high V while avoiding U. Furthermore, when packets die, they deposit localized pulses of U, causing the Turing patterns to morph and shift defensively against the attack.
+- **Novel trait**: Organic Labyrinthine Pathways. The attack waves naturally reshape the chemical environment, creating organic, pulsating labyrinthine pathways that the packets must continuously solve to reach the server.
+- **Status**: experiments/locust-diffusion
+- **Evaluation**: Compiles. Emergent behavior confirmed (morphing labyrinthine pathways from U chemical deposit).
+
 ### chaos-ddos
 - **Parents**: experiments/chaos-pendulum + experiments/locust-ddos
 - **Concept**: Swarm intelligence trying to target a chaotic double-pendulum.
@@ -283,4 +290,4 @@ Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime
 - **Concept**: Magnetic Cyberwarfare. The swarm of DDoS packets are mapped as magnetic fluid particles.
 - **Novel trait**: Fluid-Dynamic Bottlenecking. Instead of simple swarm agents, the packets are magnetic fluid particles. When attacking a server, the packets compress into a high-density magnetic fluid, actively pushing against each other and visually representing the pressure wave of a DDoS attack.
 - **Status**: experiments/ferrous-ddos
-- **Evaluation**: Compiles. Predicting an emergent visualization of bottleneck pressure waves against magnetic firewalls.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior confirmed (bottleneck pressure waves against magnetic firewalls). Success.

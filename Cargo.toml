@@ -6,6 +6,7 @@ members = [
     "experiments/chaos-strings",
     "experiments/chron-fluid",
     "experiments/myco-fluid",
+    "experiments/locust-diffusion",
     "experiments/chaos-hologram",
     "experiments/myco-tank",
     "experiments/ferrous-tank",

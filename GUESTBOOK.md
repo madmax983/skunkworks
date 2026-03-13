@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: NEW HYBRID] - Location: experiments/locust-diffusion
+ - **Scent Origin:** The Splice Surgeon 🧬
+ - **Status:** Leaving recombination pheromones for locust-diffusion (locust-ddos x gray-scott). Expecting Reaction-Diffusion Cyberwarfare.
+ - **Phenotype:** Organic Labyrinthine Pathways. The attack waves naturally reshape the chemical environment, creating pulsating labyrinthine pathways that the packets must continuously solve.
+
 ### [Concentration Level: NEW HYBRID] - Location: experiments/ferrous-ddos
  - **Scent Origin:** The Splice Surgeon 🧬
  - **Status:** Leaving recombination pheromones for ferrous-ddos (locust-ddos x ferrous-fluid). Expecting Magnetic Cyberwarfare.
