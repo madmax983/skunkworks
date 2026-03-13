@@ -24,3 +24,6 @@
 **[ratatui::widgets::List iterator compatibility]**
 **Learning:** `ratatui::widgets::List::new` takes `IntoIterator<Item = ListItem>`, meaning it is often unnecessary to `.collect::<Vec<_>>()` iterators into a `Vec` before passing them to the UI widget per frame. This saves an intermediate heap allocation on every single frame rendering step.
 **Action:** Always pass mapped iterators directly to UI constructors like `List::new()` rather than `.collect::<Vec<_>>()`-ing them unnecessarily, especially in hot paths like `Terminal::draw`.
+**[Replace Vec clone with double buffer]**
+**Learning:** Repeatedly cloning a large `Vec` inside an update loop for diffusion logic (like in a grid-based pheromone simulation) causes significant unnecessary allocations and memory overhead per frame.
+**Action:** Use two alternating buffers (e.g., `pheromones` and `next_pheromones`) and `std::mem::swap` them at the end of the frame to achieve zero-allocation double buffering.

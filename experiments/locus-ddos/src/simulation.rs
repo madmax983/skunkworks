@@ -21,6 +21,7 @@ pub struct Locust {
 pub struct World {
     pub agents: Vec<Locust>,
     pub pheromones: Vec<f32>,        // Grid of danger levels
+    pub next_pheromones: Vec<f32>,
     pub firewalls: Vec<(Vec2, f32)>, // (Center, Radius)
     pub grid_w: usize,
     pub grid_h: usize,
@@ -57,6 +58,7 @@ impl World {
         World {
             agents,
             pheromones: vec![0.0; grid_w * grid_h],
+            next_pheromones: vec![0.0; grid_w * grid_h],
             firewalls: Vec::new(),
             grid_w,
             grid_h,
@@ -99,7 +101,8 @@ impl World {
         };
 
         // Parallel update of agents
-        let updates: Vec<(Vec2, Vec2, u8, Option<(usize, usize)>, f32)> = self
+        type AgentUpdate = (Vec2, Vec2, u8, Option<(usize, usize)>, f32);
+        let updates: Vec<AgentUpdate> = self
             .agents
             .par_iter()
             .enumerate()
@@ -219,14 +222,15 @@ impl World {
         // Diffusion (Box Blur)
         let w = self.grid_w;
         let h = self.grid_h;
-        let prev_pheromones = self.pheromones.clone(); // Read from this
+        let prev_pheromones = &self.pheromones; // Read from this
 
-        self.pheromones
+        self.next_pheromones
             .par_chunks_mut(w)
             .enumerate()
             .for_each(|(y, row)| {
                 for (x, cell) in row.iter_mut().enumerate() {
                     if y == 0 || y == h - 1 || x == 0 || x == w - 1 {
+                        *cell = prev_pheromones[y * w + x];
                         continue; // Skip edges for simplicity
                     }
 
@@ -242,6 +246,8 @@ impl World {
                     *cell = sum / 9.0;
                 }
             });
+
+        std::mem::swap(&mut self.pheromones, &mut self.next_pheromones);
 
         // Decay pheromones
         self.pheromones.par_iter_mut().for_each(|p| {
