@@ -25,6 +25,61 @@ Additionally, introducing localized physics algorithms (like Boid flocking from 
 
 ## 🌿 Attempted Crosses
 
+### bifurcation-landscape
+- **Parents**: experiments/chaos-pendulum + experiments/ripple-tank
+- **Concept**: A bifurcation visualizer.
+- **Status**: graveyard/bifurcation-landscape (Executed)
+- **Evaluation**: Executed by The Reaper ☠️. Compilation Failed. Moved to graveyard.
+
+### etymological-mycelium
+- **Parents**: experiments/myco-transit + experiments/chrontext
+- **Concept**: Slime mold pathfinding applied to etymological and chronological text data.
+- **Status**: experiments/etymological-mycelium
+- **Evaluation**: Compiles. Emergent behavior confirmed. Success.
+
+### chimera-pachinko
+- **Parents**: experiments/chimera-lang + crates/locus
+- **Concept**: Chimera VM execution environment mapped to a physical pachinko simulation.
+- **Status**: experiments/chimera-pachinko
+- **Evaluation**: Compiles. Emergent behavior confirmed. Success.
+
+### gaze-attractor
+- **Parents**: experiments/chaos-pendulum + experiments/hologram-text
+- **Concept**: A swarm of particles interacting with a physics-based visual system.
+- **Status**: experiments/gaze-attractor
+- **Evaluation**: Compiles. Emergent behavior confirmed. Success.
+
+### locust-hologram
+- **Parents**: experiments/locust-ddos + experiments/hologram-text
+- **Concept**: Holographic Cyberwarfare. The swarm logic is projected as a spectral hologram.
+- **Novel trait**: Spectral Foraging. The physical attack vector generates optical interference patterns based on density and resonant frequencies.
+- **Status**: experiments/locust-hologram
+- **Evaluation**: Compiles. Emergent behavior confirmed. Success.
+
+### bifurcation-landscape
+- **Parents**: experiments/chaos-pendulum + experiments/ripple-tank
+- **Concept**: A bifurcation visualizer.
+- **Status**: graveyard/bifurcation-landscape (Executed)
+- **Evaluation**: Executed by The Reaper ☠️. Missing dependencies. Failed.
+
+### etymological-mycelium
+- **Parents**: experiments/myco-transit + experiments/chrontext
+- **Concept**: Slime mold pathfinding applied to etymological and chronological text data.
+- **Status**: experiments/etymological-mycelium
+- **Evaluation**: Compiles. Emergent behavior confirmed. Success.
+
+### chimera-pachinko
+- **Parents**: experiments/chimera-lang + crates/locus
+- **Concept**: Chimera VM execution environment mapped to a physical pachinko simulation.
+- **Status**: experiments/chimera-pachinko
+- **Evaluation**: Compiles. Emergent behavior confirmed. Success.
+
+### gaze-attractor
+- **Parents**: experiments/chaos-pendulum + experiments/hologram-text
+- **Concept**: A swarm of particles interacting with a physics-based visual system.
+- **Status**: experiments/gaze-attractor
+- **Evaluation**: Compiles. Emergent behavior confirmed. Success.
+
 ### myco-ddos
 - **Parents**: experiments/locust-ddos + experiments/myco-transit
 - **Concept**: Mycelial Cyberwarfare. The DDoS packets act as slime mold agents, foraging for the server and depositing pheromones to create organic highways through firewalls.

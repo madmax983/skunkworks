@@ -1,0 +1,16 @@
+[package]
+name = "locust-hologram"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rayon = "1.10"
+rand = "0.8"
+rustfft = "6.2"
+num-complex = "0.4"
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+tui-shared = { workspace = true }
+font8x8 = "0.3"
