@@ -20,7 +20,10 @@ pub struct Locust {
 
 pub struct World {
     pub agents: Vec<Locust>,
-    pub pheromones: Vec<f32>,        // Grid of danger levels
+    pub pheromones: Vec<f32>, // Grid of danger levels
+    /// Double buffer for diffusion.
+    /// Eliminates a costly O(n) heap allocation (`Vec::clone()`) per frame, swapping instead.
+    pub next_pheromones: Vec<f32>,
     pub firewalls: Vec<(Vec2, f32)>, // (Center, Radius)
     pub grid_w: usize,
     pub grid_h: usize,
@@ -57,6 +60,7 @@ impl World {
         World {
             agents,
             pheromones: vec![0.0; grid_w * grid_h],
+            next_pheromones: vec![0.0; grid_w * grid_h],
             firewalls: Vec::new(),
             grid_w,
             grid_h,
@@ -99,6 +103,7 @@ impl World {
         };
 
         // Parallel update of agents
+        #[allow(clippy::type_complexity)]
         let updates: Vec<(Vec2, Vec2, u8, Option<(usize, usize)>, f32)> = self
             .agents
             .par_iter()
@@ -219,9 +224,9 @@ impl World {
         // Diffusion (Box Blur)
         let w = self.grid_w;
         let h = self.grid_h;
-        let prev_pheromones = self.pheromones.clone(); // Read from this
+        let prev_pheromones = &self.pheromones; // Read from this
 
-        self.pheromones
+        self.next_pheromones
             .par_chunks_mut(w)
             .enumerate()
             .for_each(|(y, row)| {
@@ -242,6 +247,8 @@ impl World {
                     *cell = sum / 9.0;
                 }
             });
+
+        std::mem::swap(&mut self.pheromones, &mut self.next_pheromones);
 
         // Decay pheromones
         self.pheromones.par_iter_mut().for_each(|p| {

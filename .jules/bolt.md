@@ -27,3 +27,7 @@
 **[Eliminating Vec<char> during string iterations]**
 **Learning:** [Using peekable iterators eliminates unnecessary Vec allocations while preserving logical correctness.]
 **Action:** [Use peekable iterators instead of chars().collect() when traversing strings.]
+
+**[Double Buffered Diffusion]**
+**Learning:** In simulation or cellular automata loops that process grid state over time, cloning the entire `Vec` representing the grid every frame is extremely costly (`O(n)` heap allocations).
+**Action:** Use a double buffer approach. Add a `next_state` vector of the same size to the main struct, read from `self.state`, write to `self.next_state`, and use `std::mem::swap(&mut self.state, &mut self.next_state)` at the end of the step.

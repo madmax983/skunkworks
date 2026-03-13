@@ -22,7 +22,7 @@ use ratatui::{
 
 use crate::ant::Ant;
 use crate::audio::AudioEngine;
-use crate::graph::{generate_layered_dag, DepGraph, Arc};
+use crate::graph::{generate_layered_dag, Arc, DepGraph};
 
 fn main() -> anyhow::Result<()> {
     // Setup TUI

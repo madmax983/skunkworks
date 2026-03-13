@@ -4,10 +4,10 @@ use rand::prelude::*;
 use std::collections::HashMap;
 
 #[cfg(not(loom))]
-pub use std::sync::{Mutex, Arc};
+pub use std::sync::{Arc, Mutex};
 
 #[cfg(loom)]
-pub use loom::sync::{Mutex, Arc};
+pub use loom::sync::{Arc, Mutex};
 
 #[derive(Debug)]
 pub struct NodeDynamicState {
