@@ -5,3 +5,7 @@
 ## YYYY-MM-DD - [Chimera TUI Blob Extraction]
 **Tangle:** The Blob - `experiments/chimera-lang/src/tui/mod.rs` was ~4800 lines long. Most of this was a monolithic `run_app` event loop with thousands of lines of `match` blocks handling input for over 40 different `ViewMode` variants inside a single `event::read()?` branch.
 **Blueprint:** Extracted `run_app` into a new module `app/mod.rs`. Extracted the three main input handling branches (Editing, View Selector, Normal) into a new `app/handlers.rs` file. This drastically simplifies the event loop and paves the way for further domain-specific input handler files.
+
+## 2024-05-19 - [Chimera TUI Handlers Monoliths]
+**Tangle:** "The Blob" - The event handling logic in `experiments/chimera-lang/src/tui/app/handlers/` had grown into massive files. Specifically, `normal.rs` was ~2,300 lines long, containing deeply nested match blocks covering 50+ view modes for every key press. Similarly, `editing.rs` was ~800 lines long following the same pattern.
+**Blueprint:** Created `normal/` and `editing/` subdirectories. Extracted key-specific handlers into separate modules (`char.rs`, `tab.rs`, `enter.rs`, `nav.rs` for Normal mode; and `char.rs`, `enter.rs`, `tab.rs`, `esc.rs`, `backspace.rs` for Editing mode). Converted `normal.rs` and `editing.rs` into facade modules (`mod.rs`) that register these isolated handlers. This significantly reduces file lengths, localizes domain logic per action, and ensures clear structural boundaries without altering behavior.
