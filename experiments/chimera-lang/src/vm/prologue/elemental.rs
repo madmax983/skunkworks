@@ -18,7 +18,7 @@ pub fn apply_elemental_runes(
     y: usize,
     x: usize,
     current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut Vec<Vec<Option<Value>>>,
+    next_signals: &mut [Vec<Option<Value>>],
     alchemy_book: &[AlchemyRule],
 ) -> bool {
     let mut changes = false;

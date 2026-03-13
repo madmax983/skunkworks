@@ -174,18 +174,15 @@ pub fn exec_rasterize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 _ => {}
             }
 
-            match mode {
-                3 => {
-                    // Sort by brightness?
-                    // Approximate brightness: sum of R+G+B
-                    pixel_data.sort_by_key(|rgb| {
-                        let r = (rgb >> 16) & 0xFF;
-                        let g = (rgb >> 8) & 0xFF;
-                        let b = rgb & 0xFF;
-                        r + g + b
-                    });
-                }
-                _ => {} // Linear, Scatter, XOR don't pre-sort
+            if mode == 3 {
+                // Sort by brightness?
+                // Approximate brightness: sum of R+G+B
+                pixel_data.sort_by_key(|rgb| {
+                    let r = (rgb >> 16) & 0xFF;
+                    let g = (rgb >> 8) & 0xFF;
+                    let b = rgb & 0xFF;
+                    r + g + b
+                });
             }
 
             let start_x = x as usize;

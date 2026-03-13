@@ -7,7 +7,7 @@ pub fn apply_chaos_runes(
     y: usize,
     x: usize,
     _current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut Vec<Vec<Option<Value>>>,
+    next_signals: &mut [Vec<Option<Value>>],
 ) -> bool {
     let mut changes = false;
 

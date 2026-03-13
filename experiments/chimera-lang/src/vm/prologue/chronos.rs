@@ -15,7 +15,7 @@ pub fn apply_chronos_runes(
     y: usize,
     x: usize,
     current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut Vec<Vec<Option<Value>>>,
+    next_signals: &mut [Vec<Option<Value>>],
     history: &mut HashMap<(usize, usize), VecDeque<Value>>,
 ) -> bool {
     let mut changes = false;

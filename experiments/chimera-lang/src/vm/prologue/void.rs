@@ -8,9 +8,9 @@ pub fn apply_void_runes(
     y: usize,
     x: usize,
     current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut Vec<Vec<Option<Value>>>,
+    next_signals: &mut [Vec<Option<Value>>],
     void_buffer: &mut VecDeque<Value>,
-    void_rifts: &mut Vec<VoidRift>,
+    void_rifts: &mut [VoidRift],
 ) -> bool {
     let mut changes = false;
 

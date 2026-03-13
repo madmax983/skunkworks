@@ -10,7 +10,7 @@ pub fn apply_io_runes(
     x: usize,
     tick: u64,
     current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut Vec<Vec<Option<Value>>>,
+    next_signals: &mut [Vec<Option<Value>>],
     ether: &mut HashMap<i64, VecDeque<Value>>,
     registers: &mut HashMap<(usize, usize), Value>,
     orca_mode: bool,

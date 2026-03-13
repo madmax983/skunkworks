@@ -642,12 +642,12 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
         };
 
     // Pass 1: Wireworld Automata & Active Components
-    for y in 0..rows {
-        for x in 0..cols {
+    for (y, row) in next_grid.iter_mut().enumerate().take(rows) {
+        for (x, cell) in row.iter_mut().enumerate().take(cols) {
             // Evolve simple Wireworld cells
             // Using logic extracted from helper function
             if let Some(next_val) = step_cell_wireworld(vm, y, x) {
-                next_grid[y][x] = next_val;
+                *cell = next_val;
             }
         }
     }

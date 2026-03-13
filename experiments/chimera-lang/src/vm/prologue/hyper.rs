@@ -34,7 +34,7 @@ pub fn apply_hyper_runes(
     y: usize,
     x: usize,
     current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut Vec<Vec<Option<Value>>>,
+    next_signals: &mut [Vec<Option<Value>>],
     hyper_state: &mut HyperState,
 ) -> bool {
     let mut changes = false;
