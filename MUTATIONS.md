@@ -79,28 +79,28 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Codebase Foraging. This experiment crosses the git blame chronological age parsing of chrontext with the biological pathfinding of myco-transit.
 - **Novel trait**: Organic Age Mapping. Slime mold agents scavenge through the text space, treating the newest Git commits as high-value food sources. The visual layout creates glowing architectural trails showing where the code has been "foraged" between old and new blocks.
 - **Status**: experiments/chron-mycelium
-- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (Codebase Foraging).
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (Codebase Foraging). Success.
 
 ### chron-hologram
 - **Parents**: experiments/chrontext + experiments/hologram-text
 - **Concept**: "Spectral History". This experiment crosses the git blame chronological age parsing of chrontext with the FFT-based optical interference rendering of hologram-text.
 - **Novel trait**: Codebase Holography. By transforming a file's history into an interference pattern, you are viewing the spectral signature of the codebase's age. Old code generates low-frequency waves, while new code introduces high-frequency turbulence.
 - **Status**: experiments/chron-hologram
-- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (Codebase Holography).
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (Codebase Holography). Success.
 
 ### chron-flock
 - **Parents**: experiments/chrontext + crates/locus
 - **Concept**: Codebase Swarming. A TUI visualization crossing the Git blame chronological age parsing of chrontext with the 2D boid flocking logic of locus.
 - **Novel trait**: Codebase Swarming. Boids swarm around lines of code. New code attracts the swarm, while old code gently repels it.
 - **Status**: experiments/chron-flock
-- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (Codebase Swarming phenotype successfully observed).
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (Codebase Swarming phenotype successfully observed). Success.
 
 ### myco-diffusion
 - **Parents**: crates/gray-scott + experiments/myco-transit
 - **Concept**: Pheromone-Guided Reaction-Diffusion. Slime mold agents distribute the V chemical catalyst, while their movement is restricted by the U chemical.
 - **Novel trait**: Organic structural formation out of Turing patterns.
 - **Status**: experiments/myco-diffusion
-- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (macroquad-based organic structural formation from Turing patterns).
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (macroquad-based organic structural formation from Turing patterns). Success.
 
 ### gray-chaos
 - **Parents**: crates/gray-scott + experiments/chaos-hologram
@@ -186,7 +186,7 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: TUI visualization where git commit history sets the "resonant frequency" of a holographic particle swarm. The first byte of commit hash is mapped to a `resonance_dist` parameter.
 - **Novel trait**: Codebase Spectral Signatures. The visual form of the swarm becomes a unique fingerprint of each commit, influenced by the entropy through a Gaussian band-pass filter.
 - **Status**: experiments/git-hologram
-- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed. Excellent cross.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed. Excellent cross. Success.
 
 ### chaos-flock
 - **Parents**: experiments/chaos-pendulum + experiments/luminous-flock
@@ -313,3 +313,10 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Novel trait**: Fluid-Dynamic Bottlenecking. Instead of simple swarm agents, the packets are magnetic fluid particles. When attacking a server, the packets compress into a high-density magnetic fluid, actively pushing against each other and visually representing the pressure wave of a DDoS attack.
 - **Status**: experiments/ferrous-ddos
 - **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior confirmed (fluid-dynamic bottlenecking against magnetic firewalls). Success.
+
+### mnem-tank
+- **Parents**: experiments/mnem-rot + experiments/ripple-tank
+- **Concept**: Acoustic Code Rot. The decaying nodes of a codebase graph simulation physically pluck a 2D acoustic wave tank.
+- **Novel trait**: Acoustic Rot. High entropy (rotting) files generate violent, high-frequency ripples, while healthy files remain silent. A continuous acoustic mapping of code rot.
+- **Status**: experiments/mnem-tank
+- **Evaluation**: Compiles. Emergent behavior confirmed (Acoustic Rot). Success.
