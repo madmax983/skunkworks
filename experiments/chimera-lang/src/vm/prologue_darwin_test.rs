@@ -42,9 +42,10 @@ fn test_darwin_rune() {
     vm.grid[6][6] = Value::Str("!".to_string());
     vm.grid[6][5] = Value::Int(0);
 
-    // Run tick
-    // 0 != 10. Expect Mutation.
-    exec_prologue_tick(&mut vm);
+    // Wait for signals to propagate. "!" produces signal, then it moves.
+    for _ in 0..5 {
+        exec_prologue_tick(&mut vm);
+    }
 
     let mutated = vm.output.iter().any(|s| s.contains("DARWIN: Mutation"));
     assert!(
@@ -59,11 +60,12 @@ fn test_darwin_rune() {
     // Set Subject to 10
     vm.grid[6][5] = Value::Int(10);
 
-    // Run tick
-    // 10 == 10. Expect Success.
-    exec_prologue_tick(&mut vm);
+    // Wait for updated signals to propagate
+    for _ in 0..5 {
+        exec_prologue_tick(&mut vm);
+    }
 
-    let success = vm.output.iter().any(|s| s.contains("DARWIN: Success"));
+    let success = vm.output.iter().any(|s| s.contains("DARWIN: Success match"));
     assert!(
         success,
         "Darwin rune failed to recognize success. Logs: {:?}",

@@ -3,7 +3,7 @@
 mod tests {
     use chimera_lang::prelude::*;
     use chimera_lang::vm::prologue::weave_reality::RealityMode;
-    use chimera_lang::vm::prologue::{exec_prologue_tick, PrologueState};
+    use chimera_lang::vm::prologue::exec_prologue_tick;
     use chimera_lang::vm::Value;
 
     #[test]

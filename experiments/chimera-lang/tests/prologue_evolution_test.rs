@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use chimera_lang::ast::Nucleotide;
+
     use chimera_lang::compiler::compile;
     use chimera_lang::opcode::OpCode;
 
