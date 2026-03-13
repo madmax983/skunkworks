@@ -1,4 +1,3 @@
-use chimera_lang::prelude::*;
 use chimera_lang::prologue_compiler;
 use chimera_lang::vm::{ChimeraVM, Value};
 

@@ -1,10 +1,10 @@
 #[cfg(test)]
 mod tests {
-    use chimera_lang::ast::{Dna, Gene, Helix, JunctionType, Strand};
-    use chimera_lang::opcode::OpCode;
-    use chimera_lang::vm::{ChimeraVM, Value};
+    use chimera_lang::ast::JunctionType;
+
+    use chimera_lang::vm::Value;
     use std::collections::hash_map::DefaultHasher;
-    use std::hash::{Hash, Hasher};
+    use std::hash::Hash;
 
     #[test]
     fn test_val_blowup_stack_overflow() {

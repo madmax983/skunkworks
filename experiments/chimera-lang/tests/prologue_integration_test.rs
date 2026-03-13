@@ -1,6 +1,5 @@
 use chimera_lang::prologue_compiler;
 use chimera_lang::vm::Value;
-use std::path::Path;
 
 #[test]
 fn test_prologue_compilation() {

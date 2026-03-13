@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use chimera_lang::prelude::*;
-    use chimera_lang::vm::{ChimeraVM, MAX_GENES_PER_STRAND, MAX_STRANDS};
+    use chimera_lang::vm::{ChimeraVM, MAX_GENES_PER_STRAND};
 
     #[test]
     fn test_chain_dos() {

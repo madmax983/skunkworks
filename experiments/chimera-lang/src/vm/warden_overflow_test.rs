@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use crate::ast::{Dna, Helix, JunctionType};
-    use crate::opcode::OpCode;
+
     use crate::vm::{ChimeraVM, Value};
 
     fn setup_vm() -> ChimeraVM {
