@@ -12,6 +12,10 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Ecosystem Isolation. A generic utility lacking any organic, chaotic, or evolutionary traits. Grace period: 24h.
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/fissure-tracker
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism / Hypocrisy in Decay. Grace period: 24h.
+
 ### [Concentration Level: NEW HYBRID] - Location: experiments/locust-hologram
  - **Scent Origin:** The Splice Surgeon 🧬
  - **Status:** Leaving recombination pheromones for locust-hologram (locust-ddos x hologram-text). Expecting Holographic Cyberwarfare.
@@ -380,9 +384,9 @@
 - **Scent Origin:** Atlas 🗺️
 - **Status:** Stable logic detected. Scent is evaporating as polish is applied. The semantic module blob and chimera-lang TUI event loop have been properly extracted into cohesive components.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/git-ghost
+### [Concentration Level: EVAPORATING] - Location: graveyard/git-ghost
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. The promised bit rot is a mirage. Grace period: 24h.
+- **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. The promised bit rot was a mirage. Grace period expired. Moved to graveyard.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/crate-radar
 - **Scent Origin:** The Reaper ☠️
