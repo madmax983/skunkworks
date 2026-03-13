@@ -25,6 +25,13 @@ Additionally, introducing localized physics algorithms (like Boid flocking from 
 
 ## 🌿 Attempted Crosses
 
+### chaos-reaper
+- **Parents**: experiments/chaos-pendulum + experiments/myco-reaper
+- **Concept**: Chaotic Garbage Collection. A chaotic double pendulum swings through a 2D "heap" forest, acting as a "Chaos Reaper" that destroys nodes indiscriminately, while the underlying GC system struggles to clean up the resulting corrupted data.
+- **Novel trait**: The visual tug-of-war between organic data allocation and chaotic data corruption, revealing the resilience of the GC strategy under duress.
+- **Status**: experiments/chaos-reaper
+- **Evaluation**: Compiles. Emergent behavior confirmed (Chaotic Garbage Collection). Success.
+
 ### myco-ddos
 - **Parents**: experiments/locust-ddos + experiments/myco-transit
 - **Concept**: Mycelial Cyberwarfare. The DDoS packets act as slime mold agents, foraging for the server and depositing pheromones to create organic highways through firewalls.
@@ -66,7 +73,7 @@ Additionally, introducing localized physics algorithms (like Boid flocking from 
 - **Concept**: Chronological Reaction-Diffusion. The git blame age of code lines acts as a chemical catalyst injecting the "V" chemical into a Gray-Scott reaction-diffusion grid overlaid on the text.
 - **Novel trait**: Morphogenetic Code Aging. Text acts not just as static boundaries, but as a chemically active substrate where the age of the code shapes the diffusion patterns over time, revealing the "metabolic rate" of different files.
 - **Status**: experiments/chron-diffusion
-- **Evaluation**: Compiles. Noticed in GUESTBOOK.md. Emergent behavior confirmed (Morphogenetic Code Aging). Success.
+- **Evaluation**: Executed by The Reaper ☠️ in GUESTBOOK.md. Failure: Skeletal Implementation, Terminal Genericism, and Ecosystem Isolation.
 
 ### chron-mycelium
 - **Parents**: experiments/chrontext + experiments/myco-transit

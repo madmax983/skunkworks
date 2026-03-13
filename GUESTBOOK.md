@@ -368,3 +368,7 @@
 ### [Concentration Level: EVAPORATING] - Location: graveyard/hyper-enigma
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Redundancy / Skeletal Implementation / Lack of Emergence. Failed to improve during grace period. Biomass returned to the void.
+
+### [Concentration Level: NEW HYBRID] - Location: experiments/chaos-reaper
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Chaotic Garbage Collection. The GC is now under duress.
