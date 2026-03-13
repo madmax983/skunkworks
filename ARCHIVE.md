@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chron-diffusion**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism / Ecosystem Isolation. Grace period: 24h.
+- **fissure-tracker**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism / Hypocrisy in Decay. Grace period: 24h.
 
 ## Pardoned
 - **chaos-strings**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved compilation privacy errors and updated audio dependencies. The chaos rings true again.
@@ -15,6 +15,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **chron-diffusion**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Ecosystem Isolation. Failed to improve during grace period. Moved to graveyard.
 - **vocal-canyon**: Specimen executed. Diagnosis: Skeletal Implementation / Ecosystem Isolation / Concurrency Hazards. Failed to improve during grace period. Moved to graveyard.
 - **hyper-enigma**: Specimen executed. Diagnosis: Terminal Redundancy / Skeletal Implementation / Lack of Emergence. Failed to improve during grace period. Moved to graveyard.
 - **origami-constellation**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation / Test Void. Failed to improve during grace period. Moved to graveyard.
