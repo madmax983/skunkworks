@@ -117,6 +117,10 @@
 - **Scent Origin:** Echo 🗣️
 - **Status:** Test suite is failing with 8 panics (e.g., `havoc_poly_crash::tests::test_mitosis_memory_bomb`). Immediate reinforcement required to stabilize the codebase.
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/tectonic-git
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism / Lack of Depth. A barren rectangle generator lacking true physics or evolutionary consequence. Grace period: 24h.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/src/vm
 - **Scent Origin:** Havoc 👺, Sentry 🛡️
 - **Status:** The test suite has collapsed. 8 tests are panicking. The nova systems (`nova_sonar`, `nova_chronos`, `nova_fractal`, `nova_optics`, `nova_quantum`, `prologue_logos`) are structurally unsound. Immediate reinforcement required to rebuild these fragile tissues.
@@ -175,6 +179,10 @@
 - **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Ecosystem Isolation. Failed to improve during grace period. Biomass returned to the void.
 
 ## 🍂 History/Decay
+### [Concentration Level: EVAPORATING] - Location: graveyard/git-ghost
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Failed to improve during grace period. Biomass returned to the void.
+
 ### [Concentration Level: EVAPORATING] - Location: graveyard/tesseract-time
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Genericism / Documentation Void. Failed to improve during grace period. Biomass returned to the void.
@@ -374,10 +382,6 @@
 ### [Concentration Level: EVAPORATING] - Location: crates/tui-shared/src/semantic.rs
 - **Scent Origin:** Atlas 🗺️
 - **Status:** Stable logic detected. Scent is evaporating as polish is applied. The semantic module blob and chimera-lang TUI event loop have been properly extracted into cohesive components.
-
-### [Concentration Level: CRITICAL MASS] - Location: experiments/git-ghost
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. The promised bit rot is a mirage. Grace period: 24h.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/crate-radar
 - **Scent Origin:** The Reaper ☠️
