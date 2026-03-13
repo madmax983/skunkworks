@@ -307,20 +307,26 @@ impl Vec4 {
     /// This optimization is critical when rendering a large point cloud or grid,
     /// where computing `sin(theta)` and `cos(theta)` inside a tight loop would severely
     /// impact performance. Precompute the trig functions once, then pass them in.
-    ///
     /// # Examples
     ///
     /// ```
     /// use locus::vec4::Vec4;
     /// use std::f32::consts::PI;
     ///
-    /// let point = Vec4::new(1.0, 0.0, 0.0, 0.0);
-    /// let theta = PI / 2.0;
-    /// let sin_t = theta.sin();
-    /// let cos_t = theta.cos();
+    /// let mut points = vec![
+    ///     Vec4::new(1.0, 0.0, 0.0, 0.0),
+    ///     Vec4::zero(),
+    /// ];
     ///
-    /// let rotated = point.rotate_xy_fast(sin_t, cos_t);
-    /// assert!((rotated.y - 1.0).abs() < 1e-6);
+    /// let theta = PI / 2.0;
+    /// // Precompute trig values outside the loop to optimize performance!
+    /// let (sin_t, cos_t) = theta.sin_cos();
+    ///
+    /// for p in &mut points {
+    ///     *p = p.rotate_xy_fast(sin_t, cos_t);
+    /// }
+    ///
+    /// assert!((points[0].y - 1.0).abs() < 1e-6);
     /// ```
     pub fn rotate_xy_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
         Self {
@@ -368,12 +374,20 @@ impl Vec4 {
     /// use locus::vec4::Vec4;
     /// use std::f32::consts::PI;
     ///
-    /// let point = Vec4::new(1.0, 0.0, 0.0, 0.0);
+    /// let mut points = vec![
+    ///     Vec4::new(1.0, 0.0, 0.0, 0.0),
+    ///     Vec4::zero(),
+    /// ];
+    ///
     /// let theta = PI / 2.0;
+    /// // Precompute trig values outside the loop to optimize performance!
     /// let (sin_t, cos_t) = theta.sin_cos();
     ///
-    /// let rotated = point.rotate_xw_fast(sin_t, cos_t);
-    /// assert!((rotated.w - 1.0).abs() < 1e-6);
+    /// for p in &mut points {
+    ///     *p = p.rotate_xw_fast(sin_t, cos_t);
+    /// }
+    ///
+    /// assert!((points[0].w - 1.0).abs() < 1e-6);
     /// ```
     pub fn rotate_xw_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
         Self {
@@ -423,12 +437,20 @@ impl Vec4 {
     /// use locus::vec4::Vec4;
     /// use std::f32::consts::PI;
     ///
-    /// let point = Vec4::new(1.0, 0.0, 0.0, 0.0);
+    /// let mut points = vec![
+    ///     Vec4::new(1.0, 0.0, 0.0, 0.0),
+    ///     Vec4::zero(),
+    /// ];
+    ///
     /// let theta = PI / 2.0;
+    /// // Precompute trig values outside the loop to optimize performance!
     /// let (sin_t, cos_t) = theta.sin_cos();
     ///
-    /// let rotated = point.rotate_xz_fast(sin_t, cos_t);
-    /// assert!((rotated.z - 1.0).abs() < 1e-6);
+    /// for p in &mut points {
+    ///     *p = p.rotate_xz_fast(sin_t, cos_t);
+    /// }
+    ///
+    /// assert!((points[0].z - 1.0).abs() < 1e-6);
     /// ```
     pub fn rotate_xz_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
         Self {
@@ -476,12 +498,20 @@ impl Vec4 {
     /// use locus::vec4::Vec4;
     /// use std::f32::consts::PI;
     ///
-    /// let point = Vec4::new(0.0, 1.0, 0.0, 0.0);
+    /// let mut points = vec![
+    ///     Vec4::new(0.0, 1.0, 0.0, 0.0),
+    ///     Vec4::zero(),
+    /// ];
+    ///
     /// let theta = PI / 2.0;
+    /// // Precompute trig values outside the loop to optimize performance!
     /// let (sin_t, cos_t) = theta.sin_cos();
     ///
-    /// let rotated = point.rotate_yw_fast(sin_t, cos_t);
-    /// assert!((rotated.w - 1.0).abs() < 1e-6);
+    /// for p in &mut points {
+    ///     *p = p.rotate_yw_fast(sin_t, cos_t);
+    /// }
+    ///
+    /// assert!((points[0].w - 1.0).abs() < 1e-6);
     /// ```
     pub fn rotate_yw_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
         Self {
@@ -530,12 +560,20 @@ impl Vec4 {
     /// use locus::vec4::Vec4;
     /// use std::f32::consts::PI;
     ///
-    /// let point = Vec4::new(0.0, 1.0, 0.0, 0.0);
+    /// let mut points = vec![
+    ///     Vec4::new(0.0, 1.0, 0.0, 0.0),
+    ///     Vec4::zero(),
+    /// ];
+    ///
     /// let theta = PI / 2.0;
+    /// // Precompute trig values outside the loop to optimize performance!
     /// let (sin_t, cos_t) = theta.sin_cos();
     ///
-    /// let rotated = point.rotate_yz_fast(sin_t, cos_t);
-    /// assert!((rotated.z - 1.0).abs() < 1e-6);
+    /// for p in &mut points {
+    ///     *p = p.rotate_yz_fast(sin_t, cos_t);
+    /// }
+    ///
+    /// assert!((points[0].z - 1.0).abs() < 1e-6);
     /// ```
     pub fn rotate_yz_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
         Self {
@@ -583,12 +621,20 @@ impl Vec4 {
     /// use locus::vec4::Vec4;
     /// use std::f32::consts::PI;
     ///
-    /// let point = Vec4::new(0.0, 0.0, 1.0, 0.0);
+    /// let mut points = vec![
+    ///     Vec4::new(0.0, 0.0, 1.0, 0.0),
+    ///     Vec4::zero(),
+    /// ];
+    ///
     /// let theta = PI / 2.0;
+    /// // Precompute trig values outside the loop to optimize performance!
     /// let (sin_t, cos_t) = theta.sin_cos();
     ///
-    /// let rotated = point.rotate_zw_fast(sin_t, cos_t);
-    /// assert!((rotated.w - 1.0).abs() < 1e-6);
+    /// for p in &mut points {
+    ///     *p = p.rotate_zw_fast(sin_t, cos_t);
+    /// }
+    ///
+    /// assert!((points[0].w - 1.0).abs() < 1e-6);
     /// ```
     pub fn rotate_zw_fast(&self, sin_theta: f32, cos_theta: f32) -> Self {
         Self {
