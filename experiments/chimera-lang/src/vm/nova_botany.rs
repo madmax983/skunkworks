@@ -142,8 +142,7 @@ pub fn tick_seed(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
             let i = *idx as usize;
             if i >= s.len() {
                 alive = false;
-            } else {
-                let c = s.chars().nth(i).unwrap();
+            } else if let Some(c) = s.chars().nth(i) {
                 let mut next_idx = i + 1;
 
                 let mut expansion = None;
@@ -168,10 +167,17 @@ pub fn tick_seed(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
                 if let Some(replacement) = expansion {
                     if s.len() + replacement.len() < 1000 {
                         let mut new_s = String::new();
-                        new_s.push_str(&s[0..i]);
-                        new_s.push_str(&replacement);
-                        new_s.push_str(&s[i + 1..]);
-                        *s = new_s;
+                        // Careful with byte slicing here vs char boundaries.
+                        // Actually wait: if s.len() is byte length, then s[0..i] assumes i is a byte index.
+                        // BUT i was used for s.chars().nth(i). So i is BOTH a char index and a byte index according to this old code.
+                        // We must fix the slicing as well otherwise it will panic on multi-byte chars!
+                        let byte_idx = s.char_indices().nth(i).map(|(idx, _)| idx);
+                        if let Some(b_idx) = byte_idx {
+                            new_s.push_str(&s[0..b_idx]);
+                            new_s.push_str(&replacement);
+                            new_s.push_str(&s[b_idx + c.len_utf8()..]);
+                            *s = new_s;
+                        }
 
                         next_idx = i; // Process the expansion in next ticks
                         vm.energy = vm.energy.saturating_sub(1);
@@ -186,6 +192,8 @@ pub fn tick_seed(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
                 }
 
                 *idx = next_idx as i64;
+            } else {
+                alive = false;
             }
         } else {
             alive = false;

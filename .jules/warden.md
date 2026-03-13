@@ -20,3 +20,7 @@
 **2025-05-18 - [Bounded Reader Validation DoS Prevention]**
 **Threat:** Using `.take(LIMIT)` on `Read` traits to bound incoming payload lengths failed to prevent memory exhaustion (OOM DoS) or silent truncation bugs because the number of bytes read was never checked against the limit. Truncated payloads could cause unexpected bugs when parsed.
 **Defense:** Checked the returned length of `read_to_string` or `read_to_end` against the limit after using `.take(LIMIT + 1)`. Replaced implicit truncation with an explicit `continue` to try another file. Fixed in `experiments/heap-arena/src/level_gen.rs`.
+
+**2025-05-18 - [Fix Unicode String Indexing DoS Panic]**
+**Threat:** The `tick_seed` function in `experiments/chimera-lang/src/vm/nova_botany.rs` used `.unwrap()` on `s.chars().nth(i)` after checking `i < s.len()`. This assumes byte length (`s.len()`) is equal to the character count, which fails for multibyte characters (like emojis). A string containing emojis bypasses the byte-length check but produces an index out of bounds for `chars().nth(i)`, triggering the `unwrap()` to panic and causing a Denial of Service.
+**Defense:** Replaced the byte-length-driven `unwrap()` with a safe `if let Some(c) = s.chars().nth(i)` check, terminating execution gracefully if the index exceeds the true character count, and corrected the byte-based string slicing around character replacements to maintain Unicode boundaries.
