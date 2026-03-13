@@ -1,4 +1,4 @@
-use crate::tui::get_all_views;
+use crate::tui::utils::get_all_views;
 use crate::tui::panel_block;
 use crate::tui::state::AppState;
 use crate::vm::ChimeraVM;
