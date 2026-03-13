@@ -41,15 +41,24 @@ classDiagram
     note for Tui "Handles raw mode, alternate screen,\nand mouse capture automatically."
 ```
 
-### Semantic Bridge (crates/tui-semantic)
+### Semantic Bridge (crates/tui-shared/src/semantic)
 
-The `tui-semantic` crate enables applications to expose their internal state as structured data for LLM agents.
+The `semantic` module within the `tui-shared` crate enables applications to expose their internal state as structured data for LLM agents (ADR 004, ADR 070).
 
 ```mermaid
 classDiagram
     direction LR
 
+    class Facade {
+        <<Module: semantic/mod.rs>>
+        +Snapshot
+        +Entity
+        +Region
+        +Action
+    }
+
     class Snapshot {
+        <<Module: snapshot.rs>>
         +String app
         +u64 frame
         +Vec~Entity~ entities
@@ -59,6 +68,7 @@ classDiagram
     }
 
     class Entity {
+        <<Module: entity.rs>>
         +String kind
         +String id
         +Vec2 position
@@ -66,11 +76,15 @@ classDiagram
     }
 
     class Action {
+        <<Module: action.rs>>
         +String name
         +String description
         +String key
     }
 
+    Facade ..> Snapshot : Re-exports
+    Facade ..> Entity : Re-exports
+    Facade ..> Action : Re-exports
     Snapshot *-- Entity : Contains
     Snapshot *-- Action : Contains
 ```
@@ -692,6 +706,27 @@ classDiagram
 ## Experiment: Chimera Lang (ADR 008)
 
 **Chimera Lang** is a bio-inspired, stack-based esoteric programming language with an optional "Nova" expansion for advanced biological simulation.
+
+### Chimera TUI Architecture (ADR 071)
+
+The TUI event loop is decoupled into specific input handler modules to avoid a monolithic `run_app` loop.
+
+```mermaid
+sequenceDiagram
+    participant App as tui/app/mod.rs
+    participant Editing as handlers/editing.rs
+    participant Normal as handlers/normal.rs
+    participant Selector as handlers/selector.rs
+
+    App->>App: read_event()
+    alt State == Editing
+        App->>Editing: handle_input(event)
+    else State == Normal
+        App->>Normal: handle_input(event)
+    else State == Selector
+        App->>Selector: handle_input(event)
+    end
+```
 
 ### Lib/Bin Split
 
