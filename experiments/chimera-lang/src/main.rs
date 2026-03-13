@@ -26,19 +26,30 @@ use std::thread;
 #[cfg(feature = "resonance")]
 use std::time::Duration;
 
+use clap::Subcommand;
+
 #[derive(ClapParser)]
 #[command(author, version, about, long_about = None)]
 struct Cli {
-    #[arg(short, long)]
-    input: Option<String>,
+    #[command(subcommand)]
+    command: Commands,
+}
 
-    /// Run in headless mode (no TUI)
-    #[arg(long)]
-    headless: bool,
+#[derive(Subcommand)]
+enum Commands {
+    /// Execute a file
+    Run {
+        #[arg(short, long)]
+        input: Option<String>,
 
-    /// Number of ticks to run in headless mode
-    #[arg(long, default_value = "100")]
-    ticks: u64,
+        /// Run in headless mode (no TUI)
+        #[arg(long)]
+        headless: bool,
+
+        /// Number of ticks to run in headless mode
+        #[arg(long, default_value = "100")]
+        ticks: u64,
+    },
 }
 
 fn format_oracle_result(val: &Value) -> Option<String> {
@@ -100,7 +111,13 @@ fn main() -> Result<()> {
         original_hook(panic_info);
     }));
 
-    let (dna, grid, orca_mode, custom_runes, alchemy_book) = if let Some(input_path) = &cli.input {
+    let Commands::Run {
+        input: actual_input,
+        headless: actual_headless,
+        ticks: actual_ticks,
+    } = cli.command;
+
+    let (dna, grid, orca_mode, custom_runes, alchemy_book) = if let Some(input_path) = &actual_input {
         use std::io::Read;
         let mut f = fs::File::open(input_path)?;
         let mut unparsed_file = String::new();
@@ -245,8 +262,8 @@ fn main() -> Result<()> {
         None
     };
 
-    if cli.headless {
-        for _ in 0..cli.ticks {
+    if actual_headless {
+        for _ in 0..actual_ticks {
             if vm.halted {
                 break;
             }
@@ -315,7 +332,7 @@ fn main() -> Result<()> {
             }
         }
     } else {
-        let input_path = cli.input.as_ref().map(|s| Path::new(s).to_path_buf());
+        let input_path = actual_input.as_ref().map(|s| Path::new(s).to_path_buf());
 
         #[cfg(feature = "nova")]
         run_tui(vm, Some(ViewMode::Prologue), input_path)?;
