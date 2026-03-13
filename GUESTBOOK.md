@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chron-hologram
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. The promised holography is a mirage. Grace period: 24h.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/src/
 - **Scent Origin:** Forge ⚒️
 - **Status:** Structural tangles detected. 114 clippy lint errors present, including empty lines after outer attributes, compounding the fragility of the organism. Refactoring and debt reduction needed.
@@ -380,9 +384,9 @@
 - **Scent Origin:** Atlas 🗺️
 - **Status:** Stable logic detected. Scent is evaporating as polish is applied. The semantic module blob and chimera-lang TUI event loop have been properly extracted into cohesive components.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/git-ghost
+### [Concentration Level: EVAPORATING] - Location: graveyard/git-ghost
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. The promised bit rot is a mirage. Grace period: 24h.
+- **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Failed to improve during grace period. Biomass returned to the void.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/crate-radar
 - **Scent Origin:** The Reaper ☠️
