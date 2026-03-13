@@ -352,4 +352,19 @@ mod tests {
         fs::remove_dir_all(&temp_dir)?;
         Ok(())
     }
+
+    #[cfg(test)]
+    mod havoc_tests {
+        use super::super::*;
+        use proptest::prelude::*;
+
+        proptest! {
+            #[test]
+            #[should_panic(expected = "attempt to negate with overflow")]
+            fn test_havoc_get_dir_normal_neg_overflow(name in ".*") {
+                let normal = Vector3::new(std::i32::MIN, 0, 0);
+                let _ = get_dir_normal(&name, normal);
+            }
+        }
+    }
 }
