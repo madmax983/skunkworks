@@ -32,7 +32,10 @@ impl SirenState {
         }
     }
 
-    pub fn default() -> Self {
+}
+
+impl Default for SirenState {
+    fn default() -> Self {
         Self {
             bpm: 120,
             octave: 0,
@@ -42,7 +45,9 @@ impl SirenState {
             buffer: Vec::new(),
         }
     }
+}
 
+impl SirenState {
     pub fn to_value(&self) -> Value {
         Value::Str(self.to_string())
     }

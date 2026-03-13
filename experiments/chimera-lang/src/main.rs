@@ -21,10 +21,6 @@ use crossbeam_channel::unbounded;
 use resonance_audio::audio::AudioModel;
 #[cfg(feature = "resonance")]
 use rodio::OutputStream;
-#[cfg(feature = "resonance")]
-use std::thread;
-#[cfg(feature = "resonance")]
-use std::time::Duration;
 
 #[derive(ClapParser)]
 #[command(author, version, about, long_about = None)]

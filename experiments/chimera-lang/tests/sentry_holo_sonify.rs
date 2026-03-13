@@ -56,7 +56,7 @@ mod tests {
         // Set audio pressure
         // GRID_SIZE 16 -> 256 cells
         // vm.audio_snapshot.pressure is initialized to 256 zeros in new()
-        if vm.audio_snapshot.pressure.len() > 0 {
+        if !vm.audio_snapshot.pressure.is_empty() {
             vm.audio_snapshot.pressure[0] = 10.0;
         } else {
             // Should not happen with default new(), but purely defensive

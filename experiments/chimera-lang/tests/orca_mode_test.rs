@@ -10,15 +10,15 @@ fn test_orca_mode_toggle() {
         helix: Helix { strands: vec![] },
     };
     let mut vm = ChimeraVM::new(dna);
-    assert_eq!(vm.prologue_state.orca_mode, false);
+    assert!(!vm.prologue_state.orca_mode);
 
     // Toggle ON
     chimera_lang::vm::nova::exec_nova_op(&mut vm, OpCode::Orca, &[]);
-    assert_eq!(vm.prologue_state.orca_mode, true);
+    assert!(vm.prologue_state.orca_mode);
 
     // Toggle OFF
     chimera_lang::vm::nova::exec_nova_op(&mut vm, OpCode::Orca, &[]);
-    assert_eq!(vm.prologue_state.orca_mode, false);
+    assert!(!vm.prologue_state.orca_mode);
 }
 
 #[test]

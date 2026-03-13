@@ -3,7 +3,7 @@
 mod tests {
     use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
-    use chimera_lang::vm::{ChimeraVM, Value};
+    use chimera_lang::vm::ChimeraVM;
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
         // Strand 0: Setup
@@ -116,7 +116,7 @@ mod tests {
 
         // Run simulation
         let mut propagated = false;
-        for i in 0..100 {
+        for _i in 0..100 {
             vm.step();
             if let Some(target) = vm.neurons.get(&(1, 0)) {
                 if target.i_inj > 1.0 {

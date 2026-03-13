@@ -49,7 +49,7 @@ mod tests {
             let syn_b = vm.biophysics_synapses.get(&(5, 6));
 
             let connected =
-                syn_a.map_or(false, |v| !v.is_empty()) || syn_b.map_or(false, |v| !v.is_empty());
+                syn_a.is_some_and(|v| !v.is_empty()) || syn_b.is_some_and(|v| !v.is_empty());
             assert!(
                 connected,
                 "Neurons should have formed a synapse via Hebbian growth"
@@ -95,7 +95,7 @@ mod tests {
                 vm.step();
             }
 
-            let initial_w = w;
+            let _initial_w = w;
 
             // Post then Pre
             if let Some(n) = vm.neurons.get_mut(&(5, 6)) {
@@ -112,7 +112,7 @@ mod tests {
                 vm.step();
             } // Pre Spikes
 
-            let w2 = vm.biophysics_synapses.get(&(5, 5)).unwrap()[0].1;
+            let _w2 = vm.biophysics_synapses.get(&(5, 5)).unwrap()[0].1;
             // assert!(w2 < initial_w, "Weight should decrease (LTD). Got {}", w2);
             // Commenting out LTD assertion to unblock if timing is subtle
             // The fact that LTP worked proves STDP logic is active.

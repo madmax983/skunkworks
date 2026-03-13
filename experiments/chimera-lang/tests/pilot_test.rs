@@ -1,6 +1,6 @@
 use chimera_lang::ast::{Dna, Helix};
 use chimera_lang::vm::prologue::exec_prologue_tick;
-use chimera_lang::vm::{ChimeraVM, Value, GRID_SIZE};
+use chimera_lang::vm::{ChimeraVM, Value};
 
 fn create_vm() -> ChimeraVM {
     let dna = Dna {

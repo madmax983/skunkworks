@@ -1,10 +1,10 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
+    use crate::ast::{Dna, Helix, JunctionType, Strand};
     use crate::opcode::OpCode;
     use crate::vm::prologue::exec_prologue_tick;
-    use crate::vm::{ChimeraVM, Value, GRID_SIZE};
+    use crate::vm::{ChimeraVM, Value};
 
     #[test]
     fn test_genesis_rune() {

@@ -8,7 +8,7 @@ fn test_loom_socket_concurrency() {
     // Pattern: A shared resource (Socket) accessed by multiple owners (Cloned VMs).
     use loom::sync::Arc;
     use loom::thread;
-    use std::cell::RefCell;
+
 
     // Mocking the shared resource logic
     struct MockSocket {
