@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **git-ghost**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. Grace period: 24h.
+- **fissure-tracker**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism / Hypocrisy in Decay. Grace period: 24h.
 
 ## Pardoned
 - **chaos-strings**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved compilation privacy errors and updated audio dependencies. The chaos rings true again.
@@ -15,6 +15,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **git-ghost**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. The promised bit rot was a mirage. Failed to improve during grace period. Moved to graveyard.
 - **crate-radar**: Specimen executed. Diagnosis: Terminal Genericism / Ecosystem Isolation. Failed to improve during grace period. Moved to graveyard.
 - **tesseract-time**: Specimen executed. Diagnosis: Terminal Genericism / Documentation Void. Failed to improve during grace period. Moved to graveyard.
 - **chimera-stardust**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to improve during grace period. Moved to graveyard.
