@@ -284,3 +284,4 @@ fn repopulate_forest(sys: &mut System, trees: &mut Vec<Tree>) {
         trees.push(tree);
     }
 }
+mod havoc_test;

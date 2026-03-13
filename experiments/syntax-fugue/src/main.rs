@@ -152,3 +152,4 @@ fn main() -> Result<()> {
 
     Ok(())
 }
+mod havoc_test;

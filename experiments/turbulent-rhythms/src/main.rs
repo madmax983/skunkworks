@@ -166,3 +166,4 @@ fn update_viscosity(mut sys_mon: ResMut<SysMonitor>, mut params: ResMut<FluidPar
     let target_decay = 0.99 + (usage / 10000.0);
     params.decay = params.decay * 0.9 + target_decay.clamp(0.9, 0.999) * 0.1;
 }
+mod loom_test;

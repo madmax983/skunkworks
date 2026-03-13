@@ -3,6 +3,9 @@ name = "syntax-fugue"
 version = "0.1.0"
 edition = "2021"
 
+[dev-dependencies]
+proptest = "1.4"
+
 [dependencies]
 hound = "3.5"
 syn = { version = "2.0", features = ["full", "visit", "extra-traits"] }

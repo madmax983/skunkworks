@@ -3,6 +3,9 @@ name = "chimera-tardis"
 version = "0.1.0"
 edition = "2021"
 
+[dev-dependencies]
+proptest = "1.4"
+
 [dependencies]
 macroquad = "0.4"
 chimera-lang = { path = "../chimera-lang", features = ["nova"] }
