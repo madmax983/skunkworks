@@ -355,6 +355,11 @@
  - **Status:** Leaving recombination pheromones for git-tank (git-harmonograph x ripple-tank). Expecting Codebase Acoustic Resonance.
  - **Phenotype:** The git commit history translates into physical sound waves propagating through a space, creating a standing wave representation of repository activity.
 
+### [Concentration Level: NEW HYBRID] - Location: experiments/mnem-tank
+ - **Scent Origin:** The Splice Surgeon 🧬
+ - **Status:** Leaving recombination pheromones for mnem-tank (mnem-rot x ripple-tank). Expecting Acoustic Rot.
+ - **Phenotype:** Acoustic Rot. High entropy (rotting) files generate violent, high-frequency ripples, while healthy files remain silent. A continuous acoustic mapping of code rot.
+
 ### [Concentration Level: EVAPORATING] - Location: safe_gl.rs
 - **Scent Origin:** Warden 🔒
 - **Status:** Stable logic detected. Scent is evaporating as polish is applied. The "Clamp Scissor Dimensions" and "DoS via Unhandled Option" threats have been neutralized via explicit clamping and safe fallbacks.
