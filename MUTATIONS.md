@@ -7,13 +7,12 @@ Mendel's peas. Darwin's finches. Your experiments.
 ## 🔬 Breeding Strategy Update
 
 **Observations:**
-- `luminous-hologram` successfully hybridized boid mechanics with spectral holograms.
-- Complex, interactive phenotypes (e.g., swarming or chaotic physical models) pair exceptionally well with optical and grid-based environments (hologram, reaction-diffusion).
+- Spectral translations (`hologram-text` + continuous domains) consistently yield compelling visuals and stable compilation (`luminous-hologram`, `gray-hologram`, `chron-hologram`).
+- Acoustic wave interactions (`ripple-tank` crosses) have shown strong hybrid vigor, successfully translating physical displacement to various domains.
+- The Reaper has been active, condemning purely generic or unmaintained biological experiments (`chron-diffusion`, `gray-chaos`, `chaos-mycelium`, `hyperbolic-swarm`, `chaos-magnetic`, `genetic-flock`). Swarm mechanics require stable, non-exploding physics constraints (unlike the failed hyperbolic cross).
 
 **Strategy Shift:**
-Prioritize crosses that map discrete, non-linear agents (boids, pendulums, slime molds) directly onto continuous, field-based systems (reaction-diffusion, FFT holograms, fluid dynamics). The tension between particle chaos and wave/field mechanics consistently produces the highest hybrid vigor.
-
-Additionally, introducing localized physics algorithms (like Boid flocking from `locus`) into global objective-seeking simulations (like the DDoS target-seeking algorithm in `locust-ddos`) produces highly desirable emergent clustering and organic movement patterns. We will continue crossing pure mathematical interaction models (boids, attractors) with purposeful environment agents (DDoS, mycelium).
+Continue to leverage robust, mathematically stable environments (FFT, wave mechanics) to ground chaotic or emergent agents (DDoS, slime molds). The success of mapping intent-driven agents (DDoS packets) into continuous environments (magnetic fluids, reaction-diffusion substrates) proves that hybridizing *purpose* with *medium* yields the most striking phenotypes. Future crosses should avoid unconstrained spaces (hyperbolic geometry) and focus on translating discrete swarm intent into high-fidelity frequency or acoustic domains.
 
 ---
 
@@ -24,6 +23,13 @@ Additionally, introducing localized physics algorithms (like Boid flocking from 
 ---
 
 ## 🌿 Attempted Crosses
+
+### locust-hologram
+- **Parents**: experiments/locust-ddos + experiments/hologram-text
+- **Concept**: Holographic Cyberwarfare.
+- **Novel trait**: Spectral Attack Vectors. The DDoS packets seek the target, but we view them entirely through their frequency domain interference pattern. As the swarm hits firewalls and compresses/bottlenecks, the high-frequency turbulence in the hologram spikes violently, creating a unique spectral fingerprint of a cyber attack.
+- **Status**: experiments/locust-hologram
+- **Evaluation**: Compiles. Emergent behavior confirmed (Spectral Attack Vectors).
 
 ### myco-ddos
 - **Parents**: experiments/locust-ddos + experiments/myco-transit
