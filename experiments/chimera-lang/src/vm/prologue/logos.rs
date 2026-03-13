@@ -424,7 +424,7 @@ pub fn apply_logos_runes(
     y: usize,
     x: usize,
     current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut Vec<Vec<Option<Value>>>,
+    next_signals: &mut [Vec<Option<Value>>],
     logos_engine: &mut LogosEngine,
     dna: &Dna,
 ) -> bool {

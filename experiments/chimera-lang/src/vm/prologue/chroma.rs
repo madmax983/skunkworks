@@ -12,7 +12,7 @@ pub fn apply_chroma_runes(
     y: usize,
     x: usize,
     current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut Vec<Vec<Option<Value>>>,
+    next_signals: &mut [Vec<Option<Value>>],
     chroma_grid: &[Vec<crate::vm::ChromaCell>],
 ) -> bool {
     let mut changes = false;
@@ -218,7 +218,7 @@ fn apply_red_logic(
     y: usize,
     x: usize,
     current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut Vec<Vec<Option<Value>>>,
+    next_signals: &mut [Vec<Option<Value>>],
 ) -> bool {
     // Red: Amplification, Force, Destruction
     let w_sig = get_sig(current_signals, y, x, 0, -1);
@@ -289,7 +289,7 @@ fn apply_green_logic(
     y: usize,
     x: usize,
     current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut Vec<Vec<Option<Value>>>,
+    next_signals: &mut [Vec<Option<Value>>],
 ) -> bool {
     // Green: Life, Growth, Crossover
     let w_sig = get_sig(current_signals, y, x, 0, -1);
@@ -362,7 +362,7 @@ fn apply_blue_logic(
     y: usize,
     x: usize,
     current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut Vec<Vec<Option<Value>>>,
+    next_signals: &mut [Vec<Option<Value>>],
 ) -> bool {
     // Blue: Logic, Time, Control
     let w_sig = get_sig(current_signals, y, x, 0, -1);
@@ -434,7 +434,7 @@ fn get_sig(signals: &[Vec<Option<Value>>], y: usize, x: usize, dy: i64, dx: i64)
 }
 
 fn set_sig(
-    signals: &mut Vec<Vec<Option<Value>>>,
+    signals: &mut [Vec<Option<Value>>],
     y: usize,
     x: usize,
     dy: i64,

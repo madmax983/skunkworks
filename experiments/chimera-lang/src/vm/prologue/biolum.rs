@@ -6,7 +6,7 @@ pub fn apply_biolum_runes(
     y: usize,
     x: usize,
     _current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut Vec<Vec<Option<Value>>>,
+    next_signals: &mut [Vec<Option<Value>>],
     light_grid: &[Vec<i64>],
 ) -> bool {
     let mut changes = false;

@@ -229,6 +229,12 @@ fn default_epigenetic_grid() -> Vec<Vec<epigenetics::EpigeneticMark>> {
     vec![vec![epigenetics::EpigeneticMark::None; GRID_SIZE]; GRID_SIZE]
 }
 
+impl Default for PrologueState {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl PrologueState {
     /// Creates a new, empty Prologue state.
     pub fn new() -> Self {
@@ -261,14 +267,14 @@ impl PrologueState {
     }
 
     /// Scans the entire grid to identify Runes and Agents.
-    pub fn scan_grid_rules(&mut self, grid: &Vec<Vec<Value>>) {
+    pub fn scan_grid_rules(&mut self, grid: &[Vec<Value>]) {
         self.runes.clear();
         self.rules.clear();
         self.agents.clear();
 
-        for y in 0..GRID_SIZE {
-            for x in 0..GRID_SIZE {
-                if let Value::Str(s) = &grid[y][x] {
+        for (y, row) in grid.iter().enumerate().take(GRID_SIZE) {
+            for (x, cell) in row.iter().enumerate().take(GRID_SIZE) {
+                if let Value::Str(s) = cell {
                     // Identify Runes
                     if matches!(
                         s.as_str(),
@@ -653,10 +659,10 @@ fn process_reality_physics(vm: &mut ChimeraVM) {
 fn prepare_signals(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
     let mut current_signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
 
-    for y in 0..GRID_SIZE {
-        for x in 0..GRID_SIZE {
+    for (y, row) in current_signals.iter_mut().enumerate().take(GRID_SIZE) {
+        for (x, cell) in row.iter_mut().enumerate().take(GRID_SIZE) {
             if let Some(val) = &vm.prologue_state.delayed_signals[y][x] {
-                current_signals[y][x] = Some(val.clone());
+                *cell = Some(val.clone());
             }
         }
     }
@@ -779,7 +785,7 @@ fn apply_propagation_rune(
     tick: u64,
     dna: &crate::ast::Dna,
     current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut Vec<Vec<Option<Value>>>,
+    next_signals: &mut [Vec<Option<Value>>],
     next_delayed: &mut Vec<Vec<Option<Value>>>,
     ether: &mut HashMap<i64, VecDeque<Value>>,
     registers: &mut HashMap<(usize, usize), Value>,
@@ -788,7 +794,7 @@ fn apply_propagation_rune(
     history: &mut HashMap<(usize, usize), VecDeque<Value>>,
     void_buffer: &mut VecDeque<Value>,
     mycelium_buffer: &mut VecDeque<Value>,
-    void_rifts: &mut Vec<crate::vm::nova_void::VoidRift>,
+    void_rifts: &mut [crate::vm::nova_void::VoidRift],
     grid: &[Vec<Value>],
     light_grid: &[Vec<i64>],
     oneiric_grid: &mut oneiric::OneiricGrid,
@@ -1643,7 +1649,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 None => continue,
             }
         } else if current_type == "🌀" {
-            mesmerist::process_mesmerist_logic(vm, &agent, grid_snapshot).map(|t| t)
+            mesmerist::process_mesmerist_logic(vm, &agent, grid_snapshot)
         } else if current_type == "⚗" {
             match alchemist::process_alchemist_logic(vm, &agent, grid_snapshot) {
                 Some((updated_agent, t)) => {

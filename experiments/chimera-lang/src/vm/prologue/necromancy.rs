@@ -7,7 +7,7 @@ pub fn apply_necromancy_runes(
     y: usize,
     x: usize,
     current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut Vec<Vec<Option<Value>>>,
+    next_signals: &mut [Vec<Option<Value>>],
 ) -> bool {
     // Only light up if triggered by West signal
     let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {

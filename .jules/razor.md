@@ -37,3 +37,7 @@
 **Bloat:** Complex 5-element tuple return type `Result<(Dna, Option<Vec<Vec<Value>>>, Option<bool>, HashMap<String, usize>, Vec<AlchemyRule>)>` in `prologue_compiler::compile` and nested generic type `HashMap<(usize, usize), Vec<((usize, usize), f32)>>` in `ChimeraVM`.
 **Cut:** Encapsulated tuple return type into a structured `PrologueProgram` struct, and extracted the nested collection into a public `SynapseMap` type alias.
 **Saved:** Multiple lines of confusing destructuring boilerplate, cognitive load of keeping track of tuple indices and deep generic parameter types.
+## [Reduction]
+**Bloat:** Use of `&mut Vec<Vec<Option<Value>>>` references, `.map(|t| t)`, `match` for simple equality, and explicit `for` loop ranges that trigger `needless_range_loop`.
+**Cut:** Replaced `&mut Vec<Vec<T>>` with slice references `&mut [Vec<T>]`, removed identity `.map`, converted `match` to `if`, and leveraged `iter().enumerate().take()` to avoid range loop clippy warnings.
+**Saved:** Multiple allocations, simplified parameter types, fixed numerous Clippy complexity warnings in `chimera-lang`.

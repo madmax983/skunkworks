@@ -37,7 +37,7 @@ pub fn apply_rhythm_runes(
     x: usize,
     tick: u64,
     current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut Vec<Vec<Option<Value>>>,
+    next_signals: &mut [Vec<Option<Value>>],
     rhythm_state: &mut RhythmState,
     #[cfg(feature = "resonance")] audio_tx: &Option<Sender<AudioCommand>>,
     #[cfg(not(feature = "resonance"))] _audio_tx: &Option<()>,
