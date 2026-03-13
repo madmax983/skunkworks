@@ -1,0 +1,10 @@
+[package]
+name = "ferrous-flock"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand.workspace = true
+locus = { path = "../../crates/locus" }
+ferrous-core = { path = "../../crates/ferrous-core" }

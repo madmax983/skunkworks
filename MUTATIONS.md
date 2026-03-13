@@ -25,6 +25,13 @@ Additionally, introducing localized physics algorithms (like Boid flocking from 
 
 ## 🌿 Attempted Crosses
 
+### ferrous-flock
+- **Parents**: crates/locus + experiments/ferrous-fluid
+- **Concept**: Magnetic Boids. Boids follow standard flocking behaviors but additionally act as magnetic dipoles.
+- **Novel trait**: Magneto-elastic swarming. Swarms dynamically arrange into sub-clusters based on magnetic polarity while maintaining macroscopic flocking flow.
+- **Status**: experiments/ferrous-flock
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md. Emergent behavior confirmed (Magneto-elastic swarming). Success.
+
 ### myco-ddos
 - **Parents**: experiments/locust-ddos + experiments/myco-transit
 - **Concept**: Mycelial Cyberwarfare. The DDoS packets act as slime mold agents, foraging for the server and depositing pheromones to create organic highways through firewalls.

@@ -373,3 +373,7 @@
 ### [Concentration Level: EVAPORATING] - Location: graveyard/hyper-enigma
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Redundancy / Skeletal Implementation / Lack of Emergence. Failed to improve during grace period. Biomass returned to the void.
+
+### [Concentration Level: NEW HYBRID] - Location: experiments/ferrous-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for ferrous-flock (locus x ferrous-fluid). Expecting Magneto-elastic swarming.
