@@ -16,3 +16,5 @@ optional = true
 [features]
 default = []
 audio = ["dep:cpal", "dep:crossbeam-channel", "dep:rand", "dep:anyhow"]
+[dev-dependencies]
+proptest = "1.4.0"
