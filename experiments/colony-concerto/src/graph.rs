@@ -2,7 +2,12 @@ use petgraph::graph::{Graph, NodeIndex};
 use petgraph::Directed;
 use rand::prelude::*;
 use std::collections::HashMap;
-use std::sync::Mutex;
+
+#[cfg(not(loom))]
+pub use std::sync::{Mutex, Arc};
+
+#[cfg(loom)]
+pub use loom::sync::{Mutex, Arc};
 
 #[derive(Debug)]
 pub struct NodeDynamicState {
