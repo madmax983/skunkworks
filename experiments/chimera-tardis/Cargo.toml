@@ -6,3 +6,6 @@ edition = "2021"
 [dependencies]
 macroquad = "0.4"
 chimera-lang = { path = "../chimera-lang", features = ["nova"] }
+
+[dev-dependencies]
+proptest = "1.0"
