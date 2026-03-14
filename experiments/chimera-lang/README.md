@@ -290,10 +290,7 @@ fn main() {
         Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] },
         Gene { op: OpCode::Print, args: vec![] },
     ];
-    let dna = Dna {
-        helix: Helix { strands: vec![Strand { genes }] },
-        evolution_config: None,
-    };
+    let dna = Dna::from_genes(genes);
     let mut vm = ChimeraVM::new(dna);
 
     vm.step(); // Push "Hello"
@@ -314,7 +311,6 @@ You can also parse and run ChimeraScript code directly using the compiler:
 
 ```rust
 use chimera_lang::prelude::*;
-use chimera_lang::compiler;
 
 fn main() {
     let source = r#"

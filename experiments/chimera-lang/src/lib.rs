@@ -98,6 +98,7 @@ pub mod vm;
 /// Use `use chimera_lang::prelude::*;` to import common types.
 pub mod prelude {
     pub use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
+    pub use crate::compiler;
     pub use crate::opcode::OpCode;
     pub use crate::value::Value;
     pub use crate::vm::ChimeraVM;
