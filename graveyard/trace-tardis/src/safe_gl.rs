@@ -22,20 +22,26 @@ impl Drop for ScopedScissor {
 
 /// Helper function to calculate the intersection of two rectangles (x, y, w, h).
 pub fn intersect_rect(a: (i32, i32, i32, i32), b: (i32, i32, i32, i32)) -> (i32, i32, i32, i32) {
-    let x1 = a.0.max(b.0);
-    let y1 = a.1.max(b.1);
+    let ax1 = a.0;
+    let ay1 = a.1;
     let ax2 = a.0.saturating_add(a.2.max(0));
-    let bx2 = b.0.saturating_add(b.2.max(0));
     let ay2 = a.1.saturating_add(a.3.max(0));
+
+    let bx1 = b.0;
+    let by1 = b.1;
+    let bx2 = b.0.saturating_add(b.2.max(0));
     let by2 = b.1.saturating_add(b.3.max(0));
-    let x2 = ax2.min(bx2);
-    let y2 = ay2.min(by2);
-    (
-        x1,
-        y1,
-        x2.saturating_sub(x1).max(0),
-        y2.saturating_sub(y1).max(0),
-    )
+
+    let rx1 = ax1.max(bx1);
+    let ry1 = ay1.max(by1);
+    let rx2 = ax2.min(bx2);
+    let ry2 = ay2.min(by2);
+
+    if rx1 < rx2 && ry1 < ry2 {
+        (rx1, ry1, rx2.saturating_sub(rx1), ry2.saturating_sub(ry1))
+    } else {
+        (0, 0, 0, 0)
+    }
 }
 
 /// Executes the given closure `f` with a scissor rectangle applied.
