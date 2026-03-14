@@ -12,6 +12,14 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Ecosystem Isolation. A generic utility lacking any organic, chaotic, or evolutionary traits. Grace period: 24h.
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chrontext
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation / Identity Crisis. Relegated to obsolescence by its vibrant, swarming descendants. Grace period: 24h.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/chimera-automaton
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen pardoned. Resolved compiler malformations and proved fitness via rudimentary keyboard-driven physics emergence.
+
 ### [Concentration Level: EVAPORATING] - Location: graveyard/fissure-tracker
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Hypocrisy in Decay. Failed to improve during grace period. Biomass returned to the void.

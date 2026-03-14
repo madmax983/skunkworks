@@ -55,6 +55,7 @@ fn create_dna() -> Dna {
     ];
 
     Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },
@@ -81,7 +82,7 @@ async fn main() {
     let vehicle = Vehicle::spawn(&mut world, 0.0, 5.0);
 
     // Camera
-    let mut cam_target = vec2(0.0, 0.0);
+    let mut cam_target;
 
     loop {
         clear_background(LIGHTGRAY);
@@ -95,6 +96,18 @@ async fn main() {
         }
         // Refuel vm to keep it running forever for this demo
         vm.energy = 100;
+
+        // Interact with VM via keys
+        if is_key_down(KeyCode::Left) {
+            vm.grid[0][0] = Value::Int(5);
+            vm.grid[0][1] = Value::Int(15);
+        } else if is_key_down(KeyCode::Right) {
+            vm.grid[0][0] = Value::Int(15);
+            vm.grid[0][1] = Value::Int(5);
+        } else {
+            vm.grid[0][0] = Value::Int(15);
+            vm.grid[0][1] = Value::Int(15);
+        }
 
         // 2. Read VM Output -> Drive Physics
         let left_val = &vm.grid[0][0];
