@@ -58,7 +58,7 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, app: &mut App)
         let view_height = (size.height as usize).saturating_sub(5); // -3 for status, -2 for borders
         app.update_scroll(view_height);
 
-        terminal.draw(|f| ui::draw(f, app))?;
+        terminal.draw(|f| chrontext::ui::draw(f, app))?;
 
         if event::poll(Duration::from_millis(50))? {
             if let Event::Key(key) = event::read()? {

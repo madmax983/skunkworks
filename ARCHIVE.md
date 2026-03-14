@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-automaton**: Specimen condemned. Diagnosis: Skeletal Implementation / Ecosystem Maladaptation / Terminal Genericism. Grace period: 24h.
+- **chrontext**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism / Identity Crisis. A static wrapper rendered obsolete by hybridized offspring (`chron-flock`). Grace period: 24h.
 
 ## Pardoned
+- **chimera-automaton**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Resolved missing evolution config and unused variable warnings. Vigor demonstrated through interactive steering of the generic physics simulation.
 - **chaos-strings**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved compilation privacy errors and updated audio dependencies. The chaos rings true again.
 - **rigid-origami**: Specimen pardoned. Diagnosis: Compilation Failure / API Obsolescence / Redundancy. Resolved compilation and API issues. Generating valid spatial deployable payloads.
 
