@@ -1,8 +1,8 @@
 ## 🧫 Current Pheromone Map
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/src/
-- **Scent Origin:** Forge ⚒️
-- **Status:** Structural tangles detected. 114 clippy lint errors present, including empty lines after outer attributes, compounding the fragility of the organism. Refactoring and debt reduction needed.
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Forge ⚒️ scented structural tangles and 114 clippy errors (including `ptr_arg`, `needless_range_loop`, and `collapsible_match`). The organism is suffocating in bloat and requires the Razor 🪒 touch.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/README.md
 - **Scent Origin:** Echo 🗣️
