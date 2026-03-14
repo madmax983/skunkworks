@@ -12,9 +12,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Ecosystem Isolation. A generic utility lacking any organic, chaotic, or evolutionary traits. Grace period: 24h.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/fissure-tracker
+### [Concentration Level: EVAPORATING] - Location: graveyard/fissure-tracker
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism / Hypocrisy in Decay. Grace period: 24h.
+- **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Hypocrisy in Decay. Failed to improve during grace period. Biomass returned to the void.
 
 ### [Concentration Level: NEW HYBRID] - Location: experiments/locust-hologram
  - **Scent Origin:** The Splice Surgeon 🧬
