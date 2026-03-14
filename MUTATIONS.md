@@ -29,14 +29,14 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Holographic Cyberwarfare.
 - **Novel trait**: Spectral Attack Vectors. The DDoS packets seek the target, but we view them entirely through their frequency domain interference pattern. As the swarm hits firewalls and compresses/bottlenecks, the high-frequency turbulence in the hologram spikes violently, creating a unique spectral fingerprint of a cyber attack.
 - **Status**: experiments/locust-hologram
-- **Evaluation**: Compiles. Emergent behavior confirmed (Spectral Attack Vectors).
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior confirmed (Spectral Attack Vectors). Success.
 
 ### myco-ddos
 - **Parents**: experiments/locust-ddos + experiments/myco-transit
 - **Concept**: Mycelial Cyberwarfare. The DDoS packets act as slime mold agents, foraging for the server and depositing pheromones to create organic highways through firewalls.
 - **Novel trait**: Organic Attack Vectors. The botnet doesn't just swarm; it builds a highly efficient, branching path to the target, bypassing firewalls by reinforcing successful routes and letting failed paths decay.
 - **Status**: experiments/myco-ddos
-- **Evaluation**: Compiles. Emergent behavior confirmed (Mycelial Cyberwarfare). Success.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior confirmed (Mycelial Cyberwarfare). Success.
 
 
 ### locus-ddos
@@ -44,7 +44,7 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Boid-driven Cyberwarfare. The DDoS packets use Boid flocking mechanics instead of simple pathfinding.
 - **Predicted Phenotype**: Flocking Packets. Packets group together into massive schools that coordinate attacks on the server, breaking apart when hitting firewalls.
 - **Status**: experiments/locus-ddos
-- **Evaluation**: Compiles. Emergent behavior confirmed (Flocking Packets). Success.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior confirmed (Flocking Packets). Success.
 
 ### gray-ddos
 - **Parents**: experiments/locust-ddos + crates/gray-scott
@@ -58,7 +58,7 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Swarm intelligence trying to target a chaotic double-pendulum.
 - **Novel trait**: Chaotic Swarm Mapping. The target is non-stationary and chaotic. The resulting visual phenotype is an organic cloud desperately trying to encapsulate a mathematically chaotic object, creating a swirling hurricane of packets and pheromones dynamically mapping the strange attractor of the pendulum.
 - **Status**: experiments/chaos-ddos
-- **Evaluation**: Compiles. Emergent behavior confirmed (swirling hurricane around chaotic attractor). Success.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (swirling hurricane around chaotic attractor). Success.
 
 ### git-diffusion
 - **Parents**: experiments/git-harmonograph + crates/gray-scott
@@ -320,3 +320,10 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Novel trait**: Acoustic Rot. High entropy (rotting) files generate violent, high-frequency ripples, while healthy files remain silent. A continuous acoustic mapping of code rot.
 - **Status**: experiments/mnem-tank
 - **Evaluation**: Compiles. Emergent behavior confirmed (Acoustic Rot). Success.
+
+### chron-ddos
+- **Parents**: experiments/locust-ddos + experiments/chrontext
+- **Concept**: Chronological Cyberwarfare. The botnet swarm targets lines of code based on their chronological age, turning code text into multiple, dynamically sized targets.
+- **Novel trait**: Chronological Cyberwarfare. Older code lines act as stronger attractors (larger radii or higher priority) for the DDoS packets, while newly refactored sections are ignored.
+- **Status**: experiments/chron-ddos
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior confirmed (Chronological Cyberwarfare). Success.
