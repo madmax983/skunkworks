@@ -310,7 +310,7 @@ fn get_dir_normal(name: &str, parent_normal: Vector3<i32>) -> Vector3<i32> {
     for i in 0..normals.len() {
         let idx = ((h as usize) + i) % normals.len();
         let n = normals[idx];
-        if n != parent_normal && n != -parent_normal {
+        if n != parent_normal && -n != parent_normal {
             return n;
         }
     }
@@ -351,5 +351,26 @@ mod tests {
 
         fs::remove_dir_all(&temp_dir)?;
         Ok(())
+    }
+
+    use proptest::prelude::*;
+
+    #[test]
+    fn should_not_panic_on_min_normal_specific() {
+        let parent_normal = Vector3::new(i32::MIN, 0, 0);
+        get_dir_normal("test_dir", parent_normal);
+    }
+
+    proptest! {
+        #[test]
+        fn should_not_panic_on_min_normal(
+            x in proptest::num::i32::ANY,
+            y in proptest::num::i32::ANY,
+            z in proptest::num::i32::ANY,
+        ) {
+            let parent_normal = Vector3::new(x, y, z);
+            // This should not panic even if parent_normal contains std::i32::MIN
+            get_dir_normal("test_dir", parent_normal);
+        }
     }
 }
