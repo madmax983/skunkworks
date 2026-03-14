@@ -3,7 +3,6 @@ mod tests {
     use chimera_lang::compiler::compile;
     use std::fs;
 
-
     #[test]
     fn test_recursive_include_cycle() {
         // Use a temporary directory for the test to avoid path issues

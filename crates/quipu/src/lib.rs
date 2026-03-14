@@ -686,4 +686,16 @@ mod tests {
         assert!(display_str.contains("Cord 0:\n●\n  |  \n  |  "));
         assert!(display_str.contains("Cord 1:\n● ● ● ●\n≡2"));
     }
+
+    use proptest::prelude::*;
+
+    proptest! {
+        #[test]
+        #[should_panic(expected = "Quipu subtraction resulted in negative value")]
+        fn havoc_test_cord_sub_underflow_panic(a in 0u64..1000, b in 1001u64..2000) {
+            let c1 = Cord::from(a);
+            let c2 = Cord::from(b);
+            let _ = c1 - c2;
+        }
+    }
 }

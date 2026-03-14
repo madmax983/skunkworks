@@ -63,12 +63,14 @@ pub enum AudioEvent {
 /// // Trigger a kick drum sound
 /// sender.send(AudioEvent::Kick).unwrap();
 /// ```
+#[allow(dead_code)]
 pub struct AudioEngine {
     _stream: Option<Box<dyn Any>>, // Keep stream alive
     tx: Sender<AudioEvent>,
 }
 
 #[cfg(not(feature = "audio"))]
+#[allow(dead_code)]
 impl AudioEngine {
     /// Creates a new `AudioEngine`.
     ///
@@ -107,6 +109,7 @@ use crossbeam_channel::Receiver;
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 
 #[cfg(feature = "audio")]
+#[allow(dead_code)]
 struct ActiveSound {
     kind: SoundKind,
     t: f32, // Time in seconds
@@ -114,6 +117,7 @@ struct ActiveSound {
 }
 
 #[cfg(feature = "audio")]
+#[allow(dead_code)]
 enum SoundKind {
     Kick,
     Snare,
@@ -122,6 +126,7 @@ enum SoundKind {
 }
 
 #[cfg(feature = "audio")]
+#[allow(dead_code)]
 impl AudioEngine {
     /// Creates a new `AudioEngine`.
     ///
@@ -194,6 +199,7 @@ impl AudioEngine {
 }
 
 #[cfg(feature = "audio")]
+#[allow(dead_code)]
 fn process_audio(
     output: &mut [f32],
     channels: usize,
