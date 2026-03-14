@@ -18,6 +18,7 @@ members = [
     "experiments/locust-tank",
     "experiments/gray-tank",
     "experiments/git-tank",
+    "experiments/chron-ddos",
     "experiments/locus-ddos",
 ]
 
