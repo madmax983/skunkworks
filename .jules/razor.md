@@ -41,3 +41,8 @@
 **Bloat:** Use of `&mut Vec<Vec<Option<Value>>>` references, `.map(|t| t)`, `match` for simple equality, and explicit `for` loop ranges that trigger `needless_range_loop`.
 **Cut:** Replaced `&mut Vec<Vec<T>>` with slice references `&mut [Vec<T>]`, removed identity `.map`, converted `match` to `if`, and leveraged `iter().enumerate().take()` to avoid range loop clippy warnings.
 **Saved:** Multiple allocations, simplified parameter types, fixed numerous Clippy complexity warnings in `chimera-lang`.
+
+## [Reduction]
+**Bloat:** Layer Lasagna & Terminal Genericism (chrontext split across app.rs, blame.rs, ui.rs, lib.rs, and main.rs). The `BlameAnalyzer` struct was essentially just a namespace storing a single start_path string.
+**Cut:** Flattened chrontext into a single main.rs file. Replaced `BlameAnalyzer` class with a simple `analyze_blame` function.
+**Saved:** Removed 4 files (`app.rs`, `blame.rs`, `ui.rs`, `lib.rs`), avoiding pointless encapsulation. Simplified `Cargo.toml`.
