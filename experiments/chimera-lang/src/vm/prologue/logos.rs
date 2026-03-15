@@ -38,8 +38,13 @@ impl LogosEngine {
     }
 
     pub fn define_rule(&mut self, name: &str, definition: &str) {
-        if let Ok(rule) = self.parse_rule_def(definition) {
-            self.rules.insert(name.to_string(), rule);
+        match self.parse_rule_def(definition) {
+            Ok(rule) => {
+                self.rules.insert(name.to_string(), rule);
+            }
+            Err(e) => {
+                println!("Error defining rule '{}': {}", name, e);
+            }
         }
     }
 
@@ -157,10 +162,31 @@ impl LogosEngine {
             }
         }
 
-        let seq: Vec<&str> = def.split_whitespace().collect();
-        if seq.len() > 1 {
+        // A better tokenizer that respects quotes
+        let mut tokens = Vec::new();
+        let mut current_token = String::new();
+        let mut in_quotes = false;
+
+        for c in def.chars() {
+            if c == '"' {
+                in_quotes = !in_quotes;
+                current_token.push(c);
+            } else if c.is_whitespace() && !in_quotes {
+                if !current_token.is_empty() {
+                    tokens.push(current_token.clone());
+                    current_token.clear();
+                }
+            } else {
+                current_token.push(c);
+            }
+        }
+        if !current_token.is_empty() {
+            tokens.push(current_token);
+        }
+
+        if tokens.len() > 1 {
             let mut rules = Vec::new();
-            for (i, s) in seq.iter().enumerate() {
+            for (i, s) in tokens.iter().enumerate() {
                 if i > 0 {
                     rules.push(GrammarRule::Whitespace);
                 }
@@ -169,8 +195,8 @@ impl LogosEngine {
             return Ok(GrammarRule::Sequence(rules));
         }
 
-        if !def.is_empty() {
-            self.parse_single_token(def)
+        if !tokens.is_empty() {
+            self.parse_single_token(&tokens[0])
         } else {
             Err("Empty rule definition".to_string())
         }
@@ -476,15 +502,19 @@ pub fn apply_logos_runes(
             // West: Rule Name
             // Output: Self (Generated String)
             if let Some(Value::Str(name)) = w_sig {
-                // Debug: println!("Logos Generate: {}", name);
+                println!("Logos Generate Debug: w_sig = {}", name);
                 if let Ok(gen) = logos_engine.generate(name) {
-                    // Debug: println!("Gen Result: {}", gen);
+                    println!("Gen Result: {}", gen);
                     let res = Value::Str(gen);
                     if next_signals[y][x] != Some(res.clone()) {
                         next_signals[y][x] = Some(res);
                         changes = true;
                     }
+                } else {
+                    println!("Logos Generate Failed for name: {}", name);
                 }
+            } else {
+                println!("Logos Generate: w_sig is {:?}", w_sig);
             }
         }
         "«" => {

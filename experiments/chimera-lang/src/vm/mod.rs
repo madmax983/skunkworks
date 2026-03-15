@@ -3691,6 +3691,16 @@ impl ChimeraVM {
             | OpCode::SelfReplicate
             | OpCode::Forge
             | OpCode::Speak
+            | OpCode::Mandelbrot
+            | OpCode::Julia
+            | OpCode::Zoom
+            | OpCode::Pan
+            | OpCode::Iterate
+            | OpCode::Escape
+            | OpCode::QuantumScribe
+            | OpCode::QuantumScan
+            | OpCode::HoloInvoke
+            | OpCode::HoloSpeak
             | OpCode::Etymology => Some(nova::exec_nova_op(self, op, args)),
             OpCode::EvoPopSize
             | OpCode::EvoLoad
