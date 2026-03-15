@@ -16,12 +16,6 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 
 ---
 
-## 🌸 Proposed Crosses
-
-<!-- Suggest hybrid experiments by combining existing ones -->
-
----
-
 ## 🌿 Attempted Crosses
 
 ### locust-hologram
@@ -320,3 +314,10 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Novel trait**: Acoustic Rot. High entropy (rotting) files generate violent, high-frequency ripples, while healthy files remain silent. A continuous acoustic mapping of code rot.
 - **Status**: experiments/mnem-tank
 - **Evaluation**: Compiles. Emergent behavior confirmed (Acoustic Rot). Success.
+
+### mnem-diffusion
+- **Parents**: experiments/mnem-rot + crates/gray-scott
+- **Concept**: Mnemonic Diffusion. The codebase nodes act as continuous chemical catalysts on a 2D Gray-Scott substrate.
+- **Novel trait**: Codebase Fungal Rot. The older, more rotting a file is (high entropy), the more of the `V` chemical ("fungus") it injects into the environment. Fungal Turing patterns emerge strictly around legacy sections of the codebase.
+- **Status**: experiments/mnem-diffusion
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior predicted (fungal decay).
