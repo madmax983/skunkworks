@@ -27,3 +27,6 @@
 **2025-05-18 - [Fix glScissor UB via OOB Intersection Coordinates]**
 **Threat:** The `intersect_rect` function in `experiments/impossible-explorer/src/main.rs`, `experiments/chimera-tardis/src/safe_gl.rs`, and `graveyard/trace-tardis/src/safe_gl.rs` could calculate a positive width/height for disjoint rectangles using `saturating_sub` under certain large negative/positive coordinate conditions. Passing this unbounded intersecting dimension could lead to out-of-bounds UI drawing and expose the OpenGL driver to Undefined Behavior through the `unsafe` `glScissor` call.
 **Defense:** Added explicit checks ensuring that `rx1 < rx2 && ry1 < ry2` before returning a valid intersection width and height, effectively returning an empty rectangle for completely disjoint cases.
+**2026-03-15 - [Validate Physics Timestep (dt)]**
+**Threat:** The `step` method in `physics-pbd` checked if `dt <= f32::EPSILON` but did not check if `dt.is_finite()`. This allowed `NaN` or `Infinity` time step values to corrupt all particle positions silently due to multiplying `NaN` with velocity, leading to undefined physical state and potential crashes elsewhere in the engine.
+**Defense:** Added an explicit `!dt.is_finite()` check to the early return condition, safely discarding `NaN` or `Infinity` time steps to protect the simulation state.

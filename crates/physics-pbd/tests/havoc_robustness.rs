@@ -18,10 +18,10 @@ fn test_havoc_dt_nan_poison() {
 
     system.step(f32::NAN, 0);
 
-    // Position is silently NaN without a panic!
+    // Position should NOT be corrupted to NaN anymore, because it skips update on NaN.
     assert!(
-        system.particles[p1].pos.is_nan(),
-        "Havoc expected position to be corrupted to NaN!"
+        !system.particles[p1].pos.is_nan(),
+        "Warden defense failed: position became NaN!"
     );
 }
 
@@ -34,10 +34,10 @@ fn test_havoc_dt_infinity() {
 
     system.step(f32::INFINITY, 0);
 
-    // Position is silently Infinity without a panic!
+    // Position should NOT be corrupted to Infinity anymore, because it skips update on Infinity.
     assert!(
-        !system.particles[p1].pos.is_finite(),
-        "Havoc expected position to be corrupted to Infinity!"
+        system.particles[p1].pos.is_finite(),
+        "Warden defense failed: position became Infinity!"
     );
 }
 
