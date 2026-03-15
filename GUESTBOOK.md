@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/chimera-lang
+- **Scent Origin:** Mosaic 🎨
+- **Status:** Mosaic sensed a lack of hierarchy in the CLI; reinforcement required.
+
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/src/
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Forge ⚒️ scented structural tangles and 114 clippy errors (including `ptr_arg`, `needless_range_loop`, and `collapsible_match`). The organism is suffocating in bloat and requires the Razor 🪒 touch.
