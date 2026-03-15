@@ -31,3 +31,7 @@
 **[Double Buffered Diffusion]**
 **Learning:** In simulation or cellular automata loops that process grid state over time, cloning the entire `Vec` representing the grid every frame is extremely costly (`O(n)` heap allocations).
 **Action:** Use a double buffer approach. Add a `next_state` vector of the same size to the main struct, read from `self.state`, write to `self.next_state`, and use `std::mem::swap(&mut self.state, &mut self.next_state)` at the end of the step.
+
+**[Removing intermediate Vec<char> allocation in TUI drawing loops]**
+**Learning:** Calling `.chars().collect::<Vec<char>>()` inside a TUI `draw` frame loop results in unnecessary heap allocations on every single tick for every line rendered. You can directly consume the iterator to map or construct UI spans without allocating an intermediate vector.
+**Action:** Use `line_content.chars()` directly. If character padding is required to reach a certain width, combine the iterator with `.next().unwrap_or(' ')` inside a bounded loop (`for x in 0..sim.width`).
