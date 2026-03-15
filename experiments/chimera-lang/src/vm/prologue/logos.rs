@@ -151,6 +151,11 @@ impl LogosEngine {
             }
         }
 
+        // Preserve quotes for strings with spaces: "Hello World"
+        if def.starts_with('"') && def.ends_with('"') && def.len() >= 2 {
+            return Ok(GrammarRule::Literal(def[1..def.len() - 1].to_string()));
+        }
+
         let seq: Vec<&str> = def.split_whitespace().collect();
         if seq.len() > 1 {
             let mut rules = Vec::new();

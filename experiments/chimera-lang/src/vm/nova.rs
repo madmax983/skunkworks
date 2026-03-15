@@ -483,6 +483,11 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Reaction => super::nova_reactor::exec_reaction(vm),
         OpCode::Cambrian => super::nova_ecology::cambrian_explosion(vm),
         OpCode::Forge | OpCode::Speak | OpCode::Etymology => exec_verbum_op(vm, op, args),
+        OpCode::Mandelbrot | OpCode::Julia | OpCode::Zoom | OpCode::Pan => {
+            super::nova_fractal::exec_fractal_op(vm, op, args)
+        }
+        OpCode::QuantumScribe => super::nova_hologram::exec_quantum_scribe(vm, op, args),
+        OpCode::QuantumScan => super::nova_hologram::exec_quantum_scan(vm, op, args),
         OpCode::Supernova => exec_supernova(vm),
         OpCode::Singularity => exec_singularity(vm),
         OpCode::Eval => exec_eval(vm),
@@ -1184,6 +1189,7 @@ fn exec_sonar(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             if !found {
                 vm.stack.push(Value::Int(16));
                 vm.stack.push(Value::Int(0));
+                vm.sonar_target = None;
             }
 
             vm.energy = vm.energy.saturating_sub(2);

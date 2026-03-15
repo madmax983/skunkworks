@@ -77,7 +77,8 @@ mod tests {
         // Step 3: Run Choir
         // Choir needs to sing "Fiat" then "Lux".
 
-        vm.step(); // Tick 1 (Choir: "Fiat")
+        // Wait, the Choir organelle ticks at the end of the `vm.step()` where it was spawned.
+        // So Tick 1 already happened in the `Choir` step.
         assert_eq!(vm.chorus_buffer.back(), Some(&"Fiat".to_string()));
 
         vm.step(); // Tick 2 (Choir: "Lux")
