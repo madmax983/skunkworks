@@ -119,17 +119,15 @@ fn draw(f: &mut Frame, app: &App, sim: &Simulation, scroll_y: usize) {
         };
 
         // We need to construct a line of spans, interleaving agents if any are on this line
-        let mut chars = line_content.chars().collect::<Vec<char>>();
-        // Pad out to width
-        while chars.len() < sim.width {
-            chars.push(' ');
-        }
+        let mut chars = line_content.chars();
 
         // Apply agents
         let mut spans = Vec::new();
         let mut current_span_str = String::new();
 
-        for x in 0..chars.len() {
+        for x in 0..sim.width {
+            let c = chars.next().unwrap_or(' ');
+
             // Check if agent is here
             let agent_here = sim.agents.iter().find(|a| a.y == i && a.x == x);
 
@@ -148,7 +146,7 @@ fn draw(f: &mut Frame, app: &App, sim: &Simulation, scroll_y: usize) {
                     Style::default().fg(Color::Red).bg(Color::Black),
                 ));
             } else {
-                current_span_str.push(chars[x]);
+                current_span_str.push(c);
             }
         }
         if !current_span_str.is_empty() {
