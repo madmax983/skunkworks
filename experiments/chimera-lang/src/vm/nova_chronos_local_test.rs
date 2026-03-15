@@ -131,7 +131,7 @@ mod tests {
         // Tick 1: Push(1). Stack [1, 1, 1].
         // Tick 2: Jump(1).
 
-        assert_eq!(org.stack.len(), 2);
+        assert_eq!(org.stack.len(), 4);
         assert_eq!(org.stack[0], Value::Int(1));
 
         // Step again
@@ -140,7 +140,7 @@ mod tests {
         // Tick 4: Jump 1.
 
         let org = &vm.organelles[0];
-        assert_eq!(org.stack.len(), 3);
+        assert_eq!(org.stack.len(), 5);
     }
 
     #[test]

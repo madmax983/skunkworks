@@ -545,6 +545,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Rebirth => super::nova_quantum::exec_rebirth(vm),
         OpCode::Prologue => exec_prologue(vm),
         OpCode::Rune => exec_rune(vm),
+        OpCode::Mandelbrot | OpCode::Julia | OpCode::Zoom | OpCode::Iterate | OpCode::Pan => {
+            super::nova_fractal::exec_fractal_op(vm, op, args);
+            None
+        }
+        OpCode::QuantumScan => super::nova_hologram::exec_quantum_scan(vm, op, args),
+        OpCode::QuantumScribe => super::nova_hologram::exec_quantum_scribe(vm, op, args),
         _ => None,
     }
 }

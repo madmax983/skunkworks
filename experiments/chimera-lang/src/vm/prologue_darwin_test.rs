@@ -63,7 +63,7 @@ fn test_darwin_rune() {
     // 10 == 10. Expect Success.
     exec_prologue_tick(&mut vm);
 
-    let success = vm.output.iter().any(|s| s.contains("DARWIN: Success"));
+    let success = vm.output.iter().any(|s| s.contains("DARWIN: Success match"));
     assert!(
         success,
         "Darwin rune failed to recognize success. Logs: {:?}",

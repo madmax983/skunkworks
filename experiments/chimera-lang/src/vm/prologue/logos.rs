@@ -157,6 +157,12 @@ impl LogosEngine {
             }
         }
 
+        // We shouldn't split by whitespace if it is enclosed in quotes.
+        // For simplicity, handle a single string literal properly first.
+        if def.starts_with('"') && def.ends_with('"') && def.len() >= 2 {
+            return self.parse_single_token(def);
+        }
+
         let seq: Vec<&str> = def.split_whitespace().collect();
         if seq.len() > 1 {
             let mut rules = Vec::new();
@@ -477,12 +483,17 @@ pub fn apply_logos_runes(
             // Output: Self (Generated String)
             if let Some(Value::Str(name)) = w_sig {
                 // Debug: println!("Logos Generate: {}", name);
-                if let Ok(gen) = logos_engine.generate(name) {
-                    // Debug: println!("Gen Result: {}", gen);
-                    let res = Value::Str(gen);
-                    if next_signals[y][x] != Some(res.clone()) {
-                        next_signals[y][x] = Some(res);
-                        changes = true;
+                match logos_engine.generate(name) {
+                    Ok(gen) => {
+                        // Debug: println!("Gen Result: {}", gen);
+                        let res = Value::Str(gen);
+                        if next_signals[y][x] != Some(res.clone()) {
+                            next_signals[y][x] = Some(res);
+                            changes = true;
+                        }
+                    }
+                    Err(e) => {
+                        println!("Failed to generate logic for: {:?} - error: {}", name, e);
                     }
                 }
             }
