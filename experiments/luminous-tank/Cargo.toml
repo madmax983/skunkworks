@@ -1,0 +1,10 @@
+[package]
+name = "luminous-tank"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = { workspace = true }
+rayon = "1.10"
+locus = { workspace = true }

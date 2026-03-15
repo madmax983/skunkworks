@@ -24,6 +24,13 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 
 ## 🌿 Attempted Crosses
 
+### luminous-tank
+- **Parents**: crates/locus + experiments/ripple-tank
+- **Concept**: Acoustic Swarming. Boids fly over a 2D acoustic wave tank. Their movement generates pressure waves, and the resulting ripples physically push/pull the boids.
+- **Novel trait**: Acoustic Swarming Feedback Loop. Boids are advected by sound waves they themselves generate, creating complex, emergent resonant clustering behaviors.
+- **Status**: experiments/luminous-tank
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior confirmed (Acoustic Swarming). Success.
+
 ### locust-hologram
 - **Parents**: experiments/locust-ddos + experiments/hologram-text
 - **Concept**: Holographic Cyberwarfare.
@@ -320,3 +327,28 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Novel trait**: Acoustic Rot. High entropy (rotting) files generate violent, high-frequency ripples, while healthy files remain silent. A continuous acoustic mapping of code rot.
 - **Status**: experiments/mnem-tank
 - **Evaluation**: Compiles. Emergent behavior confirmed (Acoustic Rot). Success.
+
+### gaze-attractor
+- **Parents**: experiments/chaos-pendulum + experiments/luminous-flock (assumed)
+- **Concept**: Boids flocking towards a chaotic attractor.
+- **Novel trait**: Attractor mapping.
+- **Status**: experiments/gaze-attractor
+- **Evaluation**: Compiles.
+
+### bifurcation-landscape
+- **Parents**: Unknown
+- **Concept**: Chaos visualization.
+- **Status**: graveyard/bifurcation-landscape (Executed)
+- **Evaluation**: Failed to compile. Executed by the Reaper.
+
+### chimera-pachinko
+- **Parents**: experiments/chimera-lang + experiments/chaos-pendulum
+- **Concept**: A chaotic VM execution environment.
+- **Status**: experiments/chimera-pachinko
+- **Evaluation**: Compiles.
+
+### etymological-mycelium
+- **Parents**: experiments/myco-transit + experiments/chrontext
+- **Concept**: Fungal spread through a text corpus.
+- **Status**: experiments/etymological-mycelium
+- **Evaluation**: Compiles.
