@@ -12,7 +12,7 @@ use ratatui::{
 /// It uses fractional block characters for high-resolution rendering, ensuring
 /// smooth transitions between integer values.
 ///
-/// # Visual Style
+/// ## Visual Style
 ///
 /// - **Gradient**: The color shifts dynamically based on the tension value:
 ///   - **0.0 - 0.5**: Cyan → Yellow
@@ -20,7 +20,7 @@ use ratatui::{
 /// - **Precision**: Uses `ratatui`'s partial block symbols (e.g., `▂`, `▃`, `▄`) to represent
 ///   fractional values, allowing for smoother animations than standard full-block bars.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```
 /// use tui_shared::TensionBar;
@@ -46,6 +46,13 @@ impl<'a> TensionBar<'a> {
     ///
     /// * `tension` - A value between 0.0 (empty) and 1.0 (full). Values outside this range
     ///   will be clamped during rendering.
+    ///
+    /// ## Examples
+    ///
+    /// ```rust
+    /// use tui_shared::TensionBar;
+    /// let bar = TensionBar::new(0.5);
+    /// ```
     pub fn new(tension: f64) -> Self {
         Self {
             tension,
@@ -56,6 +63,14 @@ impl<'a> TensionBar<'a> {
     /// Sets a custom block for the widget.
     ///
     /// Defaults to a bordered block with title "TENSION".
+    ///
+    /// ## Examples
+    ///
+    /// ```rust
+    /// use tui_shared::TensionBar;
+    /// use ratatui::widgets::{Block, Borders};
+    /// let bar = TensionBar::new(0.5).block(Block::default().borders(Borders::ALL));
+    /// ```
     pub fn block(mut self, block: Block<'a>) -> Self {
         self.block = Some(block);
         self

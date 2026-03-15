@@ -1,3 +1,9 @@
+//! # Formatted Log List 📜
+//!
+//! A specialized `ratatui` widget for displaying streaming application logs with semantic
+//! color-coding. It automatically prefixes lines and applies foreground styles based on string
+//! matches (e.g., matching "Error" or "Success").
+
 use ratatui::{
     buffer::Buffer,
     layout::Rect,
@@ -15,7 +21,7 @@ use ratatui::{
 /// - "Success": Green text with ✅ prefix
 /// - "Note" or "Info": Blue text with ℹ️ prefix
 ///
-/// # Example
+/// ## Examples
 ///
 /// ```
 /// use tui_shared::LogList;
@@ -41,11 +47,28 @@ pub struct LogList<'a> {
 
 impl<'a> LogList<'a> {
     /// Creates a new `LogList` with the given items.
+    ///
+    /// ## Examples
+    ///
+    /// ```rust
+    /// use tui_shared::LogList;
+    ///
+    /// let logs = vec!["Info: Boot sequence initiated".into(), "Error: Failed to bind port".into()];
+    /// let widget = LogList::new(logs);
+    /// ```
     pub fn new(items: Vec<String>) -> Self {
         Self { items, block: None }
     }
 
     /// Helper to set a block with a title and all borders.
+    ///
+    /// ## Examples
+    ///
+    /// ```rust
+    /// use tui_shared::LogList;
+    ///
+    /// let widget = LogList::new(vec![]).with_title("Server Output");
+    /// ```
     pub fn with_title(mut self, title: impl Into<String>) -> Self {
         self.block = Some(Block::default().borders(Borders::ALL).title(title.into()));
         self

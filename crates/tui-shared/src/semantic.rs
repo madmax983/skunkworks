@@ -81,7 +81,7 @@ impl Entity {
 
     /// Sets the entity's position.
     ///
-    /// # Examples
+    /// ## Examples
     ///
     /// ```
     /// use tui_shared::semantic::Entity;
@@ -96,7 +96,7 @@ impl Entity {
     ///
     /// This helps the LLM predict future states.
     ///
-    /// # Examples
+    /// ## Examples
     ///
     /// ```
     /// use tui_shared::semantic::Entity;
@@ -117,7 +117,7 @@ impl Entity {
 
     /// Adds a property to the entity.
     ///
-    /// # Examples
+    /// ## Examples
     ///
     /// ```
     /// use tui_shared::semantic::Entity;
@@ -247,6 +247,9 @@ pub struct Snapshot {
     /// Application identifier
     pub app: String,
     /// Frame/tick number for tracking state over time
+    ///
+    /// This property represents the state of an animation or the duration a specific visual
+    /// effect has been running.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub frame: Option<u64>,
     /// Viewport dimensions
@@ -331,6 +334,13 @@ impl Snapshot {
     }
 
     /// Sets the application state (e.g., "menu", "playing", "game_over").
+    ///
+    /// ## Examples
+    ///
+    /// ```rust
+    /// use tui_shared::semantic::Snapshot;
+    /// let snap = Snapshot::new("Locus").with_state("paused");
+    /// ```
     pub fn with_state(mut self, state: impl Into<String>) -> Self {
         self.state = Some(state.into());
         self
@@ -343,11 +353,29 @@ impl Snapshot {
     }
 
     /// Serialize to JSON
+    ///
+    /// ## Examples
+    ///
+    /// ```rust
+    /// use tui_shared::semantic::Snapshot;
+    /// let snap = Snapshot::new("App");
+    /// let json = snap.to_json();
+    /// ```
     pub fn to_json(&self) -> String {
         serde_json::to_string(self).unwrap_or_else(|_| "{}".to_string())
     }
 
     /// Serialize to pretty JSON
+    ///
+    /// Useful for debugging or logging human-readable TUI state representations.
+    ///
+    /// ## Examples
+    ///
+    /// ```rust
+    /// use tui_shared::semantic::Snapshot;
+    /// let snap = Snapshot::new("App");
+    /// let json = snap.to_json_pretty();
+    /// ```
     pub fn to_json_pretty(&self) -> String {
         serde_json::to_string_pretty(self).unwrap_or_else(|_| "{}".to_string())
     }

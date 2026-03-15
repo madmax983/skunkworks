@@ -17,7 +17,7 @@ pub struct Bobber {
 impl Bobber {
     /// Creates a new Bobber.
     ///
-    /// # Examples
+    /// ## Examples
     ///
     /// ```
     /// use tui_shared::Bobber;
@@ -39,7 +39,7 @@ impl Bobber {
     /// * `ctx` - The Ratatui Canvas Context.
     /// * `tick` - The current simulation tick, used for animation cycles.
     ///
-    /// # Examples
+    /// ## Examples
     ///
     /// ```rust
     /// use tui_shared::Bobber;

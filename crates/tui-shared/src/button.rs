@@ -1,3 +1,21 @@
+//! # Interactive UI Buttons 🔘
+//!
+//! A module providing a stylized, stateful [`Button`] widget for Ratatui.
+//! It supports different visual variants (Primary, Danger, Success) and interaction states
+//! (Normal, Hovered, Clicked, Disabled).
+//!
+//! ## Examples
+//!
+//! ```rust
+//! use tui_shared::button::{Button, ButtonState, ButtonStyle};
+//!
+//! // A red "Delete" button that is currently being hovered over
+//! let btn = Button::new("Delete")
+//!     .style_variant(ButtonStyle::Danger)
+//!     .state(ButtonState::Hovered)
+//!     .icon("🗑️");
+//! ```
+
 use ratatui::{
     buffer::Buffer,
     layout::Rect,
@@ -73,6 +91,13 @@ impl<'a> Button<'a> {
     /// Creates a new `Button` with the given label.
     ///
     /// The button defaults to [`ButtonStyle::Primary`] and [`ButtonState::Normal`].
+    ///
+    /// ## Examples
+    ///
+    /// ```rust
+    /// use tui_shared::Button;
+    /// let btn = Button::new("Click Me");
+    /// ```
     pub fn new(label: impl Into<String>) -> Self {
         Self {
             label: label.into(),
@@ -84,12 +109,33 @@ impl<'a> Button<'a> {
     }
 
     /// Explicitly sets the button's state.
+    ///
+    /// The state determines how the button reacts to the environment (e.g., changing background
+    /// color when [`ButtonState::Hovered`]).
+    ///
+    /// ## Examples
+    ///
+    /// ```rust
+    /// use tui_shared::{Button, ButtonState};
+    ///
+    /// let btn = Button::new("Submit").state(ButtonState::Clicked);
+    /// ```
     pub fn state(mut self, state: ButtonState) -> Self {
         self.state = state;
         self
     }
 
     /// Sets the visual style variant.
+    ///
+    /// Variants define the core color palette of the button (e.g., [`ButtonStyle::Danger`] is red).
+    ///
+    /// ## Examples
+    ///
+    /// ```rust
+    /// use tui_shared::{Button, ButtonStyle};
+    ///
+    /// let btn = Button::new("Save").style_variant(ButtonStyle::Success);
+    /// ```
     pub fn style_variant(mut self, variant: ButtonStyle) -> Self {
         self.style_variant = variant;
         self
@@ -104,6 +150,15 @@ impl<'a> Button<'a> {
     }
 
     /// Sets a custom block for the button.
+    ///
+    /// ## Examples
+    ///
+    /// ```rust
+    /// use tui_shared::Button;
+    /// use ratatui::widgets::{Block, Borders};
+    ///
+    /// let btn = Button::new("Options").block(Block::default().borders(Borders::ALL));
+    /// ```
     pub fn block(mut self, block: Block<'a>) -> Self {
         self.block = Some(block);
         self
