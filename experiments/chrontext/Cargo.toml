@@ -9,11 +9,3 @@ crossterm = { workspace = true }
 ratatui = { workspace = true }
 git2 = { workspace = true }
 chrono = "0.4"
-
-[lib]
-name = "chrontext"
-path = "src/lib.rs"
-
-[[bin]]
-name = "chrontext"
-path = "src/main.rs"
