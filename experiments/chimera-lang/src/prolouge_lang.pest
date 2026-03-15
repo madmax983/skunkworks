@@ -1,0 +1,55 @@
+WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
+COMMENT = _{ ("//" ~ (!"\n" ~ ANY)*) | ("/*" ~ (!"*/" ~ ANY)* ~ "*/") | ("#" ~ (!"\n" ~ ANY)*) }
+
+program = { SOI ~ section* ~ EOI }
+
+section = { config_section | grid_section | dna_section }
+
+config_section = { "config" ~ "{" ~ config_entry* ~ "}" }
+config_entry = { identifier ~ ":" ~ value }
+
+grid_section = { "grid" ~ "{" ~ grid_content ~ "}" }
+grid_content = @{ (!"}" ~ ANY)* }
+
+dna_section = { "dna" ~ "{" ~ strand_def* ~ "}" }
+
+strand_def = { "strand" ~ identifier ~ "{" ~ instruction* ~ "}" }
+
+instruction = {
+    prolog_fact |
+    prolog_query |
+    raku_hyper_op |
+    raku_reduce_op |
+    genetic_splice |
+    forth_op |
+    literal |
+    identifier
+}
+
+prolog_fact = { "fact" ~ "(" ~ argument_list ~ ")" }
+prolog_query = { "query" ~ "(" ~ query_expr ~ ")" }
+
+query_expr = { predicate ~ ("," ~ predicate)* }
+predicate = { identifier ~ "(" ~ argument_list ~ ")" }
+
+raku_hyper_op = { ">>" ~ op_symbol ~ "<<" }
+raku_reduce_op = { "[" ~ op_symbol ~ "]" }
+
+genetic_splice = { "splice" ~ "(" ~ identifier ~ "," ~ identifier ~ ")" }
+
+forth_op = { "dup" | "drop" | "swap" | "over" | "rot" | "add" | "sub" | "mul" | "div" | "mod" }
+
+op_symbol = { "+" | "-" | "*" | "/" | "%" | "&" | "|" | "^" }
+
+argument_list = { argument ~ ("," ~ argument)* }
+argument = { literal | variable | identifier }
+variable = @{ "?" ~ (identifier | ASCII_DIGIT+) }
+
+literal = { number | string_literal }
+operator = @{ "!" | "?" | "~" | "&" | "|" | "+" | "*" | "#" | "@" | "$" | "%" | "^" | "M" | "O" | "[" | "]" | "U" | "V" | "F" | "T" | "\\" | "/" | "-" | "B" | "Π" | "Φ" | "Λ" | "Ω" | "†" | "‡" | "Ψ" | "c" | "8" }
+
+identifier = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
+value = @{ (ASCII_ALPHANUMERIC | "_")+ }
+
+number = @{ "-"? ~ ASCII_DIGIT+ }
+string_literal = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }

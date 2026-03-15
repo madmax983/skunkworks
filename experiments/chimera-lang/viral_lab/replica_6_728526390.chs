@@ -1,0 +1,5525 @@
+strand strand_0 {
+}
+
+strand strand_1 {
+    wire_growth
+    akashic_write
+    tsunami
+    incubate
+    unpocket
+    seek
+    chronos
+    remap
+    eq
+    modulate
+    evo_replace
+    g_write
+    brew
+    galvanize
+    capacitor
+    gt
+    retract
+}
+
+strand strand_2 {
+    print
+    escape
+    sub
+    mesh_send
+    cede
+    detect
+    sovereignty
+    excision
+    germinate
+    prolog_call
+}
+
+strand strand_3 {
+    self_rewrite
+    zip
+    interpret
+    undefine
+    morphogen
+    string_tune
+    babel_compile
+    egregore_link
+    outbreak
+    mesh_prune
+    iterate
+}
+
+strand strand_4 {
+    scribe
+    define_rule
+    project_geometry
+    capacitor
+    soundex
+    perceive
+    quantum_tunnel
+    evo_replace
+    sense_biome
+    parser_match
+    migrate
+    s_index
+    memristor
+}
+
+strand strand_5 {
+    quantum_scan
+    conjugate
+    remap
+    prologue
+    entangle
+    wire_growth
+    gt
+    shock
+    etymology
+    frankenstein
+    evo_pop_size
+    mitosis
+    tax
+}
+
+strand strand_6 {
+    gene_len
+    methylate
+    hyper_div
+    mesh_prune
+    salvo
+    terraform
+    reflex
+    anagram
+    evo_load
+    choir
+    seal
+    akashic_load
+    attractor_init
+    horcrux
+    signify
+    quake
+}
+
+strand strand_7 {
+    alchemy
+    sense_pigment
+    integrase
+    crispr_scan
+    reduce
+    track
+    sporulate
+    s_len
+    virus
+    match
+    havoc_rate
+    brainfuck
+    memristor
+    entropy_surge
+    prologue
+    cross
+}
+
+strand strand_8 {
+    julia
+    quake
+    egregore_summon
+    nop
+    div
+    galvanize
+    tempo
+    reflector
+    electrogenesis
+    reduce
+    unravel
+    havoc_rate
+    pocket
+}
+
+strand strand_9 {
+    hyper_add
+    pigment
+    unpocket
+    detect
+    interfere
+    accrete
+    broadcast
+    babel_compile
+    invest
+}
+
+strand strand_10 {
+    grammar
+    shl
+    ground
+    sow
+    brz
+    rest
+    entropy
+    atlas
+    evo_score
+    secrete
+}
+
+strand strand_11 {
+    mesh_grow
+    hyper_add
+    sing
+    akashic_read
+    decohere
+    chain
+    weave
+}
+
+strand strand_12 {
+    cord
+    iterate
+    eq
+    reincarnate
+    logistics
+    anneal
+    salvo
+}
+
+strand strand_13 {
+    prolog_call
+    gravitate
+    retina_clear
+    bit_xor
+    lens
+    reflector
+    fire
+    observe
+    egregore_summon
+    tangle
+}
+
+strand strand_14 {
+    paradox
+    absorb_geometry
+    railgun
+    chemotaxis
+    lt
+    self_rewrite
+    volcano
+    glitch
+    sonic_claim
+    exec
+    brz
+    quote
+    divinate
+    dry
+}
+
+strand strand_15 {
+    decohere
+    project
+    retina_clear
+    sense_moisture
+    anagram
+    transistor
+    splash
+    carbon_date
+    mesh_grow
+}
+
+strand strand_16 {
+    entropy_surge
+    sense_moisture
+    relativity
+    methylate
+    absorb
+    holo_sonify
+    compile
+    shl
+    osmosis
+}
+
+strand strand_17 {
+    quantum_scribe
+    decompile
+    bio_hack
+    battery
+    hyper_div
+    sing
+    attractor_step
+    compile
+    s_index
+    wire_growth
+}
+
+strand strand_18 {
+    note
+    void_cast
+    bind
+    seal
+    tempo
+    apoptosis
+    sub
+    capacitor
+    exec
+}
+
+strand strand_19 {
+    mitosis
+    push
+    attractor_init
+    offer
+    filter
+    choir
+}
+
+strand strand_20 {
+    drift
+    consume
+    wire_growth
+    rift
+    sub
+}
+
+strand strand_21 {
+    absorb_geometry
+    spore_cloud
+    muscle
+    phase_mutate
+    speak
+    alchemy
+    bit_or
+    brz_s
+    parser_opt
+    mutagen
+    quantum_tunnel
+    spawn
+    sow
+    d_read
+    circuit_breaker
+    mitosis
+}
+
+strand strand_22 {
+    exec
+    hologram
+    receive
+    unravel
+    spawn
+    ward
+    scavenge
+    rune
+    digest
+    balance
+    dry
+}
+
+strand strand_23 {
+    div
+    void_cast
+    seance
+    g_write
+    jump_s
+    sense_volt
+    muscle
+    relativity
+    logistics
+    singularity
+    bit_xor
+    excision
+    interfere
+    d_write
+    drift
+    cambrian
+}
+
+strand strand_24 {
+    draw
+    volcano
+    void_rift
+    refract
+    brainfuck
+    germinate
+    chain
+    egregore_query
+    lt
+    dup
+    rebirth
+    splash
+    unpocket
+    zip_with
+    adhere
+    irradiate
+    helix_len
+    egregore_summon
+}
+
+strand strand_25 {
+    levenshtein
+    project_geometry
+    symbolize
+    time_warp
+    anagram
+    crucible
+    differentiate
+    stabilize
+    project
+    cipher
+    photosynthesize
+}
+
+strand strand_26 {
+    connect
+    differentiate
+    mandelbrot
+    graviton
+    ley_shift
+    note
+    volcano
+    tectonics
+    evo_score
+    sense_light
+    fossilize
+    lucid
+}
+
+strand strand_27 {
+    audit
+    evo_pop_size
+    s_index
+    poly
+    vaccinate
+    bit_xor
+    rift
+    brainfuck
+    parser_alt_n
+    self_replicate
+    interpret
+}
+
+strand strand_28 {
+    tax
+    forget
+    filter
+    auto_cast
+    filter
+    scribe
+    photosynthesize
+    eq
+    d_view
+    infect
+    t_len
+    devour
+    ligase
+    parser_many
+    sense_pigment
+    read_cord
+}
+
+strand strand_29 {
+    egregore_tithe
+    cord
+    sonic_claim
+    pigment
+    morph
+    telomerase
+    logos
+    egregore_query
+    hyphae
+    draw
+    evo_clear
+    track
+    attractor_map
+    compile
+    lumine
+    electrophoresis
+}
+
+strand strand_30 {
+    signify
+    frankenstein
+    forget
+    diffract
+    superpose
+    sub
+    disintegrate
+    tui_mod
+    evo_mutate
+    piet
+    undefine
+    tax
+    reflector
+    undefine
+    diffract
+    exhume
+    akashic_write
+    erode
+}
+
+strand strand_31 {
+    mesh_grow
+    curry
+    prism
+    curry
+    pocket
+    audit
+    nop
+    operator
+    assert
+    ley_sense
+    drop
+}
+
+strand strand_32 {
+    gravitate
+    smell
+    zip_with
+    identity
+    read_cord
+    anneal
+    morph
+    scanline
+    generate
+    mutagen
+    karma
+    string_listen
+}
+
+strand strand_33 {
+    bio_hack
+    track
+    swap
+    electrogenesis
+    balance
+    string_listen
+    void
+    sovereignty
+    secrete
+    egregore_query
+    harmonize
+    div
+    void_cast
+    seance
+    unearth
+    glitch
+    tempo
+    holo_invoke
+}
+
+strand strand_34 {
+    entropy
+    akashic_load
+    lysis
+    dream
+    listen_freq
+    eval
+    conjugate
+    anneal
+    photophore
+    akashic_read
+}
+
+strand strand_35 {
+    hologram
+    shr
+    quake
+    audit
+    time_warp
+    g_write
+    miracle
+    attractor_map
+    attractor_step
+    levenshtein
+    symbiosis
+    ouroboros
+}
+
+strand strand_36 {
+    bind
+    assert
+    glyph
+    iterate
+    akashic_save
+    signify
+    secrete
+    balance
+    tune
+    perform
+    egregore_tithe
+    lysis
+    parser_seq
+    shape
+    apoptosis
+    restore
+    unknown
+    railgun
+}
+
+strand strand_37 {
+    egregore_link
+    photophore
+    void_rift
+    inscribe
+    logistics
+    egregore_dictate
+    crispr_scan
+    parser_regex
+    confuse
+    integrase
+    track
+    sow
+}
+
+strand strand_38 {
+    migrate
+    attractor_surf
+    rebirth
+    audit
+    siphon
+    singularity
+    parser_seq
+}
+
+strand strand_39 {
+    mesh_send
+    babel_live
+    compose
+    alchemy
+    akashic_save
+    event_horizon
+    sense_moisture
+    sensor
+    ley_tap
+}
+
+strand strand_40 {
+    havoc_rate
+    sovereignty
+    div
+    evo_pop_size
+    detox
+    digest
+    seance
+    lumine
+    egregore_summon
+    attractor_map
+    volcano
+    glossolalia
+    tectonics
+}
+
+strand strand_41 {
+    lysis
+    reactor
+    crispr_scan
+    isomerize
+    parser_alt
+    conjugate
+    d_merge
+    quantum_tunnel
+    tissue
+    germinate
+    harmonize
+}
+
+strand strand_42 {
+    modulate
+    divergence
+    ligase
+    ticker
+    diffract
+    parser_alt_n
+    entropy
+    karma
+    lt
+    catalyze
+    filter
+    splice
+}
+
+strand strand_43 {
+    fold
+    chemotaxis
+    receive
+    ligase
+    observe
+    grid_grammar
+    nucleate
+}
+
+strand strand_44 {
+    bit_xor
+    siphon
+    chart
+    unbind
+    attractor_map
+    jump
+    listen
+}
+
+strand strand_45 {
+    devour
+    induction
+    synthesize
+    draw
+    attractor_surf
+    nop
+    tissue
+    d_merge
+    mitosis
+    singularity
+    conceive
+    parser_seq
+    evo_store
+    attractor_surf
+    scan
+    lightning
+    cambrian
+    d_read
+    identity
+}
+
+strand strand_46 {
+    chaos
+    scramble
+    morph
+    generate
+    hyper_mul
+    audit
+    sing
+    conjugate
+    hox_switch
+    time_loop
+    context_shift
+    spore_cloud
+    helix_len
+    context_shift
+    frankenstein
+    meme
+    reactor
+    harmonize
+    drop
+}
+
+strand strand_47 {
+    ley_tap
+    terraform
+    t_len
+    conjugate
+    verify
+    smell
+    compile
+    retina_size
+    dampen
+    pocket
+    sense_volt
+    mutagen
+    divergence
+    pray
+    hyper_sub
+    mul
+    induction
+}
+
+strand strand_48 {
+    bond
+    cambrian
+    unknown
+    lysis
+    mix
+    divinate
+    exhume
+}
+
+strand strand_49 {
+    read_cord
+    reincarnate
+    crispr_scan
+    siphon
+    babel_compile
+    holo_speak
+    attractor_surf
+    rule
+    lt
+    membrane
+    quantum_scan
+    excision
+    photosynthesize
+    hox_switch
+    julia
+    generate
+    scan
+}
+
+strand strand_50 {
+    absorb
+    virus
+    lucid
+    sense_glyph
+    hyper_sub
+    induction
+}
+
+strand strand_51 {
+    offer
+    modulate
+    interpret
+    void
+    choir
+    sense_volt
+    mandelbrot
+    cross
+    compose
+    seal
+}
+
+strand strand_52 {
+    sporulate
+    auto_cast
+    tui_mod
+    scavenge
+    battery
+    mesh_prune
+    remap
+    forge
+    rule
+    havoc_scope
+    piet
+    secrete
+    w_read
+    refract
+    tissue
+    unify
+    chart
+    glitch
+    locate
+}
+
+strand strand_53 {
+    s_index
+    fold
+    mesh_recv
+    self_replicate
+    sense_glyph
+    glossolalia
+    anneal
+    symbiosis
+    logos
+    excision
+    cede
+    sonar
+    sense_glyph
+    bury
+    generate
+    void_rift
+}
+
+strand strand_54 {
+    zoom
+    audit
+    listen
+    lens
+    diffract
+    d_write
+    sense_moisture
+    outbreak
+    aeolus
+    reactor
+    julia
+    helix_len
+    context_shift
+    time_loop
+    divergence
+    restore
+    tectonics
+    mod
+}
+
+strand strand_55 {
+    ley_sense
+    d_merge
+    holo_invoke
+    tsunami
+    evo_load
+    fate
+    luciferin
+    bit_and
+    zip_with
+    connect
+    crossover
+    incubate
+    rune
+    g_write
+    frankenstein
+    compile
+    eq
+    g_write
+    sacrifice
+}
+
+strand strand_56 {
+    brew
+    attractor_surf
+    scribe
+    evo_mutate
+    perceive
+    sonar
+    splice
+    synthesize
+    absorb
+    define
+    chronos_splice
+    mourn
+    compile
+    retina_clear
+    codex
+    evo_mutate
+    drop
+    memristor
+    lumine
+    d_write
+}
+
+strand strand_57 {
+    electrophoresis
+    g_write
+    hologram
+    sacrifice
+    find_all
+}
+
+strand strand_58 {
+    splice
+    invoke
+    refract
+    havoc_rate
+    attractor_map
+    chain
+}
+
+strand strand_59 {
+    evolve
+    reflector
+    siphon
+    print
+    ley_tap
+    entropy
+    excision
+    singularity
+    virus
+}
+
+strand strand_60 {
+    consume
+    smell
+    zip_with
+    spore_cloud
+    buy
+    brz_s
+    storm
+    grid_grammar
+    lens
+    listen_freq
+    photosynthesize
+    clarify
+    context_shift
+    osmosis
+}
+
+strand strand_61 {
+    egregore_channel
+    attractor_surf
+    bury
+    capacitor
+    rune
+    splash
+    generate
+    brew
+    attractor_init
+    event_horizon
+    parser_alt_n
+    bury
+    sonic_claim
+    detox
+    ret
+    lumine
+    clarify
+    dampen
+    fire
+}
+
+strand strand_62 {
+    logos
+    helix_len
+    mesh_recv
+    fold
+    void_rift
+}
+
+strand strand_63 {
+    d_read
+    conceive
+    reactor
+    brew
+    zip_with
+    symbiosis
+    egregore_dictate
+    ley_sense
+    infect
+    evo_pop_size
+    ley_tap
+    spore_cloud
+    listen
+    match
+    connect
+    codex
+    unknown
+}
+
+strand strand_64 {
+    rebirth
+    drift
+    unearth
+    hox_switch
+    define
+    interfere
+    decohere
+    glitch
+    glitch
+    harvest
+    frankenstein
+    holo_speak
+    prologue
+    clarify
+    muscle
+    cas9_cut
+    bit_xor
+}
+
+strand strand_65 {
+    sanitize
+    hyper_sub
+    read_cord
+    augury
+    invoke
+    choir
+    infect
+}
+
+strand strand_66 {
+    evo_load
+    curry
+    restore
+    akashic_read
+    sensor
+    jump_s
+    morphogen
+    confuse
+    egregore_summon
+    reduce
+    chemotaxis
+    apoptosis
+    modulate
+    prism
+    locate
+    self_rewrite
+    rebirth
+}
+
+strand strand_67 {
+    diffract
+    entropy_surge
+    frankenstein
+    call
+    attractor_surf
+}
+
+strand strand_68 {
+    mesh_prune
+    inscribe
+    mesh_send
+    sense_volt
+    cipher
+    compile
+}
+
+strand strand_69 {
+    incubate
+    hyphae
+    egregore_summon
+    akashic_read
+    karma
+    entropy_surge
+    collapse
+    egregore_query
+    cambrian
+    lt
+    pigment
+    rebirth
+    mesh_grow
+    chronos
+    unknot
+    confuse
+    unpocket
+    scanline
+}
+
+strand strand_70 {
+    miracle
+    reflex
+    horcrux
+    attractor_surf
+    zip_with
+    scribe
+    collapse
+    generate
+    unravel
+    draw
+    quake
+    shape
+    sonic_claim
+    sense_mutagen
+    self_rewrite
+    hologram
+    storm
+    cord
+    observe
+}
+
+strand strand_71 {
+    radiate
+    shape
+    differentiate
+    swap
+    akashic_write
+    unpocket
+    rune
+    scan
+    splice
+    quantum_scribe
+    accrete
+    identity
+    anneal
+    cambrian
+}
+
+strand strand_72 {
+    signify
+    bio_hack
+    diffract
+    define_rule
+    s_len
+    lysis
+    akashic_load
+    babel_live
+    mesh_send
+    eq
+    sense_volt
+}
+
+strand strand_73 {
+    evo_score
+    volcano
+    mesh_net
+    dimension
+    egregore_link
+    sense_biome
+    mesh_recv
+    bind
+    charter
+    crucible
+    charter
+    hyper_add
+    egregore_link
+    signify
+    lysis
+}
+
+strand strand_74 {
+    photophore
+    superpose
+    verify
+    listen
+    meme
+    membrane
+    sense_pigment
+}
+
+strand strand_75 {
+    havoc_scope
+    assert
+    gravitate
+    match
+    crossover
+    scan
+}
+
+strand strand_76 {
+    rest
+    tune
+    chart
+    patch
+    synthesize
+    unpocket
+    galvanize
+    div
+    listen
+    luciferin
+    s_index
+    hyper_add
+    absorb
+    sow
+    evo_breed
+    phase_shift
+    cipher
+}
+
+strand strand_77 {
+    d_write
+    unknot
+    integrase
+    unravel
+    bind
+    singularity
+    egregore_summon
+    transposon
+}
+
+strand strand_78 {
+    etymology
+    chronos
+    etymology
+    ouroboros
+    egregore_channel
+    miracle
+    telomerase
+    digest
+    splice
+    clarify
+    reflector
+    identity
+    patch
+    telomerase
+    quote
+    entangle
+    conceive
+    reaction
+    bit_not
+}
+
+strand strand_79 {
+    decompile
+    listen
+    censor
+    interpret
+    plant
+    dream
+    shl
+    censor
+    drift
+    quantum_tunnel
+    dup
+    electrophoresis
+    evo_store
+    bit_not
+    unknot
+}
+
+strand strand_80 {
+    interpret
+    poly
+    identity
+    sing
+    aeolus
+    t_len
+    galvanize
+    filter
+    push
+    quote
+    forge
+    aeolus
+    hyper_add
+    dry
+}
+
+strand strand_81 {
+    parser_alt_n
+    pray
+    d_view
+    iterate
+    transposon
+    scanline
+    gt
+    wire_growth
+    nucleate
+    invest
+    censor
+    lisp_eval
+    inscribe
+    track
+    sporulate
+    plant
+    mod
+    outbreak
+    holo_speak
+}
+
+strand strand_82 {
+    evo_save
+    sediment
+    self_replicate
+    plant
+    etymology
+    string_tune
+    guild
+    retract
+    hyper_div
+    siphon
+    shock
+    lisp_eval
+    scanline
+    resonate
+    d_merge
+    unknot
+    void_rift
+    augury
+    outbreak
+}
+
+strand strand_83 {
+    tesla_coil
+    interpret
+    cymatic_scan
+    lisp_eval
+    genome
+    divergence
+    infect
+    morphogen
+    hyper_sub
+    germinate
+    zip
+    listen_freq
+}
+
+strand strand_84 {
+    excision
+    bit_or
+    shock
+    push
+    read_cord
+    retrograde
+    irradiate
+    chronostasis
+    plant
+    print
+    patch
+    devour
+    lysis
+}
+
+strand strand_85 {
+    chr
+    atlas
+    grammar
+    hyper_mul
+    hox_switch
+    attractor_surf
+    unbond
+    havoc_rate
+    d_read
+    match
+    chronos
+    define
+    memristor
+    dictionary
+    quote
+    shape
+}
+
+strand strand_86 {
+    quake
+    zip
+    lumine
+    evo_replace
+    divinate
+    memristor
+}
+
+strand strand_87 {
+    mutagen
+    locate
+    genesis
+    miracle
+    evo_mutate
+    salvo
+    electrogenesis
+    string_listen
+}
+
+strand strand_88 {
+    ticker
+    compile
+    codex
+    query
+    emit
+    restore
+    havoc_rate
+    parser_alt
+    parser_alt_n
+    hyper_mul
+    absorb_geometry
+    singularity
+}
+
+strand strand_89 {
+    fossilize
+    photophore
+    tangle
+    d_write
+    manifest
+    rift
+    lightning
+    drop
+    d_view
+    jump_s
+}
+
+strand strand_90 {
+    egregore_channel
+    eq
+    luciferin
+    quantum_jump
+    sing
+    tectonics
+    chart
+    time_loop
+}
+
+strand strand_91 {
+    unbind
+    project_geometry
+    induction
+    stabilize
+    unravel
+}
+
+strand strand_92 {
+    shl
+    muscle
+    electrophoresis
+    tsunami
+    retina_clear
+    parser_seq_n
+}
+
+strand strand_93 {
+    read_cord
+    audit
+    babel_compile
+    diffract
+    retina_draw
+    choir
+    transcribe
+    charter
+    retina_clear
+}
+
+strand strand_94 {
+    gravitate
+    auto_cast
+    digest
+    escape
+    tsunami
+    string_tune
+    attractor_step
+    generate
+    karma
+    time_warp
+    void_rift
+    evo_pop_size
+    auto_cast
+    attractor_surf
+    nop
+    unearth
+    meme
+}
+
+strand strand_95 {
+    germinate
+    retina_draw
+    verify
+    time_warp
+    signal
+    self_rewrite
+    adhere
+    evo_save
+    egregore_channel
+    mul
+    carbon_date
+    meme
+    parser_seq
+    parser_alt_n
+    lens
+    attractor_step
+    babel_live
+    deconstruct
+    reincarnate
+}
+
+strand strand_96 {
+    d_view
+    prism
+    brz_s
+    verify
+    bio_hack
+    sense_glyph
+    retina_clear
+    disintegrate
+    devour
+    mitosis
+    attractor_map
+    attractor_surf
+    print
+    sense_biome
+    forge
+    chronostasis
+    pray
+    t_len
+    miracle
+}
+
+strand strand_97 {
+    fold
+    connect
+    guild
+    invoke
+    add
+    weave
+    alchemy
+    track
+    parser_alt_n
+}
+
+strand strand_98 {
+    atlas
+    entangle
+    void
+    find_all
+    luciferin
+    grow
+    brz_s
+    fire
+    stabilize
+    restore
+    receive
+    filter
+    pigment
+    string_listen
+    entropy_surge
+    differentiate
+    lens
+    bit_or
+}
+
+strand strand_99 {
+    shr
+    brainfuck
+    knot
+    conjugate
+    void
+    restore
+    print
+    iterate
+    carbon_date
+    telomerase
+}
+
+strand strand_100 {
+    void_cast
+    egregore_tithe
+    decohere
+    perform
+    claim
+    egregore_channel
+    hyphae
+    codex
+}
+
+strand strand_101 {
+    anagram
+    generate
+    mul
+    sensor
+    retroscope
+    symbiosis
+    sovereignty
+    muscle
+}
+
+strand strand_102 {
+    sense_wind
+    entropy
+    mesh_recv
+    patch
+    sense_volt
+    photophore
+    s_index
+    swap
+    lens
+    scavenge
+    brz
+    attractor_step
+    lt
+    bury
+    sanitize
+    unknown
+    egregore_link
+}
+
+strand strand_103 {
+    unbind
+    muscle
+    tissue
+    time_warp
+    scramble
+    terraform
+    unpocket
+    phase_shift
+    prophecy
+}
+
+strand strand_104 {
+    add
+    egregore_summon
+    unknot
+    refract
+    holo_invoke
+    evolve
+    buy
+    zip_with
+    resonate
+    retract
+    mesh_send
+    carbon_date
+    drift
+    define
+}
+
+strand strand_105 {
+    ground
+    divest
+    hyper_sub
+    railgun
+    sacrifice
+    crossover
+    rasterize
+    tongue
+    bit_not
+    spore_cloud
+    ground
+}
+
+strand strand_106 {
+    unbind
+    tune
+    scan
+    pan
+    t_len
+    exhume
+    miracle
+}
+
+strand strand_107 {
+    dampen
+    diode
+    chart
+    lisp_eval
+    broadcast
+    seance
+    morph
+    evo_replace
+    print
+    tax
+}
+
+strand strand_108 {
+    superpose
+    d_write
+    guild
+    logistics
+    meme
+    gravitate
+}
+
+strand strand_109 {
+    deconstruct
+    logistics
+    self_rewrite
+    drift
+    string_tune
+    julia
+    dry
+    helix_len
+    logos
+}
+
+strand strand_110 {
+    synthesize
+    rasterize
+    match
+    divinate
+    attractor_surf
+    entropy_surge
+    context_shift
+    rune
+    modulate
+    capacitor
+}
+
+strand strand_111 {
+    observe
+    cambrian
+    crucible
+    grid_grammar
+    tempo
+    compose
+    mourn
+    interpret
+    terraform
+    parser_alt
+    membrane
+    conceive
+}
+
+strand strand_112 {
+    disintegrate
+    bit_xor
+    parser_regex
+    pan
+    reflex
+    seek
+    phase_shift
+    reduce
+    conjugate
+}
+
+strand strand_113 {
+    bond
+    photosynthesize
+    tui_mod
+    sanitize
+    brz
+    shr
+    ret
+    unify
+    detox
+    d_merge
+    drop
+    photophore
+    outbreak
+}
+
+strand strand_114 {
+    weave
+    track
+    pangram
+    ley_shift
+    receive
+    offer
+    tongue
+    bind
+    seal
+    drift
+    fossilize
+    galvanize
+    meme
+    hyper_add
+    tui_mod
+}
+
+strand strand_115 {
+    bio_hack
+    cipher
+    transistor
+    splice
+    clarify
+    grammar
+    forget
+    auto_cast
+    spore_cloud
+    string_listen
+    jump
+    egregore_channel
+    entropy
+    string_pluck
+    glossolalia
+    tectonics
+    mesh_prune
+    absorb_geometry
+}
+
+strand strand_116 {
+    disintegrate
+    diode
+    volcano
+    bond
+    egregore_channel
+    bit_and
+    recombine
+    parser_alt_n
+    etymology
+    seance
+    fossilize
+    photophore
+    evo_score
+    tesla_coil
+    cymatic_scan
+    chaos
+    ley_sense
+    evo_load
+    diffract
+}
+
+strand strand_117 {
+    germinate
+    retroscope
+    evo_mutate
+    exhume
+    project_geometry
+    match
+    atlas
+    glyph
+    prophecy
+    context_shift
+    apoptosis
+    refract
+    d_merge
+}
+
+strand strand_118 {
+    consume
+    augury
+    photosynthesize
+    blackbox
+    gt
+    evo_clear
+    glyph
+}
+
+strand strand_119 {
+    entropy_surge
+    crossover
+    pangram
+    invoke
+    ground
+    cross
+    hologram
+    nucleate
+    sonar
+    d_read
+    seance
+    time_loop
+    adhere
+    ouroboros
+    sense_pigment
+    julia
+    sense_wind
+}
+
+strand strand_120 {
+    disintegrate
+    sense_wind
+    nop
+    chronostasis
+    cipher
+    alchemy
+    mesh_recv
+}
+
+strand strand_121 {
+    sediment
+    circuit_breaker
+    knot
+    parser_opt
+    dimension
+    bond
+    listen_freq
+    outbreak
+    prolog_call
+    retrograde
+    phase_shift
+    havoc_rate
+    chronos_splice
+    g_read
+    crossover
+}
+
+strand strand_122 {
+    morph
+    adhere
+    photosynthesize
+    reflector
+    unbind
+    speak
+    swap
+    mandelbrot
+    metamorphosis
+    refract
+    hyphae
+    ligase
+}
+
+strand strand_123 {
+    unravel
+    gene_len
+    divergence
+    photosynthesize
+    mesh_send
+    etymology
+    spore_cloud
+}
+
+strand strand_124 {
+    ley_shift
+    add
+    scramble
+    grow
+    t_len
+    censor
+    resonate
+    muscle
+    metamorphosis
+    time_loop
+    sub
+    call
+    ouroboros
+    remap
+}
+
+strand strand_125 {
+    entropy_surge
+    diode
+    receive
+    railgun
+    context_shift
+    manifest
+    sense_glyph
+    unravel
+    bit_xor
+    dup
+    phase_mutate
+    absorb_geometry
+    patch
+    egregore_summon
+    scanline
+    sub
+}
+
+strand strand_126 {
+    hyper_sub
+    tax
+    apoptosis
+    project
+    parse
+    push
+    akashic_save
+    phase_mutate
+    irradiate
+    parser_many
+    sense_wind
+    graviton
+    nop
+    attractor_init
+    observe
+}
+
+strand strand_127 {
+    filter
+    digest
+    consume
+    horcrux
+    harmonize
+    outbreak
+    unravel
+    t_len
+    context_shift
+}
+
+strand strand_128 {
+    buy
+    evo_mutate
+    unpocket
+    graviton
+    string_pluck
+    map
+    lumine
+    alchemy
+    ligase
+    bit_and
+    cross
+}
+
+strand strand_129 {
+    print
+    jump(0)
+    evo_pop_size
+    censor
+    infect
+    railgun
+    propagate
+    bit_xor
+    anneal
+    hyper_div
+    print
+    pray
+    void
+    consume
+    levenshtein
+    memristor
+    nucleate
+    g_read
+    unknown
+    symbiosis
+    membrane
+    find_all
+    unify
+    dampen
+    divinate
+    apoptosis
+    rest
+    query
+    quantum_tunnel
+    parser_alt_n
+    holo_speak
+    singularity
+    parse
+    absorb
+    d_read
+    filter
+    add
+    symbolize
+    holo_sonify
+    forge
+    lightning
+    chronostasis
+    parser_match
+    fire
+    assert
+    accrete
+    grammar
+    eq
+    carbon_date
+    quote
+    digest
+    compose
+    sense_light
+    mirror
+    helix_len
+    patch
+    photosynthesize
+    muscle
+    retract
+    sonar
+    stabilize
+    scramble
+    identity
+    splice
+    excision
+    d_merge
+    babel_live
+    dream
+    railgun
+    electrogenesis
+    bit_not
+    prologue
+    meme
+    quote
+    disintegrate
+    akashic_read
+    note
+    cord
+    manifest
+    g_read
+    bond
+    push
+    relativity
+    guild
+    sense_glyph
+    absorb_geometry
+    akashic_load
+    devour
+    splash
+    gt
+    recombine
+    fire
+    modulate
+    crossover
+    superpose
+    decompile
+    transposon
+    emit
+    reduce
+    void_cast
+    entropy
+    consume
+    offer
+    parse
+    superpose
+    isomerize
+    phase_shift
+    entropy
+    sensor
+    brz
+    crispr_scan
+    prologue
+    consume
+    retract
+    anneal
+    sense_wind
+    rest
+    harmonize
+    brz_s
+    graviton
+    div
+    grow
+    retina_draw
+    div
+    egregore_link
+    cross
+    unpocket
+    splash
+    orca
+    entangle
+    shock
+    mirror
+    lightning
+    pigment
+    telomerase
+    babel_compile
+    mul
+    cymatic_scan
+    forge
+    photosynthesize
+    drift
+    zip_with
+    clarify
+    tangle
+    synthesize
+    irradiate
+    bond
+    detect
+    sing
+    unearth
+    event_horizon
+    mesh_recv
+    exec
+    chain
+    bit_xor
+    sanitize
+    call
+    brz
+    stabilize
+    evo_load
+    chaos
+    transposon
+    morph
+    s_index
+    quantum_tunnel
+    draw
+    irradiate
+    div
+    salvo
+    mesh_prune
+    swap
+    bit_and
+    quantum_scribe
+    chr
+    operator
+    reflex
+    mitosis
+    tongue
+    cymatic_scan
+    fire
+    railgun
+    brainfuck
+    exec
+    dup
+    adhere
+    lucid
+    pray
+    frankenstein
+    photosynthesize
+    d_merge
+    cambrian
+    note
+    broadcast
+    zoom
+    g_read
+    exhume
+    lucid
+    graviton
+    exec
+    parser_regex
+    nop
+    paradox
+    sense_mutagen
+    stabilize
+    jump
+    shape
+    poly
+    div
+    julia
+    dampen
+    miracle
+    fire
+    glyph
+    g_write
+    chronos
+    mesh_grow
+    ligase
+    meme
+    define_rule
+    knot
+    collapse
+    phase_mutate
+    ret
+    havoc_rate
+    capacitor
+    ley_sense
+    poly
+    inscribe
+    rest
+    ouroboros
+    transcribe
+    s_len
+    havoc_scope
+    synthesize
+    transistor
+    egregore_summon
+    meme
+    add
+    tesla_coil
+    poly
+    undefine
+    define_rule
+    choir
+    dry
+    akashic_save
+    lightning
+    dup
+    tui_mod
+    scanline
+    hyper_add
+    rule
+    dup
+    hyper_mul
+    muscle
+    wire_growth
+    evo_breed
+    unravel
+    irradiate
+    reincarnate
+    unravel
+    d_merge
+    g_read
+    osmosis
+    detox
+    div
+    unearth
+    divergence
+    choir
+    retina_draw
+    electrogenesis
+    pray
+    tangle
+    tune
+    photosynthesize
+    operator
+    manifest
+    observe
+    parser_regex
+    meme
+    zoom
+    railgun
+    graviton
+    evo_save
+    absorb_geometry
+    modulate
+    tangle
+    div
+    glossolalia
+    scramble
+    invoke
+    parser_seq_n
+    augury
+    patch
+    push
+    map
+    swap
+    metamorphosis
+    div
+    germinate
+    piet
+    circuit_breaker
+    conjugate
+    bio_hack
+    query
+    metamorphosis
+    quantum_jump
+    evo_mutate
+    prologue
+    jump
+    tui_mod
+    babel_compile
+    void_rift
+    event_horizon
+    jump
+    havoc_rate
+    karma
+    print
+    scavenge
+    absorb
+    lisp_eval
+    pigment
+    exec
+    splice
+    divest
+    ticker
+    mesh_recv
+    aeolus
+    sense_volt
+    dup
+    poly
+    filter
+    quake
+    shuffle
+    d_view
+    poly
+    relativity
+    circuit_breaker
+    cas9_cut
+    reactor
+    sense_pigment
+    sensor
+    holo_sonify
+    holo_sonify
+    print
+    cymatic_scan
+    cymatic_scan
+    egregore_summon
+    string_tune
+    brz
+    blackbox
+    restore
+    drop
+    erode
+    reincarnate
+    poly
+    osmosis
+    scavenge
+    rebirth
+    reflex
+    prologue
+    push
+    sense_glyph
+    project_geometry
+    compile
+    transcribe
+    recombine
+    ouroboros
+    unbond
+    photosynthesize
+    drop
+    confuse
+    query
+    rift
+    censor
+    div
+    soundex
+    soundex
+    gene_len
+    push
+    evo_replace
+    d_read
+    chronostasis
+    relativity
+    synthesize
+    iterate
+    pocket
+    parser_seq
+    tsunami
+    drift
+    seek
+    sonic_claim
+    fossilize
+    curry
+    s_index
+    t_len
+    lt
+    singularity
+    g_read
+    holo_sonify
+    parser_opt
+    ligase
+    brainfuck
+    meme
+    div
+    sense_mutagen
+    broadcast
+    anneal
+    nop
+    plant
+    g_read
+    diode
+    parse
+    sense_mutagen
+    sense_wind
+    bit_not
+    gene_len
+    brz
+    define_rule
+    lisp_eval
+    prolog_call
+    evo_breed
+    chr
+    photosynthesize
+    akashic_read
+    sub
+    time_loop
+    infect
+    holo_invoke
+    paradox
+    sense_mutagen
+    refract
+    lt
+    relativity
+    manifest
+    sonar
+    diffract
+    grow
+    sub
+    lucid
+    detox
+    photosynthesize
+    orca
+    circuit_breaker
+    hologram
+    egregore_query
+    define
+    operator
+    egregore_query
+    supernova
+    cord
+    fate
+    piet
+    push
+    rebirth
+    fire
+    project
+    d_merge
+    define_rule
+    drop
+    refract
+    evo_mutate
+    superpose
+    s_index
+    attractor_step
+    forge
+    drop
+    synthesize
+    memristor
+    diode
+    unbind
+    context_shift
+    identity
+    cede
+    sub
+    spore_cloud
+    hox_switch
+    scanline
+    zip_with
+    meme
+    seek
+    g_write
+    match
+    helix_len
+    perform
+    weave
+    sense_moisture
+    hyper_div
+    chemotaxis
+    absorb
+    reflector
+    eval
+    sub
+    parser_opt
+    mesh_net
+    recombine
+    verify
+    jump
+    mod
+    ley_shift
+    g_write
+    tesla_coil
+    exhume
+    forget
+    sporulate
+    splash
+    mul
+    sonar
+    poly
+    filter
+    reincarnate
+    quantum_scribe
+    blackbox
+    unknot
+    sense_light
+    seal
+    tui_mod
+    auto_cast
+    gravitate
+    telomerase
+    methylate
+    add
+    hyper_mul
+    lightning
+    carbon_date
+    railgun
+    egregore_channel
+    entropy_surge
+    receive
+    emit
+    reaction
+    radiate
+    pan
+    confuse
+    phase_shift
+    anagram
+    mandelbrot
+    tui_mod
+    synthesize
+    swap
+    augury
+    scribe
+    speak
+    map
+    metamorphosis
+    tune
+    brz
+    g_write
+    aeolus
+    tesla_coil
+    egregore_tithe
+    membrane
+    swap
+    pangram
+    crossover
+    g_read
+    grow
+    fold
+    helix_len
+    div
+    supernova
+    sediment
+    s_index
+    invoke
+    conceive
+    query
+    genome
+    phase_shift
+    lisp_eval
+    void_rift
+    sub
+    secrete
+    genome
+    lisp_eval
+    void_rift
+    rune
+    track
+    reaction
+    sediment
+    karma
+    blackbox
+    push
+    orca
+    superpose
+    havoc_rate
+    refract
+    diffract
+    salvo
+    splash
+    photosynthesize
+    divergence
+    bit_and
+    secrete
+    attractor_map
+    jump
+    photophore
+    glitch
+    div
+    conceive
+    phase_mutate
+    julia
+    attractor_map
+    shr
+    ley_warp
+    self_replicate
+    sense_mutagen
+    conceive
+    generate
+    broadcast
+    spirit
+    map
+    project_geometry
+    sub
+    parser_opt
+    mesh_prune
+    unbind
+    mul
+    rule
+    scanline
+    add
+    pan
+    quantum_tunnel
+    speak
+    genesis
+    sense_glyph
+    evo_store
+    reaction
+    self_replicate
+    string_pluck
+    print
+    isomerize
+    broadcast
+    rest
+    conceive
+    holo_speak
+    escape
+    catalyze
+    transport
+    scan
+    hyper_mul
+    evo_replace
+    consume
+    drop
+    sub
+    julia
+    sonic_claim
+    add
+    cymatic_scan
+    ouroboros
+    catalyze
+    splash
+    div
+    unpocket
+    holo_invoke
+    find_all
+    quantum_scribe
+    photosynthesize
+    siphon
+    shl
+    mesh_send
+    meme
+    drift
+    evo_replace
+    meme
+    meme
+    excision
+    sense_light
+    absorb
+    weave
+    transcribe
+    babel_compile
+    entropy_surge
+    manifest
+    buy
+    lucid
+    osmosis
+    mix
+    sonar
+    digest
+    attractor_map
+    dictionary
+    tangle
+    induction
+    t_len
+    ligase
+    remap
+    reduce
+    attractor_map
+    perceive
+    lisp_eval
+    ley_sense
+    compose
+    unknown
+    divinate
+    parser_match
+    meme
+    chart
+    mul
+    scan
+    photosynthesize
+    interpret
+    holo_invoke
+    dimension
+    migrate
+    retina_size
+    brz
+    context_shift
+    context_shift
+    simulate
+    define
+    t_len
+    dup
+    chronos_splice
+    tempo
+    augury
+    unify
+    metamorphosis
+    atlas
+    censor
+    devour
+    ley_warp
+    brew
+    forget
+    circuit_breaker
+    attractor_init
+    telomerase
+    sense_glyph
+    string_pluck
+    scanline
+    cross
+    pigment
+    piet
+    dry
+    signify
+    virus
+    sense_moisture
+    sonar
+    exec
+    parser_alt_n
+    swap
+    phase_shift
+    parser_regex
+    egregore_tithe
+    ouroboros
+    add
+    augury
+    photophore
+    attractor_surf
+    miracle
+    attractor_surf
+    bit_or
+    d_view
+    absorb
+    outbreak
+    sovereignty
+    tectonics
+    mul
+    morphogen
+    string_new
+    rift
+    add
+    push
+    pray
+    sense_volt
+    genesis
+    escape
+    isomerize
+    entropy
+    d_view
+    egregore_channel
+    parser_many
+    mesh_recv
+    d_read
+    jump
+    poly
+    define_rule
+    devour
+    lumine
+    lt
+    photophore
+    mitosis
+    mul
+    transistor
+    sub
+    consume
+    bit_and
+    push
+    attractor_step
+    string_tune
+    pray
+    brz_s
+    brainfuck
+    detox
+    project
+    quantum_scribe
+    div
+    meme
+    parser_opt
+    evo_store
+    alchemy
+    egregore_summon
+    poly
+    logos
+    horcrux
+    tempo
+    shibboleth
+    resonate
+    differentiate
+    entropy_surge
+    storm
+    sense_biome
+    exec
+    sacrifice
+    photosynthesize
+    akashic_save
+    time_warp
+    div
+    attractor_surf
+    capacitor
+    secrete
+    horcrux
+    quote
+    egregore_summon
+    photosynthesize
+    miracle
+    singularity
+    evo_replace
+    div
+    escape
+    plant
+    observe
+    egregore_tithe
+    adhere
+    hyper_div
+    virus
+    div
+    collapse
+    holo_invoke
+    add
+    dampen
+    spawn
+    t_len
+    singularity
+    mix
+    rebirth
+    glyph
+    diode
+    hyper_sub
+    nop
+    add
+    lightning
+    cas9_cut
+    siphon
+    crossover
+    d_read
+    electrophoresis
+    audit
+    reactor
+    swap
+    g_write
+    void_rift
+    push
+    lt
+    superpose
+    carbon_date
+    dimension
+    verify
+    mesh_send
+    spore_cloud
+    scramble
+    pangram
+    dictionary
+    t_len
+    jump
+    patch
+    excision
+    atlas
+    glossolalia
+    plant
+    evo_load
+    lightning
+    g_write
+    receive
+    query
+    telomerase
+    absorb
+    time_warp
+    singularity
+    ley_warp
+    lens
+    read_cord
+    ley_tap
+    graviton
+    memristor
+    crispr_scan
+    g_read
+    auto_cast
+    egregore_query
+    morphogen
+    unknot
+    crispr_scan
+    reactor
+    excision
+    auto_cast
+    perform
+    evo_mutate
+    egregore_query
+    sow
+    dup
+    hyper_sub
+    div
+    tongue
+    aeolus
+    retrograde
+    censor
+    gene_len
+    bond
+    mul
+    cipher
+    glyph
+    akashic_load
+    listen_freq
+    prism
+    tsunami
+    photosynthesize
+    osmosis
+    div
+    tempo
+    bit_and
+    unify
+    detect
+    map
+    helix_len
+    ley_sense
+    string_pluck
+    bit_not
+    pigment
+    unbind
+    entangle
+    reflex
+    genesis
+    d_write
+    jump_s
+    exec
+    chronos_splice
+    telomerase
+    grid_grammar
+    genome
+    speak
+    digest
+    add
+    quantum_scribe
+    mandelbrot
+    chronos_splice
+    genome
+    self_replicate
+    push
+    incubate
+    drop
+    simulate
+    brz
+    eval
+    nop
+    egregore_channel
+    modulate
+    blackbox
+    note
+    claim
+    capacitor
+    g_read
+    quantum_scan
+    quantum_tunnel
+    retina_clear
+    singularity
+    plant
+    sub
+    mandelbrot
+    storm
+    mul
+    ret
+    query
+    tsunami
+    attractor_init
+    aeolus
+    signify
+    string_pluck
+    seal
+    speak
+    babel_compile
+    excision
+    collapse
+    forge
+    meme
+    akashic_save
+    prophecy
+    tissue
+    sense_pigment
+    chronos_splice
+    map
+    evo_save
+    tax
+    chart
+    chronos_splice
+    reduce
+    print
+    self_rewrite
+    invoke
+    sow
+    helix_len
+    piet
+    metamorphosis
+    tsunami
+    horcrux
+    prolog_call
+    nop
+    levenshtein
+    soundex
+    sacrifice
+    helix_len
+    zip
+    soundex
+    exhume
+    query
+    curry
+    phase_mutate
+    unify
+    unpocket
+    sub
+    singularity
+    chr
+    cede
+    simulate
+    transport
+    scavenge
+    railgun
+    drop
+    soundex
+    sense_light
+    reaction
+    hyper_add
+    escape
+    spore_cloud
+    knot
+    virus
+    chronos_splice
+    consume
+    chr
+    attractor_step
+    seal
+    verify
+    mod
+    tui_mod
+    reincarnate
+    siphon
+    rebirth
+    egregore_channel
+    mourn
+    lucid
+    interpret
+    knot
+    connect
+    ley_tap
+    invoke
+    brainfuck
+    evo_score
+    genesis
+    sanitize
+    evo_load
+    egregore_dictate
+    circuit_breaker
+    virus
+    excision
+    d_write
+    drop
+    unknown
+    transistor
+    cede
+    tangle
+    relativity
+    event_horizon
+    metamorphosis
+    string_tune
+    bit_not
+    div
+    jump
+    egregore_tithe
+    osmosis
+    verify
+    atlas
+    radiate
+    time_warp
+    rift
+    operator
+    eval
+    g_write
+    cipher
+    sub
+    charter
+    bit_and
+    diode
+    mandelbrot
+    unravel
+    egregore_tithe
+    entangle
+    dampen
+    ticker
+    akashic_read
+    match
+    memristor
+    grid_grammar
+    inscribe
+    auto_cast
+    unknown
+    cas9_cut
+    storm
+    invest
+    grammar
+    hologram
+    storm
+    sing
+    smell
+    excision
+    rasterize
+    divest
+    time_loop
+    cambrian
+    g_read
+    spore_cloud
+    photosynthesize
+    mesh_prune
+    drop
+    consume
+    metamorphosis
+    drop
+    spore_cloud
+    hyper_add
+    chain
+    retroscope
+    sow
+    mod
+    lysis
+    t_len
+    tesla_coil
+    g_write
+    sporulate
+    egregore_tithe
+    lisp_eval
+    digest
+    brew
+    g_read
+    shuffle
+    infect
+    sense_light
+    sonic_claim
+    luciferin
+    parse
+    divergence
+    volcano
+    sporulate
+    broadcast
+    cas9_cut
+    eq
+    bio_hack
+    ley_sense
+    graviton
+    sing
+    parser_match
+    fossilize
+    rule
+    unravel
+    conceive
+    detect
+    photosynthesize
+    g_read
+    wire_growth
+    aeolus
+    match
+    egregore_dictate
+    spore_cloud
+    perceive
+    decohere
+    photosynthesize
+    dream
+    bio_hack
+    compose
+    lt
+    gene_len
+    weave
+    mutagen
+    signify
+    dimension
+    push
+    brew
+    crucible
+    isomerize
+    scanline
+    patch
+    evo_breed
+    reflector
+    tesla_coil
+    sense_glyph
+    reaction
+    self_rewrite
+    print
+    eq
+    unify
+    time_loop
+    unknot
+    reduce
+    retina_size
+    babel_compile
+    babel_compile
+    cas9_cut
+    mix
+    tui_mod
+    add
+    collapse
+    aeolus
+    project_geometry
+    brainfuck
+    soundex
+    signify
+    frankenstein
+    shr
+    railgun
+    decompile
+    tesla_coil
+    catalyze
+    luciferin
+    mesh_prune
+    escape
+    manifest
+    hyper_add
+    muscle
+    secrete
+    mesh_prune
+    g_read
+    sub
+    divergence
+    osmosis
+    lt
+    superpose
+    hyper_div
+    sub
+    blackbox
+    akashic_save
+    piet
+    lumine
+    propagate
+    perform
+    rasterize
+    fossilize
+    splice
+    poly
+    logistics
+    sub
+    frankenstein
+    operator
+    mourn
+    entangle
+    mix
+    bio_hack
+    self_replicate
+    forget
+    photosynthesize
+    observe
+    fate
+    bond
+    circuit_breaker
+    operator
+    parser_regex
+    unbind
+    brz
+    sub
+    quote
+    curry
+    push
+    pray
+    g_write
+    modulate
+    rule
+    sense_light
+    volcano
+    mul
+    curry
+    detect
+    radiate
+    parser_match
+    muscle
+    dup
+    jump
+    hox_switch
+    crossover
+    detox
+    evolve
+    swap
+    decompile
+    g_write
+    akashic_save
+    time_warp
+    cas9_cut
+    project
+    spore_cloud
+    quote
+    gt
+    parser_seq
+    harmonize
+    julia
+    demethylate
+    shr
+    define
+    babel_live
+    logistics
+    blackbox
+    telomerase
+    babel_live
+    find_all
+    evo_score
+    egregore_dictate
+    symbiosis
+    helix_len
+    sing
+    poly
+    modulate
+    evo_mutate
+    offer
+    unearth
+    ley_sense
+    g_write
+    mandelbrot
+    listen
+    prolog_call
+    rebirth
+    connect
+    dimension
+    mourn
+    div
+    divinate
+    exec
+    crucible
+    genome
+    tissue
+    decohere
+    claim
+    diffract
+    mesh_send
+    read_cord
+    galvanize
+    disintegrate
+    erode
+    receive
+    retract
+    retroscope
+    phase_shift
+    egregore_dictate
+    reactor
+    detox
+    reactor
+    event_horizon
+    scramble
+    luciferin
+    string_listen
+    emit
+    tissue
+    jump
+    receive
+    tectonics
+    lumine
+    g_read
+    photosynthesize
+    erode
+    evo_load
+    recombine
+    scanline
+    brew
+    sub
+    reflex
+    sensor
+    auto_cast
+    augury
+    diode
+    irradiate
+    metamorphosis
+    brew
+    offer
+    self_replicate
+    egregore_dictate
+    observe
+    sub
+    dream
+    differentiate
+    sow
+    read_cord
+    attractor_surf
+    tax
+    electrogenesis
+    d_merge
+    electrogenesis
+    evo_replace
+    ward
+    d_view
+    string_listen
+    print
+    divergence
+    chain
+    chain
+    aeolus
+    mesh_net
+    attractor_map
+    perform
+    project_geometry
+    relativity
+    forge
+    excision
+    vaccinate
+    chemotaxis
+    detect
+    iterate
+    lumine
+    swap
+    parser_opt
+    rune
+    zip
+    parser_seq
+    integrase
+    meme
+    etymology
+    transposon
+    galvanize
+    memristor
+    luciferin
+    balance
+    dry
+    operator
+    define
+    babel_compile
+    sanitize
+    conjugate
+    parser_alt
+    curry
+    galvanize
+    phase_mutate
+    retract
+    crispr_scan
+    egregore_channel
+    catalyze
+    smell
+    rune
+    lens
+    self_rewrite
+    collapse
+    dream
+    sporulate
+    w_read
+    signal
+    claim
+    smell
+    parser_match
+    compile
+    g_read
+    disintegrate
+    akashic_read
+    mul
+    crossover
+    offer
+    ouroboros
+    battery
+    circuit_breaker
+    retina_draw
+    differentiate
+    entangle
+    muscle
+    scavenge
+    evo_load
+    quantum_jump
+    superpose
+    sediment
+    atlas
+    speak
+    rune
+    call
+    spirit
+    lisp_eval
+    time_warp
+    plant
+    morphogen
+    define
+    connect
+    superpose
+    demethylate
+    methylate
+    divinate
+    forge
+    entropy_surge
+    iterate
+    string_pluck
+    retina_clear
+    string_listen
+    supernova
+    tsunami
+    pangram
+    bond
+    jump
+    dup
+    retract
+    void_cast
+    conjugate
+    ley_sense
+    ley_warp
+    morphogen
+    photosynthesize
+    blackbox
+    seal
+    receive
+    push
+    siphon
+    push
+    censor
+    drop
+    rune
+    irradiate
+    divest
+    zip
+    storm
+    battery
+    d_view
+    digest
+    forge
+    ley_tap
+    quantum_tunnel
+    zoom
+    bond
+    lumine
+    conceive
+    zip_with
+    fossilize
+    sow
+    context_shift
+    induction
+    apoptosis
+    reflex
+    virus
+    reactor
+    atlas
+    quantum_jump
+    verify
+    smell
+    sub
+    shuffle
+    chemotaxis
+    quantum_tunnel
+    incubate
+    sub
+}
+
+strand strand_130 {
+    diffract
+    jump
+    salvo
+    morphogen
+    guild
+    sub
+    sense_wind
+    mutagen
+    quake
+    synthesize
+    sonic_claim
+    tempo
+    circuit_breaker
+    egregore_summon
+}
+
+strand strand_131 {
+    chronos_splice
+    find_all
+    reincarnate
+    connect
+    akashic_read
+    escape
+    s_len
+    ouroboros
+    grid_grammar
+    diode
+    divinate
+    lumine
+    radiate
+}
+
+strand strand_132 {
+    apoptosis
+    t_len
+    bit_or
+    find_all
+    manifest
+    conjugate
+    entangle
+    mesh_grow
+    escape
+    fossilize
+    egregore_dictate
+    guild
+    deconstruct
+    scramble
+    self_replicate
+    unpocket
+    invest
+}
+
+strand strand_133 {
+    sediment
+    choir
+    tangle
+    tui_mod
+    collapse
+    singularity
+    poly
+    rest
+    cede
+    nucleate
+    infect
+    unpocket
+}
+
+strand strand_134 {
+    prophecy
+    project
+    absorb_geometry
+    remap
+    rune
+    curry
+    evolve
+}
+
+strand strand_135 {
+    cord
+    fold
+    brz
+    karma
+    eq
+    soundex
+    egregore_tithe
+    havoc_scope
+}
+
+strand strand_136 {
+    erode
+    unbind
+    parser_many
+    retroscope
+    sense_mutagen
+    sense_wind
+    sacrifice
+    scanline
+    quantum_scribe
+    conceive
+    sing
+}
+
+strand strand_137 {
+    disintegrate
+    event_horizon
+    bury
+    induction
+    resonate
+    shape
+    digest
+    battery
+    buy
+    connect
+    prophecy
+    choir
+    restore
+    balance
+    miracle
+    detect
+    quantum_jump
+    tesla_coil
+}
+
+strand strand_138 {
+    dry
+    sporulate
+    mesh_send
+    unravel
+    hyper_add
+    sensor
+    glossolalia
+    galvanize
+    self_rewrite
+    seek
+    shr
+    exhume
+    scribe
+    muscle
+    evo_score
+}
+
+strand strand_139 {
+    logistics
+    curry
+    rune
+    retrograde
+    mesh_net
+    chemotaxis
+    hyper_div
+    terraform
+    singularity
+}
+
+strand strand_140 {
+    retrograde
+    retract
+    tempo
+    graviton
+    sporulate
+    g_read
+    conjugate
+    sense_moisture
+    cas9_cut
+    catalyze
+    cymatic_scan
+    rule
+    lisp_eval
+    attractor_map
+    parser_seq
+    evo_pop_size
+    lysis
+    chart
+    julia
+}
+
+strand strand_141 {
+    undefine
+    adhere
+    sediment
+    ley_shift
+    shr
+    consume
+    salvo
+    glyph
+    memristor
+    fate
+    cord
+    dictionary
+    g_read
+    crispr_scan
+    call
+}
+
+strand strand_142 {
+    photosynthesize
+    quake
+    audit
+    buy
+    lightning
+    shibboleth
+    bit_or
+    sediment
+    hyphae
+    stabilize
+    scribe
+    d_merge
+    anagram
+}
+
+strand strand_143 {
+    define_rule
+    migrate
+    glitch
+    note
+    parser_alt
+}
+
+strand strand_144 {
+    clarify
+    add
+    adhere
+    define
+    forget
+    splice
+    rune
+    singularity
+    ligase
+    egregore_channel
+    sacrifice
+    bit_and
+    morphogen
+    pan
+    retrograde
+    sub
+    modulate
+    inscribe
+    irradiate
+}
+
+strand strand_145 {
+    bit_and
+    babel_compile
+    remap
+    quantum_scribe
+    sing
+    sovereignty
+    gt
+    time_loop
+    reflector
+    auto_cast
+    evo_breed
+    sensor
+    evolve
+    meme
+    cipher
+    weave
+    audit
+}
+
+strand strand_146 {
+    glossolalia
+    rebirth
+    bit_xor
+    havoc_rate
+    sanitize
+    decompile
+    transport
+    identity
+    genome
+    alchemy
+    germinate
+    digest
+    cipher
+    tesla_coil
+    lt
+    compose
+    cas9_cut
+}
+
+strand strand_147 {
+    cas9_cut
+    attractor_map
+    synthesize
+    diode
+    symbolize
+    event_horizon
+    exhume
+    offer
+    circuit_breaker
+    deconstruct
+}
+
+strand strand_148 {
+    evo_save
+    egregore_dictate
+    absorb
+    seek
+    sediment
+    chart
+    entangle
+    receive
+    telomerase
+    alchemy
+    brz
+    time_loop
+    bit_or
+    splice
+    bond
+    hox_switch
+    drop
+    g_read
+}
+
+strand strand_149 {
+    s_index
+    seal
+    cymatic_scan
+    prolog_call
+    logos
+    sow
+    meme
+    terraform
+    parser_seq
+    grammar
+    shape
+    parser_regex
+}
+
+strand strand_150 {
+    zip
+    interfere
+    nucleate
+    crossover
+    shr
+    choir
+    germinate
+    shuffle
+}
+
+strand strand_151 {
+}
+
+strand strand_152 {
+    egregore_channel
+    collapse
+    recombine
+    track
+    phase_shift
+    luciferin
+    ward
+    ticker
+    quote
+    tempo
+    integrase
+    time_warp
+}
+
+strand strand_153 {
+    anneal
+    tui_mod
+    speak
+    receive
+    electrogenesis
+    havoc_rate
+    shuffle
+    fire
+    unpocket
+    digest
+    sense_biome
+    invest
+    sovereignty
+    entangle
+    egregore_summon
+    grid_grammar
+    harmonize
+    locate
+}
+
+strand strand_154 {
+    manifest
+    eq
+    string_tune
+    unravel
+    evo_save
+    helix_len
+    chr
+    chr
+    photosynthesize
+    sense_volt
+    wire_growth
+    evo_store
+    attractor_map
+    hyphae
+    void_rift
+    germinate
+    ground
+    lysis
+}
+
+strand strand_155 {
+    radiate
+    void_rift
+    electrogenesis
+    evo_store
+    listen_freq
+    splice
+    confuse
+    prolog_call
+    shuffle
+    rune
+    mesh_send
+    deconstruct
+    akashic_save
+}
+
+strand strand_156 {
+    luciferin
+    mesh_net
+    query
+    irradiate
+    cymatic_scan
+    supernova
+    bit_or
+    quote
+    eq
+    print
+    resonate
+    egregore_tithe
+    project_geometry
+}
+
+strand strand_157 {
+    wire_growth
+    d_read
+    s_len
+    zip_with
+    babel_live
+    telomerase
+    unearth
+    knot
+    lens
+    bond
+    sacrifice
+    julia
+    memristor
+    ley_tap
+    sense_light
+    chronos
+    lucid
+}
+
+strand strand_158 {
+    propagate
+    quake
+    retina_draw
+    divinate
+    soundex
+    unpocket
+    evo_mutate
+    unravel
+    metamorphosis
+    bind
+    d_merge
+    siphon
+    pangram
+}
+
+strand strand_159 {
+    akashic_save
+    babel_live
+    recombine
+    filter
+    retrograde
+    div
+    sense_light
+    mandelbrot
+    ward
+    fate
+}
+
+strand strand_160 {
+    secrete
+    dimension
+    seal
+    mesh_send
+    frankenstein
+    guild
+    julia
+    terraform
+    shr
+    reflector
+    paradox
+    tempo
+    chaos
+    virus
+    cas9_cut
+}
+
+strand strand_161 {
+    evo_breed
+    havoc_rate
+    entropy
+    propagate
+    poly
+    reduce
+    irradiate
+    mesh_send
+    membrane
+    metamorphosis
+    parser_seq_n
+    interpret
+    sonar
+    quantum_jump
+    emit
+    holo_invoke
+    relativity
+    sediment
+    quantum_scribe
+}
+
+strand strand_162 {
+    project_geometry
+    remap
+    quake
+    sovereignty
+    unearth
+    absorb
+    sense_glyph
+    grid_grammar
+    retina_size
+    ley_shift
+    hyper_mul
+    shibboleth
+    ley_sense
+    exhume
+}
+
+strand strand_163 {
+    invoke
+    hyper_sub
+    egregore_link
+    brz
+    secrete
+    symbolize
+    photophore
+    virus
+    evo_load
+    sub
+    listen
+    undefine
+    mesh_prune
+    grammar
+    ticker
+    rasterize
+}
+
+strand strand_164 {
+    define
+    babel_compile
+    sense_volt
+    shape
+    shibboleth
+    evo_breed
+    evo_load
+    pray
+    pocket
+    remap
+    diode
+    shock
+    attractor_map
+    censor
+    evo_mutate
+}
+
+strand strand_165 {
+    sow
+    guild
+    assert
+    pan
+    invoke
+    nucleate
+    scan
+    parser_alt_n
+    lens
+    tongue
+    evo_load
+}
+
+strand strand_166 {
+    retrograde
+    differentiate
+    piet
+    mutagen
+    forge
+    galvanize
+    t_len
+    listen_freq
+    string_tune
+    fold
+    miracle
+    akashic_write
+    bond
+}
+
+strand strand_167 {
+    attractor_init
+    brew
+    perceive
+    genome
+    listen_freq
+    reflector
+    ley_tap
+    mesh_prune
+    sacrifice
+    dictionary
+    cross
+}
+
+strand strand_168 {
+    shibboleth
+    akashic_load
+    battery
+    unravel
+    assert
+    pigment
+    sanitize
+    rule
+    sovereignty
+    memristor
+    entropy_surge
+    collapse
+    graviton
+}
+
+strand strand_169 {
+    dampen
+    assert
+    metamorphosis
+    spawn
+    splash
+    find_all
+    isomerize
+    galvanize
+    refract
+    pocket
+    reflex
+    morph
+    sense_pigment
+    entangle
+    sub
+    unravel
+    find_all
+}
+
+strand strand_170 {
+    undefine
+    hyper_mul
+    holo_speak
+    unravel
+    mesh_net
+    blackbox
+    w_read
+    synthesize
+    babel_live
+    lt
+    crucible
+    invoke
+    electrophoresis
+    akashic_read
+    void
+    project_geometry
+    parser_alt
+    splice
+}
+
+strand strand_171 {
+    hox_switch
+    bond
+    bury
+    crispr_scan
+    filter
+    curry
+    evo_replace
+    d_write
+    d_write
+    phase_mutate
+}
+
+strand strand_172 {
+    orca
+    reflector
+    incubate
+    germinate
+    d_write
+    irradiate
+    track
+    babel_compile
+    tangle
+    cymatic_scan
+    string_tune
+    dampen
+    bit_and
+    chart
+    speak
+    levenshtein
+    evo_score
+}
+
+strand strand_173 {
+    incubate
+    evo_score
+    reincarnate
+    drift
+    eq
+    d_read
+    locate
+    interfere
+    sense_biome
+    brew
+    self_rewrite
+    ley_sense
+    context_shift
+}
+
+strand strand_174 {
+    infect
+    hologram
+    egregore_dictate
+    mitosis
+    chronos
+    spirit
+    sub
+    hox_switch
+    conjugate
+    telomerase
+    sense_pigment
+}
+
+strand strand_175 {
+    electrogenesis
+    time_loop
+    superpose
+    signal
+    evo_pop_size
+    string_listen
+    scan
+    pangram
+    sonar
+    evo_replace
+    tesla_coil
+    choir
+    logos
+    sub
+    ground
+    find_all
+    pangram
+}
+
+strand strand_176 {
+    piet
+    sense_glyph
+    grid_grammar
+    unravel
+    string_listen
+    aeolus
+    scavenge
+    bit_and
+    note
+}
+
+strand strand_177 {
+    evo_breed
+    forget
+    demethylate
+    sense_biome
+    entropy_surge
+}
+
+strand strand_178 {
+    blackbox
+    unify
+    tongue
+    propagate
+    dup
+    unbond
+    lens
+    mesh_recv
+    symbiosis
+    akashic_save
+    cord
+    disintegrate
+    phase_shift
+    connect
+    chronostasis
+    guild
+    evo_replace
+}
+
+strand strand_179 {
+    hyper_div
+    receive
+    erode
+    attractor_surf
+    grid_grammar
+    sediment
+    holo_speak
+    shr
+    catalyze
+    quake
+    divest
+}
+
+strand strand_180 {
+    irradiate
+    attractor_surf
+    brz
+    cede
+    photophore
+    invoke
+    string_listen
+    sense_wind
+    bit_xor
+    parser_many
+    g_write
+    ley_warp
+}
+
+strand strand_181 {
+    lumine
+    prologue
+    virus
+    brainfuck
+    parser_alt
+    evo_mutate
+    buy
+    parser_regex
+    sensor
+    mesh_prune
+    call
+    ward
+    havoc_scope
+    storm
+    electrogenesis
+    rebirth
+    connect
+}
+
+strand strand_182 {
+    grid_grammar
+    consume
+    tempo
+    railgun
+    harmonize
+    consume
+    paradox
+}
+
+strand strand_183 {
+    egregore_query
+    exhume
+    lt
+    divest
+    ouroboros
+    chronostasis
+    devour
+    logos
+    entropy
+}
+
+strand strand_184 {
+    query
+    photosynthesize
+    soundex
+    gt
+    conjugate
+    shl
+    absorb
+}
+
+strand strand_185 {
+    divinate
+    unknot
+    sanitize
+    piet
+    membrane
+    shr
+    mirror
+    terraform
+    morph
+    entangle
+    parser_alt_n
+    escape
+    mesh_recv
+    harmonize
+    sing
+    sense_pigment
+    mourn
+}
+
+strand strand_186 {
+    parser_alt
+    string_pluck
+    zoom
+    identity
+    hyper_sub
+    detect
+    exec
+    string_listen
+    crispr_scan
+    brainfuck
+    memristor
+    verify
+    mitosis
+    ligase
+    mul
+    broadcast
+    eq
+    cross
+    osmosis
+}
+
+strand strand_187 {
+    sing
+    unravel
+    chronostasis
+    cede
+    escape
+    stabilize
+    isomerize
+    match
+    fossilize
+    compose
+    mesh_prune
+    forge
+    evo_store
+    read_cord
+}
+
+strand strand_188 {
+    crossover
+    project_geometry
+    scan
+    akashic_load
+    salvo
+    hox_switch
+    cipher
+}
+
+strand strand_189 {
+    julia
+    connect
+    synthesize
+    vaccinate
+    sonic_claim
+    sense_volt
+}
+
+strand strand_190 {
+    adhere
+    w_read
+    connect
+    rebirth
+    unbond
+    parse
+    sub
+    symbolize
+    add
+    charter
+    mirror
+    parser_seq_n
+}
+
+strand strand_191 {
+    radiate
+    crucible
+    pan
+    membrane
+    sow
+    dimension
+    evolve
+    sense_mutagen
+    escape
+    jump_s
+    invoke
+    ley_sense
+    ret
+    horcrux
+    chronos
+    akashic_load
+    speak
+}
+
+strand strand_192 {
+    generate
+    mutagen
+    offer
+    symbolize
+    detect
+    genesis
+    anneal
+}
+
+strand strand_193 {
+    digest
+    filter
+    hyper_sub
+    conjugate
+    bind
+}
+
+strand strand_194 {
+    synthesize
+    paradox
+    assert
+    string_pluck
+    sense_moisture
+    relativity
+}
+
+strand strand_195 {
+    buy
+    claim
+    isomerize
+    exec
+    retina_draw
+    sow
+    blackbox
+    void
+    induction
+    retina_clear
+    harmonize
+    charter
+    reduce
+    define
+}
+
+strand strand_196 {
+    migrate
+    brz_s
+    reaction
+    galvanize
+    tongue
+}
+
+strand strand_197 {
+    outbreak
+    parser_match
+    ground
+    nop
+    diffract
+    scramble
+    akashic_read
+    hyphae
+    mul
+    ward
+    lens
+    choir
+}
+
+strand strand_198 {
+    sense_pigment
+    mod
+    self_replicate
+    swap
+    mesh_prune
+    unravel
+    levenshtein
+    migrate
+    railgun
+    orca
+    evo_score
+    mandelbrot
+    hologram
+}
+
+strand strand_199 {
+    retrograde
+    chronos_splice
+    observe
+    egregore_summon
+    siphon
+    sense_mutagen
+    crispr_scan
+    interfere
+    attractor_map
+    iterate
+    compile
+    s_len
+    project_geometry
+    siphon
+    parser_many
+    g_read
+}
+
+strand strand_200 {
+    membrane
+    dry
+    irradiate
+    prism
+    absorb_geometry
+    absorb
+    forget
+    tempo
+    project_geometry
+    mutagen
+    carbon_date
+    accrete
+    perceive
+    operator
+    evo_replace
+    storm
+    parser_alt_n
+    scanline
+}
+
+strand strand_201 {
+    remap
+    query
+    mirror
+    sub
+    invoke
+    rule
+    helix_len
+    harmonize
+    sensor
+    reaction
+    isomerize
+    ley_warp
+    broadcast
+    tectonics
+    egregore_summon
+    fossilize
+    reaction
+}
+
+strand strand_202 {
+    unknot
+    differentiate
+    alchemy
+    evo_score
+    germinate
+    babel_compile
+    sense_light
+    clarify
+    glitch
+    harmonize
+    frankenstein
+}
+
+strand strand_203 {
+    quake
+    query
+    project_geometry
+    patch
+    scramble
+}
+
+strand strand_204 {
+    grid_grammar
+    ley_tap
+    charter
+    censor
+    wire_growth
+    signal
+    glitch
+    anneal
+}
+
+strand strand_205 {
+    pangram
+    outbreak
+    tangle
+    exhume
+    crispr_scan
+    retract
+    superpose
+    parser_opt
+    anagram
+    cymatic_scan
+    divergence
+    zip
+    parser_many
+    conceive
+    egregore_channel
+}
+
+strand strand_206 {
+    chr
+    symbiosis
+    sediment
+    decompile
+    reflector
+    grid_grammar
+    crispr_scan
+    infect
+    inscribe
+    havoc_rate
+    phase_shift
+    catalyze
+}
+
+strand strand_207 {
+    sing
+    retrograde
+    observe
+    dampen
+    offer
+    clarify
+    interfere
+    verify
+    transistor
+    swap
+    brew
+    sow
+    brz_s
+    genesis
+    bio_hack
+    karma
+    buy
+}
+
+strand strand_208 {
+    query
+    entropy
+    muscle
+    g_write
+    cord
+    interfere
+    unbind
+    string_tune
+    decompile
+    anagram
+    find_all
+    pigment
+    sonic_claim
+}
+
+strand strand_209 {
+    compose
+    gravitate
+    ouroboros
+    shape
+    egregore_dictate
+    absorb
+    tongue
+    sonic_claim
+    undefine
+    ticker
+    shibboleth
+    divergence
+    tempo
+    isomerize
+    conceive
+    cambrian
+    glitch
+}
+
+strand strand_210 {
+    cipher
+    evolve
+    time_loop
+    string_listen
+    time_loop
+    nop
+}
+
+strand strand_211 {
+    fossilize
+    virus
+    ward
+    methylate
+    entangle
+    splash
+    helix_len
+}
+
+strand strand_212 {
+    ley_warp
+    define_rule
+    virus
+    w_read
+    secrete
+    alchemy
+    quake
+    retina_size
+    detect
+    nop
+    glossolalia
+    circuit_breaker
+    reflex
+    signal
+    query
+    shuffle
+    accrete
+    zoom
+}
+
+strand strand_213 {
+    forge
+    egregore_summon
+    holo_invoke
+    listen
+    accrete
+    mod
+    interpret
+    mesh_grow
+    egregore_tithe
+    mutagen
+    meme
+    tax
+    lightning
+    audit
+    rift
+    interfere
+}
+
+strand strand_214 {
+    interfere
+    sanitize
+    fire
+    generate
+    scan
+    assert
+    stabilize
+    perceive
+    egregore_summon
+    decohere
+    symbolize
+    dimension
+}
+
+strand strand_215 {
+    offer
+    iterate
+    signify
+    logistics
+    sense_moisture
+    eq
+    push
+    unbond
+    eq
+    luciferin
+    generate
+    exhume
+}
+
+strand strand_216 {
+    self_replicate
+    ouroboros
+    osmosis
+    devour
+    sense_light
+    methylate
+    draw
+    sacrifice
+    remap
+    jump_s
+    rune
+    transport
+    nop
+}
+
+strand strand_217 {
+    scramble
+    egregore_tithe
+    mesh_recv
+    parser_many
+    aeolus
+    germinate
+    mandelbrot
+    quantum_scribe
+    print
+    parser_seq_n
+    mesh_grow
+    mitosis
+}
+
+strand strand_218 {
+    prolog_call
+    sense_mutagen
+    context_shift
+    confuse
+    logos
+    interpret
+    pan
+    brz_s
+    s_len
+    time_warp
+    retrograde
+    fire
+    unbond
+}
+
+strand strand_219 {
+    horcrux
+    s_index
+    remap
+    disintegrate
+    inscribe
+    transport
+    chain
+    transistor
+    pan
+    mourn
+    infect
+    evo_save
+    catalyze
+    void_cast
+    event_horizon
+    attractor_init
+    holo_sonify
+    invest
+    decompile
+}
+
+strand strand_220 {
+    s_index
+    hyper_add
+    cord
+    sense_glyph
+    curry
+    cambrian
+    void_rift
+    integrase
+    void
+    parser_seq_n
+    dampen
+    differentiate
+    harmonize
+    mesh_prune
+}
+
+strand strand_221 {
+    evo_load
+    bind
+    atlas
+    entangle
+    t_len
+    self_rewrite
+    sacrifice
+    define_rule
+    isomerize
+    pigment
+    divinate
+    membrane
+    evo_replace
+    piet
+}
+
+strand strand_222 {
+}
+
+strand strand_223 {
+    print
+    levenshtein
+    rule
+    evo_mutate
+    self_rewrite
+    reflector
+    divinate
+    parser_many
+    muscle
+    query
+    unravel
+    auto_cast
+    string_new
+    cross
+    akashic_read
+    hyper_add
+    hyphae
+}
+
+strand strand_224 {
+    memristor
+    tui_mod
+    seance
+    dampen
+    shape
+    modulate
+    project
+    chart
+    electrogenesis
+}
+
+strand strand_225 {
+    lumine
+    eval
+    scanline
+    metamorphosis
+    levenshtein
+    pan
+    push
+    hyper_div
+    volcano
+    parser_alt_n
+    compose
+    luciferin
+    meme
+    glitch
+    adhere
+    shock
+    egregore_summon
+    cord
+}
+
+strand strand_226 {
+    glyph
+    divinate
+    jump
+    glossolalia
+    metamorphosis
+}
+
+strand strand_227 {
+    drop
+    bit_or
+    superpose
+    shock
+    divinate
+    evo_mutate
+    consume
+    havoc_rate
+    parser_opt
+    memristor
+    smell
+    quantum_tunnel
+    recombine
+    fate
+    escape
+    prologue
+    sub
+}
+
+strand strand_228 {
+    void_cast
+    compose
+    ticker
+    ley_sense
+    lysis
+    bit_and
+    refract
+    evo_score
+    entangle
+    rune
+    void
+    div
+}
+
+strand strand_229 {
+    void_cast
+    nop
+    recombine
+    cambrian
+    invoke
+    drift
+    lightning
+    brz_s
+    brz
+    quake
+}
+
+strand strand_230 {
+    speak
+    ley_tap
+    bury
+    lisp_eval
+    chronostasis
+    retina_clear
+}
+
+strand strand_231 {
+    hyphae
+    pocket
+    signal
+    mesh_send
+    eq
+    rest
+    weave
+    decompile
+    egregore_channel
+    superpose
+    verify
+    shatter
+    string_listen
+    invest
+    prolog_call
+}
+
+strand strand_232 {
+    scavenge
+    evo_score
+    perceive
+    mesh_prune
+    disintegrate
+    quote
+    paradox
+    dup
+    choir
+    filter
+    unravel
+}
+
+strand strand_233 {
+    forge
+    propagate
+    lysis
+    parser_alt
+    ley_sense
+    inscribe
+    lysis
+    alchemy
+    babel_compile
+    mirror
+    sense_pigment
+    compile
+    ley_warp
+    t_len
+    graviton
+    self_rewrite
+    irradiate
+    mesh_recv
+}
+
+strand strand_234 {
+    consume
+    string_listen
+    outbreak
+    luciferin
+    eq
+    terraform
+    bury
+    reflex
+    poly
+    push
+    fate
+    prolog_call
+    differentiate
+    deconstruct
+    perform
+    self_rewrite
+    parser_seq_n
+    evo_save
+}
+
+strand strand_235 {
+    hyper_add
+    string_tune
+    ley_sense
+    frankenstein
+    hyphae
+    sense_pigment
+    signal
+    glitch
+    germinate
+    divinate
+    gravitate
+    interpret
+    call
+    carbon_date
+    decompile
+    reincarnate
+    add
+}
+
+strand strand_236 {
+    membrane
+    sonic_claim
+    etymology
+    transistor
+    retrograde
+    mesh_grow
+    atlas
+    karma
+    chaos
+    poly
+    tsunami
+    reincarnate
+    d_merge
+    absorb
+    paradox
+    quantum_scan
+    tesla_coil
+}
+
+strand strand_237 {
+    codex
+    fire
+    operator
+    paradox
+    hologram
+    sensor
+    perceive
+    decohere
+    pray
+    unknown
+    push
+    virus
+}
+
+strand strand_238 {
+    havoc_rate
+    metamorphosis
+    photosynthesize
+    grammar
+    sense_volt
+    dup
+    infect
+    cross
+    decohere
+    unearth
+    jump
+    iterate
+    string_new
+}
+
+strand strand_239 {
+    cipher
+    sense_moisture
+    seek
+    g_write
+    sonar
+    sonar
+    phase_mutate
+    wire_growth
+    dream
+    charter
+}
+
+strand strand_240 {
+    speak
+    retina_size
+    evo_save
+    detox
+    devour
+    simulate
+    swap
+    phase_shift
+    rasterize
+    bit_not
+    chr
+    guild
+    tesla_coil
+}
+
+strand strand_241 {
+    parser_alt_n
+    ward
+    unknown
+    bit_or
+    lisp_eval
+    mesh_prune
+    perform
+    attractor_map
+    induction
+}
+
+strand strand_242 {
+    eq
+    salvo
+    bio_hack
+    secrete
+    evo_score
+    lightning
+    reaction
+    akashic_save
+    bury
+    sow
+    retroscope
+}
+
+strand strand_243 {
+    quantum_tunnel
+    diode
+    incubate
+    shape
+    forget
+    wire_growth
+    interfere
+    ley_warp
+    evo_pop_size
+    rest
+}
+
+strand strand_244 {
+    parser_seq_n
+    outbreak
+    void_rift
+    void_rift
+    catalyze
+    auto_cast
+    refract
+    cross
+}
+
+strand strand_245 {
+    poly
+    weave
+    note
+    entropy
+    event_horizon
+    chaos
+    chemotaxis
+    capacitor
+    electrogenesis
+    akashic_read
+    inscribe
+    chaos
+    akashic_read
+    disintegrate
+    reflex
+    outbreak
+    deconstruct
+}
+
+strand strand_246 {
+    dimension
+    balance
+    bio_hack
+    akashic_save
+    simulate
+    chr
+    glitch
+    bind
+    glyph
+    retract
+    string_pluck
+    rest
+}
+
+strand strand_247 {
+    d_merge
+    claim
+    offer
+    quote
+    levenshtein
+    observe
+    graviton
+    s_index
+    speak
+    chr
+    reincarnate
+    fold
+    d_read
+    mod
+    isomerize
+    evo_store
+}
+
+strand strand_248 {
+    symbiosis
+    draw
+    excision
+    wire_growth
+    graviton
+    morph
+    chemotaxis
+    divest
+    attractor_surf
+}
+
+strand strand_249 {
+    shl
+    gravitate
+    void_rift
+    aeolus
+    lisp_eval
+    akashic_write
+    seek
+    match
+    karma
+    brainfuck
+    time_loop
+    interpret
+    dampen
+    scanline
+    draw
+    stabilize
+    parser_seq_n
+    retina_size
+    map
+}
+
+strand strand_250 {
+    quantum_scribe
+    electrogenesis
+    mitosis
+    harmonize
+    demethylate
+    holo_speak
+    parser_match
+    rebirth
+    identity
+    seek
+    iterate
+}
+
+strand strand_251 {
+    retina_clear
+    holo_speak
+    forge
+    iterate
+    migrate
+    babel_live
+    sense_light
+    invest
+    parser_match
+    shl
+    balance
+    unknown
+}
+
+strand strand_252 {
+    quantum_scribe
+    migrate
+    membrane
+    time_loop
+    nop
+    jump
+    retract
+    mandelbrot
+    fossilize
+    detox
+    retrograde
+    patch
+    storm
+    dry
+    receive
+    glitch
+    compose
+    spirit
+    crucible
+}
+
+strand strand_253 {
+    evolve
+    digest
+    integrase
+    signify
+    egregore_tithe
+    exec
+    cambrian
+    sense_light
+    entropy
+    lens
+}
+
+strand strand_254 {
+    superpose
+    print
+    diffract
+    transposon
+    unpocket
+    sovereignty
+    fold
+    brz_s
+    auto_cast
+    genome
+    parser_alt
+    sow
+    pigment
+    grow
+    scavenge
+    infect
+    mod
+    etymology
+    retina_size
+}
+
+strand strand_255 {
+    dup
+    akashic_read
+    connect
+    attractor_map
+    crucible
+    chaos
+    charter
+    volcano
+    devour
+    cross
+    entropy_surge
+}
+
+strand strand_256 {
+    reflex
+    entangle
+    track
+    photosynthesize
+    transcribe
+    detox
+    rift
+    perceive
+    conceive
+    migrate
+}
+
+strand strand_257 {
+    lucid
+    string_new
+    egregore_query
+    retina_size
+    reaction
+    charter
+    mesh_send
+    jump_s
+    digest
+    seek
+    julia
+    brew
+    filter
+    zoom
+    auto_cast
+    parser_alt
+    outbreak
+}

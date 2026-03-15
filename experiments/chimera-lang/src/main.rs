@@ -6,7 +6,7 @@ use std::fs;
 
 use chimera_lang::{
     ast::{Dna, Helix, JunctionType},
-    compiler, prologue_compiler,
+    compiler, prologue_compiler, prolouge_compiler,
     tui::{run_tui, ViewMode},
     vm::{ChimeraVM, Value},
     ChimeraParser, Rule,
@@ -110,6 +110,9 @@ fn main() -> Result<()> {
 
         if extension == "pro" {
             prologue_compiler::compile(&unparsed_file, path.parent())?
+        } else if extension == "prl" {
+            let (dna, grid, orca, runes) = prolouge_compiler::compile(&unparsed_file, path.parent())?;
+            (dna, grid, orca, runes, Vec::new())
         } else if extension == "score" {
             #[cfg(feature = "resonance")]
             {

@@ -1,0 +1,37 @@
+config {
+    mode: Orca
+}
+
+grid {
+    . . . . .
+    . 1 2 . .
+    . ! ! . .
+    . ~ ~ . .
+    . & . . .
+    . ? . . .
+}
+
+dna {
+    strand main {
+        "Hello from Prolouge!" print
+        5
+        5
+        add
+        print
+
+        # Test Forth
+        10
+        dup
+        add
+        print
+
+        # Test Prolog Query
+        query(metabolism(?E))
+
+        # Test Raku Reduce Op
+        [+]
+
+        # Test Genetic Splice
+        splice(main, main)
+    }
+}

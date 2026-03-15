@@ -81,6 +81,7 @@ pub struct ChimeraParser;
 #[cfg(feature = "resonance")]
 pub mod acoustic_compiler;
 pub mod ast;
+pub mod prolouge_compiler;
 #[cfg(feature = "resonance")]
 pub mod audio_source;
 pub mod compiler;
