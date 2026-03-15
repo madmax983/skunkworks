@@ -28,6 +28,14 @@ pub struct Region {
 
 impl Region {
     /// Creates a new region with the specified dimensions.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::semantic::Region;
+    ///
+    /// let region = Region::new("minimap", 0, 0, 20, 10);
+    /// ```
     pub fn new(name: impl Into<String>, x: u16, y: u16, width: u16, height: u16) -> Self {
         Self {
             name: name.into(),
@@ -40,6 +48,15 @@ impl Region {
     }
 
     /// Adds a human-readable description to the region.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::semantic::Region;
+    ///
+    /// let region = Region::new("stats", 80, 0, 20, 24)
+    ///     .describe("Shows player statistics");
+    /// ```
     pub fn describe(mut self, desc: impl Into<String>) -> Self {
         self.description = Some(desc.into());
         self

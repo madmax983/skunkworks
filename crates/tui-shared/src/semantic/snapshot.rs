@@ -82,18 +82,40 @@ impl Snapshot {
     }
 
     /// Sets the current frame number.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::semantic::Snapshot;
+    /// let snap = Snapshot::new("game").with_frame(42);
+    /// ```
     pub fn with_frame(mut self, frame: u64) -> Self {
         self.frame = Some(frame);
         self
     }
 
     /// Sets the viewport dimensions.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::semantic::Snapshot;
+    /// let snap = Snapshot::new("app").with_viewport(80, 24);
+    /// ```
     pub fn with_viewport(mut self, width: u16, height: u16) -> Self {
         self.viewport = Some((width, height));
         self
     }
 
     /// Adds a single entity to the snapshot.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::semantic::{Snapshot, Entity};
+    /// let snap = Snapshot::new("game")
+    ///     .with_entity(Entity::new("player").at(10.0, 5.0));
+    /// ```
     pub fn with_entity(mut self, entity: Entity) -> Self {
         self.entities.push(entity);
         self
@@ -103,30 +125,68 @@ impl Snapshot {
     ///
     /// Useful when you have a collection of entities (like a `Vec<Player>`) that you want to
     /// dump into the snapshot at once.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::semantic::{Snapshot, Entity};
+    /// let enemies = vec![Entity::new("enemy").at(1.0, 1.0), Entity::new("enemy").at(2.0, 2.0)];
+    /// let snap = Snapshot::new("game").with_entities(enemies);
+    /// ```
     pub fn with_entities(mut self, entities: impl IntoIterator<Item = Entity>) -> Self {
         self.entities.extend(entities);
         self
     }
 
     /// Adds a region of interest to the snapshot.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::semantic::{Snapshot, Region};
+    /// let snap = Snapshot::new("app")
+    ///     .with_region(Region::new("chat", 0, 20, 80, 4));
+    /// ```
     pub fn with_region(mut self, region: Region) -> Self {
         self.regions.push(region);
         self
     }
 
     /// Adds a top-level metric (score, time, etc.).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::semantic::Snapshot;
+    /// let snap = Snapshot::new("game").with_metric("score", 100);
+    /// ```
     pub fn with_metric(mut self, key: impl Into<String>, value: impl Into<PropValue>) -> Self {
         self.metrics.insert(key.into(), value.into());
         self
     }
 
     /// Sets the application state (e.g., "menu", "playing", "game_over").
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::semantic::Snapshot;
+    /// let snap = Snapshot::new("game").with_state("game_over");
+    /// ```
     pub fn with_state(mut self, state: impl Into<String>) -> Self {
         self.state = Some(state.into());
         self
     }
 
     /// Adds an available action.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::semantic::{Snapshot, Action};
+    /// let snap = Snapshot::new("game")
+    ///     .with_action(Action::new("jump").key("Space"));
+    /// ```
     pub fn with_action(mut self, action: Action) -> Self {
         self.actions.push(action);
         self
@@ -135,6 +195,14 @@ impl Snapshot {
     /// Serializes the snapshot to a compact JSON string.
     ///
     /// This is the primary format used to send the snapshot to an LLM over a network connection.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::semantic::Snapshot;
+    /// let snap = Snapshot::new("game");
+    /// let json = snap.to_json();
+    /// ```
     pub fn to_json(&self) -> String {
         serde_json::to_string(self).unwrap_or_else(|_| "{}".to_string())
     }
@@ -142,6 +210,14 @@ impl Snapshot {
     /// Serializes the snapshot to a pretty-printed JSON string.
     ///
     /// Useful for debugging and viewing the semantic state locally.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::semantic::Snapshot;
+    /// let snap = Snapshot::new("game");
+    /// let pretty_json = snap.to_json_pretty();
+    /// ```
     pub fn to_json_pretty(&self) -> String {
         serde_json::to_string_pretty(self).unwrap_or_else(|_| "{}".to_string())
     }

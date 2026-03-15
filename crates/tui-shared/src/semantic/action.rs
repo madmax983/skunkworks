@@ -51,12 +51,26 @@ impl Action {
     }
 
     /// Adds a human-readable description to the action.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::semantic::Action;
+    /// let action = Action::new("attack").describe("Attack the nearest enemy");
+    /// ```
     pub fn describe(mut self, desc: impl Into<String>) -> Self {
         self.description = Some(desc.into());
         self
     }
 
     /// Sets the key binding for this action.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::semantic::Action;
+    /// let action = Action::new("jump").key("Space");
+    /// ```
     pub fn key(mut self, key: impl Into<String>) -> Self {
         self.key = Some(key.into());
         self

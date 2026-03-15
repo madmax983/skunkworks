@@ -83,6 +83,14 @@ impl<'a> Button<'a> {
     /// Creates a new `Button` with the given label.
     ///
     /// The button defaults to [`ButtonStyle::Primary`] and [`ButtonState::Normal`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::Button;
+    ///
+    /// let button = Button::new("Click Me");
+    /// ```
     pub fn new(label: impl Into<String>) -> Self {
         Self {
             label: label.into(),
@@ -94,12 +102,28 @@ impl<'a> Button<'a> {
     }
 
     /// Explicitly sets the button's state.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::{Button, ButtonState};
+    ///
+    /// let button = Button::new("Submit").state(ButtonState::Hovered);
+    /// ```
     pub fn state(mut self, state: ButtonState) -> Self {
         self.state = state;
         self
     }
 
     /// Sets the visual style variant.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::{Button, ButtonStyle};
+    ///
+    /// let button = Button::new("Delete").style_variant(ButtonStyle::Danger);
+    /// ```
     pub fn style_variant(mut self, variant: ButtonStyle) -> Self {
         self.style_variant = variant;
         self
@@ -108,12 +132,30 @@ impl<'a> Button<'a> {
     /// Adds an icon to the left of the label.
     ///
     /// The icon is prepended to the label text with a space separator.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::Button;
+    ///
+    /// let button = Button::new("Save").icon("💾");
+    /// ```
     pub fn icon(mut self, icon: impl Into<String>) -> Self {
         self.icon = Some(icon.into());
         self
     }
 
     /// Sets a custom block for the button.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::Button;
+    /// use ratatui::widgets::{Block, Borders};
+    ///
+    /// let block = Block::default().borders(Borders::BOTTOM);
+    /// let button = Button::new("Custom").block(block);
+    /// ```
     pub fn block(mut self, block: Block<'a>) -> Self {
         self.block = Some(block);
         self
@@ -125,6 +167,15 @@ impl<'a> Button<'a> {
     ///
     /// - `true`: Sets style to [`ButtonStyle::Warning`] (High visibility/Yellow) to represent an active state.
     /// - `false`: Sets style to [`ButtonStyle::Outline`] (Low visibility/Gray) to represent an inactive state.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::Button;
+    ///
+    /// let is_on = true;
+    /// let button = Button::new("Power").active(is_on);
+    /// ```
     pub fn active(mut self, is_active: bool) -> Self {
         if is_active {
             self.style_variant = ButtonStyle::Warning;

@@ -50,11 +50,29 @@ pub struct LogList<'a> {
 
 impl<'a> LogList<'a> {
     /// Creates a new `LogList` with the given items.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::LogList;
+    ///
+    /// let logs = vec!["System started".to_string(), "Error: timeout".to_string()];
+    /// let log_list = LogList::new(logs);
+    /// ```
     pub fn new(items: Vec<String>) -> Self {
         Self { items, block: None }
     }
 
     /// Helper to set a block with a title and all borders.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::LogList;
+    ///
+    /// let logs = vec!["Warning: low memory".to_string()];
+    /// let log_list = LogList::new(logs).with_title("Warnings");
+    /// ```
     pub fn with_title(mut self, title: impl Into<String>) -> Self {
         self.block = Some(Block::default().borders(Borders::ALL).title(title.into()));
         self
