@@ -22,3 +22,7 @@
 ## 2025-01-28 - The Builder Method Mystery
 **Confusion:** Users of `tui-shared` components like `Button`, `LogList`, `TensionBar`, and semantic `Snapshot` were unsure how to correctly chain builder methods (`.with_title()`, `.active()`, `.with_entity()`) because no examples demonstrated intermediate states.
 **Clarification:** Rigorously added `/// # Examples` executable doctests to all public builder and component configuration methods in the `tui-shared` crate, showing exactly how each method affects the component or data structure.
+
+## 2025-02-14 - The Black Box of `pub mod`
+**Confusion:** Inner modules like `semantic/action.rs` lack top-level context, making them "Black Boxes" when users view their docs directly, even if they are re-exported at the root facade (`lib.rs` or `mod.rs`).
+**Clarification:** I added `//!` module-level docs to all inner public modules (`action`, `entity`, `region`, `snapshot`) so they independently tell their story before diving into structs.

@@ -1,3 +1,11 @@
+//! # Action 🎬
+//!
+//! Provides the [`Action`] struct to define available user interactions in a semantic snapshot.
+//!
+//! Actions are the "verbs" of your TUI. By registering actions inside a
+//! [`crate::semantic::Snapshot`], you tell the LLM (or a blind user interpreting the structure)
+//! what affordances are currently available on the screen, like moving, selecting, or quitting.
+
 use serde::{Deserialize, Serialize};
 
 /// A possible user action available in the current semantic state.

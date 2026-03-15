@@ -1,3 +1,10 @@
+//! # Region 🗺️
+//!
+//! Provides the [`Region`] struct to define named bounds on the screen.
+//!
+//! Regions are the "where" in your TUI story. They provide layout context to an LLM reading
+//! the [`crate::semantic::Snapshot`], acting like named bounds or panels.
+
 use serde::{Deserialize, Serialize};
 
 /// A named rectangular boundary on the screen indicating a specific functional area.
@@ -29,7 +36,15 @@ pub struct Region {
 impl Region {
     /// Creates a new region with the specified dimensions.
     ///
-    /// # Examples
+    /// # Arguments
+    ///
+    /// * `name` - The identifier for this region.
+    /// * `x` - The horizontal starting position.
+    /// * `y` - The vertical starting position.
+    /// * `width` - The width of the region.
+    /// * `height` - The height of the region.
+    ///
+    /// ## Examples
     ///
     /// ```
     /// use tui_shared::semantic::Region;

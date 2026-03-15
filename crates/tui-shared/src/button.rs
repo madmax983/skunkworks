@@ -17,6 +17,13 @@ use ratatui::{
 };
 
 /// Represents the interaction state of a [`Button`].
+///
+/// ## Examples
+///
+/// ```
+/// use tui_shared::{Button, ButtonState};
+/// let button = Button::new("OK").state(ButtonState::Hovered);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum ButtonState {
     /// The default state.
@@ -31,6 +38,13 @@ pub enum ButtonState {
 }
 
 /// Defines the visual style variant of a [`Button`].
+///
+/// ## Examples
+///
+/// ```
+/// use tui_shared::{Button, ButtonStyle};
+/// let button = Button::new("Cancel").style_variant(ButtonStyle::Danger);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum ButtonStyle {
     /// The primary action button (Blue background).

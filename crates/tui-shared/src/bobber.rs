@@ -27,7 +27,13 @@ pub struct Bobber {
 impl Bobber {
     /// Creates a new Bobber.
     ///
-    /// # Examples
+    /// # Arguments
+    ///
+    /// * `x` - The X coordinate on the Canvas.
+    /// * `y` - The Y coordinate on the Canvas.
+    /// * `is_hooked` - Whether a fish is currently hooked.
+    ///
+    /// ## Examples
     ///
     /// ```
     /// use tui_shared::Bobber;
