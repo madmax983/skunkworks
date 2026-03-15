@@ -29,6 +29,10 @@ fn test_mandelbrot_mode() {
         },
     ];
     let mut vm = make_vm(genes);
+
+    // Default mode is already Mandelbrot, let's switch it first to verify it changes
+    vm.fractal.mode = FractalMode::Julia;
+
     vm.step(); // push
     vm.step(); // mandelbrot
 
@@ -60,6 +64,10 @@ fn test_julia_mode() {
     vm.step();
 
     assert_eq!(vm.fractal.mode, FractalMode::Julia);
+    // Since args popped from stack are (re: 100, im: -500) or vice versa depending on push order
+    // push(-500) then push(100)
+    // stack: [-500, 100]
+    // julia pops: im = 100, re = -500
     assert_eq!(vm.fractal.c_re, -0.5);
     assert_eq!(vm.fractal.c_im, 0.1);
 }

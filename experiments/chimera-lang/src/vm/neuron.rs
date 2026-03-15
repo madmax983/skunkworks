@@ -90,6 +90,10 @@ impl Neuron {
         self.m += dm * dt;
         self.h += dh * dt;
 
+        if self.v.is_nan() {
+            self.v = self.e_l;
+        }
+
         // Decay injected current to prevent accumulation without input
         self.i_inj *= 0.99;
 

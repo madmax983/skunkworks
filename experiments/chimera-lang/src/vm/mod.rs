@@ -3714,6 +3714,18 @@ impl ChimeraVM {
                 Some(None)
             }
             OpCode::Weave | OpCode::Unravel => Some(nova_weaver::exec_weave_op(self, op, args)),
+            OpCode::Interfere
+            | OpCode::Refract
+            | OpCode::Project
+            | OpCode::Diffract
+            | OpCode::Hologram
+            | OpCode::PhaseMutate
+            | OpCode::QuantumScribe
+            | OpCode::QuantumScan
+            | OpCode::HoloInvoke
+            | OpCode::HoloSpeak
+            | OpCode::HoloSonify
+            | OpCode::CymaticScan => Some(nova::exec_nova_op(self, op, args)),
             OpCode::Mutagen => Some(self.exec_mutagen_op()),
             OpCode::Scavenge => Some(self.exec_scavenge_op()),
             OpCode::Digest => Some(self.exec_digest_op()),

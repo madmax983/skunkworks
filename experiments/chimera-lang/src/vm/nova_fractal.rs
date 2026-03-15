@@ -62,6 +62,7 @@ pub fn exec_fractal_op(
                     ));
                 }
             } else {
+                vm.fractal.mode = FractalMode::Mandelbrot;
                 vm.output
                     .push("Error: Mandelbrot requires max_iter".to_string());
             }
@@ -79,6 +80,8 @@ pub fn exec_fractal_op(
                         vm.fractal.c_re, vm.fractal.c_im
                     ));
                 }
+            } else {
+                 vm.fractal.mode = FractalMode::Julia;
             }
         }
         OpCode::Zoom => {
