@@ -295,3 +295,26 @@ mod tests {
         assert_ne!(buffer[(1, 9)].symbol(), block::FULL);
     }
 }
+
+#[cfg(test)]
+mod havoc_tests {
+    use super::*;
+    use proptest::prelude::*;
+    use ratatui::{layout::Rect, buffer::Buffer, widgets::{Widget, Block}};
+
+    proptest! {
+        #[test]
+        #[should_panic]
+        fn fuzz_tension_bar_underflow(
+            y in 65530u16..=65535,
+            height in 1u16..=10,
+            tension in 0.0f64..=1.0f64
+        ) {
+            // Bypass Rect::new which clips height and prevents the overflow from being reachable.
+            let area = Rect { x: 0, y, width: 10, height };
+            let mut buffer = Buffer::empty(area);
+            let widget = TensionBar::new(tension).block(Block::default());
+            widget.render(area, &mut buffer);
+        }
+    }
+}
