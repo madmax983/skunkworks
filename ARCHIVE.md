@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chron-ddos**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Documentation Void. Broken by upstream changes in `chrontext` and abandoned before stabilization. Grace period: 24h.
+- **locust-strings**: Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. A visual sketch lacking its intended evolutionary mechanics and documentation. Grace period: 24h.
 
 ## Pardoned
 - **chrontext**: Specimen pardoned. Diagnosis: Layer Lasagna / Terminal Genericism. Resolved by Razor flattening the architecture into a single `main.rs` file and removing speculative generality. The timeline wrapper is pure again.
@@ -17,6 +17,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **chron-ddos**: Specimen executed. Diagnosis: Terminal Compilation Failure / Documentation Void. Broken by upstream changes in `chrontext` and abandoned before stabilization. Grace period expired. Moved to graveyard.
 - **fissure-tracker**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Hypocrisy in Decay. Failed to improve during grace period. Biomass returned to the void.
 - **git-ghost**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. The promised bit rot was a mirage. Failed to improve during grace period. Moved to graveyard.
 - **crate-radar**: Specimen executed. Diagnosis: Terminal Genericism / Ecosystem Isolation. Failed to improve during grace period. Moved to graveyard.

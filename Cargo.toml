@@ -18,7 +18,7 @@ members = [
     "experiments/locust-tank",
     "experiments/gray-tank",
     "experiments/git-tank",
-    "experiments/chron-ddos",
+    "graveyard/chron-ddos",
     "experiments/locus-ddos",
 ]
 
