@@ -1,0 +1,16 @@
+[package]
+name = "mnem-hologram"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+tui-shared = { workspace = true }
+locus = { workspace = true }
+rustfft = "6.2"
+num-complex = "0.4"
+rand = "0.8"
+walkdir = "2.3"
+regex = "1.9"

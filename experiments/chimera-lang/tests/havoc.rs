@@ -1,7 +1,7 @@
-use chimera_lang::vm::ChimeraVM;
-use chimera_lang::ast::{Dna, Helix, Strand, JunctionType};
+use chimera_lang::ast::{Dna, Helix, JunctionType, Strand};
 use chimera_lang::value::Value;
 use chimera_lang::vm::nova::{Organelle, OrganelleType};
+use chimera_lang::vm::ChimeraVM;
 use proptest::prelude::*;
 
 proptest! {
