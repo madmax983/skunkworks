@@ -269,7 +269,7 @@ impl PbdSystem {
     /// system.step(0.016, 10);
     /// ```
     pub fn step(&mut self, dt: f32, iterations: usize) {
-        if dt <= f32::EPSILON {
+        if !dt.is_finite() || dt <= f32::EPSILON {
             return;
         }
 
