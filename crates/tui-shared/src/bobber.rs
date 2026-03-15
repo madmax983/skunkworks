@@ -51,7 +51,7 @@ impl Bobber {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// use tui_shared::Bobber;
     /// use ratatui::widgets::canvas::{Canvas, Context};
     /// use ratatui::layout::Rect;

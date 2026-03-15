@@ -67,6 +67,13 @@ impl Entity {
     ///
     /// The ID is crucial for object permanence. Without it, the LLM might see a "particle" in
     /// frame 1 and a "particle" in frame 2 but not know they are the same object.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::semantic::Entity;
+    /// let e = Entity::new("player").with_id("player_1");
+    /// ```
     pub fn with_id(mut self, id: impl Into<String>) -> Self {
         self.id = Some(id.into());
         self
@@ -103,6 +110,13 @@ impl Entity {
     }
 
     /// Sets the character(s) used to display the entity.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::semantic::Entity;
+    /// let e = Entity::new("wall").display("#");
+    /// ```
     pub fn display(mut self, c: impl Into<String>) -> Self {
         self.display = Some(c.into());
         self

@@ -55,6 +55,14 @@ impl<'a> TensionBar<'a> {
     ///
     /// * `tension` - A value between 0.0 (empty) and 1.0 (full). Values outside this range
     ///   will be clamped during rendering.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::TensionBar;
+    ///
+    /// let widget = TensionBar::new(0.5); // 50% tension
+    /// ```
     pub fn new(tension: f64) -> Self {
         Self {
             tension,
@@ -65,6 +73,15 @@ impl<'a> TensionBar<'a> {
     /// Sets a custom block for the widget.
     ///
     /// Defaults to a bordered block with title "TENSION".
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::TensionBar;
+    /// use ratatui::widgets::{Block, Borders};
+    ///
+    /// let widget = TensionBar::new(0.5).block(Block::default().borders(Borders::NONE));
+    /// ```
     pub fn block(mut self, block: Block<'a>) -> Self {
         self.block = Some(block);
         self
