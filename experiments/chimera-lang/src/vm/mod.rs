@@ -3224,9 +3224,7 @@ impl ChimeraVM {
             OpCode::Mod => {
                 if self.stack.len() < 2 {
                     self.output.push("Error: Stack underflow".to_string());
-                } else {
-                    let b_val = self.stack.pop().unwrap();
-                    let a_val = self.stack.pop().unwrap();
+                } else if let (Some(b_val), Some(a_val)) = (self.stack.pop(), self.stack.pop()) {
                     match (a_val, b_val) {
                         (Value::Int(a), Value::Int(b)) => {
                             if b == 0 {
@@ -4114,27 +4112,27 @@ impl ChimeraVM {
         match effective_op {
             OpCode::Eq => {
                 if self.stack.len() >= 2 {
-                    let b = self.stack.pop().unwrap();
-                    let a = self.stack.pop().unwrap();
-                    self.stack.push(Value::Int(if a == b { 1 } else { 0 }));
+                    if let (Some(b), Some(a)) = (self.stack.pop(), self.stack.pop()) {
+                        self.stack.push(Value::Int(if a == b { 1 } else { 0 }));
+                    }
                 } else {
                     self.output.push("Error: Stack underflow".to_string());
                 }
             }
             OpCode::Gt | OpCode::Lt => {
                 if self.stack.len() >= 2 {
-                    let b = self.stack.pop().unwrap();
-                    let a = self.stack.pop().unwrap();
-                    match (a, b) {
-                        (Value::Int(ia), Value::Int(ib)) => {
-                            let res = match effective_op {
-                                OpCode::Gt => ia > ib,
-                                OpCode::Lt => ia < ib,
-                                _ => false,
-                            };
-                            self.stack.push(Value::Int(if res { 1 } else { 0 }));
+                    if let (Some(b), Some(a)) = (self.stack.pop(), self.stack.pop()) {
+                        match (a, b) {
+                            (Value::Int(ia), Value::Int(ib)) => {
+                                let res = match effective_op {
+                                    OpCode::Gt => ia > ib,
+                                    OpCode::Lt => ia < ib,
+                                    _ => false,
+                                };
+                                self.stack.push(Value::Int(if res { 1 } else { 0 }));
+                            }
+                            _ => self.output.push("Error: Type mismatch".to_string()),
                         }
-                        _ => self.output.push("Error: Type mismatch".to_string()),
                     }
                 } else {
                     self.output.push("Error: Stack underflow".to_string());
@@ -4150,11 +4148,11 @@ impl ChimeraVM {
                     );
 
                     if a_is_str && b_is_str {
-                        let b = self.stack.pop().unwrap();
-                        let a = self.stack.pop().unwrap();
-                        if let (Value::Str(s1), Value::Str(s2)) = (a, b) {
-                            self.stack.push(Value::Str(s1 + &s2));
-                            return;
+                        if let (Some(b), Some(a)) = (self.stack.pop(), self.stack.pop()) {
+                            if let (Value::Str(s1), Value::Str(s2)) = (a, b) {
+                                self.stack.push(Value::Str(s1 + &s2));
+                                return;
+                            }
                         }
                     }
                 }
@@ -4169,9 +4167,7 @@ impl ChimeraVM {
             OpCode::Div => {
                 if self.stack.len() < 2 {
                     self.output.push("Error: Stack underflow".to_string());
-                } else {
-                    let b_val = self.stack.pop().unwrap();
-                    let a_val = self.stack.pop().unwrap();
+                } else if let (Some(b_val), Some(a_val)) = (self.stack.pop(), self.stack.pop()) {
                     match (a_val, b_val) {
                         (Value::Int(a), Value::Int(b)) => {
                             if b == 0 {
@@ -4180,6 +4176,24 @@ impl ChimeraVM {
                                 self.output.push("Error: Division overflow".to_string());
                             } else {
                                 self.stack.push(Value::Int(a / b));
+                            }
+                        }
+                        _ => self.output.push("Error: Type mismatch".to_string()),
+                    }
+                }
+            }
+            OpCode::Mod => {
+                if self.stack.len() < 2 {
+                    self.output.push("Error: Stack underflow".to_string());
+                } else if let (Some(b_val), Some(a_val)) = (self.stack.pop(), self.stack.pop()) {
+                    match (a_val, b_val) {
+                        (Value::Int(a), Value::Int(b)) => {
+                            if b == 0 {
+                                self.output.push("Error: Division by zero".to_string());
+                            } else if a == i64::MIN && b == -1 {
+                                self.output.push("Error: Division overflow".to_string());
+                            } else {
+                                self.stack.push(Value::Int(a % b));
                             }
                         }
                         _ => self.output.push("Error: Type mismatch".to_string()),
@@ -5558,7 +5572,81 @@ mod sentry_ribosome_tests {
         // ASSERT FIX: IP should be (1, 0) because the jump was executed.
         assert_eq!(ribosome.ip, (1, 0), "Bug Fixed: Ribosome executed JumpS");
     }
+    // A helper to quickly run a single opcode with an empty stack.
+    fn run_empty_stack_op(op: OpCode) -> ChimeraVM {
+        let strand = crate::ast::Strand {
+            genes: vec![crate::ast::Gene { op, args: vec![] }],
+        };
+        let dna = crate::ast::Dna {
+            evolution_config: None,
+            helix: crate::ast::Helix {
+                strands: vec![strand],
+            },
+        };
+        let mut vm = ChimeraVM::new(dna);
+        vm.step();
+        vm
+    }
+
+    #[test]
+    fn test_grid_ops_underflow_safety() {
+        let ops = vec![
+            OpCode::GRead,
+            OpCode::GWrite,
+            OpCode::Radiate,
+            OpCode::Siphon,
+            OpCode::Virus,
+        ];
+        for op in ops {
+            let vm = run_empty_stack_op(op.clone());
+            // Since it's an underflow, stack should remain empty and output should mention underflow.
+            assert!(vm.stack.is_empty(), "Stack should remain empty after underflow on {:?}", op);
+            let has_error = vm.output.iter().any(|msg| msg.contains("underflow"));
+            assert!(has_error, "Output should contain underflow error for {:?}", op);
+        }
+    }
+
+    #[test]
+    fn test_binary_ops_underflow_safety() {
+        let ops = vec![
+            OpCode::Add,
+            OpCode::Sub,
+            OpCode::Mul,
+            OpCode::Div,
+            OpCode::Mod,
+            OpCode::Eq,
+            OpCode::Gt,
+            OpCode::Lt,
+        ];
+        for op in ops {
+            let vm = run_empty_stack_op(op.clone());
+            assert!(vm.stack.is_empty(), "Stack should remain empty after underflow on {:?}", op);
+
+            // `run_empty_stack_op` ticks 1 step.
+            // In Chimera, math operations return Some(None) to signal execution state,
+            // but the test explicitly ensures the output contains "underflow" to prove
+            // the operation was attempted and caught appropriately instead of a panic.
+            let has_error = vm.output.iter().any(|msg| msg.contains("underflow"));
+            assert!(has_error, "Output should contain underflow error for {:?}", op);
+        }
+    }
+
+    #[test]
+    fn test_misc_ops_underflow_safety() {
+        let ops = vec![
+            OpCode::JumpS,
+            OpCode::BrzS,
+            OpCode::Transcribe,
+        ];
+        for op in ops {
+            let vm = run_empty_stack_op(op.clone());
+            assert!(vm.stack.is_empty(), "Stack should remain empty after underflow on {:?}", op);
+            let has_error = vm.output.iter().any(|msg| msg.contains("underflow"));
+            assert!(has_error, "Output should contain underflow error for {:?}", op);
+        }
+    }
 }
+
 mod nova_biomesh_signal_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
