@@ -2,28 +2,30 @@ use super::normalize_coords;
 use crate::vm::Value;
 use std::collections::HashMap;
 
+pub struct ElektraArgs<'a> {
+    pub rune: &'a str,
+    pub y: usize,
+    pub x: usize,
+    pub tick: u64,
+    pub current_signals: &'a [Vec<Option<Value>>],
+    pub next_signals: &'a mut [Vec<Option<Value>>],
+    pub voltage_grid: &'a mut [Vec<f32>],
+    pub resistance_grid: &'a mut [Vec<f32>],
+    pub capacitance_grid: &'a mut [Vec<f32>],
+    pub energy: &'a mut i64,
+    pub registers: &'a mut HashMap<(usize, usize), Value>,
+}
+
 #[cfg(feature = "elektra")]
-pub fn apply_elektra_runes(
-    rune: &str,
-    y: usize,
-    x: usize,
-    tick: u64,
-    current_signals: &[Vec<Option<Value>>],
-    next_signals: &mut [Vec<Option<Value>>],
-    voltage_grid: &mut Vec<Vec<f32>>,
-    resistance_grid: &mut Vec<Vec<f32>>,
-    capacitance_grid: &mut Vec<Vec<f32>>,
-    energy: &mut i64,
-    registers: &mut HashMap<(usize, usize), Value>,
-) -> bool {
+pub fn apply_elektra_runes(args: ElektraArgs) -> bool {
     let mut changes = false;
-    let w_sig = if let Some((wy, wx)) = normalize_coords(y as i64, x as i64 - 1) {
-        current_signals[wy][wx].clone()
+    let w_sig = if let Some((wy, wx)) = normalize_coords(args.y as i64, args.x as i64 - 1) {
+        args.current_signals[wy][wx].clone()
     } else {
         None
     };
 
-    match rune {
+    match args.rune {
         "⚡" => {
             // Bolt: Source voltage. Reads West signal (Intensity) or defaults to 100V.
             let volts = if let Some(Value::Int(v)) = w_sig {
@@ -33,24 +35,24 @@ pub fn apply_elektra_runes(
             };
 
             // Set resistance to Source (-1.0) and Voltage to v
-            resistance_grid[y][x] = -1.0;
-            voltage_grid[y][x] = volts;
+            args.resistance_grid[args.y][args.x] = -1.0;
+            args.voltage_grid[args.y][args.x] = volts;
         }
         "≡" => {
             // Ground: Sink voltage.
             // Always set resistance to Ground (-2.0)
-            resistance_grid[y][x] = -2.0;
-            voltage_grid[y][x] = 0.0;
+            args.resistance_grid[args.y][args.x] = -2.0;
+            args.voltage_grid[args.y][args.x] = 0.0;
         }
         "∿" => {
             // Sine: Sense Voltage.
             // Reads local voltage, outputs to South.
-            let v = voltage_grid[y][x];
+            let v = args.voltage_grid[args.y][args.x];
             if v.abs() > 0.1 {
-                if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
+                if let Some((sy, sx)) = normalize_coords(args.y as i64 + 1, args.x as i64) {
                     let new_val = Some(Value::Int(v as i64));
-                    if next_signals[sy][sx] != new_val {
-                        next_signals[sy][sx] = new_val;
+                    if args.next_signals[sy][sx] != new_val {
+                        args.next_signals[sy][sx] = new_val;
                         changes = true;
                     }
                 }
@@ -59,55 +61,57 @@ pub fn apply_elektra_runes(
         "🔌" => {
             // Bio-Generator: Consumes 1 Energy -> Sets 100V
             // We use registers to ensure we only consume energy once per tick.
-            let last_active = if let Some(Value::Int(t)) = registers.get(&(y, x)) {
+            let last_active = if let Some(Value::Int(t)) = args.registers.get(&(args.y, args.x)) {
                 *t as u64
             } else {
                 u64::MAX
             };
 
-            if last_active != tick {
-                if *energy >= 1 {
-                    *energy -= 1;
-                    registers.insert((y, x), Value::Int(tick as i64));
-                    voltage_grid[y][x] = 100.0;
-                    resistance_grid[y][x] = -1.0; // Source
+            if last_active != args.tick {
+                if *args.energy >= 1 {
+                    *args.energy -= 1;
+                    args.registers
+                        .insert((args.y, args.x), Value::Int(args.tick as i64));
+                    args.voltage_grid[args.y][args.x] = 100.0;
+                    args.resistance_grid[args.y][args.x] = -1.0; // Source
                 } else {
                     // Not enough energy, acts as high resistance
-                    resistance_grid[y][x] = 1000.0;
+                    args.resistance_grid[args.y][args.x] = 1000.0;
                 }
             } else {
                 // Already paid this tick
-                voltage_grid[y][x] = 100.0;
-                resistance_grid[y][x] = -1.0;
+                args.voltage_grid[args.y][args.x] = 100.0;
+                args.resistance_grid[args.y][args.x] = -1.0;
             }
         }
         "💡" => {
             // Bio-Light: Consumes Voltage -> Adds 5 Energy
-            let last_active = if let Some(Value::Int(t)) = registers.get(&(y, x)) {
+            let last_active = if let Some(Value::Int(t)) = args.registers.get(&(args.y, args.x)) {
                 *t as u64
             } else {
                 u64::MAX
             };
 
-            if last_active != tick {
-                let v = voltage_grid[y][x];
+            if last_active != args.tick {
+                let v = args.voltage_grid[args.y][args.x];
                 if v > 50.0 {
-                    *energy += 5;
-                    registers.insert((y, x), Value::Int(tick as i64));
+                    *args.energy += 5;
+                    args.registers
+                        .insert((args.y, args.x), Value::Int(args.tick as i64));
                 }
             }
-            resistance_grid[y][x] = 100.0; // Load
+            args.resistance_grid[args.y][args.x] = 100.0; // Load
         }
         "🔋" => {
             // Capacitor: Set Capacitance to 100.0
-            capacitance_grid[y][x] = 100.0;
+            args.capacitance_grid[args.y][args.x] = 100.0;
         }
         "♒" => {
             // Memristor: Set Resistance to 50.0 (initial)
-            let initialized = registers.contains_key(&(y, x));
+            let initialized = args.registers.contains_key(&(args.y, args.x));
             if !initialized {
-                resistance_grid[y][x] = 50.0;
-                registers.insert((y, x), Value::Int(1));
+                args.resistance_grid[args.y][args.x] = 50.0;
+                args.registers.insert((args.y, args.x), Value::Int(1));
             }
         }
         "⇝" => {
@@ -118,15 +122,15 @@ pub fn apply_elektra_runes(
             } else {
                 0.0
             };
-            resistance_grid[y][x] = (100.0 - sig).max(1.0);
+            args.resistance_grid[args.y][args.x] = (100.0 - sig).max(1.0);
         }
         "⏧" => {
             // Switch / Transistor:
             // Gate (North): Controls flow.
             // Source (West): Input Signal.
             // Drain (East): Output Signal.
-            let n_sig = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
-                current_signals[ny][nx].clone()
+            let n_sig = if let Some((ny, nx)) = normalize_coords(args.y as i64 - 1, args.x as i64) {
+                args.current_signals[ny][nx].clone()
             } else {
                 None
             };
@@ -140,10 +144,10 @@ pub fn apply_elektra_runes(
             if gate_open {
                 // Pass West to East
                 if let Some(val) = w_sig {
-                    if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
+                    if let Some((ey, ex)) = normalize_coords(args.y as i64, args.x as i64 + 1) {
                         let new_val = Some(val);
-                        if next_signals[ey][ex] != new_val {
-                            next_signals[ey][ex] = new_val;
+                        if args.next_signals[ey][ex] != new_val {
+                            args.next_signals[ey][ex] = new_val;
                             changes = true;
                         }
                     }
@@ -156,18 +160,6 @@ pub fn apply_elektra_runes(
 }
 
 #[cfg(not(feature = "elektra"))]
-pub fn apply_elektra_runes(
-    _rune: &str,
-    _y: usize,
-    _x: usize,
-    _tick: u64,
-    _current_signals: &[Vec<Option<Value>>],
-    _next_signals: &mut [Vec<Option<Value>>],
-    _voltage_grid: &mut Vec<Vec<f32>>,
-    _resistance_grid: &mut Vec<Vec<f32>>,
-    _capacitance_grid: &mut Vec<Vec<f32>>,
-    _energy: &mut i64,
-    _registers: &mut HashMap<(usize, usize), Value>,
-) -> bool {
+pub fn apply_elektra_runes(_args: ElektraArgs) -> bool {
     false
 }
