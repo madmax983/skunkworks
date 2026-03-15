@@ -104,7 +104,9 @@ impl<'a> Widget for TensionBar<'a> {
 
         // Draw full blocks
         for y in 0..full_blocks {
-            let draw_y = inner_area.y + inner_area.height - 1 - y;
+            let draw_y = (inner_area.y + inner_area.height)
+                .saturating_sub(1)
+                .saturating_sub(y);
             if draw_y >= inner_area.y + inner_area.height {
                 continue;
             }
@@ -118,7 +120,9 @@ impl<'a> Widget for TensionBar<'a> {
 
         // Draw partial block
         if remainder > 0.0 && full_blocks < inner_area.height {
-            let draw_y = inner_area.y + inner_area.height - 1 - full_blocks;
+            let draw_y = (inner_area.y + inner_area.height)
+                .saturating_sub(1)
+                .saturating_sub(full_blocks);
 
             // Lower blocks grow from bottom
             // Uses <= to ensure exact fractions (e.g., 0.5) map to the corresponding block (HALF)

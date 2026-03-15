@@ -661,7 +661,13 @@ fn prepare_signals(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
     for row in vm.prologue_state.signal_grid.iter_mut() {
         row.fill(None);
     }
-    for (y, row) in vm.prologue_state.signal_grid.iter_mut().enumerate().take(GRID_SIZE) {
+    for (y, row) in vm
+        .prologue_state
+        .signal_grid
+        .iter_mut()
+        .enumerate()
+        .take(GRID_SIZE)
+    {
         for (x, cell) in row.iter_mut().enumerate().take(GRID_SIZE) {
             if let Some(val) = &vm.prologue_state.delayed_signals[y][x] {
                 *cell = Some(val.clone());
