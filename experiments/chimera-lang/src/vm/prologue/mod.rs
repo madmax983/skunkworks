@@ -657,17 +657,20 @@ fn process_reality_physics(vm: &mut ChimeraVM) {
 }
 
 fn prepare_signals(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
-    let mut current_signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
-
-    for (y, row) in current_signals.iter_mut().enumerate().take(GRID_SIZE) {
+    /// Clears and reuses grid memory via double buffering per memory guidelines to avoid costly allocations
+    for row in vm.prologue_state.signal_grid.iter_mut() {
+        row.fill(None);
+    }
+    for (y, row) in vm.prologue_state.signal_grid.iter_mut().enumerate().take(GRID_SIZE) {
         for (x, cell) in row.iter_mut().enumerate().take(GRID_SIZE) {
             if let Some(val) = &vm.prologue_state.delayed_signals[y][x] {
                 *cell = Some(val.clone());
             }
         }
     }
-    vm.prologue_state.signal_grid = current_signals;
-    vm.prologue_state.delayed_signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
+    for row in vm.prologue_state.delayed_signals.iter_mut() {
+        row.fill(None);
+    }
 
     let runes: Vec<(usize, usize)> = vm.prologue_state.runes.iter().cloned().collect();
 
@@ -768,6 +771,7 @@ fn process_signal_propagation(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
                 }
             }
         }
+
         std::mem::swap(&mut vm.prologue_state.signal_grid, &mut next_signals);
         vm.prologue_state.scratch_signal_grid = next_signals;
 
