@@ -15,3 +15,7 @@
 ## [Refactor God Functions and Deep Nesting]
 **Learning:** Functions like `App::update`, `BlameAnalyzer::analyze`, and `draw_text_pane` suffered from mixing unrelated logic (e.g. calculation of code force, rendering UI logic) causing deep nesting. Extracting well-named functions (like `calculate_text_force`, `process_hunks`, and `format_line`) significantly simplifies reading flow and makes logic testing easier.
 **Action:** When working with rendering loops or algorithms, aggressively extract block logic into smaller cohesive units to prevent pyramid-of-doom and simplify parent functions.
+
+## [Struct Extraction Slice Coercion]
+**Learning:** When performing "Struct Extraction" to group function arguments into a new struct (e.g. `ElektraArgs<'a>`), Rust does not perform implicit slice coercion (Deref coercion) during struct field initialization. If a variable is passed as a `&mut Vec<T>` and the field expects a `&mut [T]`, using field initialization shorthand (e.g., just `voltage_grid,`) will cause a `mismatched types` error.
+**Action:** Explicitly deref and borrow the vector to coerce it into a slice when constructing the struct: `voltage_grid: &mut *voltage_grid,`.

@@ -657,7 +657,7 @@ fn process_reality_physics(vm: &mut ChimeraVM) {
 }
 
 fn prepare_signals(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
-    /// Clears and reuses grid memory via double buffering per memory guidelines to avoid costly allocations
+    // Clears and reuses grid memory via double buffering per memory guidelines to avoid costly allocations
     for row in vm.prologue_state.signal_grid.iter_mut() {
         row.fill(None);
     }
@@ -829,19 +829,19 @@ fn apply_propagation_rune(
     }
 
     #[cfg(feature = "elektra")]
-    if elektra::apply_elektra_runes(
+    if elektra::apply_elektra_runes(elektra::ElektraArgs {
         rune,
         y,
         x,
         tick,
         current_signals,
         next_signals,
-        voltage_grid,
-        resistance_grid,
-        capacitance_grid,
+        voltage_grid: &mut *voltage_grid,
+        resistance_grid: &mut *resistance_grid,
+        capacitance_grid: &mut *capacitance_grid,
         energy,
         registers,
-    ) {
+    }) {
         return true;
     }
 
