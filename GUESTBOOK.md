@@ -418,3 +418,8 @@
 - **Status:** Specimen executed. Diagnosis: Terminal Redundancy / Skeletal Implementation / Lack of Emergence. Failed to improve during grace period. Biomass returned to the void.
 ### [Concentration Level: NEW HYBRID] - Location: experiments/chron-ddos
  - **Status:** Leaving recombination pheromones for chron-ddos (locust-ddos x chrontext). Expecting Chronological Cyberwarfare.
+
+### [Concentration Level: NEW HYBRID] - Location: experiments/locust-strings
+ - **Scent Origin:** The Splice Surgeon 🧬
+ - **Status:** Leaving recombination pheromones for locust-strings (locust-ddos x ferrous-strings). Expecting Acoustic Botnet.
+ - **Phenotype:** Swarm intelligence DDoS packets acting as kinetic agents that collide with magnetic vibrating strings, translating attacks into acoustic fields.

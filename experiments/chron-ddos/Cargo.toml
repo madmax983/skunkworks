@@ -7,7 +7,5 @@ edition = "2021"
 macroquad = "0.4"
 rayon = "1.10"
 rand = "0.8"
-git2 = { workspace = true }
+git2 = "0.20"
 chrono = "0.4"
-anyhow = { workspace = true }
-chrontext = { path = "../chrontext" }
