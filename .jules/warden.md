@@ -20,3 +20,6 @@
 **2025-05-18 - [Bounded Reader Validation DoS Prevention]**
 **Threat:** Using `.take(LIMIT)` on `Read` traits to bound incoming payload lengths failed to prevent memory exhaustion (OOM DoS) or silent truncation bugs because the number of bytes read was never checked against the limit. Truncated payloads could cause unexpected bugs when parsed.
 **Defense:** Checked the returned length of `read_to_string` or `read_to_end` against the limit after using `.take(LIMIT + 1)`. Replaced implicit truncation with an explicit `continue` to try another file. Fixed in `experiments/heap-arena/src/level_gen.rs`.
+**2025-05-18 - [Fix Cord Value Integer Overflow]**
+**Threat:** `Cord::value` in `crates/quipu/src/lib.rs` suffered from an integer overflow. When many empty clusters existed, `multiplier` saturated to `u64::MAX`. If a subsequent cluster was non-empty, `cluster_val.saturating_mul(multiplier)` effectively multiplied by `u64::MAX` rather than the correct power of 10, resulting in a completely incorrect saturated value for the cord.
+**Defense:** Replaced implicit saturating multiplication with explicit checking of `checked_mul(10)`. If the multiplier overflows, a flag `multiplier_saturated` is set. If the flag is set and any subsequent cluster is non-zero, the total value explicitly saturates to `u64::MAX`, ensuring correctness and preventing logic bugs.

@@ -155,7 +155,7 @@ impl AkashicRecords {
 
     pub fn load_from(file_path: &str) -> Result<Self, String> {
         match std::fs::File::open(file_path) {
-            Ok(mut file) => {
+            Ok(file) => {
                 // Check size
                 if let Ok(metadata) = file.metadata() {
                     if metadata.len() > MAX_AKASHIC_SIZE {
@@ -167,7 +167,16 @@ impl AkashicRecords {
                 }
 
                 let mut content = String::new();
-                if file.read_to_string(&mut content).is_ok() {
+                let limit = MAX_AKASHIC_SIZE as usize;
+                let mut handle = file.take(limit as u64 + 1);
+
+                if handle.read_to_string(&mut content).is_ok() {
+                    if content.len() > limit {
+                        return Err(format!(
+                            "Akashic Record too large (> {} bytes)",
+                            MAX_AKASHIC_SIZE
+                        ));
+                    }
                     let mut records: Self = serde_json::from_str(&content)
                         .map_err(|e| format!("Parse Error: {}", e))?;
                     records.file_path = file_path.to_string();

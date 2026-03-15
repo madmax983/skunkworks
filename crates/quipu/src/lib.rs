@@ -254,6 +254,7 @@ impl Cord {
     pub fn value(&self) -> u64 {
         let mut total: u64 = 0;
         let mut multiplier: u64 = 1;
+        let mut multiplier_saturated = false;
 
         for (i, cluster) in self.clusters.iter().enumerate() {
             let mut cluster_val: u64 = 0;
@@ -261,11 +262,20 @@ impl Cord {
                 cluster_val += knot.value() as u64;
             }
             // Use saturating arithmetic to prevent panic/wrap on overflow
-            let term = cluster_val.saturating_mul(multiplier);
-            total = total.saturating_add(term);
+            if multiplier_saturated && cluster_val > 0 {
+                total = u64::MAX;
+            } else {
+                let term = cluster_val.saturating_mul(multiplier);
+                total = total.saturating_add(term);
+            }
 
             if i < self.clusters.len() - 1 {
-                multiplier = multiplier.saturating_mul(10);
+                if let Some(m) = multiplier.checked_mul(10) {
+                    multiplier = m;
+                } else {
+                    multiplier = u64::MAX;
+                    multiplier_saturated = true;
+                }
             }
         }
         total

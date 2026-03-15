@@ -89,7 +89,7 @@ mod tests {
                 args: vec![Nucleotide::String("hacked".to_string())],
             },
             Gene {
-                op: OpCode::Synthesize,
+                op: OpCode::PhyloSynthesize,
                 args: vec![],
             },
         ];
