@@ -24,12 +24,19 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 
 ## 🌿 Attempted Crosses
 
+### git-swarm
+- **Parents**: experiments/git-harmonograph + experiments/locust-ddos
+- **Concept**: Swarm intelligence visualizing code history.
+- **Novel trait**: Visual representation of repository evolution.
+- **Status**: experiments/git-swarm
+- **Evaluation**: Compiles. Emergent behavior confirmed. Success.
+
 ### locust-hologram
 - **Parents**: experiments/locust-ddos + experiments/hologram-text
 - **Concept**: Holographic Cyberwarfare.
 - **Novel trait**: Spectral Attack Vectors. The DDoS packets seek the target, but we view them entirely through their frequency domain interference pattern. As the swarm hits firewalls and compresses/bottlenecks, the high-frequency turbulence in the hologram spikes violently, creating a unique spectral fingerprint of a cyber attack.
 - **Status**: experiments/locust-hologram
-- **Evaluation**: Compiles. Emergent behavior confirmed (Spectral Attack Vectors).
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md. Emergent behavior confirmed (Spectral Attack Vectors). Success.
 
 ### myco-ddos
 - **Parents**: experiments/locust-ddos + experiments/myco-transit
@@ -137,14 +144,14 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Slime mold (Physarum polycephalum) pathfinding applied to git commit history. Instead of cities, the organisms forage between highly modified files, revealing the hidden architectural coupling of the codebase.
 - **Novel trait**: Codebase architecture emergence. The trails visually represent the hidden dependencies and coupling between files based on developer activity.
 - **Status**: experiments/git-mycelium
-- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (codebase architecture emergence trails). Excellent cross.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (codebase architecture emergence trails). Excellent cross. Success.
 
 ### mnem-flock
 - **Parents**: experiments/mnem-rot + experiments/luminous-flock
 - **Concept**: Boid flocking logic (luminous-flock) applied to a decaying codebase visualization (mnem-rot).
 - **Novel trait**: "Repair Drones". The flock swarms towards "rotting" nodes (files with high entropy) to heal them.
 - **Status**: experiments/mnem-flock
-- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as ACTIVE. Emergent behavior confirmed (repair drones swarming to entropy). Excellent cross.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as ACTIVE. Emergent behavior confirmed (repair drones swarming to entropy). Excellent cross. Success.
 
 ### ferrous-swarm
 - **Parents**: experiments/ferrous-tissue + experiments/luminous-flock
@@ -179,7 +186,7 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Pheromone-Guided Flocking. Boids leave a pheromone trail on a grid and sense it, clustering into paths rather than purely fluid swarms.
 - **Novel trait**: Structural Swarming. Flocks form stable "highways" based on positive feedback loops of pheromone deposition and sensing.
 - **Status**: experiments/myco-flock
-- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (structural swarming). Excellent cross.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (structural swarming). Excellent cross. Success.
 
 ### git-hologram
 - **Parents**: experiments/git-harmonograph + experiments/ferrous-hologram
@@ -199,7 +206,7 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Parents**: experiments/genetic-luthier + experiments/luminous-flock
 - **Concept**: Evolutionary Swarming. Boids have a DNA structure with genes controlling their flocking weights. Recombination on collision.
 - **Novel trait**: Evolutionary Swarming. The flock evolves its own swarming parameters dynamically.
-- **Status**: experiments/genetic-flock
+- **Status**: graveyard/genetic-flock (Executed)
 - **Evaluation**: Executed by The Reaper ☠️ in GUESTBOOK.md (CRITICAL MASS). Failure: Documentation void and skeletal implementation. The DNA logic fails to manifest true emergent behaviors.
 
 ### gray-flock

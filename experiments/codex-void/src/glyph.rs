@@ -1,5 +1,16 @@
 use image::{ImageBuffer, Rgb};
 
+const OFFSETS: &[(i32, i32)] = &[
+    (0, -2),  // Top
+    (1, -1),  // Top-Right
+    (2, 0),   // Right
+    (1, 1),   // Bottom-Right
+    (0, 2),   // Bottom
+    (-1, 1),  // Bottom-Left
+    (-2, 0),  // Left
+    (-1, -1), // Top-Left
+];
+
 pub struct Glyph {
     pub byte: u8,
 }
