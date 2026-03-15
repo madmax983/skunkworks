@@ -39,6 +39,13 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior confirmed (Mycelial Cyberwarfare). Success.
 
 
+### locust-strings
+- **Parents**: experiments/locust-ddos + experiments/ferrous-strings
+- **Concept**: Acoustic Botnet. The DDoS packets act as kinetic agents that collide with magnetic vibrating strings.
+- **Predicted Phenotype**: As the swarm navigates through the environment towards the server, they pluck the strings, translating the digital attack into high-fidelity acoustic oscillations mapped onto a magnetic field.
+- **Status**: experiments/locust-strings
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior confirmed (Acoustic Botnet). Success.
+
 ### locus-ddos
 - **Parents**: experiments/locust-ddos + crates/locus
 - **Concept**: Boid-driven Cyberwarfare. The DDoS packets use Boid flocking mechanics instead of simple pathfinding.
@@ -326,4 +333,4 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Chronological Cyberwarfare. The botnet swarm targets lines of code based on their chronological age, turning code text into multiple, dynamically sized targets.
 - **Novel trait**: Chronological Cyberwarfare. Older code lines act as stronger attractors (larger radii or higher priority) for the DDoS packets, while newly refactored sections are ignored.
 - **Status**: experiments/chron-ddos
-- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior confirmed (Chronological Cyberwarfare). Success.
+- **Evaluation**: Condemned by The Reaper. Documentation void and terminal compilation failure caused by upstream changes (its dependency `chrontext` was flattened into a binary crate). Failed.
