@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chrontext**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism / Identity Crisis. A static wrapper rendered obsolete by hybridized offspring (`chron-flock`). Grace period: 24h.
+- **chron-ddos**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Documentation Void. Broken by upstream changes in `chrontext` and abandoned before stabilization. Grace period: 24h.
 
 ## Pardoned
+- **chrontext**: Specimen pardoned. Diagnosis: Layer Lasagna / Terminal Genericism. Resolved by Razor flattening the architecture into a single `main.rs` file and removing speculative generality. The timeline wrapper is pure again.
 - **chimera-automaton**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Resolved missing evolution config and unused variable warnings. Vigor demonstrated through interactive steering of the generic physics simulation.
 - **chaos-strings**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved compilation privacy errors and updated audio dependencies. The chaos rings true again.
 - **rigid-origami**: Specimen pardoned. Diagnosis: Compilation Failure / API Obsolescence / Redundancy. Resolved compilation and API issues. Generating valid spatial deployable payloads.

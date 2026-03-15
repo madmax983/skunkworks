@@ -17,9 +17,13 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Ecosystem Isolation. A generic utility lacking any organic, chaotic, or evolutionary traits. Grace period: 24h.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chrontext
+### [Concentration Level: TOXIC] - Location: experiments/chron-ddos
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation / Identity Crisis. Relegated to obsolescence by its vibrant, swarming descendants. Grace period: 24h.
+- **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Documentation Void. Broken by upstream changes to chrontext and abandoned before stabilization. Grace period: 24h.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/chrontext
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen pardoned. Layer Lasagna flattened by Razor, proving architectural fitness.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/chimera-automaton
 - **Scent Origin:** The Reaper ☠️
