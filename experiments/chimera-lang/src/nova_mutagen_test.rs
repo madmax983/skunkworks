@@ -35,6 +35,7 @@ mod tests {
             },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
+        vm.phase = crate::vm::nova::Phase::Crystalline; // Prevent radiation from mutating the instruction
 
         // Step 1: Push 100
         vm.step();
@@ -83,6 +84,7 @@ mod tests {
             },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
+        vm.phase = crate::vm::nova::Phase::Crystalline;
         let _start_energy = vm.energy;
 
         // Execute irradiate (costs energy)

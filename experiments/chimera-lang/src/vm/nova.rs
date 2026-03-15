@@ -483,6 +483,28 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Forge | OpCode::Speak | OpCode::Etymology => exec_verbum_op(vm, op, args),
         OpCode::Supernova => exec_supernova(vm),
         OpCode::Singularity => exec_singularity(vm),
+        OpCode::Mandelbrot
+        | OpCode::Julia
+        | OpCode::Zoom
+        | OpCode::Pan
+        | OpCode::Iterate
+        | OpCode::Escape => super::nova_fractal::exec_fractal_op(vm, op, args),
+        OpCode::QuantumScribe => {
+            super::nova_hologram::exec_quantum_scribe(vm, op, args);
+            None
+        }
+        OpCode::QuantumScan => {
+            super::nova_hologram::exec_quantum_scan(vm, op, args);
+            None
+        }
+        OpCode::HoloInvoke => {
+            super::nova_hologram::exec_holo_invoke(vm, op, args);
+            None
+        }
+        OpCode::HoloSpeak => {
+            super::nova_hologram::exec_holo_speak(vm, op, args);
+            None
+        }
         OpCode::Eval => exec_eval(vm),
         OpCode::Map => exec_map(vm),
         OpCode::Fold => exec_fold(vm),

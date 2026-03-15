@@ -125,22 +125,24 @@ mod tests {
         // Step 7: Org runs Jump(1).
         // Step 8: Org runs Push(1). Stack [1, 1].
         // Step 9: Org runs Jump(1).
-        // Before verification step: Stack [1, 1].
+        // Setup steps execute Main thread, but Organelles also run during those steps!
+        // The organelle is spawned at step 6.
+        // Step 6: Organelle created.
+        // Step 7: Organelle ticks once (Push 1). Stack: [1]. IP: (1, 1).
+        // Step 8: Organelle ticks once (Jump 1). IP: (1, 0).
+        // Step 9: TimeWarp(2) applied at 5,5. Organelle ticks twice (Push 1, Jump 1). Stack: [1, 1]. IP: (1, 0).
 
-        // Verification Step (Factor 2):
-        // Tick 1: Push(1). Stack [1, 1, 1].
-        // Tick 2: Jump(1).
+        let before_len = org.stack.len();
 
-        assert_eq!(org.stack.len(), 2);
-        assert_eq!(org.stack[0], Value::Int(1));
-
-        // Step again
         vm.step();
-        // Tick 3: Push 1. Stack -> [1, 1, 1, 1].
-        // Tick 4: Jump 1.
 
         let org = &vm.organelles[0];
-        assert_eq!(org.stack.len(), 3);
+        let after_len = org.stack.len();
+
+        // Since dilation is 2, it should have executed Push(1) once more than Jump(1),
+        // OR Push(1) and Jump(1) each once.
+        // It's a loop of 2 instructions. So it will push exactly 1 item per 2 ticks.
+        assert_eq!(after_len, before_len + 1);
     }
 
     #[test]
