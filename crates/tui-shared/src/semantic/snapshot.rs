@@ -1,3 +1,10 @@
+//! # Snapshot 📸
+//!
+//! Provides the [`Snapshot`] struct to capture the entire semantic state of your TUI.
+//!
+//! A semantic snapshot represents the meaning of what's on screen rather than the pixels.
+//! This allows Large Language Models to easily parse and interact with your application.
+
 use crate::semantic::action::Action;
 use crate::semantic::entity::Entity;
 use crate::semantic::entity::PropValue;
@@ -154,7 +161,12 @@ impl Snapshot {
 
     /// Adds a top-level metric (score, time, etc.).
     ///
-    /// # Examples
+    /// # Arguments
+    ///
+    /// * `key` - The name of the metric (e.g., "score").
+    /// * `value` - The value of the metric, conforming to [`PropValue`].
+    ///
+    /// ## Examples
     ///
     /// ```
     /// use tui_shared::semantic::Snapshot;

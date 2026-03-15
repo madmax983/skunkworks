@@ -111,7 +111,9 @@ impl Tui {
     ///
     /// # Errors
     ///
-    /// Returns an `io::Error` if any of the terminal setup operations fail.
+    /// Returns an `io::Error` if any of the terminal setup operations fail. This usually occurs if the application
+    /// is not running inside a valid terminal environment (e.g., piped output, background daemon).
+    /// To recover, ensure the process is run attached to a valid TTY or fallback to headless mode if available.
     ///
     /// # Panics
     ///
@@ -152,7 +154,9 @@ impl Tui {
     ///
     /// # Errors
     ///
-    /// Returns an `io::Error` if any of the terminal restoration operations fail.
+    /// Returns an `io::Error` if any of the terminal restoration operations fail. This typically happens if the terminal
+    /// state has been externally corrupted. Recovery usually involves instructing the user to type `reset` in their terminal
+    /// to fix remaining artifacting or invisible cursors.
     ///
     /// # Examples
     ///

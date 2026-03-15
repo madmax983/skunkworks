@@ -1,3 +1,11 @@
+//! # Entity 👾
+//!
+//! Provides the [`Entity`] struct for describing the "nouns" of your TUI story.
+//!
+//! Entities represent anything that has a presence in the interface, whether it's a
+//! game character, a button, or a data point. By grouping them into a [`crate::semantic::Snapshot`],
+//! you describe the world state to an LLM.
+
 pub use locus::Vec2;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -96,7 +104,12 @@ impl Entity {
     ///
     /// This helps the LLM predict future states.
     ///
-    /// # Examples
+    /// # Arguments
+    ///
+    /// * `vx` - The horizontal velocity.
+    /// * `vy` - The vertical velocity.
+    ///
+    /// ## Examples
     ///
     /// ```
     /// use tui_shared::semantic::Entity;
@@ -146,6 +159,14 @@ impl Entity {
 ///
 /// Internally, it serializes as untagged JSON values, meaning `PropValue::Int(42)`
 /// will become simply `42` in the final snapshot, making the structure cleaner for LLMs.
+///
+/// ## Examples
+///
+/// ```
+/// use tui_shared::semantic::PropValue;
+/// let text_prop: PropValue = "poisoned".into();
+/// let int_prop: PropValue = 42.into();
+/// ```
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum PropValue {
