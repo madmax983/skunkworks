@@ -342,13 +342,11 @@ fn execute_neural_l_system(vm: &mut ChimeraVM, blueprint: &str, start_y: usize, 
 
     // Limit execution to prevent infinite loops or massive writes
     let max_steps = 100;
-    let mut steps = 0;
 
-    for char in blueprint.chars() {
+    for (steps, char) in blueprint.chars().enumerate() {
         if steps >= max_steps {
             break;
         }
-        steps += 1;
 
         match char {
             'F' => {
@@ -384,7 +382,7 @@ fn execute_neural_l_system(vm: &mut ChimeraVM, blueprint: &str, start_y: usize, 
                 {
                     vm.grid[cy][cx] = Value::Str("♦".to_string());
                     // Register new neuron immediately so it works next tick
-                    vm.neurons.entry((cy, cx)).or_insert_with(Neuron::new);
+                    vm.neurons.entry((cy, cx)).or_default();
                 }
             }
             'S' => {

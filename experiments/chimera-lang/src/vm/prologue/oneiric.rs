@@ -89,8 +89,8 @@ pub fn process_oneiric_tick(vm: &mut ChimeraVM) {
     let mut next_cells = vm.prologue_state.oneiric_grid.cells.clone();
     let decay = 0.90; // Fast decay
 
-    for y in 0..GRID_SIZE {
-        for x in 0..GRID_SIZE {
+    for (y, row) in next_cells.iter_mut().enumerate().take(GRID_SIZE) {
+        for (x, cell) in row.iter_mut().enumerate().take(GRID_SIZE) {
             let mut sum = 0.0;
             let mut count = 0.0;
 
@@ -106,14 +106,14 @@ pub fn process_oneiric_tick(vm: &mut ChimeraVM) {
             if count > 0.0 {
                 // Blur: Average of neighbors and self
                 let avg = (sum + vm.prologue_state.oneiric_grid.cells[y][x]) / (count + 1.0);
-                next_cells[y][x] = avg * decay;
+                *cell = avg * decay;
             } else {
-                next_cells[y][x] *= decay;
+                *cell *= decay;
             }
 
             // Cutoff
-            if next_cells[y][x] < 0.1 {
-                next_cells[y][x] = 0.0;
+            if *cell < 0.1 {
+                *cell = 0.0;
             }
         }
     }

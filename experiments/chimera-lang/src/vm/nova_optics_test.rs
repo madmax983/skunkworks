@@ -40,6 +40,19 @@ mod tests {
                 op: OpCode::Reflector,
                 args: vec![],
             },
+            // Migrate to (0, 0)
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)], // dy (0)
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)], // dx (0)
+            },
+            Gene {
+                op: OpCode::Migrate,
+                args: vec![],
+            },
             // Fire from (0, 0) towards (0, 5)
             // Fire args: dx, dy, power
             Gene {

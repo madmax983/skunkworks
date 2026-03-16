@@ -134,11 +134,8 @@ pub fn process_forth_agent(
                                 if gi >= 0 && (gi as usize) < strand.genes.len() {
                                     let gene = &strand.genes[gi as usize];
                                     let op_str = gene.op.to_string();
-                                    let arg_val = if let Some(arg) = gene.args.first() {
-                                        match arg {
-                                            Nucleotide::Number(n) => *n,
-                                            _ => 0,
-                                        }
+                                    let arg_val = if let Some(Nucleotide::Number(n)) = gene.args.first() {
+                                        *n
                                     } else {
                                         0
                                     };

@@ -109,7 +109,7 @@ pub fn apply_architect_runes(
         "░" => {
             // Noise: West (Size Int) -> Self (Blueprint)
             if let Some(Value::Int(size)) = get_sig(0, -1) {
-                let s = size.max(1).min(32) as usize; // Cap size
+                let s = size.clamp(1, 32) as usize; // Cap size
                 let noise_grid = generate_noise(s, s);
                 let new_val = grid_to_value(&noise_grid);
                 if next_signals[y][x].is_none() {
@@ -259,10 +259,10 @@ fn apply_life_step(grid: &[Vec<Value>]) -> Vec<Vec<Value>> {
 fn generate_noise(h: usize, w: usize) -> Vec<Vec<Value>> {
     let mut rng = rand::thread_rng();
     let mut grid = vec![vec![Value::Int(0); w]; h];
-    for r in 0..h {
-        for c in 0..w {
+    for row in grid.iter_mut().take(h) {
+        for cell in row.iter_mut().take(w) {
             if rng.gen_bool(0.5) {
-                grid[r][c] = Value::Int(1);
+                *cell = Value::Int(1);
             }
         }
     }
