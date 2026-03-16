@@ -275,6 +275,10 @@ impl<'a> Widget for Button<'a> {
         let inner_area = block.inner(area);
         block.render(area, buf);
 
+        if inner_area.height < 1 {
+            return;
+        }
+
         let text_area = Rect {
             x: inner_area.x,
             y: inner_area.y + (inner_area.height.saturating_sub(1)) / 2,
@@ -379,6 +383,24 @@ mod tests {
         let cell = &buffer[(0, 0)];
         assert_eq!(cell.fg, Color::Gray);
         assert_eq!(cell.bg, Color::Reset);
+    }
+
+    #[test]
+    fn test_button_out_of_bounds() {
+        // Zero height area
+        let area0 = Rect::new(0, 0, 10, 0);
+        let mut buffer0 = Buffer::empty(area0);
+        Button::new("Test").render(area0, &mut buffer0); // Should not panic
+
+        // Small height area (borders take up 2 height, so inner height is 0)
+        let area1 = Rect::new(0, 0, 10, 1);
+        let mut buffer1 = Buffer::empty(area1);
+        Button::new("Test").render(area1, &mut buffer1); // Should not panic
+
+        // Zero width area
+        let area2 = Rect::new(0, 0, 0, 10);
+        let mut buffer2 = Buffer::empty(area2);
+        Button::new("Test").render(area2, &mut buffer2); // Should not panic
     }
 
     #[test]
