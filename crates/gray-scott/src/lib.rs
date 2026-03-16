@@ -66,7 +66,7 @@ impl GrayScott {
     /// assert_eq!(gs.height(), 100);
     /// ```
     pub fn new(width: usize, height: usize) -> Self {
-        let size = width * height;
+        let size = width.checked_mul(height).expect("GrayScott size overflow");
         Self {
             width,
             height,
@@ -119,6 +119,9 @@ impl GrayScott {
     /// assert_eq!(index, 55);
     /// ```
     pub fn get_index(&self, x: usize, y: usize) -> usize {
+        if x >= self.width || y >= self.height {
+            panic!("coordinate out of bounds");
+        }
         y * self.width + x
     }
 
