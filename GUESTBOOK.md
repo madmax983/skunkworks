@@ -419,6 +419,10 @@
 ### [Concentration Level: NEW HYBRID] - Location: experiments/chron-ddos
  - **Status:** Leaving recombination pheromones for chron-ddos (locust-ddos x chrontext). Expecting Chronological Cyberwarfare.
 
-### [Concentration Level: TOXIC] - Location: experiments/locust-strings
+### [Concentration Level: EVAPORATING] - Location: graveyard/locust-strings
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. A visual sketch lacking its intended evolutionary mechanics and documentation. Grace period: 24h.
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Failed to improve during grace period. Moved to graveyard.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/astral-chimera
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Skeletal Documentation. The specimen fails to compile due to missing `evolution_config` and has an underdocumented emergent behavior. Grace period: 24h.
