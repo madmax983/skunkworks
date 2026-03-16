@@ -98,13 +98,19 @@ impl<'a> Widget for TensionBar<'a> {
             return;
         }
 
+        let tension = tension.clamp(0.0, 1.0);
         let precise_height = inner_area.height as f64 * tension;
-        let full_blocks = precise_height.floor() as u16;
+        let full_blocks = (precise_height.floor() as u16).min(inner_area.height);
         let remainder = precise_height - full_blocks as f64;
 
         // Draw full blocks
         for y in 0..full_blocks {
-            let draw_y = inner_area.y + inner_area.height - 1 - y;
+            let Some(draw_y) = (inner_area.y + inner_area.height)
+                .checked_sub(1)
+                .and_then(|val| val.checked_sub(y))
+            else {
+                continue;
+            };
             if draw_y >= inner_area.y + inner_area.height {
                 continue;
             }
@@ -118,7 +124,12 @@ impl<'a> Widget for TensionBar<'a> {
 
         // Draw partial block
         if remainder > 0.0 && full_blocks < inner_area.height {
-            let draw_y = inner_area.y + inner_area.height - 1 - full_blocks;
+            let Some(draw_y) = (inner_area.y + inner_area.height)
+                .checked_sub(1)
+                .and_then(|val| val.checked_sub(full_blocks))
+            else {
+                return;
+            };
 
             // Lower blocks grow from bottom
             // Uses <= to ensure exact fractions (e.g., 0.5) map to the corresponding block (HALF)
