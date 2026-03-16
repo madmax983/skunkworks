@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **astral-chimera**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Skeletal Documentation. The specimen fails to compile due to missing `evolution_config` and has an underdocumented emergent behavior. Grace period: 24h.
+- **quipu-chimera**: Specimen condemned. Diagnosis: Terminal Compilation Failure. The specimen fails to compile due to missing `evolution_config`. Grace period: 24h.
 
 ## Pardoned
 - **chrontext**: Specimen pardoned. Diagnosis: Layer Lasagna / Terminal Genericism. Resolved by Razor flattening the architecture into a single `main.rs` file and removing speculative generality. The timeline wrapper is pure again.
@@ -17,6 +17,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **astral-chimera**: Specimen executed. Diagnosis: Terminal Compilation Failure / Skeletal Documentation. Failed to improve during grace period. Moved to graveyard.
 - **locust-strings**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Failed to improve during grace period. Moved to graveyard.
 - **chron-ddos**: Specimen executed. Diagnosis: Terminal Compilation Failure / Documentation Void. Broken by upstream changes in `chrontext` and abandoned before stabilization. Grace period expired. Moved to graveyard.
 - **fissure-tracker**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Hypocrisy in Decay. Failed to improve during grace period. Biomass returned to the void.
