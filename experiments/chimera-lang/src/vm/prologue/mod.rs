@@ -656,18 +656,20 @@ fn process_reality_physics(vm: &mut ChimeraVM) {
     }
 }
 
+/// Avoiding `vec![vec![None; ...]]` reallocation per tick reduces O(n) heap allocations
+/// and instead reuses memory by clearing the grids safely via `.fill(None)`.
 fn prepare_signals(vm: &mut ChimeraVM, grid: &[Vec<Value>]) {
-    let mut current_signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
+    for row in vm.prologue_state.signal_grid.iter_mut() {
+        row.fill(None);
+    }
 
-    for (y, row) in current_signals.iter_mut().enumerate().take(GRID_SIZE) {
+    for (y, row) in vm.prologue_state.delayed_signals.iter_mut().enumerate().take(GRID_SIZE) {
         for (x, cell) in row.iter_mut().enumerate().take(GRID_SIZE) {
-            if let Some(val) = &vm.prologue_state.delayed_signals[y][x] {
-                *cell = Some(val.clone());
+            if let Some(val) = cell.take() {
+                vm.prologue_state.signal_grid[y][x] = Some(val);
             }
         }
     }
-    vm.prologue_state.signal_grid = current_signals;
-    vm.prologue_state.delayed_signals = vec![vec![None; GRID_SIZE]; GRID_SIZE];
 
     let runes: Vec<(usize, usize)> = vm.prologue_state.runes.iter().cloned().collect();
 
