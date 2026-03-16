@@ -9,9 +9,9 @@ mod tests {
         for _ in 0..depth {
             deep_nesting.push_str("any(");
         }
-        deep_nesting.push_str("1");
+        deep_nesting.push('1');
         for _ in 0..depth {
-            deep_nesting.push_str(")");
+            deep_nesting.push(')');
         }
 
         let src = format!(

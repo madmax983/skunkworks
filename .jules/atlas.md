@@ -9,3 +9,7 @@
 ## YYYY-MM-DD - [Normal Handler Extraction]
 **Tangle:** The Blob - `experiments/chimera-lang/src/tui/app/handlers/normal.rs` was ~2300 lines long, containing a monolithic event loop `match` block.
 **Blueprint:** Extracted the main input branches into a new `normal/` module, separating character inputs (`chars.rs`), directional navigation (`navigation.rs`), and other actions (`actions.rs`). The `normal/mod.rs` acts as a facade delegator for `handle_normal_input`. This improves cohesion and significantly reduces file length while maintaining the TUI input handling domain logic boundary.
+
+## YYYY-MM-DD - [Chimera TUI App Extraction Finalization]
+**Tangle:** The Blob - The event loop extraction for `experiments/chimera-lang/src/tui/mod.rs` was started but left abandoned in `app/mod.rs` and its handlers. The 4000+ line monolithic `run_app` loop was duplicated and running alongside the dormant, unlinked `app/mod.rs` structure.
+**Blueprint:** Deleted the duplicate `run_app` loop from `tui/mod.rs` and properly re-exported `pub(crate) mod app;`. Wired the TUI's primary loop up to `app::run_app`. Fixed all dangling imports (`super::super`), visibility boundaries (`pub(crate) fn apply_glitch_fx`), and type annotations inside the nested `handlers/` submodules to finalize the structural boundary extraction.

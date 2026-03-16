@@ -3,7 +3,6 @@
 use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value};
-use resonance_audio::audio::AudioSnapshot;
 
 fn make_vm(genes: Vec<Gene>) -> ChimeraVM {
     let dna = Dna {

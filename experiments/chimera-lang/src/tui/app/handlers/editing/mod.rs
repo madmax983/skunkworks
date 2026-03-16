@@ -2,8 +2,8 @@ pub(crate) mod actions;
 pub(crate) mod chars;
 pub(crate) mod enter;
 
+use crate::tui::state::AppState;
 use crate::vm::ChimeraVM;
-use super::super::state::AppState;
 use anyhow::Result;
 use crossterm::event::{KeyCode, KeyEvent};
 

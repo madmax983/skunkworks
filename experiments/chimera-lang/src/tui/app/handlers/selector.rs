@@ -1,17 +1,8 @@
-use crate::ast::Gene;
-use crate::vm::ChimeraVM;
-use crate::{ChimeraParser, Rule};
-use super::super::state::{AppState, InputMode, ViewMode};
-use super::super::get_all_views;
-use super::super::parse_grid_value;
-use anyhow::Result;
+use crate::tui::get_all_views;
+use crate::tui::state::AppState;
 use crossterm::event::{KeyCode, KeyEvent};
-use pest::Parser;
 
-pub(crate) fn handle_view_selector(
-    key: KeyEvent,
-    app_state: &mut AppState,
-) -> bool {
+pub(crate) fn handle_view_selector(key: KeyEvent, app_state: &mut AppState) -> bool {
     let views = get_all_views();
     let mut list_state = app_state.view_selector_state.borrow_mut();
     let selected = list_state.selected().unwrap_or(0);

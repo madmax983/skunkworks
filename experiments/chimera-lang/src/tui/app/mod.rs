@@ -467,8 +467,8 @@ where
             }
 
             match app_state.view_mode {
-                ViewMode::Genome => render_genome(f, vm, app_state),
-                ViewMode::Grid => render_grid(f, vm, app_state),
+                ViewMode::Genome => render_genome_and_grid(f, vm, app_state),
+                ViewMode::Grid => render_genome_and_grid(f, vm, app_state),
                 ViewMode::Sequencer => render_sequencer(f, vm, app_state),
                 #[cfg(feature = "nova")]
                 ViewMode::Heatmap => render_heatmap(f, vm, app_state),
@@ -490,7 +490,7 @@ where
                 ViewMode::Verbum => render_verbum(f, vm, app_state),
                 #[cfg(feature = "nova")]
                 ViewMode::Crispr => render_crispr(f, vm, app_state),
-                _ => render_grid(f, vm, app_state), // Fallback
+                _ => render_genome_and_grid(f, vm, app_state), // Fallback
             }
 
             // Apply glitch effect to entire screen if level > 0
@@ -506,10 +506,8 @@ where
 
         if event::poll(std::time::Duration::from_millis(100))? {
             if let Event::Key(key) = event::read()? {
-                if app_state.show_view_selector {
-                    if handle_view_selector(key, app_state) {
-                        continue;
-                    }
+                if app_state.show_view_selector && handle_view_selector(key, app_state) {
+                    continue;
                 }
 
                 if let InputMode::Editing = app_state.input_mode {
