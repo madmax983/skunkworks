@@ -295,7 +295,7 @@ pub fn apply_evolution_sinks(vm: &mut ChimeraVM, rune: &str, y: usize, x: usize)
                     if goal == actual {
                         // Success
                         vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
-                        vm.output.push("DARWIN: Success match".to_string());
+                        vm.output.push("DARWIN: Success".to_string());
                     } else {
                         // Failure -> Mutate South
                         let mut rng = rand::thread_rng();
