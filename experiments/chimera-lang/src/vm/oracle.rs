@@ -670,7 +670,7 @@ fn check_dynamic_predicates(
                             for x in 0..crate::vm::GRID_SIZE {
                                 let fact_x = Value::Int(x as i64);
                                 let fact_y = Value::Int(y as i64);
-                                let fact_val = vm.grid[y][x].clone();
+                                let fact_val = &vm.grid[y][x];
 
                                 // Try to unify X
                                 if let Some(subst_x) = unify(arg_x, &fact_x, subst) {
@@ -678,7 +678,7 @@ fn check_dynamic_predicates(
                                     if let Some(subst_y) = unify(arg_y, &fact_y, &subst_x) {
                                         // Try to unify Val
                                         if let Some(final_subst) =
-                                            unify(arg_val, &fact_val, &subst_y)
+                                            unify(arg_val, fact_val, &subst_y)
                                         {
                                             solve(
                                                 remaining_goals,
@@ -1304,7 +1304,7 @@ fn check_dynamic_predicates(
                                 for x in x_range.clone() {
                                     let fact_x = Value::Int(x as i64);
                                     let fact_y = Value::Int(y as i64);
-                                    let fact_val = grid_snapshot[y][x].clone();
+                                    let fact_val = &grid_snapshot[y][x];
 
                                     let mut current_subst = subst.clone();
                                     if let Some(s1) = unify(arg_t, &fact_t, &current_subst) {
@@ -1315,7 +1315,7 @@ fn check_dynamic_predicates(
                                             {
                                                 current_subst = s3;
                                                 if let Some(s4) =
-                                                    unify(arg_val, &fact_val, &current_subst)
+                                                    unify(arg_val, fact_val, &current_subst)
                                                 {
                                                     solve(
                                                         remaining_goals,

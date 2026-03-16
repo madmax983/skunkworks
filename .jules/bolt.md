@@ -31,3 +31,4 @@
 **[Double Buffered Diffusion]**
 **Learning:** In simulation or cellular automata loops that process grid state over time, cloning the entire `Vec` representing the grid every frame is extremely costly (`O(n)` heap allocations).
 **Action:** Use a double buffer approach. Add a `next_state` vector of the same size to the main struct, read from `self.state`, write to `self.next_state`, and use `std::mem::swap(&mut self.state, &mut self.next_state)` at the end of the step.
+**[Avoid unconditional clone in grid loops]**\n**Learning:** Using `.clone()` on grid cells inside a hot nested loop (like `vm/oracle.rs` unification loops) causes unnecessary heap allocations for string values when the target function (`unify`) only borrows the value anyway.\n**Action:** Pass references to grid elements `&grid[y][x]` directly instead of cloning them when feeding them into functions taking `&Value`.
