@@ -66,3 +66,7 @@
 **[Integer Overflow in Tests on 32-bit Targets]
 **Learning:** Using `i64::MAX as usize + 1` causes panics on 32-bit targets because `i64::MAX` exceeds `usize::MAX`.
 **Action:** Feature-gate tests containing such boundary conditions with `#[cfg(target_pointer_width = "64")]` to ensure the test suite is portable and does not panic on smaller pointer width environments.
+
+**[Grid Wrapping Bug]**
+**Learning:** In 1D vectors representing 2D grids (like in `gray-scott`), `x >= width` checks are critical. Relying solely on `index < vec.len()` allows "scanline wrapping" where an out-of-bounds `x` (e.g., `width`) silently wraps to `x=0, y=y+1`. Additionally, `width * height` can easily overflow `usize` during initialization.
+**Action:** Always verify explicit bounds (`x < width` and `y < height`) before calculating the 1D index, and use `checked_mul` during grid initialization to prevent size overflow panics. Added regression tests in `sentry_bounds.rs`.
