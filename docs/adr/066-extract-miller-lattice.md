@@ -1,6 +1,6 @@
 # 066. Extract Miller Lattice
 
-* **Status:** Proposed
+* **Status:** Accepted
 * **Context:**
   The `lattice.rs` logic containing `LatticePoint`, `Atom`, and `Crystal` was duplicated across three experiments (`miller-fs`, `miller-reaction`, and `ferro-file`), resulting in unnecessary code duplication, tangling the codebase, and violating the single source of truth principle.
 

@@ -1,6 +1,6 @@
 # 065. De-abstract Single-Implementation Traits
 
-* **Status:** Proposed
+* **Status:** Accepted
 * **Context:**
   The codebase contained multiple single-implementation traits that introduced unnecessary indirection, dynamic dispatch (`Box<dyn Trait>`), and cognitive overhead without providing any actual flexibility. This violated the YAGNI (You Aren't Gonna Need It) and KISS (Keep It Simple, Stupid) principles. Specific instances included:
   - `AudioSource` trait in `syncopated-threads` and `chimera-syncopation`.

@@ -1,7 +1,7 @@
 # 019. Chimera Chemistry System
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 Chimera organisms exist in a grid-based world where interaction has historically been limited to movement, consumption (eating value), and reproduction. While "Signals" allowed for communication, there was no mechanism for organisms to manipulate the material composition of their environment in complex ways. Users and developers wanted a way for organisms to "craft" tools or weapons and for the environment to have more reactive properties (e.g., acids, buffs, mutagenic pools) beyond simple energy values.
