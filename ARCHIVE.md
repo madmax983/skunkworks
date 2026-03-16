@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chrontext**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism / Identity Crisis. A static wrapper rendered obsolete by hybridized offspring (`chron-flock`). Grace period: 24h.
+- **ik-codewalker**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism / Ecosystem Maladaptation. A basic IK solver reaching for mock data, dependent on outdated engine versions. Grace period: 24h.
 
 ## Pardoned
 - **chimera-automaton**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Resolved missing evolution config and unused variable warnings. Vigor demonstrated through interactive steering of the generic physics simulation.
@@ -16,6 +16,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **chrontext**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Identity Crisis. Failed to improve during grace period. Moved to graveyard.
 - **fissure-tracker**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Hypocrisy in Decay. Failed to improve during grace period. Biomass returned to the void.
 - **git-ghost**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. The promised bit rot was a mirage. Failed to improve during grace period. Moved to graveyard.
 - **crate-radar**: Specimen executed. Diagnosis: Terminal Genericism / Ecosystem Isolation. Failed to improve during grace period. Moved to graveyard.

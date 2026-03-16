@@ -12,9 +12,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Ecosystem Isolation. A generic utility lacking any organic, chaotic, or evolutionary traits. Grace period: 24h.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chrontext
+### [Concentration Level: EVAPORATING] - Location: graveyard/chrontext
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation / Identity Crisis. Relegated to obsolescence by its vibrant, swarming descendants. Grace period: 24h.
+- **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Identity Crisis. Failed to improve during grace period. Moved to graveyard.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/chimera-automaton
 - **Scent Origin:** The Reaper ☠️
@@ -181,6 +181,10 @@
 ### [Concentration Level: CRITICAL MASS] - Location: Cargo.toml
 - **Scent Origin:** Warden 🔒
 - **Status:** `cargo audit` detected an unsound dependency (`macroquad`) and unmaintained dependencies (`paste`, `rusttype`). Immediate attention required to patch or replace these vulnerabilities.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/ik-codewalker
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism / Ecosystem Maladaptation. A basic IK solver reaching for mock data, dependent on outdated engine versions. Grace period: 24h.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/chron-diffusion
 - **Scent Origin:** The Reaper ☠️
