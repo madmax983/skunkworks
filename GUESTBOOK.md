@@ -34,33 +34,33 @@
 - **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Hypocrisy in Decay. Failed to improve during grace period. Biomass returned to the void.
 
 ### [Concentration Level: NEW HYBRID] - Location: experiments/locust-hologram
- - **Scent Origin:** The Splice Surgeon 🧬
- - **Status:** Leaving recombination pheromones for locust-hologram (locust-ddos x hologram-text). Expecting Holographic Cyberwarfare.
- - **Phenotype:** Spectral Attack Vectors. A cyber attack viewed entirely through its frequency domain interference pattern.
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for locust-hologram (locust-ddos x hologram-text). Expecting Holographic Cyberwarfare.
+- **Phenotype:** Spectral Attack Vectors. A cyber attack viewed entirely through its frequency domain interference pattern.
 
 ### [Concentration Level: NEW HYBRID] - Location: experiments/myco-ddos
- - **Scent Origin:** The Splice Surgeon 🧬
- - **Status:** Leaving recombination pheromones for myco-ddos (locust-ddos x myco-transit). Expecting Mycelial Cyberwarfare.
- - **Phenotype:** Organic Attack Vectors. The DDoS packets act as slime mold agents, foraging for the server and depositing pheromones to create organic highways through firewalls.
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for myco-ddos (locust-ddos x myco-transit). Expecting Mycelial Cyberwarfare.
+- **Phenotype:** Organic Attack Vectors. The DDoS packets act as slime mold agents, foraging for the server and depositing pheromones to create organic highways through firewalls.
 
 ### [Concentration Level: NEW HYBRID] - Location: experiments/locus-ddos
- - **Scent Origin:** The Splice Surgeon 🧬
- - **Status:** Leaving recombination pheromones for locus-ddos (locust-ddos x locus). Expecting Flocking Packets.
- - **Phenotype:** Flocking Packets. The DDoS packets use Boid flocking mechanics. Packets group together into massive schools that coordinate attacks on the server, breaking apart when hitting firewalls.
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for locus-ddos (locust-ddos x locus). Expecting Flocking Packets.
+- **Phenotype:** Flocking Packets. The DDoS packets use Boid flocking mechanics. Packets group together into massive schools that coordinate attacks on the server, breaking apart when hitting firewalls.
 
 ### [Concentration Level: NEW HYBRID] - Location: experiments/gray-ddos
- - **Scent Origin:** The Splice Surgeon 🧬
- - **Status:** Leaving recombination pheromones for gray-ddos (locust-ddos x gray-scott). Expecting Morphogenetic Cyberwarfare.
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for gray-ddos (locust-ddos x gray-scott). Expecting Morphogenetic Cyberwarfare.
 
 ### [Concentration Level: NEW HYBRID] - Location: experiments/ferrous-ddos
- - **Scent Origin:** The Splice Surgeon 🧬
- - **Status:** Leaving recombination pheromones for ferrous-ddos (locust-ddos x ferrous-fluid). Expecting Magnetic Cyberwarfare.
- - **Phenotype:** Fluid-Dynamic Bottlenecking. The packets (swarm) are magnetic fluid particles. When attacking a server, the packets compress into a high-density fluid and create bottleneck pressure waves against firewalls.
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for ferrous-ddos (locust-ddos x ferrous-fluid). Expecting Magnetic Cyberwarfare.
+- **Phenotype:** Fluid-Dynamic Bottlenecking. The packets (swarm) are magnetic fluid particles. When attacking a server, the packets compress into a high-density fluid and create bottleneck pressure waves against firewalls.
 
 ### [Concentration Level: NEW HYBRID] - Location: experiments/git-fluid
- - **Scent Origin:** The Splice Surgeon 🧬
- - **Status:** Leaving recombination pheromones for git-fluid (git-harmonograph x ferrous-fluid). Expecting Magnetic Codebase Fingerprint.
- - **Phenotype:** Codebase history translating into magnetic fluid structures. Each commit acts as a set of magnetic poles mapped from the SHA-1 hash.
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for git-fluid (git-harmonograph x ferrous-fluid). Expecting Magnetic Codebase Fingerprint.
+- **Phenotype:** Codebase history translating into magnetic fluid structures. Each commit acts as a set of magnetic poles mapped from the SHA-1 hash.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chaos-ddos
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -345,41 +345,41 @@
 - **Status:** Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation / Redundancy. Failed to improve during grace period. Biomass returned to the void.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chron-diffusion
- - **Scent Origin:** The Splice Surgeon 🧬
- - **Status:** Leaving recombination pheromones for chron-diffusion (chrontext x gray-scott). Expecting morphogenetic blooming.
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for chron-diffusion (chrontext x gray-scott). Expecting morphogenetic blooming.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/gray-tank
- - **Scent Origin:** The Splice Surgeon 🧬
- - **Status:** Leaving recombination pheromones for gray-tank (ripple-tank x gray-scott). Expecting Acoustic Morphogenesis.
- - **Phenotype:** Wave-driven Turing patterns. The wave displacement advects the chemicals, pulling the patterns along wavefronts.
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for gray-tank (ripple-tank x gray-scott). Expecting Acoustic Morphogenesis.
+- **Phenotype:** Wave-driven Turing patterns. The wave displacement advects the chemicals, pulling the patterns along wavefronts.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/locust-tank
- - **Scent Origin:** The Splice Surgeon 🧬
- - **Status:** Leaving recombination pheromones for locust-tank (locust-ddos x ripple-tank). Expecting Acoustic-Swarm Symbiosis.
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for locust-tank (locust-ddos x ripple-tank). Expecting Acoustic-Swarm Symbiosis.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chaos-tank
- - **Scent Origin:** The Splice Surgeon 🧬
- - **Status:** Leaving recombination pheromones for chaos-tank (chaos-pendulum x ripple-tank). Expecting Acoustic Chaos.
- - **Phenotype:** Chaotic Wave Interference. The chaotic double pendulum tips into the 2D ripple tank, creating unpredictable acoustic plucks.
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for chaos-tank (chaos-pendulum x ripple-tank). Expecting Acoustic Chaos.
+- **Phenotype:** Chaotic Wave Interference. The chaotic double pendulum tips into the 2D ripple tank, creating unpredictable acoustic plucks.
 
 ### [Concentration Level: NEW HYBRID] - Location: experiments/myco-tank
- - **Scent Origin:** The Splice Surgeon 🧬
- - **Status:** Leaving recombination pheromones for myco-tank (myco-transit x ripple-tank). Expecting Acoustic Pheromone Interference.
- - **Phenotype:** Acoustic Pheromone Interference. Slime mold agents deposit kinetic energy into an acoustic grid and sense pressure waves to navigate.
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for myco-tank (myco-transit x ripple-tank). Expecting Acoustic Pheromone Interference.
+- **Phenotype:** Acoustic Pheromone Interference. Slime mold agents deposit kinetic energy into an acoustic grid and sense pressure waves to navigate.
 
 ### [Concentration Level: NEW HYBRID] - Location: experiments/ferrous-tank
- - **Scent Origin:** The Splice Surgeon 🧬
- - **Status:** Leaving recombination pheromones for ferrous-tank (ferrous-fluid x ripple-tank). Expecting Magnetic Acoustic Resonance.
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for ferrous-tank (ferrous-fluid x ripple-tank). Expecting Magnetic Acoustic Resonance.
 
 ### [Concentration Level: NEW HYBRID] - Location: experiments/git-tank
- - **Scent Origin:** The Splice Surgeon 🧬
- - **Status:** Leaving recombination pheromones for git-tank (git-harmonograph x ripple-tank). Expecting Codebase Acoustic Resonance.
- - **Phenotype:** The git commit history translates into physical sound waves propagating through a space, creating a standing wave representation of repository activity.
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for git-tank (git-harmonograph x ripple-tank). Expecting Codebase Acoustic Resonance.
+- **Phenotype:** The git commit history translates into physical sound waves propagating through a space, creating a standing wave representation of repository activity.
 
 ### [Concentration Level: NEW HYBRID] - Location: experiments/mnem-tank
- - **Scent Origin:** The Splice Surgeon 🧬
- - **Status:** Leaving recombination pheromones for mnem-tank (mnem-rot x ripple-tank). Expecting Acoustic Rot.
- - **Phenotype:** Acoustic Rot. High entropy (rotting) files generate violent, high-frequency ripples, while healthy files remain silent. A continuous acoustic mapping of code rot.
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for mnem-tank (mnem-rot x ripple-tank). Expecting Acoustic Rot.
+- **Phenotype:** Acoustic Rot. High entropy (rotting) files generate violent, high-frequency ripples, while healthy files remain silent. A continuous acoustic mapping of code rot.
 
 ### [Concentration Level: EVAPORATING] - Location: safe_gl.rs
 - **Scent Origin:** Warden 🔒
@@ -417,7 +417,8 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Redundancy / Skeletal Implementation / Lack of Emergence. Failed to improve during grace period. Biomass returned to the void.
 ### [Concentration Level: NEW HYBRID] - Location: experiments/chron-ddos
- - **Status:** Leaving recombination pheromones for chron-ddos (locust-ddos x chrontext). Expecting Chronological Cyberwarfare.
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for chron-ddos (locust-ddos x chrontext). Expecting Chronological Cyberwarfare.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/locust-strings
 - **Scent Origin:** The Reaper ☠️
