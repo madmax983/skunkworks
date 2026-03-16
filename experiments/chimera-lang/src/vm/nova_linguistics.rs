@@ -153,11 +153,10 @@ pub fn exec_pangram(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 // --- Helpers ---
 
+/// Calculates the Levenshtein distance between two strings without allocating intermediate `Vec<char>`s.
 fn levenshtein(s1: &str, s2: &str) -> usize {
-    let s1_chars: Vec<char> = s1.chars().collect();
-    let s2_chars: Vec<char> = s2.chars().collect();
-    let n = s1_chars.len();
-    let m = s2_chars.len();
+    let n = s1.chars().count();
+    let m = s2.chars().count();
 
     if n == 0 {
         return m;
@@ -167,25 +166,22 @@ fn levenshtein(s1: &str, s2: &str) -> usize {
     }
 
     // Optimization: Use 2 rows to reduce memory from O(N*M) to O(min(N,M))
-    let (short, long) = if n < m {
-        (&s1_chars, &s2_chars)
+    let (short, long, min_len) = if n < m {
+        (s1, s2, n)
     } else {
-        (&s2_chars, &s1_chars)
+        (s2, s1, m)
     };
-
-    let min_len = short.len();
-    let max_len = long.len();
 
     let mut prev_row: Vec<usize> = (0..=min_len).collect();
     let mut curr_row: Vec<usize> = vec![0; min_len + 1];
 
-    for i in 1..=max_len {
-        curr_row[0] = i;
-        for j in 1..=min_len {
-            let cost = if long[i - 1] == short[j - 1] { 0 } else { 1 };
-            curr_row[j] = std::cmp::min(
-                std::cmp::min(curr_row[j - 1] + 1, prev_row[j] + 1),
-                prev_row[j - 1] + cost,
+    for (i, long_c) in long.chars().enumerate() {
+        curr_row[0] = i + 1;
+        for (j, short_c) in short.chars().enumerate() {
+            let cost = if long_c == short_c { 0 } else { 1 };
+            curr_row[j + 1] = std::cmp::min(
+                std::cmp::min(curr_row[j] + 1, prev_row[j + 1] + 1),
+                prev_row[j] + cost,
             );
         }
         prev_row.clone_from(&curr_row);
