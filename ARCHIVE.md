@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chrontext**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism / Identity Crisis. A static wrapper rendered obsolete by hybridized offspring (`chron-flock`). Grace period: 24h.
+- **chron-ddos**: Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism / Copy-Paste Atrophy. Failed to demonstrate hybrid vigor; lacks `README.md`. Grace period: 24h.
 
 ## Pardoned
 - **chimera-automaton**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Resolved missing evolution config and unused variable warnings. Vigor demonstrated through interactive steering of the generic physics simulation.
