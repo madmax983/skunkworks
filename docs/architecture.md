@@ -2059,3 +2059,36 @@ classDiagram
     MillerReaction ..> MillerLattice : Uses
     FerroFile ..> MillerLattice : Uses
 ```
+
+### Prologue Feature: Narrative & Memetics (ADR 046)
+
+The Narrative Physics and Memetics subsystems introduce string manipulation and viral evolution into the Prologue grid.
+
+```mermaid
+classDiagram
+    direction TB
+    class PrologueGrid {
+        +HashMap~Position, String~ Library
+        +step()
+    }
+
+    class NarrativeRunes {
+        <<Module: narrative.rs>>
+        +Alpha (Incipit)
+        +Omega (Terminus)
+        +Hand (Revision)
+        +Book (Library)
+    }
+
+    class MemeticRunes {
+        <<Module: memetics.rs>>
+        +Iota (Source)
+        +Epsilon (Evolve)
+        +Phi (Censor)
+        +Sigma (Spread)
+        +Kappa (Imitate)
+    }
+
+    PrologueGrid --> NarrativeRunes : Uses
+    PrologueGrid --> MemeticRunes : Uses
+```

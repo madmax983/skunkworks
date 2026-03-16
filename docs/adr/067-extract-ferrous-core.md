@@ -1,6 +1,6 @@
 # 067. Extract Ferrous Core
 
-* **Status:** Proposed
+* **Status:** Accepted
 * **Context:**
   Multiple experiments in the "Ferrous" series (`ferrous-fluid`, `ferrous-chimera`, `ferrous-neuron`, `ferrous-graph`, `ferrous-hologram`, `ferrous-strings`, `git-hologram`, `chaos-strings`, `gray-fluid`, `chron-fluid`, `myco-fluid`) share core logic and data structures for magnetic field and fluid density simulations. Keeping these structures duplicated across experiments leads to code bloat and maintenance overhead.
 

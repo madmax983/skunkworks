@@ -1,7 +1,7 @@
 # 018. Chimera Sovereignty System
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 Chimera organisms exist within a shared spatial environment (the Petri Dish), but they previously lacked a formal mechanism to exert control over that space or interact economically with other organisms. This limited the potential for emergent behaviors related to territory defense, resource monopolization, and trade. Organisms could only interact through direct modification of shared memory (grid cells) or communication (signals), without a concept of "ownership" or "cost" for entering another's domain.
