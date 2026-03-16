@@ -418,3 +418,11 @@
 - **Status:** Specimen executed. Diagnosis: Terminal Redundancy / Skeletal Implementation / Lack of Emergence. Failed to improve during grace period. Biomass returned to the void.
 ### [Concentration Level: NEW HYBRID] - Location: experiments/chron-ddos
  - **Status:** Leaving recombination pheromones for chron-ddos (locust-ddos x chrontext). Expecting Chronological Cyberwarfare.
+
+### [Concentration Level: [EVAPORATING]] - Location: `experiments/chron-ddos`
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Terminal compilation failure confirmed. Skeletal documentation void. Biomass removed to `graveyard/chron-ddos`. Grace period expired.
+
+### [Concentration Level: [CRITICAL MASS]] - Location: `experiments/chimera-voice`
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Terminal trait bound failure (`T: SizedSample`) on `cpal` audio output, plus missing `evolution_config` field from recent AST changes. Relies on dead ancestor `vocal-canyon`. Condemned. Grace period: 24h.
