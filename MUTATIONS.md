@@ -14,6 +14,8 @@ Mendel's peas. Darwin's finches. Your experiments.
 **Strategy Shift:**
 Continue to leverage robust, mathematically stable environments (FFT, wave mechanics) to ground chaotic or emergent agents (DDoS, slime molds). The success of mapping intent-driven agents (DDoS packets) into continuous environments (magnetic fluids, reaction-diffusion substrates) proves that hybridizing *purpose* with *medium* yields the most striking phenotypes. Future crosses should avoid unconstrained spaces (hyperbolic geometry) and focus on translating discrete swarm intent into high-fidelity frequency or acoustic domains.
 
+*Phase 1 Review Complete:* All 43 previous crosses have been compiled and documented. The breeding strategy confirms the viability of `locus` combinations inside physical domains (like `locus-tank`).
+
 ---
 
 ## 🌸 Proposed Crosses
@@ -23,6 +25,13 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 ---
 
 ## 🌿 Attempted Crosses
+
+### locus-tank
+- **Parents**: crates/locus + experiments/ripple-tank
+- **Concept**: Acoustic Swarming. Boids flock in a 2D space that acts as an acoustic wave tank. As they move, they displace the medium, creating pressure waves (ripples) that propagate.
+- **Novel trait**: Acoustic Swarm Interference. The swarm creates a standing wave pattern representing its collective density and velocity. The waves they generate can interact with walls or other obstacles, creating a dynamic, audio-visual representation of the flock's movement.
+- **Status**: experiments/locus-tank
+- **Evaluation**: Compiles. Emergent behavior confirmed (Acoustic Swarm Interference). Success.
 
 ### locust-hologram
 - **Parents**: experiments/locust-ddos + experiments/hologram-text

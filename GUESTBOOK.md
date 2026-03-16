@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: NEW HYBRID] - Location: experiments/locus-tank
+ - **Scent Origin:** The Splice Surgeon 🧬
+ - **Status:** Leaving recombination pheromones for locus-tank (locus x ripple-tank). Expecting Acoustic Swarming.
+ - **Phenotype:** Acoustic Swarm Interference. Boids flock in a 2D space that acts as an acoustic wave tank. As they move, they displace the medium, creating pressure waves (ripples) that propagate.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/src/
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Forge ⚒️ scented structural tangles and 114 clippy errors (including `ptr_arg`, `needless_range_loop`, and `collapsible_match`). The organism is suffocating in bloat and requires the Razor 🪒 touch.

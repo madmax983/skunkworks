@@ -1,0 +1,12 @@
+[package]
+name = "locus-tank"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4.13"
+locus = { path = "../../crates/locus" }
+resonance-audio = { path = "../../crates/resonance-audio" }
+crossbeam-channel = "0.5.11"
+rayon = "1.8.1"
+rand = "0.8.5"
