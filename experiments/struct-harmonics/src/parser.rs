@@ -1,5 +1,6 @@
 use anyhow::Result;
 use std::fs;
+use std::io::Read;
 use std::path::Path;
 use syn::visit::Visit;
 use syn::{GenericArgument, ItemEnum, ItemStruct, PathArguments, Type};
@@ -62,7 +63,10 @@ impl<'ast> Visit<'ast> for Scanner {
     }
 }
 
-fn extract_type_name(ty: &Type) -> Option<String> {
+fn extract_type_name_impl(ty: &Type, depth: usize) -> Option<String> {
+    if depth > 50 {
+        return None; // Prevent stack overflow on deeply nested generics
+    }
     if let Type::Path(type_path) = ty {
         if let Some(segment) = type_path.path.segments.last() {
             // If it has generics, try to dive in
@@ -80,7 +84,7 @@ fn extract_type_name(ty: &Type) -> Option<String> {
                 .contains(&ident.as_str())
                 {
                     if let Some(GenericArgument::Type(inner_type)) = args.args.first() {
-                        return extract_type_name(inner_type);
+                        return extract_type_name_impl(inner_type, depth + 1);
                     }
                 }
             }
@@ -91,6 +95,10 @@ fn extract_type_name(ty: &Type) -> Option<String> {
     None
 }
 
+fn extract_type_name(ty: &Type) -> Option<String> {
+    extract_type_name_impl(ty, 0)
+}
+
 pub fn scan_workspace(root: impl AsRef<Path>) -> Result<Vec<StructInfo>> {
     let mut scanner = Scanner::default();
 
@@ -98,14 +106,19 @@ pub fn scan_workspace(root: impl AsRef<Path>) -> Result<Vec<StructInfo>> {
         let entry = entry?;
         if entry.file_type().is_file() && entry.path().extension().is_some_and(|e| e == "rs") {
             // println!("Scanning {:?}", entry.path());
-            let content = match fs::read_to_string(entry.path()) {
-                Ok(c) => c,
-                Err(_) => continue,
-            };
-
-            // Parse file. If it fails (syntax error), just skip it.
-            if let Ok(file) = syn::parse_file(&content) {
-                scanner.visit_file(&file);
+            let mut content = String::new();
+            if let Ok(file) = fs::File::open(entry.path()) {
+                let limit = 1024 * 1024; // 1MB limit
+                if let Ok(bytes_read) =
+                    std::io::Read::take(file, limit + 1).read_to_string(&mut content)
+                {
+                    if bytes_read <= limit as usize {
+                        // Parse file. If it fails (syntax error), just skip it.
+                        if let Ok(file_ast) = syn::parse_file(&content) {
+                            scanner.visit_file(&file_ast);
+                        }
+                    }
+                }
             }
         }
     }

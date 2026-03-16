@@ -15,6 +15,7 @@ pub struct Dna {
     pub natural_freq: f32,
     pub coupling_strength: f32,
     pub color: Color,
+    #[allow(dead_code)]
     pub char_representation: char,
 }
 
@@ -73,6 +74,7 @@ impl Boid {
         }
     }
 
+    #[allow(dead_code)]
     pub fn position(&self) -> Vec2 {
         self.position
     }
