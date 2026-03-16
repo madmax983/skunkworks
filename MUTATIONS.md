@@ -38,6 +38,13 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Status**: experiments/myco-ddos
 - **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior confirmed (Mycelial Cyberwarfare). Success.
 
+### mnem-ddos
+- **Parents**: experiments/mnem-rot + experiments/locust-ddos
+- **Concept**: Entropy-Driven Cyberwarfare. The botnet swarm targets lines of code and specific files (nodes) in the codebase.
+- **Novel trait**: Parasitic Code Rot. The codebase graph's entropy is directly driven by parasitic swarm agents rather than passive decay over time. As agents swarm a node, they "rot" the data, creating a tug-of-war between the swarm's chaotic consumption of nodes and the user's active maintenance.
+- **Status**: experiments/mnem-ddos
+- **Evaluation**: Compiles. Emergent behavior confirmed (Parasitic Code Rot). Success.
+
 
 ### locust-strings
 - **Parents**: experiments/locust-ddos + experiments/ferrous-strings
