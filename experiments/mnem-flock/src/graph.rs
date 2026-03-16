@@ -2,6 +2,7 @@ use macroquad::prelude::*;
 use regex::Regex;
 use std::collections::HashMap;
 use std::fs;
+use std::io::Read;
 use walkdir::WalkDir;
 
 #[derive(Clone)]
@@ -18,6 +19,7 @@ pub struct Node {
 pub struct Edge {
     pub from: usize,
     pub to: usize,
+    #[allow(dead_code)]
     pub strength: f32,
 }
 
@@ -64,11 +66,20 @@ impl Graph {
 
         // Pass 1: Create nodes
         for entry in walker.filter_map(|e| e.ok()) {
-            if entry.path().extension().map_or(false, |ext| ext == "rs") {
+            if entry.path().extension().is_some_and(|ext| ext == "rs") {
                 let name = entry.file_name().to_string_lossy().to_string();
-                if let Ok(content) = fs::read_to_string(entry.path()) {
-                    let id = self.add_node(name.clone(), content);
-                    file_map.insert(name, id);
+
+                if let Ok(file) = fs::File::open(entry.path()) {
+                    let mut content = String::new();
+                    let limit = 1024 * 1024; // 1MB limit
+                    if let Ok(bytes_read) =
+                        std::io::Read::take(file, limit + 1).read_to_string(&mut content)
+                    {
+                        if bytes_read <= limit as usize {
+                            let id = self.add_node(name.clone(), content);
+                            file_map.insert(name, id);
+                        }
+                    }
                 }
             }
         }

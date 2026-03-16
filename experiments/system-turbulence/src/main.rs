@@ -135,7 +135,7 @@ fn update_forces(
 
             // G, B = Velocity (Random direction based on hash time?)
             // We want swirling.
-            let angle = (time.elapsed_seconds() * 2.0 + (pid % 100) as f32) as f32;
+            let angle = time.elapsed_seconds() * 2.0 + (pid % 100) as f32;
             let speed = (*mem as f32 / 1024.0 / 1024.0 / 100.0).clamp(0.0, 5.0); // MB -> speed factor
 
             let vx = angle.cos() * speed;

@@ -43,7 +43,7 @@ async fn main() {
         .collect();
 
     let mut decay_timer = 0.0;
-    let decay_rate = 0.05;
+    // let decay_rate = 0.05; // unused
 
     loop {
         let dt = get_frame_time();
@@ -58,10 +58,10 @@ async fn main() {
             let node_count = graph.nodes.len();
             for i in 0..node_count {
                 // Borrow checker dance: we need to mutate node `i` but read others
-                let (head, tail) = graph.nodes.split_at_mut(i + 1);
+                let (head, _tail) = graph.nodes.split_at_mut(i + 1);
                 let node = &mut head[i];
-                let others = &tail; // This only covers nodes AFTER i, which is incomplete for all-to-all.
-                                    // A simpler way for this experiment: Update physics in one pass (copy positions), then apply.
+                // let _others = &_tail; // This only covers nodes AFTER i, which is incomplete for all-to-all.
+                // A simpler way for this experiment: Update physics in one pass (copy positions), then apply.
 
                 // Decay
                 node.health -= 0.001;

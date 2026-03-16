@@ -166,11 +166,7 @@ fn levenshtein(s1: &str, s2: &str) -> usize {
     }
 
     // Optimization: Use 2 rows to reduce memory from O(N*M) to O(min(N,M))
-    let (short, long, min_len) = if n < m {
-        (s1, s2, n)
-    } else {
-        (s2, s1, m)
-    };
+    let (short, long, min_len) = if n < m { (s1, s2, n) } else { (s2, s1, m) };
 
     let mut prev_row: Vec<usize> = (0..=min_len).collect();
     let mut curr_row: Vec<usize> = vec![0; min_len + 1];
