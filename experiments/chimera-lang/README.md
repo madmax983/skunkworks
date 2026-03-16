@@ -271,10 +271,16 @@ Some features (Epigenetics, Cell Cycle, Telomeres, `incubate`) are part of the "
 Chimera can be used as a Rust library to embed the VM in other applications.
 
 Add to your `Cargo.toml`:
+
+> **REQUIRES EXPLICIT WORKSPACE DEPENDENCIES**: If you are not operating within the repository's Cargo workspace, you will need to add the shared dependencies `anyhow` and `ratatui` (or `crossterm`) to avoid inheritance errors.
+
 ```toml
 [dependencies]
 # Note: Adjust path to point to the chimera-lang directory relative to your project
 chimera-lang = { path = "../chimera-lang" }
+anyhow = "1.0"
+ratatui = "0.30"
+crossterm = "0.28"
 ```
 
 Example `main.rs`:
@@ -284,11 +290,11 @@ use chimera_lang::prelude::*;
 fn main() {
     // Create a simple organism that prints "Hello"
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::String("Hello".to_string())] },
-        Gene { op: OpCode::Print, args: vec![] },
-        // Note: For integers, use Nucleotide::Number(n)
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] },
-        Gene { op: OpCode::Print, args: vec![] },
+        Gene::new(OpCode::Push, vec!["Hello".into()]),
+        OpCode::Print.into(),
+        // Note: For integers, pass them normally and use .into()
+        Gene::new(OpCode::Push, vec![42.into()]),
+        OpCode::Print.into(),
     ];
     let dna = Dna::from_genes(genes);
     let mut vm = ChimeraVM::new(dna);
@@ -322,7 +328,7 @@ fn main() {
 
     // Compile the source string into DNA
     // The second argument is an optional path for imports (None here)
-    let dna = compiler::compile(source, None).expect("Failed to compile");
+    let dna = chimera_lang::compiler::compile(source, None).expect("Failed to compile");
 
     let mut vm = ChimeraVM::new(dna);
 
@@ -340,7 +346,7 @@ fn main() {
 
 See `examples/story_demo.rs` for a full example of programmatic usage:
 
-> **REQUIRES FEATURE NOVA**
+> **REQUIRES FEATURE NOVA**: Note that this example will launch an interactive ratatui TUI that blocks the terminal indefinitely unless you press `Q`.
 
 ```bash
 cargo run -p chimera-lang --example story_demo

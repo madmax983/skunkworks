@@ -11,10 +11,10 @@ It unifies the concepts of **Cellular Automata** (Wireworld, Game of Life), **Co
 Run the new Evolution example to see the Prologue engine in action:
 
 ```bash
-cargo run -- --input examples/evolution.pro
+cargo run --bin chimera-lang -- --headless --ticks 1 --input examples/evolution.pro
 ```
 
-This will launch the TUI (Text User Interface) showing a live simulation of:
+If you omit the headless flags (`--headless --ticks 1`), this will launch the TUI (Text User Interface) showing a live simulation of:
 *   A **Logic Grid** with signals propagating through wires.
 *   An **Automaton Agent (🤖)** executing a spatial program.
 *   **Chaos Runes (K)** injecting entropy.

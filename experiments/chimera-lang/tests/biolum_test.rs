@@ -37,6 +37,7 @@ mod tests {
             },
         };
         let mut vm = ChimeraVM::new(dna);
+        vm.context_loc = (8, 8); // Explicitly set context_loc
 
         // Execute
         vm.step(); // push
@@ -90,6 +91,7 @@ mod tests {
             },
         };
         let mut vm = ChimeraVM::new(dna);
+        vm.context_loc = (8, 8);
 
         for _ in 0..7 {
             vm.step();
