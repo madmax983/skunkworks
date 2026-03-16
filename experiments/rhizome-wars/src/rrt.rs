@@ -46,8 +46,15 @@ impl Tree {
 
         // 1. Sample
         // 10% chance to steer towards target if it exists
-        let sample = if target.is_some() && rng.gen_bool(0.1) {
-            target.unwrap()
+        let sample = if let Some(t) = target {
+            if rng.gen_bool(0.1) {
+                t
+            } else {
+                Vec2::new(
+                    rng.gen_range(bounds.x..bounds.x + bounds.w),
+                    rng.gen_range(bounds.y..bounds.y + bounds.h),
+                )
+            }
         } else {
             Vec2::new(
                 rng.gen_range(bounds.x..bounds.x + bounds.w),

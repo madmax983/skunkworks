@@ -63,7 +63,17 @@ fn main() -> Result<()> {
             width,
             height,
         } => {
-            let text = fs::read_to_string(&input).context("Failed to read input file")?;
+            let mut text = String::new();
+            let limit = 10 * 1024 * 1024;
+            use std::io::Read;
+            let mut file = std::fs::File::open(&input).context("Failed to open input file")?;
+            let bytes_read = file
+                .take(limit + 1)
+                .read_to_string(&mut text)
+                .context("Failed to read input file")?;
+            if bytes_read > limit as usize {
+                anyhow::bail!("Input file is too large! Maximum allowed size is 10MB.");
+            }
             println!("Generating cover image ({}x{})...", width, height);
             let mut img = steg::generate_plasma(width, height);
 

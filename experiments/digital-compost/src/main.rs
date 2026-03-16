@@ -41,9 +41,24 @@ fn main() -> Result<()> {
 
                 if should_load {
                     // Read file
-                    if let Ok(raw_content) = fs::read_to_string(&file.path) {
-                        let decayed = apply_decay(&raw_content, file.decay_level);
-                        content_cache = Some((selected, decayed));
+                    if let Ok(mut f) = fs::File::open(&file.path) {
+                        let mut raw_content = String::new();
+                        use std::io::Read;
+                        let limit = 10 * 1024 * 1024;
+                        if let Ok(bytes_read) = f.take(limit + 1).read_to_string(&mut raw_content) {
+                            if bytes_read > limit as usize {
+                                content_cache = Some((
+                                    selected,
+                                    "File is too large! Maximum allowed size is 10MB.".to_string(),
+                                ));
+                            } else {
+                                let decayed = apply_decay(&raw_content, file.decay_level);
+                                content_cache = Some((selected, decayed));
+                            }
+                        } else {
+                            content_cache =
+                                Some((selected, "Binary or unreadable file.".to_string()));
+                        }
                     } else {
                         content_cache = Some((selected, "Binary or unreadable file.".to_string()));
                     }

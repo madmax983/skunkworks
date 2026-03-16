@@ -154,8 +154,19 @@ fn preprocess(
             return Err(anyhow!("Recursive include detected: {:?}", abs_path));
         }
 
-        let content = fs::read_to_string(&path)
-            .map_err(|e| anyhow!("Failed to include file {:?}: {}", path, e))?;
+        let limit = 10 * 1024 * 1024; // 10MB limit
+        let file =
+            fs::File::open(&path).map_err(|e| anyhow!("Failed to open file {:?}: {}", path, e))?;
+        let mut content = String::new();
+        use std::io::Read;
+        let bytes_read = file
+            .take(limit + 1)
+            .read_to_string(&mut content)
+            .map_err(|e| anyhow!("Failed to read file {:?}: {}", path, e))?;
+
+        if bytes_read > limit as usize {
+            return Err(anyhow!("File size exceeds limit of 10MB: {:?}", path));
+        }
 
         let sub_expanded = preprocess(&content, Some(bp), visited, depth + 1)?;
         expanded.push_str(&sub_expanded);

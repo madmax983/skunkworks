@@ -3532,6 +3532,8 @@ impl ChimeraVM {
             | OpCode::Isomerize
             | OpCode::Spirit
             | OpCode::Alchemy
+            | OpCode::Luciferin
+            | OpCode::Photophore
             | OpCode::Meme
             | OpCode::Conceive
             | OpCode::Propagate

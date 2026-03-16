@@ -88,7 +88,7 @@ async fn main() {
     sorted_polys.sort_by(|a, b| {
         let da = a.transform.apply(Point::new(0.0, 0.0)).norm_sqr();
         let db = b.transform.apply(Point::new(0.0, 0.0)).norm_sqr();
-        da.partial_cmp(&db).unwrap()
+        da.partial_cmp(&db).unwrap_or(std::cmp::Ordering::Equal)
     });
 
     // Skip the first one (center, dist ~ 0) and take next 7

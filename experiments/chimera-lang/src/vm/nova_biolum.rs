@@ -9,7 +9,11 @@ const NEIGHBOR_DIRECTIONS: [(i64, i64, u8); 4] = [
 ];
 
 pub fn exec_luciferin(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    // Stack: [r, g, b, intensity]
+    // Stack: [r, g, b, intensity] -> LIFO means [intensity, b, g, r] popped in that order
+    // if pushed as push(r) push(g) push(b) push(intensity)
+    // Wait, let's match the test. The test pushes r, g, b, intensity.
+    // So stack top is intensity.
+    // That means pop() gives: intensity, then b, then g, then r.
     if vm.stack.len() >= 4 {
         let intensity_val = vm.stack.pop().unwrap();
         let b_val = vm.stack.pop().unwrap();

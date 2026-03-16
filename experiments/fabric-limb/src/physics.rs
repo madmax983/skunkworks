@@ -42,7 +42,10 @@ impl Arm {
             }
         } else {
             // Target is reachable
-            let mut diff = dist(self.joints.last().cloned().unwrap(), target);
+            let Some(&last_joint) = self.joints.last() else {
+                return;
+            };
+            let mut diff = dist(last_joint, target);
             let mut iterations = 0;
             let max_iterations = 10; // FABRIK converges fast
 
@@ -70,14 +73,14 @@ impl Arm {
                     );
                 }
 
-                diff = dist(self.joints.last().cloned().unwrap(), target);
+                diff = dist(self.joints.last().cloned().unwrap_or((0.0, 0.0)), target);
                 iterations += 1;
             }
         }
     }
 
     pub fn end_effector(&self) -> (f64, f64) {
-        *self.joints.last().unwrap()
+        self.joints.last().cloned().unwrap_or((0.0, 0.0))
     }
 }
 

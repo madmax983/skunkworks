@@ -30,3 +30,10 @@
 **2026-03-15 - [Validate Physics Timestep (dt)]**
 **Threat:** The `step` method in `physics-pbd` checked if `dt <= f32::EPSILON` but did not check if `dt.is_finite()`. This allowed `NaN` or `Infinity` time step values to corrupt all particle positions silently due to multiplying `NaN` with velocity, leading to undefined physical state and potential crashes elsewhere in the engine.
 **Defense:** Added an explicit `!dt.is_finite()` check to the early return condition, safely discarding `NaN` or `Infinity` time steps to protect the simulation state.
+**2026-05-18 - [Fix OOM DoS via Unbounded File Reads]**
+**Threat:** Several modules across the workspace (`experiments/chimera-lang/src/compiler.rs`, `experiments/chron-compost/src/app.rs`, `experiments/digital-compost/src/main.rs`, `experiments/chromatic-code/src/main.rs`, `experiments/stego-cartridge/src/bin/pack.rs`) used `fs::read_to_string` blindly on user inputs. This unconstrained allocation could easily be exploited by supplying a massive file (e.g. 5GB), triggering an Out-of-Memory Denial of Service crash.
+**Defense:** Replaced raw `read_to_string` calls with bounded readers. Bounded readers now use `.take(LIMIT + 1)` (10MB limit) followed by a manual check ensuring `bytes_read <= LIMIT`. Exceeding limits results in an error fallback instead of an application crash.
+
+**2026-05-18 - [Fix DoS via Unhandled Panics in Domain Logic]**
+**Threat:** Several simulation, core, and physics modules (`fabric-limb`, `crystal-defense`, `rhizome-wars`, `bio-chain`, `hyperbolic-rogue`) used `.unwrap()` to extract expected structure limits or slice values blindly without graceful bounds checking. Malicious state manipulation or invalid inputs could trigger these panics directly, causing severe Denial of Service.
+**Defense:** Replaced panicking `.unwrap()` behaviors with safe fallbacks and explicit `if let Some()` assertions in the core routines.

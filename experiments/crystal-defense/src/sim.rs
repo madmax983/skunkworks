@@ -203,7 +203,7 @@ impl World {
 
                             // 20% chance to move randomly (avoid local minima / traffic)
                             if rng.gen_bool(RANDOM_MOVE_CHANCE) {
-                                *neighbors.choose(&mut rng).unwrap()
+                                *neighbors.choose(&mut rng).unwrap_or(&best)
                             } else {
                                 best
                             }
@@ -224,7 +224,7 @@ impl World {
                             if pheromone_attack[best] > PHEROMONE_THRESHOLD {
                                 best
                             } else {
-                                *neighbors.choose(&mut rng).unwrap()
+                                *neighbors.choose(&mut rng).unwrap_or(&best)
                             }
                         }
                     };

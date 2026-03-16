@@ -7,7 +7,14 @@ mod tests {
     #[test]
     fn test_luciferin() {
         // [ push(255) push(0) push(0) push(100) luciferin() ]
-        // Intensity 100, Red Color
+        // Stack pushes in reverse order compared to what's popped
+        // We pop intensity, b, g, r
+        // So we push r, g, b, intensity
+        // Wait, stack is LIFO. So to pop intensity first, it must be pushed last.
+        // Therefore pushing r, g, b, intensity means intensity is at top, b is below it, g below, r at bottom.
+        // The genes list below pushes: 255, 0, 0, 100
+        // Stack becomes: [255, 0, 0, 100] (top is 100)
+        // Intensity 100, b = 0, g = 0, r = 255
         let genes = vec![
             Gene {
                 op: OpCode::Push,
@@ -23,7 +30,7 @@ mod tests {
             },
             Gene {
                 op: OpCode::Push,
-                args: vec![Nucleotide::Number(255)],
+                args: vec![Nucleotide::Number(100)],
             },
             Gene {
                 op: OpCode::Luciferin,
@@ -56,19 +63,19 @@ mod tests {
         let genes = vec![
             Gene {
                 op: OpCode::Push,
-                args: vec![Nucleotide::Number(255)],
+                args: vec![Nucleotide::Number(255)], // r
             },
             Gene {
                 op: OpCode::Push,
-                args: vec![Nucleotide::Number(0)],
+                args: vec![Nucleotide::Number(0)], // g
             },
             Gene {
                 op: OpCode::Push,
-                args: vec![Nucleotide::Number(0)],
+                args: vec![Nucleotide::Number(0)], // b
             },
             Gene {
                 op: OpCode::Push,
-                args: vec![Nucleotide::Number(255)],
+                args: vec![Nucleotide::Number(255)], // intensity
             },
             Gene {
                 op: OpCode::Luciferin,
