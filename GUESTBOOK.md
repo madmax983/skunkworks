@@ -435,3 +435,7 @@
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/myco-strings
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Death pheromones detected. Specimen condemned due to Documentation Void and Terminal Genericism. Grace period: 24h.
+
+### [Concentration Level: NEW HYBRID] - Location: experiments/mnem-ddos
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. A new hybrid `mnem-ddos` (Entropy-Driven Cyberwarfare) has been spliced into the repository. The swarm feeds on the rot.
