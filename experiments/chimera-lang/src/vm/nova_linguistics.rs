@@ -194,19 +194,16 @@ fn levenshtein(s1: &str, s2: &str) -> usize {
     prev_row[min_len]
 }
 
+/// Removes an intermediate heap allocation (`Vec<char>`) by consuming an iterator directly.
 fn soundex(s: &str) -> String {
     let s_upper = s.to_uppercase();
     // Filter out non-alphabetic first
-    let chars: Vec<char> = s_upper
-        .chars()
-        .filter(|c| c.is_ascii_alphabetic())
-        .collect();
+    let mut chars_iter = s_upper.chars().filter(|c| c.is_ascii_alphabetic());
 
-    if chars.is_empty() {
-        return "0000".to_string();
-    }
-
-    let first = chars[0];
+    let first = match chars_iter.next() {
+        Some(c) => c,
+        None => return "0000".to_string(),
+    };
 
     let map_char = |c: char| -> char {
         match c {
@@ -225,7 +222,7 @@ fn soundex(s: &str) -> String {
 
     let mut last_digit = map_char(first);
 
-    for &c in chars.iter().skip(1) {
+    for c in chars_iter {
         if code.len() >= 4 {
             break;
         }
