@@ -108,8 +108,15 @@ impl<'a> Widget for TensionBar<'a> {
             .block
             .unwrap_or_else(|| Block::default().borders(Borders::ALL).title("TENSION"));
 
-        let inner_area = block.inner(area);
-        block.render(area, buf);
+        // Preemptively ensure `area` does not cause out-of-bounds panics when rendering.
+        // `Block::render` and subsequent logic assumes `area` is within `buf.area`.
+        let safe_area = area.intersection(buf.area);
+        if safe_area.width == 0 || safe_area.height == 0 {
+            return;
+        }
+
+        let inner_area = block.inner(safe_area);
+        block.render(safe_area, buf);
 
         if inner_area.height < 1 {
             return;

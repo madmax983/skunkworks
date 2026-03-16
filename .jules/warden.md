@@ -30,3 +30,6 @@
 **2026-03-15 - [Validate Physics Timestep (dt)]**
 **Threat:** The `step` method in `physics-pbd` checked if `dt <= f32::EPSILON` but did not check if `dt.is_finite()`. This allowed `NaN` or `Infinity` time step values to corrupt all particle positions silently due to multiplying `NaN` with velocity, leading to undefined physical state and potential crashes elsewhere in the engine.
 **Defense:** Added an explicit `!dt.is_finite()` check to the early return condition, safely discarding `NaN` or `Infinity` time steps to protect the simulation state.
+**2023-10-24 - [TensionBar u16 Underflow DoS Vulnerability]**
+**Threat:** The `TensionBar` widget in `tui-shared` allowed out-of-bounds array accesses into the terminal rendering `Buffer` when constrained rendering areas implicitly exceeded the overall terminal buffer dimensions. This caused a deterministic panic (DoS) by underflowing Ratatui's internal array indexing math during partial block calculation.
+**Defense:** Applied `safe_area = area.intersection(buf.area)` to rigidly clamp the widget rendering block within safe buffer boundaries prior to structural execution, mitigating the potential for unconstrained boundary overflows.
