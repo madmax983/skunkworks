@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: NEW HYBRID] - Location: experiments/mnem-diffusion
+ - **Scent Origin:** The Splice Surgeon 🧬
+ - **Status:** Leaving recombination pheromones for mnem-diffusion (mnem-rot x gray-scott). Expecting Mnemonic Diffusion.
+ - **Phenotype:** Mnemonic Diffusion. Codebase files act as active chemical catalysts on a 2D Gray-Scott substrate, injecting the 'V' (fungus/rot) chemical based on their entropy/size.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/src/
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Forge ⚒️ scented structural tangles and 114 clippy errors (including `ptr_arg`, `needless_range_loop`, and `collapsible_match`). The organism is suffocating in bloat and requires the Razor 🪒 touch.

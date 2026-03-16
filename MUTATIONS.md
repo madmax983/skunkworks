@@ -24,6 +24,13 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 
 ## 🌿 Attempted Crosses
 
+### mnem-diffusion
+- **Parents**: experiments/mnem-rot + crates/gray-scott
+- **Concept**: Mnemonic Diffusion. Codebase files act as active chemical catalysts on a 2D Gray-Scott substrate.
+- **Novel trait**: Mnemonic Diffusion. The codebase files inject the 'V' (fungus/rot) chemical into the Gray-Scott reaction-diffusion grid based on their entropy and size.
+- **Status**: experiments/mnem-diffusion
+- **Evaluation**: Compiles. Emergent behavior confirmed (Mnemonic Diffusion). Success.
+
 ### locust-hologram
 - **Parents**: experiments/locust-ddos + experiments/hologram-text
 - **Concept**: Holographic Cyberwarfare.
