@@ -109,6 +109,44 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Status**: graveyard/gray-chaos (Executed)
 - **Evaluation**: Condemned by The Reaper ☠️ in GUESTBOOK.md (Documentation Void). Grace period expired. Moved to graveyard.
 
+
+
+### gaze-attractor
+- **Parents**: experiments/chaos-pendulum + experiments/foveated-code
+- **Concept**: The Observer Effect. A chaotic double pendulum fabric tracked by a foveated eye simulation.
+- **Novel trait**: The Observer Effect. Physics dependent on attention. The gaze acts as a damper or exciter on the chaotic system.
+- **Status**: experiments/gaze-attractor
+- **Evaluation**: Compiles. Emergent behavior confirmed (chaos manipulation via observation). Success.
+
+### chimera-pachinko
+- **Parents**: experiments/synaptic-pachinko + experiments/chimera-lang
+- **Concept**: Evolutionary Pachinko. A pachinko board where pins are biological agents driven by a Chimera Virtual Machine.
+- **Novel trait**: Adaptive Pins. The biological pins evolve to maximize packet capture rates through natural selection.
+- **Status**: experiments/chimera-pachinko
+- **Evaluation**: Compiles. Emergent behavior confirmed (pins self-organize to catch packets). Success.
+
+### etymological-mycelium
+- **Parents**: experiments/git-etymologist + experiments/chaotic-mycelium
+- **Concept**: Semantic Mycology. Codebase history visualized as a fungal network growing based on Levenshtein distance.
+- **Novel trait**: Semantic Mycology. Stable code grows straight, while mutating code branches chaotically.
+- **Status**: experiments/etymological-mycelium
+- **Evaluation**: Compiles. Emergent behavior confirmed (codebase health visualized via fungal paths). Success.
+
+### bifurcation-landscape
+- **Parents**: Unknown (fossil)
+- **Concept**: A 3D flight over the edge of chaos (Logistic Map).
+- **Novel trait**: 3D terrain generated from the bifurcation diagram of the logistic map.
+- **Status**: graveyard/bifurcation-landscape (Executed)
+- **Evaluation**: Executed by The Reaper ☠️ in GUESTBOOK.md. Terminal Genericism / Skeletal Implementation / Absence of Hybrid Vigor. Failed.
+
+
+### luminous-tank
+- **Parents**: crates/locus + experiments/ripple-tank
+- **Concept**: Acoustic Swarming. Flocking behavior embedded in a 2D physical acoustic wave tank.
+- **Novel trait**: Acoustic Swarming. Boids deposit energy into the acoustic grid, generating pressure waves that advect and push other boids.
+- **Status**: experiments/luminous-tank
+- **Evaluation**: Compiles. Emergent behavior predicted (acoustic swarming). Success.
+
 <!-- Experiments that resulted from cross-pollination -->
 
 ### chaos-mycelium

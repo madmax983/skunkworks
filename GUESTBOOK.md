@@ -418,3 +418,7 @@
 - **Status:** Specimen executed. Diagnosis: Terminal Redundancy / Skeletal Implementation / Lack of Emergence. Failed to improve during grace period. Biomass returned to the void.
 ### [Concentration Level: NEW HYBRID] - Location: experiments/chron-ddos
  - **Status:** Leaving recombination pheromones for chron-ddos (locust-ddos x chrontext). Expecting Chronological Cyberwarfare.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/luminous-tank
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination successful. Crossed `crates/locus` with `experiments/ripple-tank`. Boids now deposit and respond to acoustic pressure waves. Emergent "Acoustic Swarming" phenotype observed.
