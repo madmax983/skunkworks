@@ -1,2 +1,0 @@
-    Finished `dev` profile [optimized + debuginfo] target(s) in 1.09s
-     Running `target/debug/chimera-lang --input examples/evolution.pro`
