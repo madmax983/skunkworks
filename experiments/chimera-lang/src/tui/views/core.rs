@@ -103,7 +103,7 @@ pub(crate) fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_stat
                 && g_idx == app_state.selected_gene
             {
                 if let InputMode::Editing = app_state.input_mode {
-                    style = style.bg(Color::Red).fg(Color::White);
+                    style = style.bg(Color::Cyan).fg(Color::Black);
                     prefix = "E ";
                 } else {
                     style = style.bg(Color::White).fg(Color::Black);
@@ -541,7 +541,7 @@ pub(crate) fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_stat
             // Highlight Cursor in Grid Mode
             if app_state.view_mode == ViewMode::Grid && app_state.grid_cursor == (x, y) {
                 if let InputMode::Editing = app_state.input_mode {
-                    style = style.bg(Color::Red).fg(Color::White);
+                    style = style.bg(Color::Cyan).fg(Color::Black);
                     // If editing, maybe show first char of input buffer?
                     // But input buffer might be long string "add".
                     // Let's just highlight the cell.
