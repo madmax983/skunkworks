@@ -57,16 +57,50 @@ impl Platter {
     }
 
     /// Returns the width of the platter.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use platter::Platter;
+    /// let p = Platter::new(10, 20);
+    /// assert_eq!(p.width(), 10);
+    /// ```
     pub fn width(&self) -> usize {
         self.width
     }
 
     /// Returns the height of the platter.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use platter::Platter;
+    /// let p = Platter::new(10, 20);
+    /// assert_eq!(p.height(), 20);
+    /// ```
     pub fn height(&self) -> usize {
         self.height
     }
 
     /// Returns a reference to the underlying magnetism grid.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use platter::Platter;
+    /// let mut p = Platter::new(2, 2);
+    /// p.accumulate(0, 0, 1.5);
+    /// assert_eq!(p.magnetism()[0], 1.5);
+    /// ```
+    ///
+    /// The returned slice is immutable and cannot be modified directly:
+    ///
+    /// ```compile_fail
+    /// use platter::Platter;
+    /// let p = Platter::new(2, 2);
+    /// let grid = p.magnetism();
+    /// grid[0] = 5.0; // This will fail to compile!
+    /// ```
     pub fn magnetism(&self) -> &[f64] {
         &self.magnetism
     }
@@ -121,6 +155,19 @@ impl Platter {
     }
 
     /// Clears the platter back to zeros.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use platter::Platter;
+    ///
+    /// let mut p = Platter::new(5, 5);
+    /// p.accumulate(2, 2, 1.0);
+    /// assert_eq!(p.get_magnetism(2, 2), 1.0);
+    ///
+    /// p.clear();
+    /// assert_eq!(p.get_magnetism(2, 2), 0.0);
+    /// ```
     pub fn clear(&mut self) {
         self.magnetism.fill(0.0);
     }
@@ -147,12 +194,31 @@ impl Platter {
     }
 
     /// Alias for [`Platter::get_magnetism`] for generic use cases (e.g., fluid density).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use platter::Platter;
+    /// let mut p = Platter::new(3, 3);
+    /// p.accumulate(1, 1, 0.5);
+    /// assert_eq!(p.get(1, 1), 0.5);
+    /// ```
     #[inline]
     pub fn get(&self, x: usize, y: usize) -> f64 {
         self.get_magnetism(x, y)
     }
 
     /// Alias for [`Platter::magnetize`] for generic use cases (e.g., saturation).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use platter::Platter;
+    /// let mut p = Platter::new(3, 3);
+    /// p.saturate(1, 1, 0.6);
+    /// p.saturate(1, 1, 0.6); // Will be clamped to 1.0
+    /// assert_eq!(p.get(1, 1), 1.0);
+    /// ```
     #[inline]
     pub fn saturate(&mut self, x: usize, y: usize, amount: f64) {
         self.magnetize(x, y, amount)
