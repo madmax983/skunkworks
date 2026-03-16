@@ -427,3 +427,7 @@
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/astral-chimera
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Skeletal Documentation. The specimen fails to compile due to missing `evolution_config` and has an underdocumented emergent behavior. Grace period: 24h.
+
+### [Concentration Level: CRITICAL MASS] - Location: `experiments/quipu-chimera`
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Death pheromones detected. Specimen condemned due to terminal compilation failure. Grace period: 24h.
