@@ -72,6 +72,18 @@ impl PhysicsGrid4D {
         self.total_energy += val.abs();
     }
 
+    /// Steps the 4D Physics Grid by calculating the Finite Difference Time Domain (FDTD)
+    /// wave equation over the entire volume.
+    ///
+    /// ## Examples
+    ///
+    /// ```
+    /// use hyper_acoustics::grid::PhysicsGrid4D;
+    /// let mut grid = PhysicsGrid4D::new(10);
+    /// grid.pluck(5, 5, 5, 5, 1.0);
+    /// grid.step(0.1, 0.99); // speed squared and damping
+    /// assert!(grid.get(5, 5, 5, 5) < 1.0);
+    /// ```
     pub fn step(&mut self, c2: f32, damping: f32) {
         let s = self.size;
         let s2 = s * s;

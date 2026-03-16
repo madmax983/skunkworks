@@ -52,6 +52,7 @@ impl Default for ChimeraState {
             helix: Helix {
                 strands: vec![strand],
             },
+            evolution_config: None,
         };
         let mut vm = ChimeraVM::new(dna);
 
