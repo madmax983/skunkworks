@@ -5,10 +5,13 @@ mod tui;
 
 use crate::audio::{start_audio_thread, AudioCommand};
 use crate::model::{Instrument, RhythmParams};
-use crate::threads::spawn_rhythm_thread;
+use crate::threads::spawn_rhythm_thread_secondary as spawn_rhythm_thread;
 use crate::tui::run_tui;
 use crossbeam_channel::unbounded;
+#[cfg(not(loom))]
 use std::sync::{atomic::AtomicBool, Arc, Mutex};
+#[cfg(loom)]
+use loom::sync::{atomic::AtomicBool, Arc, Mutex};
 use std::time::Duration;
 
 #[allow(clippy::vec_init_then_push)]
@@ -34,6 +37,7 @@ fn main() -> anyhow::Result<()> {
     handles.push(spawn_rhythm_thread(
         0,
         kick.clone(),
+        Some(snare.clone()),
         AudioCommand::Kick,
         state_sender.clone(),
         audio_sender.clone(),
@@ -48,6 +52,7 @@ fn main() -> anyhow::Result<()> {
     handles.push(spawn_rhythm_thread(
         1,
         snare.clone(),
+        Some(kick.clone()),
         AudioCommand::Snare,
         state_sender.clone(),
         audio_sender.clone(),
@@ -62,6 +67,7 @@ fn main() -> anyhow::Result<()> {
     handles.push(spawn_rhythm_thread(
         2,
         hat.clone(),
+        None,
         AudioCommand::Hat,
         state_sender.clone(),
         audio_sender.clone(),
@@ -75,7 +81,8 @@ fn main() -> anyhow::Result<()> {
     // Thread 3: "The Jazz Player" - Contends for Snare periodically
     handles.push(spawn_rhythm_thread(
         3,
-        snare.clone(), // Contends with Thread 1!
+        snare.clone(),
+        None,
         AudioCommand::Snare,
         state_sender.clone(),
         audio_sender.clone(),

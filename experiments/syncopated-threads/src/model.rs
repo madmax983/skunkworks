@@ -1,4 +1,7 @@
-use std::sync::{Arc, Mutex};
+#[cfg(not(loom))]
+pub use std::sync::{Arc, Mutex};
+#[cfg(loom)]
+pub use loom::sync::{Arc, Mutex};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum ThreadState {
