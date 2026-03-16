@@ -149,7 +149,7 @@ impl PhysicsGrid {
     /// 3. `u` becomes `u_next` (storing state t+1 for the next step).
     /// 4. `u_next` reclaims the old `u_prev` memory to be used as scratch space in the next iteration.
     ///
-    /// # Examples
+    /// ## Examples
     ///
     /// ```
     /// use resonance_audio::physics::PhysicsGrid;
