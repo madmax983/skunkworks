@@ -707,7 +707,7 @@ classDiagram
 
 **Chimera Lang** is a bio-inspired, stack-based esoteric programming language with an optional "Nova" expansion for advanced biological simulation.
 
-### Chimera TUI Architecture (ADR 071, ADR 072)
+### Chimera TUI Architecture (ADR 071, ADR 072, ADR 073)
 
 The TUI event loop is decoupled into specific input handler modules to avoid a monolithic `run_app` loop. The handlers themselves are further decoupled into specific input type submodules.
 
@@ -719,6 +719,9 @@ sequenceDiagram
     participant EditingActions as handlers/editing/actions.rs
     participant EditingEnter as handlers/editing/enter.rs
     participant Normal as handlers/normal/mod.rs
+    participant NormalChars as handlers/normal/chars.rs
+    participant NormalNav as handlers/normal/navigation.rs
+    participant NormalActions as handlers/normal/actions.rs
     participant Selector as handlers/selector.rs
 
     App->>App: read_event()
@@ -733,6 +736,13 @@ sequenceDiagram
         end
     else State == Normal
         App->>Normal: handle_input(event)
+        alt is char
+            Normal->>NormalChars: handle_char()
+        else is navigation
+            Normal->>NormalNav: handle_navigation()
+        else is action
+            Normal->>NormalActions: handle_action()
+        end
     else State == Selector
         App->>Selector: handle_input(event)
     end
