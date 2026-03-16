@@ -446,7 +446,9 @@ impl Add for Cord {
     /// assert_eq!(sum.value(), 150);
     /// ```
     fn add(self, rhs: Self) -> Self::Output {
-        let val = self.value() + rhs.value();
+        let val = self.value().checked_add(rhs.value()).expect(
+            "Quipu addition resulted in overflow (not supported by Incas! Use checked arithmetic)",
+        );
         Cord::from(val)
     }
 }
@@ -474,14 +476,10 @@ impl Sub for Cord {
     /// assert_eq!(diff.value(), 75);
     /// ```
     fn sub(self, rhs: Self) -> Self::Output {
-        // Only implementing positive result subtraction
-        if self.value() < rhs.value() {
-            // In a real library we might want to return Result or panic,
-            // but for now panic fits the original behavior.
-            panic!("Quipu subtraction resulted in negative value (not supported by Incas! Use Cord::checked_sub for safety)");
-        }
-
-        let val = self.value() - rhs.value();
+        let val = self
+            .value()
+            .checked_sub(rhs.value())
+            .expect("Quipu subtraction resulted in negative value (not supported by Incas! Use Cord::checked_sub for safety)");
         Cord::from(val)
     }
 }

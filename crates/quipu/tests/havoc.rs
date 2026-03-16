@@ -20,7 +20,7 @@ proptest! {
     ///
     /// 🧨 **The Trigger:** Two `u64` values that sum to more than `u64::MAX`.
     #[test]
-    #[should_panic(expected = "attempt to add with overflow")]
+    #[should_panic(expected = "Quipu addition resulted in overflow")]
     fn test_quipu_addition_overflow(
         a in (u64::MAX / 2 + 1)..u64::MAX,
         b in (u64::MAX / 2 + 1)..u64::MAX
