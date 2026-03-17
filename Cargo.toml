@@ -3,6 +3,7 @@ resolver = "2"
 members = [
     "crates/*",
     "experiments/*",
+    "graveyard/mnem-hologram",
     "experiments/myco-ddos",
     "experiments/chaos-strings",
     "experiments/chron-fluid",
@@ -20,7 +21,6 @@ members = [
     "experiments/git-tank",
     "graveyard/chron-ddos",
     "experiments/locus-ddos",
-    "experiments/mnem-hologram",
 ]
 
 [workspace.dependencies]
