@@ -70,3 +70,10 @@
 **[Grid Wrapping Bug]**
 **Learning:** In 1D vectors representing 2D grids (like in `gray-scott`), `x >= width` checks are critical. Relying solely on `index < vec.len()` allows "scanline wrapping" where an out-of-bounds `x` (e.g., `width`) silently wraps to `x=0, y=y+1`. Additionally, `width * height` can easily overflow `usize` during initialization.
 **Action:** Always verify explicit bounds (`x < width` and `y < height`) before calculating the 1D index, and use `checked_mul` during grid initialization to prevent size overflow panics. Added regression tests in `sentry_bounds.rs`.
+**[Float NaN propagation via time step]**
+**Learning:** In Position Based Dynamics (`hyper-system`), verifying that a time step `dt` is merely positive (`dt > EPSILON`) is insufficient to prevent floating-point poisoning. A value of `f32::NAN` fails the `dt <= f32::EPSILON` condition silently (returns false), continuing execution and propagating NaN across the system.
+**Action:** Always check `dt.is_finite()` explicitly in addition to bounds checks when injecting raw floats into physics systems.
+
+**[Missed coverage on simple struct methods]**
+**Learning:** `getters` and simple struct manipulations (`clear()`) are often left untested because they seem trivial, but they leave gaps in `cargo-llvm-cov` output, reducing overall confidence metrics.
+**Action:** Add concise test blocks for struct getters and clear methods when improving line coverage scores, as missing them can hide unintentional boundary omissions.
