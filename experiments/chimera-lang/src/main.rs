@@ -36,6 +36,10 @@ struct Cli {
     #[arg(long)]
     headless: bool,
 
+    /// Output raw JSON instead of formatted text (implies headless)
+    #[arg(long)]
+    json: bool,
+
     /// Number of ticks to run in headless mode
     #[arg(long, default_value = "100")]
     ticks: u64,
@@ -245,7 +249,7 @@ fn main() -> Result<()> {
         None
     };
 
-    if cli.headless {
+    if cli.headless || cli.json {
         for _ in 0..cli.ticks {
             if vm.halted {
                 break;
@@ -253,8 +257,26 @@ fn main() -> Result<()> {
             vm.step();
         }
 
-        println!("Execution complete.");
-        println!("--- Execution Summary ---");
+        if cli.json {
+            #[derive(serde::Serialize)]
+            struct CliOutput {
+                stack: Vec<String>,
+                log: Vec<String>,
+            }
+
+            let out = CliOutput {
+                stack: vm.stack.iter().rev().map(|v| format!("{}", v)).collect(),
+                log: vm.output.clone(),
+            };
+
+            println!("{}", serde_json::to_string_pretty(&out).unwrap());
+            return Ok(());
+        }
+
+        use crossterm::style::{Color, Stylize};
+
+        println!("\n{}", "✨ Execution Complete ✨".with(Color::Green).bold());
+        println!("{}\n", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━".with(Color::DarkGrey));
 
         let mut table = comfy_table::Table::new();
         table
@@ -292,28 +314,27 @@ fn main() -> Result<()> {
             ]);
         }
 
-        println!("Final Stack (Top -> Bottom):");
-        println!("{table}");
+        println!("🥞 {}", "Final Stack State (Top -> Bottom):".with(Color::Cyan).bold());
+        println!("{table}\n");
 
-        use crossterm::style::{Color, Stylize};
-
-        println!("Output Log:");
+        println!("📜 {}", "Output Log:".with(Color::Cyan).bold());
         for line in vm.output {
             if line.contains("Error")
                 || line.contains("Unknown")
                 || line.contains("Warning")
                 || line.contains("Failed")
             {
-                println!("  {}", line.with(Color::Red));
+                println!("  ❌ {}", line.with(Color::Red).bold());
             } else if line.contains("Success")
                 || line.contains("Started")
                 || line.contains("Executed")
             {
-                println!("  {}", line.with(Color::Green));
+                println!("  ✅ {}", line.with(Color::Green));
             } else {
-                println!("  {}", line);
+                println!("  ℹ️ {}", line.with(Color::DarkGrey));
             }
         }
+        println!();
     } else {
         let input_path = cli.input.as_ref().map(|s| Path::new(s).to_path_buf());
 
