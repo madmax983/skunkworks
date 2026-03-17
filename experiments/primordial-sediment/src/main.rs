@@ -22,7 +22,6 @@ use std::{
     time::{Duration, Instant},
 };
 
-use git::RepoHandler;
 use physics::{FluidSolver, Species};
 
 struct App {
@@ -33,11 +32,12 @@ struct App {
 impl App {
     fn new() -> Result<Self> {
         // Load initial content
-        let repo = RepoHandler::new(".")?;
+        let repo = git::open_repo(".")?;
         // Try to load own source code or README
-        let commits = repo.list_commits(1)?;
+        let commits = git::list_commits(&repo, 1)?;
         let content = if !commits.is_empty() {
-            repo.get_file_content(
+            git::get_file_content(
+                &repo,
                 &commits[0].id,
                 "experiments/primordial-sediment/src/main.rs",
             )
@@ -170,7 +170,7 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Min(0), Constraint::Length(1)].as_ref())
-        .split(f.size());
+        .split(f.area());
 
     // Create Display Buffer (Clone text and overlay particles)
     // We only render what fits on screen to avoid huge allocations if file is big
@@ -193,9 +193,9 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
         particle_map
             .entry((r, c))
             .and_modify(|e: &mut Species| {
-                if *e == Species::Algae && p.species != Species::Algae {
-                    *e = p.species;
-                } else if *e == Species::Grazer && p.species == Species::Predator {
+                if (*e == Species::Algae && p.species != Species::Algae)
+                    || (*e == Species::Grazer && p.species == Species::Predator)
+                {
                     *e = p.species;
                 }
             })

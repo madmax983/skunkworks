@@ -9,7 +9,7 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use ratatui::{
-    backend::{Backend, CrosstermBackend},
+    backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
@@ -23,11 +23,11 @@ use std::{
 };
 
 use entropy::EntropyEngine;
-use git::{CommitInfo, RepoHandler};
+use git::CommitInfo;
 use recovery::RecoveryEngine;
 
 struct App {
-    repo: RepoHandler,
+    repo: git2::Repository,
     commits: Vec<CommitInfo>,
     list_state: ListState,
     file_content: String,
@@ -38,8 +38,8 @@ struct App {
 
 impl App {
     fn new() -> Result<Self> {
-        let repo = RepoHandler::new(".")?;
-        let commits = repo.list_commits(50)?;
+        let repo = git::open_repo(".")?;
+        let commits = git::list_commits(&repo, 50)?;
         let mut list_state = ListState::default();
         if !commits.is_empty() {
             list_state.select(Some(0));
@@ -48,8 +48,7 @@ impl App {
         // Initial file load
         let filepath = "README.md".to_string(); // Default file to view
         let file_content = if !commits.is_empty() {
-            repo.get_file_content(&commits[0].id, &filepath)
-                .unwrap_or_default()
+            git::get_file_content(&repo, &commits[0].id, &filepath).unwrap_or_default()
         } else {
             String::new()
         };
@@ -109,9 +108,7 @@ impl App {
         if let Some(i) = self.list_state.selected() {
             let commit_id = &self.commits[i].id;
             // Try to find README.md or src/main.rs or src/lib.rs
-            let content = self
-                .repo
-                .get_file_content(commit_id, &self.filepath)
+            let content = git::get_file_content(&self.repo, commit_id, &self.filepath)
                 .unwrap_or_else(|_| "File not found".to_string());
             self.file_content = content;
         }
@@ -197,7 +194,7 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(30), Constraint::Percentage(70)].as_ref())
-        .split(f.size());
+        .split(f.area());
 
     // Left Pane: Sediment Layers (Commits)
     let items: Vec<ListItem> = app

@@ -2,7 +2,7 @@ use crate::physics::{FluidSolver, Species};
 use rand::Rng;
 
 impl FluidSolver {
-    pub fn update_biology(&mut self, grid: &mut Vec<Vec<char>>) {
+    pub fn update_biology(&mut self, grid: &mut [Vec<char>]) {
         let mut new_particles = Vec::new();
         let width = self.width;
         let height = self.height;
@@ -66,6 +66,7 @@ impl FluidSolver {
                 continue;
             } // Algae don't hunt
 
+            #[allow(clippy::needless_range_loop)]
             for j in 0..self.particles.len() {
                 if i == j {
                     continue;
