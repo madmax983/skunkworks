@@ -51,6 +51,7 @@ impl Agent {
             helix: Helix {
                 strands: vec![Strand { genes }],
             },
+            evolution_config: None,
         };
 
         let mut vm = ChimeraVM::new(dna);
