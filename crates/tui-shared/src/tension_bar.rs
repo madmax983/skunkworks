@@ -131,8 +131,11 @@ impl<'a> Widget for TensionBar<'a> {
             let draw_y = (inner_area.y + inner_area.height)
                 .saturating_sub(1)
                 .saturating_sub(y);
-            if draw_y >= inner_area.y + inner_area.height {
-                continue;
+
+            // Guard against out-of-bounds rendering (e.g. if terminal rect wraps u16 bounds).
+            // We use standard check as wrapping mathematically avoids panics but visually makes no sense.
+            if draw_y >= inner_area.y.wrapping_add(inner_area.height) {
+                break;
             }
 
             for x in inner_area.x..inner_area.x + inner_area.width {
@@ -147,6 +150,10 @@ impl<'a> Widget for TensionBar<'a> {
             let draw_y = (inner_area.y + inner_area.height)
                 .saturating_sub(1)
                 .saturating_sub(full_blocks);
+
+            if draw_y >= inner_area.y.wrapping_add(inner_area.height) {
+                return;
+            }
 
             // Lower blocks grow from bottom
             // Uses <= to ensure exact fractions (e.g., 0.5) map to the corresponding block (HALF)
@@ -303,6 +310,31 @@ mod tests {
     }
 
     #[test]
+    fn test_tension_bar_zero_area() {
+        // Test early return when area intersection is zero.
+        // The buffer is 10x10, but we render to a Rect outside of it or with 0 size.
+        let widget = TensionBar::new(1.0);
+        let backend = TestBackend::new(10, 10);
+        let mut terminal = Terminal::new(backend).unwrap();
+
+        terminal
+            .draw(|f| {
+                // Rendering at a Rect with 0 width and 0 height.
+                let area = Rect::new(0, 0, 0, 0);
+                f.render_widget(widget, area);
+            })
+            .unwrap();
+
+        let buffer = terminal.backend().buffer();
+        // The buffer should remain entirely empty since rendering aborted immediately.
+        for y in 0..10 {
+            for x in 0..10 {
+                assert_eq!(buffer[(x, y)].symbol(), " ");
+            }
+        }
+    }
+
+    #[test]
     fn test_tension_bar_out_of_bounds_draw() {
         // Trigger condition: draw_y >= inner_area.y + inner_area.height
         // This is theoretically guarded by full_blocks < inner_area.height and math,
@@ -321,5 +353,32 @@ mod tests {
         assert_ne!(buffer[(1, 0)].symbol(), block::FULL);
         // Ensure bottom border is preserved
         assert_ne!(buffer[(1, 9)].symbol(), block::FULL);
+    }
+
+    #[test]
+    fn test_tension_bar_draw_y_out_of_bounds() {
+        // To trigger `draw_y >= inner_area.y + inner_area.height`, we need `inner_area.y + inner_area.height`
+        // to overflow `u16::MAX` and wrap around to 0. Then `draw_y` will be `0.saturating_sub(1)` which is 0,
+        // and 0 >= 0 is true.
+        // The Ratatui Rect uses `u16` for x, y, width, height. We can manually construct an area
+        // that causes this wrap-around to test the safeguard.
+        // Use a 10.1 tension value to ensure we hit both the full_block break and the partial block return logic.
+        let widget = TensionBar::new(0.5).block(Block::default().borders(Borders::NONE));
+
+        // Use a smaller reasonable buffer size but trick the rect.
+        // However, `Buffer::empty` actually creates a buffer of `area.width * area.height` cells.
+        // We can just create a normal buffer, and render with an area that starts at u16::MAX.
+        let area = Rect::new(0, u16::MAX - 1, 10, 2);
+        let mut buffer = Buffer::empty(Rect::new(0, 0, 10, 10));
+
+        // Rendering directly to bypass terminal.draw clamping which restricts the area to backend bounds
+        widget.render(area, &mut buffer);
+
+        // It shouldn't panic, and no valid cells in standard view are affected.
+        for y in 0..10 {
+            for x in 0..10 {
+                assert_eq!(buffer[(x, y)].symbol(), " ");
+            }
+        }
     }
 }

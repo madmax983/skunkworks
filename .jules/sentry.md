@@ -70,3 +70,6 @@
 **[Grid Wrapping Bug]**
 **Learning:** In 1D vectors representing 2D grids (like in `gray-scott`), `x >= width` checks are critical. Relying solely on `index < vec.len()` allows "scanline wrapping" where an out-of-bounds `x` (e.g., `width`) silently wraps to `x=0, y=y+1`. Additionally, `width * height` can easily overflow `usize` during initialization.
 **Action:** Always verify explicit bounds (`x < width` and `y < height`) before calculating the 1D index, and use `checked_mul` during grid initialization to prevent size overflow panics. Added regression tests in `sentry_bounds.rs`.
+**[TUI Rect Arithmetic Wrapping]**
+**Learning:** `Rect` structures in TUI libraries (like `ratatui`) use `u16` for positioning. Computing bounds via `y + height` can wrap around `u16::MAX` to `0`. If not guarded, operations like `inner_bottom.saturating_sub(y)` might result in `0`, which can falsely pass bounds checks and cause silent rendering failures or panics elsewhere.
+**Action:** When manually testing TUI components, always include a test case where `Rect` dimensions intentionally wrap `u16::MAX` to verify that guard checks handle overflow/wrap gracefully without crashing.
