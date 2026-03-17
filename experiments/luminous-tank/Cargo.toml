@@ -1,0 +1,20 @@
+[package]
+name = "luminous-tank"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+locus = { path = "../../crates/locus" }
+resonance-audio = { workspace = true }
+crossbeam-channel = "0.5"
+rand = "0.8"
+anyhow = { workspace = true }
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = []
+audio = ["dep:cpal"]

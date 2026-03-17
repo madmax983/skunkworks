@@ -58,14 +58,14 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Boid-driven Cyberwarfare. The DDoS packets use Boid flocking mechanics instead of simple pathfinding.
 - **Predicted Phenotype**: Flocking Packets. Packets group together into massive schools that coordinate attacks on the server, breaking apart when hitting firewalls.
 - **Status**: experiments/locus-ddos
-- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior confirmed (Flocking Packets). Success.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (Flocking Packets). Success.
 
 ### gray-ddos
 - **Parents**: experiments/locust-ddos + crates/gray-scott
 - **Concept**: Morphogenetic Cyberwarfare. The swarm of DDoS packets navigate a Reaction-Diffusion substrate.
 - **Novel trait**: Morphogenetic Cyberwarfare. The DDoS packets seek the server, but they navigate through a chemical substrate. Firewalls act as a continuous source of the "kill" chemical, actively dissolving the swarm's "pheromone" paths. The swarm adapts by following the "feed" chemical. The resulting phenotype is an organic, pulsating siege where the botnet looks like a spreading fungus being burned back by chemical firewalls.
 - **Status**: experiments/gray-ddos
-- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior confirmed (morphogenetic cyberwarfare). Success.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (morphogenetic cyberwarfare). Success.
 
 ### chaos-ddos
 - **Parents**: experiments/chaos-pendulum + experiments/locust-ddos
@@ -272,6 +272,13 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Status**: experiments/luminous-hologram
 - **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (spectral swarming). Success.
 
+### luminous-tank
+- **Parents**: experiments/luminous-flock + experiments/ripple-tank
+- **Concept**: Acoustic Swarming. The boids navigate an acoustic wave tank field.
+- **Novel trait**: Boids generate standing waves through their motion and plucking, while the physical gradient of the sound waves physically advects them. The flock organizes into cymatic patterns based on resonance.
+- **Status**: experiments/luminous-tank
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior predicted (Cymatic Flocking).
+
 ### gray-tank
 - **Parents**: experiments/ripple-tank + crates/gray-scott
 - **Concept**: Acoustic Morphogenesis. The 2D physical acoustic wave tank simulation creates physical displacement (pressure) that affects the diffusion of chemicals (U and V) in the Gray-Scott model.
@@ -326,7 +333,7 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Magnetic Cyberwarfare. The swarm of DDoS packets are mapped as magnetic fluid particles.
 - **Novel trait**: Fluid-Dynamic Bottlenecking. Instead of simple swarm agents, the packets are magnetic fluid particles. When attacking a server, the packets compress into a high-density magnetic fluid, actively pushing against each other and visually representing the pressure wave of a DDoS attack.
 - **Status**: experiments/ferrous-ddos
-- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior confirmed (fluid-dynamic bottlenecking against magnetic firewalls). Success.
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed (fluid-dynamic bottlenecking against magnetic firewalls). Success.
 
 ### mnem-tank
 - **Parents**: experiments/mnem-rot + experiments/ripple-tank
