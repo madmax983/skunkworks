@@ -263,7 +263,13 @@ async fn main() {
             },
         );
         draw_rectangle_lines(cx1, cy2, draw_w, draw_h, 2.0, GREEN);
-        draw_text("Reconstruction (Spatial Domain)", cx1, cy2 - 10.0, 20.0, WHITE);
+        draw_text(
+            "Reconstruction (Spatial Domain)",
+            cx1,
+            cy2 - 10.0,
+            20.0,
+            WHITE,
+        );
 
         // UI Overlay
         if let Some(idx) = hovered_node {
