@@ -15,8 +15,8 @@ impl ScopedScissor {
     /// The parent scissor rect (if any) is stored to be restored on drop.
     pub fn new(x: i32, y: i32, w: i32, h: i32, parent: Option<(i32, i32, i32, i32)>) -> Self {
         // Enforce mathematical soundness and prevent GL undefined behavior
-        let w = w.max(0);
-        let h = h.max(0);
+        let w = w.clamp(0, 32768);
+        let h = h.clamp(0, 32768);
 
         // Prevent x/y from underflowing or overflowing when w/h are added inside the driver
         // e.g., if x + w > i32::MAX
@@ -28,8 +28,8 @@ impl ScopedScissor {
             (
                 px.clamp(-16384, 16384),
                 py.clamp(-16384, 16384),
-                pw.max(0),
-                ph.max(0),
+                pw.clamp(0, 32768),
+                ph.clamp(0, 32768),
             )
         });
 
@@ -52,7 +52,12 @@ impl Drop for ScopedScissor {
             if let Some((x, y, w, h)) = self.parent {
                 gl::glEnable(gl::GL_SCISSOR_TEST);
                 // Parent dimensions are already sanitized via new()
-                gl::glScissor(x, y, w, h);
+                gl::glScissor(
+                    x.clamp(-16384, 16384),
+                    y.clamp(-16384, 16384),
+                    w.clamp(0, 32768),
+                    h.clamp(0, 32768),
+                );
             } else {
                 gl::glDisable(gl::GL_SCISSOR_TEST);
             }

@@ -12,7 +12,12 @@ impl Drop for ScopedScissor {
     fn drop(&mut self) {
         unsafe {
             if let Some((x, y, w, h)) = self.parent {
-                gl::glScissor(x, y, w, h);
+                gl::glScissor(
+                    x.clamp(-16384, 16384),
+                    y.clamp(-16384, 16384),
+                    w.clamp(0, 32768),
+                    h.clamp(0, 32768),
+                );
             } else {
                 gl::glDisable(gl::GL_SCISSOR_TEST);
             }
@@ -62,6 +67,11 @@ pub fn with_scissor<F: FnOnce((i32, i32, i32, i32))>(
     } else {
         (x, y, w, h)
     };
+
+    let final_x = final_x.clamp(-16384, 16384);
+    let final_y = final_y.clamp(-16384, 16384);
+    let final_w = final_w.clamp(0, 32768);
+    let final_h = final_h.clamp(0, 32768);
 
     unsafe {
         gl::glEnable(gl::GL_SCISSOR_TEST);
