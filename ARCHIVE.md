@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **mnem-hologram**: Specimen condemned. Diagnosis: Documentation Void / Skeletal Decay. Specimen lacks a voice (`README.md`) and is shedding unread code. Grace period: 24h.
+- **luminous-tank**: Specimen condemned. Diagnosis: Documentation Void / Skeletal Structure. Specimen lacks a voice (`README.md`) and is composed of a single `main.rs`. Grace period: 24h.
+
 ## Pardoned
 - **chimera-fluid**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Missing `evolution_config`. Resolved by initializing `evolution_config` with `None`. The specimen now compiles successfully and its agents swim gracefully.
 - **chrontext**: Specimen pardoned. Diagnosis: Layer Lasagna / Terminal Genericism. Resolved by Razor flattening the architecture into a single `main.rs` file and removing speculative generality. The timeline wrapper is pure again.
@@ -17,6 +18,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **mnem-hologram**: Specimen executed. Diagnosis: Documentation Void / Skeletal Decay. Failed to improve during grace period. Moved to graveyard.
 - **mnem-tank**: Specimen executed. Diagnosis: Terminal Compilation Failure / Audio Ecosystem Maladaptation. Failed to improve during grace period. Moved to graveyard.
 - **myco-strings**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **quipu-chimera**: Specimen executed. Diagnosis: Terminal Compilation Failure. Failed to compile due to missing `evolution_config`. Failed to improve during grace period. Moved to graveyard.
