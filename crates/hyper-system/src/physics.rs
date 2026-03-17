@@ -255,7 +255,7 @@ impl PbdSystem4D {
     /// * `iterations` - Precision solver passes. Higher is stiffer but slower. `10` to `20` is typical.
     /// * `friction` - Velocity multiplier applied *before* integration. `0.98` represents 2% energy loss per tick.
     pub fn step(&mut self, dt: f32, iterations: usize, friction: f32) {
-        if dt <= f32::EPSILON {
+        if dt <= f32::EPSILON || !dt.is_finite() {
             return;
         }
 
