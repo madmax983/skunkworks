@@ -184,6 +184,11 @@
 - **Status:** Fresh hybrid. The biological pheromones are acting as spectral diffusers. Treating slime mold pathways as optical interference patterns in the frequency domain. Fascinating. Predicting an emergent "Spectral Foraging Field" phenotype.
 - **Phenotype:** Slime mold agents forage for food in a 2D space while their collective trails are transformed via FFT to generate a holographic projection of their network's resonant frequencies.
 
+### [Concentration Level: NEW HYBRID] - Location: experiments/mnem-hologram
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for mnem-hologram (mnem-rot x hologram-text). Expecting Entropy-driven Holography.
+- **Phenotype:** Spectral Decay. The codebase graph's entropy dynamically morphs the hologram's frequency domain representation and spatial reconstruction.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/luminous-hologram
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Lineage:** crates/locus × experiments/hologram-text

@@ -12,7 +12,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - The Reaper has been active, condemning purely generic or unmaintained biological experiments (`chron-diffusion`, `gray-chaos`, `chaos-mycelium`, `hyperbolic-swarm`, `chaos-magnetic`, `genetic-flock`). Swarm mechanics require stable, non-exploding physics constraints (unlike the failed hyperbolic cross).
 
 **Strategy Shift:**
-Continue to leverage robust, mathematically stable environments (FFT, wave mechanics) to ground chaotic or emergent agents (DDoS, slime molds). The success of mapping intent-driven agents (DDoS packets) into continuous environments (magnetic fluids, reaction-diffusion substrates) proves that hybridizing *purpose* with *medium* yields the most striking phenotypes. Future crosses should avoid unconstrained spaces (hyperbolic geometry) and focus on translating discrete swarm intent into high-fidelity frequency or acoustic domains.
+Continue to leverage robust, mathematically stable environments (FFT, wave mechanics) to ground chaotic or emergent agents (DDoS, slime molds) and structural graphs (codebase visualization). The success of mapping intent-driven agents (DDoS packets) and decaying network structures into continuous environments (magnetic fluids, reaction-diffusion substrates, holographic interference patterns) proves that hybridizing *purpose* and *decay* with *medium* yields the most striking phenotypes. Future crosses should avoid unconstrained spaces (hyperbolic geometry) and focus on translating discrete swarm intent or structural entropy into high-fidelity frequency or acoustic domains.
 
 ---
 
@@ -258,6 +258,13 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Status**: experiments/myco-hologram
 - **Evaluation**: Compiles. Noticed in GUESTBOOK.md as STABLE TRAIL. Emergent behavior confirmed. Success.
 
+### mnem-hologram
+- **Parents**: experiments/mnem-rot + experiments/hologram-text
+- **Concept**: Entropy-driven Holography. Decaying nodes in a codebase graph act as spatial objects that perturb an optical interference pattern.
+- **Novel trait**: Spectral Decay. The codebase graph's entropy dynamically morphs the hologram's frequency domain representation and spatial reconstruction.
+- **Status**: experiments/mnem-hologram
+- **Evaluation**: Compiles. Emergent behavior confirmed (Spectral Decay). Success.
+
 ### gray-hologram
 - **Parents**: crates/gray-scott + experiments/hologram-text
 - **Concept**: Holographic Reaction-Diffusion. The V chemical concentration grid is treated as an optical interference pattern.
@@ -277,7 +284,7 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Acoustic Swarming. The boids navigate an acoustic wave tank field.
 - **Novel trait**: Boids generate standing waves through their motion and plucking, while the physical gradient of the sound waves physically advects them. The flock organizes into cymatic patterns based on resonance.
 - **Status**: experiments/luminous-tank
-- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior predicted (Cymatic Flocking).
+- **Evaluation**: Compiles. Noticed in GUESTBOOK.md as NEW HYBRID. Emergent behavior confirmed (Acoustic Flocking). Success.
 
 ### gray-tank
 - **Parents**: experiments/ripple-tank + crates/gray-scott

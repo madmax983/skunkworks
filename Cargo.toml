@@ -20,6 +20,7 @@ members = [
     "experiments/git-tank",
     "graveyard/chron-ddos",
     "experiments/locus-ddos",
+    "experiments/mnem-hologram",
 ]
 
 [workspace.dependencies]
