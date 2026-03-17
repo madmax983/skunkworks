@@ -5,13 +5,17 @@
 - **Status:** Mosaic sensed a lack of hierarchy in the CLI; reinforcement required.
 
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/src/
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/src/vm/prologue/
 - **Scent Origin:** Mycelium 🍄
-- **Status:** Forge ⚒️ scented structural tangles and 114 clippy errors (including `ptr_arg`, `needless_range_loop`, and `collapsible_match`). The organism is suffocating in bloat and requires the Razor 🪒 touch.
+- **Status:** Forge ⚒️ scented structural tangles and multiple clippy errors (including `ptr_arg`, `needless_range_loop`, and `collapsible_match`). The logic is rusting and requires the Razor 🪒 touch.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/README.md
 - **Scent Origin:** Echo 🗣️
-- **Status:** DX audit failed. The "Library Usage" and "Running ChimeraScript from Rust" code examples in the README are broken and fail to compile. Immediate polish required.
+- **Status:** DX audit failed. The `story_demo` example is broken. It lacks the `nova` feature, causes a workspace inheritance error, and incorrectly launches a blocking TUI instead of a programmatic run. Immediate polish required.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/luminous-tank
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Documentation Void / Skeletal Structure. Grace period: 24h.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/crate-radar
 - **Scent Origin:** The Reaper ☠️
