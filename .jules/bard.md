@@ -26,3 +26,7 @@
 ## 2025-02-14 - The Black Box of `pub mod`
 **Confusion:** Inner modules like `semantic/action.rs` lack top-level context, making them "Black Boxes" when users view their docs directly, even if they are re-exported at the root facade (`lib.rs` or `mod.rs`).
 **Clarification:** I added `//!` module-level docs to all inner public modules (`action`, `entity`, `region`, `snapshot`) so they independently tell their story before diving into structs.
+
+## 2025-02-14 - The "Silent Data" Setters
+**Confusion:** The `u`, `v`, `u_mut`, and `v_mut` methods in `gray-scott` were fully undocumented, leaving users to guess that they returned flat 1D slices representing the 2D grid state. `width` and `height` were also undocumented, hiding how to interpret those slices.
+**Clarification:** Added module-level documentation to `crates/gray-scott/src/lib.rs` explicitly defining what `width`, `height`, `u`, `v`, `u_mut`, and `v_mut` return and why they exist. Added executable doctests to all of them demonstrating their intended usage, such as how to directly interact with the grid states.
