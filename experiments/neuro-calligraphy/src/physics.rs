@@ -6,7 +6,7 @@ pub struct VerletPoint {
     pub old_pos: Vec2,
     pub acc: Vec2,
     pub mass: f32,
-    pub radius: f32,
+
     pub locked: bool,
 }
 
@@ -18,7 +18,7 @@ impl VerletPoint {
             old_pos: pos,
             acc: vec2(0.0, 0.0),
             mass: 1.0,
-            radius: 5.0,
+
             locked: false,
         }
     }

@@ -46,3 +46,12 @@
 **Bloat:** Layer Lasagna & Terminal Genericism (chrontext split across app.rs, blame.rs, ui.rs, lib.rs, and main.rs). The `BlameAnalyzer` struct was essentially just a namespace storing a single start_path string.
 **Cut:** Flattened chrontext into a single main.rs file. Replaced `BlameAnalyzer` class with a simple `analyze_blame` function.
 **Saved:** Removed 4 files (`app.rs`, `blame.rs`, `ui.rs`, `lib.rs`), avoiding pointless encapsulation. Simplified `Cargo.toml`.
+## [Reduction]
+**Bloat:** Abstract `RepoHandler` structs wrapping `git2::Repository` in `digital-sediment` and `primordial-sediment`.
+**Cut:** Flattened the structure by removing the `RepoHandler` struct and its `impl` block, moving its methods (`open_repo`, `list_commits`, `get_file_content`) to free-standing module-level functions that directly take `&git2::Repository`.
+**Saved:** Unnecessary object-oriented boilerplate and wrapping of a single field (`repo: Repository`), reducing cognitive load and adhering to KISS.
+
+## [Reduction]
+**Bloat:** Enterprise-y `Builder` struct name in `neuro-calligraphy` used for parsing TTF fonts.
+**Cut:** Renamed `Builder` to the more specific and descriptive `OutlineAccumulator`, clarifying that its actual job is to accumulate `Contour` objects from the TTF parser.
+**Saved:** Vague terminology ("Builder") that adds cognitive overhead when trying to understand the struct's specific domain logic.
