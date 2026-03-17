@@ -1,8 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-fluid**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Missing `evolution_config`. Grace period: 24h.
-
+- **mnem-tank**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Audio Ecosystem Maladaptation. Failed to compile due to missing `alsa-sys` dependencies, preventing its phenotype from manifesting. Grace period: 24h.
 
 ## Pardoned
+- **chimera-fluid**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Missing `evolution_config`. Resolved by initializing `evolution_config` with `None`. The specimen now compiles successfully and its agents swim gracefully.
 - **chrontext**: Specimen pardoned. Diagnosis: Layer Lasagna / Terminal Genericism. Resolved by Razor flattening the architecture into a single `main.rs` file and removing speculative generality. The timeline wrapper is pure again.
 - **chimera-automaton**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Resolved missing evolution config and unused variable warnings. Vigor demonstrated through interactive steering of the generic physics simulation.
 - **chaos-strings**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved compilation privacy errors and updated audio dependencies. The chaos rings true again.
