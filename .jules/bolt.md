@@ -35,3 +35,7 @@
 **[Removing intermediate Vec<char> allocation in TUI drawing loops]**
 **Learning:** Calling `.chars().collect::<Vec<char>>()` inside a TUI `draw` frame loop results in unnecessary heap allocations on every single tick for every line rendered. You can directly consume the iterator to map or construct UI spans without allocating an intermediate vector.
 **Action:** Use `line_content.chars()` directly. If character padding is required to reach a certain width, combine the iterator with `.next().unwrap_or(' ')` inside a bounded loop (`for x in 0..sim.width`).
+
+**[Vec Buffer Reuse for Game Loops]**
+**Learning:** `Vec::clone_from` safely reuses the capacity of the target vector, which completely eliminates fresh heap allocations when creating identical state snapshots (e.g. `old_state.clone_from(&current_state)`) inside hot loops.
+**Action:** When creating a state snapshot in a loop using `.clone()`, pull the declaration of the snapshot vector out of the loop and use `.clone_from(&source)` to maintain zero-cost buffer reuse across frames.

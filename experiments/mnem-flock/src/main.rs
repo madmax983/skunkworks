@@ -43,6 +43,7 @@ async fn main() {
         .collect();
 
     let mut decay_timer = 0.0;
+    let mut old_boids = boids.clone();
     // let decay_rate = 0.05; // unused
 
     loop {
@@ -110,7 +111,8 @@ async fn main() {
 
         // --- 2. Update Flock (Behavior) ---
         // We need a snapshot of boids for reading neighbors
-        let old_boids = boids.clone();
+        // Eliminates a costly O(n) heap allocation (`Vec::clone()`) per frame, swapping instead.
+        old_boids.clone_from(&boids);
 
         for (i, boid) in boids.iter_mut().enumerate() {
             let mut sep = Vec2::ZERO;
