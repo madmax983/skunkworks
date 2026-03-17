@@ -273,13 +273,17 @@ Chimera can be used as a Rust library to embed the VM in other applications.
 Add to your `Cargo.toml`:
 ```toml
 [dependencies]
-# Note: Adjust path to point to the chimera-lang directory relative to your project
-chimera-lang = { path = "../chimera-lang" }
+# Note: Since chimera-lang relies on workspace dependencies,
+# you must either use it within the same workspace or provide
+# the missing dependencies in your own Cargo.toml.
+# Also, many features require the `nova` feature to be enabled.
+chimera-lang = { path = "../chimera-lang", features = ["nova"] }
 ```
 
 Example `main.rs`:
 ```rust
 use chimera_lang::prelude::*;
+use chimera_lang::vm::ChimeraVM;
 
 fn main() {
     // Create a simple organism that prints "Hello"
@@ -307,10 +311,14 @@ fn main() {
 
 ### Running ChimeraScript from Rust
 
+> ⚠️ **REQUIRES FEATURE NOVA**: The compiler requires the `nova` feature flag.
+
 You can also parse and run ChimeraScript code directly using the compiler:
 
 ```rust
 use chimera_lang::prelude::*;
+use chimera_lang::compiler;
+use chimera_lang::vm::ChimeraVM;
 
 fn main() {
     let source = r#"
