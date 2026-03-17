@@ -19,3 +19,6 @@
 ## [Struct Extraction Slice Coercion]
 **Learning:** When performing "Struct Extraction" to group function arguments into a new struct (e.g. `ElektraArgs<'a>`), Rust does not perform implicit slice coercion (Deref coercion) during struct field initialization. If a variable is passed as a `&mut Vec<T>` and the field expects a `&mut [T]`, using field initialization shorthand (e.g., just `voltage_grid,`) will cause a `mismatched types` error.
 **Action:** Explicitly deref and borrow the vector to coerce it into a slice when constructing the struct: `voltage_grid: &mut *voltage_grid,`.
+**[Too Many Arguments Refactoring]
+**Learning:** Functions over-parameterized with more than 7 arguments should extract configuration, coordinates, or context groups into structural types (like `CompilerContext` or `DirectionalDeltas`) to avoid `clippy::too_many_arguments` warnings and improve logical cohesion.
+**Action:** Group related arguments into dedicated helper `structs` (e.g. `Config`, `Context`, `Coordinates`) to simplify signatures and encourage clear logical boundaries when encountering functions with >7 arguments.

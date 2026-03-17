@@ -51,7 +51,13 @@ async fn main() {
         Ok(s) => _stream_opt = Some(s),
         Err(e) => {
             eprintln!("Audio init failed: {}. Running in silent mode.", e);
-            _fallback_model = Some(AudioModel::new(GRID_WIDTH, GRID_HEIGHT, cmd_rx, snap_tx, None));
+            _fallback_model = Some(AudioModel::new(
+                GRID_WIDTH,
+                GRID_HEIGHT,
+                cmd_rx,
+                snap_tx,
+                None,
+            ));
         }
     }
 
@@ -117,7 +123,6 @@ async fn main() {
         for (i, boid) in boids.iter_mut().enumerate().take(NUM_BOIDS) {
             let mut force = compute_force(&positions, &velocities, i, &flocking_params);
 
-
             // Advection from acoustic waves (gradient)
             let bx = boid.position.x as i32;
             let by = boid.position.y as i32;
@@ -140,7 +145,7 @@ async fn main() {
 
                 // Boids create ripples based on their speed and density
                 if ::rand::random::<f64>() < 0.05 {
-                     let _ = cmd_tx.send(AudioCommand::Pluck {
+                    let _ = cmd_tx.send(AudioCommand::Pluck {
                         x: bx as usize,
                         y: by as usize,
                         strength: 0.1,
@@ -204,13 +209,7 @@ async fn main() {
             draw_circle(x, y, scale * 0.5, GREEN);
         }
 
-        draw_text(
-            "Acoustic Swarming (luminous-tank)",
-            10.0,
-            20.0,
-            20.0,
-            WHITE,
-        );
+        draw_text("Acoustic Swarming (luminous-tank)", 10.0, 20.0, 20.0, WHITE);
 
         next_frame().await
     }

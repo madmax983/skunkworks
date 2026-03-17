@@ -275,17 +275,18 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                 let _name = inner.next().unwrap(); // skip name
                 let mut genes = Vec::new();
 
+                let mut ctx = CompilerContext {
+                    strand_map: &strand_map,
+                    macro_map: &macro_map,
+                    grammar_map: &grammar_map,
+                    organelle_map: &organelle_map,
+                    grid_maps: &grid_maps,
+                    anonymous_strands: &mut anonymous_strands,
+                    depth: 0,
+                };
+
                 for instr in inner {
-                    let generated = parse_instructions(
-                        instr,
-                        &strand_map,
-                        &macro_map,
-                        &grammar_map,
-                        &organelle_map,
-                        &grid_maps,
-                        &mut anonymous_strands,
-                        0,
-                    )?;
+                    let generated = ctx.parse_instruction(instr)?;
                     genes.extend(generated);
                 }
                 strands_ast.push(Strand { genes });
@@ -295,17 +296,18 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                 let _name = inner.next().unwrap(); // skip name
                 let mut genes = Vec::new();
 
+                let mut ctx = CompilerContext {
+                    strand_map: &strand_map,
+                    macro_map: &macro_map,
+                    grammar_map: &grammar_map,
+                    organelle_map: &organelle_map,
+                    grid_maps: &grid_maps,
+                    anonymous_strands: &mut anonymous_strands,
+                    depth: 0,
+                };
+
                 for instr in inner {
-                    let generated = parse_instructions(
-                        instr,
-                        &strand_map,
-                        &macro_map,
-                        &grammar_map,
-                        &organelle_map,
-                        &grid_maps,
-                        &mut anonymous_strands,
-                        0,
-                    )?;
+                    let generated = ctx.parse_instruction(instr)?;
                     genes.extend(generated);
                 }
                 strands_ast.push(Strand { genes });
@@ -324,18 +326,19 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                     args: vec![grammar_val],
                 }];
 
+                let mut ctx = CompilerContext {
+                    strand_map: &strand_map,
+                    macro_map: &macro_map,
+                    grammar_map: &grammar_map,
+                    organelle_map: &organelle_map,
+                    grid_maps: &grid_maps,
+                    anonymous_strands: &mut anonymous_strands,
+                    depth: 0,
+                };
+
                 // Compile block instructions
                 for instr in boot_block_pair.into_inner() {
-                    let generated = parse_instructions(
-                        instr,
-                        &strand_map,
-                        &macro_map,
-                        &grammar_map,
-                        &organelle_map,
-                        &grid_maps,
-                        &mut anonymous_strands,
-                        0,
-                    )?;
+                    let generated = ctx.parse_instruction(instr)?;
                     genes.extend(generated);
                 }
                 strands_ast.push(Strand { genes });
@@ -1140,28 +1143,6 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
 
         Ok(genes)
     }
-}
-
-fn parse_instructions(
-    pair: pest::iterators::Pair<Rule>,
-    strand_map: &HashMap<String, usize>,
-    macro_map: &HashMap<String, pest::iterators::Pairs<Rule>>,
-    grammar_map: &HashMap<String, DefinedGrammar>,
-    organelle_map: &HashMap<String, usize>,
-    grid_maps: &HashMap<String, Vec<String>>,
-    anonymous_strands: &mut Vec<Strand>,
-    depth: usize,
-) -> Result<Vec<Gene>> {
-    let mut ctx = CompilerContext {
-        strand_map,
-        macro_map,
-        grammar_map,
-        organelle_map,
-        grid_maps,
-        anonymous_strands,
-        depth,
-    };
-    ctx.parse_instruction(pair)
 }
 
 fn resolve_target(name: &str, strand_map: &HashMap<String, usize>) -> Nucleotide {

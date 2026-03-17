@@ -1,11 +1,5 @@
 use proptest::prelude::*;
-use ratatui::{
-    buffer::Buffer,
-    layout::Rect,
-    widgets::Widget,
-    widgets::Block,
-    widgets::Borders,
-};
+use ratatui::{buffer::Buffer, layout::Rect, widgets::Block, widgets::Borders, widgets::Widget};
 use tui_shared::Button;
 
 proptest! {

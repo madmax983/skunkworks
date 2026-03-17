@@ -368,10 +368,54 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                         }
                     }
                 }
-                'N' => read_write_directional(vm, y, x, -1, 0, 1, 0, &mut ctx),
-                'S' => read_write_directional(vm, y, x, 1, 0, -1, 0, &mut ctx),
-                'E' => read_write_directional(vm, y, x, 0, 1, 0, -1, &mut ctx),
-                'W' => read_write_directional(vm, y, x, 0, -1, 0, 1, &mut ctx),
+                'N' => read_write_directional(
+                    vm,
+                    y,
+                    x,
+                    DirectionalDeltas {
+                        read_dy: -1,
+                        read_dx: 0,
+                        write_dy: 1,
+                        write_dx: 0,
+                    },
+                    &mut ctx,
+                ),
+                'S' => read_write_directional(
+                    vm,
+                    y,
+                    x,
+                    DirectionalDeltas {
+                        read_dy: 1,
+                        read_dx: 0,
+                        write_dy: -1,
+                        write_dx: 0,
+                    },
+                    &mut ctx,
+                ),
+                'E' => read_write_directional(
+                    vm,
+                    y,
+                    x,
+                    DirectionalDeltas {
+                        read_dy: 0,
+                        read_dx: 1,
+                        write_dy: 0,
+                        write_dx: -1,
+                    },
+                    &mut ctx,
+                ),
+                'W' => read_write_directional(
+                    vm,
+                    y,
+                    x,
+                    DirectionalDeltas {
+                        read_dy: 0,
+                        read_dx: -1,
+                        write_dy: 0,
+                        write_dx: 1,
+                    },
+                    &mut ctx,
+                ),
                 'A' | 'a' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| a.wrapping_add(b)),
                 'B' | 'b' => exec_babel_signal(vm, y, x, signal, &mut ctx),
                 's' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| a.wrapping_sub(b)),
@@ -1552,18 +1596,24 @@ fn exec_warp(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalCon
     }
 }
 
-fn read_write_directional(
-    vm: &ChimeraVM,
-    y: usize,
-    x: usize,
+struct DirectionalDeltas {
     read_dy: i64,
     read_dx: i64,
     write_dy: i64,
     write_dx: i64,
+}
+
+fn read_write_directional(
+    vm: &ChimeraVM,
+    y: usize,
+    x: usize,
+    deltas: DirectionalDeltas,
     ctx: &mut SignalContext,
 ) {
-    if let Some(val) = peek(vm, y, x, read_dy, read_dx) {
-        if let Some((wy, wx)) = vm.normalize_coords(y as i64 + write_dy, x as i64 + write_dx) {
+    if let Some(val) = peek(vm, y, x, deltas.read_dy, deltas.read_dx) {
+        if let Some((wy, wx)) =
+            vm.normalize_coords(y as i64 + deltas.write_dy, x as i64 + deltas.write_dx)
+        {
             ctx.grid_writes.push(GridWrite {
                 y: wy,
                 x: wx,
