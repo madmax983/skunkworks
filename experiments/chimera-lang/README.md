@@ -273,16 +273,17 @@ Chimera can be used as a Rust library to embed the VM in other applications.
 Add to your `Cargo.toml`:
 ```toml
 [dependencies]
-# Note: Since chimera-lang relies on workspace dependencies,
+# ⚠️ REQUIRES WORKSPACE OR EXPLICIT DEPENDENCIES
+# Note: Since chimera-lang relies on workspace dependencies (like `anyhow`, `pest`),
 # you must either use it within the same workspace or provide
 # the missing dependencies in your own Cargo.toml.
-# Also, many features require the `nova` feature to be enabled.
+# ⚠️ REQUIRES FEATURE NOVA
 chimera-lang = { path = "../chimera-lang", features = ["nova"] }
 ```
 
 Example `main.rs`:
 ```rust
-use chimera_lang::prelude::*;
+use chimera_lang::ast::{Dna, Gene, Nucleotide, OpCode};
 use chimera_lang::vm::ChimeraVM;
 
 fn main() {
@@ -294,6 +295,7 @@ fn main() {
         Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] },
         Gene { op: OpCode::Print, args: vec![] },
     ];
+    // Note: Dna::default() is not defined, use from_genes
     let dna = Dna::from_genes(genes);
     let mut vm = ChimeraVM::new(dna);
 
@@ -316,10 +318,6 @@ fn main() {
 You can also parse and run ChimeraScript code directly using the compiler:
 
 ```rust
-use chimera_lang::prelude::*;
-use chimera_lang::compiler;
-use chimera_lang::vm::ChimeraVM;
-
 fn main() {
     let source = r#"
         strand main {
@@ -330,9 +328,9 @@ fn main() {
 
     // Compile the source string into DNA
     // The second argument is an optional path for imports (None here)
-    let dna = compiler::compile(source, None).expect("Failed to compile");
+    let dna = chimera_lang::compiler::compile(source, None).expect("Failed to compile");
 
-    let mut vm = ChimeraVM::new(dna);
+    let mut vm = chimera_lang::vm::ChimeraVM::new(dna);
 
     // Run until halted or for a max number of steps
     for _ in 0..100 {
@@ -346,9 +344,9 @@ fn main() {
 }
 ```
 
-See `examples/story_demo.rs` for a full example of programmatic usage:
+See `examples/story_demo.rs` for a full example of programmatic usage. Note that it launches an interactive TUI, not a headless execution:
 
-> **REQUIRES FEATURE NOVA**
+> ⚠️ **REQUIRES FEATURE NOVA**
 
 ```bash
 cargo run -p chimera-lang --example story_demo
