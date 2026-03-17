@@ -240,19 +240,23 @@ fn soundex(s: &str) -> String {
     code
 }
 
+/// Checks if two strings are anagrams.
+/// ⚡ Bolt Optimization:
+/// - Replaced `s.to_lowercase()` `String` allocations with lazy `flat_map(|c| c.to_lowercase())`.
+/// - Replaced `sort()` with `sort_unstable()` to remove auxiliary memory allocation and improve speed for primitives.
 fn is_anagram(s1: &str, s2: &str) -> bool {
     let mut c1: Vec<char> = s1
-        .to_lowercase()
         .chars()
         .filter(|c| c.is_alphanumeric())
+        .flat_map(|c| c.to_lowercase())
         .collect();
     let mut c2: Vec<char> = s2
-        .to_lowercase()
         .chars()
         .filter(|c| c.is_alphanumeric())
+        .flat_map(|c| c.to_lowercase())
         .collect();
-    c1.sort();
-    c2.sort();
+    c1.sort_unstable();
+    c2.sort_unstable();
     c1 == c2
 }
 
@@ -271,7 +275,16 @@ fn caesar_cipher(s: &str, shift: i8) -> String {
         .collect()
 }
 
+/// Checks if a string is a pangram (contains all letters a-z).
+/// ⚡ Bolt Optimization:
+/// - Replaced `s.to_lowercase()` `String` allocation with an O(N) single-pass bitset check using a `u32` integer.
+/// - Removed the O(N * 26) searching mechanism.
 fn is_pangram(s: &str) -> bool {
-    let lower = s.to_lowercase();
-    ('a'..='z').all(|c| lower.contains(c))
+    let mut seen = 0u32;
+    for b in s.bytes() {
+        if b.is_ascii_alphabetic() {
+            seen |= 1 << (b.to_ascii_lowercase() - b'a');
+        }
+    }
+    seen == (1 << 26) - 1
 }
