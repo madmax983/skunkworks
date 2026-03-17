@@ -1,7 +1,7 @@
 # 073. Normal Handler Extraction
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The Blob - `experiments/chimera-lang/src/tui/app/handlers/normal.rs` was ~2300 lines long, containing a monolithic event loop `match` block. This centralized logic became highly tangled and difficult to navigate.
