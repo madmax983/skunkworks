@@ -455,3 +455,8 @@
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-fluid
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure. Grace period: 24h.
+
+### [Concentration Level: NEW HYBRID] - Location: experiments/git-ddos
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for git-ddos (git-harmonograph x locust-ddos). Expecting Codebase Cyberwarfare.
+- **Phenotype:** A swarm of DDoS packets targeting "hotspots" of developer activity in the local git repository. Active files act as strong attractors, visualizing codebase churn as a cyber attack.
