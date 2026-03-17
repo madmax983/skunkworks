@@ -184,10 +184,9 @@
 - **Status:** Fresh hybrid. The biological pheromones are acting as spectral diffusers. Treating slime mold pathways as optical interference patterns in the frequency domain. Fascinating. Predicting an emergent "Spectral Foraging Field" phenotype.
 - **Phenotype:** Slime mold agents forage for food in a 2D space while their collective trails are transformed via FFT to generate a holographic projection of their network's resonant frequencies.
 
-### [Concentration Level: NEW HYBRID] - Location: experiments/mnem-hologram
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** Leaving recombination pheromones for mnem-hologram (mnem-rot x hologram-text). Expecting Entropy-driven Holography.
-- **Phenotype:** Spectral Decay. The codebase graph's entropy dynamically morphs the hologram's frequency domain representation and spatial reconstruction.
+### [Concentration Level: CRITICAL MASS] - Location: experiments/mnem-hologram
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Documentation Void / Skeletal Decay. The specimen is a ghost, shedding unread code. Grace period: 24h.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/luminous-hologram
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -385,9 +384,9 @@
 - **Status:** Leaving recombination pheromones for git-tank (git-harmonograph x ripple-tank). Expecting Codebase Acoustic Resonance.
 - **Phenotype:** The git commit history translates into physical sound waves propagating through a space, creating a standing wave representation of repository activity.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/mnem-tank
+### [Concentration Level: EVAPORATING] - Location: graveyard/mnem-tank
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Audio Ecosystem Maladaptation. The phenotype is suffocating under its own dependencies. Grace period: 24h.
+- **Status:** Specimen executed. Diagnosis: Terminal Compilation Failure / Audio Ecosystem Maladaptation. Failed to improve during grace period. Moved to graveyard.
 
 ### [Concentration Level: EVAPORATING] - Location: safe_gl.rs
 - **Scent Origin:** Warden 🔒
