@@ -51,6 +51,13 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Magnetic Code Rot. The decaying nodes of a codebase graph simulation act as magnetic poles in a continuous fluid simulation.
 - **Novel trait**: The codebase's health actively repulses or attracts a swarm of magnetic particles. Rotting code pushes particles away, while healthy, freshly maintained code attracts them, acting like a physical magnetic medium representing codebase entropy.
 - **Status**: experiments/mnem-fluid
+- **Evaluation**: Success. Compiled. Exhibits continuous magnetic repulsions mapped from simulated graph node entropy accurately.
+
+### mnem-diffusion
+- **Parents**: experiments/mnem-rot + crates/gray-scott
+- **Concept**: Codebase Rot Morphogenesis. Decaying nodes of a codebase graph act as chemical catalysts in a Gray-Scott reaction-diffusion grid.
+- **Novel trait**: Entropy Morphogenesis. High-entropy (rotting) files inject the 'V' (kill) chemical, while healthy files inject the 'U' (feed) chemical. Code rot doesn't just passively decay; it actively bleeds and diffuses across the visual space, creating organic, fungal-like patterns that physically consume adjacent healthy files in the 2D layout.
+- **Status**: experiments/mnem-diffusion
 
 
 ### locust-strings
@@ -98,31 +105,36 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Parents**: experiments/chrontext + crates/gray-scott
 - **Concept**: Chronological Reaction-Diffusion. The git blame age of code lines acts as a chemical catalyst injecting the "V" chemical into a Gray-Scott reaction-diffusion grid overlaid on the text.
 - **Novel trait**: Morphogenetic Code Aging. Text acts not just as static boundaries, but as a chemically active substrate where the age of the code shapes the diffusion patterns over time, revealing the "metabolic rate" of different files.
-- **Status**: experiments/chron-diffusion
+- **Status**: graveyard/chron-diffusion (Executed)
+- **Evaluation**: Condemned by The Reaper ☠️. Documentation void and terminal compilation failure caused by missing `chrontext` library target. Failed. Moved to graveyard.
 
 ### chron-mycelium
 - **Parents**: experiments/chrontext + experiments/myco-transit
 - **Concept**: Codebase Foraging. This experiment crosses the git blame chronological age parsing of chrontext with the biological pathfinding of myco-transit.
 - **Novel trait**: Organic Age Mapping. Slime mold agents scavenge through the text space, treating the newest Git commits as high-value food sources. The visual layout creates glowing architectural trails showing where the code has been "foraged" between old and new blocks.
-- **Status**: experiments/chron-mycelium
+- **Status**: graveyard/chron-mycelium (Executed)
+- **Evaluation**: Condemned by The Reaper ☠️. Documentation void and terminal compilation failure caused by missing `chrontext` library target. Failed. Moved to graveyard.
 
 ### chron-hologram
 - **Parents**: experiments/chrontext + experiments/hologram-text
 - **Concept**: "Spectral History". This experiment crosses the git blame chronological age parsing of chrontext with the FFT-based optical interference rendering of hologram-text.
 - **Novel trait**: Codebase Holography. By transforming a file's history into an interference pattern, you are viewing the spectral signature of the codebase's age. Old code generates low-frequency waves, while new code introduces high-frequency turbulence.
-- **Status**: experiments/chron-hologram
+- **Status**: graveyard/chron-hologram (Executed)
+- **Evaluation**: Condemned by The Reaper ☠️. Documentation void and terminal compilation failure caused by missing `chrontext` library target. Failed. Moved to graveyard.
 
 ### chron-flock
 - **Parents**: experiments/chrontext + crates/locus
 - **Concept**: Codebase Swarming. A TUI visualization crossing the Git blame chronological age parsing of chrontext with the 2D boid flocking logic of locus.
 - **Novel trait**: Codebase Swarming. Boids swarm around lines of code. New code attracts the swarm, while old code gently repels it.
-- **Status**: experiments/chron-flock
+- **Status**: graveyard/chron-flock (Executed)
+- **Evaluation**: Condemned by The Reaper ☠️. Documentation void and terminal compilation failure caused by missing `chrontext` library target. Failed. Moved to graveyard.
 
 ### myco-diffusion
 - **Parents**: crates/gray-scott + experiments/myco-transit
 - **Concept**: Pheromone-Guided Reaction-Diffusion. Slime mold agents distribute the V chemical catalyst, while their movement is restricted by the U chemical.
 - **Novel trait**: Organic structural formation out of Turing patterns.
 - **Status**: experiments/myco-diffusion
+- **Evaluation**: Success. Compiled. Pheromone trails successfully guide the reaction-diffusion Turing patterns into organic structures.
 
 ### gray-chaos
 - **Parents**: crates/gray-scott + experiments/chaos-hologram
@@ -237,13 +249,15 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Parents**: experiments/chrontext + experiments/ferrous-fluid
 - **Concept**: Magnetic Code Strata. The age of each line of code in a file creates a magnetic field. Old code attracts, new code repels.
 - **Novel trait**: The git commit history acts as a physical force field guiding magnetic particles over the text layout.
-- **Status**: experiments/chron-fluid
+- **Status**: graveyard/chron-fluid (Executed)
+- **Evaluation**: Condemned by The Reaper ☠️. Documentation void and terminal compilation failure caused by missing `chrontext` library target. Failed. Moved to graveyard.
 
 ### myco-fluid
 - **Parents**: experiments/myco-transit + experiments/ferrous-fluid
 - **Concept**: Pheromone-Guided Magnetic Particles. Magnetic particles act as agents driven by forces but also deposit a pheromone trail.
 - **Novel trait**: Magnetic Memory. Particles calculate gradient and are pulled to higher density. Trails become stable physical structures guiding future particles.
 - **Status**: experiments/myco-fluid
+- **Evaluation**: Success. Compiled. Pheromone trails successfully act as dynamic physical forcefields influencing magnetic agents.
 
 ### myco-hologram
 - **Parents**: experiments/myco-transit + experiments/hologram-text

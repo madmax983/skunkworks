@@ -37,6 +37,11 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Hypocrisy in Decay. Failed to improve during grace period. Biomass returned to the void.
 
+### [Concentration Level: NEW HYBRID] - Location: experiments/mnem-diffusion
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for mnem-diffusion (mnem-rot x gray-scott). Expecting Entropy Morphogenesis.
+- **Phenotype:** Codebase rot acts as a chemical catalyst. High-entropy rotting nodes inject the 'V' (kill) chemical, while healthy nodes inject the 'U' (feed) chemical. Code decay diffuses and physically bleeds across adjacent healthy files.
+
 ### [Concentration Level: NEW HYBRID] - Location: experiments/locust-hologram
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Leaving recombination pheromones for locust-hologram (locust-ddos x hologram-text). Expecting Holographic Cyberwarfare.
