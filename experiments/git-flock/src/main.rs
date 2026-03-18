@@ -79,7 +79,9 @@ impl App {
     }
 }
 
-fn run_app(terminal: &mut ratatui::Terminal<ratatui::backend::CrosstermBackend<std::io::Stdout>>) -> Result<()> {
+fn run_app(
+    terminal: &mut ratatui::Terminal<ratatui::backend::CrosstermBackend<std::io::Stdout>>,
+) -> Result<()> {
     let tick_rate = Duration::from_millis(16); // ~60 FPS
     let mut last_tick = Instant::now();
 
@@ -100,7 +102,8 @@ fn run_app(terminal: &mut ratatui::Terminal<ratatui::backend::CrosstermBackend<s
                         KeyCode::Char('q') | KeyCode::Esc => app.running = false,
                         KeyCode::Char(' ') => app.auto_play = !app.auto_play,
                         KeyCode::Right => {
-                            app.world.current_commit = (app.world.current_commit + 1) % app.commits.len();
+                            app.world.current_commit =
+                                (app.world.current_commit + 1) % app.commits.len();
                             app.tick_count = 0;
                         }
                         KeyCode::Left => {
@@ -142,7 +145,11 @@ fn draw(f: &mut Frame, app: &mut App) {
     };
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" Git Swarming "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Git Swarming "),
+        )
         .paint(|ctx| {
             // Draw current commit target
             ctx.draw(&Points {
@@ -168,7 +175,10 @@ fn draw(f: &mut Frame, app: &mut App) {
         Line::from(vec![
             Span::styled("Commit: ", Style::default().add_modifier(Modifier::BOLD)),
             Span::raw(format!("{} - {} ", &commit.hash[0..7], commit.author)),
-            Span::styled(format!("({})", commit.date.format("%Y-%m-%d")), Style::default().fg(Color::DarkGray)),
+            Span::styled(
+                format!("({})", commit.date.format("%Y-%m-%d")),
+                Style::default().fg(Color::DarkGray),
+            ),
         ]),
         Line::from(vec![
             Span::styled("Message: ", Style::default().add_modifier(Modifier::BOLD)),
@@ -180,7 +190,10 @@ fn draw(f: &mut Frame, app: &mut App) {
         ]),
     ];
 
-    let info_panel = Paragraph::new(info)
-        .block(Block::default().borders(Borders::ALL).title(" Codebase Metadata "));
+    let info_panel = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(" Codebase Metadata "),
+    );
     f.render_widget(info_panel, chunks[1]);
 }
