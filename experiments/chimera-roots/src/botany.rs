@@ -21,7 +21,7 @@ impl RootTip {
         let helix = Helix {
             strands: vec![strand],
         };
-        let dna = Dna { helix };
+        let dna = Dna { helix, evolution_config: None };
         let mut vm = ChimeraVM::new(dna);
         vm.energy = 1000; // Starting energy
 
@@ -108,12 +108,16 @@ impl Plant {
                 let ny = tip.position.1 as i32 + dy;
                 let val = if nx >= 0 && nx < grid.width as i32 && ny >= 0 && ny < grid.height as i32
                 {
-                    match grid.get(nx as usize, ny as usize).unwrap().cell_type {
-                        CellType::Soil => 1,
-                        CellType::HardSoil => 2,
-                        CellType::Rock => 100,  // Obstacle
-                        CellType::Water => 200, // Goal
-                        CellType::Seed => 0,
+                    if let Some(cell) = grid.get(nx as usize, ny as usize) {
+                        match cell.cell_type {
+                            CellType::Soil => 1,
+                            CellType::HardSoil => 2,
+                            CellType::Rock => 100,  // Obstacle
+                            CellType::Water => 200, // Goal
+                            CellType::Seed => 0,
+                        }
+                    } else {
+                        100 // Out of bounds effectively
                     }
                 } else {
                     100 // Wall
@@ -148,28 +152,33 @@ impl Plant {
                     if nx >= 0 && nx < grid.width as i32 && ny >= 0 && ny < grid.height as i32 {
                         let nx = nx as usize;
                         let ny = ny as usize;
-                        let cell_type = grid.get(nx, ny).unwrap().cell_type;
+                        if let Some(cell) = grid.get(nx, ny) {
+                            let cell_type = cell.cell_type;
 
-                        if cell_type == CellType::Rock {
-                            // Hit rock, die
-                            tip.finished = true;
-                        } else if cell_type == CellType::Water {
-                            // Found water!
-                            tip.reached_water = true;
-                            tip.finished = true;
-                            tip.path.push((nx, ny));
-                            tip.position = (nx, ny);
-                        } else {
-                            // Move
-                            // Check if already in path (don't backtrack immediately)
-                            if !tip.path.contains(&(nx, ny)) {
+                            if cell_type == CellType::Rock {
+                                // Hit rock, die
+                                tip.finished = true;
+                            } else if cell_type == CellType::Water {
+                                // Found water!
+                                tip.reached_water = true;
+                                tip.finished = true;
                                 tip.path.push((nx, ny));
                                 tip.position = (nx, ny);
-                                tip.energy -= 1.0; // Movement cost
-                                if tip.energy <= 0.0 {
-                                    tip.finished = true;
+                            } else {
+                                // Move
+                                // Check if already in path (don't backtrack immediately)
+                                if !tip.path.contains(&(nx, ny)) {
+                                    tip.path.push((nx, ny));
+                                    tip.position = (nx, ny);
+                                    tip.energy -= 1.0; // Movement cost
+                                    if tip.energy <= 0.0 {
+                                        tip.finished = true;
+                                    }
                                 }
                             }
+                        } else {
+                            // Hit wall (or invalid cell)
+                            tip.finished = true;
                         }
                     } else {
                         // Hit wall
@@ -209,7 +218,7 @@ impl Plant {
             })
             .collect();
 
-        fitnesses.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
+        fitnesses.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
         self.best_fitness = fitnesses[0].1;
 
         // Select top 20%

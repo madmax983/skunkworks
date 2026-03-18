@@ -36,3 +36,7 @@
 **2025-05-18 - [Unbounded File Read OOM DoS Prevention]**
 **Threat:** The functions processing files in `experiments/mnem-flock/src/graph.rs` and `experiments/struct-harmonics/src/parser.rs` used `fs::read_to_string` directly without any upper bounds check. An attacker providing a massive file (e.g., highly compressed deeply nested objects, or just a large text file) could force the application to read the entire file into memory at once, causing a Denial of Service via Out of Memory (OOM) abort.
 **Defense:** Replaced `fs::read_to_string` with bounded readers utilizing `std::io::Read::take(1024 * 1024 + 1)` and `read_to_string()`. Validated that the total read size does not exceed the imposed 1MB limit before proceeding, preventing memory exhaustion and ensuring truncated inputs aren't processed silently.
+
+**2025-05-18 - [DoS Panic via Unhandled Options and NaN Unwraps]**
+**Threat:** The code used `unwrap()` in `experiments/chimera-roots/src/botany.rs` and `experiments/cargo-rocket/src/world.rs` to extract grid cells and package map elements, which would cause an unhandled panic (Denial of Service) if the coordinates or keys were invalid. Additionally, `botany.rs` sorted floats using `unwrap()` on `partial_cmp`, exposing a DoS panic vector if the math produced `NaN`.
+**Defense:** Replaced `unwrap()` with safe `if let Some` or `let Some(...) else` pattern matching to safely handle missing elements. Used `.unwrap_or(std::cmp::Ordering::Equal)` during float comparisons to prevent `NaN` values from crashing the sorting logic.
