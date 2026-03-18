@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **sys-dance**: Specimen condemned. Diagnosis: Terminal Genericism / Swarm Neglect. The specimen is a static puppet show masquerading as a living system. Grace period: 24h.
+- **mnem-diffusion**: Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. Bare single-file toy with no README. Grace period: 24h.
+
 ## Pardoned
 - **chimera-fluid**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Missing `evolution_config`. Resolved by initializing `evolution_config` with `None`. The specimen now compiles successfully and its agents swim gracefully.
 - **chrontext**: Specimen pardoned. Diagnosis: Layer Lasagna / Terminal Genericism. Resolved by Razor flattening the architecture into a single `main.rs` file and removing speculative generality. The timeline wrapper is pure again.
@@ -17,6 +18,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **sys-dance**: Specimen executed. Diagnosis: Terminal Genericism / Swarm Neglect. Failed to improve during grace period (security fix only). Moved to graveyard.
 - **luminous-tank**: Specimen executed. Diagnosis: Documentation Void / Skeletal Structure. Failed to improve during grace period. Moved to graveyard.
 - **mnem-hologram**: Specimen executed. Diagnosis: Documentation Void / Skeletal Decay. Failed to improve during grace period. Moved to graveyard.
 - **mnem-tank**: Specimen executed. Diagnosis: Terminal Compilation Failure / Audio Ecosystem Maladaptation. Failed to improve during grace period. Moved to graveyard.
