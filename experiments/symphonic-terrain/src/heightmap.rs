@@ -1,5 +1,6 @@
 use noise::{NoiseFn, Perlin};
-use rusttype::{point, Font, PositionedGlyph, Scale};
+use ab_glyph::{FontRef, Font, ScaleFont, PxScale};
+use glyph_brush_layout::{SectionGeometry, GlyphPositioner, Layout, SectionText};
 
 pub struct HeightMap {
     pub width: u32,
@@ -34,45 +35,51 @@ impl HeightMap {
 pub fn generate_text_heightmap(text: &str, font_data: &[u8], width: u32, height: u32) -> HeightMap {
     let mut map = HeightMap::new(width, height);
 
-    // 1. Generate Noise Terrain
     let perlin = Perlin::new(1);
-    let scale = 0.05; // Zoom level for noise
+    let noise_scale = 0.05;
 
     for y in 0..height {
         for x in 0..width {
-            let nx = x as f64 * scale;
-            let ny = y as f64 * scale;
+            let nx = x as f64 * noise_scale;
+            let ny = y as f64 * noise_scale;
             let noise_val = perlin.get([nx, ny]);
-            // Normalize roughly to 0.0 - 5.0
             let terrain_height = (noise_val + 1.0) * 2.5;
             map.set(x, y, terrain_height as f32);
         }
     }
 
-    // 2. Rasterize Text
-    let font = Font::try_from_bytes(font_data).expect("Error constructing Font");
+    let font = match FontRef::try_from_slice(font_data) {
+        Ok(f) => f,
+        Err(_) => return map,
+    };
 
-    // Scale text to fit roughly in the middle
     let font_scale_val = (width as f32) * 0.25;
-    let scale = Scale::uniform(font_scale_val);
-    let v_metrics = font.v_metrics(scale);
+    let px_scale = PxScale::from(font_scale_val);
+    let scaled_font = font.as_scaled(px_scale);
 
-    let offset = point(
-        width as f32 * 0.1,
-        height as f32 / 2.0 + v_metrics.ascent / 2.0,
+    let layout = Layout::default();
+    let glyphs = layout.calculate_glyphs(
+        &[&font],
+        &SectionGeometry {
+            screen_position: (width as f32 * 0.1, height as f32 / 2.0 + scaled_font.ascent() / 2.0),
+            bounds: (f32::INFINITY, f32::INFINITY),
+        },
+        &[SectionText {
+            text,
+            scale: px_scale,
+            font_id: glyph_brush_layout::FontId(0),
+        }],
     );
 
-    let glyphs: Vec<PositionedGlyph> = font.layout(text, scale, offset).collect();
-
-    for glyph in glyphs {
-        if let Some(bb) = glyph.pixel_bounding_box() {
-            glyph.draw(|x, y, v| {
-                let gx = x as i32 + bb.min.x;
-                let gy = y as i32 + bb.min.y;
+    for g in glyphs {
+        if let Some(outlined) = font.outline_glyph(g.glyph) {
+            let bb = outlined.px_bounds();
+            outlined.draw(|x, y, v| {
+                let gx = x as i32 + bb.min.x as i32;
+                let gy = y as i32 + bb.min.y as i32;
 
                 if gx >= 0 && gx < width as i32 && gy >= 0 && gy < height as i32 {
                     let current_h = map.get(gx as u32, gy as u32);
-                    // Text should be significantly higher
                     let text_h = v * 20.0;
                     map.set(gx as u32, gy as u32, current_h + text_h);
                 }
@@ -89,7 +96,6 @@ mod tests {
 
     #[test]
     fn test_heightmap_generation() {
-        // Use include_bytes! to ensure the font is found relative to this file
         let font_data = include_bytes!("../assets/DejaVuSans.ttf");
 
         let width = 100;
@@ -99,10 +105,9 @@ mod tests {
         assert_eq!(map.width, width);
         assert_eq!(map.height, height);
 
-        // Check if we have some variation (noise)
         let mut min = f32::MAX;
         let mut max = f32::MIN;
-        let mut has_high_peak = false; // Text should create a high peak
+        let mut has_high_peak = false;
 
         for val in &map.data {
             if *val < min {

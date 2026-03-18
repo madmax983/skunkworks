@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 use poincare_disk::{mobius_add, mobius_sub, neighbor_transform_a, Point, TilingConsts};
-use rusttype::{Font, Scale};
+use ab_glyph::{FontRef, Font, ScaleFont, PxScale};
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
@@ -16,7 +16,7 @@ fn hash_path(path: &[u8]) -> f32 {
 }
 
 fn generate_font_atlas(font_bytes: &[u8]) -> Texture2D {
-    let font = Font::try_from_bytes(font_bytes).expect("Error constructing Font");
+    let font = FontRef::try_from_slice(font_bytes).expect("Error constructing Font");
 
     let atlas_size = 512;
     let grid_cols = 10;
@@ -26,7 +26,8 @@ fn generate_font_atlas(font_bytes: &[u8]) -> Texture2D {
     // Create RGBA image buffer (black transparent)
     let mut pixels = vec![0u8; (atlas_size * atlas_size * 4) as usize];
 
-    let scale = Scale::uniform(cell_size as f32 * 0.8); // 80% of cell size
+    let scale = PxScale::from(cell_size as f32 * 0.8); // 80% of cell size
+    let scaled_font = font.as_scaled(scale);
 
     // Characters to render (Space to ~)
     let start_char = b' '; // 32
@@ -38,10 +39,8 @@ fn generate_font_atlas(font_bytes: &[u8]) -> Texture2D {
         } // ASCII limit
 
         let c = char_code as char;
-        let glyph = font
-            .glyph(c)
-            .scaled(scale)
-            .positioned(rusttype::point(0.0, 0.0));
+        let glyph_id = font.glyph_id(c);
+        let glyph = glyph_id.with_scale_and_position(scale, ab_glyph::point(0.0, scaled_font.ascent()));
 
         // Calculate cell position
         let col = i % grid_cols;
@@ -51,22 +50,20 @@ fn generate_font_atlas(font_bytes: &[u8]) -> Texture2D {
         let cell_y = row * cell_size;
 
         // Center the glyph in the cell
-        let bb = glyph.pixel_bounding_box().unwrap_or(rusttype::Rect {
-            min: rusttype::Point { x: 0, y: 0 },
-            max: rusttype::Point { x: 0, y: 0 },
-        });
+        let bb = font.glyph_bounds(&glyph);
         let glyph_w = bb.width();
         let glyph_h = bb.height();
 
-        let offset_x = (cell_size as i32 - glyph_w) / 2;
-        let offset_y = (cell_size as i32 - glyph_h) / 2; // Approximate centering
+        let offset_x = (cell_size as f32 - glyph_w) / 2.0;
+        let offset_y = (cell_size as f32 - glyph_h) / 2.0; // Approximate centering
 
         // Draw glyph
-        if let Some(bb) = glyph.pixel_bounding_box() {
-            glyph.draw(|x, y, v| {
+        if let Some(outlined) = font.outline_glyph(glyph) {
+            let px_bounds = outlined.px_bounds();
+            outlined.draw(|x, y, v| {
                 // v is coverage [0.0, 1.0]
-                let gx = cell_x as i32 + offset_x + x as i32 + bb.min.x;
-                let gy = cell_y as i32 + offset_y + y as i32 + bb.min.y;
+                let gx = cell_x as i32 + offset_x as i32 + x as i32 + px_bounds.min.x as i32;
+                let gy = cell_y as i32 + offset_y as i32 + y as i32 + px_bounds.min.y as i32;
 
                 if gx >= 0 && gx < atlas_size as i32 && gy >= 0 && gy < atlas_size as i32 {
                     let idx = ((gy as usize * atlas_size as usize) + gx as usize) * 4;
