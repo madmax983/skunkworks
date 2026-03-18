@@ -16,7 +16,15 @@ impl Agent {
     }
 
     /// Senses combined value of Trail + Gradient toward most rotting node
-    pub fn sense(&self, trail_map: &[f32], width: usize, height: usize, graph: &Graph, angle_offset: f32, sensor_dist: f32) -> f32 {
+    pub fn sense(
+        &self,
+        trail_map: &[f32],
+        width: usize,
+        height: usize,
+        graph: &Graph,
+        angle_offset: f32,
+        sensor_dist: f32,
+    ) -> f32 {
         let sensor_angle = self.angle + angle_offset;
         let sensor_x = self.x + sensor_angle.cos() * sensor_dist;
         let sensor_y = self.y + sensor_angle.sin() * sensor_dist;
@@ -138,9 +146,30 @@ impl Simulation {
         let mut rng = ::rand::thread_rng();
 
         for agent in &mut self.agents {
-            let weight_fwd = agent.sense(&self.trail_map, self.width, self.height, &self.graph, 0.0, sensor_dist);
-            let weight_left = agent.sense(&self.trail_map, self.width, self.height, &self.graph, -sensor_angle, sensor_dist);
-            let weight_right = agent.sense(&self.trail_map, self.width, self.height, &self.graph, sensor_angle, sensor_dist);
+            let weight_fwd = agent.sense(
+                &self.trail_map,
+                self.width,
+                self.height,
+                &self.graph,
+                0.0,
+                sensor_dist,
+            );
+            let weight_left = agent.sense(
+                &self.trail_map,
+                self.width,
+                self.height,
+                &self.graph,
+                -sensor_angle,
+                sensor_dist,
+            );
+            let weight_right = agent.sense(
+                &self.trail_map,
+                self.width,
+                self.height,
+                &self.graph,
+                sensor_angle,
+                sensor_dist,
+            );
 
             let random_steer = ::rand::Rng::gen_range(&mut rng, 0.0..1.0);
 
@@ -235,12 +264,13 @@ impl Simulation {
             if edge.from < self.graph.nodes.len() && edge.to < self.graph.nodes.len() {
                 let n1 = self.graph.nodes[edge.from].pos;
                 let n2 = self.graph.nodes[edge.to].pos;
-                let avg_health = (self.graph.nodes[edge.from].health + self.graph.nodes[edge.to].health) / 2.0;
+                let avg_health =
+                    (self.graph.nodes[edge.from].health + self.graph.nodes[edge.to].health) / 2.0;
 
                 let jitter = if avg_health < 0.5 {
                     vec2(
                         ::macroquad::rand::gen_range(-2.0, 2.0),
-                        ::macroquad::rand::gen_range(-2.0, 2.0)
+                        ::macroquad::rand::gen_range(-2.0, 2.0),
                     )
                 } else {
                     vec2(0.0, 0.0)

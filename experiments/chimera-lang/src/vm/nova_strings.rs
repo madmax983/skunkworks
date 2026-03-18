@@ -251,7 +251,7 @@ mod tests {
         }
 
         assert!(vm.strings.len() <= MAX_STRINGS);
-        assert!(vm.strings.len() > 0);
+        assert!(!vm.strings.is_empty());
 
         // Check for error message
         assert!(vm

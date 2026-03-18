@@ -113,7 +113,7 @@ mod tests {
         match &vm.grid[2][1] {
             Value::Str(s) => {
                 let v = s.chars().next().unwrap();
-                assert!(v >= '0' && v <= '9');
+                assert!(('0'..='9').contains(&v));
             }
             _ => panic!("Expected string output at (2,1)"),
         }

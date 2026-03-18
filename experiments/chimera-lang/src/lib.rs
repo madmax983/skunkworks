@@ -31,6 +31,8 @@
 //!
 //! ### Survival Guide (Quick Start)
 //!
+//! > ⚠️ **REQUIRES FEATURE NOVA** for advanced capabilities and compilation examples below.
+//!
 //! A minimal organism must generate energy to stay alive.
 //!
 //! ```rust
@@ -43,6 +45,7 @@
 //!     Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
 //! ];
 //!
+//! // Note: Always initialize with `Dna::from_genes` instead of manual struct init
 //! let dna = Dna::from_genes(genes);
 //! let mut vm = ChimeraVM::new(dna);
 //!

@@ -286,13 +286,13 @@ ratatui = "0.30"
 crossterm = "0.28"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-clap = { version = "4.5", features = ["derive"] }
+clap = { version = "4.4", features = ["derive"] }
 rand = "0.8"
-# And path dependencies to other local crates:
+# And path dependencies to other local crates (adjust paths accordingly):
 tui-shared = { path = "../crates/tui-shared" }
-locus = { path = "../crates/locus" }
+locus = { path = "../crates/locus", features = ["serde"] }
 resonance-audio = { path = "../crates/resonance-audio" }
-hyper-system = { path = "../crates/hyper-system" }
+hyper-system = { path = "../crates/hyper-system", default-features = false }
 poincare-disk = { path = "../crates/poincare-disk" }
 ```
 
@@ -365,7 +365,7 @@ fn main() {
 }
 ```
 
-See `examples/story_demo.rs` for a full example of programmatic usage. Note that it launches an interactive TUI, not a headless execution:
+See `examples/story_demo.rs` for a full example of programmatic usage. Note that it launches a blocking interactive TUI and cannot run headlessly:
 
 > ⚠️ **REQUIRES FEATURE NOVA**
 
