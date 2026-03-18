@@ -13,6 +13,10 @@
 - **Scent Origin:** Echo 🗣️
 - **Status:** DX audit failed. The `story_demo` example is broken. It lacks the `nova` feature, causes a workspace inheritance error, and incorrectly launches a blocking TUI instead of a programmatic run. Immediate polish required.
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** DX audit failed. The 'Library Usage' and 'Running ChimeraScript' examples are broken. They lack the 'nova' feature flag, cause workspace dependency errors, and use incorrect imports (OpCode, Dna::default). Immediate polish required.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/luminous-tank
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Documentation Void / Skeletal Structure. Grace period: 24h.
