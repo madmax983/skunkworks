@@ -250,7 +250,7 @@ mod tests {
         // Allow for decay
         if let Value::Int(v) = val {
             assert!(
-                v >= 3 && v <= 10,
+                (3..=10).contains(&v),
                 "Voltage {} out of expected decay range",
                 v
             );

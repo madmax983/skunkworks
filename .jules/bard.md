@@ -30,3 +30,7 @@
 ## 2025-02-14 - The "Silent Data" Setters
 **Confusion:** The `u`, `v`, `u_mut`, and `v_mut` methods in `gray-scott` were fully undocumented, leaving users to guess that they returned flat 1D slices representing the 2D grid state. `width` and `height` were also undocumented, hiding how to interpret those slices.
 **Clarification:** Added module-level documentation to `crates/gray-scott/src/lib.rs` explicitly defining what `width`, `height`, `u`, `v`, `u_mut`, and `v_mut` return and why they exist. Added executable doctests to all of them demonstrating their intended usage, such as how to directly interact with the grid states.
+
+## 2025-02-28 - The Ghost of Workspace Resolutions
+**Confusion:** Users attempting to run README examples by copy-pasting the `Cargo.toml` dependencies into a fresh project encountered compilation errors (missing dependencies like `anyhow` and `pest`) because `chimera-lang` uses `workspace.dependencies` that are lost when referenced as a raw path dependency outside the original workspace.
+**Clarification:** Updated the `Cargo.toml` example in `experiments/chimera-lang/README.md` to explicitly include all missing workspace dependencies and corrected path locations for sibling crates to ensure "The README Run" passes smoothly. Also highlighted `nova` feature requirements and clarified that `story_demo` runs a blocking TUI.

@@ -21,7 +21,10 @@ impl RootTip {
         let helix = Helix {
             strands: vec![strand],
         };
-        let dna = Dna { helix, evolution_config: None };
+        let dna = Dna {
+            helix,
+            evolution_config: None,
+        };
         let mut vm = ChimeraVM::new(dna);
         vm.energy = 1000; // Starting energy
 

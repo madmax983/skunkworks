@@ -145,7 +145,8 @@ mod tests {
         };
 
         let json = serde_json::to_string(&data).expect("Failed to serialize FlightData to JSON");
-        let decoded: FlightData = serde_json::from_str(&json).expect("Failed to deserialize FlightData from JSON");
+        let decoded: FlightData =
+            serde_json::from_str(&json).expect("Failed to deserialize FlightData from JSON");
 
         assert_eq!(decoded.seed, 12345);
         assert_eq!(decoded.events.len(), 1);
