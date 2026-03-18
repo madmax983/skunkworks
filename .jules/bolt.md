@@ -39,3 +39,7 @@
 **[Vec Buffer Reuse for Game Loops]**
 **Learning:** `Vec::clone_from` safely reuses the capacity of the target vector, which completely eliminates fresh heap allocations when creating identical state snapshots (e.g. `old_state.clone_from(&current_state)`) inside hot loops.
 **Action:** When creating a state snapshot in a loop using `.clone()`, pull the declaration of the snapshot vector out of the loop and use `.clone_from(&source)` to maintain zero-cost buffer reuse across frames.
+
+**[Hoist per-frame Vec allocation in Network::step]**
+**Learning:** Destructuring `self` allows you to obtain disjoint mutable references to fields, letting you avoid borrow checker issues when you need to simultaneously access multiple mutable fields like pre-allocated buffers and state arrays.
+**Action:** Use `let MyStruct { a, b, .. } = self;` when multiple fields need to be mutably accessed in the same loop to avoid fighting the borrow checker, instead of doing `&mut self.a` and `&mut self.b` directly which can sometimes lead to issues when using iterators.

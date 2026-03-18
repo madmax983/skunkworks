@@ -89,6 +89,8 @@ pub struct Network {
     /// This is used to decouple the update order: synapses read from this
     /// frozen state to determine if they should initiate a new signal.
     pub spikes: Vec<bool>,
+    /// Pre-allocated buffer for gathering inputs per frame.
+    pub inputs: Vec<f32>,
 }
 
 impl Network {
@@ -106,6 +108,7 @@ impl Network {
             neurons: Vec::new(),
             synapses: Vec::new(),
             spikes: Vec::new(),
+            inputs: Vec::new(),
         }
     }
 
@@ -117,6 +120,7 @@ impl Network {
     pub fn add_neuron(&mut self) -> usize {
         self.neurons.push(Izhikevich::new());
         self.spikes.push(false);
+        self.inputs.push(0.0);
         self.neurons.len() - 1
     }
 
@@ -177,7 +181,16 @@ impl Network {
     ///   If the slice is shorter than the neuron count, remaining neurons receive 0.0.
     pub fn step(&mut self, external_inputs: &[f32]) {
         // 1. Collect inputs for this step
-        let mut inputs = vec![0.0; self.neurons.len()];
+        // By pre-allocating we remove a vector allocation per frame.
+        self.inputs.fill(0.0);
+
+        // Destructure `self` to allow simultaneous mutable borrows
+        let Network {
+            inputs,
+            synapses,
+            neurons,
+            spikes,
+        } = self;
 
         // Add external inputs
         for (i, val) in external_inputs.iter().enumerate() {
@@ -187,11 +200,11 @@ impl Network {
         }
 
         // 2. Process Synapses (Propagate spikes)
-        for syn in &mut self.synapses {
+        for syn in synapses.iter_mut() {
             syn.active = false;
 
             // Check if source neuron spiked in previous step
-            if let Some(&spiked) = self.spikes.get(syn.from) {
+            if let Some(&spiked) = spikes.get(syn.from) {
                 if spiked {
                     syn.spikes_in_transit.push(syn.delay);
                 }
@@ -221,9 +234,9 @@ impl Network {
         // We assume 1.0ms time step to match previous local implementation behavior
         let dt = 1.0;
 
-        for (i, neuron) in self.neurons.iter_mut().enumerate() {
+        for (i, neuron) in neurons.iter_mut().enumerate() {
             let (_, spiked) = neuron.update(dt, inputs[i]);
-            self.spikes[i] = spiked;
+            spikes[i] = spiked;
         }
     }
 
