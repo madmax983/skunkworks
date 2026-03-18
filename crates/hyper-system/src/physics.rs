@@ -145,6 +145,12 @@ pub struct PbdSystem4D {
 
 impl PbdSystem4D {
     /// Creates a new, empty 4D physics system.
+    ///
+    /// # Examples
+    /// ```
+    /// use hyper_system::physics::PbdSystem4D;
+    /// let system = PbdSystem4D::new();
+    /// ```
     pub fn new() -> Self {
         Self {
             particles: Vec::new(),
@@ -162,6 +168,19 @@ impl PbdSystem4D {
     /// # Arguments
     /// * `pos` - The starting position in 4D space.
     /// * `mass` - The object's weight. Pass `0.0` for an immovable anchor.
+    ///
+    /// # Examples
+    /// ```
+    /// use hyper_system::math::Vec4;
+    /// use hyper_system::physics::PbdSystem4D;
+    ///
+    /// let mut system = PbdSystem4D::new();
+    /// let p1 = system.add_particle(Vec4::zero(), 1.0);
+    /// let static_anchor = system.add_particle(Vec4::new(10.0, 0.0, 0.0, 0.0), 0.0);
+    ///
+    /// assert_eq!(p1, 0);
+    /// assert_eq!(static_anchor, 1);
+    /// ```
     pub fn add_particle(&mut self, pos: Vec4, mass: f32) -> usize {
         let idx = self.particles.len();
         self.particles.push(Particle4D {
@@ -183,6 +202,19 @@ impl PbdSystem4D {
     /// * `p1` - Index of the first particle.
     /// * `p2` - Index of the second particle.
     /// * `stiff` - Rigidity multiplier. `1.0` is solid, `0.5` acts like a soft spring.
+    ///
+    /// # Examples
+    /// ```
+    /// use hyper_system::math::Vec4;
+    /// use hyper_system::physics::PbdSystem4D;
+    ///
+    /// let mut system = PbdSystem4D::new();
+    /// let p1 = system.add_particle(Vec4::zero(), 1.0);
+    /// let p2 = system.add_particle(Vec4::new(5.0, 0.0, 0.0, 0.0), 1.0);
+    ///
+    /// // Constrain them to exactly 5.0 units apart (their current distance)
+    /// system.add_distance_constraint(p1, p2, 1.0);
+    /// ```
     pub fn add_distance_constraint(&mut self, p1: usize, p2: usize, stiff: f32) {
         if p1 >= self.particles.len() || p2 >= self.particles.len() {
             return;
@@ -211,6 +243,20 @@ impl PbdSystem4D {
     /// * `max_len` - The actuator's fully extended length.
     /// * `stiff` - How aggressively the actuator enforces its target length.
     /// * `initial_factor` - Normalized starting extension amount (`0.0` to `1.0`).
+    ///
+    /// # Examples
+    /// ```
+    /// use hyper_system::math::Vec4;
+    /// use hyper_system::physics::PbdSystem4D;
+    ///
+    /// let mut system = PbdSystem4D::new();
+    /// let p1 = system.add_particle(Vec4::zero(), 1.0);
+    /// let p2 = system.add_particle(Vec4::new(10.0, 0.0, 0.0, 0.0), 1.0);
+    ///
+    /// // Create an actuator that can extend from 5.0 to 15.0 units
+    /// // Currently set to fully extended (1.0 -> 15.0 units)
+    /// system.add_actuator_constraint(p1, p2, 5.0, 15.0, 0.8, 1.0);
+    /// ```
     pub fn add_actuator_constraint(
         &mut self,
         p1: usize,
@@ -238,6 +284,18 @@ impl PbdSystem4D {
     /// # Arguments
     /// * `p` - Index of the particle to pin.
     /// * `pos` - The 4D coordinate it must occupy.
+    ///
+    /// # Examples
+    /// ```
+    /// use hyper_system::math::Vec4;
+    /// use hyper_system::physics::PbdSystem4D;
+    ///
+    /// let mut system = PbdSystem4D::new();
+    /// let p1 = system.add_particle(Vec4::zero(), 1.0);
+    ///
+    /// // Pin the particle to (5.0, 5.0, 0.0, 0.0)
+    /// system.add_pin_constraint(p1, Vec4::new(5.0, 5.0, 0.0, 0.0));
+    /// ```
     pub fn add_pin_constraint(&mut self, p: usize, pos: Vec4) {
         self.constraints.push(Constraint4D::Pin { p, pos });
     }
@@ -254,6 +312,23 @@ impl PbdSystem4D {
     /// * `dt` - Delta time (in seconds). Pass `0.0` or less to pause simulation.
     /// * `iterations` - Precision solver passes. Higher is stiffer but slower. `10` to `20` is typical.
     /// * `friction` - Velocity multiplier applied *before* integration. `0.98` represents 2% energy loss per tick.
+    ///
+    /// # Examples
+    /// ```
+    /// use hyper_system::math::Vec4;
+    /// use hyper_system::physics::PbdSystem4D;
+    ///
+    /// let mut system = PbdSystem4D::new();
+    /// let p1 = system.add_particle(Vec4::zero(), 1.0);
+    ///
+    /// // Give it a push along the X axis
+    /// system.particles[p1].vel = Vec4::new(10.0, 0.0, 0.0, 0.0);
+    ///
+    /// // Simulate 1 second with 1 iteration and no friction
+    /// system.step(1.0, 1, 1.0);
+    ///
+    /// assert!((system.particles[p1].pos.x - 10.0).abs() < 0.001);
+    /// ```
     pub fn step(&mut self, dt: f32, iterations: usize, friction: f32) {
         if dt <= f32::EPSILON || !dt.is_finite() {
             return;
