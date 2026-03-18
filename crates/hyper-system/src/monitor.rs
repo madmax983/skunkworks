@@ -95,6 +95,13 @@ impl SystemMonitor {
     /// This function triggers an initial CPU refresh to set a baseline for differential usage calculation.
     /// The first call to `update` will likely report 0% CPU usage as `sysinfo` needs two data points
     /// to calculate the delta. Meaningful data usually appears after the first 1-second interval.
+    ///
+    /// # Examples
+    /// ```
+    /// use hyper_system::monitor::SystemMonitor;
+    /// let monitor = SystemMonitor::new();
+    /// assert_eq!(monitor.cpu_usage, 0.0);
+    /// ```
     pub fn new() -> Self {
         Self {
             sys: Self::init_system(),
@@ -181,6 +188,15 @@ impl SystemMonitor {
     /// Calculating CPU usage requires comparing two snapshots of system state.
     /// Therefore, valid CPU metrics will only appear after the *second* poll (usually at t=1.0s).
     /// Before that, `cpu_usage` will interpolate towards 0.0.
+    ///
+    /// # Examples
+    /// ```
+    /// use hyper_system::monitor::SystemMonitor;
+    ///
+    /// let mut monitor = SystemMonitor::new();
+    /// // Simulate 0.016s passing (1 frame at 60fps), current time is 0.016s
+    /// monitor.update_with_time(0.016, 0.016);
+    /// ```
     pub fn update_with_time(&mut self, dt: f32, now: f64) {
         if now - self.last_update > UPDATE_INTERVAL {
             self.poll_system_metrics();

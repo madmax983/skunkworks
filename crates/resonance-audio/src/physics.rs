@@ -72,6 +72,14 @@ impl PhysicsGrid {
     /// Creates a new physics grid with the specified dimensions.
     ///
     /// The grid is initialized with zero energy (silence) and Air everywhere.
+    ///
+    /// # Examples
+    /// ```
+    /// use resonance_audio::physics::PhysicsGrid;
+    /// let grid = PhysicsGrid::new(10, 10);
+    /// assert_eq!(grid.width(), 10);
+    /// assert_eq!(grid.height(), 10);
+    /// ```
     pub fn new(width: usize, height: usize) -> Self {
         let size = width * height;
         Self {
@@ -88,16 +96,37 @@ impl PhysicsGrid {
     }
 
     /// Returns the width of the grid.
+    ///
+    /// # Examples
+    /// ```
+    /// use resonance_audio::physics::PhysicsGrid;
+    /// let grid = PhysicsGrid::new(10, 20);
+    /// assert_eq!(grid.width(), 10);
+    /// ```
     pub fn width(&self) -> usize {
         self.width
     }
 
     /// Returns the height of the grid.
+    ///
+    /// # Examples
+    /// ```
+    /// use resonance_audio::physics::PhysicsGrid;
+    /// let grid = PhysicsGrid::new(10, 20);
+    /// assert_eq!(grid.height(), 20);
+    /// ```
     pub fn height(&self) -> usize {
         self.height
     }
 
     /// Sets the material at a specific coordinate.
+    ///
+    /// # Examples
+    /// ```
+    /// use resonance_audio::physics::{PhysicsGrid, Material};
+    /// let mut grid = PhysicsGrid::new(10, 10);
+    /// grid.set_material(5, 5, Material::Wall);
+    /// ```
     pub fn set_material(&mut self, x: usize, y: usize, material: Material) {
         if x < self.width && y < self.height {
             let idx = y * self.width + x;
@@ -213,6 +242,14 @@ impl PhysicsGrid {
     ///
     /// The energy is added to the current state, creating a disturbance that will propagate.
     /// Does nothing if the coordinates are out of bounds or inside a wall.
+    ///
+    /// # Examples
+    /// ```
+    /// use resonance_audio::physics::PhysicsGrid;
+    /// let mut grid = PhysicsGrid::new(10, 10);
+    /// grid.pluck(5, 5, 1.0);
+    /// assert_eq!(grid.get(5, 5), 1.0);
+    /// ```
     pub fn pluck(&mut self, x: usize, y: usize, strength: f32) {
         if x > 0 && x < self.width - 1 && y > 0 && y < self.height - 1 {
             let idx = y * self.width + x;
@@ -223,16 +260,40 @@ impl PhysicsGrid {
     }
 
     /// Adds a wall at the specified coordinates.
+    ///
+    /// # Examples
+    /// ```
+    /// use resonance_audio::physics::PhysicsGrid;
+    /// let mut grid = PhysicsGrid::new(10, 10);
+    /// grid.add_wall(5, 5);
+    /// ```
     pub fn add_wall(&mut self, x: usize, y: usize) {
         self.set_material(x, y, Material::Wall);
     }
 
     /// Removes a wall from the specified coordinates.
+    ///
+    /// # Examples
+    /// ```
+    /// use resonance_audio::physics::PhysicsGrid;
+    /// let mut grid = PhysicsGrid::new(10, 10);
+    /// grid.add_wall(5, 5);
+    /// grid.remove_wall(5, 5);
+    /// ```
     pub fn remove_wall(&mut self, x: usize, y: usize) {
         self.set_material(x, y, Material::Air);
     }
 
     /// Resets all wave states to zero, silencing the simulation.
+    ///
+    /// # Examples
+    /// ```
+    /// use resonance_audio::physics::PhysicsGrid;
+    /// let mut grid = PhysicsGrid::new(10, 10);
+    /// grid.pluck(5, 5, 1.0);
+    /// grid.clear_waves();
+    /// assert_eq!(grid.get(5, 5), 0.0);
+    /// ```
     pub fn clear_waves(&mut self) {
         self.u.fill(0.0);
         self.u_prev.fill(0.0);
@@ -241,6 +302,14 @@ impl PhysicsGrid {
     }
 
     /// Removes all walls from the grid.
+    ///
+    /// # Examples
+    /// ```
+    /// use resonance_audio::physics::PhysicsGrid;
+    /// let mut grid = PhysicsGrid::new(10, 10);
+    /// grid.add_wall(5, 5);
+    /// grid.clear_walls();
+    /// ```
     pub fn clear_walls(&mut self) {
         for i in 0..self.materials.len() {
             if self.materials[i] == Material::Wall {
@@ -254,6 +323,15 @@ impl PhysicsGrid {
     /// Gets the current wave value (pressure) at the specified coordinates.
     ///
     /// Returns 0.0 if coordinates are out of bounds.
+    ///
+    /// # Examples
+    /// ```
+    /// use resonance_audio::physics::PhysicsGrid;
+    /// let mut grid = PhysicsGrid::new(10, 10);
+    /// grid.pluck(5, 5, 0.5);
+    /// assert_eq!(grid.get(5, 5), 0.5);
+    /// assert_eq!(grid.get(100, 100), 0.0); // Out of bounds
+    /// ```
     pub fn get(&self, x: usize, y: usize) -> f32 {
         if x < self.width && y < self.height {
             self.u[y * self.width + x]
