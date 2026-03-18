@@ -34,13 +34,13 @@ async fn main() {
     let mut dragging = false;
     let mut last_mouse = vec2(0.0, 0.0);
 
-        let mut particles = vec![];
-        for _ in 0..5000 {
-            particles.push(Particle {
-                pos: vec2(rand::gen_range(0.0, 1000.0), rand::gen_range(0.0, 1000.0)),
-                vel: vec2(0.0, 0.0),
-            });
-        }
+    let mut particles = vec![];
+    for _ in 0..5000 {
+        particles.push(Particle {
+            pos: vec2(rand::gen_range(0.0, 1000.0), rand::gen_range(0.0, 1000.0)),
+            vel: vec2(0.0, 0.0),
+        });
+    }
 
     loop {
         let mouse_pos = mouse_position();
@@ -116,10 +116,22 @@ async fn main() {
             node.pos += node.vel;
 
             // Constrain nodes to screen slightly
-            if node.pos.x < 0.0 { node.pos.x = 0.0; node.vel.x *= -0.5; }
-            if node.pos.x > 2000.0 { node.pos.x = 2000.0; node.vel.x *= -0.5; }
-            if node.pos.y < 0.0 { node.pos.y = 0.0; node.vel.y *= -0.5; }
-            if node.pos.y > 2000.0 { node.pos.y = 2000.0; node.vel.y *= -0.5; }
+            if node.pos.x < 0.0 {
+                node.pos.x = 0.0;
+                node.vel.x *= -0.5;
+            }
+            if node.pos.x > 2000.0 {
+                node.pos.x = 2000.0;
+                node.vel.x *= -0.5;
+            }
+            if node.pos.y < 0.0 {
+                node.pos.y = 0.0;
+                node.vel.y *= -0.5;
+            }
+            if node.pos.y > 2000.0 {
+                node.pos.y = 2000.0;
+                node.vel.y *= -0.5;
+            }
 
             // Decay
             node.health -= entropy * dt * 0.05;
@@ -157,10 +169,18 @@ async fn main() {
             p.pos += p.vel;
 
             // Screen constraints
-            if p.pos.x < 0.0 { p.pos.x = 2000.0; }
-            if p.pos.x > 2000.0 { p.pos.x = 0.0; }
-            if p.pos.y < 0.0 { p.pos.y = 2000.0; }
-            if p.pos.y > 2000.0 { p.pos.y = 0.0; }
+            if p.pos.x < 0.0 {
+                p.pos.x = 2000.0;
+            }
+            if p.pos.x > 2000.0 {
+                p.pos.x = 0.0;
+            }
+            if p.pos.y < 0.0 {
+                p.pos.y = 2000.0;
+            }
+            if p.pos.y > 2000.0 {
+                p.pos.y = 0.0;
+            }
         }
 
         // Render
@@ -169,7 +189,13 @@ async fn main() {
         // Render particles
         for p in &particles {
             let render_pos = p.pos * zoom + offset;
-            draw_rectangle(render_pos.x, render_pos.y, 2.0 * zoom, 2.0 * zoom, Color::new(0.0, 1.0, 1.0, 0.5));
+            draw_rectangle(
+                render_pos.x,
+                render_pos.y,
+                2.0 * zoom,
+                2.0 * zoom,
+                Color::new(0.0, 1.0, 1.0, 0.5),
+            );
         }
 
         // Draw fluid particles attracted to healthy nodes, repulsed by rotting nodes
@@ -179,9 +205,19 @@ async fn main() {
 
             // Render magnetic field aura
             if node.health > 0.6 {
-                draw_circle(pos.x, pos.y, radius, Color::new(0.0, 1.0, 0.0, (node.health - 0.5) * 0.2));
+                draw_circle(
+                    pos.x,
+                    pos.y,
+                    radius,
+                    Color::new(0.0, 1.0, 0.0, (node.health - 0.5) * 0.2),
+                );
             } else {
-                draw_circle(pos.x, pos.y, radius, Color::new(1.0, 0.0, 0.0, (0.5 - node.health) * 0.2));
+                draw_circle(
+                    pos.x,
+                    pos.y,
+                    radius,
+                    Color::new(1.0, 0.0, 0.0, (0.5 - node.health) * 0.2),
+                );
             }
         }
 
@@ -262,7 +298,13 @@ async fn main() {
             for (j, line) in lines.iter().enumerate() {
                 // Wrap text manually or just truncate securely by char
                 let display_line: String = line.chars().take(50).collect();
-                draw_text(&display_line, 20.0, 100.0 + j as f32 * 15.0, 14.0, LIGHTGRAY);
+                draw_text(
+                    &display_line,
+                    20.0,
+                    100.0 + j as f32 * 15.0,
+                    14.0,
+                    LIGHTGRAY,
+                );
             }
         }
 
