@@ -24,8 +24,10 @@ impl AutomatonState {
             program,
         }
     }
+}
 
-    pub fn default() -> Self {
+impl Default for AutomatonState {
+    fn default() -> Self {
         Self {
             pc: 0,
             dir: 1, // East
@@ -33,7 +35,9 @@ impl AutomatonState {
             program: "W>".to_string(), // Default: Write 0, Move East
         }
     }
+}
 
+impl AutomatonState {
     pub fn to_value(&self) -> Value {
         Value::Str(self.to_string())
     }
@@ -115,7 +119,6 @@ pub fn process_automaton_agent(
         .program
         .char_indices()
         .nth(state.pc)
-        .map(|(i, c)| (i, c))
         .unwrap_or((0, ' '));
 
     // Advance PC (default behavior)

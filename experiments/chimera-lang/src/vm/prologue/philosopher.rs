@@ -130,63 +130,61 @@ pub fn process_philosopher_logic(
         let mut move_target = None;
 
         if let Some(sol) = solutions.first() {
-            if let Some(action) = sol.get("?A") {
+            if let Some(Value::Junction(JunctionType::Any, args)) = sol.get("?A") {
                 // Execute Action
-                if let Value::Junction(JunctionType::Any, args) = action {
-                    if let Some(Value::Str(cmd)) = args.first() {
-                        match cmd.as_str() {
-                            "move" => {
-                                if args.len() >= 2 {
-                                    if let Value::Str(dir) = &args[1] {
-                                        let (dy, dx) = match dir.as_str() {
-                                            "north" => (-1, 0),
-                                            "south" => (1, 0),
-                                            "east" => (0, 1),
-                                            "west" => (0, -1),
-                                            _ => (0, 0),
-                                        };
-                                        if let Some((ny, nx)) =
-                                            normalize_coords(cy as i64 + dy, cx as i64 + dx)
-                                        {
-                                            if matches!(vm.grid[ny][nx], Value::Int(0)) {
-                                                move_target = Some((ny, nx));
-                                                // vm.output.push(format!("PHILOSOPHER: Moving {}", dir));
-                                            }
+                if let Some(Value::Str(cmd)) = args.first() {
+                    match cmd.as_str() {
+                        "move" => {
+                            if args.len() >= 2 {
+                                if let Value::Str(dir) = &args[1] {
+                                    let (dy, dx) = match dir.as_str() {
+                                        "north" => (-1, 0),
+                                        "south" => (1, 0),
+                                        "east" => (0, 1),
+                                        "west" => (0, -1),
+                                        _ => (0, 0),
+                                    };
+                                    if let Some((ny, nx)) =
+                                        normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                                    {
+                                        if matches!(vm.grid[ny][nx], Value::Int(0)) {
+                                            move_target = Some((ny, nx));
+                                            // vm.output.push(format!("PHILOSOPHER: Moving {}", dir));
                                         }
                                     }
                                 }
                             }
-                            "write" => {
-                                // write(Dir, Val)
-                                if args.len() >= 3 {
-                                    if let Value::Str(dir) = &args[1] {
-                                        let val = &args[2];
-                                        let (dy, dx) = match dir.as_str() {
-                                            "north" => (-1, 0),
-                                            "south" => (1, 0),
-                                            "east" => (0, 1),
-                                            "west" => (0, -1),
-                                            _ => (0, 0),
-                                        };
-                                        if let Some((ny, nx)) =
-                                            normalize_coords(cy as i64 + dy, cx as i64 + dx)
-                                        {
-                                            vm.grid[ny][nx] = val.clone();
-                                            vm.output.push(format!("PHILOSOPHER: Wrote {:?}", val));
-                                        }
-                                    }
-                                }
-                            }
-                            "ponder" => {
-                                // Update internal state/goal
-                                if args.len() >= 2 {
-                                    let new_goal = args[1].clone();
-                                    updated_agent.state = new_goal;
-                                    vm.output.push("PHILOSOPHER: Paradigm Shift".to_string());
-                                }
-                            }
-                            _ => {}
                         }
+                        "write" => {
+                            // write(Dir, Val)
+                            if args.len() >= 3 {
+                                if let Value::Str(dir) = &args[1] {
+                                    let val = &args[2];
+                                    let (dy, dx) = match dir.as_str() {
+                                        "north" => (-1, 0),
+                                        "south" => (1, 0),
+                                        "east" => (0, 1),
+                                        "west" => (0, -1),
+                                        _ => (0, 0),
+                                    };
+                                    if let Some((ny, nx)) =
+                                        normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                                    {
+                                        vm.grid[ny][nx] = val.clone();
+                                        vm.output.push(format!("PHILOSOPHER: Wrote {:?}", val));
+                                    }
+                                }
+                            }
+                        }
+                        "ponder" => {
+                            // Update internal state/goal
+                            if args.len() >= 2 {
+                                let new_goal = args[1].clone();
+                                updated_agent.state = new_goal;
+                                vm.output.push("PHILOSOPHER: Paradigm Shift".to_string());
+                            }
+                        }
+                        _ => {}
                     }
                 }
             }

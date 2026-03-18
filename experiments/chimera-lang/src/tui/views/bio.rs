@@ -687,12 +687,13 @@ pub(crate) fn render_ecology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
     f.render_widget(grid_widget, chunks[0]);
 
     // Info Panel
-    let mut info = Vec::new();
-    info.push(Line::from("GENETIC ECOLOGY"));
-    info.push(Line::from(" "));
-    info.push(Line::from(format!("Organisms: {}", vm.organelles.len())));
-    info.push(Line::from(format!("Shared Energy: {}", vm.energy)));
-    info.push(Line::from(" "));
+    let mut info = vec![
+        Line::from("GENETIC ECOLOGY"),
+        Line::from(" "),
+        Line::from(format!("Organisms: {}", vm.organelles.len())),
+        Line::from(format!("Shared Energy: {}", vm.energy)),
+        Line::from(" "),
+    ];
 
     // Organelle Details under cursor
     let (cx, cy) = app_state.grid_cursor;
@@ -807,9 +808,7 @@ pub(crate) fn render_metazoa(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
     f.render_widget(canvas, chunks[0]);
 
     // Info Panel
-    let mut info = Vec::new();
-    info.push(Line::from("METAZOA INSPECTOR"));
-    info.push(Line::from(" "));
+    let mut info = vec![Line::from("METAZOA INSPECTOR"), Line::from(" ")];
 
     // Find organelle at cursor
     let (cx, cy) = app_state.grid_cursor;
@@ -988,12 +987,13 @@ pub(crate) fn render_mutagen(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
     f.render_widget(canvas, chunks[0]);
 
     // Info Panel
-    let mut info = Vec::new();
-    info.push(Line::from("MUTAGEN CONTROLS"));
-    info.push(Line::from(" "));
-    info.push(Line::from("Arrows: Navigate"));
-    info.push(Line::from("M: Mutate Gene (Randomize)"));
-    info.push(Line::from("Tab: Switch View"));
+    let mut info = vec![
+        Line::from("MUTAGEN CONTROLS"),
+        Line::from(" "),
+        Line::from("Arrows: Navigate"),
+        Line::from("M: Mutate Gene (Randomize)"),
+        Line::from("Tab: Switch View"),
+    ];
 
     if let Some(strand) = vm.dna.helix.strands.get(app_state.selected_strand) {
         info.push(Line::from(format!("Strand: {}", app_state.selected_strand)));
@@ -1334,8 +1334,7 @@ pub(crate) fn render_biomesh(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
 
     // Right: Info
     let (cx, cy) = app_state.grid_cursor;
-    let mut info = Vec::new();
-    info.push(Line::from(format!("Cursor: {},{}", cx, cy)));
+    let mut info = vec![Line::from(format!("Cursor: {},{}", cx, cy))];
 
     if let Some(node) = vm.biomesh.nodes.get(&(cy, cx)) {
         info.push(Line::from(format!("Node ID: {}", node.id)));

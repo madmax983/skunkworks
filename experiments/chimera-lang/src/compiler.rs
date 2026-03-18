@@ -1454,8 +1454,8 @@ fn resolve_template(template: &Nucleotide, match_res: &Nucleotide) -> Nucleotide
                 return Nucleotide::Junction(crate::ast::JunctionType::All, resolved_parts);
             }
 
-            if s.starts_with('?') {
-                if let Ok(idx) = s[1..].parse::<usize>() {
+            if let Some(stripped) = s.strip_prefix('?') {
+                if let Ok(idx) = stripped.parse::<usize>() {
                     let i = idx.saturating_sub(1);
                     match match_res {
                         Nucleotide::Junction(crate::ast::JunctionType::All, children) => {

@@ -1283,7 +1283,7 @@ fn process_critter_logic(
                                                     None
                                                 }
                                             })
-                                            .unwrap_or(critter::CritterState::default());
+                                            .unwrap_or_default();
 
                                         let child = critter::breed(&critter, &other_state);
                                         vm.grid[sy][sx] = Value::Str("C".to_string());

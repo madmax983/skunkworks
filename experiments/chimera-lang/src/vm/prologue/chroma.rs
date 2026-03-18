@@ -155,10 +155,7 @@ pub fn apply_chroma_sinks(vm: &mut crate::vm::ChimeraVM, rune: &str, y: usize, x
                                     };
 
                                     // Only overwrite if empty or weak
-                                    let can_spawn = match &vm.grid[sy][sx] {
-                                        Value::Int(0) => true,
-                                        _ => false,
-                                    };
+                                    let can_spawn = matches!(&vm.grid[sy][sx], Value::Int(0));
 
                                     if can_spawn {
                                         vm.grid[sy][sx] = Value::Str(agent_type.to_string());

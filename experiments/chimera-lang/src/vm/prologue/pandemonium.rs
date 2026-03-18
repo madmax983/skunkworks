@@ -67,17 +67,15 @@ pub fn apply_pandemonium_runes(
         }
         "¡" => {
             // Scramble: Reads West (List). Shuffles list. Output South.
-            if let Some(val) = input {
-                if let Value::Junction(t, mut list) = val {
-                    let mut rng = rand::thread_rng();
-                    list.shuffle(&mut rng);
-                    let result = Value::Junction(t, list);
+            if let Some(Value::Junction(t, mut list)) = input {
+                let mut rng = rand::thread_rng();
+                list.shuffle(&mut rng);
+                let result = Value::Junction(t, list);
 
-                    if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
-                        if next_signals[sy][sx].is_none() {
-                            next_signals[sy][sx] = Some(result);
-                            changes = true;
-                        }
+                if let Some((sy, sx)) = normalize_coords(y as i64 + 1, x as i64) {
+                    if next_signals[sy][sx].is_none() {
+                        next_signals[sy][sx] = Some(result);
+                        changes = true;
                     }
                 }
             }
