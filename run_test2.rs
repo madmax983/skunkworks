@@ -1,9 +1,29 @@
+use chimera_lang::prelude::*;
+use chimera_lang::vm::ChimeraVM;
+
 fn main() {
-    let content = r#"
-        strand alpha {
-            "Alpha Triggered" print
-        }
-    "#;
-    let trimmed = content.trim_matches(|c| c == '\n' || c == '\r' || c == '{' || c == '}');
-    println!("{}", trimmed);
+    let genes = vec![
+        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(255)] },
+        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
+        Gene { op: OpCode::Luciferin, args: vec![] },
+    ];
+    let dna = Dna {
+        evolution_config: None,
+        helix: Helix {
+            strands: vec![Strand { genes }],
+        },
+    };
+    let mut vm = ChimeraVM::new(dna);
+
+    // Execute
+    vm.step(); // push
+    vm.step(); // push
+    vm.step(); // push
+    vm.step(); // push
+    vm.step(); // luciferin
+
+    println!("Light grid at (8,8): {}", vm.light_grid[8][8]);
+    println!("Output: {:?}", vm.output);
 }
