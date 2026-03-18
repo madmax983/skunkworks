@@ -163,4 +163,16 @@ mod tests {
         };
         assert_eq!(node.entropy, 0.5);
     }
+
+    #[test]
+    fn test_node_rot() {
+        let mut node = Node {
+            x: 10.0,
+            y: 10.0,
+            entropy: 0.5,
+            decay_rate: 0.1,
+        };
+        node.entropy = (node.entropy + node.decay_rate).clamp(0.0, 1.0);
+        assert!((node.entropy - 0.6).abs() < f32::EPSILON * 2.0); // Allow slight float imprecision
+    }
 }
