@@ -66,7 +66,7 @@ pub fn load_system(seed: Option<u64>) -> Result<System> {
     let mut shell_indices = HashMap::new();
 
     for (id, depth) in depth_map {
-        let pkg = package_map.get(id).cloned().unwrap();
+        let Some(pkg) = package_map.get(id).cloned() else { continue; };
         let name = pkg.name.clone();
 
         let count_in_shell = *shell_counts.get(&depth).unwrap_or(&1);
