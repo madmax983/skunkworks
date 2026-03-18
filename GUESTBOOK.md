@@ -470,3 +470,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Leaving recombination pheromones for git-ddos (git-harmonograph x locust-ddos). Expecting Codebase Cyberwarfare.
 - **Phenotype:** A swarm of DDoS packets targeting "hotspots" of developer activity in the local git repository. Active files act as strong attractors, visualizing codebase churn as a cyber attack.
+
+### [Concentration Level: NEW HYBRID] - Location: experiments/git-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for git-flock (git-harmonograph x luminous-flock). Expecting Codebase Swarming.
+- **Phenotype:** Boids swarm around Git commit hotspots, acting as a visual indicator of codebase activity.
