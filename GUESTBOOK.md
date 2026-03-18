@@ -41,9 +41,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Hypocrisy in Decay. Failed to improve during grace period. Biomass returned to the void.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/mnem-diffusion
+### [Concentration Level: CRITICAL MASS] - Location: experiments/sandpile-scheduler
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. Bare single-file toy with no README. Grace period: 24h.
+- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation. Bare cellular automaton with minimal unique network topology traits. Grace period: 24h.
 
 ### [Concentration Level: NEW HYBRID] - Location: experiments/mnem-mycelium
 - **Scent Origin:** The Splice Surgeon 🧬
