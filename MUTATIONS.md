@@ -24,6 +24,13 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 
 ## 🌿 Attempted Crosses
 
+### mnem-mycelium
+- **Parents**: experiments/mnem-rot + experiments/myco-transit
+- **Concept**: Mycelial Code Rot. Slime mold agents forage a decaying codebase graph mapping.
+- **Novel trait**: Entropy Foraging. The slime mold agents are attracted to high-entropy (rotting) nodes in the codebase graph. As they forage, they deposit pheromones that establish organic decay highways, visually linking the most rotten parts of the codebase.
+- **Status**: experiments/mnem-mycelium
+- **Evaluation**: Success. Compiled. Pheromone trails successfully link high-entropy codebase nodes in continuous space.
+
 ### git-flock
 - **Parents**: experiments/git-harmonograph + experiments/luminous-flock
 - **Concept**: Codebase Swarming. A TUI visualization crossing the Git commit metadata parsing of git-harmonograph with the 2D boid flocking logic of luminous-flock.
