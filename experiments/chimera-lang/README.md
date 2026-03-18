@@ -273,17 +273,33 @@ Chimera can be used as a Rust library to embed the VM in other applications.
 Add to your `Cargo.toml`:
 ```toml
 [dependencies]
-# ⚠️ REQUIRES WORKSPACE OR EXPLICIT DEPENDENCIES
-# Note: Since chimera-lang relies on workspace dependencies (like `anyhow`, `pest`),
-# you must either use it within the same workspace or provide
-# the missing dependencies in your own Cargo.toml.
 # ⚠️ REQUIRES FEATURE NOVA
-chimera-lang = { path = "../chimera-lang", features = ["nova"] }
+chimera-lang = { path = "chimera-lang", features = ["nova"] }
+
+# ⚠️ WORKSPACE DEPENDENCY RESOLUTION
+# If you are compiling `chimera-lang` outside of its original workspace,
+# you MUST provide these missing workspace dependencies in your Cargo.toml:
+anyhow = "1.0"
+pest = "2.7"
+pest_derive = "2.7"
+ratatui = "0.30"
+crossterm = "0.28"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+clap = { version = "4.5", features = ["derive"] }
+rand = "0.8"
+# And path dependencies to other local crates:
+tui-shared = { path = "../crates/tui-shared" }
+locus = { path = "../crates/locus" }
+resonance-audio = { path = "../crates/resonance-audio" }
+hyper-system = { path = "../crates/hyper-system" }
+poincare-disk = { path = "../crates/poincare-disk" }
 ```
 
 Example `main.rs`:
 ```rust
-use chimera_lang::ast::{Dna, Gene, Nucleotide, OpCode};
+use chimera_lang::ast::{Dna, Gene, Nucleotide};
+use chimera_lang::opcode::OpCode;
 use chimera_lang::vm::ChimeraVM;
 
 fn main() {
@@ -295,7 +311,8 @@ fn main() {
         Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] },
         Gene { op: OpCode::Print, args: vec![] },
     ];
-    // Note: Dna::default() is not defined, use from_genes
+    // Note: `Dna::default()` doesn't exist (it requires complex nested structs).
+    // Always use `Dna::from_genes(genes)` instead to initialize the organism properly.
     let dna = Dna::from_genes(genes);
     let mut vm = ChimeraVM::new(dna);
 
@@ -313,11 +330,15 @@ fn main() {
 
 ### Running ChimeraScript from Rust
 
-> ⚠️ **REQUIRES FEATURE NOVA**: The compiler requires the `nova` feature flag.
+# 🚨 REQUIRES FEATURE NOVA 🚨
+> ⚠️ **The compiler and advanced VM features require the `nova` feature flag.**
 
 You can also parse and run ChimeraScript code directly using the compiler:
 
 ```rust
+use chimera_lang::compiler::compile;
+use chimera_lang::vm::ChimeraVM;
+
 fn main() {
     let source = r#"
         strand main {
@@ -328,9 +349,9 @@ fn main() {
 
     // Compile the source string into DNA
     // The second argument is an optional path for imports (None here)
-    let dna = chimera_lang::compiler::compile(source, None).expect("Failed to compile");
+    let dna = compile(source, None).expect("Failed to compile");
 
-    let mut vm = chimera_lang::vm::ChimeraVM::new(dna);
+    let mut vm = ChimeraVM::new(dna);
 
     // Run until halted or for a max number of steps
     for _ in 0..100 {
