@@ -30,43 +30,63 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Holographic Cyberwarfare.
 - **Novel trait**: Spectral Attack Vectors. The DDoS packets seek the target, but we view them entirely through their frequency domain interference pattern. As the swarm hits firewalls and compresses/bottlenecks, the high-frequency turbulence in the hologram spikes violently, creating a unique spectral fingerprint of a cyber attack.
 - **Status**: experiments/locust-hologram
+- **Evaluation**: Success. Compiled. Strong presence in GUESTBOOK. Phenotype successfully maps cyber attack intent to spectral interference patterns, yielding stable, emergent visuals.
 
 ### myco-ddos
 - **Parents**: experiments/locust-ddos + experiments/myco-transit
 - **Concept**: Mycelial Cyberwarfare. The DDoS packets act as slime mold agents, foraging for the server and depositing pheromones to create organic highways through firewalls.
 - **Novel trait**: Organic Attack Vectors. The botnet doesn't just swarm; it builds a highly efficient, branching path to the target, bypassing firewalls by reinforcing successful routes and letting failed paths decay.
 - **Status**: experiments/myco-ddos
+- **Evaluation**: Success. Compiled. GUESTBOOK mentions confirm emergent organic attack highways correctly circumventing digital firewalls.
 
 ### mnem-ddos
 - **Parents**: experiments/mnem-rot + experiments/locust-ddos
 - **Concept**: Entropy-Driven Cyberwarfare. The botnet swarm targets lines of code and specific files (nodes) in the codebase.
 - **Novel trait**: Parasitic Code Rot. The codebase graph's entropy is directly driven by parasitic swarm agents rather than passive decay over time. As agents swarm a node, they "rot" the data, creating a tug-of-war between the swarm's chaotic consumption of nodes and the user's active maintenance.
 - **Status**: experiments/mnem-ddos
+- **Evaluation**: Success. Compiled. Swarm agents effectively consume network nodes, exhibiting parasitic behavior over passive decay.
+
+### mnem-fluid
+- **Parents**: experiments/mnem-rot + experiments/ferrous-fluid
+- **Concept**: Magnetic Code Rot. The decaying nodes of a codebase graph simulation act as magnetic poles in a continuous fluid simulation.
+- **Novel trait**: The codebase's health actively repulses or attracts a swarm of magnetic particles. Rotting code pushes particles away, while healthy, freshly maintained code attracts them, acting like a physical magnetic medium representing codebase entropy.
+- **Status**: experiments/mnem-fluid
 
 
 ### locust-strings
 - **Parents**: experiments/locust-ddos + experiments/ferrous-strings
 - **Concept**: Acoustic Botnet. The DDoS packets act as kinetic agents that collide with magnetic vibrating strings.
 - **Predicted Phenotype**: As the swarm navigates through the environment towards the server, they pluck the strings, translating the digital attack into high-fidelity acoustic oscillations mapped onto a magnetic field.
-- **Status**: experiments/locust-strings
+- **Status**: graveyard/locust-strings (Executed)
+- **Evaluation**: Condemned by The Reaper ☠️. Failed to compile. Missing ecosystem traits leading to skeletal implementation and terminal stagnation. Moved to graveyard.
 
 ### locus-ddos
 - **Parents**: experiments/locust-ddos + crates/locus
 - **Concept**: Boid-driven Cyberwarfare. The DDoS packets use Boid flocking mechanics instead of simple pathfinding.
 - **Predicted Phenotype**: Flocking Packets. Packets group together into massive schools that coordinate attacks on the server, breaking apart when hitting firewalls.
 - **Status**: experiments/locus-ddos
+- **Evaluation**: Success. Compiled. Exhibits robust Boid flocking traits adapting smoothly to firewall constraints.
 
 ### gray-ddos
 - **Parents**: experiments/locust-ddos + crates/gray-scott
 - **Concept**: Morphogenetic Cyberwarfare. The swarm of DDoS packets navigate a Reaction-Diffusion substrate.
 - **Novel trait**: Morphogenetic Cyberwarfare. The DDoS packets seek the server, but they navigate through a chemical substrate. Firewalls act as a continuous source of the "kill" chemical, actively dissolving the swarm's "pheromone" paths. The swarm adapts by following the "feed" chemical. The resulting phenotype is an organic, pulsating siege where the botnet looks like a spreading fungus being burned back by chemical firewalls.
 - **Status**: experiments/gray-ddos
+- **Evaluation**: Success. Compiled. GUESTBOOK trail remains stable.
 
 ### chaos-ddos
 - **Parents**: experiments/chaos-pendulum + experiments/locust-ddos
 - **Concept**: Swarm intelligence trying to target a chaotic double-pendulum.
 - **Novel trait**: Chaotic Swarm Mapping. The target is non-stationary and chaotic. The resulting visual phenotype is an organic cloud desperately trying to encapsulate a mathematically chaotic object, creating a swirling hurricane of packets and pheromones dynamically mapping the strange attractor of the pendulum.
 - **Status**: experiments/chaos-ddos
+- **Evaluation**: Success. Compiled. The swarm produces emergent swirling hurricane patterns in pursuit of the strange attractor.
+
+### git-ddos
+- **Parents**: experiments/git-harmonograph + experiments/locust-ddos
+- **Concept**: Codebase Cyberwarfare. A swarm of DDoS packets targeting hotspots of developer activity in the local git repository.
+- **Novel trait**: Active files act as strong attractors, visualizing codebase churn as a cyber attack.
+- **Status**: experiments/git-ddos
+- **Evaluation**: Success. Compiled. Visualizes structural repository metadata natively as an attack surface.
 
 ### git-diffusion
 - **Parents**: experiments/git-harmonograph + crates/gray-scott
@@ -313,5 +333,5 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Parents**: experiments/locust-ddos + experiments/chrontext
 - **Concept**: Chronological Cyberwarfare. The botnet swarm targets lines of code based on their chronological age, turning code text into multiple, dynamically sized targets.
 - **Novel trait**: Chronological Cyberwarfare. Older code lines act as stronger attractors (larger radii or higher priority) for the DDoS packets, while newly refactored sections are ignored.
-- **Status**: experiments/chron-ddos
-- **Evaluation**: Condemned by The Reaper. Documentation void and terminal compilation failure caused by upstream changes (its dependency `chrontext` was flattened into a binary crate). Failed.
+- **Status**: graveyard/chron-ddos (Executed)
+- **Evaluation**: Condemned by The Reaper ☠️. Documentation void and terminal compilation failure caused by upstream changes (its dependency `chrontext` was flattened into a binary crate). Failed. Moved to graveyard.
