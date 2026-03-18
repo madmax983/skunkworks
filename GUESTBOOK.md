@@ -45,6 +45,11 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. Bare single-file toy with no README. Grace period: 24h.
 
+### [Concentration Level: NEW HYBRID] - Location: experiments/mnem-mycelium
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. Spliced mnem-rot with myco-transit.
+- **Phenotype:** Entropy Foraging. Slime mold agents are navigating the continuous codebase graph, attracted by high-entropy nodes. They lay down pheromones to form visual highways between the most decayed files.
+
 ### [Concentration Level: NEW HYBRID] - Location: experiments/mnem-diffusion
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Leaving recombination pheromones for mnem-diffusion (mnem-rot x gray-scott). Expecting Entropy Morphogenesis.
