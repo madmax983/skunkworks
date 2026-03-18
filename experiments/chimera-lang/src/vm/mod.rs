@@ -3701,6 +3701,8 @@ impl ChimeraVM {
             | OpCode::QuantumScan
             | OpCode::HoloInvoke
             | OpCode::HoloSpeak
+            | OpCode::Luciferin
+            | OpCode::Photophore
             | OpCode::Etymology => Some(nova::exec_nova_op(self, op, args)),
             OpCode::EvoPopSize
             | OpCode::EvoLoad
