@@ -24,6 +24,13 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 
 ## 🌿 Attempted Crosses
 
+### git-flock
+- **Parents**: experiments/git-harmonograph + experiments/luminous-flock
+- **Concept**: Codebase Swarming. A TUI visualization crossing the Git commit metadata parsing of git-harmonograph with the 2D boid flocking logic of luminous-flock.
+- **Novel trait**: Codebase Swarming. Boids swarm around Git commit hotspots, acting as a visual indicator of codebase activity.
+- **Status**: experiments/git-flock
+- **Evaluation**: Success. Compiled. Swarm correctly targets and circles around coordinates mapped from Git commit hashes.
+
 
 ### locust-hologram
 - **Parents**: experiments/locust-ddos + experiments/hologram-text
@@ -58,6 +65,7 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Codebase Rot Morphogenesis. Decaying nodes of a codebase graph act as chemical catalysts in a Gray-Scott reaction-diffusion grid.
 - **Novel trait**: Entropy Morphogenesis. High-entropy (rotting) files inject the 'V' (kill) chemical, while healthy files inject the 'U' (feed) chemical. Code rot doesn't just passively decay; it actively bleeds and diffuses across the visual space, creating organic, fungal-like patterns that physically consume adjacent healthy files in the 2D layout.
 - **Status**: experiments/mnem-diffusion
+- **Evaluation**: Success. Compiled. Entropy Morphogenesis phenotype successfully maps codebase entropy to reaction-diffusion gradients.
 
 
 ### locust-strings
@@ -100,6 +108,7 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Codebase Morphogenesis. Git commits act as drop points for the "V" chemical catalyst on a Gray-Scott Reaction-Diffusion grid.
 - **Novel trait**: Codebase Morphogenesis. The distinct events of commit history diffuse, react, and merge over time to create a continuous biological fingerprint of the repository's evolution.
 - **Status**: experiments/git-diffusion
+- **Evaluation**: Success. Compiled. GUESTBOOK confirmed Codebase Morphogenesis.
 
 ### chron-diffusion
 - **Parents**: experiments/chrontext + crates/gray-scott
@@ -157,30 +166,35 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: The chaotic double-pendulum's physical state dynamically perturbs the viewing angle of an FFT-based holographic field.
 - **Novel trait**: Spectral Chaos. The system unpredictably drifts in and out of perfect spectral alignment, causing the underlying structure to break down into chaotic noise and reform spontaneously.
 - **Status**: experiments/chaos-hologram
+- **Evaluation**: Success. Compiled. The holographic projection dances dynamically, visually mapping spectral chaos.
 
 ### chron-compost
 - **Parents**: experiments/chrontext + experiments/compost-chimera
 - **Concept**: TUI visualization where Chimera VM agents ("Time Scavengers") roam over the source code. The environment uses `git blame` data (`age_score`) from `chrontext` to colorize the text (Hot vs Cold).
 - **Novel trait**: Biological agents refactoring codebase history. The agents feed on the "Cold" (oldest) lines of code, consuming their history to gain energy. As they eat the ancient code, the visual age score is updated/reset, simulating refactoring.
 - **Status**: experiments/chron-compost
+- **Evaluation**: Success. Compiled. Biological agents successfully feed on the old lines of code.
 
 ### git-mycelium
 - **Parents**: experiments/git-harmonograph + experiments/myco-transit
 - **Concept**: Slime mold (Physarum polycephalum) pathfinding applied to git commit history. Instead of cities, the organisms forage between highly modified files, revealing the hidden architectural coupling of the codebase.
 - **Novel trait**: Codebase architecture emergence. The trails visually represent the hidden dependencies and coupling between files based on developer activity.
 - **Status**: experiments/git-mycelium
+- **Evaluation**: Success. Compiled. Slime mold organisms forage between highly modified files.
 
 ### mnem-flock
 - **Parents**: experiments/mnem-rot + experiments/luminous-flock
 - **Concept**: Boid flocking logic (luminous-flock) applied to a decaying codebase visualization (mnem-rot).
 - **Novel trait**: "Repair Drones". The flock swarms towards "rotting" nodes (files with high entropy) to heal them.
 - **Status**: experiments/mnem-flock
+- **Evaluation**: Success. Compiled. The flock swarms towards rotting nodes to heal them.
 
 ### ferrous-swarm
 - **Parents**: experiments/ferrous-tissue + experiments/luminous-flock
 - **Concept**: Flocking behavior applied to complex soft-body organisms where internal magnetic states affect formation.
 - **Novel trait**: Magneto-Elastic Swarming. The flock isn't just points; it's squishy, magnetic creatures that deform when they collide or align.
 - **Status**: experiments/ferrous-swarm
+- **Evaluation**: Success. Compiled. Magneto-Elastic Swarming successfully manifested.
 
 ### hyperbolic-swarm
 - **Parents**: experiments/hyperbolic-ants + experiments/luminous-flock
@@ -201,24 +215,28 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Evolving strings that vibrate and emit magnetic fields, influencing a swarm of particles. The particles, in turn, affect the fitness of the strings (e.g., strings that attract more particles reproduce).
 - **Novel trait**: Acoustic-Magnetic Symbiosis. Sound waves (string vibration) become magnetic waves, guiding matter.
 - **Status**: experiments/ferrous-strings
+- **Evaluation**: Success. Compiled. Acoustic-Magnetic Symbiosis successfully established.
 
 ### myco-flock
 - **Parents**: experiments/myco-transit + experiments/luminous-flock
 - **Concept**: Pheromone-Guided Flocking. Boids leave a pheromone trail on a grid and sense it, clustering into paths rather than purely fluid swarms.
 - **Novel trait**: Structural Swarming. Flocks form stable "highways" based on positive feedback loops of pheromone deposition and sensing.
 - **Status**: experiments/myco-flock
+- **Evaluation**: Success. Compiled. Flocks form stable highways based on pheromone deposition.
 
 ### git-hologram
 - **Parents**: experiments/git-harmonograph + experiments/ferrous-hologram
 - **Concept**: TUI visualization where git commit history sets the "resonant frequency" of a holographic particle swarm. The first byte of commit hash is mapped to a `resonance_dist` parameter.
 - **Novel trait**: Codebase Spectral Signatures. The visual form of the swarm becomes a unique fingerprint of each commit, influenced by the entropy through a Gaussian band-pass filter.
 - **Status**: experiments/git-hologram
+- **Evaluation**: Success. Compiled. The visual form of the swarm becomes a unique fingerprint of each commit.
 
 ### chaos-flock
 - **Parents**: experiments/chaos-pendulum + experiments/luminous-flock
 - **Concept**: Boids flocking towards a chaotic double pendulum.
 - **Novel trait**: Chaotic Swarming. The swarm stretches, compresses, and splits as it tries to follow a truly chaotic attractor, creating organic tension.
 - **Status**: experiments/chaos-flock
+- **Evaluation**: Success. Compiled. The swarm successfully stretches and splits.
 
 ### genetic-flock
 - **Parents**: experiments/genetic-luthier + experiments/luminous-flock
@@ -232,18 +250,21 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Reaction-Diffusion Swarming. Boids flock inside a complex chemical environment.
 - **Novel trait**: Macroscopic-Microscopic Feedback Loop. The flock shapes the environment that guides it.
 - **Status**: experiments/gray-flock
+- **Evaluation**: Success. Compiled. The flock shapes the environment in a continuous feedback loop.
 
 ### chaos-strings
 - **Parents**: experiments/chaos-pendulum + experiments/ferrous-strings
 - **Concept**: Chaotic Acoustic Feedback. A chaotic double pendulum acts as a pick/bow, striking strings that exert magnetic drag force back on it.
 - **Novel trait**: An unpredictable instrument that influences the player. Bidirectional feedback between chaos and acoustics.
 - **Status**: experiments/chaos-strings
+- **Evaluation**: Success. Compiled. Bidirectional feedback between chaos and acoustics successfully established.
 
 ### gray-fluid
 - **Parents**: crates/gray-scott + experiments/ferrous-fluid
 - **Concept**: Magnetic Reaction-Diffusion. Magnetic particles move around the space and act as catalysts depositing chemicals.
 - **Novel trait**: Macroscopic-Microscopic Feedback Loop. The particles shape the chemical environment, while the chemical environment shapes the magnetic force.
 - **Status**: experiments/gray-fluid
+- **Evaluation**: Success. Compiled. Macroscopic-Microscopic Feedback Loop successfully implemented.
 
 ### chron-fluid
 - **Parents**: experiments/chrontext + experiments/ferrous-fluid
@@ -264,84 +285,98 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Pheromone-Guided Spectral Interference. Slime mold agents forage on a grid treated as an optical interference pattern.
 - **Novel trait**: Spectral Foraging Field. The visualization exposes the Fourier transform of the slime mold's pheromone network.
 - **Status**: experiments/myco-hologram
+- **Evaluation**: Success. Compiled. Spectral Foraging Field successfully mapped.
 
 ### mnem-hologram
 - **Parents**: experiments/mnem-rot + experiments/hologram-text
 - **Concept**: Entropy-driven Holography. Decaying nodes in a codebase graph act as spatial objects that perturb an optical interference pattern.
 - **Novel trait**: Spectral Decay. The codebase graph's entropy dynamically morphs the hologram's frequency domain representation and spatial reconstruction.
 - **Status**: experiments/mnem-hologram
+- **Evaluation**: Executed by The Reaper ☠️ (moved to graveyard) due to Documentation Void / Skeletal Decay.
 
 ### gray-hologram
 - **Parents**: crates/gray-scott + experiments/hologram-text
 - **Concept**: Holographic Reaction-Diffusion. The V chemical concentration grid is treated as an optical interference pattern.
 - **Novel trait**: Spectral Morphogenesis. Turing patterns are mapped into the frequency domain revealing resonant modes of chemical growth.
 - **Status**: experiments/gray-hologram
+- **Evaluation**: Success. Compiled. Spectral Morphogenesis successfully maps Turing patterns.
 
 ### luminous-hologram
 - **Parents**: crates/locus + experiments/hologram-text
 - **Concept**: Holographic Swarming. Boids flock in a 2D space. Their positions are treated as a density field, representing an optical interference pattern.
 - **Novel trait**: Spectral Swarming. The visual form of the swarm is represented by its resonant frequencies.
 - **Status**: experiments/luminous-hologram
+- **Evaluation**: Success. Compiled. Spectral Swarming visually represented.
 
 ### luminous-tank
 - **Parents**: experiments/luminous-flock + experiments/ripple-tank
 - **Concept**: Acoustic Swarming. The boids navigate an acoustic wave tank field.
 - **Novel trait**: Boids generate standing waves through their motion and plucking, while the physical gradient of the sound waves physically advects them. The flock organizes into cymatic patterns based on resonance.
 - **Status**: experiments/luminous-tank
+- **Evaluation**: Condemned by The Reaper ☠️ due to Documentation Void / Skeletal Structure.
 
 ### gray-tank
 - **Parents**: experiments/ripple-tank + crates/gray-scott
 - **Concept**: Acoustic Morphogenesis. The 2D physical acoustic wave tank simulation creates physical displacement (pressure) that affects the diffusion of chemicals (U and V) in the Gray-Scott model.
 - **Novel trait**: Wave-driven Turing patterns. The wave displacement advects the chemicals, meaning the standing waves or ripples create flow that physically pulls the patterns along the wavefronts, altering the morphological patterns and disrupting symmetrical diffusion.
 - **Status**: experiments/gray-tank
+- **Evaluation**: Success. Compiled. Acoustic Morphogenesis successfully implemented.
 
 ### locust-tank
 - **Parents**: experiments/locust-ddos + experiments/ripple-tank
 - **Concept**: Acoustic-Swarm Symbiosis. The swarm intelligence agents collide with boundaries to pluck a 2D physical wave tank grid, and the acoustic pressure waves physically alter the swarm's trajectory.
 - **Novel trait**: Acoustic Swarm Foraging. The physical waves restructure the swarm into resonant clusters, treating sound pressure as a repulsive field.
 - **Status**: experiments/locust-tank
+- **Evaluation**: Success. Compiled. Acoustic Swarm Foraging successfully implemented.
 
 ### chaos-tank
 - **Parents**: experiments/chaos-pendulum + experiments/ripple-tank
 - **Concept**: Acoustic Chaos. The chaotic double pendulum's tip physically dips into a 2D physical acoustic wave tank.
 - **Novel trait**: Chaotic Wave Interference. The chaotic, non-repeating pendulum paths strike the acoustic field, creating complex, unpredictable interference patterns in the tank.
 - **Status**: experiments/chaos-tank
+- **Evaluation**: Success. Compiled. Chaotic Wave Interference successfully implemented.
 
 ### myco-tank
 - **Parents**: experiments/myco-transit + experiments/ripple-tank
 - **Concept**: Pheromone-Guided Acoustic Wave Advection. Slime mold agents distribute the active source on a 2D acoustic wave tank grid. The propagating pressure waves then interact with and advect the pheromone trails.
 - **Novel trait**: Acoustic Pheromone Interference. As agents deposit pheromones, they create expanding acoustic ripples that physically push and disrupt the paths of other agents, generating a dynamic, oscillating highway of biological activity driven by physical sound waves.
 - **Status**: experiments/myco-tank
+- **Evaluation**: Success. Compiled. Acoustic Pheromone Interference successfully implemented.
 
 ### ferrous-tank
 - **Parents**: experiments/ferrous-fluid + experiments/ripple-tank
 - **Concept**: Magnetic Acoustic Resonance. Magnetic particles in a 2D space are influenced by an acoustic wave tank field. The particles, in turn, deposit wave plucks based on their speed and movement.
 - **Novel trait**: Magnetic Acoustic Resonance. Magnetic particles and a physical acoustic wave tank form a bidirectional feedback loop.
 - **Status**: experiments/ferrous-tank
+- **Evaluation**: Success. Compiled. Magnetic Acoustic Resonance successfully implemented.
 
 ### git-tank
 - **Parents**: experiments/git-harmonograph + experiments/ripple-tank
 - **Concept**: Codebase Acoustic Resonance. Git commits act as physical plucks in a 2D acoustic wave tank grid.
 - **Novel trait**: The git commit history translates into physical sound waves propagating through a space, interfering with each other based on commit timing and size, creating a standing wave representation of repository activity.
 - **Status**: experiments/git-tank
+- **Evaluation**: Success. Compiled. Codebase Acoustic Resonance successfully implemented.
 
 ### git-fluid
 - **Parents**: experiments/git-harmonograph + experiments/ferrous-fluid
 - **Concept**: Magnetic Codebase Fingerprint. Git commit history drives the spawn of magnetic particles and poles in a ferrous fluid simulation.
 - **Novel trait**: Codebase history translating into magnetic fluid structures. Each commit acts as a set of magnetic poles mapped from the SHA-1 hash, pushing and pulling fluid particles around, providing a magnetic fingerprint of code evolution.
 - **Status**: experiments/git-fluid
+- **Evaluation**: Success. Compiled. Codebase history translating into magnetic fluid structures successfully.
 
 ### ferrous-ddos
 - **Parents**: experiments/locust-ddos + experiments/ferrous-fluid
 - **Concept**: Magnetic Cyberwarfare. The swarm of DDoS packets are mapped as magnetic fluid particles.
 - **Novel trait**: Fluid-Dynamic Bottlenecking. Instead of simple swarm agents, the packets are magnetic fluid particles. When attacking a server, the packets compress into a high-density magnetic fluid, actively pushing against each other and visually representing the pressure wave of a DDoS attack.
 - **Status**: experiments/ferrous-ddos
+- **Evaluation**: Success. Compiled. Fluid-Dynamic Bottlenecking successfully implemented.
 
 ### mnem-tank
 - **Parents**: experiments/mnem-rot + experiments/ripple-tank
 - **Concept**: Acoustic Code Rot. The decaying nodes of a codebase graph simulation physically pluck a 2D acoustic wave tank.
 - **Novel trait**: Acoustic Rot. High entropy (rotting) files generate violent, high-frequency ripples, while healthy files remain silent. A continuous acoustic mapping of code rot.
 - **Status**: experiments/mnem-tank
+- **Evaluation**: Executed by The Reaper ☠️ (moved to graveyard) due to Terminal Compilation Failure.
 
 ### chron-ddos
 - **Parents**: experiments/locust-ddos + experiments/chrontext
