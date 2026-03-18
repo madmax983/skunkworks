@@ -276,7 +276,10 @@ fn main() -> Result<()> {
         use crossterm::style::{Color, Stylize};
 
         println!("\n{}", "✨ Execution Complete ✨".with(Color::Green).bold());
-        println!("{}\n", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━".with(Color::DarkGrey));
+        println!(
+            "{}\n",
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━".with(Color::DarkGrey)
+        );
 
         let mut table = comfy_table::Table::new();
         table
@@ -314,7 +317,12 @@ fn main() -> Result<()> {
             ]);
         }
 
-        println!("🥞 {}", "Final Stack State (Top -> Bottom):".with(Color::Cyan).bold());
+        println!(
+            "🥞 {}",
+            "Final Stack State (Top -> Bottom):"
+                .with(Color::Cyan)
+                .bold()
+        );
         println!("{table}\n");
 
         println!("📜 {}", "Output Log:".with(Color::Cyan).bold());

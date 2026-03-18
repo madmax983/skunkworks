@@ -205,3 +205,64 @@ impl Default for SystemMonitor {
         Self::new()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_monitor_initialization() {
+        let monitor = SystemMonitor::new();
+        assert_eq!(monitor.last_update, INITIAL_UPDATE_TIMESTAMP);
+        assert_eq!(monitor.cpu_usage, 0.0);
+        assert_eq!(monitor.mem_usage, 0.0);
+        assert_eq!(monitor.swap_usage, 0.0);
+        assert_eq!(monitor.load_avg, 0.0);
+    }
+
+    #[test]
+    fn test_monitor_interpolation() {
+        let mut monitor = SystemMonitor::new();
+
+        // Manually set targets
+        monitor.target_cpu = 1.0;
+        monitor.target_mem = 0.5;
+        monitor.target_swap = 0.25;
+        monitor.target_load = 0.75;
+
+        // dt = 0.1, speed = 2.0 * 0.1 = 0.2
+        monitor.interpolate_metrics(0.1);
+
+        // lerp(0.0, target, 0.2) = 0.2 * target
+        assert!((monitor.cpu_usage - 0.2).abs() < f32::EPSILON);
+        assert!((monitor.mem_usage - 0.1).abs() < f32::EPSILON);
+        assert!((monitor.swap_usage - 0.05).abs() < f32::EPSILON);
+        assert!((monitor.load_avg - 0.15).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn test_update_with_time_timing() {
+        let mut monitor = SystemMonitor::new();
+
+        // First update should trigger a poll because last_update is INITIAL_UPDATE_TIMESTAMP (-2.0)
+        // and now (0.0) - (-2.0) = 2.0 > UPDATE_INTERVAL (1.0)
+        monitor.update_with_time(0.1, 0.0);
+        assert_eq!(monitor.last_update, 0.0);
+
+        // Second update shortly after should NOT trigger a poll
+        // now (0.5) - last_update (0.0) = 0.5 <= UPDATE_INTERVAL (1.0)
+        monitor.update_with_time(0.1, 0.5);
+        assert_eq!(monitor.last_update, 0.0); // Should still be 0.0
+
+        // Third update after interval should trigger a poll
+        // now (1.1) - last_update (0.0) = 1.1 > UPDATE_INTERVAL (1.0)
+        monitor.update_with_time(0.1, 1.1);
+        assert_eq!(monitor.last_update, 1.1);
+    }
+
+    #[test]
+    fn test_default() {
+        let monitor = SystemMonitor::default();
+        assert_eq!(monitor.last_update, INITIAL_UPDATE_TIMESTAMP);
+    }
+}
