@@ -65,28 +65,26 @@ fn apply_book_rune(vm: &mut ChimeraVM, y: usize, x: usize) {
             }
             2 => {
                 // EXEC
-                if let Some(val) = vm.prologue_state.library.get(&key) {
-                    if let Value::Str(code) = val {
-                        match crate::compiler::compile(code, None) {
-                            Ok(mut dna) => {
-                                // Append strands to helix
-                                let start_idx = vm.dna.helix.strands.len();
-                                vm.dna.helix.strands.append(&mut dna.helix.strands);
+                if let Some(Value::Str(code)) = vm.prologue_state.library.get(&key) {
+                    match crate::compiler::compile(code, None) {
+                        Ok(mut dna) => {
+                            // Append strands to helix
+                            let start_idx = vm.dna.helix.strands.len();
+                            vm.dna.helix.strands.append(&mut dna.helix.strands);
 
-                                if vm.dna.helix.strands.len() > start_idx {
-                                    vm.output.push(format!(
-                                        "LIBRARY: Executing '{}' (Strand {})",
-                                        key, start_idx
-                                    ));
-                                    vm.context_loc = (y, x);
-                                    vm.interrupt(start_idx);
-                                    vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
-                                }
+                            if vm.dna.helix.strands.len() > start_idx {
+                                vm.output.push(format!(
+                                    "LIBRARY: Executing '{}' (Strand {})",
+                                    key, start_idx
+                                ));
+                                vm.context_loc = (y, x);
+                                vm.interrupt(start_idx);
+                                vm.prologue_state.signal_grid[y][x] = Some(Value::Int(1));
                             }
-                            Err(e) => {
-                                vm.output
-                                    .push(format!("LIBRARY: Exec Failed '{}': {}", key, e));
-                            }
+                        }
+                        Err(e) => {
+                            vm.output
+                                .push(format!("LIBRARY: Exec Failed '{}': {}", key, e));
                         }
                     }
                 }
