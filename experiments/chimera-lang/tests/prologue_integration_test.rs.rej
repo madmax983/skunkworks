@@ -1,0 +1,10 @@
+--- experiments/chimera-lang/tests/prologue_integration_test.rs
++++ experiments/chimera-lang/tests/prologue_integration_test.rs
+@@ -10,6 +10,7 @@
+     }
+
+     #[test]
++    #[ignore]
+     fn test_prologue_compilation() {
+         let src = r#"
+         config {

@@ -1,0 +1,10 @@
+--- experiments/chimera-lang/src/vm/nova_optics_test.rs
++++ experiments/chimera-lang/src/vm/nova_optics_test.rs
+@@ -192,7 +192,7 @@
+
+         // Tick 3: Ray moves into Prism, should split.
+         vm.step();
+-        // assert_eq!(vm.projectiles.len(), 3, "Prism did not split projectile");
++        /* assert_eq!(vm.projectiles.len(), 3, "Prism did not split projectile"); */
+     }
+ }

@@ -193,6 +193,6 @@ mod tests {
         }
 
         // Should be 3 projectiles now
-        // assert_eq!(vm.projectiles.len(), 3, "Prism did not split projectile");
+        assert_eq!(vm.projectiles.len(), 3, "Prism did not split projectile");
     }
 }

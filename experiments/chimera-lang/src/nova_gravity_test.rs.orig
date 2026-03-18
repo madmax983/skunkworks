@@ -102,7 +102,7 @@ mod tests {
 
         // Check 8,11
         if let Value::Int(n) = vm.grid[11][8] {
-             // assert_eq!(n, 0, "Item at 8,11 should be gone");
+            assert_eq!(n, 0, "Item at 8,11 should be gone");
         }
     }
 

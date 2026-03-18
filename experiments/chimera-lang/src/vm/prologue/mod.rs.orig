@@ -1572,7 +1572,7 @@ fn process_agents(vm: &mut ChimeraVM, grid_snapshot: &[Vec<Value>]) {
                 None => continue,
             }
         } else if current_type == "℘" {
-            prolog_agent::process_prolog_agent(vm, agent.y, agent.x);
+            prolog_agent::process_prolog_agent(vm, cy, cx);
             None
         } else if current_type == "ζ" {
             match zeta::process_zeta_agent(vm, &agent, grid_snapshot) {
