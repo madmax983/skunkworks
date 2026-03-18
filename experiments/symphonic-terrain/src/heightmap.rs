@@ -1,6 +1,6 @@
+use ab_glyph::{Font, FontRef, PxScale, ScaleFont};
+use glyph_brush_layout::{GlyphPositioner, Layout, SectionGeometry, SectionText};
 use noise::{NoiseFn, Perlin};
-use ab_glyph::{FontRef, Font, ScaleFont, PxScale};
-use glyph_brush_layout::{SectionGeometry, GlyphPositioner, Layout, SectionText};
 
 pub struct HeightMap {
     pub width: u32,
@@ -61,7 +61,10 @@ pub fn generate_text_heightmap(text: &str, font_data: &[u8], width: u32, height:
     let glyphs = layout.calculate_glyphs(
         &[&font],
         &SectionGeometry {
-            screen_position: (width as f32 * 0.1, height as f32 / 2.0 + scaled_font.ascent() / 2.0),
+            screen_position: (
+                width as f32 * 0.1,
+                height as f32 / 2.0 + scaled_font.ascent() / 2.0,
+            ),
             bounds: (f32::INFINITY, f32::INFINITY),
         },
         &[SectionText {

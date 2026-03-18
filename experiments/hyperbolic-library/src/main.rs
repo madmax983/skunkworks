@@ -1,6 +1,6 @@
+use ab_glyph::{Font, FontRef, PxScale, ScaleFont};
 use macroquad::prelude::*;
 use poincare_disk::{mobius_add, mobius_sub, neighbor_transform_a, Point, TilingConsts};
-use ab_glyph::{FontRef, Font, ScaleFont, PxScale};
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
@@ -40,7 +40,8 @@ fn generate_font_atlas(font_bytes: &[u8]) -> Texture2D {
 
         let c = char_code as char;
         let glyph_id = font.glyph_id(c);
-        let glyph = glyph_id.with_scale_and_position(scale, ab_glyph::point(0.0, scaled_font.ascent()));
+        let glyph =
+            glyph_id.with_scale_and_position(scale, ab_glyph::point(0.0, scaled_font.ascent()));
 
         // Calculate cell position
         let col = i % grid_cols;

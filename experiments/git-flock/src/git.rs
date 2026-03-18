@@ -38,7 +38,9 @@ pub fn get_commit_history() -> anyhow::Result<Vec<Commit>> {
                 });
 
                 count += 1;
-                if count >= 200 { break; }
+                if count >= 200 {
+                    break;
+                }
             }
         }
     }

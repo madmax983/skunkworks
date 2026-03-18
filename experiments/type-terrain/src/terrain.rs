@@ -1,7 +1,7 @@
+use ab_glyph::{Font, FontRef, PxScale, ScaleFont};
+use glyph_brush_layout::{GlyphPositioner, Layout, SectionGeometry, SectionText};
 use macroquad::prelude::*;
 use noise::{NoiseFn, Perlin};
-use ab_glyph::{FontRef, Font, ScaleFont, PxScale};
-use glyph_brush_layout::{SectionGeometry, GlyphPositioner, Layout, SectionText};
 
 pub struct FontTerrain {
     pub heightmap: Vec<f32>,
@@ -12,7 +12,8 @@ pub struct FontTerrain {
 
 impl FontTerrain {
     pub fn new(font_data: &[u8], text: &str, font_size: f32) -> Self {
-        let font: FontRef<'_> = FontRef::try_from_slice(font_data).expect("Error constructing Font");
+        let font: FontRef<'_> =
+            FontRef::try_from_slice(font_data).expect("Error constructing Font");
         let scale = PxScale::from(font_size);
         let scaled_font = font.as_scaled(scale);
 
@@ -61,8 +62,10 @@ impl FontTerrain {
             if let Some(outlined) = font.outline_glyph(g.glyph) {
                 let px_bounds = outlined.px_bounds();
                 outlined.draw(|x, y, v| {
-                    let gx = (x as i32 + px_bounds.min.x as i32 - min_x as i32 + padding as i32) as usize;
-                    let gy = (y as i32 + px_bounds.min.y as i32 - min_y as i32 + padding as i32) as usize;
+                    let gx = (x as i32 + px_bounds.min.x as i32 - min_x as i32 + padding as i32)
+                        as usize;
+                    let gy = (y as i32 + px_bounds.min.y as i32 - min_y as i32 + padding as i32)
+                        as usize;
                     if gx < width && gy < height {
                         let idx = gy * width + gx;
                         if heightmap[idx] < v {
@@ -80,7 +83,8 @@ impl FontTerrain {
                     let mut sum = 0.0;
                     for dy in -1..=1 {
                         for dx in -1..=1 {
-                            sum += heightmap[((y as i32 + dy) as usize) * width + ((x as i32 + dx) as usize)];
+                            sum += heightmap
+                                [((y as i32 + dy) as usize) * width + ((x as i32 + dx) as usize)];
                         }
                     }
                     next_map[y * width + x] = sum / 9.0;

@@ -149,7 +149,10 @@ impl<'a> Widget for TensionBar<'a> {
         // Draw partial block
         if remainder > 0.0 && full_blocks < inner_area.height {
             let max_y = inner_area.y.saturating_add(inner_area.height);
-            let draw_y = match max_y.checked_sub(1).and_then(|v| v.checked_sub(full_blocks)) {
+            let draw_y = match max_y
+                .checked_sub(1)
+                .and_then(|v| v.checked_sub(full_blocks))
+            {
                 Some(val) => val,
                 None => return,
             };
