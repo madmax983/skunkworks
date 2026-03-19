@@ -24,6 +24,52 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 
 ## 🌿 Attempted Crosses
 
+### chimera-tank
+- **Parents**: experiments/chimera-lang + experiments/ripple-tank
+- **Concept**: Acoustic Genetic Organisms. Agents equipped with `ChimeraVM` brains navigate a 2D physical acoustic wave tank. They must evolve `Dna` sequences to sense pressure gradients and pluck waves to propel themselves, translating genetic instructions into physical acoustic locomotion.
+- **Novel trait**: Cymatic Locomotion. Agents develop cyclic, oscillatory swimming patterns by synchronizing their opcodes with the acoustic resonant frequency of the tank.
+- **Status**: experiments/chimera-tank
+- **Evaluation**: Success. Compiled. Agents successfully evolve wave-plucking rhythms inside the continuous grid.
+
+
+### chimera-rift
+- **Parents**: experiments/chimera-lang + experiments/impossible-explorer
+- **Concept**: Evo-Portals.
+- **Novel trait**: Bio-Spatial Manipulation.
+- **Status**: experiments/chimera-rift
+- **Evaluation**: Condemned by The Reaper ☠️ due to Skeletal Implementation and Terminal Genericism (specifically, missing sensory inputs via a critical TODO making its core portal trait non-functional), with a 24-hour grace period set.
+
+
+### chimera-fluid
+- **Parents**: experiments/hyper-fluid + experiments/chimera-lang
+- **Concept**: 4D Hydrodynamic Locomotion.
+- **Novel trait**: Metabolic Swimming in 4D.
+- **Status**: experiments/chimera-fluid
+- **Evaluation**: Pardoned by The Reaper ☠️. The terminal compilation failure was resolved by initializing `evolution_config` with `None`, allowing the specimen to compile successfully.
+
+
+### myco-strings
+- **Parents**: experiments/myco-transit + experiments/ferrous-strings
+- **Concept**: Pheromone-Guided Acoustic Strings.
+- **Novel trait**: Pheromone string plucking.
+- **Status**: graveyard/myco-strings (Executed)
+- **Evaluation**: Executed by The Reaper ☠️ (moved to graveyard) due to Terminal Genericism and Documentation Void, having failed to improve during its grace period.
+
+### sys-dance
+- **Parents**: experiments/system-bio-dome + experiments/waggle-dance
+- **Concept**: System Metric Waggle Dance.
+- **Novel trait**: Agents communicate system load.
+- **Status**: graveyard/sys-dance (Executed)
+- **Evaluation**: Executed by The Reaper ☠️ (moved to graveyard) due to Terminal Genericism and Swarm Neglect, having failed to improve during its grace period.
+
+### sandpile-scheduler
+- **Parents**: experiments/chimera-sandpile + experiments/ripple-scheduler
+- **Concept**: Sandpile process scheduling.
+- **Novel trait**: Avalanche scheduling.
+- **Status**: graveyard/sandpile-scheduler (Executed)
+- **Evaluation**: Executed by The Reaper ☠️ (moved to graveyard) due to Terminal Genericism and Skeletal Implementation, having failed to improve during its grace period.
+
+
 ### mnem-mycelium
 - **Parents**: experiments/mnem-rot + experiments/myco-transit
 - **Concept**: Mycelial Code Rot. Slime mold agents forage a decaying codebase graph mapping.
@@ -72,7 +118,7 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Codebase Rot Morphogenesis. Decaying nodes of a codebase graph act as chemical catalysts in a Gray-Scott reaction-diffusion grid.
 - **Novel trait**: Entropy Morphogenesis. High-entropy (rotting) files inject the 'V' (kill) chemical, while healthy files inject the 'U' (feed) chemical. Code rot doesn't just passively decay; it actively bleeds and diffuses across the visual space, creating organic, fungal-like patterns that physically consume adjacent healthy files in the 2D layout.
 - **Status**: experiments/mnem-diffusion
-- **Evaluation**: Success. Compiled. Entropy Morphogenesis phenotype successfully maps codebase entropy to reaction-diffusion gradients.
+- **Evaluation**: Pardoned by The Reaper ☠️. The initial condemnation for Documentation Void and Skeletal Implementation was resolved by adding a proper README and test cases during its grace period.
 
 
 ### locust-strings
@@ -320,7 +366,7 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Acoustic Swarming. The boids navigate an acoustic wave tank field.
 - **Novel trait**: Boids generate standing waves through their motion and plucking, while the physical gradient of the sound waves physically advects them. The flock organizes into cymatic patterns based on resonance.
 - **Status**: experiments/luminous-tank
-- **Evaluation**: Condemned by The Reaper ☠️ due to Documentation Void / Skeletal Structure.
+- **Evaluation**: Condemned by The Reaper ☠️ due to Documentation Void / Skeletal Structure, with a 24-hour grace period set.
 
 ### gray-tank
 - **Parents**: experiments/ripple-tank + crates/gray-scott
@@ -382,8 +428,8 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Parents**: experiments/mnem-rot + experiments/ripple-tank
 - **Concept**: Acoustic Code Rot. The decaying nodes of a codebase graph simulation physically pluck a 2D acoustic wave tank.
 - **Novel trait**: Acoustic Rot. High entropy (rotting) files generate violent, high-frequency ripples, while healthy files remain silent. A continuous acoustic mapping of code rot.
-- **Status**: experiments/mnem-tank
-- **Evaluation**: Executed by The Reaper ☠️ (moved to graveyard) due to Terminal Compilation Failure.
+- **Status**: graveyard/mnem-tank (Executed)
+- **Evaluation**: Executed by The Reaper ☠️ (moved to graveyard) due to Terminal Compilation Failure / Audio Ecosystem Maladaptation, failing to improve during its grace period.
 
 ### chron-ddos
 - **Parents**: experiments/locust-ddos + experiments/chrontext
