@@ -10,7 +10,7 @@ use macroquad::prelude::Vec3 as MacroquadVec3;
 
 /// A simple 3D vector for projection results.
 ///
-/// This struct primarily serves as the output type for 4D->3D projections (e.g., from [`super::Vec4`]).
+/// This struct primarily serves as the output type for 4D->3D projections (e.g., from [`crate::vec4::Vec4`]).
 /// It is intentionally minimal, avoiding the heavy machinery of full linear algebra libraries
 /// like `glam` or `nalgebra` to keep the `locus` crate lightweight and fast to compile.
 ///
