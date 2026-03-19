@@ -75,8 +75,15 @@ proptest! {
     ) {
         let mut system = physics_pbd::PbdSystem::new();
         let p1 = system.add_particle(glam::Vec3::new(0.0, 0.0, 0.0), 1.0);
-        let p2 = system.add_particle(glam::Vec3::new(dist, 0.0, 0.0), 1.0);
-        system.add_distance_constraint(p1, p2, stiffness);
+        let p2 = system.add_particle(glam::Vec3::new(1.0, 0.0, 0.0), 1.0);
+
+        // Inject non-finite constraint parameters directly to test solver robustness
+        system.constraints.push(physics_pbd::Constraint::Distance {
+            p1,
+            p2,
+            rest_length: dist,
+            stiffness,
+        });
 
         system.step(0.1, 1);
     }

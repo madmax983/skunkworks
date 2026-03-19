@@ -161,6 +161,7 @@ impl PbdSystem {
     /// assert_eq!(idx, 0);
     /// ```
     pub fn add_particle(&mut self, pos: Vec3, mass: f32) -> usize {
+        assert!(pos.is_finite(), "Particle position must be finite");
         assert!(
             mass >= 0.0 && mass.is_finite(),
             "Mass must be non-negative and finite"
@@ -242,6 +243,7 @@ impl PbdSystem {
     /// system.add_pin_constraint(p, Vec3::new(5.0, 5.0, 5.0));
     /// ```
     pub fn add_pin_constraint(&mut self, p: usize, pos: Vec3) {
+        assert!(pos.is_finite(), "Pin position must be finite");
         self.constraints.push(Constraint::Pin { p, pos });
     }
 
@@ -518,6 +520,14 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(expected = "Pin position must be finite")]
+    fn test_add_pin_constraint_nan_pos() {
+        let mut system = PbdSystem::new();
+        let p1 = system.add_particle(Vec3::ZERO, 1.0);
+        system.add_pin_constraint(p1, Vec3::NAN);
+    }
+
+    #[test]
     fn test_invalid_indices_panic() {
         let mut system = PbdSystem::new();
         let p1 = system.add_particle(Vec3::ZERO, 1.0);
@@ -716,6 +726,13 @@ mod tests {
         let dist = system.particles[p1].pos.distance(system.particles[p2].pos);
         // Should expand towards 3.0
         assert!((dist - 3.0).abs() < 0.1);
+    }
+
+    #[test]
+    #[should_panic(expected = "Particle position must be finite")]
+    fn test_add_particle_nan_pos() {
+        let mut system = PbdSystem::new();
+        system.add_particle(Vec3::NAN, 1.0);
     }
 
     #[test]
