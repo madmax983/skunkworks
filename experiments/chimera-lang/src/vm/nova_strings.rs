@@ -103,7 +103,7 @@ pub fn exec_string_op(
                         (cx - x1).powi(2) + (cy - y1).powi(2)
                     } else {
                         let t = ((cx - x1) * (x2 - x1) + (cy - y1) * (y2 - y1)) / l2;
-                        let t = t.max(0.0).min(1.0);
+                        let t = t.clamp(0.0, 1.0);
                         let px = x1 + t * (x2 - x1);
                         let py = y1 + t * (y2 - y1);
                         (cx - px).powi(2) + (cy - py).powi(2)
@@ -141,7 +141,7 @@ pub fn exec_string_op(
                         (cx - x1).powi(2) + (cy - y1).powi(2)
                     } else {
                         let t = ((cx - x1) * (x2 - x1) + (cy - y1) * (y2 - y1)) / l2;
-                        let t = t.max(0.0).min(1.0);
+                        let t = t.clamp(0.0, 1.0);
                         let px = x1 + t * (x2 - x1);
                         let py = y1 + t * (y2 - y1);
                         (cx - px).powi(2) + (cy - py).powi(2)
@@ -178,7 +178,7 @@ pub fn exec_string_op(
                     (cx - x1).powi(2) + (cy - y1).powi(2)
                 } else {
                     let t = ((cx - x1) * (x2 - x1) + (cy - y1) * (y2 - y1)) / l2;
-                    let t = t.max(0.0).min(1.0);
+                    let t = t.clamp(0.0, 1.0);
                     let px = x1 + t * (x2 - x1);
                     let py = y1 + t * (y2 - y1);
                     (cx - px).powi(2) + (cy - py).powi(2)

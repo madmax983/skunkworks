@@ -109,7 +109,7 @@ pub fn apply_architect_runes(
         "░" => {
             // Noise: West (Size Int) -> Self (Blueprint)
             if let Some(Value::Int(size)) = get_sig(0, -1) {
-                let s = size.max(1).min(32) as usize; // Cap size
+                let s = size.clamp(1, 32) as usize; // Cap size
                 let noise_grid = generate_noise(s, s);
                 let new_val = grid_to_value(&noise_grid);
                 if next_signals[y][x].is_none() {
