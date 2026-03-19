@@ -43,3 +43,7 @@
 **[Hoist per-frame Vec allocation in Network::step]**
 **Learning:** Destructuring `self` allows you to obtain disjoint mutable references to fields, letting you avoid borrow checker issues when you need to simultaneously access multiple mutable fields like pre-allocated buffers and state arrays.
 **Action:** Use `let MyStruct { a, b, .. } = self;` when multiple fields need to be mutably accessed in the same loop to avoid fighting the borrow checker, instead of doing `&mut self.a` and `&mut self.b` directly which can sometimes lead to issues when using iterators.
+
+**[Optimized Levenshtein Distance for ASCII Strings]**
+**Learning:** `&str.chars()` incurs significant allocation and character decoding overhead when calculating Levenshtein distance on simple ASCII strings. Additionally, the standard dynamic programming algorithm allocates two `Vec`s (`curr_row`, `prev_row`) for tracking diagonals, increasing allocation pressure.
+**Action:** Implemented a fast path for ASCII-only strings by operating directly on `.as_bytes()`, which avoids UTF-8 boundaries. Changed the algorithm to only require a single `Vec` allocation (`row`), maintaining the previous diagonal explicitly (`prev_diag`) and updating the array in place.

@@ -518,11 +518,7 @@ fn main() -> Result<()> {
 mod tests {
     #[test]
     fn test_sort_nan_safety() {
-        let mut items = vec![
-            (1.0, "a"),
-            (std::f64::NAN, "b"),
-            (2.0, "c"),
-        ];
+        let mut items = vec![(1.0, "a"), (std::f64::NAN, "b"), (2.0, "c")];
         // This should no longer panic
         items.sort_by(|a, b| b.0.total_cmp(&a.0));
     }

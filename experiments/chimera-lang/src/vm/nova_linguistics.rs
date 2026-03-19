@@ -154,7 +154,49 @@ pub fn exec_pangram(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 // --- Helpers ---
 
 /// Calculates the Levenshtein distance between two strings without allocating intermediate `Vec<char>`s.
+/// ⚡ Bolt Optimization:
+/// - Fast path for ASCII-only strings avoiding character decoding and using a single vector allocation to store diagonals.
 fn levenshtein(s1: &str, s2: &str) -> usize {
+    if s1.is_ascii() && s2.is_ascii() {
+        let s1_bytes = s1.as_bytes();
+        let s2_bytes = s2.as_bytes();
+
+        let n = s1_bytes.len();
+        let m = s2_bytes.len();
+
+        if n == 0 {
+            return m;
+        }
+        if m == 0 {
+            return n;
+        }
+
+        let (short, long) = if n < m {
+            (s1_bytes, s2_bytes)
+        } else {
+            (s2_bytes, s1_bytes)
+        };
+
+        let min_len = short.len();
+        let max_len = long.len();
+
+        let mut row: Vec<usize> = (0..=min_len).collect();
+
+        for i in 1..=max_len {
+            let long_char = long[i - 1];
+            let mut prev_diag = row[0];
+            row[0] = i;
+            for j in 1..=min_len {
+                let cost = if long_char == short[j - 1] { 0 } else { 1 };
+                let old_diag = row[j];
+                row[j] = std::cmp::min(std::cmp::min(row[j] + 1, row[j - 1] + 1), prev_diag + cost);
+                prev_diag = old_diag;
+            }
+        }
+
+        return row[min_len];
+    }
+
     let n = s1.chars().count();
     let m = s2.chars().count();
 
@@ -168,22 +210,20 @@ fn levenshtein(s1: &str, s2: &str) -> usize {
     // Optimization: Use 2 rows to reduce memory from O(N*M) to O(min(N,M))
     let (short, long, min_len) = if n < m { (s1, s2, n) } else { (s2, s1, m) };
 
-    let mut prev_row: Vec<usize> = (0..=min_len).collect();
-    let mut curr_row: Vec<usize> = vec![0; min_len + 1];
+    let mut row: Vec<usize> = (0..=min_len).collect();
 
     for (i, long_c) in long.chars().enumerate() {
-        curr_row[0] = i + 1;
+        let mut prev_diag = row[0];
+        row[0] = i + 1;
         for (j, short_c) in short.chars().enumerate() {
             let cost = if long_c == short_c { 0 } else { 1 };
-            curr_row[j + 1] = std::cmp::min(
-                std::cmp::min(curr_row[j] + 1, prev_row[j + 1] + 1),
-                prev_row[j] + cost,
-            );
+            let old_diag = row[j + 1];
+            row[j + 1] = std::cmp::min(std::cmp::min(row[j + 1] + 1, row[j] + 1), prev_diag + cost);
+            prev_diag = old_diag;
         }
-        prev_row.clone_from(&curr_row);
     }
 
-    prev_row[min_len]
+    row[min_len]
 }
 
 /// Removes an intermediate heap allocation (`Vec<char>`) by consuming an iterator directly.
