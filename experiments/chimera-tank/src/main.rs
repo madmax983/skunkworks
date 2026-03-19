@@ -1,8 +1,8 @@
 use crossbeam_channel::bounded;
 use macroquad::prelude::*;
-use resonance_audio::audio::{AudioCommand, AudioModel};
 #[cfg(feature = "audio")]
 use resonance_audio::audio::AudioSnapshot;
+use resonance_audio::audio::{AudioCommand, AudioModel};
 
 use chimera_lang::ast::{Dna, Gene, Nucleotide};
 use chimera_lang::opcode::OpCode;
@@ -63,13 +63,11 @@ async fn main() {
     ];
 
     let dna = Dna::from_genes(genes);
-    let mut agents = vec![
-        Agent {
-            vm: ChimeraVM::new(dna.clone()),
-            x: GRID_WIDTH as f32 / 2.0,
-            y: GRID_HEIGHT as f32 / 2.0,
-        },
-    ];
+    let mut agents = vec![Agent {
+        vm: ChimeraVM::new(dna.clone()),
+        x: GRID_WIDTH as f32 / 2.0,
+        y: GRID_HEIGHT as f32 / 2.0,
+    }];
 
     loop {
         // Poll for snapshot

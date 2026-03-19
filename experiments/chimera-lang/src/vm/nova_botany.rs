@@ -32,14 +32,24 @@ pub fn exec_plant(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
     let (axiom_val, mapping_val, rules_val) = if is_mapping(arg2) && vm.stack.len() >= 3 {
         // [rules, mapping, axiom]
-        let Some(axiom) = vm.stack.pop() else { return None; };
-        let Some(mapping) = vm.stack.pop() else { return None; };
-        let Some(rules) = vm.stack.pop() else { return None; };
+        let Some(axiom) = vm.stack.pop() else {
+            return None;
+        };
+        let Some(mapping) = vm.stack.pop() else {
+            return None;
+        };
+        let Some(rules) = vm.stack.pop() else {
+            return None;
+        };
         (axiom, mapping, rules)
     } else {
         // [rules, axiom]
-        let Some(axiom) = vm.stack.pop() else { return None; };
-        let Some(rules) = vm.stack.pop() else { return None; };
+        let Some(axiom) = vm.stack.pop() else {
+            return None;
+        };
+        let Some(rules) = vm.stack.pop() else {
+            return None;
+        };
         (
             axiom,
             Value::Junction(crate::ast::JunctionType::All, Vec::new()),
