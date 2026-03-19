@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **sandpile-scheduler**: Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation. Simple cellular automaton disguised as a load balancer without the promised complex network routing or system integration. Grace period: 24h.
+- **chimera-rift**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. The core feature lacks sensory inputs. Grace period: 24h.
+
 
 ## Pardoned
 - **mnem-diffusion**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding proper README, documentation, and test cases. The specimen has proven its right to exist in the ecosystem.
@@ -299,3 +300,4 @@
 - **atomic-groove**: Specimen executed. Diagnosis: Documentation Void, Terminal Genericism. Grace period expired. Moved to graveyard.
 - **polyrhythmic-cylinder**: Specimen executed. Diagnosis: Terminal Stagnation / Documentation Void. Grace period expired. Moved to graveyard.
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
+- **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
