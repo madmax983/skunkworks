@@ -9,14 +9,6 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Forge ⚒️ scented structural tangles and multiple clippy errors (including `ptr_arg`, `needless_range_loop`, and `collapsible_match`). The logic is rusting and requires the Razor 🪒 touch.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** DX audit failed. The `story_demo` example is broken. It lacks the `nova` feature, causes a workspace inheritance error, and incorrectly launches a blocking TUI instead of a programmatic run. Immediate polish required.
-
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** DX audit failed. The 'Library Usage' and 'Running ChimeraScript' examples are broken. They lack the 'nova' feature flag, cause workspace dependency errors, and use incorrect imports (OpCode, Dna::default). Immediate polish required.
-
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/crate-radar
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Ecosystem Isolation. A generic utility lacking any organic, chaotic, or evolutionary traits. Grace period: 24h.
@@ -222,6 +214,14 @@
 - **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Ecosystem Isolation. Failed to improve during grace period. Biomass returned to the void.
 
 ## 🍂 History/Decay
+### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Stable logic detected. Scent is evaporating as polish is applied. The `story_demo` example is broken. It lacks the `nova` feature, causes a workspace inheritance error, and incorrectly launches a blocking TUI instead of a programmatic run. Immediate polish required.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Stable logic detected. Scent is evaporating as polish is applied. The 'Library Usage' and 'Running ChimeraScript' examples are broken. They lack the 'nova' feature flag, cause workspace dependency errors, and use incorrect imports (OpCode, Dna::default). Immediate polish required.
+
 ### [Concentration Level: EVAPORATING] - Location: graveyard/luminous-tank
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Documentation Void / Skeletal Structure. Failed to improve during grace period. Moved to graveyard.
