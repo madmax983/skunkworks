@@ -6,7 +6,6 @@ use proptest::prelude::*;
 
 proptest! {
     #[test]
-    #[should_panic(expected = "called `Option::unwrap()` on a `None` value")]
     fn test_nova_botany_nth_unwrap_crash(
         len_diff in 1..10usize
     ) {
