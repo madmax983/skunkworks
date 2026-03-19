@@ -212,6 +212,11 @@ impl Vec4 {
     /// If the vector's length is greater than `max`, it is normalized and scaled to `max`.
     /// Otherwise, it returns the original vector.
     ///
+    /// # The "Why": Stability
+    ///
+    /// Useful for capping abstract hyper-dimensional forces so continuous
+    /// coordinate evolution systems remain mathematically stable.
+    ///
     /// # Examples
     ///
     /// ```
@@ -649,6 +654,12 @@ impl Vec4 {
     ///
     /// This simulates a camera looking "down" from the W axis. As points move further
     /// away in the W dimension (relative to `camera_w`), they appear smaller (perspective).
+    ///
+    /// # The "Why": Perception
+    ///
+    /// Our screens are 2D, and our game engines (like Macroquad) expect 3D spaces.
+    /// To visualize hyper-structures like Tesseracts or 4D grids, we *must*
+    /// mathematically squash the fourth dimension (W) down into observable XYZ axes.
     ///
     /// # Arguments
     ///

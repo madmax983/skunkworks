@@ -1,30 +1,18 @@
 # Locus 📍
 
-A lightweight 2D geometry library for TUI applications and grid-based simulations.
+A lightweight 2D/3D/4D geometry library for TUI applications, grid-based simulations, and hyper-dimensional experiments.
 
 `locus` provides the fundamental primitives for moving, measuring, and mapping coordinates in discrete or continuous space.
 
-## Features
+## The Modules
 
-- **`Vec2`**: A robust 2D vector struct for physics and movement. Supports standard arithmetic, normalization, reflection, and rotation.
-- **`Topology`**: A system for defining how your world wraps (Plane, Torus, Klein Bottle, Möbius Strip, etc.).
+- **`vec2`, `vec3`, `vec4`**: Robust mathematical vectors for physics and movement.
+- **`flocking`**: Craig Reynolds' "Boids" algorithm for simulating complex group behavior.
+- **`topology`**: The rulebook for how your world connects (Plane, Torus, Klein Bottle, etc.).
 
-## Installation
+## The Hero's Journey: Navigating the Unknown
 
-Add this to your `Cargo.toml`:
-
-```toml
-[dependencies]
-locus = { path = "crates/locus" }
-# or if using workspace:
-locus = { workspace = true }
-```
-
-## Usage
-
-### The Hero's Journey: Moving on a Torus
-
-Here is a minimal example of moving a particle in a wrapping world (like in *Pac-Man* or *Asteroids*).
+If you're building a simulation where agents move through space, `locus` handles the heavy lifting. This example shows an agent moving in a Torus world (where walking off the edge wraps you around to the other side).
 
 ```rust
 use locus::{Vec2, Topology};
@@ -32,45 +20,37 @@ use locus::{Vec2, Topology};
 fn main() {
     let width = 20;
     let height = 10;
+
+    // 🗺️ The Map Room
+    // A Torus topology means the world wraps around like Pac-Man
     let topo = Topology::Torus;
 
-    // Start at position (x=19.0, y=5.0) - at the right edge
+    // 🕊️ The Agent
+    // Start at position (x=19.0, y=5.0) - right at the eastern edge
     let mut position = Vec2::new(19.0, 5.0);
-    let velocity = Vec2::new(1.0, 0.0); // Moving right
 
-    // Move
+    // Moving east (right)
+    let velocity = Vec2::new(1.0, 0.0);
+
+    // Time steps forward...
     position += velocity;
 
-    // Check raw position (now 20.5, 5.0) - out of bounds!
-    println!("Raw Position: {:?}", position);
-
-    // Normalize using Topology
-    // Note: Topology expects (row, col) i.e. (y, x) integers for discrete grids.
-    // For continuous coordinates, you might map them to indices.
-
+    // We reached x=20.0, but our map is only 20 units wide (0 to 19)!
+    // Use Topology to find our true grid cell coordinates.
+    // Note: Topology expects (row, col) i.e. (y, x) integers.
     let y_idx = position.y.round() as i64;
     let x_idx = position.x.round() as i64;
 
     if let Some((ny, nx)) = topo.normalize(y_idx, x_idx, width, height) {
-        println!("Normalized Grid Index: ({}, {})", ny, nx);
-        // Should wrap to (5, 0)
+        // We safely wrapped to the left side!
         assert_eq!(nx, 0);
         assert_eq!(ny, 5);
+        println!("Wrapped around to: x={}, y={}", nx, ny);
     }
 }
 ```
 
-### Vector Math
+## Features
 
-`Vec2` supports standard vector operations.
-
-```rust
-use locus::Vec2;
-
-let v1 = Vec2::new(3.0, 4.0);
-let v2 = Vec2::new(1.0, 2.0);
-
-let sum = v1 + v2;
-let mag = v1.magnitude(); // 5.0
-let unit = v1.normalize(); // (0.6, 0.8)
-```
+- **`serde`**: (Optional) Enables `Serialize` and `Deserialize` on core types.
+- **`macroquad`**: (Optional) Implements `From` and `Into` for interoperability with `macroquad::prelude::Vec3`.

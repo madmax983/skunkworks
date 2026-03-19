@@ -121,7 +121,14 @@ impl Vec2 {
     /// Returns a normalized version of the vector (length of 1.0).
     ///
     /// If the vector is zero, it returns the zero vector.
-    /// If the vector has infinite components, it attempts to handle them gracefully.
+    ///
+    /// # The "Why": Graceful Infinity Handling
+    ///
+    /// This method explicitly handles `f64::INFINITY` or `f64::NAN` components.
+    /// In dense flocking simulations or physics engines, a division by zero
+    /// or a massive force summation could result in an infinite vector.
+    /// Instead of propagating `NaN` and crashing the simulation, `normalize`
+    /// treats infinite components as a valid directional heading and clamps them.
     ///
     /// # Examples
     ///
@@ -166,6 +173,11 @@ impl Vec2 {
     ///
     /// If the vector's length is greater than `max`, it is scaled down to `max`.
     /// Otherwise, it is returned unchanged.
+    ///
+    /// # The "Why": Speed Limits
+    ///
+    /// Useful for capping velocities in physics simulations so entities don't break
+    /// the sound barrier or tunnel through collision geometry in a single frame.
     ///
     /// # Examples
     ///
