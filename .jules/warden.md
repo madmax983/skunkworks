@@ -40,3 +40,6 @@
 **2025-05-18 - [DoS Panic via Unhandled Options and NaN Unwraps]**
 **Threat:** The code used `unwrap()` in `experiments/chimera-roots/src/botany.rs` and `experiments/cargo-rocket/src/world.rs` to extract grid cells and package map elements, which would cause an unhandled panic (Denial of Service) if the coordinates or keys were invalid. Additionally, `botany.rs` sorted floats using `unwrap()` on `partial_cmp`, exposing a DoS panic vector if the math produced `NaN`.
 **Defense:** Replaced `unwrap()` with safe `if let Some` or `let Some(...) else` pattern matching to safely handle missing elements. Used `.unwrap_or(std::cmp::Ordering::Equal)` during float comparisons to prevent `NaN` values from crashing the sorting logic.
+**2026-03-19 - [DoS via Float Sort Panic]**
+**Threat:** The `quipu-lattice` experiment used `.unwrap()` on `partial_cmp` when sorting floats (`f64`). This creates a Denial of Service (DoS) vulnerability where any `NaN` value introduced into the projection math would cause the application to panic and crash.
+**Defense:** Replaced `.unwrap()` with `total_cmp` to safely handle potential `NaN` values without panicking.

@@ -21,6 +21,7 @@ use tui_shared::Tui;
 // --- Lattice & Camera Logic ---
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(clippy::enum_variant_names)]
 enum LatticeType {
     SimpleCubic,
     BodyCenteredCubic,
@@ -441,7 +442,7 @@ impl App {
         // scale = self.zoom / (z2 + 10.0);
         // z2 is camera-space Z. Larger Z means further away.
         // So we sort descending Z (draw far first).
-        items.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap());
+        items.sort_by(|a, b| b.0.total_cmp(&a.0));
 
         let canvas = Canvas::default()
             .block(
@@ -511,4 +512,18 @@ fn main() -> Result<()> {
     }
     tui.exit()?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_sort_nan_safety() {
+        let mut items = vec![
+            (1.0, "a"),
+            (std::f64::NAN, "b"),
+            (2.0, "c"),
+        ];
+        // This should no longer panic
+        items.sort_by(|a, b| b.0.total_cmp(&a.0));
+    }
 }
