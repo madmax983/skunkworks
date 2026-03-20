@@ -1,8 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hyperbolic-chimera**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to adapt to `Dna` structural changes in `chimera-lang` (missing `evolution_config`). Grace period: 24h.
-
+- **chimera-specter**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to adapt to `Dna` structural changes in `chimera-lang` (missing `evolution_config`). Grace period: 24h.
 
 ## Pardoned
+- **hyperbolic-chimera**: Specimen pardoned. Diagnosis: Terminal Compilation Failure. Resolved by fixing missing `evolution_config` and deprecated `ratatui` UI APIs. Vigor demonstrated.
 - **chimera-rift**: Specimen pardoned. Diagnosis: Skeletal Implementation / Terminal Genericism. Resolved by adding portal sensor inputs, allowing agents to navigate their evo-portals. Vigor demonstrated.
 - **mnem-diffusion**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding proper README, documentation, and test cases. The specimen has proven its right to exist in the ecosystem.
 - **chimera-fluid**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Missing `evolution_config`. Resolved by initializing `evolution_config` with `None`. The specimen now compiles successfully and its agents swim gracefully.
