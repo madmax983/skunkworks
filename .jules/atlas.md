@@ -9,3 +9,6 @@
 ## YYYY-MM-DD - [Normal Handler Extraction]
 **Tangle:** The Blob - `experiments/chimera-lang/src/tui/app/handlers/normal.rs` was ~2300 lines long, containing a monolithic event loop `match` block.
 **Blueprint:** Extracted the main input branches into a new `normal/` module, separating character inputs (`chars.rs`), directional navigation (`navigation.rs`), and other actions (`actions.rs`). The `normal/mod.rs` acts as a facade delegator for `handle_normal_input`. This improves cohesion and significantly reduces file length while maintaining the TUI input handling domain logic boundary.
+## 2026-03-20 - [Extracting Execution Ops]
+**Tangle:** The Blob - `experiments/chimera-lang/src/vm/mod.rs` was over 5600 lines long, with many opcode execution methods implemented directly inside it.
+**Blueprint:** Created `experiments/chimera-lang/src/vm/ops/` directory, moved execution methods to submodules (`math.rs`, `stack.rs`, `flow.rs`, `grid.rs`, `io.rs`, `bio.rs`), reducing `mod.rs` by over 600 lines and improving structural cohesion.
