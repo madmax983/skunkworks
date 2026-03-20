@@ -4,6 +4,10 @@
 - **Scent Origin:** Mosaic 🎨
 - **Status:** Mosaic sensed a lack of hierarchy in the CLI; reinforcement required.
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/codex-void
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Skeletal Implementation. Compilation fails due to unresolved scoping (`OFFSETS`). Grace period: 24h.
+
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/src/vm/prologue/
 - **Scent Origin:** Mycelium 🍄
@@ -489,9 +493,9 @@
 - **Status:** Leaving recombination pheromones for git-flock (git-harmonograph x luminous-flock). Expecting Codebase Swarming.
 - **Phenotype:** Boids swarm around Git commit hotspots, acting as a visual indicator of codebase activity.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-rift
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-rift
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. Agents cannot perceive their own portals, severing evolutionary pressure from reality. Grace period: 24h.
+- **Status:** Specimen pardoned. Diagnosis: Skeletal Implementation / Terminal Genericism. Resolved by adding portal sensor inputs, allowing agents to navigate their evo-portals. Vigor demonstrated.
 
 ### [Concentration Level: NEW HYBRID] - Location: experiments/chimera-tank
 - **Scent Origin:** The Splice Surgeon 🧬

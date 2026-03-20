@@ -113,7 +113,30 @@ impl Agent {
         self.push_input(1, w);
 
         // Input 2: Portal Sensor (Nearby Portal?)
-        // TODO
+        // Simple search for nearest portal
+        let mut nearest_portal_dist = f32::MAX;
+        let mut portal_target = (self.pos.0, self.pos.1); // Self if none found
+
+        for portal in &world.portals {
+            let d1 = (portal.entry_pos.0 as f32 - self.pos.0 as f32).powi(2)
+                + (portal.entry_pos.1 as f32 - self.pos.1 as f32).powi(2);
+            if d1 < nearest_portal_dist {
+                nearest_portal_dist = d1;
+                portal_target = portal.entry_pos;
+            }
+            let d2 = (portal.exit_pos.0 as f32 - self.pos.0 as f32).powi(2)
+                + (portal.exit_pos.1 as f32 - self.pos.1 as f32).powi(2);
+            if d2 < nearest_portal_dist {
+                nearest_portal_dist = d2;
+                portal_target = portal.exit_pos;
+            }
+        }
+
+        let pdx = (portal_target.0 as i64) - (self.pos.0 as i64);
+        let pdy = (portal_target.1 as i64) - (self.pos.1 as i64);
+
+        self.push_input(2, pdx);
+        self.push_input(2, pdy);
 
         // --- 2. Run VM ---
         // Give VM energy

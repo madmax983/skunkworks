@@ -13,12 +13,14 @@ pub enum Tile {
 
 #[derive(Clone)]
 pub struct Portal {
+    #[allow(dead_code)]
     pub id: usize,
     pub entry_pos: (usize, usize),
     pub exit_pos: (usize, usize),
     pub color_entry: Color,
     pub color_exit: Color,
     pub energy: i32,
+    #[allow(dead_code)]
     pub owner_id: u64,
 }
 
