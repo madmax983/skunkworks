@@ -37,7 +37,7 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Evo-Portals.
 - **Novel trait**: Bio-Spatial Manipulation.
 - **Status**: experiments/chimera-rift
-- **Evaluation**: Condemned by The Reaper ☠️ due to Skeletal Implementation and Terminal Genericism (specifically, missing sensory inputs via a critical TODO making its core portal trait non-functional), with a 24-hour grace period set.
+- **Evaluation**: Pardoned by The Reaper ☠️. The initial condemnation for Skeletal Implementation and Terminal Genericism was resolved by adding portal sensor inputs during its grace period, allowing agents to navigate.
 
 
 ### chimera-fluid
@@ -47,6 +47,13 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Status**: experiments/chimera-fluid
 - **Evaluation**: Pardoned by The Reaper ☠️. The terminal compilation failure was resolved by initializing `evolution_config` with `None`, allowing the specimen to compile successfully.
 
+
+### chaos-fluid
+- **Parents**: experiments/chaos-pendulum + experiments/ferrous-fluid
+- **Concept**: Chaotic Magnetic Fluid. A chaotic double pendulum's bobs act as strong moving magnetic poles within a ferrous fluid simulation.
+- **Novel trait**: Macroscopic Chaos vs Microscopic Fluidics. The chaotic pendulum dynamically stirs and repels the magnetic fluid, creating swirling, unpredictable fluid dynamic patterns mapped directly to the strange attractor of the pendulum.
+- **Status**: experiments/chaos-fluid
+- **Evaluation**: Success. Compiled. The macroscopic chaos successfully shapes the microscopic density fluid.
 
 ### myco-strings
 - **Parents**: experiments/myco-transit + experiments/ferrous-strings
@@ -365,8 +372,8 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Parents**: experiments/luminous-flock + experiments/ripple-tank
 - **Concept**: Acoustic Swarming. The boids navigate an acoustic wave tank field.
 - **Novel trait**: Boids generate standing waves through their motion and plucking, while the physical gradient of the sound waves physically advects them. The flock organizes into cymatic patterns based on resonance.
-- **Status**: experiments/luminous-tank
-- **Evaluation**: Condemned by The Reaper ☠️ due to Documentation Void / Skeletal Structure, with a 24-hour grace period set.
+- **Status**: graveyard/luminous-tank (Executed)
+- **Evaluation**: Executed by The Reaper ☠️ (moved to graveyard) due to Documentation Void / Skeletal Structure, having failed to improve during its grace period.
 
 ### gray-tank
 - **Parents**: experiments/ripple-tank + crates/gray-scott

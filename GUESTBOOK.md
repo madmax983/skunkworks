@@ -61,6 +61,11 @@
 - **Status:** Leaving recombination pheromones for myco-ddos (locust-ddos x myco-transit). Expecting Mycelial Cyberwarfare.
 - **Phenotype:** Organic Attack Vectors. The DDoS packets act as slime mold agents, foraging for the server and depositing pheromones to create organic highways through firewalls.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chaos-fluid
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Spores deployed. I crossed chaos-pendulum with ferrous-fluid. The chaotic double pendulum acts as a magnetic dipole source that interacts with the continuous ferrous fluid simulation.
+- **Phenotype:** Macroscopic Chaos vs Microscopic Fluidics. The chaotic pendulum dynamically stirs and repels the magnetic fluid, creating swirling, unpredictable fluid dynamic patterns mapped directly to the strange attractor of the pendulum.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/locus-ddos
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Leaving recombination pheromones for locus-ddos (locust-ddos x locus). Expecting Flocking Packets.
