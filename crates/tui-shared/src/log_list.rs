@@ -198,4 +198,88 @@ mod tests {
         assert_eq!(cell.symbol(), "ℹ\u{fe0f}");
         assert_eq!(cell.fg, Color::Blue);
     }
+
+    #[test]
+    fn test_table_driven_log_list_rendering() {
+        struct TestCase {
+            message: &'static str,
+            expected_symbol: &'static str,
+            expected_color: Color,
+        }
+
+        let test_cases = vec![
+            TestCase {
+                message: "This is an error message",
+                expected_symbol: "❌",
+                expected_color: Color::Red,
+            },
+            TestCase {
+                message: "Error in system",
+                expected_symbol: "❌",
+                expected_color: Color::Red,
+            },
+            TestCase {
+                message: "System warning: low disk space",
+                expected_symbol: "⚠️",
+                expected_color: Color::Yellow,
+            },
+            TestCase {
+                message: "Success! Operation completed",
+                expected_symbol: "✅",
+                expected_color: Color::Green,
+            },
+            TestCase {
+                message: "Note: please restart",
+                expected_symbol: "ℹ\u{fe0f}",
+                expected_color: Color::Blue,
+            },
+            TestCase {
+                message: "Info about the process",
+                expected_symbol: "ℹ\u{fe0f}",
+                expected_color: Color::Blue,
+            },
+            TestCase {
+                message: "Plain message with no keywords",
+                expected_symbol: "P",
+                expected_color: Color::Reset,
+            },
+            TestCase {
+                message: "ERROR in all caps",
+                expected_symbol: "❌",
+                expected_color: Color::Red,
+            },
+            TestCase {
+                message: "warning in lowercase",
+                expected_symbol: "⚠️",
+                expected_color: Color::Yellow,
+            },
+            TestCase {
+                message: "SuCcEsS with mixed case",
+                expected_symbol: "✅",
+                expected_color: Color::Green,
+            },
+        ];
+
+        for (i, case) in test_cases.iter().enumerate() {
+            let log_list = LogList::new(vec![case.message.to_string()]);
+            let area = Rect::new(0, 0, 40, 1);
+            let mut buffer = Buffer::empty(area);
+
+            log_list.render(area, &mut buffer);
+
+            let cell = &buffer[(0, 0)];
+            assert_eq!(
+                cell.symbol(),
+                case.expected_symbol,
+                "Failed on test case {}: {}",
+                i,
+                case.message
+            );
+            assert_eq!(
+                cell.fg, case.expected_color,
+                "Failed on test case {}: {}",
+                i, case.message
+            );
+        }
+    }
 }
