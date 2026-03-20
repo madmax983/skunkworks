@@ -54,18 +54,22 @@ impl SirenState {
 
 impl fmt::Display for SirenState {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let buffer_str: String = self
-            .buffer
-            .iter()
-            .map(|b| b.to_string())
-            .collect::<Vec<String>>()
-            .join(",");
-
         write!(
             f,
-            "♬:{}:{}:{}:{}:{}:{}",
-            self.bpm, self.octave, self.velocity, self.waveform, self.direction, buffer_str
-        )
+            "♬:{}:{}:{}:{}:{}",
+            self.bpm, self.octave, self.velocity, self.waveform, self.direction
+        )?;
+
+        if !self.buffer.is_empty() {
+            write!(f, ":{}", self.buffer[0])?;
+            for b in &self.buffer[1..] {
+                write!(f, ",{}", b)?;
+            }
+        } else {
+            write!(f, ":")?;
+        }
+
+        Ok(())
     }
 }
 

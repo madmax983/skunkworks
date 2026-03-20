@@ -12,18 +12,16 @@ pub fn exec_gravitate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
 
         // Calculate distances and sort
-        let mut coords_with_dist: Vec<((usize, usize), i64)> = coords
-            .into_iter()
-            .map(|(x, y)| {
-                let dx = x as i64 - cx as i64;
-                let dy = y as i64 - cy as i64;
-                // Squared distance is sufficient for sorting
-                ((x, y), dx * dx + dy * dy)
-            })
-            .collect();
+        let mut coords_with_dist = Vec::with_capacity(coords.len());
+        for (x, y) in coords {
+            let dx = x as i64 - cx as i64;
+            let dy = y as i64 - cy as i64;
+            // Squared distance is sufficient for sorting
+            coords_with_dist.push(((x, y), dx * dx + dy * dy));
+        }
 
         // Sort by distance (ascending)
-        coords_with_dist.sort_by_key(|&(_, d)| d);
+        coords_with_dist.sort_unstable_by_key(|&(_, d)| d);
 
         let mut moved_count = 0;
 

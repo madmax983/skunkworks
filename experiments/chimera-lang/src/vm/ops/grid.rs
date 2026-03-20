@@ -1,6 +1,6 @@
-use crate::vm::iterate_circle;
 use crate::opcode::OpCode;
 use crate::value::Value;
+use crate::vm::iterate_circle;
 
 impl crate::vm::ChimeraVM {
     pub(crate) fn exec_grid_op(&mut self, op: OpCode) -> Option<(usize, usize)> {
@@ -181,5 +181,4 @@ impl crate::vm::ChimeraVM {
         }
         None
     }
-
 }
