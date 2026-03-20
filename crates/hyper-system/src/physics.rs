@@ -127,8 +127,8 @@ pub enum Constraint4D {
 /// let mut system = PbdSystem4D::new();
 ///
 /// // Create two 1kg particles 2.0 units apart on the X-axis
-    /// let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
-    /// let p2 = system.add_particle(Vec4::new(2.0, 0.0, 0.0, 0.0), 1.0).unwrap();
+/// let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
+/// let p2 = system.add_particle(Vec4::new(2.0, 0.0, 0.0, 0.0), 1.0).unwrap();
 ///
 /// // Create a slightly squishy distance constraint between them
 /// system.add_distance_constraint(p1, p2, 0.8);
@@ -486,7 +486,9 @@ mod tests {
     fn test_distance_constraint() {
         let mut system = PbdSystem4D::new();
         let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
-        let p2 = system.add_particle(Vec4::new(2.0, 0.0, 0.0, 0.0), 1.0).unwrap();
+        let p2 = system
+            .add_particle(Vec4::new(2.0, 0.0, 0.0, 0.0), 1.0)
+            .unwrap();
 
         system.constraints.push(Constraint4D::Distance {
             p1,

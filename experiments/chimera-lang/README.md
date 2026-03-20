@@ -272,13 +272,11 @@ Chimera can be used as a Rust library to embed the VM in other applications.
 
 Add to your `Cargo.toml`:
 ```toml
-[dependencies]
-# ⚠️ REQUIRES FEATURE NOVA
-chimera-lang = { path = "chimera-lang", features = ["nova"] }
+[workspace]
+resolver = "2"
+members = ["my-chimera-project"]
 
-# ⚠️ WORKSPACE DEPENDENCY RESOLUTION
-# If you are compiling `chimera-lang` outside of its original workspace,
-# you MUST provide these missing workspace dependencies in your Cargo.toml:
+[workspace.dependencies]
 anyhow = "1.0"
 pest = "2.7"
 pest_derive = "2.7"
@@ -288,12 +286,28 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 clap = { version = "4.4", features = ["derive"] }
 rand = "0.8"
-# And path dependencies to other local crates (adjust paths accordingly):
-tui-shared = { path = "../crates/tui-shared" }
-locus = { path = "../crates/locus", features = ["serde"] }
-resonance-audio = { path = "../crates/resonance-audio" }
-hyper-system = { path = "../crates/hyper-system", default-features = false }
-poincare-disk = { path = "../crates/poincare-disk" }
+
+# ⚠️ WORKSPACE DEPENDENCY RESOLUTION
+# If you are compiling `chimera-lang` outside of its original workspace,
+# you MUST setup your project as a workspace and provide these missing
+# workspace dependencies or point to their local paths:
+tui-shared = { path = "path/to/crates/tui-shared" }
+locus = { path = "path/to/crates/locus", features = ["serde"] }
+resonance-audio = { path = "path/to/crates/resonance-audio" }
+hyper-system = { path = "path/to/crates/hyper-system", default-features = false }
+poincare-disk = { path = "path/to/crates/poincare-disk" }
+```
+
+In your project `my-chimera-project/Cargo.toml`:
+```toml
+[package]
+name = "my-chimera-project"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# ⚠️ REQUIRES FEATURE NOVA
+chimera-lang = { path = "path/to/chimera-lang", features = ["nova"] }
 ```
 
 Example `main.rs`:

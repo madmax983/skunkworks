@@ -113,7 +113,7 @@ mod tests {
         match &vm.grid[2][1] {
             Value::Str(s) => {
                 let v = s.chars().next().unwrap();
-                assert!(('0'..='9').contains(&v));
+                assert!(v.is_ascii_digit());
             }
             _ => panic!("Expected string output at (2,1)"),
         }
