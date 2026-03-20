@@ -109,7 +109,6 @@ pub mod bard;
 #[cfg(feature = "nova")]
 pub mod blackbox;
 pub mod catalyst;
-pub mod ops;
 pub mod chimera_chaos;
 #[cfg(feature = "nova")]
 pub mod cladistics;
@@ -148,6 +147,7 @@ pub mod microscope;
 mod neurochem_test;
 #[cfg(feature = "biophysics")]
 pub mod neuron;
+pub mod ops;
 
 #[cfg(feature = "biophysics")]
 pub type SynapseMap = HashMap<(usize, usize), Vec<((usize, usize), f32)>>;

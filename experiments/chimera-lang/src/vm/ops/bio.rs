@@ -3,7 +3,11 @@ use crate::opcode::OpCode;
 use crate::value::Value;
 
 impl crate::vm::ChimeraVM {
-    pub(crate) fn exec_bio_op(&mut self, op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+    pub(crate) fn exec_bio_op(
+        &mut self,
+        op: OpCode,
+        _args: &[Nucleotide],
+    ) -> Option<(usize, usize)> {
         match op {
             OpCode::Photosynthesize => {
                 self.energy = self.energy.saturating_add(5);

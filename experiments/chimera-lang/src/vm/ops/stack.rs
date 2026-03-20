@@ -1,10 +1,14 @@
-use crate::vm::MAX_RECURSION_DEPTH;
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use crate::value::Value;
+use crate::vm::MAX_RECURSION_DEPTH;
 
 impl crate::vm::ChimeraVM {
-    pub(crate) fn exec_stack_op(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
+    pub(crate) fn exec_stack_op(
+        &mut self,
+        op: OpCode,
+        args: &[Nucleotide],
+    ) -> Option<(usize, usize)> {
         match op {
             OpCode::Push => {
                 if let Some(arg) = args.first() {

@@ -115,7 +115,8 @@ async fn main() {
 
             for s in &mut strings {
                 let string_x = s.pos.x + s.vibration;
-                let crossed = (prev_x < string_x && next_x >= string_x) || (prev_x > string_x && next_x <= string_x);
+                let crossed = (prev_x < string_x && next_x >= string_x)
+                    || (prev_x > string_x && next_x <= string_x);
                 let in_range = p.pos.y >= s.pos.y && p.pos.y <= s.pos.y + s.length;
 
                 if crossed && in_range {
@@ -178,7 +179,13 @@ async fn main() {
 
         // UI
         draw_text("Git Strings", 10.0, 30.0, 30.0, WHITE);
-        draw_text("Commit History -> Kinetic Agents -> Acoustic Strings", 10.0, 50.0, 20.0, GRAY);
+        draw_text(
+            "Commit History -> Kinetic Agents -> Acoustic Strings",
+            10.0,
+            50.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await;
     }

@@ -174,7 +174,14 @@ impl FerrousString {
             let y = self.pos.y + y_offset;
             let current = vec2(x, y);
 
-            draw_line(prev.x, prev.y, current.x, current.y, thickness, segment_color);
+            draw_line(
+                prev.x,
+                prev.y,
+                current.x,
+                current.y,
+                thickness,
+                segment_color,
+            );
             prev = current;
         }
 

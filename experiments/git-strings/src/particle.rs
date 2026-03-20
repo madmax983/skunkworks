@@ -80,10 +80,18 @@ impl Particle {
     }
 
     pub fn draw(&self) {
-        if !self.active { return; }
+        if !self.active {
+            return;
+        }
         draw_circle(self.pos.x, self.pos.y, 4.0, self.color);
         // Draw commit message nearby occasionally or maybe just author
-        draw_text(&self.commit.author, self.pos.x + 6.0, self.pos.y + 3.0, 16.0, Color::new(1.0, 1.0, 1.0, 0.4));
+        draw_text(
+            &self.commit.author,
+            self.pos.x + 6.0,
+            self.pos.y + 3.0,
+            16.0,
+            Color::new(1.0, 1.0, 1.0, 0.4),
+        );
     }
 }
 

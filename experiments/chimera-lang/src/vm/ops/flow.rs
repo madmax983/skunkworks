@@ -1,12 +1,16 @@
+use crate::ast::JunctionType;
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use crate::value::Value;
-use crate::ast::JunctionType;
 #[cfg(feature = "nova")]
 use crate::vm::Chirality;
 
 impl crate::vm::ChimeraVM {
-    pub(crate) fn exec_flow_op(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
+    pub(crate) fn exec_flow_op(
+        &mut self,
+        op: OpCode,
+        args: &[Nucleotide],
+    ) -> Option<(usize, usize)> {
         match op {
             OpCode::Jump => {
                 if let Some(Nucleotide::Number(n)) = args.first() {
@@ -106,5 +110,4 @@ impl crate::vm::ChimeraVM {
             _ => None,
         }
     }
-
 }
