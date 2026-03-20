@@ -24,6 +24,20 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 
 ## 🌿 Attempted Crosses
 
+### hyperbolic-chimera
+- **Parents**: experiments/hyperbolic-ants + experiments/chimera-lang
+- **Concept**: Boid-driven Hyperbolic Organisms.
+- **Novel trait**: Non-Euclidean Genetics. The boids navigate a hyperbolic disk using ChimeraVM brains.
+- **Status**: experiments/hyperbolic-chimera
+- **Evaluation**: Pardoned by The Reaper ☠️. The initial condemnation for Terminal Compilation Failure was resolved by fixing the missing `evolution_config` field in the `Dna` struct and fixing deprecated ratatui APIs during its grace period.
+
+### git-strings
+- **Parents**: experiments/git-harmonograph + experiments/ferrous-strings
+- **Concept**: Acoustic-Magnetic Git History. Git commits traverse the continuous space as kinetic magnetic particles, colliding with and plucking magnetic strings.
+- **Novel trait**: Continuous Acoustic-Magnetic Translation of Git Intent. By dropping git commits onto magnetic strings, the repository's evolution is represented by the physical acoustic twangs and resultant magnetic field interference patterns.
+- **Status**: experiments/git-strings
+- **Evaluation**: Success. Compiled. The visual phenotype successfully manifests git commit intent as a physical force that plucks resonant strings, producing dynamic audio-visual translations.
+
 ### chimera-tank
 - **Parents**: experiments/chimera-lang + experiments/ripple-tank
 - **Concept**: Acoustic Genetic Organisms. Agents equipped with `ChimeraVM` brains navigate a 2D physical acoustic wave tank. They must evolve `Dna` sequences to sense pressure gradients and pluck waves to propel themselves, translating genetic instructions into physical acoustic locomotion.

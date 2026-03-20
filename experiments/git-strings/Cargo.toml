@@ -1,0 +1,20 @@
+[package]
+name = "git-strings"
+version = "0.1.0"
+edition = "2021"
+description = "Git-driven acoustic-magnetic strings."
+
+[dependencies]
+macroquad = "0.4"
+rand = "0.8"
+ferrous-core = { path = "../../crates/ferrous-core" }
+crossbeam-channel = "0.5"
+anyhow = "1.0"
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = ["audio"]
+audio = ["cpal"]
