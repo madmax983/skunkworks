@@ -43,3 +43,6 @@
 **2026-03-19 - [DoS via Float Sort Panic]**
 **Threat:** The `quipu-lattice` experiment used `.unwrap()` on `partial_cmp` when sorting floats (`f64`). This creates a Denial of Service (DoS) vulnerability where any `NaN` value introduced into the projection math would cause the application to panic and crash.
 **Defense:** Replaced `.unwrap()` with `total_cmp` to safely handle potential `NaN` values without panicking.
+**2026-03-20 - [Validate Particle Initialization]**
+**Threat:** The `hyper-system` crate's `physics::PbdSystem4D::step` method, while possessing a NaN guard for `dt`, lacked protections against initialization poisoning. Particles could be created with `NaN` or `Infinity` positions, or pinned to non-finite coordinates. This allows invalid floats to silently propagate and corrupt the entire 4D simulation state, causing unpredictable visualization behavior and logic errors (Silent DoS/UB).
+**Defense:** Added an `is_finite` check to the `Vec4` type. Refactored `add_particle` and `add_pin_constraint` to return a `Result<usize, &'static str>` and `Result<(), &'static str>` respectively, following the "Parse, don't validate" pattern to reject non-finite inputs securely at the API boundary without panicking.

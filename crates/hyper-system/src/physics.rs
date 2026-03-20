@@ -127,8 +127,8 @@ pub enum Constraint4D {
 /// let mut system = PbdSystem4D::new();
 ///
 /// // Create two 1kg particles 2.0 units apart on the X-axis
-/// let p1 = system.add_particle(Vec4::zero(), 1.0);
-/// let p2 = system.add_particle(Vec4::new(2.0, 0.0, 0.0, 0.0), 1.0);
+    /// let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
+    /// let p2 = system.add_particle(Vec4::new(2.0, 0.0, 0.0, 0.0), 1.0).unwrap();
 ///
 /// // Create a slightly squishy distance constraint between them
 /// system.add_distance_constraint(p1, p2, 0.8);
@@ -175,13 +175,19 @@ impl PbdSystem4D {
     /// use hyper_system::physics::PbdSystem4D;
     ///
     /// let mut system = PbdSystem4D::new();
-    /// let p1 = system.add_particle(Vec4::zero(), 1.0);
-    /// let static_anchor = system.add_particle(Vec4::new(10.0, 0.0, 0.0, 0.0), 0.0);
+    /// let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
+    /// let static_anchor = system.add_particle(Vec4::new(10.0, 0.0, 0.0, 0.0), 0.0).unwrap();
     ///
     /// assert_eq!(p1, 0);
     /// assert_eq!(static_anchor, 1);
     /// ```
-    pub fn add_particle(&mut self, pos: Vec4, mass: f32) -> usize {
+    pub fn add_particle(&mut self, pos: Vec4, mass: f32) -> Result<usize, &'static str> {
+        if !pos.is_finite() {
+            return Err("Particle position must be finite");
+        }
+        if mass < 0.0 || !mass.is_finite() {
+            return Err("Mass must be non-negative and finite");
+        }
         let idx = self.particles.len();
         self.particles.push(Particle4D {
             pos,
@@ -190,7 +196,7 @@ impl PbdSystem4D {
             vel: Vec4::zero(),
             user_data: Vec4::zero(),
         });
-        idx
+        Ok(idx)
     }
 
     /// Creates a permanent distance constraint between two particles.
@@ -209,8 +215,8 @@ impl PbdSystem4D {
     /// use hyper_system::physics::PbdSystem4D;
     ///
     /// let mut system = PbdSystem4D::new();
-    /// let p1 = system.add_particle(Vec4::zero(), 1.0);
-    /// let p2 = system.add_particle(Vec4::new(5.0, 0.0, 0.0, 0.0), 1.0);
+    /// let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
+    /// let p2 = system.add_particle(Vec4::new(5.0, 0.0, 0.0, 0.0), 1.0).unwrap();
     ///
     /// // Constrain them to exactly 5.0 units apart (their current distance)
     /// system.add_distance_constraint(p1, p2, 1.0);
@@ -250,8 +256,8 @@ impl PbdSystem4D {
     /// use hyper_system::physics::PbdSystem4D;
     ///
     /// let mut system = PbdSystem4D::new();
-    /// let p1 = system.add_particle(Vec4::zero(), 1.0);
-    /// let p2 = system.add_particle(Vec4::new(10.0, 0.0, 0.0, 0.0), 1.0);
+    /// let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
+    /// let p2 = system.add_particle(Vec4::new(10.0, 0.0, 0.0, 0.0), 1.0).unwrap();
     ///
     /// // Create an actuator that can extend from 5.0 to 15.0 units
     /// // Currently set to fully extended (1.0 -> 15.0 units)
@@ -291,13 +297,17 @@ impl PbdSystem4D {
     /// use hyper_system::physics::PbdSystem4D;
     ///
     /// let mut system = PbdSystem4D::new();
-    /// let p1 = system.add_particle(Vec4::zero(), 1.0);
+    /// let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
     ///
     /// // Pin the particle to (5.0, 5.0, 0.0, 0.0)
     /// system.add_pin_constraint(p1, Vec4::new(5.0, 5.0, 0.0, 0.0));
     /// ```
-    pub fn add_pin_constraint(&mut self, p: usize, pos: Vec4) {
+    pub fn add_pin_constraint(&mut self, p: usize, pos: Vec4) -> Result<(), &'static str> {
+        if !pos.is_finite() {
+            return Err("Pin position must be finite");
+        }
         self.constraints.push(Constraint4D::Pin { p, pos });
+        Ok(())
     }
 
     /// Steps the simulation forward in time.
@@ -319,7 +329,7 @@ impl PbdSystem4D {
     /// use hyper_system::physics::PbdSystem4D;
     ///
     /// let mut system = PbdSystem4D::new();
-    /// let p1 = system.add_particle(Vec4::zero(), 1.0);
+    /// let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
     ///
     /// // Give it a push along the X axis
     /// system.particles[p1].vel = Vec4::new(10.0, 0.0, 0.0, 0.0);
@@ -463,7 +473,7 @@ mod tests {
     #[test]
     fn test_integration() {
         let mut system = PbdSystem4D::new();
-        let p = system.add_particle(Vec4::zero(), 1.0);
+        let p = system.add_particle(Vec4::zero(), 1.0).unwrap();
         system.particles[p].vel = Vec4::new(1.0, 0.0, 0.0, 0.0);
 
         system.step(1.0, 1, 0.98);
@@ -475,8 +485,8 @@ mod tests {
     #[test]
     fn test_distance_constraint() {
         let mut system = PbdSystem4D::new();
-        let p1 = system.add_particle(Vec4::zero(), 1.0);
-        let p2 = system.add_particle(Vec4::new(2.0, 0.0, 0.0, 0.0), 1.0);
+        let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
+        let p2 = system.add_particle(Vec4::new(2.0, 0.0, 0.0, 0.0), 1.0).unwrap();
 
         system.constraints.push(Constraint4D::Distance {
             p1,
