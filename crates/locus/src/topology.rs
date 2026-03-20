@@ -84,6 +84,19 @@ pub enum Topology {
     /// |     |
     /// +-----+
     /// ```
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::Topology;
+    /// let topo = Topology::CylinderH;
+    ///
+    /// // Walking off the right side (x=10) wraps around to the left (x=0)
+    /// assert_eq!(topo.normalize(5, 10, 10, 10), Some((5, 0)));
+    ///
+    /// // Walking off the top (y=-1) hits a wall (None)
+    /// assert_eq!(topo.normalize(-1, 5, 10, 10), None);
+    /// ```
     CylinderH,
 
     /// **Vertical Cylinder**: The "Infinite Scroll".
@@ -102,6 +115,19 @@ pub enum Topology {
     ///    |
     ///    v (Wraps vertically)
     /// ```
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::Topology;
+    /// let topo = Topology::CylinderV;
+    ///
+    /// // Walking off the bottom (y=10) wraps around to the top (y=0)
+    /// assert_eq!(topo.normalize(10, 5, 10, 10), Some((0, 5)));
+    ///
+    /// // Walking off the right side (x=10) hits a wall (None)
+    /// assert_eq!(topo.normalize(5, 10, 10, 10), None);
+    /// ```
     CylinderV,
 
     /// **Klein Bottle**: The "Twisted Tube".
@@ -117,6 +143,17 @@ pub enum Topology {
     /// <--+--> (Wraps horizontally)
     ///    |
     ///    X (Twists vertically: x -> width - 1 - x)
+    /// ```
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::Topology;
+    /// let topo = Topology::Klein;
+    ///
+    /// // Wrapping Y off the top (y=-1) twists X
+    /// // Map size is 10x10. y=-1 becomes 9. x=2 becomes (10-1)-2 = 7.
+    /// assert_eq!(topo.normalize(-1, 2, 10, 10), Some((9, 7)));
     /// ```
     Klein,
 
@@ -134,11 +171,30 @@ pub enum Topology {
     /// |     |
     /// +-----+
     /// ```
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::Topology;
+    /// let topo = Topology::Mobius;
+    ///
+    /// // Walking off the right edge (x=10) wraps and twists Y
+    /// // Map size is 10x10. x=10 becomes 0. y=2 becomes (10-1)-2 = 7.
+    /// assert_eq!(topo.normalize(2, 10, 10, 10), Some((7, 0)));
+    /// ```
     Mobius,
 
     /// **Hyperbolic**: The "Infinite Disk".
     ///
     /// Poincaré Disk model mapping. Typically handled externally or treated as bounded.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::Topology;
+    /// let topo = Topology::Hyperbolic;
+    /// assert_eq!(topo.normalize(-1, 5, 10, 10), None);
+    /// ```
     Hyperbolic,
 
     /// **Sphere**: The "Globe".
@@ -148,6 +204,19 @@ pub enum Topology {
     /// * `x` wraps normally (`x % width`).
     /// * `y` wraps (`y % height`), but if it crosses a pole, `x` shifts by `width / 2`
     ///   and `y` is reflected.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::Topology;
+    /// let topo = Topology::Sphere;
+    ///
+    /// // Walking over the "North Pole" (y=-1)
+    /// // Map size is 10x10.
+    /// // Y wraps to 9 (because -1 % 10 = 9), and then reflects: (10-1) - 9 = 0.
+    /// // X shifts by width/2 (5): 2 + 5 = 7.
+    /// assert_eq!(topo.normalize(-1, 2, 10, 10), Some((0, 7)));
+    /// ```
     Sphere,
 
     /// **Real Projective Plane**: The "Double Twist".
@@ -156,6 +225,17 @@ pub enum Topology {
     ///
     /// * If `x` wraps, `y` is mirrored: `y' = (height - 1) - y`.
     /// * If `y` wraps, `x` is mirrored: `x' = (width - 1) - x`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::Topology;
+    /// let topo = Topology::Projective;
+    ///
+    /// // Wrapping X (x=10) twists Y
+    /// // Map size is 10x10. x=10 becomes 0. y=2 becomes (10-1)-2 = 7.
+    /// assert_eq!(topo.normalize(2, 10, 10, 10), Some((7, 0)));
+    /// ```
     Projective,
 }
 
