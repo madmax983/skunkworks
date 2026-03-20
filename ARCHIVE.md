@@ -1,8 +1,9 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-rift**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. The core feature lacks sensory inputs. Grace period: 24h.
+- **codex-void**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Skeletal Implementation. Missing definitions (`OFFSETS`) in `src/glyph.rs` prevent compilation. Grace period: 24h.
 
 
 ## Pardoned
+- **chimera-rift**: Specimen pardoned. Diagnosis: Skeletal Implementation / Terminal Genericism. Resolved by adding portal sensor inputs, allowing agents to navigate their evo-portals. Vigor demonstrated.
 - **mnem-diffusion**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding proper README, documentation, and test cases. The specimen has proven its right to exist in the ecosystem.
 - **chimera-fluid**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Missing `evolution_config`. Resolved by initializing `evolution_config` with `None`. The specimen now compiles successfully and its agents swim gracefully.
 - **chrontext**: Specimen pardoned. Diagnosis: Layer Lasagna / Terminal Genericism. Resolved by Razor flattening the architecture into a single `main.rs` file and removing speculative generality. The timeline wrapper is pure again.
