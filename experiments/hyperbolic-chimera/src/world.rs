@@ -74,6 +74,7 @@ impl World {
                 helix: Helix {
                     strands: vec![Strand { genes }],
                 },
+                evolution_config: None,
             };
 
             let r = rng.gen_range(0.0..0.5);

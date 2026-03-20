@@ -63,7 +63,7 @@ fn ui(f: &mut Frame, world: &World) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Min(0), Constraint::Length(1)])
-        .split(f.size());
+        .split(f.area());
 
     let canvas_area = chunks[0];
     let status_area = chunks[1];
