@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **codex-void**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Skeletal Implementation. Missing definitions (`OFFSETS`) in `src/glyph.rs` prevent compilation. Grace period: 24h.
+- **hyperbolic-chimera**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to adapt to `Dna` structural changes in `chimera-lang` (missing `evolution_config`). Grace period: 24h.
 
 
 ## Pardoned
@@ -21,6 +21,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **codex-void**: Specimen executed. Diagnosis: Terminal Compilation Failure / Skeletal Implementation. Missing definitions (`OFFSETS`) in `src/glyph.rs` prevent compilation. Failed to improve during grace period. Moved to graveyard.
 - **sys-dance**: Specimen executed. Diagnosis: Terminal Genericism / Swarm Neglect. Failed to improve during grace period (security fix only). Moved to graveyard.
 - **luminous-tank**: Specimen executed. Diagnosis: Documentation Void / Skeletal Structure. Failed to improve during grace period. Moved to graveyard.
 - **mnem-hologram**: Specimen executed. Diagnosis: Documentation Void / Skeletal Decay. Failed to improve during grace period. Moved to graveyard.
