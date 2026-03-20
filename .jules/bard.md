@@ -34,3 +34,6 @@
 ## 2025-02-28 - The Ghost of Workspace Resolutions
 **Confusion:** Users attempting to run README examples by copy-pasting the `Cargo.toml` dependencies into a fresh project encountered compilation errors (missing dependencies like `anyhow` and `pest`) because `chimera-lang` uses `workspace.dependencies` that are lost when referenced as a raw path dependency outside the original workspace.
 **Clarification:** Updated the `Cargo.toml` example in `experiments/chimera-lang/README.md` to explicitly include all missing workspace dependencies and corrected path locations for sibling crates to ensure "The README Run" passes smoothly. Also highlighted `nova` feature requirements and clarified that `story_demo` runs a blocking TUI.
+## 2025-03-20 - The "Assume they Know" Topologies
+**Confusion:** The `Topology` enum variants in `locus` (`CylinderH`, `Klein`, `Mobius`, `Sphere`, `Projective`, `Hyperbolic`) lacked executable doctests. Users were confused on how coordinate wrapping mathematically transformed x and y indices when crossing boundaries for non-trivial topologies.
+**Clarification:** Added thorough, mathematically rigorous `/// # Examples` doctests to all `Topology` variants. These tests explicitly demonstrate the outcome of calling `.normalize()` with out-of-bounds inputs, showing exactly how twists, reflections, and shifts are applied to grid coordinates.
