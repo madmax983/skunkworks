@@ -35,6 +35,21 @@ pub struct Vec4 {
 }
 
 impl Vec4 {
+    /// Returns `true` if all components are finite (neither infinite nor NaN).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::vec4::Vec4;
+    /// let v = Vec4::new(1.0, 1.0, 1.0, 1.0);
+    /// assert!(v.is_finite());
+    /// let v2 = Vec4::new(f32::NAN, 1.0, 1.0, 1.0);
+    /// assert!(!v2.is_finite());
+    /// ```
+    pub fn is_finite(&self) -> bool {
+        self.x.is_finite() && self.y.is_finite() && self.z.is_finite() && self.w.is_finite()
+    }
+
     /// Creates a new 4D vector.
     ///
     /// # Arguments

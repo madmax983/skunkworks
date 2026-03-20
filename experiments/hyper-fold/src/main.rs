@@ -35,7 +35,7 @@ async fn main() {
     for pos3 in initial_positions_3d {
         // origami pos is Vec3
         let p = Vec4::new(pos3.x, pos3.y, pos3.z, 0.0);
-        system.add_particle(p, 1.0);
+        system.add_particle(p, 1.0).unwrap();
     }
 
     // Add constraints based on grid connectivity

@@ -44,7 +44,10 @@ impl Tissue4D {
                         // Pin center?
                         // Center is at index 40 (1,1,1,1) if grid is 3x3x3x3
                         let mass = 1.0;
-                        let idx = system.add_particle(pos, mass);
+                        let idx = system.add_particle(pos, mass).unwrap_or_else(|e| {
+                            eprintln!("Failed to add particle: {}", e);
+                            0
+                        });
                         particle_indices.push(idx);
                     }
                 }

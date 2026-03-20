@@ -55,13 +55,29 @@ proptest! {
 #[test]
 fn test_havoc_dt_nan_poison() {
     let mut system = hyper_system::physics::PbdSystem4D::new();
-    let p1 = system.add_particle(hyper_system::math::Vec4::new(1.0, 1.0, 1.0, 1.0), 1.0);
+    let p1 = system.add_particle(hyper_system::math::Vec4::new(1.0, 1.0, 1.0, 1.0), 1.0).unwrap();
 
     system.particles[p1].vel = hyper_system::math::Vec4::new(1.0, 1.0, 1.0, 1.0);
 
     system.step(f32::NAN, 0, 0.99);
 
-    if system.particles[p1].pos.x.is_nan() {
-        panic!("Havoc: position became NaN!");
-    }
+    assert!(
+        !system.particles[p1].pos.x.is_nan(),
+        "Warden defense failed: position became NaN!"
+    );
+}
+
+#[test]
+fn test_havoc_dt_infinity() {
+    let mut system = hyper_system::physics::PbdSystem4D::new();
+    let p1 = system.add_particle(hyper_system::math::Vec4::new(1.0, 1.0, 1.0, 1.0), 1.0).unwrap();
+
+    system.particles[p1].vel = hyper_system::math::Vec4::new(1.0, 1.0, 1.0, 1.0);
+
+    system.step(f32::INFINITY, 0, 0.99);
+
+    assert!(
+        system.particles[p1].pos.x.is_finite(),
+        "Warden defense failed: position became Infinity!"
+    );
 }
