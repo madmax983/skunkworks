@@ -35,6 +35,7 @@ impl SpectralAgent {
             helix: Helix {
                 strands: vec![Strand { genes }],
             },
+            evolution_config: None,
         };
         let vm = ChimeraVM::new(dna);
 

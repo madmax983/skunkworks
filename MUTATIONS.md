@@ -458,3 +458,10 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Novel trait**: Chronological Cyberwarfare. Older code lines act as stronger attractors (larger radii or higher priority) for the DDoS packets, while newly refactored sections are ignored.
 - **Status**: graveyard/chron-ddos (Executed)
 - **Evaluation**: Condemned by The Reaper ☠️. Documentation void and terminal compilation failure caused by upstream changes (its dependency `chrontext` was flattened into a binary crate). Failed. Moved to graveyard.
+
+### chimera-ddos
+- **Parents**: experiments/locust-ddos + experiments/chimera-lang
+- **Concept**: Cybernetic Organisms performing DDoS. The DDoS packets are not simple swarm agents; they run actual `ChimeraVM` genetic code to decide their pathing, evolving over time to bypass firewalls.
+- **Novel trait**: Genetic Attack Vectors. Packets that hit firewalls die, those that reach the server pass their `Dna` to the next generation, evolving to naturally weave through complex, shifting defense grids.
+- **Status**: experiments/chimera-ddos
+- **Evaluation**: Success. Compiled. Swarm intelligence adapts via genetic inheritance and crossover.
