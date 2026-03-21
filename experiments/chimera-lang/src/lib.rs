@@ -36,7 +36,9 @@
 //! A minimal organism must generate energy to stay alive.
 //!
 //! ```rust
-//! use chimera_lang::prelude::*;
+//! use chimera_lang::ast::{Dna, Gene, Nucleotide};
+//! use chimera_lang::opcode::OpCode;
+//! use chimera_lang::vm::ChimeraVM;
 //!
 //! // DNA: [ photosynthesize(), jump(0) ]
 //! // This organism sits in the sun and loops forever.

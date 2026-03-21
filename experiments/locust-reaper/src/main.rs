@@ -30,11 +30,23 @@ async fn main() {
 
         // Draw HUD
         draw_text("Locust Reaper (DDoS + GC)", 10.0, 30.0, 30.0, WHITE);
-        draw_text("Left Click: Spawn Dead Nodes (Garbage)", 10.0, 60.0, 20.0, GRAY);
+        draw_text(
+            "Left Click: Spawn Dead Nodes (Garbage)",
+            10.0,
+            60.0,
+            20.0,
+            GRAY,
+        );
         draw_text("C: Clear nodes", 10.0, 80.0, 20.0, GRAY);
 
         let agents_alive = world.agents.iter().filter(|a| a.state == 0).count();
-        draw_text(&format!("Agents: {}", agents_alive), 10.0, 110.0, 20.0, GREEN);
+        draw_text(
+            &format!("Agents: {}", agents_alive),
+            10.0,
+            110.0,
+            20.0,
+            GREEN,
+        );
 
         next_frame().await;
     }
