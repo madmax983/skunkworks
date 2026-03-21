@@ -489,10 +489,15 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by fixing missing `evolution_config` and adapting to `Dna` structural changes in `chimera-lang`. The specter haunts again.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/stardust-compiler
+### [Concentration Level: EVAPORATING] - Location: graveyard/stardust-compiler
 *The Reaper was here. A generic utility wearing the skin of an experiment is still just a utility.*
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Deceptive Persona Alignment. Standard LSB steganography disguised as esoteric research. Grace period: 24h.
+- **Status:** Specimen executed. Diagnosis: Terminal Genericism / Deceptive Persona Alignment. Standard LSB steganography disguised as esoteric research. Grace period expired. Moved to graveyard.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-cuneiform
+*The Reaper was here. The clay hardens, but the words are gibberish. Evolution requires intent, not random wandering.*
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Stagnation / Vestigial Organs / Skeletal Implementation. Grace period: 24h.
 
 ### [Concentration Level: NEW HYBRID] - Location: experiments/mnem-ddos
 - **Scent Origin:** The Splice Surgeon 🧬
