@@ -4,7 +4,8 @@ use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use chimera_lang::opcode::OpCode;
 use chimera_lang::vm::{ChimeraVM, Value};
 use rand::Rng;
-use std::fs;
+
+use std::io::Read;
 
 pub struct Agent {
     pub vm: ChimeraVM,
@@ -45,11 +46,21 @@ impl Simulation {
         self.current_file_idx = idx;
         let file = &self.bin.files[idx];
 
-        let content = if let Ok(raw) = fs::read_to_string(&file.path) {
-            apply_decay(&raw, file.decay_level)
-        } else {
-            "Error reading file".to_string()
-        };
+        let mut loaded = false;
+        let mut content = "Error reading file".to_string();
+        if let Ok(f) = std::fs::File::open(&file.path) {
+            let mut raw = String::new();
+            let limit = 1024 * 1024;
+            if let Ok(bytes) = std::io::Read::take(f, limit + 1).read_to_string(&mut raw) {
+                if bytes <= limit as usize {
+                    content = apply_decay(&raw, file.decay_level);
+                    loaded = true;
+                }
+            }
+        }
+        if !loaded {
+            content = "Binary, unreadable, or file too large.".to_string();
+        }
 
         // Convert to 2D grid
         self.current_content = content.lines().map(|l| l.chars().collect()).collect();
@@ -110,6 +121,7 @@ impl Simulation {
             ];
 
             let dna = Dna {
+                evolution_config: None,
                 helix: Helix {
                     strands: vec![Strand { genes }],
                 },
