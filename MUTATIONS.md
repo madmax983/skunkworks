@@ -9,10 +9,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 **Observations:**
 - Spectral translations (`hologram-text` + continuous domains) consistently yield compelling visuals and stable compilation (`luminous-hologram`, `gray-hologram`, `chron-hologram`).
 - Acoustic wave interactions (`ripple-tank` crosses) have shown strong hybrid vigor, successfully translating physical displacement to various domains.
-- The Reaper has been active, condemning purely generic or unmaintained biological experiments (`chron-diffusion`, `gray-chaos`, `chaos-mycelium`, `hyperbolic-swarm`, `chaos-magnetic`, `genetic-flock`). Swarm mechanics require stable, non-exploding physics constraints (unlike the failed hyperbolic cross).
+- The Reaper has been active, condemning purely generic or unmaintained biological experiments (`chron-diffusion`, `gray-chaos`, `chaos-mycelium`, `hyperbolic-swarm`, `chaos-magnetic`, `genetic-flock`, `codex-void`, `luminous-tank`, `sandpile-scheduler`, `sys-dance`). Swarm mechanics require stable, non-exploding physics constraints (unlike the failed hyperbolic cross). Several condemned organisms were pardoned after regaining structural fitness (`hyperbolic-chimera`, `chimera-specter`, `mnem-diffusion`, `chimera-rift`).
 
 **Strategy Shift:**
-Continue to leverage robust, mathematically stable environments (FFT, wave mechanics) to ground chaotic or emergent agents (DDoS, slime molds) and structural graphs (codebase visualization). The success of mapping intent-driven agents (DDoS packets) and decaying network structures into continuous environments (magnetic fluids, reaction-diffusion substrates, holographic interference patterns) proves that hybridizing *purpose* and *decay* with *medium* yields the most striking phenotypes. Future crosses should avoid unconstrained spaces (hyperbolic geometry) and focus on translating discrete swarm intent or structural entropy into high-fidelity frequency or acoustic domains.
+Continue to leverage robust, mathematically stable environments (FFT, wave mechanics) to ground chaotic or emergent agents (DDoS, slime molds) and structural graphs (codebase visualization). The success of mapping intent-driven agents (DDoS packets) and decaying network structures into continuous environments (magnetic fluids, reaction-diffusion substrates, holographic interference patterns) proves that hybridizing *purpose* and *decay* with *medium* yields the most striking phenotypes. Purely generic mashups are swiftly executed by the Reaper. Future crosses should avoid unconstrained spaces (hyperbolic geometry) and focus on translating discrete swarm intent or structural entropy into high-fidelity frequency, biological decomposition, or acoustic domains.
 
 ---
 
@@ -23,6 +23,13 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 ---
 
 ## 🌿 Attempted Crosses
+
+### locust-reaper
+- **Parents**: experiments/locust-ddos + experiments/myco-reaper
+- **Concept**: Garbage Collection Cyberwarfare. The server is protected by an intricate forest of nodes (firewalls). The locusts (DDoS packets) act as the "Reaper fungus" trying to find detached reference cycles and dead matter to consume, breaking down the server's defenses.
+- **Predicted Phenotype**: The server's defenses are structured as an interconnected memory graph. The locust swarm actively attacks and decomposes the graph by identifying and consuming "dead" nodes or forming parasitic reference cycles to cause memory leaks.
+- **Status**: experiments/locust-reaper
+- **Evaluation**: Pending observation.
 
 ### hyperbolic-chimera
 - **Parents**: experiments/hyperbolic-ants + experiments/chimera-lang

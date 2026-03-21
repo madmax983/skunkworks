@@ -42,6 +42,10 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
 
+### [Concentration Level: NEW HYBRID] - Location: experiments/locust-reaper
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Parasitic foraging observed. A new cybernetic fungal entity has emerged, consuming memory structures systematically. The cross breeds the decay mechanics of myco-reaper into the physical DDoS swarm of locust-ddos.
+
 ### [Concentration Level: NEW HYBRID] - Location: experiments/mnem-mycelium
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. Spliced mnem-rot with myco-transit.
