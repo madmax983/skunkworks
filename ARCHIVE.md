@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-specter**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to adapt to `Dna` structural changes in `chimera-lang` (missing `evolution_config`). Grace period: 24h.
+- **stardust-compiler**: Specimen condemned. Diagnosis: Terminal Genericism / Deceptive Persona Alignment. A standard CLI steganography utility disguised as an esoteric experiment. Grace period: 24h.
 
 ## Pardoned
+- **chimera-specter**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by fixing missing `evolution_config` and adapting to `Dna` structural changes in `chimera-lang`. The specter haunts again.
 - **hyperbolic-chimera**: Specimen pardoned. Diagnosis: Terminal Compilation Failure. Resolved by fixing missing `evolution_config` and deprecated `ratatui` UI APIs. Vigor demonstrated.
 - **chimera-rift**: Specimen pardoned. Diagnosis: Skeletal Implementation / Terminal Genericism. Resolved by adding portal sensor inputs, allowing agents to navigate their evo-portals. Vigor demonstrated.
 - **mnem-diffusion**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding proper README, documentation, and test cases. The specimen has proven its right to exist in the ecosystem.
