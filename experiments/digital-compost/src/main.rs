@@ -1,3 +1,4 @@
+use std::io::Read;
 mod compost;
 mod decay;
 mod ui;
@@ -7,7 +8,7 @@ use crate::decay::apply_decay;
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::widgets::ListState;
-use std::fs;
+
 use std::time::Duration;
 use tui_shared::Tui;
 
@@ -41,11 +42,25 @@ fn main() -> Result<()> {
 
                 if should_load {
                     // Read file
-                    if let Ok(raw_content) = fs::read_to_string(&file.path) {
-                        let decayed = apply_decay(&raw_content, file.decay_level);
-                        content_cache = Some((selected, decayed));
-                    } else {
-                        content_cache = Some((selected, "Binary or unreadable file.".to_string()));
+                    let mut loaded = false;
+                    if let Ok(f) = std::fs::File::open(&file.path) {
+                        let mut raw_content = String::new();
+                        let limit = 1024 * 1024;
+                        if let Ok(bytes_read) =
+                            std::io::Read::take(f, limit + 1).read_to_string(&mut raw_content)
+                        {
+                            if bytes_read <= limit as usize {
+                                let decayed = apply_decay(&raw_content, file.decay_level);
+                                content_cache = Some((selected, decayed));
+                                loaded = true;
+                            }
+                        }
+                    }
+                    if !loaded {
+                        content_cache = Some((
+                            selected,
+                            "Binary, unreadable, or file too large.".to_string(),
+                        ));
                     }
                     scroll = 0;
                 }

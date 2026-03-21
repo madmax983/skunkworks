@@ -1,7 +1,8 @@
 use anyhow::Result;
 use regex::Regex;
 use std::collections::HashMap;
-use std::fs;
+
+use std::io::Read;
 use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
 
@@ -45,11 +46,23 @@ pub fn scan_dependencies(root: &Path) -> Result<Graph> {
             continue;
         }
 
-        if path.extension().map_or(false, |ext| ext == "rs") {
-            let content = match fs::read_to_string(path) {
-                Ok(c) => c,
-                Err(_) => continue,
-            };
+        if path.extension().is_some_and(|ext| ext == "rs") {
+            let mut content = String::new();
+            let limit = 1024 * 1024;
+            let mut read_ok = false;
+
+            if let Ok(file) = std::fs::File::open(path) {
+                if let Ok(bytes) = std::io::Read::take(file, limit + 1).read_to_string(&mut content)
+                {
+                    if bytes <= limit as usize {
+                        read_ok = true;
+                    }
+                }
+            }
+            if !read_ok {
+                continue;
+            }
+
             let line_count = content.lines().count() as f32;
             let name = path.file_stem().unwrap().to_string_lossy().to_string();
 
@@ -73,10 +86,20 @@ pub fn scan_dependencies(root: &Path) -> Result<Graph> {
     let use_regex = Regex::new(r"use\s+(?:crate::|super::)?([a-zA-Z0-9_]+)").unwrap();
 
     for node in &nodes {
-        let content = match fs::read_to_string(&node.path) {
-            Ok(c) => c,
-            Err(_) => continue,
-        };
+        let mut content = String::new();
+        let limit = 1024 * 1024;
+        let mut read_ok = false;
+
+        if let Ok(file) = std::fs::File::open(&node.path) {
+            if let Ok(bytes) = std::io::Read::take(file, limit + 1).read_to_string(&mut content) {
+                if bytes <= limit as usize {
+                    read_ok = true;
+                }
+            }
+        }
+        if !read_ok {
+            continue;
+        }
 
         let parent_dir = node.path.parent().unwrap();
 

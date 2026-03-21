@@ -1,6 +1,7 @@
 use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
-use std::fs;
+
+use std::io::Read;
 use std::path::PathBuf;
 
 mod steg;
@@ -63,7 +64,14 @@ fn main() -> Result<()> {
             width,
             height,
         } => {
-            let text = fs::read_to_string(&input).context("Failed to read input file")?;
+            let mut text = String::new();
+            let limit = 1024 * 1024;
+            let file = std::fs::File::open(&input).context("Failed to open input file")?;
+            let bytes = std::io::Read::take(file, limit + 1)
+                .read_to_string(&mut text)
+                .context("Failed to read input file")?;
+            anyhow::ensure!(bytes <= limit as usize, "Input file exceeds 1MB limit");
+
             println!("Generating cover image ({}x{})...", width, height);
             let mut img = steg::generate_plasma(width, height);
 
@@ -82,7 +90,7 @@ fn main() -> Result<()> {
             let text = String::from_utf8(data).context("Decoded data is not valid UTF-8")?;
 
             if let Some(out_path) = output {
-                fs::write(&out_path, &text).context("Failed to write output file")?;
+                std::fs::write(&out_path, &text).context("Failed to write output file")?;
                 println!("Decoded text saved to {:?}", out_path);
             } else {
                 println!("--- Decoded Payload ---");
@@ -101,9 +109,24 @@ fn main() -> Result<()> {
         Commands::Demo => {
             println!("Running Demo...");
             // Use this source code as the payload
-            let source_code = fs::read_to_string("experiments/chromatic-code/src/main.rs")
-                .or_else(|_| fs::read_to_string("src/main.rs")) // Fallback if running from crate root
-                .unwrap_or_else(|_| "Could not find source code, using dummy text.".to_string());
+            let mut source_code = String::new();
+            let limit = 1024 * 1024;
+            let file_res = std::fs::File::open("experiments/chromatic-code/src/main.rs")
+                .or_else(|_| std::fs::File::open("src/main.rs")); // Fallback if running from crate root
+
+            if let Ok(file) = file_res {
+                if let Ok(bytes) =
+                    std::io::Read::take(file, limit + 1).read_to_string(&mut source_code)
+                {
+                    if bytes > limit as usize {
+                        source_code = "Could not find source code, using dummy text.".to_string();
+                    }
+                } else {
+                    source_code = "Could not find source code, using dummy text.".to_string();
+                }
+            } else {
+                source_code = "Could not find source code, using dummy text.".to_string();
+            }
 
             let mut img = steg::generate_plasma(200, 100); // Small size for TUI fit
             steg::embed(&mut img, source_code.as_bytes()).context("Failed to embed data")?;

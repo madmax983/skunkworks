@@ -1,5 +1,6 @@
 use regex::Regex;
-use std::fs;
+
+use std::io::Read;
 use std::path::Path;
 use walkdir::WalkDir;
 
@@ -16,8 +17,16 @@ pub fn harvest_functions(root: &str) -> Vec<FunctionSignature> {
 
     for entry in WalkDir::new(root).into_iter().filter_map(|e| e.ok()) {
         if entry.path().extension().is_some_and(|ext| ext == "rs") {
-            if let Ok(content) = fs::read_to_string(entry.path()) {
-                signatures.extend(parse_file_content(&content, entry.path()));
+            if let Ok(file) = std::fs::File::open(entry.path()) {
+                let mut content = String::new();
+                let limit = 1024 * 1024;
+                if let Ok(bytes_read) =
+                    std::io::Read::take(file, limit + 1).read_to_string(&mut content)
+                {
+                    if bytes_read <= limit as usize {
+                        signatures.extend(parse_file_content(&content, entry.path()));
+                    }
+                }
             }
         }
     }
