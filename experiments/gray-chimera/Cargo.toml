@@ -1,0 +1,12 @@
+[package]
+name = "gray-chimera"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4.14"
+gray-scott = { path = "../../crates/gray-scott", features = ["parallel"] }
+chimera-lang = { path = "../chimera-lang" }
+rand = "0.8"
+rayon = "1.10"
+locus = { workspace = true }
