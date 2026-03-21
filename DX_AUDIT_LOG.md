@@ -90,3 +90,22 @@ I attempted to follow the "Getting Started" instructions for `tui-shared` by cre
 *   🤦 **The Confusion:** "Tried to run the `story_demo`. Compiler said `NarrativeGenerator` not found."
 *   🕵️ **The Reality:** "Turns out I needed to enable feature `nova`."
 *   💡 **The Fix:** "Add a huge banner in README saying 'REQUIRES FEATURE NOVA'."
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the Evolution example from the root README."
+**Action:** Try to use the quick start command `cargo run -- --input examples/evolution.pro` based *only* on the public docs in `README.md`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Multiple Binaries:** The command `cargo run` fails because it "could not determine which binary to run". The repository is a workspace with dozens of binaries.
+2.  **Parser Error:** When I guess that I should run the `chimera-lang` binary instead (`cargo run -p chimera-lang -- --input examples/evolution.pro`), it fails with a syntax error on line 1: `expected strand`. It seems the file format `.pro` is not what the default parser expects.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Root README Quick Start is broken
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `evolution.pro` example from the root `README.md`. Cargo gave me an error about multiple binaries, and when I specified `-p chimera-lang`, it crashed with a parsing error about 'expected strand'."
+*   🕵️ **The Reality:** "Turns out the repository is a massive workspace so a bare `cargo run` doesn't work. Furthermore, the `chimera-lang` binary doesn't seem to know how to parse `.pro` files natively without extra configuration or flags that are completely missing from the README."
+*   💡 **The Fix:** "Update the root README's Quick Start command to specify the exact binary required and any necessary flags or features needed to parse `.pro` files."
