@@ -29,7 +29,7 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Garbage Collection Cyberwarfare. The server is protected by an intricate forest of nodes (firewalls). The locusts (DDoS packets) act as the "Reaper fungus" trying to find detached reference cycles and dead matter to consume, breaking down the server's defenses.
 - **Predicted Phenotype**: The server's defenses are structured as an interconnected memory graph. The locust swarm actively attacks and decomposes the graph by identifying and consuming "dead" nodes or forming parasitic reference cycles to cause memory leaks.
 - **Status**: experiments/locust-reaper
-- **Evaluation**: Pending observation.
+- **Evaluation**: Success. Compiled. GUESTBOOK mentions confirm emergent parasitic foraging. The cybernetic fungal entity correctly consumes memory structures systematically, combining decay mechanics with physical DDoS swarms.
 
 ### hyperbolic-chimera
 - **Parents**: experiments/hyperbolic-ants + experiments/chimera-lang
@@ -162,6 +162,13 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Predicted Phenotype**: Flocking Packets. Packets group together into massive schools that coordinate attacks on the server, breaking apart when hitting firewalls.
 - **Status**: experiments/locus-ddos
 - **Evaluation**: Success. Compiled. Exhibits robust Boid flocking traits adapting smoothly to firewall constraints.
+
+### gray-chimera
+- **Parents**: crates/gray-scott + experiments/chimera-lang
+- **Concept**: Morphogenetic Genetics. Chimera agents navigate a Gray-Scott reaction-diffusion grid. The agents drop chemicals or alter the grid, and their fitness depends on navigating it successfully or finding specific states.
+- **Phenotype**: Agents equipped with ChimeraVM brains evolve to survive in a chemical environment, adapting their behavior to follow the feed chemical and avoid the kill chemical.
+- **Status**: experiments/gray-chimera
+- **Evaluation**: Success. Compiled. Agents successfully evolve, creating a macroscopic-microscopic feedback loop mapping genetic instructions to reaction-diffusion navigation.
 
 ### gray-ddos
 - **Parents**: experiments/locust-ddos + crates/gray-scott

@@ -42,6 +42,11 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
 
+### [Concentration Level: NEW HYBRID] - Location: experiments/gray-chimera
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. A new hybrid `gray-chimera` (Morphogenetic Genetics) has been spliced.
+- **Phenotype:** ChimeraVM agents navigate a Gray-Scott reaction-diffusion grid, mapping DNA opcodes to chemical sensing and pathfinding.
+
 ### [Concentration Level: NEW HYBRID] - Location: experiments/locust-reaper
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Parasitic foraging observed. A new cybernetic fungal entity has emerged, consuming memory structures systematically. The cross breeds the decay mechanics of myco-reaper into the physical DDoS swarm of locust-ddos.
