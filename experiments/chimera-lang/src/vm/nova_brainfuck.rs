@@ -1,5 +1,5 @@
 use super::{ChimeraVM, Value};
-use std::collections::{HashMap, VecDeque};
+use std::collections::HashMap;
 
 /// Executes a Brainfuck program string with input.
 ///
@@ -10,8 +10,8 @@ pub fn exec_brainfuck(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let input = vm.pop_str("brainfuck")?;
     let code = vm.pop_str("brainfuck")?;
 
-    let code_chars: Vec<char> = code.chars().collect();
-    let mut input_chars: VecDeque<u8> = input.bytes().collect::<VecDeque<_>>();
+    let code_bytes = code.as_bytes();
+    let mut input_bytes = input.bytes();
     let mut output_bytes: Vec<u8> = Vec::new();
 
     let mut tape = vec![0u8; 30000];
@@ -23,10 +23,10 @@ pub fn exec_brainfuck(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Precompute jump targets
     let mut jumps = HashMap::new();
     let mut loop_stack = Vec::new();
-    for (i, &c) in code_chars.iter().enumerate() {
-        if c == '[' {
+    for (i, &c) in code_bytes.iter().enumerate() {
+        if c == b'[' {
             loop_stack.push(i);
-        } else if c == ']' {
+        } else if c == b']' {
             if let Some(start) = loop_stack.pop() {
                 jumps.insert(start, i);
                 jumps.insert(i, start);
@@ -34,40 +34,40 @@ pub fn exec_brainfuck(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         }
     }
 
-    while pc < code_chars.len() && cycles < max_cycles {
-        match code_chars[pc] {
-            '>' => {
+    while pc < code_bytes.len() && cycles < max_cycles {
+        match code_bytes[pc] {
+            b'>' => {
                 if ptr < tape.len() - 1 {
                     ptr += 1;
                 } else {
                     ptr = 0;
                 } // Wrap
             }
-            '<' => {
+            b'<' => {
                 if ptr > 0 {
                     ptr -= 1;
                 } else {
                     ptr = tape.len() - 1;
                 } // Wrap
             }
-            '+' => tape[ptr] = tape[ptr].wrapping_add(1),
-            '-' => tape[ptr] = tape[ptr].wrapping_sub(1),
-            '.' => {
+            b'+' => tape[ptr] = tape[ptr].wrapping_add(1),
+            b'-' => tape[ptr] = tape[ptr].wrapping_sub(1),
+            b'.' => {
                 if output_bytes.len() < crate::vm::MAX_BRAINFUCK_OUTPUT {
                     output_bytes.push(tape[ptr]);
                 }
             }
-            ',' => {
-                tape[ptr] = input_chars.pop_front().unwrap_or(0);
+            b',' => {
+                tape[ptr] = input_bytes.next().unwrap_or(0);
             }
-            '[' => {
+            b'[' => {
                 if tape[ptr] == 0 {
                     if let Some(&target) = jumps.get(&pc) {
                         pc = target;
                     }
                 }
             }
-            ']' => {
+            b']' => {
                 if tape[ptr] != 0 {
                     if let Some(&target) = jumps.get(&pc) {
                         pc = target;
