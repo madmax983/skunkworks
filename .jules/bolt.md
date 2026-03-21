@@ -47,3 +47,7 @@
 **[Optimized Levenshtein Distance for ASCII Strings]**
 **Learning:** `&str.chars()` incurs significant allocation and character decoding overhead when calculating Levenshtein distance on simple ASCII strings. Additionally, the standard dynamic programming algorithm allocates two `Vec`s (`curr_row`, `prev_row`) for tracking diagonals, increasing allocation pressure.
 **Action:** Implemented a fast path for ASCII-only strings by operating directly on `.as_bytes()`, which avoids UTF-8 boundaries. Changed the algorithm to only require a single `Vec` allocation (`row`), maintaining the previous diagonal explicitly (`prev_diag`) and updating the array in place.
+
+**[Removing intermediate Vec allocations for string byte iteration]**
+**Learning:** Collecting `.chars()` or `.bytes()` into an intermediate `Vec` or `VecDeque` just to consume them sequentially causes unnecessary heap allocations and decoding overhead for string parsing.
+**Action:** Use `.as_bytes()` directly for array-like indexing on strings when characters are ASCII, and use iterators directly like `.bytes().next().unwrap_or(0)` instead of collecting into a `VecDeque`.
