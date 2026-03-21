@@ -39,8 +39,10 @@ impl Agent {
         }
 
         // Clamp to grid
-        let x_idx = (self.pos.x as f64 / CELL_SIZE as f64).clamp(0.0, (GRID_WIDTH - 1) as f64) as usize;
-        let y_idx = (self.pos.y as f64 / CELL_SIZE as f64).clamp(0.0, (GRID_HEIGHT - 1) as f64) as usize;
+        let x_idx =
+            (self.pos.x as f64 / CELL_SIZE as f64).clamp(0.0, (GRID_WIDTH - 1) as f64) as usize;
+        let y_idx =
+            (self.pos.y as f64 / CELL_SIZE as f64).clamp(0.0, (GRID_HEIGHT - 1) as f64) as usize;
 
         let gs_idx = gs.get_index(x_idx, y_idx);
 
@@ -239,9 +241,9 @@ async fn main() {
                     new_dnas.push(mutate_dna(child_dna));
                 }
             } else {
-                 for _ in 0..num_dead {
-                     new_dnas.push(random_dna());
-                 }
+                for _ in 0..num_dead {
+                    new_dnas.push(random_dna());
+                }
             }
 
             // Re-spawn
@@ -249,7 +251,7 @@ async fn main() {
             for agent in &mut agents {
                 if agent.health <= 0.0 {
                     if let Some(dna) = dna_iter.next() {
-                         *agent = Agent::new(
+                        *agent = Agent::new(
                             Vec2::new(
                                 rand::gen_range(0.0, (GRID_WIDTH as f64) * (CELL_SIZE as f64)),
                                 rand::gen_range(0.0, (GRID_HEIGHT as f64) * (CELL_SIZE as f64)),
@@ -261,7 +263,13 @@ async fn main() {
             }
         }
 
-        draw_text("Morphogenetic Genetics (gray-chimera)", 10.0, 20.0, 30.0, WHITE);
+        draw_text(
+            "Morphogenetic Genetics (gray-chimera)",
+            10.0,
+            20.0,
+            30.0,
+            WHITE,
+        );
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 50.0, 30.0, WHITE);
 
         next_frame().await;

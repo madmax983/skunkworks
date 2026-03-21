@@ -23,7 +23,7 @@ pub fn process_omens(vm: &mut ChimeraVM) -> usize {
     for omen in omens_snapshot {
         let mut solutions = Vec::new();
         solve(
-            &[omen.condition.clone()],
+            std::slice::from_ref(&omen.condition),
             HashMap::new(),
             &vm.knowledge_base,
             vm,
@@ -1239,7 +1239,7 @@ fn check_dynamic_predicates(
                                 // Check goal on sim_vm
                                 // Note: We use recursion depth + 1 for solve depth check
                                 solve(
-                                    &[arg_goal.clone()],
+                                    std::slice::from_ref(arg_goal),
                                     subst.clone(),
                                     kb,
                                     &sim_vm,
