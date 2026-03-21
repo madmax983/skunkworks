@@ -142,8 +142,8 @@ pub fn exec_evolve(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let cols = if rows > 0 { vm.grid[0].len() } else { 0 };
     let mut next_grid = vm.grid.clone();
 
-    for y in 0..rows {
-        for x in 0..cols {
+    for (y, row) in next_grid.iter_mut().enumerate().take(rows) {
+        for (x, cell) in row.iter_mut().enumerate().take(cols) {
             let current_val = match &vm.grid[y][x] {
                 Value::Int(n) => n,
                 _ => &0,
@@ -181,7 +181,7 @@ pub fn exec_evolve(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 };
 
                 if !survives {
-                    next_grid[y][x] = Value::Int(0);
+                    *cell = Value::Int(0);
                 }
             } else {
                 // Birth
@@ -210,7 +210,7 @@ pub fn exec_evolve(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 }
 
                 if let Some(s) = born_species {
-                    next_grid[y][x] = Value::Int(s);
+                    *cell = Value::Int(s);
                 }
             }
         }
