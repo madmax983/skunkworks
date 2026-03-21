@@ -494,10 +494,15 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Genericism / Deceptive Persona Alignment. Standard LSB steganography disguised as esoteric research. Grace period expired. Moved to graveyard.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-cuneiform
-*The Reaper was here. The clay hardens, but the words are gibberish. Evolution requires intent, not random wandering.*
+### [Concentration Level: EVAPORATING] - Location: graveyard/chimera-cuneiform
+*The Reaper was here. The clay hardened, and the specimen was washed away in the flood.*
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Stagnation / Vestigial Organs / Skeletal Implementation. Grace period: 24h.
+- **Status:** Specimen executed. Diagnosis: Terminal Stagnation / Vestigial Organs / Skeletal Implementation. Failed to integrate its genetic components. Grace period expired. Moved to graveyard.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-defense
+*The Reaper was here. A genome that cannot compile its own defense is doomed to the swarm.*
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Missing `evolution_config` and `ratatui` trait bound issues. Grace period: 24h.
 
 ### [Concentration Level: NEW HYBRID] - Location: experiments/mnem-ddos
 - **Scent Origin:** The Splice Surgeon 🧬
