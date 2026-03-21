@@ -37,3 +37,7 @@
 ## 2025-03-20 - The "Assume they Know" Topologies
 **Confusion:** The `Topology` enum variants in `locus` (`CylinderH`, `Klein`, `Mobius`, `Sphere`, `Projective`, `Hyperbolic`) lacked executable doctests. Users were confused on how coordinate wrapping mathematically transformed x and y indices when crossing boundaries for non-trivial topologies.
 **Clarification:** Added thorough, mathematically rigorous `/// # Examples` doctests to all `Topology` variants. These tests explicitly demonstrate the outcome of calling `.normalize()` with out-of-bounds inputs, showing exactly how twists, reflections, and shifts are applied to grid coordinates.
+
+## 2025-03-21 - The "Explicit Imports" in Readme Doctests
+**Confusion:** Users attempting to run README examples by copy-pasting code into a fresh project encountered compilation errors (missing `chimera_lang::compiler` module and `ChimeraVM`) because `chimera-lang` doctests were using the wildcard import `use chimera_lang::prelude::*;`.
+**Clarification:** Updated the `experiments/chimera-lang/src/lib.rs` doctest to explicitly import the `ast` components, `OpCode`, and `ChimeraVM` instead of using the prelude. This matches the memory guideline ensuring code examples compile reliably when copy-pasted.
