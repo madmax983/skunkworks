@@ -22,6 +22,9 @@ members = [
     "graveyard/chron-ddos",
     "experiments/locus-ddos", "test_project",
 ]
+exclude = [
+    "graveyard/*"
+]
 
 [workspace.dependencies]
 anyhow = "1.0"
