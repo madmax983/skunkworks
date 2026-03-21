@@ -385,6 +385,9 @@ impl PbdSystem4D {
                         factor,
                         stiffness,
                     } => {
+                        if !factor.is_finite() {
+                            panic!("NaN detected - invalid factor");
+                        }
                         let target = min_len + (max_len - min_len) * factor;
                         Self::solve_distance(particles, *p1, *p2, target, *stiffness);
                     }
@@ -421,6 +424,10 @@ impl PbdSystem4D {
             return;
         }
 
+        if !target_len.is_finite() || !stiffness.is_finite() {
+            panic!("NaN detected in constraint parameters");
+        }
+
         let (pos1, w1) = {
             let p = &particles[p1];
             (p.pos, p.inv_mass)
@@ -436,6 +443,10 @@ impl PbdSystem4D {
 
         let delta = pos1 - pos2;
         let len = delta.length();
+
+        if !len.is_finite() {
+            panic!("NaN detected in particle distance");
+        }
 
         if len < f32::EPSILON {
             return;
@@ -504,5 +515,94 @@ mod tests {
             .distance_squared(system.particles[p2].pos)
             .sqrt();
         assert!((dist - 1.0).abs() < 0.1);
+    }
+
+    #[test]
+    fn test_add_particle_nan_pos() {
+        let mut system = PbdSystem4D::new();
+        let pos = Vec4::new(f32::NAN, 0.0, 0.0, 0.0);
+        let result = system.add_particle(pos, 1.0);
+        assert_eq!(result, Err("Particle position must be finite"));
+    }
+
+    #[test]
+    fn test_add_pin_constraint_nan_pos() {
+        let mut system = PbdSystem4D::new();
+        let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
+        let pos = Vec4::new(f32::NAN, 0.0, 0.0, 0.0);
+        let result = system.add_pin_constraint(p1, pos);
+        assert_eq!(result, Err("Pin position must be finite"));
+    }
+
+    #[test]
+    #[should_panic(expected = "NaN detected in constraint parameters")]
+    fn test_nan_propagation() {
+        let mut system = PbdSystem4D::new();
+        let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
+        let p2 = system
+            .add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0)
+            .unwrap();
+
+        // Inject NaN into target length by computing distance with NaN position
+        system.particles[p1].pos = Vec4::new(f32::NAN, 0.0, 0.0, 0.0);
+
+        system.add_distance_constraint(p1, p2, 1.0);
+        system.step(0.1, 10, 1.0);
+    }
+
+    #[test]
+    #[should_panic(expected = "NaN detected in particle distance")]
+    fn test_nan_distance() {
+        let mut system = PbdSystem4D::new();
+        let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
+        let p2 = system
+            .add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0)
+            .unwrap();
+
+        // Setup constraint with valid parameters
+        system.add_distance_constraint(p1, p2, 1.0);
+
+        // Inject NaN position after constraint creation
+        system.particles[p1].pos = Vec4::new(f32::NAN, 0.0, 0.0, 0.0);
+
+        system.step(0.1, 10, 1.0);
+    }
+
+    #[test]
+    #[should_panic(expected = "NaN detected")]
+    fn test_actuator_nan_factor_robustness() {
+        let mut system = PbdSystem4D::new();
+        let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
+        let p2 = system
+            .add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0)
+            .unwrap();
+
+        system.add_actuator_constraint(p1, p2, 1.0, 2.0, 1.0, 1.0);
+
+        // Inject NaN factor directly via constraints list
+        if let Constraint4D::Actuator { factor, .. } = &mut system.constraints[0] {
+            *factor = f32::NAN;
+        }
+
+        system.step(0.1, 10, 1.0);
+    }
+
+    #[test]
+    fn test_negative_mass_panic() {
+        let mut system = PbdSystem4D::new();
+        let result = system.add_particle(Vec4::zero(), -1.0);
+        assert_eq!(result, Err("Mass must be non-negative and finite"));
+    }
+
+    #[test]
+    fn test_step_zero_dt() {
+        let mut system = PbdSystem4D::new();
+        let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
+        system.particles[p1].vel = Vec4::new(1.0, 0.0, 0.0, 0.0);
+
+        system.step(0.0, 1, 1.0);
+
+        let vel = system.particles[p1].vel;
+        assert_eq!(vel, Vec4::new(1.0, 0.0, 0.0, 0.0));
     }
 }
