@@ -1,3 +1,11 @@
+//! # Thermodynamic Market World
+//!
+//! This module defines the core simulation state where physical agents (Air, Termites)
+//! interact with a 2D grid containing Heat, Pheromones, and a decentralized Market.
+//!
+//! The `World` struct orchestrates the cellular automata physics, agent movement,
+//! and market logic.
+
 use market_sim::{Grid, Particle, DEFAULT_TRADE_AGE};
 use rand::prelude::*;
 use rayon::prelude::*;
@@ -54,6 +62,18 @@ pub struct Agent {
 }
 
 impl Agent {
+    /// Creates a new Termite agent at the given coordinates.
+    ///
+    /// Termites carry resources and respond to market forces and pheromones.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use thermo_market::world::Agent;
+    /// let termite = Agent::new_termite(10.0, 10.0);
+    /// assert_eq!(termite.x, 10.0);
+    /// ```
+
     pub fn new_termite(x: f32, y: f32) -> Self {
         Self {
             x,
@@ -66,6 +86,17 @@ impl Agent {
         }
     }
 
+    /// Creates a new Air agent at the given coordinates.
+    ///
+    /// Air agents transfer heat randomly around the grid.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use thermo_market::world::Agent;
+    /// let air = Agent::new_air(10.0, 10.0);
+    /// assert_eq!(air.heat, 0.0);
+    /// ```
     pub fn new_air(x: f32, y: f32) -> Self {
         let mut rng = rand::thread_rng();
         let angle = rng.gen_range(0.0..std::f32::consts::TAU);
@@ -92,6 +123,17 @@ pub struct World {
 }
 
 impl World {
+    /// Initializes a new thermodynamic market world.
+    ///
+    /// The grid is sized based on the constant `WIDTH` and `HEIGHT`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use thermo_market::world::World;
+    /// let world = World::new();
+    /// assert_eq!(world.step, 0);
+    /// ```
     pub fn new() -> Self {
         let grid = vec![Cell::default(); WIDTH * HEIGHT];
         let market = Grid::new(WIDTH, HEIGHT);

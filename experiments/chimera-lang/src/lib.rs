@@ -47,7 +47,7 @@
 //!     Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
 //! ];
 //!
-//! // Note: Always initialize with `Dna::from_genes` instead of manual struct init
+//! // Initialize using `from_genes` to avoid complex nested struct creation.
 //! let dna = Dna::from_genes(genes);
 //! let mut vm = ChimeraVM::new(dna);
 //!
