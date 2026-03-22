@@ -82,16 +82,14 @@ pub fn exec_fractal_op(
             }
         }
         OpCode::Zoom => {
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Int(n) = val {
-                    let factor = (n as f64) / 100.0;
-                    if factor > 0.0 {
-                        vm.fractal.zoom *= factor;
-                        vm.output.push(format!(
-                            "FRACTAL: Zoom x{:.2} (Total: {:.2})",
-                            factor, vm.fractal.zoom
-                        ));
-                    }
+            if let Some(Value::Int(n)) = vm.stack.pop() {
+                let factor = (n as f64) / 100.0;
+                if factor > 0.0 {
+                    vm.fractal.zoom *= factor;
+                    vm.output.push(format!(
+                        "FRACTAL: Zoom x{:.2} (Total: {:.2})",
+                        factor, vm.fractal.zoom
+                    ));
                 }
             }
         }

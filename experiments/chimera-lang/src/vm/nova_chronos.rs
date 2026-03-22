@@ -421,7 +421,7 @@ pub fn exec_divergence(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 let mut solutions = Vec::new();
 
                 oracle::solve(
-                    &[query_val.clone()],
+                    std::slice::from_ref(&query_val),
                     HashMap::new(),
                     &sim_vm.knowledge_base,
                     &sim_vm,

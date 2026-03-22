@@ -31,8 +31,16 @@ impl PartialEq for Value {
         let mut stack = vec![(self, other)];
         while let Some((a, b)) = stack.pop() {
             match (a, b) {
-                (Value::Int(a), Value::Int(b)) => if a != b { return false; },
-                (Value::Str(a), Value::Str(b)) => if a != b { return false; },
+                (Value::Int(a), Value::Int(b)) => {
+                    if a != b {
+                        return false;
+                    }
+                }
+                (Value::Str(a), Value::Str(b)) => {
+                    if a != b {
+                        return false;
+                    }
+                }
                 (Value::Junction(ta, va), Value::Junction(tb, vb)) => {
                     if ta != tb || va.len() != vb.len() {
                         return false;
@@ -52,9 +60,15 @@ impl PartialEq for Value {
                         stack.push((xa, xb));
                     }
                 }
-                (Value::Symbol(a), Value::Symbol(b)) => if a != b { return false; },
+                (Value::Symbol(a), Value::Symbol(b)) => {
+                    if a != b {
+                        return false;
+                    }
+                }
                 (Value::Color(r1, g1, b1), Value::Color(r2, g2, b2)) => {
-                    if r1 != r2 || g1 != g2 || b1 != b2 { return false; }
+                    if r1 != r2 || g1 != g2 || b1 != b2 {
+                        return false;
+                    }
                 }
                 _ => return false,
             }
@@ -94,7 +108,6 @@ impl Clone for Value {
         }
     }
 }
-
 
 #[allow(clippy::derived_hash_with_manual_eq)]
 impl std::hash::Hash for Value {
