@@ -707,6 +707,57 @@ classDiagram
 
 **Chimera Lang** is a bio-inspired, stack-based esoteric programming language with an optional "Nova" expansion for advanced biological simulation.
 
+### ChimeraVM Execution Engine (ADR 074)
+
+The `ChimeraVM` execution logic is decoupled into domain-specific submodules within the `vm::ops` module.
+
+```mermaid
+classDiagram
+    direction TB
+    class ChimeraVM {
+        <<Struct>>
+        +step()
+        +execute_gene()
+    }
+
+    class MathOps {
+        <<Module: ops/math.rs>>
+        +exec_math_op()
+    }
+
+    class StackOps {
+        <<Module: ops/stack.rs>>
+        +exec_stack_op()
+    }
+
+    class FlowOps {
+        <<Module: ops/flow.rs>>
+        +exec_flow_op()
+    }
+
+    class GridOps {
+        <<Module: ops/grid.rs>>
+        +exec_grid_op()
+    }
+
+    class IoOps {
+        <<Module: ops/io.rs>>
+        +exec_io_op()
+    }
+
+    class BioOps {
+        <<Module: ops/bio.rs>>
+        +exec_bio_op()
+    }
+
+    MathOps ..> ChimeraVM : Extends (impl)
+    StackOps ..> ChimeraVM : Extends (impl)
+    FlowOps ..> ChimeraVM : Extends (impl)
+    GridOps ..> ChimeraVM : Extends (impl)
+    IoOps ..> ChimeraVM : Extends (impl)
+    BioOps ..> ChimeraVM : Extends (impl)
+```
+
 ### Chimera TUI Architecture (ADR 071, ADR 072, ADR 073)
 
 The TUI event loop is decoupled into specific input handler modules to avoid a monolithic `run_app` loop. The handlers themselves are further decoupled into specific input type submodules.
