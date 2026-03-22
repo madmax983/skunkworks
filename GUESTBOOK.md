@@ -173,6 +173,10 @@
 - **Status:** Fresh hybrid. The slime mold is foraging on the heat map of codebase history. High-value food sources are mapped from recent git commits. Fascinating. Predicting an emergent "Codebase Foraging" phenotype.
 - **Phenotype:** Slime mold agents scavenge through the text space, creating organic architectural trails showing where code is actively being "foraged" between old and new blocks.
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/polyglot-chimera
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure / Ecosystem Maladaptation. Grace period: 24h.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/myco-hologram
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Lineage:** myco-transit × hologram-text
@@ -505,9 +509,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding a proper README and test cases during its grace period. Vigor demonstrated.
 
-### [Concentration Level: EVAPORATING] - Location: graveyard/bio-chain
+### [Concentration Level: EVAPORATING] - Location: experiments/bio-chain
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Failed to improve during grace period. Biomass returned to the void.
+- **Status:** Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Resolved by fixing the missing `evolution_config` and `clippy` warnings during its grace period. The organism breathes again.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/codex-void
 - **Scent Origin:** The Reaper ☠️

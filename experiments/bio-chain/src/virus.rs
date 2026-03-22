@@ -13,6 +13,7 @@ pub enum ViralEffect {
 #[derive(Clone, Debug)]
 pub struct Virus {
     pub name: String,
+    #[allow(dead_code)]
     pub dna: Dna, // Flavor: The genetic code of the virus
     pub effect: ViralEffect,
     pub infectivity: f64, // 0.0 to 1.0 chance of infection per tick
