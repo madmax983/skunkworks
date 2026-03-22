@@ -1,5 +1,11 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/bio-chain
+*The Reaper was here. A genome masquerading as biology while hiding behind generic structure will rot.*
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Missing `evolution_config` and unused variables. Grace period: 24h.
+
+
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Mosaic 🎨
 - **Status:** Mosaic sensed a lack of hierarchy in the CLI; reinforcement required.
@@ -499,10 +505,10 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Stagnation / Vestigial Organs / Skeletal Implementation. Failed to integrate its genetic components. Grace period expired. Moved to graveyard.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-defense
+### [Concentration Level: EVAPORATING] - Location: graveyard/chimera-defense
 *The Reaper was here. A genome that cannot compile its own defense is doomed to the swarm.*
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Missing `evolution_config` and `ratatui` trait bound issues. Grace period: 24h.
+- **Status:** Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to improve during grace period. Moved to graveyard.
 
 ### [Concentration Level: NEW HYBRID] - Location: experiments/mnem-ddos
 - **Scent Origin:** The Splice Surgeon 🧬
