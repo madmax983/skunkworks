@@ -31,21 +31,10 @@ fn test_hash_overflow_exploit() {
         .expect("Failed to execute child process");
 
     // The child should crash (abort), which means it exits with an error status.
+    // NOTE: We have fixed the stack overflow bug in `Value::hash` and `Value::clone`.
+    // Now it should survive!
     assert!(
-        !status.success(),
-        "The system was expected to crash, but it survived! Havoc failed."
+        status.success(),
+        "The system crashed, but it was expected to survive because the hash overflow is fixed!"
     );
-
-    // We expect it to be a signal (like SIGABRT or SIGSEGV).
-    // In Rust on Unix, stack overflow usually aborts the process (signal 6), but can sometimes segfault (signal 11).
-    #[cfg(unix)]
-    {
-        use std::os::unix::process::ExitStatusExt;
-        let sig = status.signal();
-        assert!(
-            sig == Some(6) || sig == Some(11),
-            "Expected SIGABRT (6) or SIGSEGV (11) from stack overflow, got {:?}",
-            sig
-        );
-    }
 }

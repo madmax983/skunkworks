@@ -21,6 +21,7 @@ Prologue treats the grid as a circuit board. Signals propagate instantly (within
 | `&` | **AND Gate** | Output (South/Self) = Input (West) **AND** Input (East). |
 | `|` | **OR Gate** | Output (South/Self) = Input (West) **OR** Input (East). |
 | `+` | **XOR Gate** | Output (South/Self) = Input (West) **XOR** Input (East). |
+| `=` | **Unify Rune** | Output (South/Self) = 1 if Input (West) == Input (East). |
 | `*` | **Splitter** | Input (North) -> Output (Self). Acts as a diode/repeater allowing W/E/S to read. |
 | `#` | **Delay** | Input (North) -> Output (Self) in the **Next Tick**. |
 | `@` | **Agent** | A mobile logic cursor that moves towards signals. |

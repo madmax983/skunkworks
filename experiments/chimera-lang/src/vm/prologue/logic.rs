@@ -21,6 +21,7 @@ use crate::vm::Value;
 /// - `|` (OR): Output 1 if West OR East have signals.
 /// - `+` (XOR): Output 1 if exactly one of West OR East has a signal.
 /// - `I` (IF): Output North's value if West's value is non-zero.
+/// - `=` (Unify): Output 1 if West's value equals East's value.
 ///
 /// Returns `true` if a new signal was generated.
 pub fn apply_logic_runes(
@@ -60,6 +61,15 @@ pub fn apply_logic_runes(
             if w_sig.is_some() ^ e_sig.is_some() && next_signals[y][x].is_none() {
                 next_signals[y][x] = Some(Value::Int(1));
                 changes = true;
+            }
+        }
+        "=" => {
+            // Unify (Equals)
+            if let (Some(w_val), Some(e_val)) = (w_sig.clone(), e_sig.clone()) {
+                if w_val == e_val && next_signals[y][x].is_none() {
+                    next_signals[y][x] = Some(Value::Int(1));
+                    changes = true;
+                }
             }
         }
         "I" => {
