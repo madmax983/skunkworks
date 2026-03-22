@@ -28,29 +28,12 @@ impl VisualField {
         let w = self.width as i32;
         let h = self.height as i32;
 
-        // 1. Generate Base Pattern (Drifting Grating + Moving Blob)
+        // 1. Base Pattern parameters
         let phase = self.time * 2.0;
         let blob_x = (self.time.sin() * 0.5 + 0.5) * self.width as f32;
         let blob_y = (self.time.cos() * 0.5 + 0.5) * self.height as f32;
 
-        let temp_buffer = (0..self.height)
-            .flat_map(|y| {
-                (0..self.width).map(move |x| {
-                    // Background Grating
-                    let grating = (x as f32 * 0.1 + phase).sin() * 0.5 + 0.5;
-
-                    // Moving Blob
-                    let dx = x as f32 - blob_x;
-                    let dy = y as f32 - blob_y;
-                    let dist = (dx * dx + dy * dy).sqrt();
-                    let blob = (-dist * 0.1).exp();
-
-                    (grating * 0.3 + blob * 0.7).clamp(0.0, 1.0)
-                })
-            })
-            .collect::<Vec<f32>>();
-
-        // 2. Apply Warp & Decay
+        // 2. Apply Warp & Decay and Generate Base Pattern on the fly
         for y in 0..self.height {
             for x in 0..self.width {
                 let idx = y * self.width + x;
@@ -72,7 +55,17 @@ impl VisualField {
                 let sy = src_y.round() as usize;
 
                 if sx < self.width && sy < self.height {
-                    self.buffer[idx] = temp_buffer[sy * self.width + sx];
+                    // Compute source pixel directly instead of buffering
+                    // Background Grating
+                    let grating = (sx as f32 * 0.1 + phase).sin() * 0.5 + 0.5;
+
+                    // Moving Blob
+                    let dx = sx as f32 - blob_x;
+                    let dy = sy as f32 - blob_y;
+                    let dist = (dx * dx + dy * dy).sqrt();
+                    let blob = (-dist * 0.1).exp();
+
+                    self.buffer[idx] = (grating * 0.3 + blob * 0.7).clamp(0.0, 1.0);
                 } else {
                     self.buffer[idx] = 0.0;
                 }
