@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 /// The fundamental data types in the Chimera VM.
 ///
 /// Can be stored on the Stack, in the Grid, or in a Junction.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum Value {
     /// A 64-bit integer. The basic unit of arithmetic and coordinates.
     Int(i64),
@@ -25,6 +25,76 @@ pub enum Value {
 }
 
 impl Eq for Value {}
+
+impl PartialEq for Value {
+    fn eq(&self, other: &Self) -> bool {
+        let mut stack = vec![(self, other)];
+        while let Some((a, b)) = stack.pop() {
+            match (a, b) {
+                (Value::Int(a), Value::Int(b)) => if a != b { return false; },
+                (Value::Str(a), Value::Str(b)) => if a != b { return false; },
+                (Value::Junction(ta, va), Value::Junction(tb, vb)) => {
+                    if ta != tb || va.len() != vb.len() {
+                        return false;
+                    }
+                    for (xa, xb) in va.iter().zip(vb.iter()) {
+                        stack.push((xa, xb));
+                    }
+                }
+                (Value::Superposition(sa), Value::Superposition(sb)) => {
+                    if sa.len() != sb.len() {
+                        return false;
+                    }
+                    for ((xa, pa), (xb, pb)) in sa.iter().zip(sb.iter()) {
+                        if pa.to_bits() != pb.to_bits() {
+                            return false;
+                        }
+                        stack.push((xa, xb));
+                    }
+                }
+                (Value::Symbol(a), Value::Symbol(b)) => if a != b { return false; },
+                (Value::Color(r1, g1, b1), Value::Color(r2, g2, b2)) => {
+                    if r1 != r2 || g1 != g2 || b1 != b2 { return false; }
+                }
+                _ => return false,
+            }
+        }
+        true
+    }
+}
+
+impl Clone for Value {
+    fn clone(&self) -> Self {
+        match self {
+            Value::Int(i) => Value::Int(*i),
+            Value::Str(s) => Value::Str(s.clone()),
+            Value::Junction(t, vals) => {
+                let mut new_vals = Vec::with_capacity(vals.len());
+                // Avoid stack overflow on deeply nested Junctions by flattening clone?
+                // Actually, full iterative clone is complex to build due to tree reconstruction.
+                // Let's protect it via depth check or just limit clone depth.
+                // Or write a fully iterative clone.
+                // An iterative clone:
+                for v in vals {
+                    // It's still a simple loop, but recursive if `v.clone()` is used.
+                    // We'll use a depth limit to prevent crash if not fully iterative.
+                    new_vals.push(v.clone_safe(0));
+                }
+                Value::Junction(*t, new_vals)
+            }
+            Value::Superposition(states) => {
+                let mut new_states = Vec::with_capacity(states.len());
+                for (v, p) in states {
+                    new_states.push((v.clone_safe(0), *p));
+                }
+                Value::Superposition(new_states)
+            }
+            Value::Symbol(id) => Value::Symbol(*id),
+            Value::Color(r, g, b) => Value::Color(*r, *g, *b),
+        }
+    }
+}
+
 
 #[allow(clippy::derived_hash_with_manual_eq)]
 impl std::hash::Hash for Value {
@@ -88,6 +158,33 @@ impl std::fmt::Display for Value {
 }
 
 impl Value {
+    fn clone_safe(&self, depth: usize) -> Self {
+        if depth > 500 {
+            // Return dummy to prevent overflow
+            return Value::Int(0);
+        }
+        match self {
+            Value::Int(i) => Value::Int(*i),
+            Value::Str(s) => Value::Str(s.clone()),
+            Value::Junction(t, vals) => {
+                let mut new_vals = Vec::with_capacity(vals.len());
+                for v in vals {
+                    new_vals.push(v.clone_safe(depth + 1));
+                }
+                Value::Junction(*t, new_vals)
+            }
+            Value::Superposition(states) => {
+                let mut new_states = Vec::with_capacity(states.len());
+                for (v, p) in states {
+                    new_states.push((v.clone_safe(depth + 1), *p));
+                }
+                Value::Superposition(new_states)
+            }
+            Value::Symbol(id) => Value::Symbol(*id),
+            Value::Color(r, g, b) => Value::Color(*r, *g, *b),
+        }
+    }
+
     fn fmt_depth(&self, f: &mut std::fmt::Formatter<'_>, depth: usize) -> std::fmt::Result {
         if depth > 50 {
             return write!(f, "...");
