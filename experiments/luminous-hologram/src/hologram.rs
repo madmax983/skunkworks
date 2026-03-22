@@ -1,7 +1,20 @@
+//! # Holographic Memory and Reconstruction
+//!
+//! This module implements a digital simulation of optical holography.
+//! It can record the interference pattern of "boids" (acting as point light sources)
+//! with a reference beam, and then computationally reconstruct the original
+//! object wave by applying an inverse Fourier Transform.
+//!
+//! The core struct [`Hologram`] stores the complex-valued frequency domain
+//! representation of the recorded interference pattern.
+
 use num_complex::Complex;
 use rustfft::FftPlanner;
 use std::f64::consts::PI;
 
+/// Represents a 2D computational hologram.
+///
+/// Stores the frequency-domain complex data representing an optical interference pattern.
 pub struct Hologram {
     pub width: usize,
     pub height: usize,
@@ -9,6 +22,16 @@ pub struct Hologram {
 }
 
 impl Hologram {
+    /// Creates a new, empty hologram of the specified dimensions.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use luminous_hologram::hologram::Hologram;
+    /// let holo = Hologram::new(64, 64);
+    /// assert_eq!(holo.width, 64);
+    /// assert_eq!(holo.height, 64);
+    /// ```
     pub fn new(width: usize, height: usize) -> Self {
         Self {
             width,
@@ -17,6 +40,18 @@ impl Hologram {
         }
     }
 
+    /// Records a hologram from a set of point sources (boids).
+    ///
+    /// This simulates recording with an off-axis reference beam, which shifts the
+    /// object wave in the frequency domain.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use luminous_hologram::hologram::Hologram;
+    /// let boids = vec![(10.0, 10.0), (20.0, 20.0)];
+    /// let holo = Hologram::from_boids(64, 64, &boids);
+    /// ```
     pub fn from_boids(width: usize, height: usize, boids: &[(f64, f64)]) -> Self {
         let mut grid = vec![0.0; width * height];
 
@@ -91,6 +126,20 @@ impl Hologram {
         }
     }
 
+    /// Computes the inverse Fourier Transform to reconstruct the original image.
+    ///
+    /// By providing the correct `shift_x_bins` and `shift_y_bins` (matching the recording angle),
+    /// the off-axis hologram is centered back to DC before inverse transformation.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use luminous_hologram::hologram::Hologram;
+    /// let holo = Hologram::new(64, 64);
+    /// // Reconstruct with zero shift
+    /// let image = holo.reconstruct(0, 0);
+    /// assert_eq!(image.len(), 64 * 64);
+    /// ```
     pub fn reconstruct(&self, shift_x_bins: isize, shift_y_bins: isize) -> Vec<f64> {
         let width = self.width;
         let height = self.height;
@@ -139,6 +188,18 @@ impl Hologram {
         data.iter().map(|c| c.norm() * scale).collect()
     }
 
+    /// Returns the log-scaled magnitude spectrum of the hologram.
+    ///
+    /// Useful for visualizing the frequency components of the recorded pattern.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use luminous_hologram::hologram::Hologram;
+    /// let holo = Hologram::new(64, 64);
+    /// let mag = holo.get_magnitude();
+    /// assert_eq!(mag.len(), 64 * 64);
+    /// ```
     pub fn get_magnitude(&self) -> Vec<f64> {
         // Log-scale magnitude for better visualization of spectrum
         self.data.iter().map(|c| (c.norm() + 1.0).ln()).collect()
