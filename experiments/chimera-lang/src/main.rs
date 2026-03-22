@@ -120,7 +120,7 @@ fn main() -> Result<()> {
             .and_then(std::ffi::OsStr::to_str)
             .unwrap_or("");
 
-        if extension == "prl" {
+        if extension == "prl" || extension == "pro" {
             let prog = prologue_compiler::compile(&unparsed_file, path.parent())?;
             (
                 prog.dna,

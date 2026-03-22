@@ -8,10 +8,10 @@ It unifies the concepts of **Cellular Automata** (Wireworld, Game of Life), **Co
 
 ## 🚀 Quick Start
 
-Run the new Evolution example to see the Prologue engine in action:
+Run the Hello World Prologue example to see the Prologue engine in action:
 
 ```bash
-cargo run -- --input examples/evolution.pro
+cargo run -p chimera-lang -- --input experiments/chimera-lang/examples/hello_world.pro
 ```
 
 This will launch the TUI (Text User Interface) showing a live simulation of:
