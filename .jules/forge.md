@@ -22,3 +22,7 @@
 **[Too Many Arguments Refactoring]
 **Learning:** Functions over-parameterized with more than 7 arguments should extract configuration, coordinates, or context groups into structural types (like `CompilerContext` or `DirectionalDeltas`) to avoid `clippy::too_many_arguments` warnings and improve logical cohesion.
 **Action:** Group related arguments into dedicated helper `structs` (e.g. `Config`, `Context`, `Coordinates`) to simplify signatures and encourage clear logical boundaries when encountering functions with >7 arguments.
+
+## [Refactor Iterators and Matches]
+**Learning:** Found multiple instances where manual loops or verbose matching was used instead of idiomatic Rust iterator methods or macros like `matches!`, which led to unnecessary complexity (`clippy::needless_range_loop`, `clippy::match_like_matches_macro`, `clippy::collapsible_match`). Using `.iter().enumerate()`, `matches!()`, and collapsing `if let` blocks makes logic cleaner and easier to reason about. Additionally, `std::slice::from_ref` should be used instead of cloning to create single-element slices (`clippy::cloned_ref_to_slice_refs`).
+**Action:** Actively seek out redundant explicit loops or nested match/if-let chains and flatten them with Rust’s built-in abstractions to increase clarity and avoid memory allocations.
