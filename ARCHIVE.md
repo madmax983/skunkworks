@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **bio-chain**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Missing `evolution_config` and unused variables in `ui.rs`. Grace period: 24h.
+- **polyglot-chimera**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Naming Collision / Ecosystem Maladaptation. Missing `evolution_config` field. Grace period: 24h.
 
 ## Pardoned
+- **bio-chain**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Resolved by fixing the missing `evolution_config` in `Dna` struct initialization and addressing `clippy` warnings during its grace period. The organism breathes again.
 - **chimera-specter**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by fixing missing `evolution_config` and adapting to `Dna` structural changes in `chimera-lang`. The specter haunts again.
 - **hyperbolic-chimera**: Specimen pardoned. Diagnosis: Terminal Compilation Failure. Resolved by fixing missing `evolution_config` and deprecated `ratatui` UI APIs. Vigor demonstrated.
 - **chimera-rift**: Specimen pardoned. Diagnosis: Skeletal Implementation / Terminal Genericism. Resolved by adding portal sensor inputs, allowing agents to navigate their evo-portals. Vigor demonstrated.

@@ -57,6 +57,7 @@ impl Network {
     fn genesis_viruses() -> Vec<Virus> {
         let dummy_dna = Dna {
             helix: Helix { strands: vec![] },
+            evolution_config: None,
         };
         vec![
             Virus::new(
@@ -124,7 +125,7 @@ impl Network {
             .or_insert(proposer_stake);
         self.hormone_voters
             .entry(channel)
-            .or_insert_with(Vec::new)
+            .or_default()
             .push(proposer_id);
 
         println!(
@@ -184,10 +185,7 @@ impl Network {
                         .entry(channel)
                         .and_modify(|e| *e += vote_strength)
                         .or_insert(vote_strength);
-                    self.hormone_voters
-                        .entry(channel)
-                        .or_insert_with(Vec::new)
-                        .push(i);
+                    self.hormone_voters.entry(channel).or_default().push(i);
 
                     self.validators[i].total_votes += 1;
 
@@ -249,6 +247,7 @@ impl Network {
     }
 
     /// Validate a block using validator's DNA
+    #[allow(dead_code)]
     fn validate_block(&mut self, validator: &mut Validator, block: &Block) -> bool {
         // Basic validation
         if block.transactions.is_empty() {
@@ -403,7 +402,7 @@ impl Network {
     /// Propose a block automatically if needed
     fn auto_propose(&mut self) {
         // Propose every 3 ticks if we have honest validators
-        if self.tick % 3 == 0 {
+        if self.tick.is_multiple_of(3) {
             let honest_validators: Vec<_> = self
                 .validators
                 .iter()
@@ -481,7 +480,7 @@ impl Network {
     }
 
     fn auto_propose_silent(&mut self) {
-        if self.tick % 3 == 0 {
+        if self.tick.is_multiple_of(3) {
             let honest_validators: Vec<_> = self
                 .validators
                 .iter()
@@ -527,7 +526,7 @@ impl Network {
                     .or_insert(proposer_stake);
                 self.hormone_voters
                     .entry(channel)
-                    .or_insert_with(Vec::new)
+                    .or_default()
                     .push(proposer_idx);
                 self.pending_blocks.push(block);
             }
@@ -571,10 +570,7 @@ impl Network {
                         .entry(channel)
                         .and_modify(|e| *e += vote_strength)
                         .or_insert(vote_strength);
-                    self.hormone_voters
-                        .entry(channel)
-                        .or_insert_with(Vec::new)
-                        .push(i);
+                    self.hormone_voters.entry(channel).or_default().push(i);
                     self.validators[i].total_votes += 1;
                 }
             }

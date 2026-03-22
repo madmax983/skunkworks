@@ -8,6 +8,7 @@ mod tests {
     fn dummy_dna() -> Dna {
         Dna {
             helix: Helix { strands: vec![] },
+            evolution_config: None,
         }
     }
 

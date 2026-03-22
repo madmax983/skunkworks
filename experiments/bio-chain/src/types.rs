@@ -21,6 +21,7 @@ impl Transaction {
         hasher.finalize().into()
     }
 
+    #[allow(dead_code)]
     pub fn is_valid(&self) -> bool {
         self.amount > 0 && self.fee > 0
     }
@@ -65,7 +66,7 @@ impl Block {
 
     fn compute_hash(&self) -> BlockHash {
         let mut hasher = Sha256::new();
-        hasher.update(&self.parent);
+        hasher.update(self.parent);
         hasher.update(self.height.to_le_bytes());
         hasher.update(self.timestamp.to_le_bytes());
         for tx in &self.transactions {

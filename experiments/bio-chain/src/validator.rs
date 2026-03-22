@@ -151,10 +151,12 @@ impl Validator {
             helix: Helix {
                 strands: vec![validation_strand, proposal_strand, voting_strand],
             },
+            evolution_config: None,
         }
     }
 
     /// Validate a transaction using DNA
+    #[allow(dead_code)]
     pub fn validate_transaction(&mut self, _tx: &Transaction) -> bool {
         // For MVP, just do simple validation
         // Later: execute Strand 0 DNA with tx as input
@@ -166,23 +168,20 @@ impl Validator {
     /// Note: Actual hormone aggregation happens in Network::vote_on_blocks()
     /// which collects votes from all validators and updates the shared hormone_pool.
     /// This method just validates and tracks voting statistics.
+    #[allow(dead_code)]
     pub fn vote_on_block(&mut self, block: &Block, is_valid: bool) {
         let _channel = block.hash_as_channel();
         let _vote_strength = self.energy; // Vote proportional to stake
 
         // Malicious validators vote randomly or opposite
-        let actual_vote = if self.is_malicious {
+        let _actual_vote = if self.is_malicious {
             !is_valid // Byzantine behavior: vote opposite
         } else {
             is_valid
         };
 
         // Track voting statistics
-        if actual_vote {
-            self.total_votes += 1;
-        } else {
-            self.total_votes += 1;
-        }
+        self.total_votes += 1;
     }
 
     /// Earn fees from successful validation

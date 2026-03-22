@@ -84,13 +84,13 @@ pub fn run_ui(mut app: App) -> io::Result<()> {
         terminal.draw(|f| ui(f, &app))?;
 
         // Handle input
-        if event::poll(std::time::Duration::from_millis(100))? {
-            if let Event::Key(key) = event::read()? {
-                match key.code {
-                    KeyCode::Char('q') => break,
-                    KeyCode::Char(' ') => app.paused = !app.paused,
-                    _ => {}
-                }
+        if event::poll(std::time::Duration::from_millis(100))?
+            && let Event::Key(key) = event::read()?
+        {
+            match key.code {
+                KeyCode::Char('q') => break,
+                KeyCode::Char(' ') => app.paused = !app.paused,
+                _ => {}
             }
         }
 
@@ -399,7 +399,7 @@ fn render_energy_chart(f: &mut Frame, area: Rect, app: &App) {
     f.render_widget(chart, area);
 }
 
-fn render_controls(f: &mut Frame, area: Rect, app: &App) {
+fn render_controls(f: &mut Frame, area: Rect, _app: &App) {
     let controls = Paragraph::new("Controls: [SPACE] Pause/Resume | [Q] Quit")
         .style(Style::default().fg(Color::Gray))
         .block(Block::default().borders(Borders::ALL));
