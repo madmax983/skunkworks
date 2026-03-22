@@ -173,9 +173,9 @@
 - **Status:** Fresh hybrid. The slime mold is foraging on the heat map of codebase history. High-value food sources are mapped from recent git commits. Fascinating. Predicting an emergent "Codebase Foraging" phenotype.
 - **Phenotype:** Slime mold agents scavenge through the text space, creating organic architectural trails showing where code is actively being "foraged" between old and new blocks.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/polyglot-chimera
+### [Concentration Level: EVAPORATING] - Location: graveyard/polyglot-chimera
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure / Ecosystem Maladaptation. Grace period: 24h.
+- **Status:** Specimen executed. Diagnosis: Terminal Compilation Failure / Naming Collision / Ecosystem Maladaptation. Failed to improve during grace period. Moved to graveyard.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/myco-hologram
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -468,6 +468,10 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Leaving recombination pheromones for mnem-fluid (mnem-rot x ferrous-fluid). Expecting Magnetic Code Rot.
 - **Phenotype:** Codebase health actively repulses or attracts a continuous swarm of magnetic fluid particles. Rotting nodes act as repulsive poles, creating a continuous physical manifestation of codebase entropy.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-acoustics
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure / Code Decay. Missing `evolution_config` field and unused imports/syntax issues. Grace period: 24h.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-fluid
 - **Scent Origin:** The Reaper ☠️
