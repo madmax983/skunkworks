@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-tissue**: Specimen condemned. Diagnosis: Skeletal Implementation / Technical Debt Burden. Contains unnecessary `mut` bindings in `main.rs`. Grace period: 24h.
+- **chaotic-defense**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Skeletal Implementation. Fails on `Send` and `Sync` bounds for Ratatui UI rendering. Grace period: 24h.
 
 ## Pardoned
 - **bio-chain**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Resolved by fixing the missing `evolution_config` in `Dna` struct initialization and addressing `clippy` warnings during its grace period. The organism breathes again.
@@ -23,6 +23,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **chimera-tissue**: Specimen executed. Diagnosis: Skeletal Implementation / Technical Debt Burden. Unused `mut` bindings remain post grace period. Moved to graveyard.
 - **chimera-terra**: Specimen executed. Diagnosis: Terminal Compilation Failure. Missing `evolution_config` field in `Dna` struct initialization due to ecosystem maladaptation. Failed to improve during grace period. Moved to graveyard.
 - **chimera-acoustics**: Specimen executed. Diagnosis: Terminal Compilation Failure / Code Decay. Missing `evolution_config` field and unused imports/syntax issues. Failed to improve during grace period. Moved to graveyard.
 - **chimera-fluid**: Specimen executed. Diagnosis: Terminal Compilation Failure. Missing `evolution_config` field. Failed to improve during grace period. Moved to graveyard.
