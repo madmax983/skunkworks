@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-terra**: Specimen condemned. Diagnosis: Terminal Compilation Failure. Missing `evolution_config` field in `Dna` struct initialization due to ecosystem maladaptation. Grace period: 24h.
+- **chimera-tissue**: Specimen condemned. Diagnosis: Skeletal Implementation / Technical Debt Burden. Contains unnecessary `mut` bindings in `main.rs`. Grace period: 24h.
 
 ## Pardoned
 - **bio-chain**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Resolved by fixing the missing `evolution_config` in `Dna` struct initialization and addressing `clippy` warnings during its grace period. The organism breathes again.
@@ -23,6 +23,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **chimera-terra**: Specimen executed. Diagnosis: Terminal Compilation Failure. Missing `evolution_config` field in `Dna` struct initialization due to ecosystem maladaptation. Failed to improve during grace period. Moved to graveyard.
 - **chimera-acoustics**: Specimen executed. Diagnosis: Terminal Compilation Failure / Code Decay. Missing `evolution_config` field and unused imports/syntax issues. Failed to improve during grace period. Moved to graveyard.
 - **chimera-fluid**: Specimen executed. Diagnosis: Terminal Compilation Failure. Missing `evolution_config` field. Failed to improve during grace period. Moved to graveyard.
 - **polyglot-chimera**: Specimen executed. Diagnosis: Terminal Compilation Failure / Naming Collision / Ecosystem Maladaptation. Failed to improve during grace period. Moved to graveyard.
