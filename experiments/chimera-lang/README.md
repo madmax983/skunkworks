@@ -270,7 +270,13 @@ Some features (Epigenetics, Cell Cycle, Telomeres, `incubate`) are part of the "
 
 Chimera can be used as a Rust library to embed the VM in other applications.
 
-Add to your `Cargo.toml`:
+> 🚨 **REQUIRES WORKSPACE OR EXPLICIT DEPENDENCIES** 🚨
+> `chimera-lang` relies heavily on workspace dependencies. If you are using it as a path dependency outside of this repository's workspace, you must provide these dependencies in your own root `Cargo.toml`.
+>
+> 🚨 **REQUIRES FEATURE NOVA** 🚨
+> Advanced features (including the compiler and `incubate`) require the `nova` feature flag.
+
+Add to your project's `Cargo.toml`:
 ```toml
 [workspace]
 resolver = "2"
@@ -287,10 +293,7 @@ serde_json = "1.0"
 clap = { version = "4.4", features = ["derive"] }
 rand = "0.8"
 
-# ⚠️ WORKSPACE DEPENDENCY RESOLUTION
-# If you are compiling `chimera-lang` outside of its original workspace,
-# you MUST setup your project as a workspace and provide these missing
-# workspace dependencies or point to their local paths:
+# You MUST point to the local paths of these crates relative to your workspace root:
 tui-shared = { path = "path/to/crates/tui-shared" }
 locus = { path = "path/to/crates/locus", features = ["serde"] }
 resonance-audio = { path = "path/to/crates/resonance-audio" }
@@ -306,7 +309,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-# ⚠️ REQUIRES FEATURE NOVA
+# Make sure to include the `nova` feature!
 chimera-lang = { path = "path/to/chimera-lang", features = ["nova"] }
 ```
 
@@ -344,8 +347,8 @@ fn main() {
 
 ### Running ChimeraScript from Rust
 
-# 🚨 REQUIRES FEATURE NOVA 🚨
-> ⚠️ **The compiler and advanced VM features require the `nova` feature flag.**
+> 🚨 **REQUIRES FEATURE NOVA** 🚨
+> The compiler and advanced VM features require the `nova` feature flag.
 
 You can also parse and run ChimeraScript code directly using the compiler:
 
@@ -379,9 +382,9 @@ fn main() {
 }
 ```
 
-See `examples/story_demo.rs` for a full example of programmatic usage. Note that it launches a blocking interactive TUI and cannot run headlessly:
+See `examples/story_demo.rs` for a full example of programmatic usage. Note that it launches a blocking interactive TUI and cannot run headlessly.
 
-> ⚠️ **REQUIRES FEATURE NOVA**
+> 🚨 **REQUIRES FEATURE NOVA** 🚨
 
 ```bash
 cargo run -p chimera-lang --example story_demo
