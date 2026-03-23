@@ -3,3 +3,9 @@ Cargo.lock
 .claude/
 nul
 .chimera_akashic.json
+coverage.json
+cobertura.xml
+tarpaulin-report.json
+cobertura.xml
+coverage.json
+tarpaulin-report.json
