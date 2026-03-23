@@ -26,8 +26,8 @@ impl ChimeraChaos {
 
     pub fn tick(&mut self) {
         let mut next_grid = self.grid.clone();
-        for y in 0..GRID_SIZE {
-            for x in 0..GRID_SIZE {
+        for (y, row) in next_grid.iter_mut().enumerate().take(GRID_SIZE) {
+            for (x, cell) in row.iter_mut().enumerate().take(GRID_SIZE) {
                 let r = self.r_grid[y][x];
                 let val = self.grid[y][x];
                 // Logistic Map
@@ -50,7 +50,7 @@ impl ChimeraChaos {
                 let avg_neighbor = neighbor_sum / 4.0;
 
                 // CML Update
-                next_grid[y][x] = (1.0 - self.coupling) * self_term + self.coupling * avg_neighbor;
+                *cell = (1.0 - self.coupling) * self_term + self.coupling * avg_neighbor;
             }
         }
         self.grid = next_grid;

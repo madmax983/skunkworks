@@ -6,12 +6,10 @@ use rand::Rng;
 #[cfg(feature = "nova")]
 fn is_mapping(v: &Value) -> bool {
     if let Value::Junction(_, items) = v {
-        if let Some(first) = items.first() {
+        if let Some(Value::Junction(_, _)) = items.first() {
             // Check if it's a Pair (Junction of length 2 usually, or just Junction)
             // Or simple Key-Value pair represented as Junction.
-            if let Value::Junction(_, _) = first {
-                return true;
-            }
+            return true;
         }
     }
     false
@@ -32,24 +30,14 @@ pub fn exec_plant(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
     let (axiom_val, mapping_val, rules_val) = if is_mapping(arg2) && vm.stack.len() >= 3 {
         // [rules, mapping, axiom]
-        let Some(axiom) = vm.stack.pop() else {
-            return None;
-        };
-        let Some(mapping) = vm.stack.pop() else {
-            return None;
-        };
-        let Some(rules) = vm.stack.pop() else {
-            return None;
-        };
+        let axiom = vm.stack.pop()?;
+        let mapping = vm.stack.pop()?;
+        let rules = vm.stack.pop()?;
         (axiom, mapping, rules)
     } else {
         // [rules, axiom]
-        let Some(axiom) = vm.stack.pop() else {
-            return None;
-        };
-        let Some(rules) = vm.stack.pop() else {
-            return None;
-        };
+        let axiom = vm.stack.pop()?;
+        let rules = vm.stack.pop()?;
         (
             axiom,
             Value::Junction(crate::ast::JunctionType::All, Vec::new()),
@@ -70,12 +58,13 @@ pub fn exec_plant(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
             // Create Seed Organelle
             // Stack: [ rules, mapping, axiom, index, turtle_stack_placeholder ]
-            let mut stack = Vec::new();
-            stack.push(rules_val);
-            stack.push(mapping_val);
-            stack.push(axiom_val);
-            stack.push(Value::Int(0)); // Index
-            stack.push(Value::Junction(crate::ast::JunctionType::All, Vec::new())); // Turtle Stack
+            let stack = vec![
+                rules_val,
+                mapping_val,
+                axiom_val,
+                Value::Int(0),                                              // Index
+                Value::Junction(crate::ast::JunctionType::All, Vec::new()), // Turtle Stack
+            ];
 
             vm.organelle_id_counter += 1;
             let organelle = Organelle {

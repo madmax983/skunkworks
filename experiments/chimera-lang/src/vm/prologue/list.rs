@@ -261,8 +261,14 @@ mod tests {
         let mut next_signals = vec![vec![None; 16]; 16];
 
         // Setup Z Test: West=Junction([1, 2, 3]), North=Str("+"), East=Junction([4, 5, 6])
-        let j_w = Value::Junction(JunctionType::Any, vec![Value::Int(1), Value::Int(2), Value::Int(3)]);
-        let j_e = Value::Junction(JunctionType::Any, vec![Value::Int(4), Value::Int(5), Value::Int(6)]);
+        let j_w = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Int(1), Value::Int(2), Value::Int(3)],
+        );
+        let j_e = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Int(4), Value::Int(5), Value::Int(6)],
+        );
         current_signals[2][1] = Some(j_w); // West
         current_signals[1][2] = Some(Value::Str("+".to_string())); // North
         current_signals[2][3] = Some(j_e); // East
@@ -271,7 +277,10 @@ mod tests {
         let changed = apply_list_runes("Z", 2, 2, &current_signals, &mut next_signals);
         assert!(changed);
 
-        let expected_zip = Value::Junction(JunctionType::Any, vec![Value::Int(5), Value::Int(7), Value::Int(9)]);
+        let expected_zip = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Int(5), Value::Int(7), Value::Int(9)],
+        );
         assert_eq!(next_signals[2][2], Some(expected_zip));
     }
 }

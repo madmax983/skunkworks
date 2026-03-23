@@ -107,8 +107,8 @@ fn exec_reduce(vm: &mut ChimeraVM) {
         }
 
         let mut acc = list[0].clone();
-        for i in 1..list.len() {
-            if let Some(res) = apply_op(&acc, &list[i], &op_str) {
+        for item in list.iter().skip(1) {
+            if let Some(res) = apply_op(&acc, item, &op_str) {
                 acc = res;
             } else {
                 vm.output

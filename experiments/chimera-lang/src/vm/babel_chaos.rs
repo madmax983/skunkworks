@@ -149,15 +149,13 @@ pub fn exec_babel_chaos_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide])
             }
         }
         OpCode::Clarify => {
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Int(amount) = val {
-                    vm.babel_state.integrity =
-                        (vm.babel_state.integrity + (amount as f64 / 100.0)).clamp(0.0, 1.0);
-                    vm.output.push(format!(
-                        "BABEL: Integrity restored to {:.2}",
-                        vm.babel_state.integrity
-                    ));
-                }
+            if let Some(Value::Int(amount)) = vm.stack.pop() {
+                vm.babel_state.integrity =
+                    (vm.babel_state.integrity + (amount as f64 / 100.0)).clamp(0.0, 1.0);
+                vm.output.push(format!(
+                    "BABEL: Integrity restored to {:.2}",
+                    vm.babel_state.integrity
+                ));
             }
         }
         OpCode::Confuse => {

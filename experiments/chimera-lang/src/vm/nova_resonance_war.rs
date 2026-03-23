@@ -184,10 +184,8 @@ pub fn process_resonance(vm: &mut ChimeraVM) {
     let mut total_amp: f32 = 0.0;
     let mut weighted_freq_sum: f32 = 0.0;
 
-    for y in 0..size {
-        for x in 0..size {
-            let (self_freq, self_amp) = vm.resonance_grid[y][x];
-
+    for (y, row) in vm.resonance_grid.iter().enumerate().take(size) {
+        for (x, &(self_freq, self_amp)) in row.iter().enumerate().take(size) {
             // Sonic Mutagenesis (Environment Effects)
             if self_amp > 50.0 {
                 if self_freq < 200.0 {
