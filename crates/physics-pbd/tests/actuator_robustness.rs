@@ -2,7 +2,7 @@ use glam::Vec3;
 use physics_pbd::PbdSystem;
 
 #[test]
-#[should_panic(expected = "NaN detected")]
+#[should_panic(expected = "Constraint parameters must be finite")]
 fn test_actuator_nan_injection_robustness() {
     let mut system = PbdSystem::new();
     let p1 = system.add_particle(Vec3::new(0.0, 0.0, 0.0), 1.0);

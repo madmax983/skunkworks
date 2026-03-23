@@ -53,7 +53,7 @@ fn test_havoc_distance_nan() {
 }
 
 #[test]
-#[should_panic(expected = "NaN detected in constraint parameters")]
+#[should_panic(expected = "Stiffness must be finite")]
 fn test_havoc_distance_nan_2() {
     let mut system = physics_pbd::PbdSystem::new();
     let p1 = system.add_particle(glam::Vec3::new(0.0, 0.0, 0.0), 1.0);

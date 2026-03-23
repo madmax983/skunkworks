@@ -191,6 +191,7 @@ impl PbdSystem {
     /// system.add_distance_constraint(p1, p2, 0.5);
     /// ```
     pub fn add_distance_constraint(&mut self, p1: usize, p2: usize, stiff: f32) {
+        assert!(stiff.is_finite(), "Stiffness must be finite");
         let dist = self.particles[p1].pos.distance(self.particles[p2].pos);
         self.constraints.push(Constraint::Distance {
             p1,
@@ -220,6 +221,10 @@ impl PbdSystem {
         max_len: f32,
         stiff: f32,
     ) {
+        assert!(
+            min_len.is_finite() && max_len.is_finite() && stiff.is_finite(),
+            "Constraint parameters must be finite"
+        );
         self.constraints.push(Constraint::Actuator {
             p1,
             p2,
