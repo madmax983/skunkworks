@@ -567,3 +567,6 @@
 ### [Concentration Level: EVAPORATING] - Location: graveyard/chron-diffusion
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Ecosystem Isolation. Failed to improve during grace period. Biomass returned to the void.
+### [Concentration Level: EVAPORATING] - Location: README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Stable logic detected. Scent is evaporating as polish is applied. The Root README's Quick Start command has been updated to specify the correct binary and path to the `hello_world.pro` example.
