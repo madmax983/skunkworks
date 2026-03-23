@@ -17,6 +17,10 @@ use std::collections::{HashMap, HashSet};
 /// [Goal, Dy, Dx]
 /// - Goal: A Value representing the pattern to match (e.g. `(foo ?X)`).
 /// - Dy, Dx: Direction of movement.
+///
+/// Optimization (Bolt): We use `std::slice::from_ref` instead of `&[goal.clone()]`
+/// to prevent a heap allocation from `Value::clone()` when passing a single reference
+/// to the solver slice, acting as a zero-cost abstraction for the oracle.
 pub fn process_logic_agent(
     vm: &mut ChimeraVM,
     agent: &PrologueAgent,
@@ -71,8 +75,11 @@ pub fn process_logic_agent(
 
             // Solve
             let mut solutions = Vec::new();
+            // Optimization (Bolt): We use `std::slice::from_ref` instead of `&[goal.clone()]`
+            // to prevent a heap allocation from `Value::clone()` when passing a single reference
+            // to the solver slice, acting as a zero-cost abstraction for the oracle.
             oracle::solve(
-                &[goal.clone()],
+                std::slice::from_ref(&goal),
                 subst,
                 &vm.knowledge_base,
                 vm,
