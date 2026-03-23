@@ -36,6 +36,8 @@ Prologue treats the grid as a circuit board. Signals propagate instantly (within
 | `V` | **Vector** | Reads **West** (List). Outputs `Tail` (Elements 1..) to **Self**. |
 | `F` | **Filter** | Reads **West** (List), **North** (Mask). Outputs filtered list to **Self**. |
 | `T` | **Take** | Reads **West** (List), **North** (Count). Outputs first `N` elements to **Self**. |
+| `E` | **Exists/Any** | Reads **West** (List), **North** (Pattern). Outputs `1` to **Self** if Pattern exists in List. |
+| `Z` | **Zip/Hyper**| Reads **West** (List), **North** (Op), **East** (List). Element-wise operation, outputs to **Self**. |
 | `\` | **Mirror Back** | Reflects signal 90° (N<->E, S<->W). |
 | `/` | **Mirror Fwd** | Reflects signal 90° (N<->W, S<->E). |
 | `-` | **Beam H** | Conducts signal horizontally (W<->E), blocks vertical. |
