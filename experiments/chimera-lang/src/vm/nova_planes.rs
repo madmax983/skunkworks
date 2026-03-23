@@ -145,9 +145,8 @@ pub fn exec_planes_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                         return;
                     };
 
-                    for y in 0..GRID_SIZE {
-                        for x in 0..GRID_SIZE {
-                            let src = &target_plane[y][x];
+                    for (y, row) in target_plane.iter().enumerate().take(GRID_SIZE) {
+                        for (x, src) in row.iter().enumerate().take(GRID_SIZE) {
                             let dst = &mut vm.grid[y][x];
 
                             match method {

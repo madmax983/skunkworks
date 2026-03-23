@@ -771,11 +771,7 @@ pub(crate) fn render_prologue(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
                 }
             } else if !vm.prologue_state.mycelium_network.contains(&(y, x)) {
                 // Dim runes that are not active/registered
-                if !matches!(s.as_str(), "." | "0") {
-                    style = style.fg(Color::DarkGray);
-                } else {
-                    style = style.fg(Color::DarkGray);
-                }
+                style = style.fg(Color::DarkGray);
             }
 
             if app_state.grid_cursor == (x, y) {
@@ -1259,11 +1255,12 @@ pub(crate) fn render_kaleidoscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: 
     }
 
     // Black & White
-    let mut bw_spans = Vec::new();
-    bw_spans.push(Span::raw("Special:  "));
-    bw_spans.push(Span::styled("  ", Style::default().bg(Color::White))); // White
-    bw_spans.push(Span::raw(" "));
-    bw_spans.push(Span::styled("  ", Style::default().bg(Color::Black))); // Black
+    let bw_spans = vec![
+        Span::raw("Special:  "),
+        Span::styled("  ", Style::default().bg(Color::White)), // White
+        Span::raw(" "),
+        Span::styled("  ", Style::default().bg(Color::Black)), // Black
+    ];
     palette_lines.push(Line::from(bw_spans));
 
     let palette_widget = Paragraph::new(palette_lines).block(

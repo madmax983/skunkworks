@@ -258,13 +258,11 @@ pub fn exec_memetics_op(
             None
         }
         OpCode::Forget => {
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Int(id) = val {
-                    let idx = id as usize;
-                    if idx < vm.meme_pool.memes.len() {
-                        vm.meme_pool.memes.remove(idx);
-                        vm.output.push(format!("FORGET: Removed Meme {}", idx));
-                    }
+            if let Some(Value::Int(id)) = vm.stack.pop() {
+                let idx = id as usize;
+                if idx < vm.meme_pool.memes.len() {
+                    vm.meme_pool.memes.remove(idx);
+                    vm.output.push(format!("FORGET: Removed Meme {}", idx));
                 }
             }
             None

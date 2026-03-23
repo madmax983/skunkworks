@@ -91,38 +91,36 @@ pub fn exec_attractor_op(
 ) -> Option<(usize, usize)> {
     match op {
         OpCode::AttractorInit => {
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Int(mode) = val {
-                    vm.attractor.mode = mode as u8;
-                    vm.attractor.x = 0.1;
-                    vm.attractor.y = 0.0;
-                    vm.attractor.z = 0.0;
-                    vm.attractor.history.clear();
+            if let Some(Value::Int(mode)) = vm.stack.pop() {
+                vm.attractor.mode = mode as u8;
+                vm.attractor.x = 0.1;
+                vm.attractor.y = 0.0;
+                vm.attractor.z = 0.0;
+                vm.attractor.history.clear();
 
-                    // Set default params based on mode
-                    match mode {
-                        0 => {
-                            // Lorenz
-                            vm.attractor.sigma = 10.0;
-                            vm.attractor.rho = 28.0;
-                            vm.attractor.beta = 8.0 / 3.0;
-                        }
-                        1 => {
-                            // Rossler
-                            vm.attractor.sigma = 0.2;
-                            vm.attractor.rho = 0.2;
-                            vm.attractor.beta = 5.7;
-                        }
-                        2 => {
-                            // Thomas
-                            vm.attractor.sigma = 0.19; // b
-                        }
-                        _ => {}
+                // Set default params based on mode
+                match mode {
+                    0 => {
+                        // Lorenz
+                        vm.attractor.sigma = 10.0;
+                        vm.attractor.rho = 28.0;
+                        vm.attractor.beta = 8.0 / 3.0;
                     }
-
-                    vm.output
-                        .push(format!("ATTRACTOR: Initialized Mode {}", mode));
+                    1 => {
+                        // Rossler
+                        vm.attractor.sigma = 0.2;
+                        vm.attractor.rho = 0.2;
+                        vm.attractor.beta = 5.7;
+                    }
+                    2 => {
+                        // Thomas
+                        vm.attractor.sigma = 0.19; // b
+                    }
+                    _ => {}
                 }
+
+                vm.output
+                    .push(format!("ATTRACTOR: Initialized Mode {}", mode));
             }
             None
         }
@@ -140,44 +138,40 @@ pub fn exec_attractor_op(
             None
         }
         OpCode::AttractorSurf => {
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Int(scale) = val {
-                    // Map Z to strand index
-                    // Lorenz Z is approx 0-50
-                    let z = vm.attractor.z;
-                    let idx = (z * (scale as f64) / 50.0).abs() as usize;
+            if let Some(Value::Int(scale)) = vm.stack.pop() {
+                // Map Z to strand index
+                // Lorenz Z is approx 0-50
+                let z = vm.attractor.z;
+                let idx = (z * (scale as f64) / 50.0).abs() as usize;
 
-                    if idx < vm.dna.helix.strands.len() {
-                        vm.output
-                            .push(format!("SURF: Riding chaos to Strand {}", idx));
-                        return Some((idx, 0));
-                    }
+                if idx < vm.dna.helix.strands.len() {
+                    vm.output
+                        .push(format!("SURF: Riding chaos to Strand {}", idx));
+                    return Some((idx, 0));
                 }
             }
             None
         }
         OpCode::AttractorMap => {
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Int(target) = val {
-                    match target {
-                        0 => {
-                            // Map X to Global Entropy
-                            // Lorenz X: -20 to 20
-                            let chaos = (vm.attractor.x.abs() / 20.0).clamp(0.0, 1.0);
-                            vm.glitch_level = chaos as f32;
-                            vm.output
-                                .push(format!("MAP: Attractor X -> Glitch {:.2}", chaos));
-                        }
-                        1 => {
-                            // Map Y to Havoc Rate
-                            // Lorenz Y: -30 to 30
-                            let rate = (vm.attractor.y.abs() / 30.0).clamp(0.0, 1.0);
-                            vm.havoc.rate = rate;
-                            vm.output
-                                .push(format!("MAP: Attractor Y -> Havoc {:.2}", rate));
-                        }
-                        _ => {}
+            if let Some(Value::Int(target)) = vm.stack.pop() {
+                match target {
+                    0 => {
+                        // Map X to Global Entropy
+                        // Lorenz X: -20 to 20
+                        let chaos = (vm.attractor.x.abs() / 20.0).clamp(0.0, 1.0);
+                        vm.glitch_level = chaos as f32;
+                        vm.output
+                            .push(format!("MAP: Attractor X -> Glitch {:.2}", chaos));
                     }
+                    1 => {
+                        // Map Y to Havoc Rate
+                        // Lorenz Y: -30 to 30
+                        let rate = (vm.attractor.y.abs() / 30.0).clamp(0.0, 1.0);
+                        vm.havoc.rate = rate;
+                        vm.output
+                            .push(format!("MAP: Attractor Y -> Havoc {:.2}", rate));
+                    }
+                    _ => {}
                 }
             }
             None

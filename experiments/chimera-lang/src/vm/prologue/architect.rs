@@ -156,12 +156,12 @@ fn rotate_grid(grid: &[Vec<Value>]) -> Vec<Vec<Value>> {
     let w = grid[0].len();
     let mut new_grid = vec![vec![Value::Int(0); h]; w]; // Swap dimensions
 
-    for r in 0..h {
-        for c in 0..w {
+    for (r, row) in grid.iter().enumerate().take(h) {
+        for (c, item) in row.iter().enumerate().take(w) {
             // new_c = h - 1 - r
             // new_r = c
             if c < new_grid.len() && (h - 1 - r) < new_grid[0].len() {
-                new_grid[c][h - 1 - r] = grid[r][c].clone();
+                new_grid[c][h - 1 - r] = item.clone();
             }
         }
     }
@@ -182,18 +182,17 @@ fn merge_grids(base: &[Vec<Value>], overlay: &[Vec<Value>]) -> Vec<Vec<Value>> {
     let mut new_grid = vec![vec![Value::Int(0); w]; h];
 
     // Fill Base
-    for r in 0..base.len() {
-        for c in 0..base[r].len() {
-            if c < base[r].len() {
-                new_grid[r][c] = base[r][c].clone();
+    for (r, row) in base.iter().enumerate() {
+        for (c, item) in row.iter().enumerate() {
+            if c < row.len() {
+                new_grid[r][c] = item.clone();
             }
         }
     }
 
     // Overlay (Non-zero/Non-empty overwrites)
-    for r in 0..overlay.len() {
-        for c in 0..overlay[r].len() {
-            let val = &overlay[r][c];
+    for (r, row) in overlay.iter().enumerate() {
+        for (c, val) in row.iter().enumerate() {
             if is_alive(val) && r < h && c < w {
                 new_grid[r][c] = val.clone();
             }
@@ -218,8 +217,8 @@ fn apply_life_step(grid: &[Vec<Value>]) -> Vec<Vec<Value>> {
     let w = grid[0].len();
     let mut new_grid = vec![vec![Value::Int(0); w]; h];
 
-    for r in 0..h {
-        for c in 0..w {
+    for (r, row) in grid.iter().enumerate().take(h) {
+        for (c, cell) in row.iter().enumerate().take(w) {
             let mut live_neighbors = 0;
             for dr in -1..=1 {
                 for dc in -1..=1 {
@@ -239,10 +238,10 @@ fn apply_life_step(grid: &[Vec<Value>]) -> Vec<Vec<Value>> {
                 }
             }
 
-            let was_alive = is_alive(&grid[r][c]);
+            let was_alive = is_alive(cell);
             if was_alive {
                 if live_neighbors == 2 || live_neighbors == 3 {
-                    new_grid[r][c] = grid[r][c].clone(); // Survive
+                    new_grid[r][c] = cell.clone(); // Survive
                 } else {
                     new_grid[r][c] = Value::Int(0); // Die (Under/Overpopulation)
                 }
@@ -259,10 +258,10 @@ fn apply_life_step(grid: &[Vec<Value>]) -> Vec<Vec<Value>> {
 fn generate_noise(h: usize, w: usize) -> Vec<Vec<Value>> {
     let mut rng = rand::thread_rng();
     let mut grid = vec![vec![Value::Int(0); w]; h];
-    for r in 0..h {
-        for c in 0..w {
+    for row in grid.iter_mut().take(h) {
+        for cell in row.iter_mut().take(w) {
             if rng.gen_bool(0.5) {
-                grid[r][c] = Value::Int(1);
+                *cell = Value::Int(1);
             }
         }
     }
