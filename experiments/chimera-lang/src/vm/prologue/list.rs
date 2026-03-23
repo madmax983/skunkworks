@@ -134,7 +134,144 @@ pub fn apply_list_runes(
                 }
             }
         }
+        "E" => {
+            // Exists: West (List), North (Pattern) -> Self (Int 1 if found)
+            let n_sig = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+                current_signals[ny][nx].clone()
+            } else {
+                None
+            };
+            if let (Some(Value::Junction(_t, items)), Some(pattern)) = (w_sig, n_sig) {
+                let exists = items.into_iter().any(|v| v == pattern);
+                if exists && next_signals[y][x].is_none() {
+                    next_signals[y][x] = Some(Value::Int(1));
+                    changes = true;
+                }
+            }
+        }
+        "Z" => {
+            // Zip (Hyper-Op): West (List), North (Operator), East (List) -> Self (Zipped List)
+            let n_sig = if let Some((ny, nx)) = normalize_coords(y as i64 - 1, x as i64) {
+                current_signals[ny][nx].clone()
+            } else {
+                None
+            };
+            let e_sig = if let Some((ey, ex)) = normalize_coords(y as i64, x as i64 + 1) {
+                current_signals[ey][ex].clone()
+            } else {
+                None
+            };
+
+            if let (
+                Some(Value::Junction(t1, items_w)),
+                Some(Value::Str(op)),
+                Some(Value::Junction(t2, items_e)),
+            ) = (w_sig, n_sig, e_sig)
+            {
+                let len = items_w.len().min(items_e.len());
+                let mut zipped = Vec::with_capacity(len);
+                for i in 0..len {
+                    let w = items_w[i].clone();
+                    let e = items_e[i].clone();
+                    // Apply operator directly since apply_binary_op logic supports Values
+                    // For zip, we generally expect Int operations for + - * / %
+                    match (w, op.as_str(), e) {
+                        (Value::Int(w_val), "+", Value::Int(e_val)) => {
+                            zipped.push(Value::Int(w_val.wrapping_add(e_val)));
+                        }
+                        (Value::Int(w_val), "-", Value::Int(e_val)) => {
+                            zipped.push(Value::Int(w_val.wrapping_sub(e_val)));
+                        }
+                        (Value::Int(w_val), "*", Value::Int(e_val)) => {
+                            zipped.push(Value::Int(w_val.wrapping_mul(e_val)));
+                        }
+                        (Value::Int(w_val), "/", Value::Int(e_val)) => {
+                            if e_val != 0 {
+                                zipped.push(Value::Int(w_val.wrapping_div(e_val)));
+                            } else {
+                                zipped.push(Value::Int(0));
+                            }
+                        }
+                        (Value::Int(w_val), "%", Value::Int(e_val)) => {
+                            if e_val != 0 {
+                                zipped.push(Value::Int(w_val.wrapping_rem(e_val)));
+                            } else {
+                                zipped.push(Value::Int(0));
+                            }
+                        }
+                        (Value::Str(w_val), "+", Value::Str(e_val)) => {
+                            zipped.push(Value::Str(format!("{}{}", w_val, e_val)));
+                        }
+                        // Fallback: If operation doesn't match or is unsupported, push a 0 Int
+                        _ => zipped.push(Value::Int(0)),
+                    }
+                }
+
+                // Determine resultant junction type
+                let res_type = match (t1, t2) {
+                    (crate::ast::JunctionType::All, _) => crate::ast::JunctionType::All,
+                    (_, crate::ast::JunctionType::All) => crate::ast::JunctionType::All,
+                    (crate::ast::JunctionType::Dish, _) => crate::ast::JunctionType::Dish,
+                    (_, crate::ast::JunctionType::Dish) => crate::ast::JunctionType::Dish,
+                    _ => crate::ast::JunctionType::Any,
+                };
+
+                if next_signals[y][x].is_none() {
+                    next_signals[y][x] = Some(Value::Junction(res_type, zipped));
+                    changes = true;
+                }
+            }
+        }
         _ => {}
     }
     changes
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::ast::JunctionType;
+    use crate::vm::Value;
+
+    #[test]
+    fn apply_list_runes_test() {
+        let mut current_signals = vec![vec![None; 16]; 16];
+        let mut next_signals = vec![vec![None; 16]; 16];
+
+        // Setup E Test: West=Junction(Any, [Int(5), Int(10)]), North=Int(10)
+        let j_val = Value::Junction(JunctionType::Any, vec![Value::Int(5), Value::Int(10)]);
+        current_signals[2][1] = Some(j_val.clone()); // West
+        current_signals[1][2] = Some(Value::Int(10)); // North
+
+        // Run E
+        let changed = apply_list_runes("E", 2, 2, &current_signals, &mut next_signals);
+        assert!(changed);
+        assert_eq!(next_signals[2][2], Some(Value::Int(1))); // Exists
+
+        // Reset
+        let mut next_signals = vec![vec![None; 16]; 16];
+
+        // Setup E Test (Not Found): North=Int(11)
+        current_signals[1][2] = Some(Value::Int(11));
+        let changed = apply_list_runes("E", 2, 2, &current_signals, &mut next_signals);
+        assert!(!changed);
+        assert_eq!(next_signals[2][2], None);
+
+        // Reset
+        let mut next_signals = vec![vec![None; 16]; 16];
+
+        // Setup Z Test: West=Junction([1, 2, 3]), North=Str("+"), East=Junction([4, 5, 6])
+        let j_w = Value::Junction(JunctionType::Any, vec![Value::Int(1), Value::Int(2), Value::Int(3)]);
+        let j_e = Value::Junction(JunctionType::Any, vec![Value::Int(4), Value::Int(5), Value::Int(6)]);
+        current_signals[2][1] = Some(j_w); // West
+        current_signals[1][2] = Some(Value::Str("+".to_string())); // North
+        current_signals[2][3] = Some(j_e); // East
+
+        // Run Z
+        let changed = apply_list_runes("Z", 2, 2, &current_signals, &mut next_signals);
+        assert!(changed);
+
+        let expected_zip = Value::Junction(JunctionType::Any, vec![Value::Int(5), Value::Int(7), Value::Int(9)]);
+        assert_eq!(next_signals[2][2], Some(expected_zip));
+    }
 }
