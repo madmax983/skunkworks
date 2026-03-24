@@ -1,0 +1,18 @@
+[package]
+name = "chimera-strings"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chimera-lang = { path = "../chimera-lang" }
+ferrous-core = { path = "../../crates/ferrous-core" }
+macroquad = "0.4"
+tui-shared = { workspace = true }
+anyhow = "1.0"
+rand = "0.8"
+crossbeam-channel = "0.5"
+cpal = { version = "0.15", optional = true }
+
+[features]
+default = ["audio"]
+audio = ["cpal"]
