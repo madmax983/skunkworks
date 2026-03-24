@@ -41,3 +41,6 @@
 ## 2025-03-21 - The "Explicit Imports" in Readme Doctests
 **Confusion:** Users attempting to run README examples by copy-pasting code into a fresh project encountered compilation errors (missing `chimera_lang::compiler` module and `ChimeraVM`) because `chimera-lang` doctests were using the wildcard import `use chimera_lang::prelude::*;`.
 **Clarification:** Updated the `experiments/chimera-lang/src/lib.rs` doctest to explicitly import the `ast` components, `OpCode`, and `ChimeraVM` instead of using the prelude. This matches the memory guideline ensuring code examples compile reliably when copy-pasted.
+## 2025-03-24 - The Ghost Conversions
+**Confusion:** Users attempting to pass `locus::vec3::Vec3` structures into `macroquad` game engine functions (like `draw_line_3d`) were unaware they could simply use `.into()`. The conditional `From` trait implementations under `#[cfg(feature = "macroquad")]` were entirely undocumented, forcing users to manually map `.x`, `.y`, and `.z` fields.
+**Clarification:** I added robust documentation to the conditional `From<Vec3>` and `From<MacroquadVec3>` trait blocks in `crates/locus/src/vec3.rs`. I included `/// ```ignore` code examples explicitly showing the cross-ecosystem conversion via `.into()`, highlighting this crucial interoperability feature.
