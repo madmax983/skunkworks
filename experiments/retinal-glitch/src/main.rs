@@ -33,8 +33,8 @@ async fn main() {
 
         // 1. Update Physics
         visual_field.update(dt);
-        let spikes = retina.update(&visual_field.buffer);
-        visual_field.inject_feedback(&spikes);
+        retina.update(&visual_field.buffer);
+        visual_field.inject_feedback(&retina.spikes);
 
         if is_key_pressed(KeyCode::Space) {
             visual_field.warp_x.fill(0.0);
@@ -78,7 +78,7 @@ async fn main() {
         }
 
         // Draw Spikes as bright dots
-        for (sx, sy) in &spikes {
+        for (sx, sy) in &retina.spikes {
             ganglion_image.set_pixel(*sx as u32, *sy as u32, WHITE);
         }
 
@@ -145,7 +145,7 @@ async fn main() {
 
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 20.0, 20.0, YELLOW);
         draw_text(
-            &format!("Spikes: {}", spikes.len()),
+            &format!("Spikes: {}", retina.spikes.len()),
             10.0,
             40.0,
             20.0,

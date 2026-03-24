@@ -146,32 +146,31 @@ async fn main() {
         let platter = ferrous_core::Platter::new(2, 2);
 
         for s in &mut strings {
-             s.update_physics(dt, &platter, grid_scale);
+            s.update_physics(dt, &platter, grid_scale);
         }
 
         // Interaction between Graph Nodes (rotting) and Strings
         for node in &graph.nodes {
-             let screen_pos = node.pos * zoom + offset;
-             // High entropy = lower health. Rotting nodes collide and pluck the strings.
-             if node.health < 0.3 {
-                 for s in &mut strings {
-                      // Simple collision check with string
-                      let in_x = (screen_pos.x - s.pos.x).abs() < 10.0;
-                      let in_y = screen_pos.y >= s.pos.y && screen_pos.y <= s.pos.y + s.length;
-                      if in_x && in_y {
-                           let strength = (1.0 - node.health) * 10.0;
-                           s.pluck(strength);
-                           // Play Audio
-                           let _ = cmd_tx.send(AudioCommand::Pluck {
-                               frequency: s.frequency,
-                               decay: s.decay,
-                               amplitude: (strength / 50.0).clamp(0.1, 0.8),
-                           });
-                      }
-                 }
-             }
+            let screen_pos = node.pos * zoom + offset;
+            // High entropy = lower health. Rotting nodes collide and pluck the strings.
+            if node.health < 0.3 {
+                for s in &mut strings {
+                    // Simple collision check with string
+                    let in_x = (screen_pos.x - s.pos.x).abs() < 10.0;
+                    let in_y = screen_pos.y >= s.pos.y && screen_pos.y <= s.pos.y + s.length;
+                    if in_x && in_y {
+                        let strength = (1.0 - node.health) * 10.0;
+                        s.pluck(strength);
+                        // Play Audio
+                        let _ = cmd_tx.send(AudioCommand::Pluck {
+                            frequency: s.frequency,
+                            decay: s.decay,
+                            amplitude: (strength / 50.0).clamp(0.1, 0.8),
+                        });
+                    }
+                }
+            }
         }
-
 
         // Render
         clear_background(BLACK);

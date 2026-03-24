@@ -7,6 +7,8 @@ pub struct Retina {
     pub horizontal: Vec<f32>,
     pub bipolar: Vec<f32>,
     pub ganglion: Vec<Izhikevich>,
+    /// Pre-allocated buffer for spiking ganglion cells to avoid per-frame heap allocations
+    pub spikes: Vec<(usize, usize)>,
 }
 
 impl Retina {
@@ -19,13 +21,14 @@ impl Retina {
             horizontal: vec![0.0; size],
             bipolar: vec![0.0; size],
             ganglion: (0..size).map(|_| Izhikevich::new()).collect(),
+            spikes: Vec::with_capacity(size / 10), // pre-allocate some capacity
         }
     }
 
     /// Updates the retina state.
     /// Input is expected to be row-major, size width*height.
-    /// Returns a list of (x, y) coordinates of spiking ganglion cells.
-    pub fn update(&mut self, input: &[f32]) -> Vec<(usize, usize)> {
+    /// Spiking ganglion cell coordinates are stored in `self.spikes`.
+    pub fn update(&mut self, input: &[f32]) {
         if input.len() != self.photoreceptors.len() {
             // Panic or ignore? Panic is safer for debugging mismatch.
             panic!(
@@ -77,7 +80,7 @@ impl Retina {
         }
 
         // 4. Ganglion Cells (Spiking)
-        let mut spikes = Vec::new();
+        self.spikes.clear();
 
         for y in 0..self.height {
             for x in 0..self.width {
@@ -86,12 +89,10 @@ impl Retina {
                 let input_current = self.bipolar[idx].max(0.0);
 
                 if self.ganglion[idx].update(1.0, input_current) {
-                    spikes.push((x, y));
+                    self.spikes.push((x, y));
                 }
             }
         }
-
-        spikes
     }
 }
 
@@ -112,8 +113,8 @@ mod tests {
         // Run for a few ticks to allow potential to integrate
         let mut spike_count = 0;
         for _ in 0..50 {
-            let spikes = retina.update(&input);
-            spike_count += spikes.len();
+            retina.update(&input);
+            spike_count += retina.spikes.len();
         }
 
         assert!(
