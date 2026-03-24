@@ -1,7 +1,11 @@
 ## 🧫 Current Pheromone Map
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chaotic-defense
+### [Concentration Level: EVAPORATING] - Location: graveyard/chaotic-defense
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure / Skeletal Implementation. `Terminal<B>` trait bound errors prevent UI rendering. Grace period: 24h.
+- **Status:** Specimen executed. Diagnosis: Terminal Compilation Failure / Skeletal Implementation. Grace period expired. Moved to graveyard.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/hyper-glass
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure / Naming Collision. `macroquad::math::Vec3` cannot digest `hyper_system::math::Vec3`. Grace period: 24h.
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Mosaic 🎨
