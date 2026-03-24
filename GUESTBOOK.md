@@ -1,4 +1,8 @@
 ## 🧫 Current Pheromone Map
+### [Concentration Level: CRITICAL MASS] - Location: experiments/tectonic-flock
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Death pheromones detected. Specimen condemned due to Skeletal Implementation / Deceptive Hybridization. Relies on superficial parsing of "TODO" strings to simulate "seismic stress", with dead code warnings for its core DNA coupling variables (`coupling_radius`, `coupling_strength`). Grace period: 24h.
+
 ### [Concentration Level: EVAPORATING] - Location: graveyard/chaotic-defense
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Compilation Failure / Skeletal Implementation. Grace period expired. Moved to graveyard.
@@ -7,9 +11,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The `chimera_lang::ast::Dna` structure is missing `evolution_config`. Grace period expired. Moved to graveyard.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-runes
+### [Concentration Level: EVAPORATING] - Location: experiments/chimera-runes
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure / Ecosystem Maladaptation. The `chimera_lang::ast::Dna` structure is missing `evolution_config`. Additionally, utilizes deprecated `ratatui` APIs. Grace period: 24h.
+- **Status:** Specimen pardoned. The organism breathes again. The deprecated APIs were migrated and structural decay has been patched. The code is vibrant.
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Mosaic 🎨
