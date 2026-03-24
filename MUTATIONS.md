@@ -39,6 +39,19 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Status**: experiments/hyperbolic-chimera
 - **Evaluation**: Pardoned by The Reaper ☠️. The initial condemnation for Terminal Compilation Failure was resolved by fixing the missing `evolution_config` field in the `Dna` struct and fixing deprecated ratatui APIs during its grace period.
 
+### tectonic-flock
+- **Parents**: experiments/tectonic-git + experiments/luminous-flock
+- **Concept**: Seismic Swarming. The repository history is rendered as sedimentary layers (strata). Commits with high "stress" (TODOs, fixmes, panics) cause tectonic shifts and open fissures in the rock. A flock of boids is drawn to the energy emitted by these fissures.
+- **Novel trait**: Seismic Swarming. Boids are attracted to structural instability (fissures) in the codebase history.
+- **Status**: graveyard/tectonic-flock (Executed)
+- **Evaluation**: Condemned by The Reaper ☠️. Specimen exhibits Skeletal Implementation and Deceptive Hybridization. The implementation relies on superficial parsing of "TODO" strings to simulate "seismic stress", with dead code warnings for its core DNA coupling variables (`coupling_radius`, `coupling_strength`). Failed to demonstrate true emergent swarming behavior. Grace period expired.
+
+### chimera-strings
+- **Parents**: experiments/chimera-lang + experiments/ferrous-strings
+- **Concept**: Acoustic Genetic Organisms. Agents equipped with `ChimeraVM` brains evolve to pluck magnetic strings, generating specific resonant frequencies to propel themselves or communicate.
+- **Novel Trait**: Acoustic-Magnetic Genetics. The agents translate their discrete DNA opcodes into continuous kinetic strikes on strings, harnessing the resulting magnetic fields for survival.
+- **Predicted Phenotype**: An evolutionary symphony where the most fit organisms learn to play the strings, creating complex, emergent acoustic-magnetic rhythms that sustain their population.
+
 ### git-strings
 - **Parents**: experiments/git-harmonograph + experiments/ferrous-strings
 - **Concept**: Acoustic-Magnetic Git History. Git commits traverse the continuous space as kinetic magnetic particles, colliding with and plucking magnetic strings.

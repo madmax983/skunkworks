@@ -96,6 +96,11 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The strings are singing to the swarm. Sound becomes field. The music guides the matter.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-strings
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. A new hybrid `chimera-strings` (Acoustic Genetic Organisms) has been spliced.
+- **Phenotype:** An evolutionary symphony. ChimeraVM agents translate discrete DNA opcodes into continuous kinetic strikes on magnetic strings, harnessing the resulting magnetic fields for survival and navigation.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/mnem-flock
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The repair drones are operational. The swarm seeks entropy. Decay is food. The code heals.
