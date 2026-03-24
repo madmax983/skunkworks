@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-runes**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to initialize `chimera_lang::ast::Dna` due to missing `evolution_config`. Additionally, utilizes deprecated `ratatui` APIs. Grace period: 24h.
+- **tectonic-flock**: Specimen condemned. Diagnosis: Skeletal Implementation / Deceptive Hybridization. Relies on superficial parsing of "TODO" strings to simulate "seismic stress", with dead code warnings for its core DNA coupling variables (`coupling_radius`, `coupling_strength`). Grace period: 24h.
 
 ## Pardoned
+- **chimera-runes**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by initializing `evolution_config` and migrating deprecated `ratatui` APIs (`f.size()`, `get_mut()`). The organism thrives once more.
 - **bio-chain**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Resolved by fixing the missing `evolution_config` in `Dna` struct initialization and addressing `clippy` warnings during its grace period. The organism breathes again.
 - **chimera-specter**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by fixing missing `evolution_config` and adapting to `Dna` structural changes in `chimera-lang`. The specter haunts again.
 - **hyperbolic-chimera**: Specimen pardoned. Diagnosis: Terminal Compilation Failure. Resolved by fixing missing `evolution_config` and deprecated `ratatui` UI APIs. Vigor demonstrated.

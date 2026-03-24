@@ -121,7 +121,7 @@ fn execute_dna(dna_bytes: &[u8]) -> String {
     let helix = Helix {
         strands: vec![Strand { genes }],
     };
-    let dna = Dna { helix };
+    let dna = Dna { helix, evolution_config: None };
 
     // Create VM
     let mut vm = ChimeraVM::new(dna);
@@ -202,7 +202,7 @@ fn ui(f: &mut Frame, p1: &Genome, p2: &Genome, child: &Genome, output: &str) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Percentage(70), Constraint::Percentage(30)])
-        .split(f.size());
+        .split(f.area());
 
     let top_chunks = Layout::default()
         .direction(Direction::Horizontal)
@@ -265,7 +265,7 @@ fn draw_rune(f: &mut Frame, area: Rect, genome: &Genome, title: &str) {
             let c2 = Color::Rgb(p2[0], p2[1], p2[2]);
 
             f.buffer_mut()
-                .get_mut(inner_area.x + x, inner_area.y + y)
+                [(inner_area.x + x, inner_area.y + y)]
                 .set_char('▀')
                 .set_fg(c1)
                 .set_bg(c2);
