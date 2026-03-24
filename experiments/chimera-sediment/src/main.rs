@@ -58,7 +58,7 @@ async fn main() {
         if sun.mode == ScheduleMode::Priority && !trees.is_empty() {
             if let Some(target) = trees
                 .iter()
-                .max_by(|a, b| a.stats.cpu_usage.partial_cmp(&b.stats.cpu_usage).unwrap())
+                .max_by(|a, b| a.stats.cpu_usage.total_cmp(&b.stats.cpu_usage))
             {
                 let diff = target.position.x - sun.position.x;
                 if diff.abs() > 5.0 {

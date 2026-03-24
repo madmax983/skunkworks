@@ -222,7 +222,7 @@ impl GameState {
             })
             .collect();
 
-        dists.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
+        dists.sort_by(|a, b| a.1.total_cmp(&b.1));
         dists.iter().take(n).map(|(id, _)| *id).collect()
     }
 }
