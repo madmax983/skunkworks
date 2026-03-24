@@ -38,23 +38,21 @@ fn parse_git_history() -> Result<Vec<FileTarget>> {
 
     let mut file_counts: HashMap<String, usize> = HashMap::new();
 
-    for oid in revwalk.take(500) {
-        if let Ok(oid) = oid {
-            if let Ok(commit) = repo.find_commit(oid) {
-                if commit.parent_count() > 0 {
-                    if let Ok(parent) = commit.parent(0) {
-                        if let (Ok(tree), Ok(parent_tree)) = (commit.tree(), parent.tree()) {
-                            if let Ok(diff) =
-                                repo.diff_tree_to_tree(Some(&parent_tree), Some(&tree), None)
-                            {
-                                let _ = diff.print(git2::DiffFormat::NameOnly, |delta, _, _| {
-                                    if let Some(path) = delta.new_file().path() {
-                                        let path_str = path.to_string_lossy().to_string();
-                                        *file_counts.entry(path_str).or_insert(0) += 1;
-                                    }
-                                    true
-                                });
-                            }
+    for oid in revwalk.take(500).flatten() {
+        if let Ok(commit) = repo.find_commit(oid) {
+            if commit.parent_count() > 0 {
+                if let Ok(parent) = commit.parent(0) {
+                    if let (Ok(tree), Ok(parent_tree)) = (commit.tree(), parent.tree()) {
+                        if let Ok(diff) =
+                            repo.diff_tree_to_tree(Some(&parent_tree), Some(&tree), None)
+                        {
+                            let _ = diff.print(git2::DiffFormat::NameOnly, |delta, _, _| {
+                                if let Some(path) = delta.new_file().path() {
+                                    let path_str = path.to_string_lossy().to_string();
+                                    *file_counts.entry(path_str).or_insert(0) += 1;
+                                }
+                                true
+                            });
                         }
                     }
                 }
@@ -168,11 +166,12 @@ async fn main() {
         }
 
         // Parallel update
+        // fw_clone allows parallel iterations without borrowing conflicts
+        // with the mut firewall references further below in the frame
         let fw_clone = firewalls
             .iter()
             .map(|f| (f.pos, f.radius))
             .collect::<Vec<_>>();
-        let targets_clone = targets.clone();
 
         packets.par_iter_mut().for_each(|p| {
             if !p.active {
@@ -180,7 +179,7 @@ async fn main() {
             }
 
             if let Some(t_idx) = p.target_idx {
-                if let Some(target) = targets_clone.get(t_idx) {
+                if let Some(target) = targets.get(t_idx) {
                     let to_target = target.pos - p.pos;
                     let dist = to_target.length();
 
