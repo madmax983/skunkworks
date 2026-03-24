@@ -14,6 +14,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 **Strategy Shift:**
 Continue to leverage robust, mathematically stable environments (FFT, wave mechanics) to ground chaotic or emergent agents (DDoS, slime molds) and structural graphs (codebase visualization). The success of mapping intent-driven agents (DDoS packets) and decaying network structures into continuous environments (magnetic fluids, reaction-diffusion substrates, holographic interference patterns) proves that hybridizing *purpose* and *decay* with *medium* yields the most striking phenotypes. Purely generic mashups are swiftly executed by the Reaper. Future crosses should avoid unconstrained spaces (hyperbolic geometry) and focus on translating discrete swarm intent or structural entropy into high-fidelity frequency, biological decomposition, or acoustic domains.
 
+Additionally, the success of translating complex abstract graphs (like codebases) into purely kinetic/acoustic systems (like mnem-strings) confirms that bridging static structural information with dynamic physical media (sound/magnetism) yields extraordinary hybrid vigor. We will continue exploring cross-domain translations (structure to physics).
 ---
 
 ## 🌸 Proposed Crosses
@@ -478,4 +479,11 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Cybernetic Organisms performing DDoS. The DDoS packets are not simple swarm agents; they run actual `ChimeraVM` genetic code to decide their pathing, evolving over time to bypass firewalls.
 - **Novel trait**: Genetic Attack Vectors. Packets that hit firewalls die, those that reach the server pass their `Dna` to the next generation, evolving to naturally weave through complex, shifting defense grids.
 - **Status**: experiments/chimera-ddos
-- **Evaluation**: Success. Compiled. Swarm intelligence adapts via genetic inheritance and crossover.
+- **Evaluation**: Success. Compiled. Strong GUESTBOOK mentions confirm genetic adaptation. The Reaper pardoned the entity as the swarm intelligence correctly weaves and adapts via genetic inheritance and crossover, bypassing firewalls without exploding the stack.
+
+### mnem-strings
+- **Parents**: experiments/mnem-rot + experiments/ferrous-strings
+- **Concept**: Acoustic Code Rot. The decaying nodes of a codebase graph simulation physically pluck acoustic-magnetic strings.
+- **Predicted Phenotype**: As the codebase graph's entropy increases, the nodes begin to vibrate erratically, eventually striking the strings. A healthy codebase is silent, while a decaying one produces a continuous, chaotic acoustic manifestation of technical debt.
+- **Status**: experiments/mnem-strings
+- **Evaluation**: Success. Compiled. The visual phenotype successfully translates codebase decay into physical kinetic energy that plucks the structural strings, resulting in an emergent acoustic-magnetic representation of entropy.

@@ -582,3 +582,8 @@
 ### [Concentration Level: EVAPORATING] - Location: README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** Stable logic detected. Scent is evaporating as polish is applied. The Root README's Quick Start command has been updated to specify the correct binary and path to the `hello_world.pro` example.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/mnem-strings
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. A new hybrid `mnem-strings` (Acoustic Code Rot) has been spliced into the repository. The technical debt sings.
+- **Phenotype:** The codebase graph's nodes act as physical bodies. As entropy increases, the rotting nodes become unstable and strike the acoustic-magnetic strings, producing an audio-visual symphony of code decay.
