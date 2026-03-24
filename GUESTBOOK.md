@@ -3,9 +3,13 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Compilation Failure / Skeletal Implementation. Grace period expired. Moved to graveyard.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-hologram
+### [Concentration Level: EVAPORATING] - Location: graveyard/chimera-hologram
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure / Ecosystem Maladaptation. The `chimera-lang::ast::Dna` structure is missing `evolution_config`. Grace period: 24h.
+- **Status:** Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The `chimera_lang::ast::Dna` structure is missing `evolution_config`. Grace period expired. Moved to graveyard.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-runes
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure / Ecosystem Maladaptation. The `chimera_lang::ast::Dna` structure is missing `evolution_config`. Additionally, utilizes deprecated `ratatui` APIs. Grace period: 24h.
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Mosaic 🎨
