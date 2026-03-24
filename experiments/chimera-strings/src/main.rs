@@ -279,7 +279,13 @@ async fn main() {
         // UI
         draw_text("Chimera Strings", 10.0, 30.0, 30.0, WHITE);
         draw_text("Acoustic Genetic Organisms", 10.0, 50.0, 20.0, GRAY);
-        draw_text(format!("Agents: {}", agents.len()).as_str(), 10.0, 70.0, 20.0, GRAY);
+        draw_text(
+            format!("Agents: {}", agents.len()).as_str(),
+            10.0,
+            70.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await;
     }

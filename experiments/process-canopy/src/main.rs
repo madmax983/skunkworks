@@ -47,7 +47,7 @@ async fn main() {
             // Find tree with highest CPU
             if let Some(target) = trees
                 .iter()
-                .max_by(|a, b| a.stats.cpu_usage.partial_cmp(&b.stats.cpu_usage).unwrap())
+                .max_by(|a, b| a.stats.cpu_usage.total_cmp(&b.stats.cpu_usage))
             {
                 // Move sun towards target
                 let diff = target.position.x - sun.position.x;

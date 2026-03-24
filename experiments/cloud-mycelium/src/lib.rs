@@ -68,7 +68,7 @@ impl World {
             .map(|(i, m)| (i, m.pos.distance(pos)))
             .collect();
 
-        distances.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
+        distances.sort_by(|a, b| a.1.total_cmp(&b.1));
 
         for (neighbor_idx, dist) in distances.iter().take(3) {
             if *dist < 300.0 {

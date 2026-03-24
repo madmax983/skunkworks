@@ -212,7 +212,7 @@ async fn main() {
             }
 
             // Sort
-            population.sort_by(|a, b| b.fitness.partial_cmp(&a.fitness).unwrap());
+            population.sort_by(|a, b| b.fitness.total_cmp(&a.fitness));
             println!(
                 "Gen {} Best Fitness: {:.2}",
                 generation, population[0].fitness
