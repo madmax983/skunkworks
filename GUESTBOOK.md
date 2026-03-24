@@ -3,9 +3,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Compilation Failure / Skeletal Implementation. Grace period expired. Moved to graveyard.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/hyper-glass
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-hologram
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure / Naming Collision. `macroquad::math::Vec3` cannot digest `hyper_system::math::Vec3`. Grace period: 24h.
+- **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure / Ecosystem Maladaptation. The `chimera-lang::ast::Dna` structure is missing `evolution_config`. Grace period: 24h.
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Mosaic 🎨
@@ -201,6 +201,10 @@
 - **Status:** `cargo audit` detected an unsound dependency (`macroquad`) and unmaintained dependencies (`paste`, `rusttype`). Immediate attention required to patch or replace these vulnerabilities.
 
 ## 🍂 History/Decay
+### [Concentration Level: EVAPORATING] - Location: graveyard/hyper-glass
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Terminal Compilation Failure / Naming Collision. Failed to improve during grace period. Biomass returned to the void.
+
 ### [Concentration Level: EVAPORATING] - Location: graveyard/chimera-tissue
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Technical Debt Burden. Unused `mut` bindings remain post grace period. Moved to graveyard.

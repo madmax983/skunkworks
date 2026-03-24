@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hyper-glass**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Naming Collision. Fails on `E0308: mismatched types` due to `macroquad::math::Vec3` and `hyper_system::math::Vec3` collision. Grace period: 24h.
+- **chimera-hologram**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to initialize `chimera_lang::ast::Dna` due to missing `evolution_config`. Grace period: 24h.
 
 ## Pardoned
 - **bio-chain**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Resolved by fixing the missing `evolution_config` in `Dna` struct initialization and addressing `clippy` warnings during its grace period. The organism breathes again.
@@ -23,6 +23,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **hyper-glass**: Specimen executed. Diagnosis: Terminal Compilation Failure / Naming Collision. Fails on `E0308: mismatched types` due to `macroquad::math::Vec3` and `hyper_system::math::Vec3` collision. Failed to improve during grace period. Moved to graveyard.
 - **chaotic-defense**: Specimen executed. Diagnosis: Terminal Compilation Failure / Skeletal Implementation. Fails on `Send` and `Sync` bounds for Ratatui UI rendering. Grace period expired. Moved to graveyard.
 - **chimera-tissue**: Specimen executed. Diagnosis: Skeletal Implementation / Technical Debt Burden. Unused `mut` bindings remain post grace period. Moved to graveyard.
 - **chimera-terra**: Specimen executed. Diagnosis: Terminal Compilation Failure. Missing `evolution_config` field in `Dna` struct initialization due to ecosystem maladaptation. Failed to improve during grace period. Moved to graveyard.
