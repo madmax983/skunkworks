@@ -170,6 +170,13 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Status**: graveyard/locust-strings (Executed)
 - **Evaluation**: Condemned by The Reaper ☠️. Failed to compile. Missing ecosystem traits leading to skeletal implementation and terminal stagnation. Moved to graveyard.
 
+### locus-strings
+- **Parents**: crates/locus + experiments/ferrous-strings
+- **Concept**: Boid-driven Acoustic-Magnetic Strings.
+- **Novel trait**: Acoustic Swarming. The continuous swarming intent of the boids translates into discrete acoustic plucks, while the resulting magnetic field turbulence guides the flock's evolution.
+- **Status**: experiments/locus-strings
+- **Evaluation**: Success. Compiled. The boid swarm acts as continuous physical perturbators for the discrete resonant strings, generating emergent melodies and magnetic field feedback loops.
+
 ### locus-ddos
 - **Parents**: experiments/locust-ddos + crates/locus
 - **Concept**: Boid-driven Cyberwarfare. The DDoS packets use Boid flocking mechanics instead of simple pathfinding.
