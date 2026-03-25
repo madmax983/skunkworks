@@ -34,13 +34,21 @@ fn test_darwin_rune() {
 
     // Actual (Subject): 0
     // We need signal at East (5,6).
-    // Use Wire at 5,6. Reads South (6,6).
-    // ! at 6,6. Reads West (6,5).
-    // (6,5) = 0.
+    // The mutation cone of ∞ is y + 1..=5, x - 2..=2.
+    // This is y=6..=10, x=3..=7.
+    // We construct a wire path outside the cone:
+    // ! at (4,8) reads from (4,7). (4,7) = 0.
+    // ~ at (5,8) connects to (4,8).
+    // ~ at (5,7) connects to (5,8).
+    // ~ at (5,6) connects to (5,7).
+    // ∞ at (5,5) reads actual from (5,6).
+    // None of these cells are in the y=6..10 range.
 
+    vm.grid[4][7] = Value::Int(0);
+    vm.grid[4][8] = Value::Str("!".to_string());
+    vm.grid[5][8] = Value::Str("~".to_string());
+    vm.grid[5][7] = Value::Str("~".to_string());
     vm.grid[5][6] = Value::Str("~".to_string());
-    vm.grid[6][6] = Value::Str("!".to_string());
-    vm.grid[6][5] = Value::Int(0);
 
     // Run tick
     // 0 != 10. Expect Mutation.
@@ -57,7 +65,7 @@ fn test_darwin_rune() {
     vm.output.clear();
 
     // Set Subject to 10
-    vm.grid[6][5] = Value::Int(10);
+    vm.grid[4][7] = Value::Int(10);
 
     // Run tick
     // 10 == 10. Expect Success.
