@@ -44,3 +44,7 @@
 ## 2025-03-24 - The Ghost Conversions
 **Confusion:** Users attempting to pass `locus::vec3::Vec3` structures into `macroquad` game engine functions (like `draw_line_3d`) were unaware they could simply use `.into()`. The conditional `From` trait implementations under `#[cfg(feature = "macroquad")]` were entirely undocumented, forcing users to manually map `.x`, `.y`, and `.z` fields.
 **Clarification:** I added robust documentation to the conditional `From<Vec3>` and `From<MacroquadVec3>` trait blocks in `crates/locus/src/vec3.rs`. I included `/// ```ignore` code examples explicitly showing the cross-ecosystem conversion via `.into()`, highlighting this crucial interoperability feature.
+
+## 2025-03-25 - The Ghost Compilation Issue
+**Confusion:** The documentation for `Dna::default()` was misleading and led to compilation errors, because it lacked initialization for nested inner structs like `evolution_config`. Furthermore, code examples assumed wildcard prelude imports `chimera_lang::prelude::*` leading to unresolved module paths.
+**Clarification:** Replaced instances of `Dna::default()` with `Dna::from_genes(genes)` in the module-level documentation (`src/lib.rs`) and `README.md`. Made module imports explicit for components like `chimera_lang::vm::ChimeraVM` and `chimera_lang::compiler::compile`.

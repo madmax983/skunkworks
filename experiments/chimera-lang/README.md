@@ -328,8 +328,7 @@ fn main() {
         Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] },
         Gene { op: OpCode::Print, args: vec![] },
     ];
-    // Note: `Dna::default()` doesn't exist (it requires complex nested structs).
-    // Always use `Dna::from_genes(genes)` instead to initialize the organism properly.
+    // Initialize using `from_genes` to avoid complex nested struct creation.
     let dna = Dna::from_genes(genes);
     let mut vm = ChimeraVM::new(dna);
 
