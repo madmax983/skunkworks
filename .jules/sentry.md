@@ -12,3 +12,6 @@
 **Added `platter` boundary checks**
 **Learning:** Returning 0.0 using `unwrap_or` for spatial data struct on out-of-bounds coords could hide boundary flaws, but explicitly verifying it documents the safety behavior.
 **Action:** Adding tests to verify `unwrap_or(0.0)` in `get_magnetism` behaves as expected.
+**2023-10-25 - Using `cargo-llvm-cov` to Identify Gaps in Coverage**
+**Learning:** Manual inspection and basic test counting often miss subtle execution paths, such as early returns, `else` branches, or specific mathematical edge cases (e.g., negative limits, zero vectors). Utilizing `cargo-llvm-cov --html` provides explicit line-by-line visibility into what is actually executed during tests.
+**Action:** When auditing a crate (like `locus` or `physics-pbd`) that appears well-tested, run `cargo llvm-cov -p <crate> --all-features --html` and inspect the generated HTML report. Specifically target the missed lines to create pinpoint tests (e.g., covering `Vec2::reflect` with a zero-length vector, or negative `limit` values) and achieve 100% coverage on core mathematical and logical constructs.
