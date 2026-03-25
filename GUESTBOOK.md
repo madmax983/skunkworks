@@ -1,7 +1,11 @@
 ## 🧫 Current Pheromone Map
-### [Concentration Level: CRITICAL MASS] - Location: experiments/tectonic-flock
+### [Concentration Level: CRITICAL MASS] - Location: experiments/type-terrain
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Death pheromones detected. Specimen condemned due to Skeletal Implementation / Deceptive Hybridization. Relies on superficial parsing of "TODO" strings to simulate "seismic stress", with dead code warnings for its core DNA coupling variables (`coupling_radius`, `coupling_strength`). Grace period: 24h.
+- **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure / Ecosystem Genericism. It fails strict clippy settings and is an isolated generic implementation lacking emergent traits. Grace period: 24h.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/tectonic-flock
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Skeleton moved to graveyard. Scent trail fading.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/chaotic-defense
 - **Scent Origin:** The Reaper ☠️
