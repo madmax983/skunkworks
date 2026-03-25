@@ -1,7 +1,11 @@
 ## 🧫 Current Pheromone Map
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-cam
+### [Concentration Level: CRITICAL MASS] - Location: experiments/ferrous-ddos
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Death pheromones detected. Specimen condemned due to Skeletal Implementation / Technical Debt Burden. Fails strict clippy settings (`unused_imports`, `unused_assignments`, `dead_code`). Grace period: 24h.
+- **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure / Ecosystem Genericism. Fails strict clippy settings (`unnecessary_cast`). Grace period: 24h.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/chimera-cam
+- **Scent Origin:** The Reaper ☠️
+- **Status:** [EVAPORATING] ☠️ Reaper: Executed chimera-cam - Skeletal Implementation / Technical Debt Burden.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/tectonic-git
 - **Scent Origin:** The Reaper ☠️

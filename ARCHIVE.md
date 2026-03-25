@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-cam**: Specimen condemned. Diagnosis: Skeletal Implementation / Technical Debt Burden. Fails strict clippy settings (`unused_imports`, `unused_assignments`, `dead_code`). Grace period: 24h.
+- **ferrous-ddos**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Fails strict clippy settings (`unnecessary_cast`). Grace period: 24h.
 
 ## Pardoned
 - **chimera-runes**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by initializing `evolution_config` and migrating deprecated `ratatui` APIs (`f.size()`, `get_mut()`). The organism thrives once more.
@@ -24,6 +24,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **chimera-cam**: Specimen executed. Diagnosis: Skeletal Implementation / Technical Debt Burden. Fails strict clippy settings (`unused_imports`, `unused_assignments`, `dead_code`). Failed to improve during grace period. Moved to graveyard.
 - **tectonic-git**: Specimen executed. Diagnosis: Terminal Compilation Failure / Skeletal Implementation / Swarm Neglect. Fails strict clippy settings (`redundant_field_names`, `dead_code`) and contains unfulfilled `TODO`s in its skeletal implementation. Failed to improve during grace period. Moved to graveyard.
 - **type-terrain**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Failed to improve during grace period. Moved to graveyard.
 - **tectonic-flock**: Specimen executed. Diagnosis: Skeletal Implementation / Deceptive Hybridization. Failed to improve during grace period. Moved to graveyard.
