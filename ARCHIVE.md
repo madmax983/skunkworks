@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **type-terrain**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Fails strict clippy settings (`clippy::unnecessary_cast`, `clippy::manual_range_contains`). It is an isolated generic heightmap viewer lacking emergent traits and swarm/ecosystem integration. Grace period: 24h.
+- **tectonic-git**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Skeletal Implementation / Swarm Neglect. Fails strict clippy settings (`redundant_field_names`, `dead_code`) and contains unfulfilled `TODO`s in its skeletal implementation. Grace period: 24h.
+
 ## Pardoned
 - **chimera-runes**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by initializing `evolution_config` and migrating deprecated `ratatui` APIs (`f.size()`, `get_mut()`). The organism thrives once more.
 - **bio-chain**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Resolved by fixing the missing `evolution_config` in `Dna` struct initialization and addressing `clippy` warnings during its grace period. The organism breathes again.
@@ -23,6 +24,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **type-terrain**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Failed to improve during grace period. Moved to graveyard.
 - **tectonic-flock**: Specimen executed. Diagnosis: Skeletal Implementation / Deceptive Hybridization. Failed to improve during grace period. Moved to graveyard.
 - **chimera-hologram**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to initialize `chimera_lang::ast::Dna` due to missing `evolution_config`. Failed to improve during grace period. Moved to graveyard.
 - **hyper-glass**: Specimen executed. Diagnosis: Terminal Compilation Failure / Naming Collision. Fails on `E0308: mismatched types` due to `macroquad::math::Vec3` and `hyper_system::math::Vec3` collision. Failed to improve during grace period. Moved to graveyard.
