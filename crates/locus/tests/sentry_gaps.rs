@@ -69,3 +69,25 @@ fn test_vec4_limit_negative() {
     // Same expectation as Vec2
     assert_eq!(limited.x, 5.0);
 }
+
+#[test]
+fn test_vec2_reflect_zero_len() {
+    let v = Vec2::new(0.0, 0.0);
+    let n = Vec2::new(1.0, 0.0);
+    let r = v.reflect(n);
+    assert_eq!(r, Vec2::new(0.0, 0.0));
+}
+
+#[test]
+fn test_vec2_reflect_non_zero() {
+    let v = locus::Vec2::new(1.0, 1.0);
+    // reflect against x-axis
+    let n = locus::Vec2::new(0.0, 1.0);
+    let r = v.reflect(n);
+    // dot = 1.0
+    // n_sq = 1.0
+    // factor = 2.0 * 1.0 / 1.0 = 2.0
+    // x = 1.0 - 2.0 * 0.0 = 1.0
+    // y = 1.0 - 2.0 * 1.0 = -1.0
+    assert_eq!(r, locus::Vec2::new(1.0, -1.0));
+}
