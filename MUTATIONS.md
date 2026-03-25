@@ -500,3 +500,10 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Predicted Phenotype**: As the codebase graph's entropy increases, the nodes begin to vibrate erratically, eventually striking the strings. A healthy codebase is silent, while a decaying one produces a continuous, chaotic acoustic manifestation of technical debt.
 - **Status**: experiments/mnem-strings
 - **Evaluation**: Success. Compiled. The visual phenotype successfully translates codebase decay into physical kinetic energy that plucks the structural strings, resulting in an emergent acoustic-magnetic representation of entropy.
+
+### hologram-tank
+- **Parents**: experiments/ripple-tank + experiments/hologram-text
+- **Concept**: Acoustic Holography. The 2D physical acoustic wave tank simulation creates physical displacement (pressure) that is treated as an optical interference pattern.
+- **Predicted Phenotype**: Spectral Wave Mechanics. As standing waves and interference patterns form in the physical wave tank, they are transformed via 2D FFT into a holographic projection. This visualizes the resonant modes of the acoustic space in the frequency domain.
+- **Status**: experiments/hologram-tank
+- **Evaluation**: Success. Compiled. Spectral Wave Mechanics successfully maps physical pressure gradients to frequency domain optical interference patterns.
