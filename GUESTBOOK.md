@@ -31,6 +31,11 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Ecosystem Isolation. A generic utility lacking any organic, chaotic, or evolutionary traits. Grace period: 24h.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/locus-strings
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. Spliced locus with ferrous-strings.
+- **Phenotype:** Acoustic Swarming. Boids swarm around magnetic strings. Their continuous flocking motion plucks the discrete resonant strings, generating a dynamic audio-visual feedback loop. The sound waves translate back into magnetic fields, physically perturbing the flock.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/gray-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. A new hybrid `gray-chimera` (Morphogenetic Genetics) has been spliced.
