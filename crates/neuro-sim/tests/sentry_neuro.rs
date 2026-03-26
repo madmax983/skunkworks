@@ -19,10 +19,10 @@ fn test_sentry_out_of_bounds_is_spiking() {
     let n1 = net.add_neuron();
 
     // Normal access
-    assert_eq!(net.is_spiking(n1), false);
+    assert!(!net.is_spiking(n1));
 
     // Out of bounds access
-    assert_eq!(net.is_spiking(99), false);
+    assert!(!net.is_spiking(99));
 }
 
 #[test]
@@ -33,8 +33,8 @@ fn test_sentry_out_of_bounds_get_synapse_activity() {
     net.add_synapse(n1, n2, 10.0);
 
     // Normal access
-    assert_eq!(net.get_synapse_activity(0), false);
+    assert!(!net.get_synapse_activity(0));
 
     // Out of bounds access
-    assert_eq!(net.get_synapse_activity(99), false);
+    assert!(!net.get_synapse_activity(99));
 }

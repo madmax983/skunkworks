@@ -82,38 +82,7 @@ impl<'a> LogList<'a> {
 impl<'a> Widget for LogList<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let items = self.items.iter().map(|s| {
-            // Optimization: avoid `s.to_lowercase()` to reduce heap allocations per render frame.
-            // Using case-insensitive ascii checks works because our keywords are ascii.
-            let contains_ignore_case = |keyword: &str| -> bool {
-                // If it's a hot path, a simple ascii substring check is much faster than regex
-                // or building a new String via `to_lowercase()`.
-                s.as_bytes().windows(keyword.len()).any(|window| {
-                    window
-                        .iter()
-                        .zip(keyword.as_bytes())
-                        .all(|(&c, &k)| c.to_ascii_lowercase() == k)
-                })
-            };
-
-            let (style, prefix) = if contains_ignore_case("error") {
-                (
-                    Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
-                    "❌ ",
-                )
-            } else if contains_ignore_case("warning") {
-                (Style::default().fg(Color::Yellow), "⚠️ ")
-            } else if contains_ignore_case("note") || contains_ignore_case("info") {
-                (Style::default().fg(Color::Blue), "ℹ️ ")
-            } else if contains_ignore_case("success") {
-                (
-                    Style::default()
-                        .fg(Color::Green)
-                        .add_modifier(Modifier::BOLD),
-                    "✅ ",
-                )
-            } else {
-                (Style::default(), "")
-            };
+            let (style, prefix) = get_log_style_and_prefix(s);
 
             let content = Line::from(vec![
                 Span::styled(prefix, style),
@@ -127,6 +96,41 @@ impl<'a> Widget for LogList<'a> {
             list = list.block(block);
         }
         list.render(area, buf);
+    }
+}
+
+fn get_log_style_and_prefix(s: &str) -> (Style, &'static str) {
+    // Optimization: avoid `s.to_lowercase()` to reduce heap allocations per render frame.
+    // Using case-insensitive ascii checks works because our keywords are ascii.
+    let contains_ignore_case = |keyword: &str| -> bool {
+        // If it's a hot path, a simple ascii substring check is much faster than regex
+        // or building a new String via `to_lowercase()`.
+        s.as_bytes().windows(keyword.len()).any(|window| {
+            window
+                .iter()
+                .zip(keyword.as_bytes())
+                .all(|(&c, &k)| c.to_ascii_lowercase() == k)
+        })
+    };
+
+    if contains_ignore_case("error") {
+        (
+            Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
+            "❌ ",
+        )
+    } else if contains_ignore_case("warning") {
+        (Style::default().fg(Color::Yellow), "⚠️ ")
+    } else if contains_ignore_case("note") || contains_ignore_case("info") {
+        (Style::default().fg(Color::Blue), "ℹ️ ")
+    } else if contains_ignore_case("success") {
+        (
+            Style::default()
+                .fg(Color::Green)
+                .add_modifier(Modifier::BOLD),
+            "✅ ",
+        )
+    } else {
+        (Style::default(), "")
     }
 }
 
