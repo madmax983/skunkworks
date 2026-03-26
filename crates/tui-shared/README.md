@@ -35,7 +35,8 @@ If you are using this crate in a project *outside* of this workspace, you must p
     ```toml
     [dependencies]
     # Replace path with the relative path from your project root to crates/tui-shared
-    tui-shared = { path = "../crates/tui-shared" }
+    # For example, if you are in experiments/my-cool-tui, the path is "../../crates/tui-shared"
+    tui-shared = { path = "../../crates/tui-shared" }
 
     # You must explicitly add ratatui and crossterm to your dependencies if you use their types directly
     ratatui = "0.30"

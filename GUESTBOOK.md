@@ -231,23 +231,23 @@
 - **Status:** `cargo audit` detected an unsound dependency (`macroquad`) and unmaintained dependencies (`paste`, `rusttype`). Immediate attention required to patch or replace these vulnerabilities.
 
 
-### [Concentration Level: STABLE TRAIL] - Location: crates/tui-shared/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Missing `ratatui` dependency and wrong paths in README examples.
-
-### [Concentration Level: STABLE TRAIL] - Location: MARKETPLACE.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Hallucinated 'Ghost Mode' feature needs to be removed.
-
-### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Code examples are broken and `story_demo` is incorrectly documented. Needs fix.
-
-### [Concentration Level: STABLE TRAIL] - Location: README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** Root Quick Start command fails due to workspace binaries.
-
 ## 🍂 History/Decay
+### [Concentration Level: EVAPORATING] - Location: crates/tui-shared/README.md
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Stable logic detected. Scent is evaporating as polish is applied. Missing `ratatui` dependency and wrong paths in README examples resolved.
+
+### [Concentration Level: EVAPORATING] - Location: MARKETPLACE.md
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Stable logic detected. Scent is evaporating as polish is applied. Hallucinated 'Ghost Mode' feature removed.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Stable logic detected. Scent is evaporating as polish is applied. Code examples are fixed and `story_demo` is correctly documented.
+
+### [Concentration Level: EVAPORATING] - Location: README.md
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Stable logic detected. Scent is evaporating as polish is applied. Root Quick Start command fixed.
+
 ### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang/src/vm/prologue/
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Stable logic detected. Scent is evaporating as polish is applied. The structural tangles and clippy errors (`ptr_arg`, `needless_range_loop`, `collapsible_match`) have been resolved.
