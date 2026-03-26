@@ -12,6 +12,26 @@ use chrono::{DateTime, Utc};
 ///
 /// This struct aggregates essential metadata about a commit, including its hash,
 /// author, message, timestamp, and optional diff statistics.
+///
+/// # Examples
+///
+/// ```
+/// use git_associates::model::Commit;
+/// use chrono::Utc;
+///
+/// let commit = Commit {
+///     hash: "d3b07384d113edec49eaa6238ad5ff00".to_string(),
+///     short_hash: "d3b0738".to_string(),
+///     author: "Jane Doe".to_string(),
+///     message: "Fix bug in parser".to_string(),
+///     timestamp: Utc::now(),
+///     parents: vec!["a1b2c3d".to_string()],
+///     stats: None,
+///     files: vec![],
+/// };
+///
+/// assert_eq!(commit.short_hash, "d3b0738");
+/// ```
 #[derive(Debug, Clone)]
 pub struct Commit {
     /// The full SHA-1 hash of the commit.
@@ -41,6 +61,20 @@ pub struct Commit {
 }
 
 /// Aggregated statistics for a commit.
+///
+/// # Examples
+///
+/// ```
+/// use git_associates::model::CommitStats;
+///
+/// let stats = CommitStats {
+///     insertions: 15,
+///     deletions: 2,
+///     files_changed: 3,
+/// };
+///
+/// assert_eq!(stats.insertions, 15);
+/// ```
 #[derive(Debug, Clone, Default)]
 pub struct CommitStats {
     /// Total number of lines inserted across all files.
@@ -52,6 +86,23 @@ pub struct CommitStats {
 }
 
 /// Represents changes to a single file within a commit or diff.
+///
+/// # Examples
+///
+/// ```
+/// use git_associates::model::FileChange;
+///
+/// let change = FileChange {
+///     path: "src/main.rs".to_string(),
+///     extension: "rs".to_string(),
+///     insertions: 5,
+///     deletions: 1,
+///     is_binary: false,
+///     hunks: vec![],
+/// };
+///
+/// assert_eq!(change.extension, "rs");
+/// ```
 #[derive(Debug, Clone)]
 pub struct FileChange {
     /// The path of the file (relative to repo root).
@@ -72,6 +123,20 @@ pub struct FileChange {
 }
 
 /// Statistics for a working directory diff (uncommitted changes).
+///
+/// # Examples
+///
+/// ```
+/// use git_associates::model::{DiffStats, FileChange};
+///
+/// let diff_stats = DiffStats {
+///     files: vec![],
+///     total_added: 42,
+///     total_removed: 7,
+/// };
+///
+/// assert_eq!(diff_stats.total_added, 42);
+/// ```
 #[derive(Debug, Clone, Default)]
 pub struct DiffStats {
     /// List of changed files.
