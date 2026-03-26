@@ -76,6 +76,15 @@ impl GitModel {
     /// # Errors
     ///
     /// Returns an error if the repository cannot be found or opened.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use git_associates::GitModel;
+    ///
+    /// // Open the repository in the current directory
+    /// let model = GitModel::open(".").expect("Failed to open repository");
+    /// ```
     pub fn open<P: AsRef<Path>>(path: P) -> Result<Self> {
         let repo = Repository::discover(path).context("Failed to discover git repository")?;
         Ok(Self { repo })
@@ -90,6 +99,19 @@ impl GitModel {
     /// # Arguments
     ///
     /// * `limit` - The maximum number of commits to retrieve.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use git_associates::GitModel;
+    ///
+    /// let model = GitModel::open(".").unwrap();
+    /// // Get the last 5 commits
+    /// let commits = model.history(5).unwrap();
+    /// for commit in commits {
+    ///     println!("Commit: {} by {}", commit.short_hash, commit.author);
+    /// }
+    /// ```
     pub fn history(&self, limit: usize) -> Result<Vec<Commit>> {
         self.history_internal(limit, false)
     }
@@ -103,6 +125,23 @@ impl GitModel {
     ///
     /// This operation is more expensive than [`history`](Self::history) because it involves
     /// computing diffs for every commit.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use git_associates::GitModel;
+    ///
+    /// let model = GitModel::open(".").unwrap();
+    /// let commits = model.history_with_diffs(5).unwrap();
+    /// for commit in commits {
+    ///     if let Some(stats) = &commit.stats {
+    ///         println!(
+    ///             "Commit {} changed {} files (+{}, -{})",
+    ///             commit.short_hash, stats.files_changed, stats.insertions, stats.deletions
+    ///         );
+    ///     }
+    /// }
+    /// ```
     pub fn history_with_diffs(&self, limit: usize) -> Result<Vec<Commit>> {
         self.history_internal(limit, true)
     }
@@ -200,6 +239,16 @@ impl GitModel {
     /// # Returns
     ///
     /// A [`DiffStats`] object containing details about modified, added, and removed files.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use git_associates::GitModel;
+    ///
+    /// let model = GitModel::open(".").unwrap();
+    /// let stats = model.diff_workdir().unwrap();
+    /// println!("You have {} uncommitted file changes.", stats.files.len());
+    /// ```
     pub fn diff_workdir(&self) -> Result<DiffStats> {
         let mut diff_opts = git2::DiffOptions::new();
         diff_opts.include_untracked(true);

@@ -48,3 +48,6 @@
 ## 2025-03-25 - The Ghost Compilation Issue
 **Confusion:** The documentation for `Dna::default()` was misleading and led to compilation errors, because it lacked initialization for nested inner structs like `evolution_config`. Furthermore, code examples assumed wildcard prelude imports `chimera_lang::prelude::*` leading to unresolved module paths.
 **Clarification:** Replaced instances of `Dna::default()` with `Dna::from_genes(genes)` in the module-level documentation (`src/lib.rs`) and `README.md`. Made module imports explicit for components like `chimera_lang::vm::ChimeraVM` and `chimera_lang::compiler::compile`.
+## 2025-04-18 - The Black Box Git Associates
+**Confusion:** The `git-associates` wrapper abstracting `git2` lacked practical `/// # Examples` on functions like `history_with_diffs` and structs like `DiffStats`. Users didn't know how to extract insertions/deletions or iterate through hunks without digging into the underlying `git2` documentation.
+**Clarification:** I rigorously added executable doctests to all core types (`Commit`, `CommitStats`, `FileChange`, `DiffStats`) and `GitModel` methods. This proves how to construct and use the application-agnostic data structures.
