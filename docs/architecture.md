@@ -2153,3 +2153,32 @@ classDiagram
     PrologueGrid --> NarrativeRunes : Uses
     PrologueGrid --> MemeticRunes : Uses
 ```
+
+## Experiment: Gray-Strings (ADR 075)
+
+**Gray-Strings** crosses the continuous reaction-diffusion physics of `crates/gray-scott` with the discrete physics and acoustic simulation of `experiments/ferrous-strings` to generate 'Acoustic Morphogenesis.'
+
+### Bidirectional Feedback Loop
+
+Strings change tension based on local chemical concentrations, and actively perturb the grid when vibrating.
+
+```mermaid
+sequenceDiagram
+    participant GS as GrayScott
+    participant String as GrayString
+    participant Audio as AudioHandle
+
+    loop Simulation Step
+        String->>GS: Read local U & V (get_index)
+        String->>String: update_physics() (Adjust Tension)
+
+        String->>GS: perturb_grid()
+        GS->>GS: add_chemical(V, intensity * shape)
+
+        GS->>GS: update() (Laplacian Diffusion)
+
+        opt Pluck Event
+            String->>Audio: handle_command(Pluck)
+        end
+    end
+```
