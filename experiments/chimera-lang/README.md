@@ -17,7 +17,7 @@ Run the Story Demo to see the engine in action. This demo initializes a VM, comp
 > **Note**: This demo requires the `nova` feature (enabled by default).
 
 ```bash
-cargo run -p chimera-lang --example story_demo
+cargo run -p chimera-lang --features nova --example story_demo
 ```
 
 **Expected Output:**
@@ -381,10 +381,10 @@ fn main() {
 }
 ```
 
-See `examples/story_demo.rs` for a full example of programmatic usage. Note that it launches a blocking interactive TUI and cannot run headlessly.
+See `examples/story_demo.rs` for a full example of an interactive TUI usage. Note that it launches a blocking interactive TUI and cannot run headlessly.
 
 > 🚨 **REQUIRES FEATURE NOVA** 🚨
 
 ```bash
-cargo run -p chimera-lang --example story_demo
+cargo run -p chimera-lang --features nova --example story_demo
 ```
