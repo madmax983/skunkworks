@@ -34,7 +34,8 @@ async fn main() {
         strings.push(GrayString::new(pos, 300.0, target_freq));
     }
 
-    let texture = Texture2D::from_image(&Image::gen_image_color(grid_w as u16, grid_h as u16, BLACK));
+    let texture =
+        Texture2D::from_image(&Image::gen_image_color(grid_w as u16, grid_h as u16, BLACK));
     texture.set_filter(FilterMode::Nearest);
 
     let mut prev_mouse = vec2(0.0, 0.0);
@@ -122,18 +123,50 @@ async fn main() {
 
         // Draw UI
         draw_text("Gray Strings", 10.0, 30.0, 30.0, WHITE);
-        draw_text("Strings vibrate -> Perturb Reaction-Diffusion", 10.0, 50.0, 20.0, GRAY);
-        draw_text("Reaction-Diffusion -> Alters String Tension", 10.0, 70.0, 20.0, GRAY);
+        draw_text(
+            "Strings vibrate -> Perturb Reaction-Diffusion",
+            10.0,
+            50.0,
+            20.0,
+            GRAY,
+        );
+        draw_text(
+            "Reaction-Diffusion -> Alters String Tension",
+            10.0,
+            70.0,
+            20.0,
+            GRAY,
+        );
         draw_text("Pluck with Mouse!", 10.0, 90.0, 20.0, YELLOW);
 
         // Parameter controls
-        draw_text(format!("Feed: {:.4} (UP/DOWN)", feed).as_str(), 10.0, 120.0, 20.0, LIGHTGRAY);
-        draw_text(format!("Kill: {:.4} (LEFT/RIGHT)", kill).as_str(), 10.0, 140.0, 20.0, LIGHTGRAY);
+        draw_text(
+            format!("Feed: {:.4} (UP/DOWN)", feed).as_str(),
+            10.0,
+            120.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            format!("Kill: {:.4} (LEFT/RIGHT)", kill).as_str(),
+            10.0,
+            140.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
-        if is_key_down(KeyCode::Up) { feed += 0.0001; }
-        if is_key_down(KeyCode::Down) { feed -= 0.0001; }
-        if is_key_down(KeyCode::Right) { kill += 0.0001; }
-        if is_key_down(KeyCode::Left) { kill -= 0.0001; }
+        if is_key_down(KeyCode::Up) {
+            feed += 0.0001;
+        }
+        if is_key_down(KeyCode::Down) {
+            feed -= 0.0001;
+        }
+        if is_key_down(KeyCode::Right) {
+            kill += 0.0001;
+        }
+        if is_key_down(KeyCode::Left) {
+            kill -= 0.0001;
+        }
 
         prev_mouse = mouse_pos;
         next_frame().await;

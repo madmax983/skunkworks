@@ -4,6 +4,7 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use rand::Rng;
 use ratatui::{
     backend::{Backend, CrosstermBackend},
     layout::{Constraint, Direction, Layout},
@@ -14,7 +15,6 @@ use ratatui::{
     },
     Terminal,
 };
-use rand::Rng;
 use std::{io, time::Duration};
 
 mod hologram;
@@ -149,12 +149,12 @@ impl App {
 
         // Header
         let title = Paragraph::new(" HOLOGRAM STRINGS ")
-        .style(
-            Style::default()
-                .fg(Color::Cyan)
-                .add_modifier(Modifier::BOLD),
-        )
-        .block(Block::default().borders(Borders::ALL));
+            .style(
+                Style::default()
+                    .fg(Color::Cyan)
+                    .add_modifier(Modifier::BOLD),
+            )
+            .block(Block::default().borders(Borders::ALL));
         f.render_widget(title, chunks[0]);
 
         // Left Panel: Hologram (Frequency Domain)
