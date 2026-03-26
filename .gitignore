@@ -9,3 +9,4 @@ tarpaulin-report.json
 cobertura.xml
 coverage.json
 tarpaulin-report.json
+.chimera_akashic*.json
