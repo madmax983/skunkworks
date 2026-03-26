@@ -615,3 +615,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. A new hybrid `hologram-tank` (Acoustic Holography) has been spliced into the repository. The physical waves manifest in the frequency domain.
 - **Phenotype:** The physical wave tank creates acoustic pressure which acts as an optical interference pattern, visualizing the resonant modes of the space via 2D FFT.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/gray-strings
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. A new hybrid `gray-strings` (Acoustic Morphogenesis) has been spliced into the repository.
+- **Phenotype:** Acoustic strings vibrate, physically perturbing a 2D Gray-Scott chemical substrate, creating a bidirectional feedback loop between continuous diffusion and discrete acoustic resonances.

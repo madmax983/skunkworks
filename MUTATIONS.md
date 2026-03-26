@@ -50,7 +50,8 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Parents**: experiments/chimera-lang + experiments/ferrous-strings
 - **Concept**: Acoustic Genetic Organisms. Agents equipped with `ChimeraVM` brains evolve to pluck magnetic strings, generating specific resonant frequencies to propel themselves or communicate.
 - **Novel Trait**: Acoustic-Magnetic Genetics. The agents translate their discrete DNA opcodes into continuous kinetic strikes on strings, harnessing the resulting magnetic fields for survival.
-- **Predicted Phenotype**: An evolutionary symphony where the most fit organisms learn to play the strings, creating complex, emergent acoustic-magnetic rhythms that sustain their population.
+- **Status**: experiments/chimera-strings
+- **Evaluation**: Success. Compiled. The visual phenotype successfully manifests an evolutionary symphony where agents translate discrete opcodes into continuous kinetic strikes.
 
 ### git-strings
 - **Parents**: experiments/git-harmonograph + experiments/ferrous-strings
@@ -402,6 +403,14 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Novel trait**: Spectral Decay. The codebase graph's entropy dynamically morphs the hologram's frequency domain representation and spatial reconstruction.
 - **Status**: experiments/mnem-hologram
 - **Evaluation**: Executed by The Reaper ☠️ (moved to graveyard) due to Documentation Void / Skeletal Decay.
+
+### gray-strings
+- **Parents**: crates/gray-scott + experiments/ferrous-strings
+- **Concept**: Acoustic Morphogenesis Strings. Strings vibrate, and their acoustic/magnetic fields physically push or pull the diffusion of chemicals (U and V) on a 2D Gray-Scott grid.
+- **Novel trait**: A bidirectional feedback loop between continuous chemical reaction-diffusion and discrete acoustic resonances. The chemical concentrations dynamically alter the strings' physical tension and frequencies, while the vibrating strings act as catalysts, injecting the kill chemical ('V') directly into the morphogenetic substrate based on acoustic intensity.
+- **Predicted Phenotype**: An organic, pulsating bio-acoustic entity. Plucking a string should create a sudden burst of 'V' chemical, acting like a spore that triggers localized Turing pattern formation. The emerging patterns should, in turn, harden or slacken the strings above them, altering their future pitch.
+- **Status**: experiments/gray-strings
+- **Evaluation**: Success. Compiled. Acoustic Morphogenesis successfully created a bio-acoustic feedback loop.
 
 ### gray-hologram
 - **Parents**: crates/gray-scott + experiments/hologram-text

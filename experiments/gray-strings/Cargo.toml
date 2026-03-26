@@ -1,0 +1,16 @@
+[package]
+name = "gray-strings"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = "0.8"
+gray-scott = { path = "../../crates/gray-scott" }
+crossbeam-channel = "0.5"
+anyhow = "1.0"
+cpal = { version = "0.15", optional = true }
+
+[features]
+default = ["audio"]
+audio = ["cpal"]
