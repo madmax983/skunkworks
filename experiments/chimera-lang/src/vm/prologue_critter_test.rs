@@ -78,8 +78,8 @@ fn test_critter_movement_legacy() {
     );
 
     // Register should move
-    assert!(vm.prologue_state.registers.get(&(5, 5)).is_none());
-    assert!(vm.prologue_state.registers.get(&(5, 6)).is_some());
+    assert!(!vm.prologue_state.registers.contains_key(&(5, 5)));
+    assert!(vm.prologue_state.registers.contains_key(&(5, 6)));
 }
 
 #[test]
@@ -168,11 +168,9 @@ fn test_critter_eat() {
     assert_eq!(vm.grid[5][6], Value::Str("C".to_string()));
 
     // Check energy increased
-    if let Some(val) = vm.prologue_state.registers.get(&(5, 6)) {
-        if let Value::Str(s) = val {
-            let state: CritterState = s.parse().unwrap();
-            assert!(state.energy > 100, "Critter did not gain energy");
-        }
+    if let Some(Value::Str(s)) = vm.prologue_state.registers.get(&(5, 6)) {
+        let state: CritterState = s.parse().unwrap();
+        assert!(state.energy > 100, "Critter did not gain energy");
     }
 }
 
@@ -226,10 +224,8 @@ fn test_critter_attack() {
     assert_eq!(vm.grid[5][6], Value::Int(0), "Prey survived");
 
     // Check energy
-    if let Some(val) = vm.prologue_state.registers.get(&(5, 5)) {
-        if let Value::Str(s) = val {
-            let state: CritterState = s.parse().unwrap();
-            assert!(state.energy > 100, "Predator did not gain energy");
-        }
+    if let Some(Value::Str(s)) = vm.prologue_state.registers.get(&(5, 5)) {
+        let state: CritterState = s.parse().unwrap();
+        assert!(state.energy > 100, "Predator did not gain energy");
     }
 }

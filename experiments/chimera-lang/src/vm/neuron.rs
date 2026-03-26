@@ -58,22 +58,44 @@ impl Neuron {
 
     pub fn step(&mut self, dt: f32, tick: u64) -> bool {
         let v = self.v;
-        let alpha_n = if (v + 55.0).abs() < 1e-5 {
+
+        // Prevent NaN propagation by enforcing a valid operating range (-200mV to +200mV)
+        // If voltage explodes or goes to NaN, reset to resting state.
+        if !self.v.is_finite() || self.v < -200.0 || self.v > 200.0 {
+            // Check if we hit a spike threshold before resetting
+            let did_spike = self.v > 0.0 && tick > self.last_spike + 20;
+            if did_spike {
+                self.last_spike = tick;
+            }
+
+            self.v = -65.0;
+            self.m = 0.05;
+            self.h = 0.6;
+            self.n = 0.32;
+            self.i_inj = 0.0;
+
+            return did_spike;
+        }
+
+        // Clamp voltage locally for gating variables to prevent overflow/NaN
+        let v_gating = v.clamp(-100.0, 100.0);
+
+        let alpha_n = if (v_gating + 55.0).abs() < 1e-5 {
             0.1
         } else {
-            0.01 * (v + 55.0) / (1.0 - (-(v + 55.0) / 10.0).exp())
+            0.01 * (v_gating + 55.0) / (1.0 - (-(v_gating + 55.0) / 10.0).exp())
         };
-        let beta_n = 0.125 * (-(v + 65.0) / 80.0).exp();
+        let beta_n = 0.125 * (-(v_gating + 65.0) / 80.0).exp();
 
-        let alpha_m = if (v + 40.0).abs() < 1e-5 {
+        let alpha_m = if (v_gating + 40.0).abs() < 1e-5 {
             1.0
         } else {
-            0.1 * (v + 40.0) / (1.0 - (-(v + 40.0) / 10.0).exp())
+            0.1 * (v_gating + 40.0) / (1.0 - (-(v_gating + 40.0) / 10.0).exp())
         };
-        let beta_m = 4.0 * (-(v + 65.0) / 18.0).exp();
+        let beta_m = 4.0 * (-(v_gating + 65.0) / 18.0).exp();
 
-        let alpha_h = 0.07 * (-(v + 65.0) / 20.0).exp();
-        let beta_h = 1.0 / (1.0 + (-(v + 35.0) / 10.0).exp());
+        let alpha_h = 0.07 * (-(v_gating + 65.0) / 20.0).exp();
+        let beta_h = 1.0 / (1.0 + (-(v_gating + 35.0) / 10.0).exp());
 
         let dn = alpha_n * (1.0 - self.n) - beta_n * self.n;
         let dm = alpha_m * (1.0 - self.m) - beta_m * self.m;
@@ -89,6 +111,11 @@ impl Neuron {
         self.n += dn * dt;
         self.m += dm * dt;
         self.h += dh * dt;
+
+        // Ensure state variables remain in valid range [0, 1]
+        self.n = self.n.clamp(0.0, 1.0);
+        self.m = self.m.clamp(0.0, 1.0);
+        self.h = self.h.clamp(0.0, 1.0);
 
         // Decay injected current to prevent accumulation without input
         self.i_inj *= 0.99;
@@ -395,8 +422,10 @@ mod tests {
         n.i_inj = 50.0; // Strong input
         let mut spiked = false;
         // Step enough times to integrate
+        // Need to start from a tick far enough in the future to satisfy `tick > self.last_spike + 20`
+        // since `n.last_spike` initializes to 0. Let's use `i + 21`.
         for i in 0..100 {
-            if n.step(0.1, i) {
+            if n.step(0.1, i + 21) {
                 spiked = true;
                 break;
             }

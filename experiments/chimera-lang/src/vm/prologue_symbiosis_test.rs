@@ -157,12 +157,16 @@ mod tests {
         vm.grid[5][5] = Value::Str("x".to_string());
         vm.grid[5][6] = Value::Str("C".to_string());
 
-        let mut c1 = CritterState::default();
-        c1.energy = 100;
-        c1.genes = "Z".to_string(); // Nop to prevent moving
-        let mut c2 = CritterState::default();
-        c2.energy = 200;
-        c2.genes = "Z".to_string(); // Nop
+        let c1 = CritterState {
+            energy: 100,
+            genes: "Z".to_string(), // Nop to prevent moving
+            ..Default::default()
+        };
+        let c2 = CritterState {
+            energy: 200,
+            genes: "Z".to_string(), // Nop
+            ..Default::default()
+        };
 
         vm.prologue_state.registers.insert((5, 4), c1.to_value());
         vm.prologue_state.registers.insert((5, 6), c2.to_value());
