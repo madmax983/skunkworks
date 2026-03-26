@@ -50,13 +50,11 @@ fn test_plasmid_absorption() {
         for x in 0..16 {
             if let Value::Str(s) = &vm.grid[y][x] {
                 if s == "P" {
-                    if let Some(val) = vm.prologue_state.registers.get(&(y, x)) {
-                        // Check if payload is 42
-                        // Payload is stored as state directly.
-                        if let Value::Int(v) = val {
-                            if *v == 42 {
-                                found = true;
-                            }
+                    // Check if payload is 42
+                    // Payload is stored as state directly.
+                    if let Some(Value::Int(v)) = vm.prologue_state.registers.get(&(y, x)) {
+                        if *v == 42 {
+                            found = true;
                         }
                     }
                 }
@@ -95,11 +93,9 @@ fn test_plasmid_conjugation() {
         for x in 0..16 {
             if let Value::Str(s) = &vm.grid[y][x] {
                 if s == "@" {
-                    if let Some(val) = vm.prologue_state.registers.get(&(y, x)) {
-                        if let Value::Int(v) = val {
-                            if *v == 100 {
-                                found_seeker = true;
-                            }
+                    if let Some(Value::Int(v)) = vm.prologue_state.registers.get(&(y, x)) {
+                        if *v == 100 {
+                            found_seeker = true;
                         }
                     }
                 }

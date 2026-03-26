@@ -88,7 +88,7 @@ pub fn update_projectiles(vm: &mut ChimeraVM) {
                     surviving_projectiles.push(p_center);
 
                     // 2. Left
-                    if surviving_projectiles.len() < MAX_PROJECTILES {
+                    if surviving_projectiles.len() + vm.projectiles.len() < MAX_PROJECTILES {
                         let a1 = base_angle - angle_offset;
                         let p1 = Projectile {
                             x: p.x,
@@ -106,7 +106,7 @@ pub fn update_projectiles(vm: &mut ChimeraVM) {
                     }
 
                     // 3. Right
-                    if surviving_projectiles.len() < MAX_PROJECTILES {
+                    if surviving_projectiles.len() + vm.projectiles.len() < MAX_PROJECTILES {
                         let a2 = base_angle + angle_offset;
                         let p2 = Projectile {
                             x: p.x,

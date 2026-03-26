@@ -121,6 +121,6 @@ mod tests {
         crate::vm::nova_guild::exec_charter(&mut vm);
 
         assert!(!vm.guilds.get("Thieves").unwrap().members.contains(&1));
-        assert!(vm.strand_guild_map.get(&1).is_none());
+        assert!(!vm.strand_guild_map.contains_key(&1));
     }
 }

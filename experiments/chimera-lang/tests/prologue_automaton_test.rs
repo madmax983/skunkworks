@@ -63,12 +63,10 @@ fn test_automaton_loop() {
     }
 
     // Verify Memory is 0
-    if let Some(state_val) = vm.prologue_state.registers.get(&(10, 10)) {
-        if let Value::Str(s) = state_val {
-            println!("Loop State Final: {}", s);
-            let parts: Vec<&str> = s.split(':').collect();
-            let mem = parts[3].parse::<i64>().unwrap();
-            assert_eq!(mem, 0, "Memory should be 0 after loop, got {}", mem);
-        }
+    if let Some(Value::Str(s)) = vm.prologue_state.registers.get(&(10, 10)) {
+        println!("Loop State Final: {}", s);
+        let parts: Vec<&str> = s.split(':').collect();
+        let mem = parts[3].parse::<i64>().unwrap();
+        assert_eq!(mem, 0, "Memory should be 0 after loop, got {}", mem);
     }
 }

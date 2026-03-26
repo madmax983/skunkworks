@@ -92,9 +92,11 @@ fn test_echo_reverse() {
     vm.prologue_state.active = true;
 
     // Manually inject a buffer [1, 2, 3]
-    let mut echo = crate::vm::prologue::echo::EchoBuffer::default();
-    echo.buffer = vec![Value::Int(1), Value::Int(2), Value::Int(3)];
-    echo.playing = true;
+    let echo = crate::vm::prologue::echo::EchoBuffer {
+        buffer: vec![Value::Int(1), Value::Int(2), Value::Int(3)],
+        playing: true,
+        ..Default::default()
+    };
     vm.prologue_state.echoes.insert((5, 5), echo);
 
     // Place ')' Play

@@ -48,15 +48,13 @@ mod tests {
         // If vulnerable, stack has a Junction of size 1600.
         // If secure, stack has Error or nothing pushed (or specific error message).
 
-        if let Some(val) = vm.stack.pop() {
-            if let Value::Junction(_, list) = val {
-                assert!(
-                    list.len() <= MAX_JUNCTION_SIZE,
-                    "SECURITY FAILURE: Junction size {} exceeds limit {}",
-                    list.len(),
-                    MAX_JUNCTION_SIZE
-                );
-            }
+        if let Some(Value::Junction(_, list)) = vm.stack.pop() {
+            assert!(
+                list.len() <= MAX_JUNCTION_SIZE,
+                "SECURITY FAILURE: Junction size {} exceeds limit {}",
+                list.len(),
+                MAX_JUNCTION_SIZE
+            );
         }
     }
 }
