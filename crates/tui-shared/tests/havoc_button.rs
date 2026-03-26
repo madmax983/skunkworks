@@ -10,7 +10,6 @@ proptest! {
     /// so that `inner_area.height < 1`. Without bounds checking, calculating the Y coordinate
     /// for text placement can exceed the actual screen space.
     #[test]
-    #[should_panic(expected = "outside of buffer")]
     fn test_button_height_zero_panic(
         height in 0..=2u16
     ) {
@@ -18,6 +17,7 @@ proptest! {
         let area = Rect::new(0, 0, 40, height);
         let mut buffer = Buffer::empty(area);
 
+        // This used to panic but is now fixed by Warden/Mosaic.
         button.render(area, &mut buffer);
     }
 }

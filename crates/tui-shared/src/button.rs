@@ -286,8 +286,19 @@ impl<'a> Widget for Button<'a> {
             .take()
             .unwrap_or_else(|| Block::default().borders(Borders::ALL))
             .style(style);
-        let inner_area = block.inner(area);
-        block.render(area, buf);
+
+        // Ensure rendering block doesn't go out of bounds of the current buffer
+        let safe_area = area.intersection(buf.area);
+        if safe_area.width == 0 || safe_area.height == 0 {
+            return;
+        }
+
+        let inner_area = block.inner(safe_area);
+        block.render(safe_area, buf);
+
+        if inner_area.height == 0 || inner_area.width == 0 {
+            return;
+        }
 
         let text_area = Rect {
             x: inner_area.x,
@@ -305,7 +316,7 @@ impl<'a> Widget for Button<'a> {
         let line = Line::from(content);
         let x_offset = (text_area.width.saturating_sub(line.width() as u16)) / 2;
 
-        if text_area.width > 0 {
+        if text_area.y < buf.area.bottom() {
             buf.set_line(text_area.x + x_offset, text_area.y, &line, text_area.width);
         }
     }
