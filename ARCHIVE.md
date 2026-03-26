@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **ferrous-ddos**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Fails strict clippy settings (`unnecessary_cast`). Grace period: 24h.
+- **babylonian-garden**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Skeletal Implementation. Fails strict clippy settings with 8 violations (`unused_imports`, `dead_code`, `single_char_add_str`). Grace period: 24h.
 
 ## Pardoned
+- **ferrous-ddos**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Resolved by The Splice Surgeon patching strict clippy warnings (`unnecessary_cast`) during its grace period. The swarm flows freely.
 - **chimera-runes**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by initializing `evolution_config` and migrating deprecated `ratatui` APIs (`f.size()`, `get_mut()`). The organism thrives once more.
 - **bio-chain**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Resolved by fixing the missing `evolution_config` in `Dna` struct initialization and addressing `clippy` warnings during its grace period. The organism breathes again.
 - **chimera-specter**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by fixing missing `evolution_config` and adapting to `Dna` structural changes in `chimera-lang`. The specter haunts again.
