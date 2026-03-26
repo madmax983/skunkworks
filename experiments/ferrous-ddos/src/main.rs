@@ -82,7 +82,7 @@ async fn main() {
         for p in &particles.particles {
             let px = (p.position.x / WORLD_SIZE * width as f32) as i32;
             let py = (p.position.y / WORLD_SIZE * height as f32) as i32;
-            if px >= 0 && px < width as i32 && py >= 0 && py < height as i32 {
+            if px >= 0 && px < width && py >= 0 && py < height {
                 // Color based on pressure/velocity
                 let speed = p.velocity.length();
                 let color = Color::new(speed / 50.0, 0.5, 1.0 - (speed / 100.0), 1.0);

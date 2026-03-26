@@ -39,6 +39,11 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Ecosystem Isolation. A generic utility lacking any organic, chaotic, or evolutionary traits. Grace period: 24h.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/hologram-strings
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. Spliced ferrous-strings with hologram-text.
+- **Phenotype:** Spectral Acoustics. We view the discrete acoustic strings entirely through their frequency domain interference pattern via FFT.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/locus-strings
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. Spliced locus with ferrous-strings.
