@@ -98,6 +98,28 @@ pub struct OrigamiMesh {
 /// # Returns
 ///
 /// An [`OrigamiMesh`] containing the vertex data and index buffer for rendering.
+///
+/// # Examples
+///
+/// ```
+/// use origami::{generate_miura_mesh, MiuraParams, Orientation};
+///
+/// let params = MiuraParams {
+///     a: 1.0,
+///     b: 1.0,
+///     gamma: 1.4,
+///     orientation: Orientation::Horizontal,
+/// };
+///
+/// // Create a mesh for a 2x2 grid.
+/// // A 2x2 grid produces 3x3 = 9 vertices.
+/// // A 2x2 grid contains 4 quads, each split into 2 triangles (8 triangles total).
+/// // 8 triangles * 3 indices/triangle = 24 indices.
+/// let mesh = generate_miura_mesh(params, (2, 2), 0.5);
+///
+/// assert_eq!(mesh.vertices.len(), 9);
+/// assert_eq!(mesh.indices.len(), 24);
+/// ```
 pub fn generate_miura_mesh(
     params: MiuraParams,
     grid_size: (usize, usize),
