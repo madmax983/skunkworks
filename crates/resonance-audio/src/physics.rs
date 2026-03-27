@@ -426,4 +426,72 @@ mod tests {
         // Damped grid should have less total "activity"
         assert!(energy_damped < energy_undamped);
     }
+
+    #[test]
+    fn test_physics_material_properties() {
+        let mut grid = PhysicsGrid::new(10, 10);
+
+        // Default is Air
+        assert_eq!(grid.materials[0], Material::Air);
+
+        // Set Void
+        grid.set_material(1, 1, Material::Void);
+        let idx = 10 + 1;
+        assert_eq!(grid.materials[idx], Material::Void);
+        assert_eq!(grid.c2_map[idx], 0.5);
+        assert_eq!(grid.damping_map[idx], 0.5);
+
+        // Set Fast
+        grid.set_material(2, 2, Material::Fast);
+        let idx = 2 * 10 + 2;
+        assert_eq!(grid.materials[idx], Material::Fast);
+        assert_eq!(grid.c2_map[idx], 0.5);
+        assert_eq!(grid.damping_map[idx], 0.999);
+
+        // Set Slow
+        grid.set_material(3, 3, Material::Slow);
+        let idx = 3 * 10 + 3;
+        assert_eq!(grid.materials[idx], Material::Slow);
+        assert_eq!(grid.c2_map[idx], 0.1);
+        assert_eq!(grid.damping_map[idx], 0.995);
+
+        // Out of bounds set
+        grid.set_material(100, 100, Material::Air);
+        // Should not panic, but how to verify? Size remains same.
+        assert_eq!(grid.materials.len(), 100);
+    }
+
+    #[test]
+    fn test_clear_walls_and_waves() {
+        let mut grid = PhysicsGrid::new(10, 10);
+        grid.add_wall(5, 5);
+        assert_eq!(grid.materials[5 * 10 + 5], Material::Wall);
+
+        grid.clear_walls();
+        assert_eq!(grid.materials[5 * 10 + 5], Material::Air);
+        // Verify restored Air properties
+        assert_eq!(grid.c2_map[5 * 10 + 5], 0.5);
+        assert_eq!(grid.damping_map[5 * 10 + 5], 0.999);
+
+        grid.pluck(5, 5, 1.0);
+        assert!(grid.get(5, 5) > 0.0);
+        grid.clear_waves();
+        assert_eq!(grid.get(5, 5), 0.0);
+        assert_eq!(grid.energy_map[5 * 10 + 5], 0.0);
+    }
+
+    #[test]
+    fn test_grid_step_edge_cases() {
+        // 2x2 grid should return early in step()
+        let mut grid = PhysicsGrid::new(2, 2);
+        grid.pluck(1, 1, 1.0);
+        grid.step();
+        // 2x2 cannot be propagated
+        assert_eq!(grid.u_next[0], 0.0);
+
+        let mut grid3 = PhysicsGrid::new(3, 3);
+        grid3.add_wall(1, 1);
+        grid3.step();
+        assert_eq!(grid3.get(1, 1), 0.0);
+    }
 }
