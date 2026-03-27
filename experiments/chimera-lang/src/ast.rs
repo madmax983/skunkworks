@@ -107,6 +107,21 @@ impl Dna {
 
 impl Dna {
     /// Creates a simple organism with a single strand of genes.
+    ///
+    /// # Examples
+    /// ```
+    /// use chimera_lang::ast::{Dna, Gene, Nucleotide};
+    /// use chimera_lang::opcode::OpCode;
+    ///
+    /// let genes = vec![
+    ///     Gene::new(OpCode::Push, vec![Nucleotide::Number(42)]),
+    ///     Gene::new(OpCode::Print, vec![])
+    /// ];
+    ///
+    /// let dna = Dna::from_genes(genes);
+    /// assert_eq!(dna.helix.strands.len(), 1);
+    /// assert_eq!(dna.helix.strands[0].genes.len(), 2);
+    /// ```
     pub fn from_genes(genes: Vec<Gene>) -> Self {
         Dna {
             helix: Helix {
@@ -119,6 +134,16 @@ impl Dna {
 
 impl Gene {
     /// Helper to construct a Gene with arguments.
+    ///
+    /// # Examples
+    /// ```
+    /// use chimera_lang::ast::{Gene, Nucleotide};
+    /// use chimera_lang::opcode::OpCode;
+    ///
+    /// let gene = Gene::new(OpCode::Push, vec![Nucleotide::Number(100)]);
+    /// assert_eq!(gene.op, OpCode::Push);
+    /// assert_eq!(gene.args.len(), 1);
+    /// ```
     pub fn new(op: OpCode, args: Vec<Nucleotide>) -> Self {
         Gene { op, args }
     }
