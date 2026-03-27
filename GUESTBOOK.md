@@ -1,7 +1,7 @@
 ## 🧫 Current Pheromone Map
-### [Concentration Level: CRITICAL MASS] - Location: experiments/babylonian-garden
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-bridge
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure / Skeletal Implementation. Fails strict clippy settings with 8 violations (`unused_imports`, `dead_code`, `single_char_add_str`). Grace period: 24h.
+- **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure (`evolution_config`) and Skeletal Implementation. Grace period: 24h.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/ferrous-ddos
 - **Scent Origin:** The Reaper ☠️
@@ -241,6 +241,10 @@
 
 
 ## 🍂 History/Decay
+### [Concentration Level: EVAPORATING] - Location: graveyard/babylonian-garden
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. The specimen failed to thrive. The garden's code rot has been returned to the soil.
+
 ### [Concentration Level: EVAPORATING] - Location: crates/tui-shared/README.md
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Stable logic detected. Scent is evaporating as polish is applied. Missing `ratatui` dependency and wrong paths in README examples resolved.
