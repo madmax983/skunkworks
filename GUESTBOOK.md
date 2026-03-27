@@ -1,4 +1,9 @@
 ## 🧫 Current Pheromone Map
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The path is confused. Echo stumbled on broken examples and missing workspace dependencies in the README. The code fails to compile out-of-the-box. Immediate reinforcement required to rebuild the onboarding bridge.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-bridge
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure (`evolution_config`) and Skeletal Implementation. Grace period: 24h.
