@@ -25,8 +25,7 @@ fn test_binary_file_and_eof_newline_diffs() -> Result<(), Box<dyn std::error::Er
     let tree = repo.find_tree(oid)?;
     let sig = Signature::now("Test", "test@example.com")?;
 
-    let parent_commit = repo
-        .commit(Some("HEAD"), &sig, &sig, "Initial commit", &tree, &[])?;
+    let parent_commit = repo.commit(Some("HEAD"), &sig, &sig, "Initial commit", &tree, &[])?;
 
     // Modify the binary file
     fs::write(&bin_path, [0u8, 1, 2, 3, 0, 4, 5, 6, 7])?;
@@ -53,7 +52,11 @@ fn test_binary_file_and_eof_newline_diffs() -> Result<(), Box<dyn std::error::Er
     // Binary files usually don't have detailed line hunks extracted
     assert!(bin_file.hunks.is_empty());
 
-    let txt_file = commit.files.iter().find(|f| f.path == "no_newline.txt").unwrap();
+    let txt_file = commit
+        .files
+        .iter()
+        .find(|f| f.path == "no_newline.txt")
+        .unwrap();
     assert!(!txt_file.is_binary);
     assert!(!txt_file.hunks.is_empty());
 

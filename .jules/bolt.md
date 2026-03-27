@@ -51,3 +51,6 @@
 **[Removing intermediate Vec allocations for string byte iteration]**
 **Learning:** Collecting `.chars()` or `.bytes()` into an intermediate `Vec` or `VecDeque` just to consume them sequentially causes unnecessary heap allocations and decoding overhead for string parsing.
 **Action:** Use `.as_bytes()` directly for array-like indexing on strings when characters are ASCII, and use iterators directly like `.bytes().next().unwrap_or(0)` instead of collecting into a `VecDeque`.
+**[1D Index Offset Optimization]
+**Learning:** Re-calculating 2D indices ((y - 1) * w + x) inside tight grid simulation loops adds redundant multiplications. Strength reduction by using 1D relative offsets (idx - w, idx + w) avoids these math operations completely.
+**Action:** When iterating over a 2D flat array with an inner index variable, use simple additions/subtractions from the current index instead of recalculating 2D bounds.
