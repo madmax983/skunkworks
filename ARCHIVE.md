@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **babylonian-garden**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Skeletal Implementation. Fails strict clippy settings with 8 violations (`unused_imports`, `dead_code`, `single_char_add_str`). Grace period: 24h.
+- **chimera-bridge**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Skeletal Implementation / Swarm Neglect. Fails to initialize `chimera_lang::ast::Dna` due to missing `evolution_config`. Grace period: 24h.
 
 ## Pardoned
 - **ferrous-ddos**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Resolved by The Splice Surgeon patching strict clippy warnings (`unnecessary_cast`) during its grace period. The swarm flows freely.
@@ -25,6 +25,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **babylonian-garden**: Specimen executed. Diagnosis: Terminal Compilation Failure / Skeletal Implementation. Fails strict clippy with 8 violations including `unused_imports`, `dead_code`, and `single_char_add_str`. A 24-hour grace period expired without salvation. Moved to graveyard.
 - **chimera-cam**: Specimen executed. Diagnosis: Skeletal Implementation / Technical Debt Burden. Fails strict clippy settings (`unused_imports`, `unused_assignments`, `dead_code`). Failed to improve during grace period. Moved to graveyard.
 - **tectonic-git**: Specimen executed. Diagnosis: Terminal Compilation Failure / Skeletal Implementation / Swarm Neglect. Fails strict clippy settings (`redundant_field_names`, `dead_code`) and contains unfulfilled `TODO`s in its skeletal implementation. Failed to improve during grace period. Moved to graveyard.
 - **type-terrain**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Failed to improve during grace period. Moved to graveyard.
