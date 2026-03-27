@@ -205,10 +205,10 @@ impl PhysicsGrid {
                 // Wall handling is implicit via c2_map[idx] == 0.0 and damping_map[idx] == 0.0,
                 // which results in val = 0.0. This allows us to skip the branch and memory lookup.
 
-                let up = (y - 1) * w + x;
-                let down = (y + 1) * w + x;
-                let left = y * w + (x - 1);
-                let right = y * w + (x + 1);
+                let up = idx - w;
+                let down = idx + w;
+                let left = idx - 1;
+                let right = idx + 1;
 
                 let u_curr = self.u[idx];
                 let u_prev = self.u_prev[idx];
