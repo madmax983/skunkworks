@@ -312,6 +312,26 @@ impl Value {
     /// - (Superposition, Superposition) -> Superposition (cross product)
     ///
     /// Returns `None` if recursion depth exceeds `max_depth` or result size exceeds `max_size`.
+    ///
+    /// # Examples
+    /// ```
+    /// use chimera_lang::ast::JunctionType;
+    /// use chimera_lang::value::Value;
+    ///
+    /// let a = Value::Int(10);
+    /// let b = Value::Int(20);
+    /// let res = a.apply_binary_op(b, |x, y| x + y, 100, 1024).unwrap();
+    /// assert_eq!(res, Value::Int(30));
+    ///
+    /// // Scalar mapping over Junction
+    /// let scalar = Value::Int(2);
+    /// let junction = Value::Junction(JunctionType::Any, vec![Value::Int(10), Value::Int(20)]);
+    /// let map_res = junction.apply_binary_op(scalar, |x, y| x * y, 100, 1024).unwrap();
+    /// assert_eq!(
+    ///     map_res,
+    ///     Value::Junction(JunctionType::Any, vec![Value::Int(20), Value::Int(40)])
+    /// );
+    /// ```
     pub fn apply_binary_op<F>(
         self,
         other: Value,
@@ -464,6 +484,21 @@ impl Value {
     ///
     /// - Int/Str: Depth 0
     /// - Junction/Superposition: 1 + max(children.depth())
+    ///
+    /// # Examples
+    /// ```
+    /// use chimera_lang::ast::JunctionType;
+    /// use chimera_lang::value::Value;
+    ///
+    /// let simple = Value::Int(5);
+    /// assert_eq!(simple.depth(), 0);
+    ///
+    /// let nested = Value::Junction(
+    ///     JunctionType::Any,
+    ///     vec![Value::Junction(JunctionType::All, vec![Value::Int(1)])]
+    /// );
+    /// assert_eq!(nested.depth(), 2);
+    /// ```
     pub fn depth(&self) -> usize {
         self.depth_safe(0)
     }
@@ -493,6 +528,21 @@ impl Value {
     }
 
     /// Calculates the total number of nodes in the value tree.
+    ///
+    /// # Examples
+    /// ```
+    /// use chimera_lang::ast::JunctionType;
+    /// use chimera_lang::value::Value;
+    ///
+    /// let simple = Value::Int(42);
+    /// assert_eq!(simple.complexity(), 1); // 1 node
+    ///
+    /// let group = Value::Junction(
+    ///     JunctionType::Any,
+    ///     vec![Value::Int(1), Value::Int(2)]
+    /// );
+    /// assert_eq!(group.complexity(), 3); // 1 for Junction + 2 for Ints
+    /// ```
     pub fn complexity(&self) -> usize {
         self.complexity_safe(0)
     }

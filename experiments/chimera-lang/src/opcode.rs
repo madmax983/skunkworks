@@ -209,28 +209,28 @@ pub enum OpCode {
     GeneLen,
 
     // Cortex Features
-    /// **[Cortex]** Links two strands with a neural synapse.
+    /// **`Cortex`** Links two strands with a neural synapse.
     ///
     /// **Stack:** `[ ..., target_strand_idx ]` (uses current IP as source)
     #[cfg(feature = "cortex")]
     Link,
-    /// **[Cortex]** Severs a synapse between the current strand and a target.
+    /// **`Cortex`** Severs a synapse between the current strand and a target.
     ///
     /// **Stack:** `[ ..., target_strand_idx ]`
     #[cfg(feature = "cortex")]
     Sever,
-    /// **[Cortex]** Fires a signal across all synapses from the current strand.
+    /// **`Cortex`** Fires a signal across all synapses from the current strand.
     ///
     /// **Stack:** `[ ..., amount ]`
     /// **Effect:** Increases activation level of target strands.
     #[cfg(feature = "cortex")]
     Spark,
-    /// **[Cortex]** Reads the current strand's activation level.
+    /// **`Cortex`** Reads the current strand's activation level.
     ///
     /// **Stack:** `[ ... ] -> [ ..., activation_level ]`
     #[cfg(feature = "cortex")]
     Sense,
-    /// **[Cortex]** Gates execution based on activation level.
+    /// **`Cortex`** Gates execution based on activation level.
     ///
     /// **Args:** `[Nucleotide::Number(threshold)]`
     /// **Effect:** Skips next instruction if `activation < threshold`.
@@ -238,116 +238,116 @@ pub enum OpCode {
     Gate,
 
     // Biophysics Features
-    /// **[Biophysics]** Spawns a Hodgkin-Huxley neuron at the specified grid location.
+    /// **`Biophysics`** Spawns a Hodgkin-Huxley neuron at the specified grid location.
     ///
     /// **Stack:** `[ ..., y, x ] -> [ ... ]`
     #[cfg(feature = "biophysics")]
     NeuroGenesis,
-    /// **[Biophysics]** Injects current into a neuron.
+    /// **`Biophysics`** Injects current into a neuron.
     ///
     /// **Stack:** `[ ..., amount, y, x ] -> [ ... ]`
     #[cfg(feature = "biophysics")]
     Stimulate,
-    /// **[Biophysics]** Reads the membrane potential (voltage) of a neuron.
+    /// **`Biophysics`** Reads the membrane potential (voltage) of a neuron.
     ///
     /// **Stack:** `[ ..., y, x ] -> [ ..., voltage ]`
     #[cfg(feature = "biophysics")]
     Dendrite,
-    /// **[Biophysics]** Connects a neuron to another target (Synapse/Output).
+    /// **`Biophysics`** Connects a neuron to another target (Synapse/Output).
     ///
     /// **Stack:** `[ ..., y_target, x_target, y_source, x_source ] -> [ ... ]`
     #[cfg(feature = "biophysics")]
     Axon,
-    /// **[Biophysics]** Adds a chemical receptor to a neuron.
+    /// **`Biophysics`** Adds a chemical receptor to a neuron.
     ///
     /// **Stack:** `[ ..., channel, sensitivity, threshold, y, x ] -> [ ... ]`
     #[cfg(feature = "biophysics")]
     Receptor,
-    /// **[Biophysics]** Sets the bidirectional coupling coefficient between Neuron and Grid Voltage.
+    /// **`Biophysics`** Sets the bidirectional coupling coefficient between Neuron and Grid Voltage.
     ///
     /// **Stack:** `[ ..., weight, y, x ] -> [ ... ]`
     #[cfg(feature = "biophysics")]
     NeuroCoupling,
-    /// **[Biophysics]** Connects a neuron to a Cortex Strand.
+    /// **`Biophysics`** Connects a neuron to a Cortex Strand.
     ///
     /// **Stack:** `[ ..., strand_idx, y, x ] -> [ ... ]`
     #[cfg(feature = "biophysics")]
     NeuroSynapse,
 
     // Silicon Features
-    /// **[Silicon]** Runs one step of Wireworld on the grid.
+    /// **`Silicon`** Runs one step of Wireworld on the grid.
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`
     #[cfg(feature = "silicon")]
     Conduct,
-    /// **[Silicon]** Writes a conductor (1) to the grid.
+    /// **`Silicon`** Writes a conductor (1) to the grid.
     ///
     /// **Stack:** `[ ..., y, x ] -> [ ... ]`
     #[cfg(feature = "silicon")]
     Wire,
-    /// **[Silicon]** Writes an electron head (2) to the grid (Pulse).
+    /// **`Silicon`** Writes an electron head (2) to the grid (Pulse).
     ///
     /// **Stack:** `[ ..., y, x ] -> [ ... ]`
     #[cfg(feature = "silicon")]
     Pulse,
-    /// **[Silicon]** Toggles automatic conduction mode.
+    /// **`Silicon`** Toggles automatic conduction mode.
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`
     #[cfg(feature = "silicon")]
     Silicon,
-    /// **[Silicon]** Constructs a logic gate on the grid.
+    /// **`Silicon`** Constructs a logic gate on the grid.
     ///
     /// **Stack:** `[ ..., type, dir, y, x ] -> [ ... ]`
     /// **Types:** 0=AND, 1=OR, 2=XOR, 3=NAND, 4=NOT.
     /// **Dirs:** 0=N, 1=E, 2=S, 3=W.
     #[cfg(feature = "silicon")]
     Construct,
-    /// **[Silicon]** A logic gate instruction (usually on grid, not in DNA).
+    /// **`Silicon`** A logic gate instruction (usually on grid, not in DNA).
     ///
     /// **Args:** `[Nucleotide::String(type), Nucleotide::Number(dir)]`
     #[cfg(feature = "silicon")]
     LogicGate,
-    /// **[Silicon]** Creates an Input Pin (Reads from Stack -> Grid).
+    /// **`Silicon`** Creates an Input Pin (Reads from Stack -> Grid).
     ///
     /// **Stack:** `[ ..., y, x ] -> [ ... ]`
     #[cfg(feature = "silicon")]
     PinIn,
-    /// **[Silicon]** Creates an Output Pin (Reads from Grid -> Stack).
+    /// **`Silicon`** Creates an Output Pin (Reads from Grid -> Stack).
     ///
     /// **Stack:** `[ ..., y, x ] -> [ ... ]`
     #[cfg(feature = "silicon")]
     PinOut,
-    /// **[Silicon]** Creates an Emitter cell that pulses periodically.
+    /// **`Silicon`** Creates an Emitter cell that pulses periodically.
     ///
     /// **Stack:** `[ ..., freq, y, x ] -> [ ... ]`
     #[cfg(feature = "silicon")]
     Emitter,
-    /// **[Silicon]** Creates a Receiver cell that triggers a strand when powered.
+    /// **`Silicon`** Creates a Receiver cell that triggers a strand when powered.
     ///
     /// **Stack:** `[ ..., strand_idx, y, x ] -> [ ... ]`
     #[cfg(feature = "silicon")]
     Receiver,
-    /// **[Silicon]** Creates a stateful D-Latch on the grid.
+    /// **`Silicon`** Creates a stateful D-Latch on the grid.
     ///
     /// **Stack:** `[ ..., state, y, x ] -> [ ... ]`
     #[cfg(feature = "silicon")]
     Latch,
-    /// **[Silicon]** Reads 4-bit signal from neighbors and pushes value to stack (Digital-to-Analog).
+    /// **`Silicon`** Reads 4-bit signal from neighbors and pushes value to stack (Digital-to-Analog).
     ///
     /// **Stack:** `[ ... ] -> [ ..., val ]`
     #[cfg(feature = "silicon")]
     DAC,
-    /// **[Silicon]** Pops value and writes 4-bit signal to neighbors (Analog-to-Digital).
+    /// **`Silicon`** Pops value and writes 4-bit signal to neighbors (Analog-to-Digital).
     ///
     /// **Stack:** `[ ..., val ] -> [ ... ]`
     #[cfg(feature = "silicon")]
     ADC,
-    /// **[Silicon]** Traces a connected circuit and compiles it into DNA (Biologize).
+    /// **`Silicon`** Traces a connected circuit and compiles it into DNA (Biologize).
     ///
     /// **Stack:** `[ ..., y, x ] -> [ ..., new_strand_idx ]`
     #[cfg(feature = "silicon")]
     Trace,
-    /// **[Silicon]** Executes a strand as a construction blueprint (Siliconize).
+    /// **`Silicon`** Executes a strand as a construction blueprint (Siliconize).
     ///
     /// **Stack:** `[ ..., strand_idx, y, x ] -> [ ... ]`
     #[cfg(feature = "silicon")]
@@ -1968,23 +1968,23 @@ pub enum OpCode {
     Compose,
 
     // Resonance Features (Audio Physics)
-    /// **[Resonance]** Plucks the underlying physics grid at the current location.
+    /// **`Resonance`** Plucks the underlying physics grid at the current location.
     ///
     /// **Stack:** `[ ..., strength ] -> [ ... ]`
     #[cfg(feature = "resonance")]
     Pluck,
-    /// **[Resonance]** Continuously excites the grid at the current location with a sine wave.
+    /// **`Resonance`** Continuously excites the grid at the current location with a sine wave.
     ///
     /// **Stack:** `[ ..., frequency, strength ] -> [ ... ]`
     /// **Effect:** Sets up an oscillator. If strength is 0, stops oscillation.
     #[cfg(feature = "resonance")]
     Oscillate,
-    /// **[Resonance]** Reads the amplitude of the physics grid at the current location.
+    /// **`Resonance`** Reads the amplitude of the physics grid at the current location.
     ///
     /// **Stack:** `[ ... ] -> [ ..., amplitude ]`
     #[cfg(feature = "resonance")]
     Hear,
-    /// **[Resonance]** Emits a loud, physical shockwave.
+    /// **`Resonance`** Emits a loud, physical shockwave.
     ///
     /// **Stack:** `[ ..., duration, strength ] -> [ ... ]`
     #[cfg(feature = "resonance")]
@@ -2100,44 +2100,44 @@ pub enum OpCode {
     Censor,
 
     // Git Features (Repository Interaction)
-    /// **[Git]** Pushes a list of recent commit hashes to the stack.
+    /// **`Git`** Pushes a list of recent commit hashes to the stack.
     ///
     /// **Stack:** `[ ..., count ] -> [ ..., n, hash_1, ..., hash_n ]`
     #[cfg(feature = "git")]
     Ancestry,
-    /// **[Git]** Reads the content of a file from a specific commit.
+    /// **`Git`** Reads the content of a file from a specific commit.
     ///
     /// **Stack:** `[ ..., hash_str, path_str ] -> [ ..., content_string ]`
     #[cfg(feature = "git")]
     Excavate,
-    /// **[Git]** Gets the diff of a commit.
+    /// **`Git`** Gets the diff of a commit.
     ///
     /// **Stack:** `[ ..., hash_str ] -> [ ..., diff_string ]`
     #[cfg(feature = "git")]
     Evolution,
 
     // Phylogeny Features (Filesystem Genetics)
-    /// **[Phylogeny]** Lists files in a directory.
+    /// **`Phylogeny`** Lists files in a directory.
     ///
     /// **Stack:** `[ ..., path_string ] -> [ ..., junction_of_filenames ]`
     #[cfg(feature = "phylogeny")]
     Crawl,
-    /// **[Phylogeny]** Reads a file's content (Sequencing).
+    /// **`Phylogeny`** Reads a file's content (Sequencing).
     ///
     /// **Stack:** `[ ..., path_string ] -> [ ..., content_string ]`
     #[cfg(feature = "phylogeny")]
     Sequencing,
-    /// **[Phylogeny]** Writes content to a file (Synthesizing DNA).
+    /// **`Phylogeny`** Writes content to a file (Synthesizing DNA).
     ///
     /// **Stack:** `[ ..., path_string, content_string ] -> [ ... ]`
     #[cfg(feature = "phylogeny")]
     PhyloSynthesize,
-    /// **[Phylogeny]** Appends content to a file (Infection).
+    /// **`Phylogeny`** Appends content to a file (Infection).
     ///
     /// **Stack:** `[ ..., path_string, content_string ] -> [ ... ]`
     #[cfg(feature = "phylogeny")]
     PhyloInfect,
-    /// **[Phylogeny]** Executes a system command (Shell).
+    /// **`Phylogeny`** Executes a system command (Shell).
     ///
     /// **Stack:** `[ ..., command_string ] -> [ ..., output_string ]`
     #[cfg(feature = "phylogeny")]
@@ -2223,23 +2223,23 @@ pub enum OpCode {
     DView,
 
     // Hive Features (Networking)
-    /// **[Hive]** Binds a UDP port for receiving messages.
+    /// **`Hive`** Binds a UDP port for receiving messages.
     ///
     /// **Stack:** `[ ..., port ] -> [ ... ]`
     #[cfg(feature = "hive")]
     HiveBind,
-    /// **[Hive]** Sends a message to a target IP and Port.
+    /// **`Hive`** Sends a message to a target IP and Port.
     ///
     /// **Stack:** `[ ..., value, ip_string, port ] -> [ ... ]`
     #[cfg(feature = "hive")]
     HiveSend,
-    /// **[Hive]** Receives a message from a bound port (non-blocking).
+    /// **`Hive`** Receives a message from a bound port (non-blocking).
     ///
     /// **Stack:** `[ ..., port ] -> [ ..., value ]`
     /// **Effect:** Pushes received value or 0 if no message.
     #[cfg(feature = "hive")]
     HiveRecv,
-    /// **[Hive]** Closes a bound UDP port.
+    /// **`Hive`** Closes a bound UDP port.
     ///
     /// **Stack:** `[ ..., port ] -> [ ... ]`
     #[cfg(feature = "hive")]
