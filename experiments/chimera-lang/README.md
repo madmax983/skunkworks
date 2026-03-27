@@ -278,11 +278,16 @@ Chimera can be used as a Rust library to embed the VM in other applications.
 
 Add to your project's `Cargo.toml`:
 ```toml
-[workspace]
-resolver = "2"
-members = ["my-chimera-project"]
+[package]
+name = "my-chimera-project"
+version = "0.1.0"
+edition = "2021"
 
-[workspace.dependencies]
+[dependencies]
+# 🚨 Make sure to include the `nova` feature! 🚨
+chimera-lang = { path = "path/to/skunkworks/experiments/chimera-lang", features = ["nova"] }
+
+# 🚨 You MUST explicitly include these dependencies when compiling outside the workspace! 🚨
 anyhow = "1.0"
 pest = "2.7"
 pest_derive = "2.7"
@@ -292,25 +297,15 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 clap = { version = "4.4", features = ["derive"] }
 rand = "0.8"
+regex = "1.10"
+comfy-table = "7.2.2"
 
-# You MUST point to the local paths of these crates relative to your workspace root:
-tui-shared = { path = "path/to/crates/tui-shared" }
-locus = { path = "path/to/crates/locus", features = ["serde"] }
-resonance-audio = { path = "path/to/crates/resonance-audio" }
-hyper-system = { path = "path/to/crates/hyper-system", default-features = false }
-poincare-disk = { path = "path/to/crates/poincare-disk" }
-```
-
-In your project `my-chimera-project/Cargo.toml`:
-```toml
-[package]
-name = "my-chimera-project"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-# Make sure to include the `nova` feature!
-chimera-lang = { path = "path/to/chimera-lang", features = ["nova"] }
+# 🚨 You MUST also include the relative path to local shared crates! 🚨
+tui-shared = { path = "path/to/skunkworks/crates/tui-shared" }
+locus = { path = "path/to/skunkworks/crates/locus", features = ["serde"] }
+resonance-audio = { path = "path/to/skunkworks/crates/resonance-audio" }
+hyper-system = { path = "path/to/skunkworks/crates/hyper-system", default-features = false }
+poincare-disk = { path = "path/to/skunkworks/crates/poincare-disk" }
 ```
 
 Example `main.rs`:
@@ -328,7 +323,7 @@ fn main() {
         Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] },
         Gene { op: OpCode::Print, args: vec![] },
     ];
-    // Initialize using `from_genes` to avoid complex nested struct creation.
+    // Dna lacks a Default impl. Initialize using `from_genes` to avoid complex nested struct creation.
     let dna = Dna::from_genes(genes);
     let mut vm = ChimeraVM::new(dna);
 
@@ -347,7 +342,7 @@ fn main() {
 ### Running ChimeraScript from Rust
 
 > 🚨 **REQUIRES FEATURE NOVA** 🚨
-> The compiler and advanced VM features require the `nova` feature flag.
+> The `chimera_lang::compiler` module and advanced VM features require the `nova` feature flag.
 
 You can also parse and run ChimeraScript code directly using the compiler:
 
