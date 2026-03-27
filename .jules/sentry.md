@@ -15,3 +15,7 @@
 **2023-10-25 - Using `cargo-llvm-cov` to Identify Gaps in Coverage**
 **Learning:** Manual inspection and basic test counting often miss subtle execution paths, such as early returns, `else` branches, or specific mathematical edge cases (e.g., negative limits, zero vectors). Utilizing `cargo-llvm-cov --html` provides explicit line-by-line visibility into what is actually executed during tests.
 **Action:** When auditing a crate (like `locus` or `physics-pbd`) that appears well-tested, run `cargo llvm-cov -p <crate> --all-features --html` and inspect the generated HTML report. Specifically target the missed lines to create pinpoint tests (e.g., covering `Vec2::reflect` with a zero-length vector, or negative `limit` values) and achieve 100% coverage on core mathematical and logical constructs.
+
+**2024-03-27 - [Test coverage for `resonance-audio`]**
+**Learning:** `resonance-audio` had ~75% coverage. Missed regions were mostly edge cases and unimplemented functionalities around `Material` types, `AudioCommand`s handling (like `AddWall`, `ClearWaves`, `ClearWalls`, `PaintMaterial`, `Tone`), and bounds checking logic inside the physics update loop. Added targeted tests to these scenarios to hit >97% coverage.
+**Action:** Identified edge cases inside of `physics.rs` and `audio.rs` that were unreachable without direct testing, specifically enum types and grid limits. Added robust checks against unexpected behavior without requiring large UI test suites.

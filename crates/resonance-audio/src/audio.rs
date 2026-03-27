@@ -472,4 +472,60 @@ mod tests {
 
         assert_eq!(model.oscillators.len(), 0);
     }
+
+    #[test]
+    fn test_audio_commands() {
+        let (cmd_tx, cmd_rx) = bounded(100);
+        let (snap_tx, _snap_rx) = bounded(100);
+        let (rec_tx, rec_rx) = bounded(100);
+
+        let mut model = AudioModel::new(10, 10, cmd_rx, snap_tx, Some(rec_tx));
+
+        // Issue various commands
+        cmd_tx.send(AudioCommand::AddWall { x: 1, y: 1 }).unwrap();
+        cmd_tx
+            .send(AudioCommand::PaintMaterial {
+                x: 2,
+                y: 2,
+                material: Material::Slow,
+            })
+            .unwrap();
+        cmd_tx
+            .send(AudioCommand::RemoveWall { x: 1, y: 1 })
+            .unwrap();
+        cmd_tx
+            .send(AudioCommand::Tone {
+                x: 5,
+                y: 5,
+                frequency: 440.0,
+                strength: 1.0,
+                duration_ms: 1,
+            })
+            .unwrap();
+        cmd_tx
+            .send(AudioCommand::MoveListener { x: 3, y: 3 })
+            .unwrap();
+        cmd_tx
+            .send(AudioCommand::MoveListener { x: 100, y: 100 })
+            .unwrap(); // out of bounds
+
+        let mut buf = vec![0.0; 100]; // Duration 1ms is approx 44 samples
+        model.process(&mut buf);
+
+        assert_eq!(model.listener_x, 3);
+        assert_eq!(model.listener_y, 3);
+        assert_eq!(model.grid.materials[2 * 10 + 2], Material::Slow);
+        assert_eq!(model.grid.materials[10 + 1], Material::Air); // Removed wall
+
+        // Validate Tone added and decaying
+        assert!(!model.active_tones.is_empty() || buf.iter().any(|&x| x.abs() > 0.0));
+
+        // Ensure recording TX got a buffer
+        assert!(rec_rx.try_recv().is_ok());
+
+        cmd_tx.send(AudioCommand::ClearWalls).unwrap();
+        cmd_tx.send(AudioCommand::ClearWaves).unwrap();
+        let mut buf2 = vec![0.0; 10];
+        model.process(&mut buf2);
+    }
 }
