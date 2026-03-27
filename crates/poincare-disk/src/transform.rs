@@ -34,6 +34,28 @@ impl Mobius {
     /// The transformation is defined as $f(z) = \frac{az + b}{cz + d}$.
     ///
     /// Returns `None` if $ad - bc \approx 0$ (singular matrix).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use poincare_disk::Mobius;
+    /// use num_complex::Complex;
+    ///
+    /// let a = Complex::new(1.0, 0.0);
+    /// let b = Complex::new(0.5, 0.0);
+    /// let c = Complex::new(0.5, 0.0);
+    /// let d = Complex::new(1.0, 0.0);
+    ///
+    /// let transform = Mobius::new(a, b, c, d).unwrap();
+    /// assert_eq!(transform.a(), a);
+    ///
+    /// // A singular matrix (ad = bc) will return None
+    /// let invalid = Mobius::new(
+    ///     Complex::new(1.0, 0.0), Complex::new(2.0, 0.0),
+    ///     Complex::new(2.0, 0.0), Complex::new(4.0, 0.0)
+    /// );
+    /// assert!(invalid.is_none());
+    /// ```
     pub fn new(a: Complex<f64>, b: Complex<f64>, c: Complex<f64>, d: Complex<f64>) -> Option<Self> {
         let det = a * d - b * c;
         if det.norm_sqr() < 1e-12 {
