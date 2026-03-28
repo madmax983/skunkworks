@@ -379,6 +379,7 @@ fn main() {
 See `examples/story_demo.rs` for a full example of an interactive TUI usage. Note that it launches a blocking interactive TUI and cannot run headlessly.
 
 > 🚨 **REQUIRES FEATURE NOVA** 🚨
+> Advanced features (including the compiler, `incubate`, and `NarrativeGenerator`) require the `nova` feature flag.
 
 ```bash
 cargo run -p chimera-lang --features nova --example story_demo

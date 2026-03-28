@@ -14,6 +14,12 @@ Run the Hello World Prologue example to see the Prologue engine in action:
 cargo run -p chimera-lang --features nova -- --input experiments/chimera-lang/examples/hello_world.pro
 ```
 
+If you want to run the Evolution example, use this command:
+
+```bash
+cargo run -p chimera-lang --features nova -- --input experiments/chimera-lang/examples/evolution.pro
+```
+
 This will launch the TUI (Text User Interface) showing a live simulation of:
 *   A **Logic Grid** with signals propagating through wires.
 *   An **Automaton Agent (🤖)** executing a spatial program.
