@@ -183,10 +183,16 @@ impl Crystal {
             let parent_pos = crystal.atoms[parent_idx].position;
             let (u, v) = get_basis_vectors(parent_normal);
 
-            // Generate potential coordinates in a spiral
-            let mut coords = VecDeque::new();
             // Max radius depends on number of entries, roughly sqrt(N)
             let max_r = ((entries.len() as f32).sqrt() as i32) + 2;
+
+            // Generate potential coordinates in a spiral
+            // Optimization: Pre-allocate VecDeque capacity to prevent multiple heap reallocations.
+            // The number of coordinates added per radius `r` is `8 * r`.
+            // The total capacity is `sum(8 * r) from r=1 to max_r + 5`, which equals `4 * R * (R + 1)` where `R = max_r + 5`.
+            let max_radius = max_r + 5;
+            let capacity = 4 * max_radius * (max_radius + 1);
+            let mut coords = VecDeque::with_capacity(capacity as usize);
 
             // First point (0,0) is skipped because it's the parent itself?
             // Actually, the parent is already placed. We want to place children AROUND it.
@@ -246,7 +252,7 @@ impl Crystal {
                     crystal.atoms.push(Atom {
                         position: pos,
                         is_dir,
-                        name: name.clone(),
+                        name,
                         path: entry.path(),
                         normal: new_normal,
                     });
