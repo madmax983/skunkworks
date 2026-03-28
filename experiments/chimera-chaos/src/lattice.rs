@@ -86,6 +86,7 @@ impl Lattice {
         std::mem::swap(&mut self.cells, &mut self.next_cells);
     }
 
+    #[allow(dead_code)]
     pub fn paint_r(&mut self, x: usize, y: usize, radius: usize, target_r: f32) {
         for dy in -(radius as isize)..=(radius as isize) {
             for dx in -(radius as isize)..=(radius as isize) {

@@ -21,6 +21,7 @@ members = [
     "experiments/git-tank",
     "graveyard/chron-ddos",
     "experiments/locus-ddos", "test_project",
+    "experiments/locus-fluid",
 ]
 exclude = [
     "graveyard/*"
