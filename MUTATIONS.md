@@ -544,3 +544,10 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Predicted Phenotype**: Spectral Wave Mechanics. As standing waves and interference patterns form in the physical wave tank, they are transformed via 2D FFT into a holographic projection. This visualizes the resonant modes of the acoustic space in the frequency domain.
 - **Status**: experiments/hologram-tank
 - **Evaluation**: Success. Compiled. Spectral Wave Mechanics successfully maps physical pressure gradients to frequency domain optical interference patterns.
+
+### chimera-hologram
+- **Parents**: experiments/chimera-lang + experiments/hologram-text
+- **Concept**: Spectral Genetic Logic. Genetic agents (ChimeraVM) navigate a grid, but the visualization and interaction are mapped to a frequency domain optical interference pattern via 2D FFT.
+- **Phenotype**: Spectral Genetic Logic. We view the execution of genetic Prologue logic agents as an optical interference pattern, visualizing their spatial and metabolic footprint natively in the frequency domain.
+- **Status**: experiments/chimera-hologram
+- **Evaluation**: Success. Compiled. The boids/agents successfully generate continuous visual spectral interference patterns from their discrete logic gates and execution paths.

@@ -14,7 +14,8 @@ fn havoc_test_alloc() {
     let tree = repo.find_tree(oid).unwrap();
     let sig = Signature::now("Test", "test@example.com").unwrap();
 
-    repo.commit(Some("HEAD"), &sig, &sig, "Initial", &tree, &[]).unwrap();
+    repo.commit(Some("HEAD"), &sig, &sig, "Initial", &tree, &[])
+        .unwrap();
 
     // Can we crash GitModel::history with a huge history limit request?
     // Yes! GitModel::history uses Vec::with_capacity(limit).
