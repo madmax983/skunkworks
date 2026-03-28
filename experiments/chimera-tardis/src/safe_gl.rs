@@ -29,15 +29,15 @@ impl Drop for ScopedScissor {
 /// Helper function to calculate the intersection of two rectangles (x, y, w, h).
 /// Ensures widths and heights are treated as non-negative to prevent UB.
 pub fn intersect_rect(a: (i32, i32, i32, i32), b: (i32, i32, i32, i32)) -> (i32, i32, i32, i32) {
-    let ax1 = a.0;
-    let ay1 = a.1;
-    let ax2 = a.0.saturating_add(a.2.max(0));
-    let ay2 = a.1.saturating_add(a.3.max(0));
+    let ax1 = a.0 as i64;
+    let ay1 = a.1 as i64;
+    let ax2 = ax1 + a.2.max(0) as i64;
+    let ay2 = ay1 + a.3.max(0) as i64;
 
-    let bx1 = b.0;
-    let by1 = b.1;
-    let bx2 = b.0.saturating_add(b.2.max(0));
-    let by2 = b.1.saturating_add(b.3.max(0));
+    let bx1 = b.0 as i64;
+    let by1 = b.1 as i64;
+    let bx2 = bx1 + b.2.max(0) as i64;
+    let by2 = by1 + b.3.max(0) as i64;
 
     let rx1 = ax1.max(bx1);
     let ry1 = ay1.max(by1);
@@ -45,7 +45,9 @@ pub fn intersect_rect(a: (i32, i32, i32, i32), b: (i32, i32, i32, i32)) -> (i32,
     let ry2 = ay2.min(by2);
 
     if rx1 < rx2 && ry1 < ry2 {
-        (rx1, ry1, rx2.saturating_sub(rx1), ry2.saturating_sub(ry1))
+        let rw = (rx2 - rx1).min(i32::MAX as i64) as i32;
+        let rh = (ry2 - ry1).min(i32::MAX as i64) as i32;
+        (rx1 as i32, ry1 as i32, rw, rh)
     } else {
         (0, 0, 0, 0)
     }
@@ -132,14 +134,13 @@ mod tests {
         // Test with large coordinates that would overflow standard addition
         let r1 = (i32::MAX - 100, 0, 200, 100);
         let r2 = (i32::MAX - 50, 0, 200, 100);
-        // r1 ends at MAX - 100 + 200 = MAX + 100 (Saturated to MAX)
-        // r2 starts at MAX - 50.
-        // Intersection should start at MAX - 50.
-        // End at MAX.
-        // Width = 50.
+        // Using i64, r1 ends at MAX + 100.
+        // r2 ends at MAX + 150.
+        // Intersection x ranges from MAX - 50 to MAX + 100.
+        // Width is 150.
 
         let intersection = intersect_rect(r1, r2);
         assert_eq!(intersection.0, i32::MAX - 50); // x1
-        assert_eq!(intersection.2, 50); // width
+        assert_eq!(intersection.2, 150); // width
     }
 }
