@@ -2,7 +2,7 @@ use git2::{Repository, Signature};
 use git_associates::GitModel;
 
 #[test]
-#[should_panic(expected = "capacity overflow")]
+
 fn havoc_test_alloc() {
     let temp_dir = std::env::temp_dir().join("git-associates-havoc-alloc");
     let _ = std::fs::remove_dir_all(&temp_dir);

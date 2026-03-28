@@ -153,7 +153,8 @@ impl GitModel {
 
         // Optimization: Pre-allocate capacity to prevent multiple heap reallocations
         // during iterative population of commits up to the known `limit`.
-        let mut commits = Vec::with_capacity(limit);
+        // Capped to a safe bound (10_000) to prevent OOM / capacity overflow panics on unbounded user inputs.
+        let mut commits = Vec::with_capacity(limit.min(10_000));
 
         for oid in revwalk.take(limit) {
             let oid = oid?;
@@ -559,5 +560,38 @@ mod tests {
         assert_eq!(history.len(), 1);
         assert!(history[0].stats.is_none());
         assert!(history[0].files.is_empty());
+    }
+
+    #[test]
+    fn test_history_capacity_overflow_dos_prevention() {
+        let temp_dir = std::env::temp_dir().join("git-associates-dos-test");
+        let _ = std::fs::remove_dir_all(&temp_dir);
+        let repo = Repository::init(&temp_dir).unwrap();
+
+        let mut index = repo.index().unwrap();
+        let oid = index.write_tree().unwrap();
+        let tree = repo.find_tree(oid).unwrap();
+
+        let time = Time::new(1700000000, 0);
+        let sig = Signature::new("Test Author", "test@example.com", &time).unwrap();
+
+        repo.commit(
+            Some("HEAD"),
+            &sig,
+            &sig,
+            "Initial commit",
+            &tree,
+            &[],
+        )
+        .unwrap();
+
+        let model = GitModel::open(temp_dir).unwrap();
+
+        // This should not panic with an OOM abort.
+        let history = model.history(usize::MAX).unwrap();
+        assert_eq!(history.len(), 1);
+
+        let history_with_diffs = model.history_with_diffs(usize::MAX).unwrap();
+        assert_eq!(history_with_diffs.len(), 1);
     }
 }
