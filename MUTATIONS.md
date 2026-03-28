@@ -25,6 +25,14 @@ Additionally, the success of translating complex abstract graphs (like codebases
 
 ## 🌿 Attempted Crosses
 
+### market-tank
+- **Parents**: crates/market-sim + experiments/ripple-tank
+- **Concept**: Acoustic Market Dynamics. The continuous physical double auction market particles (Bids/Asks) act as physical displacers in a 2D acoustic wave tank.
+- **Novel trait**: Acoustic Liquidity. Trade executions pluck the acoustic tank, sending pressure waves that push resting Bids and Asks around, simulating market volatility driven by literal physical sound waves.
+- **Predicted Phenotype**: An emergent acoustic market structure where resting liquidity is violently displaced by the execution volume of the order flow, creating chaotic feedback loops of sound and trades.
+- **Status**: experiments/market-tank
+- **Evaluation**: Success. Compiled. The bid/ask logic successfully creates localized audio plucks, and the pressure gradient physically pushes the liquidity pool to simulate acoustic market volatility.
+
 ### locust-reaper
 - **Parents**: experiments/locust-ddos + experiments/myco-reaper
 - **Concept**: Garbage Collection Cyberwarfare. The server is protected by an intricate forest of nodes (firewalls). The locusts (DDoS packets) act as the "Reaper fungus" trying to find detached reference cycles and dead matter to consume, breaking down the server's defenses.
