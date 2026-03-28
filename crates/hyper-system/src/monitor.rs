@@ -66,6 +66,8 @@ fn lerp(a: f32, b: f32, t: f32) -> f32 {
 /// }
 /// ```
 pub struct SystemMonitor {
+    /// The underlying system instance from `sysinfo` used to query hardware metrics.
+    /// This holds the internal state required to compute deltas (like CPU usage over time).
     pub sys: System,
     /// Timestamp of the last successful system poll (in seconds).
     pub last_update: f64,

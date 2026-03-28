@@ -24,11 +24,17 @@ use serde::{Deserialize, Serialize};
 /// ```
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Region {
+    /// The unique identifier or name of the region.
     pub name: String,
+    /// The horizontal (X) starting coordinate of the region.
     pub x: u16,
+    /// The vertical (Y) starting coordinate of the region.
     pub y: u16,
+    /// The width of the region in character cells.
     pub width: u16,
+    /// The height of the region in character cells.
     pub height: u16,
+    /// An optional human-readable description of the region's purpose or contents.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
 }
