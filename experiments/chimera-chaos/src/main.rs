@@ -26,7 +26,7 @@ async fn main() {
     let texture = Texture2D::from_image(&image);
     texture.set_filter(FilterMode::Nearest);
 
-    let mut frame_count = 0;
+    let mut _frame_count = 0;
     let mut paused = false;
 
     loop {
@@ -84,7 +84,7 @@ async fn main() {
             // Remove dead agents
             agents.retain(|a| a.energy > 0.0);
 
-            frame_count += 1;
+            _frame_count += 1;
         }
 
         // --- Render ---

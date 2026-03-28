@@ -3,6 +3,7 @@ use ::rand::Rng;
 use chimera_lang::prelude::*;
 
 pub struct Agent {
+    #[allow(dead_code)]
     pub id: usize,
     pub vm: ChimeraVM,
     pub x: usize,
@@ -101,6 +102,7 @@ impl Agent {
             helix: Helix {
                 strands: vec![Strand { genes }],
             },
+            evolution_config: None,
         };
         let mut vm = ChimeraVM::new(dna);
         vm.energy = 1000;
@@ -165,8 +167,8 @@ impl Agent {
         let width = lattice.width as isize;
         let height = lattice.height as isize;
 
-        let mut next_x = (self.x as isize + move_x as isize);
-        let mut next_y = (self.y as isize + move_y as isize);
+        let mut next_x = self.x as isize + move_x as isize;
+        let mut next_y = self.y as isize + move_y as isize;
 
         // Wrap
         next_x = next_x.rem_euclid(width);

@@ -185,6 +185,13 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Status**: experiments/locus-ddos
 - **Evaluation**: Success. Compiled. Exhibits robust Boid flocking traits adapting smoothly to firewall constraints.
 
+### locus-fluid
+- **Parents**: crates/locus + experiments/ferrous-fluid
+- **Concept**: Magnetic Boid Flocking. Particles use Boid flocking rules to navigate, but they also act as magnetic poles in a continuous fluid simulation.
+- **Novel trait**: Macroscopic-Microscopic Feedback Loop. The boids shape the magnetic field, and the magnetic field shapes the boids' flocking.
+- **Status**: experiments/locus-fluid
+- **Evaluation**: Success. Compiled. Predicting an emergent amoeba-like swarming behavior driven by continuous magnetic fields bridging discrete agent choices.
+
 ### gray-chimera
 - **Parents**: crates/gray-scott + experiments/chimera-lang
 - **Concept**: Morphogenetic Genetics. Chimera agents navigate a Gray-Scott reaction-diffusion grid. The agents drop chemicals or alter the grid, and their fitness depends on navigating it successfully or finding specific states.
@@ -254,6 +261,13 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Novel trait**: Organic structural formation out of Turing patterns.
 - **Status**: experiments/myco-diffusion
 - **Evaluation**: Success. Compiled. Pheromone trails successfully guide the reaction-diffusion Turing patterns into organic structures.
+
+### chimera-chaos
+- **Parents**: experiments/chaos-pendulum + experiments/chimera-lang
+- **Concept**: Chaos Genetics. Agents with ChimeraVM brains evolve inside a grid perturbed by a chaotic double pendulum.
+- **Novel trait**: Chaotic Genetics. The chaotic double pendulum's unpredictable force creates an environment where purely linear genetic adaptations fail.
+- **Status**: experiments/chimera-chaos
+- **Evaluation**: Pardoned by The Reaper ☠️. The initial condemnation for Terminal Compilation Failure (`evolution_config`) was successfully patched during its grace period.
 
 ### gray-chaos
 - **Parents**: crates/gray-scott + experiments/chaos-hologram
