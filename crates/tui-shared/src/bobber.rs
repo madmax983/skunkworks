@@ -78,7 +78,7 @@ impl Bobber {
     /// canvas.render(Rect::new(0, 0, 10, 10), &mut buffer);
     /// ```
     pub fn draw(&self, ctx: &mut Context, tick: u64) {
-        let icon = if self.is_hooked { "🔴" } else { "⚪" };
+        let icon = if self.is_hooked { "💥" } else { "🎈" };
 
         // Draw the main bobber body
         ctx.print(self.x, self.y, icon);
@@ -145,7 +145,7 @@ mod tests {
         for y in 0..20 {
             for x in 0..20 {
                 let cell = &buffer[(x, y)];
-                if cell.symbol() == "⚪" {
+                if cell.symbol() == "🎈" {
                     found_bobber = true;
                 } else if cell.symbol() == "≈" {
                     found_ripple = true;
@@ -177,7 +177,7 @@ mod tests {
         for y in 0..20 {
             for x in 0..20 {
                 let cell = &buffer[(x, y)];
-                if cell.symbol() == "🔴" {
+                if cell.symbol() == "💥" {
                     found_bobber = true;
                 } else if cell.symbol() == "💦" {
                     found_splash = true;
