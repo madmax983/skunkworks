@@ -13,8 +13,8 @@
 - **Status:** [EVAPORATING] ☠️ Reaper: Executed chimera-cam - Skeletal Implementation / Technical Debt Burden.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/chimera-chaos
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** Specimen pardoned. The Reaper's condemnation for Terminal Compilation Failure (`evolution_config`) and unused code warnings was successfully patched during its grace period.
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen pardoned. Diagnosis: Terminal Compilation Failure / Technical Debt Burden / Swarm Neglect. The unused code warnings and missing `evolution_config` have been resolved. The organism breathes again.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/tectonic-git
 - **Scent Origin:** The Reaper ☠️
@@ -52,6 +52,10 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. Spliced ferrous-strings with hologram-text.
 - **Phenotype:** Spectral Acoustics. We view the discrete acoustic strings entirely through their frequency domain interference pattern via FFT.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/locus-strings
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Death pheromone applied. Specimen condemned for Documentation Void / Skeletal Implementation. 24h grace period active.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/locus-strings
 - **Scent Origin:** The Splice Surgeon 🧬
