@@ -202,7 +202,8 @@ impl App {
 fn main() -> Result<()> {
     // Provide a default pro file path for the experiment using manifest dir to avoid pwd issues
     let manifest_dir = env!("CARGO_MANIFEST_DIR");
-    let input_path = std::path::PathBuf::from(manifest_dir).join("../chimera-lang/examples/hello_world.pro");
+    let input_path =
+        std::path::PathBuf::from(manifest_dir).join("../chimera-lang/examples/hello_world.pro");
 
     // Initialize app BEFORE enabling raw mode to avoid terminal corruption on error
     let mut app = App::new(&input_path)?;

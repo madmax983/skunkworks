@@ -575,15 +575,8 @@ mod tests {
         let time = Time::new(1700000000, 0);
         let sig = Signature::new("Test Author", "test@example.com", &time).unwrap();
 
-        repo.commit(
-            Some("HEAD"),
-            &sig,
-            &sig,
-            "Initial commit",
-            &tree,
-            &[],
-        )
-        .unwrap();
+        repo.commit(Some("HEAD"), &sig, &sig, "Initial commit", &tree, &[])
+            .unwrap();
 
         let model = GitModel::open(temp_dir).unwrap();
 

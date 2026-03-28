@@ -9,6 +9,11 @@
 //! - [`monitor`]: A system resource monitor with smoothed metric interpolation.
 //! - [`physics`]: A shared 4D Position-Based Dynamics physics engine.
 
+/// 4D vector math library optimized for visualization.
+///
+/// This module re-exports the 3D and 4D vector math primitives from the `locus` crate.
+/// It acts as the mathematical foundation for positioning and projecting
+/// structures in hyper-dimensional space.
 pub mod math {
     pub use locus::vec3::*;
     pub use locus::vec4::*;

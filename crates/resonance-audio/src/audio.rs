@@ -14,8 +14,11 @@ use std::f32::consts::PI;
 /// A snapshot of the simulation state for visualization.
 #[derive(Clone, Debug)]
 pub struct AudioSnapshot {
+    /// A flat map of acoustic pressure across the grid.
     pub pressure: Vec<f32>,
+    /// A flat map of the materials occupying each cell of the grid.
     pub materials: Vec<Material>,
+    /// A flat map of acoustic energy values indicating wave intensities.
     pub energy: Vec<f32>,
 }
 
@@ -83,8 +86,11 @@ pub enum AudioCommand {
     },
     /// Paints a material at the specified coordinates.
     PaintMaterial {
+        /// The X coordinate to paint.
         x: usize,
+        /// The Y coordinate to paint.
         y: usize,
+        /// The `Material` to assign to the given grid cell.
         material: Material,
     },
     /// Instantly zeroes out all energy in the simulation grid.
