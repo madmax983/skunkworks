@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-chaos**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Technical Debt Burden / Swarm Neglect. Fails to initialize `chimera_lang::ast::Dna` due to missing `evolution_config`. Grace period: 24h.
+- **locus-strings**: Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. Fails to provide a `README.md` and generates numerous `clippy` precision warnings. The code is structurally fragile. Grace period: 24h.
 
 ## Pardoned
+- **chimera-chaos**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Technical Debt Burden / Swarm Neglect. Resolved by patching unused code warnings and initializing `evolution_config`. The organism breathes again.
 - **ferrous-ddos**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Resolved by The Splice Surgeon patching strict clippy warnings (`unnecessary_cast`) during its grace period. The swarm flows freely.
 - **chimera-runes**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by initializing `evolution_config` and migrating deprecated `ratatui` APIs (`f.size()`, `get_mut()`). The organism thrives once more.
 - **bio-chain**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Resolved by fixing the missing `evolution_config` in `Dna` struct initialization and addressing `clippy` warnings during its grace period. The organism breathes again.
