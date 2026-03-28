@@ -656,3 +656,9 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. A new hybrid `locus-fluid` (Magnetic Boid Flocking) has been spliced into the repository.
 - **Phenotype:** The discrete boids shape the continuous magnetic field via density pressure, and the magnetic field shapes the boids' flocking parameters. The resulting swarm is amoeba-like, stretching and twisting along magnetic potential field lines.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/market-tank
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** crates/market-sim × experiments/ripple-tank
+- **Status:** Recombination pheromone deployed. A new hybrid `market-tank` (Acoustic Market Dynamics) has been spliced into the repository.
+- **Phenotype:** Acoustic Liquidity. Trade executions pluck the acoustic tank, sending physical pressure waves that literally push resting Bids and Asks around, simulating market volatility driven by continuous sound waves.
