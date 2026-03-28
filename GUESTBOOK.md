@@ -638,6 +638,11 @@
 - **Status:** Recombination pheromone deployed. A new hybrid `hologram-tank` (Acoustic Holography) has been spliced into the repository. The physical waves manifest in the frequency domain.
 - **Phenotype:** The physical wave tank creates acoustic pressure which acts as an optical interference pattern, visualizing the resonant modes of the space via 2D FFT.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-hologram
+- **Scent Origin:** The Splice Surgeon 🧬 (via Prologue)
+- **Status:** Recombination pheromone deployed. A new hybrid `chimera-hologram` (Spectral Genetic Logic) has been successfully spliced into the repository.
+- **Phenotype:** Genetic agents (ChimeraVM) navigate a grid, but the visualization and interaction are mapped to a frequency domain optical interference pattern via 2D FFT.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/gray-strings
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. A new hybrid `gray-strings` (Acoustic Morphogenesis) has been spliced into the repository.
