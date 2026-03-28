@@ -72,7 +72,8 @@ impl App {
                 let x = rng.gen_range(0..GRID_WIDTH);
                 // Bids start at bottom (high Y index -> low price)
                 if self.market.get(x, GRID_HEIGHT - 1) == Particle::Empty {
-                    self.market.set(x, GRID_HEIGHT - 1, Particle::Bid(self.next_id));
+                    self.market
+                        .set(x, GRID_HEIGHT - 1, Particle::Bid(self.next_id));
                     self.next_id += 1;
                 }
             }
@@ -164,7 +165,9 @@ impl App {
             .borders(Borders::ALL)
             .title(Span::styled(
                 " 📈 Market-Tank: Acoustic Liquidity ",
-                Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD),
+                Style::default()
+                    .fg(Color::Cyan)
+                    .add_modifier(Modifier::BOLD),
             ))
             .style(Style::default().fg(Color::White).bg(Color::Black));
         let inner_area = block.inner(size);
@@ -176,7 +179,11 @@ impl App {
             .split(inner_area);
 
         let canvas = Canvas::default()
-            .block(Block::default().borders(Borders::ALL).title(" Acoustic Order Book "))
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title(" Acoustic Order Book "),
+            )
             .marker(ratatui::symbols::Marker::Block)
             .x_bounds([0.0, GRID_WIDTH as f64])
             .y_bounds([0.0, GRID_HEIGHT as f64])
@@ -236,7 +243,11 @@ impl App {
 
         let status = Paragraph::new(format!(
             "{} | Bids: {} | Asks: {} | Trades Last Tick: {} | CoM Price: {:.2} | [Q/Esc] Quit",
-            self.status_msg, self.market.total_bids, self.market.total_asks, self.market.trade_count, self.market.center_of_mass
+            self.status_msg,
+            self.market.total_bids,
+            self.market.total_asks,
+            self.market.trade_count,
+            self.market.center_of_mass
         ))
         .block(Block::default().borders(Borders::ALL))
         .style(Style::default().fg(Color::Gray));

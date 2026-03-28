@@ -116,7 +116,15 @@ pub enum Constraint {
 /// ```
 #[derive(Clone)]
 pub struct PbdSystem {
+    /// The collection of point masses managed by the system.
+    ///
+    /// Modifying this directly is possible, but usually you should use [`PbdSystem::add_particle`]
+    /// to ensure correct initialization of `inv_mass` and `prev_pos`.
     pub particles: Vec<Particle>,
+    /// The collection of rules defining the structural integrity of the simulation.
+    ///
+    /// You can add constraints manually to this vector or use helper methods like
+    /// [`PbdSystem::add_distance_constraint`].
     pub constraints: Vec<Constraint>,
 }
 
