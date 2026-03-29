@@ -1,3 +1,13 @@
+//! Handlers for the "Normal" Application State.
+//!
+//! This module processes keyboard inputs when the application is not actively focused on
+//! text-editing fields or specific pop-up selectors. It manages grid interactions, cursor
+//! movement, and triggering commands directly.
+//!
+//! * [`actions`] - Handles special keys like backspace, escapes, or application-wide commands.
+//! * [`chars`] - Handles character insertion, usually injecting runes or data directly onto the grid.
+//! * [`navigation`] - Handles arrow keys to move the cursor across the simulation grid.
+
 pub(crate) mod chars;
 pub(crate) mod navigation;
 pub(crate) mod actions;

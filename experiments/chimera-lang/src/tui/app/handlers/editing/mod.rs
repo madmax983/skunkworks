@@ -1,3 +1,13 @@
+//! Handlers for the "Editing" Application State.
+//!
+//! This module processes keyboard inputs when the application state is configured for active text
+//! input (such as typing command strings or inserting multi-character structures). It handles the
+//! aggregation of characters, confirming submissions, or cancelling the action.
+//!
+//! * [`actions`] - Handles special keys for backspace, deletions, and escape.
+//! * [`chars`] - Handles generic character insertion into the input buffer.
+//! * [`enter`] - Handles the submission of the input buffer.
+
 pub(crate) mod actions;
 pub(crate) mod chars;
 pub(crate) mod enter;
