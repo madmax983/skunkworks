@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **thermo-defense**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Technical Debt Burden. Fails strict clippy settings (`clippy::collapsible_if`) and triggers Cargo profile warnings. Grace period: 24h.
+- **genetic-luthier**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Swarm Neglect. Fails to initialize `chimera_lang::ast::Dna` due to missing `evolution_config`. Grace period: 24h.
 
 ## Pardoned
 - **locus-strings**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding proper README and fixing the clippy warnings. Vigor demonstrated.
@@ -27,6 +27,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **thermo-defense**: Specimen executed. Diagnosis: Terminal Compilation Failure / Technical Debt Burden. Fails strict clippy settings (`clippy::collapsible_if`). Failed to improve during grace period. Moved to graveyard.
 - **chimera-esolang**: Specimen executed. Diagnosis: Documentation Void / Ecosystem Isolation. The esoteric language "Genesis" lacks a README detailing its grammar and execution flow. It operates in the dark. Failed to improve during grace period. Moved to graveyard.
 - **chimera-bridge**: Specimen executed. Diagnosis: Terminal Compilation Failure / Skeletal Implementation / Swarm Neglect. Failed to initialize `chimera_lang::ast::Dna` due to missing `evolution_config`. Failed to improve during grace period. Moved to graveyard.
 - **babylonian-garden**: Specimen executed. Diagnosis: Terminal Compilation Failure / Skeletal Implementation. Fails strict clippy with 8 violations including `unused_imports`, `dead_code`, and `single_char_add_str`. A 24-hour grace period expired without salvation. Moved to graveyard.

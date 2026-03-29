@@ -1,5 +1,11 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: TERMINAL] - Location: graveyard/thermo-defense
+*The Reaper's judgment is final. The organism returns to the void.*
+
+### [Concentration Level: TOXIC] - Location: experiments/genetic-luthier
+*The Reaper leaves a death pheromone... it rots.*
+
 ### [Concentration Level: EVAPORATING] - Location: experiments/ferrous-ddos
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/locus-strings
