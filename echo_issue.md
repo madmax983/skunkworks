@@ -12,3 +12,20 @@
 - Provide a full, copy-pasteable `Cargo.toml` example that actually works (or explain how to resolve the workspace dependency hell).
 - Use explicit, absolute module paths (`chimera_lang::vm::ChimeraVM`, `chimera_lang::compiler::compile`) instead of assuming prelude usage, or explicitly show the imports.
 - Add a huge banner in README saying 'REQUIRES FEATURE NOVA' for the ChimeraScript compiler examples.
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the Evolution example from the root README."
+**Action:** Try to use the quick start command `cargo run -p chimera-lang --features nova -- --input experiments/chimera-lang/examples/evolution.pro` based *only* on the public docs in `README.md`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing File & Unhelpful Error:** The command fails with an incredibly unhelpful message: `Error: No such file or directory (os error 2)`. It turns out `evolution.pro` does not exist in the `examples` directory (only `evolution.chs` exists). The error message provides zero context about *which* file it failed to find.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Unhelpful file error & missing example file
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `evolution.pro` example from the root `README.md`. Cargo gave me an error saying 'No such file or directory (os error 2)' but didn't tell me which file was missing."
+*   🕵️ **The Reality:** "Turns out `evolution.pro` doesn't exist, and the error message from `chimera-lang` just spits out a generic OS error instead of telling the user what path failed to open."
+*   💡 **The Fix:** "Improve the error message in `chimera-lang`'s `main.rs` to include the filename (e.g., `Failed to open file '...': ...`), and update documentation if necessary."
