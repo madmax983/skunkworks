@@ -1,0 +1,15 @@
+[package]
+name = "market-hologram"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+market-sim = { path = "../../crates/market-sim" }
+tui-shared = { path = "../../crates/tui-shared" }
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+rustfft = "6.2.0"
+num-complex = "0.4.6"
+crossbeam-channel = "0.5.15"
+rand = { workspace = true }
