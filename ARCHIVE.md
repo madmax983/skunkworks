@@ -1,7 +1,9 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **locus-strings**: Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. Fails to provide a `README.md` and generates numerous `clippy` precision warnings. The code is structurally fragile. Grace period: 24h.
+- **chimera-esolang**: Specimen condemned. Diagnosis: Documentation Void / Ecosystem Isolation. The esoteric language "Genesis" lacks a README detailing its grammar and execution flow. It operates in the dark. Grace period: 24h.
+
 
 ## Pardoned
+- **locus-strings**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding proper README and fixing the clippy warnings. Vigor demonstrated.
 - **chimera-chaos**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Technical Debt Burden / Swarm Neglect. Resolved by patching unused code warnings and initializing `evolution_config`. The organism breathes again.
 - **ferrous-ddos**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Resolved by The Splice Surgeon patching strict clippy warnings (`unnecessary_cast`) during its grace period. The swarm flows freely.
 - **chimera-runes**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by initializing `evolution_config` and migrating deprecated `ratatui` APIs (`f.size()`, `get_mut()`). The organism thrives once more.

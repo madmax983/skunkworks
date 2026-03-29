@@ -51,6 +51,7 @@ impl FerrousString {
         let end = self.pos + vec2(0.0, self.length);
 
         let segments = 20;
+        #[allow(clippy::cast_precision_loss)]
         let step = self.length / segments as f32;
 
         let mut prev = start;
@@ -64,6 +65,7 @@ impl FerrousString {
         };
 
         for i in 1..=segments {
+            #[allow(clippy::cast_precision_loss)]
             let y_offset = i as f32 * step;
             let ratio = y_offset / self.length;
             let shape = (std::f32::consts::PI * ratio).sin();
