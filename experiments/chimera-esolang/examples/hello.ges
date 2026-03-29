@@ -1,0 +1,26 @@
+strand main {
+    10
+    20
+    +
+    dup
+    "Result:"
+    swap
+    print
+    print
+}
+
+strand extra {
+    "Extra strand"
+    print
+}
+
+organelle worker {
+    "Worker started"
+    print
+}
+
+grid map {
+    | . . . |
+    | . @ . |
+    | . . . |
+}
