@@ -31,7 +31,6 @@ use pest::Parser;
 use pest_derive::Parser;
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
-use std::fs;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 use strum::IntoEnumIterator;
@@ -154,8 +153,16 @@ fn preprocess(
             return Err(anyhow!("Recursive include detected: {:?}", abs_path));
         }
 
-        let content = fs::read_to_string(&path)
-            .map_err(|e| anyhow!("Failed to include file {:?}: {}", path, e))?;
+        let file = std::fs::File::open(&path)
+            .map_err(|e| anyhow!("Failed to open file {:?}: {}", path, e))?;
+        let mut content = String::new();
+        let limit = 1024 * 1024; // 1MB limit
+        let bytes_read = std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut content)
+            .map_err(|e| anyhow!("Failed to read file {:?}: {}", path, e))?;
+
+        if bytes_read as u64 > limit {
+            return Err(anyhow!("File {:?} exceeds 1MB limit", path));
+        }
 
         let sub_expanded = preprocess(&content, Some(bp), visited, depth + 1)?;
         expanded.push_str(&sub_expanded);

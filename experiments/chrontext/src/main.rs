@@ -36,7 +36,14 @@ struct App {
 
 impl App {
     fn new(path: String, blame_info: Vec<LineInfo>) -> Result<Self> {
-        let content_str = fs::read_to_string(&path)?;
+        let file = fs::File::open(&path)?;
+        let mut content_str = String::new();
+        let limit = 1024 * 1024; // 1MB limit
+        let bytes_read = std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut content_str)?;
+
+        if bytes_read as u64 > limit {
+            anyhow::bail!("File {:?} exceeds 1MB limit", path);
+        }
         let content: Vec<String> = content_str.lines().map(|s| s.to_string()).collect();
 
         Ok(Self {

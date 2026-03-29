@@ -30,7 +30,14 @@ struct App {
 
 impl App {
     fn new(input_path: &Path) -> Result<Self> {
-        let unparsed_file = fs::read_to_string(input_path)?;
+        let file = fs::File::open(input_path)?;
+        let mut unparsed_file = String::new();
+        let limit = 1024 * 1024; // 1MB limit
+        let bytes_read = std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut unparsed_file)?;
+
+        if bytes_read as u64 > limit {
+            anyhow::bail!("File {:?} exceeds 1MB limit", input_path);
+        }
         let prog = prologue_compiler::compile(&unparsed_file, input_path.parent())?;
 
         let mut vm = ChimeraVM::new(prog.dna);

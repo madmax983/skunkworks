@@ -30,7 +30,14 @@ fn main() -> Result<()> {
     println!("Analyzing {}...", file_path_str);
     let analyzer = BlameAnalyzer::new(".");
     let blame_info = analyzer.analyze(file_path)?;
-    let content = fs::read_to_string(file_path)?;
+    let file = fs::File::open(file_path)?;
+    let mut content = String::new();
+    let limit = 1024 * 1024; // 1MB limit
+    let bytes_read = std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut content)?;
+
+    if bytes_read as u64 > limit {
+        anyhow::bail!("File {:?} exceeds 1MB limit", file_path);
+    }
 
     let mut tui = Tui::init()?;
     let res = run_app(&mut tui, file_path_str, blame_info, content);

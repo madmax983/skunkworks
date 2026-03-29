@@ -90,8 +90,16 @@ impl App {
 
         // Load Guestbook
         let guestbook_path = "../../GUESTBOOK.md";
-        let content = fs::read_to_string(guestbook_path)
-            .unwrap_or_else(|_| "Could not read GUESTBOOK.md".to_string());
+        let content = if let Ok(file) = fs::File::open(guestbook_path) {
+            let mut buf = String::new();
+            let limit = 1024 * 1024; // 1MB limit
+            match std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut buf) {
+                Ok(bytes) if bytes as u64 <= limit => buf,
+                _ => "GUESTBOOK.md exceeds 1MB limit".to_string(),
+            }
+        } else {
+            "Could not read GUESTBOOK.md".to_string()
+        };
 
         let entries = parse_guestbook(&content);
         let mut entry_iter = entries.into_iter();
