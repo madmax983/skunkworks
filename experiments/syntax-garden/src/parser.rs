@@ -28,13 +28,21 @@ impl GardenParser {
         entries.sort();
 
         for file_path in entries {
-            let content = fs::read_to_string(&file_path)?;
-            if let Ok(ast) = syn::parse_file(&content) {
-                genome.push_str("["); // Branch for each file
-                let file_dna = self.analyze_file(&ast);
-                genome.push_str(&file_dna);
-                genome.push_str("]");
-                genome.push_str("F"); // Grow main stem between files
+            let file = fs::File::open(&file_path)?;
+            let mut content = String::new();
+            let limit = 1024 * 1024; // 1MB limit
+            let bytes_read = std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut content)?;
+
+            if bytes_read as u64 <= limit {
+                if let Ok(ast) = syn::parse_file(&content) {
+                    genome.push_str("["); // Branch for each file
+                    let file_dna = self.analyze_file(&ast);
+                    genome.push_str(&file_dna);
+                    genome.push_str("]");
+                    genome.push_str("F"); // Grow main stem between files
+                }
+            } else {
+                eprintln!("Skipping file {:?} (exceeds 1MB limit)", file_path);
             }
         }
 

@@ -30,15 +30,23 @@ where
                         };
 
                         if should_reload {
-                            if let Ok(src) = std::fs::read_to_string(path) {
-                                // Default to ChimeraScript for hot reload for now
-                                // Ideally we check extension, but compile() handles imports
-                                let parent = path.parent();
-                                if let Ok(new_dna) = crate::compiler::compile(&src, parent) {
-                                    vm.patch_dna(new_dna);
-                                    app_state.last_modified = Some(modified);
-                                    app_state.status_msg = "Hot Reloaded!".to_string();
-                                    app_state.screen_shake = 5.0;
+                            if let Ok(file) = std::fs::File::open(path) {
+                                let mut src = String::new();
+                                let limit = 1024 * 1024; // 1MB limit
+                                if let Ok(bytes) = std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut src) {
+                                    if bytes as u64 <= limit {
+                                        // Default to ChimeraScript for hot reload for now
+                                        // Ideally we check extension, but compile() handles imports
+                                        let parent = path.parent();
+                                        if let Ok(new_dna) = crate::compiler::compile(&src, parent) {
+                                            vm.patch_dna(new_dna);
+                                            app_state.last_modified = Some(modified);
+                                            app_state.status_msg = "Hot Reloaded!".to_string();
+                                            app_state.screen_shake = 5.0;
+                                        }
+                                    } else {
+                                        app_state.status_msg = "File too large to hot reload!".to_string();
+                                    }
                                 }
                             }
                         }

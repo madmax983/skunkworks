@@ -22,7 +22,13 @@ fn main() -> Result<(), String> {
         cli.output.display()
     );
 
-    let source_code = fs::read_to_string(&cli.source).map_err(|e| e.to_string())?;
+    let file = fs::File::open(&cli.source).map_err(|e| e.to_string())?;
+    let mut source_code = String::new();
+    let limit = 1024 * 1024; // 1MB limit
+    let bytes_read = std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut source_code).map_err(|e| e.to_string())?;
+    if bytes_read as u64 > limit {
+        return Err(format!("File {} exceeds 1MB limit", cli.source.display()));
+    }
     let bytecode = asm::assemble(&source_code)?;
 
     println!("Bytecode size: {} bytes", bytecode.len());

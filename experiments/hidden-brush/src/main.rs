@@ -61,7 +61,14 @@ fn main() -> Result<()> {
             width,
             height,
         } => {
-            let script_content = fs::read_to_string(&script)?;
+            let file = fs::File::open(&script)?;
+            let mut script_content = String::new();
+            let limit = 1024 * 1024; // 1MB limit
+            let bytes_read = std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut script_content)?;
+
+            if bytes_read as u64 > limit {
+                anyhow::bail!("Script file {:?} exceeds 1MB limit", script);
+            }
             let bytecode = bytecode::Assembler::parse(&script_content)?;
 
             let cover = if let Some(path) = image {
