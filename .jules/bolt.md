@@ -54,3 +54,7 @@
 **[1D Index Offset Optimization]
 **Learning:** Re-calculating 2D indices ((y - 1) * w + x) inside tight grid simulation loops adds redundant multiplications. Strength reduction by using 1D relative offsets (idx - w, idx + w) avoids these math operations completely.
 **Action:** When iterating over a 2D flat array with an inner index variable, use simple additions/subtractions from the current index instead of recalculating 2D bounds.
+
+**[Failed Optimization: Manual Loop Strength Reduction in Rust]
+**Learning:** Manual loop strength reduction (replacing `y * w + x` with `idx += 1` inside a nested loop) is an anti-pattern in modern Rust. While it eliminates a multiplication, it obscures the relationship between the loop variable and the array index, which defeats LLVM's Scalar Evolution (SCEV) and prevents Bounds Check Elision (BCE). This can actually make the code *slower*. LLVM is already very good at optimizing simple 2D index math.
+**Action:** Do not manually optimize away simple integer multiplications inside loops (like `y * w + x`) if it involves tracking a separate `idx` variable across iterations, as it interferes with bounds check elision. Rely on LLVM for this level of strength reduction.
