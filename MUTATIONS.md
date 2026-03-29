@@ -25,6 +25,14 @@ Additionally, the success of translating complex abstract graphs (like codebases
 
 ## 🌿 Attempted Crosses
 
+### market-hologram
+- **Parents**: crates/market-sim + experiments/hologram-text
+- **Concept**: Holographic Market Dynamics. The continuous physical double auction market particles (Bids/Asks) act as a density field, transformed via 2D FFT into a holographic projection. This visualizes the resonant modes of the market structure in the frequency domain.
+- **Novel trait**: Spectral Liquidity. We view the discrete market participants entirely through their frequency domain interference pattern via FFT.
+- **Predicted Phenotype**: An emergent spectral market structure where resting liquidity creates standing waves in the frequency domain, while the execution volume introduces high-frequency turbulence.
+- **Status**: experiments/market-hologram
+- **Evaluation**: Success. Compiled. The visual phenotype successfully manifests a spectral market visualization based on trade flow.
+
 ### market-tank
 - **Parents**: crates/market-sim + experiments/ripple-tank
 - **Concept**: Acoustic Market Dynamics. The continuous physical double auction market particles (Bids/Asks) act as physical displacers in a 2D acoustic wave tank.
