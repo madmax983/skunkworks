@@ -192,8 +192,10 @@ impl AudioModel {
             snapshot_tx,
             recording_tx,
             sample_counter: 0,
-            oscillators: Vec::new(),
-            active_tones: Vec::new(),
+            // ⚡ Bolt: Pre-allocate vectors with capacity to avoid dynamic heap reallocations
+            // when multiple oscillators or tones are spawned.
+            oscillators: Vec::with_capacity(32),
+            active_tones: Vec::with_capacity(32),
         }
     }
 
