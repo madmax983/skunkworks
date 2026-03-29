@@ -69,7 +69,10 @@ pub struct Synapse {
     pub delay: usize,
     /// Queue of spikes currently traveling along this synapse.
     /// Values represent "remaining steps until arrival".
-    pub spikes_in_transit: Vec<usize>,
+    /// ⚡ Bolt Optimization: Using `TinyVec<[usize; 4]>` instead of `Vec<usize>`
+    /// eliminates dynamic heap allocations for the vast majority of synapses,
+    /// vastly improving memory locality and reducing allocator pressure during simulation.
+    pub spikes_in_transit: tinyvec::TinyVec<[usize; 4]>,
     /// Visualization state: did this synapse deliver a spike in the most recent step?
     pub active: bool,
 }
@@ -160,7 +163,7 @@ impl Network {
             to,
             weight,
             delay,
-            spikes_in_transit: Vec::new(),
+            spikes_in_transit: tinyvec::TinyVec::new(),
             active: false,
         });
     }
@@ -212,15 +215,17 @@ impl Network {
 
             // Advance spikes in transit
             let mut weight_to_add = 0.0;
-            syn.spikes_in_transit.retain_mut(|t| {
-                if *t == 0 {
+            let mut i = 0;
+            while i < syn.spikes_in_transit.len() {
+                if syn.spikes_in_transit[i] == 0 {
                     weight_to_add += syn.weight;
-                    false // Remove from queue
+                    syn.spikes_in_transit.remove(i);
+                    // Do not increment i
                 } else {
-                    *t -= 1;
-                    true // Keep in queue
+                    syn.spikes_in_transit[i] -= 1;
+                    i += 1;
                 }
-            });
+            }
 
             if weight_to_add != 0.0 {
                 if let Some(input) = inputs.get_mut(syn.to) {
