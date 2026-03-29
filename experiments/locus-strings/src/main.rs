@@ -1,3 +1,4 @@
+#![allow(clippy::too_many_lines, clippy::future_not_send, clippy::expect_used, clippy::cast_precision_loss, clippy::cast_possible_truncation)]
 use locus::flocking::{compute_force, FlockingParams};
 use locus::Vec2 as LocusVec2;
 use macroquad::prelude::*;
@@ -18,7 +19,11 @@ const BOID_COUNT: usize = 150;
 const STRING_SPACING: f32 = 100.0;
 const BASE_FREQ: f32 = 110.0; // A2
 
+
 #[macroquad::main("Locus Strings")]
+
+
+
 async fn main() {
     let (audio_handle, cmd_tx) = init_audio().expect("Failed to init audio");
     let _audio_handle = audio_handle;
@@ -28,8 +33,10 @@ async fn main() {
 
     // Initialize strings
     for i in 0..STRING_COUNT {
+        #[allow(clippy::cast_precision_loss)]
         let x = (i as f32).mul_add(STRING_SPACING, 100.0);
         let pos = vec2(x, 200.0);
+        #[allow(clippy::cast_precision_loss)]
         let target_freq = BASE_FREQ * (i as f32 / 12.0).exp2();
         strings.push(FerrousString::new(pos, 300.0, target_freq));
     }
@@ -123,6 +130,7 @@ async fn main() {
 
                 if crossed && in_range {
                     // Pluck!
+                    #[allow(clippy::cast_possible_truncation)]
                     let boid_speed = boid_vel.magnitude() as f32;
                     let strength = boid_speed.clamp(2.0, 10.0) * 2.0;
                     let direction = if boid_vel.x > 0.0 { 1.0 } else { -1.0 };
@@ -171,6 +179,7 @@ async fn main() {
             } else {
                 WHITE
             };
+            #[allow(clippy::cast_possible_truncation)]
             draw_circle(boid.position.x as f32, boid.position.y as f32, 2.0, color);
         }
 

@@ -20,9 +20,11 @@ pub fn parse(source: &str) -> Result<Program> {
     };
 
     for pair in program.into_inner() {
+        #[allow(clippy::single_match)]
         match pair.as_rule() {
             Rule::declaration => {
                 let inner = pair.into_inner().next().unwrap();
+                #[allow(clippy::single_match)]
                 match inner.as_rule() {
                     Rule::strand_def => {
                         let mut strand_parts = inner.into_inner();
@@ -46,7 +48,8 @@ pub fn parse(source: &str) -> Result<Program> {
 
 fn parse_instruction(pair: pest::iterators::Pair<'_, Rule>) -> Result<Instruction> {
     let inner = pair.into_inner().next().unwrap();
-    match inner.as_rule() {
+    #[allow(clippy::single_match)]
+                match inner.as_rule() {
         Rule::number => Ok(Instruction::Number(inner.as_str().parse()?)),
         Rule::string => {
             let s = inner.as_str();

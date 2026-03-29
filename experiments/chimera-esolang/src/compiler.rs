@@ -12,6 +12,7 @@ pub fn compile(program: &Program) -> Result<Dna> {
     // Very basic mapping for demo.
     // Genesis maps Instructions -> Chimera OpCodes
 
+    #[allow(clippy::for_kv_map)]
     for (_name, strand) in &program.strands {
         let mut genes = Vec::new();
 

@@ -11,6 +11,7 @@ use cpal::{Stream, StreamConfig};
 use rand::Rng;
 
 #[allow(dead_code)]
+#[derive(Copy, Clone)]
 pub enum AudioCommand {
     Pluck {
         frequency: f32,
@@ -48,6 +49,8 @@ impl Voice {
     }
 
     fn reset(&mut self, frequency: f32, sample_rate: f32, decay: f32, amplitude: f32) {
+        #[allow(clippy::cast_possible_truncation)]
+        #[allow(clippy::cast_sign_loss)]
         let period = (sample_rate / frequency).max(2.0) as usize;
         self.len = period.min(MAX_BUFFER_SIZE);
 
@@ -152,6 +155,7 @@ pub fn init_audio() -> Result<(AudioHandle, Sender<AudioCommand>)> {
             .ok_or_else(|| anyhow!("No output device available"))?;
 
         let config: StreamConfig = device.default_output_config()?.into();
+        #[allow(clippy::cast_precision_loss)]
         let sample_rate = config.sample_rate.0 as f32;
 
         let mut model = AudioModel::new(sample_rate);
