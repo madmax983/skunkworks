@@ -259,6 +259,29 @@ impl Default for Network {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn test_external_inputs_out_of_bounds() {
+        let mut net = crate::Network::new();
+        net.add_neuron();
+        net.step(&[1.0, 2.0]);
+    }
+
+    #[test]
+    fn test_invalid_synapse_to_ignored() {
+        let mut net = crate::Network::new();
+        net.add_neuron();
+        net.add_synapse(0, 999, 10.0);
+        net.step(&[100.0]);
+        net.step(&[]);
+    }
+
+    #[test]
+    fn test_invalid_synapse_from_ignored() {
+        let mut net = crate::Network::new();
+        net.add_neuron();
+        net.add_synapse(999, 0, 10.0);
+        net.step(&[100.0]);
+    }
     use super::*;
 
     #[test]

@@ -508,4 +508,46 @@ mod tests {
         }
         println!("Time taken: {:?}", start.elapsed());
     }
+
+    #[test]
+    fn test_current_decay_zero() {
+        let mut neuron = Izhikevich::new();
+        neuron.current_decay = 1.0e-7;
+        neuron.update(0.1, 0.0);
+        assert_eq!(neuron.current_decay, 0.0);
+    }
+
+    #[test]
+    fn test_current_decay_negative_zero() {
+        let mut neuron = Izhikevich::new();
+        neuron.current_decay = -1.0e-7;
+        neuron.update(0.1, 0.0);
+        assert_eq!(neuron.current_decay, 0.0);
+    }
+
+    #[test]
+    fn test_current_decay_exactly_zero() {
+        let mut neuron = Izhikevich::new();
+        neuron.current_decay = 0.0;
+        neuron.update(0.1, 0.0);
+        assert_eq!(neuron.current_decay, 0.0);
+    }
+
+    #[test]
+    fn test_current_decay_crossover_zero() {
+        let mut neuron = Izhikevich::new();
+        neuron.tau = 0.01;
+        neuron.current_decay = 1.0e-5;
+        neuron.update(0.1, 0.0);
+        assert_eq!(neuron.current_decay, 0.0);
+    }
+
+    #[test]
+    fn test_current_decay_crossover_negative_zero() {
+        let mut neuron = Izhikevich::new();
+        neuron.tau = 0.01;
+        neuron.current_decay = -1.0e-5;
+        neuron.update(0.1, 0.0);
+        assert_eq!(neuron.current_decay, 0.0);
+    }
 }
