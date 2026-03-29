@@ -19,3 +19,6 @@
 **2024-03-27 - [Test coverage for `resonance-audio`]**
 **Learning:** `resonance-audio` had ~75% coverage. Missed regions were mostly edge cases and unimplemented functionalities around `Material` types, `AudioCommand`s handling (like `AddWall`, `ClearWaves`, `ClearWalls`, `PaintMaterial`, `Tone`), and bounds checking logic inside the physics update loop. Added targeted tests to these scenarios to hit >97% coverage.
 **Action:** Identified edge cases inside of `physics.rs` and `audio.rs` that were unreachable without direct testing, specifically enum types and grid limits. Added robust checks against unexpected behavior without requiring large UI test suites.
+**[Audio Envelope Expiration in `quipu::audio`]**
+**Learning:** Audio processing loops often contain envelope decay mechanisms that remove active elements to prevent unbounded accumulation of silent sounds. These branches (e.g., `return false` when `env <= 0.0`) are notoriously missed by basic "play a sound" tests.
+**Action:** When testing audio mixing engines like `quipu::audio`, write explicit expiration tests that inject events and then simulate enough sample frames to exceed the longest decay time (e.g., 2 seconds), asserting that the active elements buffer eventually drains to zero.
