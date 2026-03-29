@@ -1,0 +1,117 @@
+mod physics;
+
+use anyhow::Result;
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
+use market_sim::{Grid, Particle as MarketParticle};
+use physics::Universe;
+use ratatui::{
+    layout::{Constraint, Direction, Layout},
+    style::{Color, Style},
+    widgets::{canvas::Canvas, Block, Borders, Paragraph},
+};
+use std::time::{Duration, Instant};
+use tui_shared::Tui;
+use rand::Rng;
+
+fn main() -> Result<()> {
+    let mut tui = Tui::init()?;
+    let res = run_app(&mut tui);
+    tui.exit()?;
+
+    if let Err(err) = res {
+        println!("{:?}", err)
+    }
+
+    Ok(())
+}
+
+// 🧬 Lineage Notes:
+// This application loop merges the continuous particle update step from `ferrous-fluid`
+// with the discrete trade simulation engine from `market-sim`.
+// The phenotype expressed here translates discrete trading intent into continuous magnetic forces.
+fn run_app(tui: &mut Tui) -> Result<()> {
+    let mut universe = Universe::new(200.0, 100.0);
+    let mut market = Grid::new(40, 20);
+    let mut last_tick = Instant::now();
+    let tick_rate = Duration::from_millis(33);
+
+    let mut rng = rand::thread_rng();
+
+    loop {
+        tui.terminal.draw(|f| {
+            let chunks = Layout::default()
+                .direction(Direction::Vertical)
+                .constraints([Constraint::Min(0), Constraint::Length(3)])
+                .split(f.area());
+
+            let canvas = Canvas::default()
+                .block(Block::default().borders(Borders::ALL).title(" Market Fluid "))
+                .x_bounds([0.0, universe.width])
+                .y_bounds([0.0, universe.height])
+                .paint(|ctx| {
+                    // Draw Particles (Fluid)
+                    for p in &universe.particles {
+                        ctx.print(
+                            p.pos.x,
+                            p.pos.y,
+                            ratatui::text::Span::styled("~", Style::default().fg(Color::Cyan)),
+                        );
+                    }
+
+                    // Draw Magnets (Market Bids/Asks)
+                    for mag in &universe.magnets {
+                        let color = if mag.polarity { Color::Green } else { Color::Red };
+                        let label = if mag.polarity { "B" } else { "A" };
+                        ctx.print(
+                            mag.pos.x,
+                            mag.pos.y,
+                            ratatui::text::Span::styled(label, Style::default().fg(color)),
+                        );
+                    }
+                });
+
+            f.render_widget(canvas, chunks[0]);
+
+            let stats = Paragraph::new(format!(
+                "Fluid Particles: {} | Bids/Asks: {} | Trades: {} | [Space] Spawn Orders | [Q] Quit",
+                universe.particles.len(),
+                universe.magnets.len(),
+                market.trade_count
+            ))
+            .block(Block::default().borders(Borders::ALL));
+            f.render_widget(stats, chunks[1]);
+        })?;
+
+        let timeout = tick_rate
+            .checked_sub(last_tick.elapsed())
+            .unwrap_or_else(|| Duration::from_secs(0));
+
+        if event::poll(timeout)? {
+            if let Event::Key(key) = event::read()? {
+                if key.kind == KeyEventKind::Press {
+                    match key.code {
+                        KeyCode::Char('q') | KeyCode::Esc => return Ok(()),
+                        KeyCode::Char(' ') => {
+                            // Spawn some random bids and asks
+                            for _ in 0..5 {
+                                let x = rng.gen_range(0..market.width);
+                                let y = rng.gen_range(0..market.height);
+                                let is_bid = rng.gen_bool(0.5);
+                                let owner = rng.gen_range(1..100);
+                                market.set(x, y, if is_bid { MarketParticle::Bid(owner) } else { MarketParticle::Ask(owner) });
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+            }
+        }
+
+        if last_tick.elapsed() >= tick_rate {
+            market.update();
+            universe.sync_magnets_with_market(&market);
+            universe.update(0.05);
+            last_tick = Instant::now();
+        }
+    }
+}

@@ -15,6 +15,8 @@ Mendel's peas. Darwin's finches. Your experiments.
 Continue to leverage robust, mathematically stable environments (FFT, wave mechanics) to ground chaotic or emergent agents (DDoS, slime molds) and structural graphs (codebase visualization). The success of mapping intent-driven agents (DDoS packets) and decaying network structures into continuous environments (magnetic fluids, reaction-diffusion substrates, holographic interference patterns) proves that hybridizing *purpose* and *decay* with *medium* yields the most striking phenotypes. Purely generic mashups are swiftly executed by the Reaper. Future crosses should avoid unconstrained spaces (hyperbolic geometry) and focus on translating discrete swarm intent or structural entropy into high-fidelity frequency, biological decomposition, or acoustic domains.
 
 Additionally, the success of translating complex abstract graphs (like codebases) into purely kinetic/acoustic systems (like mnem-strings) confirms that bridging static structural information with dynamic physical media (sound/magnetism) yields extraordinary hybrid vigor. We will continue exploring cross-domain translations (structure to physics).
+
+**Recent Pardons:** The Reaper has successfully pardoned a few crosses (e.g., `hyperbolic-chimera`, `chimera-rift`, `chimera-fluid`) after resolving compilation failures and skeletal implementation issues during their grace period. This emphasizes the critical importance of robust code, proper DNA initialization, and comprehensive integration (e.g., adding actual sensor inputs) to prevent execution.
 ---
 
 ## 🌸 Proposed Crosses
@@ -567,3 +569,10 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Phenotype**: Spectral Genetic Logic. We view the execution of genetic Prologue logic agents as an optical interference pattern, visualizing their spatial and metabolic footprint natively in the frequency domain.
 - **Status**: experiments/chimera-hologram
 - **Evaluation**: Success. Compiled. The boids/agents successfully generate continuous visual spectral interference patterns from their discrete logic gates and execution paths.
+
+### market-fluid
+- **Parents**: crates/market-sim + experiments/ferrous-fluid
+- **Concept**: Magnetic Liquidity. The continuous physical double auction market particles (Bids/Asks) act as magnetic poles in a ferrous fluid simulation.
+- **Novel trait**: Self-organizing magnetic liquidity pools form, snapping together dynamically as trades execute and remove opposing poles. The fluid medium provides realistic viscosity and momentum.
+- **Status**: experiments/market-fluid
+- **Evaluation**: Success. Compiled. Bids and Asks successfully act as dynamic magnetic poles within the ferrous fluid continuous physical space.
