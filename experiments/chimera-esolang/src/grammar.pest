@@ -1,0 +1,59 @@
+// Grammar for our esoteric language: "Genesis"
+// A fusion of Orca (grid layout), Forth (stack), Prolog (logic), Raku (operators), and Genetics (mutations).
+
+WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
+COMMENT = _{ "#" ~ (!"\n" ~ ANY)* }
+
+program = { SOI ~ declaration* ~ EOI }
+
+declaration = {
+    strand_def |
+    organelle_def |
+    grid_def |
+    rule_def
+}
+
+// Strand definition (Forth/Genetics)
+strand_def = { "strand" ~ identifier ~ "{" ~ instruction* ~ "}" }
+
+// Organelle definition (Concurrent Agents)
+organelle_def = { "organelle" ~ identifier ~ "{" ~ instruction* ~ "}" }
+
+// Grid Definition (Orca inspired)
+grid_def = { "grid" ~ identifier ~ "{" ~ grid_row* ~ "}" }
+grid_row = { "|" ~ (!"|" ~ ANY)* ~ "|" }
+
+// Logic Rule (Prolog inspired)
+rule_def = { "rule" ~ identifier ~ "(" ~ variable* ~ ")" ~ ":-" ~ goal+ ~ "." }
+goal = { identifier ~ "(" ~ variable* ~ ")" }
+
+instruction = {
+    number |
+    string |
+    identifier |
+    operator |
+    spawn_instr |
+    exec_instr |
+    query_instr
+}
+
+spawn_instr = { "@" ~ identifier }
+exec_instr = { "!" ~ identifier }
+query_instr = { "?" ~ identifier }
+
+number = @{ "-"? ~ ASCII_DIGIT+ }
+string = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+identifier = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
+variable = @{ "?" ~ ASCII_ALPHA ~ ASCII_ALPHANUMERIC* }
+
+// Operators (Raku/Forth inspired)
+operator = {
+    "+" | "-" | "*" | "/" | "%" |
+    "dup" | "drop" | "swap" | "over" | "rot" |
+    "<<" | ">>" | // Meta-operators
+    "mutate" | "crossover" | "transcribe" // Genetic operators
+}
+
+rune = {
+    "!" | "?" | "~" | "&" | "|" | "=" | "*" | "#" | "@" | "$" | "%" | "^" | "M" | "O" | "[" | "]" | "U" | "V" | "F" | "T" | "E" | "Z" | "\\" | "/" | "-" | "B" | "Π" | "Φ" | "Λ" | "Ω" | "†" | "‡" | "Ψ" | "c" | "8"
+}
