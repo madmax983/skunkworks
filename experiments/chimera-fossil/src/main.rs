@@ -332,7 +332,7 @@ fn run_cli_list() -> Result<()> {
         // Simulate a "Verified" status based on commit hash or message properties
         // For visual demonstration of "True" as Green
         let is_verified = commit.hash.chars().next().unwrap_or('0').is_numeric(); // Arbitrary check
-        let verified_str = if is_verified { "✔" } else { "✘" };
+        let verified_str = if is_verified { "True" } else { "False" };
 
         let verified_cell = if is_verified {
             comfy_table::Cell::new(verified_str).fg(comfy_table::Color::Green)
