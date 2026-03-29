@@ -356,4 +356,39 @@ mod tests {
             || output2.iter().any(|&sample| sample != 0.0);
         assert!(has_non_zero, "Output buffer should have audio data");
     }
+
+    #[cfg(feature = "audio")]
+    #[test]
+    fn test_process_audio_expiration() {
+        use crossbeam_channel::bounded;
+
+        let (tx, rx) = bounded(10);
+
+        // Enqueue all event types
+        tx.send(AudioEvent::Kick).unwrap();
+        tx.send(AudioEvent::Snare).unwrap();
+        tx.send(AudioEvent::HiHat).unwrap();
+        tx.send(AudioEvent::Pluck(440.0)).unwrap();
+
+        let mut active_sounds = Vec::new();
+
+        // Pluck decays as exp(-t * 4). To hit <= 0.001, we need exp(-4t) <= 0.001
+        // -4t <= ln(0.001) ≈ -6.9
+        // t >= 1.725 seconds. Let's process 2 seconds of audio.
+        // At 44100 sample rate, 2 seconds is 88200 samples per channel.
+        let channels = 2;
+        let sample_rate = 44100.0;
+        let samples_needed = (2.0 * sample_rate) as usize * channels;
+
+        let mut output = vec![0.0; samples_needed];
+
+        process_audio(&mut output, channels, sample_rate, &rx, &mut active_sounds);
+
+        // All sounds should have naturally decayed and been removed
+        assert!(
+            active_sounds.is_empty(),
+            "Expected all sounds to expire after 2 seconds, but {} remained.",
+            active_sounds.len()
+        );
+    }
 }
