@@ -51,3 +51,7 @@
 ## 2025-04-18 - The Black Box Git Associates
 **Confusion:** The `git-associates` wrapper abstracting `git2` lacked practical `/// # Examples` on functions like `history_with_diffs` and structs like `DiffStats`. Users didn't know how to extract insertions/deletions or iterate through hunks without digging into the underlying `git2` documentation.
 **Clarification:** I rigorously added executable doctests to all core types (`Commit`, `CommitStats`, `FileChange`, `DiffStats`) and `GitModel` methods. This proves how to construct and use the application-agnostic data structures.
+
+## 2025-05-18 - The Black Box of Submodules
+**Confusion:** Inner `pub mod` definitions across the `chimera-lang` crate (like `vm/ops/mod.rs` and `tui/views/mod.rs`) lacked top-level context, making them "Black Boxes" when users view their docs directly.
+**Clarification:** Added `//!` module-level documentation to crucial inner public modules explaining *what* they represent at a high level (e.g. routing inputs or categorizing renderers) so they independently tell their story before a user dives into structs.
