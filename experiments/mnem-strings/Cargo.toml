@@ -1,0 +1,20 @@
+[package]
+name = "mnem-strings"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4.14"
+rand.workspace = true
+walkdir = "2.3"
+regex = "1.9"
+cpal = "0.15"
+ringbuf = "0.3.3"
+ferrous-core.workspace = true
+chimera-lang.workspace = true
+crossbeam-channel = "0.5"
+anyhow.workspace = true
+
+[features]
+default = ["audio"]
+audio = []

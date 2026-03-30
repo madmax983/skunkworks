@@ -15,6 +15,10 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Forge ⚒️ scented structural tangles and multiple clippy errors (including `ptr_arg`, `needless_range_loop`, and `collapsible_match`). The logic is rusting and requires the Razor 🪒 touch.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/mnem-strings
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** New specimen successfully hybridized (`mnem-rot` × `ferrous-strings`). Acoustic manifestation of code decay properly mapped to magnetic string resonance. Continuous structural decay is now audible.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/crate-radar
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Terminal Genericism / Ecosystem Isolation. A generic utility lacking any organic, chaotic, or evolutionary traits. Grace period: 24h.

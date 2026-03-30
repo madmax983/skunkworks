@@ -76,6 +76,13 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Status**: experiments/chaos-fluid
 - **Evaluation**: Success. Compiled. The macroscopic chaos successfully shapes the microscopic density fluid.
 
+### mnem-strings
+- **Parents**: experiments/mnem-rot + experiments/ferrous-strings
+- **Concept**: Acoustic Code Rot. The decaying nodes of a codebase graph simulation physically pluck a set of acoustic-magnetic strings.
+- **Novel trait**: Acoustic Manifestation of Code Decay. High entropy (rotting) codebase nodes fly past and aggressively pluck the acoustic strings, generating high-frequency audio-visual dissonance. A continuous acoustic mapping of codebase health and rot.
+- **Status**: experiments/mnem-strings
+- **Evaluation**: Success. Compiled. The visual phenotype successfully manifests code decay intent as a physical force that plucks resonant strings, producing dynamic audio-visual translations.
+
 ### myco-strings
 - **Parents**: experiments/myco-transit + experiments/ferrous-strings
 - **Concept**: Pheromone-Guided Acoustic Strings.
