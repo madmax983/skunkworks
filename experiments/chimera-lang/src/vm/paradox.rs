@@ -128,17 +128,17 @@ impl Paradox {
             return Err("triggers must come before do".to_string());
         }
 
-        let trigger_str = parts[trigger_idx + 1];
-        let trigger = if trigger_str == "always" {
+        let trigger_str = parts.get(trigger_idx + 1).ok_or("Missing trigger type")?;
+        let trigger = if *trigger_str == "always" {
             Trigger::Always
         } else {
             Trigger::Signal(trigger_str.to_string())
         };
 
-        let action_type = parts[do_idx + 1];
+        let action_type = parts.get(do_idx + 1).copied().ok_or("Missing action type")?;
         let action = match action_type {
             "log" => {
-                let msg = parts[do_idx + 2..].join(" ");
+                let msg = if parts.len() > do_idx + 2 { parts[do_idx + 2..].join(" ") } else { String::new() };
                 Action::Log(msg)
             }
             "glitch" => {
