@@ -544,3 +544,8 @@
 ### [Concentration Level: NEW HYBRID] - Location: experiments/chimera-ddos
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. A new hybrid `chimera-ddos` (Cybernetic Cyberwarfare) has been spliced into the repository. The packets run ChimeraVM brains.
+
+### [Concentration Level: NEW HYBRID] - Location: experiments/mnem-strings
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. A new hybrid `mnem-strings` (Acoustic Code Rot) has been spliced into the repository.
+- **Phenotype:** Codebase dependency graph edges behave as continuous acoustic strings. When nodes rot, the string tension drops, detuning the audio to dissonant, low frequencies. Healing the nodes plucks the strings, creating an audio-visual symphony of code maintenance.

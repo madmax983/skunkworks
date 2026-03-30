@@ -24,6 +24,13 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 
 ## 🌿 Attempted Crosses
 
+### mnem-strings
+- **Parents**: experiments/mnem-rot + experiments/ferrous-strings
+- **Concept**: Acoustic Code Rot. The decaying nodes and edges of a codebase graph (`mnem-rot`) are represented as acoustic strings (`ferrous-strings`). Code entropy (rot) actively detunes the physical strings. When nodes rot, their edge tension drops, causing them to vibrate at low, chaotic frequencies when interacted with. Healing or traversing the graph plucks the strings, translating codebase rot into an audio-visual symphony of structural decomposition.
+- **Status**: experiments/mnem-strings
+- **Evaluation**: Success. Compiled. The codebase edges act as strings, producing detuned audio frequencies when nodes decay, and clear audio when nodes are maintained.
+
+
 ### locust-reaper
 - **Parents**: experiments/locust-ddos + experiments/myco-reaper
 - **Concept**: Garbage Collection Cyberwarfare. The server is protected by an intricate forest of nodes (firewalls). The locusts (DDoS packets) act as the "Reaper fungus" trying to find detached reference cycles and dead matter to consume, breaking down the server's defenses.
