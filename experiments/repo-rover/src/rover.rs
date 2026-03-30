@@ -35,7 +35,9 @@ impl Rover {
         self.vel += thrust_vec;
 
         // Cap speed
-        if self.vel.magnitude() > self.max_speed {
+        // ⚡ Bolt: Using `magnitude_squared` instead of `magnitude` avoids the overhead of a
+        // ⚡ square root operation. This provides a zero-cost abstraction for distance comparisons.
+        if self.vel.magnitude_squared() > self.max_speed * self.max_speed {
             self.vel = self.vel.normalize() * self.max_speed;
         }
     }

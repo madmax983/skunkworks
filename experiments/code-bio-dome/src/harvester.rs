@@ -19,7 +19,10 @@ pub fn harvest_functions(root: &str) -> Vec<FunctionSignature> {
             if let Ok(file) = fs::File::open(entry.path()) {
                 let mut content = String::new();
                 let limit = 1024 * 1024; // 1MB limit
-                if let Ok(bytes) = std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut content) {
+                if let Ok(bytes) = std::io::Read::read_to_string(
+                    &mut std::io::Read::take(file, limit + 1),
+                    &mut content,
+                ) {
                     if bytes as u64 <= limit {
                         signatures.extend(parse_file_content(&content, entry.path()));
                     }

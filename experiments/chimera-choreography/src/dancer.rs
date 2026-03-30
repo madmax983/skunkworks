@@ -8,7 +8,9 @@ pub struct Dancer {
     pub pos: Vec2,
     pub vel: Vec2,
     pub effort: LabanEffort,
+    #[allow(dead_code)]
     pub id: usize,
+    #[allow(dead_code)]
     pub color_idx: u8,
 }
 
@@ -169,8 +171,10 @@ impl Dancer {
         self.vel *= friction;
 
         // Cap speed
+        // ⚡ Bolt: Using `magnitude_squared` avoids an expensive `sqrt` calculation on every frame,
+        // ⚡ significantly reducing CPU overhead during this hot path velocity check.
         let max_speed = if self.effort.is_sudden() { 100.0 } else { 30.0 };
-        if self.vel.magnitude() > max_speed {
+        if self.vel.magnitude_squared() > max_speed * max_speed {
             self.vel = self.vel.normalize() * max_speed;
         }
 

@@ -10,7 +10,7 @@ use ratatui::{
     symbols,
     text::Span,
     widgets::{
-        canvas::{Canvas, Line as CanvasLine, Points},
+        canvas::{Canvas, Line as CanvasLine},
         Block, Borders, Paragraph,
     },
     Frame,
@@ -139,18 +139,18 @@ fn draw_canvas(f: &mut Frame, app: &App, area: Rect) {
 
                 // Draw dancer as a point or line indicating velocity
                 ctx.print(
-                    dancer.pos.x as f64,
-                    dancer.pos.y as f64,
+                    dancer.pos.x,
+                    dancer.pos.y,
                     Span::styled("💃", Style::default().fg(color)),
                 );
 
                 // Velocity line
                 let end = dancer.pos + dancer.vel * 0.2; // scale vector for visibility
                 ctx.draw(&CanvasLine {
-                    x1: dancer.pos.x as f64,
-                    y1: dancer.pos.y as f64,
-                    x2: end.x as f64,
-                    y2: end.y as f64,
+                    x1: dancer.pos.x,
+                    y1: dancer.pos.y,
+                    x2: end.x,
+                    y2: end.y,
                     color,
                 });
             }

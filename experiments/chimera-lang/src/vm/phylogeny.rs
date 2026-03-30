@@ -108,13 +108,19 @@ pub fn exec_phylogeny_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                             Ok(file) => {
                                 let mut content = String::new();
                                 let limit = 1024 * 1024; // 1MB limit
-                                match std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut content) {
+                                match std::io::Read::read_to_string(
+                                    &mut std::io::Read::take(file, limit + 1),
+                                    &mut content,
+                                ) {
                                     Ok(bytes) if bytes as u64 <= limit => {
                                         vm.stack.push(Value::Str(content));
                                         vm.output.push(format!("SEQUENCING: Read {}", path_str));
                                     }
                                     Ok(_) => {
-                                        vm.output.push(format!("SEQUENCING ERROR: File exceeds {} byte limit", limit));
+                                        vm.output.push(format!(
+                                            "SEQUENCING ERROR: File exceeds {} byte limit",
+                                            limit
+                                        ));
                                         vm.stack.push(Value::Str("".to_string()));
                                     }
                                     Err(e) => {

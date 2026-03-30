@@ -69,7 +69,9 @@ impl Rover {
 
         let current_max_speed = self.max_speed * flow_mod * time_mod;
 
-        if self.vel.magnitude() > current_max_speed {
+        // ⚡ Bolt: By squaring the target and using `magnitude_squared`, we prevent a costly `sqrt()`
+        // ⚡ execution within the physics loop without sacrificing logical precision.
+        if self.vel.magnitude_squared() > current_max_speed * current_max_speed {
             self.vel = self.vel.normalize() * current_max_speed;
         }
     }

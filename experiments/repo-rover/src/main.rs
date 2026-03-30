@@ -3,6 +3,7 @@ mod world;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
+use locus::Vec2;
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
@@ -16,7 +17,7 @@ use ratatui::{
 };
 use rover::Rover;
 use std::time::{Duration, Instant};
-use tui_shared::{math::Vec2, Tui};
+use tui_shared::Tui;
 use world::{EntityType, World};
 
 struct App {

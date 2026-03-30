@@ -5,6 +5,7 @@ mod world;
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use laban::{Director, LabanEffort};
+use locus::Vec2;
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Style},
@@ -18,7 +19,7 @@ use ratatui::{
 };
 use rover::Rover;
 use std::time::{Duration, Instant};
-use tui_shared::{math::Vec2, Tui};
+use tui_shared::Tui;
 use world::{EntityType, World};
 
 struct App {
@@ -124,7 +125,7 @@ impl App {
 
             // Age: 0 = New, 1 Year = Old.
             let year_sec = 31536000.0;
-            let age_factor = (avg_age as f64 / year_sec).clamp(0.0, 1.0) as f32;
+            let age_factor = (avg_age / year_sec).clamp(0.0, 1.0) as f32;
 
             // Depth: Deeper = More Indirect/Complex Space?
             let depth = self.world.current_path.components().count();
