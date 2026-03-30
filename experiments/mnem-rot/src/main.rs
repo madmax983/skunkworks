@@ -21,6 +21,7 @@ async fn main() {
 
     let mut entropy = 0.0;
     let mut hovered_node: Option<usize> = None;
+    let _ = hovered_node; // Silence unused_assignments
 
     // Camera
     let mut offset = vec2(0.0, 0.0);

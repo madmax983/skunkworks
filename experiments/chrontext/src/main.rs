@@ -36,7 +36,13 @@ struct App {
 
 impl App {
     fn new(path: String, blame_info: Vec<LineInfo>) -> Result<Self> {
-        let content_str = fs::read_to_string(&path)?;
+        let file = fs::File::open(&path)?;
+        let mut content_str = String::new();
+        let limit = 10 * 1024 * 1024; // 10MB limit
+        let bytes_read = std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut content_str)?;
+        if bytes_read > limit as usize {
+            anyhow::bail!("File too large");
+        }
         let content: Vec<String> = content_str.lines().map(|s| s.to_string()).collect();
 
         Ok(Self {

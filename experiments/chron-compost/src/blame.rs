@@ -5,10 +5,15 @@ use std::path::Path;
 
 #[derive(Debug, Clone)]
 pub struct LineInfo {
+    #[allow(dead_code)]
     pub line_number: usize,
+    #[allow(dead_code)]
     pub commit_hash: String,
+    #[allow(dead_code)]
     pub author: String,
+    #[allow(dead_code)]
     pub date: DateTime<Utc>,
+    #[allow(dead_code)]
     pub message: String,
     pub age_score: f64, // 0.0 (Oldest) to 1.0 (Newest)
 }

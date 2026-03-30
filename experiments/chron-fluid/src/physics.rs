@@ -87,9 +87,9 @@ impl Universe {
                     let mag_force = (mag.strength / dist_sq).min(200.0);
 
                     if mag.polarity {
-                        force = force + dir * mag_force; // Attract
+                        force += dir * mag_force; // Attract
                     } else {
-                        force = force + dir * -mag_force; // Repel
+                        force += dir * -mag_force; // Repel
                     }
                 }
             }
@@ -114,7 +114,7 @@ impl Universe {
                 let dy = up - down;
 
                 let pressure_force = Vec2::new(-dx, -dy) * 50.0; // Push away from high density
-                force = force + pressure_force;
+                force += pressure_force;
             }
 
             self.particles[i].acc = force;
@@ -122,9 +122,9 @@ impl Universe {
 
         // Integrate
         for p in &mut self.particles {
-            p.vel = p.vel + p.acc * dt;
-            p.vel = p.vel * damping;
-            p.pos = p.pos + p.vel * dt;
+            p.vel += p.acc * dt;
+            p.vel *= damping;
+            p.pos += p.vel * dt;
 
             // Boundaries
             if p.pos.y < 0.0 {

@@ -8,6 +8,7 @@ pub struct Agent {
     pub vm: ChimeraVM,
     pub x: usize,
     pub y: usize,
+    #[allow(dead_code)]
     pub id: usize,
 }
 
@@ -149,12 +150,10 @@ impl Simulation {
             }
 
             // 5. Modify Environment (Eating)
-            if is_old {
-                if agent.y < self.blame_info.len() {
-                    // Refactor! Reset the age score to 1.0 (hot/new)
-                    self.blame_info[agent.y].age_score = 1.0;
-                    agent.vm.energy += 5; // Reward
-                }
+            if is_old && agent.y < self.blame_info.len() {
+                // Refactor! Reset the age score to 1.0 (hot/new)
+                self.blame_info[agent.y].age_score = 1.0;
+                agent.vm.energy += 5; // Reward
             }
         }
     }
