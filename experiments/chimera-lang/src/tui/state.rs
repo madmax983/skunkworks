@@ -19,6 +19,8 @@ pub enum ViewMode {
     #[cfg(feature = "nova")]
     Graveyard,
     #[cfg(feature = "nova")]
+    Prolouge,
+    #[cfg(feature = "nova")]
     PianoRoll,
     #[cfg(feature = "nova")]
     Retina,

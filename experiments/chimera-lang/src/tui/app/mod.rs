@@ -474,6 +474,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Prolouge = app_state.view_mode {
+                crate::tui::views::magic::render_prolouge(f, vm, app_state);
+                return;
+            }
+
             match app_state.view_mode {
                 ViewMode::Genome => render_genome(f, vm, app_state),
                 ViewMode::Grid => render_grid(f, vm, app_state),

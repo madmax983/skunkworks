@@ -1234,6 +1234,13 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Prologue,
+
+    /// **`Prologue`** Toggles the Prolouge Mad Scientist experiment mode.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    /// **Effect:** Injects extreme genetic chaos and random Orca signal bursts.
+    #[cfg(feature = "nova")]
+    Prolouge,
     /// **`Prologue`** Places a Rune on the grid.
     ///
     /// **Stack:** `[ ..., rune_char, y, x ] -> [ ... ]`

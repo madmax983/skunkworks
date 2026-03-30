@@ -566,6 +566,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Horcrux => super::nova_quantum::exec_horcrux(vm),
         OpCode::Rebirth => super::nova_quantum::exec_rebirth(vm),
         OpCode::Prologue => exec_prologue(vm),
+        OpCode::Prolouge => exec_prolouge(vm),
         OpCode::Rune => exec_rune(vm),
         _ => None,
     }
@@ -579,6 +580,28 @@ fn exec_prologue(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         "OFF"
     };
     vm.output.push(format!("PROLOGUE: Rune Logic {}", status));
+    None
+}
+
+fn exec_prolouge(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    vm.prologue_state.active = true;
+    vm.prologue_state.orca_mode = true;
+    vm.glitch_level = 100.0;
+    vm.energy += 1000;
+    vm.output.push("PROLOUGE: Mad Scientist Mode ACTIVATED ⚛️".to_string());
+
+    // Perform a chaotic mutation on the grid
+    let mut rng = rand::thread_rng();
+    use rand::Rng;
+    for y in 0..crate::vm::GRID_SIZE {
+        for x in 0..crate::vm::GRID_SIZE {
+            if rng.gen_bool(0.1) {
+                let runes = ["M", "Z", "₣", "⚡", "!", "*", "~", "♻"];
+                let rune = runes[rng.gen_range(0..runes.len())];
+                vm.grid[y][x] = crate::vm::Value::Str(rune.to_string());
+            }
+        }
+    }
     None
 }
 

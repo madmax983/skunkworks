@@ -9,6 +9,67 @@ use ratatui::{
 };
 
 #[cfg(feature = "nova")]
+#[allow(dead_code)]
+pub(crate) fn render_prolouge(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(app_state.get_render_area(f.area()));
+
+    let title_style = Style::default()
+        .fg(Color::Magenta)
+        .add_modifier(Modifier::BOLD);
+
+    // Left Panel: Mad Scientist's Notes & Active State
+    let mut notes = vec![
+        Line::from(Span::styled("🧪 THE MAD SCIENTIST'S LABORATORY ⚛️", title_style)),
+        Line::from(""),
+        Line::from(format!("🧬 Current Energy: {} J", vm.energy)),
+        Line::from(format!("🍄 Entropy Level: {}", vm.glitch_level)),
+        Line::from(""),
+        Line::from("Active Mutations:"),
+    ];
+
+    if vm.prologue_state.orca_mode {
+        notes.push(Line::from(Span::styled("- [ACTIVE] Orca Signal Network", Style::default().fg(Color::Blue))));
+    } else {
+        notes.push(Line::from(Span::styled("- [DORMANT] Orca Signal Network", Style::default().fg(Color::DarkGray))));
+    }
+
+    if vm.prologue_state.active {
+        notes.push(Line::from(Span::styled("- [ACTIVE] Prologue Grid Logic", Style::default().fg(Color::Green))));
+    }
+
+    notes.push(Line::from(""));
+    notes.push(Line::from("The air smells of ozone and petrichor..."));
+    notes.push(Line::from("Use the 'P' rune in the grid to witness true hybridization."));
+
+    let left_panel = Paragraph::new(notes)
+        .block(Block::default().borders(Borders::ALL).title("Prolouge Status"));
+
+    f.render_widget(left_panel, chunks[0]);
+
+    // Right Panel: Output & Diagnostics
+    let mut diagnostics = vec![];
+    for line in vm.output.iter().rev().take(20) {
+        let style = if line.contains("Error") || line.contains("Failed") {
+            Style::default().fg(Color::Red)
+        } else if line.contains("Success") || line.contains("Executed") {
+            Style::default().fg(Color::Green)
+        } else if line.contains("PROLOGUE") || line.contains("₣") {
+            Style::default().fg(Color::Cyan)
+        } else {
+            Style::default().fg(Color::Yellow)
+        };
+        diagnostics.push(Line::from(Span::styled(line.clone(), style)));
+    }
+
+    let right_panel = Paragraph::new(diagnostics)
+        .block(Block::default().borders(Borders::ALL).title("Terminal Diagnostics"));
+    f.render_widget(right_panel, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
 pub(crate) fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)

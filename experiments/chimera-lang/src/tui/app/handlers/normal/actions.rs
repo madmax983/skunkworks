@@ -212,7 +212,9 @@ pub(crate) fn handle_action_input(key_code: KeyCode, vm: &mut ChimeraVM, app_sta
                                 }
                             }
                             #[cfg(feature = "nova")]
-                            ViewMode::Laboratory => ViewMode::Genome,
+                            ViewMode::Laboratory => ViewMode::Prolouge,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Prolouge => ViewMode::Genome,
                             #[cfg(feature = "nova")]
                             ViewMode::Hyperspace => ViewMode::Genome,
                             #[cfg(feature = "nova")]

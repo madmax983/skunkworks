@@ -130,6 +130,8 @@ pub(crate) fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_stat
         #[cfg(feature = "nova")]
         ViewMode::Laboratory => "LABORATORY",
         #[cfg(feature = "nova")]
+        ViewMode::Prolouge => "PROLOUGE ⚛️",
+        #[cfg(feature = "nova")]
         ViewMode::Topology => "TOPOLOGY",
         #[cfg(feature = "nova")]
         ViewMode::Graveyard => "GRAVEYARD",
