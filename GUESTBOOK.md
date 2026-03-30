@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/mnem-fluid
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. Bare visualization of magnetic code rot lacking tests, documentation, and logic hygiene. Grace period: 24h.
+
+
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Mosaic 🎨
 - **Status:** Mosaic sensed a lack of hierarchy in the CLI; reinforcement required.

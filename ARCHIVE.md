@@ -1,4 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **mnem-fluid**: Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. Bare visualization of magnetic code rot lacking tests, documentation, and logic hygiene. Grace period: 24h.
 - **sandpile-scheduler**: Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation. Simple cellular automaton disguised as a load balancer without the promised complex network routing or system integration. Grace period: 24h.
 
 ## Pardoned
