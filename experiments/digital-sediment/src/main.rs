@@ -1,6 +1,4 @@
-mod entropy;
-mod git;
-mod recovery;
+use digital_sediment::git;
 
 use anyhow::Result;
 use crossterm::{
@@ -22,9 +20,9 @@ use std::{
     time::{Duration, Instant},
 };
 
-use entropy::EntropyEngine;
-use git::CommitInfo;
-use recovery::RecoveryEngine;
+use digital_sediment::entropy::EntropyEngine;
+use digital_sediment::git::CommitInfo;
+use digital_sediment::recovery::RecoveryEngine;
 
 struct App {
     repo: git2::Repository,

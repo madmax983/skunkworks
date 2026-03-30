@@ -2102,3 +2102,14 @@ classDiagram
     PrologueGrid --> NarrativeRunes : Uses
     PrologueGrid --> MemeticRunes : Uses
 ```
+
+## ADR 0014: Havoc Exploits in digital-sediment
+
+The `digital-sediment` experiment's internal data retrieval mechanisms interact with `git2`. The architecture does not implement robust error checking or state-validation mechanisms when acquiring Git repository contexts and reading blob data.
+
+1. **Weak Points**:
+   - `git::open_repo`: Propagates missing path errors directly to unwrapping callers.
+   - `git::list_commits`: Panics on `commits[0].id` in calling scopes for uninitialized repositories without commits.
+   - `git::get_file_content`: Attempts to coerce potentially malformed `&str` commit IDs via `Oid::from_str` unwraps.
+2. **Impact on System State**:
+   - Total application failure via panic, simulating fatal external inputs.

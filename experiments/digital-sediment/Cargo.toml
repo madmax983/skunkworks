@@ -11,3 +11,15 @@ anyhow = { workspace = true }
 rand = { workspace = true }
 nom = "7.1"
 chrono = "0.4"
+
+[dev-dependencies]
+tempfile = "3"
+proptest = "1.0"
+
+[lib]
+name = "digital_sediment"
+path = "src/lib.rs"
+
+[[bin]]
+name = "digital-sediment"
+path = "src/main.rs"
