@@ -1,11 +1,13 @@
-1. **Optimize String Iteration in `exec_brainfuck`**
-   - In `experiments/chimera-lang/src/vm/nova_brainfuck.rs`, `exec_brainfuck` iterates over strings by doing `let code_chars: Vec<char> = code.chars().collect();`. This creates an unnecessary intermediate heap allocation.
-   - It also does `let mut input_chars: VecDeque<u8> = input.bytes().collect::<VecDeque<_>>();`. We can replace this with `let mut input_bytes = input.bytes();` and consume the iterator directly.
-   - We can change `code_chars` to `let code_bytes = code.as_bytes();` since Brainfuck operates on ASCII chars (`[`, `]`, `+`, `-`, `>`, `<`, `.`, `,`). This avoids `char` decoding and the intermediate `Vec` completely. Wait, `String::as_bytes()` works perfectly for brainfuck commands since all valid commands are 1-byte ASCII.
-   - Let's check `exec_brainfuck` logic: it does jumping by precomputing `jumps`. We can iterate over `code.as_bytes()` to precompute `jumps`, and then index `code.as_bytes()[pc]` during execution. This avoids the `Vec<char>` allocation.
-
-   **Pre-commit checks**
-   - Run `pre_commit_instructions` to ensure proper testing, verification, review, and reflection are done.
-
-   **Measurement**
-   - Avoids `O(n)` heap allocations per Brainfuck execution where `n` is code length.
+1. **Phase 1: Review Previous Condemnations**
+    - The `chimera-chaos` experiment was condemned for Terminal Compilation Failure (`evolution_config`), Technical Debt Burden, and Swarm Neglect. It still fails to compile (missing `evolution_config` in `Dna`).
+    - I will formally **Execute** `chimera-chaos`, moving it to the `graveyard/` and updating `ARCHIVE.md` and `GUESTBOOK.md`.
+2. **Phase 2: Condemn ONE New Experiment**
+    - `locus-strings` exhibits "Documentation Void (No README)" and fails strict clippy due to precision/truncation/sign-loss cast warnings. I will condemn `locus-strings` to force improvement.
+    - Write a forensic report to `experiments/locus-strings/.reaper-report.md`.
+    - Update `ARCHIVE.md` to add `locus-strings` to the Condemned section.
+    - Add a Death Pheromone to `GUESTBOOK.md` for `locus-strings`.
+3. **Commit**
+    - Commit `⚰️ Reaper: Execute chimera-chaos`
+    - Commit `⚰️ Reaper: Condemn locus-strings`
+4. **Complete pre commit steps to ensure proper testing, verification, review, and reflection are done.**
+5. Submit the changes.
