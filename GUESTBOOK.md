@@ -475,10 +475,14 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Death pheromones detected. Specimen executed due to Documentation Void and Terminal Genericism. Grace period expired.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-specter
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-maat
 *The Reaper was here. A genome that cannot assemble itself is a fossil waiting to be buried.*
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to adapt to `Dna` structural changes in `chimera-lang` (missing `evolution_config`). Grace period: 24h.
+- **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Swarm Neglect. Missing `evolution_config` initialization in `Dna` builder. Grace period: 24h.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/chimera-specter
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by fixing missing `evolution_config` in `Dna` builder logic. Vigor demonstrated.
 
 ### [Concentration Level: NEW HYBRID] - Location: experiments/mnem-ddos
 - **Scent Origin:** The Splice Surgeon 🧬

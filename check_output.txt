@@ -1,0 +1,233 @@
+warning: chron-diffusion v0.1.0 (/app/graveyard/chron-diffusion) ignoring invalid dependency `chrontext` which is missing a lib target
+    Checking bytemuck v1.25.0
+    Checking petgraph v0.6.5
+   Compiling bevy_ecs_macros v0.13.2
+    Checking wgpu v0.19.4
+    Checking qoi v0.4.1
+    Checking image v0.24.9
+    Checking glam v0.25.0
+    Checking bevy_utils v0.13.2
+    Checking wayland-client v0.31.13
+   Compiling bevy_derive v0.13.2
+    Checking chrono v0.4.44
+    Checking macroquad v0.4.14
+    Checking wayland-protocols v0.31.2
+    Checking calloop v0.12.4
+    Checking bevy_math v0.13.2
+    Checking locus v0.1.0 (/app/crates/locus)
+    Checking tiny-skia-path v0.11.4
+    Checking tui-shared v0.1.0 (/app/crates/tui-shared)
+    Checking hyper-system v0.1.0 (/app/crates/hyper-system)
+    Checking bevy_reflect v0.13.2
+    Checking wayland-cursor v0.31.13
+    Checking chimera-lang v0.1.0 (/app/experiments/chimera-lang)
+    Checking wayland-csd-frame v0.3.0
+    Checking calloop-wayland-source v0.2.0
+    Checking tracing-subscriber v0.3.23
+    Checking tiny-skia v0.11.4
+    Checking wayland-protocols-wlr v0.2.0
+   Compiling winit v0.29.15
+    Checking wayland-protocols-plasma v0.2.0
+    Checking smithay-client-toolkit v0.18.1
+    Checking sctk-adwaita v0.8.3
+    Checking bevy_ecs v0.13.2
+    Checking raw-window-handle v0.5.2
+    Checking safe_arch v0.7.4
+   Compiling encase_derive_impl v0.7.0
+    Checking wide v0.7.33
+   Compiling encase_derive v0.7.0
+   Compiling bevy_asset_macros v0.13.2
+   Compiling derive_more v0.99.20
+    Checking transpose v0.2.3
+    Checking naga_oil v0.13.0
+    Checking encase v0.7.0
+    Checking hexasphere v10.0.0
+   Compiling bevy_encase_derive v0.13.2
+    Checking ruzstd v0.5.0
+    Checking bevy_mikktspace v0.13.2
+   Compiling bevy_render_macros v0.13.2
+    Checking primal-check v0.3.4
+   Compiling nalgebra-macros v0.2.2
+    Checking rustfft v6.4.1
+    Checking bevy_app v0.13.2
+    Checking ferrous-core v0.1.0 (/app/crates/ferrous-core)
+    Checking env_filter v1.0.0
+   Compiling wasm-bindgen-shared v0.2.114
+    Checking spade v2.15.0
+    Checking env_logger v0.11.9
+    Checking bevy_log v0.13.2
+    Checking bevy_core v0.13.2
+    Checking bevy_a11y v0.13.2
+    Checking bevy_input v0.13.2
+    Checking bevy_hierarchy v0.13.2
+    Checking bevy_time v0.13.2
+    Checking bevy_transform v0.13.2
+    Checking bevy_asset v0.13.2
+    Checking simba v0.9.1
+    Checking bevy_window v0.13.2
+    Checking quipu v0.1.0 (/app/crates/quipu)
+    Checking neuro-sim v0.1.0 (/app/crates/neuro-sim)
+    Checking approx v0.4.0
+    Checking glyph_brush_layout v0.2.4
+    Checking cgmath v0.18.0
+   Compiling gltf-derive v1.4.1
+    Checking bevy_render v0.13.2
+    Checking image v0.25.10
+    Checking git-associates v0.1.0 (/app/crates/git-associates)
+   Compiling generic-array v0.14.7
+    Checking nalgebra v0.33.2
+    Checking gray-scott v0.1.0 (/app/crates/gray-scott)
+   Compiling alsa-sys v0.3.1
+    Checking gltf-json v1.4.1
+   Compiling bumpalo v3.20.2
+   Compiling wasm-bindgen-macro-support v0.2.114
+    Checking gltf v1.4.1
+    Checking accesskit_winit v0.17.0
+    Checking origami v0.1.0 (/app/crates/origami)
+   Compiling bevy_gizmos_macros v0.13.2
+   Compiling wasm-bindgen v0.2.114
+   Compiling proc-macro2 v1.0.106
+    Checking bevy_diagnostic v0.13.2
+    Checking bevy_core_pipeline v0.13.2
+    Checking bevy_animation v0.13.2
+    Checking bevy_scene v0.13.2
+   Compiling wasm-bindgen-macro v0.2.114
+    Checking bevy_winit v0.13.2
+    Checking alsa v0.9.1
+   Compiling camino v1.2.2
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+    Checking bevy_sprite v0.13.2
+    Checking bevy_pbr v0.13.2
+    Checking cpal v0.15.3
+    Checking rand_xorshift v0.3.0
+   Compiling quote v1.0.45
+    Checking noise v0.9.0
+    Checking digest v0.10.7
+    Checking crossterm v0.27.0
+    Checking cargo-platform v0.1.9
+    Checking semver v1.0.27
+    Checking glam v0.24.2
+    Checking cargo_metadata v0.18.1
+    Checking bevy_text v0.13.2
+    Checking sha2 v0.10.9
+    Checking syn v2.0.117
+    Checking bevy_ui v0.13.2
+    Checking js-sys v0.3.91
+    Checking bevy_gizmos v0.13.2
+    Checking bevy_gltf v0.13.2
+    Checking simba v0.8.1
+    Checking ena v0.14.4
+    Checking ordered-float v5.1.0
+    Checking bevy_internal v0.13.2
+    Checking bevy v0.13.2
+    Checking downcast-rs v2.0.2
+    Checking futures-task v0.3.32
+    Checking hound v3.5.1
+   Compiling radium v0.7.0
+    Checking futures-util v0.3.32
+    Checking parry2d v0.22.1
+    Checking rand_chacha v0.2.2
+    Checking parry2d v0.16.1
+    Checking bit-vec v0.8.0
+   Compiling beef v0.5.2
+    Checking tap v1.0.1
+   Compiling fnv v1.0.7
+    Checking nalgebra v0.32.6
+   Compiling regex-syntax v0.8.10
+   Compiling lazy_static v1.5.0
+    Checking wyz v0.5.1
+    Checking rapier2d v0.27.0
+    Checking rapier2d v0.21.0
+   Compiling logos-codegen v0.14.4
+    Checking wasm-bindgen-futures v0.4.64
+    Checking web-sys v0.3.91
+    Checking rand v0.7.3
+    Checking console_error_panic_hook v0.1.7
+    Checking stego-attack v0.1.0 (/app/experiments/stego-attack)
+experiments/stego-attack/src/simulation.rs:30:13: warning: variable does not need to be mutable
+warning: `stego-attack` (lib) generated 1 warning (run `cargo fix --lib -p stego-attack` to apply 1 suggestion)
+    Checking miller-lattice v0.1.0 (/app/crates/miller-lattice)
+    Checking beamterm-data v0.10.0
+    Checking funty v2.0.0
+    Checking nom v7.1.3
+    Checking bitvec v1.0.1
+    Checking parry2d v0.15.1
+    Checking noise v0.8.2
+    Checking bevy_prototype_lyon v0.11.0
+   Compiling logos-derive v0.14.4
+    Checking stego-cartridge v0.1.0 (/app/experiments/stego-cartridge)
+    Checking quipu-serializer v0.1.0 (/app/experiments/quipu-serializer)
+    Checking neuro-terminal v0.1.0 (/app/experiments/neuro-terminal)
+experiments/quipu-serializer/src/ser.rs:232:5: warning: field `len_hint` is never read
+warning: `quipu-serializer` (lib) generated 1 warning
+    Checking maat-engine v0.1.0 (/app/experiments/maat-engine)
+    Checking xattr v1.6.1
+    Checking market-sim v0.1.0 (/app/crates/market-sim)
+    Checking is-terminal v0.4.17
+    Checking filetime v0.2.27
+    Checking humantime v2.3.0
+    Checking tar v0.4.45
+    Checking env_logger v0.10.2
+    Checking logos v0.14.4
+    Checking rapier2d v0.19.0
+    Checking harmonic-engine v0.1.0 (/app/experiments/harmonic-engine)
+    Checking spectral-scribe v0.1.0 (/app/experiments/spectral-scribe)
+    Checking struct-harmonics v0.1.0 (/app/experiments/struct-harmonics)
+    Checking thermo-defense v0.1.0 (/app/experiments/thermo-defense)
+    Checking dependency-karst v0.1.0 (/app/experiments/dependency-karst)
+    Checking mandala-cipher v0.1.0 (/app/experiments/mandala-cipher)
+    Checking git-cantata v0.1.0 (/app/experiments/git-cantata)
+    Checking crystal-fs v0.1.0 (/app/experiments/crystal-fs)
+    Checking colony-concerto v0.1.0 (/app/experiments/colony-concerto)
+experiments/colony-concerto/src/ant.rs:3:7: warning: unexpected `cfg` condition name: `loom`
+experiments/colony-concerto/src/ant.rs:8:11: warning: unexpected `cfg` condition name: `loom`
+experiments/colony-concerto/src/ant.rs:97:19: warning: unexpected `cfg` condition name: `loom`
+experiments/colony-concerto/src/ant.rs:67:23: warning: unexpected `cfg` condition name: `loom`
+experiments/colony-concerto/src/ant.rs:128:23: warning: unexpected `cfg` condition name: `loom`
+experiments/colony-concerto/src/ant.rs:130:19: warning: unexpected `cfg` condition name: `loom`
+experiments/colony-concerto/src/ant.rs:136:23: warning: unexpected `cfg` condition name: `loom`
+experiments/colony-concerto/src/ant.rs:138:19: warning: unexpected `cfg` condition name: `loom`
+experiments/colony-concerto/src/graph.rs:6:11: warning: unexpected `cfg` condition name: `loom`
+experiments/colony-concerto/src/graph.rs:9:7: warning: unexpected `cfg` condition name: `loom`
+    Checking quipu-legion v0.1.0 (/app/experiments/quipu-legion)
+experiments/quipu-legion/src/crypto.rs:2:23: warning: unused import: `ToPrimitive`
+warning: `colony-concerto` (lib) generated 10 warnings
+    Checking swap-meet v0.1.0 (/app/experiments/swap-meet)
+experiments/quipu-legion/src/roman.rs:175:15: warning: constant `MAPPINGS` is never used
+warning: `quipu-legion` (lib) generated 2 warnings (run `cargo fix --lib -p quipu-legion` to apply 1 suggestion)
+    Checking code-bio-dome v0.1.0 (/app/experiments/code-bio-dome)
+    Checking bio-transit v0.1.0 (/app/experiments/bio-transit)
+    Checking mnem-bridge v0.1.0 (/app/experiments/mnem-bridge)
+    Checking cloud-mycelium v0.1.0 (/app/experiments/cloud-mycelium)
+    Checking stardust-compiler v0.1.0 (/app/experiments/stardust-compiler)
+    Checking thermo-termites v0.1.0 (/app/experiments/thermo-termites)
+    Checking glossolalia v0.1.0 (/app/experiments/glossolalia)
+    Checking lensing-poetry v0.1.0 (/app/experiments/lensing-poetry)
+    Checking system-attractor v0.1.0 (/app/experiments/system-attractor)
+    Checking spqr-rsa v0.1.0 (/app/experiments/spqr-rsa)
+    Checking memetic-market v0.1.0 (/app/experiments/memetic-market)
+    Checking ringbuf v0.3.3
+    Checking synaptic-pachinko v0.1.0 (/app/experiments/synaptic-pachinko)
+experiments/synaptic-pachinko/src/main.rs:10:27: warning: unused import: `Stylize`
+experiments/synaptic-pachinko/src/audio.rs:39:31: warning: variable does not need to be mutable
+warning: `synaptic-pachinko` (bin "synaptic-pachinko") generated 2 warnings (run `cargo fix --bin "synaptic-pachinko" -p synaptic-pachinko` to apply 1 suggestion)
+experiments/quipu-legion/src/main.rs:25:15: warning: field `0` is never read
+warning: `quipu-legion` (bin "quipu-legion") generated 1 warning
+    Checking bevy_rapier2d v0.26.0
+warning: `colony-concerto` (bin "colony-concerto") generated 10 warnings (10 duplicates)
+    Checking pixel-archivist v0.1.0 (/app/experiments/pixel-archivist)
+    Checking codex-vulgaris v0.1.0 (/app/experiments/codex-vulgaris)
+    Checking quipu-tissue v0.1.0 (/app/experiments/quipu-tissue)
+    Checking market-rogue v0.1.0 (/app/experiments/market-rogue)
+    Checking thermo-market v0.1.0 (/app/experiments/thermo-market)
+    Checking chimera-maat v0.1.0 (/app/experiments/chimera-maat)
+experiments/thermo-market/src/world.rs:12:5: warning: variant `Server` is never constructed
+experiments/thermo-market/src/world.rs:116:12: warning: methods `get_cell_mut` and `add_server_block` are never used
+experiments/chimera-maat/src/main.rs:13:45: warning: unused imports: `Gauge` and `Rect`
+warning: `thermo-market` (bin "thermo-market") generated 2 warnings
+experiments/chimera-maat/src/main.rs:73:19: error[E0063]: missing field `evolution_config` in initializer of `chimera_lang::ast::Dna`: missing `evolution_config`
+experiments/chimera-maat/src/main.rs:317:17: warning: unused variable: `demand_style`: help: if this is intentional, prefix it with an underscore: `_demand_style`
+warning: `chimera-maat` (bin "chimera-maat") generated 2 warnings
+error: could not compile `chimera-maat` (bin "chimera-maat") due to 1 previous error; 2 warnings emitted
+warning: build failed, waiting for other jobs to finish...
