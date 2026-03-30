@@ -4,6 +4,7 @@ members = [
     "crates/*",
     "experiments/*",
     "graveyard/mnem-hologram",
+    "experiments/elektra-orca",
     "experiments/myco-ddos",
     "experiments/chaos-strings",
     "experiments/chron-fluid",

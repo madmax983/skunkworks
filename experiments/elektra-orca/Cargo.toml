@@ -1,0 +1,12 @@
+[package]
+name = "elektra-orca"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chimera-lang = { path = "../chimera-lang", features = ["nova", "oracle", "elektra"] }
+tui-shared = { workspace = true }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+rand = "0.8"

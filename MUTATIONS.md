@@ -530,3 +530,10 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Predicted Phenotype**: Spectral Wave Mechanics. As standing waves and interference patterns form in the physical wave tank, they are transformed via 2D FFT into a holographic projection. This visualizes the resonant modes of the acoustic space in the frequency domain.
 - **Status**: experiments/hologram-tank
 - **Evaluation**: Success. Compiled. Spectral Wave Mechanics successfully maps physical pressure gradients to frequency domain optical interference patterns.
+
+### elektra-orca
+- **Parents**: chimera-lang (Elektra) + chimera-lang (Orca)
+- **Concept**: Hybrid Electro-Logical Substrate. Combines the continuous voltage simulation of the `Elektra` feature with the discrete cellular automata execution of the `Orca` system.
+- **Novel trait**: Bidirectional Circuit Feedback. The total accumulated voltage in the continuous Elektra circuit directly controls the execution speed (clock ticks) of the discrete Orca logic grid. In turn, propagating Orca signals inject active voltage pulses back into the circuit nodes, allowing the logical system to power itself or short-circuit its own execution speed.
+- **Status**: experiments/elektra-orca
+- **Evaluation**: Success. Compiled. Successfully creates a continuous-discrete loop mapping voltage values to signal execution rates.
