@@ -1,0 +1,13 @@
+[package]
+name = "neuro-flock"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+locus = { workspace = true }
+neuro-sim = { path = "../../crates/neuro-sim" }
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+ratatui = { workspace = true }
+tui-shared = { workspace = true }

@@ -51,6 +51,8 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Concept**: Acoustic Genetic Organisms. Agents equipped with `ChimeraVM` brains evolve to pluck magnetic strings, generating specific resonant frequencies to propel themselves or communicate.
 - **Novel Trait**: Acoustic-Magnetic Genetics. The agents translate their discrete DNA opcodes into continuous kinetic strikes on strings, harnessing the resulting magnetic fields for survival.
 - **Predicted Phenotype**: An evolutionary symphony where the most fit organisms learn to play the strings, creating complex, emergent acoustic-magnetic rhythms that sustain their population.
+- **Status**: experiments/chimera-strings
+- **Evaluation**: Success. Compiled. Strong GUESTBOOK mentions confirm genetic adaptation. Agents successfully evolve, creating a macroscopic-microscopic feedback loop mapping genetic instructions to acoustic-magnetic rhythm generation.
 
 ### git-strings
 - **Parents**: experiments/git-harmonograph + experiments/ferrous-strings
@@ -514,3 +516,10 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Predicted Phenotype**: Spectral Wave Mechanics. As standing waves and interference patterns form in the physical wave tank, they are transformed via 2D FFT into a holographic projection. This visualizes the resonant modes of the acoustic space in the frequency domain.
 - **Status**: experiments/hologram-tank
 - **Evaluation**: Success. Compiled. Spectral Wave Mechanics successfully maps physical pressure gradients to frequency domain optical interference patterns.
+
+### neuro-flock
+- **Parents**: crates/neuro-sim + experiments/luminous-flock
+- **Concept**: Spiking Neural Boids.
+- **Predicted Phenotype**: Flocking behavior driven by an embedded Spiking Neural Network (SNN). Instead of pure physics vectors, the boids' steering forces are determined by the outputs of an Izhikevich neural network, translating biological spiking dynamics into macroscopic flocking patterns.
+- **Status**: experiments/neuro-flock
+- **Evaluation**: Success. Compiled. Strong GUESTBOOK mentions confirm emergent phenotype. The Izhikevich neurons successfully process neighbor distances into steering impulses, demonstrating macroscopic flocking emerging from microscopic neural dynamics.

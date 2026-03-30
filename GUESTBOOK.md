@@ -615,3 +615,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. A new hybrid `hologram-tank` (Acoustic Holography) has been spliced into the repository. The physical waves manifest in the frequency domain.
 - **Phenotype:** The physical wave tank creates acoustic pressure which acts as an optical interference pattern, visualizing the resonant modes of the space via 2D FFT.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. A new hybrid `neuro-flock` (Spiking Neural Boids) has been spliced into the repository.
+- **Phenotype:** The continuous swarming intent of the boids is processed through microscopic biological spiking networks (Izhikevich). This hybrid bridges the gap between individual neural computation and emergent, collective physical behavior in the environment.
