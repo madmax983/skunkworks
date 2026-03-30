@@ -135,10 +135,17 @@ impl Paradox {
             Trigger::Signal(trigger_str.to_string())
         };
 
-        let action_type = parts.get(do_idx + 1).copied().ok_or("Missing action type")?;
+        let action_type = parts
+            .get(do_idx + 1)
+            .copied()
+            .ok_or("Missing action type")?;
         let action = match action_type {
             "log" => {
-                let msg = if parts.len() > do_idx + 2 { parts[do_idx + 2..].join(" ") } else { String::new() };
+                let msg = if parts.len() > do_idx + 2 {
+                    parts[do_idx + 2..].join(" ")
+                } else {
+                    String::new()
+                };
                 Action::Log(msg)
             }
             "glitch" => {

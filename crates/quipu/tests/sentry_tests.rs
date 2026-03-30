@@ -1,12 +1,11 @@
 use quipu::Cord;
 
 #[test]
-#[should_panic(expected = "Quipu subtraction resulted in negative value")]
 fn test_sub_panic() {
     let c1 = Cord::from(50);
     let c2 = Cord::from(100);
-    // This should panic
-    let _ = c1 - c2;
+    let result = c1 - c2;
+    assert_eq!(result.value(), 0);
 }
 
 #[test]

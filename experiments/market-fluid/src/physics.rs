@@ -5,8 +5,8 @@
 
 use ferrous_core::Platter;
 use locus::Vec2;
-use rand::Rng;
 use market_sim::{Grid, Particle as MarketParticle};
+use rand::Rng;
 
 pub struct Particle {
     pub pos: Vec2,

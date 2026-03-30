@@ -62,7 +62,9 @@ impl CodeParser {
         let file = fs::File::open(&path).context("Failed to open file")?;
         let mut content = String::new();
         let limit = 1024 * 1024; // 1MB limit
-        let bytes_read = std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut content).context("Failed to read file")?;
+        let bytes_read =
+            std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut content)
+                .context("Failed to read file")?;
 
         if bytes_read as u64 > limit {
             anyhow::bail!("File {:?} exceeds 1MB limit", path.as_ref());

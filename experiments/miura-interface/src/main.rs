@@ -93,7 +93,8 @@ impl App {
         let content = if let Ok(file) = fs::File::open(guestbook_path) {
             let mut buf = String::new();
             let limit = 1024 * 1024; // 1MB limit
-            match std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut buf) {
+            match std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut buf)
+            {
                 Ok(bytes) if bytes as u64 <= limit => buf,
                 _ => "GUESTBOOK.md exceeds 1MB limit".to_string(),
             }

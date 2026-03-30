@@ -22,7 +22,10 @@ pub(crate) fn render_prolouge(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
 
     // Left Panel: Mad Scientist's Notes & Active State
     let mut notes = vec![
-        Line::from(Span::styled("🧪 THE MAD SCIENTIST'S LABORATORY ⚛️", title_style)),
+        Line::from(Span::styled(
+            "🧪 THE MAD SCIENTIST'S LABORATORY ⚛️",
+            title_style,
+        )),
         Line::from(""),
         Line::from(format!("🧬 Current Energy: {} J", vm.energy)),
         Line::from(format!("🍄 Entropy Level: {}", vm.glitch_level)),
@@ -31,21 +34,35 @@ pub(crate) fn render_prolouge(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
     ];
 
     if vm.prologue_state.orca_mode {
-        notes.push(Line::from(Span::styled("- [ACTIVE] Orca Signal Network", Style::default().fg(Color::Blue))));
+        notes.push(Line::from(Span::styled(
+            "- [ACTIVE] Orca Signal Network",
+            Style::default().fg(Color::Blue),
+        )));
     } else {
-        notes.push(Line::from(Span::styled("- [DORMANT] Orca Signal Network", Style::default().fg(Color::DarkGray))));
+        notes.push(Line::from(Span::styled(
+            "- [DORMANT] Orca Signal Network",
+            Style::default().fg(Color::DarkGray),
+        )));
     }
 
     if vm.prologue_state.active {
-        notes.push(Line::from(Span::styled("- [ACTIVE] Prologue Grid Logic", Style::default().fg(Color::Green))));
+        notes.push(Line::from(Span::styled(
+            "- [ACTIVE] Prologue Grid Logic",
+            Style::default().fg(Color::Green),
+        )));
     }
 
     notes.push(Line::from(""));
     notes.push(Line::from("The air smells of ozone and petrichor..."));
-    notes.push(Line::from("Use the 'P' rune in the grid to witness true hybridization."));
+    notes.push(Line::from(
+        "Use the 'P' rune in the grid to witness true hybridization.",
+    ));
 
-    let left_panel = Paragraph::new(notes)
-        .block(Block::default().borders(Borders::ALL).title("Prolouge Status"));
+    let left_panel = Paragraph::new(notes).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Prolouge Status"),
+    );
 
     f.render_widget(left_panel, chunks[0]);
 
@@ -64,8 +81,11 @@ pub(crate) fn render_prolouge(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
         diagnostics.push(Line::from(Span::styled(line.clone(), style)));
     }
 
-    let right_panel = Paragraph::new(diagnostics)
-        .block(Block::default().borders(Borders::ALL).title("Terminal Diagnostics"));
+    let right_panel = Paragraph::new(diagnostics).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Terminal Diagnostics"),
+    );
     f.render_widget(right_panel, chunks[1]);
 }
 

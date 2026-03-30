@@ -1,4 +1,10 @@
-#![allow(clippy::too_many_lines, clippy::future_not_send, clippy::expect_used, clippy::cast_precision_loss, clippy::cast_possible_truncation)]
+#![allow(
+    clippy::too_many_lines,
+    clippy::future_not_send,
+    clippy::expect_used,
+    clippy::cast_precision_loss,
+    clippy::cast_possible_truncation
+)]
 use locus::flocking::{compute_force, FlockingParams};
 use locus::Vec2 as LocusVec2;
 use macroquad::prelude::*;
@@ -19,10 +25,7 @@ const BOID_COUNT: usize = 150;
 const STRING_SPACING: f32 = 100.0;
 const BASE_FREQ: f32 = 110.0; // A2
 
-
 #[macroquad::main("Locus Strings")]
-
-
 
 async fn main() {
     let (audio_handle, cmd_tx) = init_audio().expect("Failed to init audio");

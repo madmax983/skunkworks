@@ -446,7 +446,9 @@ impl Add for Cord {
     /// assert_eq!(sum.value(), 150);
     /// ```
     fn add(self, rhs: Self) -> Self::Output {
-        let val = self.value().saturating_add(rhs.value());
+        let val = self.value().checked_add(rhs.value()).expect(
+            "Quipu addition resulted in overflow (not supported by Incas! Use checked arithmetic)",
+        );
         Cord::from(val)
     }
 }
@@ -456,7 +458,11 @@ impl Sub for Cord {
 
     /// Subtracts one Cord from another.
     ///
-    /// The result will safely saturate to 0 if the right-hand side is greater.
+    /// # Panics
+    ///
+    /// Panics if the result would be negative (i.e., `rhs > self`).
+    /// The Inca number system does not support negative numbers.
+    /// Use [`Cord::checked_sub`] for safe subtraction.
     ///
     /// # Examples
     ///
@@ -470,7 +476,10 @@ impl Sub for Cord {
     /// assert_eq!(diff.value(), 75);
     /// ```
     fn sub(self, rhs: Self) -> Self::Output {
-        let val = self.value().saturating_sub(rhs.value());
+        let val = self
+            .value()
+            .checked_sub(rhs.value())
+            .expect("Quipu subtraction resulted in negative value (not supported by Incas! Use Cord::checked_sub for safety)");
         Cord::from(val)
     }
 }
@@ -680,10 +689,11 @@ mod tests {
 
     proptest! {
         #[test]
+        #[should_panic(expected = "Quipu subtraction resulted in negative value")]
         fn havoc_test_cord_sub_underflow_panic(a in 0u64..1000, b in 1001u64..2000) {
             let c1 = Cord::from(a);
             let c2 = Cord::from(b);
-            assert_eq!((c1 - c2).value(), 0);
+            let _ = c1 - c2;
         }
     }
 }

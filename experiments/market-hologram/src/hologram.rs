@@ -117,7 +117,6 @@ impl Hologram {
         let scale = 1.0 / (width * height) as f64;
         data.iter().map(|c| c.norm() * scale).collect()
     }
-
 }
 
 fn transpose(data: &mut [Complex<f64>], width: usize, height: usize) {
