@@ -588,7 +588,8 @@ fn exec_prolouge(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     vm.prologue_state.orca_mode = true;
     vm.glitch_level = 100.0;
     vm.energy += 1000;
-    vm.output.push("PROLOUGE: Mad Scientist Mode ACTIVATED ⚛️".to_string());
+    vm.output
+        .push("PROLOUGE: Mad Scientist Mode ACTIVATED ⚛️".to_string());
 
     // Perform a chaotic mutation on the grid
     let mut rng = rand::thread_rng();

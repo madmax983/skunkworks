@@ -4,6 +4,7 @@ use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use market_sim::{Grid, Particle as MarketParticle};
 use physics::Universe;
+use rand::Rng;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
@@ -11,7 +12,6 @@ use ratatui::{
 };
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
-use rand::Rng;
 
 fn main() -> Result<()> {
     let mut tui = Tui::init()?;
@@ -98,7 +98,15 @@ fn run_app(tui: &mut Tui) -> Result<()> {
                                 let y = rng.gen_range(0..market.height);
                                 let is_bid = rng.gen_bool(0.5);
                                 let owner = rng.gen_range(1..100);
-                                market.set(x, y, if is_bid { MarketParticle::Bid(owner) } else { MarketParticle::Ask(owner) });
+                                market.set(
+                                    x,
+                                    y,
+                                    if is_bid {
+                                        MarketParticle::Bid(owner)
+                                    } else {
+                                        MarketParticle::Ask(owner)
+                                    },
+                                );
                             }
                         }
                         _ => {}

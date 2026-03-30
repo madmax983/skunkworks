@@ -66,7 +66,10 @@ impl Graph {
                 if let Ok(file) = std::fs::File::open(entry.path()) {
                     let mut content = String::new();
                     let limit = 1024 * 1024; // 1MB limit
-                    if let Ok(bytes) = std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut content) {
+                    if let Ok(bytes) = std::io::Read::read_to_string(
+                        &mut std::io::Read::take(file, limit + 1),
+                        &mut content,
+                    ) {
                         if bytes as u64 <= limit {
                             let id = self.add_node(name.clone(), content);
                             file_map.insert(name, id);

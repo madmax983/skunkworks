@@ -31,7 +31,10 @@ impl GardenParser {
             let file = fs::File::open(&file_path)?;
             let mut content = String::new();
             let limit = 1024 * 1024; // 1MB limit
-            let bytes_read = std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut content)?;
+            let bytes_read = std::io::Read::read_to_string(
+                &mut std::io::Read::take(file, limit + 1),
+                &mut content,
+            )?;
 
             if bytes_read as u64 <= limit {
                 if let Ok(ast) = syn::parse_file(&content) {

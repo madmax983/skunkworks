@@ -64,7 +64,10 @@ fn main() -> Result<()> {
             let file = fs::File::open(&script)?;
             let mut script_content = String::new();
             let limit = 1024 * 1024; // 1MB limit
-            let bytes_read = std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut script_content)?;
+            let bytes_read = std::io::Read::read_to_string(
+                &mut std::io::Read::take(file, limit + 1),
+                &mut script_content,
+            )?;
 
             if bytes_read as u64 > limit {
                 anyhow::bail!("Script file {:?} exceeds 1MB limit", script);
