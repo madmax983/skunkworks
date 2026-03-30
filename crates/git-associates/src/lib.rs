@@ -69,6 +69,9 @@ impl GitModel {
     /// The path can be the root of the repository or any subdirectory within it.
     /// This function uses `git2::Repository::discover` to find the git directory.
     ///
+    /// We use this function to bootstrap the `GitModel`, which allows us to inspect
+    /// history and diffs without dealing with low-level `git2` objects directly.
+    ///
     /// # Arguments
     ///
     /// * `path` - The path to the repository or a subdirectory.
@@ -76,6 +79,15 @@ impl GitModel {
     /// # Errors
     ///
     /// Returns an error if the repository cannot be found or opened.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use git_associates::GitModel;
+    ///
+    /// // Open the current directory as a git repository
+    /// let model = GitModel::open(".").expect("Failed to open repository");
+    /// ```
     pub fn open<P: AsRef<Path>>(path: P) -> Result<Self> {
         let repo = Repository::discover(path).context("Failed to discover git repository")?;
         Ok(Self { repo })
@@ -87,9 +99,29 @@ impl GitModel {
     /// It does *not* include detailed diff statistics or file changes, making it faster
     /// than [`history_with_diffs`](Self::history_with_diffs).
     ///
+    /// This is useful when you only need to display a high-level timeline of commits
+    /// (e.g., author, message, timestamp) and want to avoid the overhead of parsing diffs.
+    ///
     /// # Arguments
     ///
     /// * `limit` - The maximum number of commits to retrieve.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if walking the repository history fails.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use git_associates::GitModel;
+    ///
+    /// let model = GitModel::open(".").unwrap();
+    /// let commits = model.history(5).unwrap();
+    ///
+    /// for commit in commits {
+    ///     println!("{} - {}", commit.short_hash, commit.message);
+    /// }
+    /// ```
     pub fn history(&self, limit: usize) -> Result<Vec<Commit>> {
         self.history_internal(limit, false)
     }
@@ -99,10 +131,31 @@ impl GitModel {
     /// In addition to basic metadata, this method computes the diff for each commit against its parent,
     /// populating the `stats` and `files` fields of the [`Commit`] struct.
     ///
+    /// This function exists so that analytical tools can calculate churn, blame, and code velocity
+    /// by inspecting the line-by-line hunks within the returned `files`.
+    ///
     /// # Performance
     ///
     /// This operation is more expensive than [`history`](Self::history) because it involves
     /// computing diffs for every commit.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if walking the repository history fails.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use git_associates::GitModel;
+    ///
+    /// let model = GitModel::open(".").unwrap();
+    /// let commits = model.history_with_diffs(1).unwrap();
+    ///
+    /// if let Some(commit) = commits.first() {
+    ///     let stats = commit.stats.as_ref().unwrap();
+    ///     println!("Latest commit changed {} files", stats.files_changed);
+    /// }
+    /// ```
     pub fn history_with_diffs(&self, limit: usize) -> Result<Vec<Commit>> {
         self.history_internal(limit, true)
     }
@@ -197,9 +250,27 @@ impl GitModel {
     /// This is useful for checking uncommitted changes (both staged and unstaged).
     /// Untracked files are included in the diff.
     ///
+    /// We provide this to allow visualization tools to render "live" file modifications
+    /// before they are committed.
+    ///
     /// # Returns
     ///
     /// A [`DiffStats`] object containing details about modified, added, and removed files.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if reading the index or computing the diff fails.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use git_associates::GitModel;
+    ///
+    /// let model = GitModel::open(".").unwrap();
+    /// let diff = model.diff_workdir().unwrap();
+    ///
+    /// println!("You have {} uncommitted files.", diff.files.len());
+    /// ```
     pub fn diff_workdir(&self) -> Result<DiffStats> {
         let mut diff_opts = git2::DiffOptions::new();
         diff_opts.include_untracked(true);
