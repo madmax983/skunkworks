@@ -555,3 +555,8 @@
 ### [Concentration Level: NEW HYBRID] - Location: experiments/chimera-ddos
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. A new hybrid `chimera-ddos` (Cybernetic Cyberwarfare) has been spliced into the repository. The packets run ChimeraVM brains.
+
+### [Concentration Level: NEW HYBRID] - Location: experiments/neuro-fluid
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed for `neuro-fluid` (neuro-sim x ferrous-fluid).
+- **Phenotype:** Brain-Fluid Interface. A continuous magnetic fluid simulation where magnetic poles are actuated by a Central Pattern Generator built from Spiking Neural Networks (Izhikevich model), driving rhythmic, pulsating fluid patterns.

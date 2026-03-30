@@ -13,16 +13,25 @@ Mendel's peas. Darwin's finches. Your experiments.
 
 **Strategy Shift:**
 Continue to leverage robust, mathematically stable environments (FFT, wave mechanics) to ground chaotic or emergent agents (DDoS, slime molds) and structural graphs (codebase visualization). The success of mapping intent-driven agents (DDoS packets) and decaying network structures into continuous environments (magnetic fluids, reaction-diffusion substrates, holographic interference patterns) proves that hybridizing *purpose* and *decay* with *medium* yields the most striking phenotypes. Purely generic mashups are swiftly executed by the Reaper. Future crosses should avoid unconstrained spaces (hyperbolic geometry) and focus on translating discrete swarm intent or structural entropy into high-fidelity frequency, biological decomposition, or acoustic domains.
+Recent evaluations confirm that bridging disparate physical models, such as biological neural oscillators (`neuro-sim`) and fluid mechanics (`ferrous-fluid`), creates novel physical-biological interfaces and provides rich emergent dynamics. The success of `neuro-fluid` suggests expanding our breeding pool to combine raw neural computation architectures directly with continuous physical media.
 
 ---
 
 ## 🌸 Proposed Crosses
+
 
 <!-- Suggest hybrid experiments by combining existing ones -->
 
 ---
 
 ## 🌿 Attempted Crosses
+
+### neuro-fluid
+- **Parents**: crates/neuro-sim + experiments/ferrous-fluid
+- **Concept**: Brain-Fluid Interface. A continuous magnetic fluid simulation where magnetic poles are actuated by a Central Pattern Generator built from Spiking Neural Networks (Izhikevich model).
+- **Novel trait**: Brain-Fluid Interface. Neurons firing act as electromagnets, turning on and off to push and pull the fluid, creating complex, rhythmic fluid patterns driven by biological neural oscillations.
+- **Status**: experiments/neuro-fluid
+- **Evaluation**: Success. Compiled. Pheromone trails set in GUESTBOOK. Neurons spiking successfully modulate magnet strength causing emergent fluid pulsing.
 
 ### locust-reaper
 - **Parents**: experiments/locust-ddos + experiments/myco-reaper
