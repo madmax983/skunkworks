@@ -15,7 +15,8 @@
 
 use anyhow::Result;
 use cgmath::Vector3;
-use std::collections::{HashMap, HashSet, VecDeque};
+use rustc_hash::FxHashMap;
+use std::collections::{HashSet, VecDeque};
 use std::hash::{Hash, Hasher};
 use std::path::{Path, PathBuf};
 
@@ -111,7 +112,8 @@ pub struct Crystal {
     /// Each tuple `(parent_idx, child_idx)` contains indices pointing into the `atoms` vector.
     pub bonds: Vec<(usize, usize)>,
     /// Fast spatial lookup mapping a discrete coordinate to an index in the `atoms` vector.
-    pub lookup: HashMap<LatticePoint, usize>,
+    /// Fast lookup from `LatticePoint` to particle index using `FxHashMap` for better integer hashing performance.
+    pub lookup: FxHashMap<LatticePoint, usize>,
 }
 
 impl Default for Crystal {
@@ -126,7 +128,7 @@ impl Crystal {
         Self {
             atoms: Vec::new(),
             bonds: Vec::new(),
-            lookup: HashMap::new(),
+            lookup: FxHashMap::default(),
         }
     }
 
