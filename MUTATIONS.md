@@ -37,7 +37,7 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Evo-Portals.
 - **Novel trait**: Bio-Spatial Manipulation.
 - **Status**: experiments/chimera-rift
-- **Evaluation**: Condemned by The Reaper ☠️ due to Skeletal Implementation and Terminal Genericism (specifically, missing sensory inputs via a critical TODO making its core portal trait non-functional), with a 24-hour grace period set.
+- **Evaluation**: Pardoned by The Reaper ☠️. The initial condemnation for Skeletal Implementation and Terminal Genericism was resolved by adding portal sensor inputs during its grace period, allowing agents to navigate.
 
 
 ### chimera-fluid
@@ -112,6 +112,13 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Novel trait**: The codebase's health actively repulses or attracts a swarm of magnetic particles. Rotting code pushes particles away, while healthy, freshly maintained code attracts them, acting like a physical magnetic medium representing codebase entropy.
 - **Status**: experiments/mnem-fluid
 - **Evaluation**: Success. Compiled. Exhibits continuous magnetic repulsions mapped from simulated graph node entropy accurately.
+
+### mnem-strings
+- **Parents**: experiments/mnem-rot + experiments/ferrous-strings
+- **Concept**: Entropy-driven acoustic strings.
+- **Novel trait**: The decaying nodes of a codebase graph simulation violently pluck a field of magnetic acoustic strings. High-entropy (rotting) code translates its structural decay into high-fidelity acoustic oscillations mapped onto a magnetic field.
+- **Status**: experiments/mnem-strings
+- **Evaluation**: Success. Compiled. Code rot successfully translates into physical acoustic resonance.
 
 ### mnem-diffusion
 - **Parents**: experiments/mnem-rot + crates/gray-scott
@@ -365,8 +372,8 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Parents**: experiments/luminous-flock + experiments/ripple-tank
 - **Concept**: Acoustic Swarming. The boids navigate an acoustic wave tank field.
 - **Novel trait**: Boids generate standing waves through their motion and plucking, while the physical gradient of the sound waves physically advects them. The flock organizes into cymatic patterns based on resonance.
-- **Status**: experiments/luminous-tank
-- **Evaluation**: Condemned by The Reaper ☠️ due to Documentation Void / Skeletal Structure, with a 24-hour grace period set.
+- **Status**: graveyard/luminous-tank (Executed)
+- **Evaluation**: Executed by The Reaper ☠️ (moved to graveyard) due to Documentation Void / Skeletal Structure, having failed to improve during its grace period.
 
 ### gray-tank
 - **Parents**: experiments/ripple-tank + crates/gray-scott

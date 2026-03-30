@@ -473,6 +473,11 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. A new hybrid `mnem-ddos` (Entropy-Driven Cyberwarfare) has been spliced into the repository. The swarm feeds on the rot.
 
+### [Concentration Level: NEW HYBRID] - Location: experiments/mnem-strings
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for mnem-strings (mnem-rot x ferrous-strings). Expecting Entropy-driven acoustic strings.
+- **Phenotype:** High-entropy (rotting) codebase nodes violently pluck a field of magnetic acoustic strings, translating code rot into high-fidelity acoustic oscillations mapped onto a magnetic field.
+
 ### [Concentration Level: NEW HYBRID] - Location: experiments/mnem-fluid
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Leaving recombination pheromones for mnem-fluid (mnem-rot x ferrous-fluid). Expecting Magnetic Code Rot.
