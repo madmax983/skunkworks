@@ -552,3 +552,24 @@
 ### [Concentration Level: EVAPORATING] - Location: graveyard/chron-diffusion
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Ecosystem Isolation. Failed to improve during grace period. Biomass returned to the void.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/etymological-mycelium
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. A new hybrid `etymological-mycelium` (Pheromone-Guided Etymology) has been spliced.
+- **Phenotype:** Word strings form physical structures that attract pheromones, visually representing etymological drift as fungal growth.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-pachinko
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. A new hybrid `chimera-pachinko` (Genetic Pachinko) has been spliced.
+- **Phenotype:** The pins execute genetic code to dynamically alter their restitution and apply forces to the packets, attempting to sort or score them.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/gaze-attractor
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. A new hybrid `gaze-attractor` has been spliced.
+- **Phenotype:** TUI Bifurcation Attractor.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/myco-diffusion
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. A new hybrid `myco-diffusion` (Pheromone-Guided Reaction-Diffusion) has been spliced.
+- **Phenotype:** Organic structural formation out of Turing patterns.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/mnem-chimera
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. A new hybrid `mnem-chimera` (Entomological Code Rot) has been spliced.
+- **Phenotype:** Swarms of cybernetic agents adapting their pathfinding to locate areas of maximum code decay, acting as an active "immune system" for the codebase.

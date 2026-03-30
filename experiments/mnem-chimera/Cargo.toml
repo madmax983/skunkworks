@@ -1,0 +1,15 @@
+[package]
+name = "mnem-chimera"
+version = "0.1.0"
+edition = "2021"
+description = "Entomological Code Rot: ChimeraVM agents navigate codebase graph to forage high-entropy nodes."
+
+[dependencies]
+locus = { path = "../../crates/locus" }
+chimera-lang = { path = "../chimera-lang" }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = "1.0"
+rand = "0.8"
+tui-shared = { path = "../../crates/tui-shared" }
+walkdir = "2.3"
