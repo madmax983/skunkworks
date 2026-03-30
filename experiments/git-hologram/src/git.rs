@@ -5,6 +5,7 @@ use std::process::Command;
 pub struct Commit {
     pub hash: String,
     pub author: String,
+    #[allow(dead_code)]
     pub message: String,
 }
 
