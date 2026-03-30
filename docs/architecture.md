@@ -748,6 +748,59 @@ sequenceDiagram
     end
 ```
 
+### ChimeraVM Ops Extraction (ADR 074)
+
+The `ChimeraVM` execution logic is decoupled into specific opcode execution submodules under `vm/ops/` to prevent a monolithic `impl` block.
+
+```mermaid
+classDiagram
+    direction TB
+    class ChimeraVM {
+        +Dna dna
+        +PetriDish grid
+        +Vec~Deque~ stack
+        +step()
+        +execute_gene()
+    }
+
+    class MathOps {
+        <<Module: vm/ops/math.rs>>
+        +exec_math_op()
+    }
+
+    class StackOps {
+        <<Module: vm/ops/stack.rs>>
+        +exec_stack_op()
+    }
+
+    class FlowOps {
+        <<Module: vm/ops/flow.rs>>
+        +exec_flow_op()
+    }
+
+    class GridOps {
+        <<Module: vm/ops/grid.rs>>
+        +exec_grid_op()
+    }
+
+    class IoOps {
+        <<Module: vm/ops/io.rs>>
+        +exec_io_op()
+    }
+
+    class BioOps {
+        <<Module: vm/ops/bio.rs>>
+        +exec_bio_op()
+    }
+
+    ChimeraVM ..> MathOps : Delegates
+    ChimeraVM ..> StackOps : Delegates
+    ChimeraVM ..> FlowOps : Delegates
+    ChimeraVM ..> GridOps : Delegates
+    ChimeraVM ..> IoOps : Delegates
+    ChimeraVM ..> BioOps : Delegates
+```
+
 ### Lib/Bin Split
 
 The project exposes its core modules to allow embedding in other experiments.
