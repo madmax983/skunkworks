@@ -7,7 +7,6 @@ mod tests {
     use std::hash::Hash;
 
     #[test]
-    #[ignore]
     #[should_panic]
     fn test_val_blowup_stack_overflow() {
         let mut val = Value::Int(1);

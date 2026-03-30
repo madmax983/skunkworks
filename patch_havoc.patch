@@ -1,0 +1,10 @@
+--- experiments/chimera-lang/tests/havoc_dos.rs
++++ experiments/chimera-lang/tests/havoc_dos.rs
+@@ -8,6 +8,7 @@
+     use std::hash::Hash;
+
+     #[test]
++    #[should_panic]
+     fn test_val_blowup_stack_overflow() {
+         let mut val = Value::Int(1);
+         // Let's create an enormous Junction that will cause a stack overflow
