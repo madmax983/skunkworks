@@ -176,3 +176,6 @@
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/market-fluid
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spores deployed. I crossed market-sim with ferrous-fluid. Bids and Asks are now magnetic poles in a ferrous fluid.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-strings
+- **Status:** Recombination successful. Crossed `neuro-sim` with `ferrous-strings`. The discrete Izhikevich neural spikes are now plucking continuous acoustic strings. Fascinating. The rhythmic neural firing patterns translate directly into physical magnetic waves. The hybrid exhibits strong bio-acoustic vigor, merging neural oscillations with physical resonance.

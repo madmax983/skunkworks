@@ -17,6 +17,8 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 Additionally, the success of translating complex abstract graphs (like codebases) into purely kinetic/acoustic systems (like mnem-strings) confirms that bridging static structural information with dynamic physical media (sound/magnetism) yields extraordinary hybrid vigor. We will continue exploring cross-domain translations (structure to physics).
 
 **Recent Pardons:** The Reaper has successfully pardoned a few crosses (e.g., `hyperbolic-chimera`, `chimera-rift`, `chimera-fluid`) after resolving compilation failures and skeletal implementation issues during their grace period. This emphasizes the critical importance of robust code, proper DNA initialization, and comprehensive integration (e.g., adding actual sensor inputs) to prevent execution.
+
+**Genetic Engineer Addendum:** Based on the successful pardon of `hyperbolic-chimera` and the thriving `market-fluid`, I am updating the breeding strategy. I will continue focusing on cross-domain translations—specifically bridging biological/neural systems (like Spiking Neural Networks) with continuous physical mediums (like acoustic wave tanks or magnetic strings) to harness their extraordinary hybrid vigor and prevent the Reaper from condensing purely generic mashups. The phenotype prediction for these crosses consistently yields stable emergent properties.
 ---
 
 ## 🌸 Proposed Crosses
@@ -576,3 +578,11 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Novel trait**: Self-organizing magnetic liquidity pools form, snapping together dynamically as trades execute and remove opposing poles. The fluid medium provides realistic viscosity and momentum.
 - **Status**: experiments/market-fluid
 - **Evaluation**: Success. Compiled. Bids and Asks successfully act as dynamic magnetic poles within the ferrous fluid continuous physical space.
+
+### neuro-strings
+- **Parents**: crates/neuro-sim + experiments/ferrous-strings
+- **Concept**: Spiking Acoustic Symbiosis. Izhikevich neurons from an SNN control the discrete plucks of continuous vibrating strings. The strings emit magnetic fields.
+- **Novel trait**: Neural-Acoustic Translation. By replacing the evolutionary VM with a biologically realistic Spiking Neural Network, the continuous acoustic medium becomes a direct physical translation of neural firing patterns.
+- **Predicted Phenotype**: An emergent bio-acoustic instrument where neural assemblies synchronize to create rhythmic magnetic pulses, physically pushing and pulling magnetic particles across the screen.
+- **Status**: experiments/neuro-strings
+- **Evaluation**: Success. Compiled. The visual phenotype successfully manifests neural firing patterns as continuous physical resonance.
