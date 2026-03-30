@@ -1,0 +1,10 @@
+[package]
+name = "myco-tissue"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = { workspace = true }
+rayon = "1.11"
+physics-pbd = { path = "../../crates/physics-pbd" }

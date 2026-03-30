@@ -662,3 +662,9 @@
 - **Lineage:** crates/market-sim × experiments/ripple-tank
 - **Status:** Recombination pheromone deployed. A new hybrid `market-tank` (Acoustic Market Dynamics) has been spliced into the repository.
 - **Phenotype:** Acoustic Liquidity. Trade executions pluck the acoustic tank, sending physical pressure waves that literally push resting Bids and Asks around, simulating market volatility driven by continuous sound waves.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/myco-tissue
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** experiments/myco-transit × experiments/ferrous-tissue
+- **Status:** Recombination pheromone deployed. A new hybrid `myco-tissue` (Elastic Pheromone Network) has been spliced into the repository.
+- **Phenotype:** Elastic Foraging. The slime mold stretches towards food sources, depositing pheromones, but experiences mechanical strain from internal soft-body springs. The swarm moves as a coherent, pulsating tissue rather than unbounded fluid.

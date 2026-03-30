@@ -25,6 +25,14 @@ Additionally, the success of translating complex abstract graphs (like codebases
 
 ## 🌿 Attempted Crosses
 
+### myco-tissue
+- **Parents**: experiments/myco-transit + experiments/ferrous-tissue
+- **Concept**: Elastic Pheromone Network. A slime mold (Physarum) whose individual agents are connected by elastic soft-body springs.
+- **Novel trait**: Elastic Foraging. Instead of purely unconstrained foraging, the swarm must balance chemotaxis (following a pheromone gradient) with physical elasticity (maintaining the soft body). This mathematically constrains the biological growth.
+- **Predicted Phenotype**: A pulsating, organically constrained fungal network. The swarm stretches towards food sources, depositing pheromones, but experiences mechanical strain that eventually pulls the trailing edge forward, resembling a crawling amoeba or muscle tissue rather than an unbounded fluid.
+- **Status**: experiments/myco-tissue
+- **Evaluation**: Success. Compiled. Pheromone-guided elastic soft bodies effectively demonstrate mechanical foraging.
+
 ### market-tank
 - **Parents**: crates/market-sim + experiments/ripple-tank
 - **Concept**: Acoustic Market Dynamics. The continuous physical double auction market particles (Bids/Asks) act as physical displacers in a 2D acoustic wave tank.
