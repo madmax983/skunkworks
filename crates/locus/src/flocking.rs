@@ -139,8 +139,8 @@ struct FlockingAccumulators {
 /// Evaluating distances requires calculating squared radii. Computing `view_radius * view_radius`
 /// inside a loop of 10,000 agents results in millions of redundant multiplications.
 /// This struct hoists those invariants out of the loop.
-struct PrecomputedParams<'a> {
-    params: &'a FlockingParams,
+struct PrecomputedParams {
+    view_radius: f64,
     view_sq: f64,
     sep_sq: f64,
     do_sep: bool,
@@ -163,12 +163,12 @@ impl FlockingAccumulators {
         overlap_bias: Vec2,
     ) {
         let dx = my_pos.x - neighbor_pos.x;
-        if dx.abs() > pre.params.view_radius {
+        if dx.abs() > pre.view_radius {
             return;
         }
 
         let dy = my_pos.y - neighbor_pos.y;
-        if dy.abs() > pre.params.view_radius {
+        if dy.abs() > pre.view_radius {
             return;
         }
 
@@ -302,7 +302,7 @@ pub fn compute_force(
 
     // Precompute invariants for the hot loop
     let pre = PrecomputedParams {
-        params,
+        view_radius: params.view_radius,
         view_sq: params.view_radius * params.view_radius,
         sep_sq: params.separation_radius * params.separation_radius,
         do_sep: params.separation_weight.abs() > 0.0,
