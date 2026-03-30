@@ -1,21 +1,15 @@
-# Sentry's Journal
+**Memory Leak in Cladistics**
+**Learning:** Cycles in graph structures (like biological lineage trees) can grow unboundedly if cleanup isn't explicitly handled during complete resets. `Singularity` opcode merged strands but left orphan graph nodes behind, causing memory leaks.
+**Action:** Always ensure that global resets (like `Singularity`) completely clear associated state metadata (e.g., `cladistics.nodes.clear()`) to prevent unbounded memory growth.
 
-## 2024-05-24 - [Unchecked Vector Poisoning in physics-pbd]
-**Learning:** `PbdSystem::add_particle` and `PbdSystem::add_pin_constraint` lacked validation for finite vector positions (`f32::NAN` or `f32::INFINITY`). If an invalid position is injected, the solver silently poisons the entire particle system state because `pos.is_finite()` was not asserted at creation time. This caused subsequent mathematical operations in `step()` (like distance constraints) to either propagate the `NaN` or fail randomly when calculating `length()`.
-**Action:** Added `assert!(pos.is_finite(), "...");` to all public API endpoints that accept new physical coordinates or vectors. Wrote `#[should_panic]` unit tests directly targeting these API bounds. Furthermore, when writing tests that fuzz the solver constraints, it's critical to bypass the outer API validation to ensure the *internal* engine (solver) remains robust when testing edge-cases for `stiffness` and `rest_length`.**[Unvalidated Constraint Arguments in physics-pbd]**
-**Learning:** `PbdSystem::add_distance_constraint` and `PbdSystem::add_actuator_constraint` lacked validation for finite constraint parameters at creation time. While the internal solver handled these gracefully or panicked on `NaN` (tested via `havoc_robustness`), Sentry principles require failing fast at the API boundary before bad data enters the system's state.
-**Action:** Added `assert!(param.is_finite())` in all `add_*_constraint` methods to mirror the strict `is_finite` check on `add_particle`. Updated existing fuzzing tests and added new `#[should_panic]` tests specifically to verify these API guards protect the system state from being poisoned.
-**Added `neuro-sim` boundary checks**
-**Learning:** Handling unwrap or fallbacks manually by masking errors allows for soft-fails on indexing for vectors but misses critical coverage on out of bounds indexing panics or assertions. We must test these boundaries.
-**Action:** Adding tests for `is_spiking` and `get_synapse_activity` explicitly triggering the out-of-bounds `unwrap_or(false)` execution.
+**Stack Overflow during Drop**
+**Learning:** Rust's compiler-generated recursive `Drop` can cause stack overflows for deeply nested enum variants (like `Value::Junction`), even if `hash()` or `clone()` are written iteratively.
+**Action:** When writing tests that purposefully construct deeply nested structures to verify safe iterative logic (like hashing), use `std::mem::forget(v)` at the end of the test to prevent the implicit recursive drop from crashing the test runner, OR implement an iterative custom `Drop` for the type.
 
-**Added `platter` boundary checks**
-**Learning:** Returning 0.0 using `unwrap_or` for spatial data struct on out-of-bounds coords could hide boundary flaws, but explicitly verifying it documents the safety behavior.
-**Action:** Adding tests to verify `unwrap_or(0.0)` in `get_magnetism` behaves as expected.
-**2023-10-25 - Using `cargo-llvm-cov` to Identify Gaps in Coverage**
-**Learning:** Manual inspection and basic test counting often miss subtle execution paths, such as early returns, `else` branches, or specific mathematical edge cases (e.g., negative limits, zero vectors). Utilizing `cargo-llvm-cov --html` provides explicit line-by-line visibility into what is actually executed during tests.
-**Action:** When auditing a crate (like `locus` or `physics-pbd`) that appears well-tested, run `cargo llvm-cov -p <crate> --all-features --html` and inspect the generated HTML report. Specifically target the missed lines to create pinpoint tests (e.g., covering `Vec2::reflect` with a zero-length vector, or negative `limit` values) and achieve 100% coverage on core mathematical and logical constructs.
+**NaN Bypassing Bounds Checks**
+**Learning:** `NaN` comparisons (e.g. `NaN < 0.0` and `NaN >= MAX`) always evaluate to `false`. When a `NaN` float is later cast to `usize`, it becomes `0`, silently bypassing array bounds checks and corrupting index `0`.
+**Action:** Always use `.is_finite()` on float inputs before performing bounds checks that protect array indexing logic.
 
-**2024-03-27 - [Test coverage for `resonance-audio`]**
-**Learning:** `resonance-audio` had ~75% coverage. Missed regions were mostly edge cases and unimplemented functionalities around `Material` types, `AudioCommand`s handling (like `AddWall`, `ClearWaves`, `ClearWalls`, `PaintMaterial`, `Tone`), and bounds checking logic inside the physics update loop. Added targeted tests to these scenarios to hit >97% coverage.
-**Action:** Identified edge cases inside of `physics.rs` and `audio.rs` that were unreachable without direct testing, specifically enum types and grid limits. Added robust checks against unexpected behavior without requiring large UI test suites.
+**Unbounded String Concatenation**
+**Learning:** Opcodes that concatenate or grow data (like `Add` for strings) can be exploited in loops to cause Out-Of-Memory (OOM) crashes if global limits aren't enforced during the operation.
+**Action:** Enforce strict limits (e.g. `MAX_STRING_LEN`) and truncate or reject operations that exceed these bounds during the execution logic.

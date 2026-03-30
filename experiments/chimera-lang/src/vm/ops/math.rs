@@ -63,8 +63,19 @@ impl crate::vm::ChimeraVM {
                     if a_is_str && b_is_str {
                         let b = self.stack.pop().unwrap();
                         let a = self.stack.pop().unwrap();
-                        if let (Value::Str(s1), Value::Str(s2)) = (a, b) {
-                            self.stack.push(Value::Str(s1 + &s2));
+                        if let (Value::Str(mut s1), Value::Str(s2)) = (a, b) {
+                            // 🔒 WARDEN: Enforce MAX_STRING_LEN during concatenation
+                            if s1.len() + s2.len() > crate::vm::MAX_STRING_LEN {
+                                s1.push_str(&s2);
+                                s1.truncate(crate::vm::MAX_STRING_LEN);
+                                self.output.push(format!(
+                                    "ADD: String truncated to {} chars",
+                                    crate::vm::MAX_STRING_LEN
+                                ));
+                            } else {
+                                s1.push_str(&s2);
+                            }
+                            self.stack.push(Value::Str(s1));
                             return;
                         }
                     }
