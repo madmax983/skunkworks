@@ -51,3 +51,7 @@
 **[Removing intermediate Vec allocations for string byte iteration]**
 **Learning:** Collecting `.chars()` or `.bytes()` into an intermediate `Vec` or `VecDeque` just to consume them sequentially causes unnecessary heap allocations and decoding overhead for string parsing.
 **Action:** Use `.as_bytes()` directly for array-like indexing on strings when characters are ASCII, and use iterators directly like `.bytes().next().unwrap_or(0)` instead of collecting into a `VecDeque`.
+
+## 2024-03-27 - Remove per-frame allocations in sono-boids update loop
+**Learning:** `Vec::collect()` inside a hot per-frame `update` loop generates significant unnecessary allocations.
+**Action:** Lift `Vec` declarations to struct fields, use `Vec::with_capacity()` during initialization, and `clear()` and `extend()` in the loop instead of re-allocating.

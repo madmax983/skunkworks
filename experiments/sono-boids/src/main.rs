@@ -91,6 +91,8 @@ struct App {
     cmd_tx: Sender<AudioCommand>,
     snap_rx: Receiver<AudioSnapshot>,
     running: bool,
+    positions: Vec<Vec2>,
+    velocities: Vec<Vec2>,
 }
 
 impl App {
@@ -112,6 +114,8 @@ impl App {
             cmd_tx,
             snap_rx,
             running: true,
+            positions: Vec::with_capacity(50),
+            velocities: Vec::with_capacity(50),
         })
     }
 
@@ -126,8 +130,13 @@ impl App {
         }
 
         // Update boids
-        let positions: Vec<Vec2> = self.boids.iter().map(|b| b.position).collect();
-        let velocities: Vec<Vec2> = self.boids.iter().map(|b| b.velocity).collect();
+        self.positions.clear();
+        self.positions.extend(self.boids.iter().map(|b| b.position));
+
+        self.velocities.clear();
+        self.velocities
+            .extend(self.boids.iter().map(|b| b.velocity));
+
         let mut forces = Vec::with_capacity(self.boids.len());
 
         let params = FlockingParams {
@@ -141,7 +150,7 @@ impl App {
         };
 
         for (i, _) in self.boids.iter().enumerate() {
-            let force = compute_force(&positions, &velocities, i, &params);
+            let force = compute_force(&self.positions, &self.velocities, i, &params);
             forces.push(force);
         }
 
@@ -179,24 +188,21 @@ fn main() -> Result<()> {
             .unwrap_or_else(|| Duration::from_secs(0));
 
         if event::poll(timeout)? {
-            match event::read()? {
-                Event::Key(key) => {
-                    if key.kind == KeyEventKind::Press {
-                        match key.code {
-                            KeyCode::Esc | KeyCode::Char('q') => app.running = false,
-                            KeyCode::Char(' ') => {
-                                // Big splash
-                                let _ = app.cmd_tx.send(AudioCommand::Pluck {
-                                    x: WIDTH / 2,
-                                    y: HEIGHT / 2,
-                                    strength: 2.0,
-                                });
-                            }
-                            _ => {}
+            if let Event::Key(key) = event::read()? {
+                if key.kind == KeyEventKind::Press {
+                    match key.code {
+                        KeyCode::Esc | KeyCode::Char('q') => app.running = false,
+                        KeyCode::Char(' ') => {
+                            // Big splash
+                            let _ = app.cmd_tx.send(AudioCommand::Pluck {
+                                x: WIDTH / 2,
+                                y: HEIGHT / 2,
+                                strength: 2.0,
+                            });
                         }
+                        _ => {}
                     }
                 }
-                _ => {}
             }
         }
 
