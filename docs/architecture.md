@@ -443,22 +443,6 @@ classDiagram
     Grid ..> TradeEvent : Emits
 ```
 
-### Synaptic Physics (crates/synaptic-physics)
-
-Encapsulates the Izhikevich neuron model for biologically plausible neural simulations (ADR 027).
-
-```mermaid
-classDiagram
-    class Izhikevich {
-        +f32 v
-        +f32 u
-        +f32 tau
-        +update(dt, current) (f32, bool)
-        +inject(current)
-        +random() Izhikevich
-    }
-```
-
 ### Git Associates (crates/git-associates)
 
 Helper utilities for scanning and parsing Git history, used by `tectonic-git` and others (ADR 033).
@@ -580,7 +564,7 @@ classDiagram
 
 ### Neuro Simulation (crates/neuro-sim)
 
-Provides a high-level network simulation layer for spiking neural networks, managing synaptic connectivity and propagation delays (ADR 043).
+Encapsulates both the low-level Izhikevich neuron model (ADR 027) and a high-level network simulation layer for spiking neural networks, managing synaptic connectivity and propagation delays (ADR 043, ADR 075).
 
 ```mermaid
 classDiagram
@@ -601,7 +585,7 @@ classDiagram
     }
 
     class Izhikevich {
-        <<Library: synaptic-physics>>
+        <<Module: physics>>
         +update()
     }
 
