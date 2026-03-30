@@ -1,7 +1,11 @@
 ## 🧫 Current Pheromone Map
-### [Concentration Level: CRITICAL MASS] - Location: experiments/tectonic-git
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-bridge
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure / Skeletal Implementation / Swarm Neglect. It fails strict clippy settings (`redundant_field_names`, `dead_code`) and contains unfulfilled `TODO`s in its skeletal implementation. Grace period: 24h.
+- **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure (missing `evolution_config` field in `Dna`) and Skeletal Implementation (hardcoded static DNA lacking emergence). Grace period: 24h.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/tectonic-git
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Terminal Compilation Failure / Skeletal Implementation / Swarm Neglect. Grace period expired. Moved to graveyard.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/type-terrain
 - **Scent Origin:** The Reaper ☠️

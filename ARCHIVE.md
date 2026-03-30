@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **tectonic-git**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Skeletal Implementation / Swarm Neglect. Fails strict clippy settings (`redundant_field_names`, `dead_code`) and contains unfulfilled `TODO`s in its skeletal implementation. Grace period: 24h.
+- **chimera-bridge**: Specimen condemned. Diagnosis: Terminal Compilation Failure (missing `evolution_config` field in `Dna`) and Skeletal Implementation (ants use hardcoded static DNA lacking emergence). Grace period: 24h.
 
 ## Pardoned
 - **chimera-runes**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by initializing `evolution_config` and migrating deprecated `ratatui` APIs (`f.size()`, `get_mut()`). The organism thrives once more.
@@ -319,3 +319,4 @@
 - **polyrhythmic-cylinder**: Specimen executed. Diagnosis: Terminal Stagnation / Documentation Void. Grace period expired. Moved to graveyard.
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
+- **tectonic-git**: Specimen executed. Diagnosis: Terminal Compilation Failure / Skeletal Implementation / Swarm Neglect. Grace period expired. Moved to graveyard.
