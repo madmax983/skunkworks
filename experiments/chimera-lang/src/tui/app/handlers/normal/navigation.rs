@@ -191,7 +191,7 @@ pub(crate) fn handle_navigation_input(key_code: KeyCode, vm: &mut ChimeraVM, app
                             }
                         }
                         #[cfg(feature = "nova")]
-                        ViewMode::Weaver | ViewMode::Laboratory => {
+                        ViewMode::Weaver | ViewMode::Laboratory | ViewMode::Prolouge => {
                             match app_state.selected_strand {
                                 // 0=A, 1=B, 2=Method/Pattern
                                 0 => {
@@ -338,7 +338,7 @@ pub(crate) fn handle_navigation_input(key_code: KeyCode, vm: &mut ChimeraVM, app
                             }
                         }
                         #[cfg(feature = "nova")]
-                        ViewMode::Weaver | ViewMode::Laboratory => {
+                        ViewMode::Weaver | ViewMode::Laboratory | ViewMode::Prolouge => {
                             let max_strand = vm.dna.helix.strands.len().saturating_sub(1);
                             match app_state.selected_strand {
                                 // 0=A, 1=B, 2=Method
@@ -639,7 +639,7 @@ pub(crate) fn handle_navigation_input(key_code: KeyCode, vm: &mut ChimeraVM, app
                         ViewMode::Catalyst => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
-                        ViewMode::Weaver | ViewMode::Laboratory => {
+                        ViewMode::Weaver | ViewMode::Laboratory | ViewMode::Prolouge => {
                             if app_state.selected_strand < 2 {
                                 app_state.selected_strand += 1;
                             } else {
@@ -836,7 +836,7 @@ pub(crate) fn handle_navigation_input(key_code: KeyCode, vm: &mut ChimeraVM, app
                         ViewMode::Schematic => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
-                        ViewMode::Weaver | ViewMode::Laboratory => {
+                        ViewMode::Weaver | ViewMode::Laboratory | ViewMode::Prolouge => {
                             if app_state.selected_strand > 0 {
                                 app_state.selected_strand -= 1;
                             } else {

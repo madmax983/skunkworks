@@ -2615,6 +2615,8 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Codex => ViewMode::Verbum,
                             ViewMode::Verbum => ViewMode::Genome,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Prolouge => ViewMode::Genome,
                         };
                     }
                     #[cfg(feature = "nova")]
@@ -4720,6 +4722,7 @@ pub(crate) fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
     {
         views.push((ViewMode::Grimoire, "Grimoire", "Tab"));
         views.push((ViewMode::Laboratory, "Laboratory", "Tab"));
+        views.push((ViewMode::Prolouge, "Prolouge", "Tab"));
         views.push((ViewMode::Topology, "Topology", "Tab"));
         views.push((ViewMode::Graveyard, "Graveyard", "Tab"));
         views.push((ViewMode::PianoRoll, "Piano Roll", "p"));

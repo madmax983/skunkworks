@@ -13,3 +13,5 @@ pub(crate) use magic::*;
 pub(crate) use misc::*;
 pub(crate) use physics::*;
 pub(crate) use tech::*;
+
+// Note: render_prolouge is defined in magic.rs and exported via wildcard.
