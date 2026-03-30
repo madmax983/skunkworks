@@ -14,3 +14,7 @@
 
 **Saved:** [Lines of code / Cognitive load]
 Reduced roughly 50-60 lines of unnecessary boilerplate across 16+ `experiments/chimera-lang/src/vm` files. Decreased cognitive load by improving idiomatic Rust conformance. Also fixed NaN-propagation logic bugs inside neuro-physics code.
+## [Reduction]
+**Bloat:** The `RhythmEvent` enum in `experiments/turbulent-rhythms/src/rhythm.rs` which was an "Enterprise FizzBuzz" wrapper containing only a single variant: `StateChange(usize, MusicianState)`.
+**Cut:** Removed the `RhythmEvent` enum entirely. Simplified the `rhythm_tx` channel to send and receive the raw `(usize, MusicianState)` tuple directly.
+**Saved:** Unnecessary indirection, pattern matching boilerplate on a single variant, and about 5 lines of code.

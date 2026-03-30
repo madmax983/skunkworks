@@ -14,11 +14,6 @@ pub enum MusicianState {
     Playing,
 }
 
-#[derive(Debug, PartialEq)]
-pub enum RhythmEvent {
-    StateChange(usize, MusicianState),
-}
-
 pub struct Musician {
     pub id: usize,
     pub pitch: f32,
@@ -31,24 +26,23 @@ impl Musician {
         self,
         beat_lock: Arc<Mutex<()>>,
         audio_tx: Sender<AudioEvent>,
-        rhythm_tx: Sender<RhythmEvent>,
+        rhythm_tx: Sender<(usize, MusicianState)>,
         running: Arc<AtomicBool>,
     ) -> thread::JoinHandle<()> {
         thread::spawn(move || {
             while running.load(Ordering::Relaxed) {
                 // RESTING
-                let _ = rhythm_tx.send(RhythmEvent::StateChange(self.id, MusicianState::Resting));
+                let _ = rhythm_tx.send((self.id, MusicianState::Resting));
                 thread::sleep(Duration::from_millis(self.loop_duration_ms));
 
                 // WAITING
-                let _ = rhythm_tx.send(RhythmEvent::StateChange(self.id, MusicianState::Waiting));
+                let _ = rhythm_tx.send((self.id, MusicianState::Waiting));
 
                 {
                     let _guard = beat_lock.lock().unwrap();
 
                     // PLAYING
-                    let _ =
-                        rhythm_tx.send(RhythmEvent::StateChange(self.id, MusicianState::Playing));
+                    let _ = rhythm_tx.send((self.id, MusicianState::Playing));
                     let _ = audio_tx.send(AudioEvent::NoteOn {
                         id: self.id,
                         freq: self.pitch,
@@ -69,11 +63,11 @@ pub struct Conductor {
     beat_lock: Arc<Mutex<()>>,
     running: Arc<AtomicBool>,
     audio_tx: Sender<AudioEvent>,
-    rhythm_tx: Sender<RhythmEvent>,
+    rhythm_tx: Sender<(usize, MusicianState)>,
 }
 
 impl Conductor {
-    pub fn new(audio_tx: Sender<AudioEvent>, rhythm_tx: Sender<RhythmEvent>) -> Self {
+    pub fn new(audio_tx: Sender<AudioEvent>, rhythm_tx: Sender<(usize, MusicianState)>) -> Self {
         Self {
             handles: Vec::new(),
             beat_lock: Arc::new(Mutex::new(())),
@@ -130,19 +124,19 @@ mod tests {
 
         // Expect Resting
         match rhythm_rx.recv_timeout(Duration::from_millis(200)) {
-            Ok(RhythmEvent::StateChange(1, MusicianState::Resting)) => {}
+            Ok((1, MusicianState::Resting)) => {}
             x => panic!("Expected Resting, got {:?}", x),
         }
 
         // Expect Waiting (after 10ms)
         match rhythm_rx.recv_timeout(Duration::from_millis(200)) {
-            Ok(RhythmEvent::StateChange(1, MusicianState::Waiting)) => {}
+            Ok((1, MusicianState::Waiting)) => {}
             x => panic!("Expected Waiting, got {:?}", x),
         }
 
         // Expect Playing (acquired lock immediately)
         match rhythm_rx.recv_timeout(Duration::from_millis(200)) {
-            Ok(RhythmEvent::StateChange(1, MusicianState::Playing)) => {}
+            Ok((1, MusicianState::Playing)) => {}
             x => panic!("Expected Playing, got {:?}", x),
         }
 

@@ -14,11 +14,11 @@ mod rhythm;
 
 use audio::AudioEngine;
 use fluid::{FluidImage, FluidParams, FluidPlugin, ForceImage};
-use rhythm::{Conductor, MusicianState, RhythmEvent};
+use rhythm::{Conductor, MusicianState};
 
 // Resource to hold the receiver for Bevy system
 #[derive(Resource)]
-struct RhythmReceiver(Receiver<RhythmEvent>);
+struct RhythmReceiver(Receiver<(usize, MusicianState)>);
 
 // Resource to hold system info
 #[derive(Resource)]
@@ -120,8 +120,7 @@ fn apply_rhythm_forces(
     data.fill(0.0);
 
     // Read all pending events
-    while let Ok(event) = receiver.0.try_recv() {
-        let RhythmEvent::StateChange(id, state) = event;
+    while let Ok((id, state)) = receiver.0.try_recv() {
         if state == MusicianState::Playing {
             // Determine position based on ID
             // Map IDs 1..5 to locations
@@ -134,7 +133,7 @@ fn apply_rhythm_forces(
                 _ => (GRID_SIZE / 2, GRID_SIZE / 2),
             };
 
-            let idx = ((y as u32 * GRID_SIZE + x as u32) * 4) as usize;
+            let idx = ((y * GRID_SIZE + x) * 4) as usize;
 
             if idx + 4 < data.len() {
                 // Inject Density (Color)
@@ -143,7 +142,7 @@ fn apply_rhythm_forces(
 
                 // Inject Velocity
                 // Random or directional?
-                let angle = (time.elapsed_seconds() * 10.0 + id as f32) % 6.28;
+                let angle = (time.elapsed_seconds() * 10.0 + id as f32) % std::f32::consts::TAU;
                 let speed = 50.0;
                 data[idx + 1] = angle.cos() * speed; // G = Vel X
                 data[idx + 2] = angle.sin() * speed; // B = Vel Y
