@@ -4,8 +4,8 @@
 //! as dynamic magnetic nodes acting upon the microscopic fluid particle
 //! simulation from `ferrous-fluid`.
 
-use macroquad::prelude::*;
 use ::rand::Rng;
+use macroquad::prelude::*;
 
 mod physics;
 use physics::{PendulumSystem, Universe};
@@ -20,24 +20,9 @@ fn init_chaos_pendulum() -> PendulumSystem {
         true,
         "root".to_string(),
     );
-    let p1 = sys.add_node(
-        locus::Vec2::new(500.0, 400.0),
-        2.0,
-        false,
-        "p1".to_string(),
-    );
-    let p2 = sys.add_node(
-        locus::Vec2::new(500.0, 300.0),
-        1.5,
-        false,
-        "p2".to_string(),
-    );
-    let p3 = sys.add_node(
-        locus::Vec2::new(500.0, 200.0),
-        1.0,
-        false,
-        "p3".to_string(),
-    );
+    let p1 = sys.add_node(locus::Vec2::new(500.0, 400.0), 2.0, false, "p1".to_string());
+    let p2 = sys.add_node(locus::Vec2::new(500.0, 300.0), 1.5, false, "p2".to_string());
+    let p3 = sys.add_node(locus::Vec2::new(500.0, 200.0), 1.0, false, "p3".to_string());
 
     sys.add_link(root, p1, 100.0);
     sys.add_link(p1, p2, 100.0);
@@ -116,7 +101,8 @@ async fn main() {
 
         if is_mouse_button_down(MouseButton::Left) {
             if let Some(idx) = hovered_idx {
-                pendulum.nodes[idx].pos = locus::Vec2::new(world_mouse.x as f64, world_mouse.y as f64);
+                pendulum.nodes[idx].pos =
+                    locus::Vec2::new(world_mouse.x as f64, world_mouse.y as f64);
                 pendulum.nodes[idx].prev_pos =
                     locus::Vec2::new(world_mouse.x as f64, world_mouse.y as f64);
             }
@@ -135,7 +121,12 @@ async fn main() {
 
         // Draw Fluid Particles
         for p in &universe.particles {
-            draw_circle(p.pos.x as f32, p.pos.y as f32, 2.0 / zoom, Color::new(0.0, 1.0, 1.0, 1.0));
+            draw_circle(
+                p.pos.x as f32,
+                p.pos.y as f32,
+                2.0 / zoom,
+                Color::new(0.0, 1.0, 1.0, 1.0),
+            );
         }
 
         // Draw Pendulum Links

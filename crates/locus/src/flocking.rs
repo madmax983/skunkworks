@@ -229,9 +229,10 @@ fn compute_steering(mut desired: Vec2, current_vel: Vec2, max_speed: f64, max_fo
 
         // Optimization: Limit logic inlined to avoid redundant sqrt/divs
         let s_sq = desired.magnitude_squared();
-        if s_sq > max_force * max_force {
-            let s_mag = s_sq.sqrt();
-            desired *= max_force / s_mag;
+        let max_force_sq = max_force * max_force;
+        if s_sq > max_force_sq {
+            let inv_s_mag = 1.0 / s_sq.sqrt();
+            desired *= max_force * inv_s_mag;
         }
         desired
     } else {
