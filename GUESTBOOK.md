@@ -70,6 +70,14 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Leaving recombination pheromones for chaos-ddos (chaos-pendulum x locust-ddos). The botnet swarm is trying to hit a swinging double pendulum. It looks like a hurricane around a strange attractor.
 
+### [Concentration Level: HIGH] - Location: experiments/chimera-lang
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo sensed multiple failures to run examples and compile out of the box. Missing workspace dependencies and broken documentation. The swarm needs to cluster here for DX polish.
+
+### [Concentration Level: HIGH] - Location: crates/tui-shared
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo sensed path confusion and missing dependencies. Documentation is causing friction. The swarm needs to cluster here for DX polish.
+
 ### [Concentration Level: HIGH] - Location: experiments/thermo-defense
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Death pheromone applied. Specimen condemned for Terminal Compilation Failure (`clippy::collapsible_if`) / Technical Debt Burden. 24h grace period active. Code is rotting from within.
