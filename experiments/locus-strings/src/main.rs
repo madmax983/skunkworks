@@ -42,7 +42,10 @@ async fn main() {
         );
         let angle = rand::gen_range(0.0, std::f64::consts::PI * 2.0);
         let vel = LocusVec2::new(angle.cos(), angle.sin()) * 2.0;
-        boids.push(Boid { position: pos, velocity: vel });
+        boids.push(Boid {
+            position: pos,
+            velocity: vel,
+        });
     }
 
     let params = FlockingParams {
@@ -112,9 +115,11 @@ async fn main() {
                 let boid_vel = boid.velocity;
                 let boid_prev = boid_pos - boid_vel * f64::from(dt);
 
-                let crossed = (boid_prev.x < f64::from(string_x) && boid_pos.x >= f64::from(string_x))
+                let crossed = (boid_prev.x < f64::from(string_x)
+                    && boid_pos.x >= f64::from(string_x))
                     || (boid_prev.x > f64::from(string_x) && boid_pos.x <= f64::from(string_x));
-                let in_range = boid_pos.y >= f64::from(s.pos.y) && boid_pos.y <= f64::from(s.pos.y + s.length);
+                let in_range =
+                    boid_pos.y >= f64::from(s.pos.y) && boid_pos.y <= f64::from(s.pos.y + s.length);
 
                 if crossed && in_range {
                     // Pluck!
@@ -136,7 +141,14 @@ async fn main() {
                 if dist_to_string < 150.0 && in_range {
                     let force_mag = f64::from(s.vibration) * 0.1 / dist_to_string.mul_add(0.1, 1.0);
                     // Magnetic force repels or attracts based on vibration polarity
-                    let force_dir = LocusVec2::new(if boid_pos.x > f64::from(string_x) { 1.0 } else { -1.0 }, 0.0);
+                    let force_dir = LocusVec2::new(
+                        if boid_pos.x > f64::from(string_x) {
+                            1.0
+                        } else {
+                            -1.0
+                        },
+                        0.0,
+                    );
                     boid.velocity += force_dir * force_mag * f64::from(dt) * 50.0;
                 }
             }
@@ -163,8 +175,20 @@ async fn main() {
         }
 
         draw_text("Locus Strings", 10.0, 30.0, 30.0, WHITE);
-        draw_text("Boids swarm and pluck resonant strings", 10.0, 50.0, 20.0, GRAY);
-        draw_text("String vibrations create magnetic fields", 10.0, 70.0, 20.0, GRAY);
+        draw_text(
+            "Boids swarm and pluck resonant strings",
+            10.0,
+            50.0,
+            20.0,
+            GRAY,
+        );
+        draw_text(
+            "String vibrations create magnetic fields",
+            10.0,
+            70.0,
+            20.0,
+            GRAY,
+        );
         draw_text("that physically perturb the flock", 10.0, 90.0, 20.0, GRAY);
 
         next_frame().await;
