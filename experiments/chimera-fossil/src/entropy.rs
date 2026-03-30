@@ -154,7 +154,8 @@ impl std::fmt::Display for Fossil {
         ]);
 
         let is_pristine = integrity >= 100.0;
-        let bool_cell = Cell::new(is_pristine.to_string()).fg(if is_pristine {
+        let bool_text = if is_pristine { "True" } else { "False" };
+        let bool_cell = Cell::new(bool_text).fg(if is_pristine {
             Color::Green
         } else {
             Color::Red
