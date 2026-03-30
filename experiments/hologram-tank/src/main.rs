@@ -54,7 +54,10 @@ impl App {
         });
 
         // Add a wall to make it interesting
-        let _ = cmd_tx.send(AudioCommand::AddWall { x: GRID_WIDTH / 2, y: GRID_HEIGHT / 2 });
+        let _ = cmd_tx.send(AudioCommand::AddWall {
+            x: GRID_WIDTH / 2,
+            y: GRID_HEIGHT / 2,
+        });
 
         let mut app = Self {
             hologram: Hologram::new(GRID_WIDTH, GRID_HEIGHT),
@@ -179,7 +182,11 @@ impl App {
 
         // Header
         let title = Paragraph::new(" HOLOGRAM TANK - Acoustic Holography ")
-            .style(Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD))
+            .style(
+                Style::default()
+                    .fg(Color::Cyan)
+                    .add_modifier(Modifier::BOLD),
+            )
             .block(Block::default().borders(Borders::ALL));
         f.render_widget(title, chunks[0]);
 

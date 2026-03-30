@@ -51,3 +51,7 @@
 **[Removing intermediate Vec allocations for string byte iteration]**
 **Learning:** Collecting `.chars()` or `.bytes()` into an intermediate `Vec` or `VecDeque` just to consume them sequentially causes unnecessary heap allocations and decoding overhead for string parsing.
 **Action:** Use `.as_bytes()` directly for array-like indexing on strings when characters are ASCII, and use iterators directly like `.bytes().next().unwrap_or(0)` instead of collecting into a `VecDeque`.
+
+**[Removing unnecessary clone() for local string binding]**
+**Learning:** Calling `.clone()` on a `String` (like `name.clone()`) before passing it into a struct initialization (`Atom { name, ... }`) inside a loop is unnecessary when the original `name` variable is no longer used in the rest of the loop block. It results in a completely avoidable heap allocation and memory copy.
+**Action:** Remove the `.clone()` call and let the struct take ownership of the original `String` binding.

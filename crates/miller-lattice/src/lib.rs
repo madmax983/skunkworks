@@ -246,7 +246,7 @@ impl Crystal {
                     crystal.atoms.push(Atom {
                         position: pos,
                         is_dir,
-                        name: name.clone(),
+                        name,
                         path: entry.path(),
                         normal: new_normal,
                     });
