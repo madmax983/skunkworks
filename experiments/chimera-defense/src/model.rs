@@ -106,6 +106,7 @@ impl Tower {
             helix: Helix {
                 strands: vec![Strand { genes }],
             },
+            evolution_config: None,
         };
 
         Self {

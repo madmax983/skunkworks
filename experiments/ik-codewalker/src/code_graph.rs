@@ -14,6 +14,7 @@ impl Plugin for CodeGraphPlugin {
 
 #[derive(Component)]
 pub struct CodeGraph {
+    #[allow(dead_code)]
     pub root: Entity,
     pub nodes: Vec<Entity>,
 }
@@ -33,7 +34,7 @@ fn setup_code_graph(mut commands: Commands) {
     // BFS generation
     let mut head = 0;
     while head < queue.len() {
-        let (parent, parent_pos, depth) = queue[head];
+        let (_parent, parent_pos, depth) = queue[head];
         head += 1;
 
         if depth >= 4 {

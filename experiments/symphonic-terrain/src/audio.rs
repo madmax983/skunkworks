@@ -36,7 +36,7 @@ pub fn init_audio(_state: Arc<RwLock<SharedState>>) -> anyhow::Result<AudioHandl
         let channels = config.channels() as usize;
 
         let state_clone = _state.clone();
-        let mut phases = Vec::new(); // Phase for each oscillator, we might need to manage this dynamically
+        let mut phases: Vec<f32> = Vec::new(); // Phase for each oscillator, we might need to manage this dynamically
 
         // Simplification: Just sum up all oscillators.
         // But oscillators change every frame (cleared and re-added).

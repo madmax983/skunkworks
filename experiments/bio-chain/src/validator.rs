@@ -151,6 +151,7 @@ impl Validator {
             helix: Helix {
                 strands: vec![validation_strand, proposal_strand, voting_strand],
             },
+            evolution_config: None,
         }
     }
 

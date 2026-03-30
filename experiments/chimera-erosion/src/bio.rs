@@ -28,6 +28,7 @@ impl Plant {
             // Return empty DNA as fallback
             Dna {
                 helix: Helix { strands: vec![] },
+                evolution_config: None,
             }
         });
 

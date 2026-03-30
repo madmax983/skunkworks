@@ -60,7 +60,7 @@ impl AudioEngine {
                     None,
                 )?,
                 _ => return Err(anyhow::anyhow!("Unsupported sample format")),
-            }?;
+            };
 
             stream.play()?;
 

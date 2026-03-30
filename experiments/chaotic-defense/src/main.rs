@@ -44,7 +44,10 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<()> {
+fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<()>
+where
+    <B as ratatui::backend::Backend>::Error: Send + Sync + std::error::Error + 'static,
+{
     let mut world = World::new();
     let mut last_tick = Instant::now();
     let tick_rate = Duration::from_millis(50);

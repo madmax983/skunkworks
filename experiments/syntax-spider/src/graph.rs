@@ -8,6 +8,7 @@ pub struct Node {
     pub position: Vec2,
     pub radius: f32,
     pub depth: usize,
+    #[allow(dead_code)]
     pub parent_idx: Option<usize>,
 }
 

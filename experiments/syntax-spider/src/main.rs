@@ -38,6 +38,7 @@ fn main() {
 }
 
 #[derive(Component)]
+#[allow(dead_code)]
 struct GraphNode {
     path: std::path::PathBuf,
     original_scale: f32,
@@ -53,6 +54,7 @@ struct SpiderBody {
 }
 
 #[derive(Component)]
+#[allow(dead_code)]
 struct SpiderLeg {
     index: usize,
     offset_angle: f32,

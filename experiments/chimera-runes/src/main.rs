@@ -121,7 +121,10 @@ fn execute_dna(dna_bytes: &[u8]) -> String {
     let helix = Helix {
         strands: vec![Strand { genes }],
     };
-    let dna = Dna { helix };
+    let dna = Dna {
+        helix,
+        evolution_config: None,
+    };
 
     // Create VM
     let mut vm = ChimeraVM::new(dna);

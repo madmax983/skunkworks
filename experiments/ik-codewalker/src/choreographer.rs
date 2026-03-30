@@ -1,6 +1,4 @@
 use crate::code_graph::CodeGraph;
-use crate::components::*;
-use crate::ik::IKChain;
 use bevy::prelude::*;
 use rand::Rng;
 

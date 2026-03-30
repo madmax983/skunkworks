@@ -1,4 +1,3 @@
-use crate::components::*;
 use bevy::prelude::*;
 
 pub struct IKPlugin;
@@ -18,7 +17,7 @@ pub struct IKChain {
 }
 
 fn solve_ik(
-    mut chains: Query<&IKChain>,
+    chains: Query<&IKChain>,
     mut transforms: Query<&mut Transform>,
     global_transforms: Query<&GlobalTransform>,
 ) {

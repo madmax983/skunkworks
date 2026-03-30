@@ -57,6 +57,7 @@ impl Network {
     fn genesis_viruses() -> Vec<Virus> {
         let dummy_dna = Dna {
             helix: Helix { strands: vec![] },
+            evolution_config: None,
         };
         vec![
             Virus::new(
