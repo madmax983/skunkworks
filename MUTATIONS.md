@@ -25,6 +25,69 @@ Additionally, the success of translating complex abstract graphs (like codebases
 
 ## 🌿 Attempted Crosses
 
+### mnem-tissue
+- **Parents**: experiments/mnem-rot + experiments/ferrous-tissue
+- **Concept**: Rotting Tissue. A soft-body organism representing a codebase graph.
+- **Novel trait**: Tissue Necrosis. As codebase files (nodes) increase in entropy, their physical constraints weaken and expand, violently shaking. The codebase physically sags, bloats, and tears apart from its own technical debt.
+- **Status**: experiments/mnem-tissue
+- **Evaluation**: Success. Compiled. Abstract entropy translates directly into the structural integrity of a soft-body organism.
+
+### ferrous-chimera
+- **Parents**: crates/ferrous-core + experiments/chimera-lang
+- **Concept**: Evolving Magnetic Tissue.
+- **Novel trait**: Magnetic Genetics. The agents adapt magnetic dipoles via genetics.
+- **Status**: experiments/ferrous-chimera
+- **Evaluation**: Success. Compiled. Magnetic genetics successfully implemented.
+
+### luminous-valley
+- **Parents**: experiments/luminous-flock + experiments/bifurcation-landscape
+- **Concept**: Attractor Swarming.
+- **Novel trait**: The swarm traces strange attractors.
+- **Status**: experiments/luminous-valley
+- **Evaluation**: Success. Compiled. Swarm follows strange attractors.
+
+### gravitational-bridge
+- **Parents**: experiments/chaos-pendulum + experiments/bio-transit
+- **Concept**: Slime Mold in Orbit.
+- **Novel trait**: Fungal Orbits.
+- **Status**: experiments/gravitational-bridge
+- **Evaluation**: Success. Compiled. Orbital slime mold established.
+
+### spqr-rsa
+- **Parents**: experiments/biomorphic-lexicon + experiments/neuro-cipher
+- **Concept**: Roman Numeral Cryptography.
+- **Novel trait**: Classical Encryption.
+- **Status**: experiments/spqr-rsa
+- **Evaluation**: Success. Compiled. Classical Encryption established.
+
+### quipu-symphony
+- **Parents**: crates/quipu + experiments/ferrous-strings
+- **Concept**: Acoustic Memory Knots.
+- **Novel trait**: Acoustic fabric.
+- **Status**: experiments/quipu-symphony
+- **Evaluation**: Success. Compiled. Acoustic memory knots.
+
+### gaze-attractor
+- **Parents**: experiments/chaos-pendulum + experiments/foveated-code
+- **Concept**: The Observer Effect. A chaotic fabric of connected nodes where a simulated eye tracks the most energetic parts.
+- **Novel trait**: The Observer Effect. The system visualizes the tension between "Entropy" (Natural Chaos) and "Attention" (The Observer). The gaze can act as a damper or an exciter, altering the physics based on attention.
+- **Status**: experiments/gaze-attractor
+- **Evaluation**: Success. Compiled. The observer effectively alters the chaotic physics of the system.
+
+### chimera-pachinko
+- **Parents**: experiments/synaptic-pachinko + experiments/chimera-lang
+- **Concept**: Evolutionary Pachinko. A pachinko board where pins are living organisms driven by ChimeraVM.
+- **Novel trait**: Self-Organizing Pachinko. Pins evolve and reproduce based on their success at catching packets (HTTP/SSH) while avoiding malware, naturally evolving a board layout through natural selection.
+- **Status**: experiments/chimera-pachinko
+- **Evaluation**: Success. Compiled. Emergent self-organizing pin layouts successfully evolve to maximize packet capture.
+
+### etymological-mycelium
+- **Parents**: experiments/git-etymologist + experiments/chaotic-mycelium
+- **Concept**: Semantic Mycology. The etymology of codebase lines visualized as a fungal network.
+- **Novel trait**: Organic Semantic Growth. Spores grow across commits based on the Levenshtein distance between lines. Stable code forms straight hyphae, while mutating code branches chaotically, visually mapping the semantic volatility of the repository history.
+- **Status**: experiments/etymological-mycelium
+- **Evaluation**: Success. Compiled. The semantic volatility of the repository history is successfully mapped as an organic fungal network.
+
 ### locust-reaper
 - **Parents**: experiments/locust-ddos + experiments/myco-reaper
 - **Concept**: Garbage Collection Cyberwarfare. The server is protected by an intricate forest of nodes (firewalls). The locusts (DDoS packets) act as the "Reaper fungus" trying to find detached reference cycles and dead matter to consume, breaking down the server's defenses.

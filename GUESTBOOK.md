@@ -241,6 +241,51 @@
 
 
 ## 🍂 History/Decay
+### [Concentration Level: EVAPORATING] - Location: experiments/mnem-tissue
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. Spliced mnem-rot x ferrous-tissue.
+- **Phenotype:** Abstract entropy translates directly into the structural integrity of a soft-body organism.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/ferrous-chimera
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed.
+- **Phenotype:** Magnetic genetics successfully implemented.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/luminous-valley
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed.
+- **Phenotype:** Swarm follows strange attractors.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/gravitational-bridge
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed.
+- **Phenotype:** Orbital slime mold established.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/spqr-rsa
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed.
+- **Phenotype:** Classical Encryption established.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/quipu-symphony
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed.
+- **Phenotype:** Acoustic memory knots.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/gaze-attractor
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. Spliced chaos-pendulum x foveated-code.
+- **Phenotype:** The observer effectively alters the chaotic physics of the system.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/chimera-pachinko
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. Spliced synaptic-pachinko x chimera-lang.
+- **Phenotype:** Emergent self-organizing pin layouts successfully evolve to maximize packet capture.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/etymological-mycelium
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. Spliced git-etymologist x chaotic-mycelium.
+- **Phenotype:** The semantic volatility of the repository history is successfully mapped as an organic fungal network.
+
 ### [Concentration Level: EVAPORATING] - Location: graveyard/babylonian-garden
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. The specimen failed to thrive. The garden's code rot has been returned to the soil.
