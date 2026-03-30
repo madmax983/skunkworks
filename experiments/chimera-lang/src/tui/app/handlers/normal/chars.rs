@@ -320,7 +320,7 @@ pub(crate) fn handle_char_input(c: char, vm: &mut ChimeraVM, app_state: &mut App
                             app_state.view_selector_state.borrow_mut().select(Some(0));
                         }
                     }
-        KeyCode::Char('q') => return Ok(()),
+        KeyCode::Char('q') => return Ok(true),
         KeyCode::Char(' ') => {
                         if let ViewMode::Evolution = app_state.view_mode {
                             if let Some(engine) = &mut app_state.evolution_state.engine {

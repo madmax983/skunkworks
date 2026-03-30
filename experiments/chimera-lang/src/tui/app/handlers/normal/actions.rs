@@ -21,19 +21,19 @@ pub(crate) fn handle_action_input(key_code: KeyCode, vm: &mut ChimeraVM, app_sta
                             }
                             app_state.status_msg =
                                 format!("Challenge set to {}", app_state.evolution_state.challenge);
-                            return Ok(());
+                            return Ok(false);
                         }
 
                         #[cfg(feature = "nova")]
                         if let ViewMode::Genesis = app_state.view_mode {
                             app_state.genesis_focus = (app_state.genesis_focus + 1) % 3;
-                            return Ok(());
+                            return Ok(false);
                         }
 
                         #[cfg(feature = "nova")]
                         if let ViewMode::Forge = app_state.view_mode {
                             app_state.forge_focus = (app_state.forge_focus + 1) % 3;
-                            return Ok(());
+                            return Ok(false);
                         }
 
                         app_state.view_mode = match app_state.view_mode {
