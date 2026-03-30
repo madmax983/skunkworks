@@ -709,7 +709,14 @@ where
         if event::poll(std::time::Duration::from_millis(100))? {
             if let Event::Key(key) = event::read()? {
                 if app_state.show_view_selector {
+                    #[cfg(feature = "nova")]
                     let views = get_all_views();
+                    #[cfg(not(feature = "nova"))]
+                    let views: Vec<(state::ViewMode, &'static str, &'static str)> = vec![
+                        (state::ViewMode::Genome, "Genome", "Tab"),
+                        (state::ViewMode::Grid, "Grid", "Tab"),
+                        (state::ViewMode::Microscope, "Microscope", "Tab"),
+                    ];
                     let mut list_state = app_state.view_selector_state.borrow_mut();
                     let selected = list_state.selected().unwrap_or(0);
 
@@ -2606,15 +2613,16 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Tesseract => ViewMode::Genome,
-                            #[cfg(not(feature = "nova"))]
-                            ViewMode::Tesseract => ViewMode::Choir,
                             #[cfg(feature = "nova")]
                             ViewMode::Choir => ViewMode::Paradox,
                             #[cfg(feature = "nova")]
                             ViewMode::Paradox => ViewMode::Codex,
                             #[cfg(feature = "nova")]
                             ViewMode::Codex => ViewMode::Verbum,
+                            #[cfg(feature = "nova")]
                             ViewMode::Verbum => ViewMode::Genome,
+                            #[cfg(not(feature = "nova"))]
+                            _ => ViewMode::Genome,
                         };
                     }
                     #[cfg(feature = "nova")]

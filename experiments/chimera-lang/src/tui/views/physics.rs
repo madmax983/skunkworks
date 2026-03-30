@@ -2,14 +2,17 @@ use crate::tui::state::AppState;
 use crate::vm::ChimeraVM;
 #[cfg(feature = "nova")]
 use hyper_system::math::Vec4;
+#[cfg(feature = "nova")]
 use ratatui::widgets::canvas::{Canvas, Rectangle};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, List, ListItem, Paragraph},
+    widgets::{Block, Borders, Paragraph},
     Frame,
 };
+#[cfg(feature = "nova")]
+use ratatui::widgets::{List, ListItem};
 
 #[cfg(feature = "nova")]
 pub(crate) fn render_topology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {

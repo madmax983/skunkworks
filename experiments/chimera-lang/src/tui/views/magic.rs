@@ -1,5 +1,7 @@
+#[cfg(feature = "nova")]
 use crate::tui::state::AppState;
 use crate::vm::ChimeraVM;
+#[cfg(feature = "nova")]
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
@@ -125,6 +127,7 @@ pub(crate) fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
     f.render_widget(bard_paragraph, chunks[3]);
 }
 
+#[cfg(feature = "nova")]
 fn render_hermetic_rules(vm: &ChimeraVM) -> String {
     if vm.prologue_state.alchemy_book.is_empty() {
         return String::from("## Hermetic Alchemy\n\n(No dynamic rules defined)");
@@ -141,6 +144,12 @@ fn render_hermetic_rules(vm: &ChimeraVM) -> String {
         ));
     }
     s
+}
+
+#[cfg(not(feature = "nova"))]
+#[allow(dead_code)]
+fn render_hermetic_rules(_vm: &ChimeraVM) -> String {
+    String::from("## Hermetic Alchemy\n\n(Nova feature disabled)")
 }
 
 #[cfg(feature = "nova")]

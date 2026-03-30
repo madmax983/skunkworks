@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use std::path::Path;
 
 use crate::ast::Dna;
+#[cfg(feature = "nova")]
 use crate::vm::prologue::AlchemyRule;
 use crate::vm::{Value, GRID_SIZE};
 
@@ -12,12 +13,21 @@ use crate::vm::{Value, GRID_SIZE};
 #[grammar = "prologue_grammar.pest"]
 pub struct PrologueParser;
 
+#[cfg(feature = "nova")]
 pub struct PrologueProgram {
     pub dna: Dna,
     pub grid: Option<Vec<Vec<Value>>>,
     pub orca_mode: Option<bool>,
     pub custom_runes: HashMap<String, usize>,
     pub alchemy_book: Vec<AlchemyRule>,
+}
+
+#[cfg(not(feature = "nova"))]
+pub struct PrologueProgram {
+    pub dna: Dna,
+    pub grid: Option<Vec<Vec<Value>>>,
+    pub orca_mode: Option<bool>,
+    pub custom_runes: HashMap<String, usize>,
 }
 
 pub fn compile(source: &str, base_path: Option<&Path>) -> Result<PrologueProgram> {
@@ -27,6 +37,7 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<PrologueProgram
     let mut dna: Option<Dna> = None;
     let mut orca_mode = None;
     let mut custom_runes = HashMap::new();
+    #[cfg(feature = "nova")]
     let mut alchemy_book = Vec::new();
 
     let program = pairs.next().ok_or_else(|| anyhow!("Empty program"))?;
@@ -159,6 +170,7 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<PrologueProgram
                                     }
                                 };
 
+                                #[cfg(feature = "nova")]
                                 alchemy_book.push(AlchemyRule {
                                     ingredients,
                                     result,
@@ -176,13 +188,22 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<PrologueProgram
 
     let final_dna = dna.ok_or_else(|| anyhow!("No DNA section found"))?;
 
-    Ok(PrologueProgram {
+    #[cfg(feature = "nova")]
+    return Ok(PrologueProgram {
         dna: final_dna,
         grid,
         orca_mode,
         custom_runes,
         alchemy_book,
-    })
+    });
+
+    #[cfg(not(feature = "nova"))]
+    return Ok(PrologueProgram {
+        dna: final_dna,
+        grid,
+        orca_mode,
+        custom_runes,
+    });
 }
 
 fn parse_grid_line(line: &str) -> Vec<Value> {

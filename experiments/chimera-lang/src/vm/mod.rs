@@ -23,7 +23,9 @@
 //! - **Nova**: Epigenetics, Spores (Time Travel), Quantum Entanglement.
 //! - **Cortex**: Neural Network simulation (Synapses, Activation).
 
-use crate::ast::{Dna, JunctionType, Nucleotide};
+#[cfg(feature = "nova")]
+use crate::ast::JunctionType;
+use crate::ast::{Dna, Nucleotide};
 use crate::opcode::OpCode;
 pub use crate::value::Value;
 use comfy_table::modifiers::UTF8_ROUND_CORNERS;
@@ -39,6 +41,7 @@ use poincare_disk::Point;
 use rand::Rng;
 #[cfg(feature = "nova")]
 use serde::{Deserialize, Serialize};
+#[cfg(feature = "nova")]
 use std::collections::HashMap;
 #[cfg(feature = "nova")]
 use std::collections::{HashSet, VecDeque};

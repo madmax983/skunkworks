@@ -7,9 +7,11 @@ use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Gauge, List, ListItem, Paragraph},
+    widgets::{Block, Borders, Paragraph},
     Frame,
 };
+#[cfg(feature = "nova")]
+use ratatui::widgets::{Gauge, List, ListItem};
 
 #[cfg(feature = "resonance")]
 pub(crate) fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {

@@ -122,13 +122,26 @@ fn main() -> Result<()> {
 
         if extension == "prl" {
             let prog = prologue_compiler::compile(&unparsed_file, path.parent())?;
-            (
-                prog.dna,
-                prog.grid,
-                prog.orca_mode,
-                prog.custom_runes,
-                prog.alchemy_book,
-            )
+            #[cfg(feature = "nova")]
+            {
+                (
+                    prog.dna,
+                    prog.grid,
+                    prog.orca_mode,
+                    prog.custom_runes,
+                    prog.alchemy_book,
+                )
+            }
+            #[cfg(not(feature = "nova"))]
+            {
+                (
+                    prog.dna,
+                    prog.grid,
+                    prog.orca_mode,
+                    prog.custom_runes,
+                    Vec::<()>::new(), // Placeholder type since it's unused
+                )
+            }
         } else if extension == "score" {
             #[cfg(feature = "resonance")]
             {

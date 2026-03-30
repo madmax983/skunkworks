@@ -9,6 +9,7 @@ pub mod tech;
 pub(crate) use audio::*;
 pub(crate) use bio::*;
 pub(crate) use core::*;
+#[cfg(feature = "nova")]
 pub(crate) use magic::*;
 pub(crate) use misc::*;
 pub(crate) use physics::*;

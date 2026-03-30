@@ -3,6 +3,7 @@ use crate::tui::state::AppState;
 use crate::tui::state::{InputMode, ViewMode};
 use crate::tui::views::{render_palette, render_view_selector};
 use crate::vm::ChimeraVM;
+#[cfg(feature = "nova")]
 use rand::Rng;
 use ratatui::{
     layout::{Constraint, Direction, Layout},

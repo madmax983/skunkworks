@@ -1,14 +1,22 @@
+#[cfg(feature = "nova")]
 use crate::tui::get_all_views;
+#[cfg(feature = "nova")]
 use crate::tui::panel_block;
 use crate::tui::state::AppState;
+#[cfg(feature = "nova")]
 use crate::vm::ChimeraVM;
+#[cfg(feature = "nova")]
 use ratatui::widgets::canvas::{Canvas, Rectangle};
 use ratatui::{
-    layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Gauge, List, ListItem, Paragraph},
+    widgets::{Block, Borders, List, ListItem, Paragraph},
     Frame,
+};
+#[cfg(feature = "nova")]
+use ratatui::{
+    layout::{Constraint, Direction, Layout},
+    widgets::Gauge,
 };
 #[cfg(feature = "nova")]
 use tui_shared::{Bobber, Button, TensionBar};
@@ -459,7 +467,14 @@ pub(crate) fn render_view_selector(f: &mut Frame, app_state: &AppState) {
 
     f.render_widget(ratatui::widgets::Clear, rect);
 
+    #[cfg(feature = "nova")]
     let views = get_all_views();
+    #[cfg(not(feature = "nova"))]
+    let views: Vec<(crate::tui::state::ViewMode, &'static str, &'static str)> = vec![
+        (crate::tui::state::ViewMode::Genome, "Genome", "Tab"),
+        (crate::tui::state::ViewMode::Grid, "Grid", "Tab"),
+        (crate::tui::state::ViewMode::Microscope, "Microscope", "Tab"),
+    ];
 
     let current_selected = app_state
         .view_selector_state

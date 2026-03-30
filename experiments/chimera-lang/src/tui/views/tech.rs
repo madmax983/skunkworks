@@ -1,5 +1,6 @@
 use crate::tui::state::AppState;
 use crate::vm::ChimeraVM;
+#[cfg(feature = "nova")]
 use ratatui::widgets::canvas::Canvas;
 use ratatui::{
     layout::{Constraint, Direction, Layout},

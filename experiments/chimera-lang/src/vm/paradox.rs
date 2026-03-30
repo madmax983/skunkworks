@@ -84,10 +84,19 @@ impl Paradox {
                         }
                         Action::Set(dx, dy, val) => {
                             let (cy, cx) = vm.context_loc;
-                            // normalize_coords handles topology
-                            if let Some((ny, nx)) =
-                                vm.normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                            #[cfg(feature = "nova")]
                             {
+                                // normalize_coords handles topology
+                                if let Some((ny, nx)) =
+                                    vm.normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                                {
+                                    vm.grid[ny][nx] = val.clone();
+                                }
+                            }
+                            #[cfg(not(feature = "nova"))]
+                            {
+                                let ny = (cy as i64 + dy).rem_euclid(16) as usize;
+                                let nx = (cx as i64 + dx).rem_euclid(16) as usize;
                                 vm.grid[ny][nx] = val.clone();
                             }
                         }
