@@ -24,6 +24,13 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 
 ## 🌿 Attempted Crosses
 
+### locust-fluid
+- **Parents**: experiments/locust-ddos + experiments/ferrous-fluid
+- **Concept**: Magnetic Cyberwarfare. The swarm of DDoS packets are mapped as magnetic fluid particles.
+- **Novel trait**: Fluid-Dynamic Bottlenecking. Instead of simple swarm agents, the packets are magnetic fluid particles. When attacking a server, the packets compress into a high-density magnetic fluid, actively pushing against each other and visually representing the pressure wave of a DDoS attack.
+- **Status**: experiments/locust-fluid
+- **Evaluation**: Success. Compiled. Fluid-Dynamic Bottlenecking successfully implemented.
+
 ### mnem-mycelium
 - **Parents**: experiments/mnem-rot + experiments/myco-transit
 - **Concept**: Mycelial Code Rot. Slime mold agents forage a decaying codebase graph mapping.
