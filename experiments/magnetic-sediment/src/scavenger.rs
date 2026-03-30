@@ -1,5 +1,5 @@
 use chimera_lang::prelude::*;
-use locus::flocking::FlockingParams;
+use flocking::FlockingParams;
 use macroquad::prelude::*;
 use physics_pbd::PbdSystem;
 

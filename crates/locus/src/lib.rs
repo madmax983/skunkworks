@@ -41,7 +41,6 @@
 //! # }
 //! ```
 
-pub mod flocking;
 pub mod topology;
 pub(crate) mod vec2;
 pub mod vec3;

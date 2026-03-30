@@ -1,7 +1,7 @@
 use crate::boid::Boid;
 use crate::chaos::DoublePendulum;
+use flocking::{FlockingParams, compute_force};
 use locus::Vec2;
-use locus::flocking::{FlockingParams, compute_force};
 
 pub struct World {
     pub boids: Vec<Boid>,

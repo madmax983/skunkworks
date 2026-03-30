@@ -1,6 +1,6 @@
 use crate::blame::LineInfo;
 use anyhow::Result;
-use locus::flocking::{compute_force, FlockingParams};
+use flocking::{compute_force, FlockingParams};
 use locus::Vec2;
 use rand::Rng;
 use std::fs;
