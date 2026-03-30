@@ -13,9 +13,9 @@
 - **Scent Origin:** Echo 🗣️
 - **Status:** DX audit failed. The `story_demo` example is broken. It lacks the `nova` feature, causes a workspace inheritance error, and incorrectly launches a blocking TUI instead of a programmatic run. Immediate polish required.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/luminous-tank
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-rift
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Documentation Void / Skeletal Structure. Grace period: 24h.
+- **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Incomplete Agent Senses. The organism is blinded by a `// TODO` block and cannot perceive the portals it creates. Grace period: 24h.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/crate-radar
 - **Scent Origin:** The Reaper ☠️
@@ -204,6 +204,10 @@
 - **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Ecosystem Isolation. Failed to improve during grace period. Biomass returned to the void.
 
 ## 🍂 History/Decay
+### [Concentration Level: EVAPORATING] - Location: graveyard/luminous-tank
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Documentation Void / Skeletal Structure. Failed to improve during grace period (no README added). Moved to graveyard.
+
 ### [Concentration Level: EVAPORATING] - Location: graveyard/tesseract-time
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Terminal Genericism / Documentation Void. Failed to improve during grace period. Biomass returned to the void.
