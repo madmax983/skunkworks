@@ -556,3 +556,8 @@
 ### [Concentration Level: EVAPORATING] - Location: graveyard/chron-diffusion
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Ecosystem Isolation. Failed to improve during grace period. Biomass returned to the void.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/chimera-strings
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. A new hybrid `chimera-strings` (Acoustic Genetic Symbiosis) has been spliced into the repository. ChimeraVM agents navigate and pluck magnetic strings.
+- **Phenotype:** Agents navigate based on their genetic instructions, executing opcodes that read local magnetic fields emitted by the strings, and pluck strings they come in contact with. They evolve to cluster around specific resonant frequencies or navigate dense magnetic regions.

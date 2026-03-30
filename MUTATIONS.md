@@ -479,3 +479,17 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Novel trait**: Genetic Attack Vectors. Packets that hit firewalls die, those that reach the server pass their `Dna` to the next generation, evolving to naturally weave through complex, shifting defense grids.
 - **Status**: experiments/chimera-ddos
 - **Evaluation**: Success. Compiled. Swarm intelligence adapts via genetic inheritance and crossover.
+
+### chimera-strings
+- **Parents**: experiments/chimera-lang + experiments/ferrous-strings
+- **Concept**: Acoustic Genetic Symbiosis. `ChimeraVM` agents inhabit a continuous space filled with vibrating magnetic strings.
+- **Novel trait**: Magnetic Sensorimotor Control & Acoustic Foraging. Agents navigate based on their genetic instructions, executing opcodes that read local magnetic fields emitted by the strings, and pluck strings they come in contact with. They evolve to cluster around specific resonant frequencies or navigate dense magnetic regions.
+- **Status**: experiments/chimera-strings
+- **Evaluation**: Success. Compiled. Swarm logic combines ChimeraVM genetic opcodes with continuous magnetic field and string collision physics.
+
+### luminous-valley
+- **Parents**: experiments/valley-forge + experiments/luminous-flock
+- **Concept**: Bio-luminescent Terrain Interaction. Boids flock over a procedural 3D terrain where a Gray-Scott reaction-diffusion simulation runs, acting as a mobile sensor network reacting to chemical concentrations.
+- **Novel trait**: Height-Adaptive Flight & Synchronized Flashing. Boids follow terrain contours and flash based on local chemical state, synchronizing their flashes via Integrate-and-Fire models.
+- **Status**: experiments/luminous-valley
+- **Evaluation**: Success. Compiled. Boids navigate 3D space interactively sensing underlying chemical substrates successfully.
