@@ -356,4 +356,51 @@ mod tests {
             || output2.iter().any(|&sample| sample != 0.0);
         assert!(has_non_zero, "Output buffer should have audio data");
     }
+
+    #[cfg(feature = "audio")]
+    #[test]
+    fn test_process_audio_removes_inactive_sounds() {
+        use crossbeam_channel::bounded;
+
+        let (tx, rx) = bounded(10);
+
+        tx.send(AudioEvent::Kick).unwrap();
+        tx.send(AudioEvent::Snare).unwrap();
+        tx.send(AudioEvent::HiHat).unwrap();
+        tx.send(AudioEvent::Pluck(440.0)).unwrap();
+
+        let mut output = vec![0.0; 128];
+        let mut active_sounds = Vec::new();
+
+        // 1. Process the audio first to enqueue the events into `active_sounds`.
+        process_audio(
+            &mut output,
+            2,       // channels
+            44100.0, // sample rate
+            &rx,
+            &mut active_sounds,
+        );
+
+        assert_eq!(active_sounds.len(), 4);
+
+        // 2. Simulate enough time passing by calling process_audio with a tiny sample rate (which means a huge `dt`)
+        // The time delta per frame `dt = 1.0 / sample_rate`. For a chunk of 64 frames (128 / 2 channels),
+        // we can set `sample_rate` very small, like 1.0, so each frame progresses time by 1.0 seconds.
+        // A single call will progress time by 64 seconds, which is more than enough to trigger all decay cutoffs.
+        let mut empty_output = vec![0.0; 128];
+        process_audio(
+            &mut empty_output,
+            2,
+            1.0, // dt per frame = 1.0 seconds
+            &rx,
+            &mut active_sounds,
+        );
+
+        // 3. Verify that all sounds were removed due to the cutoff logic (e.g. `env <= 0.0` or `env <= 0.001` etc).
+        assert_eq!(
+            active_sounds.len(),
+            0,
+            "All inactive sounds should be removed after sufficient decay time"
+        );
+    }
 }
