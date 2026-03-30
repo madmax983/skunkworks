@@ -530,3 +530,10 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Predicted Phenotype**: Spectral Wave Mechanics. As standing waves and interference patterns form in the physical wave tank, they are transformed via 2D FFT into a holographic projection. This visualizes the resonant modes of the acoustic space in the frequency domain.
 - **Status**: experiments/hologram-tank
 - **Evaluation**: Success. Compiled. Spectral Wave Mechanics successfully maps physical pressure gradients to frequency domain optical interference patterns.
+
+### chimera-git
+- **Parents**: experiments/chimera-lang + experiments/git-harmonograph
+- **Concept**: Codebase Foraging Organisms. Agents running `ChimeraVM` traverse the Git commit history, evolving to find the most efficient path through the repository's refactoring history.
+- **Predicted Phenotype**: Evolutionary visualization of codebase navigation. The agents read Git commit diff sizes and entropy as environmental inputs to their VM. They evolve genetic sequences to navigate the codebase history efficiently, treating the Git structure as a biological landscape.
+- **Status**: experiments/chimera-git
+- **Evaluation**: Success. Compiled. The agents successfully translate structured Git history into a continuous biological foraging network.

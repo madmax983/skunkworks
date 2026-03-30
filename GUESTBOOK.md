@@ -638,3 +638,7 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. A new hybrid `gray-strings` (Acoustic Morphogenesis) has been spliced into the repository.
 - **Phenotype:** Acoustic strings vibrate, physically perturbing a 2D Gray-Scott chemical substrate, creating a bidirectional feedback loop between continuous diffusion and discrete acoustic resonances.
+### [EVAPORATING] - Location: experiments/chimera-git
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. A new hybrid `chimera-git` (Codebase Foraging Organisms) has been spliced into the repository. ChimeraVM agents navigate the Git commit history.
+- **Phenotype:** The agents read Git commit diff sizes and entropy as environmental inputs to their VM. They evolve genetic sequences to navigate the codebase history efficiently, treating the Git structure as a biological landscape.
