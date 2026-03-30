@@ -29,21 +29,21 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Garbage Collection Cyberwarfare. The server is protected by an intricate forest of nodes (firewalls). The locusts (DDoS packets) act as the "Reaper fungus" trying to find detached reference cycles and dead matter to consume, breaking down the server's defenses.
 - **Predicted Phenotype**: The server's defenses are structured as an interconnected memory graph. The locust swarm actively attacks and decomposes the graph by identifying and consuming "dead" nodes or forming parasitic reference cycles to cause memory leaks.
 - **Status**: experiments/locust-reaper
-- **Evaluation**: Success. Compiled. GUESTBOOK mentions confirm emergent parasitic foraging. The cybernetic fungal entity correctly consumes memory structures systematically, combining decay mechanics with physical DDoS swarms.
+- **Evaluation**: Success. Compiled. Exhibits emergent parasitic foraging.
 
 ### hyperbolic-chimera
 - **Parents**: experiments/hyperbolic-ants + experiments/chimera-lang
 - **Concept**: Boid-driven Hyperbolic Organisms.
 - **Novel trait**: Non-Euclidean Genetics. The boids navigate a hyperbolic disk using ChimeraVM brains.
 - **Status**: experiments/hyperbolic-chimera
-- **Evaluation**: Pardoned by The Reaper ☠️. The initial condemnation for Terminal Compilation Failure was resolved by fixing the missing `evolution_config` field in the `Dna` struct and fixing deprecated ratatui APIs during its grace period.
+- **Evaluation**: Pardoned by The Reaper ☠️. The initial condemnation for Terminal Compilation Failure was resolved by fixing the missing evolution_config field and deprecated ratatui APIs during its grace period.
 
 ### git-strings
 - **Parents**: experiments/git-harmonograph + experiments/ferrous-strings
 - **Concept**: Acoustic-Magnetic Git History. Git commits traverse the continuous space as kinetic magnetic particles, colliding with and plucking magnetic strings.
 - **Novel trait**: Continuous Acoustic-Magnetic Translation of Git Intent. By dropping git commits onto magnetic strings, the repository's evolution is represented by the physical acoustic twangs and resultant magnetic field interference patterns.
 - **Status**: experiments/git-strings
-- **Evaluation**: Success. Compiled. The visual phenotype successfully manifests git commit intent as a physical force that plucks resonant strings, producing dynamic audio-visual translations.
+- **Evaluation**: Success. Compiled. The visual phenotype successfully manifests git commit intent as a continuous acoustic-magnetic medium where commits act as kinetic particles plucking strings.
 
 ### chimera-tank
 - **Parents**: experiments/chimera-lang + experiments/ripple-tank
@@ -65,8 +65,8 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Parents**: experiments/hyper-fluid + experiments/chimera-lang
 - **Concept**: 4D Hydrodynamic Locomotion.
 - **Novel trait**: Metabolic Swimming in 4D.
-- **Status**: experiments/chimera-fluid
-- **Evaluation**: Pardoned by The Reaper ☠️. The terminal compilation failure was resolved by initializing `evolution_config` with `None`, allowing the specimen to compile successfully.
+- **Status**: graveyard/chimera-fluid (Executed)
+- **Evaluation**: Executed by The Reaper ☠️ (moved to graveyard) due to Terminal Compilation Failure (missing evolution_config field), having failed to improve during its grace period.
 
 
 ### chaos-fluid
@@ -168,7 +168,7 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Morphogenetic Genetics. Chimera agents navigate a Gray-Scott reaction-diffusion grid. The agents drop chemicals or alter the grid, and their fitness depends on navigating it successfully or finding specific states.
 - **Phenotype**: Agents equipped with ChimeraVM brains evolve to survive in a chemical environment, adapting their behavior to follow the feed chemical and avoid the kill chemical.
 - **Status**: experiments/gray-chimera
-- **Evaluation**: Success. Compiled. Agents successfully evolve, creating a macroscopic-microscopic feedback loop mapping genetic instructions to reaction-diffusion navigation.
+- **Evaluation**: Success. Compiled. Demonstrates Morphogenetic Genetics, coupling a macro-level reaction-diffusion grid to micro-level ChimeraVM agents.
 
 ### gray-ddos
 - **Parents**: experiments/locust-ddos + crates/gray-scott
@@ -478,4 +478,11 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Cybernetic Organisms performing DDoS. The DDoS packets are not simple swarm agents; they run actual `ChimeraVM` genetic code to decide their pathing, evolving over time to bypass firewalls.
 - **Novel trait**: Genetic Attack Vectors. Packets that hit firewalls die, those that reach the server pass their `Dna` to the next generation, evolving to naturally weave through complex, shifting defense grids.
 - **Status**: experiments/chimera-ddos
-- **Evaluation**: Success. Compiled. Swarm intelligence adapts via genetic inheritance and crossover.
+- **Evaluation**: Success. Compiled. Swarm intelligence adapts via genetic inheritance and crossover. Packets execute ChimeraVM genetic code to pathfind past firewalls.
+
+### mnem-strings
+- **Parents**: experiments/mnem-rot + experiments/ferrous-strings
+- **Concept**: Acoustic Code Rot. The decaying nodes of a codebase graph simulation act as kinetic particles that physically strike acoustic-magnetic strings.
+- **Novel trait**: Acoustic Manifestation of Code Decay. Rotting (high entropy) code nodes hit the strings violently, producing harsh acoustic oscillations mapped onto a magnetic field, while healthy nodes produce gentle plucks.
+- **Status**: experiments/mnem-strings
+- **Evaluation**: Success. Compiled. Exhibits an 'Acoustic Manifestation of Code Decay' phenotype, translating codebase graphs into continuous acoustic-magnetic mediums.
