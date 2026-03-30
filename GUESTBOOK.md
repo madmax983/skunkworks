@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-hologram
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. Spliced neuro-terminal with hologram-text.
+- **Phenotype:** Spectral Cognition. The internal states of a Spiking Neural Network (SNN) are visualized entirely through their frequency domain interference pattern.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang/README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** The path is confused. Echo stumbled on broken examples and missing workspace dependencies in the README. The code fails to compile out-of-the-box. Immediate reinforcement required to rebuild the onboarding bridge.

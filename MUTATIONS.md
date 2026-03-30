@@ -25,6 +25,13 @@ Additionally, the success of translating complex abstract graphs (like codebases
 
 ## 🌿 Attempted Crosses
 
+### neuro-hologram
+- **Parents**: experiments/neuro-terminal + experiments/hologram-text
+- **Concept**: Spectral Neural Network. The voltage of the neurons in a spiking neural network is treated as an optical interference pattern.
+- **Novel trait**: Spectral Cognition. We view the discrete neural spikes entirely through their frequency domain interference pattern via 2D FFT. When the network fires synchronously, the high-frequency turbulence in the hologram spikes violently, creating a unique spectral fingerprint of a "thought" or "seizure".
+- **Status**: experiments/neuro-hologram
+- **Evaluation**: Success. Compiled. The neural voltage successfully maps to holographic interference patterns.
+
 ### locust-reaper
 - **Parents**: experiments/locust-ddos + experiments/myco-reaper
 - **Concept**: Garbage Collection Cyberwarfare. The server is protected by an intricate forest of nodes (firewalls). The locusts (DDoS packets) act as the "Reaper fungus" trying to find detached reference cycles and dead matter to consume, breaking down the server's defenses.
