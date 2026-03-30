@@ -1,0 +1,10 @@
+[package]
+name = "git-gray"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+gray-scott = { path = "../../crates/gray-scott" }
+macroquad = "0.4"
+rand = "0.8"

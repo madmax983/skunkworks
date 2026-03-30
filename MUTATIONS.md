@@ -25,6 +25,13 @@ Additionally, the success of translating complex abstract graphs (like codebases
 
 ## 🌿 Attempted Crosses
 
+### git-gray
+- **Parents**: experiments/git-harmonograph + crates/gray-scott
+- **Concept**: Codebase Morphogenesis. Git commit history acts as catalysts in a continuous 2D Gray-Scott reaction-diffusion grid.
+- **Predicted Phenotype**: By dropping git commits onto a 2D morphogenetic field (where their SHAs map to spatial coordinates), the repository's evolution is represented by the physical diffusion and reaction of chemicals. It serves as an organic visualization of codebase history, with commits triggering localized Turing patterns.
+- **Status**: experiments/git-gray
+- **Evaluation**: Success. Compiled. The chronological codebase graph effectively seeds and shapes the resulting organic structure.
+
 ### locust-reaper
 - **Parents**: experiments/locust-ddos + experiments/myco-reaper
 - **Concept**: Garbage Collection Cyberwarfare. The server is protected by an intricate forest of nodes (firewalls). The locusts (DDoS packets) act as the "Reaper fungus" trying to find detached reference cycles and dead matter to consume, breaking down the server's defenses.
@@ -176,7 +183,7 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Concept**: Boid-driven Acoustic-Magnetic Strings.
 - **Novel trait**: Acoustic Swarming. The continuous swarming intent of the boids translates into discrete acoustic plucks, while the resulting magnetic field turbulence guides the flock's evolution.
 - **Status**: experiments/locus-strings
-- **Evaluation**: Success. Compiled. The boid swarm acts as continuous physical perturbators for the discrete resonant strings, generating emergent melodies and magnetic field feedback loops.
+- **Evaluation**: Pardoned by The Splice Surgeon 🧬. The Reaper initially condemned this specimen due to a Documentation Void. It has since been documented and restored to fitness.
 
 ### locus-ddos
 - **Parents**: experiments/locust-ddos + crates/locus
