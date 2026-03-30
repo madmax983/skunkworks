@@ -930,7 +930,8 @@ pub(crate) fn render_forge(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSta
     // Left: Rule List
     let mut items = Vec::new();
     let mut keys: Vec<_> = vm.prologue_state.logos_engine.rules.keys().collect();
-    keys.sort();
+    // Bolt: Use sort_unstable instead of sort to avoid heap allocations
+    keys.sort_unstable();
 
     for key in keys {
         let style = if *key == app_state.forge_selected_rule {

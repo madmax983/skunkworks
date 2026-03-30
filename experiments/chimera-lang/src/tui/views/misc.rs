@@ -362,7 +362,8 @@ pub(crate) fn render_semiotics(f: &mut Frame, vm: &mut ChimeraVM, app_state: &Ap
 
     // Sort keys for stability
     let mut keys: Vec<_> = vm.meaning_map.keys().collect();
-    keys.sort();
+    // Bolt: Use sort_unstable instead of sort to avoid heap allocations
+    keys.sort_unstable();
 
     for (ctx, id) in keys {
         if *ctx == context_hash || *ctx == 0 {

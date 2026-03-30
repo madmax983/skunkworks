@@ -1122,7 +1122,8 @@ where
                                         .cloned()
                                         .collect();
                                     let mut sorted_keys = keys;
-                                    sorted_keys.sort();
+                                    // Bolt: Use sort_unstable instead of sort to avoid heap allocations
+                                    sorted_keys.sort_unstable();
                                     if let Some(pos) = sorted_keys
                                         .iter()
                                         .position(|k| *k == app_state.forge_selected_rule)
@@ -1154,7 +1155,8 @@ where
                                         .cloned()
                                         .collect();
                                     let mut sorted_keys = keys;
-                                    sorted_keys.sort();
+                                    // Bolt: Use sort_unstable instead of sort to avoid heap allocations
+                                    sorted_keys.sort_unstable();
                                     if let Some(pos) = sorted_keys
                                         .iter()
                                         .position(|k| *k == app_state.forge_selected_rule)
@@ -3504,7 +3506,8 @@ where
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {
                             let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
-                            neurons_sorted.sort();
+                            // Bolt: Use sort_unstable instead of sort to avoid heap allocations
+                            neurons_sorted.sort_unstable();
                             if let Some(current) = app_state.selected_neuron_coords {
                                 if let Some(pos) =
                                     neurons_sorted.iter().position(|&c| *c == current)
@@ -3631,7 +3634,8 @@ where
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {
                             let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
-                            neurons_sorted.sort();
+                            // Bolt: Use sort_unstable instead of sort to avoid heap allocations
+                            neurons_sorted.sort_unstable();
                             if let Some(current) = app_state.selected_neuron_coords {
                                 if let Some(pos) =
                                     neurons_sorted.iter().position(|&c| *c == current)
@@ -4450,7 +4454,8 @@ where
                                 app_state.input_mode = InputMode::Normal;
                                 let mut registry: Vec<_> =
                                     vm.sigil_registry.keys().cloned().collect();
-                                registry.sort();
+                                // Bolt: Use sort_unstable instead of sort to avoid heap allocations
+                                registry.sort_unstable();
                                 if app_state.selected_sigil_index < registry.len() {
                                     let key = &registry[app_state.selected_sigil_index];
                                     if let Some(sigil) = vm.sigil_registry.get_mut(key) {

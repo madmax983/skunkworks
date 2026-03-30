@@ -237,7 +237,8 @@ pub(crate) fn handle_navigation_input(key_code: KeyCode, vm: &mut ChimeraVM, app
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {
                             let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
-                            neurons_sorted.sort();
+                            // Bolt: Use sort_unstable instead of sort to avoid heap allocations
+                            neurons_sorted.sort_unstable();
                             if let Some(current) = app_state.selected_neuron_coords {
                                 if let Some(pos) =
                                     neurons_sorted.iter().position(|&c| *c == current)
@@ -365,7 +366,8 @@ pub(crate) fn handle_navigation_input(key_code: KeyCode, vm: &mut ChimeraVM, app
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {
                             let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
-                            neurons_sorted.sort();
+                            // Bolt: Use sort_unstable instead of sort to avoid heap allocations
+                            neurons_sorted.sort_unstable();
                             if let Some(current) = app_state.selected_neuron_coords {
                                 if let Some(pos) =
                                     neurons_sorted.iter().position(|&c| *c == current)

@@ -1236,7 +1236,8 @@ pub(crate) fn render_garden(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSt
         rules_items.push(ListItem::new("No species defined."));
     } else {
         let mut keys: Vec<_> = vm.garden.rules.keys().collect();
-        keys.sort();
+        // Bolt: Use sort_unstable instead of sort to avoid heap allocations
+        keys.sort_unstable();
         for k in keys {
             if let Some(rule) = vm.garden.rules.get(k) {
                 let r_str = format!("B{:?}/S{:?}", rule.birth, rule.survival);
