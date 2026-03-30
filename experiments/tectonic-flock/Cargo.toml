@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 locus = { workspace = true }
+flocking = { workspace = true }
 tui-shared = { workspace = true }
 ratatui = { workspace = true }
 crossterm = { workspace = true }

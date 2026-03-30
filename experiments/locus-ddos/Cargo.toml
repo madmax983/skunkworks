@@ -8,3 +8,4 @@ macroquad = "0.4"
 rayon = "1.10"
 rand = "0.8"
 locus = { workspace = true, features = ["macroquad"] }
+flocking = { workspace = true }

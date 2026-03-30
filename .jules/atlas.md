@@ -9,3 +9,7 @@
 ## YYYY-MM-DD - [Normal Handler Extraction]
 **Tangle:** The Blob - `experiments/chimera-lang/src/tui/app/handlers/normal.rs` was ~2300 lines long, containing a monolithic event loop `match` block.
 **Blueprint:** Extracted the main input branches into a new `normal/` module, separating character inputs (`chars.rs`), directional navigation (`navigation.rs`), and other actions (`actions.rs`). The `normal/mod.rs` acts as a facade delegator for `handle_normal_input`. This improves cohesion and significantly reduces file length while maintaining the TUI input handling domain logic boundary.
+
+## YYYY-MM-DD - [Flocking Extraction]
+**Tangle:** The Domain Leak - `crates/locus/src/flocking.rs` existed within `locus`, which is defined as a primitive geometry library. Flocking (Craig Reynolds' Boids algorithm) is an AI simulation algorithm that should not be tightly coupled to pure geometry primitives like `Vec2` and `Topology`.
+**Blueprint:** Extracted the `flocking` module into its own crate (`crates/flocking`) depending on `locus`. Updated all workspace dependents to use the new `flocking` crate. This properly encapsulates the simulation AI domain logic away from core mathematical primitives.

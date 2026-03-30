@@ -1,6 +1,6 @@
 use crate::boid::Boid;
 use crate::git::Commit;
-use locus::flocking::{compute_force, FlockingParams};
+use flocking::{compute_force, FlockingParams};
 use locus::Vec2;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};

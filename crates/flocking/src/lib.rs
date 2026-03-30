@@ -15,7 +15,7 @@
 //! ## The Minimal Simulation
 //!
 //! ```rust
-//! use locus::flocking::{compute_force, FlockingParams};
+//! use flocking::{compute_force, FlockingParams};
 //! use locus::Vec2;
 //!
 //! // 1. Setup the flock
@@ -46,7 +46,7 @@
 //! }
 //! ```
 
-use crate::vec2::Vec2;
+use locus::Vec2;
 
 /// Configuration parameters for the flocking simulation.
 ///
@@ -56,7 +56,7 @@ use crate::vec2::Vec2;
 /// # Examples
 ///
 /// ```
-/// use locus::flocking::FlockingParams;
+/// use flocking::FlockingParams;
 ///
 /// // Create a "Swarm" profile: high separation, low alignment
 /// let swarm_params = FlockingParams {
@@ -264,7 +264,7 @@ fn compute_steering(mut desired: Vec2, current_vel: Vec2, max_speed: f64, max_fo
 /// # Examples
 ///
 /// ```rust
-/// use locus::flocking::{compute_force, FlockingParams};
+/// use flocking::{compute_force, FlockingParams};
 /// use locus::Vec2;
 ///
 /// let positions = vec![Vec2::new(0.0, 0.0), Vec2::new(1.0, 0.0)];

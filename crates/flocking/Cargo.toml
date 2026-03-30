@@ -1,0 +1,12 @@
+[package]
+name = "flocking"
+version = "0.1.0"
+edition = "2021"
+description = "Craig Reynolds' Boids algorithm logic extracted from locus."
+
+[dependencies]
+locus = { workspace = true }
+serde = { workspace = true, optional = true }
+
+[features]
+serde = ["dep:serde", "locus/serde"]

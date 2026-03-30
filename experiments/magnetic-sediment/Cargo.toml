@@ -10,3 +10,4 @@ rand = "0.8"
 chimera-lang = { path = "../chimera-lang", features = ["nova", "oracle", "elektra"] }
 physics-pbd = { path = "../../crates/physics-pbd" }
 locus = { path = "../../crates/locus" }
+flocking = { workspace = true }

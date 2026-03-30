@@ -1,6 +1,6 @@
 use crate::boid::Boid;
 use locus::Vec2;
-use locus::flocking::{FlockingParams, compute_force};
+use flocking::{FlockingParams, compute_force};
 use std::f64::consts::PI;
 
 pub struct World {
