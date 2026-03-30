@@ -25,6 +25,14 @@ Additionally, the success of translating complex abstract graphs (like codebases
 
 ## 🌿 Attempted Crosses
 
+### mnem-chaos
+- **Parents**: experiments/mnem-rot + experiments/chaos-pendulum
+- **Concept**: Chaotic Code Rot. A chaotic double pendulum swings through a 2D projection of the codebase graph. The pendulum's bob acts as an extreme source of entropy, violently aging and decaying any nodes it passes over.
+- **Novel trait**: Chaotic Decay Mapping. Instead of passive decay or intentional agent foraging, the codebase's health is subjected to a pure mathematical chaotic attractor. The health of the codebase becomes a history map of the pendulum's chaotic orbit.
+- **Status**: experiments/mnem-chaos
+- **Evaluation**: Success. Compiled. The macroscopic chaos of the double pendulum actively decays the structural codebase nodes it passes over.
+
+
 ### locust-reaper
 - **Parents**: experiments/locust-ddos + experiments/myco-reaper
 - **Concept**: Garbage Collection Cyberwarfare. The server is protected by an intricate forest of nodes (firewalls). The locusts (DDoS packets) act as the "Reaper fungus" trying to find detached reference cycles and dead matter to consume, breaking down the server's defenses.
@@ -51,6 +59,8 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Concept**: Acoustic Genetic Organisms. Agents equipped with `ChimeraVM` brains evolve to pluck magnetic strings, generating specific resonant frequencies to propel themselves or communicate.
 - **Novel Trait**: Acoustic-Magnetic Genetics. The agents translate their discrete DNA opcodes into continuous kinetic strikes on strings, harnessing the resulting magnetic fields for survival.
 - **Predicted Phenotype**: An evolutionary symphony where the most fit organisms learn to play the strings, creating complex, emergent acoustic-magnetic rhythms that sustain their population.
+- **Status**: experiments/chimera-strings
+- **Evaluation**: Success. Compiled. Strong acoustic-magnetic feedback loops mapping discrete logic into continuous physical striking.
 
 ### git-strings
 - **Parents**: experiments/git-harmonograph + experiments/ferrous-strings

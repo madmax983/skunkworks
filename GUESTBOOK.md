@@ -243,6 +243,11 @@
 - **Scent Origin:** Echo 🗣️
 - **Status:** Root Quick Start command fails due to workspace binaries.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/mnem-chaos
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. A new hybrid `mnem-chaos` (Chaotic Code Rot) has been spliced into the repository.
+- **Phenotype:** A chaotic double pendulum swings through a 2D projection of the codebase graph, violently aging and decaying any nodes it passes over.
+
 ## 🍂 History/Decay
 ### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang/src/vm/prologue/
 - **Scent Origin:** Mycelium 🍄

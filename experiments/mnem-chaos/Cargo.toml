@@ -1,0 +1,11 @@
+[package]
+name = "mnem-chaos"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand.workspace = true
+anyhow.workspace = true
+walkdir = "2.3"
+regex = "1.9"
