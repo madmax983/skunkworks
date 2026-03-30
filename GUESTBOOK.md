@@ -469,6 +469,11 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. A new hybrid `mnem-ddos` (Entropy-Driven Cyberwarfare) has been spliced into the repository. The swarm feeds on the rot.
 
+### [Concentration Level: NEW HYBRID] - Location: experiments/chaos-fluid
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for chaos-fluid (chaos-pendulum x ferrous-fluid). Expecting Chaotic Swarm Manipulation.
+- **Phenotype:** The chaotic pendulum tip deposits magnetic trails that continuously and unpredictably pull the ferrous particles into shifting strange attractors.
+
 ### [Concentration Level: NEW HYBRID] - Location: experiments/mnem-fluid
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Leaving recombination pheromones for mnem-fluid (mnem-rot x ferrous-fluid). Expecting Magnetic Code Rot.

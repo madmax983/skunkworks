@@ -343,6 +343,13 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Status**: experiments/chaos-tank
 - **Evaluation**: Success. Compiled. Chaotic Wave Interference successfully implemented.
 
+### chaos-fluid
+- **Parents**: experiments/chaos-pendulum + experiments/ferrous-fluid
+- **Concept**: Chaotic Magnetic Fluid. A chaotic pendulum's tip deposits magnetic force into a fluid simulation.
+- **Novel trait**: Chaotic Swarm Manipulation. The pendulum acts as an unpredictable strange attractor pulling the ferrous particles into chaotic, shifting shapes.
+- **Status**: experiments/chaos-fluid
+- **Evaluation**: Newly spliced. Awaiting full simulation observation.
+
 ### myco-tank
 - **Parents**: experiments/myco-transit + experiments/ripple-tank
 - **Concept**: Pheromone-Guided Acoustic Wave Advection. Slime mold agents distribute the active source on a 2D acoustic wave tank grid. The propagating pressure waves then interact with and advect the pheromone trails.

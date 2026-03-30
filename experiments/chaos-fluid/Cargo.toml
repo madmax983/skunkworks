@@ -1,0 +1,12 @@
+[package]
+name = "chaos-fluid"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rayon = "1.8"
+ferrous-core = { workspace = true }
+locus = { workspace = true }
+platter = { workspace = true }
+rand = { workspace = true }
