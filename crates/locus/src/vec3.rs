@@ -80,6 +80,21 @@ impl Vec3 {
     pub fn new(x: f32, y: f32, z: f32) -> Self {
         Self { x, y, z }
     }
+
+    /// Creates a vector with all components set to zero.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::vec3::Vec3;
+    /// let v = Vec3::zero();
+    /// assert_eq!(v.x, 0.0);
+    /// assert_eq!(v.y, 0.0);
+    /// assert_eq!(v.z, 0.0);
+    /// ```
+    pub fn zero() -> Self {
+        Self::new(0.0, 0.0, 0.0)
+    }
 }
 
 #[cfg(feature = "macroquad")]
