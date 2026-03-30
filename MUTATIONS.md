@@ -479,3 +479,10 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Novel trait**: Genetic Attack Vectors. Packets that hit firewalls die, those that reach the server pass their `Dna` to the next generation, evolving to naturally weave through complex, shifting defense grids.
 - **Status**: experiments/chimera-ddos
 - **Evaluation**: Success. Compiled. Swarm intelligence adapts via genetic inheritance and crossover.
+
+### mnem-strings
+- **Parents**: experiments/mnem-rot + experiments/ferrous-strings
+- **Concept**: Acoustic Manifestation of Code Decay. The decaying nodes of a codebase graph simulation physically strike acoustic-magnetic strings.
+- **Novel trait**: Codebase nodes act as particles. As their entropy (rot) increases, they fall from the graph and physically pluck resonant strings. Rotting nodes dynamically damage and decay the string tension as they collide. The repository's health is translated into continuous acoustic vibrations and magnetic interference.
+- **Status**: experiments/mnem-strings
+- **Evaluation**: Success. Compiled. Exhibits an emergent acoustic-magnetic representation of code decay.
