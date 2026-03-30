@@ -1,7 +1,11 @@
 ## 🧫 Current Pheromone Map
-### [Concentration Level: CRITICAL MASS] - Location: experiments/ferrous-ddos
+### [Concentration Level: CRITICAL MASS] - Location: experiments/ferrous-genesis
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure / Ecosystem Genericism. Fails strict clippy settings (`unnecessary_cast`). Grace period: 24h.
+- **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `E0599` missing methods on `platter::Platter` and `dead_code` warnings. Grace period: 24h.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/ferrous-ddos
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Fails strict clippy settings (`unnecessary_cast`). Grace period expired. Moved to graveyard.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/chimera-cam
 - **Scent Origin:** The Reaper ☠️

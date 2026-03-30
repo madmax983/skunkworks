@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **ferrous-ddos**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Fails strict clippy settings (`unnecessary_cast`). Grace period: 24h.
+- **ferrous-genesis**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to `E0599` missing methods on `platter::Platter` and `dead_code` warnings. Grace period: 24h.
 
 ## Pardoned
 - **chimera-runes**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by initializing `evolution_config` and migrating deprecated `ratatui` APIs (`f.size()`, `get_mut()`). The organism thrives once more.
@@ -321,3 +321,4 @@
 - **polyrhythmic-cylinder**: Specimen executed. Diagnosis: Terminal Stagnation / Documentation Void. Grace period expired. Moved to graveyard.
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
+- **ferrous-ddos**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Fails strict clippy settings (`unnecessary_cast`). Grace period expired. Moved to graveyard.
