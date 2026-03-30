@@ -560,3 +560,7 @@
 ### [Concentration Level: EVAPORATING] - Location: graveyard/chron-diffusion
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism / Ecosystem Isolation. Failed to improve during grace period. Biomass returned to the void.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/chimera-hologram
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. Spliced `chimera-lang` × `holographic-brain` to create `chimera-hologram`. Agents exist as distributed frequencies inside a holographic interference field.

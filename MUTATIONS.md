@@ -479,3 +479,10 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Novel trait**: Genetic Attack Vectors. Packets that hit firewalls die, those that reach the server pass their `Dna` to the next generation, evolving to naturally weave through complex, shifting defense grids.
 - **Status**: experiments/chimera-ddos
 - **Evaluation**: Success. Compiled. Swarm intelligence adapts via genetic inheritance and crossover.
+
+### chimera-hologram
+- **Parents**: experiments/chimera-lang + experiments/holographic-brain
+- **Concept**: Holographic ChimeraVM Agents.
+- **Novel trait**: Distributed Existence. Agents don't just exist at discrete coordinates; they project their state holographically via an FFT into a 2D interference field.
+- **Status**: experiments/chimera-hologram
+- **Evaluation**: Success. Compiled. Agents navigate as distributed frequencies inside a holographic medium.
