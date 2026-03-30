@@ -1,7 +1,7 @@
 use ::rand::Rng;
 use chimera_lang::prelude::*;
-use ferrous_core::Platter;
 use macroquad::prelude::*;
+use platter::Platter;
 
 pub struct FerrousString {
     // Physics / Visuals

@@ -11,7 +11,7 @@
 //! of magnetic influence.
 
 use ::rand::Rng;
-use ferrous_core::Platter;
+use platter::Platter;
 use macroquad::prelude::*;
 
 mod physics;

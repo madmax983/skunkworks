@@ -10,6 +10,6 @@ ratatui = { workspace = true }
 rand = { workspace = true }
 tui-shared = { workspace = true }
 locus = { workspace = true }
-ferrous-core = { workspace = true }
+platter = { workspace = true }
 git2 = { workspace = true }
 chrono = "0.4"

@@ -1,5 +1,5 @@
-use ferrous_core::Platter;
 use macroquad::prelude::*;
+use platter::Platter;
 
 mod audio;
 mod particle;

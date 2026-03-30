@@ -1,4 +1,4 @@
-use ferrous_core::Platter;
+use platter::Platter;
 use macroquad::prelude::Vec2;
 
 const SUB_STEPS: usize = 20;

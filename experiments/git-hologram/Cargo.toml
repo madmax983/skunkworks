@@ -9,7 +9,6 @@ crossterm.workspace = true
 ratatui.workspace = true
 rand.workspace = true
 tui-shared.workspace = true
-ferrous-core.workspace = true
 platter.workspace = true
 locus.workspace = true
 git2.workspace = true

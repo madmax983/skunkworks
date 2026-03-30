@@ -7,5 +7,5 @@ edition = "2021"
 macroquad = "0.4"
 rand = "0.8"
 rayon = "1.8"
-ferrous-core = { path = "../../crates/ferrous-core" }
+platter = { path = "../../crates/platter" }
 locus = { path = "../../crates/locus" }

@@ -1,5 +1,5 @@
 use ::rand::prelude::*;
-use ferrous_core::Platter;
+use platter::Platter;
 use macroquad::prelude::*;
 use rayon::prelude::*;
 use crossbeam_channel::Sender;

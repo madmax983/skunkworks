@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0"
 crossterm = "0.28"
-ferrous-core = { path = "../../crates/ferrous-core" }
+platter = { path = "../../crates/platter" }
 gray-scott = { path = "../../crates/gray-scott" }
 locus = { path = "../../crates/locus" }
 rand = "0.8"

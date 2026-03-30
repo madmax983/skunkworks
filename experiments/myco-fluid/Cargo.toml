@@ -10,5 +10,5 @@ ratatui = { workspace = true }
 rand = { workspace = true }
 tui-shared = { workspace = true }
 locus = { workspace = true }
-ferrous-core = { workspace = true }
+platter = { workspace = true }
 rayon = "1.11.0"

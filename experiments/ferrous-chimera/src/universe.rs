@@ -1,6 +1,6 @@
 use crate::agent::Agent;
 use crate::physics::Vec2;
-use ferrous_core::Platter;
+use platter::Platter;
 
 pub struct Universe {
     pub agents: Vec<Agent>,

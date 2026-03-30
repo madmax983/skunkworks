@@ -1,6 +1,6 @@
 use ::rand::Rng;
 use chimera_lang::prelude::*;
-use ferrous_core::Platter;
+use platter::Platter;
 use macroquad::prelude::*;
 
 pub struct FerrousString {

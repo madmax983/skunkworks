@@ -1,6 +1,6 @@
-use ferrous_core::Platter;
 pub use locus::Vec2;
 use neuro_sim::Izhikevich;
+use platter::Platter;
 use rand::Rng;
 use ratatui::style::Color;
 

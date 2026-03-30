@@ -1,5 +1,5 @@
-use ferrous_core::Platter;
 pub use locus::Vec2;
+use platter::Platter;
 use ratatui::style::Color;
 
 #[derive(Debug, Clone)]

@@ -1,8 +1,8 @@
 use ::rand::prelude::*;
 use crossbeam_channel::bounded;
-use ferrous_core::Platter;
 use locus::Vec2;
 use macroquad::prelude::*;
+use platter::Platter;
 #[cfg(feature = "audio")]
 use resonance_audio::audio::AudioSnapshot;
 use resonance_audio::audio::{AudioCommand, AudioModel};

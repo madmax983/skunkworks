@@ -1,5 +1,5 @@
-use ferrous_core::Platter;
 use macroquad::prelude::*;
+use platter::Platter;
 
 #[derive(Clone, Copy)]
 pub struct Particle {

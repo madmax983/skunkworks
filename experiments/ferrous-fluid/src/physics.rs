@@ -1,5 +1,5 @@
-use ferrous_core::Platter;
 use locus::Vec2;
+use platter::Platter;
 use rand::Rng;
 
 pub struct Particle {

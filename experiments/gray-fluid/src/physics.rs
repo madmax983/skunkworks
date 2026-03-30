@@ -1,6 +1,6 @@
-use ferrous_core::Platter;
 use gray_scott::GrayScott;
 use locus::Vec2;
+use platter::Platter;
 use rand::Rng;
 
 pub struct Particle {

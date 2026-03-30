@@ -10,4 +10,4 @@ ratatui.workspace = true
 rand.workspace = true
 chimera-lang.workspace = true
 locus.workspace = true
-ferrous-core.workspace = true
+platter.workspace = true

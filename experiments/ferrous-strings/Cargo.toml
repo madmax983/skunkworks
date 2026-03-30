@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 macroquad = "0.4"
 rand = "0.8"
-ferrous-core = { path = "../../crates/ferrous-core" }
+platter = { path = "../../crates/platter" }
 chimera-lang = { path = "../../experiments/chimera-lang" }
 crossbeam-channel = "0.5"
 anyhow = "1.0"
