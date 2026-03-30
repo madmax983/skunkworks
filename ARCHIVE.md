@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **locus-strings**: Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. Fails to provide a `README.md` and generates numerous `clippy` precision warnings. The code is structurally fragile. Grace period: 24h.
+- **chimera-voice**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Swarm Neglect. The organism fails to compile (`T: cpal::SizedSample` trait bound error). Grace period: 24h.
 
 ## Pardoned
 - **chimera-chaos**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Technical Debt Burden / Swarm Neglect. Resolved by patching unused code warnings and initializing `evolution_config`. The organism breathes again.
@@ -325,3 +325,5 @@
 - **polyrhythmic-cylinder**: Specimen executed. Diagnosis: Terminal Stagnation / Documentation Void. Grace period expired. Moved to graveyard.
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
+
+- **locus-strings**: Specimen executed. Diagnosis: Documentation Void / Skeletal Implementation. Grace period expired. Moved to graveyard.

@@ -53,9 +53,9 @@
 - **Status:** Recombination pheromone deployed. Spliced ferrous-strings with hologram-text.
 - **Phenotype:** Spectral Acoustics. We view the discrete acoustic strings entirely through their frequency domain interference pattern via FFT.
 
-### [Concentration Level: EVAPORATING] - Location: experiments/locus-strings
+### [Concentration Level: EXECUTED] - Location: graveyard/locus-strings
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Death pheromone applied. Specimen condemned for Documentation Void / Skeletal Implementation. 24h grace period active.
+- **Status:** Execution completed. Biomass reclaimed.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/locus-strings
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -662,3 +662,7 @@
 - **Lineage:** crates/market-sim × experiments/ripple-tank
 - **Status:** Recombination pheromone deployed. A new hybrid `market-tank` (Acoustic Market Dynamics) has been spliced into the repository.
 - **Phenotype:** Acoustic Liquidity. Trade executions pluck the acoustic tank, sending physical pressure waves that literally push resting Bids and Asks around, simulating market volatility driven by continuous sound waves.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/chimera-voice
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Death pheromone applied. Specimen condemned for Terminal Compilation Failure (`T: cpal::SizedSample`). 24h grace period active.
