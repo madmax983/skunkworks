@@ -434,6 +434,25 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_out_of_bounds_get() {
+        let grid = Grid::new(5, 5);
+        assert_eq!(grid.get(5, 5), Particle::Empty); // x and y out of bounds
+        assert_eq!(grid.get(10, 0), Particle::Empty); // x out of bounds
+        assert_eq!(grid.get(0, 10), Particle::Empty); // y out of bounds
+    }
+
+    #[test]
+    fn test_blocked_sideways_movement_does_nothing() {
+        let mut grid = Grid::new(1, 3); // 1 column wide, cannot move sideways
+        grid.set(0, 0, Particle::Trade { age: 5 }); // Top is blocked
+        grid.set(0, 1, Particle::Bid(1)); // Bid wants to go up, but blocked by trade
+
+        grid.update(); // Pass 1: tries to move up -> blocked -> tries sideways -> out of bounds (1 col) -> stays
+
+        assert_eq!(grid.get(0, 1), Particle::Bid(1)); // Still there
+    }
+
+    #[test]
     fn test_bid_movement() {
         let mut grid = Grid::new(10, 10);
         // Place a bid at (5, 5)
@@ -485,14 +504,14 @@ mod tests {
         assert_eq!(event.price, 5.0);
 
         // Grid should show a Trade particle at (5, 4)
-        match grid.get(5, 4) {
-            // Age starts at DEFAULT_TRADE_AGE, but decays by 1 in the same tick (Pass 3)
-            Particle::Trade { age } => assert_eq!(age, DEFAULT_TRADE_AGE - 1),
-            _ => panic!(
-                "Expected Trade particle at (5, 4), found {:?}",
-                grid.get(5, 4)
+        assert!(
+            matches!(
+                grid.get(5, 4),
+                Particle::Trade { age } if age == DEFAULT_TRADE_AGE - 1
             ),
-        }
+            "Expected Trade particle at (5, 4), found {:?}",
+            grid.get(5, 4)
+        );
     }
 
     #[test]
@@ -638,10 +657,11 @@ mod sentry_tests {
         // else { self.cells[idx] = Particle::Empty; }
 
         // So age 1 becomes age 0. It is NOT Empty yet.
-        match grid.get(1, 1) {
-            Particle::Trade { age } => assert_eq!(age, 0),
-            _ => panic!("Expected Trade with age 0"),
-        }
+        assert!(
+            matches!(grid.get(1, 1), Particle::Trade { age: 0 }),
+            "Expected Trade with age 0, found {:?}",
+            grid.get(1, 1)
+        );
 
         grid.update();
         // Now age 0 becomes Empty.
@@ -685,6 +705,29 @@ mod sentry_tests {
 
         // Verify original spot of Bid B is empty
         assert_eq!(grid.get(1, 2), Particle::Empty);
+    }
+
+    #[test]
+    fn test_ask_blocked_by_wall_moves_sideways() {
+        // Grid 3x3
+        let mut grid = Grid::new(3, 3);
+        // Wall at (1, 2) - Blocking Ask A moving down
+        grid.set(1, 2, Particle::Wall);
+        // Ask A at (1, 1) - Blocked by Wall
+        grid.set(1, 1, Particle::Ask(10));
+
+        grid.update();
+
+        // Expectation:
+        // Ask A moves Sideways to (0,1) or (2,1).
+
+        // Verify Ask A moved sideways
+        let a_left = matches!(grid.get(0, 1), Particle::Ask(10));
+        let a_right = matches!(grid.get(2, 1), Particle::Ask(10));
+        assert!(
+            a_left || a_right,
+            "Ask A did not move sideways when blocked by Wall"
+        );
     }
 
     #[test]

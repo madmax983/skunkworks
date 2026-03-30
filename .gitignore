@@ -3,3 +3,7 @@ Cargo.lock
 .claude/
 nul
 .chimera_akashic.json
+lcov.info
+tarpaulin-report.html
+tarpaulin-report.json
+all_lines.txt
