@@ -74,7 +74,10 @@ impl World {
         let pheromones = &self.pheromones;
 
         // Parallel update of agents
-        let updates: Vec<(Vec2, Vec2, u8, Option<(usize, usize)>, f32)> = self
+        type UpdateTuple = (Vec2, Vec2, u8, Option<(usize, usize)>, f32);
+
+        #[allow(clippy::type_complexity)]
+        let updates: Vec<UpdateTuple> = self
             .agents
             .par_iter()
             .map(|agent| {

@@ -8,6 +8,7 @@ pub struct Node {
     pub prev_pos: Vec2,
     pub mass: f32,
     pub fixed: bool,
+    #[allow(dead_code)]
     pub name: String,
 }
 
@@ -125,6 +126,7 @@ impl PendulumSystem {
         }
     }
 
+    #[allow(dead_code)]
     pub fn total_energy(&self, dt: f32) -> f32 {
         let mut kinetic = 0.0;
         let mut potential = 0.0;

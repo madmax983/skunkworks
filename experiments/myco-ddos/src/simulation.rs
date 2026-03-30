@@ -49,6 +49,9 @@ impl Agent {
 pub struct World {
     pub agents: Vec<Agent>,
     pub pheromones: Vec<f32>,
+    /// Double buffer for diffusion.
+    /// Eliminates a costly O(n) heap allocation (`Vec::clone()`) per frame, swapping instead.
+    pub next_pheromones: Vec<f32>,
     pub firewalls: Vec<(Vec2, f32)>,
     pub target: Vec2,
     pub server_health: f32,
@@ -87,6 +90,7 @@ impl World {
         Self {
             agents,
             pheromones: vec![0.0; grid_w * grid_h],
+            next_pheromones: vec![0.0; grid_w * grid_h],
             firewalls: Vec::new(),
             grid_w,
             grid_h,
@@ -103,6 +107,7 @@ impl World {
         let w = self.grid_w;
         let h = self.grid_h;
 
+        #[allow(clippy::type_complexity)]
         let updates: Vec<(Vec2, f32, u8, Option<(usize, usize)>, f32)> = self
             .agents
             .par_iter()
@@ -218,9 +223,9 @@ impl World {
         self.server_health = (self.server_health - total_damage).max(0.0);
 
         // Diffuse & Decay
-        let prev_pheromones = self.pheromones.clone();
+        let prev_pheromones = &self.pheromones;
 
-        self.pheromones
+        self.next_pheromones
             .par_chunks_mut(w)
             .enumerate()
             .for_each(|(y, row)| {
@@ -240,6 +245,8 @@ impl World {
                     *cell = (sum / 9.0) * PHEROMONE_DECAY;
                 }
             });
+
+        std::mem::swap(&mut self.pheromones, &mut self.next_pheromones);
     }
 
     pub fn render_to_buffer(&self, buffer: &mut [u8], width: usize, height: usize) {
