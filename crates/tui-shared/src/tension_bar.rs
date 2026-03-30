@@ -140,9 +140,10 @@ impl<'a> Widget for TensionBar<'a> {
 
             let max_x = inner_area.x.saturating_add(inner_area.width);
             for x in inner_area.x..max_x {
-                let cell = &mut buf[(x, draw_y)];
-                cell.set_symbol(block::FULL);
-                cell.set_fg(color);
+                if let Some(cell) = buf.cell_mut((x, draw_y)) {
+                    cell.set_symbol(block::FULL);
+                    cell.set_fg(color);
+                }
             }
         }
 
@@ -179,9 +180,10 @@ impl<'a> Widget for TensionBar<'a> {
 
             let max_x = inner_area.x.saturating_add(inner_area.width);
             for x in inner_area.x..max_x {
-                let cell = &mut buf[(x, draw_y)];
-                cell.set_symbol(symbol);
-                cell.set_fg(color);
+                if let Some(cell) = buf.cell_mut((x, draw_y)) {
+                    cell.set_symbol(symbol);
+                    cell.set_fg(color);
+                }
             }
         }
     }

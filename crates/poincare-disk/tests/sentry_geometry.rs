@@ -8,7 +8,7 @@ fn test_geodesic_euclidean_circle() {
 
     let circle = geo.euclidean_circle();
     assert!(circle.is_some());
-    let (center, _radius) = circle.unwrap();
+    let (center, _radius) = circle.expect("Geodesic should have a circle");
 
     assert!((center.re - 1.25).abs() < 1e-9);
     assert!((center.im - 1.25).abs() < 1e-9);

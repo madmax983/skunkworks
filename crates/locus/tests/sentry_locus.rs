@@ -68,7 +68,7 @@ proptest! {
         let res = topo.normalize(y, x, w, h);
 
         prop_assert!(res.is_some());
-        let (ny, nx) = res.unwrap();
+        let (ny, nx) = res.expect("Topology should normalize");
 
         // Torus wrapping check
         let expected_x = x.rem_euclid(w as i64) as usize;
@@ -90,7 +90,7 @@ proptest! {
 
         if y >= 0 && y < h as i64 {
             prop_assert!(res.is_some());
-            let (ny, nx) = res.unwrap();
+            let (ny, nx) = res.expect("Topology should normalize");
 
             // X wraps, Y bounded
             let expected_x = x.rem_euclid(w as i64) as usize;
@@ -113,7 +113,7 @@ proptest! {
 
         if x >= 0 && x < w as i64 {
             prop_assert!(res.is_some());
-            let (ny, nx) = res.unwrap();
+            let (ny, nx) = res.expect("Topology should normalize");
 
             // Y wraps, X bounded
             let expected_y = y.rem_euclid(h as i64) as usize;
@@ -136,7 +136,7 @@ proptest! {
 
         // Klein is closed, so always returns Some
         prop_assert!(res.is_some());
-        let (ny, nx) = res.unwrap();
+        let (ny, nx) = res.expect("Topology should normalize");
 
         // Check range
         prop_assert!(nx < w);
