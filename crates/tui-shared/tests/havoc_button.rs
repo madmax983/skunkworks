@@ -10,7 +10,6 @@ proptest! {
     /// so that `inner_area.height < 1`. Without bounds checking, calculating the Y coordinate
     /// for text placement can exceed the actual screen space.
     #[test]
-    #[should_panic(expected = "outside of buffer")]
     fn test_button_height_zero_panic(
         height in 0..=2u16
     ) {

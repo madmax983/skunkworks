@@ -305,7 +305,7 @@ impl<'a> Widget for Button<'a> {
         let line = Line::from(content);
         let x_offset = (text_area.width.saturating_sub(line.width() as u16)) / 2;
 
-        if text_area.width > 0 {
+        if text_area.width > 0 && inner_area.height > 0 {
             buf.set_line(text_area.x + x_offset, text_area.y, &line, text_area.width);
         }
     }
