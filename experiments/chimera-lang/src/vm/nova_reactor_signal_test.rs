@@ -5,6 +5,7 @@ mod tests {
     use crate::vm::nova_signals::process_signals;
     use crate::vm::{ChimeraVM, Value};
 
+    #[allow(dead_code)]
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
             evolution_config: None,
