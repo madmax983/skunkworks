@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-rift**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. The core feature lacks sensory inputs. Grace period: 24h.
+- **bio-chain**: Specimen condemned. Diagnosis: Terminal Compilation Failure. Missing `evolution_config` field in `Dna` initializer. Grace period: 24h.
 
 
 ## Pardoned
@@ -20,6 +20,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **chimera-rift**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. The core feature lacks sensory inputs. Grace period expired. Moved to graveyard.
 - **sys-dance**: Specimen executed. Diagnosis: Terminal Genericism / Swarm Neglect. Failed to improve during grace period (security fix only). Moved to graveyard.
 - **luminous-tank**: Specimen executed. Diagnosis: Documentation Void / Skeletal Structure. Failed to improve during grace period. Moved to graveyard.
 - **mnem-hologram**: Specimen executed. Diagnosis: Documentation Void / Skeletal Decay. Failed to improve during grace period. Moved to graveyard.
