@@ -1,19 +1,37 @@
+//! The Visual Buffer of the Chimera Organism.
+//!
+//! The `Retina` module provides a dedicated 2D terminal-like display buffer
+//! (64x32 by default) that a [`ChimeraVM`] can draw to using specific enzymes.
+//! It allows organisms to visualize their internal state, output data, or
+//! construct crude user interfaces entirely from DNA execution.
+//!
+//! Organisms manipulate this buffer by pushing RGB colors, characters, and coordinates
+//! onto the stack, then executing `retina_draw` or `rasterize`.
+
 #[cfg(feature = "nova")]
 use super::{ChimeraVM, Value};
 #[cfg(feature = "nova")]
 use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "nova")]
+/// The default width of the Retina buffer in cells.
 pub const RETINA_WIDTH: usize = 64;
 #[cfg(feature = "nova")]
+/// The default height of the Retina buffer in cells.
 pub const RETINA_HEIGHT: usize = 32;
 
 #[cfg(feature = "nova")]
+/// A 2D visual buffer for rendering text and colors.
+///
+/// The `Retina` is attached to a [`ChimeraVM`] and acts as a specialized output device.
+/// It maintains a grid of characters, each with an associated foreground RGB color.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Retina {
+    /// The horizontal dimension of the buffer.
     pub width: usize,
+    /// The vertical dimension of the buffer.
     pub height: usize,
-    /// Buffer stores (character, (r, g, b))
+    /// The underlying 2D grid storing tuples of `(character, (red, green, blue))`.
     #[allow(clippy::type_complexity)]
     pub buffer: Vec<Vec<(char, (u8, u8, u8))>>,
 }
@@ -27,6 +45,19 @@ impl Default for Retina {
 
 #[cfg(feature = "nova")]
 impl Retina {
+    /// Creates a new, blank Retina initialized with space characters and white text.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use chimera_lang::vm::retina::Retina;
+    ///
+    /// let retina = Retina::new();
+    /// assert_eq!(retina.width, 64);
+    /// assert_eq!(retina.height, 32);
+    /// // The top-left cell is a blank space, colored white.
+    /// assert_eq!(retina.buffer[0][0], (' ', (255, 255, 255)));
+    /// ```
     pub fn new() -> Self {
         // Initialize with spaces and black background (effectively empty)
         // We only store FG color for now in tuple.
@@ -40,12 +71,41 @@ impl Retina {
         }
     }
 
+    /// Draws a character with a specific RGB color at the given coordinates.
+    ///
+    /// Silently ignores out-of-bounds coordinates.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use chimera_lang::vm::retina::Retina;
+    ///
+    /// let mut retina = Retina::new();
+    /// // Draw a red 'X' at (y: 5, x: 10)
+    /// retina.draw(5, 10, 'X', 255, 0, 0);
+    /// assert_eq!(retina.buffer[5][10], ('X', (255, 0, 0)));
+    ///
+    /// // Drawing out of bounds does nothing, preventing panics
+    /// retina.draw(100, 100, '?', 0, 0, 0);
+    /// ```
     pub fn draw(&mut self, y: usize, x: usize, ch: char, r: u8, g: u8, b: u8) {
         if y < self.height && x < self.width {
             self.buffer[y][x] = (ch, (r, g, b));
         }
     }
 
+    /// Clears the entire buffer, setting all cells to a space character with the provided RGB color.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use chimera_lang::vm::retina::Retina;
+    ///
+    /// let mut retina = Retina::new();
+    /// // Clear screen to black
+    /// retina.clear(0, 0, 0);
+    /// assert_eq!(retina.buffer[15][15], (' ', (0, 0, 0)));
+    /// ```
     pub fn clear(&mut self, r: u8, g: u8, b: u8) {
         for row in self.buffer.iter_mut() {
             for cell in row.iter_mut() {
@@ -58,6 +118,12 @@ impl Retina {
 // --- VM Execution Logic ---
 
 #[cfg(feature = "nova")]
+/// Pops X, Y, Character, and Color from the stack to draw on the VM's Retina.
+///
+/// Modifies the `Retina` buffer attached to the VM. Costs 1 Energy.
+/// The `color` value is an integer interpreted as a 24-bit RGB code (e.g., `0xFF0000` is Red).
+///
+/// Returns `None` as it does not perform a jump.
 pub fn exec_retina_draw(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 4 {
         let x_val = vm.stack.pop().unwrap();
@@ -91,6 +157,12 @@ pub fn exec_retina_draw(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Pops a Color from the stack to clear the entire Retina buffer.
+///
+/// The `color` value is an integer interpreted as a 24-bit RGB code.
+/// This operation resets all cells to spaces with the new color. Costs 10 Energy.
+///
+/// Returns `None` as it does not perform a jump.
 pub fn exec_retina_clear(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(rgb) = val {
@@ -111,6 +183,11 @@ pub fn exec_retina_clear(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Pushes the width and height of the Retina buffer onto the stack.
+///
+/// Order on stack: `Width`, then `Height`.
+///
+/// Returns `None` as it does not perform a jump.
 pub fn exec_retina_size(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     vm.stack.push(Value::Int(vm.retina.width as i64));
     vm.stack.push(Value::Int(vm.retina.height as i64));
@@ -118,6 +195,12 @@ pub fn exec_retina_size(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Pops a Y coordinate and pushes a Junction array of all pixels in that row.
+///
+/// Returns a Junction of integers representing the RGB colors of each pixel in the specified row.
+/// If out-of-bounds, pushes an empty Junction array and writes to `vm.output`.
+///
+/// Returns `None` as it does not perform a jump.
 pub fn exec_scanline(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(y) = val {
@@ -148,6 +231,20 @@ pub fn exec_scanline(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 }
 
 #[cfg(feature = "nova")]
+/// Renders an array of pixels directly to the Retina buffer.
+///
+/// Pops Mode, Data (Junction or Int), X, and Y from the stack.
+/// Draws a horizontal line of pixels starting at `(x, y)`.
+///
+/// Mode behaviors:
+/// - `1`: Scatter (adds a random -2..=2 offset to X for each pixel)
+/// - `2`: XOR (XORs the new pixel RGB against the existing pixel RGB)
+/// - `3`: Sort (Sorts the given Data array by brightness before drawing)
+/// - `other`: Default (direct replacement drawing)
+///
+/// The cost depends on the number of pixels in the data array (`len / 10` Energy).
+///
+/// Returns `None` as it does not perform a jump.
 pub fn exec_rasterize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.stack.len() >= 4 {
         let mode_val = vm.stack.pop().unwrap();
