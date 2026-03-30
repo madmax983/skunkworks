@@ -54,7 +54,9 @@ impl PartialEq for Value {
                         return false;
                     }
                     for ((xa, pa), (xb, pb)) in sa.iter().zip(sb.iter()) {
-                        if pa.to_bits() != pb.to_bits() {
+                        let na = if *pa == 0.0 { 0.0 } else { *pa };
+                        let nb = if *pb == 0.0 { 0.0 } else { *pb };
+                        if na.to_bits() != nb.to_bits() {
                             return false;
                         }
                         stack.push((xa, xb));
@@ -145,7 +147,8 @@ impl std::hash::Hash for Value {
                     // Let's just use the iterative order: we hash `p` now and push `v`, meaning `p` is hashed BEFORE `v`.
                     // This is perfectly fine for a Hash implementation as long as it's consistent.
                     for (v, p) in states.iter().rev() {
-                        p.to_bits().hash(state);
+                        let np = if *p == 0.0 { 0.0 } else { *p };
+                        np.to_bits().hash(state);
                         stack.push(v);
                     }
                 }
