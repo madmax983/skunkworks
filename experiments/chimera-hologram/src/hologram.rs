@@ -31,7 +31,7 @@ impl HolographicMemory {
         }
     }
 
-    pub fn clear(&mut self) {
+    pub fn _clear(&mut self) {
         for val in &mut self.memory {
             *val = Complex::new(0.0, 0.0);
         }
@@ -148,7 +148,7 @@ impl HolographicMemory {
         data.iter().map(|c| c.norm() * scale).collect()
     }
 
-    pub fn get_magnitude_spectrum(&self) -> Vec<f64> {
+    pub fn _get_magnitude_spectrum(&self) -> Vec<f64> {
         self.memory.iter().map(|c| (c.norm() + 1.0).ln()).collect()
     }
 }

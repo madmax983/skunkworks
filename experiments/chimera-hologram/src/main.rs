@@ -95,7 +95,7 @@ fn generate_dna() -> Dna {
         }, // Jump to start of strand 0
     ];
 
-    Dna {
+    Dna { evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },
