@@ -52,3 +52,11 @@
 **2026-03-24 - [DoS via Float Sort Panic]**
 **Threat:** Several experiments used `.unwrap()` on `partial_cmp` when sorting floats (`f64`/`f32`). This created a Denial of Service (DoS) vulnerability where any `NaN` value introduced into the calculations would cause the application to panic and crash during sorting or `max_by`/`min_by` operations.
 **Defense:** Replaced `.unwrap()` with `total_cmp` to safely handle potential `NaN` values without panicking across `experiments/chimera-cam`, `experiments/process-canopy`, `experiments/chimera-canopy`, `experiments/hyperbolic-rogue`, `experiments/chimera-lattice`, `experiments/lattice-brain`, `experiments/quantum-rogue`, `experiments/cloud-mycelium`, and `experiments/chimera-sediment`.
+
+**2023-10-26 - [Unbounded Allocation Hardcap]**
+**Threat:** Potential Denial of Service (DoS) through unbounded allocation if user inputs directly control grid dimensions in `Platter::new` and `GrayScott::new`.
+**Defense:** Added hard assert checks to limit maximum sizes to safe boundaries (approx 2GB maximum per grid element set).
+
+**2023-10-26 - [Panic on Out of Bounds Timestamp]**
+**Threat:** Theoretical panic condition (Denial of Service) when resolving a git commit timestamp due to `unwrap()` on chrono's `LocalResult`.
+**Defense:** Used `single().unwrap_or_default()` to provide a safe fallback for unrepresentable timestamps, preventing panics.

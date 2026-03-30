@@ -37,7 +37,8 @@ impl Platter {
     ///
     /// # Panics
     ///
-    /// Panics if `width * height` overflows `usize::MAX`.
+    /// Panics if `width * height` overflows `usize::MAX` or exceeds 268,435,456 elements (1GB limit)
+    /// to prevent unbounded memory allocation DoS vulnerabilities.
     ///
     /// # Examples
     ///
@@ -49,6 +50,9 @@ impl Platter {
     /// ```
     pub fn new(width: usize, height: usize) -> Self {
         let size = width.checked_mul(height).expect("Platter size overflow");
+        // Warden: Hardcap allocation to 256MB * 8 bytes (f64) ~ 2GB max to prevent DoS.
+        // Even this is huge, but protects against `usize::MAX` allocation panics or OOM.
+        assert!(size <= 268_435_456, "Platter dimensions exceed maximum allowed capacity to prevent DoS");
         Self {
             magnetism: vec![0.0; size],
             width,

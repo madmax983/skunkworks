@@ -137,7 +137,7 @@ impl GitModel {
             let timestamp = Utc
                 .timestamp_opt(commit.time().seconds(), 0)
                 .single()
-                .unwrap_or_else(|| Utc.timestamp_opt(0, 0).unwrap());
+                .unwrap_or_else(|| Utc.timestamp_opt(0, 0).single().unwrap_or_default());
 
             let parents: Vec<String> = commit.parents().map(|p| p.id().to_string()).collect();
 

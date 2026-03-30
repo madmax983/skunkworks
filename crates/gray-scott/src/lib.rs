@@ -56,6 +56,11 @@ pub struct GrayScott {
 impl GrayScott {
     /// Creates a new Gray-Scott simulation with the given dimensions.
     ///
+    /// # Panics
+    ///
+    /// Panics if `width * height` overflows `usize::MAX` or exceeds 67,108,864 elements (256MB per array)
+    /// to prevent unbounded memory allocation DoS vulnerabilities.
+    ///
     /// # Examples
     ///
     /// ```
@@ -67,6 +72,8 @@ impl GrayScott {
     /// ```
     pub fn new(width: usize, height: usize) -> Self {
         let size = width.checked_mul(height).expect("GrayScott size overflow");
+        // Warden: Hardcap allocation. 67,108,864 f64 elements * 4 arrays * 8 bytes = ~2GB max.
+        assert!(size <= 67_108_864, "GrayScott dimensions exceed maximum allowed capacity to prevent DoS");
         Self {
             width,
             height,
