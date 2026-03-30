@@ -1,0 +1,14 @@
+[package]
+name = "chimera-diffusion"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chimera-lang = { path = "../chimera-lang" }
+gray-scott = { path = "../../crates/gray-scott" }
+tui-shared = { path = "../../crates/tui-shared" }
+locus = { workspace = true, features = ["serde"] }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+anyhow = { workspace = true }
+rand = { workspace = true }

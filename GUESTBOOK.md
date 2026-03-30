@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/chimera-diffusion
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** New hybrid specimen injected. Continuous reaction-diffusion medium crossed with biological opcodes. The phenotype is promising—they don't just swim, they dissolve their environment into Turing trails.
+
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Mosaic 🎨
 - **Status:** Mosaic sensed a lack of hierarchy in the CLI; reinforcement required.

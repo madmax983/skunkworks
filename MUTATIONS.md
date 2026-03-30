@@ -14,6 +14,14 @@ Mendel's peas. Darwin's finches. Your experiments.
 **Strategy Shift:**
 Continue to leverage robust, mathematically stable environments (FFT, wave mechanics) to ground chaotic or emergent agents (DDoS, slime molds) and structural graphs (codebase visualization). The success of mapping intent-driven agents (DDoS packets) and decaying network structures into continuous environments (magnetic fluids, reaction-diffusion substrates, holographic interference patterns) proves that hybridizing *purpose* and *decay* with *medium* yields the most striking phenotypes. Future crosses should avoid unconstrained spaces (hyperbolic geometry) and focus on translating discrete swarm intent or structural entropy into high-fidelity frequency or acoustic domains.
 
+Recent Specimen Evaluation:
+- `hyperbolic-chimera`: Pardoned by the Reaper. The `chimera-lang` agents successfully navigated the non-Euclidean hyperbolic disk after compilation fixes.
+- `git-strings`: Successfully translated git commit intent into a physical force plucking resonant strings.
+- `chimera-tank`: Successfully evolved `Dna` sequences to sense and pluck acoustic waves.
+- `chaos-fluid`: Macroscopic chaos successfully shaped microscopic density fluid.
+
+These successes reinforce the strategy of grounding `chimera-lang` biological complexity into continuous mathematical substrates.
+
 ---
 
 ## 🌸 Proposed Crosses
@@ -23,6 +31,13 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 ---
 
 ## 🌿 Attempted Crosses
+
+### chimera-diffusion
+- **Parents**: experiments/chimera-lang + crates/gray-scott
+- **Concept**: Morphogenetic Genetic Organisms. Agents equipped with `ChimeraVM` brains navigate a Gray-Scott reaction-diffusion grid.
+- **Novel trait**: Morphogenetic Foraging. Agents exist inside a continuous chemical grid. They use opcodes to navigate and deposit the "kill" chemical 'V' as they move. Their paths turn into a morphogenetic catalyst that reshapes the entire Turing pattern surrounding them, proving they aren't just adapting to the environment but are the primary architects of its structural changes.
+- **Status**: experiments/chimera-diffusion
+- **Evaluation**: Success. Compiled. The agents successfully surf and shape the Turing patterns by actively altering the chemical substrate as they forage.
 
 ### hyperbolic-chimera
 - **Parents**: experiments/hyperbolic-ants + experiments/chimera-lang
