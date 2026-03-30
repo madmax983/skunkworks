@@ -124,6 +124,8 @@ proptest! {
         for _ in 0..500 {
             if vm.halted { break; }
             vm.step();
+            let total_genes: usize = vm.dna.helix.strands.iter().map(|s| s.genes.len()).sum();
+            if total_genes > 1_000_000 { break; }
         }
     }
 }

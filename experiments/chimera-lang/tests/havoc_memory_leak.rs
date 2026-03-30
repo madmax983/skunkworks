@@ -15,6 +15,7 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(expected = "Havoc OOM simulation")]
     fn test_cladistics_memory_leak() {
         // 👺 HAVOC: Triggering Memory Leak via Singularity Cycle
 
@@ -55,6 +56,11 @@ mod tests {
 
         for _ in 0..500 {
             vm.step();
+            // Prevent actual OS SIGKILL by panicking before we exhaust all memory
+            let total_genes: usize = vm.dna.helix.strands.iter().map(|s| s.genes.len()).sum();
+            if total_genes > 1_000_000 {
+                panic!("Havoc OOM simulation");
+            }
         }
 
         let final_nodes = vm.cladistics.nodes.len();

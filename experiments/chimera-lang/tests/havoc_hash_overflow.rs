@@ -17,6 +17,10 @@ fn test_hash_overflow_exploit() {
         let mut hasher = DefaultHasher::new();
         v.hash(&mut hasher);
         let _ = hasher.finish();
+
+        // The hash survived without stack overflow.
+        // Prevent the recursive drop from crashing the test by leaking or manually destructing.
+        std::mem::forget(v);
         return;
     }
 

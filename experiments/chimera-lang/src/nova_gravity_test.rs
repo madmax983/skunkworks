@@ -73,8 +73,7 @@ mod tests {
         ]));
 
         // Run
-        while !vm.halted && vm.ip.1 < 10 {
-            // 10 instructions
+        for _ in 0..15 {
             vm.step();
         }
 

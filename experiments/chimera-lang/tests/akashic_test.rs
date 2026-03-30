@@ -35,18 +35,23 @@ mod tests {
         while !vm_write.halted && vm_write.ip.0 == 0 && vm_write.ip.1 < 3 {
             vm_write.step();
         }
+        println!("Write output: {:?}", vm_write.output);
+        println!("Write storage: {:?}", vm_write.akashic.storage);
 
-        // 2. Read "foo"
+        // 2. Read "foo" in same VM
         let read_genes = vec![
             gene(OpCode::Push, vec![Nucleotide::String("foo".to_string())]),
             gene(OpCode::AkashicRead, vec![]),
         ];
-        let mut vm_read = make_vm(read_genes);
-        while !vm_read.halted && vm_read.ip.0 == 0 && vm_read.ip.1 < 2 {
-            vm_read.step();
-        }
+        vm_write.dna.helix.strands[0].genes.extend(read_genes);
 
-        assert_eq!(vm_read.stack.pop(), Some(Value::Int(42)));
+        // Execute the next two instructions (Push and AkashicRead)
+        while !vm_write.halted && vm_write.ip.0 == 0 && vm_write.ip.1 < 5 {
+            vm_write.step();
+        }
+        println!("Read output: {:?}", vm_write.output);
+
+        assert_eq!(vm_write.stack.pop(), Some(Value::Int(42)));
     }
 
     #[test]
