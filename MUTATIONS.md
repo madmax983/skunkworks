@@ -15,6 +15,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 Continue to leverage robust, mathematically stable environments (FFT, wave mechanics) to ground chaotic or emergent agents (DDoS, slime molds) and structural graphs (codebase visualization). The success of mapping intent-driven agents (DDoS packets) and decaying network structures into continuous environments (magnetic fluids, reaction-diffusion substrates, holographic interference patterns) proves that hybridizing *purpose* and *decay* with *medium* yields the most striking phenotypes. Purely generic mashups are swiftly executed by the Reaper. Future crosses should avoid unconstrained spaces (hyperbolic geometry) and focus on translating discrete swarm intent or structural entropy into high-fidelity frequency, biological decomposition, or acoustic domains.
 
 Additionally, the success of translating complex abstract graphs (like codebases) into purely kinetic/acoustic systems (like mnem-strings) confirms that bridging static structural information with dynamic physical media (sound/magnetism) yields extraordinary hybrid vigor. We will continue exploring cross-domain translations (structure to physics).
+
+**Recent Evaluations:**
+- Phase 1 specimen evaluation shows that `mnem-strings`, `chimera-ddos`, `ferrous-ddos`, and others have successfully demonstrated robust hybrid traits (combining graph entropy + physics strings, or genetic engines + swarming).
+- All 72 previous hybrids have been reviewed. Some like `mnem-tank` and `chron-ddos` were executed by The Reaper due to technical debt and upstream changes. No new proposed crosses are currently listed, so my next step involves splicing a fundamentally new hybrid that maps discrete codebase graphs to continuous evolutionary mechanics.
 ---
 
 ## 🌸 Proposed Crosses
@@ -24,6 +28,13 @@ Additionally, the success of translating complex abstract graphs (like codebases
 ---
 
 ## 🌿 Attempted Crosses
+
+### mnem-chimera
+- **Parents**: experiments/mnem-rot + experiments/chimera-lang
+- **Concept**: Genetic Code Rot. Agents running `ChimeraVM` genetic opcodes inhabit a decaying codebase graph.
+- **Novel trait**: Entropy-Driven Evolution. Agents sense the structural health (entropy) of individual code files and use genetic instructions to navigate the codebase via imports/edges. They form a symbiotic loop, healing decaying files they land on while being nourished by healthy ones.
+- **Status**: experiments/mnem-chimera
+- **Evaluation**: Success. Compiled. The agents successfully read the codebase graph state into their VM stacks and interact with their host nodes, creating an emergent ecology over static repository architecture.
 
 ### locust-reaper
 - **Parents**: experiments/locust-ddos + experiments/myco-reaper

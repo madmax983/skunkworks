@@ -642,3 +642,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. A new hybrid `gray-strings` (Acoustic Morphogenesis) has been spliced into the repository.
 - **Phenotype:** Acoustic strings vibrate, physically perturbing a 2D Gray-Scott chemical substrate, creating a bidirectional feedback loop between continuous diffusion and discrete acoustic resonances.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/mnem-chimera
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. A new hybrid `mnem-chimera` (Genetic Code Rot) has been spliced into the repository.
+- **Phenotype:** Artificial `ChimeraVM` agents evolve on a codebase graph. They forage for node structural health and heal decaying files, linking the survival of their genotype to the continued maintenance of the actual repository architecture.
