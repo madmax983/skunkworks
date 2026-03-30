@@ -77,3 +77,26 @@ impl Region {
         self
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_region_new() {
+        let region = Region::new("minimap", 0, 10, 20, 30);
+        assert_eq!(region.name, "minimap");
+        assert_eq!(region.x, 0);
+        assert_eq!(region.y, 10);
+        assert_eq!(region.width, 20);
+        assert_eq!(region.height, 30);
+        assert_eq!(region.description, None);
+    }
+
+    #[test]
+    fn test_region_describe() {
+        let region = Region::new("chat", 0, 0, 80, 5).describe("Chat box");
+        assert_eq!(region.name, "chat");
+        assert_eq!(region.description, Some("Chat box".to_string()));
+    }
+}

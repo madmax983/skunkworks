@@ -84,3 +84,43 @@ impl Action {
         self
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_action_new() {
+        let action = Action::new("quit");
+        assert_eq!(action.name, "quit");
+        assert_eq!(action.description, None);
+        assert_eq!(action.key, None);
+    }
+
+    #[test]
+    fn test_action_describe() {
+        let action = Action::new("attack").describe("Attack the nearest enemy");
+        assert_eq!(action.name, "attack");
+        assert_eq!(
+            action.description,
+            Some("Attack the nearest enemy".to_string())
+        );
+        assert_eq!(action.key, None);
+    }
+
+    #[test]
+    fn test_action_key() {
+        let action = Action::new("jump").key("Space");
+        assert_eq!(action.name, "jump");
+        assert_eq!(action.description, None);
+        assert_eq!(action.key, Some("Space".to_string()));
+    }
+
+    #[test]
+    fn test_action_chained() {
+        let action = Action::new("fire").key("f").describe("Fire weapon");
+        assert_eq!(action.name, "fire");
+        assert_eq!(action.description, Some("Fire weapon".to_string()));
+        assert_eq!(action.key, Some("f".to_string()));
+    }
+}

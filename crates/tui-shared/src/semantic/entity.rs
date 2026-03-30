@@ -220,3 +220,108 @@ impl From<String> for PropValue {
         PropValue::Text(v)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_entity_new() {
+        let entity = Entity::new("player");
+        assert_eq!(entity.kind, "player");
+        assert_eq!(entity.id, None);
+        assert_eq!(entity.position, None);
+        assert_eq!(entity.velocity, None);
+        assert_eq!(entity.display, None);
+        assert!(entity.props.is_empty());
+    }
+
+    #[test]
+    fn test_entity_with_id() {
+        let entity = Entity::new("enemy").with_id("e1");
+        assert_eq!(entity.id, Some("e1".to_string()));
+    }
+
+    #[test]
+    fn test_entity_at() {
+        let entity = Entity::new("ball").at(10.5, 20.0);
+        let pos = entity.position.unwrap();
+        assert_eq!(pos.x, 10.5);
+        assert_eq!(pos.y, 20.0);
+    }
+
+    #[test]
+    fn test_entity_moving() {
+        let entity = Entity::new("bullet").moving(1.0, -1.5);
+        let vel = entity.velocity.unwrap();
+        assert_eq!(vel.x, 1.0);
+        assert_eq!(vel.y, -1.5);
+    }
+
+    #[test]
+    fn test_entity_display() {
+        let entity = Entity::new("wall").display("#");
+        assert_eq!(entity.display, Some("#".to_string()));
+    }
+
+    #[test]
+    fn test_entity_with_prop() {
+        let entity = Entity::new("npc")
+            .with_prop("hp", 100)
+            .with_prop("is_hostile", true)
+            .with_prop("name", "Goblin");
+
+        assert!(matches!(entity.props.get("hp"), Some(PropValue::Int(100))));
+        assert!(matches!(
+            entity.props.get("is_hostile"),
+            Some(PropValue::Bool(true))
+        ));
+        assert!(matches!(
+            entity.props.get("name"),
+            Some(PropValue::Text(s)) if s == "Goblin"
+        ));
+    }
+
+    #[test]
+    fn test_propvalue_from_traits() {
+        // i32
+        let v: PropValue = 42i32.into();
+        assert!(matches!(v, PropValue::Int(42)));
+
+        // i64
+        let v: PropValue = (-100i64).into();
+        assert!(matches!(v, PropValue::Int(-100)));
+
+        // usize
+        let v: PropValue = 999usize.into();
+        assert!(matches!(v, PropValue::Int(999)));
+
+        // f32
+        let v: PropValue = std::f32::consts::PI.into();
+        if let PropValue::Float(f) = v {
+            assert!((f - (std::f32::consts::PI as f64)).abs() < f64::EPSILON * 2.0);
+        } else {
+            panic!("Expected Float");
+        }
+
+        // f64
+        let v: PropValue = std::f64::consts::E.into();
+        if let PropValue::Float(f) = v {
+            assert!((f - std::f64::consts::E).abs() < f64::EPSILON);
+        } else {
+            panic!("Expected Float");
+        }
+
+        // bool
+        let v: PropValue = false.into();
+        assert!(matches!(v, PropValue::Bool(false)));
+
+        // &str
+        let v: PropValue = "hello".into();
+        assert!(matches!(v, PropValue::Text(s) if s == "hello"));
+
+        // String
+        let v: PropValue = "world".to_string().into();
+        assert!(matches!(v, PropValue::Text(s) if s == "world"));
+    }
+}

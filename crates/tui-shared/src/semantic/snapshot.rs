@@ -234,3 +234,63 @@ impl Snapshot {
         serde_json::to_string_pretty(self).unwrap_or_else(|_| "{}".to_string())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_snapshot_new() {
+        let snap = Snapshot::new("test_app");
+        assert_eq!(snap.app, "test_app");
+        assert_eq!(snap.frame, None);
+        assert_eq!(snap.viewport, None);
+        assert!(snap.entities.is_empty());
+        assert!(snap.regions.is_empty());
+        assert!(snap.metrics.is_empty());
+        assert_eq!(snap.state, None);
+        assert!(snap.actions.is_empty());
+    }
+
+    #[test]
+    fn test_snapshot_builders() {
+        let snap = Snapshot::new("test")
+            .with_frame(10)
+            .with_viewport(80, 24)
+            .with_entity(Entity::new("player"))
+            .with_entities(vec![Entity::new("enemy1"), Entity::new("enemy2")])
+            .with_region(Region::new("main", 0, 0, 80, 20))
+            .with_metric("score", 1000)
+            .with_state("menu")
+            .with_action(Action::new("start"));
+
+        assert_eq!(snap.app, "test");
+        assert_eq!(snap.frame, Some(10));
+        assert_eq!(snap.viewport, Some((80, 24)));
+        assert_eq!(snap.entities.len(), 3);
+        assert_eq!(snap.regions.len(), 1);
+        assert_eq!(snap.regions[0].name, "main");
+        assert_eq!(snap.state, Some("menu".to_string()));
+        assert_eq!(snap.actions.len(), 1);
+        assert_eq!(snap.actions[0].name, "start");
+
+        let score = snap.metrics.get("score").unwrap();
+        assert!(matches!(score, PropValue::Int(1000)));
+    }
+
+    #[test]
+    fn test_snapshot_serialization() {
+        let snap = Snapshot::new("app_name")
+            .with_frame(1)
+            .with_viewport(10, 10);
+
+        let json = snap.to_json();
+        assert!(json.contains(r#""app":"app_name""#));
+        assert!(json.contains(r#""frame":1"#));
+        assert!(json.contains(r#""viewport":[10,10]"#));
+
+        let pretty_json = snap.to_json_pretty();
+        assert!(pretty_json.contains("\"app\": \"app_name\""));
+        assert!(pretty_json.contains("\"frame\": 1"));
+    }
+}

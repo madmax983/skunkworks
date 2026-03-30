@@ -1,5 +1,3 @@
-# Sentry's Journal
-
-## 2024-05-24 - [Unchecked Vector Poisoning in physics-pbd]
-**Learning:** `PbdSystem::add_particle` and `PbdSystem::add_pin_constraint` lacked validation for finite vector positions (`f32::NAN` or `f32::INFINITY`). If an invalid position is injected, the solver silently poisons the entire particle system state because `pos.is_finite()` was not asserted at creation time. This caused subsequent mathematical operations in `step()` (like distance constraints) to either propagate the `NaN` or fail randomly when calculating `length()`.
-**Action:** Added `assert!(pos.is_finite(), "...");` to all public API endpoints that accept new physical coordinates or vectors. Wrote `#[should_panic]` unit tests directly targeting these API bounds. Furthermore, when writing tests that fuzz the solver constraints, it's critical to bypass the outer API validation to ensure the *internal* engine (solver) remains robust when testing edge-cases for `stiffness` and `rest_length`.
+**YYYY-MM-DD - Testing `from` traits with Floating-Point Constants**
+**Learning:** When using `PropValue::from(std::f32::consts::PI)` to verify trait conversions in tests, comparing the resulting internal `f64` value against `std::f64::consts::PI` directly triggers a `clippy::approx_constant` warning and fails the assertion due to precision loss during the initial `f32 -> f64` cast.
+**Action:** Use an explicit cast (`(std::f32::consts::PI as f64)`) for the expected value in the assertion to exactly match the precision of the casted input, satisfying both the math and the linter.
