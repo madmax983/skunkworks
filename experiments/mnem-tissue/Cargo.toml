@@ -1,0 +1,12 @@
+[package]
+name = "mnem-tissue"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+physics-pbd = { path = "../../crates/physics-pbd" }
+walkdir = "2.3"
+regex = "1.9"
+rand = "0.8"
+glam = "0.27"

@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/mnem-tissue
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. A new hybrid `mnem-tissue` (Decaying Soft-Body Organs) has been spliced into the repository. The soft-body tissue simulation maps code entropy to physical tearing forces.
+
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-terra
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure / Ecosystem Maladaptation. Missing `evolution_config` field. Grace period: 24h.

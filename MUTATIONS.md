@@ -20,9 +20,18 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 
 <!-- Suggest hybrid experiments by combining existing ones -->
 
----
+
 
 ## 🌿 Attempted Crosses
+
+### mnem-tissue
+- **Parents**: experiments/mnem-rot + experiments/ferrous-tissue
+- **Concept**: Decaying Soft-Body Organs. The codebase graph visualization is mapped to a soft-body tissue structure modeled with PBD constraints.
+- **Predicted Phenotype**: As code files (nodes) rot, their physical constraints (springs, distance bonds) weaken or break entirely. The visual phenotype is an organic, pulsating mass of codebase tissue that physically sags, tears, and collapses under the weight of its own entropy.
+
+---
+- **Status**: experiments/mnem-tissue
+- **Evaluation**: Success. Compiled. The soft-body physics engine accurately maps codebase rot into structural tear constraints.
 
 ### locust-reaper
 - **Parents**: experiments/locust-ddos + experiments/myco-reaper
@@ -35,8 +44,8 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Parents**: experiments/hyperbolic-ants + experiments/chimera-lang
 - **Concept**: Boid-driven Hyperbolic Organisms.
 - **Novel trait**: Non-Euclidean Genetics. The boids navigate a hyperbolic disk using ChimeraVM brains.
-- **Status**: experiments/hyperbolic-chimera
-- **Evaluation**: Pardoned by The Reaper ☠️. The initial condemnation for Terminal Compilation Failure was resolved by fixing the missing `evolution_config` field in the `Dna` struct and fixing deprecated ratatui APIs during its grace period.
+- **Status**: graveyard/hyperbolic-chimera (Executed)
+- **Evaluation**: Executed by The Reaper ☠️. Diagnosis: Terminal Compilation Failure. Moved to graveyard.
 
 ### git-strings
 - **Parents**: experiments/git-harmonograph + experiments/ferrous-strings
@@ -58,15 +67,15 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Evo-Portals.
 - **Novel trait**: Bio-Spatial Manipulation.
 - **Status**: experiments/chimera-rift
-- **Evaluation**: Pardoned by The Reaper ☠️. The initial condemnation for Skeletal Implementation and Terminal Genericism was resolved by adding portal sensor inputs during its grace period, allowing agents to navigate.
+- **Evaluation**: Pardoned by The Reaper ☠️. The organism breathed again and established fitness.
 
 
 ### chimera-fluid
 - **Parents**: experiments/hyper-fluid + experiments/chimera-lang
 - **Concept**: 4D Hydrodynamic Locomotion.
 - **Novel trait**: Metabolic Swimming in 4D.
-- **Status**: experiments/chimera-fluid
-- **Evaluation**: Pardoned by The Reaper ☠️. The terminal compilation failure was resolved by initializing `evolution_config` with `None`, allowing the specimen to compile successfully.
+- **Status**: graveyard/chimera-fluid (Executed)
+- **Evaluation**: Executed by The Reaper ☠️. Diagnosis: Terminal Compilation Failure. Moved to graveyard.
 
 
 ### chaos-fluid
@@ -146,7 +155,7 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Concept**: Codebase Rot Morphogenesis. Decaying nodes of a codebase graph act as chemical catalysts in a Gray-Scott reaction-diffusion grid.
 - **Novel trait**: Entropy Morphogenesis. High-entropy (rotting) files inject the 'V' (kill) chemical, while healthy files inject the 'U' (feed) chemical. Code rot doesn't just passively decay; it actively bleeds and diffuses across the visual space, creating organic, fungal-like patterns that physically consume adjacent healthy files in the 2D layout.
 - **Status**: experiments/mnem-diffusion
-- **Evaluation**: Pardoned by The Reaper ☠️. The initial condemnation for Documentation Void and Skeletal Implementation was resolved by adding a proper README and test cases during its grace period.
+- **Evaluation**: Pardoned by The Reaper ☠️. The organism breathed again and established fitness.
 
 
 ### locust-strings
@@ -330,8 +339,8 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Parents**: experiments/genetic-luthier + experiments/luminous-flock
 - **Concept**: Evolutionary Swarming. Boids have a DNA structure with genes controlling their flocking weights. Recombination on collision.
 - **Novel trait**: Evolutionary Swarming. The flock evolves its own swarming parameters dynamically.
-- **Status**: experiments/genetic-flock
-- **Evaluation**: Executed by The Reaper ☠️ in GUESTBOOK.md (CRITICAL MASS). Failure: Documentation void and skeletal implementation. The DNA logic fails to manifest true emergent behaviors.
+- **Status**: graveyard/genetic-flock (Executed)
+- **Evaluation**: Executed by The Reaper ☠️ (moved to graveyard) due to terminal failures.
 
 ### gray-flock
 - **Parents**: crates/gray-scott + experiments/luminous-flock
@@ -344,8 +353,8 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Parents**: experiments/chaos-pendulum + experiments/ferrous-strings
 - **Concept**: Chaotic Acoustic Feedback. A chaotic double pendulum acts as a pick/bow, striking strings that exert magnetic drag force back on it.
 - **Novel trait**: An unpredictable instrument that influences the player. Bidirectional feedback between chaos and acoustics.
-- **Status**: experiments/chaos-strings
-- **Evaluation**: Success. Compiled. Bidirectional feedback between chaos and acoustics successfully established.
+- **Status**: graveyard/chaos-strings (Executed)
+- **Evaluation**: Executed by The Reaper ☠️. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Moved to graveyard.
 
 ### gray-fluid
 - **Parents**: crates/gray-scott + experiments/ferrous-fluid
@@ -379,8 +388,8 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Parents**: experiments/mnem-rot + experiments/hologram-text
 - **Concept**: Entropy-driven Holography. Decaying nodes in a codebase graph act as spatial objects that perturb an optical interference pattern.
 - **Novel trait**: Spectral Decay. The codebase graph's entropy dynamically morphs the hologram's frequency domain representation and spatial reconstruction.
-- **Status**: experiments/mnem-hologram
-- **Evaluation**: Executed by The Reaper ☠️ (moved to graveyard) due to Documentation Void / Skeletal Decay.
+- **Status**: graveyard/mnem-hologram (Executed)
+- **Evaluation**: Executed by The Reaper ☠️. Diagnosis: Documentation Void / Skeletal Decay. Moved to graveyard.
 
 ### gray-hologram
 - **Parents**: crates/gray-scott + experiments/hologram-text
