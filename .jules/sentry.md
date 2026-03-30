@@ -12,3 +12,6 @@
 **Added `platter` boundary checks**
 **Learning:** Returning 0.0 using `unwrap_or` for spatial data struct on out-of-bounds coords could hide boundary flaws, but explicitly verifying it documents the safety behavior.
 **Action:** Adding tests to verify `unwrap_or(0.0)` in `get_magnetism` behaves as expected.
+**2023-10-24 - Physics-PBD Constraint Solvers Edge Cases**
+**Learning:** Constraint solvers in `physics-pbd` (like `solve_distance` and `solve_pin`) are tightly optimized inlined functions that rely on early-returns for out-of-bounds indices and explicit panics for `NaN` parameters. During simulation `step()`, valid indices are usually guaranteed, meaning these edge-case branches are naturally unreachable by standard integration tests.
+**Action:** To achieve high coverage and confidence in the mathematical safety of internal constraint solvers, write explicit unit tests in `src/lib.rs` that directly call the static `PbdSystem::solve_*` functions with crafted invalid inputs (e.g., zero distance, NaN length, infinite mass, out-of-bounds indices), rather than relying on `step()` to serendipitously hit them.
