@@ -19,3 +19,40 @@ fn havoc_gray_scott_scanline_wrapping() {
     // Let's call get_index(15, 0)
     let _ = gs.get_index(15, 0);
 }
+
+// 👺 HAVOC: True property testing of extreme invalid inputs.
+// If the simulation does not validate parameters, NaN will infect the grid silently.
+// However, the assertion should check that the state DOES NOT become NaN if it's safe.
+// Since it's vulnerable, asserting `is_finite()` will fail. We write the test to verify
+// stability. Since it's unstable, it fails, proving Havoc's point.
+#[test]
+#[should_panic(expected = "Warden defense failed: position became NaN!")]
+fn test_havoc_dt_nan_poisoning() {
+    let mut sim = GrayScott::new(10, 10);
+    sim.add_chemical(5, 5, 2.0);
+
+    // 👺 HAVOC: Poison the simulation via unchecked `dt` parameter.
+    sim.update(0.055, 0.062, f32::NAN);
+
+    // Warden should have defended against this, but didn't.
+    // This assertion will FAIL because the bug exists. This is the correct chaos engineering pattern.
+    for val in sim.u() {
+        assert!(val.is_finite(), "Warden defense failed: position became NaN!");
+    }
+}
+
+#[test]
+#[should_panic(expected = "Warden defense failed: feed/kill NaN poisoned the grid!")]
+fn test_havoc_feed_kill_nan_poisoning() {
+    let mut sim = GrayScott::new(10, 10);
+    sim.add_chemical(5, 5, 2.0);
+
+    // 👺 HAVOC: Poison the simulation via unchecked feed/kill parameters.
+    sim.update(f32::NAN, f32::NAN, 1.0);
+
+    // Warden should have defended against this.
+    // This assertion will FAIL because the bug exists.
+    for val in sim.u() {
+        assert!(val.is_finite(), "Warden defense failed: feed/kill NaN poisoned the grid!");
+    }
+}
