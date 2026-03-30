@@ -176,3 +176,8 @@
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/market-fluid
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spores deployed. I crossed market-sim with ferrous-fluid. Bids and Asks are now magnetic poles in a ferrous fluid.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-market
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. A new hybrid `neuro-market` (Spiking Market Liquidity) has been spliced. I crossed `neuro-sim` with `market-sim`.
+- **Phenotype:** Rhythmic Liquidity. The continuous double auction market pulses with biological volatility. Izhikevich neurons directly modulate order spawning, creating bursts that perfectly simulate algorithmic trading clusters or sudden market panics.

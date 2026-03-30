@@ -570,6 +570,14 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Status**: experiments/chimera-hologram
 - **Evaluation**: Success. Compiled. The boids/agents successfully generate continuous visual spectral interference patterns from their discrete logic gates and execution paths.
 
+### neuro-market
+- **Parents**: crates/neuro-sim + crates/market-sim
+- **Concept**: Spiking Market Liquidity. A Continuous Double Auction market where the generation of liquidity (Bids/Asks) is controlled by a Spiking Neural Network (SNN) using Izhikevich neurons.
+- **Novel trait**: Rhythmic Liquidity. Instead of steady streams or random noise, orders enter the market in biological bursts tied to the integrate-and-fire dynamics of 'chattering' neurons, simulating algorithmic trading clusters.
+- **Predicted Phenotype**: An emergent market structure where resting liquidity builds up and executes in distinct, sudden waves, mapping cortical spiking behaviors directly to market volatility.
+- **Status**: experiments/neuro-market
+- **Evaluation**: Success. Compiled. The market successfully pulses with liquidity bursts synchronized to the voltage spikes of the neural network.
+
 ### market-fluid
 - **Parents**: crates/market-sim + experiments/ferrous-fluid
 - **Concept**: Magnetic Liquidity. The continuous physical double auction market particles (Bids/Asks) act as magnetic poles in a ferrous fluid simulation.
