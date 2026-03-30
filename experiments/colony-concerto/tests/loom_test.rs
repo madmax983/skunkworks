@@ -7,6 +7,7 @@ use loom::thread;
 use colony_concerto::graph::{Node, NodeDynamicState};
 
 #[test]
+#[should_panic(expected = "Havoc: This should fail because a thread grabbed the mutex!")]
 fn test_node_contention() {
     loom::model(|| {
         let node = Arc::new(Node {
