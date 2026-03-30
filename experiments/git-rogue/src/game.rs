@@ -40,10 +40,8 @@ impl Game {
         }
     }
 
-    pub fn current_node(&self) -> &Node {
-        self.nodes
-            .get(&self.current_hash)
-            .expect("Current node must exist")
+    pub fn current_node(&self) -> Option<&Node> {
+        self.nodes.get(&self.current_hash)
     }
 
     pub fn move_to(&mut self, hash: String) {
@@ -59,8 +57,13 @@ impl Game {
 
     fn encounter(&mut self) {
         // Clone message to avoid borrow issues
-        let msg = self.current_node().message.to_lowercase();
-        let short_hash = self.current_node().short_hash.clone();
+        let (msg, short_hash) = if let Some(node) = self.current_node() {
+            (node.message.to_lowercase(), node.short_hash.clone())
+        } else {
+            self.log
+                .push("Error: Current commit data missing!".to_string());
+            return;
+        };
 
         self.log.push(format!("Entered Commit {}", short_hash));
 

@@ -69,16 +69,19 @@ fn handle_input(key: crossterm::event::KeyEvent, app: &mut Game, running: &mut b
 
         // Digits 1-9 for Parents
         KeyCode::Char(c) if c.is_ascii_digit() && c != '0' => {
-            let index = c.to_digit(10).unwrap() as usize - 1;
-            // Check if shift is pressed for Children (if terminal sends '1' + SHIFT)
-            if key.modifiers.contains(KeyModifiers::SHIFT) {
-                move_child(app, index);
-            } else {
-                // Go to parent
-                let node = app.current_node();
-                if index < node.parents.len() {
-                    let next_hash = node.parents[index].clone();
-                    app.move_to(next_hash);
+            if let Some(digit) = c.to_digit(10) {
+                let index = digit as usize - 1;
+                // Check if shift is pressed for Children (if terminal sends '1' + SHIFT)
+                if key.modifiers.contains(KeyModifiers::SHIFT) {
+                    move_child(app, index);
+                } else {
+                    // Go to parent
+                    if let Some(node) = app.current_node() {
+                        if index < node.parents.len() {
+                            let next_hash = node.parents[index].clone();
+                            app.move_to(next_hash);
+                        }
+                    }
                 }
             }
         }
@@ -99,9 +102,10 @@ fn handle_input(key: crossterm::event::KeyEvent, app: &mut Game, running: &mut b
 }
 
 fn move_child(game: &mut Game, index: usize) {
-    let node = game.current_node();
-    if index < node.children.len() {
-        let next_hash = node.children[index].clone();
-        game.move_to(next_hash);
+    if let Some(node) = game.current_node() {
+        if index < node.children.len() {
+            let next_hash = node.children[index].clone();
+            game.move_to(next_hash);
+        }
     }
 }

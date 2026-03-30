@@ -77,3 +77,7 @@
 **2024-05-19 - [Parser and Evolution Unsoundness]**
 **Threat:** The `chimera-lang` VM contained `unwrap()` calls on iterators immediately following AST parsing in `oracle.rs`, `nova_quantum.rs`, `nova_paleontology.rs`, and `nova_genetics.rs`. If the parser matched but yielded an empty iterator, this would cause a deterministic panic (DoS). Additionally, `evolution.rs` contained an `unwrap()` and an unbounded range selection on `pool`, which could panic if the pool was empty. Finally, `ipc.rs` contained an `unwrap()` on `SystemTime::now().duration_since(UNIX_EPOCH)`, which could panic if the system time was set before the Unix epoch (clock drift or malicious time setting).
 **Defense:** Replaced all vulnerable `unwrap()` calls with safe fallbacks (`?`, `unwrap_or_default()`, or early returns).
+
+**2026-04-18 - [DoS via Unsafe Unwraps in Git DAG Traversal]**
+**Threat:** The `git-rogue` experiment used `.unwrap()` and `.expect()` when traversing Git commit DAG nodes and casting user inputs (`to_digit(10).unwrap()`). This assumes the Git repository structure and inputs are perfectly aligned with internal logic, exposing the system to a panic/DoS if the repository state drifts, inputs are unhandled, or DAG structure is missing.
+**Defense:** Replaced panicking accessors with safe `Option` checking (`if let Some(digit) = ...`, `if let Some(node) = ...`) in `main.rs`, `game.rs`, and `ui.rs`, returning graceful defaults or errors instead of crashing the TUI application.

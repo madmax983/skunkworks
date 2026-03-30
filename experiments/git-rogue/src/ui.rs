@@ -33,6 +33,11 @@ fn draw_stats(f: &mut Frame, game: &Game, area: Rect) {
         .split(area);
 
     // Left: Stats Text
+    let short_hash = game
+        .current_node()
+        .map(|n| n.short_hash.clone())
+        .unwrap_or_else(|| "UNKNOWN".to_string());
+
     let text = vec![Line::from(vec![
         Span::styled("GIT ROGUE", Style::default().add_modifier(Modifier::BOLD)),
         Span::raw(" | "),
@@ -40,10 +45,7 @@ fn draw_stats(f: &mut Frame, game: &Game, area: Rect) {
         Span::styled(format!("{}", game.xp), Style::default().fg(Color::Yellow)),
         Span::raw(" | "),
         Span::raw("Loc: "),
-        Span::styled(
-            game.current_node().short_hash.clone(),
-            Style::default().fg(Color::Cyan),
-        ),
+        Span::styled(short_hash, Style::default().fg(Color::Cyan)),
         if game.game_over {
             Span::styled(
                 " | GAME OVER",
@@ -91,34 +93,94 @@ fn draw_room(f: &mut Frame, game: &Game, area: Rect) {
         .split(area);
 
     // Left: Room Description
-    let node = game.current_node();
-    let desc_text = vec![
-        Line::from(vec![Span::styled(
+    let mut desc_text = Vec::new();
+    let mut items = Vec::new();
+
+    if let Some(node) = game.current_node() {
+        desc_text.push(Line::from(vec![Span::styled(
             "Commit Message:",
             Style::default().fg(Color::Yellow),
-        )]),
-        Line::from(vec![Span::raw(&node.message)]),
-        Line::from(""),
-        Line::from(vec![Span::styled(
+        )]));
+        desc_text.push(Line::from(vec![Span::raw(&node.message)]));
+        desc_text.push(Line::from(""));
+        desc_text.push(Line::from(vec![Span::styled(
             "Author:",
             Style::default().fg(Color::Yellow),
-        )]),
-        Line::from(vec![Span::raw(&node.author)]),
-        Line::from(""),
-        Line::from(vec![Span::styled(
+        )]));
+        desc_text.push(Line::from(vec![Span::raw(&node.author)]));
+        desc_text.push(Line::from(""));
+        desc_text.push(Line::from(vec![Span::styled(
             "Hash:",
             Style::default().fg(Color::Yellow),
-        )]),
-        Line::from(vec![Span::raw(&node.hash)]),
-        Line::from(""),
-        Line::from(vec![Span::styled(
+        )]));
+        desc_text.push(Line::from(vec![Span::raw(&node.hash)]));
+        desc_text.push(Line::from(""));
+        desc_text.push(Line::from(vec![Span::styled(
             "Controls:",
             Style::default().fg(Color::Magenta),
-        )]),
-        Line::from("1-9: ⏬ Go to Parent (Back in time)"),
-        Line::from("Shift + 1-9: ⏫ Go to Child (Forward in time)"),
-        Line::from("Q: Quit"),
-    ];
+        )]));
+        desc_text.push(Line::from("1-9: ⏬ Go to Parent (Back in time)"));
+        desc_text.push(Line::from("Shift + 1-9: ⏫ Go to Child (Forward in time)"));
+        desc_text.push(Line::from("Q: Quit"));
+
+        // Parents (Down)
+        if !node.parents.is_empty() {
+            items.push(ListItem::new(Span::styled(
+                "PARENTS (Back in time):",
+                Style::default().add_modifier(Modifier::UNDERLINED),
+            )));
+            for (i, p_hash) in node.parents.iter().enumerate() {
+                let label = if let Some(p_node) = game.nodes.get(p_hash) {
+                    format!(
+                        "{} - {}",
+                        p_node.short_hash,
+                        p_node.message.lines().next().unwrap_or("").trim()
+                    )
+                } else {
+                    format!("{} (Unknown - outside crawled range)", &p_hash[..7])
+                };
+                items.push(ListItem::new(format!("[{}] ⏬ {}", i + 1, label)));
+            }
+        } else {
+            items.push(ListItem::new(Span::styled(
+                "No Parents (Initial Commit?)",
+                Style::default().fg(Color::DarkGray),
+            )));
+        }
+
+        items.push(ListItem::new(""));
+
+        // Children (Up)
+        if !node.children.is_empty() {
+            items.push(ListItem::new(Span::styled(
+                "CHILDREN (Forward in time):",
+                Style::default().add_modifier(Modifier::UNDERLINED),
+            )));
+            for (i, c_hash) in node.children.iter().enumerate() {
+                let label = if let Some(c_node) = game.nodes.get(c_hash) {
+                    format!(
+                        "{} - {}",
+                        c_node.short_hash,
+                        c_node.message.lines().next().unwrap_or("").trim()
+                    )
+                } else {
+                    format!("{} (Unknown)", &c_hash[..7])
+                };
+                // Use Shift+N logic display
+                items.push(ListItem::new(format!("[Shift+{}] ⏫ {}", i + 1, label)));
+            }
+        } else {
+            items.push(ListItem::new(Span::styled(
+                "No Children (HEAD?)",
+                Style::default().fg(Color::DarkGray),
+            )));
+        }
+    } else {
+        desc_text.push(Line::from(vec![Span::styled(
+            "ERROR: Missing Node Data",
+            Style::default().fg(Color::Red),
+        )]));
+    }
 
     let desc_block = Block::default()
         .borders(Borders::ALL)
@@ -134,61 +196,6 @@ fn draw_room(f: &mut Frame, game: &Game, area: Rect) {
         .borders(Borders::ALL)
         .border_type(BorderType::Rounded)
         .title(" 🚪 Exits ");
-
-    let mut items = Vec::new();
-
-    // Parents (Down)
-    if !node.parents.is_empty() {
-        items.push(ListItem::new(Span::styled(
-            "PARENTS (Back in time):",
-            Style::default().add_modifier(Modifier::UNDERLINED),
-        )));
-        for (i, p_hash) in node.parents.iter().enumerate() {
-            let label = if let Some(p_node) = game.nodes.get(p_hash) {
-                format!(
-                    "{} - {}",
-                    p_node.short_hash,
-                    p_node.message.lines().next().unwrap_or("").trim()
-                )
-            } else {
-                format!("{} (Unknown - outside crawled range)", &p_hash[..7])
-            };
-            items.push(ListItem::new(format!("[{}] ⏬ {}", i + 1, label)));
-        }
-    } else {
-        items.push(ListItem::new(Span::styled(
-            "No Parents (Initial Commit?)",
-            Style::default().fg(Color::DarkGray),
-        )));
-    }
-
-    items.push(ListItem::new(""));
-
-    // Children (Up)
-    if !node.children.is_empty() {
-        items.push(ListItem::new(Span::styled(
-            "CHILDREN (Forward in time):",
-            Style::default().add_modifier(Modifier::UNDERLINED),
-        )));
-        for (i, c_hash) in node.children.iter().enumerate() {
-            let label = if let Some(c_node) = game.nodes.get(c_hash) {
-                format!(
-                    "{} - {}",
-                    c_node.short_hash,
-                    c_node.message.lines().next().unwrap_or("").trim()
-                )
-            } else {
-                format!("{} (Unknown)", &c_hash[..7])
-            };
-            // Use Shift+N logic display
-            items.push(ListItem::new(format!("[Shift+{}] ⏫ {}", i + 1, label)));
-        }
-    } else {
-        items.push(ListItem::new(Span::styled(
-            "No Children (HEAD?)",
-            Style::default().fg(Color::DarkGray),
-        )));
-    }
 
     let list = List::new(items).block(exits_block);
     f.render_widget(list, chunks[1]);
