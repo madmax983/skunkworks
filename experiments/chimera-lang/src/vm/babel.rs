@@ -7,187 +7,194 @@ use crate::opcode::OpCode;
 use rand::Rng;
 
 /// Executes Babel-related OpCodes.
+fn exec_babel_compile(vm: &mut ChimeraVM) {
+    if vm.stack.len() < 2 {
+        vm.output
+            .push("Error: Stack underflow for BabelCompile".to_string());
+        return;
+    }
+
+    let handler_val = vm.stack.pop().unwrap();
+    let cst_val = vm.stack.pop().unwrap();
+
+    let Value::Int(handler_idx) = handler_val else {
+        vm.output
+            .push("Error: Handler must be an Int (strand index)".to_string());
+        return;
+    };
+
+    if handler_idx < 0 {
+        vm.output
+            .push("Error: Invalid handler index for BabelCompile".to_string());
+        return;
+    }
+
+    if let Some(new_idx) = compile_cst(vm, cst_val, handler_idx as usize) {
+        vm.stack.push(Value::Int(new_idx as i64));
+    } else {
+        vm.output
+            .push("Error: Compilation failed (Recursion limit)".to_string());
+        vm.stack.push(Value::Int(-1));
+    }
+}
+
+fn exec_generate(vm: &mut ChimeraVM) {
+    let Some(grammar) = vm.stack.pop() else {
+        vm.output
+            .push("Error: Stack underflow for Generate".to_string());
+        return;
+    };
+    let generated = generate_string(&grammar);
+    vm.stack.push(Value::Str(generated));
+}
+
+fn exec_tongue(vm: &mut ChimeraVM) {
+    if vm.stack.len() < 2 {
+        vm.output
+            .push("Error: Stack underflow for Tongue".to_string());
+        return;
+    }
+
+    let input_val = vm.stack.pop().unwrap();
+    let grammar_val = vm.stack.pop().unwrap();
+
+    let Value::Str(input_str) = input_val else {
+        vm.output
+            .push("Error: Tongue input must be string".to_string());
+        return;
+    };
+
+    // 1. Parse
+    match run_parser(&grammar_val, &input_str, &vm.prologue_state.logos_engine, 0) {
+        Ok((cst, consumed)) => {
+            if consumed == input_str.len() {
+                // 2. Mutate CST
+                let mutated_cst = mutate_cst(&cst, 0.2); // 20% base corruption rate
+                                                         // 3. Flatten
+                let output_str = flatten_cst(&mutated_cst);
+                vm.stack.push(Value::Str(output_str));
+                vm.output.push("TONGUE: Reality corrupted.".to_string());
+            } else {
+                vm.output.push(format!(
+                    "TONGUE: Partial match ({} chars), cannot corrupt.",
+                    consumed
+                ));
+                vm.stack.push(Value::Str(input_str));
+            }
+        }
+        Err(_) => {
+            vm.output.push("TONGUE: Parse failed.".to_string());
+            vm.stack.push(Value::Str(input_str));
+        }
+    }
+}
+
+fn exec_scribe(vm: &mut ChimeraVM) {
+    let Some(val) = vm.stack.pop() else {
+        vm.output
+            .push("Error: Stack underflow for Scribe".to_string());
+        return;
+    };
+
+    let s = match val {
+        Value::Str(s) => s,
+        Value::Symbol(id) => format!("§{:x}", id),
+        _ => format!("{}", val),
+    };
+    vm.tablet.push(s.clone());
+    vm.output.push(format!("SCRIBE: {}", s));
+}
+
+fn exec_grammar(vm: &mut ChimeraVM) {
+    let Some(type_val) = vm.stack.pop() else {
+        vm.output
+            .push("Error: Stack underflow for Grammar".to_string());
+        return;
+    };
+
+    let Value::Str(type_str) = type_val else {
+        vm.output
+            .push("Error: Grammar type must be a string".to_string());
+        return;
+    };
+
+    let mut args = vec![Value::Str(type_str.clone())];
+    match type_str.as_str() {
+        "Match" | "Regex" => {
+            if let Some(pattern) = vm.stack.pop() {
+                args.push(pattern);
+                vm.stack.push(Value::Junction(JunctionType::Any, args));
+            } else {
+                vm.output
+                    .push(format!("Error: Stack underflow for Grammar({})", type_str));
+            }
+        }
+        "Seq" | "Alt" => {
+            if vm.stack.len() >= 2 {
+                let p2 = vm.stack.pop().unwrap();
+                let p1 = vm.stack.pop().unwrap();
+                args.push(p1);
+                args.push(p2);
+                vm.stack.push(Value::Junction(JunctionType::Any, args));
+            } else {
+                vm.output
+                    .push(format!("Error: Stack underflow for Grammar({})", type_str));
+            }
+        }
+        "Many" | "Opt" => {
+            if let Some(p) = vm.stack.pop() {
+                args.push(p);
+                vm.stack.push(Value::Junction(JunctionType::Any, args));
+            } else {
+                vm.output
+                    .push(format!("Error: Stack underflow for Grammar({})", type_str));
+            }
+        }
+        "Ref" => {
+            if let Some(name) = vm.stack.pop() {
+                args.push(name);
+                vm.stack.push(Value::Junction(JunctionType::Any, args));
+            } else {
+                vm.output
+                    .push(format!("Error: Stack underflow for Grammar({})", type_str));
+            }
+        }
+        "Mutate" => {
+            if vm.stack.len() >= 2 {
+                let rate_val = vm.stack.pop().unwrap();
+                let grammar_val = vm.stack.pop().unwrap();
+
+                let rate = if let Value::Int(r) = rate_val {
+                    (r as f64) / 100.0
+                } else {
+                    0.1
+                };
+
+                let mutated = mutate_grammar(&grammar_val, rate);
+                vm.stack.push(mutated);
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for Grammar(Mutate)".to_string());
+            }
+        }
+        _ => {
+            vm.output
+                .push(format!("Error: Unknown Grammar type '{}'", type_str));
+        }
+    }
+}
+
 pub fn exec_babel_op(
     vm: &mut ChimeraVM,
     op: OpCode,
     _args: &[Nucleotide],
 ) -> Option<(usize, usize)> {
     match op {
-        OpCode::BabelCompile => {
-            // [ cst, handler_strand ] -> [ new_strand_idx ]
-            if vm.stack.len() >= 2 {
-                let handler_val = vm.stack.pop().unwrap();
-                let cst_val = vm.stack.pop().unwrap();
-
-                if let Value::Int(handler_idx) = handler_val {
-                    if handler_idx >= 0 {
-                        if let Some(new_idx) = compile_cst(vm, cst_val, handler_idx as usize) {
-                            vm.stack.push(Value::Int(new_idx as i64));
-                        } else {
-                            vm.output
-                                .push("Error: Compilation failed (Recursion limit)".to_string());
-                            vm.stack.push(Value::Int(-1));
-                        }
-                    } else {
-                        vm.output
-                            .push("Error: Invalid handler index for BabelCompile".to_string());
-                    }
-                } else {
-                    vm.output
-                        .push("Error: Handler must be an Int (strand index)".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for BabelCompile".to_string());
-            }
-        }
-        OpCode::Generate => {
-            if let Some(grammar) = vm.stack.pop() {
-                let generated = generate_string(&grammar);
-                vm.stack.push(Value::Str(generated));
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for Generate".to_string());
-            }
-        }
-        OpCode::Tongue => {
-            // [ grammar, input ] -> [ corrupted ]
-            if vm.stack.len() >= 2 {
-                let input_val = vm.stack.pop().unwrap();
-                let grammar_val = vm.stack.pop().unwrap();
-
-                if let Value::Str(input_str) = input_val {
-                    // 1. Parse
-                    match run_parser(&grammar_val, &input_str, &vm.prologue_state.logos_engine, 0) {
-                        Ok((cst, consumed)) => {
-                            if consumed == input_str.len() {
-                                // 2. Mutate CST
-                                let mutated_cst = mutate_cst(&cst, 0.2); // 20% base corruption rate
-                                                                         // 3. Flatten
-                                let output_str = flatten_cst(&mutated_cst);
-                                vm.stack.push(Value::Str(output_str));
-                                vm.output.push("TONGUE: Reality corrupted.".to_string());
-                            } else {
-                                vm.output.push(format!(
-                                    "TONGUE: Partial match ({} chars), cannot corrupt.",
-                                    consumed
-                                ));
-                                vm.stack.push(Value::Str(input_str));
-                            }
-                        }
-                        Err(_) => {
-                            vm.output.push("TONGUE: Parse failed.".to_string());
-                            vm.stack.push(Value::Str(input_str));
-                        }
-                    }
-                } else {
-                    vm.output
-                        .push("Error: Tongue input must be string".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for Tongue".to_string());
-            }
-        }
-        OpCode::Scribe => {
-            if let Some(val) = vm.stack.pop() {
-                let s = match val {
-                    Value::Str(s) => s,
-                    Value::Symbol(id) => format!("§{:x}", id),
-                    _ => format!("{}", val),
-                };
-                vm.tablet.push(s.clone());
-                vm.output.push(format!("SCRIBE: {}", s));
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for Scribe".to_string());
-            }
-        }
-        OpCode::Grammar => {
-            // Stack: [ ..., type_str, ...args ]
-            if let Some(type_val) = vm.stack.pop() {
-                if let Value::Str(type_str) = type_val {
-                    let mut args = vec![Value::Str(type_str.clone())];
-                    match type_str.as_str() {
-                        "Match" | "Regex" => {
-                            if let Some(pattern) = vm.stack.pop() {
-                                args.push(pattern);
-                                vm.stack.push(Value::Junction(JunctionType::Any, args));
-                            } else {
-                                vm.output.push(format!(
-                                    "Error: Stack underflow for Grammar({})",
-                                    type_str
-                                ));
-                            }
-                        }
-                        "Seq" | "Alt" => {
-                            if vm.stack.len() >= 2 {
-                                let p2 = vm.stack.pop().unwrap();
-                                let p1 = vm.stack.pop().unwrap();
-                                args.push(p1);
-                                args.push(p2);
-                                vm.stack.push(Value::Junction(JunctionType::Any, args));
-                            } else {
-                                vm.output.push(format!(
-                                    "Error: Stack underflow for Grammar({})",
-                                    type_str
-                                ));
-                            }
-                        }
-                        "Many" | "Opt" => {
-                            if let Some(p) = vm.stack.pop() {
-                                args.push(p);
-                                vm.stack.push(Value::Junction(JunctionType::Any, args));
-                            } else {
-                                vm.output.push(format!(
-                                    "Error: Stack underflow for Grammar({})",
-                                    type_str
-                                ));
-                            }
-                        }
-                        "Ref" => {
-                            if let Some(name) = vm.stack.pop() {
-                                args.push(name);
-                                vm.stack.push(Value::Junction(JunctionType::Any, args));
-                            } else {
-                                vm.output.push(format!(
-                                    "Error: Stack underflow for Grammar({})",
-                                    type_str
-                                ));
-                            }
-                        }
-                        "Mutate" => {
-                            if vm.stack.len() >= 2 {
-                                let rate_val = vm.stack.pop().unwrap();
-                                let grammar_val = vm.stack.pop().unwrap();
-
-                                let rate = if let Value::Int(r) = rate_val {
-                                    (r as f64) / 100.0
-                                } else {
-                                    0.1
-                                };
-
-                                let mutated = mutate_grammar(&grammar_val, rate);
-                                vm.stack.push(mutated);
-                            } else {
-                                vm.output
-                                    .push("Error: Stack underflow for Grammar(Mutate)".to_string());
-                            }
-                        }
-                        _ => {
-                            vm.output
-                                .push(format!("Error: Unknown Grammar type '{}'", type_str));
-                        }
-                    }
-                } else {
-                    vm.output
-                        .push("Error: Grammar type must be a string".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for Grammar".to_string());
-            }
-        }
+        OpCode::BabelCompile => exec_babel_compile(vm),
+        OpCode::Generate => exec_generate(vm),
+        OpCode::Tongue => exec_tongue(vm),
+        OpCode::Scribe => exec_scribe(vm),
+        OpCode::Grammar => exec_grammar(vm),
         OpCode::Parse => {
             // Stack: [ ..., parser, input ]
             if vm.stack.len() >= 2 {
