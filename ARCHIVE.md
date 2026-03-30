@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **stardust-compiler**: Specimen condemned. Diagnosis: Terminal Genericism / Deceptive Persona Alignment. A standard CLI steganography utility disguised as an esoteric experiment. Grace period: 24h.
+- **neuro-beats**: Specimen condemned. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period: 24h.
 
 ## Pardoned
 - **chimera-specter**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by fixing missing `evolution_config` and adapting to `Dna` structural changes in `chimera-lang`. The specter haunts again.
@@ -22,6 +22,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **stardust-compiler**: Specimen executed. Diagnosis: Terminal Genericism / Deceptive Persona Alignment. Failed to improve during grace period. Moved to graveyard.
 - **codex-void**: Specimen executed. Diagnosis: Terminal Compilation Failure / Skeletal Implementation. Missing definitions (`OFFSETS`) in `src/glyph.rs` prevent compilation. Failed to improve during grace period. Moved to graveyard.
 - **sys-dance**: Specimen executed. Diagnosis: Terminal Genericism / Swarm Neglect. Failed to improve during grace period (security fix only). Moved to graveyard.
 - **luminous-tank**: Specimen executed. Diagnosis: Documentation Void / Skeletal Structure. Failed to improve during grace period. Moved to graveyard.
