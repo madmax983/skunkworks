@@ -1,0 +1,10 @@
+[package]
+name = "chimera-reaper"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4.14"
+rayon = "1.11"
+rand = "0.8"
+chimera-lang = { path = "../chimera-lang", features = ["nova"] }

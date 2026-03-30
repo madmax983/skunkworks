@@ -1,4 +1,10 @@
 ## 🧫 Current Pheromone Map
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-reaper
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. A new hybrid `chimera-reaper` (Genetic Garbage Collection) has been spliced into the repository.
+- **Phenotype:** Agents with `ChimeraVM` brains evolve to navigate the memory graph of myco-reaper, finding and consuming unreferenced nodes for energy while taking damage if they eat live roots.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/tectonic-git
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Death pheromones detected. Specimen condemned due to Terminal Compilation Failure / Skeletal Implementation / Swarm Neglect. It fails strict clippy settings (`redundant_field_names`, `dead_code`) and contains unfulfilled `TODO`s in its skeletal implementation. Grace period: 24h.

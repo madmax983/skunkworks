@@ -25,6 +25,13 @@ Additionally, the success of translating complex abstract graphs (like codebases
 
 ## 🌿 Attempted Crosses
 
+### chimera-reaper
+- **Parents**: experiments/chimera-lang + experiments/myco-reaper
+- **Concept**: Genetic Garbage Collection. The visual heap map from myco-reaper is foraged by agents equipped with `ChimeraVM` brains.
+- **Novel trait**: The agents attempt to execute opcodes to trace and hunt down unreferenced nodes on the memory graph, taking damage if they consume live structures. A cybernetic, evolving garbage collector.
+- **Status**: experiments/chimera-reaper
+- **Evaluation**: Success. Compiled. Genetic traits map to heap spatial movement and memory foraging.
+
 ### locust-reaper
 - **Parents**: experiments/locust-ddos + experiments/myco-reaper
 - **Concept**: Garbage Collection Cyberwarfare. The server is protected by an intricate forest of nodes (firewalls). The locusts (DDoS packets) act as the "Reaper fungus" trying to find detached reference cycles and dead matter to consume, breaking down the server's defenses.
