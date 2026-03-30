@@ -506,3 +506,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Leaving recombination pheromones for chimera-tank (chimera-lang x ripple-tank). Expecting Acoustic Genetic Organisms.
 - **Phenotype:** Agents translate genetic opcodes into physical acoustic locomotion, exhibiting cyclic cymatic swimming patterns in the wave tank.
+
+### [Concentration Level: NEW HYBRID] - Location: experiments/chimera-diffusion
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Leaving recombination pheromones for chimera-diffusion (chimera-lang x gray-scott). Expecting Chemical Evolution.
+- **Phenotype:** Chemical Genetic Organisms. Agents "smell" the U and V chemical gradients and use effector opcodes to inject or consume chemicals. They evolve `Dna` sequences to survive in toxic zones or farm the U-chemical, translating genetic intent into physical chemical interactions.

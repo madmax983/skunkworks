@@ -1,0 +1,10 @@
+[package]
+name = "chimera-diffusion"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+chimera-lang = { path = "../chimera-lang", features = ["nova"] }
+gray-scott = { path = "../../crates/gray-scott" }
+rand = { workspace = true }

@@ -120,6 +120,18 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 - **Status**: experiments/mnem-fluid
 - **Evaluation**: Success. Compiled. Exhibits continuous magnetic repulsions mapped from simulated graph node entropy accurately.
 
+### chimera-diffusion
+
+- **Parents**: experiments/chimera-lang + crates/gray-scott
+
+- **Concept**: Chemical Genetic Organisms. Agents equipped with `ChimeraVM` brains navigate a Reaction-Diffusion substrate.
+
+- **Novel trait**: Chemical Evolution. Agents "smell" the U and V chemical gradients and use effector opcodes to inject or consume chemicals. They evolve `Dna` sequences to survive in toxic zones or farm the U-chemical.
+
+- **Status**: experiments/chimera-diffusion
+
+- **Evaluation**: Success. Compiled. Agents successfully navigate and alter the Turing patterns based on genetic intent.
+
 ### mnem-diffusion
 - **Parents**: experiments/mnem-rot + crates/gray-scott
 - **Concept**: Codebase Rot Morphogenesis. Decaying nodes of a codebase graph act as chemical catalysts in a Gray-Scott reaction-diffusion grid.

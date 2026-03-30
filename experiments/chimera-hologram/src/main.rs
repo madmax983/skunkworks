@@ -96,6 +96,7 @@ fn generate_dna() -> Dna {
     ];
 
     Dna {
+        evolution_config: None,
         helix: Helix {
             strands: vec![Strand { genes }],
         },
