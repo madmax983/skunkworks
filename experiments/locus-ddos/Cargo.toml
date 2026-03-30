@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+flocking = { workspace = true }
 macroquad = "0.4"
 rayon = "1.10"
 rand = "0.8"

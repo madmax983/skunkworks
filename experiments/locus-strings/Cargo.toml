@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+flocking = { workspace = true }
 locus = { path = "../../crates/locus" }
 ferrous-core = { path = "../../crates/ferrous-core" }
 macroquad = "0.4"

@@ -11,5 +11,5 @@ Pheromone-Guided Flocking. The boids exhibit behavior resembling foraging ants o
 
 ## Lineage
 - **From myco-transit**: Pheromone grid simulation (`trails` and `next_trails`), diffusion and decay mechanics using `rayon`.
-- **From luminous-flock**: Boid genetics (`Dna`), boid physics (`position`, `velocity`, `acceleration`), `locus::flocking` forces (Separation, Alignment, Cohesion), TUI render loop logic.
+- **From luminous-flock**: Boid genetics (`Dna`), boid physics (`position`, `velocity`, `acceleration`), `flocking` forces (Separation, Alignment, Cohesion), TUI render loop logic.
 - **Novel Mutation**: Boid `Dna` now includes `pheromone_attraction_weight` and `pheromone_deposit_amount`. Boids use simple directional sensors to find higher pheromone concentrations and steer towards them.

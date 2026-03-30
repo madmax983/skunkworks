@@ -19,7 +19,7 @@ The codebase suffered from fragmentation in its core mathematical types and spat
 We will consolidate all geometry and spatial behavior logic into the `locus` crate.
 
 1.  **Move `Vec3` and `Vec4` to `locus`**: The `locus` crate will become the canonical source for all linear algebra types (`Vec2`, `Vec3`, `Vec4`).
-2.  **Merge `flocking` into `locus`**: The standalone `flocking` crate will be dissolved. Its logic will move to `locus::flocking`, making spatial behavior a core feature of the geometry library.
+2.  **Merge `flocking` into `locus`**: The standalone `flocking` crate will be dissolved. Its logic will move to `flocking`, making spatial behavior a core feature of the geometry library.
 3.  **Repurpose `hyper-system`**: The `hyper-system` crate will retain its specific domain logic (system monitoring, 4D rendering utilities) but will re-export vector types from `locus` instead of defining them.
 
 ## Consequences

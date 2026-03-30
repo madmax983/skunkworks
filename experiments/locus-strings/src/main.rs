@@ -5,7 +5,7 @@
     clippy::cast_precision_loss,
     clippy::cast_possible_truncation
 )]
-use locus::flocking::{compute_force, FlockingParams};
+use flocking::{compute_force, FlockingParams};
 use locus::Vec2 as LocusVec2;
 use macroquad::prelude::*;
 

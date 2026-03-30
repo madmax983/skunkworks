@@ -1,7 +1,7 @@
 use crate::boid::Boid;
+use flocking::{FlockingParams, compute_force};
 use gray_scott::GrayScott;
 use locus::Vec2;
-use locus::flocking::{FlockingParams, compute_force};
 
 pub struct World {
     pub gray_scott: GrayScott,

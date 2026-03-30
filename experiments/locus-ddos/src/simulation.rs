@@ -2,7 +2,7 @@ use ::rand::prelude::*;
 use macroquad::prelude::*;
 use rayon::prelude::*;
 
-use locus::flocking::{compute_force, FlockingParams};
+use flocking::{compute_force, FlockingParams};
 use locus::Vec2 as LocusVec2;
 
 pub const AGENT_COUNT: usize = 100_000;

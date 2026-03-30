@@ -1,6 +1,6 @@
 use crate::boid::Boid;
+use flocking::{FlockingParams, compute_force};
 use locus::Vec2;
-use locus::flocking::{FlockingParams, compute_force};
 use rayon::prelude::*;
 use std::f64::consts::PI;
 

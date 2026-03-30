@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+flocking = { workspace = true }
 locus = { workspace = true }
 anyhow = { workspace = true }
 crossterm = { workspace = true }

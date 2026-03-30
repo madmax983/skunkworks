@@ -15,3 +15,7 @@
 ## 2024-05-18 - [Math/Bitwise Operator Untangling]
 **Tangle:** The Blob - `experiments/chimera-lang/src/vm/mod.rs` had multiple fundamental core math and bitwise operations (`Mod`, `BitAnd`, `BitOr`, `BitXor`, `BitNot`, `Shl`, `Shr`) improperly placed inside `exec_havoc_op` rather than their correct domain context inside `exec_math_op`.
 **Blueprint:** Extracted these mathematical and bitwise execution blocks from `exec_havoc_op` and relocated them to `exec_math_op` within the dedicated `experiments/chimera-lang/src/vm/ops/math.rs` module. This enforces strict domain boundaries, reduces the size of `mod.rs`, and ensures that `exec_havoc_op` is solely responsible for its designated mutation domain (`HavocRate` and `HavocScope`).
+
+## 2024-05-20 - [Extracted Flocking from Locus]
+**Tangle:** The Blob/Leak - `crates/locus/src/flocking.rs` embedded Craig Reynolds' "Boids" algorithm logic into `locus`, which is supposed to be a fundamental, lightweight 2D geometry library. This couples AI simulation domain logic directly into pure math primitives.
+**Blueprint:** Extracted `flocking.rs` into its own dedicated workspace crate `crates/flocking` that depends on `locus`. Updated all workspace dependents that previously imported `locus::flocking` to depend on the new `flocking` crate and use `flocking::...` imports. This strictly isolates AI algorithms from geometry math boundaries.

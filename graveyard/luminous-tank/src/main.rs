@@ -22,7 +22,7 @@ use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 #[cfg(feature = "audio")]
 use resonance_audio::audio::AudioSnapshot;
 
-use locus::flocking::{compute_force, FlockingParams};
+use flocking::{compute_force, FlockingParams};
 use locus::Vec2;
 use std::f64::consts::TAU;
 
