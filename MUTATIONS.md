@@ -25,6 +25,13 @@ Additionally, the success of translating complex abstract graphs (like codebases
 
 ## 🌿 Attempted Crosses
 
+### git-reaper
+- **Parents**: experiments/git-harmonograph + experiments/myco-reaper
+- **Concept**: Garbage Collection of Codebase History. The server is protected by an intricate forest of nodes (commits). The reaper fungus tries to find detached commits and dead branches to consume, visualizing git garbage collection.
+- **Novel trait**: The git commit graph translates into memory nodes, allowing the reaper to actively attack and decompose "dead" code paths or dangling commits.
+- **Status**: experiments/git-reaper
+- **Evaluation**: Success. Compiled. The git commit graph translates into memory nodes correctly targeted by fungal garbage collection.
+
 ### locust-reaper
 - **Parents**: experiments/locust-ddos + experiments/myco-reaper
 - **Concept**: Garbage Collection Cyberwarfare. The server is protected by an intricate forest of nodes (firewalls). The locusts (DDoS packets) act as the "Reaper fungus" trying to find detached reference cycles and dead matter to consume, breaking down the server's defenses.

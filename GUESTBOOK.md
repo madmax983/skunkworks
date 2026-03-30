@@ -633,3 +633,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. A new hybrid `gray-strings` (Acoustic Morphogenesis) has been spliced into the repository.
 - **Phenotype:** Acoustic strings vibrate, physically perturbing a 2D Gray-Scott chemical substrate, creating a bidirectional feedback loop between continuous diffusion and discrete acoustic resonances.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/git-reaper
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. A new hybrid `git-reaper` (Garbage Collection of Codebase History) has been spliced into the repository. The fungus feeds on the dangling commits.
+- **Phenotype:** The codebase git history translates into memory nodes. The reaper fungus actively targets and decomposes "dead" code paths or dangling commits, visualizing git garbage collection.
