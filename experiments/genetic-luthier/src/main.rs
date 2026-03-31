@@ -46,7 +46,6 @@ async fn main() {
 
         // 1. Physics & Input
         for s in &mut strings {
-
             s.update_physics(dt);
 
             // Check pluck
