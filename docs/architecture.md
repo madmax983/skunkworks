@@ -720,6 +720,11 @@ classDiagram
         +execute_gene()
     }
 
+    class CoreOps {
+        <<Module: ops/core.rs>>
+        +exec_core_op()
+    }
+
     class MathOps {
         <<Module: ops/math.rs>>
         +exec_math_op()
@@ -750,6 +755,7 @@ classDiagram
         +exec_bio_op()
     }
 
+    CoreOps ..> ChimeraVM : Extends (impl)
     MathOps ..> ChimeraVM : Extends (impl)
     StackOps ..> ChimeraVM : Extends (impl)
     FlowOps ..> ChimeraVM : Extends (impl)
