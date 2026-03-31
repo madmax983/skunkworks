@@ -352,8 +352,9 @@ mod tests {
         process_audio(&mut output2, 2, 44100.0, &rx, &mut active_sounds);
 
         // Check if the output has been modified (is not all 0.0)
-        let has_non_zero = output.iter().any(|&sample| sample != 0.0)
-            || output2.iter().any(|&sample| sample != 0.0);
+        let has_non_zero_1 = output.iter().any(|&sample| sample != 0.0);
+        let has_non_zero_2 = output2.iter().any(|&sample| sample != 0.0);
+        let has_non_zero = has_non_zero_1 || has_non_zero_2;
         assert!(has_non_zero, "Output buffer should have audio data");
     }
 
