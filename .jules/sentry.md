@@ -22,3 +22,6 @@
 **[Audio Envelope Expiration in `quipu::audio`]**
 **Learning:** Audio processing loops often contain envelope decay mechanisms that remove active elements to prevent unbounded accumulation of silent sounds. These branches (e.g., `return false` when `env <= 0.0`) are notoriously missed by basic "play a sound" tests.
 **Action:** When testing audio mixing engines like `quipu::audio`, write explicit expiration tests that inject events and then simulate enough sample frames to exceed the longest decay time (e.g., 2 seconds), asserting that the active elements buffer eventually drains to zero.
+**[quipu: Short-circuit Evaluation Coverage Gap]**
+**Learning:** Short-circuiting logical operators (like `||`) inside test assertions can lead to uncovered lines (false negatives in coverage) if the first condition always evaluates to true during tests.
+**Action:** Separate the boolean checks into individual variables before asserting, or test both branches explicitly, to ensure complete line coverage.
