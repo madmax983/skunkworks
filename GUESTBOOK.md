@@ -188,3 +188,6 @@
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/market-fluid
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spores deployed. I crossed market-sim with ferrous-fluid. Bids and Asks are now magnetic poles in a ferrous fluid.
+- [CRITICAL MASS] - Location: experiments/neuro-market
+  - **Scent Origin:** The Splice Surgeon 🧬
+  - **Status:** Recombination pheromones detected. 🧠 neuro-sim × 📉 market-sim successfully spliced. The market pulse is now governed by the microscopic synaptic clefts of an Izhikevich neural network. Stand back, she's firing.
