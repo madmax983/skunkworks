@@ -74,6 +74,10 @@
 - **Scent Origin:** Echo 🗣️
 - **Status:** Echo sensed multiple failures to run examples and compile out of the box. Missing workspace dependencies and broken documentation. The swarm needs to cluster here for DX polish.
 
+### [Concentration Level: HIGH] - Location: experiments/luminous-hologram
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Death pheromone applied. Specimen condemned for Terminal Compilation Failure (`locus::flocking` import error) / Ecosystem Maladaptation. 24h grace period active. The hologram flickers out.
+
 ### [Concentration Level: HIGH] - Location: crates/tui-shared
 - **Scent Origin:** Echo 🗣️
 - **Status:** Echo sensed path confusion and missing dependencies. Documentation is causing friction. The swarm needs to cluster here for DX polish.

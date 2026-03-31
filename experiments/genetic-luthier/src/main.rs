@@ -45,8 +45,8 @@ async fn main() {
         let mouse_speed = mouse_delta.length();
 
         // 1. Physics & Input
-        for i in 0..strings.len() {
-            let s = &mut strings[i];
+        for s in &mut strings {
+
             s.update_physics(dt);
 
             // Check pluck
@@ -74,7 +74,7 @@ async fn main() {
             evolution_timer = 0.0;
 
             // Calculate Fitness
-            let mut fitnesses = vec![0.0; STRING_COUNT];
+            let mut fitnesses = [0.0; STRING_COUNT];
 
             for i in 0..STRING_COUNT {
                 let f1 = strings[i].frequency;

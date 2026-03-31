@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **genetic-luthier**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Swarm Neglect. Fails to initialize `chimera_lang::ast::Dna` due to missing `evolution_config`. Grace period: 24h.
+- **luminous-hologram**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to find `locus::flocking` due to workspace architectural changes (flocking crate extraction). Grace period: 24h.
 
 ## Pardoned
+- **genetic-luthier**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Swarm Neglect. Resolved by fixing the missing `evolution_config` and resolving strict clippy warnings during its grace period. Vigor demonstrated.
 - **locus-strings**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding proper README and fixing the clippy warnings. Vigor demonstrated.
 - **chimera-chaos**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Technical Debt Burden / Swarm Neglect. Resolved by patching unused code warnings and initializing `evolution_config`. The organism breathes again.
 - **ferrous-ddos**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Resolved by The Splice Surgeon patching strict clippy warnings (`unnecessary_cast`) during its grace period. The swarm flows freely.
