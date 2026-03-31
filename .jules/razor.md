@@ -14,3 +14,7 @@
 
 **Saved:** [Lines of code / Cognitive load]
 Reduced roughly 50-60 lines of unnecessary boilerplate across 16+ `experiments/chimera-lang/src/vm` files. Decreased cognitive load by improving idiomatic Rust conformance. Also fixed NaN-propagation logic bugs inside neuro-physics code.
+## [Reduction]
+**Bloat:** ButtonState and ButtonStyle enums for TUI Button widget.
+**Cut:** Removed enums, simplifying the API to just use ratatui Color.
+**Saved:** 150+ lines of code / Cognitive load

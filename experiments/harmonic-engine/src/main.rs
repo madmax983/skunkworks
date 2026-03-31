@@ -3,7 +3,7 @@ use harmonic_engine::{audio::MusicBox, physics::PhysicsWorld};
 use nalgebra::Vector2;
 use ratatui::{prelude::*, widgets::*};
 use std::{error::Error, time::Duration};
-use tui_shared::{Button, ButtonState, ButtonStyle, LogList, Tui};
+use tui_shared::{Button, LogList, Tui};
 
 fn main() -> Result<(), Box<dyn Error>> {
     // Setup Terminal
@@ -173,9 +173,8 @@ fn main() -> Result<(), Box<dyn Error>> {
             f.render_widget(footer_text, footer_layout[0]);
 
             let quit_btn = Button::new("Quit")
-                .style_variant(ButtonStyle::Danger)
-                .icon("🛑")
-                .state(ButtonState::Normal); // Just visual for now
+                .style(ratatui::style::Style::default().bg(ratatui::style::Color::Red).fg(ratatui::style::Color::White).add_modifier(ratatui::style::Modifier::BOLD))
+                .icon("🛑"); // Just visual for now
             f.render_widget(quit_btn, footer_layout[1]);
         })?;
     }

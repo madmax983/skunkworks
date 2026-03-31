@@ -646,7 +646,7 @@ pub(crate) fn render_arena(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSta
     if arena.combatants.is_empty() {
         // Use Button for Call-to-Action
         let center = Button::new("Start Auto-Draft (S)")
-            .style_variant(tui_shared::ButtonStyle::Primary)
+            .style(ratatui::style::Style::default().bg(ratatui::style::Color::Blue).fg(ratatui::style::Color::Black).add_modifier(ratatui::style::Modifier::BOLD))
             .active(true);
         // Button fills its area, so we center the area
         let area = chunks[0];

@@ -606,7 +606,7 @@ pub(crate) fn render_evolution(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &A
         #[cfg(feature = "nova")]
         f.render_widget(
             tui_shared::Button::new("Initialize Evolution Engine (E)")
-                .style_variant(tui_shared::ButtonStyle::Warning),
+                .style(ratatui::style::Style::default().bg(ratatui::style::Color::Yellow).fg(ratatui::style::Color::Black).add_modifier(ratatui::style::Modifier::BOLD)),
             btn_area,
         );
 

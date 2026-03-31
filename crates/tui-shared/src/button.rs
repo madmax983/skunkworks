@@ -2,11 +2,9 @@
 //!
 //! Provides the [`Button`] widget for interactive terminal applications.
 //!
-//! The `Button` component handles visual styling for different interaction states
-//! (hover, click, disabled) and intent variants (primary, secondary, danger, etc.).
-//! It serves as the primary building block for creating interactive menus and forms
-//! within a TUI application, simplifying the repetitive logic of managing text colors
-//! and borders for state transitions.
+//! The `Button` component is a simplified, concrete widget for displaying a button-like
+//! rectangle on screen. It has been stripped of complex state and generic traits
+//! to keep it simple, direct, and explicit.
 
 use ratatui::{
     buffer::Buffer,
@@ -16,68 +14,22 @@ use ratatui::{
     widgets::{Block, Borders, Widget},
 };
 
-/// Represents the interaction state of a [`Button`].
-///
-/// ## Examples
-///
-/// ```
-/// use tui_shared::{Button, ButtonState};
-/// let button = Button::new("OK").state(ButtonState::Hovered);
-/// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub enum ButtonState {
-    /// The default state.
-    #[default]
-    Normal,
-    /// The button is being hovered over (e.g., by a mouse or selection).
-    Hovered,
-    /// The button is currently being pressed.
-    Clicked,
-    /// The button is disabled and cannot be interacted with.
-    Disabled,
-}
-
-/// Defines the visual style variant of a [`Button`].
-///
-/// ## Examples
-///
-/// ```
-/// use tui_shared::{Button, ButtonStyle};
-/// let button = Button::new("Cancel").style_variant(ButtonStyle::Danger);
-/// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub enum ButtonStyle {
-    /// The primary action button (Blue background).
-    #[default]
-    Primary,
-    /// A secondary action button (Gray/White).
-    Secondary,
-    /// A ghost button with only an outline.
-    Outline,
-    /// A destructive action button (Red).
-    Danger,
-    /// A warning or high-attention button (Yellow).
-    Warning,
-    /// A success or completion button (Green).
-    Success,
-}
-
 /// A reusable Button component for TUI applications.
 ///
-/// The button supports different [styles](ButtonStyle) and [states](ButtonState),
-/// automatically handling the visual changes for hover and click effects.
+/// The button accepts a label, optional icon, custom block borders,
+/// and an explicit `ratatui::style::Style` to dictate its appearance.
 ///
 /// # Example
 ///
 /// ```
-/// use tui_shared::{Button, ButtonStyle, ButtonState};
+/// use tui_shared::Button;
 /// use ratatui::widgets::Widget;
 /// use ratatui::layout::Rect;
 /// use ratatui::buffer::Buffer;
+/// use ratatui::style::{Color, Style};
 ///
 /// let button = Button::new("Submit")
-///     .style_variant(ButtonStyle::Primary)
-///     .state(ButtonState::Hovered)
+///     .style(Style::default().bg(Color::Blue).fg(Color::Black))
 ///     .icon("🚀");
 ///
 /// // Render
@@ -87,8 +39,7 @@ pub enum ButtonStyle {
 /// ```
 pub struct Button<'a> {
     label: String,
-    state: ButtonState,
-    style_variant: ButtonStyle,
+    style: Style,
     icon: Option<String>,
     block: Option<Block<'a>>,
 }
@@ -96,7 +47,7 @@ pub struct Button<'a> {
 impl<'a> Button<'a> {
     /// Creates a new `Button` with the given label.
     ///
-    /// The button defaults to [`ButtonStyle::Primary`] and [`ButtonState::Normal`].
+    /// By default, the button has a blue background and black text.
     ///
     /// # Examples
     ///
@@ -108,38 +59,24 @@ impl<'a> Button<'a> {
     pub fn new(label: impl Into<String>) -> Self {
         Self {
             label: label.into(),
-            state: ButtonState::Normal,
-            style_variant: ButtonStyle::Primary,
+            style: Style::default().bg(Color::Blue).fg(Color::Black).add_modifier(Modifier::BOLD),
             icon: None,
             block: None,
         }
     }
 
-    /// Explicitly sets the button's state.
+    /// Sets the visual style of the button explicitly.
     ///
     /// # Examples
     ///
     /// ```
-    /// use tui_shared::{Button, ButtonState};
+    /// use tui_shared::Button;
+    /// use ratatui::style::{Color, Style};
     ///
-    /// let button = Button::new("Submit").state(ButtonState::Hovered);
+    /// let button = Button::new("Delete").style(Style::default().bg(Color::Red).fg(Color::White));
     /// ```
-    pub fn state(mut self, state: ButtonState) -> Self {
-        self.state = state;
-        self
-    }
-
-    /// Sets the visual style variant.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use tui_shared::{Button, ButtonStyle};
-    ///
-    /// let button = Button::new("Delete").style_variant(ButtonStyle::Danger);
-    /// ```
-    pub fn style_variant(mut self, variant: ButtonStyle) -> Self {
-        self.style_variant = variant;
+    pub fn style(mut self, style: Style) -> Self {
+        self.style = style;
         self
     }
 
@@ -175,12 +112,10 @@ impl<'a> Button<'a> {
         self
     }
 
-    /// Toggles the button's "active" appearance.
+    /// Toggles the button's "active" appearance quickly.
     ///
-    /// This is a convenience method for legacy compatibility or simple toggle states.
-    ///
-    /// - `true`: Sets style to [`ButtonStyle::Warning`] (High visibility/Yellow) to represent an active state.
-    /// - `false`: Sets style to [`ButtonStyle::Outline`] (Low visibility/Gray) to represent an inactive state.
+    /// - `true`: Sets style to Black text on a Yellow background (High visibility).
+    /// - `false`: Sets style to Gray text on a default background (Low visibility).
     ///
     /// # Examples
     ///
@@ -192,9 +127,9 @@ impl<'a> Button<'a> {
     /// ```
     pub fn active(mut self, is_active: bool) -> Self {
         if is_active {
-            self.style_variant = ButtonStyle::Warning;
+            self.style = Style::default().bg(Color::Yellow).fg(Color::Black).add_modifier(Modifier::BOLD);
         } else {
-            self.style_variant = ButtonStyle::Outline;
+            self.style = Style::default().fg(Color::Gray).bg(Color::Reset);
         }
         self
     }
@@ -202,81 +137,6 @@ impl<'a> Button<'a> {
 
 impl<'a> Widget for Button<'a> {
     fn render(mut self, area: Rect, buf: &mut Buffer) {
-        let (fg, bg, modifier) = match (self.style_variant, self.state) {
-            // Disabled
-            (_, ButtonState::Disabled) => (Color::DarkGray, Color::Black, Modifier::empty()),
-
-            // Primary (Blue)
-            (ButtonStyle::Primary, ButtonState::Normal) => {
-                (Color::Black, Color::Blue, Modifier::BOLD)
-            }
-            (ButtonStyle::Primary, ButtonState::Hovered) => {
-                (Color::Black, Color::Cyan, Modifier::BOLD) // Brighter blue/cyan
-            }
-            (ButtonStyle::Primary, ButtonState::Clicked) => {
-                (Color::Blue, Color::White, Modifier::BOLD)
-            }
-
-            // Secondary (Gray)
-            (ButtonStyle::Secondary, ButtonState::Normal) => {
-                (Color::White, Color::DarkGray, Modifier::empty())
-            }
-            (ButtonStyle::Secondary, ButtonState::Hovered) => {
-                (Color::Black, Color::Gray, Modifier::empty()) // Brighter
-            }
-            (ButtonStyle::Secondary, ButtonState::Clicked) => {
-                (Color::Black, Color::White, Modifier::BOLD)
-            }
-
-            // Outline (Ghost)
-            (ButtonStyle::Outline, ButtonState::Normal) => {
-                (Color::Gray, Color::Reset, Modifier::empty())
-            }
-            (ButtonStyle::Outline, ButtonState::Hovered) => (
-                Color::White,
-                Color::Reset,
-                Modifier::BOLD | Modifier::UNDERLINED,
-            ),
-            (ButtonStyle::Outline, ButtonState::Clicked) => {
-                (Color::Black, Color::White, Modifier::BOLD)
-            }
-
-            // Danger (Red)
-            (ButtonStyle::Danger, ButtonState::Normal) => {
-                (Color::White, Color::Red, Modifier::BOLD)
-            }
-            (ButtonStyle::Danger, ButtonState::Hovered) => {
-                (Color::White, Color::LightRed, Modifier::BOLD) // Lighter red
-            }
-            (ButtonStyle::Danger, ButtonState::Clicked) => {
-                (Color::Red, Color::White, Modifier::BOLD)
-            }
-
-            // Warning (Yellow)
-            (ButtonStyle::Warning, ButtonState::Normal) => {
-                (Color::Black, Color::Yellow, Modifier::BOLD)
-            }
-            (ButtonStyle::Warning, ButtonState::Hovered) => {
-                (Color::Black, Color::LightYellow, Modifier::BOLD) // Lighter yellow
-            }
-            (ButtonStyle::Warning, ButtonState::Clicked) => {
-                (Color::Yellow, Color::Black, Modifier::BOLD)
-            }
-
-            // Success (Green)
-            (ButtonStyle::Success, ButtonState::Normal) => {
-                (Color::Black, Color::Green, Modifier::BOLD)
-            }
-            (ButtonStyle::Success, ButtonState::Hovered) => {
-                (Color::Black, Color::LightGreen, Modifier::BOLD)
-            }
-            (ButtonStyle::Success, ButtonState::Clicked) => {
-                (Color::Green, Color::White, Modifier::BOLD)
-            }
-        };
-
-        let style = Style::default().fg(fg).bg(bg).add_modifier(modifier);
-
         if self.block.is_none() {
             self.block = Some(Block::default().borders(Borders::ALL));
         }
@@ -285,7 +145,7 @@ impl<'a> Widget for Button<'a> {
             .block
             .take()
             .unwrap_or_else(|| Block::default().borders(Borders::ALL))
-            .style(style);
+            .style(self.style);
 
         // Ensure rendering block doesn't go out of bounds of the current buffer
         let safe_area = area.intersection(buf.area);
@@ -331,19 +191,17 @@ mod tests {
 
     #[test]
     fn test_button_rendering() {
-        let button = Button::new("Click Me")
-            .style_variant(ButtonStyle::Primary)
-            .state(ButtonState::Normal);
+        let button = Button::new("Click Me");
 
         let area = Rect::new(0, 0, 20, 3);
         let mut buffer = Buffer::empty(area);
 
         button.render(area, &mut buffer);
 
-        // Check border style (Primary Normal -> Blue)
+        // Check border style (Default is Blue bg, Black fg)
         let cell = &buffer[(0, 0)];
-        assert_eq!(cell.fg, Color::Black); // Text color for Primary Normal is Black
-        assert_eq!(cell.bg, Color::Blue); // Bg color for Primary Normal is Blue
+        assert_eq!(cell.fg, Color::Black);
+        assert_eq!(cell.bg, Color::Blue);
 
         // Check text content
         // Text is centered. Width 20, text "Click Me" (8 chars).
@@ -354,18 +212,16 @@ mod tests {
     }
 
     #[test]
-    fn test_button_danger_hovered() {
-        let button = Button::new("Del") // Short label to fit easily
-            .style_variant(ButtonStyle::Danger)
-            .state(ButtonState::Hovered)
-            .icon("X"); // Simple ascii icon to avoid emoji width issues
+    fn test_button_custom_style() {
+        let button = Button::new("Del")
+            .style(Style::default().bg(Color::LightRed).fg(Color::White))
+            .icon("X");
 
         let area = Rect::new(0, 0, 20, 3);
         let mut buffer = Buffer::empty(area);
 
         button.render(area, &mut buffer);
 
-        // Danger Hovered -> LightRed bg, White fg
         let cell = &buffer[(0, 0)];
         assert_eq!(cell.fg, Color::White);
         assert_eq!(cell.bg, Color::LightRed);
@@ -374,7 +230,6 @@ mod tests {
         // "X Del" -> 1 + 1 + 3 = 5 chars.
         // Inner width 18. Padding (18-5)/2 = 6 (trunc).
         // x = 1 + 6 = 7.
-        // Let's check if 'X' is at (7, 1)
         let cell_icon = &buffer[(7, 1)];
         assert_eq!(cell_icon.symbol(), "X");
 
@@ -385,9 +240,6 @@ mod tests {
     #[test]
     fn test_active_mapping() {
         let active_btn = Button::new("On").active(true);
-        // We can't access style_variant directly since it's private,
-        // so we render it and check the color which maps to the style.
-        // Warning Normal -> Yellow fg, Black bg
 
         let area = Rect::new(0, 0, 10, 3);
         let mut buffer = Buffer::empty(area);
@@ -398,28 +250,11 @@ mod tests {
         assert_eq!(cell.bg, Color::Yellow);
 
         let inactive_btn = Button::new("Off").active(false);
-        // Outline Normal -> Gray fg, Reset bg
         let mut buffer = Buffer::empty(area);
         inactive_btn.render(area, &mut buffer);
         let cell = &buffer[(0, 0)];
         assert_eq!(cell.fg, Color::Gray);
         assert_eq!(cell.bg, Color::Reset);
-    }
-
-    #[test]
-    fn test_button_success_rendering() {
-        let button = Button::new("Go")
-            .style_variant(ButtonStyle::Success)
-            .state(ButtonState::Normal);
-
-        let area = Rect::new(0, 0, 10, 3);
-        let mut buffer = Buffer::empty(area);
-
-        button.render(area, &mut buffer);
-
-        let cell = &buffer[(0, 0)];
-        assert_eq!(cell.fg, Color::Black);
-        assert_eq!(cell.bg, Color::Green);
     }
 
     #[test]
@@ -439,116 +274,5 @@ mod tests {
         assert_eq!(cell.symbol(), "C");
         let cell = &buffer[(1, 0)];
         assert_eq!(cell.symbol(), "u");
-    }
-
-    #[test]
-    fn test_button_all_states_and_styles() {
-        let styles = vec![
-            ButtonStyle::Primary,
-            ButtonStyle::Secondary,
-            ButtonStyle::Outline,
-            ButtonStyle::Danger,
-            ButtonStyle::Warning,
-            ButtonStyle::Success,
-        ];
-
-        let states = [
-            ButtonState::Normal,
-            ButtonState::Hovered,
-            ButtonState::Clicked,
-            ButtonState::Disabled,
-        ];
-
-        let area = Rect::new(0, 0, 10, 3);
-
-        for style in styles {
-            for state in states.iter().copied() {
-                let button = Button::new("Test").style_variant(style).state(state);
-
-                let mut buffer = Buffer::empty(area);
-                button.render(area, &mut buffer);
-
-                let cell = &buffer[(0, 0)];
-
-                match (style, state) {
-                    (_, ButtonState::Disabled) => {
-                        assert_eq!(cell.fg, Color::DarkGray);
-                        assert_eq!(cell.bg, Color::Black);
-                    }
-                    (ButtonStyle::Primary, ButtonState::Normal) => {
-                        assert_eq!(cell.fg, Color::Black);
-                        assert_eq!(cell.bg, Color::Blue);
-                    }
-                    (ButtonStyle::Primary, ButtonState::Hovered) => {
-                        assert_eq!(cell.fg, Color::Black);
-                        assert_eq!(cell.bg, Color::Cyan);
-                    }
-                    (ButtonStyle::Primary, ButtonState::Clicked) => {
-                        assert_eq!(cell.fg, Color::Blue);
-                        assert_eq!(cell.bg, Color::White);
-                    }
-                    (ButtonStyle::Secondary, ButtonState::Normal) => {
-                        assert_eq!(cell.fg, Color::White);
-                        assert_eq!(cell.bg, Color::DarkGray);
-                    }
-                    (ButtonStyle::Secondary, ButtonState::Hovered) => {
-                        assert_eq!(cell.fg, Color::Black);
-                        assert_eq!(cell.bg, Color::Gray);
-                    }
-                    (ButtonStyle::Secondary, ButtonState::Clicked) => {
-                        assert_eq!(cell.fg, Color::Black);
-                        assert_eq!(cell.bg, Color::White);
-                    }
-                    (ButtonStyle::Outline, ButtonState::Normal) => {
-                        assert_eq!(cell.fg, Color::Gray);
-                        assert_eq!(cell.bg, Color::Reset);
-                    }
-                    (ButtonStyle::Outline, ButtonState::Hovered) => {
-                        assert_eq!(cell.fg, Color::White);
-                        assert_eq!(cell.bg, Color::Reset);
-                    }
-                    (ButtonStyle::Outline, ButtonState::Clicked) => {
-                        assert_eq!(cell.fg, Color::Black);
-                        assert_eq!(cell.bg, Color::White);
-                    }
-                    (ButtonStyle::Danger, ButtonState::Normal) => {
-                        assert_eq!(cell.fg, Color::White);
-                        assert_eq!(cell.bg, Color::Red);
-                    }
-                    (ButtonStyle::Danger, ButtonState::Hovered) => {
-                        assert_eq!(cell.fg, Color::White);
-                        assert_eq!(cell.bg, Color::LightRed);
-                    }
-                    (ButtonStyle::Danger, ButtonState::Clicked) => {
-                        assert_eq!(cell.fg, Color::Red);
-                        assert_eq!(cell.bg, Color::White);
-                    }
-                    (ButtonStyle::Warning, ButtonState::Normal) => {
-                        assert_eq!(cell.fg, Color::Black);
-                        assert_eq!(cell.bg, Color::Yellow);
-                    }
-                    (ButtonStyle::Warning, ButtonState::Hovered) => {
-                        assert_eq!(cell.fg, Color::Black);
-                        assert_eq!(cell.bg, Color::LightYellow);
-                    }
-                    (ButtonStyle::Warning, ButtonState::Clicked) => {
-                        assert_eq!(cell.fg, Color::Yellow);
-                        assert_eq!(cell.bg, Color::Black);
-                    }
-                    (ButtonStyle::Success, ButtonState::Normal) => {
-                        assert_eq!(cell.fg, Color::Black);
-                        assert_eq!(cell.bg, Color::Green);
-                    }
-                    (ButtonStyle::Success, ButtonState::Hovered) => {
-                        assert_eq!(cell.fg, Color::Black);
-                        assert_eq!(cell.bg, Color::LightGreen);
-                    }
-                    (ButtonStyle::Success, ButtonState::Clicked) => {
-                        assert_eq!(cell.fg, Color::Green);
-                        assert_eq!(cell.bg, Color::White);
-                    }
-                }
-            }
-        }
     }
 }
