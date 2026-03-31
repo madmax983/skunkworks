@@ -576,3 +576,11 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Novel trait**: Self-organizing magnetic liquidity pools form, snapping together dynamically as trades execute and remove opposing poles. The fluid medium provides realistic viscosity and momentum.
 - **Status**: experiments/market-fluid
 - **Evaluation**: Success. Compiled. Bids and Asks successfully act as dynamic magnetic poles within the ferrous fluid continuous physical space.
+
+### neuro-market
+- **Parents**: crates/neuro-sim + crates/market-sim
+- **Concept**: Spiking Market Liquidity. Izhikevich neurons from an SNN control the rhythmic generation of orders (Bids/Asks) in a continuous double auction market.
+- **Novel trait**: Spiking Market Liquidity. The discrete market participants (Bids and Asks) are spawned entirely based on the continuous dynamic spiking behavior of an interconnected Spiking Neural Network.
+- **Predicted Phenotype**: An emergent market structure where neural cascades dictate bursts of liquidity and sudden market volatility, simulating algorithmic trading driven by complex microscopic neural interactions.
+- **Status**: experiments/neuro-market
+- **Evaluation**: Success. Compiled. The visualization successfully manifests market particle spawning dynamically driven by an underlying Izhikevich neural network.

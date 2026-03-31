@@ -1,0 +1,13 @@
+[package]
+name = "neuro-market"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+market-sim = { path = "../../crates/market-sim" }
+neuro-sim = { path = "../../crates/neuro-sim" }
+tui-shared = { path = "../../crates/tui-shared" }
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+rand = { workspace = true }
