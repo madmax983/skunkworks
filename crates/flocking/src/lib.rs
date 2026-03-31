@@ -340,13 +340,15 @@ pub fn compute_force(
     }
 
     if acc.ali_count > 0 {
-        acc.alignment /= acc.ali_count as f64;
+        // Optimization: Substitute division with multiplication by reciprocal.
+        acc.alignment *= 1.0 / (acc.ali_count as f64);
         total += compute_steering(acc.alignment, my_vel, params.max_speed, params.max_force)
             * params.alignment_weight;
     }
 
     if acc.coh_count > 0 {
-        acc.cohesion /= acc.coh_count as f64;
+        // Optimization: Substitute division with multiplication by reciprocal.
+        acc.cohesion *= 1.0 / (acc.coh_count as f64);
         let desired = acc.cohesion - my_pos;
         total += compute_steering(desired, my_vel, params.max_speed, params.max_force)
             * params.cohesion_weight;
@@ -420,6 +422,28 @@ mod tests {
             let _ = compute_force(&positions, &velocities, i, &params);
         }
         println!("Time taken: {:?}", start.elapsed());
+    }
+
+    #[test]
+    fn test_compute_steering_zero_magnitude() {
+        // Assert compute steering won't panic or return NaN when d_sq == 0.
+        let force = compute_steering(Vec2::zero(), Vec2::new(1.0, 1.0), 5.0, 1.0);
+        assert_eq!(force, Vec2::zero());
+    }
+
+    #[test]
+    fn test_compute_steering_precision() {
+        // Verifies precision holds with reciprocals.
+        let force = compute_steering(Vec2::new(3.0, 4.0), Vec2::new(1.0, 1.0), 10.0, 2.0);
+        // Desired = (3, 4). mag = 5.
+        // normalized and scaled to max_speed(10) -> (6, 8)
+        // desired -= current_vel(1,1) -> (5, 7)
+        // s_sq = 25 + 49 = 74. max_force(2) sq = 4. 74 > 4, so scale to max_force
+        // s_mag = sqrt(74) = 8.602325...
+        // x = 5 * 2 / 8.602325 = 1.162476...
+        // y = 7 * 2 / 8.602325 = 1.627466...
+        assert!((force.x - 1.162476).abs() < 1e-5);
+        assert!((force.y - 1.627466).abs() < 1e-5);
     }
 
     #[test]
