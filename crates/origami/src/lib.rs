@@ -69,6 +69,18 @@ pub struct MiuraParams {
 }
 
 /// A single vertex in the generated origami mesh.
+///
+/// # Examples
+///
+/// ```
+/// use origami::OrigamiVertex;
+/// use macroquad::prelude::{vec3, vec2};
+///
+/// let vertex = OrigamiVertex {
+///     pos: vec3(0.0, 0.0, 0.0),
+///     uv: vec2(0.5, 0.5),
+/// };
+/// ```
 pub struct OrigamiVertex {
     /// 3D position of the vertex.
     pub pos: Vec3,
@@ -79,6 +91,22 @@ pub struct OrigamiVertex {
 /// A complete mesh generated from the origami pattern.
 ///
 /// Contains vertices and indices suitable for rendering with `macroquad` or other engines.
+///
+/// # Examples
+///
+/// ```
+/// use origami::{OrigamiMesh, OrigamiVertex};
+/// use macroquad::prelude::{vec3, vec2};
+///
+/// let mesh = OrigamiMesh {
+///     vertices: vec![
+///         OrigamiVertex { pos: vec3(0.0, 0.0, 0.0), uv: vec2(0.0, 0.0) },
+///         OrigamiVertex { pos: vec3(1.0, 0.0, 0.0), uv: vec2(1.0, 0.0) },
+///         OrigamiVertex { pos: vec3(0.0, 1.0, 0.0), uv: vec2(0.0, 1.0) },
+///     ],
+///     indices: vec![0, 1, 2],
+/// };
+/// ```
 pub struct OrigamiMesh {
     /// List of vertices.
     pub vertices: Vec<OrigamiVertex>,
