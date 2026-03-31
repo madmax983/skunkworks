@@ -24,6 +24,12 @@ pub struct PhysicsWorld {
     pub couplings: Vec<(usize, usize, f32)>, // (source_idx, target_idx, gain)
 }
 
+impl Default for PhysicsWorld {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl PhysicsWorld {
     pub fn new() -> Self {
         Self {
