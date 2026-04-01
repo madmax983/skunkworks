@@ -76,7 +76,7 @@ fn main() -> Result<()> {
 }
 
 fn draw_ui(f: &mut Frame, sim: &Simulation, scroll_x: usize, scroll_y: usize) {
-    let size = f.size();
+    let size = f.area();
 
     // Title Block
     let title_block = Block::default()
@@ -100,7 +100,7 @@ fn draw_ui(f: &mut Frame, sim: &Simulation, scroll_x: usize, scroll_y: usize) {
                 let agents_here: Vec<_> =
                     sim.agents.iter().filter(|a| a.x == x && a.y == y).collect();
 
-                if let Some(agent) = agents_here.first() {
+                if let Some(_agent) = agents_here.first() {
                     spans.push(Span::styled(
                         "@",
                         Style::default().fg(Color::Red).bg(Color::Black),

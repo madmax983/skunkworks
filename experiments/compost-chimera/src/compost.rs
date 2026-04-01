@@ -10,7 +10,7 @@ use walkdir::WalkDir;
 pub struct CompostFile {
     pub path: PathBuf,
     pub relative_path: String,
-    pub timestamp: i64,
+    pub _timestamp: i64,
     pub decay_level: DecayLevel,
 }
 
@@ -67,7 +67,7 @@ impl CompostBin {
                     files.push(CompostFile {
                         path: path.to_path_buf(),
                         relative_path: relative,
-                        timestamp,
+                        _timestamp: timestamp,
                         decay_level,
                     });
                 }

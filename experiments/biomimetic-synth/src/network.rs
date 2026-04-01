@@ -160,7 +160,7 @@ mod tests {
         // Step 2: Continue simulation.
         // Neuron 1 should receive current 1 tick after spike.
 
-        let spike_tick = spiked_at.unwrap();
+        let spike_tick = spiked_at.expect("spiked_at should have been populated");
         // Run until tick == spike_tick + 1
         while net.tick <= spike_tick + 1 {
             let v_prev = net.neurons[1].v;
