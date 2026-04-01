@@ -1,6 +1,18 @@
 # Prologue: Rune Logic 🔮
 
 Prologue is a Grid-based Visual Logic Language embedded within Chimera.
+
+## Prolouge: The Mad Scientist of Language ⚛️
+
+In addition to standard `prologue`, you can invoke `prolouge` - a highly experimental and chaotic mode.
+When triggered, the Mad Scientist takes over:
+* Massive amounts of energy are injected into the grid.
+* The grid is flooded with a chaotic mixture of runes representing different paradigms (`₣` for Forth, `⚡` for Elektra, `ζ` for Lisp, `O` for Orca, `M` for Genetics, and `?` for Logic Queries).
+* Random Orca signal bursts disrupt the grid logic.
+* Extreme genetic chaos is applied: genes within strands are randomly shuffled, and chaotic mutations (like `Glitch`, `BioHack`, or `Supernova`) are forcefully inserted into the genome.
+
+Use at your own risk. The results are unpredictable and highly volatile.
+
 It allows for the construction of "Digital Circuits" and "Logic Agents" directly on the memory grid.
 
 ## Activation

@@ -596,13 +596,45 @@ fn exec_prolouge(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     use rand::Rng;
     for y in 0..crate::vm::GRID_SIZE {
         for x in 0..crate::vm::GRID_SIZE {
-            if rng.gen_bool(0.1) {
-                let runes = ["M", "Z", "₣", "⚡", "!", "*", "~", "♻"];
+            if rng.gen_bool(0.15) {
+                // Runes representing the Mad Scientist's obsessions:
+                // ₣: Forth, ⚡: Elektra, ζ: Lisp/Zeta, M: Mutate/Genetics, O: Orca, ?: Prolog Query
+                let runes = ["M", "ζ", "₣", "⚡", "O", "?", "!", "*", "~", "♻", "P", "c"];
                 let rune = runes[rng.gen_range(0..runes.len())];
                 vm.grid[y][x] = crate::vm::Value::Str(rune.to_string());
             }
+            if rng.gen_bool(0.05) {
+                // Inject random Orca signal bursts
+                vm.signal_grid[y][x] = 1;
+            }
         }
     }
+
+    // Inject extreme genetic chaos: randomly shuffle or replace genes in all strands
+    let strand_count = vm.dna.helix.strands.len();
+    for s_idx in 0..strand_count {
+        if rng.gen_bool(0.3) {
+            let genes_len = vm.dna.helix.strands[s_idx].genes.len();
+            if genes_len > 1 {
+                let g1 = rng.gen_range(0..genes_len);
+                let g2 = rng.gen_range(0..genes_len);
+                vm.dna.helix.strands[s_idx].genes.swap(g1, g2);
+            }
+        }
+        if rng.gen_bool(0.1) {
+            let ops = [
+                OpCode::Glitch, OpCode::Mutagen, OpCode::Chaos,
+                OpCode::BioHack, OpCode::Supernova, OpCode::Prolouge
+            ];
+            let new_op = ops[rng.gen_range(0..ops.len())].clone();
+            let genes_len = vm.dna.helix.strands[s_idx].genes.len();
+            if genes_len > 0 {
+                let g_idx = rng.gen_range(0..genes_len);
+                vm.dna.helix.strands[s_idx].genes[g_idx].op = new_op;
+            }
+        }
+    }
+
     None
 }
 
