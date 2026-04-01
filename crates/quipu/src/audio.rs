@@ -11,13 +11,16 @@
 //!
 //! ```rust,ignore
 //! use quipu::audio::{AudioEngine, AudioEvent};
+//! # fn main() -> anyhow::Result<()> {
 //!
 //! // Create the engine
-//! let engine = AudioEngine::new().expect("Failed to initialize audio");
+//! let engine = AudioEngine::new()?;
 //! let sender = engine.get_sender();
 //!
 //! // Trigger a sound
-//! sender.send(AudioEvent::Kick).unwrap();
+//! sender.send(AudioEvent::Kick)?;
+//! # Ok(())
+//! # }
 //! ```
 
 use anyhow::Result;
@@ -55,13 +58,16 @@ pub enum AudioEvent {
 ///
 /// ```ignore
 /// use quipu::audio::{AudioEngine, AudioEvent};
+/// # fn main() -> anyhow::Result<()> {
 ///
 /// // Create the engine
-/// let engine = AudioEngine::new().expect("Failed to initialize audio");
+/// let engine = AudioEngine::new()?;
 /// let sender = engine.get_sender();
 ///
 /// // Trigger a kick drum sound
-/// sender.send(AudioEvent::Kick).unwrap();
+/// sender.send(AudioEvent::Kick)?;
+/// # Ok(())
+/// # }
 /// ```
 #[allow(dead_code)]
 pub struct AudioEngine {
@@ -80,7 +86,10 @@ impl AudioEngine {
     ///
     /// ```
     /// use quipu::audio::AudioEngine;
-    /// let engine = AudioEngine::new().unwrap();
+    /// # fn main() -> anyhow::Result<()> {
+    /// let engine = AudioEngine::new()?;
+    /// # Ok(())
+    /// # }
     /// ```
     pub fn new() -> Result<Self> {
         let (tx, _) = bounded(1024);
@@ -93,9 +102,12 @@ impl AudioEngine {
     ///
     /// ```
     /// use quipu::audio::{AudioEngine, AudioEvent};
-    /// let engine = AudioEngine::new().unwrap();
+    /// # fn main() -> anyhow::Result<()> {
+    /// let engine = AudioEngine::new()?;
     /// let sender = engine.get_sender();
-    /// sender.send(AudioEvent::Kick).unwrap();
+    /// sender.send(AudioEvent::Kick)?;
+    /// # Ok(())
+    /// # }
     /// ```
     pub fn get_sender(&self) -> Sender<AudioEvent> {
         self.tx.clone()
@@ -140,7 +152,10 @@ impl AudioEngine {
     ///
     /// ```ignore
     /// use quipu::audio::AudioEngine;
-    /// let engine = AudioEngine::new().expect("Audio init failed");
+    /// # fn main() -> anyhow::Result<()> {
+    /// let engine = AudioEngine::new()?;
+    /// # Ok(())
+    /// # }
     /// ```
     pub fn new() -> Result<Self> {
         let host = cpal::default_host();
@@ -189,9 +204,12 @@ impl AudioEngine {
     ///
     /// ```ignore
     /// use quipu::audio::{AudioEngine, AudioEvent};
-    /// let engine = AudioEngine::new().unwrap();
+    /// # fn main() -> anyhow::Result<()> {
+    /// let engine = AudioEngine::new()?;
     /// let sender = engine.get_sender();
-    /// sender.send(AudioEvent::Kick).unwrap();
+    /// sender.send(AudioEvent::Kick)?;
+    /// # Ok(())
+    /// # }
     /// ```
     pub fn get_sender(&self) -> Sender<AudioEvent> {
         self.tx.clone()
