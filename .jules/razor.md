@@ -14,3 +14,16 @@
 
 **Saved:** [Lines of code / Cognitive load]
 Reduced roughly 50-60 lines of unnecessary boilerplate across 16+ `experiments/chimera-lang/src/vm` files. Decreased cognitive load by improving idiomatic Rust conformance. Also fixed NaN-propagation logic bugs inside neuro-physics code.
+
+## [Reduction]
+**Bloat:** [The over-engineered pattern]
+- The codebase contained a `SoundKind` enum in `crates/quipu/src/audio.rs` which perfectly mirrored the `AudioEvent` enum (having the exact same variants).
+- An unnecessary mapping step was taking place inside the `rx.try_recv()` match statement simply to convert from one identical enum to the other.
+
+**Cut:** [The simplified solution]
+- Removed the `SoundKind` enum entirely.
+- Simplified `ActiveSound` to track the actual `AudioEvent` directly.
+- Refactored the `process_audio` loop to use `AudioEvent` directly, significantly reducing duplicate boilerplate.
+
+**Saved:** [Lines of code / Cognitive load]
+Reduced 27 lines of code by excising the duplicate enum and its mapping logic. Cognitive load is reduced as audio events are no longer conceptually bifurcated into two identical types inside the engine.
