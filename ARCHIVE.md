@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-glass**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to find `evolution_config` field in `chimera_lang::ast::Dna` initialization due to AST evolutionary changes. Grace period: 24h.
+- **chimera-maat**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Technical Debt Burden. Fails to find `evolution_config` field in `chimera_lang::ast::Dna` initialization due to AST evolutionary changes, and has accumulated vestigial organs (unused `ratatui` imports `Gauge`, `Rect`). Grace period: 24h.
 
 ## Pardoned
+- **chimera-glass**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by initializing `evolution_config` and eliminating critical code rot during its grace period. The organism persists.
 - **genetic-luthier**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Swarm Neglect. Resolved by fixing the missing `evolution_config` and resolving strict clippy warnings during its grace period. Vigor demonstrated.
 - **locus-strings**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding proper README and fixing the clippy warnings. Vigor demonstrated.
 - **chimera-chaos**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Technical Debt Burden / Swarm Neglect. Resolved by patching unused code warnings and initializing `evolution_config`. The organism breathes again.
