@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-maat**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Technical Debt Burden. Fails to find `evolution_config` field in `chimera_lang::ast::Dna` initialization due to AST evolutionary changes, and has accumulated vestigial organs (unused `ratatui` imports `Gauge`, `Rect`). Grace period: 24h.
+- **chimera-erosion**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Technical Debt Burden. Fails to find `evolution_config` field in `chimera_lang::ast::Dna` initialization due to AST evolutionary changes. Grace period: 24h.
 
 ## Pardoned
 - **chimera-glass**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by initializing `evolution_config` and eliminating critical code rot during its grace period. The organism persists.
@@ -29,6 +29,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **chimera-maat**: Specimen executed. Diagnosis: Terminal Compilation Failure / Technical Debt Burden. Failed to initialize `evolution_config` and retained unused imports during its grace period. Biomass returned to the void.
 - **thermo-defense**: Specimen executed. Diagnosis: Terminal Compilation Failure / Technical Debt Burden. Fails strict clippy settings (`clippy::collapsible_if`). Failed to improve during grace period. Moved to graveyard.
 - **chimera-esolang**: Specimen executed. Diagnosis: Documentation Void / Ecosystem Isolation. The esoteric language "Genesis" lacks a README detailing its grammar and execution flow. It operates in the dark. Failed to improve during grace period. Moved to graveyard.
 - **chimera-bridge**: Specimen executed. Diagnosis: Terminal Compilation Failure / Skeletal Implementation / Swarm Neglect. Failed to initialize `chimera_lang::ast::Dna` due to missing `evolution_config`. Failed to improve during grace period. Moved to graveyard.
