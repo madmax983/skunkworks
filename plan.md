@@ -1,11 +1,18 @@
-1. **Optimize String Iteration in `exec_brainfuck`**
-   - In `experiments/chimera-lang/src/vm/nova_brainfuck.rs`, `exec_brainfuck` iterates over strings by doing `let code_chars: Vec<char> = code.chars().collect();`. This creates an unnecessary intermediate heap allocation.
-   - It also does `let mut input_chars: VecDeque<u8> = input.bytes().collect::<VecDeque<_>>();`. We can replace this with `let mut input_bytes = input.bytes();` and consume the iterator directly.
-   - We can change `code_chars` to `let code_bytes = code.as_bytes();` since Brainfuck operates on ASCII chars (`[`, `]`, `+`, `-`, `>`, `<`, `.`, `,`). This avoids `char` decoding and the intermediate `Vec` completely. Wait, `String::as_bytes()` works perfectly for brainfuck commands since all valid commands are 1-byte ASCII.
-   - Let's check `exec_brainfuck` logic: it does jumping by precomputing `jumps`. We can iterate over `code.as_bytes()` to precompute `jumps`, and then index `code.as_bytes()[pc]` during execution. This avoids the `Vec<char>` allocation.
+1. **Extract executing operations into `ops` submodules**:
+   - Create `experiments/chimera-lang/src/vm/ops/mutation.rs` for `exec_havoc_op`, `exec_mutagen_op`, `exec_prion_op`, `exec_transposon`.
+   - Create `experiments/chimera-lang/src/vm/ops/string.rs` for `exec_char_op`, `exec_findall_op`.
+   - Create `experiments/chimera-lang/src/vm/ops/resource.rs` for `exec_scavenge_op`, `exec_digest_op`.
+   - Create `experiments/chimera-lang/src/vm/ops/ribosome.rs` for `exec_ribosome_command` and related helper methods like `ribosome_binary_op`, `process_ribosome_bang`, `process_ribosome_read`, `process_ribosome_write`.
+   - Create `experiments/chimera-lang/src/vm/ops/core.rs` for `exec_core_op` (or move it appropriately).
+   - Update `experiments/chimera-lang/src/vm/ops/mod.rs` to expose the new submodules.
+   - Delegate these methods to the new modules inside the main `ChimeraVM` implementation to maintain structural integrity.
 
-   **Pre-commit checks**
-   - Run `pre_commit_instructions` to ensure proper testing, verification, review, and reflection are done.
+2. **Verify architecture and test correctness**:
+   - Run `cargo clippy --all-targets --all-features -- -D warnings` and `cargo fmt --all`.
+   - Run `cargo test -p chimera-lang` to verify everything compiles properly and behavior remains intact.
 
-   **Measurement**
-   - Avoids `O(n)` heap allocations per Brainfuck execution where `n` is code length.
+3. **Complete pre commit steps**
+   - Complete pre commit steps to make sure proper testing, verifications, reviews and reflections are done.
+
+4. **Submit the architectural blueprint PR**:
+   - Submit the change using the Atlas format: "🗺️ Atlas: [Ops Domain Extraction]".

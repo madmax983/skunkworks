@@ -15,3 +15,6 @@
 ## 2024-05-18 - [Math/Bitwise Operator Untangling]
 **Tangle:** The Blob - `experiments/chimera-lang/src/vm/mod.rs` had multiple fundamental core math and bitwise operations (`Mod`, `BitAnd`, `BitOr`, `BitXor`, `BitNot`, `Shl`, `Shr`) improperly placed inside `exec_havoc_op` rather than their correct domain context inside `exec_math_op`.
 **Blueprint:** Extracted these mathematical and bitwise execution blocks from `exec_havoc_op` and relocated them to `exec_math_op` within the dedicated `experiments/chimera-lang/src/vm/ops/math.rs` module. This enforces strict domain boundaries, reduces the size of `mod.rs`, and ensures that `exec_havoc_op` is solely responsible for its designated mutation domain (`HavocRate` and `HavocScope`).
+## YYYY-MM-DD - [Ops Domain Extraction]
+**Tangle:** The Blob - `experiments/chimera-lang/src/vm/mod.rs` was ~5,000 lines long, containing many operation execution methods (like `exec_havoc_op`, `exec_scavenge_op`, etc) that polluted the main VM orchestrator.
+**Blueprint:** Extracted operation execution blocks into `experiments/chimera-lang/src/vm/ops/` submodules (`mutation.rs`, `string.rs`, `resource.rs`, `ribosome.rs`, `core.rs`). Created a facade via `ops/mod.rs` to keep structural boundaries clean, significantly reducing the file length of `mod.rs` and cleanly categorizing operation domains without breaking features or logic.
