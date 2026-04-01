@@ -34,7 +34,7 @@ fn test_fission_reactor_chain() {
         _ => panic!("Source emit non-Int"),
     };
     assert!(
-        source_val >= 50 && source_val < 100,
+        (50..100).contains(&source_val),
         "Source val {} out of range",
         source_val
     );
