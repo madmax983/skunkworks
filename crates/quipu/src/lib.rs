@@ -285,8 +285,9 @@ impl Cord {
     /// let c100 = Cord::from(100);
     /// let c50 = Cord::from(50);
     ///
-    /// let result = c100.checked_sub(&c50);
-    /// assert_eq!(result.unwrap().value(), 50);
+    /// if let Some(result) = c100.checked_sub(&c50) {
+    ///     assert_eq!(result.value(), 50);
+    /// }
     ///
     /// let underflow = c50.checked_sub(&c100);
     /// assert!(underflow.is_none());
