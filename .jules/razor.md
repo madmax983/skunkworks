@@ -55,3 +55,8 @@
 **Bloat:** Enterprise-y `Builder` struct name in `neuro-calligraphy` used for parsing TTF fonts.
 **Cut:** Renamed `Builder` to the more specific and descriptive `OutlineAccumulator`, clarifying that its actual job is to accumulate `Contour` objects from the TTF parser.
 **Saved:** Vague terminology ("Builder") that adds cognitive overhead when trying to understand the struct's specific domain logic.
+
+## [Reduction]
+**Bloat:** `Add` and `Sub` trait implementations in `crates/quipu/src/lib.rs` that wrapped fragile mathematical operations in syntactic sugar, exposing the library to unhandled panics (e.g., negative subtractions or integer overflows).
+**Cut:** Deleted the `impl Add for Cord` and `impl Sub for Cord` blocks entirely, forcing callers to use the explicit and safe `checked_add` and `checked_sub` methods already defined on the struct. Removed associated tests in `havoc.rs` that solely targeted the traits.
+**Saved:** Multiple lines of unsafe trait boilerplate, 1 obsolete test file (`havoc.rs`), and the cognitive load of debugging implicit mathematical panics.

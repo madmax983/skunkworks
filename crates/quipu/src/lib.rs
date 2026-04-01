@@ -47,7 +47,7 @@
 //!
 //! // 4. Calculate the total harvest.
 //! //    The Incas performed arithmetic by moving knots or combining cords.
-//! let total = harvest_record.cords[0].clone() + harvest_record.cords[1].clone();
+//! let total = Cord::from(harvest_record.cords[0].value() + harvest_record.cords[1].value());
 //!
 //! assert_eq!(total.value(), 168);
 //!
@@ -60,7 +60,6 @@
 //! ```
 
 use std::fmt;
-use std::ops::{Add, Sub};
 
 #[cfg(feature = "audio")]
 pub(crate) mod audio;
@@ -427,63 +426,6 @@ impl fmt::Display for Cord {
     }
 }
 
-impl Add for Cord {
-    type Output = Cord;
-
-    /// Adds two Cords together.
-    ///
-    /// The result is a new Cord representing the sum of the values.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use quipu::Cord;
-    ///
-    /// let c1 = Cord::from(100);
-    /// let c2 = Cord::from(50);
-    /// let sum = c1 + c2;
-    ///
-    /// assert_eq!(sum.value(), 150);
-    /// ```
-    fn add(self, rhs: Self) -> Self::Output {
-        let val = self.value().checked_add(rhs.value()).expect(
-            "Quipu addition resulted in overflow (not supported by Incas! Use checked arithmetic)",
-        );
-        Cord::from(val)
-    }
-}
-
-impl Sub for Cord {
-    type Output = Cord;
-
-    /// Subtracts one Cord from another.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the result would be negative (i.e., `rhs > self`).
-    /// The Inca number system does not support negative numbers.
-    /// Use [`Cord::checked_sub`] for safe subtraction.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use quipu::Cord;
-    ///
-    /// let c1 = Cord::from(100);
-    /// let c2 = Cord::from(25);
-    /// let diff = c1 - c2;
-    ///
-    /// assert_eq!(diff.value(), 75);
-    /// ```
-    fn sub(self, rhs: Self) -> Self::Output {
-        let val = self
-            .value()
-            .checked_sub(rhs.value())
-            .expect("Quipu subtraction resulted in negative value (not supported by Incas! Use Cord::checked_sub for safety)");
-        Cord::from(val)
-    }
-}
-
 /// A full Quipu: A collection of cords hanging from a main primary cord.
 ///
 /// This acts as a database or ledger.
@@ -594,22 +536,6 @@ mod tests {
     }
 
     #[test]
-    fn test_cord_add() {
-        let c1 = Cord::from(100);
-        let c2 = Cord::from(25);
-        let sum = c1 + c2;
-        assert_eq!(sum.value(), 125);
-    }
-
-    #[test]
-    fn test_cord_sub() {
-        let c1 = Cord::from(100);
-        let c2 = Cord::from(25);
-        let diff = c1 - c2;
-        assert_eq!(diff.value(), 75);
-    }
-
-    #[test]
     fn test_checked_sub() {
         let c1 = Cord::from(50);
         let c2 = Cord::from(20);
@@ -685,15 +611,4 @@ mod tests {
         assert!(display_str.contains("Cord 1:\n● ● ● ●\n≡2"));
     }
 
-    use proptest::prelude::*;
-
-    proptest! {
-        #[test]
-        #[should_panic(expected = "Quipu subtraction resulted in negative value")]
-        fn havoc_test_cord_sub_underflow_panic(a in 0u64..1000, b in 1001u64..2000) {
-            let c1 = Cord::from(a);
-            let c2 = Cord::from(b);
-            let _ = c1 - c2;
-        }
-    }
 }
