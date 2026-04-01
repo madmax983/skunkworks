@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **luminous-hologram**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to find `locus::flocking` due to workspace architectural changes (flocking crate extraction). Grace period: 24h.
+- **chimera-glass**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to find `evolution_config` field in `chimera_lang::ast::Dna` initialization due to AST evolutionary changes. Grace period: 24h.
 
 ## Pardoned
 - **genetic-luthier**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Swarm Neglect. Resolved by fixing the missing `evolution_config` and resolving strict clippy warnings during its grace period. Vigor demonstrated.
@@ -312,6 +312,7 @@
 - **epicycle-draw**: Failed to improve during grace period. Implementation remained a generic DFT visualization with no unique evolutionary traits or documentation.
 - **particle-life**: Failed to improve during grace period. Generic implementation with no documentation or unique traits.
 - **origami-singularity**: Documentation void. Redundant with `miura-interface`. Failed to improve during grace period. Moved to graveyard.
+- **luminous-hologram**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to adapt to `flocking` crate extraction. Grace period expired. Moved to graveyard.
 - **code-radio**: Documentation void. No `README.md`. "Radio" concept opaque. Failed to improve during grace period. Moved to graveyard.
 - **type-oscillator**: Redundant with `glyph-wave`. Trivial implementation. Failed to improve during grace period. Moved to graveyard.
 - **kinetic-crease**: Specimen executed. Documentation void. Generic implementation. Grace period expired. Moved to graveyard.

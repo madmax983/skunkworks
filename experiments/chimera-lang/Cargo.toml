@@ -39,9 +39,6 @@ comfy-table = "7.2.2"
 rodio = { version = "0.17", optional = true }
 hyper-system = { path = "../../crates/hyper-system", default-features = false }
 
-[[example]]
-name = "story_demo"
-
 [dev-dependencies]
 loom = "0.7"
 proptest = "1.4"
