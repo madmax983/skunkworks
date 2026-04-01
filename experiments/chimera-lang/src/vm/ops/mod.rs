@@ -1,6 +1,10 @@
 pub mod bio;
+pub mod char;
+pub mod findall;
 pub mod flow;
 pub mod grid;
+pub mod havoc;
 pub mod io;
 pub mod math;
+pub mod mutagen;
 pub mod stack;
