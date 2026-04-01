@@ -222,16 +222,16 @@ fn compute_steering(mut desired: Vec2, current_vel: Vec2, max_speed: f64, max_fo
     if d_sq > 0.0 {
         // Optimization: Normalize and scale in one go: desired * (max_speed / mag)
         // 1 div, 1 sqrt, 2 muls (vs 2 divs, 1 sqrt, 2 muls in standard normalize)
-        let mag = d_sq.sqrt();
-        desired *= max_speed / mag;
+        let inv_mag = 1.0 / d_sq.sqrt();
+        desired *= max_speed * inv_mag;
 
         desired -= current_vel;
 
         // Optimization: Limit logic inlined to avoid redundant sqrt/divs
         let s_sq = desired.magnitude_squared();
         if s_sq > max_force * max_force {
-            let s_mag = s_sq.sqrt();
-            desired *= max_force / s_mag;
+            let inv_s_mag = 1.0 / s_sq.sqrt();
+            desired *= max_force * inv_s_mag;
         }
         desired
     } else {

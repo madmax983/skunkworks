@@ -144,7 +144,10 @@ fn run_app<B: Backend>(
     terminal: &mut Terminal<B>,
     app: &mut NeuroDiffusionApp,
     tick_rate: Duration,
-) -> Result<(), Box<dyn Error>> where <B as Backend>::Error: Send + Sync + std::error::Error + 'static, {
+) -> Result<(), Box<dyn Error>>
+where
+    <B as Backend>::Error: Send + Sync + std::error::Error + 'static,
+{
     let mut last_tick = Instant::now();
     loop {
         terminal.draw(|f| ui(f, app))?;

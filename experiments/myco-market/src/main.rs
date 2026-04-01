@@ -79,7 +79,10 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> Result<()> where <B as Backend>::Error: Send + Sync + std::error::Error + 'static {
+fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> Result<()>
+where
+    <B as Backend>::Error: Send + Sync + std::error::Error + 'static,
+{
     loop {
         terminal.draw(|f| ui(f, app))?;
 
@@ -104,7 +107,11 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
         .split(f.area());
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("🍄 Mycelial Market Simulator (Pheromone-Guided Liquidity) 📈"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("🍄 Mycelial Market Simulator (Pheromone-Guided Liquidity) 📈"),
+        )
         .x_bounds([0.0, GRID_WIDTH as f64])
         .y_bounds([0.0, GRID_HEIGHT as f64])
         .paint(|ctx| {
@@ -135,7 +142,11 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
             // Draw Agents
             for agent in &app.world.agents {
                 let cy = GRID_HEIGHT as f64 - 1.0 - agent.y;
-                let color = if agent.is_bid { Color::Green } else { Color::Red };
+                let color = if agent.is_bid {
+                    Color::Green
+                } else {
+                    Color::Red
+                };
                 ctx.draw(&Points {
                     coords: &[(agent.x, cy)],
                     color,
@@ -166,11 +177,20 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
 
     let stats = Paragraph::new(vec![
         ratatui::text::Line::from(vec![
-            Span::styled(format!("Bids/Asks: {} ", app.world.agents.len()), Style::default().fg(Color::Cyan)),
+            Span::styled(
+                format!("Bids/Asks: {} ", app.world.agents.len()),
+                Style::default().fg(Color::Cyan),
+            ),
             Span::raw("| "),
-            Span::styled(format!("Recent Trades: {} ", app.world.trades.len()), Style::default().fg(Color::Yellow)),
+            Span::styled(
+                format!("Recent Trades: {} ", app.world.trades.len()),
+                Style::default().fg(Color::Yellow),
+            ),
             Span::raw("| "),
-            Span::styled(format!("Tick: {} ", app.tick), Style::default().fg(Color::DarkGray)),
+            Span::styled(
+                format!("Tick: {} ", app.tick),
+                Style::default().fg(Color::DarkGray),
+            ),
         ]),
         ratatui::text::Line::from("Press 'q' or 'Esc' to quit"),
     ])
