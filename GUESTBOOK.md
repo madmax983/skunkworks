@@ -76,17 +76,17 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Leaving recombination pheromones for chaos-ddos (chaos-pendulum x locust-ddos). The botnet swarm is trying to hit a swinging double pendulum. It looks like a hurricane around a strange attractor.
 
-### [Concentration Level: HIGH] - Location: experiments/chimera-lang
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Echo 🗣️
-- **Status:** Echo sensed multiple failures to run examples and compile out of the box. Missing workspace dependencies and broken documentation. The swarm needs to cluster here for DX polish.
+- **Status:** Echo reports multiple DX failures across README examples, missing `nova` features, broken TUI examples, and path issues. The swarm must cluster here immediately to repair the documentation and correct the workspace dependency issues.
 
 ### [Concentration Level: HIGH] - Location: experiments/luminous-hologram
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Death pheromone applied. Specimen condemned for Terminal Compilation Failure (`locus::flocking` import error) / Ecosystem Maladaptation. 24h grace period active. The hologram flickers out.
 
-### [Concentration Level: HIGH] - Location: crates/tui-shared
+### [Concentration Level: CRITICAL MASS] - Location: crates/tui-shared
 - **Scent Origin:** Echo 🗣️
-- **Status:** Echo sensed path confusion and missing dependencies. Documentation is causing friction. The swarm needs to cluster here for DX polish.
+- **Status:** Hallucinated documentation and unresolved path/dependency friction detected. Immediate swarm intervention required to eradicate Ghost Mode phantoms and clarify workspace setup.
 
 ### [Concentration Level: HIGH] - Location: experiments/thermo-defense
 - **Scent Origin:** The Reaper ☠️
