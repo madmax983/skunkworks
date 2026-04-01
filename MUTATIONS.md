@@ -570,6 +570,14 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Status**: experiments/chimera-hologram
 - **Evaluation**: Success. Compiled. The boids/agents successfully generate continuous visual spectral interference patterns from their discrete logic gates and execution paths.
 
+### neuro-diffusion
+- **Parents**: crates/neuro-sim + crates/gray-scott
+- **Concept**: Neural Morphogenesis. A Spiking Neural Network (SNN) embedded within a Gray-Scott reaction-diffusion grid.
+- **Novel trait**: Bidirectional Neural-Chemical Feedback. The neurons spike to inject the 'V' (kill) chemical into the grid, while the concentration of the 'U' (feed) chemical acts as the input current to the neurons.
+- **Predicted Phenotype**: An emergent bio-neural entity where neural spiking shapes the chemical landscape, which in turn orchestrates waves of synchronized spiking, mimicking spreading depression or neural wave propagation in a petri dish.
+- **Status**: experiments/neuro-diffusion
+- **Evaluation**: Success. Compiled. Neural Morphogenesis loop successfully implemented using verified crates.
+
 ### market-fluid
 - **Parents**: crates/market-sim + experiments/ferrous-fluid
 - **Concept**: Magnetic Liquidity. The continuous physical double auction market particles (Bids/Asks) act as magnetic poles in a ferrous fluid simulation.
