@@ -261,7 +261,7 @@ sequenceDiagram
     GPU->>Ping: Write Next State
 ```
 
-### Storage Decoupling (ADR 006)
+### Storage Decoupling (ADR 012)
 
 Refactoring to decouple storage from core logic to resolve circular dependencies.
 
@@ -282,7 +282,7 @@ sequenceDiagram
     participant C as Core
     participant S as Storage
 
-    Note over C,S: Decoupled via Trait (ADR 006)
+    Note over C,S: Decoupled via Trait (ADR 012)
     C->>S: save_state(data)
     S-->>C: Result<Ok>
 ```
