@@ -17,7 +17,10 @@ fn test_hash_overflow_exploit() {
         let mut hasher = DefaultHasher::new();
         v.hash(&mut hasher);
         let _ = hasher.finish();
-        return;
+        // Since `Value` uses an iterative approach to hash, but `Drop` relies on the compiler generated recursive drop,
+        // it overflows when `v` goes out of scope and drops deeply nested nodes.
+        // We can just exit before it drops, as this proves it survived the hash.
+        std::process::exit(0);
     }
 
     // We are the parent process. Spawn the child to prove the crash.

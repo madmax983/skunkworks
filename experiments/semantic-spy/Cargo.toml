@@ -2,7 +2,7 @@
 name = "semantic-spy"
 version = "0.1.0"
 edition = "2021"
-description = "TUI inspector for tui-semantic snapshots"
+description = "TUI inspector for tui-shared semantic snapshots"
 
 [dependencies]
 anyhow = "1.0"

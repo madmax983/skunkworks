@@ -2,7 +2,7 @@
 
 **Semantic Spy** is a Terminal User Interface (TUI) tool for visualizing **Semantic Bridge** snapshots.
 
-It allows you to inspect the internal state of applications that implement the `tui-semantic` protocol, viewing entities, properties, and metrics in a structured way.
+It allows you to inspect the internal state of applications that implement the `tui-shared::semantic` protocol, viewing entities, properties, and metrics in a structured way.
 
 ## Features
 
@@ -40,7 +40,7 @@ cargo run --bin orbital-decay -- --semantic | cargo run --bin semantic-spy
 
 ## Input Format
 
-`semantic-spy` expects a JSON object matching the `tui_semantic::Snapshot` structure:
+`semantic-spy` expects a JSON object matching the `tui_shared::semantic::Snapshot` structure:
 
 ```json
 {

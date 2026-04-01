@@ -43,7 +43,17 @@ classDiagram
 
 ### Semantic Bridge (crates/tui-shared/src/semantic)
 
-The `semantic` module within the `tui-shared` crate enables applications to expose their internal state as structured data for LLM agents (ADR 004, ADR 070).
+The `semantic` module within the `tui-shared` crate enables applications to expose their internal state as structured data for LLM agents (ADR 004, ADR 070, ADR 076).
+
+```mermaid
+C4Component
+    title Component diagram for TUI Shared Library
+
+    Component(tui_shared, "TUI Shared", "Rust Crate", "Provides RAII wrapper for TUI lifecycle")
+    Component(semantic_module, "Semantic Module", "Rust Module", "Exposes structured state for LLMs")
+
+    Rel(tui_shared, semantic_module, "Encapsulates (ADR 076)", "Rust Mod")
+```
 
 ```mermaid
 classDiagram

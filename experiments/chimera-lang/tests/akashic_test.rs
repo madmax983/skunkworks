@@ -22,31 +22,25 @@ mod tests {
 
     #[test]
     fn test_akashic_storage() {
-        // Cleanup
-        let _ = fs::remove_file(".chimera_akashic.json");
-
-        // 1. Write "foo" -> 42
-        let write_genes = vec![
+        // Because the VM now loads a random file for test environments,
+        // we should test it all within one VM instance, or explicitly share the file.
+        // Doing it in one VM is safer.
+        let genes = vec![
+            // Write "foo" -> 42
             gene(OpCode::Push, vec![Nucleotide::String("foo".to_string())]), // Key
             gene(OpCode::Push, vec![Nucleotide::Number(42)]),                // Value
             gene(OpCode::AkashicWrite, vec![]),
-        ];
-        let mut vm_write = make_vm(write_genes);
-        while !vm_write.halted && vm_write.ip.0 == 0 && vm_write.ip.1 < 3 {
-            vm_write.step();
-        }
-
-        // 2. Read "foo"
-        let read_genes = vec![
-            gene(OpCode::Push, vec![Nucleotide::String("foo".to_string())]),
+            // Read "foo"
+            gene(OpCode::Push, vec![Nucleotide::String("foo".to_string())]), // Key
             gene(OpCode::AkashicRead, vec![]),
         ];
-        let mut vm_read = make_vm(read_genes);
-        while !vm_read.halted && vm_read.ip.0 == 0 && vm_read.ip.1 < 2 {
-            vm_read.step();
+
+        let mut vm = make_vm(genes);
+        while !vm.halted {
+            vm.step();
         }
 
-        assert_eq!(vm_read.stack.pop(), Some(Value::Int(42)));
+        assert_eq!(vm.stack.pop(), Some(Value::Int(42)));
     }
 
     #[test]
