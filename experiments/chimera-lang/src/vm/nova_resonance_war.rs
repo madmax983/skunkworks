@@ -184,8 +184,8 @@ pub fn process_resonance(vm: &mut ChimeraVM) {
     let mut total_amp: f32 = 0.0;
     let mut weighted_freq_sum: f32 = 0.0;
 
-    for y in 0..size {
-        for x in 0..size {
+    for (y, row) in new_grid.iter_mut().enumerate().take(size) {
+        for (x, cell) in row.iter_mut().enumerate().take(size) {
             let (self_freq, self_amp) = vm.resonance_grid[y][x];
 
             // Sonic Mutagenesis (Environment Effects)
@@ -203,7 +203,7 @@ pub fn process_resonance(vm: &mut ChimeraVM) {
             }
 
             if self_amp < 0.1 {
-                new_grid[y][x] = (0.0, 0.0);
+                *cell = (0.0, 0.0);
                 continue;
             }
 
@@ -253,7 +253,7 @@ pub fn process_resonance(vm: &mut ChimeraVM) {
             // Global Decay
             new_amp *= 0.95;
 
-            new_grid[y][x] = (new_freq, new_amp);
+            *cell = (new_freq, new_amp);
 
             // Accumulate for global harmony
             if new_amp > 10.0 {

@@ -1672,10 +1672,7 @@ pub fn exec_genesis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     }
 
                     let val = &vm.grid[y][x];
-                    let is_alive = match val {
-                        Value::Int(n) if *n > 0 => true,
-                        _ => false,
-                    };
+                    let is_alive = matches!(val, Value::Int(n) if *n > 0);
 
                     let mut keep = false;
                     if is_alive {

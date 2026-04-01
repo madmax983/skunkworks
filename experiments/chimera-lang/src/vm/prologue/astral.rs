@@ -146,9 +146,9 @@ fn calculate_gravity(px: f64, py: f64, grid: &[Vec<Value>]) -> (f64, f64) {
     let mut total_fx = 0.0;
     let mut total_fy = 0.0;
 
-    for y in 0..GRID_SIZE {
-        for x in 0..GRID_SIZE {
-            let mass = get_rune_mass(&grid[y][x]);
+    for (y, row) in grid.iter().enumerate().take(GRID_SIZE) {
+        for (x, cell) in row.iter().enumerate().take(GRID_SIZE) {
+            let mass = get_rune_mass(cell);
             if mass > 0.0 {
                 let dx = x as f64 - px;
                 let dy = y as f64 - py;

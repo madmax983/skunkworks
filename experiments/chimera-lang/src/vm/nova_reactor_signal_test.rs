@@ -5,15 +5,6 @@ mod tests {
     use crate::vm::nova_signals::process_signals;
     use crate::vm::{ChimeraVM, Value};
 
-    fn make_vm() -> ChimeraVM {
-        let dna = Dna {
-            evolution_config: None,
-            helix: Helix { strands: vec![] },
-        };
-        let mut vm = ChimeraVM::new(dna);
-        vm.orca_mode = true;
-        vm
-    }
 
     #[test]
     fn test_reactor_stable_fusion() {

@@ -28,10 +28,8 @@ pub fn exec_interfere(
     let mut strand_idx = 0;
     if let Some(Nucleotide::Number(n)) = args.first() {
         strand_idx = *n as usize;
-    } else if let Some(val) = vm.stack.pop() {
-        if let Value::Int(n) = val {
-            strand_idx = n as usize;
-        }
+    } else if let Some(Value::Int(n)) = vm.stack.pop() {
+        strand_idx = n as usize;
     }
 
     if strand_idx < vm.dna.helix.strands.len() {
@@ -95,10 +93,8 @@ pub fn exec_diffract(
     let mut strand_idx = 0;
     if let Some(Nucleotide::Number(n)) = args.first() {
         strand_idx = *n as usize;
-    } else if let Some(val) = vm.stack.pop() {
-        if let Value::Int(n) = val {
-            strand_idx = n as usize;
-        }
+    } else if let Some(Value::Int(n)) = vm.stack.pop() {
+        strand_idx = n as usize;
     }
 
     if strand_idx < vm.dna.helix.strands.len() {

@@ -133,14 +133,12 @@ pub fn exec_hive_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
             }
         }
         OpCode::HiveClose => {
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Int(port) = val {
-                    let port = port as u16;
-                    if vm.hive_sockets.remove(&port).is_some() {
-                        vm.output.push(format!("HIVE: Closed port {}", port));
-                    } else {
-                        vm.output.push(format!("HIVE: Port {} was not bound", port));
-                    }
+            if let Some(Value::Int(port)) = vm.stack.pop() {
+                let port = port as u16;
+                if vm.hive_sockets.remove(&port).is_some() {
+                    vm.output.push(format!("HIVE: Closed port {}", port));
+                } else {
+                    vm.output.push(format!("HIVE: Port {} not open", port));
                 }
             }
         }

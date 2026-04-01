@@ -62,12 +62,10 @@ fn test_pandemonium_flux() {
     let neighbors = [(4, 6), (6, 6), (5, 5), (5, 7)];
     let mut found = false;
     for (y, x) in neighbors {
-        if let Some(val) = &vm.prologue_state.signal_grid[y][x] {
-            if let Value::Int(n) = val {
-                if *n == 10 {
-                    found = true;
-                    break;
-                }
+        if let Some(Value::Int(n)) = &vm.prologue_state.signal_grid[y][x] {
+            if *n == 10 {
+                found = true;
+                break;
             }
         }
     }

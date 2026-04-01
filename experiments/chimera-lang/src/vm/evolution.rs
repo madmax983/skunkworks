@@ -47,8 +47,8 @@ impl EvolutionEngine {
 
         // Initial diversity
         let mut rng = rand::thread_rng();
-        for i in 1..safe_pop_size {
-            Self::mutate_strand(&mut population[i], &mut rng);
+        for child in population.iter_mut().take(safe_pop_size).skip(1) {
+            Self::mutate_strand(child, &mut rng);
         }
 
         Self {

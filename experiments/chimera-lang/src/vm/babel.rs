@@ -595,31 +595,31 @@ pub fn run_parser(
     input: &str,
     logos_engine: &LogosEngine,
     depth: usize,
-) -> Result<(Value, usize), ()> {
+) -> Result<(Value, usize), std::fmt::Error> {
     if depth > crate::vm::MAX_RECURSION_DEPTH {
-        return Err(());
+        return Err(std::fmt::Error);
     }
 
     if let Value::Junction(JunctionType::Any, args) = parser {
         if args.is_empty() {
-            return Err(());
+            return Err(std::fmt::Error);
         }
         if let Value::Str(type_str) = &args[0] {
             match type_str.as_str() {
                 "Match" => {
                     if args.len() < 2 {
-                        return Err(());
+                        return Err(std::fmt::Error);
                     }
                     if let Value::Str(pattern) = &args[1] {
                         if input.starts_with(pattern) {
                             return Ok((Value::Str(pattern.clone()), pattern.len()));
                         }
                     }
-                    Err(())
+                    Err(std::fmt::Error)
                 }
                 "Regex" => {
                     if args.len() < 2 {
-                        return Err(());
+                        return Err(std::fmt::Error);
                     }
                     if let Value::Str(pattern) = &args[1] {
                         let anchored = format!("^{}", pattern);
@@ -631,7 +631,7 @@ pub fn run_parser(
                             }
                         }
                     }
-                    Err(())
+                    Err(std::fmt::Error)
                 }
                 "Seq" => {
                     // Variadic Seq
@@ -645,7 +645,7 @@ pub fn run_parser(
                                 results.push(res);
                                 total_consumed += consumed;
                             }
-                            Err(_) => return Err(()),
+                            Err(_) => return Err(std::fmt::Error),
                         }
                     }
                     Ok((Value::Junction(JunctionType::All, results), total_consumed))
@@ -657,11 +657,11 @@ pub fn run_parser(
                             return Ok(res);
                         }
                     }
-                    Err(())
+                    Err(std::fmt::Error)
                 }
                 "Many" => {
                     if args.len() < 2 {
-                        return Err(());
+                        return Err(std::fmt::Error);
                     }
                     let p = &args[1];
                     let mut results = Vec::new();
@@ -682,7 +682,7 @@ pub fn run_parser(
                 }
                 "Opt" => {
                     if args.len() < 2 {
-                        return Err(());
+                        return Err(std::fmt::Error);
                     }
                     let p = &args[1];
 
@@ -697,7 +697,7 @@ pub fn run_parser(
                 }
                 "Ref" => {
                     if args.len() < 2 {
-                        return Err(());
+                        return Err(std::fmt::Error);
                     }
                     if let Value::Str(name) = &args[1] {
                         if let Some(rule) = logos_engine.rules.get(name) {
@@ -705,15 +705,15 @@ pub fn run_parser(
                             return run_parser(&parser_val, input, logos_engine, depth + 1);
                         }
                     }
-                    Err(())
+                    Err(std::fmt::Error)
                 }
-                _ => Err(()),
+                _ => Err(std::fmt::Error),
             }
         } else {
-            Err(())
+            Err(std::fmt::Error)
         }
     } else {
-        Err(())
+        Err(std::fmt::Error)
     }
 }
 
@@ -928,8 +928,8 @@ pub fn mutate_grammar(grammar: &Value, rate: f64) -> Value {
                 }
                 "Seq" => {
                     let mut new_args = args.clone();
-                    for i in 1..new_args.len() {
-                        new_args[i] = mutate_grammar(&new_args[i], rate);
+                    for item in new_args.iter_mut().skip(1) {
+                        *item = mutate_grammar(item, rate);
                     }
                     if new_args.len() > 2 && rng.gen_bool(0.3) {
                         let idx1 = rng.gen_range(1..new_args.len());
@@ -940,8 +940,8 @@ pub fn mutate_grammar(grammar: &Value, rate: f64) -> Value {
                 }
                 "Alt" => {
                     let mut new_args = args.clone();
-                    for i in 1..new_args.len() {
-                        new_args[i] = mutate_grammar(&new_args[i], rate);
+                    for item in new_args.iter_mut().skip(1) {
+                        *item = mutate_grammar(item, rate);
                     }
                     if rng.gen_bool(0.1) {
                         new_args[0] = Value::Str("Seq".to_string());
@@ -1030,9 +1030,9 @@ fn compile_cst_recursive(
     genes: &mut Vec<Gene>,
     handler_idx: usize,
     depth: usize,
-) -> Result<(), ()> {
+) -> Result<(), std::fmt::Error> {
     if depth > crate::vm::MAX_RECURSION_DEPTH {
-        return Err(());
+        return Err(std::fmt::Error);
     }
     match val {
         Value::Int(n) => {
@@ -1101,7 +1101,7 @@ fn compile_cst_recursive(
                 args: vec![Nucleotide::String(format!("§{:x}", id))],
             });
         }
-        Value::Color(_, _, _) => return Err(()),
+        Value::Color(_, _, _) => return Err(std::fmt::Error),
     }
     Ok(())
 }
@@ -1164,21 +1164,17 @@ impl<'a> GridScanner<'a> {
         let mut content = String::new();
         let mut curr_x = x + 1;
 
-        loop {
-            if let Some(val) = self.peek(y, curr_x) {
-                match val {
-                    Value::Str(s) => {
-                        if s == "\"" {
-                            break;
-                        }
-                        content.push_str(s);
-                        self.visited.insert((y, curr_x)); // Mark string content as visited
-                        curr_x += 1;
+        while let Some(val) = self.peek(y, curr_x) {
+            match val {
+                Value::Str(s) => {
+                    if s == "\"" {
+                        break;
                     }
-                    _ => break, // Unexpected end
+                    content.push_str(s);
+                    self.visited.insert((y, curr_x)); // Mark string content as visited
+                    curr_x += 1;
                 }
-            } else {
-                break;
+                _ => break, // Unexpected end
             }
             if curr_x >= crate::vm::GRID_SIZE {
                 break;
@@ -1200,21 +1196,17 @@ impl<'a> GridScanner<'a> {
         let mut content = String::new();
         let mut curr_x = x + 1;
 
-        loop {
-            if let Some(val) = self.peek(y, curr_x) {
-                match val {
-                    Value::Str(s) => {
-                        if s == "]" {
-                            break;
-                        }
-                        content.push_str(s);
-                        self.visited.insert((y, curr_x));
-                        curr_x += 1;
+        while let Some(val) = self.peek(y, curr_x) {
+            match val {
+                Value::Str(s) => {
+                    if s == "]" {
+                        break;
                     }
-                    _ => break,
+                    content.push_str(s);
+                    self.visited.insert((y, curr_x));
+                    curr_x += 1;
                 }
-            } else {
-                break;
+                _ => break,
             }
             if curr_x >= crate::vm::GRID_SIZE {
                 break;
