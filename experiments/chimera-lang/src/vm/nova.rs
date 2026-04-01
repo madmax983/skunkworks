@@ -623,8 +623,12 @@ fn exec_prolouge(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         }
         if rng.gen_bool(0.1) {
             let ops = [
-                OpCode::Glitch, OpCode::Mutagen, OpCode::Chaos,
-                OpCode::BioHack, OpCode::Supernova, OpCode::Prolouge
+                OpCode::Glitch,
+                OpCode::Mutagen,
+                OpCode::Chaos,
+                OpCode::BioHack,
+                OpCode::Supernova,
+                OpCode::Prolouge,
             ];
             let new_op = ops[rng.gen_range(0..ops.len())].clone();
             let genes_len = vm.dna.helix.strands[s_idx].genes.len();

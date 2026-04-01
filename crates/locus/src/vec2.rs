@@ -482,6 +482,20 @@ mod tests {
     }
 
     #[test]
+    fn test_normalize_zero() {
+        let v = Vec2::zero();
+        let n = v.normalize();
+        assert_eq!(n, Vec2::zero());
+    }
+
+    #[test]
+    fn test_normalize_y_infinite_x_finite() {
+        let v = Vec2::new(5.0, f64::INFINITY);
+        let n = v.normalize();
+        assert_eq!(n, Vec2::new(0.0, 1.0));
+    }
+
+    #[test]
     fn test_normalize_max() {
         // (f64::MAX, 0) -> (1, 0)
         let v = Vec2::new(f64::MAX, 0.0);
@@ -508,6 +522,13 @@ mod tests {
         let l2 = v2.limit(10.0);
         // Magnitude should be 10.0
         assert!((l2.magnitude() - 10.0).abs() < 1e-6);
+    }
+
+    #[test]
+    fn test_limit_zero() {
+        let v = Vec2::zero();
+        let l = v.limit(5.0);
+        assert_eq!(l, Vec2::zero());
     }
 
     #[test]
