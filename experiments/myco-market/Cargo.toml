@@ -1,0 +1,12 @@
+[package]
+name = "myco-market"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+market-sim = { workspace = true }
+rand = { workspace = true }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+rayon = "1.7.0"
