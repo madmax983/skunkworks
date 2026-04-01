@@ -1,11 +1,8 @@
 use crate::audio::SoundEvent;
 use crossbeam::channel::Sender;
-#[cfg(loom)]
-use loom::thread;
 use petgraph::graph::NodeIndex;
 use petgraph::Direction;
 use rand::prelude::*;
-#[cfg(not(loom))]
 use std::thread;
 use std::time::Duration;
 
@@ -64,7 +61,6 @@ impl Ant {
                 self.current_node = roots[rng.gen_range(0..roots.len())];
             }
             // Small delay before restart
-            #[cfg(not(loom))]
             thread::sleep(Duration::from_millis(500));
             return;
         }
@@ -94,7 +90,6 @@ impl Ant {
         }
 
         // Travel time
-        #[cfg(not(loom))]
         thread::sleep(Duration::from_millis(rng.gen_range(50..150)));
     }
 
@@ -125,18 +120,12 @@ impl Ant {
                 // Mutex Contention: TUI or another ant is holding the mutex momentarily
                 // Just retry
             }
-            #[cfg(not(loom))]
             thread::sleep(Duration::from_millis(50));
-            #[cfg(loom)]
-            loom::thread::yield_now();
         }
 
         // 2. Work Loop
         for i in 1..=steps {
-            #[cfg(not(loom))]
             thread::sleep(Duration::from_millis(step_duration as u64));
-            #[cfg(loom)]
-            loom::thread::yield_now();
 
             // Update progress
             // We use lock() here because we own the logical lock, so we expect to get mutex quickly
