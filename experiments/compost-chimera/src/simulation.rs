@@ -1,5 +1,5 @@
-use crate::compost::{CompostBin, CompostFile};
-use crate::decay::{apply_decay, DecayLevel};
+use crate::compost::CompostBin;
+use crate::decay::apply_decay;
 use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use chimera_lang::opcode::OpCode;
 use chimera_lang::vm::{ChimeraVM, Value};
@@ -11,7 +11,7 @@ pub struct Agent {
     pub vm: ChimeraVM,
     pub x: usize,
     pub y: usize,
-    pub id: usize,
+    pub _id: usize,
 }
 
 pub struct Simulation {
@@ -133,7 +133,7 @@ impl Simulation {
                 vm,
                 x: rng.gen_range(0..self.width.max(1)),
                 y: rng.gen_range(0..self.height.max(1)),
-                id: i,
+                _id: i,
             });
         }
     }

@@ -77,7 +77,7 @@ pub fn apply_decay(text: &str, level: DecayLevel) -> String {
                         if "!@#$%^&*()".contains(c) {
                             let opts = "!@#$%^&*()";
                             let idx = rng.gen_range(0..opts.len());
-                            result.push(opts.chars().nth(idx).unwrap());
+                            result.push(opts.chars().nth(idx).unwrap_or('!'));
                         } else {
                             result.push(c);
                         }

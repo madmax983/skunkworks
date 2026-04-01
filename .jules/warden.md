@@ -63,3 +63,10 @@
 **2026-04-10 - [Quipu Integer Overflow and Underflow DoS Prevention]**
 **Threat:** The `Cord` operations `add` and `sub` in `crates/quipu` relied on `checked_add().expect(...)` and `checked_sub().expect(...)`. An attacker could cause the application to panic (Denial of Service) by supplying values that sum above `u64::MAX` or by attempting to subtract a larger cord from a smaller cord.
 **Defense:** Replaced `checked_add` and `checked_sub` with `saturating_add` and `saturating_sub` in `Cord::add` and `Cord::sub`, successfully averting the panic crashes while adhering to the bounded accounting logic expected from the system. Removed the intentional panics from the `havoc.rs` tests.
+**2026-04-10 - [DoS via Random Character Extraction Panic]**
+**Threat:** The `apply_decay` function in `experiments/digital-compost/src/decay.rs` and `experiments/compost-chimera/src/decay.rs`, as well as `exec_gamma` in `experiments/chimera-lang/src/vm/nova_signals.rs`, used `opts.chars().nth(idx).unwrap()` to extract a random character. While `idx` was randomly bounded by the length of the string, relying on `unwrap()` directly introduces an unhandled panic path. A logic error, off-by-one error, or unexpected string mutation could crash the application, resulting in a Denial of Service.
+**Defense:** Replaced the vulnerable `unwrap()` calls with `unwrap_or(...)` providing safe fallback characters (e.g., `!` or `?`).
+
+**2026-04-10 - [DoS via Unhandled Option on Spiking Event]**
+**Threat:** The test logic in `experiments/biomimetic-synth/src/network.rs` used `let spike_tick = spiked_at.unwrap();` after assuming a spike occurred. If the network failed to spike due to simulation changes, the test process would panic unpredictably with an unhelpful `Option::unwrap()` message, creating a false-positive crash instead of a controlled test failure.
+**Defense:** Replaced the unhandled `.unwrap()` with a structured `.expect("spiked_at should have been populated")` to provide clear debugging context in the event of an assertion failure without silently dropping execution frames.

@@ -1661,7 +1661,7 @@ fn exec_gamma(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalCo
     let mut rng = rand::thread_rng();
     let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{};':\",./<>?|\\~`";
     let idx = rng.gen_range(0..chars.len());
-    let c = chars.chars().nth(idx).unwrap();
+    let c = chars.chars().nth(idx).unwrap_or('?');
 
     if let Some((ey, ex)) = vm.normalize_coords(y as i64, x as i64 + 1) {
         ctx.grid_writes.push(GridWrite {

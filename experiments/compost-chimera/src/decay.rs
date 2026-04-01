@@ -29,6 +29,7 @@ impl DecayLevel {
         }
     }
 
+    #[allow(dead_code)]
     pub fn color(&self) -> ratatui::style::Color {
         use ratatui::style::Color;
         match self {
@@ -40,6 +41,7 @@ impl DecayLevel {
         }
     }
 
+    #[allow(dead_code)]
     pub fn label(&self) -> &'static str {
         match self {
             DecayLevel::Fresh => "FRESH",
@@ -77,7 +79,7 @@ pub fn apply_decay(text: &str, level: DecayLevel) -> String {
                         if "!@#$%^&*()".contains(c) {
                             let opts = "!@#$%^&*()";
                             let idx = rng.gen_range(0..opts.len());
-                            result.push(opts.chars().nth(idx).unwrap());
+                            result.push(opts.chars().nth(idx).unwrap_or('!'));
                         } else {
                             result.push(c);
                         }
