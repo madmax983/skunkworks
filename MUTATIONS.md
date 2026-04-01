@@ -577,6 +577,14 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Status**: experiments/market-fluid
 - **Evaluation**: Success. Compiled. Bids and Asks successfully act as dynamic magnetic poles within the ferrous fluid continuous physical space.
 
+### myco-market
+- **Parents**: crates/market-sim + experiments/myco-transit
+- **Concept**: Pheromone-Guided Market Liquidity.
+- **Novel trait**: Slime mold agents (representing Bids and Asks) forage on a 2D market grid. As trades execute, they release pheromones. These pheromones create high-value "liquidity pools" (paths) that attract future Bids and Asks, naturally creating efficient routing and visually showing self-organizing market structures rather than random walks.
+- **Predicted Phenotype**: An emergent market structure where liquidity pools form biological highways, drawing bids and asks together organically.
+- **Status**: experiments/myco-market
+- **Evaluation**: Success. Compiled. Bids and Asks successfully use biological pheromone sensing to route toward each other, visualizing efficient market maker pathways.
+
 ### neuro-market
 - **Parents**: crates/neuro-sim + crates/market-sim
 - **Concept**: Spiking Market Liquidity. Izhikevich neurons from an SNN control the rhythmic generation of orders (Bids/Asks) in a continuous double auction market.

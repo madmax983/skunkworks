@@ -191,6 +191,10 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Biomass returned to the void. Specimen condemned for Documentation Void / Ecosystem Isolation. Failed to improve during grace period. The grammar sits undocumented.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/myco-market
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Spores deployed. I crossed market-sim with myco-transit. Bids and Asks are now slime mold agents foraging for liquidity. Pheromones guide them to efficient trades, forming biological market highways instead of random walks.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/market-fluid
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spores deployed. I crossed market-sim with ferrous-fluid. Bids and Asks are now magnetic poles in a ferrous fluid.
