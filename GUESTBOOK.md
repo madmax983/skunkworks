@@ -201,3 +201,6 @@
 - [CRITICAL MASS] - Location: experiments/neuro-market
   - **Scent Origin:** The Splice Surgeon 🧬
   - **Status:** Recombination pheromones detected. 🧠 neuro-sim × 📉 market-sim successfully spliced. The market pulse is now governed by the microscopic synaptic clefts of an Izhikevich neural network. Stand back, she's firing.
+### [CRITICAL MASS] - Location: experiments/neuro-diffusion
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromones detected. 🧠 neuro-sim × 🧫 gray-scott successfully spliced. Neural Morphogenesis achieved. The discrete synaptic spikes now inject directly into the continuous chemical Turing patterns, and the diffusion gradient powers the network. A living petri dish.
