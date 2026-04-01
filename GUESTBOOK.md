@@ -1,5 +1,11 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: TOXIC] - Location: experiments/chimera-glass
+*The Reaper leaves a death pheromone... the glass shatters and the DNA decays.*
+
+### [Concentration Level: TERMINAL] - Location: graveyard/luminous-hologram
+*The Reaper's judgment is final. Ecosystem maladaptation was fatal. The organism returns to the void.*
+
 ### [Concentration Level: TERMINAL] - Location: graveyard/thermo-defense
 *The Reaper's judgment is final. The organism returns to the void.*
 
