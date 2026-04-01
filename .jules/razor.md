@@ -18,3 +18,14 @@ Reduced roughly 50-60 lines of unnecessary boilerplate across 16+ `experiments/c
 **Bloat:** ButtonState and ButtonStyle enums for TUI Button widget.
 **Cut:** Removed enums, simplifying the API to just use ratatui Color.
 **Saved:** 150+ lines of code / Cognitive load
+## [Reduction]
+**Bloat:** Generic Soup (`PenroseTiling<T>`)
+- The `PenroseTiling` struct in `experiments/penrose-genes` was defined generically over `<T>`, but in practice was always initialized with `Value` (or `()` in unit tests).
+
+**Cut:** Concrete Types
+- Removed the generic parameter `T` completely.
+- Refactored `PenroseTiling` to use `Value` explicitly for its `data` property.
+- Simplified instantiation everywhere in the tests and application logic.
+- Applied `#[allow(dead_code)]` strategically to resolve `cargo clippy` strict checks without arbitrarily ripping out unused parser components.
+
+**Saved:** ~20 lines of boilerplate / Reduced cognitive load of tracking the "generality" of an application-specific geometric container.

@@ -32,7 +32,7 @@ pub struct ChimeraVM {
     pub output: Vec<String>,
     pub halted: bool,
     pub energy: i64,
-    pub tiling: PenroseTiling<Value>,
+    pub tiling: PenroseTiling,
     pub chaos_mode: bool,
     #[cfg(feature = "nova")]
     pub epigenome: HashSet<(usize, usize)>,

@@ -1,9 +1,9 @@
-use crate::penrose::{PenroseTiling, Point, TriangleType};
+use crate::penrose::{PenroseTiling, TriangleType};
 use crate::vm::Value;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
-    style::{Color, Style},
-    text::{Line, Span},
+    style::Color,
+    text::Line,
     widgets::{
         canvas::{Canvas, Line as CanvasLine},
         Block, Borders, Paragraph,
@@ -11,13 +11,7 @@ use ratatui::{
     Frame,
 };
 
-pub fn ui(
-    f: &mut Frame,
-    tiling: &PenroseTiling<Value>,
-    stack: &[Value],
-    output: &[String],
-    energy: i64,
-) {
+pub fn ui(f: &mut Frame, tiling: &PenroseTiling, stack: &[Value], output: &[String], energy: i64) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Min(0), Constraint::Length(10)])

@@ -25,12 +25,14 @@ pub struct Gene {
 #[derive(Debug, Clone)]
 pub enum Nucleotide {
     Number(i64),
+    #[allow(dead_code)]
     String(String),
     #[allow(dead_code)]
     Identifier(String),
 }
 
 impl Dna {
+    #[allow(dead_code)]
     pub fn from_pair(pair: Pair<Rule>) -> Self {
         match pair.as_rule() {
             Rule::dna => {
@@ -44,6 +46,7 @@ impl Dna {
 }
 
 impl Helix {
+    #[allow(dead_code)]
     pub fn from_pair(pair: Pair<Rule>) -> Self {
         match pair.as_rule() {
             Rule::helix => {
@@ -56,6 +59,7 @@ impl Helix {
 }
 
 impl Strand {
+    #[allow(dead_code)]
     pub fn from_pair(pair: Pair<Rule>) -> Self {
         match pair.as_rule() {
             Rule::strand => {
@@ -68,6 +72,7 @@ impl Strand {
 }
 
 impl Gene {
+    #[allow(dead_code)]
     pub fn from_pair(pair: Pair<Rule>) -> Self {
         match pair.as_rule() {
             Rule::gene => {
@@ -83,6 +88,7 @@ impl Gene {
 }
 
 impl Nucleotide {
+    #[allow(dead_code)]
     pub fn from_pair(pair: Pair<Rule>) -> Self {
         match pair.as_rule() {
             Rule::number => Nucleotide::Number(pair.as_str().parse().unwrap()),
