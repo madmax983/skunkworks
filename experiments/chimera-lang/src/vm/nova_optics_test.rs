@@ -112,10 +112,10 @@ mod tests {
         // Should result in 3 projectiles.
 
         let genes = vec![
-            // Place Prism
+            // Place Prism: Push ori, y, x
             Gene {
                 op: OpCode::Push,
-                args: vec![Nucleotide::Number(0)],
+                args: vec![Nucleotide::Number(0)], // ori=0
             },
             Gene {
                 op: OpCode::Push,
@@ -130,6 +130,7 @@ mod tests {
                 args: vec![],
             },
             // Fire from (5, 0) - we want x=5, y=0
+            // Migrate pops dx, dy: so push dy=0, dx=5
             Gene {
                 op: OpCode::Push,
                 args: vec![Nucleotide::Number(0)], // dy=0
@@ -139,12 +140,13 @@ mod tests {
                 args: vec![Nucleotide::Number(5)], // dx=5
             },
             Gene {
-                op: OpCode::Migrate, // Move to (0,5) -> y=0, x=5
+                op: OpCode::Migrate,
                 args: vec![],
             },
+            // Push values for Fire: pow, dy, dx
             Gene {
                 op: OpCode::Push,
-                args: vec![Nucleotide::Number(1)],
+                args: vec![Nucleotide::Number(1)], // pow = 1
             },
             Gene {
                 op: OpCode::Push,
@@ -168,16 +170,9 @@ mod tests {
         };
         let mut vm = ChimeraVM::new(dna);
         vm.energy = 1000;
-        vm.context_loc = (0, 0); // Start at 0,0, but migrate to 0,5 (x=0, y=5)
-                                 // Wait, migrate takes dy, dx. From 0,0 to 0,5 (x=0, y=5)?
-                                 // No, I want Prism at 5,5 (x=5, y=5). Fire from 0,5 (x=0, y=5).
-                                 // Migrate dx=0, dy=5.
+        vm.context_loc = (0, 0);
 
         // Run setup (Migration + Placement + Fire)
-        // Migrate: 1 step. Push(5), Push(0), Migrate.
-        // Place Prism: 4 steps. Push(5), Push(5), Push(0), Prism.
-        // Fire: 4 steps. Push(1), Push(0), Push(1), Fire.
-        // Total ~9 steps.
         for _ in 0..15 {
             vm.step();
         }
@@ -185,7 +180,7 @@ mod tests {
         assert_eq!(vm.projectiles.len(), 1);
         let p = &vm.projectiles[0];
         // Check if firing from correct pos x=5
-        assert!((p.x - 5.0).abs() < 0.1, "Projectile not at x=5");
+        assert!((p.x - 5.0).abs() < 0.1, "Projectile not at x=5, actual: x={}, y={}", p.x, p.y);
 
         // Run until hit
         for _ in 0..6 {

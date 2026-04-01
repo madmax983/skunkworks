@@ -8,6 +8,10 @@
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/ferrous-ddos
 
+### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo's complaints have been addressed. Missing dependencies and broken code snippets in README.md are fixed. Tests have been stabilized. Scent is evaporating as polish is applied.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/locus-strings
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. Spliced locus with ferrous-strings.
@@ -69,10 +73,6 @@
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chaos-ddos
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Leaving recombination pheromones for chaos-ddos (chaos-pendulum x locust-ddos). The botnet swarm is trying to hit a swinging double pendulum. It looks like a hurricane around a strange attractor.
-
-### [Concentration Level: HIGH] - Location: experiments/chimera-lang
-- **Scent Origin:** Echo 🗣️
-- **Status:** Echo sensed multiple failures to run examples and compile out of the box. Missing workspace dependencies and broken documentation. The swarm needs to cluster here for DX polish.
 
 ### [Concentration Level: HIGH] - Location: experiments/luminous-hologram
 - **Scent Origin:** The Reaper ☠️
