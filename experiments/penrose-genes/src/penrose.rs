@@ -64,13 +64,15 @@ impl Triangle {
     }
 }
 
-pub struct PenroseTiling<T> {
+use crate::vm::Value;
+
+pub struct PenroseTiling {
     pub triangles: Vec<Triangle>,
     pub adjacency: Vec<Vec<usize>>,
-    pub data: Vec<T>,
+    pub data: Vec<Value>,
 }
 
-impl<T: Default + Clone> PenroseTiling<T> {
+impl PenroseTiling {
     // Generate a sun pattern (5 thick rhombi -> 10 acute triangles)
     pub fn generate_sun(radius: f64) -> Self {
         let mut triangles = Vec::new();
@@ -99,7 +101,7 @@ impl<T: Default + Clone> PenroseTiling<T> {
         Self {
             triangles,
             adjacency: Vec::new(),
-            data: vec![T::default(); len],
+            data: vec![Value::default(); len],
         }
     }
 
@@ -136,6 +138,7 @@ impl<T: Default + Clone> PenroseTiling<T> {
         self.adjacency = adj;
     }
 
+    #[allow(dead_code)]
     pub fn get_closest_neighbor(&self, current: usize, dir: Point) -> Option<usize> {
         if current >= self.adjacency.len() {
             return None;
@@ -207,7 +210,7 @@ impl<T: Default + Clone> PenroseTiling<T> {
 
         self.triangles = new_triangles;
         // Resize data to match new count. Since subdivision doubles count exactly in this implementation:
-        self.data = vec![T::default(); self.triangles.len()];
+        self.data = vec![Value::default(); self.triangles.len()];
     }
 }
 
@@ -217,7 +220,7 @@ mod tests {
 
     #[test]
     fn test_subdivision_counts() {
-        let mut tiling: PenroseTiling<()> = PenroseTiling::generate_sun(100.0);
+        let mut tiling = PenroseTiling::generate_sun(100.0);
         assert_eq!(tiling.triangles.len(), 10);
         assert_eq!(tiling.data.len(), 10);
 
@@ -234,7 +237,7 @@ mod tests {
 
     #[test]
     fn test_connectivity() {
-        let mut tiling: PenroseTiling<()> = PenroseTiling::generate_sun(100.0);
+        let mut tiling = PenroseTiling::generate_sun(100.0);
         tiling.subdivide();
         tiling.build_adjacency();
 
