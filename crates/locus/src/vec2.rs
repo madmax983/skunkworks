@@ -141,10 +141,10 @@ impl Vec2 {
     /// assert_eq!(zero.normalize(), Vec2::zero());
     /// ```
     pub fn normalize(&self) -> Self {
-        let mag = self.magnitude();
-        if mag == 0.0 {
+        let mag_sq = self.magnitude_squared();
+        if mag_sq == 0.0 {
             Self::zero()
-        } else if mag.is_infinite() {
+        } else if mag_sq.is_infinite() {
             if self.x.is_infinite() || self.y.is_infinite() {
                 // If components are infinite, normalize by treating infinite components as +/- 1.0
                 let x = if self.x.is_infinite() {
@@ -165,7 +165,8 @@ impl Vec2 {
                 scaled.normalize()
             }
         } else {
-            *self / mag
+            let inv_mag = 1.0 / mag_sq.sqrt();
+            *self * inv_mag
         }
     }
 
@@ -199,9 +200,10 @@ impl Vec2 {
             // Optimization: Avoid full normalize() if we can
             if sq_mag.is_finite() {
                 // Common case: finite vector, just scale
-                let mag = sq_mag.sqrt();
-                if mag > 0.0 {
-                    *self * (max / mag)
+                // Optimization: Multiply by reciprocal instead of division
+                if sq_mag > 0.0 {
+                    let inv_mag = 1.0 / sq_mag.sqrt();
+                    *self * (max * inv_mag)
                 } else {
                     Self::zero()
                 }

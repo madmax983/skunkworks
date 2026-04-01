@@ -59,7 +59,10 @@ impl<'a> Button<'a> {
     pub fn new(label: impl Into<String>) -> Self {
         Self {
             label: label.into(),
-            style: Style::default().bg(Color::Blue).fg(Color::Black).add_modifier(Modifier::BOLD),
+            style: Style::default()
+                .bg(Color::Blue)
+                .fg(Color::Black)
+                .add_modifier(Modifier::BOLD),
             icon: None,
             block: None,
         }
@@ -127,7 +130,10 @@ impl<'a> Button<'a> {
     /// ```
     pub fn active(mut self, is_active: bool) -> Self {
         if is_active {
-            self.style = Style::default().bg(Color::Yellow).fg(Color::Black).add_modifier(Modifier::BOLD);
+            self.style = Style::default()
+                .bg(Color::Yellow)
+                .fg(Color::Black)
+                .add_modifier(Modifier::BOLD);
         } else {
             self.style = Style::default().fg(Color::Gray).bg(Color::Reset);
         }

@@ -173,7 +173,12 @@ fn main() -> Result<(), Box<dyn Error>> {
             f.render_widget(footer_text, footer_layout[0]);
 
             let quit_btn = Button::new("Quit")
-                .style(ratatui::style::Style::default().bg(ratatui::style::Color::Red).fg(ratatui::style::Color::White).add_modifier(ratatui::style::Modifier::BOLD))
+                .style(
+                    ratatui::style::Style::default()
+                        .bg(ratatui::style::Color::Red)
+                        .fg(ratatui::style::Color::White)
+                        .add_modifier(ratatui::style::Modifier::BOLD),
+                )
                 .icon("🛑"); // Just visual for now
             f.render_widget(quit_btn, footer_layout[1]);
         })?;

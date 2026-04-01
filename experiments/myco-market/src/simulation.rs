@@ -56,7 +56,11 @@ impl Agent {
 
     pub fn update(&mut self, world: &World) -> AgentUpdateResult {
         if !self.active {
-            return AgentUpdateResult { deposit_x: 0, deposit_y: 0, deposit_amount: 0.0 };
+            return AgentUpdateResult {
+                deposit_x: 0,
+                deposit_y: 0,
+                deposit_amount: 0.0,
+            };
         }
 
         // Bids naturally face upwards (-PI/2), Asks face downwards (PI/2)
@@ -144,12 +148,24 @@ impl World {
     }
 
     pub fn spawn_bid(&mut self, x: usize, y: usize) {
-        self.agents.push(Agent::new(x as f64, y as f64, -PI / 2.0, true, self.next_agent_id));
+        self.agents.push(Agent::new(
+            x as f64,
+            y as f64,
+            -PI / 2.0,
+            true,
+            self.next_agent_id,
+        ));
         self.next_agent_id += 1;
     }
 
     pub fn spawn_ask(&mut self, x: usize, y: usize) {
-        self.agents.push(Agent::new(x as f64, y as f64, PI / 2.0, false, self.next_agent_id));
+        self.agents.push(Agent::new(
+            x as f64,
+            y as f64,
+            PI / 2.0,
+            false,
+            self.next_agent_id,
+        ));
         self.next_agent_id += 1;
     }
 
@@ -163,7 +179,10 @@ impl World {
         self.agents = agents_clone;
 
         for deposit in deposits.iter() {
-            if deposit.deposit_amount > 0.0 && deposit.deposit_x < self.width && deposit.deposit_y < self.height {
+            if deposit.deposit_amount > 0.0
+                && deposit.deposit_x < self.width
+                && deposit.deposit_y < self.height
+            {
                 let idx = deposit.deposit_y * self.width + deposit.deposit_x;
                 self.trails[idx] = (self.trails[idx] + deposit.deposit_amount).min(255.0);
             }
@@ -175,9 +194,13 @@ impl World {
         // We use active flag to avoid double trading.
         let mut to_deactivate = vec![false; self.agents.len()];
         for i in 0..self.agents.len() {
-            if !self.agents[i].active || to_deactivate[i] { continue; }
+            if !self.agents[i].active || to_deactivate[i] {
+                continue;
+            }
             for j in (i + 1)..self.agents.len() {
-                if !self.agents[j].active || to_deactivate[j] { continue; }
+                if !self.agents[j].active || to_deactivate[j] {
+                    continue;
+                }
 
                 if self.agents[i].is_bid != self.agents[j].is_bid {
                     let dx = self.agents[i].x - self.agents[j].x;
@@ -217,14 +240,20 @@ impl World {
 
         // Remove agents that reached the opposite end without trading (expired orders)
         self.agents.retain(|a| {
-            if a.is_bid && a.y < 2.0 { return false; } // Reached top
-            if !a.is_bid && a.y > (self.height as f64 - 3.0) { return false; } // Reached bottom
+            if a.is_bid && a.y < 2.0 {
+                return false;
+            } // Reached top
+            if !a.is_bid && a.y > (self.height as f64 - 3.0) {
+                return false;
+            } // Reached bottom
             true
         });
 
         // Decay trades
         for trade in self.trades.iter_mut() {
-            if trade.age > 0 { trade.age -= 1; }
+            if trade.age > 0 {
+                trade.age -= 1;
+            }
         }
         self.trades.retain(|t| t.age > 0);
         self.trades.extend(new_trades);
