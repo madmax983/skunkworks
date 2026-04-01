@@ -1,27 +1,16 @@
 use crate::matrix_rain::MatrixRain;
 use ratatui::widgets::ListState;
 
+
 impl ViewMode {
     pub fn is_grid_navigable(&self) -> bool {
         match self {
             ViewMode::Grid | ViewMode::BioticChaos => true,
             #[cfg(feature = "nova")]
-            ViewMode::Kaleidoscope
-            | ViewMode::Metazoa
-            | ViewMode::Chronos
-            | ViewMode::Logos
-            | ViewMode::Void
-            | ViewMode::Signals
-            | ViewMode::Sovereignty
-            | ViewMode::Spectrogram
-            | ViewMode::Garden
-            | ViewMode::Orca
-            | ViewMode::Hydra
-            | ViewMode::Hologram
-            | ViewMode::Virology
-            | ViewMode::BioMesh
-            | ViewMode::Reactor
-            | ViewMode::Biolum
+            ViewMode::Kaleidoscope | ViewMode::Metazoa | ViewMode::Chronos | ViewMode::Logos
+            | ViewMode::Void | ViewMode::Signals | ViewMode::Sovereignty | ViewMode::Spectrogram
+            | ViewMode::Garden | ViewMode::Orca | ViewMode::Hydra | ViewMode::Hologram
+            | ViewMode::Virology | ViewMode::BioMesh | ViewMode::Reactor | ViewMode::Biolum
             | ViewMode::Ecology => true,
             #[cfg(feature = "elektra")]
             ViewMode::Elektra => true,

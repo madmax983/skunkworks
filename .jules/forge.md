@@ -26,3 +26,7 @@
 ## [Refactor Iterators and Matches]
 **Learning:** Found multiple instances where manual loops or verbose matching was used instead of idiomatic Rust iterator methods or macros like `matches!`, which led to unnecessary complexity (`clippy::needless_range_loop`, `clippy::match_like_matches_macro`, `clippy::collapsible_match`). Using `.iter().enumerate()`, `matches!()`, and collapsing `if let` blocks makes logic cleaner and easier to reason about. Additionally, `std::slice::from_ref` should be used instead of cloning to create single-element slices (`clippy::cloned_ref_to_slice_refs`).
 **Action:** Actively seek out redundant explicit loops or nested match/if-let chains and flatten them with Rust’s built-in abstractions to increase clarity and avoid memory allocations.
+
+## [Refactor God Function and Pyramid of Doom in TUI Navigation]
+**Learning:** Functions like `handle_navigation_input` in `navigation.rs` suffered from being nearly 1000 lines long, with almost 80 identical `match` arms managing `app_state.grid_cursor` modifications across multiple `ViewMode` variants with `cfg` features.
+**Action:** Extract repetitious logic behind a structural method guard clause `pub fn is_grid_navigable(&self) -> bool` on the base enum type (`ViewMode` in `state.rs`), eliminating the need to re-match the core behavior explicitly over 187 times.
