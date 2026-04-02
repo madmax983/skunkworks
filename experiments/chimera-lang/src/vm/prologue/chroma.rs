@@ -297,13 +297,13 @@ fn apply_green_logic(
             // Green Add: Crossover (String Splicing)
             if let (Some(Value::Str(w)), Some(Value::Str(e))) = (w_sig, e_sig) {
                 // Unicode-safe splicing
-                let w_chars: Vec<char> = w.chars().collect();
-                let e_chars: Vec<char> = e.chars().collect();
-                let split_w = w_chars.len() / 2;
-                let split_e = e_chars.len() / 2;
+                // Optimization: Directly counting and taking from `chars()` iterator
+                // avoids intermediate `Vec<char>` allocations on the hot path.
+                let split_w = w.chars().count() / 2;
+                let split_e = e.chars().count() / 2;
 
-                let head: String = w_chars.into_iter().take(split_w).collect();
-                let tail: String = e_chars.into_iter().skip(split_e).collect();
+                let head: String = w.chars().take(split_w).collect();
+                let tail: String = e.chars().skip(split_e).collect();
                 let new_s = format!("{}{}", head, tail);
 
                 set_sig(next_signals, y, x, 1, 0, Value::Str(new_s));

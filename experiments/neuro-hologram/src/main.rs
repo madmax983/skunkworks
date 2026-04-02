@@ -117,11 +117,16 @@ impl App {
                 for dy in -1..=1 {
                     let px = ox + dx;
                     let py = oy + dy;
-                    if px >= 0 && px < self.hologram.width as isize && py >= 0 && py < self.hologram.height as isize {
+                    if px >= 0
+                        && px < self.hologram.width as isize
+                        && py >= 0
+                        && py < self.hologram.height as isize
+                    {
                         // Blend slightly with distance
-                        let dist = (dx*dx + dy*dy) as f64;
+                        let dist = (dx * dx + dy * dy) as f64;
                         let val = intensity / (1.0 + dist);
-                        self.hologram.data[py as usize * self.hologram.width + px as usize] = num_complex::Complex::new(val, 0.0);
+                        self.hologram.data[py as usize * self.hologram.width + px as usize] =
+                            num_complex::Complex::new(val, 0.0);
                     }
                 }
             }
@@ -152,7 +157,7 @@ impl App {
 
 fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> Result<()>
 where
-    <B as Backend>::Error: std::error::Error + Send + Sync + 'static
+    <B as Backend>::Error: std::error::Error + Send + Sync + 'static,
 {
     loop {
         app.update();
@@ -199,7 +204,11 @@ fn ui(f: &mut Frame, app: &App) {
     let h = app.hologram.height as f64;
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Reconstruction"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Reconstruction"),
+        )
         .paint(|ctx| {
             let mut points_by_intensity: Vec<Vec<(f64, f64)>> = vec![vec![]; 10];
 
@@ -249,10 +258,7 @@ fn main() -> Result<()> {
     let res = run_app(&mut terminal, app);
 
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen,
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen,)?;
     terminal.show_cursor()?;
 
     if let Err(err) = res {
