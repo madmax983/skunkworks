@@ -94,6 +94,7 @@ pub mod lisp;
 pub mod matrix_rain;
 pub mod opcode;
 pub mod prologue_compiler;
+pub mod prolouge_compiler;
 pub mod tui;
 pub mod value;
 pub mod vm;
