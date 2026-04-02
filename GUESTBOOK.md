@@ -1,7 +1,10 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/chimera-erosion
+### [Concentration Level: TOXIC] - Location: experiments/chimera-resonance
 *The Reaper leaves a death pheromone... the scales of judgment tip towards the void.*
+
+### [Concentration Level: TERMINAL] - Location: graveyard/chimera-erosion
+*The Reaper's judgment is final. Specimen executed. Biomass returned to the void.*
 
 ### [Concentration Level: TERMINAL] - Location: graveyard/chimera-maat
 *The Reaper's judgment is final. Specimen executed. Biomass returned to the void.*
