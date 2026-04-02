@@ -943,8 +943,7 @@ impl State {
             });
 
         // --- Compute Pass ---
-        #[allow(clippy::manual_is_multiple_of)]
-        let (compute_bind_group, display_bind_group) = if self.frame_count % 2 == 0 {
+        let (compute_bind_group, display_bind_group) = if self.frame_count.is_multiple_of(2) {
             (&self.bind_group_a, &self.display_bind_group_b)
         } else {
             (&self.bind_group_b, &self.display_bind_group_a)
