@@ -1,0 +1,13 @@
+[package]
+name = "neuro-hologram"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+rustfft = "6.2"
+num-complex = "0.4"
+rand = { workspace = true }
+neuro-sim = { path = "../../crates/neuro-sim" }
