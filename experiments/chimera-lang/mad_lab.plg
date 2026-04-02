@@ -1,0 +1,24 @@
+forth {
+    "INITIATING PROLOUGE MAD SCIENCE..."
+    print
+    10 20 add
+    "Adding 10 and 20... result should be on stack"
+    print
+}
+
+raku {
+    "Raku hyper operator >>+<< requires list args to work... skipping list creation for simplicity here."
+    print
+}
+
+orca {
+    bang 8 8
+}
+
+elektra {
+    battery 8 8
+}
+
+prolog {
+    fact(x).
+}
