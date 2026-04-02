@@ -49,6 +49,8 @@ impl Agent {
 pub struct World {
     pub agents: Vec<Agent>,
     pub pheromones: Vec<f32>,
+    /// Buffer used to avoid heap allocations in the hot loop when diffusing pheromones.
+    pub pheromones_buffer: Vec<f32>,
     pub firewalls: Vec<(Vec2, f32)>,
     pub target: Vec2,
     pub server_health: f32,
@@ -87,6 +89,7 @@ impl World {
         Self {
             agents,
             pheromones: vec![0.0; grid_w * grid_h],
+            pheromones_buffer: vec![0.0; grid_w * grid_h],
             firewalls: Vec::new(),
             grid_w,
             grid_h,
@@ -103,7 +106,9 @@ impl World {
         let w = self.grid_w;
         let h = self.grid_h;
 
-        let updates: Vec<(Vec2, f32, u8, Option<(usize, usize)>, f32)> = self
+        type AgentUpdate = (Vec2, f32, u8, Option<(usize, usize)>, f32);
+
+        let updates: Vec<AgentUpdate> = self
             .agents
             .par_iter()
             .map(|agent| {
@@ -218,7 +223,9 @@ impl World {
         self.server_health = (self.server_health - total_damage).max(0.0);
 
         // Diffuse & Decay
-        let prev_pheromones = self.pheromones.clone();
+        // Copy to buffer to avoid cloning the vector, reducing heap allocations per frame
+        self.pheromones_buffer.copy_from_slice(&self.pheromones);
+        let prev_pheromones = &self.pheromones_buffer;
 
         self.pheromones
             .par_chunks_mut(w)

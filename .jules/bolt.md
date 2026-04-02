@@ -62,3 +62,11 @@
 **[Substitute Division with Reciprocal Multiplication]**
 **Learning:** In tight mathematical loops, substituting standard floating-point division with multiplication by the reciprocal (e.g. `1.0 / val.sqrt()`) serves as an effective, safe micro-optimization because division is a very expensive floating-point instruction.
 **Action:** When normalizing vectors or scaling by inverse distances in a hot loop (like flocking algorithms), compute the reciprocal once and multiply both components instead of dividing each component separately.
+
+**[Avoiding clones in hot loops]**
+**Learning:** Found an unnecessary `.clone()` call inside `World::update()` which creates a new `Vec` of pheromones every frame, putting pressure on the heap and GC.
+**Action:** Replaced `.clone()` with a persistent `pheromones_buffer: Vec<f32>` in the `World` struct and used `.copy_from_slice()` instead. Added a `///` doc comment per guidelines to explain why this buffer exists and saves heap allocations.
+
+**[Type complexity clippy]**
+**Learning:** Returning a large tuple within a `map` or similar iterator block can cause `clippy::type_complexity`.
+**Action:** Refactored the large tuple type into a local `type` alias `AgentUpdate` and replaced the in-place signature with it.
