@@ -21,36 +21,35 @@ pub fn compile(source: &str) -> Result<Dna> {
             break;
         }
 
-        match section.as_rule() {
-            Rule::section => {
-                let inner_block = section.into_inner().next().unwrap();
-                match inner_block.as_rule() {
-                    Rule::forth_block => {
-                        for instr in inner_block.into_inner() {
-                            genes.extend(compile_forth_instr(instr)?);
-                        }
-                    }
-                    Rule::raku_block => {
-                        for instr in inner_block.into_inner() {
-                            genes.extend(compile_raku_instr(instr)?);
-                        }
-                    }
-                    Rule::orca_block => {
-                        for instr in inner_block.into_inner() {
-                            genes.extend(compile_orca_instr(instr)?);
-                        }
-                    }
-                    Rule::elektra_block => {
-                        for instr in inner_block.into_inner() {
-                            genes.extend(compile_elektra_instr(instr)?);
-                        }
-                    }
-                    Rule::prolog_block => {
-                        for instr in inner_block.into_inner() {
-                            genes.extend(compile_prolog_instr(instr)?);
-                        }
-                    }
-                    _ => {}
+        if section.as_rule() != Rule::section {
+            continue;
+        }
+
+        let inner_block = section.into_inner().next().unwrap();
+        match inner_block.as_rule() {
+            Rule::forth_block => {
+                for instr in inner_block.into_inner() {
+                    genes.extend(compile_forth_instr(instr)?);
+                }
+            }
+            Rule::raku_block => {
+                for instr in inner_block.into_inner() {
+                    genes.extend(compile_raku_instr(instr)?);
+                }
+            }
+            Rule::orca_block => {
+                for instr in inner_block.into_inner() {
+                    genes.extend(compile_orca_instr(instr)?);
+                }
+            }
+            Rule::elektra_block => {
+                for instr in inner_block.into_inner() {
+                    genes.extend(compile_elektra_instr(instr)?);
+                }
+            }
+            Rule::prolog_block => {
+                for instr in inner_block.into_inner() {
+                    genes.extend(compile_prolog_instr(instr)?);
                 }
             }
             _ => {}
@@ -90,7 +89,10 @@ fn compile_forth_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
             } else if let Ok(op) = OpCode::from_str(id) {
                 genes.push(Gene::new(op, vec![]));
             } else {
-                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(id.to_string())]));
+                genes.push(Gene::new(
+                    OpCode::Push,
+                    vec![Nucleotide::String(id.to_string())],
+                ));
             }
         }
         _ => {}
@@ -113,7 +115,10 @@ fn compile_raku_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
             "/" | "div" => genes.push(Gene::new(OpCode::HyperDiv, vec![])),
             _ => {
                 // If it's a general operator
-                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(id.to_string())]));
+                genes.push(Gene::new(
+                    OpCode::Push,
+                    vec![Nucleotide::String(id.to_string())],
+                ));
                 genes.push(Gene::new(OpCode::ZipWith, vec![]));
             }
         }
@@ -131,7 +136,10 @@ fn compile_raku_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
                 genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content)]));
             }
             Rule::identifier => {
-                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(inner.as_str().to_string())]));
+                genes.push(Gene::new(
+                    OpCode::Push,
+                    vec![Nucleotide::String(inner.as_str().to_string())],
+                ));
             }
             _ => {}
         }
@@ -147,7 +155,10 @@ fn compile_orca_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let x: i64 = inner.next().unwrap().as_str().parse()?;
 
     // Push args and call Orca or related
-    genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(op.to_string())]));
+    genes.push(Gene::new(
+        OpCode::Push,
+        vec![Nucleotide::String(op.to_string())],
+    ));
     genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(y)]));
     genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(x)]));
     genes.push(Gene::new(OpCode::Orca, vec![]));
@@ -177,7 +188,10 @@ fn compile_elektra_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>>
         if let Ok(op) = OpCode::from_str(kind) {
             genes.push(Gene::new(op, vec![]));
         } else {
-            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(kind.to_string())]));
+            genes.push(Gene::new(
+                OpCode::Push,
+                vec![Nucleotide::String(kind.to_string())],
+            ));
         }
     }
     Ok(genes)

@@ -17,7 +17,7 @@ fn test_hash_overflow_exploit() {
         let mut hasher = DefaultHasher::new();
         v.hash(&mut hasher);
         let _ = hasher.finish();
-        return;
+        std::process::exit(0);
     }
 
     // We are the parent process. Spawn the child to prove the crash.
