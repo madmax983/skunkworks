@@ -125,11 +125,12 @@ pub fn apply_list_runes(
                 None
             };
 
-            if let (Some(Value::Junction(t, items)), Some(Value::Int(n))) = (w_sig, n_sig) {
+            if let (Some(Value::Junction(t, mut items)), Some(Value::Int(n))) = (w_sig, n_sig) {
                 let count = n.max(0) as usize;
-                let taken: Vec<Value> = items.into_iter().take(count).collect();
+                // Optimization: using `.truncate` on an already-owned Vec avoids an intermediate `.collect::<Vec<_>>()` allocation.
+                items.truncate(count);
                 if next_signals[y][x].is_none() {
-                    next_signals[y][x] = Some(Value::Junction(t, taken));
+                    next_signals[y][x] = Some(Value::Junction(t, items));
                     changes = true;
                 }
             }
