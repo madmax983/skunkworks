@@ -1,5 +1,9 @@
 # Forge's Journal
 
+## [Refactor God Function and Pyramid of Doom in TUI Actions]
+**Learning:** Functions like `handle_action_input` in `actions.rs` suffered from being nearly 300 lines long, with an enormous identical `match` arm managing `app_state.view_mode` modifications across multiple `ViewMode` variants with `cfg` features.
+**Action:** Extract repetitious logic behind a structural method guard clause `pub fn next_view(&self) -> ViewMode` on the base enum type (`ViewMode` in `state.rs`), eliminating the need to have a giant match block inline.
+
 ## [Refactor Platter Logic]
 **Learning:** `Platter` had repeated bounds checking and magic numbers (`0.001`, `1.0`). Extracting `get_index` and constants `DECAY_THRESHOLD` / `SATURATION_LIMIT` improved readability and centralized logic.
 **Action:** Look for other grid-based structures in `ferrous-core` or `chimera-lang` that might benefit from similar `get_index` helpers or constant extraction.
