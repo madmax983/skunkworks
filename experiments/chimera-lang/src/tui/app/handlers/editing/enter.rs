@@ -5,6 +5,16 @@ use super::super::super::state::{AppState, InputMode, ViewMode};
 use anyhow::Result;
 use pest::Parser;
 
+fn apply_grid_edit(vm: &mut ChimeraVM, app_state: &mut AppState) {
+    let val = super::super::super::parse_grid_value(&app_state.input_buffer);
+    let (x, y) = app_state.grid_cursor;
+    vm.grid[y][x] = val;
+    app_state.status_msg = format!("Grid updated at {},{}", x, y);
+    app_state.input_mode = InputMode::Normal;
+    app_state.input_buffer.clear();
+}
+
+
 pub(crate) fn handle_enter(
     vm: &mut ChimeraVM,
     app_state: &mut AppState,
@@ -67,13 +77,15 @@ pub(crate) fn handle_enter(
                                     }
                                 }
                                 ViewMode::Grid => {
-                                    // Grid Editing Logic
-                                    let val = parse_grid_value(&app_state.input_buffer);
-                                    let (x, y) = app_state.grid_cursor;
-                                    vm.grid[y][x] = val;
-                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
+                                    apply_grid_edit(vm, app_state);
+                                }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Chronos
+                                | ViewMode::Orca
+                                | ViewMode::Hydra
+                                | ViewMode::Prologue
+                                | ViewMode::Reactor => {
+                                    apply_grid_edit(vm, app_state);
                                 }
                                 #[cfg(feature = "nova")]
                                 ViewMode::Crispr => {
@@ -139,16 +151,7 @@ pub(crate) fn handle_enter(
                                     }
                                     // Stay in Editing mode
                                 }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Chronos => {
-                                    // Enable editing grid from Chronos view
-                                    let (x, y) = app_state.grid_cursor;
-                                    let val = parse_grid_value(&app_state.input_buffer);
-                                    vm.grid[y][x] = val;
-                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
+
                                 #[cfg(feature = "nova")]
                                 ViewMode::Logos => {
                                     // Enable editing grid from Logos view
@@ -166,171 +169,48 @@ pub(crate) fn handle_enter(
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Pandemonium => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Orca => {
-                                    // Grid Editing Logic
-                                    let val = parse_grid_value(&app_state.input_buffer);
-                                    let (x, y) = app_state.grid_cursor;
-                                    vm.grid[y][x] = val;
-                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                ViewMode::Microscope => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
+
+
+
                                 #[cfg(feature = "biophysics")]
                                 ViewMode::Cortex => {
                                     // No editing for Cortex view yet
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
-                                #[cfg(feature = "resonance")]
-                                ViewMode::Resonance => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Grimoire => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Laboratory => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Topology => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Graveyard => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::PianoRoll => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Retina => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Quantum => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                ViewMode::Heatmap => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "silicon")]
-                                ViewMode::Schematic => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Dream => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Phylogeny => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Alchemy => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Memetics => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Egregore => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Bestiary => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Kaleidoscope => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Void => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Signals => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Sovereignty => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Spectrogram => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Market => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Ballistics => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Scent => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Fishing => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                                 #[cfg(feature = "nova")]
                                 ViewMode::Garden => {
                                     // Enable editing for Garden (Sowing rules)
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
-                                #[cfg(feature = "elektra")]
-                                ViewMode::Elektra => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Arena => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
+
+
                                 #[cfg(feature = "nova")]
                                 ViewMode::Babel => {
                                     // In Babel, Enter in Normal mode enters Editing mode.
@@ -343,11 +223,7 @@ pub(crate) fn handle_enter(
                                     // See below.
                                     app_state.input_mode = InputMode::Normal;
                                 }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Strings => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
+
                                 #[cfg(feature = "nova")]
                                 ViewMode::Quipu => {
                                     // Edit cord value?
@@ -367,26 +243,12 @@ pub(crate) fn handle_enter(
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Hydra => {
-                                    // Enable editing grid from Hydra view
-                                    let (x, y) = app_state.grid_cursor;
-                                    let val = parse_grid_value(&app_state.input_buffer);
-                                    vm.grid[y][x] = val;
-                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
+
                                 #[cfg(feature = "silicon")]
                                 ViewMode::Foundry => {
                                     // Same as Schematic/Grid?
                                     // Allow editing grid in Foundry
-                                    let val = parse_grid_value(&app_state.input_buffer);
-                                    let (x, y) = app_state.grid_cursor;
-                                    vm.grid[y][x] = val;
-                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
+                                    apply_grid_edit(vm, app_state);
                                 }
                                 ViewMode::BioticChaos => {
                                     // Allow editing Chaos Grid?
@@ -400,36 +262,17 @@ pub(crate) fn handle_enter(
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
-                                ViewMode::Catalyst => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Hyperspace => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Hologram => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
+
+
+
                                 #[cfg(feature = "nova")]
                                 ViewMode::Weaver => {
                                     // Use input buffer as pattern
                                     app_state.input_mode = InputMode::Normal;
                                     // Don't clear buffer, keep it for preview
                                 }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Terminal => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Attractor => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
+
+
                                 #[cfg(feature = "nova")]
                                 ViewMode::Virology => {
                                     match app_state.virus_design_focus {
@@ -451,20 +294,74 @@ pub(crate) fn handle_enter(
                                                 app_state.virus_design_payload = n;
                                             }
                                         }
-                                        _ => {}
+                                        #[cfg(feature = "nova")]
+                                ViewMode::Pandemonium
+                                | ViewMode::Grimoire
+                                | ViewMode::Laboratory
+                                | ViewMode::Topology
+                                | ViewMode::Graveyard
+                                | ViewMode::PianoRoll
+                                | ViewMode::Retina
+                                | ViewMode::Quantum
+                                | ViewMode::Dream
+                                | ViewMode::Phylogeny
+                                | ViewMode::Alchemy
+                                | ViewMode::Memetics
+                                | ViewMode::Egregore
+                                | ViewMode::Bestiary
+                                | ViewMode::Kaleidoscope
+                                | ViewMode::Void
+                                | ViewMode::Signals
+                                | ViewMode::Sovereignty
+                                | ViewMode::Spectrogram
+                                | ViewMode::Market
+                                | ViewMode::Ballistics
+                                | ViewMode::Scent
+                                | ViewMode::Fishing
+                                | ViewMode::Garden
+                                | ViewMode::Arena
+                                | ViewMode::Strings
+                                | ViewMode::Hyperspace
+                                | ViewMode::Hologram
+                                | ViewMode::Terminal
+                                | ViewMode::Attractor
+                                | ViewMode::BioMesh
+                                | ViewMode::Biolum
+                                | ViewMode::Fractal
+                                | ViewMode::Metazoa => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "elektra")]
+                                ViewMode::Elektra => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "resonance")]
+                                ViewMode::Resonance => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "biophysics")]
+                                ViewMode::Cortex => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "silicon")]
+                                ViewMode::Schematic => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                ViewMode::Microscope | ViewMode::Heatmap | ViewMode::Catalyst => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                _ => {}
                                     }
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Prologue => {
-                                    let val = parse_grid_value(&app_state.input_buffer);
-                                    let (x, y) = app_state.grid_cursor;
-                                    vm.grid[y][x] = val;
-                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
+
                                 #[cfg(feature = "nova")]
                                 ViewMode::Lexicon => {
                                     let val = if app_state.input_buffer.len() == 1 {
@@ -553,35 +450,11 @@ pub(crate) fn handle_enter(
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
-                                #[cfg(feature = "nova")]
-                                ViewMode::BioMesh => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Reactor => {
-                                    let (x, y) = app_state.grid_cursor;
-                                    let val = parse_grid_value(&app_state.input_buffer);
-                                    vm.grid[y][x] = val;
-                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Biolum => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Fractal => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Metazoa => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
+
+
+
+
+
                                 #[cfg(feature = "nova")]
                                 ViewMode::Genesis => {
                                     // Commit change based on focus
@@ -645,11 +518,7 @@ pub(crate) fn handle_enter(
                                         }
                                     } else {
                                         // Grid
-                                        let val = parse_grid_value(&app_state.input_buffer);
-                                        let (x, y) = app_state.grid_cursor;
-                                        vm.grid[y][x] = val;
-                                        app_state.input_mode = InputMode::Normal;
-                                        app_state.input_buffer.clear();
+                                        apply_grid_edit(vm, app_state);
                                     }
                                 }
                                 #[cfg(feature = "nova")]
@@ -685,6 +554,68 @@ pub(crate) fn handle_enter(
                                         }
                                     }
                                     app_state.input_mode = InputMode::Normal;
+                                }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Pandemonium
+                                | ViewMode::Grimoire
+                                | ViewMode::Laboratory
+                                | ViewMode::Topology
+                                | ViewMode::Graveyard
+                                | ViewMode::PianoRoll
+                                | ViewMode::Retina
+                                | ViewMode::Quantum
+                                | ViewMode::Dream
+                                | ViewMode::Phylogeny
+                                | ViewMode::Alchemy
+                                | ViewMode::Memetics
+                                | ViewMode::Egregore
+                                | ViewMode::Bestiary
+                                | ViewMode::Kaleidoscope
+                                | ViewMode::Void
+                                | ViewMode::Signals
+                                | ViewMode::Sovereignty
+                                | ViewMode::Spectrogram
+                                | ViewMode::Market
+                                | ViewMode::Ballistics
+                                | ViewMode::Scent
+                                | ViewMode::Fishing
+                                | ViewMode::Garden
+                                | ViewMode::Arena
+                                | ViewMode::Strings
+                                | ViewMode::Hyperspace
+                                | ViewMode::Hologram
+                                | ViewMode::Terminal
+                                | ViewMode::Attractor
+                                | ViewMode::BioMesh
+                                | ViewMode::Biolum
+                                | ViewMode::Fractal
+                                | ViewMode::Metazoa => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "elektra")]
+                                ViewMode::Elektra => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "resonance")]
+                                ViewMode::Resonance => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "biophysics")]
+                                ViewMode::Cortex => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "silicon")]
+                                ViewMode::Schematic => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                ViewMode::Microscope | ViewMode::Heatmap | ViewMode::Catalyst => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
                                 }
                                 _ => {}
                             }
