@@ -10,3 +10,4 @@ cobertura.xml
 coverage.json
 tarpaulin-report.json
 .chimera_akashic*.json
+tarpaulin-report.html

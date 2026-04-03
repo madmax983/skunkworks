@@ -129,3 +129,34 @@ impl From<MacroquadVec3> for Vec3 {
         Self::new(v.x, v.y, v.z)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_vec3_new() {
+        let v = Vec3::new(1.0, 2.0, 3.0);
+        assert_eq!(v.x, 1.0);
+        assert_eq!(v.y, 2.0);
+        assert_eq!(v.z, 3.0);
+    }
+
+    #[cfg(feature = "macroquad")]
+    #[test]
+    fn test_vec3_macroquad_conversion() {
+        use macroquad::prelude::Vec3 as MqVec3;
+
+        let locus_v = Vec3::new(1.0, 2.0, 3.0);
+        let mq_v: MqVec3 = locus_v.into();
+        assert_eq!(mq_v.x, 1.0);
+        assert_eq!(mq_v.y, 2.0);
+        assert_eq!(mq_v.z, 3.0);
+
+        let mq_v2 = MqVec3::new(4.0, 5.0, 6.0);
+        let locus_v2: Vec3 = mq_v2.into();
+        assert_eq!(locus_v2.x, 4.0);
+        assert_eq!(locus_v2.y, 5.0);
+        assert_eq!(locus_v2.z, 6.0);
+    }
+}
