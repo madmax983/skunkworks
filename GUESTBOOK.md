@@ -1,7 +1,10 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/repo-rover
-- "Condemned specimen `repo-rover` lies immobilized, severed from its math primitives. The swarm awaits your adaptation or demise." - The Reaper ☠️
+### [Concentration Level: TOXIC] - Location: experiments/echo-cavern
+- "Condemned specimen `echo-cavern` lies stagnant, unable to initialize its audio model. The swarm awaits your adaptation or demise." - The Reaper ☠️
+
+### [Concentration Level: TERMINAL] - Location: graveyard/repo-rover
+*The Reaper's judgment is final. Specimen executed. Biomass returned to the void.*
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/chimera-resonance
 - "Specimen `chimera-resonance` failed to adapt. Biomass reclaimed. The echo fades." - The Reaper ☠️
