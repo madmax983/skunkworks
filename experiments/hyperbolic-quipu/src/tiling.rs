@@ -25,12 +25,12 @@ pub fn draw_tiling(view_center: Point, screen_center: Vec2, disk_radius: f32) {
 
     // Generators for the 4 neighbors
     // These are translations in the local frame of the tile
-    let generators: Vec<Mobius> = (0..4)
-        .map(|i| {
-            let offset = neighbor_transform_a(i, &consts);
-            Mobius::translation(offset)
-        })
-        .collect();
+    // ⚡ Bolt: Use a stack-allocated array instead of a heap-allocated Vec
+    // to avoid an allocation per frame.
+    let generators: [Mobius; 4] = std::array::from_fn(|i| {
+        let offset = neighbor_transform_a(i, &consts);
+        Mobius::translation(offset)
+    });
 
     // BFS State
     let mut queue: VecDeque<(Mobius, usize)> = VecDeque::new();
@@ -76,7 +76,7 @@ pub fn draw_tiling(view_center: Point, screen_center: Vec2, disk_radius: f32) {
         draw_tile_edges(&m, &consts, view_center, screen_center, disk_radius);
 
         // Expand to neighbors
-        for (_i, gen) in generators.iter().enumerate() {
+        for gen in generators.iter() {
             // New transform: M_next = M * Gen
             let m_next = m.then(gen);
             let center_next = m_next.apply(Point::new(0.0, 0.0));
@@ -114,21 +114,21 @@ fn draw_tile_edges(
     // Distance = consts.vertex_offset
 
     let mut local_vertices = [Point::default(); 4];
-    for i in 0..4 {
+    for (i, vertex) in local_vertices.iter_mut().enumerate() {
         let angle = (i as f64 * 2.0 * PI / 4.0) + (PI / 4.0);
         use num_complex::Complex;
-        local_vertices[i] = Complex::from_polar(consts.vertex_offset, angle);
+        *vertex = Complex::from_polar(consts.vertex_offset, angle);
     }
 
     // Transform vertices to World Space, then to Screen Space
-    let world_vertices: Vec<Point> = local_vertices.iter().map(|&p| m.apply(p)).collect();
+    // ⚡ Bolt: Use a stack-allocated array to eliminate 300+ heap allocations per frame.
+    let world_vertices: [Point; 4] = local_vertices.map(|p| m.apply(p));
 
-    for i in 0..4 {
-        let p1 = world_vertices[i];
+    for (i, p1) in world_vertices.iter().enumerate() {
         let p2 = world_vertices[(i + 1) % 4];
 
         // Map to view
-        let v1 = mobius_sub(p1, view_center);
+        let v1 = mobius_sub(*p1, view_center);
         let v2 = mobius_sub(p2, view_center);
 
         // Cull if both far
