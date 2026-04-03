@@ -168,7 +168,11 @@ pub fn generate_miura_mesh(
 
     // Optimization: Pre-allocate vector capacity to avoid reallocations.
     // Each grid cell consists of a quad split into 2 triangles (6 indices).
-    let mut indices = Vec::with_capacity(rows * cols * 6);
+    let capacity = rows
+        .checked_mul(cols)
+        .and_then(|x| x.checked_mul(6))
+        .expect("Integer overflow during mesh index capacity calculation");
+    let mut indices = Vec::with_capacity(capacity);
     for j in 0..rows {
         for i in 0..cols {
             let v_cols = cols + 1;
@@ -254,7 +258,11 @@ fn calculate_horizontal(
     let sy_sq = b * b - x_off * x_off;
     let sy = if sy_sq > 0.0 { sy_sq.sqrt() } else { 0.0 };
 
-    let mut positions = Vec::with_capacity((rows + 1) * (cols + 1));
+    let capacity = rows
+        .checked_add(1)
+        .and_then(|r| cols.checked_add(1).and_then(|c| r.checked_mul(c)))
+        .expect("Integer overflow during grid capacity calculation");
+    let mut positions = Vec::with_capacity(capacity);
 
     let total_w = (cols as f32) * sx + x_off;
     let total_h = (rows as f32) * sy;
@@ -314,7 +322,11 @@ fn calculate_vertical(
         }
     };
 
-    let mut positions = Vec::with_capacity((rows + 1) * (cols + 1));
+    let capacity = rows
+        .checked_add(1)
+        .and_then(|r| cols.checked_add(1).and_then(|c| r.checked_mul(c)))
+        .expect("Integer overflow during grid capacity calculation");
+    let mut positions = Vec::with_capacity(capacity);
 
     let total_w = (cols as f32) * l_x;
     // Approximation for centering, ignoring the zig-zag offset s_y

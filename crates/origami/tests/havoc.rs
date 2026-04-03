@@ -1,7 +1,7 @@
 use origami::{generate_miura_mesh, MiuraParams, Orientation};
 
 #[test]
-#[should_panic(expected = "attempt to add with overflow")]
+#[should_panic]
 fn havoc_origami_overflow() {
     let params = MiuraParams {
         a: 1.0,
