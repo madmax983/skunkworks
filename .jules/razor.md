@@ -14,10 +14,12 @@
 
 **Saved:** [Lines of code / Cognitive load]
 Reduced roughly 50-60 lines of unnecessary boilerplate across 16+ `experiments/chimera-lang/src/vm` files. Decreased cognitive load by improving idiomatic Rust conformance. Also fixed NaN-propagation logic bugs inside neuro-physics code.
+
 ## [Reduction]
 **Bloat:** ButtonState and ButtonStyle enums for TUI Button widget.
 **Cut:** Removed enums, simplifying the API to just use ratatui Color.
 **Saved:** 150+ lines of code / Cognitive load
+
 ## [Reduction]
 **Bloat:** Generic Soup (`PenroseTiling<T>`)
 - The `PenroseTiling` struct in `experiments/penrose-genes` was defined generically over `<T>`, but in practice was always initialized with `Value` (or `()` in unit tests).
@@ -29,3 +31,14 @@ Reduced roughly 50-60 lines of unnecessary boilerplate across 16+ `experiments/c
 - Applied `#[allow(dead_code)]` strategically to resolve `cargo clippy` strict checks without arbitrarily ripping out unused parser components.
 
 **Saved:** ~20 lines of boilerplate / Reduced cognitive load of tracking the "generality" of an application-specific geometric container.
+
+## [Reduction]
+**Bloat:** Implicit panicking operator overloading
+- The `Cord` struct in `crates/quipu` implemented `std::ops::Add` and `std::ops::Sub` by wrapping underlying `value()` logic with saturating arithmetic which would obscure failures, or panics in overflow/underflow situations (as exploited by `test_quipu_subtraction_crash`). This violates explicit boundary safety for domain objects.
+
+**Cut:** Removed `Add` and `Sub` trait implementations.
+- Removed the `impl Add for Cord` and `impl Sub for Cord` blocks entirely.
+- Added an explicit `checked_add` method and retained the explicit `checked_sub` method, both returning `Option<Self>`.
+- Updated all unit tests to use explicit `checked_*` method calls instead of operator overloads, making fallibility explicit.
+
+**Saved:** ~40 lines of boilerplate trait implementation. Reduced cognitive load by avoiding implicit standard trait behaviors on types where overflow/underflow is a standard domain concern, improving strictness.

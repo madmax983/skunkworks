@@ -1,11 +1,11 @@
 use quipu::Cord;
 
 #[test]
-fn test_sub_panic() {
+fn test_checked_sub_none() {
     let c1 = Cord::from(50);
     let c2 = Cord::from(100);
-    let result = c1 - c2;
-    assert_eq!(result.value(), 0);
+    let result = c1.checked_sub(&c2);
+    assert!(result.is_none());
 }
 
 #[test]
