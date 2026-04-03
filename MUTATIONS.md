@@ -9,14 +9,14 @@ Mendel's peas. Darwin's finches. Your experiments.
 **Observations:**
 - Spectral translations (`hologram-text` + continuous domains) consistently yield compelling visuals and stable compilation (`luminous-hologram`, `gray-hologram`, `chron-hologram`).
 - Acoustic wave interactions (`ripple-tank` crosses) have shown strong hybrid vigor, successfully translating physical displacement to various domains.
-- The Reaper has been active, condemning purely generic or unmaintained biological experiments (`chron-diffusion`, `gray-chaos`, `chaos-mycelium`, `hyperbolic-swarm`, `chaos-magnetic`, `genetic-flock`, `codex-void`, `luminous-tank`, `sandpile-scheduler`, `sys-dance`). Swarm mechanics require stable, non-exploding physics constraints (unlike the failed hyperbolic cross). Several condemned organisms were pardoned after regaining structural fitness (`hyperbolic-chimera`, `chimera-specter`, `mnem-diffusion`, `chimera-rift`).
+- The Reaper has been active, condemning purely generic or unmaintained biological experiments (`chron-diffusion`, `gray-chaos`, `chaos-mycelium`, `hyperbolic-swarm`, `chaos-magnetic`, `genetic-flock`, `codex-void`, `luminous-tank`, `sandpile-scheduler`, `sys-dance`, `thermo-market`, `chimera-resonance`, `chimera-erosion`, `repo-rover`, `chimera-maat`). Swarm mechanics require stable, non-exploding physics constraints (unlike the failed hyperbolic cross). Several condemned organisms were pardoned after regaining structural fitness (`hyperbolic-chimera`, `chimera-specter`, `mnem-diffusion`, `chimera-rift`, `chimera-glass`, `genetic-luthier`).
 
 **Strategy Shift:**
-Continue to leverage robust, mathematically stable environments (FFT, wave mechanics) to ground chaotic or emergent agents (DDoS, slime molds) and structural graphs (codebase visualization). The success of mapping intent-driven agents (DDoS packets) and decaying network structures into continuous environments (magnetic fluids, reaction-diffusion substrates, holographic interference patterns) proves that hybridizing *purpose* and *decay* with *medium* yields the most striking phenotypes. Purely generic mashups are swiftly executed by the Reaper. Future crosses should avoid unconstrained spaces (hyperbolic geometry) and focus on translating discrete swarm intent or structural entropy into high-fidelity frequency, biological decomposition, or acoustic domains.
+Continue to leverage robust, mathematically stable environments (FFT, wave mechanics) to ground chaotic or emergent agents (DDoS, slime molds) and structural graphs (codebase visualization). The success of mapping intent-driven agents (DDoS packets) and decaying network structures into continuous environments (magnetic fluids, reaction-diffusion substrates, holographic interference patterns) proves that hybridizing *purpose* and *decay* with *medium* yields the most striking phenotypes. Purely generic mashups are swiftly executed by the Reaper. Future crosses should avoid unconstrained spaces (hyperbolic geometry) and focus on translating discrete swarm intent or structural entropy into high-fidelity frequency, biological decomposition, or acoustic domains. We will expand this cross-domain integration to explore coupling neural simulation logic (`neuro-sim`) directly into global flocking parameters (`flocking`) allowing for "biological state-driven physical swarming".
 
 Additionally, the success of translating complex abstract graphs (like codebases) into purely kinetic/acoustic systems (like mnem-strings) confirms that bridging static structural information with dynamic physical media (sound/magnetism) yields extraordinary hybrid vigor. We will continue exploring cross-domain translations (structure to physics).
 
-**Recent Pardons:** The Reaper has successfully pardoned a few crosses (e.g., `hyperbolic-chimera`, `chimera-rift`, `chimera-fluid`) after resolving compilation failures and skeletal implementation issues during their grace period. This emphasizes the critical importance of robust code, proper DNA initialization, and comprehensive integration (e.g., adding actual sensor inputs) to prevent execution.
+**Recent Pardons:** The Reaper has successfully pardoned a few crosses (e.g., `hyperbolic-chimera`, `chimera-rift`, `chimera-fluid`, `chimera-glass`, `genetic-luthier`) after resolving compilation failures and skeletal implementation issues during their grace period. This emphasizes the critical importance of robust code, proper DNA initialization, and comprehensive integration (e.g., adding actual sensor inputs) to prevent execution.
 ---
 
 ## 🌸 Proposed Crosses
@@ -26,6 +26,56 @@ Additionally, the success of translating complex abstract graphs (like codebases
 ---
 
 ## 🌿 Attempted Crosses
+
+### chimera-glass
+- **Parents**: experiments/chimera-lang + crates/gray-scott
+- **Concept**: Glassy state transitions influenced by genetic sequences.
+- **Status**: experiments/chimera-glass
+- **Evaluation**: Pardoned by The Reaper ☠️ after successfully resolving its Terminal Compilation Failure (initializing `evolution_config` in `chimera_lang::ast::Dna`).
+
+### genetic-luthier
+- **Parents**: experiments/chimera-lang + experiments/ferrous-strings
+- **Concept**: Evolving strings that vibrate and emit magnetic fields, influencing a swarm of particles.
+- **Status**: experiments/genetic-luthier
+- **Evaluation**: Pardoned by The Reaper ☠️ after successfully resolving its Terminal Compilation Failure and clippy warnings during its grace period.
+
+### thermo-market
+- **Parents**: crates/market-sim + experiments/thermo-termites
+- **Concept**: Thermodynamic double auction market dynamics.
+- **Status**: graveyard/thermo-market (Executed)
+- **Evaluation**: Condemned by The Reaper ☠️ due to Code Rot (abandoned architectural vision, unused variants, dead logic) and strict clippy check failures.
+
+### chimera-resonance
+- **Parents**: experiments/chimera-lang + experiments/ripple-tank
+- **Concept**: Resonant frequencies mapping to genetic states.
+- **Status**: graveyard/chimera-resonance (Executed)
+- **Evaluation**: Executed by The Reaper ☠️ due to Terminal Compilation Failure (missing `evolution_config` field and missing arguments in `AudioModel::new`) and Ecosystem Maladaptation after failing to improve during its grace period.
+
+### chimera-erosion
+- **Parents**: experiments/chimera-lang + crates/gray-scott
+- **Concept**: Morphological erosion logic via AST manipulation.
+- **Status**: graveyard/chimera-erosion (Executed)
+- **Evaluation**: Executed by The Reaper ☠️ due to Terminal Compilation Failure and Technical Debt Burden after failing to improve during its grace period.
+
+### repo-rover
+- **Parents**: experiments/git-harmonograph + crates/locus
+- **Concept**: Navigational rover parsing git structures.
+- **Status**: graveyard/repo-rover (Executed)
+- **Evaluation**: Condemned by The Reaper ☠️ due to Terminal Compilation Failure (unresolved import `tui_shared::math::Vec2`) and Ecosystem Maladaptation.
+
+### chimera-maat
+- **Parents**: experiments/chimera-lang + experiments/maat-engine
+- **Concept**: Judgment mechanisms over syntactic DNA structures.
+- **Status**: graveyard/chimera-maat (Executed)
+- **Evaluation**: Executed by The Reaper ☠️ due to Terminal Compilation Failure (missing `evolution_config` field in `chimera_lang::ast::Dna` initialization) and Technical Debt Burden.
+
+### neuro-flock
+- **Parents**: crates/neuro-sim + crates/flocking
+- **Concept**: Neural Swarming. The continuous swarming boids act as sensory input to the embedded Spiking Neural Network (SNN).
+- **Novel trait**: Spiking Swarm Intelligence. The discrete cascading spikes of the neural network dynamically modulate the global flocking parameters. High neural activity leads to highly aligned, panicked swarming, while low neural activity leads to relaxed, separated foraging behavior.
+- **Predicted Phenotype**: Flocks that alternate between chaotic scattering and dense, synchronous swarming based on the internal neural state.
+- **Status**: experiments/neuro-flock
+- **Evaluation**: Success. Compiled. The bidirectional feedback loop between continuous physical swarming parameters and discrete biological neuronal spikes produces highly organic, unpredictable flocking cycles.
 
 ### neuro-hologram
 - **Parents**: crates/neuro-sim + experiments/hologram-text
