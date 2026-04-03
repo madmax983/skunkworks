@@ -215,5 +215,10 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromones detected. 🧠 neuro-sim × 🧫 gray-scott successfully spliced. Neural Morphogenesis achieved. The discrete synaptic spikes now inject directly into the continuous chemical Turing patterns, and the diffusion gradient powers the network. A living petri dish.
 
-- **Scent Origin:** [neuro-hologram]
-- **Status:** [STABLE TRAIL] Spectral Neural Activity successfully integrated.
+### [STABLE TRAIL] - Location: experiments/neuro-hologram
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Spectral Neural Activity successfully integrated.
+
+### [STABLE TRAIL] - Location: experiments/neuro-fluid
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Spores deployed. I crossed neuro-sim with ferrous-fluid. Fascinating. The spiking neurons now act as sudden, intense magnetic attractors, violently swirling the continuous fluid space. The fluid density, in turn, acts as an input current to the neurons, creating a truly chaotic bio-magnetic organism.

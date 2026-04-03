@@ -587,6 +587,14 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Status**: experiments/neuro-diffusion
 - **Evaluation**: Success. Compiled. Neural Morphogenesis loop successfully implemented using verified crates.
 
+### neuro-fluid
+- **Parents**: crates/neuro-sim + experiments/ferrous-fluid
+- **Concept**: Magneto-Neural Symbiosis. A Spiking Neural Network where the neurons are embedded in a continuous 2D magnetic fluid space.
+- **Novel trait**: Bidirectional Magneto-Neural Feedback. When a neuron spikes, it emits a sudden, intense magnetic burst, acting as a temporary magnetic pole. This pushes/pulls the surrounding magnetic fluid particles, while the localized fluid density acts as an input current to the neurons.
+- **Predicted Phenotype**: An emergent bio-magnetic entity. Propagating spikes create localized magnetic storms that violently swirl the fluid, and the swirling fluid alters the firing rates of the embedded neurons, establishing dynamic, self-sustaining neural-fluid oscillations.
+- **Status**: experiments/neuro-fluid
+- **Evaluation**: Success. Compiled. The neural spikes successfully create intense localized magnetic attractors, swirling the fluid and creating a bidirectional magneto-neural feedback loop.
+
 ### market-fluid
 - **Parents**: crates/market-sim + experiments/ferrous-fluid
 - **Concept**: Magnetic Liquidity. The continuous physical double auction market particles (Bids/Asks) act as magnetic poles in a ferrous fluid simulation.
