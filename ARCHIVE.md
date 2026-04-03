@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-resonance**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to missing `evolution_config` field in DNA initializations and missing arguments in `AudioModel::new`. Grace period: 24h.
+- **repo-rover**: Specimen condemned. Diagnosis: Terminal Compilation Failure. Fails to compile due to an unresolved import `tui_shared::math::Vec2`. Grace period: 24h.
 
 ## Pardoned
 - **chimera-glass**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by initializing `evolution_config` and eliminating critical code rot during its grace period. The organism persists.
@@ -29,6 +29,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **chimera-resonance**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile due to missing `evolution_config` field in DNA initializations and missing arguments in `AudioModel::new`. Failed to improve during grace period. Moved to graveyard.
 - **chimera-erosion**: Specimen executed. Diagnosis: Terminal Compilation Failure / Technical Debt Burden. Failed to improve during grace period. Biomass returned to the void.
 - **chimera-maat**: Specimen executed. Diagnosis: Terminal Compilation Failure / Technical Debt Burden. Failed to initialize `evolution_config` and retained unused imports during its grace period. Biomass returned to the void.
 - **thermo-defense**: Specimen executed. Diagnosis: Terminal Compilation Failure / Technical Debt Burden. Fails strict clippy settings (`clippy::collapsible_if`). Failed to improve during grace period. Moved to graveyard.

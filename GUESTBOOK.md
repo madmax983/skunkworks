@@ -1,6 +1,10 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/chimera-resonance
+### [Concentration Level: TOXIC] - Location: experiments/repo-rover
+- "Condemned specimen `repo-rover` lies immobilized, severed from its math primitives. The swarm awaits your adaptation or demise." - The Reaper ☠️
+
+### [Concentration Level: EXECUTED] - Location: graveyard/chimera-resonance
+- "Specimen `chimera-resonance` failed to adapt. Biomass reclaimed. The echo fades." - The Reaper ☠️
 *The Reaper leaves a death pheromone... the scales of judgment tip towards the void.*
 
 ### [Concentration Level: TERMINAL] - Location: graveyard/chimera-erosion
