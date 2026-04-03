@@ -17,6 +17,21 @@ use num_complex::Complex;
 /// of the hyperbolic plane.
 ///
 /// They can be represented as $2 \times 2$ matrices acting on homogeneous coordinates.
+///
+/// # Examples
+///
+/// ```
+/// use poincare_disk::Mobius;
+/// use num_complex::Complex;
+///
+/// let a = Complex::new(1.0, 0.0);
+/// let b = Complex::new(0.5, 0.0);
+/// let c = Complex::new(0.5, 0.0);
+/// let d = Complex::new(1.0, 0.0);
+///
+/// let transform = Mobius::new(a, b, c, d).unwrap();
+/// assert_eq!(transform.a(), a);
+/// ```
 #[derive(Clone, Copy, Debug)]
 #[doc(alias = "Isometry")]
 #[doc(alias = "Automorphism")]
@@ -252,6 +267,18 @@ impl Mobius {
     /// Applies the transformation to a point $z$.
     ///
     /// $$ w = \frac{az + b}{cz + d} $$
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use poincare_disk::{Mobius, Point};
+    /// use std::f64::consts::PI;
+    ///
+    /// let transform = Mobius::rotation(PI);
+    /// let z = Point::new(0.5, 0.0);
+    /// let w = transform.apply(z);
+    /// assert!((w.re - (-0.5)).abs() < 1e-9);
+    /// ```
     pub fn apply(&self, z: Point) -> Point {
         let num = self.a * z + self.b;
         let den = self.c * z + self.d;

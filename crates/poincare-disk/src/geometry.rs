@@ -9,6 +9,18 @@
 use crate::types::Point;
 
 /// Represents a geodesic segment between two points in the Poincaré disk.
+///
+/// # Examples
+///
+/// ```
+/// use poincare_disk::{Geodesic, Point};
+///
+/// let p1 = Point::new(0.5, 0.0);
+/// let p2 = Point::new(0.0, 0.5);
+/// let geo = Geodesic { p1, p2 };
+///
+/// assert_eq!(geo.p1.re, 0.5);
+/// ```
 #[derive(Debug, Clone, Copy)]
 pub struct Geodesic {
     /// The starting point of the geodesic segment in the disk.
