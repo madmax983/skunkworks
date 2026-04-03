@@ -166,13 +166,8 @@ async fn main() {
         }
 
         // Parallel update
-        // fw_clone allows parallel iterations without borrowing conflicts
-        // with the mut firewall references further below in the frame
-        let fw_clone = firewalls
-            .iter()
-            .map(|f| (f.pos, f.radius))
-            .collect::<Vec<_>>();
-
+        // Firewalls are immutably borrowed here, and mutably updated after the parallel loop,
+        // so we don't need to clone them into a separate Vec per frame.
         packets.par_iter_mut().for_each(|p| {
             if !p.active {
                 return;
@@ -195,11 +190,11 @@ async fn main() {
             }
 
             // Repel from firewalls
-            for fw in &fw_clone {
-                let to_fw = p.pos - fw.0;
+            for fw in &firewalls {
+                let to_fw = p.pos - fw.pos;
                 let dist = to_fw.length();
-                if dist < fw.1 + 10.0 {
-                    let repel = to_fw.normalize() * (fw.1 + 10.0 - dist) * 0.5;
+                if dist < fw.radius + 10.0 {
+                    let repel = to_fw.normalize() * (fw.radius + 10.0 - dist) * 0.5;
                     p.vel += repel;
                 }
             }

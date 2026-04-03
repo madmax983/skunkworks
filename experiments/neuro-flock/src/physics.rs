@@ -153,9 +153,12 @@ impl Universe {
         let target_separation = 2.0 - spike_ratio * 1.5;
         let target_cohesion = 1.0 + spike_ratio * 1.0;
 
-        self.flocking_params.alignment_weight += (target_alignment - self.flocking_params.alignment_weight) * 0.1;
-        self.flocking_params.separation_weight += (target_separation - self.flocking_params.separation_weight) * 0.1;
-        self.flocking_params.cohesion_weight += (target_cohesion - self.flocking_params.cohesion_weight) * 0.1;
+        self.flocking_params.alignment_weight +=
+            (target_alignment - self.flocking_params.alignment_weight) * 0.1;
+        self.flocking_params.separation_weight +=
+            (target_separation - self.flocking_params.separation_weight) * 0.1;
+        self.flocking_params.cohesion_weight +=
+            (target_cohesion - self.flocking_params.cohesion_weight) * 0.1;
 
         // 4. Update Boids
         let positions: Vec<Vec2> = self.boids.iter().map(|b| b.pos).collect();
@@ -171,10 +174,18 @@ impl Universe {
             let mut pos = self.boids[i].pos + vel;
 
             // Screen Wrap
-            if pos.x < 0.0 { pos.x = self.width; }
-            if pos.x > self.width { pos.x = 0.0; }
-            if pos.y < 0.0 { pos.y = self.height; }
-            if pos.y > self.height { pos.y = 0.0; }
+            if pos.x < 0.0 {
+                pos.x = self.width;
+            }
+            if pos.x > self.width {
+                pos.x = 0.0;
+            }
+            if pos.y < 0.0 {
+                pos.y = self.height;
+            }
+            if pos.y > self.height {
+                pos.y = 0.0;
+            }
 
             self.boids[i].pos = pos;
         }
