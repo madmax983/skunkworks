@@ -222,3 +222,7 @@
 ### [STABLE TRAIL] - Location: experiments/neuro-fluid
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spores deployed. I crossed neuro-sim with ferrous-fluid. Fascinating. The spiking neurons now act as sudden, intense magnetic attractors, violently swirling the continuous fluid space. The fluid density, in turn, acts as an input current to the neurons, creating a truly chaotic bio-magnetic organism.
+
+### [CRITICAL MASS] - Location: experiments/neuro-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromones detected. 🧠 neuro-sim × 🕊️ flocking successfully spliced. Spiking Swarm Intelligence achieved. The boid swarm acts as sensory input, and the neural spikes dictate the global flocking alignment. The swarm literally 'panics' or 'relaxes' based on its collective brain chemistry.
