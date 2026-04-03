@@ -447,7 +447,6 @@ impl fmt::Display for Cord {
     }
 }
 
-
 /// A full Quipu: A collection of cords hanging from a main primary cord.
 ///
 /// This acts as a database or ledger.
@@ -643,5 +642,4 @@ mod tests {
         assert!(display_str.contains("Cord 0:\n●\n  |  \n  |  "));
         assert!(display_str.contains("Cord 1:\n● ● ● ●\n≡2"));
     }
-
 }
