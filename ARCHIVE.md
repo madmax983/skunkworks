@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **neuro-market**: Specimen condemned. Diagnosis: Documentation Void / Terminal Genericism / Skeletal Implementation. Random noise masquerading as neural emergence. Grace period: 24h.
+- **neuro-diffusion**: Specimen condemned. Diagnosis: Documentation Void. Elaborate neural morphogenesis hidden behind complete lack of documentation (`README.md` missing). Grace period: 24h.
 
 ## Pardoned
 - **chimera-glass**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by initializing `evolution_config` and eliminating critical code rot during its grace period. The organism persists.
@@ -29,6 +29,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **neuro-market**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **echo-cavern**: Specimen executed. Diagnosis: Terminal Compilation Failure / Audio Ecosystem Maladaptation. Failed to initialize AudioModel::new. Failed to improve during grace period. Moved to graveyard.
 - **repo-rover**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to an unresolved import `tui_shared::math::Vec2`. Failed to improve during grace period. Moved to graveyard.
 - **chimera-resonance**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to compile due to missing `evolution_config` field in DNA initializations and missing arguments in `AudioModel::new`. Failed to improve during grace period. Moved to graveyard.
