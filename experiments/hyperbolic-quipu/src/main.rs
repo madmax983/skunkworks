@@ -58,7 +58,7 @@ async fn main() -> anyhow::Result<()> {
         // --- Animation ---
         let diff = target_center - view_center;
         if diff.norm() > 0.0001 {
-            view_center = view_center + diff * 0.1;
+            view_center += diff * 0.1;
         }
 
         // --- Drawing ---
