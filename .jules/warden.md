@@ -70,3 +70,4 @@
 **2026-04-10 - [DoS via Unhandled Option on Spiking Event]**
 **Threat:** The test logic in `experiments/biomimetic-synth/src/network.rs` used `let spike_tick = spiked_at.unwrap();` after assuming a spike occurred. If the network failed to spike due to simulation changes, the test process would panic unpredictably with an unhelpful `Option::unwrap()` message, creating a false-positive crash instead of a controlled test failure.
 **Defense:** Replaced the unhandled `.unwrap()` with a structured `.expect("spiked_at should have been populated")` to provide clear debugging context in the event of an assertion failure without silently dropping execution frames.
+**YYYY-MM-DD - [Origami Integer Overflow]**\n**Threat:** [Integer overflow in origami mesh capacity calculation]\n**Defense:** [Replaced raw usize multiplication with checked_add and checked_mul]
