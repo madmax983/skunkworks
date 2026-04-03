@@ -47,7 +47,7 @@
 //!
 //! // 4. Calculate the total harvest.
 //! //    The Incas performed arithmetic by moving knots or combining cords.
-//! let total = harvest_record.cords[0].clone() + harvest_record.cords[1].clone();
+//! let total = harvest_record.cords[0].checked_add(&harvest_record.cords[1]).unwrap();
 //!
 //! assert_eq!(total.value(), 168);
 //!
@@ -60,7 +60,6 @@
 //! ```
 
 use std::fmt;
-use std::ops::{Add, Sub};
 
 #[cfg(feature = "audio")]
 pub(crate) mod audio;
@@ -274,8 +273,6 @@ impl Cord {
     /// Performs checked subtraction.
     ///
     /// Computes `self - rhs`, returning `None` if the result would be negative (underflow).
-    /// This is safer than the standard `Sub` trait, which may panic or wrap unexpectedly
-    /// depending on implementation, although the Inca system strictly deals with natural numbers.
     ///
     /// # Examples
     ///
@@ -300,6 +297,28 @@ impl Cord {
         } else {
             Some(Cord::from(v1 - v2))
         }
+    }
+
+    /// Performs checked addition.
+    ///
+    /// Computes `self + rhs`, returning `None` if the result would overflow `u64`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use quipu::Cord;
+    ///
+    /// let c100 = Cord::from(100);
+    /// let c50 = Cord::from(50);
+    ///
+    /// if let Some(result) = c100.checked_add(&c50) {
+    ///     assert_eq!(result.value(), 150);
+    /// }
+    /// ```
+    pub fn checked_add(&self, rhs: &Self) -> Option<Self> {
+        let v1 = self.value();
+        let v2 = rhs.value();
+        v1.checked_add(v2).map(Cord::from)
     }
 }
 
@@ -428,53 +447,6 @@ impl fmt::Display for Cord {
     }
 }
 
-impl Add for Cord {
-    type Output = Cord;
-
-    /// Adds two Cords together.
-    ///
-    /// The result is a new Cord representing the sum of the values.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use quipu::Cord;
-    ///
-    /// let c1 = Cord::from(100);
-    /// let c2 = Cord::from(50);
-    /// let sum = c1 + c2;
-    ///
-    /// assert_eq!(sum.value(), 150);
-    /// ```
-    fn add(self, rhs: Self) -> Self::Output {
-        let val = self.value().saturating_add(rhs.value());
-        Cord::from(val)
-    }
-}
-
-impl Sub for Cord {
-    type Output = Cord;
-
-    /// Subtracts one Cord from another.
-    ///
-    /// The result will safely saturate to 0 if the right-hand side is greater.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use quipu::Cord;
-    ///
-    /// let c1 = Cord::from(100);
-    /// let c2 = Cord::from(25);
-    /// let diff = c1 - c2;
-    ///
-    /// assert_eq!(diff.value(), 75);
-    /// ```
-    fn sub(self, rhs: Self) -> Self::Output {
-        let val = self.value().saturating_sub(rhs.value());
-        Cord::from(val)
-    }
-}
 
 /// A full Quipu: A collection of cords hanging from a main primary cord.
 ///
@@ -586,19 +558,14 @@ mod tests {
     }
 
     #[test]
-    fn test_cord_add() {
+    fn test_checked_add() {
         let c1 = Cord::from(100);
         let c2 = Cord::from(25);
-        let sum = c1 + c2;
+        let sum = c1.checked_add(&c2).unwrap();
         assert_eq!(sum.value(), 125);
-    }
 
-    #[test]
-    fn test_cord_sub() {
-        let c1 = Cord::from(100);
-        let c2 = Cord::from(25);
-        let diff = c1 - c2;
-        assert_eq!(diff.value(), 75);
+        let max_cord = Cord::from(u64::MAX);
+        assert!(max_cord.checked_add(&Cord::from(1)).is_none());
     }
 
     #[test]
@@ -677,14 +644,4 @@ mod tests {
         assert!(display_str.contains("Cord 1:\n● ● ● ●\n≡2"));
     }
 
-    use proptest::prelude::*;
-
-    proptest! {
-        #[test]
-        fn havoc_test_cord_sub_underflow_panic(a in 0u64..1000, b in 1001u64..2000) {
-            let c1 = Cord::from(a);
-            let c2 = Cord::from(b);
-            assert_eq!((c1 - c2).value(), 0);
-        }
-    }
 }
