@@ -764,7 +764,7 @@ classDiagram
     BioOps ..> ChimeraVM : Extends (impl)
 ```
 
-### Chimera TUI Architecture (ADR 071, ADR 072, ADR 073)
+### Chimera TUI Architecture (ADR 071, ADR 072, ADR 073, ADR 077)
 
 The TUI event loop is decoupled into specific input handler modules to avoid a monolithic `run_app` loop. The handlers themselves are further decoupled into specific input type submodules.
 
@@ -790,6 +790,7 @@ sequenceDiagram
             Editing->>EditingActions: handle_action()
         else is enter
             Editing->>EditingEnter: handle_enter()
+            Note over EditingEnter: Normalized fallback & grouped cfg variants
         end
     else State == Normal
         App->>Normal: handle_input(event)
