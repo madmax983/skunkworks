@@ -3137,6 +3137,7 @@ impl ChimeraVM {
             | OpCode::TuiMod
             | OpCode::Cambrian
             | OpCode::Prologue
+            | OpCode::Prolouge
             | OpCode::Rune
             | OpCode::BioHack
             | OpCode::SelfReplicate
