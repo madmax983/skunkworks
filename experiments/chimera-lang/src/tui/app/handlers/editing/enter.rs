@@ -245,16 +245,37 @@ pub(crate) fn handle_enter(
                                         }
                                     }
                                 }
+                                #[cfg(not(any(feature = "nova", feature = "silicon")))]
                                 ViewMode::Grid => {
                                     apply_grid_edit(vm, app_state);
                                 }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Chronos
+                                #[cfg(all(feature = "nova", not(feature = "silicon")))]
+                                ViewMode::Grid
+                                | ViewMode::Chronos
                                 | ViewMode::Orca
                                 | ViewMode::Hydra
                                 | ViewMode::Prologue
                                 | ViewMode::Reactor => {
                                     apply_grid_edit(vm, app_state);
+                                }
+                                #[cfg(all(feature = "silicon", not(feature = "nova")))]
+                                ViewMode::Grid
+                                | ViewMode::Foundry => {
+                                    apply_grid_edit(vm, app_state);
+                                }
+                                #[cfg(all(feature = "nova", feature = "silicon"))]
+                                ViewMode::Grid
+                                | ViewMode::Chronos
+                                | ViewMode::Orca
+                                | ViewMode::Hydra
+                                | ViewMode::Prologue
+                                | ViewMode::Reactor
+                                | ViewMode::Foundry => {
+                                    apply_grid_edit(vm, app_state);
+                                }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Babel | ViewMode::Weaver => {
+                                    app_state.input_mode = InputMode::Normal;
                                 }
                                 #[cfg(feature = "nova")]
                                 ViewMode::Crispr => {
@@ -339,60 +360,6 @@ pub(crate) fn handle_enter(
                                     app_state.input_buffer.clear();
                                 }
 
-
-
-                                #[cfg(feature = "biophysics")]
-                                ViewMode::Cortex => {
-                                    // No editing for Cortex view yet
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                #[cfg(feature = "nova")]
-                                ViewMode::Garden => {
-                                    // Enable editing for Garden (Sowing rules)
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-
-
-                                #[cfg(feature = "nova")]
-                                ViewMode::Babel => {
-                                    // In Babel, Enter in Normal mode enters Editing mode.
-                                    // Editing happens directly on the strings, no buffer commit needed here.
-                                    // But we use input_buffer as scratchpad in other modes.
-                                    // Here we edit in place.
-                                    // So we just clear buffer and exit?
-                                    // Wait, if we are in Editing mode, keys append to buffer.
-                                    // We need to implement custom handling for Babel in Editing mode loop.
-                                    // See below.
-                                    app_state.input_mode = InputMode::Normal;
-                                }
-
                                 #[cfg(feature = "nova")]
                                 ViewMode::Quipu => {
                                     // Edit cord value?
@@ -412,13 +379,6 @@ pub(crate) fn handle_enter(
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
-
-                                #[cfg(feature = "silicon")]
-                                ViewMode::Foundry => {
-                                    // Same as Schematic/Grid?
-                                    // Allow editing grid in Foundry
-                                    apply_grid_edit(vm, app_state);
-                                }
                                 ViewMode::BioticChaos => {
                                     // Allow editing Chaos Grid?
                                     // Parse buffer as float
@@ -430,15 +390,6 @@ pub(crate) fn handle_enter(
                                     }
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
-                                }
-
-
-
-                                #[cfg(feature = "nova")]
-                                ViewMode::Weaver => {
-                                    // Use input buffer as pattern
-                                    app_state.input_mode = InputMode::Normal;
-                                    // Don't clear buffer, keep it for preview
                                 }
 
 
@@ -563,6 +514,11 @@ pub(crate) fn handle_enter(
 
 
 
+
+                                #[cfg(feature = "nova")]
+                                ViewMode::Babel | ViewMode::Weaver => {
+                                    app_state.input_mode = InputMode::Normal;
+                                }
 
                                 #[cfg(feature = "nova")]
                                 ViewMode::Genesis => {
