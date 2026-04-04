@@ -530,4 +530,90 @@ mod tests {
         assert!((r270.x - 0.0).abs() < 1e-6);
         assert!((r270.y - -1.0).abs() < 1e-6);
     }
+
+    #[test]
+    fn test_vec2_normalize_mixed_inf() {
+        // x is finite, y is infinite
+        let v1 = Vec2::new(10.0, f64::INFINITY);
+        let n1 = v1.normalize();
+        assert_eq!(n1.x, 0.0);
+        assert_eq!(n1.y, 1.0);
+
+        let v2 = Vec2::new(10.0, f64::NEG_INFINITY);
+        let n2 = v2.normalize();
+        assert_eq!(n2.x, 0.0);
+        assert_eq!(n2.y, -1.0);
+
+        // x is infinite, y is finite
+        let v3 = Vec2::new(f64::INFINITY, 10.0);
+        let n3 = v3.normalize();
+        assert_eq!(n3.x, 1.0);
+        assert_eq!(n3.y, 0.0);
+
+        let v4 = Vec2::new(f64::NEG_INFINITY, 10.0);
+        let n4 = v4.normalize();
+        assert_eq!(n4.x, -1.0);
+        assert_eq!(n4.y, 0.0);
+
+        // overflow test (mag is inf, components finite)
+        let huge = f64::MAX;
+        let v5 = Vec2::new(huge, huge);
+        let n5 = v5.normalize();
+        assert!((n5.x - std::f64::consts::FRAC_1_SQRT_2).abs() < 1e-6);
+        assert!((n5.y - std::f64::consts::FRAC_1_SQRT_2).abs() < 1e-6);
+    }
+
+    #[test]
+    fn test_vec2_limit_zero_sq_mag() {
+        // test the `sq_mag > 0.0` inner branch
+        let v = Vec2::new(f64::NAN, 0.0);
+        let l = v.limit(1.0);
+        assert!(l.x.is_nan());
+        assert_eq!(l.y, 0.0);
+    }
+
+    #[test]
+    fn test_vec2_distance() {
+        let v1 = Vec2::new(0.0, 0.0);
+        let v2 = Vec2::new(3.0, 4.0);
+        assert_eq!(v1.distance(v2), 5.0);
+
+        let v3 = Vec2::new(-3.0, -4.0);
+        assert_eq!(v1.distance(v3), 5.0);
+    }
+
+    #[test]
+    fn test_vec2_operators() {
+        let mut v1 = Vec2::new(1.0, 2.0);
+        let v2 = Vec2::new(3.0, 4.0);
+
+        v1 += v2;
+        assert_eq!(v1, Vec2::new(4.0, 6.0));
+
+        v1 -= v2;
+        assert_eq!(v1, Vec2::new(1.0, 2.0));
+
+        v1 *= 2.0;
+        assert_eq!(v1, Vec2::new(2.0, 4.0));
+
+        v1 /= 2.0;
+        assert_eq!(v1, Vec2::new(1.0, 2.0));
+
+        let v3 = v1 / 2.0;
+        assert_eq!(v3, Vec2::new(0.5, 1.0));
+
+        let v4 = -v1;
+        assert_eq!(v4, Vec2::new(-1.0, -2.0));
+    }
+
+    #[test]
+    fn test_vec2_conversions() {
+        let tuple = (1.0, 2.0);
+        let v: Vec2 = tuple.into();
+        assert_eq!(v.x, 1.0);
+        assert_eq!(v.y, 2.0);
+
+        let out_tuple: (f64, f64) = v.into();
+        assert_eq!(out_tuple, (1.0, 2.0));
+    }
 }

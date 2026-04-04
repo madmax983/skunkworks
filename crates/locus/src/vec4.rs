@@ -939,6 +939,30 @@ mod tests {
         assert_eq!(n.z, 0.0);
         assert_eq!(n.w, 0.0);
     }
+
+    #[test]
+    fn test_vec4_normalize_underflow_zero() {
+        let v = Vec4::new(f32::MIN_POSITIVE, 0.0, 0.0, 0.0);
+        let n = v.normalize();
+        assert_eq!(n.x, 1.0);
+
+        // Passing a NaN value to ensure the fallback branch handles non-finite len
+        let v2 = Vec4::new(f32::NAN, 0.0, 0.0, 0.0);
+        let n2 = v2.normalize();
+        assert_eq!(n2.x, 0.0);
+    }
+
+    #[test]
+    fn test_vec4_limit_underflow_zero() {
+        // Test limit behavior with subnormal values where len <= 0.0 could theoretically trigger
+        let v = Vec4::new(1e-30, 0.0, 0.0, 0.0);
+        let limited = v.limit(-1.0);
+        assert_eq!(limited.x, 1e-30);
+
+        let v2 = Vec4::new(f32::NAN, 0.0, 0.0, 0.0);
+        let limited2 = v2.limit(1.0);
+        assert!(limited2.x.is_nan());
+    }
     #[test]
     fn test_vec4_project_to_3d_non_finite() {
         let camera_w = 10.0;
