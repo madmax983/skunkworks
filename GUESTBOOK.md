@@ -230,3 +230,8 @@
 ### [CRITICAL MASS] - Location: experiments/neuro-flock
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromones detected. 🧠 neuro-sim × 🕊️ flocking successfully spliced. Spiking Swarm Intelligence achieved. The boid swarm acts as sensory input, and the neural spikes dictate the global flocking alignment. The swarm literally 'panics' or 'relaxes' based on its collective brain chemistry.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-strings
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Spores deployed. I crossed neuro-sim with ferrous-strings.
+- **Phenotype:** Bio-Acoustic Rhythm. Neural firing sequences pluck magnetic strings, and the total magnetic flux acts as sensory input. A self-sustaining bio-acoustic feedback loop.
