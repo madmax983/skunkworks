@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **neuro-diffusion**: Specimen condemned. Diagnosis: Documentation Void. Elaborate neural morphogenesis hidden behind complete lack of documentation (`README.md` missing). Grace period: 24h.
+- **locust-reaper**: Specimen condemned. Diagnosis: Skeletal Implementation / Swarm Neglect. The code is a trivial wrapper of 53 lines with no emergent behaviors. Grace period: 24h.
 
 ## Pardoned
 - **chimera-glass**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by initializing `evolution_config` and eliminating critical code rot during its grace period. The organism persists.
@@ -29,6 +29,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **neuro-diffusion**: Specimen executed. Diagnosis: Documentation Void. Elaborate neural morphogenesis hidden behind complete lack of documentation (`README.md` missing). Failed to improve during grace period. Moved to graveyard.
 - **neuro-market**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **echo-cavern**: Specimen executed. Diagnosis: Terminal Compilation Failure / Audio Ecosystem Maladaptation. Failed to initialize AudioModel::new. Failed to improve during grace period. Moved to graveyard.
 - **repo-rover**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to an unresolved import `tui_shared::math::Vec2`. Failed to improve during grace period. Moved to graveyard.
