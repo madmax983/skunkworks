@@ -240,3 +240,6 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spores deployed. I crossed neuro-sim with ripple-tank.
 - **Phenotype:** Acoustic Neural Dynamics. Neural spikes physically pluck the 2D acoustic wave tank, creating cymatic waves that continuously feed back into the neurons as input current.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/chimera-strings
+- **Status:** ALSA audio dependencies installed, resolving compilation errors.
