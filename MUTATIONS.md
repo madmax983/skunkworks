@@ -667,3 +667,10 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Predicted Phenotype**: An emergent market structure where neural cascades dictate bursts of liquidity and sudden market volatility, simulating algorithmic trading driven by complex microscopic neural interactions.
 - **Status**: experiments/neuro-market
 - **Evaluation**: Success. Compiled. The visualization successfully manifests market particle spawning dynamically driven by an underlying Izhikevich neural network.
+
+### neuro-strings
+- **Parents**: crates/neuro-sim + experiments/ferrous-strings
+- **Concept**: Bio-Acoustic Rhythm. Spiking Neural Network (SNN) where neurons pluck magnetic strings, and the resulting magnetic flux feeds back into sensory neurons.
+- **Novel trait**: Bio-Acoustic Feedback Loop. Discrete neural spikes translate into continuous acoustic vibrations and magnetic fields. The magnetic environment acts as an input current, creating self-sustaining rhythms.
+- **Status**: experiments/neuro-strings
+- **Evaluation**: Success. Compiled. An emergent bio-acoustic organism where neural firing sequences manifest as musical chords and magnetic waves. The magnetic waves successfully feed back into the neural network, establishing stable rhythmic loops.

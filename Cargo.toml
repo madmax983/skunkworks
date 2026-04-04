@@ -20,6 +20,7 @@ members = [
     "experiments/git-tank",
     "experiments/neuro-flock",
     "experiments/neuro-fluid",
+    "experiments/neuro-strings",
     "graveyard/chron-ddos",
     "experiments/locus-ddos", "test_project",
     "experiments/locus-fluid",
