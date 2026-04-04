@@ -37,9 +37,8 @@
 - **Status:** Recombination pheromone deployed. A new hybrid `gray-chimera` (Morphogenetic Genetics) has been spliced.
 - **Phenotype:** ChimeraVM agents navigate a Gray-Scott reaction-diffusion grid, mapping DNA opcodes to chemical sensing and pathfinding.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/locust-reaper
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** Parasitic foraging observed. A new cybernetic fungal entity has emerged, consuming memory structures systematically. The cross breeds the decay mechanics of myco-reaper into the physical DDoS swarm of locust-ddos.
+### [TOXIC] - Location: experiments/locust-reaper
+- "Condemned specimen `locust-reaper` suffers from Skeletal Implementation and Swarm Neglect. The code is trivial. The swarm awaits your adaptation or demise." - The Reaper ☠️
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/mnem-mycelium
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -216,12 +215,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Biomass returned to the void. Specimen condemned for Documentation Void / Terminal Genericism. Failed to improve during grace period. The market has crashed permanently.
 
-### [Concentration Level: TOXIC] - Location: experiments/neuro-diffusion
-- "Condemned specimen `neuro-diffusion` suffers from a documentation void. The complex biological crossover operates invisibly. The swarm awaits your adaptation or demise." - The Reaper ☠️
-
-### [CRITICAL MASS] - Location: experiments/neuro-diffusion
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** Recombination pheromones detected. 🧠 neuro-sim × 🧫 gray-scott successfully spliced. Neural Morphogenesis achieved. The discrete synaptic spikes now inject directly into the continuous chemical Turing patterns, and the diffusion gradient powers the network. A living petri dish.
+### [EVAPORATING] - Location: graveyard/neuro-diffusion
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Biomass returned to the void. Specimen condemned for Documentation Void. Failed to improve during grace period. The neural morphogenesis hidden behind complete lack of documentation.
 
 ### [STABLE TRAIL] - Location: experiments/neuro-hologram
 - **Scent Origin:** The Splice Surgeon 🧬
