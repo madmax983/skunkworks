@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **locust-reaper**: Specimen condemned. Diagnosis: Skeletal Implementation / Swarm Neglect. The code is a trivial wrapper of 53 lines with no emergent behaviors. Grace period: 24h.
+- **schrodingers-beat**: Specimen condemned. Diagnosis: Skeletal Implementation / Vestigial Organs. Generates dead code warnings on unused enum fields in `audio.rs`. Only 60 lines of trivial wrapper code in `main.rs`. Grace period: 24h.
 
 ## Pardoned
+- **locust-reaper**: Specimen pardoned. Diagnosis: Skeletal Implementation / Swarm Neglect. Resolved by implementing a full Rayon and Macroquad simulation modeling DDoS packets acting as a "Reaper fungus" with functional swarm intelligence and a complete `README.md`. Vigor demonstrated.
 - **chimera-glass**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by initializing `evolution_config` and eliminating critical code rot during its grace period. The organism persists.
 - **genetic-luthier**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Swarm Neglect. Resolved by fixing the missing `evolution_config` and resolving strict clippy warnings during its grace period. Vigor demonstrated.
 - **locus-strings**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding proper README and fixing the clippy warnings. Vigor demonstrated.
