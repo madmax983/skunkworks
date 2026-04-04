@@ -15,6 +15,175 @@ fn apply_grid_edit(vm: &mut ChimeraVM, app_state: &mut AppState) {
 }
 
 
+
+
+#[cfg(feature = "nova")]
+fn handle_crispr_enter(vm: &mut ChimeraVM, app_state: &mut AppState) {
+    let guide_tokens: Vec<&str> = app_state.crispr_guide.split_whitespace().collect();
+    let replace_tokens: Vec<&str> = app_state.crispr_replace.split_whitespace().collect();
+    use std::str::FromStr;
+
+    let mut guide_ops = Vec::new();
+    for t in &guide_tokens {
+        if let Ok(op) = crate::opcode::OpCode::from_str(t) {
+            guide_ops.push(op);
+        }
+    }
+    let mut replace_genes = Vec::new();
+    for t in &replace_tokens {
+        if let Ok(op) = crate::opcode::OpCode::from_str(t) {
+            replace_genes.push(crate::ast::Gene { op, args: vec![] });
+        }
+    }
+
+    if guide_ops.is_empty() {
+        app_state.crispr_result = "Error: Empty Guide Pattern".to_string();
+    } else {
+        let s_idx = app_state.crispr_target_strand;
+        if s_idx < vm.dna.helix.strands.len() {
+            let strand = &mut vm.dna.helix.strands[s_idx];
+            let mut new_genes = Vec::new();
+            let mut i = 0;
+            let mut matches = 0;
+            while i < strand.genes.len() {
+                let mut matched = true;
+                for (j, op) in guide_ops.iter().enumerate() {
+                    if i + j >= strand.genes.len() || strand.genes[i + j].op != *op {
+                        matched = false;
+                        break;
+                    }
+                }
+                if matched {
+                    new_genes.extend(replace_genes.clone());
+                    i += guide_ops.len();
+                    matches += 1;
+                } else {
+                    new_genes.push(strand.genes[i].clone());
+                    i += 1;
+                }
+            }
+            strand.genes = new_genes;
+            app_state.crispr_result = format!("CRISPR: Replaced {} occurrences.", matches);
+        } else {
+            app_state.crispr_result = "Error: Invalid Strand".to_string();
+        }
+    }
+}
+
+fn handle_genome_enter(vm: &mut ChimeraVM, app_state: &mut AppState) {
+    match ChimeraParser::parse(Rule::gene, &app_state.input_buffer) {
+        Ok(mut pairs) => {
+            let pair = pairs.next().unwrap();
+            match Gene::try_from_pair(pair) {
+                Ok(gene) => {
+                    if app_state.selected_strand < vm.dna.helix.strands.len()
+                        && app_state.selected_gene
+                            < vm.dna.helix.strands[app_state.selected_strand]
+                                .genes
+                                .len()
+                    {
+                        vm.dna.helix.strands[app_state.selected_strand].genes
+                            [app_state.selected_gene] = gene;
+                        app_state.status_msg = "Gene updated successfully".to_string();
+                    }
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                Err(e) => {
+                    app_state.status_msg = format!("Parse Error: {}", e);
+                }
+            }
+        }
+        Err(e) => {
+            app_state.status_msg = format!("Parse Error: {}", e);
+        }
+    }
+}
+
+
+fn handle_genome_enter(vm: &mut ChimeraVM, app_state: &mut AppState) {
+    match ChimeraParser::parse(Rule::gene, &app_state.input_buffer) {
+        Ok(mut pairs) => {
+            let pair = pairs.next().unwrap();
+            match Gene::try_from_pair(pair) {
+                Ok(gene) => {
+                    if app_state.selected_strand < vm.dna.helix.strands.len()
+                        && app_state.selected_gene
+                            < vm.dna.helix.strands[app_state.selected_strand]
+                                .genes
+                                .len()
+                    {
+                        vm.dna.helix.strands[app_state.selected_strand].genes
+                            [app_state.selected_gene] = gene;
+                        app_state.status_msg = "Gene updated successfully".to_string();
+                    }
+                    app_state.input_mode = InputMode::Normal;
+                    app_state.input_buffer.clear();
+                }
+                Err(e) => {
+                    app_state.status_msg = format!("Parse Error: {}", e);
+                }
+            }
+        }
+        Err(e) => {
+            app_state.status_msg = format!("Parse Error: {}", e);
+        }
+    }
+}
+
+#[cfg(feature = "nova")]
+fn handle_crispr_enter(vm: &mut ChimeraVM, app_state: &mut AppState) {
+    let guide_tokens: Vec<&str> = app_state.crispr_guide.split_whitespace().collect();
+    let replace_tokens: Vec<&str> = app_state.crispr_replace.split_whitespace().collect();
+    use std::str::FromStr;
+
+    let mut guide_ops = Vec::new();
+    for t in &guide_tokens {
+        if let Ok(op) = crate::opcode::OpCode::from_str(t) {
+            guide_ops.push(op);
+        }
+    }
+    let mut replace_genes = Vec::new();
+    for t in &replace_tokens {
+        if let Ok(op) = crate::opcode::OpCode::from_str(t) {
+            replace_genes.push(crate::ast::Gene { op, args: vec![] });
+        }
+    }
+
+    if guide_ops.is_empty() {
+        app_state.crispr_result = "Error: Empty Guide Pattern".to_string();
+    } else {
+        let s_idx = app_state.crispr_target_strand;
+        if s_idx < vm.dna.helix.strands.len() {
+            let strand = &mut vm.dna.helix.strands[s_idx];
+            let mut new_genes = Vec::new();
+            let mut i = 0;
+            let mut matches = 0;
+            while i < strand.genes.len() {
+                let mut matched = true;
+                for (j, op) in guide_ops.iter().enumerate() {
+                    if i + j >= strand.genes.len() || strand.genes[i + j].op != *op {
+                        matched = false;
+                        break;
+                    }
+                }
+                if matched {
+                    new_genes.extend(replace_genes.clone());
+                    i += guide_ops.len();
+                    matches += 1;
+                } else {
+                    new_genes.push(strand.genes[i].clone());
+                    i += 1;
+                }
+            }
+            strand.genes = new_genes;
+            app_state.crispr_result = format!("CRISPR: Replaced {} occurrences.", matches);
+        } else {
+            app_state.crispr_result = "Error: Invalid Strand".to_string();
+        }
+    }
+}
+
 pub(crate) fn handle_enter(
     vm: &mut ChimeraVM,
     app_state: &mut AppState,
@@ -295,66 +464,6 @@ pub(crate) fn handle_enter(
                                             }
                                         }
                                         #[cfg(feature = "nova")]
-                                ViewMode::Pandemonium
-                                | ViewMode::Grimoire
-                                | ViewMode::Laboratory
-                                | ViewMode::Topology
-                                | ViewMode::Graveyard
-                                | ViewMode::PianoRoll
-                                | ViewMode::Retina
-                                | ViewMode::Quantum
-                                | ViewMode::Dream
-                                | ViewMode::Phylogeny
-                                | ViewMode::Alchemy
-                                | ViewMode::Memetics
-                                | ViewMode::Egregore
-                                | ViewMode::Bestiary
-                                | ViewMode::Kaleidoscope
-                                | ViewMode::Void
-                                | ViewMode::Signals
-                                | ViewMode::Sovereignty
-                                | ViewMode::Spectrogram
-                                | ViewMode::Market
-                                | ViewMode::Ballistics
-                                | ViewMode::Scent
-                                | ViewMode::Fishing
-                                | ViewMode::Garden
-                                | ViewMode::Arena
-                                | ViewMode::Strings
-                                | ViewMode::Hyperspace
-                                | ViewMode::Hologram
-                                | ViewMode::Terminal
-                                | ViewMode::Attractor
-                                | ViewMode::BioMesh
-                                | ViewMode::Biolum
-                                | ViewMode::Fractal
-                                | ViewMode::Metazoa => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "elektra")]
-                                ViewMode::Elektra => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "resonance")]
-                                ViewMode::Resonance => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "biophysics")]
-                                ViewMode::Cortex => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "silicon")]
-                                ViewMode::Schematic => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                ViewMode::Microscope | ViewMode::Heatmap | ViewMode::Catalyst => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
                                 }
                                 _ => {}
                                     }
@@ -555,69 +664,11 @@ pub(crate) fn handle_enter(
                                     }
                                     app_state.input_mode = InputMode::Normal;
                                 }
-                                #[cfg(feature = "nova")]
-                                ViewMode::Pandemonium
-                                | ViewMode::Grimoire
-                                | ViewMode::Laboratory
-                                | ViewMode::Topology
-                                | ViewMode::Graveyard
-                                | ViewMode::PianoRoll
-                                | ViewMode::Retina
-                                | ViewMode::Quantum
-                                | ViewMode::Dream
-                                | ViewMode::Phylogeny
-                                | ViewMode::Alchemy
-                                | ViewMode::Memetics
-                                | ViewMode::Egregore
-                                | ViewMode::Bestiary
-                                | ViewMode::Kaleidoscope
-                                | ViewMode::Void
-                                | ViewMode::Signals
-                                | ViewMode::Sovereignty
-                                | ViewMode::Spectrogram
-                                | ViewMode::Market
-                                | ViewMode::Ballistics
-                                | ViewMode::Scent
-                                | ViewMode::Fishing
-                                | ViewMode::Garden
-                                | ViewMode::Arena
-                                | ViewMode::Strings
-                                | ViewMode::Hyperspace
-                                | ViewMode::Hologram
-                                | ViewMode::Terminal
-                                | ViewMode::Attractor
-                                | ViewMode::BioMesh
-                                | ViewMode::Biolum
-                                | ViewMode::Fractal
-                                | ViewMode::Metazoa => {
+                                _ => {
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
-                                #[cfg(feature = "elektra")]
-                                ViewMode::Elektra => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "resonance")]
-                                ViewMode::Resonance => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "biophysics")]
-                                ViewMode::Cortex => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                #[cfg(feature = "silicon")]
-                                ViewMode::Schematic => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                ViewMode::Microscope | ViewMode::Heatmap | ViewMode::Catalyst => {
-                                    app_state.input_mode = InputMode::Normal;
-                                    app_state.input_buffer.clear();
-                                }
-                                _ => {}
+
                             }
                         };
     Ok(true)
