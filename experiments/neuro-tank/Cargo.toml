@@ -1,0 +1,10 @@
+[package]
+name = "neuro-tank"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+crossbeam-channel = "0.5"
+neuro-sim = { path = "../../crates/neuro-sim" }
+resonance-audio = { path = "../../crates/resonance-audio" }
