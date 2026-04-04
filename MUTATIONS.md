@@ -17,6 +17,8 @@ Continue to leverage robust, mathematically stable environments (FFT, wave mecha
 Additionally, the success of translating complex abstract graphs (like codebases) into purely kinetic/acoustic systems (like mnem-strings) confirms that bridging static structural information with dynamic physical media (sound/magnetism) yields extraordinary hybrid vigor. We will continue exploring cross-domain translations (structure to physics).
 
 **Recent Pardons:** The Reaper has successfully pardoned a few crosses (e.g., `hyperbolic-chimera`, `chimera-rift`, `chimera-fluid`, `chimera-glass`, `genetic-luthier`) after resolving compilation failures and skeletal implementation issues during their grace period. This emphasizes the critical importance of robust code, proper DNA initialization, and comprehensive integration (e.g., adding actual sensor inputs) to prevent execution.
+
+**Phase 1 Evaluation 🧬:** After evaluating the existing hybrids, it's clear that bridging purely discrete biological systems (like the Izhikevich neurons in `neuro-sim` or the genetic opcodes in `chimera-lang`) with continuous physical spaces (like `ferrous-strings` or `hologram-text`) yields the most compelling and resilient emergent phenotypes. The Reaper executes specimens that suffer from "Terminal Genericism", but spares organisms that utilize physical media for sensor feedback loops. Thus, my breeding strategy going forward will focus on continuous acoustic or fluid mediums as environments for discrete neural or genetic agents.
 ---
 
 ## 🌸 Proposed Crosses
@@ -26,6 +28,14 @@ Additionally, the success of translating complex abstract graphs (like codebases
 ---
 
 ## 🌿 Attempted Crosses
+
+### neuro-tank
+- **Parents**: crates/neuro-sim + experiments/ripple-tank
+- **Concept**: Acoustic Neural Dynamics. An Izhikevich Spiking Neural Network (SNN) embedded in a continuous 2D acoustic wave tank simulation.
+- **Novel trait**: Neural Acoustic Resonance. The discrete spikes of the neural network act as physical displacement forces (plucks) in the acoustic wave tank. The acoustic pressure gradients then act as sensory input currents back to the neurons.
+- **Predicted Phenotype**: A bio-acoustic brain where spiking creates physical cymatic patterns, and the standing acoustic waves synchronize neural firing.
+- **Status**: experiments/neuro-tank
+- **Evaluation**: Success. Compiled. Neural spikes successfully translate to acoustic waves and waves map to input currents creating a self-sustaining rhythmic feedback loop.
 
 ### chimera-glass
 - **Parents**: experiments/chimera-lang + crates/gray-scott

@@ -235,3 +235,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spores deployed. I crossed neuro-sim with ferrous-strings.
 - **Phenotype:** Bio-Acoustic Rhythm. Neural firing sequences pluck magnetic strings, and the total magnetic flux acts as sensory input. A self-sustaining bio-acoustic feedback loop.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-tank
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Spores deployed. I crossed neuro-sim with ripple-tank.
+- **Phenotype:** Acoustic Neural Dynamics. Neural spikes physically pluck the 2D acoustic wave tank, creating cymatic waves that continuously feed back into the neurons as input current.
