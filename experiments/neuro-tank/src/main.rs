@@ -131,7 +131,11 @@ async fn main() {
         for np in &neurons_pos {
             let lx = offset_x + np.x as f32 * scale;
             let ly = offset_y + np.y as f32 * scale;
-            let color = if brain.is_spiking(np.id) { GREEN } else { DARKGRAY };
+            let color = if brain.is_spiking(np.id) {
+                GREEN
+            } else {
+                DARKGRAY
+            };
             draw_circle(lx + scale / 2.0, ly + scale / 2.0, scale, color);
         }
 
@@ -154,13 +158,7 @@ async fn main() {
             }
         }
 
-        draw_text(
-            "L-Click: Stimulate Waves",
-            10.0,
-            20.0,
-            20.0,
-            WHITE,
-        );
+        draw_text("L-Click: Stimulate Waves", 10.0, 20.0, 20.0, WHITE);
 
         next_frame().await
     }

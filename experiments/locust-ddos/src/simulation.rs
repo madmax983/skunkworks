@@ -18,6 +18,7 @@ pub struct Locust {
 pub struct World {
     pub agents: Vec<Locust>,
     pub pheromones: Vec<f32>,        // Grid of danger levels
+    pub pheromones_buffer: Vec<f32>, // Buffer for diffusion to avoid allocations
     pub firewalls: Vec<(Vec2, f32)>, // (Center, Radius)
     pub grid_w: usize,
     pub grid_h: usize,
@@ -54,6 +55,7 @@ impl World {
         World {
             agents,
             pheromones: vec![0.0; grid_w * grid_h],
+            pheromones_buffer: vec![0.0; grid_w * grid_h],
             firewalls: Vec::new(),
             grid_w,
             grid_h,
@@ -74,7 +76,8 @@ impl World {
         let pheromones = &self.pheromones;
 
         // Parallel update of agents
-        let updates: Vec<(Vec2, Vec2, u8, Option<(usize, usize)>, f32)> = self
+        type UpdateTuple = (Vec2, Vec2, u8, Option<(usize, usize)>, f32);
+        let updates: Vec<UpdateTuple> = self
             .agents
             .par_iter()
             .map(|agent| {
@@ -188,7 +191,9 @@ impl World {
         // Diffusion (Box Blur)
         let w = self.grid_w;
         let h = self.grid_h;
-        let prev_pheromones = self.pheromones.clone(); // Read from this
+
+        self.pheromones_buffer.copy_from_slice(&self.pheromones);
+        let prev_pheromones = &self.pheromones_buffer;
 
         self.pheromones
             .par_chunks_mut(w)
