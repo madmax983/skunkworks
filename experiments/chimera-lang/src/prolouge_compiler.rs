@@ -10,6 +10,34 @@ use crate::opcode::OpCode;
 #[grammar = "prolouge_grammar.pest"]
 pub struct ProlougeParser;
 
+/// Evaluates an esoteric Prolouge script and synthesizes a biological [`Dna`] structure.
+///
+/// Prolouge acts as the "Mad Scientist" layer, allowing code mixing from completely different paradigms like Forth, Raku, and Orca in one file.
+/// This compiler translates those varied esoteric syntaxes into a unified sequence of standard Chimera [`Gene`] structures.
+///
+/// # Examples
+///
+/// ```
+/// use chimera_lang::prolouge_compiler::compile;
+/// use chimera_lang::opcode::OpCode;
+///
+/// // Crossing a Forth instruction block into our biological VM.
+/// let source = r#"
+/// forth {
+///     5 3 add
+/// }
+/// "#;
+/// let dna = compile(source).unwrap();
+/// assert_eq!(dna.helix.strands.len(), 1);
+/// assert_eq!(dna.helix.strands[0].genes[2].op, OpCode::Add);
+/// ```
+///
+/// # Details
+/// - **Paradigms**: Supports blocks defined via `forth`, `raku`, `orca`, `elektra`, `prolog`, and `genetics`.
+/// - **Integration**: All blocks are compiled into a single flattened [`Strand`] in the returned DNA.
+/// - **Panics**: Returns a `Result::Err` if a block contains syntax invalid for its declared paradigm.
+///
+/// For more details on the VM execution, see [`crate::vm::ChimeraVM`].
 pub fn compile(source: &str) -> Result<Dna> {
     let mut pairs = ProlougeParser::parse(Rule::program, source)?;
     let program = pairs.next().ok_or(anyhow!("No program found"))?;
@@ -105,8 +133,6 @@ fn compile_forth_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     Ok(genes)
 }
 
-
-
 fn compile_raku_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
     // hyper_instruction = { (">>" ~ operator ~ "<<") | string | number | identifier }
@@ -153,8 +179,6 @@ fn compile_raku_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     }
     Ok(genes)
 }
-
-
 
 fn compile_orca_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
@@ -253,7 +277,6 @@ fn compile_genetics_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>
 
     Ok(genes)
 }
-
 
 #[cfg(test)]
 mod tests {

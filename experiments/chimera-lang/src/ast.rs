@@ -87,6 +87,7 @@ pub enum Nucleotide {
 }
 
 impl Dna {
+    #[doc(hidden)]
     pub fn try_from_pair(pair: Pair<Rule>) -> Result<Self, String> {
         match pair.as_rule() {
             Rule::dna => {
@@ -174,6 +175,7 @@ impl From<&str> for Nucleotide {
 }
 
 impl Helix {
+    #[doc(hidden)]
     pub fn try_from_pair(pair: Pair<Rule>) -> Result<Self, String> {
         match pair.as_rule() {
             Rule::helix => {
@@ -187,6 +189,7 @@ impl Helix {
 }
 
 impl Strand {
+    #[doc(hidden)]
     pub fn try_from_pair(pair: Pair<Rule>) -> Result<Self, String> {
         match pair.as_rule() {
             Rule::strand => {
@@ -200,6 +203,7 @@ impl Strand {
 }
 
 impl Gene {
+    #[doc(hidden)]
     pub fn try_from_pair(pair: Pair<Rule>) -> Result<Self, String> {
         match pair.as_rule() {
             Rule::gene => {
@@ -221,6 +225,7 @@ impl Gene {
 }
 
 impl Nucleotide {
+    #[doc(hidden)]
     pub fn try_from_pair(pair: Pair<Rule>) -> Result<Self, String> {
         Self::try_from_pair_with_depth(pair, 0)
     }

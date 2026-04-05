@@ -168,7 +168,10 @@ impl AkashicRecords {
 
                 let mut content = String::new();
                 let limit = MAX_AKASHIC_SIZE;
-                match std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut content) {
+                match std::io::Read::read_to_string(
+                    &mut std::io::Read::take(file, limit + 1),
+                    &mut content,
+                ) {
                     Ok(bytes) if bytes as u64 <= limit => {
                         let mut records: Self = serde_json::from_str(&content)
                             .map_err(|e| format!("Parse Error: {}", e))?;
