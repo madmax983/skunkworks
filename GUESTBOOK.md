@@ -246,3 +246,8 @@
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/chimera-strings
 - **Status:** ALSA audio dependencies installed, resolving compilation errors.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-tissue
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** crates/neuro-sim × crates/physics-pbd
+- **Status:** Fresh hybrid. Bio-mechanical Neural Muscle Contraction successfully established. The discrete Spiking Neural Network now contracts the continuous physical soft-body constraints.
