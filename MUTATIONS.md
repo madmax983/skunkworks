@@ -18,7 +18,7 @@ Additionally, the success of translating complex abstract graphs (like codebases
 
 **Recent Pardons:** The Reaper has successfully pardoned a few crosses (e.g., `hyperbolic-chimera`, `chimera-rift`, `chimera-fluid`, `chimera-glass`, `genetic-luthier`) after resolving compilation failures and skeletal implementation issues during their grace period. This emphasizes the critical importance of robust code, proper DNA initialization, and comprehensive integration (e.g., adding actual sensor inputs) to prevent execution.
 
-**Phase 1 Evaluation 🧬:** After evaluating the existing hybrids, it's clear that bridging purely discrete biological systems (like the Izhikevich neurons in `neuro-sim` or the genetic opcodes in `chimera-lang`) with continuous physical spaces (like `ferrous-strings` or `hologram-text`) yields the most compelling and resilient emergent phenotypes. The Reaper executes specimens that suffer from "Terminal Genericism", but spares organisms that utilize physical media for sensor feedback loops. Thus, my breeding strategy going forward will focus on continuous acoustic or fluid mediums as environments for discrete neural or genetic agents.
+**Phase 1 Evaluation 🧬:** After evaluating the existing hybrids, I have verified the structural fitness of recent crosses. `ferrous-ddos`, `chimera-glass`, and `genetic-luthier` all successfully compile and exhibit robust stability after their respective pardons. It's clear that bridging purely discrete biological systems (like the Izhikevich neurons in `neuro-sim` or the genetic opcodes in `chimera-lang`) with continuous physical spaces (like `ferrous-strings` or `hologram-text`) yields the most compelling and resilient emergent phenotypes. The Reaper executes specimens that suffer from "Terminal Genericism", but spares organisms that utilize physical media for sensor feedback loops. Thus, my breeding strategy going forward will focus on continuous acoustic, fluid, or soft-body physical mediums as environments for discrete neural or genetic agents.
 ---
 
 ## 🌸 Proposed Crosses
@@ -86,6 +86,14 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Predicted Phenotype**: Flocks that alternate between chaotic scattering and dense, synchronous swarming based on the internal neural state.
 - **Status**: experiments/neuro-flock
 - **Evaluation**: Success. Compiled. The bidirectional feedback loop between continuous physical swarming parameters and discrete biological neuronal spikes produces highly organic, unpredictable flocking cycles.
+
+### neuro-tissue
+- **Parents**: crates/neuro-sim + crates/physics-pbd
+- **Concept**: Neural Muscle Contraction. A Spiking Neural Network (SNN) embedded in a soft-body mesh simulated via Position Based Dynamics (PBD).
+- **Novel trait**: Bidirectional bio-mechanical feedback loop. When a neuron spikes, it physically contracts the `Distance` constraints between its adjacent nodes. The physical deformation of the soft body acts as a sensory input current back to the neurons.
+- **Predicted Phenotype**: An emergent bio-mechanical organism that twitches and locomotes across the screen, driven entirely by an SNN, forming a self-sustaining bio-mechanical feedback loop.
+- **Status**: experiments/neuro-tissue
+- **Evaluation**: Success. Compiled. Neural spikes successfully contract distance constraints and stretch forces map back to input currents.
 
 ### neuro-hologram
 - **Parents**: crates/neuro-sim + experiments/hologram-text
