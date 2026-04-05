@@ -25,7 +25,7 @@ use std::collections::HashMap;
 #[cfg(feature = "nova")]
 use std::fs::OpenOptions;
 #[cfg(feature = "nova")]
-use std::io::{Read, Write};
+use std::io::Write;
 
 #[cfg(feature = "nova")]
 const AKASHIC_FILE: &str = ".chimera_akashic.json";
@@ -155,7 +155,7 @@ impl AkashicRecords {
 
     pub fn load_from(file_path: &str) -> Result<Self, String> {
         match std::fs::File::open(file_path) {
-            Ok(mut file) => {
+            Ok(file) => {
                 // Check size
                 if let Ok(metadata) = file.metadata() {
                     if metadata.len() > MAX_AKASHIC_SIZE {
@@ -167,13 +167,16 @@ impl AkashicRecords {
                 }
 
                 let mut content = String::new();
-                if file.read_to_string(&mut content).is_ok() {
-                    let mut records: Self = serde_json::from_str(&content)
-                        .map_err(|e| format!("Parse Error: {}", e))?;
-                    records.file_path = file_path.to_string();
-                    Ok(records)
-                } else {
-                    Err("Read Error".to_string())
+                let limit = MAX_AKASHIC_SIZE;
+                match std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut content) {
+                    Ok(bytes) if bytes as u64 <= limit => {
+                        let mut records: Self = serde_json::from_str(&content)
+                            .map_err(|e| format!("Parse Error: {}", e))?;
+                        records.file_path = file_path.to_string();
+                        Ok(records)
+                    }
+                    Ok(_) => Err(format!("Akashic Record too large (> {} bytes)", limit)),
+                    Err(_) => Err("Read Error".to_string()),
                 }
             }
             Err(_) => Ok(Self {

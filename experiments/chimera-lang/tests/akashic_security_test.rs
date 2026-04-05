@@ -88,3 +88,33 @@ fn test_akashic_corruption_prevention() {
         vm.output
     );
 }
+
+#[test]
+fn test_akashic_read_limit() {
+    let filename = ".chimera_akashic_limit.json";
+
+    // Create a file that is exactly 1 byte larger than the limit
+    let limit = chimera_lang::vm::MAX_AKASHIC_SIZE as usize;
+    let large_content = vec![b' '; limit + 1];
+
+    {
+        let mut file = File::create(filename).expect("Failed to create test file");
+        file.write_all(&large_content).expect("Failed to write test file");
+    }
+
+    // Try to load the AkashicRecords
+    let result = chimera_lang::vm::akashic::AkashicRecords::load_from(filename);
+
+    // Clean up
+    let _ = std::fs::remove_file(filename);
+
+    // Should return an error
+    assert!(
+        result.is_err(),
+        "AkashicRecords::load_from should have returned an error for a file exceeding MAX_AKASHIC_SIZE"
+    );
+
+    if let Err(e) = result {
+        assert!(e.contains("too large") || e.contains("exceeds"), "Unexpected error message: {}", e);
+    }
+}
