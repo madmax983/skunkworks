@@ -277,10 +277,7 @@ fn compile_genetics_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>
         genes.push(Gene::new(opcode, vec![]));
     } else {
         // Fallback for custom or unknown genetic opcodes
-        genes.push(Gene::new(
-            OpCode::Unknown(op.to_string()),
-            vec![]
-        ));
+        genes.push(Gene::new(OpCode::Unknown(op.to_string()), vec![]));
     }
 
     Ok(genes)
