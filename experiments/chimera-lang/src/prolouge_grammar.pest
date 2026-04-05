@@ -2,19 +2,21 @@ WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
 COMMENT = _{ ("#" ~ (!"\n" ~ ANY)*) }
 
 program = { SOI ~ section* ~ EOI }
-section = { forth_block | raku_block | orca_block | elektra_block | prolog_block }
+section = { forth_block | raku_block | orca_block | elektra_block | prolog_block | genetics_block }
 
 forth_block = { "forth" ~ "{" ~ instruction* ~ "}" }
 raku_block = { "raku" ~ "{" ~ hyper_instruction* ~ "}" }
 orca_block = { "orca" ~ "{" ~ orca_instruction* ~ "}" }
 elektra_block = { "elektra" ~ "{" ~ elektra_instruction* ~ "}" }
 prolog_block = { "prolog" ~ "{" ~ prolog_instruction* ~ "}" }
+genetics_block = { "genetics" ~ "{" ~ genetics_instruction* ~ "}" }
 
 instruction = { string | number | identifier }
 hyper_instruction = { (">>" ~ operator ~ "<<") | string | number | identifier }
 orca_instruction = { identifier ~ number ~ number }
 elektra_instruction = { identifier ~ number ~ number }
 prolog_instruction = { identifier ~ "(" ~ identifier ~ ")" ~ "." }
+genetics_instruction = { identifier ~ identifier ~ identifier }
 
 operator = { "+" | "-" | "*" | "/" }
 identifier = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
