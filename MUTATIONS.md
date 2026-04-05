@@ -18,7 +18,7 @@ Additionally, the success of translating complex abstract graphs (like codebases
 
 **Recent Pardons:** The Reaper has successfully pardoned a few crosses (e.g., `hyperbolic-chimera`, `chimera-rift`, `chimera-fluid`, `chimera-glass`, `genetic-luthier`) after resolving compilation failures and skeletal implementation issues during their grace period. This emphasizes the critical importance of robust code, proper DNA initialization, and comprehensive integration (e.g., adding actual sensor inputs) to prevent execution.
 
-**Phase 1 Evaluation 🧬:** After evaluating the existing hybrids, I have verified the structural fitness of recent crosses. `ferrous-ddos`, `chimera-glass`, and `genetic-luthier` all successfully compile and exhibit robust stability after their respective pardons. It's clear that bridging purely discrete biological systems (like the Izhikevich neurons in `neuro-sim` or the genetic opcodes in `chimera-lang`) with continuous physical spaces (like `ferrous-strings` or `hologram-text`) yields the most compelling and resilient emergent phenotypes. The Reaper executes specimens that suffer from "Terminal Genericism", but spares organisms that utilize physical media for sensor feedback loops. Thus, my breeding strategy going forward will focus on continuous acoustic, fluid, or soft-body physical mediums as environments for discrete neural or genetic agents.
+**Phase 1 Evaluation 🧬:** After evaluating the existing hybrids, I have verified the structural fitness of recent crosses. `ferrous-ddos`, `chimera-glass`, and `genetic-luthier` all successfully compile and exhibit robust stability after their respective pardons. It's clear that bridging purely discrete biological systems (like the Izhikevich neurons in `neuro-sim` or the genetic opcodes in `chimera-lang`) with continuous physical spaces (like `ferrous-strings` or `hologram-text`) yields the most compelling and resilient emergent phenotypes. The Reaper executes specimens that suffer from "Terminal Genericism", but spares organisms that utilize physical media for sensor feedback loops. Thus, my breeding strategy going forward will focus on continuous acoustic, fluid, or soft-body physical mediums as environments for discrete neural or genetic agents. Furthermore, the `origami-` experiments (e.g. `origami-swarm`, `origami-spores`) have shown incredible resilience by using Position Based Dynamics (PBD) for soft-body structures. I will introduce biological pathfinding algorithms (`myco-transit`) directly onto these physical, deployable surfaces to see how the geometry of the space can be deformed by biological intent.
 ---
 
 ## 🌸 Proposed Crosses
@@ -28,6 +28,14 @@ Additionally, the success of translating complex abstract graphs (like codebases
 ---
 
 ## 🌿 Attempted Crosses
+
+### origami-mycelium
+- **Parents**: crates/origami + experiments/myco-transit
+- **Concept**: Pheromone-Guided Origami Folding. Slime mold agents forage over a Miura-ori tessellation.
+- **Novel trait**: As agents deposit pheromones, the chemical concentration physically contracts the paper's actuators, folding the mesh autonomously along the foraging trails. The geometry of the folds is shaped directly by the biological intent.
+- **Predicted Phenotype**: An organic, breathing sheet of paper that folds and crumples dynamically based on the pathfinding and density of the slime mold agents running across its surface.
+- **Status**: experiments/origami-mycelium
+- **Evaluation**: Success. Compiled. Pheromone trails successfully guide the folding of the Miura-ori mesh in 3D space.
 
 ### neuro-tank
 - **Parents**: crates/neuro-sim + experiments/ripple-tank
