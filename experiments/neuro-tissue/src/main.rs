@@ -151,7 +151,13 @@ async fn main() {
 
         // 3. Write Neural state to Physics Constraints (Contraction)
         for c in &mut pbd.constraints {
-            if let Constraint::Distance { p1, p2, rest_length, .. } = c {
+            if let Constraint::Distance {
+                p1,
+                p2,
+                rest_length,
+                ..
+            } = c
+            {
                 let spike1 = brain.is_spiking(*p1);
                 let spike2 = brain.is_spiking(*p2);
 
@@ -170,7 +176,13 @@ async fn main() {
 
         // Draw Constraints
         for c in &pbd.constraints {
-            if let Constraint::Distance { p1, p2, rest_length, .. } = c {
+            if let Constraint::Distance {
+                p1,
+                p2,
+                rest_length,
+                ..
+            } = c
+            {
                 let pos1 = pbd.particles[*p1].pos;
                 let pos2 = pbd.particles[*p2].pos;
 
