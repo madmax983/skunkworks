@@ -16,8 +16,11 @@
 ### [Concentration Level: TERMINAL] - Location: graveyard/chimera-maat
 *The Reaper's judgment is final. Specimen executed. Biomass returned to the void.*
 
-### [TOXIC] - Location: experiments/schrodingers-beat
-- "Condemned specimen `schrodingers-beat` suffers from Skeletal Implementation and Vestigial Organs. Dead code warnings and unread fields in `audio.rs` show decay. You have 24 hours to adapt or perish." - The Reaper ☠️
+### [EVAPORATING] - Location: graveyard/schrodingers-beat
+- "[EVAPORATING] schrodingers-beat executed by The Reaper."
+
+### [CRITICAL MASS] - Location: experiments/ferrous-genesis
+- "[CRITICAL MASS] ferrous-genesis marked for condemnation. 24h grace period begins." - The Reaper ☠️
 
 ### [Concentration Level: TERMINAL] - Location: graveyard/luminous-hologram
 *The Reaper's judgment is final. Ecosystem maladaptation was fatal. The organism returns to the void.*
