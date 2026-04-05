@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **ferrous-genesis**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Skeletal Implementation. Fails to compile due to missing methods `width()` and `height()` on `Platter` struct across `physics.rs` and `main.rs`. Grace period: 24h.
+- **quipu-serializer**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to missing `Add` trait on `Cord` (`cannot add 'Cord' to 'Cord'`). Grace period: 24h.
 
 ## Pardoned
+- **ferrous-genesis**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Skeletal Implementation. Resolved by removing method calls on `.width()` and `.height()` and accessing the properties directly. Vigor demonstrated.
 - **locust-reaper**: Specimen pardoned. Diagnosis: Skeletal Implementation / Swarm Neglect. Resolved by implementing a full Rayon and Macroquad simulation modeling DDoS packets acting as a "Reaper fungus" with functional swarm intelligence and a complete `README.md`. Vigor demonstrated.
 - **chimera-glass**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by initializing `evolution_config` and eliminating critical code rot during its grace period. The organism persists.
 - **genetic-luthier**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Swarm Neglect. Resolved by fixing the missing `evolution_config` and resolving strict clippy warnings during its grace period. Vigor demonstrated.
