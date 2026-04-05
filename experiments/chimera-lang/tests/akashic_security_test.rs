@@ -99,7 +99,8 @@ fn test_akashic_read_limit() {
 
     {
         let mut file = File::create(filename).expect("Failed to create test file");
-        file.write_all(&large_content).expect("Failed to write test file");
+        file.write_all(&large_content)
+            .expect("Failed to write test file");
     }
 
     // Try to load the AkashicRecords
@@ -115,6 +116,10 @@ fn test_akashic_read_limit() {
     );
 
     if let Err(e) = result {
-        assert!(e.contains("too large") || e.contains("exceeds"), "Unexpected error message: {}", e);
+        assert!(
+            e.contains("too large") || e.contains("exceeds"),
+            "Unexpected error message: {}",
+            e
+        );
     }
 }

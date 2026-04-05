@@ -174,7 +174,37 @@ fn preprocess(
     Ok(expanded)
 }
 
-/// Compiles ChimeraScript source code into DNA.
+/// Translates high-level ChimeraScript text into the executable [`Dna`] blueprint required by the Virtual Machine.
+///
+/// We provide this function because writing raw [`Gene`] structs by hand is tedious and error-prone. This compiler
+/// acts as the cellular ribosome, processing includes, resolving macro expansions, and packing instructions into Strands.
+///
+/// # Examples
+///
+/// ```
+/// use chimera_lang::compiler::compile;
+/// use chimera_lang::opcode::OpCode;
+///
+/// // The Hero's Journey: defining a simple script.
+/// let source = r#"
+/// strand main {
+///     5
+///     3
+///     add
+/// }
+/// "#;
+///
+/// let dna = compile(source, None).unwrap();
+/// assert_eq!(dna.helix.strands.len(), 1);
+/// assert_eq!(dna.helix.strands[0].genes[2].op, OpCode::Add);
+/// ```
+///
+/// # Details
+/// - **Includes**: If `base_path` is provided, `#include "filename"` statements will recursively load sibling files.
+/// - **Limits**: To prevent stack overflows and denial of service attacks, include depth is limited to 32, and nesting limits are strictly enforced.
+/// - **Panics**: This function does not panic but returns a `Result::Err` if the syntax is invalid, if path traversal is attempted, or if recursion limits are exceeded.
+///
+/// See [`OpCode`] for the full genetic instruction set.
 pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
     // Phase 1: Preprocessing (Includes)
     let mut visited = HashSet::new();

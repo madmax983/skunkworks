@@ -20,6 +20,34 @@ pub struct PrologueProgram {
     pub alchemy_book: Vec<AlchemyRule>,
 }
 
+/// Transforms the visual representation of a `.pro` file into a structured [`PrologueProgram`].
+///
+/// The Prologue language uses a 2D text grid combined with genetic sequences to define a digital circuit.
+/// This compiler exists to parse that hybrid visual/textual format into a runtime-ready data structure containing both the [`Dna`] and the initial memory grid.
+///
+/// # Examples
+///
+/// ```
+/// use chimera_lang::prologue_compiler::compile;
+///
+/// // A simple configuration containing only genetic instructions.
+/// let source = r#"
+/// dna {
+///     strand main {
+///         5
+///     }
+/// }
+/// "#;
+/// let program = compile(source, None).unwrap();
+/// assert_eq!(program.dna.helix.strands.len(), 1);
+/// ```
+///
+/// # Details
+/// - **The Grid**: Ensure the `grid` block represents a valid 16x16 toroidal space. Elements beyond 16x16 are truncated.
+/// - **Integration**: The compiled `dna` section is merged with custom `definitions` mapped to specific rune characters.
+/// - **Panics**: Returns `Result::Err` rather than panicking if the syntax is invalid or if the internal ChimeraScript fails to compile.
+///
+/// Use this in conjunction with [`crate::compiler::compile`] if loading raw scripts.
 pub fn compile(source: &str, base_path: Option<&Path>) -> Result<PrologueProgram> {
     let mut pairs = PrologueParser::parse(Rule::program, source)?;
 
