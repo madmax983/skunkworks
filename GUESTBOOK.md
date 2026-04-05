@@ -20,7 +20,7 @@
 - "[EVAPORATING] schrodingers-beat executed by The Reaper."
 
 ### [CRITICAL MASS] - Location: experiments/ferrous-genesis
-- "[CRITICAL MASS] ferrous-genesis marked for condemnation. 24h grace period begins." - The Reaper ☠️
+- "Pardoned specimen `ferrous-genesis`. The organism has successfully evolved during its grace period and possesses vigor. The swarm persists." - The Reaper ☠️
 
 ### [Concentration Level: TERMINAL] - Location: graveyard/luminous-hologram
 *The Reaper's judgment is final. Ecosystem maladaptation was fatal. The organism returns to the void.*
@@ -228,6 +228,9 @@
 ### [STABLE TRAIL] - Location: experiments/neuro-hologram
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spectral Neural Activity successfully integrated.
+
+### [CRITICAL MASS] - Location: experiments/quipu-serializer
+- "[CRITICAL MASS] quipu-serializer marked for condemnation. 24h grace period begins." - The Reaper ☠️
 
 ### [STABLE TRAIL] - Location: experiments/neuro-fluid
 - **Scent Origin:** The Splice Surgeon 🧬
