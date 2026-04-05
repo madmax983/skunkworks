@@ -105,38 +105,7 @@ fn compile_forth_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     Ok(genes)
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
 
-    #[test]
-    fn test_genetics_block() {
-        let code = r#"
-genetics {
-    splice dna1 dna2
-    recombine a b
-}
-"#;
-        let dna = compile(code).unwrap();
-        let genes = &dna.helix.strands[0].genes;
-
-        // "splice dna1 dna2" -> Push("dna1"), Push("dna2"), Push(0), Splice
-        assert_eq!(genes[0].op, OpCode::Push);
-        assert_eq!(genes[0].args[0], Nucleotide::String("dna1".to_string()));
-        assert_eq!(genes[1].op, OpCode::Push);
-        assert_eq!(genes[1].args[0], Nucleotide::String("dna2".to_string()));
-        assert_eq!(genes[2].op, OpCode::Push);
-        assert_eq!(genes[2].args[0], Nucleotide::Number(0));
-        assert_eq!(genes[3].op, OpCode::Splice);
-
-        // "recombine a b" -> Push("a"), Push("b"), Recombine
-        assert_eq!(genes[4].op, OpCode::Push);
-        assert_eq!(genes[4].args[0], Nucleotide::String("a".to_string()));
-        assert_eq!(genes[5].op, OpCode::Push);
-        assert_eq!(genes[5].args[0], Nucleotide::String("b".to_string()));
-        assert_eq!(genes[6].op, OpCode::Recombine);
-    }
-}
 
 fn compile_raku_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
@@ -184,6 +153,8 @@ fn compile_raku_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     }
     Ok(genes)
 }
+
+
 
 fn compile_orca_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
@@ -281,4 +252,38 @@ fn compile_genetics_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>
     }
 
     Ok(genes)
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_genetics_block() {
+        let code = r#"
+genetics {
+    splice dna1 dna2
+    recombine a b
+}
+"#;
+        let dna = compile(code).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        // "splice dna1 dna2" -> Push("dna1"), Push("dna2"), Push(0), Splice
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(genes[0].args[0], Nucleotide::String("dna1".to_string()));
+        assert_eq!(genes[1].op, OpCode::Push);
+        assert_eq!(genes[1].args[0], Nucleotide::String("dna2".to_string()));
+        assert_eq!(genes[2].op, OpCode::Push);
+        assert_eq!(genes[2].args[0], Nucleotide::Number(0));
+        assert_eq!(genes[3].op, OpCode::Splice);
+
+        // "recombine a b" -> Push("a"), Push("b"), Recombine
+        assert_eq!(genes[4].op, OpCode::Push);
+        assert_eq!(genes[4].args[0], Nucleotide::String("a".to_string()));
+        assert_eq!(genes[5].op, OpCode::Push);
+        assert_eq!(genes[5].args[0], Nucleotide::String("b".to_string()));
+        assert_eq!(genes[6].op, OpCode::Recombine);
+    }
 }
