@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **schrodingers-beat**: Specimen condemned. Diagnosis: Skeletal Implementation / Vestigial Organs. Generates dead code warnings on unused enum fields in `audio.rs`. Only 60 lines of trivial wrapper code in `main.rs`. Grace period: 24h.
+- **ferrous-genesis**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Skeletal Implementation. Fails to compile due to missing methods `width()` and `height()` on `Platter` struct across `physics.rs` and `main.rs`. Grace period: 24h.
 
 ## Pardoned
 - **locust-reaper**: Specimen pardoned. Diagnosis: Skeletal Implementation / Swarm Neglect. Resolved by implementing a full Rayon and Macroquad simulation modeling DDoS packets acting as a "Reaper fungus" with functional swarm intelligence and a complete `README.md`. Vigor demonstrated.
@@ -30,6 +30,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **schrodingers-beat**: Specimen executed. Diagnosis: Skeletal Implementation / Vestigial Organs. Failed to improve during grace period. Moved to graveyard.
 - **neuro-diffusion**: Specimen executed. Diagnosis: Documentation Void. Elaborate neural morphogenesis hidden behind complete lack of documentation (`README.md` missing). Failed to improve during grace period. Moved to graveyard.
 - **neuro-market**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **echo-cavern**: Specimen executed. Diagnosis: Terminal Compilation Failure / Audio Ecosystem Maladaptation. Failed to initialize AudioModel::new. Failed to improve during grace period. Moved to graveyard.
