@@ -42,6 +42,8 @@ pub struct Button<'a> {
     style: Style,
     icon: Option<String>,
     block: Option<Block<'a>>,
+    is_hovered: bool,
+    is_clicked: bool,
 }
 
 impl<'a> Button<'a> {
@@ -65,7 +67,21 @@ impl<'a> Button<'a> {
                 .add_modifier(Modifier::BOLD),
             icon: None,
             block: None,
+            is_hovered: false,
+            is_clicked: false,
         }
+    }
+
+    /// Sets the hovered state of the button.
+    pub fn hovered(mut self, is_hovered: bool) -> Self {
+        self.is_hovered = is_hovered;
+        self
+    }
+
+    /// Sets the clicked state of the button.
+    pub fn clicked(mut self, is_clicked: bool) -> Self {
+        self.is_clicked = is_clicked;
+        self
     }
 
     /// Sets the visual style of the button explicitly.
@@ -147,11 +163,18 @@ impl<'a> Widget for Button<'a> {
             self.block = Some(Block::default().borders(Borders::ALL));
         }
 
+        let mut final_style = self.style;
+        if self.is_clicked {
+            final_style = final_style.bg(Color::Red).fg(Color::White);
+        } else if self.is_hovered {
+            final_style = final_style.bg(Color::Cyan).fg(Color::Black);
+        }
+
         let block = self
             .block
             .take()
             .unwrap_or_else(|| Block::default().borders(Borders::ALL))
-            .style(self.style);
+            .style(final_style);
 
         // Ensure rendering block doesn't go out of bounds of the current buffer
         let safe_area = area.intersection(buf.area);
