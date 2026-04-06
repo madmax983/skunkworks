@@ -42,3 +42,13 @@ Reduced roughly 50-60 lines of unnecessary boilerplate across 16+ `experiments/c
 - Updated all unit tests to use explicit `checked_*` method calls instead of operator overloads, making fallibility explicit.
 
 **Saved:** ~40 lines of boilerplate trait implementation. Reduced cognitive load by avoiding implicit standard trait behaviors on types where overflow/underflow is a standard domain concern, improving strictness.
+
+## [Reduction]
+**Bloat:** `Stream` enum with 1 variant in `semantic-spy`
+- `experiments/semantic-spy/src/main.rs` contained an `enum Stream { Stdin }` that was unnecessarily passed to `is(_stream: Stream) -> bool`.
+
+**Cut:** Removed the `Stream` enum.
+- Replaced `is(_stream: Stream) -> bool` with `pub fn is_stdin() -> bool` inside `mod atty`.
+- Updated caller `atty::is(atty::Stream::Stdin)` to `atty::is_stdin()`.
+
+**Saved:** 4 lines of boilerplate code / Reduced cognitive load by replacing an overly abstract/generic enum with a straightforward function call.

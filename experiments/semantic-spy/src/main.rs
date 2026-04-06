@@ -171,7 +171,7 @@ fn read_snapshot() -> Result<Snapshot> {
         }
     } else {
         // Read from stdin
-        if atty::is(atty::Stream::Stdin) {
+        if atty::is_stdin() {
             eprintln!("Usage: semantic-spy < snapshot.json");
             eprintln!("   or: cargo run --bin orbital-decay -- --semantic | semantic-spy");
             std::process::exit(1);
@@ -320,10 +320,7 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
 }
 
 mod atty {
-    pub enum Stream {
-        Stdin,
-    }
-    pub fn is(_stream: Stream) -> bool {
+    pub fn is_stdin() -> bool {
         use std::io::IsTerminal;
         std::io::stdin().is_terminal()
     }
