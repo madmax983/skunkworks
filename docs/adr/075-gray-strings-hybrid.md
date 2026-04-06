@@ -3,7 +3,7 @@
 Date: 2026-03-26
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The repository continuously explores the intersection of different simulational models to discover emergent "phenotypes." We sought to combine the continuous chemical reaction-diffusion dynamics of `crates/gray-scott` with the discrete acoustic physics and Karplus-Strong synthesis of `experiments/ferrous-strings`. The goal was to establish a bidirectional feedback loop where the continuous substrate affects the discrete agents, and the discrete agents, in turn, act as localized catalysts on the continuous substrate.

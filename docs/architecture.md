@@ -10,9 +10,11 @@ C4Context
 
     Person(user, "Developer / Artist", "Explores creative coding experiments.")
     System(skunkworks, "Skunkworks Sandbox", "Collection of Rust experiments (Git Rhythm, Literary Boids, etc.)")
+    System(storage, "Storage", "Decoupled persistence logic.")
     System_Ext(git_repo, "Target Git Repository", "Any local git repository to be analyzed.")
 
     Rel(user, skunkworks, "Runs & Modifies", "Cargo CLI")
+    Rel(skunkworks, storage, "Saves Data", "Trait Bound")
     Rel(skunkworks, git_repo, "Reads History", "libgit2")
 ```
 
