@@ -1,9 +1,0 @@
-config { mode: Orca }
-grid {
-"🤖" "~" "~" "~"
-"~"  "?" "." "."
-"."  "." "." "."
-"."  "." "." "."
-}
-definitions { }
-dna { strand main { "jump(0)" } }
