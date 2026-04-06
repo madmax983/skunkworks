@@ -55,3 +55,7 @@
 ## 2025-05-18 - The Black Box of Submodules
 **Confusion:** Inner `pub mod` definitions across the `chimera-lang` crate (like `vm/ops/mod.rs` and `tui/views/mod.rs`) lacked top-level context, making them "Black Boxes" when users view their docs directly.
 **Clarification:** Added `//!` module-level documentation to crucial inner public modules explaining *what* they represent at a high level (e.g. routing inputs or categorizing renderers) so they independently tell their story before a user dives into structs.
+
+## 2025-05-24 - The Phantom Persistence
+**Confusion:** The `AkashicRecords` struct in `experiments/chimera-lang/src/vm/akashic.rs` was a "Black Box" API. Users could not tell how global state was persisted across VM restarts or how `Karma` and `Memories` were stored because there were no module-level descriptions or executable examples for its loading/saving mechanisms.
+**Clarification:** Added `//!` module-level documentation explaining the conceptual role of the Akashic Records (persistent key-value store, memories, and karma) alongside the `.chimera_akashic.json` serialization. Populated `AkashicRecords` and its core methods (`new`, `load_from`, `save`) with `/// # Examples` executable doctests demonstrating safe initialization and disk interaction.
