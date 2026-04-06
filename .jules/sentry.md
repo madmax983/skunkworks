@@ -1,3 +1,7 @@
 **[vec4 coverage]**
 **Learning:** `cargo tarpaulin` can truncate output making it difficult to find missing lines. By exporting to XML and parsing `cobertura.xml`, you can precisely find missed coverage lines. Infinite overflows inside generic math functions (like `project_to_3d` returning Infinity/NaN limits) might go undetected in standard tests unless intentionally provoked using extreme constants like `f32::MAX`.
 **Action:** Use Python script parsing of XML coverage data when analyzing large files with missing branches. Always include `f32::MAX`/`f32::NAN` boundary tests for math utilities.
+
+**[gray-scott laplacian coverage]**
+**Learning:** `cargo tarpaulin` might consistently report lines within `#[inline(always)]` nested loops (like 3x3 convolution kernels) as uncovered due to LLVM optimizations, especially lines containing `rem_euclid` boundary arithmetic or branching logic (`if/else if/else`), even when tests definitively exercise those branches.
+**Action:** When `#[inline(always)]` prevents `tarpaulin` from registering hit lines, write robust mathematical boundary tests (e.g. testing index `0, 0` and max boundary) to prove correctness rather than arbitrarily removing the `inline` compiler hint which may negatively affect performance in mathematical code.

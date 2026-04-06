@@ -452,4 +452,66 @@ mod tests {
         gs.update(0.05, 0.06, 1.0);
         assert_eq!(gs.u.len(), 0);
     }
+
+    #[test]
+    fn test_compute_laplacian() {
+        let w = 3;
+        let h = 3;
+        let mut u = vec![0.0; w * h];
+        let mut v = vec![0.0; w * h];
+
+        // Setup a gradient to test laplacian values
+        // 1 2 3
+        // 4 5 6
+        // 7 8 9
+        for i in 0..9 {
+            u[i] = (i + 1) as f32;
+            v[i] = (i + 1) as f32; // same for v for simplicity
+        }
+
+        // Test center (1, 1) - index 4
+        // Center value is 5.0
+        // Surrounding sum with weights:
+        // 1*0.05 + 2*0.2 + 3*0.05 +
+        // 4*0.2  - 5*1.0 + 6*0.2 +
+        // 7*0.05 + 8*0.2 + 9*0.05
+        // = 0.05 + 0.4 + 0.15 + 0.8 - 5.0 + 1.2 + 0.35 + 1.6 + 0.45
+        // Wait, calculating exactly isn't strictly necessary, we just ensure it runs and isn't NaN
+        let (cur_u, cur_v, lap_u, lap_v) = GrayScott::compute_laplacian(1, 1, w, h, &u, &v);
+        assert_eq!(cur_u, 5.0);
+        assert_eq!(cur_v, 5.0);
+
+        // Since it's a linear gradient, the laplacian of a linear gradient is 0.
+        // Let's check:
+        // sum = 0.05(1+3+7+9) + 0.2(2+4+6+8) - 1.0*5
+        // = 0.05(20) + 0.2(20) - 5
+        // = 1 + 4 - 5 = 0.0
+        assert!(lap_u.abs() < 1e-6);
+        assert!(lap_v.abs() < 1e-6);
+
+        // Test boundary (0, 0)
+        // Wraps around to use rightmost and bottommost elements
+        // Neighbors for (0,0):
+        // (-1,-1)->(2,2)=9, (0,-1)->(0,2)=7, (1,-1)->(1,2)=8
+        // (-1,0)->(2,0)=3, (0,0)=1, (1,0)=2
+        // (-1,1)->(2,1)=6, (0,1)=4, (1,1)=5
+        let (cur_u_0, cur_v_0, lap_u_0, lap_v_0) = GrayScott::compute_laplacian(0, 0, w, h, &u, &v);
+        assert_eq!(cur_u_0, 1.0);
+        assert_eq!(cur_v_0, 1.0);
+        // sum = 0.05*(9+8+6+5) + 0.2*(7+3+2+4) - 1.0*1
+        // = 0.05*(28) + 0.2*(16) - 1.0
+        // = 1.4 + 3.2 - 1.0 = 3.6
+        assert!((lap_u_0 - 3.6).abs() < 1e-6);
+        assert!((lap_v_0 - 3.6).abs() < 1e-6);
+
+        // Test boundary (2, 2)
+        // Wraps around to use top and left elements
+        // Center is 9
+        let (cur_u_2, cur_v_2, lap_u_2, lap_v_2) = GrayScott::compute_laplacian(2, 2, w, h, &u, &v);
+        assert_eq!(cur_u_2, 9.0);
+        assert_eq!(cur_v_2, 9.0);
+        // Since it's symmetric to (0,0) across the 5 center, it should be -3.6
+        assert!((lap_u_2 - -3.6).abs() < 1e-6);
+        assert!((lap_v_2 - -3.6).abs() < 1e-6);
+    }
 }
