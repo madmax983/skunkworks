@@ -1,3 +1,18 @@
+//! The Akashic Records system.
+//!
+//! The `AkashicRecords` act as the persistent, global memory of the `ChimeraVM`.
+//! While normal VM memory (like the logic grid or genome) is ephemeral and resets
+//! between simulation lifecycles, the Akashic Records are saved to disk (`.chimera_akashic.json`)
+//! and endure across executions.
+//!
+//! It provides three core services:
+//! - **Storage (`storage`)**: A persistent key-value store for saving strings, integers, and states.
+//! - **Memories (`memories`)**: Full VM state snapshots (`Spore`) that can be saved and reloaded.
+//! - **Karma (`karma`)**: A meta-currency earned by positive grid actions, used to trigger `Miracle`s.
+//!
+//! If the system detects tampering or invalid JSON, it protects the simulation by marking
+//! the records as `corrupted`, freezing further disk writes until manually intervened.
+
 #[cfg(feature = "nova")]
 use super::nova_chronos::Spore;
 #[cfg(feature = "nova")]
@@ -41,13 +56,34 @@ fn is_test_env() -> bool {
 
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents the persistent state of the virtual machine.
+///
+/// This struct holds the data that survives across multiple executions of the `ChimeraVM`.
+///
+/// # Examples
+/// ```rust
+/// # fn main() -> Result<(), String> {
+/// # use chimera_lang::vm::AkashicRecords;
+/// # use chimera_lang::vm::Value;
+/// let mut records = AkashicRecords::new();
+/// records.storage.insert("Knowledge".to_string(), Value::Int(42));
+/// records.karma += 100;
+/// // records.save()?; // Save to disk
+/// # Ok(())
+/// # }
+/// ```
 pub struct AkashicRecords {
+    /// Arbitrary key-value persistent storage.
     pub storage: HashMap<String, Value>,
+    /// Meta-currency used to invoke `Miracle` operations.
     pub karma: i64,
+    /// Snapshots of VM states saved using `OpCode::AkashicSave`.
     #[serde(default)]
     pub memories: HashMap<String, Spore>,
+    /// Flags if the JSON file on disk could not be parsed safely.
     #[serde(skip)]
     pub corrupted: bool,
+    /// The physical path where this record saves its JSON output.
     #[serde(skip)]
     pub file_path: String,
 }
@@ -124,6 +160,17 @@ impl Default for AkashicRecords {
 }
 
 impl AkashicRecords {
+    /// Attempts to load the existing records from disk, or creates a new empty record
+    /// if the file does not exist.
+    ///
+    /// # Examples
+    /// ```rust
+    /// # fn main() {
+    /// # use chimera_lang::vm::AkashicRecords;
+    /// let records = AkashicRecords::new();
+    /// println!("Current Karma: {}", records.karma);
+    /// # }
+    /// ```
     pub fn new() -> Self {
         Self::load().unwrap_or_else(|_| Self {
             storage: HashMap::new(),
@@ -153,6 +200,24 @@ impl AkashicRecords {
         Self::load_from(&file_path)
     }
 
+    /// Directly loads an Akashic Record from a specified JSON file path.
+    ///
+    /// # Panics
+    /// Will not panic, but returns an `Err(String)` if the file exceeds the `MAX_AKASHIC_SIZE`
+    /// or if the JSON is malformed.
+    ///
+    /// # Examples
+    /// ```rust
+    /// # fn main() -> Result<(), String> {
+    /// # use chimera_lang::vm::AkashicRecords;
+    /// // Attempt to load a custom save file
+    /// let result = AkashicRecords::load_from("my_save.json");
+    /// if let Ok(records) = result {
+    ///     println!("Loaded {}", records.storage.len());
+    /// }
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn load_from(file_path: &str) -> Result<Self, String> {
         match std::fs::File::open(file_path) {
             Ok(file) => {
@@ -192,6 +257,23 @@ impl AkashicRecords {
         }
     }
 
+    /// Serializes the current state of the records and writes it to disk.
+    ///
+    /// The save operation uses an atomic write pattern (writing to a `.tmp` file
+    /// and then renaming it) to prevent data corruption during crashes.
+    ///
+    /// # Examples
+    /// ```rust
+    /// # fn main() -> Result<(), String> {
+    /// # use chimera_lang::vm::AkashicRecords;
+    /// # use chimera_lang::vm::Value;
+    /// let mut records = AkashicRecords::new();
+    /// records.storage.insert("Highscore".to_string(), Value::Int(9999));
+    /// // Save immediately returns Ok(()) if successful
+    /// // records.save()?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn save(&self) -> Result<(), String> {
         if self.corrupted {
             return Err(
