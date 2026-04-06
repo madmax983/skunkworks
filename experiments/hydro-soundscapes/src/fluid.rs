@@ -5,8 +5,14 @@ pub struct FluidSim {
     pub width: usize,
     pub height: usize,
     pub temperature: Vec<f32>,
+    /// Double buffer for temperature to avoid allocations during diffuse_heat and apply_buoyancy
+    pub temperature_buf: Vec<f32>,
     pub chem_a: Vec<f32>, // U (Substrate)
+    /// Double buffer for chem_a to avoid allocations during update
+    pub chem_a_buf: Vec<f32>,
     pub chem_b: Vec<f32>, // V (Activator/Boid Pheromone)
+    /// Double buffer for chem_b to avoid allocations during update
+    pub chem_b_buf: Vec<f32>,
 }
 
 impl FluidSim {
@@ -15,8 +21,11 @@ impl FluidSim {
             width,
             height,
             temperature: vec![0.0; width * height],
+            temperature_buf: vec![0.0; width * height],
             chem_a: vec![1.0; width * height], // Start with full substrate
+            chem_a_buf: vec![1.0; width * height],
             chem_b: vec![0.0; width * height],
+            chem_b_buf: vec![0.0; width * height],
         }
     }
 
@@ -71,8 +80,8 @@ impl FluidSim {
         let feed = 0.055;
         let kill = 0.062;
 
-        let mut next_a = self.chem_a.clone();
-        let mut next_b = self.chem_b.clone();
+        self.chem_a_buf.copy_from_slice(&self.chem_a);
+        self.chem_b_buf.copy_from_slice(&self.chem_b);
 
         for y in 1..self.height - 1 {
             for x in 1..self.width - 1 {
@@ -120,13 +129,13 @@ impl FluidSim {
                 let du = da * sum_a - reaction + feed * (1.0 - u);
                 let dv = db * sum_b + reaction - (feed + kill) * v;
 
-                next_a[idx] = (u + du * dt * 10.0).clamp(0.0, 1.0); // Speed up
-                next_b[idx] = (v + dv * dt * 10.0).clamp(0.0, 1.0);
+                self.chem_a_buf[idx] = (u + du * dt * 10.0).clamp(0.0, 1.0); // Speed up
+                self.chem_b_buf[idx] = (v + dv * dt * 10.0).clamp(0.0, 1.0);
             }
         }
 
-        self.chem_a = next_a;
-        self.chem_b = next_b;
+        std::mem::swap(&mut self.chem_a, &mut self.chem_a_buf);
+        std::mem::swap(&mut self.chem_b, &mut self.chem_b_buf);
 
         // Cooling
         for t in self.temperature.iter_mut() {
@@ -135,7 +144,7 @@ impl FluidSim {
     }
 
     fn diffuse_heat(&mut self, grid: &Grid, _dt: f32) {
-        let mut new_temp = self.temperature.clone();
+        self.temperature_buf.copy_from_slice(&self.temperature);
 
         for y in 1..self.height - 1 {
             for x in 1..self.width - 1 {
@@ -164,14 +173,14 @@ impl FluidSim {
                     }
                 }
 
-                new_temp[idx] = sum / count;
+                self.temperature_buf[idx] = sum / count;
             }
         }
-        self.temperature = new_temp;
+        std::mem::swap(&mut self.temperature, &mut self.temperature_buf);
     }
 
     fn apply_buoyancy(&mut self, _dt: f32) {
-        let mut new_temp = self.temperature.clone();
+        self.temperature_buf.copy_from_slice(&self.temperature);
         for y in 1..self.height {
             for x in 0..self.width {
                 let idx = y * self.width + x;
@@ -180,12 +189,31 @@ impl FluidSim {
                 if self.temperature[idx] > 0.01 {
                     let amount = self.temperature[idx] * 0.1;
                     if y > 0 {
-                        new_temp[up_idx] += amount;
-                        new_temp[idx] -= amount;
+                        self.temperature_buf[up_idx] += amount;
+                        self.temperature_buf[idx] -= amount;
                     }
                 }
             }
         }
-        self.temperature = new_temp;
+        std::mem::swap(&mut self.temperature, &mut self.temperature_buf);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_buoyancy() {
+        let mut fluid = FluidSim::new(3, 3);
+        // Middle cell
+        fluid.temperature[4] = 1.0;
+
+        fluid.apply_buoyancy(0.1);
+
+        // Heat should move up
+        let amount = 1.0 * 0.1;
+        assert_eq!(fluid.temperature[1], amount); // up
+        assert_eq!(fluid.temperature[4], 1.0 - amount); // original
     }
 }
