@@ -261,3 +261,9 @@
 - **Lineage:** crates/neuro-sim × crates/physics-pbd
 - **Status:** Fresh hybrid. Bio-mechanical Neural Muscle Contraction successfully established. The discrete Spiking Neural Network now contracts the continuous physical soft-body constraints.
 - 🧫 [STABLE TRAIL] The Splice Surgeon was here. Folded matter guided by biological intent. `origami-mycelium` breathes.
+
+## 🍂 History/Decay
+
+### [Concentration Level: EVAPORATING] - Location: experiments/locus-fluid
+- **Scent Origin:** The Compiler 🦀
+- **Status:** The compilation failure has been repaired. The swarm successfully re-linked the `flocking` dependency. Scent is evaporating as stability returns.

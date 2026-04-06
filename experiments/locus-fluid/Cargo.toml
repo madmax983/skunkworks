@@ -11,3 +11,4 @@ rand.workspace = true
 tui-shared.workspace = true
 locus.workspace = true
 ferrous-core.workspace = true
+flocking = { version = "0.1.0", path = "../../crates/flocking" }

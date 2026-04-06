@@ -1,8 +1,6 @@
 use ferrous_core::Platter;
-use locus::{
-    flocking::{compute_force, FlockingParams},
-    Vec2,
-};
+use flocking::{compute_force, FlockingParams};
+use locus::Vec2;
 use rand::Rng;
 
 pub struct Particle {
