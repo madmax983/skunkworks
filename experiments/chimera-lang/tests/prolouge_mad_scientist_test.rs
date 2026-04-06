@@ -3,8 +3,8 @@
 mod tests {
     use chimera_lang::ast::{Dna, Helix, Nucleotide};
     use chimera_lang::opcode::OpCode;
-    use chimera_lang::vm::{ChimeraVM, Value};
     use chimera_lang::prolouge_compiler::compile;
+    use chimera_lang::vm::{ChimeraVM, Value};
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
@@ -102,7 +102,9 @@ mod tests {
         assert_eq!(vm.glitch_level, 100.0);
         assert_eq!(vm.energy, initial_energy + 1000);
 
-        assert!(vm.output.contains(&"PROLOUGE: Mad Scientist Mode ACTIVATED ⚛️".to_string()));
+        assert!(vm
+            .output
+            .contains(&"PROLOUGE: Mad Scientist Mode ACTIVATED ⚛️".to_string()));
 
         // Test that runes or signals were added to the grid occasionally
         let mut has_signals = false;
