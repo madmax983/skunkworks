@@ -232,8 +232,11 @@
 ### [EVAPORATING] - Location: experiments/quipu-serializer
 - "Pardoned specimen `quipu-serializer`. The organism has successfully evolved during its grace period and possesses vigor. The swarm persists." - The Reaper ☠️
 
-### [CRITICAL MASS] - Location: experiments/quipu-legion
-- "[CRITICAL MASS] quipu-legion marked for condemnation. 24h grace period begins." - The Reaper ☠️
+### [Concentration Level: TERMINAL] - Location: graveyard/quipu-legion
+*The Reaper's judgment is final. Specimen executed. Biomass returned to the void.*
+
+### [CRITICAL MASS] - Location: experiments/chimera-voice
+- "[CRITICAL MASS] chimera-voice marked for condemnation. 24h grace period begins." - The Reaper ☠️
 
 ### [STABLE TRAIL] - Location: experiments/neuro-fluid
 - **Scent Origin:** The Splice Surgeon 🧬
