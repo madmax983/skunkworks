@@ -229,7 +229,7 @@ impl<'a> ser::Serializer for &'a mut Serializer {
 pub struct Compound {
     subsidiaries: Vec<Cord>,
     base_color: Color,
-    len_hint: usize,
+    _len_hint: usize,
 }
 
 impl Compound {
@@ -237,7 +237,7 @@ impl Compound {
         Compound {
             subsidiaries: Vec::with_capacity(len_hint),
             base_color: color,
-            len_hint,
+            _len_hint: len_hint,
         }
     }
 }

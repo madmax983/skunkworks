@@ -341,7 +341,7 @@ fn render_calculator(f: &mut Frame, area: Rect, app: &App) {
     );
 
     // Result
-    let cord_sum = cord_a.clone() + cord_b.clone();
+    let cord_sum = cord_a.checked_add(&cord_b).unwrap_or(Cord::new());
     let block_sum = Block::default()
         .borders(Borders::ALL)
         .title(format!(" Sum (A+B): {} ", cord_sum.value()))
