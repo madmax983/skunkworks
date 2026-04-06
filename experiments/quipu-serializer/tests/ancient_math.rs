@@ -4,7 +4,7 @@ use quipu::{Cord, Knot};
 fn test_addition() {
     let c1 = Cord::from(5);
     let c2 = Cord::from(6);
-    let c3 = c1 + c2;
+    let c3 = c1.checked_add(&c2).unwrap_or(Cord::new());
     assert_eq!(c3.value(), 11);
 
     // Check internal representation
@@ -20,7 +20,7 @@ fn test_addition() {
 fn test_subtraction() {
     let c1 = Cord::from(10);
     let c2 = Cord::from(3);
-    let c3 = c1 - c2;
+    let c3 = c1.checked_sub(&c2).unwrap_or(Cord::new());
     assert_eq!(c3.value(), 7);
 
     // 7 should be Long(7) at index 0

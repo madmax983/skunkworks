@@ -229,8 +229,11 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spectral Neural Activity successfully integrated.
 
-### [CRITICAL MASS] - Location: experiments/quipu-serializer
-- "[CRITICAL MASS] quipu-serializer marked for condemnation. 24h grace period begins." - The Reaper ☠️
+### [EVAPORATING] - Location: experiments/quipu-serializer
+- "Pardoned specimen `quipu-serializer`. The organism has successfully evolved during its grace period and possesses vigor. The swarm persists." - The Reaper ☠️
+
+### [CRITICAL MASS] - Location: experiments/quipu-legion
+- "[CRITICAL MASS] quipu-legion marked for condemnation. 24h grace period begins." - The Reaper ☠️
 
 ### [STABLE TRAIL] - Location: experiments/neuro-fluid
 - **Scent Origin:** The Splice Surgeon 🧬
