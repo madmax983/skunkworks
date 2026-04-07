@@ -109,3 +109,23 @@ I attempted to follow the "Getting Started" instructions for `tui-shared` by cre
 *   🤦 **The Confusion:** "Tried to run the `evolution.pro` example from the root `README.md`. Cargo gave me an error about multiple binaries, and when I specified `-p chimera-lang`, it crashed with a parsing error about 'expected strand'."
 *   🕵️ **The Reality:** "Turns out the repository is a massive workspace so a bare `cargo run` doesn't work. Furthermore, the `chimera-lang` binary doesn't seem to know how to parse `.pro` files natively without extra configuration or flags that are completely missing from the README."
 *   💡 **The Fix:** "Update the root README's Quick Start command to specify the exact binary required and any necessary flags or features needed to parse `.pro` files."
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the Hello World Prologue example from the root README."
+**Action:** Run `cargo run -p chimera-lang --features nova -- --input experiments/chimera-lang/examples/mad_scientist.prl`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Errors Galore:** The README tells me "Run the Hello World Prologue example to see the Prologue engine in action", but when I run it, the console is filled with `Error: Unknown OpCode` and `Stack underflow` errors.
+2.  **Path Confusion:** The README has instructions to clone the repo and `cd chimera-lang`, but there is no `chimera-lang` folder at the root. It's inside `experiments/chimera-lang`.
+3.  **Insane Dependency Requirements:** The library usage instructions in `experiments/chimera-lang/README.md` require me to manually add `tui-shared`, `locus`, `resonance-audio`, `hyper-system`, `poincare-disk` using relative local paths just to get it to compile! It tells me to `use chimera_lang::ast::Dna`, but I have to clone 10 random sub-crates just to try out the library.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Getting Started example is broken and DX is terrible
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the Hello World Prologue example (`mad_scientist.prl`) and the console exploded with 'Unknown OpCode' and 'Stack underflow' errors. The README says `cd chimera-lang` but the folder doesn't exist. Finally, to use the library I have to import half of the workspace manually."
+*   🕵️ **The Reality:** "Turns out the Mad Scientist mode injects chaos runes that the VM tries to execute as OpCodes, causing error spam. The repo structure doesn't match the clone instructions, and the library is deeply coupled with random workspace crates instead of keeping them optional or private."
+*   💡 **The Fix:** "Fix `mad_scientist.prl` so it doesn't crash visually for new users, correct the folder path in the root README, and decouple the `chimera-lang` crate from requiring users to manually import 5 different internal UI/physics crates just to run a script."
