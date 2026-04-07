@@ -85,6 +85,16 @@ pub fn compile(source: &str) -> Result<Dna> {
                     genes.extend(compile_genetics_instr(instr)?);
                 }
             }
+            Rule::lisp_block => {
+                // The lisp block has everything between { and } as a single chunk
+                let content = inner_block.as_str();
+                // We strip off the "lisp {" and "}" parts safely by taking the inner span
+                let mut content = content.trim_start_matches("lisp").trim();
+                if content.starts_with('{') && content.ends_with('}') {
+                    content = &content[1..content.len() - 1];
+                }
+                genes.extend(crate::lisp::compile_fragment(content)?);
+            }
             _ => {}
         }
     }

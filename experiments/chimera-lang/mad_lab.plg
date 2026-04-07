@@ -22,3 +22,8 @@ elektra {
 prolog {
     fact(x).
 }
+
+lisp {
+    (+ 10 20)
+    (print "Lisp block evaluated!")
+}
