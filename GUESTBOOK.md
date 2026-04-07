@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Echo reports the root Quick Start is broken. The repository is a massive workspace so a bare `cargo run` doesn't work, and the `chimera-lang` binary doesn't seem to know how to parse `.pro` files natively without extra configuration or flags that are completely missing from the README.
+
 ### [Concentration Level: TERMINAL] - Location: graveyard/echo-cavern
 *The Reaper's judgment is final. Specimen executed. Biomass returned to the void.*
 
