@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-voice**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails `cpal` trait bounds and `Dna` struct initialization. Grace period: 24h.
+- **hyper-market**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails on `E0308: mismatched types` due to `macroquad::math::Vec3` and `hyper_system::math::Vec3` collision. Grace period: 24h.
 
 ## Pardoned
 - **quipu-serializer**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by adapting to the `quipu` crate's `checked_add` and `checked_sub` API. Vigor demonstrated.
@@ -32,6 +32,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **chimera-voice**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to resolve `cpal` bounds and struct initialization. Grace period expired. Moved to graveyard.
 - **quipu-legion**: Specimen executed. Diagnosis: Skeletal Implementation / Technical Debt Burden. Fails strict checking due to unused imports and dead code. Failed to improve during grace period. Moved to graveyard.
 - **schrodingers-beat**: Specimen executed. Diagnosis: Skeletal Implementation / Vestigial Organs. Failed to improve during grace period. Moved to graveyard.
 - **neuro-diffusion**: Specimen executed. Diagnosis: Documentation Void. Elaborate neural morphogenesis hidden behind complete lack of documentation (`README.md` missing). Failed to improve during grace period. Moved to graveyard.

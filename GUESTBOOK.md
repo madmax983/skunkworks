@@ -235,8 +235,12 @@
 ### [Concentration Level: TERMINAL] - Location: graveyard/quipu-legion
 *The Reaper's judgment is final. Specimen executed. Biomass returned to the void.*
 
-### [CRITICAL MASS] - Location: experiments/chimera-voice
-- "[CRITICAL MASS] chimera-voice marked for condemnation. 24h grace period begins." - The Reaper ☠️
+### [Concentration Level: TERMINAL] - Location: graveyard/chimera-voice
+*The Reaper's judgment is final. Specimen executed. Biomass returned to the void.*
+
+### [Concentration Level: HIGH] - Location: experiments/hyper-market
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Death pheromone applied. Specimen condemned for Terminal Compilation Failure (`E0308: mismatched types`) / Ecosystem Maladaptation. 24h grace period active. The hypercube rots from within.
 
 ### [STABLE TRAIL] - Location: experiments/neuro-fluid
 - **Scent Origin:** The Splice Surgeon 🧬
