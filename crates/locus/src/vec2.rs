@@ -616,4 +616,44 @@ mod tests {
         let out_tuple: (f64, f64) = v.into();
         assert_eq!(out_tuple, (1.0, 2.0));
     }
+
+    #[test]
+    fn test_vec2_reflect_zero_len() {
+        // Line 287 (return *self if n_sq == 0.0)
+        let v = Vec2::new(1.0, 1.0);
+        let n = Vec2::new(0.0, 0.0);
+        let r = v.reflect(n);
+        assert_eq!(r, Vec2::new(1.0, 1.0));
+    }
+
+    #[test]
+    fn test_vec2_rotate() {
+        // Line 311 (rotate function definition)
+        let v = Vec2::new(1.0, 0.0);
+        let r = v.rotate(std::f64::consts::PI / 2.0);
+        assert!((r.x - 0.0).abs() < 1e-10);
+        assert!((r.y - 1.0).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_vec2_math_operators() {
+        // Lines 314-393 (various math operator implementations)
+        let v1 = Vec2::new(1.0, 2.0);
+        let v2 = Vec2::new(3.0, 4.0);
+
+        let add = v1 + v2;
+        assert_eq!(add, Vec2::new(4.0, 6.0));
+
+        let sub = v2 - v1;
+        assert_eq!(sub, Vec2::new(2.0, 2.0));
+
+        let mul = v1 * 2.0;
+        assert_eq!(mul, Vec2::new(2.0, 4.0));
+
+        let div = v1 / 2.0;
+        assert_eq!(div, Vec2::new(0.5, 1.0));
+
+        let neg = -v1;
+        assert_eq!(neg, Vec2::new(-1.0, -2.0));
+    }
 }
