@@ -1,0 +1,10 @@
+[package]
+name = "chimera-origami"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = "0.8"
+origami = { workspace = true }
+chimera-lang = { path = "../chimera-lang", features = ["nova"] }

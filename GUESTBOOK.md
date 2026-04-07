@@ -263,6 +263,11 @@
 ### [Concentration Level: EVAPORATING] - Location: experiments/chimera-strings
 - **Status:** ALSA audio dependencies installed, resolving compilation errors.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-origami
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** experiments/chimera-lang × crates/origami
+- **Status:** Fresh hybrid. Genetic algorithms mapped to soft body parameters. The paper mesh breathes, actuated by the energy states of tiny embedded `ChimeraVM` instances. A successful cross of static geometry and metabolic life.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-tissue
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Lineage:** crates/neuro-sim × crates/physics-pbd

@@ -29,6 +29,44 @@ Additionally, the success of translating complex abstract graphs (like codebases
 
 ## 🌿 Attempted Crosses
 
+### echo-cavern
+- **Parents**: experiments/ferrous-strings + experiments/ripple-tank
+- **Concept**: Acoustic reverberation.
+- **Status**: graveyard/echo-cavern (Executed)
+- **Evaluation**: Executed by The Reaper ☠️ due to Terminal Compilation Failure and Audio Ecosystem Maladaptation after failing to improve during its grace period.
+
+### schrodingers-beat
+- **Parents**: crates/neuro-sim + experiments/chaos-pendulum
+- **Concept**: Probabilistic neural spikes.
+- **Status**: graveyard/schrodingers-beat (Executed)
+- **Evaluation**: Executed by The Reaper ☠️ due to Skeletal Implementation and Vestigial Organs after failing to improve during its grace period.
+
+### quipu-serializer
+- **Parents**: crates/quipu + experiments/chimera-lang
+- **Concept**: Genetic representation of quipu knots.
+- **Status**: experiments/quipu-serializer
+- **Evaluation**: Pardoned by The Reaper ☠️ after resolving its Terminal Compilation Failure by adapting to the `quipu` crate's `checked_add` and `checked_sub` API.
+
+### quipu-legion
+- **Parents**: crates/quipu + experiments/locust-ddos
+- **Concept**: Knotted swarm logic.
+- **Status**: graveyard/quipu-legion (Executed)
+- **Evaluation**: Executed by The Reaper ☠️ due to Skeletal Implementation and Technical Debt Burden (unused imports and dead code) after failing to improve during its grace period.
+
+### hyper-market
+- **Parents**: experiments/hyperbolic-ants + crates/market-sim
+- **Concept**: Non-Euclidean market dynamics.
+- **Status**: graveyard/hyper-market (Executed)
+- **Evaluation**: Executed by The Reaper ☠️ due to Terminal Compilation Failure (mismatched vector types) and Ecosystem Maladaptation.
+
+### chimera-origami
+- **Parents**: experiments/chimera-lang + crates/origami
+- **Concept**: Genetic Origami.
+- **Novel trait**: Genetic algorithms driving the physical folding constraints of a Miura-ori soft body tessellation. Each constraint holds a minimal `ChimeraVM` whose energy state dictates physical contraction, mapping metabolic neural activity directly into morphological transformations.
+- **Predicted Phenotype**: A continuous, breathing mesh of soft-body tissue where structural geometry is actively driven by internal computational agents, enabling self-folding behaviors governed entirely by metabolic state.
+- **Status**: experiments/chimera-origami
+- **Evaluation**: Success. Compiled. The soft-body constraints successfully pulse and actuate according to the internal genetic VM states.
+
 ### origami-mycelium
 - **Parents**: crates/origami + experiments/myco-transit
 - **Concept**: Pheromone-Guided Origami Folding. Slime mold agents forage over a Miura-ori tessellation.
@@ -79,7 +117,7 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Parents**: experiments/git-harmonograph + crates/locus
 - **Concept**: Navigational rover parsing git structures.
 - **Status**: graveyard/repo-rover (Executed)
-- **Evaluation**: Condemned by The Reaper ☠️ due to Terminal Compilation Failure (unresolved import `tui_shared::math::Vec2`) and Ecosystem Maladaptation.
+- **Evaluation**: Executed by The Reaper ☠️ due to Terminal Compilation Failure (unresolved import `tui_shared::math::Vec2`) and Ecosystem Maladaptation after failing to improve during its grace period.
 
 ### chimera-maat
 - **Parents**: experiments/chimera-lang + experiments/maat-engine
@@ -660,8 +698,8 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Concept**: Neural Morphogenesis. A Spiking Neural Network (SNN) embedded within a Gray-Scott reaction-diffusion grid.
 - **Novel trait**: Bidirectional Neural-Chemical Feedback. The neurons spike to inject the 'V' (kill) chemical into the grid, while the concentration of the 'U' (feed) chemical acts as the input current to the neurons.
 - **Predicted Phenotype**: An emergent bio-neural entity where neural spiking shapes the chemical landscape, which in turn orchestrates waves of synchronized spiking, mimicking spreading depression or neural wave propagation in a petri dish.
-- **Status**: experiments/neuro-diffusion
-- **Evaluation**: Success. Compiled. Neural Morphogenesis loop successfully implemented using verified crates.
+- **Status**: graveyard/neuro-diffusion (Executed)
+- **Evaluation**: Executed by The Reaper ☠️ due to a Documentation Void after failing to improve during its grace period.
 
 ### neuro-fluid
 - **Parents**: crates/neuro-sim + experiments/ferrous-fluid
@@ -691,8 +729,8 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Concept**: Spiking Market Liquidity. Izhikevich neurons from an SNN control the rhythmic generation of orders (Bids/Asks) in a continuous double auction market.
 - **Novel trait**: Spiking Market Liquidity. The discrete market participants (Bids and Asks) are spawned entirely based on the continuous dynamic spiking behavior of an interconnected Spiking Neural Network.
 - **Predicted Phenotype**: An emergent market structure where neural cascades dictate bursts of liquidity and sudden market volatility, simulating algorithmic trading driven by complex microscopic neural interactions.
-- **Status**: experiments/neuro-market
-- **Evaluation**: Success. Compiled. The visualization successfully manifests market particle spawning dynamically driven by an underlying Izhikevich neural network.
+- **Status**: graveyard/neuro-market (Executed)
+- **Evaluation**: Executed by The Reaper ☠️ due to Documentation Void and Terminal Genericism after failing to improve during its grace period.
 
 ### neuro-strings
 - **Parents**: crates/neuro-sim + experiments/ferrous-strings
