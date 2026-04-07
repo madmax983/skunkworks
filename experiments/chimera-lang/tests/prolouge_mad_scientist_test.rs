@@ -59,6 +59,25 @@ mod tests {
     }
 
     #[test]
+    fn test_prolouge_compiler_lisp() {
+        let source = r#"
+        lisp {
+            (+ 5 3)
+        }
+        "#;
+        let dna = compile(source).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(genes[0].args[0], Nucleotide::Number(5));
+
+        assert_eq!(genes[1].op, OpCode::Push);
+        assert_eq!(genes[1].args[0], Nucleotide::Number(3));
+
+        assert_eq!(genes[2].op, OpCode::Add);
+    }
+
+    #[test]
     fn test_prolouge_compiler_elektra() {
         let source = r#"
         elektra {

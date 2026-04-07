@@ -32,9 +32,10 @@ mod tests {
             gene(OpCode::AkashicWrite, vec![]),
         ];
         let mut vm_write = make_vm(write_genes);
-        while !vm_write.halted && vm_write.ip.0 == 0 && vm_write.ip.1 < 3 {
-            vm_write.step();
-        }
+        // Step enough to push key, push value, and write
+        vm_write.step(); // Push key
+        vm_write.step(); // Push val
+        vm_write.step(); // AkashicWrite
 
         // 2. Read "foo"
         let read_genes = vec![
@@ -42,9 +43,8 @@ mod tests {
             gene(OpCode::AkashicRead, vec![]),
         ];
         let mut vm_read = make_vm(read_genes);
-        while !vm_read.halted && vm_read.ip.0 == 0 && vm_read.ip.1 < 2 {
-            vm_read.step();
-        }
+        vm_read.step(); // Push key
+        vm_read.step(); // AkashicRead
 
         assert_eq!(vm_read.stack.pop(), Some(Value::Int(42)));
     }

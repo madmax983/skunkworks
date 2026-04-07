@@ -2,7 +2,7 @@ WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
 COMMENT = _{ ("#" ~ (!"\n" ~ ANY)*) }
 
 program = { SOI ~ section* ~ EOI }
-section = { forth_block | raku_block | orca_block | elektra_block | prolog_block | genetics_block }
+section = { forth_block | raku_block | orca_block | elektra_block | prolog_block | genetics_block | lisp_block }
 
 forth_block = { "forth" ~ "{" ~ instruction* ~ "}" }
 raku_block = { "raku" ~ "{" ~ hyper_instruction* ~ "}" }
@@ -10,6 +10,7 @@ orca_block = { "orca" ~ "{" ~ orca_instruction* ~ "}" }
 elektra_block = { "elektra" ~ "{" ~ elektra_instruction* ~ "}" }
 prolog_block = { "prolog" ~ "{" ~ prolog_instruction* ~ "}" }
 genetics_block = { "genetics" ~ "{" ~ genetics_instruction* ~ "}" }
+lisp_block = { "lisp" ~ "{" ~ (!"}" ~ ANY)* ~ "}" }
 
 instruction = { string | number | identifier }
 hyper_instruction = { (">>" ~ operator ~ "<<") | string | number | identifier }
