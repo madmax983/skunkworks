@@ -178,6 +178,39 @@ classDiagram
     Experiment ..> AudioFeature : Checks
 ```
 
+### TUI Button State Precedence (crates/tui-shared)
+
+The `Button` widget uses multiple boolean flags to determine its visual appearance. Rendering precedence is strictly enforced.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Default
+
+    Default --> Hovered : is_hovered = true
+    Hovered --> Default : is_hovered = false
+
+    Default --> Clicked : is_clicked = true
+    Hovered --> Clicked : is_clicked = true
+    Clicked --> Default : is_clicked = false
+
+    Default --> Loading : is_loading = true
+    Hovered --> Loading : is_loading = true
+    Clicked --> Loading : is_loading = true
+    Loading --> Default : is_loading = false
+
+    Loading --> Success : is_success = true
+    Default --> Success : is_success = true
+    Success --> Default : is_success = false
+
+    note right of Success
+        Precedence Order:
+        1. Success (Green, '✅')
+        2. Loading (Yellow, '⏳')
+        3. Clicked (Red)
+        4. Hovered (Cyan)
+    end note
+```
+
 ### Ghost Input Replay (crates/tui-shared)
 
 The `tui-shared` crate includes a `ghost` feature for recording and replaying user input sessions, facilitating deterministic testing and demos.
