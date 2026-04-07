@@ -47,23 +47,26 @@ impl Dungeon {
 
     /// Canonicalize path: In a tree structure, stepping back cancels the previous step.
     /// Opposites: 0<->2, 1<->3 (Right<->Left, Up<->Down)
-    pub fn canonicalize_step(mut path: Path, step: usize) -> Path {
+    /// ⚡ This function takes `&[usize]` to avoid cloning the path vector in hot loops.
+    pub fn get_canonical_step(path: &[usize], step: usize) -> Path {
         if let Some(&last) = path.last() {
             let opposite = (step + 2) % 4;
             if last == opposite {
-                path.pop();
-                return path;
+                return path[..path.len() - 1].to_vec();
             }
         }
-        path.push(step);
-        path
+        let mut new_path = Vec::with_capacity(path.len() + 1);
+        new_path.extend_from_slice(path);
+        new_path.push(step);
+        new_path
     }
 
-    pub fn get_tile(&self, path: &Path) -> Ref<'_, Tile> {
+    /// ⚡ Takes `&[usize]` instead of `&Path` to allow seamless lookups without allocations.
+    pub fn get_tile(&self, path: &[usize]) -> Ref<'_, Tile> {
         let mut tiles = self.tiles.borrow_mut();
         if !tiles.contains_key(path) {
             let tile = self.generate_tile(path);
-            tiles.insert(path.clone(), tile);
+            tiles.insert(path.to_vec(), tile);
         }
         // Return Ref. We need to release the borrow_mut first.
         drop(tiles);
@@ -74,14 +77,14 @@ impl Dungeon {
         Ref::map(tiles, |t| t.get(path).unwrap())
     }
 
-    pub fn mark_visited(&self, path: &Path) {
+    pub fn mark_visited(&self, path: &[usize]) {
         let mut tiles = self.tiles.borrow_mut();
         if let Some(tile) = tiles.get_mut(path) {
             tile.visited = true;
         }
     }
 
-    fn generate_tile(&self, path: &Path) -> Tile {
+    fn generate_tile(&self, path: &[usize]) -> Tile {
         // Hash the path + seed to get a deterministic RNG
         let mut hasher = DefaultHasher::new();
         self.seed.hash(&mut hasher);
@@ -116,13 +119,13 @@ mod tests {
     fn test_canonicalize() {
         let path = vec![0, 1];
         // Move opposite to 1 (which is 3)
-        let new_path = Dungeon::canonicalize_step(path.clone(), 3);
+        let new_path = Dungeon::get_canonical_step(&path, 3);
         assert_eq!(new_path, vec![0]);
 
         // Move arbitrary (2) which is opposite to 0? No, 2 is opposite to 0.
         // path is [0, 1]. Last is 1. 2 is not opposite to 1.
         let path2 = vec![0, 1];
-        let new_path2 = Dungeon::canonicalize_step(path2, 2);
+        let new_path2 = Dungeon::get_canonical_step(&path2, 2);
         assert_eq!(new_path2, vec![0, 1, 2]);
     }
 }

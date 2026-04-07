@@ -14,7 +14,7 @@ pub fn draw_dungeon(ctx: &mut Context, game: &Game, view_transform: &Mobius) {
     draw_tile_recursive(
         ctx,
         game,
-        game.get_player().path.clone(),
+        &game.get_player().path,
         *view_transform,
         &game.tiling_consts,
         0,
@@ -25,7 +25,7 @@ pub fn draw_dungeon(ctx: &mut Context, game: &Game, view_transform: &Mobius) {
 fn draw_tile_recursive(
     ctx: &mut Context,
     game: &Game,
-    path: Vec<usize>,
+    path: &[usize],
     transform: Mobius,
     consts: &TilingConsts,
     depth: usize,
@@ -46,7 +46,7 @@ fn draw_tile_recursive(
     }
 
     // 2. Get Tile Data
-    let tile = game.dungeon.get_tile(&path);
+    let tile = game.dungeon.get_tile(path);
     let is_wall = match tile.tile_type {
         TileType::Wall => true,
         TileType::Floor => false,
@@ -143,13 +143,13 @@ fn draw_tile_recursive(
         let step_transform = Mobius::translation(step_a);
         let child_transform = transform.then(&step_transform);
 
-        let next_path = Dungeon::canonicalize_step(path.clone(), i);
+        let next_path = Dungeon::get_canonical_step(path, i);
         let next_from_dir = (i + 2) % 4;
 
         draw_tile_recursive(
             ctx,
             game,
-            next_path,
+            &next_path,
             child_transform,
             consts,
             depth + 1,
