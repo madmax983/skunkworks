@@ -1,4 +1,5 @@
 use locus::Topology;
+use locus::vec4::Vec4;
 use proptest::prelude::*;
 
 proptest! {
@@ -36,5 +37,22 @@ proptest! {
     ) {
         // Specifically hammer Mobius to ensure edge cases are covered
         let _ = Topology::Mobius.normalize(y, x, width, height);
+    }
+}
+
+proptest! {
+    // 👺 Havoc: Prove `length_squared` and `distance_squared` can overflow!
+    #[test]
+    #[should_panic]
+    fn test_havoc_length_squared_overflow(
+        x in (f32::MAX / 2.0)..=f32::MAX,
+        y in (f32::MAX / 2.0)..=f32::MAX,
+        z in (f32::MAX / 2.0)..=f32::MAX,
+        w in (f32::MAX / 2.0)..=f32::MAX,
+    ) {
+        let v = Vec4::new(x, y, z, w);
+        // This will result in an infinite f32, which might not strictly panic unless we assert!
+        let sq = v.length_squared();
+        assert!(sq.is_finite(), "👺 Havoc: Vector length squared overflowed into Infinity!");
     }
 }
