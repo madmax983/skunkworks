@@ -44,6 +44,8 @@ pub struct Button<'a> {
     block: Option<Block<'a>>,
     is_hovered: bool,
     is_clicked: bool,
+    is_loading: bool,
+    is_success: bool,
 }
 
 impl<'a> Button<'a> {
@@ -69,6 +71,8 @@ impl<'a> Button<'a> {
             block: None,
             is_hovered: false,
             is_clicked: false,
+            is_loading: false,
+            is_success: false,
         }
     }
 
@@ -81,6 +85,18 @@ impl<'a> Button<'a> {
     /// Sets the clicked state of the button.
     pub fn clicked(mut self, is_clicked: bool) -> Self {
         self.is_clicked = is_clicked;
+        self
+    }
+
+    /// Sets the loading state of the button.
+    pub fn loading(mut self, is_loading: bool) -> Self {
+        self.is_loading = is_loading;
+        self
+    }
+
+    /// Sets the success state of the button.
+    pub fn success(mut self, is_success: bool) -> Self {
+        self.is_success = is_success;
         self
     }
 
@@ -164,7 +180,14 @@ impl<'a> Widget for Button<'a> {
         }
 
         let mut final_style = self.style;
-        if self.is_clicked {
+
+        if self.is_success {
+            final_style = final_style.bg(Color::Green).fg(Color::Black);
+            self.icon = Some("✅".to_string());
+        } else if self.is_loading {
+            final_style = final_style.bg(Color::Yellow).fg(Color::Black);
+            self.icon = Some("⏳".to_string());
+        } else if self.is_clicked {
             final_style = final_style.bg(Color::Red).fg(Color::White);
         } else if self.is_hovered {
             final_style = final_style.bg(Color::Cyan).fg(Color::Black);
@@ -303,5 +326,55 @@ mod tests {
         assert_eq!(cell.symbol(), "C");
         let cell = &buffer[(1, 0)];
         assert_eq!(cell.symbol(), "u");
+    }
+
+    #[test]
+    fn test_button_loading_state() {
+        let button = Button::new("Sync").loading(true);
+
+        let area = Rect::new(0, 0, 20, 3);
+        let mut buffer = Buffer::empty(area);
+
+        button.render(area, &mut buffer);
+
+        // Check border style (Yellow bg, Black fg)
+        let cell = &buffer[(0, 0)];
+        assert_eq!(cell.fg, Color::Black);
+        assert_eq!(cell.bg, Color::Yellow);
+
+        // Find the icon by iterating over the row
+        let mut found_icon = false;
+        for x in 1..19 {
+            if buffer[(x, 1)].symbol() == "⏳" {
+                found_icon = true;
+                break;
+            }
+        }
+        assert!(found_icon, "Expected to find loading icon '⏳' in rendered buffer");
+    }
+
+    #[test]
+    fn test_button_success_state() {
+        let button = Button::new("Done").success(true);
+
+        let area = Rect::new(0, 0, 20, 3);
+        let mut buffer = Buffer::empty(area);
+
+        button.render(area, &mut buffer);
+
+        // Check border style (Green bg, Black fg)
+        let cell = &buffer[(0, 0)];
+        assert_eq!(cell.fg, Color::Black);
+        assert_eq!(cell.bg, Color::Green);
+
+        // Find the icon by iterating over the row
+        let mut found_icon = false;
+        for x in 1..19 {
+            if buffer[(x, 1)].symbol() == "✅" {
+                found_icon = true;
+                break;
+            }
+        }
+        assert!(found_icon, "Expected to find success icon '✅' in rendered buffer");
     }
 }
