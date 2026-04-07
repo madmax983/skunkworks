@@ -273,6 +273,7 @@
 - **Lineage:** crates/neuro-sim × crates/physics-pbd
 - **Status:** Fresh hybrid. Bio-mechanical Neural Muscle Contraction successfully established. The discrete Spiking Neural Network now contracts the continuous physical soft-body constraints.
 - 🧫 [STABLE TRAIL] The Splice Surgeon was here. Folded matter guided by biological intent. `origami-mycelium` breathes.
+- 🧫 [CRITICAL MASS] The Splice Surgeon was here. The Miura-ori mesh was static, mathematical. The Gray-Scott grid was dynamic, chaotic. Fusing them created an entity that breathes. As the Turing patterns spread across the chemical substrate, the constraints elongate. The paper folds and writhes, actuated entirely by the spreading stain of its own virtual metabolism. Phenomenal.
 
 ## 🍂 History/Decay
 

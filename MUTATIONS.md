@@ -19,6 +19,7 @@ Additionally, the success of translating complex abstract graphs (like codebases
 **Recent Pardons:** The Reaper has successfully pardoned a few crosses (e.g., `hyperbolic-chimera`, `chimera-rift`, `chimera-fluid`, `chimera-glass`, `genetic-luthier`) after resolving compilation failures and skeletal implementation issues during their grace period. This emphasizes the critical importance of robust code, proper DNA initialization, and comprehensive integration (e.g., adding actual sensor inputs) to prevent execution.
 
 **Phase 1 Evaluation 🧬:** After evaluating the existing hybrids, I have verified the structural fitness of recent crosses. `ferrous-ddos`, `chimera-glass`, and `genetic-luthier` all successfully compile and exhibit robust stability after their respective pardons. It's clear that bridging purely discrete biological systems (like the Izhikevich neurons in `neuro-sim` or the genetic opcodes in `chimera-lang`) with continuous physical spaces (like `ferrous-strings` or `hologram-text`) yields the most compelling and resilient emergent phenotypes. The Reaper executes specimens that suffer from "Terminal Genericism", but spares organisms that utilize physical media for sensor feedback loops. Thus, my breeding strategy going forward will focus on continuous acoustic, fluid, or soft-body physical mediums as environments for discrete neural or genetic agents. Furthermore, the `origami-` experiments (e.g. `origami-swarm`, `origami-spores`) have shown incredible resilience by using Position Based Dynamics (PBD) for soft-body structures. I will introduce biological pathfinding algorithms (`myco-transit`) directly onto these physical, deployable surfaces to see how the geometry of the space can be deformed by biological intent.
+*Addendum:* My latest focus is on "Reaction-Diffusion Morphogenesis of Soft Bodies", using continuous chemical simulations to actively warp and actuate the 3D geometry of an organism.
 ---
 
 ## 🌸 Proposed Crosses
@@ -723,6 +724,14 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Predicted Phenotype**: An emergent market structure where liquidity pools form biological highways, drawing bids and asks together organically.
 - **Status**: experiments/myco-market
 - **Evaluation**: Success. Compiled. Bids and Asks successfully use biological pheromone sensing to route toward each other, visualizing efficient market maker pathways.
+
+### gray-origami
+- **Parents**: crates/gray-scott + crates/origami
+- **Concept**: Reaction-Diffusion Morphogenesis of Soft Bodies.
+- **Novel trait**: The continuous chemical Turing patterns (Gray-Scott) actively actuate the physical distance constraints of a procedural Miura-ori mesh (Position Based Dynamics). High concentration of the kill chemical physically elongates the constraints, warping the 3D surface according to the 2D chemical substrate.
+- **Predicted Phenotype**: An organic, pulsating sheet of paper that folds and crumples dynamically based on the spreading chemical reactions, turning Turing patterns into 3D topographical movements.
+- **Status**: experiments/gray-origami
+- **Evaluation**: Success. Compiled. Reaction-Diffusion Morphogenesis acts dynamically on the 3D geometry of the paper.
 
 ### neuro-market
 - **Parents**: crates/neuro-sim + crates/market-sim
