@@ -54,12 +54,13 @@ impl Game {
     }
 
     pub fn update_enemies(&mut self) {
-        let player_path = self.get_player().path.clone();
-        let player_offset = self.get_player().offset;
-        let player_id = self.player_id;
+        let (player_path, player_offset, player_id) = {
+            let p = self.get_player();
+            (p.path.clone(), p.offset, p.id)
+        };
 
         // Collect updates to avoid borrowing self while iterating
-        let mut updates: Vec<(usize, Point, Vec<usize>)> = Vec::new();
+        let mut updates: Vec<(usize, Point)> = Vec::new();
         let mut attacks: Vec<(usize, usize)> = Vec::new(); // attacker, victim
 
         for entity in &self.entities {
@@ -99,11 +100,11 @@ impl Game {
             let step = direction * move_dist;
 
             let new_pos_local = Mobius::translation(entity.offset).apply(step);
-            updates.push((entity.id, new_pos_local, entity.path.clone()));
+            updates.push((entity.id, new_pos_local));
         }
 
         // Apply updates
-        for (id, new_pos, current_path) in updates {
+        for (id, new_pos) in updates {
             let mut best_neighbor = None;
             let mut best_dist_sq = new_pos.norm_sqr();
 
@@ -119,8 +120,8 @@ impl Game {
             }
 
             if let Some((idx, neighbor_pos)) = best_neighbor {
-                let next_path = Dungeon::canonicalize_step(current_path.clone(), idx);
                 if let Some(e) = self.entities.iter_mut().find(|e| e.id == id) {
+                    let next_path = Dungeon::get_canonical_step(&e.path, idx);
                     e.path = next_path;
                     e.offset = neighbor_pos;
                 }
@@ -158,9 +159,9 @@ impl Game {
             return;
         }
 
-        let (current_path, current_offset) = {
+        let current_offset = {
             let player = self.get_player();
-            (player.path.clone(), player.offset)
+            player.offset
         };
 
         let candidate_offset = mobius_add(current_offset, delta);
@@ -181,7 +182,10 @@ impl Game {
         }
 
         if let Some((idx, new_pos)) = best_neighbor {
-            let next_path = Dungeon::canonicalize_step(current_path.clone(), idx);
+            let next_path = {
+                let player = self.get_player();
+                Dungeon::get_canonical_step(&player.path, idx)
+            };
 
             let (is_wall, tile_seed, tile_type) = {
                 let tile = self.dungeon.get_tile(&next_path);
