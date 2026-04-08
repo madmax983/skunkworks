@@ -95,6 +95,25 @@ pub fn compile(source: &str) -> Result<Dna> {
                 }
                 genes.extend(crate::lisp::compile_fragment(content)?);
             }
+            Rule::brainfuck_block => {
+                let content = inner_block.as_str();
+                let mut content = content.trim_start_matches("brainfuck").trim();
+                if content.starts_with('{') && content.ends_with('}') {
+                    content = &content[1..content.len() - 1];
+                }
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content.trim().to_string())]));
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String("".to_string())])); // Empty input
+                genes.push(Gene::new(OpCode::Brainfuck, vec![]));
+            }
+            Rule::tui_block => {
+                let content = inner_block.as_str();
+                let mut content = content.trim_start_matches("tui").trim();
+                if content.starts_with('{') && content.ends_with('}') {
+                    content = &content[1..content.len() - 1];
+                }
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content.trim().to_string())]));
+                genes.push(Gene::new(OpCode::TuiDraw, vec![]));
+            }
             _ => {}
         }
     }

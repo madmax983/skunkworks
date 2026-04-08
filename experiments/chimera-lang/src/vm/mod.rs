@@ -3002,6 +3002,7 @@ impl ChimeraVM {
             | OpCode::Transport
             | OpCode::SporeCloud
             | OpCode::Brainfuck
+            | OpCode::TuiDraw
             | OpCode::Irradiate
             | OpCode::SenseMutagen
             | OpCode::Devour

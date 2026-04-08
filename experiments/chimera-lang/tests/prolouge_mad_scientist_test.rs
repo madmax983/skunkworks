@@ -15,6 +15,30 @@ mod tests {
     }
 
     #[test]
+    fn test_prolouge_compiler_brainfuck_and_tui() {
+        let source = r#"
+        brainfuck {
+            +++[>+++<-]>
+        }
+        tui {
+            "DRAW RECT"
+        }
+        "#;
+        let dna = compile(source).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(genes[0].args[0], Nucleotide::String("+++[>+++<-]>".to_string()));
+        assert_eq!(genes[1].op, OpCode::Push);
+        assert_eq!(genes[1].args[0], Nucleotide::String("".to_string()));
+        assert_eq!(genes[2].op, OpCode::Brainfuck);
+
+        assert_eq!(genes[3].op, OpCode::Push);
+        assert_eq!(genes[3].args[0], Nucleotide::String("\"DRAW RECT\"".to_string()));
+        assert_eq!(genes[4].op, OpCode::TuiDraw);
+    }
+
+    #[test]
     fn test_prolouge_compiler_forth() {
         let source = r#"
         forth {
