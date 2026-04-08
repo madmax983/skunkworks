@@ -245,32 +245,19 @@ pub(crate) fn handle_enter(
                                         }
                                     }
                                 }
-                                #[cfg(not(any(feature = "nova", feature = "silicon")))]
                                 ViewMode::Grid => {
                                     apply_grid_edit(vm, app_state);
                                 }
-                                #[cfg(all(feature = "nova", not(feature = "silicon")))]
-                                ViewMode::Grid
-                                | ViewMode::Chronos
+                                #[cfg(feature = "nova")]
+                                ViewMode::Chronos
                                 | ViewMode::Orca
                                 | ViewMode::Hydra
                                 | ViewMode::Prologue
                                 | ViewMode::Reactor => {
                                     apply_grid_edit(vm, app_state);
                                 }
-                                #[cfg(all(feature = "silicon", not(feature = "nova")))]
-                                ViewMode::Grid
-                                | ViewMode::Foundry => {
-                                    apply_grid_edit(vm, app_state);
-                                }
-                                #[cfg(all(feature = "nova", feature = "silicon"))]
-                                ViewMode::Grid
-                                | ViewMode::Chronos
-                                | ViewMode::Orca
-                                | ViewMode::Hydra
-                                | ViewMode::Prologue
-                                | ViewMode::Reactor
-                                | ViewMode::Foundry => {
+                                #[cfg(feature = "silicon")]
+                                ViewMode::Foundry => {
                                     apply_grid_edit(vm, app_state);
                                 }
                                 #[cfg(feature = "nova")]
@@ -514,11 +501,6 @@ pub(crate) fn handle_enter(
 
 
 
-
-                                #[cfg(feature = "nova")]
-                                ViewMode::Babel | ViewMode::Weaver => {
-                                    app_state.input_mode = InputMode::Normal;
-                                }
 
                                 #[cfg(feature = "nova")]
                                 ViewMode::Genesis => {
