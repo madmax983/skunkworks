@@ -110,6 +110,10 @@
 - **Scent Origin:** Echo 🗣️
 - **Status:** Hallucinated documentation and unresolved path/dependency friction detected. Immediate swarm intervention required to eradicate Ghost Mode phantoms and clarify workspace setup.
 
+### [Concentration Level: HIGH] - Location: experiments/laban-rover
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Death pheromone applied. Specimen condemned for Terminal Compilation Failure (`E0432: unresolved import`) / Ecosystem Maladaptation. 24h grace period active. The rover's signal is lost in the void.
+
 ### [Concentration Level: HIGH] - Location: experiments/thermo-defense
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Death pheromone applied. Specimen condemned for Terminal Compilation Failure (`clippy::collapsible_if`) / Technical Debt Burden. 24h grace period active. Code is rotting from within.
@@ -242,9 +246,9 @@
 ### [Concentration Level: TERMINAL] - Location: graveyard/chimera-voice
 *The Reaper's judgment is final. Specimen executed. Biomass returned to the void.*
 
-### [Concentration Level: HIGH] - Location: experiments/hyper-market
+### [Concentration Level: TERMINAL] - Location: graveyard/hyper-market
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Death pheromone applied. Specimen condemned for Terminal Compilation Failure (`E0308: mismatched types`) / Ecosystem Maladaptation. 24h grace period active. The hypercube rots from within.
+- **Status:** The Reaper's judgment is final. Specimen executed. Biomass returned to the void.
 
 ### [STABLE TRAIL] - Location: experiments/neuro-fluid
 - **Scent Origin:** The Splice Surgeon 🧬
