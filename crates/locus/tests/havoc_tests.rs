@@ -1,5 +1,5 @@
-use locus::Topology;
 use locus::vec4::Vec4;
+use locus::Topology;
 use proptest::prelude::*;
 
 proptest! {

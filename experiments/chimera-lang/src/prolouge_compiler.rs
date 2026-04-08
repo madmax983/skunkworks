@@ -101,8 +101,14 @@ pub fn compile(source: &str) -> Result<Dna> {
                 if content.starts_with('{') && content.ends_with('}') {
                     content = &content[1..content.len() - 1];
                 }
-                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content.trim().to_string())]));
-                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String("".to_string())])); // Empty input
+                genes.push(Gene::new(
+                    OpCode::Push,
+                    vec![Nucleotide::String(content.trim().to_string())],
+                ));
+                genes.push(Gene::new(
+                    OpCode::Push,
+                    vec![Nucleotide::String("".to_string())],
+                )); // Empty input
                 genes.push(Gene::new(OpCode::Brainfuck, vec![]));
             }
             Rule::tui_block => {
@@ -111,7 +117,10 @@ pub fn compile(source: &str) -> Result<Dna> {
                 if content.starts_with('{') && content.ends_with('}') {
                     content = &content[1..content.len() - 1];
                 }
-                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content.trim().to_string())]));
+                genes.push(Gene::new(
+                    OpCode::Push,
+                    vec![Nucleotide::String(content.trim().to_string())],
+                ));
                 genes.push(Gene::new(OpCode::TuiDraw, vec![]));
             }
             _ => {}

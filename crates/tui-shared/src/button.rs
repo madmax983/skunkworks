@@ -350,7 +350,10 @@ mod tests {
                 break;
             }
         }
-        assert!(found_icon, "Expected to find loading icon '⏳' in rendered buffer");
+        assert!(
+            found_icon,
+            "Expected to find loading icon '⏳' in rendered buffer"
+        );
     }
 
     #[test]
@@ -375,6 +378,9 @@ mod tests {
                 break;
             }
         }
-        assert!(found_icon, "Expected to find success icon '✅' in rendered buffer");
+        assert!(
+            found_icon,
+            "Expected to find success icon '✅' in rendered buffer"
+        );
     }
 }

@@ -28,13 +28,19 @@ mod tests {
         let genes = &dna.helix.strands[0].genes;
 
         assert_eq!(genes[0].op, OpCode::Push);
-        assert_eq!(genes[0].args[0], Nucleotide::String("+++[>+++<-]>".to_string()));
+        assert_eq!(
+            genes[0].args[0],
+            Nucleotide::String("+++[>+++<-]>".to_string())
+        );
         assert_eq!(genes[1].op, OpCode::Push);
         assert_eq!(genes[1].args[0], Nucleotide::String("".to_string()));
         assert_eq!(genes[2].op, OpCode::Brainfuck);
 
         assert_eq!(genes[3].op, OpCode::Push);
-        assert_eq!(genes[3].args[0], Nucleotide::String("\"DRAW RECT\"".to_string()));
+        assert_eq!(
+            genes[3].args[0],
+            Nucleotide::String("\"DRAW RECT\"".to_string())
+        );
         assert_eq!(genes[4].op, OpCode::TuiDraw);
     }
 
