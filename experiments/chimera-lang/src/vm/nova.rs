@@ -407,6 +407,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Sing => exec_sing(vm),
         OpCode::Listen => exec_listen(vm),
         OpCode::Brainfuck => super::nova_brainfuck::exec_brainfuck(vm),
+        OpCode::TuiDraw => {
+            if let Some(cmd) = vm.pop_str("tui_draw") {
+                vm.output.push(format!("TUI: {}", cmd));
+            }
+            None
+        }
         OpCode::Spawn => super::nova_biology::exec_spawn(vm),
         OpCode::Entropy => exec_entropy(vm),
         OpCode::Stabilize => exec_stabilize(vm),

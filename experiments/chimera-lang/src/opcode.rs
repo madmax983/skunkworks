@@ -1776,6 +1776,11 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Brainfuck,
 
+    /// **`Prolouge`** Renders a TUI element or manipulates the grid based on a TUI instruction string.
+    ///
+    /// **Stack:** `[ ..., instruction_string ] -> [ ... ]`
+    TuiDraw,
+
     // Meta Features (Self-Definition)
     /// **`Nova`** Defines a new enzyme (OpCode) that calls a strand.
     ///
