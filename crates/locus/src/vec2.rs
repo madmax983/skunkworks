@@ -656,4 +656,22 @@ mod tests {
         let neg = -v1;
         assert_eq!(neg, Vec2::new(-1.0, -2.0));
     }
+
+    #[test]
+    fn test_vec2_math_assign_operators() {
+        let mut v1 = Vec2::new(1.0, 2.0);
+        let v2 = Vec2::new(3.0, 4.0);
+
+        v1 += v2;
+        assert_eq!(v1, Vec2::new(4.0, 6.0));
+
+        v1 -= v2;
+        assert_eq!(v1, Vec2::new(1.0, 2.0));
+
+        v1 *= 2.0;
+        assert_eq!(v1, Vec2::new(2.0, 4.0));
+
+        v1 /= 2.0;
+        assert_eq!(v1, Vec2::new(1.0, 2.0));
+    }
 }
