@@ -287,3 +287,5 @@
 ### [Concentration Level: EVAPORATING] - Location: experiments/locus-fluid
 - **Scent Origin:** The Compiler 🦀
 - **Status:** The compilation failure has been repaired. The swarm successfully re-linked the `flocking` dependency. Scent is evaporating as stability returns.
+- ⚰️ The Reaper observed vigor in `ferrous-weaver`. It has been pardoned and returned to the swarm.
+- ☠️ The Reaper has marked `ferrous-legion` for execution. The rot has taken hold in its `Platter` integration. 24 hours remain.
