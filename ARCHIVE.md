@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **laban-rover**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails on `error[E0432]: unresolved import tui_shared::math`. Grace period: 24h.
+- **ferrous-weaver**: Specimen condemned. Diagnosis: Terminal Compilation Failure / API Obsolescence. Fails on `error[E0599]: no method named width found for struct Platter`. Grace period: 24h.
 
 ## Pardoned
 - **quipu-serializer**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by adapting to the `quipu` crate's `checked_add` and `checked_sub` API. Vigor demonstrated.
@@ -32,6 +32,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **laban-rover**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to resolve `tui_shared::math` import. Grace period expired. Moved to graveyard.
 - **hyper-market**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to resolve type collision between `macroquad` and `hyper_system` components. Grace period expired. Moved to graveyard.
 - **chimera-voice**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to resolve `cpal` bounds and struct initialization. Grace period expired. Moved to graveyard.
 - **quipu-legion**: Specimen executed. Diagnosis: Skeletal Implementation / Technical Debt Burden. Fails strict checking due to unused imports and dead code. Failed to improve during grace period. Moved to graveyard.
