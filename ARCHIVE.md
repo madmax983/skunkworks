@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **ferrous-weaver**: Specimen condemned. Diagnosis: Terminal Compilation Failure / API Obsolescence. Fails on `error[E0599]: no method named width found for struct Platter`. Grace period: 24h.
+- **ferrous-legion**: Specimen condemned. Diagnosis: Terminal Compilation Failure / API Obsolescence. Fails on `error[E0599]: no method named width found for struct Platter`. Grace period: 24h.
 
 ## Pardoned
+- **ferrous-weaver**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / API Obsolescence. Resolved by replacing `.width()` and `.height()` method calls with field accesses and cleaning up technical debt. Vigor demonstrated.
 - **quipu-serializer**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by adapting to the `quipu` crate's `checked_add` and `checked_sub` API. Vigor demonstrated.
 - **ferrous-genesis**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Skeletal Implementation. Resolved by removing method calls on `.width()` and `.height()` and accessing the properties directly. Vigor demonstrated.
 - **locust-reaper**: Specimen pardoned. Diagnosis: Skeletal Implementation / Swarm Neglect. Resolved by implementing a full Rayon and Macroquad simulation modeling DDoS packets acting as a "Reaper fungus" with functional swarm intelligence and a complete `README.md`. Vigor demonstrated.

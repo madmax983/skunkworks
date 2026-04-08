@@ -138,7 +138,7 @@ impl AppState {
             for sub in &cord.subsidiaries {
                 let sub_prev_id = prev_id; // Attach to end of main cord
                 let mut sub_prev = sub_prev_id;
-                let mut sub_depth = 1;
+                let mut _sub_depth = 1;
 
                 for cluster in sub.clusters.iter().enumerate().rev().map(|(_, c)| c) {
                     if cluster.is_empty() {
@@ -171,7 +171,7 @@ impl AppState {
                     let id = self.universe.add_body(body);
                     self.universe.add_edge(sub_prev, id);
                     sub_prev = id;
-                    sub_depth += 1;
+                    _sub_depth += 1;
                 }
             }
         }
@@ -251,8 +251,8 @@ fn ui(f: &mut Frame, state: &AppState) {
         .paint(|ctx| {
             // Draw Platter (Magnetism)
             let step = 4;
-            for y in (0..state.universe.platter.height()).step_by(step) {
-                for x in (0..state.universe.platter.width()).step_by(step) {
+            for y in (0..state.universe.platter.height).step_by(step) {
+                for x in (0..state.universe.platter.width).step_by(step) {
                     let mag = state.universe.platter.get_magnetism(x, y);
                     if mag > 0.2 {
                         let px = x as f64 - 100.0;
@@ -286,7 +286,7 @@ fn ui(f: &mut Frame, state: &AppState) {
 
             // Draw Bodies
             for (id, body) in state.universe.bodies.iter().enumerate() {
-                let mut color = if state.triggered_bodies.contains(&id) {
+                let color = if state.triggered_bodies.contains(&id) {
                     Color::White // Flash
                 } else {
                     body.color
