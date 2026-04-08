@@ -59,3 +59,7 @@
 ## 2025-05-24 - The Phantom Persistence
 **Confusion:** The `AkashicRecords` struct in `experiments/chimera-lang/src/vm/akashic.rs` was a "Black Box" API. Users could not tell how global state was persisted across VM restarts or how `Karma` and `Memories` were stored because there were no module-level descriptions or executable examples for its loading/saving mechanisms.
 **Clarification:** Added `//!` module-level documentation explaining the conceptual role of the Akashic Records (persistent key-value store, memories, and karma) alongside the `.chimera_akashic.json` serialization. Populated `AkashicRecords` and its core methods (`new`, `load_from`, `save`) with `/// # Examples` executable doctests demonstrating safe initialization and disk interaction.
+
+## 2025-06-15 - The Flat Earth Example
+**Confusion:** While most `Topology` variants in the `locus` crate had executable doctests after the previous cleanup, the foundational `Plane` variant was left entirely undocumented with examples, causing users to guess its bounded behavior at edges.
+**Clarification:** Added an explicit `/// # Examples` section to `Topology::Plane` demonstrating `.normalize()` on in-bounds and out-of-bounds coordinates to visually prove the hard-wall boundary constraints.

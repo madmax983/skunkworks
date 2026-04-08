@@ -42,6 +42,22 @@ pub enum Topology {
     /// |   |
     /// +---+
     /// ```
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::Topology;
+    /// let topo = Topology::Plane;
+    ///
+    /// // In-bounds coordinates are unchanged
+    /// assert_eq!(topo.normalize(5, 5, 10, 10), Some((5, 5)));
+    ///
+    /// // Walking off the top edge (y=-1) hits a wall (None)
+    /// assert_eq!(topo.normalize(-1, 5, 10, 10), None);
+    ///
+    /// // Walking off the right edge (x=10) hits a wall (None)
+    /// assert_eq!(topo.normalize(5, 10, 10, 10), None);
+    /// ```
     Plane,
 
     /// **Torus**: The "Arcade Loop".
