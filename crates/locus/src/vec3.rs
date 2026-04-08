@@ -142,6 +142,14 @@ mod tests {
         assert_eq!(v.z, 3.0);
     }
 
+    #[test]
+    fn test_vec3_new_edge_cases() {
+        let v = Vec3::new(-0.0, std::f32::NAN, std::f32::INFINITY);
+        assert_eq!(v.x.to_bits(), (-0.0f32).to_bits());
+        assert!(v.y.is_nan());
+        assert!(v.z.is_infinite());
+    }
+
     #[cfg(feature = "macroquad")]
     #[test]
     fn test_vec3_macroquad_conversion() {
