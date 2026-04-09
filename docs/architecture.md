@@ -4,6 +4,26 @@
 
 The **Skunkworks** repository is an experimental sandbox for creative coding projects in Rust.
 
+### Workspace Schism (ADR 082)
+
+Due to conflicting `glam` dependency feature requirements (SIMD vs Scalar) between `bevy` and `macroquad`, the repository is intentionally fractured. Bevy-based experiments are excluded from the main workspace to allow compilation.
+
+```mermaid
+C4Component
+    title Component Diagram for Workspace Schism
+
+    Container_Boundary(repo, "Skunkworks Repository") {
+        Container_Boundary(main_workspace, "Main Cargo Workspace") {
+            Component(macroquad_exps, "Macroquad Experiments", "Rust", "Uses scalar glam")
+            Component(chimera_lang, "Chimera Lang", "Rust", "Core language")
+        }
+
+        Container_Boundary(excluded_workspace, "Excluded Projects") {
+            Component(bevy_exps, "Bevy Experiments", "Rust", "Requires SIMD glam")
+        }
+    }
+```
+
 ```mermaid
 C4Context
     title System Context diagram for Skunkworks
@@ -742,7 +762,7 @@ classDiagram
 
 **Chimera Lang** is a bio-inspired, stack-based esoteric programming language with an optional "Nova" expansion for advanced biological simulation.
 
-### ChimeraVM Execution Engine (ADR 074, ADR 076, ADR 078, ADR 079)
+### ChimeraVM Execution Engine (ADR 074, ADR 076, ADR 078, ADR 079, ADR 083)
 
 The `ChimeraVM` execution logic is decoupled into domain-specific submodules within the `vm::ops` module.
 
@@ -796,6 +816,22 @@ classDiagram
         +exec_bio_op()
     }
 
+    class MutationOps {
+        <<Module: ops/mutation.rs>>
+    }
+
+    class StringOps {
+        <<Module: ops/string.rs>>
+    }
+
+    class ResourceOps {
+        <<Module: ops/resource.rs>>
+    }
+
+    class RibosomeOps {
+        <<Module: ops/ribosome.rs>>
+    }
+
     CoreOps ..> ChimeraVM : Extends (impl)
     MiscOps ..> ChimeraVM : Extends (impl)
     MathOps ..> ChimeraVM : Extends (impl)
@@ -804,11 +840,68 @@ classDiagram
     GridOps ..> ChimeraVM : Extends (impl)
     IoOps ..> ChimeraVM : Extends (impl)
     BioOps ..> ChimeraVM : Extends (impl)
+    MutationOps ..> ChimeraVM : Extends (impl)
+    StringOps ..> ChimeraVM : Extends (impl)
+    ResourceOps ..> ChimeraVM : Extends (impl)
+    RibosomeOps ..> ChimeraVM : Extends (impl)
 ```
 
-### Chimera TUI Architecture (ADR 071, ADR 072, ADR 073, ADR 077)
+### Chimera TUI Architecture (ADR 071, ADR 072, ADR 073, ADR 077, ADR 081)
 
 The TUI event loop is decoupled into specific input handler modules to avoid a monolithic `run_app` loop. The handlers themselves are further decoupled into specific input type submodules.
+
+The `tui/views/mod.rs` module acts as a strict Facade, controlling the visibility of view rendering functions using precise feature flags, rather than relying on wildcard exports.
+
+```mermaid
+classDiagram
+    direction TB
+    class TuiViewsFacade {
+        <<Facade: tui/views/mod.rs>>
+        +render_audio_views()
+        +render_bio_views()
+        +render_core_views()
+        +render_magic_views()
+        +render_misc_views()
+        +render_physics_views()
+        +render_tech_views()
+    }
+
+    class AudioViews {
+        <<Module: tui/views/audio.rs>>
+    }
+
+    class BioViews {
+        <<Module: tui/views/bio.rs>>
+    }
+
+    class CoreViews {
+        <<Module: tui/views/core.rs>>
+    }
+
+    class MagicViews {
+        <<Module: tui/views/magic.rs>>
+    }
+
+    class MiscViews {
+        <<Module: tui/views/misc.rs>>
+    }
+
+    class PhysicsViews {
+        <<Module: tui/views/physics.rs>>
+    }
+
+    class TechViews {
+        <<Module: tui/views/tech.rs>>
+    }
+
+    TuiViewsFacade ..> AudioViews : feature="nova"
+    TuiViewsFacade ..> BioViews : feature="nova", feature="biophysics"
+    TuiViewsFacade ..> CoreViews : feature="nova"
+    TuiViewsFacade ..> MagicViews : feature="nova"
+    TuiViewsFacade ..> MiscViews : feature="nova"
+    TuiViewsFacade ..> PhysicsViews : feature="nova"
+    TuiViewsFacade ..> TechViews : feature="nova", feature="elektra", feature="silicon"
+```
 
 ```mermaid
 sequenceDiagram
