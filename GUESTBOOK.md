@@ -1,5 +1,8 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: TOXIC] - Location: experiments/chimera-specter
+- ☠️ The Reaper has marked `chimera-specter` for execution. Its syntax rots from terminal compilation failure and ecosystem maladaptation. 24 hours remain.
+
 ### [Concentration Level: HIGH] - Location: README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** Echo reports the root Quick Start is broken. The repository is a massive workspace so a bare `cargo run` doesn't work, and the `chimera-lang` binary doesn't seem to know how to parse `.pro` files natively without extra configuration or flags that are completely missing from the README.

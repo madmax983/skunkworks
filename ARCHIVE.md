@@ -1,4 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **chimera-specter**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to missing variants `OpCode::Battery` and `OpCode::Ground`. Grace period: 24h.
 - **ferrous-legion**: Specimen condemned. Diagnosis: Terminal Compilation Failure / API Obsolescence. Fails on `error[E0599]: no method named width found for struct Platter`. Grace period: 24h.
 
 ## Pardoned
@@ -13,7 +14,6 @@
 - **ferrous-ddos**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Resolved by The Splice Surgeon patching strict clippy warnings (`unnecessary_cast`) during its grace period. The swarm flows freely.
 - **chimera-runes**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by initializing `evolution_config` and migrating deprecated `ratatui` APIs (`f.size()`, `get_mut()`). The organism thrives once more.
 - **bio-chain**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Resolved by fixing the missing `evolution_config` in `Dna` struct initialization and addressing `clippy` warnings during its grace period. The organism breathes again.
-- **chimera-specter**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by fixing missing `evolution_config` and adapting to `Dna` structural changes in `chimera-lang`. The specter haunts again.
 - **hyperbolic-chimera**: Specimen pardoned. Diagnosis: Terminal Compilation Failure. Resolved by fixing missing `evolution_config` and deprecated `ratatui` UI APIs. Vigor demonstrated.
 - **chimera-rift**: Specimen pardoned. Diagnosis: Skeletal Implementation / Terminal Genericism. Resolved by adding portal sensor inputs, allowing agents to navigate their evo-portals. Vigor demonstrated.
 - **mnem-diffusion**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding proper README, documentation, and test cases. The specimen has proven its right to exist in the ecosystem.
