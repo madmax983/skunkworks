@@ -22,7 +22,7 @@ members = [
     "experiments/neuro-fluid",
     "experiments/neuro-strings",
     "graveyard/chron-ddos",
-    "experiments/locus-ddos", "test_project",
+    "experiments/locus-ddos",
 ]
 exclude = [
     "graveyard/*"

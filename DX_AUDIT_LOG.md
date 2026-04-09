@@ -129,3 +129,36 @@ I attempted to follow the "Getting Started" instructions for `tui-shared` by cre
 *   🤦 **The Confusion:** "Tried to run the Hello World Prologue example (`mad_scientist.prl`) and the console exploded with 'Unknown OpCode' and 'Stack underflow' errors. The README says `cd chimera-lang` but the folder doesn't exist. Finally, to use the library I have to import half of the workspace manually."
 *   🕵️ **The Reality:** "Turns out the Mad Scientist mode injects chaos runes that the VM tries to execute as OpCodes, causing error spam. The repo structure doesn't match the clone instructions, and the library is deeply coupled with random workspace crates instead of keeping them optional or private."
 *   💡 **The Fix:** "Fix `mad_scientist.prl` so it doesn't crash visually for new users, correct the folder path in the root README, and decouple the `chimera-lang` crate from requiring users to manually import 5 different internal UI/physics crates just to run a script."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `experiments/chimera-lang/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+I am a new user trying to run the Genesis example as described in the `chimera-lang` README.md. I literally copy-pasted the example commands from the "Running" section:
+
+```bash
+# Running complex examples like Genesis
+cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples/genesis.chs
+```
+
+## 🚧 Stumble - The Friction Points
+
+1. **File Not Found Confusion:**
+   The command fails immediately with:
+   ```
+   Error: No such file or directory (os error 2)
+   ```
+   When I look inside `experiments/chimera-lang/examples/`, there is no file named `genesis.chs`. The only files there are `mad_scientist.prl` and `story_demo.rs`.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Getting Started example is broken (Missing genesis.chs)
+
+* 🤦 **The Confusion:** Tried to run the complex example `genesis.chs` as explicitly documented in the README. The system just spat an `os error 2` at me.
+* 🕵️ **The Reality:** The file `experiments/chimera-lang/examples/genesis.chs` does not exist in the codebase at all.
+* 💡 **The Fix:** Either remove the Genesis example from the README, or actually provide the `genesis.chs` file in the examples directory. Simple!
