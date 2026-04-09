@@ -63,3 +63,7 @@
 ## 2025-06-15 - The Flat Earth Example
 **Confusion:** While most `Topology` variants in the `locus` crate had executable doctests after the previous cleanup, the foundational `Plane` variant was left entirely undocumented with examples, causing users to guess its bounded behavior at edges.
 **Clarification:** Added an explicit `/// # Examples` section to `Topology::Plane` demonstrating `.normalize()` on in-bounds and out-of-bounds coordinates to visually prove the hard-wall boundary constraints.
+
+## 2025-06-25 - The Ephemeral Akashic Records
+**Confusion:** Inter-VM communication tests using the `AkashicRecords` API (like `test_akashic_storage`) were failing with `Some(Int(0))` instead of the expected read value (`42`). Users didn't realize that in testing environments (`is_test_env()`), `AkashicRecords::new()` dynamically generates a randomized temporary file path to prevent parallel tests from colliding, so a new `ChimeraVM` wouldn't see the saved state of a previous one unless specifically pointed to it.
+**Clarification:** Clarified testing isolation logic for `AkashicRecords`. When orchestrating integration tests across multiple VMs using `AkashicRecords`, tests must explicitly clone the `.file_path` from the writing instance and `load_from` that specific path to override the randomized temporary state of the reading VM instance.
