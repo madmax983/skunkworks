@@ -13,7 +13,7 @@ mod penrose;
 mod tui;
 mod vm;
 
-use ast::{Dna, Gene, Helix, Nucleotide, Strand};
+use ast::{Dna, Gene, Nucleotide, Strand};
 use vm::ChimeraVM;
 
 #[derive(Parser)]
@@ -98,9 +98,7 @@ fn main() -> Result<()> {
     ];
 
     let dna = Dna {
-        helix: Helix {
-            strands: vec![Strand { genes }],
-        },
+        strands: vec![Strand { genes }],
     };
 
     let mut vm = ChimeraVM::new(dna);

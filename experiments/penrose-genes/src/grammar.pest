@@ -1,5 +1,4 @@
-dna = { SOI ~ helix ~ EOI }
-helix = { strand+ }
+dna = { SOI ~ strand+ ~ EOI }
 strand = { "[" ~ gene* ~ "]" }
 gene = { identifier ~ "(" ~ nucleotides ~ ")" }
 nucleotides = { (number | string | identifier)* }

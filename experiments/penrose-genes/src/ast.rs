@@ -3,11 +3,6 @@ use pest::iterators::Pair;
 
 #[derive(Debug, Clone)]
 pub struct Dna {
-    pub helix: Helix,
-}
-
-#[derive(Debug, Clone)]
-pub struct Helix {
     pub strands: Vec<Strand>,
 }
 
@@ -36,24 +31,14 @@ impl Dna {
     pub fn from_pair(pair: Pair<Rule>) -> Self {
         match pair.as_rule() {
             Rule::dna => {
-                let mut inner = pair.into_inner();
-                let helix = Helix::from_pair(inner.next().unwrap());
-                Dna { helix }
+                let strands = pair
+                    .into_inner()
+                    .filter(|p| p.as_rule() == Rule::strand)
+                    .map(Strand::from_pair)
+                    .collect();
+                Dna { strands }
             }
             _ => panic!("Expected DNA rule"),
-        }
-    }
-}
-
-impl Helix {
-    #[allow(dead_code)]
-    pub fn from_pair(pair: Pair<Rule>) -> Self {
-        match pair.as_rule() {
-            Rule::helix => {
-                let strands = pair.into_inner().map(Strand::from_pair).collect();
-                Helix { strands }
-            }
-            _ => panic!("Expected Helix rule"),
         }
     }
 }
