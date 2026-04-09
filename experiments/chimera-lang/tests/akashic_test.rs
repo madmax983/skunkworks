@@ -23,7 +23,7 @@ mod tests {
     #[test]
     fn test_akashic_storage() {
         // Cleanup
-        let _ = fs::remove_file(".chimera_akashic.json");
+        let _ = fs::remove_file(".chimera_akashic_test_manual.json");
 
         // 1. Write "foo" -> 42
         let write_genes = vec![
@@ -32,6 +32,8 @@ mod tests {
             gene(OpCode::AkashicWrite, vec![]),
         ];
         let mut vm_write = make_vm(write_genes);
+        // Force the VMs to use the same file for tests to prevent conflicts
+        vm_write.akashic.file_path = ".chimera_akashic_test_manual.json".to_string();
         // Step enough to push key, push value, and write
         vm_write.step(); // Push key
         vm_write.step(); // Push val
@@ -43,6 +45,10 @@ mod tests {
             gene(OpCode::AkashicRead, vec![]),
         ];
         let mut vm_read = make_vm(read_genes);
+        vm_read.akashic.file_path = ".chimera_akashic_test_manual.json".to_string();
+        vm_read.akashic = chimera_lang::vm::akashic::AkashicRecords::load_from(".chimera_akashic_test_manual.json").unwrap_or_else(|_| vm_read.akashic);
+        vm_read.akashic.file_path = ".chimera_akashic_test_manual.json".to_string();
+        vm_read.akashic = chimera_lang::vm::akashic::AkashicRecords::load_from(".chimera_akashic_test_manual.json").unwrap_or_else(|_| vm_read.akashic);
         vm_read.step(); // Push key
         vm_read.step(); // AkashicRead
 
@@ -52,7 +58,7 @@ mod tests {
     #[test]
     fn test_karma_miracle() {
         // Cleanup
-        let _ = fs::remove_file(".chimera_akashic.json");
+        let _ = fs::remove_file(".chimera_akashic_test_manual.json");
 
         // 1. Gain Karma
         let karma_genes = vec![
@@ -60,6 +66,7 @@ mod tests {
             gene(OpCode::Karma, vec![]),
         ];
         let mut vm = make_vm(karma_genes);
+        vm.akashic.file_path = ".chimera_akashic_test_manual2.json".to_string();
         // Execute Karma gain
         for _ in 0..2 {
             vm.step();

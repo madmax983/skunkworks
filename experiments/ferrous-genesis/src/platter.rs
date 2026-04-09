@@ -1,8 +1,8 @@
 #[derive(Debug, Clone)]
 pub struct Platter {
     pub magnetism: Vec<f64>,
-    pub width: usize,
-    pub height: usize,
+    pub(crate) width: usize,
+    pub(crate) height: usize,
 }
 
 impl Platter {
