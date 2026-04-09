@@ -10,7 +10,7 @@ use crate::semantic::entity::Entity;
 use crate::semantic::entity::PropValue;
 use crate::semantic::region::Region;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 /// Complete semantic snapshot of the TUI state.
 ///
@@ -56,8 +56,8 @@ pub struct Snapshot {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub regions: Vec<Region>,
     /// Top-level metrics (score, time, counts)
-    #[serde(default, skip_serializing_if = "HashMap::is_empty")]
-    pub metrics: HashMap<String, PropValue>,
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub metrics: BTreeMap<String, PropValue>,
     /// Current app state/mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub state: Option<String>,
@@ -80,11 +80,14 @@ impl Snapshot {
             app: app.into(),
             frame: None,
             viewport: None,
-            entities: Vec::new(),
-            regions: Vec::new(),
-            metrics: HashMap::new(),
+            // ⚡ Bolt: Pre-allocate vectors with typical capacities to reduce heap reallocations.
+            entities: Vec::with_capacity(32),
+            regions: Vec::with_capacity(8),
+            // ⚡ Bolt: Use BTreeMap instead of HashMap for smaller structures (like properties and metrics)
+            // to avoid the memory/hashing overhead of the default SipHasher, while gaining deterministic serialization.
+            metrics: BTreeMap::new(),
             state: None,
-            actions: Vec::new(),
+            actions: Vec::with_capacity(8),
         }
     }
 

@@ -8,7 +8,7 @@
 
 pub use locus::Vec2;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 /// A semantic entity in the TUI (particle, player, enemy, UI element, etc.).
 ///
@@ -47,8 +47,8 @@ pub struct Entity {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub display: Option<String>,
     /// Arbitrary properties (health, mass, state, etc.)
-    #[serde(default, skip_serializing_if = "HashMap::is_empty")]
-    pub props: HashMap<String, PropValue>,
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub props: BTreeMap<String, PropValue>,
 }
 
 impl Entity {
@@ -67,7 +67,9 @@ impl Entity {
             position: None,
             velocity: None,
             display: None,
-            props: HashMap::new(),
+            // ⚡ Bolt: Use BTreeMap instead of HashMap for smaller structures (like properties and metrics)
+            // to avoid the memory/hashing overhead of the default SipHasher, while gaining deterministic serialization.
+            props: BTreeMap::new(),
         }
     }
 
