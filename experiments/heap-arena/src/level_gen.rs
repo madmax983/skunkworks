@@ -79,7 +79,7 @@ pub fn generate_level(path: &Path) -> Option<LevelProfile> {
 
     // If path is a file, just use it. If dir, walk it.
     let walker = if path.is_file() {
-        WalkDir::new(path.parent().unwrap()).max_depth(1) // Hacky way to walk just one file? No.
+        WalkDir::new(path.parent().unwrap_or(path)).max_depth(1) // Hacky way to walk just one file? No.
     } else {
         WalkDir::new(path)
     };
