@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **ferrous-legion**: Specimen condemned. Diagnosis: Terminal Compilation Failure / API Obsolescence. Fails on `error[E0599]: no method named width found for struct Platter`. Grace period: 24h.
+- **ferrous-quipu**: Specimen condemned. Diagnosis: Terminal Compilation Failure / API Obsolescence. Fails on `error[E0599]: no method named width found for struct Platter`. Grace period: 24h.
 
 ## Pardoned
 - **ferrous-weaver**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / API Obsolescence. Resolved by replacing `.width()` and `.height()` method calls with field accesses and cleaning up technical debt. Vigor demonstrated.
@@ -33,6 +33,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **ferrous-legion**: Specimen executed. Diagnosis: Terminal Compilation Failure / API Obsolescence. Fails on `error[E0599]: no method named width found for struct Platter`. Grace period expired. Biomass returned to the void.
 - **laban-rover**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to resolve `tui_shared::math` import. Grace period expired. Moved to graveyard.
 - **hyper-market**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to resolve type collision between `macroquad` and `hyper_system` components. Grace period expired. Moved to graveyard.
 - **chimera-voice**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to resolve `cpal` bounds and struct initialization. Grace period expired. Moved to graveyard.

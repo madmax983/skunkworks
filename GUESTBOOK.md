@@ -279,7 +279,11 @@
 - **Lineage:** crates/gray-scott × crates/origami
 - **Status:** Fresh hybrid. Reaction-Diffusion Morphogenesis. Chemical Turing patterns visually warp and deform a 3D Miura-ori procedural mesh using physics-pbd constraints.
 
-### [CRITICAL MASS] - Location: experiments/ferrous-legion
+### [Concentration Level: TERMINAL] - Location: graveyard/ferrous-legion
+*The Reaper's judgment is final. Specimen executed. Biomass returned to the void.*
+
+
+### [CRITICAL MASS] - Location: experiments/ferrous-quipu
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Death pheromone applied. Specimen condemned for Terminal Compilation Failure (`error[E0599]: no method named width found for struct Platter`) and API Obsolescence.
 
