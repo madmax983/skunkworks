@@ -50,7 +50,7 @@ impl ChimeraVM {
         tiling.build_adjacency();
 
         #[cfg(feature = "nova")]
-        let strand_count = dna.helix.strands.len();
+        let strand_count = dna.strands.len();
 
         Self {
             dna,
@@ -89,13 +89,13 @@ impl ChimeraVM {
             return;
         }
 
-        let helix_len = self.dna.helix.strands.len();
+        let helix_len = self.dna.strands.len();
         if self.ip.0 >= helix_len {
             self.halted = true;
             return;
         }
 
-        let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
+        let strand_len = self.dna.strands[self.ip.0].genes.len();
         if self.ip.1 >= strand_len {
             // End of strand, move to next strand
             self.ip.0 += 1;
@@ -128,7 +128,7 @@ impl ChimeraVM {
 
         // Clone gene info to release borrow on self.dna
         let (gene_name, gene_args) = {
-            let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
+            let gene = &self.dna.strands[self.ip.0].genes[self.ip.1];
             (gene.name.clone(), gene.args.clone())
         };
 
@@ -353,8 +353,8 @@ impl ChimeraVM {
 
                 match (val, arg_idx_val, gene_idx_val, strand_idx_val) {
                     (Value::Int(v), Value::Int(ai), Value::Int(gi), Value::Int(si)) => {
-                        if si >= 0 && (si as usize) < self.dna.helix.strands.len() {
-                            let strand = &mut self.dna.helix.strands[si as usize];
+                        if si >= 0 && (si as usize) < self.dna.strands.len() {
+                            let strand = &mut self.dna.strands[si as usize];
                             if gi >= 0 && (gi as usize) < strand.genes.len() {
                                 let gene = &mut strand.genes[gi as usize];
                                 if ai >= 0 && (ai as usize) < gene.args.len() {
@@ -432,16 +432,15 @@ impl ChimeraVM {
                 None
             }
             "helix_len" => {
-                self.stack
-                    .push(Value::Int(self.dna.helix.strands.len() as i64));
+                self.stack.push(Value::Int(self.dna.strands.len() as i64));
                 None
             }
             "gene_len" => {
                 if let Some(val) = self.stack.pop() {
                     match val {
                         Value::Int(idx) => {
-                            if idx >= 0 && (idx as usize) < self.dna.helix.strands.len() {
-                                let len = self.dna.helix.strands[idx as usize].genes.len();
+                            if idx >= 0 && (idx as usize) < self.dna.strands.len() {
+                                let len = self.dna.strands[idx as usize].genes.len();
                                 self.stack.push(Value::Int(len as i64));
                             } else {
                                 self.output.push(
@@ -543,7 +542,7 @@ impl ChimeraVM {
 
                     match (strand_a_val, strand_b_val, split_val) {
                         (Value::Int(sa), Value::Int(sb), Value::Int(split)) => {
-                            let helix_len = self.dna.helix.strands.len();
+                            let helix_len = self.dna.strands.len();
                             let sa_idx = sa as usize;
                             let sb_idx = sb as usize;
                             let split_idx = split as usize;
@@ -554,8 +553,8 @@ impl ChimeraVM {
                                 && sa_idx < helix_len
                                 && sb_idx < helix_len
                             {
-                                let len_a = self.dna.helix.strands[sa_idx].genes.len();
-                                let len_b = self.dna.helix.strands[sb_idx].genes.len();
+                                let len_a = self.dna.strands[sa_idx].genes.len();
+                                let len_b = self.dna.strands[sb_idx].genes.len();
 
                                 if split_idx <= len_a && split_idx <= len_b {
                                     if sa_idx == sb_idx {
@@ -570,7 +569,7 @@ impl ChimeraVM {
                                         };
 
                                         let (first_slice, second_slice) =
-                                            self.dna.helix.strands.split_at_mut(upper);
+                                            self.dna.strands.split_at_mut(upper);
                                         let strand_low = &mut first_slice[lower];
                                         let strand_high = &mut second_slice[0];
 
@@ -622,12 +621,12 @@ impl ChimeraVM {
                     match val {
                         Value::Int(idx) => {
                             let s_idx = idx as usize;
-                            if s_idx < self.dna.helix.strands.len() {
-                                let new_strand = self.dna.helix.strands[s_idx].clone();
-                                self.dna.helix.strands.push(new_strand);
+                            if s_idx < self.dna.strands.len() {
+                                let new_strand = self.dna.strands[s_idx].clone();
+                                self.dna.strands.push(new_strand);
                                 self.telomeres.push(50);
 
-                                let new_s_idx = self.dna.helix.strands.len() - 1;
+                                let new_s_idx = self.dna.strands.len() - 1;
                                 let genes_to_methylate: Vec<usize> = self
                                     .epigenome
                                     .iter()
@@ -667,8 +666,8 @@ impl ChimeraVM {
                     match val {
                         Value::Int(idx) => {
                             let s_idx = idx as usize;
-                            if s_idx < self.dna.helix.strands.len() {
-                                self.dna.helix.strands[s_idx].genes.clear();
+                            if s_idx < self.dna.strands.len() {
+                                self.dna.strands[s_idx].genes.clear();
                                 self.epigenome.retain(|(s, _)| *s != s_idx);
                                 self.energy -= 10;
                                 self.output
@@ -715,7 +714,7 @@ impl ChimeraVM {
 
     pub fn mutate(&mut self) {
         let mut rng = rand::thread_rng();
-        let helix = &mut self.dna.helix;
+        let helix = &mut self.dna;
         if helix.strands.is_empty() {
             return;
         }

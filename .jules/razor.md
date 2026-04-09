@@ -52,3 +52,13 @@ Reduced roughly 50-60 lines of unnecessary boilerplate across 16+ `experiments/c
 - Updated caller `atty::is(atty::Stream::Stdin)` to `atty::is_stdin()`.
 
 **Saved:** 4 lines of boilerplate code / Reduced cognitive load by replacing an overly abstract/generic enum with a straightforward function call.
+
+## [Reduction]
+**Bloat:** Layer Lasagna (ast::Helix in penrose-genes)
+- `Dna` wrapped `Helix` which wrapped `Vec<Strand>`. `Helix` added zero value and merely acted as a pass-through layer, causing unnecessary indirection when accessing `dna.strands`.
+**Cut:** Flattened the AST.
+- Removed `Helix` from `experiments/penrose-genes/src/ast.rs`.
+- Removed `helix` rule from `grammar.pest`.
+- Simplified `Dna` to directly contain `pub strands: Vec<Strand>`.
+- Updated parser, VM, and tests to access `dna.strands` directly.
+**Saved:** ~20 lines of boilerplate parser logic / Reduced cognitive load by eliminating an unnecessary structural layer.
