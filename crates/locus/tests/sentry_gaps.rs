@@ -1,40 +1,14 @@
 use locus::{Topology, Vec2, Vec4};
 
 #[test]
-// This should NO LONGER panic after the fix
 fn test_topology_sphere_overflow() {
     let topo = Topology::Sphere;
-    // Use a large width that fits in i64
     let width = i64::MAX as usize;
     let height = 100;
-
-    // x = 0.
-    // y = height (100). wrap_y = 100/100 = 1 (odd).
-    // This triggers the sphere pole crossing logic.
-    // nx = (nx + w/2) % w
-    // If nx is large, nx + w/2 overflows i64.
-
-    // We need nx to be large. nx = x % w.
-    // Let's pick x = width - 1.
     let x = (width - 1) as i64;
     let y = height as i64;
 
-    // This call should NOT panic now
     let res = topo.normalize(y, x, width, height);
-
-    // Let's verify the result manually.
-    // wrap_y = 1 (odd). ny = 100 % 100 = 0.
-    // Pole crossing: ny = (h-1) - ny = 99 - 0 = 99.
-    // nx:
-    // x = width - 1.
-    // shift = width / 2.
-    // x >= width - shift ?
-    // width - 1 >= width - width/2
-    // width - 1 >= width/2. (True for large width).
-    // So nx -= width - shift;
-    // nx = (width - 1) - (width - width/2)
-    // nx = width - 1 - width + width/2
-    // nx = width/2 - 1.
 
     if let Some((ny, nx)) = res {
         assert_eq!(ny, 99);
@@ -47,16 +21,7 @@ fn test_topology_sphere_overflow() {
 #[test]
 fn test_vec2_limit_negative() {
     let v = Vec2::new(10.0, 0.0);
-    // Passing a negative limit should probably limit the magnitude to abs(max)
-    // without flipping the vector.
-    // Currently, if max is -5.0:
-    // mag_sq (100) > max*max (25).
-    // result = normalize(1,0) * -5.0 = (-5, 0).
-    // This flips the vector! Expected behavior for "limit" is usually capping magnitude.
-    // If I limit my speed to -5, it doesn't mean run backwards.
     let limited = v.limit(-5.0);
-
-    // We expect it to be (5.0, 0.0), maintaining direction but capping length.
     assert_eq!(limited.x, 5.0);
     assert_eq!(limited.y, 0.0);
 }
@@ -65,8 +30,6 @@ fn test_vec2_limit_negative() {
 fn test_vec4_limit_negative() {
     let v = Vec4::new(10.0, 0.0, 0.0, 0.0);
     let limited = v.limit(-5.0);
-
-    // Same expectation as Vec2
     assert_eq!(limited.x, 5.0);
 }
 
@@ -81,13 +44,90 @@ fn test_vec2_reflect_zero_len() {
 #[test]
 fn test_vec2_reflect_non_zero() {
     let v = locus::Vec2::new(1.0, 1.0);
-    // reflect against x-axis
     let n = locus::Vec2::new(0.0, 1.0);
     let r = v.reflect(n);
-    // dot = 1.0
-    // n_sq = 1.0
-    // factor = 2.0 * 1.0 / 1.0 = 2.0
-    // x = 1.0 - 2.0 * 0.0 = 1.0
-    // y = 1.0 - 2.0 * 1.0 = -1.0
     assert_eq!(r, locus::Vec2::new(1.0, -1.0));
+}
+
+#[test]
+fn test_vec2_normalize_finite_inf() {
+    let v = Vec2::new(1e300, 1e300);
+    let n = v.normalize();
+    assert!((n.x - std::f64::consts::FRAC_1_SQRT_2).abs() < 1e-6);
+    assert!((n.y - std::f64::consts::FRAC_1_SQRT_2).abs() < 1e-6);
+}
+
+#[test]
+fn test_vec4_normalize_finite_inf() {
+    let v = Vec4::new(1e38, 1e38, 1e38, 1e38);
+    let n = v.normalize();
+    assert!((n.x - 0.5).abs() < 1e-6);
+}
+
+#[test]
+fn test_vec2_limit_finite_inf() {
+    let v = Vec2::new(1e300, 1e300);
+    let max = 1e300;
+    let l = v.limit(max);
+    assert!((l.x - max * std::f64::consts::FRAC_1_SQRT_2).abs() < 1e290);
+}
+
+#[test]
+fn test_vec4_limit_finite_inf() {
+    let v = Vec4::new(1e38, 1e38, 1e38, 1e38);
+    let max = 1e38;
+    let l = v.limit(max);
+    assert!((l.x - max * 0.5).abs() < 1e30);
+}
+
+#[test]
+fn test_vec2_limit_infinite() {
+    let v = Vec2::new(f64::INFINITY, 0.0);
+    let l = v.limit(f64::INFINITY);
+    assert_eq!(l.x, f64::INFINITY);
+}
+
+#[test]
+fn test_vec4_limit_infinite() {
+    let v = Vec4::new(f32::INFINITY, 0.0, 0.0, 0.0);
+    let l = v.limit(f32::INFINITY);
+    assert_eq!(l.x, f32::INFINITY);
+}
+
+#[test]
+fn test_vec2_normalize_inf_neg_inf() {
+    let v = Vec2::new(f64::NEG_INFINITY, f64::INFINITY);
+    let n = v.normalize();
+    assert!((n.x - -std::f64::consts::FRAC_1_SQRT_2).abs() < 1e-6);
+    assert!((n.y - std::f64::consts::FRAC_1_SQRT_2).abs() < 1e-6);
+
+    let v2 = Vec2::new(f64::INFINITY, f64::NEG_INFINITY);
+    let n2 = v2.normalize();
+    assert!((n2.x - std::f64::consts::FRAC_1_SQRT_2).abs() < 1e-6);
+    assert!((n2.y - -std::f64::consts::FRAC_1_SQRT_2).abs() < 1e-6);
+
+    let v3 = Vec2::new(f64::NEG_INFINITY, f64::NEG_INFINITY);
+    let n3 = v3.normalize();
+    assert!((n3.x - -std::f64::consts::FRAC_1_SQRT_2).abs() < 1e-6);
+    assert!((n3.y - -std::f64::consts::FRAC_1_SQRT_2).abs() < 1e-6);
+}
+
+#[test]
+fn test_vec4_normalize_overflow() {
+    let v = Vec4::new(f32::MAX, f32::MAX, f32::MAX, f32::MAX);
+    let l = v.limit(f32::MAX);
+    assert!((l.x - f32::MAX * 0.5).abs() < 1e30);
+}
+
+#[test]
+fn test_vec2_normalize_inf_finite() {
+    let v = Vec2::new(0.0, f64::INFINITY);
+    let n = v.normalize();
+    assert_eq!(n.y, 1.0);
+    assert_eq!(n.x, 0.0);
+
+    let v2 = Vec2::new(f64::INFINITY, 0.0);
+    let n2 = v2.normalize();
+    assert_eq!(n2.x, 1.0);
+    assert_eq!(n2.y, 0.0);
 }
