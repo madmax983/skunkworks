@@ -108,6 +108,25 @@ mod tests {
     }
 
     #[test]
+    fn test_prolouge_compiler_piet() {
+        let source = r#"
+        piet {
+            rgb(255, 0, 0)
+            rgb(0, 255, 0)
+        }
+        "#;
+        let dna = compile(source).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(
+            genes[0].args[0],
+            Nucleotide::String("rgb(255, 0, 0)\n            rgb(0, 255, 0)".to_string())
+        );
+        assert_eq!(genes[1].op, OpCode::Piet);
+    }
+
+    #[test]
     fn test_prolouge_compiler_elektra() {
         let source = r#"
         elektra {
