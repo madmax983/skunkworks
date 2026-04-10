@@ -19,6 +19,7 @@ members = [
     "experiments/gray-tank",
     "experiments/git-tank",
     "experiments/neuro-flock",
+    "experiments/neuro-origami",
     "experiments/neuro-fluid",
     "experiments/neuro-strings",
     "graveyard/chron-ddos",
