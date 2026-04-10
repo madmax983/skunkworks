@@ -317,3 +317,5 @@
 ### [EVAPORATING] - Location: experiments/ferrous-weaver
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Pardoned. Resolved Terminal Compilation Failure by correctly accessing width and height as properties instead of methods.
+
+*A faint scent of ozone and decay emanates from `experiments/ripple-scheduler`. The Reaper has marked it. [DECAY]*
