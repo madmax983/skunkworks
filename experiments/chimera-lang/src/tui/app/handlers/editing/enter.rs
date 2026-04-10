@@ -245,32 +245,19 @@ pub(crate) fn handle_enter(
                                         }
                                     }
                                 }
-                                #[cfg(not(any(feature = "nova", feature = "silicon")))]
                                 ViewMode::Grid => {
                                     apply_grid_edit(vm, app_state);
                                 }
-                                #[cfg(all(feature = "nova", not(feature = "silicon")))]
-                                ViewMode::Grid
-                                | ViewMode::Chronos
+                                #[cfg(feature = "nova")]
+                                ViewMode::Chronos
                                 | ViewMode::Orca
                                 | ViewMode::Hydra
                                 | ViewMode::Prologue
                                 | ViewMode::Reactor => {
                                     apply_grid_edit(vm, app_state);
                                 }
-                                #[cfg(all(feature = "silicon", not(feature = "nova")))]
-                                ViewMode::Grid
-                                | ViewMode::Foundry => {
-                                    apply_grid_edit(vm, app_state);
-                                }
-                                #[cfg(all(feature = "nova", feature = "silicon"))]
-                                ViewMode::Grid
-                                | ViewMode::Chronos
-                                | ViewMode::Orca
-                                | ViewMode::Hydra
-                                | ViewMode::Prologue
-                                | ViewMode::Reactor
-                                | ViewMode::Foundry => {
+                                #[cfg(feature = "silicon")]
+                                ViewMode::Foundry => {
                                     apply_grid_edit(vm, app_state);
                                 }
                                 #[cfg(feature = "nova")]
@@ -279,66 +266,7 @@ pub(crate) fn handle_enter(
                                 }
                                 #[cfg(feature = "nova")]
                                 ViewMode::Crispr => {
-                                    // Execute CRISPR Logic
-                                    let guide_tokens: Vec<&str> =
-                                        app_state.crispr_guide.split_whitespace().collect();
-                                    let replace_tokens: Vec<&str> =
-                                        app_state.crispr_replace.split_whitespace().collect();
-                                    use std::str::FromStr;
-
-                                    let mut guide_ops = Vec::new();
-                                    for t in &guide_tokens {
-                                        if let Ok(op) = crate::opcode::OpCode::from_str(t) {
-                                            guide_ops.push(op);
-                                        }
-                                    }
-                                    let mut replace_genes = Vec::new();
-                                    for t in &replace_tokens {
-                                        if let Ok(op) = crate::opcode::OpCode::from_str(t) {
-                                            replace_genes
-                                                .push(crate::ast::Gene { op, args: vec![] });
-                                        }
-                                    }
-
-                                    if guide_ops.is_empty() {
-                                        app_state.crispr_result =
-                                            "Error: Empty Guide Pattern".to_string();
-                                    } else {
-                                        let s_idx = app_state.crispr_target_strand;
-                                        if s_idx < vm.dna.helix.strands.len() {
-                                            let strand = &mut vm.dna.helix.strands[s_idx];
-                                            let mut new_genes = Vec::new();
-                                            let mut i = 0;
-                                            let mut matches = 0;
-                                            while i < strand.genes.len() {
-                                                let mut matched = true;
-                                                for (j, op) in guide_ops.iter().enumerate() {
-                                                    if i + j >= strand.genes.len()
-                                                        || strand.genes[i + j].op != *op
-                                                    {
-                                                        matched = false;
-                                                        break;
-                                                    }
-                                                }
-                                                if matched {
-                                                    new_genes.extend(replace_genes.clone());
-                                                    i += guide_ops.len();
-                                                    matches += 1;
-                                                } else {
-                                                    new_genes.push(strand.genes[i].clone());
-                                                    i += 1;
-                                                }
-                                            }
-                                            strand.genes = new_genes;
-                                            app_state.crispr_result = format!(
-                                                "CRISPR: Replaced {} occurrences.",
-                                                matches
-                                            );
-                                        } else {
-                                            app_state.crispr_result =
-                                                "Error: Invalid Strand".to_string();
-                                        }
-                                    }
+                                    handle_crispr_enter(vm, app_state);
                                     // Stay in Editing mode
                                 }
 
