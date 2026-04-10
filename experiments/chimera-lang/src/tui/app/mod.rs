@@ -481,8 +481,8 @@ where
             }
 
             match app_state.view_mode {
-                ViewMode::Genome => render_genome(f, vm, app_state),
-                ViewMode::Grid => render_grid(f, vm, app_state),
+                ViewMode::Genome => crate::tui::views::core::render_genome_and_grid(f, vm, app_state),
+                ViewMode::Grid => crate::tui::views::core::render_genome_and_grid(f, vm, app_state),
                 ViewMode::Sequencer => render_sequencer(f, vm, app_state),
                 #[cfg(feature = "nova")]
                 ViewMode::Heatmap => render_heatmap(f, vm, app_state),
@@ -504,7 +504,7 @@ where
                 ViewMode::Verbum => render_verbum(f, vm, app_state),
                 #[cfg(feature = "nova")]
                 ViewMode::Crispr => render_crispr(f, vm, app_state),
-                _ => render_grid(f, vm, app_state), // Fallback
+                _ => crate::tui::views::core::render_genome_and_grid(f, vm, app_state), // Fallback
             }
 
             // Apply glitch effect to entire screen if level > 0

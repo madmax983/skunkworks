@@ -290,7 +290,7 @@ pub(crate) fn handle_char_input(c: char, vm: &mut ChimeraVM, app_state: &mut App
                             app_state.view_selector_state.borrow_mut().select(Some(0));
                         }
                     }
-        KeyCode::Char('q') => return Ok(()),
+        KeyCode::Char('q') => return Ok(true),
         KeyCode::Char(' ') => return handle_char_space(vm, app_state),
         KeyCode::Char('s') => return handle_char_s(vm, app_state),
         #[cfg(feature = "nova")]

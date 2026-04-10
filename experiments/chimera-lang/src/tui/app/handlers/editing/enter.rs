@@ -1,12 +1,13 @@
 use crate::ast::Gene;
 use crate::vm::ChimeraVM;
 use crate::{ChimeraParser, Rule};
-use super::super::super::state::{AppState, InputMode, ViewMode};
+use crate::tui::state::{AppState, InputMode, ViewMode};
+use crate::tui::parse_grid_value;
 use anyhow::Result;
 use pest::Parser;
 
 fn apply_grid_edit(vm: &mut ChimeraVM, app_state: &mut AppState) {
-    let val = super::super::super::parse_grid_value(&app_state.input_buffer);
+    let val = parse_grid_value(&app_state.input_buffer);
     let (x, y) = app_state.grid_cursor;
     vm.grid[y][x] = val;
     app_state.status_msg = format!("Grid updated at {},{}", x, y);
@@ -100,91 +101,7 @@ fn handle_genome_enter(vm: &mut ChimeraVM, app_state: &mut AppState) {
     }
 }
 
-
-fn handle_genome_enter(vm: &mut ChimeraVM, app_state: &mut AppState) {
-    match ChimeraParser::parse(Rule::gene, &app_state.input_buffer) {
-        Ok(mut pairs) => {
-            let pair = pairs.next().unwrap();
-            match Gene::try_from_pair(pair) {
-                Ok(gene) => {
-                    if app_state.selected_strand < vm.dna.helix.strands.len()
-                        && app_state.selected_gene
-                            < vm.dna.helix.strands[app_state.selected_strand]
-                                .genes
-                                .len()
-                    {
-                        vm.dna.helix.strands[app_state.selected_strand].genes
-                            [app_state.selected_gene] = gene;
-                        app_state.status_msg = "Gene updated successfully".to_string();
-                    }
-                    app_state.input_mode = InputMode::Normal;
-                    app_state.input_buffer.clear();
-                }
-                Err(e) => {
-                    app_state.status_msg = format!("Parse Error: {}", e);
-                }
-            }
-        }
-        Err(e) => {
-            app_state.status_msg = format!("Parse Error: {}", e);
-        }
-    }
-}
-
-#[cfg(feature = "nova")]
-fn handle_crispr_enter(vm: &mut ChimeraVM, app_state: &mut AppState) {
-    let guide_tokens: Vec<&str> = app_state.crispr_guide.split_whitespace().collect();
-    let replace_tokens: Vec<&str> = app_state.crispr_replace.split_whitespace().collect();
-    use std::str::FromStr;
-
-    let mut guide_ops = Vec::new();
-    for t in &guide_tokens {
-        if let Ok(op) = crate::opcode::OpCode::from_str(t) {
-            guide_ops.push(op);
-        }
-    }
-    let mut replace_genes = Vec::new();
-    for t in &replace_tokens {
-        if let Ok(op) = crate::opcode::OpCode::from_str(t) {
-            replace_genes.push(crate::ast::Gene { op, args: vec![] });
-        }
-    }
-
-    if guide_ops.is_empty() {
-        app_state.crispr_result = "Error: Empty Guide Pattern".to_string();
-    } else {
-        let s_idx = app_state.crispr_target_strand;
-        if s_idx < vm.dna.helix.strands.len() {
-            let strand = &mut vm.dna.helix.strands[s_idx];
-            let mut new_genes = Vec::new();
-            let mut i = 0;
-            let mut matches = 0;
-            while i < strand.genes.len() {
-                let mut matched = true;
-                for (j, op) in guide_ops.iter().enumerate() {
-                    if i + j >= strand.genes.len() || strand.genes[i + j].op != *op {
-                        matched = false;
-                        break;
-                    }
-                }
-                if matched {
-                    new_genes.extend(replace_genes.clone());
-                    i += guide_ops.len();
-                    matches += 1;
-                } else {
-                    new_genes.push(strand.genes[i].clone());
-                    i += 1;
-                }
-            }
-            strand.genes = new_genes;
-            app_state.crispr_result = format!("CRISPR: Replaced {} occurrences.", matches);
-        } else {
-            app_state.crispr_result = "Error: Invalid Strand".to_string();
-        }
-    }
-}
-
-pub(crate) fn handle_enter(
+pub(crate) fn handle_enter_key(
     vm: &mut ChimeraVM,
     app_state: &mut AppState,
 ) -> Result<bool> {
@@ -371,7 +288,7 @@ pub(crate) fn handle_enter(
                                     // Parse buffer as float
                                     if let Ok(v) = app_state.input_buffer.parse::<f64>() {
                                         let (x, y) = app_state.grid_cursor;
-                                        vm.chaos_struct.grid[y][x] = v.clamp(0.0, 1.0);
+                                        vm.chaos_struct.grid[y][x] = v.clamp(0.0, 1.0) as f64;
                                         app_state.status_msg =
                                             format!("Chaos Grid updated at {},{}", x, y);
                                     }
@@ -393,7 +310,7 @@ pub(crate) fn handle_enter(
                                         }
                                         2 => {
                                             if let Ok(n) = app_state.input_buffer.parse::<u8>() {
-                                                app_state.virus_design_rate = n.clamp(0, 100);
+                                                app_state.virus_design_rate = n.clamp(0, 100) as u8;
                                             }
                                         }
                                         3 => {
@@ -401,9 +318,7 @@ pub(crate) fn handle_enter(
                                                 app_state.virus_design_payload = n;
                                             }
                                         }
-                                        #[cfg(feature = "nova")]
-                                }
-                                _ => {}
+                                        _ => {}
                                     }
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
