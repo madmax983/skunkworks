@@ -42,3 +42,14 @@ Reduced roughly 50-60 lines of unnecessary boilerplate across 16+ `experiments/c
 - Updated all unit tests to use explicit `checked_*` method calls instead of operator overloads, making fallibility explicit.
 
 **Saved:** ~40 lines of boilerplate trait implementation. Reduced cognitive load by avoiding implicit standard trait behaviors on types where overflow/underflow is a standard domain concern, improving strictness.
+
+## [Reduction]
+**Bloat:** Redundant Enums (`SoundKind` mirroring `AudioEvent`)
+- The `SoundKind` enum in `crates/quipu/src/audio.rs` exactly mirrored the structure and variants of `AudioEvent`, simply passing properties along through pattern matching without changing structure.
+
+**Cut:** Concrete Shared Types
+- Removed the `SoundKind` enum entirely.
+- Refactored `ActiveSound` struct to hold `AudioEvent` directly.
+- Condensed identical match arms by utilizing the shared data type.
+
+**Saved:** ~20 lines of redundant enum boilerplate and mappings. Reduced cognitive load by avoiding duplicated state abstractions.
