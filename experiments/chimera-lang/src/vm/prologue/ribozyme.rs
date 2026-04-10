@@ -46,7 +46,10 @@ pub fn process_ribozyme_agent(
                     let mut genes = Vec::new();
                     for val in list {
                         if let Value::Str(s) = val {
-                            if let Ok(op) = s.parse::<OpCode>() {
+                            let op = s
+                                .parse::<OpCode>()
+                                .unwrap_or_else(|_| OpCode::Unknown(s.clone()));
+                            if !matches!(op, OpCode::Unknown(_)) {
                                 genes.push(crate::ast::Gene { op, args: vec![] });
                             }
                         }
@@ -54,7 +57,10 @@ pub fn process_ribozyme_agent(
                     genes
                 }
                 Value::Str(s) => {
-                    if let Ok(op) = s.parse::<OpCode>() {
+                    let op = s
+                        .parse::<OpCode>()
+                        .unwrap_or_else(|_| OpCode::Unknown(s.clone()));
+                    if !matches!(op, OpCode::Unknown(_)) {
                         vec![crate::ast::Gene { op, args: vec![] }]
                     } else {
                         vec![]

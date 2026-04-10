@@ -2134,7 +2134,10 @@ impl ChimeraVM {
                 ":" => self.process_ribosome_read(cy, cx, false),
                 ";" => self.process_ribosome_write(cy, cx),
                 _ => {
-                    if let Ok(op) = s.parse::<OpCode>() {
+                    let op = s
+                        .parse::<OpCode>()
+                        .unwrap_or_else(|_| OpCode::Unknown(s.clone()));
+                    if !matches!(op, OpCode::Unknown(_)) {
                         if let Some(target) = self.execute_gene_inner(op, &[]) {
                             self.ip = target;
                         }

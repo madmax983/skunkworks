@@ -172,7 +172,10 @@ pub fn process_forth_agent(
                                 let strand = &mut vm.dna.helix.strands[si as usize];
                                 // Auto-extend strand if needed? Or strict? Strict for now.
                                 if gi >= 0 && (gi as usize) < strand.genes.len() {
-                                    if let Ok(op) = op_s.parse::<OpCode>() {
+                                    let op = op_s
+                                        .parse::<OpCode>()
+                                        .unwrap_or_else(|_| OpCode::Unknown(op_s.clone()));
+                                    if !matches!(op, OpCode::Unknown(_)) {
                                         strand.genes[gi as usize] = Gene {
                                             op,
                                             args: vec![Nucleotide::Number(arg_i)],
@@ -184,7 +187,10 @@ pub fn process_forth_agent(
                                     }
                                 } else if gi as usize == strand.genes.len() {
                                     // Append
-                                    if let Ok(op) = op_s.parse::<OpCode>() {
+                                    let op = op_s
+                                        .parse::<OpCode>()
+                                        .unwrap_or_else(|_| OpCode::Unknown(op_s.clone()));
+                                    if !matches!(op, OpCode::Unknown(_)) {
                                         strand.genes.push(Gene {
                                             op,
                                             args: vec![Nucleotide::Number(arg_i)],

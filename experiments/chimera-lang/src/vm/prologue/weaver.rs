@@ -143,13 +143,18 @@ pub fn process_weaver_agent(
                                     args: vec![],
                                 });
                                 valid_synthesis = true;
-                            } else if let Ok(parsed_op) = s.parse::<OpCode>() {
-                                // Direct OpCode support (e.g. "push", "dup")
-                                genes.push(Gene {
-                                    op: parsed_op,
-                                    args: vec![],
-                                });
-                                valid_synthesis = true;
+                            } else {
+                                let parsed_op = s
+                                    .parse::<OpCode>()
+                                    .unwrap_or_else(|_| OpCode::Unknown(s.clone()));
+                                if !matches!(parsed_op, OpCode::Unknown(_)) {
+                                    // Direct OpCode support (e.g. "push", "dup")
+                                    genes.push(Gene {
+                                        op: parsed_op,
+                                        args: vec![],
+                                    });
+                                    valid_synthesis = true;
+                                }
                             }
                         }
                         _ => {}

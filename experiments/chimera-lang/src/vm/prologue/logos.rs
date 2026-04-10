@@ -596,7 +596,10 @@ fn execute_junction_ast(vm: &mut ChimeraVM, items: Vec<Value>) {
         match item {
             Value::Str(s) => {
                 // Try to parse as OpCode
-                if let Ok(op) = s.parse::<OpCode>() {
+                let op = s
+                    .parse::<OpCode>()
+                    .unwrap_or_else(|_| OpCode::Unknown(s.clone()));
+                if !matches!(op, OpCode::Unknown(_)) {
                     vm.execute_gene_inner(op, &[]);
                 } else {
                     // Push string literal

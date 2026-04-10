@@ -496,7 +496,10 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 '⚛' => exec_reactor_rune(vm, y, x, signal, &mut ctx),
                 _ => {
                     if let Value::Str(s) = val {
-                        if let Ok(op) = s.parse::<OpCode>() {
+                        let op = s
+                            .parse::<OpCode>()
+                            .unwrap_or_else(|_| OpCode::Unknown(s.clone()));
+                        if !matches!(op, OpCode::Unknown(_)) {
                             if signal > 0 {
                                 ctx.executions.push((op, vec![]));
                             }

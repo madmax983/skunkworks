@@ -23,7 +23,13 @@ mod tests {
     #[test]
     fn test_akashic_storage() {
         // Cleanup
-        let _ = fs::remove_file(".chimera_akashic.json");
+        let mut path = std::env::current_dir().unwrap();
+        if !path.ends_with("chimera-lang") {
+            path.push("experiments");
+            path.push("chimera-lang");
+        }
+        path.push(".chimera_akashic.json");
+        let _ = fs::remove_file(&path);
 
         // 1. Write "foo" -> 42
         let write_genes = vec![
@@ -52,7 +58,13 @@ mod tests {
     #[test]
     fn test_karma_miracle() {
         // Cleanup
-        let _ = fs::remove_file(".chimera_akashic.json");
+        let mut path = std::env::current_dir().unwrap();
+        if !path.ends_with("chimera-lang") {
+            path.push("experiments");
+            path.push("chimera-lang");
+        }
+        path.push(".chimera_akashic.json");
+        let _ = fs::remove_file(&path);
 
         // 1. Gain Karma
         let karma_genes = vec![
