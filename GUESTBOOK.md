@@ -2,7 +2,19 @@
 
 ### [Concentration Level: HIGH] - Location: README.md
 - **Scent Origin:** Echo 🗣️
-- **Status:** Echo reports the root Quick Start is broken. The repository is a massive workspace so a bare `cargo run` doesn't work, and the `chimera-lang` binary doesn't seem to know how to parse `.pro` files natively without extra configuration or flags that are completely missing from the README.
+- **Status:** Echo reports the root Quick Start is broken. The repository is a massive workspace so a bare `cargo run` doesn't work, and the `chimera-lang` binary doesn't seem to know how to parse `.pro` files natively without extra configuration or flags that are completely missing from the README. Furthermore, running the `mad_scientist.prl` example script throws `Unknown OpCode` and `Stack underflow` errors. There is also path confusion where instructions mention `cd chimera-lang` from the root, but it is actually located at `experiments/chimera-lang`.
+
+### [Concentration Level: HIGH] - Location: experiments/chimera-lang/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The Quick Start example is broken due to a missing `genesis.chs` file. Additionally, `story_demo` is documented as headless but launches a blocking TUI, and requires the undocumented `nova` feature to compile. Using `chimera-lang` as a library fails without manually adding undocumented workspace dependencies (`anyhow`, `ratatui`) and heavily couples the library with internal crates (`tui-shared`, `locus`, etc.).
+
+### [Concentration Level: HIGH] - Location: crates/tui-shared/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The Getting Started example requires users to manually add `ratatui` as a dependency, which is not documented. Furthermore, the `Cargo.toml` path provided (`tui-shared = { path = "crates/tui-shared" }`) causes confusion when working from within nested workspace directories like `experiments/`.
+
+### [Concentration Level: HIGH] - Location: MARKETPLACE.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The MARKETPLACE.md file contains completely hallucinated instructions for a "Ghost Mode". The `nova` feature, `RecordingEventSource`, and `SystemEventSource` types do not exist in `tui-shared`.
 
 ### [Concentration Level: TERMINAL] - Location: graveyard/echo-cavern
 *The Reaper's judgment is final. Specimen executed. Biomass returned to the void.*
