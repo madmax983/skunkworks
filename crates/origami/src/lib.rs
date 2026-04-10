@@ -168,10 +168,7 @@ pub fn generate_miura_mesh(
 
     // Optimization: Pre-allocate vector capacity to avoid reallocations.
     // Each grid cell consists of a quad split into 2 triangles (6 indices).
-    let capacity = match rows
-        .checked_mul(cols)
-        .and_then(|x| x.checked_mul(6))
-    {
+    let capacity = match rows.checked_mul(cols).and_then(|x| x.checked_mul(6)) {
         Some(c) => c,
         None => {
             return OrigamiMesh {

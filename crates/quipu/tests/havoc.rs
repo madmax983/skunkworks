@@ -48,7 +48,7 @@ fn havoc_quipu_huge_cord_equality() {
 
     if let Ok(status) = status {
         // If it exited with signal (e.g. SIGABRT from stack overflow), we proved fragility!
-        assert!(!status.success(), "👺 Havoc: System safely handled 100k depth PartialEq without crashing! Our chaos hunt failed!");
+        assert!(status.success(), "👺 Havoc: System did not safely handle 100k depth PartialEq! Our chaos hunt proved successful, but now Sentry fixed it!");
     }
 }
 
@@ -72,5 +72,8 @@ fn havoc_quipu_huge_cord_equality_inner() {
 
         // This will stack overflow if PartialEq is not iterative, or take forever.
         assert_eq!(cord1, cord2);
+
+        // Return 0 if successful
+        std::process::exit(0);
     }
 }
