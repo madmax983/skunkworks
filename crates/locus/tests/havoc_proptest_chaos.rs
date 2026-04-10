@@ -1,23 +1,29 @@
 use locus::vec4::Vec4;
+use locus::Vec2;
 use proptest::prelude::*;
 
 proptest! {
     #[test]
     #[should_panic]
-    fn test_havoc_distance_squared_overflow(
-        x1 in (f32::MAX / 2.0)..=f32::MAX,
-        y1 in (f32::MAX / 2.0)..=f32::MAX,
-        z1 in (f32::MAX / 2.0)..=f32::MAX,
-        w1 in (f32::MAX / 2.0)..=f32::MAX,
-        x2 in f32::MIN..=(f32::MIN / 2.0),
-        y2 in f32::MIN..=(f32::MIN / 2.0),
-        z2 in f32::MIN..=(f32::MIN / 2.0),
-        w2 in f32::MIN..=(f32::MIN / 2.0),
+    fn test_havoc_length_squared_overflow_proptest(
+        x in (f32::MAX / 2.0)..=f32::MAX,
+        y in (f32::MAX / 2.0)..=f32::MAX,
+        z in (f32::MAX / 2.0)..=f32::MAX,
+        w in (f32::MAX / 2.0)..=f32::MAX,
     ) {
-        let v1 = Vec4::new(x1, y1, z1, w1);
-        let v2 = Vec4::new(x2, y2, z2, w2);
+        let v = Vec4::new(x, y, z, w);
+        let sq = v.length_squared();
+        assert!(sq.is_finite(), "👺 Havoc: Vector length squared overflowed into Infinity!");
+    }
 
-        let dist_sq = v1.distance_squared(v2);
-        assert!(dist_sq.is_finite(), "👺 Havoc: Vector distance squared overflowed into Infinity!");
+    #[test]
+    #[should_panic]
+    fn test_havoc_vec2_magnitude_squared_overflow_proptest(
+        x in (f64::MAX / 2.0)..=f64::MAX,
+        y in (f64::MAX / 2.0)..=f64::MAX,
+    ) {
+        let v = Vec2::new(x, y);
+        let sq = v.magnitude_squared();
+        assert!(sq.is_finite(), "👺 Havoc: Vector magnitude squared overflowed into Infinity!");
     }
 }
