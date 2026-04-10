@@ -135,6 +135,10 @@ impl Paradox {
             Trigger::Signal(trigger_str.to_string())
         };
 
+        if do_idx + 1 >= parts.len() {
+            return Err("Missing action type".to_string());
+        }
+
         let action_type = parts
             .get(do_idx + 1)
             .copied()

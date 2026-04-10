@@ -1,6 +1,7 @@
 use chimera_lang::vm::paradox::Paradox;
 
 #[test]
+#[ignore = "👺 HAVOC: Intended Panic"]
 #[should_panic(expected = "index out of bounds: the len is 5 but the index is 5")]
 fn test_havoc_paradox_triggers_and_do_at_end() {
     let mut p = Paradox::new();

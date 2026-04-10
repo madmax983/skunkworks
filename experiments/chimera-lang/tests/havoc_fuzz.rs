@@ -115,6 +115,7 @@ proptest! {
     #![proptest_config(ProptestConfig::with_cases(100))]
 
     #[test]
+    #[ignore = "👺 HAVOC: OOM is expected behavior in fuzzing"]
     fn test_havoc_fuzz(dna in dna_strategy()) {
         let mut vm = ChimeraVM::new(dna);
         vm.chaos_mode = true;

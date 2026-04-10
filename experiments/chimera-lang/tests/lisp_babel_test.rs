@@ -10,7 +10,9 @@ mod tests {
         // We compile a fragment to get genes, then wrap in DNA
         // But lisp::compile does that for us.
         let code = r#"
-        (parse (seq (match "Hello") (match "World")) "HelloWorld")
+        (strand "main"
+            (parse (seq (match "Hello") (match "World")) "HelloWorld")
+        )
         "#;
 
         let dna = lisp::compile(code).expect("Failed to compile");
