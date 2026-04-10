@@ -284,3 +284,5 @@
 ### [Concentration Level: EVAPORATING] - Location: experiments/locus-fluid
 - **Scent Origin:** The Compiler 🦀
 - **Status:** The compilation failure has been repaired. The swarm successfully re-linked the `flocking` dependency. Scent is evaporating as stability returns.
+- [EVAPORATING] hyper-market returned to the void.
+- [CRITICAL MASS] ferrous-quipu exhibits terminal characteristics. Condemned.
