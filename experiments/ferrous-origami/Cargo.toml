@@ -1,0 +1,11 @@
+[package]
+name = "ferrous-origami"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = "0.8"
+origami = { path = "../../crates/origami" }
+ferrous-core = { path = "../../crates/ferrous-core" }
+physics-pbd = { path = "../../crates/physics-pbd" }
