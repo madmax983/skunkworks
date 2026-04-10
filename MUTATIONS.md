@@ -753,3 +753,11 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Concept**: Magnetic Morphogenesis.
 - **Novel trait**: A continuous 2D magnetic substrate dynamically warps and actuates the 3D structural constraints of a Miura-ori soft body mesh. As magnetic flux concentrates, the physical constraints of the paper in that region expand or contract, causing the paper to bulge, warp, and deform dynamically based on the underlying field.
 - **Predicted Phenotype**: An organic, pulsating sheet of paper that folds and crumples dynamically based on the spreading magnetic fields, turning magnetic flux into 3D topographical movements.
+
+### gray-resonance
+- **Parents**: crates/gray-scott + crates/resonance-audio
+- **Concept**: Reaction-Diffusion Acoustic Synthesis.
+- **Novel trait**: The continuous 2D chemical Turing patterns actively shape an acoustic resonance chamber. High concentration of the 'kill' chemical acts as a dampener, while the 'feed' chemical acts as an exciter to inject pressure into the acoustic field.
+- **Predicted Phenotype**: An evolving organic drone synthesizer where the evolving geometry of Turing patterns dynamically shapes the harmonic and rhythmic structure of the sound.
+- **Status**: experiments/gray-resonance
+- **Evaluation**: Success. Compiled. The Gray-Scott diffusion successfully acts as a spatial wavetable and exciter mechanism for the continuous acoustic simulation.
