@@ -212,7 +212,7 @@ pub enum Color {
 /// // Tens (10^1)
 /// assert_eq!(cord.clusters[1], vec![Knot::Simple]);
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Eq, Default)]
 pub struct Cord {
     /// The clusters of knots, ordered from Units (index 0) to highest power.
     ///
@@ -222,6 +222,24 @@ pub struct Cord {
     pub subsidiaries: Vec<Cord>,
     /// The color of the cord.
     pub color: Color,
+}
+
+impl PartialEq for Cord {
+    fn eq(&self, other: &Self) -> bool {
+        let mut stack = vec![(self, other)];
+        while let Some((a, b)) = stack.pop() {
+            if a.color != b.color
+                || a.clusters != b.clusters
+                || a.subsidiaries.len() != b.subsidiaries.len()
+            {
+                return false;
+            }
+            for (sub_a, sub_b) in a.subsidiaries.iter().zip(b.subsidiaries.iter()) {
+                stack.push((sub_a, sub_b));
+            }
+        }
+        true
+    }
 }
 
 impl Cord {
@@ -512,6 +530,17 @@ impl fmt::Display for Quipu {
             writeln!(f, "Cord {}:\n{}", i, cord)?;
         }
         Ok(())
+    }
+}
+
+impl Drop for Cord {
+    fn drop(&mut self) {
+        // Prevent stack overflow when dropping deeply nested Cord structures
+        let mut stack = Vec::new();
+        stack.append(&mut self.subsidiaries);
+        while let Some(mut cord) = stack.pop() {
+            stack.append(&mut cord.subsidiaries);
+        }
     }
 }
 

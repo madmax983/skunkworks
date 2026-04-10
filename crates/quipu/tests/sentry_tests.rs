@@ -105,3 +105,24 @@ fn test_multiple_subsidiaries_display() {
     assert!(display.contains("●")); // Main cord 100
     assert!(display.contains("∞")); // Subsidiary 1
 }
+
+// Ensure we test equality directly without relying on stack implicitly through custom asserts
+#[test]
+fn should_not_stack_overflow_on_deep_equality() {
+    let mut cord1 = Cord::new();
+    let mut current1 = &mut cord1;
+    // Lower bound so it does not overflow stack but is deep enough to test
+    for _ in 0..100_000 {
+        current1.subsidiaries.push(Cord::new());
+        current1 = &mut current1.subsidiaries[0];
+    }
+
+    let mut cord2 = Cord::new();
+    let mut current2 = &mut cord2;
+    for _ in 0..100_000 {
+        current2.subsidiaries.push(Cord::new());
+        current2 = &mut current2.subsidiaries[0];
+    }
+
+    assert!(cord1 == cord2);
+}
