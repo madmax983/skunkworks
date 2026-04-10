@@ -162,3 +162,57 @@ cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples
 * 🤦 **The Confusion:** Tried to run the complex example `genesis.chs` as explicitly documented in the README. The system just spat an `os error 2` at me.
 * 🕵️ **The Reality:** The file `experiments/chimera-lang/examples/genesis.chs` does not exist in the codebase at all.
 * 💡 **The Fix:** Either remove the Genesis example from the README, or actually provide the `genesis.chs` file in the examples directory. Simple!
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/locus/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for the `locus` crate."
+**Action:** Try to follow the README using a fresh crate. Copied the exact example code to `src/main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Dependency:** The example code uses `Topology` and `Vec2` from `locus`. However, when trying to use it in an external project, `locus` is an internal workspace crate and the `README.md` lacks installation instructions.
+    - *Impact:* Compilation error or confusion on how to add `locus` to `Cargo.toml`.
+    - *Fix:* Provide clear `Cargo.toml` dependency instructions (e.g., `locus = { path = "../crates/locus" }`).
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing installation instructions
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `locus` example. There are no instructions on how to install it or add it to my `Cargo.toml`."
+*   🕵️ **The Reality:** "Turns out I need to figure out the path to the internal crate manually because it's not on crates.io and the README doesn't tell me."
+*   💡 **The Fix:** "Add a clear `Installation` section with the `Cargo.toml` snippet."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `crates/poincare-disk/README.md`
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the quickstart example for the `poincare-disk` crate."
+**Action:** Try to follow the README using a fresh crate. Copied the exact example code to `src/main.rs`.
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Missing Dependency:** The example code uses `poincare_disk`. However, when trying to use it, the `README.md` lacks installation instructions.
+    - *Impact:* Compilation error or confusion on how to add `poincare-disk` to `Cargo.toml`.
+    - *Fix:* Provide clear `Cargo.toml` dependency instructions (e.g., `poincare-disk = { path = "../crates/poincare-disk" }`).
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Missing installation instructions
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to run the `poincare-disk` example. There are no instructions on how to install it or add it to my `Cargo.toml`."
+*   🕵️ **The Reality:** "Turns out I need to figure out the path to the internal crate manually."
+*   💡 **The Fix:** "Add a clear `Installation` section with the `Cargo.toml` snippet."
