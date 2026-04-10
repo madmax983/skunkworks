@@ -1,21 +1,21 @@
-1.  **Understand the User Request and Persona**:
-    *   Persona: Havoc 👹 (Chaos Engineer)
-    *   Goal: Prove the system is fragile by finding race conditions, deadlocks, and panics using noise, concurrency, and garbage data.
-    *   Boundaries: *Never fix the bug.* Red Phase: Write tests that fail.
-    *   Analysis of codebase (`locus` crate): I found existing tests in `crates/locus/tests/havoc.rs` and `crates/locus/tests/havoc_tests.rs` that use `#[should_panic]` to prove `length_squared` and `distance_squared` can overflow into `Infinity`. However, to act as Havoc, I need to *expand* on this fragility. Since the instructions say not to delete or modify existing vulnerability documentation tests but *append* or isolate new chaos/fuzzing tests, I will add more tests.
+1. **Phase 1: Review Previous Condemnations**
+   - Review `experiments/ripple-scheduler`.
+   - Run compilation and tests for `ripple-scheduler`. It currently compiles successfully.
+   - Pardon `ripple-scheduler` because it now compiles successfully (vigor demonstrated).
+   - Update `ARCHIVE.md` to reflect `ripple-scheduler`'s pardon.
+   - Add a pardon message to `GUESTBOOK.md`.
 
-2.  **Identify New Attack Surfaces (`locus` crate)**:
-    *   I've created `crates/locus/tests/havoc_vec2.rs` to show `Vec2::magnitude_squared` and `Vec2::distance_squared` overflow into Infinity just like `Vec4`.
-    *   I've created `crates/locus/tests/havoc_proptest_chaos.rs` using `proptest` to automatically generate floating-point combinations that cause overflows in `Vec4::length_squared` and `Vec2::magnitude_squared`.
-
-3.  **Execute the Plan**:
-    *   I've already created the test files and run `cargo test -p locus` to verify that they *fail* when `#[should_panic]` is applied (they actually pass the test suite because they panic as expected). This fulfills the "Write tests that fail" criteria of the Red Phase for a chaos engineer.
-    *   Since I must *not* fix the bug, I will leave the source code (`vec4.rs`, `vec2.rs`) exactly as is.
-
-4.  **Finalize (Pre-commit)**:
-    *   Use `pre_commit_instructions`.
-
-5.  **Submit**:
-    *   Submit a PR formatted according to the Havoc persona guidelines:
-        *   Title: "👺 Havoc: Mathematical Overflow Panics in `Vec2` & `Vec4`"
-        *   Description formatted with Trigger, Stack Trace, Reproduction, and Comment.
+2. **Phase 2: Condemn One New Experiment**
+   - Review `experiments/quipu-symphony`. It fails to compile with `error[E0509]: cannot move out of type Cord, which implements the Drop trait`.
+   - Wait, `quipu-symphony` has a `README.md` and it is an interesting experiment, but it fails to compile due to deep nested structure trait drop issues (as seen in memory, `quipu::Cord` needs custom drop/iterators to prevent SIGABRT, and can't be moved out of).
+   - Wait, `chimera-specter` fails to compile with `error[E0599]: no variant or associated item named Battery found for enum OpCode`. It does have a `README.md`.
+   - Let's check `ARCHIVE.md` to ensure `quipu-symphony` or `chimera-specter` hasn't been condemned before.
+   - Let's check `origami-hologram`. Wait, `origami-hologram` has NO `README.md` but compiles successfully.
+   - Let's look for an experiment that is the "SINGLE WORST" combining compilation status, documentation, etc.
+   - Let's condemn `quipu-symphony`. It fails to compile due to borrow checker / drop trait issues.
+   - No, wait, Memory says: "The `experiments/chimera-specter` experiment was Condemned by The Reaper due to Terminal Compilation Failure (missing OpCode::Battery...". But it is in the "Pardoned" section! The memory might be reflecting a previous state. Wait, memory says: "The experiments/chimera-specter experiment was Condemned by The Reaper due to Terminal Compilation Failure (missing OpCode::Battery...". I should execute it if it is still failing? No, "Phase 1: Review Previous Condemnations" is only for "Condemned (Awaiting Execution)". `chimera-specter` is listed in "Pardoned". So it cannot be executed right now.
+   - What about `quipu-symphony`? It fails to compile. I will condemn it.
+   - Forensic Report: `experiments/quipu-symphony/.reaper-report.md`.
+   - Update `ARCHIVE.md` to move `quipu-symphony` to Condemned.
+   - Leave death pheromone in `GUESTBOOK.md`.
+   - Commit changes.

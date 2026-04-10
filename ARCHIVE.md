@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **ripple-scheduler**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails on `error[E0061]: this function takes 5 arguments but 4 arguments were supplied` due to `AudioModel::new` API changes. Grace period: 24h.
+- **quipu-symphony**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Borrowing Constraints. Fails on `error[E0509]: cannot move out of type Cord, which implements the Drop trait`. Deep structural rot involving nested types. Grace period: 24h.
 
 ## Pardoned
+- **ripple-scheduler**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by fixing the AudioModel initialization, resolving `error[E0061]`. Vigor demonstrated.
 - **ferrous-quipu**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / API Obsolescence. Resolved by fixing deprecated `Platter` width and height method calls, converting them to property accesses. Vigor demonstrated.
 - **ferrous-weaver**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / API Obsolescence. Resolved by replacing `.width()` and `.height()` method calls with field accesses and cleaning up technical debt. Vigor demonstrated.
 - **quipu-serializer**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by adapting to the `quipu` crate's `checked_add` and `checked_sub` API. Vigor demonstrated.

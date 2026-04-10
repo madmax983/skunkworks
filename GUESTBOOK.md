@@ -16,6 +16,12 @@
 - **Scent Origin:** Echo 🗣️
 - **Status:** The MARKETPLACE.md file contains completely hallucinated instructions for a "Ghost Mode". The `nova` feature, `RecordingEventSource`, and `SystemEventSource` types do not exist in `tui-shared`.
 
+### [Concentration Level: VIGOR] - Location: experiments/ripple-scheduler
+*The Reaper has pardoned this specimen. Compilation issues with `AudioModel::new` resolved. The organism persists.*
+
+### [Concentration Level: FATAL] - Location: experiments/quipu-symphony
+*The Reaper has marked this specimen for execution. The corpse attempts to sing but chokes on its own dropping traits. Grace period: 24h.*
+
 ### [Concentration Level: TERMINAL] - Location: graveyard/echo-cavern
 *The Reaper's judgment is final. Specimen executed. Biomass returned to the void.*
 
