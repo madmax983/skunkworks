@@ -1,5 +1,5 @@
 use crate::vm::ChimeraVM;
-use super::super::super::state::{AppState, ViewMode};
+use crate::tui::state::{AppState, ViewMode};
 use anyhow::Result;
 
 pub(crate) fn handle_char(

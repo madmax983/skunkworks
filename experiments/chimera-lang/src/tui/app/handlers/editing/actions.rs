@@ -1,5 +1,5 @@
 use crate::vm::ChimeraVM;
-use super::super::super::state::{AppState, InputMode, ViewMode};
+use crate::tui::state::{AppState, InputMode, ViewMode};
 use anyhow::Result;
 use crossterm::event::KeyCode;
 
