@@ -255,11 +255,11 @@ You can run legacy DNA files (`.dna`) or new ChimeraScript files (`.chs`).
 # Basic usage with standard DNA files (from repository root)
 cargo run -p chimera-lang --release -- --input experiments/chimera-lang/sample.dna
 
-# Running complex examples like Genesis
-cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples/genesis.chs
+# Running complex examples like Frankenstein Lab
+cargo run -p chimera-lang --release -- --input experiments/chimera-lang/frankenstein_lab.chs
 
 # Headless mode (no TUI)
-cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples/genesis.chs -- --headless
+cargo run -p chimera-lang --release -- --input experiments/chimera-lang/frankenstein_lab.chs -- --headless
 ```
 
 ## Nova Features

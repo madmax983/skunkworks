@@ -75,7 +75,7 @@ pub fn extract(image: &RgbaImage) -> Result<Vec<u8>, String> {
     }
 
     // Sanity check length
-    let capacity_bytes = (image.width() * image.height() * 4 / 8) as u32 - 4;
+    let capacity_bytes = (image.width() * image.height() * 4 / 8) - 4;
     if len > capacity_bytes {
         return Err(format!(
             "Extracted length {} exceeds capacity {}",

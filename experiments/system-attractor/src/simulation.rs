@@ -174,9 +174,9 @@ pub fn update_particles(particles: &mut [Particle], params: &LorenzParams, dt: f
         // Jitter (Swap usage)
         if params.jitter > 0.01 {
             // Deterministic noise based on position to avoid non-thread-safe RNG
-            let noise = ((p.pos.x * 12.9898 + p.pos.y * 78.233).sin() * 43758.5453).fract();
-            let noise2 = ((p.pos.y * 12.9898 + p.pos.z * 78.233).sin() * 43758.5453).fract();
-            let noise3 = ((p.pos.z * 12.9898 + p.pos.x * 78.233).sin() * 43758.5453).fract();
+            let noise = ((p.pos.x * 12.9898 + p.pos.y * 78.233).sin() * 43_758.547).fract();
+            let noise2 = ((p.pos.y * 12.9898 + p.pos.z * 78.233).sin() * 43_758.547).fract();
+            let noise3 = ((p.pos.z * 12.9898 + p.pos.x * 78.233).sin() * 43_758.547).fract();
 
             next_pos.x += (noise - 0.5) * params.jitter;
             next_pos.y += (noise2 - 0.5) * params.jitter;

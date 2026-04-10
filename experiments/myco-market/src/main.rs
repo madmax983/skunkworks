@@ -191,12 +191,21 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
     let market_stats = Paragraph::new(vec![
         ratatui::text::Line::from(vec![
             Span::raw("Active Agents: "),
-            Span::styled(format!("{}", agents_count), Style::default().fg(Color::Cyan)),
+            Span::styled(
+                format!("{}", agents_count),
+                Style::default().fg(Color::Cyan),
+            ),
         ]),
         ratatui::text::Line::from(vec![
-            Span::styled(format!("Bids: {} ", bids_count), Style::default().fg(Color::Green)),
+            Span::styled(
+                format!("Bids: {} ", bids_count),
+                Style::default().fg(Color::Green),
+            ),
             Span::raw("| "),
-            Span::styled(format!("Asks: {} ", asks_count), Style::default().fg(Color::Red)),
+            Span::styled(
+                format!("Asks: {} ", asks_count),
+                Style::default().fg(Color::Red),
+            ),
         ]),
     ])
     .block(Block::default().borders(Borders::ALL).title("Market Stats"));
@@ -218,7 +227,11 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
             ),
         ]),
     ])
-    .block(Block::default().borders(Borders::ALL).title("Simulation Info"));
+    .block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Simulation Info"),
+    );
     f.render_widget(sim_info, stats_chunks[1]);
 
     let controls = Paragraph::new(vec![
