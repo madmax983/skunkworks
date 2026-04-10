@@ -9,11 +9,13 @@ mod tests {
     #[test]
     fn test_lisp_rule_query() {
         let code = r#"
-        (rule (ancestor ?x ?y) (parent ?x ?z) (ancestor ?z ?y))
-        (rule (ancestor ?x ?y) (parent ?x ?y))
-        (assert (parent "alice" "bob"))
-        (assert (parent "bob" "charlie"))
-        (query (ancestor "alice" ?who))
+        (strand "main"
+            (rule (ancestor ?x ?y) (parent ?x ?z) (ancestor ?z ?y))
+            (rule (ancestor ?x ?y) (parent ?x ?y))
+            (assert (parent "alice" "bob"))
+            (assert (parent "bob" "charlie"))
+            (query (ancestor "alice" ?who))
+        )
         "#;
 
         let dna = lisp::compile(code).expect("Failed to compile");

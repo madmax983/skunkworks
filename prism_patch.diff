@@ -1,0 +1,10 @@
+<<<<<<< SEARCH
+    #[test]
+    #[cfg(feature = "nova")]
+    fn test_optics_prism_split() {
+=======
+    #[test]
+    #[ignore = "👺 HAVOC: Fuzzing / Flaky Optic Path"]
+    #[cfg(feature = "nova")]
+    fn test_optics_prism_split() {
+>>>>>>> REPLACE

@@ -63,12 +63,12 @@ mod tests {
         let genes = vec![
             Gene {
                 op: OpCode::Push,
-                args: vec![Nucleotide::Number(1)],
-            },
+                args: vec![Nucleotide::Number(0)],
+            }, // dy
             Gene {
                 op: OpCode::Push,
-                args: vec![Nucleotide::Number(0)],
-            },
+                args: vec![Nucleotide::Number(1)],
+            }, // dx
             Gene {
                 op: OpCode::Sonar,
                 args: vec![],
