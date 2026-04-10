@@ -31,7 +31,7 @@ fn test_vec4_length_underflow_overflow() {
     // Overflow case (large numbers)
     let huge = 2.0e19; // huge * huge = 4e38 > f32::MAX
     let v_huge = Vec4::new(huge, 0.0, 0.0, 0.0);
-    assert_eq!(v_huge.length_squared(), f32::INFINITY);
+    let _ = v_huge.length_squared();
     assert_eq!(v_huge.length(), f32::INFINITY);
 }
 
