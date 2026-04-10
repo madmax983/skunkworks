@@ -2,12 +2,14 @@
 pub mod audio_impl {
     use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
     use ringbuf::{HeapRb, Producer, SharedRb};
-    use std::sync::{Arc, Mutex};
+    use std::sync::Arc;
+
+    type AudioProducer = Producer<f32, Arc<SharedRb<f32, Vec<std::mem::MaybeUninit<f32>>>>>;
 
     pub struct Synth {
         #[allow(dead_code)]
         stream: cpal::Stream,
-        producer: Producer<f32, Arc<SharedRb<f32, Vec<std::mem::MaybeUninit<f32>>>>>,
+        producer: AudioProducer,
         sample_rate: f32,
         phase: f32,
         frequency: f32,

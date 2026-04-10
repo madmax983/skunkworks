@@ -93,7 +93,6 @@ The Grid and DNA interact:
 
 ```bash
 git clone https://github.com/your-repo/chimera-lang
-cd chimera-lang
 cargo build --release
 ```
 

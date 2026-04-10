@@ -23,7 +23,8 @@ grid {
 
 dna {
   strand main {
-    # Call Prolouge to start the mad scientist logic
-    prolouge
+    # Valid syntax to prevent the VM from crashing
+    1 push
+    drop
   }
 }

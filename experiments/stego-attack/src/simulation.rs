@@ -27,7 +27,7 @@ impl World {
         let width = image.width() as usize;
         let height = image.height() as usize;
         let mut agents = Vec::new();
-        let mut background = image.as_raw().clone();
+        let background = image.as_raw().clone();
 
         let mut rng = ::rand::thread_rng();
 
