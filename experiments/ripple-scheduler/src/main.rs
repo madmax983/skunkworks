@@ -31,7 +31,7 @@ async fn main() {
 
     // If audio is not active, we need to drive the simulation manually
     #[cfg(not(feature = "audio"))]
-    let mut model = AudioModel::new(GRID_WIDTH, GRID_HEIGHT, cmd_rx, snap_tx);
+    let mut model = AudioModel::new(GRID_WIDTH, GRID_HEIGHT, cmd_rx, snap_tx, None);
 
     // 2. Scheduler Setup
     let mut scheduler = Scheduler::new();
@@ -354,7 +354,7 @@ fn init_audio(
 
     let config = device.default_output_config()?;
 
-    let mut model = AudioModel::new(GRID_WIDTH, GRID_HEIGHT, cmd_rx, snap_tx);
+    let mut model = AudioModel::new(GRID_WIDTH, GRID_HEIGHT, cmd_rx, snap_tx, None);
 
     let err_fn = |err| eprintln!("an error occurred on stream: {}", err);
 

@@ -747,3 +747,9 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Novel trait**: Bio-Acoustic Feedback Loop. Discrete neural spikes translate into continuous acoustic vibrations and magnetic fields. The magnetic environment acts as an input current, creating self-sustaining rhythms.
 - **Status**: experiments/neuro-strings
 - **Evaluation**: Success. Compiled. An emergent bio-acoustic organism where neural firing sequences manifest as musical chords and magnetic waves. The magnetic waves successfully feed back into the neural network, establishing stable rhythmic loops.
+
+### ferrous-origami
+- **Parents**: crates/ferrous-core + crates/origami
+- **Concept**: Magnetic Morphogenesis.
+- **Novel trait**: A continuous 2D magnetic substrate dynamically warps and actuates the 3D structural constraints of a Miura-ori soft body mesh. As magnetic flux concentrates, the physical constraints of the paper in that region expand or contract, causing the paper to bulge, warp, and deform dynamically based on the underlying field.
+- **Predicted Phenotype**: An organic, pulsating sheet of paper that folds and crumples dynamically based on the spreading magnetic fields, turning magnetic flux into 3D topographical movements.

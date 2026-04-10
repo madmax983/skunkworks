@@ -25,6 +25,15 @@ members = [
     "experiments/locus-ddos",
 ]
 exclude = [
+    "experiments/clockwork-chimera",
+    "experiments/clockwork-concerto",
+    "experiments/ik-codewalker",
+    "experiments/laban-machine",
+    "experiments/spectral-decay",
+    "experiments/syntax-spider",
+    "experiments/system-turbulence",
+    "experiments/turbulent-rhythms",
+    "experiments/verge-computer",
     "graveyard/*"
 ]
 
