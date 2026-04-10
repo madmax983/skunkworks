@@ -507,6 +507,14 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Status**: experiments/myco-fluid
 - **Evaluation**: Success. Compiled. Pheromone trails successfully act as dynamic physical forcefields influencing magnetic agents.
 
+### origami-hologram
+- **Parents**: crates/origami + experiments/hologram-text
+- **Concept**: Spectral Origami. Treating the 3D vertex Z-depths (or heights) of folded paper as a density/phase map, the physical folds of the paper generate standing waves in the optical domain.
+- **Novel trait**: The visualization exposes the frequency domain interference pattern of the geometric compression ratio of the Miura-ori mesh. As the paper expands and contracts, the interference pattern breathes.
+- **Predicted Phenotype**: An optical interference pattern representing a breathing piece of folded paper.
+- **Status**: experiments/origami-hologram
+- **Evaluation**: Success. Compiled. The geometry of the folds successfully generates an interference pattern reflecting its expansion state.
+
 ### myco-hologram
 - **Parents**: experiments/myco-transit + experiments/hologram-text
 - **Concept**: Pheromone-Guided Spectral Interference. Slime mold agents forage on a grid treated as an optical interference pattern.
