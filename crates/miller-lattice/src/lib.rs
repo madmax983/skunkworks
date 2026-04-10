@@ -174,7 +174,10 @@ impl Crystal {
             let entries = match std::fs::read_dir(&path) {
                 Ok(read_dir) => {
                     let mut entries: Vec<_> = read_dir.flatten().collect();
-                    entries.sort_by_key(|e| e.file_name());
+                    // Optimization: `DirEntry::file_name()` allocates an `OsString`.
+                    // Using `sort_by_cached_key` avoids O(N log N) heap allocations
+                    // compared to `sort_by_key`.
+                    entries.sort_by_cached_key(|e| e.file_name());
                     entries
                 }
                 Err(_) => continue,

@@ -8,3 +8,7 @@
 **[Semantic Telemetry Overheads]**
 **Learning:** Using `HashMap` with the default `SipHasher` inside frequently serialized semantic payloads (like `Entity` and `Snapshot`) incurs heavy instantiation overhead and hashing latency for small collections (e.g. `props` or `metrics` holding 1-5 keys). Additionally, dynamic `Vec::new()` calls when constructing `Snapshot`s causes multiple heap reallocations.
 **Action:** Default to `BTreeMap` over `HashMap` for small mappings to bypass SipHasher overhead and guarantee deterministic serialization, and always use `Vec::with_capacity` when struct construction sizes can be reasonably anticipated.
+
+**[Optimized DirEntry sorting allocations]**
+**Learning:** When sorting a collection of `std::fs::DirEntry` elements using `.file_name()`, `sort_by_key` calls the key extraction function O(N log N) times. Since `DirEntry::file_name()` allocates an `OsString`, this results in O(N log N) hidden heap allocations.
+**Action:** Use `sort_by_cached_key` instead of `sort_by_key` whenever the key extraction method is expensive or allocating. This caches the keys and evaluates the extraction exactly O(N) times.
