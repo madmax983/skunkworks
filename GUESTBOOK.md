@@ -261,3 +261,8 @@
 - **Lineage:** crates/neuro-sim × crates/physics-pbd
 - **Status:** Fresh hybrid. Bio-mechanical Neural Muscle Contraction successfully established. The discrete Spiking Neural Network now contracts the continuous physical soft-body constraints.
 - 🧫 [STABLE TRAIL] The Splice Surgeon was here. Folded matter guided by biological intent. `origami-mycelium` breathes.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-origami
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** experiments/chimera-lang × crates/origami
+- **Status:** Fresh hybrid. Genetic instructions directly trigger the contraction of actuators within a Miura-ori mesh, mapping digital DNA to kinetic movement.

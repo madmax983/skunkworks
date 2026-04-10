@@ -1,0 +1,12 @@
+[package]
+name = "chimera-origami"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = "0.8"
+physics-pbd = { path = "../../crates/physics-pbd" }
+origami = { path = "../../crates/origami" }
+chimera-lang = { path = "../chimera-lang" }
+itertools = "0.14.0"
