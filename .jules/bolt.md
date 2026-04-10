@@ -1,3 +1,3 @@
-**[Title] Stack-Allocated Arrays in Hot Rendering Loops**
-**Learning:** Found an inefficient `Vec` allocation chaining using `.collect()` within the hot rendering loop of `experiments/hyperbolic-quipu/src/tiling.rs`.
-**Action:** Replaced `(0..4).map(...).collect::<Vec<_>>()` with `std::array::from_fn(...)` and `array.map()` to stack-allocate small fixed-size arrays without triggering heap allocations. Eliminated 300+ vector allocations per frame.
+**[Zero-Delay Synapse Hoisting]**
+**Learning:** Found an unnecessary O(n) heap allocation (`Vec::push`) during `retain_mut` operations for immediate connections (delay=0) inside Spiking Neural Network inner loops.
+**Action:** For values processed instantly, hoist them into a local accumulator buffer rather than enqueuing and immediately dequeuing them in a dynamically sized `Vec`.

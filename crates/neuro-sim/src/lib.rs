@@ -202,16 +202,23 @@ impl Network {
         // 2. Process Synapses (Propagate spikes)
         for syn in synapses.iter_mut() {
             syn.active = false;
+            let mut weight_to_add = 0.0;
 
             // Check if source neuron spiked in previous step
             if let Some(&spiked) = spikes.get(syn.from) {
                 if spiked {
-                    syn.spikes_in_transit.push(syn.delay);
+                    if syn.delay == 0 {
+                        // Bolt ⚡: Hoist 0-delay spikes directly into current frame.
+                        // Eliminates an O(n) heap allocation (`Vec::push()`) and
+                        // subsequent `retain_mut` operations for immediate connections.
+                        weight_to_add += syn.weight;
+                    } else {
+                        syn.spikes_in_transit.push(syn.delay);
+                    }
                 }
             }
 
             // Advance spikes in transit
-            let mut weight_to_add = 0.0;
             syn.spikes_in_transit.retain_mut(|t| {
                 if *t == 0 {
                     weight_to_add += syn.weight;
@@ -378,5 +385,44 @@ mod tests {
         // In Step 4, `v_end` should be higher than `v_start` (if no decay/drift masking it).
         // Actually, let's just check `active`.
         assert!(network.get_synapse_activity(0));
+    }
+}
+
+#[cfg(test)]
+mod tests_optimization {
+    use super::*;
+
+    #[test]
+    fn test_zero_delay_optimization() {
+        let mut net = Network::new();
+        let n1 = net.add_neuron();
+        let n2 = net.add_neuron();
+
+        // Add a synapse with 0 delay (immediate effect)
+        net.add_synapse_with_delay(n1, n2, 10.0, 0);
+
+        // Force n1 to spike
+        net.neurons[n1].v = 35.0;
+
+        // n1 spikes in this step. The spike is added to spikes_in_transit.
+        net.step(&[]);
+
+        let capacity_before = net.synapses[0].spikes_in_transit.capacity();
+
+        // In the NEXT step, the synapse evaluates its source neuron's spike.
+        // It should immediately add the weight to n2, WITHOUT allocating in spikes_in_transit.
+        net.step(&[]); // Synapse propagates the spike
+        let capacity_after = net.synapses[0].spikes_in_transit.capacity();
+
+        // Bolt optimization: spikes_in_transit should not allocate for delay=0
+        assert_eq!(
+            capacity_before, 0,
+            "Synapse should not have allocated memory yet"
+        );
+        assert_eq!(
+            capacity_after, 0,
+            "Synapse should not allocate memory for 0-delay spikes"
+        );
+        assert!(net.synapses[0].active, "Synapse should have been active");
     }
 }
