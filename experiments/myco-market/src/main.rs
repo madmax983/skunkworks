@@ -175,25 +175,59 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
 
     f.render_widget(canvas, chunks[0]);
 
-    let stats = Paragraph::new(vec![
+    let stats_chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([
+            Constraint::Percentage(33),
+            Constraint::Percentage(34),
+            Constraint::Percentage(33),
+        ])
+        .split(chunks[1]);
+
+    let agents_count = app.world.agents.len();
+    let bids_count = app.world.agents.iter().filter(|a| a.is_bid).count();
+    let asks_count = agents_count.saturating_sub(bids_count);
+
+    let market_stats = Paragraph::new(vec![
         ratatui::text::Line::from(vec![
-            Span::styled(
-                format!("Bids/Asks: {} ", app.world.agents.len()),
-                Style::default().fg(Color::Cyan),
-            ),
+            Span::raw("Active Agents: "),
+            Span::styled(format!("{}", agents_count), Style::default().fg(Color::Cyan)),
+        ]),
+        ratatui::text::Line::from(vec![
+            Span::styled(format!("Bids: {} ", bids_count), Style::default().fg(Color::Green)),
             Span::raw("| "),
+            Span::styled(format!("Asks: {} ", asks_count), Style::default().fg(Color::Red)),
+        ]),
+    ])
+    .block(Block::default().borders(Borders::ALL).title("Market Stats"));
+    f.render_widget(market_stats, stats_chunks[0]);
+
+    let sim_info = Paragraph::new(vec![
+        ratatui::text::Line::from(vec![
+            Span::raw("Recent Trades: "),
             Span::styled(
-                format!("Recent Trades: {} ", app.world.trades.len()),
+                format!("{}", app.world.trades.len()),
                 Style::default().fg(Color::Yellow),
             ),
-            Span::raw("| "),
+        ]),
+        ratatui::text::Line::from(vec![
+            Span::raw("Tick: "),
             Span::styled(
-                format!("Tick: {} ", app.tick),
+                format!("{}", app.tick),
                 Style::default().fg(Color::DarkGray),
             ),
         ]),
+    ])
+    .block(Block::default().borders(Borders::ALL).title("Simulation Info"));
+    f.render_widget(sim_info, stats_chunks[1]);
+
+    let controls = Paragraph::new(vec![
+        ratatui::text::Line::from(Span::styled(
+            "Controls",
+            Style::default().add_modifier(ratatui::style::Modifier::BOLD),
+        )),
         ratatui::text::Line::from("Press 'q' or 'Esc' to quit"),
     ])
-    .block(Block::default().borders(Borders::ALL));
-    f.render_widget(stats, chunks[1]);
+    .block(Block::default().borders(Borders::ALL).title("Controls"));
+    f.render_widget(controls, stats_chunks[2]);
 }
