@@ -323,3 +323,7 @@
 ### [CRITICAL MASS] - Location: experiments/ferrous-origami
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination successful. The continuous magnetic substrate correctly warps the 3D origami constraints. Hybrid vigor achieved.
+
+### [CRITICAL MASS] - Location: experiments/gray-resonance
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination successful. The continuous reaction-diffusion Turing patterns actively drive the 2D acoustic simulation, generating an evolving organic drone synthesizer. Hybrid vigor achieved.
