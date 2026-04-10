@@ -117,6 +117,17 @@ impl Network {
     /// # Returns
     ///
     /// The index (`usize`) of the newly created neuron. Use this index to connect synapses.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use neuro_sim::Network;
+    /// let mut net = Network::new();
+    /// let n1 = net.add_neuron();
+    /// let n2 = net.add_neuron();
+    /// assert_eq!(n1, 0);
+    /// assert_eq!(n2, 1);
+    /// ```
     pub fn add_neuron(&mut self) -> usize {
         self.neurons.push(Izhikevich::new());
         self.spikes.push(false);
@@ -131,6 +142,18 @@ impl Network {
     /// * `from` - Index of source neuron.
     /// * `to` - Index of target neuron.
     /// * `weight` - Connection strength.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use neuro_sim::Network;
+    /// let mut net = Network::new();
+    /// let n1 = net.add_neuron();
+    /// let n2 = net.add_neuron();
+    ///
+    /// // Connect n1 to n2 with a weight of 15.0
+    /// net.add_synapse(n1, n2, 15.0);
+    /// ```
     pub fn add_synapse(&mut self, from: usize, to: usize, weight: f32) {
         self.add_synapse_with_delay(from, to, weight, 0);
     }
@@ -179,6 +202,22 @@ impl Network {
     ///
     /// * `external_inputs` - A slice of currents to inject into neurons matching the index.
     ///   If the slice is shorter than the neuron count, remaining neurons receive 0.0.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use neuro_sim::Network;
+    /// let mut net = Network::new();
+    /// let n1 = net.add_neuron();
+    /// let n2 = net.add_neuron();
+    /// net.add_synapse(n1, n2, 10.0);
+    ///
+    /// // Inject 100.0 current into n1, and 0.0 into n2
+    /// net.step(&[100.0, 0.0]);
+    ///
+    /// // Next step without external current
+    /// net.step(&[]);
+    /// ```
     pub fn step(&mut self, external_inputs: &[f32]) {
         // 1. Collect inputs for this step
         // By pre-allocating we remove a vector allocation per frame.
@@ -241,11 +280,42 @@ impl Network {
     }
 
     /// Checks if a specific neuron spiked in the most recent step.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use neuro_sim::Network;
+    /// let mut net = Network::new();
+    /// let n1 = net.add_neuron();
+    ///
+    /// // Inject enough current to cause a spike
+    /// net.neurons[n1].inject(100.0);
+    /// net.step(&[]);
+    ///
+    /// assert!(net.is_spiking(n1));
+    /// ```
     pub fn is_spiking(&self, index: usize) -> bool {
         self.spikes.get(index).cloned().unwrap_or(false)
     }
 
     /// Checks if a specific synapse was active (delivered a spike) in the most recent step.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use neuro_sim::Network;
+    /// let mut net = Network::new();
+    /// let n1 = net.add_neuron();
+    /// let n2 = net.add_neuron();
+    /// net.add_synapse(n1, n2, 10.0);
+    ///
+    /// // Force n1 to spike
+    /// net.neurons[n1].inject(100.0);
+    /// net.step(&[]); // n1 spikes
+    /// net.step(&[]); // Spike travels across synapse 0 to n2
+    ///
+    /// assert!(net.get_synapse_activity(0));
+    /// ```
     pub fn get_synapse_activity(&self, index: usize) -> bool {
         self.synapses.get(index).map(|s| s.active).unwrap_or(false)
     }
