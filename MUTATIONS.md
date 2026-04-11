@@ -30,6 +30,15 @@ Additionally, the success of translating complex abstract graphs (like codebases
 
 ## 🌿 Attempted Crosses
 
+### flock-origami
+- **Parents**: crates/flocking + crates/origami
+- **Concept**: Swarm Morphogenesis. A continuous 2D boids simulation acts as a density field that actively actuates the physical distance and tension constraints of a procedural Miura-ori mesh (Position Based Dynamics).
+- **Novel trait**: Spatially projecting swarm agents onto a paper surface to induce folding. The flocking density actively crumples the 3D topology.
+- **Predicted Phenotype**: An organic, pulsating sheet of paper that folds and crumples dynamically based on the spatial density of the swarming agents running across its surface. The flocking geometry dynamically rewrites the paper geometry.
+- **Status**: experiments/flock-origami
+- **Evaluation**: Success. Compiled. A beautiful emergent organism where swarm behavior translates directly into physical mesh deformations via Position Based Dynamics.
+
+
 ### echo-cavern
 - **Parents**: experiments/ferrous-strings + experiments/ripple-tank
 - **Concept**: Acoustic reverberation.
