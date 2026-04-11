@@ -350,3 +350,6 @@
 ### [CRITICAL MASS] - Location: experiments/gray-resonance
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination successful. The continuous reaction-diffusion Turing patterns actively drive the 2D acoustic simulation, generating an evolving organic drone synthesizer. Hybrid vigor achieved.
+
+* [☠️ Reaper] `quipu-symphony` exhibited terminal characteristics. Compilation fails due to deep structural rot and borrowing constraints. No swarm defense mounted. Biomass returned to the void. (Execution)
+* [☠️ Reaper] `chimera-specter` exhibits terminal characteristics. Compilation fails due to vestigial dependencies on `OpCode::Battery` and `OpCode::Ground`. Ecosystem maladaptation confirmed. (Condemnation)
