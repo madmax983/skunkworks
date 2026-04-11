@@ -30,6 +30,14 @@ Additionally, the success of translating complex abstract graphs (like codebases
 
 ## 🌿 Attempted Crosses
 
+### resonance-origami
+- **Parents**: crates/resonance-audio + crates/origami
+- **Concept**: Acoustic Morphogenesis of Soft Bodies.
+- **Novel trait**: The continuous 2D acoustic wave pressure actively actuates the physical distance and tension constraints of the procedural Miura-ori mesh. High acoustic pressure dynamically expands the structural constraints, while low pressure causes them to contract.
+- **Predicted Phenotype**: An organic, vibrating sheet of paper that dances and crumples dynamically based on standing acoustic waves, turning resonant frequencies into 3D topographical movements.
+- **Status**: experiments/resonance-origami
+- **Evaluation**: Success. Compiled. The soft-body mesh successfully translates acoustic wave phases directly into structural folds and vibrations.
+
 ### flock-origami
 - **Parents**: crates/flocking + crates/origami
 - **Concept**: Swarm Morphogenesis. A continuous 2D boids simulation acts as a density field that actively actuates the physical distance and tension constraints of a procedural Miura-ori mesh (Position Based Dynamics).
@@ -770,6 +778,8 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Concept**: Magnetic Morphogenesis.
 - **Novel trait**: A continuous 2D magnetic substrate dynamically warps and actuates the 3D structural constraints of a Miura-ori soft body mesh. As magnetic flux concentrates, the physical constraints of the paper in that region expand or contract, causing the paper to bulge, warp, and deform dynamically based on the underlying field.
 - **Predicted Phenotype**: An organic, pulsating sheet of paper that folds and crumples dynamically based on the spreading magnetic fields, turning magnetic flux into 3D topographical movements.
+- **Status**: experiments/ferrous-origami
+- **Evaluation**: Success. Compiled. Magnetic fluid dynamics actively warp the geometric soft body mesh into 3D pulsating shapes.
 
 ### gray-resonance
 - **Parents**: crates/gray-scott + crates/resonance-audio

@@ -1,0 +1,10 @@
+[package]
+name = "resonance-origami"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+origami = { path = "../../crates/origami" }
+physics-pbd = { path = "../../crates/physics-pbd" }
+resonance-audio = { path = "../../crates/resonance-audio" }
