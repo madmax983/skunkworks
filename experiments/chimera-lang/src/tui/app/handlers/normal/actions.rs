@@ -1,11 +1,11 @@
-use crate::tui::state::{AppState, InputMode, ViewMode};
+use crate::tui::state::{AppState, ViewMode};
 use crate::vm::ChimeraVM;
 use anyhow::Result;
 use crossterm::event::KeyCode;
 
 pub(crate) fn handle_action_input(
     key_code: KeyCode,
-    vm: &mut ChimeraVM,
+    _vm: &mut ChimeraVM,
     app_state: &mut AppState,
 ) -> Result<bool> {
     match key_code {

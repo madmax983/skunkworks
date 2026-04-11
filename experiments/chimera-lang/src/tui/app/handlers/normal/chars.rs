@@ -378,7 +378,7 @@ fn handle_char_s_upper(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<b
 }
 
 #[cfg(feature = "nova")]
-fn handle_char_m_upper(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
+fn handle_char_m_upper(_vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
     if let ViewMode::Babel = app_state.view_mode {
         // Initialize if needed
         if app_state.babel_ast.is_none() {

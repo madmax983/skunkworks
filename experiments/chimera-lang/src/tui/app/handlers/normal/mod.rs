@@ -12,15 +12,10 @@ pub(crate) mod actions;
 pub(crate) mod chars;
 pub(crate) mod navigation;
 
-use crate::ast::Gene;
-use crate::tui::get_all_views;
-use crate::tui::parse_grid_value;
-use crate::tui::state::{AppState, InputMode, ViewMode};
+use crate::tui::state::{AppState, ViewMode};
 use crate::vm::ChimeraVM;
-use crate::{ChimeraParser, Rule};
 use anyhow::Result;
 use crossterm::event::{KeyCode, KeyEvent};
-use pest::Parser;
 
 pub(crate) fn handle_normal_input(
     key: KeyEvent,

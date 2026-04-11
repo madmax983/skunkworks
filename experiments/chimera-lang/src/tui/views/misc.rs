@@ -263,6 +263,17 @@ pub(crate) fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
 }
 
 #[cfg(feature = "nova")]
+/// Renders the Fractal view for observing recursive execution patterns.
+///
+/// Uses a Canvas to draw a procedural tree or geometric shape based on the
+/// execution trace complexity or recursive stack depth.
+///
+/// # Examples
+///
+/// ```ignore
+/// // Inside app/mod.rs render loop
+/// ViewMode::Fractal => render_fractal(f, vm, app_state),
+/// ```
 pub(crate) fn render_fractal(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     // 1. Compute
     crate::vm::nova_fractal::compute_fractal(vm);
@@ -338,6 +349,17 @@ pub(crate) fn render_fractal(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppS
 }
 
 #[cfg(feature = "nova")]
+/// Renders the Semiotics view tracking logical implications and semantic shifts.
+///
+/// Displays the symbol resolution map and the state of any parsed Babel-19 grid
+/// structures currently loaded into the VM environment.
+///
+/// # Examples
+///
+/// ```ignore
+/// // Inside app/mod.rs render loop
+/// ViewMode::Semiotics => render_semiotics(f, vm, app_state),
+/// ```
 pub(crate) fn render_semiotics(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)

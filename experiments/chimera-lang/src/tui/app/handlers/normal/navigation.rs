@@ -1,4 +1,4 @@
-use crate::tui::state::{AppState, InputMode, ViewMode};
+use crate::tui::state::{AppState, ViewMode};
 use crate::vm::ChimeraVM;
 use anyhow::Result;
 use crossterm::event::KeyCode;
