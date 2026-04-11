@@ -171,7 +171,13 @@ async fn main() {
 
         set_default_camera();
         draw_text("Resonance-Origami", 10.0, 30.0, 30.0, WHITE);
-        draw_text("Click to pluck acoustic wave tank", 10.0, 60.0, 20.0, LIGHTGRAY);
+        draw_text(
+            "Click to pluck acoustic wave tank",
+            10.0,
+            60.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await;
     }

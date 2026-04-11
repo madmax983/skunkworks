@@ -1,367 +1,350 @@
-use crate::vm::ChimeraVM;
 use crate::tui::state::{AppState, InputMode, ViewMode};
+use crate::vm::ChimeraVM;
 use anyhow::Result;
 use crossterm::event::KeyCode;
 
-pub(crate) fn handle_char_input(c: char, vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
+pub(crate) fn handle_char_input(
+    c: char,
+    vm: &mut ChimeraVM,
+    app_state: &mut AppState,
+) -> Result<bool> {
     match KeyCode::Char(c) {
         KeyCode::Char('K') => {
-                        #[cfg(feature = "nova")]
-                        {
-                            if let ViewMode::Ecology = app_state.view_mode {
-                                vm.organelles.clear();
-                                app_state.status_msg = "Extinction Event.".to_string();
-                            } else {
-                                app_state.view_mode = ViewMode::Choir;
-                                app_state.status_msg = "Switched to Choir View".to_string();
-                            }
-                        }
-                    }
+            #[cfg(feature = "nova")]
+            {
+                if let ViewMode::Ecology = app_state.view_mode {
+                    vm.organelles.clear();
+                    app_state.status_msg = "Extinction Event.".to_string();
+                } else {
+                    app_state.view_mode = ViewMode::Choir;
+                    app_state.status_msg = "Switched to Choir View".to_string();
+                }
+            }
+        }
         KeyCode::Char('C') => {
-                        app_state.chaos_mode = !app_state.chaos_mode;
-                        app_state.status_msg = format!("Chaos Mode: {}", app_state.chaos_mode);
-                    }
+            app_state.chaos_mode = !app_state.chaos_mode;
+            app_state.status_msg = format!("Chaos Mode: {}", app_state.chaos_mode);
+        }
         #[cfg(feature = "nova")]
-                    KeyCode::Char('^') => app_state.view_mode = ViewMode::Cambrian,
+        KeyCode::Char('^') => app_state.view_mode = ViewMode::Cambrian,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('&') => app_state.view_mode = ViewMode::Semiotics,
+        KeyCode::Char('&') => app_state.view_mode = ViewMode::Semiotics,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('*') => app_state.view_mode = ViewMode::Fractal,
+        KeyCode::Char('*') => app_state.view_mode = ViewMode::Fractal,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('y') => app_state.view_mode = ViewMode::LifeCycle,
+        KeyCode::Char('y') => app_state.view_mode = ViewMode::LifeCycle,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('|') => app_state.view_mode = ViewMode::Savant,
+        KeyCode::Char('|') => app_state.view_mode = ViewMode::Savant,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('#') => app_state.view_mode = ViewMode::Akashic,
+        KeyCode::Char('#') => app_state.view_mode = ViewMode::Akashic,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('\\') => app_state.view_mode = ViewMode::Prologue,
+        KeyCode::Char('\\') => app_state.view_mode = ViewMode::Prologue,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('6') => app_state.view_mode = ViewMode::Lexicon,
+        KeyCode::Char('6') => app_state.view_mode = ViewMode::Lexicon,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('N') => app_state.view_mode = ViewMode::Narrative,
+        KeyCode::Char('N') => app_state.view_mode = ViewMode::Narrative,
         KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
         #[cfg(feature = "silicon")]
-                    KeyCode::Char('F') => app_state.view_mode = ViewMode::Foundry,
+        KeyCode::Char('F') => app_state.view_mode = ViewMode::Foundry,
         #[cfg(feature = "elektra")]
-                    KeyCode::Char('E') => app_state.view_mode = ViewMode::Elektra,
+        KeyCode::Char('E') => app_state.view_mode = ViewMode::Elektra,
         KeyCode::Char('p') => {
-                        if let ViewMode::Grid = app_state.view_mode {
-                            app_state.palette_open = !app_state.palette_open;
-                        } else {
-                            #[cfg(feature = "nova")]
-                            {
-                                app_state.view_mode = ViewMode::PianoRoll;
-                            }
-                        }
-                    }
+            if let ViewMode::Grid = app_state.view_mode {
+                app_state.palette_open = !app_state.palette_open;
+            } else {
+                #[cfg(feature = "nova")]
+                {
+                    app_state.view_mode = ViewMode::PianoRoll;
+                }
+            }
+        }
         #[cfg(feature = "nova")]
-                    KeyCode::Char('5') => {
-                        if let ViewMode::Pandemonium = app_state.view_mode {
-                            app_state.pandemonium_selected_tool = 4;
-                        }
-                    }
+        KeyCode::Char('5') => {
+            if let ViewMode::Pandemonium = app_state.view_mode {
+                app_state.pandemonium_selected_tool = 4;
+            }
+        }
         #[cfg(feature = "nova")]
-                    KeyCode::Char('z') => app_state.view_mode = ViewMode::Bestiary,
+        KeyCode::Char('z') => app_state.view_mode = ViewMode::Bestiary,
         KeyCode::Char('i') => {
-                        app_state.input_mode = InputMode::Injection;
-                        app_state.input_buffer.clear();
-                    }
+            app_state.input_mode = InputMode::Injection;
+            app_state.input_buffer.clear();
+        }
         #[cfg(feature = "nova")]
-                    KeyCode::Char('r') => {
-                        if let ViewMode::Graveyard = app_state.view_mode {
-                            match vm.resurrect_from_graveyard(app_state.selected_graveyard_strand) {
-                                Ok(idx) => {
-                                    app_state.status_msg = format!("Resurrected strand {}!", idx);
-                                    if app_state.selected_graveyard_strand >= vm.graveyard.len()
-                                        && !vm.graveyard.is_empty()
-                                    {
-                                        app_state.selected_graveyard_strand =
-                                            vm.graveyard.len() - 1;
-                                    }
-                                }
-                                Err(e) => app_state.status_msg = format!("Error: {}", e),
-                            }
+        KeyCode::Char('r') => {
+            if let ViewMode::Graveyard = app_state.view_mode {
+                match vm.resurrect_from_graveyard(app_state.selected_graveyard_strand) {
+                    Ok(idx) => {
+                        app_state.status_msg = format!("Resurrected strand {}!", idx);
+                        if app_state.selected_graveyard_strand >= vm.graveyard.len()
+                            && !vm.graveyard.is_empty()
+                        {
+                            app_state.selected_graveyard_strand = vm.graveyard.len() - 1;
                         }
                     }
+                    Err(e) => app_state.status_msg = format!("Error: {}", e),
+                }
+            }
+        }
         #[cfg(feature = "biophysics")]
-                    KeyCode::Char('b') => app_state.view_mode = ViewMode::Cortex,
+        KeyCode::Char('b') => app_state.view_mode = ViewMode::Cortex,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('a') => {
-                        if let ViewMode::Evolution = app_state.view_mode {
-                            app_state.evolution_state.auto_run =
-                                !app_state.evolution_state.auto_run;
-                        } else if let ViewMode::Alchemy = app_state.view_mode {
-                            // Add to Crucible
-                            match app_state.alchemy_selection {
-                                0 => {
-                                    // Shelf
-                                    let elements = [
-                                        "Fire", "Water", "Earth", "Air", "Life", "Death", "Lead",
-                                        "Energy",
-                                    ];
-                                    if app_state.alchemy_shelf_idx < elements.len() {
-                                        vm.crucible.add(crate::vm::Value::Str(
-                                            elements[app_state.alchemy_shelf_idx].to_string(),
-                                        ));
-                                    }
-                                }
-                                1 => {
-                                    // Strands
-                                    if app_state.alchemy_strand_idx < vm.dna.helix.strands.len() {
-                                        vm.crucible.add(crate::vm::Value::Int(
-                                            app_state.alchemy_strand_idx as i64,
-                                        ));
-                                    }
-                                }
-                                _ => {}
-                            }
+        KeyCode::Char('a') => {
+            if let ViewMode::Evolution = app_state.view_mode {
+                app_state.evolution_state.auto_run = !app_state.evolution_state.auto_run;
+            } else if let ViewMode::Alchemy = app_state.view_mode {
+                // Add to Crucible
+                match app_state.alchemy_selection {
+                    0 => {
+                        // Shelf
+                        let elements = [
+                            "Fire", "Water", "Earth", "Air", "Life", "Death", "Lead", "Energy",
+                        ];
+                        if app_state.alchemy_shelf_idx < elements.len() {
+                            vm.crucible.add(crate::vm::Value::Str(
+                                elements[app_state.alchemy_shelf_idx].to_string(),
+                            ));
                         }
                     }
-        #[cfg(feature = "nova")]
-                    KeyCode::Char('x') => {
-                        if let ViewMode::Graveyard = app_state.view_mode {
-                            if app_state.selected_graveyard_strand < vm.graveyard.len() {
-                                vm.graveyard.remove(app_state.selected_graveyard_strand);
-                                app_state.status_msg = "Exterminated strand.".to_string();
-                                if app_state.selected_graveyard_strand >= vm.graveyard.len()
-                                    && !vm.graveyard.is_empty()
-                                {
-                                    app_state.selected_graveyard_strand = vm.graveyard.len() - 1;
-                                }
-                            }
-                        } else if let ViewMode::Alchemy = app_state.view_mode {
-                            vm.crucible.clear();
-                            app_state.status_msg = "Crucible emptied.".to_string();
+                    1 => {
+                        // Strands
+                        if app_state.alchemy_strand_idx < vm.dna.helix.strands.len() {
+                            vm.crucible
+                                .add(crate::vm::Value::Int(app_state.alchemy_strand_idx as i64));
                         }
                     }
+                    _ => {}
+                }
+            }
+        }
         #[cfg(feature = "nova")]
-                    KeyCode::Char('t') => {
-                        if let ViewMode::Alchemy = app_state.view_mode {
-                            crate::vm::alchemy::transmute_crucible(vm);
-                        }
+        KeyCode::Char('x') => {
+            if let ViewMode::Graveyard = app_state.view_mode {
+                if app_state.selected_graveyard_strand < vm.graveyard.len() {
+                    vm.graveyard.remove(app_state.selected_graveyard_strand);
+                    app_state.status_msg = "Exterminated strand.".to_string();
+                    if app_state.selected_graveyard_strand >= vm.graveyard.len()
+                        && !vm.graveyard.is_empty()
+                    {
+                        app_state.selected_graveyard_strand = vm.graveyard.len() - 1;
                     }
+                }
+            } else if let ViewMode::Alchemy = app_state.view_mode {
+                vm.crucible.clear();
+                app_state.status_msg = "Crucible emptied.".to_string();
+            }
+        }
         #[cfg(feature = "nova")]
-                    KeyCode::Char('k') => app_state.view_mode = ViewMode::Kaleidoscope,
+        KeyCode::Char('t') => {
+            if let ViewMode::Alchemy = app_state.view_mode {
+                crate::vm::alchemy::transmute_crucible(vm);
+            }
+        }
         #[cfg(feature = "nova")]
-                    KeyCode::Char('$') => app_state.view_mode = ViewMode::Market,
+        KeyCode::Char('k') => app_state.view_mode = ViewMode::Kaleidoscope,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('!') => app_state.view_mode = ViewMode::Ballistics,
+        KeyCode::Char('$') => app_state.view_mode = ViewMode::Market,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('~') => app_state.view_mode = ViewMode::Scent,
+        KeyCode::Char('!') => app_state.view_mode = ViewMode::Ballistics,
+        #[cfg(feature = "nova")]
+        KeyCode::Char('~') => app_state.view_mode = ViewMode::Scent,
         KeyCode::Char('e') => {
-                        if let ViewMode::Genome = app_state.view_mode {
-                            if let Some(strand) =
-                                vm.dna.helix.strands.get(app_state.selected_strand)
-                            {
-                                let engine = crate::vm::evolution::EvolutionEngine::new(
-                                    strand.clone(),
-                                    20, // Population
-                                    app_state.evolution_state.challenge.clone(),
-                                );
-                                app_state.evolution_state.engine = Some(engine);
-                                app_state.view_mode = ViewMode::Evolution;
-                                app_state.status_msg = "Evolution Initialized".to_string();
-                            }
-                        }
-                    }
+            if let ViewMode::Genome = app_state.view_mode {
+                if let Some(strand) = vm.dna.helix.strands.get(app_state.selected_strand) {
+                    let engine = crate::vm::evolution::EvolutionEngine::new(
+                        strand.clone(),
+                        20, // Population
+                        app_state.evolution_state.challenge.clone(),
+                    );
+                    app_state.evolution_state.engine = Some(engine);
+                    app_state.view_mode = ViewMode::Evolution;
+                    app_state.status_msg = "Evolution Initialized".to_string();
+                }
+            }
+        }
         KeyCode::Char('f') => return handle_char_f(vm, app_state),
         #[cfg(feature = "nova")]
-                    KeyCode::Char('V') => app_state.view_mode = ViewMode::Arena,
+        KeyCode::Char('V') => app_state.view_mode = ViewMode::Arena,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('G') => {
-                        if let ViewMode::Babel = app_state.view_mode {
-                            if let Some(ast) = &app_state.babel_ast {
-                                let s = crate::vm::babel::generate_string(ast);
-                                app_state.babel_result = s;
-                            } else {
-                                app_state.status_msg = "No Grammar to Generate from".to_string();
-                            }
-                        } else {
-                            app_state.view_mode = ViewMode::Garden;
-                        }
+        KeyCode::Char('G') => {
+            if let ViewMode::Babel = app_state.view_mode {
+                if let Some(ast) = &app_state.babel_ast {
+                    let s = crate::vm::babel::generate_string(ast);
+                    app_state.babel_result = s;
+                } else {
+                    app_state.status_msg = "No Grammar to Generate from".to_string();
+                }
+            } else {
+                app_state.view_mode = ViewMode::Garden;
+            }
+        }
+        #[cfg(feature = "nova")]
+        KeyCode::Char('l') => app_state.view_mode = ViewMode::Biolum,
+        #[cfg(feature = "nova")]
+        KeyCode::Char('L') => app_state.view_mode = ViewMode::Babel,
+        #[cfg(feature = "nova")]
+        KeyCode::Char('=') => app_state.view_mode = ViewMode::Strings,
+        #[cfg(feature = "nova")]
+        KeyCode::Char('Y') => app_state.view_mode = ViewMode::Hydra,
+        #[cfg(feature = "nova")]
+        KeyCode::Char('T') => {
+            if let ViewMode::Babel = app_state.view_mode {
+                if let Some(ast) = &app_state.babel_ast {
+                    vm.stack.push(ast.clone());
+                    vm.stack
+                        .push(crate::vm::Value::Str(app_state.babel_input.clone()));
+                    crate::vm::babel::exec_babel_op(vm, crate::opcode::OpCode::Tongue, &[]);
+                    if let Some(res) = vm.stack.pop() {
+                        app_state.babel_result = format!("{}", res);
                     }
+                }
+            } else {
+                app_state.view_mode = ViewMode::Chronos;
+            }
+        }
         #[cfg(feature = "nova")]
-                    KeyCode::Char('l') => app_state.view_mode = ViewMode::Biolum,
+        KeyCode::Char('U') => app_state.view_mode = ViewMode::Logos,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('L') => app_state.view_mode = ViewMode::Babel,
+        KeyCode::Char('P') => app_state.view_mode = ViewMode::Pandemonium,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('=') => app_state.view_mode = ViewMode::Strings,
+        KeyCode::Char('H') => app_state.view_mode = ViewMode::Hyperspace,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('Y') => app_state.view_mode = ViewMode::Hydra,
+        KeyCode::Char('W') => app_state.view_mode = ViewMode::Weaver,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('T') => {
-                        if let ViewMode::Babel = app_state.view_mode {
-                            if let Some(ast) = &app_state.babel_ast {
-                                vm.stack.push(ast.clone());
-                                vm.stack
-                                    .push(crate::vm::Value::Str(app_state.babel_input.clone()));
-                                crate::vm::babel::exec_babel_op(
-                                    vm,
-                                    crate::opcode::OpCode::Tongue,
-                                    &[],
-                                );
-                                if let Some(res) = vm.stack.pop() {
-                                    app_state.babel_result = format!("{}", res);
-                                }
-                            }
-                        } else {
-                            app_state.view_mode = ViewMode::Chronos;
-                        }
-                    }
+        KeyCode::Char('`') => app_state.view_mode = ViewMode::Terminal,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('U') => app_state.view_mode = ViewMode::Logos,
+        KeyCode::Char('A') => app_state.view_mode = ViewMode::Attractor,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('P') => app_state.view_mode = ViewMode::Pandemonium,
+        KeyCode::Char('v') => app_state.view_mode = ViewMode::Virology,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('H') => app_state.view_mode = ViewMode::Hyperspace,
+        KeyCode::Char('B') => app_state.view_mode = ViewMode::BioMesh,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('W') => app_state.view_mode = ViewMode::Weaver,
+        KeyCode::Char('X') => app_state.view_mode = ViewMode::Reactor,
         #[cfg(feature = "nova")]
-                    KeyCode::Char('`') => app_state.view_mode = ViewMode::Terminal,
+        KeyCode::Char('I') => {
+            if let ViewMode::Hologram = app_state.view_mode {
+                // Interfere (DNA -> Hologram)
+                let idx = app_state.selected_strand;
+                vm.stack.push(crate::vm::Value::Int(idx as i64));
+                crate::vm::nova_hologram::exec_interfere(vm, crate::opcode::OpCode::Interfere, &[]);
+                app_state.status_msg = format!("Interfered strand {}", idx);
+            } else if let ViewMode::Ecology = app_state.view_mode {
+                app_state.input_mode = InputMode::Editing;
+                app_state.input_buffer.clear();
+                app_state.status_msg = "Injecting Gene... (Type & Enter)".to_string();
+            } else {
+                app_state.view_mode = ViewMode::Hologram;
+            }
+        }
         #[cfg(feature = "nova")]
-                    KeyCode::Char('A') => app_state.view_mode = ViewMode::Attractor,
+        KeyCode::Char('O') => {
+            if let ViewMode::Hologram = app_state.view_mode {
+                // Refract (Hologram -> DNA)
+                crate::vm::nova_hologram::exec_refract(vm, crate::opcode::OpCode::Refract, &[]);
+            } else {
+                app_state.view_mode = ViewMode::Orca;
+            }
+        }
         #[cfg(feature = "nova")]
-                    KeyCode::Char('v') => app_state.view_mode = ViewMode::Virology,
+        KeyCode::Char('+') => {
+            if let ViewMode::Hologram = app_state.view_mode {
+                let (x, y) = app_state.grid_cursor;
+                vm.hologram_grid[y][x].0 += 0.1;
+                vm.hologram_grid[y][x].1 += 0.1;
+            }
+        }
         #[cfg(feature = "nova")]
-                    KeyCode::Char('B') => app_state.view_mode = ViewMode::BioMesh,
-        #[cfg(feature = "nova")]
-                    KeyCode::Char('X') => app_state.view_mode = ViewMode::Reactor,
-        #[cfg(feature = "nova")]
-                    KeyCode::Char('I') => {
-                        if let ViewMode::Hologram = app_state.view_mode {
-                            // Interfere (DNA -> Hologram)
-                            let idx = app_state.selected_strand;
-                            vm.stack.push(crate::vm::Value::Int(idx as i64));
-                            crate::vm::nova_hologram::exec_interfere(
-                                vm,
-                                crate::opcode::OpCode::Interfere,
-                                &[],
-                            );
-                            app_state.status_msg = format!("Interfered strand {}", idx);
-                        } else if let ViewMode::Ecology = app_state.view_mode {
-                            app_state.input_mode = InputMode::Editing;
-                            app_state.input_buffer.clear();
-                            app_state.status_msg = "Injecting Gene... (Type & Enter)".to_string();
-                        } else {
-                            app_state.view_mode = ViewMode::Hologram;
-                        }
-                    }
-        #[cfg(feature = "nova")]
-                    KeyCode::Char('O') => {
-                        if let ViewMode::Hologram = app_state.view_mode {
-                            // Refract (Hologram -> DNA)
-                            crate::vm::nova_hologram::exec_refract(
-                                vm,
-                                crate::opcode::OpCode::Refract,
-                                &[],
-                            );
-                        } else {
-                            app_state.view_mode = ViewMode::Orca;
-                        }
-                    }
-        #[cfg(feature = "nova")]
-                    KeyCode::Char('+') => {
-                        if let ViewMode::Hologram = app_state.view_mode {
-                            let (x, y) = app_state.grid_cursor;
-                            vm.hologram_grid[y][x].0 += 0.1;
-                            vm.hologram_grid[y][x].1 += 0.1;
-                        }
-                    }
-        #[cfg(feature = "nova")]
-                    KeyCode::Char('-') => {
-                        if let ViewMode::Hologram = app_state.view_mode {
-                            let (x, y) = app_state.grid_cursor;
-                            vm.hologram_grid[y][x].0 -= 0.1;
-                            vm.hologram_grid[y][x].1 -= 0.1;
-                        }
-                    }
+        KeyCode::Char('-') => {
+            if let ViewMode::Hologram = app_state.view_mode {
+                let (x, y) = app_state.grid_cursor;
+                vm.hologram_grid[y][x].0 -= 0.1;
+                vm.hologram_grid[y][x].1 -= 0.1;
+            }
+        }
         #[cfg(all(feature = "oracle", feature = "nova"))]
-                    KeyCode::Char('/') => {
-                        if let ViewMode::Grimoire = app_state.view_mode {
-                            app_state.query_mode = true;
-                            app_state.query_input.clear();
-                            app_state.query_results.clear();
-                        }
-                    }
+        KeyCode::Char('/') => {
+            if let ViewMode::Grimoire = app_state.view_mode {
+                app_state.query_mode = true;
+                app_state.query_input.clear();
+                app_state.query_results.clear();
+            }
+        }
         KeyCode::Char('?') => {
-                        app_state.show_view_selector = !app_state.show_view_selector;
-                        // Reset index when opening
-                        if app_state.show_view_selector {
-                            app_state.view_selector_state.borrow_mut().select(Some(0));
-                        }
-                    }
+            app_state.show_view_selector = !app_state.show_view_selector;
+            // Reset index when opening
+            if app_state.show_view_selector {
+                app_state.view_selector_state.borrow_mut().select(Some(0));
+            }
+        }
         KeyCode::Char('q') => return Ok(true),
         KeyCode::Char(' ') => return handle_char_space(vm, app_state),
         KeyCode::Char('s') => return handle_char_s(vm, app_state),
         #[cfg(feature = "nova")]
-                    KeyCode::Char('R') => return handle_char_r_upper(vm, app_state),
+        KeyCode::Char('R') => return handle_char_r_upper(vm, app_state),
         #[cfg(feature = "nova")]
-                    KeyCode::Char('M') => return handle_char_m_upper(vm, app_state),
+        KeyCode::Char('M') => return handle_char_m_upper(vm, app_state),
         #[cfg(feature = "nova")]
-                    KeyCode::Char('S') => return handle_char_s_upper(vm, app_state),
+        KeyCode::Char('S') => return handle_char_s_upper(vm, app_state),
         #[cfg(feature = "nova")]
-                    KeyCode::Char('1') => {
-                        if let ViewMode::Pandemonium = app_state.view_mode {
-                            app_state.pandemonium_selected_tool = 0;
-                        }
-                    }
+        KeyCode::Char('1') => {
+            if let ViewMode::Pandemonium = app_state.view_mode {
+                app_state.pandemonium_selected_tool = 0;
+            }
+        }
         #[cfg(feature = "nova")]
-                    KeyCode::Char('2') => {
-                        if let ViewMode::Pandemonium = app_state.view_mode {
-                            app_state.pandemonium_selected_tool = 1;
-                        }
-                    }
+        KeyCode::Char('2') => {
+            if let ViewMode::Pandemonium = app_state.view_mode {
+                app_state.pandemonium_selected_tool = 1;
+            }
+        }
         #[cfg(feature = "nova")]
-                    KeyCode::Char('3') => {
-                        if let ViewMode::Pandemonium = app_state.view_mode {
-                            app_state.pandemonium_selected_tool = 2;
-                        }
-                    }
+        KeyCode::Char('3') => {
+            if let ViewMode::Pandemonium = app_state.view_mode {
+                app_state.pandemonium_selected_tool = 2;
+            }
+        }
         #[cfg(feature = "nova")]
-                    KeyCode::Char('4') => {
-                        if let ViewMode::Pandemonium = app_state.view_mode {
-                            app_state.pandemonium_selected_tool = 3;
-                        }
-                    }
+        KeyCode::Char('4') => {
+            if let ViewMode::Pandemonium = app_state.view_mode {
+                app_state.pandemonium_selected_tool = 3;
+            }
+        }
         #[cfg(feature = "nova")]
-                    KeyCode::Char('[') => {
-                        if let ViewMode::Kaleidoscope = app_state.view_mode {
-                            if app_state.kaleidoscope_hue_idx > 0 {
-                                app_state.kaleidoscope_hue_idx -= 1;
-                            } else {
-                                app_state.kaleidoscope_hue_idx = 5;
-                            }
-                        } else if let ViewMode::Pandemonium = app_state.view_mode {
-                            app_state.pandemonium_radius =
-                                (app_state.pandemonium_radius - 1.0).max(1.0);
-                        }
-                    }
+        KeyCode::Char('[') => {
+            if let ViewMode::Kaleidoscope = app_state.view_mode {
+                if app_state.kaleidoscope_hue_idx > 0 {
+                    app_state.kaleidoscope_hue_idx -= 1;
+                } else {
+                    app_state.kaleidoscope_hue_idx = 5;
+                }
+            } else if let ViewMode::Pandemonium = app_state.view_mode {
+                app_state.pandemonium_radius = (app_state.pandemonium_radius - 1.0).max(1.0);
+            }
+        }
         #[cfg(feature = "nova")]
-                    KeyCode::Char(']') => {
-                        if let ViewMode::Kaleidoscope = app_state.view_mode {
-                            app_state.kaleidoscope_hue_idx =
-                                (app_state.kaleidoscope_hue_idx + 1) % 6;
-                        } else if let ViewMode::Pandemonium = app_state.view_mode {
-                            app_state.pandemonium_radius += 1.0;
-                        }
-                    }
+        KeyCode::Char(']') => {
+            if let ViewMode::Kaleidoscope = app_state.view_mode {
+                app_state.kaleidoscope_hue_idx = (app_state.kaleidoscope_hue_idx + 1) % 6;
+            } else if let ViewMode::Pandemonium = app_state.view_mode {
+                app_state.pandemonium_radius += 1.0;
+            }
+        }
         #[cfg(feature = "nova")]
-                    KeyCode::Char('{') => {
-                        if let ViewMode::Kaleidoscope = app_state.view_mode {
-                            if app_state.kaleidoscope_light_idx > 0 {
-                                app_state.kaleidoscope_light_idx -= 1;
-                            } else {
-                                app_state.kaleidoscope_light_idx = 2;
-                            }
-                        }
-                    }
-                    #[cfg(feature = "nova")]
-                    KeyCode::Char('}') => {
-                        if let ViewMode::Kaleidoscope = app_state.view_mode {
-                            app_state.kaleidoscope_light_idx =
-                                (app_state.kaleidoscope_light_idx + 1) % 3;
-                        }
-                    }
+        KeyCode::Char('{') => {
+            if let ViewMode::Kaleidoscope = app_state.view_mode {
+                if app_state.kaleidoscope_light_idx > 0 {
+                    app_state.kaleidoscope_light_idx -= 1;
+                } else {
+                    app_state.kaleidoscope_light_idx = 2;
+                }
+            }
+        }
+        #[cfg(feature = "nova")]
+        KeyCode::Char('}') => {
+            if let ViewMode::Kaleidoscope = app_state.view_mode {
+                app_state.kaleidoscope_light_idx = (app_state.kaleidoscope_light_idx + 1) % 3;
+            }
+        }
         KeyCode::Char('m') => vm.mutate(),
         KeyCode::Char('c') => vm.chaos_mode = !vm.chaos_mode,
         _ => {}
@@ -379,12 +362,10 @@ fn handle_char_s_upper(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<b
                 let mut rng = rand::thread_rng();
                 use rand::Rng;
                 if !vm.dna.helix.strands.is_empty() {
-                    let s1 = vm.dna.helix.strands
-                        [rng.gen_range(0..vm.dna.helix.strands.len())]
-                    .clone();
-                    let s2 = vm.dna.helix.strands
-                        [rng.gen_range(0..vm.dna.helix.strands.len())]
-                    .clone();
+                    let s1 =
+                        vm.dna.helix.strands[rng.gen_range(0..vm.dna.helix.strands.len())].clone();
+                    let s2 =
+                        vm.dna.helix.strands[rng.gen_range(0..vm.dna.helix.strands.len())].clone();
                     arena.add_gladiator(s1, rng.gen());
                     arena.add_gladiator(s2, rng.gen());
                 }
@@ -508,18 +489,10 @@ fn handle_char_space(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<boo
         // Run Parse
         vm.stack
             .push(crate::vm::Value::Str(app_state.babel_pattern.clone()));
-        let _ = crate::vm::babel::exec_babel_op(
-            vm,
-            crate::opcode::OpCode::ParserRegex,
-            &[],
-        );
+        let _ = crate::vm::babel::exec_babel_op(vm, crate::opcode::OpCode::ParserRegex, &[]);
         vm.stack
             .push(crate::vm::Value::Str(app_state.babel_input.clone()));
-        let _ = crate::vm::babel::exec_babel_op(
-            vm,
-            crate::opcode::OpCode::Parse,
-            &[],
-        );
+        let _ = crate::vm::babel::exec_babel_op(vm, crate::opcode::OpCode::Parse, &[]);
 
         if let Some(res) = vm.stack.pop() {
             app_state.babel_result = format!("{}", res);
@@ -575,23 +548,16 @@ fn handle_char_space(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<boo
                         g,
                         app_state.pandemonium_radius,
                     ),
-                    2 => crate::vm::pandemonium::apply_purge(
-                        vm,
-                        s,
-                        g,
-                        app_state.pandemonium_radius,
-                    ),
+                    2 => {
+                        crate::vm::pandemonium::apply_purge(vm, s, g, app_state.pandemonium_radius)
+                    }
                     3 => crate::vm::pandemonium::apply_duplicate(vm, s, g),
-                    4 => crate::vm::pandemonium::apply_storm(
-                        vm,
-                        s,
-                        g,
-                        app_state.pandemonium_radius,
-                    ),
+                    4 => {
+                        crate::vm::pandemonium::apply_storm(vm, s, g, app_state.pandemonium_radius)
+                    }
                     _ => {}
                 }
-                app_state.status_msg =
-                    format!("Pandemonium applied at {},{}", s, g);
+                app_state.status_msg = format!("Pandemonium applied at {},{}", s, g);
             }
         } else if let ViewMode::Fishing = app_state.view_mode {
             if app_state.fishing_cast {
@@ -655,8 +621,8 @@ fn handle_char_space(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<boo
             // Adjust for lightness (Light=0, Normal=1, Dark=2)
             let (r, g, b) = match app_state.kaleidoscope_light_idx {
                 0 => (r + (255 - r) / 2, g + (255 - g) / 2, b + (255 - b) / 2), // Light
-                2 => (r / 2, g / 2, b / 2), // Dark
-                _ => (r, g, b),             // Normal
+                2 => (r / 2, g / 2, b / 2),                                     // Dark
+                _ => (r, g, b),                                                 // Normal
             };
 
             vm.chroma_grid[y][x].fg = Some((r as u8, g as u8, b as u8));
@@ -685,13 +651,8 @@ fn handle_char_f(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
         vm.stack.push(crate::vm::Value::Int(s_idx as i64));
         vm.stack.push(crate::vm::Value::Int(y as i64));
         vm.stack.push(crate::vm::Value::Int(x as i64));
-        crate::vm::silicon::exec_silicon_op(
-            vm,
-            crate::opcode::OpCode::Fabricate,
-            &[],
-        );
-        app_state.status_msg =
-            format!("Fabricated strand {} at {},{}", s_idx, x, y);
+        crate::vm::silicon::exec_silicon_op(vm, crate::opcode::OpCode::Fabricate, &[]);
+        app_state.status_msg = format!("Fabricated strand {} at {},{}", s_idx, x, y);
         return Ok(true);
     }
 

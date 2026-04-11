@@ -9,9 +9,9 @@
 //! * [`normal`] - Handles input during the default, non-editing state (e.g., movement, triggers).
 
 pub(crate) mod editing;
-pub(crate) mod selector;
 pub(crate) mod normal;
+pub(crate) mod selector;
 
 pub(crate) use editing::*;
-pub(crate) use selector::*;
 pub(crate) use normal::*;
+pub(crate) use selector::*;

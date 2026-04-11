@@ -7,12 +7,12 @@ mod mesh_gen;
 mod pbd;
 
 use ::rand::Rng;
+use flocking::{compute_force, FlockingParams};
+use locus::Vec2;
 use macroquad::models::{Mesh, Vertex};
 use macroquad::prelude::*;
 use mesh_gen::generate_miura_ori;
 use pbd::{Constraint, PbdSystem};
-use flocking::{compute_force, FlockingParams};
-use locus::Vec2;
 
 const MAX_BOIDS: usize = 200;
 const BOID_SPEED: f64 = 2.0;
@@ -29,10 +29,8 @@ impl Boid {
         let mut rng = ::rand::thread_rng();
         Self {
             pos,
-            vel: Vec2::new(
-                rng.gen_range(-1.0..1.0),
-                rng.gen_range(-1.0..1.0),
-            ).normalize() * BOID_SPEED,
+            vel: Vec2::new(rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0)).normalize()
+                * BOID_SPEED,
             color: Color::new(
                 rng.gen_range(0.2..0.8),
                 rng.gen_range(0.6..1.0),
@@ -112,10 +110,18 @@ async fn main() {
             boid.pos += boid.vel * (dt as f64) * 10.0;
 
             // Bounds wrapping
-            if boid.pos.x > 25.0 { boid.pos.x = -25.0; }
-            if boid.pos.x < -25.0 { boid.pos.x = 25.0; }
-            if boid.pos.y > 25.0 { boid.pos.y = -25.0; }
-            if boid.pos.y < -25.0 { boid.pos.y = 25.0; }
+            if boid.pos.x > 25.0 {
+                boid.pos.x = -25.0;
+            }
+            if boid.pos.x < -25.0 {
+                boid.pos.x = 25.0;
+            }
+            if boid.pos.y > 25.0 {
+                boid.pos.y = -25.0;
+            }
+            if boid.pos.y < -25.0 {
+                boid.pos.y = 25.0;
+            }
         }
 
         // Apply Boid density to Mesh Constraints
@@ -134,7 +140,12 @@ async fn main() {
 
         for constraint in &mut system.constraints {
             match constraint {
-                Constraint::Distance { p1, p2, ref mut stiffness, .. } => {
+                Constraint::Distance {
+                    p1,
+                    p2,
+                    ref mut stiffness,
+                    ..
+                } => {
                     let d1 = density[*p1];
                     let d2 = density[*p2];
                     if d1 > 0.0 || d2 > 0.0 {
@@ -144,7 +155,12 @@ async fn main() {
                         *stiffness = 0.5; // default
                     }
                 }
-                Constraint::Actuator { p1, p2, ref mut factor, .. } => {
+                Constraint::Actuator {
+                    p1,
+                    p2,
+                    ref mut factor,
+                    ..
+                } => {
                     let d1 = density[*p1];
                     let d2 = density[*p2];
                     if d1 > 0.0 || d2 > 0.0 {
@@ -186,7 +202,8 @@ async fn main() {
             let mut nearest_y = 0.0;
             let mut min_dist = f32::MAX;
             for particle in &system.particles {
-                let dist_sq = (particle.pos.x - boid.pos.x as f32).powi(2) + (particle.pos.z - boid.pos.y as f32).powi(2);
+                let dist_sq = (particle.pos.x - boid.pos.x as f32).powi(2)
+                    + (particle.pos.z - boid.pos.y as f32).powi(2);
                 if dist_sq < min_dist {
                     min_dist = dist_sq;
                     nearest_y = particle.pos.y;
@@ -232,9 +249,24 @@ async fn main() {
 
             let normal_v4 = vec4(normal.x, normal.y, normal.z, 1.0);
 
-            mesh.vertices.push(Vertex { position: v0, uv: vec2(0., 0.), color: color.into(), normal: normal_v4 });
-            mesh.vertices.push(Vertex { position: v1, uv: vec2(0., 0.), color: color.into(), normal: normal_v4 });
-            mesh.vertices.push(Vertex { position: v2, uv: vec2(0., 0.), color: color.into(), normal: normal_v4 });
+            mesh.vertices.push(Vertex {
+                position: v0,
+                uv: vec2(0., 0.),
+                color: color.into(),
+                normal: normal_v4,
+            });
+            mesh.vertices.push(Vertex {
+                position: v1,
+                uv: vec2(0., 0.),
+                color: color.into(),
+                normal: normal_v4,
+            });
+            mesh.vertices.push(Vertex {
+                position: v2,
+                uv: vec2(0., 0.),
+                color: color.into(),
+                normal: normal_v4,
+            });
 
             mesh.indices.push(start_idx);
             mesh.indices.push(start_idx + 1);
@@ -247,7 +279,13 @@ async fn main() {
 
         draw_text("Flock Origami", 10.0, 30.0, 30.0, WHITE);
         draw_text(&format!("Boids: {}", boids.len()), 10.0, 50.0, 20.0, WHITE);
-        draw_text("Boid density actively crumples the mesh", 10.0, 70.0, 20.0, GRAY);
+        draw_text(
+            "Boid density actively crumples the mesh",
+            10.0,
+            70.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }
