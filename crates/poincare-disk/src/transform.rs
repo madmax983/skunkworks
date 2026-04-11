@@ -34,6 +34,21 @@ impl Mobius {
     /// The transformation is defined as $f(z) = \frac{az + b}{cz + d}$.
     ///
     /// Returns `None` if $ad - bc \approx 0$ (singular matrix).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use poincare_disk::Mobius;
+    /// use num_complex::Complex;
+    ///
+    /// let a = Complex::new(1.0, 0.0);
+    /// let b = Complex::new(0.0, 0.0);
+    /// let c = Complex::new(0.0, 0.0);
+    /// let d = Complex::new(1.0, 0.0);
+    ///
+    /// let identity = Mobius::new(a, b, c, d);
+    /// assert!(identity.is_some());
+    /// ```
     pub fn new(a: Complex<f64>, b: Complex<f64>, c: Complex<f64>, d: Complex<f64>) -> Option<Self> {
         let det = a * d - b * c;
         if det.norm_sqr() < 1e-12 {
@@ -42,22 +57,25 @@ impl Mobius {
         Some(Self { a, b, c, d })
     }
 
-    /// Returns the coefficient `a`.
+    // BARD AVOIDS (Noise):
+    // ❌ "Getters" docs: `/// Gets the x` (Useless noise).
+
+    #[doc(hidden)]
     pub fn a(&self) -> Complex<f64> {
         self.a
     }
 
-    /// Returns the coefficient `b`.
+    #[doc(hidden)]
     pub fn b(&self) -> Complex<f64> {
         self.b
     }
 
-    /// Returns the coefficient `c`.
+    #[doc(hidden)]
     pub fn c(&self) -> Complex<f64> {
         self.c
     }
 
-    /// Returns the coefficient `d`.
+    #[doc(hidden)]
     pub fn d(&self) -> Complex<f64> {
         self.d
     }
@@ -230,6 +248,19 @@ impl Mobius {
     /// Applies the transformation to a point $z$.
     ///
     /// $$ w = \frac{az + b}{cz + d} $$
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use poincare_disk::{Mobius, Point};
+    /// use std::f64::consts::PI;
+    ///
+    /// let point = Point::new(0.5, 0.0);
+    /// let rotation = Mobius::rotation(PI); // Rotate by 180 degrees
+    ///
+    /// let transformed = rotation.apply(point);
+    /// assert!((transformed.re - (-0.5)).abs() < 1e-9);
+    /// ```
     pub fn apply(&self, z: Point) -> Point {
         let num = self.a * z + self.b;
         let den = self.c * z + self.d;

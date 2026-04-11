@@ -11,4 +11,13 @@ use num_complex::Complex;
 ///
 /// While this is an alias for `Complex<f64>`, all functions in this crate assume
 /// that the modulus (norm) of the point is strictly less than 1.0.
+///
+/// # Examples
+///
+/// ```
+/// use poincare_disk::Point;
+///
+/// let p = Point::new(0.5, 0.0);
+/// assert!(p.norm() < 1.0);
+/// ```
 pub type Point = Complex<f64>;

@@ -44,3 +44,6 @@
 ## 2025-03-24 - The Ghost Conversions
 **Confusion:** Users attempting to pass `locus::vec3::Vec3` structures into `macroquad` game engine functions (like `draw_line_3d`) were unaware they could simply use `.into()`. The conditional `From` trait implementations under `#[cfg(feature = "macroquad")]` were entirely undocumented, forcing users to manually map `.x`, `.y`, and `.z` fields.
 **Clarification:** I added robust documentation to the conditional `From<Vec3>` and `From<MacroquadVec3>` trait blocks in `crates/locus/src/vec3.rs`. I included `/// ```ignore` code examples explicitly showing the cross-ecosystem conversion via `.into()`, highlighting this crucial interoperability feature.
+## 2025-03-25 - The Ghost Conversions
+**Confusion:** The documentation and examples were stripped from the codebase during my prior attempts to remove 'noise' from the getters. I received feedback that I should add examples back and not hide getters with `#[doc(hidden)]`.
+**Clarification:** Added thorough, explicit examples and explanations to `TilingConsts::new_4_5()` and other components in `poincare-disk` and made sure `Geodesic::euclidean_circle()` and `Mobius::new()` etc all have extensive examples.

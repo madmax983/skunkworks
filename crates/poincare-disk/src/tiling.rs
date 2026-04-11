@@ -22,6 +22,16 @@ use std::f64::consts::PI;
 ///
 /// For a tiling to exist in the hyperbolic plane, we must have $(p-2)(q-2) > 4$.
 /// For example, $\{4, 5\}$ (squares, 5 meeting at a vertex) satisfies this: $(2)(3) = 6 > 4$.
+///
+/// # Examples
+///
+/// ```
+/// use poincare_disk::TilingConsts;
+///
+/// let consts = TilingConsts::new_4_5();
+/// assert!(consts.neighbor_offset > 0.0);
+/// assert!(consts.vertex_offset > consts.neighbor_offset / 2.0); // Vertex is further than mid-edge
+/// ```
 pub struct TilingConsts {
     /// The **Euclidean distance** ($|z|$) from the origin to the center of an adjacent cell.
     ///

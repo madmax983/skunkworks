@@ -56,51 +56,17 @@ impl Platter {
         }
     }
 
-    /// Returns the width of the platter.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use platter::Platter;
-    /// let p = Platter::new(10, 20);
-    /// assert_eq!(p.width(), 10);
-    /// ```
+    #[doc(hidden)]
     pub fn width(&self) -> usize {
         self.width
     }
 
-    /// Returns the height of the platter.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use platter::Platter;
-    /// let p = Platter::new(10, 20);
-    /// assert_eq!(p.height(), 20);
-    /// ```
+    #[doc(hidden)]
     pub fn height(&self) -> usize {
         self.height
     }
 
-    /// Returns a reference to the underlying magnetism grid.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use platter::Platter;
-    /// let mut p = Platter::new(2, 2);
-    /// p.accumulate(0, 0, 1.5);
-    /// assert_eq!(p.magnetism()[0], 1.5);
-    /// ```
-    ///
-    /// The returned slice is immutable and cannot be modified directly:
-    ///
-    /// ```compile_fail
-    /// use platter::Platter;
-    /// let p = Platter::new(2, 2);
-    /// let grid = p.magnetism();
-    /// grid[0] = 5.0; // This will fail to compile!
-    /// ```
+    #[doc(hidden)]
     pub fn magnetism(&self) -> &[f64] {
         &self.magnetism
     }

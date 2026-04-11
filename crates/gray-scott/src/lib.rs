@@ -80,116 +80,32 @@ impl GrayScott {
         }
     }
 
-    /// Returns the width of the simulation grid.
-    ///
-    /// This is the total number of cells along the X-axis. Used when iterating over the
-    /// grid to calculate row/column bounds, such as when rendering.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use gray_scott::GrayScott;
-    ///
-    /// let gs = GrayScott::new(256, 128);
-    /// assert_eq!(gs.width(), 256);
-    /// ```
+    #[doc(hidden)]
     pub fn width(&self) -> usize {
         self.width
     }
 
-    /// Returns the height of the simulation grid.
-    ///
-    /// This is the total number of cells along the Y-axis. Used when calculating the total
-    /// capacity or setting up bounds checks for external components interacting with the grid.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use gray_scott::GrayScott;
-    ///
-    /// let gs = GrayScott::new(256, 128);
-    /// assert_eq!(gs.height(), 128);
-    /// ```
+    #[doc(hidden)]
     pub fn height(&self) -> usize {
         self.height
     }
 
-    /// Returns a read-only slice containing the internal 1D grid state vector for chemical U.
-    ///
-    /// The U chemical is the "prey" or "food" in the reaction system. The slice has a length
-    /// of `width * height`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use gray_scott::GrayScott;
-    ///
-    /// let gs = GrayScott::new(10, 10);
-    /// // The grid starts completely full of U (concentration = 1.0)
-    /// assert_eq!(gs.u()[0], 1.0);
-    /// assert_eq!(gs.u().len(), 100);
-    /// ```
+    #[doc(hidden)]
     pub fn u(&self) -> &[f32] {
         &self.u
     }
 
-    /// Returns a read-only slice containing the internal 1D grid state vector for chemical V.
-    ///
-    /// The V chemical is the "predator" in the reaction system. The slice has a length
-    /// of `width * height`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use gray_scott::GrayScott;
-    ///
-    /// let gs = GrayScott::new(10, 10);
-    /// // The grid starts completely empty of V (concentration = 0.0)
-    /// assert_eq!(gs.v()[0], 0.0);
-    /// assert_eq!(gs.v().len(), 100);
-    /// ```
+    #[doc(hidden)]
     pub fn v(&self) -> &[f32] {
         &self.v
     }
 
-    /// Returns a mutable slice containing the internal 1D grid state vector for chemical U.
-    ///
-    /// This allows external code to directly seed patterns or introduce disturbances into the
-    /// U chemical layer without relying on standard physics functions.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use gray_scott::GrayScott;
-    ///
-    /// let mut gs = GrayScott::new(10, 10);
-    /// let idx = gs.get_index(5, 5);
-    ///
-    /// // Directly reduce the concentration of U at the center
-    /// gs.u_mut()[idx] = 0.5;
-    /// assert_eq!(gs.u()[idx], 0.5);
-    /// ```
+    #[doc(hidden)]
     pub fn u_mut(&mut self) -> &mut [f32] {
         &mut self.u
     }
 
-    /// Returns a mutable slice containing the internal 1D grid state vector for chemical V.
-    ///
-    /// This allows external code to directly seed patterns or introduce disturbances into the
-    /// V chemical layer.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use gray_scott::GrayScott;
-    ///
-    /// let mut gs = GrayScott::new(10, 10);
-    /// let idx = gs.get_index(5, 5);
-    ///
-    /// // Directly add a high concentration of V at the center to trigger a reaction
-    /// gs.v_mut()[idx] = 1.0;
-    /// assert_eq!(gs.v()[idx], 1.0);
-    /// ```
+    #[doc(hidden)]
     pub fn v_mut(&mut self) -> &mut [f32] {
         &mut self.v
     }
