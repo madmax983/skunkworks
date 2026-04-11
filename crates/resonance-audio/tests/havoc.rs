@@ -13,7 +13,6 @@ fn test_one_dim() {
 }
 
 #[test]
-#[should_panic]
 fn havoc_resonance_overflow() {
     // 👺 Havoc: `PhysicsGrid::new` calculates `size = width * height` without checked_mul.
     // An attacker or erroneous logic providing large dimensions will cause a deterministic panic DoS.
