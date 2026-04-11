@@ -1,9 +1,6 @@
-use crate::ast::Gene;
 use crate::vm::ChimeraVM;
-use crate::{ChimeraParser, Rule};
 use anyhow::Result;
 use crossterm::{
-    event::{self, Event, KeyCode},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
@@ -12,7 +9,7 @@ use ratatui::{
     backend::CrosstermBackend,
     style::{Color, Modifier, Style},
     text::Span,
-    widgets::{Block, Borders, Paragraph},
+    widgets::{Block, Borders},
     Terminal,
 };
 use std::io;
@@ -23,7 +20,6 @@ pub mod state;
 pub use state::*;
 pub(crate) mod app;
 pub(crate) mod views;
-use views::*;
 pub(crate) fn panel_block<'a>(title: &'a str, active: bool) -> Block<'a> {
     let border_style = if active {
         Style::default()

@@ -511,6 +511,27 @@ where
                 ViewMode::Verbum => render_verbum(f, vm, app_state),
                 #[cfg(feature = "nova")]
                 ViewMode::Crispr => render_crispr(f, vm, app_state),
+                #[cfg(feature = "nova")]
+                ViewMode::Lexicon => render_lexicon(f, vm, app_state),
+                #[cfg(feature = "nova")]
+                ViewMode::Narrative => render_narrative(f, vm, app_state),
+                #[cfg(feature = "nova")]
+                ViewMode::Akashic => render_akashic(f, vm, app_state),
+                #[cfg(feature = "nova")]
+                ViewMode::Cambrian => render_cambrian(f, vm, app_state),
+                #[cfg(feature = "nova")]
+                ViewMode::Biolum => render_biolum(f, vm, app_state),
+                #[cfg(feature = "nova")]
+                ViewMode::LifeCycle => render_lifecycle(f, vm, app_state),
+                #[cfg(feature = "nova")]
+                ViewMode::Tesseract => render_tesseract(f, vm, app_state),
+                #[cfg(feature = "nova")]
+                ViewMode::Metazoa => render_metazoa(f, vm, app_state),
+                ViewMode::Mutagen => render_mutagen(f, vm, app_state),
+                #[cfg(feature = "nova")]
+                ViewMode::Fractal => render_fractal(f, vm, app_state),
+                #[cfg(feature = "nova")]
+                ViewMode::Semiotics => render_semiotics(f, vm, app_state),
                 _ => crate::tui::views::core::render_genome_and_grid(f, vm, app_state), // Fallback
             }
 

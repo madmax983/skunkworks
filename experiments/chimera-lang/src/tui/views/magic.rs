@@ -597,6 +597,17 @@ pub(crate) fn render_savant(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppSt
 }
 
 #[cfg(feature = "nova")]
+/// Renders the Akashic view for global state persistence.
+///
+/// Shows the contents of the `AkashicRecords` detailing what karma and memory
+/// values have been saved across virtual machine executions to the JSON backend.
+///
+/// # Examples
+///
+/// ```ignore
+/// // Inside app/mod.rs render loop
+/// ViewMode::Akashic => render_akashic(f, vm, app_state),
+/// ```
 pub(crate) fn render_akashic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)

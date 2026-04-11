@@ -332,6 +332,17 @@ pub(crate) fn render_hyperspace(f: &mut Frame, vm: &mut ChimeraVM, app_state: &A
 }
 
 #[cfg(feature = "nova")]
+/// Renders the Tesseract view for observing 4D hyper-volume projections.
+///
+/// Translates inner grid dimensions across time and nested layers into a
+/// pseudo-3D terminal interface projection to visualize non-euclidean interactions.
+///
+/// # Examples
+///
+/// ```ignore
+/// // Inside app/mod.rs render loop
+/// ViewMode::Tesseract => render_tesseract(f, vm, app_state),
+/// ```
 pub(crate) fn render_tesseract(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)

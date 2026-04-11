@@ -71,3 +71,7 @@
 ## 2025-06-25 - The Missing Genesis
 **Confusion:** The Getting Started documentation in `chimera-lang/README.md` and the root `README.md` pointed users to non-existent examples (`genesis.chs`) and contained pathing issues (`cd chimera-lang` from root). The root README also pointed to a `mad_scientist.prl` example that contained invalid code which crashed the VM immediately, leaving a terrible first impression.
 **Clarification:** Replaced references to `genesis.chs` with `frankenstein_lab.chs` which actually exists. Removed the confusing `cd chimera-lang` instruction from the root README. Updated the DNA in `mad_scientist.prl` to execute a safe `1 push` and `drop` sequence to prevent the VM from panicking.
+
+## 2025-06-25 - The "Dead Code" Renderers
+**Confusion:** I noticed multiple `tui::views::*` functions (`render_narrative`, `render_lexicon`, etc.) were triggering "dead code" warnings in `chimera-lang`. When exploring `tui/app/mod.rs` and `tui/state.rs`, it became clear these `ViewMode` variants were recently added or refactored but the main `match app_state.view_mode` dispatcher had not been updated to route them correctly.
+**Clarification:** I wired up the disconnected `ViewMode` variants (such as `Lifecycle`, `Lexicon`, `Narrative`, `Akashic`, etc.) in the main `match` block within `app::run_app`, correctly mapping them to their respective rendering functions. I also fixed a capitalization error (`Lifecycle` vs `LifeCycle`) that caused compilation failures.

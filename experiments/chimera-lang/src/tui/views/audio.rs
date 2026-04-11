@@ -347,6 +347,17 @@ pub(crate) fn render_sequencer(f: &mut Frame, vm: &mut ChimeraVM, app_state: &Ap
 }
 
 #[cfg(feature = "nova")]
+/// Renders the Narrative view for exploring the prologue library and story progress.
+///
+/// This view splits the screen to show the current contents of the prologue library,
+/// giving insight into active plot threads and available lore entries.
+///
+/// # Examples
+///
+/// ```ignore
+/// // Inside app/mod.rs render loop
+/// ViewMode::Narrative => render_narrative(f, vm, app_state),
+/// ```
 pub(crate) fn render_narrative(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
@@ -390,6 +401,17 @@ pub(crate) fn render_narrative(f: &mut Frame, vm: &mut ChimeraVM, app_state: &Ap
 }
 
 #[cfg(feature = "nova")]
+/// Renders the Lexicon view for editing and inspecting linguistic structures.
+///
+/// Provides a dedicated workspace for constructing semantic actions and viewing
+/// parsed linguistic trees before they are compiled or executed.
+///
+/// # Examples
+///
+/// ```ignore
+/// // Inside app/mod.rs render loop
+/// ViewMode::Lexicon => render_lexicon(f, vm, app_state),
+/// ```
 pub(crate) fn render_lexicon(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)

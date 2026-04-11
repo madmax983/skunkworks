@@ -11,7 +11,7 @@ pub fn assemble(source: &str) -> Result<Vec<u8>, String> {
         let line = line.trim();
         // Remove comments
         let line = if let Some(idx) = line.find(';') {
-            &line[..idx].trim()
+            line[..idx].trim()
         } else {
             line
         };
@@ -21,8 +21,7 @@ pub fn assemble(source: &str) -> Result<Vec<u8>, String> {
         }
 
         // Check for label
-        if line.ends_with(':') {
-            let label = &line[..line.len() - 1];
+        if let Some(label) = line.strip_suffix(':') {
             if labels.contains_key(label) {
                 return Err(format!("Duplicate label: {}", label));
             }
