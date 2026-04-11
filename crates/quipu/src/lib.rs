@@ -399,6 +399,11 @@ impl From<u64> for Cord {
 
 impl Cord {
     fn fmt_indented(&self, f: &mut fmt::Formatter<'_>, level: usize) -> fmt::Result {
+        if level > 500 {
+            let indent = "  ".repeat(level);
+            return write!(f, "{}(max depth reached)", indent);
+        }
+
         let indent = "  ".repeat(level);
 
         if self.color != Color::Natural {
