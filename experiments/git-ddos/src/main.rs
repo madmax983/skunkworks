@@ -131,6 +131,9 @@ async fn main() {
     let mut rng = ::rand::thread_rng();
     let spawn_point = vec2(50.0, 50.0);
 
+    // ⚡ Bolt: Pre-allocate clone buffer to avoid per-frame heap allocations
+    let mut fw_clone = Vec::with_capacity(16);
+
     loop {
         clear_background(Color::new(0.05, 0.05, 0.05, 1.0));
 
@@ -168,10 +171,8 @@ async fn main() {
         // Parallel update
         // fw_clone allows parallel iterations without borrowing conflicts
         // with the mut firewall references further below in the frame
-        let fw_clone = firewalls
-            .iter()
-            .map(|f| (f.pos, f.radius))
-            .collect::<Vec<_>>();
+        fw_clone.clear();
+        fw_clone.extend(firewalls.iter().map(|f| (f.pos, f.radius)));
 
         packets.par_iter_mut().for_each(|p| {
             if !p.active {
