@@ -19,6 +19,9 @@ use std::str::FromStr;
 mod entropy;
 mod git;
 
+#[cfg(test)]
+mod havoc_tests;
+
 use chimera_lang::{
     ast::{Dna, Gene, Helix, Nucleotide, Strand},
     opcode::OpCode,
