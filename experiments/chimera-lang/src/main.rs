@@ -285,6 +285,9 @@ fn main() -> Result<()> {
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━".with(Color::DarkGrey)
         );
 
+        println!("🖥️  {}", "VM State Dashboard:".with(Color::Cyan).bold());
+        println!("{}\n", vm);
+
         let mut table = comfy_table::Table::new();
         table
             .load_preset(comfy_table::presets::UTF8_FULL)
