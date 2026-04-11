@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **quipu-symphony**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Borrowing Constraints. Fails on `error[E0509]: cannot move out of type Cord, which implements the Drop trait`. Deep structural rot involving nested types. Grace period: 24h.
+- **chimera-specter**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The `OpCode::Battery` and `OpCode::Ground` variants are missing in `chimera-lang`, causing terminal build failure. Grace period: 24h.
 
 ## Pardoned
 - **ripple-scheduler**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by fixing the AudioModel initialization, resolving `error[E0061]`. Vigor demonstrated.
@@ -15,7 +15,6 @@
 - **ferrous-ddos**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Resolved by The Splice Surgeon patching strict clippy warnings (`unnecessary_cast`) during its grace period. The swarm flows freely.
 - **chimera-runes**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by initializing `evolution_config` and migrating deprecated `ratatui` APIs (`f.size()`, `get_mut()`). The organism thrives once more.
 - **bio-chain**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Genericism. Resolved by fixing the missing `evolution_config` in `Dna` struct initialization and addressing `clippy` warnings during its grace period. The organism breathes again.
-- **chimera-specter**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by fixing missing `evolution_config` and adapting to `Dna` structural changes in `chimera-lang`. The specter haunts again.
 - **hyperbolic-chimera**: Specimen pardoned. Diagnosis: Terminal Compilation Failure. Resolved by fixing missing `evolution_config` and deprecated `ratatui` UI APIs. Vigor demonstrated.
 - **chimera-rift**: Specimen pardoned. Diagnosis: Skeletal Implementation / Terminal Genericism. Resolved by adding portal sensor inputs, allowing agents to navigate their evo-portals. Vigor demonstrated.
 - **mnem-diffusion**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding proper README, documentation, and test cases. The specimen has proven its right to exist in the ecosystem.
@@ -35,6 +34,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **quipu-symphony**: Specimen executed. Diagnosis: Terminal Compilation Failure / Borrowing Constraints. Failed to improve during grace period. Biomass returned to the void.
 - **ferrous-legion**: Specimen executed. Diagnosis: Terminal Compilation Failure / API Obsolescence. Fails on `error[E0599]: no method named width found for struct Platter`. Grace period expired. Biomass returned to the void.
 - **laban-rover**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to resolve `tui_shared::math` import. Grace period expired. Moved to graveyard.
 - **hyper-market**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to resolve type collision between `macroquad` and `hyper_system` components. Grace period expired. Moved to graveyard.
