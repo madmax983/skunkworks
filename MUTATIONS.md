@@ -27,6 +27,15 @@ Additionally, the success of translating complex abstract graphs (like codebases
 
 ## 🌿 Attempted Crosses
 
+### neuro-strings
+- **Parents**: crates/neuro-sim + experiments/ferrous-strings
+- **Concept**: Acoustic Neural Dynamics. A Spiking Neural Network (SNN) where the continuous membrane voltages of Izhikevich neurons physically pluck a set of resonant acoustic-magnetic strings.
+- **Novel trait**: Spiking Acoustic Feedback. Synchronized neural bursts pluck the strings, and the resulting physical magnetic turbulence modifies the synaptic weights.
+- **Predicted Phenotype**: An emergent acoustic mind. Synchronized neural bursting creates rhythmic acoustic melodies. Localized seizures or "spreading depression" sound like chaotic static and violent twangs.
+- **Status**: experiments/neuro-strings
+- **Evaluation**: Success. Compiled. Neural cascades successfully manifest as dynamic acoustic rhythms and structural vibrations.
+
+
 ### neuro-hologram
 - **Parents**: crates/neuro-sim + experiments/hologram-text
 - **Concept**: Holographic Neural Networks. A Spiking Neural Network (SNN) where the continuous membrane voltages of the Izhikevich neurons are treated as a spatial density field and transformed via 2D FFT into an optical interference pattern.

@@ -1,0 +1,17 @@
+[package]
+name = "neuro-strings"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = "0.8"
+ferrous-core = { path = "../../crates/ferrous-core" }
+neuro-sim = { path = "../../crates/neuro-sim" }
+anyhow = "1.0"
+crossbeam-channel = "0.5"
+cpal = { version = "0.15", optional = true }
+
+[features]
+default = ["audio"]
+audio = ["cpal"]
