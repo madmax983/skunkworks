@@ -1,5 +1,5 @@
-use crate::vm::ChimeraVM;
 use crate::tui::state::{AppState, InputMode, ViewMode};
+use crate::vm::ChimeraVM;
 use anyhow::Result;
 use crossterm::event::KeyCode;
 
@@ -9,7 +9,8 @@ pub(crate) fn handle_action(
     app_state: &mut AppState,
 ) -> Result<bool> {
     match code {
-        KeyCode::Tab => {
+        KeyCode::Tab =>
+        {
             #[cfg(feature = "nova")]
             match app_state.view_mode {
                 ViewMode::Babel => {
@@ -31,21 +32,29 @@ pub(crate) fn handle_action(
                 ViewMode::Paradox => {
                     app_state.paradox_editor_buffer.pop();
                 }
-                ViewMode::Forge => {
-                    match app_state.forge_focus {
-                        1 => { app_state.forge_editor_buffer.pop(); }
-                        2 => { app_state.forge_test_input.pop(); }
-                        0 => { app_state.forge_selected_rule.pop(); }
-                        _ => {}
+                ViewMode::Forge => match app_state.forge_focus {
+                    1 => {
+                        app_state.forge_editor_buffer.pop();
                     }
-                }
-                ViewMode::Genesis => {
-                    match app_state.genesis_focus {
-                        0 => { app_state.genesis_editor_buffer.pop(); }
-                        1 => { app_state.genesis_grammar_buffer.pop(); }
-                        _ => { app_state.input_buffer.pop(); }
+                    2 => {
+                        app_state.forge_test_input.pop();
                     }
-                }
+                    0 => {
+                        app_state.forge_selected_rule.pop();
+                    }
+                    _ => {}
+                },
+                ViewMode::Genesis => match app_state.genesis_focus {
+                    0 => {
+                        app_state.genesis_editor_buffer.pop();
+                    }
+                    1 => {
+                        app_state.genesis_grammar_buffer.pop();
+                    }
+                    _ => {
+                        app_state.input_buffer.pop();
+                    }
+                },
                 ViewMode::Babel => {
                     let target = if app_state.babel_focus == 0 {
                         &mut app_state.babel_pattern
@@ -54,13 +63,15 @@ pub(crate) fn handle_action(
                     };
                     target.pop();
                 }
-                ViewMode::Crispr => {
-                    match app_state.crispr_focus {
-                        1 => { app_state.crispr_guide.pop(); }
-                        2 => { app_state.crispr_replace.pop(); }
-                        _ => {}
+                ViewMode::Crispr => match app_state.crispr_focus {
+                    1 => {
+                        app_state.crispr_guide.pop();
                     }
-                }
+                    2 => {
+                        app_state.crispr_replace.pop();
+                    }
+                    _ => {}
+                },
                 _ => {
                     app_state.input_buffer.pop();
                 }

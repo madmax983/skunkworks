@@ -12,3 +12,7 @@
 **[Optimized DirEntry sorting allocations]**
 **Learning:** When sorting a collection of `std::fs::DirEntry` elements using `.file_name()`, `sort_by_key` calls the key extraction function O(N log N) times. Since `DirEntry::file_name()` allocates an `OsString`, this results in O(N log N) hidden heap allocations.
 **Action:** Use `sort_by_cached_key` instead of `sort_by_key` whenever the key extraction method is expensive or allocating. This caches the keys and evaluates the extraction exactly O(N) times.
+
+**[neuro-sim] Hoisting zero-delay spikes to avoid Vec::push heap allocations**
+**Learning:** During Spiking Neural Network (SNN) simulations in `neuro-sim`, the majority of network connections may be immediate (delay=0). Pushing these immediate spikes into the `spikes_in_transit` vector and extracting them immediately via `retain_mut` causes expensive O(n) heap allocations (growing the `Vec`) every step. By checking for `delay == 0` when generating spikes and routing them directly to the `weight_to_add` accumulator, we avoid heap allocations entirely for the most common synapse type, dramatically reducing the per-frame allocation load without any change to network behaviour.
+**Action:** Always check if a queue/transit data structure can be bypassed for immediate values (delay/timer = 0) to save the allocation overhead of pushing to `Vec`.

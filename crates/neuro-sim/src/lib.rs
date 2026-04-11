@@ -241,16 +241,24 @@ impl Network {
         // 2. Process Synapses (Propagate spikes)
         for syn in synapses.iter_mut() {
             syn.active = false;
+            let mut weight_to_add = 0.0;
 
             // Check if source neuron spiked in previous step
             if let Some(&spiked) = spikes.get(syn.from) {
                 if spiked {
-                    syn.spikes_in_transit.push(syn.delay);
+                    // ⚡ Bolt Optimization: Hoist zero-delay spikes to avoid Vec::push heap allocations.
+                    // Instead of pushing to `spikes_in_transit` and immediately extracting it via `retain_mut`,
+                    // we directly evaluate delay=0 spikes into the local accumulator.
+                    // This eliminates O(n) heap allocations during dense firing events.
+                    if syn.delay == 0 {
+                        weight_to_add += syn.weight;
+                    } else {
+                        syn.spikes_in_transit.push(syn.delay);
+                    }
                 }
             }
 
             // Advance spikes in transit
-            let mut weight_to_add = 0.0;
             syn.spikes_in_transit.retain_mut(|t| {
                 if *t == 0 {
                     weight_to_add += syn.weight;
