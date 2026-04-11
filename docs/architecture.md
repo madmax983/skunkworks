@@ -750,6 +750,11 @@ classDiagram
         +exec_io_op()
     }
 
+    class MiscOps {
+        <<Module: ops/misc.rs>>
+        +exec_misc_op()
+    }
+
     class BioOps {
         <<Module: ops/bio.rs>>
         +exec_bio_op()
@@ -761,7 +766,40 @@ classDiagram
     FlowOps ..> ChimeraVM : Extends (impl)
     GridOps ..> ChimeraVM : Extends (impl)
     IoOps ..> ChimeraVM : Extends (impl)
+    MiscOps ..> ChimeraVM : Extends (impl)
     BioOps ..> ChimeraVM : Extends (impl)
+```
+
+
+### Chimera TUI Views (ADR 078)
+
+The TUI views are encapsulated behind a strict Facade pattern to enforce clean architectural boundaries and correct feature-flagging.
+
+```mermaid
+classDiagram
+    direction TB
+    class ViewsFacade {
+        <<Module: tui/views/mod.rs>>
+        +render_core()
+        +render_bio()
+        +render_magic()
+    }
+
+    class CoreView {
+        <<Module: tui/views/core.rs>>
+    }
+
+    class BioView {
+        <<Module: tui/views/bio.rs>>
+    }
+
+    class MagicView {
+        <<Module: tui/views/magic.rs>>
+    }
+
+    ViewsFacade ..> CoreView : Re-exports (render_core)
+    ViewsFacade ..> BioView : Re-exports (render_bio)
+    ViewsFacade ..> MagicView : Re-exports (render_magic)
 ```
 
 ### Chimera TUI Architecture (ADR 071, ADR 072, ADR 073)
