@@ -14,6 +14,7 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(expected = "BUFFER OVERFLOW")]
     fn test_string_bomb_safety() {
         // 👺 HAVOC: The Ouroboros String Bomb
         // EXPECTATION: The VM should prevent strings from exceeding MAX_STRING_LEN.

@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 /// The fundamental data types in the Chimera VM.
 ///
 /// Can be stored on the Stack, in the Grid, or in a Junction.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum Value {
     /// A 64-bit integer. The basic unit of arithmetic and coordinates.
     Int(i64),
@@ -22,6 +22,91 @@ pub enum Value {
     Symbol(u64),
     /// A 24-bit RGB Color. Used for Chromatics and Visuals.
     Color(u8, u8, u8),
+}
+
+impl Clone for Value {
+    fn clone(&self) -> Self {
+        enum Task<'a> {
+            Process(&'a Value),
+            BuildJunction(JunctionType, usize),
+            BuildSuperposition(usize),
+        }
+        let mut tasks = vec![Task::Process(self)];
+        let mut results = Vec::new();
+        let mut probs_stack = Vec::new();
+
+        while let Some(task) = tasks.pop() {
+            match task {
+                Task::Process(val) => match val {
+                    Value::Int(i) => results.push(Value::Int(*i)),
+                    Value::Str(s) => results.push(Value::Str(s.clone())),
+                    Value::Symbol(id) => results.push(Value::Symbol(*id)),
+                    Value::Color(r, g, b) => results.push(Value::Color(*r, *g, *b)),
+                    Value::Junction(t, vals) => {
+                        tasks.push(Task::BuildJunction(*t, vals.len()));
+                        for v in vals.iter().rev() {
+                            tasks.push(Task::Process(v));
+                        }
+                    }
+                    Value::Superposition(states) => {
+                        tasks.push(Task::BuildSuperposition(states.len()));
+                        for (v, p) in states.iter().rev() {
+                            probs_stack.push(*p);
+                            tasks.push(Task::Process(v));
+                        }
+                    }
+                },
+                Task::BuildJunction(t, len) => {
+                    let start = results.len() - len;
+                    let vals = results.split_off(start);
+                    results.push(Value::Junction(t, vals));
+                }
+                Task::BuildSuperposition(len) => {
+                    let start = results.len() - len;
+                    let vals = results.split_off(start);
+                    let mut states = Vec::with_capacity(len);
+                    for v in vals {
+                        let p = probs_stack.pop().unwrap();
+                        states.push((v, p));
+                    }
+                    results.push(Value::Superposition(states));
+                }
+            }
+        }
+        results.pop().unwrap()
+    }
+}
+
+impl PartialEq for Value {
+    fn eq(&self, other: &Self) -> bool {
+        let mut stack = vec![(self, other)];
+
+        while let Some((a, b)) = stack.pop() {
+            match (a, b) {
+                (Value::Int(ia), Value::Int(ib)) if ia == ib => {},
+                (Value::Str(sa), Value::Str(sb)) if sa == sb => {},
+                (Value::Symbol(sa), Value::Symbol(sb)) if sa == sb => {},
+                (Value::Color(ra, ga, ba), Value::Color(rb, gb, bb))
+                    if ra == rb && ga == gb && ba == bb => {},
+                (Value::Junction(ta, valsa), Value::Junction(tb, valsb))
+                    if ta == tb && valsa.len() == valsb.len() => {
+                    for (va, vb) in valsa.iter().zip(valsb.iter()) {
+                        stack.push((va, vb));
+                    }
+                },
+                (Value::Superposition(states_a), Value::Superposition(states_b))
+                    if states_a.len() == states_b.len() => {
+                    for ((va, pa), (vb, pb)) in states_a.iter().zip(states_b.iter()) {
+                        // Float comparison in tests or typical structures
+                        if pa != pb { return false; }
+                        stack.push((va, vb));
+                    }
+                },
+                _ => return false,
+            }
+        }
+        true
+    }
 }
 
 impl Eq for Value {}
@@ -378,6 +463,42 @@ impl Value {
                     .map(|(v, _)| v.depth_safe(depth + 1))
                     .max()
                     .unwrap_or(0)
+            }
+        }
+    }
+
+    /// Safely drops the Value iteratively to prevent stack overflow on deeply nested structures.
+    /// This should be called manually when dropping abnormally large Values.
+    pub fn safe_drop(&mut self) {
+        let mut stack = Vec::new();
+
+        match std::mem::replace(self, Value::Int(0)) {
+            Value::Junction(_, mut vals) => {
+                while let Some(v) = vals.pop() { stack.push(v); }
+            }
+            Value::Superposition(mut states) => {
+                while let Some((v, _)) = states.pop() { stack.push(v); }
+            }
+            _ => {}
+        }
+
+        while let Some(mut val) = stack.pop() {
+            // By extracting the Vecs using std::mem::take, we leave an empty Vec in `val`.
+            // When `val` drops at the end of the loop, it drops an empty Vec (no recursion).
+            match &mut val {
+                Value::Junction(_, vals) => {
+                    let mut inner = std::mem::take(vals);
+                    while let Some(v) = inner.pop() {
+                        stack.push(v);
+                    }
+                }
+                Value::Superposition(states) => {
+                    let mut inner = std::mem::take(states);
+                    while let Some((v, _)) = inner.pop() {
+                        stack.push(v);
+                    }
+                }
+                _ => {}
             }
         }
     }

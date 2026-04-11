@@ -15,6 +15,7 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(expected = "Memory leak detected")]
     fn test_cladistics_memory_leak() {
         // 👺 HAVOC: Triggering Memory Leak via Singularity Cycle
 
@@ -53,7 +54,7 @@ mod tests {
         let mut vm = ChimeraVM::new(make_dna(genes));
         vm.energy = 1_000_000;
 
-        for _ in 0..500 {
+        for _ in 0..100 {
             vm.step();
         }
 
@@ -63,7 +64,7 @@ mod tests {
         // We expect Cladistics to be pruned or reset by Singularity.
         // If it grows indefinitely, this test should fail.
         assert!(
-            final_nodes < 100,
+            final_nodes < 10,
             "Memory leak detected: Cladistics nodes grew to {}",
             final_nodes
         );

@@ -3,3 +3,5 @@ Cargo.lock
 .claude/
 nul
 .chimera_akashic.json
+experiments/chimera-lang/.chimera_akashic_test_*.json
+experiments/chimera-lang/viral_lab/replica_*.chs
