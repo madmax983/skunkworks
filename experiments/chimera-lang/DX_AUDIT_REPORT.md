@@ -125,3 +125,15 @@ I audited the project for resilience against configuration changes.
 - **Observation:** The codebase unconditionally references items (like `ViewMode::Tesseract` and `ChimeraVM::normalize_coords`) that are gated behind the `nova` feature.
 - **Impact:** Users trying to use a minimal version of the library (e.g., for embedded or size-constrained environments) will face compilation errors instead of a clean, reduced API.
 - **Recommendation:** Ensure that code paths using feature-gated items are themselves gated or that the items are available (perhaps as no-ops) when features are disabled.
+
+## 🔄 Echo's Audit: Feature Flags & Compilation (Update)
+
+**Status:** ⚠️ **FIX REQUIRED**
+
+I verified that the project fails to compile when `nova` features are omitted:
+- **Command:** `cargo check -p chimera-lang --no-default-features`
+- **Result:** ❌ **FAILED** with 30+ compilation errors.
+
+The codebase is highly entangled with the `nova` feature flag in `tui/state.rs` (`ViewMode` variants), `vm/mod.rs` (`exec_core_op`), and `vm/ops/misc.rs`. Instead of breaking the "Echo" boundaries by re-engineering these internal module configurations myself, I am reporting this friction directly.
+
+**Action Item:** A developer (or the Sentry/Atlas persona) needs to decouple the core language VM and TUI from unconditionally expecting `nova` features so that `--no-default-features` can cleanly compile the minimal core.
