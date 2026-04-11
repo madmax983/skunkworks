@@ -216,3 +216,30 @@ cargo run -p chimera-lang --release -- --input experiments/chimera-lang/examples
 *   🤦 **The Confusion:** "Tried to run the `poincare-disk` example. There are no instructions on how to install it or add it to my `Cargo.toml`."
 *   🕵️ **The Reality:** "Turns out I need to figure out the path to the internal crate manually."
 *   💡 **The Fix:** "Add a clear `Installation` section with the `Cargo.toml` snippet."
+
+---
+
+# Echo's DX Audit Log 🗣️
+
+**Target:** `chimera-lang` Compilation
+**Date:** 2025-05-24
+
+## 🔍 Experience - The Walkthrough
+
+**Scenario:** "I am a new user trying to run the project without default features to reduce bloat."
+**Action:** `cargo run -p chimera-lang --example story_demo --no-default-features`
+
+## 🚧 Stumble - The Friction Points
+
+1.  **Massive Compilation Failure:** The codebase fails to compile with 30+ errors due to unconditionally referencing enums, variants (e.g. `ViewMode::Tesseract`), methods (`exec_core_op`), and fields (`prologue_state`) that are hidden behind the `nova` feature flag.
+    - *Impact:* Total failure to build. Users are forced to use the bloated default features.
+    - *Fix:* Ensure that internal modules correctly apply feature gates (`#[cfg(feature = "nova")]`) around usages of feature-gated items, or provide fallback implementations.
+
+## 📢 Report - The Complaint
+
+**Title:** 🗣️ Echo: Compilation fails entirely with --no-default-features
+
+**Description:**
+*   🤦 **The Confusion:** "Tried to compile without default features to make the binary smaller. The compiler exploded with 30+ errors about missing variants and unknown fields."
+*   🕵️ **The Reality:** "Turns out the codebase is full of hardcoded references to `nova` features that aren't properly `#cfg` gated. The feature flags are broken."
+*   💡 **The Fix:** "Fix the feature gates throughout `chimera-lang` (e.g., `tui::state::ViewMode`, `vm::mod::exec_core_op`, etc.) so the project compiles cleanly with `--no-default-features`."
