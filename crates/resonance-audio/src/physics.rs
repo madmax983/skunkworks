@@ -81,7 +81,20 @@ impl PhysicsGrid {
     /// assert_eq!(grid.height(), 10);
     /// ```
     pub fn new(width: usize, height: usize) -> Self {
-        let size = width * height;
+        let Some(size) = width.checked_mul(height) else {
+            return Self {
+                width: 0,
+                height: 0,
+                u: vec![],
+                u_prev: vec![],
+                u_next: vec![],
+                materials: vec![],
+                c2_map: vec![],
+                damping_map: vec![],
+                energy_map: vec![],
+            };
+        };
+
         Self {
             width,
             height,
