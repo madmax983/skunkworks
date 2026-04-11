@@ -1,0 +1,13 @@
+--- experiments/chimera-lang/src/vm/paradox.rs
++++ experiments/chimera-lang/src/vm/paradox.rs
+@@ -137,9 +137,7 @@
+         };
+
+         let action_type = parts
+-            .get(do_idx + 1)
+-            .copied()
+-            .ok_or("Missing action type")?;
++            [do_idx + 1];
+         let action = match action_type {
+             "log" => {
+                 let msg = if parts.len() > do_idx + 2 {

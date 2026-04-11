@@ -29,10 +29,6 @@ pub fn update_projectiles(vm: &mut ChimeraVM) {
             continue;
         }
 
-        if p.x.is_nan() || p.y.is_nan() {
-            continue;
-        }
-
         // Check bounds
         if p.x < 0.0 || p.x >= GRID_SIZE as f64 || p.y < 0.0 || p.y >= GRID_SIZE as f64 {
             continue;

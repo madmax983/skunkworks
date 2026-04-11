@@ -136,7 +136,9 @@ impl Paradox {
         };
 
         let action_type = parts
-            [do_idx + 1];
+            .get(do_idx + 1)
+            .copied()
+            .ok_or("Missing action type")?;
         let action = match action_type {
             "log" => {
                 let msg = if parts.len() > do_idx + 2 {
