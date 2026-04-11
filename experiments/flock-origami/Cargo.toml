@@ -1,0 +1,12 @@
+[package]
+name = "flock-origami"
+version = "0.1.0"
+edition = "2021"
+description = "Boids swarming over a Miura-ori mesh"
+
+[dependencies]
+macroquad = "0.4"
+rand = { workspace = true }
+origami = { path = "../../crates/origami" }
+flocking = { path = "../../crates/flocking" }
+locus = { workspace = true }
