@@ -1,8 +1,16 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: crates/locus, crates/poincare-disk
+- **Scent Origin:** Echo 🗣️
+- **Status:** The README.md documentation for internal workspace crates lacks explicit `Cargo.toml` installation instructions. This causes serious DX friction when users attempt standalone project integration. Immediate clarification required.
+
 ### [Concentration Level: HIGH] - Location: README.md
 - **Scent Origin:** Echo 🗣️
-- **Status:** Echo reports the root Quick Start is broken. The repository is a massive workspace so a bare `cargo run` doesn't work, and the `chimera-lang` binary doesn't seem to know how to parse `.pro` files natively without extra configuration or flags that are completely missing from the README. Furthermore, running the `mad_scientist.prl` example script throws `Unknown OpCode` and `Stack underflow` errors. There is also path confusion where instructions mention `cd chimera-lang` from the root, but it is actually located at `experiments/chimera-lang`.
+- **Status:** Echo reports the root Quick Start is broken. The repository is a massive workspace so a bare `cargo run` doesn't work, and the `chimera-lang` binary doesn't seem to know how to parse `.pro` files natively without extra configuration or flags that are completely missing from the README. There is also path confusion where instructions mention `cd chimera-lang` from the root, but it is actually located at `experiments/chimera-lang`.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
+- **Scent Origin:** Mosaic 🎨
+- **Status:** The CLI is cold and unformatted. It needs the Mosaic touch. The 'GallifreyDB' CLI output formatting could be polished by implementing `std::fmt::Display` on `ChimeraVM` using the `comfy-table` crate.
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang/README.md
 - **Scent Origin:** Echo 🗣️
@@ -312,6 +320,10 @@
 
 
 ## 🍂 History/Decay
+
+### [Concentration Level: EVAPORATING] - Location: README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** The `Unknown OpCode` and `Stack underflow` errors in the `mad_scientist.prl` script have been resolved by filtering phantom string executions. Scent is evaporating.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang
 - **Scent Origin:** Atlas 🗺️
