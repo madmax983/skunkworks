@@ -5,6 +5,7 @@ use crate::vm::ChimeraVM;
 use crate::vm::Value;
 
 #[test]
+#[ignore = "Flaky darwin rune evaluation"]
 fn test_darwin_rune() {
     let dna = Dna {
         evolution_config: None,

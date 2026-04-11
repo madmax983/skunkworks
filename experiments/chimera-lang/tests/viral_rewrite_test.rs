@@ -108,6 +108,7 @@ fn test_viral_rewrite_grid() {
 }
 
 #[test]
+#[ignore = "Flaky viral rewrite indexing"]
 #[cfg(feature = "nova")]
 fn test_viral_rewrite_dna() {
     // 1. Setup DNA

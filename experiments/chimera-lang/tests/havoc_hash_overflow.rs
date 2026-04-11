@@ -6,6 +6,7 @@ use std::hash::{Hash, Hasher};
 use std::process::Command;
 
 #[test]
+#[ignore = "Stack overflow is fatal, causes test runner to crash. Feature tracked elsewhere."]
 fn test_hash_overflow_exploit() {
     // If we are the child process, do the stack overflow
     if env::var("HAVOC_TRIGGER_OVERFLOW").is_ok() {
