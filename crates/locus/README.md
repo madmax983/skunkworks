@@ -12,6 +12,13 @@ A lightweight 2D/3D/4D geometry library for TUI applications, grid-based simulat
 
 ## The Hero's Journey: Navigating the Unknown
 
+First, add `locus` to your `Cargo.toml`:
+
+```toml
+[dependencies]
+locus = { path = "crates/locus" }
+```
+
 If you're building a simulation where agents move through space, `locus` handles the heavy lifting. This example shows an agent moving in a Torus world (where walking off the edge wraps you around to the other side).
 
 ```rust
