@@ -25,6 +25,7 @@ use simulation::{Agent, World};
 struct App {
     world: World,
     agents: Vec<Agent>,
+    agent_deposits: Vec<simulation::AgentUpdateResult>,
     reconstruction_angle_x: isize,
     reconstruction_angle_y: isize,
     reconstruction_data: Vec<f64>,
@@ -38,10 +39,12 @@ impl App {
         let height = 64;
         let num_cities = 5;
         let (world, agents) = World::with_cities_and_agents(width, height, num_cities);
+        let agents_len = agents.len();
 
         Self {
             world,
             agents,
+            agent_deposits: Vec::with_capacity(agents_len),
             reconstruction_angle_x: 20,
             reconstruction_angle_y: 10,
             reconstruction_data: vec![0.0; width * height],
@@ -54,20 +57,8 @@ impl App {
         // Update simulation
         self.world.diffuse_and_decay();
 
-        let mut deposits = Vec::new();
-
-        for agent in &mut self.agents {
-            let res = agent.update(&self.world);
-            deposits.push(res);
-        }
-
-        // Apply deposits
-        for d in deposits {
-            if d.deposit_amount > 0.0 {
-                self.world
-                    .set_trail(d.deposit_x, d.deposit_y, d.deposit_amount);
-            }
-        }
+        self.world
+            .update_agents_parallel(&mut self.agents, &mut self.agent_deposits);
 
         // Generate Hologram from trails
         let hologram = Hologram::from_grid(

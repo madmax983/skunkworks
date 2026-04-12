@@ -212,6 +212,7 @@ impl World {
         self.trails[y * self.width + x]
     }
 
+    #[allow(dead_code)]
     pub fn set_trail(&mut self, x: usize, y: usize, value: f64) {
         if x < self.width && y < self.height {
             self.trails[y * self.width + x] = value;
@@ -219,13 +220,18 @@ impl World {
     }
 
     #[allow(dead_code)]
-    pub fn update_agents_parallel(&mut self, agents: &mut [Agent]) {
-        let deposits: Vec<AgentUpdateResult> = agents
+    pub fn update_agents_parallel(
+        &mut self,
+        agents: &mut [Agent],
+        deposits: &mut Vec<AgentUpdateResult>,
+    ) {
+        deposits.clear();
+        agents
             .par_iter_mut()
             .map(|agent| agent.update(self))
-            .collect();
+            .collect_into_vec(deposits);
 
-        for deposit in deposits {
+        for deposit in deposits.iter() {
             if deposit.deposit_x < self.width && deposit.deposit_y < self.height {
                 let idx = deposit.deposit_y * self.width + deposit.deposit_x;
                 self.trails[idx] = (self.trails[idx] + deposit.deposit_amount).min(255.0);

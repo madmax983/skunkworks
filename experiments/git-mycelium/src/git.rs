@@ -3,7 +3,9 @@ use std::process::Command;
 
 #[derive(Debug, Clone)]
 pub struct Commit {
+    #[allow(dead_code)]
     pub hash: String,
+    #[allow(dead_code)]
     pub author: String,
     pub files_changed: Vec<String>,
 }

@@ -150,8 +150,10 @@ mod tests {
 
     #[test]
     fn test_hologram_roundtrip() {
-        let text = "AB";
-        let h = Hologram::from_text(text);
+        // The struct no longer has `from_text`, just use `from_grid`
+        let mut grid = vec![0.0; 64 * 64];
+        grid[10] = 100.0; // dummy data
+        let h = Hologram::from_grid(64, 64, &grid, -20.0, -10.0);
 
         // Reconstruct at correct angle (-20, -10)
         let recon = h.reconstruct(-20, -10);
