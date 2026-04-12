@@ -6,6 +6,13 @@ This crate provides the mathematical primitives for working with hyperbolic poin
 
 ## Quick Start
 
+First, add `poincare-disk` to your `Cargo.toml`:
+
+```toml
+[dependencies]
+poincare-disk = { path = "crates/poincare-disk" }
+```
+
 ```rust
 use poincare_disk::{Point, mobius_add, hyperbolic_dist};
 
