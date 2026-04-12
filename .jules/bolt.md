@@ -16,3 +16,7 @@
 **[neuro-sim] Hoisting zero-delay spikes to avoid Vec::push heap allocations**
 **Learning:** During Spiking Neural Network (SNN) simulations in `neuro-sim`, the majority of network connections may be immediate (delay=0). Pushing these immediate spikes into the `spikes_in_transit` vector and extracting them immediately via `retain_mut` causes expensive O(n) heap allocations (growing the `Vec`) every step. By checking for `delay == 0` when generating spikes and routing them directly to the `weight_to_add` accumulator, we avoid heap allocations entirely for the most common synapse type, dramatically reducing the per-frame allocation load without any change to network behaviour.
 **Action:** Always check if a queue/transit data structure can be bypassed for immediate values (delay/timer = 0) to save the allocation overhead of pushing to `Vec`.
+
+**[Eliminate Per-Frame Rayon Vector Allocations]**
+**Learning:** Hot loops using Rayon `par_iter().map().collect::<Vec<_>>()` will constantly trigger heap allocations that kill framerate in simulations. Rayon provides `collect_into_vec(&mut vec)` specifically for reusing an existing capacity without dropping it.
+**Action:** Always pre-allocate memory outside hot game/simulation loops with `Vec::with_capacity` and re-use the vector by clearing it and collecting into it. `collect_into_vec` replaces the whole vector so `deposits.clear()` works great with it.

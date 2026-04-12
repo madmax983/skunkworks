@@ -106,6 +106,7 @@ fn main() -> Result<()> {
     let mut trails_low = Vec::with_capacity(2048);
     let mut trails_med = Vec::with_capacity(2048);
     let mut trails_high = Vec::with_capacity(2048);
+    let mut agent_deposits = Vec::with_capacity(agents.len());
 
     loop {
         for group in &mut agent_groups {
@@ -239,7 +240,7 @@ fn main() -> Result<()> {
         }
 
         if last_tick.elapsed() >= tick_rate {
-            world.update_agents_parallel(&mut agents);
+            world.update_agents_parallel(&mut agents, &mut agent_deposits);
             world.diffuse_and_decay();
             last_tick = Instant::now();
         }
