@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-specter**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The `OpCode::Battery` and `OpCode::Ground` variants are missing in `chimera-lang`, causing terminal build failure. Grace period: 24h.
+- **flock-origami**: Specimen condemned. Diagnosis: Documentation Void / Vestigial Organs / Runtime Panic. The organism lacks a README, contains unutilized `actuators` code, and panics in headless environments. Grace period: 24h.
+
 
 ## Pardoned
 - **ripple-scheduler**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by fixing the AudioModel initialization, resolving `error[E0061]`. Vigor demonstrated.
@@ -350,3 +351,5 @@
 - **polyrhythmic-cylinder**: Specimen executed. Diagnosis: Terminal Stagnation / Documentation Void. Grace period expired. Moved to graveyard.
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
+## ☠️ Executed
+- **chimera-specter**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The `OpCode::Battery` and `OpCode::Ground` variants are missing in `chimera-lang`, causing terminal build failure. Failed to adapt during grace period. Biomass returned to the void.
