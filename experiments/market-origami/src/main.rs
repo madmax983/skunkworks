@@ -1,0 +1,238 @@
+use macroquad::prelude::*;
+use market_sim::{Grid, Particle};
+use origami::{generate_miura_grid, MiuraParams, Orientation};
+use physics_pbd::{Constraint, PbdSystem};
+
+#[macroquad::main("Market-Origami: Liquidity Morphogenesis")]
+async fn main() {
+    let cols = 30;
+    let rows = 30;
+
+    // 1. Initialize Market Simulation
+    let mut market = Grid::new(cols, rows);
+
+    // 2. Initialize Origami Mesh and Physics
+    let params = MiuraParams {
+        a: 0.5,
+        b: 0.5,
+        gamma: 1.2,
+        orientation: Orientation::Horizontal,
+    };
+
+    // Start slightly expanded
+    let points = generate_miura_grid(params, (cols, rows), 0.5);
+
+    let mut system = PbdSystem::new();
+    let mut p_indices = Vec::with_capacity(points.len());
+
+    // Add particles
+    for pos in &points {
+        p_indices.push(system.add_particle(*pos, 1.0));
+    }
+
+    // Pin the four corners to keep the mesh from floating away
+    let w = cols + 1;
+    let top_left = 0;
+    let top_right = cols;
+    let bottom_left = rows * w;
+    let bottom_right = rows * w + cols;
+
+    system.add_pin_constraint(p_indices[top_left], points[top_left]);
+    system.add_pin_constraint(p_indices[top_right], points[top_right]);
+    system.add_pin_constraint(p_indices[bottom_left], points[bottom_left]);
+    system.add_pin_constraint(p_indices[bottom_right], points[bottom_right]);
+
+    // Store constraint mappings to know which market cell affects which constraint
+    // (Constraint Index -> (x, y) grid coordinate)
+    let mut constraint_mapping = Vec::new();
+
+    // Add actuator constraints for grid edges
+    let stiffness = 0.8;
+    for y in 0..=rows {
+        for x in 0..=cols {
+            let i = y * w + x;
+
+            // Horizontal edge
+            if x < cols {
+                let right = y * w + (x + 1);
+                let dist = points[i].distance(points[right]);
+                let min_len = dist * 0.2;
+                let max_len = dist * 1.5;
+
+                system.add_actuator_constraint(
+                    p_indices[i],
+                    p_indices[right],
+                    min_len,
+                    max_len,
+                    stiffness,
+                );
+                // Map the left node coordinate as the reference point in the market grid
+                // Cap to market limits since points is cols+1 by rows+1
+                let cx = x.min(cols - 1);
+                let cy = y.min(rows - 1);
+                constraint_mapping.push((system.constraints.len() - 1, cx, cy));
+            }
+
+            // Vertical edge
+            if y < rows {
+                let down = (y + 1) * w + x;
+                let dist = points[i].distance(points[down]);
+                let min_len = dist * 0.2;
+                let max_len = dist * 1.5;
+
+                system.add_actuator_constraint(
+                    p_indices[i],
+                    p_indices[down],
+                    min_len,
+                    max_len,
+                    stiffness,
+                );
+                let cx = x.min(cols - 1);
+                let cy = y.min(rows - 1);
+                constraint_mapping.push((system.constraints.len() - 1, cx, cy));
+            }
+        }
+    }
+
+    let mut camera = Camera3D {
+        position: vec3(0.0, 15.0, 15.0),
+        target: vec3(0.0, 0.0, 0.0),
+        up: vec3(0.0, 1.0, 0.0),
+        ..Default::default()
+    };
+
+    let mut rotation = 0.0f32;
+    let mut market_heat = vec![0.0f32; cols * rows];
+
+    loop {
+        clear_background(Color::new(0.05, 0.05, 0.08, 1.0));
+
+        // Inject new orders into the market occasionally
+        if rand::gen_range(0.0, 1.0) < 0.3 {
+            let x = rand::gen_range(0, cols);
+            // Bids enter at the bottom (high y index)
+            market.set(x, rows - 1, Particle::Bid(rand::gen_range(1, 100)));
+        }
+        if rand::gen_range(0.0, 1.0) < 0.3 {
+            let x = rand::gen_range(0, cols);
+            // Asks enter at the top (low y index)
+            market.set(x, 0, Particle::Ask(rand::gen_range(101, 200)));
+        }
+
+        // Update Market (run a few steps to speed up visual liquidity)
+        for _ in 0..3 {
+            let _trades = market.update();
+            // TradeEvent doesn't return coordinates directly, so we infer trade locations
+            // from the presence of Particle::Trade nodes in the market array.
+            for y in 0..rows {
+                for x in 0..cols {
+                    if let Particle::Trade { .. } = market.get(x, y) {
+                        market_heat[y * cols + x] += 1.0;
+                    }
+                }
+            }
+        }
+
+        // Dissipate heat slowly
+        for h in market_heat.iter_mut() {
+            *h *= 0.95;
+        }
+
+        // Map market activity to physical constraints
+        for &(c_idx, x, y) in &constraint_mapping {
+            // Base activity is some combination of heat and presence of orders
+            let mut activity = market_heat[y * cols + x];
+            match market.get(x, y) {
+                Particle::Empty => {}
+                Particle::Wall => {}
+                Particle::Trade { .. } => activity += 0.5,
+                _ => activity += 0.1, // slight bump just for having an order there
+            }
+            let concentration = activity.clamp(0.0, 1.0);
+
+            // If activity is high, factor goes towards 1.0 (expand/max_len)
+            // If activity is low, factor goes towards 0.0 (contract/min_len)
+            if let Constraint::Actuator { ref mut factor, .. } = system.constraints[c_idx] {
+                // Smooth transition
+                *factor = *factor * 0.9 + concentration * 0.1;
+            }
+        }
+
+        // Update Physics
+        system.step(0.016, 5);
+
+        // Update Camera
+        rotation += 0.005;
+        camera.position = vec3(rotation.sin() * 20.0, 15.0, rotation.cos() * 20.0);
+        set_camera(&camera);
+
+        // Render Mesh
+        for y in 0..rows {
+            for x in 0..cols {
+                let i = y * w + x;
+                let p00 = system.particles[p_indices[i]].pos;
+                let p10 = system.particles[p_indices[i + 1]].pos;
+                let p01 = system.particles[p_indices[i + w]].pos;
+
+                let activity = market_heat[y * cols + x];
+
+                // Base color based on market activity
+                // Cold = Blue/Gray, Hot = Green (Bids) / Red (Asks) / Yellow (Trades)
+                let r = 0.2 + activity * 0.8;
+                let g = 0.2 + activity * 0.6;
+                let b = 0.4;
+
+                let mut color = Color::new(r.min(1.0), g.min(1.0), b, 1.0);
+
+                let particle = market.get(x, y);
+                if particle != Particle::Empty {
+                    color = match particle {
+                        Particle::Bid(_) => Color::new(0.0, 1.0, 0.0, 1.0),
+                        Particle::Ask(_) => Color::new(1.0, 0.0, 0.0, 1.0),
+                        Particle::Trade { .. } => Color::new(1.0, 1.0, 0.0, 1.0),
+                        Particle::Wall => Color::new(0.5, 0.5, 0.5, 1.0),
+                        Particle::Empty => unreachable!(),
+                    };
+                }
+
+                // Draw wireframe outline instead of solid triangles (macroquad lacks draw_triangle_3d)
+                draw_line_3d(p00, p10, color);
+                draw_line_3d(p00, p01, color);
+            }
+        }
+
+        // Draw last edges for wireframe
+        for x in 0..cols {
+            let i = rows * w + x;
+            let p0 = system.particles[p_indices[i]].pos;
+            let p1 = system.particles[p_indices[i + 1]].pos;
+            draw_line_3d(p0, p1, Color::new(0.5, 0.5, 0.5, 1.0));
+        }
+        for y in 0..rows {
+            let i = y * w + cols;
+            let p0 = system.particles[p_indices[i]].pos;
+            let p1 = system.particles[p_indices[i + w]].pos;
+            draw_line_3d(p0, p1, Color::new(0.5, 0.5, 0.5, 1.0));
+        }
+
+        set_default_camera();
+
+        // UI text
+        draw_text(
+            "Market-Origami: Liquidity Morphogenesis",
+            10.0,
+            20.0,
+            30.0,
+            WHITE,
+        );
+        draw_text(
+            "Trades & Orders -> Extends physical paper distance constraints",
+            10.0,
+            50.0,
+            20.0,
+            GRAY,
+        );
+
+        next_frame().await
+    }
+}
