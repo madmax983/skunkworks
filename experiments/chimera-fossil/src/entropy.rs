@@ -118,14 +118,28 @@ impl std::fmt::Display for Fossil {
             .set_content_arrangement(ContentArrangement::Dynamic)
             .set_header(vec!["Property", "Value"]);
 
-        let display_orig = if self.original_text.len() > 60 {
-            format!("{}...", &self.original_text[..60].replace('\n', " "))
+        let display_orig = if self.original_text.chars().count() > 60 {
+            format!(
+                "{}...",
+                self.original_text
+                    .chars()
+                    .take(60)
+                    .collect::<String>()
+                    .replace('\n', " ")
+            )
         } else {
             self.original_text.replace('\n', " ")
         };
 
-        let display_curr = if self.displayed_text.len() > 60 {
-            format!("{}...", &self.displayed_text[..60].replace('\n', " "))
+        let display_curr = if self.displayed_text.chars().count() > 60 {
+            format!(
+                "{}...",
+                self.displayed_text
+                    .chars()
+                    .take(60)
+                    .collect::<String>()
+                    .replace('\n', " ")
+            )
         } else {
             self.displayed_text.replace('\n', " ")
         };

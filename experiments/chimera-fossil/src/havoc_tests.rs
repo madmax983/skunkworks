@@ -3,11 +3,10 @@ mod havoc_tests {
     use crate::entropy::Fossil;
 
     #[test]
-    #[should_panic(expected = "byte index 60 is not a char boundary")]
     fn test_havoc_fossil_display_unicode_panic() {
-        // 👺 Havoc: `Fossil::fmt` checks `self.original_text.len() > 60` and then slices `&self.original_text[..60]`.
-        // It assumes that byte index 60 is a valid UTF-8 character boundary.
-        // If the 60th byte falls in the middle of a multi-byte Unicode character, this will panic!
+        // 👺 Havoc: `Fossil::fmt` checked `self.original_text.len() > 60` and then sliced `&self.original_text[..60]`.
+        // It assumed that byte index 60 is a valid UTF-8 character boundary.
+        // If the 60th byte falls in the middle of a multi-byte Unicode character, it would panic!
         //
         // Let's build a string where byte 60 is precisely inside a multi-byte character.
         // "A" is 1 byte. 59 "A"s = 59 bytes.
