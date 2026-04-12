@@ -196,7 +196,9 @@
 - **Lineage:** crates/gray-scott × experiments/hologram-text
 - **Status:** Fresh hybrid. The Turing patterns of reaction-diffusion are mapped into the frequency domain, acting as optical interference patterns. Fascinating. Predicting an emergent "Spectral Morphogenesis" phenotype, revealing the resonant modes of chemical growth.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/origami-hologram
+### [CRITICAL MASS] - Location: experiments/origami-hologram
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Death pheromone applied. Specimen condemned for Documentation Void and Skeletal Implementation. Requires a documented explanation of its holographic behavior.
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. Spliced origami with hologram-text.
 - **Phenotype:** Spectral Origami. The physical folds of the paper generate standing waves in the optical domain. The interference pattern breathes as the paper expands and contracts.
