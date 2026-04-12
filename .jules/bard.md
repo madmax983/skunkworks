@@ -75,3 +75,7 @@
 ## 2025-06-25 - The "Dead Code" Renderers
 **Confusion:** I noticed multiple `tui::views::*` functions (`render_narrative`, `render_lexicon`, etc.) were triggering "dead code" warnings in `chimera-lang`. When exploring `tui/app/mod.rs` and `tui/state.rs`, it became clear these `ViewMode` variants were recently added or refactored but the main `match app_state.view_mode` dispatcher had not been updated to route them correctly.
 **Clarification:** I wired up the disconnected `ViewMode` variants (such as `Lifecycle`, `Lexicon`, `Narrative`, `Akashic`, etc.) in the main `match` block within `app::run_app`, correctly mapping them to their respective rendering functions. I also fixed a capitalization error (`Lifecycle` vs `LifeCycle`) that caused compilation failures.
+
+## 2025-06-25 - The Ghost Param of Topology::normalize
+**Confusion:** The `Topology::normalize` method had a ghost parameter problem where its arguments `y`, `x`, `width`, and `height` were completely undocumented.
+**Clarification:** Documented the arguments using standard Rustdoc `# Arguments` headers to explicitly describe what each parameter represents.

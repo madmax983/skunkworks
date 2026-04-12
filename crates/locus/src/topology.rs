@@ -318,6 +318,13 @@ impl Topology {
     /// // Walking off side (x=10) hits a wall (None)
     /// assert_eq!(cyl_v.normalize(5, 10, 10, 10), None);
     /// ```
+    ///
+    /// # Arguments
+    ///
+    /// * `y` - The row index (can be negative or out-of-bounds).
+    /// * `x` - The column index (can be negative or out-of-bounds).
+    /// * `width` - The total width of the grid/space.
+    /// * `height` - The total height of the grid/space.
     pub fn normalize(&self, y: i64, x: i64, width: usize, height: usize) -> Option<(usize, usize)> {
         if width == 0 || height == 0 {
             return None;
