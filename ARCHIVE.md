@@ -1,4 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **origami-hologram**: Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. The organism lacks a README and its intended holographic reconstruction mechanics are completely undocumented. Grace period: 24h.
 - **flock-origami**: Specimen condemned. Diagnosis: Documentation Void / Vestigial Organs / Runtime Panic. The organism lacks a README, contains unutilized `actuators` code, and panics in headless environments. Grace period: 24h.
 
 
