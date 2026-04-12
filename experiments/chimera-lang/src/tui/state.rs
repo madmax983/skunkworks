@@ -551,10 +551,6 @@ pub(crate) struct AppState {
     #[cfg(feature = "nova")]
     pub(crate) terminal_input: String,
     #[cfg(feature = "nova")]
-    pub(crate) terminal_history: Vec<String>,
-    #[cfg(feature = "nova")]
-    pub(crate) terminal_history_idx: usize,
-    #[cfg(feature = "nova")]
     pub(crate) crispr_target_strand: usize,
     #[cfg(feature = "nova")]
     pub(crate) crispr_guide: String,
@@ -694,10 +690,6 @@ impl AppState {
             catalyst_scroll: 0,
             #[cfg(feature = "nova")]
             terminal_input: String::new(),
-            #[cfg(feature = "nova")]
-            terminal_history: Vec::new(),
-            #[cfg(feature = "nova")]
-            terminal_history_idx: 0,
             #[cfg(feature = "nova")]
             crispr_target_strand: 0,
             #[cfg(feature = "nova")]

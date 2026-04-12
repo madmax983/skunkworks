@@ -548,10 +548,8 @@ where
 
         if event::poll(std::time::Duration::from_millis(100))? {
             if let Event::Key(key) = event::read()? {
-                if app_state.show_view_selector {
-                    if handle_view_selector(key, app_state) {
-                        continue;
-                    }
+                if app_state.show_view_selector && handle_view_selector(key, app_state) {
+                    continue;
                 }
 
                 if let InputMode::Editing = app_state.input_mode {

@@ -68,36 +68,8 @@ fn handle_crispr_enter(vm: &mut ChimeraVM, app_state: &mut AppState) {
     }
 }
 
-fn handle_genome_enter(vm: &mut ChimeraVM, app_state: &mut AppState) {
-    match ChimeraParser::parse(Rule::gene, &app_state.input_buffer) {
-        Ok(mut pairs) => {
-            let pair = pairs.next().unwrap();
-            match Gene::try_from_pair(pair) {
-                Ok(gene) => {
-                    if app_state.selected_strand < vm.dna.helix.strands.len()
-                        && app_state.selected_gene
-                            < vm.dna.helix.strands[app_state.selected_strand].genes.len()
-                    {
-                        vm.dna.helix.strands[app_state.selected_strand].genes
-                            [app_state.selected_gene] = gene;
-                        app_state.status_msg = "Gene updated successfully".to_string();
-                    }
-                    app_state.input_mode = InputMode::Normal;
-                    app_state.input_buffer.clear();
-                }
-                Err(e) => {
-                    app_state.status_msg = format!("Parse Error: {}", e);
-                }
-            }
-        }
-        Err(e) => {
-            app_state.status_msg = format!("Parse Error: {}", e);
-        }
-    }
-}
-
 pub(crate) fn handle_enter_key(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
-    let _ = {
+    {
         match app_state.view_mode {
             #[cfg(feature = "nova")]
             ViewMode::Paradox => {
@@ -207,7 +179,7 @@ pub(crate) fn handle_enter_key(vm: &mut ChimeraVM, app_state: &mut AppState) -> 
                 // Parse buffer as float
                 if let Ok(v) = app_state.input_buffer.parse::<f64>() {
                     let (x, y) = app_state.grid_cursor;
-                    vm.chaos_struct.grid[y][x] = v.clamp(0.0, 1.0) as f64;
+                    vm.chaos_struct.grid[y][x] = v.clamp(0.0, 1.0);
                     app_state.status_msg = format!("Chaos Grid updated at {},{}", x, y);
                 }
                 app_state.input_mode = InputMode::Normal;
@@ -221,7 +193,7 @@ pub(crate) fn handle_enter_key(vm: &mut ChimeraVM, app_state: &mut AppState) -> 
                     1 => app_state.virus_design_pattern = app_state.input_buffer.clone(),
                     2 => {
                         if let Ok(n) = app_state.input_buffer.parse::<u8>() {
-                            app_state.virus_design_rate = n.clamp(0, 100) as u8;
+                            app_state.virus_design_rate = n.clamp(0, 100);
                         }
                     }
                     3 => {
