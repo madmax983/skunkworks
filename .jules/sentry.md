@@ -14,3 +14,7 @@
 **[NaN Propagation in Normalization]**
 **Learning:** Vector normalization methods (like `Vec4::normalize`) that rely on floating-point `max` or `abs` calculations might inadvertently let `NaN` components pass through finite/length checks if not explicitly guarded against, causing downstream calculations to become polluted with `NaN`s.
 **Action:** Always add an explicit `is_nan()` boundary check at the start of mathematical vector operations (e.g., `if x.is_nan() { return Self::zero() }`) to safely collapse invalid coordinate states before applying complex arithmetic.
+
+**[Distance Squared Overflow Intentionality]**
+**Learning:** Math functions that compute the sum of squares, like `magnitude_squared`, `length_squared`, and `distance_squared`, naturally overflow to `Infinity` when given large components (e.g. `f32::MAX`). Attempting to "fix" this via scaling limits the performance of these hot-path operations and breaks the expected behavior for existing simulations, as verified by Chaos tests.
+**Action:** Do not "fix" intentional overflows in hot-path `length_squared` implementations by adding branches and scaling operations. Focus instead on rigorously testing robust fallback functions like `project_to_3d` with extreme values like `f32::MAX`, `f32::MIN`, and `NaN` to ensure safe degradation downstream.
