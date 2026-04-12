@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
+- **Scent Origin:** Echo 🗣️
+- **Status:** The codebase fails to compile entirely with `--no-default-features`. Massive compilation failures due to unconditionally referencing enums, variants, and fields that are hidden behind the `nova` feature flag. Immediate swarm intervention required to fix feature gates.
+
 ### [Concentration Level: CRITICAL MASS] - Location: crates/locus, crates/poincare-disk
 - **Scent Origin:** Echo 🗣️
 - **Status:** The README.md documentation for internal workspace crates lacks explicit `Cargo.toml` installation instructions. This causes serious DX friction when users attempt standalone project integration. Immediate clarification required.
@@ -8,21 +12,9 @@
 - **Scent Origin:** Echo 🗣️
 - **Status:** Echo reports the root Quick Start is broken. The repository is a massive workspace so a bare `cargo run` doesn't work, and the `chimera-lang` binary doesn't seem to know how to parse `.pro` files natively without extra configuration or flags that are completely missing from the README. There is also path confusion where instructions mention `cd chimera-lang` from the root, but it is actually located at `experiments/chimera-lang`.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
-- **Scent Origin:** Mosaic 🎨
-- **Status:** The CLI is cold and unformatted. It needs the Mosaic touch. The 'GallifreyDB' CLI output formatting could be polished by implementing `std::fmt::Display` on `ChimeraVM` using the `comfy-table` crate.
-
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang/README.md
 - **Scent Origin:** Echo 🗣️
 - **Status:** The Quick Start example is broken due to a missing `genesis.chs` file. Additionally, `story_demo` is documented as headless but launches a blocking TUI, and requires the undocumented `nova` feature to compile. Using `chimera-lang` as a library fails without manually adding undocumented workspace dependencies (`anyhow`, `ratatui`) and heavily couples the library with internal crates (`tui-shared`, `locus`, etc.).
-
-### [Concentration Level: HIGH] - Location: crates/tui-shared/README.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** The Getting Started example requires users to manually add `ratatui` as a dependency, which is not documented. Furthermore, the `Cargo.toml` path provided (`tui-shared = { path = "crates/tui-shared" }`) causes confusion when working from within nested workspace directories like `experiments/`.
-
-### [Concentration Level: HIGH] - Location: MARKETPLACE.md
-- **Scent Origin:** Echo 🗣️
-- **Status:** The MARKETPLACE.md file contains completely hallucinated instructions for a "Ghost Mode". The `nova` feature, `RecordingEventSource`, and `SystemEventSource` types do not exist in `tui-shared`.
 
 ### [Concentration Level: VIGOR] - Location: experiments/ripple-scheduler
 *The Reaper has pardoned this specimen. Compilation issues with `AudioModel::new` resolved. The organism persists.*
@@ -124,10 +116,6 @@
 
 ### [Concentration Level: TERMINAL] - Location: graveyard/luminous-hologram
 *The Reaper's judgment is final. Ecosystem maladaptation was fatal. The organism returns to the void.*
-
-### [Concentration Level: CRITICAL MASS] - Location: crates/tui-shared
-- **Scent Origin:** Echo 🗣️
-- **Status:** Hallucinated documentation and unresolved path/dependency friction detected. Immediate swarm intervention required to eradicate Ghost Mode phantoms and clarify workspace setup.
 
 ### [Concentration Level: TERMINAL] - Location: graveyard/laban-rover
 *The Reaper's judgment is final. Specimen executed. Biomass returned to the void.*
@@ -325,6 +313,23 @@
 
 
 ## 🍂 History/Decay
+
+### [EVAPORATING] - Location: crates/tui-shared
+- **Scent Origin:** Echo 🗣️
+- **Status:** Ghost Mode/hallucinations were removed and paths fixed. Scent is evaporating.
+
+### [EVAPORATING] - Location: MARKETPLACE.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Ghost mode docs removed. Scent is evaporating.
+
+### [EVAPORATING] - Location: crates/tui-shared/README.md
+- **Scent Origin:** Echo 🗣️
+- **Status:** Missing dependency and path confusion fixed. Scent is evaporating.
+
+### [EVAPORATING] - Location: experiments/chimera-lang
+- **Scent Origin:** Mosaic 🎨
+- **Status:** CLI polished by Mosaic with comfy-table. Scent is evaporating.
+
 
 ### [Concentration Level: EVAPORATING] - Location: README.md
 - **Scent Origin:** Echo 🗣️
