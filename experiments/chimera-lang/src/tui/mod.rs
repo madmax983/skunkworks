@@ -4,7 +4,6 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use pest::Parser;
 use ratatui::{
     backend::CrosstermBackend,
     style::{Color, Modifier, Style},
@@ -101,7 +100,7 @@ pub(crate) fn apply_glitch_fx(buffer: &mut ratatui::buffer::Buffer, intensity: f
     for y in area.y..area.height {
         for x in area.x..area.width {
             if rng.gen::<f32>() < intensity {
-                let cell = buffer.get_mut(x, y);
+                let cell = buffer.cell_mut((x, y)).unwrap();
                 match rng.gen_range(0..4) {
                     0 => {
                         let chars = ['@', '#', '$', '%', '&', '!', '?', 'X', '.', ':', ';', '~'];

@@ -34,3 +34,6 @@
 ## [Refactor God Function and Pyramid of Doom in TUI Navigation]
 **Learning:** Functions like `handle_navigation_input` in `navigation.rs` suffered from being nearly 1000 lines long, with almost 80 identical `match` arms managing `app_state.grid_cursor` modifications across multiple `ViewMode` variants with `cfg` features.
 **Action:** Extract repetitious logic behind a structural method guard clause `pub fn is_grid_navigable(&self) -> bool` on the base enum type (`ViewMode` in `state.rs`), eliminating the need to re-match the core behavior explicitly over 187 times.
+**[TUI State Dead Code and Nested Ifs]**
+**Learning:** Found several unused fields in `tui/state.rs` (`terminal_history`, `terminal_history_idx`) and an unused function in `tui/app/handlers/editing/enter.rs` (`handle_genome_enter`). Also identified nested `if` statements that could be collapsed using the `&&` operator in `tui/app/mod.rs` and a single-arm `match` statement converted to `if` in `tui/app/handlers/normal/actions.rs`.
+**Action:** When working on TUI components, systematically review for dead code and overly complex control flow, especially after removing monolithic patterns (like ADR 084). Use `clippy` to identify these exact instances.
