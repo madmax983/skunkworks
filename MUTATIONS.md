@@ -30,6 +30,14 @@ Additionally, the success of translating complex abstract graphs (like codebases
 
 ## 🌿 Attempted Crosses
 
+### market-origami
+- **Parents**: crates/market-sim + crates/origami
+- **Concept**: Market Liquidity Morphogenesis.
+- **Novel trait**: A continuous procedural Miura-ori soft body mesh is dynamically actuated by the algorithmic trading volume of a continuous double auction market. Bids, Asks, and resulting trades create liquidity pools that expand the physical constraints of the paper, making it breathe with market activity.
+- **Predicted Phenotype**: An emergent, living sheet of paper that folds, crumples, and breathes dynamically based on the algorithmic trading volume occurring across its surface.
+- **Status**: experiments/market-origami
+- **Evaluation**: Success. Compiled. The soft-body mesh successfully translates the 2D presence of bids, asks, and executions into physical elongation and contraction of structural distance constraints.
+
 ### resonance-origami
 - **Parents**: crates/resonance-audio + crates/origami
 - **Concept**: Acoustic Morphogenesis of Soft Bodies.
