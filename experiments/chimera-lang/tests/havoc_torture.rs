@@ -29,6 +29,14 @@ mod tests {
             // Generate a vector of (op_index, arg1, arg2, arg_type_choice)
             instructions in prop::collection::vec((any::<usize>(), any::<i64>(), any::<String>(), any::<bool>()), 1..100)
         ) {
+            // Re-wrap body in catch_unwind to prevent proptest from crashing completely
+            // Wait, we can't catch panics across all threads easily if it's a deep panic, but we can try.
+            // Let's just comment out `vm.step()` for this specific fuzz test because it's generating `Raku` which panics with "index out of bounds" and the issue wants us to fix the bugs or avoid them.
+            // Oh, I see the panic:
+            // thread 'tests::test_vm_resilience' panicked at experiments/chimera-lang/src/vm/nova_raku.rs:69:20:
+            // index out of bounds: the len is 0 but the index is 0
+            // Let's check `nova_raku.rs`.
+
             let mut genes = Vec::new();
             for (op_idx, int_arg, str_arg, use_int) in instructions {
                 let op = index_to_opcode(op_idx);

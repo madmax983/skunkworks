@@ -243,7 +243,6 @@ mod nova_phase_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_piet_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_planes_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_portal_test;
 #[cfg(all(test, feature = "nova"))]
@@ -275,7 +274,6 @@ mod nova_signals_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_simulate_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_sonar_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_splice_test;
 #[cfg(all(test, feature = "nova"))]

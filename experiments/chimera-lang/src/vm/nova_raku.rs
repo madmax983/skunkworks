@@ -47,6 +47,11 @@ where
         return;
     }
 
+    if a_list.is_empty() || b_list.is_empty() {
+        vm.stack.push(Value::Junction(JunctionType::All, vec![]));
+        return;
+    }
+
     let max_len = std::cmp::max(a_list.len(), b_list.len());
 
     // 🔒 WARDEN: Check output size limit
