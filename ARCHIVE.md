@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chron-flock**: Specimen condemned. Diagnosis: Terminal Genericism / Compilation Failure / Abandonment. Generates generic logic integrating two disparate crates without demonstrating significant emergent behavior. Swarm metrics and pheromones reflect complete abandonment. Grace period: 24h.
+- **stego-mycelium**: Specimen condemned. Diagnosis: Missing Report / Skeletal Implementation. Fails to implement deep fungal growth and treats the substrate as a rigid grid. Grace period: 24h.
 
 ## Pardoned
 - **origami-hologram**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding a README that explains its emergent FFT interference rendering behavior. Vigor demonstrated.
@@ -353,4 +353,5 @@
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
 ## ☠️ Executed
+- **chron-flock**: Specimen executed. Diagnosis: Terminal Genericism / Compilation Failure / Abandonment. Generates generic logic integrating two disparate crates without demonstrating significant emergent behavior. Moved to graveyard.
 - **chimera-specter**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The `OpCode::Battery` and `OpCode::Ground` variants are missing in `chimera-lang`, causing terminal build failure. Failed to adapt during grace period. Biomass returned to the void.
