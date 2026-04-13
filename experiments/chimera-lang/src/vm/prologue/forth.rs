@@ -182,9 +182,12 @@ pub fn process_forth_agent(
                                             si, gi
                                         ));
                                     }
-                                } else if gi as usize == strand.genes.len() {
-                                    // Append
+                                } else if gi as usize >= strand.genes.len() {
+                                    // Append/Extend
                                     if let Ok(op) = op_s.parse::<OpCode>() {
+                                        while strand.genes.len() < gi as usize {
+                                            strand.genes.push(Gene { op: OpCode::Nop, args: vec![] });
+                                        }
                                         strand.genes.push(Gene {
                                             op,
                                             args: vec![Nucleotide::Number(arg_i)],

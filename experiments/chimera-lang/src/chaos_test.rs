@@ -76,12 +76,14 @@ mod tests {
 
         let mut vm = ChimeraVM::new(make_dna(setup_genes));
 
-        // Execute writes (4 ops * 3 = 12 steps)
-        for _ in 0..12 {
+        // Evolve is a nova-garden op, so let's enable active to be safe
+        vm.prologue_state.active = true;
+
+        // Wait, for nova rules, we need a default rule seeded. Evolve uses vm.garden.rules
+        // The default rule is ID 1 -> B3/S23. It should be seeded. But let's step till halt.
+        while !vm.halted {
             vm.step();
         }
-        // Execute Evolve
-        vm.step();
 
         // Check new state: Horizontal line (5,4), (5,5), (5,6)
         match vm.grid[5][4] {
