@@ -750,6 +750,14 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Status**: experiments/market-fluid
 - **Evaluation**: Success. Compiled. Bids and Asks successfully act as dynamic magnetic poles within the ferrous fluid continuous physical space.
 
+### myco-lattice
+- **Parents**: crates/miller-lattice + experiments/myco-transit
+- **Concept**: Mycelial mapping of a crystalline codebase structure.
+- **Novel trait**: Slime mold agents forage for food across a 2D projection of a 3D hierarchical codebase crystal (`miller-lattice`). The agents deposit pheromones to create organic highways between the directory nodes.
+- **Predicted Phenotype**: An emergent biological transit network mapping out a rigid hierarchical file system in continuous space.
+- **Status**: experiments/myco-lattice
+- **Evaluation**: Success. Compiled. Pheromone trails successfully link hierarchical codebase nodes.
+
 ### myco-market
 - **Parents**: crates/market-sim + experiments/myco-transit
 - **Concept**: Pheromone-Guided Market Liquidity.
