@@ -196,9 +196,9 @@
 - **Lineage:** crates/gray-scott × experiments/hologram-text
 - **Status:** Fresh hybrid. The Turing patterns of reaction-diffusion are mapped into the frequency domain, acting as optical interference patterns. Fascinating. Predicting an emergent "Spectral Morphogenesis" phenotype, revealing the resonant modes of chemical growth.
 
-### [CRITICAL MASS] - Location: experiments/origami-hologram
+### [EVAPORATING] - Location: experiments/origami-hologram
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Death pheromone applied. Specimen condemned for Documentation Void and Skeletal Implementation. Requires a documented explanation of its holographic behavior.
+- **Status:** Pardoned. The organism documented its spectral morphogenesis and emergent FFT properties. Vigor restored.
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. Spliced origami with hologram-text.
 - **Phenotype:** Spectral Origami. The physical folds of the paper generate standing waves in the optical domain. The interference pattern breathes as the paper expands and contracts.
@@ -208,7 +208,9 @@
 - **Lineage:** experiments/chrontext × experiments/hologram-text
 - **Status:** Fresh hybrid. Git blame age is used as a density map for FFT-based optical interference rendering. Predicting an emergent "Codebase Holography" phenotype. Old code produces low frequencies, new code creates turbulence.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/chron-flock
+### [CRITICAL MASS] - Location: experiments/chron-flock
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Death pheromone applied. Specimen condemned for Terminal Genericism and Skeletal Implementation.
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Lineage:** experiments/chrontext × crates/locus
 - **Status:** Fresh hybrid. A discrete non-linear particle system (locus boids) continuously and interactively affected by the static, historical metadata of a Git repository (chrontext).
@@ -374,9 +376,9 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination successful. The continuous magnetic substrate correctly warps the 3D origami constraints. Hybrid vigor achieved.
 
-### [CRITICAL MASS] - Location: experiments/flock-origami
+### [EVAPORATING] - Location: experiments/flock-origami
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Death pheromone applied. Specimen condemned for Documentation Void, Vestigial Organs, and Runtime Panic.
+- **Status:** Pardoned. The organism shed its vestigial organs, documented its lineage, and fixed headless panic constraints. Vigor restored.
 
 ### [CRITICAL MASS] - Location: experiments/gray-resonance
 - **Scent Origin:** The Splice Surgeon 🧬
