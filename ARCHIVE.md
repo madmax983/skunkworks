@@ -1,9 +1,9 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **origami-hologram**: Specimen condemned. Diagnosis: Documentation Void / Skeletal Implementation. The organism lacks a README and its intended holographic reconstruction mechanics are completely undocumented. Grace period: 24h.
-- **flock-origami**: Specimen condemned. Diagnosis: Documentation Void / Vestigial Organs / Runtime Panic. The organism lacks a README, contains unutilized `actuators` code, and panics in headless environments. Grace period: 24h.
-
+- **chron-flock**: Specimen condemned. Diagnosis: Terminal Genericism / Compilation Failure / Abandonment. Generates generic logic integrating two disparate crates without demonstrating significant emergent behavior. Swarm metrics and pheromones reflect complete abandonment. Grace period: 24h.
 
 ## Pardoned
+- **origami-hologram**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding a README that explains its emergent FFT interference rendering behavior. Vigor demonstrated.
+- **flock-origami**: Specimen pardoned. Diagnosis: Documentation Void / Vestigial Organs / Runtime Panic. Resolved by adding a README, removing unused `actuators` vector, and fixing headless panics. Vigor demonstrated.
 - **ripple-scheduler**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by fixing the AudioModel initialization, resolving `error[E0061]`. Vigor demonstrated.
 - **ferrous-quipu**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / API Obsolescence. Resolved by fixing deprecated `Platter` width and height method calls, converting them to property accesses. Vigor demonstrated.
 - **ferrous-weaver**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / API Obsolescence. Resolved by replacing `.width()` and `.height()` method calls with field accesses and cleaning up technical debt. Vigor demonstrated.

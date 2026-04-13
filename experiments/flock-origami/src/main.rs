@@ -12,7 +12,7 @@ use locus::Vec2;
 use macroquad::models::{Mesh, Vertex};
 use macroquad::prelude::*;
 use mesh_gen::generate_miura_ori;
-use pbd::{Constraint, PbdSystem};
+use pbd::Constraint;
 
 const MAX_BOIDS: usize = 200;
 const BOID_SPEED: f64 = 2.0;
@@ -43,6 +43,11 @@ impl Boid {
 
 #[macroquad::main("Flock Origami")]
 async fn main() {
+    if std::env::var("DISPLAY").is_err() && cfg!(target_os = "linux") {
+        println!("Headless environment detected. Exiting gracefully to avoid XOpenDisplay panic.");
+        return;
+    }
+
     let rows = 15;
     let cols = 15;
     let mesh_data = generate_miura_ori(rows, cols);

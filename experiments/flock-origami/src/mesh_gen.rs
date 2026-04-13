@@ -4,14 +4,12 @@ use origami::{generate_miura_grid, MiuraParams, Orientation};
 
 pub struct MeshData {
     pub system: PbdSystem,
-    pub indices: Vec<u16>,     // For rendering triangles
-    pub actuators: Vec<usize>, // Indices into constraints
+    pub indices: Vec<u16>, // For rendering triangles
 }
 
 pub fn generate_miura_ori(rows: usize, cols: usize) -> MeshData {
     let mut system = PbdSystem::new();
     let mut indices = Vec::new();
-    let mut actuators = Vec::new();
 
     let params = MiuraParams {
         a: 1.0,
@@ -78,7 +76,6 @@ pub fn generate_miura_ori(rows: usize, cols: usize) -> MeshData {
             let folded_dist = dist * 0.2;
 
             system.add_actuator_constraint(p_left, p_right, folded_dist, dist, 0.5);
-            actuators.push(system.constraints.len() - 1);
         }
     }
 
@@ -95,7 +92,6 @@ pub fn generate_miura_ori(rows: usize, cols: usize) -> MeshData {
             let folded_dist = dist * 0.2;
 
             system.add_actuator_constraint(p_top, p_bottom, folded_dist, dist, 0.5);
-            actuators.push(system.constraints.len() - 1);
         }
     }
 
@@ -128,9 +124,5 @@ pub fn generate_miura_ori(rows: usize, cols: usize) -> MeshData {
         }
     }
 
-    MeshData {
-        system,
-        indices,
-        actuators,
-    }
+    MeshData { system, indices }
 }
