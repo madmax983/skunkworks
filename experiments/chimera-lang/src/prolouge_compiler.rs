@@ -334,6 +334,8 @@ fn compile_prolog_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> 
     );
 
     genes.push(Gene::new(OpCode::Push, vec![fact]));
+    #[cfg(feature = "oracle")]
+    #[cfg(feature = "oracle")]
     genes.push(Gene::new(OpCode::Assert, vec![]));
     Ok(genes)
 }
@@ -356,6 +358,8 @@ fn compile_genetics_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>
 
     if op == "splice" {
         genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(0)])); // Splice method
+        #[cfg(feature = "nova")]
+        #[cfg(feature = "nova")]
         genes.push(Gene::new(OpCode::Splice, vec![]));
     } else if let Ok(opcode) = OpCode::from_str(&op.to_ascii_lowercase()) {
         genes.push(Gene::new(opcode, vec![]));

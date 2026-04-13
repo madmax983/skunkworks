@@ -72,3 +72,12 @@ let right_step = neighbor_transform_a(0, &consts);
 ## License
 
 MIT
+
+## Installation
+
+To use `poincare-disk` in another crate within the workspace, add the following to your `Cargo.toml`:
+
+```toml
+[dependencies]
+poincare-disk = { path = "../poincare-disk" }
+```

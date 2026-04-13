@@ -2826,7 +2826,6 @@ impl ChimeraVM {
         coords
     }
 
-    #[cfg(feature = "nova")]
     fn exec_core_op(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<Option<(usize, usize)>> {
         match op {
             OpCode::Push => Some(self.exec_stack_op(op, args)),
@@ -3290,6 +3289,8 @@ impl ChimeraVM {
         op: OpCode,
         args: &[Nucleotide],
     ) -> Option<(usize, usize)> {
+        #[cfg(feature = "nova")]
+        #[cfg(feature = "nova")]
         if let Some(res) = self.exec_core_op(op.clone(), args) {
             return res;
         }

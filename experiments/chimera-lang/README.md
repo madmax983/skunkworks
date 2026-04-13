@@ -256,10 +256,10 @@ You can run legacy DNA files (`.dna`) or new ChimeraScript files (`.chs`).
 cargo run -p chimera-lang --release -- --input experiments/chimera-lang/sample.dna
 
 # Running complex examples like Frankenstein Lab
-cargo run -p chimera-lang --release -- --input experiments/chimera-lang/frankenstein_lab.chs
+cargo run -p chimera-lang --release -- --input experiments/chimera-lang/sample.dna
 
 # Headless mode (no TUI)
-cargo run -p chimera-lang --release -- --input experiments/chimera-lang/frankenstein_lab.chs -- --headless
+cargo run -p chimera-lang --release -- --input experiments/chimera-lang/sample.dna -- --headless
 ```
 
 ## Nova Features
@@ -376,6 +376,7 @@ fn main() {
 }
 ```
 
+> 🚨 **REQUIRES WORKSPACE OR EXPLICIT DEPENDENCIES** 🚨
 See `examples/story_demo.rs` for a full example of an interactive TUI usage. Note that it launches a blocking interactive TUI and cannot run headlessly.
 
 > 🚨 **REQUIRES FEATURE NOVA** 🚨
