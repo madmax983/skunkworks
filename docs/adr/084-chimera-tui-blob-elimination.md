@@ -3,7 +3,7 @@
 Date: 2026-04-10
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The application maintained a massive duplicated `match` block inside `experiments/chimera-lang/src/tui/mod.rs` while the refactored handlers in `experiments/chimera-lang/src/tui/app/handlers/` remained disconnected. Specifically, `tui/mod.rs` retained a ~4,500 line duplication of the `run_app` event loop logic despite previous extractions into `tui/app/mod.rs`. This was a severe architectural "Blob" that hindered maintainability and resulted in code sprawl.
