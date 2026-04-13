@@ -34,11 +34,8 @@ fn main() -> Result<()> {
     let mut sorted_files: Vec<_> = file_counts.into_iter().collect();
     sorted_files.sort_by(|a, b| b.1.cmp(&a.1)); // Sort descending
 
-    let top_files = sorted_files
-        .into_iter()
-        .take(8)
-        .map(|(f, _)| f)
-        .collect::<Vec<_>>();
+    let mut top_files = Vec::with_capacity(8);
+    top_files.extend(sorted_files.into_iter().take(8).map(|(f, _)| f));
 
     if top_files.len() < 2 {
         println!("Not enough git history to form a mycelial network. Need at least 2 highly modified files.");
@@ -49,7 +46,7 @@ fn main() -> Result<()> {
     let height = 100;
 
     // Arrange cities in a circle
-    let mut city_positions = Vec::new();
+    let mut city_positions = Vec::with_capacity(top_files.len());
     let center_x = width as f64 / 2.0;
     let center_y = height as f64 / 2.0;
     let radius = (height as f64 * 0.4).min(width as f64 * 0.4);
@@ -65,7 +62,7 @@ fn main() -> Result<()> {
     let mut connections = Vec::new();
     for commit in &commits {
         // Only look at files that are in our "cities" list
-        let mut indices = Vec::new();
+        let mut indices = Vec::with_capacity(commit.files_changed.len().min(top_files.len()));
         for file in &commit.files_changed {
             if let Some(pos) = top_files.iter().position(|&f| f == file) {
                 indices.push(pos);
@@ -100,9 +97,8 @@ fn main() -> Result<()> {
         Color::LightRed,
     ];
 
-    let mut agent_groups: Vec<Vec<(f64, f64)>> = (0..world.cities.len())
-        .map(|_| Vec::with_capacity(1500))
-        .collect();
+    let mut agent_groups: Vec<Vec<(f64, f64)>> = Vec::with_capacity(world.cities.len());
+    agent_groups.extend((0..world.cities.len()).map(|_| Vec::with_capacity(1500)));
     let mut trails_low = Vec::with_capacity(2048);
     let mut trails_med = Vec::with_capacity(2048);
     let mut trails_high = Vec::with_capacity(2048);

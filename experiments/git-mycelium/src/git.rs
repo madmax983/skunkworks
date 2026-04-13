@@ -40,7 +40,8 @@ fn parse_git_log(output: &str) -> Result<Vec<Commit>> {
             if let Some(c) = current_commit.take() {
                 commits.push(c);
             }
-            let parts: Vec<&str> = line.split('|').collect();
+            let mut parts = Vec::with_capacity(4);
+            parts.extend(line.split('|'));
             if parts.len() >= 2 {
                 current_commit = Some(Commit {
                     hash: parts[0].to_string(),
