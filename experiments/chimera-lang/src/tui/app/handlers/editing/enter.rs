@@ -69,307 +69,300 @@ fn handle_crispr_enter(vm: &mut ChimeraVM, app_state: &mut AppState) {
 }
 
 pub(crate) fn handle_enter_key(vm: &mut ChimeraVM, app_state: &mut AppState) -> Result<bool> {
-    {
-        match app_state.view_mode {
-            #[cfg(feature = "nova")]
-            ViewMode::Paradox => {
-                if !app_state.paradox_editor_buffer.is_empty() {
-                    match vm.paradox.parse_rule(&app_state.paradox_editor_buffer) {
-                        Ok(_) => {
-                            app_state.status_msg = "Paradox Rule Compiled.".to_string();
-                            app_state.paradox_editor_buffer.clear();
+    match app_state.view_mode {
+        #[cfg(feature = "nova")]
+        ViewMode::Paradox => {
+            if !app_state.paradox_editor_buffer.is_empty() {
+                match vm.paradox.parse_rule(&app_state.paradox_editor_buffer) {
+                    Ok(_) => {
+                        app_state.status_msg = "Paradox Rule Compiled.".to_string();
+                        app_state.paradox_editor_buffer.clear();
+                    }
+                    Err(e) => {
+                        app_state.status_msg = format!("Error: {}", e);
+                    }
+                }
+            }
+            app_state.input_mode = InputMode::Normal;
+        }
+        ViewMode::Genome => {
+            // Genome Editing Logic
+            match ChimeraParser::parse(Rule::gene, &app_state.input_buffer) {
+                Ok(mut pairs) => {
+                    let pair = pairs.next().unwrap();
+                    match Gene::try_from_pair(pair) {
+                        Ok(gene) => {
+                            if app_state.selected_strand < vm.dna.helix.strands.len()
+                                && app_state.selected_gene
+                                    < vm.dna.helix.strands[app_state.selected_strand].genes.len()
+                            {
+                                vm.dna.helix.strands[app_state.selected_strand].genes
+                                    [app_state.selected_gene] = gene;
+                                app_state.status_msg = "Gene updated successfully".to_string();
+                            }
+                            app_state.input_mode = InputMode::Normal;
+                            app_state.input_buffer.clear();
                         }
                         Err(e) => {
-                            app_state.status_msg = format!("Error: {}", e);
+                            app_state.status_msg = format!("Parse Error: {}", e);
                         }
                     }
                 }
-                app_state.input_mode = InputMode::Normal;
+                Err(e) => {
+                    app_state.status_msg = format!("Parse Error: {}", e);
+                }
             }
-            ViewMode::Genome => {
-                // Genome Editing Logic
-                match ChimeraParser::parse(Rule::gene, &app_state.input_buffer) {
-                    Ok(mut pairs) => {
-                        let pair = pairs.next().unwrap();
-                        match Gene::try_from_pair(pair) {
-                            Ok(gene) => {
-                                if app_state.selected_strand < vm.dna.helix.strands.len()
-                                    && app_state.selected_gene
-                                        < vm.dna.helix.strands[app_state.selected_strand]
-                                            .genes
-                                            .len()
-                                {
-                                    vm.dna.helix.strands[app_state.selected_strand].genes
-                                        [app_state.selected_gene] = gene;
-                                    app_state.status_msg = "Gene updated successfully".to_string();
+        }
+        ViewMode::Grid => {
+            apply_grid_edit(vm, app_state);
+        }
+        #[cfg(feature = "nova")]
+        ViewMode::Chronos
+        | ViewMode::Orca
+        | ViewMode::Hydra
+        | ViewMode::Prologue
+        | ViewMode::Reactor => {
+            apply_grid_edit(vm, app_state);
+        }
+        #[cfg(feature = "silicon")]
+        ViewMode::Foundry => {
+            apply_grid_edit(vm, app_state);
+        }
+        #[cfg(feature = "nova")]
+        ViewMode::Babel | ViewMode::Weaver => {
+            app_state.input_mode = InputMode::Normal;
+        }
+        #[cfg(feature = "nova")]
+        ViewMode::Crispr => {
+            handle_crispr_enter(vm, app_state);
+            // Stay in Editing mode
+        }
+
+        #[cfg(feature = "nova")]
+        ViewMode::Logos => {
+            // Enable editing grid from Logos view
+            let (x, y) = app_state.grid_cursor;
+            // Should parse as String usually for Atoms
+            // parse_grid_value handles numbers.
+            let val = if app_state.input_buffer.starts_with('?') {
+                // Variable
+                crate::vm::Value::Str(app_state.input_buffer.clone())
+            } else {
+                parse_grid_value(&app_state.input_buffer)
+            };
+            vm.grid[y][x] = val;
+            app_state.status_msg = format!("Grid updated at {},{}", x, y);
+            app_state.input_mode = InputMode::Normal;
+            app_state.input_buffer.clear();
+        }
+
+        #[cfg(feature = "nova")]
+        ViewMode::Quipu => {
+            // Edit cord value?
+            // Let's allow setting value of active cord
+            let val = parse_grid_value(&app_state.input_buffer);
+            if let crate::vm::Value::Int(n) = val {
+                if let Some(cord) = vm.quipu.cords.get_mut(vm.quipu.active_cord) {
+                    *cord = n;
+                    app_state.status_msg = format!("Cord {} set to {}", vm.quipu.active_cord, n);
+                }
+            }
+            app_state.input_mode = InputMode::Normal;
+            app_state.input_buffer.clear();
+        }
+        ViewMode::BioticChaos => {
+            // Allow editing Chaos Grid?
+            // Parse buffer as float
+            if let Ok(v) = app_state.input_buffer.parse::<f64>() {
+                let (x, y) = app_state.grid_cursor;
+                vm.chaos_struct.grid[y][x] = v.clamp(0.0, 1.0);
+                app_state.status_msg = format!("Chaos Grid updated at {},{}", x, y);
+            }
+            app_state.input_mode = InputMode::Normal;
+            app_state.input_buffer.clear();
+        }
+
+        #[cfg(feature = "nova")]
+        ViewMode::Virology => {
+            match app_state.virus_design_focus {
+                0 => app_state.virus_design_name = app_state.input_buffer.clone(),
+                1 => app_state.virus_design_pattern = app_state.input_buffer.clone(),
+                2 => {
+                    if let Ok(n) = app_state.input_buffer.parse::<u8>() {
+                        app_state.virus_design_rate = n.clamp(0, 100);
+                    }
+                }
+                3 => {
+                    if let Ok(n) = app_state.input_buffer.parse::<i64>() {
+                        app_state.virus_design_payload = n;
+                    }
+                }
+                _ => {}
+            }
+            app_state.input_mode = InputMode::Normal;
+            app_state.input_buffer.clear();
+        }
+
+        #[cfg(feature = "nova")]
+        ViewMode::Lexicon => {
+            let val = if app_state.input_buffer.len() == 1 {
+                crate::vm::Value::Str(app_state.input_buffer.clone())
+            } else {
+                parse_grid_value(&app_state.input_buffer)
+            };
+            let (x, y) = app_state.grid_cursor;
+            vm.grid[y][x] = val;
+            app_state.status_msg = format!("Grid updated at {},{}", x, y);
+            app_state.input_mode = InputMode::Normal;
+            app_state.input_buffer.clear();
+        }
+        ViewMode::Evolution => {
+            if let Ok(val) = app_state.input_buffer.parse::<i64>() {
+                app_state.evolution_state.challenge = crate::vm::evolution::Challenge::Target(val);
+                if let Some(engine) = &mut app_state.evolution_state.engine {
+                    engine.challenge = crate::vm::evolution::Challenge::Target(val);
+                }
+                app_state.status_msg = format!("Target set to {}", val);
+            }
+            app_state.input_mode = InputMode::Normal;
+            app_state.input_buffer.clear();
+        }
+        #[cfg(feature = "nova")]
+        ViewMode::Ecology => {
+            // Inject Gene into Selected Organelle
+            let gene_src = app_state.input_buffer.clone();
+            if !gene_src.is_empty() {
+                // 1. Compile gene
+                // We use a hack: wrap in strand to compile, then extract gene
+                let src = format!("strand injection {{ {} }}", gene_src);
+                match crate::compiler::compile(&src, None) {
+                    Ok(dna) => {
+                        if let Some(strand) = dna.helix.strands.first() {
+                            // 2. Inject into selected organelle
+                            let mut found = false;
+                            let (cx, cy) = app_state.grid_cursor;
+                            for org in vm.organelles.iter_mut() {
+                                if org.context_loc == (cy, cx) {
+                                    // Push to stack or execute immediately?
+                                    // Let's append to their current strand? No, shared DNA.
+                                    // Let's force execute immediately (Interrupt)
+                                    // Or push to their stack?
+
+                                    // "Mad Science" Injection: Modify the Organelle's IP to a new ephemeral strand?
+                                    // Complicated.
+                                    // Let's just try to execute the genes on the organelle's stack context?
+                                    // VM doesn't support executing genes on organelle directly easily without setting IP.
+
+                                    // Simplest: Add genes to the end of the Helix, and Jump the organelle there.
+                                    vm.dna.helix.strands.push(strand.clone());
+                                    let new_idx = vm.dna.helix.strands.len() - 1;
+
+                                    // Save current IP to call stack
+                                    org.call_stack.push(org.ip);
+                                    org.ip = (new_idx, 0);
+
+                                    found = true;
+                                    app_state.status_msg =
+                                        format!("Injected code into {}", org.name);
+                                    break;
                                 }
-                                app_state.input_mode = InputMode::Normal;
-                                app_state.input_buffer.clear();
                             }
-                            Err(e) => {
-                                app_state.status_msg = format!("Parse Error: {}", e);
+                            if !found {
+                                app_state.status_msg = "No organelle at cursor.".to_string();
                             }
                         }
                     }
                     Err(e) => {
-                        app_state.status_msg = format!("Parse Error: {}", e);
+                        app_state.status_msg = format!("Compilation Error: {}", e);
                     }
                 }
             }
-            ViewMode::Grid => {
+            app_state.input_mode = InputMode::Normal;
+            app_state.input_buffer.clear();
+        }
+
+        #[cfg(feature = "nova")]
+        ViewMode::Genesis => {
+            // Commit change based on focus
+            if app_state.genesis_focus == 0 {
+                // Compile Editor Code
+                let src = format!("strand genesis {{ {} }}", app_state.genesis_editor_buffer);
+                match crate::compiler::compile(&src, None) {
+                    Ok(dna) => {
+                        if let Some(strand) = dna.helix.strands.first() {
+                            // Execute immediately
+                            for gene in &strand.genes {
+                                vm.execute_gene_inner(gene.op.clone(), &gene.args);
+                            }
+                            app_state.status_msg = "Genesis: Executed.".to_string();
+                        }
+                    }
+                    Err(e) => app_state.status_msg = format!("Compile Error: {}", e),
+                }
+                // Clear buffer? Maybe keep it for repeated editing.
+                app_state.input_mode = InputMode::Normal;
+            } else if app_state.genesis_focus == 1 {
+                // Update Grammar
+                match crate::lisp::parse(&app_state.genesis_grammar_buffer) {
+                    Ok(exprs) => {
+                        // Take the first expression as the grammar
+                        if let Some(expr) = exprs.first() {
+                            match crate::lisp::sexpr_to_value(expr) {
+                                Ok(grammar) => {
+                                    vm.active_grammar = grammar;
+                                    app_state.status_msg = "Genesis: Grammar Updated.".to_string();
+                                }
+                                Err(e) => {
+                                    app_state.status_msg = format!("Value Conversion Error: {}", e)
+                                }
+                            }
+                        } else {
+                            app_state.status_msg = "Error: Empty Grammar".to_string();
+                        }
+                        app_state.input_mode = InputMode::Normal;
+                    }
+                    Err(e) => app_state.status_msg = format!("Lisp Error: {}", e),
+                }
+            } else {
+                // Grid
                 apply_grid_edit(vm, app_state);
-            }
-            #[cfg(feature = "nova")]
-            ViewMode::Chronos
-            | ViewMode::Orca
-            | ViewMode::Hydra
-            | ViewMode::Prologue
-            | ViewMode::Reactor => {
-                apply_grid_edit(vm, app_state);
-            }
-            #[cfg(feature = "silicon")]
-            ViewMode::Foundry => {
-                apply_grid_edit(vm, app_state);
-            }
-            #[cfg(feature = "nova")]
-            ViewMode::Babel | ViewMode::Weaver => {
-                app_state.input_mode = InputMode::Normal;
-            }
-            #[cfg(feature = "nova")]
-            ViewMode::Crispr => {
-                handle_crispr_enter(vm, app_state);
-                // Stay in Editing mode
-            }
-
-            #[cfg(feature = "nova")]
-            ViewMode::Logos => {
-                // Enable editing grid from Logos view
-                let (x, y) = app_state.grid_cursor;
-                // Should parse as String usually for Atoms
-                // parse_grid_value handles numbers.
-                let val = if app_state.input_buffer.starts_with('?') {
-                    // Variable
-                    crate::vm::Value::Str(app_state.input_buffer.clone())
-                } else {
-                    parse_grid_value(&app_state.input_buffer)
-                };
-                vm.grid[y][x] = val;
-                app_state.status_msg = format!("Grid updated at {},{}", x, y);
-                app_state.input_mode = InputMode::Normal;
-                app_state.input_buffer.clear();
-            }
-
-            #[cfg(feature = "nova")]
-            ViewMode::Quipu => {
-                // Edit cord value?
-                // Let's allow setting value of active cord
-                let val = parse_grid_value(&app_state.input_buffer);
-                if let crate::vm::Value::Int(n) = val {
-                    if let Some(cord) = vm.quipu.cords.get_mut(vm.quipu.active_cord) {
-                        *cord = n;
-                        app_state.status_msg =
-                            format!("Cord {} set to {}", vm.quipu.active_cord, n);
-                    }
-                }
-                app_state.input_mode = InputMode::Normal;
-                app_state.input_buffer.clear();
-            }
-            ViewMode::BioticChaos => {
-                // Allow editing Chaos Grid?
-                // Parse buffer as float
-                if let Ok(v) = app_state.input_buffer.parse::<f64>() {
-                    let (x, y) = app_state.grid_cursor;
-                    vm.chaos_struct.grid[y][x] = v.clamp(0.0, 1.0);
-                    app_state.status_msg = format!("Chaos Grid updated at {},{}", x, y);
-                }
-                app_state.input_mode = InputMode::Normal;
-                app_state.input_buffer.clear();
-            }
-
-            #[cfg(feature = "nova")]
-            ViewMode::Virology => {
-                match app_state.virus_design_focus {
-                    0 => app_state.virus_design_name = app_state.input_buffer.clone(),
-                    1 => app_state.virus_design_pattern = app_state.input_buffer.clone(),
-                    2 => {
-                        if let Ok(n) = app_state.input_buffer.parse::<u8>() {
-                            app_state.virus_design_rate = n.clamp(0, 100);
-                        }
-                    }
-                    3 => {
-                        if let Ok(n) = app_state.input_buffer.parse::<i64>() {
-                            app_state.virus_design_payload = n;
-                        }
-                    }
-                    _ => {}
-                }
-                app_state.input_mode = InputMode::Normal;
-                app_state.input_buffer.clear();
-            }
-
-            #[cfg(feature = "nova")]
-            ViewMode::Lexicon => {
-                let val = if app_state.input_buffer.len() == 1 {
-                    crate::vm::Value::Str(app_state.input_buffer.clone())
-                } else {
-                    parse_grid_value(&app_state.input_buffer)
-                };
-                let (x, y) = app_state.grid_cursor;
-                vm.grid[y][x] = val;
-                app_state.status_msg = format!("Grid updated at {},{}", x, y);
-                app_state.input_mode = InputMode::Normal;
-                app_state.input_buffer.clear();
-            }
-            ViewMode::Evolution => {
-                if let Ok(val) = app_state.input_buffer.parse::<i64>() {
-                    app_state.evolution_state.challenge =
-                        crate::vm::evolution::Challenge::Target(val);
-                    if let Some(engine) = &mut app_state.evolution_state.engine {
-                        engine.challenge = crate::vm::evolution::Challenge::Target(val);
-                    }
-                    app_state.status_msg = format!("Target set to {}", val);
-                }
-                app_state.input_mode = InputMode::Normal;
-                app_state.input_buffer.clear();
-            }
-            #[cfg(feature = "nova")]
-            ViewMode::Ecology => {
-                // Inject Gene into Selected Organelle
-                let gene_src = app_state.input_buffer.clone();
-                if !gene_src.is_empty() {
-                    // 1. Compile gene
-                    // We use a hack: wrap in strand to compile, then extract gene
-                    let src = format!("strand injection {{ {} }}", gene_src);
-                    match crate::compiler::compile(&src, None) {
-                        Ok(dna) => {
-                            if let Some(strand) = dna.helix.strands.first() {
-                                // 2. Inject into selected organelle
-                                let mut found = false;
-                                let (cx, cy) = app_state.grid_cursor;
-                                for org in vm.organelles.iter_mut() {
-                                    if org.context_loc == (cy, cx) {
-                                        // Push to stack or execute immediately?
-                                        // Let's append to their current strand? No, shared DNA.
-                                        // Let's force execute immediately (Interrupt)
-                                        // Or push to their stack?
-
-                                        // "Mad Science" Injection: Modify the Organelle's IP to a new ephemeral strand?
-                                        // Complicated.
-                                        // Let's just try to execute the genes on the organelle's stack context?
-                                        // VM doesn't support executing genes on organelle directly easily without setting IP.
-
-                                        // Simplest: Add genes to the end of the Helix, and Jump the organelle there.
-                                        vm.dna.helix.strands.push(strand.clone());
-                                        let new_idx = vm.dna.helix.strands.len() - 1;
-
-                                        // Save current IP to call stack
-                                        org.call_stack.push(org.ip);
-                                        org.ip = (new_idx, 0);
-
-                                        found = true;
-                                        app_state.status_msg =
-                                            format!("Injected code into {}", org.name);
-                                        break;
-                                    }
-                                }
-                                if !found {
-                                    app_state.status_msg = "No organelle at cursor.".to_string();
-                                }
-                            }
-                        }
-                        Err(e) => {
-                            app_state.status_msg = format!("Compilation Error: {}", e);
-                        }
-                    }
-                }
-                app_state.input_mode = InputMode::Normal;
-                app_state.input_buffer.clear();
-            }
-
-            #[cfg(feature = "nova")]
-            ViewMode::Genesis => {
-                // Commit change based on focus
-                if app_state.genesis_focus == 0 {
-                    // Compile Editor Code
-                    let src = format!("strand genesis {{ {} }}", app_state.genesis_editor_buffer);
-                    match crate::compiler::compile(&src, None) {
-                        Ok(dna) => {
-                            if let Some(strand) = dna.helix.strands.first() {
-                                // Execute immediately
-                                for gene in &strand.genes {
-                                    vm.execute_gene_inner(gene.op.clone(), &gene.args);
-                                }
-                                app_state.status_msg = "Genesis: Executed.".to_string();
-                            }
-                        }
-                        Err(e) => app_state.status_msg = format!("Compile Error: {}", e),
-                    }
-                    // Clear buffer? Maybe keep it for repeated editing.
-                    app_state.input_mode = InputMode::Normal;
-                } else if app_state.genesis_focus == 1 {
-                    // Update Grammar
-                    match crate::lisp::parse(&app_state.genesis_grammar_buffer) {
-                        Ok(exprs) => {
-                            // Take the first expression as the grammar
-                            if let Some(expr) = exprs.first() {
-                                match crate::lisp::sexpr_to_value(expr) {
-                                    Ok(grammar) => {
-                                        vm.active_grammar = grammar;
-                                        app_state.status_msg =
-                                            "Genesis: Grammar Updated.".to_string();
-                                    }
-                                    Err(e) => {
-                                        app_state.status_msg =
-                                            format!("Value Conversion Error: {}", e)
-                                    }
-                                }
-                            } else {
-                                app_state.status_msg = "Error: Empty Grammar".to_string();
-                            }
-                            app_state.input_mode = InputMode::Normal;
-                        }
-                        Err(e) => app_state.status_msg = format!("Lisp Error: {}", e),
-                    }
-                } else {
-                    // Grid
-                    apply_grid_edit(vm, app_state);
-                }
-            }
-            #[cfg(feature = "nova")]
-            ViewMode::Forge => {
-                if app_state.forge_focus == 1 {
-                    // Define Rule
-                    if !app_state.forge_selected_rule.is_empty() {
-                        vm.prologue_state.logos_engine.define_rule(
-                            &app_state.forge_selected_rule,
-                            &app_state.forge_editor_buffer,
-                        );
-                        app_state.status_msg =
-                            format!("Forge: Rule '{}' updated.", app_state.forge_selected_rule);
-                    }
-                } else if app_state.forge_focus == 2 {
-                    // Test Rule
-                    if !app_state.forge_selected_rule.is_empty() {
-                        match vm.prologue_state.logos_engine.parse_input(
-                            &app_state.forge_selected_rule,
-                            &app_state.forge_test_input,
-                        ) {
-                            Ok(val) => {
-                                app_state.forge_test_output = format!("Success: {}", val);
-                            }
-                            Err(e) => {
-                                app_state.forge_test_output = format!("Error: {}", e);
-                            }
-                        }
-                    }
-                }
-                app_state.input_mode = InputMode::Normal;
-            }
-            _ => {
-                app_state.input_mode = InputMode::Normal;
-                app_state.input_buffer.clear();
             }
         }
-    };
+        #[cfg(feature = "nova")]
+        ViewMode::Forge => {
+            if app_state.forge_focus == 1 {
+                // Define Rule
+                if !app_state.forge_selected_rule.is_empty() {
+                    vm.prologue_state.logos_engine.define_rule(
+                        &app_state.forge_selected_rule,
+                        &app_state.forge_editor_buffer,
+                    );
+                    app_state.status_msg =
+                        format!("Forge: Rule '{}' updated.", app_state.forge_selected_rule);
+                }
+            } else if app_state.forge_focus == 2 {
+                // Test Rule
+                if !app_state.forge_selected_rule.is_empty() {
+                    match vm
+                        .prologue_state
+                        .logos_engine
+                        .parse_input(&app_state.forge_selected_rule, &app_state.forge_test_input)
+                    {
+                        Ok(val) => {
+                            app_state.forge_test_output = format!("Success: {}", val);
+                        }
+                        Err(e) => {
+                            app_state.forge_test_output = format!("Error: {}", e);
+                        }
+                    }
+                }
+            }
+            app_state.input_mode = InputMode::Normal;
+        }
+        _ => {
+            app_state.input_mode = InputMode::Normal;
+            app_state.input_buffer.clear();
+        }
+    }
     Ok(true)
 }
