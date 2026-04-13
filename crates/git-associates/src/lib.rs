@@ -587,4 +587,34 @@ mod tests {
         let history_with_diffs = model.history_with_diffs(usize::MAX).unwrap();
         assert_eq!(history_with_diffs.len(), 1);
     }
+
+    #[test]
+    fn test_process_diff_internal_without_hunks() {
+        let temp_dir = std::env::temp_dir().join("git-associates-internal-hunks-test");
+        let _ = std::fs::remove_dir_all(&temp_dir);
+        std::fs::create_dir_all(&temp_dir).unwrap();
+        let repo = Repository::init(&temp_dir).unwrap();
+
+        let file_path = temp_dir.join("context.txt");
+        std::fs::write(&file_path, "line1\nline2\nline3\nline4\nline5\n").unwrap();
+
+        let mut index = repo.index().unwrap();
+        index.add_path(std::path::Path::new("context.txt")).unwrap();
+        let oid = index.write_tree().unwrap();
+        let tree = repo.find_tree(oid).unwrap();
+        let sig = Signature::now("Test", "test@example.com").unwrap();
+
+        repo.commit(Some("HEAD"), &sig, &sig, "Initial commit", &tree, &[])
+            .unwrap();
+
+        std::fs::write(&file_path, "line1\nmodified2\nline3\nline4\nnew line\nline5\n").unwrap();
+
+        let model = GitModel::open(temp_dir).unwrap();
+        let diff = model.repo.diff_tree_to_workdir_with_index(Some(&tree), None).unwrap();
+
+        let (_, _, files) = model.process_diff_internal(&diff, false).unwrap();
+
+        assert_eq!(files.len(), 1);
+        assert!(files[0].hunks.is_empty());
+    }
 }

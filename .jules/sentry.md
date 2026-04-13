@@ -18,3 +18,7 @@
 **[Distance Squared Overflow Intentionality]**
 **Learning:** Math functions that compute the sum of squares, like `magnitude_squared`, `length_squared`, and `distance_squared`, naturally overflow to `Infinity` when given large components (e.g. `f32::MAX`). Attempting to "fix" this via scaling limits the performance of these hot-path operations and breaks the expected behavior for existing simulations, as verified by Chaos tests.
 **Action:** Do not "fix" intentional overflows in hot-path `length_squared` implementations by adding branches and scaling operations. Focus instead on rigorously testing robust fallback functions like `project_to_3d` with extreme values like `f32::MAX`, `f32::MIN`, and `NaN` to ensure safe degradation downstream.
+
+**[Coverage Gap Audits]**
+**Learning:** Found significant gaps in `git-associates` and `hyper-system` where non-default conditions in error handling and math constraint solvers (NaN edge cases and `unwrap_or_default` logic) were not exercised.
+**Action:** Always fuzz constraints and force branch conditions using `f32::NAN`, `is_finite()`, or mock empty repositories to ensure `unwrap_or_default()` isn't hiding unhandled code paths.

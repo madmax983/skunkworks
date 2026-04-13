@@ -582,6 +582,8 @@ mod tests {
         // Inject NaN factor directly via constraints list
         if let Constraint4D::Actuator { factor, .. } = &mut system.constraints[0] {
             *factor = f32::NAN;
+        } else {
+            unreachable!("Expected Actuator constraint");
         }
 
         system.step(0.1, 10, 1.0);
@@ -604,5 +606,55 @@ mod tests {
 
         let vel = system.particles[p1].vel;
         assert_eq!(vel, Vec4::new(1.0, 0.0, 0.0, 0.0));
+    }
+
+    #[test]
+    fn test_solve_distance_zero_mass_sum() {
+        let mut system = PbdSystem4D::new();
+        let p1 = system.add_particle(Vec4::zero(), 0.0).unwrap();
+        let p2 = system.add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 0.0).unwrap();
+
+        // Two infinite mass (inv_mass = 0) particles shouldn't move
+        system.add_distance_constraint(p1, p2, 1.0);
+        system.step(0.1, 10, 1.0);
+
+        assert_eq!(system.particles[p1].pos, Vec4::zero());
+        assert_eq!(system.particles[p2].pos, Vec4::new(1.0, 0.0, 0.0, 0.0));
+    }
+
+    #[test]
+    fn test_solve_distance_zero_len() {
+        let mut system = PbdSystem4D::new();
+        let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
+        let p2 = system.add_particle(Vec4::zero(), 1.0).unwrap();
+
+        // Distance is already zero, length is < EPSILON
+        system.add_distance_constraint(p1, p2, 1.0);
+        system.step(0.1, 10, 1.0);
+
+        // Particles shouldn't move because direction isn't well defined when exactly overlapping
+        assert_eq!(system.particles[p1].pos, Vec4::zero());
+        assert_eq!(system.particles[p2].pos, Vec4::zero());
+    }
+
+    #[test]
+    fn test_solve_distance_out_of_bounds() {
+        let mut system = PbdSystem4D::new();
+        // Invalid index
+        system.add_distance_constraint(99, 100, 1.0);
+
+        // Should not panic, just return early
+        system.step(0.1, 10, 1.0);
+    }
+
+    #[test]
+    #[should_panic(expected = "NaN detected in constraint parameters")]
+    fn test_solve_distance_nan_stiffness() {
+        let mut system = PbdSystem4D::new();
+        let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
+        let p2 = system.add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0).unwrap();
+
+        system.add_distance_constraint(p1, p2, f32::NAN);
+        system.step(0.1, 10, 1.0);
     }
 }
