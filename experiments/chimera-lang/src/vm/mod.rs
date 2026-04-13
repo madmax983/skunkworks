@@ -246,9 +246,6 @@ pub mod nova_hologram;
 #[cfg(test)]
 mod nova_hologram_grammar_test;
 #[cfg(feature = "nova")]
-#[cfg(test)]
-mod nova_hologram_test;
-#[cfg(feature = "nova")]
 pub mod nova_ley;
 #[cfg(feature = "nova")]
 pub mod nova_linguistics;

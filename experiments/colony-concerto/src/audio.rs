@@ -1,4 +1,5 @@
 use crossbeam::channel::Receiver;
+#[cfg(not(feature = "audio"))]
 use std::thread;
 
 #[cfg(feature = "audio")]
@@ -60,7 +61,7 @@ impl AudioEngine {
                     None,
                 )?,
                 _ => return Err(anyhow::anyhow!("Unsupported sample format")),
-            }?;
+            };
 
             stream.play()?;
 

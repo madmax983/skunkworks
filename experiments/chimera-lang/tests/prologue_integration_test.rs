@@ -10,7 +10,9 @@ config {
 
 definitions {
     Z: {
-        "Custom Rune Z" print
+        strand custom_z {
+            "Custom Rune Z" print
+        }
     }
 }
 

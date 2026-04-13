@@ -62,14 +62,13 @@ fn is_test_env() -> bool {
 ///
 /// # Examples
 /// ```rust
-/// # fn main() -> Result<(), String> {
-/// # use chimera_lang::vm::AkashicRecords;
+/// # fn main() {
+/// # use chimera_lang::vm::akashic::AkashicRecords;
 /// # use chimera_lang::vm::Value;
 /// let mut records = AkashicRecords::new();
 /// records.storage.insert("Knowledge".to_string(), Value::Int(42));
 /// records.karma += 100;
-/// // records.save()?; // Save to disk
-/// # Ok(())
+/// // records.save(); // Save to disk
 /// # }
 /// ```
 pub struct AkashicRecords {
@@ -166,7 +165,7 @@ impl AkashicRecords {
     /// # Examples
     /// ```rust
     /// # fn main() {
-    /// # use chimera_lang::vm::AkashicRecords;
+    /// # use chimera_lang::vm::akashic::AkashicRecords;
     /// let records = AkashicRecords::new();
     /// println!("Current Karma: {}", records.karma);
     /// # }
@@ -208,14 +207,13 @@ impl AkashicRecords {
     ///
     /// # Examples
     /// ```rust
-    /// # fn main() -> Result<(), String> {
-    /// # use chimera_lang::vm::AkashicRecords;
+    /// # fn main() {
+    /// # use chimera_lang::vm::akashic::AkashicRecords;
     /// // Attempt to load a custom save file
     /// let result = AkashicRecords::load_from("my_save.json");
     /// if let Ok(records) = result {
     ///     println!("Loaded {}", records.storage.len());
     /// }
-    /// # Ok(())
     /// # }
     /// ```
     pub fn load_from(file_path: &str) -> Result<Self, String> {
@@ -264,14 +262,13 @@ impl AkashicRecords {
     ///
     /// # Examples
     /// ```rust
-    /// # fn main() -> Result<(), String> {
-    /// # use chimera_lang::vm::AkashicRecords;
+    /// # fn main() {
+    /// # use chimera_lang::vm::akashic::AkashicRecords;
     /// # use chimera_lang::vm::Value;
     /// let mut records = AkashicRecords::new();
     /// records.storage.insert("Highscore".to_string(), Value::Int(9999));
     /// // Save immediately returns Ok(()) if successful
-    /// // records.save()?;
-    /// # Ok(())
+    /// // records.save();
     /// # }
     /// ```
     pub fn save(&self) -> Result<(), String> {
