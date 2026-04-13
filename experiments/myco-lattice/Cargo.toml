@@ -1,0 +1,11 @@
+[package]
+name = "myco-lattice"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+miller-lattice = { path = "../../crates/miller-lattice" }
+macroquad = "0.4"
+rand = "0.8"
+rayon = "1.11.0"
+cgmath = "0.18"
