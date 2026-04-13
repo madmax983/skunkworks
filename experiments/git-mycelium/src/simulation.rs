@@ -138,12 +138,14 @@ impl World {
     ) -> (Self, Vec<Agent>) {
         let mut world = Self::new(width, height);
 
+        world.city_names.reserve(cities.len());
+        world.cities.reserve(cities.len());
         for (name, pos) in cities {
             world.city_names.push(name);
             world.cities.push(pos);
         }
 
-        let mut agents = Vec::new();
+        let mut agents = Vec::with_capacity(connections.len() * 100);
         let mut rng = rand::thread_rng();
 
         // For each connection (files changed in the same commit), spawn some agents
