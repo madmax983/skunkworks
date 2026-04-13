@@ -249,16 +249,12 @@ impl ViewMode {
                     ViewMode::Genome
                 }
             }
-            #[cfg(feature = "nova")]
             ViewMode::Tesseract => ViewMode::Genome,
-            #[cfg(not(feature = "nova"))]
-            ViewMode::Tesseract => ViewMode::Choir,
-            #[cfg(feature = "nova")]
+
             ViewMode::Choir => ViewMode::Paradox,
-            #[cfg(feature = "nova")]
             ViewMode::Paradox => ViewMode::Codex,
-            #[cfg(feature = "nova")]
             ViewMode::Codex => ViewMode::Verbum,
+            #[cfg(feature = "nova")]
             ViewMode::Verbum => ViewMode::Genome,
         }
     }
@@ -425,15 +421,10 @@ pub enum ViewMode {
     Sequencer,
     Mutagen,
     Forge,
-    #[cfg(feature = "nova")]
     Tesseract,
-    #[cfg(feature = "nova")]
     Choir,
-    #[cfg(feature = "nova")]
     Paradox,
-    #[cfg(feature = "nova")]
     Codex,
-    #[cfg(feature = "nova")]
     Verbum,
 }
 

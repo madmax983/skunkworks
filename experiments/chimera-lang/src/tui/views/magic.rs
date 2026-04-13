@@ -207,11 +207,15 @@ pub(crate) fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &App
 }
 
 fn render_hermetic_rules(vm: &ChimeraVM) -> String {
+    #[cfg(feature = "nova")]
+    #[cfg(feature = "nova")]
     if vm.prologue_state.alchemy_book.is_empty() {
         return String::from("## Hermetic Alchemy\n\n(No dynamic rules defined)");
     }
 
     let mut s = String::from("## Hermetic Alchemy\n\n");
+    #[cfg(feature = "nova")]
+    #[cfg(feature = "nova")]
     for (i, rule) in vm.prologue_state.alchemy_book.iter().enumerate() {
         let ingredients: Vec<String> = rule.ingredients.iter().map(|v| format!("{}", v)).collect();
         s.push_str(&format!(

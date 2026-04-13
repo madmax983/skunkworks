@@ -61,3 +61,12 @@ fn main() {
 
 - **`serde`**: (Optional) Enables `Serialize` and `Deserialize` on core types.
 - **`macroquad`**: (Optional) Implements `From` and `Into` for interoperability with `macroquad::prelude::Vec3`.
+
+## Installation
+
+To use `locus` in another crate within the workspace, add the following to your `Cargo.toml`:
+
+```toml
+[dependencies]
+locus = { path = "../locus", features = ["serde"] }
+```

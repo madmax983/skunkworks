@@ -86,7 +86,19 @@ impl Paradox {
                             let (cy, cx) = vm.context_loc;
                             // normalize_coords handles topology
                             if let Some((ny, nx)) =
-                                vm.normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                                {
+                        #[cfg(feature = "nova")]
+                        let c = {
+                        #[cfg(feature = "nova")]
+                        let c = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx);
+                        #[cfg(not(feature = "nova"))]
+                        let c = ((cy as i64 + dy).rem_euclid(crate::vm::GRID_SIZE as i64) as usize, (cx as i64 + dx).rem_euclid(crate::vm::GRID_SIZE as i64) as usize);
+                        c
+                    };
+                        #[cfg(not(feature = "nova"))]
+                        let c = ((cy as i64 + dy).rem_euclid(crate::vm::GRID_SIZE as i64) as usize, (cx as i64 + dx).rem_euclid(crate::vm::GRID_SIZE as i64) as usize);
+                        c
+                    }
                             {
                                 vm.grid[ny][nx] = val.clone();
                             }

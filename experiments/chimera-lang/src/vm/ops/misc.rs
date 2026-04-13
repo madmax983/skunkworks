@@ -16,6 +16,8 @@ impl crate::vm::ChimeraVM {
         _args: &[Nucleotide],
     ) -> Option<(usize, usize)> {
         match op {
+            #[cfg(feature = "nova")]
+            #[cfg(feature = "nova")]
             OpCode::Remap => {
                 if self.stack.len() >= 2 {
                     let to_val = self.stack.pop().unwrap();
@@ -39,6 +41,8 @@ impl crate::vm::ChimeraVM {
                         .push("Error: Stack underflow for remap".to_string());
                 }
             }
+            #[cfg(feature = "nova")]
+            #[cfg(feature = "nova")]
             OpCode::Restore => {
                 if let Some(val) = self.stack.pop() {
                     if let Value::Str(s) = val {
@@ -62,6 +66,8 @@ impl crate::vm::ChimeraVM {
                         .push("Error: Stack underflow for restore".to_string());
                 }
             }
+            #[cfg(feature = "nova")]
+            #[cfg(feature = "nova")]
             OpCode::Mirror => {
                 self.direction *= -1;
                 self.output
