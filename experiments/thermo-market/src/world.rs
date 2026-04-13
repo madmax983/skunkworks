@@ -16,7 +16,8 @@ pub const HEIGHT: usize = 512;
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Material {
     Empty,
-    Wall,   // Cooling Fin
+    Wall, // Cooling Fin
+    #[allow(dead_code)]
     Server, // Exchange / Heat Source
 }
 
@@ -73,7 +74,6 @@ impl Agent {
     /// let termite = Agent::new_termite(10.0, 10.0);
     /// assert_eq!(termite.x, 10.0);
     /// ```
-
     pub fn new_termite(x: f32, y: f32) -> Self {
         Self {
             x,
@@ -122,6 +122,12 @@ pub struct World {
     current_pheros: Vec<f32>,
 }
 
+impl Default for World {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl World {
     /// Initializes a new thermodynamic market world.
     ///
@@ -155,11 +161,13 @@ impl World {
         &self.grid[self.get_index(x, y)]
     }
 
+    #[allow(dead_code)]
     pub fn get_cell_mut(&mut self, x: usize, y: usize) -> &mut Cell {
         let idx = self.get_index(x, y);
         &mut self.grid[idx]
     }
 
+    #[allow(dead_code)]
     pub fn add_server_block(&mut self, x: usize, y: usize, w: usize, h: usize) {
         for dy in 0..h {
             for dx in 0..w {

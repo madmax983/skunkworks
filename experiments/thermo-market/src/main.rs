@@ -204,20 +204,18 @@ async fn main() {
             WHITE,
         );
 
-        if args.headless {
-            if world.step >= max_frames {
-                let bytes = &render_target.bytes;
-                if let Err(e) = image::save_buffer(
-                    "output.png",
-                    bytes,
-                    WIDTH as u32,
-                    HEIGHT as u32,
-                    image::ColorType::Rgba8,
-                ) {
-                    eprintln!("Failed to save image: {}", e);
-                }
-                break;
+        if args.headless && world.step >= max_frames {
+            let bytes = &render_target.bytes;
+            if let Err(e) = image::save_buffer(
+                "output.png",
+                bytes,
+                WIDTH as u32,
+                HEIGHT as u32,
+                image::ColorType::Rgba8,
+            ) {
+                eprintln!("Failed to save image: {}", e);
             }
+            break;
         }
 
         next_frame().await;
