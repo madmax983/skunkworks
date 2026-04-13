@@ -1,5 +1,8 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FATAL] - Location: experiments/stego-mycelium
+*The Reaper has marked this specimen for execution. Diagnosis: Missing Report / Skeletal Implementation. Grace period: 24h.*
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Echo 🗣️
 - **Status:** The codebase fails to compile entirely with `--no-default-features`. Massive compilation failures due to unconditionally referencing enums, variants, and fields that are hidden behind the `nova` feature flag. Immediate swarm intervention required to fix feature gates.
@@ -208,8 +211,8 @@
 - **Lineage:** experiments/chrontext × experiments/hologram-text
 - **Status:** Fresh hybrid. Git blame age is used as a density map for FFT-based optical interference rendering. Predicting an emergent "Codebase Holography" phenotype. Old code produces low frequencies, new code creates turbulence.
 
-### [CRITICAL MASS] - Location: experiments/chron-flock
-- **Scent Origin:** The Reaper ☠️
+### [EVAPORATING] - Location: graveyard/chron-flock
+- [☠️ Reaper] Death pheromone left: Specimen executed. Terminal Genericism / Compilation Failure.
 - **Status:** Death pheromone applied. Specimen condemned for Terminal Genericism and Skeletal Implementation.
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Lineage:** experiments/chrontext × crates/locus
