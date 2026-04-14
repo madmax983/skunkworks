@@ -1,0 +1,11 @@
+[package]
+name = "origami-ddos"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = { workspace = true }
+rayon = "1.10"
+origami = { path = "../../crates/origami" }
+physics-pbd = { path = "../../crates/physics-pbd" }

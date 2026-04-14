@@ -186,7 +186,10 @@ pub fn process_forth_agent(
                                     // Append/Extend
                                     if let Ok(op) = op_s.parse::<OpCode>() {
                                         while strand.genes.len() < gi as usize {
-                                            strand.genes.push(Gene { op: OpCode::Nop, args: vec![] });
+                                            strand.genes.push(Gene {
+                                                op: OpCode::Nop,
+                                                args: vec![],
+                                            });
                                         }
                                         strand.genes.push(Gene {
                                             op,

@@ -607,10 +607,17 @@ mod tests {
         repo.commit(Some("HEAD"), &sig, &sig, "Initial commit", &tree, &[])
             .unwrap();
 
-        std::fs::write(&file_path, "line1\nmodified2\nline3\nline4\nnew line\nline5\n").unwrap();
+        std::fs::write(
+            &file_path,
+            "line1\nmodified2\nline3\nline4\nnew line\nline5\n",
+        )
+        .unwrap();
 
         let model = GitModel::open(temp_dir).unwrap();
-        let diff = model.repo.diff_tree_to_workdir_with_index(Some(&tree), None).unwrap();
+        let diff = model
+            .repo
+            .diff_tree_to_workdir_with_index(Some(&tree), None)
+            .unwrap();
 
         let (_, _, files) = model.process_diff_internal(&diff, false).unwrap();
 
