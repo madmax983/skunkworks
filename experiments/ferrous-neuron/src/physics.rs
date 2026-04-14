@@ -244,7 +244,7 @@ impl Universe {
             body.pos += body.vel * dt;
 
             // Trail Logic
-            if rand::random::<u8>() % 10 == 0 {
+            if rand::random::<u8>().is_multiple_of(10) {
                 body.trail.push(body.pos);
                 if body.trail.len() > 20 {
                     body.trail.remove(0);

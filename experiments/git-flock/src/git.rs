@@ -1,5 +1,5 @@
 use chrono::{DateTime, TimeZone, Utc};
-use git2::{Commit as GitCommit, Repository, Sort};
+use git2::{Repository, Sort};
 use std::env;
 
 #[derive(Clone, Debug)]
@@ -23,24 +23,22 @@ pub fn get_commit_history() -> anyhow::Result<Vec<Commit>> {
 
     // We only take the last 50 commits to avoid clustering too much
     // Or we can take all of them and sample. Let's take up to 200.
-    for id in revwalk {
-        if let Ok(id) = id {
-            if let Ok(commit) = repo.find_commit(id) {
-                let author = commit.author();
-                let time = commit.time();
-                let date = Utc.timestamp_opt(time.seconds(), 0).unwrap();
+    for id in revwalk.flatten() {
+        if let Ok(commit) = repo.find_commit(id) {
+            let author = commit.author();
+            let time = commit.time();
+            let date = Utc.timestamp_opt(time.seconds(), 0).unwrap();
 
-                commits.push(Commit {
-                    hash: id.to_string(),
-                    author: author.name().unwrap_or("Unknown").to_string(),
-                    date,
-                    message: commit.summary().unwrap_or("").to_string(),
-                });
+            commits.push(Commit {
+                hash: id.to_string(),
+                author: author.name().unwrap_or("Unknown").to_string(),
+                date,
+                message: commit.summary().unwrap_or("").to_string(),
+            });
 
-                count += 1;
-                if count >= 200 {
-                    break;
-                }
+            count += 1;
+            if count >= 200 {
+                break;
             }
         }
     }

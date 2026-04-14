@@ -8,7 +8,7 @@ use render::{draw_room, render_portal_view, PortalRenderer};
 
 #[macroquad::main("Memory Palace")]
 async fn main() {
-    let mut graph = generate_heap();
+    let graph = generate_heap();
     let mut renderer = PortalRenderer::new();
 
     // Player State

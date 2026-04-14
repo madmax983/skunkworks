@@ -1,4 +1,4 @@
-use memetic_market::sim::{Agent, Market, MarketPhase, Strategy, Topic};
+use memetic_market::sim::{Agent, Market, Strategy, Topic};
 
 #[test]
 fn test_market_initialization() {

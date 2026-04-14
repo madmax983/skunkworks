@@ -127,7 +127,7 @@ impl AppState {
 
         // 1. Step Physics
         // Random input to keep it alive if silent
-        if self.iteration % 20 == 0 {
+        if self.iteration.is_multiple_of(20) {
             let mut rng = rand::thread_rng();
             let inputs: Vec<f32> = (0..self.net.neurons.len())
                 .map(|_| if rng.gen_bool(0.1) { 20.0 } else { 0.0 })
@@ -191,18 +191,6 @@ fn main() -> Result<()> {
     }
 
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_app_state_initialization() {
-        let state = AppState::new();
-        assert_eq!(state.cords.len(), 10);
-        assert!(!state.net.neurons.is_empty());
-    }
 }
 
 fn ui(f: &mut Frame, state: &AppState) {
@@ -311,4 +299,16 @@ fn ui(f: &mut Frame, state: &AppState) {
         .style(Style::default().fg(Color::Yellow))
         .block(Block::default().borders(Borders::ALL));
     f.render_widget(footer, chunks[2]);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_app_state_initialization() {
+        let state = AppState::new();
+        assert_eq!(state.cords.len(), 10);
+        assert!(!state.net.neurons.is_empty());
+    }
 }

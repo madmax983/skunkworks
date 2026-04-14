@@ -80,7 +80,7 @@ impl Swarm {
                     system.add_distance_constraint(
                         prev,
                         p_idx,
-                        (radius * 2.0 * (std::f32::consts::PI / num_tentacles as f32).sin()),
+                        radius * 2.0 * (std::f32::consts::PI / num_tentacles as f32).sin(),
                     );
                 }
             }
@@ -90,7 +90,7 @@ impl Swarm {
             system.add_distance_constraint(
                 first,
                 last,
-                (radius * 2.0 * (std::f32::consts::PI / num_tentacles as f32).sin()),
+                radius * 2.0 * (std::f32::consts::PI / num_tentacles as f32).sin(),
             );
 
             let r = ::rand::thread_rng().gen_range(0.4..0.9);

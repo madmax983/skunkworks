@@ -82,8 +82,8 @@ async fn main() {
         }
 
         // Input
-        if is_mouse_button_pressed(MouseButton::Left) {
-            if bodies.len() < shader::MAX_BODIES {
+        if is_mouse_button_pressed(MouseButton::Left)
+            && bodies.len() < shader::MAX_BODIES {
                 let mpos = mouse_position();
                 let world_pos = vec2(mpos.0 - width as f32 / 2.0, mpos.1 - height as f32 / 2.0);
 
@@ -100,10 +100,9 @@ async fn main() {
                     ),
                 });
             }
-        }
 
-        if is_mouse_button_pressed(MouseButton::Right) {
-            if bodies.len() < shader::MAX_BODIES {
+        if is_mouse_button_pressed(MouseButton::Right)
+            && bodies.len() < shader::MAX_BODIES {
                 let mpos = mouse_position();
                 let world_pos = vec2(mpos.0 - width as f32 / 2.0, mpos.1 - height as f32 / 2.0);
 
@@ -115,7 +114,6 @@ async fn main() {
                     color: PURPLE,
                 });
             }
-        }
 
         if is_key_pressed(KeyCode::Space) {
             bodies.truncate(1);

@@ -285,7 +285,7 @@ impl Universe {
             body.pos += body.vel * dt;
 
             // Trail
-            if rand::random::<u8>() % 20 == 0 {
+            if rand::random::<u8>().is_multiple_of(20) {
                 // Clone pos to avoid borrow checker issues? No, Vec2 is Copy.
                 let p = body.pos;
                 body.trail.push(p);

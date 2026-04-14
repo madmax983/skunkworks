@@ -35,8 +35,7 @@ impl AudioEngine {
                 let source = rodio::source::SineWave::new(freq)
                     .take_duration(Duration::from_millis(150))
                     .amplify(volume)
-                    .fade_in(Duration::from_millis(10))
-                    .fade_out(Duration::from_millis(140));
+                    .fade_in(Duration::from_millis(10));
                 sink.append(source);
                 sink.detach();
             }

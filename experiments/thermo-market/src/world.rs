@@ -395,11 +395,9 @@ impl World {
                         },
                     ];
 
-                    for n_opt in neighbors {
-                        if let Some(n_idx) = n_opt {
-                            if matches!(self.grid[n_idx].material, Material::Wall) {
-                                wall_neighbors += 1;
-                            }
+                    for n_idx in neighbors.into_iter().flatten() {
+                        if matches!(self.grid[n_idx].material, Material::Wall) {
+                            wall_neighbors += 1;
                         }
                     }
 

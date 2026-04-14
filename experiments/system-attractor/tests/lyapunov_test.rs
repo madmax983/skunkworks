@@ -1,4 +1,3 @@
-use macroquad::prelude::Vec3;
 use system_attractor::lyapunov::LyapunovMonitor;
 use system_attractor::simulation::LorenzParams;
 use system_attractor::simulation::{update_particles, Particle};
@@ -8,7 +7,7 @@ fn test_lyapunov_positive() {
     let params = LorenzParams::default();
 
     // Warm up phase: Evolve a particle to get onto the attractor
-    let mut p = Particle::new(1.0, 1.0, 1.0);
+    let p = Particle::new(1.0, 1.0, 1.0);
     let dt = 0.01;
     let mut particles = vec![p];
 

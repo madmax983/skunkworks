@@ -78,17 +78,14 @@ fn main() -> Result<()> {
             .unwrap_or_else(|| Duration::from_secs(0));
 
         if event::poll(timeout)? {
-            match event::read()? {
-                Event::Key(key) => {
-                    if key.kind == KeyEventKind::Press {
-                        match key.code {
-                            KeyCode::Esc | KeyCode::Char('q') => app.running = false,
-                            KeyCode::Char(' ') => app.game.spawn_packet(),
-                            _ => {}
-                        }
+            if let Event::Key(key) = event::read()? {
+                if key.kind == KeyEventKind::Press {
+                    match key.code {
+                        KeyCode::Esc | KeyCode::Char('q') => app.running = false,
+                        KeyCode::Char(' ') => app.game.spawn_packet(),
+                        _ => {}
                     }
                 }
-                _ => {}
             }
         }
 

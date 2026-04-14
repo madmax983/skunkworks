@@ -31,9 +31,9 @@ impl Particle {
         if !self.active {
             return;
         }
-        self.vel = self.vel + gravity * dt;
-        self.pos = self.pos + self.vel * dt;
-        self.vel = self.vel * 0.99; // Friction
+        self.vel += gravity * dt;
+        self.pos += self.vel * dt;
+        self.vel *= 0.99; // Friction
     }
 }
 
@@ -71,14 +71,14 @@ pub fn resolve_collision(particle: &mut Particle, pin: &NeuronPin) -> Option<usi
         };
 
         let overlap = min_dist - dist;
-        particle.pos = particle.pos + normal * overlap;
+        particle.pos += normal * overlap;
 
         let restitution = 0.8;
         let v_dot_n = particle.vel.dot(normal);
 
         if v_dot_n < 0.0 {
             let j = -(1.0 + restitution) * v_dot_n;
-            particle.vel = particle.vel + normal * j;
+            particle.vel += normal * j;
             return Some(pin.neuron_index);
         }
     }

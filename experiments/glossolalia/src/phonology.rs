@@ -219,8 +219,8 @@ impl Rule {
                         }
                     }
                     // Voiced Stop -> Voiceless Stop (b->p, d->t, g->k)
-                    else if p.voice == Voice::Voiced && p.manner == Manner::Stop {
-                        if rng.gen_bool(0.3) {
+                    else if p.voice == Voice::Voiced && p.manner == Manner::Stop
+                        && rng.gen_bool(0.3) {
                             match p.place {
                                 Place::Labial => *p = Phoneme::from_char('p').unwrap(),
                                 Place::Alveolar => *p = Phoneme::from_char('t').unwrap(),
@@ -229,15 +229,14 @@ impl Rule {
                             }
                             changed = true;
                         }
-                    }
                 }
                 changed
             }
             Rule::VowelShift => {
                 let mut changed = false;
                 for p in &mut word.phonemes {
-                    if p.manner == Manner::Vowel {
-                        if rng.gen_bool(0.2) {
+                    if p.manner == Manner::Vowel
+                        && rng.gen_bool(0.2) {
                             match p.symbol {
                                 'a' => *p = Phoneme::from_char('e').unwrap(),
                                 'e' => *p = Phoneme::from_char('i').unwrap(),
@@ -248,7 +247,6 @@ impl Rule {
                             }
                             changed = true;
                         }
-                    }
                 }
                 changed
             }

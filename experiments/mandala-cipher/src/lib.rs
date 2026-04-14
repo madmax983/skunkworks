@@ -33,7 +33,7 @@ impl Jewel {
 
     pub fn from_nibble(n: u8) -> Self {
         let n = n & 0xF;
-        let shape = if n % 2 == 0 {
+        let shape = if n.is_multiple_of(2) {
             Shape::Circle
         } else {
             Shape::Square
@@ -155,18 +155,16 @@ pub fn decode(mandala: &Mandala) -> Vec<u8> {
     let mut current_byte: u8 = 0;
     let mut is_high_nibble = false;
 
-    for jewel_opt in &mandala.jewels {
-        if let Some(jewel) = jewel_opt {
-            if let Some(nibble) = jewel.to_nibble() {
-                if !is_high_nibble {
-                    current_byte = nibble;
-                    is_high_nibble = true;
-                } else {
-                    current_byte |= nibble << 4;
-                    data.push(current_byte);
-                    current_byte = 0;
-                    is_high_nibble = false;
-                }
+    for jewel in mandala.jewels.iter().flatten() {
+        if let Some(nibble) = jewel.to_nibble() {
+            if !is_high_nibble {
+                current_byte = nibble;
+                is_high_nibble = true;
+            } else {
+                current_byte |= nibble << 4;
+                data.push(current_byte);
+                current_byte = 0;
+                is_high_nibble = false;
             }
         }
     }

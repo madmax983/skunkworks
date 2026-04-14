@@ -212,9 +212,7 @@ fn run_app(
                 }
 
                 // Move back in history
-                if commit_idx > 0 {
-                    commit_idx -= 1;
-                }
+                commit_idx = commit_idx.saturating_sub(1);
             }
 
             // Update simulation (standard spot parameters)

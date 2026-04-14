@@ -197,7 +197,7 @@ async fn main() -> Result<()> {
                 });
 
                 // Triangles: 0-1-3, 1-2-3
-                indices.push(idx_counter + 0);
+                indices.push(idx_counter);
                 indices.push(idx_counter + 1);
                 indices.push(idx_counter + 3);
 

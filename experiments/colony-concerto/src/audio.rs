@@ -137,7 +137,7 @@ fn write_data(
         });
 
         // Hard clipper
-        sample = sample.max(-0.8).min(0.8);
+        sample = sample.clamp(-0.8, 0.8);
 
         for channel_sample in frame.iter_mut() {
             *channel_sample = sample;

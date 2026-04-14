@@ -116,9 +116,9 @@ where
             .checked_sub(last_tick.elapsed())
             .unwrap_or_else(|| Duration::from_secs(0));
 
-        if crossterm::event::poll(timeout)? {
-            if let Event::Key(key) = event::read()? {
-                if key.kind == KeyEventKind::Press {
+        if crossterm::event::poll(timeout)?
+            && let Event::Key(key) = event::read()?
+                && key.kind == KeyEventKind::Press {
                     match key.code {
                         KeyCode::Esc => return Ok(()),
                         KeyCode::Char('k') | KeyCode::Char('K') => {
@@ -139,8 +139,6 @@ where
                         _ => {}
                     }
                 }
-            }
-        }
 
         if last_tick.elapsed() >= tick_rate {
             // Integrate chaotic pendulum

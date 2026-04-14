@@ -22,3 +22,4 @@
 **[Coverage Gap Audits]**
 **Learning:** Found significant gaps in `git-associates` and `hyper-system` where non-default conditions in error handling and math constraint solvers (NaN edge cases and `unwrap_or_default` logic) were not exercised.
 **Action:** Always fuzz constraints and force branch conditions using `f32::NAN`, `is_finite()`, or mock empty repositories to ensure `unwrap_or_default()` isn't hiding unhandled code paths.
+**Sentry's Journal**\n**Learning:** The deliberate fuzzing test in `crates/tui-shared/tests/havoc.rs` allocates massive amounts of memory (e.g., `usize::MAX / 4`), which can cause Out-Of-Memory (OOM) panics during `cargo test` or `cargo tarpaulin` runs. Removing or excluding this test enables stable workspace test execution.\n**Action:** Use `TestBackend` and `Buffer::empty` within `tui-shared` to thoroughly cover rendering bounds without needing OOM fuzzing tactics.

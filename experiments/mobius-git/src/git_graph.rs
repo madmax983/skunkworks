@@ -96,15 +96,13 @@ impl GitGraph {
             let first_parent_oid = parent_ids[0];
             if let Some(&p_idx) = node_map.get(&first_parent_oid) {
                 // Main parent continues my lane
-                if !node_lanes.contains_key(&p_idx) {
-                    node_lanes.insert(p_idx, my_v);
-                }
+                node_lanes.entry(p_idx).or_insert(my_v);
             }
 
             // Other parents (merge bases) get new lanes
             for &pid in parent_ids.iter().skip(1) {
                 if let Some(&p_idx) = node_map.get(&pid) {
-                    if !node_lanes.contains_key(&p_idx) {
+                    node_lanes.entry(p_idx).or_insert_with(|| {
                         // Assign a new lane
                         // To keep it balanced around 0, we can alternate signs
                         let v = if next_lane % 2.0 == 0.0 {
@@ -113,8 +111,8 @@ impl GitGraph {
                             -(next_lane + 1.0) / 2.0
                         };
                         next_lane += 1.0;
-                        node_lanes.insert(p_idx, v);
-                    }
+                        v
+                    });
                 }
             }
         }

@@ -22,9 +22,7 @@ fn test_chaff_ignorance() {
     assert!(decoded.is_empty());
 
     // Jewels should be present but chaff (Triangles/Diamonds)
-    for jewel in mandala.jewels {
-        if let Some(j) = jewel {
-            assert!(matches!(j.shape, Shape::Triangle | Shape::Diamond));
-        }
+    for j in mandala.jewels.into_iter().flatten() {
+        assert!(matches!(j.shape, Shape::Triangle | Shape::Diamond));
     }
 }

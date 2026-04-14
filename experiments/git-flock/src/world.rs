@@ -76,7 +76,7 @@ impl World {
             let mut seek_force = target - boid.position;
             if seek_force.magnitude_squared() > 0.0 {
                 seek_force = seek_force.normalize() * boid.dna.max_speed;
-                seek_force = seek_force - boid.velocity;
+                seek_force -= boid.velocity;
                 seek_force = seek_force.limit(boid.dna.max_force * 1.5); // stronger pull towards target
             }
 

@@ -43,9 +43,7 @@ impl Qubit {
 
     /// Apply Pauli-X gate (NOT)
     pub fn x(&mut self) {
-        let temp = self.alpha;
-        self.alpha = self.beta;
-        self.beta = temp;
+        std::mem::swap(&mut self.alpha, &mut self.beta);
     }
 
     /// Apply Pauli-Z gate (Phase Flip)

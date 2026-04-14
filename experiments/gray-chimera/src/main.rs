@@ -40,9 +40,9 @@ impl Agent {
 
         // Clamp to grid
         let x_idx =
-            (self.pos.x as f64 / CELL_SIZE as f64).clamp(0.0, (GRID_WIDTH - 1) as f64) as usize;
+            (self.pos.x / CELL_SIZE as f64).clamp(0.0, (GRID_WIDTH - 1) as f64) as usize;
         let y_idx =
-            (self.pos.y as f64 / CELL_SIZE as f64).clamp(0.0, (GRID_HEIGHT - 1) as f64) as usize;
+            (self.pos.y / CELL_SIZE as f64).clamp(0.0, (GRID_HEIGHT - 1) as f64) as usize;
 
         let gs_idx = gs.get_index(x_idx, y_idx);
 
@@ -116,8 +116,8 @@ fn random_dna() -> Dna {
 }
 
 fn mutate_dna(mut dna: Dna) -> Dna {
-    if rand::gen_range(0.0, 1.0) < 0.1 {
-        if !dna.helix.strands.is_empty() {
+    if rand::gen_range(0.0, 1.0) < 0.1
+        && !dna.helix.strands.is_empty() {
             let strand_idx = rand::gen_range(0, dna.helix.strands.len());
             let strand = &mut dna.helix.strands[strand_idx];
             if !strand.genes.is_empty() {
@@ -133,7 +133,6 @@ fn mutate_dna(mut dna: Dna) -> Dna {
                 );
             }
         }
-    }
     dna
 }
 

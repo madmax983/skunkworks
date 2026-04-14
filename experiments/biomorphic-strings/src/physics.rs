@@ -204,8 +204,8 @@ mod tests {
         let string = BioString::new(start, end, 10, 10.0, 0.1);
 
         assert_eq!(string.nodes.len(), 11);
-        assert_eq!(string.nodes[0].fixed, true);
-        assert_eq!(string.nodes[10].fixed, true);
+        assert!(string.nodes[0].fixed);
+        assert!(string.nodes[10].fixed);
         // Middle should have v=1.0 due to seeding
         assert_eq!(string.nodes[5].v, 1.0);
     }

@@ -9,7 +9,7 @@ fn havoc_bomb_test() {
     }
     bomb_code.push_str("String");
     for _ in 0..5000 {
-        bomb_code.push_str(">");
+        bomb_code.push('>');
     }
     bomb_code.push_str(",\n}");
 
