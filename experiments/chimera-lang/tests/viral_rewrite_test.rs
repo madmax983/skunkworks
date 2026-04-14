@@ -74,7 +74,7 @@ fn test_viral_rewrite_grid() {
     let mut vm = ChimeraVM::new(dna);
     vm.grid = grid;
     vm.context_loc = (5, 5); // Set context for Infect
-    // Run Strand 0 (Infect)
+                             // Run Strand 0 (Infect)
     while vm.ip.0 == 0 && !vm.halted {
         vm.step();
     }

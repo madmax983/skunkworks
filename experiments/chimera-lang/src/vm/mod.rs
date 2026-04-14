@@ -2932,9 +2932,12 @@ impl ChimeraVM {
             | OpCode::BabelLive
             | OpCode::DefineRule
             | OpCode::Ouroboros => Some(babel::exec_babel_op(self, op, args)),
-            OpCode::Superpose | OpCode::Collapse | OpCode::Observe | OpCode::Interfere | OpCode::Project | OpCode::Refract => {
-                Some(nova::exec_nova_op(self, op, args))
-            }
+            OpCode::Superpose
+            | OpCode::Collapse
+            | OpCode::Observe
+            | OpCode::Interfere
+            | OpCode::Project
+            | OpCode::Refract => Some(nova::exec_nova_op(self, op, args)),
             OpCode::Levenshtein
             | OpCode::Soundex
             | OpCode::Anagram

@@ -152,7 +152,6 @@ fn test_volcano() {
     vm.step();
     vm.step();
 
-
     // Check neighbors have something (random > 50)
     // We can't deterministically check specific cells due to randomness,
     // but we can check if *some* cells changed.

@@ -612,7 +612,9 @@ mod tests {
     fn test_solve_distance_zero_mass_sum() {
         let mut system = PbdSystem4D::new();
         let p1 = system.add_particle(Vec4::zero(), 0.0).unwrap();
-        let p2 = system.add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 0.0).unwrap();
+        let p2 = system
+            .add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 0.0)
+            .unwrap();
 
         // Two infinite mass (inv_mass = 0) particles shouldn't move
         system.add_distance_constraint(p1, p2, 1.0);
@@ -652,7 +654,9 @@ mod tests {
     fn test_solve_distance_nan_stiffness() {
         let mut system = PbdSystem4D::new();
         let p1 = system.add_particle(Vec4::zero(), 1.0).unwrap();
-        let p2 = system.add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0).unwrap();
+        let p2 = system
+            .add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0)
+            .unwrap();
 
         system.add_distance_constraint(p1, p2, f32::NAN);
         system.step(0.1, 10, 1.0);
