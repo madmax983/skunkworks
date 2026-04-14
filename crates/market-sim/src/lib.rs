@@ -150,15 +150,32 @@ impl Grid {
     /// assert_eq!(market.width, 20);
     /// ```
     pub fn new(width: usize, height: usize) -> Self {
+        let capacity = match width.checked_mul(height) {
+            Some(c) => c,
+            None => {
+                return Self {
+                    width: 0,
+                    height: 0,
+                    cells: Vec::new(),
+                    trade_count: 0,
+                    total_bids: 0,
+                    total_asks: 0,
+                    center_of_mass: 0.0,
+                    updated: Vec::new(),
+                    scan_x: Vec::new(),
+                };
+            }
+        };
+
         Self {
             width,
             height,
-            cells: vec![Particle::Empty; width * height],
+            cells: vec![Particle::Empty; capacity],
             trade_count: 0,
             total_bids: 0,
             total_asks: 0,
             center_of_mass: height as f32 / 2.0,
-            updated: vec![false; width * height],
+            updated: vec![false; capacity],
             scan_x: (0..width).collect(),
         }
     }
