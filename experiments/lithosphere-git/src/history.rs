@@ -145,7 +145,7 @@ mod tests {
         // This test relies on running inside a git repo (the sandbox is one)
         let stream = HistoryStream::new(".", 10);
         if let Ok(mut stream) = stream {
-            assert!(stream.commits.len() > 0);
+            assert!(!stream.commits.is_empty());
             let mut mapper = FileMapper::new(10, 10);
             if let Some((events, _hash, _msg)) = stream.next_events(&mut mapper) {
                 // We might have events or not depending on the commit

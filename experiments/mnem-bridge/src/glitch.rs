@@ -43,7 +43,7 @@ impl TextGlitcher {
                     }
                     9 => {
                         // Zalgo-ish or garbage
-                        result.push_str("▒");
+                        result.push('▒');
                     }
                     _ => result.push(c),
                 }

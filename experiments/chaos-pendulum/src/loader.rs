@@ -108,7 +108,7 @@ mod tests {
         let result = load_dependencies();
         match result {
             Ok(sys) => {
-                assert!(sys.nodes.len() > 0, "Should load nodes");
+                assert!(!sys.nodes.is_empty(), "Should load nodes");
                 // Check that we have an anchor
                 let anchor_exists = sys.nodes.iter().any(|n| n.fixed);
                 assert!(anchor_exists, "Should have at least one fixed anchor node");

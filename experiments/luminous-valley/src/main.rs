@@ -173,7 +173,7 @@ fn generate_heightmap(seed: u32) -> Image {
                 amp *= 0.5;
             }
 
-            val = val / max;
+            val /= max;
             val = (val + 1.0) * 0.5;
             val = val.clamp(0.0, 1.0);
 
@@ -361,9 +361,7 @@ async fn main() {
         set_default_camera();
 
         // Swap
-        let temp = current_rt;
-        current_rt = next_rt;
-        next_rt = temp;
+        std::mem::swap(&mut current_rt, &mut next_rt);
 
         // --- Boid Logic ---
         // Read the chemical texture (current_rt) back to CPU

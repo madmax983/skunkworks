@@ -291,7 +291,7 @@ impl Universe {
             body.pos += body.vel * dt;
 
             // Trail
-            if rand::random::<u8>() % 20 == 0 {
+            if rand::random::<u8>().is_multiple_of(20) {
                 let p = body.pos;
                 body.trail.push(p);
                 if body.trail.len() > 10 {

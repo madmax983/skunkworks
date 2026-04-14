@@ -179,24 +179,21 @@ fn main() -> Result<()> {
             .unwrap_or_else(|| Duration::from_secs(0));
 
         if event::poll(timeout)? {
-            match event::read()? {
-                Event::Key(key) => {
-                    if key.kind == KeyEventKind::Press {
-                        match key.code {
-                            KeyCode::Esc | KeyCode::Char('q') => app.running = false,
-                            KeyCode::Char(' ') => {
-                                // Big splash
-                                let _ = app.cmd_tx.send(AudioCommand::Pluck {
-                                    x: WIDTH / 2,
-                                    y: HEIGHT / 2,
-                                    strength: 2.0,
-                                });
-                            }
-                            _ => {}
+            if let Event::Key(key) = event::read()? {
+                if key.kind == KeyEventKind::Press {
+                    match key.code {
+                        KeyCode::Esc | KeyCode::Char('q') => app.running = false,
+                        KeyCode::Char(' ') => {
+                            // Big splash
+                            let _ = app.cmd_tx.send(AudioCommand::Pluck {
+                                x: WIDTH / 2,
+                                y: HEIGHT / 2,
+                                strength: 2.0,
+                            });
                         }
+                        _ => {}
                     }
                 }
-                _ => {}
             }
         }
 

@@ -127,8 +127,8 @@ mod tests {
         let string = CosmicString::new(start, end, 10, 10.0, 0.1);
 
         assert_eq!(string.nodes.len(), 11);
-        assert_eq!(string.nodes[0].fixed, true);
-        assert_eq!(string.nodes[10].fixed, true);
+        assert!(string.nodes[0].fixed);
+        assert!(string.nodes[10].fixed);
         assert_eq!(string.rest_length, 1.0);
     }
 

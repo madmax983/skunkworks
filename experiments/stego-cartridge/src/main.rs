@@ -58,7 +58,7 @@ async fn play_cartridge(initial_cartridge: Option<PathBuf>) {
         if macroquad::miniquad::window::dropped_file_count() > 0 {
             if let Some(file) = macroquad::miniquad::window::dropped_file_path(0) {
                 println!("Dropped file: {:?}", file);
-                if let Err(e) = load_cartridge(&mut vm, &PathBuf::from(file)) {
+                if let Err(e) = load_cartridge(&mut vm, &file) {
                     eprintln!("Failed to load cartridge: {}", e);
                 } else {
                     cartridge_loaded = true;

@@ -267,7 +267,7 @@ mod tests {
         let samples: Vec<f32> = source.take(100).collect();
         assert_eq!(samples.len(), 100);
         for s in samples {
-            assert!(s >= -1.0 && s <= 1.0);
+            assert!((-1.0..=1.0).contains(&s));
         }
     }
 }

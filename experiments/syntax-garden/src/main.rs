@@ -7,8 +7,7 @@ use crossterm::{
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
-    style::{Color, Style},
-    text::Span,
+    style::Color,
     widgets::{
         canvas::{Canvas, Line},
         Block, Borders, Paragraph,

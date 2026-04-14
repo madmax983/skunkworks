@@ -13,9 +13,9 @@ crossbeam = "0.8"
 parking_lot = "0.12"
 cpal = { version = "0.15", optional = true }
 
+loom = { version = "0.7.2", optional = true }
+
 [features]
 default = []
 audio = ["cpal"]
-
-[target.'cfg(loom)'.dependencies]
-loom = "0.7.2"
+loom = ["dep:loom"]

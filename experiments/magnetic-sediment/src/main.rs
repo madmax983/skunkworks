@@ -2,8 +2,7 @@ mod monitor;
 mod scavenger;
 mod sediment;
 
-use chimera_lang::prelude::*;
-use flocking::{compute_force, FlockingParams};
+use flocking::compute_force;
 use locus::Vec2 as LocusVec2;
 use macroquad::prelude::*;
 use monitor::ProcessMonitor;

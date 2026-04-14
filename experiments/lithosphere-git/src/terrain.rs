@@ -99,8 +99,8 @@ impl Terrain {
             let (gx, gy) = self.calculate_gradient(x, y);
 
             // Update direction with inertia
-            dir_x = (dir_x * inertia - gx * (1.0 - inertia));
-            dir_y = (dir_y * inertia - gy * (1.0 - inertia));
+            dir_x = dir_x * inertia - gx * (1.0 - inertia) ;
+            dir_y = dir_y * inertia - gy * (1.0 - inertia) ;
 
             // Normalize direction
             let len = (dir_x * dir_x + dir_y * dir_y).sqrt();
@@ -146,7 +146,7 @@ impl Terrain {
             }
 
             speed = (speed * speed + diff * gravity).sqrt();
-            water *= (1.0 - evaporation);
+            water *= 1.0 - evaporation ;
 
             if water < 0.01 {
                 break;
@@ -255,7 +255,7 @@ mod tests {
         }
 
         // Erode
-        let initial_height = terrain.get_height(5, 5);
+        let _initial_height = terrain.get_height(5, 5);
         terrain.erode(100);
 
         // Since we eroded, height should change, but it's stochastic.

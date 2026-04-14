@@ -117,7 +117,7 @@ fn render_commit_list(f: &mut Frame, area: Rect, app: &App) {
                 ),
                 Span::raw(" | "),
                 Span::styled(
-                    format!("{}", c.short_hash),
+                    c.short_hash.to_string(),
                     Style::default().fg(Color::Cyan),
                 ),
                 Span::raw(" | "),

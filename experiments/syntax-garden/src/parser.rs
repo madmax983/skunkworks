@@ -19,7 +19,7 @@ impl GardenParser {
 
         let mut entries = Vec::new();
         for entry in WalkDir::new(path).into_iter().filter_map(|e| e.ok()) {
-            if entry.path().extension().map_or(false, |ext| ext == "rs") {
+            if entry.path().extension().is_some_and(|ext| ext == "rs") {
                 entries.push(entry.path().to_owned());
             }
         }
@@ -38,11 +38,11 @@ impl GardenParser {
 
             if bytes_read as u64 <= limit {
                 if let Ok(ast) = syn::parse_file(&content) {
-                    genome.push_str("["); // Branch for each file
+                    genome.push('['); // Branch for each file
                     let file_dna = self.analyze_file(&ast);
                     genome.push_str(&file_dna);
-                    genome.push_str("]");
-                    genome.push_str("F"); // Grow main stem between files
+                    genome.push(']');
+                    genome.push('F'); // Grow main stem between files
                 }
             } else {
                 eprintln!("Skipping file {:?} (exceeds 1MB limit)", file_path);
@@ -54,7 +54,7 @@ impl GardenParser {
 
     fn analyze_file(&self, file: &syn::File) -> String {
         let mut dna = String::new();
-        dna.push_str("F"); // File stem
+        dna.push('F'); // File stem
 
         for item in &file.items {
             match item {
@@ -72,26 +72,26 @@ impl GardenParser {
                 }
                 Item::Impl(_) => {
                     // Impls extend the branch
-                    dna.push_str("F");
+                    dna.push('F');
                 }
                 Item::Mod(m) => {
                     // Modules branch and recurse if inline
-                    dna.push_str("[");
+                    dna.push('[');
                     if let Some((_, items)) = &m.content {
                         for sub_item in items {
                             // Simplified recursion for inline mods
                             match sub_item {
                                 Item::Fn(_) => dna.push_str("F[L]"),
                                 Item::Struct(_) => dna.push_str("[+F]"),
-                                _ => dna.push_str("F"),
+                                _ => dna.push('F'),
                             }
                         }
                     }
-                    dna.push_str("]");
+                    dna.push(']');
                 }
                 _ => {
                     // Other items just add length
-                    dna.push_str("f"); // f = move without drawing (gap?) or just F
+                    dna.push('f'); // f = move without drawing (gap?) or just F
                 }
             }
         }

@@ -36,7 +36,7 @@ impl AudioEngine {
         let (hit_tx, hit_rx) = crossbeam_channel::unbounded::<NeuronHit>();
 
         let rb_snapshot = HeapRb::<Snapshot>::new(16);
-        let (mut snapshot_tx, mut snapshot_rx) = rb_snapshot.split();
+        let (mut snapshot_tx, snapshot_rx) = rb_snapshot.split();
 
         let mut neurons: Vec<Izhikevich> = Vec::with_capacity(neuron_count);
         let mut rng = rand::thread_rng();

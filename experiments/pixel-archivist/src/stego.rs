@@ -6,7 +6,7 @@ pub fn embed(mut cover: DynamicImage, data: &[u8]) -> Result<DynamicImage> {
     // Header is 4 bytes (u32)
     let total_bits = (4 + data.len()) as u64 * 8;
     // 3 channels * 2 bits = 6 bits per pixel
-    let pixels_needed = (total_bits + 5) / 6;
+    let pixels_needed = total_bits.div_ceil(6);
 
     let (width, height) = cover.dimensions();
     if pixels_needed > (width as u64 * height as u64) {

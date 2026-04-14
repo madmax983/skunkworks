@@ -27,7 +27,7 @@ pub fn calculate_dimensions(data_len: usize) -> (u32, u32) {
     // 4 bytes header + data
     let total_bits = (4 + data_len) as u64 * 8;
     // 6 bits per pixel
-    let pixels_needed = (total_bits + 5) / 6;
+    let pixels_needed = total_bits.div_ceil(6);
 
     // Add 20% padding for aesthetics
     let target_pixels = (pixels_needed as f64 * 1.2) as u64;

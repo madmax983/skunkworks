@@ -120,6 +120,12 @@ pub struct World {
     current_pheros: Vec<f32>,
 }
 
+impl Default for World {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl World {
     pub fn new() -> Self {
         let grid = vec![Cell::default(); WIDTH * HEIGHT];

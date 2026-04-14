@@ -133,9 +133,9 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result
             .checked_sub(last_tick.elapsed())
             .unwrap_or_else(|| Duration::from_secs(0));
 
-        if crossterm::event::poll(timeout)? {
-            if let Event::Key(key) = event::read()? {
-                if key.kind == KeyEventKind::Press {
+        if crossterm::event::poll(timeout)?
+            && let Event::Key(key) = event::read()?
+                && key.kind == KeyEventKind::Press {
                     match key.code {
                         KeyCode::Char('q') => app.running = false,
                         KeyCode::Char('r') => {
@@ -144,8 +144,6 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result
                         _ => {}
                     }
                 }
-            }
-        }
 
         if last_tick.elapsed() >= tick_rate {
             app.on_tick();

@@ -14,7 +14,7 @@ impl ProcessMonitor {
         system.refresh_all();
         let mut known_pids = HashMap::new();
 
-        for (pid, _) in system.processes() {
+        for pid in system.processes().keys() {
             known_pids.insert(
                 *pid,
                 vec2(

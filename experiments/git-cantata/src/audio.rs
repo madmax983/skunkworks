@@ -18,6 +18,12 @@ struct AudioState {
     sink: Sink,
 }
 
+impl Default for AudioEngine {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl AudioEngine {
     pub fn new() -> Self {
         #[cfg(feature = "audio")]
@@ -115,7 +121,7 @@ impl Iterator for CommitSource {
                 }
             }
             "md" | "txt" => (rand::random::<f32>() * 2.0 - 1.0) * 0.5,
-            _ => (self.phase * 2.0 - 1.0), // Sawtooth
+            _ => self.phase * 2.0 - 1.0 , // Sawtooth
         };
 
         // Apply Envelope (simple attack/decay)

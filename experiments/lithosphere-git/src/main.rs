@@ -41,11 +41,10 @@ async fn main() {
         if is_key_pressed(KeyCode::Equal) {
             speed += 1;
         }
-        if is_key_pressed(KeyCode::Minus) {
-            if speed > 1 {
+        if is_key_pressed(KeyCode::Minus)
+            && speed > 1 {
                 speed -= 1;
             }
-        }
 
         let move_speed = 1.0;
         if is_key_down(KeyCode::Left) {

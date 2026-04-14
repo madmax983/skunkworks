@@ -36,17 +36,15 @@ fn main() -> Result<()> {
     ];
 
     let mut agents = Vec::new();
-    let strategies = vec![
-        Strategy::TrendFollower,
+    let strategies = [Strategy::TrendFollower,
         Strategy::ValueInvestor,
         Strategy::HypeBeast,
         Strategy::Contrarian,
-        Strategy::Random,
-    ];
+        Strategy::Random];
 
     let mut rng = rand::thread_rng();
     for i in 0..500 {
-        let strategy = strategies[rng.gen_range(0..strategies.len())].clone();
+        let strategy = strategies[rng.gen_range(0..strategies.len())];
         agents.push(Agent::new(&format!("Bot_{}", i), strategy, 1000.0));
     }
 

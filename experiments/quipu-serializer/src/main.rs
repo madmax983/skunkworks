@@ -81,7 +81,7 @@ fn main() -> Result<()> {
                     KeyCode::Tab => {
                         app.mode = Mode::Serializer;
                     }
-                    KeyCode::Char(c) if c.is_digit(10) => {
+                    KeyCode::Char(c) if c.is_ascii_digit() => {
                         if app.calc_focus == 0 {
                             app.calc_input_a.push(c);
                         } else {

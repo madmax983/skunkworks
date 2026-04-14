@@ -207,7 +207,7 @@ impl Simulation {
     }
 
     pub fn step(&mut self, encoder: &mut wgpu::CommandEncoder) {
-        let bind_group = if self.frame_count % 2 == 0 {
+        let bind_group = if self.frame_count.is_multiple_of(2) {
             &self.bind_group_a_to_b
         } else {
             &self.bind_group_b_to_a
@@ -223,8 +223,8 @@ impl Simulation {
 
         let workgroup_size_x = 16;
         let workgroup_size_y = 16;
-        let dispatch_x = (self.params.width + workgroup_size_x - 1) / workgroup_size_x;
-        let dispatch_y = (self.params.height + workgroup_size_y - 1) / workgroup_size_y;
+        let dispatch_x = self.params.width.div_ceil(workgroup_size_x);
+        let dispatch_y = self.params.height.div_ceil(workgroup_size_y);
 
         cpass.dispatch_workgroups(dispatch_x, dispatch_y, 1);
 
@@ -232,7 +232,7 @@ impl Simulation {
     }
 
     pub fn get_current_view(&self) -> &wgpu::TextureView {
-        if self.frame_count % 2 != 0 {
+        if !self.frame_count.is_multiple_of(2) {
             &self.view_b
         } else {
             &self.view_a

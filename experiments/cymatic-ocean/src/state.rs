@@ -107,7 +107,7 @@ impl State {
         let v1 = t1.create_view(&wgpu::TextureViewDescriptor::default());
         let v2 = t2.create_view(&wgpu::TextureViewDescriptor::default());
 
-        let views = vec![v0, v1, v2];
+        let views = [v0, v1, v2];
 
         // --- Shader ---
         let shader = device.create_shader_module(wgpu::include_wgsl!("shader.wgsl"));

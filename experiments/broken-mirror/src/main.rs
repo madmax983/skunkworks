@@ -85,13 +85,10 @@ fn main() -> Result<()> {
                         }
                         _ => {}
                     },
-                    WindowEvent::MouseWheel { delta, .. } => match delta {
-                        MouseScrollDelta::LineDelta(_, y) => {
-                            simulation.params.temperature =
-                                (simulation.params.temperature + y * 0.1).max(0.0).min(10.0);
-                            info!("Temperature: {:.2}", simulation.params.temperature);
-                        }
-                        _ => {}
+                    WindowEvent::MouseWheel { delta, .. } => if let MouseScrollDelta::LineDelta(_, y) = delta {
+                        simulation.params.temperature =
+                            (simulation.params.temperature + y * 0.1).max(0.0).min(10.0);
+                        info!("Temperature: {:.2}", simulation.params.temperature);
                     },
                     WindowEvent::RedrawRequested => {
                         simulation.update_uniforms(&state.queue);

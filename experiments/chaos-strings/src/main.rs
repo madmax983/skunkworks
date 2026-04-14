@@ -177,12 +177,11 @@ async fn main() {
             let mouse_pos = vec2(mx, my);
 
             for node in &mut pendulum.nodes {
-                if !node.fixed {
-                    if node.pos.distance(mouse_pos) < 50.0 {
+                if !node.fixed
+                    && node.pos.distance(mouse_pos) < 50.0 {
                         node.pos = mouse_pos;
                         node.prev_pos = mouse_pos;
                     }
-                }
             }
         }
 

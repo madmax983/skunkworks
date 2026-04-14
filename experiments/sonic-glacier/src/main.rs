@@ -34,7 +34,7 @@ async fn main() {
 
     loop {
         // --- Input ---
-        let dt = get_frame_time();
+        let _dt = get_frame_time();
 
         if is_key_down(KeyCode::W) {
             position += vec3(yaw.sin(), 0.0, yaw.cos()) * 0.5;
@@ -93,11 +93,10 @@ async fn main() {
             let y = rng.gen_range(0..height);
 
             // Low freq -> shifts bedrock slightly (vibration)
-            if spectrum.low > 10.0 {
-                if rng.gen_bool(0.1) {
+            if spectrum.low > 10.0
+                && rng.gen_bool(0.1) {
                     terrain.bedrock[y * width + x] += (rng.gen::<f32>() - 0.5) * 0.1;
                 }
-            }
 
             // Mid freq -> Freezes water
             if spectrum.mid > 5.0 {
