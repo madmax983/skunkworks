@@ -3,7 +3,7 @@
 Date: 2026-04-04
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The "Blob" anti-pattern had taken hold in `experiments/chimera-lang/src/tui/app/handlers/editing/enter.rs`. The file contained a bloated `match` block spanning hundreds of lines where over 30 different `ViewMode` variants duplicated identical fallback logic (`InputMode::Normal` and `input_buffer.clear()`). The logic for calling `apply_grid_edit` was also loosely repeated across multiple variants. This made the file overly large, difficult to read, and violated DRY principles.
