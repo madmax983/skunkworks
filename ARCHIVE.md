@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **stego-mycelium**: Specimen condemned. Diagnosis: Missing Report / Skeletal Implementation. Fails to implement deep fungal growth and treats the substrate as a rigid grid. Grace period: 24h.
+- **gray-resonance**: Specimen condemned. Diagnosis: Acoustic Void / Terminal Genericism. The simulation claims to be an acoustic chamber but never connects its generated audio buffer to an output stream, remaining entirely silent. Grace period: 24h.
 
 ## Pardoned
 - **origami-hologram**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding a README that explains its emergent FFT interference rendering behavior. Vigor demonstrated.
