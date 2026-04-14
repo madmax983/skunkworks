@@ -267,6 +267,7 @@ impl Value {
             table.load_preset(comfy_table::presets::UTF8_FULL);
             // Compact mode for CLI dashboard feel
             table.apply_modifier(comfy_table::modifiers::UTF8_ROUND_CORNERS);
+            table.set_content_arrangement(comfy_table::ContentArrangement::Dynamic);
 
             for row_val in rows {
                 if let Value::Junction(_, cells) = row_val {
@@ -281,6 +282,9 @@ impl Value {
                                 Value::Str(s) if s.eq_ignore_ascii_case("false") => {
                                     comfy_table::Cell::new("False").fg(comfy_table::Color::Red)
                                 }
+                                Value::Str(s) => {
+                                    comfy_table::Cell::new(s).fg(comfy_table::Color::Cyan)
+                                }
                                 // Polish: Treat 1/0 as boolean flags in table view
                                 Value::Int(1) => {
                                     comfy_table::Cell::new("1").fg(comfy_table::Color::Green)
@@ -288,6 +292,8 @@ impl Value {
                                 Value::Int(0) => {
                                     comfy_table::Cell::new("0").fg(comfy_table::Color::Red)
                                 }
+                                Value::Int(n) => comfy_table::Cell::new(n.to_string())
+                                    .fg(comfy_table::Color::Blue),
                                 _ => comfy_table::Cell::new(v.to_string()),
                             }
                         })
