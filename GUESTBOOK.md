@@ -1,7 +1,8 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: FATAL] - Location: experiments/stego-mycelium
-*The Reaper has marked this specimen for execution. Diagnosis: Missing Report / Skeletal Implementation. Grace period: 24h.*
+### [Concentration Level: FATAL] - Location: experiments/gray-resonance
+*The Reaper has marked this specimen for execution. Diagnosis: Acoustic Void / Terminal Genericism. The acoustic simulation generates audio buffers but discards them without playing. Grace period: 24h.*
+
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Echo 🗣️
