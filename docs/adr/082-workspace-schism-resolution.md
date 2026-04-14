@@ -3,7 +3,7 @@
 Date: 2026-04-01
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The workspace compilation failed due to a fundamental dependency conflict. The `bevy` engine mandates SIMD operations requiring `BVec4A` from the `glam` crate. However, the dominant `macroquad` population in our repository forces `glam` into a scalar-only mode by disabling SIMD features across the entire workspace graph. Cargo attempts to unify `glam` features, resulting in a compilation error where `bevy_reflect` failed to find `BVec4A`.

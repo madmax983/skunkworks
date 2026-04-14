@@ -3,7 +3,7 @@
 Date: 2026-04-01
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The Blob anti-pattern was present in `experiments/chimera-lang/src/vm/mod.rs` (~5,000 lines long). Numerous specific operations (`exec_havoc_op`, `exec_transposon`, `exec_scavenge_op`, `exec_char_op`, etc.) were grouped alongside the main core dispatcher. This made domain boundaries fuzzy, hindered maintainability, and made testing difficult.
