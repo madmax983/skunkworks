@@ -1,5 +1,9 @@
 use font8x8::{UnicodeFonts, BASIC_FONTS};
 
+/// Generates a binary pixel grid from an ASCII string using a standard 8x8 font.
+///
+/// Returns an array containing 8 rows (each row is a `Vec<u8>`), where
+/// `1` represents a pixel that is 'on' and `0` represents 'off'.
 pub fn render_text(text: &str) -> Vec<Vec<u8>> {
     let width = text.len() * 8;
     // We want a grid where each inner vector is a ROW (frequency bin).

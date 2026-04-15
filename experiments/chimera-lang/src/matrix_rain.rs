@@ -1,6 +1,15 @@
+//! Visual "Matrix Rain" effect renderer.
+//!
+//! Provides the `MatrixRain` state machine and ratatui widget for rendering
+//! cascading character drops to the TUI.
+
 use rand::Rng;
 use ratatui::{buffer::Buffer, layout::Rect, style::Color};
 
+/// Represents the internal state for the Matrix Rain visual effect.
+///
+/// Manages the layout and rendering of animated text drop sequences
+/// across the terminal grid.
 pub struct MatrixRain {
     columns: Vec<Column>,
     width: u16,

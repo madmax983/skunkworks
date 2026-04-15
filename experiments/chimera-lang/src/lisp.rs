@@ -1,3 +1,8 @@
+//! Lisp parsing and synthesis environment.
+//!
+//! Provides the parser and compiler for the embedded Lisp dialect,
+//! transforming S-expressions into raw Chimera `Dna`.
+
 use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
 use crate::opcode::OpCode;
 use crate::vm::Value;

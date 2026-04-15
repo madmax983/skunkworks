@@ -1,3 +1,8 @@
+//! Audio output streaming source for `rodio`.
+//!
+//! Provides the `RodioAudioSource` struct which wraps the `resonance-audio` core
+//! to push dynamically generated `f32` samples out to the system speakers.
+
 #[cfg(feature = "resonance")]
 use resonance_audio::audio::AudioModel;
 #[cfg(feature = "resonance")]

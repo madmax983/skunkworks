@@ -1,4 +1,10 @@
 #![cfg(feature = "resonance")]
+
+//! Compilation pipeline for the Resonance acoustic sub-language.
+//!
+//! This module converts textual musical scores and synth definitions into
+//! biological sequences (`Dna`) capable of synthesizing audio via the `OpCode::Oscillator` family.
+
 use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use crate::opcode::OpCode;
 use anyhow::{anyhow, Result};
@@ -7,7 +13,13 @@ use pest_derive::Parser;
 use std::collections::HashMap;
 use std::str::FromStr;
 
+/// The parser for the Resonance acoustic sub-language.
+///
+/// This parser processes acoustic "scores" and "instruments" defined in `.score` files
+/// (using the rules in `acoustic.pest`) and translates them into sequences of genetic
+/// sonic instructions.
 #[derive(Parser)]
+#[allow(missing_docs)]
 #[grammar = "acoustic.pest"]
 pub struct AcousticParser;
 
