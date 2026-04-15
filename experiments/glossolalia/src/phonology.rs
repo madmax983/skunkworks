@@ -219,34 +219,35 @@ impl Rule {
                         }
                     }
                     // Voiced Stop -> Voiceless Stop (b->p, d->t, g->k)
-                    else if p.voice == Voice::Voiced && p.manner == Manner::Stop
-                        && rng.gen_bool(0.3) {
-                            match p.place {
-                                Place::Labial => *p = Phoneme::from_char('p').unwrap(),
-                                Place::Alveolar => *p = Phoneme::from_char('t').unwrap(),
-                                Place::Velar => *p = Phoneme::from_char('k').unwrap(),
-                                _ => {}
-                            }
-                            changed = true;
+                    else if p.voice == Voice::Voiced
+                        && p.manner == Manner::Stop
+                        && rng.gen_bool(0.3)
+                    {
+                        match p.place {
+                            Place::Labial => *p = Phoneme::from_char('p').unwrap(),
+                            Place::Alveolar => *p = Phoneme::from_char('t').unwrap(),
+                            Place::Velar => *p = Phoneme::from_char('k').unwrap(),
+                            _ => {}
                         }
+                        changed = true;
+                    }
                 }
                 changed
             }
             Rule::VowelShift => {
                 let mut changed = false;
                 for p in &mut word.phonemes {
-                    if p.manner == Manner::Vowel
-                        && rng.gen_bool(0.2) {
-                            match p.symbol {
-                                'a' => *p = Phoneme::from_char('e').unwrap(),
-                                'e' => *p = Phoneme::from_char('i').unwrap(),
-                                'i' => *p = Phoneme::from_char('o').unwrap(), // stylized shift
-                                'o' => *p = Phoneme::from_char('u').unwrap(),
-                                'u' => *p = Phoneme::from_char('a').unwrap(),
-                                _ => {}
-                            }
-                            changed = true;
+                    if p.manner == Manner::Vowel && rng.gen_bool(0.2) {
+                        match p.symbol {
+                            'a' => *p = Phoneme::from_char('e').unwrap(),
+                            'e' => *p = Phoneme::from_char('i').unwrap(),
+                            'i' => *p = Phoneme::from_char('o').unwrap(), // stylized shift
+                            'o' => *p = Phoneme::from_char('u').unwrap(),
+                            'u' => *p = Phoneme::from_char('a').unwrap(),
+                            _ => {}
                         }
+                        changed = true;
+                    }
                 }
                 changed
             }

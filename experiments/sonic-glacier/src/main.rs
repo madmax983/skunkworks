@@ -93,10 +93,9 @@ async fn main() {
             let y = rng.gen_range(0..height);
 
             // Low freq -> shifts bedrock slightly (vibration)
-            if spectrum.low > 10.0
-                && rng.gen_bool(0.1) {
-                    terrain.bedrock[y * width + x] += (rng.gen::<f32>() - 0.5) * 0.1;
-                }
+            if spectrum.low > 10.0 && rng.gen_bool(0.1) {
+                terrain.bedrock[y * width + x] += (rng.gen::<f32>() - 0.5) * 0.1;
+            }
 
             // Mid freq -> Freezes water
             if spectrum.mid > 5.0 {

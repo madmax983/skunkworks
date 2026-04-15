@@ -118,27 +118,28 @@ where
 
         if crossterm::event::poll(timeout)?
             && let Event::Key(key) = event::read()?
-                && key.kind == KeyEventKind::Press {
-                    match key.code {
-                        KeyCode::Esc => return Ok(()),
-                        KeyCode::Char('k') | KeyCode::Char('K') => {
-                            // Kick the pendulum
-                            app.pendulum.a1_v += 10.0;
-                            app.pendulum.a2_v -= 10.0;
-                        }
-                        KeyCode::Char(c) => {
-                            app.text_buffer.push(c);
-                            app.status_msg = format!("Recording: [{}]", app.text_buffer);
-                            app.update_hologram();
-                        }
-                        KeyCode::Backspace => {
-                            app.text_buffer.pop();
-                            app.status_msg = format!("Recording: [{}]", app.text_buffer);
-                            app.update_hologram();
-                        }
-                        _ => {}
-                    }
+            && key.kind == KeyEventKind::Press
+        {
+            match key.code {
+                KeyCode::Esc => return Ok(()),
+                KeyCode::Char('k') | KeyCode::Char('K') => {
+                    // Kick the pendulum
+                    app.pendulum.a1_v += 10.0;
+                    app.pendulum.a2_v -= 10.0;
                 }
+                KeyCode::Char(c) => {
+                    app.text_buffer.push(c);
+                    app.status_msg = format!("Recording: [{}]", app.text_buffer);
+                    app.update_hologram();
+                }
+                KeyCode::Backspace => {
+                    app.text_buffer.pop();
+                    app.status_msg = format!("Recording: [{}]", app.text_buffer);
+                    app.update_hologram();
+                }
+                _ => {}
+            }
+        }
 
         if last_tick.elapsed() >= tick_rate {
             // Integrate chaotic pendulum

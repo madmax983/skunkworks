@@ -63,9 +63,10 @@ impl World {
                 // If neighbor is flashing (timer == 5), it pulls us
                 // Check distance
                 if p1.distance_squared(other.position()) < coupling_radius_sq
-                    && other.flash_timer == 5 {
-                        nudge += boid.dna.coupling_strength;
-                    }
+                    && other.flash_timer == 5
+                {
+                    nudge += boid.dna.coupling_strength;
+                }
             }
             phase_nudges[i] = nudge;
         }

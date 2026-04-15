@@ -147,8 +147,10 @@ pub struct Brain {
 impl Brain {
     pub fn new(size: usize) -> Self {
         let running = Arc::new(AtomicBool::new(true));
-        let mut neuron_states = Vec::new();
-        let mut input_buffers = Vec::new();
+        // ⚡ Bolt Optimization: Pre-allocate vectors with capacity to avoid dynamic heap reallocations
+        // when initializing `neuron_states` and `input_buffers`.
+        let mut neuron_states = Vec::with_capacity(size);
+        let mut input_buffers = Vec::with_capacity(size);
 
         for _ in 0..size {
             neuron_states.push(Arc::new(Mutex::new(NeuronState::default())));
@@ -159,7 +161,7 @@ impl Brain {
             neuron_states,
             input_buffers,
             running,
-            handles: Vec::new(),
+            handles: Vec::with_capacity(size),
         }
     }
 
@@ -171,7 +173,7 @@ impl Brain {
         // But we need to move Neurons into threads.
 
         // We need to construct the neurons first, then connect them, then spawn them.
-        let mut neurons = Vec::new();
+        let mut neurons = Vec::with_capacity(size);
 
         for i in 0..size {
             let n = Neuron::new(

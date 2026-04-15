@@ -49,11 +49,13 @@ impl World {
                 if dist < ENTANGLEMENT_RADIUS {
                     // Close proximity: Interact
                     // If not entangled, entangle
-                    if boid.entangled_partner.is_none() && self.boids[j].entangled_partner.is_none()
-                        && rand::thread_rng().gen_bool(0.1) {
-                            boid.entangled_partner = Some(j);
-                            // Partner update handled when j is processed or we can do it here via index lookups if careful
-                        }
+                    if boid.entangled_partner.is_none()
+                        && self.boids[j].entangled_partner.is_none()
+                        && rand::thread_rng().gen_bool(0.1)
+                    {
+                        boid.entangled_partner = Some(j);
+                        // Partner update handled when j is processed or we can do it here via index lookups if careful
+                    }
                 }
             }
 
