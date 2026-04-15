@@ -21,6 +21,7 @@ members = [
     "experiments/neuro-flock",
     "experiments/neuro-fluid",
     "experiments/neuro-strings",
+    "experiments/neuro-origami",
     "graveyard/chron-ddos",
     "experiments/locus-ddos",
 ]
