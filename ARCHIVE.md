@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **broken-mirror**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. The simulation features abandoned compute shader pipelines with unused textures (`texture_a` and `texture_b`) and acts as a generic wgpu template. Grace period: 24h.
+- **ik-codewalker**: Specimen condemned. Diagnosis: Skeletal Implementation / Vestigial Organs. The IK simulation boasts 'Inverse Kinematics reaching for syntax tokens', yet fields representing core kinematics (length, angle constraints) and syntax node identities (name, node_type) are never read. It executes hollow motions disconnected from the claimed Code Graph. Grace period: 24h.
 
 ## Pardoned
 - **origami-hologram**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding a README that explains its emergent FFT interference rendering behavior. Vigor demonstrated.
@@ -353,6 +353,7 @@
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
 ## ☠️ Executed
+- **broken-mirror**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Failed to improve during grace period. Biomass returned to the void.
 - **gray-resonance**: Specimen executed. Diagnosis: Acoustic Void / Terminal Genericism. Failed to improve during grace period. Biomass returned to the void.
 - **chron-flock**: Specimen executed. Diagnosis: Terminal Genericism / Compilation Failure / Abandonment. Generates generic logic integrating two disparate crates without demonstrating significant emergent behavior. Moved to graveyard.
 - **chimera-specter**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The `OpCode::Battery` and `OpCode::Ground` variants are missing in `chimera-lang`, causing terminal build failure. Failed to adapt during grace period. Biomass returned to the void.
