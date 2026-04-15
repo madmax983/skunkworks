@@ -358,6 +358,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Executed. Skeletal Implementation and Vestigial Organs.
 
+### [FATAL] - Location: experiments/laban-machine
+*The Reaper has marked this specimen for execution. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Generic implementation. Grace period: 24h.*
+
 ### [EVAPORATING] - Location: experiments/laban-rover
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Executed. Terminal Compilation Failure (`error[E0432]: unresolved import tui_shared::math`) and Ecosystem Maladaptation.
@@ -387,8 +390,8 @@
 ### [Concentration Level: TERMINAL] - Location: graveyard/broken-mirror
 *The Reaper's judgment is final. Specimen executed. Biomass returned to the void.*
 
-### [Concentration Level: FATAL] - Location: experiments/ik-codewalker
-*The Reaper has marked this specimen for execution. Diagnosis: Skeletal Implementation / Vestigial Organs. Unread structural properties and decoupled physics. Grace period: 24h.*
+### [EVAPORATING] - Location: experiments/ik-codewalker
+*The Reaper's judgment is final. Specimen executed. Biomass returned to the void.*
 
 ### [EVAPORATING] - Location: experiments/gray-resonance
 - **Scent Origin:** The Reaper ☠️
