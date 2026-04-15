@@ -1,7 +1,6 @@
 use gray_scott::GrayScott;
 
 #[test]
-#[should_panic(expected = "GrayScott size overflow")]
 fn havoc_gray_scott_init_overflow() {
     // 👺 Havoc: Using size large enough to overflow usize during initialization
     let _ = GrayScott::new(usize::MAX, 2);

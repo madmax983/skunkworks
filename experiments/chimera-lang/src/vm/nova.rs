@@ -605,7 +605,9 @@ fn exec_prolouge(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             if rng.gen_bool(0.15) {
                 // Runes representing the Mad Scientist's obsessions:
                 // ₣: Forth, ⚡: Elektra, ζ: Lisp/Zeta, M: Mutate/Genetics, O: Orca, ?: Prolog Query
-                let runes = ["M", "ζ", "₣", "⚡", "O", "?", "!", "*", "~", "♻", "P", "c", "[a-z]+"];
+                let runes = [
+                    "M", "ζ", "₣", "⚡", "O", "?", "!", "*", "~", "♻", "P", "c", "[a-z]+",
+                ];
                 let rune = runes[rng.gen_range(0..runes.len())];
                 vm.grid[y][x] = crate::vm::Value::Str(rune.to_string());
             }

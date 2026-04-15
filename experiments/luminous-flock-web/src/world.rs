@@ -25,7 +25,7 @@ impl World {
         let mut physics_forces = Vec::with_capacity(count);
         let mut phase_nudges = vec![0.0; count];
 
-        for i in 0..count {
+        for (i, p_nudge) in phase_nudges.iter_mut().enumerate().take(count) {
             let mut separation = (0.0, 0.0);
             let mut alignment = (0.0, 0.0);
             let mut cohesion = (0.0, 0.0);
@@ -125,7 +125,7 @@ impl World {
             }
 
             physics_forces.push(total_force);
-            phase_nudges[i] = nudge;
+            *p_nudge = nudge;
         }
 
         for (i, boid) in self.boids.iter_mut().enumerate() {

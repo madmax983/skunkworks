@@ -1,9 +1,9 @@
 use nalgebra::{Point3, Rotation3, Vector3};
 
 pub struct Camera {
-    pub position: Point3<f64>,
+    //pub position: Point3<f64>,
     pub target: Point3<f64>,
-    pub fov: f64,
+    //pub fov: f64,
     pub aspect: f64,
     pub rotation: Rotation3<f64>,
     pub zoom: f64,
@@ -12,9 +12,9 @@ pub struct Camera {
 impl Camera {
     pub fn new() -> Self {
         Self {
-            position: Point3::new(0.0, 0.0, -50.0),
+            //position: Point3::new(0.0, 0.0, -50.0),
             target: Point3::origin(),
-            fov: 60.0f64.to_radians(),
+            //fov: 60.0f64.to_radians(),
             aspect: 2.0,
             rotation: Rotation3::identity(),
             zoom: 1.0,

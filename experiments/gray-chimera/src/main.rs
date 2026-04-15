@@ -39,10 +39,8 @@ impl Agent {
         }
 
         // Clamp to grid
-        let x_idx =
-            (self.pos.x / CELL_SIZE as f64).clamp(0.0, (GRID_WIDTH - 1) as f64) as usize;
-        let y_idx =
-            (self.pos.y / CELL_SIZE as f64).clamp(0.0, (GRID_HEIGHT - 1) as f64) as usize;
+        let x_idx = (self.pos.x / CELL_SIZE as f64).clamp(0.0, (GRID_WIDTH - 1) as f64) as usize;
+        let y_idx = (self.pos.y / CELL_SIZE as f64).clamp(0.0, (GRID_HEIGHT - 1) as f64) as usize;
 
         let gs_idx = gs.get_index(x_idx, y_idx);
 
@@ -116,23 +114,22 @@ fn random_dna() -> Dna {
 }
 
 fn mutate_dna(mut dna: Dna) -> Dna {
-    if rand::gen_range(0.0, 1.0) < 0.1
-        && !dna.helix.strands.is_empty() {
-            let strand_idx = rand::gen_range(0, dna.helix.strands.len());
-            let strand = &mut dna.helix.strands[strand_idx];
-            if !strand.genes.is_empty() {
-                let gene_idx = rand::gen_range(0, strand.genes.len());
-                strand.genes[gene_idx] = Gene::new(
-                    match rand::gen_range(0, 4) {
-                        0 => OpCode::Add,
-                        1 => OpCode::Sub,
-                        2 => OpCode::Mul,
-                        _ => OpCode::Push,
-                    },
-                    vec![Nucleotide::from(rand::gen_range(0, 16) as i64)],
-                );
-            }
+    if rand::gen_range(0.0, 1.0) < 0.1 && !dna.helix.strands.is_empty() {
+        let strand_idx = rand::gen_range(0, dna.helix.strands.len());
+        let strand = &mut dna.helix.strands[strand_idx];
+        if !strand.genes.is_empty() {
+            let gene_idx = rand::gen_range(0, strand.genes.len());
+            strand.genes[gene_idx] = Gene::new(
+                match rand::gen_range(0, 4) {
+                    0 => OpCode::Add,
+                    1 => OpCode::Sub,
+                    2 => OpCode::Mul,
+                    _ => OpCode::Push,
+                },
+                vec![Nucleotide::from(rand::gen_range(0, 16) as i64)],
+            );
         }
+    }
     dna
 }
 

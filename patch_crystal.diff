@@ -1,0 +1,11 @@
+--- experiments/crystal-fs/src/main.rs
++++ experiments/crystal-fs/src/main.rs
+@@ -298,11 +298,7 @@
+         // Keep pitch within bounds
+-        if self.camera_pitch > 89.0 {
+-            self.camera_pitch = 89.0;
+-        }
+-        if self.camera_pitch < -89.0 {
+-            self.camera_pitch = -89.0;
+-        }
++        self.camera_pitch = self.camera_pitch.clamp(-89.0, 89.0);

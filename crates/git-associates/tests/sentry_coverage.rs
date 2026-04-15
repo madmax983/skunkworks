@@ -15,7 +15,8 @@ fn test_history_without_diffs_limit() {
     let time = Time::new(1700000000, 0);
     let sig = Signature::new("Test", "test@example.com", &time).unwrap();
 
-    repo.commit(Some("HEAD"), &sig, &sig, "Initial", &tree, &[]).unwrap();
+    repo.commit(Some("HEAD"), &sig, &sig, "Initial", &tree, &[])
+        .unwrap();
 
     let model = GitModel::open(&temp_dir).unwrap();
     let history = model.history(10).unwrap();

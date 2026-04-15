@@ -178,7 +178,9 @@ mod tests {
         let mut has_signals = false;
         let mut has_runes = false;
 
-        let target_runes = ["M", "ζ", "₣", "⚡", "O", "?", "!", "*", "~", "♻", "P", "c", "[a-z]+"];
+        let target_runes = [
+            "M", "ζ", "₣", "⚡", "O", "?", "!", "*", "~", "♻", "P", "c", "[a-z]+",
+        ];
         for y in 0..chimera_lang::vm::GRID_SIZE {
             for x in 0..chimera_lang::vm::GRID_SIZE {
                 if vm.signal_grid[y][x] == 1 {
@@ -211,10 +213,7 @@ mod tests {
         let genes = &dna.helix.strands[0].genes;
 
         assert_eq!(genes[0].op, OpCode::Push);
-        assert_eq!(
-            genes[0].args[0],
-            Nucleotide::String("[a-z]+".to_string())
-        );
+        assert_eq!(genes[0].args[0], Nucleotide::String("[a-z]+".to_string()));
         assert_eq!(genes[1].op, OpCode::ParserRegex);
     }
 }

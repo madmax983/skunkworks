@@ -51,7 +51,7 @@ impl Universe {
         let n = self.bodies.len();
         let mut accelerations = vec![Vec3::ZERO; n];
 
-        for i in 0..n {
+        for (i, acc) in accelerations.iter_mut().enumerate().take(n) {
             for j in 0..n {
                 if i == j {
                     continue;
@@ -67,7 +67,7 @@ impl Universe {
                 let f = (G * self.bodies[j].mass) / softened_dist_sq;
                 let dir = diff / dist;
 
-                accelerations[i] += dir * f;
+                *acc += dir * f;
             }
         }
 

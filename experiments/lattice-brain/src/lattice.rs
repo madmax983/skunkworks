@@ -1,5 +1,6 @@
 use nalgebra::Point3;
 
+#[allow(clippy::enum_variant_names)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum LatticeType {
     SimpleCubic,
@@ -9,7 +10,7 @@ pub enum LatticeType {
 
 pub struct Lattice {
     pub points: Vec<Point3<f64>>,
-    pub lattice_type: LatticeType,
+    //pub lattice_type: LatticeType,
 }
 
 impl Lattice {
@@ -21,7 +22,7 @@ impl Lattice {
         };
         Self {
             points,
-            lattice_type: l_type,
+            //lattice_type: l_type,
         }
     }
 }

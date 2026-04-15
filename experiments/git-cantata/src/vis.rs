@@ -60,7 +60,7 @@ impl VisualState {
             };
 
             // Scale particles by change size
-            let count = ((change.insertions + change.deletions) / 10).min(50).max(5);
+            let count = ((change.insertions + change.deletions) / 10).clamp(5, 50);
 
             for _ in 0..count {
                 let angle = rng.gen_range(0.0..std::f64::consts::TAU);

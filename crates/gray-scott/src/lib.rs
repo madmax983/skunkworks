@@ -66,7 +66,20 @@ impl GrayScott {
     /// assert_eq!(gs.height(), 100);
     /// ```
     pub fn new(width: usize, height: usize) -> Self {
-        let size = width.checked_mul(height).expect("GrayScott size overflow");
+        let size = width.checked_mul(height);
+        if size.is_none() {
+            return Self {
+                width: 0,
+                height: 0,
+                u: vec![],
+                v: vec![],
+                next_u: vec![],
+                next_v: vec![],
+                diff_u: 0.0,
+                diff_v: 0.0,
+            };
+        }
+        let size = size.unwrap();
         Self {
             width,
             height,

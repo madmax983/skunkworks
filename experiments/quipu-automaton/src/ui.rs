@@ -104,8 +104,8 @@ pub fn ui(f: &mut Frame, physics: &PhysicsWorld, machine: &QuipuMachine) {
                 ctx.draw(&Line {
                     x1: x,
                     y1: y,
-                    x2: x + r * (angle + 3.14159).cos(),
-                    y2: y + r * (angle + 3.14159).sin(),
+                    x2: x + r * (angle + std::f64::consts::PI).cos(),
+                    y2: y + r * (angle + std::f64::consts::PI).sin(),
                     color: Color::Black,
                 });
             }

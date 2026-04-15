@@ -37,7 +37,7 @@ impl CircuitGenerator {
         let mut traces = Vec::new();
 
         let num_pads = rng.gen_range(20..40);
-        let min_dist_sq = 30 * 30 ; // Spread them out
+        let min_dist_sq = 30 * 30; // Spread them out
 
         // Generate Pads
         for _ in 0..num_pads {

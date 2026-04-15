@@ -2,7 +2,7 @@ use crate::physics::PhysicsWorld;
 use rapier2d::prelude::*;
 
 pub struct Puppet {
-    pub torso: RigidBodyHandle,
+    //pub torso: RigidBodyHandle,
     pub left_leg: RigidBodyHandle,
     pub right_leg: RigidBodyHandle,
 }
@@ -72,7 +72,7 @@ impl Puppet {
             .insert(anchor_h, torso, hanger, true);
 
         Puppet {
-            torso,
+
             left_leg,
             right_leg,
         }

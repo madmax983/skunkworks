@@ -23,7 +23,8 @@ fn test_get_index_out_of_bounds_y() {
 }
 
 #[test]
-#[should_panic(expected = "GrayScott size overflow")]
 fn test_gray_scott_overflow() {
-    let _gs = GrayScott::new(usize::MAX, 2);
+    let gs = GrayScott::new(usize::MAX, 2);
+    assert_eq!(gs.width(), 0);
+    assert_eq!(gs.height(), 0);
 }

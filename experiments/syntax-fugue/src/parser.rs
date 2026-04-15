@@ -12,7 +12,7 @@ use crate::audio::{Adsr, Waveform};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum ContextType {
-    Global,
+    //Global,
     Function,
     Loop,
     Condition,

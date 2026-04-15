@@ -48,10 +48,9 @@ impl App {
     fn on_tick(&mut self, dt: f64) {
         self.vis.update(dt);
 
-        if !self.paused
-            && self.last_commit_change.elapsed() >= self.commit_duration {
-                self.next_commit();
-            }
+        if !self.paused && self.last_commit_change.elapsed() >= self.commit_duration {
+            self.next_commit();
+        }
     }
 
     fn next_commit(&mut self) {

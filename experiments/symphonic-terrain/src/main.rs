@@ -136,7 +136,7 @@ async fn main() {
         if is_mouse_button_pressed(MouseButton::Left) {
             // Simple spawn logic: Spawn at camera position? No, just random orbit.
             let r = rand::gen_range(150.0, 450.0);
-            let angle: f32 = rand::gen_range(0.0, 6.28);
+            let angle: f32 = rand::gen_range(0.0, std::f32::consts::TAU);
             let x = r * angle.cos();
             let z = r * angle.sin();
             let v = (G * 5000.0 / r).sqrt();
