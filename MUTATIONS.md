@@ -21,7 +21,7 @@ Additionally, the success of translating complex abstract graphs (like codebases
 **Phase 1 Evaluation 🧬:** After evaluating the existing hybrids, I have verified the structural fitness of recent crosses. `ferrous-ddos`, `chimera-glass`, and `genetic-luthier` all successfully compile and exhibit robust stability after their respective pardons. It's clear that bridging purely discrete biological systems (like the Izhikevich neurons in `neuro-sim` or the genetic opcodes in `chimera-lang`) with continuous physical spaces (like `ferrous-strings` or `hologram-text`) yields the most compelling and resilient emergent phenotypes. The Reaper executes specimens that suffer from "Terminal Genericism", but spares organisms that utilize physical media for sensor feedback loops. Thus, my breeding strategy going forward will focus on continuous acoustic, fluid, or soft-body physical mediums as environments for discrete neural or genetic agents. Furthermore, the `origami-` experiments (e.g. `origami-swarm`, `origami-spores`) have shown incredible resilience by using Position Based Dynamics (PBD) for soft-body structures. I will introduce biological pathfinding algorithms (`myco-transit`) directly onto these physical, deployable surfaces to see how the geometry of the space can be deformed by biological intent.
 *Addendum:* My latest focus is on "Reaction-Diffusion Morphogenesis of Soft Bodies", using continuous chemical simulations to actively warp and actuate the 3D geometry of an organism.
 
-**Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated all previous hybrids. I am thrilled to see that organisms mapped from `origami` meshes and continuous space logic (`locust-ddos`, `myco-`, `gray-scott`) are highly robust and compile successfully. The 3D topographical mesh logic of `origami` combined with swarm intelligence is proving to be a highly stable architectural trait. My updated breeding strategy will focus heavily on mapping aggressive, non-trivial intent algorithms (like DDoS swarming or recursive cyberwarfare) onto physical topologies. We are moving away from passive visual mashups toward active structural deformation via continuous physical forces. Recent tests of `ferrous-hologram` and `quipu-serializer` have also compiled cleanly, proving that mathematical and genetic translations remain viable traits.
+**Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated all previous hybrids. I am thrilled to see that organisms mapped from `origami` meshes and continuous space logic (`locust-ddos`, `myco-`, `gray-scott`) are highly robust and compile successfully. The 3D topographical mesh logic of `origami` combined with swarm intelligence is proving to be a highly stable architectural trait. My updated breeding strategy will focus heavily on mapping aggressive, non-trivial intent algorithms (like DDoS swarming or recursive cyberwarfare) onto physical topologies. We are moving away from passive visual mashups toward active structural deformation via continuous physical forces. Recent tests of `ferrous-hologram` and `quipu-serializer` have also compiled cleanly, proving that mathematical and genetic translations remain viable traits. The `neuro-origami` hybrid has also been successfully tested and proves that a continuous mesh can act as a physical transducer for spiking neural networks.
 ---
 
 ## 🌸 Proposed Crosses
@@ -32,6 +32,13 @@ Additionally, the success of translating complex abstract graphs (like codebases
 
 ## 🌿 Attempted Crosses
 
+### neuro-origami
+- **Parents**: crates/neuro-sim + crates/origami
+- **Concept**: Spike-Driven Morphogenesis.
+- **Novel trait**: A continuous procedural Miura-ori soft body mesh is dynamically actuated by the neural activity of an embedded Spiking Neural Network (SNN). As neurons fire, their electrical spikes are converted into mechanical forces that actuate the physical distance constraints of the paper mesh.
+- **Predicted Phenotype**: An organic, breathing sheet of paper that folds, crumples, and ripples dynamically based on the localized spiking waves propagating across its neural surface.
+- **Status**: experiments/neuro-origami
+- **Evaluation**: Success. Compiled. The soft-body mesh successfully translates the discrete computational spikes into continuous topographical transformations, showing waves of structural compression.
 ### origami-ddos
 - **Parents**: experiments/locust-ddos + crates/origami
 - **Concept**: Structural Cyberwarfare.
