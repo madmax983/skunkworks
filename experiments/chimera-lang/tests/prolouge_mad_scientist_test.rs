@@ -178,7 +178,7 @@ mod tests {
         let mut has_signals = false;
         let mut has_runes = false;
 
-        let target_runes = ["M", "ζ", "₣", "⚡", "O", "?", "!", "*", "~", "♻", "P", "c"];
+        let target_runes = ["M", "ζ", "₣", "⚡", "O", "?", "!", "*", "~", "♻", "P", "c", "[a-z]+"];
         for y in 0..chimera_lang::vm::GRID_SIZE {
             for x in 0..chimera_lang::vm::GRID_SIZE {
                 if vm.signal_grid[y][x] == 1 {
@@ -198,5 +198,23 @@ mod tests {
         // So probability of having 0 is practically 0.
         assert!(has_runes, "Should have injected runes");
         assert!(has_signals, "Should have injected signals");
+    }
+
+    #[test]
+    fn test_prolouge_compiler_regex() {
+        let source = r#"
+        regex {
+            [a-z]+
+        }
+        "#;
+        let dna = compile(source).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(
+            genes[0].args[0],
+            Nucleotide::String("[a-z]+".to_string())
+        );
+        assert_eq!(genes[1].op, OpCode::ParserRegex);
     }
 }

@@ -135,6 +135,18 @@ pub fn compile(source: &str) -> Result<Dna> {
                 ));
                 genes.push(Gene::new(OpCode::Piet, vec![]));
             }
+            Rule::regex_block => {
+                let content = inner_block.as_str();
+                let mut content = content.trim_start_matches("regex").trim();
+                if content.starts_with('{') && content.ends_with('}') {
+                    content = &content[1..content.len() - 1];
+                }
+                genes.push(Gene::new(
+                    OpCode::Push,
+                    vec![Nucleotide::String(content.trim().to_string())],
+                ));
+                genes.push(Gene::new(OpCode::ParserRegex, vec![]));
+            }
             Rule::chaos_block => {
                 for instr in inner_block.into_inner() {
                     genes.extend(compile_chaos_instr(instr)?);
