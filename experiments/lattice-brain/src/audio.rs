@@ -76,10 +76,9 @@ impl AudioEngine {
                         match cmd {
                             AudioCommand::UpdateNetwork {
                                 neurons: n,
-                                connections: c,
+                                connections: _c,
                             } => {
                                 neurons = n;
-                                _connections = c; let _ = _connections;
                             }
                             AudioCommand::Inject { index, current } => {
                                 if index < neurons.len() {

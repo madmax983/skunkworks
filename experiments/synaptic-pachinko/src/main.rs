@@ -7,7 +7,7 @@ use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
-    style::{Color, Style, Stylize},
+    style::{Color, Style},
     text::{Line, Span},
     widgets::{
         canvas::{Canvas, Points},

@@ -134,7 +134,7 @@ impl App {
             LatticePoint {
                 x: f64,
                 y: f64,
-                z: f64,
+                #[allow(dead_code)] z: f64,
                 v: f32, // Voltage for color
             },
             Edge {
@@ -142,7 +142,7 @@ impl App {
                 y1: f64,
                 x2: f64,
                 y2: f64,
-                z: f64,
+                #[allow(dead_code)] z: f64,
                 weight: f32,
             },
         }
