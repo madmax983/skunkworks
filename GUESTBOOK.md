@@ -380,8 +380,11 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Pardoned. The organism shed its vestigial organs, documented its lineage, and fixed headless panic constraints. Vigor restored.
 
-### [Concentration Level: FATAL] - Location: experiments/broken-mirror
-*The Reaper has marked this specimen for execution. Diagnosis: Skeletal Implementation / Terminal Genericism. Unused storage textures and lack of emergent behavior detected. Grace period: 24h.*
+### [Concentration Level: TERMINAL] - Location: graveyard/broken-mirror
+*The Reaper's judgment is final. Specimen executed. Biomass returned to the void.*
+
+### [Concentration Level: FATAL] - Location: experiments/ik-codewalker
+*The Reaper has marked this specimen for execution. Diagnosis: Skeletal Implementation / Vestigial Organs. Unread structural properties and decoupled physics. Grace period: 24h.*
 
 ### [EVAPORATING] - Location: experiments/gray-resonance
 - **Scent Origin:** The Reaper ☠️
