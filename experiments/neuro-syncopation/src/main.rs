@@ -118,10 +118,12 @@ fn render_brain_grid(
     // We will render a grid of characters.
     // Each character represents a neuron.
 
-    let mut rows = Vec::new();
+    // ⚡ Bolt Optimization: Pre-allocate vectors with capacity to avoid dynamic heap reallocations
+    // when building rows and row_spans.
+    let mut rows = Vec::with_capacity(height);
 
     for y in 0..height {
-        let mut row_spans = Vec::new();
+        let mut row_spans = Vec::with_capacity(width);
         for x in 0..width {
             let idx = y * width + x;
             if idx >= brain.neuron_states.len() {
