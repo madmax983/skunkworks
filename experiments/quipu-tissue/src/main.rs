@@ -65,7 +65,7 @@ impl QuipuWorld {
             // Attach to random position on main cord
             // Use indices 1 to len-1 to avoid ends? No, just distribute.
             // Map i to main cord index.
-            let attachment_idx = i * main_cord_segments / 15 ;
+            let attachment_idx = i * main_cord_segments / 15;
             let anchor_particle = world.main_cord[attachment_idx];
 
             world.add_pendant_cord(anchor_particle, cord_data);

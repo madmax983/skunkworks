@@ -1,12 +1,37 @@
+//! Audio decoding engine.
+//!
+//! Provides tools to analyze raw audio samples, generate spectrograms via Fast Fourier Transform (FFT),
+//! and recover embedded textual data previously injected by the encoder.
+
 use font8x8::{UnicodeFonts, BASIC_FONTS};
 use rustfft::{num_complex::Complex, FftPlanner};
 
+/// Configuration parameters for extracting text from the audio spectrum.
+///
+/// These parameters must match the `EncoderConfig` used during generation
+/// to successfully parse the hidden characters.
+///
+/// # Examples
+///
+/// ```
+/// use spectral_scribe::decoder::DecoderConfig;
+///
+/// let config = DecoderConfig::default();
+/// assert_eq!(config.fft_size, 1024);
+/// assert_eq!(config.threshold, 25.0);
+/// ```
 pub struct DecoderConfig {
+    /// Number of bins for the FFT analysis block size.
     pub fft_size: usize,
+    /// Number of adjacent frequency bins expected per vertical pixel.
     pub bin_per_pixel: usize,
+    /// The starting bin index for the lowest frequency of the text rendering.
     pub base_bin: usize,
+    /// Expected frequency bin distance between vertical pixel rows.
     pub spacing: usize,
+    /// Number of sequential audio frames expected to represent one horizontal pixel column.
     pub stretch_factor: usize,
+    /// The minimum required average magnitude threshold across target bins to consider a pixel "on".
     pub threshold: f32,
 }
 
@@ -23,6 +48,9 @@ impl Default for DecoderConfig {
     }
 }
 
+/// Reads a WAV file from disk and normalizes its samples to `f32` (-1.0 to 1.0).
+///
+/// Note: This function assumes the WAV file is signed 16-bit integer format.
 #[allow(dead_code)]
 pub fn load_wav(path: &str) -> anyhow::Result<Vec<f32>> {
     let mut reader = hound::WavReader::open(path)?;
@@ -34,6 +62,9 @@ pub fn load_wav(path: &str) -> anyhow::Result<Vec<f32>> {
     Ok(samples)
 }
 
+/// Transforms raw audio samples into a 2D spectrogram (time vs frequency bins).
+///
+/// Returns a sequence of frames, where each frame is an array of frequency bin magnitudes.
 pub fn audio_to_spectrogram(samples: &[f32], config: &DecoderConfig) -> Vec<Vec<f32>> {
     let mut planner = FftPlanner::new();
     let fft = planner.plan_fft_forward(config.fft_size);
@@ -61,6 +92,10 @@ pub fn audio_to_spectrogram(samples: &[f32], config: &DecoderConfig) -> Vec<Vec<
     spectrogram
 }
 
+/// Extracts the hidden textual message from a spectrogram.
+///
+/// Correlates the frequency bins back into pixel rows and matches them
+/// against the `font8x8` standard ASCII representation. Returns the best-fit decoded string.
 pub fn recover_text(spectrogram: &[Vec<f32>], config: &DecoderConfig) -> String {
     let num_frames = spectrogram.len();
     if num_frames == 0 {

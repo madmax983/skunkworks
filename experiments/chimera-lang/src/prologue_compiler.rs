@@ -1,3 +1,8 @@
+//! Compilation pipeline for the Prologue circuit language.
+//!
+//! Provides the parser and compiler to map 2D textual layout grids
+//! into executable `PrologueProgram` logic circuits.
+
 use anyhow::{anyhow, Result};
 use pest::Parser;
 use pest_derive::Parser;
@@ -8,15 +13,47 @@ use crate::ast::Dna;
 use crate::vm::prologue::AlchemyRule;
 use crate::vm::{Value, GRID_SIZE};
 
+/// The parser for the Prologue circuit language.
+///
+/// Responsible for reading the hybrid text/grid representations used by
+/// the Prologue system via the rules defined in `prologue_grammar.pest`.
 #[derive(Parser)]
+#[allow(missing_docs)]
 #[grammar = "prologue_grammar.pest"]
 pub struct PrologueParser;
 
+/// Represents the parsed structure of a Prologue circuit script.
+///
+/// Contains both the genetic code logic (`dna`) and the structural layout
+/// and configuration needed to execute it.
+///
+/// # Examples
+///
+/// ```
+/// use chimera_lang::ast::{Dna, Helix};
+/// use chimera_lang::prologue_compiler::PrologueProgram;
+/// use std::collections::HashMap;
+///
+/// let program = PrologueProgram {
+///     dna: Dna { helix: Helix { strands: vec![] }, evolution_config: None },
+///     grid: None,
+///     orca_mode: Some(false),
+///     custom_runes: HashMap::new(),
+///     alchemy_book: vec![],
+/// };
+///
+/// assert_eq!(program.orca_mode, Some(false));
+/// ```
 pub struct PrologueProgram {
+    /// The compiled biological instruction set to execute the logic circuit.
     pub dna: Dna,
+    /// An optional pre-configured initial 2D memory space state.
     pub grid: Option<Vec<Vec<Value>>>,
+    /// Flags if this circuit uses Orca-specific execution timing rules.
     pub orca_mode: Option<bool>,
+    /// Custom operational runes mapped to specific DNA `OpCode` sequences.
     pub custom_runes: HashMap<String, usize>,
+    /// Transformation rules for transmuting values via `OpCode::Alchemy`.
     pub alchemy_book: Vec<AlchemyRule>,
 }
 

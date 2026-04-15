@@ -1,14 +1,38 @@
+//! Audio encoding engine.
+//!
+//! Provides tools to convert string text into a spectrogram footprint, which is
+//! then synthesized into raw audio samples via Inverse Fast Fourier Transform (IFFT).
+
 use crate::font;
 use rand::prelude::*;
 use rustfft::{num_complex::Complex, FftPlanner};
 use std::f32::consts::PI;
 
+/// Configuration parameters for embedding text into the audio spectrum.
+///
+/// Controls the resolution, frequency band placement, and duration of the encoded signal.
+///
+/// # Examples
+///
+/// ```
+/// use spectral_scribe::encoder::EncoderConfig;
+///
+/// let config = EncoderConfig::default();
+/// assert_eq!(config.sample_rate, 44100);
+/// assert_eq!(config.fft_size, 1024);
+/// ```
 pub struct EncoderConfig {
+    /// Audio sample rate in Hz (e.g. 44100).
     pub sample_rate: u32,
+    /// Number of bins for the FFT. Higher sizes offer higher frequency resolution.
     pub fft_size: usize,
+    /// Number of adjacent frequency bins used to represent a single pixel in height.
     pub bin_per_pixel: usize,
+    /// The starting bin index for the lowest frequency of the text rendering.
     pub base_bin: usize,
+    /// Frequency bin distance between vertical pixel rows.
     pub spacing: usize,
+    /// Number of audio frames a single horizontal pixel column is repeated (duration).
     pub stretch_factor: usize,
 }
 
@@ -25,6 +49,20 @@ impl Default for EncoderConfig {
     }
 }
 
+/// Synthesizes raw audio samples from an input string.
+///
+/// The string is converted into an 8-bit height bitmap and written into
+/// the frequency spectrum via IFFT according to the `EncoderConfig`.
+///
+/// # Examples
+///
+/// ```
+/// use spectral_scribe::encoder::{EncoderConfig, generate_audio};
+///
+/// let config = EncoderConfig::default();
+/// let samples = generate_audio("Hello", &config);
+/// assert!(!samples.is_empty());
+/// ```
 pub fn generate_audio(text: &str, config: &EncoderConfig) -> Vec<f32> {
     let grid = font::render_text(text); // 8 rows, W cols
     if grid.is_empty() {
@@ -84,6 +122,7 @@ pub fn generate_audio(text: &str, config: &EncoderConfig) -> Vec<f32> {
     samples
 }
 
+/// Saves raw audio samples as a single-channel, 16-bit WAV file on disk.
 pub fn save_wav(path: &str, samples: &[f32], sample_rate: u32) -> anyhow::Result<()> {
     let spec = hound::WavSpec {
         channels: 1,

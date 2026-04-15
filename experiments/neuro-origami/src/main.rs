@@ -199,10 +199,18 @@ async fn main() {
         set_default_camera();
 
         // Check for headless mode
-        if std::env::var("DISPLAY").is_err() && cfg!(target_os = "linux") { return; }
+        if std::env::var("DISPLAY").is_err() && cfg!(target_os = "linux") {
+            return;
+        }
 
         draw_text("Neuro-Origami", 10.0, 20.0, 30.0, WHITE);
-        draw_text("Spiking Neural Network actuates Miura-ori mesh constraints.", 10.0, 50.0, 20.0, GRAY);
+        draw_text(
+            "Spiking Neural Network actuates Miura-ori mesh constraints.",
+            10.0,
+            50.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }

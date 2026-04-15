@@ -1,3 +1,8 @@
+//! Abstract Syntax Tree representations for Chimera's biological constructs.
+//!
+//! Defines the foundational data structures (`Dna`, `Helix`, `Strand`, `Gene`, `Nucleotide`)
+//! that make up a running Chimera organism.
+
 use crate::opcode::OpCode;
 use crate::Rule;
 use pest::iterators::Pair;
@@ -17,6 +22,7 @@ pub struct Dna {
 /// Configuration for the Evolution Engine.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct EvolutionConfig {
+    /// The number of individuals tested in a single evolutionary generation.
     pub population_size: usize,
     /// Stored as string to preserve Eq/Hash (parsed as f64 at runtime)
     pub mutation_rate: String,

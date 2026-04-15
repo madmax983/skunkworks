@@ -36,11 +36,13 @@ fn main() -> Result<()> {
     ];
 
     let mut agents = Vec::new();
-    let strategies = [Strategy::TrendFollower,
+    let strategies = [
+        Strategy::TrendFollower,
         Strategy::ValueInvestor,
         Strategy::HypeBeast,
         Strategy::Contrarian,
-        Strategy::Random];
+        Strategy::Random,
+    ];
 
     let mut rng = rand::thread_rng();
     for i in 0..500 {

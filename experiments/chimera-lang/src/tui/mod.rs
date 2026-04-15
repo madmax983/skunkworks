@@ -1,3 +1,8 @@
+//! Terminal User Interface (TUI) frontend for the Chimera Engine.
+//!
+//! Provides the primary visualization and interactive environment for running
+//! Biological scripts, esoteric Prolouge circuits, and observing cellular automata.
+
 use crate::vm::ChimeraVM;
 use anyhow::Result;
 use crossterm::{

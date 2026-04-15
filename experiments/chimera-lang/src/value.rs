@@ -1,3 +1,8 @@
+//! Runtime value representations.
+//!
+//! Defines the `Value` enum which encapsulates dynamic types during execution,
+//! including integers, strings, junctions, and quantum superpositions.
+
 use crate::ast::JunctionType;
 use serde::{Deserialize, Serialize};
 

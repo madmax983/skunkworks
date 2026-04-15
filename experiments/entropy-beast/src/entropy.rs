@@ -38,17 +38,15 @@ pub fn corrupt(data: &mut Vec<u8>, intensity: f32) {
             }
             2 => {
                 // Byte Drop (rare, very destructive)
-                if rng.gen_bool(0.1) && data.len() > 10
-                    && idx < data.len() {
-                        data.remove(idx);
-                    }
+                if rng.gen_bool(0.1) && data.len() > 10 && idx < data.len() {
+                    data.remove(idx);
+                }
             }
             3 => {
                 // Byte Insert (rare)
-                if rng.gen_bool(0.1)
-                    && idx <= data.len() {
-                        data.insert(idx, rng.gen());
-                    }
+                if rng.gen_bool(0.1) && idx <= data.len() {
+                    data.insert(idx, rng.gen());
+                }
             }
             4 => {
                 // Zero Range (small range)

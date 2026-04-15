@@ -79,3 +79,7 @@
 ## 2025-06-25 - The Ghost Param of Topology::normalize
 **Confusion:** The `Topology::normalize` method had a ghost parameter problem where its arguments `y`, `x`, `width`, and `height` were completely undocumented.
 **Clarification:** Documented the arguments using standard Rustdoc `# Arguments` headers to explicitly describe what each parameter represents.
+
+## 2026-04-15 - The Black Box of Esoteric Parsers
+**Confusion:** While `chimera-lang` supports incredibly diverse paradigms (like Forth, Orca, Lisp, logic grids), the top-level documentation parsing these features was completely absent, emitting `missing_docs` warnings. Users could not tell which parser did what from reading `lib.rs` alone.
+**Clarification:** Added explicit module-level (`//!`) documentation to root modules, explaining the context of `AcousticParser`, `ProlougeParser` (the mad scientist esoteric layer), and `PrologueParser` (the core logic layer). I also documented the `PrologueProgram` construction which acts as the circuit blueprint.

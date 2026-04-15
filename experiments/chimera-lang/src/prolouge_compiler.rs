@@ -1,3 +1,8 @@
+//! Compilation pipeline for the Prolouge esoteric language.
+//!
+//! Exposes parsers that translate multi-paradigm script blocks (e.g., Forth, Lisp, Orca)
+//! into a standard unified `Dna` construct.
+
 use anyhow::{anyhow, Result};
 use pest::Parser;
 use pest_derive::Parser;
@@ -6,7 +11,12 @@ use std::str::FromStr;
 use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
 use crate::opcode::OpCode;
 
+/// The parser for the Prolouge esoteric language.
+///
+/// Handles the syntax mapping for multiple esoteric blocks (like Forth, Orca, Lisp)
+/// into the unified AST based on rules within `prolouge_grammar.pest`.
 #[derive(Parser)]
+#[allow(missing_docs)]
 #[grammar = "prolouge_grammar.pest"]
 pub struct ProlougeParser;
 
