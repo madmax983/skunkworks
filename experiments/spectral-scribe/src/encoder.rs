@@ -45,12 +45,12 @@ pub fn generate_audio(text: &str, config: &EncoderConfig) -> Vec<f32> {
             let mut spectrum = vec![Complex::new(0.0, 0.0); config.fft_size];
 
             // Fill spectrum
-            for row in 0..8 {
-                if grid[row][col] == 1 {
+            for (row_idx, row_vec) in grid.iter().enumerate().take(8) {
+                if row_vec[col] == 1 {
                     // Row 0 (Top) -> High Freq
                     // Row 7 (Bottom) -> Low Freq
-                    // visual_y = 7 - row
-                    let visual_y = 7 - row;
+                    // visual_y = 7 - row_idx
+                    let visual_y = 7 - row_idx;
                     let start_bin = config.base_bin + visual_y * config.spacing;
 
                     for k in 0..config.bin_per_pixel {
