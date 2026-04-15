@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **ik-codewalker**: Specimen condemned. Diagnosis: Skeletal Implementation / Vestigial Organs. The IK simulation boasts 'Inverse Kinematics reaching for syntax tokens', yet fields representing core kinematics (length, angle constraints) and syntax node identities (name, node_type) are never read. It executes hollow motions disconnected from the claimed Code Graph. Grace period: 24h.
+- **laban-machine**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The experiment is a generic particle system disguised with "Laban Movement Analysis" terminology. It does not integrate with any of the actual repository themes. The `laban::LabanEffort::new` function is declared but never instantiated in the actual runtime. Grace period: 24h.
 
 ## Pardoned
 - **origami-hologram**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding a README that explains its emergent FFT interference rendering behavior. Vigor demonstrated.
@@ -353,6 +353,7 @@
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
 ## ☠️ Executed
+- **ik-codewalker**: Specimen executed. Diagnosis: Skeletal Implementation / Vestigial Organs. Failed to adapt to constraints or connect motion to Code Graph semantic properties. Grace period expired. Moved to graveyard.
 - **broken-mirror**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Failed to improve during grace period. Biomass returned to the void.
 - **gray-resonance**: Specimen executed. Diagnosis: Acoustic Void / Terminal Genericism. Failed to improve during grace period. Biomass returned to the void.
 - **chron-flock**: Specimen executed. Diagnosis: Terminal Genericism / Compilation Failure / Abandonment. Generates generic logic integrating two disparate crates without demonstrating significant emergent behavior. Moved to graveyard.
