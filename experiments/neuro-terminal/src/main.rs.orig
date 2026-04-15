@@ -361,7 +361,8 @@ fn draw_network(f: &mut Frame, app: &App, area: Rect) {
             // 3. Draw Nodes on top
             for (l, &neuron_count) in app.network.layers.iter().enumerate() {
                 let layer_nodes = &node_positions[l];
-                for (n, &(x, y)) in layer_nodes.iter().enumerate().take(neuron_count) {
+                for n in 0..neuron_count {
+                    let (x, y) = layer_nodes[n];
 
                     // Color neuron based on activation if available
                     let color = if let Some(layer_data) = app.network.data.get(l) {

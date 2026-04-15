@@ -3,7 +3,7 @@ use ratzilla::ratatui::style::Color;
 use std::f64::consts::TAU;
 
 #[derive(Clone, Debug)]
-pub struct DNA {
+pub struct Dna {
     pub max_speed: f64,
     pub max_force: f64,
     pub view_radius: f64,
@@ -17,7 +17,7 @@ pub struct DNA {
     pub char_representation: char,
 }
 
-impl DNA {
+impl Dna {
     pub fn random() -> Self {
         let mut rng = rand::thread_rng();
         Self {
@@ -41,7 +41,7 @@ pub struct Boid {
     pub position: (f64, f64),
     pub velocity: (f64, f64),
     pub acceleration: (f64, f64),
-    pub dna: DNA,
+    pub dna: Dna,
     pub phase: f64,
     pub flash_timer: usize,
 }
@@ -50,7 +50,7 @@ impl Boid {
     pub fn new(x: f64, y: f64) -> Self {
         let mut rng = rand::thread_rng();
         let angle = rng.gen_range(0.0..TAU);
-        let dna = DNA::random();
+        let dna = Dna::random();
 
         Self {
             position: (x, y),

@@ -1,0 +1,11 @@
+--- physics.rs
++++ physics.rs
+@@ -37,7 +37,7 @@
+
+-    pub fn add_node(&mut self, pos: Vec2, mass: f32, fixed: bool, name: String) -> usize {
++    pub fn add_node(&mut self, pos: Vec2, mass: f32, fixed: bool) -> usize {
+         let idx = self.nodes.len();
+         self.nodes.push(Node {
+             pos,
+             prev_pos: pos,
+             velocity: Vec2::ZERO,

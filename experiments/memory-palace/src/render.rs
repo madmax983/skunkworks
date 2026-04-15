@@ -82,7 +82,7 @@ pub fn draw_room(graph: &MemoryGraph, room_id: usize) {
         );
     }
 }
-
+#[allow(clippy::too_many_arguments)]
 pub fn render_portal_view(
     renderer: &mut PortalRenderer,
     graph: &MemoryGraph,

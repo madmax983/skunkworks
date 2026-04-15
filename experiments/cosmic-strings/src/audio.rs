@@ -13,7 +13,7 @@ pub struct AudioSystem {
     #[cfg(feature = "audio")]
     _stream_handle: OutputStreamHandle,
     #[cfg(feature = "audio")]
-    sink: Sink,
+    //sink: Sink,
     #[cfg(feature = "audio")]
     source_data: Arc<Mutex<SharedData>>,
 }
@@ -86,7 +86,7 @@ impl AudioSystem {
             Ok(Self {
                 _stream,
                 _stream_handle: stream_handle,
-                sink,
+
                 source_data: data,
             })
         }

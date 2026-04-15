@@ -82,8 +82,8 @@ async fn play_cartridge(initial_cartridge: Option<PathBuf>) {
         } else {
             // Draw "INSERT CARTRIDGE" static
             for pixel in screen_image.get_image_data_mut() {
-                for i in 0..pixel.len() {
-                    pixel[i] = rand::gen_range(0, 255);
+                for p in pixel.iter_mut() {
+                    *p = rand::gen_range(0, 255);
                 }
             }
             screen_texture.update(&screen_image);

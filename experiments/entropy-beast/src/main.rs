@@ -111,7 +111,7 @@ fn draw_creature(creature: &Creature, pos: Vec2, base_angle: f32) {
     }
 }
 
-fn draw_limb(limb: &Limb, parent_pos: Vec2, angle: f32, depth: u8) {
+fn draw_limb(limb: &Limb, parent_pos: Vec2, angle: f32, _depth: u8) {
     let end_pos = parent_pos + vec2(angle.cos(), angle.sin()) * limb.length;
 
     // Draw Segment
@@ -133,7 +133,7 @@ fn draw_limb(limb: &Limb, parent_pos: Vec2, angle: f32, depth: u8) {
 
         for (i, child) in limb.children.iter().enumerate() {
             let child_angle = start_angle + child_angle_step * (i as f32 + 1.0);
-            draw_limb(child, end_pos, child_angle, depth + 1);
+            draw_limb(child, end_pos, child_angle, _depth + 1);
         }
     }
 }

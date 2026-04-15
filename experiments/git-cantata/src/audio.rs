@@ -121,7 +121,7 @@ impl Iterator for CommitSource {
                 }
             }
             "md" | "txt" => (rand::random::<f32>() * 2.0 - 1.0) * 0.5,
-            _ => self.phase * 2.0 - 1.0 , // Sawtooth
+            _ => self.phase * 2.0 - 1.0, // Sawtooth
         };
 
         // Apply Envelope (simple attack/decay)

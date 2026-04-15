@@ -35,12 +35,13 @@ impl PendulumSystem {
         }
     }
 
-    pub fn add_node(&mut self, pos: Vec2, mass: f32, fixed: bool) -> usize {
+    pub fn add_node(&mut self, pos: Vec2, mass: f32, fixed: bool, name: String) -> usize {
         self.nodes.push(Node {
             pos,
             prev_pos: pos,
             mass,
             fixed,
+            name,
         });
         self.nodes.len() - 1
     }
@@ -140,8 +141,8 @@ mod tests {
     #[test]
     fn test_physics_step() {
         let mut sys = PendulumSystem::new();
-        sys.add_node(Vec2::new(0.0, 0.0), 1.0, true);
-        let child = sys.add_node(Vec2::new(10.0, 0.0), 1.0, false);
+        sys.add_node(Vec2::new(0.0, 0.0), 1.0, true, "root".to_string());
+        let child = sys.add_node(Vec2::new(10.0, 0.0), 1.0, false, "child".to_string());
 
         // Run a few steps
         for _ in 0..10 {

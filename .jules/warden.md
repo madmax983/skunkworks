@@ -86,3 +86,7 @@
 **2026-05-18 - [Market Sim Capacity Overflow DoS Prevention]**
 **Threat:** The `Grid::new` function in `crates/market-sim/src/lib.rs` performed capacity calculations using raw `usize` multiplication (`width * height`) without checking for overflow. This created a deterministic Panic DoS vulnerability where an attacker or erroneous logic providing extreme grid dimensions (e.g., `usize::MAX`) could crash the entire application or service due to integer overflow, rather than failing gracefully.
 **Defense:** Replaced the raw multiplication with `width.checked_mul(height)`. If an overflow occurs, it now returns an empty `Grid` (width: 0, height: 0, empty vectors), preventing the panic while remaining backwards-compatible with the method signature.
+
+**2026-06-03 - [GrayScott & Platter Capacity Overflow DoS Prevention]**
+**Threat:** The `new` functions in `crates/gray-scott/src/lib.rs` and `crates/platter/src/lib.rs` performed capacity calculations using `checked_mul` but immediately called `.expect("... size overflow")`. This created a deterministic Panic DoS vulnerability where an attacker providing extreme grid dimensions (e.g., `usize::MAX`) could crash the entire application or service rather than it failing gracefully.
+**Defense:** Replaced the `.expect()` calls with logic that returns an empty struct (e.g. `width: 0, height: 0`, and empty vectors) if an overflow occurs. This gracefully handles out-of-bounds calculations, preventing the crash, without breaking the public library signatures.

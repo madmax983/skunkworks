@@ -1,4 +1,4 @@
-use crossbeam_channel::{unbounded, Receiver, Sender};
+use crossbeam_channel::{unbounded, Sender};
 use neuro_sim::Izhikevich;
 
 #[cfg(feature = "audio")]
@@ -11,7 +11,7 @@ use std::sync::Arc;
 #[derive(Clone, Debug)]
 pub struct Snapshot {
     pub voltages: Vec<f32>,
-    pub mean_field: f32,
+    //pub mean_field: f32,
 }
 
 pub enum AudioCommand {
@@ -30,6 +30,7 @@ pub struct AudioEngine {
     _stream: Option<cpal::Stream>,
     pub cmd_tx: Sender<AudioCommand>,
     #[cfg(feature = "audio")]
+#[allow(clippy::type_complexity)]
     pub snapshot_rx:
         Consumer<Snapshot, Arc<SharedRb<Snapshot, Vec<std::mem::MaybeUninit<Snapshot>>>>>,
     #[cfg(not(feature = "audio"))]
@@ -62,7 +63,7 @@ impl AudioEngine {
             let (mut snapshot_tx, snapshot_rx) = rb.split();
 
             let mut neurons: Vec<Izhikevich> = Vec::new();
-            let mut connections: Vec<Vec<(usize, f32)>> = Vec::new();
+            let mut _connections: Vec<Vec<(usize, f32)>> = Vec::new();
 
             let dt = 1000.0 / sample_rate;
             let mut snapshot_timer = 0;
@@ -78,7 +79,7 @@ impl AudioEngine {
                                 connections: c,
                             } => {
                                 neurons = n;
-                                connections = c;
+                                _connections = c; let _ = _connections;
                             }
                             AudioCommand::Inject { index, current } => {
                                 if index < neurons.len() {
@@ -123,7 +124,7 @@ impl AudioEngine {
                             let voltages: Vec<f32> = neurons.iter().map(|n| n.v).collect();
                             let _ = snapshot_tx.push(Snapshot {
                                 voltages,
-                                mean_field,
+                                //mean_field,
                             });
                         }
                     }

@@ -1,4 +1,4 @@
-#![cfg(loom)]
+#![cfg(feature = "loom")]
 
 use loom::sync::Arc;
 use loom::sync::Mutex;

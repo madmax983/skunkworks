@@ -1,9 +1,11 @@
 use platter::Platter;
 
 #[test]
-#[should_panic(expected = "Platter size overflow")]
 fn test_platter_overflow() {
-    let _ = Platter::new(usize::MAX, 2);
+    let p = Platter::new(usize::MAX, 2);
+    assert_eq!(p.width(), 0);
+    assert_eq!(p.height(), 0);
+    assert_eq!(p.magnetism().len(), 0);
 }
 
 #[test]

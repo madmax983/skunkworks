@@ -81,10 +81,10 @@ fn draw_glyph(
 
     // Spawn sub-circles on perimeter
     let num_children = rng.gen_range(3..=6);
-    let angle_offset = rng.gen_range(0.0..6.28);
+    let angle_offset = rng.gen_range(0.0..std::f32::consts::TAU);
 
     for i in 0..num_children {
-        let angle = angle_offset + (i as f32 * 6.28 / num_children as f32);
+        let angle = angle_offset + (i as f32 * std::f32::consts::TAU / num_children as f32);
         let nx = cx + (radius as f32 * angle.cos()) as i32;
         let ny = cy + (radius as f32 * angle.sin()) as i32;
 

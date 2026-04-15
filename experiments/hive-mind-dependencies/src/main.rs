@@ -51,9 +51,10 @@ fn main() -> io::Result<()> {
 
         if crossterm::event::poll(timeout)?
             && let Event::Key(key) = event::read()?
-                && let KeyCode::Char('q') = key.code {
-                    break;
-                }
+            && let KeyCode::Char('q') = key.code
+        {
+            break;
+        }
 
         if last_tick.elapsed() >= tick_rate {
             sim.step(&mut rng);

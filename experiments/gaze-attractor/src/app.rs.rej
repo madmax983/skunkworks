@@ -1,0 +1,19 @@
+--- app.rs
++++ app.rs
+@@ -37,13 +37,13 @@
+
+         let mut node_indices = vec![vec![0; cols]; rows];
+
+-        for y in 0..rows {
+-            for x in 0..cols {
++        for (y, row) in node_indices.iter_mut().enumerate().take(rows) {
++            for (x, idx) in row.iter_mut().enumerate().take(cols) {
+                 let pos = Vec2::new(
+                     start_x + x as f32 * spacing_x,
+                     start_y + y as f32 * spacing_y,
+                 );
+                 let id = system.add_node(pos.x, pos.y, 2.0); // Start everything light
+-                node_indices[y][x] = id;
++                *idx = id;
+             }
+         }

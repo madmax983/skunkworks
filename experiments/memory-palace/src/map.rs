@@ -2,7 +2,7 @@ use macroquad::prelude::*;
 
 #[derive(Clone, Debug)]
 pub struct Portal {
-    pub id: usize,
+    //pub id: usize,
     pub pos: Vec3,  // Center position relative to room center
     pub rot: Quat,  // Rotation of the portal plane
     pub size: Vec2, // Width, Height
@@ -12,7 +12,7 @@ pub struct Portal {
 
 #[derive(Clone, Debug)]
 pub struct Room {
-    pub id: usize,
+    //pub id: usize,
     pub pos: Vec3,  // World position origin (for rendering separation)
     pub size: Vec3, // Half-extents? No, let's say full dimensions (W, H, D)
     pub color: Color,
@@ -32,7 +32,7 @@ impl MemoryGraph {
     pub fn add_room(&mut self, pos: Vec3, size: Vec3, color: Color) -> usize {
         let id = self.rooms.len();
         self.rooms.push(Room {
-            id,
+
             pos,
             size,
             color,
@@ -43,6 +43,7 @@ impl MemoryGraph {
 
     // Connects two rooms with a bidirectional portal
     // p1_pos: position in room 1
+    #[allow(clippy::too_many_arguments)]
     // p2_pos: position in room 2
     pub fn connect(
         &mut self,
@@ -59,7 +60,7 @@ impl MemoryGraph {
         let p2_id = self.rooms[r2].portals.len();
 
         self.rooms[r1].portals.push(Portal {
-            id: p1_id,
+
             pos: p1_pos,
             rot: p1_rot,
             size: p1_size,
@@ -68,7 +69,7 @@ impl MemoryGraph {
         });
 
         self.rooms[r2].portals.push(Portal {
-            id: p2_id,
+
             pos: p2_pos,
             rot: p2_rot,
             size: p2_size,

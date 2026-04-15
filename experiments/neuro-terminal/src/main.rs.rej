@@ -1,0 +1,9 @@
+--- main.rs
++++ main.rs
+@@ -325,7 +325,7 @@
+             let mut layer_nodes = Vec::new();
+-            for n in 0..neuron_count {
++            for n in 0..neuron_count {
+                 let y = y_step * (n as f64 + 1.0);
+                 layer_nodes.push((x, y));
+             }

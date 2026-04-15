@@ -135,15 +135,16 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result
 
         if crossterm::event::poll(timeout)?
             && let Event::Key(key) = event::read()?
-                && key.kind == KeyEventKind::Press {
-                    match key.code {
-                        KeyCode::Char('q') => app.running = false,
-                        KeyCode::Char('r') => {
-                            app.world = World::new(world_width, world_height);
-                        }
-                        _ => {}
-                    }
+            && key.kind == KeyEventKind::Press
+        {
+            match key.code {
+                KeyCode::Char('q') => app.running = false,
+                KeyCode::Char('r') => {
+                    app.world = World::new(world_width, world_height);
                 }
+                _ => {}
+            }
+        }
 
         if last_tick.elapsed() >= tick_rate {
             app.on_tick();

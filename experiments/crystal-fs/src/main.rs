@@ -296,12 +296,7 @@ impl State {
         }
 
         // Clamp pitch
-        if self.camera_pitch > 89.0 {
-            self.camera_pitch = 89.0;
-        }
-        if self.camera_pitch < -89.0 {
-            self.camera_pitch = -89.0;
-        }
+        self.camera_pitch = self.camera_pitch.clamp(-89.0, 89.0);
 
         let (yaw_sin, yaw_cos) = cgmath::Rad::from(cgmath::Deg(self.camera_yaw)).0.sin_cos();
         let (pitch_sin, pitch_cos) = cgmath::Rad::from(cgmath::Deg(self.camera_pitch))

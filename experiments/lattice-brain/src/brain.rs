@@ -1,8 +1,6 @@
-use crate::audio::{AudioCommand, AudioEngine, Snapshot};
+use crate::audio::{AudioCommand, AudioEngine};
 use crate::lattice::{Lattice, LatticeType};
-use nalgebra::Point3;
 use neuro_sim::Izhikevich;
-use rand::prelude::*;
 
 pub struct Brain {
     pub lattice: Lattice,

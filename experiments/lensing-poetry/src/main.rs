@@ -82,38 +82,36 @@ async fn main() {
         }
 
         // Input
-        if is_mouse_button_pressed(MouseButton::Left)
-            && bodies.len() < shader::MAX_BODIES {
-                let mpos = mouse_position();
-                let world_pos = vec2(mpos.0 - width as f32 / 2.0, mpos.1 - height as f32 / 2.0);
+        if is_mouse_button_pressed(MouseButton::Left) && bodies.len() < shader::MAX_BODIES {
+            let mpos = mouse_position();
+            let world_pos = vec2(mpos.0 - width as f32 / 2.0, mpos.1 - height as f32 / 2.0);
 
-                bodies.push(Body {
-                    pos: world_pos,
-                    vel: vec2(rand::gen_range(-10.0, 10.0), rand::gen_range(-10.0, 10.0)),
-                    mass: rand::gen_range(500.0, 5000.0),
-                    radius: rand::gen_range(10.0, 30.0),
-                    color: Color::new(
-                        rand::gen_range(0.5, 1.0),
-                        rand::gen_range(0.5, 1.0),
-                        rand::gen_range(0.5, 1.0),
-                        1.0,
-                    ),
-                });
-            }
+            bodies.push(Body {
+                pos: world_pos,
+                vel: vec2(rand::gen_range(-10.0, 10.0), rand::gen_range(-10.0, 10.0)),
+                mass: rand::gen_range(500.0, 5000.0),
+                radius: rand::gen_range(10.0, 30.0),
+                color: Color::new(
+                    rand::gen_range(0.5, 1.0),
+                    rand::gen_range(0.5, 1.0),
+                    rand::gen_range(0.5, 1.0),
+                    1.0,
+                ),
+            });
+        }
 
-        if is_mouse_button_pressed(MouseButton::Right)
-            && bodies.len() < shader::MAX_BODIES {
-                let mpos = mouse_position();
-                let world_pos = vec2(mpos.0 - width as f32 / 2.0, mpos.1 - height as f32 / 2.0);
+        if is_mouse_button_pressed(MouseButton::Right) && bodies.len() < shader::MAX_BODIES {
+            let mpos = mouse_position();
+            let world_pos = vec2(mpos.0 - width as f32 / 2.0, mpos.1 - height as f32 / 2.0);
 
-                bodies.push(Body {
-                    pos: world_pos,
-                    vel: vec2(0.0, 0.0),
-                    mass: -5000.0,
-                    radius: 15.0,
-                    color: PURPLE,
-                });
-            }
+            bodies.push(Body {
+                pos: world_pos,
+                vel: vec2(0.0, 0.0),
+                mass: -5000.0,
+                radius: 15.0,
+                color: PURPLE,
+            });
+        }
 
         if is_key_pressed(KeyCode::Space) {
             bodies.truncate(1);
