@@ -75,13 +75,13 @@ pub fn recover_text(spectrogram: &[Vec<f32>], config: &DecoderConfig) -> String 
     // Recover grid
     let mut recovered_grid = vec![vec![0u8; width]; 8];
 
-    for col in 0..width {
-        let start_frame = col * config.stretch_factor;
-        let end_frame = start_frame + config.stretch_factor;
+    for (row, row_vec) in recovered_grid.iter_mut().enumerate().take(8) {
+        let visual_y = 7 - row;
+        let start_bin = config.base_bin + visual_y * config.spacing;
 
-        for row in 0..8 {
-            let visual_y = 7 - row;
-            let start_bin = config.base_bin + visual_y * config.spacing;
+        for (col, cell) in row_vec.iter_mut().enumerate().take(width) {
+            let start_frame = col * config.stretch_factor;
+            let end_frame = start_frame + config.stretch_factor;
 
             let mut sum_mag = 0.0;
             let mut count = 0;
@@ -111,7 +111,7 @@ pub fn recover_text(spectrogram: &[Vec<f32>], config: &DecoderConfig) -> String 
             // avg_mag is average per BIN.
             // If encoder put 50.0 per bin, we expect ~50.0 here.
             if avg_mag > config.threshold {
-                recovered_grid[row][col] = 1;
+                *cell = 1;
             }
         }
     }
