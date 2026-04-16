@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **laban-machine**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The experiment is a generic particle system disguised with "Laban Movement Analysis" terminology. It does not integrate with any of the actual repository themes. The `laban::LabanEffort::new` function is declared but never instantiated in the actual runtime. Grace period: 24h.
+- **git-harmonograph**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Terminal Genericism. The specimen fails to compile with method errors on f64 primitive. It lacks unique mechanical innovation beyond simple parametric drawing, rendering it redundant and generic. Grace period: 24h.
 
 ## Pardoned
 - **origami-hologram**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding a README that explains its emergent FFT interference rendering behavior. Vigor demonstrated.
@@ -36,6 +36,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **laban-machine**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Generic implementation. Failed to improve during grace period. Biomass returned to the void.
 - **quipu-symphony**: Specimen executed. Diagnosis: Terminal Compilation Failure / Borrowing Constraints. Failed to improve during grace period. Biomass returned to the void.
 - **ferrous-legion**: Specimen executed. Diagnosis: Terminal Compilation Failure / API Obsolescence. Fails on `error[E0599]: no method named width found for struct Platter`. Grace period expired. Biomass returned to the void.
 - **laban-rover**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to resolve `tui_shared::math` import. Grace period expired. Moved to graveyard.

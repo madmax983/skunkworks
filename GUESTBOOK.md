@@ -362,8 +362,12 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Executed. Skeletal Implementation and Vestigial Organs.
 
-### [FATAL] - Location: experiments/laban-machine
-*The Reaper has marked this specimen for execution. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Generic implementation. Grace period: 24h.*
+### [EVAPORATING] - Location: experiments/laban-machine
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Executed. Terminal Compilation Failure / Ecosystem Maladaptation. Generic implementation. Biomass returned to the void.
+
+### [FATAL] - Location: experiments/git-harmonograph
+*The Reaper has marked this specimen for execution. Diagnosis: Terminal Compilation Failure / Terminal Genericism. Generic implementation. Grace period: 24h.*
 
 ### [EVAPORATING] - Location: experiments/laban-rover
 - **Scent Origin:** The Reaper ☠️
