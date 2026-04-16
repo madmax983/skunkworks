@@ -1,7 +1,0 @@
---- experiments/neuro-terminal/src/main.rs
-+++ experiments/neuro-terminal/src/main.rs
-@@ -363,3 +363,3 @@
-                 let layer_nodes = &node_positions[l];
--                for n in 0..neuron_count {
--                    let (x, y) = layer_nodes[n];
-+                for (n, &(x, y)) in layer_nodes.iter().enumerate().take(neuron_count) {

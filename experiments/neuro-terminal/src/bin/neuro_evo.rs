@@ -1,3 +1,7 @@
+//! Evolutionary Neuro-Terminal
+//!
+//! This binary runs the Genetic Algorithm visualization.
+
 use anyhow::Result;
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
