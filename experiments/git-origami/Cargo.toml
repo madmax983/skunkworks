@@ -1,0 +1,11 @@
+[package]
+name = "git-origami"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+origami = { path = "../../crates/origami" }
+git-associates = { path = "../../crates/git-associates" }
+physics-pbd = { path = "../../crates/physics-pbd" }
+tui-shared = { path = "../../crates/tui-shared" }
