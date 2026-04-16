@@ -47,7 +47,7 @@ fn init_audio(
 
     let config = device.default_output_config()?;
     let sample_rate = config.sample_rate().0 as f32;
-    let mut model = AudioModel::new(GRID_WIDTH, GRID_HEIGHT, cmd_rx, snap_tx, Some(sample_rate));
+    let mut model = AudioModel::new(GRID_WIDTH, GRID_HEIGHT, cmd_rx, snap_tx, None);
 
     let stream = device.build_output_stream(
         &config.into(),

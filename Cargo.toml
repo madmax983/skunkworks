@@ -14,7 +14,6 @@ members = [
 
     "experiments/myco-hologram",
     "experiments/git-diffusion",
-    "graveyard/chron-diffusion",
     "experiments/locust-tank",
     "experiments/gray-tank",
     "experiments/git-tank",
@@ -22,7 +21,6 @@ members = [
     "experiments/neuro-fluid",
     "experiments/neuro-strings",
     "experiments/neuro-origami",
-    "graveyard/chron-ddos",
     "experiments/locus-ddos",
 ]
 exclude = [

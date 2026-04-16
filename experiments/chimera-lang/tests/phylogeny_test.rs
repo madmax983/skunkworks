@@ -44,7 +44,7 @@ fn test_synthesize_and_sequencing() {
             args: vec![Nucleotide::String(content.clone())],
         },
         Gene {
-            op: OpCode::Synthesize,
+            op: OpCode::PhyloSynthesize,
             args: vec![],
         },
         Gene {
@@ -174,7 +174,7 @@ fn test_infect() {
             args: vec![Nucleotide::String(viral_code.to_string())],
         },
         Gene {
-            op: OpCode::Infect,
+            op: OpCode::PhyloInfect,
             args: vec![],
         },
     ];
