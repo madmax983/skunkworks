@@ -1,13 +1,33 @@
+//! # Evolutionary Training
+//!
+//! This module provides a Genetic Algorithm approach to training Neural Networks.
+//! Instead of using backpropagation (gradient descent), it creates a population of
+//! networks, evaluates their fitness, and breeds the best performers (with mutation)
+//! to create the next generation.
+
 use crate::nn::Network;
 use rand::Rng;
 
+/// A population of Neural Networks undergoing evolutionary training.
 pub struct Population {
+    /// The current generation of networks.
     pub networks: Vec<Network>,
+    /// The current generation number.
     pub generation: usize,
+    /// The highest fitness score achieved in the current generation.
     pub best_fitness: f64,
 }
 
 impl Population {
+    /// Creates a new population of networks with the given layer configuration.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use neuro_terminal::evo::Population;
+    /// let pop = Population::new(100, vec![2, 5, 1]);
+    /// assert_eq!(pop.networks.len(), 100);
+    /// ```
     pub fn new(size: usize, layers: Vec<usize>) -> Self {
         let mut networks = vec![];
         for _ in 0..size {
@@ -21,11 +41,20 @@ impl Population {
         }
     }
 
+    /// Returns a reference to the best performing network in the population.
+    ///
+    /// Note: This assumes `evolve` has been called at least once to sort the networks
+    /// by fitness.
     pub fn best(&self) -> &Network {
         // Assumes networks are sorted by fitness after evolve()
         &self.networks[0]
     }
 
+    /// Evolves the population by one generation.
+    ///
+    /// This method evaluates all networks against the provided inputs and targets,
+    /// sorts them by fitness, and then breeds the top performers to replace the
+    /// lower performers, applying random mutations to the offspring.
     pub fn evolve(&mut self, inputs: &[Vec<f64>], targets: &[Vec<f64>]) {
         // 1. Evaluate Fitness
         let mut fitnesses: Vec<(usize, f64)> = self

@@ -83,3 +83,7 @@
 ## 2026-04-15 - The Black Box of Esoteric Parsers
 **Confusion:** While `chimera-lang` supports incredibly diverse paradigms (like Forth, Orca, Lisp, logic grids), the top-level documentation parsing these features was completely absent, emitting `missing_docs` warnings. Users could not tell which parser did what from reading `lib.rs` alone.
 **Clarification:** Added explicit module-level (`//!`) documentation to root modules, explaining the context of `AcousticParser`, `ProlougeParser` (the mad scientist esoteric layer), and `PrologueParser` (the core logic layer). I also documented the `PrologueProgram` construction which acts as the circuit blueprint.
+
+## 2025-06-25 - The Black Box of Neuro-Terminal
+**Confusion:** The `experiments/neuro-terminal` crate was completely devoid of documentation. There were no module-level descriptions explaining the difference between the `evo` (genetic) and `nn` (feed-forward/backprop) modules. Furthermore, core mathematical structures like `Matrix` and `Network` lacked any `/// # Examples`, making it impossible for users to know how to initialize or train them without reverse-engineering the codebase.
+**Clarification:** Added rigorous module-level `//!` documentation, explicit field-level documentation for network sizes and layers, and executable `/// # Examples` doctests demonstrating basic matrix initialization, dot products, predictions, and population evolution.

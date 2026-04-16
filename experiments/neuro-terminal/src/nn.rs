@@ -1,19 +1,52 @@
+//! # Neural Network Core
+//!
+//! This module implements the core components of a simple Feed-Forward Neural Network,
+//! including a custom [`Matrix`] struct for mathematical operations and the [`Network`]
+//! struct itself, capable of forward propagation and backpropagation.
+
 use rand::Rng;
 use std::ops::{Add, Mul, Sub};
 
+/// A 2D Matrix used for weights, biases, and activations.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Matrix {
+    /// Number of rows.
     pub rows: usize,
+    /// Number of columns.
     pub cols: usize,
+    /// The flat data array storing the matrix elements in row-major order.
     pub data: Vec<f64>,
 }
 
 impl Matrix {
+    /// Creates a new matrix from a flat vector of data.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use neuro_terminal::nn::Matrix;
+    /// let m = Matrix::new(2, 2, vec![1.0, 2.0, 3.0, 4.0]);
+    /// assert_eq!(m.rows, 2);
+    /// assert_eq!(m.cols, 2);
+    /// ```
+    ///
+    /// # Panics
+    ///
+    /// Panics if the length of `data` does not equal `rows * cols`.
     pub fn new(rows: usize, cols: usize, data: Vec<f64>) -> Self {
         assert_eq!(data.len(), rows * cols, "Data length must match rows*cols");
         Self { rows, cols, data }
     }
 
+    /// Creates a new matrix initialized with zeros.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use neuro_terminal::nn::Matrix;
+    /// let m = Matrix::zeros(2, 3);
+    /// assert_eq!(m.get(1, 2), 0.0);
+    /// ```
     pub fn zeros(rows: usize, cols: usize) -> Self {
         Self {
             rows,
@@ -22,20 +55,35 @@ impl Matrix {
         }
     }
 
+    /// Creates a new matrix initialized with random values between -1.0 and 1.0.
     pub fn random(rows: usize, cols: usize) -> Self {
         let mut rng = rand::thread_rng();
         let data = (0..rows * cols).map(|_| rng.gen_range(-1.0..1.0)).collect();
         Self { rows, cols, data }
     }
 
+    /// Gets an element at the specified row and column.
     pub fn get(&self, row: usize, col: usize) -> f64 {
         self.data[row * self.cols + col]
     }
 
+    /// Gets a mutable reference to an element at the specified row and column.
     pub fn get_mut(&mut self, row: usize, col: usize) -> &mut f64 {
         &mut self.data[row * self.cols + col]
     }
 
+    /// Performs matrix multiplication (dot product) with another matrix.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use neuro_terminal::nn::Matrix;
+    /// let a = Matrix::new(2, 2, vec![1.0, 2.0, 3.0, 4.0]);
+    /// let b = Matrix::new(2, 1, vec![2.0, 0.0]);
+    /// let c = a.dot(&b);
+    /// assert_eq!(c.get(0, 0), 2.0);
+    /// assert_eq!(c.get(1, 0), 6.0);
+    /// ```
     pub fn dot(&self, other: &Matrix) -> Matrix {
         assert_eq!(
             self.cols, other.rows,
@@ -55,23 +103,28 @@ impl Matrix {
         result
     }
 
+    /// Adds another matrix to this one (element-wise).
     pub fn add(&self, other: &Matrix) -> Matrix {
         self + other
     }
 
+    /// Subtracts another matrix from this one (element-wise).
     pub fn sub(&self, other: &Matrix) -> Matrix {
         self - other
     }
 
+    /// Multiplies this matrix with another one (element-wise, Hadamard product).
     pub fn mul(&self, other: &Matrix) -> Matrix {
         self * other
     }
 
+    /// Multiplies all elements in the matrix by a scalar value.
     pub fn mul_scalar(&self, scalar: f64) -> Matrix {
         let data = self.data.iter().map(|a| a * scalar).collect();
         Matrix::new(self.rows, self.cols, data)
     }
 
+    /// Maps a function over all elements of the matrix, returning a new matrix.
     pub fn map<F>(&self, func: F) -> Matrix
     where
         F: Fn(f64) -> f64,
@@ -80,6 +133,7 @@ impl Matrix {
         Matrix::new(self.rows, self.cols, data)
     }
 
+    /// Transposes the matrix, swapping rows and columns.
     pub fn transpose(&self) -> Matrix {
         let mut result = Matrix::zeros(self.cols, self.rows);
         for i in 0..self.rows {
@@ -90,6 +144,7 @@ impl Matrix {
         result
     }
 
+    /// Converts a 1D vector into an N x 1 column matrix.
     pub fn from_vec(data: Vec<f64>) -> Matrix {
         Matrix::new(data.len(), 1, data)
     }
@@ -143,21 +198,32 @@ impl<'b> Mul<&'b Matrix> for &Matrix {
     }
 }
 
+/// The sigmoid activation function.
 pub fn sigmoid(x: f64) -> f64 {
     1.0 / (1.0 + (-x).exp())
 }
 
+/// A simple Feed-Forward Neural Network.
 #[derive(Clone)]
 pub struct Network {
+    /// The sizes of each layer (e.g., `[2, 5, 1]` for 2 inputs, 5 hidden, 1 output).
     pub layers: Vec<usize>,
+    /// The weight matrices connecting the layers.
     pub weights: Vec<Matrix>,
+    /// The bias matrices for each layer (except input).
     pub biases: Vec<Matrix>,
-    pub data: Vec<Matrix>,   // Activations for each layer (including input)
-    pub z_data: Vec<Matrix>, // Unactivated inputs (z) for each layer
+    /// Activations for each layer (including input).
+    pub data: Vec<Matrix>,
+    /// Unactivated inputs (z) for each layer.
+    pub z_data: Vec<Matrix>,
+    /// The learning rate used during backpropagation.
     pub learning_rate: f64,
 }
 
 impl Network {
+    /// Creates a new neural network with the specified layer structure and learning rate.
+    ///
+    /// Weights and biases are initialized randomly.
     pub fn new(layers: Vec<usize>, learning_rate: f64) -> Self {
         let mut weights = vec![];
         let mut biases = vec![];
@@ -177,6 +243,7 @@ impl Network {
         }
     }
 
+    /// Performs a forward pass, storing activations and unactivated inputs internally.
     pub fn forward(&mut self, inputs: &[f64]) -> Vec<f64> {
         let inputs = Matrix::from_vec(inputs.to_vec());
         self.data = vec![inputs.clone()];
@@ -194,6 +261,16 @@ impl Network {
         current.data
     }
 
+    /// Predicts the output for a given input without storing intermediate state.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use neuro_terminal::nn::Network;
+    /// let nn = Network::new(vec![2, 3, 1], 0.1);
+    /// let prediction = nn.predict(&[0.5, -0.5]);
+    /// assert_eq!(prediction.len(), 1);
+    /// ```
     pub fn predict(&self, inputs: &[f64]) -> Vec<f64> {
         let inputs = Matrix::from_vec(inputs.to_vec());
         let mut current = inputs;
@@ -206,6 +283,9 @@ impl Network {
         current.data
     }
 
+    /// Trains the network on a single input-target pair using backpropagation.
+    ///
+    /// Returns the Mean Squared Error (MSE) for the given pair.
     pub fn train(&mut self, inputs: &[f64], targets: &[f64]) -> f64 {
         // Forward pass
         self.forward(inputs);
@@ -223,6 +303,7 @@ impl Network {
         mse
     }
 
+    /// Performs a single layer of backpropagation.
     fn backward_pass_layer(&mut self, layer_idx: usize, errors: Matrix) -> Matrix {
         let outputs = &self.data[layer_idx + 1];
         let prev_outputs = &self.data[layer_idx];
