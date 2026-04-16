@@ -416,31 +416,36 @@ impl Grid {
         let mut weighted_y_sum = 0.0;
         let mut mass_sum = 0.0;
 
-        let mut idx = 0;
-        for y in 0..self.height {
-            for _x in 0..self.width {
-                match self.cells[idx] {
+        if self.width == 0 || self.height == 0 {
+            return;
+        }
+
+        // ⚡ Bolt: Iterate over 1D chunks to avoid nested loop overhead and bounds checks.
+        let mut inv_y = self.height as f32;
+        for row in self.cells.chunks_exact_mut(self.width) {
+            for cell in row.iter_mut() {
+                match cell {
                     Particle::Trade { age } => {
-                        if age > 0 {
-                            self.cells[idx] = Particle::Trade { age: age - 1 };
+                        if *age > 0 {
+                            *age -= 1;
                         } else {
-                            self.cells[idx] = Particle::Empty;
+                            *cell = Particle::Empty;
                         }
                     }
                     Particle::Bid(_) => {
                         bids += 1;
-                        weighted_y_sum += (self.height - y) as f32;
+                        weighted_y_sum += inv_y;
                         mass_sum += 1.0;
                     }
                     Particle::Ask(_) => {
                         asks += 1;
-                        weighted_y_sum += (self.height - y) as f32;
+                        weighted_y_sum += inv_y;
                         mass_sum += 1.0;
                     }
                     _ => {}
                 }
-                idx += 1;
             }
+            inv_y -= 1.0;
         }
 
         self.trade_count = trade_count;
