@@ -30,7 +30,7 @@ pub struct AudioEngine {
     _stream: Option<cpal::Stream>,
     pub cmd_tx: Sender<AudioCommand>,
     #[cfg(feature = "audio")]
-#[allow(clippy::type_complexity)]
+    #[allow(clippy::type_complexity)]
     pub snapshot_rx:
         Consumer<Snapshot, Arc<SharedRb<Snapshot, Vec<std::mem::MaybeUninit<Snapshot>>>>>,
     #[cfg(not(feature = "audio"))]

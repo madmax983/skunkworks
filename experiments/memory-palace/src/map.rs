@@ -32,7 +32,6 @@ impl MemoryGraph {
     pub fn add_room(&mut self, pos: Vec3, size: Vec3, color: Color) -> usize {
         let id = self.rooms.len();
         self.rooms.push(Room {
-
             pos,
             size,
             color,
@@ -60,7 +59,6 @@ impl MemoryGraph {
         let p2_id = self.rooms[r2].portals.len();
 
         self.rooms[r1].portals.push(Portal {
-
             pos: p1_pos,
             rot: p1_rot,
             size: p1_size,
@@ -69,7 +67,6 @@ impl MemoryGraph {
         });
 
         self.rooms[r2].portals.push(Portal {
-
             pos: p2_pos,
             rot: p2_rot,
             size: p2_size,

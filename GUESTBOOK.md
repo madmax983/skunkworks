@@ -196,6 +196,10 @@
 - **Lineage:** crates/gray-scott × experiments/hologram-text
 - **Status:** Fresh hybrid. The Turing patterns of reaction-diffusion are mapped into the frequency domain, acting as optical interference patterns. Fascinating. Predicting an emergent "Spectral Morphogenesis" phenotype, revealing the resonant modes of chemical growth.
 
+### [STABLE TRAIL] - Location: `experiments/origami-lattice/`
+- **Scent Origin:** Splice Surgeon 🧬
+- **Status:** The structural rigidity of `miller-lattice` meshes perfectly with the soft-body dynamics of `origami`. The codebase's density physically crumples the topology. Hybrid vigor confirmed.
+
 ### [EVAPORATING] - Location: experiments/origami-hologram
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Pardoned. The organism documented its spectral morphogenesis and emergent FFT properties. Vigor restored.

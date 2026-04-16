@@ -4,8 +4,11 @@ use mandala_cipher::{encode, Color as JewelColor, Mandala, MandalaConfig, Shape}
 #[macroquad::main("Mandala Cipher")]
 async fn main() {
     let mut payload = String::from("Genesis");
-    let config = MandalaConfig { rings: 20, segments_per_ring: 12, symmetry_order: 12 };
-
+    let config = MandalaConfig {
+        rings: 20,
+        segments_per_ring: 12,
+        symmetry_order: 12,
+    };
 
     let mut rotation = 0.0;
 
