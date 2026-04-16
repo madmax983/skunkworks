@@ -25,3 +25,10 @@
 **[Optimize Vec capacity in git-mycelium]**
 **Learning:** `Vec::new()` requires numerous re-allocations when adding elements, especially for inner loops.
 **Action:** Switch to `Vec::with_capacity` when creating temporary vecs, mapping collections, or filtering based on collections where the upper bound of the length is known.
+**[Chunk-based Grid Iteration]**
+**Learning:** Nested `for y ... for x` loops with explicit array index access (`self.cells[idx]`) in Rust result in per-element bounds checks when iterating over a flat 1D vector representing a 2D grid. Iterating via `chunks_exact_mut(width)` is roughly 2x faster in hot loops as it eliminates these bounds checks and allows clean per-row logic (e.g. tracking `y` without division).
+**Action:** Use `chunks_exact_mut` or `chunks_mut` for 2D grid iterations over flat 1D vectors instead of nested `for` loops.
+
+**[ExactSizeIterator `.collect()`]**
+**Learning:** Calling `.collect()` on an `ExactSizeIterator` automatically pre-allocates the optimal vector capacity. Replacing it with a manual `Vec::with_capacity(len)` followed by a `for` loop provides zero performance benefit and only adds verbosity.
+**Action:** Trust `.collect()` for iterators with a known length (e.g. `commit.parents()`).
