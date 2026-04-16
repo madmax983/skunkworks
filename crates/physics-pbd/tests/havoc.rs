@@ -1,5 +1,5 @@
-use physics_pbd::*;
 use glam::Vec3;
+use physics_pbd::*;
 use proptest::prelude::*;
 
 proptest! {

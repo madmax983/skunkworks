@@ -20,56 +20,54 @@ impl World {
         for _ in 0..num_agents {
             // Default DNA:
             // [ Push(Angle), Push(Speed), Jump(0) ]
-        #[allow(clippy::vec_init_then_push)]
+            #[allow(clippy::vec_init_then_push)]
             // Random movements for now
             let genes = vec![
-
-            // Gene 1: Push Random Angle (0-100)
-            Gene {
-                op: OpCode::Push,
-                args: vec![Nucleotide::Number(rng.gen_range(0..100))],
-            },
-            // Gene 2: Push Speed (50)
-            Gene {
-                op: OpCode::Push,
-                args: vec![Nucleotide::Number(50)],
-            },
-            // Gene 3: GWrite Angle (0, 0)
-            Gene {
-                op: OpCode::Push,
-                args: vec![Nucleotide::Number(0)],
-            },
-            Gene {
-                op: OpCode::Push,
-                args: vec![Nucleotide::Number(0)],
-            },
-            Gene {
-                op: OpCode::GWrite,
-                args: vec![],
-            },
-            // Gene 4: GWrite Speed (0, 1)
-            Gene {
-                op: OpCode::Push,
-                args: vec![Nucleotide::Number(50)], // Speed val
-            },
-            Gene {
-                op: OpCode::Push,
-                args: vec![Nucleotide::Number(0)],
-            },
-            Gene {
-                op: OpCode::Push,
-                args: vec![Nucleotide::Number(1)],
-            },
-            Gene {
-                op: OpCode::GWrite,
-                args: vec![],
-            },
-
-            // Loop
-            Gene {
-                op: OpCode::Jump,
-                args: vec![Nucleotide::Number(0)],
-            },
+                // Gene 1: Push Random Angle (0-100)
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(rng.gen_range(0..100))],
+                },
+                // Gene 2: Push Speed (50)
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(50)],
+                },
+                // Gene 3: GWrite Angle (0, 0)
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(0)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(0)],
+                },
+                Gene {
+                    op: OpCode::GWrite,
+                    args: vec![],
+                },
+                // Gene 4: GWrite Speed (0, 1)
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(50)], // Speed val
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(0)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    op: OpCode::GWrite,
+                    args: vec![],
+                },
+                // Loop
+                Gene {
+                    op: OpCode::Jump,
+                    args: vec![Nucleotide::Number(0)],
+                },
             ];
 
             let dna = Dna {

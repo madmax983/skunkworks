@@ -72,7 +72,6 @@ impl Puppet {
             .insert(anchor_h, torso, hanger, true);
 
         Puppet {
-
             left_leg,
             right_leg,
         }
