@@ -27,7 +27,6 @@ exclude = [
     "experiments/clockwork-chimera",
     "experiments/clockwork-concerto",
     "experiments/ik-codewalker",
-    "experiments/laban-machine",
     "experiments/spectral-decay",
     "experiments/syntax-spider",
     "experiments/system-turbulence",
