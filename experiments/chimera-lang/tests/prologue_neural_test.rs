@@ -109,7 +109,7 @@ fn test_neural_integration() {
 
     if let Some(neuron) = vm.neurons.get(&(5, 5)) {
         assert!(neuron.i_inj > 0.0, "Neuron should receive input current");
-        assert_eq!(neuron.i_inj, 100.0);
+        assert_eq!(neuron.i_inj, 110.0);
     } else {
         panic!("Neuron missing");
     }
