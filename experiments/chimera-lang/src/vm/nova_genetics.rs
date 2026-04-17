@@ -1662,17 +1662,21 @@ pub fn exec_genesis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                             if let Some((ny, nx)) =
                                 vm.normalize_coords(y as i64 + dy, x as i64 + dx)
                             {
-                                if let Value::Int(n) = &vm.grid[ny][nx] {
-                                    if *n > 0 {
-                                        neighbors_count += 1;
-                                    }
+                                match &vm.grid[ny][nx] {
+                                    Value::Int(n) if *n > 0 => neighbors_count += 1,
+                                    Value::Str(s) if !s.is_empty() => neighbors_count += 1,
+                                    _ => {}
                                 }
                             }
                         }
                     }
 
                     let val = &vm.grid[y][x];
-                    let is_alive = matches!(val, Value::Int(n) if *n > 0);
+                    let is_alive = match val {
+                        Value::Int(n) if *n > 0 => true,
+                        Value::Str(s) if !s.is_empty() => true,
+                        _ => false,
+                    };
 
                     let mut keep = false;
                     if is_alive {
