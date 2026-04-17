@@ -74,12 +74,9 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Status**: experiments/resonance-origami
 - **Evaluation**: Success. Compiled. The soft-body mesh successfully translates acoustic wave phases directly into structural folds and vibrations.
 
-### origami-lattice
-- **Parents**: crates/miller-lattice + crates/origami
 - **Concept**: Codebase Morphogenesis.
 - **Novel trait**: A 3D continuous procedural Miura-ori soft-body mesh dynamically represents the codebase file hierarchy. The crystal nodes (directories/files) are spatially projected onto the mesh. High codebase density physically crumples the paper via constraint actuation, while empty space relaxes it.
 - **Predicted Phenotype**: A living, topographical map of the repository's structural entropy mapped directly to physical folds in 3D space.
-- **Status**: experiments/origami-lattice
 - **Evaluation**: Success. Compiled. The soft-body mesh successfully translates the discrete structural hierarchy into continuous topographical deformations.
 
 ### flock-origami
@@ -840,3 +837,20 @@ Additionally, the success of translating complex abstract graphs (like codebases
 - **Predicted Phenotype**: An evolving organic drone synthesizer where the evolving geometry of Turing patterns dynamically shapes the harmonic and rhythmic structure of the sound.
 - **Status**: experiments/gray-resonance
 - **Evaluation**: Success. Compiled. The Gray-Scott diffusion successfully acts as a spatial wavetable and exciter mechanism for the continuous acoustic simulation.
+
+
+### origami-lattice
+- **Parents**: crates/miller-lattice + crates/origami
+- **Concept**: Structural Codebase Morphogenesis.
+- **Novel trait**: The rigid, discrete lattice of the codebase is projected down onto a continuous soft-body mesh. Directories pull up on the fabric of the codebase, while files pull down. As the hierarchical weight of the repository strains the mesh, it dynamically buckles, crumples, and breathes.
+- **Predicted Phenotype**: An organic, breathing visualization of a codebase where the physical tension of the repository's structure dynamically warps a topological space.
+- **Status**: experiments/origami-lattice
+- **Evaluation**: Success. Compiled. The soft-body mesh successfully translates the discrete codebase crystal lattice into continuous topographical stress and structural deformation.
+
+### ferrous-lattice
+- **Parents**: crates/miller-lattice + crates/ferrous-core
+- **Concept**: Magnetic Codebase Architecture.
+- **Novel trait**: The rigid, discrete lattice of the codebase is projected down onto a continuous 2D magnetic fluid plane. Directories act as positive magnetic poles, while files act as negative magnetic poles.
+- **Predicted Phenotype**: An organic, fluid visualization of a codebase where the hierarchical static structure continuously pulses and emits interacting magnetic fields.
+- **Status**: experiments/ferrous-lattice
+- **Evaluation**: Success. Compiled. The static crystal lattice nodes successfully translate into interacting positive and negative magnetic poles within the ferrous fluid substrate.

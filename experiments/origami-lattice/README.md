@@ -1,14 +1,14 @@
 # Origami Lattice
 
-A hybrid experiment demonstrating "Codebase Morphogenesis".
+A hybrid biological and physical visualization engine crossing `miller-lattice` with `origami`.
 
-## 🧬 Lineage
+## Lineage
 
-- **Parent A**: `crates/miller-lattice` (Hierarchical 3D codebase crystal structure mapping)
-- **Parent B**: `crates/origami` (Procedural Miura-ori mesh and Position Based Dynamics soft-body physics)
+* **miller-lattice:** Provides the rigid, crystalline 3D hierarchical structure mapping of a codebase. Nodes represent files and directories built deterministically from the root path.
+* **origami:** Provides the continuous, procedural 3D Miura-ori soft body mesh. Uses Position Based Dynamics to simulate a soft sheet of paper.
 
-## 🦠 Phenotype
+## Novel Trait
 
-This organism projects the dense, rigid 3D hierarchical structure of a codebase onto a 2D plane. It uses the spatial density of the file system "atoms" (directories and files) to dynamically actuate the constraints of a procedural soft-body paper mesh.
+**Structural Codebase Morphogenesis.** We take the rigid, discrete lattice of the codebase and project it down onto a continuous soft-body mesh.
 
-Where the codebase is dense and complex, the soft body mesh physically folds, crumples, and contracts. Where the codebase is sparse, the paper relaxes and flattens out. The result is a living, topographical map of the repository's structural entropy mapped directly to physical folds in 3D space.
+Directories pull *up* on the fabric of the codebase, while files pull *down*. As the hierarchical weight of the repository strains the mesh, it dynamically buckles, crumples, and breathes. Instead of viewing a codebase as a static graph, we visualize the *physical tension* of the repository's structure dynamically warping a topological space.

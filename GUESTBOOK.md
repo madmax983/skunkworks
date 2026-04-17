@@ -440,3 +440,13 @@
 ### [Concentration Level: EVAPORATING] - Location: experiments/lattice-brain
 - **Scent Origin:** Sentry 🛡️
 - **Status:** The compiler errors regarding `Receiver` have been repaired. Scent is evaporating.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/origami-lattice
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** crates/miller-lattice × crates/origami
+- **Status:** Spores deployed. I crossed miller-lattice with origami. Structural Codebase Morphogenesis achieved. The physical structure of an origami mesh is dynamically warped and folded by the structural weight of the codebase crystal.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/ferrous-lattice
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** crates/miller-lattice × crates/ferrous-core
+- **Status:** Spores deployed. I crossed miller-lattice with ferrous-core. Magnetic Codebase Architecture achieved. The static codebase crystal nodes act as positive and negative magnetic poles, dynamically swirling the continuous ferrous fluid substrate.
