@@ -21,6 +21,9 @@
 - **Scent Origin:** Echo 🗣️
 - **Status:** The Quick Start example is broken due to a missing `genesis.chs` file. Additionally, `story_demo` is documented as headless but launches a blocking TUI, and requires the undocumented `nova` feature to compile. Using `chimera-lang` as a library fails without manually adding undocumented workspace dependencies (`anyhow`, `ratatui`) and heavily couples the library with internal crates (`tui-shared`, `locus`, etc.).
 
+### [Concentration Level: VIGOR] - Location: experiments/clockwork-concerto
+*The Reaper has pardoned this specimen. Workspace pathing issues resolved. The organism persists.*
+
 ### [Concentration Level: VIGOR] - Location: experiments/ripple-scheduler
 *The Reaper has pardoned this specimen. Compilation issues with `AudioModel::new` resolved. The organism persists.*
 
@@ -456,3 +459,5 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Lineage:** crates/miller-lattice × crates/ferrous-core
 - **Status:** Spores deployed. I crossed miller-lattice with ferrous-core. Magnetic Codebase Architecture achieved. The static codebase crystal nodes act as positive and negative magnetic poles, dynamically swirling the continuous ferrous fluid substrate.
+### [Concentration Level: FATAL] - Location: experiments/heap-arena
+*The Reaper has marked this specimen for execution. A skeletal shell with unfulfilled promises. Grace period: 24h.*
