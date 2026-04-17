@@ -2,8 +2,27 @@ use image::{Rgba, RgbaImage};
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 
-/// Embeds data into the LSBs of the image.
+/// Embeds data into the LSBs (Least Significant Bits) of the image.
 /// The first 32 bits (8 pixels * 4 channels) store the length of the data (u32, little-endian).
+///
+/// # Arguments
+///
+/// * `image` - A mutable reference to the `RgbaImage` to embed into.
+/// * `data` - The raw byte payload to hide in the image.
+///
+/// # Examples
+///
+/// ```
+/// # fn main() -> Result<(), String> {
+/// use image::RgbaImage;
+/// use stego_attack::stego::embed;
+///
+/// let mut img = RgbaImage::new(100, 100);
+/// let secret_data = b"Hello, World!";
+/// embed(&mut img, secret_data)?;
+/// # Ok(())
+/// # }
+/// ```
 pub fn embed(image: &mut RgbaImage, data: &[u8]) -> Result<(), String> {
     let capacity = (image.width() * image.height() * 4) as usize;
     let required_bits = 32 + (data.len() * 8);
@@ -52,7 +71,31 @@ fn embed_bit(image: &mut RgbaImage, bit_idx: usize, bit: u8) {
     pixel[channel_idx] = (pixel[channel_idx] & !1) | bit;
 }
 
-/// Extracts data from the LSBs of the image.
+/// Extracts data from the LSBs (Least Significant Bits) of the image.
+///
+/// Assumes the first 32 bits indicate the length of the payload, and dynamically
+/// reads that many bits following the header to reconstruct the data.
+///
+/// # Arguments
+///
+/// * `image` - The `RgbaImage` to read the hidden data from.
+///
+/// # Examples
+///
+/// ```
+/// # fn main() -> Result<(), String> {
+/// use image::RgbaImage;
+/// use stego_attack::stego::{embed, extract};
+///
+/// let mut img = RgbaImage::new(100, 100);
+/// let secret_data = b"Hello, World!";
+/// embed(&mut img, secret_data)?;
+///
+/// let extracted = extract(&img)?;
+/// assert_eq!(secret_data, extracted.as_slice());
+/// # Ok(())
+/// # }
+/// ```
 pub fn extract(image: &RgbaImage) -> Result<Vec<u8>, String> {
     let mut bit_idx = 0;
 
@@ -100,6 +143,26 @@ pub fn extract(image: &RgbaImage) -> Result<Vec<u8>, String> {
 
 /// Generates a cover image based on the data.
 /// The visual pattern is deterministic based on the data to create a "Visual Cipher".
+///
+/// Ensures the initial LSBs are all set to 0 to prepare the image for data embedding.
+///
+/// # Arguments
+///
+/// * `data` - The target payload, used to seed the noise generation.
+/// * `width` - The width of the returned cover image.
+/// * `height` - The height of the returned cover image.
+///
+/// # Examples
+///
+/// ```
+/// use stego_attack::stego::generate_cover;
+///
+/// let secret = b"super secret code";
+/// let cover = generate_cover(secret, 50, 50);
+///
+/// assert_eq!(cover.width(), 50);
+/// assert_eq!(cover.height(), 50);
+/// ```
 pub fn generate_cover(data: &[u8], width: u32, height: u32) -> RgbaImage {
     let mut img = RgbaImage::new(width, height);
 

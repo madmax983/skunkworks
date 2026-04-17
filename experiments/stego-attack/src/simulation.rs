@@ -4,25 +4,57 @@ use image::RgbaImage;
 use macroquad::prelude::*;
 use rayon::prelude::*;
 
+/// An individual swarming unit generated from a pixel in the image.
 #[derive(Clone, Copy)]
 pub struct Agent {
+    /// Current 2D position in the simulation.
     pub pos: Vec2,
+    /// Current velocity vector.
     pub vel: Vec2,
+    /// RGBA color extracted from the original source pixel.
     pub color: [u8; 4],
+    /// Whether the agent is currently participating in the simulation.
     pub active: bool,
 }
 
+/// The physical simulation managing the agents and the dissolving background.
 pub struct World {
+    /// The collection of all generated swarming agents.
     pub agents: Vec<Agent>,
-    pub background: Vec<u8>, // RGBA8 buffer of the image state
+    /// The raw 1D RGBA8 pixel buffer of the background image.
+    pub background: Vec<u8>,
+    /// The width of the simulation area (matches image width).
     pub width: usize,
+    /// The height of the simulation area (matches image height).
     pub height: usize,
+    /// The destination coordinate the agents steer towards.
     pub target: Vec2,
+    /// The maximum speed agents can move.
     pub speed: f32,
+    /// The rate at which the background alpha decays.
     pub dissolve_rate: f32,
 }
 
 impl World {
+    /// Spawns a new simulation world from the given image and configuration.
+    ///
+    /// It samples non-transparent pixels from the image to generate a manageable
+    /// number of [`Agent`]s based on the image size.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # fn main() -> Result<(), String> {
+    /// use image::RgbaImage;
+    /// use stego_attack::config::AttackConfig;
+    /// use stego_attack::simulation::World;
+    ///
+    /// let img = RgbaImage::new(100, 100);
+    /// let config = AttackConfig::default();
+    /// let world = World::new(&img, &config);
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn new(image: &RgbaImage, config: &AttackConfig) -> Self {
         let width = image.width() as usize;
         let height = image.height() as usize;
@@ -85,6 +117,25 @@ impl World {
         }
     }
 
+    /// Steps the simulation forward by one tick.
+    ///
+    /// Agents compute steering forces towards the target and update their positions.
+    /// The background pixels dissolve probabilistically based on `dissolve_rate`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # fn main() -> Result<(), String> {
+    /// use image::RgbaImage;
+    /// use stego_attack::config::AttackConfig;
+    /// use stego_attack::simulation::World;
+    ///
+    /// let img = RgbaImage::new(10, 10);
+    /// let mut world = World::new(&img, &AttackConfig::default());
+    /// world.update();
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn update(&mut self) {
         let target = self.target;
         let speed = self.speed;
@@ -137,6 +188,30 @@ impl World {
         }
     }
 
+    /// Writes the current state of the simulation into the provided RGBA8 buffer.
+    ///
+    /// Copies the dissolved background and overlays all active agents at their current
+    /// spatial coordinates.
+    ///
+    /// # Arguments
+    ///
+    /// * `buffer` - A mutable slice to a 1D RGBA8 buffer to write the frame into.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # fn main() -> Result<(), String> {
+    /// use image::RgbaImage;
+    /// use stego_attack::config::AttackConfig;
+    /// use stego_attack::simulation::World;
+    ///
+    /// let img = RgbaImage::new(10, 10);
+    /// let mut world = World::new(&img, &AttackConfig::default());
+    /// let mut render_buffer = vec![0; 10 * 10 * 4];
+    /// world.render_to_buffer(&mut render_buffer);
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn render_to_buffer(&self, buffer: &mut [u8]) {
         // First copy background
         // Ideally we would blend, but simple copy is fast
