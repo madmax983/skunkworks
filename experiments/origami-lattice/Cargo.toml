@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-origami = { path = "../../crates/origami" }
 miller-lattice = { path = "../../crates/miller-lattice" }
-macroquad = "0.4.14"
+origami = { path = "../../crates/origami" }
 physics-pbd = { path = "../../crates/physics-pbd" }
+macroquad = "0.4.4"

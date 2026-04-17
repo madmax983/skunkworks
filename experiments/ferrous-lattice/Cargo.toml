@@ -1,0 +1,9 @@
+[package]
+name = "ferrous-lattice"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ferrous-core = { path = "../../crates/ferrous-core" }
+miller-lattice = { path = "../../crates/miller-lattice" }
+macroquad = "0.4.14"
