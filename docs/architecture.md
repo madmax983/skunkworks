@@ -428,7 +428,7 @@ classDiagram
 
 ### Locus Geometry (crates/locus)
 
-Provides standard vector math (2D, 3D, 4D), topological wrapping logic, and spatial behaviors (flocking) (ADR 025, ADR 059).
+Provides standard vector math (2D, 3D, 4D) and topological wrapping logic (ADR 025, ADR 059).
 
 ```mermaid
 classDiagram
@@ -459,14 +459,31 @@ classDiagram
         +normalize(y, x) Option~y, x~
     }
 
+    Topology ..> Vec2 : Complements
+```
+
+### Flocking Logic (crates/flocking)
+
+Encapsulates Craig Reynolds' "Boids" algorithm logic, extracting AI simulation physics from pure geometry primitives (ADR 032).
+
+```mermaid
+classDiagram
+    direction LR
     class Flocking {
-        <<Module>>
+        <<Library: flocking>>
         +compute_force(agents, idx, params) Vec2
-        +FlockingParams params
+    }
+    class FlockingParams {
+        +f64 separation_weight
+        +f64 alignment_weight
+        +f64 cohesion_weight
+    }
+    class LocusVec2 {
+        <<Library: locus>>
     }
 
-    Topology ..> Vec2 : Complements
-    Flocking ..> Vec2 : Uses
+    Flocking *-- FlockingParams : Uses
+    Flocking ..> LocusVec2 : Uses
 ```
 
 ### Market Simulation (crates/market-sim)
