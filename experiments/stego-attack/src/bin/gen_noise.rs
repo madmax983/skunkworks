@@ -1,13 +1,18 @@
+//! A utility to generate noise images to act as covers or payloads for the simulation.
+
 use clap::Parser;
 use image::{Rgba, RgbaImage};
 use std::path::PathBuf;
 
+/// Command line arguments for generating a noise image.
 #[derive(Parser)]
 struct Cli {
+    /// The output path where the noise image will be saved.
     #[arg(long, default_value = "experiments/stego-attack/assets/input.png")]
     output: PathBuf,
 }
 
+/// The main entry point for the noise generator utility.
 fn main() {
     let cli = Cli::parse();
     let width = 500;

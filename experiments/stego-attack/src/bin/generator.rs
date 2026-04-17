@@ -1,8 +1,12 @@
+//! A utility to generate a Stego Attack Cartridge by embedding an `AttackConfig`
+//! directly into a target image using LSB steganography.
+
 use clap::Parser;
 use std::path::PathBuf;
 use stego_attack::config::AttackConfig;
 use stego_attack::stego;
 
+/// Command line arguments for generating a stego cartridge.
 #[derive(Parser)]
 #[command(name = "stego-generator")]
 #[command(about = "Generates a Stego Attack Cartridge", long_about = None)]
@@ -32,6 +36,7 @@ struct Cli {
     dissolve: f32,
 }
 
+/// The main entry point for the stego generator utility.
 fn main() {
     let cli = Cli::parse();
 
