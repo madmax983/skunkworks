@@ -6,12 +6,22 @@ use macroquad::prelude::*;
 use miller_lattice::Crystal;
 use pbd::Constraint;
 
-#[macroquad::main("Origami Lattice: Codebase Morphogenesis")]
-async fn main() {
+fn window_conf() -> macroquad::window::Conf {
+    macroquad::window::Conf {
+        window_title: "Origami Lattice: Codebase Morphogenesis".to_owned(),
+        ..Default::default()
+    }
+}
+
+fn main() {
     if std::env::var("DISPLAY").is_err() && cfg!(target_os = "linux") {
+        println!("Headless environment detected, skipping execution.");
         return;
     }
+    macroquad::Window::from_config(window_conf(), amain());
+}
 
+async fn amain() {
     let rows = 15;
     let cols = 15;
     let mesh_data = mesh_gen::generate_miura_ori(rows, cols);

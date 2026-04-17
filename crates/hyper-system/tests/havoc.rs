@@ -1,5 +1,5 @@
-use hyper_system::physics::*;
 use hyper_system::math::Vec4;
+use hyper_system::physics::*;
 use proptest::prelude::*;
 
 proptest! {
