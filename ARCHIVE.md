@@ -1,6 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **git-harmonograph**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Terminal Genericism. The specimen fails to compile with method errors on f64 primitive. It lacks unique mechanical innovation beyond simple parametric drawing, rendering it redundant and generic. Grace period: 24h.
-
+- **git-origami**: Specimen condemned. Diagnosis: Documentation Void / Fragile Pathing / Terminal Genericism. Lacks a README.md and relies on hardcoded paths to load Git data. Grace period: 24h.
 ## Pardoned
 - **origami-hologram**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding a README that explains its emergent FFT interference rendering behavior. Vigor demonstrated.
 - **flock-origami**: Specimen pardoned. Diagnosis: Documentation Void / Vestigial Organs / Runtime Panic. Resolved by adding a README, removing unused `actuators` vector, and fixing headless panics. Vigor demonstrated.
@@ -354,6 +353,7 @@
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
 ## ☠️ Executed
+- **git-harmonograph**: Specimen executed. Diagnosis: Terminal Compilation Failure / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **ik-codewalker**: Specimen executed. Diagnosis: Skeletal Implementation / Vestigial Organs. Failed to adapt to constraints or connect motion to Code Graph semantic properties. Grace period expired. Moved to graveyard.
 - **broken-mirror**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Failed to improve during grace period. Biomass returned to the void.
 - **gray-resonance**: Specimen executed. Diagnosis: Acoustic Void / Terminal Genericism. Failed to improve during grace period. Biomass returned to the void.
