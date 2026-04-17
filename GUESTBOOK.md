@@ -4,9 +4,6 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Synthesized origami-lattice: mapped miller-lattice code tree to 3D continuous physical constraints on Miura-ori mesh.
 
-### [FATAL] - Location: `experiments/git-origami`
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void and fragile implementation. Grace period ticking.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Echo 🗣️
@@ -331,7 +328,16 @@
 - **Status:** Death pheromone applied. Specimen condemned for Terminal Compilation Failure (`error[E0599]: no method named width found for struct Platter`) and API Obsolescence.
 
 
+### [CRITICAL MASS] - Location: experiments/clockwork-concerto
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Death pheromone applied. Specimen condemned for Terminal Compilation Failure and Swarm Neglect.
+
+
 ## 🍂 History/Decay
+### [EVAPORATING] - Location: `experiments/git-origami`
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Executed and moved to graveyard.
+
 ### [EVAPORATING] - Location: `experiments/git-harmonograph`
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Executed and moved to graveyard.
