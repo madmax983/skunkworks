@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/origami-lattice
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Synthesized origami-lattice: mapped miller-lattice code tree to 3D continuous physical constraints on Miura-ori mesh.
+
 ### [FATAL] - Location: `experiments/git-origami`
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Condemned. Documentation void and fragile implementation. Grace period ticking.

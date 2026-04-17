@@ -38,7 +38,11 @@ fn sexpr_to_value_inner(expr: &SExpr, depth: usize) -> Result<Value> {
             if let Ok(n) = s.parse::<i64>() {
                 Ok(Value::Int(n))
             } else if s.starts_with('"') && s.ends_with('"') {
-                Ok(Value::Str(if s.len() >= 2 { s[1..s.len() - 1].to_string() } else { "".to_string() }))
+                Ok(Value::Str(if s.len() >= 2 {
+                    s[1..s.len() - 1].to_string()
+                } else {
+                    "".to_string()
+                }))
             } else {
                 Ok(Value::Str(s.clone()))
             }
@@ -298,7 +302,11 @@ fn compile_as_data(expr: &SExpr, depth: usize) -> Result<Nucleotide> {
             if let Ok(n) = s.parse::<i64>() {
                 Ok(Nucleotide::Number(n))
             } else if s.starts_with('"') && s.ends_with('"') {
-                Ok(Nucleotide::String(if s.len() >= 2 { s[1..s.len() - 1].to_string() } else { "".to_string() }))
+                Ok(Nucleotide::String(if s.len() >= 2 {
+                    s[1..s.len() - 1].to_string()
+                } else {
+                    "".to_string()
+                }))
             } else {
                 Ok(Nucleotide::Identifier(s.clone()))
             }
@@ -572,9 +580,11 @@ fn compile_expr(expr: &SExpr, depth: usize) -> Result<Vec<Gene>> {
                                     if let Ok(n) = s.parse::<i64>() {
                                         args.push(Nucleotide::Number(n));
                                     } else if s.starts_with('"') {
-                                        args.push(Nucleotide::String(
-                                            if s.len() >= 2 { s[1..s.len() - 1].to_string() } else { "".to_string() },
-                                        ));
+                                        args.push(Nucleotide::String(if s.len() >= 2 {
+                                            s[1..s.len() - 1].to_string()
+                                        } else {
+                                            "".to_string()
+                                        }));
                                     } else {
                                         args.push(Nucleotide::Identifier(s.clone()));
                                     }
