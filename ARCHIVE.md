@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **clockwork-concerto**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Swarm Neglect. Specimen fails to compile out-of-the-box and has a decaying dependency web. Grace period: 24h.
+- **heap-arena**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. Specimen claims a hybrid lineage but delivers only a boilerplate TUI loop with unaddressed TODOs. Grace period: 24h.
 ## Pardoned
+- **clockwork-concerto**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Swarm Neglect. Resolved by fixing workspace exclusion and running cargo check. Vigor demonstrated.
 - **origami-hologram**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding a README that explains its emergent FFT interference rendering behavior. Vigor demonstrated.
 - **flock-origami**: Specimen pardoned. Diagnosis: Documentation Void / Vestigial Organs / Runtime Panic. Resolved by adding a README, removing unused `actuators` vector, and fixing headless panics. Vigor demonstrated.
 - **ripple-scheduler**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by fixing the AudioModel initialization, resolving `error[E0061]`. Vigor demonstrated.
