@@ -48,15 +48,7 @@ impl Platter {
     /// assert_eq!(p.width(), 10);
     /// ```
     pub fn new(width: usize, height: usize) -> Self {
-        let size = width.checked_mul(height);
-        if size.is_none() {
-            return Self {
-                magnetism: vec![],
-                width: 0,
-                height: 0,
-            };
-        }
-        let size = size.unwrap();
+        let size = width.checked_mul(height).expect("Platter size overflow");
         Self {
             magnetism: vec![0.0; size],
             width,
