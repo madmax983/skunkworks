@@ -1,3 +1,17 @@
+//! # Bifurcation Crawler
+//!
+//! An experimental simulation where a multi-segmented physics-based agent (a "crawler")
+//! navigates the 2D visualization of the logistic map bifurcation diagram.
+//!
+//! The crawler's internal neural/VM state (`ChimeraVM`) controls its
+//! muscular actuators to propel it across the diagram. It receives "chaos damage" based
+//! on how far its head strays from the stable attractor points of the logistic map equation
+//! ($x_{n+1} = r \cdot x_n \cdot (1 - x_n)$).
+//!
+//! - **Safe Zones**: Low $r$ values where the diagram has 1, 2, or 4 stable points.
+//! - **Danger Zones**: High $r$ values (approaching 4.0) where the map enters chaotic regimes
+//!   and the safe "attractor" paths become infinitely thin.
+
 use chimera_lang::prelude::*;
 use macroquad::prelude::*;
 use physics_pbd::PbdSystem;
