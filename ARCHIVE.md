@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **heap-arena**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. Specimen claims a hybrid lineage but delivers only a boilerplate TUI loop with unaddressed TODOs. Grace period: 24h.
+- **spectral-decay**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The specimen has explicitly severed itself from the workspace (`exclude = [...]`) and panics in standard headless environments (`neither WAYLAND_DISPLAY ...`). Grace period: 24h.
 ## Pardoned
+- **heap-arena**: Specimen pardoned. Diagnosis: Skeletal Implementation / Terminal Genericism. Specimen entirely rewritten with custom game loop (`tui-shared`) and functional hybrid memory-management platforming semantics. Vigor demonstrated.
 - **clockwork-concerto**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Swarm Neglect. Resolved by fixing workspace exclusion and running cargo check. Vigor demonstrated.
 - **origami-hologram**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding a README that explains its emergent FFT interference rendering behavior. Vigor demonstrated.
 - **flock-origami**: Specimen pardoned. Diagnosis: Documentation Void / Vestigial Organs / Runtime Panic. Resolved by adding a README, removing unused `actuators` vector, and fixing headless panics. Vigor demonstrated.
