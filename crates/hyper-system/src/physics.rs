@@ -640,6 +640,55 @@ mod tests {
     }
 
     #[test]
+    fn test_velocity_update_inv_mass_zero() {
+        let mut system = PbdSystem4D::new();
+        let p1 = system.add_particle(Vec4::zero(), 0.0).unwrap();
+        // Manually set velocities to show they don't get updated
+        system.particles[p1].pos = Vec4::new(1.0, 0.0, 0.0, 0.0);
+        system.particles[p1].prev_pos = Vec4::zero();
+        system.particles[p1].vel = Vec4::zero();
+
+        system.step(0.1, 10, 1.0);
+
+        // Velocity should still be zero because inv_mass is 0.0
+        assert_eq!(system.particles[p1].vel, Vec4::zero());
+    }
+
+    #[test]
+    fn test_solve_distance_w1_zero_w2_positive() {
+        let mut system = PbdSystem4D::new();
+        let p1 = system.add_particle(Vec4::zero(), 0.0).unwrap(); // Infinite mass
+        let p2 = system.add_particle(Vec4::new(2.0, 0.0, 0.0, 0.0), 1.0).unwrap();
+
+        system.add_distance_constraint(p1, p2, 1.0);
+
+        // Let's directly call solve_distance to just test the specific branches
+        // without worrying about the full step() integration.
+        PbdSystem4D::solve_distance(&mut system.particles, p1, p2, 1.0, 1.0);
+
+        // p1 should not move
+        assert_eq!(system.particles[p1].pos, Vec4::zero());
+        // p2 should move closer from 2.0 to 1.0 since stiffness is 1.0
+        assert!((system.particles[p2].pos.x - 1.0).abs() < 1e-4);
+    }
+
+    #[test]
+    fn test_solve_distance_w2_zero_w1_positive() {
+        let mut system = PbdSystem4D::new();
+        let p1 = system.add_particle(Vec4::new(2.0, 0.0, 0.0, 0.0), 1.0).unwrap();
+        let p2 = system.add_particle(Vec4::zero(), 0.0).unwrap(); // Infinite mass
+
+        system.add_distance_constraint(p1, p2, 1.0);
+
+        PbdSystem4D::solve_distance(&mut system.particles, p1, p2, 1.0, 1.0);
+
+        // p2 should not move
+        assert_eq!(system.particles[p2].pos, Vec4::zero());
+        // p1 should move closer from 2.0 to 1.0
+        assert!((system.particles[p1].pos.x - 1.0).abs() < 1e-4);
+    }
+
+    #[test]
     fn test_solve_distance_out_of_bounds() {
         let mut system = PbdSystem4D::new();
         // Invalid index

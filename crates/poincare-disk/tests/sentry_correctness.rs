@@ -23,6 +23,14 @@ fn test_dist_nan_propagation() {
 }
 
 #[test]
+fn test_dist_nan_propagation_modulus() {
+    // Explicitly trigger modulus.is_nan() inside hyperbolic_dist
+    let p = Point::new(f64::NAN, 0.0);
+    let dist = hyperbolic_dist(p, p);
+    assert!(dist.is_nan());
+}
+
+#[test]
 fn test_mobius_add_invalid_z() {
     // Sentry: Ensure mobius_add handles invalid z inputs safely
     // Currently, this might panic or return weird values. After fix, it should return z unchanged.
