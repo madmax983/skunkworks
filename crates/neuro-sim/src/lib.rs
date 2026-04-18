@@ -231,11 +231,9 @@ impl Network {
             spikes,
         } = self;
 
-        // Add external inputs
-        for (i, val) in external_inputs.iter().enumerate() {
-            if i < inputs.len() {
-                inputs[i] += val;
-            }
+        // ⚡ Bolt Optimization: Elide bounds checks using zip
+        for (input, &val) in inputs.iter_mut().zip(external_inputs.iter()) {
+            *input += val;
         }
 
         // 2. Process Synapses (Propagate spikes)
