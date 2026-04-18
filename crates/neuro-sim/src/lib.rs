@@ -219,11 +219,10 @@ impl Network {
     /// net.step(&[]);
     /// ```
     pub fn step(&mut self, external_inputs: &[f32]) {
-        // 1. Collect inputs for this step
         // By pre-allocating we remove a vector allocation per frame.
         self.inputs.fill(0.0);
 
-        // Destructure `self` to allow simultaneous mutable borrows
+        // Destructure `self` to allow simultaneous mutable borrows across helper functions
         let Network {
             inputs,
             synapses,
@@ -231,12 +230,23 @@ impl Network {
             spikes,
         } = self;
 
+        Self::apply_inputs(inputs, external_inputs);
+        Self::propagate_spikes(synapses, spikes, inputs);
+
+        // We assume 1.0ms time step to match previous local implementation behavior
+        Self::update_neurons(neurons, spikes, inputs, 1.0);
+    }
+
+    /// 1. Collect inputs for this step
+    fn apply_inputs(inputs: &mut [f32], external_inputs: &[f32]) {
         // ⚡ Bolt Optimization: Elide bounds checks using zip
         for (input, &val) in inputs.iter_mut().zip(external_inputs.iter()) {
             *input += val;
         }
+    }
 
-        // 2. Process Synapses (Propagate spikes)
+    /// 2. Process Synapses (Propagate spikes)
+    fn propagate_spikes(synapses: &mut [Synapse], spikes: &[bool], inputs: &mut [f32]) {
         for syn in synapses.iter_mut() {
             syn.active = false;
             let mut weight_to_add = 0.0;
@@ -274,11 +284,10 @@ impl Network {
                 }
             }
         }
+    }
 
-        // 3. Update Neurons
-        // We assume 1.0ms time step to match previous local implementation behavior
-        let dt = 1.0;
-
+    /// 3. Update Neurons
+    fn update_neurons(neurons: &mut [Izhikevich], spikes: &mut [bool], inputs: &[f32], dt: f32) {
         for (i, neuron) in neurons.iter_mut().enumerate() {
             let (_, spiked) = neuron.update(dt, inputs[i]);
             spikes[i] = spiked;
