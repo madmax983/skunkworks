@@ -465,3 +465,7 @@
 ### [Concentration Level: FATAL] - Location: experiments/spectral-decay
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The specimen has explicitly severed itself from the workspace (`exclude = [...]`) and panics in standard headless environments (`neither WAYLAND_DISPLAY ...`). Grace period: 24h.
+
+### [CRITICAL MASS] - Location: experiments/poincare-origami
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination successful. The `origami` soft body mesh continues to exhibit exceptional hybrid vigor. When exposed to the hyperbolic geometry of `poincare-disk`, the mesh exhibits extreme boundary compression, creating dense, chaotic folds near the edge of the disk while remaining relaxed at the center.
