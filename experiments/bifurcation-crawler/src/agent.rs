@@ -2,16 +2,52 @@ use chimera_lang::prelude::*;
 use macroquad::prelude::*;
 use physics_pbd::PbdSystem;
 
+/// Represents the physical and mental state of a simulated crawler agent.
+///
+/// The crawler consists of physical particle segments connected by muscular actuators.
+/// Its brain is driven by a `ChimeraVM` that processes environmental chaos and dictates
+/// muscular contraction logic.
 pub struct Crawler {
+    /// The virtual machine executing the crawler's genetic logic.
     pub vm: ChimeraVM,
+    /// Indices referencing the agent's physical particles in the `PbdSystem`.
     pub particle_indices: Vec<usize>,
+    /// Indices referencing the agent's muscular actuators (distance constraints) in the `PbdSystem`.
     pub actuator_indices: Vec<usize>,
+    /// The rendering color of the crawler, dynamically indicating its health/energy.
     pub color: Color,
+    /// The crawler's internal energy level (0.0 to 100.0). Depletes in chaotic zones.
     pub energy: f32,
+    /// The total simulation time the crawler has been alive.
     pub age: f32,
 }
 
 impl Crawler {
+    /// Constructs a new `Crawler` with a multi-segmented physics body.
+    ///
+    /// The body consists of 5 particles connected horizontally by 4 distance constraints
+    /// acting as muscular actuators.
+    ///
+    /// # Arguments
+    ///
+    /// * `pos` - The initial 2D coordinate placement of the crawler's head.
+    /// * `system` - A mutable reference to the active Position Based Dynamics physics system.
+    /// * `dna` - The genetic code injected into the crawler's internal `ChimeraVM`.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use bifurcation_crawler::agent::Crawler;
+    /// # use physics_pbd::PbdSystem;
+    /// # use macroquad::prelude::*;
+    /// # use chimera_lang::prelude::*;
+    /// let mut physics = PbdSystem::new();
+    /// let empty_dna = Dna::default();
+    /// let crawler = Crawler::new(vec2(1.0, 5.0), &mut physics, empty_dna);
+    ///
+    /// assert_eq!(crawler.energy, 100.0);
+    /// assert_eq!(crawler.particle_indices.len(), 5);
+    /// ```
     pub fn new(pos: Vec2, system: &mut PbdSystem, dna: Dna) -> Self {
         let mut particle_indices = Vec::new();
         let mut actuator_indices = Vec::new();
@@ -48,6 +84,32 @@ impl Crawler {
         }
     }
 
+    /// Updates the crawler's internal virtual machine and applies its computational
+    /// outputs to physically actuate its muscular constraints.
+    ///
+    /// The agent reads the `chaos_factor`, its current `energy`, and body `strain`
+    /// onto its VM stack. After stepping the VM, popped values are mapped to
+    /// constraint scaling factors, allowing the agent to "flex" its body to move.
+    ///
+    /// # Arguments
+    ///
+    /// * `system` - A mutable reference to the Position Based Dynamics physics system.
+    /// * `chaos_factor` - The proximity distance to the nearest logistic map attractor.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use bifurcation_crawler::agent::Crawler;
+    /// # use physics_pbd::PbdSystem;
+    /// # use macroquad::prelude::*;
+    /// # use chimera_lang::prelude::*;
+    /// let mut physics = PbdSystem::new();
+    /// let mut crawler = Crawler::new(vec2(1.0, 5.0), &mut physics, Dna::default());
+    ///
+    /// // Simulate an update step with a 0.0 chaos factor (safe zone)
+    /// crawler.update(&mut physics, 0.0);
+    /// assert!(crawler.age > 0.0);
+    /// ```
     pub fn update(&mut self, system: &mut PbdSystem, chaos_factor: f32) {
         self.age += 0.016;
 
