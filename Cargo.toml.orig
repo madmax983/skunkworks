@@ -28,6 +28,7 @@ exclude = [
 
     "experiments/ik-codewalker",
 
+    "experiments/syntax-spider",
     "experiments/system-turbulence",
     "experiments/turbulent-rhythms",
     "experiments/verge-computer",

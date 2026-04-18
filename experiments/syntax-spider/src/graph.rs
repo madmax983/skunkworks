@@ -3,11 +3,13 @@ use std::path::PathBuf;
 
 #[derive(Debug, Clone)]
 pub struct Node {
+    #[allow(dead_code)]
     pub path: PathBuf,
     pub is_dir: bool,
     pub position: Vec2,
     pub radius: f32,
     pub depth: usize,
+    #[allow(dead_code)]
     pub parent_idx: Option<usize>,
 }
 

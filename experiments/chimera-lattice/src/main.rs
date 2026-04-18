@@ -203,6 +203,7 @@ struct LatticeColony {
     agents: Vec<ChimeraAgent>,
     adj: Vec<Vec<usize>>,
     lattice_type: LatticeType,
+    #[allow(dead_code)]
     size: usize,
 }
 
@@ -391,6 +392,7 @@ impl App {
             Agent {
                 x: f64,
                 y: f64,
+                #[allow(dead_code)]
                 z: f64,
                 state: AgentState,
             },
@@ -399,6 +401,7 @@ impl App {
                 y1: f64,
                 x2: f64,
                 y2: f64,
+                #[allow(dead_code)]
                 z: f64,
             },
         }

@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **syntax-spider**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The specimen has explicitly severed itself from the workspace (`exclude = [...]`). Grace period: 24h.
+- **chimera-canopy**: Specimen condemned. Diagnosis: Skeletal Implementation / Vestigial Organs. The specimen claims to use a `ChimeraVM` for agent logic but uses a hardcoded random number generator to trigger jumping, making the genetic simulation vestigial. Grace period: 24h.
 ## Pardoned
 - **heap-arena**: Specimen pardoned. Diagnosis: Skeletal Implementation / Terminal Genericism. Specimen entirely rewritten with custom game loop (`tui-shared`) and functional hybrid memory-management platforming semantics. Vigor demonstrated.
 - **clockwork-concerto**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Swarm Neglect. Resolved by fixing workspace exclusion and running cargo check. Vigor demonstrated.
