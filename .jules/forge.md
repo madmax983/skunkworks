@@ -37,3 +37,7 @@
 **[TUI State Dead Code and Nested Ifs]**
 **Learning:** Found several unused fields in `tui/state.rs` (`terminal_history`, `terminal_history_idx`) and an unused function in `tui/app/handlers/editing/enter.rs` (`handle_genome_enter`). Also identified nested `if` statements that could be collapsed using the `&&` operator in `tui/app/mod.rs` and a single-arm `match` statement converted to `if` in `tui/app/handlers/normal/actions.rs`.
 **Action:** When working on TUI components, systematically review for dead code and overly complex control flow, especially after removing monolithic patterns (like ADR 084). Use `clippy` to identify these exact instances.
+
+## [God Function and Simultaneous Borrow Extraction]
+**Learning:** `Network::step` in `crates/neuro-sim/src/lib.rs` was a "God Function" containing logic for apply inputs, propagating spikes, and updating neurons. When extracting helpers, simultaneous mutable borrows of multiple struct fields can cause borrow checker issues. By destructing `self` inside the parent function (`let Network { inputs, synapses, neurons, spikes } = self;`) and passing only the necessary slices directly to the static helper functions (`Self::apply_inputs`, `Self::propagate_spikes`, etc.), the borrow checker allows simultaneous mutable operations without conflict.
+**Action:** Use struct destructuring within the parent God Function and pass individual slices to extracted static helpers to satisfy the borrow checker when performing complex logic refactoring.
