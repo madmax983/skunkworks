@@ -15,9 +15,7 @@ pub enum MusicianState {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum RhythmEvent {
-    StateChange(usize, MusicianState),
-}
+pub struct RhythmEvent(pub usize, pub MusicianState);
 
 pub struct Musician {
     pub id: usize,
@@ -37,18 +35,17 @@ impl Musician {
         thread::spawn(move || {
             while running.load(Ordering::Relaxed) {
                 // RESTING
-                let _ = rhythm_tx.send(RhythmEvent::StateChange(self.id, MusicianState::Resting));
+                let _ = rhythm_tx.send(RhythmEvent(self.id, MusicianState::Resting));
                 thread::sleep(Duration::from_millis(self.loop_duration_ms));
 
                 // WAITING
-                let _ = rhythm_tx.send(RhythmEvent::StateChange(self.id, MusicianState::Waiting));
+                let _ = rhythm_tx.send(RhythmEvent(self.id, MusicianState::Waiting));
 
                 {
                     let _guard = beat_lock.lock().unwrap();
 
                     // PLAYING
-                    let _ =
-                        rhythm_tx.send(RhythmEvent::StateChange(self.id, MusicianState::Playing));
+                    let _ = rhythm_tx.send(RhythmEvent(self.id, MusicianState::Playing));
                     let _ = audio_tx.send(AudioEvent::NoteOn {
                         id: self.id,
                         freq: self.pitch,
@@ -130,19 +127,19 @@ mod tests {
 
         // Expect Resting
         match rhythm_rx.recv_timeout(Duration::from_millis(200)) {
-            Ok(RhythmEvent::StateChange(1, MusicianState::Resting)) => {}
+            Ok(RhythmEvent(1, MusicianState::Resting)) => {}
             x => panic!("Expected Resting, got {:?}", x),
         }
 
         // Expect Waiting (after 10ms)
         match rhythm_rx.recv_timeout(Duration::from_millis(200)) {
-            Ok(RhythmEvent::StateChange(1, MusicianState::Waiting)) => {}
+            Ok(RhythmEvent(1, MusicianState::Waiting)) => {}
             x => panic!("Expected Waiting, got {:?}", x),
         }
 
         // Expect Playing (acquired lock immediately)
         match rhythm_rx.recv_timeout(Duration::from_millis(200)) {
-            Ok(RhythmEvent::StateChange(1, MusicianState::Playing)) => {}
+            Ok(RhythmEvent(1, MusicianState::Playing)) => {}
             x => panic!("Expected Playing, got {:?}", x),
         }
 

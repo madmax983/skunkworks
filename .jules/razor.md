@@ -62,3 +62,13 @@ Reduced roughly 50-60 lines of unnecessary boilerplate across 16+ `experiments/c
 - Simplified `Dna` to directly contain `pub strands: Vec<Strand>`.
 - Updated parser, VM, and tests to access `dna.strands` directly.
 **Saved:** ~20 lines of boilerplate parser logic / Reduced cognitive load by eliminating an unnecessary structural layer.
+
+## [Reduction]
+**Bloat:** `RhythmEvent` enum with 1 variant in `turbulent-rhythms`
+- `experiments/turbulent-rhythms/src/rhythm.rs` contained `pub enum RhythmEvent { StateChange(usize, MusicianState) }` which only had a single variant.
+
+**Cut:** Converted enum to struct.
+- Replaced the enum with a tuple struct `pub struct RhythmEvent(pub usize, pub MusicianState)`.
+- Updated senders and receivers to construct/match the struct directly rather than wrapping it in `RhythmEvent::StateChange`.
+
+**Saved:** ~3 lines of boilerplate code / Reduced cognitive load by removing unnecessary state wrappers for events that always carry the same data structure.
