@@ -17,7 +17,9 @@ pub struct Transaction {
 impl Transaction {
     pub fn hash(&self) -> BlockHash {
         let mut hasher = Sha256::new();
-        hasher.update(serde_json::to_string(self).unwrap());
+        if let Ok(json) = serde_json::to_string(self) {
+            hasher.update(json);
+        }
         hasher.finalize().into()
     }
 
@@ -47,7 +49,7 @@ impl Block {
     ) -> Self {
         let timestamp = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
-            .unwrap()
+            .unwrap_or(std::time::Duration::from_secs(0))
             .as_secs();
 
         let mut block = Block {
@@ -82,7 +84,7 @@ impl Block {
 
     pub fn hash_as_channel(&self) -> i64 {
         // Convert hash to channel ID for hormones
-        i64::from_le_bytes(self.hash[0..8].try_into().unwrap())
+        i64::from_le_bytes(self.hash[0..8].try_into().unwrap_or([0; 8]))
     }
 }
 

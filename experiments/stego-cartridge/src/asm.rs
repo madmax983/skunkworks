@@ -139,7 +139,7 @@ mod tests {
         let jnz_opcode_idx = 12;
         assert_eq!(bc[jnz_opcode_idx], OpCode::Jnz as u8);
         let target_bytes = &bc[jnz_opcode_idx + 1..jnz_opcode_idx + 5];
-        let target = u32::from_le_bytes(target_bytes.try_into().unwrap());
+        let target = u32::from_le_bytes(target_bytes.try_into().unwrap_or([0; 4]));
         assert_eq!(target, 5);
     }
 }

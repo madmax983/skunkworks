@@ -39,7 +39,7 @@ pub fn embed(mut cover: DynamicImage, data: &[u8]) -> Result<DynamicImage> {
                     break;
                 }
 
-                let byte_val = current_byte.unwrap();
+                let byte_val = current_byte.unwrap_or(0);
                 // Extract 2 bits starting at bit_cursor
                 let bits = (byte_val >> bit_cursor) & 0x03;
 

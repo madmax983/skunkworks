@@ -658,7 +658,9 @@ mod tests {
     fn test_solve_distance_w1_zero_w2_positive() {
         let mut system = PbdSystem4D::new();
         let p1 = system.add_particle(Vec4::zero(), 0.0).unwrap(); // Infinite mass
-        let p2 = system.add_particle(Vec4::new(2.0, 0.0, 0.0, 0.0), 1.0).unwrap();
+        let p2 = system
+            .add_particle(Vec4::new(2.0, 0.0, 0.0, 0.0), 1.0)
+            .unwrap();
 
         system.add_distance_constraint(p1, p2, 1.0);
 
@@ -675,7 +677,9 @@ mod tests {
     #[test]
     fn test_solve_distance_w2_zero_w1_positive() {
         let mut system = PbdSystem4D::new();
-        let p1 = system.add_particle(Vec4::new(2.0, 0.0, 0.0, 0.0), 1.0).unwrap();
+        let p1 = system
+            .add_particle(Vec4::new(2.0, 0.0, 0.0, 0.0), 1.0)
+            .unwrap();
         let p2 = system.add_particle(Vec4::zero(), 0.0).unwrap(); // Infinite mass
 
         system.add_distance_constraint(p1, p2, 1.0);
