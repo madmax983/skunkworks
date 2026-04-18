@@ -201,6 +201,7 @@ fn prepare_fluid_pipeline(
     });
 }
 
+#[allow(clippy::too_many_arguments)]
 fn prepare_bind_group(
     mut commands: Commands,
     pipeline: Res<FluidPipeline>,
