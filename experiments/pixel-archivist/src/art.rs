@@ -121,7 +121,7 @@ pub fn generate_cover(
     let mut hasher = Sha256::new();
     hasher.update(data);
     let result = hasher.finalize();
-    let seed = u64::from_le_bytes(result[0..8].try_into().unwrap());
+    let seed = u64::from_le_bytes(result[0..8].try_into().unwrap_or([0; 8]));
 
     let mut rng = StdRng::seed_from_u64(seed);
 

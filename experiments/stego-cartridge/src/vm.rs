@@ -116,7 +116,7 @@ impl VM {
                     return;
                 }
                 let bytes = &self.memory[self.pc..self.pc + 4];
-                let val = i32::from_le_bytes(bytes.try_into().unwrap());
+                let val = i32::from_le_bytes(bytes.try_into().unwrap_or([0; 4]));
                 self.stack.push(val);
                 self.pc += 4;
             }
@@ -162,7 +162,7 @@ impl VM {
                     return;
                 }
                 let bytes = &self.memory[self.pc..self.pc + 4];
-                let addr = u32::from_le_bytes(bytes.try_into().unwrap()) as usize;
+                let addr = u32::from_le_bytes(bytes.try_into().unwrap_or([0; 4])) as usize;
                 self.pc = addr;
             }
             Some(OpCode::Jz) => {
@@ -171,7 +171,7 @@ impl VM {
                     return;
                 }
                 let bytes = &self.memory[self.pc..self.pc + 4];
-                let addr = u32::from_le_bytes(bytes.try_into().unwrap()) as usize;
+                let addr = u32::from_le_bytes(bytes.try_into().unwrap_or([0; 4])) as usize;
                 let val = self.stack.pop().unwrap_or(0);
                 self.pc += 4; // Advance past addr
                 if val == 0 {
@@ -184,7 +184,7 @@ impl VM {
                     return;
                 }
                 let bytes = &self.memory[self.pc..self.pc + 4];
-                let addr = u32::from_le_bytes(bytes.try_into().unwrap()) as usize;
+                let addr = u32::from_le_bytes(bytes.try_into().unwrap_or([0; 4])) as usize;
                 let val = self.stack.pop().unwrap_or(0);
                 self.pc += 4; // Advance past addr
                 if val != 0 {
