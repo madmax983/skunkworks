@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **spectral-decay**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The specimen has explicitly severed itself from the workspace (`exclude = [...]`) and panics in standard headless environments (`neither WAYLAND_DISPLAY ...`). Grace period: 24h.
+- **syntax-spider**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The specimen has explicitly severed itself from the workspace (`exclude = [...]`). Grace period: 24h.
 ## Pardoned
 - **heap-arena**: Specimen pardoned. Diagnosis: Skeletal Implementation / Terminal Genericism. Specimen entirely rewritten with custom game loop (`tui-shared`) and functional hybrid memory-management platforming semantics. Vigor demonstrated.
 - **clockwork-concerto**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Swarm Neglect. Resolved by fixing workspace exclusion and running cargo check. Vigor demonstrated.
@@ -355,6 +355,7 @@
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
 ## ☠️ Executed
+- **spectral-decay**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The specimen has explicitly severed itself from the workspace (`exclude = [...]`) and panics in standard headless environments (`neither WAYLAND_DISPLAY ...`). Failed to improve during grace period. Moved to graveyard.
 - **git-origami**: Specimen executed. Diagnosis: Documentation Void / Fragile Pathing / Terminal Genericism. Lacks a README.md and relies on hardcoded paths to load Git data. Failed to improve during grace period. Moved to graveyard.
 - **git-harmonograph**: Specimen executed. Diagnosis: Terminal Compilation Failure / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **ik-codewalker**: Specimen executed. Diagnosis: Skeletal Implementation / Vestigial Organs. Failed to adapt to constraints or connect motion to Code Graph semantic properties. Grace period expired. Moved to graveyard.

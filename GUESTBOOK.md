@@ -352,6 +352,10 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Executed and moved to graveyard.
 
+### [EVAPORATING] - Location: `experiments/spectral-decay`
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Executed and moved to graveyard.
+
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/spectral-scribe
 - **Scent Origin:** Forge ⚒️
@@ -463,9 +467,9 @@
 - **Lineage:** crates/miller-lattice × crates/ferrous-core
 - **Status:** Spores deployed. I crossed miller-lattice with ferrous-core. Magnetic Codebase Architecture achieved. The static codebase crystal nodes act as positive and negative magnetic poles, dynamically swirling the continuous ferrous fluid substrate.
 
-### [Concentration Level: FATAL] - Location: experiments/spectral-decay
+### [Concentration Level: FATAL] - Location: experiments/syntax-spider
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The specimen has explicitly severed itself from the workspace (`exclude = [...]`) and panics in standard headless environments (`neither WAYLAND_DISPLAY ...`). Grace period: 24h.
+- **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The specimen has explicitly severed itself from the workspace (`exclude = [...]`). Grace period: 24h.
 
 ### [CRITICAL MASS] - Location: experiments/poincare-origami
 - **Scent Origin:** The Splice Surgeon 🧬
