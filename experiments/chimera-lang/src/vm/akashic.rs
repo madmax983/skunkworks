@@ -1,157 +1,125 @@
-//! The Akashic Records system.
-//!
-//! The `AkashicRecords` act as the persistent, global memory of the `ChimeraVM`.
-//! While normal VM memory (like the logic grid or genome) is ephemeral and resets
-//! between simulation lifecycles, the Akashic Records are saved to disk (`.chimera_akashic.json`)
-//! and endure across executions.
-//!
-//! It provides three core services:
-//! - **Storage (`storage`)**: A persistent key-value store for saving strings, integers, and states.
-//! - **Memories (`memories`)**: Full VM state snapshots (`Spore`) that can be saved and reloaded.
-//! - **Karma (`karma`)**: A meta-currency earned by positive grid actions, used to trigger `Miracle`s.
-//!
-//! If the system detects tampering or invalid JSON, it protects the simulation by marking
-//! the records as `corrupted`, freezing further disk writes until manually intervened.
+#![cfg(feature = "nova")]
 
-#[cfg(feature = "nova")]
-use super::nova_chronos::Spore;
-#[cfg(feature = "nova")]
-use super::{ChimeraVM, Value, MAX_AKASHIC_SIZE};
-#[cfg(feature = "nova")]
 use crate::ast::Nucleotide;
-#[cfg(feature = "nova")]
 use crate::opcode::OpCode;
-#[cfg(feature = "nova")]
-use comfy_table::modifiers::UTF8_ROUND_CORNERS;
-#[cfg(feature = "nova")]
-use comfy_table::presets::UTF8_FULL;
-#[cfg(feature = "nova")]
-use comfy_table::Color;
-#[cfg(feature = "nova")]
-use comfy_table::ContentArrangement;
-#[cfg(feature = "nova")]
-use comfy_table::Table;
-#[cfg(feature = "nova")]
-use rand::Rng;
-#[cfg(feature = "nova")]
+use crate::value::Value;
+use crate::vm::ChimeraVM;
 use serde::{Deserialize, Serialize};
-#[cfg(feature = "nova")]
 use std::collections::HashMap;
-#[cfg(feature = "nova")]
 use std::fs::OpenOptions;
-#[cfg(feature = "nova")]
 use std::io::Write;
 
-#[cfg(feature = "nova")]
-const AKASHIC_FILE: &str = ".chimera_akashic.json";
+pub const AKASHIC_FILE: &str = ".chimera_akashic.json";
+pub const MAX_AKASHIC_SIZE: u64 = 1024 * 1024; // 1MB limit for safety
 
-#[cfg(feature = "nova")]
-fn is_test_env() -> bool {
-    cfg!(test)
-        || std::env::var("CHIMERA_TEST").is_ok()
-        || std::env::current_exe()
-            .map(|p| p.to_string_lossy().contains("deps/chimera_lang-"))
-            .unwrap_or(false)
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct AkashicSpore {
+    pub dna_hash: u64,
+    pub generation: u64,
+    pub energy: i64,
+    pub ip: (usize, usize),
+    #[serde(skip)]
+    pub stack_snapshot: Vec<Value>, // Too complex to safely serialize/deserialize dynamically without bounds checking
+    pub active_strands: usize,
+    pub telomeres: Vec<i64>,
+    pub ether: HashMap<i64, std::collections::VecDeque<Value>>,
 }
 
-#[cfg(feature = "nova")]
-#[derive(Debug, Clone, Serialize, Deserialize)]
-/// Represents the persistent state of the virtual machine.
+/// The Akashic Records represent a persistent storage mechanism for the ChimeraVM.
 ///
-/// This struct holds the data that survives across multiple executions of the `ChimeraVM`.
+/// It acts as a key-value store (`storage`) that persists across VM runs, allowing agents
+/// to leave messages, save states, or accumulate resources (like `karma`).
 ///
-/// # Examples
-/// ```rust
-/// # fn main() {
-/// # use chimera_lang::vm::akashic::AkashicRecords;
-/// # use chimera_lang::vm::Value;
-/// let mut records = AkashicRecords::new();
-/// records.storage.insert("Knowledge".to_string(), Value::Int(42));
-/// records.karma += 100;
-/// // records.save(); // Save to disk
-/// # }
-/// ```
+/// It also handles memory snapshots (`memories`) via `AkashicSave` and `AkashicLoad`,
+/// though complex dynamic data (like full stack states) are omitted from serialization
+/// to prevent DoS via deep recursion during parsing.
+///
+/// # Security
+/// The records are protected by a strict size limit (`MAX_AKASHIC_SIZE`) to prevent
+/// memory exhaustion attacks if an agent writes excessively large values. File
+/// access uses atomic renames for safety.
+#[derive(Serialize, Deserialize, Clone)]
 pub struct AkashicRecords {
-    /// Arbitrary key-value persistent storage.
     pub storage: HashMap<String, Value>,
-    /// Meta-currency used to invoke `Miracle` operations.
     pub karma: i64,
-    /// Snapshots of VM states saved using `OpCode::AkashicSave`.
-    #[serde(default)]
-    pub memories: HashMap<String, Spore>,
-    /// Flags if the JSON file on disk could not be parsed safely.
+    pub memories: HashMap<String, AkashicSpore>,
     #[serde(skip)]
     pub corrupted: bool,
-    /// The physical path where this record saves its JSON output.
     #[serde(skip)]
     pub file_path: String,
 }
 
-#[cfg(feature = "nova")]
+impl std::fmt::Debug for AkashicRecords {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "AkashicRecords {{ entries: {}, karma: {}, memories: {} }}",
+            self.storage.len(),
+            self.karma,
+            self.memories.len()
+        )
+    }
+}
+
 impl std::fmt::Display for AkashicRecords {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let mut table = Table::new();
+        let mut table = comfy_table::Table::new();
         table
-            .load_preset(UTF8_FULL)
-            .apply_modifier(UTF8_ROUND_CORNERS)
-            .set_content_arrangement(ContentArrangement::Dynamic)
+            .load_preset(comfy_table::presets::UTF8_FULL)
+            .apply_modifier(comfy_table::modifiers::UTF8_ROUND_CORNERS)
+            .set_content_arrangement(comfy_table::ContentArrangement::Dynamic)
             .set_header(vec!["Attribute", "Value"]);
 
-        // Karma
-        let karma_color = if self.karma >= 0 {
-            Color::Green
-        } else {
-            Color::Red
-        };
         table.add_row(vec![
-            comfy_table::Cell::new("Karma"),
-            comfy_table::Cell::new(self.karma).fg(karma_color),
+            comfy_table::Cell::new("Karma").fg(comfy_table::Color::Yellow),
+            comfy_table::Cell::new(self.karma.to_string()).fg(comfy_table::Color::Green),
         ]);
 
-        // Integrity
-        let integrity_str = if self.corrupted {
+        table.add_row(vec![
+            comfy_table::Cell::new("Memories").fg(comfy_table::Color::Cyan),
+            comfy_table::Cell::new(self.memories.len().to_string()),
+        ]);
+
+        let integrity = if self.corrupted {
             "CORRUPTED"
         } else {
             "STABLE"
         };
         let integrity_color = if self.corrupted {
-            Color::Red
+            comfy_table::Color::Red
         } else {
-            Color::Green
+            comfy_table::Color::Green
         };
+
         table.add_row(vec![
-            comfy_table::Cell::new("Integrity"),
-            comfy_table::Cell::new(integrity_str).fg(integrity_color),
+            comfy_table::Cell::new("Integrity").fg(comfy_table::Color::Magenta),
+            comfy_table::Cell::new(integrity).fg(integrity_color),
         ]);
 
-        // Storage Count
-        table.add_row(vec!["Records", &self.storage.len().to_string()]);
+        write!(f, "{}", table)?;
 
-        // Memories Count
-        table.add_row(vec!["Memories", &self.memories.len().to_string()]);
-
-        // Storage Detail (if any)
         if !self.storage.is_empty() {
-            let mut sub_table = Table::new();
-            sub_table.load_preset(UTF8_FULL);
-            sub_table.set_header(vec!["Key", "Value"]);
-            for (k, v) in self.storage.iter().take(5) {
-                sub_table.add_row(vec![k, &format!("{:?}", v)]);
+            write!(f, "\n\n  [ Storage ]\n")?;
+            let mut storage_table = comfy_table::Table::new();
+            storage_table
+                .load_preset(comfy_table::presets::UTF8_FULL)
+                .apply_modifier(comfy_table::modifiers::UTF8_ROUND_CORNERS)
+                .set_content_arrangement(comfy_table::ContentArrangement::Dynamic)
+                .set_header(vec!["Key", "Value"]);
+
+            for (k, v) in &self.storage {
+                storage_table.add_row(vec![
+                    comfy_table::Cell::new(k).fg(comfy_table::Color::Cyan),
+                    comfy_table::Cell::new(v.to_string()),
+                ]);
             }
-            if self.storage.len() > 5 {
-                sub_table.add_row(vec!["...", &format!("{} more", self.storage.len() - 5)]);
-            }
-            table.add_row(vec![
-                comfy_table::Cell::new("Preview"),
-                comfy_table::Cell::new(sub_table),
-            ]);
+            write!(f, "{}", storage_table)?;
         }
 
-        write!(f, "{}", table)
+        Ok(())
     }
 }
 
-#[cfg(feature = "nova")]
 impl Default for AkashicRecords {
     fn default() -> Self {
         Self::new()
@@ -159,44 +127,22 @@ impl Default for AkashicRecords {
 }
 
 impl AkashicRecords {
-    /// Attempts to load the existing records from disk, or creates a new empty record
-    /// if the file does not exist.
-    ///
-    /// # Examples
-    /// ```rust
-    /// # fn main() {
-    /// # use chimera_lang::vm::akashic::AkashicRecords;
-    /// let records = AkashicRecords::new();
-    /// println!("Current Karma: {}", records.karma);
-    /// # }
-    /// ```
+    /// Creates a new `AkashicRecords` instance by attempting to load from the default file (`.chimera_akashic.json`).
+    /// If the file does not exist or cannot be parsed, it initializes a fresh, empty record.
+    /// If an alternative path is set via the environment variable `CHIMERA_AKASHIC_PATH`, it will use that instead.
     pub fn new() -> Self {
-        Self::load().unwrap_or_else(|_| Self {
-            storage: HashMap::new(),
-            karma: 0,
-            memories: HashMap::new(),
-            corrupted: true,
-            file_path: if is_test_env() {
-                format!(
-                    ".chimera_akashic_test_{}.json",
-                    rand::thread_rng().gen::<u64>()
-                )
-            } else {
-                AKASHIC_FILE.to_string()
-            },
-        })
-    }
-
-    pub fn load() -> Result<Self, String> {
-        let file_path = if is_test_env() {
-            format!(
-                ".chimera_akashic_test_{}.json",
-                rand::thread_rng().gen::<u64>()
-            )
+        let file_path = if let Ok(path) = std::env::var("CHIMERA_AKASHIC_PATH") {
+            path
         } else {
             AKASHIC_FILE.to_string()
         };
-        Self::load_from(&file_path)
+        Self::load_from(&file_path).unwrap_or_else(|_| Self {
+            storage: HashMap::new(),
+            karma: 0,
+            memories: HashMap::new(),
+            corrupted: false,
+            file_path: file_path.to_string(),
+        })
     }
 
     /// Directly loads an Akashic Record from a specified JSON file path.
@@ -236,20 +182,32 @@ impl AkashicRecords {
                     &mut content,
                 ) {
                     Ok(bytes) if bytes as u64 <= limit => {
-                        let mut records: Self = serde_json::from_str(&content)
-                            .map_err(|e| format!("Parse Error: {}", e))?;
+                        let mut records: Self =
+                            serde_json::from_str(&content).unwrap_or_else(|_| Self {
+                                storage: HashMap::new(),
+                                karma: 0,
+                                memories: HashMap::new(),
+                                corrupted: true,
+                                file_path: file_path.to_string(),
+                            });
                         records.file_path = file_path.to_string();
                         Ok(records)
                     }
                     Ok(_) => Err(format!("Akashic Record too large (> {} bytes)", limit)),
-                    Err(_) => Err("Read Error".to_string()),
+                    Err(_) => Ok(Self {
+                        storage: HashMap::new(),
+                        karma: 0,
+                        memories: HashMap::new(),
+                        corrupted: true,
+                        file_path: file_path.to_string(),
+                    }),
                 }
             }
             Err(_) => Ok(Self {
                 storage: HashMap::new(),
                 karma: 0,
                 memories: HashMap::new(),
-                corrupted: false,
+                corrupted: true,
                 file_path: file_path.to_string(),
             }),
         }
@@ -331,7 +289,16 @@ pub fn exec_akashic_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
         OpCode::AkashicSave => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Str(key) = val {
-                    let spore = super::nova_chronos::create_spore(vm);
+                    let spore = crate::vm::akashic::AkashicSpore {
+                        dna_hash: 0,
+                        generation: 0,
+                        energy: vm.energy,
+                        ip: vm.ip,
+                        stack_snapshot: vm.stack.clone(),
+                        active_strands: vm.dna.helix.strands.len(),
+                        telomeres: vm.telomeres.clone(),
+                        ether: vm.ether.clone(),
+                    };
                     vm.akashic.memories.insert(key.clone(), spore);
                     if let Err(e) = vm.akashic.save() {
                         vm.output.push(format!("AKASHIC ERROR: {}", e));
@@ -350,7 +317,11 @@ pub fn exec_akashic_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Str(key) = val {
                     if let Some(spore) = vm.akashic.memories.get(&key).cloned() {
-                        super::nova_chronos::restore_state(vm, &spore);
+                        vm.energy = spore.energy;
+                        vm.ip = spore.ip;
+                        vm.stack = spore.stack_snapshot.clone();
+                        vm.telomeres = spore.telomeres.clone();
+                        vm.ether = spore.ether.clone();
                         vm.output
                             .push(format!("AKASHIC: Restored Memory '{}'", key));
                     } else {

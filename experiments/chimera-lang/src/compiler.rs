@@ -31,6 +31,7 @@ use pest::Parser;
 use pest_derive::Parser;
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
+use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 use strum::IntoEnumIterator;
@@ -157,9 +158,10 @@ fn preprocess(
             .map_err(|e| anyhow!("Failed to open file {:?}: {}", path, e))?;
         let mut content = String::new();
         let limit = 1024 * 1024; // 1MB limit
-        let bytes_read =
-            std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut content)
-                .map_err(|e| anyhow!("Failed to read file {:?}: {}", path, e))?;
+        let bytes_read = file
+            .take(limit + 1)
+            .read_to_string(&mut content)
+            .map_err(|e| anyhow!("Failed to read file {:?}: {}", path, e))?;
 
         if bytes_read as u64 > limit {
             return Err(anyhow!("File {:?} exceeds 1MB limit", path));

@@ -1,0 +1,3 @@
+#!/bin/bash
+sed -i 's/let spore = super::nova_chronos::create_spore(vm);/let spore = crate::vm::akashic::AkashicSpore { dna_hash: 0, generation: 0, energy: vm.energy, ip: vm.ip, stack_snapshot: vm.stack.clone(), active_strands: vm.dna.helix.strands.len(), telomeres: vm.telomeres.clone(), ether: vm.ether.clone() };/g' experiments/chimera-lang/src/vm/akashic.rs
+sed -i 's/super::nova_chronos::restore_state(vm, \&spore);/vm.energy = spore.energy; vm.ip = spore.ip; vm.stack = spore.stack_snapshot.clone(); vm.telomeres = spore.telomeres.clone(); vm.ether = spore.ether.clone();/g' experiments/chimera-lang/src/vm/akashic.rs

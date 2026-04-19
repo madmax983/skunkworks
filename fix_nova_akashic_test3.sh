@@ -1,3 +1,5 @@
+#!/bin/bash
+cat << 'EOF2' > experiments/chimera-lang/src/nova_akashic_test.rs
 #[cfg(all(test, feature = "nova"))]
 mod tests {
     use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
@@ -34,7 +36,6 @@ mod tests {
         let mut vm1 = ChimeraVM::new(make_dna(write_genes));
         let path = ".chimera_akashic_test.json".to_string();
         vm1.akashic.file_path = path.clone();
-        vm1.akashic.corrupted = false;
 
         for _ in 0..10 {
             vm1.step();
@@ -42,7 +43,6 @@ mod tests {
                 break;
             }
         }
-        println!("{:?}", vm1.output);
 
         let read_genes = vec![
             Gene {
@@ -71,3 +71,4 @@ mod tests {
         let _ = fs::remove_file(path);
     }
 }
+EOF2

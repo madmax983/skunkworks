@@ -26,7 +26,7 @@ fn main() -> Result<(), String> {
     let mut source_code = String::new();
     let limit = 1024 * 1024; // 1MB limit
     let bytes_read =
-        std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut source_code)
+        file.take(limit + 1).read_to_string(&mut source_code)
             .map_err(|e| e.to_string())?;
     if bytes_read as u64 > limit {
         return Err(format!("File {} exceeds 1MB limit", cli.source.display()));
