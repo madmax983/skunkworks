@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-canopy**: Specimen condemned. Diagnosis: Skeletal Implementation / Vestigial Organs. The specimen claims to use a `ChimeraVM` for agent logic but uses a hardcoded random number generator to trigger jumping, making the genetic simulation vestigial. Grace period: 24h.
+- **verge-computer**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Swarm Neglect. Explicitly severed from workspace via `exclude = ["experiments/verge-computer"]` in Cargo.toml. Grace period: 24h.
 ## Pardoned
+- **syntax-spider**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation / Skeletal Implementation. Resolved by removing it from the `exclude` block in Cargo.toml. The specimen now compiles cleanly alongside the workspace. Vigor demonstrated.
 - **heap-arena**: Specimen pardoned. Diagnosis: Skeletal Implementation / Terminal Genericism. Specimen entirely rewritten with custom game loop (`tui-shared`) and functional hybrid memory-management platforming semantics. Vigor demonstrated.
 - **clockwork-concerto**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Swarm Neglect. Resolved by fixing workspace exclusion and running cargo check. Vigor demonstrated.
 - **origami-hologram**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding a README that explains its emergent FFT interference rendering behavior. Vigor demonstrated.
@@ -37,6 +38,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **chimera-canopy**: Specimen executed. Diagnosis: Skeletal Implementation / Vestigial Organs. Failed to connect the `ChimeraVM`'s execution output to the agent's behavior during grace period. Biomass returned to the void.
 - **laban-machine**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Generic implementation. Failed to improve during grace period. Biomass returned to the void.
 - **quipu-symphony**: Specimen executed. Diagnosis: Terminal Compilation Failure / Borrowing Constraints. Failed to improve during grace period. Biomass returned to the void.
 - **ferrous-legion**: Specimen executed. Diagnosis: Terminal Compilation Failure / API Obsolescence. Fails on `error[E0599]: no method named width found for struct Platter`. Grace period expired. Biomass returned to the void.
