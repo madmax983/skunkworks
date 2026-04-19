@@ -35,3 +35,7 @@
 **[Chimera TUI Blob Elimination]
 **Tangle:** The Blob - experiments/chimera-lang/src/tui/mod.rs retained a ~4,500 line duplication of the run_app event loop logic despite previous extractions into tui/app/mod.rs. This meant the application was maintaining massive duplicated match blocks inside tui/mod.rs while the refactored handlers in tui/app/handlers/ remained disconnected.
 **Blueprint:** Eliminated the monolithic 4,500+ line run_app function and all of its duplicated match blocks and view rendering routing from tui/mod.rs. Redirected the run_tui loop to properly consume the cleanly modularized app::run_app execution logic. tui/mod.rs now correctly acts as a small facade (reduced to ~200 lines) maintaining shared UI utilities (apply_glitch_fx, parse_grid_value).
+
+**[Extracted Value struct in penrose-genes]
+**Tangle:** Circular dependency found in `penrose-genes` between `vm.rs` and `penrose.rs` via `Value` enum. `vm.rs` imported `PenroseTiling` from `penrose.rs`, and `penrose.rs` imported `Value` from `vm.rs`.
+**Blueprint:** Extracted the `Value` enum into a new `value.rs` module, breaking the cyclic dependency. `vm.rs` and `penrose.rs` now both rely on `value.rs`.

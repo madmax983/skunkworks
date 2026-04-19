@@ -13,7 +13,9 @@ async fn main() {
     let (snap_tx, snap_rx) = bounded(2);
 
     let host = cpal::default_host();
-    let device = host.default_output_device().expect("No output device available");
+    let device = host
+        .default_output_device()
+        .expect("No output device available");
     let config = device.default_output_config().unwrap();
 
     let mut model = AudioModel::new(GRID_W, GRID_H, cmd_rx, snap_tx, None);
@@ -69,11 +71,13 @@ async fn main() {
                     let h_dist = hyperbolic_dist(click_pt, center_pt);
                     let strength = (1.0 / (1.0 + h_dist as f32)).clamp(0.1, 1.0);
 
-                    cmd_tx.send(AudioCommand::Pluck {
-                        x: grid_x,
-                        y: grid_y,
-                        strength,
-                    }).unwrap();
+                    cmd_tx
+                        .send(AudioCommand::Pluck {
+                            x: grid_x,
+                            y: grid_y,
+                            strength,
+                        })
+                        .unwrap();
                 }
             }
         }
@@ -130,11 +134,23 @@ async fn main() {
         let screen_cx = x + (cx as f32 + 1.0) * 0.5 * w;
         let screen_cy = y + (cy as f32 + 1.0) * 0.5 * h;
         draw_circle_lines(screen_cx, screen_cy, 5.0, 2.0, RED);
-        draw_circle_lines(x + w/2.0, y + h/2.0, w/2.0, 2.0, GRAY); // Unit disk boundary
+        draw_circle_lines(x + w / 2.0, y + h / 2.0, w / 2.0, 2.0, GRAY); // Unit disk boundary
 
         draw_text("Poincaré Resonance", 10.0, 20.0, 30.0, WHITE);
-        draw_text("Hyperbolic acoustic wave propagation", 10.0, 50.0, 20.0, GRAY);
-        draw_text("Click to pluck. Distances warp near the edge.", 10.0, 70.0, 20.0, GRAY);
+        draw_text(
+            "Hyperbolic acoustic wave propagation",
+            10.0,
+            50.0,
+            20.0,
+            GRAY,
+        );
+        draw_text(
+            "Click to pluck. Distances warp near the edge.",
+            10.0,
+            70.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await;
     }

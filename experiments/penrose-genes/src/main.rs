@@ -11,6 +11,7 @@ use std::{io, time::Duration};
 mod ast;
 mod penrose;
 mod tui;
+mod value;
 mod vm;
 
 use ast::{Dna, Gene, Nucleotide, Strand};
