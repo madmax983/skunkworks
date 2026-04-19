@@ -1,3 +1,5 @@
+#!/bin/bash
+cat << 'EOF2' > experiments/chimera-lang/src/nova_akashic_test.rs
 #[cfg(all(test, feature = "nova"))]
 mod tests {
     use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
@@ -71,3 +73,4 @@ mod tests {
         let _ = fs::remove_file(path);
     }
 }
+EOF2
