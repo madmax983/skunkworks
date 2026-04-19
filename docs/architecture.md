@@ -2365,3 +2365,34 @@ sequenceDiagram
         end
     end
 ```
+
+## Experiment: Penrose Genes (ADR 085)
+
+**Penrose Genes** explores the connection between aperiodic tilings and genetic execution. It features an extraction of the basic `Value` representation.
+
+### Extracted Value Architecture
+
+The fundamental `Value` primitive is extracted to break the circular dependency between the VM and the Penrose grid generation logic.
+
+```mermaid
+classDiagram
+    direction TB
+    class Value {
+        <<Module: value.rs>>
+        +Int(i64)
+        +Str(String)
+    }
+
+    class ChimeraVM {
+        <<Module: vm.rs>>
+        +execute()
+    }
+
+    class PenroseTiling {
+        <<Module: penrose.rs>>
+        +generate()
+    }
+
+    ChimeraVM ..> Value : Uses
+    PenroseTiling ..> Value : Uses
+```
