@@ -334,13 +334,23 @@ impl GrayScott {
     fn update_sequential(&mut self, feed: f32, kill: f32, dt: f32) {
         let w = self.width;
         let h = self.height;
+        if w == 0 || h == 0 {
+            return;
+        }
         let diff_u = self.diff_u;
         let diff_v = self.diff_v;
 
-        for y in 0..h {
-            for x in 0..w {
-                let i = y * w + x;
-
+        // ⚡ Bolt Optimization: Chunk-based grid iteration.
+        // Replaces nested `for` loops and manual index calculation `i = y * w + x`.
+        // By iterating over `chunks_exact_mut(w)`, we elide per-element bounds checks
+        // when writing to `next_u` and `next_v`, resulting in faster iteration over the 1D grid.
+        for (y, (row_u, row_v)) in self
+            .next_u
+            .chunks_exact_mut(w)
+            .zip(self.next_v.chunks_exact_mut(w))
+            .enumerate()
+        {
+            for (x, (nu, nv)) in row_u.iter_mut().zip(row_v.iter_mut()).enumerate() {
                 let (cur_u, cur_v, lap_u, lap_v) =
                     Self::compute_laplacian(x, y, w, h, &self.u, &self.v);
 
@@ -349,8 +359,8 @@ impl GrayScott {
                 let du = diff_u * lap_u - reaction + feed * (1.0 - cur_u);
                 let dv = diff_v * lap_v + reaction - (feed + kill) * cur_v;
 
-                self.next_u[i] = (cur_u + du * dt).clamp(0.0, 1.0);
-                self.next_v[i] = (cur_v + dv * dt).clamp(0.0, 1.0);
+                *nu = (cur_u + du * dt).clamp(0.0, 1.0);
+                *nv = (cur_v + dv * dt).clamp(0.0, 1.0);
             }
         }
 
