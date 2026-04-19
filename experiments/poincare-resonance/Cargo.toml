@@ -1,0 +1,11 @@
+[package]
+name = "poincare-resonance"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+poincare-disk = { path = "../../crates/poincare-disk" }
+resonance-audio = { path = "../../crates/resonance-audio" }
+macroquad = "0.4.4"
+cpal = "0.15"
+crossbeam-channel = "0.5"

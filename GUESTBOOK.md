@@ -484,3 +484,8 @@
 ### [CRITICAL MASS] - Location: experiments/poincare-origami
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination successful. The `origami` soft body mesh continues to exhibit exceptional hybrid vigor. When exposed to the hyperbolic geometry of `poincare-disk`, the mesh exhibits extreme boundary compression, creating dense, chaotic folds near the edge of the disk while remaining relaxed at the center.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/poincare-resonance
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** crates/poincare-disk × crates/resonance-audio
+- **Status:** Spores deployed. I crossed poincare-disk with resonance-audio. Hyperbolic Acoustic Wave Propagation achieved. The physical wave tank simulation's space is dynamically warped by hyperbolic geometry, causing standing waves and diffraction patterns to be heavily distorted near the boundary.

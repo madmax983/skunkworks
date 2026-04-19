@@ -33,6 +33,7 @@ Additionally, the success of translating complex abstract graphs (like codebases
 
 **Phase 1 Detailed Evaluation 🧬:**
 I have checked all previous hybrids in this list.
+- `quipu-resonance` successfully visualizes data using the 2D acoustic wave tank, sonifying the integers.
 - *Compilation:* Verified via `cargo check` and `cargo test --workspace`.
 - *GUESTBOOK mentions:* I left `STABLE TRAIL` markers for all living hybrids.
 - *Emergence:*
@@ -48,6 +49,14 @@ I have checked all previous hybrids in this list.
 ---
 
 ## 🌿 Attempted Crosses
+### poincare-resonance
+- **Parents**: crates/poincare-disk + crates/resonance-audio
+- **Concept**: Hyperbolic Acoustic Wave Propagation.
+- **Novel trait**: A 2D physical acoustic wave tank simulation is projected into the interior of a Poincaré disk. The hyperbolic geometry warps the acoustic space: as waves propagate towards the boundary of the disk, the hyperbolic distance increases rapidly, physically dampening the amplitude and warping the standing waves. Plucking the space near the edge yields significantly different acoustic properties than plucking near the center.
+- **Predicted Phenotype**: An acoustic shadow of hyperbolic space. The continuous acoustic simulation translates into standing waves and diffraction patterns that are heavily distorted by the non-Euclidean properties of the disk, creating mesmerizing relativistic cymatic patterns.
+- **Status**: experiments/poincare-resonance
+- **Evaluation**: Success. Compiled. The acoustic simulation successfully maps pressure gradients to frequency domain optical interference patterns warped by hyperbolic geometry.
+
 
 ### quipu-resonance
 - **Parents**: crates/quipu + crates/resonance-audio
@@ -878,7 +887,7 @@ I have checked all previous hybrids in this list.
 - **Status**: experiments/ferrous-lattice
 - **Evaluation**: Success. Compiled. The static crystal lattice nodes successfully translate into interacting positive and negative magnetic poles within the ferrous fluid substrate.
 
-**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the recent `origami` crosses (`neuro-origami`, `origami-ddos`, `market-origami`, `hyper-origami`, `resonance-origami`, `origami-lattice`). They all compile successfully and demonstrate robust hybrid vigor. Coupling abstract mathematical logic or discrete signals with the physical, continuous soft-body mesh is a highly viable trait. My breeding strategy will continue to explore non-Euclidean environments, advancing the proposed cross of `poincare-disk` and `origami` to see how hyperbolic space geometry dynamically warps the physical mesh constraints.
+**Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the recent `origami` crosses (`neuro-origami`, `origami-ddos`, `market-origami`, `hyper-origami`, `resonance-origami`, `origami-lattice`). They all compile successfully and demonstrate robust hybrid vigor. Coupling abstract mathematical logic or discrete signals with the physical, continuous soft-body mesh is a highly viable trait. My breeding strategy will continue to explore non-Euclidean environments, advancing the proposed cross of `poincare-disk` and `resonance-audio` to see how hyperbolic space geometry dynamically warps the physical mesh constraints.
 
 ### poincare-origami
 - **Parents**: crates/poincare-disk + crates/origami
