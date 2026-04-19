@@ -1,34 +1,78 @@
+//! The Virtual Machine for executing Stego-Cartridge bytecode.
+//!
+//! This module provides the [`VM`](crate::vm::VM) and the instruction set ([`OpCode`](crate::vm::OpCode)) required
+//! to run the embedded programs. The VM is a simple stack-based architecture
+//! with a built-in 128x128 palette-indexed framebuffer.
+
 use rand::Rng;
 
+/// The width of the VM's framebuffer in pixels.
 pub const SCREEN_WIDTH: usize = 128;
+/// The height of the VM's framebuffer in pixels.
 pub const SCREEN_HEIGHT: usize = 128;
+/// The total number of pixels in the framebuffer (`SCREEN_WIDTH` * `SCREEN_HEIGHT`).
 pub const SCREEN_SIZE: usize = SCREEN_WIDTH * SCREEN_HEIGHT;
+/// The total byte capacity of the VM's flat memory space.
 pub const MEMORY_SIZE: usize = 65536;
 
+/// The instruction set architecture for the Stego-Cartridge [`VM`].
+///
+/// Each instruction is represented as a single byte in memory.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(u8)]
 pub enum OpCode {
+    /// Pushes the next 4 bytes in memory onto the stack as a little-endian `i32`.
     Push = 0x01,
+    /// Removes the top value from the stack.
     Pop = 0x02,
+    /// Pops two values, adds them, and pushes the result.
     Add = 0x03,
+    /// Pops two values (A then B), subtracts them (B - A), and pushes the result.
     Sub = 0x04,
+    /// Pops two values, multiplies them, and pushes the result.
     Mul = 0x05,
+    /// Pops two values (A then B), divides them (B / A), and pushes the result. Avoids dividing by zero.
     Div = 0x06,
+    /// Pops two values (A then B), calculates modulo (B % A), and pushes the result.
     Mod = 0x07,
+    /// Unconditional jump. Reads the next 4 bytes as the memory address to set the PC to.
     Jmp = 0x08,
+    /// Jump if Zero. Pops a value; if 0, reads next 4 bytes as jump address.
     Jz = 0x09,
+    /// Jump if Not Zero. Pops a value; if not 0, reads next 4 bytes as jump address.
     Jnz = 0x0A,
+    /// Pops an address, reads a byte from that memory address, and pushes it as an `i32`.
     Load = 0x0B,
+    /// Pops a value and an address, and stores the lowest byte of the value at that address.
     Store = 0x0C,
+    /// Pops an X, Y, and Color index, and updates the framebuffer at `(X, Y)`.
     Plot = 0x0D,
+    /// Pops a Color index and fills the entire framebuffer with it.
     Cls = 0x0E,
+    /// Pops a maximum value, generates a random number `[0..max)`, and pushes it.
     Rnd = 0x0F,
+    /// Signals the VM to pause execution until the next frame.
     Wait = 0x10,
+    /// Duplicates the top value on the stack.
     Dup = 0x11,
+    /// Halts VM execution permanently.
     Halt = 0xFF,
 }
 
 impl OpCode {
+    /// Attempts to parse a raw byte into an [`OpCode`].
+    ///
+    /// # Arguments
+    /// * `v` - The raw byte read from memory.
+    ///
+    /// # Examples
+    /// ```rust
+    /// use stego_cartridge::vm::OpCode;
+    ///
+    /// assert_eq!(OpCode::from_u8(0x01), Some(OpCode::Push));
+    /// assert_eq!(OpCode::from_u8(0xFF), Some(OpCode::Halt));
+    /// assert_eq!(OpCode::from_u8(0x99), None); // Invalid opcode
+    /// ```
     pub fn from_u8(v: u8) -> Option<Self> {
         match v {
             0x01 => Some(OpCode::Push),
@@ -54,12 +98,22 @@ impl OpCode {
     }
 }
 
+/// The state and execution context for a Stego-Cartridge program.
+///
+/// Contains a flat memory space, an operational stack, a program counter,
+/// and a palette-indexed framebuffer.
 pub struct VM {
+    /// The flat 64KB memory space.
     pub memory: [u8; MEMORY_SIZE],
+    /// The operational data stack holding `i32` values.
     pub stack: Vec<i32>,
-    pub pc: usize, // Program Counter
+    /// The Program Counter (index of the next instruction in memory).
+    pub pc: usize,
+    /// The 128x128 palette-indexed framebuffer.
     pub screen: [u8; SCREEN_SIZE],
+    /// If true, the VM has hit a `HALT` instruction or fatal error and will not run further.
     pub halted: bool,
+    /// If true, the VM hit a `WAIT` instruction and is paused until the next frame tick.
     pub waiting: bool,
 }
 
@@ -70,6 +124,16 @@ impl Default for VM {
 }
 
 impl VM {
+    /// Creates a new Virtual Machine in a clean, zeroed state.
+    ///
+    /// # Examples
+    /// ```rust
+    /// use stego_cartridge::vm::VM;
+    ///
+    /// let vm = VM::new();
+    /// assert_eq!(vm.pc, 0);
+    /// assert_eq!(vm.halted, false);
+    /// ```
     pub fn new() -> Self {
         Self {
             memory: [0; MEMORY_SIZE],
@@ -81,6 +145,23 @@ impl VM {
         }
     }
 
+    /// Loads a bytecode program into memory starting at address `0` and resets the VM state.
+    ///
+    /// # Arguments
+    /// * `program` - The raw bytecode slice to load.
+    ///
+    /// # Panics
+    /// Panics if the `program` length exceeds [`MEMORY_SIZE`] (64KB).
+    ///
+    /// # Examples
+    /// ```rust
+    /// use stego_cartridge::vm::{VM, OpCode};
+    ///
+    /// let mut vm = VM::new();
+    /// let program = vec![OpCode::Push as u8, 10, 0, 0, 0, OpCode::Halt as u8];
+    /// vm.load_program(&program);
+    /// assert_eq!(vm.memory[0], OpCode::Push as u8);
+    /// ```
     pub fn load_program(&mut self, program: &[u8]) {
         // Clear memory
         self.memory.fill(0);
@@ -95,6 +176,24 @@ impl VM {
         self.stack.clear();
     }
 
+    /// Executes a single instruction at the current Program Counter.
+    ///
+    /// If the VM is halted or waiting, this function does nothing.
+    /// If an unknown opcode is encountered, or a memory read goes out of bounds,
+    /// the VM is automatically halted.
+    ///
+    /// # Examples
+    /// ```rust
+    /// use stego_cartridge::vm::{VM, OpCode};
+    ///
+    /// let mut vm = VM::new();
+    /// // PUSH 42
+    /// let program = vec![OpCode::Push as u8, 42, 0, 0, 0];
+    /// vm.load_program(&program);
+    ///
+    /// vm.step();
+    /// assert_eq!(vm.stack[0], 42);
+    /// ```
     pub fn step(&mut self) {
         if self.halted || self.waiting {
             return;
@@ -246,6 +345,14 @@ impl VM {
         }
     }
 
+    /// Runs a batch of instructions representing a single frame of execution.
+    ///
+    /// Execution will stop early if the VM hits a `WAIT` instruction, a `HALT`
+    /// instruction, or after `instructions_per_frame` cycles have elapsed. The
+    /// `waiting` flag is cleared at the start of this call.
+    ///
+    /// # Arguments
+    /// * `instructions_per_frame` - The maximum number of instructions to execute before yielding.
     pub fn run_frame(&mut self, instructions_per_frame: usize) {
         if self.halted {
             return;

@@ -1,3 +1,9 @@
+//! The main console emulator for the Stego-Cartridge VM.
+//!
+//! Provides a `macroquad`-based graphical interface for running embedded
+//! steganographic cartridges. Users can drag-and-drop PNG images directly
+//! onto the window to execute the programs hidden within them.
+
 use clap::Parser;
 use macroquad::prelude::*;
 use std::path::PathBuf;

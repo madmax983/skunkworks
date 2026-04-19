@@ -1,6 +1,56 @@
+//! Assembly compiler for the Stego-Cartridge bytecode.
+//!
+//! This module provides the [`assemble`](crate::asm::assemble) function, which translates
+//! human-readable assembly instructions into the raw bytecode understood by
+//! the [`crate::vm::VM`].
+
 use crate::vm::OpCode;
 use std::collections::HashMap;
 
+/// Assembles a string of assembly source code into a raw bytecode vector.
+///
+/// This compiler supports:
+/// - **Instructions**: e.g., `PUSH <val>`, `POP`, `ADD`, `SUB`, etc.
+/// - **Labels**: Denoted by a trailing colon (e.g., `Loop:`).
+/// - **Jumps**: Direct integration with labels (e.g., `JMP Loop`, `JNZ Loop`).
+/// - **Comments**: Anything following a `;` on a line is ignored.
+///
+/// The assembly process occurs in two passes: the first generates raw bytecode
+/// and records label positions, while the second patches the jump instructions
+/// with the exact resolved byte offsets.
+///
+/// # Arguments
+/// * `source` - A string slice containing the assembly code.
+///
+/// # Errors
+/// Returns an `Err(String)` if the source contains:
+/// - Duplicate labels.
+/// - Undefined labels targeted by jump instructions.
+/// - Unknown mnemonics.
+/// - Missing arguments for instructions that require them (like `PUSH` or `JMP`).
+/// - Invalid numeric parsing for `PUSH`.
+///
+/// # Examples
+///
+/// ```rust
+/// use stego_cartridge::asm::assemble;
+/// use stego_cartridge::vm::OpCode;
+///
+/// let source = "
+///     ; A simple program to push two numbers and add them
+///     PUSH 10
+///     PUSH 20
+///     ADD
+///     HALT
+/// ";
+///
+/// let bytecode = assemble(source).unwrap();
+///
+/// // Verify the first opcode is PUSH (0x01)
+/// assert_eq!(bytecode[0], OpCode::Push as u8);
+/// // The PUSH argument is 4 bytes (little-endian i32)
+/// assert_eq!(&bytecode[1..5], &10i32.to_le_bytes());
+/// ```
 pub fn assemble(source: &str) -> Result<Vec<u8>, String> {
     let mut bytecode = Vec::new();
     let mut labels = HashMap::new();
