@@ -1,0 +1,11 @@
+[package]
+name = "quipu-resonance"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+quipu = { workspace = true }
+resonance-audio = { workspace = true }
+macroquad = "0.4"
+cpal = "0.15"
+crossbeam-channel = "0.5"

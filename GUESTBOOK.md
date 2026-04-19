@@ -1,5 +1,11 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/quipu-resonance
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. Spliced quipu with resonance-audio.
+- **Phenotype:** Acoustic shadow of ancient data. The discrete Quipu knot structure successfully acts as solid wall constraints and acoustic exciters, visually mapping data into physical sound interference patterns.
+
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/origami-lattice
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Synthesized origami-lattice: mapped miller-lattice code tree to 3D continuous physical constraints on Miura-ori mesh.
