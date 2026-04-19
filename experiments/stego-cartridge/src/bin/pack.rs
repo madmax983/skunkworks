@@ -1,3 +1,5 @@
+//! The CLI utility to pack assembly code into a PNG image.
+
 use clap::Parser;
 use std::fs;
 use std::path::PathBuf;
