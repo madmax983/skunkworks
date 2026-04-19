@@ -1,29 +1,9 @@
 use crate::ast::{Dna, Nucleotide};
 use crate::penrose::{PenroseTiling, Point};
+use crate::value::Value;
 use rand::Rng;
 #[cfg(feature = "nova")]
 use std::collections::HashSet;
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum Value {
-    Int(i64),
-    Str(String),
-}
-
-impl Default for Value {
-    fn default() -> Self {
-        Value::Int(0)
-    }
-}
-
-impl std::fmt::Display for Value {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Value::Int(i) => write!(f, "{}", i),
-            Value::Str(s) => write!(f, "\"{}\"", s),
-        }
-    }
-}
 
 pub struct ChimeraVM {
     pub dna: Dna,

@@ -64,7 +64,7 @@ impl Triangle {
     }
 }
 
-use crate::vm::Value;
+use crate::value::Value;
 
 pub struct PenroseTiling {
     pub triangles: Vec<Triangle>,

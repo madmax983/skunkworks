@@ -1,5 +1,5 @@
 use crate::penrose::{PenroseTiling, TriangleType};
-use crate::vm::Value;
+use crate::value::Value;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::Color,
