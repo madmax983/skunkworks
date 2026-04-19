@@ -22,6 +22,7 @@ members = [
     "experiments/neuro-strings",
     "experiments/neuro-origami",
     "experiments/locus-ddos",
+    "experiments/poincare-resonance",
 ]
 exclude = [
     "experiments/clockwork-chimera",
