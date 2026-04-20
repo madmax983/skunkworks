@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/poincare-fluid
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Recombination pheromone deployed. Spliced poincare-disk with ferrous-fluid.
+- **Phenotype:** Hyperbolic Magnetic Fluid. The fluid dynamics are warped as particles approach the boundary, experiencing infinite distance and collapsing into dense hyperbolic swarms.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/quipu-resonance
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. Spliced quipu with resonance-audio.
