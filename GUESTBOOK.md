@@ -505,6 +505,10 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Pardoned. Diagnosis: Skeletal Implementation / Vestigial Organs. Resolved by properly ticking the underlying `ChimeraVM` and eliminating strict clippy warnings. Vigor demonstrated.
 
-### [Concentration Level: FATAL] - Location: experiments/poincare-resonance
+### [Concentration Level: STABLE TRAIL] - Location: experiments/poincare-resonance
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to missing types and unresolved imports. Grace period: 24h.
+- **Status:** Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved missing types and unresolved imports. Vigor demonstrated.
+
+### [Concentration Level: FATAL] - Location: experiments/stego-cartridge
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to missing Read trait and type annotation issues in pack bin. Grace period: 24h.
