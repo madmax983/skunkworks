@@ -62,6 +62,9 @@ impl Detritivore {
             self.energy -= 1;
         }
 
+        // Tick VM
+        self.vm.step();
+
         // Find nearest food
         let mut target_idx = None;
         let mut min_dist = 200.0; // Vision range
