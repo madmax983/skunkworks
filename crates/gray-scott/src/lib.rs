@@ -305,25 +305,24 @@ impl GrayScott {
         let next_u = &mut self.next_u;
         let next_v = &mut self.next_v;
 
-        // Parallel update using rayon
-        // We zip next_u and next_v to update them together
+        // ⚡ Bolt Optimization: Use chunk-based iteration in `update_parallel` to match `update_sequential`.
+        // This elides bounds checks and modulo calculations (`i % w`, `i / w`) per pixel, significantly speeding up the hot loop.
         next_u
-            .par_iter_mut()
-            .zip(next_v.par_iter_mut())
+            .par_chunks_exact_mut(w)
+            .zip(next_v.par_chunks_exact_mut(w))
             .enumerate()
-            .for_each(|(i, (nu, nv))| {
-                let x = i % w;
-                let y = i / w;
+            .for_each(|(y, (row_u, row_v))| {
+                for (x, (nu, nv)) in row_u.iter_mut().zip(row_v.iter_mut()).enumerate() {
+                    let (cur_u, cur_v, lap_u, lap_v) = Self::compute_laplacian(x, y, w, h, u, v);
 
-                let (cur_u, cur_v, lap_u, lap_v) = Self::compute_laplacian(x, y, w, h, u, v);
+                    let reaction = cur_u * cur_v * cur_v;
 
-                let reaction = cur_u * cur_v * cur_v;
+                    let du = diff_u * lap_u - reaction + feed * (1.0 - cur_u);
+                    let dv = diff_v * lap_v + reaction - (feed + kill) * cur_v;
 
-                let du = diff_u * lap_u - reaction + feed * (1.0 - cur_u);
-                let dv = diff_v * lap_v + reaction - (feed + kill) * cur_v;
-
-                *nu = (cur_u + du * dt).clamp(0.0, 1.0);
-                *nv = (cur_v + dv * dt).clamp(0.0, 1.0);
+                    *nu = (cur_u + du * dt).clamp(0.0, 1.0);
+                    *nv = (cur_v + dv * dt).clamp(0.0, 1.0);
+                }
             });
 
         std::mem::swap(&mut self.u, &mut self.next_u);
