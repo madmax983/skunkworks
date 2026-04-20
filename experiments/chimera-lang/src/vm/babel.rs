@@ -1023,6 +1023,9 @@ pub fn flatten_cst(cst: &Value) -> String {
 }
 
 pub fn compile_cst(vm: &mut ChimeraVM, cst: Value, handler_idx: usize) -> Option<usize> {
+    if cst.depth() > crate::vm::MAX_RECURSION_DEPTH {
+        return None;
+    }
     if vm.dna.helix.strands.len() >= crate::vm::MAX_STRANDS {
         return None;
     }
