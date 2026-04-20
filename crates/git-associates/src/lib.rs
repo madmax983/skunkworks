@@ -354,9 +354,7 @@ impl GitModel {
             let mut hunk_lines = Vec::with_capacity(lines_count);
             for l_idx in 0..lines_count {
                 if let Ok(line) = patch.line_in_hunk(h_idx, l_idx) {
-                    let content = std::str::from_utf8(line.content())
-                        .map(|s| s.to_string())
-                        .unwrap_or_default();
+                    let content = String::from_utf8_lossy(line.content()).into_owned();
                     // Origin character indicates the type of change:
                     // '+' = Addition, '-' = Deletion, ' ' = Context
                     match line.origin() {
@@ -368,9 +366,7 @@ impl GitModel {
                 }
             }
             hunks.push(Hunk {
-                header: std::str::from_utf8(hunk_info.header())
-                    .map(|s| s.to_string())
-                    .unwrap_or_default(),
+                header: String::from_utf8_lossy(hunk_info.header()).into_owned(),
                 lines: hunk_lines,
             });
         }

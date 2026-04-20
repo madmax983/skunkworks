@@ -35,3 +35,6 @@
 **Bolt Optimization: Loop Unrolling and Branchless Bounds Checking in compute_laplacian**
 **Learning:** `rem_euclid` (modulo arithmetic) inside the hot 3x3 convolution loop of the Gray-Scott simulation caused significant performance overhead, requiring 18 modulo operations per cell per tick.
 **Action:** Unroll the 3x3 convolution loop into explicit neighbor calculations with pre-computed branchless boundary checks (`left`, `right`, `up`, `down`). This provides a ~2x performance speedup on the simulation's hottest path and avoids redundant math operations.
+**Bolt Optimization: Rayon chunk-based iteration in Gray-Scott**
+**Learning:** Using `par_iter_mut()` and `enumerate()` combined with division and modulo arithmetic (`i % w`, `i / w`) per pixel inside the hottest loop of a simulation significantly degrades parallel performance by introducing branching and math instructions into the critical path.
+**Action:** Use `par_chunks_exact_mut` or `par_chunks_mut` for 2D parallel grid iterations. This allows iterating row by row, naturally providing the `y` coordinate and avoiding expensive modulo/division operations while preserving the bounds-check elision benefits of chunking.
