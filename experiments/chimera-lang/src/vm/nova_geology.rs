@@ -133,7 +133,7 @@ fn exec_tectonics(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             (dy_val, dx_val, h_val, w_val)
         {
             // 🔒 WARDEN: Clamp dimensions to prevent OOM/DoS
-            let max_dim = (crate::vm::GRID_SIZE * 4) as i64; // Allow some overflow but keep it reasonable
+            let max_dim = (crate::vm::GRID_SIZE) as i64; // Allow some overflow but keep it reasonable
             let safe_h = h.clamp(1, max_dim);
             let safe_w = w.clamp(1, max_dim);
 

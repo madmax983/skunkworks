@@ -1,3 +1,4 @@
+use std::io::Read;
 use anyhow::Result;
 use rand::Rng;
 use std::path::Path;
@@ -103,11 +104,11 @@ pub fn generate_level(path: &Path) -> Result<Option<LevelProfile>> {
         let file_entry = rs_files[rng.gen_range(0..rs_files.len())];
 
         // Prevent OOM DoS by capping the file read to 1MB
-        let file = std::fs::File::open(file_entry.path())?;
+        let mut file = std::fs::File::open(file_entry.path())?;
         let mut content = String::new();
         let limit = 1024 * 1024;
         let bytes_read =
-            file.take(limit + 1).read_to_string(&mut content)?;
+            (&mut file).take(limit + 1).read_to_string(&mut content)?;
         if bytes_read > limit as usize {
             continue; // Ignore large files, try another one
         }
