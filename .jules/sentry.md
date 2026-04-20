@@ -27,3 +27,6 @@
 **[Testing TUI Button Rendering States Headlessly]**
 **Learning:** You can test Ratatui widgets cleanly and headlessly without mocking the terminal by creating a `Buffer::empty(Rect::...)` and passing it to the widget's `render(area, &mut buffer)` implementation. This allows assertions on individual cell styles (e.g. `assert_eq!(buffer[(0, 0)].bg, Color::Cyan)`), ensuring style logic maps perfectly to the final buffer.
 **Action:** Default to using `Buffer::empty()` for headless TUI tests to test widget layouts, rendering bounds (like `Rect::new(0,0,0,0)`), and dynamic text placement logic without spinning up a full terminal backend.
+**[Coverage Gap: NaN Poisoning in Constraints]**
+**Learning:** `f32::NAN` injection via properties (like distances or stiffness factors) can silently break loop execution or math functions, causing the simulation to stall or silently fail if not explicitly validated.
+**Action:** Make sure to always check `.is_finite()` on distance calculations and constraint factors inside solvers, and explicitly add `#[should_panic]` test cases injecting `f32::NAN` or `f32::INFINITY` in tests to ensure these checks work as intended.

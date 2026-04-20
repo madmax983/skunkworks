@@ -129,14 +129,9 @@ impl<'a> Widget for TensionBar<'a> {
         // Draw full blocks
         for y in 0..full_blocks {
             let max_y = inner_area.y.saturating_add(inner_area.height);
-            let draw_y = match max_y.checked_sub(1).and_then(|v| v.checked_sub(y)) {
-                Some(val) => val,
-                None => continue,
-            };
-
-            if draw_y >= max_y {
-                continue;
-            }
+            // Since we established inner_area.height >= 1 and y < full_blocks <= inner_area.height,
+            // max_y >= 1, so max_y - 1 cannot underflow. And max_y - 1 >= y, so it also cannot underflow.
+            let draw_y = max_y.saturating_sub(1).saturating_sub(y);
 
             let max_x = inner_area.x.saturating_add(inner_area.width);
             for x in inner_area.x..max_x {
@@ -149,13 +144,10 @@ impl<'a> Widget for TensionBar<'a> {
         // Draw partial block
         if remainder > 0.0 && full_blocks < inner_area.height {
             let max_y = inner_area.y.saturating_add(inner_area.height);
-            let draw_y = match max_y
-                .checked_sub(1)
-                .and_then(|v| v.checked_sub(full_blocks))
-            {
-                Some(val) => val,
-                None => return,
-            };
+            // We know inner_area.height >= 1, so max_y >= 1, max_y - 1 >= 0.
+            // We know full_blocks < inner_area.height, so full_blocks <= inner_area.height - 1.
+            // Thus, max_y - 1 - full_blocks >= 0. This cannot underflow.
+            let draw_y = max_y.saturating_sub(1).saturating_sub(full_blocks);
 
             // Lower blocks grow from bottom
             // Uses <= to ensure exact fractions (e.g., 0.5) map to the corresponding block (HALF)
