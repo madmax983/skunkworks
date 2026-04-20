@@ -51,7 +51,7 @@ pub fn exec_live_parse(vm: &mut ChimeraVM, start_y: usize, start_x: usize, input
                         let mut loop_safety = 0;
                         loop {
                             loop_safety += 1;
-                            if loop_safety > 256 {
+                            if loop_safety > crate::vm::MAX_RECURSION_DEPTH {
                                 matched = false;
                                 break;
                             }
@@ -111,7 +111,7 @@ pub fn exec_live_parse(vm: &mut ChimeraVM, start_y: usize, start_x: usize, input
                         let mut loop_safety = 0;
                         loop {
                             loop_safety += 1;
-                            if loop_safety > 256 {
+                            if loop_safety > crate::vm::MAX_RECURSION_DEPTH {
                                 break;
                             }
                             vm.babel_live_trace.push((temp_y, temp_x));
@@ -168,7 +168,7 @@ pub fn exec_live_parse(vm: &mut ChimeraVM, start_y: usize, start_x: usize, input
                         let mut loop_safety = 0;
                         loop {
                             loop_safety += 1;
-                            if loop_safety > 256 {
+                            if loop_safety > crate::vm::MAX_RECURSION_DEPTH {
                                 break;
                             }
                             vm.babel_live_trace.push((temp_y, temp_x));
