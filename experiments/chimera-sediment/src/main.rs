@@ -161,7 +161,7 @@ fn update_forest(sys: &mut System, trees: &mut Vec<Tree>, sediment: &mut Vec<Sed
     let processes = fetch_processes(sys);
 
     // Store old trees to check for dead ones
-    let old_trees: Vec<Tree> = trees.drain(..).collect();
+    let old_trees: Vec<Tree> = std::mem::take(trees);
 
     // Build new trees (Top 20)
     let top_20_len = processes.len().min(20);

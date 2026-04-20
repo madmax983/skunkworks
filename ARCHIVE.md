@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chimera-sediment**: Specimen condemned. Diagnosis: Skeletal Implementation / Vestigial Organs. The specimen claims to use a `ChimeraVM` for agent logic but uses a hardcoded random number generator to trigger wandering and eating, making the genetic simulation vestigial. Grace period: 24h.
+- **poincare-resonance**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to missing types and unresolved imports. Grace period: 24h.
 ## Pardoned
+- **chimera-sediment**: Specimen pardoned. Diagnosis: Skeletal Implementation / Vestigial Organs. Resolved by properly ticking the underlying `ChimeraVM` and eliminating strict clippy warnings during its grace period. Vigor demonstrated.
 - **heap-arena**: Specimen pardoned. Diagnosis: Skeletal Implementation / Terminal Genericism. Specimen entirely rewritten with custom game loop (`tui-shared`) and functional hybrid memory-management platforming semantics. Vigor demonstrated.
 - **clockwork-concerto**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Swarm Neglect. Resolved by fixing workspace exclusion and running cargo check. Vigor demonstrated.
 - **origami-hologram**: Specimen pardoned. Diagnosis: Documentation Void / Skeletal Implementation. Resolved by adding a README that explains its emergent FFT interference rendering behavior. Vigor demonstrated.
