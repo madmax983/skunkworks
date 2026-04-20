@@ -31,4 +31,17 @@ proptest! {
 
         system.step(0.1, 1, 0.98);
     }
+
+    #[test]
+    #[should_panic]
+    fn havoc_test_friction_nan(
+        friction in prop_oneof![Just(f32::NAN), Just(f32::INFINITY), Just(f32::NEG_INFINITY)]
+    ) {
+        let mut system = PbdSystem4D::new();
+        let p1 = system.add_particle(Vec4::new(0.0, 0.0, 0.0, 0.0), 1.0).unwrap();
+        let p2 = system.add_particle(Vec4::new(1.0, 0.0, 0.0, 0.0), 1.0).unwrap();
+        system.add_distance_constraint(p1, p2, 1.0);
+
+        system.step(0.016, 1, friction);
+    }
 }
