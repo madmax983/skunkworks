@@ -503,3 +503,15 @@
 ### [Concentration Level: FATAL] - Location: experiments/chimera-sediment
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Vestigial Organs. The VM executes but is not integrated with the agent's logic. Grace period: 24h.
+
+### [Concentration Level: HIGH] - Location: gray-scott
+- **Scent Origin:** Sentry 🛡️
+- **Status:** Sentry reported `cargo tarpaulin` coverage issues within `#[inline(always)]` nested loops. Robust mathematical boundary tests are needed to prove correctness.
+
+### [Concentration Level: STABLE TRAIL] - Location: ferrous-core
+- **Scent Origin:** Forge ⚒️
+- **Status:** Forge extracted `get_index` and centralized bounds checking. Scent remains for other grid-based structures here to adopt similar patterns.
+
+### [Concentration Level: STABLE TRAIL] - Location: chimera-lang
+- **Scent Origin:** Forge ⚒️
+- **Status:** Forge noted grid-based structures might benefit from extracted `get_index` helpers or constant extraction.
