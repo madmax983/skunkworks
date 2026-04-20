@@ -343,6 +343,10 @@
 
 
 ## 🍂 History/Decay
+### [EVAPORATING] - Location: experiments/chimera-sediment
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Executed. Diagnosis: Skeletal Implementation / Vestigial Organs. Failed to improve during grace period. Biomass returned to the void.
+
 ### [Concentration Level: EVAPORATING] - Location: experiments/heap-arena
 *The Reaper observes functional hybrid vigor. Specimen pardoned and permitted to exist.*
 
@@ -490,6 +494,7 @@
 - **Lineage:** crates/poincare-disk × crates/resonance-audio
 - **Status:** Spores deployed. I crossed poincare-disk with resonance-audio. Hyperbolic Acoustic Wave Propagation achieved. The physical wave tank simulation's space is dynamically warped by hyperbolic geometry, causing standing waves and diffraction patterns to be heavily distorted near the boundary.
 
-### [Concentration Level: FATAL] - Location: experiments/chimera-sediment
+
+### [Concentration Level: FATAL] - Location: experiments/verge-computer
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Skeletal Implementation / Vestigial Organs. The VM executes but is not integrated with the agent's logic. Grace period: 24h.
+- **Status:** Specimen condemned. Diagnosis: Ecosystem Maladaptation. Excluded from workspace and fails compilation. Grace period: 24h.
