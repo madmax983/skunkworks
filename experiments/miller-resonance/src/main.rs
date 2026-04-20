@@ -81,10 +81,20 @@ async fn main() {
 
             // make dirs thicker
             if grid_x + 1 < GRID_W - 1 {
-                cmd_tx.send(AudioCommand::AddWall { x: grid_x + 1, y: grid_y }).unwrap();
+                cmd_tx
+                    .send(AudioCommand::AddWall {
+                        x: grid_x + 1,
+                        y: grid_y,
+                    })
+                    .unwrap();
             }
             if grid_y + 1 < GRID_H - 1 {
-                cmd_tx.send(AudioCommand::AddWall { x: grid_x, y: grid_y + 1 }).unwrap();
+                cmd_tx
+                    .send(AudioCommand::AddWall {
+                        x: grid_x,
+                        y: grid_y + 1,
+                    })
+                    .unwrap();
             }
         }
     }
@@ -117,7 +127,7 @@ async fn main() {
             let grid_y = ((my - offset_y) / scale).round() as usize;
 
             if grid_x > 0 && grid_x < GRID_W - 1 && grid_y > 0 && grid_y < GRID_H - 1 {
-                 cmd_tx
+                cmd_tx
                     .send(AudioCommand::Pluck {
                         x: grid_x,
                         y: grid_y,
@@ -179,13 +189,7 @@ async fn main() {
             20.0,
             GRAY,
         );
-        draw_text(
-            "Click to pluck locally.",
-            10.0,
-            100.0,
-            20.0,
-            GRAY,
-        );
+        draw_text("Click to pluck locally.", 10.0, 100.0, 20.0, GRAY);
 
         frame_count += 1;
         next_frame().await;

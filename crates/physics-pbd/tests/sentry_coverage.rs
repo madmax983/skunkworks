@@ -119,3 +119,55 @@ fn test_add_actuator_constraint_nan_params() {
     let p2 = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
     system.add_actuator_constraint(p1, p2, f32::NAN, 2.0, 1.0);
 }
+
+#[test]
+#[should_panic(expected = "NaN detected in constraint parameters")]
+fn test_solve_distance_nan_params() {
+    let mut system = PbdSystem::new();
+    let p1 = system.add_particle(Vec3::ZERO, 1.0);
+    let p2 = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
+
+    // Bypassing add_distance_constraint validation to hit solve_distance internal panic
+    system.constraints.push(Constraint::Distance {
+        p1,
+        p2,
+        rest_length: f32::NAN,
+        stiffness: 1.0,
+    });
+
+    system.step(0.1, 1);
+}
+
+#[test]
+#[should_panic(expected = "NaN detected in particle distance")]
+fn test_solve_distance_nan_distance() {
+    let mut system = PbdSystem::new();
+    let p1 = system.add_particle(Vec3::new(1.0, 0.0, 0.0), 1.0);
+    let p2 = system.add_particle(Vec3::new(0.0, 0.0, 0.0), 1.0);
+
+    system.particles[p1].pos = Vec3::new(f32::NAN, 0.0, 0.0);
+
+    system.constraints.push(Constraint::Distance {
+        p1,
+        p2,
+        rest_length: 1.0,
+        stiffness: 1.0,
+    });
+
+    system.step(0.1, 1);
+}
+
+#[test]
+fn test_solve_distance_zero_distance() {
+    let mut system = PbdSystem::new();
+    let p1 = system.add_particle(Vec3::ZERO, 1.0);
+    let p2 = system.add_particle(Vec3::ZERO, 1.0);
+
+    system.add_distance_constraint(p1, p2, 1.0);
+
+    system.step(0.1, 1);
+
+    // Positions shouldn't move if they are perfectly overlapping due to division by zero protection
+    assert_eq!(system.particles[p1].pos, Vec3::ZERO);
+    assert_eq!(system.particles[p2].pos, Vec3::ZERO);
+}

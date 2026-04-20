@@ -1,7 +1,7 @@
 use ferrous_core::Platter;
 use locus::Vec2;
-use rand::Rng;
 use poincare_disk::{hyperbolic_dist, Point};
+use rand::Rng;
 
 pub struct Particle {
     pub pos: Vec2,

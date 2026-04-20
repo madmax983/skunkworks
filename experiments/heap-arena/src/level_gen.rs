@@ -106,8 +106,7 @@ pub fn generate_level(path: &Path) -> Result<Option<LevelProfile>> {
         let file = std::fs::File::open(file_entry.path())?;
         let mut content = String::new();
         let limit = 1024 * 1024;
-        let bytes_read =
-            file.take(limit + 1).read_to_string(&mut content)?;
+        let bytes_read = file.take(limit + 1).read_to_string(&mut content)?;
         if bytes_read > limit as usize {
             continue; // Ignore large files, try another one
         }
