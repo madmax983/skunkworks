@@ -1,7 +1,7 @@
+use ::rand::{thread_rng, Rng};
 use flocking::{compute_force, FlockingParams};
 use locus::Vec2 as FlockingVec2;
 use macroquad::prelude::*;
-use ::rand::{thread_rng, Rng};
 use resonance_audio::physics::{Material, PhysicsGrid};
 
 // Constants
@@ -67,7 +67,9 @@ async fn main() {
             new_velocities[i] += force;
 
             // Speed limit
-            if new_velocities[i].magnitude_squared() > flock_params.max_speed * flock_params.max_speed {
+            if new_velocities[i].magnitude_squared()
+                > flock_params.max_speed * flock_params.max_speed
+            {
                 new_velocities[i] = new_velocities[i].normalize() * flock_params.max_speed;
             }
         }
@@ -100,14 +102,14 @@ async fn main() {
             let py = positions[i].y.round() as usize;
 
             if px > 0 && px < GRID_WIDTH - 1 && py > 0 && py < GRID_HEIGHT - 1 {
-                 grid.pluck(px, py, speed * 0.05);
+                grid.pluck(px, py, speed * 0.05);
             }
         }
 
         // --- 3. Step the acoustic wave simulation ---
         // Run physics multiple times per frame for stability and wave speed
         for _ in 0..2 {
-             grid.step();
+            grid.step();
         }
 
         // --- 4. Render ---
@@ -134,7 +136,10 @@ async fn main() {
             (screen_height() - GRID_HEIGHT as f32 * cell_size) / 2.0,
             WHITE,
             DrawTextureParams {
-                dest_size: Some(vec2(GRID_WIDTH as f32 * cell_size, GRID_HEIGHT as f32 * cell_size)),
+                dest_size: Some(vec2(
+                    GRID_WIDTH as f32 * cell_size,
+                    GRID_HEIGHT as f32 * cell_size,
+                )),
                 ..Default::default()
             },
         );

@@ -211,36 +211,53 @@ impl PhysicsGrid {
         }
 
         // Iterate over the interior of the grid (skipping boundaries)
-        for y in 1..h - 1 {
-            for x in 1..w - 1 {
-                let idx = y * w + x;
+        // ⚡ Bolt: Chunk-based iteration to elide bounds checks in hot simulation loop.
+        let end_idx = w * (h - 1);
+        let start_idx = w;
 
-                // Wall handling is implicit via c2_map[idx] == 0.0 and damping_map[idx] == 0.0,
-                // which results in val = 0.0. This allows us to skip the branch and memory lookup.
+        let u_next_slice = &mut self.u_next[start_idx..end_idx];
+        let energy_slice = &mut self.energy_map[start_idx..end_idx];
+        let u_curr_slice = &self.u[start_idx..end_idx];
+        let u_prev_slice = &self.u_prev[start_idx..end_idx];
+        let c2_slice = &self.c2_map[start_idx..end_idx];
+        let damp_slice = &self.damping_map[start_idx..end_idx];
+
+        let mut current_idx = start_idx;
+
+        for (((((row_next, row_energy), row_curr), row_prev), row_c2), row_damp) in u_next_slice
+            .chunks_exact_mut(w)
+            .zip(energy_slice.chunks_exact_mut(w))
+            .zip(u_curr_slice.chunks_exact(w))
+            .zip(u_prev_slice.chunks_exact(w))
+            .zip(c2_slice.chunks_exact(w))
+            .zip(damp_slice.chunks_exact(w))
+        {
+            // Iterate from 1 to w - 1 to skip X boundaries
+            for x in 1..w - 1 {
+                let idx = current_idx + x;
 
                 let up = idx - w;
                 let down = idx + w;
-                let left = idx - 1;
-                let right = idx + 1;
 
-                let u_curr = self.u[idx];
-                let u_prev = self.u_prev[idx];
-                let c2 = self.c2_map[idx];
-                let damping = self.damping_map[idx];
+                let u_curr = row_curr[x];
+                let u_prev = row_prev[x];
+                let c2 = row_c2[x];
+                let damping = row_damp[x];
 
                 // Standard 5-point discrete Laplacian stencil
                 let laplacian =
-                    self.u[up] + self.u[down] + self.u[left] + self.u[right] - 4.0 * u_curr;
+                    self.u[up] + self.u[down] + row_curr[x - 1] + row_curr[x + 1] - 4.0 * u_curr;
 
                 // Wave equation update
                 let mut val = 2.0 * u_curr - u_prev + c2 * laplacian;
                 val *= damping;
 
-                self.u_next[idx] = val;
+                row_next[x] = val;
 
                 // Accumulate energy with decay (for visualization)
-                self.energy_map[idx] = self.energy_map[idx] * 0.9995 + val.abs() * 0.005;
+                row_energy[x] = row_energy[x] * 0.9995 + val.abs() * 0.005;
             }
+            current_idx += w;
         }
 
         // Cycle buffers:
