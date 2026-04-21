@@ -2,6 +2,55 @@ pub(crate) mod handlers;
 
 use crate::vm::ChimeraVM;
 use anyhow::Result;
+
+fn check_hot_reload(vm: &mut ChimeraVM, app_state: &mut AppState) {
+    let path = match &app_state.source_path {
+        Some(p) => p,
+        None => return,
+    };
+
+    let metadata = match std::fs::metadata(path) {
+        Ok(m) => m,
+        Err(_) => return,
+    };
+
+    let modified = match metadata.modified() {
+        Ok(m) => m,
+        Err(_) => return,
+    };
+
+    let should_reload = match app_state.last_modified {
+        Some(last) => modified > last,
+        None => true,
+    };
+
+    if !should_reload {
+        return;
+    }
+
+    let file = match std::fs::File::open(path) {
+        Ok(f) => f,
+        Err(_) => return,
+    };
+
+    let mut src = String::new();
+    let limit = 1024 * 1024; // 1MB limit
+    if let Ok(bytes) =
+        std::io::Read::read_to_string(&mut std::io::Read::take(file, limit + 1), &mut src)
+    {
+        if bytes as u64 <= limit {
+            let parent = path.parent();
+            if let Ok(new_dna) = crate::compiler::compile(&src, parent) {
+                vm.patch_dna(new_dna);
+                app_state.last_modified = Some(modified);
+                app_state.status_msg = "Hot Reloaded!".to_string();
+                app_state.screen_shake = 5.0;
+            }
+        } else {
+            app_state.status_msg = "File too large to hot reload!".to_string();
+        }
+    }
+}
 use crossterm::event::{self, Event};
 use ratatui::Terminal;
 
@@ -21,43 +70,7 @@ where
         // Hot Reload Check
         app_state.last_check_tick = app_state.last_check_tick.wrapping_add(1);
         if app_state.last_check_tick.is_multiple_of(10) {
-            if let Some(path) = &app_state.source_path {
-                if let Ok(metadata) = std::fs::metadata(path) {
-                    if let Ok(modified) = metadata.modified() {
-                        let should_reload = match app_state.last_modified {
-                            Some(last) => modified > last,
-                            None => true,
-                        };
-
-                        if should_reload {
-                            if let Ok(file) = std::fs::File::open(path) {
-                                let mut src = String::new();
-                                let limit = 1024 * 1024; // 1MB limit
-                                if let Ok(bytes) = std::io::Read::read_to_string(
-                                    &mut std::io::Read::take(file, limit + 1),
-                                    &mut src,
-                                ) {
-                                    if bytes as u64 <= limit {
-                                        // Default to ChimeraScript for hot reload for now
-                                        // Ideally we check extension, but compile() handles imports
-                                        let parent = path.parent();
-                                        if let Ok(new_dna) = crate::compiler::compile(&src, parent)
-                                        {
-                                            vm.patch_dna(new_dna);
-                                            app_state.last_modified = Some(modified);
-                                            app_state.status_msg = "Hot Reloaded!".to_string();
-                                            app_state.screen_shake = 5.0;
-                                        }
-                                    } else {
-                                        app_state.status_msg =
-                                            "File too large to hot reload!".to_string();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            check_hot_reload(vm, app_state);
         }
 
         // Process TuiEvents
