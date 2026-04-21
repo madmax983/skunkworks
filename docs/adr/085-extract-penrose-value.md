@@ -3,7 +3,7 @@
 Date: 2026-04-19
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 A circular dependency existed in the `penrose-genes` experiment between `vm.rs` and `penrose.rs` via the `Value` enum. Specifically, `vm.rs` imported `PenroseTiling` from `penrose.rs`, and `penrose.rs` imported the `Value` enum from `vm.rs`. This tight coupling caused build issues, complicated testing, and entangled the Virtual Machine execution domain with the Penrose tiling generation domain.
