@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **stego-cartridge**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile `pack` bin due to missing `std::io::Read` and type annotation issues. Grace period: 24h.
+- **verge-computer**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Technical Debt Burden. Explicitly excluded from workspace CI checks and fails clippy (`clippy::vec_init_then_push`). Grace period: 24h.
 ## Pardoned
 - **poincare-resonance**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved missing types and unresolved imports. Vigor demonstrated.
 - **chimera-sediment**: Specimen pardoned. Diagnosis: Skeletal Implementation / Vestigial Organs. Resolved by properly ticking the underlying `ChimeraVM` and eliminating strict clippy warnings during its grace period. Vigor demonstrated.
@@ -357,6 +357,7 @@
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
 ## ☠️ Executed
+- **stego-cartridge**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile `pack` bin due to missing `std::io::Read` and type annotation issues. Failed to adapt during grace period. Biomass returned to the void.
 - **chimera-canopy**: Specimen executed. Diagnosis: Skeletal Implementation / Vestigial Organs. Failed to connect the `ChimeraVM`'s execution output to the agent's movement and replace hardcoded random jumping with genetic decision-making during grace period. Biomass returned to the void.
 - **syntax-spider**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to reintegrate into the ecosystem by compiling cleanly alongside the workspace, remaining a detached generic Bevy physics sketch during grace period. Biomass returned to the void.
 - **spectral-decay**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. The specimen has explicitly severed itself from the workspace (`exclude = [...]`) and panics in standard headless environments (`neither WAYLAND_DISPLAY ...`). Failed to improve during grace period. Moved to graveyard.
