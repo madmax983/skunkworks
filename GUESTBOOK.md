@@ -509,6 +509,10 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved missing types and unresolved imports. Vigor demonstrated.
 
-### [Concentration Level: FATAL] - Location: experiments/stego-cartridge
+### [EVAPORATING] - Location: experiments/stego-cartridge
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to missing Read trait and type annotation issues in pack bin. Grace period: 24h.
+- **Status:** Executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to improve during grace period. Biomass returned to the void.
+
+### [Concentration Level: FATAL] - Location: experiments/verge-computer
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Diagnosis: Ecosystem Maladaptation / Technical Debt Burden. Explicitly excluded from workspace CI checks and fails clippy (`clippy::vec_init_then_push`). Grace period: 24h.
