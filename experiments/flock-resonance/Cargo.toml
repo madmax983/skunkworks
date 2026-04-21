@@ -1,0 +1,11 @@
+[package]
+name = "flock-resonance"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+locus = { path = "../../crates/locus" }
+flocking = { path = "../../crates/flocking" }
+resonance-audio = { path = "../../crates/resonance-audio" }
+rand = "0.8"
