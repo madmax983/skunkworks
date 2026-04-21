@@ -393,6 +393,7 @@ fn compile_genetics_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>
     Ok(genes)
 }
 
+#[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
     use super::*;
