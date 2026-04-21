@@ -14,7 +14,10 @@ pub(crate) fn handle_char_input(
             app_state.status_msg = format!("Chaos Mode: {}", app_state.chaos_mode);
             Ok(false)
         }
-        KeyCode::Char('h') => { app_state.view_mode = ViewMode::Heatmap; Ok(false) },
+        KeyCode::Char('h') => {
+            app_state.view_mode = ViewMode::Heatmap;
+            Ok(false)
+        }
         KeyCode::Char('i') => {
             app_state.input_mode = InputMode::Injection;
             app_state.input_buffer.clear();
@@ -31,8 +34,14 @@ pub(crate) fn handle_char_input(
         KeyCode::Char(' ') => handle_char_space(vm, app_state),
         KeyCode::Char('s') => handle_char_s(vm, app_state),
         KeyCode::Char('f') => handle_char_f(vm, app_state),
-        KeyCode::Char('m') => { vm.mutate(); Ok(false) },
-        KeyCode::Char('c') => { vm.chaos_mode = !vm.chaos_mode; Ok(false) },
+        KeyCode::Char('m') => {
+            vm.mutate();
+            Ok(false)
+        }
+        KeyCode::Char('c') => {
+            vm.chaos_mode = !vm.chaos_mode;
+            Ok(false)
+        }
         KeyCode::Char(c) => handle_mode_specific_chars(c, vm, app_state),
         _ => Ok(false),
     }

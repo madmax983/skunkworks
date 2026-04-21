@@ -1,6 +1,6 @@
-use std::io::Read;
 use anyhow::Result;
 use rand::Rng;
+use std::io::Read;
 use std::path::Path;
 use syn::{spanned::Spanned, visit::Visit, ItemFn};
 use walkdir::WalkDir;
