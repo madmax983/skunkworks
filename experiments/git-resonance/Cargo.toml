@@ -1,0 +1,19 @@
+[package]
+name = "git-resonance"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+git-associates = { path = "../../crates/git-associates" }
+resonance-audio = { path = "../../crates/resonance-audio" }
+macroquad = "0.4.14"
+crossbeam-channel = "0.5"
+anyhow = { workspace = true }
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = []
+audio = ["dep:cpal"]

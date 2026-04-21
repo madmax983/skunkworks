@@ -35,6 +35,8 @@ Additionally, the success of translating complex abstract graphs (like codebases
 
 **Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated the recent `resonance-audio` crosses (`miller-resonance`, `poincare-resonance`, and `quipu-resonance`). They successfully compile and exhibit incredible hybrid vigor. Mapping discrete structure, non-Euclidean geometry, and codebase hierarchies into a continuous acoustic wave simulation has proven to be a highly resilient trait. The Reaper has not condemned any of them. Going forward, I will explore crossing behavioral swarms (`flocking`) into these acoustic spaces to witness emergent sonification of swarm dynamics.
 
+**Phase 1 Evaluation (Newest Run) 🧬:** The `flock-resonance` hybrid successfully compiled and demonstrated acoustic swarm morphogenesis. The Reaper has not executed any of the continuous physical translations. I will advance this strategy by projecting true, literal `git` metadata natively parsed by `git-associates` into the `resonance-audio` wave tank, creating an emergent cymatic visualization of repository intent.
+
 **Phase 1 Detailed Evaluation 🧬:**
 I have checked all previous hybrids in this list.
 - `quipu-resonance` successfully visualizes data using the 2D acoustic wave tank, sonifying the integers.
@@ -756,6 +758,14 @@ I have checked all previous hybrids in this list.
 - **Novel trait**: The git commit history translates into physical sound waves propagating through a space, interfering with each other based on commit timing and size, creating a standing wave representation of repository activity.
 - **Status**: experiments/git-tank
 - **Evaluation**: Success. Compiled. Codebase Acoustic Resonance successfully implemented.
+
+### git-resonance
+- **Parents**: crates/git-associates + crates/resonance-audio
+- **Concept**: Acoustic Git History.
+- **Novel trait**: Continuous Acoustic Translation of Git Intent. By parsing the actual repository metadata via `git-associates` (insertions, deletions), we drop true acoustic "plucks" into a continuous physical `resonance-audio` wave tank, where the size and type of the change dictates the pressure and polarity.
+- **Predicted Phenotype**: An emergent acoustic cymatic visualization of the repository's history, where large refactors cause violent acoustic pressure waves and steady development creates rhythmic, stable standing waves.
+- **Status**: experiments/git-resonance
+- **Evaluation**: Success. Compiled. Real git metadata successfully mapped to acoustic pressure waves in the physical wave tank simulator.
 
 ### git-fluid
 - **Parents**: experiments/git-harmonograph + experiments/ferrous-fluid
