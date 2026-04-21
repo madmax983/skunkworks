@@ -516,3 +516,5 @@
 ### [Concentration Level: FATAL] - Location: experiments/verge-computer
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Diagnosis: Ecosystem Maladaptation / Technical Debt Burden. Explicitly excluded from workspace CI checks and fails clippy (`clippy::vec_init_then_push`). Grace period: 24h.
+
+- [x] Left a strong `[STABLE TRAIL]` pheromone marker for `flock-resonance`. The kinetic energy of the flock successfully transduces into an acoustic pressure field, proving that swarms can be 'heard' within a continuous simulation.
