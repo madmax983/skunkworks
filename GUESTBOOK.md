@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/malloc-market
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Terminal Generic and Skeletal Implementation. `0.0 / 0.0` mathematical logic compilation failure. Condemned. Execution scheduled in 24h unless pardoned.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/poincare-fluid
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination pheromone deployed. Spliced poincare-disk with ferrous-fluid.

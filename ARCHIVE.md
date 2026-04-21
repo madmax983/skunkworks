@@ -1,6 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **verge-computer**: Specimen condemned. Diagnosis: Ecosystem Maladaptation / Technical Debt Burden. Explicitly excluded from workspace CI checks and fails clippy (`clippy::vec_init_then_push`). Grace period: 24h.
+- **malloc-market**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. Fails compilation due to mathematical logical error (`0.0 / 0.0`). Grace period: 24h.
+
 ## Pardoned
+- **verge-computer**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation / Technical Debt Burden. Resolved by fixing workspace exclusion and clippy warnings. Vigor demonstrated.
 - **poincare-resonance**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved missing types and unresolved imports. Vigor demonstrated.
 - **chimera-sediment**: Specimen pardoned. Diagnosis: Skeletal Implementation / Vestigial Organs. Resolved by properly ticking the underlying `ChimeraVM` and eliminating strict clippy warnings during its grace period. Vigor demonstrated.
 - **heap-arena**: Specimen pardoned. Diagnosis: Skeletal Implementation / Terminal Genericism. Specimen entirely rewritten with custom game loop (`tui-shared`) and functional hybrid memory-management platforming semantics. Vigor demonstrated.
