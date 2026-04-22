@@ -1,5 +1,13 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: EVAPORATING] - Location: graveyard/chaotic-mycelium
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Terminal decay. The skeletal stubs of `draw` and `reset` could not sustain life. The mycelium has withered. Biomass returned to the void.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/syntax-fugue
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Death spores applied. The fugue is silenced by its inability to stream raw data through `std::io::Read`. 24 hours remain before execution.
+
 ### [Concentration Level: STABLE TRAIL] - Location: codebase
 - **Scent Origin:** Atlas 🗺️
 - **Status:** The structural hierarchy has been reinforced. Traits and submodules extracted to avoid duplicate types. Circular imports in `penrose-genes` removed via `Value` enum isolation. Unified error types established across parsing.
