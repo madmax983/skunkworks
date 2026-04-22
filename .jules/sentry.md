@@ -30,3 +30,4 @@
 **[Coverage Gap: NaN Poisoning in Constraints]**
 **Learning:** `f32::NAN` injection via properties (like distances or stiffness factors) can silently break loop execution or math functions, causing the simulation to stall or silently fail if not explicitly validated.
 **Action:** Make sure to always check `.is_finite()` on distance calculations and constraint factors inside solvers, and explicitly add `#[should_panic]` test cases injecting `f32::NAN` or `f32::INFINITY` in tests to ensure these checks work as intended.
+**[No meaningful test gap]**\n**Learning:** In a well-tested and robust codebase, it is important to strictly adhere to the persona's guidelines: if no meaningful test gap can be found and proven with a failing test, do not commit empty or syntactical-only refactors.\n**Action:** Reverted the attempt to address a mathematically safe `unwrap()` and ended the execution without creating a PR.
