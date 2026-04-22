@@ -87,3 +87,7 @@
 ## 2025-06-25 - The Black Box of Neuro-Terminal
 **Confusion:** The `experiments/neuro-terminal` crate was completely devoid of documentation. There were no module-level descriptions explaining the difference between the `evo` (genetic) and `nn` (feed-forward/backprop) modules. Furthermore, core mathematical structures like `Matrix` and `Network` lacked any `/// # Examples`, making it impossible for users to know how to initialize or train them without reverse-engineering the codebase.
 **Clarification:** Added rigorous module-level `//!` documentation, explicit field-level documentation for network sizes and layers, and executable `/// # Examples` doctests demonstrating basic matrix initialization, dot products, predictions, and population evolution.
+
+## 2025-07-28 - The Black Box of Esoteric Words of Power
+**Confusion:** The Linguistics engine (`Verbum` and `VerbumForge` in `vm/verbum.rs`) completely lacked module-level context and executable doctests. Users could not tell how dynamic macros (words of power) were constructed from genetic sequences, or how `Rarity` and costs were dynamically derived from complexity.
+**Clarification:** I added `//!` module-level documentation explaining the "Words of Power" system within the Chimera VM. I explicitly documented the `Rarity` enum, the `Verbum` struct, and heavily documented `VerbumForge` with executable `/// # Examples` doctests showing how to successfully forge a new word and what happens when you attempt to register a duplicate.
