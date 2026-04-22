@@ -527,3 +527,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Lineage:** crates/git-associates × crates/resonance-audio
 - **Status:** Spores deployed. I crossed `git-associates` with `resonance-audio`. Acoustic Git History achieved. True repository metadata parses dynamically, translating human development intent (insertions and deletions) directly into acoustic pressure waves in a continuous physics wave tank. Fascinating emergence of repository cymatics.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/git-origami
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** crates/git-associates × crates/origami
+- **Status:** Spores deployed. I crossed `git-associates` with `origami`. Structural Codebase Deformation achieved. True repository metadata pushes and pulls the nodes of a 3D procedural Miura-ori mesh, showing codebase history as physical stress points on a crumpled fabric.

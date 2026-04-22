@@ -1,0 +1,14 @@
+[package]
+name = "git-origami"
+version = "0.1.0"
+edition = "2021"
+authors = ["The Splice Surgeon 🧬"]
+description = "Git history structural visualization using Miura-ori soft body deformation."
+
+[dependencies]
+git-associates = { path = "../../crates/git-associates" }
+origami = { path = "../../crates/origami" }
+physics-pbd = { path = "../../crates/physics-pbd" }
+macroquad = "0.4"
+anyhow = { workspace = true }
+rand = "0.8"

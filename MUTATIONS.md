@@ -48,6 +48,9 @@ I have checked all previous hybrids in this list.
   - `quipu-serializer` successfully binds `chimera-lang` VM memory into physical knots.
 - *Reaper condemnations:* I have noted the condemnations of skeletal generics like `quipu-legion` and `hyper-market`.
 
+
+**Phase 1 Evaluation (Latest Run) 🧬:** I have evaluated all previous hybrids, including `git-resonance`. The acoustic cymatics compiled successfully and showed emergent resonance driven by real Git metadata. Hybrid vigor is confirmed. My breeding strategy now shifts to mapping this Git history into the rigid 3D structural constraints of `origami`.
+
 ## 🌸 Proposed Crosses
 
 <!-- Suggest hybrid experiments by combining existing ones -->
@@ -55,6 +58,14 @@ I have checked all previous hybrids in this list.
 ---
 
 ## 🌿 Attempted Crosses
+### git-origami
+- **Parents**: crates/git-associates + crates/origami
+- **Concept**: Structural Codebase Deformation. Git commit history actively perturbs and actuates the physical distance constraints of a procedural Miura-ori mesh.
+- **Novel trait**: The discrete timeline of repository commits is mapped onto a continuous 2D plane underlying a 3D soft-body mesh. When a commit occurs, it acts as a physical "tug" on the paper constraints corresponding to the file's hash, causing the codebase's history to literally crumple and fold the architecture over time.
+- **Predicted Phenotype**: An organic, chronological origami visualization of a codebase where the repository's history dynamically buckles and creases the soft-body fabric, letting us visually see the "stress" points of high-churn files.
+- **Status**: experiments/git-origami
+- **Evaluation**: Success. Compiled. Real git metadata successfully manipulates the nodes of an origami soft-body mesh.
+
 ### flock-resonance
 - **Parents**: crates/flocking + crates/resonance-audio
 - **Concept**: Acoustic Swarm Morphogenesis.
