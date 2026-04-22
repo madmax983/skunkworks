@@ -145,7 +145,12 @@ pub fn compile(source: &str) -> Result<Dna> {
                 ));
                 genes.push(Gene::new(OpCode::Piet, vec![]));
             }
-            Rule::acoustic_block => { for instr in inner_block.into_inner() { genes.extend(compile_acoustic_instr(instr)?); } }, Rule::regex_block => {
+            Rule::acoustic_block => {
+                for instr in inner_block.into_inner() {
+                    genes.extend(compile_acoustic_instr(instr)?);
+                }
+            }
+            Rule::regex_block => {
                 let content = inner_block.as_str();
                 let mut content = content.trim_start_matches("regex").trim();
                 if content.starts_with('{') && content.ends_with('}') {
