@@ -398,6 +398,38 @@ fn compile_genetics_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>
     Ok(genes)
 }
 
+
+
+#[cfg(feature = "resonance")]
+fn compile_acoustic_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
+    let mut genes = Vec::new();
+    let mut inner = pair.into_inner();
+    let op = inner.next().unwrap().as_str().to_ascii_lowercase();
+
+    match op.as_str() {
+        "pluck" => {
+            let strength: i64 = inner.next().unwrap().as_str().parse()?;
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(strength)]));
+            genes.push(Gene::new(OpCode::Pluck, vec![]));
+        }
+        "oscillate" => {
+            let freq: i64 = inner.next().unwrap().as_str().parse()?;
+            let strength: i64 = inner.next().unwrap().as_str().parse()?;
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(freq)]));
+            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(strength)]));
+            genes.push(Gene::new(OpCode::Oscillate, vec![]));
+        }
+        _ => {}
+    }
+    Ok(genes)
+}
+
+#[cfg(not(feature = "resonance"))]
+fn compile_acoustic_instr(_pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
+    Ok(Vec::new())
+}
+
+
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
@@ -448,33 +480,4 @@ chaos {
         assert_eq!(genes[1].op, OpCode::Glitch);
         assert_eq!(genes[2].op, OpCode::EntropySurge);
     }
-}
-
-#[cfg(feature = "resonance")]
-fn compile_acoustic_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
-    let mut genes = Vec::new();
-    let mut inner = pair.into_inner();
-    let op = inner.next().unwrap().as_str().to_ascii_lowercase();
-
-    match op.as_str() {
-        "pluck" => {
-            let strength: i64 = inner.next().unwrap().as_str().parse()?;
-            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(strength)]));
-            genes.push(Gene::new(OpCode::Pluck, vec![]));
-        }
-        "oscillate" => {
-            let freq: i64 = inner.next().unwrap().as_str().parse()?;
-            let strength: i64 = inner.next().unwrap().as_str().parse()?;
-            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(freq)]));
-            genes.push(Gene::new(OpCode::Push, vec![Nucleotide::Number(strength)]));
-            genes.push(Gene::new(OpCode::Oscillate, vec![]));
-        }
-        _ => {}
-    }
-    Ok(genes)
-}
-
-#[cfg(not(feature = "resonance"))]
-fn compile_acoustic_instr(_pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
-    Ok(Vec::new())
 }
