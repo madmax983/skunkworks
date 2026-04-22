@@ -12,11 +12,14 @@ fn main() -> Result<()> {
     let args: Vec<String> = env::args().collect();
     let mut path = ".".to_string();
     let mut semantic_mode = false;
+    let mut json_mode = false;
 
     // Simple arg parsing
     for arg in args.iter().skip(1) {
         if arg == "--semantic" {
             semantic_mode = true;
+        } else if arg == "--json" {
+            json_mode = true;
         } else {
             path = arg.clone();
         }
@@ -46,7 +49,13 @@ fn main() -> Result<()> {
         // Run a few ticks to let things settle?
         world.update();
         let snapshot = world.snapshot();
-        println!("{}", snapshot.to_json_pretty());
+        if json_mode {
+            println!("{}", snapshot.to_json_pretty());
+        } else {
+            // 🎨 Mosaic: Replaced raw JSON stdout with a styled semantic representation
+            println!("🌱 Semantic Snapshot Generated ({} entities)", snapshot.entities.len());
+            println!("   (Run with --json to see raw data)");
+        }
         return Ok(());
     }
 

@@ -127,8 +127,28 @@ mod tests {
 /// 3. Runs the main event loop.
 /// 4. Restores the terminal on exit.
 fn main() -> Result<()> {
+    // 🎨 Mosaic: parse args manually to support CLI flags natively
+    let args: Vec<String> = env::args().collect();
+    let mut json_mode = false;
+    let mut input_path = None;
+
+    for arg in args.iter().skip(1) {
+        if arg == "--json" {
+            json_mode = true;
+        } else {
+            input_path = Some(arg.clone());
+        }
+    }
+
     // 1. Read input
-    let snapshot = read_snapshot()?;
+    let snapshot = read_snapshot(input_path)?;
+
+    if json_mode {
+        // Output raw JSON if requested
+        println!("{}", snapshot.to_json_pretty());
+        return Ok(());
+    }
+
 
     // 2. Setup Terminal
     let mut tui = tui_shared::Tui::init()?;
@@ -153,14 +173,12 @@ fn main() -> Result<()> {
 ///
 /// * `Ok(Snapshot)` - The parsed snapshot.
 /// * `Err` - If reading fails or JSON is invalid.
-fn read_snapshot() -> Result<Snapshot> {
-    let args: Vec<String> = env::args().collect();
+fn read_snapshot(input_path: Option<String>) -> Result<Snapshot> {
     let mut json = String::new();
 
     let limit = 10 * 1024 * 1024;
-    if args.len() > 1 {
+    if let Some(path) = input_path {
         // Read from file
-        let path = &args[1];
         let file = std::fs::File::open(path).context("Failed to open input file")?;
         let bytes_read = file
             .take(limit + 1)
@@ -173,6 +191,7 @@ fn read_snapshot() -> Result<Snapshot> {
         // Read from stdin
         if atty::is_stdin() {
             eprintln!("Usage: semantic-spy < snapshot.json");
+            eprintln!("   or: semantic-spy --json < snapshot.json");
             eprintln!("   or: cargo run --bin orbital-decay -- --semantic | semantic-spy");
             std::process::exit(1);
         }

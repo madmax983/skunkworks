@@ -60,7 +60,8 @@ fn run_app(tui: &mut Tui) -> Result<()> {
 
                     // Draw Magnets (Market Bids/Asks)
                     for mag in &universe.magnets {
-                        let color = if mag.polarity { Color::Green } else { Color::Red };
+                        // 🎨 Mosaic: Replaced Red/Green with high contrast Yellow/Cyan
+                        let color = if mag.polarity { Color::Cyan } else { Color::Yellow };
                         let label = if mag.polarity { "B" } else { "A" };
                         ctx.print(
                             mag.pos.x,

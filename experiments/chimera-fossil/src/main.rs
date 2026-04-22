@@ -36,6 +36,10 @@ struct Cli {
     /// List fossil history (Git Log) in a table
     #[arg(short, long)]
     list: bool,
+
+    /// Output raw JSON format
+    #[arg(long)]
+    json: bool,
 }
 
 #[derive(PartialEq, Debug, Clone, Copy)]
@@ -289,7 +293,7 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
 
     if cli.list {
-        run_cli_list()?;
+        run_cli_list(cli.json)?;
         return Ok(());
     }
 
@@ -322,8 +326,24 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn run_cli_list() -> Result<()> {
+fn run_cli_list(json_mode: bool) -> Result<()> {
     let commits = load_history()?;
+
+    if json_mode {
+        // 🎨 Mosaic: output JSON for programmatic consumption when requested
+        // Using a structured, machine-readable format.
+        let json_output: Vec<serde_json::Value> = commits.iter().map(|c| {
+            serde_json::json!({
+                "hash": c.hash,
+                "date": c.date.to_string(),
+                "author": c.author,
+                "message": c.message
+            })
+        }).collect();
+        println!("{}", serde_json::to_string_pretty(&json_output)?);
+        return Ok(());
+    }
+
     let mut table = comfy_table::Table::new();
     table
         .load_preset(comfy_table::presets::UTF8_FULL)
@@ -331,16 +351,17 @@ fn run_cli_list() -> Result<()> {
             "Hash", "Date", "Author", "Message", "Entropy", "Verified",
         ]);
 
-    for commit in commits {
+    for commit in &commits {
         // Simulate a "Verified" status based on commit hash or message properties
         // For visual demonstration of "True" as Green
         let is_verified = commit.hash.chars().next().unwrap_or('0').is_numeric(); // Arbitrary check
         let verified_str = if is_verified { "True" } else { "False" };
 
+        // 🎨 Mosaic: Replaced Red/Green with high contrast Yellow/Cyan
         let verified_cell = if is_verified {
-            comfy_table::Cell::new(verified_str).fg(comfy_table::Color::Green)
+            comfy_table::Cell::new(verified_str).fg(comfy_table::Color::Cyan)
         } else {
-            comfy_table::Cell::new(verified_str).fg(comfy_table::Color::Red)
+            comfy_table::Cell::new(verified_str).fg(comfy_table::Color::Yellow)
         };
 
         // Calculate Entropy (Mock)
@@ -350,12 +371,13 @@ fn run_cli_list() -> Result<()> {
         let entropy_val = (hasher.finish() % 100) as u8;
 
         let entropy_cell = comfy_table::Cell::new(format!("{}%", entropy_val));
+        // 🎨 Mosaic: Replaced Red/Green with high contrast colors
         let entropy_cell = if entropy_val > 70 {
-            entropy_cell.fg(comfy_table::Color::Red)
+            entropy_cell.fg(comfy_table::Color::Magenta)
         } else if entropy_val > 30 {
             entropy_cell.fg(comfy_table::Color::Yellow)
         } else {
-            entropy_cell.fg(comfy_table::Color::Green)
+            entropy_cell.fg(comfy_table::Color::Cyan)
         };
 
         table.add_row(vec![

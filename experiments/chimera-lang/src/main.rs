@@ -71,12 +71,13 @@ impl<'a> std::fmt::Display for OracleResultWrapper<'a> {
                             let mut v_cell = comfy_table::Cell::new(&v_str);
 
                             // Colorize
+                            // 🎨 Mosaic: Replaced Red/Green with high contrast Yellow/Cyan
                             if v_str == "1" || v_str.eq_ignore_ascii_case("true") {
-                                v_cell = v_cell.fg(comfy_table::Color::Green);
-                            } else if v_str == "0" || v_str.eq_ignore_ascii_case("false") {
-                                v_cell = v_cell.fg(comfy_table::Color::Red);
-                            } else if matches!(v, Value::Str(_)) {
                                 v_cell = v_cell.fg(comfy_table::Color::Cyan);
+                            } else if v_str == "0" || v_str.eq_ignore_ascii_case("false") {
+                                v_cell = v_cell.fg(comfy_table::Color::Yellow);
+                            } else if matches!(v, Value::Str(_)) {
+                                v_cell = v_cell.fg(comfy_table::Color::Magenta);
                             }
 
                             table.add_row(vec![
@@ -307,19 +308,20 @@ fn main() -> Result<()> {
                 Value::Junction(_, _) => ("Junction", comfy_table::Color::Magenta),
                 Value::Superposition(_) => ("Superposition", comfy_table::Color::Yellow),
                 Value::Symbol(_) => ("Symbol", comfy_table::Color::Magenta),
-                Value::Color(_, _, _) => ("Color", comfy_table::Color::Green),
+                Value::Color(_, _, _) => ("Color", comfy_table::Color::Cyan), // 🎨 Mosaic: No raw green text
             };
 
             let val_str = format!("{}", OracleResultWrapper(val));
 
             let mut val_cell = comfy_table::Cell::new(&val_str);
 
+            // 🎨 Mosaic: Replaced Red/Green with high contrast Yellow/Cyan
             if val_str == "1" || val_str.eq_ignore_ascii_case("true") {
-                val_cell = val_cell.fg(comfy_table::Color::Green);
-            } else if val_str == "0" || val_str.eq_ignore_ascii_case("false") {
-                val_cell = val_cell.fg(comfy_table::Color::Red);
-            } else if matches!(val, Value::Str(_)) {
                 val_cell = val_cell.fg(comfy_table::Color::Cyan);
+            } else if val_str == "0" || val_str.eq_ignore_ascii_case("false") {
+                val_cell = val_cell.fg(comfy_table::Color::Yellow);
+            } else if matches!(val, Value::Str(_)) {
+                val_cell = val_cell.fg(comfy_table::Color::Magenta);
             }
 
             table.add_row(vec![
