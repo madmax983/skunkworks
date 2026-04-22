@@ -1,5 +1,5 @@
-🔒 Warden: [Unbounded File Read DoS Prevention V]
+📜 Codex: ADR 086 & Architecture Diagram Update
 
-**Threat:** Unbounded file reads were identified in several graph and compiler components (`mnem-strings`, `chron-compost`, `chimera-lang`, etc.). Using `std::io::Read::read_to_string` combined with `take` incorrectly or `fs::read_to_string` directly allowed malformed, excessively large inputs to exhaust system memory and crash the application (Denial of Service).
-**Defense:** Replaced calls with the memory-safe pattern `file.take(limit + 1).read_to_string(&mut content)`. Ensured explicit bounds checks where required. Also fixed tests and compilation issues around the safe usage.
-**Severity:** High - prevents OOM crashes on malformed inputs.
+🧠 **Decision:** Recorded the move to eliminate the massive 4,500+ line run_app event loop duplication in `tui/mod.rs` and correctly delegate to `tui/app/mod.rs` in `chimera-lang`. Addressed previous feedback by moving status to Accepted, fixing diagram syntax, and updating sequence diagram.
+🗺️ **Visuals:** Updated the architecture diagram in `docs/architecture.md` by linking the Chimera TUI Architecture section to ADR 086. The existing Mermaid diagram `TuiFacade --> AppLoop : Delegates event loop` perfectly captures the new boundaries. Added the updated sequence diagram indicating how the Facade calls `run_app`.
+🔗 **Link:** See `docs/adr/086-chimera-tui-blob-elimination.md`.
