@@ -83,7 +83,6 @@ pub(crate) fn handle_enter_key(vm: &mut ChimeraVM, app_state: &mut AppState) -> 
                     }
                 }
             }
-            app_state.input_mode = InputMode::Normal;
         }
         ViewMode::Genome => {
             // Genome Editing Logic
@@ -100,8 +99,6 @@ pub(crate) fn handle_enter_key(vm: &mut ChimeraVM, app_state: &mut AppState) -> 
                                     [app_state.selected_gene] = gene;
                                 app_state.status_msg = "Gene updated successfully".to_string();
                             }
-                            app_state.input_mode = InputMode::Normal;
-                            app_state.input_buffer.clear();
                         }
                         Err(e) => {
                             app_state.status_msg = format!("Parse Error: {}", e);
@@ -129,9 +126,7 @@ pub(crate) fn handle_enter_key(vm: &mut ChimeraVM, app_state: &mut AppState) -> 
             apply_grid_edit(vm, app_state);
         }
         #[cfg(feature = "nova")]
-        ViewMode::Babel | ViewMode::Weaver => {
-            app_state.input_mode = InputMode::Normal;
-        }
+        ViewMode::Babel | ViewMode::Weaver => {}
         #[cfg(feature = "nova")]
         ViewMode::Crispr => {
             handle_crispr_enter(vm, app_state);
@@ -152,8 +147,6 @@ pub(crate) fn handle_enter_key(vm: &mut ChimeraVM, app_state: &mut AppState) -> 
             };
             vm.grid[y][x] = val;
             app_state.status_msg = format!("Grid updated at {},{}", x, y);
-            app_state.input_mode = InputMode::Normal;
-            app_state.input_buffer.clear();
         }
 
         #[cfg(feature = "nova")]
@@ -167,8 +160,6 @@ pub(crate) fn handle_enter_key(vm: &mut ChimeraVM, app_state: &mut AppState) -> 
                     app_state.status_msg = format!("Cord {} set to {}", vm.quipu.active_cord, n);
                 }
             }
-            app_state.input_mode = InputMode::Normal;
-            app_state.input_buffer.clear();
         }
         ViewMode::BioticChaos => {
             // Allow editing Chaos Grid?
@@ -178,30 +169,24 @@ pub(crate) fn handle_enter_key(vm: &mut ChimeraVM, app_state: &mut AppState) -> 
                 vm.chaos_struct.grid[y][x] = v.clamp(0.0, 1.0);
                 app_state.status_msg = format!("Chaos Grid updated at {},{}", x, y);
             }
-            app_state.input_mode = InputMode::Normal;
-            app_state.input_buffer.clear();
         }
 
         #[cfg(feature = "nova")]
-        ViewMode::Virology => {
-            match app_state.virus_design_focus {
-                0 => app_state.virus_design_name = app_state.input_buffer.clone(),
-                1 => app_state.virus_design_pattern = app_state.input_buffer.clone(),
-                2 => {
-                    if let Ok(n) = app_state.input_buffer.parse::<u8>() {
-                        app_state.virus_design_rate = n.clamp(0, 100);
-                    }
+        ViewMode::Virology => match app_state.virus_design_focus {
+            0 => app_state.virus_design_name = app_state.input_buffer.clone(),
+            1 => app_state.virus_design_pattern = app_state.input_buffer.clone(),
+            2 => {
+                if let Ok(n) = app_state.input_buffer.parse::<u8>() {
+                    app_state.virus_design_rate = n.clamp(0, 100);
                 }
-                3 => {
-                    if let Ok(n) = app_state.input_buffer.parse::<i64>() {
-                        app_state.virus_design_payload = n;
-                    }
-                }
-                _ => {}
             }
-            app_state.input_mode = InputMode::Normal;
-            app_state.input_buffer.clear();
-        }
+            3 => {
+                if let Ok(n) = app_state.input_buffer.parse::<i64>() {
+                    app_state.virus_design_payload = n;
+                }
+            }
+            _ => {}
+        },
 
         #[cfg(feature = "nova")]
         ViewMode::Lexicon => {
@@ -213,8 +198,6 @@ pub(crate) fn handle_enter_key(vm: &mut ChimeraVM, app_state: &mut AppState) -> 
             let (x, y) = app_state.grid_cursor;
             vm.grid[y][x] = val;
             app_state.status_msg = format!("Grid updated at {},{}", x, y);
-            app_state.input_mode = InputMode::Normal;
-            app_state.input_buffer.clear();
         }
         ViewMode::Evolution => {
             if let Ok(val) = app_state.input_buffer.parse::<i64>() {
@@ -224,8 +207,6 @@ pub(crate) fn handle_enter_key(vm: &mut ChimeraVM, app_state: &mut AppState) -> 
                 }
                 app_state.status_msg = format!("Target set to {}", val);
             }
-            app_state.input_mode = InputMode::Normal;
-            app_state.input_buffer.clear();
         }
         #[cfg(feature = "nova")]
         ViewMode::Ecology => {
@@ -277,8 +258,6 @@ pub(crate) fn handle_enter_key(vm: &mut ChimeraVM, app_state: &mut AppState) -> 
                     }
                 }
             }
-            app_state.input_mode = InputMode::Normal;
-            app_state.input_buffer.clear();
         }
 
         #[cfg(feature = "nova")]
@@ -299,8 +278,7 @@ pub(crate) fn handle_enter_key(vm: &mut ChimeraVM, app_state: &mut AppState) -> 
                     }
                     Err(e) => app_state.status_msg = format!("Compile Error: {}", e),
                 }
-                // Clear buffer? Maybe keep it for repeated editing.
-                app_state.input_mode = InputMode::Normal;
+            // Clear buffer? Maybe keep it for repeated editing.
             } else if app_state.genesis_focus == 1 {
                 // Update Grammar
                 match crate::lisp::parse(&app_state.genesis_grammar_buffer) {
@@ -319,7 +297,6 @@ pub(crate) fn handle_enter_key(vm: &mut ChimeraVM, app_state: &mut AppState) -> 
                         } else {
                             app_state.status_msg = "Error: Empty Grammar".to_string();
                         }
-                        app_state.input_mode = InputMode::Normal;
                     }
                     Err(e) => app_state.status_msg = format!("Lisp Error: {}", e),
                 }
@@ -357,12 +334,45 @@ pub(crate) fn handle_enter_key(vm: &mut ChimeraVM, app_state: &mut AppState) -> 
                     }
                 }
             }
-            app_state.input_mode = InputMode::Normal;
         }
-        _ => {
-            app_state.input_mode = InputMode::Normal;
-            app_state.input_buffer.clear();
+        _ => {}
+    }
+
+    // Default cleanup for editing mode
+    let mut stay_in_editing = false;
+    let mut keep_buffer = false;
+
+    #[cfg(feature = "nova")]
+    if matches!(app_state.view_mode, ViewMode::Crispr) {
+        stay_in_editing = true;
+        keep_buffer = true;
+    }
+
+    #[cfg(feature = "nova")]
+    if matches!(app_state.view_mode, ViewMode::Babel | ViewMode::Weaver) {
+        keep_buffer = true;
+    }
+
+    if matches!(app_state.view_mode, ViewMode::Genome) {
+        // Only clear buffer if compilation was successful (status_msg indicates success)
+        if !app_state.status_msg.contains("success") {
+            stay_in_editing = true;
+            keep_buffer = true;
         }
     }
+
+    #[cfg(feature = "nova")]
+    if matches!(app_state.view_mode, ViewMode::Genesis) && app_state.status_msg.contains("Error") {
+        stay_in_editing = true;
+        keep_buffer = true;
+    }
+
+    if !stay_in_editing {
+        app_state.input_mode = InputMode::Normal;
+    }
+    if !keep_buffer {
+        app_state.input_buffer.clear();
+    }
+
     Ok(true)
 }

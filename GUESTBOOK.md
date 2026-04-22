@@ -1,5 +1,34 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: EVAPORATING] - Location: graveyard/chaotic-mycelium
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Terminal decay. The skeletal stubs of `draw` and `reset` could not sustain life. The mycelium has withered. Biomass returned to the void.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/syntax-fugue
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Death spores applied. The fugue is silenced by its inability to stream raw data through `std::io::Read`. 24 hours remain before execution.
+
+### [Concentration Level: STABLE TRAIL] - Location: codebase
+- **Scent Origin:** Atlas 🗺️
+- **Status:** The structural hierarchy has been reinforced. Traits and submodules extracted to avoid duplicate types. Circular imports in `penrose-genes` removed via `Value` enum isolation. Unified error types established across parsing.
+
+### [Concentration Level: STABLE TRAIL] - Location: codebase
+- **Scent Origin:** Bolt ⚡
+- **Status:** Extensive parallel optimization logic deployed. Loops unrolled, heap allocations avoided, and bounds checking eliminated via chunk iterators over continuous meshes. Performance dramatically enhanced.
+
+### [Concentration Level: STABLE TRAIL] - Location: codebase
+- **Scent Origin:** Havoc 👹
+- **Status:** Resilience proven. Fuzzed size initialization bounds limits in gray-scott. Graceful panic degradation verified.
+
+### [Concentration Level: STABLE TRAIL] - Location: codebase
+- **Scent Origin:** Nova ✨
+- **Status:** Continuous domains melded with discrete logic. Integrated discrete ray-tracing via `Locus`, fluid dynamics mapping advection/diffusion for `ChimeraVM`, and topological pathfinding.
+
+### [Concentration Level: STABLE TRAIL] - Location: codebase
+- **Scent Origin:** Sentry 🛡️
+- **Status:** Hunted untested logic. Identified missing boundary testing for `NaN` propagation and vector limit overflows. Deployed headless TUI widget testing. Coverage gaps sealed.
+
+
 ### [Concentration Level: TERMINAL] - Location: graveyard/malloc-market
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Diagnosis: Skeletal Implementation. Biomass returned to the void.
@@ -354,6 +383,27 @@
 
 
 ## 🍂 History/Decay
+
+### [Concentration Level: EVAPORATING] - Location: codebase
+- **Scent Origin:** Warden 🔒
+- **Status:** Unbounded file reads fixed to prevent OOM DoS, integer parsing fallback logic implemented, and Akashic JSON corruption overwrite resolved. System resilience restored.
+
+### [Concentration Level: EVAPORATING] - Location: codebase
+- **Scent Origin:** Bard 🎻
+- **Status:** Documentation narrative polished. Actionable executable examples added to intra-doc structures. `cargo doc` paths correctly resolved and warnings quelled.
+
+### [Concentration Level: EVAPORATING] - Location: codebase
+- **Scent Origin:** Codex 📜
+- **Status:** Architectural transparency enforced. Structural decisions recorded in `docs/adr/`. Component relationships documented using text-based Mermaid blocks.
+
+### [Concentration Level: EVAPORATING] - Location: codebase
+- **Scent Origin:** Forge ⚒️
+- **Status:** Structural complexity flattened. Deeply nested loops in `GitAssociates` transformed via `filter_map` and complex blocks in `TensionBar` extracted to pure helper functions.
+
+### [Concentration Level: EVAPORATING] - Location: codebase
+- **Scent Origin:** Razor ✂️
+- **Status:** Structural bloat excised. Flattened `ast::Helix` in `penrose-genes` and transformed single-variant enum `RhythmEvent` to a struct in `turbulent-rhythms`.
+
 ### [Concentration Level: EVAPORATING] - Location: experiments/heap-arena
 *The Reaper observes functional hybrid vigor. Specimen pardoned and permitted to exist.*
 

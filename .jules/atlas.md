@@ -39,3 +39,7 @@
 **[Extracted Value struct in penrose-genes]
 **Tangle:** Circular dependency found in `penrose-genes` between `vm.rs` and `penrose.rs` via `Value` enum. `vm.rs` imported `PenroseTiling` from `penrose.rs`, and `penrose.rs` imported `Value` from `vm.rs`.
 **Blueprint:** Extracted the `Value` enum into a new `value.rs` module, breaking the cyclic dependency. `vm.rs` and `penrose.rs` now both rely on `value.rs`.
+
+## 2026-04-22 - [Editing Handler Cleanup DRY Refactoring]
+**Tangle:** The Sprawl - `experiments/chimera-lang/src/tui/app/handlers/editing/enter.rs` had duplicated boilerplate code for setting `app_state.input_mode = InputMode::Normal` and `app_state.input_buffer.clear()` at the end of almost every variant arm in the `match app_state.view_mode` block.
+**Blueprint:** Abstracted the cleanup logic out of the individual `match` arms and moved it to the end of the `handle_enter_key` function. Used mutable boolean flags (`stay_in_editing`, `keep_buffer`) evaluated dynamically within specific arms (like `ViewMode::Genesis` and `ViewMode::Genome` during parse errors) to conditionally override the cleanup, satisfying DRY without breaking functionality.
