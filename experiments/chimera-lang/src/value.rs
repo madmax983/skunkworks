@@ -280,22 +280,23 @@ impl Value {
                         .iter()
                         .map(|v| {
                             // Special formatting for boolean-like values
+                            // 🎨 Mosaic: Replaced Red/Green with high contrast Yellow/Cyan
                             match v {
                                 Value::Str(s) if s.eq_ignore_ascii_case("true") => {
-                                    comfy_table::Cell::new("True").fg(comfy_table::Color::Green)
+                                    comfy_table::Cell::new("True").fg(comfy_table::Color::Cyan)
                                 }
                                 Value::Str(s) if s.eq_ignore_ascii_case("false") => {
-                                    comfy_table::Cell::new("False").fg(comfy_table::Color::Red)
+                                    comfy_table::Cell::new("False").fg(comfy_table::Color::Yellow)
                                 }
                                 Value::Str(s) => {
-                                    comfy_table::Cell::new(s).fg(comfy_table::Color::Cyan)
+                                    comfy_table::Cell::new(s).fg(comfy_table::Color::Magenta)
                                 }
                                 // Polish: Treat 1/0 as boolean flags in table view
                                 Value::Int(1) => {
-                                    comfy_table::Cell::new("1").fg(comfy_table::Color::Green)
+                                    comfy_table::Cell::new("1").fg(comfy_table::Color::Cyan)
                                 }
                                 Value::Int(0) => {
-                                    comfy_table::Cell::new("0").fg(comfy_table::Color::Red)
+                                    comfy_table::Cell::new("0").fg(comfy_table::Color::Yellow)
                                 }
                                 Value::Int(n) => comfy_table::Cell::new(n.to_string())
                                     .fg(comfy_table::Color::Blue),

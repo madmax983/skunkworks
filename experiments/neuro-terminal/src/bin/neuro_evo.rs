@@ -163,10 +163,11 @@ fn draw_decision_boundary(f: &mut Frame, app: &App, area: Rect) {
         .paint(|ctx| {
             // Draw dataset points
             for (i, input) in app.inputs.iter().enumerate() {
+                // 🎨 Mosaic: Replaced Red/Green with high contrast Yellow/Cyan
                 let color = if app.targets[i][0] > 0.5 {
-                    Color::Green
+                    Color::Cyan
                 } else {
-                    Color::Red
+                    Color::Yellow
                 };
                 ctx.draw(&Points {
                     coords: &[(input[0], input[1])],
@@ -245,7 +246,8 @@ fn draw_network(f: &mut Frame, app: &App, area: Rect) {
                         let w = weights.data[idx];
 
                         // Color based on weight sign
-                        let color = if w > 0.0 { Color::Green } else { Color::Red };
+                        // 🎨 Mosaic: Replaced Red/Green with high contrast Yellow/Cyan
+                        let color = if w > 0.0 { Color::Cyan } else { Color::Yellow };
 
                         if w.abs() > 0.5 {
                             ctx.draw(&Line {
