@@ -88,21 +88,44 @@ impl<'a> TensionBar<'a> {
     }
 }
 
+fn get_tension_color(tension: f64) -> Color {
+    // Gradient Calculation: Cyan -> Yellow -> Red
+    let (r, g, b) = if tension < 0.5 {
+        // Cyan (0, 255, 255) to Yellow (255, 255, 0)
+        let t = tension * 2.0;
+        ((255.0 * t) as u8, 255, (255.0 * (1.0 - t)) as u8)
+    } else {
+        // Yellow (255, 255, 0) to Red (255, 0, 0)
+        let t = (tension - 0.5) * 2.0;
+        (255, (255.0 * (1.0 - t)) as u8, 0)
+    };
+    Color::Rgb(r, g, b)
+}
+
+fn get_fractional_symbol(remainder: f64) -> &'static str {
+    if remainder <= 0.125 {
+        block::ONE_EIGHTH
+    } else if remainder <= 0.25 {
+        block::ONE_QUARTER
+    } else if remainder <= 0.375 {
+        block::THREE_EIGHTHS
+    } else if remainder <= 0.5 {
+        block::HALF
+    } else if remainder <= 0.625 {
+        block::FIVE_EIGHTHS
+    } else if remainder <= 0.75 {
+        block::THREE_QUARTERS
+    } else if remainder <= 0.875 {
+        block::SEVEN_EIGHTHS
+    } else {
+        block::FULL
+    }
+}
+
 impl<'a> Widget for TensionBar<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let tension = self.tension.clamp(0.0, 1.0);
-
-        // Gradient Calculation: Cyan -> Yellow -> Red
-        let (r, g, b) = if tension < 0.5 {
-            // Cyan (0, 255, 255) to Yellow (255, 255, 0)
-            let t = tension * 2.0;
-            ((255.0 * t) as u8, 255, (255.0 * (1.0 - t)) as u8)
-        } else {
-            // Yellow (255, 255, 0) to Red (255, 0, 0)
-            let t = (tension - 0.5) * 2.0;
-            (255, (255.0 * (1.0 - t)) as u8, 0)
-        };
-        let color = Color::Rgb(r, g, b);
+        let color = get_tension_color(tension);
 
         let block = self
             .block
@@ -150,24 +173,7 @@ impl<'a> Widget for TensionBar<'a> {
             let draw_y = max_y.saturating_sub(1).saturating_sub(full_blocks);
 
             // Lower blocks grow from bottom
-            // Uses <= to ensure exact fractions (e.g., 0.5) map to the corresponding block (HALF)
-            let symbol = if remainder <= 0.125 {
-                block::ONE_EIGHTH
-            } else if remainder <= 0.25 {
-                block::ONE_QUARTER
-            } else if remainder <= 0.375 {
-                block::THREE_EIGHTHS
-            } else if remainder <= 0.5 {
-                block::HALF
-            } else if remainder <= 0.625 {
-                block::FIVE_EIGHTHS
-            } else if remainder <= 0.75 {
-                block::THREE_QUARTERS
-            } else if remainder <= 0.875 {
-                block::SEVEN_EIGHTHS
-            } else {
-                block::FULL
-            };
+            let symbol = get_fractional_symbol(remainder);
 
             let max_x = inner_area.x.saturating_add(inner_area.width);
             for x in inner_area.x..max_x {

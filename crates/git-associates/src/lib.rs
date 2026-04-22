@@ -341,36 +341,29 @@ impl GitModel {
     /// A Hunk is a contiguous block of changes in a file. This function iterates
     /// through all hunks and their lines, classifying them as Added, Removed, or Context.
     fn extract_hunks(patch: &git2::Patch) -> Vec<Hunk> {
-        // Optimization: Pre-allocate capacity based on the total number of hunks
-        // to prevent multiple heap reallocations.
-        let mut hunks = Vec::with_capacity(patch.num_hunks());
-        for h_idx in 0..patch.num_hunks() {
-            // Get the hunk header info and the number of lines in this hunk
-            let Ok((hunk_info, lines_count)) = patch.hunk(h_idx) else {
-                continue;
-            };
-            // Optimization: Pre-allocate capacity based on the total lines in the hunk
-            // to prevent multiple heap reallocations.
-            let mut hunk_lines = Vec::with_capacity(lines_count);
-            for l_idx in 0..lines_count {
-                if let Ok(line) = patch.line_in_hunk(h_idx, l_idx) {
-                    let content = String::from_utf8_lossy(line.content()).into_owned();
-                    // Origin character indicates the type of change:
-                    // '+' = Addition, '-' = Deletion, ' ' = Context
-                    match line.origin() {
-                        '+' => hunk_lines.push(LineChange::Added(content)),
-                        '-' => hunk_lines.push(LineChange::Removed(content)),
-                        ' ' => hunk_lines.push(LineChange::Context(content)),
-                        _ => {}
-                    }
-                }
-            }
-            hunks.push(Hunk {
-                header: String::from_utf8_lossy(hunk_info.header()).into_owned(),
-                lines: hunk_lines,
-            });
-        }
-        hunks
+        (0..patch.num_hunks())
+            .filter_map(|h_idx| {
+                let (hunk_info, lines_count) = patch.hunk(h_idx).ok()?;
+
+                let lines = (0..lines_count)
+                    .filter_map(|l_idx| {
+                        let line = patch.line_in_hunk(h_idx, l_idx).ok()?;
+                        let content = String::from_utf8_lossy(line.content()).into_owned();
+                        match line.origin() {
+                            '+' => Some(LineChange::Added(content)),
+                            '-' => Some(LineChange::Removed(content)),
+                            ' ' => Some(LineChange::Context(content)),
+                            _ => None,
+                        }
+                    })
+                    .collect();
+
+                Some(Hunk {
+                    header: String::from_utf8_lossy(hunk_info.header()).into_owned(),
+                    lines,
+                })
+            })
+            .collect()
     }
 }
 
