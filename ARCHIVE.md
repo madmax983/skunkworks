@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **malloc-market**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. Fails compilation due to mathematical logical error (`0.0 / 0.0`). Grace period: 24h.
+- **chaotic-mycelium**: Specimen condemned. Diagnosis: Skeletal Implementation / Ecosystem Maladaptation. Fails compilation due to dead code (`draw`, `reset`) and strict clippy constraints. Grace period: 24h.
 
 ## Pardoned
 - **verge-computer**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation / Technical Debt Burden. Resolved by fixing workspace exclusion and clippy warnings. Vigor demonstrated.
@@ -359,6 +359,7 @@
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
 ## ☠️ Executed
+- **malloc-market**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Failed to resolve mathematical logical error (`0.0 / 0.0`) during grace period. Biomass returned to the void.
 - **stego-cartridge**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile `pack` bin due to missing `std::io::Read` and type annotation issues. Failed to adapt during grace period. Biomass returned to the void.
 - **chimera-canopy**: Specimen executed. Diagnosis: Skeletal Implementation / Vestigial Organs. Failed to connect the `ChimeraVM`'s execution output to the agent's movement and replace hardcoded random jumping with genetic decision-making during grace period. Biomass returned to the void.
 - **syntax-spider**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Failed to reintegrate into the ecosystem by compiling cleanly alongside the workspace, remaining a detached generic Bevy physics sketch during grace period. Biomass returned to the void.
