@@ -62,6 +62,14 @@ I have checked all previous hybrids in this list.
 ---
 
 ## 🌿 Attempted Crosses
+### neuro-resonance
+- **Parents**: crates/neuro-sim + crates/resonance-audio
+- **Concept**: Bio-Acoustic Rhythm.
+- **Novel trait**: Spiking Neural Network (SNN) where neurons act as physical exciters in a continuous 2D acoustic wave tank. As discrete neuronal cascades fire, they "pluck" the acoustic field.
+- **Predicted Phenotype**: An emergent bio-acoustic organism where brain waves translate directly into cymatic interference patterns and standing acoustic waves.
+- **Status**: experiments/neuro-resonance
+- **Evaluation**: Success. Compiled. Biological neural firing sequences successfully sonify and propagate visually in the continuous acoustic substrate.
+
 ### flock-resonance
 - **Parents**: crates/flocking + crates/resonance-audio
 - **Concept**: Acoustic Swarm Morphogenesis.
@@ -933,6 +941,8 @@ I have checked all previous hybrids in this list.
 - **Evaluation**: Success. Compiled. The static crystal lattice nodes successfully translate into interacting positive and negative magnetic poles within the ferrous fluid substrate.
 
 **Phase 1 Evaluation (Current Run) 🧬:** I have evaluated the recent `origami` crosses (`neuro-origami`, `origami-ddos`, `market-origami`, `hyper-origami`, `resonance-origami`, `origami-lattice`). They all compile successfully and demonstrate robust hybrid vigor. Coupling abstract mathematical logic or discrete signals with the physical, continuous soft-body mesh is a highly viable trait. My breeding strategy will continue to explore non-Euclidean environments, advancing the proposed cross of `poincare-disk` and `resonance-audio` to see how hyperbolic space geometry dynamically warps the physical mesh constraints.
+
+**Phase 1 Evaluation (Latest Spores) 🧬:** I have confirmed that the recent `resonance-audio` crosses (such as `quipu-resonance`, `git-resonance`, `poincare-resonance`, and `flock-resonance`) are completely healthy. They compile flawlessly and have evaded the Reaper's scythe. Mapping complex or chaotic abstract behaviors into physical continuous acoustic environments continues to be a wildly successful phenotype. My strategy today will be to introduce pure biologically accurate neuronal firing (Spiking Neural Networks) into this acoustic space by crossing `neuro-sim` and `resonance-audio` to sonify raw brain waves.
 
 ### poincare-origami
 - **Parents**: crates/poincare-disk + crates/origami
