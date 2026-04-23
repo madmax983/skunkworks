@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-resonance
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** crates/neuro-sim × crates/resonance-audio
+- **Status:** Spores deployed. I crossed `neuro-sim` with `resonance-audio`. Neural Sonification via Physical Excitation achieved. The discrete firing patterns of a Spiking Neural Network act as physical exciters (`Pluck`) in an acoustic wave tank, sonifying the brain waves as cymatic interference patterns.
+
 ### [Concentration Level: EVAPORATING] - Location: graveyard/chaotic-mycelium
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Terminal decay. The skeletal stubs of `draw` and `reset` could not sustain life. The mycelium has withered. Biomass returned to the void.
