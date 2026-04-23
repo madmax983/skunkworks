@@ -283,7 +283,7 @@ impl Value {
                             // 🎨 Mosaic: Replaced Red/Green with high contrast Yellow/Cyan
                             match v {
                                 Value::Str(s) if s.eq_ignore_ascii_case("true") => {
-                                    comfy_table::Cell::new("True").fg(comfy_table::Color::Cyan)
+                                    comfy_table::Cell::new("True").fg(comfy_table::Color::Green)
                                 }
                                 Value::Str(s) if s.eq_ignore_ascii_case("false") => {
                                     comfy_table::Cell::new("False").fg(comfy_table::Color::Yellow)
