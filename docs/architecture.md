@@ -337,7 +337,7 @@ sequenceDiagram
     participant C as Core
     participant S as Storage
 
-    Note over C,S: Decoupled via Trait (ADR 012)
+    Note over C,S: Decoupled via Trait (ADR 006)
     C->>S: save_state(data)
     S-->>C: Result<Ok>
 ```
