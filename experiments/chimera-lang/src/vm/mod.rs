@@ -3088,6 +3088,7 @@ impl ChimeraVM {
             | OpCode::Retroscope
             | OpCode::Reincarnate
             | OpCode::Piet
+            | OpCode::Befunge
             | OpCode::Terraform
             | OpCode::SenseBiome
             | OpCode::RetinaDraw

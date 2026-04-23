@@ -400,6 +400,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Synthesize => super::catalyst::synthesize(vm),
         OpCode::Catalyze => super::catalyst::catalyze(vm),
         OpCode::Piet => exec_piet(vm),
+        OpCode::Befunge => exec_befunge(vm),
         OpCode::Chronostasis => super::nova_chronos::exec_chronostasis(vm),
         OpCode::Simulate => super::nova_simulation::exec_simulate(vm),
         OpCode::SensePigment => exec_sense_pigment(vm),
@@ -931,6 +932,150 @@ fn exec_alchemy_op(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let (cy, cx) = vm.context_loc;
     crate::vm::alchemy::perform_alchemy(vm, cy, cx);
     vm.energy = vm.energy.saturating_sub(5);
+    None
+}
+
+fn exec_befunge(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if let Some(source) = vm.pop_str("befunge") {
+        let lines: Vec<&str> = source.lines().collect();
+        let grid: Vec<Vec<char>> = lines.iter().map(|l| l.chars().collect()).collect();
+        let height = grid.len() as isize;
+        let width = if height > 0 { grid[0].len() as isize } else { 0 };
+
+        if width == 0 || height == 0 {
+            return None;
+        }
+
+        let mut x: isize = 0;
+        let mut y: isize = 0;
+        let mut dx: isize = 1;
+        let mut dy: isize = 0;
+        let mut local_stack: Vec<i64> = Vec::new();
+        let mut string_mode = false;
+        let mut ticks = 0;
+        let max_ticks = 10000;
+
+        while ticks < max_ticks {
+            ticks += 1;
+
+            let c = if y >= 0 && y < height && x >= 0 && x < grid[y as usize].len() as isize {
+                grid[y as usize][x as usize]
+            } else {
+                ' '
+            };
+
+            if string_mode {
+                if c == '"' {
+                    string_mode = false;
+                } else {
+                    local_stack.push(c as u8 as i64);
+                }
+            } else {
+                match c {
+                    '>' => { dx = 1; dy = 0; }
+                    '<' => { dx = -1; dy = 0; }
+                    '^' => { dx = 0; dy = -1; }
+                    'v' => { dx = 0; dy = 1; }
+                    '+' => {
+                        let a = local_stack.pop().unwrap_or(0);
+                        let b = local_stack.pop().unwrap_or(0);
+                        local_stack.push(b + a);
+                    }
+                    '-' => {
+                        let a = local_stack.pop().unwrap_or(0);
+                        let b = local_stack.pop().unwrap_or(0);
+                        local_stack.push(b - a);
+                    }
+                    '*' => {
+                        let a = local_stack.pop().unwrap_or(0);
+                        let b = local_stack.pop().unwrap_or(0);
+                        local_stack.push(b * a);
+                    }
+                    '/' => {
+                        let a = local_stack.pop().unwrap_or(0);
+                        let b = local_stack.pop().unwrap_or(0);
+                        if a != 0 {
+                            local_stack.push(b / a);
+                        } else {
+                            local_stack.push(0);
+                        }
+                    }
+                    '%' => {
+                        let a = local_stack.pop().unwrap_or(0);
+                        let b = local_stack.pop().unwrap_or(0);
+                        if a != 0 {
+                            local_stack.push(b % a);
+                        } else {
+                            local_stack.push(0);
+                        }
+                    }
+                    '!' => {
+                        let a = local_stack.pop().unwrap_or(0);
+                        local_stack.push(if a == 0 { 1 } else { 0 });
+                    }
+                    '`' => {
+                        let a = local_stack.pop().unwrap_or(0);
+                        let b = local_stack.pop().unwrap_or(0);
+                        local_stack.push(if b > a { 1 } else { 0 });
+                    }
+                    '_' => {
+                        let a = local_stack.pop().unwrap_or(0);
+                        dx = if a == 0 { 1 } else { -1 };
+                        dy = 0;
+                    }
+                    '|' => {
+                        let a = local_stack.pop().unwrap_or(0);
+                        dx = 0;
+                        dy = if a == 0 { 1 } else { -1 };
+                    }
+                    '"' => {
+                        string_mode = true;
+                    }
+                    ':' => {
+                        let a = local_stack.last().copied().unwrap_or(0);
+                        local_stack.push(a);
+                    }
+                    '\\' => {
+                        let a = local_stack.pop().unwrap_or(0);
+                        let b = local_stack.pop().unwrap_or(0);
+                        local_stack.push(a);
+                        local_stack.push(b);
+                    }
+                    '$' => {
+                        local_stack.pop();
+                    }
+                    '.' => {
+                        let a = local_stack.pop().unwrap_or(0);
+                        vm.output.push(a.to_string());
+                    }
+                    ',' => {
+                        let a = local_stack.pop().unwrap_or(0);
+                        if let Some(ch) = char::from_u32(a as u32) {
+                            vm.output.push(ch.to_string());
+                        }
+                    }
+                    '#' => {
+                        x += dx;
+                        y += dy;
+                    }
+                    '@' => {
+                        break;
+                    }
+                    c if c.is_ascii_digit() => {
+                        local_stack.push(c.to_digit(10).unwrap() as i64);
+                    }
+                    _ => {}
+                }
+            }
+
+            x += dx;
+            y += dy;
+
+            if x < 0 || y < 0 || y >= height || x >= grid[y as usize].len() as isize {
+                break;
+            }
+        }
+    }
     None
 }
 
