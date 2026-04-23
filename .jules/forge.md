@@ -1,3 +1,3 @@
-**[TensionBar & GitAssociates Extraction]**
-**Learning:** Extracting complex inline block matching logic into a pure helper function (`get_fractional_symbol`) significantly flattens rendering functions, reducing cognitive load without altering behavior. Similarly, replacing manual `for` loops inside `extract_hunks` with `filter_map` flattens "Pyramids of Doom" and makes the data transformation intent explicit.
-**Action:** Always scan for deeply nested `if/match` blocks or manual accumulator loops during UI widget or data parsing refactors, as they are prime candidates for extraction and iterator conversion.
+**[Handle Enter Extraction]**
+**Learning:** Large `match` statements evaluating enums with deep, complex branches inside an event handler loop (like `handle_enter_key`) often become unreadable "God objects". Extracting the body of each match arm into dedicated, clearly named helper functions drastically flattens the pyramid of doom, separates concerns, and significantly enhances readability without altering logic.
+**Action:** Scan event loops and TUI handler patterns for massive `match` blocks evaluating state enums (`ViewMode`, `InputMode`, etc.), and proactively break them down into domain-specific function calls.
