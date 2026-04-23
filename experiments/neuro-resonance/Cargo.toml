@@ -4,6 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+crossbeam-channel = "0.5"
+cpal = "0.15"
+macroquad = "0.4.14"
+rand = { workspace = true }
 neuro-sim = { path = "../../crates/neuro-sim" }
 resonance-audio = { path = "../../crates/resonance-audio" }
-crossbeam-channel = "0.5.15"

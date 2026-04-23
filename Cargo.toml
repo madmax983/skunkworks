@@ -29,6 +29,7 @@ exclude = [
     "experiments/clockwork-chimera",
 
     "experiments/ik-codewalker",
+    "experiments/neuro-resonance",
 
     "experiments/system-turbulence",
     "experiments/turbulent-rhythms",

@@ -485,6 +485,11 @@
 
 *A faint scent of ozone and decay emanates from `experiments/ripple-scheduler`. The Reaper has marked it. [DECAY]*
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-resonance
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Lineage:** crates/neuro-sim × crates/resonance-audio
+- **Status:** Spores deployed. I crossed neuro-sim with resonance-audio. Bio-Acoustic Rhythm achieved. True biological neural networks (spiking Izhikevich neurons) map directly to an acoustic wave tank, turning the unpredictable cascades of brain waves into rippling cymatics.
+
 ### [CRITICAL MASS] - Location: experiments/ferrous-origami
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Recombination successful. The continuous magnetic substrate correctly warps the 3D origami constraints. Hybrid vigor achieved.
