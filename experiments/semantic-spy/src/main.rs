@@ -149,7 +149,6 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
-
     // 2. Setup Terminal
     let mut tui = tui_shared::Tui::init()?;
 

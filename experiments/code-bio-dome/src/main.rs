@@ -53,7 +53,10 @@ fn main() -> Result<()> {
             println!("{}", snapshot.to_json_pretty());
         } else {
             // 🎨 Mosaic: Replaced raw JSON stdout with a styled semantic representation
-            println!("🌱 Semantic Snapshot Generated ({} entities)", snapshot.entities.len());
+            println!(
+                "🌱 Semantic Snapshot Generated ({} entities)",
+                snapshot.entities.len()
+            );
             println!("   (Run with --json to see raw data)");
         }
         return Ok(());

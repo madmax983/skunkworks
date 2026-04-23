@@ -332,14 +332,17 @@ fn run_cli_list(json_mode: bool) -> Result<()> {
     if json_mode {
         // 🎨 Mosaic: output JSON for programmatic consumption when requested
         // Using a structured, machine-readable format.
-        let json_output: Vec<serde_json::Value> = commits.iter().map(|c| {
-            serde_json::json!({
-                "hash": c.hash,
-                "date": c.date.to_string(),
-                "author": c.author,
-                "message": c.message
+        let json_output: Vec<serde_json::Value> = commits
+            .iter()
+            .map(|c| {
+                serde_json::json!({
+                    "hash": c.hash,
+                    "date": c.date.to_string(),
+                    "author": c.author,
+                    "message": c.message
+                })
             })
-        }).collect();
+            .collect();
         println!("{}", serde_json::to_string_pretty(&json_output)?);
         return Ok(());
     }
