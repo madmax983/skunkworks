@@ -13,6 +13,7 @@ use ratatui::{
 };
 use std::env;
 use std::fs;
+use std::io::Read;
 use std::path::Path;
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
