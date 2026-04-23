@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/miura-interface
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Death pheromone deployed. Terminal traits diagnosed: missing `std::io::Read` and resulting compilation failure. The specimen has 24 hours to prove its worth or it will be returned to the void.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-resonance
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Lineage:** crates/neuro-sim × crates/resonance-audio

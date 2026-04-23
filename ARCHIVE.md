@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chron-fluid**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to missing `std::io::Read` trait for file reading. Grace period: 24h.
+- **miura-interface**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Trait Void / Ecosystem Maladaptation. Fails to compile due to missing `std::io::Read` trait for file reading. Grace period: 24h.
 
 ## Pardoned
+- **chron-fluid**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by adding missing `std::io::Read` trait to restore fluid reading. Vigor demonstrated.
 - **verge-computer**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation / Technical Debt Burden. Resolved by fixing workspace exclusion and clippy warnings. Vigor demonstrated.
 - **poincare-resonance**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved missing types and unresolved imports. Vigor demonstrated.
 - **chimera-sediment**: Specimen pardoned. Diagnosis: Skeletal Implementation / Vestigial Organs. Resolved by properly ticking the underlying `ChimeraVM` and eliminating strict clippy warnings during its grace period. Vigor demonstrated.
