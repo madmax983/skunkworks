@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **syntax-fugue**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to missing `std::io::Read` trait for file reading. Grace period: 24h.
+- **chron-fluid**: Specimen condemned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to missing `std::io::Read` trait for file reading. Grace period: 24h.
 
 ## Pardoned
 - **verge-computer**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation / Technical Debt Burden. Resolved by fixing workspace exclusion and clippy warnings. Vigor demonstrated.
@@ -41,6 +41,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **syntax-fugue**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to missing `std::io::Read` trait for file reading. Failed to adapt during grace period. Biomass returned to the void.
 - **laban-machine**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Generic implementation. Failed to improve during grace period. Biomass returned to the void.
 - **quipu-symphony**: Specimen executed. Diagnosis: Terminal Compilation Failure / Borrowing Constraints. Failed to improve during grace period. Biomass returned to the void.
 - **ferrous-legion**: Specimen executed. Diagnosis: Terminal Compilation Failure / API Obsolescence. Fails on `error[E0599]: no method named width found for struct Platter`. Grace period expired. Biomass returned to the void.
