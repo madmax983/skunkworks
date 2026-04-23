@@ -23,6 +23,7 @@ members = [
     "experiments/neuro-origami",
     "experiments/locus-ddos",
     "experiments/poincare-resonance",
+    "experiments/neuro-resonance",
 ]
 exclude = [
     "experiments/clockwork-chimera",
