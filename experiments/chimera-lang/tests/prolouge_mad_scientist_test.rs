@@ -1,7 +1,7 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use chimera_lang::ast::{Dna, Helix, Nucleotide};
+    use chimera_lang::ast::{Dna, Helix, Nucleotide, Gene};
     use chimera_lang::opcode::OpCode;
     use chimera_lang::prolouge_compiler::compile;
     use chimera_lang::vm::{ChimeraVM, Value};
@@ -150,6 +150,49 @@ mod tests {
         assert_eq!(genes[5].op, OpCode::Push);
         assert_eq!(genes[5].args[0], Nucleotide::Number(4));
         assert_eq!(genes[6].op, OpCode::Ground);
+    }
+
+    #[test]
+    fn test_prolouge_compiler_befunge() {
+        let source = r#"
+        befunge {
+            >987v>.v
+            v456<  :
+            >321 ^ _@
+        }
+        "#;
+        let dna = compile(source).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(
+            genes[0].args[0],
+            Nucleotide::String(">987v>.v\n            v456<  :\n            >321 ^ _@".to_string())
+        );
+        assert_eq!(genes[1].op, OpCode::Befunge);
+    }
+
+    #[test]
+    fn test_befunge_execution() {
+        let genes = vec![
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("23+.".to_string())],
+            },
+            Gene {
+                op: OpCode::Befunge,
+                args: vec![],
+            },
+        ];
+        let mut vm = ChimeraVM::new(Dna {
+            evolution_config: None,
+            helix: Helix { strands: vec![chimera_lang::ast::Strand { genes }] },
+        });
+
+        vm.step(); // Push string
+        vm.step(); // Befunge
+
+        assert_eq!(vm.output, vec!["5".to_string()]);
     }
 
     #[test]

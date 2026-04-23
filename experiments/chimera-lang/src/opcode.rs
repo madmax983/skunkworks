@@ -1493,6 +1493,10 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Piet,
 
+    /// **`Nova`** Executes basic 2D Befunge logic based on string input on the stack.
+    #[cfg(feature = "nova")]
+    Befunge,
+
     /// **`Nova`** Freezes the environment and other organisms for a duration.
     ///
     /// **Stack:** `[ ..., ticks ] -> [ ... ]`

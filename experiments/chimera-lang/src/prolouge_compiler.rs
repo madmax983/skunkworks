@@ -105,6 +105,18 @@ pub fn compile(source: &str) -> Result<Dna> {
                 }
                 genes.extend(crate::lisp::compile_fragment(content)?);
             }
+            Rule::befunge_block => {
+                let content = inner_block.as_str();
+                let mut content = content.trim_start_matches("befunge").trim();
+                if content.starts_with('{') && content.ends_with('}') {
+                    content = &content[1..content.len() - 1];
+                }
+                genes.push(Gene::new(
+                    OpCode::Push,
+                    vec![Nucleotide::String(content.trim().to_string())],
+                ));
+                genes.push(Gene::new(OpCode::Befunge, vec![]));
+            }
             Rule::brainfuck_block => {
                 let content = inner_block.as_str();
                 let mut content = content.trim_start_matches("brainfuck").trim();
