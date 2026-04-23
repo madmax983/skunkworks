@@ -728,6 +728,11 @@ pub fn run_parser(
     }
 }
 
+/// Converts a `Value` abstract syntax tree node into a `GrammarRule`.
+///
+/// **Optimization (Bolt ⚡):** When constructing `GrammarRule::Sequence` and
+/// `GrammarRule::Choice`, we inline the `.collect()` call directly into the enum
+/// constructor. This removes an unnecessary intermediate `Vec<_>` binding.
 pub fn value_to_grammar_rule(v: &Value) -> GrammarRule {
     if let Value::Junction(JunctionType::Any, args) = v {
         if let Some(Value::Str(type_str)) = args.first() {
@@ -743,20 +748,14 @@ pub fn value_to_grammar_rule(v: &Value) -> GrammarRule {
                     }
                 }
                 "Seq" => {
-                    let rules = args
-                        .iter()
-                        .skip(1)
-                        .map(value_to_grammar_rule)
-                        .collect::<Vec<_>>();
-                    return GrammarRule::Sequence(rules);
+                    return GrammarRule::Sequence(
+                        args.iter().skip(1).map(value_to_grammar_rule).collect(),
+                    );
                 }
                 "Alt" => {
-                    let rules = args
-                        .iter()
-                        .skip(1)
-                        .map(value_to_grammar_rule)
-                        .collect::<Vec<_>>();
-                    return GrammarRule::Choice(rules);
+                    return GrammarRule::Choice(
+                        args.iter().skip(1).map(value_to_grammar_rule).collect(),
+                    );
                 }
                 "Ref" => {
                     if let Some(Value::Str(s)) = args.get(1) {

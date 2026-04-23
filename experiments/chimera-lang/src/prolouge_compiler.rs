@@ -398,8 +398,6 @@ fn compile_genetics_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>
     Ok(genes)
 }
 
-
-
 #[cfg(feature = "resonance")]
 fn compile_acoustic_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     let mut genes = Vec::new();
@@ -428,7 +426,6 @@ fn compile_acoustic_instr(pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>
 fn compile_acoustic_instr(_pair: pest::iterators::Pair<Rule>) -> Result<Vec<Gene>> {
     Ok(Vec::new())
 }
-
 
 #[cfg(feature = "nova")]
 #[cfg(test)]
