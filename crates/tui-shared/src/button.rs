@@ -76,25 +76,53 @@ impl<'a> Button<'a> {
         }
     }
 
-    /// Sets the hovered state of the button.
+    /// Renders the button with a `Cyan` background to indicate it is currently focused or hovered.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::Button;
+    /// let button = Button::new("Hover Me").hovered(true);
+    /// ```
     pub fn hovered(mut self, is_hovered: bool) -> Self {
         self.is_hovered = is_hovered;
         self
     }
 
-    /// Sets the clicked state of the button.
+    /// Renders the button with a `Red` background and `White` text to indicate it is actively being pressed.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::Button;
+    /// let button = Button::new("Clicking!").clicked(true);
+    /// ```
     pub fn clicked(mut self, is_clicked: bool) -> Self {
         self.is_clicked = is_clicked;
         self
     }
 
-    /// Sets the loading state of the button.
+    /// Renders the button with a `Yellow` background, `Black` text, and prepends a "⏳" icon to indicate a pending operation.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::Button;
+    /// let button = Button::new("Loading...").loading(true);
+    /// ```
     pub fn loading(mut self, is_loading: bool) -> Self {
         self.is_loading = is_loading;
         self
     }
 
-    /// Sets the success state of the button.
+    /// Renders the button with a `Green` background, `Black` text, and prepends a "✅" icon to indicate a successful operation.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::Button;
+    /// let button = Button::new("Done").success(true);
+    /// ```
     pub fn success(mut self, is_success: bool) -> Self {
         self.is_success = is_success;
         self
