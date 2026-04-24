@@ -121,8 +121,11 @@ mod tests {
         assert_eq!(genes[0].op, OpCode::Push);
         assert_eq!(
             genes[0].args[0],
-            Nucleotide::String("            rgb(255, 0, 0)
-            rgb(0, 255, 0)".to_string())
+            Nucleotide::String(
+                "            rgb(255, 0, 0)
+            rgb(0, 255, 0)"
+                    .to_string()
+            )
         );
         assert_eq!(genes[1].op, OpCode::Piet);
     }
@@ -168,9 +171,12 @@ mod tests {
         assert_eq!(genes[0].op, OpCode::Push);
         assert_eq!(
             genes[0].args[0],
-            Nucleotide::String("            >987v>.v
+            Nucleotide::String(
+                "            >987v>.v
             v456<  :
-            >321 ^ _@".to_string())
+            >321 ^ _@"
+                    .to_string()
+            )
         );
         assert_eq!(genes[1].op, OpCode::Befunge);
     }
