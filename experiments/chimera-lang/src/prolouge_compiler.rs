@@ -123,19 +123,15 @@ pub fn compile(source: &str) -> Result<Dna> {
                 genes.extend(crate::lisp::compile_fragment(content)?);
             }
             Rule::befunge_block => {
-                let content = extract_block_content_preserve_whitespace(inner_block.as_str(), "befunge");
-                genes.push(Gene::new(
-                    OpCode::Push,
-                    vec![Nucleotide::String(content)],
-                ));
+                let content =
+                    extract_block_content_preserve_whitespace(inner_block.as_str(), "befunge");
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content)]));
                 genes.push(Gene::new(OpCode::Befunge, vec![]));
             }
             Rule::brainfuck_block => {
-                let content = extract_block_content_preserve_whitespace(inner_block.as_str(), "brainfuck");
-                genes.push(Gene::new(
-                    OpCode::Push,
-                    vec![Nucleotide::String(content)],
-                ));
+                let content =
+                    extract_block_content_preserve_whitespace(inner_block.as_str(), "brainfuck");
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content)]));
                 genes.push(Gene::new(
                     OpCode::Push,
                     vec![Nucleotide::String("".to_string())],
@@ -143,19 +139,15 @@ pub fn compile(source: &str) -> Result<Dna> {
                 genes.push(Gene::new(OpCode::Brainfuck, vec![]));
             }
             Rule::tui_block => {
-                let content = extract_block_content_preserve_whitespace(inner_block.as_str(), "tui");
-                genes.push(Gene::new(
-                    OpCode::Push,
-                    vec![Nucleotide::String(content)],
-                ));
+                let content =
+                    extract_block_content_preserve_whitespace(inner_block.as_str(), "tui");
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content)]));
                 genes.push(Gene::new(OpCode::TuiDraw, vec![]));
             }
             Rule::piet_block => {
-                let content = extract_block_content_preserve_whitespace(inner_block.as_str(), "piet");
-                genes.push(Gene::new(
-                    OpCode::Push,
-                    vec![Nucleotide::String(content)],
-                ));
+                let content =
+                    extract_block_content_preserve_whitespace(inner_block.as_str(), "piet");
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content)]));
                 genes.push(Gene::new(OpCode::Piet, vec![]));
             }
             Rule::acoustic_block => {
@@ -164,11 +156,9 @@ pub fn compile(source: &str) -> Result<Dna> {
                 }
             }
             Rule::regex_block => {
-                let content = extract_block_content_preserve_whitespace(inner_block.as_str(), "regex");
-                genes.push(Gene::new(
-                    OpCode::Push,
-                    vec![Nucleotide::String(content)],
-                ));
+                let content =
+                    extract_block_content_preserve_whitespace(inner_block.as_str(), "regex");
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content)]));
                 genes.push(Gene::new(OpCode::ParserRegex, vec![]));
             }
             Rule::chaos_block => {
