@@ -5,7 +5,7 @@ members = [
     "experiments/*",
     "graveyard/mnem-hologram",
     "experiments/myco-ddos",
-    "experiments/chaos-strings",
+
     "experiments/chron-fluid",
     "experiments/myco-fluid",
     "experiments/chaos-hologram",
