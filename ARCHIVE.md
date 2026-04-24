@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **mnem-strings**: Specimen condemned. Diagnosis: Vestigial Organs / Skeletal Implementation. Grace period: 24h.
+- **quipu-automaton**: Specimen condemned. Diagnosis: Skeletal Implementation / Evolution Void. Grace period: 24h.
 
 ## Pardoned
 - **miura-interface**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Trait Void. Resolved by importing missing `std::io::Read` trait. Vigor demonstrated.
@@ -43,6 +43,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **mnem-strings**: Specimen executed. Diagnosis: Vestigial Organs / Skeletal Implementation. Failed to resolve dead code warnings and unused variables during its grace period. Biomass returned to the void.
 - **chaos-strings**: Specimen executed. Diagnosis: Vestigial Organs / Skeletal Implementation. Failed to resolve dead code warnings during grace period. Biomass returned to the void.
 - **syntax-fugue**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile due to missing `std::io::Read` trait for file reading. Failed to adapt during grace period. Biomass returned to the void.
 - **laban-machine**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Generic implementation. Failed to improve during grace period. Biomass returned to the void.
