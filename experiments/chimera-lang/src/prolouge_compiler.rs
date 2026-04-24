@@ -25,6 +25,23 @@ pub struct ProlougeParser;
 /// Prolouge acts as the "Mad Scientist" layer, allowing code mixing from completely different paradigms like Forth, Raku, and Orca in one file.
 /// This compiler translates those varied esoteric syntaxes into a unified sequence of standard Chimera [`Gene`] structures.
 ///
+/// Helper function to extract block content while preserving spatial whitespace.
+/// This is critical for 2D esolangs like Befunge and Piet where leading spaces matter.
+fn extract_block_content_preserve_whitespace(block_str: &str, block_type: &str) -> String {
+    let mut content = block_str.trim_start_matches(block_type).trim_start();
+    if content.starts_with('{') && content.ends_with('}') {
+        content = &content[1..content.len() - 1];
+    }
+
+    // Strip only the first newline to keep subsequent lines indented properly
+    let res = content
+        .strip_prefix("\r\n")
+        .unwrap_or_else(|| content.strip_prefix('\n').unwrap_or(content));
+
+    // Trailing whitespace can be safely removed
+    res.trim_end().to_string()
+}
+
 /// # Examples
 ///
 /// ```
@@ -106,26 +123,18 @@ pub fn compile(source: &str) -> Result<Dna> {
                 genes.extend(crate::lisp::compile_fragment(content)?);
             }
             Rule::befunge_block => {
-                let content = inner_block.as_str();
-                let mut content = content.trim_start_matches("befunge").trim();
-                if content.starts_with('{') && content.ends_with('}') {
-                    content = &content[1..content.len() - 1];
-                }
+                let content = extract_block_content_preserve_whitespace(inner_block.as_str(), "befunge");
                 genes.push(Gene::new(
                     OpCode::Push,
-                    vec![Nucleotide::String(content.trim().to_string())],
+                    vec![Nucleotide::String(content)],
                 ));
                 genes.push(Gene::new(OpCode::Befunge, vec![]));
             }
             Rule::brainfuck_block => {
-                let content = inner_block.as_str();
-                let mut content = content.trim_start_matches("brainfuck").trim();
-                if content.starts_with('{') && content.ends_with('}') {
-                    content = &content[1..content.len() - 1];
-                }
+                let content = extract_block_content_preserve_whitespace(inner_block.as_str(), "brainfuck");
                 genes.push(Gene::new(
                     OpCode::Push,
-                    vec![Nucleotide::String(content.trim().to_string())],
+                    vec![Nucleotide::String(content)],
                 ));
                 genes.push(Gene::new(
                     OpCode::Push,
@@ -134,26 +143,18 @@ pub fn compile(source: &str) -> Result<Dna> {
                 genes.push(Gene::new(OpCode::Brainfuck, vec![]));
             }
             Rule::tui_block => {
-                let content = inner_block.as_str();
-                let mut content = content.trim_start_matches("tui").trim();
-                if content.starts_with('{') && content.ends_with('}') {
-                    content = &content[1..content.len() - 1];
-                }
+                let content = extract_block_content_preserve_whitespace(inner_block.as_str(), "tui");
                 genes.push(Gene::new(
                     OpCode::Push,
-                    vec![Nucleotide::String(content.trim().to_string())],
+                    vec![Nucleotide::String(content)],
                 ));
                 genes.push(Gene::new(OpCode::TuiDraw, vec![]));
             }
             Rule::piet_block => {
-                let content = inner_block.as_str();
-                let mut content = content.trim_start_matches("piet").trim();
-                if content.starts_with('{') && content.ends_with('}') {
-                    content = &content[1..content.len() - 1];
-                }
+                let content = extract_block_content_preserve_whitespace(inner_block.as_str(), "piet");
                 genes.push(Gene::new(
                     OpCode::Push,
-                    vec![Nucleotide::String(content.trim().to_string())],
+                    vec![Nucleotide::String(content)],
                 ));
                 genes.push(Gene::new(OpCode::Piet, vec![]));
             }
@@ -163,14 +164,10 @@ pub fn compile(source: &str) -> Result<Dna> {
                 }
             }
             Rule::regex_block => {
-                let content = inner_block.as_str();
-                let mut content = content.trim_start_matches("regex").trim();
-                if content.starts_with('{') && content.ends_with('}') {
-                    content = &content[1..content.len() - 1];
-                }
+                let content = extract_block_content_preserve_whitespace(inner_block.as_str(), "regex");
                 genes.push(Gene::new(
                     OpCode::Push,
-                    vec![Nucleotide::String(content.trim().to_string())],
+                    vec![Nucleotide::String(content)],
                 ));
                 genes.push(Gene::new(OpCode::ParserRegex, vec![]));
             }

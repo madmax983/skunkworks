@@ -30,7 +30,7 @@ mod tests {
         assert_eq!(genes[0].op, OpCode::Push);
         assert_eq!(
             genes[0].args[0],
-            Nucleotide::String("+++[>+++<-]>".to_string())
+            Nucleotide::String("            +++[>+++<-]>".to_string())
         );
         assert_eq!(genes[1].op, OpCode::Push);
         assert_eq!(genes[1].args[0], Nucleotide::String("".to_string()));
@@ -39,7 +39,7 @@ mod tests {
         assert_eq!(genes[3].op, OpCode::Push);
         assert_eq!(
             genes[3].args[0],
-            Nucleotide::String("\"DRAW RECT\"".to_string())
+            Nucleotide::String("            \"DRAW RECT\"".to_string())
         );
         assert_eq!(genes[4].op, OpCode::TuiDraw);
     }
@@ -121,7 +121,8 @@ mod tests {
         assert_eq!(genes[0].op, OpCode::Push);
         assert_eq!(
             genes[0].args[0],
-            Nucleotide::String("rgb(255, 0, 0)\n            rgb(0, 255, 0)".to_string())
+            Nucleotide::String("            rgb(255, 0, 0)
+            rgb(0, 255, 0)".to_string())
         );
         assert_eq!(genes[1].op, OpCode::Piet);
     }
@@ -167,7 +168,9 @@ mod tests {
         assert_eq!(genes[0].op, OpCode::Push);
         assert_eq!(
             genes[0].args[0],
-            Nucleotide::String(">987v>.v\n            v456<  :\n            >321 ^ _@".to_string())
+            Nucleotide::String("            >987v>.v
+            v456<  :
+            >321 ^ _@".to_string())
         );
         assert_eq!(genes[1].op, OpCode::Befunge);
     }
@@ -256,7 +259,10 @@ mod tests {
         let genes = &dna.helix.strands[0].genes;
 
         assert_eq!(genes[0].op, OpCode::Push);
-        assert_eq!(genes[0].args[0], Nucleotide::String("[a-z]+".to_string()));
+        assert_eq!(
+            genes[0].args[0],
+            Nucleotide::String("            [a-z]+".to_string())
+        );
         assert_eq!(genes[1].op, OpCode::ParserRegex);
     }
 }
