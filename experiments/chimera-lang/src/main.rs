@@ -73,7 +73,7 @@ impl<'a> std::fmt::Display for OracleResultWrapper<'a> {
                             // Colorize
                             // 🎨 Mosaic: Replaced Red/Green with high contrast Yellow/Cyan
                             if v_str == "1" || v_str.eq_ignore_ascii_case("true") {
-                                v_cell = v_cell.fg(comfy_table::Color::Cyan);
+                                v_cell = v_cell.fg(comfy_table::Color::Green);
                             } else if v_str == "0" || v_str.eq_ignore_ascii_case("false") {
                                 v_cell = v_cell.fg(comfy_table::Color::Yellow);
                             } else if matches!(v, Value::Str(_)) {
@@ -317,7 +317,7 @@ fn main() -> Result<()> {
 
             // 🎨 Mosaic: Replaced Red/Green with high contrast Yellow/Cyan
             if val_str == "1" || val_str.eq_ignore_ascii_case("true") {
-                val_cell = val_cell.fg(comfy_table::Color::Cyan);
+                val_cell = val_cell.fg(comfy_table::Color::Green);
             } else if val_str == "0" || val_str.eq_ignore_ascii_case("false") {
                 val_cell = val_cell.fg(comfy_table::Color::Yellow);
             } else if matches!(val, Value::Str(_)) {

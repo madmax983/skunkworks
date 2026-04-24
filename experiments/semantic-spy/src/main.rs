@@ -25,11 +25,20 @@ use ratatui::{
     widgets::{canvas::Canvas, Block, Borders, List, ListItem, ListState, Paragraph, Wrap},
     Terminal,
 };
-use std::{
-    env,
-    io::{self, Read},
-};
+use clap::Parser;
+use std::io::{self, Read};
 use tui_shared::semantic::Snapshot;
+
+#[derive(Parser)]
+#[command(author, version, about, long_about = None)]
+struct Cli {
+    /// Path to the snapshot file to visualize (or read from stdin if not provided)
+    input: Option<String>,
+
+    /// Output raw JSON instead of starting the TUI
+    #[arg(long)]
+    json: bool,
+}
 
 /// Application state for the TUI.
 ///
@@ -127,23 +136,12 @@ mod tests {
 /// 3. Runs the main event loop.
 /// 4. Restores the terminal on exit.
 fn main() -> Result<()> {
-    // 🎨 Mosaic: parse args manually to support CLI flags natively
-    let args: Vec<String> = env::args().collect();
-    let mut json_mode = false;
-    let mut input_path = None;
-
-    for arg in args.iter().skip(1) {
-        if arg == "--json" {
-            json_mode = true;
-        } else {
-            input_path = Some(arg.clone());
-        }
-    }
+    let cli = Cli::parse();
 
     // 1. Read input
-    let snapshot = read_snapshot(input_path)?;
+    let snapshot = read_snapshot(cli.input)?;
 
-    if json_mode {
+    if cli.json {
         // Output raw JSON if requested
         println!("{}", snapshot.to_json_pretty());
         return Ok(());
