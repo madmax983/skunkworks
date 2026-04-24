@@ -863,7 +863,7 @@ classDiagram
     RibosomeOps ..> ChimeraVM : Extends (impl)
 ```
 
-### Chimera TUI Architecture (ADR 071, ADR 072, ADR 073, ADR 077, ADR 081, ADR 084, ADR 086)
+### Chimera TUI Architecture (ADR 071, ADR 072, ADR 073, ADR 077, ADR 081, ADR 084, ADR 086, ADR 087)
 
 The TUI event loop is decoupled into specific input handler modules to avoid a monolithic `run_app` loop. The main `run_tui` loop delegates directly to the modularized `app::run_app` execution logic, reducing `tui/mod.rs` to a lightweight facade. The handlers themselves are further decoupled into specific input type submodules.
 
@@ -960,6 +960,7 @@ sequenceDiagram
     participant Normal as handlers/normal/mod.rs
     participant NormalChars as handlers/normal/chars.rs
     participant NormalNav as handlers/normal/navigation.rs
+    Note over NormalNav: Domain functions extracted (ADR 087)
     participant NormalActions as handlers/normal/actions.rs
     participant Selector as handlers/selector.rs
 
