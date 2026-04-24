@@ -1,7 +1,7 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use chimera_lang::ast::{Dna, Helix, Nucleotide, Gene};
+    use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide};
     use chimera_lang::opcode::OpCode;
     use chimera_lang::prolouge_compiler::compile;
     use chimera_lang::vm::{ChimeraVM, Value};
@@ -186,7 +186,9 @@ mod tests {
         ];
         let mut vm = ChimeraVM::new(Dna {
             evolution_config: None,
-            helix: Helix { strands: vec![chimera_lang::ast::Strand { genes }] },
+            helix: Helix {
+                strands: vec![chimera_lang::ast::Strand { genes }],
+            },
         });
 
         vm.step(); // Push string

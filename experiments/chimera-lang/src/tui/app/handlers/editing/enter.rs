@@ -240,8 +240,7 @@ fn handle_ecology_enter(vm: &mut ChimeraVM, app_state: &mut AppState) {
                             org.ip = (new_idx, 0);
 
                             found = true;
-                            app_state.status_msg =
-                                format!("Injected code into {}", org.name);
+                            app_state.status_msg = format!("Injected code into {}", org.name);
                             break;
                         }
                     }
@@ -290,9 +289,7 @@ fn handle_genesis_enter(vm: &mut ChimeraVM, app_state: &mut AppState) {
                             vm.active_grammar = grammar;
                             app_state.status_msg = "Genesis: Grammar Updated.".to_string();
                         }
-                        Err(e) => {
-                            app_state.status_msg = format!("Value Conversion Error: {}", e)
-                        }
+                        Err(e) => app_state.status_msg = format!("Value Conversion Error: {}", e),
                     }
                 } else {
                     app_state.status_msg = "Error: Empty Grammar".to_string();

@@ -940,7 +940,11 @@ fn exec_befunge(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let lines: Vec<&str> = source.lines().collect();
         let grid: Vec<Vec<char>> = lines.iter().map(|l| l.chars().collect()).collect();
         let height = grid.len() as isize;
-        let width = if height > 0 { grid[0].len() as isize } else { 0 };
+        let width = if height > 0 {
+            grid[0].len() as isize
+        } else {
+            0
+        };
 
         if width == 0 || height == 0 {
             return None;
@@ -972,10 +976,22 @@ fn exec_befunge(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 }
             } else {
                 match c {
-                    '>' => { dx = 1; dy = 0; }
-                    '<' => { dx = -1; dy = 0; }
-                    '^' => { dx = 0; dy = -1; }
-                    'v' => { dx = 0; dy = 1; }
+                    '>' => {
+                        dx = 1;
+                        dy = 0;
+                    }
+                    '<' => {
+                        dx = -1;
+                        dy = 0;
+                    }
+                    '^' => {
+                        dx = 0;
+                        dy = -1;
+                    }
+                    'v' => {
+                        dx = 0;
+                        dy = 1;
+                    }
                     '+' => {
                         let a = local_stack.pop().unwrap_or(0);
                         let b = local_stack.pop().unwrap_or(0);
