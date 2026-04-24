@@ -1,8 +1,10 @@
-use tui_shared::semantic::{Action, Entity, Region, Snapshot, PropValue};
+use tui_shared::semantic::{Action, Entity, PropValue, Region, Snapshot};
 
 #[test]
 fn test_semantic_coverage() {
-    let action = Action::new("test_action").describe("A test action").key("Space");
+    let action = Action::new("test_action")
+        .describe("A test action")
+        .key("Space");
     assert_eq!(action.name, "test_action");
     assert_eq!(action.description.unwrap(), "A test action");
     assert_eq!(action.key.unwrap(), "Space");

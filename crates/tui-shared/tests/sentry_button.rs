@@ -151,7 +151,7 @@ fn test_button_hovered_false() {
     let area = Rect::new(0, 0, 20, 3);
     let mut buffer = Buffer::empty(area);
     button.render(area, &mut buffer);
-    assert_ne!(buffer[(0,0)].bg, Color::Cyan);
+    assert_ne!(buffer[(0, 0)].bg, Color::Cyan);
 }
 
 #[test]
@@ -160,7 +160,7 @@ fn test_button_clicked_false() {
     let area = Rect::new(0, 0, 20, 3);
     let mut buffer = Buffer::empty(area);
     button.render(area, &mut buffer);
-    assert_ne!(buffer[(0,0)].bg, Color::Red);
+    assert_ne!(buffer[(0, 0)].bg, Color::Red);
 }
 
 #[test]
@@ -169,7 +169,7 @@ fn test_button_loading_false() {
     let area = Rect::new(0, 0, 20, 3);
     let mut buffer = Buffer::empty(area);
     button.render(area, &mut buffer);
-    assert_ne!(buffer[(0,0)].bg, Color::Yellow);
+    assert_ne!(buffer[(0, 0)].bg, Color::Yellow);
 }
 
 #[test]
@@ -178,5 +178,5 @@ fn test_button_success_false() {
     let area = Rect::new(0, 0, 20, 3);
     let mut buffer = Buffer::empty(area);
     button.render(area, &mut buffer);
-    assert_ne!(buffer[(0,0)].bg, Color::Green);
+    assert_ne!(buffer[(0, 0)].bg, Color::Green);
 }

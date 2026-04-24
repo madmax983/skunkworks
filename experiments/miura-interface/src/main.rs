@@ -1,4 +1,3 @@
-use std::io::Read;
 use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode},
@@ -17,6 +16,7 @@ use ratatui::{
 };
 use std::fs;
 use std::io;
+use std::io::Read;
 use std::time::{Duration, Instant};
 
 mod geo;

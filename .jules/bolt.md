@@ -17,3 +17,7 @@
 **Bolt Optimization: Removing intermediate iterator allocations**
 **Learning:** `collect::<Vec<_>>()` forces an intermediate heap allocation when constructing enums or structs that internally just collect again or require the final vector representation immediately.
 **Action:** Where `Vec`s are mapped over directly to create struct variants (e.g., `GrammarRule::Sequence(iter.collect())`), inline the `collect` into the constructor to avoid an intermediate bound variable map pass.
+
+**[Optimizing Git-Associates Hunk Extraction]**
+**Learning:** We replaced nested `filter_map(...).collect()` iterator chains in `extract_hunks` with pre-allocated vectors (`Vec::with_capacity`), ensuring proper heap capacity reservation before iterative pushing.
+**Action:** When extracting data from nested sources (e.g., git patch hunks and lines), always check if `num_hunks` and `lines_count` properties are available to pre-allocate exact capacities. Avoid blind `.collect()` as it may rely on inaccurate iterator size bounds and force unnecessary reallocations.
