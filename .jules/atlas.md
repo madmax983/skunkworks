@@ -32,3 +32,6 @@
 ## 2026-04-19 - [Extracted Value struct in penrose-genes]
 **Tangle:** Circular dependency found in `penrose-genes` between `vm.rs` and `penrose.rs` via `Value` enum. `vm.rs` imported `PenroseTiling` from `penrose.rs`, and `penrose.rs` imported `Value` from `vm.rs`.
 **Blueprint:** Extracted the `Value` enum into a new `value.rs` module, breaking the cyclic dependency. `vm.rs` and `penrose.rs` now both rely on `value.rs`.
+## $(date +%Y-%m-%d) - [Chimera TUI View Router Extraction]
+**Tangle:** The Blob - `experiments/chimera-lang/src/tui/app/mod.rs` had a massive `run_app` event loop where `terminal.draw` was rendering over 40 individual `ViewMode` enumerations using large `match` and `if let` blocks, tightly coupling application routing to rendering.
+**Blueprint:** Extracted the massive view routing block from `terminal.draw` inside `run_app` into a new `router.rs` module (`route_view`). This keeps `mod.rs` lean and dedicated to high-level loop execution while centralizing the UI view resolution.
