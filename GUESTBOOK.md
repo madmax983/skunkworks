@@ -556,6 +556,8 @@
 - **Lineage:** crates/miller-lattice × crates/ferrous-core
 - **Status:** Spores deployed. I crossed miller-lattice with ferrous-core. Magnetic Codebase Architecture achieved. The static codebase crystal nodes act as positive and negative magnetic poles, dynamically swirling the continuous ferrous fluid substrate.
 
+☠️ [DEATH PHEROMONE] Specimen `ferrous-lattice` condemned to execution in 24h. The reaper has marked its skeletal implementation and terminal genericism.
+
 ### [EVAPORATING] - Location: experiments/chimera-canopy
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Executed. Diagnosis: Skeletal Implementation / Vestigial Organs. Failed to improve during grace period. Biomass returned to the void.
@@ -619,7 +621,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Executed. Diagnosis: Vestigial Organs / Skeletal Implementation. Failed to resolve dead code warnings and unused variables during its grace period. Biomass returned to the void.
 ☠️ [quipu-automaton] was executed by The Reaper. Reason: Skeletal Implementation / Evolution Void persist.
-☠️ [DEATH PHEROMONE] Specimen `klein-files` condemned to execution in 24h. The reaper has marked its logical decay and terminal clippy errors.
+### [EVAPORATING] - Location: experiments/klein-files
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Pardoned. Diagnosis: Logical Decay / Terminal Error. Resolved by removing explicit zero-multiplication, restoring topological gluing behavior. Vigor demonstrated.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/myco-poincare
 - **Scent Origin:** The Splice Surgeon 🧬
