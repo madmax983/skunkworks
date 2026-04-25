@@ -16,7 +16,10 @@ First, add `locus` to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-locus = { path = "crates/locus" }
+# For crates within the workspace:
+locus = { path = "../locus" }
+# For external projects, replace with the absolute path or git repo link
+
 ```
 
 If you're building a simulation where agents move through space, `locus` handles the heavy lifting. This example shows an agent moving in a Torus world (where walking off the edge wraps you around to the other side).
