@@ -10,6 +10,7 @@ pub struct Hologram {
 }
 
 impl Hologram {
+    #[allow(dead_code)]
     pub fn new(width: usize, height: usize) -> Self {
         Self {
             width,
@@ -18,7 +19,8 @@ impl Hologram {
         }
     }
 
-    pub fn from_text(text: &str) -> Self {
+    #[allow(dead_code)]
+    pub fn from_text(text: pub fn from_text(text: &str) -> Self {str) -> Self {
         let width = 256;
         let height = 128;
         let mut grid = vec![0.0; width * height];

@@ -12,12 +12,10 @@ use rand::Rng;
 
 #[allow(dead_code)]
 #[derive(Copy, Clone)]
-pub enum AudioCommand {
-    Pluck {
-        frequency: f32,
-        decay: f32,
-        amplitude: f32,
-    },
+pub struct AudioCommand {
+    pub frequency: f32,
+    pub decay: f32,
+    pub amplitude: f32,
 }
 
 #[cfg(feature = "audio")]
@@ -118,11 +116,7 @@ impl AudioModel {
 
     fn handle_command(&mut self, cmd: AudioCommand) {
         match cmd {
-            AudioCommand::Pluck {
-                frequency,
-                decay,
-                amplitude,
-            } => {
+            AudioCommand { frequency, decay, amplitude } => {
                 let idx = self.next_voice;
                 self.voices[idx].reset(frequency, self.sample_rate, decay, amplitude);
                 self.next_voice = (self.next_voice + 1) % MAX_VOICES;
