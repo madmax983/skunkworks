@@ -1,5 +1,6 @@
-📜 Codex: ADR 086 & Architecture Diagram Update
+Razor: Remove 1-variant enums
 
-🧠 **Decision:** Recorded the move to eliminate the massive 4,500+ line run_app event loop duplication in `tui/mod.rs` and correctly delegate to `tui/app/mod.rs` in `chimera-lang`. Addressed previous feedback by moving status to Accepted, fixing diagram syntax, and updating sequence diagram.
-🗺️ **Visuals:** Updated the architecture diagram in `docs/architecture.md` by linking the Chimera TUI Architecture section to ADR 086. The existing Mermaid diagram `TuiFacade --> AppLoop : Delegates event loop` perfectly captures the new boundaries. Added the updated sequence diagram indicating how the Facade calls `run_app`.
-🔗 **Link:** See `docs/adr/086-chimera-tui-blob-elimination.md`.
+Following Razor's philosophy, 1-variant enums were flattened to reduce abstraction:
+- Flattened `AudioCommand` enum into a single struct across `genetic-luthier`, `git-strings`, `chimera-strings`, `ferrous-strings`, `string-theory`, `neuro-strings`, `locus-strings`, `gray-strings`.
+- Flattened `VisualEffect` and `MidiEvent` into structs in `chimera-lang/src/vm/mod.rs`.
+- Fixed several Clippy warnings regarding dead code and initialization across multiple workspace projects (`chaos-pendulum`, `syntax-garden`, `lattice-brain`, `neuro-circuit`, `mnem-hologram`, `chaos-hologram`).

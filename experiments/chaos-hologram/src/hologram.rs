@@ -10,6 +10,7 @@ pub struct Hologram {
 }
 
 impl Hologram {
+    #[allow(dead_code)]
     pub fn new(width: usize, height: usize) -> Self {
         Self {
             width,
