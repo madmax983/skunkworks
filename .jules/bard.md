@@ -91,3 +91,7 @@
 ## 2025-07-28 - The Black Box of Esoteric Words of Power
 **Confusion:** The Linguistics engine (`Verbum` and `VerbumForge` in `vm/verbum.rs`) completely lacked module-level context and executable doctests. Users could not tell how dynamic macros (words of power) were constructed from genetic sequences, or how `Rarity` and costs were dynamically derived from complexity.
 **Clarification:** I added `//!` module-level documentation explaining the "Words of Power" system within the Chimera VM. I explicitly documented the `Rarity` enum, the `Verbum` struct, and heavily documented `VerbumForge` with executable `/// # Examples` doctests showing how to successfully forge a new word and what happens when you attempt to register a duplicate.
+
+## 2026-06-25 - The Gray-Scott Story
+**Confusion:** The `crates/gray-scott` directory lacked a `README.md` entirely. While the source code (`lib.rs`) was heavily documented, new users exploring the codebase from the filesystem wouldn't find a quick overview, making it harder to understand the crate's purpose without reading the code.
+**Clarification:** Created a `README.md` for `gray-scott` that summarizes its purpose (simulating the Gray-Scott reaction-diffusion system), explains its features (like the optional `parallel` feature using `rayon`), and provides a clean, copy-pasteable minimal example of a "Cell Division" simulation. This ensures "The README Run" passes smoothly.
