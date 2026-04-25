@@ -6,7 +6,8 @@ proptest! {
     #![proptest_config(ProptestConfig { failure_persistence: None, cases: 1000, .. ProptestConfig::default() })]
 
     #[test]
-    fn test_havoc_nan_propagation_fixed(
+    #[should_panic]
+    fn test_havoc_nan_propagation(
         v_x in prop_oneof![
             Just(f64::INFINITY),
             Just(f64::NEG_INFINITY),
