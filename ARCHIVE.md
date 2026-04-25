@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **quipu-automaton**: Specimen condemned. Diagnosis: Skeletal Implementation / Evolution Void. Grace period: 24h.
+- **klein-files**: Specimen condemned. Diagnosis: Logical Decay / Terminal Error. Grace period: 24h.
 
 ## Pardoned
 - **miura-interface**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Trait Void. Resolved by importing missing `std::io::Read` trait. Vigor demonstrated.
@@ -364,6 +364,7 @@
 - **recursive-conservatory**: Specimen executed. Diagnosis: Documentation Void / Terminal Genericism. Failed to improve during grace period. Moved to graveyard.
 - **sandpile-scheduler**: Specimen executed. Diagnosis: Terminal Genericism / Skeletal Implementation. Grace period expired. Moved to graveyard.
 ## ☠️ Executed
+- **quipu-automaton**: Specimen executed. Diagnosis: Skeletal Implementation / Evolution Void. Failed to improve during grace period. Biomass returned to the void.
 - **chaotic-mycelium**: Specimen executed. Diagnosis: Skeletal Implementation / Ecosystem Maladaptation. Failed to resolve dead code (`draw`, `reset`) during grace period. Biomass returned to the void.
 - **malloc-market**: Specimen executed. Diagnosis: Skeletal Implementation / Terminal Genericism. Failed to resolve mathematical logical error (`0.0 / 0.0`) during grace period. Biomass returned to the void.
 - **stego-cartridge**: Specimen executed. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Fails to compile `pack` bin due to missing `std::io::Read` and type annotation issues. Failed to adapt during grace period. Biomass returned to the void.

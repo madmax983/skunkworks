@@ -618,7 +618,8 @@
 ### [Concentration Level: TERMINAL] - Location: graveyard/mnem-strings
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Executed. Diagnosis: Vestigial Organs / Skeletal Implementation. Failed to resolve dead code warnings and unused variables during its grace period. Biomass returned to the void.
-☠️ [DEATH PHEROMONE] Specimen `quipu-automaton` condemned to execution in 24h. The reaper has marked its skeletal implementation and evolution void.
+☠️ [quipu-automaton] was executed by The Reaper. Reason: Skeletal Implementation / Evolution Void persist.
+☠️ [DEATH PHEROMONE] Specimen `klein-files` condemned to execution in 24h. The reaper has marked its logical decay and terminal clippy errors.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/myco-poincare
 - **Scent Origin:** The Splice Surgeon 🧬
