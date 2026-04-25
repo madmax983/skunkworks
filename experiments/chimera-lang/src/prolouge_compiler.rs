@@ -166,6 +166,12 @@ pub fn compile(source: &str) -> Result<Dna> {
                     genes.extend(compile_chaos_instr(instr)?);
                 }
             }
+            Rule::reactor_block => {
+                let content =
+                    extract_block_content_preserve_whitespace(inner_block.as_str(), "reactor");
+                genes.push(Gene::new(OpCode::Push, vec![Nucleotide::String(content)]));
+                genes.push(Gene::new(OpCode::Reactor, vec![]));
+            }
             _ => {}
         }
     }
