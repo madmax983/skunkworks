@@ -257,6 +257,24 @@ mod tests {
     }
 
     #[test]
+    fn test_prolouge_compiler_reactor() {
+        let source = r#"
+        reactor {
+            toggle
+        }
+        "#;
+        let dna = compile(source).unwrap();
+        let genes = &dna.helix.strands[0].genes;
+
+        assert_eq!(genes[0].op, OpCode::Push);
+        assert_eq!(
+            genes[0].args[0],
+            Nucleotide::String("            toggle".to_string())
+        );
+        assert_eq!(genes[1].op, OpCode::Reactor);
+    }
+
+    #[test]
     fn test_prolouge_compiler_regex() {
         let source = r#"
         regex {
