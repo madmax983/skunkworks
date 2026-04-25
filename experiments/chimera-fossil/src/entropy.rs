@@ -171,7 +171,7 @@ impl std::fmt::Display for Fossil {
         let bool_cell = if is_pristine {
             Cell::new("True").fg(Color::Green)
         } else {
-            Cell::new("False").fg(Color::Red)
+            Cell::new("False").fg(Color::Yellow)
         };
 
         table.add_row(vec![Cell::new("Pristine?"), bool_cell]);

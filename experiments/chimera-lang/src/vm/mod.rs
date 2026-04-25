@@ -572,7 +572,7 @@ impl std::fmt::Display for ChimeraVM {
             comfy_table::Cell::new(format!("{}", self.energy)).fg(if self.energy > 20 {
                 Color::Green
             } else {
-                Color::Red
+                Color::Yellow
             });
         table.add_row(vec![comfy_table::Cell::new("Energy"), energy_cell]);
 
@@ -581,7 +581,7 @@ impl std::fmt::Display for ChimeraVM {
         let chaos_color = if self.chaos_mode {
             Color::Green
         } else {
-            Color::Red
+            Color::Yellow
         };
         table.add_row(vec![
             comfy_table::Cell::new("Chaos Mode"),
