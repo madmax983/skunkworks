@@ -1,0 +1,60 @@
+<<<<<<< SEARCH
+pub fn compute_steering(mut desired: Vec2, current_vel: Vec2, max_speed: f64, max_force: f64) -> Vec2 {
+    let d_sq = desired.magnitude_squared();
+    if d_sq > 0.0 {
+        // Optimization: Normalize and scale in one go: desired * (max_speed / mag)
+        // 1 div, 1 sqrt, 2 muls (vs 2 divs, 1 sqrt, 2 muls in standard normalize)
+        let inv_mag = 1.0 / d_sq.sqrt();
+        desired *= max_speed * inv_mag;
+
+        desired -= current_vel;
+
+        // Optimization: Limit logic inlined to avoid redundant sqrt/divs
+        let s_sq = desired.magnitude_squared();
+        if s_sq > max_force * max_force {
+            let inv_s_mag = 1.0 / s_sq.sqrt();
+            desired *= max_force * inv_s_mag;
+        }
+        desired
+    } else {
+        Vec2::zero()
+    }
+}
+=======
+pub fn compute_steering(mut desired: Vec2, current_vel: Vec2, max_speed: f64, max_force: f64) -> Vec2 {
+    if !desired.x.is_finite()
+        || !desired.y.is_finite()
+        || !current_vel.x.is_finite()
+        || !current_vel.y.is_finite()
+        || !max_speed.is_finite()
+        || !max_force.is_finite()
+    {
+        return Vec2::zero();
+    }
+
+    let d_sq = desired.magnitude_squared();
+    if d_sq > 0.0 {
+        // Optimization: Normalize and scale in one go: desired * (max_speed / mag)
+        // 1 div, 1 sqrt, 2 muls (vs 2 divs, 1 sqrt, 2 muls in standard normalize)
+        let inv_mag = 1.0 / d_sq.sqrt();
+        desired *= max_speed * inv_mag;
+
+        desired -= current_vel;
+
+        // Optimization: Limit logic inlined to avoid redundant sqrt/divs
+        let s_sq = desired.magnitude_squared();
+        if s_sq > max_force * max_force {
+            let inv_s_mag = 1.0 / s_sq.sqrt();
+            desired *= max_force * inv_s_mag;
+        }
+
+        if !desired.x.is_finite() || !desired.y.is_finite() {
+            return Vec2::zero();
+        }
+
+        desired
+    } else {
+        Vec2::zero()
+    }
+}
+>>>>>>> REPLACE
