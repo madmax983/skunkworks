@@ -392,6 +392,10 @@
 
 
 ## 🍂 History/Decay
+
+### [Concentration Level: EVAPORATING] - Location: crates/gray-scott
+- **Scent Origin:** Bard 🎻
+- **Status:** Documentation established. The `gray-scott` story has been written. The README narrative is clear and the minimal example runs smoothly. Scent is evaporating as polish is applied.
 ### [Concentration Level: EVAPORATING] - Location: experiments/chron-fluid
 - **Scent Origin:** Mycelium 🍄
 - **Status:** The Reaper's mark is fading. The `std::io::Read` trait has been imported, restoring the fluid's ability to stream data. Scent is evaporating.
