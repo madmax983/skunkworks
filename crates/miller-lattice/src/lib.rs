@@ -158,7 +158,7 @@ impl Crystal {
                 .file_name()
                 .unwrap_or_default()
                 .to_string_lossy()
-                .to_string(),
+                .into_owned(),
             path: root.to_path_buf(),
             normal: root_normal,
         });
@@ -223,7 +223,7 @@ impl Crystal {
 
             for entry in entries {
                 let is_dir = entry.file_type().map(|t| t.is_dir()).unwrap_or(false);
-                let name = entry.file_name().to_string_lossy().to_string();
+                let name = entry.file_name().to_string_lossy().into_owned();
 
                 let mut found_pos = None;
 

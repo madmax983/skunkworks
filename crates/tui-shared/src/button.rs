@@ -37,10 +37,12 @@ use ratatui::{
 /// let mut buffer = Buffer::empty(area);
 /// button.render(area, &mut buffer);
 /// ```
+use std::borrow::Cow;
+
 pub struct Button<'a> {
-    label: String,
+    label: Cow<'a, str>,
     style: Style,
-    icon: Option<String>,
+    icon: Option<Cow<'a, str>>,
     block: Option<Block<'a>>,
     is_hovered: bool,
     is_clicked: bool,
@@ -60,7 +62,7 @@ impl<'a> Button<'a> {
     ///
     /// let button = Button::new("Click Me");
     /// ```
-    pub fn new(label: impl Into<String>) -> Self {
+    pub fn new(label: impl Into<Cow<'a, str>>) -> Self {
         Self {
             label: label.into(),
             style: Style::default()
@@ -154,7 +156,7 @@ impl<'a> Button<'a> {
     ///
     /// let button = Button::new("Save").icon("💾");
     /// ```
-    pub fn icon(mut self, icon: impl Into<String>) -> Self {
+    pub fn icon(mut self, icon: impl Into<Cow<'a, str>>) -> Self {
         self.icon = Some(icon.into());
         self
     }
@@ -211,10 +213,10 @@ impl<'a> Widget for Button<'a> {
 
         if self.is_success {
             final_style = final_style.bg(Color::Green).fg(Color::Black);
-            self.icon = Some("✅".to_string());
+            self.icon = Some(Cow::Borrowed("✅"));
         } else if self.is_loading {
             final_style = final_style.bg(Color::Yellow).fg(Color::Black);
-            self.icon = Some("⏳".to_string());
+            self.icon = Some(Cow::Borrowed("⏳"));
         } else if self.is_clicked {
             final_style = final_style.bg(Color::Red).fg(Color::White);
         } else if self.is_hovered {
@@ -247,13 +249,12 @@ impl<'a> Widget for Button<'a> {
             height: 1,
         };
 
-        let content = if let Some(icon) = self.icon {
-            format!("{} {}", icon, self.label)
+        let line = if let Some(icon) = self.icon {
+            Line::from(format!("{} {}", icon, self.label))
         } else {
-            self.label
+            Line::from(self.label.as_ref())
         };
 
-        let line = Line::from(content);
         let x_offset = (text_area.width.saturating_sub(line.width() as u16)) / 2;
 
         if text_area.y < buf.area.bottom() {

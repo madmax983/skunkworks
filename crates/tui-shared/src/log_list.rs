@@ -43,8 +43,10 @@ use ratatui::{
 /// let mut buffer = Buffer::empty(area);
 /// widget.render(area, &mut buffer);
 /// ```
+use std::borrow::Cow;
+
 pub struct LogList<'a> {
-    items: Vec<String>,
+    items: Vec<Cow<'a, str>>,
     block: Option<Block<'a>>,
 }
 
@@ -56,11 +58,14 @@ impl<'a> LogList<'a> {
     /// ```
     /// use tui_shared::LogList;
     ///
-    /// let logs = vec!["System started".to_string(), "Error: timeout".to_string()];
+    /// let logs: Vec<&str> = vec!["System started", "Error: timeout"];
     /// let log_list = LogList::new(logs);
     /// ```
-    pub fn new(items: Vec<String>) -> Self {
-        Self { items, block: None }
+    pub fn new(items: Vec<impl Into<Cow<'a, str>>>) -> Self {
+        Self {
+            items: items.into_iter().map(|i| i.into()).collect(),
+            block: None,
+        }
     }
 
     /// Helper to set a block with a title and all borders.
@@ -70,10 +75,10 @@ impl<'a> LogList<'a> {
     /// ```
     /// use tui_shared::LogList;
     ///
-    /// let logs = vec!["Warning: low memory".to_string()];
+    /// let logs: Vec<&str> = vec!["Warning: low memory"];
     /// let log_list = LogList::new(logs).with_title("Warnings");
     /// ```
-    pub fn with_title(mut self, title: impl Into<String>) -> Self {
+    pub fn with_title(mut self, title: impl Into<Cow<'a, str>>) -> Self {
         self.block = Some(Block::default().borders(Borders::ALL).title(title.into()));
         self
     }
@@ -86,7 +91,7 @@ impl<'a> Widget for LogList<'a> {
 
             let content = Line::from(vec![
                 Span::styled(prefix, style),
-                Span::styled(s.as_str(), style),
+                Span::styled(s.as_ref(), style),
             ]);
             ListItem::new(content)
         });
