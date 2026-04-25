@@ -576,9 +576,9 @@ fn create_klein_grid(a: f32, u_steps: u32, v_steps: u32) -> (Vec<Vertex>, Vec<u3
                 // v index j maps to v_steps - j
                 // if j=0 (v=0) -> v_flipped=2PI (which is 0) -> j=0
                 // if j=1 -> v_flipped=2PI-delta -> j=v_steps-1
-                let j_flipped = (width - j) % width;
+
                 // Next u is 0
-                0 * width + j_flipped
+                (width - j) % width
             } else {
                 (i + 1) * width + j
             };

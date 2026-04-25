@@ -1,7 +1,8 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **klein-files**: Specimen condemned. Diagnosis: Logical Decay / Terminal Error. Grace period: 24h.
+- **ferrous-lattice**: Specimen condemned. Diagnosis: Skeletal Implementation / Terminal Genericism. Grace period: 24h.
 
 ## Pardoned
+- **klein-files**: Specimen pardoned. Diagnosis: Logical Decay / Terminal Error. Resolved by removing explicit zero-multiplication, restoring topological gluing behavior. Vigor demonstrated.
 - **miura-interface**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Trait Void. Resolved by importing missing `std::io::Read` trait. Vigor demonstrated.
 - **chron-fluid**: Specimen pardoned. Diagnosis: Terminal Compilation Failure / Ecosystem Maladaptation. Resolved by adding missing `std::io::Read` trait to restore fluid reading. Vigor demonstrated.
 - **verge-computer**: Specimen pardoned. Diagnosis: Ecosystem Maladaptation / Technical Debt Burden. Resolved by fixing workspace exclusion and clippy warnings. Vigor demonstrated.
