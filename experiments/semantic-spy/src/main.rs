@@ -16,6 +16,7 @@
 //! ```
 
 use anyhow::{Context, Result};
+use clap::Parser;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
     backend::CrosstermBackend,
@@ -25,7 +26,6 @@ use ratatui::{
     widgets::{canvas::Canvas, Block, Borders, List, ListItem, ListState, Paragraph, Wrap},
     Terminal,
 };
-use clap::Parser;
 use std::io::{self, Read};
 use tui_shared::semantic::Snapshot;
 

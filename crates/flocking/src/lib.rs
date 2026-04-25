@@ -162,6 +162,14 @@ impl FlockingAccumulators {
         pre: &PrecomputedParams,
         overlap_bias: Vec2,
     ) {
+        if !neighbor_pos.x.is_finite()
+            || !neighbor_pos.y.is_finite()
+            || !neighbor_vel.x.is_finite()
+            || !neighbor_vel.y.is_finite()
+        {
+            return;
+        }
+
         let dx = my_pos.x - neighbor_pos.x;
         if dx.abs() > pre.params.view_radius {
             return;
@@ -297,6 +305,14 @@ pub fn compute_force(
 
     let my_pos = positions[my_idx];
     let my_vel = velocities[my_idx];
+
+    if !my_pos.x.is_finite()
+        || !my_pos.y.is_finite()
+        || !my_vel.x.is_finite()
+        || !my_vel.y.is_finite()
+    {
+        return Vec2::zero();
+    }
 
     let mut acc = FlockingAccumulators::default();
 
